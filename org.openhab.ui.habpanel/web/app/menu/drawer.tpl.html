@@ -1,0 +1,23 @@
+<ul class="menu">
+    <li ng-if="!settings.drawer_heading_image" ng-click="goHome()" ng-class="{ active: isActive('/') }" class="head">
+        <widget-icon iconset="'freepik-housethings'" icon="'house-building'" size="40"></widget-icon> {{settings.panel_name || 'HABPanel'}}
+    </li>
+    <li ng-if="settings.drawer_heading_image" ng-click="goHome()" style="padding: 0">
+        <img ng-src="{{settings.drawer_heading_image}}" />
+    </li>
+    <li ng-repeat="dash in dashboards | filter:isShown | orderBy:['row', 'col']" ng-class="{ active: isActive(dash.id) }" ng-click="goToDashboard(dash.id)">
+        <widget-icon ng-if="dash.tile.iconset && dash.tile.icon && !dash.drawer.use_custom_widget" style="position:absolute; right: 20px" iconset="dash.tile.iconset" icon="dash.tile.icon" inline="true" size="24"></widget-icon>
+        <span ng-if="!dash.drawer.use_custom_widget">{{dash.name}}</span>
+        <div ng-if="dash.drawer.use_custom_widget" ng-click="vm.viewDashboard(dash)" class="card-title" style="cursor: pointer; height: 100%"
+                ng-init="customDrawerWidgetsModels[dash.id] = { id: dash.id, name: dash.name, nobackground: true, customwidget: dash.drawer.custom_widget, dontwrap: true, config: dash.drawer.custom_widget_config }">
+            <widget-template ng-model="customDrawerWidgetsModels[dash.id]">
+            </widget-template>
+        </div>
+    </li>
+</ul>
+<footer ng-if="!settings.hide_drawer_footer">
+    <ds-widget-clock style="width: 100%; color: darkgray; white-space: nowrap;" show-digital digital-format="dateFormat"></ds-widget-clock>
+    <a ng-hide="lockEditing || kioskMode" class="btn" style="position: absolute; right: 0; font-size: 18px;" ng-click="goToSettings()"><i class="glyphicon glyphicon-cog"></i></a>
+    <a class="btn" style="position: absolute; left: 0; font-size: 18px; opacity: 0.25;" ng-click="togglePin()"><i ng-style="{ 'transform' : pinnedDrawer ? 'rotate(45deg) translate(-10px, 10px)' : '' }" class="glyphicon glyphicon-pushpin"></i></a>
+    <ds-widget-clock style="width: 100%; font-size: 24px;" show-digital digital-format="'mediumTime'"></ds-widget-clock>
+</footer>

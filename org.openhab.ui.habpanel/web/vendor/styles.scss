@@ -1,0 +1,20 @@
+@font-face {
+    font-family: Roboto;
+    src: url("../fonts/roboto/Roboto-Regular.eot");
+    src: local("Roboto Regular"), local("Roboto-Regular"), url("../fonts/roboto/Roboto-Regular.eot?#iefix") format("embedded-opentype"), url("../fonts/roboto/Roboto-Regular.woff2") format("woff2"), url("../fonts/roboto/Roboto-Regular.woff") format("woff"), url("../fonts/roboto/Roboto-Regular.ttf") format("truetype"), url("../fonts/roboto/Roboto-Regular.svg#Roboto") format("svg");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@import "../bower_components/angular-gridster/dist/angular-gridster";
+@import "../bower_components/angularjs-slider/dist/rzslider";
+@import "../bower_components/angular-ui-clock/dist/angular-clock";
+@import "../bower_components/selectize/dist/css/selectize.default";
+@import "../bower_components/angular-ui-select/dist/select";
+@import "../bower_components/angular-snap/angular-snap";
+@import "../bower_components/aCKolor/dist/css/aCKolor.min";
+@import "node_modules/n3-charts/build/LineChart";
+@import "../assets/styles/reset.scss";
+@import "../bower_components/bootstrap-sass/assets/stylesheets/bootstrap.scss";
+@import "../assets/styles/[^reset]*.scss";
+@import '../app/widgets/**/*.scss';

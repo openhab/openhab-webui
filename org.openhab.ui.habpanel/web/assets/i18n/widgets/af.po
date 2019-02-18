@@ -1,0 +1,1154 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: openhab-habpanel\n"
+"Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Language: af\n"
+"X-Crowdin-File: /master/web/assets/i18n/widgets/widgets.pot\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Language-Team: Afrikaans\n"
+"Language: af_ZA\n"
+"PO-Revision-Date: 2018-01-18 13:22-0500\n"
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.min"
+msgid "Min"
+msgstr ""
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.max"
+msgid "Max"
+msgstr ""
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.step"
+msgid "Step"
+msgstr ""
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.unit"
+msgid "Unit"
+msgstr ""
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.format"
+msgid "Format"
+msgstr ""
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.format.useserverprovided"
+msgid "Use server-provided format if available"
+msgstr ""
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.dontwrap"
+msgid "Value right of label"
+msgstr ""
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.backdrop_center"
+msgid "Center backdrop horizontally"
+msgstr ""
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.icon_nolinebreak"
+msgid "Icon left of label instead of below"
+msgstr ""
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.icon_replacestext"
+msgid "Icon replaces textual value display"
+msgstr ""
+
+#. Common tab header label
+msgctxt "widget.common.general"
+msgid "General"
+msgstr ""
+
+#. Common tab header label
+msgctxt "widget.common.advanced"
+msgid "Advanced"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.button"
+msgid "Button"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.button.description"
+msgid "A button performing a certain action, like sending a command to an openHAB item"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.button.settings.header"
+msgid "Button Settings"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.button.general"
+msgid "General"
+msgstr ""
+
+#. Dropdown header
+msgctxt "widget.button.general.action_type"
+msgid "Action type"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.button.general.action_type.command"
+msgid "Send a fixed command to an item"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.button.general.action_type.toggle"
+msgid "Alternate item between 2 states"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.button.general.action_type.navigate"
+msgid "Navigate"
+msgstr ""
+
+#. Textbox header
+msgctxt "widget.button.general.command"
+msgid "Command value"
+msgstr ""
+
+#. Textbox header
+msgctxt "widget.button.general.command_alt"
+msgid "Alternate command value"
+msgstr ""
+
+#. Radio buttons header
+msgctxt "widget.button.general.navigation_type"
+msgid "Navigation type"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.button.general.navigation_type.dashboard"
+msgid "Dashboard"
+msgstr ""
+
+#. Radio buttons header
+msgctxt "widget.button.general.navigation_target"
+msgid "Open in"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.button.general.navigation_target.self"
+msgid "Current tab"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.button.general.navigation_target.new_tab"
+msgid "New tab"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.button.general.navigation_target.new_window"
+msgid "New window"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.button.display"
+msgid "Display"
+msgstr ""
+
+#. Section header
+msgctxt "widget.button.display.label"
+msgid "Label"
+msgstr ""
+
+#. Section header
+msgctxt "widget.button.display.value"
+msgid "Value"
+msgstr ""
+
+#. Checkbox label (when there's an item configured in the General tab)
+msgctxt "widget.button.display.value.showitemvalue"
+msgid "Show the item's state value"
+msgstr ""
+
+#. Checkbox label (when there's no item configured in the General tab)
+msgctxt "widget.button.display.value.showitemvalue_noitem"
+msgid "Show an item's state value"
+msgstr ""
+
+#. Textbox header
+msgctxt "widget.button.display.value.active_state"
+msgid "Active state"
+msgstr ""
+
+#. Checkboxes header
+msgctxt "widget.button.display.value.layout"
+msgid "Layout"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.button.inactive"
+msgid "Inactive"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.button.active"
+msgid "Active"
+msgstr ""
+
+#. Tab header (when there's no item configured in the General tab)
+msgctxt "widget.button.colors"
+msgid "Colors"
+msgstr ""
+
+#. Color picker header
+msgctxt "widget.button.background_color"
+msgid "Background color"
+msgstr ""
+
+#. Color picker header
+msgctxt "widget.button.foreground_color"
+msgid "Label color"
+msgstr ""
+
+#. Color picker header
+msgctxt "widget.button.value_color"
+msgid "Value color"
+msgstr ""
+
+msgctxt "widget.button.preview.state"
+msgid "State"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.chart"
+msgid "Chart"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.chart.description"
+msgid "Displays a chart"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.chart.settings.header"
+msgid "Chart Settings"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.chart.general"
+msgid "General"
+msgstr ""
+
+#. Dropdown header
+msgctxt "widget.chart.general.type"
+msgid "Type"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.chart.general.type.default"
+msgid "Default"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.chart.general.type.rrd4j"
+msgid "RRD4j (rrd4j persistence service only)"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.chart.general.type.interactive"
+msgid "n3-line-chart (interactive)"
+msgstr ""
+
+#. Textbox header
+msgctxt "widget.chart.general.service"
+msgid "Persistence service"
+msgstr ""
+
+#. Textbox placeholder
+msgctxt "widget.chart.general.service.hint"
+msgid "rrd4j, mysql, influxdb... Leave blank for default"
+msgstr ""
+
+#. Item picker header
+msgctxt "widget.chart.general.itemgroup"
+msgid "openHAB Item or Group"
+msgstr ""
+
+#. Dropdown header
+msgctxt "widget.chart.general.period"
+msgid "Period"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.chart.axis"
+msgid "Axis"
+msgstr ""
+
+#. Section header
+msgctxt "widget.chart.axis.primary"
+msgid "Primary axis (y)"
+msgstr ""
+
+#. Section header
+msgctxt "widget.chart.axis.secondary"
+msgid "Secondary axis (y2)"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.chart.axis.enabled"
+msgid "Enabled"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.chart.axis.includezero"
+msgid "Include zero"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.chart.series"
+msgid "Series"
+msgstr ""
+
+#. Radio buttons header
+msgctxt "widget.chart.series.axis"
+msgid "Axis"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.chart.series.axis.primary"
+msgid "Primary"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.chart.series.axis.secondary"
+msgid "Secondary"
+msgstr ""
+
+#. Radio buttons header
+msgctxt "widget.chart.series.display"
+msgid "Display"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.chart.series.display.line"
+msgid "Line"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.chart.series.display.area"
+msgid "Area"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.chart.series.display.dots"
+msgid "Dots"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.chart.series.liveupdate"
+msgid "Live update (experimental)"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.chart.series.liveupdate.fillvalues"
+msgid "Repeat other series' current values on update if necessary"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.clock"
+msgid "Clock"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.clock.description"
+msgid "A clock widget - displays an analog or digital clock"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.clock.settings.header"
+msgid "Clock Settings"
+msgstr ""
+
+#. Dropdown header
+msgctxt "widget.clock.mode"
+msgid "Mode"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.clock.mode.analog"
+msgid "Analog"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.clock.mode.digital"
+msgid "Digital"
+msgstr ""
+
+#. Dropdown header
+msgctxt "widget.clock.theme"
+msgid "Analog Theme"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.clock.theme.light"
+msgid "light"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.clock.theme.dark"
+msgid "dark"
+msgstr ""
+
+#. Textbox header
+msgctxt "widget.clock.digital_format"
+msgid "Digital Format"
+msgstr ""
+
+#. Textbox header
+msgctxt "widget.clock.font_size"
+msgid "Digital Font Size"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.colorpicker"
+msgid "Color Picker"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.colorpicker.description"
+msgid "Displays an color picker"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.colorpicker.settings.header"
+msgid "Color Picker Settings"
+msgstr ""
+
+#. Dropdown header
+msgctxt "widget.colorpicker.type"
+msgid "Type"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.colorpicker.type.hsl"
+msgid "HSL Sliders"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.colorpicker.type.ackolor"
+msgid "aCKolor style (modal picker)"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.colorpicker.blur_background"
+msgid "Apply blurring effect to background"
+msgstr ""
+
+#. Displayed below the checkbox in small text
+msgctxt "widget.colorpicker.blur_background.warning"
+msgid "Warning: This can cause performance problems on tablets"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.dummy"
+msgid "Dummy"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.dummy.description"
+msgid "A dummy widget - displays the value of an openHAB item"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.dummy.settings.header"
+msgid "Dummy Settings"
+msgstr ""
+
+#. Checkboxes header
+msgctxt "widget.dummy.layout"
+msgid "Layout"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.frame"
+msgid "Frame"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.frame.description"
+msgid "Embedded website from predefined URL or openHAB item."
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.frame.settings.header"
+msgid "Frame Settings"
+msgstr ""
+
+#. Dropdown header
+msgctxt "widget.frame.url_source"
+msgid "URL Source"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.frame.url_source.static"
+msgid "Static URL"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.frame.url_source.item"
+msgid "openHAB String Item"
+msgstr ""
+
+#. Textbox header
+msgctxt "widget.frame.refresh_interval"
+msgid "Refresh interval (seconds)"
+msgstr ""
+
+#. Checkbox header - appears only if the refresh interval is set
+msgctxt "widget.frame.nosuffix"
+msgid "No cache busting (advanced)"
+msgstr ""
+
+#. Checkbox label - appears only if the refresh interval is set
+msgctxt "widget.frame.nosuffix.description"
+msgid "Don't add URL suffixes to prevent reusing cached pages"
+msgstr ""
+
+#. Color picker header
+msgctxt "widget.frame.background_color"
+msgid "Frame background color"
+msgstr ""
+
+#. Checkbox header
+msgctxt "widget.frame.frameless"
+msgid "Frameless"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.frame.frameless.description"
+msgid "Fill to edges"
+msgstr ""
+
+#. Checkbox header
+msgctxt "widget.frame.label"
+msgid "Label"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.frame.label.description"
+msgid "Hide title label"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.image"
+msgid "Image"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.image.description"
+msgid "Displays an image (not necessarily from openHAB)"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.image.settings.header"
+msgid "Image Settings"
+msgstr ""
+
+#. Dropdown header
+msgctxt "widget.image.image_source"
+msgid "Image source"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.image.image_source.static"
+msgid "Static image URL"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.image.image_source.item-string"
+msgid "openHAB String Item"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.image.image_source.item-image"
+msgid "openHAB Image Item"
+msgstr ""
+
+#. Textbox header
+msgctxt "widget.image.refresh_interval"
+msgid "Refresh interval"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.image.refresh_interval.seconds"
+msgid "seconds"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.image.refresh_interval.milliseconds"
+msgid "milliseconds"
+msgstr ""
+
+#. Checkbox header - appears only if the refresh interval is set
+msgctxt "widget.image.nosuffix"
+msgid "No cache busting (advanced)"
+msgstr ""
+
+#. Checkbox label - appears only if the refresh interval is set
+msgctxt "widget.image.nosuffix.description"
+msgid "Don't add URL suffixes to prevent reusing cached images"
+msgstr ""
+
+#. Color picker header
+msgctxt "widget.image.background_color"
+msgid "Background color"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.knob"
+msgid "Knob"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.knob.description"
+msgid "A knob for setting numerical openHAB items"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.knob.settings.header"
+msgid "Knob Settings"
+msgstr ""
+
+#. Checkbox header
+msgctxt "widget.knob.general.readonly"
+msgid "Read only"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.knob.general.readonly.description"
+msgid "Disable interaction"
+msgstr ""
+
+#. Checkboxes header
+msgctxt "widget.knob.general.centraldisplay"
+msgid "Central display"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.knob.general.centraldisplay.showvalue"
+msgid "Show value"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.knob.general.centraldisplay.showlabel"
+msgid "Show name (below value)"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.knob.bartrack"
+msgid "Bar & Track"
+msgstr ""
+
+#. Section header
+msgctxt "widget.knob.bartrack.angles"
+msgid "Angles (°)"
+msgstr ""
+
+#. Textbox header (small)
+msgctxt "widget.knob.bartrack.angles.start"
+msgid "Start"
+msgstr ""
+
+#. Textbox header (small)
+msgctxt "widget.knob.bartrack.angles.end"
+msgid "End"
+msgstr ""
+
+#. Textbox header (small)
+msgctxt "widget.knob.bartrack.width"
+msgid "Width"
+msgstr ""
+
+#. Textbox header (small)
+msgctxt "widget.knob.bartrack.cap"
+msgid "Cap"
+msgstr ""
+
+#. Section header
+msgctxt "widget.knob.bartrack.bar"
+msgid "Bar"
+msgstr ""
+
+#. Section header
+msgctxt "widget.knob.bartrack.track"
+msgid "Track"
+msgstr ""
+
+#. Section header
+msgctxt "widget.knob.bartrack.previousvalue"
+msgid "Previous value"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.knob.bartrack.previousvalue.description"
+msgid "Display previous value when dragging"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.knob.scale"
+msgid "Scale"
+msgstr ""
+
+#. Checkbox header
+msgctxt "widget.knob.scale.display"
+msgid "Display scale"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.knob.scale.display.enabled"
+msgid "Enabled"
+msgstr ""
+
+#. Radio buttons header
+msgctxt "widget.knob.scale.type"
+msgid "Scale Type"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.knob.scale.type.lines"
+msgid "Lines"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.knob.scale.type.dots"
+msgid "Dots"
+msgstr ""
+
+#. Textbox header (small)
+msgctxt "widget.knob.scale.width"
+msgid "Width"
+msgstr ""
+
+#. Textbox header (small)
+msgctxt "widget.knob.scale.qty"
+msgid "Qty."
+msgstr ""
+
+#. Textbox header (small)
+msgctxt "widget.knob.scale.space"
+msgid "Space"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.knob.skin"
+msgid "Skin"
+msgstr ""
+
+#. Radio buttons header
+msgctxt "widget.knob.skin.type"
+msgid "Type"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.knob.skin.type.simple"
+msgid "Simple"
+msgstr ""
+
+#. Radio button label
+msgctxt "widget.knob.skin.type.tron"
+msgid "Tron"
+msgstr ""
+
+#. Section header
+msgctxt "widget.knob.skin.tronsettings"
+msgid "Tron skin settings"
+msgstr ""
+
+#. Textbox header (small)
+msgctxt "widget.knob.skin.tronsettings.width"
+msgid "Width"
+msgstr ""
+
+#. Textbox header (small)
+msgctxt "widget.knob.skin.tronsettings.space"
+msgid "Space"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.knob.ranges"
+msgid "Ranges"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.knob.ranges.enable"
+msgid "Enable Ranges"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.knob.ranges.match_text_color"
+msgid "Match Text Color to Range"
+msgstr ""
+
+#. Textbox header (small)
+msgctxt "widget.knob.ranges.from"
+msgid "from"
+msgstr ""
+
+#. Textbox header (small)
+msgctxt "widget.knob.ranges.to"
+msgid "to"
+msgstr ""
+
+#. Color picker header
+msgctxt "widget.knob.ranges.bar"
+msgid "Bar"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.knob.misc"
+msgid "Misc."
+msgstr ""
+
+#. Color picker header
+msgctxt "widget.knob.misc.text"
+msgid "Text"
+msgstr ""
+
+#. Color picker header
+msgctxt "widget.knob.misc.background"
+msgid "Background"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.label"
+msgid "Label"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.label.description"
+msgid "A fixed label used for headers etc. (no openHAB item binding)"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.label.settings.header"
+msgid "Label Settings"
+msgstr ""
+
+#. Preview widget label in the top-right corner
+msgctxt "widget.label.preview"
+msgid "Preview"
+msgstr ""
+
+#. Color picker label
+msgctxt "widget.label.background_color"
+msgid "Background color"
+msgstr ""
+
+#. Color picker label
+msgctxt "widget.label.foreground_color"
+msgid "Text color"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.selection"
+msgid "Selection"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.selection.description"
+msgid "A widget allowing a selection between multiple choices"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.selection.settings.header"
+msgid "Selection Settings"
+msgstr ""
+
+#. Dropdown header
+msgctxt "widget.selection.choices_source"
+msgid "Choices source"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.selection.choices_source.server"
+msgid "Server-provided item options"
+msgstr ""
+
+#. Dropdown option
+msgctxt "widget.selection.choices_source.csv"
+msgid "Comma-separated list"
+msgstr ""
+
+#. Textbox header - appears only when the "comma-separated list" choice source is selected
+msgctxt "widget.selection.choices"
+msgid "List of comma-separated choices"
+msgstr ""
+
+#. Displayed in small text below the textbox
+msgctxt "widget.selection.choices.hint"
+msgid "You can optionally use the syntax: 'cmd=label' for each choice<br />Example: 18=Cold,20,22,24,26,28=Warm"
+msgstr ""
+
+#. Header
+msgctxt "widget.selection.display"
+msgid "Display options"
+msgstr ""
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.display.hidelabel"
+msgid "Hide name"
+msgstr ""
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.display.hideicon"
+msgid "Hide icon"
+msgstr ""
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.display.hidestate"
+msgid "Hide current value"
+msgstr ""
+
+#. Header
+msgctxt "widget.selection.choices_window"
+msgid "Choices window"
+msgstr ""
+
+#. Textbox (very small)
+msgctxt "widget.selection.choices_window.columns"
+msgid "Columns"
+msgstr ""
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.choices_window.disable_mobile"
+msgid "Disable mobile mode"
+msgstr ""
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.choices_window.no_squares"
+msgid "No square tiles"
+msgstr ""
+
+#. Header
+msgctxt "widget.selection.selection_options"
+msgid "Selection options"
+msgstr ""
+
+#. Checkbox label (small)
+msgctxt "widget.selection.selection_options.no_highlight"
+msgid "Don't highlight current selection"
+msgstr ""
+
+#. Checkbox label (small)
+msgctxt "widget.selection.selection_options.keep_open"
+msgid "Keep window open upon selection"
+msgstr ""
+
+#. Displayed when running the widget if no choices available
+msgctxt "widget.selection.nochoices"
+msgid "No choices available - check widget config"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.slider"
+msgid "Slider"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.slider.description"
+msgid "A slider for setting numerical openHAB items"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.slider.settings.header"
+msgid "Slider Settings"
+msgstr ""
+
+#. Checkbox header
+msgctxt "widget.slider.general.orientation"
+msgid "Orientation"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.slider.general.orientation.vertical"
+msgid "Vertical slider"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.hidelabel"
+msgid "Hide title label"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.hidelimits"
+msgid "Hide limits labels"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.hidepointer"
+msgid "Hide current value label"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.showticks"
+msgid "Show ticks"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.showticksvalues"
+msgid "Show ticks labels"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.inverted"
+msgid "Reverse direction"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.bigslider"
+msgid "Big slider (horizontal only)"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.slider.backdrop"
+msgid "Backdrop"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.switch"
+msgid "Switch"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.switch.description"
+msgid "A ON/OFF toggle for openHAB switches"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.switch.settings.header"
+msgid "Switch Settings"
+msgstr ""
+
+#. Header
+msgctxt "widget.switch.display"
+msgid "Display options"
+msgstr ""
+
+#. Checkbox label (very small)
+msgctxt "widget.switch.display.hidelabel"
+msgid "Hide name"
+msgstr ""
+
+#. Checkbox label (very small)
+msgctxt "widget.switch.display.hideicon"
+msgid "Hide icon"
+msgstr ""
+
+#. Checkbox label (very small)
+msgctxt "widget.switch.display.hideonoff"
+msgid "Hide ON/OFF"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.template"
+msgid "Template"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.template.description"
+msgid "A template widget - displays a custom dynamic template"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.template.settings.header"
+msgid "Template Settings"
+msgstr ""
+
+#. Settings dialog title for a custom widget (don't translate the variable)
+msgctxt "widget.template.settings.header.customwidget"
+msgid "{{customwidget_name}} Settings"
+msgstr ""
+
+#. Checkbox label (small)
+msgctxt "widget.template.dontwrap"
+msgid "Don't wrap in container"
+msgstr ""
+
+#. Checkbox label (small)
+msgctxt "widget.template.nobackground"
+msgid "No background"
+msgstr ""
+
+#. Section header (displayed above the code editor)
+msgctxt "widget.template.template"
+msgid "Template"
+msgstr ""
+
+#. Menu entry (top-right above the code editor)
+msgctxt "widget.template.importfromfile"
+msgid "Import from file..."
+msgstr ""
+
+#. Menu entry (top-right above the code editor)
+msgctxt "widget.template.exporttofile"
+msgid "Export to file"
+msgstr ""
+
+#. Menu entry (top-right above the code editor)
+msgctxt "widget.template.communitysupport"
+msgid "Community support"
+msgstr ""
+
+#. Menu entry (top-right above the code editor)
+msgctxt "widget.template.knowledgebase"
+msgid "Knowledge base"
+msgstr ""
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.timeline"
+msgid "Timeline"
+msgstr ""
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.timeline.description"
+msgid "Displays a timeline of several items"
+msgstr ""
+
+#. Settings dialog title
+msgctxt "widget.timeline.settings.header"
+msgid "Timeline Settings"
+msgstr ""
+
+#. Textbox header
+msgctxt "widget.timeline.general.service"
+msgid "Persistence service"
+msgstr ""
+
+#. Textbox placeholder
+msgctxt "widget.timeline.general.service.hint"
+msgid "rrd4j, mysql, influxdb... Leave blank for default"
+msgstr ""
+
+#. Dropdown placeholder
+msgctxt "widget.timeline.general.period"
+msgid "Period"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.timeline.colors"
+msgid "Colors"
+msgstr ""
+
+#. Accordion header (followed by the state value)
+msgctxt "widget.timeline.colors.state"
+msgid "State"
+msgstr ""
+
+#. Tab header
+msgctxt "widget.timeline.series"
+msgid "Series"
+msgstr ""
+

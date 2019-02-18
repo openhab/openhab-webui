@@ -1,0 +1,1154 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: openhab-habpanel\n"
+"Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Language: ro\n"
+"X-Crowdin-File: /master/web/assets/i18n/widgets/widgets.pot\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Language-Team: Romanian\n"
+"Language: ro_RO\n"
+"PO-Revision-Date: 2018-09-23 13:31\n"
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.min"
+msgid "Min"
+msgstr "Minim"
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.max"
+msgid "Max"
+msgstr "Maxim"
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.step"
+msgid "Step"
+msgstr "Pas"
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.unit"
+msgid "Unit"
+msgstr "Unitate"
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.format"
+msgid "Format"
+msgstr "Format"
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.format.useserverprovided"
+msgid "Use server-provided format if available"
+msgstr "Utilizaţi formatul de server oferit dacă este disponibil"
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.dontwrap"
+msgid "Value right of label"
+msgstr "Valoare dreapta de etichetă"
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.backdrop_center"
+msgid "Center backdrop horizontally"
+msgstr "Centrează fundalul orizontal"
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.icon_nolinebreak"
+msgid "Icon left of label instead of below"
+msgstr "Pictograma în stânga etichetei în loc de mai jos"
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.icon_replacestext"
+msgid "Icon replaces textual value display"
+msgstr "Pictograma înlocuieşte valoarea textului afișat"
+
+#. Common tab header label
+msgctxt "widget.common.general"
+msgid "General"
+msgstr "General"
+
+#. Common tab header label
+msgctxt "widget.common.advanced"
+msgid "Advanced"
+msgstr "Avansat"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.button"
+msgid "Button"
+msgstr "Buton"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.button.description"
+msgid "A button performing a certain action, like sending a command to an openHAB item"
+msgstr "Un buton efectuează o anumită acţiune, cum ar fi trimiterea unei comenzi pentru un item din openHAB"
+
+#. Settings dialog title
+msgctxt "widget.button.settings.header"
+msgid "Button Settings"
+msgstr "Setări buton"
+
+#. Tab header
+msgctxt "widget.button.general"
+msgid "General"
+msgstr "General"
+
+#. Dropdown header
+msgctxt "widget.button.general.action_type"
+msgid "Action type"
+msgstr "Tip de acţiune"
+
+#. Dropdown option
+msgctxt "widget.button.general.action_type.command"
+msgid "Send a fixed command to an item"
+msgstr "Trimite o comandă fixă unui element"
+
+#. Dropdown option
+msgctxt "widget.button.general.action_type.toggle"
+msgid "Alternate item between 2 states"
+msgstr "Alternează element între două valori"
+
+#. Dropdown option
+msgctxt "widget.button.general.action_type.navigate"
+msgid "Navigate"
+msgstr "Navighează"
+
+#. Textbox header
+msgctxt "widget.button.general.command"
+msgid "Command value"
+msgstr "Valoare comandă"
+
+#. Textbox header
+msgctxt "widget.button.general.command_alt"
+msgid "Alternate command value"
+msgstr "Valoare comandă alternativă"
+
+#. Radio buttons header
+msgctxt "widget.button.general.navigation_type"
+msgid "Navigation type"
+msgstr "Tip navigare"
+
+#. Radio button label
+msgctxt "widget.button.general.navigation_type.dashboard"
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#. Radio buttons header
+msgctxt "widget.button.general.navigation_target"
+msgid "Open in"
+msgstr "Deschide în"
+
+#. Radio button label
+msgctxt "widget.button.general.navigation_target.self"
+msgid "Current tab"
+msgstr "Fila curentă"
+
+#. Radio button label
+msgctxt "widget.button.general.navigation_target.new_tab"
+msgid "New tab"
+msgstr "Filă nouă"
+
+#. Radio button label
+msgctxt "widget.button.general.navigation_target.new_window"
+msgid "New window"
+msgstr "Fereastră nouă"
+
+#. Tab header
+msgctxt "widget.button.display"
+msgid "Display"
+msgstr "Afișaj"
+
+#. Section header
+msgctxt "widget.button.display.label"
+msgid "Label"
+msgstr "Etichetă"
+
+#. Section header
+msgctxt "widget.button.display.value"
+msgid "Value"
+msgstr "Valoare"
+
+#. Checkbox label (when there's an item configured in the General tab)
+msgctxt "widget.button.display.value.showitemvalue"
+msgid "Show the item's state value"
+msgstr "Arată valoarea de stare a elementului"
+
+#. Checkbox label (when there's no item configured in the General tab)
+msgctxt "widget.button.display.value.showitemvalue_noitem"
+msgid "Show an item's state value"
+msgstr "Arată valoarea de stare a unui element"
+
+#. Textbox header
+msgctxt "widget.button.display.value.active_state"
+msgid "Active state"
+msgstr "Stare activă"
+
+#. Checkboxes header
+msgctxt "widget.button.display.value.layout"
+msgid "Layout"
+msgstr "Aspect"
+
+#. Tab header
+msgctxt "widget.button.inactive"
+msgid "Inactive"
+msgstr "Inactiv"
+
+#. Tab header
+msgctxt "widget.button.active"
+msgid "Active"
+msgstr "Activ"
+
+#. Tab header (when there's no item configured in the General tab)
+msgctxt "widget.button.colors"
+msgid "Colors"
+msgstr "Culori"
+
+#. Color picker header
+msgctxt "widget.button.background_color"
+msgid "Background color"
+msgstr "Culoare de fundal"
+
+#. Color picker header
+msgctxt "widget.button.foreground_color"
+msgid "Label color"
+msgstr "Culoare etichetă"
+
+#. Color picker header
+msgctxt "widget.button.value_color"
+msgid "Value color"
+msgstr "Culoarea valorii"
+
+msgctxt "widget.button.preview.state"
+msgid "State"
+msgstr "Stare"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.chart"
+msgid "Chart"
+msgstr "Diagramă"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.chart.description"
+msgid "Displays a chart"
+msgstr "Afişează o diagramă"
+
+#. Settings dialog title
+msgctxt "widget.chart.settings.header"
+msgid "Chart Settings"
+msgstr "Setările de diagramă"
+
+#. Tab header
+msgctxt "widget.chart.general"
+msgid "General"
+msgstr "General"
+
+#. Dropdown header
+msgctxt "widget.chart.general.type"
+msgid "Type"
+msgstr "Tip"
+
+#. Dropdown option
+msgctxt "widget.chart.general.type.default"
+msgid "Default"
+msgstr "Prestabilit"
+
+#. Dropdown option
+msgctxt "widget.chart.general.type.rrd4j"
+msgid "RRD4j (rrd4j persistence service only)"
+msgstr "RRD4j (rrd4j doar serviciu de persistenţă)"
+
+#. Dropdown option
+msgctxt "widget.chart.general.type.interactive"
+msgid "n3-line-chart (interactive)"
+msgstr "n3-line-chart (interactiv)"
+
+#. Textbox header
+msgctxt "widget.chart.general.service"
+msgid "Persistence service"
+msgstr "Serviciul de persistență"
+
+#. Textbox placeholder
+msgctxt "widget.chart.general.service.hint"
+msgid "rrd4j, mysql, influxdb... Leave blank for default"
+msgstr "rrd4j, mysql, influxdb... lasa liber pentru setările standard"
+
+#. Item picker header
+msgctxt "widget.chart.general.itemgroup"
+msgid "openHAB Item or Group"
+msgstr "openHAB element sau grup"
+
+#. Dropdown header
+msgctxt "widget.chart.general.period"
+msgid "Period"
+msgstr "Perioadă"
+
+#. Tab header
+msgctxt "widget.chart.axis"
+msgid "Axis"
+msgstr "Axele"
+
+#. Section header
+msgctxt "widget.chart.axis.primary"
+msgid "Primary axis (y)"
+msgstr "Axe primare (y)"
+
+#. Section header
+msgctxt "widget.chart.axis.secondary"
+msgid "Secondary axis (y2)"
+msgstr "Axe secundare (y2)"
+
+#. Checkbox label
+msgctxt "widget.chart.axis.enabled"
+msgid "Enabled"
+msgstr "Activat"
+
+#. Checkbox label
+msgctxt "widget.chart.axis.includezero"
+msgid "Include zero"
+msgstr "Include zero"
+
+#. Tab header
+msgctxt "widget.chart.series"
+msgid "Series"
+msgstr "Serii"
+
+#. Radio buttons header
+msgctxt "widget.chart.series.axis"
+msgid "Axis"
+msgstr "Axele"
+
+#. Radio button label
+msgctxt "widget.chart.series.axis.primary"
+msgid "Primary"
+msgstr "Principal"
+
+#. Radio button label
+msgctxt "widget.chart.series.axis.secondary"
+msgid "Secondary"
+msgstr "Secundar"
+
+#. Radio buttons header
+msgctxt "widget.chart.series.display"
+msgid "Display"
+msgstr "Afișează"
+
+#. Radio button label
+msgctxt "widget.chart.series.display.line"
+msgid "Line"
+msgstr "Linie"
+
+#. Radio button label
+msgctxt "widget.chart.series.display.area"
+msgid "Area"
+msgstr "Suprafață"
+
+#. Radio button label
+msgctxt "widget.chart.series.display.dots"
+msgid "Dots"
+msgstr "Puncte"
+
+#. Checkbox label
+msgctxt "widget.chart.series.liveupdate"
+msgid "Live update (experimental)"
+msgstr "Actualizare live (experimental)"
+
+#. Checkbox label
+msgctxt "widget.chart.series.liveupdate.fillvalues"
+msgid "Repeat other series' current values on update if necessary"
+msgstr "Dacă e necesar, repetă valorile actuale ale altor serii"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.clock"
+msgid "Clock"
+msgstr "Ceas"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.clock.description"
+msgid "A clock widget - displays an analog or digital clock"
+msgstr "Widget ceas - afişează un ceas analog sau digital"
+
+#. Settings dialog title
+msgctxt "widget.clock.settings.header"
+msgid "Clock Settings"
+msgstr "Setări ceas"
+
+#. Dropdown header
+msgctxt "widget.clock.mode"
+msgid "Mode"
+msgstr "Mod"
+
+#. Dropdown option
+msgctxt "widget.clock.mode.analog"
+msgid "Analog"
+msgstr "Analog"
+
+#. Dropdown option
+msgctxt "widget.clock.mode.digital"
+msgid "Digital"
+msgstr "Digital"
+
+#. Dropdown header
+msgctxt "widget.clock.theme"
+msgid "Analog Theme"
+msgstr "Temă analog"
+
+#. Dropdown option
+msgctxt "widget.clock.theme.light"
+msgid "light"
+msgstr "luminos"
+
+#. Dropdown option
+msgctxt "widget.clock.theme.dark"
+msgid "dark"
+msgstr "întunecat"
+
+#. Textbox header
+msgctxt "widget.clock.digital_format"
+msgid "Digital Format"
+msgstr "Format digital"
+
+#. Textbox header
+msgctxt "widget.clock.font_size"
+msgid "Digital Font Size"
+msgstr "Mărime font digital"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.colorpicker"
+msgid "Color Picker"
+msgstr "Selector de Culoare"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.colorpicker.description"
+msgid "Displays an color picker"
+msgstr "Vizualizare selector de culoare"
+
+#. Settings dialog title
+msgctxt "widget.colorpicker.settings.header"
+msgid "Color Picker Settings"
+msgstr "Setări selector de culoare"
+
+#. Dropdown header
+msgctxt "widget.colorpicker.type"
+msgid "Type"
+msgstr "Tip"
+
+#. Dropdown option
+msgctxt "widget.colorpicker.type.hsl"
+msgid "HSL Sliders"
+msgstr "Cursor HSL"
+
+#. Dropdown option
+msgctxt "widget.colorpicker.type.ackolor"
+msgid "aCKolor style (modal picker)"
+msgstr "stil aCKolor (cursor modal)"
+
+#. Checkbox label
+msgctxt "widget.colorpicker.blur_background"
+msgid "Apply blurring effect to background"
+msgstr "Aplicați efectul de estompare pe fundal"
+
+#. Displayed below the checkbox in small text
+msgctxt "widget.colorpicker.blur_background.warning"
+msgid "Warning: This can cause performance problems on tablets"
+msgstr "Avertisment: Acest lucru poate provoca probleme de performanţă pe tablete"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.dummy"
+msgid "Dummy"
+msgstr "Fictiv"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.dummy.description"
+msgid "A dummy widget - displays the value of an openHAB item"
+msgstr "Widget fictiv - afișează valuarea unui articol openHAB"
+
+#. Settings dialog title
+msgctxt "widget.dummy.settings.header"
+msgid "Dummy Settings"
+msgstr "Setări fictive"
+
+#. Checkboxes header
+msgctxt "widget.dummy.layout"
+msgid "Layout"
+msgstr "Aspect"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.frame"
+msgid "Frame"
+msgstr "Cadru"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.frame.description"
+msgid "Embedded website from predefined URL or openHAB item."
+msgstr "Site încorporat de la URL sau articol openHAB predefinit."
+
+#. Settings dialog title
+msgctxt "widget.frame.settings.header"
+msgid "Frame Settings"
+msgstr "Setări pentru ramă"
+
+#. Dropdown header
+msgctxt "widget.frame.url_source"
+msgid "URL Source"
+msgstr "URL sursă"
+
+#. Dropdown option
+msgctxt "widget.frame.url_source.static"
+msgid "Static URL"
+msgstr "URL static"
+
+#. Dropdown option
+msgctxt "widget.frame.url_source.item"
+msgid "openHAB String Item"
+msgstr "element string openHAB"
+
+#. Textbox header
+msgctxt "widget.frame.refresh_interval"
+msgid "Refresh interval (seconds)"
+msgstr "Interval de reîmprospătare(secunde)"
+
+#. Checkbox header - appears only if the refresh interval is set
+msgctxt "widget.frame.nosuffix"
+msgid "No cache busting (advanced)"
+msgstr "Ascunde memoria-busting (doar pentru experți)"
+
+#. Checkbox label - appears only if the refresh interval is set
+msgctxt "widget.frame.nosuffix.description"
+msgid "Don't add URL suffixes to prevent reusing cached pages"
+msgstr "Nu se adaugă sufixul URL pentru a preveni reutilizarea paginile stocate în cache"
+
+#. Color picker header
+msgctxt "widget.frame.background_color"
+msgid "Frame background color"
+msgstr "Culoarea de fundal a cadrului"
+
+#. Checkbox header
+msgctxt "widget.frame.frameless"
+msgid "Frameless"
+msgstr "Fară ramă"
+
+#. Checkbox label
+msgctxt "widget.frame.frameless.description"
+msgid "Fill to edges"
+msgstr "Umple până la margini"
+
+#. Checkbox header
+msgctxt "widget.frame.label"
+msgid "Label"
+msgstr "Etichetă"
+
+#. Checkbox label
+msgctxt "widget.frame.label.description"
+msgid "Hide title label"
+msgstr "Ascunde titlul etichetei"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.image"
+msgid "Image"
+msgstr "Imagine"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.image.description"
+msgid "Displays an image (not necessarily from openHAB)"
+msgstr "Afişează o imagine (nu neapărat de la openHAB)"
+
+#. Settings dialog title
+msgctxt "widget.image.settings.header"
+msgid "Image Settings"
+msgstr "Setări imagine"
+
+#. Dropdown header
+msgctxt "widget.image.image_source"
+msgid "Image source"
+msgstr "Sursa Imaginii"
+
+#. Dropdown option
+msgctxt "widget.image.image_source.static"
+msgid "Static image URL"
+msgstr "URL-ul imaginii statice"
+
+#. Dropdown option
+msgctxt "widget.image.image_source.item-string"
+msgid "openHAB String Item"
+msgstr "openHAB String Item"
+
+#. Dropdown option
+msgctxt "widget.image.image_source.item-image"
+msgid "openHAB Image Item"
+msgstr "openHAB element de imagine"
+
+#. Textbox header
+msgctxt "widget.image.refresh_interval"
+msgid "Refresh interval"
+msgstr "Interval de reîmprospătare"
+
+#. Radio button label
+msgctxt "widget.image.refresh_interval.seconds"
+msgid "seconds"
+msgstr "secunde"
+
+#. Radio button label
+msgctxt "widget.image.refresh_interval.milliseconds"
+msgid "milliseconds"
+msgstr "milisecunde"
+
+#. Checkbox header - appears only if the refresh interval is set
+msgctxt "widget.image.nosuffix"
+msgid "No cache busting (advanced)"
+msgstr "Fără cache busting (avansat)"
+
+#. Checkbox label - appears only if the refresh interval is set
+msgctxt "widget.image.nosuffix.description"
+msgid "Don't add URL suffixes to prevent reusing cached images"
+msgstr "Nu se adaugă sufixul URL pentru a preveni reutilizarea paginile stocate în cache"
+
+#. Color picker header
+msgctxt "widget.image.background_color"
+msgid "Background color"
+msgstr "Culoare de fundal"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.knob"
+msgid "Knob"
+msgstr "Buton"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.knob.description"
+msgid "A knob for setting numerical openHAB items"
+msgstr "Un buton rotativ pentru elemente numerice openHAB"
+
+#. Settings dialog title
+msgctxt "widget.knob.settings.header"
+msgid "Knob Settings"
+msgstr "Serări buton rotativ"
+
+#. Checkbox header
+msgctxt "widget.knob.general.readonly"
+msgid "Read only"
+msgstr "Doar citire"
+
+#. Checkbox label
+msgctxt "widget.knob.general.readonly.description"
+msgid "Disable interaction"
+msgstr "Dezactivaţi interacţiunea"
+
+#. Checkboxes header
+msgctxt "widget.knob.general.centraldisplay"
+msgid "Central display"
+msgstr "Afișare centrată"
+
+#. Checkbox label
+msgctxt "widget.knob.general.centraldisplay.showvalue"
+msgid "Show value"
+msgstr "Afișare valoare"
+
+#. Checkbox label
+msgctxt "widget.knob.general.centraldisplay.showlabel"
+msgid "Show name (below value)"
+msgstr "Arată numele (sub valoare)"
+
+#. Tab header
+msgctxt "widget.knob.bartrack"
+msgid "Bar & Track"
+msgstr "Bară & Urmăritor"
+
+#. Section header
+msgctxt "widget.knob.bartrack.angles"
+msgid "Angles (°)"
+msgstr "Unghiuri (°)"
+
+#. Textbox header (small)
+msgctxt "widget.knob.bartrack.angles.start"
+msgid "Start"
+msgstr "Început"
+
+#. Textbox header (small)
+msgctxt "widget.knob.bartrack.angles.end"
+msgid "End"
+msgstr "Sfârșit"
+
+#. Textbox header (small)
+msgctxt "widget.knob.bartrack.width"
+msgid "Width"
+msgstr "Lățime"
+
+#. Textbox header (small)
+msgctxt "widget.knob.bartrack.cap"
+msgid "Cap"
+msgstr "Vârf"
+
+#. Section header
+msgctxt "widget.knob.bartrack.bar"
+msgid "Bar"
+msgstr "Bară"
+
+#. Section header
+msgctxt "widget.knob.bartrack.track"
+msgid "Track"
+msgstr "Pistă"
+
+#. Section header
+msgctxt "widget.knob.bartrack.previousvalue"
+msgid "Previous value"
+msgstr "Valoare anterioară"
+
+#. Checkbox label
+msgctxt "widget.knob.bartrack.previousvalue.description"
+msgid "Display previous value when dragging"
+msgstr "Arată valuarea anterioară cand trageți"
+
+#. Tab header
+msgctxt "widget.knob.scale"
+msgid "Scale"
+msgstr "Scală"
+
+#. Checkbox header
+msgctxt "widget.knob.scale.display"
+msgid "Display scale"
+msgstr "Afișează scala"
+
+#. Checkbox label
+msgctxt "widget.knob.scale.display.enabled"
+msgid "Enabled"
+msgstr "Activat"
+
+#. Radio buttons header
+msgctxt "widget.knob.scale.type"
+msgid "Scale Type"
+msgstr "Tip de scală"
+
+#. Radio button label
+msgctxt "widget.knob.scale.type.lines"
+msgid "Lines"
+msgstr "Linii"
+
+#. Checkbox label
+msgctxt "widget.knob.scale.type.dots"
+msgid "Dots"
+msgstr "Puncte"
+
+#. Textbox header (small)
+msgctxt "widget.knob.scale.width"
+msgid "Width"
+msgstr "Lăţime"
+
+#. Textbox header (small)
+msgctxt "widget.knob.scale.qty"
+msgid "Qty."
+msgstr "Cantitate"
+
+#. Textbox header (small)
+msgctxt "widget.knob.scale.space"
+msgid "Space"
+msgstr "Spaţiu"
+
+#. Tab header
+msgctxt "widget.knob.skin"
+msgid "Skin"
+msgstr "Costum"
+
+#. Radio buttons header
+msgctxt "widget.knob.skin.type"
+msgid "Type"
+msgstr "Tip"
+
+#. Radio button label
+msgctxt "widget.knob.skin.type.simple"
+msgid "Simple"
+msgstr "Simplu"
+
+#. Radio button label
+msgctxt "widget.knob.skin.type.tron"
+msgid "Tron"
+msgstr "Tip neon"
+
+#. Section header
+msgctxt "widget.knob.skin.tronsettings"
+msgid "Tron skin settings"
+msgstr "Setări suprafață tip neon"
+
+#. Textbox header (small)
+msgctxt "widget.knob.skin.tronsettings.width"
+msgid "Width"
+msgstr "Lăţime"
+
+#. Textbox header (small)
+msgctxt "widget.knob.skin.tronsettings.space"
+msgid "Space"
+msgstr "Spaţiu"
+
+#. Tab header
+msgctxt "widget.knob.ranges"
+msgid "Ranges"
+msgstr "Intervale"
+
+#. Checkbox label
+msgctxt "widget.knob.ranges.enable"
+msgid "Enable Ranges"
+msgstr "Activează intervale"
+
+#. Checkbox label
+msgctxt "widget.knob.ranges.match_text_color"
+msgid "Match Text Color to Range"
+msgstr "Potrivește culoarea textului cu intervalul"
+
+#. Textbox header (small)
+msgctxt "widget.knob.ranges.from"
+msgid "from"
+msgstr "de la"
+
+#. Textbox header (small)
+msgctxt "widget.knob.ranges.to"
+msgid "to"
+msgstr "până la"
+
+#. Color picker header
+msgctxt "widget.knob.ranges.bar"
+msgid "Bar"
+msgstr "Bară"
+
+#. Tab header
+msgctxt "widget.knob.misc"
+msgid "Misc."
+msgstr "Diverse."
+
+#. Color picker header
+msgctxt "widget.knob.misc.text"
+msgid "Text"
+msgstr "Text"
+
+#. Color picker header
+msgctxt "widget.knob.misc.background"
+msgid "Background"
+msgstr "Fundal"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.label"
+msgid "Label"
+msgstr "Etichetă"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.label.description"
+msgid "A fixed label used for headers etc. (no openHAB item binding)"
+msgstr "O etichetă fixă utilizată pentru anteturi etc. (Nu e obligatoriu să fie element openHAB)"
+
+#. Settings dialog title
+msgctxt "widget.label.settings.header"
+msgid "Label Settings"
+msgstr "Configurări etichetă"
+
+#. Preview widget label in the top-right corner
+msgctxt "widget.label.preview"
+msgid "Preview"
+msgstr "Previzualizare"
+
+#. Color picker label
+msgctxt "widget.label.background_color"
+msgid "Background color"
+msgstr "Culoare de fundal"
+
+#. Color picker label
+msgctxt "widget.label.foreground_color"
+msgid "Text color"
+msgstr "Culoare text"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.selection"
+msgid "Selection"
+msgstr "Selecţie"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.selection.description"
+msgid "A widget allowing a selection between multiple choices"
+msgstr "Un widget care permite o selecție între mai multe opțiuni"
+
+#. Settings dialog title
+msgctxt "widget.selection.settings.header"
+msgid "Selection Settings"
+msgstr "Selecţie de setări"
+
+#. Dropdown header
+msgctxt "widget.selection.choices_source"
+msgid "Choices source"
+msgstr "Alege sursa"
+
+#. Dropdown option
+msgctxt "widget.selection.choices_source.server"
+msgid "Server-provided item options"
+msgstr "Opțiuni ale elementelor furnizate de server"
+
+#. Dropdown option
+msgctxt "widget.selection.choices_source.csv"
+msgid "Comma-separated list"
+msgstr "Listă cu separare prin virgulă"
+
+#. Textbox header - appears only when the "comma-separated list" choice source is selected
+msgctxt "widget.selection.choices"
+msgid "List of comma-separated choices"
+msgstr "Listă de opțiunii separate prin virgulă"
+
+#. Displayed in small text below the textbox
+msgctxt "widget.selection.choices.hint"
+msgid "You can optionally use the syntax: 'cmd=label' for each choice<br />Example: 18=Cold,20,22,24,26,28=Warm"
+msgstr "Opțional puteți folosi sintaxa: 'cmd=label' pentru fiecare alegere <br /> Exemplu: 18=rece,20,22,24,26,28=cald"
+
+#. Header
+msgctxt "widget.selection.display"
+msgid "Display options"
+msgstr "Opţiuni de afişare"
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.display.hidelabel"
+msgid "Hide name"
+msgstr "Ascunde numele"
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.display.hideicon"
+msgid "Hide icon"
+msgstr "Ascunde pictograma"
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.display.hidestate"
+msgid "Hide current value"
+msgstr "Ascunde valoarea curentă"
+
+#. Header
+msgctxt "widget.selection.choices_window"
+msgid "Choices window"
+msgstr "Fereastra de opţiuni"
+
+#. Textbox (very small)
+msgctxt "widget.selection.choices_window.columns"
+msgid "Columns"
+msgstr "Coloane"
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.choices_window.disable_mobile"
+msgid "Disable mobile mode"
+msgstr "Dezactivează modul mobil"
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.choices_window.no_squares"
+msgid "No square tiles"
+msgstr "Fără dală pătrată"
+
+#. Header
+msgctxt "widget.selection.selection_options"
+msgid "Selection options"
+msgstr "Opțiuni de selecție"
+
+#. Checkbox label (small)
+msgctxt "widget.selection.selection_options.no_highlight"
+msgid "Don't highlight current selection"
+msgstr "Nu marca selecția curentă"
+
+#. Checkbox label (small)
+msgctxt "widget.selection.selection_options.keep_open"
+msgid "Keep window open upon selection"
+msgstr "Păstrează fereastra deschisă după selecție"
+
+#. Displayed when running the widget if no choices available
+msgctxt "widget.selection.nochoices"
+msgid "No choices available - check widget config"
+msgstr "Nu sunt disponibile opțiuni - verifică setările widget-ului"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.slider"
+msgid "Slider"
+msgstr "Cursor"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.slider.description"
+msgid "A slider for setting numerical openHAB items"
+msgstr "Un cursor pentru elemente numerice openHAB"
+
+#. Settings dialog title
+msgctxt "widget.slider.settings.header"
+msgid "Slider Settings"
+msgstr "Setările cursorului"
+
+#. Checkbox header
+msgctxt "widget.slider.general.orientation"
+msgid "Orientation"
+msgstr "Orientare"
+
+#. Checkbox label
+msgctxt "widget.slider.general.orientation.vertical"
+msgid "Vertical slider"
+msgstr "Cursor vertical"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.hidelabel"
+msgid "Hide title label"
+msgstr "Ascunde titlul etichetei"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.hidelimits"
+msgid "Hide limits labels"
+msgstr "Ascunde etichetele limitelor"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.hidepointer"
+msgid "Hide current value label"
+msgstr "Ascunde eticheta valoarei curente"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.showticks"
+msgid "Show ticks"
+msgstr "Arată gradații"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.showticksvalues"
+msgid "Show ticks labels"
+msgstr "Arată etichetele gradate"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.inverted"
+msgid "Reverse direction"
+msgstr "Direcţie inversă"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.bigslider"
+msgid "Big slider (horizontal only)"
+msgstr "Glisor mare (doar orizontal)"
+
+#. Tab header
+msgctxt "widget.slider.backdrop"
+msgid "Backdrop"
+msgstr "Fundal"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.switch"
+msgid "Switch"
+msgstr "Întrerupător"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.switch.description"
+msgid "A ON/OFF toggle for openHAB switches"
+msgstr "Comutator ON/OFF pentru întrerupătoare openHAB"
+
+#. Settings dialog title
+msgctxt "widget.switch.settings.header"
+msgid "Switch Settings"
+msgstr "Setări întrerupător"
+
+#. Header
+msgctxt "widget.switch.display"
+msgid "Display options"
+msgstr "Opţiuni de afişare"
+
+#. Checkbox label (very small)
+msgctxt "widget.switch.display.hidelabel"
+msgid "Hide name"
+msgstr "Ascunde numele"
+
+#. Checkbox label (very small)
+msgctxt "widget.switch.display.hideicon"
+msgid "Hide icon"
+msgstr "Ascunde pictograma"
+
+#. Checkbox label (very small)
+msgctxt "widget.switch.display.hideonoff"
+msgid "Hide ON/OFF"
+msgstr "Ascunde ON/OFF"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.template"
+msgid "Template"
+msgstr "Şablon"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.template.description"
+msgid "A template widget - displays a custom dynamic template"
+msgstr "Un widget şablon - afişează un şablon dinamic personalizat"
+
+#. Settings dialog title
+msgctxt "widget.template.settings.header"
+msgid "Template Settings"
+msgstr "Setări pentru şablon"
+
+#. Settings dialog title for a custom widget (don't translate the variable)
+msgctxt "widget.template.settings.header.customwidget"
+msgid "{{customwidget_name}} Settings"
+msgstr "{{customwidget_name}} Setări"
+
+#. Checkbox label (small)
+msgctxt "widget.template.dontwrap"
+msgid "Don't wrap in container"
+msgstr "Nu încorpora în container"
+
+#. Checkbox label (small)
+msgctxt "widget.template.nobackground"
+msgid "No background"
+msgstr "Fără fundal"
+
+#. Section header (displayed above the code editor)
+msgctxt "widget.template.template"
+msgid "Template"
+msgstr "Şablon"
+
+#. Menu entry (top-right above the code editor)
+msgctxt "widget.template.importfromfile"
+msgid "Import from file..."
+msgstr "Importă din fișier.."
+
+#. Menu entry (top-right above the code editor)
+msgctxt "widget.template.exporttofile"
+msgid "Export to file"
+msgstr "Exportă ca fișier"
+
+#. Menu entry (top-right above the code editor)
+msgctxt "widget.template.communitysupport"
+msgid "Community support"
+msgstr "Sprinjinul comunităţii"
+
+#. Menu entry (top-right above the code editor)
+msgctxt "widget.template.knowledgebase"
+msgid "Knowledge base"
+msgstr "Baza de cunoștințe"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.timeline"
+msgid "Timeline"
+msgstr "Cronologie"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.timeline.description"
+msgid "Displays a timeline of several items"
+msgstr "Afişeaza o cronologie a mai multor elemente"
+
+#. Settings dialog title
+msgctxt "widget.timeline.settings.header"
+msgid "Timeline Settings"
+msgstr "Setări cronologie"
+
+#. Textbox header
+msgctxt "widget.timeline.general.service"
+msgid "Persistence service"
+msgstr "Serviciu de persistență"
+
+#. Textbox placeholder
+msgctxt "widget.timeline.general.service.hint"
+msgid "rrd4j, mysql, influxdb... Leave blank for default"
+msgstr "rrd4j, mysql, influxdb... pentru standard lasă liber"
+
+#. Dropdown placeholder
+msgctxt "widget.timeline.general.period"
+msgid "Period"
+msgstr "Perioadă"
+
+#. Tab header
+msgctxt "widget.timeline.colors"
+msgid "Colors"
+msgstr "Culori"
+
+#. Accordion header (followed by the state value)
+msgctxt "widget.timeline.colors.state"
+msgid "State"
+msgstr "Stare"
+
+#. Tab header
+msgctxt "widget.timeline.series"
+msgid "Series"
+msgstr "Serii"
+

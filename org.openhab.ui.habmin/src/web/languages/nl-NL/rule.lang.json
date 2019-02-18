@@ -1,0 +1,14 @@
+{
+  "Rule": "Regel",
+  "Source": "Bron",
+  "Value": "Waarde",
+  "NoRules": "Geen regels beschikbaar",
+  "NewRuleTitle": "Nieuwe regel",
+  "NoDevices": "Geen apparaat",
+  "ErrorLoadingRule": "Fout bij het laden van regel <i>{1}</i>:<BR><b><i>{2}</i></b>.",
+  "ErrorLoadingRuleList": "Fout bij het laden van de lijst regels.",
+  "DeleteRuleTitle": "Verwijder regel",
+  "DeleteRuleCheck": "Weet u zeker dat u regel '{{selectedRule.name}}' wilt verwijderen?",
+  "UnsavedChangesTitle": "Waarschuwing: niet opgeslagen wijzigingen",
+  "UnsavedChangesCheck": "Er zijn niet opgeslagen wijzigingen in de regel '{rulename}'. Weet u zeker dat u wilt verdergaan? Als u op Ja klikt zullen de wijzigingen verloren gaan!"
+}

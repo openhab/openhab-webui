@@ -1,0 +1,1154 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: openhab-habpanel\n"
+"Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Language: tl\n"
+"X-Crowdin-File: /master/web/assets/i18n/widgets/widgets.pot\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Language-Team: Tagalog\n"
+"Language: tl_PH\n"
+"PO-Revision-Date: 2018-02-20 10:53-0500\n"
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.min"
+msgid "Min"
+msgstr "I-min"
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.max"
+msgid "Max"
+msgstr "I-Max"
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.step"
+msgid "Step"
+msgstr "Step"
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.unit"
+msgid "Unit"
+msgstr "Yunit"
+
+#. Common term in widget settings dialogs
+msgctxt "widget.common.format"
+msgid "Format"
+msgstr "I-format"
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.format.useserverprovided"
+msgid "Use server-provided format if available"
+msgstr "Gumamit ng inilaan ng server na format kung mayroon nito"
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.dontwrap"
+msgid "Value right of label"
+msgstr "Balyung karapatan ng label"
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.backdrop_center"
+msgid "Center backdrop horizontally"
+msgstr "Isentro ang backdrop ng pahalang"
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.icon_nolinebreak"
+msgid "Icon left of label instead of below"
+msgstr "Kaliwang ikon ng label sa halip na sa ibaba"
+
+#. Common option label in widget settings dialogs
+msgctxt "widget.common.icon_replacestext"
+msgid "Icon replaces textual value display"
+msgstr "Ang ikon ay pumapalit sa pagdisplay ng tekstuwal balyu"
+
+#. Common tab header label
+msgctxt "widget.common.general"
+msgid "General"
+msgstr "Pangkalahatan"
+
+#. Common tab header label
+msgctxt "widget.common.advanced"
+msgid "Advanced"
+msgstr "Mag-advance"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.button"
+msgid "Button"
+msgstr "Pindutan"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.button.description"
+msgid "A button performing a certain action, like sending a command to an openHAB item"
+msgstr "Isang pindutan na gumagawa ng iilang aksyon, tulad ng pagpapadala ng isang kautusan papunta sa isang openHAB aytem"
+
+#. Settings dialog title
+msgctxt "widget.button.settings.header"
+msgid "Button Settings"
+msgstr "Mga Setting ng Pindutan"
+
+#. Tab header
+msgctxt "widget.button.general"
+msgid "General"
+msgstr "Pangkalahatan"
+
+#. Dropdown header
+msgctxt "widget.button.general.action_type"
+msgid "Action type"
+msgstr "Uri ng aksyon"
+
+#. Dropdown option
+msgctxt "widget.button.general.action_type.command"
+msgid "Send a fixed command to an item"
+msgstr "Magpadala ng fixed na kautusan sa isang aytem"
+
+#. Dropdown option
+msgctxt "widget.button.general.action_type.toggle"
+msgid "Alternate item between 2 states"
+msgstr "Maghalinhinan ang aytem sa pagitan ng 2 mga estado"
+
+#. Dropdown option
+msgctxt "widget.button.general.action_type.navigate"
+msgid "Navigate"
+msgstr "Mag-navigate"
+
+#. Textbox header
+msgctxt "widget.button.general.command"
+msgid "Command value"
+msgstr "Balyu ng Kautusan"
+
+#. Textbox header
+msgctxt "widget.button.general.command_alt"
+msgid "Alternate command value"
+msgstr "Kahaliling balyu ng kautusan"
+
+#. Radio buttons header
+msgctxt "widget.button.general.navigation_type"
+msgid "Navigation type"
+msgstr "Uri ng nabigasyon"
+
+#. Radio button label
+msgctxt "widget.button.general.navigation_type.dashboard"
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#. Radio buttons header
+msgctxt "widget.button.general.navigation_target"
+msgid "Open in"
+msgstr "Buksan sa"
+
+#. Radio button label
+msgctxt "widget.button.general.navigation_target.self"
+msgid "Current tab"
+msgstr "Kasalukuyang tab"
+
+#. Radio button label
+msgctxt "widget.button.general.navigation_target.new_tab"
+msgid "New tab"
+msgstr "Bagong tab"
+
+#. Radio button label
+msgctxt "widget.button.general.navigation_target.new_window"
+msgid "New window"
+msgstr "Bagong window"
+
+#. Tab header
+msgctxt "widget.button.display"
+msgid "Display"
+msgstr "I-display"
+
+#. Section header
+msgctxt "widget.button.display.label"
+msgid "Label"
+msgstr "Mag-label"
+
+#. Section header
+msgctxt "widget.button.display.value"
+msgid "Value"
+msgstr "Balyu"
+
+#. Checkbox label (when there's an item configured in the General tab)
+msgctxt "widget.button.display.value.showitemvalue"
+msgid "Show the item's state value"
+msgstr "Ipakita ang estadong balyu ng aytem"
+
+#. Checkbox label (when there's no item configured in the General tab)
+msgctxt "widget.button.display.value.showitemvalue_noitem"
+msgid "Show an item's state value"
+msgstr "Magpakita ng isang estadong balyu ng aytem"
+
+#. Textbox header
+msgctxt "widget.button.display.value.active_state"
+msgid "Active state"
+msgstr "Aktibong estado"
+
+#. Checkboxes header
+msgctxt "widget.button.display.value.layout"
+msgid "Layout"
+msgstr "Pagkakalatag"
+
+#. Tab header
+msgctxt "widget.button.inactive"
+msgid "Inactive"
+msgstr "Hindi aktibo"
+
+#. Tab header
+msgctxt "widget.button.active"
+msgid "Active"
+msgstr "Aktibo"
+
+#. Tab header (when there's no item configured in the General tab)
+msgctxt "widget.button.colors"
+msgid "Colors"
+msgstr "Mga Kulay"
+
+#. Color picker header
+msgctxt "widget.button.background_color"
+msgid "Background color"
+msgstr "Kulay ng Background"
+
+#. Color picker header
+msgctxt "widget.button.foreground_color"
+msgid "Label color"
+msgstr "Kulay ng label"
+
+#. Color picker header
+msgctxt "widget.button.value_color"
+msgid "Value color"
+msgstr "Kulay ng balyu"
+
+msgctxt "widget.button.preview.state"
+msgid "State"
+msgstr "Estado"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.chart"
+msgid "Chart"
+msgstr "Tsart"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.chart.description"
+msgid "Displays a chart"
+msgstr "Mag-display ng isang tsart"
+
+#. Settings dialog title
+msgctxt "widget.chart.settings.header"
+msgid "Chart Settings"
+msgstr "Mga setting ng tsart"
+
+#. Tab header
+msgctxt "widget.chart.general"
+msgid "General"
+msgstr "Pangkalahatan"
+
+#. Dropdown header
+msgctxt "widget.chart.general.type"
+msgid "Type"
+msgstr "Uri"
+
+#. Dropdown option
+msgctxt "widget.chart.general.type.default"
+msgid "Default"
+msgstr "Default"
+
+#. Dropdown option
+msgctxt "widget.chart.general.type.rrd4j"
+msgid "RRD4j (rrd4j persistence service only)"
+msgstr "RRD4j (rrd4j serbisyo ng persistence lamang)"
+
+#. Dropdown option
+msgctxt "widget.chart.general.type.interactive"
+msgid "n3-line-chart (interactive)"
+msgstr "n3-line-chart (interactive)"
+
+#. Textbox header
+msgctxt "widget.chart.general.service"
+msgid "Persistence service"
+msgstr "Serbisyo ng Persistence"
+
+#. Textbox placeholder
+msgctxt "widget.chart.general.service.hint"
+msgid "rrd4j, mysql, influxdb... Leave blank for default"
+msgstr "rrd4j, mysql, influxdb... Panatilihing blanko para sa default"
+
+#. Item picker header
+msgctxt "widget.chart.general.itemgroup"
+msgid "openHAB Item or Group"
+msgstr "openHAB aytem o Grupo"
+
+#. Dropdown header
+msgctxt "widget.chart.general.period"
+msgid "Period"
+msgstr "Period"
+
+#. Tab header
+msgctxt "widget.chart.axis"
+msgid "Axis"
+msgstr "Axis"
+
+#. Section header
+msgctxt "widget.chart.axis.primary"
+msgid "Primary axis (y)"
+msgstr "Pangunahing axis (y)"
+
+#. Section header
+msgctxt "widget.chart.axis.secondary"
+msgid "Secondary axis (y2)"
+msgstr "Pangalawang axis (y2)"
+
+#. Checkbox label
+msgctxt "widget.chart.axis.enabled"
+msgid "Enabled"
+msgstr "Pinagagana"
+
+#. Checkbox label
+msgctxt "widget.chart.axis.includezero"
+msgid "Include zero"
+msgstr "Isama ang zero"
+
+#. Tab header
+msgctxt "widget.chart.series"
+msgid "Series"
+msgstr "Series"
+
+#. Radio buttons header
+msgctxt "widget.chart.series.axis"
+msgid "Axis"
+msgstr "Axis"
+
+#. Radio button label
+msgctxt "widget.chart.series.axis.primary"
+msgid "Primary"
+msgstr "Pangunahin"
+
+#. Radio button label
+msgctxt "widget.chart.series.axis.secondary"
+msgid "Secondary"
+msgstr "Pangalawa"
+
+#. Radio buttons header
+msgctxt "widget.chart.series.display"
+msgid "Display"
+msgstr "I-display"
+
+#. Radio button label
+msgctxt "widget.chart.series.display.line"
+msgid "Line"
+msgstr "Linya"
+
+#. Radio button label
+msgctxt "widget.chart.series.display.area"
+msgid "Area"
+msgstr "Lawak"
+
+#. Radio button label
+msgctxt "widget.chart.series.display.dots"
+msgid "Dots"
+msgstr "Mga tuldok"
+
+#. Checkbox label
+msgctxt "widget.chart.series.liveupdate"
+msgid "Live update (experimental)"
+msgstr "Pangkasalukuyang pag-uupdate (eksperimental)"
+
+#. Checkbox label
+msgctxt "widget.chart.series.liveupdate.fillvalues"
+msgid "Repeat other series' current values on update if necessary"
+msgstr "Ulitin ang iba pang kasalukuyang balyu ng series sa pag-update kung kinakailangan"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.clock"
+msgid "Clock"
+msgstr "Orasan"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.clock.description"
+msgid "A clock widget - displays an analog or digital clock"
+msgstr "Ang widget ng orasan - nagdidisplay ng isang analog o digital na orasan"
+
+#. Settings dialog title
+msgctxt "widget.clock.settings.header"
+msgid "Clock Settings"
+msgstr "Mga setting ng Orasan"
+
+#. Dropdown header
+msgctxt "widget.clock.mode"
+msgid "Mode"
+msgstr "Mode"
+
+#. Dropdown option
+msgctxt "widget.clock.mode.analog"
+msgid "Analog"
+msgstr "Analog"
+
+#. Dropdown option
+msgctxt "widget.clock.mode.digital"
+msgid "Digital"
+msgstr "Digital"
+
+#. Dropdown header
+msgctxt "widget.clock.theme"
+msgid "Analog Theme"
+msgstr "Analog na tema"
+
+#. Dropdown option
+msgctxt "widget.clock.theme.light"
+msgid "light"
+msgstr "maliwanag"
+
+#. Dropdown option
+msgctxt "widget.clock.theme.dark"
+msgid "dark"
+msgstr "madilim"
+
+#. Textbox header
+msgctxt "widget.clock.digital_format"
+msgid "Digital Format"
+msgstr "Digital na Format"
+
+#. Textbox header
+msgctxt "widget.clock.font_size"
+msgid "Digital Font Size"
+msgstr "Digital na Sukat ng Font"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.colorpicker"
+msgid "Color Picker"
+msgstr "Tagapili ng Kulay"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.colorpicker.description"
+msgid "Displays an color picker"
+msgstr "Mag-display ng isang tagapili ng kulay"
+
+#. Settings dialog title
+msgctxt "widget.colorpicker.settings.header"
+msgid "Color Picker Settings"
+msgstr "Mga Setting ng Tagapili ng Kulay"
+
+#. Dropdown header
+msgctxt "widget.colorpicker.type"
+msgid "Type"
+msgstr "Uri"
+
+#. Dropdown option
+msgctxt "widget.colorpicker.type.hsl"
+msgid "HSL Sliders"
+msgstr "Mga Slider ng HSL"
+
+#. Dropdown option
+msgctxt "widget.colorpicker.type.ackolor"
+msgid "aCKolor style (modal picker)"
+msgstr "estilo ng aCKolor (tagapili ng modal)"
+
+#. Checkbox label
+msgctxt "widget.colorpicker.blur_background"
+msgid "Apply blurring effect to background"
+msgstr "Mag-aplay ng lumalabong epekto sa paligid"
+
+#. Displayed below the checkbox in small text
+msgctxt "widget.colorpicker.blur_background.warning"
+msgid "Warning: This can cause performance problems on tablets"
+msgstr "Babala: Ito ay maaring magsanhi ng mga problema sa performance sa mga tablet"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.dummy"
+msgid "Dummy"
+msgstr "Dummy"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.dummy.description"
+msgid "A dummy widget - displays the value of an openHAB item"
+msgstr "Isang dummy na widget - nagdidisplay ng balyu ng isang openHAB aytem"
+
+#. Settings dialog title
+msgctxt "widget.dummy.settings.header"
+msgid "Dummy Settings"
+msgstr "Mga setting ng Dummy"
+
+#. Checkboxes header
+msgctxt "widget.dummy.layout"
+msgid "Layout"
+msgstr "Pagkakalatag"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.frame"
+msgid "Frame"
+msgstr "Frame"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.frame.description"
+msgid "Embedded website from predefined URL or openHAB item."
+msgstr "Naka-embed na website mula sa predefined na URL o openHAB aytem."
+
+#. Settings dialog title
+msgctxt "widget.frame.settings.header"
+msgid "Frame Settings"
+msgstr "Mga setting ng Frame"
+
+#. Dropdown header
+msgctxt "widget.frame.url_source"
+msgid "URL Source"
+msgstr "Pinagmulang URL"
+
+#. Dropdown option
+msgctxt "widget.frame.url_source.static"
+msgid "Static URL"
+msgstr "Statik na URL"
+
+#. Dropdown option
+msgctxt "widget.frame.url_source.item"
+msgid "openHAB String Item"
+msgstr "openHAB String Aytem"
+
+#. Textbox header
+msgctxt "widget.frame.refresh_interval"
+msgid "Refresh interval (seconds)"
+msgstr "I-refresh ang pagitan (segundo)"
+
+#. Checkbox header - appears only if the refresh interval is set
+msgctxt "widget.frame.nosuffix"
+msgid "No cache busting (advanced)"
+msgstr "Walang cache busting (nakaadvance)"
+
+#. Checkbox label - appears only if the refresh interval is set
+msgctxt "widget.frame.nosuffix.description"
+msgid "Don't add URL suffixes to prevent reusing cached pages"
+msgstr "Huwag magdagdag ng URL suffixes upang mapigilan ang paggamit muli sa mga pahina ng cached"
+
+#. Color picker header
+msgctxt "widget.frame.background_color"
+msgid "Frame background color"
+msgstr "Kulay ng background ng Frame"
+
+#. Checkbox header
+msgctxt "widget.frame.frameless"
+msgid "Frameless"
+msgstr "Walang Frame"
+
+#. Checkbox label
+msgctxt "widget.frame.frameless.description"
+msgid "Fill to edges"
+msgstr "Punan ang mga dulo"
+
+#. Checkbox header
+msgctxt "widget.frame.label"
+msgid "Label"
+msgstr "Mag-label"
+
+#. Checkbox label
+msgctxt "widget.frame.label.description"
+msgid "Hide title label"
+msgstr "Itago ang pamagat na label"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.image"
+msgid "Image"
+msgstr "Imahe"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.image.description"
+msgid "Displays an image (not necessarily from openHAB)"
+msgstr "Nag-didisplay ng isang imahe (hindi kinakailangang galing sa openHAB)"
+
+#. Settings dialog title
+msgctxt "widget.image.settings.header"
+msgid "Image Settings"
+msgstr "Mga setting ng Imahe"
+
+#. Dropdown header
+msgctxt "widget.image.image_source"
+msgid "Image source"
+msgstr "Pinagmulang Imahe"
+
+#. Dropdown option
+msgctxt "widget.image.image_source.static"
+msgid "Static image URL"
+msgstr "Statik na URL ng imahe"
+
+#. Dropdown option
+msgctxt "widget.image.image_source.item-string"
+msgid "openHAB String Item"
+msgstr "openHAB String Aytem"
+
+#. Dropdown option
+msgctxt "widget.image.image_source.item-image"
+msgid "openHAB Image Item"
+msgstr "openHAB Aytem ng Imahe"
+
+#. Textbox header
+msgctxt "widget.image.refresh_interval"
+msgid "Refresh interval"
+msgstr "I-refresh ang pagitan"
+
+#. Radio button label
+msgctxt "widget.image.refresh_interval.seconds"
+msgid "seconds"
+msgstr "mga segundo"
+
+#. Radio button label
+msgctxt "widget.image.refresh_interval.milliseconds"
+msgid "milliseconds"
+msgstr "milliseconds"
+
+#. Checkbox header - appears only if the refresh interval is set
+msgctxt "widget.image.nosuffix"
+msgid "No cache busting (advanced)"
+msgstr "Walang cache busting (nakaadvance)"
+
+#. Checkbox label - appears only if the refresh interval is set
+msgctxt "widget.image.nosuffix.description"
+msgid "Don't add URL suffixes to prevent reusing cached images"
+msgstr "Huwag magdagdag ng URL suffixes upang mapigilan ang paggamit muli sa mga pahina ng cached"
+
+#. Color picker header
+msgctxt "widget.image.background_color"
+msgid "Background color"
+msgstr "Kulay ng background"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.knob"
+msgid "Knob"
+msgstr "Knob"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.knob.description"
+msgid "A knob for setting numerical openHAB items"
+msgstr "Isang knob para sa pagtatakda ng numerical openHAB na mga aytem"
+
+#. Settings dialog title
+msgctxt "widget.knob.settings.header"
+msgid "Knob Settings"
+msgstr "Mga setting ng knob"
+
+#. Checkbox header
+msgctxt "widget.knob.general.readonly"
+msgid "Read only"
+msgstr "Mababasa lamang"
+
+#. Checkbox label
+msgctxt "widget.knob.general.readonly.description"
+msgid "Disable interaction"
+msgstr "I-disable ang pakikipag-ugnayan"
+
+#. Checkboxes header
+msgctxt "widget.knob.general.centraldisplay"
+msgid "Central display"
+msgstr "Sentral na display"
+
+#. Checkbox label
+msgctxt "widget.knob.general.centraldisplay.showvalue"
+msgid "Show value"
+msgstr "Ipakita ang balyu"
+
+#. Checkbox label
+msgctxt "widget.knob.general.centraldisplay.showlabel"
+msgid "Show name (below value)"
+msgstr "Ipakita ang pangalan (sa ibaba ng balyu)"
+
+#. Tab header
+msgctxt "widget.knob.bartrack"
+msgid "Bar & Track"
+msgstr "Bar & Bakas"
+
+#. Section header
+msgctxt "widget.knob.bartrack.angles"
+msgid "Angles (°)"
+msgstr "Mga anggulo(°)"
+
+#. Textbox header (small)
+msgctxt "widget.knob.bartrack.angles.start"
+msgid "Start"
+msgstr "Umpisa"
+
+#. Textbox header (small)
+msgctxt "widget.knob.bartrack.angles.end"
+msgid "End"
+msgstr "Dulo"
+
+#. Textbox header (small)
+msgctxt "widget.knob.bartrack.width"
+msgid "Width"
+msgstr "Lapad"
+
+#. Textbox header (small)
+msgctxt "widget.knob.bartrack.cap"
+msgid "Cap"
+msgstr "Cap"
+
+#. Section header
+msgctxt "widget.knob.bartrack.bar"
+msgid "Bar"
+msgstr "Bar"
+
+#. Section header
+msgctxt "widget.knob.bartrack.track"
+msgid "Track"
+msgstr "Bakas"
+
+#. Section header
+msgctxt "widget.knob.bartrack.previousvalue"
+msgid "Previous value"
+msgstr "Nakaraang balyu"
+
+#. Checkbox label
+msgctxt "widget.knob.bartrack.previousvalue.description"
+msgid "Display previous value when dragging"
+msgstr "I-display ang nakaraang balyu kung nagdradrag"
+
+#. Tab header
+msgctxt "widget.knob.scale"
+msgid "Scale"
+msgstr "Iskala"
+
+#. Checkbox header
+msgctxt "widget.knob.scale.display"
+msgid "Display scale"
+msgstr "I-display ang iskala"
+
+#. Checkbox label
+msgctxt "widget.knob.scale.display.enabled"
+msgid "Enabled"
+msgstr "Pinagagana"
+
+#. Radio buttons header
+msgctxt "widget.knob.scale.type"
+msgid "Scale Type"
+msgstr "Uri ng Iskala"
+
+#. Radio button label
+msgctxt "widget.knob.scale.type.lines"
+msgid "Lines"
+msgstr "Mga linya"
+
+#. Checkbox label
+msgctxt "widget.knob.scale.type.dots"
+msgid "Dots"
+msgstr "Mga Tuldok"
+
+#. Textbox header (small)
+msgctxt "widget.knob.scale.width"
+msgid "Width"
+msgstr "Lapad"
+
+#. Textbox header (small)
+msgctxt "widget.knob.scale.qty"
+msgid "Qty."
+msgstr "Qty."
+
+#. Textbox header (small)
+msgctxt "widget.knob.scale.space"
+msgid "Space"
+msgstr "Ispasiyo"
+
+#. Tab header
+msgctxt "widget.knob.skin"
+msgid "Skin"
+msgstr "Balat"
+
+#. Radio buttons header
+msgctxt "widget.knob.skin.type"
+msgid "Type"
+msgstr "Uri"
+
+#. Radio button label
+msgctxt "widget.knob.skin.type.simple"
+msgid "Simple"
+msgstr "Simple"
+
+#. Radio button label
+msgctxt "widget.knob.skin.type.tron"
+msgid "Tron"
+msgstr "Tron"
+
+#. Section header
+msgctxt "widget.knob.skin.tronsettings"
+msgid "Tron skin settings"
+msgstr "Mga setting ng balat ng Tron"
+
+#. Textbox header (small)
+msgctxt "widget.knob.skin.tronsettings.width"
+msgid "Width"
+msgstr "Lapad"
+
+#. Textbox header (small)
+msgctxt "widget.knob.skin.tronsettings.space"
+msgid "Space"
+msgstr "Ispasyo"
+
+#. Tab header
+msgctxt "widget.knob.ranges"
+msgid "Ranges"
+msgstr "Mga Saklaw"
+
+#. Checkbox label
+msgctxt "widget.knob.ranges.enable"
+msgid "Enable Ranges"
+msgstr "Paganahin ang mga saklaw"
+
+#. Checkbox label
+msgctxt "widget.knob.ranges.match_text_color"
+msgid "Match Text Color to Range"
+msgstr "Ipareho ang Kulay ng Teksto sa Saklaw"
+
+#. Textbox header (small)
+msgctxt "widget.knob.ranges.from"
+msgid "from"
+msgstr "galing sa"
+
+#. Textbox header (small)
+msgctxt "widget.knob.ranges.to"
+msgid "to"
+msgstr "para sa"
+
+#. Color picker header
+msgctxt "widget.knob.ranges.bar"
+msgid "Bar"
+msgstr "Bar"
+
+#. Tab header
+msgctxt "widget.knob.misc"
+msgid "Misc."
+msgstr "Misc."
+
+#. Color picker header
+msgctxt "widget.knob.misc.text"
+msgid "Text"
+msgstr "Teksto"
+
+#. Color picker header
+msgctxt "widget.knob.misc.background"
+msgid "Background"
+msgstr "Paligid"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.label"
+msgid "Label"
+msgstr "Mag-label"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.label.description"
+msgid "A fixed label used for headers etc. (no openHAB item binding)"
+msgstr "Isang fixed na label ginagamit para sa mga header etc. (walang pagbibigkis ng openHAB aytem)"
+
+#. Settings dialog title
+msgctxt "widget.label.settings.header"
+msgid "Label Settings"
+msgstr "Mga setting ng label"
+
+#. Preview widget label in the top-right corner
+msgctxt "widget.label.preview"
+msgid "Preview"
+msgstr "I-preview"
+
+#. Color picker label
+msgctxt "widget.label.background_color"
+msgid "Background color"
+msgstr "Kulay ng Background"
+
+#. Color picker label
+msgctxt "widget.label.foreground_color"
+msgid "Text color"
+msgstr "Kulay ng Teksto"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.selection"
+msgid "Selection"
+msgstr "Seleksyon"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.selection.description"
+msgid "A widget allowing a selection between multiple choices"
+msgstr "Isang widget na nagpapahintulot ng isang seleksyon sa pagitan ng mga maraming pagpipilian"
+
+#. Settings dialog title
+msgctxt "widget.selection.settings.header"
+msgid "Selection Settings"
+msgstr "Mga setting ng Seleksyon"
+
+#. Dropdown header
+msgctxt "widget.selection.choices_source"
+msgid "Choices source"
+msgstr "Pinagmulan ng mga Pagpipilian"
+
+#. Dropdown option
+msgctxt "widget.selection.choices_source.server"
+msgid "Server-provided item options"
+msgstr "Mga pagpipilian ng inilaan ng server aytem"
+
+#. Dropdown option
+msgctxt "widget.selection.choices_source.csv"
+msgid "Comma-separated list"
+msgstr "Ipinaghihiwalay ng kuwit na listahan"
+
+#. Textbox header - appears only when the "comma-separated list" choice source is selected
+msgctxt "widget.selection.choices"
+msgid "List of comma-separated choices"
+msgstr "Listahan ng ipinaghihiwalay ng kuwit na mga pagpipilian"
+
+#. Displayed in small text below the textbox
+msgctxt "widget.selection.choices.hint"
+msgid "You can optionally use the syntax: 'cmd=label' for each choice<br />Example: 18=Cold,20,22,24,26,28=Warm"
+msgstr "Pwede mong opsyonal na gamitin ang syntax: 'cmd=label' para sa bawat pagpipilian<br/>Halimbawa: 18=Cold,20,22,24,26,28=Warm"
+
+#. Header
+msgctxt "widget.selection.display"
+msgid "Display options"
+msgstr "I-display ang mga opsyon"
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.display.hidelabel"
+msgid "Hide name"
+msgstr "Itago ang pangalan"
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.display.hideicon"
+msgid "Hide icon"
+msgstr "Itago ang ikon"
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.display.hidestate"
+msgid "Hide current value"
+msgstr "Itago ang kasalukuyang balyu"
+
+#. Header
+msgctxt "widget.selection.choices_window"
+msgid "Choices window"
+msgstr "Window ng Mga Pagpipilian"
+
+#. Textbox (very small)
+msgctxt "widget.selection.choices_window.columns"
+msgid "Columns"
+msgstr "Mga hilera"
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.choices_window.disable_mobile"
+msgid "Disable mobile mode"
+msgstr "I-disable ang mobile mode"
+
+#. Checkbox label (very small)
+msgctxt "widget.selection.choices_window.no_squares"
+msgid "No square tiles"
+msgstr "Walang parisukát na mga tile"
+
+#. Header
+msgctxt "widget.selection.selection_options"
+msgid "Selection options"
+msgstr "Mga opsyon ng seleksyon"
+
+#. Checkbox label (small)
+msgctxt "widget.selection.selection_options.no_highlight"
+msgid "Don't highlight current selection"
+msgstr "Huwag i-highlight ang kasalukuyang seleksyon"
+
+#. Checkbox label (small)
+msgctxt "widget.selection.selection_options.keep_open"
+msgid "Keep window open upon selection"
+msgstr "Panatilihing nakabukas ang window sa oras ng seleksyon"
+
+#. Displayed when running the widget if no choices available
+msgctxt "widget.selection.nochoices"
+msgid "No choices available - check widget config"
+msgstr "Walang pwedeng pagpipilian - i-check ang widget config"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.slider"
+msgid "Slider"
+msgstr "Slider"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.slider.description"
+msgid "A slider for setting numerical openHAB items"
+msgstr "Isang Slider para sa pagtatakda ng numerical openHAB ng mga aytem"
+
+#. Settings dialog title
+msgctxt "widget.slider.settings.header"
+msgid "Slider Settings"
+msgstr "Mga setting ng Slider"
+
+#. Checkbox header
+msgctxt "widget.slider.general.orientation"
+msgid "Orientation"
+msgstr "Oryentasyon"
+
+#. Checkbox label
+msgctxt "widget.slider.general.orientation.vertical"
+msgid "Vertical slider"
+msgstr "Patayong slider"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.hidelabel"
+msgid "Hide title label"
+msgstr "Itago ang pamagat na label"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.hidelimits"
+msgid "Hide limits labels"
+msgstr "Itago ang mga label ng mga limit"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.hidepointer"
+msgid "Hide current value label"
+msgstr "Itago ang kasalukuyang balyu"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.showticks"
+msgid "Show ticks"
+msgstr "Ipakita ang mga tick"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.showticksvalues"
+msgid "Show ticks labels"
+msgstr "Ipakita ang mga label ng mga tick"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.inverted"
+msgid "Reverse direction"
+msgstr "Kabaliktarang direksyon"
+
+#. Checkbox label
+msgctxt "widget.slider.advanced.bigslider"
+msgid "Big slider (horizontal only)"
+msgstr "Malaking slider (pahalang lamang)"
+
+#. Tab header
+msgctxt "widget.slider.backdrop"
+msgid "Backdrop"
+msgstr "Backdrop"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.switch"
+msgid "Switch"
+msgstr "Switch"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.switch.description"
+msgid "A ON/OFF toggle for openHAB switches"
+msgstr "A ON/OFF toggle para sa openHAB na mga switch"
+
+#. Settings dialog title
+msgctxt "widget.switch.settings.header"
+msgid "Switch Settings"
+msgstr "Mga setting ng Switch"
+
+#. Header
+msgctxt "widget.switch.display"
+msgid "Display options"
+msgstr "I-display ang mga opsyon"
+
+#. Checkbox label (very small)
+msgctxt "widget.switch.display.hidelabel"
+msgid "Hide name"
+msgstr "Itago ang pangalan"
+
+#. Checkbox label (very small)
+msgctxt "widget.switch.display.hideicon"
+msgid "Hide icon"
+msgstr "Itago ang ikon"
+
+#. Checkbox label (very small)
+msgctxt "widget.switch.display.hideonoff"
+msgid "Hide ON/OFF"
+msgstr "Itago ang ON/OFF"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.template"
+msgid "Template"
+msgstr "Template"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.template.description"
+msgid "A template widget - displays a custom dynamic template"
+msgstr "Isang template widget - nagdidisplay ng isang custom na dinamikang template"
+
+#. Settings dialog title
+msgctxt "widget.template.settings.header"
+msgid "Template Settings"
+msgstr "Mga setting ng Template"
+
+#. Settings dialog title for a custom widget (don't translate the variable)
+msgctxt "widget.template.settings.header.customwidget"
+msgid "{{customwidget_name}} Settings"
+msgstr "{{customwidget_name}} Mga setting"
+
+#. Checkbox label (small)
+msgctxt "widget.template.dontwrap"
+msgid "Don't wrap in container"
+msgstr "Huwag ibalot sa lalagyan"
+
+#. Checkbox label (small)
+msgctxt "widget.template.nobackground"
+msgid "No background"
+msgstr "Walang background"
+
+#. Section header (displayed above the code editor)
+msgctxt "widget.template.template"
+msgid "Template"
+msgstr "Template"
+
+#. Menu entry (top-right above the code editor)
+msgctxt "widget.template.importfromfile"
+msgid "Import from file..."
+msgstr "Mag-angkat mula sa file..."
+
+#. Menu entry (top-right above the code editor)
+msgctxt "widget.template.exporttofile"
+msgid "Export to file"
+msgstr "I-eksport papunta sa file"
+
+#. Menu entry (top-right above the code editor)
+msgctxt "widget.template.communitysupport"
+msgid "Community support"
+msgstr "Suporta ng komunidad"
+
+#. Menu entry (top-right above the code editor)
+msgctxt "widget.template.knowledgebase"
+msgid "Knowledge base"
+msgstr "Base sa kaalaman"
+
+#. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
+msgctxt "widget.timeline"
+msgid "Timeline"
+msgstr "Timeline"
+
+#. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
+msgctxt "widget.timeline.description"
+msgid "Displays a timeline of several items"
+msgstr "Nagdidisplay ng isang timeline ng iilang mga aytem"
+
+#. Settings dialog title
+msgctxt "widget.timeline.settings.header"
+msgid "Timeline Settings"
+msgstr "Mga setting ng Timeline"
+
+#. Textbox header
+msgctxt "widget.timeline.general.service"
+msgid "Persistence service"
+msgstr "Serbisyo ng Persistence"
+
+#. Textbox placeholder
+msgctxt "widget.timeline.general.service.hint"
+msgid "rrd4j, mysql, influxdb... Leave blank for default"
+msgstr "rrd4j, mysql, influxdb... Panatilihing blangko para sa default"
+
+#. Dropdown placeholder
+msgctxt "widget.timeline.general.period"
+msgid "Period"
+msgstr "Period"
+
+#. Tab header
+msgctxt "widget.timeline.colors"
+msgid "Colors"
+msgstr "Mga Kulay"
+
+#. Accordion header (followed by the state value)
+msgctxt "widget.timeline.colors.state"
+msgid "State"
+msgstr "Estado"
+
+#. Tab header
+msgctxt "widget.timeline.series"
+msgid "Series"
+msgstr "Series"
+

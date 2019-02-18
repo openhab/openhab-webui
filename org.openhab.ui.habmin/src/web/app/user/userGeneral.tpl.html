@@ -1,0 +1,78 @@
+<div class="modal-header">
+    <h3 class="modal-title" i18n="user.GeneralPrefTitle"></h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" role="form">
+        <div class="form-group">
+            <label for="inputTheme" class="col-sm-3 control-label" i18n="user.Theme"></label>
+
+            <div class="col-sm-9">
+                <ui-select id="inputTheme"
+                           ng-model="model.theme"
+                           theme="bootstrap"
+                           search-enabled="false"
+                        >
+                    <ui-select-match i18n-attr="{placeholder: 'user.ThemeSelect'}">{{$select.selected.name}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="theme.id as theme in model.themes">
+                        <div>{{theme.name}}</div>
+                        <span class="small">&nbsp;{{theme.desc}}</span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputTheme" class="col-sm-3 control-label" i18n="user.Language"></label>
+
+            <div class="col-sm-9">
+                <ui-select id="inputLanguage"
+                           ng-model="model.language"
+                           theme="bootstrap"
+                           search-enabled="false"
+                        >
+                    <ui-select-match i18n-attr="{placeholder: 'user.LanguageSelect'}">
+                        <span ng-bind-html="$select.selected.name"></span>&nbsp;(<span
+                            ng-bind-html="$select.selected.desc"></span>)
+                    </ui-select-match>
+                    <ui-select-choices repeat="language.id as language in model.languages | orderBy: 'name'">
+                        <div class="language-select"
+                             ng-style="{'background-image':'url(assets/'+language.flag+'.svg)'}">
+                            <div ng-bind-html="language.name"></div>
+                            <span style="padding-left:10px;" class="small" ng-bind-html="language.desc"></span>
+                        </div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+        <!--
+        <div class="form-group">
+            <label for="inputEmail2" class="col-sm-3 control-label" i18n="user.Name"></label>
+
+            <div class="col-sm-9">
+                <input type="email" class="form-control" id="inputEmail2" placeholder="Name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-3 control-label" i18n="user.Email">Email</label>
+
+            <div class="col-sm-9">
+                <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword3" class="col-sm-3 control-label" i18n="user.Password">Password</label>
+
+            <div class="col-sm-9">
+                <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
+            </div>
+        </div>
+        -->
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="ok()" i18n="common.save"></button>
+    <button type="button" class="btn btn-warning" ng-click="cancel()" i18n="common.cancel"></button>
+</div>

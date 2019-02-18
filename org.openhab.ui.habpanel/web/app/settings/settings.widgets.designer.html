@@ -1,0 +1,142 @@
+<div class="header">
+    <a class="btn pull-left" title="Menu" snap-toggle="left">
+        <i class="glyphicon glyphicon-menu-hamburger"></i>
+    </a>
+	<!--<a class="btn btn-link pull-left" onclick="window.history.back()"><i class="glyphicon glyphicon-chevron-left"></i></a>
+    <a class="btn btn-link pull-left" href="#/" title="Home"><i class="glyphicon glyphicon-home"></i></a>-->
+	<h2><span translate-keep-content translate="customwidgets.designer.heading">Widget:</span> {{vm.widgetId}}</h2>
+</div>
+
+<div class="col-md-12 widgetdesigner" data-snap-ignore="true">
+
+    <!--<div class="col-xs-2">
+        <div>here be widgets</div>
+    </div>-->
+
+    <div class="row">
+        <div class="tab-container">
+            <uib-tabset style="height: calc(100%)">
+                <button class="btn btn-success pull-right" ng-click="vm.save()"><i class="glyphicon" ng-class="{ 'glyphicon-ok': vm.saveLabel==='Saved!', 'glyphicon-save': vm.saveLabel!=='Saved!'}"></i><span class="hidden-xs">&nbsp;{{vm.saveLabel}}</span></button>
+                <uib-tab heading="{{'Code' | translation:'customwidgets.designer.code'}}" class="whitebg">
+                    <div ui-codemirror ng-keydown="vm.keyDown($event)" style="height: calc(100%)" ui-refresh='vm.refreshEditor' ui-codemirror-opts="vm.editorOptions" ng-model="vm.widget.template">
+                    </div>
+                </uib-tab>
+                <uib-tab heading="{{'Settings' | translation:'customwidgets.designer.settings'}}">
+                    <div class="whitebg modal-body" style="overflow-y: auto">
+                        <h4 translate-keep-content translate="customwidgets.designer.settings.general">General settings</h4>
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-md-2" translate-keep-content translate="customwidgets.designer.settings.general.display_name">Display name</label>
+                                <div class="col-md-10">
+                                    <input name="name" type="text" ng-model="vm.widget.name" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2" translate-keep-content translate="customwidgets.designer.settings.general.author">Author</label>
+                                <div class="col-md-10">
+                                    <input name="name" type="text" ng-model="vm.widget.author" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2" translate-keep-content translate="customwidgets.designer.settings.general.description">Description</label>
+                                <div class="col-md-10">
+                                    <input name="name" type="text" ng-model="vm.widget.description" class="form-control" />
+                                </div>
+                            </div>
+                        </form>
+                        <hr />
+                        <h4 translate-keep-content translate="customwidgets.designer.settings.config">Configuration settings</h4>
+                        <small><i class="glyphicon glyphicon-exclamation-sign">&nbsp;</i><span translate-keep-content translate="customwidgets.designer.settings.config.warning">Beware: always bear in mind instances of this widget might be existing when altering configuration settings!</span></small>
+                        <br /><br />
+                        <button class="btn btn-primary" ng-click="vm.addSetting()"><i class="glyphicon glyphicon-plus">&nbsp;</i><span translate-keep-content translate="customwidgets.designer.settings.config.add">Add setting</span></button>
+                        <br /><br />
+                        <div class="well" ng-repeat="setting in vm.widget.settings">
+                            <button class="btn btn-danger pull-right" ng-click="vm.deleteSetting(setting)"><i class="glyphicon glyphicon-trash"></i></button>
+                            <button class="btn btn-default pull-right" ng-if="$index > 0" ng-click="vm.swapSettings($index, $index-1)"><i class="glyphicon glyphicon-arrow-up"></i></button>
+                            <button class="btn btn-default pull-right" ng-if="$index < vm.widget.settings.length - 1" ng-click="vm.swapSettings($index, $index+1)"><i class="glyphicon glyphicon-arrow-down"></i></button>
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" translate-keep-content translate="customwidgets.designer.settings.config.type">Type</label>
+                                    <div class="col-md-4">
+                                        <select ng-model="setting.type" class="form-control" style="width: 110px">
+                                            <option value="string" translate-keep-content translate="customwidgets.designer.settings.config.type.string">String</option>
+                                            <option value="number" translate-keep-content translate="customwidgets.designer.settings.config.type.number">Number</option>
+                                            <option value="checkbox" translate-keep-content translate="customwidgets.designer.settings.config.type.checkbox">Checkbox</option>
+                                            <option value="item" translate-keep-content translate="customwidgets.designer.settings.config.type.item">Item</option>
+                                            <option value="color" translate-keep-content translate="customwidgets.designer.settings.config.type.color">Color</option>
+                                            <option value="choice" translate-keep-content translate="customwidgets.designer.settings.config.type.choices">Choices</option>
+                                            <option value="icon" translate-keep-content translate="customwidgets.designer.settings.config.type.icon">Icon</option>
+                                            <option value="heading" translate-keep-content translate="customwidgets.designer.settings.config.type.heading">Heading</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label uib-tooltip="{{'Enter a JSON friendly key for this setting - ideally, use only lowercase letters, digits and underscores. Examples: my_setting, first_item, text_size, font_color' | translation:'customwidgets.designer.settings.config.id.hint'}}" tooltip-placement="right" class="control-label col-md-2">ID <i class="glyphicon glyphicon-info-sign"></i></label>
+                                    <div class="col-md-10">
+                                        <input name="name" type="text" ng-model="setting.id" class="form-control" required />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" translate-keep-content translate="customwidgets.designer.settings.config.label">Label</label>
+                                    <div class="col-md-10">
+                                        <input name="name" type="text" ng-model="setting.label" class="form-control" required />
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-if="setting.type !== 'heading' && setting.type !== 'icon' && setting.type !== 'checkbox'">
+                                    <label class="control-label col-md-2" translate-keep-content translate="customwidgets.designer.settings.config.default">Default value</label>
+                                    <div class="col-md-10">
+                                        <input name="default" type="text" ng-model="setting.default" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-if="setting.type === 'checkbox'">
+                                    <label class="control-label col-md-2" translate-keep-content translate="customwidgets.designer.settings.config.default">Default value</label>
+                                    <div class="col-md-10">
+                                        <div style="padding-top: 7px"><input name="default_check" type="checkbox" ng-model="setting.default" /></div>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-if="setting.type === 'choice'">
+                                    <label class="control-label col-md-2" translate-keep-content translate="customwidgets.designer.settings.config.choices">Choices</label>
+                                    <div class="col-md-10">
+                                        <input name="name" type="text" ng-model="setting.choices" class="form-control" />
+                                        <small translate-keep-content translate="customwidgets.designer.settings.config.choices.hint">Comma-separated possible values</small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" translate-keep-content translate="customwidgets.designer.settings.config.description">Description</label>
+                                    <div class="col-md-10">
+                                        <input name="description" type="text" ng-model="setting.description" class="form-control" />
+                                    </div>
+                                </div>
+                            </form>
+                            <div ng-if="setting.type === 'icon' && setting.id" class="alert alert-info"><span translate-keep-content translate="customwidgets.designer.settings.config.icon.hint">This will define 2 config elements:</span> <code>config.{{setting.id}}_iconset</code>, <code>config.{{setting.id}}</code></div>
+                        </div>
+
+                    </div>
+                </uib-tab>
+                <uib-tab heading="{{'Preview' | translation:'customwidgets.designer.preview'}}" select="refreshPreview()">
+                    <div class="col-xs-2" style="height: calc(100%); padding-top: 80px; padding-bottom: 20px">
+                        <a style="position: absolute; top: 0; left: 0; font-size: 30px; padding: 20px" ng-click="vm.openPreviewSettings()"><i class="glyphicon glyphicon-cog"></i></a> 
+                        <rzslider rz-slider-model="vm.previewmodel.sizeY" rz-slider-options="{ floor:1, ceil:12, vertical: true, rightToLeft: true, hidePointerLabels: true, hideLimitLabels: true, showTicks: true, onEnd: vm.onChangedColumns() }" />
+                    </div>
+                    <div class="col-xs-10" style="height: calc(100%); padding-left: 20px; padding-right: 20px">
+                        <div>
+                            <rzslider rz-slider-model="vm.previewmodel.sizeX" rz-slider-options="{ floor:1, ceil:12, showTicks: true, hidePointerLabels: true, hideLimitLabels: true, onEnd: vm.onChangedColumns() }" />
+                        </div>
+                        <br />
+                        <div>
+                            <div gridster="vm.gridsterOptions">
+                                <ul>
+                                    <li gridster-item="vm.previewmodel">
+                                        <div class="box">
+                                            <widget-template ng-model="vm.previewmodel"></widget-template>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div> 
+                        </div>
+                    </div>
+                </uib-tab>
+            </uib-tabset>
+        </div>
+    </div>
+</div>

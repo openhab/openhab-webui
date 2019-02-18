@@ -1,0 +1,25 @@
+<ul class="nav navbar-nav">
+    <li class="dropdown" uib-dropdown is-open="status.isopen">
+        <a class="dropdown-toggle" uib-dropdown-toggle ngx-class="{'disabled': discoveryEnabled}"
+           uib-tooltip-placement="bottom" uib-tooltip="{{tooltipDiscover}}" uib-tooltip-popup-delay="500"
+           uib-tooltip-enable="{{status.isopen==false}}" uib-tooltip-trigger uib-tooltip-animation="false">
+            <i class="fa fa-search-plus"></i>
+        </a>
+        <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+            <li ng-repeat="binding in bindings | orderBy:'name' | filter:{discovery: 'true'}">
+                <a ng-click="startDiscovery(binding)">
+                    <habmin-icon class="fa-fw" icon="{{binding.icon}}"></habmin-icon>
+                    <span>{{binding.name}}</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <a class="navbar-button" role="button" ui-sref="/thing-wizard.binding"
+           uib-tooltip-placement="bottom" uib-tooltip="{{tooltipManualAdd}}" uib-tooltip-popup-delay="500"
+           uib-tooltip-enable="true" uib-tooltip-trigger uib-tooltip-animation="false">
+            <i class="fa fa-plus"></i>
+        </a>
+    </li>
+</ul>
+

@@ -1,0 +1,10 @@
+{
+  "CommandFailed": "Errore nel processare il comando estensione: {message}",
+  "ErrorGettingExtensions": "Errore nel recuperare la lista estensioni",
+  "ExtensionTypes": "Tipologie Estensioni",
+  "Extensions": "Estensioni",
+  "Install": "Installa",
+  "InstallOk": "Estensione {extension} installata correttamente",
+  "Uninstall": "Disinstalla",
+  "UninstallOk": "Estensione {extension} disinstallata correttamente"
+}

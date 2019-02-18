@@ -1,0 +1,1118 @@
+@font-face {
+	font-family: 'openautomation';
+	src:url('../fonts/openautomation.eot?5ao571');
+	src:url('../fonts/openautomation.eot?#iefix5ao571') format('embedded-opentype'),
+		url('../fonts/openautomation.woff?5ao571') format('woff'),
+		url('../fonts/openautomation.ttf?5ao571') format('truetype'),
+		url('../fonts/openautomation.svg?5ao571#openautomation') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="oa-"], [class*=" oa-"] {
+    display: inline-block;
+	font: normal normal normal 14px/1 'openautomation';
+    font-size: inherit;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+
+.oa-battery-20:before {
+    content: "\e631";
+}
+.oa-battery-40:before {
+    content: "\e633";
+}
+.oa-battery-60:before {
+    content: "\e634";
+}
+.oa-battery-80:before {
+    content: "\e636";
+}
+.oa-battery-100:before {
+    content: "\e641";
+}
+.oa-battery-charge:before {
+    content: "\e642";
+}
+.oa-battery-empty:before {
+    content: "\e643";
+}
+.oa-light_light_dim_00:before {
+    content: "\e60b";
+}
+.oa-light_light_dim_10:before {
+    content: "\e60c";
+}
+.oa-light_light_dim_20:before {
+    content: "\e60d";
+}
+.oa-light_light_dim_30:before {
+    content: "\e60e";
+}
+.oa-light_light_dim_40:before {
+    content: "\e60f";
+}
+.oa-light_light_dim_50:before {
+    content: "\e610";
+}
+.oa-light_light_dim_60:before {
+    content: "\e611";
+}
+.oa-light_light_dim_70:before {
+    content: "\e612";
+}
+.oa-light_light_dim_80:before {
+    content: "\e613";
+}
+.oa-light_light_dim_90:before {
+    content: "\e614";
+}
+.oa-light_light_dim_100:before {
+    content: "\e615";
+}
+.oa-it_camera:before {
+    content: "\e625";
+}
+.oa-it_fax:before {
+    content: "\e64e";
+}
+.oa-it_internet:before {
+    content: "\e64f";
+}
+.oa-it_nas:before {
+    content: "\e67e";
+}
+.oa-it_net:before {
+    content: "\e6da";
+}
+.oa-it_network:before {
+    content: "\e744";
+}
+.oa-it_pc:before {
+    content: "\e745";
+}
+.oa-it_radio:before {
+    content: "\e78d";
+}
+.oa-it_remote:before {
+    content: "\e78e";
+}
+.oa-it_router:before {
+    content: "\e78f";
+}
+.oa-it_satellite_dish_heating:before {
+    content: "\e790";
+}
+.oa-it_satellite_dish:before {
+    content: "\e791";
+}
+.oa-it_smartphone:before {
+    content: "\e793";
+}
+.oa-it_telephone:before {
+    content: "\e794";
+}
+.oa-it_television:before {
+    content: "\e795";
+}
+.oa-it_wifi:before {
+    content: "\e796";
+}
+.oa-it_wireless_dcf77:before {
+    content: "\e797";
+}
+.oa-light_cabinet:before {
+    content: "\e600";
+}
+.oa-light_ceiling_light:before {
+    content: "\e601";
+}
+.oa-light_control:before {
+    content: "\e602";
+}
+.oa-light_diffused:before {
+    content: "\e603";
+}
+.oa-light_dinner_table:before {
+    content: "\e604";
+}
+.oa-light_downlight:before {
+    content: "\e605";
+}
+.oa-light_fairy_lights:before {
+    content: "\e606";
+}
+.oa-light_floor_lamp:before {
+    content: "\e607";
+}
+.oa-light_led_stripe_rgb:before {
+    content: "\e608";
+}
+.oa-light_led_stripe:before {
+    content: "\e609";
+}
+.oa-light_led:before {
+    content: "\e60a";
+}
+.oa-light_light:before {
+    content: "\e616";
+}
+.oa-light_mirror:before {
+    content: "\e617";
+}
+.oa-light_office_desk:before {
+    content: "\e618";
+}
+.oa-light_office:before {
+    content: "\e619";
+}
+.oa-light_outdoor:before {
+    content: "\e61a";
+}
+.oa-light_party:before {
+    content: "\e61b";
+}
+.oa-light_pendant_light_round:before {
+    content: "\e61c";
+}
+.oa-light_pendant_light:before {
+    content: "\e61d";
+}
+.oa-light_stairs:before {
+    content: "\e61e";
+}
+.oa-light_uplight:before {
+    content: "\e61f";
+}
+.oa-light_wall_1:before {
+    content: "\e620";
+}
+.oa-light_wall_2:before {
+    content: "\e621";
+}
+.oa-light_wall_3:before {
+    content: "\e622";
+}
+.oa-light_wire_system_1:before {
+    content: "\e623";
+}
+.oa-light_wire_system_2:before {
+    content: "\e624";
+}
+.oa-measure_battery_25:before {
+    content: "\e626";
+}
+.oa-measure_battery_50:before {
+    content: "\e627";
+}
+.oa-measure_battery_75:before {
+    content: "\e628";
+}
+.oa-measure_battery_100:before {
+    content: "\e629";
+}
+.oa-measure_current:before {
+    content: "\e62a";
+}
+.oa-measure_photovoltaic_inst:before {
+    content: "\e62b";
+}
+.oa-measure_power_meter:before {
+    content: "\e62c";
+}
+.oa-measure_power:before {
+    content: "\e62d";
+}
+.oa-measure_voltage:before {
+    content: "\e62e";
+}
+.oa-measure_water_meter:before {
+    content: "\e62f";
+}
+.oa-message_attention:before {
+    content: "\e630";
+}
+.oa-message_light_intensity:before {
+    content: "\e632";
+}
+.oa-message_medicine:before {
+    content: "\e635";
+}
+.oa-message_presence_disabled:before {
+    content: "\e637";
+}
+.oa-message_presence:before {
+    content: "\e638";
+}
+.oa-message_service:before {
+    content: "\e639";
+}
+.oa-message_socket_ch_3:before {
+    content: "\e63a";
+}
+.oa-message_socket_ch:before {
+    content: "\e63b";
+}
+.oa-message_socket_on_off:before {
+    content: "\e63c";
+}
+.oa-message_socket:before {
+    content: "\e63d";
+}
+.oa-message_tendency_downward:before {
+    content: "\e63e";
+}
+.oa-message_tendency_steady:before {
+    content: "\e63f";
+}
+.oa-message_tendency_upward:before {
+    content: "\e640";
+}
+.oa-control_all_on_off:before {
+    content: "\e645";
+}
+.oa-control_building_2_s_all:before {
+    content: "\e654";
+}
+.oa-control_building_2_s_dg:before {
+    content: "\e655";
+}
+.oa-control_building_2_s_eg:before {
+    content: "\e656";
+}
+.oa-control_building_2_s_kg:before {
+    content: "\e657";
+}
+.oa-control_building_all:before {
+    content: "\e658";
+}
+.oa-control_building_control:before {
+    content: "\e659";
+}
+.oa-control_building_dg:before {
+    content: "\e65a";
+}
+.oa-control_building_eg:before {
+    content: "\e65b";
+}
+.oa-control_building_empty:before {
+    content: "\e65c";
+}
+.oa-control_building_filled:before {
+    content: "\e65d";
+}
+.oa-control_building_kg:before {
+    content: "\e65e";
+}
+.oa-control_building_modern_s_2og_all:before {
+    content: "\e65f";
+}
+.oa-control_building_modern_s_2og_dg:before {
+    content: "\e660";
+}
+.oa-control_building_modern_s_2og_eg:before {
+    content: "\e661";
+}
+.oa-control_building_modern_s_2og_kg:before {
+    content: "\e662";
+}
+.oa-control_building_modern_s_2og_og1:before {
+    content: "\e663";
+}
+.oa-control_building_modern_s_2og_og2:before {
+    content: "\e664";
+}
+.oa-control_building_modern_s_all:before {
+    content: "\e665";
+}
+.oa-control_building_modern_s_dg:before {
+    content: "\e666";
+}
+.oa-control_building_modern_s_eg:before {
+    content: "\e667";
+}
+.oa-control_building_modern_s_kg:before {
+    content: "\e668";
+}
+.oa-control_building_modern_s_og:before {
+    content: "\e669";
+}
+.oa-control_building_modern_s_okg_all:before {
+    content: "\e66a";
+}
+.oa-control_building_modern_s_okg_dg:before {
+    content: "\e66b";
+}
+.oa-control_building_modern_s_okg_eg:before {
+    content: "\e66c";
+}
+.oa-control_building_modern_s_okg_og:before {
+    content: "\e66d";
+}
+.oa-control_building_og:before {
+    content: "\e66e";
+}
+.oa-control_building_outside:before {
+    content: "\e66f";
+}
+.oa-control_building_s_all:before {
+    content: "\e670";
+}
+.oa-control_building_s_dg:before {
+    content: "\e671";
+}
+.oa-control_building_s_eg:before {
+    content: "\e672";
+}
+.oa-control_building_s_kg:before {
+    content: "\e673";
+}
+.oa-control_building_s_og:before {
+    content: "\e674";
+}
+.oa-control_outside_on_off:before {
+    content: "\e680";
+}
+.oa-fts_blade_arc_close_00:before {
+    content: "\e692";
+}
+.oa-fts_blade_arc_close_50:before {
+    content: "\e693";
+}
+.oa-fts_blade_arc_close_100:before {
+    content: "\e694";
+}
+.oa-fts_blade_arc_sun:before {
+    content: "\e695";
+}
+.oa-fts_blade_arc:before {
+    content: "\e696";
+}
+.oa-fts_blade_s_sun:before {
+    content: "\e697";
+}
+.oa-fts_blade_s:before {
+    content: "\e698";
+}
+.oa-fts_blade_z_sun:before {
+    content: "\e699";
+}
+.oa-fts_blade_z:before {
+    content: "\e69a";
+}
+.oa-fts_door_open:before {
+    content: "\e69b";
+}
+.oa-fts_door_slide_2w_open_l:before {
+    content: "\e69c";
+}
+.oa-fts_door_slide_2w_open_lr:before {
+    content: "\e69d";
+}
+.oa-fts_door_slide_2w_open_r:before {
+    content: "\e69e";
+}
+.oa-fts_door_slide_2w:before {
+    content: "\e69f";
+}
+.oa-fts_door_slide_m:before {
+    content: "\e6a0";
+}
+.oa-fts_door_slide_open_m:before {
+    content: "\e6a1";
+}
+.oa-fts_door_slide_open:before {
+    content: "\e6a2";
+}
+.oa-fts_door_slide:before {
+    content: "\e6a3";
+}
+.oa-fts_door:before {
+    content: "\e6a4";
+}
+.oa-fts_garage_door_10:before {
+    content: "\e6a5";
+}
+.oa-fts_garage_door_20:before {
+    content: "\e6a6";
+}
+.oa-fts_garage_door_30:before {
+    content: "\e6a7";
+}
+.oa-fts_garage_door_40:before {
+    content: "\e6a8";
+}
+.oa-fts_garage_door_50:before {
+    content: "\e6a9";
+}
+.oa-fts_garage_door_60:before {
+    content: "\e6aa";
+}
+.oa-fts_garage_door_70:before {
+    content: "\e6ab";
+}
+.oa-fts_garage_door_80:before {
+    content: "\e6ac";
+}
+.oa-fts_garage_door_90:before {
+    content: "\e6ad";
+}
+.oa-fts_garage_door_100:before {
+    content: "\e6ae";
+}
+.oa-fts_garage:before {
+    content: "\e6af";
+}
+.oa-fts_light_dome_open:before {
+    content: "\e6b0";
+}
+.oa-fts_light_dome:before {
+    content: "\e6b1";
+}
+.oa-fts_shutter_10:before {
+    content: "\e6b2";
+}
+.oa-fts_shutter_20:before {
+    content: "\e6b3";
+}
+.oa-fts_shutter_30:before {
+    content: "\e6b4";
+}
+.oa-fts_shutter_40:before {
+    content: "\e6b5";
+}
+.oa-fts_shutter_50:before {
+    content: "\e6b6";
+}
+.oa-fts_shutter_60:before {
+    content: "\e6b7";
+}
+.oa-fts_shutter_70:before {
+    content: "\e6b8";
+}
+.oa-fts_shutter_80:before {
+    content: "\e6b9";
+}
+.oa-fts_shutter_90:before {
+    content: "\e6ba";
+}
+.oa-fts_shutter_100:before {
+    content: "\e6bb";
+}
+.oa-fts_shutter_automatic:before {
+    content: "\e6bc";
+}
+.oa-fts_shutter_down:before {
+    content: "\e6bd";
+}
+.oa-fts_shutter_manual:before {
+    content: "\e6be";
+}
+.oa-fts_shutter_up:before {
+    content: "\e6bf";
+}
+.oa-fts_shutter:before {
+    content: "\e6c0";
+}
+.oa-fts_sliding_gate:before {
+    content: "\e6c1";
+}
+.oa-fts_sunblind:before {
+    content: "\e6c2";
+}
+.oa-fts_window_1w_open:before {
+    content: "\e6c3";
+}
+.oa-fts_window_1w_tilt:before {
+    content: "\e6c4";
+}
+.oa-fts_window_1w:before {
+    content: "\e6c5";
+}
+.oa-fts_window_2w_open_l_tilt_r:before {
+    content: "\e6c6";
+}
+.oa-fts_window_2w_open_l:before {
+    content: "\e6c7";
+}
+.oa-fts_window_2w_open_lr:before {
+    content: "\e6c8";
+}
+.oa-fts_window_2w_open_r:before {
+    content: "\e6c9";
+}
+.oa-fts_window_2w_open:before {
+    content: "\e6ca";
+}
+.oa-fts_window_2w_tilt_l_open_r:before {
+    content: "\e6cb";
+}
+.oa-fts_window_2w_tilt_l:before {
+    content: "\e6cc";
+}
+.oa-fts_window_2w_tilt_lr:before {
+    content: "\e6cd";
+}
+.oa-fts_window_2w_tilt_r:before {
+    content: "\e6ce";
+}
+.oa-fts_window_2w_tilt:before {
+    content: "\e6cf";
+}
+.oa-fts_window_2w:before {
+    content: "\e6d0";
+}
+.oa-fts_window_louvre_open:before {
+    content: "\e6d1";
+}
+.oa-fts_window_louvre:before {
+    content: "\e6d2";
+}
+.oa-fts_window_roof_open_1:before {
+    content: "\e6d3";
+}
+.oa-fts_window_roof_open_2:before {
+    content: "\e6d4";
+}
+.oa-fts_window_roof_shutter:before {
+    content: "\e6d5";
+}
+.oa-fts_window_roof:before {
+    content: "\e6d6";
+}
+.oa-phone_call_end_in:before {
+    content: "\e6d8";
+}
+.oa-phone_call_end_out:before {
+    content: "\e6d9";
+}
+.oa-phone_call_in:before {
+    content: "\e6db";
+}
+.oa-phone_call_out:before {
+    content: "\e6dc";
+}
+.oa-phone_call:before {
+    content: "\e6dd";
+}
+.oa-phone_dial:before {
+    content: "\e6de";
+}
+.oa-phone_missed_in:before {
+    content: "\e6df";
+}
+.oa-phone_missed_out:before {
+    content: "\e6e0";
+}
+.oa-phone_ring_in:before {
+    content: "\e6e1";
+}
+.oa-phone_ring_out:before {
+    content: "\e6e2";
+}
+.oa-phone_ring:before {
+    content: "\e6e3";
+}
+.oa-sani_boiler_temp:before {
+    content: "\e6e4";
+}
+.oa-sani_buffer_temp_all:before {
+    content: "\e6e5";
+}
+.oa-sani_buffer_temp_down:before {
+    content: "\e6e6";
+}
+.oa-sani_buffer_temp_up:before {
+    content: "\e6e7";
+}
+.oa-sani_domestic_waterworks:before {
+    content: "\e6e8";
+}
+.oa-sani_earth_source_heat_pump:before {
+    content: "\e6e9";
+}
+.oa-sani_floor_heating:before {
+    content: "\e6ea";
+}
+.oa-sani_garden_pump:before {
+    content: "\e6eb";
+}
+.oa-sani_heating_automatic:before {
+    content: "\e6ec";
+}
+.oa-sani_heating_manual:before {
+    content: "\e6ed";
+}
+.oa-sani_heating_temp:before {
+    content: "\e6ee";
+}
+.oa-sani_heating:before {
+    content: "\e6ef";
+}
+.oa-sani_irrigation:before {
+    content: "\e6f0";
+}
+.oa-sani_pump:before {
+    content: "\e6f1";
+}
+.oa-sani_return_temp:before {
+    content: "\e6f2";
+}
+.oa-sani_solar_temp:before {
+    content: "\e6f3";
+}
+.oa-sani_solar:before {
+    content: "\e6f4";
+}
+.oa-sani_sprinkling:before {
+    content: "\e6f5";
+}
+.oa-sani_supply_temp:before {
+    content: "\e6f6";
+}
+.oa-sani_water_cold:before {
+    content: "\e6f7";
+}
+.oa-sani_water_tap:before {
+    content: "\e6f9";
+}
+.oa-scene_baby:before {
+    content: "\e6fa";
+}
+.oa-scene_baking_oven:before {
+    content: "\e6fb";
+}
+.oa-scene_bath:before {
+    content: "\e6fc";
+}
+.oa-scene_bathroom:before {
+    content: "\e6fd";
+}
+.oa-scene_childs_room:before {
+    content: "\e6fe";
+}
+.oa-scene_cinema:before {
+    content: "\e6ff";
+}
+.oa-scene_cleaning:before {
+    content: "\e700";
+}
+.oa-scene_clothes_dryer:before {
+    content: "\e701";
+}
+.oa-scene_cockle_stove:before {
+    content: "\e702";
+}
+.oa-scene_cooking:before {
+    content: "\e703";
+}
+.oa-scene_cubby:before {
+    content: "\e704";
+}
+.oa-scene_day:before {
+    content: "\e705";
+}
+.oa-scene_dinner:before {
+    content: "\e706";
+}
+.oa-scene_dishwasher:before {
+    content: "\e707";
+}
+.oa-scene_dressing_room:before {
+    content: "\e708";
+}
+.oa-scene_fitness:before {
+    content: "\e709";
+}
+.oa-scene_gaming:before {
+    content: "\e70a";
+}
+.oa-scene_garden:before {
+    content: "\e70b";
+}
+.oa-scene_hall:before {
+    content: "\e70c";
+}
+.oa-scene_keyboard:before {
+    content: "\e70d";
+}
+.oa-scene_laundry_room_fem:before {
+    content: "\e70e";
+}
+.oa-scene_livingroom:before {
+    content: "\e710";
+}
+.oa-scene_making_love_clean:before {
+    content: "\e711";
+}
+.oa-scene_making_love:before {
+    content: "\e712";
+}
+.oa-scene_microwave_oven:before {
+    content: "\e713";
+}
+.oa-scene_night:before {
+    content: "\e714";
+}
+.oa-scene_office:before {
+    content: "\e715";
+}
+.oa-scene_party:before {
+    content: "\e716";
+}
+.oa-scene_pool:before {
+    content: "\e717";
+}
+.oa-scene_robo_lawnmower:before {
+    content: "\e718";
+}
+.oa-scene_sauna:before {
+    content: "\e719";
+}
+.oa-scene_scene:before {
+    content: "\e71a";
+}
+.oa-scene_shower:before {
+    content: "\e71b";
+}
+.oa-scene_sleeping_alternat:before {
+    content: "\e71c";
+}
+.oa-scene_sleeping:before {
+    content: "\e71d";
+}
+.oa-scene_stairs:before {
+    content: "\e71e";
+}
+.oa-scene_storeroom:before {
+    content: "\e71f";
+}
+.oa-scene_stove:before {
+    content: "\e720";
+}
+.oa-scene_summerhouse:before {
+    content: "\e721";
+}
+.oa-scene_swimming:before {
+    content: "\e722";
+}
+.oa-scene_terrace:before {
+    content: "\e723";
+}
+.oa-scene_toilet_alternat:before {
+    content: "\e724";
+}
+.oa-scene_toilet:before {
+    content: "\e725";
+}
+.oa-scene_visit_guests:before {
+    content: "\e726";
+}
+.oa-scene_washing_machine:before {
+    content: "\e727";
+}
+.oa-scene_wine_cellar:before {
+    content: "\e728";
+}
+.oa-scene_workshop:before {
+    content: "\e729";
+}
+.oa-scene_x-mas:before {
+    content: "\e72a";
+}
+.oa-secur_alarm:before {
+    content: "\e72b";
+}
+.oa-secur_encoding:before {
+    content: "\e72c";
+}
+.oa-secur_frost_protection:before {
+    content: "\e72d";
+}
+.oa-secur_heat_protection:before {
+    content: "\e72e";
+}
+.oa-secur_locked:before {
+    content: "\e72f";
+}
+.oa-secur_open:before {
+    content: "\e730";
+}
+.oa-secur_smoke_detector:before {
+    content: "\e731";
+}
+.oa-status_automatic:before {
+    content: "\e732";
+}
+.oa-status_available:before {
+    content: "\e733";
+}
+.oa-status_away_1:before {
+    content: "\e734";
+}
+.oa-status_away_2:before {
+    content: "\e735";
+}
+.oa-status_comfort:before {
+    content: "\e736";
+}
+.oa-status_frost:before {
+    content: "\e737";
+}
+.oa-status_locked:before {
+    content: "\e738";
+}
+.oa-status_night:before {
+    content: "\e739";
+}
+.oa-status_open:before {
+    content: "\e73a";
+}
+.oa-status_standby:before {
+    content: "\e73b";
+}
+.oa-temp_control:before {
+    content: "\e73c";
+}
+.oa-temp_frost:before {
+    content: "\e73d";
+}
+.oa-temp_inside:before {
+    content: "\e73e";
+}
+.oa-temp_outside:before {
+    content: "\e73f";
+}
+.oa-temp_temperature_max:before {
+    content: "\e740";
+}
+.oa-temp_temperature_min:before {
+    content: "\e741";
+}
+.oa-temp_temperature:before {
+    content: "\e742";
+}
+.oa-temp_windchill:before {
+    content: "\e743";
+}
+.oa-time_automatic:before {
+    content: "\e746";
+}
+.oa-time_calendar:before {
+    content: "\e747";
+}
+.oa-time_clock:before {
+    content: "\e748";
+}
+.oa-time_eco_mode:before {
+    content: "\e749";
+}
+.oa-time_graph:before {
+    content: "\e74a";
+}
+.oa-time_manual_mode:before {
+    content: "\e74b";
+}
+.oa-time_note:before {
+    content: "\e74c";
+}
+.oa-time_statistic:before {
+    content: "\e74d";
+}
+.oa-time_timer:before {
+    content: "\e74e";
+}
+.oa-user_available:before {
+    content: "\e74f";
+}
+.oa-user_away:before {
+    content: "\e750";
+}
+.oa-user_ext_away:before {
+    content: "\e751";
+}
+.oa-vent_ambient_air:before {
+    content: "\e752";
+}
+.oa-vent_bypass:before {
+    content: "\e753";
+}
+.oa-vent_exhaust_air:before {
+    content: "\e754";
+}
+.oa-vent_supply_air:before {
+    content: "\e755";
+}
+.oa-vent_used_air:before {
+    content: "\e756";
+}
+.oa-vent_ventilation_control:before {
+    content: "\e757";
+}
+.oa-vent_ventilation_level_0:before {
+    content: "\e758";
+}
+.oa-vent_ventilation_level_1:before {
+    content: "\e759";
+}
+.oa-vent_ventilation_level_2:before {
+    content: "\e75a";
+}
+.oa-vent_ventilation_level_3:before {
+    content: "\e75b";
+}
+.oa-vent_ventilation_level_automatic:before {
+    content: "\e75c";
+}
+.oa-vent_ventilation_level_manual_m:before {
+    content: "\e75d";
+}
+.oa-vent_ventilation:before {
+    content: "\e75e";
+}
+.oa-weather_barometric_pressure:before {
+    content: "\e75f";
+}
+.oa-weather_cloudy_heavy:before {
+    content: "\e760";
+}
+.oa-weather_cloudy_light:before {
+    content: "\e761";
+}
+.oa-weather_cloudy:before {
+    content: "\e762";
+}
+.oa-weather_directions:before {
+    content: "\e763";
+}
+.oa-weather_frost:before {
+    content: "\e764";
+}
+.oa-weather_humidity:before {
+    content: "\e765";
+}
+.oa-weather_light_meter:before {
+    content: "\e766";
+}
+.oa-weather_moon_phases_1_new:before {
+    content: "\e767";
+}
+.oa-weather_moon_phases_2:before {
+    content: "\e768";
+}
+.oa-weather_moon_phases_3_half:before {
+    content: "\e769";
+}
+.oa-weather_moon_phases_4:before {
+    content: "\e76a";
+}
+.oa-weather_moon_phases_5_full:before {
+    content: "\e76b";
+}
+.oa-weather_moon_phases_6:before {
+    content: "\e76c";
+}
+.oa-weather_moon_phases_7_half:before {
+    content: "\e76d";
+}
+.oa-weather_moon_phases_8:before {
+    content: "\e76e";
+}
+.oa-weather_moonrise:before {
+    content: "\e76f";
+}
+.oa-weather_moonset:before {
+    content: "\e770";
+}
+.oa-weather_pollen:before {
+    content: "\e771";
+}
+.oa-weather_rain_gauge:before {
+    content: "\e772";
+}
+.oa-weather_rain_heavy:before {
+    content: "\e773";
+}
+.oa-weather_rain_light:before {
+    content: "\e774";
+}
+.oa-weather_rain_meter:before {
+    content: "\e775";
+}
+.oa-weather_rain:before {
+    content: "\e776";
+}
+.oa-weather_snow_heavy:before {
+    content: "\e777";
+}
+.oa-weather_snow_light:before {
+    content: "\e778";
+}
+.oa-weather_snow:before {
+    content: "\e779";
+}
+.oa-weather_station_quadra:before {
+    content: "\e77a";
+}
+.oa-weather_station:before {
+    content: "\e77b";
+}
+.oa-weather_storm:before {
+    content: "\e77c";
+}
+.oa-weather_summer:before {
+    content: "\e77d";
+}
+.oa-weather_sun:before {
+    content: "\e77e";
+}
+.oa-weather_sunrise:before {
+    content: "\e77f";
+}
+.oa-weather_sunset:before {
+    content: "\e780";
+}
+.oa-weather_thunderstorm:before {
+    content: "\e781";
+}
+.oa-weather_wind_directions_e:before {
+    content: "\e782";
+}
+.oa-weather_wind_directions_n:before {
+    content: "\e783";
+}
+.oa-weather_wind_directions_ne:before {
+    content: "\e784";
+}
+.oa-weather_wind_directions_nw:before {
+    content: "\e785";
+}
+.oa-weather_wind_directions_s:before {
+    content: "\e786";
+}
+.oa-weather_wind_directions_se:before {
+    content: "\e787";
+}
+.oa-weather_wind_directions_sw:before {
+    content: "\e788";
+}
+.oa-weather_wind_directions_w:before {
+    content: "\e789";
+}
+.oa-weather_wind_speed:before {
+    content: "\e78a";
+}
+.oa-weather_wind:before {
+    content: "\e78b";
+}
+.oa-weather_winter:before {
+    content: "\e78c";
+}

@@ -1,0 +1,929 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: openhab-habpanel\n"
+"Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Language: hu\n"
+"X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Language-Team: Hungarian\n"
+"Language: hu_HU\n"
+"PO-Revision-Date: 2018-06-14 04:21-0400\n"
+
+#. Save button in the dashboard designer
+msgctxt "designer.save"
+msgid "Save"
+msgstr "Mentés"
+
+#. Run button in the dashboard designer
+msgctxt "designer.run"
+msgid "Run"
+msgstr "Futtatás"
+
+#. Add widget button in the dashboard designer
+msgctxt "designer.addwidget"
+msgid "Add Widget"
+msgstr "Widget hozzáadás"
+
+#. Tutorial text with arrow when on an empty dashboard
+msgctxt "designer.addwidget.hint"
+msgid "Add some widgets"
+msgstr "Widget-ek hozzáadása"
+
+#. Header of the custom widget section (beware, it might overlap the cogs icon on the right)
+msgctxt "designer.addwidget.customwidgets"
+msgid "Custom widgets"
+msgstr "Egyéni widget-ek"
+
+#. Open widget gallery
+msgctxt "designer.addwidget.getmore"
+msgid "Get more..."
+msgstr "Továbbiak..."
+
+#. Tooltip when hovering the "Get more" menu entry
+msgctxt "designer.addwidget.getmore.tooltip"
+msgid "Open the widget gallery to import more widgets"
+msgstr "Widget galéria megnyitása további widget-ek importálásához"
+
+#. Edit option in a widget placeholder context menu (3-dot icon)
+msgctxt "designer.contextmenu.edit"
+msgid "Edit..."
+msgstr "Szerkesztés..."
+
+#. Copy/move option in a widget placeholder context menu (3-dot icon)
+msgctxt "designer.contextmenu.copymove"
+msgid "Copy/move to..."
+msgstr "Másolás/áthelyezés..."
+
+#. Delete option in a widget placeholder context menu (3-dot icon)
+msgctxt "designer.contextmenu.delete"
+msgid "Delete"
+msgstr "Törlés"
+
+#. Title of copy/move widget dialog
+msgctxt "designer.copymove.header"
+msgid "Copy/move {{widgetName}}"
+msgstr "Másolás/áthelyezés {{widgetName}}"
+
+#. Alongside the dropdown dashboard selection
+msgctxt "designer.copymove.todashboard"
+msgid "To dashboard"
+msgstr "Irány a vezérlőpult"
+
+#. Move button
+msgctxt "designer.copymove.move"
+msgid "Move"
+msgstr "Áthelyezés"
+
+#. Copy button
+msgctxt "designer.copymove.copy"
+msgid "Copy"
+msgstr "Másolás"
+
+#. Default name of a newly created widget
+msgctxt "designer.newwidget.defaultname"
+msgid "New Widget"
+msgstr "Új widget"
+
+msgctxt "designer.serversavefailed"
+msgid "Server save failed!"
+msgstr "Serverre mentés sikertelen!"
+
+#. Title of the dashboard settings dialog
+msgctxt "dashboard.settings.dialog.title"
+msgid "Dashboard Settings"
+msgstr "Vezérlőpult beállítás"
+
+#. Tab header
+msgctxt "dashboard.settings.tile"
+msgid "Menu tile"
+msgstr "Menülap"
+
+#. Textbox header
+msgctxt "dashboard.settings.tile.background_image_url"
+msgid "Background Image URL"
+msgstr "Háttérkép URL"
+
+#. Color picker header
+msgctxt "dashboard.settings.tile.title_text_color"
+msgid "Title Text color"
+msgstr "Címszöveg színe"
+
+#. Checkbox header
+msgctxt "dashboard.settings.tile.click_feedback"
+msgid "Click feedback"
+msgstr "Kattintson a visszajelzéshez"
+
+#. Checkbox label
+msgctxt "dashboard.settings.tile.click_feedback.description"
+msgid "Don't brighten tile on click/tap"
+msgstr "Ne legyen fényes a csempe kattintáskor/érintéskor"
+
+#. Tab header
+msgctxt "dashboard.settings.advanced"
+msgid "Advanced"
+msgstr "Haladó mód"
+
+#. Alert display at the top
+msgctxt "dashboard.settings.advanced.warning"
+msgid "These options are currently experimental, unstable or targeted at advanced users! Use at your own risk."
+msgstr "Ezek a beállítások kísérletik, nem használtak, vagy csak haladó felhasználók részére vannak! Saját felelősségedre használd!"
+
+#. Tab header
+msgctxt "dashboard.settings.customwidgets"
+msgid "Custom widgets"
+msgstr "Egyéni widget-ek"
+
+#. Alert displayed at the top
+msgctxt "dashboard.settings.customwidgets.warning"
+msgid "This feature is currently experimental, and targeted at advanced users! Use at your own risk."
+msgstr "Ez a lehetőség kísérlet, vagy csak haladó felhasználók részére van! Saját felelősségedre használd!"
+
+#. Checkbox header
+msgctxt "dashboard.settings.customwidgets.usecustomwidget"
+msgid "Use a custom widget"
+msgstr "Használj egyéni widget-et"
+
+#. Dropdown header
+msgctxt "dashboard.settings.customwidgets.customwidget"
+msgid "Custom Widget"
+msgstr "Egyéni widget"
+
+#. Accordion header
+msgctxt "dashboard.settings.customwidgets.tile"
+msgid "Main menu tile"
+msgstr "Főmenü lap"
+
+#. Checkbox label
+msgctxt "dashboard.settings.customwidgets.tile.description"
+msgid "Replace the tile contents by a custom widget"
+msgstr "A lap tartalma cseréje egyéni widget-el"
+
+#. Accordion header
+msgctxt "dashboard.settings.customwidgets.drawer"
+msgid "Drawer"
+msgstr "Rajzoló"
+
+#. Checkbox label
+msgctxt "dashboard.settings.customwidgets.drawer.description"
+msgid "Replace the contents of the drawer menu by a custom widget"
+msgstr "A rajzoló menü tartalmának cseréje egy egyéni widget-el"
+
+#. Accordion header
+msgctxt "dashboard.settings.customwidgets.header"
+msgid "Dashboard header"
+msgstr "Vezérlőpult fejléc"
+
+#. Checkbox label
+msgctxt "dashboard.settings.customwidgets.header.description"
+msgid "Replace the contents of the dashboard header by a custom widget"
+msgstr "A vezérlőpult fejléc cseréje egy egyéni widget-el"
+
+#. Displayed in the item picker when no item selected
+msgctxt "itempicker.placeholder"
+msgid "Search or select an openHAB item"
+msgstr "Egy openHAB elem keresése, kiválasztása"
+
+#. Icon picker dropdown placeholder
+msgctxt "iconpicker.selecticonset"
+msgid "Select icon set"
+msgstr "Icon csomag kiválasztás"
+
+#. Icon picker dropdown entry
+msgctxt "iconpicker.customicon"
+msgid "Custom icon"
+msgstr "Egyéni icon"
+
+#. Icon picker dropdown entry
+msgctxt "iconpicker.customurl"
+msgid "Custom URL"
+msgstr "Egyéni URL"
+
+#. Icon picker dropdown entry
+msgctxt "iconpicker.none"
+msgid "(none)"
+msgstr "(nincs)"
+
+#. Appears when focusing the icon textbox when the "Custom icon" iconset is selected
+msgctxt "iconpicker.customicontooltip"
+msgid "Type the name of a <a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'>registered icon</a> (only SVG supported)<br />Examples: <em>switch</em>, <em>temperature</em> or an additional icon in your configuration's <code>icons/classic</code> folder"
+msgstr "Írj be egy nevet a <a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'>registered icon</a> (only SVG supported)<br />Például: <em>kapcsoló</em>, <em>hőmérséklet</em> vagy egy hozzáadott icon a Te konfigurációdban <code>icons/classic</code> könyvtár"
+
+#. Screen title
+msgctxt "settings.header"
+msgid "Settings"
+msgstr "Beállítások"
+
+#. Header of the storage section
+msgctxt "settings.storage.header"
+msgid "Current storage configuration"
+msgstr "Jelenlegi tárló konfiguráció"
+
+#. Radio button for local storage
+msgctxt "settings.storage.localstorage"
+msgid "Local storage"
+msgstr "Helyi tároló"
+
+#. Explanation of the "local storage only" option
+msgctxt "settings.storage.localstorage.hint"
+msgid "The configuration is saved for this browser and device only. It will be kept as long as you don't clean up the browser's historical data."
+msgstr "A konfiguráció csak ebben a böngészőben van elmentve. Ez sokáig megmarad, amíg nem törlöd a böngésződ előzmény adatait."
+
+#. Link below the "local storage" option
+msgctxt "settings.storage.localstorage.edit"
+msgid "Edit the local panel configuration (experts only)"
+msgstr "Helyi panel konfiguráció szerkesztése (csak haladóknak)"
+
+#. Prefix of a panel configuration before its name
+msgctxt "settings.storage.panelconfiguration"
+msgid "Panel configuration:"
+msgstr "Panel konfiguráció:"
+
+#. Prefix of the last synced line, before the date
+msgctxt "settings.storage.panelconfiguration.lastsynced"
+msgid "Last synced on"
+msgstr "Utoljára szinkronizálva"
+
+#. Displayed before the list of dashboard the panel configuration contains
+msgctxt "settings.storage.panelconfiguration.contains"
+msgid "Contains:"
+msgstr "Tartalmaz:"
+
+#. Link to create a panel configuration from the current configuration
+msgctxt "settings.storage.panelconfiguration.save"
+msgid "Save the current configuration to a new panel configuration"
+msgstr "Aktuális konfiguráció mentése egy új panel konfigurációba"
+
+#. Title of the dialog box when creating a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.title"
+msgid "New panel configuration"
+msgstr "Új panel konfiguráció"
+
+#. Message of the dialog box when creating a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.message"
+msgid "Please choose a name for the new panel configuration (letters and digits only please):"
+msgstr "Válasszon egy nevet az új konfigurációs panelhez (csak betűk és számjegyek):"
+
+#. Panel name (section header)
+msgctxt "settings.panel.name"
+msgid "Panel name"
+msgstr "Panel neve"
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.name.hint"
+msgid "Replaces 'HABPanel' in the side drawer when set"
+msgstr "Lecseréli a \"HABPanel\"-t az oldalsó fiókban, ha értéke"
+
+#. Appearance (section header)
+msgctxt "settings.panel.appearance.header"
+msgid "Appearance"
+msgstr "Megjelenés"
+
+#. Dropown menu header
+msgctxt "settings.panel.appearance.theme"
+msgid "Theme"
+msgstr "Sablon"
+
+#. Alert banner displayed when the browsers doesn't support themes (CSS variables)
+msgctxt "settings.panel.appearance.theme.not_supported"
+msgid "Themes are not compatible with this browser."
+msgstr "Sablon nem kompatibilisek ezzel a böngészővel."
+
+#. Setting header
+msgctxt "settings.panel.appearance.additional_stylesheet"
+msgid "Additional stylesheet (optional)"
+msgstr "További stíluslap (opcionális)"
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.appearance.additional_stylesheet.hint"
+msgid "Relative URL only; example: /static/example.css"
+msgstr "Relatív URL-címek csak; Példa: /static/example.css"
+
+#. Setting header
+msgctxt "settings.panel.appearance.background_image"
+msgid "Background image (optional)"
+msgstr "Háttér kép (opcionális)"
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.appearance.background_image.hint"
+msgid "Example: //source.unsplash.com/random"
+msgstr "Például: //source.unsplash.com/random"
+
+#. Setting header
+msgctxt "settings.panel.appearance.drawer_heading_image"
+msgid "Drawer heading image (optional)"
+msgstr "Fiók fejléc kép (opcionális)"
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.appearance.drawer_heading_image.hint"
+msgid "Example: //via.placeholder.com/265x95"
+msgstr "Például: //via.placeholder.com/265x95"
+
+#. Checkbox
+msgctxt "settings.panel.appearance.prevent_scrolling"
+msgid "Prevent scrolling (when not editing)"
+msgstr "Megakadályozza a görgetést (nem szerkesztés módban)"
+
+#. Checkbox
+msgctxt "settings.panel.appearance.hide_drawer_footer"
+msgid "Hide the drawer's footer"
+msgstr "Fiók lábléc elrejtése"
+
+#. Checkbox
+msgctxt "settings.panel.appearance.hide_toolbar_buttons"
+msgid "Hide toolbar buttons:"
+msgstr "Eszköztár gombjainak elrejtése:"
+
+#. Checkbox
+msgctxt "settings.panel.appearance.show_clock"
+msgid "Show a clock on the header"
+msgstr "Az óra megjelenítése a fejlécben"
+
+#. Textbox setting header, only displayed when the "Show a clock on the header" option is checked
+msgctxt "settings.panel.appearance.show_clock.header_format"
+msgid "Header clock format"
+msgstr "Fejléc óra formátum"
+
+#. Textbox placeholder, only displayed when the "Show a clock on the header" option is checked
+msgctxt "settings.panel.appearance.show_clock.header_format.hint"
+msgid "Default: shortTime, use AngularJS date format"
+msgstr "Alapértelmezett érték: shortTime, AngularJS dátum formátumot használ"
+
+#. Custom widgets settings (section header)
+msgctxt "settings.panel.customwidgets.header"
+msgid "Custom Widgets"
+msgstr "Egyéni widget-ek"
+
+#. Big "manage" button label (a > suffix is added)
+msgctxt "settings.panel.customwidgets.manage"
+msgid "Manage"
+msgstr "Kezelés"
+
+#. Voice support (section header) - formerly (<=2.2.0) : "Voice feedback"
+msgctxt "settings.panel.voicesupport.header"
+msgid "Voice Support"
+msgstr "Hang támogatás"
+
+#. Dropdown header - formerly (<=2.2.0) : "Voice"
+msgctxt "settings.panel.voicesupport.speech_synthesis_voice"
+msgid "Speech synthesis voice"
+msgstr "Beszéd szintézis"
+
+#. Displayed below the voice dropdown
+msgctxt "settings.panel.voicesupport.speech_synthesis_voice.hint"
+msgid "Available voices depend on the operating system and browser environments."
+msgstr "A rendelkezésre álló hangok függenek az operációs rendszertől és a böngészőtől."
+
+#. Test button below the voice selection - make the voice say "habpanel 1 2 3"
+msgctxt "settings.panel.voicesupport.speech_synthesis_voice.test"
+msgid "Test"
+msgstr "Teszt"
+
+#. Checkbox
+msgctxt "settings.panel.voicesupport.floating_speech_button"
+msgid "Display a floating speech button at the bottom of the screen"
+msgstr "Megjelenít egy lebegő beszéd gombot a képernyő alján"
+
+#. Dropdown header
+msgctxt "settings.panel.voicesupport.speech_synthesis_item"
+msgid "Speak the new value of the following item when it changes:"
+msgstr "Beszél a következő elem új értékéről, ha módosul:"
+
+#. Section header
+msgctxt "settings.panel.dashboard_control.header"
+msgid "Switch dashboard with item value"
+msgstr "Cserélje le a dashboard-on levő értéket az \"Item\" értékére"
+
+#. Dropdown header
+msgctxt "settings.panel.dashboard_control.item"
+msgid "When this item changes to a dashboard's name, switch to it:"
+msgstr "Ha az \"Item\" neve a dashboard nevére változik, cserélje le:"
+
+#. Local panel configuration editor header
+msgctxt "settings.localconfig.title"
+msgid "Local panel configuration editor"
+msgstr "Helyi panel konfiguráció szerkesztő"
+
+#. Displayed in a tooltip when hovering the exclamation mark in the local panel config editor
+msgctxt "settings.localconfig.warning"
+msgid "This is the raw configuration object representing your current configuration. Be careful while editing it by hand!"
+msgstr "Ez a nyers konfigurációs objektum, amely a jelenlegi beállításaidat tükrözi. Óvatosan a manuális szerkeszetéssel!"
+
+#. Blue button
+msgctxt "settings.localconfig.import"
+msgid "Import"
+msgstr "Import"
+
+#. Blue button
+msgctxt "settings.localconfig.export"
+msgid "Export"
+msgstr "Export"
+
+#. Default label for the white button on the right
+msgctxt "settings.localconfig.copy"
+msgid "Copy"
+msgstr "Másolás"
+
+#. Label displayed on the button for a few seconds after a successful copy to clipboard
+msgctxt "settings.localconfig.copied"
+msgid "Copied!"
+msgstr "Másolva!"
+
+#. Default label for the red button on the right
+msgctxt "settings.localconfig.save"
+msgid "Save"
+msgstr "Mentés"
+
+#. Label displayed on the button for a few seconds after a successful save
+msgctxt "settings.localconfig.saved"
+msgid "Saved!"
+msgstr "Mentve!"
+
+#. Label displayed for a few seconds on the copy or save button if an error occurred
+msgctxt "settings.localconfig.failed"
+msgid "FAILED!"
+msgstr "NEM SIKERÜLT!"
+
+#. Displayed in a dialog box
+msgctxt "settings.localconfig.error.nodashboardsfound"
+msgid "No dashboards found!"
+msgstr "Nincs megjeleníthető felület!"
+
+#. Title of a a dialog box
+msgctxt "settings.localconfig.parsingerror.dialog.title"
+msgid "Error"
+msgstr "Hiba"
+
+#. Message in a dialog box
+msgctxt "settings.localconfig.parsingerror.dialog.message"
+msgid "Configuration parsing error, nothing has been modified: "
+msgstr "Konfigurációs feldolgozási hiba, semmi sem módosult: "
+
+#. Title of a a dialog box
+msgctxt "settings.localconfig.importerror.dialog.title"
+msgid "Error"
+msgstr "Hiba"
+
+#. Message in a dialog box
+msgctxt "settings.localconfig.importerror.dialog.message"
+msgid "Problem while importing: "
+msgstr "Probléma az importálása során: "
+
+#. Screen title
+msgctxt "customwidgets.list.header"
+msgid "Custom widgets"
+msgstr "Egyéni widget-ek"
+
+#. Prefix displayed before the author's name
+msgctxt "customwidgets.list.byauthor"
+msgid "by"
+msgstr "által"
+
+#. Displayed in a tooltip when hovering the icon indicating a globally provisioned widget
+msgctxt "customwidgets.list.globallyprovisioned.hint"
+msgid "This widget was provisioned globally via a bundle. It cannot be modified, but may be cloned to an user-defined widget with another name."
+msgstr "Ez a widget globálisan egy csomagban lett hozzáadva. Nem lehet módosítani, de klónozható egy a felhasználó által definiált widget-re, más néven."
+
+#. Displayed in a tooltip when hovering the icon indicating a user defined widget
+msgctxt "customwidgets.list.userdefined.hint"
+msgid "This widget has been defined manually in this panel configuration and can be modified."
+msgstr "Ez a widget kézzel lett megadva a konfigurációs panelen, nem lehet módosítani."
+
+#. Custom widget context menu entry - clone a globally-provisioned widget
+msgctxt "customwidgets.list.contextmenu.clone"
+msgid "Clone widget..."
+msgstr "Widget sokszorozása..."
+
+#. Custom widget context menu entry - downloads a widget's .widget.json file
+msgctxt "customwidgets.list.contextmenu.exporttofile"
+msgid "Export to file"
+msgstr "Exportálás fájlba"
+
+#. Custom widget context menu entry - opens a forum topic or GitHub readme
+msgctxt "customwidgets.list.contextmenu.openhelp"
+msgid "Open Help"
+msgstr "Súgó megnyitása"
+
+#. Custom widget context menu entry - update the widget from its source
+msgctxt "customwidgets.list.contextmenu.update"
+msgid "Update..."
+msgstr "Frissítés..."
+
+#. Blue button opening a dialog
+msgctxt "customwidgets.list.newwidget"
+msgid "New widget"
+msgstr "Új widget"
+
+#. Blue button with a dropdown menu
+msgctxt "customwidgets.list.importwidget"
+msgid "Import widget"
+msgstr "Widget importálása"
+
+#. Import button menu entry - opens a dialog
+msgctxt "customwidgets.list.importwidget.fromfile"
+msgid "Import from file..."
+msgstr "Importálás fájlból..."
+
+#. Import button menu entry - opens a dialog
+msgctxt "customwidgets.list.importwidget.fromgallery"
+msgid "Import from gallery..."
+msgstr "Importálás galériából..."
+
+#. Dialog box title
+msgctxt "customwidgets.list.add.dialog.title"
+msgid "New custom widget"
+msgstr "Új egyéni widget"
+
+#. Dialog box message
+msgctxt "customwidgets.list.add.dialog.message"
+msgid "Please choose a short name as an identifier for your widget (for example, 'window-shutter=up-down-button, 'weather-forecast' etc.). If a widget with the same identifier already exists, it will be replaced!"
+msgstr "Válasszon egy rövid nevet a widget-je azonosítójának (például, 'redőny = fel-le-gomb, 'Időjárás' stb.). Ha már létezik ugyanezzel az azonosítóval egy widget, akkor azt felülírja!"
+
+#. Error message, displayed in an alert box
+msgctxt "customwidgets.list.import.nojson"
+msgid "The file must have a .json extension!"
+msgstr "A fájl-nak .json kiterjesztésűnek kell lennie!"
+
+#. Dialog box title
+msgctxt "customwidgets.list.import.dialog.title"
+msgid "Import widget"
+msgstr "Widget importálása"
+
+#. Dialog box message
+msgctxt "customwidgets.list.import.dialog.message"
+msgid "Please confirm or change the identifier of your widget (avoid spaces and special chars!). If a widget with the same identifier already exists, it will be replaced!"
+msgstr "Kérem erősítse meg vagy módosítsa a widget-je azonosítóját (ne használjon szóközöket és speciális karaktereket!). Ha egy widget már létezik ugyanezzel az azonosítóval, akkor azt felülírja!"
+
+#. Prefix of an error message - followed by a technical exception message
+msgctxt "customwidgets.list.import.error"
+msgid "Widget import error: "
+msgstr "Widget importálási hiba: "
+
+#. Dialog box title
+msgctxt "customwidgets.list.update.dialog.title"
+msgid "Update widget"
+msgstr "Widget frissítése"
+
+#. Dialog box message
+msgctxt "customwidgets.list.update.dialog.message"
+msgid "This will update widget <id> from <source_url>. Any changes you made will be overwritten! Continue?"
+msgstr "Ez frissíteni fogja a widget <id> a <source_url>-ből. Minden módosítás felülíródik! Folytatja?"
+
+#. Alert banner message
+msgctxt "customwidgets.list.update.error.notemplatefound"
+msgid "Couldn't update widget <id> from <source_url>: no template found"
+msgstr "Nem tudtam frissíteni a widget <id> a <source_url>-ből: nem található a sablon"
+
+#. Alert banner message
+msgctxt "customwidgets.list.update.error.unknown"
+msgid "Couldn't update widget <id> from <source_url>: "
+msgstr "Nem tudtam frissíteni a widget <id> a <source_url>-ből: "
+
+#. Alert banner message
+msgctxt "customwidgets.list.update.success"
+msgid "Widget <id> updated successfully from <source_url>"
+msgstr "Az <id> widget-et sikeresen frissítettük a <source_url> -ről"
+
+#. Dialog box title
+msgctxt "customwidgets.list.delete.dialog.title"
+msgid "Remove widget"
+msgstr "Widget eltávolítása"
+
+#. Dialog box message
+msgctxt "customwidgets.list.delete.dialog.message"
+msgid "Please confirm you want to delete this widget: "
+msgstr "Kérjük erősítse meg, hogy törölni szeretné-e ezt a widget-et: "
+
+#. Dialog box title
+msgctxt "customwidgets.list.clone.dialog.title"
+msgid "Clone widget"
+msgstr "Widget másolása"
+
+#. Dialog box message
+msgctxt "customwidgets.list.clone.dialog.message"
+msgid "This will clone the globally provisioned widget: <id> to be modified as part of the panel configuration. Enter an unique identifier below - it must be different from the widget being cloned, and should avoid spaces and special chars. If an user-defined widget with the same identifier already exists, it will be replaced!"
+msgstr "Ez klónozza a globálisan hozzáadott widget-t: <id>, módosítandó a panel beállításainak részeként. Írjon be egy egyedi azonosítót - különböznie kell a widget-től, ami klónozva lett, és nem lehet benne szóköz és speciális karakter. Ha egy felhasználó által definiált widget ugyanezzel az azonosítóval már létezik, akkor felülírja!"
+
+#. Screen title, followed by the widget name - beware of size!
+msgctxt "customwidgets.designer.heading"
+msgid "Widget:"
+msgstr "Widget:"
+
+#. Save button on the right, default label - can be hidden on phones
+msgctxt "customwidgets.designer.save"
+msgid "Save"
+msgstr "Mentés"
+
+#. Save button on the right, displayed for a few seconds after a save - can be hidden on phones
+msgctxt "customwidgets.designer.saved"
+msgid "Saved!"
+msgstr "Mentve!"
+
+#. Tab header
+msgctxt "customwidgets.designer.code"
+msgid "Code"
+msgstr "Kód"
+
+#. Tab header
+msgctxt "customwidgets.designer.settings"
+msgid "Settings"
+msgstr "Beállítások"
+
+#. Section header in the Settings tab
+msgctxt "customwidgets.designer.settings.general"
+msgid "General settings"
+msgstr "Általános beállítások"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.general.display_name"
+msgid "Display name"
+msgstr "Megjelenített név"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.general.author"
+msgid "Author"
+msgstr "Szerző"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.general.description"
+msgid "Description"
+msgstr "Leírás"
+
+#. Section header in the Settings tab
+msgctxt "customwidgets.designer.settings.config"
+msgid "Configuration settings"
+msgstr "Konfiguráció beállítása"
+
+#. Displayed in small text below the section header, with an information icon
+msgctxt "customwidgets.designer.settings.config.warning"
+msgid "Beware: always bear in mind instances of this widget might be existing when altering configuration settings!"
+msgstr "Vigyázat: mindig tartsa észben, hogy ezen widget példányai létezhetnek amikor a konfigurációs beállítások változnak!"
+
+#. Button label
+msgctxt "customwidgets.designer.settings.config.add"
+msgid "Add setting"
+msgstr "Beállítás hozzáadása"
+
+#. Dropdown header
+msgctxt "customwidgets.designer.settings.config.type"
+msgid "Type"
+msgstr "Típus"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.string"
+msgid "String"
+msgstr "Karakterlánc"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.number"
+msgid "Number"
+msgstr "Szám"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.checkbox"
+msgid "Checkbox"
+msgstr "Jelölőnégyzet"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.item"
+msgid "Item"
+msgstr "Elem"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.color"
+msgid "Color"
+msgstr "Szín"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.choices"
+msgid "Choices"
+msgstr "Választási lehetőségek"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.icon"
+msgid "Icon"
+msgstr "Ikon"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.heading"
+msgid "Heading"
+msgstr "Irány"
+
+#. Tooltip displayed when hovering the help icon alongside the ID field
+msgctxt "customwidgets.designer.settings.config.id.hint"
+msgid "Enter a JSON friendly key for this setting - ideally, use only lowercase letters, digits and underscores. Examples: my_setting, first_item, text_size, font_color"
+msgstr "Adjon meg JSON barát kulcsot ehhez a beállításhoz - használjon csak kisbetűket, számokat és aláhúzást. Például: my_setting, first_item, text_size, font_color"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.label"
+msgid "Label"
+msgstr "Címke"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.default"
+msgid "Default value"
+msgstr "Alapértelmezett érték"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.choices"
+msgid "Choices"
+msgstr "Választási lehetőségek"
+
+#. Textbox placeholder
+msgctxt "customwidgets.designer.settings.config.choices.hint"
+msgid "Comma-separated possible values"
+msgstr "Vesszővel több érték megadható"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.description"
+msgid "Description"
+msgstr "Leírás"
+
+#. Banner displayed when selecting the Icon type for the settings, followed by the defined settings themselves
+msgctxt "customwidgets.designer.settings.config.icon.hint"
+msgid "This will define 2 config elements:"
+msgstr "Ez 2 konfigurációs elemet fog definiálni:"
+
+#. Tab header
+msgctxt "customwidgets.designer.preview"
+msgid "Preview"
+msgstr "Előnézet"
+
+#. Dialog box title
+msgctxt "widgetgallery.heading"
+msgid "Widget Gallery"
+msgstr "Widget Galéria"
+
+#. Dialog box title (when displaying a repository)
+msgctxt "widgetgallery.heading.importrepo"
+msgid "Import GitHub Repository"
+msgstr "Import GitHub adattárból"
+
+#. Dialog box title (when displaying a community gallery item)
+msgctxt "widgetgallery.heading.importgallery"
+msgid "Import Gallery Item"
+msgstr "Galéria elem importálása"
+
+#. Alert banner message
+msgctxt "widgetgallery.warning.githubratelimit"
+msgid "Warning: rate limiting on the GitHub API will temporarily block further requests!"
+msgstr "Figyelem: sebesség korlátozás a GitHub API-n ideiglenesen blokkolja a további kéréseket!"
+
+#. Alert banner message (2nd part)
+msgctxt "widgetgallery.warning.githubratelimit.wait"
+msgid "Wait until this time and try again:"
+msgstr "Várjon ennyi ideig, majd próbálja meg újra:"
+
+#. Textbox placeholder
+msgctxt "widgetgallery.addressbar.hint"
+msgid "GitHub repository full name (owner/name) or URL"
+msgstr "GitHub adattár teljes neve (tulajdonosnév) vagy URL-címe"
+
+#. Button on the right of the addressbar
+msgctxt "widgetgallery.addressbar.go"
+msgid "Go"
+msgstr "Menj"
+
+#. Suffix displayed after a number, i.e. "24 community contributions"
+msgctxt "widgetgallery.toolbar.communitycontributions"
+msgid "community&nbsp;contributions"
+msgstr "közösségi hozzájárulások"
+
+#. On the right with the sort options
+msgctxt "widgetgallery.toolbar.sortby"
+msgid "sort by:"
+msgstr "rendezés:"
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostrecent"
+msgid "most&nbsp;recent"
+msgstr "legutóbbiak"
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostliked"
+msgid "most&nbsp;liked"
+msgstr "legkedveltebb"
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostpopular"
+msgid "most&nbsp;popular"
+msgstr "legnépszerűbb"
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostdiscussed"
+msgid "most&nbsp;discussed"
+msgstr "legtöbbet&nbsp;tárgyalt"
+
+#. Prefix before the author's name
+msgctxt "widgetgallery.details.authorby"
+msgid "by"
+msgstr "által"
+
+#. Suffix displayed after a number, i.e. "24 posts on this topic"
+msgctxt "widgetgallery.details.forumposts"
+msgid "post(s) on this topic - discuss on community.openhab.org"
+msgstr "hozzászólás ebben a témában - a community.openhab.org on"
+
+#. Label of the big green button when nothing to import
+msgctxt "widgetgallery.details.nothingtoimport"
+msgid "Nothing to import"
+msgstr "Nincs mit importálni"
+
+#. Label of the big green button when 1 widget was found
+msgctxt "widgetgallery.details.importwidget"
+msgid "Import Widget"
+msgstr "Widget importálása"
+
+#. Label of the big green button when 2 or more widgets were found
+msgctxt "widgetgallery.details.importwidgets"
+msgid "Import {} Widgets"
+msgstr "Widget {} importálása"
+
+#. Label of the big blue button when there is a referenced GitHub repo
+msgctxt "widgetgallery.details.gotorepository"
+msgid "Go to the repository"
+msgstr "A repository felkeresése"
+
+#. Displyed in orange inside the big green button after a number, when some widgets are already present
+msgctxt "widgetgallery.details.toupdate"
+msgid "to update"
+msgstr "frissítése"
+
+#. Little white button label with a down caret
+msgctxt "widgetgallery.details.showdetails"
+msgid "Show details"
+msgstr "Részletek mutatása"
+
+#. Little white button label with a up caret
+msgctxt "widgetgallery.details.hidedetails"
+msgid "Hide details"
+msgstr "Részletek elrejtése"
+
+#. Little white button label
+msgctxt "widgetgallery.details.downloadzip"
+msgid "Download ZIP"
+msgstr "Zip letöltése"
+
+#. 1. Prefix of the explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.prefix"
+msgid "This"
+msgstr "Ez"
+
+#. 2a. Name of a community contribution
+msgctxt "widgetgallery.details.widget.hint.communitycontribution"
+msgid "community contribution"
+msgstr "közösségi hozzájárulások"
+
+#. 2b. Name of a community contribution
+msgctxt "widgetgallery.details.widget.hint.repository"
+msgid "repository"
+msgstr "repository"
+
+#. 3. Suffix of the explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.suffix"
+msgid "contains the following widgets; you can import them individually:"
+msgstr "tartalmazza a következő widget-eket; importálhatja őket egyesével:"
+
+#. Explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.nowidgets"
+msgid "No widgets were found (*.widget.json files)! Please report this."
+msgstr "Nincsenek widget-ek (*. widget.json fájlok)! Kérem, jelentse."
+
+#. Explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.checkrepo"
+msgid "The widgets are likely in the referenced GitHub repository. Click the 'Go to the repository' button to open it."
+msgstr "A widget-ek valószínűleg a hivatkozott GitHub adattárban vannak. \"A repository felkeresése\" gombra kattintva megnyithatja."
+
+#. Green button in the expanded details section
+msgctxt "widgetgallery.details.widget.import"
+msgid "Import widget"
+msgstr "Widget importálása"
+
+#. Orange button in the expanded details section
+msgctxt "widgetgallery.details.widget.update"
+msgid "Update widget"
+msgstr "Widget frissítése"
+
+#. Disabled button in the expanded details section after a widget was imported/updated
+msgctxt "widgetgallery.details.widget.imported"
+msgid "Widget imported!"
+msgstr "Widget importálva!"
+
+#. Alert banner, followed by a technical exception message
+msgctxt "widgetgallery.error"
+msgid "Error:"
+msgstr "Hiba:"
+
+#. Dialog box title
+msgctxt "widgetgallery.widgetsdetected.dialog.title"
+msgid "Existing widgets detected"
+msgstr "Meglévő észlelt widget-ek"
+
+#. Dialog box message
+msgctxt "widgetgallery.widgetsdetected.dialog.message"
+msgid "Warning: please confirm you wish to update <nbexisting> existing widgets, overwriting any eventual changes made locally! If unsure, cancel and click Show details to review the list of affected widgets."
+msgstr "Figyelmeztetés: erősítse meg, hogy frissíteni kívánja a már létező <nbexisting> widget-et, az esetleg helyben végrehajtott változtatások elvesznek! Ha bizonytalan, akkor kattintson a Részletek megjelenítésre az érintett widgeten."
+

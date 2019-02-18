@@ -1,0 +1,10 @@
+{
+  "CommandFailed": "Fejl under behandling af udvidelses kommando: {message}",
+  "ErrorGettingExtensions": "Fejl under indlæsning af liste over udvidelser",
+  "ExtensionTypes": "Udvidelses type",
+  "Extensions": "Udvidelser",
+  "Install": "Installér",
+  "InstallOk": "Udvidelse {extension} succesfuldt installeret",
+  "Uninstall": "Afinstallér",
+  "UninstallOk": "Udvidelse {extension} succesfuldt afinstalleret"
+}

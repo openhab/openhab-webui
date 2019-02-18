@@ -1,0 +1,24 @@
+.chart-content .chart .grid .tick>line {
+    stroke: #456;
+    stroke: var(--chart-stroke, #456);
+}
+
+.chart-content .chart .axis>.tick>text {
+    fill: #89a;
+    fill: var(--chart-fill, #89a);
+    font-family: $font-family-base;
+}
+
+.chart-content .legend-label {
+    color: #def;
+    color: var(--widget-text-color, #def);
+}
+
+.chart-content .chart-tooltip {
+    background-color: #123;
+    background-color: var(--chart-tooltip, #123);
+}
+
+.chart .axis {
+    font-size: 0.72em;
+}

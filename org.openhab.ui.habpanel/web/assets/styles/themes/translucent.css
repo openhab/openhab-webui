@@ -1,0 +1,38 @@
+:root {
+    /* Basic HABpanel styles */
+    --body-bg: rgb(7, 45, 75);
+    --body-color: #ccc;
+    --primary-color: #0db9f0;
+    --box-bg: rgba(0, 0, 0, 0.6);
+    --header-bg: none;
+    /* General widget styles */
+    --widget-design-bg: #567;
+    --widget-text-color: #def;
+    --widget-border-radius: 0px;
+    --widget-box-shadow: none;
+    /* Icon colors */
+    --icon-color-filter: invert(60%) sepia(100%) hue-rotate(185deg) saturate(1000%);
+    /* Should be aligned with --primary-color */
+    --icon-color-off-filter: invert(45%) sepia(80%) hue-rotate(170deg);
+    --icon-backdrop-filter: invert(60%) sepia(100%) hue-rotate(165deg) opacity(15%);
+    /* Chart widget */
+    --chart-stroke: #456;
+    --chart-fill: #89a;
+    --chart-tooltip: #123;
+    --chart-default-theme: "black";
+    /* Color picker widget */
+    --colorpicker-border: #3960FF;
+    --colorpicker-stroke: #456;
+    --colorpicker-fill: #89a;
+    /* Image widget */
+    --image-border: #456;
+    /* Switch widget */
+    --switch-off-color: #89a;
+    /* Slider widget */
+    --slider-pointer-color: #234;
+    --slider-pointer-bg-color: #def;
+    --slider-ceil-color: #def;
+    --slider-bubble-bg-color: #123;
+    --slider-bubble-border-color: #456;
+    --slider-bubble-color: #aaaa77;
+}

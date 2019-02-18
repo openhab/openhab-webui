@@ -1,0 +1,15 @@
+{
+  "ApproveAllConfirmMsg": "Sei sicuro di voler aggiungere tutti gli elementi dell'inbox come nuovi oggetti?",
+  "ApproveAllConfirmTitle": "Approva tutti gli elementi in Inbox",
+  "ClearConfirmMsg": "Sei sicuro di voler pulire la scansione inbox. Tutti gli oggetti saranno rimossi e dovranno essere riscansionati!",
+  "ClearConfirmTitle": "Pulisci Inbox",
+  "ClearFail": "Pulizia inbox fallita per uno o più elementi!",
+  "DeleteConfirmMsg": "Sei sicuro di voler cancellare l'oggetto dall'inbox?",
+  "DeleteConfirmTitle": "Cancellazione Oggetto Da Inbox",
+  "IgnoreConfirmMsg": "Sei sicuro di voler ignorare l'oggetto nell'inbox?",
+  "IgnoreConfirmTitle": "Ignora Oggetto In Inbox",
+  "IgnoreFail": "Impossibile da ignorare <b><i>{name}</i></b>",
+  "NewThing": "Nuovo oggetto scoperto <b><i>{name}</i></b>.",
+  "StartFail": "Scansione fallita per il binding <b><i>{name}</i></b>",
+  "StartOk": "Scansione iniziata per il binding <b><i>{name}</i></b>"
+}

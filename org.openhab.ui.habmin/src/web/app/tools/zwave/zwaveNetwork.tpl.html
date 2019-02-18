@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!-- Device Configuration -->
+<div class="col-sm-12">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <div class="btn-group dropdown">
+                <button type="button" ng-class="{'disabled': !devEdit.label}"
+                        class="btn btn-default dropdown-toggle"
+                        data-toggle="dropdown">
+                    <span class="fa fa-cog"></span>
+                    <span i18n="zwave.DeviceTools"></span>
+                    <span class="caret"></span>
+                    <span class="sr-only">Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li>
+                        <a ng-click="setView('CONFIG')">
+                            <span class="fa fa-fw fa-wrench"></span>
+                            <span i18n="zwave.DeviceConfiguration"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a ng-click="setView('NETWORK')">
+                            <span class="fa fa-fw fa-sitemap"></span>
+                            <span i18n="zwave.DeviceNetworkDiagram"></span>
+                        </a>
+                    </li>
+                    <li role="presentation" class="divider"></li>
+                    <li>
+                        <a ng-click="zwaveAction('nodes/'+devEdit.device+'/', 'Heal')">
+                            <span class="fa fa-fw fa-ambulance"></span>
+                            <span i18n="zwave.DeviceHeal"></span>
+                        </a>
+                    </li>
+                    <li ng-class1="{'disabled':devEdit.nodeStage!='FAILED'}">
+                        <a ng-confirm-click="zwaveAction('nodes/'+devEdit.device+'/', 'Delete')"
+                           i18n-attr="{'ngConfirmMessage': 'zwave.RemoveFailedText','ngConfirmTitle': 'zwave.RemoveFailedTitle','ngConfirmNoBtn': 'common.no', 'ngConfirmYesBtn': 'common.yes'}"
+                           nodenumber="{{devEdit.id}}">
+                            <span class="fa fa-fw fa-trash-o"></span>
+                            <span i18n="zwave.DeviceKill"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a ng-click="zwaveAction('nodes/'+devEdit.device+'/parameters/', 'Refresh');zwaveAction('nodes/'+devEdit.device+'/associations/', 'Refresh')">
+                            <span class="fa fa-fw fa-refresh"></span>
+                            <span i18n="zwave.DeviceRefresh"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <!-- Node Network Diagram -->
+        <div class="panel-body" style="padding:3px;" resize-panel>
+            <vis-network data="networkNodes" options="networkOptions" events="networkEvents"></vis-network>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>

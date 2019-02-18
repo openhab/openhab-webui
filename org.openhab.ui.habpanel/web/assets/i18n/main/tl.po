@@ -1,0 +1,215 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: openhab-habpanel\n"
+"Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Language: tl\n"
+"X-Crowdin-File: /master/web/assets/i18n/main/main.pot\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Language-Team: Tagalog\n"
+"Language: tl_PH\n"
+"PO-Revision-Date: 2018-02-20 04:13-0500\n"
+
+#. Common term
+msgctxt "OK"
+msgid "OK"
+msgstr "OK"
+
+#. Common term
+msgctxt "Cancel"
+msgid "Cancel"
+msgstr "Kanselahin"
+
+#. Common term
+msgctxt "Delete"
+msgid "Delete"
+msgstr "Tanggalin"
+
+#. Common term
+msgctxt "Save"
+msgid "Save"
+msgstr "I-save"
+
+#. Common term
+msgctxt "Name"
+msgid "Name"
+msgstr "Pangalan"
+
+#. Common term
+msgctxt "Icon"
+msgid "Icon"
+msgstr "Ikon"
+
+#. Common term (plural)
+msgctxt "Icons"
+msgid "Icons"
+msgstr "Mga Ikon"
+
+#. Common term
+msgctxt "Backdrop Icon"
+msgid "Backdrop Icon"
+msgstr "Backdrop Ikon"
+
+#. Common term
+msgctxt "Size"
+msgid "Size"
+msgstr "Sukat"
+
+#. Common term
+msgctxt "Font size"
+msgid "Font Size"
+msgstr "Sukat ng Font"
+
+#. Common term
+msgctxt "Color"
+msgid "Color"
+msgstr "Kulay"
+
+#. Common term (plural)
+msgctxt "Colors"
+msgid "Colors"
+msgstr "Mga Kulay"
+
+#. Common term
+msgctxt "Transparent"
+msgid "Transparent"
+msgstr "Transparent"
+
+#. Common term
+msgctxt "openHAB Item"
+msgid "openHAB Item"
+msgstr "aytem ng openHAB"
+
+#. Common term (e.g. tooltip in the dashboard header toolbar)
+msgctxt "Speak"
+msgid "Speak"
+msgstr "Magsalita"
+
+#. Common term (e.g. tooltip in the dashboard header toolbar)
+msgctxt "Refresh"
+msgid "Refresh"
+msgstr "I-refresh"
+
+#. Common term (e.g. tooltip in the dashboard header toolbar)
+msgctxt "Fullscreen"
+msgid "Fullscreen"
+msgstr "Tingnan ang Kabuuan"
+
+#. Common term
+msgctxt "Help"
+msgid "Help"
+msgstr "Tulong"
+
+#. Appears in a red background in the bottom of the screen when openHAB is not responding
+msgctxt "error.connectionlost"
+msgid "Connection lost! Trying to reconnect..."
+msgstr "Nawala ang iyong koneksyon! Sinusubukang komunekta ulit..."
+
+#. Appears below the edit mode button when there's no dashboard - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
+msgctxt "tutorial.welcome"
+msgid "Welcome to HABPanel!"
+msgstr "Maligayang Pagdating sa HABPanel!"
+
+#. Appears below the edit mode button when there's no dashboard - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
+msgctxt "tutorial.clickheretobegin"
+msgid "Click or tap here to begin."
+msgstr "Mag-click o mag-tap dito upang magsimula."
+
+#. Appears at the top of the screen when in edit mode and no dashboards are present
+msgctxt "tutorial.editmode"
+msgid "You're now in edit mode, where you can design dashboards."
+msgstr "Ikaw ngayon ay nasa mode ng pag-eedit, kung saan ay makakadesenyo ka ng mga dashboard."
+
+#. Hint for the bottom left link when in edit mode and no dashboards are present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
+msgctxt "tutorial.createfirstdashboard"
+msgid "Click or tap here to create your first dashboard..."
+msgstr "Mag-click o mag-tap dito upang makagawa ka ng iyong pinakaunang dashboard..."
+
+#. Hint for the bottom right link when in edit mode and no dashboards are present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
+msgctxt "tutorial.importpanel"
+msgid "...or here to restore a panel from the server"
+msgstr "...o dito upang ibalik ang isang panel mula sa server"
+
+#. Hint in the bottom left part of the page when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
+msgctxt "tutorial.enterdesigner"
+msgid "Click or tap inside the tile to enter the dashboard designer."
+msgstr "Mag-click o mag-tap sa loob ng tile upang makapasok sa tagadesenyo ng dashboard."
+
+#. Hint in the bottom center part of the page above the column number slider when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
+msgctxt "tutorial.adjustnbcolumns"
+msgid "Adjust the number of columns"
+msgstr "I-adjust ang bilang ng mga hilera"
+
+#. Hint for the bottom left link when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
+msgctxt "tutorial.saveonserver"
+msgid "Save on the openHAB server when done!"
+msgstr "I-save sa server ng openHAB kung tapos na!"
+
+#. Displayed when no dashboard is present and editing is locked in the service configuration
+msgctxt "tutorial.editingdisabled"
+msgid "Editing is disabled on the server!"
+msgstr "Ang pag-eedit ay hindi gumagana sa server!"
+
+#. Displayed when no dashboard is present and editing is locked in the service configuration
+msgctxt "tutorial.unlockedit"
+msgid "Please go to Paper UI and unlock editing to use HABPanel on this device."
+msgstr "Pakiusap pumunta sa Paper UI at i-unlock ang pag-eedit upang magamit ang HABPanel sa device na ito."
+
+#. Label of the bottom-left link in edit mode - please also test with phone resolutions!
+msgctxt "menu.addnewdashboard"
+msgid "Add new dashboard"
+msgstr "Magdagdag ng bagong dashboard"
+
+#. Label of the bottom-right link in edit mode - please also test with phone resolutions!
+msgctxt "menu.panelsettings"
+msgid "Panel settings"
+msgstr "Mga setting ng Panel"
+
+#. New dashboard dialog box title
+msgctxt "menu.dialog.newdashboard.title"
+msgid "New dashboard"
+msgstr "Bagong dashboard"
+
+#. New dashboard dialog box message
+msgctxt "menu.dialog.newdashboard.message"
+msgid "Name of your new dashboard:"
+msgstr "Pangalan ng iyang bagong dashboard:"
+
+#. Remove dashboard dialog box title
+msgctxt "menu.dialog.removedashboard.title"
+msgid "Remove dashboard"
+msgstr "Mag-alis ng dashboard"
+
+#. Remove dashboard dialog box message, followed by the dashboard id
+msgctxt "menu.dialog.removedashboard.message"
+msgid "Please confirm you want to delete this dashboard: "
+msgstr "Pakikumpirma na gusto mong tanggalin ang dashboard na ito: "
+
+#. Dashboard toolbar Speak button tooltip
+msgctxt "dashboard.toolbar.speak"
+msgid "Speak"
+msgstr "Magsalita"
+
+#. Dashboard toolbar Refresh button tooltip
+msgctxt "dashboard.toolbar.refresh"
+msgid "Refresh"
+msgstr "I-refresh"
+
+#. Dashboard toolbar Fullscreen button tooltip
+msgctxt "dashboard.toolbar.fullscreen"
+msgid "Fullscreen"
+msgstr "Tingnan ang Kabuuan"
+
+#. Displayed at the bottom after clicking on the Speak button
+msgctxt "dashboard.speaknow"
+msgid "Speak now..."
+msgstr "Magsalita ka na ngayon..."
+
+#. Prefix of an error message, displayed at the bottom after clicking on the Speak button
+msgctxt "dashboard.speakerror"
+msgid "Error: "
+msgstr "Eror: "
+

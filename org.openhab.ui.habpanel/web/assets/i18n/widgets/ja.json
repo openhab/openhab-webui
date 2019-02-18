@@ -1,0 +1,18 @@
+{
+    "_meta": {
+        "Project-Id-Version": "openhab-habpanel",
+        "Report-Msgid-Bugs-To": "https://github.com/openhab/org.openhab.ui.habpanel/issues",
+        "POT-Creation-Date": "",
+        "PO-Revision-Date": "2018-01-18 13:21-0500",
+        "Last-Translator": "openhab-bot <bot@openhab.org>",
+        "Language": "ja_JP",
+        "Language-Team": "Japanese",
+        "Content-Type": "text/plain; charset=UTF-8",
+        "Content-Transfer-Encoding": "",
+        "Plural-Forms": "nplurals=1; plural=0;",
+        "X-Generator": "crowdin.com",
+        "X-Crowdin-Project": "openhab-habpanel",
+        "X-Crowdin-Language": "ja",
+        "X-Crowdin-File": "/master/web/assets/i18n/widgets/widgets.pot"
+    }
+}

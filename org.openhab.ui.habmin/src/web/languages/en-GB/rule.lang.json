@@ -1,0 +1,14 @@
+{
+  "DeleteRuleCheck": "Are you sure you want to delete rule '{{selectedRule.name}}'?",
+  "DeleteRuleTitle": "Delete Rule",
+  "ErrorLoadingRule": "Error loading rule <i>{1}</i>:<BR><b><i>{2}</i></b>.",
+  "ErrorLoadingRuleList": "Error loading rule list.",
+  "NewRuleTitle": "New Rule",
+  "NoDevices": "No Devices",
+  "NoRules": "No Rules Available",
+  "Rule": "Rule",
+  "Source": "Source",
+  "UnsavedChangesCheck": "There are unsaved changes in rule '{rulename}'. Are you sure you wish to continue - if you click Yes your changes will be lost!",
+  "UnsavedChangesTitle": "Warning: Unsaved Changes",
+  "Value": "Value"
+}

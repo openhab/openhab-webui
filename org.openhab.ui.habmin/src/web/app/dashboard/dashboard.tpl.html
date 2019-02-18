@@ -1,0 +1,89 @@
+<div ng-if="editMode" class="page-header">
+    <div class="btn-group btn-group-sm" role="group">
+        <button class="btn btn-sm btn-primary" ng-click="dashboardProperties()"><i class="fa fa-bookmark-o"></i> <span
+                i18n="common.properties"></span></button>
+
+        <div class="dashboard-toolbar btn-group dropdown" uib-dropdown>
+            <button type="button" class="btn btn-sm btn-primary dropdown-toggle" uib-dropdown-toggle>
+                <span class="fa fa-plus-square-o"></span> <span i18n="dashboard.AddWidget"></span>
+                <span class="caret"></span>
+                <span class="sr-only">Dropdown</span>
+            </button>
+            <ul class="dropdown-menu" role="menu" uib-dropdown-menu>
+                <li>
+                    <a role="presentation" ng-click="addWidget('Chart')">
+                        <span class="fa fa-fw fa-area-chart"></span>
+                        <span i18n="dashboard.AddChart"></span>
+                    </a>
+                </li>
+                <li>
+                    <a ng-click="addWidget('Gauge')">
+                        <span class="fa fa-fw fa-dashboard"></span>
+                        <span i18n="dashboard.AddGauge"></span>
+                    </a>
+                </li>
+                <li>
+                    <a ng-click="addWidget('Image')">
+                        <span class="fa fa-fw fa-picture-o"></span>
+                        <span i18n="dashboard.AddImage"></span>
+                    </a>
+                </li>
+                <li>
+                    <a ng-click="addWidget('Group')">
+                        <span class="fa fa-fw fa-sliders"></span>
+                        <span i18n="dashboard.AddGroup"></span>
+                    </a>
+                </li>
+                <li>
+                    <a ng-click="addWidget('GroupBar')">
+                        <span class="fa fa-fw fa-sliders"></span>
+                        <span i18n="dashboardAddGroup"></span>
+                    </a>
+                </li>
+                <li>
+                    <a ng-click="addWidget('Floor')">
+                        <span class="fa fa-fw fa-home"></span>
+                        <span i18n="dashboard.AddFloorplan"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="btn-group btn-group-sm pull-right" role="group">
+        <button class="btn btn-sm btn-default" ng-click="saveDashboard()"
+                ng-disabled="isDirty==false" ng-class="{'btn-success': isDirty}">
+            <span class="fa fa-save"></span> <span i18n="common.save"></span>
+        </button>
+        <button class="btn btn-sm btn-default" ng-click="endEdit()">
+            <span class="fa fa-check-square"></span> <span i18n="common.close"></span>
+        </button>
+        <button class="btn btn-sm btn-default" ng-confirm-click="clearDashboard()"
+                ng-disabled="dashboard.widgets.length==0"
+                i18n-attr="{'ngConfirmMessage': 'dashboard.ClearText','ngConfirmTitle': 'dashboard.ClearTitle','ngConfirmNoBtn': 'common.no', 'ngConfirmYesBtn': 'common.yes'}">
+            <span class="fa fa-file-o"></span> <span i18n="common.clear"></span>
+        </button>
+        <button class="btn btn-sm btn-default" ng-confirm-click="deleteDashboard()"
+                ng-disabled="dashboard.id==0"
+                i18n-attr="{'ngConfirmMessage': 'dashboard.DeleteText','ngConfirmTitle': 'dashboard.DeleteTitle','ngConfirmNoBtn': 'common.no', 'ngConfirmYesBtn': 'common.yes'}">
+            <span class="fa fa-trash-o"></span> <span i18n="common.delete"></span>
+        </button>
+    </div>
+</div>
+
+<div gridster="gridsterOptions">
+    <ul>
+        <li gridster-item="widget" ng-repeat="widget in dashboard.widgets">
+            <div ng-class="{'dashboard':true, 'dashboard-edit':editMode}">
+                <div ng-if="editMode" class="dashboard-header">
+                    <div class="dashboard-header-btns pull-right">
+                        <a title="settings" ng-click="configWidget(widget)"><span class="fa fa-cog"></span></a>
+                        <a title="Remove widget" ng-click="removeWidget(widget)"><span class="fa fa-trash"></span></a>
+                    </div>
+                </div>
+
+                <dashboard-widget widget="widget"></dashboard-widget>
+            </div>
+        </li>
+    </ul>
+</div>

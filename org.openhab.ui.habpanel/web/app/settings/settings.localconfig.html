@@ -1,0 +1,31 @@
+<div class="header">
+    <a class="btn pull-left" title="Menu" snap-toggle="left">
+        <i class="glyphicon glyphicon-menu-hamburger"></i>
+    </a>
+    <!--<a class="btn btn-link pull-left" onclick="window.history.back()"><i class="glyphicon glyphicon-chevron-left"></i></a>
+    <a class="btn btn-link pull-left" href="#/"><i class="glyphicon glyphicon-home"></i></a>-->
+	<h2 translate-keep-content translate="settings.header">Settings</h2>
+</div>
+
+<div class="box col-md-12 localconfig">
+
+    <br />    
+    <div class="pull-right">
+        <a clipboard text="vm.rawLocalConfig" on-copied="vm.copiedToClipboard(true)" on-copied="vm.copiedToClipboard(false)" class="btn btn-default"  style="width: 90px; margin-bottom: 3px"><i class="glyphicon glyphicon-copy"></i>&nbsp;{{vm.copyLabel}}</a>
+        <br />
+        <a ng-click="vm.saveConfig()" class="btn btn-danger" style="width: 90px; margin-bottom: 3px"><i class="glyphicon glyphicon-save"></i>&nbsp;{{vm.saveLabel}}</a>
+    </div>
+    <h4><span class="label" uib-tooltip="{{'This is the raw configuration object representing your current configuration. Be careful while editing it by hand!' | translation:'settings.localconfig.warning'}}" tooltip-placement="bottom-left"><i class="glyphicon glyphicon-alert"></i></span> <span translate-keep-content translate="settings.localconfig.title">Local panel configuration editor</span></h4>
+
+    <div ng-show="vm.importMode">
+        <input type="file" local-file-select="vm.file" on-file-selected="vm.importFile" style="display: inline"><a ng-click="vm.importMode=false" translate>Cancel</a>
+    </div>
+
+    <div ng-show="!vm.importMode">
+        <a ng-click="vm.importMode=true" class="btn btn-primary"><i class="glyphicon glyphicon-import">&nbsp;</i><span translate-keep-content translate="settings.localconfig.import">Import</span></a>
+        <a ng-click="vm.exportToFile()" class="btn btn-primary"><i class="glyphicon glyphicon-export">&nbsp;</i><span translate-keep-content translate="settings.localconfig.export">Export</span></a>
+    </div>
+
+    <div ui-codemirror data-snap-ignore="true" ui-refresh='vm.refreshEditor' ui-codemirror-opts="vm.editorOptions" ng-model="vm.rawLocalConfig" />
+
+</div>

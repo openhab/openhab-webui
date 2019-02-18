@@ -1,0 +1,75 @@
+/*
+ * Theme by Kuba Wolanin / github:kubawolanin
+ *
+ * Based on CometVISU/Knx template suggested by @Fejitatete
+ * on this thread:
+ * https://community.openhab.org/t/new-design-talent-wanted/29718
+ */
+:root {
+  --body-bg: #09120f;
+  --body-color: #a4a4a4;
+  --primary-color: hsl(29, 100%, 50%);
+  --box-bg: rgba(255, 255, 255, .01);
+  --header-bg: var(--body-bg);
+  --widget-design-bg: #191716;
+  --widget-text-color: #a4a4a4;
+  --widget-border-radius: 3px;
+  --widget-box-shadow: 0 1px 8px 0 rgba(0, 0, 0, .8), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 2px 1px -1px rgba(0, 0, 0, .12);
+  --icon-color-filter: invert(40%) sepia(100%) hue-rotate(3deg) saturate(1000%);;
+  --icon-color-off-filter: invert(60%) sepia(80%) hue-rotate(180deg);
+  --icon-backdrop-filter: invert(60%) sepia(100%) hue-rotate(165deg) opacity(15%);
+  --chart-stroke: #456;
+  --chart-fill: #89a;
+  --chart-tooltip: #fff;
+  --chart-default-theme: "black";
+  --colorpicker-border: #191716;
+  --colorpicker-stroke: #456;
+  --colorpicker-fill: #89a;
+  --image-border: #191716;
+  --switch-off-color: #89a;
+  --slider-pointer-color: #234;
+  --slider-pointer-bg-color: #def;
+  --slider-ceil-color: #def;
+  --slider-bubble-bg-color: #09120f;
+  --slider-bubble-border-color: #fff;
+  --slider-bubble-color: #a4a4a4;
+}
+
+.drawer ul.menu {
+  background: linear-gradient(to right, #111715 0%,#1c2220 50%,#111715 100%);
+}
+
+.drawer ul.menu li {
+  background: transparent;
+  border-bottom: 1px solid #070d0b !important;
+  font-weight: bold;
+  text-shadow: none;
+}
+
+.drawer ul.menu li.active:not(.head) {
+  background: var(--primary-color);
+  color: #000;
+  border-bottom: 1px solid #070d0b !important;
+  position: relative;
+  width: calc(100% - 15px);
+}
+
+.drawer ul.menu li.active:not(.head):after {
+  left: 100%;
+  top: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: transparent;
+  border-left-color: var(--primary-color);
+  border-width: 15px;
+  margin-top: -15px;
+}
+
+.drawer ul.menu li.active:not(.head) .icon-tile.colorize {
+    filter: none;
+    -webkit-filter: none;
+}

@@ -1,0 +1,37 @@
+<form class="form" role="form">
+    <div class="form-group">
+        <label for="inputGroups" class="control-label" i18n="dashboard.GroupName"></label>
+
+        <div>
+            <ui-select id="inputGroups"
+                       ng-model="options.group"
+                       theme="bootstrap"
+                       search-enabled="true">
+                <ui-select-match i18n-attr="{placeholder: 'dashboard.GroupSelectName'}">
+                    <habmin-icon class="fa fa-fw" category="{{$select.selected.category}}"></habmin-icon>
+                    {{$select.selected.label}}
+                </ui-select-match>
+                <ui-select-choices
+                        repeat="group.name as group in itemList | filter: {type: 'GroupItem'} | orderBy: 'label'">
+                    <habmin-icon class="fa fa-fw" category="{{group.category}}"></habmin-icon>
+                    <span>{{group.label}}</span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    </div>
+
+    <div class="form-group drag-list">
+        <label class="control-label" i18n="dashboard.GroupItems"></label>
+        <ul dnd-list="list">
+            <li role="presentation" class="list-group-item"
+                ng-repeat="item in list"
+                dnd-draggable="item"
+                dnd-moved="list.splice($index, 1)"
+                dnd-effect-allowed="move"
+                ng-class="{'selected': models.selected === item}">
+                {{item.label}}
+            </li>
+        </ul>
+    </div>
+
+</form>

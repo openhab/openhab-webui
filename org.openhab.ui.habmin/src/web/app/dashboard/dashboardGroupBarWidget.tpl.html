@@ -1,0 +1,17 @@
+<div class="info-box">
+    <span class="info-box-icon"><habmin-icon class="fa" category="{{groupItem.category}}"></habmin-icon></span>
+
+    <div class="info-box-content">
+        <div class="" ng-repeat="item in groupMembers">
+            <div class="info-box-group">
+                <span class="info-box-text">{{item.label}}</span>
+                <span class="info-box-value">{{item.state}}</span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar" style="width: 5%"></div>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.info-box-content -->
+</div><!-- /.info-box -->

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html ng-app="app">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>HABPanel</title>
+    <meta name="description" content="Dashboard user interface for openHAB" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="HABPanel">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'sha256-5hvlzGKhlKhafFjW6G/cRVpM/e+JewYxe/pLpQ5Kj9M='; style-src 'self' 'unsafe-inline';">
+
+    <link rel="icon" type="image/png" href="assets/manifest/logo36.png">
+    <link rel="apple-touch-icon" type="image/png" href="assets/manifest/apple-icon.png">
+    <link rel="apple-touch-startup-image" href="assets/manifest/logo340.png">
+    <link rel="stylesheet" href="vendor/styles.min.css" />
+    <link rel="stylesheet" ng-href="assets/styles/themes/{{settings.theme || 'default'}}.css" />
+    <link rel="stylesheet" ng-if="settings.additional_stylesheet_url" ng-href="{{settings.additional_stylesheet_url}}" />
+    <link rel="manifest" href="manifest.json" />
+
+    <script>
+        window.addEventListener('load', function() {
+            if (navigator.serviceWorker) {
+                navigator.serviceWorker.register('service-worker.js', { scope: './' })
+                .then(function(r) {
+                    console.log('Service worker registered');
+                })
+                .catch(function(what) {
+                    console.info('Service worker not registered (not using HTTPS?): ' + what);
+                });
+            }
+        });
+        if (!Function.prototype.bind) {
+            Function.prototype.bind = function (oThis) {
+                if (typeof this !== 'function') {
+                    // closest thing possible to the ECMAScript 5
+                    // internal IsCallable function
+                    throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+                }
+
+                var aArgs = Array.prototype.slice.call(arguments, 1),
+                    fToBind = this,
+                    fNOP = function () { },
+                    fBound = function () {
+                        return fToBind.apply(this instanceof fNOP
+                            ? this
+                            : oThis,
+                            aArgs.concat(Array.prototype.slice.call(arguments)));
+                    };
+
+                if (this.prototype) {
+                    // Function.prototype doesn't have a prototype property
+                    fNOP.prototype = this.prototype;
+                }
+                fBound.prototype = new fNOP();
+
+                return fBound;
+            };
+        }
+    </script>
+
+    <script src="vendor/vendor.js"></script>
+
+    <!-- Register widgets here -->
+    <script src="app/widgets/widgets.module.js"></script>
+    <script src="app/widgets/button/button.widget.js"></script>
+    <script src="app/widgets/chart/chart.widget.js"></script>
+    <script src="app/widgets/clock/clock.widget.js"></script>
+    <script src="app/widgets/colorpicker/colorpicker.widget.js"></script>
+    <script src="app/widgets/dummy/dummy.widget.js"></script>
+    <script src="app/widgets/frame/frame.widget.js"></script>
+    <script src="app/widgets/image/image.widget.js"></script>
+    <script src="app/widgets/knob/knob.widget.js"></script>
+    <script src="app/widgets/label/label.widget.js"></script>
+    <script src="app/widgets/selection/selection.widget.js"></script>
+    <script src="app/widgets/slider/slider.widget.js"></script>
+    <script src="app/widgets/switch/switch.widget.js"></script>
+    <script src="app/widgets/timeline/timeline.widget.js"></script>
+    <script src="app/widgets/template/template.widget.js"></script>
+
+    <script src="app/services/services.js"></script>
+    <script src="app/services/persistence.service.js"></script>
+    <script src="app/services/openhab.service.js"></script>
+    <script src="app/services/icon.service.js"></script>
+    <script src="app/services/localfile.service.js"></script>
+    <script src="app/services/speech.service.js"></script>
+    <script src="app/services/translation.service.js"></script>
+    
+    <script src="app/app.js"></script>
+    <script src="app/dashboard/dashboard.view.controller.js"></script>
+    <script src="app/dashboard/dashboard.edit.controller.js"></script>
+    <script src="app/menu/menu.controller.js"></script>
+    <script src="app/menu/drawer.controller.js"></script>
+    <script src="app/settings/settings.controller.js"></script>
+    <script src="app/settings/settings.localconfig.controller.js"></script>
+    <script src="app/settings/settings.widgets.list.controller.js"></script>
+    <script src="app/settings/settings.widgets.designer.controller.js"></script>
+
+</head>
+
+<body ng-class="{ 'pinneddrawer': pinnedDrawer }">
+    <aside class="drawer" snap-drawer style="display: none" ng-controller="DrawerController" ng-include="'app/menu/drawer.tpl.html'">
+    </aside>
+    <div class="reconnecting" ng-if="reconnecting">
+        &nbsp;<i class="glyphicon glyphicon-ban-circle"></i>&nbsp;<span translate-keep-content translate="error.connectionlost">Connection lost! Trying to reconnect...</span>&nbsp;
+    </div>
+    <main class="container"
+         snap-content
+         snap-opt-disable="'right'"
+         snap-opt-hyperextensible="false"
+         ng-view
+         ng-class="{ 'image-bg': settings.background_image, kiosk: kioskMode }"
+         ng-style="{ 'background-image': (settings.background_image) ? 'url(' + settings.background_image +')' : '' }">
+    </main>
+</body>
+
+</html>
+

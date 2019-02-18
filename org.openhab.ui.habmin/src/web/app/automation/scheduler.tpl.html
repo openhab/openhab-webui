@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<div class="col-sm-4">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <button type="button" class="btn btn-default">
+                <span class="fa fa-folder-o"></span>
+                <span i18n="common.new"></span>
+            </button>
+            <button type="button" class="btn btn-default disabled">
+                <span class="fa fa-trash-o"></span>
+                <span i18n="common.delete"></span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+            <div ng-repeat="choice in events.events">
+                <a role="presentation" class="list-group-item" ng-class="{'active':choice==selectedEvent}"
+                   ng-click="">
+                    <span class="fa fa-fw fa-puzzle-piece"></span>
+                    <span>{{choice.title}}</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>
+
+<!-- Calendar View Pane -->
+<div class="col-sm-8">
+    <!-- Heading -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <button type="button" class="btn btn-default" ng-click="stepDate('today')">
+                <span i18n1="common.new">today</span>
+            </button>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" ng-click="stepDate('prev')">
+                    <span class="fa fa-angle-left"></span>
+                </button>
+                <button type="button" class="btn btn-default" ng-click="stepDate('next')">
+                    <span class="fa fa-angle-right"></span>
+                </button>
+            </div>
+
+            <div class="pull-right btn-group">
+                <button type="button" class="btn btn-default" ng-class="{'active': view=='timeline'}"
+                        ng-click="changeView('timeline')">
+                    <span class="fa fa-clock-o"></span>
+                    <span i18n1="common.new">Timeline</span>
+                </button>
+                <button type="button" class="btn btn-default" ng-class="{'active': view=='agendaDay'}"
+                        ng-click="changeView('agendaDay')">
+                    <span class="fa fa-calendar-o"></span>
+                    <span i18n1="common.new">Day</span>
+                </button>
+                <button type="button" class="btn btn-default" ng-class="{'active': view=='agendaWeek'}"
+                        ng-click="changeView('agendaWeek')">
+                    <span class="fa fa-calendar-o"></span>
+                    <span i18n1="common.delete">Week</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div resize-panel>
+            <div ng-show="view!='timeline'" ui-calendar="calendarCfg" ng-model="eventSources" calendar="calendar">
+            </div>
+
+            <vis-timeline ng-show="view=='timeline'" data="timelineData" options="timelineOptions"
+                          events="graphEvents"></vis-timeline>
+        </div>
+    </div>
+</div>

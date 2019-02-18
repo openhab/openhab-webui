@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<!-- Device List -->
+<div class="col-sm-4" sidepanel-pane="side">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <!-- Network tools dropdown -->
+            <div class="btn-group dropdown">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="fa fa-cog"></span>
+                    <span i18n="zwave.zwaveNetworkTools"></span>
+                    <span class="caret"></span>
+                    <span class="sr-only">Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a ng-click="zwaveAction('binding/network', 'Heal')">
+                        <span class="fa fa-fw fa-ambulance"></span>
+                        <span i18n="zwave.zwaveNetworkHeal"></span>
+                    </a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a ng-click="zwaveAction('binding/network', 'Include')">
+                        <span class="fa fa-fw fa-sign-in"></span>
+                        <span i18n="zwave.zwaveNetworkInclude"></span>
+                    </a></li>
+                    <li><a ng-click="zwaveAction('binding/network', 'Exclude')">
+                        <span class="fa fa-fw fa-sign-out"></span>
+                        <span i18n="zwave.zwaveNetworkExclude"></span>
+                    </a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a ng-confirm-click="zwaveAction('binding/network', 'SoftReset')"
+                           i18n-attr="{'ngConfirmMessage': 'zwave.zwaveSoftResetConfirmMessage','ngConfirmTitle': 'zwave.zwaveSoftResetConfirmTitle','ngConfirmNoBtn': 'common.cancel', 'ngConfirmYesBtn': 'common.ok'}"
+                            >
+                        <span class="fa fa-fw fa-power-off"></span>
+                        <span i18n="zwave.zwaveNetworkReset"></span>
+                    </a></li>
+                    <li><a ng-click="networkReplicate()">
+                        <span class="fa fa-fw fa-copy fa-fw"></span>
+                        <span i18n="zwave.zwaveNetworkReplicate"></span>
+                    </a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a ng-confirm-click="zwaveAction('binding/network', 'HardReset')"
+                           ng-confirm-icon="danger"
+                           i18n-attr="{'ngConfirmMessage': 'zwave.zwaveHardResetConfirmMessage','ngConfirmTitle': 'zwave.zwaveHardResetConfirmTitle','ngConfirmNoBtn': 'common.cancel', 'ngConfirmYesBtn': 'common.ok'}"
+                            >
+                        <span class="fa fa-fw fa-exclamation-triangle"></span>
+                        <span i18n="zwave.zwaveNetworkDefault"></span>
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+            <div ng-repeat="device in devices | orderObjectBy:'deviceID'">
+                <a role="presentation" ng-class="{'list-group-item':true, 'active': device.device==devEdit.device}"
+                   ng-click="selectDevice(device)" sidepanel-click="main">
+                    <habmin-icon class="icon-lg" icon="{{device.icon}}"></habmin-icon>
+                    <span>{{device.label}}</span>
+                    <span class="pull-right">
+                        <span popover="{{stateHeal(device)}}" popover-trigger="mouseenter" popover-placement="top"
+                              popover-append-to-body="true" popover-popup-delay="500">
+                            <span ng-class="{'text-success': device.healState=='OK','text-danger': device.healState =='ERROR','text-warning': device.healState =='RUN','text-muted': device.healState =='WAIT'}">
+                                <span class="fa fa-ambulance"></span>
+                            </span>
+                        </span>
+                        <span popover="{{stateOnline(device)}}" popover-trigger="mouseenter" popover-placement="top"
+                              popover-append-to-body="true" popover-popup-delay="500">
+                            <span ng-class="{'text-success': device.state=='OK','text-danger': device.state=='ERROR','text-warning': device.state =='WARNING','text-muted': device.state =='INITIALIZING'}">
+                                <span class="fa fa-rss"></span>
+                            </span>
+                        </span>
+                    </span>
+                    <br>
+                    <span ng-class="{'small': true, 'text-warning': device.typeUnknown}">{{device.type}}</span>
+                    <span class="pull-right">
+                        <span popover="{{device.powerInfo}}" popover-trigger="mouseenter" popover-placement="top"
+                              popover-append-to-body="true" popover-popup-delay="500">
+                            <span ng-class="{'text-success': device.batteryLevel>=40,'text-danger': device.batteryLevel==0,'text-muted': device.batteryLevel=='UNK','text-warning': device.batteryLevel<40}">
+                                <span ng-class="device.batteryIcon"></span>
+                            </span>
+                        </span>
+                    </span>
+                </a>
+            </div>
+
+            <!-- Cover options for loading, and no devices -->
+            <div ng-if="deviceCnt==-1" class="list-group-item text-center">
+                <span class="fa fa-spin fa-refresh"></span>
+                <span i18n="common.loading"></span>
+            </div>
+            <div ng-if="deviceCnt==0" class="list-group-item text-center">
+                <span class="fa fa-exclamation-triangle text-warning"></span>
+                <span i18n="zwave.zwaveNoDevices"></span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>
+
+<!-- Device Configuration -->
+<div class="col-sm-8" sidepanel-pane="main">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <div class="btn-group dropdown">
+                <button type="button" ng-class="{'disabled': !devEdit.label}"
+                        class="btn btn-default dropdown-toggle"
+                        data-toggle="dropdown">
+                    <span class="fa fa-cog"></span>
+                    <span i18n="zwave.zwaveDeviceTools"></span>
+                    <span class="caret"></span>
+                    <span class="sr-only">Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li>
+                        <a ng-click="setView('CONFIG')">
+                            <span class="fa fa-fw fa-wrench"></span>
+                            <span i18n="zwave.zwaveDeviceConfiguration"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a ng-click="setView('NETWORK')">
+                            <span class="fa fa-fw fa-sitemap"></span>
+                            <span i18n="zwave.zwaveDeviceNetworkDiagram"></span>
+                        </a>
+                    </li>
+                    <li role="presentation" class="divider"></li>
+                    <li>
+                        <a ng-click="zwaveAction('nodes/'+devEdit.device+'/', 'Heal')">
+                            <span class="fa fa-fw fa-ambulance"></span>
+                            <span i18n="zwave.zwaveDeviceHeal"></span>
+                        </a>
+                    </li>
+                    <li ng-class1="{'disabled':devEdit.nodeStage!='FAILED'}">
+                        <a ng-confirm-click="zwaveAction('nodes/'+devEdit.device+'/', 'Delete')"
+                           i18n-attr="{'ngConfirmMessage': 'zwave.zwaveRemoveFailedText','ngConfirmTitle': 'zwave.zwaveRemoveFailedTitle','ngConfirmNoBtn': 'common.no', 'ngConfirmYesBtn': 'common.yes'}"
+                           nodenumber="{{devEdit.id}}">
+                            <span class="fa fa-fw fa-trash-o"></span>
+                            <span i18n="zwave.zwaveDeviceKill"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a ng-click="zwaveAction('nodes/'+devEdit.device+'/parameters/', 'Refresh');zwaveAction('nodes/'+devEdit.device+'/associations/', 'Refresh')">
+                            <span class="fa fa-fw fa-refresh"></span>
+                            <span i18n="zwave.zwaveDeviceRefresh"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <button ng-show="deviceDisplay=='CONFIG'" type="button" ng-click="deviceSave()"
+                    ng-class="{'btn btn-default':true, 'disabled':!isDirty}">
+                <span class="fa fa-floppy-o"></span>
+                <span class="hidden-xs hidden-sm" i18n="common.save"></span>
+            </button>
+            <button ng-show="deviceDisplay=='CONFIG'" type="button" ng-click="deviceCancel()"
+                    ng-class="{'btn btn-default':true, 'disabled':!isDirty}">
+                <span class="fa fa-times"></span>
+                <span class="hidden-xs hidden-sm" i18n="common.cancel"></span>
+            </button>
+
+            <div ng-hide="!devEdit.label" class="btn-group pull-right">
+                <div class="text-right">{{devEdit.label}}</div>
+                <div class="text-right small"><span i18n="zwave.zwaveNode"></span>&nbsp;<span>{{devEdit.nodeID}}</span>:&nbsp;<span
+                        class="hidden-xs">{{devEdit.type}}</span></div>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div ng-show="deviceDisplay=='CONFIG'" class="list-group habmin-list" resize-panel>
+            <!-- INFORMATION -->
+            <div ng-show="devEdit.information">
+                <a role="presentation" ng-class="{'list-group-item':true, 'active': panelDisplayed=='INFO'}"
+                   ng-click="showPanel('INFO')">
+                    <span class="fa fa-fw fa-info"></span>
+                    <span i18n="zwave.zwaveInformation"></span>
+                </a>
+            </div>
+            <div ng-show="devEdit.information" uib-collapse="panelDisplayed!='INFO'">
+                <binding-config template="{{devEdit.deviceInfo}}"
+                                binding-change="changeNotification" binding-data="deviceData">
+                </binding-config>
+                <binding-config template="{{devEdit.information}}"
+                                binding-change="changeNotification" binding-data="infoData">
+                </binding-config>
+            </div>
+
+            <!-- CONFIGURATION -->
+            <div ng-show="devEdit.configuration">
+                <a role="presentation" ng-class="{'list-group-item':true, 'active': panelDisplayed=='CONFIG'}"
+                   ng-click="showPanel('CONFIG')">
+                    <span class="fa fa-fw fa-wrench"></span>
+                    <span i18n="zwave.zwaveConfiguration"></span>
+                </a>
+            </div>
+            <div ng-show="devEdit.configuration" uib-collapse="panelDisplayed!='CONFIG'">
+                <binding-config template="{{devEdit.configuration}}"
+                                binding-change="changeNotification" binding-data="configData">
+                </binding-config>
+            </div>
+
+            <!-- ASSOCIATIONS -->
+            <div ng-show="devEdit.associations">
+                <a role="presentation" ng-class="{'list-group-item':true, 'active': panelDisplayed=='ASSOC'}"
+                   ng-click="showPanel('ASSOC')">
+                    <span class="fa fa-fw fa-link"></span>
+                    <span i18n="zwave.zwaveAssociations"></span>
+                </a>
+            </div>
+            <div ng-show="devEdit.associations" uib-collapse="panelDisplayed!='ASSOC'">
+                <div ng-repeat="choice in devEdit.associations">
+                    {{choice.label}}
+                    <binding-config template="{{choice.associations}}"
+                                    binding-change="changeNotification" binding-data="xData">
+                    </binding-config>
+                </div>
+            </div>
+
+            <!-- WAKEUP -->
+            <div ng-show="devEdit.wakeup">
+                <a role="presentation" ng-class="{'list-group-item':true, 'active': panelDisplayed=='WAKE'}"
+                   ng-click="showPanel('WAKE')">
+                    <span class="fa fa-fw fa-moon-o"></span>
+                    <span i18n="zwave.zwaveWakeup"></span>
+                </a>
+            </div>
+            <div ng-show="devEdit.wakeup" uib-collapse="panelDisplayed!='WAKE'">
+                <binding-config template="{{devEdit.wakeup}}"
+                                binding-change="changeNotification" binding-data="wakeupData">>
+                </binding-config>
+            </div>
+        </div>
+
+        <!-- Node Network Diagram -->
+        <div ng-show="deviceDisplay=='NETWORK'" class="panel-body" style="padding:3px;" resize-panel>
+            <vis-network data="networkNodes" options="networkOptions" events="networkEvents"></vis-network>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,36 @@
+<div class="modal-header">
+    <h3 class="modal-title" i18n="floorplan.HotspotTitle"></h3>
+</div>
+<div class="modal-body">
+    <form class="form" role="form">
+
+        <div class="form-group">
+            <label for="inputItem" class="control-label" i18n="floorplan.HotspotItem"></label>
+
+            <div>
+                <ui-select id="inputItem"
+                           ng-model="hotspot.itemId"
+                           theme="bootstrap"
+                        >
+                    <ui-select-match i18n-attr="{placeholder: 'floorplan.HotspotItemPlaceholder'}">
+                        <habmin-icon class="fa fa-fw" category="{{$select.selected.category}}"></habmin-icon>
+                        &nbsp;{{$select.selected.label}}
+                        <span ng-if="getParentThingItem($select.selected)!=null">&nbsp;({{getParentThingItem($select.selected).label}})</span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item.name as item in items | filter: {label: $select.search }">
+                        <habmin-icon class="fa fa-fw" category="{{item.category}}"></habmin-icon>
+                        &nbsp;{{item.label}}
+                        <span ng-if="getParentThingItem(item)!=null">&nbsp;({{getParentThingItem(item).label}})</span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="ok()" i18n="common.save"></button>
+    <button type="button" class="btn btn-warning" ng-click="cancel()" i18n="common.cancel"></button>
+    <button type="button" class="btn btn-warning" ng-click="delete()" i18n="common.delete"></button>
+</div>

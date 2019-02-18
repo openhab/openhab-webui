@@ -1,0 +1,82 @@
+<div class="header">
+    <a class="btn pull-left" title="Menu" snap-toggle="left">
+        <i class="glyphicon glyphicon-menu-hamburger"></i>
+    </a>
+    <!--<a class="btn btn-link pull-left" onclick="window.history.back()"><i class="glyphicon glyphicon-chevron-left"></i></a>
+    <a class="btn btn-link pull-left" href="#/" title="Home"><i class="glyphicon glyphicon-home"></i></a>-->
+	<h2 translate-keep-content translate="customwidgets.list.header">Custom widgets</h2>
+</div>
+
+<br />
+
+<div uib-alert ng-if="vm.updatedMessage" type="info" close="vm.updatedMessage = null">{{vm.updatedMessage}}</div>
+<div uib-alert ng-if="vm.updateErrorMessage" type="danger" close="vm.updateErrorMessage = null">{{vm.updateErrorMessage}}</div>
+
+<div class="scrollable">
+
+<div class="col-sm-12 widgetlist">
+    <div class="col-sm-4" ng-repeat="(id, widget) in configWidgets">
+        <div class="widgettile col-sm-12 box">
+            <div class="pull-right box-header-btns" uib-dropdown dropdown-append-to-body="true">
+                <i class="glyphicon glyphicon-check"
+                   uib-tooltip="{{'This widget was provisioned globally via a bundle. It cannot be modified, but may be cloned to an user-defined widget with another name.' | translation:'customwidgets.list.globallyprovisioned.hint'}}"
+                   tooltip-placement="bottom-right"></i>
+                <a uib-dropdown-toggle class="settings-btn" ng-click><i class="glyphicon glyphicon-option-vertical"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu" aria-labelledby="template-actions">
+                        <li class="menuitem"><a ng-click="vm.cloneConfigWidget(id, widget)"><i class="glyphicon glyphicon-duplicate">&nbsp;</i><span translate-keep-content translate="customwidgets.list.contextmenu.clone">Clone widget...</a></li>
+                    </ul>
+            </div>
+            <div>
+                <h4>{{id}}<small ng-if="widget.author"><br /><span translate-keep-content translate="customwidgets.list.byauthor">by</span> {{widget.author}}</small></h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-4" ng-repeat="(id, widget) in customwidgets">
+        <div class="widgettile col-sm-12 box activefeedback">
+            <div class="pull-right box-header-btns" uib-dropdown dropdown-append-to-body="true">
+                <i class="glyphicon glyphicon-expand"
+                   uib-tooltip="{{'This widget has been defined manually in this panel configuration and can be modified.' | translation:'customwidgets.list.userdefined.hint'}}"
+                   tooltip-placement="bottom-right"></i>
+                <a uib-dropdown-toggle class="settings-btn" ng-click><i class="glyphicon glyphicon-option-vertical"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu" aria-labelledby="template-actions">
+                        <li class="menuitem"><a ng-click="vm.exportToFile(id, widget)"><i class="glyphicon glyphicon-export">&nbsp;</i><span translate-keep-content translate="customwidgets.list.contextmenu.exporttofile">Export to file</span></a></li>
+                        <li class="divider" ng-if="widget.source_url || widget.readme_url"></li>
+                        <li class="menuitem" ng-if="widget.readme_url"><a href="{{widget.readme_url}}" target="_blank"><i class="glyphicon glyphicon-question-sign">&nbsp;</i><span translate-keep-content translate="customwidgets.list.contextmenu.openhelp">Open Help</span></a>
+                        <li class="menuitem" ng-if="widget.source_url"><a ng-click="vm.updateWidget(id)"><i class="glyphicon glyphicon-retweet">&nbsp;</i><span translate-keep-content translate="customwidgets.list.contextmenu.update">Update...</span></a>
+                        <li class="divider"></li>
+                        <li class="menuitem"><a ng-click="vm.deleteWidget(id)"><i class="glyphicon glyphicon-trash">&nbsp;</i><span translate>Delete</span></a>
+                    </ul>
+            </div>
+            <a href="#/settings/widgets/design/{{id}}">
+                <h4>{{id}}<small ng-if="widget.author"><br /><span translate-keep-content translate="customwidgets.list.byauthor">by</span> {{widget.author}}</small></h4>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-12">
+    <br /><br /><br />
+
+    <button class="btn btn-primary" ng-click="vm.addNewWidget()" translate-keep-content translate="customwidgets.list.newwidget">
+        New widget...
+    </button>
+
+    <span class="btn-group" uib-dropdown is-open="import-dropdown-open">
+        <button id="import-button" class="btn btn-primary" uib-dropdown-toggle>
+            <span translate-keep-content translate="customwidgets.list.importwidget">Import widget</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="import-button">
+            <li role="menuitem"><a ng-click="vm.showImportDialog()" translate-keep-content translate="customwidgets.list.importwidget.fromfile">Import from file...</a></li>
+            <li role="menuitem"><a ng-click="vm.showImportGalleryDialog()" translate-keep-content translate="customwidgets.list.importwidget.fromgallery">Import from gallery...</a></li>
+        </ul>
+    </span>
+
+    <input style="display: none" type="file" id="widget-file-select" local-file-select="file" on-file-selected="vm.importFile" />
+
+    <!-- <br /><br />
+    <a href="https://community.openhab.org/tags/c/apps-services/habpanel/widget" target="_blank">Get widgets from the openHAB community</a> -->
+</div>
+
+
+</div>

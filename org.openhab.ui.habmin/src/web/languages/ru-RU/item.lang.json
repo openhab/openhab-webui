@@ -1,0 +1,23 @@
+{
+  "Delete": "Удаление Элемента",
+  "DeleteCheck": "Уверены, что хотите удалить элемент ?",
+  "EditCategory": "Категория",
+  "EditFormat": "Формат",
+  "EditGroups": "Группы",
+  "EditLabel": "Метка",
+  "EditName": "Наименование",
+  "EditTags": "Теги",
+  "EditTitle": "Редактировать Элемент",
+  "EditType": "Тип Элемента",
+  "LinkOk": "Элемент привязан к каналу",
+  "LinkTitle": "Привязка Элемента к Каналу",
+  "NameCopiedOk": "Наименование элемента  <b><i>{name}</i></b>  скопировано в буфер обмена",
+  "SaveFailed": "Ошибка сохранения элемента <b><i>{name}</i></b>.<br />{message}",
+  "SaveLinkFailed": "Ошибка привязки элемента к каналу для <b><i>{name}</i></b>.<br />{message}",
+  "SaveOk": "Элемент <b><i>{name}</i></b> сохранен",
+  "SelectCategory": "Выбор категории...",
+  "SelectGroup": "Выбор групп...",
+  "SelectLabel": "Ввод метки...",
+  "SelectName": "Ввод наименования...",
+  "SelectType": "Выбор типа..."
+}

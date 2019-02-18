@@ -1,0 +1,231 @@
+html,
+body {
+    background: #000;
+    background: var(--body-bg, #000);
+    height: 100%;
+}
+
+.snap-content.image-bg {
+    //background-image: url("//source.unsplash.com/random");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    body {
+        background: inherit;
+        overflow: auto;
+    }
+}
+
+.main.container {
+    background: #000;
+    background: var(--body-bg, #000);
+    height: 100%;
+    position: absolute;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-weight: 300;
+    margin: 10px 0;
+}
+
+h1,
+h2,
+h3.add-widgets {
+    color: #def;
+    color: var(--widget-text-color, #def);
+}
+
+h1 {
+    font-size: $font-size-base;
+    text-align: center;
+    margin-left: 80px;
+    margin-right: 80px;
+    //line-height: 1.5;
+    //padding-top: 6px;
+    position: absolute;
+    width: calc(100% - 160px);
+}
+
+.navbar {
+    padding: 0 20px;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+input {
+    font-family: $font-family-base;
+    font-size: $font-size-base;
+    padding: 4px;
+}
+
+.container {
+    background: #000;
+    background: var(--body-bg, #000);
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    padding-top: 48px;
+    box-shadow: 0 0 20px var(--body-bg, #000);
+}
+
+.container.kiosk {
+    padding-top: 15px;
+}
+
+.pinneddrawer .container {
+    left: 265px;
+    right: 0;
+    width: auto;
+}
+
+.scrollable {
+    -webkit-overflow-scrolling: touch;
+}
+
+.reconnecting {
+    background-color: maroon;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+    bottom: 0;
+    z-index: 10000;
+    padding: 5px;
+}
+
+.dash-buttons {
+    font-size: 30px;
+    margin-top: 16px;
+    margin-right: -15px;
+    &.pull-right {
+        margin-right: 5px;
+    }
+}
+
+.dash-edit {
+    position: absolute;
+    bottom: 5px;
+    left: 10px;
+}
+
+.dash-buttons em {
+    font-size: $font-size-small;
+    clear: both;
+}
+
+.handle {
+    cursor: move;
+}
+
+.dash-card {
+    margin: 0;
+    min-height: 100px !important;
+    width: 100%;
+    float: left;
+    overflow: hidden;
+    border-radius: var(--widget-border-radius, 0px);
+}
+
+.dash-card h3 {
+    margin: 0 0 0 -15px;
+    padding: 15px;
+    height: 100%;
+    width: calc(100% + 30px);
+    cursor: pointer;
+}
+
+.dash-card .handle-se {
+    border-width: 0 0 3rem 3rem !important;
+    border-color: transparent transparent var(--widget-text-color, #def) !important;
+}
+
+.dash-card .backdrop {
+    right: 0;
+    margin: -5px;
+}
+
+.dash-card .backdrop.center {
+    left: 0 !important;
+    right: 0 !important;
+    text-align: center;
+}
+
+.tile-background {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1000;
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.drawer {
+    background: #234;
+    background-color: var(--box-bg, #234);
+    ul.menu {
+        padding-left: 0;
+        margin-bottom: 80px;
+        li {
+            width: 100%;
+            color: #def;
+            color: var(--widget-text-color, #def);
+            font-size: 16px;
+            padding: 15px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #012;
+            cursor: pointer;
+            line-height: 24px;
+            &.head {
+                text-align: center;
+                background: rgba(0, 0, 0, .3);
+                text-transform: none;
+            }
+            &:hover {
+                background: #000;
+                background: var(--body-bg, #000);
+            }
+            &.active {
+                background: #000;
+                background: var(--body-bg, #000);
+            }
+        }
+    }
+    footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 265px;
+        height: 80px;
+        font-size: 18px;
+        color: white;
+        background: black;
+        text-align: center;
+        padding: 10px;
+        a:hover,
+        a:active {
+            color: white;
+        }
+    }
+}
+
+.pinneddrawer .header a[title="Menu"] {
+    visibility: hidden;
+    width: 0;
+    padding-right: 0;
+}

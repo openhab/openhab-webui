@@ -1,0 +1,169 @@
+<!-- Device List -->
+<div class="col-sm-4">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <!-- FILTER BOX -->
+            <div id="custom-search-form" class="input-group">
+                <span class="input-group-addon"><span class="fa fa-filter"></span></span>
+                <input type="text" class="form-control" placeholder={{filterDefaultString}} ng-model="filter.text"
+                       ng-model-options="{debounce: 500}">
+                <span class="input-group-addon">
+                    <span class="fa fa-minus-circle text-danger" ng-click="filter.text=''"></span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+            <!-- ITEM LIST -->
+            <div ng-if="itemsCnt>0"
+                class="list-group-item"
+                ng-class="{'active': item==selectedItem}"
+                ng-click="selectItem(item)"
+                ng-repeat="item in items | filter:filterFunction">
+                <li role="presentation" >
+                    <table style="background-color: transparent">
+                        <tr>
+                            <td class="text-large" rowspan="3">
+                                <habmin-icon class="fa fa-fw" category="{{item.category}}"></habmin-icon>
+                            </td>
+                            <td>
+                                <span>{{item.label}}&nbsp;</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted small">
+                                &nbsp;{{getParentThingItem(item).label}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted small">
+                                <habmin-icon class="fa fa-fw" itemtype="{{item.type}}"></habmin-icon>
+                                &nbsp;{{item.type}}
+                            </td>
+                        </tr>
+                    </table>
+                </li>
+            </div>
+
+            <!-- Cover options for loading, and no devices -->
+            <div ng-if="bindingsCnt==-1" class="list-group-item text-center">
+                <span class="fa fa-spin fa-refresh"></span>
+                <span i18n="common.loading"></span>
+            </div>
+            <div ng-if="bindingsCnt==0" class="list-group-item text-center">
+                <span class="fa fa-exclamation-triangle text-warning"></span>
+                <span i18n="binding.NoneFound"></span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>
+
+<!-- Item Information / Configuration -->
+<div class="col-sm-8">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <button type="button"
+                    class="btn btn-default" ng-class="{'btn-success': formLoaded&&itemConfigForm.modified}"
+                    ng-click="itemSave()"
+                    ng-disabled="!formLoaded || !itemConfigForm.modified">
+                <span class="fa fa-floppy-o"></span>
+                <span class="hidden-xs hidden-sm" i18n="common.save"></span>
+            </button>
+            <button type="button"
+                    class="btn btn-default"
+                    ng-click="itemConfigForm.reset()"
+                    ng-disabled="!formLoaded || !itemConfigForm.modified">
+                <span class="fa fa-times"></span>
+                <span class="hidden-xs hidden-sm" i18n="common.cancel"></span>
+            </button>
+            <button type="button"
+                    class="btn btn-default"
+                    ng-disabled="!formLoaded || newItem"
+                    ng-confirm-click="itemDelete()" ng-confirm-icon="warning"
+                    i18n-attr="{'ngConfirmMessage': 'item.DeleteCheck','ngConfirmTitle': 'item.Delete','ngConfirmNoBtn': 'common.no', 'ngConfirmYesBtn': 'common.yes' }">
+                <span class="fa fa-trash"></span>
+                <span class="hidden-xs hidden-sm" i18n="common.delete"></span>
+            </button>
+
+            <div class="pull-right">
+                {{selectedItem.name}}
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+            <div ng-if="selectedItem">
+                <div class="habmin-info">
+                    <label>Name</label>
+
+                    <div class="well well-sm">
+                        {{selectedItem.name}}
+                    </div>
+                </div>
+
+                <div class="habmin-info">
+                    <label>Label</label>
+
+                    <div class="well well-sm">
+                        {{selectedItem.label}}
+                    </div>
+                </div>
+
+                <div class="habmin-info">
+                    <label>Format</label>
+
+                    <div class="well well-sm">
+                        {{selectedItem.stateDescription.format}}
+                    </div>
+                </div>
+
+                <div class="habmin-info">
+                    <label>Type</label>
+
+                    <div class="well well-sm">
+                        {{selectedItem.type}}
+                    </div>
+                </div>
+
+                <div class="habmin-info">
+                    <label>Category</label>
+
+                    <div class="well well-sm">
+                        {{selectedItem.category}}
+                    </div>
+                </div>
+
+                <div class="habmin-info">
+                    <label>Tags</label>
+
+                    <div class="well well-sm">
+                        <p ng-repeat="tag in selectedItem.tags">
+                            {{tag}}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="habmin-info">
+                    <label>Groups</label>
+
+                    <div class="well well-sm">
+                        <p ng-repeat="group in selectedItem.groupNames">
+                            {{group}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>

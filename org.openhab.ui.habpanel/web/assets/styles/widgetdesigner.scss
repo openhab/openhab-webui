@@ -1,0 +1,41 @@
+.widgetdesigner {
+    height: calc(100% - 10px);
+
+    .row {
+        height: calc(100%);
+
+        .tab-container {
+            height: calc(100%);
+
+            .tab-content {
+                height: calc(100% - 42px);
+
+                .tab-pane {
+                    height: calc(100%);
+
+                    .CodeMirror {
+                        height: calc(100%);
+                    }
+
+                    .whitebg {
+                        height: calc(100%);
+                        background: #fff;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.widgetlist {
+    .widgettile {
+        height: 90px;
+        margin-right: 10px;
+        margin-bottom: 30px;
+
+        h4 {
+            line-height: 2;
+            height: calc(100% - 20px);
+        }
+    }
+}

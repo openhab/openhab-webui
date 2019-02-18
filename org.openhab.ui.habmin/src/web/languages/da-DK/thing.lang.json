@@ -1,0 +1,16 @@
+{
+  "Attributes": "Egenskaber",
+  "ChannelDeleteConfirm": "Er du sikker på at du vil slette enheden og frigøre den fra kanalen?<br />Dette vil helt slette enheden!",
+  "ChannelDeleteTitle": "Slet enhed fra kanal",
+  "ChannelUnlinkConfirm": "Er du sikker på at du vil frigøre enheden fra kanalen?<br />Dette vil ikke fjerne enheden, og vil gøre det muligt at tilknytte den senere, hvis du ønsker.",
+  "ChannelUnlinkTitle": "Frigør enhed fra kanal",
+  "DeleteItemFailed": "Fejl ved sletning af enhed fra kanal: {message}",
+  "Pending": "afventer...",
+  "RefreshItems": "Opdater enheder",
+  "SelectLabel": "Indtast label...",
+  "SelectUID": "Indtast unik identifikation",
+  "Tags": "Tags",
+  "UID": "UID (unik identifikation)",
+  "UnlinkItemFailed": "Fejl ved frigørelse af enhed fra kanal: {message}",
+  "UnlinkItemOk": "Enhed er succesfuldt frigjort fra kanal"
+}

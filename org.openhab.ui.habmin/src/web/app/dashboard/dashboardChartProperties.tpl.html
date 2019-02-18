@@ -1,0 +1,22 @@
+<form class="form" role="form">
+    <div class="form-group">
+        <label for="inputChart" class="control-label" i18n="dashboard.ChartName"></label>
+
+        <div>
+            <select class="form-control" id="inputChart"
+                    ng-model="options.chartId"
+                    ng-options="chart.id as chart.name for chart in charts">
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputServices" class="control-label" i18n="dashboard.ChartService"></label>
+
+        <div>
+            <select class="form-control" id="inputServices"
+                    ng-model="options.serviceId"
+                    ng-options="service.name as service.name for service in services">
+            </select>
+        </div>
+    </div>
+</form>

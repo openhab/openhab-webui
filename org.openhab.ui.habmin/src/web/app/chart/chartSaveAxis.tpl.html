@@ -1,0 +1,58 @@
+<form class="form" role="form">
+    <div class="form-group">
+        <label for="inputLabel" class="control-label" i18n="chart.SaveAxesLabel"></label>
+
+        <div>
+            <input type="text" ng-model="model.label" class="form-control" id="inputLabel" placeholder="Label">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inputDecimalPlaces" class="control-label" i18n="chart.SaveAxesDecimals"></label>
+
+        <div>
+            <input type="number" class="form-control" id="inputDecimalPlaces" ng-model="model.format"
+                   placeholder="format">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inputMinimum" class="control-label" i18n="chart.SaveAxesMinimum"></label>
+
+        <div>
+            <input type="number" ng-model="model.minimum" class="form-control" id="inputMinimum" placeholder="minimum">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inputMaximum" class="control-label" i18n="chart.SaveAxesMaximum"></label>
+
+        <div>
+            <input type="number" ng-model="model.maximum" class="form-control" id="inputMaximum" placeholder="maximum">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label" i18n="chart.SaveAxesTextColor"></label>
+
+        <div>
+            <pick-a-color id="inputColor" ng-model="model.textColor"></pick-a-color>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label" i18n="chart.SaveAxesLineColor"></label>
+
+        <div>
+            <pick-a-color id="inputLineColor" ng-model="model.lineColor"></pick-a-color>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label" i18n="chart.SaveAxesLineStyle">Line Style</label>
+
+        <div>
+            <select-line-style id="inputLineStyle" ng-model="model.lineStyle"></select-line-style>
+        </div>
+    </div>
+</form>

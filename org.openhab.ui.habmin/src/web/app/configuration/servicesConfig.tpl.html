@@ -1,0 +1,116 @@
+<!-- Device List -->
+<div class="col-sm-4">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <span i18n="services.Services"></span> {{panelDisplayed}}
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+            <!-- SERVICES LIST -->
+            <div ng-repeat="serviceType in serviceTypes | orderBy:'label'">
+                <div>
+                    <a role="presentation" class="list-group-item config-panel-title"
+                       ng-class="{'active': $parent.panelDisplayed=='SVC-'+serviceType.id}"
+                       ng-click="$parent.panelDisplayed='SVC-'+serviceType.id">
+                        <span class="fa fa-fw fa-book"></span> {{serviceType.label}}
+                    </a>
+                </div>
+                <div uib-collapse="panelDisplayed!='SVC-'+serviceType.id">
+                    <div class="list-group-item"
+                        ng-class="{'active': service==selectedService}"
+                        ng-click="selectService(service)"
+                        ng-repeat="service in services | filter: {category: serviceType.id} | orderBy:'label'">
+                        <li role="presentation">
+                            {{service.label}}
+                        </li>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>
+
+<!-- Service Information / Configuration -->
+<div class="col-sm-8">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <button type="button"
+                    class="btn btn-default" ng-class="{'btn-success': formLoaded&&configForm.modified}"
+                    ng-click="configSave()"
+                    ng-disabled="!formLoaded || !configForm.modified">
+                <span class="fa fa-floppy-o"></span>
+                <span class="hidden-xs hidden-sm" i18n="common.save"></span>
+            </button>
+            <button type="button"
+                    class="btn btn-default"
+                    ng-click="configForm.reset()"
+                    ng-disabled="!formLoaded || !configForm.modified">
+                <span class="fa fa-times"></span>
+                <span class="hidden-xs hidden-sm" i18n="common.cancel"></span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+            <form name="configForm" novalidate ng-show="selectedService" style="height:100%">
+
+                <!-- CONFIGURATION GROUPS -->
+                <div ng-repeat="group in serviceConfig.parameterGroups">
+                    <div>
+                        <a role="presentation" class="list-group-item list-group-item-heading"
+                           ng-class="{'active': $parent.cfgPanelDisplayed=='CONFIG-'+group.name}"
+                           ng-click="$parent.cfgPanelDisplayed='CONFIG-'+group.name"
+                           ng-if="configGroupAdvanced(group)||showAdvancedSettings">
+                            <habmin-icon class="fa-fw" cfgcontext="{{group.context}}"></habmin-icon>
+                            <span>{{group.label}} {{$parent.cfgPanelDisplayed}}</span>
+                        </a>
+                    </div>
+                    <div uib-collapse="$parent.cfgPanelDisplayed!='CONFIG-{{group.name}}'"
+                         class="panel-form">
+                        <div ng-repeat="config in serviceConfig.parameters">
+                            <div class="form-group"
+                                 ng-if="configGroupFilter(config, group.name) && (!config.advanced||showAdvancedSettings)">
+                                <ng-include
+                                        ng-init="cfgType='CONFIG';cfgModel=serviceConfiguration[config.name]"
+                                        src="'configuration/eshConfigParam.tpl.html'"></ng-include>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONFIGURATION UNGROUPED -->
+                <div ng-if="hasUngroupedParams()">
+                    <div>
+                        <a role="presentation" class="list-group-item list-group-item-heading"
+                           ng-class="{'active': $parent.cfgPanelDisplayed=='CONFIG-ungrouped'}"
+                           ng-click="$parent.cfgPanelDisplayed='CONFIG-ungrouped'">
+                            <span class="fa fa-fw fa-wrench"></span>
+                            <span i18n="thing.Configuration"></span>
+                        </a>
+                    </div>
+                    <div uib-collapse="$parent.cfgPanelDisplayed!='CONFIG-ungrouped'" class="panel-form">
+                        <div ng-repeat="config in serviceConfig.parameters">
+                            <div class="form-group"
+                                 ng-if="configGroupFilter(config, null) && (!config.advanced||showAdvancedSettings)">
+                                <ng-include
+                                        ng-init="cfgType='CONFIG';cfgModel=serviceConfiguration[config.name]"
+                                        src="'configuration/eshConfigParam.tpl.html'"></ng-include>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>

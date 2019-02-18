@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.openhab.core.bundles</groupId>
+    <artifactId>org.openhab.core.reactor.bundles</artifactId>
+    <version>2.5.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.openhab.ui</groupId>
+  <artifactId>pom</artifactId>
+
+  <packaging>pom</packaging>
+
+  <name>openHAB UI Components</name>
+
+  <organization>
+    <name>openHAB.org</name>
+    <url>http://www.openhab.org</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>Eclipse Public License 2.0</name>
+      <url>https://www.eclipse.org/legal/epl-2.0/</url>
+    </license>
+  </licenses>
+
+  <modules>
+    <module>iconset</module>
+    <module>org.openhab.ui.basic</module>
+    <module>org.openhab.ui.classic</module>
+    <module>org.openhab.ui.cometvisu</module>
+    <module>org.openhab.ui.cometvisu.php</module>
+    <module>org.openhab.ui.dashboard</module>
+    <module>org.openhab.ui.habmin</module>
+    <module>org.openhab.ui.habot</module>
+    <module>org.openhab.ui.habpanel</module>
+    <module>org.openhab.ui.homebuilder</module>
+    <module>org.openhab.ui.paper</module>
+    <module>org.openhab.ui.restdocs</module>
+    <module>features</module>
+    <module>repo</module>
+  </modules>
+
+  <scm>
+    <connection>scm:git:${scm.gitBaseUrl}/openhab-webui.git</connection>
+    <developerConnection>scm:git:${scm.gitBaseUrl}/openhab-webui.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://github.com/openhab/openhab-webui</url>
+  </scm>
+
+  <issueManagement>
+    <system>Github</system>
+    <url>https://github.com/openhab/openhab-webui/issues</url>
+  </issueManagement>
+
+  <distributionManagement>
+    <repository>
+      <id>bintray</id>
+      <url>https://api.bintray.com/maven/openhab/mvn/openhab2-addons/;publish=1</url>
+    </repository>
+    <snapshotRepository>
+      <id>jfrog</id>
+      <url>https://openhab.jfrog.io/openhab/libs-snapshot-local</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <properties>
+    <ohdr.version>1.0.40</ohdr.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.openhab.core.bom</groupId>
+      <artifactId>org.openhab.core.bom.compile-model</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+
+    <!-- releases -->
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>jcenter</id>
+      <name>JCenter Repository</name>
+      <url>https://jcenter.bintray.com/</url>
+    </repository>
+
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>openhab-artifactory-release</id>
+      <name>JFrog Artifactory Repository</name>
+      <url>https://openhab.jfrog.io/openhab/libs-release</url>
+    </repository>
+
+    <!-- snapshots -->
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+      <id>openhab-artifactory-snapshot</id>
+      <name>JFrog Artifactory Repository</name>
+      <url>https://openhab.jfrog.io/openhab/libs-snapshot</url>
+    </repository>
+
+  </repositories>
+
+</project>

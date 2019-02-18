@@ -1,0 +1,15 @@
+{
+  "ChartLegend": "Показать легенду",
+  "ChartPeriod": "Период диаграммы",
+  "ChartPersistence": "Основная служба хранения данных",
+  "ChartPersistenceSelect": "Выбор основного хранилища...",
+  "ChartPrefTitle": "Настройки диаграммы",
+  "GeneralPrefTitle": "Основные настройки",
+  "Language": "Язык",
+  "LanguageSelect": "Выбор Вашего языка...",
+  "Name": "Наименование",
+  "ServerAddress": "Адрес",
+  "ServerPrefTitle": "Настройки Сервера",
+  "Theme": "Тема оформления",
+  "ThemeSelect": "Выбор Вашей темы оформления..."
+}

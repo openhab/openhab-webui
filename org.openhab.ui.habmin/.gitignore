@@ -1,0 +1,5 @@
+/node_modules/
+/cordova/platforms
+/cordova/www
+/target/
+/web/

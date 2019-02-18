@@ -1,0 +1,929 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: openhab-habpanel\n"
+"Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Language-Team: Chinese Simplified\n"
+"Language: zh_CN\n"
+"PO-Revision-Date: 2018-04-10 14:51-0400\n"
+
+#. Save button in the dashboard designer
+msgctxt "designer.save"
+msgid "Save"
+msgstr "保存"
+
+#. Run button in the dashboard designer
+msgctxt "designer.run"
+msgid "Run"
+msgstr "运行"
+
+#. Add widget button in the dashboard designer
+msgctxt "designer.addwidget"
+msgid "Add Widget"
+msgstr "添加小部件"
+
+#. Tutorial text with arrow when on an empty dashboard
+msgctxt "designer.addwidget.hint"
+msgid "Add some widgets"
+msgstr "添加多个小部件"
+
+#. Header of the custom widget section (beware, it might overlap the cogs icon on the right)
+msgctxt "designer.addwidget.customwidgets"
+msgid "Custom widgets"
+msgstr "自定义小部件"
+
+#. Open widget gallery
+msgctxt "designer.addwidget.getmore"
+msgid "Get more..."
+msgstr "获取更多小部件"
+
+#. Tooltip when hovering the "Get more" menu entry
+msgctxt "designer.addwidget.getmore.tooltip"
+msgid "Open the widget gallery to import more widgets"
+msgstr "打开小部件库以导入更多小部件"
+
+#. Edit option in a widget placeholder context menu (3-dot icon)
+msgctxt "designer.contextmenu.edit"
+msgid "Edit..."
+msgstr "编辑..."
+
+#. Copy/move option in a widget placeholder context menu (3-dot icon)
+msgctxt "designer.contextmenu.copymove"
+msgid "Copy/move to..."
+msgstr "复制/移动到..。"
+
+#. Delete option in a widget placeholder context menu (3-dot icon)
+msgctxt "designer.contextmenu.delete"
+msgid "Delete"
+msgstr "删除"
+
+#. Title of copy/move widget dialog
+msgctxt "designer.copymove.header"
+msgid "Copy/move {{widgetName}}"
+msgstr "复制/移动{{widgetName}}"
+
+#. Alongside the dropdown dashboard selection
+msgctxt "designer.copymove.todashboard"
+msgid "To dashboard"
+msgstr "转到仪表盘"
+
+#. Move button
+msgctxt "designer.copymove.move"
+msgid "Move"
+msgstr "移动"
+
+#. Copy button
+msgctxt "designer.copymove.copy"
+msgid "Copy"
+msgstr "复制"
+
+#. Default name of a newly created widget
+msgctxt "designer.newwidget.defaultname"
+msgid "New Widget"
+msgstr "新建小部件"
+
+msgctxt "designer.serversavefailed"
+msgid "Server save failed!"
+msgstr "服务器保存失败!"
+
+#. Title of the dashboard settings dialog
+msgctxt "dashboard.settings.dialog.title"
+msgid "Dashboard Settings"
+msgstr "仪表盘设置"
+
+#. Tab header
+msgctxt "dashboard.settings.tile"
+msgid "Menu tile"
+msgstr "菜单平铺"
+
+#. Textbox header
+msgctxt "dashboard.settings.tile.background_image_url"
+msgid "Background Image URL"
+msgstr "背景图片链接:"
+
+#. Color picker header
+msgctxt "dashboard.settings.tile.title_text_color"
+msgid "Title Text color"
+msgstr "标题文本颜色"
+
+#. Checkbox header
+msgctxt "dashboard.settings.tile.click_feedback"
+msgid "Click feedback"
+msgstr "点击反馈"
+
+#. Checkbox label
+msgctxt "dashboard.settings.tile.click_feedback.description"
+msgid "Don't brighten tile on click/tap"
+msgstr "不要点击变亮的选项"
+
+#. Tab header
+msgctxt "dashboard.settings.advanced"
+msgid "Advanced"
+msgstr "高级选项"
+
+#. Alert display at the top
+msgctxt "dashboard.settings.advanced.warning"
+msgid "These options are currently experimental, unstable or targeted at advanced users! Use at your own risk."
+msgstr "这些选项目前是实验性的, 不太稳定，如果针对高级用户使用风险自负"
+
+#. Tab header
+msgctxt "dashboard.settings.customwidgets"
+msgid "Custom widgets"
+msgstr "自定义小部件"
+
+#. Alert displayed at the top
+msgctxt "dashboard.settings.customwidgets.warning"
+msgid "This feature is currently experimental, and targeted at advanced users! Use at your own risk."
+msgstr "此功能目前是实验性的, 并针对高级用户使用，风险自负。"
+
+#. Checkbox header
+msgctxt "dashboard.settings.customwidgets.usecustomwidget"
+msgid "Use a custom widget"
+msgstr "使用自定义部件"
+
+#. Dropdown header
+msgctxt "dashboard.settings.customwidgets.customwidget"
+msgid "Custom Widget"
+msgstr "自定义部件"
+
+#. Accordion header
+msgctxt "dashboard.settings.customwidgets.tile"
+msgid "Main menu tile"
+msgstr "主菜单平铺"
+
+#. Checkbox label
+msgctxt "dashboard.settings.customwidgets.tile.description"
+msgid "Replace the tile contents by a custom widget"
+msgstr "用自定义部件替换平铺内容"
+
+#. Accordion header
+msgctxt "dashboard.settings.customwidgets.drawer"
+msgid "Drawer"
+msgstr "抽屉"
+
+#. Checkbox label
+msgctxt "dashboard.settings.customwidgets.drawer.description"
+msgid "Replace the contents of the drawer menu by a custom widget"
+msgstr "将抽屉式菜单的内容替换为自定义部件"
+
+#. Accordion header
+msgctxt "dashboard.settings.customwidgets.header"
+msgid "Dashboard header"
+msgstr "仪表板头部"
+
+#. Checkbox label
+msgctxt "dashboard.settings.customwidgets.header.description"
+msgid "Replace the contents of the dashboard header by a custom widget"
+msgstr "将仪表板头部的内容替换为自定义部件"
+
+#. Displayed in the item picker when no item selected
+msgctxt "itempicker.placeholder"
+msgid "Search or select an openHAB item"
+msgstr "搜索或选择 openHAB 项目"
+
+#. Icon picker dropdown placeholder
+msgctxt "iconpicker.selecticonset"
+msgid "Select icon set"
+msgstr "选择图标集"
+
+#. Icon picker dropdown entry
+msgctxt "iconpicker.customicon"
+msgid "Custom icon"
+msgstr "自定义图标"
+
+#. Icon picker dropdown entry
+msgctxt "iconpicker.customurl"
+msgid "Custom URL"
+msgstr "自定义地址"
+
+#. Icon picker dropdown entry
+msgctxt "iconpicker.none"
+msgid "(none)"
+msgstr "(没有)"
+
+#. Appears when focusing the icon textbox when the "Custom icon" iconset is selected
+msgctxt "iconpicker.customicontooltip"
+msgid "Type the name of a <a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'>registered icon</a> (only SVG supported)<br />Examples: <em>switch</em>, <em>temperature</em> or an additional icon in your configuration's <code>icons/classic</code> folder"
+msgstr "键入 <a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'> 已注册图标 </a> 的名称 (仅支持 SVG) <br/> 示例: <em>switch</em>、<em>temperature</em> 或配置中的其他图标<code>icons/classic</code> 文件夹"
+
+#. Screen title
+msgctxt "settings.header"
+msgid "Settings"
+msgstr "设置"
+
+#. Header of the storage section
+msgctxt "settings.storage.header"
+msgid "Current storage configuration"
+msgstr "当前存储配置"
+
+#. Radio button for local storage
+msgctxt "settings.storage.localstorage"
+msgid "Local storage"
+msgstr "本地存储"
+
+#. Explanation of the "local storage only" option
+msgctxt "settings.storage.localstorage.hint"
+msgid "The configuration is saved for this browser and device only. It will be kept as long as you don't clean up the browser's historical data."
+msgstr "仅为该浏览器和设备保存配置。只要你不清理浏览器的历史数据, 它就会被保存。"
+
+#. Link below the "local storage" option
+msgctxt "settings.storage.localstorage.edit"
+msgid "Edit the local panel configuration (experts only)"
+msgstr "编辑本地面板配置 (仅限专家)"
+
+#. Prefix of a panel configuration before its name
+msgctxt "settings.storage.panelconfiguration"
+msgid "Panel configuration:"
+msgstr "面板配置:"
+
+#. Prefix of the last synced line, before the date
+msgctxt "settings.storage.panelconfiguration.lastsynced"
+msgid "Last synced on"
+msgstr "上次同步发生于"
+
+#. Displayed before the list of dashboard the panel configuration contains
+msgctxt "settings.storage.panelconfiguration.contains"
+msgid "Contains:"
+msgstr "包含："
+
+#. Link to create a panel configuration from the current configuration
+msgctxt "settings.storage.panelconfiguration.save"
+msgid "Save the current configuration to a new panel configuration"
+msgstr "将当前配置保存到新的面板配置中"
+
+#. Title of the dialog box when creating a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.title"
+msgid "New panel configuration"
+msgstr "新面板配置"
+
+#. Message of the dialog box when creating a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.message"
+msgid "Please choose a name for the new panel configuration (letters and digits only please):"
+msgstr "请为新的面板配置选择一个名称 (仅限字母和数字):"
+
+#. Panel name (section header)
+msgctxt "settings.panel.name"
+msgid "Panel name"
+msgstr "面板名字"
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.name.hint"
+msgid "Replaces 'HABPanel' in the side drawer when set"
+msgstr "设置时，取代侧面抽屉中“HABPanel” 的设置"
+
+#. Appearance (section header)
+msgctxt "settings.panel.appearance.header"
+msgid "Appearance"
+msgstr "外观"
+
+#. Dropown menu header
+msgctxt "settings.panel.appearance.theme"
+msgid "Theme"
+msgstr "界面主题"
+
+#. Alert banner displayed when the browsers doesn't support themes (CSS variables)
+msgctxt "settings.panel.appearance.theme.not_supported"
+msgid "Themes are not compatible with this browser."
+msgstr "主题与此浏览器不兼容。"
+
+#. Setting header
+msgctxt "settings.panel.appearance.additional_stylesheet"
+msgid "Additional stylesheet (optional)"
+msgstr "其他样式表（可选）"
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.appearance.additional_stylesheet.hint"
+msgid "Relative URL only; example: /static/example.css"
+msgstr "仅相对URL; 例如：/static/example.css"
+
+#. Setting header
+msgctxt "settings.panel.appearance.background_image"
+msgid "Background image (optional)"
+msgstr "背景图像 (可选)"
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.appearance.background_image.hint"
+msgid "Example: //source.unsplash.com/random"
+msgstr "示例: //source.unsplash.com/random"
+
+#. Setting header
+msgctxt "settings.panel.appearance.drawer_heading_image"
+msgid "Drawer heading image (optional)"
+msgstr "抽屉标题图像 (可选)"
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.appearance.drawer_heading_image.hint"
+msgid "Example: //via.placeholder.com/265x95"
+msgstr "示例: //via.placeholder.com/265x95"
+
+#. Checkbox
+msgctxt "settings.panel.appearance.prevent_scrolling"
+msgid "Prevent scrolling (when not editing)"
+msgstr "防止滚动 (不编辑时)"
+
+#. Checkbox
+msgctxt "settings.panel.appearance.hide_drawer_footer"
+msgid "Hide the drawer's footer"
+msgstr "隐藏抽屉的页脚"
+
+#. Checkbox
+msgctxt "settings.panel.appearance.hide_toolbar_buttons"
+msgid "Hide toolbar buttons:"
+msgstr "隐藏工具栏按钮:"
+
+#. Checkbox
+msgctxt "settings.panel.appearance.show_clock"
+msgid "Show a clock on the header"
+msgstr "在页眉上显示时钟"
+
+#. Textbox setting header, only displayed when the "Show a clock on the header" option is checked
+msgctxt "settings.panel.appearance.show_clock.header_format"
+msgid "Header clock format"
+msgstr "页眉时钟格式"
+
+#. Textbox placeholder, only displayed when the "Show a clock on the header" option is checked
+msgctxt "settings.panel.appearance.show_clock.header_format.hint"
+msgid "Default: shortTime, use AngularJS date format"
+msgstr "默认值: 短, 使用 AngularJS 日期格式"
+
+#. Custom widgets settings (section header)
+msgctxt "settings.panel.customwidgets.header"
+msgid "Custom Widgets"
+msgstr "自定义小部件"
+
+#. Big "manage" button label (a > suffix is added)
+msgctxt "settings.panel.customwidgets.manage"
+msgid "Manage"
+msgstr "管理"
+
+#. Voice support (section header) - formerly (<=2.2.0) : "Voice feedback"
+msgctxt "settings.panel.voicesupport.header"
+msgid "Voice Support"
+msgstr "语音支持"
+
+#. Dropdown header - formerly (<=2.2.0) : "Voice"
+msgctxt "settings.panel.voicesupport.speech_synthesis_voice"
+msgid "Speech synthesis voice"
+msgstr "言语合成语音"
+
+#. Displayed below the voice dropdown
+msgctxt "settings.panel.voicesupport.speech_synthesis_voice.hint"
+msgid "Available voices depend on the operating system and browser environments."
+msgstr "可用的声音取决于操作系统和浏览器环境。"
+
+#. Test button below the voice selection - make the voice say "habpanel 1 2 3"
+msgctxt "settings.panel.voicesupport.speech_synthesis_voice.test"
+msgid "Test"
+msgstr "测试"
+
+#. Checkbox
+msgctxt "settings.panel.voicesupport.floating_speech_button"
+msgid "Display a floating speech button at the bottom of the screen"
+msgstr "在屏幕底部显示浮动语音按钮"
+
+#. Dropdown header
+msgctxt "settings.panel.voicesupport.speech_synthesis_item"
+msgid "Speak the new value of the following item when it changes:"
+msgstr "在更改时, 说出以下项的新值:"
+
+#. Section header
+msgctxt "settings.panel.dashboard_control.header"
+msgid "Switch dashboard with item value"
+msgstr "使用项目值切换仪表板"
+
+#. Dropdown header
+msgctxt "settings.panel.dashboard_control.item"
+msgid "When this item changes to a dashboard's name, switch to it:"
+msgstr "当此项更改为仪表板的名称时, 切换到它:"
+
+#. Local panel configuration editor header
+msgctxt "settings.localconfig.title"
+msgid "Local panel configuration editor"
+msgstr "本地面板配置编辑器"
+
+#. Displayed in a tooltip when hovering the exclamation mark in the local panel config editor
+msgctxt "settings.localconfig.warning"
+msgid "This is the raw configuration object representing your current configuration. Be careful while editing it by hand!"
+msgstr "这是表示当前配置的原始配置对象。手工编辑时要小心!"
+
+#. Blue button
+msgctxt "settings.localconfig.import"
+msgid "Import"
+msgstr "导入"
+
+#. Blue button
+msgctxt "settings.localconfig.export"
+msgid "Export"
+msgstr "导出"
+
+#. Default label for the white button on the right
+msgctxt "settings.localconfig.copy"
+msgid "Copy"
+msgstr "复制"
+
+#. Label displayed on the button for a few seconds after a successful copy to clipboard
+msgctxt "settings.localconfig.copied"
+msgid "Copied!"
+msgstr "已复制！"
+
+#. Default label for the red button on the right
+msgctxt "settings.localconfig.save"
+msgid "Save"
+msgstr "保存"
+
+#. Label displayed on the button for a few seconds after a successful save
+msgctxt "settings.localconfig.saved"
+msgid "Saved!"
+msgstr "已保存！"
+
+#. Label displayed for a few seconds on the copy or save button if an error occurred
+msgctxt "settings.localconfig.failed"
+msgid "FAILED!"
+msgstr "已失败"
+
+#. Displayed in a dialog box
+msgctxt "settings.localconfig.error.nodashboardsfound"
+msgid "No dashboards found!"
+msgstr "未找到仪表板!"
+
+#. Title of a a dialog box
+msgctxt "settings.localconfig.parsingerror.dialog.title"
+msgid "Error"
+msgstr "错误"
+
+#. Message in a dialog box
+msgctxt "settings.localconfig.parsingerror.dialog.message"
+msgid "Configuration parsing error, nothing has been modified: "
+msgstr "配置分析错误, 未修改任何内容: "
+
+#. Title of a a dialog box
+msgctxt "settings.localconfig.importerror.dialog.title"
+msgid "Error"
+msgstr "错误"
+
+#. Message in a dialog box
+msgctxt "settings.localconfig.importerror.dialog.message"
+msgid "Problem while importing: "
+msgstr "导入时出现问题: "
+
+#. Screen title
+msgctxt "customwidgets.list.header"
+msgid "Custom widgets"
+msgstr "自定义小部件"
+
+#. Prefix displayed before the author's name
+msgctxt "customwidgets.list.byauthor"
+msgid "by"
+msgstr "来自"
+
+#. Displayed in a tooltip when hovering the icon indicating a globally provisioned widget
+msgctxt "customwidgets.list.globallyprovisioned.hint"
+msgid "This widget was provisioned globally via a bundle. It cannot be modified, but may be cloned to an user-defined widget with another name."
+msgstr "这个小部件是通过捆绑全局设置的。它不能被修改, 但可能被克隆到一个用户定义的小部件用 另一个名称。"
+
+#. Displayed in a tooltip when hovering the icon indicating a user defined widget
+msgctxt "customwidgets.list.userdefined.hint"
+msgid "This widget has been defined manually in this panel configuration and can be modified."
+msgstr "此部件已在该面板配置中手动定义, 可以修改。"
+
+#. Custom widget context menu entry - clone a globally-provisioned widget
+msgctxt "customwidgets.list.contextmenu.clone"
+msgid "Clone widget..."
+msgstr "克隆部件..。"
+
+#. Custom widget context menu entry - downloads a widget's .widget.json file
+msgctxt "customwidgets.list.contextmenu.exporttofile"
+msgid "Export to file"
+msgstr "导出到文件"
+
+#. Custom widget context menu entry - opens a forum topic or GitHub readme
+msgctxt "customwidgets.list.contextmenu.openhelp"
+msgid "Open Help"
+msgstr "打开帮助"
+
+#. Custom widget context menu entry - update the widget from its source
+msgctxt "customwidgets.list.contextmenu.update"
+msgid "Update..."
+msgstr "正在更新..."
+
+#. Blue button opening a dialog
+msgctxt "customwidgets.list.newwidget"
+msgid "New widget"
+msgstr "新建小部件"
+
+#. Blue button with a dropdown menu
+msgctxt "customwidgets.list.importwidget"
+msgid "Import widget"
+msgstr "导入小部件"
+
+#. Import button menu entry - opens a dialog
+msgctxt "customwidgets.list.importwidget.fromfile"
+msgid "Import from file..."
+msgstr "从文件导入..."
+
+#. Import button menu entry - opens a dialog
+msgctxt "customwidgets.list.importwidget.fromgallery"
+msgid "Import from gallery..."
+msgstr "从库中导入..。"
+
+#. Dialog box title
+msgctxt "customwidgets.list.add.dialog.title"
+msgid "New custom widget"
+msgstr "使用自定义部件"
+
+#. Dialog box message
+msgctxt "customwidgets.list.add.dialog.message"
+msgid "Please choose a short name as an identifier for your widget (for example, 'window-shutter=up-down-button, 'weather-forecast' etc.). If a widget with the same identifier already exists, it will be replaced!"
+msgstr "请选择一个简短的名称作为您的小部件的标识符 (例如, \"窗口快门 = 上-下-按钮, 天气预报\" 等)。如果一个具有相同标识符的小部件已经存在, 它将被替换!"
+
+#. Error message, displayed in an alert box
+msgctxt "customwidgets.list.import.nojson"
+msgid "The file must have a .json extension!"
+msgstr "该文件必须具有. json 扩展名!"
+
+#. Dialog box title
+msgctxt "customwidgets.list.import.dialog.title"
+msgid "Import widget"
+msgstr "导入小部件"
+
+#. Dialog box message
+msgctxt "customwidgets.list.import.dialog.message"
+msgid "Please confirm or change the identifier of your widget (avoid spaces and special chars!). If a widget with the same identifier already exists, it will be replaced!"
+msgstr "请确认或更改您的小部件的标识符 (避免空格和特殊字符)! 如果一个具有相同标识符的小部件已经存在, 它将被替换!"
+
+#. Prefix of an error message - followed by a technical exception message
+msgctxt "customwidgets.list.import.error"
+msgid "Widget import error: "
+msgstr "小部件导入错误: "
+
+#. Dialog box title
+msgctxt "customwidgets.list.update.dialog.title"
+msgid "Update widget"
+msgstr "更新小部件"
+
+#. Dialog box message
+msgctxt "customwidgets.list.update.dialog.message"
+msgid "This will update widget <id> from <source_url>. Any changes you made will be overwritten! Continue?"
+msgstr "这将更新小部件 <id> 来自 <source_url>。您所做的任何更改都将被改写! 继续?"
+
+#. Alert banner message
+msgctxt "customwidgets.list.update.error.notemplatefound"
+msgid "Couldn't update widget <id> from <source_url>: no template found"
+msgstr "不许更新小部件 <id> 来自 <source_url>"
+
+#. Alert banner message
+msgctxt "customwidgets.list.update.error.unknown"
+msgid "Couldn't update widget <id> from <source_url>: "
+msgstr "不许更新小部件 <id> 来自 <source_url>: "
+
+#. Alert banner message
+msgctxt "customwidgets.list.update.success"
+msgid "Widget <id> updated successfully from <source_url>"
+msgstr "小部件 <id> 从 <source_url>更新成功"
+
+#. Dialog box title
+msgctxt "customwidgets.list.delete.dialog.title"
+msgid "Remove widget"
+msgstr "删除部件"
+
+#. Dialog box message
+msgctxt "customwidgets.list.delete.dialog.message"
+msgid "Please confirm you want to delete this widget: "
+msgstr "请确认以删除该xiao'bu'jian "
+
+#. Dialog box title
+msgctxt "customwidgets.list.clone.dialog.title"
+msgid "Clone widget"
+msgstr "克隆部件..。"
+
+#. Dialog box message
+msgctxt "customwidgets.list.clone.dialog.message"
+msgid "This will clone the globally provisioned widget: <id> to be modified as part of the panel configuration. Enter an unique identifier below - it must be different from the widget being cloned, and should avoid spaces and special chars. If an user-defined widget with the same identifier already exists, it will be replaced!"
+msgstr "这将克隆全局配置的小部件：<id>作为面板配置的一部分进行修改。在下面输入一个唯一的标识符 - 它必须与被克隆的小部件不同，并且应该避免空格和特殊字符。如果一个用户定义的小部件具有相同的标识符已经存在，它将被替换！"
+
+#. Screen title, followed by the widget name - beware of size!
+msgctxt "customwidgets.designer.heading"
+msgid "Widget:"
+msgstr "部件："
+
+#. Save button on the right, default label - can be hidden on phones
+msgctxt "customwidgets.designer.save"
+msgid "Save"
+msgstr "保存"
+
+#. Save button on the right, displayed for a few seconds after a save - can be hidden on phones
+msgctxt "customwidgets.designer.saved"
+msgid "Saved!"
+msgstr "已保存！"
+
+#. Tab header
+msgctxt "customwidgets.designer.code"
+msgid "Code"
+msgstr "代码"
+
+#. Tab header
+msgctxt "customwidgets.designer.settings"
+msgid "Settings"
+msgstr "设置"
+
+#. Section header in the Settings tab
+msgctxt "customwidgets.designer.settings.general"
+msgid "General settings"
+msgstr "常规设置"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.general.display_name"
+msgid "Display name"
+msgstr "显示名称"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.general.author"
+msgid "Author"
+msgstr "作者"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.general.description"
+msgid "Description"
+msgstr "描述"
+
+#. Section header in the Settings tab
+msgctxt "customwidgets.designer.settings.config"
+msgid "Configuration settings"
+msgstr "配置设置"
+
+#. Displayed in small text below the section header, with an information icon
+msgctxt "customwidgets.designer.settings.config.warning"
+msgid "Beware: always bear in mind instances of this widget might be existing when altering configuration settings!"
+msgstr "当心: 永远牢记此小部件的实例可能在更改配置设置时存在!"
+
+#. Button label
+msgctxt "customwidgets.designer.settings.config.add"
+msgid "Add setting"
+msgstr "添加设置"
+
+#. Dropdown header
+msgctxt "customwidgets.designer.settings.config.type"
+msgid "Type"
+msgstr "类型"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.string"
+msgid "String"
+msgstr "字符串"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.number"
+msgid "Number"
+msgstr "数字"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.checkbox"
+msgid "Checkbox"
+msgstr "复选框"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.item"
+msgid "Item"
+msgstr "项目"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.color"
+msgid "Color"
+msgstr "顏色"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.choices"
+msgid "Choices"
+msgstr "选择"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.icon"
+msgid "Icon"
+msgstr "图标"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.heading"
+msgid "Heading"
+msgstr "标题"
+
+#. Tooltip displayed when hovering the help icon alongside the ID field
+msgctxt "customwidgets.designer.settings.config.id.hint"
+msgid "Enter a JSON friendly key for this setting - ideally, use only lowercase letters, digits and underscores. Examples: my_setting, first_item, text_size, font_color"
+msgstr "输入配置 JSON 友好键。理想情况下, 只使用小写字母、数字和下划线。例子: my_setting, first_item, text_size, font_color"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.label"
+msgid "Label"
+msgstr "标签"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.default"
+msgid "Default value"
+msgstr "默认值"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.choices"
+msgid "Choices"
+msgstr "选择"
+
+#. Textbox placeholder
+msgctxt "customwidgets.designer.settings.config.choices.hint"
+msgid "Comma-separated possible values"
+msgstr "逗号分隔可能值"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.description"
+msgid "Description"
+msgstr "说明"
+
+#. Banner displayed when selecting the Icon type for the settings, followed by the defined settings themselves
+msgctxt "customwidgets.designer.settings.config.icon.hint"
+msgid "This will define 2 config elements:"
+msgstr "这将定义两个配置元素:"
+
+#. Tab header
+msgctxt "customwidgets.designer.preview"
+msgid "Preview"
+msgstr "预览"
+
+#. Dialog box title
+msgctxt "widgetgallery.heading"
+msgid "Widget Gallery"
+msgstr "部件库"
+
+#. Dialog box title (when displaying a repository)
+msgctxt "widgetgallery.heading.importrepo"
+msgid "Import GitHub Repository"
+msgstr "导入 GitHub 存储库"
+
+#. Dialog box title (when displaying a community gallery item)
+msgctxt "widgetgallery.heading.importgallery"
+msgid "Import Gallery Item"
+msgstr "导入库项目"
+
+#. Alert banner message
+msgctxt "widgetgallery.warning.githubratelimit"
+msgid "Warning: rate limiting on the GitHub API will temporarily block further requests!"
+msgstr "警告: GitHub API 的速率限制将暂时阻止进一步的请求!"
+
+#. Alert banner message (2nd part)
+msgctxt "widgetgallery.warning.githubratelimit.wait"
+msgid "Wait until this time and try again:"
+msgstr "请等到此时间再试一次:"
+
+#. Textbox placeholder
+msgctxt "widgetgallery.addressbar.hint"
+msgid "GitHub repository full name (owner/name) or URL"
+msgstr "GitHub 资料库全名 (所有者/名称) 或 URL"
+
+#. Button on the right of the addressbar
+msgctxt "widgetgallery.addressbar.go"
+msgid "Go"
+msgstr "前进"
+
+#. Suffix displayed after a number, i.e. "24 community contributions"
+msgctxt "widgetgallery.toolbar.communitycontributions"
+msgid "community&nbsp;contributions"
+msgstr "社区&nbsp;贡献"
+
+#. On the right with the sort options
+msgctxt "widgetgallery.toolbar.sortby"
+msgid "sort by:"
+msgstr "排序方式："
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostrecent"
+msgid "most&nbsp;recent"
+msgstr "最近"
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostliked"
+msgid "most&nbsp;liked"
+msgstr "最喜欢"
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostpopular"
+msgid "most&nbsp;popular"
+msgstr "最流行"
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostdiscussed"
+msgid "most&nbsp;discussed"
+msgstr "最争议"
+
+#. Prefix before the author's name
+msgctxt "widgetgallery.details.authorby"
+msgid "by"
+msgstr "来自"
+
+#. Suffix displayed after a number, i.e. "24 posts on this topic"
+msgctxt "widgetgallery.details.forumposts"
+msgid "post(s) on this topic - discuss on community.openhab.org"
+msgstr "关于本主题的帖子-关于 community.openhab.org 的讨论"
+
+#. Label of the big green button when nothing to import
+msgctxt "widgetgallery.details.nothingtoimport"
+msgid "Nothing to import"
+msgstr "没有可供导入的事件"
+
+#. Label of the big green button when 1 widget was found
+msgctxt "widgetgallery.details.importwidget"
+msgid "Import Widget"
+msgstr "导入小部件"
+
+#. Label of the big green button when 2 or more widgets were found
+msgctxt "widgetgallery.details.importwidgets"
+msgid "Import {} Widgets"
+msgstr "导入 {} 小部件"
+
+#. Label of the big blue button when there is a referenced GitHub repo
+msgctxt "widgetgallery.details.gotorepository"
+msgid "Go to the repository"
+msgstr "进入这个仓库"
+
+#. Displyed in orange inside the big green button after a number, when some widgets are already present
+msgctxt "widgetgallery.details.toupdate"
+msgid "to update"
+msgstr "来更新"
+
+#. Little white button label with a down caret
+msgctxt "widgetgallery.details.showdetails"
+msgid "Show details"
+msgstr "显示详情"
+
+#. Little white button label with a up caret
+msgctxt "widgetgallery.details.hidedetails"
+msgid "Hide details"
+msgstr "隐藏详情"
+
+#. Little white button label
+msgctxt "widgetgallery.details.downloadzip"
+msgid "Download ZIP"
+msgstr "下载 Zip"
+
+#. 1. Prefix of the explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.prefix"
+msgid "This"
+msgstr "这是"
+
+#. 2a. Name of a community contribution
+msgctxt "widgetgallery.details.widget.hint.communitycontribution"
+msgid "community contribution"
+msgstr "社区贡献"
+
+#. 2b. Name of a community contribution
+msgctxt "widgetgallery.details.widget.hint.repository"
+msgid "repository"
+msgstr "资源库"
+
+#. 3. Suffix of the explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.suffix"
+msgid "contains the following widgets; you can import them individually:"
+msgstr "包含以下小部件;您可以分别导入它们:"
+
+#. Explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.nowidgets"
+msgid "No widgets were found (*.widget.json files)! Please report this."
+msgstr "未找到小部件 (*. json 文件)!请报告这个"
+
+#. Explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.checkrepo"
+msgid "The widgets are likely in the referenced GitHub repository. Click the 'Go to the repository' button to open it."
+msgstr "这些小部件可能在引用的 GitHub 存储库中。单击 \"转到存储库\" 按钮将其打开。"
+
+#. Green button in the expanded details section
+msgctxt "widgetgallery.details.widget.import"
+msgid "Import widget"
+msgstr "导入小部件"
+
+#. Orange button in the expanded details section
+msgctxt "widgetgallery.details.widget.update"
+msgid "Update widget"
+msgstr "更新小部件"
+
+#. Disabled button in the expanded details section after a widget was imported/updated
+msgctxt "widgetgallery.details.widget.imported"
+msgid "Widget imported!"
+msgstr "部件已导入!"
+
+#. Alert banner, followed by a technical exception message
+msgctxt "widgetgallery.error"
+msgid "Error:"
+msgstr "错误："
+
+#. Dialog box title
+msgctxt "widgetgallery.widgetsdetected.dialog.title"
+msgid "Existing widgets detected"
+msgstr "检测到现有的小部件"
+
+#. Dialog box message
+msgctxt "widgetgallery.widgetsdetected.dialog.message"
+msgid "Warning: please confirm you wish to update <nbexisting> existing widgets, overwriting any eventual changes made locally! If unsure, cancel and click Show details to review the list of affected widgets."
+msgstr "警告: 请确认您希望更新 <nbexisting> 现有的小部件, 覆盖在本地进行的任何最终更改!如果不确定, 请取消并单击 \"显示详细信息\" 以查看受影响的小部件列表。"
+

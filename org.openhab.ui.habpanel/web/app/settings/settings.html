@@ -1,0 +1,137 @@
+<div class="header">
+    <!--<a class="btn btn-link pull-left" onclick="window.history.back()"><i class="glyphicon glyphicon-chevron-left"></i></a>-->
+    <a class="btn pull-left" title="Menu" snap-toggle="left">
+        <i class="glyphicon glyphicon-menu-hamburger"></i>
+    </a>
+	<h2 translate-keep-content translate="settings.header">Settings</h2>
+</div>
+
+<div class="scrollable">
+
+    <div class="box col-md-5">
+        <br />    
+        <h4 translate-keep-content translate="settings.storage.header">Current storage configuration</h4>
+
+        <ul>
+            <li>
+                <input type="radio" ng-click="vm.switchToPanelConfig($event)" ng-model="vm.storageOption" value="(localStorage)" />&nbsp;<strong translate-keep-content translate="settings.storage.localstorage">Local storage</strong>
+                <br /><small><span translate-keep-content translate="settings.storage.localstorage.hint">The configuration is saved for this browser and device only. It will be kept as long as you don't clean up the browser's historical data.</span>
+                <br /><a href="#/settings/localconfig" translate-keep-content translate="settings.storage.localstorage.edit">Edit the local panel configuration (experts only)</a></small>
+                <br /><br />
+            </li>
+            <li ng-if="useRegistry" ng-repeat="(name, data) in vm.panelsRegistry">
+                <a class="pull-right" ng-if="vm.storageOption != name" ng-click="vm.deletePanelConfig(name)"><i class="glyphicon glyphicon-trash"></i></a> 
+                <input type="radio" ng-click="vm.switchToPanelConfig($event)" ng-model="vm.storageOption" value="{{name}}" />&nbsp;<strong><span translate-keep-content translate="settings.storage.panelconfiguration">Panel configuration:</span> <em>{{name}}</em></strong>
+                <br /><small><span translate-keep-content translate="settings.storage.panelconfiguration.lastsynced">Last synced on</span> {{data.updatedTime | date:'medium'}}</small>
+                <div translate-keep-content translate="settings.storage.panelconfiguration.contains">Contains:</div>
+                <ul>
+                    <li ng-repeat="dashboard in data.dashboards">
+                        {{dashboard.name}}
+                    </li>
+                </ul>
+                <br /><br />
+            </li>
+        </ul>
+        <a ng-if="vm.useRegistry" ng-click="vm.saveAsNewPanelConfig()"><i class="glyphicon glyphicon-save">&nbsp;</i><span translate-keep-content translate="settings.storage.panelconfiguration.save">Save the current configuration to a new panel configuration</span></a>
+        <div ng-if="!vm.useRegistry" class="alert alert-warning">Panel configurations are not available: not running openHAB 2 or service not installed?</div>
+
+        <br />
+        <br />
+    </div>
+
+    <div class="col-md-2"></div>
+
+
+    <div class="box col-md-5">
+        <br />
+        <h4 translate-keep-content translate="settings.panel.name">Panel name</h4>
+
+        <input type="text" class="form-control" ng-blur="vm.saveOptions()" ng-model="settings.panel_name" placeholder="{{vm.textboxPlaceholders.panel_name}}" />
+
+        <br />
+        <br />
+        <h4 translate-keep-content translate="settings.panel.appearance.header">Appearance</h4>
+
+        <label translate-keep-content translate="settings.panel.appearance.theme">Theme</label>
+        <select ng-if="vm.supportsTheming" class="form-control" ng-change="vm.saveOptions()" ng-model="settings.theme" ng-options="theme.id as theme.name for theme in vm.themes"></select>
+        <div class="alert alert-warning" ng-if="!vm.supportsTheming" translate-keep-content translate="settings.panel.appearance.theme.not_supported">Themes are not compatible with this browser.</div>
+        <br />
+        <br />
+        <label translate-keep-content translate="settings.panel.appearance.additional_stylesheet">Additional stylesheet (optional)</label>
+        <input type="text" class="form-control" ng-blur="vm.saveOptions()" ng-model="vm.additional_stylesheet_url" placeholder="{{vm.textboxPlaceholders.additional_stylesheet}}" />
+        <br />
+        <br />
+        <label translate-keep-content translate="settings.panel.appearance.background_image">Background image (optional)</label>
+        <input type="text" class="form-control" ng-blur="vm.saveOptions()" ng-model="vm.background_image"  placeholder="{{vm.textboxPlaceholders.background_image}}" />
+        <br />
+        <br />
+        <label translate-keep-content translate="settings.panel.appearance.drawer_heading_image">Drawer heading image (optional)</label>
+        <input type="text" class="form-control" ng-blur="vm.saveOptions()" ng-model="vm.drawer_heading_image"  placeholder="{{vm.textboxPlaceholders.drawer_heading_image}}" />
+        <br />
+        <br />
+        <div class="input-group">
+            <input type="checkbox" ng-model="settings.no_scrolling" ng-change="vm.saveOptions()" id="no_scrolling" /><label for="no_scrolling">&nbsp;<span translate-keep-content translate="settings.panel.appearance.prevent_scrolling">Prevent scrolling (when not editing)</span></label>
+        </div>
+        <div class="input-group">
+            <input type="checkbox" ng-model="settings.hide_drawer_footer" ng-change="vm.saveOptions()" id="hide_drawer_footer" /><label for="hide_drawer_footer">&nbsp;<span translate-keep-content translate="settings.panel.appearance.hide_drawer_footer">Hide the drawer's footer</span></label>
+        </div>
+        <div class="input-group">
+            <label translate-keep-content translate="settings.panel.appearance.hide_toolbar_buttons">Hide toolbar buttons:</label> &nbsp;
+            <div style="display:inline-block">
+                <input type="checkbox" ng-model="settings.hide_speak_button" ng-change="vm.saveOptions()" id="hide_speak_button" /><label for="hide_speak_button">&nbsp;<span translate-keep-content translate="dashboard.toolbar.speak">Speak</span></label> &nbsp;
+                <input type="checkbox" ng-model="settings.hide_refresh_button" ng-change="vm.saveOptions()" id="hide_refresh_button" /><label for="hide_refresh_button">&nbsp;<span translate-keep-content translate="dashboard.toolbar.refresh">Refresh</span></label> &nbsp;
+                <input type="checkbox" ng-model="settings.hide_fullscreen_button" ng-change="vm.saveOptions()" id="hide_fullscreen_button" /><label for="hide_fullscreen_button">&nbsp;<span translate-keep-content translate="dashboard.toolbar.fullscreen">Fullscreen</span></label>
+            </div>
+        </div>
+        <div class="input-group">
+            <input type="checkbox" ng-model="settings.show_header_clock" ng-change="vm.saveOptions()" id="show_header_clock" /><label for="show_header_clock">&nbsp;<span translate-keep-content translate="settings.panel.appearance.show_clock">Show a clock on the header</span></label>
+        </div>
+        <label ng-if="settings.show_header_clock" translate-keep-content translate="settings.panel.appearance.show_clock.header_format">Header clock format</label>
+        <input ng-if="settings.show_header_clock" type="text" class="form-control" ng-blur="vm.saveOptions()" ng-model="vm.header_clock_format" placeholder="{{vm.textboxPlaceholders.clock_format}}" />
+
+        <br />
+        <br /> 
+        <h4 translate-keep-content translate="settings.panel.customwidgets.header">Custom Widgets</h4>
+        <a class="btn btn-lg btn-primary" href="#/settings/widgets">
+            <span translate-keep-content translate="settings.panel.customwidgets.manage">Manage</span> &gt;
+        </a>
+
+        <br />
+        <br /> 
+        <br /> 
+        <h4 translate-keep-content translate="settings.panel.voicesupport.header">Voice Support</h4>
+        <label translate-keep-content translate="settings.panel.voicesupport.speech_synthesis_voice">Speech synthesis voice</label>
+
+        <select class="form-control" ng-change="vm.saveOptions()" ng-model="settings.speech_synthesis_voice" ng-options="voice.name as voice.name + (voice.lang ? ' ('+voice.lang+')' : '') for voice in vm.voices">
+            <option value=""></option>
+        </select>
+        <small translate-keep-content translate="settings.panel.voicesupport.speech_synthesis_voice.hint">Available voices depend on the operating system and browser environments.</small>
+        <br />
+        <button class="btn btn-primary" ng-click="vm.speakTestSentence()" translate-keep-content translate="settings.panel.voicesupport.speech_synthesis_voice.test">Test</button>
+        <br />
+        <br />
+        <div class="input-group" ng-if="vm.supportsSpeech">
+            <input type="checkbox" ng-model="settings.floating_speech" ng-change="vm.saveOptions()" id="floating_speech" />
+            <label for="floating_speech">&nbsp;<span translate-keep-content translate="settings.panel.voicesupport.floating_speech_button">Display a floating speech button at the bottom of the screen</span></label>
+        </div>
+        <br />
+        <label translate-keep-content translate="settings.panel.voicesupport.speech_synthesis_item">Speak the new value of the following item when it changes:</label>
+        <select ng-model="settings.speech_synthesis_item" ng-change="vm.saveOptions()" ng-options="item.name as item.name for item in items | filter: vm.isStringItem" class="form-control">
+            <option value=""></option>
+        </select>
+        <br />
+        <br />
+
+        <h4 translate-keep-content translate="settings.panel.dashboard_control.header">Switch dashboard with item value</h4>    
+        <label translate-keep-content translate="settings.panel.dashboard_control.item">When this item changes to a dashboard's name, switch to it:</label>
+        <div class="form-group">
+        <select ng-model="settings.dashboard_control_item" ng-change="vm.saveOptions()" ng-options="item.name as item.name for item in items | filter: vm.isStringItem" class="form-control">
+            <option value=""></option>
+        </select>
+        </div>
+
+        <br />
+        <br />
+
+    </div>
+</div>

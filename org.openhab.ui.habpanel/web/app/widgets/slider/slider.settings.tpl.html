@@ -1,0 +1,192 @@
+<div>
+    <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
+            <h3 translate-keep-content translate="widget.slider.settings.header">Slider Settings</h3>
+        </div>
+
+        <div class="modal-body">
+            <uib-tabset>
+                <uib-tab heading="{{'General' | translation:'widget.common.general'}}">
+                    <br />
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate>Name</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <input name="name" type="text" ng-model="form.name" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{error: _form.item.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate>openHAB Item</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <item-picker ng-model="form.item"></item-picker>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-6">
+                                    <div class="form-group" ng-class="{error: _form.floor.$error && _form.submitted}">
+                                        <label class="control-label col-xs-4" translate-keep-content translate="widget.common.min">Min</label>
+                                        <div class="col-xs-6">
+                                            <input name="min" type="number" step="any" ng-model="form.floor" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group" ng-class="{error: _form.ceil.$error && _form.submitted}">
+                                        <label class="control-label col-xs-4" translate-keep-content translate="widget.common.max">Max</label>
+                                        <div class="col-xs-6">
+                                            <input name="max" type="number" step="any" ng-model="form.ceil" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group" ng-class="{error: _form.step.$error && _form.submitted}">
+                                        <label class="control-label col-xs-4" translate-keep-content translate="widget.common.step">Step</label>
+                                        <div class="col-xs-6">
+                                            <input name="step" type="number" step="any" ng-model="form.step" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group" ng-class="{error: _form.unit.$error && _form.submitted}">
+                                        <label class="control-label col-xs-4" translate-keep-content translate="widget.common.unit">Unit</label>
+                                        <div class="col-xs-6">
+                                            <input name="unit" type="text" ng-model="form.unit" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12 col-md-12">
+                                <div class="form-group" ng-class="{error: _form.vertical.$error && _form.submitted}">
+                                    <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.slider.general.orientation">Orientation</label>
+                                    <div class="col-lg-9 col-md-9">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="vertical" ng-model="form.vertical" /> <span translate-keep-content translate="widget.slider.general.orientation.vertical">Vertical slider</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                </uib-tab>
+
+                <uib-tab heading="{{'Advanced' | translation:'widget.common.advanced'}}">
+                    <br />
+                    <div class="row">
+
+                        <div class="col-xs-12">
+                            <div class="form-group" ng-class="{error: _form.hidelabels.$error && _form.submitted}">
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="hidelabel" ng-model="form.hidelabel" /> <span translate-keep-content translate="widget.slider.advanced.hidelabel">Hide title label</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{error: _form.hidelimits.$error && _form.submitted}">
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="hidelimits" ng-model="form.hidelimits" /> <span translate-keep-content translate="widget.slider.advanced.hidelimits">Hide limits labels</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{error: _form.hidepointer.$error && _form.submitted}">
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="hidepointer" ng-model="form.hidepointer" /> <span translate-keep-content translate="widget.slider.advanced.hidepointer">Hide current value label</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div class="form-group" ng-class="{error: _form.showticks.$error && _form.submitted}">
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="showticks" ng-model="form.showticks" /> <span translate-keep-content translate="widget.slider.advanced.showticks">Show ticks</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{error: _form.showticksvalues.$error && _form.submitted}">
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.showticksvalues" /> <span translate-keep-content translate="widget.slider.advanced.showticksvalues">Show ticks labels</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div class="form-group" ng-class="{error: _form.showticks.$error && _form.submitted}">
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="showticks" ng-model="form.inverted" /> <span translate-keep-content translate="widget.slider.advanced.inverted">Reverse direction</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div class="form-group" ng-class="{error: _form.bigslider.$error && _form.submitted}">
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="bigslider" ng-model="form.bigslider" /> <span translate-keep-content translate="widget.slider.advanced.bigslider">Big slider (horizontal only)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </uib-tab>
+
+                <uib-tab heading="{{'Backdrop' | translation:'widget.slider.backdrop'}}">
+                    <br />
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-group" ng-class="{error: _form.backdrop_icon.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate>Backdrop Icon</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <icon-picker iconset="form.backdrop_iconset" icon="form.backdrop_icon"></icon-picker>
+                                    <div ng-if="form.backdrop_icon" class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.backdrop_center" /> <span translate-keep-content translate="widget.common.backdrop_center">Center backdrop horizontally</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </uib-tab>
+            </uib-tabset>
+        </div>
+
+
+
+        <div class="modal-footer">
+            <a ng-click="remove()" class="btn btn-danger pull-left" tabindex="-1"><i class="glyphicon glyphicon-trash"></i>&nbsp;<span translate>Delete</span></a>
+            <a ng-click="dismiss()" class="btn btn-default" tabindex="-1"><i class="glyphicon glyphicon-remove"></i>&nbsp;<span translate>Cancel</span></a>
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;<span translate>Save</span></button>
+        </div>
+    </form>
+</div>

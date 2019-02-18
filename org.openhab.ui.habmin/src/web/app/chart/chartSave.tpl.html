@@ -1,0 +1,43 @@
+<div class="modal-header">
+    <h3 class="modal-title" i18n="chart.SaveChartTitle"></h3>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xs-6">
+            <ul class="nav nav-pills nav-stacked">
+                <li ng-class="{'active':showTab==0}">
+                    <a ng-click="showTab=0">
+                        <span i18n="chart.SaveGeneral"></span>
+                    </a>
+                </li>
+                <li ng-class="{'active':showTab==1}"><a ng-click="showTab=1">
+                    <span i18n="chart.SaveLeftAxis"></span>
+                </a>
+                </li>
+                <li ng-class="{'active':showTab==2}">
+                    <a ng-click="showTab=2">
+                        <span i18n="chart.SaveRightAxis"></span>
+                    </a>
+                </li>
+                <li ng-class="{'active':showTab==item.item}" ng-repeat="item in items">
+                    <a ng-click="$parent.showTab=item.item">
+                        <div>{{item.label}}</div>
+                        <div class="small">{{item.item}}</div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-xs-6">
+            <chart-save-general ng-show="showTab==0" model="general"></chart-save-general>
+            <chart-save-axis ng-show="showTab==1" model="leftaxis"></chart-save-axis>
+            <chart-save-axis ng-show="showTab==2" model="rightaxis"></chart-save-axis>
+            <chart-save-item ng-repeat="item in items" model="choice"
+                             ng-show="showTab==item.item"></chart-save-item>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="ok()" i18n="common.save"></button>
+    <button type="button" class="btn btn-warning" ng-click="cancel()" i18n="common.cancel"></button>
+</div>

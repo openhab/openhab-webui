@@ -1,0 +1,15 @@
+.image {
+    display: flex;
+    border: 1px solid #456;
+    border: 1px solid var(--image-border, #456);
+}
+
+.image-content {
+    margin: auto;
+}
+
+.image-content img {
+    zoom: 15;
+    width: 100%;
+    height: 100%;
+}

@@ -1,0 +1,65 @@
+{
+  "name": "habpanel",
+  "version": "1.0.0",
+  "homepage": "https://github.com/ghys/habpanel",
+  "authors": [
+    "Yannick Schaus",
+    "Kuba Wolanin"
+  ],
+  "description": "Dashboard user interface for openHAB",
+  "main": "",
+  "moduleType": [],
+  "keywords": [
+    "dashboard",
+    "panel",
+    "openhab",
+    "smarthome",
+    "ui"
+  ],
+  "license": "EPL",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.5.11",
+    "angular-gridster": "~0.13.14",
+    "angular-bootstrap": "^1.x",
+    "angular-fullscreen": "~1.0.1",
+    "angular-i18n": "~1.5.11",
+    "angular-prompt": "~1.2",
+    "angular-local-storage": "~0.4.0",
+    "angular-route": "~1.5.11",
+    "angular-sanitize": "~1.5.11",
+    "angular-touch": "~1.5.11",
+    "angularjs-slider": "~5.4.3",
+    "d3": "^3.5.x",
+    "ng-knob": "https://github.com/ghys/ng-knob.git#0.1.6",
+    "sprintf": "~1.0.3",
+    "inobounce": "iNoBounce#~0.1.2",
+    "angular-ui-codemirror": "~0.3.0",
+    "oclazyload": "ocLazyLoad#~1.0.9",
+    "angular-clipboard": "~1.5.0",
+    "bootstrap-sass": "^3.3.7",
+    "roboto-fontface": "^0.5.0",
+    "angular-ui-clock": "latest",
+    "angular-file-saver": "~1.1.2",
+    "event-source-polyfill": "latest",
+    "angular-snap": "^1.8.5",
+    "angular-ui-select": "^0.19.6",
+    "angular-dynamic-locale": "^0.1.32",
+    "selectize": "~0.12.4",
+    "d3-timeline": "master",
+    "aCKolor": "https://github.com/ghys/aCKolor.git#3.0.2-habpanel",
+    "angular-translate": "^2.17.0",
+    "angular-translate-loader-static-files": "^2.17.0",
+    "angular-translate-loader-partial": "^2.17.0"
+  },
+  "resolutions": {
+    "angular": "~1.5.9"
+  }
+}

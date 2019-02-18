@@ -1,0 +1,51 @@
+<div>
+    <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
+            <h3 translate-keep-content translate="widget.colorpicker.settings.header">Color Picker Settings</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>Name</label>
+                <div class="col-lg-9 col-md-9">
+                    <input name="name" type="text" ng-model="form.name" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group" ng-class="{error: _form.item.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>openHAB Item</label>
+                <div class="col-lg-9 col-md-9">
+                    <item-picker ng-model="form.item" filter-type="Color" include-groups="true"></item-picker>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{error: _form.style.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.colorpicker.type">Type</label>
+                <div class="col-lg-9 col-md-9">
+                    <select ng-model="form.style" class="form-control">
+                        <option value="default" translate-keep-content translate="widget.colorpicker.type.hsl">HSL Sliders</option>
+                        <option value="aCKolor" translate-keep-content translate="widget.colorpicker.type.ackolor">aCKolor style (modal picker)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" ng-if="form.style === 'aCKolor'">
+                <label class="control-label col-lg-3 col-md-3"></label>
+                <div class="col-lg-9 col-md-9">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="blur" ng-model="form.blur_background" /> <span translate-keep-content translate="widget.colorpicker.blur_background">Apply blurring effect to background</span>
+                            <br />
+                            <small translate-keep-content translate="widget.colorpicker.blur_background.warning">Warning: This can cause performance problems on tablets</small>
+                        </label>
+                    </div>
+                </div>
+            </div>            
+        </div>
+
+        <div class="modal-footer">
+            <a ng-click="remove()" class="btn btn-danger pull-left" tabindex="-1"><i class="glyphicon glyphicon-trash"></i>&nbsp;<span translate>Delete</span></a>
+            <a ng-click="dismiss()" class="btn btn-default" tabindex="-1"><i class="glyphicon glyphicon-remove"></i>&nbsp;<span translate>Cancel</span></a>
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;<span translate>Save</span></button>
+        </div>
+    </form>
+</div>

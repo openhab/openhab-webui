@@ -1,0 +1,21 @@
+.template-container {
+  display: flex;
+  width: 100%;
+}
+
+.template-contents {
+  display: block;
+  margin: auto;
+  text-align: center;
+  width: 100%;
+}
+
+.cm-template-expression {
+  color: #0ca;
+}
+
+.cm-habpanel-function {
+  color: #a0c;
+  font-weight: bold;
+  font-style: italic;
+}

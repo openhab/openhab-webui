@@ -1,0 +1,15 @@
+{
+  "ApproveAllConfirmMsg": "Are you sure you wish to add all entries in the inbox to as new things?",
+  "ApproveAllConfirmTitle": "Approve All Inbox Entries",
+  "ClearConfirmMsg": "Are you sure you wish to clear the discovery inbox. All things will be removed and will need to be rediscovered!",
+  "ClearConfirmTitle": "Clear Inbox",
+  "ClearFail": "Clearing the inbox failed for one or more entries!",
+  "DeleteConfirmMsg": "Are you sure you want to delete the thing from the inbox?",
+  "DeleteConfirmTitle": "Delete Thing From Inbox",
+  "IgnoreConfirmMsg": "Are you sure you want to ignore the thing in the inbox?",
+  "IgnoreConfirmTitle": "Ignore Thing In Inbox",
+  "IgnoreFail": "Failed to ignore <b><i>{name}</i></b>",
+  "NewThing": "New thing discovered <b><i>{name}</i></b>.",
+  "StartFail": "Discovery failed for binding <b><i>{name}</i></b>",
+  "StartOk": "Discovery started for binding <b><i>{name}</i></b>"
+}

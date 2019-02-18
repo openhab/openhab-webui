@@ -1,0 +1,115 @@
+<form class="form" role="form">
+
+    <div class="form-group">
+        <label for="inputLabel" class="control-label" i18n="chart.SaveItemLabel"></label>
+
+        <div>
+            <input type="text" ng-model="model.label" class="form-control" id="inputLabel" placeholder="Label">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inputDecimalPlaces" class="control-label" i18n="chart.SaveItemDecimals"></label>
+
+        <div>
+            <input type="number" class="form-control" id="inputDecimalPlaces" ng-model="model.format"
+                   placeholder="format">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inputAxis" class="control-label" i18n="chart.SaveItemAxes"></label>
+
+        <div>
+            <select ng-model="model.axis" class="form-control" id="inputAxis">
+                <option value="left" i18n="chart.ItemLeftAxis"></option>
+                <option value="right" i18n="chart.ItemRightAxis"></option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inputStyle" class="control-label" i18n="chart.SaveItemStyle"></label>
+
+        <div>
+            <select ng-model="model.chart" class="form-control" id="inputStyle">
+                <option value="line" i18n="chart.SaveItemStyleLine"></option>
+                <option value="bar" i18n="chart.SaveItemStyleBar"></option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label" i18n="chart.SaveItemLineColor"></label>
+
+        <div>
+            <pick-a-color id="inputColor" ng-model="model.lineColor"></pick-a-color>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inputLineWidth" class="control-label" i18n="chart.SaveItemLineWidth"></label>
+
+        <div>
+            <input type="number" class="form-control" id="inputLineWidth" ng-model="model.lineWidth"
+                   placeholder="width">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label" i18n="chart.SaveItemLineStyle"></label>
+
+        <div>
+            <select-line-style id="inputLineStyle" ng-model="model.lineStyle"></select-line-style>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inputFill" class="control-label" i18n="chart.SaveItemFill"></label>
+
+        <div>
+            <select ng-model="model.axis" class="form-control" id="inputFill">
+                <option value="none" i18n="chart.ItemFillNone"></option>
+                <option value="top" i18n="chart.ItemFillTop"></option>
+                <option value="bottom" i18n="chart.ItemFillBottom"></option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label" i18n="chart.SaveItemFillColor"></label>
+
+        <div>
+            <pick-a-color id="fillColor" ng-model="model.fillColor"></pick-a-color>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inputPoints" class="control-label" i18n="chart.SaveItemPointType"></label>
+
+        <div>
+            <select ng-model="model.axis" class="form-control" id="inputPoints">
+                <option value="none" i18n="chart.ItemPointsNone"></option>
+                <option value="circle" i18n="chart.ItemPointsCircle"></option>
+                <option value="square" i18n="chart.ItemPointsSquare"></option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inputPointSize" class="control-label" i18n="chart.SaveItemPointSize"></label>
+
+        <div>
+            <input type="number" class="form-control" id="inputPointSize" ng-model="model.pointsSize"
+                   placeholder="size">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inputRepeatTime" class="control-label" i18n="chart.SaveItemRepeatTime"></label>
+
+        <div>
+            <input type="number" class="form-control" id="inputRepeatTime" placeholder="repeat time">
+        </div>
+    </div>
+</form>

@@ -1,0 +1,18 @@
+.switch {
+    display: flex;
+    cursor: pointer;
+}
+
+.switch-content {
+    margin: auto;
+    text-align: center;
+}
+
+.switch-off {
+    color: #89a;
+    color: var(--switch-off-color, #89a);
+}
+
+.switch-icon {
+    font-size: 24px;
+}

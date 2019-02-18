@@ -1,0 +1,93 @@
+<ul class="nav navbar-nav">
+    <li class="dropdown items-menu" ng-class="{'open': itemListOpen}">
+        <a class="navbar-button" ng-init="itemListOpen=false" ng-click="itemListOpen=!itemListOpen">
+            <i class="fa fa-list-alt"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-right">
+            <li class="search-form">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon"><span class="fa fa-filter"></span></span>
+                    <input type="text" class="form-control" placeholder={{filterDefaultString}} ng-model="filter.text"
+                           ng-model-options="{debounce: 500}">
+                    <span class="input-group-addon" ng-click="filter.text=''">
+                        <span class="fa fa-minus-circle"></span>
+                    </span>
+                </div>
+            </li>
+            <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu scroll-body" slimscroll="{size: 3, height:'100%'}">
+                    <li ng-repeat="item in items | filter:filterFunction">
+                        <a role="presentation" ng-show="item.label" ng-hide="item.filter"
+                           class="list-group-item" ng-class="{'active':item.selected}"
+                           ng-click="selectItem(item)">
+                            <habmin-icon class="fa fa-fw" category="{{item.category}}"></habmin-icon>
+                            <span>{{item.label}}</span>
+                            <span class="pull-right">
+                                <span ng-show="item.selected" class="fa fa-check-square-o"></span>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="footer">
+                <button type="button" class="btn btn-xs btn-default"
+                        ng-click="itemListOpen=false">
+                    <span class="fa fa-fw fa-times text-danger"></span>
+                    <span i18n="common.close"></span>
+                </button>
+
+                <button type="button" class="btn btn-xs btn-default"
+                        ng-click="clearList()">
+                    <span class="fa fa-fw fa-eraser"></span>
+                    <span i18n="common.clear"></span>
+                </button>
+
+                <button type="button" class="btn btn-xs btn-default"
+                        ng-click="doGraph()">
+                    <span class="fa fa-fw fa-check text-success"></span>
+                    <span i18n="common.ok"></span>
+                </button>
+            </li>
+        </ul>
+    </li>
+
+    <li class="dropdown" uib-dropdown ng-if="services.length > 1">
+        <a class="dropdown-toggle" uib-dropdown-toggle>
+            <i class="fa fa-database"></i>
+        </a>
+        <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+            <li ng-repeat="service in services">
+                <a ng-click="selectService(service)">
+                    <span class="fa fa-fw fa-database"></span>
+                    <span>{{service.label}}</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li ng-if="services!=null && services.length==0">
+        <a class="navbar-button" role="button">
+            <i class="fa fa-warning text-warning"></i>
+        </a>
+    </li>
+
+    <li>
+        <a class="navbar-button" role="button" ng-click="saveChart()"
+           tooltip-placement="bottom" tooltip="{{tooltipSave}}" tooltip-popup-delay="500"
+           tooltip-enable="true" tooltip-trigger tooltip-animation="false">
+            <i class="fa fa-save"></i>
+        </a>
+    </li>
+
+    <li>
+        <a class="navbar-button" role="button"
+           tooltip-placement="bottom" tooltip="{{tooltipDelete}}" tooltip-popup-delay="500"
+           tooltip-enable="true" tooltip-trigger tooltip-animation="false"
+           ng-confirm-click="deleteChart()" ng-confirm-icon="warning"
+           i18n-attr="{'ngConfirmMessage': 'chart.DeleteChartCheck','ngConfirmTitle': 'chart.DeleteChart','ngConfirmNoBtn': 'common.no', 'ngConfirmYesBtn': 'common.yes' }">
+            <i class="fa fa-trash-o"></i>
+        </a>
+    </li>
+
+</ul>

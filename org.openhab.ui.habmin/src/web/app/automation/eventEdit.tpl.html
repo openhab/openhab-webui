@@ -1,0 +1,90 @@
+<div class="modal-header">
+    <h3 class="modal-title" i18n="schedule.EditTitle"></h3>
+</div>
+<div class="modal-body">
+    <ul class="nav nav-tabs">
+        <li role="presentation" ng-class="{'active': tabDisplayed=='event'}" ng-click="tabDisplayed='event'"><a
+                href="#">Event</a></li>
+        <li role="presentation" ng-class="{'active': tabDisplayed=='rule'}" ng-click="tabDisplayed='rule'"><a href="#">Rule</a>
+        </li>
+    </ul>
+
+    <div ng-show="tabDisplayed=='event'">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label for="inputLabel" class="control-label" i18n="schedule.EditLabel"></label>
+
+                <div>
+                    <input type="text" ng-model="event.label" class="form-control" id="inputLabel"
+                           i18n-attr="{placeholder: 'habmin.itemSelectLabel'}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" i18n="schedule.EditStart"></label>
+
+                <p class="input-group">
+                    <input type="text" class="form-control" datetime-picker="dd MMM yyyy HH:mm"
+                           ng-model="event.start" is-open="startOpen"/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="startOpen=true">
+                                <i class="fa fa-calendar"></i>
+                            </button>
+                        </span>
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" i18n="schedule.EditDaily"></label>
+
+                <div>
+                    <form-select-yes-no ng-model="event.daily" placeholder="Label"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputRepeat" class="control-label" i18n="schedule.EditRepeat"></label>
+
+                <div>
+                    <ui-select id="inputRepeat"
+                               ng-model="event.repeat"
+                               theme="bootstrap"
+                               search-enabled="false"
+                            >
+                        <ui-select-match i18n-attr="{placeholder: 'schedule.EditRepeat'}">
+                            {{$select.selected.label}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="repeat.period as repeat in repeater">
+                            <span>{{repeat.label}}</span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputCategory" class="control-label" i18n="habmin.itemEditCategory"></label>
+
+                <div>
+                    <ui-select id="inputCategory"
+                               ng-model="item.category"
+                               theme="bootstrap"
+                               search-enabled="false"
+                            >
+                        <ui-select-match i18n-attr="{placeholder: 'habmin.itemSelectCategory'}">
+                            <habmin-icon class="fa fa-fw" category="{{$select.selected.id}}"></habmin-icon>
+                            {{$select.selected.name}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="category.id as category in categories | orderBy: 'name'">
+                            <habmin-icon class="fa fa-fw" category="{{category.id}}"></habmin-icon>
+                            <span>{{category.name}}</span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" ng-click="ok()" i18n="common.save"></button>
+        <button type="button" class="btn btn-warning" ng-click="cancel()" i18n="common.cancel"></button>
+    </div>

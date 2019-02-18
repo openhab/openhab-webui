@@ -1,0 +1,14 @@
+{
+  "DeleteRuleCheck": "Er du sikker på at du vil slette regel '{{selectedRule.name}}'?",
+  "DeleteRuleTitle": "Slet regel",
+  "ErrorLoadingRule": "Fejl ved indlæsning af regel <i>{1}</i>:<BR /><b><i>{2}</i></b>.",
+  "ErrorLoadingRuleList": "Fejl ved indlæsning af regler",
+  "NewRuleTitle": "Ny regel",
+  "NoDevices": "Ingen enheder",
+  "NoRules": "Ingen regler tilgængelig",
+  "Rule": "Regel",
+  "Source": "Kilde",
+  "UnsavedChangesCheck": "Der er ikke gemte ændringer i regel '{rulename}'. Er du sikker på at du vil forsætte - hvis du trykker Ja er dine ændringer tabt!",
+  "UnsavedChangesTitle": "Advarsel: Ikke gemte ændringer",
+  "Value": "Værdi"
+}

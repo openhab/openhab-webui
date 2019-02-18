@@ -1,0 +1,941 @@
+# HABPanel translation PO file - must be converted to .json
+# run `gulp i18n-po2json`
+
+msgid ""
+msgstr ""
+"Project-Id-Version: habpanel\n"
+"Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
+
+# DASHBOARD DESIGNER
+
+#. Save button in the dashboard designer
+msgctxt "designer.save"
+msgid "Save"
+msgstr ""
+
+#. Run button in the dashboard designer
+msgctxt "designer.run"
+msgid "Run"
+msgstr ""
+
+#. Add widget button in the dashboard designer
+msgctxt "designer.addwidget"
+msgid "Add Widget"
+msgstr ""
+
+#. Tutorial text with arrow when on an empty dashboard
+msgctxt "designer.addwidget.hint"
+msgid "Add some widgets"
+msgstr ""
+
+#. Header of the custom widget section (beware, it might overlap the cogs icon on the right)
+msgctxt "designer.addwidget.customwidgets"
+msgid "Custom widgets"
+msgstr ""
+
+#. Open widget gallery
+msgctxt "designer.addwidget.getmore"
+msgid "Get more..."
+msgstr ""
+
+#. Tooltip when hovering the "Get more" menu entry
+msgctxt "designer.addwidget.getmore.tooltip"
+msgid "Open the widget gallery to import more widgets"
+msgstr ""
+
+#. Edit option in a widget placeholder context menu (3-dot icon)
+msgctxt "designer.contextmenu.edit"
+msgid "Edit..."
+msgstr ""
+
+#. Copy/move option in a widget placeholder context menu (3-dot icon)
+msgctxt "designer.contextmenu.copymove"
+msgid "Copy/move to..."
+msgstr ""
+
+#. Delete option in a widget placeholder context menu (3-dot icon)
+msgctxt "designer.contextmenu.delete"
+msgid "Delete"
+msgstr ""
+
+#. Title of copy/move widget dialog
+msgctxt "designer.copymove.header"
+msgid "Copy/move {{widgetName}}"
+msgstr ""
+
+#. Alongside the dropdown dashboard selection
+msgctxt "designer.copymove.todashboard"
+msgid "To dashboard"
+msgstr ""
+
+#. Move button
+msgctxt "designer.copymove.move"
+msgid "Move"
+msgstr ""
+
+#. Copy button
+msgctxt "designer.copymove.copy"
+msgid "Copy"
+msgstr ""
+
+#. Default name of a newly created widget
+msgctxt "designer.newwidget.defaultname"
+msgid "New Widget"
+msgstr ""
+
+msgctxt "designer.serversavefailed"
+msgid "Server save failed!"
+msgstr ""
+
+# DASHBOARD SETTINGS DIALOG
+
+#. Title of the dashboard settings dialog
+msgctxt "dashboard.settings.dialog.title"
+msgid "Dashboard Settings"
+msgstr ""
+
+#. Tab header
+msgctxt "dashboard.settings.tile"
+msgid "Menu tile"
+msgstr ""
+
+#. Textbox header
+msgctxt "dashboard.settings.tile.background_image_url"
+msgid "Background Image URL"
+msgstr ""
+
+#. Color picker header
+msgctxt "dashboard.settings.tile.title_text_color"
+msgid "Title Text color"
+msgstr ""
+
+#. Checkbox header
+msgctxt "dashboard.settings.tile.click_feedback"
+msgid "Click feedback"
+msgstr ""
+
+#. Checkbox label
+msgctxt "dashboard.settings.tile.click_feedback.description"
+msgid "Don't brighten tile on click/tap"
+msgstr ""
+
+#. Tab header
+msgctxt "dashboard.settings.advanced"
+msgid "Advanced"
+msgstr ""
+
+#. Alert display at the top
+msgctxt "dashboard.settings.advanced.warning"
+msgid "These options are currently experimental, unstable or targeted at advanced users! Use at your own risk."
+msgstr ""
+
+#. Tab header
+msgctxt "dashboard.settings.customwidgets"
+msgid "Custom widgets"
+msgstr ""
+
+#. Alert displayed at the top
+msgctxt "dashboard.settings.customwidgets.warning"
+msgid "This feature is currently experimental, and targeted at advanced users! Use at your own risk."
+msgstr ""
+
+#. Checkbox header
+msgctxt "dashboard.settings.customwidgets.usecustomwidget"
+msgid "Use a custom widget"
+msgstr ""
+
+#. Dropdown header
+msgctxt "dashboard.settings.customwidgets.customwidget"
+msgid "Custom Widget"
+msgstr ""
+
+#. Accordion header
+msgctxt "dashboard.settings.customwidgets.tile"
+msgid "Main menu tile"
+msgstr ""
+
+#. Checkbox label
+msgctxt "dashboard.settings.customwidgets.tile.description"
+msgid "Replace the tile contents by a custom widget"
+msgstr ""
+
+#. Accordion header
+msgctxt "dashboard.settings.customwidgets.drawer"
+msgid "Drawer"
+msgstr ""
+
+#. Checkbox label
+msgctxt "dashboard.settings.customwidgets.drawer.description"
+msgid "Replace the contents of the drawer menu by a custom widget"
+msgstr ""
+
+#. Accordion header
+msgctxt "dashboard.settings.customwidgets.header"
+msgid "Dashboard header"
+msgstr ""
+
+#. Checkbox label
+msgctxt "dashboard.settings.customwidgets.header.description"
+msgid "Replace the contents of the dashboard header by a custom widget"
+msgstr ""
+
+
+# ITEM/ICON PICKERS
+
+#. Displayed in the item picker when no item selected
+msgctxt "itempicker.placeholder"
+msgid "Search or select an openHAB item"
+msgstr ""
+
+#. Icon picker dropdown placeholder
+msgctxt "iconpicker.selecticonset"
+msgid "Select icon set"
+msgstr ""
+
+#. Icon picker dropdown entry
+msgctxt "iconpicker.customicon"
+msgid "Custom icon"
+msgstr ""
+
+#. Icon picker dropdown entry
+msgctxt "iconpicker.customurl"
+msgid "Custom URL"
+msgstr ""
+
+#. Icon picker dropdown entry
+msgctxt "iconpicker.none"
+msgid "(none)"
+msgstr ""
+
+#. Appears when focusing the icon textbox when the "Custom icon" iconset is selected
+msgctxt "iconpicker.customicontooltip"
+msgid "Type the name of a <a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'>registered icon</a> (only SVG supported)<br />Examples: <em>switch</em>, <em>temperature</em> or an additional icon in your configuration's <code>icons/classic</code> folder"
+msgstr ""
+
+
+# SETTINGS SCREEN
+
+#. Screen title
+msgctxt "settings.header"
+msgid "Settings"
+msgstr ""
+
+#. Header of the storage section
+msgctxt "settings.storage.header"
+msgid "Current storage configuration"
+msgstr ""
+
+#. Radio button for local storage
+msgctxt "settings.storage.localstorage"
+msgid "Local storage"
+msgstr ""
+
+#. Explanation of the "local storage only" option
+msgctxt "settings.storage.localstorage.hint"
+msgid "The configuration is saved for this browser and device only. It will be kept as long as you don't clean up the browser's historical data."
+msgstr ""
+
+#. Link below the "local storage" option
+msgctxt "settings.storage.localstorage.edit"
+msgid "Edit the local panel configuration (experts only)"
+msgstr ""
+
+#. Prefix of a panel configuration before its name
+msgctxt "settings.storage.panelconfiguration"
+msgid "Panel configuration:"
+msgstr ""
+
+#. Prefix of the last synced line, before the date
+msgctxt "settings.storage.panelconfiguration.lastsynced"
+msgid "Last synced on"
+msgstr ""
+
+#. Displayed before the list of dashboard the panel configuration contains
+msgctxt "settings.storage.panelconfiguration.contains"
+msgid "Contains:"
+msgstr ""
+
+#. Link to create a panel configuration from the current configuration
+msgctxt "settings.storage.panelconfiguration.save"
+msgid "Save the current configuration to a new panel configuration"
+msgstr ""
+
+#. Title of the dialog box when creating a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.title"
+msgid "New panel configuration"
+msgstr ""
+
+#. Message of the dialog box when creating a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.message"
+msgid "Please choose a name for the new panel configuration (letters and digits only please):"
+msgstr ""
+
+#. Panel name (section header)
+msgctxt "settings.panel.name"
+msgid "Panel name"
+msgstr ""
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.name.hint"
+msgid "Replaces 'HABPanel' in the side drawer when set"
+msgstr ""
+
+#. Appearance (section header)
+msgctxt "settings.panel.appearance.header"
+msgid "Appearance"
+msgstr ""
+
+#. Dropown menu header
+msgctxt "settings.panel.appearance.theme"
+msgid "Theme"
+msgstr ""
+
+#. Alert banner displayed when the browsers doesn't support themes (CSS variables)
+msgctxt "settings.panel.appearance.theme.not_supported"
+msgid "Themes are not compatible with this browser."
+msgstr ""
+
+#. Setting header
+msgctxt "settings.panel.appearance.additional_stylesheet"
+msgid "Additional stylesheet (optional)"
+msgstr ""
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.appearance.additional_stylesheet.hint"
+msgid "Relative URL only; example: /static/example.css"
+msgstr ""
+
+#. Setting header
+msgctxt "settings.panel.appearance.background_image"
+msgid "Background image (optional)"
+msgstr ""
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.appearance.background_image.hint"
+msgid "Example: //source.unsplash.com/random"
+msgstr ""
+
+#. Setting header
+msgctxt "settings.panel.appearance.drawer_heading_image"
+msgid "Drawer heading image (optional)"
+msgstr ""
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.appearance.drawer_heading_image.hint"
+msgid "Example: //via.placeholder.com/265x95"
+msgstr ""
+
+#. Checkbox
+msgctxt "settings.panel.appearance.prevent_scrolling"
+msgid "Prevent scrolling (when not editing)"
+msgstr ""
+
+#. Checkbox
+msgctxt "settings.panel.appearance.hide_drawer_footer"
+msgid "Hide the drawer's footer"
+msgstr ""
+
+#. Checkbox
+msgctxt "settings.panel.appearance.hide_toolbar_buttons"
+msgid "Hide toolbar buttons:"
+msgstr ""
+
+#. Checkbox
+msgctxt "settings.panel.appearance.show_clock"
+msgid "Show a clock on the header"
+msgstr ""
+
+#. Textbox setting header, only displayed when the "Show a clock on the header" option is checked
+msgctxt "settings.panel.appearance.show_clock.header_format"
+msgid "Header clock format"
+msgstr ""
+
+#. Textbox placeholder, only displayed when the "Show a clock on the header" option is checked
+msgctxt "settings.panel.appearance.show_clock.header_format.hint"
+msgid "Default: shortTime, use AngularJS date format"
+msgstr ""
+
+#. Custom widgets settings (section header)
+msgctxt "settings.panel.customwidgets.header"
+msgid "Custom Widgets"
+msgstr ""
+
+#. Big "manage" button label (a > suffix is added)
+msgctxt "settings.panel.customwidgets.manage"
+msgid "Manage"
+msgstr ""
+
+#. Voice support (section header) - formerly (<=2.2.0) : "Voice feedback"
+msgctxt "settings.panel.voicesupport.header"
+msgid "Voice Support"
+msgstr ""
+
+#. Dropdown header - formerly (<=2.2.0) : "Voice"
+msgctxt "settings.panel.voicesupport.speech_synthesis_voice"
+msgid "Speech synthesis voice"
+msgstr ""
+
+#. Displayed below the voice dropdown
+msgctxt "settings.panel.voicesupport.speech_synthesis_voice.hint"
+msgid "Available voices depend on the operating system and browser environments."
+msgstr ""
+
+#. Test button below the voice selection - make the voice say "habpanel 1 2 3"
+msgctxt "settings.panel.voicesupport.speech_synthesis_voice.test"
+msgid "Test"
+msgstr ""
+
+#. Checkbox
+msgctxt "settings.panel.voicesupport.floating_speech_button"
+msgid "Display a floating speech button at the bottom of the screen"
+msgstr ""
+
+#. Dropdown header
+msgctxt "settings.panel.voicesupport.speech_synthesis_item"
+msgid "Speak the new value of the following item when it changes:"
+msgstr ""
+
+#. Section header
+msgctxt "settings.panel.dashboard_control.header"
+msgid "Switch dashboard with item value"
+msgstr ""
+
+#. Dropdown header
+msgctxt "settings.panel.dashboard_control.item"
+msgid "When this item changes to a dashboard's name, switch to it:"
+msgstr ""
+
+#. Local panel configuration editor header
+msgctxt "settings.localconfig.title"
+msgid "Local panel configuration editor"
+msgstr ""
+
+#. Displayed in a tooltip when hovering the exclamation mark in the local panel config editor
+msgctxt "settings.localconfig.warning"
+msgid "This is the raw configuration object representing your current configuration. Be careful while editing it by hand!"
+msgstr ""
+
+#. Blue button
+msgctxt "settings.localconfig.import"
+msgid "Import"
+msgstr ""
+
+#. Blue button
+msgctxt "settings.localconfig.export"
+msgid "Export"
+msgstr ""
+
+#. Default label for the white button on the right
+msgctxt "settings.localconfig.copy"
+msgid "Copy"
+msgstr ""
+
+#. Label displayed on the button for a few seconds after a successful copy to clipboard
+msgctxt "settings.localconfig.copied"
+msgid "Copied!"
+msgstr ""
+
+#. Default label for the red button on the right
+msgctxt "settings.localconfig.save"
+msgid "Save"
+msgstr ""
+
+#. Label displayed on the button for a few seconds after a successful save
+msgctxt "settings.localconfig.saved"
+msgid "Saved!"
+msgstr ""
+
+#. Label displayed for a few seconds on the copy or save button if an error occurred
+msgctxt "settings.localconfig.failed"
+msgid "FAILED!"
+msgstr ""
+
+#. Displayed in a dialog box
+msgctxt "settings.localconfig.error.nodashboardsfound"
+msgid "No dashboards found!"
+msgstr ""
+
+#. Title of a a dialog box
+msgctxt "settings.localconfig.parsingerror.dialog.title"
+msgid "Error"
+msgstr ""
+
+#. Message in a dialog box
+msgctxt "settings.localconfig.parsingerror.dialog.message"
+msgid "Configuration parsing error, nothing has been modified: "
+msgstr ""
+
+#. Title of a a dialog box
+msgctxt "settings.localconfig.importerror.dialog.title"
+msgid "Error"
+msgstr ""
+
+#. Message in a dialog box
+msgctxt "settings.localconfig.importerror.dialog.message"
+msgid "Problem while importing: "
+msgstr ""
+
+
+# CUSTOM WIDGETS LIST SCREEN
+
+#. Screen title
+msgctxt "customwidgets.list.header"
+msgid "Custom widgets"
+msgstr ""
+
+#. Prefix displayed before the author's name
+msgctxt "customwidgets.list.byauthor"
+msgid "by"
+msgstr ""
+
+#. Displayed in a tooltip when hovering the icon indicating a globally provisioned widget
+msgctxt "customwidgets.list.globallyprovisioned.hint"
+msgid "This widget was provisioned globally via a bundle. It cannot be modified, but may be cloned to an user-defined widget with another name."
+msgstr ""
+
+#. Displayed in a tooltip when hovering the icon indicating a user defined widget
+msgctxt "customwidgets.list.userdefined.hint"
+msgid "This widget has been defined manually in this panel configuration and can be modified."
+msgstr ""
+
+#. Custom widget context menu entry - clone a globally-provisioned widget
+msgctxt "customwidgets.list.contextmenu.clone"
+msgid "Clone widget..."
+msgstr ""
+
+#. Custom widget context menu entry - downloads a widget's .widget.json file
+msgctxt "customwidgets.list.contextmenu.exporttofile"
+msgid "Export to file"
+msgstr ""
+
+#. Custom widget context menu entry - opens a forum topic or GitHub readme
+msgctxt "customwidgets.list.contextmenu.openhelp"
+msgid "Open Help"
+msgstr ""
+
+#. Custom widget context menu entry - update the widget from its source
+msgctxt "customwidgets.list.contextmenu.update"
+msgid "Update..."
+msgstr ""
+
+#. Blue button opening a dialog
+msgctxt "customwidgets.list.newwidget"
+msgid "New widget"
+msgstr ""
+
+#. Blue button with a dropdown menu
+msgctxt "customwidgets.list.importwidget"
+msgid "Import widget"
+msgstr ""
+
+#. Import button menu entry - opens a dialog
+msgctxt "customwidgets.list.importwidget.fromfile"
+msgid "Import from file..."
+msgstr ""
+
+#. Import button menu entry - opens a dialog
+msgctxt "customwidgets.list.importwidget.fromgallery"
+msgid "Import from gallery..."
+msgstr ""
+
+#. Dialog box title
+msgctxt "customwidgets.list.add.dialog.title"
+msgid "New custom widget"
+msgstr ""
+
+#. Dialog box message
+msgctxt "customwidgets.list.add.dialog.message"
+msgid "Please choose a short name as an identifier for your widget (for example, 'window-shutter=up-down-button, 'weather-forecast' etc.). If a widget with the same identifier already exists, it will be replaced!"
+msgstr ""
+
+#. Error message, displayed in an alert box
+msgctxt "customwidgets.list.import.nojson"
+msgid "The file must have a .json extension!"
+msgstr ""
+
+#. Dialog box title
+msgctxt "customwidgets.list.import.dialog.title"
+msgid "Import widget"
+msgstr ""
+
+#. Dialog box message
+msgctxt "customwidgets.list.import.dialog.message"
+msgid "Please confirm or change the identifier of your widget (avoid spaces and special chars!). If a widget with the same identifier already exists, it will be replaced!"
+msgstr ""
+
+#. Prefix of an error message - followed by a technical exception message
+msgctxt "customwidgets.list.import.error"
+msgid "Widget import error: "
+msgstr ""
+
+#. Dialog box title
+msgctxt "customwidgets.list.update.dialog.title"
+msgid "Update widget"
+msgstr ""
+
+#. Dialog box message
+msgctxt "customwidgets.list.update.dialog.message"
+msgid "This will update widget <id> from <source_url>. Any changes you made will be overwritten! Continue?"
+msgstr ""
+
+#. Alert banner message
+msgctxt "customwidgets.list.update.error.notemplatefound"
+msgid "Couldn't update widget <id> from <source_url>: no template found"
+msgstr ""
+
+#. Alert banner message
+msgctxt "customwidgets.list.update.error.unknown"
+msgid "Couldn't update widget <id> from <source_url>: "
+msgstr ""
+
+#. Alert banner message
+msgctxt "customwidgets.list.update.success"
+msgid "Widget <id> updated successfully from <source_url>"
+msgstr ""
+
+#. Dialog box title
+msgctxt "customwidgets.list.delete.dialog.title"
+msgid "Remove widget"
+msgstr ""
+
+#. Dialog box message
+msgctxt "customwidgets.list.delete.dialog.message"
+msgid "Please confirm you want to delete this widget: "
+msgstr ""
+
+#. Dialog box title
+msgctxt "customwidgets.list.clone.dialog.title"
+msgid "Clone widget"
+msgstr ""
+
+#. Dialog box message
+msgctxt "customwidgets.list.clone.dialog.message"
+msgid "This will clone the globally provisioned widget: <id> to be modified as part of the panel configuration. Enter an unique identifier below - it must be different from the widget being cloned, and should avoid spaces and special chars. If an user-defined widget with the same identifier already exists, it will be replaced!"
+msgstr ""
+
+
+# CUSTOM WIDGETS DESIGNER
+
+#. Screen title, followed by the widget name - beware of size!
+msgctxt "customwidgets.designer.heading"
+msgid "Widget:"
+msgstr ""
+
+#. Save button on the right, default label - can be hidden on phones
+msgctxt "customwidgets.designer.save"
+msgid "Save"
+msgstr ""
+
+#. Save button on the right, displayed for a few seconds after a save - can be hidden on phones
+msgctxt "customwidgets.designer.saved"
+msgid "Saved!"
+msgstr ""
+
+#. Tab header
+msgctxt "customwidgets.designer.code"
+msgid "Code"
+msgstr ""
+
+#. Tab header
+msgctxt "customwidgets.designer.settings"
+msgid "Settings"
+msgstr ""
+
+#. Section header in the Settings tab
+msgctxt "customwidgets.designer.settings.general"
+msgid "General settings"
+msgstr ""
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.general.display_name"
+msgid "Display name"
+msgstr ""
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.general.author"
+msgid "Author"
+msgstr ""
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.general.description"
+msgid "Description"
+msgstr ""
+
+#. Section header in the Settings tab
+msgctxt "customwidgets.designer.settings.config"
+msgid "Configuration settings"
+msgstr ""
+
+#. Displayed in small text below the section header, with an information icon
+msgctxt "customwidgets.designer.settings.config.warning"
+msgid "Beware: always bear in mind instances of this widget might be existing when altering configuration settings!"
+msgstr ""
+
+#. Button label
+msgctxt "customwidgets.designer.settings.config.add"
+msgid "Add setting"
+msgstr ""
+
+#. Dropdown header
+msgctxt "customwidgets.designer.settings.config.type"
+msgid "Type"
+msgstr ""
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.string"
+msgid "String"
+msgstr ""
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.number"
+msgid "Number"
+msgstr ""
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.checkbox"
+msgid "Checkbox"
+msgstr ""
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.item"
+msgid "Item"
+msgstr ""
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.color"
+msgid "Color"
+msgstr ""
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.choices"
+msgid "Choices"
+msgstr ""
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.icon"
+msgid "Icon"
+msgstr ""
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.heading"
+msgid "Heading"
+msgstr ""
+
+#. Tooltip displayed when hovering the help icon alongside the ID field
+msgctxt "customwidgets.designer.settings.config.id.hint"
+msgid "Enter a JSON friendly key for this setting - ideally, use only lowercase letters, digits and underscores. Examples: my_setting, first_item, text_size, font_color"
+msgstr ""
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.label"
+msgid "Label"
+msgstr ""
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.default"
+msgid "Default value"
+msgstr ""
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.choices"
+msgid "Choices"
+msgstr ""
+
+#. Textbox placeholder
+msgctxt "customwidgets.designer.settings.config.choices.hint"
+msgid "Comma-separated possible values"
+msgstr ""
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.description"
+msgid "Description"
+msgstr ""
+
+#. Banner displayed when selecting the Icon type for the settings, followed by the defined settings themselves
+msgctxt "customwidgets.designer.settings.config.icon.hint"
+msgid "This will define 2 config elements:"
+msgstr ""
+
+#. Tab header
+msgctxt "customwidgets.designer.preview"
+msgid "Preview"
+msgstr ""
+
+
+# WIDGET GALLERY
+
+#. Dialog box title
+msgctxt "widgetgallery.heading"
+msgid "Widget Gallery"
+msgstr ""
+
+#. Dialog box title (when displaying a repository)
+msgctxt "widgetgallery.heading.importrepo"
+msgid "Import GitHub Repository"
+msgstr ""
+
+#. Dialog box title (when displaying a community gallery item)
+msgctxt "widgetgallery.heading.importgallery"
+msgid "Import Gallery Item"
+msgstr ""
+
+#. Alert banner message
+msgctxt "widgetgallery.warning.githubratelimit"
+msgid "Warning: rate limiting on the GitHub API will temporarily block further requests!"
+msgstr ""
+
+#. Alert banner message (2nd part)
+msgctxt "widgetgallery.warning.githubratelimit.wait"
+msgid "Wait until this time and try again:"
+msgstr ""
+
+#. Textbox placeholder
+msgctxt "widgetgallery.addressbar.hint"
+msgid "GitHub repository full name (owner/name) or URL"
+msgstr ""
+
+#. Button on the right of the addressbar
+msgctxt "widgetgallery.addressbar.go"
+msgid "Go"
+msgstr ""
+
+#. Suffix displayed after a number, i.e. "24 community contributions"
+msgctxt "widgetgallery.toolbar.communitycontributions"
+msgid "community&nbsp;contributions"
+msgstr ""
+
+#. On the right with the sort options
+msgctxt "widgetgallery.toolbar.sortby"
+msgid "sort by:"
+msgstr ""
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostrecent"
+msgid "most&nbsp;recent"
+msgstr ""
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostliked"
+msgid "most&nbsp;liked"
+msgstr ""
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostpopular"
+msgid "most&nbsp;popular"
+msgstr ""
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostdiscussed"
+msgid "most&nbsp;discussed"
+msgstr ""
+
+#. Prefix before the author's name
+msgctxt "widgetgallery.details.authorby"
+msgid "by"
+msgstr ""
+
+#. Suffix displayed after a number, i.e. "24 posts on this topic"
+msgctxt "widgetgallery.details.forumposts"
+msgid "post(s) on this topic - discuss on community.openhab.org"
+msgstr ""
+
+#. Label of the big green button when nothing to import
+msgctxt "widgetgallery.details.nothingtoimport"
+msgid "Nothing to import"
+msgstr ""
+
+#. Label of the big green button when 1 widget was found
+msgctxt "widgetgallery.details.importwidget"
+msgid "Import Widget"
+msgstr ""
+
+#. Label of the big green button when 2 or more widgets were found
+msgctxt "widgetgallery.details.importwidgets"
+msgid "Import {} Widgets"
+msgstr ""
+
+#. Label of the big blue button when there is a referenced GitHub repo
+msgctxt "widgetgallery.details.gotorepository"
+msgid "Go to the repository"
+msgstr ""
+
+#. Displyed in orange inside the big green button after a number, when some widgets are already present
+msgctxt "widgetgallery.details.toupdate"
+msgid "to update"
+msgstr ""
+
+#. Little white button label with a down caret
+msgctxt "widgetgallery.details.showdetails"
+msgid "Show details"
+msgstr ""
+
+#. Little white button label with a up caret
+msgctxt "widgetgallery.details.hidedetails"
+msgid "Hide details"
+msgstr ""
+
+#. Little white button label
+msgctxt "widgetgallery.details.downloadzip"
+msgid "Download ZIP"
+msgstr ""
+
+#. 1. Prefix of the explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.prefix"
+msgid "This"
+msgstr ""
+
+#. 2a. Name of a community contribution
+msgctxt "widgetgallery.details.widget.hint.communitycontribution"
+msgid "community contribution"
+msgstr ""
+
+#. 2b. Name of a community contribution
+msgctxt "widgetgallery.details.widget.hint.repository"
+msgid "repository"
+msgstr ""
+
+#. 3. Suffix of the explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.suffix"
+msgid "contains the following widgets; you can import them individually:"
+msgstr ""
+
+#. Explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.nowidgets"
+msgid "No widgets were found (*.widget.json files)! Please report this."
+msgstr ""
+
+#. Explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.checkrepo"
+msgid "The widgets are likely in the referenced GitHub repository. Click the 'Go to the repository' button to open it."
+msgstr ""
+
+#. Green button in the expanded details section
+msgctxt "widgetgallery.details.widget.import"
+msgid "Import widget"
+msgstr ""
+
+#. Orange button in the expanded details section
+msgctxt "widgetgallery.details.widget.update"
+msgid "Update widget"
+msgstr ""
+
+#. Disabled button in the expanded details section after a widget was imported/updated
+msgctxt "widgetgallery.details.widget.imported"
+msgid "Widget imported!"
+msgstr ""
+
+#. Alert banner, followed by a technical exception message
+msgctxt "widgetgallery.error"
+msgid "Error:"
+msgstr ""
+
+#. Dialog box title
+msgctxt "widgetgallery.widgetsdetected.dialog.title"
+msgid "Existing widgets detected"
+msgstr ""
+
+#. Dialog box message
+msgctxt "widgetgallery.widgetsdetected.dialog.message"
+msgid "Warning: please confirm you wish to update <nbexisting> existing widgets, overwriting any eventual changes made locally! If unsure, cancel and click Show details to review the list of affected widgets."
+msgstr ""
+

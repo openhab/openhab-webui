@@ -1,0 +1,34 @@
+<div class="modal-header">
+    <h3 class="modal-title" i18n="item.LinkTitle"></h3>
+</div>
+<div class="modal-body">
+    <form class="form" role="form">
+
+        <div class="form-group">
+            <label for="inputItem" class="control-label" i18n="item.EditName"></label>
+
+            <div>
+                <ui-select id="inputItem"
+                           ng-model="result.name"
+                           theme="bootstrap"
+                           search-enabled="true">
+                    <ui-select-match i18n-attr="{placeholder: 'item.SelectName'}">
+                        <habmin-icon class="fa fa-fw" category="{{$select.selected.category}}"></habmin-icon>
+                        <span>{{$select.selected.name}}</span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item.name as item in items | orderBy: 'name' | filter: $select.search">
+                        <habmin-icon class="fa fa-fw" category="{{item.category}}"></habmin-icon>
+                        <span>{{item.label}}</span><br>
+                        <span class="small">{{item.name}}</span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" ng-disabled="choiceSelected" class="btn btn-primary" ng-click="ok()" i18n="common.save"></button>
+    <button type="button" class="btn btn-warning" ng-click="cancel()" i18n="common.cancel"></button>
+</div>

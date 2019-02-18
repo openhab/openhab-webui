@@ -1,0 +1,16 @@
+{
+  "Delete": "Radera våningsritning",
+  "DeleteCheck": "Är du säkert på att du vill radera denna ritning?",
+  "Editor": "Redigera våningsritning",
+  "HotspotItem": "Sak",
+  "HotspotItemPlaceholder": "Välj sak...",
+  "HotspotTitle": "Hotspot-prioriteter",
+  "PropertiesCategory": "Kategori",
+  "PropertiesName": "Namn",
+  "PropertiesTitle": "Egenskaper våningsritning",
+  "SaveError": "Problem när våningsritning <b><i>{name}</i> sparades</b>",
+  "SaveOk": "Våningsritning <b><i>{name}</i></b> sparades korrekt",
+  "SelectImage": "Välj bild",
+  "UploadName": "Namn på våningsritning",
+  "UploadTitle": "Ladda upp våningsritning"
+}

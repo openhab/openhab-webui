@@ -1,0 +1,11 @@
+<div  class="box-content frame" >
+	<div ng-class="{ 'frame-content': !vm.widget.frameless, 'frame-content-frameless': vm.widget.frameless }">		
+		<div class="frame-label" ng-hide="vm.widget.hidelabel">{{vm.widget.name}}</div>
+		<div class="frame-container" ng-if="!vm.widget.nosuffix">
+			<iframe width="100%" height="100%" name="{{vm.ngModel.name}}" ng-src="{{vm.detailFrame}}"  ng-style="{ 'background-color': vm.widget.background }" frameborder="0"> </iframe>
+		</div>
+		<div class="frame-container" ng-if="vm.widget.nosuffix" ng-repeat="url in [vm.detailFrame]">
+			<iframe width="100%" height="100%" name="{{vm.ngModel.name}}" ng-src="{{url}}"  ng-style="{ 'background-color': vm.widget.background }" frameborder="0"> </iframe>
+		</div>
+	</div>
+</div>

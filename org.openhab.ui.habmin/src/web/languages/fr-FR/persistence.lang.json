@@ -1,0 +1,9 @@
+{
+  "Entries": "Entrées",
+  "ErrorGettingData": "Erreur lors de la récupération des données de persistance",
+  "ErrorGettingItems": "Erreur lors la récupération de la liste des items supportée par le service de persistance",
+  "ErrorGettingServices": "Erreur lors de la récupération de la liste des services de persistance",
+  "RecordDeleteConfirm": "Etes-vous sûr de supprimer cet enregistrement ?",
+  "RecordDeleteTitle": "Supprimer l'enregistrement",
+  "Service": "Service"
+}

@@ -1,0 +1,23 @@
+{
+  "name": "angular-dialgauge",
+  "version": "0.1.5",
+  "homepage": "https://github.com/cdjackson/angular-dialgauge",
+  "authors": [
+    "Chris Jackson <chris@cd-jackson.com>"
+  ],
+  "description": "Animated dial gauge for AngularJS",
+  "main": "src/angular-dialgauge.js",
+  "keywords": [
+    "AngularJS",
+    "Javascript",
+    "directive"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

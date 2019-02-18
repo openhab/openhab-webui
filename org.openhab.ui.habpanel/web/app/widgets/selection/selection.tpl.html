@@ -1,0 +1,29 @@
+<script type="text/ng-template" id="selectionChoiceWindow.html">
+    <div class="container" id="modal-body" style="padding: 30px">
+        <div ng-if="!vm.choices || !vm.choices.length" class="box selection-choice col-xs-12" translate-keep-content translate="widget.selection.nochoices">No choices available - check widget config</div>
+        <ul style="padding-left: 0">
+            <li ng-repeat="choice in vm.choices" class="{{vm.gridClass}}">
+                <div href="#" class="box switch selection-choice activefeedback col-xs-12 {{vm.gridClassMode}}"
+                     ng-class="{ square: vm.square, 'active': vm.item.state === choice.cmd && !vm.no_highlight }"
+                     ng-click="vm.selectChoice(choice)">
+                    <div class="switch box-content selection-choice-content {{vm.gridClassMode}}" ng-class="{ square: vm.square }">
+                        <span class="switch-content choice-label">{{ choice.label }}</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</script>
+<div class="box-content switch" ng-click="vm.openChoices()">
+    <widget-icon ng-if="vm.widget.backdrop_icon" backdrop="true" iconset="vm.widget.backdrop_iconset" icon="vm.widget.backdrop_icon" center="vm.widget.backdrop_center"></widget-icon>
+    <div class="switch-content" ng-if="vm.widget.nolinebreak && vm.widget.name">
+        <span class="pull-left">{{vm.widget.name}}</span>
+    </div>
+    <div class="switch-content">
+        <widget-icon ng-if="vm.widget.icon && vm.widget.icon_nolinebreak && !vm.widget.hideicon" size="vm.widget.icon_size" iconset="vm.widget.iconset" icon="vm.widget.icon" inline="vm.widget.icon_nolinebreak" state="vm.state"></widget-icon>
+        <span ng-if="!vm.widget.nolinebreak && vm.widget.name">{{vm.widget.name}}</span>
+        <br ng-if="!vm.widget.nolinebreak && vm.widget.name" />
+        <widget-icon ng-if="vm.widget.icon && !vm.widget.icon_nolinebreak && !vm.widget.hideicon" size="vm.widget.icon_size" iconset="vm.widget.iconset" icon="vm.widget.icon" inline="vm.widget.icon_nolinebreak" state="vm.state"></widget-icon>
+        <span ng-hide="vm.widget.hidestate" ng-style="{ 'font-size': vm.widget.font_size + 'pt' }" ng-class="{ 'dummy-value-right': vm.widget.nolinebreak }" class="value">{{vm.value}}</span>
+    </div>
+</div>

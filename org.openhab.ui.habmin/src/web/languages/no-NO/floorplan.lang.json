@@ -1,0 +1,16 @@
+{
+  "Delete": "Slett planløsning",
+  "DeleteCheck": "Er du sikker på at du vil slette denne planløsningen?",
+  "Editor": "Planløsningseditor",
+  "HotspotItem": "Enhet",
+  "HotspotItemPlaceholder": "Velg enhet",
+  "HotspotTitle": "Hotspot-egenskaper",
+  "PropertiesCategory": "Kategori",
+  "PropertiesName": "Navn",
+  "PropertiesTitle": "Planløsningsegenskaper",
+  "SaveError": "Feil ved lagring av planløsning <b><i>{name}</i></b>",
+  "SaveOk": "Planløsning <b><i>{name}</i></b> lagret",
+  "SelectImage": "Velg bilde",
+  "UploadName": "Planløsningsnavn",
+  "UploadTitle": "Last opp planløsning"
+}

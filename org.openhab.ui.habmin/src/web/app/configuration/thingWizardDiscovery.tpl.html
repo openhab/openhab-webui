@@ -1,0 +1,83 @@
+<label>Configure Thing...</label>
+<div class="form-group">
+    <label for="inputThingLabel" class="control-label" i18n="thing.Label"></label>
+    <input type="text"
+           class="form-control"
+           id="inputThingLabel"
+           name="itemLabel"
+           ng-model="selectedThing.item.label"
+           i18n-attr="{placeholder: 'item.SelectLabel'}">
+</div>
+
+<div class="form-group"
+     ng-if="selectedThingType.bridge==false && selectedThingType.supportedBridgeTypeUIDs!=null && selectedThingType.supportedBridgeTypeUIDs.length>0">
+    <label for="inputBridge" class="control-label" i18n="thing.EditBridge"></label>
+
+    <div>
+        <ui-select id="inputBridge"
+                   ng-model="selectedThing.bridgeUID"
+                   theme="bootstrap"
+                   search-enabled="false"
+                >
+            <ui-select-match i18n-attr="{placeholder: 'thing.SelectBridge'}">
+                <habmin-icon class="fa fa-fw"
+                             category="{{$select.selected.item.category}}"></habmin-icon>
+                {{$select.selected.item.label}}
+            </ui-select-match>
+            <ui-select-choices
+                    repeat="bridge.UID as bridge in things | filter:bridgeFilter | orderBy:'label'">
+                <habmin-icon class="fa fa-fw"
+                             category="{{category.item.category}}"></habmin-icon>
+                <span>{{bridge.item.label}}</span>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="inputCategory" class="control-label" i18n="item.EditCategory"></label>
+
+    <div>
+        <ui-select id="inputCategory"
+                   ng-model="selectedThing.item.category"
+                   theme="bootstrap"
+                   name="itemCategory"
+                   search-enabled="false"
+                >
+            <ui-select-match i18n-attr="{placeholder: 'item.SelectCategory'}">
+                <habmin-icon class="fa fa-fw" category="{{$select.selected.id}}"></habmin-icon>
+                {{$select.selected.name}}
+            </ui-select-match>
+            <ui-select-choices repeat="category.id as category in categories | orderBy: 'name'">
+                <habmin-icon class="fa fa-fw" category="{{category.id}}"></habmin-icon>
+                <span>{{category.name}}</span>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="inputGroups" class="control-label" i18n="item.EditGroups"></label>
+
+    <div>
+        <ui-select id="inputGroups"
+                   ng-model="selectedThing.item.groupNames"
+                   theme="bootstrap"
+                   search-enabled="false"
+                   name="itemGroups"
+                   multiple
+                >
+            <ui-select-match i18n-attr="{placeholder: 'item.SelectGroup'}">
+                <habmin-icon class="fa fa-fw" category="{{$item.category}}"></habmin-icon>
+                {{$item.label}}
+            </ui-select-match>
+            <ui-select-choices
+                    repeat="group.name as group in itemList | filter: {type: 'GroupItem'} | orderBy: 'label'">
+                <habmin-icon class="fa fa-fw" category="{{group.category}}"></habmin-icon>
+                <span>{{group.label}}</span>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</div>
+
+<button class="btn btn-success" ng-click="saveNewThing()">Save</button>

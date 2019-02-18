@@ -1,0 +1,10 @@
+<div class="box box-default">
+    <div class="box-body">
+        <div class="" ng-repeat="item in groupMembers">
+            <div ng-switch on="item.type" class="sitemap-row">
+                <dashboard-switch ng-switch-when="Switch" item="item"></dashboard-switch>
+                <dashboard-text ng-switch-default item="item"></dashboard-text>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+{
+  "Entries": "Valori",
+  "ErrorGettingData": "Errore nell'ottenimento dei dati di persistenza",
+  "ErrorGettingItems": "Errore nell'ottenimento della lista degli elementi supportati dal servizio di persistenza",
+  "ErrorGettingServices": "Errore nell'ottenimento della lista dei servizi di persistenza",
+  "RecordDeleteConfirm": "Sei sicuro di voler eliminare questo record?",
+  "RecordDeleteTitle": "Elimina Record",
+  "Service": "Servizio"
+}

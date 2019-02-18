@@ -1,0 +1,40 @@
+{
+  "author": "Chris Jackson",
+  "name": "HABmin2",
+  "version": "2.0.0",
+  "androidVersionCode": "3",
+  "homepage": "https://github.com/cdjackson/HABmin2",
+  "licenses": {
+    "type": "GPL",
+    "url": "https://raw.github.com/cdjackson/HABmin2/master/LICENSE"
+  },
+  "bugs": "https://github.com/openhab/org.openhab.ui.habmin/issues",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:openhab/org.openhab.ui.habmin.git"
+  },
+  "devDependencies": {
+    "bower": "1.8.4",
+    "grunt": "v1.0.1",
+    "grunt-cli": "1.2.0",
+    "grunt-json-minify": "1.1.0",
+    "grunt-contrib-less": "1.3.0",
+    "grunt-contrib-clean": "1.0.0",
+    "grunt-contrib-copy": "1.0.0",
+    "grunt-contrib-jshint": "1.0.0",
+    "grunt-contrib-concat": "1.0.1",
+    "grunt-contrib-uglify": "2.0.0",
+    "grunt-html2js": "0.3.6",
+    "grunt-conventional-changelog": "1.1.0",
+    "grunt-bump": "0.0.16",
+    "grunt-ng-annotate": "2.0.2",
+    "grunt-contrib-htmlmin": "2.0.0",
+    "grunt-bootlint": "0.10.1",
+    "grunt-contrib-cssmin": "1.0.1",
+    "grunt-shell": "1.3.0",
+    "grunt-lesslint": "3.2.0",
+    "grunt-string-replace": "1.2.1",
+    "grunt-karma": "2.0.0",
+    "karma": "1.1.2"
+  }
+}

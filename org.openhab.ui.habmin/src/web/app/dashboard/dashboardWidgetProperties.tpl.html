@@ -1,0 +1,83 @@
+<div class="modal-header">
+    <h3 class="modal-title" i18n="dashboard.WidgetEditTitle"></h3>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xs-6">
+            <ul class="nav nav-pills nav-stacked">
+                <li ng-class="{'active':showTab==0}">
+                    <a ng-click="showTab=0">
+                        <span i18n="dashboard.WidgetConfigGeneral"></span>
+                    </a>
+                </li>
+
+                <li ng-show="widget.type=='Button'"
+                    ng-class="{'active':showTab==1}">
+                    <a ng-click="showTab=1">
+                        <span i18n="dashboard.WidgetConfigButton"></span>
+                    </a>
+                </li>
+                <li ng-show="widget.type=='Chart'"
+                    ng-class="{'active':showTab==1}">
+                    <a ng-click="showTab=1">
+                        <span i18n="dashboard.WidgetConfigChart"></span>
+                    </a>
+                </li>
+                <li ng-show="widget.type=='Gauge'"
+                    ng-class="{'active':showTab==1}">
+                    <a ng-click="showTab=1">
+                        <span i18n="dashboard.WidgetConfigGauge"></span>
+                    </a>
+                </li>
+                <li ng-show="widget.type=='Image'"
+                    ng-class="{'active':showTab==1}">
+                    <a ng-click="showTab=1">
+                        <span i18n="dashboard.WidgetConfigImage"></span>
+                    </a>
+                </li>
+                <li ng-show="widget.type=='Group'"
+                    ng-class="{'active':showTab==1}">
+                    <a ng-click="showTab=1">
+                        <span i18n="dashboard.WidgetConfigGroup"></span>
+                    </a>
+                </li>
+                <li ng-show="widget.type=='GroupBar'"
+                    ng-class="{'active':showTab==1}">
+                    <a ng-click="showTab=1">
+                        <span i18n="dashboard.WidgetConfigGroup"></span>
+                    </a>
+                </li>
+                <li ng-show="widget.type=='Floor'"
+                    ng-class="{'active':showTab==1}">
+                    <a ng-click="showTab=1">
+                        <span i18n="dashboard.WidgetConfigFloorplan"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-xs-6">
+            <dashboard-general-properties ng-show="showTab==0" model="general"></dashboard-general-properties>
+            <div ng-show="showTab==1">
+                <dashboard-button-properties ng-if="widget.type=='Button'"
+                                             options="widget.options"></dashboard-button-properties>
+                <dashboard-chart-properties ng-if="widget.type=='Chart'"
+                                            options="widget.options"></dashboard-chart-properties>
+                <dashboard-gauge-properties ng-if="widget.type=='Gauge'"
+                                            options="widget.options"></dashboard-gauge-properties>
+                <dashboard-image-properties ng-if="widget.type=='Image'"
+                                            options="widget.options"></dashboard-image-properties>
+                <dashboard-group-properties ng-if="widget.type=='Group'"
+                                            options="widget.options"></dashboard-group-properties>
+                <dashboard-groupbar-properties ng-if="widget.type=='GroupBar'"
+                                               options="widget.options"></dashboard-groupbar-properties>
+                <dashboard-floorplan-properties ng-if="widget.type=='Floor'"
+                                                options="widget.options"></dashboard-floorplan-properties>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="ok()" i18n="common.save"></button>
+    <button type="button" class="btn btn-warning" ng-click="cancel()" i18n="common.cancel"></button>
+</div>

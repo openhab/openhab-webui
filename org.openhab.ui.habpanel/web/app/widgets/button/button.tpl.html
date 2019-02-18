@@ -1,0 +1,20 @@
+<div class="box-content switch" ng-style="{ 'background-color': vm.background, color: vm.foreground }" ng-click="vm.sendCommand()">
+    <widget-icon ng-if="vm.widget.backdrop_icon" backdrop="true" iconset="vm.widget.backdrop_iconset" icon="vm.widget.backdrop_icon" center="vm.widget.backdrop_center" state="vm.state"></widget-icon>
+
+    <div class="dummy-content" ng-if="vm.widget.value_nolinebreak && vm.widget.show_item_value && vm.widget.name">
+        <span class="pull-left" ng-style="{ 'font-size': vm.font_size + 'pt' }">{{vm.widget.name}}</span>
+    </div>
+    <div class="dummy-content" ng-if="vm.widget.show_item_value">
+        <widget-icon ng-if="vm.widget.icon && vm.widget.icon_nolinebreak" size="vm.widget.icon_size" iconset="vm.widget.iconset" icon="vm.widget.icon" inline="vm.widget.icon_nolinebreak" state="vm.state"></widget-icon>
+        <span ng-if="!vm.widget.value_nolinebreak && vm.widget.name" ng-style="{ 'color': vm.foreground, 'font-size': vm.font_size + 'pt' }">{{vm.widget.name}}</span>
+        <br ng-if="!vm.widget.value_nolinebreak && vm.widget.name" />
+        <widget-icon ng-if="vm.widget.icon && !vm.widget.icon_nolinebreak" size="vm.widget.icon_size" iconset="vm.widget.iconset" icon="vm.widget.icon" inline="vm.widget.icon_nolinebreak" state="vm.state"></widget-icon>
+        <span ng-hide="vm.widget.icon && vm.widget.icon_replacestext" ng-style="{ 'color': vm.value_color, 'font-size': vm.widget.value_font_size + 'pt' }" ng-class="{ 'dummy-value-right': vm.widget.value_nolinebreak }" class="value">{{vm.value}}<small ng-if="vm.widget.value_unit">{{vm.widget.value_unit}}</small></span>
+    </div>
+
+    <div class="switch-content" ng-if="!vm.widget.show_item_value">
+        <widget-icon ng-if="vm.widget.icon && vm.widget.icon_nolinebreak" size="vm.widget.icon_size" iconset="vm.widget.iconset" icon="vm.widget.icon" inline="vm.widget.icon_nolinebreak" state="vm.state"></widget-icon>
+        <widget-icon ng-if="vm.widget.icon && !vm.widget.icon_nolinebreak" size="vm.widget.icon_size" iconset="vm.widget.iconset" icon="vm.widget.icon" inline="vm.widget.icon_nolinebreak" state="vm.state"></widget-icon>
+        <span ng-hide="vm.widget.icon && vm.widget.icon_replacestext" ng-style="{ 'font-size': vm.font_size + 'pt' }">{{vm.ngModel.name}}</span>
+    </div>
+</div>

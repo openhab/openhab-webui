@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!-- Device List -->
+<div class="col-sm-4">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading clearfix">
+            <span class="panel-title pull-left" i18n="floorplan.Editor"></span>
+
+            <div class="btn-group pull-right">
+                <button type="button"
+                        class="btn btn-default"
+                        ng-click="newFloorplan()">
+                    <span class="fa fa-floppy-o"></span>
+                    <span class="hidden-xs hidden-sm" i18n="common.new"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+            <!-- FLOORPLAN LIST -->
+            <div ng-if="floorplanList.length>0" ng-repeat="floorplan in floorplanList">
+                <a role="presentation" ng-class="{'list-group-item':true, 'active': selectedFloorplan.id==floorplan.id}"
+                   ng-click="selectFloorplan(floorplan)">
+                    <table style="background-color: transparent">
+                        <tr>
+                            <td class="text-large" rowspan="2">
+                                <habmin-icon class="fa fa-fw" category="{{floorplan.category}}"></habmin-icon>
+                            </td>
+                            <td>
+                                <span>{{floorplan.name}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted small"></td>
+                        </tr>
+                    </table>
+                </a>
+            </div>
+
+            <!-- Cover options for loading, and no floorplans -->
+            <div ng-if="bindingsCnt==-1" class="list-group-item text-center">
+                <span class="fa fa-spin fa-refresh"></span>
+                <span i18n="common.loading"></span>
+            </div>
+            <div ng-if="bindingsCnt==0" class="list-group-item text-center">
+                <span class="fa fa-exclamation-triangle text-warning"></span>
+                <span i18n="binding.NoneFound"></span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>
+
+<!-- Binding Information / Configuration -->
+<div class="col-sm-8">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+             <span class="btn btn-default btn-file" ng-disabled="selectedFloorplan==null">
+                <span class="fa fa-picture-o"></span>
+                <span i18n="floorplan.SelectImage"></span>
+                <input onchange="angular.element(this).scope().selectImage(this.files[0]);this.value = '';"
+                       type="file"/>
+            </span>
+            <button type="button"
+                    class="btn btn-default"
+                    ng-disabled="selectedFloorplan==null"
+                    ng-click="editFloorplan()">
+                <span class="fa fa-floppy-o"></span>
+                <span class="hidden-xs hidden-sm" i18n="common.properties"></span>
+            </button>
+            <button type="button"
+                    class="btn btn-default"
+                    ng-class="{'btn-success': isDirty}"
+                    ng-click="saveFloorplan()"
+                    ng-disabled="selectedFloorplan==null || isDirty==false">
+                <span class="fa fa-floppy-o"></span>
+                <span class="hidden-xs hidden-sm" i18n="common.save"></span>
+            </button>
+            <button type="button"
+                    class="btn btn-default"
+                    ng-confirm-click="floorplanDelete()" ng-confirm-icon="warning"
+                    ng-disabled="selectedFloorplan==null || selectedFloorplan.id==null"
+                    i18n-attr="{'ngConfirmMessage': 'floorplan.DeleteCheck','ngConfirmTitle': 'floorplan.Delete','ngConfirmNoBtn': 'common.no', 'ngConfirmYesBtn': 'common.yes' }">
+                <span class="fa fa-trash"></span>
+                <span class="hidden-xs hidden-sm" i18n="common.delete"></span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list floorplan-editor" resize-panel>
+            <floor-plan ng-click="imgClicked($event)"
+                        hotspot-click="editHotspot"
+                        hotspot-list="selectedFloorplan.hotspots"
+                        image="{{floorplanImage}}">
+            </floor-plan>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>

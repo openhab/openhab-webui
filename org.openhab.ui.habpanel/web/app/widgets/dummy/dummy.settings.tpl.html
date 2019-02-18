@@ -1,0 +1,112 @@
+<div>
+    <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
+            <h3 translate-keep-content translate="widget.dummy.settings.header">Dummy Settings</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>Name</label>
+                <div class="col-lg-9 col-md-9">
+                    <input name="name" type="text" ng-model="form.name" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group" ng-class="{error: _form.item.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>openHAB Item</label>
+                <div class="col-lg-9 col-md-9">
+                    <item-picker ng-model="form.item"></item-picker>
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{error: _form.font_size.$error && _form.submitted}">
+                <label class="control-label col-xs-3" translate>Font size</label>
+                <div class="col-xs-4">
+                    <input name="font_size" ng-model="form.font_size" class="form-control" />
+                </div>
+                <div class="col-xs-4">
+                <!--<label class="control-label">
+                    <input type="checkbox"  name="font_bold" ng-model="form.font_bold" />
+                    <label for="font_bold"><i class="glyphicon glyphicon-bold"></i></label>
+                    <input type="checkbox"  name="font_italic" ng-model="form.font_italic" />
+                    <label for="font_italic"><i class="glyphicon glyphicon-italic"></i></label>
+                </label>-->
+                </div>
+            </div>
+            <div class="form-group" ng-class="{error: _form.unit.$error && _form.submitted}">
+                <label class="control-label col-xs-3" translate-keep-content translate="widget.common.unit">Unit (suffix)</label>
+                <div class="col-xs-4">
+                    <input name="col" ng-disabled="form.useserverformat" ng-model="form.unit" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group" ng-class="{error: _form.format.$error && _form.submitted}">
+                <label class="control-label col-xs-3" translate-keep-content translate="widget.common.format">Format</label>
+                <div class="col-xs-7">
+                    <input name="col" ng-disabled="form.useserverformat" ng-model="form.format" class="form-control" />
+                </div>
+                <label class="control-label col-lg-3 col-md-3"></label>
+                <div class="col-lg-9 col-md-9">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="vertical" ng-model="form.useserverformat" /> <span translate-keep-content translate="widget.common.format.useserverprovided">Use server-provided format if available</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{error: _form.backdrop_icon.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>Backdrop Icon</label>
+                <div class="col-lg-9 col-md-9">
+                    <icon-picker iconset="form.backdrop_iconset" icon="form.backdrop_icon"></icon-picker>
+                    <div ng-if="form.backdrop_icon" class="checkbox">
+                        <label>
+                            <input type="checkbox" name="vertical" ng-model="form.backdrop_center" /> <span translate-keep-content translate="widget.common.backdrop_center">Center backdrop horizontally</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{error: _form.icon.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>Icon</label>
+                <div class="col-lg-9 col-md-9">
+                    <icon-picker iconset="form.iconset" icon="form.icon"></icon-picker>
+                    <div class="col-xs-5 input-group" ng-if="form.icon">
+                        <div class="input-group-addon" translate>Size</div>
+                        <input name="icon_size" ng-model="form.icon_size" class="form-control" />
+                        <div class="input-group-addon">px</div>
+                    </div>
+                    <div ng-if="form.icon" class="checkbox">
+                        <label>
+                            <input type="checkbox" name="vertical" ng-model="form.icon_nolinebreak" /> <span translate-keep-content translate="widget.common.icon_nolinebreak">Icon left of label instead of below</span>
+                        </label>
+                    </div>
+                    <div ng-if="form.icon" class="checkbox">
+                        <label>
+                            <input type="checkbox" name="vertical" ng-model="form.icon_replacestext" /> <span translate-keep-content translate="widget.common.icon_replacestext">Icon replaces textual value display</span>
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{error: _form.nolinebreak.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.dummy.layout">Layout</label>
+                <div class="col-lg-9 col-md-9">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="vertical" ng-model="form.nolinebreak" /> <span translate-keep-content translate="widget.common.dontwrap">Value right of label instead of below</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+            <a ng-click="remove()" class="btn btn-danger pull-left" tabindex="-1"><i class="glyphicon glyphicon-trash"></i>&nbsp;<span translate>Delete</span></a>
+            <a ng-click="dismiss()" class="btn btn-default" tabindex="-1"><i class="glyphicon glyphicon-remove"></i>&nbsp;<span translate>Cancel</span></a>
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;<span translate>Save</span></button>
+        </div>
+    </form>
+</div>

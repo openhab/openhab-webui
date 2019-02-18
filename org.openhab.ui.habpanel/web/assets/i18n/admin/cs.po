@@ -1,0 +1,929 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: openhab-habpanel\n"
+"Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
+"Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Language: cs\n"
+"X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Language-Team: Czech\n"
+"Language: cs_CZ\n"
+"PO-Revision-Date: 2018-02-26 14:43-0500\n"
+
+#. Save button in the dashboard designer
+msgctxt "designer.save"
+msgid "Save"
+msgstr "Uložit"
+
+#. Run button in the dashboard designer
+msgctxt "designer.run"
+msgid "Run"
+msgstr "Spustit"
+
+#. Add widget button in the dashboard designer
+msgctxt "designer.addwidget"
+msgid "Add Widget"
+msgstr "Přidat Widget"
+
+#. Tutorial text with arrow when on an empty dashboard
+msgctxt "designer.addwidget.hint"
+msgid "Add some widgets"
+msgstr "Přidejte nějaké Widgety"
+
+#. Header of the custom widget section (beware, it might overlap the cogs icon on the right)
+msgctxt "designer.addwidget.customwidgets"
+msgid "Custom widgets"
+msgstr "Vlastní Widgety"
+
+#. Open widget gallery
+msgctxt "designer.addwidget.getmore"
+msgid "Get more..."
+msgstr "Získat další..."
+
+#. Tooltip when hovering the "Get more" menu entry
+msgctxt "designer.addwidget.getmore.tooltip"
+msgid "Open the widget gallery to import more widgets"
+msgstr "Otevřít galerii Widgetů kde lze získat další"
+
+#. Edit option in a widget placeholder context menu (3-dot icon)
+msgctxt "designer.contextmenu.edit"
+msgid "Edit..."
+msgstr "Upravit..."
+
+#. Copy/move option in a widget placeholder context menu (3-dot icon)
+msgctxt "designer.contextmenu.copymove"
+msgid "Copy/move to..."
+msgstr "Kopírovat/přesunout do..."
+
+#. Delete option in a widget placeholder context menu (3-dot icon)
+msgctxt "designer.contextmenu.delete"
+msgid "Delete"
+msgstr "Smazat"
+
+#. Title of copy/move widget dialog
+msgctxt "designer.copymove.header"
+msgid "Copy/move {{widgetName}}"
+msgstr "Kopírovat/přesunout {{widgetName}}"
+
+#. Alongside the dropdown dashboard selection
+msgctxt "designer.copymove.todashboard"
+msgid "To dashboard"
+msgstr "Na Dashboard"
+
+#. Move button
+msgctxt "designer.copymove.move"
+msgid "Move"
+msgstr "Přesunout"
+
+#. Copy button
+msgctxt "designer.copymove.copy"
+msgid "Copy"
+msgstr "Kopírovat"
+
+#. Default name of a newly created widget
+msgctxt "designer.newwidget.defaultname"
+msgid "New Widget"
+msgstr "Nový Widget"
+
+msgctxt "designer.serversavefailed"
+msgid "Server save failed!"
+msgstr "Jejda, uložení na server se nezdařilo!"
+
+#. Title of the dashboard settings dialog
+msgctxt "dashboard.settings.dialog.title"
+msgid "Dashboard Settings"
+msgstr "Nastavení Dashboardu"
+
+#. Tab header
+msgctxt "dashboard.settings.tile"
+msgid "Menu tile"
+msgstr "Panel s menu"
+
+#. Textbox header
+msgctxt "dashboard.settings.tile.background_image_url"
+msgid "Background Image URL"
+msgstr "Adresa URL obrázku na pozadí"
+
+#. Color picker header
+msgctxt "dashboard.settings.tile.title_text_color"
+msgid "Title Text color"
+msgstr "Barva textu nadpisu"
+
+#. Checkbox header
+msgctxt "dashboard.settings.tile.click_feedback"
+msgid "Click feedback"
+msgstr "Reakce na kliknutí"
+
+#. Checkbox label
+msgctxt "dashboard.settings.tile.click_feedback.description"
+msgid "Don't brighten tile on click/tap"
+msgstr "Nezesvětlit panel po kliknutí/tapnutí"
+
+#. Tab header
+msgctxt "dashboard.settings.advanced"
+msgid "Advanced"
+msgstr "Rozšířená nastavení"
+
+#. Alert display at the top
+msgctxt "dashboard.settings.advanced.warning"
+msgid "These options are currently experimental, unstable or targeted at advanced users! Use at your own risk."
+msgstr "Tyto možnosti jsou v současné době experimentální, nestabilní nebo zaměřené na pokročilé uživatele! Používáte je tedy na vlastní riziko."
+
+#. Tab header
+msgctxt "dashboard.settings.customwidgets"
+msgid "Custom widgets"
+msgstr "Vlastní Widgety"
+
+#. Alert displayed at the top
+msgctxt "dashboard.settings.customwidgets.warning"
+msgid "This feature is currently experimental, and targeted at advanced users! Use at your own risk."
+msgstr "Tato možnost je v současné době experimentální, nestabilní nebo zaměřená na pokročilé uživatele! Používáte ji tedy na vlastní riziko."
+
+#. Checkbox header
+msgctxt "dashboard.settings.customwidgets.usecustomwidget"
+msgid "Use a custom widget"
+msgstr "Použít vlastní Widget"
+
+#. Dropdown header
+msgctxt "dashboard.settings.customwidgets.customwidget"
+msgid "Custom Widget"
+msgstr "Vlastní Widget"
+
+#. Accordion header
+msgctxt "dashboard.settings.customwidgets.tile"
+msgid "Main menu tile"
+msgstr "Panel s hlavním menu"
+
+#. Checkbox label
+msgctxt "dashboard.settings.customwidgets.tile.description"
+msgid "Replace the tile contents by a custom widget"
+msgstr "Nahradit obsah panelu vlastním Widgetem"
+
+#. Accordion header
+msgctxt "dashboard.settings.customwidgets.drawer"
+msgid "Drawer"
+msgstr "Boční menu"
+
+#. Checkbox label
+msgctxt "dashboard.settings.customwidgets.drawer.description"
+msgid "Replace the contents of the drawer menu by a custom widget"
+msgstr "Nahradit obsah bočního menu vlastním Widgetem"
+
+#. Accordion header
+msgctxt "dashboard.settings.customwidgets.header"
+msgid "Dashboard header"
+msgstr "Nadpis Dashboardu"
+
+#. Checkbox label
+msgctxt "dashboard.settings.customwidgets.header.description"
+msgid "Replace the contents of the dashboard header by a custom widget"
+msgstr "Nahradit obsah nadpisu Dashboardu vlastním Widgetem"
+
+#. Displayed in the item picker when no item selected
+msgctxt "itempicker.placeholder"
+msgid "Search or select an openHAB item"
+msgstr "Vyhledejte nebo vyberte openHAB Item"
+
+#. Icon picker dropdown placeholder
+msgctxt "iconpicker.selecticonset"
+msgid "Select icon set"
+msgstr "Vyberte skupinu ikon"
+
+#. Icon picker dropdown entry
+msgctxt "iconpicker.customicon"
+msgid "Custom icon"
+msgstr "Vlastní ikona"
+
+#. Icon picker dropdown entry
+msgctxt "iconpicker.customurl"
+msgid "Custom URL"
+msgstr "Vlastní URL"
+
+#. Icon picker dropdown entry
+msgctxt "iconpicker.none"
+msgid "(none)"
+msgstr "(Žádná)"
+
+#. Appears when focusing the icon textbox when the "Custom icon" iconset is selected
+msgctxt "iconpicker.customicontooltip"
+msgid "Type the name of a <a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'>registered icon</a> (only SVG supported)<br />Examples: <em>switch</em>, <em>temperature</em> or an additional icon in your configuration's <code>icons/classic</code> folder"
+msgstr "Zadejte název <a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'> ikony</a> (podporovaný je pouze formát SVG)< br />Například: <em>switch</em>, <em>temperature</em> nebo třeba Vaše vlastní ikony ve složce nastavení openHAB (conf) <code>icons/classic</code>"
+
+#. Screen title
+msgctxt "settings.header"
+msgid "Settings"
+msgstr "Nastavení"
+
+#. Header of the storage section
+msgctxt "settings.storage.header"
+msgid "Current storage configuration"
+msgstr "Aktuální nastavení úložiště"
+
+#. Radio button for local storage
+msgctxt "settings.storage.localstorage"
+msgid "Local storage"
+msgstr "Místní úložiště"
+
+#. Explanation of the "local storage only" option
+msgctxt "settings.storage.localstorage.hint"
+msgid "The configuration is saved for this browser and device only. It will be kept as long as you don't clean up the browser's historical data."
+msgstr "Konfigurace je uložena POUZE pro tento prohlížeč a zařízení. Bude uložena jen tak dlouho, dokud nevymažete historii v prohlížeči."
+
+#. Link below the "local storage" option
+msgctxt "settings.storage.localstorage.edit"
+msgid "Edit the local panel configuration (experts only)"
+msgstr "Upravit nastavení lokálního panelu (pouze pro zkušené)"
+
+#. Prefix of a panel configuration before its name
+msgctxt "settings.storage.panelconfiguration"
+msgid "Panel configuration:"
+msgstr "Nastavení panelu:"
+
+#. Prefix of the last synced line, before the date
+msgctxt "settings.storage.panelconfiguration.lastsynced"
+msgid "Last synced on"
+msgstr "Poslední synchronizace:"
+
+#. Displayed before the list of dashboard the panel configuration contains
+msgctxt "settings.storage.panelconfiguration.contains"
+msgid "Contains:"
+msgstr "Obsahuje:"
+
+#. Link to create a panel configuration from the current configuration
+msgctxt "settings.storage.panelconfiguration.save"
+msgid "Save the current configuration to a new panel configuration"
+msgstr "Uložit aktuální nastavení do nového panelu"
+
+#. Title of the dialog box when creating a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.title"
+msgid "New panel configuration"
+msgstr "Nastavení nového panelu"
+
+#. Message of the dialog box when creating a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.message"
+msgid "Please choose a name for the new panel configuration (letters and digits only please):"
+msgstr "Zvolte prosím název nového panelu (jen písmena a číslice):"
+
+#. Panel name (section header)
+msgctxt "settings.panel.name"
+msgid "Panel name"
+msgstr "Název panelu"
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.name.hint"
+msgid "Replaces 'HABPanel' in the side drawer when set"
+msgstr "Název bude zobrazen místo \"HABPanel\" v bočním menu"
+
+#. Appearance (section header)
+msgctxt "settings.panel.appearance.header"
+msgid "Appearance"
+msgstr "Vzhled"
+
+#. Dropown menu header
+msgctxt "settings.panel.appearance.theme"
+msgid "Theme"
+msgstr "Motivy vzhledu"
+
+#. Alert banner displayed when the browsers doesn't support themes (CSS variables)
+msgctxt "settings.panel.appearance.theme.not_supported"
+msgid "Themes are not compatible with this browser."
+msgstr "Motivy nejsou kompatibilní s tímto prohlížečem."
+
+#. Setting header
+msgctxt "settings.panel.appearance.additional_stylesheet"
+msgid "Additional stylesheet (optional)"
+msgstr "Další šablony stylů (volitelné)"
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.appearance.additional_stylesheet.hint"
+msgid "Relative URL only; example: /static/example.css"
+msgstr "Pouze relativní adresa URL; Například: /static/example.css"
+
+#. Setting header
+msgctxt "settings.panel.appearance.background_image"
+msgid "Background image (optional)"
+msgstr "Obrázek pozadí (volitelné)"
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.appearance.background_image.hint"
+msgid "Example: //source.unsplash.com/random"
+msgstr "Například: //source.unsplash.com/random"
+
+#. Setting header
+msgctxt "settings.panel.appearance.drawer_heading_image"
+msgid "Drawer heading image (optional)"
+msgstr "Obrázek záhlaví bočního menu (volitelné)"
+
+#. Placeholder inside the text box
+msgctxt "settings.panel.appearance.drawer_heading_image.hint"
+msgid "Example: //via.placeholder.com/265x95"
+msgstr "Například: //via.placeholder.com/265x95"
+
+#. Checkbox
+msgctxt "settings.panel.appearance.prevent_scrolling"
+msgid "Prevent scrolling (when not editing)"
+msgstr "Zabránit posouvání (když neupravujete)"
+
+#. Checkbox
+msgctxt "settings.panel.appearance.hide_drawer_footer"
+msgid "Hide the drawer's footer"
+msgstr "Skrýt zápatí bočního menu"
+
+#. Checkbox
+msgctxt "settings.panel.appearance.hide_toolbar_buttons"
+msgid "Hide toolbar buttons:"
+msgstr "Skrýt tlačítka na panelu nástrojů:"
+
+#. Checkbox
+msgctxt "settings.panel.appearance.show_clock"
+msgid "Show a clock on the header"
+msgstr "Zobrazit hodiny v záhlaví"
+
+#. Textbox setting header, only displayed when the "Show a clock on the header" option is checked
+msgctxt "settings.panel.appearance.show_clock.header_format"
+msgid "Header clock format"
+msgstr "Formát hodin v záhlaví"
+
+#. Textbox placeholder, only displayed when the "Show a clock on the header" option is checked
+msgctxt "settings.panel.appearance.show_clock.header_format.hint"
+msgid "Default: shortTime, use AngularJS date format"
+msgstr "Výchozí hodnota: shortTime, použijte formát data AngularJS"
+
+#. Custom widgets settings (section header)
+msgctxt "settings.panel.customwidgets.header"
+msgid "Custom Widgets"
+msgstr "Vlastní Widgety"
+
+#. Big "manage" button label (a > suffix is added)
+msgctxt "settings.panel.customwidgets.manage"
+msgid "Manage"
+msgstr "Spravovat"
+
+#. Voice support (section header) - formerly (<=2.2.0) : "Voice feedback"
+msgctxt "settings.panel.voicesupport.header"
+msgid "Voice Support"
+msgstr "Hlasová podpora"
+
+#. Dropdown header - formerly (<=2.2.0) : "Voice"
+msgctxt "settings.panel.voicesupport.speech_synthesis_voice"
+msgid "Speech synthesis voice"
+msgstr "Hlas pro syntézu řeči"
+
+#. Displayed below the voice dropdown
+msgctxt "settings.panel.voicesupport.speech_synthesis_voice.hint"
+msgid "Available voices depend on the operating system and browser environments."
+msgstr "Výběr hlasů závisí na operačním systému a prostředí prohlížeče."
+
+#. Test button below the voice selection - make the voice say "habpanel 1 2 3"
+msgctxt "settings.panel.voicesupport.speech_synthesis_voice.test"
+msgid "Test"
+msgstr "Otestovat"
+
+#. Checkbox
+msgctxt "settings.panel.voicesupport.floating_speech_button"
+msgid "Display a floating speech button at the bottom of the screen"
+msgstr "Zobrazit ve spodní části tlačítko pro zadání hlasového povelu"
+
+#. Dropdown header
+msgctxt "settings.panel.voicesupport.speech_synthesis_item"
+msgid "Speak the new value of the following item when it changes:"
+msgstr "Vyslovit novou hodnotu u následující Item:"
+
+#. Section header
+msgctxt "settings.panel.dashboard_control.header"
+msgid "Switch dashboard with item value"
+msgstr "Přepnout na Dashboard pomocí změny hodnoty Item"
+
+#. Dropdown header
+msgctxt "settings.panel.dashboard_control.item"
+msgid "When this item changes to a dashboard's name, switch to it:"
+msgstr "Pokud se hodnota této Item změní na název nějakého Dashboardu, přepnout na něj:"
+
+#. Local panel configuration editor header
+msgctxt "settings.localconfig.title"
+msgid "Local panel configuration editor"
+msgstr "Editor nastavení lokálního panelu"
+
+#. Displayed in a tooltip when hovering the exclamation mark in the local panel config editor
+msgctxt "settings.localconfig.warning"
+msgid "This is the raw configuration object representing your current configuration. Be careful while editing it by hand!"
+msgstr "To je objekt obsahující vaší aktuální konfiguraci. Buďte opatrní při ručních úpravách!"
+
+#. Blue button
+msgctxt "settings.localconfig.import"
+msgid "Import"
+msgstr "Importovat"
+
+#. Blue button
+msgctxt "settings.localconfig.export"
+msgid "Export"
+msgstr "Exportovat"
+
+#. Default label for the white button on the right
+msgctxt "settings.localconfig.copy"
+msgid "Copy"
+msgstr "Kopírovat"
+
+#. Label displayed on the button for a few seconds after a successful copy to clipboard
+msgctxt "settings.localconfig.copied"
+msgid "Copied!"
+msgstr "Zkopírováno!"
+
+#. Default label for the red button on the right
+msgctxt "settings.localconfig.save"
+msgid "Save"
+msgstr "Uložit"
+
+#. Label displayed on the button for a few seconds after a successful save
+msgctxt "settings.localconfig.saved"
+msgid "Saved!"
+msgstr "Uloženo!"
+
+#. Label displayed for a few seconds on the copy or save button if an error occurred
+msgctxt "settings.localconfig.failed"
+msgid "FAILED!"
+msgstr "NEPODAŘILO SE!"
+
+#. Displayed in a dialog box
+msgctxt "settings.localconfig.error.nodashboardsfound"
+msgid "No dashboards found!"
+msgstr "Žádné Dashboardy nenalezeny!"
+
+#. Title of a a dialog box
+msgctxt "settings.localconfig.parsingerror.dialog.title"
+msgid "Error"
+msgstr "Chyba"
+
+#. Message in a dialog box
+msgctxt "settings.localconfig.parsingerror.dialog.message"
+msgid "Configuration parsing error, nothing has been modified: "
+msgstr "Nastala chyba a změna nebyla provedena: "
+
+#. Title of a a dialog box
+msgctxt "settings.localconfig.importerror.dialog.title"
+msgid "Error"
+msgstr "Chyba"
+
+#. Message in a dialog box
+msgctxt "settings.localconfig.importerror.dialog.message"
+msgid "Problem while importing: "
+msgstr "Problém při importu: "
+
+#. Screen title
+msgctxt "customwidgets.list.header"
+msgid "Custom widgets"
+msgstr "Vlastní Widgety"
+
+#. Prefix displayed before the author's name
+msgctxt "customwidgets.list.byauthor"
+msgid "by"
+msgstr "od"
+
+#. Displayed in a tooltip when hovering the icon indicating a globally provisioned widget
+msgctxt "customwidgets.list.globallyprovisioned.hint"
+msgid "This widget was provisioned globally via a bundle. It cannot be modified, but may be cloned to an user-defined widget with another name."
+msgstr "Tento Widget byl zajištěn globálně prostřednictvím balíčku. Nelze jej přímo změnit, ale může být zkopírován do vlastního Widget s jiným názvem."
+
+#. Displayed in a tooltip when hovering the icon indicating a user defined widget
+msgctxt "customwidgets.list.userdefined.hint"
+msgid "This widget has been defined manually in this panel configuration and can be modified."
+msgstr "Toto je vlastní Widget v tomto panelu a lze jej tedy upravit."
+
+#. Custom widget context menu entry - clone a globally-provisioned widget
+msgctxt "customwidgets.list.contextmenu.clone"
+msgid "Clone widget..."
+msgstr "Kopírovat Widget..."
+
+#. Custom widget context menu entry - downloads a widget's .widget.json file
+msgctxt "customwidgets.list.contextmenu.exporttofile"
+msgid "Export to file"
+msgstr "Exportovat do souboru"
+
+#. Custom widget context menu entry - opens a forum topic or GitHub readme
+msgctxt "customwidgets.list.contextmenu.openhelp"
+msgid "Open Help"
+msgstr "Otevřít nápovědu"
+
+#. Custom widget context menu entry - update the widget from its source
+msgctxt "customwidgets.list.contextmenu.update"
+msgid "Update..."
+msgstr "Aktualizovat..."
+
+#. Blue button opening a dialog
+msgctxt "customwidgets.list.newwidget"
+msgid "New widget"
+msgstr "Nový Widget"
+
+#. Blue button with a dropdown menu
+msgctxt "customwidgets.list.importwidget"
+msgid "Import widget"
+msgstr "Importovat Widget"
+
+#. Import button menu entry - opens a dialog
+msgctxt "customwidgets.list.importwidget.fromfile"
+msgid "Import from file..."
+msgstr "Importovat ze souboru..."
+
+#. Import button menu entry - opens a dialog
+msgctxt "customwidgets.list.importwidget.fromgallery"
+msgid "Import from gallery..."
+msgstr "Importovat z galerie..."
+
+#. Dialog box title
+msgctxt "customwidgets.list.add.dialog.title"
+msgid "New custom widget"
+msgstr "Nový vlastní Widget"
+
+#. Dialog box message
+msgctxt "customwidgets.list.add.dialog.message"
+msgid "Please choose a short name as an identifier for your widget (for example, 'window-shutter=up-down-button, 'weather-forecast' etc.). If a widget with the same identifier already exists, it will be replaced!"
+msgstr "Prosím zvolte pro svůj Widget krátký název (například \"window-shutter=up-down-button\", \"weather-forecast\" atd.). Pozor, pokud Widget se stejným názvem již existuje, bude tímto nahrazen!"
+
+#. Error message, displayed in an alert box
+msgctxt "customwidgets.list.import.nojson"
+msgid "The file must have a .json extension!"
+msgstr "Soubor musí mít příponu .json!"
+
+#. Dialog box title
+msgctxt "customwidgets.list.import.dialog.title"
+msgid "Import widget"
+msgstr "Importovat Widget"
+
+#. Dialog box message
+msgctxt "customwidgets.list.import.dialog.message"
+msgid "Please confirm or change the identifier of your widget (avoid spaces and special chars!). If a widget with the same identifier already exists, it will be replaced!"
+msgstr "Prosím potvrďte nebo změňte název Widgetu (bez mezer a speciálních znaků!). Pozor, pokud Widget se stejným názvem již existuje, bude tímto nahrazen!"
+
+#. Prefix of an error message - followed by a technical exception message
+msgctxt "customwidgets.list.import.error"
+msgid "Widget import error: "
+msgstr "Chyba při importu Widgetu: "
+
+#. Dialog box title
+msgctxt "customwidgets.list.update.dialog.title"
+msgid "Update widget"
+msgstr "Aktualizovat Widget"
+
+#. Dialog box message
+msgctxt "customwidgets.list.update.dialog.message"
+msgid "This will update widget <id> from <source_url>. Any changes you made will be overwritten! Continue?"
+msgstr "Tímto aktualizujete widget <id> z <source_url>. Všechny změny, které jste provedli, budou tímto přepsány! Chcete pokračovat?"
+
+#. Alert banner message
+msgctxt "customwidgets.list.update.error.notemplatefound"
+msgid "Couldn't update widget <id> from <source_url>: no template found"
+msgstr "Nelze aktualizovat Widget <id> z <source_url>: nebyla nalezena žádná šablona"
+
+#. Alert banner message
+msgctxt "customwidgets.list.update.error.unknown"
+msgid "Couldn't update widget <id> from <source_url>: "
+msgstr "Nelze aktualizovat Widget <id> z <source_url>: "
+
+#. Alert banner message
+msgctxt "customwidgets.list.update.success"
+msgid "Widget <id> updated successfully from <source_url>"
+msgstr "Widget <id> úspěšně aktualizován z <source_url>"
+
+#. Dialog box title
+msgctxt "customwidgets.list.delete.dialog.title"
+msgid "Remove widget"
+msgstr "Smazat Widget"
+
+#. Dialog box message
+msgctxt "customwidgets.list.delete.dialog.message"
+msgid "Please confirm you want to delete this widget: "
+msgstr "Prosím potvrďte, že chcete smazat tento Widget: "
+
+#. Dialog box title
+msgctxt "customwidgets.list.clone.dialog.title"
+msgid "Clone widget"
+msgstr "Kopírovat Widget"
+
+#. Dialog box message
+msgctxt "customwidgets.list.clone.dialog.message"
+msgid "This will clone the globally provisioned widget: <id> to be modified as part of the panel configuration. Enter an unique identifier below - it must be different from the widget being cloned, and should avoid spaces and special chars. If an user-defined widget with the same identifier already exists, it will be replaced!"
+msgstr "Tímto vytvoříte kopii Widgetu: <id> který může být upraven jako součást konfigurace panelu. Níže zadejte jedinečný název nového Widgetu - musí být odlišný od názvu zdrojového Widgetu a neměl by obsahovat mezery a speciální znaky. Pozor, existuje-li již vlastní Widget se stejným názvem, bude tímto nahrazen!"
+
+#. Screen title, followed by the widget name - beware of size!
+msgctxt "customwidgets.designer.heading"
+msgid "Widget:"
+msgstr "Widget:"
+
+#. Save button on the right, default label - can be hidden on phones
+msgctxt "customwidgets.designer.save"
+msgid "Save"
+msgstr "Uložit"
+
+#. Save button on the right, displayed for a few seconds after a save - can be hidden on phones
+msgctxt "customwidgets.designer.saved"
+msgid "Saved!"
+msgstr "Uloženo!"
+
+#. Tab header
+msgctxt "customwidgets.designer.code"
+msgid "Code"
+msgstr "Kód"
+
+#. Tab header
+msgctxt "customwidgets.designer.settings"
+msgid "Settings"
+msgstr "Nastavení"
+
+#. Section header in the Settings tab
+msgctxt "customwidgets.designer.settings.general"
+msgid "General settings"
+msgstr "Obecná nastavení"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.general.display_name"
+msgid "Display name"
+msgstr "Zobrazovaný název"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.general.author"
+msgid "Author"
+msgstr "Autor"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.general.description"
+msgid "Description"
+msgstr "Popis"
+
+#. Section header in the Settings tab
+msgctxt "customwidgets.designer.settings.config"
+msgid "Configuration settings"
+msgstr "Nastavení konfigurace"
+
+#. Displayed in small text below the section header, with an information icon
+msgctxt "customwidgets.designer.settings.config.warning"
+msgid "Beware: always bear in mind instances of this widget might be existing when altering configuration settings!"
+msgstr "Pozor: když měníte nastavení konfigurace nezapomeňte, že možná existují někde kopie tohoto Widgetu!"
+
+#. Button label
+msgctxt "customwidgets.designer.settings.config.add"
+msgid "Add setting"
+msgstr "Přidat nastavení"
+
+#. Dropdown header
+msgctxt "customwidgets.designer.settings.config.type"
+msgid "Type"
+msgstr "Typ"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.string"
+msgid "String"
+msgstr "Text (String)"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.number"
+msgid "Number"
+msgstr "Číslo (Number)"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.checkbox"
+msgid "Checkbox"
+msgstr "Zaškrtávací pole (Checkbox)"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.item"
+msgid "Item"
+msgstr "Item"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.color"
+msgid "Color"
+msgstr "Barva (Color)"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.choices"
+msgid "Choices"
+msgstr "Volby (Choices)"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.icon"
+msgid "Icon"
+msgstr "Ikona (Icon)"
+
+#. Dropdown option
+msgctxt "customwidgets.designer.settings.config.type.heading"
+msgid "Heading"
+msgstr "Nadpis (Heading)"
+
+#. Tooltip displayed when hovering the help icon alongside the ID field
+msgctxt "customwidgets.designer.settings.config.id.hint"
+msgid "Enter a JSON friendly key for this setting - ideally, use only lowercase letters, digits and underscores. Examples: my_setting, first_item, text_size, font_color"
+msgstr "Zadejte JSON klíč pro toto nastavení - ideálně, používejte pouze malá písmena, číslice a podtržítka. Například: my_setting, first_item, text_size, font_color"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.label"
+msgid "Label"
+msgstr "Popisek"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.default"
+msgid "Default value"
+msgstr "Výchozí hodnota"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.choices"
+msgid "Choices"
+msgstr "Volby (Choices)"
+
+#. Textbox placeholder
+msgctxt "customwidgets.designer.settings.config.choices.hint"
+msgid "Comma-separated possible values"
+msgstr "Možné hodnoty oddělené čárkami"
+
+#. Textbox header
+msgctxt "customwidgets.designer.settings.config.description"
+msgid "Description"
+msgstr "Popis"
+
+#. Banner displayed when selecting the Icon type for the settings, followed by the defined settings themselves
+msgctxt "customwidgets.designer.settings.config.icon.hint"
+msgid "This will define 2 config elements:"
+msgstr "Toto bude definovat 2 konfigurační prvky:"
+
+#. Tab header
+msgctxt "customwidgets.designer.preview"
+msgid "Preview"
+msgstr "Náhled"
+
+#. Dialog box title
+msgctxt "widgetgallery.heading"
+msgid "Widget Gallery"
+msgstr "Galerie Widgetů"
+
+#. Dialog box title (when displaying a repository)
+msgctxt "widgetgallery.heading.importrepo"
+msgid "Import GitHub Repository"
+msgstr "Importovat z úložiště GitHub"
+
+#. Dialog box title (when displaying a community gallery item)
+msgctxt "widgetgallery.heading.importgallery"
+msgid "Import Gallery Item"
+msgstr "Importovat položku galerie"
+
+#. Alert banner message
+msgctxt "widgetgallery.warning.githubratelimit"
+msgid "Warning: rate limiting on the GitHub API will temporarily block further requests!"
+msgstr "Upozornění: omezení rychlosti na GitHub API bude dočasně blokovat další požadavky!"
+
+#. Alert banner message (2nd part)
+msgctxt "widgetgallery.warning.githubratelimit.wait"
+msgid "Wait until this time and try again:"
+msgstr "Počkejte do té doby a akci opakujte:"
+
+#. Textbox placeholder
+msgctxt "widgetgallery.addressbar.hint"
+msgid "GitHub repository full name (owner/name) or URL"
+msgstr "Celé jméno úložiště GitHub (jméno/vlastníka) nebo adresa URL"
+
+#. Button on the right of the addressbar
+msgctxt "widgetgallery.addressbar.go"
+msgid "Go"
+msgstr "Přejít"
+
+#. Suffix displayed after a number, i.e. "24 community contributions"
+msgctxt "widgetgallery.toolbar.communitycontributions"
+msgid "community&nbsp;contributions"
+msgstr "příspěvků&nbsp;komunity"
+
+#. On the right with the sort options
+msgctxt "widgetgallery.toolbar.sortby"
+msgid "sort by:"
+msgstr "seřadit podle:"
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostrecent"
+msgid "most&nbsp;recent"
+msgstr "nejnovější"
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostliked"
+msgid "most&nbsp;liked"
+msgstr "nejvíce&nbsp;hodnocené"
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostpopular"
+msgid "most&nbsp;popular"
+msgstr "nejoblíbenější"
+
+#. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
+msgctxt "widgetgallery.toolbar.sortby.mostdiscussed"
+msgid "most&nbsp;discussed"
+msgstr "nejvíce&nbsp;diskutované"
+
+#. Prefix before the author's name
+msgctxt "widgetgallery.details.authorby"
+msgid "by"
+msgstr "od"
+
+#. Suffix displayed after a number, i.e. "24 posts on this topic"
+msgctxt "widgetgallery.details.forumposts"
+msgid "post(s) on this topic - discuss on community.openhab.org"
+msgstr "příspěvků na toto téma - diskutovat na community.openhab.org"
+
+#. Label of the big green button when nothing to import
+msgctxt "widgetgallery.details.nothingtoimport"
+msgid "Nothing to import"
+msgstr "Není co importovat"
+
+#. Label of the big green button when 1 widget was found
+msgctxt "widgetgallery.details.importwidget"
+msgid "Import Widget"
+msgstr "Importovat Widget"
+
+#. Label of the big green button when 2 or more widgets were found
+msgctxt "widgetgallery.details.importwidgets"
+msgid "Import {} Widgets"
+msgstr "Importovat {} Widgety"
+
+#. Label of the big blue button when there is a referenced GitHub repo
+msgctxt "widgetgallery.details.gotorepository"
+msgid "Go to the repository"
+msgstr "Přejít do repozitáře"
+
+#. Displyed in orange inside the big green button after a number, when some widgets are already present
+msgctxt "widgetgallery.details.toupdate"
+msgid "to update"
+msgstr "aktualizace"
+
+#. Little white button label with a down caret
+msgctxt "widgetgallery.details.showdetails"
+msgid "Show details"
+msgstr "Zobrazit podrobnosti"
+
+#. Little white button label with a up caret
+msgctxt "widgetgallery.details.hidedetails"
+msgid "Hide details"
+msgstr "Skrýt podrobnosti"
+
+#. Little white button label
+msgctxt "widgetgallery.details.downloadzip"
+msgid "Download ZIP"
+msgstr "Stáhnout Zip"
+
+#. 1. Prefix of the explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.prefix"
+msgid "This"
+msgstr "Tento"
+
+#. 2a. Name of a community contribution
+msgctxt "widgetgallery.details.widget.hint.communitycontribution"
+msgid "community contribution"
+msgstr "příspěvek komunity"
+
+#. 2b. Name of a community contribution
+msgctxt "widgetgallery.details.widget.hint.repository"
+msgid "repository"
+msgstr "repozitář"
+
+#. 3. Suffix of the explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.suffix"
+msgid "contains the following widgets; you can import them individually:"
+msgstr "obsahuje tyto Widgety, které mohou být naimportovány jednotlivě:"
+
+#. Explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.nowidgets"
+msgid "No widgets were found (*.widget.json files)! Please report this."
+msgstr "Nebyly nalezeny žádné Widgety (*. widget.json soubory)! Ohlaste to prosím."
+
+#. Explanation in the expanded details section
+msgctxt "widgetgallery.details.widget.hint.checkrepo"
+msgid "The widgets are likely in the referenced GitHub repository. Click the 'Go to the repository' button to open it."
+msgstr "Widget je pravděpodobně na GitHubu. Klikněte na tlačítko \"Přejít do repozitáře\" abyste jej zobrazili."
+
+#. Green button in the expanded details section
+msgctxt "widgetgallery.details.widget.import"
+msgid "Import widget"
+msgstr "Importovat Widget"
+
+#. Orange button in the expanded details section
+msgctxt "widgetgallery.details.widget.update"
+msgid "Update widget"
+msgstr "Aktualizovat Widget"
+
+#. Disabled button in the expanded details section after a widget was imported/updated
+msgctxt "widgetgallery.details.widget.imported"
+msgid "Widget imported!"
+msgstr "Widget importován!"
+
+#. Alert banner, followed by a technical exception message
+msgctxt "widgetgallery.error"
+msgid "Error:"
+msgstr "Chyba:"
+
+#. Dialog box title
+msgctxt "widgetgallery.widgetsdetected.dialog.title"
+msgid "Existing widgets detected"
+msgstr "Zjištěny existující widgety"
+
+#. Dialog box message
+msgctxt "widgetgallery.widgetsdetected.dialog.message"
+msgid "Warning: please confirm you wish to update <nbexisting> existing widgets, overwriting any eventual changes made locally! If unsure, cancel and click Show details to review the list of affected widgets."
+msgstr "Upozornění: potvrďte, že chcete aktualizovat <nbexisting> stávajících Widgety, čímž přepíšete všechny případné změny provedené lokálně! Pokud si nejste jisti, zrušte aktualizaci a klikněte na tlačítko Zobrazit podrobnosti, kde uvidíte seznam ovlivněných Widgetů."
+

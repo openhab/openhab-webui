@@ -1,0 +1,180 @@
+<!-- Device List -->
+<div class="col-sm-4">
+	<div class="panel panel-default">
+		<!-- Header -->
+		<div class="panel-heading">
+			<span i18n="binding.InstalledBindings"></span>
+		</div>
+
+		<!-- Body -->
+		<div class="list-group habmin-list" resize-panel>
+			<!-- BINDING LIST -->
+			<div ng-if="bindingsCnt>0" ng-repeat="binding in bindings | orderBy:'name'"
+    			class="list-group-item" ng-class="{'active': binding==selectedBinding}"
+    			ng-click="selectBinding(binding)">
+				<li role="presentation">
+					<table style="background-color: transparent">
+						<tr>
+							<td class="text-large" rowspan="2">
+								<habmin-icon class="fa fa-fw" icon="{{binding.icon}}"></habmin-icon>
+							</td>
+							<td>
+								<span>{{binding.name}}&nbsp;</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-muted small">{{binding.author}}</td>
+						</tr>
+					</table>
+				</li>
+			</div>
+
+			<!-- Cover options for loading, and no devices -->
+			<div ng-if="bindingsCnt==-1" class="list-group-item text-center">
+				<span class="fa fa-spin fa-refresh"></span>
+				<span i18n="common.loading"></span>
+			</div>
+			<div ng-if="bindingsCnt==0" class="list-group-item text-center">
+				<span class="fa fa-exclamation-triangle text-warning"></span>
+				<span i18n="binding.NoneFound"></span>
+			</div>
+		</div>
+
+		<!-- Footer -->
+		<div class="panel-footer panel-footer-none"></div>
+	</div>
+</div>
+
+<!-- Binding Information / Configuration -->
+<div class="col-sm-8">
+	<div class="panel panel-default">
+		<!-- Header -->
+		<div class="panel-heading">
+			<h3 class="panel-title pull-left">
+				<span i18n="binding.Information"></span>
+				&nbsp;
+				<span>
+					<i>{{selectedBinding.name}}</i>
+				</span>
+			</h3>
+
+			<div class="pull-right btn-group dropdown">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					<span class="fa fa-cog"></span>
+					<span i18n="habmin.Tools"></span>
+					<span class="caret"></span>
+					<span class="sr-only">Dropdown</span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li ng-repeat="config in selectedThingConfig.parameters">
+						<a ng-if="config.groupName=='actions'" ng-click="doAction(config)">
+							<span class="fa fa-fw"></span>
+							<span class="fa fa-fw fa-user-plus"></span>
+							<span>{{config.label}}</span>
+						</a>
+					</li>
+
+					<li>
+						<a ng-click="showAdvancedSettings=!showAdvancedSettings">
+							<span class="fa fa-fw" ng-class="{'fa-check-square-o': showAdvancedSettings}"></span>
+							<span class="fa fa-fw fa-user-plus"></span>
+							<span i18n="habmin.AdvancedMode"></span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<!-- Body -->
+		<div class="list-group habmin-list" resize-panel>
+			<form name="thingConfigForm" novalidate ng-show="selectedBinding" style="height: 100%">
+				<!-- DESCRIPTION -->
+				<div>
+					<a role="presentation" class="list-group-item config-panel-title" 
+					   ng-class="{'active': panelDisplayed=='DESCRIPTION'}"
+					   ng-click="setPanelDisplayed('DESCRIPTION')">
+						<span class="fa fa-fw fa-book"></span>
+						<span i18n="habmin.Description"></span>
+					</a>
+				</div>
+				<div uib-collapse="panelDisplayed!='DESCRIPTION'" class="panel-form">
+					<div class="habmin-info">
+						<label i18n="habmin.Description"></label>
+
+						<div class="well well-sm" ng-bind-html="selectedBinding.description"></div>
+					</div>
+
+					<div class="habmin-info">
+						<label i18n="binding.Author"></label>
+
+						<div class="well well-sm">{{selectedBinding.author}}</div>
+					</div>
+				</div>
+
+				<!-- THING TYPES -->
+				<div>
+					<a role="presentation" ng-class="{'list-group-item config-panel-title':true, 'active': panelDisplayed=='THINGS'}" ng-click="setPanelDisplayed('THINGS')">
+						<span class="fa fa-fw fa-plug"></span>
+						<span i18n="binding.ThingTypes"></span>
+					</a>
+				</div>
+				<div uib-collapse="panelDisplayed!='THINGS'" class="panel-form">
+					<table class="table table-striped">
+						<tr ng-repeat="thingType in thingTypes | orderBy: 'label'" class="row" ng-if="bindingThingType(thingType)">
+							<td>
+								<div>
+									{{thingType.label}}
+									<span ng-if="thingType.properties.dbReference">
+										<a ng-href="http://www.cd-jackson.com/index.php/zwave/zwave-device-database/zwave-device-list/devicesummary/{{thingType.properties.dbReference}}" target="_blank">
+											<span class="fa fa-database"></span>
+										</a>
+									</span>
+								</div>
+								<div class="small">{{thingType.properties.vendor}} {{thingType.properties.modelId}}</div>
+								<div class="small single-line" ng-bind-html="thingType.description"></div>
+							</td>
+						</tr>
+					</table>
+				</div>
+
+				<!-- CONFIGURATION GROUPS -->
+				<div ng-repeat="group in bindingConfig.parameterGroups">
+					<div>
+						<a role="presentation" ng-class="{'list-group-item list-group-item-heading':true, 'active': panelDisplayed=='CONFIG-{{group.name}}'}" ng-click="setPanelDisplayed('CONFIG-{{group.name}}')" ng-if="configGroupAdvanced(group)||showAdvancedSettings">
+							<habmin-icon class="fa-fw" cfgcontext="{{group.context}}"></habmin-icon>
+							<span>{{group.label}}</span>
+						</a>
+					</div>
+					<div uib-collapse="$parent.panelDisplayed!='CONFIG-{{group.name}}'" class="panel-form">
+						<div ng-repeat="config in bindingConfig.parameters">
+							<div class="form-group" ng-if="configGroupFilter(config, group.name) && (!config.advanced||showAdvancedSettings)">
+								<ng-include src="'configuration/eshConfigParam.tpl.html'"></ng-include>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- CONFIGURATION UNGROUPED -->
+				<div ng-if="bindingHasUngroupedParams()">
+					<div>
+						<a role="presentation" ng-class="{'list-group-item list-group-item-heading':true, 'active': panelDisplayed=='CONFIG-ungrouped'}" ng-click="setPanelDisplayed('CONFIG-ungrouped')">
+							<span class="fa fa-fw fa-wrench"></span>
+							<span i18n="habmin.Configuration"></span>
+						</a>
+					</div>
+					<div uib-collapse="$parent.panelDisplayed!='CONFIG-ungrouped'" class="panel-form">
+						<div ng-repeat="config in bindingConfig.parameters">
+							<div class="form-group" ng-if="configGroupFilter(config, null) && (!config.advanced||showAdvancedSettings)">
+								<ng-include src="'configuration/eshConfigParam.tpl.html'"></ng-include>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<!-- Footer -->
+		<div class="panel-footer panel-footer-none"></div>
+	</div>
+</div>
