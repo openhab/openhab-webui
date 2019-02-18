@@ -1,0 +1,15 @@
+{
+  "ApproveAllConfirmMsg": "Er du sikker på at du vil legge alle elementene i innboksen til som nye ting?",
+  "ApproveAllConfirmTitle": "Godkjenn Alle Innboks-elementer",
+  "ClearConfirmMsg": "Er du sikker på at du vil tømme tingene i innboksen? Alle tingene vil bli slettet, og må søkes opp på nytt.",
+  "ClearConfirmTitle": "Tøm Innboks",
+  "ClearFail": "Tømming av innboksen mislyktes for en eller flere elementer.",
+  "DeleteConfirmMsg": "Er du sikker på at du vil slette tingen fra inboksen?",
+  "DeleteConfirmTitle": "Slett Ting fra Innboks",
+  "IgnoreConfirmMsg": "Er du sikker på at du vil ignorere denne tingen i innboksen?",
+  "IgnoreConfirmTitle": "Ignorer Ting i Innboks",
+  "IgnoreFail": "Kunne ikke ignorere <b><i>{name}</i></b>",
+  "NewThing": "Ny ting oppdaget  <b><i>{name}</i></b>",
+  "StartFail": "Søk feilet for binding <b><i>{name}</i></b>",
+  "StartOk": "Søk startet for binding <b><i>{name}</i></b>"
+}

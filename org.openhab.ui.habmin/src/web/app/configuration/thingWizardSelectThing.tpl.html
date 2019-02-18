@@ -1,0 +1,9 @@
+<label>Select thing type...</label>
+<ul class="list-group">
+    <li class="list-group-item" ng-repeat="thing in newThings | orderBy: 'label'">
+        <a ng-click="selectThing(thing)">
+            <habmin-icon class="fa-fw" icon="{{binding.icon}}"></habmin-icon>
+            <span>{{thing.label}}</span>
+        </a>
+    </li>
+</ul>

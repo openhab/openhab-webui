@@ -1,0 +1,22 @@
+<form class="form" role="form">
+    <div class="form-group">
+        <label for="inputGroups" class="control-label" i18n="dashboard.FloorName"></label>
+
+        <div>
+            <ui-select id="inputGroups"
+                       ng-model="options.floorplanId"
+                       theme="bootstrap"
+                       search-enabled="true">
+                <ui-select-match i18n-attr="{placeholder: 'dashboard.FloorSelectName'}">
+                    <habmin-icon class="fa fa-fw" category="{{$select.selected.category}}"></habmin-icon>
+                    {{$select.selected.name}}
+                </ui-select-match>
+                <ui-select-choices
+                        repeat="floorplan.id as floorplan in floorplanList | orderBy: 'name'">
+                    <habmin-icon class="fa fa-fw" category="{{floorplan.category}}"></habmin-icon>
+                    <span>{{floorplan.name}}</span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    </div>
+</form>

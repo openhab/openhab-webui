@@ -1,0 +1,530 @@
+<div class="row">
+    <div class="col-md-4" i18n="zwave.Manufacturer"></div>
+    <div class="col-md-8" ng-if="selectedThing.properties['zwave_manufacturer']">
+        {{dec2hex(selectedThing.properties['zwave_manufacturer'], 4)}}
+        <span class="fa fa-quote-left"></span>
+        <span ng-switch on=selectedThing.properties['zwave_manufacturer']>
+            <span ng-switch-when="65535">Not defined</span>
+            <span ng-switch-when="40">2B Electronics</span>
+            <span ng-switch-when="155">2gig Technologies Inc.</span>
+            <span ng-switch-when="42">3e Technologies</span>
+            <span ng-switch-when="34">A-1 Components</span>
+            <span ng-switch-when="279">Abilia</span>
+            <span ng-switch-when="1">ACT - Advanced Control Technologies</span>
+            <span ng-switch-when="257">ADOX, Inc.</span>
+            <span ng-switch-when="364">Advanced Optronic Devices Co.,Ltd</span>
+            <span ng-switch-when="158">Adventure Interactive</span>
+            <span ng-switch-when="134">AEON Labs</span>
+            <span ng-switch-when="273">Airline Mechanical Co., Ltd.</span>
+            <span ng-switch-when="136">Airvent SAM S.p.A.</span>
+            <span ng-switch-when="148">Alarm.com</span>
+            <span ng-switch-when="294">Alertme</span>
+            <span ng-switch-when="59">Allegion</span>
+            <span ng-switch-when="560">Alphonsus Tech</span>
+            <span ng-switch-when="412">Amdocs</span>
+            <span ng-switch-when="90">American Grid, Inc.</span>
+            <span ng-switch-when="120">anyCOMM Corporation</span>
+            <span ng-switch-when="324">Applied Micro Electronics \"AME\" BV</span>
+            <span ng-switch-when="41">Asia Heading</span>
+            <span ng-switch-when="561">ASITEQ</span>
+            <span ng-switch-when="297">ASSA ABLOY</span>
+            <span ng-switch-when="315">AstraLink</span>
+            <span ng-switch-when="308">AT&T</span>
+            <span ng-switch-when="43">Atech</span>
+            <span ng-switch-when="580">Athom BV</span>
+            <span ng-switch-when="341">Avadesign Technology Co., Ltd.</span>
+            <span ng-switch-when="326">Axesstel Inc</span>
+            <span ng-switch-when="24">Balboa Instruments</span>
+            <span ng-switch-when="566">Bandi Comm Tech Inc.</span>
+            <span ng-switch-when="516">Beijing Sino-American Boyi Software Development Co., Ltd</span>
+            <span ng-switch-when="593">Beijing Universal Energy Huaxia Technology Co.,Ltd</span>
+            <span ng-switch-when="406">Bellatrix Systems, Inc.</span>
+            <span ng-switch-when="138">BeNext</span>
+            <span ng-switch-when="44">BeSafer</span>
+            <span ng-switch-when="331">BFT S.p.A.</span>
+            <span ng-switch-when="82">Bit7 Inc.</span>
+            <span ng-switch-when="144">Black & Decker</span>
+            <span ng-switch-when="531">BMS Evler LTD</span>
+            <span ng-switch-when="35">Boca Devices</span>
+            <span ng-switch-when="348">Bosch Security Systems, Inc</span>
+            <span ng-switch-when="312">BRK Brands, Inc.</span>
+            <span ng-switch-when="45">Broadband Energy Networks Inc.</span>
+            <span ng-switch-when="586">BTSTAR(HK) TECHNOLOGY COMPANY LIMITED</span>
+            <span ng-switch-when="325">Buffalo Inc.</span>
+            <span ng-switch-when="400">Building 36 Technologies</span>
+            <span ng-switch-when="38">BuLogics</span>
+            <span ng-switch-when="361">Bönig und Kallenbach oHG</span>
+            <span ng-switch-when="156">Cameo Communications Inc.</span>
+            <span ng-switch-when="46">Carrier</span>
+            <span ng-switch-when="11">CasaWorks</span>
+            <span ng-switch-when="579">casenio AG</span>
+            <span ng-switch-when="358">CBCC Domotique SAS</span>
+            <span ng-switch-when="582">CentraLite Systems, Inc</span>
+            <span ng-switch-when="334">Check-It Solutions Inc.</span>
+            <span ng-switch-when="278">Chromagic Technologies Corporation</span>
+            <span ng-switch-when="130">Cisco Consumer Business Group</span>
+            <span ng-switch-when="398">Climax Technology, Ltd.</span>
+            <span ng-switch-when="512">Cloud Media</span>
+            <span ng-switch-when="47">Color Kinetics Incorporated</span>
+            <span ng-switch-when="320">Computime</span>
+            <span ng-switch-when="283">Connected Object</span>
+            <span ng-switch-when="377">ConnectHome</span>
+            <span ng-switch-when="25">ControlThink LC</span>
+            <span ng-switch-when="15">ConvergeX Ltd.</span>
+            <span ng-switch-when="125">CoolGuard</span>
+            <span ng-switch-when="121">Cooper Lighting</span>
+            <span ng-switch-when="26">Cooper Wiring Devices</span>
+            <span ng-switch-when="157">Coventive Technologies Inc.</span>
+            <span ng-switch-when="20">Cyberhouse</span>
+            <span ng-switch-when="103">CyberTAN Technology, Inc.</span>
+            <span ng-switch-when="48">Cytech Technology Pre Ltd.</span>
+            <span ng-switch-when="2">Danfoss</span>
+            <span ng-switch-when="396">Dawon DNS</span>
+            <span ng-switch-when="522">Decoris Intelligent System Limited</span>
+            <span ng-switch-when="319">Defacontrols BV</span>
+            <span ng-switch-when="49">Destiny Networks</span>
+            <span ng-switch-when="373">Devolo</span>
+            <span ng-switch-when="259">Diehl AKO</span>
+            <span ng-switch-when="50">Digital 5, Inc.</span>
+            <span ng-switch-when="590">Digital Home Systems Pty Ltd,</span>
+            <span ng-switch-when="552">DigitalZone</span>
+            <span ng-switch-when="264">D-Link</span>
+            <span ng-switch-when="295">DMP (Digital Monitoring Products)</span>
+            <span ng-switch-when="375">Domino sistemi d.o.o.</span>
+            <span ng-switch-when="526">Domitech Products, LLC</span>
+            <span ng-switch-when="524">Dongguan Zhou Da Electronics Co.,Ltd</span>
+            <span ng-switch-when="381">DRACOR Inc.</span>
+            <span ng-switch-when="388">Dragon Tech Industrial, Ltd.</span>
+            <span ng-switch-when="547">DTV Research Unipessoal, Lda</span>
+            <span ng-switch-when="306">DynaQuip Controls</span>
+            <span ng-switch-when="583">EASY SAVER Co., Inc</span>
+            <span ng-switch-when="380">EbV</span>
+            <span ng-switch-when="363">Echostar</span>
+            <span ng-switch-when="330">Ecolink</span>
+            <span ng-switch-when="343">EcoNet Controls</span>
+            <span ng-switch-when="269">e-Home AUTOMATION</span>
+            <span ng-switch-when="135">Eka Systems</span>
+            <span ng-switch-when="51">Electronic Solutions</span>
+            <span ng-switch-when="543">Elexa Consumer Products Inc.</span>
+            <span ng-switch-when="52">El-Gev Electronics LTD</span>
+            <span ng-switch-when="27">ELK Products, Inc.</span>
+            <span ng-switch-when="523">Embedded System Design Limited</span>
+            <span ng-switch-when="53">Embedit A/S</span>
+            <span ng-switch-when="333">Enblink Co. Ltd</span>
+            <span ng-switch-when="537">Enwox Technologies s.r.o.</span>
+            <span ng-switch-when="111">Erone</span>
+            <span ng-switch-when="352">Essence Security</span>
+            <span ng-switch-when="328">Eurotronics</span>
+            <span ng-switch-when="96">Everspring</span>
+            <span ng-switch-when="275">Evolve</span>
+            <span ng-switch-when="54">Exceptional Innovations</span>
+            <span ng-switch-when="4">Exhausto</span>
+            <span ng-switch-when="159">Exigent Sensors</span>
+            <span ng-switch-when="30">Express Controls</span>
+            <span ng-switch-when="563">eZEX Corporation</span>
+            <span ng-switch-when="133">Fakro</span>
+            <span ng-switch-when="362">Fantem</span>
+            <span ng-switch-when="271">Fibargroup</span>
+            <span ng-switch-when="397">Flextronics</span>
+            <span ng-switch-when="36">Flue Sentinel</span>
+            <span ng-switch-when="55">Foard Systems</span>
+            <span ng-switch-when="399">Focal Point Limited</span>
+            <span ng-switch-when="311">FollowGood Technology Company Ltd.</span>
+            <span ng-switch-when="519">Forest Group Nederland B.V</span>
+            <span ng-switch-when="132">FortrezZ LLC</span>
+            <span ng-switch-when="285">Foxconn</span>
+            <span ng-switch-when="272">Frostdale</span>
+            <span ng-switch-when="602">GES</span>
+            <span ng-switch-when="555">GKB Security Corporation</span>
+            <span ng-switch-when="394">Globalchina-Tech</span>
+            <span ng-switch-when="345">Goap</span>
+            <span ng-switch-when="118">Goggin Research</span>
+            <span ng-switch-when="104">Good Way Technology Co., Ltd</span>
+            <span ng-switch-when="153">GreenWave Reality Inc.</span>
+            <span ng-switch-when="395">Grib</span>
+            <span ng-switch-when="365">Guangzhou Ruixiang M&E Co., Ltd</span>
+            <span ng-switch-when="344">GuangZhou Zeewave Information Technology Co., Ltd.</span>
+            <span ng-switch-when="588">Hankook Gas Kiki CO.,LTD.</span>
+            <span ng-switch-when="604">Hauppauge</span>
+            <span ng-switch-when="115">Hawking Technologies Inc.</span>
+            <span ng-switch-when="527">Herald Datanetics Limited</span>
+            <span ng-switch-when="23">HiTech Automation</span>
+            <span ng-switch-when="385">Holion Electronic Engineering Co., Ltd</span>
+            <span ng-switch-when="318">Holtec Electronics BV</span>
+            <span ng-switch-when="13">Home Automated Living</span>
+            <span ng-switch-when="154">Home Automation Europe</span>
+            <span ng-switch-when="91">Home Automation Inc.</span>
+            <span ng-switch-when="56">Home Director</span>
+            <span ng-switch-when="112">Homemanageables, Inc.</span>
+            <span ng-switch-when="80">Homepro</span>
+            <span ng-switch-when="354">HomeScenario</span>
+            <span ng-switch-when="12">HomeSeer Technologies</span>
+            <span ng-switch-when="573">Honest Technology Co., Ltd.</span>
+            <span ng-switch-when="57">Honeywell</span>
+            <span ng-switch-when="89">Horstmann Controls Limited</span>
+            <span ng-switch-when="545">HOSEOTELNET</span>
+            <span ng-switch-when="384">Huapin Information Technology Co.,Ltd</span>
+            <span ng-switch-when="587">Huawei Technologies Co., Ltd.</span>
+            <span ng-switch-when="124">Hunter Douglas</span>
+            <span ng-switch-when="536">iAutomade Pte Ltd</span>
+            <span ng-switch-when="17">iCOM Technology b.v.</span>
+            <span ng-switch-when="262">iControl</span>
+            <span ng-switch-when="262">Icontrol Networks</span>
+            <span ng-switch-when="357">ID-RF</span>
+            <span ng-switch-when="414">iEXERGY GmbH</span>
+            <span ng-switch-when="86">Impact Technologies and Products</span>
+            <span ng-switch-when="97">Impact Technologies BV</span>
+            <span ng-switch-when="299">Infusion Development</span>
+            <span ng-switch-when="108">Ingersoll Rand (Schlage)</span>
+            <span ng-switch-when="287">Ingersoll Rand (was Ecolink)</span>
+            <span ng-switch-when="598">Inkel Corp.</span>
+            <span ng-switch-when="58">Inlon Srl</span>
+            <span ng-switch-when="321">Innoband Technologies, Inc</span>
+            <span ng-switch-when="119">INNOVUS</span>
+            <span ng-switch-when="256">Insignia</span>
+            <span ng-switch-when="6">Intel</span>
+            <span ng-switch-when="28">IntelliCon</span>
+            <span ng-switch-when="114">Interactive Electronics Systems (IES)</span>
+            <span ng-switch-when="5">Intermatic</span>
+            <span ng-switch-when="19">Internet Dom</span>
+            <span ng-switch-when="95">IQ-Group</span>
+            <span ng-switch-when="530">iRevo</span>
+            <span ng-switch-when="595">iungo.nl B.V.</span>
+            <span ng-switch-when="291">IWATSU</span>
+            <span ng-switch-when="99">Jasco Products</span>
+            <span ng-switch-when="346">Jin Tao Bao</span>
+            <span ng-switch-when="356">JSW Pacific Corporation</span>
+            <span ng-switch-when="532">Kaipule Technology Co., Ltd.</span>
+            <span ng-switch-when="145">Kamstrup A/S</span>
+            <span ng-switch-when="106">Kellendonk Elektronik</span>
+            <span ng-switch-when="276">Kichler</span>
+            <span ng-switch-when="372">Kopera Development Inc.</span>
+            <span ng-switch-when="570">KUMHO ELECTRIC, INC</span>
+            <span ng-switch-when="81">Lagotek Corporation</span>
+            <span ng-switch-when="371">Leak Intelligence, LLC</span>
+            <span ng-switch-when="391">LEVION Technologies Gmbh</span>
+            <span ng-switch-when="29">Leviton</span>
+            <span ng-switch-when="21">Lexel</span>
+            <span ng-switch-when="347">LG Electronics</span>
+            <span ng-switch-when="548">LifeShield, LLC</span>
+            <span ng-switch-when="60">Lifestyle Networks</span>
+            <span ng-switch-when="528">Light Engine Limited</span>
+            <span ng-switch-when="335">Linear Corp</span>
+            <span ng-switch-when="378">Liveguard Ltd.</span>
+            <span ng-switch-when="314">Living Style Enterprises, Ltd.</span>
+            <span ng-switch-when="350">Locstar Technology Co., Ltd</span>
+            <span ng-switch-when="127">Logitech</span>
+            <span ng-switch-when="37">Loudwater Technologies, LLC</span>
+            <span ng-switch-when="113">LS Control</span>
+            <span ng-switch-when="98">LVI Produkter AB</span>
+            <span ng-switch-when="405">M2M Solution</span>
+            <span ng-switch-when="110">Manodo / KTC</span>
+            <span ng-switch-when="61">Marmitek BV</span>
+            <span ng-switch-when="62">Martec Access Products</span>
+            <span ng-switch-when="146">Martin Renz GmbH</span>
+            <span ng-switch-when="143">MB Turn Key Design</span>
+            <span ng-switch-when="351">McoHome Technology Co., Ltd</span>
+            <span ng-switch-when="546">MCT CO., LTD</span>
+            <span ng-switch-when="39">Meedio, LLC</span>
+            <span ng-switch-when="263">MegaChips</span>
+            <span ng-switch-when="557">Mercury Corporation</span>
+            <span ng-switch-when="122">Merten</span>
+            <span ng-switch-when="568">Milanity, Inc.</span>
+            <span ng-switch-when="274">MITSUMI</span>
+            <span ng-switch-when="413">MOBILUS MOTOR Spólka z o.o.</span>
+            <span ng-switch-when="562">MODACOM CO., LTD.</span>
+            <span ng-switch-when="141">Modstrøm</span>
+            <span ng-switch-when="14">Mohito Networks</span>
+            <span ng-switch-when="514">Monoprice</span>
+            <span ng-switch-when="126">Monster Cable</span>
+            <span ng-switch-when="293">Motion Control Systems</span>
+            <span ng-switch-when="63">Motorola</span>
+            <span ng-switch-when="290">MSK - Miyakawa Seisakusho</span>
+            <span ng-switch-when="131">MTC Maintronic Germany</span>
+            <span ng-switch-when="323">myStrom</span>
+            <span ng-switch-when="366">Nanjing Easthouse Electrical Co., Ltd.</span>
+            <span ng-switch-when="289">Napco Security Technologies, Inc.</span>
+            <span ng-switch-when="109">Nefit</span>
+            <span ng-switch-when="393">Ness Corporation Pty Ltd</span>
+            <span ng-switch-when="307">Netgear</span>
+            <span ng-switch-when="515">Newland Communication Science Technology Co., Ltd.</span>
+            <span ng-switch-when="376">Nexia Home Intelligence</span>
+            <span ng-switch-when="117">NextEnergy</span>
+            <span ng-switch-when="389">Ningbo Sentek Electronics Co., Ltd</span>
+            <span ng-switch-when="594">North China University of Technology</span>
+            <span ng-switch-when="150">NorthQ</span>
+            <span ng-switch-when="64">Novar Electrical Devices and Systems (EDS)</span>
+            <span ng-switch-when="525">Novateqni HK Ltd</span>
+            <span ng-switch-when="281">Omnima Limited</span>
+            <span ng-switch-when="332">OnSite Pro</span>
+            <span ng-switch-when="65">OpenPeak Inc.</span>
+            <span ng-switch-when="260">Panasonic Electric Works Co., Ltd.</span>
+            <span ng-switch-when="599">PARATECH</span>
+            <span ng-switch-when="370">PassivSystems Limited</span>
+            <span ng-switch-when="317">Pella</span>
+            <span ng-switch-when="581">permundo GmbH</span>
+            <span ng-switch-when="316">Philio Technology Corp</span>
+            <span ng-switch-when="336">Physical Graph Corporation</span>
+            <span ng-switch-when="123">PiTech</span>
+            <span ng-switch-when="270">Poly-control</span>
+            <span ng-switch-when="340">Popp & Co</span>
+            <span ng-switch-when="368">Powerhouse Dynamics</span>
+            <span ng-switch-when="116">PowerLinx</span>
+            <span ng-switch-when="22">PowerLynx</span>
+            <span ng-switch-when="66">Pragmatic Consulting Inc.</span>
+            <span ng-switch-when="296">Prodrive Technologies</span>
+            <span ng-switch-when="353">Promixis, LLC</span>
+            <span ng-switch-when="93">Pulse Technologies (Aspalis)</span>
+            <span ng-switch-when="149">Qees</span>
+            <span ng-switch-when="298">Qolsys</span>
+            <span ng-switch-when="304">Quby</span>
+            <span ng-switch-when="355">Queenlock Ind. Co., Ltd.</span>
+            <span ng-switch-when="322">Rademacher Geräte-Elektronik GmbH & Co. KG</span>
+            <span ng-switch-when="152">Radio Thermostat Company of America (RTC)</span>
+            <span ng-switch-when="142">Raritan</span>
+            <span ng-switch-when="542">Red Bee Co. Ltd</span>
+            <span ng-switch-when="100">Reitz-Group.de</span>
+            <span ng-switch-when="556">Remote Solution</span>
+            <span ng-switch-when="21076">Remotec</span>
+            <span ng-switch-when="16">Residential Control Systems, Inc. (RCS)</span>
+            <span ng-switch-when="534">RET Nanjing Intelligence System CO.,Ltd</span>
+            <span ng-switch-when="339">Revolv Inc</span>
+            <span ng-switch-when="327">R-import Ltd.</span>
+            <span ng-switch-when="571">ROC-Connect, Inc.</span>
+            <span ng-switch-when="407">RPE Ajax LLC (dbs Secur Ltd)</span>
+            <span ng-switch-when="101">RS Scene Automation</span>
+            <span ng-switch-when="572">SafeTech Products</span>
+            <span ng-switch-when="513">Samsung Electronics Co., Ltd.</span>
+            <span ng-switch-when="558">Samsung SDS</span>
+            <span ng-switch-when="147">San Shih Electrical Enterprise Co., Ltd.</span>
+            <span ng-switch-when="300">SANAV</span>
+            <span ng-switch-when="31">Scientia Technologies, Inc.</span>
+            <span ng-switch-when="286">Secure Wireless</span>
+            <span ng-switch-when="359">SecureNet Technologies</span>
+            <span ng-switch-when="386">Securifi Ltd.</span>
+            <span ng-switch-when="105">Seluxit</span>
+            <span ng-switch-when="67">Senmatic A/S</span>
+            <span ng-switch-when="410">Sensative AB</span>
+            <span ng-switch-when="68">Sequoia Technology LTD</span>
+            <span ng-switch-when="337">Sercomm Corp</span>
+            <span ng-switch-when="533">Shangdong Smart Life Data System Co.,Ltd</span>
+            <span ng-switch-when="574">Shanghai Dorlink Intelligent Technologies Co.,Ltd</span>
+            <span ng-switch-when="517">Shanghai Longchuang Eco-energy Systems Co., Ltd</span>
+            <span ng-switch-when="267">Sharp</span>
+            <span ng-switch-when="538">SHENZHEN AOYA INDUSTRY CO. LTD</span>
+            <span ng-switch-when="540">Shenzhen iSurpass Technology Co. ,Ltd</span>
+            <span ng-switch-when="541">Shenzhen Kaadas Intelligent Technology Co., Ltd</span>
+            <span ng-switch-when="529">Shenzhen Liao Wang Tong Da Technology Ltd</span>
+            <span ng-switch-when="600">Shenzhen Neo Electronics Co., Ltd</span>
+            <span ng-switch-when="592">Shenzhen Tripath Digital Audio Equipment Co.,Ltd</span>
+            <span ng-switch-when="129">SIEGENIA-AUBI KG</span>
+            <span ng-switch-when="0">Sigma Designs (Former Zensys)</span>
+            <span ng-switch-when="69">Sine Wireless</span>
+            <span ng-switch-when="70">Smart Products, Inc.</span>
+            <span ng-switch-when="591">Smartly AS</span>
+            <span ng-switch-when="258">SMK Manufacturing Inc.</span>
+            <span ng-switch-when="71">Somfy</span>
+            <span ng-switch-when="596">Spectrum Brands</span>
+            <span ng-switch-when="292">Square Connect</span>
+            <span ng-switch-when="539">ST&T Electric Corporation</span>
+            <span ng-switch-when="601">Starkoff</span>
+            <span ng-switch-when="569">Stelpro</span>
+            <span ng-switch-when="535">Strattec Advanced Logic,LLC</span>
+            <span ng-switch-when="360">STRATTEC Security Corporation</span>
+            <span ng-switch-when="261">Sumitomo</span>
+            <span ng-switch-when="84">Superna</span>
+            <span ng-switch-when="401">Swann Communications Pty Ltd</span>
+            <span ng-switch-when="9">Sylvania</span>
+            <span ng-switch-when="310">Systech Corporation</span>
+            <span ng-switch-when="565">TAEWON Lighting Co., Ltd.</span>
+            <span ng-switch-when="390">Team Digital Limited</span>
+            <span ng-switch-when="137">Team Precision PCL</span>
+            <span ng-switch-when="576">Technicolor</span>
+            <span ng-switch-when="10">Techniku</span>
+            <span ng-switch-when="303">Tecom Co., Ltd.</span>
+            <span ng-switch-when="18">Tell It Online</span>
+            <span ng-switch-when="374">Telldus Technologies AB</span>
+            <span ng-switch-when="72">Telsey</span>
+            <span ng-switch-when="382">Telular</span>
+            <span ng-switch-when="92">Terra Optima B.V. (tidligere Primair Services)</span>
+            <span ng-switch-when="268">There Corporation</span>
+            <span ng-switch-when="411">ThermoFloor</span>
+            <span ng-switch-when="554">TIMEVALVE, Inc.</span>
+            <span ng-switch-when="280">TKB Home</span>
+            <span ng-switch-when="284">TKH Group / Eminent</span>
+            <span ng-switch-when="139">Trane Corporation</span>
+            <span ng-switch-when="102">TrickleStar</span>
+            <span ng-switch-when="107">Tricklestar Ltd. (former Empower Controls Ltd.)</span>
+            <span ng-switch-when="85">Tridium</span>
+            <span ng-switch-when="73">Twisthink</span>
+            <span ng-switch-when="338">UFairy G.R. Tech</span>
+            <span ng-switch-when="403">Universal Devices, Inc</span>
+            <span ng-switch-when="32">Universal Electronics Inc.</span>
+            <span ng-switch-when="387">Universe Future</span>
+            <span ng-switch-when="521">UTC Fire and Security Americas Corp</span>
+            <span ng-switch-when="266">VDA</span>
+            <span ng-switch-when="408">Venstar Inc.</span>
+            <span ng-switch-when="140">Vera Control</span>
+            <span ng-switch-when="128">Vero Duco</span>
+            <span ng-switch-when="567">Vestel Elektronik Ticaret ve Sanayi A.S.</span>
+            <span ng-switch-when="83">Viewsonic</span>
+            <span ng-switch-when="94">ViewSonic Corporation</span>
+            <span ng-switch-when="7">Vimar CRS</span>
+            <span ng-switch-when="392">Vipa-Star</span>
+            <span ng-switch-when="265">Vision Security</span>
+            <span ng-switch-when="74">Visualize</span>
+            <span ng-switch-when="88">Vitelec</span>
+            <span ng-switch-when="342">Vivint</span>
+            <span ng-switch-when="379">Vs-Safety AS</span>
+            <span ng-switch-when="75">Watt Stopper</span>
+            <span ng-switch-when="8">Wayne Dalton</span>
+            <span ng-switch-when="415">Webee Life</span>
+            <span ng-switch-when="369">WeBeHome AB</span>
+            <span ng-switch-when="282">Wenzhou MTLC Electric Appliances Co.,Ltd.</span>
+            <span ng-switch-when="87">Whirlpool</span>
+            <span ng-switch-when="329">wiDom</span>
+            <span ng-switch-when="349">Willis Electric Co., Ltd.</span>
+            <span ng-switch-when="301">Wilshine Holding Co., Ltd</span>
+            <span ng-switch-when="383">Wink Inc.</span>
+            <span ng-switch-when="151">Wintop</span>
+            <span ng-switch-when="578">Winytechnology</span>
+            <span ng-switch-when="409">Wireless Maingate AB</span>
+            <span ng-switch-when="76">Woodward Labs</span>
+            <span ng-switch-when="3">Wr@p</span>
+            <span ng-switch-when="559">WRT Intelligent Technology CO., LTD.</span>
+            <span ng-switch-when="302">Wuhan NWD Technology Co., Ltd.</span>
+            <span ng-switch-when="77">Xanboo</span>
+            <span ng-switch-when="78">Zdata, LLC.</span>
+            <span ng-switch-when="367">Zhejiang Jiuxing Electric Co Ltd</span>
+            <span ng-switch-when="313">Zhome</span>
+            <span ng-switch-when="305">Zipato</span>
+            <span ng-switch-when="288">Zonoff</span>
+            <span ng-switch-when="79">Z-Wave Technologia</span>
+            <span ng-switch-when="277">Z-Wave.Me</span>
+            <span ng-switch-when="589">Z-works Inc.</span>
+            <span ng-switch-when="33">Zykronix</span>
+            <span ng-switch-when="309">ZyXEL</span>
+        <span ng-switch-default>Unknown Manufacturer</span>
+        <span class="fa fa-quote-right"></span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4" i18n="zwave.TypeId"></div>
+    <div class="col-md-8" ng-if="selectedThing.properties['zwave_devicetype']">
+        {{dec2hex(selectedThing.properties['zwave_devicetype'],4)}}:{{dec2hex(selectedThing.properties['zwave_deviceid'],4)}}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4" i18n="zwave.FirmwareVersion"></div>
+    <div class="col-md-8">{{selectedThing.properties['zwave_version']}}</div>
+</div>
+
+<div class="row" ng-if="selectedThing.properties['zwave_plus_devicetype']">
+    <div class="col-md-4" i18n="zwave.ZWavePlusDeviceType"></div>
+    <div class="col-md-8">{{selectedThing.properties['zwave_plus_devicetype']}}</div>
+</div>
+
+<div class="row" ng-if="selectedThing.properties['zwave_plus_roletype']">
+    <div class="col-md-4" i18n="zwave.ZWavePlusRoleType"></div>
+    <div class="col-md-8">{{selectedThing.properties['zwave_plus_roletype']}}</div>
+</div>
+
+<div class="row">
+    <div class="col-md-4" i18n="zwave.BasicClass"></div>
+    <div class="col-md-8">{{selectedThing.properties['zwave_class_basic']}}</div>
+</div>
+<div class="row">
+    <div class="col-md-4" i18n="zwave.GenericClass"></div>
+    <div class="col-md-8">{{selectedThing.properties['zwave_class_generic']}}</div>
+</div>
+<div class="row">
+    <div class="col-md-4" i18n="zwave.SpecificClass"></div>
+    <div class="col-md-8">{{selectedThing.properties['zwave_class_specific']}}</div>
+</div>
+
+<div class="row">
+    <div class="col-md-4" i18n="zwave.UsingSecurity"></div>
+    <div class="col-md-8">
+        <span ng-switch="selectedThing.properties['zwave_secure']">
+            <span ng-switch-when="true" class="fa fa-check-circle-o text-success"></span>
+            <span ng-switch-when="false" class="fa fa-times-circle-o text-danger"></span>
+            <span ng-switch-default class="fa fa-question-circle-o text-warning"></span>
+        </span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4" i18n="zwave.Routing"></div>
+    <div class="col-md-8">
+        <span ng-switch="selectedThing.properties['zwave_routing']">
+            <span ng-switch-when="true" class="fa fa-check-circle-o text-success"></span>
+            <span ng-switch-when="false" class="fa fa-times-circle-o text-danger"></span>
+            <span ng-switch-default class="fa fa-question-circle-o text-warning"></span>
+        </span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4" i18n="zwave.Listening"></div>
+    <div class="col-md-8">
+        <span ng-switch="selectedThing.properties['zwave_listening']">
+            <span ng-switch-when="true" class="fa fa-check-circle-o text-success"></span>
+            <span ng-switch-when="false" class="fa fa-times-circle-o text-danger"></span>
+            <span ng-switch-default class="fa fa-question-circle-o text-warning"></span>
+        </span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4" i18n="zwave.FrequentlyListening"></div>
+    <div class="col-md-8">
+        <span ng-switch="selectedThing.properties['zwave_frequent']">
+            <span ng-switch-when="true" class="fa fa-check-circle-o text-success"></span>
+            <span ng-switch-when="false" class="fa fa-times-circle-o text-danger"></span>
+            <span ng-switch-default class="fa fa-question-circle-o text-warning"></span>
+        </span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4" i18n="zwave.Beaming"></div>
+    <div class="col-md-8">
+        <span ng-switch="selectedThing.properties['zwave_beaming']">
+            <span ng-switch-when="true" class="fa fa-check-circle-o text-success"></span>
+            <span ng-switch-when="false" class="fa fa-times-circle-o text-danger"></span>
+            <span ng-switch-default class="fa fa-question-circle-o text-warning"></span>
+        </span>
+    </div>
+</div>
+
+<div class="row" ng-if="selectedThing.properties['zwave_lastwakeup']">
+    <div class="col-md-4" i18n="zwave.WakeupTime"></div>
+    <div class="col-md-8">
+        <span>{{selectedThing.properties['zwave_lastwakeup'] | amUtc | amLocal | amDateFormat:'dddd, MMMM Do YYYY, HH:mm:ss'}}</span>
+        <span class="fa fa-history text-muted"></span>
+        <span am-time-ago="selectedThing.properties['zwave_lastwakeup']"></span>
+    </div>
+</div>
+
+<div class="row" ng-if="selectedThing.properties['zwave_wakeup_time']">
+    <div class="col-md-4" i18n="zwave.WakeupTime"></div>
+    <div class="col-md-8">
+        <span>{{selectedThing.properties['zwave_wakeup_time'] | amUtc | amLocal | amDateFormat:'dddd, MMMM Do YYYY, HH:mm:ss'}}</span>
+        <span class="fa fa-history text-muted"></span>
+        <span am-time-ago="selectedThing.properties['zwave_wakeup_time']"></span>
+    </div>
+</div>
+
+<div class="row" ng-if="selectedThing.properties['zwave_neighbours']">
+    <div class="col-md-4" i18n="zwave.Neighbors"></div>
+    <div class="col-md-8">
+        {{selectedThing.properties['zwave_neighbours'].split(",").length}} nodes
+        <span class="fa fa-exchange text-muted"></span>
+        {{selectedThing.properties['zwave_neighbours'].split(",").join(", ")}}
+    </div>
+</div>
+
+<div class="row" ng-if="selectedThing.properties['zwave_lastheal']">
+    <div class="col-md-4" i18n="zwave.LastHeal"></div>
+    <div class="col-md-8">
+        <span>{{selectedThing.properties['zwave_lastheal'] | amUtc | amLocal | amDateFormat:'dddd, MMMM Do YYYY, HH:mm:ss'}}</span>
+        <span class="fa fa-history text-muted"></span>
+        <span am-time-ago="selectedThing.properties['zwave_lastheal']"></span>
+    </div>
+</div>

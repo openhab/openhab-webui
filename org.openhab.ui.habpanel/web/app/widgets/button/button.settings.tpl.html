@@ -1,0 +1,294 @@
+<div>
+    <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
+            <h3 translate-keep-content translate="widget.button.settings.header">Button Settings</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="form-group">
+                <div class="col-xs-9">
+                    <uib-tabset>
+                        <uib-tab heading="{{'General' | translation:'widget.button.general'}}">
+                            <br />
+                            <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate>Name</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <input name="name" type="text" ng-model="form.name" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{error: _form.action_type.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.button.general.action_type">Action type</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <select ng-model="form.action_type" class="form-control">
+                                        <option value="command" translate-keep-content translate="widget.button.general.action_type.command">Send a fixed command to an item</option>
+                                        <option value="toggle" translate-keep-content translate="widget.button.general.action_type.toggle">Alternate item between 2 states</option>
+                                        <option value="navigate" translate-keep-content translate="widget.button.general.action_type.navigate">Navigate</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div ng-if="form.action_type !== 'navigate'" class="form-group" ng-class="{error: _form.item.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate>openHAB Item</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <item-picker ng-model="form.item"></item-picker>
+                                </div>
+                            </div>
+                            <div ng-if="form.action_type !== 'navigate'" class="form-group" ng-class="{error: _form.command.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.button.general.command">Command value</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <input name="command" type="text" ng-model="form.command" class="form-control" />
+                                </div>
+                            </div>
+                            <div ng-if="form.action_type === 'toggle'" class="form-group" ng-class="{error: _form.command_alt.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.button.general.command_alt">Alternate command value</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <input name="command" type="text" ng-model="form.command_alt" class="form-control" />
+                                </div>
+                            </div>
+                            <section ng-if="form.action_type === 'navigate'">
+                                <div class="form-group" ng-class="{error: _form.navigate_dashboard.$error && _form.submitted}">
+                                    <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.button.general.navigation_type">Navigation type</label>
+                                    <div class="col-lg-9 col-md-9">
+                                        <div>
+                                            <label class="radio-inline">
+                                                <input type="radio" ng-model="form.navigate_type" value="dashboard" name="navigate_type" /> <span  translate-keep-content translate="widget.button.general.navigation_type.dashboard">Dashboard</span>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" ng-model="form.navigate_type" value="url" name="navigate_type" /> <span>URL</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-if="form.navigate_type=='dashboard'" ng-class="{error: _form.navigate_dashboard.$error && _form.submitted}">
+                                    <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.button.general.navigation_type.dashboard">Dashboard</label>
+                                    <div class="col-lg-9 col-md-9">
+                                        <select ng-model="form.navigate_dashboard" class="form-control" ng-options="dashboard.id as dashboard.name for dashboard in dashboards"></select>
+                                    </div>
+                                </div>
+                                <section ng-if="form.navigate_type=='url'">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-3 col-md-3">URL</label>
+                                        <div class="col-lg-9 col-md-9">
+                                            <input name="navigate_url" ng-model="form.navigate_url" class="form-control" required />
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-if="form.navigate_url && form.navigate_type=='url'" ng-class="{error: _form.navigate_target.$error && _form.submitted}">
+                                        <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.button.general.navigation_target">Open in</label>
+                                        <div class="col-lg-9 col-md-9">
+                                            <label class="radio-inline">
+                                                <input type="radio" ng-model="form.navigate_target" value="self" name="navigate_target" checked /> <span translate-keep-content translate="widget.button.general.navigation_target.self">Current tab</span>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" ng-model="form.navigate_target" value="new_tab" name="navigate_target" /> <span translate-keep-content translate="widget.button.general.navigation_target.new_tab">New tab</span>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" ng-model="form.navigate_target" value="new_window" name="navigate_target" /> <span translate-keep-content translate="widget.button.general.navigation_target.new_window">New window</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </section>
+                            </section>
+                        </uib-tab>
+
+
+                        <uib-tab heading="{{'Display' | translation:'widget.button.display'}}">
+                            <br />
+                            <h4 translate-keep-content translate="widget.button.display.label">Label</h4>
+                            <div class="form-group" ng-class="{error: _form.font_size.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate>Font size</label>
+                                <div class="col-xs-4">
+                                    <input name="font_size" ng-model="form.font_size" class="form-control" />
+                                </div>
+                            </div>
+
+                            <br />
+                            <h4 translate>Icons</h4>
+                            <div class="form-group" ng-class="{error: _form.backdrop_icon.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate>Backdrop Icon</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <icon-picker iconset="form.backdrop_iconset" icon="form.backdrop_icon"></icon-picker>
+                                    <div ng-if="form.backdrop_icon" class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.backdrop_center" /> <span translate-keep-content translate="widget.common.backdrop_center">Center backdrop horizontally</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group" ng-class="{error: _form.icon.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate>Icon</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <icon-picker iconset="form.iconset" icon="form.icon"></icon-picker>
+                                    <div class="col-xs-6 input-group" ng-if="form.icon">
+                                        <div class="input-group-addon" translate>Size</div>
+                                        <input name="icon_size" ng-model="form.icon_size" class="form-control" />
+                                        <div class="input-group-addon">px</div>
+                                    </div>
+                                    <div ng-if="form.icon" class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.icon_nolinebreak" /> <span translate-keep-content translate="widget.common.icon_nolinebreak">Icon left of label instead of below</span>
+                                        </label>
+                                    </div>
+                                    <div ng-if="form.icon" class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.icon_replacestext" /> <span translate-keep-content translate="widget.common.icon_replacestext">Icon replaces text</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+                            <h4 translate-keep-content translate="widget.button.display.value">Value</h4>
+                            <div class="form-group" ng-class="{error: _form.show_item_value.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3">&nbsp;</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="show_item_value" ng-model="form.show_item_value" />
+                                            <span ng-if="form.action_type !== 'navigate'" translate-keep-content translate="widget.button.display.value.showitemvalue">Show the item's state value</span>
+                                            <span ng-if="form.action_type === 'navigate'" translate-keep-content translate="widget.button.display.value.showitemvalue_noitem">Show an item's state value</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="form.action_type === 'navigate' && form.show_item_value" class="form-group" ng-class="{error: _form.item.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate>openHAB Item</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <item-picker ng-model="form.item"></item-picker>
+                                </div>
+                            </div>
+                            <div ng-if="form.action_type === 'navigate' && form.show_item_value" class="form-group" ng-class="{error: _form.command.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.button.display.value.active_state">Active state</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <input name="command" type="text" ng-model="form.navigate_active_state" class="form-control" />
+                                </div>
+                            </div>
+
+                            <section ng-if="form.show_item_value">
+                                <div class="form-group" ng-class="{error: _form.font_size.$error && _form.submitted}">
+                                    <label class="control-label col-xs-3" translate>Font size</label>
+                                    <div class="col-xs-4">
+                                        <input name="font_size" ng-model="form.value_font_size" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-class="{error: _form.value_unit.$error && _form.submitted}">
+                                    <label class="control-label col-xs-3" translate-keep-content translate="widget.common.unit">Unit (suffix)</label>
+                                    <div class="col-xs-4">
+                                        <input name="col" ng-disabled="form.value_useserverformat" ng-model="form.value_unit" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-class="{error: _form.format.$error && _form.submitted}">
+                                    <label class="control-label col-xs-3" translate-keep-content translate="widget.common.format">Format</label>
+                                    <div class="col-xs-7">
+                                        <input name="col" ng-disabled="form.value_useserverformat" ng-model="form.value_format" class="form-control" />
+                                    </div>
+                                    <label class="control-label col-lg-3 col-md-3"></label>
+                                    <div class="col-lg-9 col-md-9">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="vertical" ng-model="form.value_useserverformat" /> <span  translate-keep-content translate="widget.common.format.useserverprovided">Use server-provided format if available</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" ng-class="{error: _form.value_nolinebreak.$error && _form.submitted}">
+                                    <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.button.display.value.layout">Layout</label>
+                                    <div class="col-lg-9 col-md-9">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="vertical" ng-model="form.value_nolinebreak" /> <span  translate-keep-content translate="widget.common.dontwrap">Value right of label instead of below</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </uib-tab>
+
+
+                        <uib-tab heading="{{(form.action_type !== 'navigate' || form.show_item_value) ? ('Inactive' | translation:'widget.button.inactive') : ('Colors' | translation:'widget.button.colors')}}">
+                            <br />
+                            <div class="form-group" ng-class="{error: _form.background.$error && _form.submitted}">
+                                <label class="control-label col-lg-2 col-md-2" translate-keep-content translate="widget.button.background_color">Background color</label>
+                                <div class="col-lg-4 col-md-4">
+                                    <div dab-model="form.background" web-colorpicker dab-width="20" dab-height="20" dab-radius="50" dab-vertical="4" dab-rotate="0"
+                                        show-grayscale="true"></div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{error: _form.foreground.$error && _form.submitted}">
+                                <label class="control-label col-lg-2 col-md-2" translate-keep-content translate="widget.button.foreground_color">Label color</label>
+                                <div class="col-lg-4 col-md-4">
+                                    <div dab-model="form.foreground" web-colorpicker dab-width="20" dab-height="20" dab-radius="50" dab-vertical="4" dab-rotate="0"
+                                        show-grayscale="true"></div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="form.show_item_value" ng-class="{error: _form.value_color.$error && _form.submitted}">
+                                <label class="control-label col-lg-2 col-md-2" translate-keep-content translate="widget.button.value_color">Value color</label>
+                                <div class="col-lg-4 col-md-4">
+                                    <div dab-model="form.value_color" web-colorpicker dab-width="20" dab-height="20" dab-radius="50" dab-vertical="4" dab-rotate="0"
+                                        show-grayscale="true"></div>
+                                </div>
+                            </div>
+                        </uib-tab>
+
+
+                        <uib-tab heading="{{'Active' | translation:'widget.button.active'}}" ng-if="form.action_type !== 'navigate' || form.show_item_value">
+                            <br />
+                            <div class="form-group" ng-class="{error: _form.background_active.$error && _form.submitted}">
+                                <label class="control-label col-lg-2 col-md-2" translate-keep-content translate="widget.button.background_color">Background color</label>
+                                <div class="col-lg-4 col-md-4">
+                                    <div dab-model="form.background_active" web-colorpicker dab-width="20" dab-height="20" dab-radius="50" dab-vertical="4" dab-rotate="0"
+                                        show-grayscale="true"></div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{error: _form.foreground_active.$error && _form.submitted}">
+                                <label class="control-label col-lg-2 col-md-2" translate-keep-content translate="widget.button.foreground_color">Label color</label>
+                                <div class="col-lg-4 col-md-4">
+                                    <div dab-model="form.foreground_active" web-colorpicker dab-width="20" dab-height="20" dab-radius="50" dab-vertical="4" dab-rotate="0"
+                                        show-grayscale="true"></div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="form.show_item_value" ng-class="{error: _form.value_color_active.$error && _form.submitted}">
+                                <label class="control-label col-lg-2 col-md-2" translate-keep-content translate="widget.button.value_color">Value color</label>
+                                <div class="col-lg-4 col-md-4">
+                                    <div dab-model="form.value_color_active" web-colorpicker dab-width="20" dab-height="20" dab-radius="50" dab-vertical="4" dab-rotate="0"
+                                        show-grayscale="true"></div>
+                                </div>
+                            </div>
+                        </uib-tab>
+
+                    </uib-tabset>
+                </div>
+                <div class="col-xs-3">
+                    <div class="box" style="overflow: hidden;">
+                        <div class="box-content switch" ng-style="{ 'background-color': form.background, color: form.foreground, padding: '20px' }">
+                            <div class="switch-content">
+                                <span ng-if="form.action_type !== 'navigate' || form.show_item_value" ng-style="{ 'font-size': form.font_size + 'pt' }" translate-keep-content translate="widget.button.inactive">Inactive</span>
+                                <span ng-if="form.action_type === 'navigate' && !form.show_item_value" ng-style="{ 'font-size': form.font_size + 'pt' }" translate-keep-content translate="widget.button.display.label">Label</span>
+                                <div ng-if="form.show_item_value" class="value" ng-style="{ 'color': form.value_color, 'font-size': form.value_font_size + 'pt' }" translate-keep-content translate="widget.button.preview.state">State</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box" ng-if="form.action_type !== 'navigate' || form.show_item_value" style="overflow: hidden;">
+                        <div class="box-content switch" ng-style="{ 'background-color': form.background_active, color: form.foreground_active, padding: '20px' }">
+                            <div class="switch-content">
+                                <span ng-style="{ 'font-size': form.font_size + 'pt' }" translate-keep-content translate="widget.button.active">Active</span>
+                                <div ng-if="form.show_item_value" class="value" ng-style="{ 'color': form.value_color_active, 'font-size': form.value_font_size + 'pt' }" translate-keep-content translate="widget.button.preview.state">State</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <a ng-click="remove()" class="btn btn-danger pull-left" tabindex="-1">
+                <i class="glyphicon glyphicon-trash"></i>&nbsp;<span translate>Delete</span></a>
+            <a ng-click="dismiss()" class="btn btn-default" tabindex="-1">
+                <i class="glyphicon glyphicon-remove"></i>&nbsp;<span translate>Cancel</span></a>
+            <button type="submit" class="btn btn-primary" ng-disabled="_form.$invalid">
+                <i class="glyphicon glyphicon-ok"></i>&nbsp;<span translate>Save</span></button>
+        </div>
+    </form>
+</div>

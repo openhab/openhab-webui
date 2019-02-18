@@ -1,0 +1,86 @@
+<div>
+    <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">
+                &times;
+            </button>
+            <h3 translate-keep-content translate="widget.switch.settings.header">Switch Settings</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>Name</label>
+                <div class="col-lg-9 col-md-9">
+                    <input name="name" type="text" ng-model="form.name" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group" ng-class="{error: _form.item.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>openHAB Item</label>
+                <div class="col-lg-9 col-md-9">
+                    <item-picker ng-model="form.item"></item-picker>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="form-group" ng-class="{error: _form.vertical.$error && _form.submitted}">
+                        <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.switch.display">Display options</label>
+                        <div class="col-lg-3 col-md-3">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="vertical" ng-model="form.hidelabel" /> <span translate-keep-content translate="widget.switch.display.hidelabel">Hide name</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="vertical" ng-model="form.hideicon" /> <span translate-keep-content translate="widget.switch.display.hideicon">Hide icon</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="vertical" ng-model="form.hideonoff" /> <span translate-keep-content translate="widget.switch.display.hideonoff">Hide ON/OFF</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{error: _form.backdrop_icon.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>Backdrop Icon</label>
+                <div class="col-lg-9 col-md-9">
+                    <icon-picker iconset="form.backdrop_iconset" icon="form.backdrop_icon"></icon-picker>
+                    <div ng-if="form.backdrop_icon" class="checkbox">
+                        <label>
+                            <input type="checkbox" name="vertical" ng-model="form.backdrop_center" /> <span translate-keep-content translate="widget.common.backdrop_center">Center backdrop horizontally</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{error: _form.icon.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>Icon</label>
+                <div class="col-lg-9 col-md-9">
+                    <icon-picker iconset="form.iconset" icon="form.icon"></icon-picker>
+                    <div class="col-xs-5 input-group" ng-if="form.icon">
+                        <div class="input-group-addon" translate>Size</div>
+                        <input name="icon_size" ng-model="form.icon_size" class="form-control" />
+                        <div class="input-group-addon">px</div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <a ng-click="remove()" class="btn btn-danger pull-left" tabindex="-1"><i class="glyphicon glyphicon-trash"></i>&nbsp;<span translate>Delete</span></a>
+            <a ng-click="dismiss()" class="btn btn-default" tabindex="-1"><i class="glyphicon glyphicon-remove"></i>&nbsp;<span translate>Cancel</span></a>
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;<span translate>Save</span></button>
+        </div>
+    </form>
+</div>

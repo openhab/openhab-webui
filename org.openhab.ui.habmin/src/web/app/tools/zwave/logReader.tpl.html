@@ -1,0 +1,293 @@
+<!-- Rule Pane -->
+<div class="col-sm-12">
+    <!-- Heading -->
+    <div class="panel panel-default">
+        <div class="panel-heading" style="padding:3px;">
+            <button type="button" ng-disabled="logState!='loaded' || showOption=='LIST'" class="btn btn-sm btn-default"
+                    ng-click="changePanel('LIST')">
+                <span class="fa fa-list-alt"></span>
+                <span>Log</span>
+            </button>
+            <button type="button" ng-disabled="logState!='loaded' || showOption=='TIMELINE'"
+                    class="btn btn-sm btn-default"
+                    ng-click="changePanel('TIMELINE')">
+                <span class="fa fa-line-chart"></span>
+                <span>Timeline</span>
+            </button>
+            <button type="button" ng-disabled="logState!='loaded' || showOption=='NODES'" class="btn btn-sm btn-default"
+                    ng-click="changePanel('NODES')">
+                <span class="fa fa-list"></span>
+                <span>Nodes</span>
+            </button>
+            <span ng-class="{'btn-group btn-group-sm': true, 'open': filterOpen}">
+                <button type="button" class="btn btn-sm btn-default dropdown" ng-disabled="logState!='loaded'"
+                        ng-init="filterOpen=false" ng-click="filterOpen=!filterOpen">
+                    <span class="fa fa-filter"></span>
+                    &nbsp;Filter
+                    <span class="caret"></span>
+                </button>
+                <div class="dropdown-menu dropdown_dialog" style="min-width:200px;white-space:nowrap;">
+                    <div class="modal-header">
+                        <button class="btn btn-xs default" ng-click="checkAllNodes(true)">All
+                            Nodes
+                        </button>
+
+                        <button class="btn btn-xs default" ng-click="checkAllNodes(false)">No
+                            Nodes
+                        </button>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr ng-repeat="node in nodes | orderObjectBy:'id'">
+                                        <td>
+                                            <input type="checkbox" checklist-model="nodeFilter"
+                                                   checklist-value="node.id">
+                                            &nbsp;Node {{node.id}}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="vertical-align: top;padding-left: 10px;">
+                                <table>
+                                    <tr ng-repeat="process in processFilterOptions">
+                                        <td>
+                                            <input type="checkbox" checklist-model="processFilter"
+                                                   checklist-value="process.ref">&nbsp;{{process.name}}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </span>
+
+            <span class="pull-right">
+                <div class="btn-group" ng-show="logState=='loaded'">
+                    <div class="text-right small">{{logName}}</div>
+                    <div class="text-right small">Lines Processed: {{countEntries}}:{{countLines}}</div>
+                </div>
+
+                <span class="btn btn-sm btn-default btn-file" ng-disabled="logState=='loading'">
+                    <span class="fa fa-download" ng-hide="logState=='loading'"></span>
+
+                    <span>Select File</span>
+                    <input onchange="angular.element(this).scope().fileChanged(this);this.value = '';" type="file"/>
+                </span>
+            </span>
+        </div>
+
+        <!-- Body LIST -->
+        <div ng-show="showOption=='LIST'" class="habmin-list" resize-panel>
+            <table class="table">
+                <tbody>
+                <tr ng-repeat="log in data | filter:filterFunction" ng-class="log.result"
+                    popup-show="tools/zwave/logInfo.tpl.html" popup-placement="bottom-left"
+                    popup-shown="onPopupShown(log)" popup-class="zwave-logreader-popover">
+                    <td>
+                        {{log.time}}
+                    </td>
+                    <td class="text-center">
+                        {{log.node}}
+                    </td>
+                    <td>
+                        {{log.content}}
+                    </td>
+                    <td class="text-center">
+                        {{log.class}}
+                    </td>
+                    <td class="text-center">
+                        {{log.stage}}
+                    </td>
+                    <td class="text-center" style="white-space:nowrap;">
+                        <span ng-if="log.duplicate" class="text-muted fa fa-copy"></span>
+                        <span ng-if="log.successFlag" class="text-success fa fa-check-circle"></span>
+                        <span ng-if="log.warnFlag" class="text-warning fa fa-question-circle"></span>
+                        <span ng-if="log.errorFlag" class="text-danger fa fa-exclamation-circle"></span>
+                        <span ng-if="log.queueLen>5&&log.queueLen<15"
+                              class="small label label-warning">{{log.queueLen}}</span>
+                        <span ng-if="log.queueLen>=15" class="small label label-danger">{{log.queueLen}}</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Body TIMELINE -->
+        <div ng-show="showOption=='TIMELINE'" style="padding:3px;" resize-panel>
+            <vis-timeline data="timelineData" options="timelineOptions" events="timelineEvents"></vis-timeline>
+        </div>
+
+        <!-- Body NODES -->
+        <div ng-show="showOption=='NODES'" style="padding:10px;" resize-panel>
+            <div class="col-sm-4 panel panel-default" style="height:100%;padding:0px;border-left:0px;border-right:0px;">
+                <div class="habmin-list" style="height:100%;">
+                    <div class="list-group" style="height:100%;margin-bottom:0px;">
+                        <a ng-class="{'list-group-item':true, 'active':node==selectedNode}"
+                           ng-repeat="node in nodes | orderObjectBy:'id'" ng-click="selectNode(node)">
+                            Node {{node.id}}
+                            <span class="pull-right">
+                                <span ng-if="node.warnings.length" class="text-warning fa fa-question-circle"></span>
+                                <span ng-if="node.errors.length" class="text-danger fa fa-exclamation-circle"></span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8 panel panel-default" style="height:100%;padding:0px;border-left:0px;border-right:0px;">
+                <div class="habmin-list" style="height:100%;">
+                    <table ng-if="selectedNode" class="table habmin-property-table">
+                        <tbody>
+                        <tr>
+                            <td>Node ID</td>
+                            <td>{{selectedNode.id}}</td>
+                        </tr>
+                        <tr>
+                            <td>Device Class</td>
+                            <td>{{selectedNode.deviceClass}}</td>
+                        </tr>
+                        <tr>
+                            <td>Alerts</td>
+                            <td>
+                                <table>
+                                    <tr ng-repeat="error in selectedNode.errors">
+                                        <td><span class="text-danger fa fa-exclamation-circle"></span>&nbsp;{{error}}
+                                        </td>
+                                    </tr>
+                                    <tr ng-repeat="warning in selectedNode.warnings">
+                                        <td><span class="text-warning fa fa-question-circle"></span>&nbsp;{{warning}}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr ng-if="selectedNode.txErrorCan">
+                            <td>Messages CANcelled</td>
+                            <td><span class="text-danger fa fa-exclamation-circle"></span>&nbsp;{{selectedNode.txErrorCan}}
+                            </td>
+                        </tr>
+                        <tr ng-if="selectedNode.txErrorNak">
+                            <td>Messages NAKed</td>
+                            <td><span class="text-danger fa fa-exclamation-circle"></span>&nbsp;{{selectedNode.txErrorNak}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Command Classes</td>
+                            <td>
+                                <table>
+                                    <tr ng-repeat="(key, value) in selectedNode.classes">
+                                        <td>{{key}}</td>
+                                        <td>{{value}}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Control Classes</td>
+                            <td>
+                                <table>
+                                    <tr ng-repeat="(key, value) in selectedNode.control">
+                                        <td>{{key}}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Endpoints</td>
+                            <td>
+                                <table>
+                                    <tr ng-repeat="(key, value) in selectedNode.endpoints">
+                                        <td>{{key}}</td>
+                                        <td>
+                                            <table>
+                                                <tr>Device Class</tr>
+                                                <tr>{{value.deviceClass}}</tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Item Definitions</td>
+                            <td>
+                                <table>
+                                    <tr ng-repeat="item in selectedNode.items">
+                                        <td>{{item}}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Listening State</td>
+                            <td>
+                                <span ng-if="selectedNode.isListening">Yes</span>
+                                &nbsp;
+                                <span ng-if="selectedNode.isFLiRS">Frequently</span>
+                            </td>
+                        </tr>
+                        <tr ng-if="selectedNode.neighboursTotal!=null">
+                            <td>Neighbours</td>
+                            <td>{{selectedNode.neighboursTotal}} total, {{selectedNode.neighboursListening}} listening,
+                                {{selectedNode.neighboursUnknown}} unknown
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Messages Sent</td>
+                            <td>{{selectedNode.messagesSent}}</td>
+                        </tr>
+                        <tr>
+                            <td>Messages Timed-out</td>
+                            <td>{{selectedNode.responseTimeouts}} ({{selectedNode.retryPercent}}%)</td>
+                        </tr>
+                        <tr>
+                            <td>Response Times</td>
+                            <td>{{selectedNode.responseTimeMin}} / {{selectedNode.responseTimeAvg}} /
+                                {{selectedNode.responseTimeMax}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Manufacturer</td>
+                            <td>{{selectedNode.manufacturer}}</td>
+                        </tr>
+                        <tr>
+                            <td>Device Type</td>
+                            <td>{{selectedNode.deviceType}}</td>
+                        </tr>
+                        <tr>
+                            <td>Device ID</td>
+                            <td>{{selectedNode.deviceID}}</td>
+                        </tr>
+                        <tr>
+                            <td>Basic Device Class</td>
+                            <td>{{selectedNode.basicClass}}</td>
+                        </tr>
+                        <tr>
+                            <td>Generic Device Class</td>
+                            <td>{{selectedNode.genericClass}}</td>
+                        </tr>
+                        <tr>
+                            <td>Specific Device Class</td>
+                            <td>{{selectedNode.specificClass}}</td>
+                        </tr>
+
+                        <tr></tr>
+
+                        <tr ng-repeat="(key, value) in selectedNode">
+                            <td>{{key}}</td>
+                            <td>{{value}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,72 @@
+<div class="popover-content">
+    <table class="table table-condensed small">
+        <tr>
+            <td>Time</td>
+            <td>{{selectedPkt.time}}</td>
+        </tr>
+
+        <!-- PACKET INFORMATION -->
+        <tr ng-show="selectedPkt.packetData">
+            <td>Packet Data</td>
+            <td>{{selectedPkt.packetData}}</td>
+        </tr>
+        <tr ng-show="selectedPkt.class">
+            <td>Packet Class</td>
+            <td>{{selectedPkt.class}}</td>
+        </tr>
+        <tr ng-show="selectedPkt.warnFlag">
+            <td>Warning Message</td>
+            <td><span class="text-warning fa fa-question-circle"></span> {{selectedPkt.warnMessage}}</td>
+        </tr>
+        <tr ng-show="selectedPkt.errorFlag">
+            <td>Error Message</td>
+            <td><span class="text-danger fa fa-exclamation-circle"></span> {{selectedPkt.errorMessage}}</td>
+        </tr>
+
+        <!-- COMMAND CLASS INFORMATION -->
+        <tr ng-show="selectedPkt.packet.class">
+            <td>Command Class</td>
+            <td>{{selectedPkt.packet.class}}</td>
+        </tr>
+        <tr ng-show="selectedPkt.packet.function">
+            <td>Command Function</td>
+            <td>{{selectedPkt.packet.function}}</td>
+        </tr>
+
+
+        <tr ng-show="selectedPkt.packet.responseTime">
+            <td>Packet Response Time</td>
+            <td>{{selectedPkt.packet.responseTime}}</td>
+        </tr>
+
+        <!-- NODE INFORMATION -->
+        <tr>
+            <td>Node Number</td>
+            <td>{{selectedPkt.node}}</td>
+        </tr>
+        <tr ng-show="selectedPkt.stage">
+            <td>Current Stage</td>
+            <td>{{selectedPkt.stage}}</td>
+        </tr>
+        <tr ng-show="selectedNode">
+            <td>Node Messages Sent</td>
+            <td>{{selectedNode.messagesSent}}</td>
+        </tr>
+        <tr ng-show="selectedNode">
+            <td>Node Messages Received</td>
+            <td>{{selectedNode.responseTimeCnt}}</td>
+        </tr>
+        <tr ng-show="selectedNode">
+            <td>Node Messages Timed-out</td>
+            <td>{{selectedNode.responseTimeouts}}</td>
+        </tr>
+        <tr ng-show="selectedNode">
+            <td>Node Response Time Stats</td>
+            <td>{{selectedNode.responseTimeMin}}/{{selectedNode.responseTimeAvg}}/{{selectedNode.responseTimeMax}}</td>
+        </tr>
+    </table>
+
+    <div class="pull-right">
+        <a ng-click="hidePopover()" class="btn btn-xs btn-primary">Close</a>
+    </div>
+</div>

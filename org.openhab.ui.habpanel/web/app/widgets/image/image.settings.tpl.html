@@ -1,0 +1,83 @@
+<div>
+    <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
+            <h3 translate-keep-content translate="widget.image.settings.header">Image Settings</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>Name</label>
+                <div class="col-lg-9 col-md-9">
+                    <input name="name" type="text" ng-model="form.name" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group" ng-class="{error: _form.image_source.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.image.image_source">Image source</label>
+                <div class="col-lg-9 col-md-9">
+                    <select ng-model="form.image_source" class="form-control" ng-change = "form.item_string = form.item_image = undefined">
+                        <option value="static" translate-keep-content translate="widget.image.image_source.static">Static image URL</option>
+                        <option value="item-string" translate-keep-content translate="widget.image.image_source.item-string">openHAB String Item</option>
+                        <option value="item-image" translate-keep-content translate="widget.image.image_source.item-image">openHAB Image Item</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" ng-if="form.image_source === 'static'" ng-class="{error: _form.url.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3">URL</label>
+                <div class="col-lg-9 col-md-9">
+                    <input name="url" type="text" ng-model="form.url" class="form-control" />
+                </div>
+            </div>
+            <div ng-if="form.image_source === 'item-string'" class="form-group" ng-class="{error: _form.item.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.image.image_source.item-string">openHAB String Item</label>
+                <div class="col-lg-9 col-md-9">
+                    <item-picker ng-model="form.item_string" filter-type="String"></item-picker>
+                </div>
+            </div>
+            <div ng-if="form.image_source === 'item-image'" class="form-group" ng-class="{error: _form.item.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.image.image_source.item-image">openHAB Image Item</label>
+                <div class="col-lg-9 col-md-9">
+                    <item-picker ng-model="form.item_image" filter-type="Image"></item-picker>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{error: _form.interval.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.image.refresh_interval">Refresh interval</label>
+                <div class="col-lg-3 col-md-3">
+                    <input name="refresh" type="number" ng-model="form.refresh" class="form-control" />
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <div class="checkbox">
+                        <label>
+                            <input type="radio" ng-model="form.intervaltype" value="seconds" name="type" /> <span translate-keep-content translate="widget.image.refresh_interval.seconds">seconds</span>
+                        </label>
+                        <label>
+                            <input type="radio" ng-model="form.intervaltype" value="milliseconds" name="type" /> <span translate-keep-content translate="widget.image.refresh_interval.milliseconds">milliseconds</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{error: _form.nosuffix.$error && _form.submitted}" ng-if="form.refresh > 0">
+                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.image.nosuffix">No cache busting (advanced)</label>
+                <div class="col-lg-9 col-md-9">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="nosuffix" ng-model="form.nosuffix" />
+                            <span translate-keep-content translate="widget.image.nosuffix.description">Don't add URL suffixes to prevent reusing cached images</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{error: _form.background.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.image.background_color">Background color</label>
+                <div class="col-lg-9 col-md-9">
+                    <div dab-model="form.background" web-colorpicker dab-width="20" dab-height="20" dab-radius="50" dab-vertical="4" dab-rotate="0" show-grayscale="true"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a ng-click="remove()" class="btn btn-danger pull-left" tabindex="-1"><i class="glyphicon glyphicon-trash"></i>&nbsp;<span translate>Delete</span></a>
+            <a ng-click="dismiss()" class="btn btn-default" tabindex="-1"><i class="glyphicon glyphicon-remove"></i>&nbsp;<span translate>Cancel</span></a>
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;<span translate>Save</span></button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,148 @@
+<div class="header" ng-hide="kioskMode">
+    <!--<a class="btn btn-link pull-right" title="Toggle full screen"
+        ng-click="vm.goFullscreen()">
+        <i class="glyphicon glyphicon-resize-full"></i>
+    </a>-->
+    <a class="btn pull-left" title="Menu" snap-toggle="left">
+        <i class="glyphicon glyphicon-menu-hamburger"></i>
+    </a>
+    <a class="btn pull-right" 
+        title="Edit dashboards"
+        ng-hide="lockEditing" ng-click="vm.toggleEditMode()" ng-class="{ 'btn-danger': vm.editMode }">
+        <i class="glyphicon glyphicon-cog"></i>
+    </a>
+    <h2 class="dashboard-title">
+        <small class="header-clock" ng-if="settings.show_header_clock"><ds-widget-clock show-digital digital-format="settings.header_clock_format || 'shortTime'"></ds-widget-clock></small>
+    </h2>
+</div>
+<!-- Tutorial part 1 -->
+<div ng-if="!vm.dashboards.length" class="text-muted">
+    <div ng-if="lockEditing">
+        <h2>
+            <i class="glyphicon glyphicon-alert"></i>
+            <br /><span translate-keep-content translate="tutorial.editingdisabled">Editing is disabled on the server!</span>
+        </h2>
+        <h3 translate-keep-content translate="tutorial.unlockedit">Please go to Paper UI and unlock editing to use HABPanel on this device.</h3>
+    </div>
+    <div ng-if="!lockEditing && !vm.editMode" class="pull-right">
+        <h2>
+            <i class="glyphicon glyphicon-arrow-up pull-right"></i>
+            <span translate-keep-content translate="tutorial.welcome">Welcome to HABPanel!</span><br /><span translate-keep-content translate="tutorial.clickheretobegin">Click or tap here to begin.</span>&nbsp;&nbsp;
+        </h2>
+    </div>
+    <div ng-if="!lockEditing && vm.editMode" class="text-center">
+        <h4 translate-keep-content translate="tutorial.editmode">You're now in edit mode, where you can design dashboards.<h4>
+    </div>
+</div>
+
+<div class="dashboard row scrollable">
+    <div ng-if="vm.editMode" gridster="vm.gridsterOptions" class="col-md-12 col-lg-12">
+        <div gridster-item="dash" ng-init="tile=dash.tile" class="dash-card col-md-6 col-lg-6 col-sm-6 box" ng-repeat="dash in vm.dashboards" data-snap-ignore="true">
+            <div class="pull-left dash-buttons">
+                <span class="pull-right handle">
+                    <i class="glyphicon" ng-class="{ 'glyphicon-sort': vm.gridsterOptions.columns<2, 'glyphicon-move': vm.gridsterOptions.columns>1 }"></i>
+                </span>
+            </div>
+            <div class="pull-right dash-buttons">
+                <a class="pull-right" title="Dashboard settings" 
+                    ng-click="vm.openDashboardSettings(dash)">
+                    <i class="glyphicon glyphicon-cog"></i>
+                </a>
+            </div>
+            <em class="dash-edit">
+                <i class="glyphicon glyphicon-edit"></i>
+                {{dash.name}}
+            </em>
+            <h3 ng-click="vm.viewDashboard(dash)" class="card-title"></h3>
+        </div>
+    </div>
+    <div ng-if="!vm.editMode" gridster="vm.gridsterOptions" class="col-md-12 col-lg-12">
+        <div gridster-item="dash" ng-init="tile=dash.tile" class="dash-card col-md-6 col-lg-6 col-sm-6 box" ng-class="{ activefeedback: !tile.no_click_feedback }" ng-repeat="dash in vm.dashboards">
+            <h3 ng-if="!tile.use_custom_widget" ng-style="{ color:(tile.title_color && tile.title_color!='transparent')?tile.title_color:'inherit' }" ng-click="vm.viewDashboard(dash)" class="card-title">
+                <img class="tile-background" ng-if="tile.background_image" ng-src="{{tile.background_image}}" />
+                <widget-icon ng-if="tile.backdrop_icon && !tile.background_image" backdrop="true" iconset="tile.backdrop_iconset" icon="tile.backdrop_icon" center="tile.backdrop_center"></widget-icon>
+                <!--<widget-icon iconset="'smarthome-set'" icon="'bulb'" backdrop="true"></widget-icon>-->
+                <div>{{dash.name}}</div>
+            </h3>
+            <div ng-if="tile.use_custom_widget" ng-click="vm.viewDashboard(dash)" class="card-title" style="cursor: pointer; height: 100%"
+                 ng-init="customWidgetsModels[dash.id] = { id: dash.id, name: dash.name, nobackground: tile.custom_widget_nobackground, customwidget: tile.custom_widget, dontwrap: tile.custom_widget_dontwrap, config: tile.custom_widget_config }">
+                <widget-template ng-model="customWidgetsModels[dash.id]">
+                </widget-template>
+            </div>
+        </div>
+    </div>       
+</div>
+
+<br />
+
+<!-- Tutorial part 2 -->
+<div ng-if="!vm.dashboards.length && vm.editMode" class="col-xs-12 text-muted">
+    <div class="col-xs-4 text-center">
+        <div>
+            <h4>
+                <span translate-keep-content translate="tutorial.createfirstdashboard">Click or tap here to create your first dashboard...</span>
+                <br /><i class="glyphicon glyphicon-arrow-down"></i>
+            </h4>
+        </div>
+</div>
+<div class="col-xs-4 text-center"></div>
+<div class="col-xs-4 text-center">
+    <div>
+        <h4>
+            <span translate-keep-content translate="tutorial.importpanel">...or here to restore a panel from the server</span><br />
+            <i class="glyphicon glyphicon-arrow-down"></i>
+        </h4>
+    </div>
+</div>
+</div>
+<!-- Tutorial part 3 -->
+<div ng-if="vm.dashboards.length==1 && !vm.dashboards[0].widgets.length" class="col-xs-12 text-muted">
+    <div class="col-xs-4 text-left">
+        <div ng-if="vm.editMode" class="pull-left">
+            <h4>
+                &nbsp;<i class="glyphicon glyphicon-arrow-up"></i>
+                &nbsp;<span translate-keep-content translate="tutorial.enterdesigner">Click or tap inside the tile to enter the dashboard designer.</span>
+            </h4>
+        </div>
+    </div>
+    <div class="col-xs-4 text-center">
+        <div ng-if="vm.editMode">
+            <h4>
+                <span translate-keep-content translate="tutorial.adjustnbcolumns">Adjust the number of columns</span>
+                <br /><i class="glyphicon glyphicon-arrow-down"></i>
+            </h4>
+        </div>
+    </div>
+    <div class="col-xs-4 text-right">
+        <div ng-if="vm.editMode">
+            <h4>
+                <span translate-keep-content translate="tutorial.saveonserver">Save on the openHAB server when done!</span>
+                &nbsp;<i class="glyphicon glyphicon-arrow-down"></i>
+            </h4>
+        </div>
+    </div>
+</div>
+<div class="col-xs-12 text-muted" ng-if="vm.editMode">
+    <div class="col-xs-4 text-center">
+        <a ng-click="vm.addNewDashboard()">
+            <h4>
+                <i class="glyphicon glyphicon-plus"></i>
+                <br /><span translate-keep-content translate="menu.addnewdashboard">Add new dashboard</span>
+            </h4>
+        </a>
+    </div>
+    <div class="col-xs-4 text-center">
+        <rzslider ng-if="vm.dashboards.length" rz-slider-model="vm.gridsterOptions.columns" rz-slider-options="{ floor:1, ceil:6, showTicks: true, onEnd: vm.onChangedColumns() }" />
+    </div>
+    <div class="col-xs-4 text-center">
+        <a href="#/settings">
+            <h4>
+                <i class="glyphicon glyphicon-edit"></i>
+                <br /><span translate-keep-content translate="menu.panelsettings">Panel settings</span>
+            </h4>
+        </a>
+    </div>
+    <br />
+    <br />
+    <br />
+</div>

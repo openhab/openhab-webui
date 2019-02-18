@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+	<groupId>org.openhab</groupId>
+    	<artifactId>pom-tycho</artifactId>
+	<version>2.5.0-SNAPSHOT</version>
+	<relativePath/>
+    </parent>
+
+    <groupId>org.openhab.ui</groupId>
+    <artifactId>org.openhab.ui.habmin</artifactId>
+    <!-- do not delete the version here as it is required by the release process -->
+    <version>2.5.0-SNAPSHOT</version>
+    <name>HABmin User Interface</name>
+
+    <packaging>eclipse-plugin</packaging>
+
+    <properties>
+        <ohc.version>2.5.0-SNAPSHOT</ohc.version>
+        <report.fail.on.error>false</report.fail.on.error>
+    </properties>
+
+    <scm>
+        <connection>scm:git:${scm.gitBaseUrl}/org.openhab.ui.habmin.git</connection>
+        <developerConnection>scm:git:${scm.gitBaseUrl}/org.openhab.ui.habmin.git</developerConnection>
+        <url>https://github.com/openhab/org.openhab.ui.habmin</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray</id>
+            <url>https://api.bintray.com/maven/openhab/mvn/org.openhab.ui.habmin/;publish=1</url>
+        </repository>
+        <snapshotRepository>
+            <id>jfrog</id>
+            <url>https://openhab.jfrog.io/openhab/libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.0</version>
+
+                <configuration>
+                    <srcdir>${basedir}/src/web</srcdir>
+                    <outputdir>${basedir}/web</outputdir>
+                    <installDirectory>target</installDirectory>
+                    <triggerfiles>
+                        <triggerfile>Gulpfile.js</triggerfile>
+                        <triggerfile>package.json</triggerfile>
+                    </triggerfiles>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v6.3.1</nodeVersion>
+                            <npmVersion>3.10.6</npmVersion>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>bower install</id>
+                        <goals>
+                            <goal>bower</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>grunt build</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>grunt</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>--verbose</arguments>
+                        </configuration>
+                    </execution>
+
+                </executions>
+
+            </plugin>
+        </plugins>
+    </build>
+
+	<dependencies>
+	    <dependency>
+			<groupId>org.openhab.ui</groupId>
+			<artifactId>org.openhab.ui.dashboard</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+
+    <pluginRepositories>
+      <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter Repository</name>
+            <url>https://jcenter.bintray.com/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+      </pluginRepository>
+      <pluginRepository>
+          <id>artifactory</id>
+          <name>JFrog Artifactory Repository</name>
+          <url>https://openhab.jfrog.io/openhab/libs-release</url>
+          <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+          </releases>
+          <snapshots>
+              <enabled>false</enabled>
+          </snapshots>
+      </pluginRepository>
+    </pluginRepositories>
+
+</project>

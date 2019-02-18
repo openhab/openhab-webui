@@ -1,0 +1,16 @@
+{
+  "Delete": "Usuń plan piętra",
+  "DeleteCheck": "Czy na pewno chcesz usunąć ten plan?",
+  "Editor": "Edytor piętra",
+  "HotspotItem": "Element",
+  "HotspotItemPlaceholder": "Wybierz Element...",
+  "HotspotTitle": "Właściwości Hotspotu",
+  "PropertiesCategory": "Kategoria",
+  "PropertiesName": "Nazwa",
+  "PropertiesTitle": "Właściwości planu piętra",
+  "SaveError": "Błąd zapisu planu piętra <b><i>{name}</i></b>",
+  "SaveOk": "Plan piętra <b><i>{name}</i></b> zapisany pomyślnie",
+  "SelectImage": "Wybierz obraz",
+  "UploadName": "Nazwa planu piętra",
+  "UploadTitle": "Prześlij plan piętra"
+}

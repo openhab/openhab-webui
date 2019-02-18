@@ -1,0 +1,14 @@
+{
+  "DeleteRuleCheck": "Czy na pewno chcesz usunąć regułę '{{selectedRule.name}}'?",
+  "DeleteRuleTitle": "Usuń regułę",
+  "ErrorLoadingRule": "Błąd ładowania reguły <i>{1}</i>:<br><b><i>{2}</i></b>.",
+  "ErrorLoadingRuleList": "Błąd ładowania listy reguł.",
+  "NewRuleTitle": "Nowa reguła",
+  "NoDevices": "Brak urządzeń",
+  "NoRules": "Brak dostępnych reguł",
+  "Rule": "Reguła",
+  "Source": "Źródło",
+  "UnsavedChangesCheck": "Nie zapisano zmian w regule '{rulename}' - jeśli ich nie zapiszesz, zostaną usunięte. Czy na pewno chcesz kontynuować?",
+  "UnsavedChangesTitle": "Ostrzeżenie:  Nie zapisano zmian",
+  "Value": "Wartość"
+}

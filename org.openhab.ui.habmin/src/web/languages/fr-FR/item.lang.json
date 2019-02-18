@@ -1,0 +1,23 @@
+{
+  "Delete": "Supprimer l'item",
+  "DeleteCheck": "Etes-vous sûr de vouloir supprimer l'item ?",
+  "EditCategory": "Catégorie",
+  "EditFormat": "Format",
+  "EditGroups": "Groupes",
+  "EditLabel": "Libellé",
+  "EditName": "Nom",
+  "EditTags": "Etiquette",
+  "EditTitle": "Editer un item",
+  "EditType": "Type de l'item",
+  "LinkOk": "Item lié au canal",
+  "LinkTitle": "Lier un item au canal",
+  "NameCopiedOk": "Le nom de l'item <b><i>{name}</i></b> a été copié dans le presse-papier",
+  "SaveFailed": "Erreur de sauvegarde de l'item <b><i>{name}</i></b>.<br />{message}",
+  "SaveLinkFailed": "Erreur lors du lien du canal <b><i>{name}</i></b>.<br />{message}",
+  "SaveOk": "L'item <b><i>{name}</i></b> a été enregistré avec succès",
+  "SelectCategory": "Choisir la catégorie...",
+  "SelectGroup": "Choisir le groupe...",
+  "SelectLabel": "Entrer le libellé...",
+  "SelectName": "Entrer le nom...",
+  "SelectType": "Choisir le type..."
+}

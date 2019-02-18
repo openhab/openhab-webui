@@ -1,0 +1,1001 @@
+/**
+ * This is the main application stylesheet. It should include or import all
+ * stylesheets used throughout the application as this is the only stylesheet in
+ * the Grunt configuration that is automatically processed.
+ */
+/**
+ * First, we include the Twitter Bootstrap LESS files. Only the ones used in the
+ * project should be imported as the rest are just wasting space.
+ */
+// Import individual Bootstrap less files - and only those we need!
+//  @import '../../vendor/bootstrap/less/bootstrap.less';
+// Core variables and mixins
+@import "../../../target/bower_modules/bootstrap/less/variables.less";
+@import "../../../target/bower_modules/bootstrap/less/mixins.less";
+// Reset
+@import "../../../target/bower_modules/bootstrap/less/normalize.less";
+@import "../../../target/bower_modules/bootstrap/less/print.less";
+// Core CSS
+@import "../../../target/bower_modules/bootstrap/less/scaffolding.less";
+@import "../../../target/bower_modules/bootstrap/less/type.less";
+@import "../../../target/bower_modules/bootstrap/less/code.less";
+@import "../../../target/bower_modules/bootstrap/less/grid.less";
+@import "../../../target/bower_modules/bootstrap/less/tables.less";
+@import "../../../target/bower_modules/bootstrap/less/forms.less";
+@import "../../../target/bower_modules/bootstrap/less/buttons.less";
+// Components
+@import "../../../target/bower_modules/bootstrap/less/component-animations.less";
+//  @import "../../../target/bower_modules/bootstrap/less/glyphicons.less";
+@import "../../../target/bower_modules/bootstrap/less/dropdowns.less";
+@import "../../../target/bower_modules/bootstrap/less/button-groups.less";
+@import "../../../target/bower_modules/bootstrap/less/input-groups.less";
+@import "../../../target/bower_modules/bootstrap/less/navs.less";
+@import "../../../target/bower_modules/bootstrap/less/navbar.less";
+//  @import "../../../target/bower_modules/bootstrap/less/breadcrumbs.less";
+@import "../../../target/bower_modules/bootstrap/less/pagination.less";
+//  @import "../../../target/bower_modules/bootstrap/less/pager.less";
+@import "../../../target/bower_modules/bootstrap/less/labels.less";
+@import "../../../target/bower_modules/bootstrap/less/badges.less";
+@import "../../../target/bower_modules/bootstrap/less/jumbotron.less";
+@import "../../../target/bower_modules/bootstrap/less/thumbnails.less";
+@import "../../../target/bower_modules/bootstrap/less/alerts.less";
+@import "../../../target/bower_modules/bootstrap/less/progress-bars.less";
+//  @import "../../../target/bower_modules/bootstrap/less/media.less";
+@import "../../../target/bower_modules/bootstrap/less/list-group.less";
+@import "../../../target/bower_modules/bootstrap/less/panels.less";
+@import "../../../target/bower_modules/bootstrap/less/wells.less";
+@import "../../../target/bower_modules/bootstrap/less/close.less";
+// Components w/ JavaScript
+@import "../../../target/bower_modules/bootstrap/less/modals.less";
+@import "../../../target/bower_modules/bootstrap/less/tooltip.less";
+@import "../../../target/bower_modules/bootstrap/less/popovers.less";
+//  @import "../../../target/bower_modules/bootstrap/less/carousel.less";
+// Utility classes
+@import "../../../target/bower_modules/bootstrap/less/utilities.less";
+@import "../../../target/bower_modules/bootstrap/less/responsive-utilities.less";
+//@import "../../../target/bower_modules/pick-a-color/src/less/pick-a-color.less";
+@import "../../../target/bower_modules/angular-gridster/src/angular-gridster.less";
+@import "blockly.less";
+//MISC
+//----
+@import "core.less";
+@import "variables.less";
+@import "mixins.less";
+//COMPONENTS
+//-----------
+@import "header.less";
+@import "sidebar.less";
+@import "sidebar-mini.less";
+@import "control-sidebar.less";
+@import "dropdown.less";
+@import "forms.less";
+@import "progress-bars.less";
+@import "small-box.less";
+@import "boxes.less";
+@import "info-box.less";
+@import "timeline.less";
+@import "buttons.less";
+@import "callout.less";
+@import "alerts.less";
+@import "navs.less";
+@import "products.less";
+@import "table.less";
+@import "labels.less";
+@import "users-list.less";
+@import "carousel.less";
+@import "modal.less";
+@import "wizard.less";
+//PAGES
+//------
+@import "mailbox.less";
+@import "lockscreen.less";
+@import "login_and_register.less";
+@import "profile";
+//Plugins
+//--------
+@import "fullcalendar.less";
+@import "select2.less";
+//Miscellaneous
+//-------------
+@import "miscellaneous.less";
+@import "print.less";
+/**
+ * This is our main variables file. We must include it last so we can overwrite any variable
+ * definitions in our imported stylesheets.
+ */
+@import "variables.less";
+@import "rzslider.less";
+@import "visjs.less";
+@import "angular-toggle-switch.less";
+@import "angular-ui-select.less";
+
+//  @import 'angular-ui-select.less';
+
+// Body updates
+// Stop the user selecting text (it's annoying)
+* {
+  -webkit-touch-callout: none;
+//  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.logo {
+  background-image: url('icon-152x152.png');
+  background-repeat: no-repeat;
+  background-size: 35px 35px;
+  background-position: left;
+}
+
+.logo-lg {
+  padding: 0px 35px;
+}
+
+.text-large {
+  font-size: @font-size-base * 2;
+}
+
+/**
+ * For smaller screens, reduce the padding on the side of the screen
+ */
+//.container-fluid {
+//  @media (max-width: @grid-float-breakpoint-max) {
+//    padding-left: 0px;
+//    padding-right: 0px;
+//  }
+//}
+
+/**
+ * Navigation
+ */
+
+//.navbar {
+//  small {
+//    font-size: 60%;
+//  }
+//}
+
+/*.nav-stacked {
+  li {
+    border-left: 3px transparent solid;
+  }
+
+  .select {
+    border-left: 3px @input-border-focus solid;
+  }
+}*/
+
+// Bars
+/*
+.navbar-toggle.pull-left {
+  padding-top: 2px;
+  position: absolute;
+  left: 0px;
+  display: inline-flex;
+  vertical-align: middle;
+  .nav-expand-bar {
+    padding-top: 7px;
+    .icon-bar {
+      padding-top: 0px;
+      width: 15px;
+    }
+  }
+
+  margin-right: 0px;
+  margin-bottom: 0px;
+  font-size: @font-size-large;
+  color: @link-color;
+
+  &:hover {
+    color: @nav-tabs-active-link-hover-color;
+  }
+
+  .nav-expand-dir {
+    padding-left: 3px;
+  }
+
+  @media (min-width: @grid-float-breakpoint) {
+    display: none;
+  }
+}*/
+
+//.navbar-brand {
+//  margin-left: 30px;
+//}
+
+/*
+.navbar-notification {
+  right: 0px;
+  width: 30px;
+  .no-padding {
+    padding: @navbar-padding-vertical 2px;
+    margin: 0px;
+  }
+}*/
+
+.fillspace {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  text-align: center;
+  margin: auto;
+}
+
+//.habmin-body {
+//  margin-top: calc(@navbar-height + 10px);
+//}
+
+.habmin-list {
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-bottom: 0px;
+
+  &.list-group {
+//    padding: none;
+    
+    .list-group-item {
+        border-bottom: 1px;
+        list-style-type: none;
+        padding: none;
+
+        .list-group-item-detail {
+        }
+        
+        .list-group-item-notification {
+          text-align: center;
+          border-top: none;
+          padding-top: 5px;
+          padding-bottom: 10px;
+          margin-left: -15px;
+          margin-right: -15px;
+          margin-bottom: -10px;
+          
+          color: @text-color;
+          
+          &.danger {
+              background: linear-gradient(to bottom, transparent, @state-danger-bg);
+          }
+          
+          &.success {
+              background: linear-gradient(to bottom, transparent, @state-success-bg);
+          }
+          
+          .active {
+              border-color: @list-group-border;
+          }
+      }
+    }
+  }
+}
+
+.habmin-property-table {
+  tr td:first-child {
+    white-space: nowrap;
+  }
+}
+
+.btn {
+  border-radius: @border-radius-base;
+}
+
+.panel {
+  margin-bottom: 5px;
+  border-radius: @border-radius-base;
+}
+
+.panel-heading h3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: normal;
+  width: 75%;
+  padding-top: 8px;
+}
+
+.panel-footer-small {
+  padding: 5px 15px;
+}
+
+.panel-footer-none {
+  padding: 0px 15px;
+  border-top: 0px;
+}
+
+.panel-form {
+  padding: 5px 40px;
+}
+
+//#custom-search-form {
+//  margin: 0;
+//  margin-top: 5px;
+//  padding: 0;
+//}
+
+.sitemap-title {
+  font-weight: 500;
+  font-size: 24px;
+  border-bottom: 2px solid @nav-tabs-border-color;
+  background-color: @panel-default-heading-bg;
+  .box-shadow(0 2px 2px rgba(0, 0, 0, .05));
+  width: 100%;
+  padding-left: @panel-body-padding;
+  padding-right: @panel-body-padding;
+  margin-bottom: 5px;
+  //  position: fixed;
+  left: 0px;
+  right: 0px;
+  z-index: 10;
+  @media (max-width: @grid-float-breakpoint-max) {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+}
+
+.sitemap-parent {
+  display: inline-block;
+  width: 20px;
+  margin-right: 20px;
+  color: @link-color;
+
+  &:hover,
+  &:focus {
+    color: @link-hover-color;
+  }
+}
+
+.sitemap-link {
+  cursor: pointer;
+}
+
+.sitemap-title-icon {
+  width: 40px;
+  display: inline-block;
+  text-align: center;
+  font-size: 20px;
+}
+
+.sitemap-body {
+  margin-top: calc(50px);
+  z-index: 5;
+}
+
+.sitemap-row {
+  width: 100%;
+  display: inline-block;
+  //    float: left;
+  //    vertical-align: middle;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.sitemap-widget-icon {
+  float: left;
+  width: 30px;
+  vertical-align: middle;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.sitemap-widget-content {
+  margin-left: 30px;
+}
+
+.sitemap-frame-title {
+  font-weight: 300;
+  line-height: 1.1;
+  font-size: 20px;
+  border-bottom: 1px solid @nav-tabs-border-color;
+  .box-shadow(0 2px 2px rgba(0, 0, 0, .05));
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+  white-space: nowrap;
+}
+
+.sitemap-frame {
+  margin-bottom: 20px;
+}
+
+.sitemap-item-text {
+  vertical-align: middle;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.line-selector {
+  height: @input-height-base;
+  padding: 8px 12px;
+  background-color: @input-bg;
+  stroke: @input-color;
+  border-radius: @input-border-radius;
+  border: 1px solid @input-border;
+  .box-shadow(inset 0 1px 1px rgba(0, 0, 0, .075));
+
+  li {
+    stroke: white;
+  }
+}
+
+.gridster .gridster-item {
+  overflow: hidden;
+}
+
+.controls {
+  margin-bottom: 20px;
+}
+
+.page-header {
+  //  margin-top: 60px;
+}
+
+ul {
+  list-style: none;
+}
+
+.dashboard {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.dashboard-toolbar {
+  margin-bottom: 10px;
+}
+
+.dashboard-edit {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  -o-box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.dashboard-header {
+  background-color: @navbar-default-bg;
+  opacity: 0.9;
+  height: 20px;
+  cursor: move;
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  right: 5px;
+  z-index: @zindex-dropdown;
+
+  .dashboard-header-btns {
+    right: 5px;
+    cursor: pointer;
+    position: absolute;
+
+    a {
+      padding-left: 5px;
+      color: @navbar-default-link-color;
+    }
+    a:hover {
+      color: @navbar-default-link-hover-color;
+    }
+  }
+}
+
+.dashboard-content {
+  //  position: absolute;  // Causes collapsed dash not to work
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  //  background-color: yellow;
+}
+
+.icon-lg {
+  display: inline-block;
+  width: 30px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.chart-menu {
+  position: fixed;
+  right: 0px;
+  top: 60px;
+  padding: 5px 0px 5px 2px;
+  background-color: @navbar-default-bg;
+  border: 1px 0px 1px 1px @btn-default-border solid;
+
+  -webkit-border-radius: @border-radius-base 0px 0px @border-radius-base;
+  -moz-border-radius: @border-radius-base 0px 0px @border-radius-base;
+  -ms-border-radius: @border-radius-base 0px 0px @border-radius-base;
+  -o-border-radius: @border-radius-base 0px 0px @border-radius-base;
+}
+
+// Customisation of the FullCalendar plugin
+.fc {
+  padding: 5px;
+}
+
+.fc-header-title h2 {
+  font-size: @font-size-h3;
+  color: @navbar-default-color;
+}
+
+.fc-today {
+  background: blue !important; //#fcf8e3;
+}
+
+.login-form {
+  padding-top: 50px;
+}
+
+.chart-loading {
+  position: absolute;
+  bottom: calc(@line-height-computed + 3px);
+  left: calc(@panel-body-padding + 5px);
+  z-index: 2000;
+
+  @media (max-width: @grid-float-breakpoint-max) {
+    bottom: 3px;
+  }
+}
+
+.calendar-stack {
+  position: relative;
+  display: inline-block;
+  width: (13em / 14);
+  height: 1em;
+
+  .icon-calendar-empty,
+  .calendar-day {
+    position: absolute;
+  }
+
+  .calendar-day {
+    top: (12em / 8);
+    left: (1em / 8);
+    width: (11em / 8);
+    height: (6em / 8);
+    font-family: sans-serif;
+    font-size: (8em / 14);
+    font-weight: 700;
+    line-height: (8em / 14);
+    text-align: center;
+  }
+}
+
+.dropdown_dialog {
+  padding-left: 3px;
+  padding-right: 3px;
+
+  table {
+    background-color: @dropdown-bg;
+  }
+
+  .modal-footer {
+    margin-top: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+}
+
+.status_pending {
+  margin-top: 9px;
+}
+
+.cursor_pointer {
+  cursor: pointer;
+}
+
+// Range Slider styling
+/* Webkit */
+.safari input[type=range],
+.chrome input[type=range],
+.opera input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  border-radius: 8px;
+  height: 7px;
+  border: 1px solid #bdc3c7;
+  background-color: #fff;
+}
+
+.safari input[type='range']::-webkit-slider-thumb,
+.chrome input[type='range']::-webkit-slider-thumb,
+.opera input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-color: #ecf0f1;
+  border: 1px solid #bdc3c7;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Mozilla */
+.firefox input[type=range] {
+  width: 100%;
+}
+
+.firefox input[type=range]::-moz-range-track {
+  border-radius: 8px;
+  height: 7px;
+  border: 1px solid #bdc3c7;
+  background-color: #fff;
+}
+
+.firefox input[type=range]::-moz-range-thumb {
+  background: #ecf0f1;
+  border: 1px solid #bdc3c7;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Internet Explorer */
+.ie input[type="range"]::-ms-fill-lower,
+.ie input[type="range"]::-ms-fill-upper {
+  background: transparent;
+}
+
+.ie input[type="range"]::-ms-track {
+  border-radius: 8px;
+  height: 7px;
+  border: 1px solid #bdc3c7;
+  background-color: #fff;
+}
+
+.ie input[type="range"]::-ms-thumb {
+  background-color: #ecf0f1;
+  border: 1px solid #bdc3c7;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+// File input styling
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;
+  background: white;
+  cursor: inherit;
+  display: block;
+}
+
+// ZWAVE LOGREADER Styles
+.zwave-logreader {
+  height: 100%;
+  overflow: auto;
+
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.fixed-headers {
+  thead {
+    tr {
+      //        display: block;
+      //        position: relative;
+    }
+  }
+  tbody {
+    display: block;
+    overflow: auto;
+    width: 100%;
+  }
+}
+
+.zwave-logreader-popover {
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.category-icon {
+  width: 40px;
+}
+
+.thing-items {
+  margin-left: 40px;
+  margin-top: 2px;
+  margin-bottom: 0px;
+
+  .thing-items-title {
+    float: left;
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  .table {
+    margin-bottom: 5px;
+
+    td {
+      padding: 3px;
+      vertical-align: middle;
+    }
+  }
+}
+
+// Gauge stype
+.dialgauge-title {
+  letter-spacing: 1px;
+  font-family: @font-family-base;
+  font-style: normal;
+  font-size: @font-size-small;
+  font-weight: 100;
+  fill: @text-color;
+  stroke: @text-color;
+}
+
+.dialgauge-value {
+  font-family: @font-family-base;
+  letter-spacing: 1px;
+  font-style: normal;
+  font-size: @font-size-base;
+  font-weight: 100;
+  fill: @text-color;
+  stroke: @text-color;
+}
+
+.dialgauge-unit {
+  font-family: @font-family-base;
+  letter-spacing: 1px;
+  font-style: normal;
+  font-size: @font-size-small;
+  font-weight: 100;
+  fill: @text-color;
+  stroke: @text-color;
+}
+
+// TODO: This needs styling to account of themes
+.habmin-info {
+  padding: 10px 25px;
+
+  label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #bbb;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+.language-select {
+  padding-left: 40px;
+  background-size: 30px 24px;
+  background-repeat: no-repeat;
+  background-position: left;
+}
+
+.single-line {
+  height: 1.5em;
+  overflow: hidden;
+  white-space: nowrap;
+
+  position: relative;
+}
+
+.ellipsis {
+  text-align: right;
+
+  margin-top: 3px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 30px;
+
+  background: -webkit-gradient(linear, left top, right top,
+  from(rgba(255, 255, 255, 0)), to(white), color-stop(15%, white));
+  background: -moz-linear-gradient(to right, rgba(255, 255, 255, 0), @panel-bg 50%, @panel-bg);
+  background: -o-linear-gradient(to right, rgba(255, 255, 255, 0), @panel-bg 50%, @panel-bg);
+  background: -ms-linear-gradient(to right, rgba(255, 255, 255, 0), @panel-bg 50%, @panel-bg);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), @panel-bg 50%, @panel-bg);
+}
+
+.drag-list {
+  /**
+   * For the correct positioning of the placeholder element, the dnd-list and
+   * it's children must have position: relative
+   */
+  ul[dnd-list],
+  ul[dnd-list] > li {
+    position: relative;
+  }
+
+  /**
+   * The dnd-list should always have a min-height,
+   * otherwise you can't drop to it once it's empty
+   */
+  ul[dnd-list] {
+    min-height: 42px;
+    padding-left: 0px;
+  }
+
+  /**
+   * The dndDraggingSource class will be applied to
+   * the source element of a drag operation. It makes
+   * sense to hide it to give the user the feeling
+   * that he's actually moving it.
+   */
+  ul[dnd-list] .dndDraggingSource {
+    display: none;
+  }
+
+  /**
+   * An element with .dndPlaceholder class will be
+   * added to the dnd-list while the user is dragging
+   * over it.
+   */
+  ul[dnd-list] .dndPlaceholder {
+    display: block;
+    background-color: @list-group-disabled-bg;
+    min-height: 42px;
+  }
+
+  /**
+   * The dnd-lists's child elements currently MUST have
+   * position: relative. Otherwise we can not determine
+   * whether the mouse pointer is in the upper or lower
+   * half of the element we are dragging over. In other
+   * browsers we can use event.offsetY for this.
+   */
+  ul[dnd-list] li {
+    background-color: @list-group-bg;
+    border: 1px solid @list-group-border;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+
+    // Round the first and last items
+    &:first-child {
+      .border-top-radius(@list-group-border-radius);
+    }
+    &:last-child {
+      margin-bottom: 0;
+      .border-bottom-radius(@list-group-border-radius);
+    }
+  }
+
+  /**
+   * Show selected elements in green
+   */
+  ul[dnd-list] li.selected {
+    background-color: @list-group-active-bg;
+    color: @list-group-active-color;
+  }
+}
+
+.glyphicon {
+  display: inline-block;
+  font: normal normal normal @font-size-base/1 FontAwesome; // shortening font declaration
+  font-size: inherit; // can't have font-size inherit on line above, so need to override
+  text-rendering: auto; // optimizelegibility throws things off #1094
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform: translate(0, 0); // ensures no half-pixel rendering in firefox
+}
+
+.glyphicon-chevron-left:before {
+  content: "\f053";
+}
+
+.glyphicon-chevron-right:before {
+  content: "\f054";
+}
+
+.glyphicon-chevron-up:before {
+  content: "\f077";
+}
+
+.glyphicon-chevron-down:before {
+  content: "\f078";
+}
+
+.thing-battery {
+  display: inline;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+
+.floorplan {
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  position: relative;
+
+  img {
+    cursor: crosshair;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hotspot {
+    position: absolute;
+
+    .badge {
+      margin-left: -50%;
+      margin-top: -50%;
+      opacity: 0.6;
+      cursor: context-menu;
+
+      transition: all 0.2s;
+      -moz-transition: all 0.2s;
+      -webkit-transition: all 0.2s;
+      -o-transition: all 0.2s;
+
+      &:hover {
+        font-size: @font-size-base * 1.6;
+        opacity: 1;
+      }
+
+    }
+  }
+}
+
+.updated {
+  opacity: 1 !important;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+  -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+  -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+  -o-box-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+}
+
+.fullscreen {
+  width: 100%;
+  height: 100%;
+}
+
+.nav > li {
+  //  overflow: hidden;
+}
+
+.span-hover {
+  .span-hover-hide {
+    opacity: 0;
+  }
+  &:hover {
+    .span-hover-hide {
+      transition: all 0.4s ease-in-out;
+      opacity: 1;
+      -webkit-transition-delay: 1s;
+      transition-delay: 1s;
+    }
+  }
+}
+
+.label-as-badge {
+  border-radius: 1em;
+}
+
+.pagination {
+  margin: 10px 0px;
+}
+
+.editable-click,
+a.editable-click {
+  cursor: cell;
+  border-bottom: none;
+}
+
+// Override the font locations
+@font-face {
+  font-family: 'habmin-weathericons';
+  src: url('../fonts/weathericons-regular-webfont.eot');
+  src: url('../fonts/weathericons-regular-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/weathericons-regular-webfont.woff2') format('woff2'), url('../fonts/weathericons-regular-webfont.woff') format('woff'), url('../fonts/weathericons-regular-webfont.ttf') format('truetype'), url('../fonts/weathericons-regular-webfont.svg#weather_iconsregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+.wi {
+  font-family: 'habmin-weathericons';
+}

@@ -1,0 +1,71 @@
+/*
+ * Skin: Blue
+ * ----------
+ */
+@import "../../../../target/bower_modules/bootstrap/less/variables.less";
+@import "../../../../target/bower_modules/bootstrap/less/mixins.less";
+@import "../variables.less";
+@import "../mixins.less";
+
+.skin-blue {
+  //Navbar
+  .main-header {
+    .navbar {
+      color: #fff;
+      .navbar-variant(@light-blue; #fff);
+      .sidebar-toggle {
+        &:hover {
+          background-color: darken(@light-blue, 5%);
+        }
+      }
+      @media (max-width: @screen-header-collapse) {
+        .dropdown-menu {
+          li {
+            &.divider {
+              background-color: rgba(255, 255, 255, 0.1);
+            }
+            a {
+              color: #fff;
+              &:hover {
+                background: darken(@light-blue, 5%);
+              }
+            }
+          }
+        }
+      }
+
+      .nav .text-warning {
+        color: #f89406
+      }
+    }
+    //Logo
+    .logo {
+      .logo-variant(darken(@light-blue, 5%));
+    }
+
+    li.user-header {
+      background-color: @light-blue;
+    }
+  }
+
+  //Content Header
+  .content-header {
+    background: transparent;
+  }
+
+  //Create the sidebar skin
+  .skin-dark-sidebar(@light-blue);
+
+  .list-group-item {
+    &.active {
+      .text-muted {
+        color: lightskyblue;
+      }
+    }
+  }
+
+  .layout-top-nav .main-header > .logo {
+    .logo-variant(@light-blue);
+  }
+}
+

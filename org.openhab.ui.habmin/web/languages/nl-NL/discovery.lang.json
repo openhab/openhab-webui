@@ -1,0 +1,15 @@
+{
+  "ApproveAllConfirmMsg": "Weet u zeker dat u alle items in de inbox toe wilt voegen als nieuwe dingen?",
+  "ApproveAllConfirmTitle": "Goedkeuren van alle inbox aanmeldingen",
+  "ClearConfirmMsg": "Weet u zeker dat u de ontdekkingen in de inbox wilt wissen. Alle dingen zullen worden verwijderd en zal moeten worden herontdekt!",
+  "ClearConfirmTitle": "Leeg inbox",
+  "ClearFail": "Wissen van de inbox is mislukt voor een of meer items!",
+  "DeleteConfirmMsg": "Weet u zeker dat u het ding wilt verwijderen uit de inbox?",
+  "DeleteConfirmTitle": "Verwijder ding van inbox",
+  "IgnoreConfirmMsg": "Weet je zeker dat je het ding in de inbox te negeren?",
+  "IgnoreConfirmTitle": "Negeer ding in inbox",
+  "IgnoreFail": "Mislukt om <b><i>{name}</i></b> te negeren",
+  "NewThing": "Nieuw ding ontdekt <b><i>{name}</i></b>.",
+  "StartFail": "Ontdekking voor binding <b><i>{name}</i></b> is mislukt",
+  "StartOk": "Ontdekking begonnen voor binding <b><i>{name}</i></b>"
+}

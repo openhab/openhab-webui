@@ -1,0 +1,59 @@
+.colorpicker {
+    display: flex;
+}
+
+.color-picker-swatch {
+    border: 1px solid #3960ff;
+    border: 1px var(--colorpicker-border, #3960ff) dotted;
+}
+
+.transparent-swatch-arrow {
+    padding-left: 3px;
+    padding-top: 8px;
+}
+
+.colorpicker canvas {
+    cursor: pointer;
+}
+
+.colorpicker-content .axis path,
+.colorpicker-content .axis line {
+    fill: none;
+    stroke: #456;
+    stroke: var(--colorpicker-stroke, #456);
+    shape-rendering: crispEdges;
+}
+
+.colorpicker-content .axis text {
+    fill: #89a;
+    fill: var(--colorpicker-fill, #89a);
+    font: 10px $font-family-base;
+}
+
+.colorpicker-content .s .tick:last-of-type text,
+.colorpicker-content .l .tick:last-of-type text {
+    display: none;
+}
+
+.colorpicker-content .channel canvas {
+    width: 900px;
+    height: 90px;
+    float: left;
+    margin: 0 30px;
+}
+
+.colorpicker-content-flex {
+    margin: auto;
+    .c-ckolor__picker {
+        cursor: pointer;
+        margin-bottom: 5px;
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+    }
+}
+
+.c-ckolor__save-btn,
+.c-ckolor__close-btn {
+    height: 65px;
+}

@@ -1,0 +1,9 @@
+<label>Select binding...</label>
+<ul class="list-group">
+    <li class="list-group-item" ng-repeat="binding in bindings | orderBy:'name'">
+        <a ng-click="selectBinding(binding)">
+            <span>{{binding.name}}</span>
+            <span class="badge pull-right">{{countBindingThings(binding)}}</span>
+        </a>
+    </li>
+</ul>

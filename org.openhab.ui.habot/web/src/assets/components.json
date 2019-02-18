@@ -1,0 +1,1013 @@
+{
+    "HbCard": {
+        "description": "The HbCard is the root component of all HABot cards",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "bigger": {
+                "type": "boolean",
+                "description": "Make the card a little bigger (except on phones where it will always span the entire screen width)"
+            },
+            "color": {
+                "type": "color",
+                "description": "The background color of the card (expressions accepted)"
+            },
+            "textColor": {
+                "type": "color",
+                "description": "The color of the text in the card (expressions accepted)"
+            }
+        },
+        "slotDescriptions": {
+            "main": {
+                "description": "The main area of the card",
+                "deniedComponents": [ "HbCard", "HbList", "HbListItem", "HbListHeader", "HbTab", "HbTabPane" ]
+            },
+            "list": {
+                "description": "A slot for hosting a list component (HbList)",
+                "allowedComponents": [ "HbList"]
+            },
+            "tabs": {
+                "description": "A slot for hosting a tabs component (HbTabs)",
+                "allowedComponents": [ "HbTabs"]
+            },
+            "right": {
+                "description": "The area on the right of the card title along the context menu",
+                "allowedComponents": [ "HbSingleItemValue", "HbSwitch", "HbColorPicker" ]
+            },
+            "media": {
+                "description": "An optional area above the card's title where images, charts and carousels may be displayed",
+                "allowedComponents": [ "HbChartImage", "HbImage", "HbCarousel" ]
+            },
+            "actions": {
+                "description": "The area on the bottom of the card where action buttons may be added",
+                "allowedComponents": [ "HbCommandActionButton", "HbAnalyzeActionButton" ]
+            }
+        }
+    },
+
+    "HbCommandActionButton": {
+        "description": "An action button sending a command to an item",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "label": {
+                "type": "text",
+                "description": "The label of the button (expressions accepted)"
+            },
+            "icon": {
+                "type": "icon",
+                "description": "The icon to display alongside the label"
+            },
+            "textColor": {
+                "type": "text",
+                "description": "The color of the button (expressions accepted)"
+            },
+            "disabled": {
+                "type": "expr",
+                "targetType": "boolean",
+                "description": "The button will be disabled when this expression evaluates to true"
+            },
+            "item": {
+                "type": "item",
+                "description": "The item to send the command to"
+            },
+            "command": {
+                "type": "text",
+                "description": "The command to send (expressions accepted)"
+            }
+        }
+    },
+
+    "HbAnalyzeActionButton": {
+        "description": "An action button opening the analyze window for a set of items",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "items": {
+                "type": "item",
+                "multiple": true,
+                "description": "The initial list of items to analyze"
+            },
+            "period": {
+                "type": "optiongroup",
+                "description": "The initial period to analyze",
+                "options": [
+                    { "value": "h", "label": "h" },
+                    { "value": "4h", "label": "4h" },
+                    { "value": "8h", "label": "8h" },
+                    { "value": "12h", "label": "12h" },
+                    { "value": "D", "label": "D" },
+                    { "value": "2D", "label": "2D" },
+                    { "value": "3D", "label": "3D" },
+                    { "value": "W", "label": "W" },
+                    { "value": "2W", "label": "2W" },
+                    { "value": "M", "label": "M" },
+                    { "value": "2M", "label": "2M" },
+                    { "value": "4M", "label": "4M" },
+                    { "value": "Y", "label": "Y" }
+                ]
+            }
+        }
+    },
+
+    "HbContainer": {
+        "description": "A generic, flexible container",
+        "configDescriptions": {
+            "classes": {
+                "type": "array",
+                "description": "CSS classes to apply to the container; see http://quasar-framework.org/components/"
+            },
+            "classesExpr": {
+                "type": "expr",
+                "targetType": "array",
+                "description": "Optional expression which should evaluate to an array with additional CSS classes to apply; for example: [\"bg-\" + (items.Temperature.state > 16 ? \"positive\" : \"negative\"]"
+            },
+            "visible": {
+                "type": "expr",
+                "targetType": "boolean",
+                "description": "Optional boolean expression to control the visibility of the container (hidden if false); for example: items.Temperature.state <= 16"
+            },
+            "text": {
+                "type": "text",
+                "description": "A text to display in the container (expressions accepted)"
+            }
+        },
+        "slotDescriptions": {
+            "main": {
+                "description": "The contents of the container"
+            }
+        }
+    },
+
+    "HbList": {
+        "description": "Container for a list of HbListItems",
+        "configDescriptions": {
+            "link": {
+                "type": "boolean",
+                "description": "Display the list items in gray when hovering on desktops"
+            },
+            "noseparator": {
+                "type": "boolean",
+                "description": "Don't display a separator between items automatically - you can still add HbListSeparators yourself"
+            },
+            "striped": {
+                "type": "boolean",
+                "description": "Apply highlight to items intermittently"
+            }
+        },
+        "slotDescriptions": {
+            "items": {
+                "description": "Contains the list items",
+                "allowedComponents": [ "HbListItem", "HbCollapsible", "HbListHeader", "HbListSeparator" ]
+            }
+        }
+    },
+
+    "HbListHeader": {
+        "description": "A header between list items",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "label": {
+                "type": "text",
+                "description": "Label"
+            },
+            "inset": {
+                "type": "boolean",
+                "description": "Place an inset header - leave a margin on the left"
+            }
+        }
+    },
+
+    "HbListSeparator": {
+        "description": "A separator between list items",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "inset": {
+                "type": "boolean",
+                "description": "Place an inset separator - leave a margin on the left"
+            }
+        }
+    },
+
+    "HbListItem": {
+        "description": "A list item",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "label": {
+                "type": "text",
+                "description": "The label of the list item; accepts expressions"
+            },
+            "sublabel": {
+                "type": "text",
+                "description": "The subtitle below; accepts expressions - will contain the name of the item if specified by default; accepts expressions"
+            },
+            "item": {
+                "type": "item",
+                "description": "The item controlled by this list item"
+            },
+            "state": {
+                "type": "text",
+                "description": "The state to display on the right if no item is specified; accepts expressions"
+            },
+            "leftIcon": {
+                "type": "icon",
+                "description": "The icon to display on left"
+            },
+            "leftLetter": {
+                "type": "text",
+                "description": "The letter to display on left"
+            },
+            "leftAvatar": {
+                "type": "text",
+                "description": "The avatar (image) to display on left"
+            },
+            "leftColor": {
+                "type": "color",
+                "description": "The color for the icon or letter on the left"
+            },
+            "leftInverted": {
+                "type": "boolean",
+                "description": "Invert the colors of the icon or letter on the left"
+            }
+        }
+    },
+
+    "HbCollapsible": {
+        "description": "A collapsible, useable both in a HbList and standalone",
+        "configDescriptions": {
+            "label": {
+                "type": "text",
+                "description": "The label in the header"
+            },
+            "sublabel": {
+                "type": "text",
+                "description": "The sublabel in the header"
+            },
+            "group": {
+                "type": "text",
+                "description": "Use the same group identifier on several HbCollapsibles to make a group act as an accordion"
+            },
+            "indent": {
+                "type": "boolean",
+                "description": "Indent the collapsible's contents (for example to build a hierarchy)"
+            }
+        },
+        "slotDescriptions": {
+            "main": {
+                "description": "The main area of the collapsible"
+            }
+        }
+    },
+
+    "HbTabs": {
+        "description": "A set of tabs",
+        "configDescriptions": {
+            "align": {
+                "type": "optiongroup",
+                "description": "Alignment of the tabs in the bar",
+                "options": [
+                    {"value": "left", "label": "Left"},
+                    {"value": "center", "label": "Center"},
+                    {"value": "right", "label": "Right"},
+                    {"value": "justify", "label": "Justify"}
+                ]
+            },
+            "inverted": {
+                "type": "boolean",
+                "description": "Invert the background of the tab"
+            },
+            "position": {
+                "type": "optiongroup",
+                "description": "Position the tab above or below the tab panes",
+                "options": [
+                    {"value": "top", "label": "Top"},
+                    {"value": "bottom", "label": "Bottom"}
+                ]
+            },
+            "color": {
+                "type": "color",
+                "description": "Color of the tab header's background"
+            },
+            "glossy": {
+                "type": "boolean",
+                "description": "Apply a glossy effect to the tab header"
+            },
+            "noborder": {
+                "type": "boolean",
+                "description": "Don't draw a border around the tab panes"
+            }
+        },
+        "slotDescriptions": {
+            "tabs": {
+                "description": "The collection of tabs",
+                "allowedComponents": [ "HbTab" ]
+            },
+            "tabpanes": {
+                "description": "The collection of tab panes which must match the tabs",
+                "allowedComponents": [ "HbTabPane" ]
+            }
+        }
+    },
+
+    "HbTab": {
+        "description": "A tab - use in HbTabs and be sure to add a HbTabPane with the same name in the tabpanes slot",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "name": {
+                "type": "text",
+                "description": "Name of the tab - should match the name of the corresponding HbTabPane in the tabpanes slot"
+            },
+            "label": {
+                "type": "text",
+                "description": "Label of the tab"
+            }
+        }
+    },
+
+    "HbTabPane": {
+        "description": "A tab pane - use in HbTabs's tabpanes slot and be sure to match the name with a HbTab",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "name": {
+                "type": "text",
+                "description": "Name of the tab pane - should match the name of the corresponding HbTab in the tabs slot"
+            }
+        },
+        "slotDescriptions": {
+            "main": {
+                "description": "The main area of the tab pane"
+            }
+        }
+    },
+
+    "HbSlider": {
+        "description": "A slider operating an item",
+        "configDescriptions": {
+            "item": {
+                "type": "item",
+                "description": "The item controlled by this list item"
+            },
+            "min": {
+                "type": "number",
+                "description": "The minimum value, 0 by default"
+            },
+            "max": {
+                "type": "number",
+                "description": "The maximum value, 100 by default"
+            },
+            "step": {
+                "type": "number",
+                "description": "The step between values"
+            },
+            "color": {
+                "type": "color",
+                "description": "One color of the bar (accepts expressions)"
+            },
+            "label": {
+                "type": "boolean",
+                "description": "Display a label when dragging the slider"
+            },
+            "labelAlways": {
+                "type": "boolean",
+                "description": "Display the label even when not dragging the slider"
+            },
+            "labelValue": {
+                "type": "text",
+                "description": "Override the default label value (expressions accepted, with pre-defined 'state' variable)"
+            },
+            "square": {
+                "type": "boolean",
+                "description": "Displays a squared slider button instead of round"
+            },
+            "snap": {
+                "type": "boolean",
+                "description": "Snap the handler on step values"
+            },
+            "markers": {
+                "type": "boolean",
+                "description": "Display markers representing step values"
+            },
+            "fillHandleAlways": {
+                "type": "boolean",
+                "description": "Fill the handle with color even if it's at the minimum value"
+            }
+        }
+    },
+
+    "HbKnob": {
+        "description": "A knob operating an item",
+        "configDescriptions": {
+            "item": {
+                "type": "item",
+                "description": "The item controlled by this list item"
+            },
+            "size": {
+                "type": "text",
+                "description": "The size of the knob, e.g. '100px' or '15rem'"
+            },
+            "min": {
+                "type": "number",
+                "description": "The minimum value, 0 by default"
+            },
+            "max": {
+                "type": "number",
+                "description": "The maximum value, 100 by default"
+            },
+            "step": {
+                "type": "number",
+                "description": "The step between values"
+            },
+            "color": {
+                "type": "color",
+                "description": "One color of the bar (accepts expressions)"
+            },
+            "trackColor": {
+                "type": "color",
+                "description": "One color of the track (accepts expressions)"
+            },
+            "lineWidth": {
+                "type": "number",
+                "description": "The thickness of the track, 5 by default"
+            },
+            "textSize": {
+                "type": "text",
+                "description": "Size of the text (examples: 24px, 36pt, 5rem...)"
+            },
+            "label": {
+                "type": "text",
+                "description": "Override the default label (accepts expressions with pre-defined 'state' variable)"
+            },
+            "iconLeft": {
+                "type": "icon",
+                "description": "Optional icon to display left of the label"
+            },
+            "iconRight": {
+                "type": "icon",
+                "description": "Optional icon to display right of the label"
+            }
+        }
+    },
+
+    "HbSwitch": {
+        "description": "A switch operating an item",
+        "configDescriptions": {
+            "item": {
+                "type": "item",
+                "description": "The item controlled by this switch"
+            }
+        }
+    },
+
+    "HbColorPicker": {
+        "description": "A color picker operating an item",
+        "configDescriptions": {
+            "item": {
+                "type": "item",
+                "description": "The item controlled by this color picker"
+            },
+            "inline": {
+                "type": "boolean",
+                "description": "Displays the color picker itself inline in the parent component, instead of the swatch"
+            },
+            "brightnessSlider": {
+                "type": "boolean",
+                "description": "Display a slider for brightness underneath and center (inline mode only)"
+            }
+        }
+    },
+
+    "HbPlayer": {
+        "description": "A set of three buttons controlling a Player item",
+        "configDescriptions": {
+            "item": {
+                "type": "item",
+                "description": "The item controlled by this player control"
+            },
+            "size": {
+                "type": "optiongroup",
+                "description": "Size of the button",
+                "options": [
+                    { "value": "", "label": "Default" },
+                    { "value": "xs", "label": "xs" },
+                    { "value": "sm", "label": "sm" },
+                    { "value": "md", "label": "md" },
+                    { "value": "lg", "label": "lg" },
+                    { "value": "xl", "label": "xl" }
+                ]
+            }
+        }
+    },
+
+    "HbSingleItemValue": {
+        "description": "Displays the formatted state of an item. Designed to be placed in the right slot of a HbCard",
+        "configDescriptions": {
+            "item": {
+                "type": "item",
+                "description": "The item whose state should be displayed this component"
+            },
+            "state": {
+                "type": "text",
+                "description": "A textual value to display instead of the state of the state of the configyured item"
+            }
+        }
+    },
+
+    "HbImage": {
+        "description": "Displays an item as an image. Requires a sitemap and a 'imageSitemap=<sitemapname>' property in the item's 'habot' metadata namespace",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "item": {
+                "type": "item",
+                "description": "The item to display; either an Image item or a String item with an associated sitemap referenced in the 'imageSitemap' property of the 'habot' item metadata namespace"
+            },
+            "aspectRatio": {
+                "type": "optiongroup",
+                "description": "The aspect ratio of the image",
+                "options": [
+                    { "value": null, "label": "4:3 (default)" },
+                    { "value": "1:1", "label": "1:1" },
+                    { "value": "2:1", "label": "2:1" },
+                    { "value": "3:2", "label": "3:2" },
+                    { "value": "16:9", "label": "16:9" }
+                ]
+            }
+        }
+    },
+
+    "HbChartImage": {
+        "description": "Displays a chart generated by the openHAB servlet",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "items": {
+                "type": "item",
+                "multiple": true,
+                "description": "The item(s) to chart"
+            },
+            "period": {
+                "type": "optiongroup",
+                "description": "The period to chart",
+                "options": [
+                    { "value": "h", "label": "h" },
+                    { "value": "4h", "label": "4h" },
+                    { "value": "8h", "label": "8h" },
+                    { "value": "12h", "label": "12h" },
+                    { "value": "D", "label": "D" },
+                    { "value": "2D", "label": "2D" },
+                    { "value": "3D", "label": "3D" },
+                    { "value": "W", "label": "W" },
+                    { "value": "2W", "label": "2W" },
+                    { "value": "M", "label": "M" },
+                    { "value": "2M", "label": "2M" },
+                    { "value": "4M", "label": "4M" },
+                    { "value": "Y", "label": "Y" }
+                ]
+            }
+        }
+    },
+
+    "HbCarousel": {
+        "description": "A carousel able to display several images, charts or containers in a slideshow",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "color": {
+                "type": "color",
+                "description": "Color of the controls"
+            },
+            "arrows": {
+                "type": "boolean",
+                "description": "Display navigation arrows on the sides"
+            },
+            "infinite": {
+                "type": "boolean",
+                "description": "Infinite scrolling - allows scrolling last to first or first or last"
+            },
+            "autoplay": {
+                "type": "boolean",
+                "description": "Scrolls automatically between slides at regular intervals"
+            },
+            "quickNav": {
+                "type": "boolean",
+                "description": "Show navigation dots at the bottom"
+            },
+            "nowipe": {
+                "type": "boolean",
+                "description": "Disable swipe gesture to switch slides - enable arrows or quick-nav in this case"
+            }
+        },
+        "slotDescriptions": {
+            "slides": {
+                "description": "The carousel's slides",
+                "allowedComponents": [ "HbImage", "HbChartImage", "HbContainer" ]
+            }
+        }
+    },    
+
+    "HbBtn": {
+        "description": "Displays a button which may be used to send commands, open a modal or an action sheet",
+        "configDescriptions": {
+            "label": {
+                "type": "text",
+                "description": "Label of the button (expressions allowed)"
+            },
+            "item": {
+                "type": "item",
+                "description": "Item to send the command to (optional if slots defined)"
+            },
+            "command": {
+                "type": "text",
+                "description": "Command to send (optional if slots defined, expressions accepted)"
+            },
+            "size": {
+                "type": "optiongroup",
+                "description": "Size of the button",
+                "options": [
+                    { "value": "", "label": "Default" },
+                    { "value": "xs", "label": "xs" },
+                    { "value": "sm", "label": "sm" },
+                    { "value": "md", "label": "md" },
+                    { "value": "lg", "label": "lg" },
+                    { "value": "xl", "label": "xl" }
+                ]
+            },
+            "icon": {
+                "type": "icon",
+                "description": "Primary icon"
+            },
+            "iconRight": {
+                "type": "icon",
+                "description": "Icon to the right"
+            },
+            "disabled": {
+                "type": "expr",
+                "targetType": "boolean",
+                "description": "The button is disabled when this expression is true"
+            },
+            "color": {
+                "type": "color",
+                "description": "Color of the button (expressions allowed)"
+            },
+            "textColor": {
+                "type": "color",
+                "description": "Text color of the button (expressions allowed)"
+            },
+            "flat": {
+                "type": "boolean",
+                "description": "Button has a flat look"
+            },
+            "outline": {
+                "type": "boolean",
+                "description": "Button has an outlined look"
+            },
+            "rounded": {
+                "type": "boolean",
+                "description": "Button has a rounded look"
+            },
+            "round": {
+                "type": "boolean",
+                "description": "Button is round (displays only the icon)"
+            },
+            "dense": {
+                "type": "boolean",
+                "description": "Button has a dense look"
+            },
+            "push": {
+                "type": "boolean",
+                "description": "Button has a push effect"
+            },
+            "glossy": {
+                "type": "boolean",
+                "description": "Button has a glossy look"
+            },
+            "noCaps": {
+                "type": "boolean",
+                "description": "Don't put the label in all caps"
+            },
+            "noRipple": {
+                "type": "boolean",
+                "description": "Disable the ripple effect"
+            }
+        },
+        "slotDescriptions": {
+            "modal": {
+                "description": "Accepts a HbModal which will be displayed when clicking on the button",
+                "allowedComponents": [ "HbModal" ]
+            },
+            "popover": {
+                "description": "Accepts a HbPopover which will be displayed when clicking on the button"
+            }
+        }
+    },
+
+    "HbPopover": {
+        "description": "Container for a popover - use for menus and other elements displayed as a popup",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "fit": {
+                "type": "boolean",
+                "description": "Fit the popover width to the parent component"
+            },
+            "anchor": {
+                "type": "text",
+                "description": "Where to place the anchor"
+            },
+            "self": {
+                "type": "text",
+                "description": "Where to place the popover itself"
+            }
+        },
+        "slotDescriptions": {
+            "main": {
+                "description": "The contents of the popover",
+                "allowedComponents": [ "HbContainer", "HbList" ]
+            }
+        }
+    },
+
+    "HbBtnGroup": {
+        "description": "A group of several HbBtn components",
+        "configDescriptions": {
+            "flat": {
+                "type": "boolean",
+                "description": "Button has a flat look"
+            },
+            "outline": {
+                "type": "boolean",
+                "description": "Button has an outlined look"
+            },
+            "rounded": {
+                "type": "boolean",
+                "description": "Button has a rounded look"
+            },
+            "push": {
+                "type": "boolean",
+                "description": "Button has a push effect"
+            }
+        },
+        "slotDescriptions": {
+            "buttons": {
+                "description": "The buttons in the button group",
+                "allowedComponents": [ "HbBtn" ]
+            }
+        }
+    },
+
+    "HbSelect": {
+        "description": "A selection control to switch an item's state",
+        "configDescriptions": {
+            "item": {
+                "type": "item",
+                "description": "The item to control - server-provided options will be used if available and if the options slot is absent or empty"
+            },
+            "stackLabel": {
+                "type": "text",
+                "description": "Label to display above the control"
+            },
+            "color": {
+                "type": "color",
+                "description": "Color of the control's content (accepts expressions)"
+            },
+            "inverted": {
+                "type": "boolean",
+                "description": "Invert the background"
+            },
+            "hideUnderline": {
+                "type": "boolean",
+                "description": "Hide the line under the control"
+            },
+            "dark": {
+                "type": "boolean",
+                "description": "Select to optimize the display if the control is on a dark background"
+            },
+            "separator": {
+                "type": "boolean",
+                "description": "Draw separators between options"
+            },
+            "filter": {
+                "type": "boolean",
+                "description": "Offers a filter field for long lists of options"
+            },
+            "radio": {
+                "type": "boolean",
+                "description": "Displays radio buttons alongside options"
+            },
+            "disable": {
+                "type": "expr",
+                "targetType": "boolean",
+                "description": "The control will be disabled if this expression evaluates to true"
+            }
+        },
+        "slotDescriptions": {
+            "options": {
+                "description": "The collection of options for the HbSelect control; replaces the server-provided options",
+                "allowedComponents": [ "HbSelectOption" ]
+            }
+        }
+    },
+
+    "HbSelectOption": {
+        "description": "A selection option for the HbSelect component",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "value": {
+                "type": "text",
+                "description": "The value to send as a command to the item configured for the parent HbSelect"
+            },
+            "label": {
+                "type": "text",
+                "description": "The display label of option"
+            },
+            "sublabel": {
+                "type": "text",
+                "description": "The sublabel of the option"
+            },
+            "leftColor": {
+                "type": "color",
+                "description": "The color of the icon or letter on the left"
+            },
+            "icon": {
+                "type": "icon",
+                "description": "The icon of the left"
+            },
+            "letter": {
+                "type": "text",
+                "description": "The letter on the left"
+            },
+            "leftInverted": {
+                "type": "boolean",
+                "description": "Invert the color of the background of the icon/letter on the left"
+            },
+            "leftTextColor": {
+                "type": "text",
+                "description": "Override the white color of the text or icon (for inverted icons or letter)"
+            },
+            "labelLines": {
+                "type": "text",
+                "description": "Number of lines the label can expand to"
+            },
+            "sublabelLines": {
+                "type": "text",
+                "description": "Number of lines the sublabel can expand to"
+            },
+            "inset": {
+                "type": "boolean",
+                "description": "Inset the label if no left-side icon or letter is specified"
+            },
+            "rightColor": {
+                "type": "color",
+                "description": "The color of the icon or letter on the right"
+            },
+            "rightIcon": {
+                "type": "icon",
+                "description": "The icon of the right"
+            },
+            "rightLetter": {
+                "type": "text",
+                "description": "The letter on the right"
+            },
+            "rightInverted": {
+                "type": "boolean",
+                "description": "Invert the color of the background of the icon/letter on the right"
+            },
+            "rightTextColor": {
+                "type": "text",
+                "description": "Override the white color of the text or icon (for inverted icons or letter on the right)"
+            },
+            "stamp": {
+                "type": "text",
+                "description": "Short text to use as a 'stamp' on the right side"
+            }
+        }
+    },
+
+    "HbShutterControl": {
+        "description": "A group of three buttons to control a rollershutter item",
+        "configDescriptions": {
+            "item": {
+                "type": "item",
+                "description": "The Rollershutter item to control"
+            },
+            "flat": {
+                "type": "boolean",
+                "description": "Buttons have a flat look"
+            },
+            "outline": {
+                "type": "boolean",
+                "description": "Buttons have an outlined look"
+            },
+            "rounded": {
+                "type": "boolean",
+                "description": "Buttons have a rounded look"
+            },
+            "dense": {
+                "type": "boolean",
+                "description": "Button has a dense look"
+            },
+            "push": {
+                "type": "boolean",
+                "description": "Buttons have a push effect"
+            },
+            "glossy": {
+                "type": "boolean",
+                "description": "Button has a glossy look"
+            },
+            "noRipple": {
+                "type": "boolean",
+                "description": "Disable the ripple effect"
+            },
+            "upDownIcons": {
+                "type": "optiongroup",
+                "description": "The Material icons for the up/down buttons",
+                "options": [
+                    { "value": "keyboard_arrow", "label": "keyboard_arrow_down / keyboard_arrow_up" },
+                    { "value": "arrow", "label": "arrow_downward / arrow_upward" },
+                    { "value": "arrow_drop", "label": "arrow_dropup / arrow_dropdown" }
+                ]
+            },
+            "stopIcon": {
+                "type": "optiongroup",
+                "description": "The Material icons for the stop button",
+                "options": [
+                    { "value": "stop", "label": "stop" },
+                    { "value": "report", "label": "report" },
+                    { "value": "cancel", "label": "cancel" },
+                    { "value": "close", "label": "close" }
+                ]
+            },
+            "size": {
+                "type": "optiongroup",
+                "description": "Size of the buttons",
+                "options": [
+                    { "value": "", "label": "Default" },
+                    { "value": "xs", "label": "xs" },
+                    { "value": "sm", "label": "sm" },
+                    { "value": "md", "label": "md" },
+                    { "value": "lg", "label": "lg" },
+                    { "value": "xl", "label": "xl" }
+                ]
+            }
+        },
+        "slotDescriptions": {
+            "buttons": {
+                "description": "The buttons in the button group",
+                "allowedComponents": [ "HbBtn" ]
+            }
+        }
+    },
+
+    "HbModal": {
+        "description": "Container for a modal - use for displaying more information in a separate screen",
+        "availableByDefault": false,
+        "configDescriptions": {
+            "minimized": {
+                "type": "boolean",
+                "description": "Modal is never fullscreen, even on small screens, and has no toolbar"
+            },
+            "maximized": {
+                "type": "boolean",
+                "description": "Modal is always fullscreen, even on big screens"
+            },
+            "position": {
+                "type": "optiongroup",
+                "description": "Where to position the modal, if not maximized",
+                "options": [
+                    { "value": "", "label": "Default" },
+                    { "value": "left", "label": "Left" },
+                    { "value": "top", "label": "Top" },
+                    { "value": "right", "label": "Right" },
+                    { "value": "bottom", "label": "Bottom" }
+                ]
+            },
+            "contentClasses": {
+                "type": "array",
+                "description": "CSS Classes to apply to the content area; see http://quasar-framework.org/components/"
+            },
+            "toolbarTitle": {
+                "type": "text",
+                "description": "Title of the toolbar"
+            },
+            "toolbarSubtitle": {
+                "type": "text",
+                "description": "Subtitle of the toolbar"
+            },
+            "toolbarColor": {
+                "type": "color",
+                "description": "Background color of the toolbar"
+            },
+            "toolbarTextColor": {
+                "type": "color",
+                "description": "Text color of the toolbar"
+            },
+            "toolbarInverted": {
+                "type": "boolean",
+                "description": "Toolbar is inverted"
+            },
+            "toolbarGlossy": {
+                "type": "boolean",
+                "description": "Toolbar is glossy"
+            }
+        },
+        "slotDescriptions": {
+            "main": {
+                "description": "The contents of the popover",
+                "allowedComponents": [ "HbContainer", "HbList" ]
+            }
+        }
+    }
+}

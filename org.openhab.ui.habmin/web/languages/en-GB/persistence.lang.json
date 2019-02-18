@@ -1,0 +1,9 @@
+{
+  "Entries": "Entries",
+  "ErrorGettingData": "Error while getting item persistence data",
+  "ErrorGettingItems": "Error getting list of items supported by the persistence service",
+  "ErrorGettingServices": "Error getting list of persistence services",
+  "RecordDeleteConfirm": "Are you sure you wish to delete this record?",
+  "RecordDeleteTitle": "Delete Record",
+  "Service": "Service"
+}

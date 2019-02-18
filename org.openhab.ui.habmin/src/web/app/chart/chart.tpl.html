@@ -1,0 +1,85 @@
+<div class="panel panel-default">
+    <!-- Header -->
+    <div class="panel-heading" style="padding:3px;">
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-sm btn-default" ng-disabled="!graphLoaded"
+                    ng-click="stepWindow(-1)">
+                <span class="fa fa-backward"></span>
+            </button>
+            <button type="button" class="btn btn-sm btn-default" ng-disabled="!graphLoaded"
+                    ng-click="stepWindow(1)">
+                <span class="fa fa-forward"></span>
+            </button>
+            <button type="button" class="btn btn-sm btn-default" ng-disabled="!graphLoaded"
+                    ng-click="setNow()">
+                <span class="fa fa-fast-forward"></span>
+            </button>
+            <button type="button" class="btn btn-sm btn-default" ng-disabled="!graphLoaded"
+                    ng-click="zoomWindow(0.10)">
+                <span class="fa fa-search-minus"></span>
+            </button>
+            <button type="button" class="btn btn-sm btn-default" ng-disabled="!graphLoaded"
+                    ng-click="zoomWindow(-0.10)">
+                <span class="fa fa-search-plus"></span>
+            </button>
+        </div>
+        <div class="btn-group btn-group-sm">
+            <button type="button" class="btn btn-sm btn-default" ng-disabled="!graphLoaded"
+                    ng-class="{active:graphWindow=='day'}" ng-click="setWindow('day')">
+                        <span class="calendar-stack">
+                            <span class="fa fa-calendar-o"></span>
+                            <span class="calendar-day">1</span>
+                        </span>
+                <span class="hidden-xs hidden-sm">Day</span>
+            </button>
+            <button type="button" class="btn btn-sm btn-default" ng-disabled="!graphLoaded"
+                    ng-class="{active:graphWindow=='week'}" ng-click="setWindow('week')">
+                        <span class="calendar-stack">
+                            <span class="fa fa-calendar-o"></span>
+                            <span class="calendar-day">7</span>
+                        </span>
+                <span class="hidden-xs hidden-sm">Week</span>
+            </button>
+            <button type="button" class="btn btn-sm btn-default" ng-disabled="!graphLoaded"
+                    ng-class="{active:graphWindow=='month'}" ng-click="setWindow('month')">
+                        <span class="calendar-stack">
+                            <span class="fa fa-calendar-o"></span>
+                            <span class="calendar-day">30</span>
+                        </span>
+                <span class="hidden-xs hidden-sm">Month</span>
+            </button>
+        </div>
+
+        <div class="pull-right btn-group btn-group-sm">
+            <button type="button" class="btn btn-sm btn-default" ng-disabled="!graphLoaded"
+                    ng-click="liveupdate=!liveupdate" ng-class="{'btn-success':liveupdate}">
+                <span class="fa fa-video-camera"></span>
+            </button>
+            <button type="button" class="btn btn-sm btn-default" ng-disabled="!graphLoaded"
+                    ng-click="refreshChart()">
+                <span class="fa fa-refresh"></span>
+            </button>
+        </div>
+
+        <div ng-show="graphLoaded" class="pull-right hidden-xs hidden-sm">
+            <h6>{{graphTimeline}}&nbsp;</h6>
+        </div>
+    </div>
+
+    <!-- Graph -->
+    <div class="panel-body" style="padding:3px;" resize-panel>
+        <habmin-chart ng-show="true" style="display:inline-block;height:100%;width:100%"
+                      items="graphItems()" chart="selectedChart().id" liveupdate="liveupdate"
+                      service="persistenceService()" events="graphEvents">
+        </habmin-chart>
+    </div>
+    <div ng-show="chartLoading==true" class="chart-loading"><span class="fa fa-spin fa-circle-o-notch"></span></div>
+
+    <!-- Footer -->
+    <div class="panel-footer panel-footer-none">
+    </div>
+</div>
+
+
+
+

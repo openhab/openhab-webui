@@ -1,0 +1,61 @@
+<div>
+    <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
+            <h3 translate-keep-content translate="widget.label.settings.header">Label Settings</h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>Name</label>
+                <div class="col-lg-9 col-md-9">
+                    <input name="name" type="text" ng-model="form.name" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-9">
+                    <div class="form-group" ng-class="{error: _form.font_size.$error && _form.submitted}">
+                        <label class="control-label col-xs-4" translate>Font size</label>
+                        <div class="col-xs-4">
+                            <input name="font_size" ng-model="form.font_size" class="form-control" />
+                        </div>
+                        <!--<div class="col-xs-4">
+                        <label class="control-label">
+                            <input type="checkbox"  name="font_bold" ng-model="form.font_bold" />
+                            <label for="font_bold"><i class="glyphicon glyphicon-bold"></i></label>
+                            <input type="checkbox"  name="font_italic" ng-model="form.font_italic" />
+                            <label for="font_italic"><i class="glyphicon glyphicon-italic"></i></label>
+                        </label>
+                        </div>-->
+                    </div>
+                    <div class="form-group" ng-class="{error: _form.background.$error && _form.submitted}">
+                        <label class="control-label col-lg-4 col-md-4" translate-keep-content translate="widget.label.background_color">Background color</label>
+                        <div class="col-lg-4 col-md-4">
+                            <div dab-model="form.background" web-colorpicker dab-width="20" dab-height="20" dab-radius="50" dab-vertical="4" dab-rotate="0" show-grayscale="true"></div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-class="{error: _form.foreground.$error && _form.submitted}">
+                        <label class="control-label col-lg-4 col-md-4" translate-keep-content translate="widget.label.foreground_color">Text color</label>
+                        <div class="col-lg-4 col-md-4">
+                            <div dab-model="form.foreground" web-colorpicker dab-width="20" dab-height="20" dab-radius="50" dab-vertical="4" dab-rotate="0" show-grayscale="true"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-3" style="height: 80px">
+                    <div class="box">
+                        <div class="box-content switch" ng-style="{ 'background-color': form.background, color: form.foreground }">
+                            <div class="switch-content">
+                                <span ng-style="{ 'font-size': form.font_size + 'pt' }">    <span translate-keep-content translate="widget.label.preview">Preview</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a ng-click="remove()" class="btn btn-danger pull-left" tabindex="-1"><i class="glyphicon glyphicon-trash"></i>&nbsp;<span translate>Delete</span></a>
+            <a ng-click="dismiss()" class="btn btn-default" tabindex="-1"><i class="glyphicon glyphicon-remove"></i>&nbsp;<span translate>Cancel</span></a>
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;<span translate>Save</span></button>
+        </div>
+    </form>
+</div>

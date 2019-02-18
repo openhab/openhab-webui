@@ -1,0 +1,33 @@
+{  
+   "actions":[  
+      {  
+         "uid":"habot.WebPushNotificationAction",
+         "label":"send a web push notification to HABot",
+         "description":"Push the message to all subscribed HABot clients.",
+         "configDescriptions":[  
+            {  
+               "name":"title",
+               "type":"TEXT",
+               "description":"the title of the notification - only for the native notification, in the chat page the title will NOT appear!"
+            },
+            {  
+               "name":"body",
+               "type":"TEXT",
+               "description":"the body of the native notification message which is also the chat message from HABot (required)",
+               "required":true
+            },
+            {  
+               "name":"cardUID",
+               "type":"TEXT",
+               "description":"the explicit UID of a card to make HABot display when the notification is clicked"
+            },
+            {
+                "name":"tags",
+                "type":"TEXT",
+                "multiple":true,
+                "description":"the tags associated with the message, HABot will try to find a matching card with those tags if you don't specify an explicit UID" 
+            }
+         ]
+      }
+   ]
+}

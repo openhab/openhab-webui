@@ -1,0 +1,7 @@
+files:
+  - source: /web/assets/i18n/main/main.pot
+    translation: /web/assets/i18n/main/%two_letters_code%.po
+  - source: /web/assets/i18n/admin/admin.pot
+    translation: /web/assets/i18n/admin/%two_letters_code%.po
+  - source: /web/assets/i18n/widgets/widgets.pot
+    translation: /web/assets/i18n/widgets/%two_letters_code%.po

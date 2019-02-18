@@ -1,0 +1,9 @@
+{
+  "Entries": "Einträge",
+  "ErrorGettingData": "Fehler beim Laden der Persistenzdaten des Items",
+  "ErrorGettingItems": "Fehler beim Laden der Items, die vom Persistenzdienst unterstütz werden",
+  "ErrorGettingServices": "Fehler beim Laden der Liste der Persistenzdiente",
+  "RecordDeleteConfirm": "Sind Sie sich, dass Sie diesen Eintrag löschen möchten?",
+  "RecordDeleteTitle": "Eintrag löschen",
+  "Service": "Dienst"
+}

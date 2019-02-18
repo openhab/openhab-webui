@@ -1,0 +1,110 @@
+<div class="modal-header">
+    <h3 class="modal-title" i18n="item.EditTitle"></h3>
+</div>
+<div class="modal-body">
+    <form class="form" role="form">
+
+        <div class="form-group">
+            <label for="inputName" class="control-label" i18n="item.EditName"></label>
+
+            <div>
+                <input type="text" ng-model="item.name" class="form-control" id="inputName"
+                       ng-disabled="!newItem" i18n-attr="{placeholder: 'item.SelectName'}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputLabel" class="control-label" i18n="item.EditLabel"></label>
+
+            <div>
+                <input type="text" ng-model="item.label" class="form-control" id="inputLabel"
+                       i18n-attr="{placeholder: 'item.SelectLabel'}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputType" class="control-label" i18n="item.EditType"></label>
+
+            <div>
+                <ui-select id="inputType"
+                           ng-model="item.type"
+                           theme="bootstrap"
+                           search-enabled="false"
+                        >
+                    <ui-select-match i18n-attr="{placeholder: 'item.SelectType'}">
+                        <habmin-icon class="fa fa-fw" itemtype="{{$select.selected.id}}"></habmin-icon>
+                        {{$select.selected.name}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="type.id as type in itemtypes | orderBy: 'name'">
+                        <habmin-icon class="fa fa-fw" itemtype="{{type.id}}"></habmin-icon>
+                        <span>{{type.name}}</span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputCategory" class="control-label" i18n="item.EditCategory"></label>
+
+            <div>
+                <ui-select id="inputCategory"
+                           ng-model="item.category"
+                           theme="bootstrap"
+                           search-enabled="false">
+                    <ui-select-match i18n-attr="{placeholder: 'item.SelectCategory'}">
+                        <habmin-icon class="fa fa-fw" category="{{$select.selected.id}}"></habmin-icon>
+                        {{$select.selected.name}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="category.id as category in categories | orderBy: 'name'">
+                        <habmin-icon class="fa fa-fw" category="{{category.id}}"></habmin-icon>
+                        <span>{{category.name}}</span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputTags" class="control-label" i18n="item.EditTags"></label>
+
+            <div>
+                <ui-select id="inputTags"
+                           multiple tagging tagging-label="(custom 'new' label)"
+                           ng-model="item.tags"
+                           theme="bootstrap"
+                           sortable="true">
+                    <ui-select-match placeholder="Select colors...">{{$item}}</ui-select-match>
+                    <ui-select-choices repeat="color in availableColors | filter:$select.search">
+                        {{color}}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputGroups" class="control-label" i18n="item.EditGroups"></label>
+
+            <div>
+                <ui-select id="inputGroups"
+                           ng-model="item.groupNames"
+                           theme="bootstrap"
+                           search-enabled="false"
+                           multiple
+                        >
+                    <ui-select-match i18n-attr="{placeholder: 'item.SelectGroup'}">
+                        <habmin-icon class="fa fa-fw" category="{{$item.category}}"></habmin-icon>
+                        {{$item.label}}
+                    </ui-select-match>
+                    <ui-select-choices
+                            repeat="group.name as group in items | filter: {type: 'GroupItem'} | orderBy: 'label'">
+                        <habmin-icon class="fa fa-fw" category="{{group.category}}"></habmin-icon>
+                        <span>{{group.label}}</span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="ok()" i18n="common.save"></button>
+    <button type="button" class="btn btn-warning" ng-click="cancel()" i18n="common.cancel"></button>
+</div>

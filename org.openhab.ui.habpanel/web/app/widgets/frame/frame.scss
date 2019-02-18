@@ -1,0 +1,20 @@
+.frame-content,
+.frame-content-frameless,
+.frame-container {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.frame .frame-label {
+  padding-bottom: 10px;
+}
+
+.frame-content-frameless {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}

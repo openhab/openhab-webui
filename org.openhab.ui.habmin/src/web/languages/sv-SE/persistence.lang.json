@@ -1,0 +1,6 @@
+{
+  "ErrorGettingServices": "Fel vid hämtning av lista över lagringstjänster",
+  "RecordDeleteConfirm": "Är du säker på att du vill ta bort den här posten?",
+  "RecordDeleteTitle": "Ta bort post",
+  "Service": "Tjänst"
+}

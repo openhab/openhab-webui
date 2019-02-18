@@ -1,0 +1,24 @@
+<div class="row">
+    <div class="wizard col-sm-8 col-sm-offset-2">
+
+        <div class="wizard-header text-center">
+            <h2>Add new Thing Wizard</h2>
+
+            <!-- the links to our nested states using relative paths -->
+            <!-- add the active class if the state matches our ui-sref -->
+            <div class="status-buttons text-center">
+                <a ui-sref-active="active" ui-sref="/thing-wizard.binding"
+                   ng-click="binding=null;selectedThing=null"><span class="number">1</span><span
+                        i18n="thing.WizardBinding"></span></a>
+                <a ui-sref-active="active" ui-sref="/thing-wizard.thing" ng-class="{disabled: binding==null}"
+                   ng-click="selectedThing=null"><span class="number">2</span><span i18n="thing.WizardType"></span></a>
+                <a ui-sref-active="active" ui-sref="/thing-wizard.configure"
+                   ng-class="{disabled: binding==null || selectedThing==null}"><span class="number">3</span><span
+                        i18n="thing.WizardConfigure"></span></a>
+            </div>
+        </div>
+
+        <div class="wizard-views" ui-view></div>
+    </div>
+</div>
+

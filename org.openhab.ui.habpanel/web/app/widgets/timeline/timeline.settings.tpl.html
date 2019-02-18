@@ -1,0 +1,120 @@
+<div>
+    <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
+            <h3 translate-keep-content translate="widget.timeline.settings.header">Timeline Settings</h3>
+        </div>
+
+        <div class="modal-body">
+            <uib-tabset>
+                <uib-tab heading="{{'General' | translation:'widget.common.general'}}">
+                    <br />
+
+                    <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
+                        <label class="control-label col-lg-3 col-md-3" translate>Name</label>
+                        <div class="col-lg-9 col-md-9">
+                            <input name="name" type="text" ng-model="form.name" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
+                        <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.timeline.general.service">Persistence service</label>
+                        <div class="col-lg-9 col-md-9">
+                            <input name="name" type="text" ng-model="form.service" class="form-control" placeholder="{{'rrd4j, mysql, influxdb... Leave blank for default' | translation:'widget.timeline.general.service.hint'}}" />
+                        </div>
+                    </div>
+                    <div class="form-group" ng-class="{error: _form.period.$error && _form.submitted}">
+                        <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.timeline.general.period">Period</label>
+                        <div class="col-lg-9 col-md-9">
+                            <select ng-model="form.period" class="form-control">
+                                <option value="h">h</option>
+                                <option value="4h">4h</option>
+                                <option value="8h">8h</option>
+                                <option value="12h">12h</option>
+                                <option value="D">D</option>
+                                <option value="2D">2D</option>
+                                <option value="3D">3D</option>
+                                <option value="W">W</option>
+                                <option value="2W">2W</option>
+                                <option value="M">M</option>
+                                <option value="2M">2M</option>
+                                <option value="4M">4M</option>
+                                <option value="Y">Y</option>
+                            </select>
+                        </div>
+                    </div>
+                </uib-tab>
+
+                <uib-tab heading="{{'Colors' | translation:'widget.timeline.colors'}}">
+                    <br />
+
+                    <button type="button" class="btn" ng-click="addColorMap()"><i class="glyphicon glyphicon-plus"></i></button>
+                    <br /><br />
+                    <uib-accordion>
+                        <div uib-accordion-group is-open="colorMapAccordions[$index]" class="panel default" ng-repeat="colorMap in form.colorMaps">
+                            <uib-accordion-heading>
+                                <span ng-style="{ 'background-color': colorMap.color }" style="border: 1px solid black">&nbsp;&nbsp;&nbsp;</span>
+                                &nbsp;
+                                <span translate-keep-content translate="widget.timeline.colors.state">State</span>: {{colorMap.state}}
+                            </uib-accordion-heading>
+                            <div class="col-lg-12 col-md-12">
+                                <button type="button" class="btn pull-right" ng-click="removeColorMap(colorMap)"><i class="glyphicon glyphicon-trash"></i></button>
+
+                                <div class="form-group">
+                                    <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.timeline.colors.state">State</label>
+                                    <div class="col-lg-5 col-md-5">
+                                        <input name="name" type="text" ng-model="colorMap.state" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2 col-md-2" translate>Color</label>
+                                    <div class="col-lg-4 col-md-4">
+                                        <div dab-model="colorMap.color" web-colorpicker dab-width="20" dab-height="20" dab-radius="50" dab-vertical="4" dab-rotate="0" show-grayscale="true"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-accordion>
+                </uib-tab>
+
+                <uib-tab heading="{{'Series' | translation:'widget.timeline.series'}}">
+                    <br />
+                    <button type="button" class="btn" ng-click="addSeries()"><i class="glyphicon glyphicon-plus"></i></button>
+                    <br /><br />
+                    <uib-accordion>
+                        <div uib-accordion-group is-open="accordions[$index]" class="panel default" heading="Item: {{series.item || 'N/A'}}" ng-repeat="series in form.series">
+                            <div class="col-lg-12 col-md-12">
+                                <button type="button" class="btn pull-right" ng-click="removeSeries(series)"><i class="glyphicon glyphicon-trash"></i></button>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-lg-3 col-md-3" translate>Name</label>
+                                <div class="col-lg-5 col-md-5">
+                                    <input name="name" type="text" ng-model="series.name" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-lg-3 col-md-3" translate>openHAB Item</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <item-picker ng-model="series.item"></item-picker>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </uib-accordion>
+
+                </uib-tab>
+
+            </uib-tabset>
+
+        </div>
+
+        <div class="modal-footer">
+            <a ng-click="remove()" class="btn btn-danger pull-left" tabindex="-1"><i class="glyphicon glyphicon-trash"></i>&nbsp;<span translate>Delete</span></a>
+            <a ng-click="dismiss()" class="btn btn-default" tabindex="-1"><i class="glyphicon glyphicon-remove"></i>&nbsp;<span translate>Cancel</span></a>
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;<span translate>Save</span></button>
+        </div>
+    </form>
+</div>

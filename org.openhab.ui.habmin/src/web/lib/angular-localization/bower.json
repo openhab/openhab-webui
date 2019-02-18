@@ -1,0 +1,32 @@
+{
+  "name": "angular-localization",
+  "version": "1.2.1",
+  "homepage": "https://github.com/doshprompt/angular-localization",
+  "description": "angularjs localization done right",
+  "main": "angular-localization.js",
+  "keywords": [
+    "angularjs",
+    "localization",
+    "i18n",
+    "l10n",
+    "internationalization",
+    "angular",
+    "ng"
+  ],
+  "authors": [
+    "Rahul Doshi"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": ">=1.2 < 2",
+    "angular-cookies": ">=1.2 < 2",
+    "angular-sanitize": ">=1.2 < 2"
+  }
+}

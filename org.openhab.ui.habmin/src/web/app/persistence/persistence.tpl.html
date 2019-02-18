@@ -1,0 +1,108 @@
+<!-- Device List -->
+<div class="col-sm-6">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <div class="btn-group" uib-dropdown>
+                <button type="button"
+                        class="btn btn-default"
+                        uib-dropdown-toggle>
+                    <span class="fa fa-cog"></span>
+                    <span i18n="persistence.Service"></span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                    <li ng-repeat="service in services"  ng-click="selectService(service)">
+                        <a ng-click="selectService(service)">
+                            <span class="fa fa-fw" ng-class="{'fa-check': service==selectedService}"></span>
+                            <span>{{service.label}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+            <!-- BINDING LIST -->
+            <div ng-repeat="item in serviceItems | orderBy:'name'">
+                <a role="presentation" ng-class="{'list-group-item':true, 'active': item==selectedItem}"
+                   ng-click="selectItem(item)">
+                    <table style="background-color: transparent; width: 100%;">
+                        <tr>
+                            <td>
+                                <span>{{item.name}}</span>
+                                <span class="small pull-right">{{item.count}}&nbsp;<span
+                                        i18n="persistence.Entries"></span></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="small">&nbsp;{{item.earliest | amDateFormat:'dddd, MMMM Do YYYY, h:mm:ss.SSS a'}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="small">&nbsp;{{item.latest | amDateFormat:'dddd, MMMM Do YYYY, h:mm:ss.SSS a'}}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>
+
+<!-- Binding Information / Configuration -->
+<div class="col-sm-6">
+    <div class="panel panel-default">
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+            <!-- DESCRIPTION -->
+            <div>
+                <table class="table">
+                    <tr ng-repeat="data in dataPage">
+                        <td>{{data.time | amDateFormat:'dddd, MMMM Do YYYY, h:mm:ss.SSS a'}}</td>
+                        <td>
+                            <div class="popover-wrapper">
+                                <a editable-text="data.state"
+                                   edit-disabled="!serviceEditable"
+                                   onbeforesave="updateRecord(data.time, $data)">{{data.state}}</a>
+                            </div>
+                        </td>
+                        <td class="pull-right">
+                            <button type="button" ng-if="serviceEditable"
+                                    class="btn btn-warning btn-xs"
+                                    ng-confirm-click="removeRecord(data.time)"
+                                    tooltip-placement="top" tooltip="Delete this record"
+                                    tooltip-popup-delay="1500"
+                                    tooltip-enable="true" tooltip-trigger
+                                    tooltip-animation="false"
+                                    tooltip-append-to-body="true"
+                                    ng-confirm-icon="warning"
+                                    i18n-attr="{'ngConfirmMessage': 'persistence.RecordDeleteConfirm','ngConfirmTitle': 'persistence.RecordDeleteTitle','ngConfirmNoBtn': 'common.no', 'ngConfirmYesBtn': 'common.yes' }">
+                                <span class="fa fa-trash"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer text-center">
+            <ul uib-pagination total-items="totalItems"
+                ng-change="selectPage()"
+                items-per-page="pageSize"
+                ng-model="currentPage"
+                max-size="maxSize"
+                boundary-links="true"
+                boundary-link-numbers="true"
+                rotate="false"></ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+{
+  "Entries": "Innhold",
+  "ErrorGettingData": "Feil ved henting av lagret informasjon for elementet",
+  "ErrorGettingItems": "Feil ved henting av listen over støttede lagringstjenester",
+  "ErrorGettingServices": "Feil ved henting av listen over lagringstjenester",
+  "RecordDeleteConfirm": "Er du sikker på at vil slette denne verdien",
+  "RecordDeleteTitle": "Slett lagret verdi",
+  "Service": "Tjeneste"
+}

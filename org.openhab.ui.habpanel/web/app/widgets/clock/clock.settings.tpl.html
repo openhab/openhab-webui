@@ -1,0 +1,79 @@
+<div>
+    <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
+            <h3 translate-keep-content translate="widget.clock.settings.header">Clock Settings</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate>Name</label>
+                <div class="col-lg-9 col-md-9">
+                    <input name="name" type="text" ng-model="form.name" class="form-control" />
+                </div>
+            </div>
+
+
+            <div class="form-group" ng-class="{error: _form.mode.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.clock.mode">Mode</label>
+                <div class="col-lg-9 col-md-9">
+                    <select name="mode" ng-model="form.mode" value="Analog" ng-init="Analog" class="form-control">
+			<option translate-keep-content translate="widget.clock.mode.analog">Analog</option>
+			<option translate-keep-content translate="widget.clock.mode.digital">Digital</opetion>
+		    </select>
+                </div>
+            </div>
+
+
+            <div class="form-group" ng-class="{error: _form.analog_theme.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.clock.theme">Analog Theme</label>
+                <div class="col-lg-9 col-md-9">
+                    <select name="analog_theme" ng-model="form.analog_theme" class="form-control">
+                        <option translate-keep-content translate="widget.clock.theme.light">light</option>
+                        <option translate-keep-content translate="widget.clock.theme.dark">dark</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group" ng-class="{error: _form.digital_format.$error && _form.submitted}">
+                <label class="control-label col-xs-3" translate-keep-content translate="widget.clock.digital_format">Digital Format</label>
+                <div class="col-xs-7">
+                    <input name="digital_format" ng-model="form.digital_format" class="form-control" />
+                </div>
+            </div>
+
+
+            <div class="form-group" ng-class="{error: _form.font_size.$error && _form.submitted}">
+                <label class="control-label col-xs-3" translate-keep-content translate="widget.clock.font_size">Digital Font Size</label>
+                <div class="col-xs-4">
+                    <input name="font_size" ng-model="form.font_size" class="form-control" />
+                </div>
+            </div>
+
+<!--
+
+            <div class="form-group" ng-class="{error: _form.nolinebreak.$error && _form.submitted}">
+                <label class="control-label col-lg-3 col-md-3">Background</label>
+                <div class="col-lg-9 col-md-9">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="vertical" ng-model="form.nobackground" /> No background
+                        </label>
+                    </div>
+                </div>
+            </div>
+-->
+
+
+
+
+        </div>
+
+
+        <div class="modal-footer">
+            <a ng-click="remove()" class="btn btn-danger pull-left" tabindex="-1"><i class="glyphicon glyphicon-trash"></i>&nbsp;<span translate>Delete</span></a>
+            <a ng-click="dismiss()" class="btn btn-default" tabindex="-1"><i class="glyphicon glyphicon-remove"></i>&nbsp;<span translate>Cancel</span></a>
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;<span translate>Save</span></button>
+        </div>
+    </form>
+</div>

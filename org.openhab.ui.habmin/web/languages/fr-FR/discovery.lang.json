@@ -1,0 +1,15 @@
+{
+  "ApproveAllConfirmMsg": "Etes-vous sûr de vouloir ajouter toutes les entrées de la boite de réception ?",
+  "ApproveAllConfirmTitle": "Valider toutes les entrées de la boite de réception",
+  "ClearConfirmMsg": "Etes-vous sûr de vouloir vider la boite de réception ? Tous les objets seront retirés et devront être rescannés !",
+  "ClearConfirmTitle": "Vider la boite de réception",
+  "ClearFail": "Le nettoyage de la boite de réception a échoué pour une ou plusieurs entrées !",
+  "DeleteConfirmMsg": "Etes-vous sûr de vouloir supprimer l'objet de la boite?",
+  "DeleteConfirmTitle": "Supprimer l'objet de la boite de réception",
+  "IgnoreConfirmMsg": "Etes-vous sûr de vouloir ignorer l'objet de la boite de réception ?",
+  "IgnoreConfirmTitle": "Ignorer l'objet de la boite réception",
+  "IgnoreFail": "Impossible d'ignorer <b><i>{name}</i></b>",
+  "NewThing": "Nouvel objet découvert <b><i>{name}</i></b>.",
+  "StartFail": "Recherche échouée pour le connecteur <b><i>{name}</i></b>",
+  "StartOk": "Recherche lancée pour le connecteur <b><i>{name}</i></b>"
+}

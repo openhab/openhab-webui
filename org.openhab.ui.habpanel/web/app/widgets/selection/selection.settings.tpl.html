@@ -1,0 +1,178 @@
+<div>
+    <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">
+                &times;
+            </button>
+            <h3 translate-keep-content translate="widget.selection.settings.header">Selection Settings</h3>
+        </div>
+
+        <div class="modal-body">
+            <uib-tabset>
+
+                <uib-tab heading="General">
+                    <br />
+
+                    <div class="row">
+
+                        <div class="col-lg-12 col-md-12">
+                            <div class="form-group" ng-class="{error: _form.name.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate>Name</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <input name="name" type="text" ng-model="form.name" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{error: _form.item.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate>openHAB Item</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <item-picker ng-model="form.item"></item-picker>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group" ng-class="{error: _form.choices_source.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.selection.choices_source">Choices source</label>
+                                <div class="col-lg-6 col-md-6">
+                                    <select ng-model="form.choices_source" class="form-control">
+                                        <option value="server" translate-keep-content translate="widget.selection.choices_source.server">Server-provided item options</option>
+                                        <option value="csv" translate-keep-content translate="widget.selection.choices_source.csv">Comma-separated list</option>
+                                        <!--<option value="array">List with advanced options</option>-->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="form.choices_source === 'csv'" ng-class="{error: _form.choices.$error && _form.submitted}">
+                                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.selection.choices">List of comma-separated choices</label>
+                                <div class="col-lg-9 col-md-9">
+                                    <input name="name" type="text" ng-model="form.choices" class="form-control" />
+                                    <small translate-keep-content translate="widget.selection.choices.hint">You can optionally use the syntax: 'cmd=label' for each choice<br />Example: 18=Cold,20,22,24,26,28=Warm</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-lg-3 col-md-3" translate-keep-content translate="widget.selection.display">Display options</label>
+                                <div class="col-lg-3 col-md-3">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.hidelabel" /> <span translate-keep-content translate="widget.selection.display.hidelabel">Hide name</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.hideicon" /> <span translate-keep-content translate="widget.selection.display.hideicon">Hide icon</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <div class="checkbox">
+                                        <label>
+                                            <span translate>Font size</span>: <input type="number" ng-model="form.font_size" class="form-control" />
+                                        </label>
+                                    </div>
+                                </div>
+                                <label class="control-label col-lg-3 col-md-3 hidden-sm">&nbsp;</label>
+                                <div class="col-lg-3 col-md-3">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.hidestate" /> <span translate-keep-content translate="widget.selection.display.hidestate">Hide current value</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.nolinebreak" /> <span translate-keep-content translate="widget.common.dontwrap">Value right of label</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <label class="control-label col-lg-3 col-md-3" style="clear:both" translate-keep-content translate="widget.selection.choices_window">Choices window</label>
+                                <div class="col-lg-3 col-md-3">
+                                    <div class="checkbox">
+                                        <label>
+                                            <span translate-keep-content translate="widget.selection.choices_window.columns">Columns</span> <input type="number" ng-model="form.choices_columns" min="1" max="6" class="form-control" />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.disable_mobile" ng-disabled="form.choices_columns < 2" /> <span translate-keep-content translate="widget.selection.choices_window.disable_mobile">Disable mobile mode</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.no_squares" ng-disabled="form.choices_columns < 2" /> <span translate-keep-content translate="widget.selection.choices_window.no_squares">No square tiles</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <label class="control-label col-lg-3 col-md-3" style="clear:both" translate-keep-content translate="widget.selection.selection_options">Selection options</label>
+                                <div class="col-lg-4 col-md-4">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.no_highlight" /> <span translate-keep-content translate="widget.selection.selection_options.no_highlight">Don't highlight current selection</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="vertical" ng-model="form.keep_open" /> <span translate-keep-content translate="widget.selection.selection_options.keep_open">Keep window open upon selection</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </uib-tab>
+                <uib-tab heading="{{'Icons' | translate}}">
+                    <br />
+
+                    <div class="row">
+                        <div class="form-group" ng-class="{error: _form.backdrop_icon.$error && _form.submitted}">
+                            <label class="control-label col-lg-3 col-md-3" translate>Backdrop Icon</label>
+                            <div class="col-lg-9 col-md-9">
+                                <icon-picker iconset="form.backdrop_iconset" icon="form.backdrop_icon"></icon-picker>
+                                <div ng-if="form.backdrop_icon" class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="vertical" ng-model="form.backdrop_center" /> <span translate-keep-content translate="widget.common.backdrop_center">Center backdrop horizontally</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{error: _form.icon.$error && _form.submitted}">
+                            <label class="control-label col-lg-3 col-md-3" translate>Icon</label>
+                            <div class="col-lg-9 col-md-9">
+                                <icon-picker iconset="form.iconset" icon="form.icon"></icon-picker>
+                                <div class="col-xs-5 input-group" ng-if="form.icon">
+                                    <div class="input-group-addon" translate>Size</div>
+                                    <input name="icon_size" ng-model="form.icon_size" class="form-control" />
+                                    <div class="input-group-addon">px</div>
+                                </div>
+                                <div ng-if="form.icon" class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="vertical" ng-model="form.icon_nolinebreak" /> <span translate-keep-content translate="widget.common.icon_nolinebreak">Icon left of label instead of below</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </uib-tab>
+
+            </uib-tabset>
+        </div>
+
+        <div class="modal-footer">
+            <a ng-click="remove()" class="btn btn-danger pull-left" tabindex="-1"><i class="glyphicon glyphicon-trash"></i>&nbsp;<span translate>Delete</span></a>
+            <a ng-click="dismiss()" class="btn btn-default" tabindex="-1"><i class="glyphicon glyphicon-remove"></i>&nbsp;<span translate>Cancel</span></a>
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;<span translate>Save</span></button>
+        </div>
+    </form>
+</div>

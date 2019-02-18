@@ -1,0 +1,15 @@
+{
+  "ChartLegend": "Montrer la légende",
+  "ChartPeriod": "Intervalle du graphique",
+  "ChartPersistence": "Service de persistence par défaut",
+  "ChartPersistenceSelect": "Choisir le service de persistence par défaut...",
+  "ChartPrefTitle": "Paramètres du graphique",
+  "GeneralPrefTitle": "Paramètres généraux",
+  "Language": "Langue",
+  "LanguageSelect": "Choisir votre langue...",
+  "Name": "Nom",
+  "ServerAddress": "Adresse",
+  "ServerPrefTitle": "Paramètres du serveur",
+  "Theme": "Thème",
+  "ThemeSelect": "Choisir votre thème..."
+}

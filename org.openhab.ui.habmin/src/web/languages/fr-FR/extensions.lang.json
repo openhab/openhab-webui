@@ -1,0 +1,10 @@
+{
+  "CommandFailed": "Erreur de lancement de la commande de l'extension :{message}",
+  "ErrorGettingExtensions": "Erreur de récupération de la liste des extensions",
+  "ExtensionTypes": "Type d'extension",
+  "Extensions": "Extensions",
+  "Install": "Installer",
+  "InstallOk": "Extension {extension} installée avec succès",
+  "Uninstall": "Désinstaller",
+  "UninstallOk": "Extension {extension} désinstallée avec succès"
+}

@@ -1,0 +1,10 @@
+{
+  "CommandFailed": "Сбой обработки команды расширения: {message}",
+  "ErrorGettingExtensions": "Ошибка получения списка расширений",
+  "ExtensionTypes": "Типы расширений",
+  "Extensions": "Расширения",
+  "Install": "Установить",
+  "InstallOk": "Расширение {extension} установлено",
+  "Uninstall": "Деинсталяция",
+  "UninstallOk": "Расширение {extension} удалено"
+}

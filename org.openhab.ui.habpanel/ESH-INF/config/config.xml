@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config-description:config-descriptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:config-description="http://eclipse.org/smarthome/schemas/config-description/v1.0.0"
+	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/config-description/v1.0.0
+        http://eclipse.org/smarthome/schemas/config-description-1.0.0.xsd">
+
+	<config-description uri="ui:habpanel">
+		<parameter name="panelsRegistry" type="text" required="true">
+		    <context>script</context>
+			<label>Panel registry JSON</label>
+			<advanced>true</advanced>
+			<description>JSON object containing the registry of panel configurations. Normally only modified with the embedded designer, edit by hand at your own risk!</description>
+		</parameter>
+        <parameter name="lockEditing" type="boolean" required="true">
+            <default>false</default>
+            <label>Lock editing</label>
+            <description>Edit mode is unavailable in the UI when enabled. Keeping the configuration locked and unlocking only when needed helps prevent accidental changes.</description>
+        </parameter>
+        <parameter name="initialPanelConfig" type="text" required="false">
+            <default></default>
+            <label>Initial panel configuration</label>
+            <description>The name of the existing panel configuration to switch to initially when accessing HABPanel with no prior local configuration.</description>
+        </parameter>
+	</config-description>
+
+</config-description:config-descriptions>

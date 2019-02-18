@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.openhab</groupId>
+        <artifactId>pom-tycho</artifactId>
+        <version>2.5.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.openhab.ui</groupId>
+    <artifactId>org.openhab.ui.habpanel</artifactId>
+    <!-- do not delete the version here as it is required by the release process -->
+    <version>2.5.0-SNAPSHOT</version>
+    <name>HABPanel user interface</name>
+
+    <packaging>eclipse-plugin</packaging>
+
+    <properties>
+        <ohc.version>2.5.0-SNAPSHOT</ohc.version>
+    </properties>
+
+    <scm>
+        <connection>scm:git:${scm.gitBaseUrl}/org.openhab.ui.habpanel.git</connection>
+        <developerConnection>scm:git:${scm.gitBaseUrl}/org.openhab.ui.habpanel.git</developerConnection>
+        <url>https://github.com/openhab/org.openhab.ui.habpanel</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray</id>
+            <url>https://api.bintray.com/maven/openhab/mvn/org.openhab.ui.habpanel/;publish=1</url>
+        </repository>
+        <snapshotRepository>
+            <id>jfrog</id>
+            <url>https://openhab.jfrog.io/openhab/libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openhab.core.bundles</groupId>
+            <artifactId>org.openhab.core</artifactId>
+            <version>${ohc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openhab.core.bundles</groupId>
+            <artifactId>org.openhab.core.ui.dashboard</artifactId>
+            <version>${ohc.version}</version>
+        </dependency>
+    </dependencies>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter Repository</name>
+            <url>https://jcenter.bintray.com/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>artifactory</id>
+            <name>JFrog Artifactory Repository</name>
+            <url>https://openhab.jfrog.io/openhab/libs-release</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <repositories>
+
+        <!-- releases -->
+        <repository>
+            <id>jcenter</id>
+            <name>JCenter Repository</name>
+            <url>https://jcenter.bintray.com/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>openhab-artifactory-release</id>
+            <name>JFrog Artifactory Repository</name>
+            <url>https://openhab.jfrog.io/openhab/libs-release</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <!-- snapshots -->
+        <repository>
+            <id>openhab-artifactory-snapshot</id>
+            <name>JFrog Artifactory Repository</name>
+            <url>https://openhab.jfrog.io/openhab/libs-snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+
+        <!-- openHAB dependencies p2 repository -->
+        <repository>
+            <id>p2-openhab-deps-repo</id>
+            <url>https://dl.bintray.com/openhab/p2/openhab-deps-repo/${ohdr.version}</url>
+            <layout>p2</layout>
+        </repository>
+    </repositories>
+
+</project>

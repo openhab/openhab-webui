@@ -1,0 +1,23 @@
+{
+  "Delete": "Slett element",
+  "DeleteCheck": "Er du sikker på at du vil slette elementet?",
+  "EditCategory": "Kategori",
+  "EditFormat": "Formater",
+  "EditGroups": "Grupper",
+  "EditLabel": "Etikett",
+  "EditName": "Navn",
+  "EditTags": "Tagger",
+  "EditTitle": "Rediger Element",
+  "EditType": "Elementtype",
+  "LinkOk": "Element koblet til kanal",
+  "LinkTitle": "Koble element til Kanal",
+  "NameCopiedOk": "Navnet på elementet <b><i>{name}</i></b> ble kopiert til utklippstavlen",
+  "SaveFailed": "Feil ved lagring av element <b><i>{name}</i></b> {message}",
+  "SaveLinkFailed": "Feil ved kobling av element til kanal for <b><i>{name}</i></b> {message}",
+  "SaveOk": "Element <b><i>{name}</i></b> ble lagret",
+  "SelectCategory": "Velg kategori...",
+  "SelectGroup": "Velg grupper...",
+  "SelectLabel": "Velg etikett...",
+  "SelectName": "Velg navn...",
+  "SelectType": "Velg type..."
+}

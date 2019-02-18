@@ -1,0 +1,14 @@
+{
+  "DeleteRuleCheck": "Sei sicuro di voler cancellare la regola '{{selectedRule.name}}'?",
+  "DeleteRuleTitle": "Elimina Regola",
+  "ErrorLoadingRule": "Errore caricamento regola <i>{1}</i>:<BR /><b><i>{2}</i></b>.",
+  "ErrorLoadingRuleList": "Errore caricamento elenco regole.",
+  "NewRuleTitle": "Nuova Regola",
+  "NoDevices": "Nessun Dispositivo",
+  "NoRules": "Nessuna Regola Disponibile",
+  "Rule": "Regola",
+  "Source": "Sorgente",
+  "UnsavedChangesCheck": "Ci sono modifiche non salvate nella regola '{rulename}'. Sei sicuro di voler continuare - se clicchi su Si, i cambiamenti verranno persi!",
+  "UnsavedChangesTitle": "Attenzione: Modifiche non salvate",
+  "Value": "Valore"
+}

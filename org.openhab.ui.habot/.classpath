@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/resources"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/opennlp-tools-1.8.3.jar" sourcepath="C:/Users/ys/.m2/repository/org/apache/opennlp/opennlp-tools/1.8.3/opennlp-tools-1.8.3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/bcprov-jdk15on-154.jar"/>
+	<classpathentry kind="lib" path="lib/jose4j-0.6.3.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

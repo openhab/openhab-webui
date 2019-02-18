@@ -1,0 +1,8 @@
+<div class="box-content image" ng-style="{ 'background-color': vm.background }">
+    <div class="image-content" ng-if="!vm.widget.nosuffix">
+        <img ng-src="{{vm.url}}" />
+    </div>
+    <div class="image-content" ng-if="vm.widget.nosuffix" ng-repeat="url in [vm.url]">
+        <img ng-src="{{url}}" />
+    </div>
+</div>

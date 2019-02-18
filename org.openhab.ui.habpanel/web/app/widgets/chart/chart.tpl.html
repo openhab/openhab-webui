@@ -1,0 +1,11 @@
+<div class="box-content chart">
+    <div class="chart-content" ng-if="vm.widget.charttype==='default'">
+        <img ng-src="/chart?{{vm.imageQueryString()}}&h={{vm.height}}&w={{vm.width}}" />
+    </div>
+    <div class="chart-content" ng-if="vm.widget.charttype==='rrd4j'">
+        <img ng-src="/rrdchart.png?{{vm.imageQueryString()}}&h={{vm.height}}&w={{vm.width}}" />
+    </div>
+    <div class="chart-content" ng-if="vm.widget.charttype==='interactive'" style="height: calc(100% - 2em)">
+        <linechart ng-if="vm.interactiveChartReady" data="vm.datasets" options="vm.interactiveChartOptions"></linechart>
+    </div>
+</div>

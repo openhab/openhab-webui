@@ -1,0 +1,51 @@
+<div class="header" ng-if="!kioskMode">
+    <a class="btn pull-left" title="Menu" snap-toggle="left">
+        <i class="glyphicon glyphicon-menu-hamburger"></i>
+    </a>
+
+    <a class="btn pull-right" ng-click="vm.goFullscreen()" title="{{vm.fullscreenTooltip}}" ng-if="!settings.hide_fullscreen_button && !vm.dashboard.header.use_custom_widget">
+        <i class="glyphicon glyphicon-resize-full"></i>
+    </a>
+    <a class="btn pull-right" ng-click="vm.refresh()" title="{{vm.refreshTooltip}}" ng-if="!settings.hide_refresh_button && !vm.dashboard.header.use_custom_widget">
+        <i class="glyphicon glyphicon-refresh"></i>
+    </a>
+    <a class="btn pull-right" 
+        ng-if="vm.supportsSpeech && !settings.floating_speech && !settings.hide_speak_button && !vm.dashboard.header.use_custom_widget" 
+        ng-click="vm.isListening ? vm.stopListening() : vm.listen()" 
+        title="{{vm.speakTooltip}}">
+        <i class="glyphicon" ng-class="vm.isListening ? 'glyphicon-stop' : 'glyphicon-comment'"></i>
+    </a>
+    <h2 class="dashboard-title" ng-if="!vm.dashboard.header.use_custom_widget">
+        <small class="header-clock" ng-if="settings.show_header_clock"><ds-widget-clock show-digital digital-format="settings.header_clock_format || 'shortTime'"></ds-widget-clock></small>
+        <span>{{vm.dashboard.name}}
+            <a class="btn btn-link btn-edit-dashboard"
+                ng-if="!lockEditing"
+                ng-click="vm.toggleEdit()"
+                title="Edit {{vm.dashboard.name}}">
+                <i class="glyphicon glyphicon-pencil"></i>
+            </a>
+        </span>
+    </h2>
+    <div ng-if="vm.dashboard.header.use_custom_widget"
+         ng-init="customHeaderWidgetModel = { id: vm.dashboard.id, name: vm.dashboard.name, nobackground: true, customwidget: vm.dashboard.header.custom_widget, dontwrap: true, config: vm.dashboard.header.custom_widget_config }">
+        <widget-template ng-model="customHeaderWidgetModel">
+        </widget-template>
+    </div>
+</div>
+<span ng-if="vm.isListening" class="speech-output">{{vm.speechOutput}}</span>
+<a class="btn fab" 
+    ng-if="vm.supportsSpeech && settings.floating_speech" 
+    ng-click="vm.isListening ? vm.stopListening() : vm.listen()" 
+    uib-tooltip="Speak"
+    tooltip-placement="top">
+    <i class="glyphicon" ng-class="vm.isListening ? 'glyphicon-stop' : 'glyphicon-comment'"></i>
+</a>
+<div class="scrollable" ng-show="vm.ready" gridster="vm.gridsterOptions">
+    <ul>
+        <li gridster-item="widget" ng-repeat="widget in vm.dashboard.widgets">
+            <div class="box" ng-style="{'font-size': vm.dashboard.font_scale ? vm.dashboard.font_scale + '%' : undefined }">
+                <generic-widget type="widget.type" ng-model="widget"></generic-widget>
+            </div>
+        </li>
+    </ul>
+</div>

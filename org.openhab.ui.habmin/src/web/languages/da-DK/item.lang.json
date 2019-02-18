@@ -1,0 +1,23 @@
+{
+  "Delete": "Slet enhed",
+  "DeleteCheck": "Er du sikker på at du vil slette denne enhed?",
+  "EditCategory": "Kategori",
+  "EditFormat": "Format",
+  "EditGroups": "Gruppe",
+  "EditLabel": "Label",
+  "EditName": "Navn",
+  "EditTags": "Tags",
+  "EditTitle": "Ret enhed",
+  "EditType": "Enhed type",
+  "LinkOk": "Enhed forbundet til kanal",
+  "LinkTitle": "Forbind enhed med kanal",
+  "NameCopiedOk": "Enhedsnavn <b><i>{name}</i></b> kopieret til klippeværktøj",
+  "SaveFailed": "Fejl ved at gemme enhed <b><i>{name}</i></b>.<br />{message}",
+  "SaveLinkFailed": "Fejl ved at forbinde enhed til kanal for <b><i>{name}</i></b>.<br />{message}",
+  "SaveOk": "Enhed <b><i>{name}</i></b> er gemt ok",
+  "SelectCategory": "Vælg kategori...",
+  "SelectGroup": "Vælg gruppe...",
+  "SelectLabel": "Indtast label...",
+  "SelectName": "Indtast navn...",
+  "SelectType": "Vælg type..."
+}

@@ -1,0 +1,10 @@
+{
+  "CommandFailed": "Failed processing extension command: {message}",
+  "ErrorGettingExtensions": "Error retrieving extensions list",
+  "ExtensionTypes": "Extension Types",
+  "Extensions": "Extensions",
+  "Install": "Install",
+  "InstallOk": "Extension {extension} installed successfully",
+  "Uninstall": "Uninstall",
+  "UninstallOk": "Extension {extension} uninstalled successfully"
+}

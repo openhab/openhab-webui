@@ -1,0 +1,10 @@
+{
+  "CommandFailed": "Feil ved prosessering av kommando til utvidelsen: {message}",
+  "ErrorGettingExtensions": "Feil ved henting av liste over utvidelser",
+  "ExtensionTypes": "Utvidelsestyper",
+  "Extensions": "Utvidelser",
+  "Install": "Installer",
+  "InstallOk": "Utvidelsen {extension} ble installert",
+  "Uninstall": "Avinstaller",
+  "UninstallOk": "Utvidelsen {extension}  ble avinstallert"
+}

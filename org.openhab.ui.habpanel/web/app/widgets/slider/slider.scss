@@ -1,0 +1,132 @@
+.slider {
+    display: flex;
+}
+
+.slider-content {
+    width: 100%;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.slider-content-vertical {
+    text-align: left;
+    padding-bottom: 1.5em;
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.slider-content-vertical .slider-label {
+    width: 100%;
+    text-align: center;
+}
+
+.slider-content-vertical .slider-container {
+    text-align: center;
+    margin: auto;
+    height: 100%;
+}
+
+.slider-content-vertical .rzslider {
+    text-align: left;
+}
+
+:not(.bigslider).rz-bubble {
+    color: #0db9f0;
+    color: var(--primary-color, #0db9f0);
+}
+
+.rz-floor,
+.rz-ceil {
+    color: #89a !important;
+}
+
+.knob-content {
+    width: 100%;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+
+/* Big Mr. Robot-style slider :)
+see http://www.makeuseof.com/wp-content/uploads/2016/07/mr-robot-heating.jpg */
+
+.bigslider .rzslider {
+    margin-bottom: 110px;
+}
+
+.bigslider .rz-bar-wrapper {
+    visibility: hidden;
+}
+
+.bigslider .rz-pointer {
+    height: 128px !important;
+    border-radius: 0 !important;
+    outline: none;
+}
+
+.bigslider .rz-pointer:after {
+    top: 0;
+    height: 128px;
+    background-color: #def;
+    background-color: var(--slider-pointer-bg-color, #def);
+    border-radius: 0;
+    width: 8px;
+    border-left: 3px solid #234;
+    border-left: 3px solid var(--slider-pointer-color, #234);
+    border-right: 3px solid #234;
+    border-right: 3px solid var(--slider-pointer-color, #234);
+}
+
+.bigslider .rz-pointer.rz-active:after {
+    background-color: #def !important;
+    background-color: var(--slider-pointer-bg-color, #def) !important;
+}
+
+.bigslider .rz-ticks .rz-tick {
+    width: 2px !important;
+    height: 117px !important;
+    border-radius: 0 !important;
+    background-color: #456;
+}
+
+.bigslider .rz-ticks .rz-tick .selected {
+    background-color: inherit;
+}
+
+.bigslider .rz-floor {
+    font-size: 18pt;
+    color: #def !important;
+    color: var(--slider-ceil-color, #def) !important;
+}
+
+.bigslider .rz-ceil {
+    font-size: 18pt;
+    color: #def !important;
+    color: var(--slider-ceil-color, #def) !important;
+}
+
+.bigslider .rz-bubble:not(.rz-floor):not(.rz-ceil) {
+    background-color: #123;
+    background-color: var(--slider-bubble-bg-color, #123);
+    font-size: 32pt;
+    width: 120px;
+    border-radius: 10px;
+    border: 2px solid #456;
+    border: 2px solid var(--slider-bubble-border-color, #456);
+    color: #aa7;
+    color: var(--slider-bubble-color, #aa7);
+    z-index: 1000;
+}
+
+.bigslider .rzslider .rz-bar.rz-selection {
+    display: none;
+}
+
+.rzslider .rz-pointer {
+    outline: none;
+}

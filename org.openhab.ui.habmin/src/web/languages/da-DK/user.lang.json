@@ -1,0 +1,15 @@
+{
+  "ChartLegend": "Vis forklaring",
+  "ChartPeriod": "Diagram periode",
+  "ChartPersistence": "Standard lagringstjeneste",
+  "ChartPersistenceSelect": "Vælg standard lagringstjeneste...",
+  "ChartPrefTitle": "Diagram opsætning",
+  "GeneralPrefTitle": "Generl opsætning",
+  "Language": "Sprog",
+  "LanguageSelect": "Vælg dit sprog...",
+  "Name": "Navn",
+  "ServerAddress": "Adresse",
+  "ServerPrefTitle": "Server opsætning",
+  "Theme": "Tema",
+  "ThemeSelect": "Vælg dit tema..."
+}

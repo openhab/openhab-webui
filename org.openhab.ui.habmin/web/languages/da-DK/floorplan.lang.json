@@ -1,0 +1,16 @@
+{
+  "Delete": "Slet grundplan",
+  "DeleteCheck": "Er du sikker på at du vil slette denne grundplanen?",
+  "Editor": "Grundplan editor",
+  "HotspotItem": "Enhed",
+  "HotspotItemPlaceholder": "Vælg enhed...",
+  "HotspotTitle": "Hotspot egenskaber",
+  "PropertiesCategory": "Kategori",
+  "PropertiesName": "Navn",
+  "PropertiesTitle": "Grundplan egenskaber",
+  "SaveError": "Fejl ved at gemme grundplan <b><i>{name}</i></b>",
+  "SaveOk": "Grundplan <b><i>{name}</i></b> er gemt succesfuldt",
+  "SelectImage": "Vælg billede",
+  "UploadName": "Navn på grundplan",
+  "UploadTitle": "Indlæs grundplan"
+}

@@ -1,0 +1,4 @@
+/*
+    Dummy service worker to enable app install banner
+    in Chrome on Android when using HTTPS.
+*/

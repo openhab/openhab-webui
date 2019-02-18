@@ -1,0 +1,38 @@
+:root {
+    /* Basic HABpanel styles */
+    --body-bg: rgb(48, 48, 48);
+    --body-color: #fff;
+    --primary-color: #0db9f0;
+    --box-bg: rgb(66, 66, 66);
+    --header-bg: var(--body-bg);
+    /* General widget styles */
+    --widget-design-bg: #abc;
+    --widget-text-color: #fff;
+    --widget-border-radius: 2px;
+    --widget-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 2px 1px -1px rgba(0, 0, 0, .12);
+    /* Icon colors */
+    --icon-color-filter: invert(60%) sepia(100%) hue-rotate(185deg) saturate(1000%);
+    /* Should be aligned with --primary-color */
+    --icon-color-off-filter: invert(45%) sepia(80%) hue-rotate(170deg);
+    --icon-backdrop-filter: invert(60%) sepia(100%) hue-rotate(165deg) opacity(15%);
+    /* Chart widget */
+    --chart-stroke: #456;
+    --chart-fill: #89a;
+    --chart-tooltip: #123;
+    --chart-default-theme: "dark";
+    /* Color picker widget */
+    --colorpicker-border: #3960ff;
+    --colorpicker-stroke: #456;
+    --colorpicker-fill: #89a;
+    /* Image widget */
+    --image-border: #0db9f0;
+    /* Switch widget */
+    --switch-off-color: #89a;
+    /* Slider widget */
+    --slider-pointer-color: #234;
+    --slider-pointer-bg-color: #def;
+    --slider-ceil-color: #def;
+    --slider-bubble-bg-color: #123;
+    --slider-bubble-border-color: #456;
+    --slider-bubble-color: #aaaa77;
+}

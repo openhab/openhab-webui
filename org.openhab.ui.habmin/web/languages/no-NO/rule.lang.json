@@ -1,0 +1,14 @@
+{
+  "DeleteRuleCheck": "Er du sikekr på at vil slette regelen '{{selectedRule.name}}'?",
+  "DeleteRuleTitle": "Slett regel",
+  "ErrorLoadingRule": "Feil ved lasting av regel <i>{1}</i>:<BR /><b><i>{2}</i></b>",
+  "ErrorLoadingRuleList": "Feil ved lasting av liste over regler.",
+  "NewRuleTitle": "Ny regel",
+  "NoDevices": "Ingen enheter",
+  "NoRules": "Ingen regler tilgjengelig",
+  "Rule": "Regel",
+  "Source": "Kilde",
+  "UnsavedChangesCheck": "Det er gjort endringer som ikke er lagret i regelen '{rulename}'. Er du sikker på at du vil fortsette? Hvis du trykker Ja vil endringene gå tapt.",
+  "UnsavedChangesTitle": "Advarsel: Endringer ikke er lagret",
+  "Value": "Verdi"
+}

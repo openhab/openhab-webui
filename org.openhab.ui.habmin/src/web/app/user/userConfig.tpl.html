@@ -1,0 +1,100 @@
+<div class="col-sm-12">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <button type="button"
+                    class="btn btn-default" ng-class="{'btn-success': userConfigForm.modified}"
+                    ng-click="saveConfig()"
+                    ng-disabled="!userConfigForm.modified">
+                <span class="fa fa-floppy-o"></span>
+                <span class="hidden-xs hidden-sm" i18n="common.save"></span>
+            </button>
+            <button type="button"
+                    class="btn btn-default"
+                    ng-click="userConfigForm.reset()"
+                    ng-disabled="!userConfigForm.modified">
+                <span class="fa fa-times"></span>
+                <span class="hidden-xs hidden-sm" i18n="common.cancel"></span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+            <form name="userConfigForm" novalidate style="height:100%">
+                <!-- GENERAL -->
+                <div>
+                    <a role="presentation" class="list-group-item config-panel-title"
+                       ng-class="{'active': panelDisplayed=='GENERAL'}"
+                       ng-click="setPanelDisplayed('GENERAL')">
+                        <span class="fa fa-fw fa-book"></span>
+                        <span i18n="user.GeneralPrefTitle"></span>
+                    </a>
+                </div>
+                <div uib-collapse="panelDisplayed!='GENERAL'" class="panel-form">
+                    <div class="form-group">
+                        <label for="inputLanguage" class="control-label" i18n="user.Language"></label>
+
+                            <ui-select id="inputLanguage"
+                                       ng-model="model.currentLanguage"
+                                       theme="bootstrap"
+                                       search-enabled="false"
+                                    >
+                                <ui-select-match i18n-attr="{placeholder: 'user.LanguageSelect'}">
+                                    <span ng-bind-html="$select.selected.name"></span>&nbsp;(<span
+                                        ng-bind-html="$select.selected.desc"></span>)
+                                </ui-select-match>
+                                <ui-select-choices repeat="language.id as language in languages | orderBy: 'name'">
+                                    <div class="language-select"
+                                         ng-style="{'background-image':'url(assets/'+language.flag+'.svg)'}">
+                                        <div ng-bind-html="language.name"></div>
+                                        <span style="padding-left:10px;" class="small"
+                                              ng-bind-html="language.desc"></span>
+                                    </div>
+                                </ui-select-choices>
+                            </ui-select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputPersistence" class="control-label" i18n="user.ChartPersistence"></label>
+
+                            <ui-select id="inputPersistence"
+                                       ng-model="model.currentPersistence"
+                                       theme="bootstrap"
+                                       search-enabled="false">
+                                <ui-select-match i18n-attr="{placeholder: 'user.ChartPersistenceSelect'}">
+                                    <span ng-bind-html="$select.selected.label"></span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="service.id as service in services | orderBy: 'label'">
+                                    <div ng-bind-html="service.label"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                </div>
+
+                <!-- SERVER SETTINGS -->
+                <div ng-if="document.HABminCordova">
+                    <a role="presentation" class="list-group-item config-panel-title"
+                       ng-class="{'active': panelDisplayed=='SERVER'}"
+                       ng-click="setPanelDisplayed('SERVER')">
+                        <span class="fa fa-fw fa-desktop"></span>
+                        <span i18n="user.ServerPrefTitle"></span>
+                    </a>
+                </div>
+                <div uib-collapse="panelDisplayed!='SERVER'" class="panel-form">
+                    <div class="form-group">
+                        <label for="inputServerAddress" class="control-label" i18n="user.ServerAddress"></label>
+
+                            <input id="inputServerAddress"
+                                   class="form-control"
+                                   ng-dirty
+                                   ng-model="model.serverAddress">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>

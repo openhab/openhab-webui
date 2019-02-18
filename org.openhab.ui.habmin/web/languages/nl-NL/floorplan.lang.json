@@ -1,0 +1,16 @@
+{
+  "Delete": "Verwijder plattegrond",
+  "DeleteCheck": "Weet u zeker dat u deze plattegrond wilt verwijderen?",
+  "Editor": "Plattegrond editor",
+  "HotspotItem": "Item",
+  "HotspotItemPlaceholder": "Selecteer item...",
+  "HotspotTitle": "Hotspot eigenschappen",
+  "PropertiesCategory": "Categorie",
+  "PropertiesName": "Naam",
+  "PropertiesTitle": "Plattegrond eigenschappen",
+  "SaveError": "Fout bij het opslaan van plattegrond <b><i>{name}</i></b>",
+  "SaveOk": "Plattegrond <b><i>{name}</i></b> succesvol opgeslagen",
+  "SelectImage": "Selecteer plaatje",
+  "UploadName": "Plattegrond naam",
+  "UploadTitle": "Upload plattegrond"
+}

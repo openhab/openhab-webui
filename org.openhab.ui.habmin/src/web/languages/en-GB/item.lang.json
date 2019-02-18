@@ -1,0 +1,23 @@
+{
+  "Delete": "Delete Item",
+  "DeleteCheck": "Are you sure you want to delete the item?",
+  "EditCategory": "Category",
+  "EditFormat": "Format",
+  "EditGroups": "Groups",
+  "EditLabel": "Label",
+  "EditName": "Name",
+  "EditTags": "Tags",
+  "EditTitle": "Edit Item",
+  "EditType": "Item Type",
+  "LinkOk": "Item linked to channel",
+  "LinkTitle": "Link Item To Channel",
+  "NameCopiedOk": "Item name <b><i>{name}</i></b> copied to clipboard",
+  "SaveFailed": "Error saving item <b><i>{name}</i></b>.<br>{message}",
+  "SaveLinkFailed": "Error link item to channel for <b><i>{name}</i></b>.<br>{message}",
+  "SaveOk": "Item <b><i>{name}</i></b> saved ok",
+  "SelectCategory": "Select category...",
+  "SelectGroup": "Select groups...",
+  "SelectLabel": "Enter label...",
+  "SelectName": "Enter name...",
+  "SelectType": "Select type..."
+}

@@ -1,0 +1,124 @@
+<!-- Device List -->
+<div class="col-sm-4" sidepanel-pane="side">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <!-- List filter -->
+            <div class="btn-group dropdown">
+                <button type="button" class="btn btn-default dropdown-toggle" ng-disabledx="logState!='loaded'"
+                        ng-init="filterOpen=false" ng-click="filterOpen=!filterOpen">
+                    <span class="fa fa-filter"></span>
+                    <span i18n="common.Filter"></span>
+                    <span class="caret"></span>
+                    <span class="sr-only">Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a ng-click="listNew=!listNew">
+                        <span ng-class="{'fa fa-fw': true, 'fa-check-square-o': listNew}"></span>
+                        <span class="fa fa-fw fa-plus-circle text-success"></span>
+                        <span i18n="thing.New"></span>
+                    </a></li>
+                    <li><a ng-click="listIgnored=!listIgnored">
+                        <span ng-class="{'fa fa-fw': true, 'fa-check-square-o': listIgnored}"></span>
+                        <span class="fa fa-fw fa-dot-circle-o text-muted"></span>
+                        <span i18n="thing.Ignored"></span>
+                    </a></li>
+                </ul>
+            </div>
+
+            <!-- Thing tools -->
+            <div class="btn-group dropdown pull-right">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="fa fa-plus-square"></span>
+                    <span i18n="thing.Search"></span>
+                    <span class="caret"></span>
+                    <span class="sr-only">Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li ng-repeat="choice in bindings" ng-class="{'disabled': choice.disabled}"
+                        ng-if="choice.discovery">
+                        <a ng-click="startDiscovery(choice)">
+                            <habmin-icon class="fa-fw" icon="{{choice.icon}}"></habmin-icon>
+                            <span>{{choice.name}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+            <!-- New Inbox Things -->
+            <div ng-if="inboxCnt!=-1" ng-repeat="thing in inbox | filter:filterFunction">
+                <a role="presentation" ng-class="{'list-group-item':true, 'active': thing==selectedThing}"
+                   ng-click="selectThing(thing)" sidepanel-click="main">
+                    <table style="background-color: transparent">
+                        <tr>
+                            <td class="text-large" rowspan="2">
+                                <span ng-if="thing.flag=='NEW'" class="fa fa-fw fa-plus-circle text-success"></span>
+                                <span ng-if="thing.flag=='IGNORED'" class="fa fa-fw fa-dot-circle-o text-muted"></span>
+                            </td>
+                            <td>
+                                <span>{{thing.label}}&nbsp;</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted small">{{thing.thingUID}}</td>
+                        </tr>
+                    </table>
+                </a>
+            </div>
+
+            <!-- Cover options for loading, and no devices -->
+            <div ng-if="inboxCnt==-1" class="list-group-item text-center">
+                <span class="fa fa-spin fa-refresh"></span>
+                <span i18n="common.loading"></span>
+            </div>
+            <div ng-if="inboxCnt==0" class="list-group-item text-center">
+                <span class="fa fa-exclamation-triangle text-warning"></span>
+                <span i18n="thing.NoneFound"></span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>
+
+<!-- Device Configuration -->
+<div class="col-sm-8" sidepanel-pane="main">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <button type="button" ng-class="{'btn btn-default':true, 'disabled':!selectedThing}"
+                    ng-click="saveThing()">
+                <span class="fa fa-fw fa-plus-circle"></span>
+                <span i18n="common.add"></span>
+            </button>
+            <button type="button" ng-class="{'btn btn-default':true, 'disabled':!selectedThing}"
+                    ng-confirm-click="ignoreThing()"
+                    i18n-attr="{'ngConfirmMessage': 'discovery.IgnoreConfirmMsg','ngConfirmTitle': 'discovery.IgnoreConfirmTitle','ngConfirmNoBtn': 'common.cancel', 'ngConfirmYesBtn': 'common.ok'}"
+                    >
+                <span class="fa fa-fw fa-dot-circle-o"></span>
+                <span i18n="common.ignore"></span>
+            </button>
+            <button type="button" ng-class="{'btn btn-default':true, 'disabled':!selectedThing}"
+                    ng-confirm-click="deleteThing()"
+                    i18n-attr="{'ngConfirmMessage': 'discovery.DeleteConfirmMsg','ngConfirmTitle': 'discovery.DeleteConfirmTitle','ngConfirmNoBtn': 'common.cancel', 'ngConfirmYesBtn': 'common.ok'}"
+                    >
+                <span class="fa fa-fw fa-times-circle"></span>
+                <span i18n="common.delete"></span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>

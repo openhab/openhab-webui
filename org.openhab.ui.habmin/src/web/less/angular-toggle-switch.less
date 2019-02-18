@@ -1,0 +1,22 @@
+// Override toggle-switch to account for theming
+.toggle-switch {
+  -webkit-border-radius: @border-radius-base;
+  -moz-border-radius: @border-radius-base;
+  -ms-border-radius: @border-radius-base;
+  -o-border-radius: @border-radius-base;
+}
+
+.toggle-switch .switch-left {
+  background: @brand-success;
+}
+
+.toggle-switch .switch-right {
+  background: @brand-primary;
+}
+
+.toggle-switch-animate {
+  transition: left 0.25s;
+  -o-transition: left 0.25s;
+  -moz-transition: left 0.25s;
+  -webkit-transition: left 0.25s;
+}

@@ -1,0 +1,14 @@
+{
+  "DeleteRuleCheck": "Är du säker på att du vill radera regel '{{selectedRule.name}}'?",
+  "DeleteRuleTitle": "Radera regel",
+  "ErrorLoadingRule": "Fel vid läsning av regel <i>{1}</i>:<BR><b><i>{2}</i></b>.",
+  "ErrorLoadingRuleList": "Fel vid läsning av regel-listan.",
+  "NewRuleTitle": "Ny regel",
+  "NoDevices": "Inga devices",
+  "NoRules": "Inga regler tillgängliga",
+  "Rule": "Regel",
+  "Source": "Källa",
+  "UnsavedChangesCheck": "Det finns osparade ändringar i regel '{rulename}'. Är du säker på att du vill fortsätta - trycker du Ja så förlorar du dina ändringar!",
+  "UnsavedChangesTitle": "Varning: osparade ändringar",
+  "Value": "Värde"
+}

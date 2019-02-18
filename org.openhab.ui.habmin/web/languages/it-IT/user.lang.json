@@ -1,0 +1,15 @@
+{
+  "ChartLegend": "Mostra Legenda",
+  "ChartPeriod": "Periodo Grafico",
+  "ChartPersistence": "Sistema Predefinito di Archiviazione",
+  "ChartPersistenceSelect": "Seleziona sistema di archiviazione predefinito...",
+  "ChartPrefTitle": "Impostazioni Grafico",
+  "GeneralPrefTitle": "Impostazioni Generali",
+  "Language": "Lingua",
+  "LanguageSelect": "Seleziona la tua lingua...",
+  "Name": "Nome",
+  "ServerAddress": "Indirizzo",
+  "ServerPrefTitle": "Impostazioni Server",
+  "Theme": "Tema",
+  "ThemeSelect": "Seleziona il tuo tema..."
+}

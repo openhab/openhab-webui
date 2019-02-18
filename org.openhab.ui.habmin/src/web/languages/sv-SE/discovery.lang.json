@@ -1,0 +1,15 @@
+{
+  "ApproveAllConfirmMsg": "Är du säker på att du vill lägga till allt i inkorgen som nya föremål?",
+  "ApproveAllConfirmTitle": "Godkänn allt i inkorgen",
+  "ClearConfirmMsg": "Är du säker på att du vill rensa sökningsinkorgen? Alla föremål kommer tas bort och måste sökas efter igen!",
+  "ClearConfirmTitle": "Rensa inkorgen",
+  "ClearFail": "Misslyckades med att rensa inkorgen från ett eller flera föremål!",
+  "DeleteConfirmMsg": "Är du säker på att du vill radera föremålet från inkorgen?",
+  "DeleteConfirmTitle": "Radera föremålet från inkorgen",
+  "IgnoreConfirmMsg": "Är du säker på att du vill ignorera föremålet i inkorgen?",
+  "IgnoreConfirmTitle": "Ignorera föremålet i inkorgen",
+  "IgnoreFail": "Misslyckades att ignorera <b><i>{name}</i></b>",
+  "NewThing": "Nytt föremål upptäckt <b><i>{name}</i></b>.",
+  "StartFail": "Sökning misslyckades för bidning <b><i>{name}</i></b>",
+  "StartOk": "Sökning påbörjades för bidning <b><i>{name}</i></b>"
+}

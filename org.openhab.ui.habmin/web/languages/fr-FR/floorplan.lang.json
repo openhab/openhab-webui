@@ -1,0 +1,16 @@
+{
+  "Delete": "Supprimer le plan",
+  "DeleteCheck": "Etes-vous sûr de vouloir supprimer ce plan ?",
+  "Editor": "Editeur de plan",
+  "HotspotItem": "Item",
+  "HotspotItemPlaceholder": "Choisir l'item...",
+  "HotspotTitle": "Propriétés du hotspot",
+  "PropertiesCategory": "Catégorie",
+  "PropertiesName": "Nom",
+  "PropertiesTitle": "Propriétés du plan",
+  "SaveError": "Erreur de sauvegarde du plan <b><i>{name}</i></b>",
+  "SaveOk": "Plan <b><i>{name}</i></b> supprimé avec succès",
+  "SelectImage": "Choisir l'image",
+  "UploadName": "Nom du plan",
+  "UploadTitle": "Ajouter un plan"
+}

@@ -1,0 +1,103 @@
+<div class="col-sm-4">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <button type="button" class="btn btn-default"
+                    ng-confirm-click="newRule()" ng-confirm-if="isDirty"
+                    data-i18n-attr="{'ngConfirmMessage': 'rule.UnsavedChangesCheck','ngConfirmTitle': 'rule.UnsavedChangesTitle','ngConfirmNoBtn': 'common.no', 'ngConfirmYesBtn': 'common.yes'}"
+                    data-rulename="{{selectedRule.name}}">
+                <span class="fa fa-plus"></span>
+                <span i18n="common.new"></span>
+            </button>
+            <button type="button" ng-confirm-click="deleteRule()"
+                    ng-class="{'btn btn-default':true, 'disabled':!selectedRule}"
+                    data-i18n-attr="{'ngConfirmMessage': 'rule.DeleteRuleCheck','ngConfirmTitle': 'rule.DeleteRuleTitle','ngConfirmNoBtn': 'common.no', 'ngConfirmYesBtn': 'common.yes'}"
+                    data-rulename="{{selectedRule.name}}">
+                <span class="fa fa-trash-o"></span>
+                <span i18n="common.delete"></span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group" resize-panel>
+            <div ng-repeat="choice in blockRules">
+                <a role="presentation" ng-class="{'list-group-item':true, 'active':choice==selectedRule}"
+                   ng-confirm-click="selectBlock(choice)" ng-confirm-if="$parent.isDirty"
+                   data-i18n-attr="{'ngConfirmMessage': 'rule.UnsavedChangesCheck','ngConfirmTitle': 'rule.UnsavedChangesTitle','ngConfirmNoBtn': 'common.no', 'ngConfirmYesBtn': 'common.yes'}"
+                   data-rulename={{selectedRule.name}}">
+                    <span class="fa fa-fw fa-puzzle-piece"></span>
+                    <span>{{choice.name}}</span>
+                </a>
+            </div>
+
+            <div ng-repeat="choice in codeRules">
+                <a role="presentation" ng-class="{'list-group-item':true, 'active':choice==selectedRule}"
+                   ng-confirm-click="selectRule(choice)" ng-confirm-if="$parent.isDirty"
+                   data-i18n-attr="{'ngConfirmMessage': 'rule.UnsavedChangesCheck','ngConfirmTitle': 'rule.UnsavedChangesTitle','ngConfirmNoBtn': 'common.no', 'ngConfirmYesBtn': 'common.yes'}"
+                   rulename={{selectedRule.name}}">
+                    <span class="fa fa-fw fa-code"></span>
+                    <span>{{choice.name}}</span>
+                </a>
+            </div>
+
+            <!-- Cover options for loading, and no rules -->
+            <div ng-if="rulesTotal==-1" class="list-group-item text-center">
+                <span class="fa fa-spin fa-refresh"></span>
+                <span i18n="common.loading"></span>
+            </div>
+            <div ng-if="rulesTotal==0" class="list-group-item text-center">
+                <span class="fa fa-exclamation-triangle text-warning"></span>
+                <span i18n="rule.NoRules"></span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>
+
+<!-- Rule Pane -->
+<div class="col-sm-8">
+    <!-- Heading -->
+    <div class="panel panel-default">
+        <div class="panel-heading" style="padding:3px;">
+            <button type="button" ng-class="{'btn btn-sm btn-default':true, 'disabled':!isDirty}" ng-click="saveRule()">
+                <span class="fa fa-floppy-o"></span>
+                <span i18n="common.save"></span>
+            </button>
+            <button type="button" ng-class="{'btn btn-sm btn-default':true, 'disabled':!isDirty}"
+                    ng-click="cancelRule()">
+                <span class="fa fa-times"></span>
+                <span i18n="common.cancel"></span>
+            </button>
+
+            <div class="pull-right">
+                <button type="button"
+                        ng-class="{'btn btn-sm btn-default':true, 'active':editSource==false, 'disabled':selectedRule.type=='code'}"
+                        ng-click="showRule()">
+                    <span class="fa fa-puzzle-piece"></span>
+                    <span i18n="rule.Rule"></span>
+                </button>
+                <button type="button" ng-class="{'btn btn-sm btn-default':true, 'active':editSource==true}"
+                        ng-click="showSource()">
+                    <span class="fa fa-code"></span>
+                    <span i18n="rule.Source"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div resize-panel>
+            <ng-blockly ng-show="!editSource">
+            </ng-blockly>
+
+            <div style="height:100%" ng-if="editSource" ng-model="codeEditor" ui-ace="aceOptions">
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>

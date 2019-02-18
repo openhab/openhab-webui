@@ -1,0 +1,99 @@
+<!-- Device List -->
+<div class="col-sm-4">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <span i18n="extensions.ExtensionTypes"></span>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+            <!-- EXTENSION TYPE LIST -->
+            <div ng-if="typesCnt>0"
+                ng-repeat="extensionType in extensionTypes | orderBy:'label'"
+                class="list-group-item"
+                ng-class="{'active': extensionType==selectedType}"
+                ng-click="selectType(extensionType)">
+                <li role="presentation">
+                    <span>{{extensionType.label}}&nbsp;</span>
+                </li>
+            </div>
+
+            <!-- Cover options for loading, and no types -->
+            <div ng-if="typesCnt==-1" class="list-group-item text-center">
+                <span class="fa fa-spin fa-refresh"></span>
+                <span i18n="common.loading"></span>
+            </div>
+            <div ng-if="typesCnt==0" class="list-group-item text-center">
+                <span class="fa fa-exclamation-triangle text-warning"></span>
+                <span i18n="binding.NoneFound"></span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>
+
+<!-- Service Information / Configuration -->
+<div class="col-sm-8">
+    <div class="panel panel-default">
+        <!-- Header -->
+        <div class="panel-heading">
+            <span i18n="extensions.Extensions"></span>
+        </div>
+
+        <!-- Body -->
+        <div class="list-group habmin-list" resize-panel>
+
+            <!-- EXTENSION LIST -->
+            <div ng-if="extensionsCnt>0"
+                class="list-group-item"
+                ng-class="{'active': extension==selectedType}"
+                ng-repeat="extension in extensions | filter: {type: selectedType.id} | orderBy:'label'">
+                <li role="presentation">
+                    <!-- TODO This will break when ESH goes to 1.0 -->
+                    <span ng-if="extension.version.substring(0, 2)=='0.'" class="label label-success small">SmartHome</span>
+                    <span ng-if="extension.version.substring(0, 2)=='1.'" class="label label-warning small">openHAB-1</span>
+                    <span ng-if="extension.version.substring(0, 2)=='2.'" class="label label-success small">openHAB-2</span>
+
+                    <span ng-show="extension.inprogress">
+                        <span class="fa fa-fw fa-spin fa-circle-o-notch text-warning"></span>
+                    </span>
+                    <span ng-hide="extension.inprogress">
+                        <span ng-if="extension.installed" class="fa fa-fw fa-check-circle-o text-success"></span>
+                        <span ng-if="!extension.installed" class="fa fa-fw fa-circle-o text-muted"></span>
+                    </span>
+                    <span>{{extension.label}}&nbsp;
+                        <!-- TODO This will break when ESH goes to 1.0 -->
+                        <span ng-if="extension.version.substring(0, 2)!='1.' && extension.id.substring(0,8)=='binding-'">
+                            <a ng-href="http://docs.openhab.org/addons/bindings/{{extension.id.substring(8)}}/readme.html" target="_blank">
+                                <span class="fa fa-book"></span>
+                            </a>
+                        </span>
+                    </span>
+
+                    <span class="pull-right" ng-hide="extension.inprogress">
+                        <button type="button" class="btn btn-xs btn-default"
+                                ng-if="!extension.installed"
+                                ng-click="installExtension(extension)">
+                            <span class="fa fa-fw fa-plus-circle text-success"></span>
+                            <span i18n="extensions.Install"></span>
+                        </button>
+                        <button type="button" class="btn btn-xs btn-default"
+                                ng-if="extension.installed"
+                                ng-click="uninstallExtension(extension)">
+                            <span class="fa fa-fw fa-trash text-danger"></span>
+                            <span i18n="extensions.Uninstall"></span>
+                        </button>
+                    </span>
+                </li>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer panel-footer-none">
+        </div>
+    </div>
+</div>

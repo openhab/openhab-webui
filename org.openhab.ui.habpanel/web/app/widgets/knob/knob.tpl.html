@@ -1,0 +1,10 @@
+<div class="box-content slider">
+    <widget-icon ng-if="vm.widget.backdrop_icon" backdrop="true" iconset="vm.widget.backdrop_iconset" icon="vm.widget.backdrop_icon" center="vm.widget.backdrop_center" state="vm.value"></widget-icon>
+    <div class="knob-content">
+        <!--<div class="knob-label" ng-hide="vm.widget.hidelabel">{{vm.widget.name}}</div>-->
+        <div class="knob-container">
+            <ui-knob value="vm.knob.value" options="vm.knob.options" data-snap-ignore="true"></ui-knob>
+        </div>
+
+    </div>
+</div>

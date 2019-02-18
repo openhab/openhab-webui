@@ -1,0 +1,21 @@
+<div>
+    <form name="_form" class="form-horizontal" ng-submit="submit(_form)">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="dismiss()" aria-hidden="true">&times;</button>
+            <h3 translate-keep-content translate="designer.copymove.header" translate-values="{ widgetName: widgetName }">Copy/move {{widgetName}}</h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-group" ng-class="{error: _form.targetDashboard.$error && _form.submitted}">
+                <label class="control-label col-xs-4 col-lg-4 col-md-4" translate-keep-content translate="designer.copymove.todashboard">To dashboard</label>
+                <div class="col-lg-5 col-md-5 col-xs-5">
+                    <select ng-model="form.targetDashboard" ng-options="dashboard.id as dashboard.name for dashboard in selDashboards" class="form-control"></select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a ng-click="dismiss()" class="btn btn-default" tabindex="-1"><i class="glyphicon glyphicon-remove"></i>&nbsp;<span translate>Cancel</span></a>
+            <a ng-click="moveWidget()" ng-disabled="form.targetDashboard == form.currentDashboard" class="btn btn-primary"><i class="glyphicon glyphicon-save-file"></i>&nbsp;<span translate-keep-content translate="designer.copymove.move">Move</span></a>
+            <a ng-click="copyWidget({close: true})" class="btn btn-primary"><i class="glyphicon glyphicon-duplicate"></i>&nbsp;<span translate-keep-content translate="designer.copymove.copy">Copy</span></a>
+        </div>
+    </form>
+</div>
