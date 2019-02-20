@@ -1,0 +1,18 @@
+# This file helps Github doing automatic review requests for new PRs.
+# It should always list the active maintainers of certain add-ons.
+
+# As a fallback, if no specific maintainer is listed below, assign the PR to the repo maintainers team:
+*       @openhab/webui-maintainers
+
+# Add-on maintainers:
+/iconset/ @kaikreuzer
+/org.openhab.ui.basic/ @lolodomo @resetnow
+/org.openhab.ui.classic/ @lolodomo @kaikreuzer
+/org.openhab.ui.cometvisu/ @peuter
+/org.openhab.ui.cometvisu.php/ @peuter
+/org.openhab.ui.dashboard/ @kaikreuzer
+/org.openhab.ui.habmin/ @cdjackson
+/org.openhab.ui.habot/ @ghys
+/org.openhab.ui.habpanel/ @ghys
+/org.openhab.ui.homebuilder/ @kubawolanin
+/org.openhab.ui.paper/
