@@ -2,13 +2,17 @@
 # It should always list the active maintainers of certain add-ons.
 
 # As a fallback, if no specific maintainer is listed below, assign the PR to the repo maintainers team:
-*       @openhab/2-x-add-ons-maintainers
+*       @openhab/webui-maintainers
 
 # Add-on maintainers:
-/addons/ui/iconset/ @kaikreuzer
-/addons/ui/org.openhab.ui.basic/ @lolodomo @resetnow
-/addons/ui/org.openhab.ui.classic/ @lolodomo @resetnow
-/addons/ui/org.openhab.ui.cometvisu/ @peuter
-/addons/ui/org.openhab.ui.cometvisu.php/ @peuter
-/addons/ui/org.openhab.ui.homebuilder/ @kubawolanin
-/addons/ui/org.openhab.ui.paper/ @htreu
+/iconset/ @kaikreuzer
+/org.openhab.ui.basic/ @lolodomo @resetnow
+/org.openhab.ui.classic/ @lolodomo @kaikreuzer
+/org.openhab.ui.cometvisu/ @peuter
+/org.openhab.ui.cometvisu.php/ @peuter
+/org.openhab.ui.dashboard/ @kaikreuzer
+/org.openhab.ui.habmin/ @cdjackson
+/org.openhab.ui.habot/ @ghys
+/org.openhab.ui.habpanel/ @ghys
+/org.openhab.ui.homebuilder/ @kubawolanin
+/org.openhab.ui.paper/
