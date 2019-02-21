@@ -55,12 +55,12 @@
             icons.mapping>groundfloor=control_building_int_eg
             icons.mapping>cellar=control_building_int_kg
             icons.mapping>garden=scene_garden
-            icons.mapping>sun=weather_sun			
+            icons.mapping>sun=weather_sun
             icons.mapping>video=scene_livingroom
             icons.mapping>kitchen=scene_dinner
             icons.mapping>bath=scene_bath
             icons.mapping>corridor=scene_hall
-            icons.mapping>office=scene_office			
+            icons.mapping>office=scene_office
             icons.mapping>boy1=scene_childs_room
             icons.mapping>bedroom=scene_sleeping
             icons.mapping>heating=sani_heating
@@ -74,6 +74,21 @@
         <feature>openhab-ui-cometvisu</feature>
         <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.cometvisu.php/${project.version}</bundle>
         <bundle start-level="80">mvn:org.openhab/com.caucho.quercus/4.0.45</bundle>
+    </feature>
+
+    <feature name="openhab-ui-habmin" description="HABmin" version="${project.version}">
+        <feature>openhab-runtime-base</feature>
+        <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.habmin/${project.version}</bundle>
+    </feature>
+
+    <feature name="openhab-ui-habot" description="HABot" version="${project.version}">
+        <feature>openhab-runtime-base</feature>
+        <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.habot/${project.version}</bundle>
+    </feature>
+
+    <feature name="openhab-ui-habpanel" description="HABPanel" version="${project.version}">
+        <feature>openhab-runtime-base</feature>
+        <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.habpanel/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-ui-homebuilder" description="Home Builder" version="${project.version}">
