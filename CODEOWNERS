@@ -16,3 +16,4 @@
 /org.openhab.ui.habpanel/ @ghys
 /org.openhab.ui.homebuilder/ @kubawolanin
 /org.openhab.ui.paper/
+/org.openhab.ui.restdocs/ @kaikreuzer

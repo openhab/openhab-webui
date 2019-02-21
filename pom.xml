@@ -27,6 +27,7 @@
     <module>org.openhab.ui.habpanel</module>
     <module>org.openhab.ui.homebuilder</module>
     <module>org.openhab.ui.paper</module>
+    <module>org.openhab.ui.restdocs</module>
     <module>features</module>
     <module>repo</module>
   </modules>
