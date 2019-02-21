@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.rest.docs.internal;
+package org.openhab.ui.restdocs.internal;
 
 import org.openhab.ui.dashboard.DashboardTile;
 import org.osgi.service.component.annotations.Component;

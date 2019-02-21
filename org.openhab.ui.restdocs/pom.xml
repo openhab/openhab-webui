@@ -6,7 +6,7 @@
     <version>2.5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>org.openhab.ui.rest.docs</artifactId>
+  <artifactId>org.openhab.ui.restdocs</artifactId>
 
   <packaging>eclipse-plugin</packaging>
   <name>openHAB REST API Documentation</name>

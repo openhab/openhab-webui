@@ -103,10 +103,10 @@
         <bundle>mvn:org.openhab.ui/org.openhab.ui.paper/${project.version}</bundle>
     </feature>
 
-    <feature name="openhab-misc-restdocs" description="REST Documentation" version="${project.version}">
+    <feature name="openhab-ui-restdocs" description="REST Documentation" version="${project.version}">
         <feature>openhab-runtime-base</feature>
         <feature>openhab.tp-swagger-jax-rs-provider</feature>
-        <bundle>mvn:org.openhab.ui/org.openhab.ui.rest.docs/${project.version}</bundle>
+        <bundle>mvn:org.openhab.ui/org.openhab.ui.restdocs/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-iconset-classic" version="${project.version}">
