@@ -6,6 +6,7 @@
     <groupId>org.openhab</groupId>
     <artifactId>pom-addons2</artifactId>
     <version>2.5.0-SNAPSHOT</version>
+    <relativePath/>
   </parent>
 
   <groupId>org.openhab.ui</groupId>
@@ -17,11 +18,11 @@
 
   <modules>
     <module>iconset</module>
+    <module>org.openhab.ui.dashboard</module>
     <module>org.openhab.ui.basic</module>
     <module>org.openhab.ui.classic</module>
     <module>org.openhab.ui.cometvisu</module>
     <module>org.openhab.ui.cometvisu.php</module>
-    <module>org.openhab.ui.dashboard</module>
     <module>org.openhab.ui.habmin</module>
     <module>org.openhab.ui.habot</module>
     <module>org.openhab.ui.habpanel</module>
