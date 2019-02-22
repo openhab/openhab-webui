@@ -47,37 +47,12 @@
               <additionalArgs>-metadataRepositoryName openhab.ui.repo.metadata -artifactRepositoryName openhab.ui.repo.artifact</additionalArgs>
               <artifacts>
                 <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.dashboard:${project.version}</id>
-                  <transitive>false</transitive>
-                  <source>true</source>
-                </artifact>
-                <artifact>
                   <id>org.openhab.ui:org.openhab.ui.basic:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
                 <artifact>
                   <id>org.openhab.ui:org.openhab.ui.classic:${project.version}</id>
-                  <transitive>false</transitive>
-                  <source>true</source>
-                </artifact>
-                <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.paper:${project.version}</id>
-                  <transitive>false</transitive>
-                  <source>true</source>
-                </artifact>
-                <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.habot:${project.version}</id>
-                  <transitive>false</transitive>
-                  <source>true</source>
-                </artifact>
-                <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.habmin:${project.version}</id>
-                  <transitive>false</transitive>
-                  <source>true</source>
-                </artifact>
-                <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.habpanel:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
@@ -92,7 +67,37 @@
                   <source>true</source>
                 </artifact>
                 <artifact>
+                  <id>org.openhab.ui:org.openhab.ui.dashboard:${project.version}</id>
+                  <transitive>false</transitive>
+                  <source>true</source>
+                </artifact>
+                <artifact>
+                  <id>org.openhab.ui:org.openhab.ui.habmin:${project.version}</id>
+                  <transitive>false</transitive>
+                  <source>true</source>
+                </artifact>
+                <artifact>
+                  <id>org.openhab.ui:org.openhab.ui.habot:${project.version}</id>
+                  <transitive>false</transitive>
+                  <source>true</source>
+                </artifact>
+                <artifact>
+                  <id>org.openhab.ui:org.openhab.ui.habpanel:${project.version}</id>
+                  <transitive>false</transitive>
+                  <source>true</source>
+                </artifact>
+                <artifact>
                   <id>org.openhab.ui:org.openhab.ui.homebuilder:${project.version}</id>
+                  <transitive>false</transitive>
+                  <source>true</source>
+                </artifact>
+                <artifact>
+                  <id>org.openhab.ui:org.openhab.ui.paper:${project.version}</id>
+                  <transitive>false</transitive>
+                  <source>true</source>
+                </artifact>
+                <artifact>
+                  <id>org.openhab.ui:org.openhab.ui.restdocs:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>

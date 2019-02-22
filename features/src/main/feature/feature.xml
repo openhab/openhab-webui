@@ -23,6 +23,7 @@
     <feature name="openhab-ui-basic" description="Basic UI" version="${project.version}">
         <feature>openhab-runtime-base</feature>
         <feature>openhab-iconset-classic</feature>
+        <feature>openhab-ui-dashboard</feature>
         <bundle>mvn:org.openhab.ui/org.openhab.ui.basic/${project.version}</bundle>
         <config name="org.eclipse.smarthome.basicui">
             iconType = svg
@@ -32,6 +33,7 @@
     <feature name="openhab-ui-classic" description="Classic UI" version="${project.version}">
         <feature>openhab-runtime-base</feature>
         <feature>openhab-iconset-classic</feature>
+        <feature>openhab-ui-dashboard</feature>
         <bundle>mvn:org.openhab.ui/org.openhab.ui.classic/${project.version}</bundle>
         <config name="org.eclipse.smarthome.classicui">
             defaultSitemap = _default
@@ -44,6 +46,7 @@
         <feature>openhab-core-model-sitemap</feature>
         <feature>openhab-core-ui-icon</feature>
         <feature>openhab-core-ui</feature>
+        <feature>openhab-ui-dashboard</feature>
         <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.cometvisu/${project.version}</bundle>
         <config name="org.openhab.cometvisu">
             webFolder=../../../CometVisu/src/
@@ -78,21 +81,25 @@
 
     <feature name="openhab-ui-habmin" description="HABmin" version="${project.version}">
         <feature>openhab-runtime-base</feature>
+        <feature>openhab-ui-dashboard</feature>
         <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.habmin/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-ui-habot" description="HABot" version="${project.version}">
         <feature>openhab-runtime-base</feature>
+        <feature>openhab-ui-dashboard</feature>
         <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.habot/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-ui-habpanel" description="HABPanel" version="${project.version}">
         <feature>openhab-runtime-base</feature>
+        <feature>openhab-ui-dashboard</feature>
         <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.habpanel/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-ui-homebuilder" description="Home Builder" version="${project.version}">
         <feature>openhab-runtime-base</feature>
+        <feature>openhab-ui-dashboard</feature>
         <bundle>mvn:org.openhab.ui/org.openhab.ui.homebuilder/${project.version}</bundle>
     </feature>
 
@@ -100,11 +107,13 @@
         <feature>openhab-runtime-base</feature>
         <feature>openhab-io-javasound</feature>
         <feature>openhab-io-webaudio</feature>
+        <feature>openhab-ui-dashboard</feature>
         <bundle>mvn:org.openhab.ui/org.openhab.ui.paper/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-ui-restdocs" description="REST Documentation" version="${project.version}">
         <feature>openhab-runtime-base</feature>
+        <feature>openhab-ui-dashboard</feature>
         <feature>openhab.tp-swagger-jax-rs-provider</feature>
         <bundle>mvn:org.openhab.ui/org.openhab.ui.restdocs/${project.version}</bundle>
     </feature>
