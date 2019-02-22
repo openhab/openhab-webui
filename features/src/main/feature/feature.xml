@@ -16,13 +16,13 @@
 <features name="${project.artifactId}-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.4.0">
 
     <feature name="openhab-ui-dashboard" description="Dashboard UI" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
+        <feature>openhab-core-base</feature>
         <bundle>mvn:org.openhab.ui/org.openhab.ui.dashboard/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-ui-basic" description="Basic UI" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
         <feature>openhab-iconset-classic</feature>
+        <feature>openhab-core-io-rest-sitemap</feature>
         <feature>openhab-ui-dashboard</feature>
         <bundle>mvn:org.openhab.ui/org.openhab.ui.basic/${project.version}</bundle>
         <config name="org.eclipse.smarthome.basicui">
@@ -31,7 +31,6 @@
     </feature>
 
     <feature name="openhab-ui-classic" description="Classic UI" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
         <feature>openhab-iconset-classic</feature>
         <feature>openhab-ui-dashboard</feature>
         <bundle>mvn:org.openhab.ui/org.openhab.ui.classic/${project.version}</bundle>
@@ -41,13 +40,13 @@
     </feature>
 
     <feature name="openhab-ui-cometvisu" description="CometVisu Backend" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
         <feature>openhab-core-model-item</feature>
         <feature>openhab-core-model-sitemap</feature>
         <feature>openhab-core-ui-icon</feature>
         <feature>openhab-core-ui</feature>
         <feature>openhab-ui-dashboard</feature>
-        <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.cometvisu/${project.version}</bundle>
+        <bundle>mvn:org.openhab.ui/org.openhab.ui.cometvisu/${project.version}</bundle>
+        <bundle dependency="true">mvn:org.rrd4j/rrd4j/3.4</bundle>
         <config name="org.openhab.cometvisu">
             webFolder=../../../CometVisu/src/
             webAlias=/cometvisu
@@ -73,38 +72,40 @@
     </feature>
 
     <feature name="openhab-ui-cometvisu-php" description="PHP support for CometVisu" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
+        <feature>openhab-core-base</feature>
         <feature>openhab-ui-cometvisu</feature>
-        <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.cometvisu.php/${project.version}</bundle>
-        <bundle start-level="80">mvn:org.openhab/com.caucho.quercus/4.0.45</bundle>
+        <bundle>mvn:org.openhab.ui/org.openhab.ui.cometvisu.php/${project.version}</bundle>
+        <bundle>mvn:org.openhab/com.caucho.quercus/4.0.45</bundle>
     </feature>
 
     <feature name="openhab-ui-habmin" description="HABmin" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
         <feature>openhab-ui-dashboard</feature>
-        <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.habmin/${project.version}</bundle>
+        <bundle>mvn:org.openhab.ui/org.openhab.ui.habmin/${project.version}</bundle>
+        <bundle dependency="true">mvn:commons-codec/commons-codec/1.10</bundle>
     </feature>
 
     <feature name="openhab-ui-habot" description="HABot" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
         <feature>openhab-ui-dashboard</feature>
-        <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.habot/${project.version}</bundle>
+        <feature>openhab-core-automation</feature>
+        <bundle>mvn:org.openhab.ui/org.openhab.ui.habot/${project.version}</bundle>
+        <bundle>mvn:org.openhab.core.bundles/org.openhab.core.semantics/${project.version}</bundle>
+        <bundle>mvn:org.openhab.core.bundles/org.openhab.core.io.rest/${project.version}</bundle>
+        <bundle dependency="true">mvn:org.bouncycastle/bcprov-jdk15on/1.54</bundle>
+        <bundle dependency="true">mvn:org.apache.opennlp/opennlp-tools/1.8.3</bundle>
+        <bundle dependency="true">mvn:org.bitbucket.b_c/jose4j/0.6.3</bundle>
     </feature>
 
     <feature name="openhab-ui-habpanel" description="HABPanel" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
         <feature>openhab-ui-dashboard</feature>
-        <bundle start-level="80">mvn:org.openhab.ui/org.openhab.ui.habpanel/${project.version}</bundle>
+        <bundle>mvn:org.openhab.ui/org.openhab.ui.habpanel/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-ui-homebuilder" description="Home Builder" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
         <feature>openhab-ui-dashboard</feature>
         <bundle>mvn:org.openhab.ui/org.openhab.ui.homebuilder/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-ui-paper" description="Paper UI" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
         <feature>openhab-io-javasound</feature>
         <feature>openhab-io-webaudio</feature>
         <feature>openhab-ui-dashboard</feature>
@@ -112,14 +113,12 @@
     </feature>
 
     <feature name="openhab-ui-restdocs" description="REST Documentation" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
         <feature>openhab-ui-dashboard</feature>
         <feature>openhab.tp-swagger-jax-rs-provider</feature>
         <bundle>mvn:org.openhab.ui/org.openhab.ui.restdocs/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-iconset-classic" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
         <feature>openhab-core-ui-icon</feature>
         <bundle>mvn:org.openhab.ui.iconset/org.openhab.ui.iconset.classic/${project.version}</bundle>
     </feature>

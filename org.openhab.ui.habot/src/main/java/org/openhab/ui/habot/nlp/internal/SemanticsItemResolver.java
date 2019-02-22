@@ -50,8 +50,6 @@ import org.slf4j.LoggerFactory;
 @Component(service = ItemResolver.class, immediate = true)
 public class SemanticsItemResolver implements ItemResolver {
 
-    private final Logger logger = LoggerFactory.getLogger(SemanticsItemResolver.class);
-
     private static final String SYNONYMS_NAMESPACE = "synonyms";
 
     private ItemRegistry itemRegistry;

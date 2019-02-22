@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class RuleContext {
-	private static final Logger logger = LoggerFactory.getLogger(RuleContext.class);
 
 	List<Trigger> triggerList = new ArrayList<Trigger>();
 	List<String> importList = new ArrayList<String>();

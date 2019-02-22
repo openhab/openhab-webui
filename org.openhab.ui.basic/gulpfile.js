@@ -24,13 +24,13 @@
 	
 	gulp.task("copyFontLibs", function () {
 	    return gulp.src(paths.FontLibs)
-	        .pipe(gulp.dest('./web/fonts'));
+	        .pipe(gulp.dest('./src/main/resources/web/fonts'));
 	});
 
 	gulp.task("css", function() {
 		return gulp.src(sources.sass)
 			.pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-			.pipe(gulp.dest("web"));
+			.pipe(gulp.dest("./src/main/resources/web"));
 	});
 
 	gulp.task("eslint", function() {
@@ -45,7 +45,7 @@
 	gulp.task("js", function() {
 		return gulp.src(sources.js)
 			.pipe(uglify())
-			.pipe(gulp.dest("web"));
+			.pipe(gulp.dest("./src/main/resources/web"));
 	});
 
 	gulp.task("default", [ "css", "copyFontLibs", "eslint", "js" ]);

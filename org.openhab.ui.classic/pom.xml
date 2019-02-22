@@ -9,8 +9,20 @@
   </parent>
 
   <artifactId>org.openhab.ui.classic</artifactId>
-  <packaging>eclipse-plugin</packaging>
 
   <name>Classic UI</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.openhab.core.bundles</groupId>
+      <artifactId>org.openhab.core.ui</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openhab.ui</groupId>
+      <artifactId>org.openhab.ui.dashboard</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 
 </project>

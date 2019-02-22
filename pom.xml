@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.openhab</groupId>
-    <artifactId>pom-tycho</artifactId>
+    <groupId>org.openhab.core.bundles</groupId>
+    <artifactId>org.openhab.core.reactor.bundles</artifactId>
     <version>2.5.0-SNAPSHOT</version>
   </parent>
 
@@ -68,8 +69,17 @@
   </distributionManagement>
 
   <properties>
-    <ohc.version>2.5.0-SNAPSHOT</ohc.version>
+    <ohdr.version>1.0.40</ohdr.version>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.openhab.core.bom</groupId>
+      <artifactId>org.openhab.core.bom.compile-model</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+  </dependencies>
 
   <repositories>
 
@@ -112,13 +122,6 @@
       <id>openhab-artifactory-snapshot</id>
       <name>JFrog Artifactory Repository</name>
       <url>https://openhab.jfrog.io/openhab/libs-snapshot</url>
-    </repository>
-
-    <!-- openHAB dependencies p2 repository -->
-    <repository>
-      <id>p2-openhab-deps-repo</id>
-      <url>https://dl.bintray.com/openhab/p2/openhab-deps-repo/${ohdr.version}</url>
-      <layout>p2</layout>
     </repository>
 
   </repositories>

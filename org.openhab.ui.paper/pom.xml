@@ -10,15 +10,21 @@
   </parent>
 
   <artifactId>org.openhab.ui.paper</artifactId>
-  <packaging>eclipse-plugin</packaging>
 
   <name>Paper UI</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.openhab.ui</groupId>
+      <artifactId>org.openhab.ui.dashboard</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>3.1.0</version>
         <configuration>
           <filesets>
             <fileset>
@@ -88,6 +94,37 @@
             </configuration>
           </execution>
 
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>add-resource</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>web</directory>
+                  <targetPath>web</targetPath>
+                  <excludes>
+                    <exclude>fonts/Roboto-Thin.woff</exclude>
+                    <exclude>fonts/Roboto-ThinItalic.woff</exclude>
+                    <exclude>fonts/Roboto-RegularItalic.woff</exclude>
+                    <exclude>fonts/Roboto-MediumItalic.woff</exclude>
+                    <exclude>fonts/Roboto-LightItalic.woff</exclude>
+                    <exclude>fonts/Roboto-BoldItalic.woff</exclude>
+                    <exclude>fonts/Roboto-BlackItalic.woff</exclude>
+                    <exclude>fonts/Roboto-Black.woff</exclude>
+                  </excludes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>

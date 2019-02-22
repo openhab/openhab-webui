@@ -1,7 +1,7 @@
 node_modules
 node
 npm_cache
-web/smarthome.css
-web/smarthome.js
-web/fonts/Roboto-Medium.svg
-web/fonts/Roboto-Regular.svg
+web
+src/main/resources/web/smarthome.css
+src/main/resources/web/smarthome.js
+src/main/resources/web/fonts/*
