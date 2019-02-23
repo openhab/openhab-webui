@@ -1,3 +1,15 @@
+/**
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
+ *
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
 package org.openhab.ui.habot.test;
 
 import static org.junit.Assert.assertEquals;
@@ -5,44 +17,43 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
-import org.openhab.ui.habot.test.AbstractTrainerTest.Skills;
 
 public class TrainerNlTest extends AbstractTrainerTest {
 
     @Test
     public void testGetStatus() throws Exception {
-        
+
         this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
- 
-        assertIsGetStatus ("Wat is de temperatuur in de keuken?", "temperatuur", "keuken");
-        assertIsGetStatus ("Temperatuur in de keuken?", "temperatuur", "keuken");
-        assertIsGetStatus ("toon me de temperatuur in de keuken", "temperatuur", "keuken");
-        assertIsGetStatus ("wat is de temperatuur in de garage?", "temperatuur", "garage");
-        assertIsGetStatus ("temperatuur in de gang", "temperatuur", "gang");
-        assertIsGetStatus ("temperatuur op de eerste verdieping", "temperatuur", "eerste verdieping");
-        assertIsGetStatus ("vertel me de temperatuur van het zwembad", "temperatuur", "zwembad"); 
-        assertIsGetStatus ("lichten op zolder", "lichten", "zolder");
-        assertIsGetStatus ("lichten in de kelder", "lichten", "kelder");
-        assertIsGetStatus ("lichten in het tuinhuis", "lichten", "tuinhuis");
-        assertIsGetStatus ("gang lichten", "lichten", "gang");
-        assertIsGetStatus ("woonkamer verlichting", "verlichting", "woonkamer");
-        assertIsGetStatus ("keuken verlichting", "verlichting", "keuken");	
-        assertIsGetStatus ("welke lampen staan aan?", "lampen", null);
-        assertIsGetStatus ("wat is de temperatuur in de keuken?", "temperatuur", "keuken");
-        assertIsGetStatus ("staat de voordeur open?", "voordeur", null);
-        assertIsGetStatus ("is de voordeur open? ", "voordeur", null);
-        assertIsGetStatus ("welke ramen staan open?", "ramen", null);
-        assertIsGetStatus ("staat het raam in de wc open?", "raam", "wc");
-        assertIsGetStatus ("verwarming in de keuken", "verwarming", "keuken");
-        assertIsGetStatus ("Wat is de temperatuur in de woonkamer?", "temperatuur", "woonkamer");
-        assertIsGetStatus ("Wat is de temperatuur in de kelder?", "temperatuur", "kelder");
+
+        assertIsGetStatus("Wat is de temperatuur in de keuken?", "temperatuur", "keuken");
+        assertIsGetStatus("Temperatuur in de keuken?", "temperatuur", "keuken");
+        assertIsGetStatus("toon me de temperatuur in de keuken", "temperatuur", "keuken");
+        assertIsGetStatus("wat is de temperatuur in de garage?", "temperatuur", "garage");
+        assertIsGetStatus("temperatuur in de gang", "temperatuur", "gang");
+        assertIsGetStatus("temperatuur op de eerste verdieping", "temperatuur", "eerste verdieping");
+        assertIsGetStatus("vertel me de temperatuur van het zwembad", "temperatuur", "zwembad");
+        assertIsGetStatus("lichten op zolder", "lichten", "zolder");
+        assertIsGetStatus("lichten in de kelder", "lichten", "kelder");
+        assertIsGetStatus("lichten in het tuinhuis", "lichten", "tuinhuis");
+        assertIsGetStatus("gang lichten", "lichten", "gang");
+        assertIsGetStatus("woonkamer verlichting", "verlichting", "woonkamer");
+        assertIsGetStatus("keuken verlichting", "verlichting", "keuken");
+        assertIsGetStatus("welke lampen staan aan?", "lampen", null);
+        assertIsGetStatus("wat is de temperatuur in de keuken?", "temperatuur", "keuken");
+        assertIsGetStatus("staat de voordeur open?", "voordeur", null);
+        assertIsGetStatus("is de voordeur open? ", "voordeur", null);
+        assertIsGetStatus("welke ramen staan open?", "ramen", null);
+        assertIsGetStatus("staat het raam in de wc open?", "raam", "wc");
+        assertIsGetStatus("verwarming in de keuken", "verwarming", "keuken");
+        assertIsGetStatus("Wat is de temperatuur in de woonkamer?", "temperatuur", "woonkamer");
+        assertIsGetStatus("Wat is de temperatuur in de kelder?", "temperatuur", "kelder");
     }
-	
+
     @Test
     public void testActivateObjects() throws Exception {
-        
+
         this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
-        
+
         assertIsActivate("zet de tv aan", "tv", null);
         assertIsActivate("doe het licht aan", "licht", null);
         assertIsActivate("doe het licht aan in de keuken", "licht", "keuken");
@@ -52,12 +63,12 @@ public class TrainerNlTest extends AbstractTrainerTest {
         assertIsActivate("zet het licht aan op de zolder", "licht", "zolder");
         assertIsActivate("zet het licht op de gang aan", "licht", "gang");
         assertIsActivate("zet de verwarmng aan", "verwarmng", null);
-        
+
     }
-    
+
     @Test
     public void testDeactivateObjects() throws Exception {
-        
+
         this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
 
         assertIsDeactivate("doe het licht uit", "licht", null);
@@ -72,7 +83,6 @@ public class TrainerNlTest extends AbstractTrainerTest {
         assertIsDeactivate("zet het licht op de gang uit", "licht", "gang");
         assertIsDeactivate("zet de verwarmng uit", "verwarmng", null);
     }
-    
 
     @Test
     public void testHistoryHourly() throws Exception {
@@ -216,7 +226,6 @@ public class TrainerNlTest extends AbstractTrainerTest {
         assertEquals("woonkamer", actual.getEntities().get("location"));
         assertEquals("50", actual.getEntities().get("value"));
 
-
         actual = interpret("Kleur de lichten rood");
         assertEquals(Skills.SET_VALUE, actual.getName());
         assertEquals(2, actual.getEntities().size());
@@ -235,7 +244,7 @@ public class TrainerNlTest extends AbstractTrainerTest {
         assertEquals("licht", actual.getEntities().get("object"));
         assertEquals("oranje", actual.getEntities().get("color"));
         assertEquals("keuken", actual.getEntities().get("location"));
-        
+
         actual = interpret("zet de lampen in het tuinhuis op geel");
         assertEquals(Skills.SET_VALUE, actual.getName());
         assertEquals(3, actual.getEntities().size());
@@ -243,37 +252,36 @@ public class TrainerNlTest extends AbstractTrainerTest {
         assertEquals("geel", actual.getEntities().get("color"));
         assertEquals("tuinhuis", actual.getEntities().get("location"));
 
-               
         actual = interpret("Kleur het licht groen");
         assertEquals(Skills.SET_VALUE, actual.getName());
         assertEquals(2, actual.getEntities().size());
         assertEquals("licht", actual.getEntities().get("object"));
         assertEquals("groen", actual.getEntities().get("color"));
-        
+
         actual = interpret("Kleur het licht cyaan");
         assertEquals(Skills.SET_VALUE, actual.getName());
         assertEquals(2, actual.getEntities().size());
         assertEquals("licht", actual.getEntities().get("object"));
         assertEquals("cyaan", actual.getEntities().get("color"));
-        
+
         actual = interpret("Kleur het licht blauw");
         assertEquals(Skills.SET_VALUE, actual.getName());
         assertEquals(2, actual.getEntities().size());
         assertEquals("licht", actual.getEntities().get("object"));
         assertEquals("blauw", actual.getEntities().get("color"));
-        
+
         actual = interpret("Kleur het licht paars");
         assertEquals(Skills.SET_VALUE, actual.getName());
         assertEquals(2, actual.getEntities().size());
         assertEquals("licht", actual.getEntities().get("object"));
         assertEquals("paars", actual.getEntities().get("color"));
-        
+
         actual = interpret("Kleur het licht wit");
         assertEquals(Skills.SET_VALUE, actual.getName());
         assertEquals(2, actual.getEntities().size());
         assertEquals("licht", actual.getEntities().get("object"));
         assertEquals("wit", actual.getEntities().get("color"));
-        
+
     }
 
     @Test
@@ -288,5 +296,5 @@ public class TrainerNlTest extends AbstractTrainerTest {
         assertEquals(Skills.CREATE_RULE, actual.getName());
 
     }
-    
+
 }

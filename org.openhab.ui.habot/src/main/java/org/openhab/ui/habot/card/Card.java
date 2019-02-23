@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.ui.habot.card;
 
@@ -26,7 +30,7 @@ import org.openhab.ui.habot.nlp.Intent;
  * It has a number of specific parameters, a set of tags, a timestamp, and is
  * identifiable by its UID (generally a GUID).
  *
- * @author Yannick Schaus
+ * @author Yannick Schaus - Initial contribution
  */
 public class Card extends Component implements Identifiable<String> {
     @NonNull
@@ -61,7 +65,7 @@ public class Card extends Component implements Identifiable<String> {
     /**
      * Constructs a Card with a specific UID.
      *
-     * @param uid the UID of the new card
+     * @param uid  the UID of the new card
      * @param name the name of the UI component to render the card on client frontends, ie. "HbCard"
      */
     public Card(@NonNull String uid, String name) {

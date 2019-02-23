@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.ui.habot.card;
 
@@ -24,7 +28,7 @@ import java.util.Map;
  * particular slot for a certain component or the validity of certain types of sub-components within a particular slot:
  * that is the frontend's responsibility.
  *
- * @author Yannick Schaus
+ * @author Yannick Schaus - Initial contribution
  */
 public class Component {
     String component;
@@ -66,7 +70,7 @@ public class Component {
     /**
      * Adds a new configuration parameter to the component
      *
-     * @param key the parameter key
+     * @param key   the parameter key
      * @param value the parameter value
      */
     public void addConfig(String key, Object value) {
@@ -111,7 +115,7 @@ public class Component {
     /**
      * Add a new sub-component to the specified slot. Creates the slot if necessary.
      *
-     * @param slotName the slot to add the component to
+     * @param slotName     the slot to add the component to
      * @param subComponent the sub-component to add
      */
     public void addComponent(String slotName, Component subComponent) {
