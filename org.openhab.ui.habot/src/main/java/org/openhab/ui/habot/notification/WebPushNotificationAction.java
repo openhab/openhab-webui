@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.ui.habot.notification;
 
@@ -25,7 +29,7 @@ import com.google.gson.Gson;
 /**
  * An @link {@link ActionService} to send web push notifications to HABot clients from rules and scripts.
  *
- * @author Yannick Schaus
+ * @author Yannick Schaus - Initial contribution
  */
 @Component(service = { ActionService.class }, immediate = true)
 public class WebPushNotificationAction implements ActionService {
@@ -58,8 +62,9 @@ public class WebPushNotificationAction implements ActionService {
      * Sends a web push notification to all HABot subscribed clients with a reference to tags used to retrieve a card
      *
      * @param message the message to send
-     * @param tags the tags associated with the notification - cards matching these tags will be displayed alongside the
-     *            message
+     * @param tags    the tags associated with the notification - cards matching these tags will be displayed alongside
+     *                    the
+     *                    message
      */
     @ActionDoc(text = "Sends a web push notification to all HABot subscribed clients")
     public static void sendHABotNotificationWithTags(String message, List<Object> tags) {
@@ -69,11 +74,12 @@ public class WebPushNotificationAction implements ActionService {
     /**
      * Sends a web push notification to all HABot subscribed clients (extended version)
      *
-     * @param title the title of the notification (will only be used for native notifications, won't appear in the chat)
+     * @param title   the title of the notification (will only be used for native notifications, won't appear in the
+     *                    chat)
      * @param message the message to send
      * @param cardUID the optional card UID to display with the message
-     * @param tags the optional tags associated with the notification - cards matching these tags will be displayed
-     *            alongside the message
+     * @param tags    the optional tags associated with the notification - cards matching these tags will be displayed
+     *                    alongside the message
      */
     @ActionDoc(text = "Sends a web push notification to all HABot subscribed clients")
     public static void sendHABotNotificationExt(String title, String message, String cardUID, List<Object> tags) {

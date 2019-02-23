@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.ui.habot.nlp;
 
@@ -23,7 +27,7 @@ import opennlp.tools.namefind.NameSample;
  * user natural language query: object - "what" and location - "where". It also acts as a supplemental source of @link
  * {@link NameSample}s for the {@link IntentTrainer}
  *
- * @author Yannick Schaus
+ * @author Yannick Schaus - Initial contribution
  */
 public interface ItemResolver {
 
@@ -41,7 +45,7 @@ public interface ItemResolver {
      * If a non-null object and a non-null location are provided,
      * items shall match both.
      *
-     * @param object the object extracted from the intent (or null)
+     * @param object   the object extracted from the intent (or null)
      * @param location the location extracted from the intent (or null)
      * @return a stream of matching items (groups included)
      */

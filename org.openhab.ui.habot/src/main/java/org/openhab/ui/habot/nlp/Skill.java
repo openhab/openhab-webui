@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.ui.habot.nlp;
 
@@ -15,7 +19,7 @@ import java.io.InputStream;
  * It covers both the training data to supply to OpenNLP for the intent categorization (and token extraction),
  * and the method to call when the intent is recognized.
  *
- * @author Yannick Schaus
+ * @author Yannick Schaus - Initial contribution
  */
 public interface Skill {
     /**
@@ -40,7 +44,7 @@ public interface Skill {
     /**
      * Interprets the recognized intent.
      *
-     * @param intent the intent to interpret
+     * @param intent   the intent to interpret
      * @param language the language of the query (ISO-639 code)
      * @return the {@link IntentInterpretation} containing the results of the interpretation
      */

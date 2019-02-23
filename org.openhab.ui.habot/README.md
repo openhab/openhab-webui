@@ -9,6 +9,7 @@ It consists in:
 - a modular intent-based skill system with learning data provisioning (basic skills to retrieve item statuses, historical data and send basic commands are built-in, but more can be injected by other OSGi dependency injection);
 - a fully-featured responsive card-based user interface built with the [Quasar Framework](http://quasar-framework.org) and its companion REST API to interact with the bot;
 - an Eclipse SmartHome [Human Language Interpreter](http://docs.openhab.org/configuration/multimedia.html#human-language-interpreter) - this means once the natural language answers expand to more than "here's what I found" and "there you go", you will eventually be able to ask HABot questions and give it orders without a visual UI when coupled with speech-to-text and text-to-speech engines in ESH, for instance to build privacy-focused specialized voice assistant.
+
 It is another step to have a full, open source, privacy-focused, integrated natural language processing toolchain for your openHAB smart home.
 
 ## Screenshots

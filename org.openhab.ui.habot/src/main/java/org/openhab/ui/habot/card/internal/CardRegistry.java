@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.ui.habot.card.internal;
 
@@ -30,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The @link {@link Registry} tracking for {@link Card} elements provided by the @link {@link CardProvider}
  *
- * @author Yannick Schaus
+ * @author Yannick Schaus - Initial contribution
  */
 @Component(service = CardRegistry.class, immediate = true)
 public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
@@ -60,7 +64,7 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
     /**
      * Returns cards matching the specified object and/or location attribute(s)
      *
-     * @param object optional object attribute
+     * @param object   optional object attribute
      * @param location optional location attribute
      * @return matching cards - if one of the 2 arguments is not or empty, matching cards do NOT have the attribute. If
      *         both are provided, matching cards have both.
@@ -93,7 +97,7 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
     /**
      * Returns the most recent cards according to their timestamp
      *
-     * @param skip number of elements to skip, for paging
+     * @param skip  number of elements to skip, for paging
      * @param count number of elements to retrieve, for paging (default 10)
      * @return the recent cards, in decreasing order of age
      */

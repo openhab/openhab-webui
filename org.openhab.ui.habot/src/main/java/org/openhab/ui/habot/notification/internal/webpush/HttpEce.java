@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.ui.habot.notification.internal.webpush;
 
@@ -42,7 +46,7 @@ import org.bouncycastle.jce.interfaces.ECPublicKey;
  * <a href=
  * "https://github.com/web-push-libs/webpush-java/tree/master/src/main/java/nl/martijndwars/webpush">webpush-java</a>.
  *
- * @author Martijn Dwars
+ * @author Martijn Dwars - Initial contribution
  * @author Yannick Schaus - integration for HABot
  */
 public class HttpEce {
@@ -117,10 +121,10 @@ public class HttpEce {
         keyinfo = buildInfo("aesgcm", context);
         nonceinfo = buildInfo("nonce", context);
 
-        byte[] hkdf_key = hkdfExpand(secret, salt, keyinfo, 16);
-        byte[] hkdf_nonce = hkdfExpand(secret, salt, nonceinfo, 12);
+        byte[] hkdfKey = hkdfExpand(secret, salt, keyinfo, 16);
+        byte[] hkdfNonce = hkdfExpand(secret, salt, nonceinfo, 12);
 
-        return new byte[][] { hkdf_key, hkdf_nonce };
+        return new byte[][] { hkdfKey, hkdfNonce };
     }
 
     /**
@@ -198,11 +202,11 @@ public class HttpEce {
             int padSize) throws NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
             IllegalBlockSizeException, BadPaddingException, InvalidKeyException, NoSuchProviderException, IOException {
         byte[][] derivedKey = deriveKey(salt, key, keyid, dh, authSecret, padSize);
-        byte[] key_ = derivedKey[0];
-        byte[] nonce_ = derivedKey[1];
+        byte[] dkKey = derivedKey[0];
+        byte[] dkNonce = derivedKey[1];
 
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", "BC");
-        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key_, "AES"), new GCMParameterSpec(16 * 8, nonce_));
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(dkKey, "AES"), new GCMParameterSpec(16 * 8, dkNonce));
         cipher.update(new byte[padSize]);
 
         return cipher.doFinal(buffer);

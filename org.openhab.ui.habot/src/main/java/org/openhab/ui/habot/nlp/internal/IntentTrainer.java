@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.ui.habot.nlp.internal;
 
@@ -41,7 +45,7 @@ import opennlp.tools.util.TrainingParameters;
  * This class is used both for training the OpenNLP document categorizer and token extractor, and for doing the actual
  * natural language understanding - it converts a natural query into an {@link Intent}.
  *
- * @author Yannick Schaus
+ * @author Yannick Schaus - Initial contribution
  */
 public class IntentTrainer {
 
@@ -55,7 +59,7 @@ public class IntentTrainer {
      * Trains a new IntentTrainer instance with intents sourced from a collection of skills for the specified language
      *
      * @param language the ISO-639 language code
-     * @param skills the collection of skills providing training data
+     * @param skills   the collection of skills providing training data
      * @throws Exception
      */
     public IntentTrainer(String language, Collection<Skill> skills) throws Exception {
@@ -66,10 +70,10 @@ public class IntentTrainer {
      * Trains a new IntentTrainer instance with intents sourced from a collection of skills for the specified language,
      * and additional name samples
      *
-     * @param language the ISO-639 language code
-     * @param skills the collection of skills providing training data
+     * @param language              the ISO-639 language code
+     * @param skills                the collection of skills providing training data
      * @param additionalNameSamples additional user-provided name samples to train the token name finder
-     * @param tokenizerId tokenizer to use ("alphanumeric" or "whitespace")
+     * @param tokenizerId           tokenizer to use ("alphanumeric" or "whitespace")
      * @throws Exception
      */
     public IntentTrainer(String language, Collection<Skill> skills, InputStream additionalNameSamples,
