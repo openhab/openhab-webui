@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2015-2017 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.ui.habpanel.internal.gallery.community;
 
@@ -39,12 +43,12 @@ import com.google.gson.GsonBuilder;
  */
 public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(CommunityWidgetGalleryProvider.class);
+    private final Logger logger = LoggerFactory.getLogger(CommunityWidgetGalleryProvider.class);
 
-    public final String COMMUNITY_BASE_URL = "https://community.openhab.org";
-    public final String COMMUNITY_GALLERY_URL = COMMUNITY_BASE_URL
+    public static final String COMMUNITY_BASE_URL = "https://community.openhab.org";
+    public static final String COMMUNITY_GALLERY_URL = COMMUNITY_BASE_URL
             + "/tags/c/apps-services/habpanel/widgetgallery.json";
-    public final String COMMUNITY_TOPIC_URL = COMMUNITY_BASE_URL + "/t/";
+    public static final String COMMUNITY_TOPIC_URL = COMMUNITY_BASE_URL + "/t/";
 
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
 
@@ -119,7 +123,6 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
                             widget.contents = IOUtils.toString(widgetDownload.getInputStream());
                             String cDisp = widgetDownload.getHeaderField("Content-Disposition");
                             if (cDisp != null && cDisp.indexOf("=") != -1 && cDisp.indexOf(".widget.json") != -1) {
-
                                 widget.id = cDisp.split("=")[1].replaceAll("\"", "").replaceAll("]", "")
                                         .replaceAll(".widget.json", "");
 
@@ -128,13 +131,11 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
                         } finally {
                             IOUtils.closeQuietly(widgetDownload.getInputStream());
                         }
-
                     }
                 }
             }
 
             return item;
-
         } finally {
             IOUtils.closeQuietly(connection.getInputStream());
         }
