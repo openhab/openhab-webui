@@ -2,6 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: HABPanel User Interface
 Bundle-SymbolicName: org.openhab.ui.habpanel
+Bundle-Vendor: openHAB
 Bundle-Version: 2.5.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/*.xml
@@ -13,6 +14,7 @@ Import-Package: com.google.gson,
  javax.ws.rs,
  javax.ws.rs.core,
  org.apache.commons.io,
+ org.eclipse.jdt.annotation;resolution:=optional,
  org.eclipse.smarthome.core.auth,
  org.eclipse.smarthome.io.rest,
  org.openhab.ui.dashboard,
