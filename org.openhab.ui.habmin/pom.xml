@@ -2,10 +2,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-	<groupId>org.openhab</groupId>
-    	<artifactId>pom-tycho</artifactId>
-	<version>2.5.0-SNAPSHOT</version>
-	<relativePath/>
+        <groupId>org.openhab.ui</groupId>
+        <artifactId>pom</artifactId>
+        <version>2.5.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.openhab.ui</groupId>
@@ -17,27 +16,8 @@
     <packaging>eclipse-plugin</packaging>
 
     <properties>
-        <ohc.version>2.5.0-SNAPSHOT</ohc.version>
         <report.fail.on.error>false</report.fail.on.error>
     </properties>
-
-    <scm>
-        <connection>scm:git:${scm.gitBaseUrl}/org.openhab.ui.habmin.git</connection>
-        <developerConnection>scm:git:${scm.gitBaseUrl}/org.openhab.ui.habmin.git</developerConnection>
-        <url>https://github.com/openhab/org.openhab.ui.habmin</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>bintray</id>
-            <url>https://api.bintray.com/maven/openhab/mvn/org.openhab.ui.habmin/;publish=1</url>
-        </repository>
-        <snapshotRepository>
-            <id>jfrog</id>
-            <url>https://openhab.jfrog.io/openhab/libs-snapshot-local</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <build>
         <plugins>
@@ -112,32 +92,5 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
-
-    <pluginRepositories>
-      <pluginRepository>
-            <id>jcenter</id>
-            <name>JCenter Repository</name>
-            <url>https://jcenter.bintray.com/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-      </pluginRepository>
-      <pluginRepository>
-          <id>artifactory</id>
-          <name>JFrog Artifactory Repository</name>
-          <url>https://openhab.jfrog.io/openhab/libs-release</url>
-          <releases>
-              <enabled>true</enabled>
-              <updatePolicy>never</updatePolicy>
-          </releases>
-          <snapshots>
-              <enabled>false</enabled>
-          </snapshots>
-      </pluginRepository>
-    </pluginRepositories>
 
 </project>
