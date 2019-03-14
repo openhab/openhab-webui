@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suppressions PUBLIC "-//Puppy Crawl//DTD Suppressions 1.1//EN" "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+<suppressions>
+    <suppress files="build.properties" checks="AboutHtmlCheck" />
+    <!-- These suppressions define which files to be suppressed for which checks. -->
+    <suppress files=".+[\\/]pom\.xml" checks="OnlyTabIndentationCheck"/>
+    <suppress files=".+[\\/]gen[\\/].+\.java" checks="AuthorTagCheck"/>
+    <suppress files=".+[\\/]internal[\\/].+\.java" checks="JavadocType|JavadocVariable|JavadocMethod|JavadocFilterCheck"/>
+    <suppress files=".+Impl\.java" checks="JavadocType|JavadocVariable|JavadocMethod|JavadocFilterCheck"/>
+    <suppress files=".+.test[\\/].+" checks="RequireBundleCheck"/>
+
+    <!-- The CometVisu UI contains files in the resources folder that are used only during the build -->
+    <suppress files=".+org.openhab.ui.cometvisu.+" checks="BuildPropertiesCheck"/>
+
+    <suppress files=".+org.openhab.ui.paper.+" checks="OutsideOfLibExternalLibrariesCheck|ManifestExternalLibrariesCheck|BuildPropertiesExternalLibrariesCheck" />
+</suppressions>
