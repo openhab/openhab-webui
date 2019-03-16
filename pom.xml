@@ -68,10 +68,6 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <properties>
-    <ohdr.version>1.0.40</ohdr.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.openhab.core.bom</groupId>
@@ -125,5 +121,17 @@
     </repository>
 
   </repositories>
+
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>jcenter</id>
+      <url>https://jcenter.bintray.com</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>openhab-artifactory-release</id>
+      <url>https://openhab.jfrog.io/openhab/libs-release</url>
+    </pluginRepository>
+  </pluginRepositories>
 
 </project>
