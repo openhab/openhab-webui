@@ -54,4 +54,4 @@ matrix:
   allow_failures:
     - jdk: openjdk11
 script:
-  - mvnp clean verify -B -DskipChecks $(extra_maven_opts)
+  - mvnp clean verify -B $(extra_maven_opts)
