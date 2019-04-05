@@ -11,17 +11,14 @@ cache:
   directories:
   - $HOME/.m2
   - $HOME/.p2
-  - org.openhab.ui.basic/npm_cache
-  - org.openhab.ui.homebuilder/npm_cache
-  - org.openhab.ui.paper/npm_cache
+  - bundles/org.openhab.ui.basic/npm_cache
+  - bundles/org.openhab.ui.homebuilder/npm_cache
+  - bundles/org.openhab.ui.paper/npm_cache
 
 before_install:
   - echo "MAVEN_OPTS='-Xms1g -Xmx2g'" > ~/.mavenrc
 install:
   - |
-    function extra_maven_opts() {
-        if [ "$TRAVIS_JDK_VERSION" != "openjdk8" ]; then echo "-Denforcer.skip=true"; fi;
-    }
     function prevent_timeout() {
         local i=0
         while [ -e /proc/$1 ]; do
@@ -49,9 +46,5 @@ after_success:
   - print_reactor_summary .build.log
 after_failure:
   - tail -n 2000 .build.log
-env: # required for allowing failures
-matrix:
-  allow_failures:
-    - jdk: openjdk11
 script:
-  - mvnp clean verify -B $(extra_maven_opts)
+  - mvnp clean verify -B
