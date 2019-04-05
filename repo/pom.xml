@@ -4,10 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.openhab</groupId>
-    <artifactId>pom</artifactId>
+    <groupId>org.openhab.ui</groupId>
+    <artifactId>org.openhab.ui.reactor</artifactId>
     <version>2.5.0-SNAPSHOT</version>
-    <relativePath></relativePath>
   </parent>
 
   <groupId>org.openhab.ui</groupId>
@@ -15,55 +14,11 @@
 
   <packaging>pom</packaging>
 
-  <name>openHAB UI P2 Repository</name>
+  <name>openHAB UI :: P2 Repository</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
-  <repositories>
-
-    <!-- releases -->
-    <repository>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>jcenter</id>
-      <name>JCenter Repository</name>
-      <url>https://jcenter.bintray.com/</url>
-    </repository>
-
-    <repository>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>openhab-artifactory-release</id>
-      <name>JFrog Artifactory Repository</name>
-      <url>https://openhab.jfrog.io/openhab/libs-release</url>
-    </repository>
-
-    <!-- snapshots -->
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-      </snapshots>
-      <id>openhab-artifactory-snapshot</id>
-      <name>JFrog Artifactory Repository</name>
-      <url>https://openhab.jfrog.io/openhab/libs-snapshot</url>
-    </repository>
-  </repositories>
 
   <build>
     <resources>
