@@ -57,6 +57,7 @@
 
     <bnd.version>4.2.0</bnd.version>
     <karaf.version>4.2.2</karaf.version>
+    <sat.version>0.6.1</sat.version>
   </properties>
 
   <repositories>
@@ -461,8 +462,8 @@ Import-Package: \\
           <artifactId>sat-plugin</artifactId>
           <version>${sat.version}</version>
           <configuration>
-            <checkstyleProperties>${basedirRoot}/../../tools/checkstyle/ruleset.properties</checkstyleProperties>
-            <checkstyleFilter>${basedirRoot}/../../tools/checkstyle/suppressions.xml</checkstyleFilter>
+            <checkstyleProperties>${basedirRoot}/tools/static-code-analysis/checkstyle/ruleset.properties</checkstyleProperties>
+            <checkstyleFilter>${basedirRoot}/tools/static-code-analysis/checkstyle/suppressions.xml</checkstyleFilter>
           </configuration>
           <executions>
             <execution>
@@ -495,8 +496,8 @@ Import-Package: \\
             <configuration>
               <property>basedirRoot</property>
               <project>
-                <groupId>org.openhab.addons</groupId>
-                <artifactId>org.openhab.addons.reactor</artifactId>
+                <groupId>org.openhab.ui</groupId>
+                <artifactId>org.openhab.ui.reactor</artifactId>
               </project>
             </configuration>
           </execution>
