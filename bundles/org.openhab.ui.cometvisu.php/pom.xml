@@ -20,7 +20,7 @@
       <version>4.0.45</version>
     </dependency>
     <dependency>
-      <groupId>org.openhab.ui</groupId>
+      <groupId>org.openhab.ui.bundles</groupId>
       <artifactId>org.openhab.ui.cometvisu</artifactId>
       <version>${project.version}</version>
     </dependency>
