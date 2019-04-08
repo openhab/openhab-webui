@@ -8,7 +8,6 @@
     <version>2.5.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.openhab.ui</groupId>
   <artifactId>org.openhab.ui.dashboard</artifactId>
 
   <name>openHAB UI :: Dashboard UI</name>
