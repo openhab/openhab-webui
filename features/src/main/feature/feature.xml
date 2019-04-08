@@ -130,7 +130,7 @@
 
     <feature name="openhab-iconset-classic" version="${project.version}">
         <feature>openhab-core-ui-icon</feature>
-        <bundle>mvn:org.openhab.ui.iconset/org.openhab.ui.iconset.classic/${project.version}</bundle>
+        <bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.iconset.classic/${project.version}</bundle>
     </feature>
 
 </features>
