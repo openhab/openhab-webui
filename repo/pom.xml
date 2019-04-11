@@ -56,62 +56,62 @@
               <additionalArgs>-metadataRepositoryName openhab.ui.repo.metadata -artifactRepositoryName openhab.ui.repo.artifact</additionalArgs>
               <artifacts>
                 <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.basic:${project.version}</id>
+                  <id>org.openhab.ui.bundles:org.openhab.ui.basic:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
                 <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.classic:${project.version}</id>
+                  <id>org.openhab.ui.bundles:org.openhab.ui.classic:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
                 <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.cometvisu:${project.version}</id>
+                  <id>org.openhab.ui.bundles:org.openhab.ui.cometvisu:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
                 <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.cometvisu.php:${project.version}</id>
+                  <id>org.openhab.ui.bundles:org.openhab.ui.cometvisu.php:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
                 <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.dashboard:${project.version}</id>
+                  <id>org.openhab.ui.bundles:org.openhab.ui.dashboard:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
                 <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.habmin:${project.version}</id>
+                  <id>org.openhab.ui.bundles:org.openhab.ui.habmin:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
                 <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.habot:${project.version}</id>
+                  <id>org.openhab.ui.bundles:org.openhab.ui.habot:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
                 <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.habpanel:${project.version}</id>
+                  <id>org.openhab.ui.bundles:org.openhab.ui.habpanel:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
                 <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.homebuilder:${project.version}</id>
+                  <id>org.openhab.ui.bundles:org.openhab.ui.homebuilder:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
                 <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.paper:${project.version}</id>
+                  <id>org.openhab.ui.bundles:org.openhab.ui.paper:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
                 <artifact>
-                  <id>org.openhab.ui:org.openhab.ui.restdocs:${project.version}</id>
+                  <id>org.openhab.ui.bundles:org.openhab.ui.restdocs:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
                 <artifact>
-                  <id>org.openhab.ui.iconset:org.openhab.ui.iconset.classic:${project.version}</id>
+                  <id>org.openhab.ui.bundles:org.openhab.ui.iconset.classic:${project.version}</id>
                   <transitive>false</transitive>
                   <source>true</source>
                 </artifact>
