@@ -15,7 +15,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.openhab.ui</groupId>
+      <groupId>org.openhab.ui.bundles</groupId>
       <artifactId>org.openhab.ui.dashboard</artifactId>
       <version>${project.version}</version>
     </dependency>
