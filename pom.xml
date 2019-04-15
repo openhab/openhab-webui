@@ -573,6 +573,7 @@ Import-Package: \\
   </profiles>
 
   <modules>
+    <module>bom</module>
     <module>bundles</module>
     <module>features</module>
     <module>repo</module>
