@@ -19,7 +19,7 @@ public class TrainerItTest extends AbstractTrainerTest {
 
     @Test
     public void testIT() throws Exception {
-        this.trainer = new IntentTrainer("it", skills);
+        this.trainer = new IntentTrainer("it", skills, null, "alphanumeric");
 
         assertIsGetStatus("Temperatura in cucina?", "temperatura", "cucina");
         assertIsGetStatus("mostrami la temperatura in cucina", "temperatura", "cucina");
