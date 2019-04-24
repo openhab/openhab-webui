@@ -1,4 +1,4 @@
-vogli creare una regola
+voglio creare una regola
 crea una regola
 voglio impostare qualcosa che si attivi più tardi
 voglio impostare un timer

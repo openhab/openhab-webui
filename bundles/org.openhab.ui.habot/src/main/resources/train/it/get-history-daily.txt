@@ -5,6 +5,6 @@ mostra un grafico della <START:object> temperatura <END> in <START:location> cuc
 grafico della <START:object> temperatura <END> del <START:location> bagno <END> di oggi
 <START:object> temperatura <END> in <START:location> soggiorno <END> degli ultimi <START:period> 2 <END> giorni
 evoluzione della <START:object> temperatura <END> in <START:location> sala da pranzo <END> negli ultimi <START:period> 3 <END> giorni
-variazioni di <START:object> consumo dell'acqua <END> in <START:location> giardino <END> in questi ultimi <START:period> 4 <END> giorni
+variazioni di <START:object> consumo dell acqua <END> in <START:location> giardino <END> in questi ultimi <START:period> 4 <END> giorni
 quanto è stato il <START:object> consumo di gas <END> negli ultimi <START:period> 4 <END> giorni
-fai un grafico dell'<START:object> umidità <END> negli ultimi <START:period> 5 <END> giorni
+fai un grafico dell <START:object> umidità <END> negli ultimi <START:period> 5 <END> giorni

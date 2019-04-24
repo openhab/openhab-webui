@@ -1,5 +1,5 @@
-imposta il <START:object> termostato <END> a <START:value> 23 °C <END>
-imposta la <START:object> temperatura <END> a <START:value> 80 °F <END>
+imposta il <START:object> termostato <END> a <START:value> 23 Â°C <END>
+imposta la <START:object> temperatura <END> a <START:value> 80 Â°F <END>
 metti la <START:object> temperatura <END> a <START:value> 25 gradi <END>
 imposta le <START:object> luci <END> al <START:value> 75% <END>
 imposta il <START:object> riscaldamento <END> della <START:location> camera <END> a <START:value> 2 <END>
@@ -9,7 +9,7 @@ metti il <START:object> volume della musica <END> in <START:location> cucina <EN
 cambia il colore delle <START:object> luci <END> del <START:location> bagno <END> in <START:color> giallo <END>
 cambia il colore delle <START:object> luci <END> del <START:location> primo piano <END> in <START:color> bianco <END>
 maetti le <START:object> luci <END> della <START:color> camera <END> al <START:value> 30% <END>
-imposta il <START:object> riscaldamento <END> dello <START:location> studio <END> a <START:color> 70°F <END>
+imposta il <START:object> riscaldamento <END> dello <START:location> studio <END> a <START:color> 70ï¿½F <END>
 imposta le <START:object> luci <END> a <START:color> rosso <END>
 imposta le <START:object> luci <END> to <START:color> arancione <END>
 imposta le <START:object> luci <END> nel <START:location> soggiorno <END> a <START:color> blu <END>
