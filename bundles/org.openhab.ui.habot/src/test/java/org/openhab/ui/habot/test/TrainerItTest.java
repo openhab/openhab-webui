@@ -21,7 +21,6 @@ public class TrainerItTest extends AbstractTrainerTest {
     public void testIT() throws Exception {
         this.trainer = new IntentTrainer("it", skills, null, "alphanumeric");
 
- /*     
         assertIsGetStatus("Temperatura in cucina?", "temperatura", "cucina");
         assertIsGetStatus("mostrami la temperatura in cucina", "temperatura", "cucina");
         assertIsGetStatus("Qual è la temperatura in garage?", "temperatura", "garage");
@@ -87,6 +86,5 @@ public class TrainerItTest extends AbstractTrainerTest {
         assertIs("create-rule", "imposta una regola che si attivi fra 90 minuti");
         assertIs("create-rule", "imposta una nuova regola per domani alle 8");
         assertIs("create-rule", "imposta una nuova regola per tutti i mercoledì alle 11h30");
-    */
    }
 }
