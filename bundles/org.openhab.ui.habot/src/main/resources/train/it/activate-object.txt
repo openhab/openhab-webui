@@ -1,4 +1,4 @@
-puoi accendere le <START:object> luci <END> della <START:location> camera <END> ?
+puoi accendere le <START:object> luci <END> della <START:location> camera <END>
 per favore accendi le <START:object> luci <END>
 accendi la <START:object> tv <END>
 accendi l <START:object> aria condizionata <END> please
