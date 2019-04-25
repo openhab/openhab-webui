@@ -27,7 +27,7 @@ public class TrainerItTest extends AbstractTrainerTest {
         assertIsGetStatus("temperatura in corridoio", "temperatura", "corridoio");
         assertIsGetStatus("temperatura al primo piano", "temperatura", "primo piano");
         assertIsGetStatus("dimmi la temperatura della piscina", "temperatura", "piscina");
-        assertIsGetStatus("stato delle luci nell'attico", "luci", "attico");
+        assertIsGetStatus("luci dell'attico", "luci", "attico");
         assertIsGetStatus("luci al piano terra", "luci", "piano terra");
         assertIsGetStatus("luci nello studio", "luci", "studio");
         assertIsGetStatus("luci del corridoio", "luci", "corridoio");
