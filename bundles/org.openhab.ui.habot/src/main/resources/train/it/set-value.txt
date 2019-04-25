@@ -14,7 +14,7 @@ imposta le <START:object> luci <END> a <START:color> rosso <END>
 imposta le <START:object> luci <END> to <START:color> arancione <END>
 imposta le <START:object> luci <END> nel <START:location> soggiorno <END> a <START:color> blu <END>
 imposta le <START:object> luci <END> della <START:location> piscina <END> a <START:color> rosso <END>
-imposta le <START:object> luci<END> del <START:location> giardino <END> a <START:color> viola <END>
+imposta le <START:object> luci <END> del <START:location> giardino <END> a <START:color> viola <END>
 imposta il <START:object> ventilatore <END> della <START:location> stanza degli ospiti <END> a <START:value> 100% <END>
 metti le <START:object> luci <END> a <START:color> blue <END>
 cambia la <START:object> luce <END> del <START:location> tavolo <END> al <START:value> 100% <END>
