@@ -28,3 +28,4 @@ vorrei un po di <START:object> musica <END> in <START:location> bagno <END> per 
 vorrei un po di <START:object> musica <END>
 puoi fare un po di <START:object> luce <END> in <START:location> camera <END>
 voglio un po di <START:object> riscaldamento <END> al <START:location> primo piano <END>
+metti un po di <START:object> musica <END> per favore
