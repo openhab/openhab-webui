@@ -28,3 +28,4 @@ non voglio il <START:object> riscaldamento <END> in <START:location> camera <END
 niente più <START:object> luci <END> in <START:location> camera <END> 
 niente più <START:object> aria condizionata <END> per favore
 disattiva l <START:object> allarme <END> per favore
+per favore spegni i <START:object> radiatori <END>
