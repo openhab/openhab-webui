@@ -57,7 +57,7 @@ public class CardBuilder {
     /**
      * Retrieves or build a card for the specified intent and matched items
      *
-     * @param intent       the intent including entities
+     * @param intent the intent including entities
      * @param matchedItems the matched items
      * @return the card (either retrieved or built)
      */
@@ -255,9 +255,9 @@ public class CardBuilder {
     /**
      * Builds a card with a chart from an intent and matched items
      *
-     * @param intent       the intent
+     * @param intent the intent
      * @param matchedItems the matched items
-     * @param period       the chart period
+     * @param period the chart period
      * @return the card
      */
     public Card buildChartCard(Intent intent, Collection<Item> matchedItems, String period) {
@@ -338,19 +338,23 @@ public class CardBuilder {
         if (item.getStateDescription() != null) {
             try {
                 StateDescription stateDescription = item.getStateDescription();
-                if (stateDescription != null && stateDescription.getPattern() != null) {
-                    String transformedState = TransformationHelper.transform(
-                            FrameworkUtil.getBundle(CardBuilder.class).getBundleContext(),
-                            stateDescription.getPattern(), state.toString());
-                    if (transformedState == null) {
+                if (stateDescription != null) {
+                    final String pattern = stateDescription.getPattern();
+                    if (pattern != null) {
+                        String transformedState = TransformationHelper.transform(
+                                FrameworkUtil.getBundle(CardBuilder.class).getBundleContext(), pattern,
+                                state.toString());
+                        if (transformedState == null) {
+                            return state.toString();
+                        }
+                        if (transformedState.equals(state.toString())) {
+                            return state.format(pattern);
+                        } else {
+                            return transformedState;
+                        }
+                    } else {
                         return state.toString();
                     }
-                    if (transformedState.equals(state.toString())) {
-                        return state.format(stateDescription.getPattern());
-                    } else {
-                        return transformedState;
-                    }
-
                 } else {
                     return state.toString();
                 }

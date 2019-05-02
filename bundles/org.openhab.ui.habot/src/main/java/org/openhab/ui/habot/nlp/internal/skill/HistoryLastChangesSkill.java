@@ -119,19 +119,24 @@ public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
     private String formatState(Item item, State state) {
         if (item.getStateDescription() != null) {
             StateDescription stateDescription = item.getStateDescription();
-            if (stateDescription != null && stateDescription.getPattern() != null) {
-                try {
-                    String transformedState = TransformationHelper.transform(
-                            FrameworkUtil.getBundle(HistoryLastChangesSkill.class).getBundleContext(),
-                            stateDescription.getPattern(), state.toString());
-                    if (transformedState != null && transformedState.equals(state.toString())) {
-                        return state.format(stateDescription.getPattern());
-                    } else {
-                        return transformedState;
+            if (stateDescription != null) {
+                final String pattern = stateDescription.getPattern();
+                if (pattern != null) {
+                    try {
+                        String transformedState = TransformationHelper.transform(
+                                FrameworkUtil.getBundle(HistoryLastChangesSkill.class).getBundleContext(), pattern,
+                                state.toString());
+                        if (transformedState != null && transformedState.equals(state.toString())) {
+                            return state.format(pattern);
+                        } else {
+                            return transformedState;
+                        }
+                    } catch (NoClassDefFoundError | TransformationException ex) {
+                        // TransformationHelper is optional dependency, so ignore if class not found
+                        // return state as it is without transformation
+                        return state.toString();
                     }
-                } catch (NoClassDefFoundError | TransformationException ex) {
-                    // TransformationHelper is optional dependency, so ignore if class not found
-                    // return state as it is without transformation
+                } else {
                     return state.toString();
                 }
             } else {
