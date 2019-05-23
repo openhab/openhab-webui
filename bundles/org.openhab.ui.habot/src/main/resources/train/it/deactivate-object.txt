@@ -5,6 +5,7 @@ puoi spegnere la <START:object> lavatrice <END>
 spegni il <START:object> riscaldamento <END> della <START:location> camera matrimoniale <END> per favore
 spegni il <START:object> ventilatore <END> del <START:location> soggiorno <END>
 ferma la <START:object> lavastoviglie <END>
+ferma la <START:object> lavatrice <END>
 spegni la <START:object> tv <END>
 spegni le <START:object> luci <END> della <START:location> camera di Marco <END> per favore
 spegni il <START:object> termostato <END>
