@@ -1,7 +1,7 @@
 puoi accendere le <START:object> luci <END> della <START:location> camera <END>
 per favore accendi le <START:object> luci <END>
 accendi la <START:object> tv <END>
-accendi l <START:object> aria condizionata <END> please
+accendi l <START:object> aria condizionata <END> per favore
 puoi accendere la <START:object> lavastoviglie <END> 
 accendi il <START:object> radiatore <END> della <START:location> cucina <END>
 accendi il <START:object> ventilatore <END> del <START:location> soggiorno <END>
