@@ -13,3 +13,4 @@ dammi l ultima data e ora della <START:object> televisione <END>
 a che ora è stato acceso il <START:object> proiettore <END>
 a che ora è stata spenta la <START:object> tv <END>
 quando si è fermato il <START:object> ricevitore <END>
+mostrami gli ultimi cambi di stato della <START:object> finestra <END> della <START:location> camera <END>
