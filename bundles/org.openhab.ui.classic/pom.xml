@@ -10,7 +10,7 @@
 
   <artifactId>org.openhab.ui.classic</artifactId>
 
-  <name>openHAB UI :: Classic UI</name>
+  <name>openHAB UI :: Bundles :: Classic UI</name>
 
   <dependencies>
     <dependency>

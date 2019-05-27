@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>org.openhab.ui.habmin</artifactId>
-  <name>openHAB UI :: HABmin User Interface</name>
+  <name>openHAB UI :: Bundles :: HABmin UI</name>
 
   <properties>
     <report.fail.on.error>false</report.fail.on.error>

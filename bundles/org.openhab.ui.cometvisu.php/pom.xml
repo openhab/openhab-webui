@@ -11,7 +11,7 @@
 
   <artifactId>org.openhab.ui.cometvisu.php</artifactId>
 
-  <name>openHAB UI :: PHP Support for the CometVisu Backend</name>
+  <name>openHAB UI :: Bundles :: CometVisu :: PHP Support</name>
 
   <dependencies>
     <dependency>

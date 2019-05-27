@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>org.openhab.ui.habpanel</artifactId>
-  <name>openHAB UI :: HABPanel user interface</name>
+  <name>openHAB UI :: Bundles :: HABPanel UI</name>
 
   <dependencies>
     <dependency>

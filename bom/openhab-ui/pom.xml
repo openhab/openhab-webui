@@ -15,7 +15,7 @@
 
   <name>openHAB UI :: BOM :: openHAB UI</name>
 
-<dependencies>
+  <dependencies>
     <dependency>
       <groupId>org.openhab.ui.bundles</groupId>
       <artifactId>org.openhab.ui.basic</artifactId>

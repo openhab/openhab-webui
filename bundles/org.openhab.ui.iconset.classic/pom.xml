@@ -11,7 +11,7 @@
 
   <artifactId>org.openhab.ui.iconset.classic</artifactId>
 
-  <name>openHAB UI :: Classic Icon Set</name>
+  <name>openHAB UI :: Bundles :: Icon Set :: Classic</name>
 
   <dependencies>
     <dependency>
