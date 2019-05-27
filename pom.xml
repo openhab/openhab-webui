@@ -576,7 +576,6 @@ Import-Package: \\
     <module>bom</module>
     <module>bundles</module>
     <module>features</module>
-    <module>repo</module>
   </modules>
 
 
