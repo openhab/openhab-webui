@@ -4,6 +4,7 @@ target/
 src-gen/
 bin/
 .metadata/
+**/.settings/org.eclipse.*
 features/*/src/main/history
 npm-debug.log
 node_modules/
