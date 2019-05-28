@@ -58,6 +58,29 @@ public class TokenizerTest {
         assertEquals(10, actual.length);
         assertEquals("l", actual[3]);
         assertEquals("s", actual[6]);
+
+        actual = tokenizer.tokenize("Vorrei conoscere la temperatura del piano terra. Puoi dirmela?");
+        printTokens(actual);
+        assertEquals(9, actual.length);
+
+        actual = tokenizer.tokenize("Qual è lo stato dell'illuminazione del giardino?");
+        printTokens(actual);
+        assertEquals(8, actual.length);
+        assertEquals("dell", actual[4]);
+        assertEquals("giardino", actual[7]);
+
+        actual = tokenizer.tokenize("Qual'è lo stato delle luci del giardino?");
+        printTokens(actual);
+        assertEquals(8, actual.length);
+        assertEquals("Qual", actual[0]);
+        assertEquals("è", actual[1]);
+
+        actual = tokenizer.tokenize("Vorrei un po' di musica nell'attico!");
+        printTokens(actual);
+        assertEquals(7, actual.length);
+        assertEquals("po", actual[2]);
+        assertEquals("nell", actual[5]);
+        assertEquals("attico", actual[6]);
     }
 
 }
