@@ -44,7 +44,7 @@ public class TrainerItTest extends AbstractTrainerTest {
         assertIsActivate("vorrei un po' di luce in bagno", "luce", "bagno");
         assertIsActivate("voglio un po' d'aria condizionata in cucina", "aria condizionata", "cucina");
 
-        //assertIsDeactivate("per favore spegni i radiatori", "radiatori", null);
+        assertIsDeactivate("spegni i radiatori", "radiatori", null);
         assertIsDeactivate("disattiva l'allarme", "allarme", null);
         assertIsDeactivate("spegni la musica in soggiorno", "musica", "soggiorno");
         assertIsDeactivate("non voglio più musica in cucina", "musica", "cucina");
