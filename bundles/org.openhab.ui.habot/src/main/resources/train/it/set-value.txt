@@ -21,3 +21,4 @@ cambia la <START:object> luce <END> del <START:location> tavolo <END> al <START:
 cambia la <START:object> luce <END> della <START:location> sala da pranzo <END> al <START:value> 100% <END>
 imposta la <START:object> televisione <END> al <START:value> 100% <END>
 cambia il <START:object> volume <END> al <START:value> 40% <END>
+maetti le <START:object> luci <END> del <START:color> corridoio <END> al <START:value> 70% <END>
