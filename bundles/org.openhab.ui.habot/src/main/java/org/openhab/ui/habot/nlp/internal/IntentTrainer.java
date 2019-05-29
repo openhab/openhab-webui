@@ -29,6 +29,7 @@ import opennlp.tools.doccat.DoccatFactory;
 import opennlp.tools.doccat.DoccatModel;
 import opennlp.tools.doccat.DocumentCategorizerME;
 import opennlp.tools.doccat.DocumentSample;
+import opennlp.tools.ml.AbstractTrainer;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.NameSample;
 import opennlp.tools.namefind.NameSampleDataStream;
@@ -109,9 +110,12 @@ public class IntentTrainer {
         ObjectStream<DocumentSample> combinedDocumentSampleStream = ObjectStreamUtils
                 .concatenateObjectStream(categoryStreams);
 
+        TrainingParameters trainingParams = TrainingParameters.defaultParams();
+        trainingParams.put(AbstractTrainer.VERBOSE_PARAM, false);
+
         /* train the categorizer! */
         DoccatModel doccatModel = DocumentCategorizerME.train(language, combinedDocumentSampleStream,
-                TrainingParameters.defaultParams(), new DoccatFactory());
+                trainingParams, new DoccatFactory());
         combinedDocumentSampleStream.close();
 
         List<TokenNameFinderModel> tokenNameFinderModels = new ArrayList<TokenNameFinderModel>();
@@ -146,7 +150,7 @@ public class IntentTrainer {
 
         /* train the token name finder! */
         TokenNameFinderModel tokenNameFinderModel = NameFinderME.train(language, null, combinedNameSampleStream,
-                TrainingParameters.defaultParams(), new TokenNameFinderFactory());
+                trainingParams, new TokenNameFinderFactory());
         combinedNameSampleStream.close();
         tokenNameFinderModels.add(tokenNameFinderModel);
 
