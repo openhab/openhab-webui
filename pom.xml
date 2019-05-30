@@ -67,18 +67,6 @@
   </properties>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-      <resource>
-        <directory>.</directory>
-        <includes>
-          <include>NOTICE</include> <!-- general -->
-          <include>*.xsd</include> <!-- only a very rare -->
-        </includes>
-      </resource>
-    </resources>
     <pluginManagement>
       <plugins>
 
@@ -108,6 +96,7 @@ Import-Package: \\
   org.openhab.*
 -sources: false
 -contract: *
+-includeresource: -${.}/NOTICE, -${.}/*.xsd
 ]]></bnd>
 <!--
 -dsannotations-options: norequirements
