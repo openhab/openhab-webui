@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>org.openhab.ui.habot</artifactId>
-  <name>openHAB UI :: HABot Interactive Bot</name>
+  <name>openHAB UI :: Bundles :: HABot Interactive Bot</name>
   <description>HABot Interactive Bot for openHAB</description>
   <dependencies>
     <dependency>

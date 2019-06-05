@@ -9,11 +9,13 @@
     <version>2.5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>openhab-webui</artifactId>
+  <groupId>org.openhab.ui.features</groupId>
+  <artifactId>org.openhab.ui.features</artifactId>
+
   <packaging>feature</packaging>
 
-  <name>openHAB UI :: Feature</name>
-  <description>openHAB 2 Addons</description>
+  <name>openHAB UI :: Features</name>
+  <description>openHAB UI Features</description>
 
   <build>
     <plugins>

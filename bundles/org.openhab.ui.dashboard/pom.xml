@@ -10,7 +10,7 @@
 
   <artifactId>org.openhab.ui.dashboard</artifactId>
 
-  <name>openHAB UI :: Dashboard UI</name>
+  <name>openHAB UI :: Bundles :: Dashboard UI</name>
 
   <dependencies>
     <dependency>

@@ -9,7 +9,7 @@
 
   <artifactId>org.openhab.ui.restdocs</artifactId>
 
-  <name>openHAB UI :: openHAB REST API Documentation</name>
+  <name>openHAB UI :: Bundles :: openHAB REST API Documentation</name>
 
   <dependencies>
     <dependency>
@@ -18,4 +18,5 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
+
 </project>

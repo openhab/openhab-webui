@@ -11,7 +11,7 @@
 
   <artifactId>org.openhab.ui.cometvisu</artifactId>
 
-  <name>openHAB UI :: CometVisu Backend</name>
+  <name>openHAB UI :: Bundles :: CometVisu :: Backend</name>
 
   <dependencies>
     <dependency>

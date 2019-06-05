@@ -11,7 +11,7 @@
 
   <artifactId>org.openhab.ui.basic</artifactId>
 
-  <name>openHAB UI :: Basic UI</name>
+  <name>openHAB UI :: Bundles :: Basic UI</name>
 
   <dependencies>
     <dependency>

@@ -11,7 +11,7 @@
 
   <artifactId>org.openhab.ui.homebuilder</artifactId>
 
-  <name>openHAB UI :: HomeBuilder UI</name>
+  <name>openHAB UI :: Bundles :: HomeBuilder UI</name>
 
   <dependencies>
     <dependency>

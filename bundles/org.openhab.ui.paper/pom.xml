@@ -11,7 +11,7 @@
 
   <artifactId>org.openhab.ui.paper</artifactId>
 
-  <name>openHAB UI :: Paper UI</name>
+  <name>openHAB UI :: Bundles :: Paper UI</name>
 
   <dependencies>
     <dependency>
