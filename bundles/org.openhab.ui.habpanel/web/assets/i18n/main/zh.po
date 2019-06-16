@@ -8,10 +8,10 @@ msgstr ""
 "X-Crowdin-Language: zh-CN\n"
 "X-Crowdin-File: /master/web/assets/i18n/main/main.pot\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Last-Translator: openhab-bot\n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
-"PO-Revision-Date: 2018-04-10 14:51-0400\n"
+"PO-Revision-Date: 2019-06-16 09:54\n"
 
 #. Common term
 msgctxt "OK"

@@ -8,130 +8,130 @@ msgstr ""
 "X-Crowdin-Language: bg\n"
 "X-Crowdin-File: /master/web/assets/i18n/main/main.pot\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Last-Translator: openhab-bot\n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
-"PO-Revision-Date: 2018-01-19 07:11-0500\n"
+"PO-Revision-Date: 2019-06-16 10:18\n"
 
 #. Common term
 msgctxt "OK"
 msgid "OK"
-msgstr ""
+msgstr "ОК"
 
 #. Common term
 msgctxt "Cancel"
 msgid "Cancel"
-msgstr ""
+msgstr "Отмени"
 
 #. Common term
 msgctxt "Delete"
 msgid "Delete"
-msgstr ""
+msgstr "Изтрий"
 
 #. Common term
 msgctxt "Save"
 msgid "Save"
-msgstr ""
+msgstr "Запази"
 
 #. Common term
 msgctxt "Name"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 #. Common term
 msgctxt "Icon"
 msgid "Icon"
-msgstr ""
+msgstr "Икона"
 
 #. Common term (plural)
 msgctxt "Icons"
 msgid "Icons"
-msgstr ""
+msgstr "Иконки"
 
 #. Common term
 msgctxt "Backdrop Icon"
 msgid "Backdrop Icon"
-msgstr ""
+msgstr "Икона на фона"
 
 #. Common term
 msgctxt "Size"
 msgid "Size"
-msgstr ""
+msgstr "Размер"
 
 #. Common term
 msgctxt "Font size"
 msgid "Font Size"
-msgstr ""
+msgstr "Размер на шрифта"
 
 #. Common term
 msgctxt "Color"
 msgid "Color"
-msgstr ""
+msgstr "Цвят"
 
 #. Common term (plural)
 msgctxt "Colors"
 msgid "Colors"
-msgstr ""
+msgstr "Цветове"
 
 #. Common term
 msgctxt "Transparent"
 msgid "Transparent"
-msgstr ""
+msgstr "Прозрачен"
 
 #. Common term
 msgctxt "openHAB Item"
 msgid "openHAB Item"
-msgstr ""
+msgstr "openHAB Item"
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Speak"
 msgid "Speak"
-msgstr ""
+msgstr "Говорете"
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Refresh"
 msgid "Refresh"
-msgstr ""
+msgstr "Обновяване"
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Fullscreen"
 msgid "Fullscreen"
-msgstr ""
+msgstr "Пълен екран"
 
 #. Common term
 msgctxt "Help"
 msgid "Help"
-msgstr ""
+msgstr "Помощ"
 
 #. Appears in a red background in the bottom of the screen when openHAB is not responding
 msgctxt "error.connectionlost"
 msgid "Connection lost! Trying to reconnect..."
-msgstr ""
+msgstr "Връзката е прекъсната! Опит за повторно свързване..."
 
 #. Appears below the edit mode button when there's no dashboard - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.welcome"
 msgid "Welcome to HABPanel!"
-msgstr ""
+msgstr "Добре дошли в HABPanel!"
 
 #. Appears below the edit mode button when there's no dashboard - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.clickheretobegin"
 msgid "Click or tap here to begin."
-msgstr ""
+msgstr "Щракнете или чукнете тук да започнете."
 
 #. Appears at the top of the screen when in edit mode and no dashboards are present
 msgctxt "tutorial.editmode"
 msgid "You're now in edit mode, where you can design dashboards."
-msgstr ""
+msgstr "Сега сте в режим на редактиране, където можете да проектирате табла."
 
 #. Hint for the bottom left link when in edit mode and no dashboards are present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.createfirstdashboard"
 msgid "Click or tap here to create your first dashboard..."
-msgstr ""
+msgstr "Щракнете или натиснете тук, за да създадете първото си табло..."
 
 #. Hint for the bottom right link when in edit mode and no dashboards are present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.importpanel"
 msgid "...or here to restore a panel from the server"
-msgstr ""
+msgstr "... или тук, за да възстановите панел от сървъра"
 
 #. Hint in the bottom left part of the page when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.enterdesigner"
