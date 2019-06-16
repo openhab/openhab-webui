@@ -96,7 +96,6 @@
 
     <feature name="openhab-ui-habot" description="HABot" version="${project.version}">
         <feature>openhab-ui-dashboard</feature>
-        <feature>openhab-io-webaudio</feature>
         <feature>openhab-core-automation</feature>
         <bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.habot/${project.version}</bundle>
         <bundle>mvn:org.openhab.core.bundles/org.openhab.core.semantics/${project.version}</bundle>
