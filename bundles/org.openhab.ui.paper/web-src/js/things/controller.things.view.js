@@ -526,6 +526,7 @@ angular.module('PaperUI.things') //
             uid : thing.UID + ':' + $scope.channelId,
             id : $scope.channelId,
             channelTypeUID : $scope.channelType.UID,
+            kind : $scope.channelType.kind,
             itemType : $scope.channelType.itemType,
             label : $scope.channelLabel,
             configuration : $scope.configuration,
