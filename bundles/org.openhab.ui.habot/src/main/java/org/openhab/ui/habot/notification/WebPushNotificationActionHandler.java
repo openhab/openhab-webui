@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.automation.Action;
 import org.openhab.core.automation.handler.ActionHandler;
@@ -33,12 +33,12 @@ import com.google.gson.Gson;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 public class WebPushNotificationActionHandler extends BaseModuleHandler<Action> implements ActionHandler {
 
     /**
      * The ID of this module type
      */
-    @NonNull
     public static final String TYPE_ID = "habot.WebPushNotificationAction";
 
     protected static final String PARAM_TITLE = "title";
@@ -53,7 +53,7 @@ public class WebPushNotificationActionHandler extends BaseModuleHandler<Action> 
     /**
      * Constructs a WebPushNotificationActionHandler instance
      *
-     * @param module              the {@link Action} module instance
+     * @param module the {@link Action} module instance
      * @param notificationService the notification service to use to send the web push notifications
      */
     public WebPushNotificationActionHandler(Action module, NotificationService notificationService) {
@@ -62,8 +62,7 @@ public class WebPushNotificationActionHandler extends BaseModuleHandler<Action> 
     }
 
     @Override
-    public @Nullable Map<@NonNull String, @NonNull Object> execute(
-            @NonNull Map<@NonNull String, @NonNull Object> context) {
+    public @Nullable Map<String, Object> execute(Map<String, Object> context) {
         String title = (String) module.getConfiguration().get(PARAM_TITLE);
         String body = (String) module.getConfiguration().get(PARAM_BODY);
         String cardUID = (String) module.getConfiguration().get(PARAM_CARD_UID);
