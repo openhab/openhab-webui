@@ -28,7 +28,7 @@ install:
         done
     }
     function print_reactor_summary() {
-        sed -ne '/\[INFO\] Reactor Summary:/,$ p' "$1" | sed 's/\[INFO\] //'
+        sed -ne '/\[INFO\] Reactor Summary.*:/,$ p' "$1" | sed 's/\[INFO\] //'
     }
     function mvnp() {
         set -o pipefail # exit build with error when pipes fail
