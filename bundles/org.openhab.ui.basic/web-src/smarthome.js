@@ -351,14 +351,23 @@
 			// Some widgets don't have icons
 			if (_t.icon !== null) {
 				_t.icon.addEventListener("error", replaceImageWithNone);
-				_t.icon.setAttribute("src",
-					"/icon/" +
-					_t.iconName +
-					"?state=" +
-					encodeURIComponent(state) +
-					"&format=" +
-					smarthome.UI.iconType
-				);
+				if (state.length < 200) {
+					_t.icon.setAttribute("src",
+						"/icon/" +
+						_t.iconName +
+						"?state=" +
+						encodeURIComponent(state) +
+						"&format=" +
+						smarthome.UI.iconType
+					);
+				} else {
+					_t.icon.setAttribute("src",
+						"/icon/" +
+						_t.iconName +
+						"?format=" +
+						smarthome.UI.iconType
+					);
+				}
 			}
 		};
 
