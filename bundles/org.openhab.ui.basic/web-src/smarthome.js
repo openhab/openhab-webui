@@ -1939,7 +1939,7 @@
 
 			var
 				data = JSON.parse(payload.data),
-				state,
+				state = "NULL",
 				title;
 
 			if (data.TYPE === "ALIVE") {
@@ -1965,10 +1965,12 @@
 				return;
 			}
 
-			if (data.state === undefined) {
-				state = data.item.state;
-			} else {
-				state = data.state;
+			if (data.item !== undefined) {
+				if (data.state === undefined) {
+					state = data.item.state;
+				} else {
+					state = data.state;
+				}
 			}
 
 			title = _t.getTitleFromLabel(data.label);
