@@ -1,7 +1,6 @@
 node_modules
 node
 npm_cache
-web
 src/main/resources/web/smarthome.css
 src/main/resources/web/smarthome.js
 src/main/resources/web/fonts/*
