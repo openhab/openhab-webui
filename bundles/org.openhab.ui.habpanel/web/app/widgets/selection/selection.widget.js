@@ -121,7 +121,7 @@
         vm.square = vm.columns > 1 && !widget.no_squares;
 
         vm.gridClassMode = (vm.mobile_mode) ? 'sm' : 'xs';
-        vm.gridClass = 'col-' + vm.gridClassMode + '-' + (12 / vm.columns).toString();
+        vm.gridClass = 'col-' + vm.gridClassMode + '-' + (vm.colums == 5 ? '5ths' : (12 / vm.columns).toString());;
 
         vm.selectChoice = function (choice) {
             OHService.sendCmd(widget.item, choice.cmd);
