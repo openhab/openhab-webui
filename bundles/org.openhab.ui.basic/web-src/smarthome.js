@@ -539,6 +539,56 @@
 		}
 	}
 
+	/* class ControlMap */
+	function ControlMap(parentNode) {
+		Control.call(this, parentNode);
+
+		var
+			_t = this,
+			urlMarkerOffIcon = "images/map-marker-off.png",
+			urlNoneIcon = "images/none.png";
+
+		_t.iframe = parentNode.querySelector("iframe");
+		_t.url = parentNode.getAttribute("data-map-url");
+		_t.zoom = parseFloat(parentNode.getAttribute("data-map-zoom"));
+
+		_t.setValuePrivate = function(value, itemState, visible) {
+			var
+				mapUrl = urlMarkerOffIcon,
+				splittedState,
+				lat,
+				lon,
+				val;
+
+			if (!visible) {
+				mapUrl = urlNoneIcon;
+			} else if (itemState !== "UNDEF") {
+				splittedState = itemState.split(",");
+				lat = parseFloat(splittedState[0]);
+				lon = parseFloat(splittedState[1]);
+				mapUrl = _t.url.replace("%lat%", lat.toString());
+				mapUrl = mapUrl.replace("%lon%", lon.toString());
+				val = lon - _t.zoom;
+				mapUrl = mapUrl.replace("%lonminus%", val.toString());
+				val = lon + _t.zoom;
+				mapUrl = mapUrl.replace("%lonplus%", val.toString());
+				val = lat - _t.zoom;
+				mapUrl = mapUrl.replace("%latminus%", val.toString());
+				val = lat + _t.zoom;
+				mapUrl = mapUrl.replace("%latplus%", val.toString());
+			}
+			_t.iframe.setAttribute("src", mapUrl);
+		};
+
+		_t.destroy = function() {
+			var
+				mapParent = _t.iframe.parentNode;
+
+			_t.iframe.setAttribute("src", urlNoneIcon);
+			mapParent.removeChild(_t.iframe);
+		};
+	}
+
 	/* class ControlText extends Control */
 	function ControlText(parentNode) {
 		Control.call(this, parentNode);
@@ -1792,9 +1842,11 @@
 				case "colorpicker":
 					appendControl(new ControlColorpicker(e));
 					break;
+				case "mapview":
+					appendControl(new ControlMap(e));
+					break;
 				case "video":
 				case "webview":
-				case "mapview":
 					appendControl(new Control(e));
 					break;
 				default:

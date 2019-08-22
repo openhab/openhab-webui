@@ -37,6 +37,9 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = WidgetRenderer.class)
 public class MapviewRenderer extends AbstractWidgetRenderer {
 
+    private static final String MAP_URL = "//www.openstreetmap.org/export/embed.html?bbox=%lonminus%,%latminus%,%lonplus%,%latplus%&marker=%lat%,%lon%";
+    private static final double MAP_ZOOM = 0.01;
+
     @Override
     @Activate
     protected void activate(BundleContext bundleContext) {
@@ -67,13 +70,19 @@ public class MapviewRenderer extends AbstractWidgetRenderer {
             PointType pointState = (PointType) state;
             double latitude = pointState.getLatitude().doubleValue();
             double longitude = pointState.getLongitude().doubleValue();
+            snippet = StringUtils.replace(snippet, "%url%", MAP_URL);
             snippet = StringUtils.replace(snippet, "%lat%", Double.toString(latitude));
             snippet = StringUtils.replace(snippet, "%lon%", Double.toString(longitude));
-            snippet = StringUtils.replace(snippet, "%lonminus%", Double.toString(longitude - 0.01));
-            snippet = StringUtils.replace(snippet, "%lonplus%", Double.toString(longitude + 0.01));
-            snippet = StringUtils.replace(snippet, "%latminus%", Double.toString(latitude - 0.01));
-            snippet = StringUtils.replace(snippet, "%latplus%", Double.toString(latitude + 0.01));
+            snippet = StringUtils.replace(snippet, "%lonminus%", Double.toString(longitude - MAP_ZOOM));
+            snippet = StringUtils.replace(snippet, "%lonplus%", Double.toString(longitude + MAP_ZOOM));
+            snippet = StringUtils.replace(snippet, "%latminus%", Double.toString(latitude - MAP_ZOOM));
+            snippet = StringUtils.replace(snippet, "%latplus%", Double.toString(latitude + MAP_ZOOM));
+        } else {
+            snippet = StringUtils.replace(snippet, "%url%", "images/map-marker-off.png");
         }
+
+        snippet = StringUtils.replace(snippet, "%map_url%", MAP_URL);
+        snippet = StringUtils.replace(snippet, "%map_zoom%", Double.toString(MAP_ZOOM));
 
         int height = mapview.getHeight();
         if (height == 0) {
