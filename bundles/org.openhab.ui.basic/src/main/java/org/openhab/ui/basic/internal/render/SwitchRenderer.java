@@ -19,6 +19,7 @@ import org.eclipse.smarthome.core.items.Item;
 import org.eclipse.smarthome.core.items.ItemNotFoundException;
 import org.eclipse.smarthome.core.library.items.NumberItem;
 import org.eclipse.smarthome.core.library.items.RollershutterItem;
+import org.eclipse.smarthome.core.library.items.SwitchItem;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.QuantityType;
 import org.eclipse.smarthome.core.types.State;
@@ -85,6 +86,8 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
             if (s.getMappings().size() == 0) {
                 if (item instanceof RollershutterItem) {
                     snippetName = "rollerblind";
+                } else if (item instanceof SwitchItem) {
+                    snippetName = "switch";
                 } else if (item instanceof GroupItem && ((GroupItem) item).getBaseItem() instanceof RollershutterItem) {
                     snippetName = "rollerblind";
                 } else {
