@@ -24,15 +24,12 @@ import java.util.Map;
 public class WebAppConfig {
 
     private static final String DEFAULT_SITEMAP = "default";
-    private static final String DEFAULT_ICON_TYPE = "png";
     private static final boolean DEFAULT_HTML_CACHE_DISABLED = false;
 
     private String defaultSitemap = DEFAULT_SITEMAP;
-    private String iconType = DEFAULT_ICON_TYPE;
     private boolean htmlCacheDisabled = DEFAULT_HTML_CACHE_DISABLED;
 
     public void applyConfig(Map<String, Object> configProps) {
-        String configIconType = (String) configProps.get("iconType");
         String configDefaultSitemap = (String) configProps.get("defaultSitemap");
         Object configHtmlCacheDisabled = configProps.get("disableHtmlCache");
 
@@ -40,26 +37,15 @@ public class WebAppConfig {
             configDefaultSitemap = DEFAULT_SITEMAP;
         }
 
-        if (configIconType == null) {
-            configIconType = DEFAULT_ICON_TYPE;
-        } else if (!configIconType.equalsIgnoreCase("svg") && !configIconType.equalsIgnoreCase("png")) {
-            configIconType = DEFAULT_ICON_TYPE;
-        }
-
         if (configHtmlCacheDisabled != null && "true".equalsIgnoreCase(configHtmlCacheDisabled.toString())) {
             htmlCacheDisabled = true;
         }
 
-        iconType = configIconType;
         defaultSitemap = configDefaultSitemap;
     }
 
     public String getDefaultSitemap() {
         return defaultSitemap;
-    }
-
-    public String getIconType() {
-        return iconType;
     }
 
     public boolean isHtmlCacheDisabled() {

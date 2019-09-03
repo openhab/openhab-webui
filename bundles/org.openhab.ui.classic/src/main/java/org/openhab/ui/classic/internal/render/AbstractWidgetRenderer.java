@@ -49,6 +49,8 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
     private final Logger logger = LoggerFactory.getLogger(AbstractWidgetRenderer.class);
 
+    private static final String ICON_TYPE = "svg";
+
     protected WebAppConfig config;
 
     protected ItemUIRegistry itemUIRegistry;
@@ -195,7 +197,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     }
 
     protected String getFormat() {
-        return config.getIconType();
+        return ICON_TYPE;
     }
 
     protected String getState(Widget w) {
