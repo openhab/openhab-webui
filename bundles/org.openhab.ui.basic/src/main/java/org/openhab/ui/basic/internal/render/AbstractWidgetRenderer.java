@@ -52,6 +52,8 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
     private final Logger logger = LoggerFactory.getLogger(AbstractWidgetRenderer.class);
 
+    public static final String ICON_TYPE = "svg";
+
     protected ItemUIRegistry itemUIRegistry;
     protected TranslationProvider i18nProvider;
     protected LocaleProvider localeProvider;
@@ -115,7 +117,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     protected String preprocessSnippet(String originalSnippet, Widget w) {
         String snippet = originalSnippet;
         snippet = StringUtils.replace(snippet, "%widget_id%", itemUIRegistry.getWidgetId(w));
-        snippet = StringUtils.replace(snippet, "%icon_type%", config.getIconType());
+        snippet = StringUtils.replace(snippet, "%icon_type%", ICON_TYPE);
         snippet = StringUtils.replace(snippet, "%item%", w.getItem() != null ? w.getItem() : "");
         // Optimization: avoid calling 3 times itemUIRegistry.getLabel(w)
         String text = itemUIRegistry.getLabel(w);
