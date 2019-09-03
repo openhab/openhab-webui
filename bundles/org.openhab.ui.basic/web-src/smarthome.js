@@ -358,14 +358,16 @@
 						"?state=" +
 						encodeURIComponent(state) +
 						"&format=" +
-						smarthome.UI.iconType
+						smarthome.UI.iconType +
+						"&anyFormat=true"
 					);
 				} else {
 					_t.icon.setAttribute("src",
 						"/icon/" +
 						_t.iconName +
 						"?format=" +
-						smarthome.UI.iconType
+						smarthome.UI.iconType +
+						"&anyFormat=true"
 					);
 				}
 			}

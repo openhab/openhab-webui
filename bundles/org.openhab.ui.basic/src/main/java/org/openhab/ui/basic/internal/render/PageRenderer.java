@@ -84,11 +84,11 @@ public class PageRenderer extends AbstractWidgetRenderer {
     /**
      * This is the main method, which is called to produce the HTML code for a servlet request.
      *
-     * @param id       the id of the parent widget whose children are about to appear on this page
-     * @param sitemap  the sitemap to use
-     * @param label    the title of this page
+     * @param id the id of the parent widget whose children are about to appear on this page
+     * @param sitemap the sitemap to use
+     * @param label the title of this page
      * @param children a list of widgets that should appear on this page
-     * @param async    true, if this is an asynchronous request. This will use a different HTML skeleton
+     * @param async true, if this is an asynchronous request. This will use a different HTML skeleton
      * @return a string builder with the produced HTML code
      * @throws RenderException if an error occurs during the processing
      */
@@ -112,7 +112,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
         snippet = StringUtils.replace(snippet, "%servletname%", WebAppServlet.SERVLET_NAME);
         snippet = StringUtils.replace(snippet, "%sitemap%", sitemap);
         snippet = StringUtils.replace(snippet, "%htmlclass%", config.getCssClassList());
-        snippet = StringUtils.replace(snippet, "%icon_type%", config.getIconType());
+        snippet = StringUtils.replace(snippet, "%icon_type%", ICON_TYPE);
         snippet = StringUtils.replace(snippet, "%theme%", config.getTheme());
 
         String[] parts = snippet.split("%children%");
