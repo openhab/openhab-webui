@@ -114,6 +114,8 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
                         GalleryWidgetAttachment widget = new GalleryWidgetAttachment();
                         if (link.url.startsWith("//")) {
                             link.url = "https:" + link.url;
+                        } else if (link.url.startsWith("/uploads")) {
+                            link.url = COMMUNITY_BASE_URL + link.url;
                         }
                         widget.sourceUrl = link.url;
                         URL widgetUrl = new URL(link.url);
