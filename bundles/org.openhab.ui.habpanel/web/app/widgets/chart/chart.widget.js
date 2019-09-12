@@ -209,9 +209,8 @@
                         vm.interactiveChartOptions.liveUpdates.fillValues = vm.widget.liveUpdates.fillValues;
                     }
 
+                    vm.interactiveChartReady = true;
                 });
-
-                vm.interactiveChartReady = true;
             };
 
             var updateValue = function(item) {
