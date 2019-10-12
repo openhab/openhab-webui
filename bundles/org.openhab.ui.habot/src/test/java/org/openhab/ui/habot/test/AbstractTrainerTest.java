@@ -12,19 +12,19 @@
  */
 package org.openhab.ui.habot.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.eclipse.smarthome.core.voice.text.Intent;
+import org.eclipse.smarthome.core.voice.text.InterpretationException;
+import org.eclipse.smarthome.core.voice.text.InterpretationResult;
+import org.eclipse.smarthome.core.voice.text.UnsupportedLanguageException;
 import org.junit.Before;
-import org.openhab.ui.habot.nlp.Intent;
-import org.openhab.ui.habot.nlp.IntentInterpretation;
 import org.openhab.ui.habot.nlp.Skill;
-import org.openhab.ui.habot.nlp.UnsupportedLanguageException;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 
 public class AbstractTrainerTest {
@@ -82,9 +82,23 @@ public class AbstractTrainerTest {
         }
 
         @Override
-        public IntentInterpretation interpret(Intent intent, String language) {
-            // TODO Auto-generated method stub
-            return null;
+        public String interpretForVoice(Intent intent, String language) throws InterpretationException {
+            return "OK";
+        }
+
+        @Override
+        public InterpretationResult interpretForChat(Intent intent, String language) throws InterpretationException {
+            return new InterpretationResult(language, "OK");
+        }
+
+        @Override
+        public boolean isSuitableForChat() {
+            return true;
+        }
+
+        @Override
+        public boolean isSuitableForVoice() {
+            return true;
         }
     }
 

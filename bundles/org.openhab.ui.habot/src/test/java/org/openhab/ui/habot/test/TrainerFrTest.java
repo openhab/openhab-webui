@@ -14,8 +14,8 @@ package org.openhab.ui.habot.test;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.smarthome.core.voice.text.Intent;
 import org.junit.Test;
-import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 
 public class TrainerFrTest extends AbstractTrainerTest {

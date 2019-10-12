@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config-description:config-descriptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<config-description:config-descriptions
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:config-description="http://eclipse.org/smarthome/schemas/config-description/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/config-description/v1.0.0 http://eclipse.org/smarthome/schemas/config-description-1.0.0.xsd">
 
 	<config-description uri="ui:habot">
+		<parameter name="interpreter" type="text" required="true">
+			<label>Interpreter</label>
+			<description>The human language interpreter to be used</description>
+			<default>habot_opennlp</default>
+		</parameter>
 		<parameter name="useGzipCompression" type="boolean">
 			<label>Use compressed web app resources</label>
 			<description>Serves the compressed web app static files with Content-Encoding: gzip. This decreases significantly the download size of the app. This is NOT supported by openHAB Cloud/myopenhab.org!</description>
@@ -11,7 +17,7 @@
 		</parameter>
 	</config-description>
 
-	<config-description uri="voice:opennlphli">
+	<config-description uri="voice:habotopennlp">
 		<parameter name="theme" type="text" required="true">
 			<label>Tokenizer</label>
 			<description>The alphanumeric tokenizer removes punctuation and might help with languages where entities might not always be enclosed between whitespaces (French, Spanish, Italian... Example: "l'humidité", "l'alarme")</description>

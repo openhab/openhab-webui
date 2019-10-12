@@ -31,10 +31,10 @@ import org.eclipse.smarthome.core.items.ItemRegistry;
 import org.eclipse.smarthome.core.items.Metadata;
 import org.eclipse.smarthome.core.items.MetadataKey;
 import org.eclipse.smarthome.core.items.MetadataRegistry;
-import org.openhab.ui.habot.nlp.ItemNamedAttribute;
-import org.openhab.ui.habot.nlp.ItemNamedAttribute.AttributeSource;
-import org.openhab.ui.habot.nlp.ItemResolver;
-import org.openhab.ui.habot.nlp.UnsupportedLanguageException;
+import org.eclipse.smarthome.core.voice.text.ItemNamedAttribute;
+import org.eclipse.smarthome.core.voice.text.ItemNamedAttribute.AttributeSource;
+import org.eclipse.smarthome.core.voice.text.ItemResolver;
+import org.eclipse.smarthome.core.voice.text.UnsupportedLanguageException;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,7 @@ public class NamedAttributesItemResolver implements ItemResolver {
     public void setLocale(Locale locale) {
         if (!locale.equals(currentLocale)) {
             this.currentLocale = locale;
-            logger.debug("Language set to: %s - invalidating cached item named attributes", locale.getLanguage());
+            logger.debug("Language set to: {} - invalidating cached item named attributes", locale.getLanguage());
             this.itemAttributes = null;
             this.tagAttributes = ResourceBundle.getBundle("tagattributes", locale,
                     ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT));

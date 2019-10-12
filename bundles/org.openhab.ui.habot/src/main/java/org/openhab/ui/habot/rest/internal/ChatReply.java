@@ -10,11 +10,14 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.habot.nlp;
+package org.openhab.ui.habot.rest.internal;
 
 import java.util.Locale;
+import java.util.stream.Collectors;
 
-import org.openhab.ui.habot.card.Card;
+import org.eclipse.smarthome.core.voice.chat.Card;
+import org.eclipse.smarthome.core.voice.text.Intent;
+import org.eclipse.smarthome.core.voice.text.InterpretationResult;
 
 /**
  * The complete DTO object representing an HABot chat reply, returned by the REST API.
@@ -22,6 +25,7 @@ import org.openhab.ui.habot.card.Card;
  * matched items and card.
  *
  * @author Yannick Schaus - Initial contribution
+ * @author Laurent Garnier - class moved + new constructor added
  */
 public class ChatReply {
 
@@ -51,6 +55,25 @@ public class ChatReply {
     public ChatReply(Locale locale, String query) {
         this.language = locale.getLanguage();
         this.query = query;
+    }
+
+    /**
+     * Constructs a ChatReply for the specified query and {@link InterpretationResult}
+     *
+     * @param query the user query
+     * @param result the result of the interpretation
+     */
+    public ChatReply(String query, InterpretationResult result) {
+        this.query = query;
+        if (result != null) {
+            this.language = result.getLanguage();
+            this.answer = result.getAnswer();
+            this.hint = result.getHint();
+            this.intent = result.getIntent();
+            this.matchedItemNames = result.getMatchedItems().stream().map(i -> i.getName()).collect(Collectors.toList())
+                    .toArray(new String[0]);
+            this.card = result.getCard();
+        }
     }
 
     /**

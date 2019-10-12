@@ -16,11 +16,14 @@ import java.io.InputStream;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.items.GroupItem;
 import org.eclipse.smarthome.core.items.Item;
 import org.eclipse.smarthome.core.items.ItemRegistry;
-import org.openhab.ui.habot.nlp.internal.AnswerFormatter;
-import org.openhab.ui.habot.nlp.internal.NamedAttributesItemResolver;
+import org.eclipse.smarthome.core.voice.text.Intent;
+import org.eclipse.smarthome.core.voice.text.ItemResolver;
+import org.eclipse.smarthome.core.voice.text.UnsupportedLanguageException;
 
 /**
  * An abstract implmentation of a {@link Skill} with helper methods to find items matching an {@link Intent}
@@ -29,17 +32,17 @@ import org.openhab.ui.habot.nlp.internal.NamedAttributesItemResolver;
  * It also contains a default implementation of the training data sourcing (text file in train/(language)/(intent).txt).
  *
  * @author Yannick Schaus - Initial contribution
+ * @author Laurent Garnier - add null annotations
  */
+@NonNullByDefault
 public abstract class AbstractItemIntentInterpreter implements Skill {
 
-    protected ItemRegistry itemRegistry;
-    protected ItemResolver itemResolver;
-    protected AnswerFormatter answerFormatter;
+    protected @NonNullByDefault({}) ItemRegistry itemRegistry;
+    protected @NonNullByDefault({}) ItemResolver itemResolver;
+    protected @Nullable AnswerFormatter answerFormatter;
 
     /**
      * Returns the items matching the entities in the intent.
-     * It delegates this task to the {@link NamedAttributesItemResolver} to find named attributes
-     * matching the entities.
      *
      * The resulting items should match the object AND the location if both are provided.
      *

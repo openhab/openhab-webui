@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.habot.card;
+package org.openhab.ui.habot.nlp;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +20,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.items.GroupItem;
 import org.eclipse.smarthome.core.items.Item;
 import org.eclipse.smarthome.core.items.Metadata;
@@ -30,8 +32,10 @@ import org.eclipse.smarthome.core.transform.TransformationException;
 import org.eclipse.smarthome.core.transform.TransformationHelper;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.StateDescription;
-import org.openhab.ui.habot.card.internal.CardRegistry;
-import org.openhab.ui.habot.nlp.Intent;
+import org.eclipse.smarthome.core.voice.chat.Card;
+import org.eclipse.smarthome.core.voice.chat.CardRegistry;
+import org.eclipse.smarthome.core.voice.chat.Component;
+import org.eclipse.smarthome.core.voice.text.Intent;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Reference;
 
@@ -47,12 +51,14 @@ import org.osgi.service.component.annotations.Reference;
  * appropriate tags, and from there edit them so that they would appear with the eventual customizations the next time.
  *
  * @author Yannick Schaus - Initial contribution
+ * @author Laurent Garnier - class moved + null annotations added
  */
+@NonNullByDefault
 @org.osgi.service.component.annotations.Component(service = CardBuilder.class, immediate = true)
 public class CardBuilder {
 
-    private CardRegistry cardRegistry;
-    private MetadataRegistry metadataRegistry;
+    private @NonNullByDefault({}) CardRegistry cardRegistry;
+    private @NonNullByDefault({}) MetadataRegistry metadataRegistry;
 
     /**
      * Retrieves or build a card for the specified intent and matched items
@@ -326,7 +332,7 @@ public class CardBuilder {
      * @param items the group of matching items including an eventual GroupItem to find
      * @return an optional group eligible for the card's title, or null if none was found
      */
-    private GroupItem getMatchingGroup(Collection<Item> items) {
+    private @Nullable GroupItem getMatchingGroup(Collection<Item> items) {
         Optional<Item> groupItem = items.stream().filter(i -> i instanceof GroupItem)
                 .filter(g -> items.stream().allMatch(i -> i.getName().equals(g.getName())
                         || ((GroupItem) g).getAllMembers().stream().anyMatch(i2 -> i2.getName().contains(i.getName()))))

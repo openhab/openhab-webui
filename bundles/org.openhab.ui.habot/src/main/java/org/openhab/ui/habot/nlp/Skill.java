@@ -14,20 +14,33 @@ package org.openhab.ui.habot.nlp;
 
 import java.io.InputStream;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.smarthome.core.voice.text.UnsupportedLanguageException;
+
 /**
  * This interface must be implemented to add support for a certain intent.
  * It covers both the training data to supply to OpenNLP for the intent categorization (and token extraction),
  * and the method to call when the intent is recognized.
  *
  * @author Yannick Schaus - Initial contribution
+ * @author Laurent Garnier - extends Skill interface from the core framework + null annotations added
  */
-public interface Skill {
+@NonNullByDefault
+public interface Skill extends org.eclipse.smarthome.core.voice.text.Skill {
+
     /**
-     * Gets the internal name of the intent handled by this skill.
+     * Returns whether this skill is suitable for chat dialog
      *
-     * @return the id of the intent covered by this skill
+     * @return true if the skill is suitable for chat dialog; false if not
      */
-    String getIntentId();
+    boolean isSuitableForChat();
+
+    /**
+     * Returns whether this skill is suitable for voice control
+     *
+     * @return true if the skill is suitable for voice control; false if not
+     */
+    boolean isSuitableForVoice();
 
     /**
      * Get an input stream containing the training data for the specified intent to feed to the OpenNLP document
@@ -40,13 +53,4 @@ public interface Skill {
      * @return the input stream containing the training data
      */
     InputStream getTrainingData(String language) throws UnsupportedLanguageException;
-
-    /**
-     * Interprets the recognized intent.
-     *
-     * @param intent   the intent to interpret
-     * @param language the language of the query (ISO-639 code)
-     * @return the {@link IntentInterpretation} containing the results of the interpretation
-     */
-    IntentInterpretation interpret(Intent intent, String language);
 }

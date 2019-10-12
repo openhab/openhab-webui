@@ -14,12 +14,15 @@ package org.openhab.ui.habot.nlp.internal.skill;
 
 import java.util.Set;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.core.items.Item;
-import org.openhab.ui.habot.card.CardBuilder;
+import org.eclipse.smarthome.core.voice.text.Intent;
+import org.eclipse.smarthome.core.voice.text.InterpretationException;
+import org.eclipse.smarthome.core.voice.text.InterpretationResult;
+import org.eclipse.smarthome.core.voice.text.ItemResolver;
 import org.openhab.ui.habot.nlp.AbstractItemIntentInterpreter;
-import org.openhab.ui.habot.nlp.Intent;
-import org.openhab.ui.habot.nlp.IntentInterpretation;
-import org.openhab.ui.habot.nlp.ItemResolver;
+import org.openhab.ui.habot.nlp.AnswerFormatter;
+import org.openhab.ui.habot.nlp.CardBuilder;
 import org.openhab.ui.habot.nlp.Skill;
 import org.osgi.service.component.annotations.Reference;
 
@@ -27,11 +30,13 @@ import org.osgi.service.component.annotations.Reference;
  * This {@link Skill} is used to reply with a card containing a daily chart of the matching item(s).
  *
  * @author Yannick Schaus - Initial contribution
+ * @author Laurent Garnier - consider extended Skill interface + null annotations added
  */
+@NonNullByDefault
 @org.osgi.service.component.annotations.Component(service = Skill.class)
 public class HistoryDailyGraphSkill extends AbstractItemIntentInterpreter {
 
-    private CardBuilder cardBuilder;
+    private @NonNullByDefault({}) CardBuilder cardBuilder;
 
     @Override
     public String getIntentId() {
@@ -39,17 +44,37 @@ public class HistoryDailyGraphSkill extends AbstractItemIntentInterpreter {
     }
 
     @Override
-    public IntentInterpretation interpret(Intent intent, String language) {
-        IntentInterpretation interpretation = new IntentInterpretation();
+    public boolean isSuitableForChat() {
+        return true;
+    }
+
+    @Override
+    public boolean isSuitableForVoice() {
+        return false;
+    }
+
+    @Override
+    public String interpretForVoice(Intent intent, String language) throws InterpretationException {
+        throw new InterpretationException("Voice control not yet supported by the HABot OpenNLP interpreter");
+    }
+
+    @Override
+    public InterpretationResult interpretForChat(Intent intent, String language) throws InterpretationException {
+        InterpretationResult interpretation = new InterpretationResult(language, intent);
+        AnswerFormatter formatter = answerFormatter;
+        if (formatter == null) {
+            formatter = answerFormatter = new AnswerFormatter(language);
+        }
+
         Set<Item> matchedItems = findItems(intent);
 
         if (intent.getEntities().isEmpty()) {
-            interpretation.setAnswer(answerFormatter.getRandomAnswer("general_failure"));
+            interpretation.setAnswer(formatter.getRandomAnswer("general_failure"));
             return interpretation;
         }
-        if (matchedItems == null || matchedItems.isEmpty()) {
-            interpretation.setAnswer(answerFormatter.getRandomAnswer("answer_nothing_found"));
-            interpretation.setHint(answerFormatter.getStandardTagHint(intent.getEntities()));
+        if (matchedItems.isEmpty()) {
+            interpretation.setAnswer(formatter.getRandomAnswer("answer_nothing_found"));
+            interpretation.setHint(formatter.getStandardTagHint(intent.getEntities()));
         } else {
             interpretation.setMatchedItems(matchedItems);
 
@@ -61,7 +86,7 @@ public class HistoryDailyGraphSkill extends AbstractItemIntentInterpreter {
             interpretation.setCard(this.cardBuilder.buildChartCard(intent, matchedItems, period));
         }
 
-        interpretation.setAnswer(answerFormatter.getRandomAnswer("info_found_simple"));
+        interpretation.setAnswer(formatter.getRandomAnswer("info_found_simple"));
 
         return interpretation;
     }

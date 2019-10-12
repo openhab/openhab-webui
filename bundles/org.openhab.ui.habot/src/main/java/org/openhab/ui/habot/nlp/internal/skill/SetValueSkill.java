@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.core.events.EventPublisher;
 import org.eclipse.smarthome.core.items.GroupItem;
 import org.eclipse.smarthome.core.items.Item;
@@ -26,11 +27,13 @@ import org.eclipse.smarthome.core.items.events.ItemEventFactory;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.HSBType;
 import org.eclipse.smarthome.core.library.types.PercentType;
-import org.openhab.ui.habot.card.CardBuilder;
+import org.eclipse.smarthome.core.voice.text.Intent;
+import org.eclipse.smarthome.core.voice.text.InterpretationException;
+import org.eclipse.smarthome.core.voice.text.InterpretationResult;
+import org.eclipse.smarthome.core.voice.text.ItemResolver;
 import org.openhab.ui.habot.nlp.AbstractItemIntentInterpreter;
-import org.openhab.ui.habot.nlp.Intent;
-import org.openhab.ui.habot.nlp.IntentInterpretation;
-import org.openhab.ui.habot.nlp.ItemResolver;
+import org.openhab.ui.habot.nlp.AnswerFormatter;
+import org.openhab.ui.habot.nlp.CardBuilder;
 import org.openhab.ui.habot.nlp.Skill;
 import org.osgi.service.component.annotations.Reference;
 
@@ -41,12 +44,14 @@ import com.google.common.collect.ImmutableMap;
  * color (for Color items).
  *
  * @author Yannick Schaus - Initial contribution
+ * @author Laurent Garnier - consider extended Skill interface + null annotations added
  */
+@NonNullByDefault
 @org.osgi.service.component.annotations.Component(service = Skill.class)
 public class SetValueSkill extends AbstractItemIntentInterpreter {
 
-    private CardBuilder cardBuilder;
-    private EventPublisher eventPublisher;
+    private @NonNullByDefault({}) CardBuilder cardBuilder;
+    private @NonNullByDefault({}) EventPublisher eventPublisher;
 
     @Override
     public String getIntentId() {
@@ -54,35 +59,54 @@ public class SetValueSkill extends AbstractItemIntentInterpreter {
     }
 
     @Override
-    public IntentInterpretation interpret(Intent intent, String language) {
-        IntentInterpretation interpretation = new IntentInterpretation();
+    public boolean isSuitableForChat() {
+        return true;
+    }
+
+    @Override
+    public boolean isSuitableForVoice() {
+        return false;
+    }
+
+    @Override
+    public String interpretForVoice(Intent intent, String language) throws InterpretationException {
+        throw new InterpretationException("Voice control not yet supported by the HABot OpenNLP interpreter");
+    }
+
+    @Override
+    public InterpretationResult interpretForChat(Intent intent, String language) throws InterpretationException {
+        InterpretationResult interpretation = new InterpretationResult(language, intent);
+        AnswerFormatter formatter = answerFormatter;
+        if (formatter == null) {
+            formatter = answerFormatter = new AnswerFormatter(language);
+        }
 
         Set<Item> matchedItems = findItems(intent);
 
         if (intent.getEntities().isEmpty()) {
-            interpretation.setAnswer(answerFormatter.getRandomAnswer("general_failure"));
+            interpretation.setAnswer(formatter.getRandomAnswer("general_failure"));
             return interpretation;
         }
-        if (matchedItems == null || matchedItems.isEmpty()) {
-            interpretation.setAnswer(answerFormatter.getRandomAnswer("answer_nothing_found"));
-            interpretation.setHint(answerFormatter.getStandardTagHint(intent.getEntities()));
+        if (matchedItems.isEmpty()) {
+            interpretation.setAnswer(formatter.getRandomAnswer("answer_nothing_found"));
+            interpretation.setHint(formatter.getStandardTagHint(intent.getEntities()));
         } else {
             interpretation.setMatchedItems(matchedItems);
 
             if (intent.getEntities().containsKey("color")) {
-                interpretSetColor(intent, language, interpretation, matchedItems);
+                interpretSetColor(intent, language, interpretation, matchedItems, formatter);
             } else if (intent.getEntities().containsKey("value")) {
-                interpretSetValue(intent, language, interpretation, matchedItems);
+                interpretSetValue(intent, language, interpretation, matchedItems, formatter);
             } else {
-                interpretation.setAnswer(answerFormatter.getRandomAnswer("value_misunderstood"));
+                interpretation.setAnswer(formatter.getRandomAnswer("value_misunderstood"));
             }
         }
 
         return interpretation;
     }
 
-    private void interpretSetColor(Intent intent, String language, IntentInterpretation interpretation,
-            Set<Item> matchedItems) {
+    private void interpretSetColor(Intent intent, String language, InterpretationResult interpretation,
+            Set<Item> matchedItems, AnswerFormatter answerFormatter) {
         String colorString = intent.getEntities().get("color");
 
         // filter out the items which can't receive an HSB command
@@ -120,8 +144,8 @@ public class SetValueSkill extends AbstractItemIntentInterpreter {
         }
     }
 
-    private void interpretSetValue(Intent intent, String language, IntentInterpretation interpretation,
-            Set<Item> matchedItems) {
+    private void interpretSetValue(Intent intent, String language, InterpretationResult interpretation,
+            Set<Item> matchedItems, AnswerFormatter answerFormatter) {
         String rawValue = intent.getEntities().get("value");
 
         // Set a color

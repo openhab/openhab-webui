@@ -10,12 +10,15 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.habot.nlp.internal;
+package org.openhab.ui.habot.nlp;
 
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.ResourceBundle;
+
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -23,7 +26,9 @@ import com.google.common.collect.ImmutableMap;
  * This class helps building natural language answers by selecting random answers from a resource bundle.
  *
  * @author Yannick Schaus - Initial contribution
+ * @author Laurent Garnier - class moved + null annotations added
  */
+@NonNullByDefault
 public class AnswerFormatter {
 
     ResourceBundle answers;
@@ -41,7 +46,7 @@ public class AnswerFormatter {
                 ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT));
     }
 
-    public String getRandomAnswer(String key, Map<String, String> placeholderValues) {
+    public String getRandomAnswer(String key, @Nullable Map<String, String> placeholderValues) {
         String alternativesStr = answers.getString(key);
 
         String[] alternatives = alternativesStr.split("\\|");

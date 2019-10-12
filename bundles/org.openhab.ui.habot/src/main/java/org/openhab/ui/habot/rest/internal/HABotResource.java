@@ -38,16 +38,13 @@ import javax.ws.rs.core.Response.Status;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.core.auth.Role;
 import org.eclipse.smarthome.core.voice.VoiceManager;
-import org.eclipse.smarthome.core.voice.text.InterpretationException;
+import org.eclipse.smarthome.core.voice.chat.Card;
+import org.eclipse.smarthome.core.voice.chat.CardRegistry;
+import org.eclipse.smarthome.core.voice.text.InterpretationResult;
+import org.eclipse.smarthome.core.voice.text.ItemNamedAttribute;
+import org.eclipse.smarthome.core.voice.text.ItemResolver;
 import org.eclipse.smarthome.io.rest.LocaleService;
 import org.eclipse.smarthome.io.rest.RESTResource;
-import org.openhab.ui.habot.card.Card;
-import org.openhab.ui.habot.card.internal.CardRegistry;
-import org.openhab.ui.habot.nlp.ChatReply;
-import org.openhab.ui.habot.nlp.ItemNamedAttribute;
-import org.openhab.ui.habot.nlp.ItemResolver;
-import org.openhab.ui.habot.nlp.internal.AnswerFormatter;
-import org.openhab.ui.habot.nlp.internal.OpenNLPInterpreter;
 import org.openhab.ui.habot.notification.internal.NotificationService;
 import org.openhab.ui.habot.notification.internal.webpush.Subscription;
 import org.osgi.service.component.annotations.Component;
@@ -69,8 +66,9 @@ import io.swagger.annotations.ApiResponses;
  * This class describes the /habot resource of the REST API.
  *
  * @author Yannick Schaus - Initial contribution
+ * @author Laurent Garnier - use the interpreter provided as a configuration setting
  */
-@Component
+@Component(service = HABotResource.class)
 @RolesAllowed({ Role.USER, Role.ADMIN })
 @Path(HABotResource.PATH_HABOT)
 @Api(HABotResource.PATH_HABOT)
@@ -78,7 +76,7 @@ public class HABotResource implements RESTResource {
 
     private final Logger logger = LoggerFactory.getLogger(HABotResource.class);
 
-    private static final String OPENNLP_HLI = "opennlp";
+    private String hliId;
 
     private VoiceManager voiceManager;
 
@@ -137,6 +135,10 @@ public class HABotResource implements RESTResource {
 
     public static final String PATH_HABOT = "habot";
 
+    public void setHliId(String hliId) {
+        this.hliId = hliId;
+    }
+
     @GET
     @RolesAllowed({ Role.USER, Role.ADMIN })
     @Path("/greet")
@@ -145,14 +147,12 @@ public class HABotResource implements RESTResource {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ChatReply.class),
             @ApiResponse(code = 500, message = "There is no support for the configured language") })
     public Response greet(
-            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) @ApiParam(value = "language (will use the default if omitted)") String language) {
+            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) @ApiParam(value = "language (will use the default if omitted)") String language)
+            throws Exception {
         final Locale locale = this.localeService.getLocale(null);
 
-        AnswerFormatter answerFormatter = new AnswerFormatter(locale);
-
-        String greeting = answerFormatter.getRandomAnswer("greeting");
-        ChatReply reply = new ChatReply(locale);
-        reply.setAnswer(greeting);
+        InterpretationResult result = voiceManager.interpretForChat(locale, "", hliId);
+        ChatReply reply = new ChatReply(null, result);
 
         return Response.ok(reply).build();
     }
@@ -170,11 +170,8 @@ public class HABotResource implements RESTResource {
         final Locale locale = this.localeService.getLocale(null);
 
         // interpret
-        OpenNLPInterpreter hli = (OpenNLPInterpreter) voiceManager.getHLI(OPENNLP_HLI);
-        if (hli == null) {
-            throw new InterpretationException("The OpenNLP interpreter is not available");
-        }
-        ChatReply reply = hli.reply(locale, query);
+        InterpretationResult result = voiceManager.interpretForChat(locale, query, hliId);
+        ChatReply reply = new ChatReply(query, result);
 
         return Response.ok(reply).build();
     }

@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 
-import org.openhab.ui.habot.nlp.Intent;
+import org.eclipse.smarthome.core.voice.text.Intent;
+import org.eclipse.smarthome.core.voice.text.UnsupportedLanguageException;
 import org.openhab.ui.habot.nlp.Skill;
-import org.openhab.ui.habot.nlp.UnsupportedLanguageException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +60,7 @@ public class IntentTrainer {
      * Trains a new IntentTrainer instance with intents sourced from a collection of skills for the specified language
      *
      * @param language the ISO-639 language code
-     * @param skills   the collection of skills providing training data
+     * @param skills the collection of skills providing training data
      * @throws Exception
      */
     public IntentTrainer(String language, Collection<Skill> skills) throws Exception {
@@ -71,10 +71,10 @@ public class IntentTrainer {
      * Trains a new IntentTrainer instance with intents sourced from a collection of skills for the specified language,
      * and additional name samples
      *
-     * @param language              the ISO-639 language code
-     * @param skills                the collection of skills providing training data
+     * @param language the ISO-639 language code
+     * @param skills the collection of skills providing training data
      * @param additionalNameSamples additional user-provided name samples to train the token name finder
-     * @param tokenizerId           tokenizer to use ("alphanumeric" or "whitespace")
+     * @param tokenizerId tokenizer to use ("alphanumeric" or "whitespace")
      * @throws Exception
      */
     public IntentTrainer(String language, Collection<Skill> skills, InputStream additionalNameSamples,
@@ -89,10 +89,6 @@ public class IntentTrainer {
 
             try {
                 InputStream trainingData = skill.getTrainingData(language);
-                if (trainingData == null) {
-                    throw new UnsupportedLanguageException(language);
-                }
-
                 ObjectStream<String> lineStream = new LowerCasePlainTextByLineStream(trainingData);
                 ObjectStream<DocumentSample> documentSampleStream = new IntentDocumentSampleStream(intent, lineStream);
                 categoryStreams.add(documentSampleStream);
@@ -114,8 +110,8 @@ public class IntentTrainer {
         trainingParams.put(AbstractTrainer.VERBOSE_PARAM, false);
 
         /* train the categorizer! */
-        DoccatModel doccatModel = DocumentCategorizerME.train(language, combinedDocumentSampleStream,
-                trainingParams, new DoccatFactory());
+        DoccatModel doccatModel = DocumentCategorizerME.train(language, combinedDocumentSampleStream, trainingParams,
+                new DoccatFactory());
         combinedDocumentSampleStream.close();
 
         List<TokenNameFinderModel> tokenNameFinderModels = new ArrayList<TokenNameFinderModel>();
@@ -125,10 +121,6 @@ public class IntentTrainer {
         for (Skill skill : skills) {
             try {
                 InputStream trainingData = skill.getTrainingData(language);
-                if (trainingData == null) {
-                    throw new UnsupportedLanguageException(language);
-                }
-
                 ObjectStream<String> lineStream = new LowerCasePlainTextByLineStream(trainingData);
                 ObjectStream<NameSample> nameSampleStream = new NameSampleDataStream(lineStream);
                 nameStreams.add(nameSampleStream);
@@ -156,6 +148,7 @@ public class IntentTrainer {
 
         categorizer = new DocumentCategorizerME(doccatModel);
         nameFinder = new NameFinderME(tokenNameFinderModel);
+        logger.debug("IntentTrainer created");
     }
 
     /**
@@ -177,10 +170,12 @@ public class IntentTrainer {
         Span[] spans = nameFinder.find(tokens);
         String[] names = Span.spansToStrings(spans, tokens);
         for (int i = 0; i < spans.length; i++) {
+            logger.debug("Span {}: {} {} {} name {}", i, spans[i].getStart(), spans[i].getEnd(), spans[i].getType(),
+                    names[i]);
             intent.getEntities().put(spans[i].getType(), names[i]);
         }
 
-        logger.debug("{}", intent.toString());
+        logger.debug("IntentTrainer interpret => {}", intent.toString());
 
         return intent;
     }

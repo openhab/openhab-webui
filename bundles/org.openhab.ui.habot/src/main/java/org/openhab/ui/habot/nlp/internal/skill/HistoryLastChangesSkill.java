@@ -18,20 +18,24 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.items.Item;
 import org.eclipse.smarthome.core.persistence.HistoricItem;
 import org.eclipse.smarthome.core.transform.TransformationException;
 import org.eclipse.smarthome.core.transform.TransformationHelper;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.StateDescription;
+import org.eclipse.smarthome.core.voice.chat.Card;
+import org.eclipse.smarthome.core.voice.chat.CardRegistry;
+import org.eclipse.smarthome.core.voice.chat.Component;
+import org.eclipse.smarthome.core.voice.text.Intent;
+import org.eclipse.smarthome.core.voice.text.InterpretationException;
+import org.eclipse.smarthome.core.voice.text.InterpretationResult;
+import org.eclipse.smarthome.core.voice.text.ItemResolver;
 import org.eclipse.smarthome.model.persistence.extensions.PersistenceExtensions;
-import org.openhab.ui.habot.card.Card;
-import org.openhab.ui.habot.card.Component;
-import org.openhab.ui.habot.card.internal.CardRegistry;
 import org.openhab.ui.habot.nlp.AbstractItemIntentInterpreter;
-import org.openhab.ui.habot.nlp.Intent;
-import org.openhab.ui.habot.nlp.IntentInterpretation;
-import org.openhab.ui.habot.nlp.ItemResolver;
+import org.openhab.ui.habot.nlp.AnswerFormatter;
 import org.openhab.ui.habot.nlp.Skill;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Reference;
@@ -41,11 +45,13 @@ import org.osgi.service.component.annotations.Reference;
  * displays a card with an HbTimeline component.
  *
  * @author Yannick Schaus - Initial contribution
+ * @author Laurent Garnier - consider extended Skill interface + null annotations added
  */
+@NonNullByDefault
 @org.osgi.service.component.annotations.Component(service = Skill.class)
 public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
 
-    private CardRegistry cardRegistry;
+    private @NonNullByDefault({}) CardRegistry cardRegistry;
 
     @Override
     public String getIntentId() {
@@ -53,17 +59,36 @@ public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
     }
 
     @Override
-    public IntentInterpretation interpret(Intent intent, String language) {
-        IntentInterpretation interpretation = new IntentInterpretation();
+    public boolean isSuitableForChat() {
+        return true;
+    }
+
+    @Override
+    public boolean isSuitableForVoice() {
+        return false;
+    }
+
+    @Override
+    public String interpretForVoice(Intent intent, String language) throws InterpretationException {
+        throw new InterpretationException("Voice control not yet supported by the HABot OpenNLP interpreter");
+    }
+
+    @Override
+    public InterpretationResult interpretForChat(Intent intent, String language) throws InterpretationException {
+        InterpretationResult interpretation = new InterpretationResult(language, intent);
+        AnswerFormatter formatter = answerFormatter;
+        if (formatter == null) {
+            formatter = answerFormatter = new AnswerFormatter(language);
+        }
 
         Set<Item> matchedItems = findItems(intent);
         if (intent.getEntities().isEmpty()) {
-            interpretation.setAnswer(answerFormatter.getRandomAnswer("general_failure"));
+            interpretation.setAnswer(formatter.getRandomAnswer("general_failure"));
             return interpretation;
         }
-        if (matchedItems == null || matchedItems.isEmpty()) {
-            interpretation.setAnswer(answerFormatter.getRandomAnswer("answer_nothing_found"));
-            interpretation.setHint(answerFormatter.getStandardTagHint(intent.getEntities()));
+        if (matchedItems.isEmpty()) {
+            interpretation.setAnswer(formatter.getRandomAnswer("answer_nothing_found"));
+            interpretation.setHint(formatter.getStandardTagHint(intent.getEntities()));
             return interpretation;
         }
 
@@ -84,8 +109,8 @@ public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
                                                                                           // for rrd4j
 
             if (historicItem == null) {
-                interpretation.setAnswer(answerFormatter.getRandomAnswer("answer_nothing_found"));
-                interpretation.setHint(answerFormatter.getRandomAnswer("no_historical_data"));
+                interpretation.setAnswer(formatter.getRandomAnswer("answer_nothing_found"));
+                interpretation.setHint(formatter.getRandomAnswer("no_historical_data"));
                 return interpretation;
             }
 
@@ -103,7 +128,7 @@ public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
             nowTimelineEntry.addConfig("subtitle", dateFormat.format(new Date()));
             timeline.addComponent("main", nowTimelineEntry);
         } else {
-            interpretation.setAnswer(answerFormatter.getRandomAnswer("multiple_items_error"));
+            interpretation.setAnswer(formatter.getRandomAnswer("multiple_items_error"));
             return interpretation;
         }
 
@@ -111,12 +136,12 @@ public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
 
         this.cardRegistry.add(card);
 
-        interpretation.setAnswer(answerFormatter.getRandomAnswer("info_found_simple"));
+        interpretation.setAnswer(formatter.getRandomAnswer("info_found_simple"));
         interpretation.setCard(card);
         return interpretation;
     }
 
-    private String formatState(Item item, State state) {
+    private @Nullable String formatState(Item item, State state) {
         if (item.getStateDescription() != null) {
             StateDescription stateDescription = item.getStateDescription();
             if (stateDescription != null) {

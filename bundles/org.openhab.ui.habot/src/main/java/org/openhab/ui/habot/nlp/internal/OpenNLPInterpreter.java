@@ -12,6 +12,8 @@
  */
 package org.openhab.ui.habot.nlp.internal;
 
+import static org.openhab.ui.habot.nlp.internal.OpenNLPInterpreter.*;
+
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,22 +27,25 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.smarthome.config.core.ConfigurableService;
 import org.eclipse.smarthome.core.common.registry.RegistryChangeListener;
 import org.eclipse.smarthome.core.events.EventPublisher;
 import org.eclipse.smarthome.core.items.Item;
 import org.eclipse.smarthome.core.items.ItemRegistry;
 import org.eclipse.smarthome.core.voice.text.HumanLanguageInterpreter;
+import org.eclipse.smarthome.core.voice.text.Intent;
 import org.eclipse.smarthome.core.voice.text.InterpretationException;
-import org.openhab.ui.habot.nlp.ChatReply;
-import org.openhab.ui.habot.nlp.Intent;
-import org.openhab.ui.habot.nlp.IntentInterpretation;
-import org.openhab.ui.habot.nlp.ItemNamedAttribute;
-import org.openhab.ui.habot.nlp.ItemNamedAttribute.AttributeType;
-import org.openhab.ui.habot.nlp.ItemResolver;
+import org.eclipse.smarthome.core.voice.text.InterpretationResult;
+import org.eclipse.smarthome.core.voice.text.ItemNamedAttribute;
+import org.eclipse.smarthome.core.voice.text.ItemNamedAttribute.AttributeType;
+import org.eclipse.smarthome.core.voice.text.ItemResolver;
+import org.eclipse.smarthome.core.voice.text.UnsupportedLanguageException;
+import org.openhab.ui.habot.nlp.AnswerFormatter;
 import org.openhab.ui.habot.nlp.Skill;
-import org.openhab.ui.habot.nlp.UnsupportedLanguageException;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -48,31 +53,45 @@ import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The OpenNLP-based interpreter used by HABot.
  *
  * @author Yannick Schaus - Initial contribution
+ * @author Laurent Garnier - adapated to the extended interfaces + null annotations added
  */
-@Component(service = HumanLanguageInterpreter.class, immediate = true, name = "org.openhab.opennlphli", property = {
-        "service.config.description.uri=voice:opennlphli", "service.config.label=OpenNLP Interpreter for HABot",
-        "service.config.category=voice" })
+@NonNullByDefault
+@Component(service = HumanLanguageInterpreter.class, immediate = true, configurationPid = SERVICE_PID, property = {
+        Constants.SERVICE_PID + "=" + SERVICE_PID,
+        ConfigurableService.SERVICE_PROPERTY_DESCRIPTION_URI + "=" + SERVICE_URI,
+        ConfigurableService.SERVICE_PROPERTY_LABEL + "=" + SERVICE_LABEL,
+        ConfigurableService.SERVICE_PROPERTY_CATEGORY + "=" + SERVICE_CATEGORY })
 public class OpenNLPInterpreter implements HumanLanguageInterpreter {
+
+    static final String SERVICE_LABEL = "HABot OpenNLP Interpreter";
+    static final String SERVICE_ID = "habotopennlp";
+    static final String SERVICE_CATEGORY = "voice";
+    static final String SERVICE_PID = "org.openhab." + SERVICE_ID;
+    static final String SERVICE_URI = SERVICE_CATEGORY + ":" + SERVICE_ID;
+
+    private final Logger logger = LoggerFactory.getLogger(OpenNLPInterpreter.class);
 
     public static final Set<Locale> SUPPORTED_LOCALES = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList(Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN)));
 
-    private IntentTrainer intentTrainer = null;
-    private Locale currentLocale = null;
-    private String tokenizerId = null;
+    private @Nullable IntentTrainer intentTrainer;
+    private @Nullable Locale currentLocale;
+    private @Nullable String tokenizerId;
 
-    private ItemRegistry itemRegistry;
-    private ItemResolver itemResolver;
-    private EventPublisher eventPublisher;
+    private @NonNullByDefault({}) ItemRegistry itemRegistry;
+    private @NonNullByDefault({}) ItemResolver itemResolver;
+    private @NonNullByDefault({}) EventPublisher eventPublisher;
 
     private HashMap<String, Skill> skills = new HashMap<String, Skill>();
 
-    private @NonNull RegistryChangeListener<Item> registryChangeListener = new RegistryChangeListener<Item>() {
+    private RegistryChangeListener<Item> registryChangeListener = new RegistryChangeListener<Item>() {
         @Override
         public void added(Item element) {
             intentTrainer = null;
@@ -91,22 +110,12 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
 
     @Override
     public String getId() {
-        return "opennlp";
+        return SERVICE_ID;
     }
 
     @Override
-    public String getLabel(Locale locale) {
-        return "HABot OpenNLP Interpreter";
-    }
-
-    @Override
-    public String interpret(Locale locale, String text) throws InterpretationException {
-        ChatReply reply = reply(locale, text);
-        if (reply == null) {
-            return null;
-        }
-
-        return reply.getAnswer();
+    public String getLabel(@Nullable Locale locale) {
+        return SERVICE_LABEL;
     }
 
     /**
@@ -132,15 +141,20 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
         return IOUtils.toInputStream(nameSamplesDoc.toString());
     }
 
-    /**
-     * This variant of interpret() returns a more complete interpretation result.
-     *
-     * @param locale the locale of the query
-     * @param text   the query text
-     * @return the interpretation result as a {@link ChatReply} object
-     * @throws InterpretationException
-     */
-    public ChatReply reply(Locale locale, String text) throws InterpretationException {
+    @Override
+    public @Nullable String interpret(@Nullable Locale locale, String text) throws InterpretationException {
+        throw new InterpretationException("Voice control not yet supported by the HABot OpenNLP interpreter");
+    }
+
+    @Override
+    public InterpretationResult interpretForChat(Locale locale, String text) throws InterpretationException {
+        logger.debug("interpretForChat text {}", text);
+        if (text.isEmpty()) {
+            // Return a greeting message
+            AnswerFormatter answerFormatter = new AnswerFormatter(locale);
+            return new InterpretationResult(locale.getLanguage(), answerFormatter.getRandomAnswer("greeting"));
+        }
+
         if (!locale.equals(currentLocale) || intentTrainer == null) {
             try {
                 itemResolver.setLocale(locale);
@@ -168,8 +182,6 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
             }
         }
 
-        ChatReply reply = new ChatReply(locale, text);
-
         Intent intent;
 
         // Shortcut: if there are any items whose named attributes match the query (case insensitive), consider
@@ -188,32 +200,17 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
             // Else, run it through the IntentTrainer
             intent = intentTrainer.interpret(text);
         }
-        reply.setIntent(intent);
+
         Skill skill = skills.get(intent.getName());
-
-        if (skill != null) {
-            IntentInterpretation intentInterpretation = skill.interpret(intent, locale.getLanguage());
-            if (intentInterpretation != null) {
-                reply.setAnswer(intentInterpretation.getAnswer());
-                if (intentInterpretation.getHint() != null) {
-                    reply.setHint(intentInterpretation.getHint());
-                }
-                if (intentInterpretation.getMatchedItems() != null) {
-                    reply.setMatchedItems(intentInterpretation.getMatchedItems().stream().map(i -> i.getName())
-                            .collect(Collectors.toList()).toArray(new String[0]));
-                }
-                if (intentInterpretation.getCard() != null) {
-                    reply.setCard(intentInterpretation.getCard());
-                }
-            }
+        if (skill == null) {
+            throw new InterpretationException("No skill available for the intent " + intent.getName());
         }
-
-        return reply;
+        return skill.interpretForChat(intent, locale.getLanguage());
     }
 
     @Override
-    public String getGrammar(Locale locale, String format) {
-        throw new UnsupportedOperationException();
+    public @Nullable String getGrammar(Locale locale, String format) {
+        return null;
     }
 
     @Override
