@@ -160,7 +160,7 @@
         
         function registerEventSource() {
             if (typeof(EventSource) !== "undefined") {
-                var source = new EventSource('/rest/events');
+                var source = new EventSource('/rest/events?topics=smarthome/items/*/statechanged,smarthome/items/*/*/statechanged,smarthome/webaudio/playurl');
                 liveUpdatesEnabled = true;
 
                 source.onmessage = function (event) {
@@ -250,13 +250,6 @@
                                 if (context)
                                   context.close();
                             }
-                        } else if (topicparts[0] !== 'smarthome') {
-                            var payload = JSON.parse(evtdata.payload);
-                            var ohEvent = { topic: evtdata.topic, type: evtdata.type, payload: payload };
-                            $rootScope.$apply(function () {
-                                console.log("Emitting event type=" + ohEvent.type + ", topic=" + ohEvent.topic);
-                                $rootScope.$emit('openhab-event', ohEvent);
-                            });
                         }
                     } catch (e) {
                         console.warn('SSE event issue: ' + e.message);
