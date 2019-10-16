@@ -8,208 +8,208 @@ msgstr ""
 "X-Crowdin-Language: lt\n"
 "X-Crowdin-File: /master/web/assets/i18n/main/main.pot\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Last-Translator: openhab-bot\n"
 "Language-Team: Lithuanian\n"
 "Language: lt_LT\n"
-"PO-Revision-Date: 2018-12-01 14:12\n"
+"PO-Revision-Date: 2019-06-16 10:19\n"
 
 #. Common term
 msgctxt "OK"
 msgid "OK"
-msgstr ""
+msgstr "Gerai"
 
 #. Common term
 msgctxt "Cancel"
 msgid "Cancel"
-msgstr ""
+msgstr "Atšaukti"
 
 #. Common term
 msgctxt "Delete"
 msgid "Delete"
-msgstr ""
+msgstr "Ištrinti"
 
 #. Common term
 msgctxt "Save"
 msgid "Save"
-msgstr ""
+msgstr "Išsaugoti"
 
 #. Common term
 msgctxt "Name"
 msgid "Name"
-msgstr ""
+msgstr "Pavadinimas"
 
 #. Common term
 msgctxt "Icon"
 msgid "Icon"
-msgstr ""
+msgstr "Piktograma"
 
 #. Common term (plural)
 msgctxt "Icons"
 msgid "Icons"
-msgstr ""
+msgstr "Piktogramos"
 
 #. Common term
 msgctxt "Backdrop Icon"
 msgid "Backdrop Icon"
-msgstr ""
+msgstr "Fonas piktogramos"
 
 #. Common term
 msgctxt "Size"
 msgid "Size"
-msgstr ""
+msgstr "Pagal dydį"
 
 #. Common term
 msgctxt "Font size"
 msgid "Font Size"
-msgstr ""
+msgstr "Šrifto dydis"
 
 #. Common term
 msgctxt "Color"
 msgid "Color"
-msgstr ""
+msgstr "Spalva"
 
 #. Common term (plural)
 msgctxt "Colors"
 msgid "Colors"
-msgstr ""
+msgstr "Spalvos"
 
 #. Common term
 msgctxt "Transparent"
 msgid "Transparent"
-msgstr ""
+msgstr "Permatomas"
 
 #. Common term
 msgctxt "openHAB Item"
 msgid "openHAB Item"
-msgstr ""
+msgstr "openHAB elementas"
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Speak"
 msgid "Speak"
-msgstr ""
+msgstr "Kalbėti"
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Refresh"
 msgid "Refresh"
-msgstr ""
+msgstr "Naujinti"
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Fullscreen"
 msgid "Fullscreen"
-msgstr ""
+msgstr "Per visą ekraną"
 
 #. Common term
 msgctxt "Help"
 msgid "Help"
-msgstr ""
+msgstr "Pagalba"
 
 #. Appears in a red background in the bottom of the screen when openHAB is not responding
 msgctxt "error.connectionlost"
 msgid "Connection lost! Trying to reconnect..."
-msgstr ""
+msgstr "Dingo ryšis. Bandykite jungtis iš naujo..."
 
 #. Appears below the edit mode button when there's no dashboard - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.welcome"
 msgid "Welcome to HABPanel!"
-msgstr ""
+msgstr "Sveiki atvykę į HABPanel!"
 
 #. Appears below the edit mode button when there's no dashboard - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.clickheretobegin"
 msgid "Click or tap here to begin."
-msgstr ""
+msgstr "Spustelėkite arba bakstelėkite pradėti."
 
 #. Appears at the top of the screen when in edit mode and no dashboards are present
 msgctxt "tutorial.editmode"
 msgid "You're now in edit mode, where you can design dashboards."
-msgstr ""
+msgstr "Dabar esate redagavimo režime, kur jūs galite kurti skelbimų lentos."
 
 #. Hint for the bottom left link when in edit mode and no dashboards are present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.createfirstdashboard"
 msgid "Click or tap here to create your first dashboard..."
-msgstr ""
+msgstr "Spustelėkite arba bakstelėkite čia kurti savo pirmąjį skydelis..."
 
 #. Hint for the bottom right link when in edit mode and no dashboards are present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.importpanel"
 msgid "...or here to restore a panel from the server"
-msgstr ""
+msgstr "... arba atkurti grupę iš serverio"
 
 #. Hint in the bottom left part of the page when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.enterdesigner"
 msgid "Click or tap inside the tile to enter the dashboard designer."
-msgstr ""
+msgstr "Spustelėkite arba bakstelėkite plytelę ir įveskite ataskaitų srities dizaino įrankį viduje."
 
 #. Hint in the bottom center part of the page above the column number slider when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.adjustnbcolumns"
 msgid "Adjust the number of columns"
-msgstr ""
+msgstr "Reguliuoti stulpelių skaičius"
 
 #. Hint for the bottom left link when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.saveonserver"
 msgid "Save on the openHAB server when done!"
-msgstr ""
+msgstr "Įrašyti openHAB serveryje, kai baigsite!"
 
 #. Displayed when no dashboard is present and editing is locked in the service configuration
 msgctxt "tutorial.editingdisabled"
 msgid "Editing is disabled on the server!"
-msgstr ""
+msgstr "Serveryje yra išjungtas redagavimo!"
 
 #. Displayed when no dashboard is present and editing is locked in the service configuration
 msgctxt "tutorial.unlockedit"
 msgid "Please go to Paper UI and unlock editing to use HABPanel on this device."
-msgstr ""
+msgstr "Prašome kreiptis į popieriaus UI ir atrakinti redagavimo naudoti HABPanel Šiame įrenginyje."
 
 #. Label of the bottom-left link in edit mode - please also test with phone resolutions!
 msgctxt "menu.addnewdashboard"
 msgid "Add new dashboard"
-msgstr ""
+msgstr "Pridėti naujas prietaisų skydelis"
 
 #. Label of the bottom-right link in edit mode - please also test with phone resolutions!
 msgctxt "menu.panelsettings"
 msgid "Panel settings"
-msgstr ""
+msgstr "Skydo parametrai"
 
 #. New dashboard dialog box title
 msgctxt "menu.dialog.newdashboard.title"
 msgid "New dashboard"
-msgstr ""
+msgstr "Naujas prietaisų skydelis"
 
 #. New dashboard dialog box message
 msgctxt "menu.dialog.newdashboard.message"
 msgid "Name of your new dashboard:"
-msgstr ""
+msgstr "Pavadinimas, naujas Panel:"
 
 #. Remove dashboard dialog box title
 msgctxt "menu.dialog.removedashboard.title"
 msgid "Remove dashboard"
-msgstr ""
+msgstr "Pašalinti Panel"
 
 #. Remove dashboard dialog box message, followed by the dashboard id
 msgctxt "menu.dialog.removedashboard.message"
 msgid "Please confirm you want to delete this dashboard: "
-msgstr ""
+msgstr "Prašome patvirtinti, kad norite panaikinti šią ataskaitų sritį: "
 
 #. Dashboard toolbar Speak button tooltip
 msgctxt "dashboard.toolbar.speak"
 msgid "Speak"
-msgstr ""
+msgstr "Kalbėti"
 
 #. Dashboard toolbar Refresh button tooltip
 msgctxt "dashboard.toolbar.refresh"
 msgid "Refresh"
-msgstr ""
+msgstr "Naujinti"
 
 #. Dashboard toolbar Fullscreen button tooltip
 msgctxt "dashboard.toolbar.fullscreen"
 msgid "Fullscreen"
-msgstr ""
+msgstr "Pilnas ekranas"
 
 #. Displayed at the bottom after clicking on the Speak button
 msgctxt "dashboard.speaknow"
 msgid "Speak now..."
-msgstr ""
+msgstr "Prašome kalbėti..."
 
 #. Prefix of an error message, displayed at the bottom after clicking on the Speak button
 msgctxt "dashboard.speakerror"
 msgid "Error: "
-msgstr ""
+msgstr "Klaida: "
 

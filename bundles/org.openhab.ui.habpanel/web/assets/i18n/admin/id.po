@@ -8,10 +8,10 @@ msgstr ""
 "X-Crowdin-Language: id\n"
 "X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Last-Translator: openhab-bot\n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
-"PO-Revision-Date: 2018-12-15 15:32\n"
+"PO-Revision-Date: 2019-06-16 09:55\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"

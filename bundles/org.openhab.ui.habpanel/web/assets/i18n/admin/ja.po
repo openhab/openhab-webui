@@ -8,922 +8,922 @@ msgstr ""
 "X-Crowdin-Language: ja\n"
 "X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Last-Translator: openhab-bot\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
-"PO-Revision-Date: 2018-01-18 13:21-0500\n"
+"PO-Revision-Date: 2019-06-16 10:18\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #. Run button in the dashboard designer
 msgctxt "designer.run"
 msgid "Run"
-msgstr ""
+msgstr "実行"
 
 #. Add widget button in the dashboard designer
 msgctxt "designer.addwidget"
 msgid "Add Widget"
-msgstr ""
+msgstr "ウィジェットを追加"
 
 #. Tutorial text with arrow when on an empty dashboard
 msgctxt "designer.addwidget.hint"
 msgid "Add some widgets"
-msgstr ""
+msgstr "複数のウィジェットを追加"
 
 #. Header of the custom widget section (beware, it might overlap the cogs icon on the right)
 msgctxt "designer.addwidget.customwidgets"
 msgid "Custom widgets"
-msgstr ""
+msgstr "カスタムウィジェット"
 
 #. Open widget gallery
 msgctxt "designer.addwidget.getmore"
 msgid "Get more..."
-msgstr ""
+msgstr "さらに見る"
 
 #. Tooltip when hovering the "Get more" menu entry
 msgctxt "designer.addwidget.getmore.tooltip"
 msgid "Open the widget gallery to import more widgets"
-msgstr ""
+msgstr "ウィジェットのインポートのためにウィジェットギャラリーを開く"
 
 #. Edit option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.edit"
 msgid "Edit..."
-msgstr ""
+msgstr "編集"
 
 #. Copy/move option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.copymove"
 msgid "Copy/move to..."
-msgstr ""
+msgstr "コピー/移動"
 
 #. Delete option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.delete"
 msgid "Delete"
-msgstr ""
+msgstr "削除"
 
 #. Title of copy/move widget dialog
 msgctxt "designer.copymove.header"
 msgid "Copy/move {{widgetName}}"
-msgstr ""
+msgstr "{{widgetName}} のコピー/移動"
 
 #. Alongside the dropdown dashboard selection
 msgctxt "designer.copymove.todashboard"
 msgid "To dashboard"
-msgstr ""
+msgstr "ダッシュ ボードに移動"
 
 #. Move button
 msgctxt "designer.copymove.move"
 msgid "Move"
-msgstr ""
+msgstr "移動"
 
 #. Copy button
 msgctxt "designer.copymove.copy"
 msgid "Copy"
-msgstr ""
+msgstr "コピー"
 
 #. Default name of a newly created widget
 msgctxt "designer.newwidget.defaultname"
 msgid "New Widget"
-msgstr ""
+msgstr "新しいウィジェット"
 
 msgctxt "designer.serversavefailed"
 msgid "Server save failed!"
-msgstr ""
+msgstr "サーバへの保存が失敗しました！"
 
 #. Title of the dashboard settings dialog
 msgctxt "dashboard.settings.dialog.title"
 msgid "Dashboard Settings"
-msgstr ""
+msgstr "ダッシュボードの設定"
 
 #. Tab header
 msgctxt "dashboard.settings.tile"
 msgid "Menu tile"
-msgstr ""
+msgstr "メニュータイル"
 
 #. Textbox header
 msgctxt "dashboard.settings.tile.background_image_url"
 msgid "Background Image URL"
-msgstr ""
+msgstr "背景画像 URL"
 
 #. Color picker header
 msgctxt "dashboard.settings.tile.title_text_color"
 msgid "Title Text color"
-msgstr ""
+msgstr "タイトル文字色"
 
 #. Checkbox header
 msgctxt "dashboard.settings.tile.click_feedback"
 msgid "Click feedback"
-msgstr ""
+msgstr "クリック応答"
 
 #. Checkbox label
 msgctxt "dashboard.settings.tile.click_feedback.description"
 msgid "Don't brighten tile on click/tap"
-msgstr ""
+msgstr "クリック/タップでタイルを明るくしない"
 
 #. Tab header
 msgctxt "dashboard.settings.advanced"
 msgid "Advanced"
-msgstr ""
+msgstr "アドバンスト"
 
 #. Alert display at the top
 msgctxt "dashboard.settings.advanced.warning"
 msgid "These options are currently experimental, unstable or targeted at advanced users! Use at your own risk."
-msgstr ""
+msgstr "これらのオプションは現時点では実験的で不安定、上級ユーザ向けです！自身のご判断でお使いください。"
 
 #. Tab header
 msgctxt "dashboard.settings.customwidgets"
 msgid "Custom widgets"
-msgstr ""
+msgstr "カスタムウィジェット"
 
 #. Alert displayed at the top
 msgctxt "dashboard.settings.customwidgets.warning"
 msgid "This feature is currently experimental, and targeted at advanced users! Use at your own risk."
-msgstr ""
+msgstr "この機能は現時点では実験的で上級ユーザ向けです！自身のご判断でお使いください。"
 
 #. Checkbox header
 msgctxt "dashboard.settings.customwidgets.usecustomwidget"
 msgid "Use a custom widget"
-msgstr ""
+msgstr "カスタムウィジェットを使用"
 
 #. Dropdown header
 msgctxt "dashboard.settings.customwidgets.customwidget"
 msgid "Custom Widget"
-msgstr ""
+msgstr "カスタム ウィジェット"
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.tile"
 msgid "Main menu tile"
-msgstr ""
+msgstr "メインメニュータイル"
 
 #. Checkbox label
 msgctxt "dashboard.settings.customwidgets.tile.description"
 msgid "Replace the tile contents by a custom widget"
-msgstr ""
+msgstr "タイルコンテンツをカスタムウィジェットで置き換え"
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.drawer"
 msgid "Drawer"
-msgstr ""
+msgstr "ドロワー"
 
 #. Checkbox label
 msgctxt "dashboard.settings.customwidgets.drawer.description"
 msgid "Replace the contents of the drawer menu by a custom widget"
-msgstr ""
+msgstr "ドロワーメニューのコンテンツをカスタムウィジェットで置き換え"
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.header"
 msgid "Dashboard header"
-msgstr ""
+msgstr "ダッシュボードのヘッダー"
 
 #. Checkbox label
 msgctxt "dashboard.settings.customwidgets.header.description"
 msgid "Replace the contents of the dashboard header by a custom widget"
-msgstr ""
+msgstr "ダッシュボードヘッダーのコンテンツをカスタムウィジェットで置き換え"
 
 #. Displayed in the item picker when no item selected
 msgctxt "itempicker.placeholder"
 msgid "Search or select an openHAB item"
-msgstr ""
+msgstr "openHAB アイテムの検索、あるいは選択"
 
 #. Icon picker dropdown placeholder
 msgctxt "iconpicker.selecticonset"
 msgid "Select icon set"
-msgstr ""
+msgstr "アイコンセットの選択"
 
 #. Icon picker dropdown entry
 msgctxt "iconpicker.customicon"
 msgid "Custom icon"
-msgstr ""
+msgstr "カスタム アイコン"
 
 #. Icon picker dropdown entry
 msgctxt "iconpicker.customurl"
 msgid "Custom URL"
-msgstr ""
+msgstr "カスタム URL"
 
 #. Icon picker dropdown entry
 msgctxt "iconpicker.none"
 msgid "(none)"
-msgstr ""
+msgstr "(なし)"
 
 #. Appears when focusing the icon textbox when the "Custom icon" iconset is selected
 msgctxt "iconpicker.customicontooltip"
 msgid "Type the name of a <a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'>registered icon</a> (only SVG supported)<br />Examples: <em>switch</em>, <em>temperature</em> or an additional icon in your configuration's <code>icons/classic</code> folder"
-msgstr ""
+msgstr "<a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'>登録済みアイコン</a>の名前を入力します (SVG のみサポート) <br/>例：<em>スイッチ</em>、<em>温度</em>、または設定の <code> icons/classic </code> フォルダにある追加アイコン"
 
 #. Screen title
 msgctxt "settings.header"
 msgid "Settings"
-msgstr ""
+msgstr "設定"
 
 #. Header of the storage section
 msgctxt "settings.storage.header"
 msgid "Current storage configuration"
-msgstr ""
+msgstr "現在のストレージの設定"
 
 #. Radio button for local storage
 msgctxt "settings.storage.localstorage"
 msgid "Local storage"
-msgstr ""
+msgstr "ローカルストレージ"
 
 #. Explanation of the "local storage only" option
 msgctxt "settings.storage.localstorage.hint"
 msgid "The configuration is saved for this browser and device only. It will be kept as long as you don't clean up the browser's historical data."
-msgstr ""
+msgstr "設定はこのブラウザとデバイスにのみ保存されます。ブラウザに関しては、履歴データを削除しない限り保持されます。"
 
 #. Link below the "local storage" option
 msgctxt "settings.storage.localstorage.edit"
 msgid "Edit the local panel configuration (experts only)"
-msgstr ""
+msgstr "ローカルパネル設定を編集する (上級者向け)"
 
 #. Prefix of a panel configuration before its name
 msgctxt "settings.storage.panelconfiguration"
 msgid "Panel configuration:"
-msgstr ""
+msgstr "パネル設定："
 
 #. Prefix of the last synced line, before the date
 msgctxt "settings.storage.panelconfiguration.lastsynced"
 msgid "Last synced on"
-msgstr ""
+msgstr "最終同期"
 
 #. Displayed before the list of dashboard the panel configuration contains
 msgctxt "settings.storage.panelconfiguration.contains"
 msgid "Contains:"
-msgstr ""
+msgstr "含む："
 
 #. Link to create a panel configuration from the current configuration
 msgctxt "settings.storage.panelconfiguration.save"
 msgid "Save the current configuration to a new panel configuration"
-msgstr ""
+msgstr "現在の設定を新しいパネル設定に保存します"
 
 #. Title of the dialog box when creating a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.title"
 msgid "New panel configuration"
-msgstr ""
+msgstr "新しいパネルの設定"
 
 #. Message of the dialog box when creating a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.message"
 msgid "Please choose a name for the new panel configuration (letters and digits only please):"
-msgstr ""
+msgstr "新しいパネル設定の名前を選択してください (使用できる文字は英数文字のみです)。"
 
 #. Panel name (section header)
 msgctxt "settings.panel.name"
 msgid "Panel name"
-msgstr ""
+msgstr "パネル名"
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.name.hint"
 msgid "Replaces 'HABPanel' in the side drawer when set"
-msgstr ""
+msgstr "設定時、サイドドロワーの 'HABPanel' を置き換えます"
 
 #. Appearance (section header)
 msgctxt "settings.panel.appearance.header"
 msgid "Appearance"
-msgstr ""
+msgstr "外観"
 
 #. Dropown menu header
 msgctxt "settings.panel.appearance.theme"
 msgid "Theme"
-msgstr ""
+msgstr "テーマ"
 
 #. Alert banner displayed when the browsers doesn't support themes (CSS variables)
 msgctxt "settings.panel.appearance.theme.not_supported"
 msgid "Themes are not compatible with this browser."
-msgstr ""
+msgstr "テーマはこのブラウザと互換性がありません。"
 
 #. Setting header
 msgctxt "settings.panel.appearance.additional_stylesheet"
 msgid "Additional stylesheet (optional)"
-msgstr ""
+msgstr "追加のスタイルシート (任意)"
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.additional_stylesheet.hint"
 msgid "Relative URL only; example: /static/example.css"
-msgstr ""
+msgstr "相対 URL のみ。例：/static/example.css"
 
 #. Setting header
 msgctxt "settings.panel.appearance.background_image"
 msgid "Background image (optional)"
-msgstr ""
+msgstr "背景画像 (任意)"
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.background_image.hint"
 msgid "Example: //source.unsplash.com/random"
-msgstr ""
+msgstr "例：//source.unsplash.com/random"
 
 #. Setting header
 msgctxt "settings.panel.appearance.drawer_heading_image"
 msgid "Drawer heading image (optional)"
-msgstr ""
+msgstr "ドロワー見出し画像 (オプション)"
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.drawer_heading_image.hint"
 msgid "Example: //via.placeholder.com/265x95"
-msgstr ""
+msgstr "例：//via.placeholder.com/265x95"
 
 #. Checkbox
 msgctxt "settings.panel.appearance.prevent_scrolling"
 msgid "Prevent scrolling (when not editing)"
-msgstr ""
+msgstr "(編集していない時は) スクロールを禁止"
 
 #. Checkbox
 msgctxt "settings.panel.appearance.hide_drawer_footer"
 msgid "Hide the drawer's footer"
-msgstr ""
+msgstr "ドロワーのフッターを非表示"
 
 #. Checkbox
 msgctxt "settings.panel.appearance.hide_toolbar_buttons"
 msgid "Hide toolbar buttons:"
-msgstr ""
+msgstr "ツールバーボタンを非表示："
 
 #. Checkbox
 msgctxt "settings.panel.appearance.show_clock"
 msgid "Show a clock on the header"
-msgstr ""
+msgstr "ヘッダーに時計を表示"
 
 #. Textbox setting header, only displayed when the "Show a clock on the header" option is checked
 msgctxt "settings.panel.appearance.show_clock.header_format"
 msgid "Header clock format"
-msgstr ""
+msgstr "ヘッダーの時計のフォーマット"
 
 #. Textbox placeholder, only displayed when the "Show a clock on the header" option is checked
 msgctxt "settings.panel.appearance.show_clock.header_format.hint"
 msgid "Default: shortTime, use AngularJS date format"
-msgstr ""
+msgstr "デフォルト：shortTime、Angular JS日付フォーマットを使用"
 
 #. Custom widgets settings (section header)
 msgctxt "settings.panel.customwidgets.header"
 msgid "Custom Widgets"
-msgstr ""
+msgstr "カスタムウィジェット"
 
 #. Big "manage" button label (a > suffix is added)
 msgctxt "settings.panel.customwidgets.manage"
 msgid "Manage"
-msgstr ""
+msgstr "管理"
 
 #. Voice support (section header) - formerly (<=2.2.0) : "Voice feedback"
 msgctxt "settings.panel.voicesupport.header"
 msgid "Voice Support"
-msgstr ""
+msgstr "音声サポート"
 
 #. Dropdown header - formerly (<=2.2.0) : "Voice"
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice"
 msgid "Speech synthesis voice"
-msgstr ""
+msgstr "音声合成"
 
 #. Displayed below the voice dropdown
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice.hint"
 msgid "Available voices depend on the operating system and browser environments."
-msgstr ""
+msgstr "利用可能な音声は、オペレーティングシステムとブラウザの環境によって異なります。"
 
 #. Test button below the voice selection - make the voice say "habpanel 1 2 3"
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice.test"
 msgid "Test"
-msgstr ""
+msgstr "テスト"
 
 #. Checkbox
 msgctxt "settings.panel.voicesupport.floating_speech_button"
 msgid "Display a floating speech button at the bottom of the screen"
-msgstr ""
+msgstr "画面下部にフローティング音声ボタンを表示"
 
 #. Dropdown header
 msgctxt "settings.panel.voicesupport.speech_synthesis_item"
 msgid "Speak the new value of the following item when it changes:"
-msgstr ""
+msgstr "次の項目が変わったら、新しい値を読み上げる："
 
 #. Section header
 msgctxt "settings.panel.dashboard_control.header"
 msgid "Switch dashboard with item value"
-msgstr ""
+msgstr "ダッシュボードをアイテムの値で切り替える"
 
 #. Dropdown header
 msgctxt "settings.panel.dashboard_control.item"
 msgid "When this item changes to a dashboard's name, switch to it:"
-msgstr ""
+msgstr "この項目がダッシュボードの名前に変わったら、それに切り替えます："
 
 #. Local panel configuration editor header
 msgctxt "settings.localconfig.title"
 msgid "Local panel configuration editor"
-msgstr ""
+msgstr "ローカルパネル設定エディタ"
 
 #. Displayed in a tooltip when hovering the exclamation mark in the local panel config editor
 msgctxt "settings.localconfig.warning"
 msgid "This is the raw configuration object representing your current configuration. Be careful while editing it by hand!"
-msgstr ""
+msgstr "これは現在の設定を表す生の設定オブジェクトです。手動で編集する場合はご注意ください。"
 
 #. Blue button
 msgctxt "settings.localconfig.import"
 msgid "Import"
-msgstr ""
+msgstr "インポート"
 
 #. Blue button
 msgctxt "settings.localconfig.export"
 msgid "Export"
-msgstr ""
+msgstr "エクスポート"
 
 #. Default label for the white button on the right
 msgctxt "settings.localconfig.copy"
 msgid "Copy"
-msgstr ""
+msgstr "コピー"
 
 #. Label displayed on the button for a few seconds after a successful copy to clipboard
 msgctxt "settings.localconfig.copied"
 msgid "Copied!"
-msgstr ""
+msgstr "コピーしました！"
 
 #. Default label for the red button on the right
 msgctxt "settings.localconfig.save"
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #. Label displayed on the button for a few seconds after a successful save
 msgctxt "settings.localconfig.saved"
 msgid "Saved!"
-msgstr ""
+msgstr "保存しました！"
 
 #. Label displayed for a few seconds on the copy or save button if an error occurred
 msgctxt "settings.localconfig.failed"
 msgid "FAILED!"
-msgstr ""
+msgstr "失敗しました！"
 
 #. Displayed in a dialog box
 msgctxt "settings.localconfig.error.nodashboardsfound"
 msgid "No dashboards found!"
-msgstr ""
+msgstr "ダッシュボードが見つかりません！"
 
 #. Title of a a dialog box
 msgctxt "settings.localconfig.parsingerror.dialog.title"
 msgid "Error"
-msgstr ""
+msgstr "エラー"
 
 #. Message in a dialog box
 msgctxt "settings.localconfig.parsingerror.dialog.message"
 msgid "Configuration parsing error, nothing has been modified: "
-msgstr ""
+msgstr "構成解析エラー。何も変更されていません："
 
 #. Title of a a dialog box
 msgctxt "settings.localconfig.importerror.dialog.title"
 msgid "Error"
-msgstr ""
+msgstr "エラー"
 
 #. Message in a dialog box
 msgctxt "settings.localconfig.importerror.dialog.message"
 msgid "Problem while importing: "
-msgstr ""
+msgstr "インポート中の問題："
 
 #. Screen title
 msgctxt "customwidgets.list.header"
 msgid "Custom widgets"
-msgstr ""
+msgstr "カスタムウィジェット"
 
 #. Prefix displayed before the author's name
 msgctxt "customwidgets.list.byauthor"
 msgid "by"
-msgstr ""
+msgstr "並び"
 
 #. Displayed in a tooltip when hovering the icon indicating a globally provisioned widget
 msgctxt "customwidgets.list.globallyprovisioned.hint"
 msgid "This widget was provisioned globally via a bundle. It cannot be modified, but may be cloned to an user-defined widget with another name."
-msgstr ""
+msgstr "このウィジェットはバンドルを介してグローバルにプロビジョニングされました。変更することはできませんが、別の名前のユーザー定義ウィジェットに複製することができます。"
 
 #. Displayed in a tooltip when hovering the icon indicating a user defined widget
 msgctxt "customwidgets.list.userdefined.hint"
 msgid "This widget has been defined manually in this panel configuration and can be modified."
-msgstr ""
+msgstr "このウィジェットはこのパネル設定において手動で定義されており、変更することができます。"
 
 #. Custom widget context menu entry - clone a globally-provisioned widget
 msgctxt "customwidgets.list.contextmenu.clone"
 msgid "Clone widget..."
-msgstr ""
+msgstr "ウィジェットの複製"
 
 #. Custom widget context menu entry - downloads a widget's .widget.json file
 msgctxt "customwidgets.list.contextmenu.exporttofile"
 msgid "Export to file"
-msgstr ""
+msgstr "ファイルへエクスポート"
 
 #. Custom widget context menu entry - opens a forum topic or GitHub readme
 msgctxt "customwidgets.list.contextmenu.openhelp"
 msgid "Open Help"
-msgstr ""
+msgstr "ヘルプを開く"
 
 #. Custom widget context menu entry - update the widget from its source
 msgctxt "customwidgets.list.contextmenu.update"
 msgid "Update..."
-msgstr ""
+msgstr "更新..."
 
 #. Blue button opening a dialog
 msgctxt "customwidgets.list.newwidget"
 msgid "New widget"
-msgstr ""
+msgstr "新しいウィジェット"
 
 #. Blue button with a dropdown menu
 msgctxt "customwidgets.list.importwidget"
 msgid "Import widget"
-msgstr ""
+msgstr "ウィジェットをインポート"
 
 #. Import button menu entry - opens a dialog
 msgctxt "customwidgets.list.importwidget.fromfile"
 msgid "Import from file..."
-msgstr ""
+msgstr "ファイルからインポート"
 
 #. Import button menu entry - opens a dialog
 msgctxt "customwidgets.list.importwidget.fromgallery"
 msgid "Import from gallery..."
-msgstr ""
+msgstr "ギャラリーからインポート"
 
 #. Dialog box title
 msgctxt "customwidgets.list.add.dialog.title"
 msgid "New custom widget"
-msgstr ""
+msgstr "新しいカスタムウィジェット"
 
 #. Dialog box message
 msgctxt "customwidgets.list.add.dialog.message"
 msgid "Please choose a short name as an identifier for your widget (for example, 'window-shutter=up-down-button, 'weather-forecast' etc.). If a widget with the same identifier already exists, it will be replaced!"
-msgstr ""
+msgstr "ウィジェットの識別子として短い名前を選択してください (たとえば、'window-shutter=up-down-button'、'天気予報' など)。既に同じ識別子のウィジェットが存在する場合は、置き換えられます！"
 
 #. Error message, displayed in an alert box
 msgctxt "customwidgets.list.import.nojson"
 msgid "The file must have a .json extension!"
-msgstr ""
+msgstr "ファイルは .json 拡張子でないといけません！"
 
 #. Dialog box title
 msgctxt "customwidgets.list.import.dialog.title"
 msgid "Import widget"
-msgstr ""
+msgstr "ウィジェットをインポート"
 
 #. Dialog box message
 msgctxt "customwidgets.list.import.dialog.message"
 msgid "Please confirm or change the identifier of your widget (avoid spaces and special chars!). If a widget with the same identifier already exists, it will be replaced!"
-msgstr ""
+msgstr "ウィジェットの識別子を確認、あるいは変更してください (スペースや特殊文字は使えません)。既に同じ識別子のウィジェットが存在する場合は、置き換えられます！"
 
 #. Prefix of an error message - followed by a technical exception message
 msgctxt "customwidgets.list.import.error"
 msgid "Widget import error: "
-msgstr ""
+msgstr "ウィジェットインポートエラー："
 
 #. Dialog box title
 msgctxt "customwidgets.list.update.dialog.title"
 msgid "Update widget"
-msgstr ""
+msgstr "ウィジェットの更新"
 
 #. Dialog box message
 msgctxt "customwidgets.list.update.dialog.message"
 msgid "This will update widget <id> from <source_url>. Any changes you made will be overwritten! Continue?"
-msgstr ""
+msgstr "<source_url> からウィジェット <id> を更新します。すべての変更は上書きされます！続けますか？"
 
 #. Alert banner message
 msgctxt "customwidgets.list.update.error.notemplatefound"
 msgid "Couldn't update widget <id> from <source_url>: no template found"
-msgstr ""
+msgstr "ウィジェット <id> を <source_url> から更新できませんでした：テンプレートが見つかりません"
 
 #. Alert banner message
 msgctxt "customwidgets.list.update.error.unknown"
 msgid "Couldn't update widget <id> from <source_url>: "
-msgstr ""
+msgstr "<source_url> からウィジェット <id> を更新できませんでした："
 
 #. Alert banner message
 msgctxt "customwidgets.list.update.success"
 msgid "Widget <id> updated successfully from <source_url>"
-msgstr ""
+msgstr "ウィジェット <id> が <source_url> から正常に更新されました"
 
 #. Dialog box title
 msgctxt "customwidgets.list.delete.dialog.title"
 msgid "Remove widget"
-msgstr ""
+msgstr "ウィジェットを削除"
 
 #. Dialog box message
 msgctxt "customwidgets.list.delete.dialog.message"
 msgid "Please confirm you want to delete this widget: "
-msgstr ""
+msgstr "ウィジェットを削除して良いかご確認ください："
 
 #. Dialog box title
 msgctxt "customwidgets.list.clone.dialog.title"
 msgid "Clone widget"
-msgstr ""
+msgstr "ウィジェットの複製"
 
 #. Dialog box message
 msgctxt "customwidgets.list.clone.dialog.message"
 msgid "This will clone the globally provisioned widget: <id> to be modified as part of the panel configuration. Enter an unique identifier below - it must be different from the widget being cloned, and should avoid spaces and special chars. If an user-defined widget with the same identifier already exists, it will be replaced!"
-msgstr ""
+msgstr "グローバルにプロビジョニングされたウィジェットを複製します：<id> はパネル設定の一部として 変更されます。ユニークな識別子を以下に入力してください - それはクローンされているウィジェットと異なる必要があり、空白文字と特殊文字は使用できません。同じ識別子を持つユーザ定義ウィジェットが既に存在する場合、置き換えられます！"
 
 #. Screen title, followed by the widget name - beware of size!
 msgctxt "customwidgets.designer.heading"
 msgid "Widget:"
-msgstr ""
+msgstr "ウィジェット："
 
 #. Save button on the right, default label - can be hidden on phones
 msgctxt "customwidgets.designer.save"
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #. Save button on the right, displayed for a few seconds after a save - can be hidden on phones
 msgctxt "customwidgets.designer.saved"
 msgid "Saved!"
-msgstr ""
+msgstr "保存しました！"
 
 #. Tab header
 msgctxt "customwidgets.designer.code"
 msgid "Code"
-msgstr ""
+msgstr "コード"
 
 #. Tab header
 msgctxt "customwidgets.designer.settings"
 msgid "Settings"
-msgstr ""
+msgstr "設定"
 
 #. Section header in the Settings tab
 msgctxt "customwidgets.designer.settings.general"
 msgid "General settings"
-msgstr ""
+msgstr "一般設定"
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.general.display_name"
 msgid "Display name"
-msgstr ""
+msgstr "ディスプレイ名"
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.general.author"
 msgid "Author"
-msgstr ""
+msgstr "作者"
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.general.description"
 msgid "Description"
-msgstr ""
+msgstr "説明"
 
 #. Section header in the Settings tab
 msgctxt "customwidgets.designer.settings.config"
 msgid "Configuration settings"
-msgstr ""
+msgstr "設定"
 
 #. Displayed in small text below the section header, with an information icon
 msgctxt "customwidgets.designer.settings.config.warning"
 msgid "Beware: always bear in mind instances of this widget might be existing when altering configuration settings!"
-msgstr ""
+msgstr "注意：構成設定を変更するときは、このウィジェットのインスタンスが存在する可能性があることを常に心に留めておいてください。"
 
 #. Button label
 msgctxt "customwidgets.designer.settings.config.add"
 msgid "Add setting"
-msgstr ""
+msgstr "設定を追加"
 
 #. Dropdown header
 msgctxt "customwidgets.designer.settings.config.type"
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.string"
 msgid "String"
-msgstr ""
+msgstr "String"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.number"
 msgid "Number"
-msgstr ""
+msgstr "Number"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.checkbox"
 msgid "Checkbox"
-msgstr ""
+msgstr "Checkbox"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.item"
 msgid "Item"
-msgstr ""
+msgstr "Item"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.color"
 msgid "Color"
-msgstr ""
+msgstr "Color"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.choices"
 msgid "Choices"
-msgstr ""
+msgstr "選択肢"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.icon"
 msgid "Icon"
-msgstr ""
+msgstr "アイコン"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.heading"
 msgid "Heading"
-msgstr ""
+msgstr "見出し"
 
 #. Tooltip displayed when hovering the help icon alongside the ID field
 msgctxt "customwidgets.designer.settings.config.id.hint"
 msgid "Enter a JSON friendly key for this setting - ideally, use only lowercase letters, digits and underscores. Examples: my_setting, first_item, text_size, font_color"
-msgstr ""
+msgstr "この設定には JSON フレンドリーなキーを入力します - 理想的には、小英文字、数字、およびアンダースコアのみを使用してください。例：my_setting、first_item、text_size、font_color"
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.label"
 msgid "Label"
-msgstr ""
+msgstr "ラベル"
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.default"
 msgid "Default value"
-msgstr ""
+msgstr "デフォルト値"
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.choices"
 msgid "Choices"
-msgstr ""
+msgstr "選択肢"
 
 #. Textbox placeholder
 msgctxt "customwidgets.designer.settings.config.choices.hint"
 msgid "Comma-separated possible values"
-msgstr ""
+msgstr "コンマ区切りの可能な値"
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.description"
 msgid "Description"
-msgstr ""
+msgstr "説明"
 
 #. Banner displayed when selecting the Icon type for the settings, followed by the defined settings themselves
 msgctxt "customwidgets.designer.settings.config.icon.hint"
 msgid "This will define 2 config elements:"
-msgstr ""
+msgstr "これは 2 つの要素を定義します："
 
 #. Tab header
 msgctxt "customwidgets.designer.preview"
 msgid "Preview"
-msgstr ""
+msgstr "プレビュー"
 
 #. Dialog box title
 msgctxt "widgetgallery.heading"
 msgid "Widget Gallery"
-msgstr ""
+msgstr "ウィジェットギャラリー"
 
 #. Dialog box title (when displaying a repository)
 msgctxt "widgetgallery.heading.importrepo"
 msgid "Import GitHub Repository"
-msgstr ""
+msgstr "GitHub リポジトリのインポート"
 
 #. Dialog box title (when displaying a community gallery item)
 msgctxt "widgetgallery.heading.importgallery"
 msgid "Import Gallery Item"
-msgstr ""
+msgstr "ギャラリーアイテムのインポート"
 
 #. Alert banner message
 msgctxt "widgetgallery.warning.githubratelimit"
 msgid "Warning: rate limiting on the GitHub API will temporarily block further requests!"
-msgstr ""
+msgstr "警告：GitHub API のレート制限により、今後のリクエストを一時的にブロックします！"
 
 #. Alert banner message (2nd part)
 msgctxt "widgetgallery.warning.githubratelimit.wait"
 msgid "Wait until this time and try again:"
-msgstr ""
+msgstr "この時間まで待ってからやり直してください。"
 
 #. Textbox placeholder
 msgctxt "widgetgallery.addressbar.hint"
 msgid "GitHub repository full name (owner/name) or URL"
-msgstr ""
+msgstr "GitHub リポジトリのフルネーム (owner/name) あるいは URL"
 
 #. Button on the right of the addressbar
 msgctxt "widgetgallery.addressbar.go"
 msgid "Go"
-msgstr ""
+msgstr "移動"
 
 #. Suffix displayed after a number, i.e. "24 community contributions"
 msgctxt "widgetgallery.toolbar.communitycontributions"
 msgid "community&nbsp;contributions"
-msgstr ""
+msgstr "投稿"
 
 #. On the right with the sort options
 msgctxt "widgetgallery.toolbar.sortby"
 msgid "sort by:"
-msgstr ""
+msgstr "並び順："
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostrecent"
 msgid "most&nbsp;recent"
-msgstr ""
+msgstr "新しい順"
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostliked"
 msgid "most&nbsp;liked"
-msgstr ""
+msgstr "LIKE 順"
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostpopular"
 msgid "most&nbsp;popular"
-msgstr ""
+msgstr "人気順"
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostdiscussed"
 msgid "most&nbsp;discussed"
-msgstr ""
+msgstr "コメント順"
 
 #. Prefix before the author's name
 msgctxt "widgetgallery.details.authorby"
 msgid "by"
-msgstr ""
+msgstr "並び"
 
 #. Suffix displayed after a number, i.e. "24 posts on this topic"
 msgctxt "widgetgallery.details.forumposts"
 msgid "post(s) on this topic - discuss on community.openhab.org"
-msgstr ""
+msgstr "件のトピックに関する投稿 - community.openhab.org における議論"
 
 #. Label of the big green button when nothing to import
 msgctxt "widgetgallery.details.nothingtoimport"
 msgid "Nothing to import"
-msgstr ""
+msgstr "インポートするものがありません"
 
 #. Label of the big green button when 1 widget was found
 msgctxt "widgetgallery.details.importwidget"
 msgid "Import Widget"
-msgstr ""
+msgstr "ウィジェットをインポート"
 
 #. Label of the big green button when 2 or more widgets were found
 msgctxt "widgetgallery.details.importwidgets"
 msgid "Import {} Widgets"
-msgstr ""
+msgstr "{} 個のウィジェットをインポートする"
 
 #. Label of the big blue button when there is a referenced GitHub repo
 msgctxt "widgetgallery.details.gotorepository"
 msgid "Go to the repository"
-msgstr ""
+msgstr "リポジトリに移動"
 
 #. Displyed in orange inside the big green button after a number, when some widgets are already present
 msgctxt "widgetgallery.details.toupdate"
 msgid "to update"
-msgstr ""
+msgstr "更新する"
 
 #. Little white button label with a down caret
 msgctxt "widgetgallery.details.showdetails"
 msgid "Show details"
-msgstr ""
+msgstr "詳細を表示"
 
 #. Little white button label with a up caret
 msgctxt "widgetgallery.details.hidedetails"
 msgid "Hide details"
-msgstr ""
+msgstr "詳細を非表示"
 
 #. Little white button label
 msgctxt "widgetgallery.details.downloadzip"
 msgid "Download ZIP"
-msgstr ""
+msgstr "ZIP ファイルのダウンロード"
 
 #. 1. Prefix of the explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.prefix"
 msgid "This"
-msgstr ""
+msgstr "この"
 
 #. 2a. Name of a community contribution
 msgctxt "widgetgallery.details.widget.hint.communitycontribution"
 msgid "community contribution"
-msgstr ""
+msgstr "投稿"
 
 #. 2b. Name of a community contribution
 msgctxt "widgetgallery.details.widget.hint.repository"
 msgid "repository"
-msgstr ""
+msgstr "リポジトリ"
 
 #. 3. Suffix of the explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.suffix"
 msgid "contains the following widgets; you can import them individually:"
-msgstr ""
+msgstr "これらのウィジェットがあります。そして、それらを個別にインポートできます："
 
 #. Explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.nowidgets"
 msgid "No widgets were found (*.widget.json files)! Please report this."
-msgstr ""
+msgstr "ウィジェット (*.widget.json ファイル) が見つかりません！報告してください。"
 
 #. Explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.checkrepo"
 msgid "The widgets are likely in the referenced GitHub repository. Click the 'Go to the repository' button to open it."
-msgstr ""
+msgstr "おそらくウィジェットは GitHub リポジトリにあります。「リポジトリへ移動」ボタンをクリックして表示します。"
 
 #. Green button in the expanded details section
 msgctxt "widgetgallery.details.widget.import"
 msgid "Import widget"
-msgstr ""
+msgstr "ウィジェットをインポート"
 
 #. Orange button in the expanded details section
 msgctxt "widgetgallery.details.widget.update"
 msgid "Update widget"
-msgstr ""
+msgstr "ウィジェットの更新"
 
 #. Disabled button in the expanded details section after a widget was imported/updated
 msgctxt "widgetgallery.details.widget.imported"
 msgid "Widget imported!"
-msgstr ""
+msgstr "ウィジェットをインポートしました！"
 
 #. Alert banner, followed by a technical exception message
 msgctxt "widgetgallery.error"
 msgid "Error:"
-msgstr ""
+msgstr "エラー："
 
 #. Dialog box title
 msgctxt "widgetgallery.widgetsdetected.dialog.title"
 msgid "Existing widgets detected"
-msgstr ""
+msgstr "既存のウィジェットが見つかりました"
 
 #. Dialog box message
 msgctxt "widgetgallery.widgetsdetected.dialog.message"
 msgid "Warning: please confirm you wish to update <nbexisting> existing widgets, overwriting any eventual changes made locally! If unsure, cancel and click Show details to review the list of affected widgets."
-msgstr ""
+msgstr "警告：ローカルで行われた最終的な変更を上書きして、既存の <nbexisting> ウィジェットを更新したいか確認をしてください！よくわからない場合は、キャンセルして '詳細の表示' をクリックし、影響を受けるウィジェットのリストを確認してください。"
 
