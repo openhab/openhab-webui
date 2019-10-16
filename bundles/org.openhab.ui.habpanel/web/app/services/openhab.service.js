@@ -29,6 +29,11 @@
         }
 
         function loadItems() {
+            /* send the update event early if the items are already there (to speed up the dashboard switches) */
+            if ($rootScope.items && $rootScope.items.length > 0) {
+                $timeout($rootScope.$emit('openhab-update'));
+            }
+
             $http.get('/rest/items')
             .then(function (data) {
                 if (angular.isArray(data.data)) {
