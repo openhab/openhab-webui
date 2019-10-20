@@ -13,7 +13,7 @@
 		<div class="container">
 			<p class="text-center" ng-show="data.rules.length == 0">No rules defined yet.</p>
 			<div class="groups">
-				<div class="clickable" ng-repeat="rule in rules | orderBy:'uid'" ng-click="configure(rule, $event)">
+				<div class="clickable" ng-repeat="rule in rules | orderBy:'name'" ng-click="configure(rule, $event)">
 					<div class="rule fab-item text-left">
 						<div class="circle">{{rule.name.substring(0,1)}}</div>
 						<div class="item-content" ng-class="{'enabled' : isEnabled(rule), 'disabled' : !isEnabled(rule)}">
