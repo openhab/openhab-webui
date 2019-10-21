@@ -73,7 +73,7 @@ public class NamedAttributesItemResolver implements ItemResolver {
     public void setLocale(Locale locale) {
         if (!locale.equals(currentLocale)) {
             this.currentLocale = locale;
-            logger.debug("Language set to: %s - invalidating cached item named attributes", locale.getLanguage());
+            logger.debug("Language set to: {} - invalidating cached item named attributes", locale.getLanguage());
             this.itemAttributes = null;
             this.tagAttributes = ResourceBundle.getBundle("tagattributes", locale,
                     ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT));
