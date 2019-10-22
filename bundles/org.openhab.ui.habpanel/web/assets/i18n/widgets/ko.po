@@ -8,40 +8,40 @@ msgstr ""
 "X-Crowdin-Language: ko\n"
 "X-Crowdin-File: /master/web/assets/i18n/widgets/widgets.pot\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Last-Translator: openhab-bot\n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
-"PO-Revision-Date: 2018-01-18 13:21-0500\n"
+"PO-Revision-Date: 2019-06-16 10:19\n"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.min"
 msgid "Min"
-msgstr ""
+msgstr "최소"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.max"
 msgid "Max"
-msgstr ""
+msgstr "최대"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.step"
 msgid "Step"
-msgstr ""
+msgstr "스텝"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.unit"
 msgid "Unit"
-msgstr ""
+msgstr "단위"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.format"
 msgid "Format"
-msgstr ""
+msgstr "형식"
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.format.useserverprovided"
 msgid "Use server-provided format if available"
-msgstr ""
+msgstr "가능하면 서버에서 제공하는 형식을 사용"
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.dontwrap"
@@ -66,17 +66,17 @@ msgstr ""
 #. Common tab header label
 msgctxt "widget.common.general"
 msgid "General"
-msgstr ""
+msgstr "일반"
 
 #. Common tab header label
 msgctxt "widget.common.advanced"
 msgid "Advanced"
-msgstr ""
+msgstr "고급"
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.button"
 msgid "Button"
-msgstr ""
+msgstr "버튼"
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.button.description"
@@ -86,17 +86,17 @@ msgstr ""
 #. Settings dialog title
 msgctxt "widget.button.settings.header"
 msgid "Button Settings"
-msgstr ""
+msgstr "버튼 설정"
 
 #. Tab header
 msgctxt "widget.button.general"
 msgid "General"
-msgstr ""
+msgstr "일반"
 
 #. Dropdown header
 msgctxt "widget.button.general.action_type"
 msgid "Action type"
-msgstr ""
+msgstr "동작 유형"
 
 #. Dropdown option
 msgctxt "widget.button.general.action_type.command"
@@ -111,7 +111,7 @@ msgstr ""
 #. Dropdown option
 msgctxt "widget.button.general.action_type.navigate"
 msgid "Navigate"
-msgstr ""
+msgstr "탐색"
 
 #. Textbox header
 msgctxt "widget.button.general.command"
@@ -126,12 +126,12 @@ msgstr ""
 #. Radio buttons header
 msgctxt "widget.button.general.navigation_type"
 msgid "Navigation type"
-msgstr ""
+msgstr "탐색 유형"
 
 #. Radio button label
 msgctxt "widget.button.general.navigation_type.dashboard"
 msgid "Dashboard"
-msgstr ""
+msgstr "대시 보드"
 
 #. Radio buttons header
 msgctxt "widget.button.general.navigation_target"
@@ -141,116 +141,116 @@ msgstr ""
 #. Radio button label
 msgctxt "widget.button.general.navigation_target.self"
 msgid "Current tab"
-msgstr ""
+msgstr "현재 탭"
 
 #. Radio button label
 msgctxt "widget.button.general.navigation_target.new_tab"
 msgid "New tab"
-msgstr ""
+msgstr "새 탭"
 
 #. Radio button label
 msgctxt "widget.button.general.navigation_target.new_window"
 msgid "New window"
-msgstr ""
+msgstr "새 창"
 
 #. Tab header
 msgctxt "widget.button.display"
 msgid "Display"
-msgstr ""
+msgstr "디스플레이"
 
 #. Section header
 msgctxt "widget.button.display.label"
 msgid "Label"
-msgstr ""
+msgstr "라벨"
 
 #. Section header
 msgctxt "widget.button.display.value"
 msgid "Value"
-msgstr ""
+msgstr "값"
 
 #. Checkbox label (when there's an item configured in the General tab)
 msgctxt "widget.button.display.value.showitemvalue"
 msgid "Show the item's state value"
-msgstr ""
+msgstr "항목의 상태 값 보기"
 
 #. Checkbox label (when there's no item configured in the General tab)
 msgctxt "widget.button.display.value.showitemvalue_noitem"
 msgid "Show an item's state value"
-msgstr ""
+msgstr "항목의 상태 값 보기"
 
 #. Textbox header
 msgctxt "widget.button.display.value.active_state"
 msgid "Active state"
-msgstr ""
+msgstr "활성 상태"
 
 #. Checkboxes header
 msgctxt "widget.button.display.value.layout"
 msgid "Layout"
-msgstr ""
+msgstr "레이아웃"
 
 #. Tab header
 msgctxt "widget.button.inactive"
 msgid "Inactive"
-msgstr ""
+msgstr "비활성"
 
 #. Tab header
 msgctxt "widget.button.active"
 msgid "Active"
-msgstr ""
+msgstr "활성"
 
 #. Tab header (when there's no item configured in the General tab)
 msgctxt "widget.button.colors"
 msgid "Colors"
-msgstr ""
+msgstr "색상"
 
 #. Color picker header
 msgctxt "widget.button.background_color"
 msgid "Background color"
-msgstr ""
+msgstr "배경 색상"
 
 #. Color picker header
 msgctxt "widget.button.foreground_color"
 msgid "Label color"
-msgstr ""
+msgstr "레이블 색상"
 
 #. Color picker header
 msgctxt "widget.button.value_color"
 msgid "Value color"
-msgstr ""
+msgstr "색상 값"
 
 msgctxt "widget.button.preview.state"
 msgid "State"
-msgstr ""
+msgstr "상태"
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.chart"
 msgid "Chart"
-msgstr ""
+msgstr "차트"
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.chart.description"
 msgid "Displays a chart"
-msgstr ""
+msgstr "차트 표시"
 
 #. Settings dialog title
 msgctxt "widget.chart.settings.header"
 msgid "Chart Settings"
-msgstr ""
+msgstr "차트 설정"
 
 #. Tab header
 msgctxt "widget.chart.general"
 msgid "General"
-msgstr ""
+msgstr "일반"
 
 #. Dropdown header
 msgctxt "widget.chart.general.type"
 msgid "Type"
-msgstr ""
+msgstr "타입"
 
 #. Dropdown option
 msgctxt "widget.chart.general.type.default"
 msgid "Default"
-msgstr ""
+msgstr "기본값"
 
 #. Dropdown option
 msgctxt "widget.chart.general.type.rrd4j"
@@ -260,7 +260,7 @@ msgstr ""
 #. Dropdown option
 msgctxt "widget.chart.general.type.interactive"
 msgid "n3-line-chart (interactive)"
-msgstr ""
+msgstr "n3-라인-차트 (대화형)"
 
 #. Textbox header
 msgctxt "widget.chart.general.service"
@@ -465,17 +465,17 @@ msgstr ""
 #. Settings dialog title
 msgctxt "widget.dummy.settings.header"
 msgid "Dummy Settings"
-msgstr ""
+msgstr "더미 설정"
 
 #. Checkboxes header
 msgctxt "widget.dummy.layout"
 msgid "Layout"
-msgstr ""
+msgstr "레이아웃"
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.frame"
 msgid "Frame"
-msgstr ""
+msgstr "프레임"
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.frame.description"
@@ -485,27 +485,27 @@ msgstr ""
 #. Settings dialog title
 msgctxt "widget.frame.settings.header"
 msgid "Frame Settings"
-msgstr ""
+msgstr "프레임 설정"
 
 #. Dropdown header
 msgctxt "widget.frame.url_source"
 msgid "URL Source"
-msgstr ""
+msgstr "URL 소스"
 
 #. Dropdown option
 msgctxt "widget.frame.url_source.static"
 msgid "Static URL"
-msgstr ""
+msgstr "정적 URL"
 
 #. Dropdown option
 msgctxt "widget.frame.url_source.item"
 msgid "openHAB String Item"
-msgstr ""
+msgstr "openHAB 문자열 항목"
 
 #. Textbox header
 msgctxt "widget.frame.refresh_interval"
 msgid "Refresh interval (seconds)"
-msgstr ""
+msgstr "새로 고침 간격 (초)"
 
 #. Checkbox header - appears only if the refresh interval is set
 msgctxt "widget.frame.nosuffix"
@@ -520,7 +520,7 @@ msgstr ""
 #. Color picker header
 msgctxt "widget.frame.background_color"
 msgid "Frame background color"
-msgstr ""
+msgstr "프레임 배경색"
 
 #. Checkbox header
 msgctxt "widget.frame.frameless"
@@ -535,7 +535,7 @@ msgstr ""
 #. Checkbox header
 msgctxt "widget.frame.label"
 msgid "Label"
-msgstr ""
+msgstr "라벨"
 
 #. Checkbox label
 msgctxt "widget.frame.label.description"
@@ -545,7 +545,7 @@ msgstr ""
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.image"
 msgid "Image"
-msgstr ""
+msgstr "이미지"
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.image.description"
@@ -555,12 +555,12 @@ msgstr ""
 #. Settings dialog title
 msgctxt "widget.image.settings.header"
 msgid "Image Settings"
-msgstr ""
+msgstr "이미지 설정"
 
 #. Dropdown header
 msgctxt "widget.image.image_source"
 msgid "Image source"
-msgstr ""
+msgstr "이미지 소스"
 
 #. Dropdown option
 msgctxt "widget.image.image_source.static"
@@ -570,27 +570,27 @@ msgstr ""
 #. Dropdown option
 msgctxt "widget.image.image_source.item-string"
 msgid "openHAB String Item"
-msgstr ""
+msgstr "openHAB 문자열 항목"
 
 #. Dropdown option
 msgctxt "widget.image.image_source.item-image"
 msgid "openHAB Image Item"
-msgstr ""
+msgstr "openHAB 이미지 항목"
 
 #. Textbox header
 msgctxt "widget.image.refresh_interval"
 msgid "Refresh interval"
-msgstr ""
+msgstr "새로고침 간격"
 
 #. Radio button label
 msgctxt "widget.image.refresh_interval.seconds"
 msgid "seconds"
-msgstr ""
+msgstr "초"
 
 #. Radio button label
 msgctxt "widget.image.refresh_interval.milliseconds"
 msgid "milliseconds"
-msgstr ""
+msgstr "밀리초"
 
 #. Checkbox header - appears only if the refresh interval is set
 msgctxt "widget.image.nosuffix"
@@ -605,7 +605,7 @@ msgstr ""
 #. Color picker header
 msgctxt "widget.image.background_color"
 msgid "Background color"
-msgstr ""
+msgstr "배경 색상"
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.knob"
@@ -625,7 +625,7 @@ msgstr ""
 #. Checkbox header
 msgctxt "widget.knob.general.readonly"
 msgid "Read only"
-msgstr ""
+msgstr "읽기 전용"
 
 #. Checkbox label
 msgctxt "widget.knob.general.readonly.description"
@@ -640,7 +640,7 @@ msgstr ""
 #. Checkbox label
 msgctxt "widget.knob.general.centraldisplay.showvalue"
 msgid "Show value"
-msgstr ""
+msgstr "값 표시"
 
 #. Checkbox label
 msgctxt "widget.knob.general.centraldisplay.showlabel"
@@ -655,22 +655,22 @@ msgstr ""
 #. Section header
 msgctxt "widget.knob.bartrack.angles"
 msgid "Angles (°)"
-msgstr ""
+msgstr "각도 (°)"
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.angles.start"
 msgid "Start"
-msgstr ""
+msgstr "시작:"
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.angles.end"
 msgid "End"
-msgstr ""
+msgstr "끝"
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.width"
 msgid "Width"
-msgstr ""
+msgstr "너비"
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.cap"
@@ -685,22 +685,22 @@ msgstr ""
 #. Section header
 msgctxt "widget.knob.bartrack.track"
 msgid "Track"
-msgstr ""
+msgstr "트랙"
 
 #. Section header
 msgctxt "widget.knob.bartrack.previousvalue"
 msgid "Previous value"
-msgstr ""
+msgstr "이전 값"
 
 #. Checkbox label
 msgctxt "widget.knob.bartrack.previousvalue.description"
 msgid "Display previous value when dragging"
-msgstr ""
+msgstr "드래그할 때 이전 값을 표시"
 
 #. Tab header
 msgctxt "widget.knob.scale"
 msgid "Scale"
-msgstr ""
+msgstr "스케일"
 
 #. Checkbox header
 msgctxt "widget.knob.scale.display"

@@ -61,7 +61,7 @@ public class HABotHttpContext implements HttpContext {
 
     @Override
     public URL getResource(String name) {
-        logger.debug("Requesting resource " + name);
+        logger.debug("Requesting resource: {}", name);
         // Get the gzipped version for selected resources, built as static resources by webpack
         URL defaultResource = defaultHttpContext.getResource(name);
         if (useGzipCompression && isGzipVersionAvailable(name)) {

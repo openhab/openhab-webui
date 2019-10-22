@@ -8,40 +8,40 @@ msgstr ""
 "X-Crowdin-Language: ar\n"
 "X-Crowdin-File: /master/web/assets/i18n/widgets/widgets.pot\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Last-Translator: openhab-bot\n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
-"PO-Revision-Date: 2018-01-18 13:31-0500\n"
+"PO-Revision-Date: 2019-06-16 10:18\n"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.min"
 msgid "Min"
-msgstr ""
+msgstr "الحد الأدنى"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.max"
 msgid "Max"
-msgstr ""
+msgstr "الحد الأعلى"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.step"
 msgid "Step"
-msgstr ""
+msgstr "الخطوة"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.unit"
 msgid "Unit"
-msgstr ""
+msgstr "الوحدة"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.format"
 msgid "Format"
-msgstr ""
+msgstr "التنسيق"
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.format.useserverprovided"
 msgid "Use server-provided format if available"
-msgstr ""
+msgstr "استخدام تنسيق المخدم إذا كان متوفراً"
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.dontwrap"
@@ -66,17 +66,17 @@ msgstr ""
 #. Common tab header label
 msgctxt "widget.common.general"
 msgid "General"
-msgstr ""
+msgstr "عام"
 
 #. Common tab header label
 msgctxt "widget.common.advanced"
 msgid "Advanced"
-msgstr ""
+msgstr "متقدم"
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.button"
 msgid "Button"
-msgstr ""
+msgstr "زر"
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.button.description"
@@ -86,17 +86,17 @@ msgstr ""
 #. Settings dialog title
 msgctxt "widget.button.settings.header"
 msgid "Button Settings"
-msgstr ""
+msgstr "إعدادات الزر"
 
 #. Tab header
 msgctxt "widget.button.general"
 msgid "General"
-msgstr ""
+msgstr "عام"
 
 #. Dropdown header
 msgctxt "widget.button.general.action_type"
 msgid "Action type"
-msgstr ""
+msgstr "نوع الإجراء"
 
 #. Dropdown option
 msgctxt "widget.button.general.action_type.command"
@@ -111,7 +111,7 @@ msgstr ""
 #. Dropdown option
 msgctxt "widget.button.general.action_type.navigate"
 msgid "Navigate"
-msgstr ""
+msgstr "تنقل"
 
 #. Textbox header
 msgctxt "widget.button.general.command"
@@ -131,7 +131,7 @@ msgstr ""
 #. Radio button label
 msgctxt "widget.button.general.navigation_type.dashboard"
 msgid "Dashboard"
-msgstr ""
+msgstr "لوحة التحكم"
 
 #. Radio buttons header
 msgctxt "widget.button.general.navigation_target"
@@ -151,12 +151,12 @@ msgstr ""
 #. Radio button label
 msgctxt "widget.button.general.navigation_target.new_window"
 msgid "New window"
-msgstr ""
+msgstr "نافذة جديدة"
 
 #. Tab header
 msgctxt "widget.button.display"
 msgid "Display"
-msgstr ""
+msgstr "عرض"
 
 #. Section header
 msgctxt "widget.button.display.label"
@@ -166,7 +166,7 @@ msgstr ""
 #. Section header
 msgctxt "widget.button.display.value"
 msgid "Value"
-msgstr ""
+msgstr "القيمة"
 
 #. Checkbox label (when there's an item configured in the General tab)
 msgctxt "widget.button.display.value.showitemvalue"
@@ -191,12 +191,12 @@ msgstr ""
 #. Tab header
 msgctxt "widget.button.inactive"
 msgid "Inactive"
-msgstr ""
+msgstr "غير مفعل"
 
 #. Tab header
 msgctxt "widget.button.active"
 msgid "Active"
-msgstr ""
+msgstr "مفعل"
 
 #. Tab header (when there's no item configured in the General tab)
 msgctxt "widget.button.colors"
@@ -206,26 +206,26 @@ msgstr ""
 #. Color picker header
 msgctxt "widget.button.background_color"
 msgid "Background color"
-msgstr ""
+msgstr "لون الخلفية"
 
 #. Color picker header
 msgctxt "widget.button.foreground_color"
 msgid "Label color"
-msgstr ""
+msgstr "لون التسمية"
 
 #. Color picker header
 msgctxt "widget.button.value_color"
 msgid "Value color"
-msgstr ""
+msgstr "لون القيمة"
 
 msgctxt "widget.button.preview.state"
 msgid "State"
-msgstr ""
+msgstr "الحالة"
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.chart"
 msgid "Chart"
-msgstr ""
+msgstr "الرسم البياني"
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.chart.description"
@@ -235,22 +235,22 @@ msgstr ""
 #. Settings dialog title
 msgctxt "widget.chart.settings.header"
 msgid "Chart Settings"
-msgstr ""
+msgstr "إعدادات المخطط"
 
 #. Tab header
 msgctxt "widget.chart.general"
 msgid "General"
-msgstr ""
+msgstr "عام"
 
 #. Dropdown header
 msgctxt "widget.chart.general.type"
 msgid "Type"
-msgstr ""
+msgstr "النوع"
 
 #. Dropdown option
 msgctxt "widget.chart.general.type.default"
 msgid "Default"
-msgstr ""
+msgstr "افتراضي"
 
 #. Dropdown option
 msgctxt "widget.chart.general.type.rrd4j"
@@ -280,17 +280,17 @@ msgstr ""
 #. Dropdown header
 msgctxt "widget.chart.general.period"
 msgid "Period"
-msgstr ""
+msgstr "المدة"
 
 #. Tab header
 msgctxt "widget.chart.axis"
 msgid "Axis"
-msgstr ""
+msgstr "المحور"
 
 #. Section header
 msgctxt "widget.chart.axis.primary"
 msgid "Primary axis (y)"
-msgstr ""
+msgstr "المحور الرئيسي (y)"
 
 #. Section header
 msgctxt "widget.chart.axis.secondary"
@@ -430,7 +430,7 @@ msgstr ""
 #. Dropdown header
 msgctxt "widget.colorpicker.type"
 msgid "Type"
-msgstr ""
+msgstr "النوع"
 
 #. Dropdown option
 msgctxt "widget.colorpicker.type.hsl"
@@ -475,7 +475,7 @@ msgstr ""
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.frame"
 msgid "Frame"
-msgstr ""
+msgstr "إطار"
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.frame.description"
@@ -525,27 +525,27 @@ msgstr ""
 #. Checkbox header
 msgctxt "widget.frame.frameless"
 msgid "Frameless"
-msgstr ""
+msgstr "بدون إطار"
 
 #. Checkbox label
 msgctxt "widget.frame.frameless.description"
 msgid "Fill to edges"
-msgstr ""
+msgstr "تعبئة إلى الحواف"
 
 #. Checkbox header
 msgctxt "widget.frame.label"
 msgid "Label"
-msgstr ""
+msgstr "التسمية"
 
 #. Checkbox label
 msgctxt "widget.frame.label.description"
 msgid "Hide title label"
-msgstr ""
+msgstr "إخفاء تسمية العنوان"
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.image"
 msgid "Image"
-msgstr ""
+msgstr "الصورة"
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.image.description"
@@ -555,12 +555,12 @@ msgstr ""
 #. Settings dialog title
 msgctxt "widget.image.settings.header"
 msgid "Image Settings"
-msgstr ""
+msgstr "إعدادات الصورة"
 
 #. Dropdown header
 msgctxt "widget.image.image_source"
 msgid "Image source"
-msgstr ""
+msgstr "مصدر الصورة"
 
 #. Dropdown option
 msgctxt "widget.image.image_source.static"

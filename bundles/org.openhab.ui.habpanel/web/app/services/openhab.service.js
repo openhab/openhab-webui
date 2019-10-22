@@ -29,6 +29,11 @@
         }
 
         function loadItems() {
+            /* send the update event early if the items are already there (to speed up the dashboard switches) */
+            if ($rootScope.items && $rootScope.items.length > 0) {
+                $timeout($rootScope.$emit('openhab-update'));
+            }
+
             $http.get('/rest/items')
             .then(function (data) {
                 if (angular.isArray(data.data)) {
@@ -89,7 +94,7 @@
             if (locale) {
                 deferred.resolve(locale);
             } else {
-                $http.get('/rest/services/org.eclipse.smarthome.core.i18nprovider/config')
+                $http.get('/rest/services/org.eclipse.smarthome.i18n/config')
                 .then(function (response) {
                     var language;
                     if (!response.data.language) {
@@ -160,7 +165,7 @@
         
         function registerEventSource() {
             if (typeof(EventSource) !== "undefined") {
-                var source = new EventSource('/rest/events');
+                var source = new EventSource('/rest/events?topics=smarthome/items/*/statechanged,smarthome/items/*/*/statechanged,smarthome/webaudio/playurl');
                 liveUpdatesEnabled = true;
 
                 source.onmessage = function (event) {
@@ -250,13 +255,6 @@
                                 if (context)
                                   context.close();
                             }
-                        } else if (topicparts[0] !== 'smarthome') {
-                            var payload = JSON.parse(evtdata.payload);
-                            var ohEvent = { topic: evtdata.topic, type: evtdata.type, payload: payload };
-                            $rootScope.$apply(function () {
-                                console.log("Emitting event type=" + ohEvent.type + ", topic=" + ohEvent.topic);
-                                $rootScope.$emit('openhab-event', ohEvent);
-                            });
                         }
                     } catch (e) {
                         console.warn('SSE event issue: ' + e.message);

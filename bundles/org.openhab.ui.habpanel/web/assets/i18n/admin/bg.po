@@ -8,169 +8,169 @@ msgstr ""
 "X-Crowdin-Language: bg\n"
 "X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot <bot@openhab.org>\n"
+"Last-Translator: openhab-bot\n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
-"PO-Revision-Date: 2018-01-19 07:11-0500\n"
+"PO-Revision-Date: 2019-06-16 10:18\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
 msgid "Save"
-msgstr ""
+msgstr "Запази"
 
 #. Run button in the dashboard designer
 msgctxt "designer.run"
 msgid "Run"
-msgstr ""
+msgstr "Пусни"
 
 #. Add widget button in the dashboard designer
 msgctxt "designer.addwidget"
 msgid "Add Widget"
-msgstr ""
+msgstr "Добави уиджет"
 
 #. Tutorial text with arrow when on an empty dashboard
 msgctxt "designer.addwidget.hint"
 msgid "Add some widgets"
-msgstr ""
+msgstr "Добави уиджети"
 
 #. Header of the custom widget section (beware, it might overlap the cogs icon on the right)
 msgctxt "designer.addwidget.customwidgets"
 msgid "Custom widgets"
-msgstr ""
+msgstr "Персонализирай уиджети"
 
 #. Open widget gallery
 msgctxt "designer.addwidget.getmore"
 msgid "Get more..."
-msgstr ""
+msgstr "Още..."
 
 #. Tooltip when hovering the "Get more" menu entry
 msgctxt "designer.addwidget.getmore.tooltip"
 msgid "Open the widget gallery to import more widgets"
-msgstr ""
+msgstr "Отвори галерията за уиджети, за да добавиш още уиджети"
 
 #. Edit option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.edit"
 msgid "Edit..."
-msgstr ""
+msgstr "Промени..."
 
 #. Copy/move option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.copymove"
 msgid "Copy/move to..."
-msgstr ""
+msgstr "Копирай/премести..."
 
 #. Delete option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.delete"
 msgid "Delete"
-msgstr ""
+msgstr "Изтрий"
 
 #. Title of copy/move widget dialog
 msgctxt "designer.copymove.header"
 msgid "Copy/move {{widgetName}}"
-msgstr ""
+msgstr "Копирай/премести {{widgetName}}"
 
 #. Alongside the dropdown dashboard selection
 msgctxt "designer.copymove.todashboard"
 msgid "To dashboard"
-msgstr ""
+msgstr "Към контролното табло"
 
 #. Move button
 msgctxt "designer.copymove.move"
 msgid "Move"
-msgstr ""
+msgstr "Преместване"
 
 #. Copy button
 msgctxt "designer.copymove.copy"
 msgid "Copy"
-msgstr ""
+msgstr "Копирай"
 
 #. Default name of a newly created widget
 msgctxt "designer.newwidget.defaultname"
 msgid "New Widget"
-msgstr ""
+msgstr "Нова Джаджа"
 
 msgctxt "designer.serversavefailed"
 msgid "Server save failed!"
-msgstr ""
+msgstr "Запаметяванаето на сървър е неуспешно!"
 
 #. Title of the dashboard settings dialog
 msgctxt "dashboard.settings.dialog.title"
 msgid "Dashboard Settings"
-msgstr ""
+msgstr "Нстройки на Таблото"
 
 #. Tab header
 msgctxt "dashboard.settings.tile"
 msgid "Menu tile"
-msgstr ""
+msgstr "Заглавие на Менюто"
 
 #. Textbox header
 msgctxt "dashboard.settings.tile.background_image_url"
 msgid "Background Image URL"
-msgstr ""
+msgstr "URL адрес на изображението за фон"
 
 #. Color picker header
 msgctxt "dashboard.settings.tile.title_text_color"
 msgid "Title Text color"
-msgstr ""
+msgstr "Цвят на текста във Заглавието"
 
 #. Checkbox header
 msgctxt "dashboard.settings.tile.click_feedback"
 msgid "Click feedback"
-msgstr ""
+msgstr "Обратна връзка след кликване"
 
 #. Checkbox label
 msgctxt "dashboard.settings.tile.click_feedback.description"
 msgid "Don't brighten tile on click/tap"
-msgstr ""
+msgstr "Не увеличавай светлината при цъкане"
 
 #. Tab header
 msgctxt "dashboard.settings.advanced"
 msgid "Advanced"
-msgstr ""
+msgstr "Напренали"
 
 #. Alert display at the top
 msgctxt "dashboard.settings.advanced.warning"
 msgid "These options are currently experimental, unstable or targeted at advanced users! Use at your own risk."
-msgstr ""
+msgstr "Тези опции понастоящем са експериментални, нестабилни или насочени към напреднали потребители! Използвайте го на свой собствен риск."
 
 #. Tab header
 msgctxt "dashboard.settings.customwidgets"
 msgid "Custom widgets"
-msgstr ""
+msgstr "Персонализирай уиджети"
 
 #. Alert displayed at the top
 msgctxt "dashboard.settings.customwidgets.warning"
 msgid "This feature is currently experimental, and targeted at advanced users! Use at your own risk."
-msgstr ""
+msgstr "Тази функция понастоящем е експериментална и е насочена към напреднали потребители! Използвайте го на свой собствен риск."
 
 #. Checkbox header
 msgctxt "dashboard.settings.customwidgets.usecustomwidget"
 msgid "Use a custom widget"
-msgstr ""
+msgstr "Ползвай персонализиран уиджет"
 
 #. Dropdown header
 msgctxt "dashboard.settings.customwidgets.customwidget"
 msgid "Custom Widget"
-msgstr ""
+msgstr "Персонализиран уиджет"
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.tile"
 msgid "Main menu tile"
-msgstr ""
+msgstr "Главно меню"
 
 #. Checkbox label
 msgctxt "dashboard.settings.customwidgets.tile.description"
 msgid "Replace the tile contents by a custom widget"
-msgstr ""
+msgstr "Замени съдържанието чрез Персонализиран уиджет"
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.drawer"
 msgid "Drawer"
-msgstr ""
+msgstr "Чекмедже"
 
 #. Checkbox label
 msgctxt "dashboard.settings.customwidgets.drawer.description"
 msgid "Replace the contents of the drawer menu by a custom widget"
-msgstr ""
+msgstr "Замени съдържанието на чекмеджето чрез Персонализиран уиджет"
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.header"
@@ -250,17 +250,17 @@ msgstr ""
 #. Displayed before the list of dashboard the panel configuration contains
 msgctxt "settings.storage.panelconfiguration.contains"
 msgid "Contains:"
-msgstr ""
+msgstr "Съдържа:"
 
 #. Link to create a panel configuration from the current configuration
 msgctxt "settings.storage.panelconfiguration.save"
 msgid "Save the current configuration to a new panel configuration"
-msgstr ""
+msgstr "Запазете текущата конфигурация в нова панелна конфигурация"
 
 #. Title of the dialog box when creating a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.title"
 msgid "New panel configuration"
-msgstr ""
+msgstr "Нова панелна конфигурация"
 
 #. Message of the dialog box when creating a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.message"
@@ -440,12 +440,12 @@ msgstr ""
 #. Label displayed on the button for a few seconds after a successful save
 msgctxt "settings.localconfig.saved"
 msgid "Saved!"
-msgstr ""
+msgstr "Запаметено!"
 
 #. Label displayed for a few seconds on the copy or save button if an error occurred
 msgctxt "settings.localconfig.failed"
 msgid "FAILED!"
-msgstr ""
+msgstr "НЕУСПЕШНО!"
 
 #. Displayed in a dialog box
 msgctxt "settings.localconfig.error.nodashboardsfound"
@@ -455,7 +455,7 @@ msgstr ""
 #. Title of a a dialog box
 msgctxt "settings.localconfig.parsingerror.dialog.title"
 msgid "Error"
-msgstr ""
+msgstr "Грешка"
 
 #. Message in a dialog box
 msgctxt "settings.localconfig.parsingerror.dialog.message"
@@ -465,7 +465,7 @@ msgstr ""
 #. Title of a a dialog box
 msgctxt "settings.localconfig.importerror.dialog.title"
 msgid "Error"
-msgstr ""
+msgstr "Грешка"
 
 #. Message in a dialog box
 msgctxt "settings.localconfig.importerror.dialog.message"
@@ -670,22 +670,22 @@ msgstr ""
 #. Dropdown header
 msgctxt "customwidgets.designer.settings.config.type"
 msgid "Type"
-msgstr ""
+msgstr "Тип"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.string"
 msgid "String"
-msgstr ""
+msgstr "Низ"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.number"
 msgid "Number"
-msgstr ""
+msgstr "Цифра"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.checkbox"
 msgid "Checkbox"
-msgstr ""
+msgstr "Отметка"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.item"
@@ -785,7 +785,7 @@ msgstr ""
 #. Button on the right of the addressbar
 msgctxt "widgetgallery.addressbar.go"
 msgid "Go"
-msgstr ""
+msgstr "Отиди"
 
 #. Suffix displayed after a number, i.e. "24 community contributions"
 msgctxt "widgetgallery.toolbar.communitycontributions"
@@ -795,32 +795,32 @@ msgstr ""
 #. On the right with the sort options
 msgctxt "widgetgallery.toolbar.sortby"
 msgid "sort by:"
-msgstr ""
+msgstr "сортиране по:"
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostrecent"
 msgid "most&nbsp;recent"
-msgstr ""
+msgstr "най&nbsp;-нови"
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostliked"
 msgid "most&nbsp;liked"
-msgstr ""
+msgstr "най&nbsp;-харесвани"
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostpopular"
 msgid "most&nbsp;popular"
-msgstr ""
+msgstr "най&nbsp;-гледани"
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostdiscussed"
 msgid "most&nbsp;discussed"
-msgstr ""
+msgstr "най&nbsp;-обсъждани"
 
 #. Prefix before the author's name
 msgctxt "widgetgallery.details.authorby"
 msgid "by"
-msgstr ""
+msgstr "от"
 
 #. Suffix displayed after a number, i.e. "24 posts on this topic"
 msgctxt "widgetgallery.details.forumposts"
