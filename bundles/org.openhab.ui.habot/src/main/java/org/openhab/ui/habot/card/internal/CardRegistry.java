@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.common.registry.AbstractRegistry;
 import org.eclipse.smarthome.core.common.registry.Registry;
 import org.eclipse.smarthome.core.events.EventPublisher;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 @Component(service = CardRegistry.class, immediate = true)
 public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
 
@@ -64,12 +66,12 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
     /**
      * Returns cards matching the specified object and/or location attribute(s)
      *
-     * @param object   optional object attribute
+     * @param object optional object attribute
      * @param location optional location attribute
      * @return matching cards - if one of the 2 arguments is not or empty, matching cards do NOT have the attribute. If
      *         both are provided, matching cards have both.
      */
-    public Collection<Card> getCardMatchingAttributes(String object, String location) {
+    public Collection<Card> getCardMatchingAttributes(@Nullable String object, @Nullable String location) {
         List<Card> filteredCards = new ArrayList<Card>();
         for (Card card : getAll()) {
             if (cardMatchesAttributes(card, object, location)) {
@@ -80,7 +82,7 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
     }
 
     @Override
-    public @NonNull Card add(@NonNull Card element) {
+    public Card add(Card element) {
         // Remove old ephemeral cards
         Comparator<Card> byTimestamp = (e1, e2) -> e2.getTimestamp().compareTo(e1.getTimestamp());
         List<Card> oldCards = getAll().stream().filter(card -> card.isEphemeral()).sorted(byTimestamp).skip(10)
@@ -97,7 +99,7 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
     /**
      * Returns the most recent cards according to their timestamp
      *
-     * @param skip  number of elements to skip, for paging
+     * @param skip number of elements to skip, for paging
      * @param count number of elements to retrieve, for paging (default 10)
      * @return the recent cards, in decreasing order of age
      */
@@ -122,11 +124,11 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
     /*
      * NOTE: unlike the ItemRegistry this method returns true only if the card has ALL the provided tags!
      */
-    private boolean cardHasTags(Card card, Set<String> tags) {
+    private boolean cardHasTags(Card card, @Nullable Set<String> tags) {
         return (tags != null && card.getTags() != null && card.getTags().equals(tags));
     }
 
-    private boolean cardMatchesAttributes(Card card, String object, String location) {
+    private boolean cardMatchesAttributes(Card card, @Nullable String object, @Nullable String location) {
         boolean objectMatches = (object == null || object.isEmpty()) ^ card.hasObjectAttribute(object);
         boolean locationMatches = (location == null || location.isEmpty()) ^ card.hasLocationAttribute(location);
 

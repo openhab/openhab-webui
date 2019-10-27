@@ -12,7 +12,7 @@
  */
 package org.openhab.ui.habot.card.internal;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.core.common.registry.DefaultAbstractManagedProvider;
 import org.eclipse.smarthome.core.common.registry.ManagedProvider;
 import org.eclipse.smarthome.core.storage.StorageService;
@@ -26,6 +26,7 @@ import org.osgi.service.component.annotations.Reference;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 @Component(service = CardProvider.class, immediate = true)
 public class CardProvider extends DefaultAbstractManagedProvider<Card, String> {
 
@@ -40,7 +41,7 @@ public class CardProvider extends DefaultAbstractManagedProvider<Card, String> {
     }
 
     @Override
-    protected @NonNull String keyToString(@NonNull String key) {
+    protected String keyToString(String key) {
         return key;
     }
 

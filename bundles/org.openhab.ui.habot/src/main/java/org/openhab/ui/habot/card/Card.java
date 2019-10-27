@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.common.registry.Identifiable;
 import org.openhab.ui.habot.card.internal.CardRegistry;
@@ -32,11 +32,13 @@ import org.openhab.ui.habot.nlp.Intent;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 public class Card extends Component implements Identifiable<String> {
-    @NonNull
     String uid;
 
+    @Nullable
     String title;
+    @Nullable
     String subtitle;
 
     Set<String> objects = new HashSet<String>();
@@ -49,6 +51,7 @@ public class Card extends Component implements Identifiable<String> {
     boolean addToDeckDenied;
     boolean ephemeral;
 
+    @Nullable
     Date timestamp;
 
     /**
@@ -56,7 +59,6 @@ public class Card extends Component implements Identifiable<String> {
      *
      * @param name the name of the UI component to render the card on client frontends, ie. "HbCard"
      */
-    @SuppressWarnings("null")
     public Card(String name) {
         super(name);
         this.uid = UUID.randomUUID().toString();
@@ -65,16 +67,15 @@ public class Card extends Component implements Identifiable<String> {
     /**
      * Constructs a Card with a specific UID.
      *
-     * @param uid  the UID of the new card
+     * @param uid the UID of the new card
      * @param name the name of the UI component to render the card on client frontends, ie. "HbCard"
      */
-    public Card(@NonNull String uid, String name) {
+    public Card(String uid, String name) {
         super(name);
         this.uid = uid;
     }
 
     @Override
-    @NonNull
     public String getUID() {
         return uid;
     }
@@ -84,7 +85,7 @@ public class Card extends Component implements Identifiable<String> {
      *
      * @return the card title
      */
-    public String getTitle() {
+    public @Nullable String getTitle() {
         return title;
     }
 
@@ -93,7 +94,7 @@ public class Card extends Component implements Identifiable<String> {
      *
      * @param title the card title
      */
-    public void setTitle(String title) {
+    public void setTitle(@Nullable String title) {
         this.title = title;
     }
 
@@ -102,7 +103,7 @@ public class Card extends Component implements Identifiable<String> {
      *
      * @return the card subtitle
      */
-    public String getSubtitle() {
+    public @Nullable String getSubtitle() {
         return subtitle;
     }
 
@@ -111,7 +112,7 @@ public class Card extends Component implements Identifiable<String> {
      *
      * @param subtitle the card subtitle
      */
-    public void setSubtitle(String subtitle) {
+    public void setSubtitle(@Nullable String subtitle) {
         this.subtitle = subtitle;
     }
 
@@ -223,7 +224,7 @@ public class Card extends Component implements Identifiable<String> {
      *
      * @return the timestamp
      */
-    public Date getTimestamp() {
+    public @Nullable Date getTimestamp() {
         return timestamp;
     }
 
@@ -337,7 +338,7 @@ public class Card extends Component implements Identifiable<String> {
      *
      * @param object
      */
-    public boolean hasObjectAttribute(String object) {
+    public boolean hasObjectAttribute(@Nullable String object) {
         if (this.objects == null || object == null || object.isEmpty()) {
             return false;
         }
@@ -385,7 +386,7 @@ public class Card extends Component implements Identifiable<String> {
      *
      * @param object
      */
-    public boolean hasLocationAttribute(String location) {
+    public boolean hasLocationAttribute(@Nullable String location) {
         if (this.locations == null || location == null || location.isEmpty()) {
             return false;
         }
