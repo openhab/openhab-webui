@@ -33,12 +33,12 @@ import org.eclipse.smarthome.core.library.items.ContactItem;
 import org.eclipse.smarthome.core.library.items.DateTimeItem;
 import org.eclipse.smarthome.core.library.items.NumberItem;
 import org.eclipse.smarthome.core.library.items.RollershutterItem;
-import org.eclipse.smarthome.model.sitemap.LinkableWidget;
-import org.eclipse.smarthome.model.sitemap.Selection;
-import org.eclipse.smarthome.model.sitemap.Setpoint;
-import org.eclipse.smarthome.model.sitemap.Sitemap;
-import org.eclipse.smarthome.model.sitemap.Webview;
-import org.eclipse.smarthome.model.sitemap.Widget;
+import org.eclipse.smarthome.model.sitemap.sitemap.LinkableWidget;
+import org.eclipse.smarthome.model.sitemap.sitemap.Selection;
+import org.eclipse.smarthome.model.sitemap.sitemap.Setpoint;
+import org.eclipse.smarthome.model.sitemap.sitemap.Sitemap;
+import org.eclipse.smarthome.model.sitemap.sitemap.Webview;
+import org.eclipse.smarthome.model.sitemap.sitemap.Widget;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.config.ConfigHelper.Transform;
 import org.openhab.ui.cometvisu.internal.config.beans.Address;
@@ -208,7 +208,7 @@ public class VisuConfig {
             EList<Widget> children = app.getItemUIRegistry().getChildren((LinkableWidget) widget);
             if (children.size() == 0) {
                 processItemWidget(rootPage, widget, item, pages, level);
-            } else if (widget instanceof org.eclipse.smarthome.model.sitemap.Frame) {
+            } else if (widget instanceof org.eclipse.smarthome.model.sitemap.sitemap.Frame) {
                 Group group = new Group();
                 group.setLayout(configHelper.createLayout(6));
                 group.setName(configHelper.getLabel(widget));
@@ -220,8 +220,8 @@ public class VisuConfig {
                 Page page = new Page();
                 page.setName(configHelper.getLabel(widget));
                 configHelper.addToRoot(rootPage, factory.createPagePage(page));
-                if (widget instanceof org.eclipse.smarthome.model.sitemap.Group) {
-                    org.eclipse.smarthome.model.sitemap.Group group = (org.eclipse.smarthome.model.sitemap.Group) widget;
+                if (widget instanceof org.eclipse.smarthome.model.sitemap.sitemap.Group) {
+                    org.eclipse.smarthome.model.sitemap.sitemap.Group group = (org.eclipse.smarthome.model.sitemap.sitemap.Group) widget;
                     // add Group item to the Navbar
                     // logger.debug("page '{}' on level {}",page.getName(),level);
                     NavbarPositionType position = (level <= 1) ? NavbarPositionType.TOP : NavbarPositionType.LEFT;
@@ -247,8 +247,8 @@ public class VisuConfig {
     }
 
     private void processItemWidget(Object rootPage, Widget widget, Item item, Pages pages, int level) {
-        if (widget instanceof org.eclipse.smarthome.model.sitemap.Switch) {
-            org.eclipse.smarthome.model.sitemap.Switch switchWidget = (org.eclipse.smarthome.model.sitemap.Switch) widget;
+        if (widget instanceof org.eclipse.smarthome.model.sitemap.sitemap.Switch) {
+            org.eclipse.smarthome.model.sitemap.sitemap.Switch switchWidget = (org.eclipse.smarthome.model.sitemap.sitemap.Switch) widget;
 
             if (item instanceof RollershutterItem) {
                 // in the demo-sitemap a rullershutter item is defined as
@@ -272,7 +272,7 @@ public class VisuConfig {
                 configHelper.addStyling(switchBean, widget);
                 configHelper.addToRoot(rootPage, factory.createPageSwitch(switchBean));
             }
-        } else if (widget instanceof org.eclipse.smarthome.model.sitemap.Text) {
+        } else if (widget instanceof org.eclipse.smarthome.model.sitemap.sitemap.Text) {
             Info info = new Info();
             Transform transform = Transform.STRING;
             boolean skipFormat = false;
@@ -304,7 +304,7 @@ public class VisuConfig {
                 configHelper.addToRoot(rootPage, factory.createPageText(text));
             }
 
-        } else if (widget instanceof org.eclipse.smarthome.model.sitemap.Slider) {
+        } else if (widget instanceof org.eclipse.smarthome.model.sitemap.sitemap.Slider) {
             Slide bean = new Slide();
             bean.setFormat("%d%%");
             configHelper.addAddress(bean, item, Transform.DIMMER);
@@ -334,7 +334,7 @@ public class VisuConfig {
             Mapping mapping = configHelper.createMapping(mappingName, selection.getMappings());
             configHelper.addToMappings(mapping);
 
-            for (org.eclipse.smarthome.model.sitemap.Mapping map : selection.getMappings()) {
+            for (org.eclipse.smarthome.model.sitemap.sitemap.Mapping map : selection.getMappings()) {
                 Trigger trigger = new Trigger();
                 trigger.setValue(map.getCmd());
                 trigger.setMapping(mappingName);
@@ -356,8 +356,8 @@ public class VisuConfig {
             configHelper.addLabel(bean, widget);
 
             configHelper.addToRoot(rootPage, factory.createPageWeb(bean));
-        } else if (widget instanceof org.eclipse.smarthome.model.sitemap.Image) {
-            org.eclipse.smarthome.model.sitemap.Image image = (org.eclipse.smarthome.model.sitemap.Image) widget;
+        } else if (widget instanceof org.eclipse.smarthome.model.sitemap.sitemap.Image) {
+            org.eclipse.smarthome.model.sitemap.sitemap.Image image = (org.eclipse.smarthome.model.sitemap.sitemap.Image) widget;
             Image bean = new Image();
             bean.setSrc(image.getUrl());
             bean.setRefresh(new BigDecimal(image.getRefresh()));
@@ -365,19 +365,19 @@ public class VisuConfig {
             configHelper.addLabel(bean, widget);
 
             configHelper.addToRoot(rootPage, factory.createPageImage(bean));
-        } else if (widget instanceof org.eclipse.smarthome.model.sitemap.Video) {
-            org.eclipse.smarthome.model.sitemap.Video video = (org.eclipse.smarthome.model.sitemap.Video) widget;
+        } else if (widget instanceof org.eclipse.smarthome.model.sitemap.sitemap.Video) {
+            org.eclipse.smarthome.model.sitemap.sitemap.Video video = (org.eclipse.smarthome.model.sitemap.sitemap.Video) widget;
             Video bean = new Video();
             bean.setSrc(video.getUrl());
 
             configHelper.addLabel(bean, widget);
 
             configHelper.addToRoot(rootPage, factory.createPageVideo(bean));
-        } else if (widget instanceof org.eclipse.smarthome.model.sitemap.Chart && item != null) {
+        } else if (widget instanceof org.eclipse.smarthome.model.sitemap.sitemap.Chart && item != null) {
             Plugin plugin = new Plugin();
             plugin.setName("diagram");
             configHelper.addPlugin(plugin);
-            org.eclipse.smarthome.model.sitemap.Chart chart = (org.eclipse.smarthome.model.sitemap.Chart) widget;
+            org.eclipse.smarthome.model.sitemap.sitemap.Chart chart = (org.eclipse.smarthome.model.sitemap.sitemap.Chart) widget;
             Diagram bean = new Diagram();
             bean.setSeries(configHelper.getCvChartPeriod(chart.getPeriod()));
             bean.setRefresh(new BigInteger(String.valueOf(chart.getRefresh())));
@@ -406,7 +406,7 @@ public class VisuConfig {
             }
 
             configHelper.addToRoot(rootPage, factory.createPageDiagram(bean));
-        } else if (widget instanceof org.eclipse.smarthome.model.sitemap.Colorpicker) {
+        } else if (widget instanceof org.eclipse.smarthome.model.sitemap.sitemap.Colorpicker) {
             Plugin plugin = new Plugin();
             plugin.setName("colorchooser");
             configHelper.addPlugin(plugin);

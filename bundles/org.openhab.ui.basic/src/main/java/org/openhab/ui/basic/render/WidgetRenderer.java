@@ -13,7 +13,7 @@
 package org.openhab.ui.basic.render;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.smarthome.model.sitemap.Widget;
+import org.eclipse.smarthome.model.sitemap.sitemap.Widget;
 import org.openhab.ui.basic.internal.WebAppConfig;
 
 /**
@@ -36,7 +36,7 @@ public interface WidgetRenderer {
     /**
      * Produces HTML code for a given widget and writes it to a string builder.
      *
-     * @param w  the widget to produce HTML code for
+     * @param w the widget to produce HTML code for
      * @param sb the string builder to append the HTML code to
      * @return a list of widgets that need to be rendered as children of the widget; the HTML code in sb should contain
      *         a "%children%" placeholder for them.

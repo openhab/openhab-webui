@@ -34,7 +34,7 @@ import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.library.types.UpDownType;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.TypeParser;
-import org.eclipse.smarthome.model.sitemap.Widget;
+import org.eclipse.smarthome.model.sitemap.sitemap.Widget;
 import org.eclipse.smarthome.ui.icon.IconProvider;
 import org.eclipse.smarthome.ui.icon.IconSet.Format;
 import org.openhab.ui.cometvisu.internal.Config;
@@ -441,7 +441,8 @@ public class ConfigHelper {
         return null;
     }
 
-    public Mapping createMapping(String name, EList<org.eclipse.smarthome.model.sitemap.Mapping> sitemapMapping) {
+    public Mapping createMapping(String name,
+            EList<org.eclipse.smarthome.model.sitemap.sitemap.Mapping> sitemapMapping) {
         Mapping mapping = null;
         if (mappings.containsKey(name)) {
             mapping = mappings.get(name);
@@ -450,7 +451,7 @@ public class ConfigHelper {
             mapping = new Mapping();
             mapping.setName(name);
 
-            for (org.eclipse.smarthome.model.sitemap.Mapping map : sitemapMapping) {
+            for (org.eclipse.smarthome.model.sitemap.sitemap.Mapping map : sitemapMapping) {
                 Entry entry = new Entry();
                 entry.setValue(map.getCmd());
                 entry.getContent().add(map.getLabel());
@@ -519,7 +520,7 @@ public class ConfigHelper {
     }
 
     public void mapToTriggers(Object element, Item item, Widget widget) {
-        EList<org.eclipse.smarthome.model.sitemap.Mapping> sitemapMapping = getMapping(widget);
+        EList<org.eclipse.smarthome.model.sitemap.sitemap.Mapping> sitemapMapping = getMapping(widget);
 
         int groupColumns = 6;
 
@@ -546,7 +547,7 @@ public class ConfigHelper {
         states.add(UpDownType.class);
         states.add(StringType.class);
 
-        for (org.eclipse.smarthome.model.sitemap.Mapping map : sitemapMapping) {
+        for (org.eclipse.smarthome.model.sitemap.sitemap.Mapping map : sitemapMapping) {
             Command command = TypeParser.parseCommand(states, map.getCmd());
             if (!(command instanceof DecimalType)) {
                 // no number command
@@ -560,7 +561,7 @@ public class ConfigHelper {
         Mapping mapping = createMapping(mappingName, sitemapMapping);
         addToMappings(mapping);
 
-        for (org.eclipse.smarthome.model.sitemap.Mapping map : sitemapMapping) {
+        for (org.eclipse.smarthome.model.sitemap.sitemap.Mapping map : sitemapMapping) {
             Trigger trigger = new Trigger();
 
             trigger.setValue(map.getCmd());
@@ -581,7 +582,7 @@ public class ConfigHelper {
      * @param widget
      */
     public void mapToMultiTrigger(Object element, Item item, Widget widget) {
-        EList<org.eclipse.smarthome.model.sitemap.Mapping> sitemapMapping = getMapping(widget);
+        EList<org.eclipse.smarthome.model.sitemap.sitemap.Mapping> sitemapMapping = getMapping(widget);
 
         Transform transform = Transform.NUMBER;
 
@@ -592,7 +593,7 @@ public class ConfigHelper {
         states.add(UpDownType.class);
         states.add(StringType.class);
 
-        for (org.eclipse.smarthome.model.sitemap.Mapping map : sitemapMapping) {
+        for (org.eclipse.smarthome.model.sitemap.sitemap.Mapping map : sitemapMapping) {
             Command command = TypeParser.parseCommand(states, map.getCmd());
             if (!(command instanceof DecimalType)) {
                 // no number command
@@ -610,7 +611,7 @@ public class ConfigHelper {
         mtrigger.setLayout(createLayout(6));
 
         int i = 1;
-        for (org.eclipse.smarthome.model.sitemap.Mapping map : sitemapMapping) {
+        for (org.eclipse.smarthome.model.sitemap.sitemap.Mapping map : sitemapMapping) {
             switch (i) {
                 case 1:
                     mtrigger.setButton1Label(map.getLabel());
@@ -635,11 +636,11 @@ public class ConfigHelper {
     }
 
     @SuppressWarnings("unchecked")
-    private EList<org.eclipse.smarthome.model.sitemap.Mapping> getMapping(Widget widget) {
-        EList<org.eclipse.smarthome.model.sitemap.Mapping> mapping = null;
+    private EList<org.eclipse.smarthome.model.sitemap.sitemap.Mapping> getMapping(Widget widget) {
+        EList<org.eclipse.smarthome.model.sitemap.sitemap.Mapping> mapping = null;
         try {
             Method getter = widget.getClass().getMethod("getMappings");
-            mapping = (EList<org.eclipse.smarthome.model.sitemap.Mapping>) getter.invoke(widget);
+            mapping = (EList<org.eclipse.smarthome.model.sitemap.sitemap.Mapping>) getter.invoke(widget);
         } catch (NoSuchMethodException | SecurityException e) {
             // do nothing, normal behaviour for item that have no mappingdefined
         } catch (IllegalAccessException e) {
@@ -654,7 +655,7 @@ public class ConfigHelper {
 
     public Mapping addMapping(Object element, Widget widget) {
         Mapping mapping = null;
-        EList<org.eclipse.smarthome.model.sitemap.Mapping> smap = getMapping(widget);
+        EList<org.eclipse.smarthome.model.sitemap.sitemap.Mapping> smap = getMapping(widget);
         if (smap != null && smap.size() > 0) {
             mapping = addMapping(element, String.valueOf(smap.hashCode()), smap);
         }
@@ -663,7 +664,7 @@ public class ConfigHelper {
     }
 
     public Mapping addMapping(Object element, String name,
-            EList<org.eclipse.smarthome.model.sitemap.Mapping> sitemapMapping) {
+            EList<org.eclipse.smarthome.model.sitemap.sitemap.Mapping> sitemapMapping) {
         Mapping mapping = createMapping(name, sitemapMapping);
         addMapping(element, mapping);
         return mapping;
@@ -831,7 +832,7 @@ public class ConfigHelper {
      *            the page for wich the pagejump should be created
      * @param widget
      */
-    public void addToNavbar(Page barPage, Page targetPage, org.eclipse.smarthome.model.sitemap.Group widget,
+    public void addToNavbar(Page barPage, Page targetPage, org.eclipse.smarthome.model.sitemap.sitemap.Group widget,
             NavbarPositionType position, Item item) {
         Pagejump pagejump = new Pagejump();
         pagejump.setBindClickToWidget(true);

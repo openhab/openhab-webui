@@ -22,10 +22,10 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.smarthome.core.i18n.LocaleProvider;
 import org.eclipse.smarthome.core.i18n.TranslationProvider;
-import org.eclipse.smarthome.model.sitemap.Frame;
-import org.eclipse.smarthome.model.sitemap.Sitemap;
 import org.eclipse.smarthome.model.sitemap.SitemapProvider;
-import org.eclipse.smarthome.model.sitemap.Widget;
+import org.eclipse.smarthome.model.sitemap.sitemap.Frame;
+import org.eclipse.smarthome.model.sitemap.sitemap.Sitemap;
+import org.eclipse.smarthome.model.sitemap.sitemap.Widget;
 import org.eclipse.smarthome.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.internal.WebAppConfig;
 import org.openhab.ui.basic.internal.servlet.WebAppServlet;
@@ -136,7 +136,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
             EObject firstChild = children.get(0);
             EObject parent = itemUIRegistry.getParent((Widget) firstChild);
             if (!(firstChild instanceof Frame || parent instanceof Frame || parent instanceof Sitemap
-                    || parent instanceof org.eclipse.smarthome.model.sitemap.List)) {
+                    || parent instanceof org.eclipse.smarthome.model.sitemap.sitemap.List)) {
                 String frameSnippet = getSnippet("frame");
                 frameSnippet = StringUtils.replace(frameSnippet, "%widget_id%", "");
                 frameSnippet = StringUtils.replace(frameSnippet, "%label%", "");

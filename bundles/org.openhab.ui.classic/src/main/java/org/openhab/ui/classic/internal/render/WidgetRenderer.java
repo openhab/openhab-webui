@@ -13,7 +13,7 @@
 package org.openhab.ui.classic.internal.render;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.smarthome.model.sitemap.Widget;
+import org.eclipse.smarthome.model.sitemap.sitemap.Widget;
 import org.openhab.ui.classic.internal.WebAppConfig;
 
 /**
