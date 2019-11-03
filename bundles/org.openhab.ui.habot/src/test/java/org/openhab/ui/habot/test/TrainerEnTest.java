@@ -15,6 +15,9 @@ package org.openhab.ui.habot.test;
 import org.junit.Test;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 
+/**
+ * @author Stephan Strittmatter - Initial contribution
+ */
 public class TrainerEnTest extends AbstractTrainerTest {
 
     @Test

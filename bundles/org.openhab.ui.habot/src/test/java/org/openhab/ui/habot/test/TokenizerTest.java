@@ -17,6 +17,9 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.openhab.ui.habot.nlp.internal.AlphaNumericTokenizer;
 
+/**
+ * @author Yannick Schaus - Initial contribution
+ */
 public class TokenizerTest {
 
     private void printTokens(String[] tokens) {
