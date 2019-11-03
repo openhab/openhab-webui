@@ -18,6 +18,9 @@ import org.junit.Test;
 import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 
+/**
+ * @author Jorg de Jong - Initial contribution
+ */
 public class TrainerNlTest extends AbstractTrainerTest {
 
     @Test

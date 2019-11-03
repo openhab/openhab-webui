@@ -12,8 +12,7 @@
  */
 package org.openhab.ui.habot.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,6 +26,9 @@ import org.openhab.ui.habot.nlp.Skill;
 import org.openhab.ui.habot.nlp.UnsupportedLanguageException;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 
+/**
+ * @author Stephan Strittmatter - Initial contribution
+ */
 public class AbstractTrainerTest {
 
     IntentTrainer trainer = null;

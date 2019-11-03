@@ -18,6 +18,9 @@ import org.junit.Test;
 import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 
+/**
+ * @author Stephan Strittmatter - Initial contribution
+ */
 public class TrainerFrTest extends AbstractTrainerTest {
 
     @Test

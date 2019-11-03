@@ -15,6 +15,9 @@ package org.openhab.ui.habot.test;
 import org.junit.Test;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 
+/**
+ * @author Luciano Legovich - Initial contribution
+ */
 public class TrainerItTest extends AbstractTrainerTest {
 
     @Test
@@ -44,7 +47,7 @@ public class TrainerItTest extends AbstractTrainerTest {
         assertIsActivate("vorrei un po' di luce in bagno", "luce", "bagno");
         assertIsActivate("voglio un po' d'aria condizionata in cucina", "aria condizionata", "cucina");
 
-        //assertIsDeactivate("spegni i radiatori", "radiatori", null);
+        // assertIsDeactivate("spegni i radiatori", "radiatori", null);
         assertIsDeactivate("disattiva l'allarme", "allarme", null);
         assertIsDeactivate("spegni la musica in soggiorno", "musica", "soggiorno");
         assertIsDeactivate("non voglio più musica in cucina", "musica", "cucina");
@@ -54,12 +57,11 @@ public class TrainerItTest extends AbstractTrainerTest {
         assertIsDeactivate("spegni le luci", "luci", null);
 
         checkInterpretation(Skills.GET_HISTORY_HOURLY,
-                "mostrami un grafico della temperatura del soggiorno delle ultime 3 ore", "temperatura",
-                "soggiorno");
+                "mostrami un grafico della temperatura del soggiorno delle ultime 3 ore", "temperatura", "soggiorno");
         checkInterpretation(Skills.GET_HISTORY_DAILY, "grafico del consumo di acqua degli ultimi 2 giorni",
                 "consumo di acqua", null);
-        checkInterpretation(Skills.GET_HISTORY_WEEKLY, "vorrei un grafico dell'umidità deglle ultime 2 settimane", "umidità",
-                null);
+        checkInterpretation(Skills.GET_HISTORY_WEEKLY, "vorrei un grafico dell'umidità deglle ultime 2 settimane",
+                "umidità", null);
         checkInterpretation(Skills.GET_HISTORY_MONTHLY, "temperatura del piano di sotto nell'ultimo mese",
                 "temperatura", "piano di sotto");
         checkInterpretation(Skills.GET_HISTORY_MONTHLY, "luminosità del soggiorno negli ultimi 6 mesi", "luminosità",
@@ -86,5 +88,5 @@ public class TrainerItTest extends AbstractTrainerTest {
         assertIs("create-rule", "imposta una regola che si attivi fra 90 minuti");
         assertIs("create-rule", "imposta una nuova regola per domani alle 8");
         assertIs("create-rule", "imposta una nuova regola per tutti i mercoledì alle 11h30");
-   }
+    }
 }
