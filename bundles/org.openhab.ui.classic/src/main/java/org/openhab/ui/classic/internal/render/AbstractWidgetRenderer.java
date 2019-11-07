@@ -30,7 +30,7 @@ import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.library.types.QuantityType;
 import org.eclipse.smarthome.core.types.State;
-import org.eclipse.smarthome.model.sitemap.Widget;
+import org.eclipse.smarthome.model.sitemap.sitemap.Widget;
 import org.eclipse.smarthome.ui.items.ItemUIRegistry;
 import org.openhab.ui.classic.internal.WebAppActivator;
 import org.openhab.ui.classic.internal.WebAppConfig;

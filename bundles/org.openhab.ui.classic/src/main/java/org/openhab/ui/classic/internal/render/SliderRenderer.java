@@ -14,8 +14,8 @@ package org.openhab.ui.classic.internal.render;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.smarthome.model.sitemap.Slider;
-import org.eclipse.smarthome.model.sitemap.Widget;
+import org.eclipse.smarthome.model.sitemap.sitemap.Slider;
+import org.eclipse.smarthome.model.sitemap.sitemap.Widget;
 import org.eclipse.smarthome.ui.items.ItemUIRegistry;
 import org.openhab.ui.classic.internal.servlet.WebAppServlet;
 import org.osgi.service.component.annotations.Component;

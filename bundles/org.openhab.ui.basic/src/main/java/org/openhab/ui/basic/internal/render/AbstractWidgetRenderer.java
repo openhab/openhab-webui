@@ -29,7 +29,7 @@ import org.eclipse.smarthome.core.i18n.LocaleProvider;
 import org.eclipse.smarthome.core.i18n.TranslationProvider;
 import org.eclipse.smarthome.core.library.types.QuantityType;
 import org.eclipse.smarthome.core.types.State;
-import org.eclipse.smarthome.model.sitemap.Widget;
+import org.eclipse.smarthome.model.sitemap.sitemap.Widget;
 import org.eclipse.smarthome.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.internal.WebAppActivator;
 import org.openhab.ui.basic.internal.WebAppConfig;
