@@ -17,6 +17,16 @@
   <name>openHAB UI :: Features</name>
   <description>openHAB UI Features</description>
 
+  <dependencies>
+    <!-- BOM, so features are build after bundles in parallel builds -->
+    <dependency>
+      <groupId>org.openhab.ui.bom</groupId>
+      <artifactId>org.openhab.ui.bom.openhab-ui</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
