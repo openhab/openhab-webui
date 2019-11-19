@@ -141,6 +141,7 @@ public class SemanticsItemResolver implements ItemResolver {
                     }
                 }
 
+                itemAttributes.removeIf(attribute -> attribute.getValue() == null || attribute.getValue().isEmpty());
                 attributes.put(item, itemAttributes);
             }
         }
