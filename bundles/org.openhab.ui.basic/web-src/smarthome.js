@@ -936,6 +936,10 @@
 			_t.valueNode.innerHTML = value;
 		};
 
+		_t.setValueColor = function(color) {
+			_t.valueNode.style.color = color;
+		};
+
 		function onMouseDown(up, event) {
 			var
 				value = _t.value + ((up === true) ? _t.step : -_t.step );
