@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.openhab.ui.bundles</groupId>
     <artifactId>org.openhab.ui.reactor.bundles</artifactId>
-    <version>2.5.0</version>
+    <version>2.5.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>org.openhab.ui.cometvisu</artifactId>
@@ -40,27 +40,27 @@
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core</artifactId>
-      <version>${project.version}</version>
+      <version>${ohc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openhab.ui.bundles</groupId>
       <artifactId>org.openhab.ui.dashboard</artifactId>
-      <version>${project.version}</version>
+      <version>${ohc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core.model.sitemap</artifactId>
-      <version>${project.version}</version>
+      <version>${ohc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core.ui</artifactId>
-      <version>${project.version}</version>
+      <version>${ohc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core.ui.icon</artifactId>
-      <version>${project.version}</version>
+      <version>${ohc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.rrd4j</groupId>

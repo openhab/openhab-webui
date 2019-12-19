@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.openhab.ui.bundles</groupId>
     <artifactId>org.openhab.ui.reactor.bundles</artifactId>
-    <version>2.5.0</version>
+    <version>2.5.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>org.openhab.ui.habot</artifactId>
@@ -28,22 +28,22 @@
     <dependency>
       <groupId>org.openhab.ui.bundles</groupId>
       <artifactId>org.openhab.ui.dashboard</artifactId>
-      <version>${project.version}</version>
+      <version>${ohc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core.io.rest</artifactId>
-      <version>${project.version}</version>
+      <version>${ohc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core.semantics</artifactId>
-      <version>${project.version}</version>
+      <version>${ohc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core.automation</artifactId>
-      <version>${project.version}</version>
+      <version>${ohc.version}</version>
     </dependency>
   </dependencies>
 
