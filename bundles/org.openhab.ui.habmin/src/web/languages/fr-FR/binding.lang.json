@@ -1,8 +1,0 @@
-{
-  "Author": "Auteur",
-  "Description": "Description",
-  "Information": "Information sur le connecteur",
-  "InstalledBindings": "Connecteurs installés",
-  "NoneFound": "Pas de connecteur trouvé",
-  "ThingTypes": "Types d'objet supportés"
-}
