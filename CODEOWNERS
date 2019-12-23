@@ -7,13 +7,10 @@
 # Add-on maintainers:
 /bundles/org.openhab.ui.iconset.classic/ @kaikreuzer
 /bundles/org.openhab.ui.basic/ @lolodomo @resetnow
-/bundles/org.openhab.ui.classic/ @lolodomo @kaikreuzer
 /bundles/org.openhab.ui.cometvisu/ @peuter
 /bundles/org.openhab.ui.cometvisu.php/ @peuter
 /bundles/org.openhab.ui.dashboard/ @kaikreuzer
-/bundles/org.openhab.ui.habmin/ @cdjackson
 /bundles/org.openhab.ui.habot/ @ghys
 /bundles/org.openhab.ui.habpanel/ @ghys
 /bundles/org.openhab.ui.homebuilder/ @kubawolanin
-/bundles/org.openhab.ui.paper/
 /bundles/org.openhab.ui.restdocs/ @kaikreuzer
