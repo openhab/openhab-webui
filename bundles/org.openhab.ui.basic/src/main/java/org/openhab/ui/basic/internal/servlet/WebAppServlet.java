@@ -14,6 +14,7 @@ package org.openhab.ui.basic.internal.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -25,7 +26,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.config.core.ConfigurableService;
+import org.eclipse.smarthome.core.items.GroupItem;
+import org.eclipse.smarthome.core.items.Item;
+import org.eclipse.smarthome.core.items.ItemNotFoundException;
 import org.eclipse.smarthome.core.items.ItemRegistry;
 import org.eclipse.smarthome.io.http.HttpContextFactoryService;
 import org.eclipse.smarthome.io.rest.sitemap.SitemapSubscriptionService;
@@ -206,6 +211,22 @@ public class WebAppServlet extends BaseServlet {
                         throw new RenderException("Widget '" + w + "' can not have any content");
                     }
                     EList<Widget> children = renderer.getItemUIRegistry().getChildren((LinkableWidget) w);
+                    
+                    // Figure out if the item is a group and -- if so -- sort by child label.
+                    String itemId = w.getItem();
+                    if (itemId != null && !itemId.isEmpty()) {
+                    	try {
+                    		@NonNull
+                    		Item item = renderer.getItemUIRegistry().getItem(w.getItem());
+                    		if (item instanceof GroupItem) {
+                    			// Ideally, the comparator would be depending on a (new) group widget property.
+                    			children.sort(new LabelComparator());
+                    		}
+                    	} catch (ItemNotFoundException e) {
+                    		throw new RenderException("Item not found: " + itemId);
+                    	}
+                    }
+                    
                     result.append(renderer.processPage(renderer.getItemUIRegistry().getWidgetId(w), sitemapName, label,
                             children, async));
                 }
@@ -255,4 +276,19 @@ public class WebAppServlet extends BaseServlet {
         super.unsetHttpContextFactoryService(HttpContextFactoryService);
     }
 
+    // Can't be static: accesses the renderer.
+    class LabelComparator implements Comparator<Widget> {
+
+		@Override
+		public int compare(Widget w1, Widget w2) {
+			// Not using renderer.getLabel() here because it might contain HTML.
+			try {
+				@NonNull Item i1 = renderer.getItemUIRegistry().getItem(w1.getItem());
+				@NonNull Item i2 = renderer.getItemUIRegistry().getItem(w2.getItem());
+				return i1.getLabel().compareToIgnoreCase(i2.getLabel());
+			} catch (ItemNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+		}
+    }
 }
