@@ -1,10 +1,10 @@
 {
   "name": "habot",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "A chatbot for openHAB",
   "productName": "HABot",
   "cordovaId": "org.openhab.ui.habot",
-  "author": "Yannick Schaus <habpanel@schaus.net>",
+  "author": "openHAB Community",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue src",

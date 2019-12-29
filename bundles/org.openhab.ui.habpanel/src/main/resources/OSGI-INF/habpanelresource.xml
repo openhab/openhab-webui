@@ -16,6 +16,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.openhab.habpanel.rest">
 	<implementation class="org.openhab.ui.habpanel.internal.rest.HABPanelResource"/>
 	<service>
-		<provide interface="org.eclipse.smarthome.io.rest.RESTResource"/>
+		<provide interface="org.openhab.core.io.rest.RESTResource"/>
 	</service>
 </scr:component>

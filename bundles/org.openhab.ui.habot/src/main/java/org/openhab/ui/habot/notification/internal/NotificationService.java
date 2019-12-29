@@ -39,7 +39,7 @@ import org.bouncycastle.jce.interfaces.ECPrivateKey;
 import org.bouncycastle.jce.interfaces.ECPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
-import org.eclipse.smarthome.config.core.ConfigConstants;
+import org.openhab.core.config.core.ConfigConstants;
 import org.jose4j.lang.JoseException;
 import org.openhab.ui.habot.notification.internal.webpush.Notification;
 import org.openhab.ui.habot.notification.internal.webpush.PushService;

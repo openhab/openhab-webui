@@ -14,7 +14,7 @@ package org.openhab.ui.habot.nlp;
 
 import java.util.Collection;
 
-import org.eclipse.smarthome.core.items.Item;
+import org.openhab.core.items.Item;
 import org.openhab.ui.habot.card.Card;
 
 /**

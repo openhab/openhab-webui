@@ -16,7 +16,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.smarthome.model.sitemap.SitemapProvider;
+import org.openhab.core.model.sitemap.SitemapProvider;
 import org.openhab.ui.dashboard.DashboardTile;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

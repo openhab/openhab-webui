@@ -26,12 +26,12 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.smarthome.core.common.registry.RegistryChangeListener;
-import org.eclipse.smarthome.core.events.EventPublisher;
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.items.ItemRegistry;
-import org.eclipse.smarthome.core.voice.text.HumanLanguageInterpreter;
-import org.eclipse.smarthome.core.voice.text.InterpretationException;
+import org.openhab.core.common.registry.RegistryChangeListener;
+import org.openhab.core.events.EventPublisher;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.voice.text.HumanLanguageInterpreter;
+import org.openhab.core.voice.text.InterpretationException;
 import org.openhab.ui.habot.nlp.ChatReply;
 import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.IntentInterpretation;

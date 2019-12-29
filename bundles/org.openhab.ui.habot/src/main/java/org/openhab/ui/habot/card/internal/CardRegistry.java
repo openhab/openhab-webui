@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.core.common.registry.AbstractRegistry;
-import org.eclipse.smarthome.core.common.registry.Registry;
-import org.eclipse.smarthome.core.events.EventPublisher;
+import org.openhab.core.common.registry.AbstractRegistry;
+import org.openhab.core.common.registry.Registry;
+import org.openhab.core.events.EventPublisher;
 import org.openhab.ui.habot.card.Card;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

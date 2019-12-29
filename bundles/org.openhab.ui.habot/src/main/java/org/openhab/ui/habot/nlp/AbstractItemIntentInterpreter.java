@@ -16,9 +16,9 @@ import java.io.InputStream;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.eclipse.smarthome.core.items.GroupItem;
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.items.ItemRegistry;
+import org.openhab.core.items.GroupItem;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.ItemRegistry;
 import org.openhab.ui.habot.nlp.internal.AnswerFormatter;
 import org.openhab.ui.habot.nlp.internal.NamedAttributesItemResolver;
 

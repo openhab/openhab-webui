@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.eclipse.smarthome.core.items.Item;
+import org.openhab.core.items.Item;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 
 import opennlp.tools.namefind.NameSample;

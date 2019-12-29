@@ -58,18 +58,18 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
-import org.eclipse.smarthome.core.items.GroupItem;
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.items.ItemNotFoundException;
-import org.eclipse.smarthome.core.items.events.ItemEventFactory;
-import org.eclipse.smarthome.core.library.types.StringType;
-import org.eclipse.smarthome.core.persistence.FilterCriteria;
-import org.eclipse.smarthome.core.persistence.FilterCriteria.Ordering;
-import org.eclipse.smarthome.core.persistence.HistoricItem;
-import org.eclipse.smarthome.core.persistence.QueryablePersistenceService;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.model.sitemap.SitemapProvider;
-import org.eclipse.smarthome.model.sitemap.sitemap.Sitemap;
+import org.openhab.core.items.GroupItem;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.ItemNotFoundException;
+import org.openhab.core.items.events.ItemEventFactory;
+import org.openhab.core.library.types.StringType;
+import org.openhab.core.persistence.FilterCriteria;
+import org.openhab.core.persistence.FilterCriteria.Ordering;
+import org.openhab.core.persistence.HistoricItem;
+import org.openhab.core.persistence.QueryablePersistenceService;
+import org.openhab.core.types.Command;
+import org.openhab.core.model.sitemap.SitemapProvider;
+import org.openhab.core.model.sitemap.sitemap.Sitemap;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.config.ConfigHelper.Transform;
 import org.openhab.ui.cometvisu.internal.config.VisuConfig;
@@ -123,7 +123,7 @@ public class CometVisuServlet extends HttpServlet {
     public CometVisuServlet(String filesystemDir, CometVisuApp cometVisuApp) {
         root = filesystemDir;
         rootFolder = new File(root);
-        userFileFolder = new File(org.eclipse.smarthome.config.core.ConfigConstants.getConfigFolder()
+        userFileFolder = new File(org.openhab.core.config.core.ConfigConstants.getConfigFolder()
                 + Config.COMETVISU_WEBAPP_USERFILE_FOLDER);
         defaultUserDir = System.getProperty("user.dir");
         this.cometVisuApp = cometVisuApp;

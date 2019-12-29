@@ -22,7 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.eclipse.smarthome.io.rest.RESTResource;
+import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.backend.beans.ConfigBean;
 import org.openhab.ui.cometvisu.internal.backend.beans.LoginBean;

@@ -16,12 +16,12 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.smarthome.core.items.GroupItem;
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.items.ItemNotFoundException;
-import org.eclipse.smarthome.model.sitemap.sitemap.Chart;
-import org.eclipse.smarthome.model.sitemap.sitemap.Widget;
-import org.eclipse.smarthome.ui.items.ItemUIRegistry;
+import org.openhab.core.items.GroupItem;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.ItemNotFoundException;
+import org.openhab.core.model.sitemap.sitemap.Chart;
+import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.internal.WebAppConfig;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;

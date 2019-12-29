@@ -121,7 +121,7 @@
             getLocale: function () {
                 const DEFAULT_LOCALE = 'en-UK';
                 this.$http
-                    .get('services/org.eclipse.smarthome.i18n/config')
+                    .get('services/org.openhab.core.i18n/config')
                     .then(response => {
                         const body = response.body;
                         let selectedLang = DEFAULT_LOCALE;

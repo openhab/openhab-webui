@@ -29,7 +29,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
-import org.eclipse.smarthome.io.net.http.HttpUtil;
+import org.openhab.core.io.net.http.HttpUtil;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

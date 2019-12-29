@@ -20,13 +20,13 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.smarthome.core.i18n.LocaleProvider;
-import org.eclipse.smarthome.core.i18n.TranslationProvider;
-import org.eclipse.smarthome.model.sitemap.SitemapProvider;
-import org.eclipse.smarthome.model.sitemap.sitemap.Frame;
-import org.eclipse.smarthome.model.sitemap.sitemap.Sitemap;
-import org.eclipse.smarthome.model.sitemap.sitemap.Widget;
-import org.eclipse.smarthome.ui.items.ItemUIRegistry;
+import org.openhab.core.i18n.LocaleProvider;
+import org.openhab.core.i18n.TranslationProvider;
+import org.openhab.core.model.sitemap.SitemapProvider;
+import org.openhab.core.model.sitemap.sitemap.Frame;
+import org.openhab.core.model.sitemap.sitemap.Sitemap;
+import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.internal.WebAppConfig;
 import org.openhab.ui.basic.internal.servlet.WebAppServlet;
 import org.openhab.ui.basic.render.RenderException;
@@ -136,7 +136,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
             EObject firstChild = children.get(0);
             EObject parent = itemUIRegistry.getParent((Widget) firstChild);
             if (!(firstChild instanceof Frame || parent instanceof Frame || parent instanceof Sitemap
-                    || parent instanceof org.eclipse.smarthome.model.sitemap.sitemap.List)) {
+                    || parent instanceof org.openhab.core.model.sitemap.sitemap.List)) {
                 String frameSnippet = getSnippet("frame");
                 frameSnippet = StringUtils.replace(frameSnippet, "%widget_id%", "");
                 frameSnippet = StringUtils.replace(frameSnippet, "%label%", "");

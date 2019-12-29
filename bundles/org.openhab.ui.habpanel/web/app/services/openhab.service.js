@@ -94,7 +94,7 @@
             if (locale) {
                 deferred.resolve(locale);
             } else {
-                $http.get('/rest/services/org.eclipse.smarthome.i18n/config')
+                $http.get('/rest/services/org.openhab.core.i18n/config')
                 .then(function (response) {
                     var language;
                     if (!response.data.language) {

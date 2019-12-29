@@ -23,10 +23,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.eclipse.smarthome.core.auth.Role;
-import org.eclipse.smarthome.io.rest.JSONResponse;
-import org.eclipse.smarthome.io.rest.RESTResource;
-import org.eclipse.smarthome.io.rest.Stream2JSONInputStream;
+import org.openhab.core.auth.Role;
+import org.openhab.core.io.rest.JSONResponse;
+import org.openhab.core.io.rest.RESTResource;
+import org.openhab.core.io.rest.Stream2JSONInputStream;
 import org.openhab.ui.habpanel.internal.gallery.GalleryItem;
 import org.openhab.ui.habpanel.internal.gallery.GalleryProviderFactory;
 import org.openhab.ui.habpanel.internal.gallery.GalleryWidgetProvider;
