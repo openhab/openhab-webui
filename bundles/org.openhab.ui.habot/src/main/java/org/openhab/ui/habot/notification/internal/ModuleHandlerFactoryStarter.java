@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Enables the {@link WebPushNotificationModuleHandlerFactory} on activation - allows the
- * org.eclipse.smarthome.automation dependency to remain optional.
+ * org.openhab.core.automation dependency to remain optional.
  *
  * @author Yannick Schaus - Initial contribution
  */

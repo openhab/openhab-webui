@@ -24,7 +24,7 @@
 
         var output = $('#geolocation')
 
-        $.getJSON(window.location.origin + '/rest/services/org.eclipse.smarthome.i18n/config', function(response) {
+        $.getJSON(window.location.origin + '/rest/services/org.openhab.core.i18n/config', function(response) {
             window.language = response;
 
             if (!response.location) {
@@ -37,7 +37,7 @@
 
     function send(configuration) {
         $.ajax({
-            url : window.location.origin + '/rest/services/org.eclipse.smarthome.i18n/config',
+            url : window.location.origin + '/rest/services/org.openhab.core.i18n/config',
             data : JSON.stringify(configuration),
             type : 'PUT',
             dataType : 'json',

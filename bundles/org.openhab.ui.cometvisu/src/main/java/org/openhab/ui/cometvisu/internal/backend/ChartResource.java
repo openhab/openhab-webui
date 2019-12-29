@@ -37,17 +37,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.eclipse.smarthome.core.items.GroupItem;
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.items.ItemNotFoundException;
-import org.eclipse.smarthome.core.items.ItemRegistry;
-import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.persistence.FilterCriteria;
-import org.eclipse.smarthome.core.persistence.FilterCriteria.Ordering;
-import org.eclipse.smarthome.core.persistence.HistoricItem;
-import org.eclipse.smarthome.core.persistence.PersistenceService;
-import org.eclipse.smarthome.core.persistence.QueryablePersistenceService;
-import org.eclipse.smarthome.io.rest.RESTResource;
+import org.openhab.core.items.GroupItem;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.ItemNotFoundException;
+import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.persistence.FilterCriteria;
+import org.openhab.core.persistence.FilterCriteria.Ordering;
+import org.openhab.core.persistence.HistoricItem;
+import org.openhab.core.persistence.PersistenceService;
+import org.openhab.core.persistence.QueryablePersistenceService;
+import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -78,7 +78,7 @@ public class ChartResource implements RESTResource {
 
     private static final DecimalFormat DECIMAL_FORMAT;
 
-    protected static final String RRD_FOLDER = org.eclipse.smarthome.config.core.ConfigConstants.getUserDataFolder()
+    protected static final String RRD_FOLDER = org.openhab.core.config.core.ConfigConstants.getUserDataFolder()
             + File.separator + "persistence" + File.separator + "rrd4j";
 
     static {
@@ -204,7 +204,7 @@ public class ChartResource implements RESTResource {
         while (it.hasNext()) {
             dataCounter++;
             HistoricItem historicItem = it.next();
-            org.eclipse.smarthome.core.types.State state = historicItem.getState();
+            org.openhab.core.types.State state = historicItem.getState();
             if (state instanceof DecimalType) {
                 List<String> vals = new ArrayList<>();
                 vals.add(formatDouble(((DecimalType) state).doubleValue(), "null", true));

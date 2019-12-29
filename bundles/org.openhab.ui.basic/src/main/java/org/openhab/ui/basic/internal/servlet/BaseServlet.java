@@ -12,8 +12,8 @@
  */
 package org.openhab.ui.basic.internal.servlet;
 
-import org.eclipse.smarthome.core.items.ItemRegistry;
-import org.eclipse.smarthome.io.http.servlet.SmartHomeBundleServlet;
+import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.io.http.servlet.SmartHomeBundleServlet;
 
 /**
  * This is the base servlet class for other servlet in the Basic UI.

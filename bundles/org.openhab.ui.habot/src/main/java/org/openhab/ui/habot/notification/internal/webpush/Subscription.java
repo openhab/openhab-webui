@@ -13,7 +13,7 @@
 package org.openhab.ui.habot.notification.internal.webpush;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.smarthome.core.common.registry.Identifiable;
+import org.openhab.core.common.registry.Identifiable;
 import org.openhab.ui.habot.notification.internal.webpush.Subscription.Keys;
 
 /**

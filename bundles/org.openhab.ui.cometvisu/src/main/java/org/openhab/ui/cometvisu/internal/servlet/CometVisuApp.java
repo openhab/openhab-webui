@@ -23,14 +23,14 @@ import java.util.Set;
 
 import javax.servlet.ServletException;
 
-import org.eclipse.smarthome.config.core.ConfigurableService;
-import org.eclipse.smarthome.core.events.EventPublisher;
-import org.eclipse.smarthome.core.items.ItemRegistry;
-import org.eclipse.smarthome.core.persistence.PersistenceService;
-import org.eclipse.smarthome.core.persistence.QueryablePersistenceService;
-import org.eclipse.smarthome.model.sitemap.SitemapProvider;
-import org.eclipse.smarthome.ui.icon.IconProvider;
-import org.eclipse.smarthome.ui.items.ItemUIRegistry;
+import org.openhab.core.config.core.ConfigurableService;
+import org.openhab.core.events.EventPublisher;
+import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.persistence.PersistenceService;
+import org.openhab.core.persistence.QueryablePersistenceService;
+import org.openhab.core.model.sitemap.SitemapProvider;
+import org.openhab.core.ui.icon.IconProvider;
+import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.util.ClientInstaller;
 import org.openhab.ui.cometvisu.php.PHProvider;

@@ -13,9 +13,9 @@
 package org.openhab.ui.habot.notification.internal;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.smarthome.core.common.registry.DefaultAbstractManagedProvider;
-import org.eclipse.smarthome.core.common.registry.ManagedProvider;
-import org.eclipse.smarthome.core.storage.StorageService;
+import org.openhab.core.common.registry.DefaultAbstractManagedProvider;
+import org.openhab.core.common.registry.ManagedProvider;
+import org.openhab.core.storage.StorageService;
 import org.openhab.ui.habot.notification.internal.webpush.Subscription;
 import org.openhab.ui.habot.notification.internal.webpush.Subscription.Keys;
 import org.osgi.service.component.annotations.Activate;

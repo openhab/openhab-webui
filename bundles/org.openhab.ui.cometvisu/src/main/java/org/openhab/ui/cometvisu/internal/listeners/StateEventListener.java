@@ -14,10 +14,10 @@ package org.openhab.ui.cometvisu.internal.listeners;
 
 import java.util.Map;
 
-import org.eclipse.smarthome.core.items.GroupItem;
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.items.StateChangeListener;
-import org.eclipse.smarthome.core.types.State;
+import org.openhab.core.items.GroupItem;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.StateChangeListener;
+import org.openhab.core.types.State;
 import org.openhab.ui.cometvisu.internal.backend.EventBroadcaster;
 import org.openhab.ui.cometvisu.internal.backend.beans.StateBean;
 

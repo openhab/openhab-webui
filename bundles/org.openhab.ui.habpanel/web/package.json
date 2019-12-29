@@ -1,9 +1,9 @@
 {
   "name": "habpanel",
-  "version": "1.0.0",
-  "author": "Yannick Schaus",
+  "version": "3.0.0",
+  "author": "openHAB Community",
   "description": "Dashboard user interface for openHAB",
-  "license": "EPL-1.0",
+  "license": "EPL-2.0",
   "contributors": [
     {
       "name": "Yannick Schaus",
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/openhab/org.openhab.ui.habpanel"
+    "url": "https://github.com/openhab/openhab-webui"
   },
   "keywords": [
     "dashboard",

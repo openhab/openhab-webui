@@ -20,11 +20,11 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import org.eclipse.smarthome.core.i18n.TranslationProvider;
-import org.eclipse.smarthome.ui.icon.AbstractResourceIconProvider;
-import org.eclipse.smarthome.ui.icon.IconProvider;
-import org.eclipse.smarthome.ui.icon.IconSet;
-import org.eclipse.smarthome.ui.icon.IconSet.Format;
+import org.openhab.core.i18n.TranslationProvider;
+import org.openhab.core.ui.icon.AbstractResourceIconProvider;
+import org.openhab.core.ui.icon.IconProvider;
+import org.openhab.core.ui.icon.IconSet;
+import org.openhab.core.ui.icon.IconSet.Format;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;

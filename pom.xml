@@ -84,7 +84,6 @@ Import-Package: \\
   javax.annotation.security.*;resolution:=optional,\\
   org.eclipse.jdt.annotation.*;resolution:=optional,\\
   org.openhab.core.automation.annotation.*;resolution:=optional;version=!,\\
-  org.eclipse.smarthome.*;version=!,\\
   org.openhab.*;version=!,\\
   com.google.common.*;version="14.0",\\
   *

@@ -14,9 +14,9 @@ package org.openhab.ui.cometvisu.internal.listeners;
 
 import java.util.Collection;
 
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.items.ItemRegistry;
-import org.eclipse.smarthome.core.items.ItemRegistryChangeListener;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.items.ItemRegistryChangeListener;
 import org.openhab.ui.cometvisu.internal.backend.EventBroadcaster;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

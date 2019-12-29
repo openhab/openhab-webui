@@ -14,8 +14,8 @@ package org.openhab.ui.cometvisu.internal.backend;
 
 import java.util.Map;
 
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.types.State;
+import org.openhab.core.items.Item;
+import org.openhab.core.types.State;
 
 /**
  * Broadcast state change events of items to listening clients

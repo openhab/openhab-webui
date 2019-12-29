@@ -16,8 +16,8 @@ import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.smarthome.model.script.engine.action.ActionDoc;
-import org.eclipse.smarthome.model.script.engine.action.ActionService;
+import org.openhab.core.model.script.engine.action.ActionDoc;
+import org.openhab.core.model.script.engine.action.ActionService;
 import org.openhab.ui.habot.notification.internal.NotificationService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

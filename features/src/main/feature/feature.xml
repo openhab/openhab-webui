@@ -25,7 +25,7 @@
         <feature>openhab-core-io-rest-sitemap</feature>
         <feature>openhab-ui-dashboard</feature>
         <bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.basic/${project.version}</bundle>
-        <config name="org.eclipse.smarthome.basicui">
+        <config name="org.openhab.basicui">
             iconType = svg
         </config>
     </feature>
