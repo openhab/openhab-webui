@@ -11,6 +11,4 @@
 
     <!-- The CometVisu UI contains files in the resources folder that are used only during the build -->
     <suppress files=".+org.openhab.ui.cometvisu.+" checks="BuildPropertiesCheck"/>
-
-    <suppress files=".+org.openhab.ui.paper.+" checks="OutsideOfLibExternalLibrariesCheck|ManifestExternalLibrariesCheck|BuildPropertiesExternalLibrariesCheck" />
 </suppressions>

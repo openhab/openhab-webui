@@ -30,15 +30,6 @@
         </config>
     </feature>
 
-    <feature name="openhab-ui-classic" description="Classic UI" version="${project.version}">
-        <feature>openhab-iconset-classic</feature>
-        <feature>openhab-ui-dashboard</feature>
-        <bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.classic/${project.version}</bundle>
-        <config name="org.eclipse.smarthome.classicui">
-            defaultSitemap = _default
-        </config>
-    </feature>
-
     <feature name="openhab-ui-cometvisu" description="CometVisu Backend" version="${project.version}">
         <feature>openhab-core-model-item</feature>
         <feature>openhab-core-model-sitemap</feature>
@@ -83,17 +74,6 @@
         <bundle>mvn:org.openhab/com.caucho.quercus/4.0.45</bundle>
     </feature>
 
-    <feature name="openhab-ui-habmin" description="HABmin" version="${project.version}">
-        <feature>openhab-ui-dashboard</feature>
-        <feature prerequisite="true">wrap</feature>
-        <bundle dependency="true">wrap:mvn:javax.activation/activation/1.1.1$Bundle-Name=Javax%20Activation&amp;Bundle-SymbolicName=javax.activation.activation&amp;Bundle-Version=1.1.1</bundle>
-        <bundle dependency="true">mvn:com.sun.xml.bind/jaxb-impl/2.2.11</bundle>
-        <bundle dependency="true">mvn:com.sun.xml.bind/jaxb-core/2.2.11</bundle>
-        <bundle dependency="true">mvn:javax.xml.bind/jaxb-api/2.2.12</bundle>
-        <bundle dependency="true">mvn:commons-codec/commons-codec/1.10</bundle>
-        <bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.habmin/${project.version}</bundle>
-    </feature>
-
     <feature name="openhab-ui-habot" description="HABot" version="${project.version}">
         <feature>openhab-ui-dashboard</feature>
         <feature>openhab-core-automation</feature>
@@ -114,13 +94,6 @@
     <feature name="openhab-ui-homebuilder" description="Home Builder" version="${project.version}">
         <feature>openhab-ui-dashboard</feature>
         <bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.homebuilder/${project.version}</bundle>
-    </feature>
-
-    <feature name="openhab-ui-paper" description="Paper UI" version="${project.version}">
-        <feature>openhab-io-javasound</feature>
-        <feature>openhab-io-webaudio</feature>
-        <feature>openhab-ui-dashboard</feature>
-        <bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.paper/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-ui-restdocs" description="REST Documentation" version="${project.version}">
