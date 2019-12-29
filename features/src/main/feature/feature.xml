@@ -36,11 +36,7 @@
         <feature>openhab-core-ui-icon</feature>
         <feature>openhab-core-ui</feature>
         <feature>openhab-ui-dashboard</feature>
-        <feature prerequisite="true">wrap</feature>
-        <bundle dependency="true">wrap:mvn:javax.activation/activation/1.1.1$Bundle-Name=Javax%20Activation&amp;Bundle-SymbolicName=javax.activation.activation&amp;Bundle-Version=1.1.1</bundle>
-        <bundle dependency="true">mvn:com.sun.xml.bind/jaxb-impl/2.2.11</bundle>
-        <bundle dependency="true">mvn:com.sun.xml.bind/jaxb-core/2.2.11</bundle>
-        <bundle dependency="true">mvn:javax.xml.bind/jaxb-api/2.2.12</bundle>
+        <feature dependency="true">openhab.tp-jaxb</feature>
         <bundle dependency="true">mvn:org.rrd4j/rrd4j/3.4</bundle>
         <bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.cometvisu/${project.version}</bundle>
         <config name="org.openhab.cometvisu">
