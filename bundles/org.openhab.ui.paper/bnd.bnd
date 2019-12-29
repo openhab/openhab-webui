@@ -1,3 +1,0 @@
-Bundle-SymbolicName: ${project.artifactId}
-Bundle-ClassPath: patch/,.
-

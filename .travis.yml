@@ -13,7 +13,6 @@ cache:
   - $HOME/.p2
   - bundles/org.openhab.ui.basic/npm_cache
   - bundles/org.openhab.ui.homebuilder/npm_cache
-  - bundles/org.openhab.ui.paper/npm_cache
 
 before_install:
   - echo "MAVEN_OPTS='-Xms1g -Xmx2g'" > ~/.mavenrc
