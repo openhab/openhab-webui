@@ -18,6 +18,9 @@
     <feature name="openhab-ui-dashboard" description="Dashboard UI" version="${project.version}">
         <feature>openhab-core-base</feature>
         <bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.dashboard/${project.version}</bundle>
+        <config name="org.openhab.addons">
+            ui = dashboard
+        </config>
     </feature>
 
     <feature name="openhab-ui-basic" description="Basic UI" version="${project.version}">
