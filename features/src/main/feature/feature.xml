@@ -15,11 +15,6 @@
 -->
 <features name="${project.artifactId}-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.4.0">
 
-    <feature name="openhab-ui-dashboard" description="Dashboard UI" version="${project.version}">
-        <feature>openhab-core-base</feature>
-        <bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.dashboard/${project.version}</bundle>
-    </feature>
-
     <feature name="openhab-ui-basic" description="Basic UI" version="${project.version}">
         <feature>openhab-iconset-classic</feature>
         <feature>openhab-core-io-rest-sitemap</feature>
