@@ -27,8 +27,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openhab.core.OpenHAB;
 import org.openhab.ui.dashboard.DashboardTile;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
@@ -125,7 +127,7 @@ public class DashboardServlet extends HttpServlet {
             resp.sendRedirect(req.getRequestURI());
         } else {
             Map<String, String> replaceMap = new HashMap<>();
-            replaceMap.put("version", OpenHAB.getVersion() + " " + OpenHAB.buildString());
+            replaceMap.put("version", getVersion() + " " + OpenHAB.buildString());
             resp.setContentType("text/html;charset=UTF-8");
             resp.getWriter().append(replaceKeysWithLocaleFunction(replaceKeysFromMap(setupTemplate, replaceMap)));
             resp.getWriter().close();
@@ -227,4 +229,22 @@ public class DashboardServlet extends HttpServlet {
         m.appendTail(sb);
         return sb.toString();
     }
+
+    /**
+     * Returns the current openHAB dashboardversion
+     *
+     * @return the openHAB dashboard version
+     */
+    public static String getVersion() {
+        String versionString = FrameworkUtil.getBundle(DashboardServlet.class).getVersion().toString();
+        // if the version string contains a "snapshot" qualifier, remove it!
+        if (StringUtils.countMatches(versionString, ".") == 3) {
+            String qualifier = StringUtils.substringAfterLast(versionString, ".");
+            if (StringUtils.isNumeric(qualifier) || qualifier.equals("qualifier")) {
+                versionString = StringUtils.substringBeforeLast(versionString, ".");
+            }
+        }
+        return versionString;
+    }
+
 }
