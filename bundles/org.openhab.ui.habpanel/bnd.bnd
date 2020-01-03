@@ -1,1 +1,2 @@
+Bundle-SymbolicName: ${project.artifactId}
 Service-Component: OSGI-INF/*.xml
