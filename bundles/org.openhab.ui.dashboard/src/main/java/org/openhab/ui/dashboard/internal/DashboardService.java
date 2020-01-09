@@ -28,6 +28,7 @@ import org.eclipse.smarthome.core.i18n.LocaleProvider;
 import org.eclipse.smarthome.core.i18n.TranslationProvider;
 import org.eclipse.smarthome.core.net.HttpServiceUtil;
 import org.eclipse.smarthome.core.net.NetworkAddressService;
+import org.eclipse.smarthome.io.http.HttpContextFactoryService;
 import org.openhab.ui.dashboard.DashboardReady;
 import org.openhab.ui.dashboard.DashboardTile;
 import org.osgi.framework.BundleContext;
@@ -67,6 +68,7 @@ public class DashboardService implements DashboardReady {
     protected NetworkAddressService networkAddressService;
     protected TranslationProvider i18nProvider;
     protected LocaleProvider localeProvider;
+    protected HttpContextFactoryService httpContextFactoryService;
 
     protected Set<DashboardTile> tiles = new CopyOnWriteArraySet<>();
 
@@ -83,7 +85,8 @@ public class DashboardService implements DashboardReady {
             Hashtable<String, String> props = new Hashtable<>();
             httpService.registerServlet(DASHBOARD_ALIAS + "/" + SERVLET_NAME, createServlet(), props,
                     httpService.createDefaultHttpContext());
-            httpService.registerResources(DASHBOARD_ALIAS, "web", null);
+            httpService.registerResources(DASHBOARD_ALIAS, "web",
+                    httpContextFactoryService.createDefaultHttpContext(bundleContext.getBundle()));
 
             if (HttpServiceUtil.getHttpServicePort(bundleContext) > 0) {
                 logger.info("Started Dashboard at http://{}:{}", networkAddressService.getPrimaryIpv4HostAddress(),
@@ -167,7 +170,7 @@ public class DashboardService implements DashboardReady {
         String warnTemplate;
         String setupTemplate;
 
-        URL index = bundleContext.getBundle().getEntry("templates/index.html");
+        URL index = bundleContext.getBundle().getResource("templates/index.html");
         if (index != null) {
             try {
                 indexTemplate = IOUtils.toString(index.openStream());
@@ -178,7 +181,7 @@ public class DashboardService implements DashboardReady {
             throw new ComponentException("Cannot find index.html - failed to initialize Dashboard servlet");
         }
 
-        URL entry = bundleContext.getBundle().getEntry("templates/entry.html");
+        URL entry = bundleContext.getBundle().getResource("templates/entry.html");
         if (entry != null) {
             try {
                 entryTemplate = IOUtils.toString(entry.openStream());
@@ -189,7 +192,7 @@ public class DashboardService implements DashboardReady {
             throw new ComponentException("Cannot find entry.html - failed to initialize Dashboard servlet");
         }
 
-        URL warn = bundleContext.getBundle().getEntry("templates/warn.html");
+        URL warn = bundleContext.getBundle().getResource("templates/warn.html");
         if (warn != null) {
             try {
                 warnTemplate = IOUtils.toString(warn.openStream());
@@ -200,7 +203,7 @@ public class DashboardService implements DashboardReady {
             throw new RuntimeException("Cannot find warn.html - failed to initialize Dashboard servlet");
         }
 
-        URL setup = bundleContext.getBundle().getEntry("templates/setup.html");
+        URL setup = bundleContext.getBundle().getResource("templates/setup.html");
         if (setup != null) {
             try {
                 setupTemplate = IOUtils.toString(setup.openStream());
@@ -260,5 +263,14 @@ public class DashboardService implements DashboardReady {
         } else {
             return i18nProvider.getText(bundleContext.getBundle(), key, key, useLocale);
         }
+    }
+
+    @Reference(policy = ReferencePolicy.STATIC)
+    public void setHttpContextFactoryService(HttpContextFactoryService httpContextFactoryService) {
+        this.httpContextFactoryService = httpContextFactoryService;
+    }
+
+    public void unsetHttpContextFactoryService(HttpContextFactoryService httpContextFactoryService) {
+        this.httpContextFactoryService = null;
     }
 }
