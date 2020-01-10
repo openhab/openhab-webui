@@ -12,10 +12,15 @@
  */
 package org.openhab.ui.restdocs.internal;
 
+import org.eclipse.smarthome.io.http.HttpContextFactoryService;
+import org.jetbrains.annotations.NotNull;
+import org.osgi.framework.Bundle;
+import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 import org.slf4j.Logger;
@@ -35,6 +40,7 @@ public class SwaggerService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private HttpService httpService;
+    private HttpContextFactoryService httpContextFactoryService;
 
     @Reference
     protected void setHttpService(HttpService httpService) {
@@ -46,9 +52,10 @@ public class SwaggerService {
     }
 
     @Activate
-    protected void activate() {
+    protected void activate(@NotNull ComponentContext context) {
         try {
-            httpService.registerResources(ALIAS, "swagger", httpService.createDefaultHttpContext());
+            httpService.registerResources(ALIAS, "swagger", httpContextFactoryService.createDefaultHttpContext(
+                context.getBundleContext().getBundle()));
         } catch (NamespaceException e) {
             logger.error("Could not start up REST documentation service: {}", e.getMessage());
         }
@@ -59,4 +66,12 @@ public class SwaggerService {
         httpService.unregister(ALIAS);
     }
 
+    @Reference(policy = ReferencePolicy.STATIC)
+    public void setHttpContextFactoryService(HttpContextFactoryService httpContextFactoryService) {
+        this.httpContextFactoryService = httpContextFactoryService;
+    }
+
+    public void unsetHttpContextFactoryService(HttpContextFactoryService httpContextFactoryService) {
+        this.httpContextFactoryService = null;
+    }
 }
