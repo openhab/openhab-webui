@@ -112,7 +112,7 @@ public class DashboardServlet extends HttpServlet {
             }
         }
         Map<String, String> replaceMap = new HashMap<>();
-        replaceMap.put("version", OpenHAB.getVersion() + " " + OpenHAB.buildString());
+        replaceMap.put("version", getVersion() + " " + OpenHAB.buildString());
         replaceMap.put("entries", entries.toString());
         replaceMap.put("warn", isExposed(req) ? warnTemplate : "");
         // Set the messages in the session
