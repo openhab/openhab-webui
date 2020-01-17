@@ -254,7 +254,7 @@ public class DashboardService implements DashboardReady {
             // The return value for "locale" key is an ISO 639-1 language code
             // In case there is no translation for the used locale provided with the dashboard, "en" is returned
             return bundleContext.getBundle()
-                    .getEntry("ESH-INF/i18n/dashboard_" + useLocale.getLanguage() + ".properties") != null
+                    .getEntry("OH-INF/i18n/dashboard_" + useLocale.getLanguage() + ".properties") != null
                             ? useLocale.getLanguage()
                             : "en";
         } else {
