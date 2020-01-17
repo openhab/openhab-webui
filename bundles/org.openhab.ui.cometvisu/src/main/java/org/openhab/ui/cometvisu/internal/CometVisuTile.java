@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.openhab.core.model.sitemap.SitemapProvider;
-import org.openhab.ui.dashboard.DashboardTile;
+import org.openhab.core.ui.tiles.Tile;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -26,9 +26,10 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 /**
  *
  * @author Tobias Bräutigam - Initial contribution
+ * @author Yannick Schaus - remove dependency to dashboard
  */
 @Component
-public class CometVisuDashboardTile implements DashboardTile {
+public class CometVisuTile implements Tile {
     private Set<SitemapProvider> sitemapProviders = new HashSet<>();
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)

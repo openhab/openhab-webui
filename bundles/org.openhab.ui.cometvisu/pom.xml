@@ -43,11 +43,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openhab.ui.bundles</groupId>
-      <artifactId>org.openhab.ui.dashboard</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.openhab.core.bundles</groupId>
       <artifactId>org.openhab.core.model.sitemap</artifactId>
       <version>${project.version}</version>

@@ -12,17 +12,18 @@
  */
 package org.openhab.ui.homebuilder.internal;
 
-import org.openhab.ui.dashboard.DashboardTile;
+import org.openhab.core.ui.tiles.Tile;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * The dashboard tile for Home Builder
+ * The tile for Home Builder
  *
  * @author Kuba Wolanin - Initial contribution
+ * @author Yannick Schaus - remove dependency to dashboard
  *
  */
 @Component
-public class HomeBuilderDashboardTile implements DashboardTile {
+public class HomeBuilderTile implements Tile {
 
     @Override
     public String getName() {

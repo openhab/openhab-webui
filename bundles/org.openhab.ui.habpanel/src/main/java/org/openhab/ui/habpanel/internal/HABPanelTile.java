@@ -12,19 +12,19 @@
  */
 package org.openhab.ui.habpanel.internal;
 
-import org.openhab.ui.dashboard.DashboardTile;
+import org.openhab.core.ui.tiles.Tile;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The dashboard tile and resource registering for HABPanel
+ * The tile and resource registering for HABPanel
  *
  * @author Yannick Schaus - Initial contribution
  *
  */
-public class HABPanelDashboardTile implements DashboardTile {
+public class HABPanelTile implements Tile {
 
     @Override
     public String getName() {
@@ -48,7 +48,7 @@ public class HABPanelDashboardTile implements DashboardTile {
 
     public static final String HABPANEL_ALIAS = "/habpanel";
 
-    private final Logger logger = LoggerFactory.getLogger(HABPanelDashboardTile.class);
+    private final Logger logger = LoggerFactory.getLogger(HABPanelTile.class);
 
     protected HttpService httpService;
 

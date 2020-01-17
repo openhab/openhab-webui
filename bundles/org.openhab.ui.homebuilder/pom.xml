@@ -14,8 +14,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.openhab.ui.bundles</groupId>
-      <artifactId>org.openhab.ui.dashboard</artifactId>
+      <groupId>org.openhab.core.bundles</groupId>
+      <artifactId>org.openhab.core.ui</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
