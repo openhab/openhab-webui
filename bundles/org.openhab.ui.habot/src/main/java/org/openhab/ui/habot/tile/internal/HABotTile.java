@@ -14,6 +14,7 @@ package org.openhab.ui.habot.tile.internal;
 
 import java.util.Map;
 
+import org.openhab.core.ui.tiles.Tile;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
