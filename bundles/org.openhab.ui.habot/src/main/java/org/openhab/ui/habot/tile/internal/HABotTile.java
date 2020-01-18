@@ -10,11 +10,11 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.habot.dashboard.internal;
+package org.openhab.ui.habot.tile.internal;
 
 import java.util.Map;
 
-import org.openhab.ui.dashboard.DashboardTile;
+import org.openhab.core.ui.tiles.Tile;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -27,13 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The dashboard tile and resource registering for HABot
+ * The tile and resource registering for HABot
  *
  * @author Yannick Schaus - Initial contribution
  */
-@Component(service = DashboardTile.class, immediate = true, name = "org.openhab.habot", property = {
+@Component(service = Tile.class, immediate = true, name = "org.openhab.habot", property = {
         "service.config.description.uri=ui:habot", "service.config.label=HABot", "service.config.category=ui" })
-public class HABotDashboardTile implements DashboardTile {
+public class HABotTile implements Tile {
 
     @Override
     public String getName() {
@@ -52,13 +52,13 @@ public class HABotDashboardTile implements DashboardTile {
 
     @Override
     public String getImageUrl() {
-        return "../habot/statics/dashboardtile.png";
+        return "../habot/statics/tile.png";
     }
 
     public static final String HABOT_ALIAS = "/habot";
     public static final String RESOURCES_BASE = "web/dist/pwa-mat";
 
-    private final Logger logger = LoggerFactory.getLogger(HABotDashboardTile.class);
+    private final Logger logger = LoggerFactory.getLogger(HABotTile.class);
 
     protected HttpService httpService;
 

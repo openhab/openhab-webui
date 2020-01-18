@@ -12,17 +12,18 @@
  */
 package org.openhab.ui.basic.internal;
 
-import org.openhab.ui.dashboard.DashboardTile;
+import org.openhab.core.ui.tiles.Tile;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * The dashboard tile for the Basic UI
+ * The tile for the Basic UI
  *
  * @author Kai Kreuzer
+ * @author Yannick Schaus - remove dependency to dashboard
  *
  */
 @Component
-public class BasicUIDashboardTile implements DashboardTile {
+public class BasicUITile implements Tile {
 
     @Override
     public String getName() {

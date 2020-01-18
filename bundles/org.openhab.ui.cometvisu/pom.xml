@@ -39,12 +39,12 @@
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
-      <artifactId>org.openhab.core</artifactId>
+      <artifactId>org.openhab.core.boot</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openhab.ui.bundles</groupId>
-      <artifactId>org.openhab.ui.dashboard</artifactId>
+      <groupId>org.openhab.core.bundles</groupId>
+      <artifactId>org.openhab.core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

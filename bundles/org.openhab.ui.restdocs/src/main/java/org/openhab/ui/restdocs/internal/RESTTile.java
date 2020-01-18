@@ -12,17 +12,18 @@
  */
 package org.openhab.ui.restdocs.internal;
 
-import org.openhab.ui.dashboard.DashboardTile;
+import org.openhab.core.ui.tiles.Tile;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * The dashboard tile for the REST API,
+ * The tile for the REST API,
  *
  * @author Kai Kreuzer - Initial contribution
+ * @author Yannick Schaus - remove dependency to dashboard
  *
  */
 @Component
-public class RESTDashboardTile implements DashboardTile {
+public class RESTTile implements Tile {
 
     protected void activate() {
     }
@@ -47,7 +48,7 @@ public class RESTDashboardTile implements DashboardTile {
 
     @Override
     public String getImageUrl() {
-        return "../doc/images/dashboardtile.png";
+        return "../doc/images/tile.png";
     }
 
 }

@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.habot.dashboard.internal;
+package org.openhab.ui.habot.tile.internal;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
