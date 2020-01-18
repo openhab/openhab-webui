@@ -1,0 +1,339 @@
+/* iOS Cordova Tweak */
+.device-cordova.device-ios {
+  height: 100vh;
+}
+
+/* Disable Android Chrome pull-to-refresh */
+html
+  overscroll-behavior-y contain
+
+/* Fixes for desktops */
+.device-desktop
+  --f7-navbar-title-line-height 1.3
+  --f7-navbar-subtitle-line-height 1.3
+  --f7-subnavbar-title-line-height 1.3
+  --f7-list-item-header-line-height 1.3
+  --f7-label-line-height 1.3
+  --f7-list-item-after-line-height 1.3
+  // seems to reduce the problems with the mouse wheel not working on Chrome
+  .smart-select-popup.popup.modal-in, .smart-select-popup.popup.modal-out
+    transition-duration 1ms
+
+.no-page-transitions
+   --f7-page-transition-duration 0ms !important
+
+/* Custom color theme properties */
+:root {
+  --f7-theme-color: #e64a19; // #ff7700;
+  --f7-theme-color-rgb: 255, 119, 0;
+  --f7-theme-color-shade: #d66400;
+  --f7-theme-color-tint: #ff8d29;
+}
+
+:root.theme-filled,
+:root .theme-filled {
+  .subnavbar:not(.toolbar-bottom) {
+    --f7-bars-bg-color: var(--f7-theme-color);
+    --f7-bars-text-color: #fff;
+    --f7-bars-link-color: #fff;
+  }
+  .toolbar:not(.toolbar-bottom) {
+    --f7-bars-bg-color: var(--f7-theme-color);
+    --f7-bars-text-color: #fff;
+    --f7-bars-link-color: #fff;
+  }
+  .tabbar:not(.toolbar-bottom) {
+    --f7-bars-bg-color: var(--f7-theme-color);
+    --f7-bars-text-color: #fff;
+    --f7-bars-link-color: #fff;
+    --f7-tabbar-link-active-color: #fff;
+    --f7-tabbar-link-inactive-color: rgba(255,255,255,0.54);
+    --f7-tabbar-link-active-border-color: #fff;
+  }
+  .navbar {
+    --f7-bars-bg-color: var(--f7-theme-color);
+    --f7-bars-text-color: #fff;
+    --f7-navbar-large-title-text-color: #fff;
+    --f7-bars-link-color: #fff;
+    &.navbar-large-transparent .title-large-text {
+      --f7-navbar-large-title-text-color: #000;
+    }
+    &.navbar-large-transparent:not(.navbar-large-collapsed) {
+      --f7-bars-link-color: var(--f7-theme-color);
+    }
+  }
+  --f7-navbar-subtitle-text-color: rgba(255,255,255,0.85);
+  --f7-navbar-border-color: transparent;
+  --f7-searchbar-input-bg-color: #fff;
+  --f7-sheet-border-color: transparent;
+}
+
+// .md
+//   --f7-page-bg-color: #f7f7f7
+
+.home-tabs {
+  --f7-theme-color: #2196f3;
+}
+
+.navbar-large-hidden {
+  --f7-navbar-large-collapse-progress: 1
+  opacity 0
+}
+.navbar-large-hidden:not(.navbar-large-collapsed) .navbar-bg {
+  opacity 0
+}
+
+.toolbar.toolbar-bottom, .tabbar.tabbar-bottom {
+  --f7-theme-color: #2196f3;
+  }
+
+.home-tabs {
+  --f7-theme-color: #2196f3;
+  --f7-bars-bg-color: rgb(247, 247, 248);
+  --f7-bars-text-color: #000;
+  --f7-tabbar-link-inactive-color: rgba(0, 0, 0, 0.54);
+  --f7-tabbar-link-active-color: var(--f7-theme-color);
+  text-transform: none;
+}
+
+.md .title-large-text {
+  font-weight bold !important
+}
+
+.theme-dark .home-tabs {
+  --f7-bars-bg-color: rgb(32, 32, 33);
+  --f7-bars-text-color: #fff;
+  --f7-bars-link-color: #fff;
+  --f7-tabbar-link-inactive-color: rgba(255,255,255,0.54);
+}
+
+.ios .contextual-toolbar {
+//   --f7-theme-color: #2196f3;
+//   --f7-bars-bg-color: rgb(247, 247, 248);
+//   --f7-bars-text-color: #000;
+//   --f7-tabbar-link-inactive-color: rgba(0, 0, 0, 0.54);
+//   --f7-tabbar-link-active-color: var(--f7-theme-color);
+// //  --f7-bars-link-color: var(--f7-theme-color);
+//   text-transform: none;
+
+   .delete {
+     --f7-bars-link-color: #ff3b30;
+   }
+}
+.md .contextual-toolbar {
+  --f7-theme-color: #474747;
+  --f7-bars-bg-color: #474747;
+  --f7-bars-text-color: #fff;
+  height: var(--f7-navbar-height);
+}
+
+.page-home
+  .page-content::-webkit-scrollbar
+    width 0
+  // &.page-with-card-opened
+  //   .page-content
+  //     overflow auto
+  // .toolbar-hidden + .page-content
+  //   overflow hidden !important
+
+// .tabbar-labels .tabbar-label {
+//     line-height: 1;
+//     margin: 0;
+//     text-overflow: ellipsis;
+//     white-space: nowrap;
+//     font-size: var(--f7-tabbar-label-font-size) !important;
+//     text-transform: var(--f7-tabbar-label-text-transform) !important;
+//     font-weight: var(--f7-tabbar-label-font-weight) !important;
+//     letter-spacing: var(--f7-tabbar-label-letter-spacing) !important;
+// }
+
+/* Left Panel right border when it is visible by breakpoint */
+.panel-left.panel-in-breakpoint:before {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 1px;
+  background: rgba(0,0,0,0.1);
+  content: '';
+  z-index: 6000;
+}
+
+/* Hide navbar link which opens left panel when it is visible by breakpoint */
+.panel-left.panel-in-breakpoint ~ .view .navbar .panel-open[data-panel="left"] {
+  display: none;
+}
+
+/*
+  Extra borders for main view and left panel for iOS theme when it behaves as panel (before breakpoint size)
+*/
+.ios .panel-left:not(.panel-in-breakpoint).panel-active ~ .view-main:before,
+.ios .panel-left:not(.panel-in-breakpoint).panel-closing ~ .view-main:before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 1px;
+  background: rgba(0,0,0,0.1);
+  content: '';
+  z-index: 6000;
+}
+
+/* Your app styles here */
+
+@media (min-width: 1024px) {
+    .block-narrow {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .block-narrow .row {
+        width: 720px;
+    }
+
+    .block-narrow .col {
+        width: 720px;
+        display: initial;
+    }
+}
+
+@media (max-width: 1023px) {
+  .block-narrow {
+    padding-left: var(--f7-safe-area-left);
+    padding-right: var(--f7-safe-area-right);
+  }
+}
+
+.md .panel-in-breakpoint {
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.3);
+}
+
+// .page-content {
+//   margin-top: 1rem;
+// }
+.page-content
+  .block:first-child
+    margin-top 1rem
+    // &.after-big-title
+    //   margin-top 1rem
+
+.md .page-content .after-big-title
+  margin-top 4.5rem
+
+.navbar
+  .title-large-text
+    overflow initial
+
+.after-big-title
+  margin-top 5rem
+
+.aurora .after-big-title
+  margin-top 5rem !important
+
+.demo-expandable-cards
+  justify-content center
+
+  .card-header
+    padding-top calc(var(--f7-safe-area-top) + var(--f7-card-header-padding-vertical))
+    padding-left calc(var(--f7-safe-area-left) + var(--f7-card-header-padding-horizontal))
+
+/* Demo Expandable Cards */
+@media (min-width: 768px) {
+  .demo-expandable-cards {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .demo-expandable-cards .card {
+    flex-shrink: 10;
+    min-width: 0;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .demo-expandable-cards .card {
+    width 340px
+  }
+  // .demo-expandable-cards .card {
+  //   width: calc((100% - var(--f7-card-expandable-margin-horizontal) * 3) / 2);
+  // }
+  .demo-expandable-cards .card:nth-child(n),
+  .demo-expandable-cards .card:nth-child(n + 1) {
+    margin-left: 0;
+  }
+  .demo-expandable-cards .card:nth-child(n + 3) {
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 1024px)
+  .demo-expandable-cards 
+    margin-top 2rem
+    .card
+      width 340px
+      margin-top 0
+
+  .demo-expandable-cards .card:nth-child(n),
+  .demo-expandable-cards .card:nth-child(n + 1)
+    margin-left 0
+
+  .demo-expandable-cards .card:nth-child(n + 3)
+    margin-top 0
+
+
+  // hide scrollbar
+  .card-expandable.card-opened .card-content
+      overflow-y scroll
+      scrollbar-width none /* Firefox */
+      -ms-overflow-style none  /* IE 10+ */
+
+  .card-expandable.card-opened .card-content::-webkit-scrollbar /* WebKit */
+      width 0
+      height 0
+
+
+.view-master-detail .navbar-master-detail .link.back,
+.view-master-detail .page-master-detail .navbar .link.back
+  display none
+
+// .ios .card-expandable
+//   background-color var(--f7-page-bg-color)
+//   .list
+//     background-color white
+
+// Remove the borders and background for admin links in sidebar
+.list.admin-links
+  ul
+    background transparent !important
+  ul:before
+    display none !important
+  ul:after
+    display none !important
+  .item-inner:after
+    display none !important
+
+.item-initial
+  color #c0c0c0
+  font-size 32px
+  font-weight lighter
+  height 32px
+  width 32px
+  text-align center
+  line-height 32px
+
+#framework7-root:not(.theme-dark) .page-home,
+#framework7-root:not(.theme-dark) .page-about,
+//#framework7-root:not(.theme-dark) .page-settings
+  --f7-page-bg-color #fff
+
+// disable blur on card backdrop (poor performance)
+.card-backdrop {
+  background: rgba(0,0,0,0.2);
+}
+.card-backdrop-in {
+  animation: card-backdrop-fade-in 400ms forwards;
+  pointer-events: auto;
+}
+.card-backdrop-out {
+  animation: card-backdrop-fade-out 400ms forwards;
+}

@@ -31,6 +31,7 @@ import org.openhab.ui.habpanel.internal.gallery.GalleryItem;
 import org.openhab.ui.habpanel.internal.gallery.GalleryProviderFactory;
 import org.openhab.ui.habpanel.internal.gallery.GalleryWidgetProvider;
 import org.openhab.ui.habpanel.internal.gallery.GalleryWidgetsListItem;
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,7 @@ import io.swagger.annotations.ApiResponses;
  * @author Yannick Schaus - Initial contribution
  *
  */
+@Component
 @Path(HABPanelResource.PATH_HABPANEL)
 @Api(HABPanelResource.PATH_HABPANEL)
 public class HABPanelResource implements RESTResource {

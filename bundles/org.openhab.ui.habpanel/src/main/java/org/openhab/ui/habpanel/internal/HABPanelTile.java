@@ -13,6 +13,10 @@
 package org.openhab.ui.habpanel.internal;
 
 import org.openhab.core.ui.tiles.Tile;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 import org.slf4j.Logger;
@@ -24,6 +28,7 @@ import org.slf4j.LoggerFactory;
  * @author Yannick Schaus - Initial contribution
  *
  */
+@Component
 public class HABPanelTile implements Tile {
 
     @Override
@@ -52,6 +57,7 @@ public class HABPanelTile implements Tile {
 
     protected HttpService httpService;
 
+    @Activate
     protected void activate() {
         try {
             httpService.registerResources(HABPANEL_ALIAS, "web", null);
@@ -61,11 +67,13 @@ public class HABPanelTile implements Tile {
         }
     }
 
+    @Deactivate
     protected void deactivate() {
         httpService.unregister(HABPANEL_ALIAS);
         logger.info("Stopped HABPanel");
     }
 
+    @Reference
     protected void setHttpService(HttpService httpService) {
         this.httpService = httpService;
     }
