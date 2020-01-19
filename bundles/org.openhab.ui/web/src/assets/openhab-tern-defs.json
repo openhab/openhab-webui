@@ -1,0 +1,116 @@
+{
+  "!name": "esh-script-scope",
+  "!define": {
+      "Item": {
+          "getName": {
+              "!doc": "The name of the item",
+              "!type": "fn() -> string"
+          },
+          "getState": {
+              "!doc": "The current state of the item",
+              "!type": "fn() -> ESHState"
+          },
+          "getLabel": {
+              "!doc": "The label of the item",
+              "!type": "fn() -> string"
+          },
+          "getType": {
+              "!doc": "The type of the item",
+              "!type": "fn() -> string"
+          },
+          "getGroupNames": {
+              "!doc": "An array of group names the item belongs to",
+              "!type": "fn() -> [string]"
+          },
+          "getTags": {
+              "!doc": "An array of tag names attached to the item",
+              "!type": "fn() -> [string]"
+          },
+          "hasTag": {
+              "!doc": "Returns whether or not the item has the specified tag",
+              "!type": "fn(string) -> boolean"
+          }
+      },
+      "ScriptBusEvent": {
+          "postUpdate": {
+              "!doc": "Posts a status update for a specified item to the event bus.",
+              "!type": "fn(itemName: string, state: ?)"
+          },
+          "sendCommand": {
+              "!doc": "Sends a command for a specified item to the event bus.",
+              "!type": "fn(itemName: string, command: ?)"
+          }
+      },
+      "ItemRegistry": {
+          "getItem": {
+              "!doc": "This method retrieves a single item from the registry.",
+              "!type": "fn(name: string) -> Item"
+          },
+          "getItemsOfType": {
+              "!doc": "This method retrieves all items with the given type",
+              "!type": "fn(type: string) -> [Item]"
+          },
+          "getItems": {
+              "!doc": "This method retrieves all items that match an (optional) given search pattern",
+              "!type": "fn(pattern?: string) -> [Item]"
+          },
+          "getItemsByTag": {
+              "!doc": "Returns a list of items containing all of the given tags.",
+              "!type": "fn(tag?: [string]) -> [Item]"
+          },
+          "getItemsByTagAndType": {
+              "!doc": "Returns a list of items with a certain type containing all of the given tags.",
+              "!type": "fn(type: string, pattern?: [string]) -> [Item]"
+          }
+      },
+      "ESHEvent": {
+          "getSource": {
+              "!doc": "The source of the event",
+              "!type": "fn() -> string"
+          },
+          "getType": {
+              "!doc": "The type of the event",
+              "!type": "fn() -> string"
+          },
+          "getTopic": {
+              "!doc": "The topic of the event",
+              "!type": "fn() -> string"
+          },
+          "getPayload": {
+              "!doc": "The payload of the event",
+              "!type": "fn() -> string"
+          },
+          "toString": {
+              "!doc": "Returns a string representation of the event",
+              "!type": "fn() -> string"
+          }
+      },
+      "ESHState": {
+          "toString": {
+              "!doc": "Returns a string representation of the state",
+              "!type": "fn() -> string"
+          }
+      }
+  },
+  "events": {
+      "!doc": "Provides functionality to send commands to the openHAB event bus",
+      "!type": "ScriptBusEvent"
+  },
+  "itemRegistry": {
+      "!doc": "The Item Registry provides access to the list of openHAB items and their state",
+      "!type": "ItemRegistry"
+  },
+  "ir": {
+      "!doc": "Alias for itemRegistry",
+      "!type": "ItemRegistry"
+  },
+
+  "ON": "OnOffType",
+  "OFF": "OnOffType",
+  "MOVE": "StopMoveType",
+  "STOP": "StopMoveType",
+  "OPEN": "OpenClosedType",
+  "CLOSED": "OpenClosedType",
+  "DOWN": "UpDownType",
+  "UP": "UpDownType"
+}

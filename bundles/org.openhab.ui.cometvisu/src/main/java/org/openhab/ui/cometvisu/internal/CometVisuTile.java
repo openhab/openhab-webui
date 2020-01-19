@@ -95,6 +95,6 @@ public class CometVisuTile implements Tile {
 
     @Override
     public String getImageUrl() {
-        return "img/cometvisu.png";
+        return "res/img/cometvisu.png";
     }
 }

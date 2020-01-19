@@ -15,6 +15,7 @@
   <name>openHAB UI :: Bundles</name>
 
   <modules>
+    <module>org.openhab.ui</module>
     <module>org.openhab.ui.dashboard</module>
     <module>org.openhab.ui.basic</module>
     <module>org.openhab.ui.cometvisu</module>
