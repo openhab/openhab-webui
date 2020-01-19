@@ -16,7 +16,6 @@
 
   <modules>
     <module>org.openhab.ui</module>
-    <module>org.openhab.ui.dashboard</module>
     <module>org.openhab.ui.basic</module>
     <module>org.openhab.ui.cometvisu</module>
     <module>org.openhab.ui.cometvisu.php</module>
