@@ -16,7 +16,7 @@ export default {
   data () {
     return {
       smartSelectParams: {
-        view: this.$f7.view.main
+        view: (this.$f7) ? this.$f7.view.main : null
       }
     }
   },

@@ -1,12 +1,18 @@
 # Contributing to the openHAB UI
 
+The [standard contributing and community guidelines for the openHAB project](https://github.com/openhab/openhab-core/blob/master/CONTRIBUTING.md), including signing off your commits, also apply for the development of the UI.
+
+The repository for web user interfaces, including this project, is located at https://github.com/openhab/openhab-webui and the code of this project, including this file, is found in the `bundles/org.openhab.ui` folder.
+
+## Prerequisites
+
 This project is built using [Vue.js](https://vuejs.org/), [webpack](https://webpack.js.org/) and [Framework7](https://framework7.io).
 
-You need Node 8.10.0 or later and npm 5.6.0. Gather the necessary dependencies with `npm install` then the scripts below will be available.
+You need Node 8.10.0 or later and npm 5.6.0. Change to the `web` directory, gather the necessary dependencies with `npm install` then the scripts below will be available.
 
 ## NPM Scripts
 
-* `npm start` - run development server
+* `npm start` - run the development server (see below)
 * `npm run build-prod` - build web app for production (note: no need to prepare a production version when submitting a PR, the build server will do it)
 * `npm run build-cordova-prod` - build cordova's `www` folder from source and build a Cordova app
 * `npm run test:unit` - start the Jest test runner and run the unit tests
@@ -14,13 +20,24 @@ You need Node 8.10.0 or later and npm 5.6.0. Gather the necessary dependencies w
 * `npm run test:e2e` - start Cypress and run the e2e tests
 * `npm run test:e2e:gui` - open the Cypress GUI
 
+## Development server
+
+Before starting the development server with `npm start`, you should have an instance of openHAB (either a complete distribution or the demo app) running on _localhost:8080_.
+The development server will run on the next available port (for instance, 8081) and proxy requests to well-known openHAB URLs like the REST API or icon servlet, forwarding them to their equivalent on port 8080.
+If you wish to change the target of these forwards, allowing to target a remote instance, look for `const apiBaseUrl` in `build/webpack.config.js` and change it accordingly before starting the server.
+Don't commit changes to the base URL to avoid confusing others!
+
+You can also run the unit tests (`test/jest`) and e2e (`test/cypress`) tests using the abovementioned commands.
+Cypress is configured to assume the development server is running on port 8081 - you can change that in `cypress.json` but again, remember not to commit.
+You can also use Majestic GUI to run the unit tests and temporarily collect code coverage and view coverage reports (it is disabled by default for performance reasons): install it globally with `npm install -g majestic`, and run `majestic` in the root web folder to open Majestic in a browser window.
+
 ## PWA
 
-This is a PWA. Don't forget to check what is inside of your `service-worker.js`. It is also recommended that you disable service worker (or enable "Update on reload") in browser dev tools during development.
+This is a PWA. Don't forget to check what is inside of your `service-worker.js`. It is also recommended that you disable the service worker (or enable "Update on reload") in your browser's dev tools during development.
 
 ## Cordova
 
-The Cordova project is located in `cordova` folder. You shouldn't modify content of `cordova/www` folder. Its content will be correctly generated when you call `npm run cordova-build-prod`.
+The Cordova project is located in the `cordova` folder. You shouldn't modify content of the `cordova/www` folder. Its content will be correctly generated when you call `npm run cordova-build-prod`.
 
 ## Documentation & Resources
 
