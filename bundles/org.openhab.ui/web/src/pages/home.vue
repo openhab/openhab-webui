@@ -1,6 +1,6 @@
 <template>
   <f7-page stacked name="HomePage" class="page-home" @page:init="onPageInit">
-    <f7-navbar :large-transparent="true">
+    <f7-navbar :large="$f7.data.themeOptions.homeNavbar !== 'simple'" :large-transparent="true">
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
       </f7-nav-left>

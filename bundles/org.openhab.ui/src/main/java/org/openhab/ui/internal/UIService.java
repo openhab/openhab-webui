@@ -12,8 +12,15 @@
  */
 package org.openhab.ui.internal;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openhab.core.config.core.ConfigConstants;
 import org.openhab.core.net.HttpServiceUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
@@ -33,18 +40,50 @@ import org.slf4j.LoggerFactory;
  * @author Yannick Schaus - Initial contribution
  */
 @Component(immediate = true, name = "org.openhab.ui")
-public class UIService {
+public class UIService implements HttpContext {
+
+    private static final String APP_BASE = "app";
+    private static final String STATIC_PATH = "/static";
+    private static final String STATIC_BASE = ConfigConstants.getConfigFolder() + "/html";
 
     private final Logger logger = LoggerFactory.getLogger(UIService.class);
 
     protected HttpService httpService;
+    protected HttpContext defaultHttpContext;
+
+    @Override
+    public boolean handleSecurity(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        return defaultHttpContext.handleSecurity(request, response);
+    }
+
+    @Override
+    public URL getResource(String name) {
+        if (name.startsWith(APP_BASE + STATIC_PATH) && !name.endsWith("/")) {
+            try {
+                URL url = new java.io.File(STATIC_BASE + name.substring(new String(APP_BASE + STATIC_PATH).length()))
+                        .toURI().toURL();
+                logger.trace("Serving static file from {}", url);
+                return url;
+            } catch (MalformedURLException e) {
+                logger.error("Error while serving static content: {}", e.getMessage());
+                return defaultHttpContext.getResource(name);
+            }
+        } else {
+            return defaultHttpContext.getResource(name);
+        }
+    }
+
+    @Override
+    public String getMimeType(String name) {
+        return defaultHttpContext.getMimeType(name);
+    }
 
     @Activate
     protected void activate(ComponentContext componentContext, Map<String, Object> properties) {
         BundleContext bundleContext = componentContext.getBundleContext();
-        HttpContext httpContext = httpService.createDefaultHttpContext();
+        defaultHttpContext = httpService.createDefaultHttpContext();
         try {
-            httpService.registerResources("/", "app", httpContext);
+            httpService.registerResources("/", APP_BASE, this);
             if (HttpServiceUtil.getHttpServicePort(bundleContext) > 0) {
                 logger.info("Started UI on port {}", HttpServiceUtil.getHttpServicePort(bundleContext));
             } else {

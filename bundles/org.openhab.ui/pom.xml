@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>org.openhab.ui</artifactId>
-  <name>openHAB UI :: Bundles :: Default UI</name>
+  <name>openHAB UI :: Bundles :: Main UI</name>
 
   <dependencies>
     <dependency>

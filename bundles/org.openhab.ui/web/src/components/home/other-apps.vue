@@ -1,17 +1,28 @@
 <template>
-  <div class="row app-links">
-    <f7-link class="app-link col-50 medium-33 large-33 xlarge-25" v-for="app in apps" :key="app.url" :href="app.url.replace(/^\.\./, '')" external target="_blank">
-      <f7-card class="app-card">
-        <f7-card-content :padding="false">
-          <!-- <img :src="'res/img/dashboard-tiles-tmp/basicui.png'" width="100%"> -->
-          <img :src="app.imageUrl.replace(/^\.\./, '')" width="100%">
-        </f7-card-content>
-        <f7-card-footer>
-          <div class="app-card-name">{{app.name}}</div>
-        </f7-card-footer>
-      </f7-card>
-    </f7-link>
-  </div>
+  <f7-block class="block-narrow" v-show="apps && apps.length">
+    <f7-row>
+      <f7-col>
+        <div class="row app-links">
+          <div class="app-link col-50" v-for="app in apps" :key="app.url" :href="app.url.replace(/^\.\./, '')" external target="_blank">
+            <f7-link class="app-link" :href="app.url.replace(/^\.\./, '')" external target="_blank">
+              <f7-card class="app-card">
+                <f7-card-content :padding="false" :style="{
+                  'height': '200px',
+                  'background-image': 'url(' + app.imageUrl.replace(/^\.\./, '') + ')',
+                  'background-size': 'cover',
+                  'background-repeat': 'no-repeat'
+                }">
+                </f7-card-content>
+                <f7-card-footer>
+                  <div class="app-card-name">{{app.name}}</div>
+                </f7-card-footer>
+              </f7-card>
+            </f7-link>
+          </div>
+        </div>
+      </f7-col>
+    </f7-row>
+  </f7-block>
 </template>
 
 <script>
