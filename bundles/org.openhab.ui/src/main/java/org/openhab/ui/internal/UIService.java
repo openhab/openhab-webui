@@ -62,7 +62,7 @@ public class UIService implements HttpContext {
             try {
                 URL url = new java.io.File(STATIC_BASE + name.substring(new String(APP_BASE + STATIC_PATH).length()))
                         .toURI().toURL();
-                logger.trace("Serving static file from {}", name, url);
+                logger.trace("Serving static file from {}", url);
                 return url;
             } catch (MalformedURLException e) {
                 logger.error("Error while serving static content: {}", e.getMessage());
