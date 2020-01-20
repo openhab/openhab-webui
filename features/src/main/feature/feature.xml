@@ -77,7 +77,7 @@
 
     <feature name="openhab-ui-habpanel" description="HABPanel" version="${project.version}">
         <feature>openhab-core-ui</feature>
-        <feature>openhab-io-webaudio</feature>
+        <feature>openhab-iconset-classic</feature>
         <bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.habpanel/${project.version}</bundle>
     </feature>
 

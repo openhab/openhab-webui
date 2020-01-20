@@ -1,6 +1,6 @@
 <template>
   <f7-page name="about" class="page-about">
-    <f7-navbar title-large="About" title="About" back-link="Back"></f7-navbar>
+    <f7-navbar large title-large="About" title="About" back-link="Back"></f7-navbar>
     <f7-block class="block-narrow after-big-title">
       <f7-row>
         <f7-col>
