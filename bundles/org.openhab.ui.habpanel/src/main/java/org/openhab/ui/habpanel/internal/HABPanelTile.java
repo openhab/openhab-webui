@@ -28,7 +28,8 @@ import org.slf4j.LoggerFactory;
  * @author Yannick Schaus - Initial contribution
  *
  */
-@Component
+@Component(service = Tile.class, immediate = true, name = "org.openhab.habpanel", property = {
+        "service.config.description.uri=ui:habpanel", "service.config.label=HABPanel", "service.config.category=ui" })
 public class HABPanelTile implements Tile {
 
     @Override
