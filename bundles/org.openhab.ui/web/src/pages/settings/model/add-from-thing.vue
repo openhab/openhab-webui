@@ -22,7 +22,7 @@
           <item-picker title="Create Items Under" name="parent-group" :value="parentGroup" @input="(value) => parentGroup = value" :multiple="false" filterType="Group"></item-picker>
         </f7-list>
         <f7-block-title v-if="createEquipment">Equipment</f7-block-title>
-        <f7-block-title v-else-if="!thingId">Parent Group</f7-block-title>
+        <f7-block-title v-else-if="!thingId">Source Thing</f7-block-title>
         <f7-block-footer v-if="createEquipment && !thingId" class="padding-left padding-right">
           Select the Thing you wish to create as a new Equipment group in the model. It will be placed under the parent group above, if any.
           You can alter the new group's details and change its equipment class.
