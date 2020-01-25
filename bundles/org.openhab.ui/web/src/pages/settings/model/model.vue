@@ -32,7 +32,7 @@
     <f7-block v-else class="semantic-tree-wrapper" :class="{ 'sheet-opened' : detailsOpened }">
       <f7-row>
         <f7-col width="100" medium="50">
-          <f7-block strong class="semantic-tree" no-gap>
+          <f7-block strong class="semantic-tree" no-gap @click.native="clearSelection">
             <f7-treeview>
               <model-treeview-item v-for="node in [rootLocations, rootEquipments, rootPoints, rootGroups, rootItems].flat()"
                 :key="node.item.name" :model="node"
@@ -41,15 +41,33 @@
             </f7-treeview>
           </f7-block>
         </f7-col>
-        <f7-col v-if="selectedItem" width="100" medium="50" class="details-pane">
-          <f7-block no-gap>
+        <f7-col width="100" medium="50" class="details-pane">
+          <f7-block v-if="selectedItem" no-gap>
             <model-details-pane :model="selectedItem" :links="links" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" />
+          </f7-block>
+          <f7-block v-else>
+            <div class="padding text-align-center">Nothing selected</div>
+          </f7-block>
+          <f7-block v-if="!selectedItem || (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)">
+            <div><f7-block-title>Add to Model</f7-block-title></div>
+            <f7-card>
+              <f7-card-content>
+                <f7-list>
+                  <f7-list-button color="blue" v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" title="Add Location" @click="addSemanticItem('Location')"></f7-list-button>
+                  <f7-list-button color="blue" title="Create Equipment from Thing" @click="addFromThing(true)"></f7-list-button>
+                  <f7-list-button color="blue" title="Create Points from Thing" @click="addFromThing(false)"></f7-list-button>
+                  <f7-list-button color="blue" title="Add Equipment" @click="addSemanticItem('Equipment')"></f7-list-button>
+                  <f7-list-button color="blue" title="Add Point" @click="addSemanticItem('Point')"></f7-list-button>
+                  <f7-list-button color="blue" v-if="includeNonSemantic" title="Add Item" @click="addNonSemanticItem(false)"></f7-list-button>
+                </f7-list>
+              </f7-card-content>
+            </f7-card>
           </f7-block>
         </f7-col>
       </f7-row>
     </f7-block>
 
-    <f7-fab position="right-bottom" slot="fixed" color="blue" v-if="!selectedItem || (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)">
+    <f7-fab class="add-to-model-fab" position="right-bottom" slot="fixed" color="blue" v-if="!selectedItem || (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply"></f7-icon>
       <f7-fab-buttons position="top">
@@ -122,6 +140,8 @@
   .toolbar-details
     .details-link
       visibility hidden !important
+  .add-to-model-fab
+    visibility hidden !important
 
 @media (max-width: 767px)
   .details-pane
@@ -331,6 +351,11 @@ export default {
       // this.detailsOpened = true
       // console.log('selected ' + item.item.name)
     },
+    clearSelection (ev) {
+      if (ev.target && ev.currentTarget && ev.target === ev.currentTarget) {
+        this.selectedItem = null
+      }
+    },
     toggleNonSemantic () {
       this.rootGroups = []
       this.rootItems = []
@@ -339,7 +364,7 @@ export default {
     },
     addSemanticItem (semanticType) {
       this.newItem = {
-        type: 'Group',
+        type: (semanticType === 'Point') ? 'Switch' : 'Group',
         name: '',
         label: '',
         category: '',
