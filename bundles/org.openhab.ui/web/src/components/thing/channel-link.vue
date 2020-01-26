@@ -18,21 +18,7 @@
     </div>
   </div>
   <f7-list media-list v-else inset class="margin-left searchbar-ignore">
-    <!-- <f7-list-group v-if="!ready">
-      <f7-list-item
-        media-item
-        v-for="n in links.length"
-        :key="n"
-        :class="`skeleton-text skeleton-effect-blink`"
-        title="Label of the item"
-        subtitle="type + semantic metadata"
-        after="The item state"
-        footer="This contains the type of the item"
-      >
-        <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media"></f7-skeleton-block>
-      </f7-list-item>
-    </f7-list-group> -->
-    <f7-list-group>
+    <f7-list-group v-if="links">
       <f7-list-item
         v-for="link in links" :key="link.itemName"
         media-item link
@@ -49,11 +35,15 @@
         <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
       </f7-list-item>
     </f7-list-group>
+    <!-- <f7-list-item class="searchbar-ignore" media-item link
+      color="blue" title="Add Link..." subtitle="Adds another link" @click="addLink()">
+        <f7-icon slot="media" color="green" aurora="f7:plus_circle" ios="f7:plus_circle" md="material:control_point" size="32" width="32"></f7-icon>
+    </f7-list-item> -->
     <f7-list-item class="searchbar-ignore" link
       color="blue" subtitle="Add Link to Item..." @click="addLink()">
         <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point"></f7-icon>
     </f7-list-item>
-    <f7-list-button class="searchbar-ignore" color="blue" title="Configure Channel" @click="configureChannel()"></f7-list-button>
+    <f7-list-button class="searchbar-ignore" color="blue" :title="(channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'" @click="configureChannel()"></f7-list-button>
     <f7-list-button class="searchbar-ignore" v-if="extensible" color="red" title="Remove Channel" @click="removeChannel()"></f7-list-button>
   </f7-list>
 </template>
@@ -73,19 +63,17 @@ import ConfigureLinkPage from '@/pages/settings/things/link/link-edit.vue'
 import ConfigureChannelPage from '@/pages/settings/things/channel/channel-edit.vue'
 
 export default {
-  props: ['channelType', 'channelId', 'thing', 'opened', 'extensible'],
+  props: ['channelType', 'channelId', 'channel', 'thing', 'opened', 'extensible'],
   data () {
     return {
       ready: false,
       loading: false,
-      channel: null,
       links: [],
       channelKind: ''
     }
   },
   methods: {
     buildLinks () {
-      this.channel = this.thing.channels.find((c) => c.id === this.channelId)
       if (this.channel) {
         this.channelKind = this.channel.kind
         let links = []

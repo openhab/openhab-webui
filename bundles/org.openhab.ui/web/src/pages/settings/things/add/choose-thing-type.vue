@@ -120,7 +120,7 @@ export default {
     },
     onPageAfterIn () {
       this.loading = true
-      this.$oh.api.get('/rest/thing-types').then((data) => {
+      this.$oh.api.get('/rest/thing-types?bindingId=' + this.bindingId).then((data) => {
         this.thingTypes = data.filter((tt) => tt.UID.split(':')[0] === this.bindingId && tt.listed)
           .sort((a, b) => {
             if (a.bridge && !b.bridge) return -1

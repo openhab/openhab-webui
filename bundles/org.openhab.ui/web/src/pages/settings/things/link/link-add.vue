@@ -11,8 +11,8 @@
         <f7-block-title>Channel</f7-block-title>
         <f7-list media-list>
           <f7-list-item media-item class="channel-item"
-            :title="channel.label"
-            :footer="channel.description"
+            :title="channel.label || channelType.label"
+            :footer="channel.description || channelType.description"
             :subtitle="channel.uid">
           </f7-list-item>
         </f7-list>
@@ -59,7 +59,7 @@
         <div v-if="selectedThing.UID && selectedThingType.UID">
           <f7-block-title>Channel</f7-block-title>
             <channel-list :thing="selectedThing" :thingType="selectedThingType"
-              :picker-mode="true" :item-type-filter="item.type"
+              :picker-mode="true" :item-type-filter="item.type" :channel-types="selectedThingChannelTypes"
               @selected="(channel) => loadProfileTypes(channel)" />
         </div>
       </f7-col>
@@ -137,6 +137,7 @@ export default {
       selectedThingId: '',
       selectedThing: {},
       selectedThingType: {},
+      selectedThingChannelTypes: {},
       selectedChannel: null,
       profileTypes: [],
       currentProfileType: null,
@@ -151,9 +152,12 @@ export default {
     onPageAfterIn (event) {
       if (!this.channel) return
       this.loadProfileTypes(this.channel)
+      let newItemName = this.thing.label.replace(/[^0-9a-z]/gi, '')
+      newItemName += '_'
+      newItemName += (this.channel.label) ? this.channel.label.replace(/[^0-9a-z]/gi, '') : this.channelType.label.replace(/[^0-9a-z]/gi, '')
       this.$set(this, 'newItem', {
-        name: this.thing.label.replace(/[^0-9a-z]/gi, '') + '_' + this.channel.label.replace(/[^0-9a-z]/gi, ''),
-        label: this.channel.label,
+        name: newItemName,
+        label: this.channel.label || this.channelType.label,
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
         type: this.channel.itemType,
@@ -280,8 +284,12 @@ export default {
       this.$oh.api.get('/rest/things/' + this.selectedThingId).then((data) => {
         this.selectedThing = data
 
-        this.$oh.api.get('/rest/thing-types/' + this.selectedThing.thingTypeUID).then(data2 => {
-          this.selectedThingType = data2
+        let typePromises = [this.$oh.api.get('/rest/thing-types/' + this.selectedThing.thingTypeUID),
+          this.$oh.api.get('/rest/channel-types?prefixes=system,' + this.selectedThing.thingTypeUID.split(':')[0])]
+
+        Promise.all(typePromises).then(data2 => {
+          this.selectedThingType = data2[0]
+          this.selectedThingChannelTypes = data2[1]
           this.ready = true
         })
       })

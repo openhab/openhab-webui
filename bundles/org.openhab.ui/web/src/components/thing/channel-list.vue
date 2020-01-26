@@ -1,6 +1,6 @@
 <template>
   <f7-block v-if="thingType" class="channel-list">
-    <f7-block>
+    <f7-block v-show="thing.channels.length > 0">
       <f7-row>
         <f7-col class="padding-left">
           <f7-searchbar
@@ -19,9 +19,9 @@
     <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
       <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox name="channel-advanced" :checked="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
     </div>
-    <f7-col v-if="thingType.channelGroups.length">
+    <f7-col v-if="thing.channels.length > 0">
       <f7-block width="100" class="channel-group">
-        <f7-row v-for="group in thingType.channelGroups" :key="group.id">
+        <f7-row v-for="group in channelGroups" :key="group.id">
           <f7-col>
             <!-- <f7-block-title class="channel-group-title">{{group.label}}</f7-block-title>
             <f7-block-footer class="channel-description param-description" v-if="group.description">
@@ -30,14 +30,13 @@
 
             <channel-group
               :group="group"
-              :channelTypes="displayedChannelTypes(group)"
               :thing="thing"
               :picker-mode="pickerMode" :multiple-links-mode="multipleLinksMode" :item-type-filter="itemTypeFilter"
               @selected="selectChannel"
               @channel-opened="channelOpened">
-              <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode && !multipleLinksMode">
+              <template v-slot:default="{ channelId, channelType, channel, extensible }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId"
-                  :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel"
+                  :thing="thing" :channelId="channelId" :channelType="channelType" :channel="channel" :extensible="extensible"
                   @channel-updated="(e) => $emit('channels-updated', e)">
                 </channel-link>
               </template>
@@ -45,48 +44,6 @@
                 <item-form v-if="isChecked(channel)" :item="newItem(channel)" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
               </template>
               <!-- <channel-link #default="{ channelId }" /> -->
-            </channel-group>
-          </f7-col>
-        </f7-row>
-      </f7-block>
-    </f7-col>
-    <f7-col v-else-if="knownChannelTypesUID.length > 0 || dynamicChannels.length > 0">
-      <f7-block width="100" class="channel-group">
-        <f7-row>
-          <f7-col>
-            <channel-group
-              :channelTypes="displayedChannelTypes()"
-              :thing="thing"
-              :picker-mode="pickerMode" :multiple-links-mode="multipleLinksMode" :item-type-filter="itemTypeFilter"
-              @selected="selectChannel"
-              @channel-opened="channelOpened">
-              <template v-slot:default="{ channelId, channelType, channel }" v-if="!pickerMode && !multipleLinksMode">
-                <channel-link :opened="openedChannelId === channelId"
-                  :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel"
-                  @channel-updated="(e) => $emit('channels-updated', e)">
-                </channel-link>
-              </template>
-              <template v-slot:default="{ channel }" v-else-if="multipleLinksMode">
-                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
-              </template>
-            </channel-group>
-
-            <channel-group
-              :extensible="true"
-              :channelTypes="dynamicChannels"
-              :thing="thing"
-              :picker-mode="pickerMode" :multiple-links-mode="multipleLinksMode" :item-type-filter="itemTypeFilter"
-              @selected="selectChannel"
-              @channel-opened="channelOpened">
-              <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode && !multipleLinksMode">
-                <channel-link :opened="openedChannelId === channelId" :extensible="true"
-                  :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel"
-                  @channel-updated="(e) => $emit('channels-updated', e)">
-                </channel-link>
-              </template>
-              <template v-slot:default="{ channel, channelId, channelType }" v-else-if="multipleLinksMode">
-                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
-              </template>
             </channel-group>
           </f7-col>
         </f7-row>
@@ -122,56 +79,53 @@ import ChannelLink from './channel-link.vue'
 import ItemForm from '@/components/item/item-form.vue'
 
 export default {
-  props: ['thingType', 'thing', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItems'],
+  props: ['thingType', 'thing', 'channelTypes', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems'],
   components: {
     ChannelGroup,
     ChannelLink,
     ItemForm
   },
   data () {
-    let knownChannelTypesUID = []
-    if (this.thingType) {
-      this.thingType.channelGroups.forEach((g) => {
-        g.channels.forEach((c) => {
-          knownChannelTypesUID.push(g.id + '#' + c.id)
-        })
-      })
-      this.thingType.channels.forEach((c) => {
-        knownChannelTypesUID.push(c.id)
-      })
-    }
     return {
       showAdvanced: false,
       openedChannelId: '',
       openedChannel: null,
       selectedChannel: null,
       selectedChannels: [],
-      knownChannelTypesUID: knownChannelTypesUID
+      channelTypesMap: new Map(this.channelTypes.map(ct => [ct.UID, ct]))
     }
   },
   computed: {
     isExtensible () {
       return this.thingType.extensibleChannelTypeIds.length > 0
     },
+    channelGroups () {
+      if (!this.thing || !this.thingType || !this.channelTypes) return {}
+      let groups = this.thingType.channelGroups.map((g) => { return { id: g.id, label: g.label, description: g.description, channels: [] } })
+      groups.push({ id: '', channels: [] })
+
+      try {
+        this.thing.channels.forEach((c) => {
+          let groupIndex = groups.findIndex(g => g.id === c.id.split('#')[0])
+          if (groupIndex < 0) groupIndex = groups.length - 1
+          let channelType = this.channelTypesMap.get(c.channelTypeUID)
+          if (!channelType) {
+            console.warn('Channel type ' + c.channelTypeUID + ' not found for channel ' + c.id)
+            return
+          }
+          if (this.showAdvanced || !channelType.advanced) {
+            groups[groupIndex].channels.push({ channel: c, channelType: channelType, extensible: this.thingType.extensibleChannelTypeIds.indexOf(c.channelTypeUID.split(':')[1]) >= 0 })
+          }
+          if (channelType.advanced) groups[groupIndex].hasAdvanced = true
+        })
+      } catch (e) {
+        console.warn(e)
+      }
+
+      return groups
+    },
     hasAdvanced () {
-      if (this.thingType.channelGroups.length > 0) {
-        return this.thingType.channelGroups.some((g) => g.channels.some((c) => c.advanced))
-      } else {
-        return this.thingType.channels.some((c) => c.advanced)
-      }
-    },
-    dynamicChannels () {
-      return this.thing.channels.filter((c) => this.knownChannelTypesUID.indexOf(c.id) < 0 || this.thingType.extensibleChannelTypeIds.indexOf(c.channelTypeUID.split(':')[1]) >= 0)
-    },
-    displayedChannelTypes () {
-      if (!this.thingType) return []
-      return (group) => {
-        if (!group) {
-          return (this.showAdvanced) ? this.thingType.channels : this.thingType.channels.filter((p) => p.advanced === false)
-        } else {
-          return (this.showAdvanced) ? group.channels : group.channels.filter((p) => p.advanced === false)
-        }
-      }
+      return this.channelGroups.some(g => g.hasAdvanced)
     }
   },
   methods: {
@@ -196,11 +150,14 @@ export default {
         this.newItems.splice(this.newItems.findIndex((i) => i.channel === channel), 1)
       } else {
         this.selectedChannels.push(channel)
+        let newItemName = (this.newItemsPrefix) ? this.newItemsPrefix : this.thing.label.replace(/[^0-9a-z]/gi, '')
+        newItemName += '_'
+        newItemName += (channel.label) ? channel.label.replace(/[^0-9a-z]/gi, '') : channelType.label.replace(/[^0-9a-z]/gi, '')
         const newItem = {
           channel: channel,
           channelType: channelType,
-          name: this.thing.label.replace(/[^0-9a-z]/gi, '') + '_' + channel.label.replace(/[^0-9a-z]/gi, ''),
-          label: channel.label,
+          name: newItemName,
+          label: channel.label || channelType.label,
           category: (channelType) ? channelType.category : '',
           type: channel.itemType,
           tags: ['Point']
