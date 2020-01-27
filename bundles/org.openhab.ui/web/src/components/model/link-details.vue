@@ -4,11 +4,11 @@
       <f7-list media-list>
         <ul>
           <f7-list-item v-for="l in enrichedLinks" :key="l.itemName" media-item
-            :title="l.thing.label" :subtitle="l.channel.label" :footer="l.link.channelUID"
+            :title="l.thing.label" :subtitle="l.channel.label || '?'" :footer="l.link.channelUID"
             :badge="l.thing.statusInfo.status"
             :badge-color="l.thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'"
             link="#" @click="editLink(l)">
-            <span slot="media" class="item-initial">{{l.channel.label[0]}}</span>
+            <span slot="media" class="item-initial">{{l.channel.label ? l.channel.label[0] : '?'}}</span>
           </f7-list-item>
           <f7-list-button v-if="!$theme.md" color="blue" title="Add Link" @click="addLink"></f7-list-button>
         </ul>

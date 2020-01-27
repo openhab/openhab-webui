@@ -1,6 +1,6 @@
 <template>
   <f7-list :accordion-list="!pickerMode">
-    <f7-list-item group-title v-if="group"
+    <f7-list-item group-title v-if="group && group.label"
       :title="group.label"
       :description="group.description"
       :footer="group.description" />
@@ -10,22 +10,23 @@
       :checkbox="multipleLinksMode"
       name="channel-picker"
       media-item class="channel-item"
-      v-for="channelType in channelTypes"
-      :key="channelType.id" :title="channelType.label"
-      :footer="channelType.description"
-      :subtitle="getChannelId(channelType) + ' (' + getItemType(channelType) + ')'"
-      :badge="getLinkedItems(channelType).length || ''" badge-color="blue"
-      @change="$emit('selected', getChannel(getChannelId(channelType)), channelType)"
-      @accordion:beforeopen="openedChannel = channelType.id"
+      v-for="c in group.channels"
+      :key="c.channel.id" :title="c.channel.label || c.channelType.label"
+      :footer="c.channelType.description"
+      :subtitle="c.channel.id + ' (' + getItemType(c.channelType) + ')'"
+      :badge="getLinkedItems(c.channel).length || ''" badge-color="blue"
+      @change="$emit('selected', c.channel, c.channelType)"
+      @accordion:beforeopen="openedChannel = c.channelType.id"
       @accordion:close="openedChannel = ''"
-      @accordion:open="opened(channelType)">
-      <oh-icon v-if="!extensible && channelType.category" slot="media" :icon="channelType.category" height="32" width="32" />
-      <span v-else-if="channelType.label" slot="media" class="item-initial">{{channelType.label[0]}}</span>
+      @accordion:open="opened(c.channel)">
+      <oh-icon v-if="!c.extensible && c.channelType.category" slot="media" :icon="c.channelType.category" height="32" width="32" />
+      <span v-else-if="c.extensible && c.channel.label" slot="media" class="item-initial">{{c.channel.label[0]}}</span>
+      <span v-else-if="!c.extensible && c.channelType.label" slot="media" class="item-initial">{{c.channelType.label[0]}}</span>
       <f7-accordion-content v-if="!pickerMode">
-        <slot :channelType="channelType" :channelId="getChannelId(channelType)"></slot>
+        <slot :channelType="c.channelType" :channelId="c.channel.id" :channel="c.channel" :extensible="c.extensible"></slot>
       </f7-accordion-content>
       <div v-if="multipleLinksMode" slot="root-end">
-        <slot :channelType="channelType" :channelId="getChannelId(channelType)" :channel="getChannel(getChannelId(channelType))"></slot>
+        <slot :channelType="c.channelType" :channelId="c.channel.id" :channel="c.channel" :extensible="c.extensible"></slot>
       </div>
     </f7-list-item>
   </f7-list>
@@ -48,58 +49,30 @@ export default {
     }
   },
   methods: {
-    getChannelId (channelType) {
-      if (this.extensible) return channelType.id
-      return (this.group) ? this.group.id + '#' + channelType.id : channelType.id
-    },
-    getChannel (channelId) {
-      return this.channels[channelId]
-      // return this.thing.channels.find((c) => c.id === channelId)
-    },
-    getLinkedItems (channelType) {
-      const channelId = this.getChannelId(channelType)
-      const channel = this.getChannel(channelId)
+    getLinkedItems (channel) {
       if (!channel || !channel.linkedItems.length) return []
       return channel.linkedItems
     },
-    getItemType (channelType) {
-      const channelId = this.getChannelId(channelType)
-      const channel = this.getChannel(channelId)
+    getItemType (channel) {
       if (channel && channel.kind === 'TRIGGER') return 'Trigger'
       if (!channel || !channel.itemType) return '?'
       return channel.itemType
     },
-    getChannelKind (channelType) {
-      const channelId = this.getChannelId(channelType)
-      const channel = this.getChannel(channelId)
+    getChannelKind (channel) {
       if (channel && channel.kind === 'TRIGGER') return 'Trigger'
       return ''
     },
-    opened (channelType) {
-      console.log('channel opened')
+    opened (channel) {
+      console.log('channel opened:' + channel.id)
       this.$emit('channel-opened', {
-        channelId: this.getChannelId(channelType),
-        channel: this.getChannel(channelType)
+        channelId: channel.id,
+        channel: channel
       })
     },
     isItemTypeCompatible (channelType) {
       if (!this.pickerMode || !this.itemTypeFilter) return true
       return this.getItemType(channelType) === this.itemTypeFilter
     }
-  },
-  computed: {
-    channels () {
-      let channels = {}
-      this.channelTypes.forEach((channelType) => {
-        const channelId = this.getChannelId(channelType)
-        channels[channelId] = this.thing.channels.find((c) => c.id === channelId)
-      })
-      return channels
-    }
   }
 }
 </script>
-
-<style>
-
-</style>

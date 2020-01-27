@@ -107,7 +107,7 @@
 
       <f7-tab id="channels" disabled="!thingType.channels" @tab:show="() => this.currentTab = 'channels'" :tab-active="currentTab === 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
-          <channel-list :thingType="thingType" :thing="thing"
+          <channel-list :thingType="thingType" :thing="thing" :channelTypes="channelTypes"
             @channels-updated="onChannelsUpdated"
           />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
@@ -221,6 +221,7 @@ export default {
       currentTab: 'info',
       thing: {},
       thingType: {},
+      channelTypes: {},
       configDescriptions: {},
       zwaveActions: {},
       thingEnabled: true,
@@ -262,8 +263,12 @@ export default {
       this.$oh.api.get('/rest/things/' + this.thingId).then(data => {
         this.$set(this, 'thing', data)
 
-        this.$oh.api.get('/rest/thing-types/' + this.thing.thingTypeUID).then(data2 => {
-          this.thingType = data2
+        let typePromises = [this.$oh.api.get('/rest/thing-types/' + this.thing.thingTypeUID),
+          this.$oh.api.get('/rest/channel-types?prefixes=system,' + this.thing.thingTypeUID.split(':')[0])]
+
+        Promise.all(typePromises).then(data2 => {
+          this.thingType = data2[0]
+          this.channelTypes = data2[1]
 
           this.$oh.api.get('/rest/config-descriptions/thing:' + this.thingId).then(data3 => {
             this.configDescriptions = data3

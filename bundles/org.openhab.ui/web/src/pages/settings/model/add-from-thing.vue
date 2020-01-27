@@ -50,8 +50,8 @@
               The newly created Points will be linked to their respective channels with the default profile
               (you will be able to configure the links individually later if needed).
             </f7-block-footer>
-            <channel-list :thing="selectedThing" :thingType="selectedThingType"
-              :multiple-links-mode="true"
+            <channel-list :thing="selectedThing" :thingType="selectedThingType" :channelTypes="selectedThingChannelTypes"
+              :multiple-links-mode="true" :new-items-prefix="(createEquipment) ? newEquipmentItem.name : (parentGroup) ? parentGroup : ''"
               @selected="(channel) => toggleSelect(channel)" :new-items="newPointItems" />
         </div>
       </f7-col>
@@ -83,6 +83,7 @@ export default {
       selectedThingId: '',
       selectedThing: {},
       selectedThingType: {},
+      selectedThingChannelTypes: {},
       newEquipmentItem: {},
       newPointItems: []
     }
@@ -177,8 +178,13 @@ export default {
       this.$oh.api.get('/rest/things/' + this.selectedThingId).then((data) => {
         this.selectedThing = data
 
-        this.$oh.api.get('/rest/thing-types/' + this.selectedThing.thingTypeUID).then(data2 => {
-          this.selectedThingType = data2
+        let typePromises = [this.$oh.api.get('/rest/thing-types/' + this.selectedThing.thingTypeUID),
+          this.$oh.api.get('/rest/channel-types?prefixes=system,' + this.selectedThing.thingTypeUID.split(':')[0])]
+
+        Promise.all(typePromises).then(data2 => {
+          this.selectedThingType = data2[0]
+          this.selectedThingChannelTypes = data2[1]
+
           if (this.createEquipment) {
             this.newEquipmentItem = {
               name: this.selectedThing.label.replace(/[^0-9a-z]/gi, ''),
