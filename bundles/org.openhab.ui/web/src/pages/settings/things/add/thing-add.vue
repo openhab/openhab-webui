@@ -143,7 +143,7 @@ export default {
           closeTimeout: 2000
         }).open()
       })
-      this.$f7router.back('/settings/things/', { force: true })
+      setTimeout(() => { this.$f7router.navigate('/settings/things/', { reloadCurrent: true }) }, 300)
     }
   }
 }
