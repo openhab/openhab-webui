@@ -10,6 +10,7 @@ import SettingsMenuPage from '../pages/settings/settings-menu.vue'
 import ServiceSettingsPage from '../pages/settings/services/service-settings.vue'
 import AddonsListPage from '../pages/settings/addons/addons-list.vue'
 import AddonsAddPage from '../pages/settings/addons/addons-add.vue'
+import AddonsConfigureBindingPage from '../pages/settings/addons/binding-config.vue'
 
 import ItemsListPage from '../pages/settings/items/items-list-vlist.vue'
 import ItemDetailsPage from '../pages/settings/items/item-details.vue'
@@ -250,13 +251,7 @@ export default [
       },
       {
         path: 'inbox/',
-        component: InboxListPage,
-        routes: [
-          // {
-          //   path: 'add',
-          //   component: AddonsAddPage
-          // }
-        ]
+        component: InboxListPage
       },
       {
         path: 'addons/:addonType',
@@ -265,7 +260,12 @@ export default [
           {
             path: 'add',
             component: AddonsAddPage
+          },
+          {
+            path: ':bindingId/config',
+            component: AddonsConfigureBindingPage
           }
+
         ]
       },
       {
