@@ -20,6 +20,7 @@
       <f7-block>
         <f7-list>
           <f7-list-item title="Version" :after="addon.version"></f7-list-item>
+          <f7-list-button v-if="bindingInfo.configDescriptionURI" color="blue" :href="bindingInfo.id + '/config'" title="Configure"></f7-list-button>
           <f7-list-button v-if="addon.link" color="blue" external target="_blank" :href="addon.link" title="Documentation"></f7-list-button>
         </f7-list>
       </f7-block>
