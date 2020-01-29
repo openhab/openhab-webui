@@ -13,13 +13,6 @@
         ></f7-searchbar>
       </f7-subnavbar>
     </f7-navbar>
-
-    <!-- <f7-list-index
-      ref="listIndex"
-      list-el=".thing-type-list"
-      :scroll-list="true"
-      :label="true"
-    ></f7-list-index> -->
     <f7-block class="block-narrow">
       <f7-col>
         <div v-if="discoverySupported" class="display-flex justify-content-center">
@@ -29,18 +22,7 @@
         </div>
         <p class="margin-left margin-right" style="height: 30px" id="scan-progress"></p>
         <f7-block-title v-if="discoverySupported && scanResults.length">Discovered Things</f7-block-title>
-        <!-- <f7-list class="col thing-type-list" v-if="scanning">
-          <f7-list-item title="Scanning for things...">
-            <f7-preloader slot="media" :size="42"></f7-preloader>
-          </f7-list-item>
-        </f7-list> -->
-        <!-- <f7-list class="col thing-type-list" v-if="ready && discoverySupported && !scanning && !scanResults.length">
-          <f7-list-item
-            title="No discovery results.">
-            <f7-button slot="after" @click="scan()">Retry</f7-button>
-          </f7-list-item>
-        </f7-list> -->
-        <f7-list class="col thing-type-list" v-if="scanResults.length">
+        <f7-list class="col" v-if="scanResults.length">
           <f7-list-item v-for="entry in scanResults"
             :key="entry.thingUID"
             :link="true"
@@ -54,7 +36,7 @@
         </f7-list>
 
         <f7-block-title>Add Manually</f7-block-title>
-        <f7-list>
+        <f7-list class="thing-type-list">
           <ul v-if="!ready">
           <f7-list-item
             v-for="n in 10"
@@ -67,21 +49,23 @@
           >
           </f7-list-item>
           </ul>
-          <f7-list-item v-else v-for="thingType in thingTypes"
-            :key="thingType.UID"
-            :link="thingType.UID"
-            :title="thingType.label"
-            :footer="thingType.description"
-            :header="thingType.UID"
-            :badge="thingType.bridge ? 'Bridge' : ''" badge-color="blue"
-            media-item
-          >
-          </f7-list-item>
+          <ul v-else>
+            <f7-list-item v-for="thingType in thingTypes"
+              :key="thingType.UID"
+              :link="thingType.UID"
+              :title="thingType.label"
+              :footer="thingType.description"
+              :header="thingType.UID"
+              :badge="thingType.bridge ? 'Bridge' : ''" badge-color="blue"
+              media-item
+            >
+            </f7-list-item>
+          </ul>
         </f7-list>
 
       </f7-col>
     </f7-block>
-    <f7-block v-if="!loading && !thingTypes.length" class="block-narrow">
+    <f7-block v-if="!loading && ready && !thingTypes.length" class="block-narrow">
       <f7-col>
         <f7-block strong>
           <p>No thing types can be added with this binding.</p>
@@ -128,8 +112,9 @@ export default {
             return a.label.localeCompare(b.label)
           })
         this.loading = false
-        this.ready = true
         this.initSearchbar = true
+        this.ready = true
+        this.loadInbox()
         this.$oh.api.get('/rest/discovery').then((data) => {
           if (data.indexOf(this.bindingId) >= 0) {
             this.discoverySupported = true
@@ -142,13 +127,13 @@ export default {
       this.scanning = true
       this.$oh.api.postPlain('/rest/discovery/bindings/' + this.bindingId + '/scan', null, 'text/plain', 'text/plain').then((data) => {
         try {
-          this.loadInbox()
           this.scanTimeout = parseInt(data)
           this.scanProgress = 0
           let progressBarEl = this.$f7.progressbar.show('#scan-progress', 0, 'blue')
           this.intervalId = setInterval(() => {
             this.scanProgress += 1
             this.$f7.progressbar.set(progressBarEl, this.scanProgress * 100 / this.scanTimeout)
+            this.loadInbox()
           }, 1000)
           setTimeout(() => {
             this.scanning = false

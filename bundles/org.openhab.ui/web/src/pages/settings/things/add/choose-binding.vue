@@ -49,12 +49,15 @@
         </f7-list>
 
       </f7-col>
-    </f7-block>
-    <f7-block v-if="ready && !bindings.length" class="block-narrow">
-      <f7-col>
+      <f7-col v-if="ready && !bindings.length">
         <f7-block strong>
           <p>No bindings available.</p>
         </f7-block>
+      </f7-col>
+      <f7-col>
+        <f7-list>
+          <f7-list-button color="blue" title="Install New Bindings" href="/settings/addons/binding/add" />
+        </f7-list>
       </f7-col>
     </f7-block>
   </f7-page>

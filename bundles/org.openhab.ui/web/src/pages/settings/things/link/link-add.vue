@@ -244,10 +244,11 @@ export default {
         this.$f7.dialog.alert('Please configure the channel to link')
         return
       }
-      if (!this.itemTypeCompatible()) {
-        this.$f7.dialog.alert('The channel and item type are not compatible')
-        return
-      }
+      // temporarily disabled
+      // if (!this.itemTypeCompatible()) {
+      //   this.$f7.dialog.alert('The channel and item type are not compatible')
+      //   return
+      // }
 
       if (this.createItem) {
         this.$oh.api.put('/rest/items/' + this.newItem.name, this.newItem).then((data) => {

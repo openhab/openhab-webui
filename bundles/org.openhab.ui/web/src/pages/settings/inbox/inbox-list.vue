@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn">
+  <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
     <f7-navbar title="Inbox" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
@@ -42,7 +42,7 @@
 
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block-title><span v-if="ready">{{inbox.length}} entries</span>
+        <f7-block-title><span v-if="ready">{{inboxCount}} entries</span>
         <div style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
           <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label> <f7-checkbox :checked="showIgnored" @change="toggleIgnored"></f7-checkbox>
         </div>
@@ -130,6 +130,10 @@ export default {
     }
   },
   computed: {
+    inboxCount () {
+      if (!this.inbox) return 0
+      return (this.showIgnored) ? this.inbox.length : this.inbox.filter((e) => e.flag !== 'IGNORED').length
+    },
     indexedInbox () {
       const filteredInbox = (this.showIgnored) ? this.inbox : this.inbox.filter((e) => e.flag !== 'IGNORED')
       if (this.groupBy === 'alphabetical') {
@@ -168,6 +172,18 @@ export default {
     },
     onPageAfterIn () {
       this.load()
+      this.startEventSource()
+    },
+    startEventSource () {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/inbox/*', null, (event) => {
+        console.log(event)
+        // const topicParts = event.topic.split('/')
+        this.load()
+      })
+    },
+    stopEventSource () {
+      this.$oh.sse.close(this.eventSource)
+      this.eventSource = null
     },
     openEntryActions (e, entry) {
       if (this.showCheckboxes) {
