@@ -60,6 +60,7 @@
       @closed="addonPopupOpened = false; currentAddonId = null"
     /> -->
     <addon-details-sheet
+      v-if="ready"
       :addon-id="currentAddonId"
       :opened="addonPopupOpened"
       @closed="addonPopupOpened = false"

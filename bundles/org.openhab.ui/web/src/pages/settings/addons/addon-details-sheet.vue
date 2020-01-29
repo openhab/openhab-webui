@@ -140,7 +140,7 @@ export default {
   methods: {
     toggleSwipeStep () {
       const self = this
-      self.$f7.sheet.stepToggle('.demo-sheet-swipe-to-step')
+      self.$refs.sheet.f7Sheet.stepToggle('.demo-sheet-swipe-to-step')
     },
     install () {
       this.$oh.api.post('/rest/extensions/' + this.addonId + '/install', {}, 'text').then((data) => {
