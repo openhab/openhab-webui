@@ -181,7 +181,7 @@ export default {
               destroyOnClose: true,
               closeTimeout: 2000
             }).open()
-            this.$f7router.back('/settings/things/', { force: true })
+            setTimeout(() => { this.$f7router.navigate('/settings/things/', { reloadCurrent: true }) }, 300)
           }).catch((err) => {
             this.$f7.toast.create({
               text: 'Error during thing creation: ' + err,
@@ -204,7 +204,7 @@ export default {
             closeTimeout: 2000
           }).open()
           dialog.close()
-          this.$f7router.back('/settings/things/', { force: true })
+          setTimeout(() => { this.$f7router.navigate('/settings/things/', { reloadCurrent: true }) }, 300)
         }).catch((err) => {
           dialog.close()
           console.error(err)
