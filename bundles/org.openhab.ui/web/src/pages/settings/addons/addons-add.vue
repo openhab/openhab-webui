@@ -41,6 +41,7 @@
       </f7-col>
     </f7-block>
     <addon-details-sheet
+      v-if="ready"
       :addon-id="currentAddonId"
       :opened="addonPopupOpened"
       @closed="addonPopupOpened = false"
