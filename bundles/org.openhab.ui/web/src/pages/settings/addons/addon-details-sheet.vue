@@ -1,36 +1,14 @@
 <template>
-  <f7-sheet class="demo-sheet-swipe-to-step" :opened="opened" @sheet:closed="$emit('closed')" swipe-to-close swipe-to-step backdrop
-    style="height:auto; --f7-sheet-bg-color: #fff;">
+  <f7-sheet ref="sheet" class="demo-sheet-swipe-to-step" @sheet:closed="$emit('closed')" swipe-to-close swipe-to-step backdrop>
     <div class="sheet-modal-swipe-step">
 
-      <div class="swipe-handler"></div>
+      <div class="swipe-handler" @click="toggleSwipeStep"></div>
       <f7-block-title><strong><big>{{addon.label}}</big></strong></f7-block-title>
       <f7-block>
         <f7-row>
-          <f7-col class="col-100 tablet-50">
-            <f7-button
-              outline
-              color="blue"
-              :href="addon.link"
-              external
-              target="_blank"
-            >Documentation</f7-button>
-          </f7-col>
-          <f7-col class="col-100 tablet-50">
-            <f7-button
-              outline
-              fill
-              color="blue"
-              v-if="state === 'UNINSTALLED'"
-              @click="install()"
-            >Install</f7-button>
-            <f7-button
-              outline
-              fill
-              color="red"
-              v-if="state === 'INSTALLED'"
-              @click="uninstall()"
-            >Uninstall</f7-button>
+          <f7-col class="col-100 margin-top padding-horizontal">
+            <f7-button large fill color="blue" v-if="state === 'UNINSTALLED'" @click="install()" >Install</f7-button>
+            <f7-button large fill color="red"  v-if="state !== 'UNINSTALLED'" @click="uninstall()" >Uninstall</f7-button>
           </f7-col>
         </f7-row>
       </f7-block>
@@ -40,27 +18,30 @@
     </div>
     <f7-page-content>
       <f7-block>
-        <p>
-          <strong>Version: {{addon.version}}</strong>
-        </p>
+        <f7-list>
+          <f7-list-item title="Version" :after="addon.version"></f7-list-item>
+          <f7-list-button v-if="addon.link" color="blue" external target="_blank" :href="addon.link" title="Documentation"></f7-list-button>
+        </f7-list>
       </f7-block>
       <f7-block v-if="bindingInfo.description">
-        <p>
-          <strong>Author: {{bindingInfo.author}}</strong>
-        </p>
         <div v-html="bindingInfo.description"/>
+        <p>
+          <em>Author: {{bindingInfo.author}}</em>
+        </p>
       </f7-block>
-      <f7-block v-if="!bindingInfo.description">
+      <!-- <f7-block v-else>
         <p>No description available.</p>
-      </f7-block>
+      </f7-block> -->
     </f7-page-content>
   </f7-sheet>
 </template>
 
 <style lang="stylus">
+.demo-sheet-swipe-to-step
+  height auto
+
 .demo-sheet-swipe-to-close,
 .demo-sheet-swipe-to-step {
-  --f7-sheet-bg-color: #fff;
   --f7-sheet-border-color: transparent;
   border-radius: 15px 15px 0 0;
   overflow: hidden;
@@ -71,7 +52,6 @@
   left: 0;
   width: 100%;
   top: 0;
-  background: #fff;
   cursor: pointer;
   z-index: 10;
 }
@@ -90,15 +70,15 @@
 
 @media (min-width: 1024px)
   .demo-sheet-swipe-to-close, .demo-sheet-swipe-to-step
-    margin-left 150px
-    margin-right 150px
-    width: calc(100% - 300px)
+    margin-left 15%
+    margin-right 15%
+    width calc(100% - 30%)
 
 @media (min-width: 1280px)
   .demo-sheet-swipe-to-close, .demo-sheet-swipe-to-step
-    margin-left 250px
-    margin-right 250px
-    width: calc(100% - 500px)
+    margin-left 30%
+    margin-right 30%
+    width: calc(100% - 60%)
 
 </style>
 
@@ -112,23 +92,38 @@ export default {
     }
   },
   watch: {
-    addonId () {
-      if (!this.addonId) {
-        this.addon = {}
-        this.bindingInfo = {}
-        return
-      }
-      this.$oh.api.get('/rest/extensions/' + this.addonId).then(data => {
-        this.addon = data
-
-        if (this.addon.type === 'binding' && this.addon.installed) {
-          this.$oh.api.get('/rest/bindings').then(data2 => {
-            this.bindingInfo = data2.find(b => b.id === this.addonId.replace('binding-', '')) || {}
-
-            // TODO: binding configuration stuff
-          })
+    opened (state) {
+      let self = this
+      if (state) {
+        if (!this.addonId) {
+          this.addon = {}
+          this.bindingInfo = {}
+          return
         }
-      })
+        self.$f7.preloader.show()
+        this.$oh.api.get('/rest/extensions/' + this.addonId).then(data => {
+          this.addon = data
+
+          if (this.addon.type === 'binding' && this.addon.installed) {
+            this.$oh.api.get('/rest/bindings').then(data2 => {
+              this.bindingInfo = data2.find(b => b.id === this.addonId.replace('binding-', '')) || {}
+              self.$f7.preloader.hide()
+              setTimeout(() => {
+                self.$refs.sheet.f7Sheet.setSwipeStep()
+                self.$refs.sheet.f7Sheet.open()
+              })
+
+              // TODO: binding configuration stuff
+            })
+          } else {
+            self.$f7.preloader.hide()
+            self.$refs.sheet.f7Sheet.setSwipeStep()
+            self.$refs.sheet.f7Sheet.open()
+          }
+        })
+      } else {
+        self.$refs.sheet.f7Sheet.close()
+      }
     }
   },
   computed: {
@@ -139,6 +134,10 @@ export default {
     }
   },
   methods: {
+    toggleSwipeStep () {
+      const self = this
+      self.$f7.sheet.stepToggle('.demo-sheet-swipe-to-step')
+    },
     install () {
       this.$oh.api.post('/rest/extensions/' + this.addonId + '/install', {}, 'text').then((data) => {
         this.$emit('install', this.addon)

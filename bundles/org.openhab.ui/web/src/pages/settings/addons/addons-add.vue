@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="stopEventSource">
-    <f7-navbar :title="'Add ' + addonType + ' add-on'" back-link="Back">
+    <f7-navbar :title="'Add ' + addonType + ' add-ons'" back-link="Back">
       <f7-subnavbar :inner="false">
         <f7-searchbar search-container=".search-list" search-in=".item-title" remove-diacritics :disable-button="!$theme.aurora"></f7-searchbar>
       </f7-subnavbar>
@@ -10,10 +10,21 @@
     </f7-list>
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block-title
-          v-if="addons.length"
-        >{{addons.length}} Addon{{addons.length > 1 ? 's' : ''}} available</f7-block-title>
-        <f7-list media-list class="search-list searchbar-found">
+        <f7-block-title v-if="!ready">Loading...</f7-block-title>
+        <f7-block-title v-else>{{addons.length}} add-on{{addons.length > 1 ? 's' : ''}} available</f7-block-title>
+        <f7-list media-list v-if="!ready">
+          <f7-list-item
+            v-for="n in 10"
+            :key="n"
+            :class="`skeleton-text skeleton-effect-blink`"
+            title="Label of the binding"
+            header="BindingID"
+            footer="Binding version"
+            media-item
+          >
+          </f7-list-item>
+        </f7-list>
+        <f7-list v-else media-list class="search-list searchbar-found">
           <f7-list-item
             media-item
             v-for="addon in addons"
@@ -25,16 +36,10 @@
             :after="(currentlyInstalling.indexOf(addon.id) >= 0) ? 'Installing...' : ''"
             :title="addon.label"
           >
-            <!-- <f7-icon slot="media" icon="demo-list-icon"></f7-icon> -->
           </f7-list-item>
         </f7-list>
       </f7-col>
     </f7-block>
-    <!-- <addon-details-popup
-      :addon-id="currentAddonId"
-      :opened="addonPopupOpened"
-      @closed="addonPopupOpened = false"
-    /> -->
     <addon-details-sheet
       :addon-id="currentAddonId"
       :opened="addonPopupOpened"
@@ -45,12 +50,10 @@
 </template>
 
 <script>
-// import AddonDetailsPopup from './addon-details-popup.vue'
 import AddonDetailsSheet from './addon-details-sheet.vue'
 
 export default {
   components: {
-    // AddonDetailsPopup,
     AddonDetailsSheet
   },
   props: ['addonType'],
@@ -58,6 +61,7 @@ export default {
     return {
       addons: [],
       currentAddonId: null,
+      ready: false,
       addonPopupOpened: false,
       currentlyInstalling: []
     }
@@ -74,6 +78,7 @@ export default {
     load () {
       this.$oh.api.get('/rest/extensions').then(data => {
         this.addons = data.filter(addon => !addon.installed && addon.type === this.addonType)
+        this.ready = true
         this.startEventSource()
       }).catch((err) => {
         // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
@@ -92,6 +97,15 @@ export default {
         switch (topicParts[3]) {
           case 'installed':
           case 'uninstalled':
+            this.stopEventSource()
+            this.load()
+            break
+          case 'failed':
+            this.$f7.toast.create({
+              text: `Installation of addon ${topicParts[2]} failed`,
+              closeButton: true,
+              destroyOnClose: true
+            }).open()
             this.stopEventSource()
             this.load()
             break

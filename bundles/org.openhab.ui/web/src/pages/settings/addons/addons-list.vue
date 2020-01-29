@@ -5,10 +5,23 @@
         <f7-link href="add">Add</f7-link>
       </f7-nav-right>-->
     </f7-navbar>
-    <f7-block form v-if="addons.length" class="service-config block-narrow">
+    <f7-block form class="service-config block-narrow">
       <f7-col>
-        <f7-block-title>{{addons.length}} Add-on{{addons.length > 1 ? 's' : ''}} installed</f7-block-title>
-        <f7-list media-list>
+        <f7-block-title v-if="!ready">Loading...</f7-block-title>
+        <f7-block-title v-else-if="addons.length">{{addons.length}} add-on{{addons.length > 1 ? 's' : ''}} installed</f7-block-title>
+        <f7-list media-list v-if="!ready">
+          <f7-list-item
+            v-for="n in 10"
+            :key="n"
+            :class="`skeleton-text skeleton-effect-blink`"
+            title="Label of the binding"
+            header="BindingID"
+            footer="Binding version"
+            media-item
+          >
+          </f7-list-item>
+        </f7-list>
+        <f7-list v-else>
           <f7-list-item
             media-item
             link="#"
@@ -30,7 +43,7 @@
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-block form v-if="!addons.length" class="service-config block-narrow">
+    <f7-block form v-if="ready && !addons.length" class="service-config block-narrow">
       <f7-col>
         <f7-block strong>
           <p>No add-ons of type {{addonType}} installed yet. Click the + button to add one!</p>
@@ -67,6 +80,7 @@ export default {
   data () {
     return {
       addons: [],
+      ready: false,
       currentAddonId: null,
       addonPopupOpened: false,
       currentlyUninstalling: []
@@ -84,6 +98,7 @@ export default {
     load () {
       this.$oh.api.get('/rest/extensions').then(data => {
         this.addons = data.filter(addon => addon.installed && addon.type === this.addonType)
+        this.ready = true
         this.startEventSource()
       }).catch((err) => {
         // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
@@ -102,6 +117,15 @@ export default {
         switch (topicParts[3]) {
           case 'installed':
           case 'uninstalled':
+            this.stopEventSource()
+            this.load()
+            break
+          case 'failed':
+            this.$f7.toast.create({
+              text: `Installation of addon ${topicParts[2]} failed`,
+              closeButton: true,
+              destroyOnClose: true
+            }).open()
             this.stopEventSource()
             this.load()
             break
