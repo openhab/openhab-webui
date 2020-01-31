@@ -32,30 +32,31 @@
       <f7-list-item title="Nothing found"></f7-list-item>
     </f7-list>
     <!-- skeleton for not ready -->
-    <f7-block class="block-narrow" v-if="!ready">
-      <f7-block-title class="col wide padding-left">Loading...</f7-block-title>
-      <f7-list media-list class="col wide">
-        <f7-list-group>
-          <f7-list-item
-            media-item
-            v-for="n in 20"
-            :key="n"
-            :class="`skeleton-text skeleton-effect-blink`"
-            title="Label of the item"
-            subtitle="type, semantic metadata"
-            after="The item state"
-            footer="This contains the type of the item"
-          >
-            <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media"></f7-skeleton-block>
-          </f7-list-item>
-        </f7-list-group>
-      </f7-list>
-    </f7-block>
-    <f7-block class="block-narrow" v-else>
-      <f7-block-title class="col wide padding-left searchbar-hide-on-search">{{items.length}} items</f7-block-title>
-      <f7-col>
+    <f7-block class="block-narrow">
+      <f7-col v-show="!ready">
+        <f7-block-title>&nbsp;Loading...</f7-block-title>
+        <f7-list media-list class="col wide">
+          <f7-list-group>
+            <f7-list-item
+              media-item
+              v-for="n in 20"
+              :key="n"
+              :class="`skeleton-text skeleton-effect-blink`"
+              title="Label of the item"
+              subtitle="type, semantic metadata"
+              after="The item state"
+              footer="This contains the type of the item"
+            >
+              <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media"></f7-skeleton-block>
+            </f7-list-item>
+          </f7-list-group>
+        </f7-list>
+      </f7-col>
+      <f7-col v-if="ready">
+        <f7-block-title class="searchbar-hide-on-search">{{items.length}} items</f7-block-title>
         <f7-list
-          class="searchbar-found col wide"
+          v-show="items.length > 0"
+          class="searchbar-found col"
           ref="itemsList"
           media-list
           virtual-list
@@ -86,13 +87,9 @@
         </f7-list>
       </f7-col>
     </f7-block>
-    <!-- <f7-block v-if="!items.length" class="service-config block-narrow">
-      <f7-col>
-        <f7-block strong>
-          <p>No items.</p>
-        </f7-block>
-      </f7-col>
-    </f7-block>-->
+    <f7-block v-if="ready && !items.length" class="service-config block-narrow">
+      <empty-state-placeholder icon="square_on_circle" title="items.title" text="items.text" />
+    </f7-block>
     <f7-fab v-show="!showCheckboxes" position="right-bottom" slot="fixed" color="blue">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply"></f7-icon>

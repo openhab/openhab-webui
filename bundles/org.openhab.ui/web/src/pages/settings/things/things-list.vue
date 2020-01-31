@@ -28,7 +28,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title class="searchbar-hide-on-search"><span v-if="ready">{{things.length}} things</span></f7-block-title>
-        <div class="padding-left padding-right">
+        <div class="padding-left padding-right" v-show="!ready || things.length > 0">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'; $nextTick(() => $refs.listIndex.update())">Alphabetical</f7-button>
             <f7-button :active="groupBy === 'binding'" @click="groupBy = 'binding'">By binding</f7-button>
@@ -67,13 +67,9 @@
 
       </f7-col>
     </f7-block>
-    <!-- <f7-block v-if="!things.length" class="block-narrow">
-      <f7-col>
-        <f7-block strong>
-          <p>No things.</p>
-        </f7-block>
-      </f7-col>
-    </f7-block>-->
+    <f7-block v-if="ready && !things.length" class="block-narrow">
+      <empty-state-placeholder icon="lightbulb" title="things.title" text="things.text" />
+    </f7-block>
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>

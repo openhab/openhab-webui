@@ -30,7 +30,9 @@
       </div>
     </f7-toolbar>
 
-    <div class="timeline timeline-horizontal col-33 tablet-15">
+    <empty-state-placeholder v-if="noRuleEngine" icon="exclamationmark_triangle" title="rules.missingengine.title" text="rules.missingengine.text" />
+    <empty-state-placeholder v-else-if="ready && !rules.length" icon="calendar" title="schedule.title" text="schedule.text" />
+    <div v-else class="timeline timeline-horizontal col-33 tablet-15">
       <div class="timeline-year" v-for="(yearObj, year) in calendar" :key="year">
         <div class="timeline-year-title"><span>{{year}}</span></div>
         <div class="timeline-month" v-for="(monthObj, month) in yearObj" :key="month">
@@ -49,7 +51,7 @@
         </div>
       </div>
     </div>
-    <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
+    <f7-fab v-if="ready" position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
     </f7-fab>
@@ -75,6 +77,7 @@ export default {
       ready: false,
       loading: false,
       rules: [],
+      noRuleEngine: false,
       calendar: {},
       initSearchbar: false,
       selectedItems: [],
@@ -163,6 +166,10 @@ export default {
 
         this.ready = true
         if (!this.eventSource) this.startEventSource()
+      }).catch((err, status) => {
+        if (err === 'Not Found' || status === 404) {
+          this.noRuleEngine = true
+        }
       })
     },
     startEventSource () {

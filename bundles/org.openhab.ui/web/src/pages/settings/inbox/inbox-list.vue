@@ -47,7 +47,7 @@
           <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label> <f7-checkbox :checked="showIgnored" @change="toggleIgnored"></f7-checkbox>
         </div>
         </f7-block-title>
-        <div class="padding-left padding-right">
+        <div class="padding-left padding-right" v-show="!ready || inboxCount > 0">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'; $nextTick(() => $refs.listIndex.update())">Alphabetical</f7-button>
             <f7-button :active="groupBy === 'binding'" @click="groupBy = 'binding'">By binding</f7-button>
@@ -95,12 +95,8 @@
 
       </f7-col>
     </f7-block>
-    <f7-block v-if="ready && !inbox.length" class="block-narrow">
-      <f7-col>
-        <f7-block strong>
-          <p>Inbox is empty.</p>
-        </f7-block>
-      </f7-col>
+    <f7-block v-if="ready && inboxCount === 0" class="block-narrow">
+      <empty-state-placeholder icon="tray" title="inbox.title" text="inbox.text" />
     </f7-block>
     <f7-fab v-show="!showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="/settings/things/add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
@@ -209,7 +205,7 @@ export default {
               bold: true,
               onClick: () => {
                 console.log(`Add ${entry.thingUID} as thing`)
-                this.$f7.dialog.prompt(`This will create a new Thing ${entry.thingUID} with the following name:`,
+                this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID} with the following name:`,
                   'Add as Thing',
                   (name) => {
                     this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve`, name).then((res) => {
@@ -259,7 +255,7 @@ export default {
               text: 'Remove',
               color: 'red',
               onClick: () => {
-                this.$f7.dialog.confirm(`Remove ${entry.label} from Inbox?`, 'Remove Entry', () => {
+                this.$f7.dialog.confirm(`Remove ${entry.label} from the Inbox?`, 'Remove Entry', () => {
                   this.$oh.api.delete('/rest/inbox/' + entry.thingUID).then((res) => {
                     this.$f7.toast.create({
                       text: 'Entry removed',

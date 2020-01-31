@@ -17,7 +17,7 @@
       <f7-col>
         <div v-if="discoverySupported" class="display-flex justify-content-center">
           <div class="flex-shrink-0">
-            <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill :disabled="scanning" @click="scan">{{(scanning) ? 'Scanning...' : 'Rescan'}}</f7-button>
+            <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill :disabled="scanning" @click="scan">{{(scanning) ? 'Scanning...' : 'Scan Again'}}</f7-button>
           </div>
         </div>
         <p class="margin-left margin-right" style="height: 30px" id="scan-progress"></p>
@@ -157,7 +157,7 @@ export default {
     },
     approve (entry) {
       console.log(`Add ${entry.thingUID} as thing`)
-      this.$f7.dialog.prompt(`This will create a new Thing ${entry.thingUID} with the following name:`,
+      this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID} with the following name:`,
         'Add as Thing',
         (name) => {
           this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve`, name).then((res) => {
