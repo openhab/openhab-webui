@@ -24,7 +24,6 @@
       </div>
       <f7-link :disabled="selectedItem != null" class="right" @click="selectedItem = null">Clear</f7-link>
     </f7-toolbar>
-
     <f7-block v-if="!ready" class="text-align-center">
       <f7-preloader></f7-preloader>
       <div>Loading...</div>
@@ -32,7 +31,9 @@
     <f7-block v-else class="semantic-tree-wrapper" :class="{ 'sheet-opened' : detailsOpened }">
       <f7-row>
         <f7-col width="100" medium="50">
-          <f7-block strong class="semantic-tree" no-gap @click.native="clearSelection">
+          <empty-state-placeholder v-if="empty" icon="list_bullet_indent" title="model.title" text="model.text" />
+          <f7-block v-show="!empty" strong class="semantic-tree" no-gap @click.native="clearSelection">
+            <!-- <empty-state-placeholder v-if="empty" icon="list_bullet_indent" title="model.title" text="model.text" /> -->
             <f7-treeview>
               <model-treeview-item v-for="node in [rootLocations, rootEquipments, rootPoints, rootGroups, rootItems].flat()"
                 :key="node.item.name" :model="node"
@@ -103,10 +104,9 @@
 .semantic-tree-wrapper
   padding 0
   margin-bottom 0
-  .block
-    padding 0
-    border-right 1px solid var(--f7-block-strong-border-color)
 .semantic-tree
+  padding 0
+  border-right 1px solid var(--f7-block-strong-border-color)
   .treeview
     --f7-treeview-item-height 40px
     .treeview-item-label
@@ -191,6 +191,12 @@ export default {
   },
   created () {
 
+  },
+  computed: {
+    empty () {
+      let emptySemantic = !this.rootLocations.length && !this.rootEquipments.length && !this.rootPoints.length
+      return (this.includeNonSemantic) ? emptySemantic && !this.rootGroups.length && !this.rootItems.length : emptySemantic
+    }
   },
   methods: {
     onPageAfterIn () {

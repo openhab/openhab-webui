@@ -20,43 +20,41 @@
       :scroll-list="true"
       :label="true"
     ></f7-list-index>
+
+    <empty-state-placeholder v-if="ready && !bindings.length" icon="circle_grid_hex" title="things.nobindings.title" text="things.nobindings.text" />
+
     <f7-block class="block-narrow">
       <f7-col>
         <f7-list v-if="!ready" class="col binding-list">
           <f7-list-group>
             <f7-list-item
               v-for="n in 10"
+              media-item
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Label of the binding"
               header="BindingID"
-              footer="This contains the description of the binding"
-              media-item
-            >
+              footer="This contains the description of the binding">
             </f7-list-item>
           </f7-list-group>
         </f7-list>
         <f7-list v-else class="col">
-          <f7-list-item v-for="binding in bindings"
+          <f7-list-item
+            v-for="binding in bindings"
+            media-item
             :key="binding.id"
             :link="binding.id"
             :title="binding.name"
             :header="binding.id"
-            :footer="binding.description"
-            media-item
-          >
+            :footer="(binding.description && binding.description.indexOf('<br>') >= 0) ?
+                      binding.description.split('<br>')[0] : binding.description">
           </f7-list-item>
         </f7-list>
 
       </f7-col>
-      <f7-col v-if="ready && !bindings.length">
-        <f7-block strong>
-          <p>No bindings available.</p>
-        </f7-block>
-      </f7-col>
       <f7-col>
         <f7-list>
-          <f7-list-button color="blue" title="Install New Bindings" href="/settings/addons/binding/add" />
+          <f7-list-button color="blue" title="Install Bindings" href="/settings/addons/binding/add" />
         </f7-list>
       </f7-col>
     </f7-block>
@@ -73,12 +71,8 @@ export default {
       bindings: []
     }
   },
-  created () {
-
-  },
   methods: {
     onPageAfterIn () {
-      // this.$f7.preloader.show()
       this.loading = true
       this.$oh.api.get('/rest/bindings').then((data) => {
         this.bindings = data.sort((a, b) => a.name.localeCompare(b.name))

@@ -105,7 +105,7 @@ export default {
             break
           case 'failed':
             this.$f7.toast.create({
-              text: `Installation of addon ${topicParts[2]} failed`,
+              text: `Installation of add-on ${topicParts[2]} failed`,
               closeButton: true,
               destroyOnClose: true
             }).open()

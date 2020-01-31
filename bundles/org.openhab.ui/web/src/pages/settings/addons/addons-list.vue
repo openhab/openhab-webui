@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="addonPopupOpened = false" @page:afterout="stopEventSource">
-    <f7-navbar :title="'Add-ons: ' + addonType" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar :title="'Add-ons: ' + addonsLabels[addonType]" back-link="Settings" back-link-url="/settings/" back-link-force>
       <!-- <f7-nav-right>
         <f7-link href="add">Add</f7-link>
       </f7-nav-right>-->
@@ -44,11 +44,7 @@
       </f7-col>
     </f7-block>
     <f7-block form v-if="ready && !addons.length" class="service-config block-narrow">
-      <f7-col>
-        <f7-block strong>
-          <p>No add-ons of type {{addonType}} installed yet. Click the + button to add one!</p>
-        </f7-block>
-      </f7-col>
+      <empty-state-placeholder :icon="addonsIcons[addonType]" :title="'No ' + addonsLabels[addonType] + ' installed yet'" text="addons.text" />
     </f7-block>
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
@@ -84,7 +80,25 @@ export default {
       ready: false,
       currentAddonId: null,
       addonPopupOpened: false,
-      currentlyUninstalling: []
+      currentlyUninstalling: [],
+      addonsLabels: {
+        binding: 'bindings',
+        action: 'actions',
+        persistence: 'persistence services',
+        transformation: 'transformations',
+        misc: 'miscellaneous add-ons',
+        ui: 'user interfaces',
+        voice: 'voice services'
+      },
+      addonsIcons: {
+        binding: 'circle_grid_hex',
+        action: 'bolt_horizontal',
+        persistence: 'download_circle',
+        transformation: 'function',
+        misc: 'rectangle_3_offgrid',
+        ui: 'play_rectangle',
+        voice: 'chat_bubble_2'
+      }
     }
   },
   methods: {
@@ -123,7 +137,7 @@ export default {
             break
           case 'failed':
             this.$f7.toast.create({
-              text: `Installation of addon ${topicParts[2]} failed`,
+              text: `Uninstallation of add-on ${topicParts[2]} failed`,
               closeButton: true,
               destroyOnClose: true
             }).open()

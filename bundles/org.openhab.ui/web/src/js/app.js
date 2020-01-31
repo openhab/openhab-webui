@@ -4,6 +4,7 @@ import Vue from 'vue'
 import SitemapWidgetGeneric from '../components/sitemap/widget-generic.vue'
 import OHIconComponent from '../components/oh-icon.vue'
 import TreeviewItem from '../components/model/treeview-item.vue'
+import EmptyStatePlaceholder from '../components/empty-state-placeholder.vue'
 
 // Import Framework7
 import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
@@ -47,3 +48,4 @@ const app = new Vue({
 Vue.component('sitemap-widget-generic', SitemapWidgetGeneric)
 Vue.component('oh-icon', OHIconComponent)
 Vue.component('model-treeview-item', TreeviewItem)
+Vue.component('empty-state-placeholder', EmptyStatePlaceholder)

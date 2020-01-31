@@ -12,14 +12,14 @@
           :init="initSearchbar"
           search-container=".rules-list"
           search-item=".rulelist-item"
-          search-in=".item-title, .item-header, .item-footer"
+          search-in=".item-title, .item-subtitle, .item-header, .item-footer"
           remove-diacritics
           :disable-button="!$theme.aurora"
         ></f7-searchbar>
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">Remove {{selectedItems.length}}</f7-link>
+      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">Remove {{selectedItems.length}}</f7-link>
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false"></f7-link>
       <div class="title" v-if="$theme.md">
         {{selectedItems.length}} selected
@@ -33,30 +33,34 @@
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found"></f7-list-item>
     </f7-list>
+
+    <empty-state-placeholder v-if="noRuleEngine" icon="exclamationmark_triangle" title="rules.missingengine.title" text="rules.missingengine.text" />
+
     <!-- skeleton for not ready -->
-    <f7-block class="block-narrow" v-if="!ready">
-      <f7-block-title class="col wide padding-left">Loading...</f7-block-title>
-      <f7-list media-list class="col wide">
-        <f7-list-group>
-          <f7-list-item
-            media-item
-            v-for="n in 20"
-            :key="n"
-            :class="`skeleton-text skeleton-effect-blink`"
-            title="Title of the rule"
-            subtitle="Tags, Schedule, Scene..."
-            after="status badge"
-            footer="Description of the rule"
-          >
-          </f7-list-item>
-        </f7-list-group>
-      </f7-list>
-    </f7-block>
-    <f7-block class="block-narrow" v-else>
-      <f7-block-title class="col wide padding-left searchbar-hide-on-search">{{rules.length}} rules</f7-block-title>
-      <f7-col>
+    <f7-block class="block-narrow" v-show="!noRuleEngine">
+      <f7-col v-show="!ready">
+        <f7-block-title>&nbsp;Loading...</f7-block-title>
+        <f7-list media-list class="col wide">
+          <f7-list-group>
+            <f7-list-item
+              media-item
+              v-for="n in 20"
+              :key="n"
+              :class="`skeleton-text skeleton-effect-blink`"
+              title="Title of the rule"
+              subtitle="Tags, Schedule, Scene..."
+              after="status badge"
+              footer="Description of the rule"
+            >
+            </f7-list-item>
+          </f7-list-group>
+        </f7-list>
+      </f7-col>
+      <f7-col v-if="ready">
+        <f7-block-title v-show="rules.length" class="searchbar-hide-on-search">{{rules.length}} rules</f7-block-title>
         <f7-list
-          class="searchbar-found col wide rules-list"
+          v-show="rules.length > 0"
+          class="searchbar-found col rules-list"
           ref="rulesList"
           media-list>
           <f7-list-item
@@ -83,7 +87,10 @@
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-fab v-show="!showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
+    <f7-block v-if="ready && !noRuleEngine && !rules.length" class="service-config block-narrow">
+      <empty-state-placeholder icon="wand_rays" title="rules.title" text="rules.text" />
+    </f7-block>
+    <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
     </f7-fab>
@@ -96,6 +103,7 @@ export default {
     return {
       ready: false,
       loading: false,
+      noRuleEngine: false,
       rules: [],
       initSearchbar: false,
       selectedItems: [],
@@ -117,11 +125,15 @@ export default {
         this.rules = data.sort((a, b) => {
           return a.name.localeCompare(b.name)
         })
-        this.initSearchbar = true
         this.loading = false
         this.ready = true
+        setTimeout(() => { this.initSearchbar = true })
 
         if (!this.eventSource) this.startEventSource()
+      }).catch((err, status) => {
+        if (err === 'Not Found' || status === 404) {
+          this.noRuleEngine = true
+        }
       })
     },
     startEventSource () {
