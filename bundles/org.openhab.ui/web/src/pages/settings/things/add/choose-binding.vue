@@ -42,9 +42,10 @@
             :link="binding.id"
             :title="binding.name"
             :header="binding.id"
-            :footer="binding.description"
-            media-item
-          >
+            :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id && e.flag !== 'IGNORED').length || undefined"
+            badge-color="red"
+            :footer="(binding.description && binding.description.indexOf('<br>') >= 0) ?
+                      binding.description.split('<br>')[0] : binding.description">
           </f7-list-item>
         </f7-list>
 
@@ -70,7 +71,8 @@ export default {
       ready: false,
       loading: false,
       initSearchbar: false,
-      bindings: []
+      bindings: [],
+      inbox: []
     }
   },
   created () {
@@ -85,6 +87,9 @@ export default {
         this.loading = false
         this.initSearchbar = true
         this.ready = true
+      })
+      this.$oh.api.get('/rest/inbox').then((data) => {
+        this.inbox = data
       })
     }
   }

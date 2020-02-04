@@ -48,7 +48,7 @@
             </f7-list-item>
           </f7-list-group>
         </f7-list>
-        <f7-list v-else class="searchbar-found col" :contacts-list="groupBy === 'alphabetical'">
+        <f7-list v-else class="searchbar-found col things-list" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
             <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title></f7-list-item>
             <f7-list-item v-for="thing in thingsWithInitial"
@@ -75,15 +75,23 @@
       </f7-col>
     </f7-block>-->
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
+      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus">
+      </f7-icon>
       <!-- <f7-fab-buttons position="top">
         <f7-fab-button label="Scan and add to Inbox">S</f7-fab-button>
         <f7-fab-button label="Add thing manually">M</f7-fab-button>
       </f7-fab-buttons> -->
     </f7-fab>
+    <f7-fab v-show="inbox.length > 0" position="center-bottom" :text="`Inbox (${inboxCount})`" slot="fixed" :color="inboxCount > 0 ? 'red' : 'gray'" href="inbox">
+      <f7-icon f7="tray" />
+    </f7-fab>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.things-list
+  margin-bottom calc(var(--f7-fab-size) + 2 * calc(var(--f7-fab-margin) + var(--f7-safe-area-bottom)))
+</style>
 
 <script>
 export default {
@@ -93,6 +101,7 @@ export default {
       loading: false,
       initSearchbar: false,
       things: [],
+      inbox: [],
       // indexedThings: {},
       groupBy: 'alphabetical',
       eventSource: null
@@ -124,6 +133,9 @@ export default {
           return prev
         }, {})
       }
+    },
+    inboxCount () {
+      return this.inbox.filter((e) => e.flag !== 'IGNORED').length
     }
   },
   methods: {
@@ -140,22 +152,32 @@ export default {
         setTimeout(() => { this.$refs.listIndex.update() })
         if (!this.eventSource) this.startEventSource()
       })
+      this.loadInbox()
+    },
+    loadInbox () {
+      this.$oh.api.get('/rest/inbox').then((data) => {
+        this.inbox = data
+      })
     },
     startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/things/*/added,smarthome/things/*/removed,smarthome/things/*/updated,smarthome/things/*/status', null, (event) => {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/things/*/added,smarthome/things/*/removed,smarthome/things/*/updated,smarthome/things/*/status,smarthome/inbox/*', null, (event) => {
         console.log(event)
         const topicParts = event.topic.split('/')
-        switch (topicParts[3]) {
-          case 'status':
-            const updatedThing = this.things.find((t) => t.UID === topicParts[2])
-            if (updatedThing) {
-              this.$set(updatedThing, 'statusInfo', JSON.parse(event.payload))
-            }
-            break
-          case 'added':
-          case 'removed':
-            this.load()
-            break
+        if (topicParts[2] === 'inbox') {
+          this.loadInbox()
+        } else {
+          switch (topicParts[3]) {
+            case 'status':
+              const updatedThing = this.things.find((t) => t.UID === topicParts[2])
+              if (updatedThing) {
+                this.$set(updatedThing, 'statusInfo', JSON.parse(event.payload))
+              }
+              break
+            case 'added':
+            case 'removed':
+              this.load()
+              break
+          }
         }
       })
     },
@@ -166,6 +188,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>

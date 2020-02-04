@@ -25,23 +25,20 @@
         </f7-list-item>
         <li v-if="showAdministrationMenu">
           <ul class="admin-sublinks">
-          <f7-list-item inset link="/settings/inbox/" title="Inbox" view=".view-main" panel-close :animate="false">
-            <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
-          </f7-list-item>
           <f7-list-item inset link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false">
-            <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
+            <f7-icon slot="media" f7="lightbulb" color="gray"></f7-icon>
           </f7-list-item>
           <f7-list-item inset link="/settings/items/" title="Items" view=".view-main" panel-close :animate="false">
-            <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
+            <f7-icon slot="media" f7="square_on_circle" color="gray"></f7-icon>
           </f7-list-item>
           <f7-list-item inset link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false">
-            <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
+            <f7-icon slot="media" f7="list_bullet_indent" color="gray"></f7-icon>
           </f7-list-item>
           <f7-list-item inset link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false">
-            <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
+            <f7-icon slot="media" f7="wand_rays" color="gray"></f7-icon>
           </f7-list-item>
           <f7-list-item inset link="/settings/schedule/" title="Schedule" view=".view-main" panel-close :animate="false">
-            <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
+            <f7-icon slot="media" f7="calendar" color="gray"></f7-icon>
           </f7-list-item>
           </ul>
         </li>

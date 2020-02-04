@@ -18,16 +18,6 @@
         :disable-button="!$theme.aurora"
       ></f7-searchbar>
     </f7-navbar>
-    <!-- <f7-block>
-      <f7-row tag="p">
-        <f7-col tag="span">
-          <f7-segmented>
-            <f7-button big round outline><big>16</big> Things</f7-button>
-            <f7-button big round outline><big>138</big> Items</f7-button>
-          </f7-segmented>
-        </f7-col>
-      </f7-row>
-    </f7-block>-->
     <f7-block class="block-narrow after-big-title settings-menu" v-show="addonsLoaded && servicesLoaded">
       <f7-row>
         <f7-col width="100" medium="50">
@@ -35,20 +25,11 @@
           <f7-list media-list class="search-list">
             <f7-list-item
               media-item
-              color="red"
-              link="inbox/"
-              title="Inbox"
-              :badge="(inboxCount > 0) ? inboxCount : undefined"
-              badge-color="red"
-              :footer="objectsSubtitles.inbox">
-              <f7-icon slot="media" f7="tray" color="gray"></f7-icon>
-            </f7-list-item>
-            <f7-list-item
-              media-item
               link="things/"
               title="Things"
-              :after="thingsCount"
-              badge-color="blue"
+              :badge="(inboxCount > 0) ? inboxCount : undefined"
+              :after="(inboxCount > 0) ? undefined : thingsCount"
+              :badge-color="inboxCount ? 'red' : 'blue'"
               :footer="objectsSubtitles.things">
               <f7-icon slot="media" f7="lightbulb" color="gray"></f7-icon>
             </f7-list-item>
@@ -141,7 +122,6 @@ export default {
       systemServices: [],
       otherServices: [],
       objectsSubtitles: {
-        inbox: 'Add new things to your system',
         things: 'Manage the physical layer',
         items: 'Manage the functional layer',
         model: 'The semantic model of your home',
