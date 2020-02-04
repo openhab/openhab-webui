@@ -23,7 +23,7 @@ import AddThingChooseBindingPage from '../pages/settings/things/add/choose-bindi
 import AddThingChooseThingTypePage from '../pages/settings/things/add/choose-thing-type.vue'
 import AddThingPage from '../pages/settings/things/add/thing-add.vue'
 
-import InboxListPage from '../pages/settings/inbox/inbox-list.vue'
+import InboxListPage from '../pages/settings/things/inbox/inbox-list.vue'
 
 import SemanticModelPage from '../pages/settings/model/model.vue'
 
@@ -172,6 +172,10 @@ export default [
             ]
           },
           {
+            path: 'inbox',
+            component: InboxListPage
+          },
+          {
             path: ':thingId',
             component: ThingDetailsPage
           }
@@ -249,10 +253,10 @@ export default [
           }
         ]
       },
-      {
-        path: 'inbox/',
-        component: InboxListPage
-      },
+      // {
+      //   path: 'inbox/',
+      //   component: InboxListPage
+      // },
       {
         path: 'addons/:addonType',
         component: AddonsListPage,

@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
-    <f7-navbar title="Inbox" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar title="Inbox" back-link="Things" back-link-url="/settings/things/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
         :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
