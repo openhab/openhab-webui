@@ -35,6 +35,14 @@
             </f7-list-item>
             <f7-list-item
               media-item
+              link="model/"
+              title="Model"
+              badge-color="blue"
+              :footer="objectsSubtitles.model">
+              <f7-icon slot="media" f7="list_bullet_indent" color="gray"></f7-icon>
+            </f7-list-item>
+            <f7-list-item
+              media-item
               link="items/"
               title="Items"
               :after="itemsCount"
@@ -43,20 +51,12 @@
               <f7-icon slot="media" f7="square_on_circle" color="gray"></f7-icon>
             </f7-list-item>
             <f7-list-item
-              media-item
-              link="model/"
-              title="Model"
+              link="pages/"
+              title="Pages"
               badge-color="blue"
-              :footer="objectsSubtitles.model">
-              <f7-icon slot="media" f7="list_bullet_indent" color="gray"></f7-icon>
+              :footer="objectsSubtitles.pages">
+              <f7-icon slot="media" f7="tv" color="gray"></f7-icon>
             </f7-list-item>
-            <!-- <f7-list-item
-              link="items-virtual/"
-              title="Items (virtual)"
-              :after="itemsCount"
-              badge-color="blue"
-              :footer="objectsSubtitles.items"
-            ></f7-list-item> -->
             <f7-list-item
               media-item
               link="rules/"
@@ -123,8 +123,9 @@ export default {
       otherServices: [],
       objectsSubtitles: {
         things: 'Manage the physical layer',
-        items: 'Manage the functional layer',
         model: 'The semantic model of your home',
+        items: 'Manage the functional layer',
+        pages: 'Design displays for user control & monitoring',
         rules: 'Automate with triggers and actions',
         schedule: 'View upcoming time-based rules'
       },

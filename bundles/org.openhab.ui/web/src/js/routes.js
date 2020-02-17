@@ -31,6 +31,9 @@ import RulesListPage from '../pages/settings/rules/rules-list.vue'
 import RuleEditPage from '../pages/settings/rules/rule-edit.vue'
 import RuleConfigureModulePage from '../pages/settings/rules/rule-configure-module.vue'
 
+import PagesListPage from '../pages/settings/pages/pages-list.vue'
+import SitemapEditPage from '../pages/settings/pages/sitemap/sitemap-edit.vue'
+
 // import SchedulePage from '../pages/settings/schedule/schedule.vue'
 
 import Analyzer from '../pages/analyzer/analyzer.vue'
@@ -135,22 +138,25 @@ export default [
           }
         ]
       },
-      // {
-      //   path: 'items-virtual',
-      //   component: ItemsVirtualListPage,
-      //   routes: [
-      //     {
-      //       path: ':itemName',
-      //       component: ItemDetailsPage,
-      //       routes: [
-      //         {
-      //           path: 'edit',
-      //           component: ItemEditPage
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // },
+      {
+        path: 'pages',
+        component: PagesListPage,
+        routes: [
+          {
+            path: 'sitemap/add',
+            component: SitemapEditPage,
+            options: {
+              props: {
+                createMode: true
+              }
+            }
+          },
+          {
+            path: 'sitemap/:uid',
+            component: SitemapEditPage
+          }
+        ]
+      },
       {
         path: 'things/',
         component: ThingsListPage,
