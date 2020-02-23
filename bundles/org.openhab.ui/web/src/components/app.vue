@@ -28,11 +28,14 @@
           <f7-list-item inset link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false">
             <f7-icon slot="media" f7="lightbulb" color="gray"></f7-icon>
           </f7-list-item>
+          <f7-list-item inset link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false">
+            <f7-icon slot="media" f7="list_bullet_indent" color="gray"></f7-icon>
+          </f7-list-item>
           <f7-list-item inset link="/settings/items/" title="Items" view=".view-main" panel-close :animate="false">
             <f7-icon slot="media" f7="square_on_circle" color="gray"></f7-icon>
           </f7-list-item>
-          <f7-list-item inset link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false">
-            <f7-icon slot="media" f7="list_bullet_indent" color="gray"></f7-icon>
+          <f7-list-item inset link="/settings/pages/" title="Pages" view=".view-main" panel-close :animate="false">
+            <f7-icon slot="media" f7="tv" color="gray"></f7-icon>
           </f7-list-item>
           <f7-list-item inset link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false">
             <f7-icon slot="media" f7="wand_rays" color="gray"></f7-icon>
@@ -217,7 +220,7 @@ export default {
     }
   },
   methods: {
-    loadSitemaps () {
+    loadSidebarPages () {
       this.$oh.api.get('/rest/sitemaps').then((data) => {
         this.sitemaps = data
       })
@@ -272,12 +275,16 @@ export default {
         this.loggedIn = true
       }
 
-      this.loadSitemaps()
+      this.loadSidebarPages()
 
       this.$f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
           this.showAdministrationMenu = page.route.url.indexOf('/settings/') === 0
         }
+      })
+
+      this.$f7.on('sidebarRefresh', () => {
+        this.loadSidebarPages()
       })
     })
   }

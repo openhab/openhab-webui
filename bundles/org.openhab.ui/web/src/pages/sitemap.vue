@@ -7,6 +7,9 @@
       <f7-nav-title-large v-if="isRoot">{{sitemap.title}}</f7-nav-title-large>
       <f7-nav-title>{{sitemap.title}}</f7-nav-title>
     </f7-navbar>
+    <f7-toolbar position="bottom">
+      <span class="text-color-red">Warning: sitemaps are not functional. Please use Basic UI.</span>
+    </f7-toolbar>
     <f7-block class="block-narrow" v-if="sitemap.widgets && sitemap.widgets.length > 0">
       <f7-row>
         <f7-col>
@@ -30,12 +33,8 @@
 </template>
 
 <script>
-// import SitemapWidgetGeneric from '../components/sitemap/widget-generic.vue'
 
 export default {
-  // components: {
-  //   SitemapWidgetGeneric
-  // },
   props: ['sitemapId', 'pageId'],
   data () {
     return {
@@ -46,11 +45,6 @@ export default {
     this.$oh.api.get('/rest/sitemaps/' + this.sitemapId + '/' + this.pageId).then(data => {
       this.sitemap = data
     })
-    this.$f7.toast.create({
-      text: 'The sitemap rendering is currently for demonstration purposes only. It is not functional nor updates in real time. Please use another app like Basic UI or HABPanel to interact with your items.',
-      closeButton: true,
-      destroyOnClose: true
-    }).open()
   },
   computed: {
     isRoot () {

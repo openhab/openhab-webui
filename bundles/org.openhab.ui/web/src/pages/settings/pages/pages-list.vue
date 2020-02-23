@@ -1,6 +1,6 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
-    <f7-navbar title="Rules" back-link="Settings" back-link-url="/settings/" back-link-force>
+  <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
+    <f7-navbar title="Pages" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
         :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
@@ -8,10 +8,10 @@
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
-          class="searchbar-rules"
+          class="searchbar-pages"
           :init="initSearchbar"
-          search-container=".rules-list"
-          search-item=".rulelist-item"
+          search-container=".pages-list"
+          search-item=".pagelist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
           remove-diacritics
           :disable-button="!$theme.aurora"
@@ -34,10 +34,8 @@
       <f7-list-item title="Nothing found"></f7-list-item>
     </f7-list>
 
-    <empty-state-placeholder v-if="noRuleEngine" icon="exclamationmark_triangle" title="rules.missingengine.title" text="rules.missingengine.text" />
-
     <!-- skeleton for not ready -->
-    <f7-block class="block-narrow" v-show="!noRuleEngine">
+    <f7-block class="block-narrow">
       <f7-col v-show="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list media-list class="col wide">
@@ -47,52 +45,57 @@
               v-for="n in 20"
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
-              title="Title of the rule"
-              subtitle="Tags, Schedule, Scene..."
+              title="Title of the page"
+              subtitle="Type of the page"
               after="status badge"
-              footer="Description of the rule"
             >
             </f7-list-item>
           </f7-list-group>
         </f7-list>
       </f7-col>
       <f7-col v-if="ready">
-        <f7-block-title class="searchbar-hide-on-search">{{rules.length}} rules</f7-block-title>
+        <f7-block-title class="searchbar-hide-on-search">{{pages.length}} pages</f7-block-title>
         <f7-list
-          v-show="rules.length > 0"
-          class="searchbar-found col rules-list"
-          ref="rulesList"
+          v-show="pages.length > 0"
+          class="searchbar-found col pages-list"
+          ref="pagesList"
           media-list>
           <f7-list-item
-            v-for="(rule, index) in rules"
+            v-for="(page, index) in pages"
             :key="index"
             media-item
-            class="rulelist-item"
+            class="pagelist-item"
             :checkbox="showCheckboxes"
-            :checked="isChecked(rule.uid)"
-            @change="(e) => toggleItemCheck(e, rule.uid)"
-            :link="showCheckboxes ? null : rule.uid"
-            :title="rule.name"
-            :footer="rule.description"
-            :badge="rule.status.status"
-            :badge-color="(rule.status.status === 'RUNNING') ? 'orange' : (rule.status.status != 'IDLE') ? 'red' : ''"
+            :checked="isChecked(page.uid)"
+            @change="(e) => toggleItemCheck(e, page.uid, page)"
+            :link="showCheckboxes ? null : page.component.toLowerCase() + '/' + page.uid"
+            :title="page.config.label"
+            :subtitle="page.component"
           >
             <div slot="subtitle">
-              <f7-chip v-for="tag in rule.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+              <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                 <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
               </f7-chip>
             </div>
-            <span slot="media" class="item-initial">{{rule.name[0]}}</span>
+            <!-- <span slot="media" class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
+            <f7-icon slot="media" color="gray" :f7="icon(page)" :size="32"></f7-icon>
           </f7-list-item>
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-block v-if="ready && !noRuleEngine && !rules.length" class="service-config block-narrow">
-      <empty-state-placeholder icon="wand_rays" title="rules.title" text="rules.text" />
+    <f7-block v-if="ready && !pages.length" class="service-config block-narrow">
+      <empty-state-placeholder icon="tv" title="pages.title" text="pages.text" />
     </f7-block>
-    <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
+    <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
+      <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply"></f7-icon>
+      <f7-fab-buttons position="top">
+        <f7-fab-button fab-close label="Create sitemap" href="sitemap/add"><f7-icon f7="menu"></f7-icon></f7-fab-button>
+        <!-- <f7-fab-button fab-close label="Create layout" href="add"><f7-icon f7="rectangle_grid_2x2"></f7-icon></f7-fab-button>
+        <f7-fab-button fab-close label="Create map view" href="add"><f7-icon f7="map"></f7-icon></f7-fab-button>
+        <f7-fab-button fab-close label="Create chart" href="add"><f7-icon f7="graph_square"></f7-icon></f7-fab-button>
+        <f7-fab-button fab-close label="Create floor plan" href="add"><f7-icon f7="layers"></f7-icon></f7-fab-button> -->
+      </f7-fab-buttons>
     </f7-fab>
   </f7-page>
 </template>
@@ -103,12 +106,10 @@ export default {
     return {
       ready: false,
       loading: false,
-      noRuleEngine: false,
-      rules: [],
+      pages: [],
       initSearchbar: false,
       selectedItems: [],
-      showCheckboxes: false,
-      eventSource: null
+      showCheckboxes: false
     }
   },
   created () {
@@ -118,44 +119,33 @@ export default {
     onPageAfterIn () {
       this.load()
     },
+    onPageAfterOut () {
+
+    },
+    icon (page) {
+      switch (page.component) {
+        case 'Sitemap':
+          return 'menu'
+        default:
+          return 'tv'
+      }
+    },
     load () {
       if (this.loading) return
       this.loading = true
-      this.$oh.api.get('/rest/rules').then(data => {
-        this.rules = data.sort((a, b) => {
-          return a.name.localeCompare(b.name)
+      var promises = [
+        this.$oh.api.get('/rest/ui/components/system:sitemap'),
+        this.$oh.api.get('/rest/ui/components/ui:page')
+      ]
+      Promise.all(promises).then(data => {
+        const pagesAndSitemaps = data[0].concat(data[1])
+        this.pages = pagesAndSitemaps.sort((a, b) => {
+          return a.config.label.localeCompare(b.config.label)
         })
         this.loading = false
         this.ready = true
         setTimeout(() => { this.initSearchbar = true })
-
-        if (!this.eventSource) this.startEventSource()
-      }).catch((err, status) => {
-        if (err === 'Not Found' || status === 404) {
-          this.noRuleEngine = true
-        }
       })
-    },
-    startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/rules/*/*', null, (event) => {
-        console.log(event)
-        const topicParts = event.topic.split('/')
-        switch (topicParts[3]) {
-          case 'added':
-          case 'removed':
-          case 'updated':
-            this.load()
-            break
-          case 'state':
-            const rule = this.rules.find((r) => r.uid === topicParts[2])
-            if (!rule) break
-            this.$set(rule, 'status', JSON.parse(event.payload))
-        }
-      })
-    },
-    stopEventSource () {
-      this.$oh.sse.close(this.eventSource)
-      this.eventSource = null
     },
     toggleCheck () {
       this.showCheckboxes = !this.showCheckboxes
@@ -163,43 +153,52 @@ export default {
     isChecked (item) {
       return this.selectedItems.indexOf(item) >= 0
     },
-    toggleItemCheck (event, item) {
+    toggleItemCheck (event, itemName, item) {
       console.log('toggle check')
-      if (this.isChecked(item)) {
-        this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
+      itemName = (item.component === 'Sitemap') ? 'system:sitemap:' + itemName : 'ui:page:' + itemName
+      if (this.isChecked(itemName)) {
+        this.selectedItems.splice(this.selectedItems.indexOf(itemName), 1)
       } else {
-        this.selectedItems.push(item)
+        this.selectedItems.push(itemName)
       }
     },
     removeSelected () {
       const vm = this
 
       this.$f7.dialog.confirm(
-        `Remove ${this.selectedItems.length} selected rules?`,
-        'Remove Rules',
+        `Remove ${this.selectedItems.length} selected pages?`,
+        'Remove Pages',
         () => {
           vm.doRemoveSelected()
         }
       )
     },
     doRemoveSelected () {
-      let dialog = this.$f7.dialog.progress('Deleting Rules...')
+      let dialog = this.$f7.dialog.progress('Deleting Pages...')
 
-      const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
+      const promises = this.selectedItems.map((p) => {
+        if (p.startsWith('system:sitemap')) {
+          return this.$oh.api.delete('/rest/ui/components/system:sitemap/' + p.replace('system:sitemap:', ''))
+        } else {
+          return this.$oh.api.delete('/rest/ui/components/ui:page/' + p.replace('ui:page:', ''))
+        }
+      })
       Promise.all(promises).then((data) => {
         this.$f7.toast.create({
-          text: 'Rules removed',
+          text: 'Pages removed',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
         this.selectedItems = []
         dialog.close()
         this.load()
+        this.$f7.emit('sidebarRefresh', null)
       }).catch((err) => {
         dialog.close()
         this.load()
         console.error(err)
         this.$f7.dialog.alert('An error occurred while deleting: ' + err)
+        this.$f7.emit('sidebarRefresh', null)
       })
     }
   },
