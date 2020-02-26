@@ -75,7 +75,7 @@ export default {
     },
     displayedParameters () {
       if (!this.parameters.length) return []
-      return (this.showAdvanced) ? this.parameters : this.parameters.filter((p) => p.advanced === false)
+      return (this.showAdvanced) ? this.parameters : this.parameters.filter((p) => !p.advanced)
     }
   },
   methods: {

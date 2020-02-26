@@ -68,9 +68,9 @@
             :checkbox="showCheckboxes"
             :checked="isChecked(page.uid)"
             @change="(e) => toggleItemCheck(e, page.uid, page)"
-            :link="showCheckboxes ? null : page.component.toLowerCase() + '/' + page.uid"
+            :link="showCheckboxes ? null : getPageType(page).type + '/' + page.uid"
             :title="page.config.label"
-            :subtitle="page.component"
+            :subtitle="getPageType(page).label"
           >
             <div slot="subtitle">
               <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
@@ -91,8 +91,8 @@
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply"></f7-icon>
       <f7-fab-buttons position="top">
         <f7-fab-button fab-close label="Create sitemap" href="sitemap/add"><f7-icon f7="menu"></f7-icon></f7-fab-button>
-        <!-- <f7-fab-button fab-close label="Create layout" href="add"><f7-icon f7="rectangle_grid_2x2"></f7-icon></f7-fab-button>
-        <f7-fab-button fab-close label="Create map view" href="add"><f7-icon f7="map"></f7-icon></f7-fab-button>
+        <f7-fab-button fab-close label="Create layout" href="layout/add"><f7-icon f7="rectangle_grid_2x2"></f7-icon></f7-fab-button>
+        <!-- <f7-fab-button fab-close label="Create map view" href="add"><f7-icon f7="map"></f7-icon></f7-fab-button>
         <f7-fab-button fab-close label="Create chart" href="add"><f7-icon f7="graph_square"></f7-icon></f7-fab-button>
         <f7-fab-button fab-close label="Create floor plan" href="add"><f7-icon f7="layers"></f7-icon></f7-fab-button> -->
       </f7-fab-buttons>
@@ -109,7 +109,11 @@ export default {
       pages: [],
       initSearchbar: false,
       selectedItems: [],
-      showCheckboxes: false
+      showCheckboxes: false,
+      pageTypes: [
+        { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap' },
+        { type: 'layout', label: 'Layout', componentType: 'oh-layout-page' }
+      ]
     }
   },
   created () {
@@ -161,6 +165,9 @@ export default {
       } else {
         this.selectedItems.push(itemName)
       }
+    },
+    getPageType (page) {
+      return this.pageTypes.find(t => t.componentType === page.component)
     },
     removeSelected () {
       const vm = this

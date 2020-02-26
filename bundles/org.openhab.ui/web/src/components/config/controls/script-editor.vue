@@ -34,6 +34,8 @@ import 'codemirror/lib/codemirror.css'
 
 // language js
 import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/yaml/yaml.js'
+
 // theme css
 import 'codemirror/theme/ambiance.css'
 
@@ -47,6 +49,12 @@ import 'codemirror/addon/dialog/dialog.js'
 import 'codemirror/addon/dialog/dialog.css'
 import 'codemirror/addon/tern/tern.js'
 import 'codemirror/addon/tern/tern.css'
+
+// for folding
+import 'codemirror/addon/fold/foldgutter.css'
+import 'codemirror/addon/fold/foldcode.js'
+import 'codemirror/addon/fold/foldgutter.js'
+import 'codemirror/addon/fold/indent-fold.js'
 
 import tern from 'tern'
 
@@ -64,20 +72,22 @@ export default {
   components: {
     codemirror
   },
-  props: ['value'],
+  props: ['value', 'mode'],
   data () {
     return {
       code: this.value,
       cmOptions: {
         // codemirror options
         tabSize: 4,
-        mode: 'text/javascript',
+        mode: this.mode || 'text/javascript',
         theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'ambiance' : 'default',
         lineNumbers: true,
         line: true,
         matchBrackets: true,
         autoCloseBrackets: true,
-        viewportMargin: Infinity
+        viewportMargin: Infinity,
+        foldGutter: true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
       }
     }
   },
@@ -86,22 +96,34 @@ export default {
       // debugger
     },
     onCmReady (cm) {
-      window.tern = tern
-      const server = new _CodeMirror.TernServer({
-        defs: [EcmascriptDefs, OpenhabDefs],
-        ecmaVersion: 5
-      })
-      cm.setOption('extraKeys', {
-        'Ctrl-Space': function (cm) { server.complete(cm) },
-        'Ctrl-Q': function (cm) { server.showDocs(cm) },
-        "'.'": function (cm) {
-          setTimeout(function () { server.complete(cm) }, 100)
-          return _CodeMirror.Pass // tell CodeMirror we didn't handle the key
+      let extraKeys = {}
+      if (!this.mode) {
+        window.tern = tern
+        const server = new _CodeMirror.TernServer({
+          defs: [EcmascriptDefs, OpenhabDefs],
+          ecmaVersion: 5
+        })
+        extraKeys = {
+          'Ctrl-Space': function (cm) { server.complete(cm) },
+          'Ctrl-Q': function (cm) { server.showDocs(cm) },
+          "'.'": function (cm) {
+            setTimeout(function () { server.complete(cm) }, 100)
+            return _CodeMirror.Pass // tell CodeMirror we didn't handle the key
+          }
         }
-      })
-      cm.on('cursorActivity', function (cm) {
-        server.updateArgHints(cm)
-      })
+        cm.on('cursorActivity', function (cm) {
+          server.updateArgHints(cm)
+        })
+      }
+      extraKeys.Tab = function (cm) {
+        if (cm.somethingSelected()) {
+          cm.indentSelection('add')
+        } else {
+          cm.replaceSelection(cm.getOption('indentWithTabs') ? '\t'
+            : Array(cm.getOption('indentUnit') + 1).join(' '), 'end', '+input')
+        }
+      }
+      cm.setOption('extraKeys', extraKeys)
     },
     onCmCodeChange (newCode) {
       this.$emit('input', newCode)

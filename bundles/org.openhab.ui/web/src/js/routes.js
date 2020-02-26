@@ -2,7 +2,8 @@ import HomePage from '../pages/home.vue'
 import AboutPage from '../pages/about.vue'
 import NotFoundPage from '../pages/not-found.vue'
 
-import SitemapPage from '../pages/sitemap.vue'
+import SitemapPage from '../pages/page/sitemap.vue'
+import LayoutPage from '../pages/page/layout-page.vue'
 
 import SetupWizard from '../pages/wizards/setup-wizard.vue'
 import SetupWizardPage from '../pages/wizards/setup-wizard-page.vue'
@@ -33,6 +34,7 @@ import RuleConfigureModulePage from '../pages/settings/rules/rule-configure-modu
 
 import PagesListPage from '../pages/settings/pages/pages-list.vue'
 import SitemapEditPage from '../pages/settings/pages/sitemap/sitemap-edit.vue'
+import LayoutEditPage from '../pages/settings/pages/layout/layout-edit.vue'
 
 // import SchedulePage from '../pages/settings/schedule/schedule.vue'
 
@@ -85,6 +87,10 @@ export default [
     loginScreen: {
       component: SetupWizard
     }
+  },
+  {
+    path: '/page/layout/:uid',
+    component: LayoutPage
   },
   {
     path: '/sitemap/:sitemapId/:pageId',
@@ -154,6 +160,19 @@ export default [
           {
             path: 'sitemap/:uid',
             component: SitemapEditPage
+          },
+          {
+            path: 'layout/add',
+            component: LayoutEditPage,
+            options: {
+              props: {
+                createMode: true
+              }
+            }
+          },
+          {
+            path: 'layout/:uid',
+            component: LayoutEditPage
           }
         ]
       },

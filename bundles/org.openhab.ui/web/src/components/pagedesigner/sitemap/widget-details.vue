@@ -20,8 +20,8 @@
         <ul>
           <!-- additional controls -->
           <f7-list-input v-if="supports('url')" label="URL" type="text" :value="widget.config.url" @input="updateParameter('url', $event)" clear-button />
-          <f7-list-input v-if="supports('refresh')" label="Refresh interval" type="text" :value="widget.config.refresh" @input="updateParameter('url', $event)" clear-button />
-          <f7-list-input v-if="supports('encoding')" label="Encoding" type="text" :value="widget.config.encoding" @input="updateParameter('url', $event)" clear-button />
+          <f7-list-input v-if="supports('refresh')" label="Refresh interval" type="text" :value="widget.config.refresh" @input="updateParameter('refresh', $event)" clear-button />
+          <f7-list-input v-if="supports('encoding')" label="Encoding" type="text" :value="widget.config.encoding" @input="updateParameter('encoding', $event)" clear-button />
           <f7-list-input v-if="supports('service')" label="Service" type="text" :value="widget.config.service" @input="updateParameter('service', $event)" clear-button />
           <f7-list-input v-if="supports('period')" label="Period" type="text" :value="widget.config.period" @input="updateParameter('period', $event)" clear-button />
           <f7-list-input v-if="supports('height')" label="Height" type="text" :value="widget.config.height" @input="updateParameter('height', $event)" clear-button />

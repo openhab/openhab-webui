@@ -264,7 +264,7 @@ export default {
         return
       }
       if (!this.sitemap.config.label) {
-        this.$f7.dialog.alert('Please give an label to the sitemap')
+        this.$f7.dialog.alert('Please give a label to the sitemap')
         return
       }
       if (!this.createMode && this.uid !== this.sitemap.uid) {
