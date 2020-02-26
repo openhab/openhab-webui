@@ -17,6 +17,11 @@
                 :title="sitemap.label" view=".view-main" panel-close>
           <f7-icon slot="media" ios="f7:menu" aurora="f7:menu" md="material:list"></f7-icon>
         </f7-list-item>
+        <f7-list-item v-for="page in pages" :animate="false" :key="page.uid"
+                :link="'/page/layout/' + page.uid"
+                :title="page.config.label" view=".view-main" panel-close>
+          <f7-icon slot="media" f7="tv"></f7-icon>
+        </f7-list-item>
       </f7-list>
       <f7-block-title>Administration</f7-block-title>
       <f7-list class="admin-links">
@@ -207,6 +212,7 @@ export default {
       password: '',
 
       sitemaps: null,
+      pages: null,
       showSidebar: true,
       loginScreenOpened: false,
       loggedIn: false,
@@ -221,16 +227,25 @@ export default {
   },
   methods: {
     loadSidebarPages () {
-      this.$oh.api.get('/rest/sitemaps').then((data) => {
-        this.sitemaps = data
+      return Promise.all([
+        this.$oh.api.get('/rest/sitemaps'),
+        this.$oh.api.get('/rest/ui/components/ui:page')
+      ]).then((data) => {
+        this.sitemaps = data[0]
+        this.pages = data[1].filter((p) => p.config.sidebar)
+          .sort((p1, p2) => {
+            const order1 = p1.config.order || 1000
+            const order2 = p2.config.order || 1000
+            return order1 - order2
+          })
       })
     },
     login () {
       localStorage.setItem('openhab.ui:serverUrl', this.serverUrl)
       localStorage.setItem('openhab.ui:username', this.username)
       localStorage.setItem('openhab.ui:password', this.password)
-      this.$oh.api.get('/rest/sitemaps').then((data) => {
-        this.sitemaps = data
+      this.loadSidebarPages().then((data) => {
+        // this.sitemaps = data
         this.loginScreenOpened = false
         this.loggedIn = true
       }).catch((err) => {

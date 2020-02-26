@@ -1,5 +1,5 @@
 <template>
-    <f7-list class="config-parameter" :no-hairlines-md="configDescription.type !== 'BOOLEAN' && !configDescription.options.length && ['item'].indexOf(configDescription.context) < 0">
+    <f7-list class="config-parameter" :no-hairlines-md="configDescription.type !== 'BOOLEAN' && (!configDescription.options || !configDescription.options.length) && ['item'].indexOf(configDescription.context) < 0">
       <component :is="control" :config-description="configDescription" :value="value" :title="configDescription.title" @input="updateValue" />
       <f7-block-footer slot="after-list" class="param-description">
         <small v-html="configDescription.description"></small>
@@ -34,7 +34,7 @@ export default {
   computed: {
     control () {
       const configDescription = this.configDescription
-      if (configDescription.options.length && configDescription.limitToOptions) {
+      if (configDescription.options && configDescription.options.length && configDescription.limitToOptions) {
         return ParameterOptions
       } else if (configDescription.type === 'INTEGER') {
         return ParameterInteger
