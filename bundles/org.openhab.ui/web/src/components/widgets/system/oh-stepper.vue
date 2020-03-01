@@ -1,12 +1,13 @@
 <template>
-  <f7-range v-bind="config" :value="value" @range:changed="onChange" />
+  <f7-stepper ref="stepper" v-bind="config" @stepper:change="onChange"
+   manual-input-mode />
 </template>
 
 <script>
 import mixin from '../widget-mixin'
 
 export default {
-  name: 'oh-slider',
+  name: 'oh-stepper',
   mixins: [mixin],
   mounted () {
     delete this.config.value
@@ -15,6 +16,12 @@ export default {
     value () {
       const value = parseFloat(this.context.store[this.config.item].state)
       return value
+    }
+  },
+  watch: {
+    value (newValue) {
+      if (isNaN(newValue) || !isFinite(newValue)) return
+      this.$refs.stepper.setValue(newValue)
     }
   },
   methods: {

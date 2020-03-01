@@ -37,7 +37,7 @@ import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/mode/yaml/yaml.js'
 
 // theme css
-import 'codemirror/theme/ambiance.css'
+import 'codemirror/theme/gruvbox-dark.css'
 
 import 'codemirror/addon/edit/matchbrackets.js'
 import 'codemirror/addon/edit/closebrackets.js'
@@ -80,7 +80,7 @@ export default {
         // codemirror options
         tabSize: 4,
         mode: this.mode || 'text/javascript',
-        theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'ambiance' : 'default',
+        theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'gruvbox-dark' : 'default',
         lineNumbers: true,
         line: true,
         matchBrackets: true,

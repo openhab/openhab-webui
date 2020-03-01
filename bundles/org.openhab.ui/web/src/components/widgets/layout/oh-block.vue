@@ -4,19 +4,20 @@
     <f7-block class="oh-block" :style="{ 'z-index': 100 - context.parent.component.slots.default.indexOf(context.component) }">
       <f7-block-title v-if="context.component.config.title">{{context.component.config.title}}</f7-block-title>
       <f7-menu v-if="context.editmode" class="configure-layout-menu padding-bottom">
-        <f7-menu-item @click="$emit('add-widget', context.component, 'oh-grid-row')" icon-f7="plus" text="Add Row" />
-        <f7-menu-item style="margin-left: auto" icon-f7="squares_below_rectangle" dropdown>
+        <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-grid-row')" icon-f7="plus" text="Add Row" />
+        <f7-menu-item style="margin-left: auto" icon-f7="square_split_2x2" dropdown>
           <f7-menu-dropdown right>
-            <f7-menu-dropdown-item @click="$emit('configure-widget', context.component, context.parent)" href="#" text="Configure Block"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context.parent)" href="#" text="Configure Block"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
             <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-            <!-- <f7-menu-dropdown-item @click="$emit('cut-widget', context.component, context.parent)" href="#" text="Cut"></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item @click="$emit('copy-widget', context.component, context.parent)" href="#" text="Copy"></f7-menu-dropdown-item> -->
-            <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row'" @click="$emit('paste-widget', context.component, context.parent)" href="#" text="Paste"></f7-menu-dropdown-item>
+            <!-- <f7-menu-dropdown-item @click="context.editmode.(context.component, context.parent)" href="#" text="Cut"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.(context.component, context.parent)" href="#" text="Copy"></f7-menu-dropdown-item> -->
+            <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row'" @click="context.editmode.pasteWidget(context.component, context.parent)" href="#" text="Paste"></f7-menu-dropdown-item>
             <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row'" divider></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item @click="$emit('move-widget-up', context.component, context.parent)" href="#" text="Move Up"></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item @click="$emit('move-widget-down', context.component, context.parent)" href="#" text="Move Down"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Up"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move Down"></f7-menu-dropdown-item>
             <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item @click="$emit('remove-widget', context.component, context.parent)" href="#" text="Remove Block"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.removeWidget(context.component, context.parent)" href="#" text="Remove Block"></f7-menu-dropdown-item>
           </f7-menu-dropdown>
         </f7-menu-item>
       </f7-menu>
@@ -26,9 +27,6 @@
         v-on="$listeners"
       ></oh-grid-row>
     </f7-block>
-    <!-- <div class="display-flex justify-content-center" v-if="context.editmode">
-      <f7-button color="blue" icon-f7="rectangle_grid_1x2" round raised text="Add row" @click="$emit('add-widget', context.component, 'oh-grid-row')"></f7-button>
-    </div> -->
   </div>
 </template>
 

@@ -13,6 +13,14 @@ export default {
     componentType () {
       return this.context.component.component
     },
+    childWidgetComponentType () {
+      if (!this.componentType.startsWith('widget:')) return null
+      const widget = this.$store.getters.widget(this.componentType.substring(7))
+      if (!widget) {
+        console.warn('widget not found, cannot render: ' + this.componentType)
+      }
+      return widget.component
+    },
     config () {
       const sourceConfig = this.context.component.config
       let evalConfig = {}
@@ -25,7 +33,11 @@ export default {
               if (!this.exprAst[key] || this.context.editmode) {
                 this.exprAst[key] = expr.parse(sourceConfig[key].substring(1))
               }
-              evalConfig[key] = expr.eval(this.exprAst[key], { items: this.context.store, props: this.context.props, Math: Math })
+              evalConfig[key] = expr.eval(this.exprAst[key], {
+                items: this.context.store,
+                props: this.context.props,
+                Math: Math
+              })
             } catch (e) {
               evalConfig[key] = e
             }
@@ -44,13 +56,30 @@ export default {
         component: component,
         props: this.context.props,
         store: this.context.store,
+        config: this.context.config,
         editmode: this.context.editmode,
         clipboardtype: this.context.clipboardtype,
         parent: this.context
       }
     },
+    childWidgetContext () {
+      if (!this.componentType.startsWith('widget:')) return null
+      const widget = this.$store.getters.widget(this.componentType.substring(7))
+      if (!widget) {
+        console.warn('widget not found, cannot render: ' + this.componentType)
+      }
+      return {
+        component: widget,
+        props: this.config,
+        store: this.context.store,
+        config: this.context.config,
+        editmode: this.context.editmode,
+        clipboardtype: this.context.clipboardtype,
+        parent: this.context.parent
+      }
+    },
     onCommand (itemName, cmd) {
-      this.$emit('command', itemName, cmd)
+      this.$store.dispatch('sendCommand', { itemName, cmd })
     }
   }
 }

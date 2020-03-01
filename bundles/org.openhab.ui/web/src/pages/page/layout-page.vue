@@ -7,7 +7,7 @@
       <f7-nav-title>{{(ready) ? page.config.label : ''}}</f7-nav-title>
     </f7-navbar>
 
-    <oh-layout-page v-if="page.uid" :context="context"
+    <oh-layout-page v-if="page" :context="context"
       class="layout-page"
       :class="{notready: !ready}"
       @command="onCommand" />
@@ -21,53 +21,46 @@
 </style>
 
 <script>
-import stateTracking from '@/js/openhab/stateTracking'
-
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 
 export default {
-  mixins: [stateTracking],
   components: {
     OhLayoutPage
   },
   props: ['uid'],
   data () {
     return {
-      ready: false,
-      loading: false,
-      page: {}
+      // ready: false,
+      loading: false
+      // page: {}
     }
-  },
-  created () {
-
   },
   computed: {
     context () {
       return {
         component: this.page,
-        store: this.stateTracking.store
+        store: this.$store.getters.trackedItems
       }
+    },
+    page () {
+      return this.$store.getters.page(this.uid)
+    },
+    ready () {
+      return this.page
     }
   },
   methods: {
     onPageAfterIn () {
-      this.startStateTracking()
+      this.$store.dispatch('startTrackingStates')
       this.load()
     },
     onPageBeforeOut () {
-      this.stopStateTracking()
+      this.$store.dispatch('stopTrackingStates')
     },
-    onReady (component) {
+    onCommand (itemName, command) {
+      this.$store.dispatch('sendCommand', { itemName, command })
     },
     load () {
-      if (this.loading) return
-      this.loading = true
-
-      this.$oh.api.get('/rest/ui/components/ui:page/' + this.uid).then((data) => {
-        this.$set(this, 'page', data)
-        this.ready = true
-        this.loading = false
-      })
     }
   }
 }

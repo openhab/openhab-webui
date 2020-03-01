@@ -18,7 +18,7 @@
           <f7-icon slot="media" ios="f7:menu" aurora="f7:menu" md="material:list"></f7-icon>
         </f7-list-item>
         <f7-list-item v-for="page in pages" :animate="false" :key="page.uid"
-                :link="'/page/layout/' + page.uid"
+                :link="'/page/' + page.uid"
                 :title="page.config.label" view=".view-main" panel-close>
           <f7-icon slot="media" f7="tv"></f7-icon>
         </f7-list-item>
@@ -28,8 +28,8 @@
         <f7-list-item link="/settings/" title="Settings" view=".view-main" panel-close :animate="false">
           <f7-icon slot="media" ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray"></f7-icon>
         </f7-list-item>
-        <li v-if="showAdministrationMenu">
-          <ul class="admin-sublinks">
+        <li v-if="showSettingsSubmenu">
+          <ul class="menu-sublinks">
           <f7-list-item inset link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false">
             <f7-icon slot="media" f7="lightbulb" color="gray"></f7-icon>
           </f7-list-item>
@@ -54,6 +54,14 @@
         <f7-list-item link="/developer/" title="Developer Tools" panel-close>
           <f7-icon slot="media" ios="f7:exclamationmark_shield_fill" aurora="f7:exclamationmark_shield_fill" md="material:extension" color="gray"></f7-icon>
         </f7-list-item>
+        <li v-if="showDeveloperSubmenu">
+          <ul class="menu-sublinks">
+          <f7-list-item inset link="/developer/widgets/" title="Widgets" view=".view-main" panel-close :animate="false">
+            <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray"></f7-icon>
+          </f7-list-item>
+          </ul>
+        </li>
+
         <f7-list-item link="/about/" title="Help &amp; About" view=".view-main" panel-close>
           <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray"></f7-icon>
         </f7-list-item>
@@ -133,7 +141,7 @@
       background #232323 !important
   .logo
     background #111111 !important
-.admin-sublinks
+.menu-sublinks
   color var(--f7-list-item-footer-text-color)
 </style>
 
@@ -222,16 +230,20 @@ export default {
         filled: true
       },
 
-      showAdministrationMenu: false
+      showSettingsSubmenu: false,
+      showDeveloperSubmenu: false
     }
   },
   methods: {
     loadSidebarPages () {
       return Promise.all([
         this.$oh.api.get('/rest/sitemaps'),
-        this.$oh.api.get('/rest/ui/components/ui:page')
+        this.$oh.api.get('/rest/ui/components/ui:page'),
+        this.$oh.api.get('/rest/ui/components/ui:widget')
       ]).then((data) => {
         this.sitemaps = data[0]
+        this.$store.commit('setPages', { pages: data[1] })
+        this.$store.commit('setWidgets', { widgets: data[2] })
         this.pages = data[1].filter((p) => p.config.sidebar)
           .sort((p1, p2) => {
             const order1 = p1.config.order || 1000
@@ -294,7 +306,8 @@ export default {
 
       this.$f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
-          this.showAdministrationMenu = page.route.url.indexOf('/settings/') === 0
+          this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0
+          this.showDeveloperSubmenu = page.route.url.indexOf('/developer/') === 0
         }
       })
 

@@ -12,6 +12,8 @@
               :key="parameter.name"
               :config-description="parameter"
               :value="configuration[parameter.name]"
+              :parameters="parameters"
+              :configuration="configuration"
               @update="(value) => updateParameter(parameter, value)"
             />
           </f7-col>
@@ -32,6 +34,8 @@
               :key="parameter.name"
               :config-description="parameter"
               :value="configuration[parameter.name]"
+              :parameters="parameters"
+              :configuration="configuration"
               @update="(value) => updateParameter(parameter, value)"
             />
           </f7-col>

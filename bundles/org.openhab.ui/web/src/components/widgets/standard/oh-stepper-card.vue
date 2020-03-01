@@ -3,8 +3,8 @@
     <f7-card-header v-if="config.title">
       <div>{{config.title}}</div>
     </f7-card-header>
-    <f7-card-content class="display-flex justify-content-center" :class="{ 'slider-card-vertical': config.vertical }">
-      <oh-slider :context="childContext(context.component)" :class="{ 'slider-card-vertical': config.vertical }" @command="onCommand" />
+    <f7-card-content class="display-flex justify-content-center">
+      <oh-stepper :context="childContext(context.component)" @command="onCommand" />
     </f7-card-content>
     <f7-card-footer v-if="config.footer">
       {{config.footer}}
@@ -19,17 +19,17 @@
 
 <script>
 import mixin from '../widget-mixin'
-import OhSlider from '../system/oh-slider.vue'
+import OhStepper from '../system/oh-stepper.vue'
 
 export default {
   mixins: [mixin],
   components: {
-    OhSlider
+    OhStepper
   },
   widget: {
-    name: 'oh-slider-card',
-    label: 'Simple slider',
-    description: 'Display a slider in a card',
+    name: 'oh-stepper-card',
+    label: 'Simple stepper',
+    description: 'Display a stepper in a card',
     props: {
       parameters: [
         {
@@ -56,24 +56,6 @@ export default {
           label: 'Color',
           type: 'TEXT',
           description: 'Color of the control'
-        },
-        {
-          name: 'vertical',
-          label: 'Vertical slider',
-          type: 'BOOLEAN',
-          description: 'Display the slider vertically'
-        },
-        {
-          name: 'label',
-          label: 'Label on slider',
-          type: 'BOOLEAN',
-          description: 'Display a label on the slider'
-        },
-        {
-          name: 'scale',
-          label: 'Scale on slider',
-          type: 'BOOLEAN',
-          description: 'Display a scale on the slider'
         }
       ]
     }
