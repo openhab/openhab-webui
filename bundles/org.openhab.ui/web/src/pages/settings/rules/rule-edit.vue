@@ -3,7 +3,7 @@
     <f7-navbar :title="(createMode) ? 'Create rule' : rule.name" back-link="Back" no-hairline>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
+        <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
@@ -397,8 +397,7 @@ export default {
     },
     keyDown (ev) {
       if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey)) {
-        if (this.createMode) return // not supported!
-        this.save(true)
+        this.save(!this.createMode)
         ev.stopPropagation()
         ev.preventDefault()
       }

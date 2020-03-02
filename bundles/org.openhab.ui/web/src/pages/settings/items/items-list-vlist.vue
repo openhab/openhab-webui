@@ -95,7 +95,7 @@
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply"></f7-icon>
       <f7-fab-buttons position="top">
         <f7-fab-button fab-close label="Add Item" href="add"><f7-icon ios="material:label_outline" md="material:label_outline" aurora="material:label_outline"></f7-icon></f7-fab-button>
-        <f7-fab-button fab-close label="Add Items from Textual Definition" href="add-from-textual-definition"><f7-icon ios="f7:document_text" md="material:assignment" aurora="f7:document_text"></f7-icon></f7-fab-button>
+        <f7-fab-button fab-close label="Add Items from Textual Definition" href="add-from-textual-definition"><f7-icon ios="f7:document_text" md="material:assignment" aurora="f7:text_badge_plus"></f7-icon></f7-fab-button>
       </f7-fab-buttons>
     </f7-fab>
   </f7-page>

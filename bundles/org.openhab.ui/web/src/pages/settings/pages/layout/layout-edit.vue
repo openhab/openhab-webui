@@ -3,7 +3,7 @@
     <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create layout page' : page.config.label" back-link="Back" no-hairline>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
+        <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
@@ -12,16 +12,16 @@
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details" v-show="currentTab === 'design'">
       <div style="margin-left: auto">
-        <f7-toggle :value="previewMode" @toggle:change="(value) => previewMode = value.toString()"></f7-toggle> Preview
+        <f7-toggle :checked="previewMode" @toggle:change="(value) => previewMode = value"></f7-toggle> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
     <f7-tabs class="layout-editor-tabs">
-      <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+      <f7-tab id="design" class="layout-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader></f7-preloader>
           <div>Loading...</div>
         </f7-block>
-        <f7-block class="block-narrow" v-if="ready && previewMode === 'false'">
+        <f7-block class="block-narrow" v-if="ready && !previewMode">
           <f7-col>
             <f7-list inline-labels>
               <f7-list-input label="ID" type="text" placeholder="ID" :value="page.uid" @input="page.uid = $event.target.value"
@@ -38,18 +38,9 @@
           </f7-col>
         </f7-block>
 
-        <oh-layout-page v-if="ready" :context="context" :key="pageKey"
+        <oh-layout-page class="layout-page" v-if="ready" :context="context" :key="pageKey"
           @add-block="addBlock"
           @add-masonry="addMasonry"
-          @add-widget="addWidget"
-          @configure-widget="configureWidget"
-          @cut-widget="cutWidget"
-          @copy-widget="copyWidget"
-          @paste-widget="pasteWidget"
-          @move-widget-up="moveWidgetUp"
-          @move-widget-down="moveWidgetDown"
-          @remove-widget="removeWidget"
-          @command="onCommand"
         />
 
         <!-- <f7-actions ref="widgetTypeSelection" id="widget-type-selection" :grid="true">
@@ -74,13 +65,12 @@
           <f7-nav-left>
             <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
           </f7-nav-left>
-          <f7-nav-title>Edit {{currentWidget.label}}</f7-nav-title>
+          <f7-nav-title>Edit {{currentWidget.label || currentWidget.uid}}</f7-nav-title>
           <f7-nav-right>
             <f7-link @click="updateWidgetConfig">Done</f7-link>
           </f7-nav-right>
         </f7-navbar>
         <f7-block v-if="currentWidget.props">
-          <f7-block-title style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">Configuration</f7-block-title>
           <f7-col>
             <config-sheet
               :parameterGroups="currentWidget.props.parameterGroups || []"
@@ -93,6 +83,21 @@
       </f7-page>
     </f7-popup>
 
+    <f7-popup ref="widgetCode" class="widgetcode-popup" :opened="widgetCodeOpened" @popup:closed="widgetCodeClosed">
+      <f7-page v-if="currentComponent && widgetCodeOpened">
+        <f7-navbar>
+          <f7-nav-left>
+            <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
+          </f7-nav-left>
+          <f7-nav-title>Edit Widget Code</f7-nav-title>
+          <f7-nav-right>
+            <f7-link @click="updateWidgetCode">Done</f7-link>
+          </f7-nav-right>
+        </f7-navbar>
+        <editor class="page-code-editor" mode="text/x-yaml" :value="widgetYaml" @input="(value) => widgetYaml = value" />
+        <pre class="yaml-message padding-horizontal" :class="[widgetYamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{widgetYamlError}}</pre>
+      </f7-page>
+    </f7-popup>
   </f7-page>
 </template>
 
@@ -112,13 +117,19 @@
   position absolute
   top 80%
   white-space pre-wrap
+.menu-dropdown-content
+  z-index 2000
+.layout-editor-design-tab
+  .layout-page
+    .oh-columns-grid
+      padding-bottom 5rem
 </style>
 
 <script>
-import stateTracking from '@/js/openhab/stateTracking'
 import YAML from 'yaml'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
+import * as SystemWidgets from '@/components/widgets/system/index'
 import * as StandardWidgets from '@/components/widgets/standard/index'
 import * as LayoutWidgets from '@/components/widgets/layout/index'
 
@@ -131,7 +142,6 @@ function uuidv4 () {
 }
 
 export default {
-  mixins: [stateTracking],
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
     OhLayoutPage,
@@ -140,7 +150,7 @@ export default {
   props: ['createMode', 'uid'],
   data () {
     return {
-      ready: false,
+      pageReady: false,
       loading: false,
       page: {
         uid: 'page_' + uuidv4().split('-')[0],
@@ -150,29 +160,38 @@ export default {
       },
       pageKey: uuidv4(),
       pageYaml: null,
-      previewMode: 'false',
+      previewMode: false,
       currentTab: 'design',
       clipboard: null,
       clipboardType: null,
       currentComponent: null,
       currentComponentConfig: null,
       currentWidget: null,
-      widgetConfigOpened: false
+      widgetConfigOpened: false,
+      widgetCodeOpened: false,
+      widgetYaml: null
     }
   },
-  created () {
-
-  },
-  mounted () {
-    this.widgetDefinition = YAML.stringify(this.page)
-  },
   computed: {
+    ready () {
+      return this.pageReady && this.$store.state.components.widgets != null
+    },
     context () {
       return {
         component: this.page,
-        store: this.stateTracking.store,
+        store: this.$store.getters.trackedItems,
         // states: this.stateTracking.store,
-        editmode: this.previewMode === 'false',
+        editmode: (!this.previewMode) ? {
+          addWidget: this.addWidget,
+          configureWidget: this.configureWidget,
+          editWidgetCode: this.editWidgetCode,
+          cutWidget: this.cutWidget,
+          copyWidget: this.copyWidget,
+          pasteWidget: this.pasteWidget,
+          moveWidgetUp: this.moveWidgetUp,
+          moveWidgetDown: this.moveWidgetDown,
+          removeWidget: this.removeWidget
+        } : null,
         clipboardtype: this.clipboardType
       }
     },
@@ -184,12 +203,15 @@ export default {
       } catch (e) {
         return e
       }
-    }
-  },
-  watch: {
-    states () {
-      if (!this.stateTrackerConnectionId) return
-      this.$oh.api.postPlain('/rest/events/states/' + this.stateTrackerConnectionId, JSON.stringify(this.store._keys), 'text/plain', 'application/json')
+    },
+    widgetYamlError () {
+      if (!this.widgetCodeOpened) return null
+      try {
+        YAML.parse(this.widgetYaml, { prettyErrors: true })
+        return 'OK'
+      } catch (e) {
+        return e
+      }
     }
   },
   methods: {
@@ -197,21 +219,29 @@ export default {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
-      this.startStateTracking()
+      this.$store.dispatch('startTrackingStates')
       this.load()
     },
     onPageBeforeOut () {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
-      this.stopStateTracking()
+      this.$store.dispatch('stopTrackingStates')
     },
     keyDown (ev) {
-      if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey)) {
-        if (this.createMode) return // not supported!
-        this.save(true)
-        ev.stopPropagation()
-        ev.preventDefault()
+      if (ev.ctrlKey || ev.metakKey) {
+        switch (ev.keyCode) {
+          case 82:
+            this.previewMode = !this.previewMode
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
+          case 83:
+            this.save(!this.createMode)
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
+        }
       }
     },
     load () {
@@ -220,11 +250,11 @@ export default {
 
       if (this.createMode) {
         this.loading = false
-        this.ready = true
+        this.pageReady = true
       } else {
         this.$oh.api.get('/rest/ui/components/ui:page/' + this.uid).then((data) => {
           this.$set(this, 'page', data)
-          this.ready = true
+          this.pageReady = true
           this.loading = false
         })
       }
@@ -271,21 +301,26 @@ export default {
         }).open()
       })
     },
-    addWidget (component, widgetType, parentContext) {
+    addWidget (component, widgetType, parentContext, slot) {
+      if (!slot) slot = 'default'
+      if (!component.slots) component.slots = {}
+      if (!component.slots[slot]) component.slots[slot] = []
       if (widgetType) {
-        component.slots.default.push({
+        component.slots[slot].push({
           component: widgetType,
           config: {},
           slots: { default: [] }
         })
+        this.forceUpdate()
       } else {
         let actions
         var doAddWidget = (choice) => {
-          component.slots.default.push({
+          component.slots[slot].push({
             component: choice,
-            config: (choice === 'oh-test-card') ? { height: 300 } : {}
+            config: {}
           })
           this.$nextTick(() => actions.destroy())
+          this.forceUpdate()
         }
         const standardWidgetOptions = Object.keys(StandardWidgets).map((k) => {
           return {
@@ -293,10 +328,17 @@ export default {
             onClick: () => doAddWidget(StandardWidgets[k].widget.name)
           }
         })
+        const customWidgetOptions = this.$store.state.components.widgets.map((w) => {
+          return {
+            text: w.uid,
+            onClick: () => doAddWidget('widget:' + w.uid)
+          }
+        })
         actions = this.$f7.actions.create({
           grid: true,
           buttons: [
-            standardWidgetOptions
+            standardWidgetOptions,
+            customWidgetOptions
           ]
         }).open()
       }
@@ -310,6 +352,18 @@ export default {
       this.$set(this.currentComponent, 'config', this.currentComponentConfig)
       this.forceUpdate()
       this.widgetConfigClosed()
+    },
+    widgetCodeClosed () {
+      this.currentComponent = null
+      this.currentWidget = null
+      this.widgetCodeOpened = false
+    },
+    updateWidgetCode () {
+      const updatedWidget = YAML.parse(this.widgetYaml)
+      this.$set(this.currentComponent, 'config', updatedWidget.config)
+      this.$set(this.currentComponent, 'slots', updatedWidget.slots)
+      this.forceUpdate()
+      this.widgetCodeClosed()
     },
     addBlock (component) {
       component.slots.default.push({
@@ -327,22 +381,46 @@ export default {
         }])
       }
     },
-    configureWidget (component, parentContext) {
+    configureWidget (component, parentContext, forceComponentType) {
+      const componentType = forceComponentType || component.component
       this.currentComponent = null
       this.currentWidget = null
       let widgetDefinition
-      widgetDefinition = Object.values(StandardWidgets).find((w) => w.widget.name === component.component)
-      if (!widgetDefinition) {
-        widgetDefinition = Object.values(LayoutWidgets).find((w) => w.widget.name === component.component)
+      if (componentType.indexOf('widget:') === 0) {
+        this.currentWidget = this.$store.getters.widget(componentType.substring(7))
+      } else {
+        widgetDefinition = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets }).find((w) => w.widget && w.widget.name === componentType)
         if (!widgetDefinition) {
-          console.warn('Widget not found')
-          return
+          // widgetDefinition = Object.values(LayoutWidgets).find((w) => w.widget.name === component.component)
+          if (!widgetDefinition) {
+            console.warn('Widget not found: ' + componentType)
+            this.$f7.toast.create({
+              text: `This type of component cannot be configured: ${componentType}.`,
+              destroyOnClose: true,
+              closeTimeout: 3000,
+              closeButton: true,
+              closeButtonText: 'Edit YAML',
+              on: {
+                closeButtonClick: () => {
+                  this.editWidgetCode(component, parentContext)
+                }
+              }
+            }).open()
+            return
+          }
         }
+        this.currentWidget = widgetDefinition.widget
       }
       this.currentComponent = component
-      this.currentWidget = widgetDefinition.widget
       this.currentComponentConfig = JSON.parse(JSON.stringify(this.currentComponent.config))
       this.widgetConfigOpened = true
+    },
+    editWidgetCode (component, parentContext, slot) {
+      if (slot && !component.slots) component.slots = {}
+      if (slot && !component.slots[slot]) component.slots[slot] = []
+      this.currentComponent = component
+      this.widgetYaml = YAML.stringify(component)
+      this.widgetCodeOpened = true
     },
     cutWidget (component, parentContext) {
       this.copyWidget(component, parentContext)
@@ -356,6 +434,7 @@ export default {
     pasteWidget (component, parentContext) {
       if (!this.clipboard) return
       component.slots.default.push(JSON.parse(this.clipboard))
+      this.forceUpdate()
     },
     moveWidgetUp (component, parentContext) {
       let siblings = parentContext.component.slots.default
@@ -391,6 +470,7 @@ export default {
         const updatedSlots = YAML.parse(this.pageYaml)
         this.$set(this.page.slots, 'default', updatedSlots.blocks)
         this.$set(this.page.slots, 'masonry', updatedSlots.masonry)
+        this.forceUpdate()
         return true
       } catch (e) {
         this.$f7.dialog.alert(e).open()

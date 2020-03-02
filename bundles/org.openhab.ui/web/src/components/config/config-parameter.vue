@@ -1,6 +1,7 @@
 <template>
-    <f7-list class="config-parameter" :no-hairlines-md="configDescription.type !== 'BOOLEAN' && (!configDescription.options || !configDescription.options.length) && ['item'].indexOf(configDescription.context) < 0">
-      <component :is="control" :config-description="configDescription" :value="value" :title="configDescription.title" @input="updateValue" />
+    <f7-list class="config-parameter" :no-hairlines-md="configDescription.type !== 'BOOLEAN' && (!configDescription.options || !configDescription.options.length) && ['item'].indexOf(configDescription.context) < 0"
+      v-show="(configDescription.visible) ? configDescription.visible(value, configuration, configDescription, parameters) : true">
+      <component :is="control" :config-description="configDescription" :value="value" :parameters="parameters" :configuration="configuration" :title="configDescription.title" @input="updateValue" />
       <f7-block-footer slot="after-list" class="param-description">
         <small v-html="configDescription.description"></small>
       </f7-block-footer>
@@ -18,6 +19,8 @@ import ParameterScript from './controls/parameter-script.vue'
 import ParameterLocation from './controls/parameter-location.vue'
 import ParameterCronExpression from './controls/parameter-cronexpression.vue'
 import ParameterDayOfWeek from './controls/parameter-dayofweek.vue'
+import ParameterPageWidget from './controls/parameter-pagewidget.vue'
+import ParameterProps from './controls/parameter-props.vue'
 import ParameterText from './controls/parameter-text.vue'
 
 export default {
@@ -25,7 +28,9 @@ export default {
   },
   props: [
     'configDescription',
-    'value'
+    'value',
+    'parameters',
+    'configuration'
   ],
   data () {
     return {
@@ -48,6 +53,12 @@ export default {
         return ParameterCronExpression
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'dayOfWeek') {
         return ParameterDayOfWeek
+      } else if (configDescription.type === 'TEXT' && configDescription.context && configDescription.context.indexOf('page') >= 0) {
+        return ParameterPageWidget
+      } else if (configDescription.type === 'TEXT' && configDescription.context && configDescription.context.indexOf('widget') >= 0) {
+        return ParameterPageWidget
+      } else if (configDescription.type === 'TEXT' && configDescription.context === 'props') {
+        return ParameterProps
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'item') {
         return ParameterItem
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'thing') {

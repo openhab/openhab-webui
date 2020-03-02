@@ -3,29 +3,31 @@
     <f7-navbar title="Developer Tools" back-link="Back" back-link-url="/" back-link-force no-hairline>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <!-- <f7-link @click="currentTab = 'parser'" :tab-link-active="currentTab === 'parser'" class="tab-link">Items file parser</f7-link> -->
-      <f7-link @click="currentTab = 'widget'" :tab-link-active="currentTab === 'widget'" class="tab-link">Widget Sandbox</f7-link>
-      <f7-link @click="currentTab = 'sse'" :tab-link-active="currentTab === 'sse'" class="tab-link">SSE &amp; Icons</f7-link>
+      <f7-link @click="currentTab = 'menu'" :tab-link-active="currentTab === 'menu'" class="tab-link">Expert Features</f7-link>
+      <f7-link @click="currentTab = 'debug'" :tab-link-active="currentTab === 'debug'" class="tab-link">Debug</f7-link>
       <f7-nav-right>
-        <!-- <f7-link
-          class="searchbar-enable"
-          data-searchbar=".searchbar-demo"
-          icon-ios="f7:search_strong"
-          icon-aurora="f7:search_strong"
-          icon-md="material:search"
-        ></f7-link> -->
       </f7-nav-right>
-    </f7-toolbar>
-    <f7-toolbar position="bottom" v-if="currentTab === 'widget'">
-      <f7-link @click="$refs.widgetRenderer.redrawWidget()">Redraw Widget</f7-link>
-      <f7-link @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'">Toggle Split Orientation</f7-link>
     </f7-toolbar>
 
     <f7-tabs>
-      <f7-tab id="widget" @ tab:show="() => this.currentTab = 'widget'" :tab-active="currentTab === 'widget'">
-        <widget-renderer-test-tab ref="widgetRenderer" :split="split" />
+      <f7-tab id="menu-tab" @ tab:show="() => this.currentTab = 'menu'" :tab-active="currentTab === 'menu'">
+      <f7-block class="block-narrow settings-menu">
+        <f7-row>
+          <f7-col width="100" medium="50">
+            <f7-block-title>Advanced Object Management</f7-block-title>
+            <f7-list media-item>
+              <f7-list-item media-item title="Widgets" footer="Develop custom widgets to use on pages" link="widgets/">
+                <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray"></f7-icon>
+              </f7-list-item>
+              <f7-list-item media-item title="Add Items from Textual Definition" footer="Add &amp; link items in bulk" link="/settings/items/add-from-textual-definition">
+                <f7-icon slot="media" f7="text_badge_plus" color="gray"></f7-icon>
+              </f7-list-item>
+            </f7-list>
+          </f7-col>
+        </f7-row>
+      </f7-block>
       </f7-tab>
-      <f7-tab id="info" @tab:show="() => this.currentTab = 'sse'" :tab-active="currentTab === 'sse'">
+      <f7-tab id="debug-tab" @tab:show="() => this.currentTab = 'debug'" :tab-active="currentTab === 'debug'">
         <f7-block class="block-narrow">
           <f7-row>
             <f7-col>
@@ -74,15 +76,13 @@
 </style>
 
 <script>
-import WidgetRendererTestTab from './widget/widget-renderer-test-tab.vue'
 
 export default {
   components: {
-    WidgetRendererTestTab
   },
   data () {
     return {
-      currentTab: 'widget',
+      currentTab: 'menu',
       sseClient: null,
       sseEvents: [],
       icon: 'lightbulb',

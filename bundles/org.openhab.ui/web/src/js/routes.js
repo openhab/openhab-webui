@@ -41,6 +41,8 @@ import LayoutEditPage from '../pages/settings/pages/layout/layout-edit.vue'
 import Analyzer from '../pages/analyzer/analyzer.vue'
 
 import DeveloperToolsPage from '../pages/developer/developer-tools.vue'
+import WidgetsListPage from '../pages/developer/widgets/widget-list.vue'
+import WidgetEditPage from '../pages/developer/widgets/widget-edit.vue'
 
 export default [
   {
@@ -51,36 +53,6 @@ export default [
       // animate: false
       transition: 'f7-dive'
     }
-    // tabs: [
-    //   {
-    //     path: '/',
-    //     id: 'tab-overview',
-    //     content: `
-    //     <div class="block">
-    //       <p>Tab 1 content</p>
-    //       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ullam enim quia molestiae facilis laudantium voluptates obcaecati officia cum, sit libero commodi. Ratione illo suscipit temporibus sequi iure ad laboriosam accusamus?</p>
-    //       <p>Saepe explicabo voluptas ducimus provident, doloremque quo totam molestias! Suscipit blanditiis eaque exercitationem praesentium reprehenderit, fuga accusamus possimus sed, sint facilis ratione quod, qui dignissimos voluptas! Aliquam rerum consequuntur deleniti.</p>
-    //       <p>Totam reprehenderit amet commodi ipsum nam provident doloremque possimus odio itaque, est animi culpa modi consequatur reiciendis corporis libero laudantium sed eveniet unde delectus a maiores nihil dolores? Natus, perferendis.</p>
-    //     </div>
-    //     `,
-    //     component: OverviewTab
-    //   },
-    //   {
-    //     path: '/locations/',
-    //     id: 'tab-locations',
-    //     component: LocationsTab
-    //   },
-    //   {
-    //     path: '/equipments/',
-    //     id: 'tab-equipments',
-    //     component: EquipmentsTab
-    //   },
-    //   {
-    //     path: '/properties/',
-    //     id: 'tab-properties',
-    //     component: PropertiesTab
-    //   }
-    // ]
   },
   {
     path: '/setup/',
@@ -89,7 +61,7 @@ export default [
     }
   },
   {
-    path: '/page/layout/:uid',
+    path: '/page/:uid',
     component: LayoutPage
   },
   {
@@ -308,7 +280,32 @@ export default [
     component: DeveloperToolsPage,
     options: {
       animate: false
-    }
+    },
+    routes: [
+      {
+        path: 'widgets/',
+        component: WidgetsListPage,
+        routes: [
+          {
+            path: 'add',
+            component: WidgetEditPage,
+            options: {
+              animate: false,
+              props: {
+                createMode: true
+              }
+            }
+          },
+          {
+            path: ':uid',
+            component: WidgetEditPage,
+            options: {
+              animate: false
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     path: '/analyzer/',

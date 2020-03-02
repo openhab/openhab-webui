@@ -39,6 +39,12 @@ Vue.use(MagicGrid)
 // Init Framework7-Vue Plugin
 Framework7.use(Framework7Vue)
 
+// Import VueX store
+import store from './store'
+Vue.prototype.$store = store
+store.dispatch('initializeTrackingStore')
+
+// Extend prototype with the openHAB API interface
 Vue.prototype.$oh = openhab
 
 // Init App

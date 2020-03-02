@@ -15,13 +15,15 @@ export default {
     value () {
       if (!this.context.store[this.config.item]) return
       const value = this.context.store[this.config.item].state
-      return value === 'ON'
+      if (value === 'ON') return true
+      if (value === 'OFF') return false
+      return (['0', 'UNDEF', 'NULL', '-'].indexOf(value.toString()) < 0)
     }
   },
   methods: {
     onChange (value) {
       if (value === this.value) return
-      this.$emit('command', this.config.item, value ? 'ON' : 'OFF')
+      this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: (value) ? 'ON' : 'OFF' })
     }
   }
 }
