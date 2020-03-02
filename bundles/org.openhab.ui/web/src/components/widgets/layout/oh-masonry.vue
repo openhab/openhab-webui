@@ -59,7 +59,8 @@ export default {
   width calc(100% - 2 * var(--oh-grid-gap))
 
 .oh-columns-grid
-  columns auto 300px
+  column-count 6
+  column-width 300px
   column-gap 0
   margin-left auto
   margin-right auto
