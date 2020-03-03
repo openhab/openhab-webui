@@ -59,7 +59,7 @@
 
     </f7-tabs>
 
-    <f7-popup ref="widgetConfig" class="widgetconfig-popup" :opened="widgetConfigOpened" @popup:closed="widgetConfigClosed">
+    <f7-popup ref="widgetConfig" class="widgetconfig-popup" close-on-escape :opened="widgetConfigOpened" @popup:closed="widgetConfigClosed">
       <f7-page v-if="currentComponent && currentWidget">
         <f7-navbar>
           <f7-nav-left>
@@ -83,7 +83,7 @@
       </f7-page>
     </f7-popup>
 
-    <f7-popup ref="widgetCode" class="widgetcode-popup" :opened="widgetCodeOpened" @popup:closed="widgetCodeClosed">
+    <f7-popup ref="widgetCode" class="widgetcode-popup" close-on-escape :opened="widgetCodeOpened" @popup:closed="widgetCodeClosed">
       <f7-page v-if="currentComponent && widgetCodeOpened">
         <f7-navbar>
           <f7-nav-left>

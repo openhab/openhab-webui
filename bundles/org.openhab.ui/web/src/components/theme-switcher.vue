@@ -30,10 +30,10 @@
 
     <f7-row>
       <f7-col>
-        <f7-block-title>Home page</f7-block-title>
+        <f7-block-title>Miscellaneous</f7-block-title>
         <f7-list>
           <f7-list-item>
-            <span>Simple navigation bar</span>
+            <span>Simple navigation bar on home page</span>
             <f7-toggle :checked="homePageNavbarStyle === 'simple'" @toggle:change="setHomePageNavbarStyle"></f7-toggle>
           </f7-list-item>
           <f7-list-item>
@@ -87,7 +87,7 @@ export default {
       return localStorage.getItem('openhab.ui:theme.dark') || 'light'
     },
     barsStyle () {
-      return localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.md) ? 'filled' : 'light')
+      return localStorage.getItem('openhab.ui:theme.bars') || ((!this.$theme.ios) ? 'filled' : 'light')
     },
     homePageNavbarStyle () {
       return localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'

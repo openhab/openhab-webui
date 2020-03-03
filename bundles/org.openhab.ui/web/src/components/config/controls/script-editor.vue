@@ -123,6 +123,7 @@ export default {
             : Array(cm.getOption('indentUnit') + 1).join(' '), 'end', '+input')
         }
       }
+      extraKeys['Shift-Tab'] = 'indentLess'
       cm.setOption('extraKeys', extraKeys)
     },
     onCmCodeChange (newCode) {

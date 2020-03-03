@@ -13,11 +13,13 @@
       <!-- <f7-block-title>Sitemaps</f7-block-title> -->
       <f7-list>
         <f7-list-item v-for="sitemap in sitemaps" :animate="false" :key="sitemap.name"
+                :class="{ currentsection: currentUrl.indexOf('/sitemap/' + sitemap.name) >= 0 }"
                 :link="'/sitemap/' + sitemap.name + '/' + sitemap.name"
                 :title="sitemap.label" view=".view-main" panel-close>
           <f7-icon slot="media" ios="f7:menu" aurora="f7:menu" md="material:list"></f7-icon>
         </f7-list-item>
         <f7-list-item v-for="page in pages" :animate="false" :key="page.uid"
+                :class="{ currentsection: currentUrl.indexOf('/page/' + page.uid) >= 0 }"
                 :link="'/page/' + page.uid"
                 :title="page.config.label" view=".view-main" panel-close>
           <f7-icon slot="media" f7="tv"></f7-icon>
@@ -25,44 +27,54 @@
       </f7-list>
       <f7-block-title>Administration</f7-block-title>
       <f7-list class="admin-links">
-        <f7-list-item link="/settings/" title="Settings" view=".view-main" panel-close :animate="false">
+        <f7-list-item link="/settings/" title="Settings" view=".view-main" panel-close :animate="false"
+            :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/addons/') >= 0 || currentUrl.indexOf('/settings/services/') >= 0 }">
           <f7-icon slot="media" ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray"></f7-icon>
         </f7-list-item>
         <li v-if="showSettingsSubmenu">
           <ul class="menu-sublinks">
-          <f7-list-item inset link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false">
+          <f7-list-item link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false" no-chevron
+              :class="{ currentsection: currentUrl.indexOf('/settings/things') >= 0 }">
             <f7-icon slot="media" f7="lightbulb" color="gray"></f7-icon>
           </f7-list-item>
-          <f7-list-item inset link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false">
+          <f7-list-item link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false" no-chevron
+              :class="{ currentsection: currentUrl.indexOf('/settings/model') >= 0 }">
             <f7-icon slot="media" f7="list_bullet_indent" color="gray"></f7-icon>
           </f7-list-item>
-          <f7-list-item inset link="/settings/items/" title="Items" view=".view-main" panel-close :animate="false">
+          <f7-list-item link="/settings/items/" title="Items" view=".view-main" panel-close :animate="false" no-chevron
+              :class="{ currentsection: currentUrl.indexOf('/settings/items') >= 0 }">
             <f7-icon slot="media" f7="square_on_circle" color="gray"></f7-icon>
           </f7-list-item>
-          <f7-list-item inset link="/settings/pages/" title="Pages" view=".view-main" panel-close :animate="false">
+          <f7-list-item link="/settings/pages/" title="Pages" view=".view-main" panel-close :animate="false" no-chevron
+              :class="{ currentsection: currentUrl.indexOf('/settings/pages') >= 0 }">
             <f7-icon slot="media" f7="tv" color="gray"></f7-icon>
           </f7-list-item>
-          <f7-list-item inset link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false">
+          <f7-list-item link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false" no-chevron
+              :class="{ currentsection: currentUrl.indexOf('/settings/rules') >= 0 }">
             <f7-icon slot="media" f7="wand_rays" color="gray"></f7-icon>
           </f7-list-item>
-          <f7-list-item inset link="/settings/schedule/" title="Schedule" view=".view-main" panel-close :animate="false">
+          <f7-list-item link="/settings/schedule/" title="Schedule" view=".view-main" panel-close :animate="false" no-chevron
+              :class="{ currentsection: currentUrl.indexOf('/settings/schedule') >= 0 }">
             <f7-icon slot="media" f7="calendar" color="gray"></f7-icon>
           </f7-list-item>
           </ul>
         </li>
 
-        <f7-list-item link="/developer/" title="Developer Tools" panel-close>
+        <f7-list-item link="/developer/" title="Developer Tools" panel-close
+            :class="{ currentsection: currentUrl.indexOf('/developer/') >= 0 && currentUrl.indexOf('/developer/widgets') < 0 }">
           <f7-icon slot="media" ios="f7:exclamationmark_shield_fill" aurora="f7:exclamationmark_shield_fill" md="material:extension" color="gray"></f7-icon>
         </f7-list-item>
         <li v-if="showDeveloperSubmenu">
           <ul class="menu-sublinks">
-          <f7-list-item inset link="/developer/widgets/" title="Widgets" view=".view-main" panel-close :animate="false">
+          <f7-list-item link="/developer/widgets/" title="Widgets" view=".view-main" panel-close :animate="false" no-chevron
+              :class="{ currentsection: currentUrl.indexOf('/developer/widgets') >= 0 }">
             <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray"></f7-icon>
           </f7-list-item>
           </ul>
         </li>
 
-        <f7-list-item link="/about/" title="Help &amp; About" view=".view-main" panel-close>
+        <f7-list-item link="/about/" title="Help &amp; About" view=".view-main" panel-close
+            :class="{ currentsection: currentUrl.indexOf('/about') >= 0 }">
           <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray"></f7-icon>
         </f7-list-item>
         <f7-list-item v-if="loggedIn" link="/" title="Logout" @click="logout()" panel-close>
@@ -135,14 +147,31 @@
     height 50px
   .list
     margin-top 0
+  .currentsection
+    background-color var(--f7-color-blue-tint)
+    color var(--f7-color-white)
+    --f7-list-chevron-icon-color var(--f7-color-white)
+    .icon
+      color var(--f7-color-white) !important
+
 .theme-dark
   .panel-left
     .page
       background #232323 !important
+    .currentsection
+      background-color var(--f7-color-blue-shade)
   .logo
     background #111111 !important
+
 .menu-sublinks
   color var(--f7-list-item-footer-text-color)
+  padding-left 0
+  margin-bottom var(--f7-list-margin-vertical)
+  background-color red
+  // --f7-list-item-media-margin 24px
+  // --f7-list-item-padding-horizontal 32px
+  // --f7-list-chevron-icon-color var(--f7-color-blue-tint) !important
+
 </style>
 
 <script>
@@ -180,6 +209,9 @@ export default {
         // App routes
         routes: routes,
         view: {
+          // disable f7 swipeback on iOS (if not in cordova) because it's handled natively by Safari
+          iosSwipeBack: !this.$device.ios || this.$device.cordova,
+          auroraSwipeBack: !this.$device.ios || this.$device.cordova,
           pushState: true // !this.$device.cordova
         },
         // Enable panel left visibility breakpoint
@@ -231,7 +263,8 @@ export default {
       },
 
       showSettingsSubmenu: false,
-      showDeveloperSubmenu: false
+      showDeveloperSubmenu: false,
+      currentUrl: ''
     }
   },
   methods: {
@@ -283,7 +316,7 @@ export default {
   },
   mounted () {
     this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || 'light'
-    this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.md) ? 'filled' : 'light')
+    this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((!this.$theme.ios) ? 'filled' : 'light')
     this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
     this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
     this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
@@ -308,6 +341,7 @@ export default {
         if (page.route && page.route.url) {
           this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0
           this.showDeveloperSubmenu = page.route.url.indexOf('/developer/') === 0
+          this.currentUrl = page.route.url
         }
       })
 

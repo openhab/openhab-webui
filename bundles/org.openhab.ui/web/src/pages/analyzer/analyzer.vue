@@ -1,5 +1,5 @@
 <template>
-  <f7-popup tablet-fullscreen @popup:opened="() => showChart = true">
+  <f7-popup tablet-fullscreen close-on-escape @popup:opened="() => showChart = true">
     <f7-page class="analyzer-content">
       <f7-navbar :title="titleDisplayText" back-link="Back">
         <!-- <f7-nav-right>

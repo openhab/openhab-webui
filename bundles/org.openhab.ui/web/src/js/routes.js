@@ -157,6 +157,15 @@ export default [
             component: AddThingChooseBindingPage,
             routes: [
               {
+                path: 'install-binding',
+                component: AddonsAddPage,
+                options: {
+                  props: {
+                    addonType: 'binding'
+                  }
+                }
+              },
+              {
                 path: ':bindingId',
                 component: AddThingChooseThingTypePage,
                 routes: [
@@ -304,6 +313,10 @@ export default [
             }
           }
         ]
+      },
+      {
+        path: 'add-items-dsl',
+        component: ItemsAddFromTextualDefinition
       }
     ]
   },

@@ -10,7 +10,10 @@
       <div class="col">
         <editor class="items-parser" :value="itemsDsl" @input="(value) => itemsDsl = value" />
         <div v-if="parsedItems.error" class="items-results error">
-          <pre><code>{{parsedItems.error}}</code></pre>
+          <div v-if="!itemsDsl">
+            <empty-state-placeholder icon="text_badge_plus" title="items.add.title" text="items.add.text" />
+          </div>
+          <pre v-else><code>{{parsedItems.error}}</code></pre>
         </div>
         <div v-else class="items-results">
           <div class="card data-table data-table-init">

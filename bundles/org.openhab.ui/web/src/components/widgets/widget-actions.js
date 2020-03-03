@@ -152,7 +152,7 @@ export const actionsMixin = {
             console.log('Action target is not of the format page:uid')
             return
           }
-          this.$f7router.navigate('/page/' + actionPage.substring(5))
+          this.$f7router.navigate('/page/' + actionPage.substring(5), { props: { deep: true } })
           break
         case 'command':
           const actionItem = this.config[prefix + 'actionItem']
