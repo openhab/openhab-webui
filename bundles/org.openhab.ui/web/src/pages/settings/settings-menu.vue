@@ -188,4 +188,10 @@ export default {
 <style lang="stylus">
 .device-desktop .settings-menu
   --f7-list-item-footer-line-height 1.3
+.settings-menu .icon
+  color var(--f7-color-blue)
+.theme-filled .settings-menu .icon
+  color var(--f7-color-gray) !important
+.aurora .settings-menu .icon
+  font-size 24px
 </style>
