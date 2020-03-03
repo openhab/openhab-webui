@@ -12,12 +12,12 @@
       </f7-list-item>
       <!-- <f7-block-title>Sitemaps</f7-block-title> -->
       <f7-list>
-        <f7-list-item v-for="sitemap in sitemaps" :animate="false" :key="sitemap.name"
+        <!-- <f7-list-item v-for="sitemap in sitemaps" :animate="false" :key="sitemap.name"
                 :class="{ currentsection: currentUrl.indexOf('/sitemap/' + sitemap.name) >= 0 }"
                 :link="'/sitemap/' + sitemap.name + '/' + sitemap.name"
                 :title="sitemap.label" view=".view-main" panel-close>
           <f7-icon slot="media" ios="f7:menu" aurora="f7:menu" md="material:list"></f7-icon>
-        </f7-list-item>
+        </f7-list-item> -->
         <f7-list-item v-for="page in pages" :animate="false" :key="page.uid"
                 :class="{ currentsection: currentUrl.indexOf('/page/' + page.uid) >= 0 }"
                 :link="'/page/' + page.uid"
