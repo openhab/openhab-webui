@@ -54,11 +54,14 @@
         </f7-list>
 
       </f7-col>
-      <f7-col>
+      <f7-col v-if="bindings.length">
         <f7-list>
-          <f7-list-button color="blue" title="Install Bindings" href="/settings/addons/binding/add" />
+          <f7-list-button color="blue" title="Install More Bindings" href="install-binding" />
         </f7-list>
       </f7-col>
+      <f7-row v-else-if="ready" class="display-flex justify-content-center">
+        <f7-button large fill color="blue" href="install-binding">Install Bindings</f7-button>
+      </f7-row>
     </f7-block>
   </f7-page>
 </template>

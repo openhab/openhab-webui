@@ -128,7 +128,7 @@
       <f7-icon ios="f7:close" md="material:close"></f7-icon>
     </f7-fab>
 
-    <f7-popup tablet-fullscreen :opened="codePopupOpened" @popup:closed="codePopupOpened = false">
+    <f7-popup tablet-fullscreen :opened="codePopupOpened" close-on-escape @popup:closed="codePopupOpened = false">
       <f7-page>
         <f7-toolbar>
           <div class="left">

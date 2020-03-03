@@ -11,7 +11,7 @@
 
     <f7-tabs>
       <f7-tab id="menu-tab" @ tab:show="() => this.currentTab = 'menu'" :tab-active="currentTab === 'menu'">
-      <f7-block class="block-narrow settings-menu">
+      <f7-block class="block-narrow after-big-title settings-menu">
         <f7-row>
           <f7-col width="100" medium="50">
             <f7-block-title>Advanced Object Management</f7-block-title>
@@ -19,7 +19,7 @@
               <f7-list-item media-item title="Widgets" footer="Develop custom widgets to use on pages" link="widgets/">
                 <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray"></f7-icon>
               </f7-list-item>
-              <f7-list-item media-item title="Add Items from Textual Definition" footer="Add &amp; link items in bulk" link="/settings/items/add-from-textual-definition">
+              <f7-list-item media-item title="Add Items from Textual Definition" footer="Create or update items &amp; links in bulk" link="add-items-dsl">
                 <f7-icon slot="media" f7="text_badge_plus" color="gray"></f7-icon>
               </f7-list-item>
             </f7-list>

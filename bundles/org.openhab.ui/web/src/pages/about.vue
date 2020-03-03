@@ -20,8 +20,18 @@
 
         </f7-col>
       </f7-row>
+
       <f7-block-title><h4>Appearance Options (local to this device)</h4></f7-block-title>
       <theme-switcher />
+
+      <f7-block-title v-if="hasServiceWorker"><h4>Cache Management</h4></f7-block-title>
+      <f7-col v-if="hasServiceWorker">
+        <p class="padding-horizontal">An active service worker is in place to cache the assets of this app to make it load faster, however it may not detect when it has been updated to a new version, even if you refresh the page.</p>
+        <p class="padding-horizontal">Click Purge the Application Cache below to clear the cache and download everything from the server again.</p>
+        <f7-list>
+          <f7-list-button color="red" @click="purgeServiceWorkerAndCaches()">Purge the Application Cache</f7-list-button>
+        </f7-list>
+      </f7-col>
     </f7-block>
 
     <!-- <f7-button href="/analyzer/?items=MultiSensorSalon_Temperature">Analyzer</f7-button> -->
@@ -35,6 +45,53 @@ import ThemeSwitcher from '../components/theme-switcher.vue'
 export default {
   components: {
     ThemeSwitcher
+  },
+  data () {
+    return {
+      hasServiceWorker: false
+    }
+  },
+  mounted () {
+
+  },
+  methods: {
+    mounted () {
+      if (navigator.serviceWorker) {
+        navigator.serviceWorker.getRegistrations().then(() => {
+          this.hasServiceWorker = true
+        })
+      }
+    },
+    purgeServiceWorkerAndCaches () {
+      this.$f7.dialog.confirm(
+        'Purge all application caches and unregister the service workers? This will refresh the page and might take a few seconds.',
+        () => {
+          navigator.serviceWorker.getRegistrations().then(function (registrations) {
+            for (let registration of registrations) {
+              registration.unregister().then(function () {
+                return self.clients.matchAll()
+              }).then(function (clients) {
+                clients.forEach(client => {
+                  if (client.url && 'navigate' in client) {
+                    setTimeout(() => { client.navigate(client.url) }, 1000)
+                  }
+                })
+              })
+            }
+          })
+          caches.keys().then(function (cachesNames) {
+            console.log('Deleting caches')
+            return Promise.all(cachesNames.map(function (cacheName) {
+              return caches.delete(cacheName).then(function () {
+                console.log('Cache with name ' + cacheName + ' is deleted')
+              })
+            }))
+          }).then(function () {
+            console.log('Caches deleted')
+          })
+        }
+      )
+    }
   }
 }
 </script>

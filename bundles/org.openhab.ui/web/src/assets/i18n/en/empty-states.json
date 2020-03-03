@@ -5,14 +5,17 @@
   "things.title": "No things yet",
   "things.text": "Things are the devices and services connected to openHAB, they are provided by binding add-ons.<br><br>Installed bindings which support auto-discovery will add thing candidates to your Inbox. You can also start a scan for a certain binding or add your first thing manually with the button below.",
 
-  "things.nobindings.title": "No bindings installed",
-  "things.nobindings.text": "You need to install binding add-ons to be able to add things to your system.",
+  "things.nobindings.title": "No bindings",
+  "things.nobindings.text": "To add things to your system, you first need to install binding add-ons.",
 
   "model.title": "Start modelling your home",
   "model.text": "Build a model from your items to organize them and relate them to each other semantically.<br><br>Begin with a hierarchy of locations: buildings, outside areas, floors and rooms, as needed. Then, insert equipments and points from your things (or manually).",
 
   "items.title": "No items yet",
   "items.text": "Items represent the functional side of your home - you can link them to the channels defined by your things. Start with the Model view to create a clean initial structure.<br><br>You can also define items with configuration files, or with the button below.",
+
+  "items.add.title": "Define Items Above",
+  "items.add.text": "Use the openHAB item syntax to create new items or update them, as well as their metadata and links to channels. They will be stored in the internal database.",
 
   "pages.title": "No pages yet",
   "pages.text": "Design pages to display information in various ways and interact with your items. You can create several kinds of pages: charts, sitemaps, floor plans...<br><br>Click the button below to create your first page.",

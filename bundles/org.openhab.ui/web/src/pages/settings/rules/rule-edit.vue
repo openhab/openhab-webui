@@ -101,7 +101,7 @@
       </f7-tab>
     </f7-tabs>
 
-    <f7-popup ref="modulePopup" class="moduleconfig-popup" :opened="moduleConfigOpened" @popupClosed="moduleConfigClosed">
+    <f7-popup ref="modulePopup" class="moduleconfig-popup" close-on-escape :opened="moduleConfigOpened" @popupClosed="moduleConfigClosed">
       <f7-page>
         <f7-navbar>
           <f7-nav-left>

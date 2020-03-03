@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create Widget' : 'Widget: ' + widget.uid" back-link="Back" back-link-url="/" back-link-force>
+    <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create Widget' : 'Widget: ' + widget.uid" back-link="Back">
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>

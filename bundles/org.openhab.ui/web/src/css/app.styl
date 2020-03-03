@@ -24,37 +24,52 @@ html
 
 /* Custom color theme properties */
 :root {
-  --f7-theme-color: #e64a19; // #ff7700;
-  --f7-theme-color-rgb: 255, 119, 0;
-  --f7-theme-color-shade: #d66400;
-  --f7-theme-color-tint: #ff8d29;
+  --f7-theme-color: #e64a19;
+  --f7-theme-color-rgb: 230, 74, 25;
+  --f7-theme-color-shade: #c13e15;
+  --f7-theme-color-tint: #ea673e;
 }
 
 :root.theme-filled,
 :root .theme-filled {
   .subnavbar:not(.toolbar-bottom) {
     --f7-bars-bg-color: var(--f7-theme-color);
+    --f7-bars-bg-color-rgb: var(--f7-theme-color-rgb);
+    --f7-bars-translucent-opacity: 0.9;
     --f7-bars-text-color: #fff;
     --f7-bars-link-color: #fff;
+    --f7-navbar-subtitle-text-color: rgba(255,255,255,0.85);
+    --f7-bars-border-color: transparent;
   }
   .toolbar:not(.toolbar-bottom) {
-    --f7-bars-bg-color: var(--f7-theme-color);
-    --f7-bars-text-color: #fff;
-    --f7-bars-link-color: #fff;
+  --f7-bars-bg-color: var(--f7-theme-color);
+  --f7-bars-bg-color-rgb: var(--f7-theme-color-rgb);
+  --f7-bars-translucent-opacity: 0.9;
+  --f7-bars-text-color: #fff;
+  --f7-bars-link-color: #fff;
+  --f7-bars-border-color: transparent;
   }
   .tabbar:not(.toolbar-bottom) {
     --f7-bars-bg-color: var(--f7-theme-color);
+    --f7-bars-bg-color-rgb: var(--f7-theme-color-rgb);
+    --f7-bars-translucent-opacity: 0.9;
     --f7-bars-text-color: #fff;
     --f7-bars-link-color: #fff;
+    --f7-navbar-subtitle-text-color: rgba(255,255,255,0.85);
+    --f7-bars-border-color: transparent;
     --f7-tabbar-link-active-color: #fff;
     --f7-tabbar-link-inactive-color: rgba(255,255,255,0.54);
     --f7-tabbar-link-active-border-color: #fff;
   }
   .navbar {
     --f7-bars-bg-color: var(--f7-theme-color);
+    --f7-bars-bg-color-rgb: var(--f7-theme-color-rgb);
     --f7-bars-text-color: #fff;
-    --f7-navbar-large-title-text-color: #fff;
+    --f7-bars-translucent-opacity: 0.9;
     --f7-bars-link-color: #fff;
+    --f7-navbar-large-title-text-color: #fff;
+    --f7-bars-border-color: transparent;
+    
     &.navbar-large-transparent .title-large-text {
       --f7-navbar-large-title-text-color: #000;
     }
@@ -66,10 +81,27 @@ html
   --f7-navbar-border-color: transparent;
   --f7-searchbar-input-bg-color: #fff;
   --f7-sheet-border-color: transparent;
+
+  .navbar-large-transparent {
+    --f7-navbar-large-title-text-color: #000;
+
+    --r: 230;
+    --g: 74;
+    --b: 25;
+    --progress: var(--f7-navbar-large-collapse-progress);
+    // --f7-bars-link-color: rgb(
+    //   calc(var(--r) + (255 - var(--r)) * var(--progress)),
+    //   calc(var(--g) + (255 - var(--g)) * var(--progress)),
+    //   calc(var(--b) + (255 - var(--b)) * var(--progress))
+    // );
+  }
 }
 
-// .md
-//   --f7-page-bg-color: #f7f7f7
+.md
+  --f7-page-bg-color: #fafafa
+  --f7-page-bg-color-rgb: rgb(250, 250, 250)
+  .list-card
+    box-shadow var(--f7-elevation-1)
 
 .home-tabs {
   --f7-theme-color: #2196f3;
@@ -311,6 +343,9 @@ html
     display none !important
   .item-inner:after
     display none !important
+  .menu-sublinks
+    .item-content
+      padding-left calc(2*var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left))
 
 .item-initial
   color #c0c0c0
