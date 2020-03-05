@@ -17,6 +17,15 @@
     height 100%
     width 100%
 
+    .CodeMirror-line
+      line-height 1.3
+
+    .cm-lkcampbell-indent-guides
+      margin-top -5px
+      background-repeat repeat-y
+      background-image url("data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='1px' height='2px'><rect width='1' height='1' style='fill:%2377777777' /></svg>")
+      position relative
+
 .CodeMirror-hints
   z-index 999999
 .CodeMirror-Tern-tooltip
@@ -67,6 +76,42 @@ import tern from 'tern'
 
 import EcmascriptDefs from 'tern/defs/ecmascript.json'
 import OpenhabDefs from '@/assets/openhab-tern-defs.json'
+
+// Adapted from https://github.com/lkcampbell/brackets-indent-guides (MIT)
+var indentGuidesOverlay = {
+  token: function (stream, state) {
+    var char = '',
+      colNum = 0,
+      spaceUnits = 0,
+      isTabStart = false
+
+    char = stream.next()
+    colNum = stream.column()
+
+    if (colNum === 0) {
+      return null
+    }
+
+    if (char === '\t') {
+      return 'lkcampbell-indent-guides'
+    }
+
+    if (char !== ' ') {
+      stream.skipToEnd()
+      return null
+    }
+
+    spaceUnits = 2
+    isTabStart = !(colNum % spaceUnits)
+
+    if ((char === ' ') && (isTabStart)) {
+      return 'lkcampbell-indent-guides'
+    } else {
+      return null
+    }
+  },
+  flattenSpans: false
+}
 
 export default {
   components: {
@@ -125,6 +170,8 @@ export default {
       }
       extraKeys['Shift-Tab'] = 'indentLess'
       cm.setOption('extraKeys', extraKeys)
+      cm.addOverlay(indentGuidesOverlay)
+      cm.refresh()
     },
     onCmCodeChange (newCode) {
       this.$emit('input', newCode)

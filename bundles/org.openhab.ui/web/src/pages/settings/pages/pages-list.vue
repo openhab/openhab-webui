@@ -71,6 +71,7 @@
             :link="showCheckboxes ? null : getPageType(page).type + '/' + page.uid"
             :title="page.config.label"
             :subtitle="getPageType(page).label"
+            :footer="page.uid"
           >
             <div slot="subtitle">
               <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
@@ -92,8 +93,9 @@
       <f7-fab-buttons position="top">
         <f7-fab-button fab-close label="Create sitemap" href="sitemap/add"><f7-icon f7="menu"></f7-icon></f7-fab-button>
         <f7-fab-button fab-close label="Create layout" href="layout/add"><f7-icon f7="rectangle_grid_2x2"></f7-icon></f7-fab-button>
-        <!-- <f7-fab-button fab-close label="Create map view" href="add"><f7-icon f7="map"></f7-icon></f7-fab-button>
-        <f7-fab-button fab-close label="Create chart" href="add"><f7-icon f7="graph_square"></f7-icon></f7-fab-button>
+        <f7-fab-button fab-close label="Create tabbed page" href="tabs/add"><f7-icon f7="squares_below_rectangle"></f7-icon></f7-fab-button>
+        <f7-fab-button fab-close label="Create map view" href="map/add"><f7-icon f7="map"></f7-icon></f7-fab-button>
+        <!-- <f7-fab-button fab-close label="Create chart" href="add"><f7-icon f7="graph_square"></f7-icon></f7-fab-button>
         <f7-fab-button fab-close label="Create floor plan" href="add"><f7-icon f7="layers"></f7-icon></f7-fab-button> -->
       </f7-fab-buttons>
     </f7-fab>
@@ -112,7 +114,9 @@ export default {
       showCheckboxes: false,
       pageTypes: [
         { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap' },
-        { type: 'layout', label: 'Layout', componentType: 'oh-layout-page' }
+        { type: 'layout', label: 'Layout', componentType: 'oh-layout-page' },
+        { type: 'tabs', label: 'Tabbed', componentType: 'oh-tabs-page' },
+        { type: 'map', label: 'Map', componentType: 'oh-map-page' }
       ]
     }
   },
@@ -130,6 +134,12 @@ export default {
       switch (page.component) {
         case 'Sitemap':
           return 'menu'
+        case 'oh-layout-page':
+          return 'rectangle_grid_2x2'
+        case 'oh-tabs-page':
+          return 'squares_below_rectangle'
+        case 'oh-map-page':
+          return 'map'
         default:
           return 'tv'
       }

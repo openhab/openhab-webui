@@ -1,6 +1,6 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="layout-editor">
-    <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create layout page' : page.config.label" back-link="Back" no-hairline>
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="tabs-editor">
+    <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create tabbed page' : page.config.label" back-link="Back" no-hairline>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
@@ -8,15 +8,16 @@
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
+      <!-- <f7-link @click="currentTab = 'preview'" :tab-link-active="currentTab === 'preview'" class="tab-link">Preview</f7-link> -->
       <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details" v-show="currentTab === 'design'">
-      <div style="margin-left: auto">
+      <!-- <div style="margin-left: auto">
         <f7-toggle :checked="previewMode" @toggle:change="(value) => previewMode = value"></f7-toggle> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
-      </div>
+      </div> -->
     </f7-toolbar>
-    <f7-tabs class="layout-editor-tabs">
-      <f7-tab id="design" class="layout-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+    <f7-tabs class="tabs-editor-tabs">
+      <f7-tab id="design" class="tabs-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader></f7-preloader>
           <div>Loading...</div>
@@ -38,19 +39,47 @@
           </f7-col>
         </f7-block>
 
-        <oh-layout-page class="layout-page" v-if="ready" :context="context" :key="pageKey"
-          @add-block="addBlock"
-          @add-masonry="addMasonry"
-        />
+        <f7-block class="block-narrow" v-if="ready">
+          <f7-col>
+            <f7-block-title>Tabs</f7-block-title>
+            <f7-menu v-if="clipboardType === 'oh-tab'">
+              <f7-menu-item style="margin-left: auto" icon-f7="squares_below_rectangle" dropdown>
+                <f7-menu-dropdown right>
+                  <f7-menu-dropdown-item @click="pasteWidget(page, null)" href="#" text="Paste"></f7-menu-dropdown-item>
+                </f7-menu-dropdown>
+              </f7-menu-item>
+            </f7-menu>
 
-        <!-- <f7-actions ref="widgetTypeSelection" id="widget-type-selection" :grid="true">
-          <f7-actions-group>
-            <f7-actions-button v-for="widgetType in widgetTypes" :key="widgetType.type" @click="addWidget(widgetType.type)">
-              <f7-icon :f7="widgetType.icon" slot="media" />
-              <span>{{widgetType.type}}</span>
-            </f7-actions-button>
-          </f7-actions-group>
-        </f7-actions> -->
+            <f7-list media-list>
+              <f7-list-item media-item v-for="(tab, idx) in page.slots.default" :key="idx"
+                :title="tab.config.title" :subtitle="tab.config.page">
+                <f7-icon slot="media" :ios="tab.config.icon" :md="tab.config.icon" :aurora="tab.config.icon" color="gray" />
+                <f7-menu slot="content-start">
+                  <f7-menu-item icon-f7="list_bullet" dropdown>
+                    <f7-menu-dropdown>
+                      <f7-menu-dropdown-item @click="configureWidget(tab,  { component: page })" href="#" text="Configure Tab"></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item @click="editWidgetCode(tab, { component: page })" href="#" text="Edit YAML"></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item @click="cutWidget(tab, { component: page })" href="#" text="Cut"></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item @click="copyWidget(tab, { component: page })" href="#" text="Copy"></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item @click="moveWidgetUp(tab, { component: page })" href="#" text="Move Up"></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item @click="moveWidgetDown(tab, { component: page })" href="#" text="Move Down"></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item @click="removeWidget(tab, { component: page })" href="#" text="Remove Tab"></f7-menu-dropdown-item>
+                    </f7-menu-dropdown>
+                  </f7-menu-item>
+                </f7-menu>
+              </f7-list-item>
+              <f7-list-button color="blue" title="Add tab" @click="addWidget(page, 'oh-tab')" />
+            </f7-list>
+          </f7-col>
+        </f7-block>
+
+      </f7-tab>
+
+      <f7-tab id="preview" class="tabs-editor-preview-tab" @tab:show="() => this.currentTab = 'preview'" :tab-active="currentTab === 'preview'">
+
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'" class="page-code-editor" mode="text/x-yaml" :value="pageYaml" @input="(value) => pageYaml = value" />
@@ -117,26 +146,16 @@
   position absolute
   top 80%
   white-space pre-wrap
-.layout-editor-design-tab
-  .layout-page
-    .oh-masonry
-      z-index inherit
-      padding-bottom 5rem
-.layout-editor
-  .page-content
-    padding-bottom 5rem
-    z-index inherit
 </style>
 
 <script>
 import YAML from 'yaml'
 
-import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
-import * as SystemWidgets from '@/components/widgets/system/index'
-import * as StandardWidgets from '@/components/widgets/standard/index'
-import * as LayoutWidgets from '@/components/widgets/layout/index'
-
+// import OhMapPage from '@/components/widgets/map/oh-map-page.vue'
+import OhTab from './oh-tab'
 import ConfigSheet from '@/components/config/config-sheet.vue'
+
+const ConfigurableWidgets = { OhTab }
 
 function uuidv4 () {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
@@ -147,7 +166,6 @@ function uuidv4 () {
 export default {
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
-    OhLayoutPage,
     ConfigSheet
   },
   props: ['createMode', 'uid'],
@@ -157,7 +175,7 @@ export default {
       loading: false,
       page: {
         uid: 'page_' + uuidv4().split('-')[0],
-        component: 'oh-layout-page',
+        component: 'oh-tabs-page',
         config: {},
         slots: { default: [] }
       },
@@ -234,11 +252,11 @@ export default {
     keyDown (ev) {
       if (ev.ctrlKey || ev.metakKey) {
         switch (ev.keyCode) {
-          case 82:
-            this.previewMode = !this.previewMode
-            ev.stopPropagation()
-            ev.preventDefault()
-            break
+          // case 82:
+          //   this.previewMode = !this.previewMode
+          //   ev.stopPropagation()
+          //   ev.preventDefault()
+          //   break
           case 83:
             this.save(!this.createMode)
             ev.stopPropagation()
@@ -315,35 +333,6 @@ export default {
           slots: { default: [] }
         })
         this.forceUpdate()
-      } else {
-        let actions
-        var doAddWidget = (choice) => {
-          component.slots[slot].push({
-            component: choice,
-            config: {}
-          })
-          this.$nextTick(() => actions.destroy())
-          this.forceUpdate()
-        }
-        const standardWidgetOptions = Object.keys(StandardWidgets).map((k) => {
-          return {
-            text: StandardWidgets[k].widget.label,
-            onClick: () => doAddWidget(StandardWidgets[k].widget.name)
-          }
-        })
-        const customWidgetOptions = this.$store.state.components.widgets.map((w) => {
-          return {
-            text: w.uid,
-            onClick: () => doAddWidget('widget:' + w.uid)
-          }
-        })
-        actions = this.$f7.actions.create({
-          grid: true,
-          buttons: [
-            standardWidgetOptions,
-            customWidgetOptions
-          ]
-        }).open()
       }
     },
     widgetConfigClosed () {
@@ -368,22 +357,6 @@ export default {
       this.forceUpdate()
       this.widgetCodeClosed()
     },
-    addBlock (component) {
-      component.slots.default.push({
-        component: 'oh-block',
-        config: {},
-        slots: { default: [] }
-      })
-    },
-    addMasonry (component) {
-      if (!component.slots.masonry) {
-        this.$set(this.page.slots, 'masonry', [{
-          component: 'oh-masonry',
-          config: { nbTestCards: 10 },
-          slots: { default: [] }
-        }])
-      }
-    },
     configureWidget (component, parentContext, forceComponentType) {
       const componentType = forceComponentType || component.component
       this.currentComponent = null
@@ -392,7 +365,7 @@ export default {
       if (componentType.indexOf('widget:') === 0) {
         this.currentWidget = this.$store.getters.widget(componentType.substring(7))
       } else {
-        widgetDefinition = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets }).find((w) => w.widget && w.widget.name === componentType)
+        widgetDefinition = Object.values(ConfigurableWidgets).find((w) => w.widget && w.widget.name === componentType)
         if (!widgetDefinition) {
           // widgetDefinition = Object.values(LayoutWidgets).find((w) => w.widget.name === component.component)
           if (!widgetDefinition) {
@@ -464,15 +437,13 @@ export default {
     },
     toYaml () {
       this.pageYaml = YAML.stringify({
-        blocks: this.page.slots.default,
-        masonry: this.page.slots.masonry
+        tabs: this.page.slots.default
       })
     },
     fromYaml () {
       try {
-        const updatedSlots = YAML.parse(this.pageYaml)
-        this.$set(this.page.slots, 'default', updatedSlots.blocks)
-        this.$set(this.page.slots, 'masonry', updatedSlots.masonry)
+        const updatedTabs = YAML.parse(this.pageYaml)
+        this.$set(this.page.slots, 'default', updatedTabs.tabs)
         this.forceUpdate()
         return true
       } catch (e) {

@@ -12,10 +12,10 @@
         <generic-widget-component class="magic-grid-item" :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="idx" v-on="$listeners" />
       </template>
     </magic-grid>
-    <div v-else class="oh-columns-grid">
-      <div v-for="(slotComponent, idx) in context.component.slots.default" :key="idx" class="oh-column-item">
-        <f7-menu v-if="context.editmode" class="configure-layout-menu" :style="{ 'z-index': 100 - context.component.slots.default.indexOf(slotComponent) }">
-          <f7-menu-item style="margin-left: auto" icon-f7="slider_horizontal_below_rectangle" dropdown>
+    <div v-else class="oh-masonry">
+      <div v-for="(slotComponent, idx) in context.component.slots.default" :key="idx" class="oh-masonry-item" :style="{ 'min-height': dropdownMenuOpened === idx ? 'calc(10 * var(--f7-menu-dropdown-item-height))' : undefined, 'z-index': 100 - context.component.slots.default.indexOf(slotComponent) }">
+        <f7-menu v-if="context.editmode" class="configure-layout-menu">
+          <f7-menu-item style="margin-left: auto" icon-f7="slider_horizontal_below_rectangle" dropdown @menu:opened="dropdownMenuOpened = idx" @menu:closed="dropdownMenuOpened = null">
             <f7-menu-dropdown right>
             <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Configure Widget"></f7-menu-dropdown-item>
             <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(slotComponent, context)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
@@ -45,6 +45,11 @@ export default {
   mixins: [mixin],
   components: {
     OhPlaceholderWidget
+  },
+  data () {
+    return {
+      dropdownMenuOpened: null
+    }
   }
 }
 </script>
@@ -58,16 +63,18 @@ export default {
 .magic-grid-item
   width calc(100% - 2 * var(--oh-grid-gap))
 
-.oh-columns-grid
+.oh-masonry
   column-count 6
   column-width 300px
   column-gap 0
   margin-left auto
   margin-right auto
   min-height 300px
-  .oh-column-item
+  .oh-masonry-item
     width 100%
     display inline-block
+    .list
+      z-index inherit
     &.placeholder
       width calc(100% - 16px)
 

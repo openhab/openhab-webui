@@ -36,7 +36,11 @@ export default {
               evalConfig[key] = expr.eval(this.exprAst[key], {
                 items: this.context.store,
                 props: this.context.props,
-                Math: Math
+                Math: Math,
+                theme: this.$theme,
+                themeOptions: this.$f7.data.themeOptions,
+                device: this.$device,
+                JSON: JSON
               })
             } catch (e) {
               evalConfig[key] = e

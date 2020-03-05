@@ -2,8 +2,8 @@ import HomePage from '../pages/home.vue'
 import AboutPage from '../pages/about.vue'
 import NotFoundPage from '../pages/not-found.vue'
 
-import SitemapPage from '../pages/page/sitemap.vue'
-import LayoutPage from '../pages/page/layout-page.vue'
+import SitemapViewPage from '../pages/page/sitemap-view.vue'
+import PageViewPage from '../pages/page/page-view.vue'
 
 import SetupWizard from '../pages/wizards/setup-wizard.vue'
 import SetupWizardPage from '../pages/wizards/setup-wizard-page.vue'
@@ -33,8 +33,6 @@ import RuleEditPage from '../pages/settings/rules/rule-edit.vue'
 import RuleConfigureModulePage from '../pages/settings/rules/rule-configure-module.vue'
 
 import PagesListPage from '../pages/settings/pages/pages-list.vue'
-import SitemapEditPage from '../pages/settings/pages/sitemap/sitemap-edit.vue'
-import LayoutEditPage from '../pages/settings/pages/layout/layout-edit.vue'
 
 // import SchedulePage from '../pages/settings/schedule/schedule.vue'
 
@@ -62,11 +60,11 @@ export default [
   },
   {
     path: '/page/:uid',
-    component: LayoutPage
+    component: PageViewPage
   },
   {
     path: '/sitemap/:sitemapId/:pageId',
-    component: SitemapPage
+    component: SitemapViewPage
   },
   {
     path: '/about/',
@@ -121,30 +119,23 @@ export default [
         component: PagesListPage,
         routes: [
           {
-            path: 'sitemap/add',
-            component: SitemapEditPage,
-            options: {
-              props: {
-                createMode: true
-              }
+            path: ':type/:uid',
+            async (routeTo, routeFrom, resolve, reject) {
+              // dynamic import component; returns promise
+              const editorComponent = () => import(`../pages/settings/pages/${routeTo.params.type}/${routeTo.params.type}-edit.vue`)
+              // resolve promise
+              editorComponent().then((vc) => {
+                // resolve with component
+                resolve({
+                  component: vc.default
+                },
+                (routeTo.params.uid === 'add') ? {
+                  props: {
+                    createMode: true
+                  }
+                } : {})
+              })
             }
-          },
-          {
-            path: 'sitemap/:uid',
-            component: SitemapEditPage
-          },
-          {
-            path: 'layout/add',
-            component: LayoutEditPage,
-            options: {
-              props: {
-                createMode: true
-              }
-            }
-          },
-          {
-            path: 'layout/:uid',
-            component: LayoutEditPage
           }
         ]
       },

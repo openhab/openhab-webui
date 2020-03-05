@@ -8,6 +8,8 @@
 
 <style lang="stylus">
 .placeholder-widget
+  width 100%
+  display inline-block
   opacity 0.5
   height calc(2*3rem + 50px)
   .button
