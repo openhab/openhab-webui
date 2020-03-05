@@ -1,9 +1,6 @@
 <template>
   <f7-popover :target="el">
-    <oh-layout-page v-if="page && page.component === 'oh-layout-page'" :context="context"
-      class="layout-page"
-      :class="{notready: !ready}" />
-    <generic-widget-component v-else-if="widget" :context="context" :class="{notready: !ready}" />
+    <component :is="componentType" :context="context" :class="{notready: !ready}" />
   </f7-popover>
 </template>
 
@@ -41,6 +38,21 @@ export default {
     },
     ready () {
       return this.page || this.widget
+    },
+    componentType () {
+      if (this.page) {
+        switch (this.page.component) {
+          case 'oh-layout-page':
+            return OhLayoutPage
+          case 'oh-map-page':
+            return () => import('@/components/widgets/map/oh-map-page.vue')
+          default:
+            return null
+        }
+      } else if (this.widget) {
+        return 'generic-widget-component'
+      }
+      return null
     }
   }
 }

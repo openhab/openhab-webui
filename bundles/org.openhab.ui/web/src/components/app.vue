@@ -22,7 +22,7 @@
                 :class="{ currentsection: currentUrl.indexOf('/page/' + page.uid) >= 0 }"
                 :link="'/page/' + page.uid"
                 :title="page.config.label" view=".view-main" panel-close>
-          <f7-icon slot="media" f7="tv"></f7-icon>
+          <f7-icon slot="media" :f7="pageIcon(page)"></f7-icon>
         </f7-list-item>
       </f7-list>
       <f7-block-title>Administration</f7-block-title>
@@ -284,6 +284,20 @@ export default {
             return order1 - order2
           })
       })
+    },
+    pageIcon (page) {
+      switch (page.component) {
+        case 'Sitemap':
+          return 'menu'
+        case 'oh-layout-page':
+          return 'rectangle_grid_2x2'
+        case 'oh-tabs-page':
+          return 'squares_below_rectangle'
+        case 'oh-map-page':
+          return 'map'
+        default:
+          return 'tv'
+      }
     },
     login () {
       localStorage.setItem('openhab.ui:serverUrl', this.serverUrl)
