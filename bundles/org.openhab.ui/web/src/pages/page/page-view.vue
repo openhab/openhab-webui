@@ -20,7 +20,7 @@
       </f7-tab>
     </f7-tabs>
 
-    <component :is="pageComponent(page)" v-if="page" :context="context" :class="{notready: !ready}" @command="onCommand" />
+    <component :is="page.component" v-if="page" :context="context" :class="{notready: !ready}" @command="onCommand" />
 
   </f7-page>
 </template>
@@ -35,8 +35,9 @@ import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 
 export default {
   components: {
-    OhLayoutPage,
-    'oh-map-page': () => import('@/components/widgets/map/oh-map-page.vue')
+    'oh-layout-page': OhLayoutPage,
+    'oh-map-page': () => import('@/components/widgets/map/oh-map-page.vue'),
+    'oh-plan-page': () => import('@/components/widgets/plan/oh-plan-page.vue')
   },
   props: ['uid', 'deep'],
   data () {
@@ -66,6 +67,8 @@ export default {
           return 'map'
         case 'oh-tabs-page':
           return 'tabs'
+        case 'oh-plan-page':
+          return 'plan'
         default:
           console.warn('Unknown page type!')
           return 'unknown'
@@ -97,20 +100,9 @@ export default {
         store: this.$store.getters.trackedItems
       }
     },
-    pageComponent (page) {
-      if (!page) return null
-      switch (page.component) {
-        case 'oh-layout-page':
-          return OhLayoutPage
-        case 'oh-map-page':
-          return 'oh-map-page'
-        default:
-          return null
-      }
-    },
     tabComponent (tab) {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
-      return this.pageComponent(page)
+      return page.component
     }
   }
 }

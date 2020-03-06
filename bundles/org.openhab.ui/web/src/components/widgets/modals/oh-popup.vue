@@ -29,8 +29,9 @@ import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 
 export default {
   components: {
-    OhLayoutPage,
-    'oh-map-page': () => import('@/components/widgets/map/oh-map-page.vue')
+    'oh-layout-page': OhLayoutPage,
+    'oh-map-page': () => import('@/components/widgets/map/oh-map-page.vue'),
+    'oh-plan-page': () => import('@/components/widgets/plan/oh-plan-page.vue')
   },
   props: ['uid', 'modalParams'],
   data () {
@@ -57,14 +58,7 @@ export default {
     },
     componentType () {
       if (this.page) {
-        switch (this.page.component) {
-          case 'oh-layout-page':
-            return OhLayoutPage
-          case 'oh-map-page':
-            return 'oh-map-page'
-          default:
-            return null
-        }
+        return this.page.component
       } else if (this.widget) {
         return 'generic-widget-component'
       }
@@ -81,20 +75,9 @@ export default {
         store: this.$store.getters.trackedItems
       }
     },
-    pageComponent (page) {
-      if (!page) return null
-      switch (page.component) {
-        case 'oh-layout-page':
-          return OhLayoutPage
-        case 'oh-map-page':
-          return 'oh-map-page'
-        default:
-          return null
-      }
-    },
     tabComponent (tab) {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
-      return this.pageComponent(page)
+      return page.component
     }
   }
 }

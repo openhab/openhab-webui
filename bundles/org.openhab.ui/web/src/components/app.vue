@@ -295,6 +295,8 @@ export default {
           return 'squares_below_rectangle'
         case 'oh-map-page':
           return 'map'
+        case 'oh-plan-page':
+          return 'square_stack_3d_up'
         default:
           return 'tv'
       }

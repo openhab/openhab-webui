@@ -79,7 +79,7 @@
               </f7-chip>
             </div>
             <!-- <span slot="media" class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
-            <f7-icon slot="media" color="gray" :f7="icon(page)" :size="32"></f7-icon>
+            <f7-icon slot="media" color="gray" :f7="getPageIcon(page)" :size="32"></f7-icon>
           </f7-list-item>
         </f7-list>
       </f7-col>
@@ -95,8 +95,8 @@
         <f7-fab-button fab-close label="Create layout" href="layout/add"><f7-icon f7="rectangle_grid_2x2"></f7-icon></f7-fab-button>
         <f7-fab-button fab-close label="Create tabbed page" href="tabs/add"><f7-icon f7="squares_below_rectangle"></f7-icon></f7-fab-button>
         <f7-fab-button fab-close label="Create map view" href="map/add"><f7-icon f7="map"></f7-icon></f7-fab-button>
-        <!-- <f7-fab-button fab-close label="Create chart" href="add"><f7-icon f7="graph_square"></f7-icon></f7-fab-button>
-        <f7-fab-button fab-close label="Create floor plan" href="add"><f7-icon f7="layers"></f7-icon></f7-fab-button> -->
+        <f7-fab-button fab-close label="Create floor plan" href="plan/add"><f7-icon f7="square_stack_3d_up"></f7-icon></f7-fab-button>
+        <!-- <f7-fab-button fab-close label="Create chart" href="add"><f7-icon f7="graph_square"></f7-icon></f7-fab-button> -->
       </f7-fab-buttons>
     </f7-fab>
   </f7-page>
@@ -113,10 +113,11 @@ export default {
       selectedItems: [],
       showCheckboxes: false,
       pageTypes: [
-        { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap' },
-        { type: 'layout', label: 'Layout', componentType: 'oh-layout-page' },
-        { type: 'tabs', label: 'Tabbed', componentType: 'oh-tabs-page' },
-        { type: 'map', label: 'Map', componentType: 'oh-map-page' }
+        { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap', icon: 'menu' },
+        { type: 'layout', label: 'Layout', componentType: 'oh-layout-page', icon: 'rectangle_grid_2x2' },
+        { type: 'tabs', label: 'Tabbed', componentType: 'oh-tabs-page', icon: 'squares_below_rectangle' },
+        { type: 'map', label: 'Map', componentType: 'oh-map-page', icon: 'map' },
+        { type: 'plan', label: 'Floor plan', componentType: 'oh-plan-page', icon: 'square_stack_3d_up' }
       ]
     }
   },
@@ -129,20 +130,6 @@ export default {
     },
     onPageAfterOut () {
 
-    },
-    icon (page) {
-      switch (page.component) {
-        case 'Sitemap':
-          return 'menu'
-        case 'oh-layout-page':
-          return 'rectangle_grid_2x2'
-        case 'oh-tabs-page':
-          return 'squares_below_rectangle'
-        case 'oh-map-page':
-          return 'map'
-        default:
-          return 'tv'
-      }
     },
     load () {
       if (this.loading) return
@@ -178,6 +165,10 @@ export default {
     },
     getPageType (page) {
       return this.pageTypes.find(t => t.componentType === page.component)
+    },
+    getPageIcon (page) {
+      const pageType = this.pageTypes.find(t => t.componentType === page.component)
+      return (pageType) ? pageType.icon : 'tv'
     },
     removeSelected () {
       const vm = this

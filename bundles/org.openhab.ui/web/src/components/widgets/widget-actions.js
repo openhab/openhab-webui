@@ -188,7 +188,7 @@ export const actionsMixin = {
           let modalProps = {
             props: {
               uid: actionModal,
-              el: evt.target,
+              el: (evt && evt.target && evt.target._icon) ? evt.target._icon : (evt) ? evt.target : null,
               modalParams: actionModalConfig || {}
             }
           }

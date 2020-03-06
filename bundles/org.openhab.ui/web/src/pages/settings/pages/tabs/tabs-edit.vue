@@ -39,7 +39,7 @@
           </f7-col>
         </f7-block>
 
-        <f7-block class="block-narrow" v-if="ready">
+        <f7-block class="block-narrow" style="padding-bottom: 8rem" v-if="ready">
           <f7-col>
             <f7-block-title>Tabs</f7-block-title>
             <f7-menu v-if="clipboardType === 'oh-tab'">

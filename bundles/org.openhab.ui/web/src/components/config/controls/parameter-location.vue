@@ -13,7 +13,7 @@
           <f7-button slot="content-end" @click="openMapPicker"><f7-icon f7="placemark" /> Map</f7-button>
         </div>
       </f7-list-input>
-      <f7-popup ref="mapPicker" class="mappicker-popup" close-on-escape :opened="mapPickerOpen" @popup:opened="mapPickerOpened" @popup:closed="mapPickerClosed">
+      <f7-popup ref="mapPicker" class="mappicker-popup" :opened="mapPickerOpen" @popup:opened="mapPickerOpened" @popup:closed="mapPickerClosed">
         <f7-page>
           <f7-navbar>
             <f7-nav-left>
@@ -36,7 +36,7 @@
                 :url="url"
                 :attribution="attribution"
               />
-              <l-marker :lat-lng="marker" />
+              <l-marker v-if="marker" :lat-lng="marker" />
           </l-map>
 
         </f7-page>
@@ -71,12 +71,12 @@ export default {
   data () {
     return {
       mapPickerOpen: false,
-      zoom: 13,
-      center: latLng(52.5200066, 13.4049540),
+      zoom: 4,
+      center: latLng(48, 6),
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       url: `https://a.basemaps.cartocdn.com/${this.$f7.data.themeOptions.dark}_all/{z}/{x}/{y}.png`,
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution/">CARTO</a>',
-      marker: latLng(52.5200066, 13.4049540),
+      attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
+      marker: null,
       showMap: false,
       mapOptions: {
         zoomSnap: 0.5
@@ -97,7 +97,12 @@ export default {
       this.mapPickerOpen = false
     },
     mapPickerOpened () {
-      this.$nextTick(() => { this.showMap = true })
+      this.$nextTick(() => {
+        this.zoom = (this.value) ? 13 : 4
+        this.marker = (this.value) ? latLng(this.value.split(',')) : null
+        this.center = (this.value) ? latLng(this.value.split(',')) : latLng(48, 6)
+        this.showMap = true
+      })
     },
     mapClicked (evt) {
       this.marker = latLng(evt.latlng)
