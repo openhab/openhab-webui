@@ -1,6 +1,6 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="map-editor">
-    <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create map page' : page.config.label" back-link="Back" no-hairline>
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="plan-editor">
+    <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create plan page' : page.config.label" back-link="Back" no-hairline>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
@@ -16,8 +16,8 @@
         <f7-toggle :checked="previewMode" @toggle:change="(value) => previewMode = value"></f7-toggle> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
-    <f7-tabs class="map-editor-tabs">
-      <f7-tab id="design" class="map-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+    <f7-tabs class="plan-editor-tabs">
+      <f7-tab id="design" class="plan-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader></f7-preloader>
           <div>Loading...</div>
@@ -41,9 +41,17 @@
 
         <f7-block class="block-narrow" style="padding-bottom: 8rem" v-if="ready && !previewMode">
           <f7-col>
-            <f7-block-title>Markers</f7-block-title>
-            <f7-menu v-if="clipboardType === 'oh-map-marker'">
-              <f7-menu-item style="margin-left: auto" icon-f7="map" dropdown>
+            <f7-block-title>Background Configuration</f7-block-title>
+            <config-sheet
+              :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
+              :parameters="pageWidgetDefinition.props.parameters || []"
+              :configuration="page.config"
+              @updated="dirty = true"
+            />
+
+            <f7-block-title class="padding-bottom">Markers</f7-block-title>
+            <f7-menu v-if="clipboardType === 'oh-plan-marker'" class="padding-bottom">
+              <f7-menu-item style="margin-left: auto" icon-f7="square_on_square" dropdown>
                 <f7-menu-dropdown right>
                   <f7-menu-dropdown-item @click="pasteWidget(page, null)" href="#" text="Paste"></f7-menu-dropdown-item>
                 </f7-menu-dropdown>
@@ -52,7 +60,7 @@
 
             <f7-list media-list>
               <f7-list-item media-item v-for="(marker, idx) in page.slots.default" :key="idx"
-                :title="marker.config.label" :subtitle="marker.config.item || marker.config.location">
+                :title="marker.config.name" :subtitle="marker.config.item || marker.config.location">
                 <oh-icon v-if="marker.config.icon && marker.config.icon.indexOf('oh:') === 0" slot="media" :icon="marker.config.icon.substring(3)" height="32" width="32" />
                 <f7-icon v-else slot="media" :f7="markerDefaultIcon(marker)" :size="32" />
                 <f7-menu slot="content-start">
@@ -72,18 +80,17 @@
                   </f7-menu-item>
                 </f7-menu>
               </f7-list-item>
-              <f7-list-button color="blue" title="Add marker" @click="addWidget(page, 'oh-map-marker')" />
-              <f7-list-button color="blue" title="Add circle marker" @click="addWidget(page, 'oh-map-circle-marker')" />
-              <!-- <f7-list-button color="blue" title="Add marker" @click="addWidget(page, 'oh-map-radius')" /> -->
+              <f7-list-button color="blue" title="Add marker" @click="addWidget(page, 'oh-plan-marker')" />
             </f7-list>
+            <f7-block-footer class="param-description">You can also <f7-link style="z-index: inherit" href="#" @click="previewMode = true">switch to Run mode</f7-link> to add markers and position them on the plan.</f7-block-footer>
           </f7-col>
         </f7-block>
 
-        <oh-map-page class="map-page" v-else-if="ready && previewMode" :context="context" :key="pageKey" />
+        <oh-plan-page class="plan-page" v-else-if="ready && previewMode" :context="context" :key="pageKey" />
 
       </f7-tab>
 
-      <!-- <f7-tab id="preview" class="map-editor-preview-tab" @tab:show="() => this.currentTab = 'preview'" :tab-active="currentTab === 'preview'">
+      <!-- <f7-tab id="preview" class="plan-editor-preview-tab" @tab:show="() => this.currentTab = 'preview'" :tab-active="currentTab === 'preview'">
       </f7-tab> -->
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
@@ -146,8 +153,8 @@
   position absolute
   top 80%
   white-space pre-wrap
-.map-editor
-  .oh-map-page-lmap
+.plan-editor
+  .oh-plan-page-lmap
     top calc(var(--f7-navbar-height) + var(--f7-toolbar-height)) !important
     height calc(100% - var(--f7-navbar-height) - 2 * var(--f7-toolbar-height)) !important
 </style>
@@ -155,17 +162,16 @@
 <script>
 import YAML from 'yaml'
 
-// import OhMapPage from '@/components/widgets/map/oh-map-page.vue'
-import OhMapMarker from '@/components/widgets/map/oh-map-marker.vue'
-import OhMapCircleMarker from '@/components/widgets/map/oh-map-circle-marker.vue'
+// import OhplanPage from '@/components/widgets/plan/oh-plan-page.vue'
+import OhPlanPage from '@/components/widgets/plan/oh-plan-page.vue'
+import OhPlanMarker from '@/components/widgets/plan/oh-plan-marker.vue'
 
 // const ConfigurableWidgets = {
-//   'oh-map-marker': () => import('@/components/widgets/map/oh-map-marker.vue'),
-//   'oh-map-circle-marker': () => import('@/components/widgets/map/oh-map-circle-marker.vue')
+//   'oh-plan-marker': () => import('@/components/widgets/plan/oh-plan-marker.vue'),
+//   'oh-plan-circle-marker': () => import('@/components/widgets/plan/oh-plan-circle-marker.vue')
 // }
 const ConfigurableWidgets = {
-  OhMapMarker,
-  OhMapCircleMarker
+  OhPlanMarker
 }
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
@@ -179,7 +185,7 @@ function uuidv4 () {
 export default {
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
-    'oh-map-page': () => import('@/components/widgets/map/oh-map-page.vue'),
+    OhPlanPage,
     ConfigSheet
   },
   props: ['createMode', 'uid'],
@@ -187,9 +193,10 @@ export default {
     return {
       pageReady: false,
       loading: false,
+      pageWidgetDefinition: OhPlanPage.widget,
       page: {
         uid: 'page_' + uuidv4().split('-')[0],
-        component: 'oh-map-page',
+        component: 'oh-plan-page',
         config: {},
         slots: { default: [] }
       },
@@ -216,7 +223,7 @@ export default {
         component: this.page,
         store: this.$store.getters.trackedItems,
         // states: this.stateTracking.store,
-        editmode: (!this.previewMode) ? {
+        editmode: {
           addWidget: this.addWidget,
           configureWidget: this.configureWidget,
           editWidgetCode: this.editWidgetCode,
@@ -226,7 +233,7 @@ export default {
           moveWidgetUp: this.moveWidgetUp,
           moveWidgetDown: this.moveWidgetDown,
           removeWidget: this.removeWidget
-        } : null,
+        },
         clipboardtype: this.clipboardType
       }
     },

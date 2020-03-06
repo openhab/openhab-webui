@@ -23,6 +23,7 @@
 <style lang="stylus">
 .oh-map-page-lmap
   position absolute
+  background-color var(--f7-page-bg-color)
   top calc(var(--f7-navbar-height))
   height calc(100% - var(--f7-navbar-height)) !important
   &.with-tabbar
@@ -62,7 +63,7 @@ export default {
       center: latLng(52.5200066, 13.4049540),
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       url: `https://a.basemaps.cartocdn.com/${this.$f7.data.themeOptions.dark}_all/{z}/{x}/{y}.png`,
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution/">CARTO</a>',
+      attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
       showMap: true,
       mapOptions: {
         zoomSnap: 0.5

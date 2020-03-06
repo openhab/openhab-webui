@@ -26,7 +26,7 @@
           <f7-col v-if="displayedParameters.some((p) => p.groupName === group.name)">
             <f7-block-title class="parameter-group-title">{{group.label}}</f7-block-title>
             <f7-block-footer class="param-description" v-if="group.description">
-              {{group.description}}
+              <div v-html="group.description"></div>
             </f7-block-footer>
 
             <config-parameter

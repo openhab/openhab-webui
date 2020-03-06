@@ -24,12 +24,15 @@
       <f7-block-title><h4>Appearance Options (local to this device)</h4></f7-block-title>
       <theme-switcher />
 
-      <f7-block-title v-if="hasServiceWorker"><h4>Cache Management</h4></f7-block-title>
-      <f7-col v-if="hasServiceWorker">
-        <p class="padding-horizontal">An active service worker is in place to cache the assets of this app to make it load faster, however it may not detect when it has been updated to a new version, even if you refresh the page.</p>
+      <f7-block-title><h4>Reload</h4></f7-block-title>
+      <f7-col v-if="showCachePurgeOption">
+        <p class="padding-horizontal">If an active service worker is in place, to cache the assets of this app to make it load faster, however it may not detect when it has been updated to a new version, even if you refresh the page.</p>
         <p class="padding-horizontal">Click Purge the Application Cache below to clear the cache and download everything from the server again.</p>
+      </f7-col>
+      <f7-col>
         <f7-list>
-          <f7-list-button color="red" @click="purgeServiceWorkerAndCaches()">Purge the Application Cache</f7-list-button>
+          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches()">Purge the Application Cache and Reload</f7-list-button>
+          <f7-list-button color="blue" @click="reload">Reload the App</f7-list-button>
         </f7-list>
       </f7-col>
     </f7-block>
@@ -48,23 +51,29 @@ export default {
   },
   data () {
     return {
-      hasServiceWorker: false
+      showCachePurgeOption: false
     }
   },
   mounted () {
-
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        if (registrations.length > 0) {
+          this.showCachePurgeOption = true
+        }
+      })
+    }
+    if (caches) {
+      caches.keys().then((cachesNames) => {
+        if (cachesNames.length > 0) {
+          this.showCachePurgeOption = true
+        }
+      })
+    }
   },
   methods: {
-    mounted () {
-      if (navigator.serviceWorker) {
-        navigator.serviceWorker.getRegistrations().then(() => {
-          this.hasServiceWorker = true
-        })
-      }
-    },
     purgeServiceWorkerAndCaches () {
       this.$f7.dialog.confirm(
-        'Purge all application caches and unregister the service workers? This will refresh the page and might take a few seconds.',
+        'Purge all application caches and unregister the service workers? This will also reload the page from the server, which might take a few seconds.',
         () => {
           navigator.serviceWorker.getRegistrations().then(function (registrations) {
             for (let registration of registrations) {
@@ -73,7 +82,7 @@ export default {
               }).then(function (clients) {
                 clients.forEach(client => {
                   if (client.url && 'navigate' in client) {
-                    setTimeout(() => { client.navigate(client.url) }, 1000)
+                    setTimeout(() => { client.navigate(client.url.split('#')[0]) }, 1000)
                   }
                 })
               })
@@ -88,9 +97,13 @@ export default {
             }))
           }).then(function () {
             console.log('Caches deleted')
+            setTimeout(() => { location.reload(true) }, 1000)
           })
         }
       )
+    },
+    reload () {
+      document.location.reload()
     }
   }
 }

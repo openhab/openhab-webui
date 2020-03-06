@@ -19,7 +19,9 @@ import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 
 export default {
   components: {
-    OhLayoutPage
+    'oh-layout-page': OhLayoutPage,
+    'oh-map-page': () => import('@/components/widgets/map/oh-map-page.vue'),
+    'oh-plan-page': () => import('@/components/widgets/plan/oh-plan-page.vue')
   },
   props: ['uid', 'modalParams'],
   data () {
@@ -45,14 +47,7 @@ export default {
     },
     componentType () {
       if (this.page) {
-        switch (this.page.component) {
-          case 'oh-layout-page':
-            return OhLayoutPage
-          case 'oh-map-page':
-            return () => import('@/components/widgets/map/oh-map-page.vue')
-          default:
-            return null
-        }
+        return this.page.component
       } else if (this.widget) {
         return 'generic-widget-component'
       }
