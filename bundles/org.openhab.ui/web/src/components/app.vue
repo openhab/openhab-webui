@@ -25,8 +25,8 @@
           <f7-icon slot="media" :f7="pageIcon(page)"></f7-icon>
         </f7-list-item>
       </f7-list>
-      <f7-block-title>Administration</f7-block-title>
-      <f7-list class="admin-links">
+      <f7-block-title v-if="isAdmin">Administration</f7-block-title>
+      <f7-list class="admin-links" v-if="isAdmin">
         <f7-list-item link="/settings/" title="Settings" view=".view-main" panel-close :animate="false"
             :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/addons/') >= 0 || currentUrl.indexOf('/settings/services/') >= 0 }">
           <f7-icon slot="media" ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray"></f7-icon>
@@ -72,18 +72,24 @@
           </f7-list-item>
           </ul>
         </li>
+      </f7-list>
 
+      <f7-list class="admin-links">
         <f7-list-item link="/about/" title="Help &amp; About" view=".view-main" panel-close
             :class="{ currentsection: currentUrl.indexOf('/about') >= 0 }">
           <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray"></f7-icon>
         </f7-list-item>
-        <f7-list-item v-if="loggedIn" link="/" title="Logout" @click="logout()" panel-close>
+        <!-- <f7-list-item v-if="loggedIn" link="/" title="Logout" @click="logout()" panel-close>
           <f7-icon slot="media" ios="f7:square_arrow_right" md="material:exit_to_app" color="gray"></f7-icon>
-        </f7-list-item>
+        </f7-list-item> -->
         <!-- <f7-list-item title="Master-Details" view=".view-main" panel-close>
           <f7-icon slot="media" ios="f7:exit" md="material:exit_to_app"></f7-icon>
         </f7-list-item> -->
       </f7-list>
+      <div class="account" v-if="ready">
+        <f7-button v-if="!loggedIn" large color="gray" icon-size="36" tooltip="Unlock Administration" icon-f7="lock_shield_fill" @click="authorize()" />
+        <f7-link v-if="user" color="gray" icon-size="30" :text="accountLabel" tooltip="Sign out" icon-f7="person_alt_circle_fill" @click="logout()" />
+      </div>
     </f7-page>
   </f7-panel>
 
@@ -153,6 +159,13 @@
     --f7-list-chevron-icon-color var(--f7-color-white)
     .icon
       color var(--f7-color-white) !important
+  .account
+    position absolute
+    bottom calc(var(--f7-safe-area-bottom))
+    display flex
+    justify-content center
+    width 100%
+    padding 1.5rem 0
 
 .theme-dark
   .panel-left
@@ -179,7 +192,10 @@ import cordovaApp from '../js/cordova-app.js'
 import routes from '../js/routes.js'
 import PanelRight from '../pages/panel-right.vue'
 
+import auth from '@/js/openhab/auth.js'
+
 export default {
+  mixins: [auth],
   components: {
     PanelRight
   },
@@ -251,11 +267,14 @@ export default {
       username: '',
       password: '',
 
+      user: null,
+
       sitemaps: null,
       pages: null,
       showSidebar: true,
       loginScreenOpened: false,
       loggedIn: false,
+      ready: false,
 
       themeOptions: {
         dark: false,
@@ -265,6 +284,14 @@ export default {
       showSettingsSubmenu: false,
       showDeveloperSubmenu: false,
       currentUrl: ''
+    }
+  },
+  computed: {
+    isAdmin () {
+      return this.ready && this.user && this.user.roles && this.user.roles.indexOf('administrator') >= 0
+    },
+    accountLabel () {
+      return this.user.name + '@' + (this.serverUrl || window.location.host)
     }
   },
   methods: {
@@ -283,6 +310,8 @@ export default {
             const order2 = p2.config.order || 1000
             return order1 - order2
           })
+
+        this.ready = true
       })
     },
     pageIcon (page) {
@@ -317,14 +346,26 @@ export default {
       })
     },
     logout () {
+      this.$f7.preloader.show()
+      this.ready = false
       localStorage.removeItem('openhab.ui:serverUrl')
       localStorage.removeItem('openhab.ui:username')
       localStorage.removeItem('openhab.ui:password')
+      this.user = null
       this.serverUrl = ''
       this.username = ''
       this.password = ''
-      this.loginScreenOpened = true
-      this.loggedIn = false
+      this.cleanSession().then(() => {
+        this.loggedIn = false
+        this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
+        window.location = window.location.origin
+        if (this.$device.cordova) {
+          this.loginScreenOpened = true
+        }
+      }).catch((err) => {
+        this.$f7.preloader.hide()
+        this.$f7.dialog.alert('Error while signing out: ' + err)
+      })
     }
   },
   created () {
@@ -351,7 +392,29 @@ export default {
         this.loggedIn = true
       }
 
-      this.loadSidebarPages()
+      const refreshToken = this.getRefreshToken()
+      if (refreshToken) {
+        this.refreshAccessToken().then((user) => {
+          this.loggedIn = true
+          this.$set(this, 'user', user)
+          this.loadSidebarPages()
+        }).catch((err) => {
+          this.$f7.dialog.alert('An error occurred while getting authorization: ' + err)
+        })
+      } else {
+        this.tryExchangeAuthorizationCode().then((user) => {
+          this.loggedIn = true
+          this.$set(this, 'user', user)
+          this.loadSidebarPages()
+        }).catch((err) => {
+          if (err) {
+            this.$f7.dialog.alert('An error occurred while getting authorization: ' + err)
+          } else {
+            // we're just not signed in
+            this.loadSidebarPages()
+          }
+        })
+      }
 
       this.$f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {

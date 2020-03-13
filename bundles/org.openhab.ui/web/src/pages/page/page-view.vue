@@ -6,7 +6,7 @@
       </f7-nav-left>
       <f7-nav-title>{{(ready) ? page.config.label : ''}}</f7-nav-title>
       <f7-nav-right>
-        <f7-link icon-md="material:edit" :href="'/settings/pages/' + pageType + '/' + uid">{{ $theme.md ? '' : 'Edit' }}</f7-link>
+        <f7-link v-if="isAdmin" icon-md="material:edit" :href="'/settings/pages/' + pageType + '/' + uid">{{ $theme.md ? '' : 'Edit' }}</f7-link>
       </f7-nav-right>
     </f7-navbar>
 
@@ -76,6 +76,9 @@ export default {
     },
     ready () {
       return this.page
+    },
+    isAdmin () {
+      return this.ready && this.$f7.data.user && this.$f7.data.user.roles && this.$f7.data.user.roles.indexOf('administrator') >= 0
     }
   },
   methods: {

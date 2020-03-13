@@ -2,6 +2,8 @@ import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
 
 let openSSEClients = []
 
+let accessToken = null
+
 function wrapPromise (f7promise) {
   return new Promise((resolve, reject) => {
     f7promise
@@ -44,7 +46,19 @@ function newSSEConnection (path, readyCallback, messageCallback, errorCallback) 
   return eventSource
 }
 
+Framework7.request.setup({
+  xhrFields: { withCredentials: true },
+  beforeSend (xhr) {
+    if (accessToken) {
+      xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+    }
+  }
+})
+
 export default {
+  setAccessToken (token) {
+    accessToken = token
+  },
   api: {
     get (uri, data) {
       return wrapPromise(Framework7.request.promise.json(uri, data))

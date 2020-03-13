@@ -95,6 +95,9 @@ var cordovaApp = {
 
     // register Cordova-compatible API interface
     Vue.prototype.$oh = {
+      setAccessToken () {
+        console.warn('Not supported in Cordova yet')
+      },
       api: openHABCordovaApi,
       sse: openHABCordovaSSE,
       media: openHABCordovaMedia
