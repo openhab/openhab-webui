@@ -2,6 +2,8 @@ import HomePage from '../pages/home.vue'
 import AboutPage from '../pages/about.vue'
 import NotFoundPage from '../pages/not-found.vue'
 
+import UserProfilePage from '../pages/profile.vue'
+
 import SitemapViewPage from '../pages/page/sitemap-view.vue'
 import PageViewPage from '../pages/page/page-view.vue'
 
@@ -78,6 +80,13 @@ export default [
     component: SetupWizardPage,
     options: {
       transition: 'f7-cover-v'
+    }
+  },
+  {
+    path: '/profile/',
+    component: UserProfilePage,
+    options: {
+      animate: false
     }
   },
   {

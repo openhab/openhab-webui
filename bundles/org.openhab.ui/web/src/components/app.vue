@@ -87,8 +87,16 @@
         </f7-list-item> -->
       </f7-list>
       <div class="account" v-if="ready">
-        <f7-button v-if="!loggedIn" large color="gray" icon-size="36" tooltip="Unlock Administration" icon-f7="lock_shield_fill" @click="authorize()" />
-        <f7-link v-if="user" color="gray" icon-size="30" :text="accountLabel" tooltip="Sign out" icon-f7="person_alt_circle_fill" @click="logout()" />
+        <div class="display-flex justify-content-center">
+          <f7-button v-if="!loggedIn" large color="gray" icon-size="36" tooltip="Unlock Administration" icon-f7="lock_shield_fill" @click="authorize()" />
+        </div>
+        <f7-list v-if="user" class="admin-links" media-list>
+          <f7-list-item :title="user.name" :footer="serverDisplayUrl" io="f7:person_alt_circle_fill" link="/profile/" no-chevron panel-close view=".view-main"
+              :class="{ currentsection: currentUrl.indexOf('/profile') >= 0 }">
+            <f7-icon slot="media" size="36" ios="f7:person_alt_circle_fill" aurora="f7:person_alt_circle_fill" md="f7:person_alt_circle_fill" color="gray"></f7-icon>
+          </f7-list-item>
+        </f7-list>
+        <!-- <f7-link v-if="user" color="gray" icon-size="30" :text="accountLabel" tooltip="Sign out" icon-f7="person_alt_circle_fill" @click="logout()" /> -->
       </div>
     </f7-page>
   </f7-panel>
@@ -145,6 +153,7 @@
 .panel-left
   .page
     background #f5f5f5 !important
+    padding-bottom 3rem
   .logo
     margin-top var(--f7-safe-area-top)
     list-style none
@@ -160,16 +169,18 @@
     .icon
       color var(--f7-color-white) !important
   .account
-    position absolute
+    z-index 300
+    height 3rem
+    background #f5f5f5 !important
+    position fixed
     bottom calc(var(--f7-safe-area-bottom))
-    display flex
-    justify-content center
     width 100%
-    padding 1.5rem 0
 
 .theme-dark
   .panel-left
     .page
+      background #232323 !important
+    .account
       background #232323 !important
     .currentsection
       background-color var(--f7-color-blue-shade)
@@ -290,8 +301,8 @@ export default {
     isAdmin () {
       return this.ready && this.user && this.user.roles && this.user.roles.indexOf('administrator') >= 0
     },
-    accountLabel () {
-      return this.user.name + '@' + (this.serverUrl || window.location.host)
+    serverDisplayUrl () {
+      return (this.serverUrl || window.location.origin)
     }
   },
   methods: {
