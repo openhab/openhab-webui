@@ -153,7 +153,7 @@
 .panel-left
   .page
     background #f5f5f5 !important
-    padding-bottom 3rem
+    padding-bottom 4rem
   .logo
     margin-top var(--f7-safe-area-top)
     list-style none
@@ -170,7 +170,7 @@
       color var(--f7-color-white) !important
   .account
     z-index 300
-    height 3rem
+    height 4rem
     background #f5f5f5 !important
     position fixed
     bottom calc(var(--f7-safe-area-bottom))
