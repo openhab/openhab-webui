@@ -9,7 +9,7 @@
 
   <groupId>org.openhab.ui</groupId>
   <artifactId>org.openhab.ui.reactor</artifactId>
-  <version>2.5.3-SNAPSHOT</version>
+  <version>2.5.3</version>
 
   <packaging>pom</packaging>
 
@@ -32,6 +32,7 @@
     <connection>scm:git:https://github.com/openhab/openhab-webui.git</connection>
     <developerConnection>scm:git:https://github.com/openhab/openhab-webui.git</developerConnection>
     <url>https://github.com/openhab/openhab-webui</url>
+<tag>2.5.3</tag>
   </scm>
 
   <issueManagement>
