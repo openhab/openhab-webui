@@ -78,7 +78,7 @@ export default {
       return this.page
     },
     isAdmin () {
-      return this.ready && this.$f7.data.user && this.$f7.data.user.roles && this.$f7.data.user.roles.indexOf('administrator') >= 0
+      return this.ready && this.$store.getters.isAdmin
     }
   },
   methods: {

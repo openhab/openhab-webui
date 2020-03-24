@@ -1,5 +1,5 @@
 <template>
-<f7-app :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled', 'no-page-transitions': this.themeOptions.pageTransitionAnimation === 'disabled' }">
+<f7-app v-if="init" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled', 'no-page-transitions': this.themeOptions.pageTransitionAnimation === 'disabled' }">
 
   <!-- Left Panel -->
   <f7-panel left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
@@ -25,8 +25,8 @@
           <f7-icon slot="media" :f7="pageIcon(page)"></f7-icon>
         </f7-list-item>
       </f7-list>
-      <f7-block-title v-if="isAdmin">Administration</f7-block-title>
-      <f7-list class="admin-links" v-if="isAdmin">
+      <f7-block-title v-if="$store.getters.isAdmin">Administration</f7-block-title>
+      <f7-list class="admin-links" v-if="$store.getters.isAdmin">
         <f7-list-item link="/settings/" title="Settings" view=".view-main" panel-close :animate="false"
             :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/addons/') >= 0 || currentUrl.indexOf('/settings/services/') >= 0 }">
           <f7-icon slot="media" ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray"></f7-icon>
@@ -90,8 +90,8 @@
         <div class="display-flex justify-content-center">
           <f7-button v-if="!loggedIn" large color="gray" icon-size="36" tooltip="Unlock Administration" icon-f7="lock_shield_fill" @click="authorize()" />
         </div>
-        <f7-list v-if="user" class="admin-links" media-list>
-          <f7-list-item :title="user.name" :footer="serverDisplayUrl" io="f7:person_alt_circle_fill" link="/profile/" no-chevron panel-close view=".view-main"
+        <f7-list v-if="$store.getters.user" class="admin-links" media-list>
+          <f7-list-item :title="$store.getters.user.name" :footer="serverDisplayUrl" io="f7:person_alt_circle_fill" link="/profile/" no-chevron panel-close view=".view-main"
               :class="{ currentsection: currentUrl.indexOf('/profile') >= 0 }">
             <f7-icon slot="media" size="36" ios="f7:person_alt_circle_fill" aurora="f7:person_alt_circle_fill" md="f7:person_alt_circle_fill" color="gray"></f7-icon>
           </f7-list-item>
@@ -218,6 +218,9 @@ export default {
     }
 
     return {
+      init: false,
+      ready: false,
+
       // Framework7 Parameters
       f7params: {
         id: 'org.openhab.ui', // App bundle ID
@@ -285,7 +288,6 @@ export default {
       showSidebar: true,
       loginScreenOpened: false,
       loggedIn: false,
-      ready: false,
 
       themeOptions: {
         dark: false,
@@ -381,6 +383,20 @@ export default {
   },
   created () {
     // this.loginScreenOpened = true
+    const refreshToken = this.getRefreshToken()
+    if (refreshToken) {
+      this.refreshAccessToken().then((user) => {
+        this.loggedIn = true
+        this.loadSidebarPages()
+        this.init = true
+      }).catch((err) => {
+        console.warn('Error while using the stored refresh_token to get a new access_token: ' + err + '. Logging out & cleaning session.')
+        this.cleanSession()
+        this.init = true
+      })
+    } else {
+      this.init = true
+    }
   },
   mounted () {
     this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || 'light'
@@ -403,19 +419,9 @@ export default {
         this.loggedIn = true
       }
 
-      const refreshToken = this.getRefreshToken()
-      if (refreshToken) {
-        this.refreshAccessToken().then((user) => {
-          this.loggedIn = true
-          this.$set(this, 'user', user)
-          this.loadSidebarPages()
-        }).catch((err) => {
-          this.$f7.dialog.alert('An error occurred while getting authorization: ' + err)
-        })
-      } else {
+      if (!this.user) {
         this.tryExchangeAuthorizationCode().then((user) => {
           this.loggedIn = true
-          this.$set(this, 'user', user)
           this.loadSidebarPages()
         }).catch((err) => {
           if (err) {

@@ -95,7 +95,7 @@ export default {
   mixins: [auth],
   data () {
     return {
-      user: this.$f7.data.user,
+      user: this.$store.getters.user,
       sessions: []
     }
   },

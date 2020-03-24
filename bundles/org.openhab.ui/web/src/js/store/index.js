@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import components from './modules/components'
 import states from './modules/states'
+import user from './modules/user'
 
 Vue.use(Vuex)
 
@@ -11,7 +12,8 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     components,
-    states
+    states,
+    user
   }
   // strict: debug
 })
