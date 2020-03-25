@@ -102,6 +102,12 @@ export default {
           description: 'The width of the image (by default 1000 pixels). Please specify if the image is not square to compute the aspect ratio'
         },
         {
+          name: 'noZoomOrDrag',
+          label: 'Disable Ability to Zoom or Move Image',
+          type: 'BOOLEAN',
+          description: 'Disable the ability to zoom or move the image'
+        },
+        {
           name: 'noZoomAnimation',
           label: 'No Zoom Animation',
           type: 'BOOLEAN',
@@ -143,9 +149,6 @@ export default {
       zoom: -0.5,
       crs: CRS.Simple,
       showMap: true,
-      mapOptions: {
-        zoomSnap: 0.1
-      }
     }
   },
   computed: {
@@ -153,6 +156,17 @@ export default {
       const lat = this.config.imageHeight || 1000
       const lng = this.config.imageWidth || 1000
       return [[0, 0], [lat, lng]]
+    },
+     mapOptions () {
+      return Object.assign({
+        zoomSnap: 0.1
+      }, this.config.noZoomOrDrag ? {
+        dragging: false, 
+        touchZoom: false, 
+        doubleClickZoom: false,
+        scrollWheelZoom: false, 
+        zoomControl:false
+        } : {})
     }
   },
   mounted () {
