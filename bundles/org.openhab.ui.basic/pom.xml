@@ -30,13 +30,11 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.0</version>
+        <version>1.9.0</version>
 
         <configuration>
-          <nodeVersion>v5.4.0</nodeVersion>
-          <npmVersion>3.3.12</npmVersion>
-          <nodeDownloadRoot>http://nodejs.org/dist/</nodeDownloadRoot>
-          <npmDownloadRoot>http://registry.npmjs.org/npm/-/</npmDownloadRoot>
+          <nodeVersion>v12.16.1</nodeVersion>
+          <npmVersion>6.14.3</npmVersion>
           <environmentVariables>
             <npm_config_cache>${project.basedir}/npm_cache</npm_config_cache>
             <npm_config_tmp>${project.basedir}/npm_tmp</npm_config_tmp>
