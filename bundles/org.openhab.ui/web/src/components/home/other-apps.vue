@@ -3,7 +3,7 @@
     <f7-row>
       <f7-col>
         <div class="row app-links">
-          <div class="app-link col-50" v-for="app in apps" :key="app.url" :href="app.url.replace(/^\.\./, '')" external target="_blank">
+          <div class="app-link col-100 medium-50" v-for="app in apps" :key="app.url" :href="app.url.replace(/^\.\./, '')" external target="_blank">
             <f7-link class="app-link" :href="app.url.replace(/^\.\./, '')" external target="_blank">
               <f7-card class="app-card">
                 <f7-card-content :padding="false" :style="{

@@ -52,6 +52,7 @@ module.exports = {
     //   poll: 1000,
     // },
     proxy: {
+      '/auth': apiBaseUrl,
       '/rest': apiBaseUrl,
       '/chart': apiBaseUrl,
       '/proxy': apiBaseUrl,
