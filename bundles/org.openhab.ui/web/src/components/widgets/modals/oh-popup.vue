@@ -31,7 +31,8 @@ export default {
   components: {
     'oh-layout-page': OhLayoutPage,
     'oh-map-page': () => import('@/components/widgets/map/oh-map-page.vue'),
-    'oh-plan-page': () => import('@/components/widgets/plan/oh-plan-page.vue')
+    'oh-plan-page': () => import('@/components/widgets/plan/oh-plan-page.vue'),
+    'oh-chart-page': () => import('@/components/widgets/chart/oh-chart-page.vue')
   },
   props: ['uid', 'modalParams'],
   data () {

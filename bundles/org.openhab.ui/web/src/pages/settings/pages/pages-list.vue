@@ -96,7 +96,7 @@
         <f7-fab-button fab-close label="Create tabbed page" href="tabs/add"><f7-icon f7="squares_below_rectangle"></f7-icon></f7-fab-button>
         <f7-fab-button fab-close label="Create map view" href="map/add"><f7-icon f7="map"></f7-icon></f7-fab-button>
         <f7-fab-button fab-close label="Create floor plan" href="plan/add"><f7-icon f7="square_stack_3d_up"></f7-icon></f7-fab-button>
-        <!-- <f7-fab-button fab-close label="Create chart" href="add"><f7-icon f7="graph_square"></f7-icon></f7-fab-button> -->
+        <f7-fab-button fab-close label="Create chart" href="chart/add"><f7-icon f7="graph_square"></f7-icon></f7-fab-button>
       </f7-fab-buttons>
     </f7-fab>
   </f7-page>
@@ -117,7 +117,8 @@ export default {
         { type: 'layout', label: 'Layout', componentType: 'oh-layout-page', icon: 'rectangle_grid_2x2' },
         { type: 'tabs', label: 'Tabbed', componentType: 'oh-tabs-page', icon: 'squares_below_rectangle' },
         { type: 'map', label: 'Map', componentType: 'oh-map-page', icon: 'map' },
-        { type: 'plan', label: 'Floor plan', componentType: 'oh-plan-page', icon: 'square_stack_3d_up' }
+        { type: 'plan', label: 'Floor plan', componentType: 'oh-plan-page', icon: 'square_stack_3d_up' },
+        { type: 'chart', label: 'Chart', componentType: 'oh-chart-page', icon: 'graph_square' }
       ]
     }
   },
