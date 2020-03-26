@@ -56,7 +56,8 @@ module.exports = {
       '/rest': apiBaseUrl,
       '/chart': apiBaseUrl,
       '/proxy': apiBaseUrl,
-      '/icon': apiBaseUrl
+      '/icon': apiBaseUrl,
+      '/static': apiBaseUrl,
     }
   },
   optimization: {
