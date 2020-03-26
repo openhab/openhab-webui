@@ -195,7 +195,6 @@ export default {
       this.$refs.map.mapObject.fitBounds(this.bounds)
     },
     refreshMap() {
-      console.log("refreshMap")
       this.mapKey = this.$f7.utils.id()
       this.$nextTick(() => {
 		    this.fitMapBounds()
