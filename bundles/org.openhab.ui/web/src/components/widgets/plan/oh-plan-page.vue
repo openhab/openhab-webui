@@ -104,9 +104,9 @@ export default {
         },
         {
           name: 'noZoomOrDrag',
-          label: 'Disable Ability to Zoom, Drag or Move',
+          label: 'Disable Zooming & Dragging',
           type: 'BOOLEAN',
-          description: 'Disable the ability to zoom, drag or move'
+          description: 'Disable the ability to zoom and drag'
         },
         {
           name: 'noZoomAnimation',
@@ -176,7 +176,7 @@ export default {
   },
   watch: {
     'config.noZoomOrDrag' : function (val) {
-      this.refeshMap()
+      this.refreshMap()
     }
   },
   methods: {
@@ -194,7 +194,8 @@ export default {
     fitMapBounds() {
       this.$refs.map.mapObject.fitBounds(this.bounds)
     },
-    refeshMap() {
+    refreshMap() {
+      console.log("refreshMap")
       this.mapKey = this.$f7.utils.id()
       this.$nextTick(() => {
 		    this.fitMapBounds()
