@@ -177,12 +177,6 @@ const ConfigurableWidgets = {
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
-function uuidv4 () {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-  )
-}
-
 export default {
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
@@ -196,12 +190,12 @@ export default {
       loading: false,
       pageWidgetDefinition: OhChartPage.widget,
       page: {
-        uid: 'page_' + uuidv4().split('-')[0],
+        uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-chart-page',
         config: {},
         slots: { default: [] }
       },
-      pageKey: uuidv4(),
+      pageKey: this.$f7.utils.id(),
       pageYaml: null,
       previewMode: false,
       currentTab: 'design',
@@ -456,7 +450,7 @@ export default {
       this.forceUpdate()
     },
     forceUpdate () {
-      this.pageKey = uuidv4()
+      this.pageKey = this.$f7.utils.id()
     },
     togglePreviewMode (value) {
       if (value === undefined) value = !this.previewMode
