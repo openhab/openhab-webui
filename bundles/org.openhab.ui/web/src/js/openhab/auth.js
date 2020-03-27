@@ -1,4 +1,3 @@
-import PkceChallenge from 'pkce-challenge'
 import { Utils } from 'framework7'
 
 export default {
@@ -7,16 +6,18 @@ export default {
       return localStorage.getItem('openhab.ui:refreshToken') || null
     },
     authorize () {
-      const pkceChallenge = PkceChallenge()
-      sessionStorage.setItem('openhab.ui:codeVerifier', pkceChallenge.code_verifier)
+      import('pkce-challenge').then((PkceChallenge) => {
+        const pkceChallenge = PkceChallenge.default()
+        sessionStorage.setItem('openhab.ui:codeVerifier', pkceChallenge.code_verifier)
 
-      window.location = '/auth' +
-        '?response_type=code' +
-        '&client_id=' + encodeURIComponent(window.location.origin) +
-        '&redirect_uri=' + encodeURIComponent(window.location.origin) +
-        '&scope=admin' +
-        '&code_challenge_method=S256' +
-        '&code_challenge=' + encodeURIComponent(pkceChallenge.code_challenge)
+        window.location = '/auth' +
+          '?response_type=code' +
+          '&client_id=' + encodeURIComponent(window.location.origin) +
+          '&redirect_uri=' + encodeURIComponent(window.location.origin) +
+          '&scope=admin' +
+          '&code_challenge_method=S256' +
+          '&code_challenge=' + encodeURIComponent(pkceChallenge.code_challenge)
+      })
     },
     tryExchangeAuthorizationCode () {
       return new Promise((resolve, reject) => {

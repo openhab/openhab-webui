@@ -83,12 +83,6 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 
-function uuidv4 () {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-  )
-}
-
 export default {
   components: {
     ConfigSheet,
@@ -116,7 +110,7 @@ export default {
       this.$oh.api.get('/rest/thing-types/' + this.thingTypeId).then(data => {
         this.thingType = data
         try {
-          this.thing.ID = uuidv4().split('-')[0]
+          this.thing.ID = this.$f7.utils.id()
           this.thing.UID = this.thingTypeId + ':' + this.thing.ID
         } catch (e) {
           console.log('Cannot generate ID: ' + e)

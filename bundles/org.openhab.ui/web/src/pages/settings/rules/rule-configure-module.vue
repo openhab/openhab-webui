@@ -46,12 +46,10 @@
 </template>
 
 <script>
-import ConfigParameter from '@/components/config/config-parameter.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
   components: {
-    ConfigParameter,
     ConfigSheet
   },
   props: ['rule', 'moduleTypes', 'currentSection'],

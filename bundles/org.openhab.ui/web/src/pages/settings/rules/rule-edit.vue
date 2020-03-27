@@ -208,12 +208,6 @@ import TagInput from '@/components/tags/tag-input.vue'
 const ScriptEditorPopup = () => import('@/components/config/controls/script-editor-popup.vue')
 import CronEditor from '@/components/config/controls/cronexpression-editor.vue'
 
-function uuidv4 () {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-  )
-}
-
 export default {
   components: {
     ConfigSheet,
@@ -284,7 +278,7 @@ export default {
         this.moduleTypes.triggers = data[2]
         if (this.createMode) {
           this.$set(this, 'rule', {
-            uid: uuidv4().split('-')[0],
+            uid: this.$f7.utils.id(),
             name: '',
             triggers: [],
             actions: [],

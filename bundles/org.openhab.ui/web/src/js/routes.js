@@ -31,8 +31,6 @@ import InboxListPage from '../pages/settings/things/inbox/inbox-list.vue'
 import SemanticModelPage from '../pages/settings/model/model.vue'
 
 import RulesListPage from '../pages/settings/rules/rules-list.vue'
-import RuleEditPage from '../pages/settings/rules/rule-edit.vue'
-import RuleConfigureModulePage from '../pages/settings/rules/rule-configure-module.vue'
 
 import PagesListPage from '../pages/settings/pages/pages-list.vue'
 
@@ -42,7 +40,6 @@ import Analyzer from '../pages/analyzer/analyzer.vue'
 
 import DeveloperToolsPage from '../pages/developer/developer-tools.vue'
 import WidgetsListPage from '../pages/developer/widgets/widget-list.vue'
-import WidgetEditPage from '../pages/developer/widgets/widget-edit.vue'
 
 export default [
   {
@@ -210,26 +207,23 @@ export default [
         keepAlive: true,
         routes: [
           {
-            path: 'add',
-            component: RuleEditPage,
-            options: {
-              props: {
-                createMode: true
-              }
-            }
-          },
-          {
             path: ':ruleId',
-            component: RuleEditPage,
-            // master: true,
-            // detailRoutes: [
-            routes: [
-              {
-                path: ':moduleType/:moduleId',
-                // path: '/settings/rules/:ruleId/:moduleType/:moduleId',
-                component: RuleConfigureModulePage
-              }
-            ]
+            async (routeTo, routeFrom, resolve, reject) {
+              // dynamic import component; returns promise
+              const ruleEditComponent = () => import('../pages/settings/rules/rule-edit.vue')
+              // resolve promise
+              ruleEditComponent().then((vc) => {
+                // resolve with component
+                resolve({
+                  component: vc.default
+                },
+                (routeTo.params.uid === 'add') ? {
+                  props: {
+                    createMode: true
+                  }
+                } : {})
+              })
+            }
           }
         ]
       },
@@ -249,12 +243,21 @@ export default [
         routes: [
           {
             path: 'add',
-            component: RuleEditPage,
-            options: {
-              props: {
-                createMode: true,
-                schedule: true
-              }
+            async (routeTo, routeFrom, resolve, reject) {
+              // dynamic import component; returns promise
+              const ruleEditComponent = () => import('../pages/settings/rules/rule-edit.vue')
+              // resolve promise
+              ruleEditComponent().then((vc) => {
+                // resolve with component
+                resolve({
+                  component: vc.default
+                }, {
+                  props: {
+                    createMode: true,
+                    schedule: true
+                  }
+                })
+              })
             }
           }
         ]
@@ -296,20 +299,22 @@ export default [
         component: WidgetsListPage,
         routes: [
           {
-            path: 'add',
-            component: WidgetEditPage,
-            options: {
-              animate: false,
-              props: {
-                createMode: true
-              }
-            }
-          },
-          {
             path: ':uid',
-            component: WidgetEditPage,
-            options: {
-              animate: false
+            async (routeTo, routeFrom, resolve, reject) {
+              // dynamic import component; returns promise
+              const widgetEditComponent = () => import('../pages/developer/widgets/widget-edit.vue')
+              // resolve promise
+              widgetEditComponent().then((vc) => {
+                // resolve with component
+                resolve({
+                  component: vc.default
+                },
+                (routeTo.params.uid === 'add') ? {
+                  props: {
+                    createMode: true
+                  }
+                } : {})
+              })
             }
           }
         ]
