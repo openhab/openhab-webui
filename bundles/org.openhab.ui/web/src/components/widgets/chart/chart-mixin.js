@@ -2,6 +2,7 @@ import * as dayjs from 'dayjs'
 
 // Axis components
 import OhTimeAxis from './axis/oh-time-axis'
+import OhValueAxis from './axis/oh-value-axis'
 import OhCalendarAxis from './axis/oh-calendar-axis'
 import OhWeekAxis from './axis/oh-week-axis'
 
@@ -11,6 +12,7 @@ import OhCalendarSeries from './series/oh-calendar-series'
 
 const axisComponents = {
   'oh-time-axis': OhTimeAxis,
+  'oh-value-axis': OhValueAxis,
   'oh-calendar-axis': OhCalendarAxis,
   'oh-week-axis': OhWeekAxis
 }
@@ -65,20 +67,24 @@ export default {
   asyncComputed: {
     series () {
       if (!this.context.component.slots || !this.context.component.slots.series) return Promise.resolve([])
-      return Promise.all(this.context.component.slots.series.map((s) => this.getSeriesPromise(s)))
+      return Promise.all(this.context.component.slots.series.map((s) => this.getSeriesPromises(s)))
     }
   },
   methods: {
-    getSeriesPromise (component) {
-      if (!component || !component.config || !component.config.item) return Promise.resolve({})
-      let url = `/rest/persistence/items/${component.config.item}`
-      let query = {
-        serviceId: component.config.service || undefined,
-        starttime: this.startTime.toISOString(),
-        endtime: this.endTime.toISOString()
-      }
+    getSeriesPromises (component) {
+      const neededItems = seriesComponents[component.component].neededItems(component)
+      const promises = neededItems.map((neededItem) => {
+        let url = `/rest/persistence/items/${neededItem}`
+        let query = {
+          serviceId: component.config.service || undefined,
+          starttime: this.startTime.toISOString(),
+          endtime: this.endTime.toISOString()
+        }
 
-      return this.$oh.api.get(url, query).then((data) => {
+        return this.$oh.api.get(url, query)
+      })
+
+      return Promise.all(promises).then((data) => {
         return seriesComponents[component.component].get(component, data)
       })
     },

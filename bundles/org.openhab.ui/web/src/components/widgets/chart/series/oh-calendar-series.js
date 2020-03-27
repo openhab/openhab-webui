@@ -1,8 +1,13 @@
 import * as dayjs from 'dayjs'
 
 export default {
+  neededItems (component) {
+    if (!component || !component.config || !component.config.item) return []
+    return [component.config.item]
+  },
   get (component, points) {
-    const groups = points.data.reduce((acc, p) => {
+    const itemPoints = points.find(p => p.name === component.config.item).data
+    const groups = itemPoints.reduce((acc, p) => {
       let day = dayjs(p.time).startOf('day')
       if (acc.length && acc[acc.length - 1][0].isSame(day)) {
         acc[acc.length - 1][1].push(p.state)
