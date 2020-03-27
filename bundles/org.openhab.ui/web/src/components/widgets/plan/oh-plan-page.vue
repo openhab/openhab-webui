@@ -9,6 +9,7 @@
     :zoom-animation="!config.noZoomAnimation"
     :marker-zoom-animation="!config.noMarkerZoomAnimation"
     :max-bounds="bounds"
+    :key="mapKey"
     @update:bounds="ready = true"
     class="oh-plan-page-lmap"
     :class="{ 'with-tabbar': context.tab,
@@ -102,6 +103,12 @@ export default {
           description: 'The width of the image (by default 1000 pixels). Please specify if the image is not square to compute the aspect ratio'
         },
         {
+          name: 'noZoomOrDrag',
+          label: 'Disable Zooming & Dragging',
+          type: 'BOOLEAN',
+          description: 'Disable the ability to zoom and drag'
+        },
+        {
           name: 'noZoomAnimation',
           label: 'No Zoom Animation',
           type: 'BOOLEAN',
@@ -143,9 +150,7 @@ export default {
       zoom: -0.5,
       crs: CRS.Simple,
       showMap: true,
-      mapOptions: {
-        zoomSnap: 0.1
-      }
+      mapKey: this.$f7.utils.id()
     }
   },
   computed: {
@@ -153,10 +158,26 @@ export default {
       const lat = this.config.imageHeight || 1000
       const lng = this.config.imageWidth || 1000
       return [[0, 0], [lat, lng]]
-    }
+    },
+    mapOptions () {
+    return Object.assign({
+      zoomSnap: 0.1
+    }, this.config.noZoomOrDrag ? {
+      dragging: false, 
+      touchZoom: false, 
+      doubleClickZoom: false,
+      scrollWheelZoom: false, 
+      zoomControl:false
+      } : {})
+    },
   },
   mounted () {
-    this.$refs.map.mapObject.fitBounds(this.bounds)
+    this.fitMapBounds()
+  },
+  watch: {
+    'config.noZoomOrDrag' : function (val) {
+      this.refreshMap()
+    }
   },
   methods: {
     zoomUpdate (zoom) {
@@ -169,6 +190,15 @@ export default {
       return 'oh-plan-marker'
     },
     onMarkerUpdate () {
+    },
+    fitMapBounds() {
+      this.$refs.map.mapObject.fitBounds(this.bounds)
+    },
+    refreshMap() {
+      this.mapKey = this.$f7.utils.id()
+      this.$nextTick(() => {
+		    this.fitMapBounds()
+		  });
     }
   }
 }
