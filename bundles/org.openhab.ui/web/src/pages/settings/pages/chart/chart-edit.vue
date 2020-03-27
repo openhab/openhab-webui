@@ -86,7 +86,7 @@
           </f7-col>
         </f7-block> -->
 
-        <oh-chart-page class="chart-page" v-else-if="ready && previewMode" :context="context" :key="pageKey" />
+        <oh-chart-page class="chart-page" v-else-if="ready && previewMode && currentTab === 'design'" :context="context" :key="pageKey" />
 
       </f7-tab>
 

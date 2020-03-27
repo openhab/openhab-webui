@@ -1,15 +1,27 @@
 <template>
-  <chart
-    ref="chart"
-    v-if="ready"
-    :options="options"
-    class="oh-chart-page-chart"
-    :class="{ 'with-tabbar': context.tab,
-      'oh-plan-white-background': config.backgroundColor === 'white',
-      'oh-plan-blackwhite-background': config.backgroundColor === 'blackwhite',
-      'oh-plan-dark-mode-invert': config.darkModeInvert,
-    }"
-    :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize></chart>
+  <div>
+    <chart
+      ref="chart"
+      v-if="ready"
+      :options="options"
+      class="oh-chart-page-chart"
+      :class="{ 'with-tabbar': context.tab,
+        'oh-plan-white-background': config.backgroundColor === 'white',
+        'oh-plan-blackwhite-background': config.backgroundColor === 'blackwhite',
+        'oh-plan-dark-mode-invert': config.darkModeInvert,
+      }"
+      :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize></chart>
+    <f7-menu class="padding float-right">
+      <f7-menu-item @click="earlierPeriod()" icon-f7="chevron_left" />
+      <f7-menu-item dropdown :text="period">
+        <f7-menu-dropdown right>
+          <f7-menu-dropdown-item v-for="p in ['h', '2h', '4h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '4M', 'Y']"
+            :key="p" @click="setPeriod(p)" href="#" :text="p"></f7-menu-dropdown-item>
+        </f7-menu-dropdown>
+      </f7-menu-item>
+      <f7-menu-item @click="laterPeriod()" icon-f7="chevron_right" />
+    </f7-menu>
+  </div>
 </template>
 
 <style lang="stylus">
@@ -30,11 +42,14 @@
 
 <script>
 import mixin from '../widget-mixin'
+import chart from './chart-mixin'
 
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/bar'
 import 'echarts/lib/component/title'
+import 'echarts/lib/component/legend'
+import 'echarts/lib/component/legendScroll'
 import 'echarts/lib/component/toolbox'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/dataZoom'
@@ -45,7 +60,7 @@ import 'echarts/lib/component/visualMap'
 import ECharts from 'vue-echarts/components/ECharts'
 
 export default {
-  mixins: [mixin],
+  mixins: [mixin, chart],
   components: {
     'chart': ECharts
   },
@@ -74,12 +89,6 @@ export default {
   data () {
     return {
       ready: false
-    }
-  },
-  computed: {
-    options () {
-      // temporary
-      return this.config.options
     }
   },
   mounted () {
