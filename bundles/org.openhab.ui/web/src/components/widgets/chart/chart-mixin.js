@@ -1,10 +1,23 @@
 import * as dayjs from 'dayjs'
 
+// Axis components
+import OhTimeAxis from './axis/oh-time-axis'
+import OhCalendarAxis from './axis/oh-calendar-axis'
+import OhWeekAxis from './axis/oh-week-axis'
+
 // Series components
 import OhTimeSeries from './series/oh-time-series'
+import OhCalendarSeries from './series/oh-calendar-series'
+
+const axisComponents = {
+  'oh-time-axis': OhTimeAxis,
+  'oh-calendar-axis': OhCalendarAxis,
+  'oh-week-axis': OhWeekAxis
+}
 
 const seriesComponents = {
-  'oh-time-series': OhTimeSeries
+  'oh-time-series': OhTimeSeries,
+  'oh-calendar-series': OhCalendarSeries
 }
 
 export default {
@@ -18,7 +31,8 @@ export default {
     }
     return {
       period,
-      endTime
+      endTime,
+      orient: null
     }
   },
   computed: {
@@ -29,8 +43,23 @@ export default {
       const chartConfig = this.config.options || {}
       return {
         ...chartConfig,
+        xAxis: this.xAxis,
+        yAxis: this.yAxis,
+        calendar: this.calendar,
         series: this.series
       }
+    },
+    xAxis () {
+      if (!this.context.component.slots || !this.context.component.slots.xAxis) return undefined
+      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime))
+    },
+    yAxis () {
+      if (!this.context.component.slots || !this.context.component.slots.yAxis) return undefined
+      return this.context.component.slots.yAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime))
+    },
+    calendar () {
+      if (!this.context.component.slots || !this.context.component.slots.calendar) return undefined
+      return this.context.component.slots.calendar.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.orient))
     }
   },
   asyncComputed: {
@@ -79,7 +108,8 @@ export default {
           case 'M': day = fn.apply(day, [1, 'month']); break
           case '2M': day = fn.apply(day, [2, 'month']); break
           case '4M': day = fn.apply(day, [4, 'month']); break
-          case 'Y': day = fn.apply(day, [1, 'year']); break
+          case '6M': day = fn.apply(day, [6, 'month']); break
+          case 'Y': day = fn.apply(day, [365, 'day']); break
         }
       }
 
