@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const WorkboxPlugin = require('workbox-webpack-plugin')
-// const WebpackAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const WebpackAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const path = require('path')
 
@@ -57,7 +57,7 @@ module.exports = {
       '/chart': apiBaseUrl,
       '/proxy': apiBaseUrl,
       '/icon': apiBaseUrl,
-      '/static': apiBaseUrl,
+      '/static': apiBaseUrl
     }
   },
   optimization: {
@@ -230,6 +230,9 @@ module.exports = {
       new WorkboxPlugin.InjectManifest({
         swSrc: resolvePath('src/service-worker.js')
       })
+    ] : []),
+    ...(process.env.WEBPACK_ANALYZER ? [
+      new WebpackAnalyzerPlugin()
     ] : [])
   ]
 }

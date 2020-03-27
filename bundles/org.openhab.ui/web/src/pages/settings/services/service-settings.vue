@@ -37,12 +37,10 @@
 
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
-import ConfigParameter from '@/components/config/config-parameter.vue'
 
 export default {
   components: {
-    ConfigSheet,
-    ConfigParameter
+    ConfigSheet
   },
   props: ['serviceId'],
   data () {

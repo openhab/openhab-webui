@@ -61,12 +61,10 @@
 </style>
 
 <script>
-import ConfigParameter from './config-parameter.vue'
-
 export default {
   props: ['parameterGroups', 'parameters', 'configuration'],
   components: {
-    ConfigParameter
+    'config-parameter': () => import('./config-parameter.vue')
   },
   data () {
     return {
