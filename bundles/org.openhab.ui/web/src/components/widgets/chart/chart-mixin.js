@@ -73,9 +73,9 @@ export default {
         let url = `/rest/persistence/items/${neededItem}`
         let seriesStartTime = this.startTime
         let seriesEndTime = this.endTime
-        if (component.config.offset_amount && component.config.offset_unit) {
-          seriesStartTime = seriesStartTime.subtract(component.config.offset_amount, component.config.offset_unit)
-          seriesEndTime = seriesEndTime.subtract(component.config.offset_amount, component.config.offset_unit)
+        if (component.config.offsetAmount && component.config.offsetUnit) {
+          seriesStartTime = seriesStartTime.subtract(component.config.offsetAmount, component.config.offsetUnit)
+          seriesEndTime = seriesEndTime.subtract(component.config.offsetAmount, component.config.offsetUnit)
         }
         let query = {
           serviceId: component.config.service || undefined,
