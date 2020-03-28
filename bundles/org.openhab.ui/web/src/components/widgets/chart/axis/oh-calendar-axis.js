@@ -1,5 +1,5 @@
 export default {
-  get (component, startTime, endTime, orient) {
+  get (component, startTime, endTime, chart, orient) {
     let calendar = Object.assign({}, component.config)
     calendar.range = [startTime.toDate(), endTime.toDate()]
     if (orient) calendar.orient = orient

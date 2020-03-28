@@ -2,7 +2,7 @@ import * as dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 
 export default {
-  get (component, startTime, endTime) {
+  get (component, startTime, endTime, chart) {
     let axis = Object.assign({}, component.config)
     axis.type = 'category'
     dayjs.extend(LocalizedFormat)

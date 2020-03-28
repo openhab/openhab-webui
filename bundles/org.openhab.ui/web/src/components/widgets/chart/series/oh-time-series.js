@@ -12,7 +12,7 @@ export default {
       ...markAreaItems
     ]
   },
-  get (component, points) {
+  get (component, points, startTime, endTime, chart) {
     const itemPoints = points.find(p => p.name === component.config.item).data
 
     const data = itemPoints.map((p) => {
