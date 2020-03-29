@@ -5,11 +5,11 @@ import aggregate from './aggregators'
 
 function dimensionFromDate (d, dimension, invert) {
   switch (dimension) {
-    case 'minute': return d.minute()
-    case 'hour': return d.hour()
+    case 'minute': return (invert) ? 59 - d.minute() : d.minute()
+    case 'hour': return (invert) ? 23 - d.hour() : d.hour()
     case 'weekday': return (invert) ? 6 - d.day() : d.day()
     case 'isoWeekday': return (invert) ? 7 - d.isoWeekday() : d.isoWeekday() - 1
-    case 'date': return d.date() - 1
+    case 'date': return (invert) ? 31 - d.date() : d.date() - 1
     case 'month': return (invert) ? 11 - d.month() : d.month()
     default: return d
   }
@@ -57,6 +57,13 @@ export default {
 
     let series = Object.assign({}, component.config)
     if (!series.type) series.type = 'heatmap'
+
+    if (series.type === 'scatter') {
+      const symbolSizeFactor = component.config.scatterSymbolSizeFactor || 1
+      series.symbolSize = (v) => {
+        return v.pop() * symbolSizeFactor
+      }
+    }
 
     series.data = data
 
