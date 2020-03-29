@@ -24,7 +24,7 @@
         :bounds="bounds"
       />
       <l-feature-group ref="featureGroup" v-if="context.component.slots && ready">
-        <component v-for="(marker, idx) in context.component.slots.default" :key="idx"
+        <component v-for="(marker, idx) in markers" :key="idx"
           :is="markerComponent(marker)" :context="childContext(marker)" @update="onMarkerUpdate" />
       </l-feature-group>
       <l-control v-if="context.editmode != null" position="topright">
@@ -170,6 +170,14 @@ export default {
       zoomControl:false
       } : {})
     },
+    markers(){
+      return this.context.component.slots.default.filter((e) => {
+        let zv = parseFloat(e.config.zoomVisibility)
+        return this.context.editmode != null || 
+        isNaN(zv) ||
+        zv <= this.currentZoom
+      })
+    }
   },
   mounted () {
     this.fitMapBounds()
