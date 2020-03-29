@@ -1,24 +1,36 @@
 import * as dayjs from 'dayjs'
+import IsoWeek from 'dayjs/plugin/isoWeek'
+dayjs.extend(IsoWeek)
 
 // Axis components
 import OhTimeAxis from './axis/oh-time-axis'
 import OhValueAxis from './axis/oh-value-axis'
 import OhCalendarAxis from './axis/oh-calendar-axis'
+import OhHourAxis from './axis/oh-hour-axis'
+import OhDayAxis from './axis/oh-day-axis'
 import OhWeekAxis from './axis/oh-week-axis'
+import OhMonthAxis from './axis/oh-month-axis'
+import OhYearAxis from './axis/oh-year-axis'
 
 // Series components
 import OhTimeSeries from './series/oh-time-series'
+import OhAggregateSeries from './series/oh-aggregate-series'
 import OhCalendarSeries from './series/oh-calendar-series'
 
 const axisComponents = {
   'oh-time-axis': OhTimeAxis,
   'oh-value-axis': OhValueAxis,
   'oh-calendar-axis': OhCalendarAxis,
-  'oh-week-axis': OhWeekAxis
+  'oh-hour-axis': OhHourAxis,
+  'oh-day-axis': OhDayAxis,
+  'oh-week-axis': OhWeekAxis,
+  'oh-month-axis': OhMonthAxis,
+  'oh-year-axis': OhYearAxis
 }
 
 const seriesComponents = {
   'oh-time-series': OhTimeSeries,
+  'oh-aggregate-series': OhAggregateSeries,
   'oh-calendar-series': OhCalendarSeries
 }
 
@@ -26,7 +38,7 @@ export default {
   data () {
     const chartType = this.context.component.config.chartType
     const period = this.context.component.config.period || 'D'
-    let endTime = (chartType) ? dayjs().startOf(chartType).add(1, chartType) : dayjs()
+    let endTime = (chartType) ? this.addOrSubtractPeriod(dayjs().startOf(chartType), 1) : dayjs()
     return {
       period,
       endTime,
@@ -53,7 +65,7 @@ export default {
     },
     yAxis () {
       if (!this.context.component.slots || !this.context.component.slots.yAxis) return undefined
-      return this.context.component.slots.yAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component))
+      return this.context.component.slots.yAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, true)) // invert Y axis by default
     },
     calendar () {
       if (!this.context.component.slots || !this.context.component.slots.calendar) return undefined
@@ -69,7 +81,7 @@ export default {
   methods: {
     getSeriesPromises (component) {
       const neededItems = seriesComponents[component.component].neededItems(component)
-      const promises = neededItems.map((neededItem) => {
+      const promises = neededItems.filter(i => !!i).map((neededItem) => {
         let url = `/rest/persistence/items/${neededItem}`
         let seriesStartTime = this.startTime
         let seriesEndTime = this.endTime
@@ -102,9 +114,10 @@ export default {
     },
     addOrSubtractPeriod (day, direction) {
       const fn = (direction < 0) ? day.subtract : day.add
+      const chartType = this.context.component.config.chartType
       for (let i = 0; i < Math.abs(direction); i++) {
-        if (this.config.chartType) {
-          day = fn.apply(day, [1, this.config.chartType])
+        if (chartType) {
+          day = fn.apply(day, [1, chartType === 'isoWeek' ? 'week' : chartType])
         } else {
           switch (this.period) {
             case 'h': day = fn.apply(day, [1, 'hour']); break

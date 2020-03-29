@@ -1,4 +1,5 @@
 import * as dayjs from 'dayjs'
+import aggregate from './aggregators'
 
 export default {
   neededItems (component) {
@@ -19,39 +20,11 @@ export default {
 
     console.debug(groups)
 
+    const formatter = new Intl.NumberFormat('en', { maximumFractionDigits: 3 })
     const data = groups.map((arr, idx, days) => {
       const aggregationFunction = component.config.aggregationFunction || 'average'
-      let aggregate
-      switch (aggregationFunction) {
-        case 'sum':
-          aggregate = arr[1].reduce((sum, state) => sum + parseFloat(state), 0)
-          break
-        case 'min':
-          aggregate = arr[1].reduce((min, state) => parseFloat(state) < min ? parseFloat(state) : min, +Infinity)
-          break
-        case 'max':
-          aggregate = arr[1].reduce((max, state) => parseFloat(state) > max ? parseFloat(state) : max, -Infinity)
-          break
-        case 'first':
-          aggregate = arr[1][0]
-          break
-        case 'last':
-          aggregate = arr[1][arr[1].length - 1]
-          break
-        case 'diff_first':
-          aggregate = idx < 1 ? NaN : arr[1][0] - days[idx - 1][1][0]
-          break
-        case 'diff_last':
-          aggregate = idx < 1 ? NaN : arr[1][arr[1].length - 1] - days[idx - 1][1][days[idx - 1][1].length - 1]
-          break
-        case 'average':
-          aggregate = arr[1].reduce((sum, state) => sum + parseFloat(state), 0) / arr[1].length
-          break
-        default:
-          aggregate = arr[1][0]
-          break
-      }
-      return [arr[0].toDate(), aggregate]
+      let value = aggregate(aggregationFunction, arr, idx, days)
+      return [arr[0].toDate(), parseFloat(formatter.format(value))]
     })
 
     let series = Object.assign({}, component.config)

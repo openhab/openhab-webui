@@ -11,18 +11,11 @@ export default {
     dayjs.extend(LocaleData)
     switch (config.dayFormat) {
       case 'short':
-        axis.data = dayjs.localeData().weekdaysShort()
-        break
-      case 'min':
-        axis.data = dayjs.localeData().weekdaysMin()
+        axis.data = dayjs.localeData().monthsShort()
         break
       default:
-        axis.data = dayjs.localeData().weekdays()
+        axis.data = dayjs.localeData().months()
         break
-    }
-
-    if (!config.startOnSunday) {
-      axis.data.push(axis.data.shift())
     }
     if (reverse) axis.data.reverse()
 

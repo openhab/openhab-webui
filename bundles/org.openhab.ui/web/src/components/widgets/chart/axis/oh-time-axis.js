@@ -1,4 +1,6 @@
 import * as dayjs from 'dayjs'
+import IsoWeek from 'dayjs/plugin/isoWeek'
+dayjs.extend(IsoWeek)
 
 export default {
   get (component, startTime, endTime, chart) {
@@ -9,8 +11,11 @@ export default {
         return isFinite(v.min) ? dayjs(v.min).startOf(chart.config.chartType).toDate().getTime() : v.min
       }
       axis.max = (v) => {
-        return isFinite(v.max) ? dayjs(v.max).startOf(chart.config.chartType).add(1, chart.config.chartType).toDate().getTime() : v.max
+        return isFinite(v.min) ? dayjs(v.min).startOf(chart.config.chartType).add(1, chart.config.chartType === 'isoWeek' ? 'week' : chart.config.chartType).toDate().getTime() : v.max
       }
+    // } else {
+    //   axis.min = startTime.toDate()
+    //   axis.max = endTime.toDate()
     }
     return axis
   }

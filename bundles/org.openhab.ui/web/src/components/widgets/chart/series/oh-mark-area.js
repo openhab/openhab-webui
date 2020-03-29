@@ -7,7 +7,7 @@ export default {
     let currentArea = null
     itemPoints.forEach((p) => {
       if (p.state === 'ON' && rollingState !== 'ON') {
-        currentArea = [ { xAxis: new Date(p.time) } ]
+        currentArea = [ { name: component.config.name, xAxis: new Date(p.time) } ]
       } else if (p.state !== 'ON' && rollingState === 'ON' && currentArea) {
         currentArea.push({ xAxis: new Date(p.time) })
         markArea.data.push(currentArea)
@@ -15,6 +15,8 @@ export default {
       }
       rollingState = p.state
     })
+
+    if (!component.config.label) markArea.label = { show: false }
 
     return markArea
   }
