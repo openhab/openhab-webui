@@ -141,8 +141,9 @@ export default {
           name: 'zoomVisibility',
           label: 'Zoom Visibility',
           type: 'NUMBER',
-          description: 'Visible only when zoomed to at least this level (empty by default)'
-        },
+          description: 'Visible only when zoomed to at least this level (empty by default)',
+          advanced: true
+        }
       ]
     }
   },

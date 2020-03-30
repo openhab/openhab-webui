@@ -33,6 +33,9 @@
           <f7-menu-item v-if="context.clipboardtype" @click="context.editmode.pasteWidget(context.component)" icon-f7="square_on_square" />
         </f7-menu>
       </l-control>
+      <l-control v-if="context.editmode != null" position="bottomleft">
+        <span>Zoom Level: {{currentZoom.toFixed(2)}}</span>
+      </l-control>
   </l-map>
 </template>
 
@@ -160,20 +163,20 @@ export default {
       return [[0, 0], [lat, lng]]
     },
     mapOptions () {
-    return Object.assign({
-      zoomSnap: 0.1
-    }, this.config.noZoomOrDrag ? {
-      dragging: false, 
-      touchZoom: false, 
-      doubleClickZoom: false,
-      scrollWheelZoom: false, 
-      zoomControl:false
+      return Object.assign({
+        zoomSnap: 0.1
+      }, this.config.noZoomOrDrag ? {
+        dragging: false,
+        touchZoom: false,
+        doubleClickZoom: false,
+        scrollWheelZoom: false,
+        zoomControl: false
       } : {})
     },
-    markers(){
+    markers () {
       return this.context.component.slots.default.filter((e) => {
         let zv = parseFloat(e.config.zoomVisibility)
-        return this.context.editmode != null || 
+        return this.context.editmode != null ||
         isNaN(zv) ||
         zv <= this.currentZoom
       })
@@ -183,7 +186,7 @@ export default {
     this.fitMapBounds()
   },
   watch: {
-    'config.noZoomOrDrag' : function (val) {
+    'config.noZoomOrDrag': function (val) {
       this.refreshMap()
     }
   },
@@ -199,14 +202,14 @@ export default {
     },
     onMarkerUpdate () {
     },
-    fitMapBounds() {
+    fitMapBounds () {
       this.$refs.map.mapObject.fitBounds(this.bounds)
     },
-    refreshMap() {
+    refreshMap () {
       this.mapKey = this.$f7.utils.id()
       this.$nextTick(() => {
-		    this.fitMapBounds()
-		  });
+        this.fitMapBounds()
+      })
     }
   }
 }
