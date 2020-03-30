@@ -153,8 +153,7 @@ export default {
       zoom: -0.5,
       crs: CRS.Simple,
       showMap: true,
-      mapKey: this.$f7.utils.id(),
-      markers: []
+      mapKey: this.$f7.utils.id()
     }
   },
   computed: {
@@ -173,11 +172,18 @@ export default {
         scrollWheelZoom: false,
         zoomControl: false
       } : {})
+    },
+    markers () {
+      return this.context.component.slots.default.filter((e) => {
+        let zv = parseFloat(e.config.zoomVisibility)
+        return this.context.editmode != null ||
+        isNaN(zv) ||
+        zv <= this.currentZoom
+      })
     }
   },
   mounted () {
     this.fitMapBounds()
-    this.filterMarkers()
   },
   watch: {
     'config.noZoomOrDrag': function (val) {
@@ -187,7 +193,6 @@ export default {
   methods: {
     zoomUpdate (zoom) {
       this.currentZoom = zoom
-      this.filterMarkers()
     },
     centerUpdate (center) {
       this.currentCenter = center
@@ -205,16 +210,6 @@ export default {
       this.$nextTick(() => {
         this.fitMapBounds()
       })
-    },
-    filterMarkers () {
-      // to avoid unnecessary flickering of markers, only update our list if we add/remove markers
-      let visibleMarkers = this.context.component.slots.default.filter((e) => {
-        let zv = parseFloat(e.config.zoomVisibility)
-        return this.context.editmode != null ||
-        isNaN(zv) ||
-        zv <= this.currentZoom
-      })
-      if (visibleMarkers.length !== this.markers.length) this.markers = visibleMarkers
     }
   }
 }
