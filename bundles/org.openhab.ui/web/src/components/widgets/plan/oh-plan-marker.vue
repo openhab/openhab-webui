@@ -136,6 +136,13 @@ export default {
           type: 'TEXT',
           context: 'color',
           description: 'Color of the tooltip'
+        },
+        {
+          name: 'zoomVisibility',
+          label: 'Zoom Visibility',
+          type: 'NUMBER',
+          description: 'Visible only when zoomed to at least this level (empty by default)',
+          advanced: true
         }
       ]
     }
