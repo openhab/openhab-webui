@@ -17,6 +17,11 @@ export default {
     //   axis.min = startTime.toDate()
     //   axis.max = endTime.toDate()
     }
+
+    if (!component.config.axisPointer) {
+      axis.axisPointer = { show: true }
+    }
+
     return axis
   }
 }

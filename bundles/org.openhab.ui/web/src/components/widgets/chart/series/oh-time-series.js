@@ -32,6 +32,11 @@ export default {
       series.markArea = MarkArea.get(component.slots.markArea[0], points)
     }
 
+    if (!component.config.showSymbol) series.showSymbol = false
+    if (!component.config.tooltip) {
+      series.tooltip = { show: true }
+    }
+
     return series
   }
 }
