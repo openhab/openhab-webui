@@ -39,52 +39,7 @@
           </f7-col>
         </f7-block>
 
-        <!-- <f7-block class="block-narrow" style="padding-bottom: 8rem" v-if="ready && !previewMode">
-          <f7-col>
-            <f7-block-title>Background Configuration</f7-block-title>
-            <config-sheet
-              :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
-              :parameters="pageWidgetDefinition.props.parameters || []"
-              :configuration="page.config"
-              @updated="dirty = true"
-            />
-
-            <f7-block-title class="padding-bottom">Markers</f7-block-title>
-            <f7-menu v-if="clipboardType === 'oh-chart-marker'" class="padding-bottom">
-              <f7-menu-item style="margin-left: auto" icon-f7="square_on_square" dropdown>
-                <f7-menu-dropdown right>
-                  <f7-menu-dropdown-item @click="pasteWidget(page, null)" href="#" text="Paste"></f7-menu-dropdown-item>
-                </f7-menu-dropdown>
-              </f7-menu-item>
-            </f7-menu>
-
-            <f7-list media-list>
-              <f7-list-item media-item v-for="(marker, idx) in page.slots.default" :key="idx"
-                :title="marker.config.name" :subtitle="marker.config.item || marker.config.location">
-                <oh-icon v-if="marker.config.icon && marker.config.icon.indexOf('oh:') === 0" slot="media" :icon="marker.config.icon.substring(3)" height="32" width="32" />
-                <f7-icon v-else slot="media" :f7="markerDefaultIcon(marker)" :size="32" />
-                <f7-menu slot="content-start">
-                  <f7-menu-item icon-f7="list_bullet" dropdown>
-                    <f7-menu-dropdown>
-                      <f7-menu-dropdown-item @click="configureWidget(marker,  { component: page })" href="#" text="Configure marker"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="editWidgetCode(marker, { component: page })" href="#" text="Edit YAML"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="cutWidget(marker, { component: page })" href="#" text="Cut"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="copyWidget(marker, { component: page })" href="#" text="Copy"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="moveWidgetUp(marker, { component: page })" href="#" text="Move Up"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="moveWidgetDown(marker, { component: page })" href="#" text="Move Down"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="removeWidget(marker, { component: page })" href="#" text="Remove marker"></f7-menu-dropdown-item>
-                    </f7-menu-dropdown>
-                  </f7-menu-item>
-                </f7-menu>
-              </f7-list-item>
-              <f7-list-button color="blue" title="Add marker" @click="addWidget(page, 'oh-chart-marker')" />
-            </f7-list>
-            <f7-block-footer class="param-description">You can also <f7-link style="z-index: inherit" href="#" @click="previewMode = true">switch to Run mode</f7-link> to add markers and position them on the chart.</f7-block-footer>
-          </f7-col>
-        </f7-block> -->
+        <chart-designer class="chart-designer" v-if="ready && !previewMode && currentTab === 'design'" :context="context" />
 
         <oh-chart-page class="chart-page" v-else-if="ready && previewMode && currentTab === 'design'" :context="context" :key="pageKey" />
 
@@ -167,6 +122,8 @@ import YAML from 'yaml'
 // import OhchartPage from '@/components/widgets/chart/oh-chart-page.vue'
 import OhChartPage from '@/components/widgets/chart/oh-chart-page.vue'
 
+import ChartDesigner from '@/components/pagedesigner/chart/chart-designer.vue'
+
 // const ConfigurableWidgets = {
 //   'oh-chart-marker': () => import('@/components/widgets/chart/oh-chart-marker.vue'),
 //   'oh-chart-circle-marker': () => import('@/components/widgets/chart/oh-chart-circle-marker.vue')
@@ -181,6 +138,7 @@ export default {
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
     OhChartPage,
+    ChartDesigner,
     ConfigSheet
   },
   props: ['createMode', 'uid'],
@@ -193,7 +151,7 @@ export default {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-chart-page',
         config: {},
-        slots: { default: [] }
+        slots: { grid: [], xAxis: [], yAxis: [], series: [] }
       },
       pageKey: this.$f7.utils.id(),
       pageYaml: null,
@@ -415,38 +373,38 @@ export default {
       this.widgetYaml = YAML.stringify(component)
       this.widgetCodeOpened = true
     },
-    cutWidget (component, parentContext) {
-      this.copyWidget(component, parentContext)
-      this.removeWidget(component, parentContext)
+    cutWidget (component, parentContext, slot = 'default') {
+      this.copyWidget(component, parentContext, slot)
+      this.removeWidget(component, parentContext, slot)
     },
-    copyWidget (component, parentContext) {
+    copyWidget (component, parentContext, slot = 'default') {
       let newClipboard = JSON.stringify(component)
       this.$set(this, 'clipboard', newClipboard)
       this.clipboardType = component.component
     },
-    pasteWidget (component, parentContext) {
+    pasteWidget (component, parentContext, slot = 'default') {
       if (!this.clipboard) return
-      component.slots.default.push(JSON.parse(this.clipboard))
+      component.slots[slot].push(JSON.parse(this.clipboard))
       this.forceUpdate()
     },
-    moveWidgetUp (component, parentContext) {
-      let siblings = parentContext.component.slots.default
+    moveWidgetUp (component, parentContext, slot = 'default') {
+      let siblings = parentContext.component.slots[slot]
       let pos = siblings.indexOf(component)
       if (pos <= 0) return
       siblings.splice(pos, 1)
       siblings.splice(pos - 1, 0, component)
       this.forceUpdate()
     },
-    moveWidgetDown (component, parentContext) {
-      let siblings = parentContext.component.slots.default
+    moveWidgetDown (component, parentContext, slot = 'default') {
+      let siblings = parentContext.component.slots[slot]
       let pos = siblings.indexOf(component)
       if (pos >= siblings.length - 1) return
       siblings.splice(pos, 1)
       siblings.splice(pos + 1, 0, component)
       this.forceUpdate()
     },
-    removeWidget (component, parentContext) {
-      parentContext.component.slots.default.splice(parentContext.component.slots.default.indexOf(component), 1)
+    removeWidget (component, parentContext, slot = 'default') {
+      parentContext.component.slots[slot].splice(parentContext.component.slots[slot].indexOf(component), 1)
       this.forceUpdate()
     },
     forceUpdate () {
