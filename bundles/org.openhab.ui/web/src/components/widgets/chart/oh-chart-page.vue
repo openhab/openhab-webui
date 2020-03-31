@@ -9,7 +9,10 @@
       :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize></chart>
     <f7-menu class="padding float-right">
       <f7-menu-item @click="earlierPeriod()" icon-f7="chevron_left" />
-      <f7-menu-item v-if="!context.component.config.chartType" dropdown :text="period">
+      <f7-menu-item v-if="context.component.config.chartType" :text="fixedPeriodLabel" type="text" @click="pickFixedStartDate">
+      <input ref="calendarInput" type="text" style="width: 40px; height: 0; visibility: hidden">
+      </f7-menu-item>
+      <f7-menu-item v-else dropdown :text="period">
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item v-for="p in ['h', '2h', '4h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '4M', '6M', 'Y']"
             :key="p" @click="setPeriod(p)" href="#" :text="p"></f7-menu-dropdown-item>
@@ -38,6 +41,10 @@
 <script>
 import mixin from '../widget-mixin'
 import chart from './chart-mixin'
+
+import dayjs from 'dayjs'
+import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+dayjs.extend(LocalizedFormat)
 
 // import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
@@ -85,16 +92,57 @@ export default {
       ]
     }
   },
+  computed: {
+    fixedPeriodLabel () {
+      const startTime = this.startTime
+      if (!this.startTime) return ''
+      switch (this.context.component.config.chartType) {
+        case 'hour':
+          return startTime.format('lll')
+        case 'day':
+          return startTime.format('ll')
+        case 'week':
+        case 'isoWeek':
+          return startTime.format('ll')
+        case 'month':
+          return startTime.format('MMM YYYY')
+        case 'year':
+          return startTime.format('YYYY')
+        default:
+          return startTime.format('ll')
+      }
+    }
+  },
   data () {
     return {
-      ready: false
+      ready: false,
+      calendarPicker: null
     }
   },
   mounted () {
     this.ready = true
   },
+  beforeDestroy () {
+    if (this.calendarPicker) this.calendarPicker.destroy()
+  },
   methods: {
-
+    pickFixedStartDate (evt) {
+      const self = this
+      const value = this.startTime.toDate()
+      this.calendarPicker = this.$f7.calendar.create({
+        inputEl: this.$refs.calendarInput,
+        value: [value],
+        on: {
+          change (calendar, value) {
+            console.log(value)
+            if (value.length < 1) return
+            if (dayjs(value[0]).isSame(self.startTime)) return
+            self.setDate(value[0])
+          }
+        }
+      })
+      this.calendarPicker.open()
+    }
   }
 }
 </script>

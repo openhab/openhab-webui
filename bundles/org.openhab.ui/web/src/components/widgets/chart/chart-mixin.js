@@ -53,11 +53,16 @@ export default {
       const chartConfig = this.config.options || {}
       return {
         ...chartConfig,
+        grid: this.grid,
         xAxis: this.xAxis,
         yAxis: this.yAxis,
         calendar: this.calendar,
         series: this.series
       }
+    },
+    grid () {
+      if (!this.context.component.slots || !this.context.component.slots.grid) return undefined
+      return this.context.component.slots.grid.map((g) => g.config)
     },
     xAxis () {
       if (!this.context.component.slots || !this.context.component.slots.xAxis) return undefined
@@ -105,6 +110,11 @@ export default {
     setPeriod (period) {
       this.period = period
       this.endTime = dayjs()
+    },
+    setDate (date) {
+      const chartType = this.context.component.config.chartType
+      const day = dayjs(date)
+      this.endTime = this.addOrSubtractPeriod((chartType) ? day.startOf(chartType) : day, 1)
     },
     earlierPeriod () {
       this.endTime = this.addOrSubtractPeriod(this.endTime, -1)
