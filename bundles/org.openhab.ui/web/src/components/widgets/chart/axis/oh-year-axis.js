@@ -9,7 +9,7 @@ export default {
     axis.type = 'category'
     dayjs.extend(LocalizedFormat)
     dayjs.extend(LocaleData)
-    switch (config.dayFormat) {
+    switch (config.monthFormat) {
       case 'short':
         axis.data = dayjs.localeData().monthsShort()
         break

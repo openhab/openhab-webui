@@ -5,7 +5,7 @@
     <div>
       <f7-menu v-if="context.editmode" class="configure-layout-menu">
         <span v-for="(yAxis, yAxisIdx) in context.component.slots.yAxis" :key="yAxisIdx">
-          <f7-menu-item v-if="yAxis.config.gridIndex === gridIdx" class="margin-right" :text="parseInt(yAxisIdx).toString()" dropdown>
+          <f7-menu-item v-if="yAxis.config.gridIndex === gridIdx" class="margin-right" :text="'Y' + parseInt(yAxisIdx).toString()" dropdown>
             <f7-menu-dropdown left>
               <f7-menu-dropdown-item @click="context.editmode.configureWidget(yAxis, context)" href="#" text="Configure Y Axis"></f7-menu-dropdown-item>
               <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(yAxis, context)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
@@ -43,7 +43,7 @@
       <div class="skeleton-series">
         <f7-card class="elevation-4">
           <f7-list media-list>
-            <f7-list-item media-item v-for="(series, seriesIdx) in gridSeries(grid, gridIdx)" :key="seriesIdx"
+            <f7-list-item media-item link-item v-for="(series, seriesIdx) in gridSeries(grid, gridIdx)" :key="seriesIdx"
                 :title="series.config.name" :subtitle="series.config.item"
                 :after="`X: ${series.config.xAxisIndex} Y: ${series.config.yAxisIndex}`">
               <f7-menu slot="content-start" class="configure-layout-menu">
@@ -62,10 +62,14 @@
                   </f7-menu-dropdown>
                 </f7-menu-item>
               </f7-menu>
-              <img slot="media" v-if="series.config.type === 'bar'" src="@/res/img/chartdesigner/bar.svg" width="32px">
-              <img slot="media" v-else-if="series.config.type === 'scatter'" src="@/res/img/chartdesigner/scatter.svg" width="32px">
-              <img slot="media" v-else-if="series.config.type === 'heatmap'" src="@/res/img/chartdesigner/heatmap.svg" width="32px">
-              <img slot="media" v-else src="@/res/img/chartdesigner/line.svg" width="32px">
+              <div slot="media">
+                <a @click="context.editmode.configureWidget(series, context)">
+                  <img slot="media" v-if="series.config.type === 'bar'" src="@/res/img/chartdesigner/bar.svg" width="32px">
+                  <img slot="media" v-else-if="series.config.type === 'scatter'" src="@/res/img/chartdesigner/scatter.svg" width="32px">
+                  <img slot="media" v-else-if="series.config.type === 'heatmap'" src="@/res/img/chartdesigner/heatmap.svg" width="32px">
+                  <img slot="media" v-else src="@/res/img/chartdesigner/line.svg" width="32px">
+                </a>
+              </div>
             </f7-list-item>
             <f7-list-button color="blue" @click="addSeries('oh-time-series', gridIdx)">Add Time Series</f7-list-button>
             <f7-list-button color="blue" @click="addSeries('oh-aggregate-series', gridIdx)">Add Aggregate Series</f7-list-button>
@@ -77,7 +81,7 @@
     <div>
       <f7-menu v-if="context.editmode" class="configure-layout-menu">
         <span :style="{ marginLeft: xAxisIdx === 0 ? 'auto' : undefined }" v-for="(xAxis, xAxisIdx) in context.component.slots.xAxis" :key="xAxisIdx">
-          <f7-menu-item v-if="xAxis.config.gridIndex === gridIdx" class="margin-right" :text="parseInt(xAxisIdx).toString()" dropdown>
+          <f7-menu-item v-if="xAxis.config.gridIndex === gridIdx" class="margin-right" :text="'X' + parseInt(xAxisIdx).toString()" dropdown>
             <f7-menu-dropdown right>
               <f7-menu-dropdown-item @click="context.editmode.configureWidget(xAxis, context)" href="#" text="Configure X Axis"></f7-menu-dropdown-item>
               <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(xAxis, context)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
@@ -116,27 +120,47 @@
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
         <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addCalendar">
           <img src="@/res/img/chartdesigner/singleAxis.svg" width="80px" />
-          Add<br />Single Axis
+          Add<br />Single&nbsp;Axis
         </f7-link>
       </f7-col>
     </f7-row>
-    <f7-row>
+    <f7-row class="margin-bottom">
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
         <f7-link color="blue" class="display-flex flex-direction-column padding">
-          <img src="@/res/img/chartdesigner/tooltip.svg" width="50px" />
+          <img src="@/res/img/chartdesigner/tooltip.svg" width="80px" />
           Tooltip
         </f7-link>
       </f7-col>
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
         <f7-link color="blue" class="display-flex flex-direction-column padding">
-          <img src="@/res/img/chartdesigner/visualMap.svg" width="50px" />
+          <img src="@/res/img/chartdesigner/visualMap.svg" width="80px" />
           Visual Map
         </f7-link>
       </f7-col>
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
         <f7-link color="blue" class="display-flex flex-direction-column padding">
-          <img src="@/res/img/chartdesigner/dataZoom.svg" width="50px" />
+          <img src="@/res/img/chartdesigner/dataZoom.svg" width="80px" />
           Data Zoom
+        </f7-link>
+      </f7-col>
+    </f7-row>
+    <f7-row class="margin-bottom">
+      <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
+        <f7-link color="blue" class="display-flex flex-direction-column padding">
+          <img src="@/res/img/chartdesigner/legend.svg" width="80px" />
+          Legend
+        </f7-link>
+      </f7-col>
+      <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
+        <f7-link color="blue" class="display-flex flex-direction-column padding">
+          <img src="@/res/img/chartdesigner/title.svg" width="80px" />
+          Title
+        </f7-link>
+      </f7-col>
+      <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
+        <f7-link color="blue" class="display-flex flex-direction-column padding">
+          <img src="@/res/img/chartdesigner/toolbox.svg" width="80px" />
+          Toolbox
         </f7-link>
       </f7-col>
     </f7-row>
@@ -164,6 +188,7 @@
 .chartdesigner-big-button
   background var(--f7-card-bg-color)
   text-align center
+  height 10rem
   .link
     color var(--f7-text-color)
 </style>
@@ -212,7 +237,7 @@ export default {
         component: 'oh-calendar-axis'
       })
     },
-    addXAxis (gridIdx) {
+    addXAxis (gridIdx, type = 'oh-time-axis') {
       this.context.component.slots.xAxis.push({
         component: 'oh-time-axis',
         config: {
@@ -220,7 +245,7 @@ export default {
         }
       })
     },
-    addYAxis (gridIdx) {
+    addYAxis (gridIdx, type = 'oh-value-axis') {
       this.context.component.slots.yAxis.push({
         component: 'oh-value-axis',
         config: {
@@ -229,11 +254,25 @@ export default {
       })
     },
     addSeries (type, gridIdx) {
-      const firstXAxis = this.context.component.slots.xAxis.find(a => a.config.gridIndex === gridIdx)
-      const firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
-      if (!firstXAxis || !firstYAxis) {
-        this.$f7.dialog.alert('Please first add at least one X axis and one Y axis with the buttons in the corners')
-        return
+      let firstXAxis = this.context.component.slots.xAxis.find(a => a.config.gridIndex === gridIdx)
+      let firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
+      if (!firstXAxis) {
+        if (type === 'oh-time-series') {
+          this.addXAxis(gridIdx)
+          firstXAxis = this.context.component.slots.xAxis.find(a => a.config.gridIndex === gridIdx)
+        } else {
+          this.$f7.dialog.alert('Please add at least one X axis and one Y axis')
+          return
+        }
+      }
+      if (!firstYAxis) {
+        if (type === 'oh-time-series') {
+          this.addYAxis(gridIdx)
+          firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
+        } else {
+          this.$f7.dialog.alert('Please add at least one X axis and one Y axis')
+          return
+        }
       }
       this.context.component.slots.series.push({
         component: type,
@@ -245,6 +284,9 @@ export default {
           type: 'line'
         }
       })
+    },
+    configureSeries (evt, series, context) {
+      debugger
     }
   }
 }

@@ -37,6 +37,14 @@
               </f7-list-input>
             </f7-list>
           </f7-col>
+
+          <f7-block-title>Chart Configuration</f7-block-title>
+          <config-sheet
+            :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
+            :parameters="pageWidgetDefinition.props.parameters || []"
+            :configuration="page.config"
+            @updated="dirty = true"
+          />
         </f7-block>
 
         <chart-designer class="chart-designer" v-if="ready && !previewMode && currentTab === 'design'" :context="context" />
@@ -123,6 +131,7 @@ import YAML from 'yaml'
 import OhChartPage from '@/components/widgets/chart/oh-chart-page.vue'
 
 import ChartDesigner from '@/components/pagedesigner/chart/chart-designer.vue'
+import ChartWidgetsDefinitions from './chart-widgets-definitions'
 
 // const ConfigurableWidgets = {
 //   'oh-chart-marker': () => import('@/components/widgets/chart/oh-chart-marker.vue'),
@@ -340,7 +349,7 @@ export default {
       if (componentType.indexOf('widget:') === 0) {
         this.currentWidget = this.$store.getters.widget(componentType.substring(7))
       } else {
-        widgetDefinition = Object.values(ConfigurableWidgets).find((w) => w.widget && w.widget.name === componentType)
+        widgetDefinition = ChartWidgetsDefinitions[componentType]
         if (!widgetDefinition) {
           // widgetDefinition = Object.values(LayoutWidgets).find((w) => w.widget.name === component.component)
           if (!widgetDefinition) {
@@ -360,7 +369,7 @@ export default {
             return
           }
         }
-        this.currentWidget = widgetDefinition.widget
+        this.currentWidget = widgetDefinition
       }
       this.currentComponent = component
       this.currentComponentConfig = JSON.parse(JSON.stringify(this.currentComponent.config))
