@@ -20,7 +20,7 @@ const buildSourceMaps = process.env.SOURCE_MAPS || false
 const isCordova = target === 'cordova'
 
 // const apiBaseUrl = 'http://openhab:8080' // 'http://demo.openhab.org:8080' // 'http://localhost:8080'
-const apiBaseUrl = 'http://192.168.1.251:8080'
+const apiBaseUrl = 'http://localhost:8080'
 
 module.exports = {
   mode: env,
