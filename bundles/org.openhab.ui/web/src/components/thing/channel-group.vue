@@ -1,6 +1,6 @@
 <template>
   <f7-list :accordion-list="!pickerMode">
-    <f7-list-item group-title v-if="group && group.label"
+    <f7-list-item group-title v-if="group && group.label && group.channels.length > 0"
       :title="group.label"
       :description="group.description"
       :footer="group.description" />
