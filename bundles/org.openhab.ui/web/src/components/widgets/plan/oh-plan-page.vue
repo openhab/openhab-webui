@@ -175,10 +175,11 @@ export default {
     },
     markers () {
       return this.context.component.slots.default.filter((e) => {
-        let zv = parseFloat(e.config.zoomVisibility)
-        return this.context.editmode != null ||
-        isNaN(zv) ||
-        zv <= this.currentZoom
+        const zoomVisibilityMin = parseFloat(e.config.zoomVisibilityMin)
+        const zoomVisibilityMax = parseFloat(e.config.zoomVisibilityMax)
+        const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
+        const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
+        return this.context.editmode != null || (isVisibleMin && isVisibleMax)
       })
     }
   },

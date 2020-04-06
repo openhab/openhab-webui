@@ -138,10 +138,17 @@ export default {
           description: 'Color of the tooltip'
         },
         {
-          name: 'zoomVisibility',
-          label: 'Zoom Visibility',
+          name: 'zoomVisibilityMin',
+          label: 'Zoom Visibility Minimum',
           type: 'NUMBER',
-          description: 'Visible only when zoomed to at least this level (empty by default)',
+          description: 'Visible only when zoomed to above this level (empty by default)',
+          advanced: true
+        },
+        {
+          name: 'zoomVisibilityMax',
+          label: 'Zoom Visibility Maximum',
+          type: 'NUMBER',
+          description: 'Visible only when zoomed to below this level (empty by default)',
           advanced: true
         }
       ]
