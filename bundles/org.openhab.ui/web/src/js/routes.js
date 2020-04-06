@@ -217,7 +217,7 @@ export default [
                 resolve({
                   component: vc.default
                 },
-                (routeTo.params.uid === 'add') ? {
+                (routeTo.params.ruleId === 'add') ? {
                   props: {
                     createMode: true
                   }
