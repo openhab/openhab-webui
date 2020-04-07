@@ -12,7 +12,7 @@
  */
 package org.openhab.ui.habot.notification.internal;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.common.registry.DefaultAbstractManagedProvider;
 import org.openhab.core.common.registry.ManagedProvider;
 import org.openhab.core.storage.StorageService;
@@ -27,6 +27,7 @@ import org.osgi.service.component.annotations.Reference;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 @Component(service = SubscriptionProvider.class, immediate = true)
 public class SubscriptionProvider extends DefaultAbstractManagedProvider<Subscription, Keys> {
 
@@ -40,9 +41,8 @@ public class SubscriptionProvider extends DefaultAbstractManagedProvider<Subscri
         return "habot_webpush_subscriptions";
     }
 
-    @SuppressWarnings("null")
     @Override
-    protected @NonNull String keyToString(@NonNull Keys key) {
+    protected String keyToString(Keys key) {
         return String.format("%s.%s", key.p256dh, key.auth);
     }
 
