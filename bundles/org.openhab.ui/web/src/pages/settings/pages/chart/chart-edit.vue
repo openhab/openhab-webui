@@ -8,7 +8,6 @@
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
-      <!-- <f7-link @click="currentTab = 'preview'" :tab-link-active="currentTab === 'preview'" class="tab-link">Preview</f7-link> -->
       <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
@@ -53,9 +52,6 @@
 
       </f7-tab>
 
-      <!-- <f7-tab id="preview" class="chart-editor-preview-tab" @tab:show="() => this.currentTab = 'preview'" :tab-active="currentTab === 'preview'">
-      </f7-tab> -->
-
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="text/x-yaml" :value="pageYaml" @input="(value) => pageYaml = value" />
         <pre v-show="!previewMode" class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre>
@@ -85,6 +81,41 @@
               @updated="dirty = true"
             />
           </f7-col>
+        </f7-block>
+      </f7-page>
+    </f7-popup>
+
+    <f7-popup ref="slotConfig" class="slotconfig-popup" close-on-escape :opened="widgetSlotConfigOpened" @popup:closed="widgetConfigClosed">
+      <f7-page v-if="currentSlot">
+        <f7-navbar>
+          <f7-nav-left>
+            <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
+          </f7-nav-left>
+          <f7-nav-title>Edit {{currentSlot}}</f7-nav-title>
+          <f7-nav-right>
+            <f7-link @click="updateWidgetSlotConfig">Done</f7-link>
+          </f7-nav-right>
+        </f7-navbar>
+        <f7-block v-if="currentSlotParent.slots[currentSlot]">
+          <f7-col v-for="(slotComponent, idx) in currentSlotConfig" :key="idx">
+            <config-sheet v-if="getWidgetDefinition(slotComponent.component)"
+              :parameterGroups="getWidgetDefinition(slotComponent.component).props.parameterGroups || []"
+              :parameters="getWidgetDefinition(slotComponent.component).props.parameters || []"
+              :configuration="slotComponent.config"
+              @updated="dirty = true"
+            />
+            <f7-block v-else strong>
+              This type of component cannot be configured: {{slotComponent.component}}.
+            </f7-block>
+            <f7-list>
+              <f7-list-button color="blue" @click="editWidgetCode(slotComponent)">Edit YAML</f7-list-button>
+              <f7-list-button color="Remove" @click="removeComponentFromSlot(slotComponent, currentSlotConfig)">Remove</f7-list-button>
+            </f7-list>
+            <hr />
+          </f7-col>
+          <f7-list>
+            <f7-list-button color="blue" @click="currentSlotConfig.push({ component: currentSlotDefaultComponentType, config: { show: true }})">Add Another</f7-list-button>
+          </f7-list>
         </f7-block>
       </f7-page>
     </f7-popup>
@@ -170,8 +201,13 @@ export default {
       clipboardType: null,
       currentComponent: null,
       currentComponentConfig: null,
+      currentSlot: null,
+      currentSlotParent: null,
+      currentSlotConfig: null,
+      currentSlotDefaultComponentType: null,
       currentWidget: null,
       widgetConfigOpened: false,
+      widgetSlotConfigOpened: false,
       widgetCodeOpened: false,
       widgetYaml: null
     }
@@ -188,6 +224,7 @@ export default {
         editmode: {
           addWidget: this.addWidget,
           configureWidget: this.configureWidget,
+          configureSlot: this.configureSlot,
           editWidgetCode: this.editWidgetCode,
           cutWidget: this.cutWidget,
           copyWidget: this.copyWidget,
@@ -322,10 +359,19 @@ export default {
     widgetConfigClosed () {
       this.currentComponent = null
       this.currentWidget = null
+      this.currentSlot = null
+      this.currentSlotParent = null
+      this.currentSlotConfig = null
       this.widgetConfigOpened = false
+      this.widgetSlotConfigOpened = false
     },
     updateWidgetConfig () {
       this.$set(this.currentComponent, 'config', this.currentComponentConfig)
+      this.forceUpdate()
+      this.widgetConfigClosed()
+    },
+    updateWidgetSlotConfig () {
+      this.$set(this.currentSlotParent.slots, this.currentSlot, this.currentSlotConfig)
       this.forceUpdate()
       this.widgetConfigClosed()
     },
@@ -341,6 +387,9 @@ export default {
       this.forceUpdate()
       this.widgetCodeClosed()
     },
+    getWidgetDefinition (componentType) {
+      return ChartWidgetsDefinitions[componentType]
+    },
     configureWidget (component, parentContext, forceComponentType) {
       const componentType = forceComponentType || component.component
       this.currentComponent = null
@@ -349,7 +398,7 @@ export default {
       if (componentType.indexOf('widget:') === 0) {
         this.currentWidget = this.$store.getters.widget(componentType.substring(7))
       } else {
-        widgetDefinition = ChartWidgetsDefinitions[componentType]
+        widgetDefinition = this.getWidgetDefinition(componentType)
         if (!widgetDefinition) {
           // widgetDefinition = Object.values(LayoutWidgets).find((w) => w.widget.name === component.component)
           if (!widgetDefinition) {
@@ -374,6 +423,14 @@ export default {
       this.currentComponent = component
       this.currentComponentConfig = JSON.parse(JSON.stringify(this.currentComponent.config))
       this.widgetConfigOpened = true
+    },
+    configureSlot (component, slotName, defaultSlotComponentType) {
+      this.currentSlotParent = component
+      this.currentWidget = null
+      this.currentSlot = slotName
+      this.currentSlotDefaultComponentType = defaultSlotComponentType
+      this.currentSlotConfig = JSON.parse(JSON.stringify(this.currentSlotParent.slots[slotName]))
+      this.widgetSlotConfigOpened = true
     },
     editWidgetCode (component, parentContext, slot) {
       if (slot && !component.slots) component.slots = {}
@@ -414,6 +471,15 @@ export default {
     },
     removeWidget (component, parentContext, slot = 'default') {
       parentContext.component.slots[slot].splice(parentContext.component.slots[slot].indexOf(component), 1)
+      this.forceUpdate()
+    },
+    removeComponentFromSlot (component, slot) {
+      slot.splice(slot.indexOf(component), 1)
+      if (this.widgetSlotConfigOpened && slot.length === 0) {
+        this.$set(this.currentSlotParent.slots, this.currentSlot, undefined)
+        delete this.currentSlotParent.slots[this.currentSlot]
+        this.widgetConfigClosed()
+      }
       this.forceUpdate()
     },
     forceUpdate () {

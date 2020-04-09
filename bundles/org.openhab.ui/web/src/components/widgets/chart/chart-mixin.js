@@ -17,6 +17,14 @@ import OhTimeSeries from './series/oh-time-series'
 import OhAggregateSeries from './series/oh-aggregate-series'
 import OhCalendarSeries from './series/oh-calendar-series'
 
+// Other components
+import OhChartTooltip from './misc/oh-chart-tooltip'
+import OhChartVisualMap from './misc/oh-chart-visualmap'
+import OhChartDataZoom from './misc/oh-chart-datazoom'
+import OhChartLegend from './misc/oh-chart-legend'
+import OhChartTitle from './misc/oh-chart-title'
+import OhChartToolbox from './misc/oh-chart-toolbox'
+
 const axisComponents = {
   'oh-time-axis': OhTimeAxis,
   'oh-value-axis': OhValueAxis,
@@ -57,6 +65,13 @@ export default {
         xAxis: this.xAxis,
         yAxis: this.yAxis,
         calendar: this.calendar,
+        singleAxis: this.singleAxis,
+        tooltip: this.tooltip,
+        visualMap: this.visualMap,
+        dataZoom: this.dataZoom,
+        legend: this.legend,
+        title: this.title,
+        toolbox: this.toolbox,
         series: this.series
       }
     },
@@ -75,6 +90,34 @@ export default {
     calendar () {
       if (!this.context.component.slots || !this.context.component.slots.calendar) return undefined
       return this.context.component.slots.calendar.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this.orient))
+    },
+    singleAxis () {
+      if (!this.context.component.slots || !this.context.component.slots.singleAxis) return undefined
+      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component))
+    },
+    tooltip () {
+      if (!this.context.component.slots || !this.context.component.slots.tooltip) return undefined
+      return this.context.component.slots.tooltip.map((c) => OhChartTooltip.get(c, this.startTime, this.endTime, this.$device))
+    },
+    visualMap () {
+      if (!this.context.component.slots || !this.context.component.slots.visualMap) return undefined
+      return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(c, this.startTime, this.endTime, this.$device))
+    },
+    dataZoom () {
+      if (!this.context.component.slots || !this.context.component.slots.dataZoom) return undefined
+      return this.context.component.slots.dataZoom.map((c) => OhChartDataZoom.get(c, this.startTime, this.endTime, this.$device))
+    },
+    legend () {
+      if (!this.context.component.slots || !this.context.component.slots.legend) return undefined
+      return this.context.component.slots.legend.map((c) => OhChartLegend.get(c, this.startTime, this.endTime, this.$device))
+    },
+    title () {
+      if (!this.context.component.slots || !this.context.component.slots.title) return undefined
+      return this.context.component.slots.title.map((c) => OhChartTitle.get(c, this.startTime, this.endTime, this.$device))
+    },
+    toolbox () {
+      if (!this.context.component.slots || !this.context.component.slots.toolbox) return undefined
+      return this.context.component.slots.toolbox.map((c) => OhChartToolbox.get(c, this.startTime, this.endTime, this.$device))
     }
   },
   asyncComputed: {

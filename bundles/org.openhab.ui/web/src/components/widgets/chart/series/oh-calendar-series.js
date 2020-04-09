@@ -31,6 +31,13 @@ export default {
     if (!series.type) series.type = 'heatmap'
     series.coordinateSystem = 'calendar'
 
+    if (series.type === 'scatter') {
+      const symbolSizeFactor = component.config.scatterSymbolSizeFactor || 1
+      series.symbolSize = (v) => {
+        return v.pop() * symbolSizeFactor
+      }
+    }
+
     series.data = data
 
     // other things

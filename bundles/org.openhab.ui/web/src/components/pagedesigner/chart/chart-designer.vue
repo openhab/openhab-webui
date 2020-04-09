@@ -1,42 +1,43 @@
 <template>
 <div>
+  <f7-block class="block-narrow margin-bottom" inset>
+    <f7-block-title>Coordinate Systems</f7-block-title>
+    <f7-row class="margin-bottom">
+      <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
+        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addGrid">
+          <img src="@/res/img/chartdesigner/gridSimple.svg" width="80px" />
+          Add<br />Grid
+        </f7-link>
+      </f7-col>
+      <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
+        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addCalendar">
+          <img src="@/res/img/chartdesigner/calendar.svg" width="80px" />
+          Add<br />Calendar
+        </f7-link>
+      </f7-col>
+      <!-- <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
+        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addCalendar">
+          <img src="@/res/img/chartdesigner/singleAxis.svg" width="80px" />
+          Add<br />Single&nbsp;Axis
+        </f7-link>
+      </f7-col> -->
+    </f7-row>
+  </f7-block>
+
+  <!-- Grids -->
   <f7-block strong :style="{ zIndex: 100 - gridIdx }" v-for="(grid, gridIdx) in context.component.slots.grid" :key="gridIdx">
     <f7-block-title>Grid {{gridIdx}}</f7-block-title>
     <div>
       <f7-menu v-if="context.editmode" class="configure-layout-menu">
         <span v-for="(yAxis, yAxisIdx) in context.component.slots.yAxis" :key="yAxisIdx">
-          <f7-menu-item v-if="yAxis.config.gridIndex === gridIdx" class="margin-right" :text="'Y' + parseInt(yAxisIdx).toString()" dropdown>
-            <f7-menu-dropdown left>
-              <f7-menu-dropdown-item @click="context.editmode.configureWidget(yAxis, context)" href="#" text="Configure Y Axis"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(yAxis, context)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item @click="context.editmode.cutWidget(yAxis, context, 'yAxis')" href="#" text="Cut"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item @click="context.editmode.copyWidget(yAxis, context, 'yAxis')" href="#" text="Copy"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row'" @click="context.editmode.pasteWidget(yAxis, context, 'yAxis')" href="#" text="Paste"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row'" divider></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(yAxis, context, 'yAxis')" href="#" text="Move Up"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(yAxis, context, 'yAxis')" href="#" text="Move Down"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item @click="context.editmode.removeWidget(yAxis, context, 'yAxis')" href="#" text="Remove Axis"></f7-menu-dropdown-item>
-            </f7-menu-dropdown>
-          </f7-menu-item>
+          <edit-context-menu v-if="yAxis.config.gridIndex === gridIdx" :context="context" :component="yAxis" :parentSlot="'yAxis'"
+            class="margin-right" :text="'Y' + parseInt(yAxisIdx).toString()"
+            :configureLabel="'Configure Y Axis'" :removeLabel="'Remove Axis'" />
         </span>
         <f7-menu-item @click="addYAxis(gridIdx)" icon-f7="plus" />
-        <f7-menu-item style="margin-left: auto" icon-f7="square_split_2x2" dropdown>
-          <f7-menu-dropdown right>
-            <f7-menu-dropdown-item @click="context.editmode.configureWidget(grid, context)" href="#" text="Configure Grid"></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(grid, context)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item @click="context.editmode.cutWidget(grid, context, 'grid')" href="#" text="Cut"></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item @click="context.editmode.copyWidget(grid, context, 'grid')" href="#" text="Copy"></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row'" @click="context.editmode.pasteWidget(grid, context, 'grid')" href="#" text="Paste"></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row'" divider></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(grid, context, 'grid')" href="#" text="Move Up"></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(grid, context, 'grid')" href="#" text="Move Down"></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item @click="context.editmode.removeWidget(grid, context, 'grid')" href="#" text="Remove Grid"></f7-menu-dropdown-item>
-          </f7-menu-dropdown>
-        </f7-menu-item>
+        <edit-context-menu :context="context" :component="grid" :parentSlot="'grid'"
+          style="margin-left: auto" icon-f7="square_split_2x2" right
+          :configureLabel="'Configure Grid'" :removeLabel="'Remove Grid'" />
       </f7-menu>
     </div>
     <div>
@@ -47,20 +48,8 @@
                 :title="series.config.name" :subtitle="series.config.item"
                 :after="`X: ${series.config.xAxisIndex} Y: ${series.config.yAxisIndex}`">
               <f7-menu slot="content-start" class="configure-layout-menu">
-                <f7-menu-item icon-f7="list_bullet" dropdown>
-                  <f7-menu-dropdown>
-                    <f7-menu-dropdown-item @click="context.editmode.configureWidget(series, context)" href="#" text="Configure Series"></f7-menu-dropdown-item>
-                    <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(series, context)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
-                    <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                    <f7-menu-dropdown-item @click="context.editmode.cutWidget(series, context, 'series')" href="#" text="Cut"></f7-menu-dropdown-item>
-                    <f7-menu-dropdown-item @click="context.editmode.copyWidget(series, context, 'series')" href="#" text="Copy"></f7-menu-dropdown-item>
-                    <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                    <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(series, context, 'series')" href="#" text="Move Up"></f7-menu-dropdown-item>
-                    <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(series, context, 'series')" href="#" text="Move Down"></f7-menu-dropdown-item>
-                    <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                    <f7-menu-dropdown-item @click="context.editmode.removeWidget(series, context, 'series')" href="#" text="Remove Series"></f7-menu-dropdown-item>
-                  </f7-menu-dropdown>
-                </f7-menu-item>
+                <edit-context-menu :context="context" :component="series" :parentSlot="'series'"
+                  icon-f7="list_bullet" :configureLabel="'Configure Series'" :removeLabel="'Remove Series'" />
               </f7-menu>
               <div slot="media">
                 <a @click="context.editmode.configureWidget(series, context)">
@@ -76,26 +65,14 @@
           </f7-list>
         </f7-card>
       </div>
-      <chart-skeleton :options="skeletonOptions(grid, gridIdx)" style="height: 400px; width: 100%" :autoresize="true" />
+      <chart-skeleton :options="skeletonGridOptions(grid, gridIdx)" style="height: 400px; width: 100%" :autoresize="true" />
     </div>
     <div>
       <f7-menu v-if="context.editmode" class="configure-layout-menu">
         <span :style="{ marginLeft: xAxisIdx === 0 ? 'auto' : undefined }" v-for="(xAxis, xAxisIdx) in context.component.slots.xAxis" :key="xAxisIdx">
-          <f7-menu-item v-if="xAxis.config.gridIndex === gridIdx" class="margin-right" :text="'X' + parseInt(xAxisIdx).toString()" dropdown>
-            <f7-menu-dropdown right>
-              <f7-menu-dropdown-item @click="context.editmode.configureWidget(xAxis, context)" href="#" text="Configure X Axis"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(xAxis, context)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item @click="context.editmode.cutWidget(xAxis, context, 'xAxis')" href="#" text="Cut"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item @click="context.editmode.copyWidget(xAxis, context, 'xAxis')" href="#" text="Copy"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row'" @click="context.editmode.pasteWidget(xAxis, context, 'xAxis')" href="#" text="Paste"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row'" divider></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(xAxis, context, 'xAxis')" href="#" text="Move Up"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(xAxis, context, 'xAxis')" href="#" text="Move Down"></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-              <f7-menu-dropdown-item @click="context.editmode.removeWidget(xAxis, context, 'xAxis')" href="#" text="Remove X Axis"></f7-menu-dropdown-item>
-            </f7-menu-dropdown>
-          </f7-menu-item>
+          <edit-context-menu v-if="xAxis.config.gridIndex === gridIdx" :context="context" :component="xAxis" :parentSlot="'xAxis'"
+            class="margin-right" :text="'X' + parseInt(xAxisIdx).toString()" right
+            :configureLabel="'Configure X Axis'" :removeLabel="'Remove Axis'" />
         </span>
 
         <f7-menu-item :style="{ marginLeft: context.component.slots.xAxis.length === 0 ? 'auto' : undefined }" @click="addXAxis(gridIdx)" icon-f7="plus" />
@@ -103,42 +80,62 @@
     </div>
   </f7-block>
 
+  <!-- Calendars -->
+  <f7-block strong :style="{ zIndex: 50 - calendarIdx }" v-for="(calendar, calendarIdx) in context.component.slots.calendar" :key="calendarIdx">
+    <f7-block-title>Calendar {{calendarIdx}}</f7-block-title>
+    <div>
+      <f7-menu v-if="context.editmode" class="configure-layout-menu">
+        <edit-context-menu :context="context" :component="calendar" :parentSlot="'calendar'"
+          style="margin-left: auto" icon-f7="calendar" right
+          :configureLabel="'Configure Calendar'" :removeLabel="'Remove Calendar'" />
+      </f7-menu>
+    </div>
+    <div>
+      <div class="skeleton-series">
+        <f7-card class="elevation-4">
+          <f7-list media-list>
+            <f7-list-item media-item link-item v-for="(series, seriesIdx) in calendarSeries(calendar, calendarIdx)" :key="seriesIdx"
+                :title="series.config.name" :subtitle="series.config.item">
+              <f7-menu slot="content-start" class="configure-layout-menu">
+                <edit-context-menu :context="context" :component="series" :parentSlot="'series'"
+                  icon-f7="list_bullet" :configureLabel="'Configure Series'" :removeLabel="'Remove Series'" />
+              </f7-menu>
+              <div slot="media">
+                <a @click="context.editmode.configureWidget(series, context)">
+                  <img slot="media" v-if="series.config.type === 'scatter'" src="@/res/img/chartdesigner/scatter.svg" width="32px">
+                  <img slot="media" v-else-if="series.config.type === 'heatmap'" src="@/res/img/chartdesigner/heatmap.svg" width="32px">
+                  <img slot="media" v-else src="@/res/img/chartdesigner/line.svg" width="32px">
+                </a>
+              </div>
+            </f7-list-item>
+            <f7-list-button color="blue" @click="addCalendarSeries('oh-calendar-series', calendarIdx)">Add Calendar Series</f7-list-button>
+          </f7-list>
+        </f7-card>
+      </div>
+      <chart-skeleton :options="skeletonCalendarOptions(calendar, calendarIdx)" style="height: 400px; width: 100%" :autoresize="true" />
+    </div>
+  </f7-block>
+
   <f7-block class="block-narrow margin-bottom" inset>
+    <f7-block-title>Other Components</f7-block-title>
     <f7-row class="margin-bottom">
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addGrid">
-          <img src="@/res/img/chartdesigner/gridSimple.svg" width="80px" />
-          Add<br />Grid
-        </f7-link>
-      </f7-col>
-      <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addCalendar">
-          <img src="@/res/img/chartdesigner/calendar.svg" width="80px" />
-          Add<br />Calendar
-        </f7-link>
-      </f7-col>
-      <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addCalendar">
-          <img src="@/res/img/chartdesigner/singleAxis.svg" width="80px" />
-          Add<br />Single&nbsp;Axis
-        </f7-link>
-      </f7-col>
-    </f7-row>
-    <f7-row class="margin-bottom">
-      <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-        <f7-link color="blue" class="display-flex flex-direction-column padding">
+        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('tooltip')">
+          <f7-badge v-if="context.component.slots.tooltip" color="blue" class="count-badge">{{context.component.slots.tooltip.length}}</f7-badge>
           <img src="@/res/img/chartdesigner/tooltip.svg" width="80px" />
           Tooltip
         </f7-link>
       </f7-col>
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-        <f7-link color="blue" class="display-flex flex-direction-column padding">
+        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('visualMap')">
+          <f7-badge v-if="context.component.slots.visualMap" color="blue" class="count-badge">{{context.component.slots.visualMap.length}}</f7-badge>
           <img src="@/res/img/chartdesigner/visualMap.svg" width="80px" />
           Visual Map
         </f7-link>
       </f7-col>
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-        <f7-link color="blue" class="display-flex flex-direction-column padding">
+        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('dataZoom')">
+          <f7-badge v-if="context.component.slots.dataZoom" color="blue" class="count-badge">{{context.component.slots.dataZoom.length}}</f7-badge>
           <img src="@/res/img/chartdesigner/dataZoom.svg" width="80px" />
           Data Zoom
         </f7-link>
@@ -146,30 +143,28 @@
     </f7-row>
     <f7-row class="margin-bottom">
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-        <f7-link color="blue" class="display-flex flex-direction-column padding">
+        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('legend')">
+          <f7-badge v-if="context.component.slots.legend" color="blue" class="count-badge">{{context.component.slots.legend.length}}</f7-badge>
           <img src="@/res/img/chartdesigner/legend.svg" width="80px" />
           Legend
         </f7-link>
       </f7-col>
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-        <f7-link color="blue" class="display-flex flex-direction-column padding">
+        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('title')">
+          <f7-badge v-if="context.component.slots.title" color="blue" class="count-badge">{{context.component.slots.title.length}}</f7-badge>
           <img src="@/res/img/chartdesigner/title.svg" width="80px" />
           Title
         </f7-link>
       </f7-col>
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-        <f7-link color="blue" class="display-flex flex-direction-column padding">
+        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('toolbox')">
+          <f7-badge v-if="context.component.slots.toolbox" color="blue" class="count-badge">{{context.component.slots.toolbox.length}}</f7-badge>
           <img src="@/res/img/chartdesigner/toolbox.svg" width="80px" />
           Toolbox
         </f7-link>
       </f7-col>
     </f7-row>
   </f7-block>
-    <!-- <f7-list>
-      <f7-list-button color="blue" @click="addGrid">Add Grid</f7-list-button>
-      <f7-list-button color="blue" @click="addCalendar">Add Calendar</f7-list-button>
-    </f7-list> -->
-    <!-- <f7-button color="blue" icon-f7="squares_below_rectangle" large round raised text="Add Block" @click="$emit('add-block', context.component)"></f7-button> -->
 </div>
 </template>
 
@@ -191,20 +186,39 @@
   height 10rem
   .link
     color var(--f7-text-color)
+  .count-badge
+    position absolute
+    top 0.3rem
+    right 0.3rem
 </style>
 
 <script>
 import widget from '@/components/widgets/widget-mixin'
+import EditContextMenu from '@/components/pagedesigner/edit-menu.vue'
 
 import ECharts from 'vue-echarts/components/ECharts'
+
+import * as dayjs from 'dayjs'
+import IsoWeek from 'dayjs/plugin/isoWeek'
+dayjs.extend(IsoWeek)
+
+const defaultSlotComponentType = {
+  'tooltip': 'oh-chart-tooltip',
+  'title': 'oh-chart-title',
+  'visualMap': 'oh-chart-visualmap',
+  'dataZoom': 'oh-chart-datazoom',
+  'legend': 'oh-chart-legend',
+  'toolbox': 'oh-chart-toolbox'
+}
 
 export default {
   mixins: [widget],
   components: {
-    'chart-skeleton': ECharts
+    'chart-skeleton': ECharts,
+    EditContextMenu
   },
   methods: {
-    skeletonOptions (grid, gridIdx) {
+    skeletonGridOptions (grid, gridIdx) {
       let options = {}
       options.grid = grid.config
 
@@ -219,25 +233,79 @@ export default {
 
       return options
     },
+    skeletonCalendarOptions (calendar, calendarIdx) {
+      let options = {}
+      let calendarOptions = Object.assign({}, calendar.config)
+      calendarOptions.dayLabel = {
+        firstDay: 1,
+        margin: 5
+      }
+      calendarOptions.monthName = {
+        margin: 5
+      }
+
+      // calculate range based on chart type and/or initial period
+      const chartType = this.context.component.config.chartType
+      const period = this.context.component.config.period || 'M'
+      let endTime = (chartType) ? dayjs().startOf(chartType).add(1, chartType === 'isoWeek' ? 'week' : chartType) : dayjs()
+      let startTime = endTime
+
+      const fn = endTime.subtract
+      if (chartType) {
+        startTime = fn.apply(endTime, [1, chartType === 'isoWeek' ? 'week' : chartType])
+      } else {
+        switch (period) {
+          case 'h': startTime = fn.apply(endTime, [1, 'hour']); break
+          case '2h': startTime = fn.apply(endTime, [2, 'hour']); break
+          case '4h': startTime = fn.apply(endTime, [4, 'hour']); break
+          case '12h': startTime = fn.apply(endTime, [12, 'hour']); break
+          case 'D': startTime = fn.apply(endTime, [1, 'day']); break
+          case '2D': startTime = fn.apply(endTime, [2, 'day']); break
+          case '3D': startTime = fn.apply(endTime, [3, 'day']); break
+          case 'W': startTime = fn.apply(endTime, [1, 'week']); break
+          case '2W': startTime = fn.apply(endTime, [2, 'week']); break
+          case 'M': startTime = fn.apply(endTime, [1, 'month']); break
+          case '2M': startTime = fn.apply(endTime, [2, 'month']); break
+          case '4M': startTime = fn.apply(endTime, [4, 'month']); break
+          case '6M': startTime = fn.apply(endTime, [6, 'month']); break
+          case 'Y': startTime = fn.apply(endTime, [365, 'day']); break
+        }
+      }
+
+      calendarOptions.range = [startTime.toDate(), endTime.subtract(1, 'second').toDate()]
+      calendarOptions.top = 60
+      calendarOptions.bottom = 60
+      calendarOptions.left = 60
+      calendarOptions.right = 60
+
+      options.calendar = calendarOptions
+
+      return options
+    },
     gridSeries (grid, gridIdx) {
       const gridxAxisIndexes = this.context.component.slots.xAxis.map((a, idx) => a.config.gridIndex === gridIdx ? idx : null).filter(i => i !== null)
       const gridyAxisIndexes = this.context.component.slots.yAxis.map((a, idx) => a.config.gridIndex === gridIdx ? idx : null).filter(i => i !== null)
       return this.context.component.slots.series.filter((s) => gridxAxisIndexes.indexOf(s.config.xAxisIndex) >= 0 && gridyAxisIndexes.indexOf(s.config.yAxisIndex) >= 0)
     },
+    calendarSeries (calendar, calendarIdx) {
+      return this.context.component.slots.series.filter((s) => s.config.calendarIndex === calendarIdx)
+    },
     addGrid () {
-      if (!this.context.component.slots.grid) this.context.component.grid = []
+      if (!this.context.component.slots.grid) this.$set(this.context.component.slots, 'grid', [])
       this.context.component.slots.grid.push({
         component: 'oh-chart-grid',
         config: {}
       })
     },
     addCalendar () {
-      if (!this.context.component.slots.calendar) this.context.component.calendar = []
+      if (!this.context.component.slots.calendar) this.$set(this.context.component.slots, 'calendar', [])
       this.context.component.slots.calendar.push({
-        component: 'oh-calendar-axis'
+        component: 'oh-calendar-axis',
+        config: {}
       })
     },
     addXAxis (gridIdx, type = 'oh-time-axis') {
+      if (!this.context.component.slots.xAxis) this.$set(this.context.component.slots, 'xAxis', [])
       this.context.component.slots.xAxis.push({
         component: 'oh-time-axis',
         config: {
@@ -246,6 +314,7 @@ export default {
       })
     },
     addYAxis (gridIdx, type = 'oh-value-axis') {
+      if (!this.context.component.slots.yAxis) this.$set(this.context.component.slots, 'yAxis', [])
       this.context.component.slots.yAxis.push({
         component: 'oh-value-axis',
         config: {
@@ -253,7 +322,19 @@ export default {
         }
       })
     },
+    addCalendarSeries (type, calendarIdx) {
+      if (!this.context.component.slots.series) this.$set(this.context.component.slots, 'series', [])
+      this.context.component.slots.series.push({
+        component: type,
+        config: {
+          name: 'Series ' + (this.context.component.slots.series.length + 1),
+          calendarIndex: calendarIdx,
+          type: 'heatmap'
+        }
+      })
+    },
     addSeries (type, gridIdx) {
+      if (!this.context.component.slots.series) this.$set(this.context.component.slots, 'series', [])
       let firstXAxis = this.context.component.slots.xAxis.find(a => a.config.gridIndex === gridIdx)
       let firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
       if (!firstXAxis) {
@@ -287,6 +368,19 @@ export default {
     },
     configureSeries (evt, series, context) {
       debugger
+    },
+    configureSlot (slotName) {
+      if (!this.context.component.slots[slotName]) {
+        this.$set(this.context.component.slots, slotName, [
+          {
+            component: defaultSlotComponentType[slotName],
+            config: {
+              show: true
+            }
+          }
+        ])
+      }
+      this.context.editmode.configureSlot(this.context.component, slotName, defaultSlotComponentType[slotName])
     }
   }
 }
