@@ -36,13 +36,9 @@ public class Subscription implements Identifiable<Keys> {
     }
 
     public class Keys {
-        public @NonNullByDefault({}) String p256dh;
+        public final String p256dh;
 
-        public @NonNullByDefault({}) String auth;
-
-        public Keys() {
-            // No-args constructor
-        }
+        public final String auth;
 
         public Keys(String p256dh, String auth) {
             this.p256dh = p256dh;
