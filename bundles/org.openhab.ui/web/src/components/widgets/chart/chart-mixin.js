@@ -6,11 +6,7 @@ dayjs.extend(IsoWeek)
 import OhTimeAxis from './axis/oh-time-axis'
 import OhValueAxis from './axis/oh-value-axis'
 import OhCalendarAxis from './axis/oh-calendar-axis'
-import OhHourAxis from './axis/oh-hour-axis'
-import OhDayAxis from './axis/oh-day-axis'
-import OhWeekAxis from './axis/oh-week-axis'
-import OhMonthAxis from './axis/oh-month-axis'
-import OhYearAxis from './axis/oh-year-axis'
+import OhCategoryAxis from './axis/oh-category-axis'
 
 // Series components
 import OhTimeSeries from './series/oh-time-series'
@@ -29,11 +25,7 @@ const axisComponents = {
   'oh-time-axis': OhTimeAxis,
   'oh-value-axis': OhValueAxis,
   'oh-calendar-axis': OhCalendarAxis,
-  'oh-hour-axis': OhHourAxis,
-  'oh-day-axis': OhDayAxis,
-  'oh-week-axis': OhWeekAxis,
-  'oh-month-axis': OhMonthAxis,
-  'oh-year-axis': OhYearAxis
+  'oh-category-axis': OhCategoryAxis
 }
 
 const seriesComponents = {

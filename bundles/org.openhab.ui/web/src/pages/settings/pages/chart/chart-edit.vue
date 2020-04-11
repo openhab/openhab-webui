@@ -96,7 +96,7 @@
             <f7-link @click="updateWidgetSlotConfig">Done</f7-link>
           </f7-nav-right>
         </f7-navbar>
-        <f7-block v-if="currentSlotParent.slots[currentSlot]">
+        <f7-block>
           <f7-col v-for="(slotComponent, idx) in currentSlotConfig" :key="idx">
             <config-sheet v-if="getWidgetDefinition(slotComponent.component)"
               :parameterGroups="getWidgetDefinition(slotComponent.component).props.parameterGroups || []"
@@ -132,7 +132,16 @@
           </f7-nav-right>
         </f7-navbar>
         <editor class="page-code-editor" mode="text/x-yaml" :value="widgetYaml" @input="(value) => widgetYaml = value" />
-        <pre class="yaml-message padding-horizontal" :class="[widgetYamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{widgetYamlError}}</pre>
+        <pre v-if="widgetYamlError !== 'OK'" class="yaml-message padding-horizontal" :class="['text-color-red']">{{widgetYamlError}}</pre>
+        <div class="code-editor-docs-link"
+          v-if="widgetYamlError === 'OK' && getWidgetDefinition(currentComponent.component) && getWidgetDefinition(currentComponent.component).docLink">
+          <f7-list>
+            <f7-list-button target="_blank" external color="blue"
+            :href="getWidgetDefinition(currentComponent.component).docLink">
+              Apache ECharts Option Reference
+            </f7-list-button>
+          </f7-list>
+        </div>
       </f7-page>
     </f7-popup>
   </f7-page>
@@ -142,13 +151,17 @@
 .page-code-editor.vue-codemirror
   display block
   top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(80% - 2*var(--f7-navbar-height))
+  height calc(80% - 2 * var(--f7-navbar-height))
   width 100%
 .yaml-message
   display block
   position absolute
   top 80%
   white-space pre-wrap
+.code-editor-docs-link
+  position absolute
+  top calc(80% - var(--f7-navbar-height))
+  width 100%
 .chart-editor
   .oh-chart-page-chart
     top calc(var(--f7-navbar-height) + var(--f7-toolbar-height)) !important
@@ -158,19 +171,10 @@
 <script>
 import YAML from 'yaml'
 
-// import OhchartPage from '@/components/widgets/chart/oh-chart-page.vue'
 import OhChartPage from '@/components/widgets/chart/oh-chart-page.vue'
 
 import ChartDesigner from '@/components/pagedesigner/chart/chart-designer.vue'
 import ChartWidgetsDefinitions from './chart-widgets-definitions'
-
-// const ConfigurableWidgets = {
-//   'oh-chart-marker': () => import('@/components/widgets/chart/oh-chart-marker.vue'),
-//   'oh-chart-circle-marker': () => import('@/components/widgets/chart/oh-chart-circle-marker.vue')
-// }
-const ConfigurableWidgets = {
-
-}
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
@@ -429,7 +433,18 @@ export default {
       this.currentWidget = null
       this.currentSlot = slotName
       this.currentSlotDefaultComponentType = defaultSlotComponentType
-      this.currentSlotConfig = JSON.parse(JSON.stringify(this.currentSlotParent.slots[slotName]))
+      if (this.currentSlotParent.slots[slotName] && this.currentSlotParent.slots[slotName].length > 0) {
+        this.currentSlotConfig = JSON.parse(JSON.stringify(this.currentSlotParent.slots[slotName]))
+      } else {
+        this.currentSlotConfig = [
+          {
+            component: defaultSlotComponentType,
+            config: {
+              show: true
+            }
+          }
+        ]
+      }
       this.widgetSlotConfigOpened = true
     },
     editWidgetCode (component, parentContext, slot) {

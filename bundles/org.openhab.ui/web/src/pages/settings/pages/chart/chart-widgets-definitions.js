@@ -4,6 +4,16 @@ const positionGroup = {
   description: 'Each parameter accepts pixel values, or percentages. Additionally, top accepts "top", "middle" and "bottom" and left accepts "left", "center", "right" to align the component vertically or horizontally'
 }
 
+const componentRelationsGroup = {
+  name: 'componentRelations',
+  label: 'Axis and Coordinate System Assignments'
+}
+
+const nameDisplayGroup = {
+  name: 'nameDisplay',
+  label: 'Name Display'
+}
+
 const positionParameters = [
   { name: 'top', type: 'TEXT', label: 'Top', groupName: 'position' },
   { name: 'bottom', type: 'TEXT', label: 'Bottom', groupName: 'position' },
@@ -50,6 +60,7 @@ const nameLocationParameter = {
   name: 'nameLocation',
   type: 'TEXT',
   label: 'Name Location',
+  groupName: 'nameDisplay',
   description: 'Location of axis name',
   limitToOptions: true,
   options: [
@@ -63,6 +74,7 @@ const nameGapParameter = {
   name: 'nameGap',
   type: 'INTEGER',
   label: 'Name Gap',
+  groupName: 'nameDisplay',
   description: 'Gap between axis name and axis line.'
 }
 
@@ -70,6 +82,7 @@ const nameRotateParameter = {
   name: 'nameRotate',
   type: 'TEXT',
   label: 'Name Rotate',
+  groupName: 'nameDisplay',
   description: 'Rotation of axis name'
 }
 
@@ -87,6 +100,42 @@ const maxParameter = {
   description: 'Maximum boundary'
 }
 
+const gridIndexParameter = {
+  name: 'gridIndex',
+  type: 'INTEGER',
+  context: 'chartGrid',
+  label: 'Grid Index',
+  groupName: 'componentRelations',
+  description: 'The index of the grid for this axis'
+}
+
+const calendarIndexParameter = {
+  name: 'calendarIndex',
+  type: 'INTEGER',
+  context: 'chartCalendar',
+  label: 'Calendar Index',
+  groupName: 'componentRelations',
+  description: 'The index of the calendar for this series'
+}
+
+const xAxisIndexParameter = {
+  name: 'xAxisIndex',
+  type: 'INTEGER',
+  context: 'xAxis',
+  label: 'X Axis Index',
+  groupName: 'componentRelations',
+  description: 'The index of the X axis for this series'
+}
+
+const yAxisIndexParameter = {
+  name: 'yAxisIndex',
+  type: 'INTEGER',
+  context: 'yAxis',
+  label: 'Y Axis Index',
+  groupName: 'componentRelations',
+  description: 'The index of the Y axis for this series'
+}
+
 const axisNameParameters = [
   nameParameter,
   nameLocationParameter,
@@ -95,7 +144,8 @@ const axisNameParameters = [
 ]
 
 const dateAxisParameters = [
-  ...axisNameParameters
+  ...axisNameParameters,
+  gridIndexParameter
 ]
 
 const seriesParameters = [
@@ -151,6 +201,7 @@ const dimensionTypesOptions = [
 export default {
   'oh-chart-grid': {
     label: 'Cartesian Grid',
+    docLink: 'https://echarts.apache.org/en/option.html#grid',
     props: {
       parameterGroups: [positionGroup],
       parameters: [
@@ -171,104 +222,137 @@ export default {
     }
   },
 
-  'oh-hour-axis': {
-    label: 'Minute of Hour Axis',
+  'oh-category-axis': {
+    label: 'Category Axis',
+    docLink: 'https://echarts.apache.org/en/option.html#xAxis',
     props: {
-      parameterGroups: [],
+      parameterGroups: [nameDisplayGroup, componentRelationsGroup],
       parameters: [
-        ...dateAxisParameters
-      ]
-    }
-  },
-
-  'oh-day-axis': {
-    label: 'Hour of Day Axis',
-    props: {
-      parameterGroups: [],
-      parameters: [
-        ...dateAxisParameters
-      ]
-    }
-  },
-
-  'oh-week-axis': {
-    label: 'Day of Week Axis',
-    props: {
-      parameterGroups: [],
-      parameters: [
-        ...dateAxisParameters
-      ]
-    }
-  },
-
-  'oh-month-axis': {
-    label: 'Day of Month Axis',
-    props: {
-      parameterGroups: [],
-      parameters: [
-        ...dateAxisParameters
-      ]
-    }
-  },
-
-  'oh-year-axis': {
-    label: 'Month of Year Axis',
-    props: {
-      parameterGroups: [],
-      parameters: [
-        ...dateAxisParameters
+        ...dateAxisParameters,
+        {
+          name: 'categoryType',
+          label: 'Categories',
+          type: 'TEXT',
+          description: 'Type of categories to display',
+          required: true,
+          limitToOptions: true,
+          options: [
+            { value: 'hour', label: 'Minutes of hour' },
+            { value: 'day', label: 'Hours of day' },
+            { value: 'week', label: 'Days of week' },
+            { value: 'month', label: 'Days of month' },
+            { value: 'year', label: 'Months of year' }
+          ]
+        },
+        {
+          name: 'weekdayFormat',
+          label: 'Weekday Format',
+          type: 'TEXT',
+          description: 'Format of week days labels',
+          required: true,
+          limitToOptions: true,
+          options: [
+            { value: 'default', label: 'Long (default)' },
+            { value: 'short', label: 'Short' },
+            { value: 'min', label: 'Minimal' }
+          ],
+          visible: (value, configuration, configDescription, parameters) => {
+            return configuration.categoryType === 'week'
+          }
+        },
+        {
+          name: 'startonSunday',
+          label: 'Start Week on Sunday',
+          type: 'BOOLEAN',
+          description: 'Check to start the week on Sundays instead of Mondays',
+          visible: (value, configuration, configDescription, parameters) => {
+            return configuration.categoryType === 'week'
+          }
+        },
+        {
+          name: 'monthFormat',
+          label: 'Month Format',
+          type: 'TEXT',
+          description: 'Format of months labels',
+          required: true,
+          limitToOptions: true,
+          options: [
+            { value: 'default', label: 'Long (default)' },
+            { value: 'short', label: 'Short' }
+          ],
+          visible: (value, configuration, configDescription, parameters) => {
+            return configuration.categoryType === 'year'
+          }
+        },
+        gridIndexParameter
       ]
     }
   },
 
   'oh-value-axis': {
     label: 'Value Axis',
+    docLink: 'https://echarts.apache.org/en/option.html#yAxis',
     props: {
-      parameterGroups: [],
+      parameterGroups: [nameDisplayGroup, componentRelationsGroup],
       parameters: [
         ...axisNameParameters,
         minParameter,
-        maxParameter
+        maxParameter,
+        {
+          name: 'scale',
+          label: 'Do Not Force Scale to Include Zero',
+          type: 'BOOLEAN',
+          description: 'If checked the scale will not necessarily include the origin (has no effect if min or max are set explicitely)'
+        },
+        gridIndexParameter
       ]
     }
   },
 
   'oh-time-axis': {
     label: 'Time Axis',
+    docLink: 'https://echarts.apache.org/en/option.html#xAxis',
     props: {
-      parameterGroups: [],
+      parameterGroups: [nameDisplayGroup, componentRelationsGroup],
       parameters: [
-        ...axisNameParameters
+        ...axisNameParameters,
+        gridIndexParameter
       ]
     }
   },
 
   'oh-calendar-axis': {
     label: 'Calendar',
+    docLink: 'https://echarts.apache.org/en/option.html#calendar',
     props: {
-      parameterGroups: [],
+      parameterGroups: [nameDisplayGroup, componentRelationsGroup],
       parameters: [
         ...positionParameters,
-        orientParameter
+        orientParameter,
+        gridIndexParameter
       ]
     }
   },
 
   'oh-time-series': {
     label: 'Time Series',
+    docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
-      parameterGroups: [],
+      parameterGroups: [componentRelationsGroup],
       parameters: [
         ...seriesParameters,
-        seriesTypeParameter('line', 'bar', 'heatmap', 'scatter')
+        seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
+        xAxisIndexParameter,
+        yAxisIndexParameter
       ]
     }
   },
 
   'oh-aggregate-series': {
     label: 'Aggregate Series',
+    docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
-      parameterGroups: [],
+      parameterGroups: [componentRelationsGroup],
       parameters: [
         ...seriesParameters,
         seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
@@ -294,26 +378,30 @@ export default {
           type: 'BOOLEAN',
           description: 'Enable when the first dimension should be mapped to the Y axis instead of the X axis'
         },
-        aggregationFunctionParameter
-
+        aggregationFunctionParameter,
+        xAxisIndexParameter,
+        yAxisIndexParameter
       ]
     }
   },
 
   'oh-calendar-series': {
     label: 'Calendar Series',
+    docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
-      parameterGroups: [],
+      parameterGroups: [componentRelationsGroup],
       parameters: [
         ...seriesParameters,
         seriesTypeParameter('heatmap', 'scatter'),
-        aggregationFunctionParameter
+        aggregationFunctionParameter,
+        calendarIndexParameter
       ]
     }
   },
 
   'oh-chart-tooltip': {
     label: 'Tooltip',
+    docLink: 'https://echarts.apache.org/en/option.html#tooltip',
     props: {
       parameterGroups: [],
       parameters: [
@@ -331,6 +419,7 @@ export default {
 
   'oh-chart-visualmap': {
     label: 'Visual Map',
+    docLink: 'https://echarts.apache.org/en/option.html#visualMap',
     props: {
       parameterGroups: [
         {
@@ -366,14 +455,20 @@ export default {
           label: 'Show handles',
           type: 'BOOLEAN',
           groupName: 'appearanceGroup',
-          description: 'Show handles to filter data in continuous mode'
+          description: 'Show handles to filter data in continuous mode',
+          visible: (value, configuration, configDescription, parameters) => {
+            return configuration.type !== 'piecewise'
+          }
         },
         {
           name: 'pieces',
           label: 'Number of pieces',
           type: 'INTEGER',
           groupName: 'appearanceGroup',
-          description: 'Number of pieces in piecewise mode'
+          description: 'Number of pieces in piecewise mode',
+          visible: (value, configuration, configDescription, parameters) => {
+            return configuration.type === 'piecewise'
+          }
         },
         {
           name: 'presetPalette',
@@ -395,6 +490,7 @@ export default {
 
   'oh-chart-datazoom': {
     label: 'Data Zoom',
+    docLink: 'https://echarts.apache.org/en/option.html#dataZoom',
     props: {
       parameterGroups: [Object.assign({}, positionGroup, { description: 'Applicable only for sliders' })],
       parameters: [
@@ -417,7 +513,8 @@ export default {
   },
 
   'oh-chart-legend': {
-    label: 'Data Zoom',
+    label: 'Legend',
+    docLink: 'https://echarts.apache.org/en/option.html#legend',
     props: {
       parameterGroups: [positionGroup],
       parameters: [
@@ -431,6 +528,7 @@ export default {
 
   'oh-chart-title': {
     label: 'Title',
+    docLink: 'https://echarts.apache.org/en/option.html#title',
     props: {
       parameterGroups: [positionGroup],
       parameters: [
@@ -452,6 +550,7 @@ export default {
 
   'oh-chart-toolbox': {
     label: 'Toolbox',
+    docLink: 'https://echarts.apache.org/en/option.html#toolbox',
     props: {
       parameterGroups: [positionGroup],
       parameters: [

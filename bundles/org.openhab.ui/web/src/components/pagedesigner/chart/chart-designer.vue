@@ -15,12 +15,6 @@
           Add<br />Calendar
         </f7-link>
       </f7-col>
-      <!-- <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-        <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addCalendar">
-          <img src="@/res/img/chartdesigner/singleAxis.svg" width="80px" />
-          Add<br />Single&nbsp;Axis
-        </f7-link>
-      </f7-col> -->
     </f7-row>
   </f7-block>
 
@@ -34,7 +28,12 @@
             class="margin-right" :text="'Y' + parseInt(yAxisIdx).toString()"
             :configureLabel="'Configure Y Axis'" :removeLabel="'Remove Axis'" />
         </span>
-        <f7-menu-item @click="addYAxis(gridIdx)" icon-f7="plus" />
+        <f7-menu-item icon-f7="plus" dropdown>
+          <f7-menu-dropdown left>
+            <f7-menu-dropdown-item @click="addAxis(gridIdx, 'yAxis', 'oh-value-axis')" href="#" text="Add value axis" />
+            <f7-menu-dropdown-item @click="addAxis(gridIdx, 'yAxis', 'oh-category-axis')" href="#" text="Add category axis" />
+          </f7-menu-dropdown>
+        </f7-menu-item>
         <edit-context-menu :context="context" :component="grid" :parentSlot="'grid'"
           style="margin-left: auto" icon-f7="square_split_2x2" right
           :configureLabel="'Configure Grid'" :removeLabel="'Remove Grid'" />
@@ -46,18 +45,17 @@
           <f7-list media-list>
             <f7-list-item media-item link-item v-for="(series, seriesIdx) in gridSeries(grid, gridIdx)" :key="seriesIdx"
                 :title="series.config.name" :subtitle="series.config.item"
-                :after="`X: ${series.config.xAxisIndex} Y: ${series.config.yAxisIndex}`">
-              <f7-menu slot="content-start" class="configure-layout-menu">
+                :after="`X: ${series.config.xAxisIndex} Y: ${series.config.yAxisIndex}`"
+                link="#" @click.native="(ev) => configureSeries(ev, series, context)">
+              <f7-menu slot="content-start" class="configure-layout-menu" style="z-index: 50">
                 <edit-context-menu :context="context" :component="series" :parentSlot="'series'"
                   icon-f7="list_bullet" :configureLabel="'Configure Series'" :removeLabel="'Remove Series'" />
               </f7-menu>
               <div slot="media">
-                <a @click="context.editmode.configureWidget(series, context)">
-                  <img slot="media" v-if="series.config.type === 'bar'" src="@/res/img/chartdesigner/bar.svg" width="32px">
-                  <img slot="media" v-else-if="series.config.type === 'scatter'" src="@/res/img/chartdesigner/scatter.svg" width="32px">
-                  <img slot="media" v-else-if="series.config.type === 'heatmap'" src="@/res/img/chartdesigner/heatmap.svg" width="32px">
-                  <img slot="media" v-else src="@/res/img/chartdesigner/line.svg" width="32px">
-                </a>
+                <img slot="media" v-if="series.config.type === 'bar'" src="@/res/img/chartdesigner/bar.svg" width="32px">
+                <img slot="media" v-else-if="series.config.type === 'scatter'" src="@/res/img/chartdesigner/scatter.svg" width="32px">
+                <img slot="media" v-else-if="series.config.type === 'heatmap'" src="@/res/img/chartdesigner/heatmap.svg" width="32px">
+                <img slot="media" v-else src="@/res/img/chartdesigner/line.svg" width="32px">
               </div>
             </f7-list-item>
             <f7-list-button color="blue" @click="addSeries('oh-time-series', gridIdx)">Add Time Series</f7-list-button>
@@ -75,7 +73,14 @@
             :configureLabel="'Configure X Axis'" :removeLabel="'Remove Axis'" />
         </span>
 
-        <f7-menu-item :style="{ marginLeft: context.component.slots.xAxis.length === 0 ? 'auto' : undefined }" @click="addXAxis(gridIdx)" icon-f7="plus" />
+        <f7-menu-item :style="{ marginLeft: context.component.slots.xAxis.length === 0 ? 'auto' : undefined }" icon-f7="plus" dropdown>
+          <f7-menu-dropdown right>
+            <f7-menu-dropdown-item @click="addAxis(gridIdx, 'xAxis', 'oh-time-axis')" href="#" text="Add time axis" />
+            <f7-menu-dropdown-item @click="addAxis(gridIdx, 'xAxis', 'oh-category-axis')" href="#" text="Add category axis" />
+            <f7-menu-dropdown-item @click="addAxis(gridIdx, 'xAxis', 'oh-value-axis')" href="#" text="Add value axis" />
+          </f7-menu-dropdown>
+        </f7-menu-item>
+
       </f7-menu>
     </div>
   </f7-block>
@@ -95,17 +100,16 @@
         <f7-card class="elevation-4">
           <f7-list media-list>
             <f7-list-item media-item link-item v-for="(series, seriesIdx) in calendarSeries(calendar, calendarIdx)" :key="seriesIdx"
-                :title="series.config.name" :subtitle="series.config.item">
+                :title="series.config.name" :subtitle="series.config.item"
+                link="#" @click.native="(ev) => configureSeries(ev, series, context)">
               <f7-menu slot="content-start" class="configure-layout-menu">
                 <edit-context-menu :context="context" :component="series" :parentSlot="'series'"
                   icon-f7="list_bullet" :configureLabel="'Configure Series'" :removeLabel="'Remove Series'" />
               </f7-menu>
               <div slot="media">
-                <a @click="context.editmode.configureWidget(series, context)">
-                  <img slot="media" v-if="series.config.type === 'scatter'" src="@/res/img/chartdesigner/scatter.svg" width="32px">
-                  <img slot="media" v-else-if="series.config.type === 'heatmap'" src="@/res/img/chartdesigner/heatmap.svg" width="32px">
-                  <img slot="media" v-else src="@/res/img/chartdesigner/line.svg" width="32px">
-                </a>
+                <img slot="media" v-if="series.config.type === 'scatter'" src="@/res/img/chartdesigner/scatter.svg" width="32px">
+                <img slot="media" v-else-if="series.config.type === 'heatmap'" src="@/res/img/chartdesigner/heatmap.svg" width="32px">
+                <img slot="media" v-else src="@/res/img/chartdesigner/line.svg" width="32px">
               </div>
             </f7-list-item>
             <f7-list-button color="blue" @click="addCalendarSeries('oh-calendar-series', calendarIdx)">Add Calendar Series</f7-list-button>
@@ -180,6 +184,9 @@
     width 60%
     margin-top 4rem
     // overflow-y auto
+  .item-link
+    overflow inherit
+    z-index inherit !important
 .chartdesigner-big-button
   background var(--f7-card-bg-color)
   text-align center
@@ -304,19 +311,10 @@ export default {
         config: {}
       })
     },
-    addXAxis (gridIdx, type = 'oh-time-axis') {
-      if (!this.context.component.slots.xAxis) this.$set(this.context.component.slots, 'xAxis', [])
-      this.context.component.slots.xAxis.push({
-        component: 'oh-time-axis',
-        config: {
-          gridIndex: gridIdx
-        }
-      })
-    },
-    addYAxis (gridIdx, type = 'oh-value-axis') {
-      if (!this.context.component.slots.yAxis) this.$set(this.context.component.slots, 'yAxis', [])
-      this.context.component.slots.yAxis.push({
-        component: 'oh-value-axis',
+    addAxis (gridIdx, axis, type) {
+      if (!this.context.component.slots[axis]) this.$set(this.context.component.slots, axis, [])
+      this.context.component.slots[axis].push({
+        component: type,
         config: {
           gridIndex: gridIdx
         }
@@ -335,12 +333,14 @@ export default {
     },
     addSeries (type, gridIdx) {
       if (!this.context.component.slots.series) this.$set(this.context.component.slots, 'series', [])
+      let automaticAxisCreated = false
       let firstXAxis = this.context.component.slots.xAxis.find(a => a.config.gridIndex === gridIdx)
       let firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
       if (!firstXAxis) {
         if (type === 'oh-time-series') {
-          this.addXAxis(gridIdx)
+          this.addAxis(gridIdx, 'xAxis', 'oh-time-axis')
           firstXAxis = this.context.component.slots.xAxis.find(a => a.config.gridIndex === gridIdx)
+          automaticAxisCreated = true
         } else {
           this.$f7.dialog.alert('Please add at least one X axis and one Y axis')
           return
@@ -348,13 +348,23 @@ export default {
       }
       if (!firstYAxis) {
         if (type === 'oh-time-series') {
-          this.addYAxis(gridIdx)
+          this.addAxis(gridIdx, 'yAxis', 'oh-value-axis')
           firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
+          automaticAxisCreated = true
         } else {
           this.$f7.dialog.alert('Please add at least one X axis and one Y axis')
           return
         }
       }
+
+      if (automaticAxisCreated) {
+        this.$f7.toast.create({
+          text: 'Missing axes have been created automatically.',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      }
+
       this.context.component.slots.series.push({
         component: type,
         config: {
@@ -366,20 +376,16 @@ export default {
         }
       })
     },
-    configureSeries (evt, series, context) {
-      debugger
+    configureSeries (ev, series, context) {
+      let el = ev.target
+      ev.cancelBubble = true
+      while (!el.classList.contains('media-item')) {
+        if (el && el.classList.contains('menu')) return
+        el = el.parentElement
+      }
+      this.context.editmode.configureWidget(series, context)
     },
     configureSlot (slotName) {
-      if (!this.context.component.slots[slotName]) {
-        this.$set(this.context.component.slots, slotName, [
-          {
-            component: defaultSlotComponentType[slotName],
-            config: {
-              show: true
-            }
-          }
-        ])
-      }
       this.context.editmode.configureSlot(this.context.component, slotName, defaultSlotComponentType[slotName])
     }
   }
