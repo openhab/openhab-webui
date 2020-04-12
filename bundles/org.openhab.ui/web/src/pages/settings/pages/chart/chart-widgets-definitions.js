@@ -1,7 +1,7 @@
 const positionGroup = {
   name: 'position',
   label: 'Position',
-  description: 'Each parameter accepts pixel values, or percentages. Additionally, top accepts "top", "middle" and "bottom" and left accepts "left", "center", "right" to align the component vertically or horizontally'
+  description: 'Each parameter accepts pixel values or percentages. Additionally, top accepts "top", "middle" and "bottom" to align the component vertically, and left accepts "left", "center" and "right" to align the component horizontally'
 }
 
 const componentRelationsGroup = {
