@@ -12,7 +12,7 @@
  */
 package org.openhab.ui.habot.notification.internal.webpush;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.common.registry.Identifiable;
 import org.openhab.ui.habot.notification.internal.webpush.Subscription.Keys;
 
@@ -24,25 +24,21 @@ import org.openhab.ui.habot.notification.internal.webpush.Subscription.Keys;
  * @author Martijn Dwars - Initial contribution
  * @author Yannick Schaus - integration for HABot
  */
+@NonNullByDefault
 public class Subscription implements Identifiable<Keys> {
     public String endpoint;
 
-    @NonNull
     public Keys keys;
 
-    public Subscription(String endpoint, @NonNull Keys keys) {
+    public Subscription(String endpoint, Keys keys) {
         this.endpoint = endpoint;
         this.keys = keys;
     }
 
     public class Keys {
-        public String p256dh;
+        public final String p256dh;
 
-        public String auth;
-
-        public Keys() {
-            // No-args constructor
-        }
+        public final String auth;
 
         public Keys(String p256dh, String auth) {
             this.p256dh = p256dh;
