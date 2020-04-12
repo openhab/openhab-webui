@@ -10,7 +10,7 @@
 
 <script>
 // import ScriptEditorPopup from './config/script-editor-popup.vue'
-import ThingPicker from './controls/thing-picker.vue'
+import ParameterThing from './controls/parameter-thing.vue'
 import ParameterBoolean from './controls/parameter-boolean.vue'
 import ParameterInteger from './controls/parameter-integer.vue'
 import ParameterOptions from './controls/parameter-options.vue'
@@ -19,8 +19,12 @@ import ParameterScript from './controls/parameter-script.vue'
 import ParameterLocation from './controls/parameter-location.vue'
 import ParameterCronExpression from './controls/parameter-cronexpression.vue'
 import ParameterDayOfWeek from './controls/parameter-dayofweek.vue'
+import ParameterTime from './controls/parameter-time.vue'
 import ParameterPageWidget from './controls/parameter-pagewidget.vue'
+import ParameterRule from './controls/parameter-rule.vue'
+import ParameterPersistenceService from './controls/parameter-persistenceservice.vue'
 import ParameterProps from './controls/parameter-props.vue'
+import ParameterTriggerChannel from './controls/parameter-triggerchannel.vue'
 import ParameterText from './controls/parameter-text.vue'
 
 export default {
@@ -53,6 +57,8 @@ export default {
         return ParameterCronExpression
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'dayOfWeek') {
         return ParameterDayOfWeek
+      } else if (configDescription.type === 'TEXT' && configDescription.context === 'time') {
+        return ParameterTime
       } else if (configDescription.type === 'TEXT' && configDescription.context && configDescription.context.indexOf('page') >= 0) {
         return ParameterPageWidget
       } else if (configDescription.type === 'TEXT' && configDescription.context && configDescription.context.indexOf('widget') >= 0) {
@@ -62,7 +68,13 @@ export default {
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'item') {
         return ParameterItem
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'thing') {
-        return ThingPicker
+        return ParameterThing
+      } else if (configDescription.type === 'TEXT' && configDescription.context === 'rule') {
+        return ParameterRule
+      } else if (configDescription.type === 'TEXT' && configDescription.context === 'channel') {
+        return ParameterTriggerChannel
+      } else if (configDescription.type === 'TEXT' && configDescription.context === 'persistenceService') {
+        return ParameterPersistenceService
       }
 
       return ParameterText

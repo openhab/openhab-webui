@@ -339,6 +339,8 @@ export default {
           return 'map'
         case 'oh-plan-page':
           return 'square_stack_3d_up'
+        case 'oh-chart-page':
+          return 'graph_square'
         default:
           return 'tv'
       }

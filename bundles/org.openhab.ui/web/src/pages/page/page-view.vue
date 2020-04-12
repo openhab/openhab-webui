@@ -37,7 +37,8 @@ export default {
   components: {
     'oh-layout-page': OhLayoutPage,
     'oh-map-page': () => import('@/components/widgets/map/oh-map-page.vue'),
-    'oh-plan-page': () => import('@/components/widgets/plan/oh-plan-page.vue')
+    'oh-plan-page': () => import('@/components/widgets/plan/oh-plan-page.vue'),
+    'oh-chart-page': () => import('@/components/widgets/chart/oh-chart-page.vue')
   },
   props: ['uid', 'deep'],
   data () {
@@ -69,6 +70,8 @@ export default {
           return 'tabs'
         case 'oh-plan-page':
           return 'plan'
+        case 'oh-chart-page':
+          return 'chart'
         default:
           console.warn('Unknown page type!')
           return 'unknown'
