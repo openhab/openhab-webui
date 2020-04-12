@@ -19,7 +19,7 @@ firmwareControllers.controller('FirmwareController', function($scope, $mdDialog,
             });
         }
 
-        var thingUID = $scope.$parent.thing.thingUID;
+        var thingUID = $scope.$parent.thing.UID;
         if (thingUID) {
             thingService.getFirmwares({
                 thingUID : thingUID
