@@ -136,6 +136,41 @@ const yAxisIndexParameter = {
   description: 'The index of the Y axis for this series'
 }
 
+const persistenceServiceParameter = {
+  name: 'service',
+  type: 'TEXT',
+  context: 'persistenceService',
+  label: 'Persistence Service',
+  advanced: true,
+  description: 'The identifier of the persistence service to retrieve the data from. Leave blank to the use the default.'
+}
+
+const offsetAmountParameter = {
+  name: 'offsetAmount',
+  type: 'INTEGER',
+  label: 'Offset Amount',
+  advanced: true,
+  description: 'Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Unit).'
+}
+
+const offsetUnitParameter = {
+  name: 'offsetUnit',
+  type: 'STRING',
+  context: 'offsetUnit',
+  label: 'Offset Unit',
+  advanced: true,
+  description: 'Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Amount).',
+  limitToOptions: true,
+  options: [
+    { value: 'hour', label: 'Hour' },
+    { value: 'minute', label: 'Minute' },
+    { value: 'day', label: 'Day' },
+    { value: 'week', label: 'Week' },
+    { value: 'month', label: 'Month' },
+    { value: 'year', label: 'Year' }
+  ]
+}
+
 const axisNameParameters = [
   nameParameter,
   nameLocationParameter,
@@ -150,7 +185,10 @@ const dateAxisParameters = [
 
 const seriesParameters = [
   nameParameter,
-  itemParameter
+  itemParameter,
+  persistenceServiceParameter,
+  offsetAmountParameter,
+  offsetUnitParameter
 ]
 
 const seriesTypesLabels = {
@@ -492,12 +530,13 @@ export default {
     label: 'Data Zoom',
     docLink: 'https://echarts.apache.org/en/option.html#dataZoom',
     props: {
-      parameterGroups: [Object.assign({}, positionGroup, { description: 'Applicable only for sliders' })],
+      parameterGroups: [Object.assign({}, positionGroup, { description: 'Applicable only to slider types' })],
       parameters: [
         {
           name: 'type',
           label: 'Type',
           type: 'TEXT',
+          required: true,
           description: 'Type: slider (default) or inside (allows to zoom with the mousewheel or a pinch gesture)',
           limitToOptions: true,
           options: [
@@ -505,9 +544,24 @@ export default {
             { value: 'inside', label: 'Inside' }
           ]
         },
-        Object.assign({}, showParameter, { description: 'Applicable only for sliders' }),
-        Object.assign({}, orientParameter, { description: 'Applicable only for sliders' }),
-        ...positionParameters
+        Object.assign({}, showParameter, {
+          visible: (value, configuration, configDescription, parameters) => {
+            return configuration.type === 'slider'
+          }
+        }),
+        Object.assign({}, orientParameter, {
+          visible: (value, configuration, configDescription, parameters) => {
+            return configuration.type === 'slider'
+          }
+        }),
+        ...positionParameters.map((o) => {
+          return Object.assign({}, o, {
+            groupName: null,
+            visible: (value, configuration, configDescription, parameters) => {
+              return configuration.type === 'slider'
+            }
+          })
+        })
       ]
     }
   },
