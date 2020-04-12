@@ -404,23 +404,20 @@ export default {
       } else {
         widgetDefinition = this.getWidgetDefinition(componentType)
         if (!widgetDefinition) {
-          // widgetDefinition = Object.values(LayoutWidgets).find((w) => w.widget.name === component.component)
-          if (!widgetDefinition) {
-            console.warn('Widget not found: ' + componentType)
-            this.$f7.toast.create({
-              text: `This type of component cannot be configured: ${componentType}.`,
-              destroyOnClose: true,
-              closeTimeout: 3000,
-              closeButton: true,
-              closeButtonText: 'Edit YAML',
-              on: {
-                closeButtonClick: () => {
-                  this.editWidgetCode(component, parentContext)
-                }
+          console.warn('Widget not found: ' + componentType)
+          this.$f7.toast.create({
+            text: `This type of component cannot be configured: ${componentType}.`,
+            destroyOnClose: true,
+            closeTimeout: 3000,
+            closeButton: true,
+            closeButtonText: 'Edit YAML',
+            on: {
+              closeButtonClick: () => {
+                this.editWidgetCode(component, parentContext)
               }
-            }).open()
-            return
-          }
+            }
+          }).open()
+          return
         }
         this.currentWidget = widgetDefinition
       }

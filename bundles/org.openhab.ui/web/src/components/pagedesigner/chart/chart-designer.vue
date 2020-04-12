@@ -193,6 +193,7 @@
   height 10rem
   .link
     color var(--f7-text-color)
+    height 10rem
   .count-badge
     position absolute
     top 0.3rem
