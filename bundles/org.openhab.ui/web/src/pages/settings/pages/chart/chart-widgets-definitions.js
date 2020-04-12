@@ -248,7 +248,7 @@ export default {
           name: 'weekdayFormat',
           label: 'Weekday Format',
           type: 'TEXT',
-          description: 'Format of week days labels',
+          description: 'Format of weekdays labels',
           required: true,
           limitToOptions: true,
           options: [
