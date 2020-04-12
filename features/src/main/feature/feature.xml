@@ -29,13 +29,15 @@
         <feature>openhab-core-model-item</feature>
         <feature>openhab-core-model-sitemap</feature>
         <feature>openhab-core-ui-icon</feature>
-        <feature>openhab-core-ui</feature>
+	<feature>openhab-core-ui</feature>
         <feature dependency="true">openhab.tp-jaxb</feature>
         <bundle dependency="true">mvn:org.rrd4j/rrd4j/3.4</bundle>
+        <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-annotations/2.10.3</bundle>
         <bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.cometvisu/${project.version}</bundle>
         <config name="cometvisu">
             webFolder=../../../CometVisu/src/
-            webAlias=/cometvisu
+	    webAlias=/cometvisu
+	    mount>demo=resource/demo
 
             icons>enableMapping=true
 

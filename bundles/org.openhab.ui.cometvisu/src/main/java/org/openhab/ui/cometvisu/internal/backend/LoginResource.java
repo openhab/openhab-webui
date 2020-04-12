@@ -59,6 +59,7 @@ public class LoginResource implements RESTResource {
         res.read = Config.COMETVISU_BACKEND_READ_ALIAS;
         res.rrd = Config.COMETVISU_BACKEND_CHART_ALIAS;
         res.write = Config.COMETVISU_BACKEND_WRITE_ALIAS;
+        res.rest = conf.baseURL.substring(0, conf.baseURL.length() - 1); // no trailing slash
         bean.c = conf;
         return Response.ok(bean, MediaType.APPLICATION_JSON).build();
     }

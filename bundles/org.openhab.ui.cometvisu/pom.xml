@@ -67,6 +67,16 @@
       <artifactId>rrd4j</artifactId>
       <version>3.4</version>
     </dependency>
+    <dependency>
+    	<groupId>com.fasterxml.jackson.core</groupId>
+    	<artifactId>jackson-annotations</artifactId>
+    	<version>2.10.3</version>
+    </dependency>
+    <dependency>
+	    <groupId>org.glassfish.jersey.media</groupId>
+	    <artifactId>jersey-media-multipart</artifactId>
+	    <version>2.22.2</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -94,7 +104,40 @@
           <generateEpisode>false</generateEpisode>
         </configuration>
       </plugin>
+      <plugin>
+	    <groupId>org.openapitools</groupId>
+	    <artifactId>openapi-generator-maven-plugin</artifactId>
+	    <!-- RELEASE_VERSION -->
+	    <version>4.3.0</version>
+	    <!-- /RELEASE_VERSION -->
+	    <executions>
+	        <execution>
+	            <goals>
+	                <goal>generate</goal>
+	            </goals>
+	            <configuration>
+	                <inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
+	                <generatorName>jaxrs-spec</generatorName>
+	                <output>${project.basedir}</output>
+	                <addCompileSourceRoot>false</addCompileSourceRoot>
+                    <packageName>org.openhab.ui.cometvisu.backend.rest</packageName>
+                    <apiPackage>org.openhab.ui.cometvisu.backend.rest.api</apiPackage>
+                    <generateApis>false</generateApis>
+                    <modelPackage>org.openhab.ui.cometvisu.backend.rest.model</modelPackage>
+                    <generateAliasAsModel>true</generateAliasAsModel>
+	                <configOptions>
+	                   <sourceFolder>src/gen/java</sourceFolder>
+	                   <interfaceOnly>true</interfaceOnly>
+	                   <java8>true</java8>
+	                   <dateLibrary>java8</dateLibrary>
+	                   <generatePom>false</generatePom>
+	                   <useSwaggerAnnotations>false</useSwaggerAnnotations>
+	                   <useBeanValidation>false</useBeanValidation>
+	                </configOptions>
+	            </configuration>
+	        </execution>
+	      </executions>
+	    </plugin>
     </plugins>
   </build>
-
 </project>

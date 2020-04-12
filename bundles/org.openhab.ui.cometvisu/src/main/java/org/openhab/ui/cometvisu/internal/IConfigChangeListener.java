@@ -10,18 +10,14 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.backend.beans;
+package org.openhab.ui.cometvisu.internal;
 
 /**
- * This is a java bean that is used with JAXB to define the resources of backend configuration for the
- * Cometvisu client.
+ * Interface for listeners to cometvisu backend config changes
  *
  * @author Tobias Bräutigam - Initial contribution
  *
  */
-public class ResourcesBean {
-    public String read;
-    public String rrd;
-    public String write;
-    public String rest;
+public interface IConfigChangeListener {
+    public void handleConfigChange(String key);
 }

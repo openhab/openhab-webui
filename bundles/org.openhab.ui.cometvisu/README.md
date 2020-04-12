@@ -75,6 +75,33 @@ The list of icons in the CometVisu is available at:
 http://<openhab-server>:8080/<webAlias>/icon/knx-uf-iconset/showicons.php
 ```
 
+You can also customize the mounted folders in the CometVisu manager. The CometVisu manager can only access
+files/folders in the resource/config folder. In order to make other files of the CometVisu available mount points
+are used and this feature is used in order to make the demo config folder accessible.
+You can add further mount points if you need to access other resources in the cometvisu. Please keep in mind that
+only subfolders of the CometVisu installation can be mounted, you cannot access paths outside this folder.
+
+Default setting is: 
+
+```
+mount>demo=resource/demo
+```
+
+This mounts the `resource/demo` subfolder as `demo`-folder in the manager. By default these mounted folders
+are not writeable, which means that you cannot create/edit files and folders in there. You can add some flags to
+the mount entry to customize some settings, the available flags are:
+
+```
+w: mounted content is writeable
+s: show subfolders in the mounted folder
+```
+
+A complete mount entry with these flags looks like this:
+
+```
+mount>designs=resource/designs:ws
+```
+
 ### Override CometVisu files
 
 You can create a folder called 'cometvisu' in openHAB's 'conf/' folder and create files there which should be used instead of CometVisu's own. For example, you can put all your customizations there (e.g. you config, custom.css, etc.).
@@ -255,6 +282,11 @@ For every change in the CometVisu XSD-schema the JAXB auto-generation job must b
 
 *   Copy the new visu_config.xsd to src/main/resources/
 *   and call `mvn jaxb2:xjc`
+
+For every change in the CometVisu REST-API spec the openapi generator must be executed:
+
+* Copy the new openapi.yaml to src/main/resources/
+* and call `mvn 
 
 ## TODO
 

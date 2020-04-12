@@ -32,13 +32,15 @@ import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.OpenClosedType;
 import org.openhab.core.library.types.StringType;
 import org.openhab.core.library.types.UpDownType;
+import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.TypeParser;
-import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.ui.icon.IconProvider;
 import org.openhab.core.ui.icon.IconSet.Format;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.config.beans.Address;
+import org.openhab.ui.cometvisu.internal.config.beans.Button;
+import org.openhab.ui.cometvisu.internal.config.beans.Buttons;
 import org.openhab.ui.cometvisu.internal.config.beans.CDataStatus;
 import org.openhab.ui.cometvisu.internal.config.beans.Entry;
 import org.openhab.ui.cometvisu.internal.config.beans.Group;
@@ -441,8 +443,7 @@ public class ConfigHelper {
         return null;
     }
 
-    public Mapping createMapping(String name,
-            EList<org.openhab.core.model.sitemap.sitemap.Mapping> sitemapMapping) {
+    public Mapping createMapping(String name, EList<org.openhab.core.model.sitemap.sitemap.Mapping> sitemapMapping) {
         Mapping mapping = null;
         if (mappings.containsKey(name)) {
             mapping = mappings.get(name);
@@ -610,27 +611,13 @@ public class ConfigHelper {
         mtrigger.getAddress().add(address);
         mtrigger.setLayout(createLayout(6));
 
-        int i = 1;
+        Buttons buttons = factory.createButtons();
+
         for (org.openhab.core.model.sitemap.sitemap.Mapping map : sitemapMapping) {
-            switch (i) {
-                case 1:
-                    mtrigger.setButton1Label(map.getLabel());
-                    mtrigger.setButton1Value(map.getCmd());
-                    break;
-                case 2:
-                    mtrigger.setButton2Label(map.getLabel());
-                    mtrigger.setButton2Value(map.getCmd());
-                    break;
-                case 3:
-                    mtrigger.setButton3Label(map.getLabel());
-                    mtrigger.setButton3Value(map.getCmd());
-                    break;
-                case 4:
-                    mtrigger.setButton4Label(map.getLabel());
-                    mtrigger.setButton4Value(map.getCmd());
-                    break;
-            }
-            i++;
+            Button button = factory.createButton();
+            button.setLabel(map.getLabel());
+            button.setValue(map.getCmd());
+            buttons.getButton().add(button);
         }
         addToRoot(element, factory.createPageMultitrigger(mtrigger));
     }
@@ -774,8 +761,10 @@ public class ConfigHelper {
 
     public String getLabel(Widget widget) {
         String label = app.getItemUIRegistry().getLabel(widget);
-        // remove format
-        label = label.replaceAll("\\[.*\\]$", "");
+        if (label != null) {
+            // remove format
+            label = label.replaceAll("\\[.*\\]$", "");
+        }
         return StringEscapeUtils.escapeXml(label);
     }
 

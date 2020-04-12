@@ -26,9 +26,9 @@ import javax.servlet.ServletException;
 import org.openhab.core.config.core.ConfigurableService;
 import org.openhab.core.events.EventPublisher;
 import org.openhab.core.items.ItemRegistry;
+import org.openhab.core.model.sitemap.SitemapProvider;
 import org.openhab.core.persistence.PersistenceService;
 import org.openhab.core.persistence.QueryablePersistenceService;
-import org.openhab.core.model.sitemap.SitemapProvider;
 import org.openhab.core.ui.icon.IconProvider;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.cometvisu.internal.Config;
@@ -234,6 +234,7 @@ public class CometVisuApp {
                 }
                 Config.cometvisuAutoDownload = newValue;
             }
+            ArrayList<String> changedKeys = new ArrayList<>();
             for (String key : properties.keySet()) {
                 String[] parts = key.split(">");
                 String propKey = parts.length > 1 ? parts[1] : parts[0];
@@ -243,8 +244,14 @@ public class CometVisuApp {
                 if (!propPid.isEmpty()) {
                     if (Config.configMappings.containsKey(propPid)) {
                         Config.configMappings.get(propPid).put(propKey, properties.get(key));
+                        if (!changedKeys.contains(propPid)) {
+                            changedKeys.add(propPid);
+                        }
                     }
                 }
+            }
+            for (final String key : changedKeys) {
+                Config.triggerConfigChange(key);
             }
         }
     }

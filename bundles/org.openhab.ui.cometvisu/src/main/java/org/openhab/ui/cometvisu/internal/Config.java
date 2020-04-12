@@ -13,6 +13,7 @@
 package org.openhab.ui.cometvisu.internal;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.openhab.core.config.core.ConfigConstants;
@@ -33,6 +34,28 @@ import org.openhab.core.types.State;
  *
  */
 public class Config {
+    private static ArrayList<IConfigChangeListener> listeners = new ArrayList<IConfigChangeListener>();
+
+    public static void addConfigChangeListener(IConfigChangeListener listener) {
+        listeners.add(listener);
+    }
+
+    public static void removeConfigChangeListener(IConfigChangeListener listener) {
+        listeners.remove(listener);
+    }
+
+    public static void setCometVisuFolder(String folder) {
+        if (!Config.cometvisuWebfolder.equals(folder)) {
+            Config.cometvisuWebfolder = folder;
+            Config.triggerConfigChange("cometvisuWebfolder");
+        }
+    }
+
+    public static void triggerConfigChange(String key) {
+        for (final IConfigChangeListener listener : Config.listeners) {
+            listener.handleConfigChange(key);
+        }
+    }
 
     public static final String COMETVISU_CONFIG = "org.openhab.cometvisu";
     public static final String COMETVISU_ICON_CONFIG = "icons";
@@ -42,6 +65,7 @@ public class Config {
     public static final String COMETVISU_AUTODOWNLOAD_PROPERTY = "autoDownload";
     public static final String COMETVISU_WEBAPP_ALIAS_PROPERTY = "webAlias";
     public static final String COMETVISU_WEBAPP_USERFILE_FOLDER = File.separator + "cometvisu";
+    public static final String COMETVISU_MOUNTPOINTS = "mount";
 
     public static String cometvisuWebfolder = ConfigConstants.getUserDataFolder() + "/cometvisu";
     public static String cometvisuWebappAlias = "/cometvisu";
@@ -60,6 +84,7 @@ public class Config {
 
     public static Hashtable<String, Object> iconConfig = new Hashtable<>();
     public static Hashtable<String, Object> iconMappings = new Hashtable<>();
+    public static Hashtable<String, Object> mountPoints = new Hashtable<>();
 
     public static Hashtable<String, Hashtable<String, Object>> configMappings = new Hashtable<>();
 
@@ -71,6 +96,7 @@ public class Config {
     static {
         configMappings.put(COMETVISU_ICON_CONFIG, iconConfig);
         configMappings.put(COMETVISU_ICON_MAPPING_CONFIG, iconMappings);
+        configMappings.put(COMETVISU_MOUNTPOINTS, mountPoints);
 
         itemTypeMapper.put("number", DecimalType.class);
         itemTypeMapper.put("switch", OnOffType.class);
