@@ -12,16 +12,15 @@
  */
 package org.openhab.ui.basic.internal.render;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.types.CommandDescription;
+import org.openhab.core.types.CommandOption;
 import org.openhab.core.types.State;
-import org.openhab.core.types.StateDescription;
-import org.openhab.core.types.StateOption;
 import org.openhab.core.types.util.UnitUtils;
 import org.openhab.core.model.sitemap.sitemap.Mapping;
 import org.openhab.core.model.sitemap.sitemap.Selection;
@@ -45,7 +44,6 @@ import com.google.gson.JsonObject;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
- *
  */
 @Component(service = WidgetRenderer.class)
 public class SelectionRenderer extends AbstractWidgetRenderer {
@@ -89,12 +87,12 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
 
         JsonObject jsonObject = new JsonObject();
         StringBuilder rowSB = new StringBuilder();
-        if (selection.getMappings().size() == 0 && item != null) {
-            final StateDescription stateDescription = item.getStateDescription();
-            if (stateDescription != null) {
-                for (StateOption option : stateDescription.getOptions()) {
-                    jsonObject.addProperty(option.getValue(), option.getLabel());
-                    rowMappingLabel = buildRow(selection, option.getLabel(), option.getValue(), item, state, rowSB);
+        if (selection.getMappings().isEmpty() && item != null) {
+            final CommandDescription commandDescription = item.getCommandDescription();
+            if (commandDescription != null) {
+                for (CommandOption option : commandDescription.getCommandOptions()) {
+                    jsonObject.addProperty(option.getCommand(), option.getLabel());
+                    rowMappingLabel = buildRow(selection, option.getLabel(), option.getCommand(), item, state, rowSB);
                     if (rowMappingLabel != null) {
                         mappingLabel = rowMappingLabel;
                     }
@@ -110,7 +108,7 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
             }
         }
         snippet = StringUtils.replace(snippet, "%rows%", rowSB.toString());
-        snippet = StringUtils.replace(snippet, "%value_map%", StringEscapeUtils.escapeHtml(jsonObject.toString()));
+        snippet = StringUtils.replace(snippet, "%value_map%", escapeHtml(jsonObject.toString()));
         snippet = StringUtils.replace(snippet, "%label_header%", getLabel(w));
         snippet = StringUtils.replace(snippet, "%value_header%", mappingLabel != null ? mappingLabel : "");
 
