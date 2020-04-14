@@ -22,9 +22,9 @@ import org.openhab.core.library.items.RollershutterItem;
 import org.openhab.core.library.items.SwitchItem;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.types.CommandDescription;
+import org.openhab.core.types.CommandOption;
 import org.openhab.core.types.State;
-import org.openhab.core.types.StateDescription;
-import org.openhab.core.types.StateOption;
 import org.openhab.core.types.util.UnitUtils;
 import org.openhab.core.model.sitemap.sitemap.Mapping;
 import org.openhab.core.model.sitemap.sitemap.Switch;
@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
- *
  */
 @Component(service = WidgetRenderer.class)
 public class SwitchRenderer extends AbstractWidgetRenderer {
@@ -83,7 +82,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         int nbButtons = 0;
         try {
             item = itemUIRegistry.getItem(w.getItem());
-            if (s.getMappings().size() == 0) {
+            if (s.getMappings().isEmpty()) {
                 if (item instanceof RollershutterItem) {
                     snippetName = "rollerblind";
                 } else if (item instanceof SwitchItem) {
@@ -91,8 +90,9 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
                 } else if (item instanceof GroupItem && ((GroupItem) item).getBaseItem() instanceof RollershutterItem) {
                     snippetName = "rollerblind";
                 } else {
-                    final StateDescription stateDescription = item.getStateDescription();
-                    final int optsSize = stateDescription == null ? -1 : stateDescription.getOptions().size();
+                    final CommandDescription commandDescription = item.getCommandDescription();
+                    final int optsSize = commandDescription == null ? -1
+                            : commandDescription.getCommandOptions().size();
                     if (optsSize > 0 && optsSize <= MAX_BUTTONS) {
                         // Render with buttons only when a max of MAX_BUTTONS options are defined
                         snippetName = "buttons";
@@ -123,20 +123,18 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
             }
         } else {
             StringBuilder buttons = new StringBuilder();
-            if (s.getMappings().size() > 0) {
-                for (Mapping mapping : s.getMappings()) {
-                    buildButton(s, mapping.getLabel(), mapping.getCmd(), -1, nbButtons > 1, item, state, buttons);
+            if (s.getMappings().isEmpty() && item != null) {
+                final CommandDescription commandDescription = item.getCommandDescription();
+                if (commandDescription != null) {
+                    for (CommandOption option : commandDescription.getCommandOptions()) {
+                        // Truncate the button label to MAX_LABEL_SIZE characters
+                        buildButton(s, option.getLabel(), option.getCommand(), MAX_LABEL_SIZE, nbButtons > 1, item,
+                                state, buttons);
+                    }
                 }
             } else {
-                if (item != null) {
-                    final StateDescription stateDescription = item.getStateDescription();
-                    if (stateDescription != null) {
-                        for (StateOption option : stateDescription.getOptions()) {
-                            // Truncate the button label to MAX_LABEL_SIZE characters
-                            buildButton(s, option.getLabel(), option.getValue(), MAX_LABEL_SIZE, nbButtons > 1, item,
-                                    state, buttons);
-                        }
-                    }
+                for (Mapping mapping : s.getMappings()) {
+                    buildButton(s, mapping.getLabel(), mapping.getCmd(), -1, nbButtons > 1, item, state, buttons);
                 }
             }
             snippet = StringUtils.replace(snippet, "%buttons%", buttons.toString());
