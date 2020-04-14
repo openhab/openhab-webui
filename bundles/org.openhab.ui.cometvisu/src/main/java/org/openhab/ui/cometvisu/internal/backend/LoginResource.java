@@ -29,17 +29,25 @@ import org.openhab.ui.cometvisu.internal.backend.beans.LoginBean;
 import org.openhab.ui.cometvisu.internal.backend.beans.ResourcesBean;
 import org.osgi.service.component.annotations.Component;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 /**
  * handles login request from the CometVisu client
  * currently this is just a placeholder and does no real authentification
  *
  * @author Tobias Bräutigam - Initial contribution
  */
-@Component(immediate = true, service = { LoginResource.class, RESTResource.class })
+@Component
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_LOGIN_ALIAS)
+@Api(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_LOGIN_ALIAS)
 public class LoginResource implements RESTResource {
     @GET
-    @Produces({ MediaType.APPLICATION_JSON })
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "returns the login response with backend configuration information")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = LoginBean.class) })
     public Response getLogin(@Context UriInfo uriInfo, @Context HttpHeaders headers, @QueryParam("u") String user,
             @QueryParam("p") String password, @QueryParam("d") String device) {
         LoginBean bean = new LoginBean();

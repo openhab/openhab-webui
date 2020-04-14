@@ -1,8 +1,7 @@
 package org.openhab.ui.cometvisu.backend.rest.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.openhab.ui.cometvisu.backend.rest.model.ConfigOption;
+import java.util.HashMap;
+import java.util.Map;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,43 +9,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2020-04-11T14:15:37.661+02:00[Europe/Berlin]")
-public class ConfigSection   {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2020-04-14T16:34:36.480+02:00[Europe/Berlin]")
+public class ConfigSection extends HashMap<String, String>  {
   
-  private  String name;
-  private  List<ConfigOption> options = new ArrayList<>();
-
-  /**
-   **/
-  public ConfigSection name(String name) {
-    this.name = name;
-    return this;
-  }
-
-  
-  @JsonProperty("name")
-  public String getName() {
-    return name;
-  }
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  /**
-   **/
-  public ConfigSection options(List<ConfigOption> options) {
-    this.options = options;
-    return this;
-  }
-
-  
-  @JsonProperty("options")
-  public List<ConfigOption> getOptions() {
-    return options;
-  }
-  public void setOptions(List<ConfigOption> options) {
-    this.options = options;
-  }
 
 
   @Override
@@ -57,23 +22,19 @@ public class ConfigSection   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ConfigSection configSection = (ConfigSection) o;
-    return Objects.equals(this.name, configSection.name) &&
-        Objects.equals(this.options, configSection.options);
+    return super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, options);
+    return Objects.hash(super.hashCode());
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ConfigSection {\n");
-    
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
-    sb.append("    options: ").append(toIndentedString(options)).append("\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -1,7 +1,7 @@
 package org.openhab.ui.cometvisu.backend.rest.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import org.openhab.ui.cometvisu.backend.rest.model.ConfigSection;
 
 import java.util.Objects;
@@ -10,8 +10,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2020-04-11T14:15:37.661+02:00[Europe/Berlin]")
-public class HiddenConfig extends ArrayList<ConfigSection>  {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2020-04-14T16:34:36.480+02:00[Europe/Berlin]")
+public class HiddenConfig extends HashMap<String, ConfigSection>  {
   
 
 

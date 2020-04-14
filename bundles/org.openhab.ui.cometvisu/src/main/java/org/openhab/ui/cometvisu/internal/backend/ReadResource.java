@@ -31,16 +31,16 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
+import org.glassfish.jersey.media.sse.EventOutput;
+import org.glassfish.jersey.media.sse.SseBroadcaster;
+import org.glassfish.jersey.media.sse.SseFeature;
+import org.openhab.core.io.rest.RESTResource;
 import org.openhab.core.items.GenericItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemFactory;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.types.State;
-import org.openhab.core.io.rest.RESTResource;
-import org.glassfish.jersey.media.sse.EventOutput;
-import org.glassfish.jersey.media.sse.SseBroadcaster;
-import org.glassfish.jersey.media.sse.SseFeature;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.backend.beans.StateBean;
 import org.openhab.ui.cometvisu.internal.listeners.StateEventListener;
@@ -50,6 +50,11 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 /**
  * handles read request from the CometVisu client every request initializes a
  * SSE communication
@@ -58,6 +63,7 @@ import org.slf4j.LoggerFactory;
  */
 @Component(immediate = true)
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_READ_ALIAS)
+@Api(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_READ_ALIAS)
 public class ReadResource implements EventBroadcaster, RESTResource {
     private final Logger logger = LoggerFactory.getLogger(ReadResource.class);
 
@@ -118,6 +124,8 @@ public class ReadResource implements EventBroadcaster, RESTResource {
      */
     @GET
     @Produces(SseFeature.SERVER_SENT_EVENTS)
+    @ApiOperation(value = "Creates the SSE stream for item states, sends all requested states once and then only changes states")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Object getStates(@QueryParam("a") List<String> itemNames, @QueryParam("i") long index,
             @QueryParam("t") long time) throws IOException, InterruptedException {
         final EventOutput eventOutput = new EventOutput();

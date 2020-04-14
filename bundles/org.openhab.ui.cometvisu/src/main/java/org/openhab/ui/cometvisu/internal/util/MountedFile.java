@@ -74,6 +74,10 @@ public class MountedFile {
         return this.toFile().getName();
     }
 
+    public boolean hasChildren() {
+        return this.toFile().list().length > 0;
+    }
+
     private String normalize(String path) throws FileOperationException {
         String normalizedPath = path.equals(".") ? "" : path;
         while (normalizedPath.startsWith(File.separator)) {

@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.backend.fs;
+package org.openhab.ui.cometvisu.internal.backend.rest;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.backend.rest.model.CheckResponse;
@@ -27,14 +28,20 @@ import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.ManagerSettings;
 import org.osgi.service.component.annotations.Component;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 /**
  * Check filesystem backend for the cometvisu manager.
  *
  * @author Tobias Bräutigam - Initial contribution
  *
  */
-@Component(immediate = true, service = { CheckResource.class, RESTResource.class })
+@Component
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/fs/check")
+@Api(Config.COMETVISU_BACKEND_ALIAS + "/fs/check")
 public class CheckResource implements RESTResource {
 
     /**
@@ -43,7 +50,9 @@ public class CheckResource implements RESTResource {
      * @return the check result that contains a bitfield with check results for each entity
      */
     @GET
-    @Produces({ "application/json" })
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Check filesystem environment (access rights, etc)")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = CheckResponse.class) })
     public CheckResponse checkEnvironment() {
         CheckResponse res = new CheckResponse();
         File configFolder = ManagerSettings.getInstance().getConfigFolder();

@@ -189,6 +189,7 @@ public class CometVisuServlet extends HttpServlet {
      *      javax.servlet.http.HttpServletResponse)
      */
     @Override
+    @Deprecated
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         File requestedFile = getRequestedFile(req);
         Matcher match = configStorePattern.matcher(req.getParameter("config"));
@@ -260,6 +261,7 @@ public class CometVisuServlet extends HttpServlet {
         }
     }
 
+    @Deprecated
     protected void processPhpRequest(File file, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!this.phpEnabled) {
@@ -901,7 +903,9 @@ public class CometVisuServlet extends HttpServlet {
      * @param response
      * @throws ServletException
      * @throws IOException
+     * @deprecated replaced by the CV REST backend in CometVisu versions >=0.12.0
      */
+    @Deprecated
     private final void dataProviderService(File file, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         logger.debug("dataprovider '{}' requested", file.getPath());

@@ -164,7 +164,7 @@ paths:
           description: successful operation
         '403':
           description: Not allowed
-        '406':
+        '404':
           description: File does not exist
     delete:
       tags:
@@ -239,7 +239,7 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/HiddenConfig'
                   - $ref: '#/components/schemas/ConfigSection'
-                  - $ref: '#/components/schemas/ConfigOption'
+                  - $ref: '#/components/schemas/ConfigOptionValue'
         '403':
           description: Not allowed
         '404':
@@ -282,7 +282,7 @@ paths:
           description: successful operation
         '403':
           description: Not allowed
-        '406':
+        '404':
           description: Config option does exist
     delete:
       tags:
@@ -423,6 +423,14 @@ components:
           type: string
         label:
           type: string
+        hints:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataProviderHint'
+    DataProviderHint:
+      type: object
+      additionalProperties:
+        type: string
     ReadResponse:
       oneOf:
         - $ref: '#/components/schemas/DirContent'
@@ -431,18 +439,15 @@ components:
       items:
         $ref: '#/components/schemas/FsEntry'
     HiddenConfig:
-      type: array
-      items:
+      type: object
+      additionalProperties:
         $ref: '#/components/schemas/ConfigSection'
     ConfigSection:
       type: object
-      properties:
-        name:
-          type: string
-        options:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConfigOption'
+      additionalProperties:
+        type: string
+    ConfigOptionValue:
+      type: string
     CheckResponse:
       type: array
       items:
@@ -455,13 +460,6 @@ components:
         state:
           type: number
           description: bitmask with a list of states <writeable,readable,exists>
-    ConfigOption:
-      type: object
-      properties:
-        key:
-          type: string
-        value:
-          type: string
     FsEntry:
       type: object
       properties:
@@ -469,7 +467,7 @@ components:
           type: string
         type:
           type: string
-          enum: ['dir', 'file']
+          enum: ['DIR', 'FILE']
         parentFolder:
           type: string
         hasChildren:
@@ -491,6 +489,10 @@ components:
         trash:
           type: boolean
           description: marks the trash folder
+          default: false
+        inTrash:
+          type: boolean
+          description: true when this entry is inside the trash folder
           default: false
         hash:
           type: number

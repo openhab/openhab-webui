@@ -128,7 +128,7 @@ public class ManagerSettings implements IConfigChangeListener {
      * @return The absolute path to the cometvisus resource folder
      */
     public String getResourcesDir() {
-        return this.configFolder.getAbsoluteFile() + File.pathSeparator + this.resourcesDir;
+        return this.configFolder.getAbsoluteFile() + File.separator + this.resourcesDir;
     }
 
     /**
@@ -148,15 +148,23 @@ public class ManagerSettings implements IConfigChangeListener {
     }
 
     public String getBackupPath() {
-        return this.configFolder.getAbsoluteFile() + File.pathSeparator + this.backupFolderName;
+        return this.configFolder.getAbsoluteFile() + File.separator + this.backupFolderName;
+    }
+
+    public String getTrashFolder() {
+        return this.trashFolderName;
     }
 
     public String getTrashPath() {
-        return this.configFolder.getAbsoluteFile() + File.pathSeparator + this.trashFolderName;
+        return this.configFolder.getAbsoluteFile() + File.separator + this.trashFolderName;
     }
 
     public String getDesignsDir() {
         return designsDir;
+    }
+
+    public File getDesignFolder() {
+        return new File(this.baseDir, this.designsDir);
     }
 
     public ArrayList<Pattern> getBackupOnChange() {

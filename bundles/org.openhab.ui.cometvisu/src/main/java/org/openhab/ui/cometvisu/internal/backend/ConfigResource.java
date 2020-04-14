@@ -26,12 +26,17 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 /**
  * Allows certain actions to configure the CometVisu backend through the REST api.
  *
  * @author Tobias Bräutigam - Initial contribution
  */
-@Component(immediate = true, service = { ConfigResource.class, RESTResource.class })
+@Component
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CONFIG_ALIAS)
 public class ConfigResource implements RESTResource {
 
@@ -40,7 +45,10 @@ public class ConfigResource implements RESTResource {
     @GET
     @Path("/{actionName}")
     @Produces({ MediaType.TEXT_PLAIN })
-    public Response getValue(@PathParam("actionName") String actionName) {
+    @ApiOperation(value = "starts defined actions e.g. downloading the CometVisu client")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
+    public Response getValue(
+            @ApiParam(value = "name of the action, currently only 'download-client' is implemented") @PathParam("actionName") String actionName) {
         if ("download-client".equalsIgnoreCase(actionName)) {
             logger.debug("calling installation checker with config overriding");
             ClientInstaller.getInstance().check(true);

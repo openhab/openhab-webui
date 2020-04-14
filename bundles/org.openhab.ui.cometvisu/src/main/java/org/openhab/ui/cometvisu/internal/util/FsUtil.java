@@ -28,9 +28,12 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.openhab.ui.cometvisu.backend.rest.model.FsEntry;
+import org.openhab.ui.cometvisu.backend.rest.model.FsEntry.TypeEnum;
 import org.openhab.ui.cometvisu.backend.rest.model.ReadResponse;
 import org.openhab.ui.cometvisu.internal.ManagerSettings;
 import org.openhab.ui.cometvisu.internal.MountPoint;
@@ -60,21 +63,51 @@ public class FsUtil {
         FsUtil fs = FsUtil.getInstance();
         ReadResponse read = new ReadResponse();
         File dir = mdir.toFile();
+        boolean trashExists = false;
+        boolean isConfigFolder = dir.toPath().equals(ManagerSettings.getInstance().getConfigFolder().toPath());
         for (final File fileEntry : dir.listFiles()) {
-            if (!fileEntry.isHidden()) {
-                read.add(fs.getEntry(fileEntry, recursive, mdir));
+            boolean isTrash = false;
+            if (isConfigFolder) {
+                if (fileEntry.getName().equals(ManagerSettings.getInstance().getTrashFolder())) {
+                    trashExists = true;
+                    isTrash = true;
+                }
+            }
+            if (!fileEntry.isHidden() || isTrash) {
+                FsEntry entry = fs.getEntry(fileEntry, recursive, mdir);
+                if (isTrash) {
+                    entry.setTrash(true);
+                    entry.setWriteable(false);
+                }
+                read.add(entry);
             }
         }
-        // add mounts (when the config folder is requested)
-        if (dir.toPath().equals(ManagerSettings.getInstance().getConfigFolder().toPath())) {
+        // some special customizations in the config folder
+        if (isConfigFolder) {
+            // add mounts (when the config folder is requested)
             Path requestedPath = dir.toPath();
             for (final MountPoint mount : ManagerSettings.getInstance().getMounts()) {
                 if (mount.getAbsoluteTarget().getParent().equals(requestedPath)) {
                     read.add(fs.getEntry(new MountedFile(mount), recursive));
                 }
             }
+            if (!trashExists) {
+                // add trash folder even if it does not exist
+                FsEntry trash = new FsEntry();
+                trash.setName(ManagerSettings.getInstance().getTrashFolder());
+                trash.setType(TypeEnum.DIR);
+                trash.setReadable(true);
+                trash.setTrash(true);
+                read.add(trash);
+            }
         }
         return read;
+    }
+
+    public boolean isInTrash(File file) {
+        String absPath = file.getAbsolutePath();
+        String absTrashPath = ManagerSettings.getInstance().getTrashPath();
+        return absPath.startsWith(absTrashPath) && absPath.length() > absTrashPath.length();
     }
 
     public void saveFile(File file, InputStream fileInputStream, String hash) throws FileOperationException {
@@ -216,8 +249,7 @@ public class FsUtil {
         entry.setWriteable(mount.isReadonlyMount() ? false : file.canWrite());
         entry.setReadable(file.canRead());
         entry.setMounted(false);
-        // entry.setTrash(false);
-        // entry.setHash();
+        entry.setInTrash(this.isInTrash(file));
         if (recursive && entry.getHasChildren()) {
             for (final File fileEntry : file.listFiles()) {
                 if (!fileEntry.isHidden()) {
@@ -251,4 +283,14 @@ public class FsUtil {
 
         return entry;
     }
+
+    public static Response createErrorResponse(FileOperationException e) {
+        return FsUtil.createErrorResponse(e.getStatus(), e.getCause().toString());
+    }
+
+    public static Response createErrorResponse(Status status, String message) {
+        return Response.status(Status.NOT_FOUND).entity(new ErrorResponse(message)).type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
 }

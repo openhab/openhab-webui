@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TimeZone;
 import java.util.TreeMap;
 
 import javax.ws.rs.GET;
@@ -37,6 +39,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.openhab.core.io.rest.RESTResource;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
@@ -47,7 +50,6 @@ import org.openhab.core.persistence.FilterCriteria.Ordering;
 import org.openhab.core.persistence.HistoricItem;
 import org.openhab.core.persistence.PersistenceService;
 import org.openhab.core.persistence.QueryablePersistenceService;
-import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -61,6 +63,11 @@ import org.rrd4j.core.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 /**
  * handles requests for chart series data from the CometVisu client
  * used by the diagram plugin
@@ -68,8 +75,9 @@ import org.slf4j.LoggerFactory;
  * @author Tobias Bräutigam - Initial contribution
  *
  */
-@Component(immediate = true, service = { ChartResource.class, RESTResource.class })
+@Component
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CHART_ALIAS)
+@Api(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CHART_ALIAS)
 public class ChartResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(ChartResource.class);
 
@@ -118,7 +126,10 @@ public class ChartResource implements RESTResource {
     }
 
     @GET
-    @Produces({ MediaType.APPLICATION_JSON })
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "returns chart data from persistence service for an item")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 500, message = "Server error") })
     public Response getChartSeries(@Context HttpHeaders headers, @QueryParam("rrd") String itemName,
             @QueryParam("ds") String consFunction, @QueryParam("start") String start, @QueryParam("end") String end,
             @QueryParam("res") long resolution) {
@@ -190,8 +201,8 @@ public class ChartResource implements RESTResource {
 
         // Define the data filter
         FilterCriteria filter = new FilterCriteria();
-        filter.setBeginDate(timeBegin);
-        filter.setEndDate(timeEnd);
+        filter.setBeginDate(ZonedDateTime.ofInstant(timeBegin.toInstant(), TimeZone.getDefault().toZoneId()));
+        filter.setEndDate(ZonedDateTime.ofInstant(timeEnd.toInstant(), TimeZone.getDefault().toZoneId()));
         filter.setItemName(item.getName());
         filter.setOrdering(Ordering.ASCENDING);
 
@@ -212,7 +223,7 @@ public class ChartResource implements RESTResource {
             }
         }
         logger.debug("'{}' querying item '{}' from '{}' to '{}' => '{}' results", persistenceService.getId(),
-                filter.getItemName(), filter.getBeginDate(), filter.getEndDate(), dataCounter);
+                filter.getItemName(), filter.getBeginDateZoned(), filter.getEndDateZoned(), dataCounter);
         return convertToRrd(data);
     }
 
