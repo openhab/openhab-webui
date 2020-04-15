@@ -24,11 +24,10 @@ You need Node 8.10.0 or later and npm 5.6.0. Change to the `web` directory, gath
 
 Before starting the development server with `npm start`, you should have an instance of openHAB (either a complete distribution or the demo app) running on _localhost:8080_.
 The development server will run on the next available port (for instance, 8081) and proxy requests to well-known openHAB URLs like the REST API or icon servlet, forwarding them to their equivalent on port 8080.
-If you wish to change the target of these forwards, allowing to target a remote instance, look for `const apiBaseUrl` in `build/webpack.config.js` and change it accordingly before starting the server.
-Don't commit changes to the base URL to avoid confusing others!
+If you wish to change the target of these forwards and use a remote instance, set the `OH_APIBASE` environment variable to the desired URL (e.g. `OH_APIBASE=http://openhab-dev:8080`) before running `npm start`.
 
 You can also run the unit tests (`test/jest`) and e2e (`test/cypress`) tests using the abovementioned commands.
-Cypress is configured to assume the development server is running on port 8081 - you can change that in `cypress.json` but again, remember not to commit.
+Cypress is configured to assume the development server is running on port 8081 - you can change that in `cypress.json` but remember not to commit.
 You can also use Majestic GUI to run the unit tests and temporarily collect code coverage and view coverage reports (it is disabled by default for performance reasons): install it globally with `npm install -g majestic`, and run `majestic` in the root web folder to open Majestic in a browser window.
 
 ## PWA
