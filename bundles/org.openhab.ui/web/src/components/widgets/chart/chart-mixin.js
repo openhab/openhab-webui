@@ -132,7 +132,7 @@ export default {
         let query = {
           serviceId: component.config.service || undefined,
           starttime: seriesStartTime.toISOString(),
-          endtime: seriesEndTime.toISOString()
+          endtime: seriesEndTime.subtract(1, 'millisecond').toISOString()
         }
 
         return this.$oh.api.get(url, query)

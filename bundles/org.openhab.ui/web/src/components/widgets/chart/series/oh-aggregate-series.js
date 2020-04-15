@@ -30,7 +30,7 @@ export default {
       // e.g. if dimension1=day, dimension2 can be hour but not month
       let groupStart = dimension2 || dimension1
       if (groupStart === 'weekday' || groupStart === 'isoWeekday') groupStart = 'day'
-      let start = dayjs(p.time).startOf(dimension2 || dimension1)
+      let start = dayjs(p.time).startOf(groupStart)
       if (acc.length && acc[acc.length - 1][0].isSame(start)) {
         acc[acc.length - 1][1].push(p.state)
       } else {
