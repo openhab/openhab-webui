@@ -19,7 +19,7 @@ export default {
     if (component.config.item) {
       const itemPoints = points.find(p => p.name === component.config.item).data
 
-      const formatter = new Intl.NumberFormat('en', { maximumFractionDigits: 3 })
+      const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
       const data = itemPoints.map((p) => {
         return [new Date(p.time), formatter.format(p.state)]
       })

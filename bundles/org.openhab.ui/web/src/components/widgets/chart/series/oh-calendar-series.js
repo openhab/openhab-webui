@@ -20,7 +20,7 @@ export default {
 
     console.debug(groups)
 
-    const formatter = new Intl.NumberFormat('en', { maximumFractionDigits: 3 })
+    const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
     const data = groups.map((arr, idx, days) => {
       const aggregationFunction = component.config.aggregationFunction || 'average'
       let value = aggregate(aggregationFunction, arr, idx, days)
