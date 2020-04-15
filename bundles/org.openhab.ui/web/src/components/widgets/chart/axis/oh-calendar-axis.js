@@ -1,7 +1,7 @@
 export default {
   get (component, startTime, endTime, chart, orient) {
     let calendar = Object.assign({}, component.config)
-    calendar.range = [startTime.toDate(), endTime.toDate()]
+    calendar.range = [startTime.toDate(), endTime.subtract(1, 'day').toDate()]
     if (orient) calendar.orient = orient
     calendar.dayLabel = {
       firstDay: 1,
