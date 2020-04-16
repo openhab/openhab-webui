@@ -115,6 +115,20 @@ export default [
               {
                 path: 'edit',
                 component: ItemEditPage
+              },
+              {
+                path: 'metadata/:namespace',
+                async (routeTo, routeFrom, resolve, reject) {
+                  // dynamic import component; returns promise
+                  const editorComponent = () => import(`../pages/settings/items/metadata/item-metadata-edit.vue`)
+                  // resolve promise
+                  editorComponent().then((vc) => {
+                    // resolve with component
+                    resolve({
+                      component: vc.default
+                    })
+                  })
+                }
               }
             ]
           }

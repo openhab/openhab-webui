@@ -6,17 +6,23 @@
   :title="(item.label) ? item.label :item.name"
   :footer="(item.label) ? item.name : '\xa0'"
   :subtitle="getItemTypeAndMetaLabel(item)"
-  :after="item.state"
+  :after="state"
 >
   <oh-icon v-if="item.category" slot="media" :icon="item.category" height="32" width="32" />
   <span v-else slot="media" class="item-initial">{{item.name[0]}}</span>
-  <f7-icon v-if="!item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
+  <f7-icon v-if="!item.editable && !ignoreEditable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
 </f7-list-item>
 </template>
 
 <script>
 export default {
-  props: ['item', 'link'],
+  props: ['item', 'context', 'ignoreEditable', 'link'],
+  computed: {
+    state () {
+      if (!this.context || !this.context.store) return this.item.state
+      return this.context.store[this.item.name].displayState || this.context.store[this.item.name].state
+    }
+  },
   methods: {
     getItemTypeAndMetaLabel () {
       let ret = this.item.type

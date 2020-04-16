@@ -1,5 +1,5 @@
 <template>
-  <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn">
+  <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline class="item-details-navbar">
       <f7-nav-right>
         <f7-link icon-md="material:edit" href="edit">{{ $theme.md ? '' : 'Edit' }}</f7-link>
@@ -20,13 +20,12 @@
       <f7-row v-if="item.state">
         <f7-col>
           <f7-block-title>Current State</f7-block-title>
-          <f7-block strong class="state-block">
-            {{item.transformedState || item.state}}
-            <f7-button v-show="$theme.md" :href="'/analyzer/?items=' + item.name">Analyze</f7-button>
-          </f7-block>
-          <f7-list class="analyze-button" v-show="!$theme.md">
-            <f7-list-button :href="'/analyzer/?items=' + item.name">Analyze</f7-list-button>
-          </f7-list>
+          <item-standalone-control :item="item" :context="context" />
+          <div class="display-flex justify-content-center flex-direction-column">
+            <div v-if="item.type.indexOf('Number') === 0 || item.type === 'Switch'" class="margin-top display-flex justify-content-center flex-direction-row">
+              <f7-button :href="'/analyzer/?items=' + item.name">Analyze</f7-button>
+            </div>
+          </div>
         </f7-col>
       </f7-row>
       <f7-row  v-if="item && item.tags && item.tags.length > 0">
@@ -41,7 +40,7 @@
       </f7-row>
       <f7-row  v-if="item && item.groupNames && item.groupNames.length > 0">
         <f7-col>
-          <f7-block-title>Member of (Direct)</f7-block-title>
+          <f7-block-title>Direct Parent Groups</f7-block-title>
           <f7-card>
             <f7-list>
               <f7-list-item
@@ -54,29 +53,10 @@
           </f7-card>
         </f7-col>
       </f7-row>
-      <f7-row  v-if="item && item.members && item.members.length > 0">
+      <f7-row  v-if="item && item.type === 'Group'">
         <f7-col>
-          <f7-block-title>Group Members (Children Items)</f7-block-title>
-          <f7-card>
-            <f7-list>
-              <f7-list-item
-                v-for="member in item.members" :key="member.name"
-                media-item
-                class="itemlist-item"
-                @change="(e) => toggleItemCheck(e, member.name)"
-                :link="'/settings/items/' + member.name"
-                :title="(member.label) ? member.label : member.name"
-                :footer="(member.label) ? member.name : '\xa0'"
-                :subtitle="getItemTypeAndMetaLabel(member)"
-                :after="member.state"
-              >
-                <oh-icon v-if="member.category" slot="media" :icon="member.category" height="32" width="32" />
-                <span v-else slot="media" class="item-initial">{{member.name[0]}}</span>
-                <!-- <f7-icon v-if="!member.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon> -->
-                <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
-              </f7-list-item>
-            </f7-list>
-          </f7-card>
+          <f7-block-title>Direct Group Members</f7-block-title>
+          <group-members :group-item="item" :context="context" @updated="load" />
         </f7-col>
       </f7-row>
       <f7-row  v-if="item && item.metadata && item.metadata.semantics">
@@ -90,6 +70,20 @@
               :title="key"
               :after="value"
             ></f7-list-item>
+          </f7-list>
+        </f7-col>
+      </f7-row>
+      <f7-row v-if="item.name">
+        <f7-col>
+          <f7-block-title>Metadata</f7-block-title>
+          <f7-list>
+            <f7-list-item
+              v-for="namespace in metadataNamespaces" :key="namespace.name"
+              :link="'metadata/' + namespace.name"
+              :title="namespace.label"
+              :after="(item.metadata && item.metadata[namespace.name]) ? item.metadata[namespace.name].value : 'Not Set'"
+            />
+            <f7-list-button color="blue" @click="editCustomMetadata">Edit Custom Metadata</f7-list-button>
           </f7-list>
         </f7-col>
       </f7-row>
@@ -142,40 +136,45 @@
       margin-top 0
 .after-item-header
   margin-top 10rem !important
-.state-block
-  margin-bottom 0
-  text-align center
-  font-size 36px
 .tags-block
   margin-bottom 0
   text-align center
   .chip
     margin-left 3px
     margin-right 3px
-.analyze-button
-  margin-top -1px
 </style>
 
 <script>
+import ItemStandaloneControl from '@/components/item/item-standalone-control.vue'
 import LinkDetails from '@/components/model/link-details.vue'
+import GroupMembers from '@/components/item/group-members.vue'
+import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 
 export default {
   props: ['itemName'],
   components: {
-    LinkDetails
+    LinkDetails,
+    GroupMembers,
+    ItemStandaloneControl
   },
   data () {
     return {
       item: {},
-      links: []
+      links: [],
+      metadataNamespaces: MetadataNamespaces
+    }
+  },
+  computed: {
+    context () {
+      return {
+        store: this.$store.getters.trackedItems
+      }
     }
   },
   methods: {
     onPageBeforeIn () {
-      this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=semantics').then((data) => {
-        this.item = data
-        this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
-      })
+      this.$store.dispatch('startTrackingStates')
+      this.load()
     },
     onPageAfterIn () {
       this.$oh.api.get('/rest/links?itemName=' + this.item.name).then((data) => {
@@ -183,17 +182,21 @@ export default {
         this.links = data
       })
     },
-    getItemTypeAndMetaLabel (item) {
-      let ret = item.type
-      if (item.metadata && item.metadata.semantics) {
-        ret += ' · '
-        const classParts = item.metadata.semantics.value.split('_')
-        ret += classParts[0]
-        if (classParts.length > 1) {
-          ret += '>' + classParts.pop()
-        }
-      }
-      return ret
+    onPageBeforeOut () {
+      this.$store.dispatch('stopTrackingStates')
+    },
+    load () {
+      this.$oh.api.get(`/rest/items/${this.itemName}?metadata=semantics,${this.metadataNamespaces.map((n) => n.name).join(',')}`).then((data) => {
+        this.item = data
+        this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
+      })
+    },
+    editCustomMetadata () {
+      this.$f7.dialog.prompt(`Please type in the namespace you would like to edit:`,
+        'Edit Custom Metadata',
+        (namespace) => {
+          if (namespace) this.$f7.views.main.router.navigate('metadata/' + namespace)
+        })
     }
   }
 }

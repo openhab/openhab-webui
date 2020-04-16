@@ -166,6 +166,26 @@ export const actionsMixin = {
           const cmd = this.context.store[actionToggleItem].state === actionToggleCommand ? actionToggleCommandAlt : actionToggleCommand
           this.$store.dispatch('sendCommand', { itemName: actionToggleItem, cmd })
           break
+        case 'options':
+          const actionCommandOptionsItem = this.config[prefix + 'actionItem']
+          const actionCommandOptions = this.config[prefix + 'actionOptions']
+          const actions = actionCommandOptions.split(',').map((o) => {
+            const parts = o.split('=')
+            return {
+              text: parts[1] || parts[0],
+              color: 'blue',
+              onClick: () => {
+                this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd: parts[0] })
+              }
+            }
+          })
+          this.$f7.actions.create({
+            buttons: [...actions, {
+              text: 'Cancel',
+              color: 'red'
+            }]
+          }).open()
+          break
         case 'popup':
         case 'popover':
         case 'sheet':
