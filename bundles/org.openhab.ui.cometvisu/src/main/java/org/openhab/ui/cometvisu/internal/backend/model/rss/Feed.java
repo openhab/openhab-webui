@@ -10,21 +10,22 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.rss.beans;
+package org.openhab.ui.cometvisu.internal.backend.model.rss;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link Entry} is used by the CometVisu rss-plugin
+ * {@link Feed} is used by the CometVisu rss-plugin
  *
  * @author Tobias Bräutigam - Initial contribution
  */
-public class Entry {
-    public String id;
+public class Feed {
+    public String feedUrl;
     public String title;
-    public String content;
-    public List<String> tags = new ArrayList<>();
-    public String state;
-    public long publishedDate;
+    public String link;
+    public String author;
+    public String description;
+    public String type;
+    public List<Entry> entries = new ArrayList<>();
 }

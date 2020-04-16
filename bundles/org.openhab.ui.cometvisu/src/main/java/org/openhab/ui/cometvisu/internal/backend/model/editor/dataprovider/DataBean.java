@@ -10,17 +10,15 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.editor.dataprovider.beans;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.openhab.ui.cometvisu.internal.backend.model.editor.dataprovider;
 
 /**
- * {@link ItemBean} is a helper bean used by the dataprovider-servlet
+ * {@link DataBean} is a helper bean used by the dataprovider-servlet
  * which delivers some additional data for the CometVisu-Editor
  *
  * @author Tobias Bräutigam - Initial contribution
  */
-public class ItemBean extends DataBean {
-    public Map<String, String> hints = new HashMap<>();
+public class DataBean {
+    public String value;
+    public String label;
 }

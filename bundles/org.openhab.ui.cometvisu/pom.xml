@@ -133,6 +133,7 @@
 	                   <generatePom>false</generatePom>
 	                   <useSwaggerAnnotations>false</useSwaggerAnnotations>
 	                   <useBeanValidation>false</useBeanValidation>
+	                   <hideGenerationTimestamp>true</hideGenerationTimestamp>
 	                </configOptions>
 	            </configuration>
 	        </execution>

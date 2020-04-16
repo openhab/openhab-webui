@@ -21,6 +21,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Configuration for the manager backend.
  *
@@ -28,6 +31,7 @@ import java.util.regex.Pattern;
  *
  */
 public class ManagerSettings implements IConfigChangeListener {
+    private final Logger logger = LoggerFactory.getLogger(ManagerSettings.class);
     private static ManagerSettings instance;
     private File baseDir;
     private File configFolder;
@@ -71,6 +75,7 @@ public class ManagerSettings implements IConfigChangeListener {
             File versionFile = new File(this.baseDir.getAbsolutePath() + File.separator + "version");
             Scanner sc = new Scanner(versionFile);
             String versionContent = sc.nextLine();
+            sc.close();
             Matcher matcher = ManagerSettings.versionPattern.matcher(versionContent);
             if (matcher.find()) {
                 this.cometVisuVersion.major = Integer.parseInt(matcher.group(1));
@@ -79,7 +84,7 @@ public class ManagerSettings implements IConfigChangeListener {
                 this.cometVisuVersion.dev = matcher.group(4) == "dev";
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error("{}", e.getMessage());
         }
 
         if (this.cometVisuVersion.major == 0 && this.cometVisuVersion.minor < 11) {
@@ -96,16 +101,18 @@ public class ManagerSettings implements IConfigChangeListener {
         this.mounts.clear();
         // always mount the demo folder
         this.mounts.add(new MountPoint(Paths.get("demo"), Paths.get("resource", "demo")));
+        // when serving source version, a mount can lookup 2 directory levels
+        boolean allowLookup = this.baseDir.getPath().endsWith("compiled/source");
+        Pattern lookupMount = Pattern.compile("^(\\.\\.\\/){0,2}\\w+");
 
         for (final String target : Config.mountPoints.keySet()) {
             if (!target.contains("..") && !target.equalsIgnoreCase("demo")) {
                 String value = (String) Config.mountPoints.get(target);
                 String[] parts = value.split(":");
                 String source = parts[0];
-                boolean writeable = parts.length > 1 ? parts[1].contains("w") : false;
-                boolean showSubDirs = parts.length > 1 ? parts[1].contains("s") : false;
-
-                if (!source.contains("..")) {
+                if (!source.contains("..") || (allowLookup && lookupMount.matcher(source).find())) {
+                    boolean writeable = parts.length > 1 ? parts[1].contains("w") : false;
+                    boolean showSubDirs = parts.length > 1 ? parts[1].contains("s") : false;
                     if (source.startsWith(File.separator)) {
                         source = source.substring(1);
                     }

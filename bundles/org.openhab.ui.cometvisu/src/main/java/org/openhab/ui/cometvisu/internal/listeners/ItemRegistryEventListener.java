@@ -17,7 +17,7 @@ import java.util.Collection;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.items.ItemRegistryChangeListener;
-import org.openhab.ui.cometvisu.internal.backend.EventBroadcaster;
+import org.openhab.ui.cometvisu.internal.backend.rest.EventBroadcaster;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 

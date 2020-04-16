@@ -10,26 +10,17 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.config;
+package org.openhab.ui.cometvisu.internal.backend.model.editor.dataprovider;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Adapter for marshaling CDATA content
+ * {@link ItemBean} is a helper bean used by the dataprovider-servlet
+ * which delivers some additional data for the CometVisu-Editor
  *
  * @author Tobias Bräutigam - Initial contribution
- *
  */
-public class AdapterCDATA extends XmlAdapter<String, String> {
-
-    @Override
-    public String unmarshal(String v) throws Exception {
-        return String.format("<![CDATA[ {} ]]>", v);
-    }
-
-    @Override
-    public String marshal(String v) throws Exception {
-        return v;
-    }
-
+public class ItemBean extends DataBean {
+    public Map<String, String> hints = new HashMap<>();
 }

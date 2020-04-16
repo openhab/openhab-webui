@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.backend;
+package org.openhab.ui.cometvisu.internal.backend.rest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.types.State;
 import org.openhab.ui.cometvisu.internal.Config;
-import org.openhab.ui.cometvisu.internal.backend.beans.StateBean;
+import org.openhab.ui.cometvisu.internal.backend.model.StateBean;
 import org.openhab.ui.cometvisu.internal.listeners.StateEventListener;
 import org.openhab.ui.cometvisu.internal.util.SseUtil;
 import org.osgi.service.component.annotations.Component;

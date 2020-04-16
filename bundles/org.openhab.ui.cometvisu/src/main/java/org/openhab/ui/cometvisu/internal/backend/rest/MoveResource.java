@@ -90,7 +90,7 @@ public class MoveResource implements RESTResource {
         } catch (FileOperationException e) {
             return FsUtil.createErrorResponse(e);
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error("{}", e.getMessage());
             return FsUtil.createErrorResponse(Status.INTERNAL_SERVER_ERROR, "rename/move failed");
         }
     }

@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.config;
+package org.openhab.ui.cometvisu.internal.backend.sitemap;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

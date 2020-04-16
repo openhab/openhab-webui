@@ -10,15 +10,18 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.editor.dataprovider.beans;
+package org.openhab.ui.cometvisu.internal.backend.model;
 
 /**
- * {@link DataBean} is a helper bean used by the dataprovider-servlet
- * which delivers some additional data for the CometVisu-Editor
+ * This is a java bean that is used with JAXB to define the backend configurationfor the
+ * Cometvisu client.
  *
  * @author Tobias Bräutigam - Initial contribution
+ *
  */
-public class DataBean {
-    public String value;
-    public String label;
+public class ConfigBean {
+    public String name = "openhab2";
+    public String transport = "sse";
+    public String baseURL = "/rest/cv/";
+    public ResourcesBean resources;
 }

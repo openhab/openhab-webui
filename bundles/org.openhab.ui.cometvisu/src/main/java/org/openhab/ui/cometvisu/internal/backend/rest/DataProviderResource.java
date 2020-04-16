@@ -38,7 +38,7 @@ import org.openhab.ui.cometvisu.backend.rest.model.DataProviderHint;
 import org.openhab.ui.cometvisu.backend.rest.model.DataProviderResponse;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.ManagerSettings;
-import org.openhab.ui.cometvisu.internal.config.ConfigHelper.Transform;
+import org.openhab.ui.cometvisu.internal.backend.sitemap.ConfigHelper.Transform;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;

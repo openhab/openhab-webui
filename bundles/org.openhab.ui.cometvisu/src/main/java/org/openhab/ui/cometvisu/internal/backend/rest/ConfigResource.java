@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.backend;
+package org.openhab.ui.cometvisu.internal.backend.rest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

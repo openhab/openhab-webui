@@ -210,7 +210,7 @@ public class CometVisuApp {
         if (properties != null) {
             setProperties(properties);
             if (properties.get(Config.COMETVISU_WEBFOLDER_PROPERTY) != null) {
-                Config.cometvisuWebfolder = (String) properties.get(Config.COMETVISU_WEBFOLDER_PROPERTY);
+                Config.setCometVisuFolder((String) properties.get(Config.COMETVISU_WEBFOLDER_PROPERTY));
             }
             if (properties.get(Config.COMETVISU_WEBAPP_ALIAS_PROPERTY) != null) {
                 Config.cometvisuWebappAlias = (String) properties.get(Config.COMETVISU_WEBAPP_ALIAS_PROPERTY);

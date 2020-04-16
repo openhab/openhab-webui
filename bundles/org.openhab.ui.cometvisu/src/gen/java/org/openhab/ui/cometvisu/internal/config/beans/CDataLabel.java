@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.openhab.ui.cometvisu.internal.config.AdapterCDATA;
+import org.openhab.ui.cometvisu.internal.backend.sitemap.AdapterCDATA;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "label", propOrder = { "value" })

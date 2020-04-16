@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.backend;
+package org.openhab.ui.cometvisu.internal.backend.rest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -32,7 +32,7 @@ import org.openhab.core.items.events.ItemEventFactory;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.TypeParser;
 import org.openhab.ui.cometvisu.internal.Config;
-import org.openhab.ui.cometvisu.internal.backend.beans.SuccessBean;
+import org.openhab.ui.cometvisu.internal.backend.model.SuccessBean;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;

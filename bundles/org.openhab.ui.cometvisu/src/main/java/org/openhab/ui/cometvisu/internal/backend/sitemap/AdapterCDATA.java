@@ -10,13 +10,26 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.rss.beans;
+package org.openhab.ui.cometvisu.internal.backend.sitemap;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
- * {@link ResponseData} is used by the CometVisu rss-plugin
+ * Adapter for marshaling CDATA content
  *
  * @author Tobias Bräutigam - Initial contribution
+ *
  */
-public class ResponseData {
-    public Feed feed;
+public class AdapterCDATA extends XmlAdapter<String, String> {
+
+    @Override
+    public String unmarshal(String v) throws Exception {
+        return String.format("<![CDATA[ {} ]]>", v);
+    }
+
+    @Override
+    public String marshal(String v) throws Exception {
+        return v;
+    }
+
 }

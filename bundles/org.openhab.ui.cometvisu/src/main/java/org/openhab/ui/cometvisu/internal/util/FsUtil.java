@@ -12,8 +12,10 @@
  */
 package org.openhab.ui.cometvisu.internal.util;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -27,6 +29,8 @@ import java.util.Date;
 import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
+import java.util.zip.CheckedInputStream;
+import java.util.zip.CheckedOutputStream;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -116,17 +120,20 @@ public class FsUtil {
             parentDir.mkdirs();
         }
         // check hash
-        byte[] bytes;
         try {
-            bytes = new byte[fileInputStream.available()];
-            fileInputStream.read(bytes);
-            CRC32 contentHash = new CRC32();
-            contentHash.update(bytes, 0, bytes.length);
-            if (!hash.isEmpty() && hash.equalsIgnoreCase("ignore")) {
+            BufferedInputStream buffered = new BufferedInputStream(fileInputStream);
+            CheckedInputStream cis = new CheckedInputStream(buffered, new CRC32());
+            cis.mark(Integer.MAX_VALUE);
+            byte[] buffer = new byte[1024];
+            while (cis.read(buffer) > 0) {
+            }
+            long contentChecksum = cis.getChecksum().getValue();
+            cis.reset();
+            if (hash != null && !hash.isEmpty() && hash.equalsIgnoreCase("ignore")) {
                 // compare hashes
-                if (contentHash.getValue() != Long.parseLong(hash)) {
+                if (contentChecksum != Long.parseLong(hash)) {
                     throw new FileOperationException(
-                            "data has been corrupted during transport " + hash + " != " + contentHash,
+                            "data has been corrupted during transport " + hash + " != " + contentChecksum,
                             Status.METHOD_NOT_ALLOWED);
                 }
             }
@@ -169,20 +176,26 @@ public class FsUtil {
                     tempBackup = new File(file.getAbsoluteFile() + String.valueOf(backupSuffix));
                     Files.copy(file.toPath(), tempBackup.toPath());
                 } catch (IOException e) {
-                    logger.error(e.getMessage());
+                    logger.error("{}", e.getMessage());
                     tempBackup = null;
                 }
             }
             // now write new content
             try {
-                Files.write(file.toPath(), bytes);
+                // Files.write(file.toPath(), bytes);
+                int read = 0;
+                CheckedOutputStream out = new CheckedOutputStream(new FileOutputStream(file), new CRC32());
+
+                while ((read = cis.read(buffer)) != -1) {
+                    out.write(buffer, 0, read);
+                }
+                out.flush();
+                out.close();
+                cis.close();
 
                 // check written hash
-                CRC32 writtenHash = new CRC32();
-                byte[] writtenBytes = Files.readAllBytes(file.toPath());
-                writtenHash.update(writtenBytes, 0, writtenBytes.length);
 
-                if (!contentHash.equals(writtenHash)) {
+                if (contentChecksum != out.getChecksum().getValue()) {
                     // something went wrong, restore old data
                     if (tempBackup != null) {
                         Files.copy(tempBackup.toPath(), file.toPath());
@@ -206,7 +219,7 @@ public class FsUtil {
                 throw new FileOperationException("file not written", Status.METHOD_NOT_ALLOWED);
             }
         } catch (IOException e1) {
-            logger.error(e1.getMessage());
+            logger.error("{}", e1.getMessage());
             throw new FileOperationException("error reading content", Status.METHOD_NOT_ALLOWED);
         }
 
@@ -289,8 +302,7 @@ public class FsUtil {
     }
 
     public static Response createErrorResponse(Status status, String message) {
-        return Response.status(Status.NOT_FOUND).entity(new ErrorResponse(message)).type(MediaType.APPLICATION_JSON)
-                .build();
+        return Response.status(status).entity(new ErrorResponse(message)).type(MediaType.APPLICATION_JSON).build();
     }
 
 }

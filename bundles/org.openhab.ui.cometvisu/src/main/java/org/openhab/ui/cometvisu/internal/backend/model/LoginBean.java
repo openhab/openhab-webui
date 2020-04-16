@@ -10,18 +10,17 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.backend.beans;
+package org.openhab.ui.cometvisu.internal.backend.model;
 
 /**
- * This is a java bean that is used with JAXB to define the resources of backend configuration for the
- * Cometvisu client.
+ * This is a java bean that is used with JAXB to define the login entry
+ * page of the Cometvisu interface.
  *
  * @author Tobias Bräutigam - Initial contribution
  *
  */
-public class ResourcesBean {
-    public String read;
-    public String rrd;
-    public String write;
-    public String rest;
+public class LoginBean {
+    public String v;
+    public String s;
+    public ConfigBean c;
 }

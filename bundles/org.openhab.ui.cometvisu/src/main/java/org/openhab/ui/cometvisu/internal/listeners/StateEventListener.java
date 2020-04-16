@@ -18,8 +18,8 @@ import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.StateChangeListener;
 import org.openhab.core.types.State;
-import org.openhab.ui.cometvisu.internal.backend.EventBroadcaster;
-import org.openhab.ui.cometvisu.internal.backend.beans.StateBean;
+import org.openhab.ui.cometvisu.internal.backend.model.StateBean;
+import org.openhab.ui.cometvisu.internal.backend.rest.EventBroadcaster;
 
 /**
  * listens to state changes on items and send them to an EventBroadcaster

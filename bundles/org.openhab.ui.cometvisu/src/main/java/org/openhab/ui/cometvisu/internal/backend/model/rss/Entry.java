@@ -10,17 +10,21 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.backend.beans;
+package org.openhab.ui.cometvisu.internal.backend.model.rss;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Item bean for broadcasted item states.
- * 
- * @author Tobias Bräutigam - Initial Contribution and API
+ * {@link Entry} is used by the CometVisu rss-plugin
+ *
+ * @author Tobias Bräutigam - Initial contribution
  */
-public class StateBean {
-
-    public String name;
-
+public class Entry {
+    public String id;
+    public String title;
+    public String content;
+    public List<String> tags = new ArrayList<>();
     public String state;
-
+    public long publishedDate;
 }

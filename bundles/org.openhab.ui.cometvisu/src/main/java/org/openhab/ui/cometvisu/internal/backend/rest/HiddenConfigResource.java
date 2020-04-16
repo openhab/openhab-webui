@@ -89,7 +89,7 @@ public class HiddenConfigResource implements RESTResource {
             this.writeHiddenConfig(config);
             return Response.ok().build();
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("{}", e.getMessage());
             return FsUtil.createErrorResponse(Status.INTERNAL_SERVER_ERROR, "error saving hidden config");
         }
     }
@@ -121,7 +121,7 @@ public class HiddenConfigResource implements RESTResource {
             this.writeHiddenConfig(config);
             return Response.ok().build();
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("{}", e.getMessage());
             return FsUtil.createErrorResponse(Status.INTERNAL_SERVER_ERROR, "error saving hidden config");
         }
     }
@@ -174,7 +174,7 @@ public class HiddenConfigResource implements RESTResource {
             this.writeHiddenConfig(config);
             return Response.ok().build();
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("{}", e.getMessage());
             return FsUtil.createErrorResponse(Status.INTERNAL_SERVER_ERROR, "error saving hidden config");
         }
     }
@@ -207,7 +207,7 @@ public class HiddenConfigResource implements RESTResource {
             this.writeHiddenConfig(config);
             return Response.ok().build();
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("{}", e.getMessage());
             return FsUtil.createErrorResponse(Status.INTERNAL_SERVER_ERROR, "error saving hidden config");
         }
     }

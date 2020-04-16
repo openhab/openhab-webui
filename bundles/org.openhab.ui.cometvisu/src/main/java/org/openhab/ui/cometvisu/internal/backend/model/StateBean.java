@@ -10,17 +10,17 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.backend.beans;
+package org.openhab.ui.cometvisu.internal.backend.model;
 
 /**
- * This is a java bean that is used with JAXB to define the login entry
- * page of the Cometvisu interface.
- *
- * @author Tobias Bräutigam - Initial contribution
- *
+ * Item bean for broadcasted item states.
+ * 
+ * @author Tobias Bräutigam - Initial Contribution and API
  */
-public class LoginBean {
-    public String v;
-    public String s;
-    public ConfigBean c;
+public class StateBean {
+
+    public String name;
+
+    public String state;
+
 }

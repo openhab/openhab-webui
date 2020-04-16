@@ -14,6 +14,7 @@ package org.openhab.ui.cometvisu.internal.backend.rest;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -22,6 +23,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -30,6 +32,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.backend.rest.model.ReadResponse;
 import org.openhab.ui.cometvisu.internal.Config;
@@ -59,32 +63,77 @@ import io.swagger.annotations.ApiResponses;
 public class FsResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(FsResource.class);
 
-    // @POST
-    // @Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.TEXT_PLAIN })
-    // public Response create(@QueryParam("path") String path, @QueryParam("type") String type,
-    // @QueryParam("hash") String hash, @FormParam(value = "file") InputStream fileInputStream,
-    // @FormParam(value = "filename") String filename,
-    // @DefaultValue("false") @FormParam(value = "force") Boolean force) {
-    // File folder = new File(
-    // ManagerSettings.getInstance().getConfigFolder().getAbsolutePath() + File.separator + path);
-    // File target = new File(folder.getAbsoluteFile() + File.pathSeparator + filename);
-    // if (!target.exists() || force) {
-    // if (folder.canWrite()) {
-    // try {
-    // FsUtil.getInstance().saveFile(target, fileInputStream, hash);
-    // return Response.ok().build();
-    // } catch (FileOperationException e) {
-    // return this.createErrorResponse(e);
-    // } catch (Exception e) {
-    // return FsUtil.createErrorResponse(Status.FORBIDDEN, "forbidden");
-    // }
-    // } else {
-    // return FsUtil.createErrorResponse(Status.FORBIDDEN, "forbidden");
-    // }
-    // } else {
-    // return FsUtil.createErrorResponse(Status.NOT_ACCEPTABLE, "File already exists");
-    // }
-    // }
+    @POST
+    @Consumes("text/*")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Create a text file")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
+            @ApiResponse(code = 406, message = "File already exists") })
+    public Response create(@QueryParam("path") String path, @QueryParam("type") String type,
+            @QueryParam("hash") String hash, @ApiParam(value = "file content") String body,
+            @DefaultValue("false") @QueryParam("force") Boolean force) {
+        MountedFile file;
+        try {
+            file = new MountedFile(path);
+            File folder = file.toFile().toPath().getParent().toFile();
+            if (!file.exists() || force) {
+                if (!file.isReadonlyMount() && folder.canWrite()) {
+                    try {
+                        FsUtil.getInstance().saveFile(file.toFile(), body, hash);
+                        return Response.ok().build();
+                    } catch (FileOperationException e) {
+                        return FsUtil.createErrorResponse(e);
+                    } catch (Exception e) {
+                        return FsUtil.createErrorResponse(Status.FORBIDDEN, "forbidden");
+                    }
+                } else {
+                    return FsUtil.createErrorResponse(Status.FORBIDDEN, "forbidden");
+                }
+            } else {
+                return FsUtil.createErrorResponse(Status.NOT_ACCEPTABLE, "File already exists");
+            }
+        } catch (FileOperationException e1) {
+            return FsUtil.createErrorResponse(e1);
+        }
+    }
+
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Create a binary file")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
+            @ApiResponse(code = 406, message = "File already exists") })
+    public Response createBinary(
+            @ApiParam(value = "Relative path inside the config folder", required = true) @QueryParam("path") String path,
+            @QueryParam("type") String type,
+            @ApiParam(value = "CRC32 hash of the file content") @QueryParam("hash") String hash,
+            @ApiParam(value = "force overriding existing file") @DefaultValue("false") @FormDataParam("force") Boolean force,
+            @ApiParam(value = "file content") @FormDataParam("file") InputStream fileInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileMetaData) {
+        MountedFile target;
+        try {
+            target = new MountedFile(Paths.get(path, fileMetaData.getFileName()).toString());
+            File folder = target.toFile().toPath().getParent().toFile();
+            if (!target.exists() || force) {
+                if (!target.isReadonlyMount() && folder.canWrite()) {
+                    try {
+                        FsUtil.getInstance().saveFile(target.toFile(), fileInputStream, hash);
+                        return Response.ok().build();
+                    } catch (FileOperationException e) {
+                        return FsUtil.createErrorResponse(e);
+                    } catch (Exception e) {
+                        return FsUtil.createErrorResponse(Status.FORBIDDEN, "forbidden");
+                    }
+                } else {
+                    return FsUtil.createErrorResponse(Status.FORBIDDEN, "forbidden");
+                }
+            } else {
+                return FsUtil.createErrorResponse(Status.NOT_ACCEPTABLE, "File already exists");
+            }
+        } catch (FileOperationException e1) {
+            return FsUtil.createErrorResponse(e1);
+        }
+    }
 
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
@@ -147,7 +196,7 @@ public class FsResource implements RESTResource {
 
         try {
             MountedFile file = new MountedFile(path);
-            logger.debug("read request for: " + file.getAbsolutePath());
+            logger.debug("read request for: {}", file.getAbsolutePath());
             if (file.exists()) {
                 if (file.isDirectory()) {
                     return Response.ok(FsUtil.getInstance().listDir(file, recursive), MediaType.APPLICATION_JSON)

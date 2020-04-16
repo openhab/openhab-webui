@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.backend;
+package org.openhab.ui.cometvisu.internal.backend.rest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -24,9 +24,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.internal.Config;
-import org.openhab.ui.cometvisu.internal.backend.beans.ConfigBean;
-import org.openhab.ui.cometvisu.internal.backend.beans.LoginBean;
-import org.openhab.ui.cometvisu.internal.backend.beans.ResourcesBean;
+import org.openhab.ui.cometvisu.internal.backend.model.ConfigBean;
+import org.openhab.ui.cometvisu.internal.backend.model.LoginBean;
+import org.openhab.ui.cometvisu.internal.backend.model.ResourcesBean;
 import org.osgi.service.component.annotations.Component;
 
 import io.swagger.annotations.Api;

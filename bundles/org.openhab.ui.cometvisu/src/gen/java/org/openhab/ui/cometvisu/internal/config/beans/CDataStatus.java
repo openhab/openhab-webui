@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.openhab.ui.cometvisu.internal.config.AdapterCDATA;
+import org.openhab.ui.cometvisu.internal.backend.sitemap.AdapterCDATA;
 
 /**
  * {@inheritDoc}

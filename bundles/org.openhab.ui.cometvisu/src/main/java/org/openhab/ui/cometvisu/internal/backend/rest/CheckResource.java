@@ -82,7 +82,7 @@ public class CheckResource implements RESTResource {
             stateField |= 1 << 1;
         }
         if (file.canWrite()) {
-            // Bit 2: writeable
+            // Bit 2: writable
             stateField |= 2 << 1;
         }
         return new BigDecimal(stateField);

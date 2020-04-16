@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.editor.dataprovider.beans;
+package org.openhab.ui.cometvisu.internal.backend.model.editor.dataprovider;
 
 /**
  * {@link TransformBean} is a helper bean used by the dataprovider-servlet

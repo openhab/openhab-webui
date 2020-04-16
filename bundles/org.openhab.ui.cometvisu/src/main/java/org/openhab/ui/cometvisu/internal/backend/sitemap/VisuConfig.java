@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.config;
+package org.openhab.ui.cometvisu.internal.backend.sitemap;
 
 import java.io.File;
 import java.io.StringWriter;
@@ -40,7 +40,7 @@ import org.openhab.core.model.sitemap.sitemap.Sitemap;
 import org.openhab.core.model.sitemap.sitemap.Webview;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.ui.cometvisu.internal.Config;
-import org.openhab.ui.cometvisu.internal.config.ConfigHelper.Transform;
+import org.openhab.ui.cometvisu.internal.backend.sitemap.ConfigHelper.Transform;
 import org.openhab.ui.cometvisu.internal.config.beans.Address;
 import org.openhab.ui.cometvisu.internal.config.beans.Colorchooser;
 import org.openhab.ui.cometvisu.internal.config.beans.Diagram;

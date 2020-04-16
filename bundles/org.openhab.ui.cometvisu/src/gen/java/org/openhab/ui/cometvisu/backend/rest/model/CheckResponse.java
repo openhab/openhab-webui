@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2020-04-14T16:34:36.480+02:00[Europe/Berlin]")
 public class CheckResponse extends ArrayList<EnvironmentState>  {
   
 
