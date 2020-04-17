@@ -11,8 +11,8 @@
       <f7-link @click="currentTab = 'code'" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details" v-show="currentTab === 'tree'">
-      <f7-link class="left details-link" @click="detailsOpened = true">Details</f7-link>
-      <f7-link :disabled="selectedWidget != null" class="right" @click="selectedWidget = null">Clear</f7-link>
+      <f7-link :disabled="selectedWidget != null" class="left" @click="selectedWidget = null">Clear</f7-link>
+      <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link>
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
       <f7-tab id="tree" @tab:show="() => this.currentTab = 'tree'" :tab-active="currentTab === 'tree'">
@@ -78,7 +78,7 @@
     <f7-sheet class="sitemap-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
       <f7-page>
         <f7-toolbar tabbar>
-          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'item'" @click="detailsTab = 'widget'">Widget</f7-link>
+          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'widget'" @click="detailsTab = 'widget'">Widget</f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'mappings'" @click="detailsTab = 'mappings'">Mappings</f7-link>
           <div class="right">
             <f7-link sheet-close class="padding-right"><f7-icon f7="chevron_down"></f7-icon></f7-link>
@@ -347,6 +347,11 @@ export default {
       this.$nextTick(() => {
         this.selectedWidget = widget
         this.selectedWidgetParent = parentWidget
+        const detailsLink = this.$refs.detailsLink
+        const visibility = window.getComputedStyle(detailsLink.$el).visibility
+        if (!visibility || visibility !== 'hidden') {
+          this.detailsOpened = true
+        }
       })
     },
     clearSelection (ev) {

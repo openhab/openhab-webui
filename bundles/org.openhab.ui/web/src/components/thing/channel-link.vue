@@ -27,7 +27,7 @@
         :title="(link.item.label) ? link.item.label : link.item.name"
         :footer="(link.item.label) ? link.item.name : '\xa0'"
         :subtitle="getItemTypeAndMetaLabel(link.item)"
-        :after="link.item.state"
+        :after="context.store[link.item.name].displayState || context.store[link.item.name].state"
       >
         <oh-icon v-if="link.item.category" slot="media" :icon="link.item.category" height="32" width="32" />
         <span v-else slot="media" class="item-initial">{{link.item.name[0]}}</span>
@@ -63,7 +63,7 @@ import ConfigureLinkPage from '@/pages/settings/things/link/link-edit.vue'
 import ConfigureChannelPage from '@/pages/settings/things/channel/channel-edit.vue'
 
 export default {
-  props: ['channelType', 'channelId', 'channel', 'thing', 'opened', 'extensible'],
+  props: ['channelType', 'channelId', 'channel', 'thing', 'opened', 'extensible', 'context'],
   data () {
     return {
       ready: false,

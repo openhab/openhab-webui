@@ -12,14 +12,14 @@ export default {
 
       let ctx = {}
 
+      const stateDescription = this.item.stateDescription || {}
+
       if (this.item.metadata && this.item.metadata.widget) {
         ctx.component = {
           component: this.item.metadata.widget.value,
           config: this.item.metadata.widget.config
         }
       } else {
-        const stateDescription = this.item.stateDescription || {}
-
         if (this.item.type === 'Switch' && !stateDescription.readOnly) {
           ctx.component = {
             component: 'oh-toggle-card'
@@ -40,6 +40,15 @@ export default {
             }
           }
         }
+
+        if (this.item.type === 'Rollershutter' && !stateDescription.readOnly) {
+          ctx.component = {
+            component: 'oh-rollershutter-card',
+            config: {
+              vertical: true
+            }
+          }
+        }
       }
 
       if (!ctx.component) {
@@ -47,7 +56,7 @@ export default {
           component: 'oh-label-card'
         }
 
-        if (this.item.commandDescription && this.item.commandDescription.commandOptions) {
+        if (this.item.commandDescription && this.item.commandDescription.commandOptions && !stateDescription.readOnly) {
           ctx.component.config = {
             action: 'options',
             actionItem: this.item.name,

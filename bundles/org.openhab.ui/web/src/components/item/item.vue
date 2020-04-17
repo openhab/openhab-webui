@@ -16,9 +16,10 @@
 
 <script>
 export default {
-  props: ['item', 'context', 'ignoreEditable', 'link'],
+  props: ['item', 'context', 'ignoreEditable', 'noState', 'link'],
   computed: {
     state () {
+      if (this.noState) return
       if (!this.context || !this.context.store) return this.item.state
       return this.context.store[this.item.name].displayState || this.context.store[this.item.name].state
     }

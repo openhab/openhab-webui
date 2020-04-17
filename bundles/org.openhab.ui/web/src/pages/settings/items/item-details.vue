@@ -19,13 +19,7 @@
     <f7-block class="block-narrow after-item-header" v-if="item">
       <f7-row v-if="item.state">
         <f7-col>
-          <f7-block-title>Current State</f7-block-title>
-          <item-standalone-control :item="item" :context="context" />
-          <div class="display-flex justify-content-center flex-direction-column">
-            <div v-if="item.type.indexOf('Number') === 0 || item.type === 'Switch'" class="margin-top display-flex justify-content-center flex-direction-row">
-              <f7-button :href="'/analyzer/?items=' + item.name">Analyze</f7-button>
-            </div>
-          </div>
+          <item-state-preview :item="item" :context="context" />
         </f7-col>
       </f7-row>
       <f7-row  v-if="item && item.tags && item.tags.length > 0">
@@ -53,13 +47,13 @@
           </f7-card>
         </f7-col>
       </f7-row>
-      <f7-row  v-if="item && item.type === 'Group'">
+      <f7-row v-if="item && item.type === 'Group'">
         <f7-col>
           <f7-block-title>Direct Group Members</f7-block-title>
           <group-members :group-item="item" :context="context" @updated="load" />
         </f7-col>
       </f7-row>
-      <f7-row  v-if="item && item.metadata && item.metadata.semantics">
+      <f7-row v-if="item && item.metadata && item.metadata.semantics">
         <f7-col>
           <f7-block-title>Semantic Classification</f7-block-title>
           <f7-list>
@@ -76,15 +70,7 @@
       <f7-row v-if="item.name">
         <f7-col>
           <f7-block-title>Metadata</f7-block-title>
-          <f7-list>
-            <f7-list-item
-              v-for="namespace in metadataNamespaces" :key="namespace.name"
-              :link="'metadata/' + namespace.name"
-              :title="namespace.label"
-              :after="(item.metadata && item.metadata[namespace.name]) ? item.metadata[namespace.name].value : 'Not Set'"
-            />
-            <f7-list-button color="blue" @click="editCustomMetadata">Edit Custom Metadata</f7-list-button>
-          </f7-list>
+          <metadata-menu :item="item" />
         </f7-col>
       </f7-row>
       <f7-row v-if="item.name && links.length && item.type !== 'Group'">
@@ -145,9 +131,11 @@
 </style>
 
 <script>
-import ItemStandaloneControl from '@/components/item/item-standalone-control.vue'
+import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
+import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
+
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 
 export default {
@@ -155,13 +143,13 @@ export default {
   components: {
     LinkDetails,
     GroupMembers,
-    ItemStandaloneControl
+    ItemStatePreview,
+    MetadataMenu
   },
   data () {
     return {
       item: {},
-      links: [],
-      metadataNamespaces: MetadataNamespaces
+      links: []
     }
   },
   computed: {
@@ -186,17 +174,10 @@ export default {
       this.$store.dispatch('stopTrackingStates')
     },
     load () {
-      this.$oh.api.get(`/rest/items/${this.itemName}?metadata=semantics,${this.metadataNamespaces.map((n) => n.name).join(',')}`).then((data) => {
+      this.$oh.api.get(`/rest/items/${this.itemName}?metadata=semantics,${MetadataNamespaces.map((n) => n.name).join(',')}`).then((data) => {
         this.item = data
         this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
       })
-    },
-    editCustomMetadata () {
-      this.$f7.dialog.prompt(`Please type in the namespace you would like to edit:`,
-        'Edit Custom Metadata',
-        (namespace) => {
-          if (namespace) this.$f7.views.main.router.navigate('metadata/' + namespace)
-        })
     }
   }
 }

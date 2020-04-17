@@ -180,10 +180,10 @@ export const actionsMixin = {
             }
           })
           this.$f7.actions.create({
-            buttons: [...actions, {
-              text: 'Cancel',
-              color: 'red'
-            }]
+            buttons: [
+              actions,
+              [{ text: 'Cancel', color: 'red' }]
+            ]
           }).open()
           break
         case 'popup':

@@ -17,12 +17,12 @@
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar bottom class="toolbar-details">
-      <f7-link class="left details-link" @click="detailsOpened = true">Details</f7-link>
+      <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">Clear</f7-link>
       <div class="padding-right text-align-right">
         <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic"></f7-checkbox>
         <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
       </div>
-      <f7-link :disabled="selectedItem != null" class="right" @click="selectedItem = null">Clear</f7-link>
+      <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link>
     </f7-toolbar>
     <f7-block v-if="!ready" class="text-align-center">
       <f7-preloader></f7-preloader>
@@ -44,7 +44,7 @@
         </f7-col>
         <f7-col width="100" medium="50" class="details-pane">
           <f7-block v-if="selectedItem" no-gap>
-            <model-details-pane :model="selectedItem" :links="links" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" />
+            <model-details-pane :key="itemDetailsKey" :model="selectedItem" :links="links" :context="context" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" />
           </f7-block>
           <f7-block v-else>
             <div class="padding text-align-center">Nothing selected</div>
@@ -84,6 +84,7 @@
     <f7-sheet class="model-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
       <f7-page>
         <f7-toolbar tabbar>
+          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'state'" @click="detailsTab = 'state'">State</f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'item'" @click="detailsTab = 'item'">Item</f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'links'" @click="detailsTab = 'links'">Links</f7-link>
           <div class="right">
@@ -91,8 +92,12 @@
           </div>
         </f7-toolbar>
         <f7-block style="margin-bottom: 6rem" v-if="selectedItem">
+          <item-state-preview v-if="detailsTab === 'state'" :item="selectedItem.item" :context="context" />
           <item-details v-if="detailsTab === 'item'" :model="selectedItem" :links="links" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)"/>
           <link-details v-if="detailsTab === 'links'" :item="selectedItem.item" :links="links" />
+        </f7-block>
+        <f7-block v-else>
+          <div class="padding text-align-center">Nothing selected</div>
         </f7-block>
       </f7-page>
     </f7-sheet>
@@ -119,7 +124,7 @@
 .model-details-sheet
   z-index 10900
 .md .model-details-sheet .toolbar .link
-  width 35%
+  width 28%
 
 @media (min-width: 768px)
   .semantic-tree-wrapper
@@ -156,12 +161,16 @@
 import ModelDetailsPane from '@/components/model/details-pane.vue'
 import AddFromThing from './add-from-thing.vue'
 
+import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import ItemDetails from '@/components/model/item-details.vue'
 import LinkDetails from '@/components/model/link-details.vue'
+
+import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 
 export default {
   components: {
     ModelDetailsPane,
+    ItemStatePreview,
     ItemDetails,
     LinkDetails
   },
@@ -185,8 +194,9 @@ export default {
       selectedItem: null,
       previousSelection: null,
       detailsOpened: false,
-      detailsTab: 'item',
-      eventSource: null
+      detailsTab: 'state',
+      eventSource: null,
+      itemDetailsKey: this.$f7.utils.id()
     }
   },
   created () {
@@ -196,14 +206,25 @@ export default {
     empty () {
       let emptySemantic = !this.rootLocations.length && !this.rootEquipments.length && !this.rootPoints.length
       return (this.includeNonSemantic) ? emptySemantic && !this.rootGroups.length && !this.rootItems.length : emptySemantic
+    },
+    context () {
+      return {
+        store: this.$store.getters.trackedItems
+      }
     }
   },
   methods: {
-    onPageAfterIn () {
-      this.load()
+    onPageAfterIn (ev) {
+      this.$store.dispatch('startTrackingStates')
+      if (this.selectedItem) {
+        this.update()
+      } else {
+        this.load()
+      }
     },
     onPageBeforeOut () {
       this.detailsOpened = false
+      this.$store.dispatch('stopTrackingStates')
       this.stopEventSource()
     },
     modelItem (item) {
@@ -223,12 +244,18 @@ export default {
       if (item.created === false) {
         this.selectItem(modelItem)
       }
+      if (this.previousSelection && item.name === this.previousSelection.item.name) {
+        this.selectedItem = parent
+        this.previousSelection = null
+        this.selectItem(modelItem)
+      }
+
       return modelItem
     },
-    load () {
+    load (update) {
       // if (this.ready) return
       this.loading = true
-      const items = this.$oh.api.get('/rest/items?metadata=semantics')
+      const items = this.$oh.api.get('/rest/items?metadata=semantics,' + MetadataNamespaces.map((n) => n.name).join(','))
       const links = this.$oh.api.get('/rest/links')
       Promise.all([items, links]).then((data) => {
         this.items = data[0]
@@ -354,7 +381,11 @@ export default {
         // this.newItemParent = null
         this.load()
       }
-      // this.detailsOpened = true
+      const detailsLink = this.$refs.detailsLink
+      const visibility = window.getComputedStyle(detailsLink.$el).visibility
+      if (!visibility || visibility !== 'hidden') {
+        this.detailsOpened = true
+      }
       // console.log('selected ' + item.item.name)
     },
     clearSelection (ev) {

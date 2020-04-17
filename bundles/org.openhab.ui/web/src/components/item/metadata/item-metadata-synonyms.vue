@@ -10,10 +10,10 @@
         :value="synonyms"
         @input="updateValue"
       />
+      <f7-block-footer class="param-description" slot="after-list">
+        <small>Enter each synonym on a separate line.</small>
+      </f7-block-footer>
     </f7-list>
-    <f7-block-footer class="param-description">
-      <small>Enter each synonym on a separate line.</small>
-    </f7-block-footer>
   </div>
 </template>
 

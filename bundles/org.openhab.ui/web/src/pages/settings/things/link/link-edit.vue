@@ -9,13 +9,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <div v-if="item.state">
-          <f7-block-title>Current State</f7-block-title>
-          <item-standalone-control :item="item" :context="context" raw-label />
-          <div class="display-flex justify-content-center flex-direction-column">
-            <div v-if="item.type.indexOf('Number') === 0 || item.type === 'Switch'" class="margin-top display-flex justify-content-center flex-direction-row">
-              <f7-button :href="'/analyzer/?items=' + item.name">Analyze</f7-button>
-            </div>
-          </div>
+          <item-state-preview :item="item" :context="context" />
         </div>
 
         <f7-block-title>Link</f7-block-title>
@@ -31,7 +25,7 @@
               <span slot="media" class="item-initial">{{(channel.label) ? channel.label[0] : (channelType.label) ? channelType.label[0] : '?'}}</span>
             </f7-list-item>
             <f7-list-item divider title="Item"></f7-list-item>
-            <item :item="item" :context="context" />
+            <item :item="item" :context="context" :no-state="true" />
           </ul>
           <ul>
             <f7-list-button color="red" title="Unlink" @click="unlink()"></f7-list-button>
@@ -77,13 +71,13 @@
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import Item from '@/components/item/item.vue'
-import ItemStandaloneControl from '@/components/item/item-standalone-control.vue'
+import ItemStatePreview from '@/components/item/item-state-preview.vue'
 
 export default {
   components: {
     ConfigSheet,
     Item,
-    ItemStandaloneControl
+    ItemStatePreview
   },
   props: ['thing', 'channel', 'item', 'source'],
   data () {

@@ -11,10 +11,10 @@
         :value="options"
         @input="updateOptions"
       />
+      <f7-block-footer class="param-description" alot="after-list">
+        <small>Enter each option on a separate line.<br />Use <code>value=label</code> format to provide a label different than the option.</small>
+      </f7-block-footer>
     </f7-list>
-    <f7-block-footer class="param-description">
-      <small>Enter each option on a separate line.<br />Use <code>value=label</code> format to provide a label different than the option.</small>
-    </f7-block-footer>
   </div>
 </template>
 
@@ -29,7 +29,7 @@ export default {
   data () {
     return {
       stateDescriptionParameters: [
-        { type: 'BOOLEAN', name: 'readOnly', label: 'Read only', description: 'Item is read-only and may not accept commands or updates' },
+        { type: 'BOOLEAN', name: 'readOnly', label: 'Read only', description: 'Item is read-only and should not accept commands' },
         { type: 'TEXT', name: 'pattern', label: 'Pattern', description: 'Pattern or transformation applied to the state for display purposes' },
         { type: 'TEXT', name: 'min', label: 'Min', description: 'Minimum allowed value' },
         { type: 'TEXT', name: 'max', label: 'Max', description: 'Maximum allowed value' },

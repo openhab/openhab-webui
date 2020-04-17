@@ -3,6 +3,7 @@
 export { default as OhTestCard } from './oh-test-card.vue'
 export { default as OhLabelCard } from './oh-label-card.vue'
 export { default as OhToggleCard } from './oh-toggle-card.vue'
+export { default as OhRollershutterCard } from './oh-rollershutter-card.vue'
 export { default as OhSliderCard } from './oh-slider-card.vue'
 export { default as OhStepperCard } from './oh-stepper-card.vue'
 export { default as OhPlayerCard } from './oh-player-card.vue'

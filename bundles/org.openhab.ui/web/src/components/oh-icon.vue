@@ -1,9 +1,7 @@
 <template>
-  <transition name="fade">
-    <img :src="iconUrl" :width="width" :height="height"
-      :style="{ width: (width) ? width + 'px' : 'auto', height: (height) ? height + 'px' : 'auto' }"
-      onload="this.className=''" onerror="this.className='no-icon'" />
-  </transition>
+  <img :src="iconUrl" :width="width" :height="height"
+    :style="{ width: (width) ? width + 'px' : 'auto', height: (height) ? height + 'px' : 'auto' }"
+    onload="this.className=''" onerror="this.className='no-icon'" />
 </template>
 
 <style lang="stylus">
@@ -17,6 +15,7 @@ export default {
   data () {
     return {
       currentState: this.state,
+      currentIcon: this.icon,
       iconUrl: null
     }
   },
@@ -24,6 +23,12 @@ export default {
     state (val) {
       if (val !== this.currentState) {
         this.currentState = val
+        this.updateIcon()
+      }
+    },
+    icon (val) {
+      if (val !== this.currentIcon) {
+        this.currentIcon = val
         this.updateIcon()
       }
     }
