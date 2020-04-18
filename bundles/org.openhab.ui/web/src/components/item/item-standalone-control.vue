@@ -26,8 +26,7 @@ export default {
           }
         }
 
-        // temporary until we have a colorpicker control
-        if ((this.item.type === 'Dimmer' || this.item.type === 'Color') && !stateDescription.readOnly) {
+        if ((this.item.type === 'Dimmer') && !stateDescription.readOnly) {
           ctx.component = {
             component: 'oh-slider-card',
             config: {
@@ -37,6 +36,16 @@ export default {
               min: stateDescription.min,
               max: stateDescription.max,
               step: stateDescription.step
+            }
+          }
+        }
+
+        if ((this.item.type === 'Color') && !stateDescription.readOnly) {
+          ctx.component = {
+            component: 'oh-colorpicker-card',
+            config: {
+              sliderLabel: true,
+              sliderValue: true
             }
           }
         }
