@@ -13,30 +13,29 @@
         </div>
 
         <f7-block-title>Link</f7-block-title>
-        <f7-list media-list>
-          <ul>
-            <f7-list-item divider title="Channel"></f7-list-item>
-            <f7-list-item media-item class="channel-item"
-              :title="channel.label || channelType.label"
-              :footer="channel.uid"
-              :subtitle="thing.label"
-              :badge="thing.statusInfo.status"
-              :badge-color="thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'">
-              <span slot="media" class="item-initial">{{(channel.label) ? channel.label[0] : (channelType.label) ? channelType.label[0] : '?'}}</span>
-            </f7-list-item>
-            <f7-list-item divider title="Item"></f7-list-item>
-            <item :item="item" :context="context" :no-state="true" />
-          </ul>
-          <ul>
-            <f7-list-button color="red" title="Unlink" @click="unlink()"></f7-list-button>
-            <f7-list-button color="red" title="Unlink and Delete Item" @click="unlinkAndDelete()" v-if="source === 'thing'"></f7-list-button>
-          </ul>
-        </f7-list>
-        <!-- <f7-block strong>
-          <f7-block-title>{{channel.label}}</f7-block-title>
-          <div>{{channel.uid}}</div>
-          <f7-block-footer>{{channel.description}}</f7-block-footer>
-        </f7-block> -->
+        <f7-card>
+          <f7-card-content>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item divider title="Channel"></f7-list-item>
+              <f7-list-item media-item class="channel-item"
+                :title="channel.label || channelType.label"
+                :footer="channel.uid"
+                :subtitle="thing.label"
+                :badge="thing.statusInfo.status"
+                :badge-color="thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'">
+                <span slot="media" class="item-initial">{{(channel.label) ? channel.label[0] : (channelType.label) ? channelType.label[0] : '?'}}</span>
+              </f7-list-item>
+              <f7-list-item divider title="Item"></f7-list-item>
+              <item :item="item" :context="context" :no-state="true" />
+            </ul>
+          </f7-list>
+          </f7-card-content>
+          <f7-card-footer>
+            <f7-button color="red" fill @click="unlinkAndDelete()" v-if="source === 'thing'">Unlink &amp; Remove Item</f7-button>
+            <f7-button color="red" @click="unlink()">{{source === 'thing' ? 'Unlink Only' : 'Unlink'}}</f7-button>
+          </f7-card-footer>
+        </f7-card>
       </f7-col>
       <f7-col>
         <f7-block-title>Profile</f7-block-title>

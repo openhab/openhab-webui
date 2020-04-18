@@ -1,23 +1,24 @@
 <template>
   <f7-card>
-    <f7-list>
-      <ul v-if="!editMembers">
-        <item
-          v-for="member in groupItem.members" :key="member.name"
-          :item="member" :link="'/settings/items/' + member.name"
-          :context="context"
-          :ignore-editable="true"
-          />
-        <f7-list-button @click="enableEditMode" color="blue" title="Add or Remove Members" />
-      </ul>
-      <item-picker v-if="editMembers" :multiple="true" name="groupMembers" :value="memberNames" title="Members" @input="(members) => memberNames = members" />
-      <ul v-if="editMembers">
-        <f7-list-button color="blue" title="Apply" @click="updateMembers" />
-        <f7-list-button color="red" title="Cancel" @click="cancelEditMode" />
-      </ul>
-    </f7-list>
-    <f7-list v-if="editMembers">
-    </f7-list>
+    <f7-card-content>
+      <f7-list>
+        <ul v-if="!editMembers">
+          <item
+            v-for="member in groupItem.members" :key="member.name"
+            :item="member" :link="'/settings/items/' + member.name"
+            :context="context"
+            :ignore-editable="true"
+            />
+          <!-- <f7-list-button @click="enableEditMode" color="blue" title="Add or Remove Members" /> -->
+        </ul>
+        <item-picker v-if="editMembers" :multiple="true" name="groupMembers" :value="memberNames" title="Members" @input="(members) => memberNames = members" />
+      </f7-list>
+    </f7-card-content>
+    <f7-card-footer>
+      <f7-button color="blue" v-if="!editMembers" @click="enableEditMode">Change</f7-button>
+      <f7-button color="blue" v-if="editMembers" fill raised @click="updateMembers">Apply</f7-button>
+      <f7-button color="blue" v-if="editMembers" @click="cancelEditMode">Cancel</f7-button>
+    </f7-card-footer>
   </f7-card>
 </template>
 
@@ -55,7 +56,7 @@ export default {
       const itemsToRemove = this.groupItem.members.filter((m) => (this.memberNames.indexOf(m.name) < 0)).map((m) => m.name)
 
       if (!itemsToAdd.length && !itemsToRemove.length) {
-        this.$f7.dialog.alert('Nothing to do')
+        this.$f7.dialog.alert('Nothing to change')
         return
       }
       if (itemsToAdd.indexOf(this.groupItem.name) >= 0) {

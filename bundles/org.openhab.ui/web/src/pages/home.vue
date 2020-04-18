@@ -2,8 +2,7 @@
   <f7-page stacked name="HomePage" class="page-home" @page:init="onPageInit">
     <f7-navbar :large="$f7.data.themeOptions.homeNavbar !== 'simple'" :large-transparent="true">
       <f7-nav-left>
-        <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"
-          icon-color="($f7.data.themeOptions.homeNavbar !== 'simple' && $f7.data.themeOptions.bars === 'filled') ? 'orange' : undefined"></f7-link>
+        <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
       </f7-nav-left>
       <f7-nav-title-large v-if="$f7.data.themeOptions.homeNavbar !== 'simple'" class="home-title-large">
         <span class="today">{{new Date().toLocaleString('default', { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
@@ -44,6 +43,12 @@
 <style lang="stylus">
 .theme-filled .home-title-large .title-large-text
   color var(--f7-text-color)
+.theme-filled .navbar-large:not(.navbar-large-collapsed) .link.icon-only
+  color var(--f7-theme-color)
+  transition color 0.3s
+.theme-filled .navbar-large.navbar-large-collapsed .link.icon-only
+  color var(--f7-navbar-link-color)
+  transition color 0.3s
 .home-title-large .title-large-text
   line-height 0.95
   .today
