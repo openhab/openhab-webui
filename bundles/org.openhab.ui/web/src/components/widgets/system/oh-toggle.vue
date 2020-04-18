@@ -17,6 +17,7 @@ export default {
       const value = this.context.store[this.config.item].state
       if (value === 'ON') return true
       if (value === 'OFF') return false
+      if (value.split(',').length === 3) return (value.split(',')[2] !== '0')
       return (['0', 'UNDEF', 'NULL', '-'].indexOf(value.toString()) < 0)
     }
   },
