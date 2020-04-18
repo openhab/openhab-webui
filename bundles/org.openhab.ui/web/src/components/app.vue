@@ -150,7 +150,15 @@
 </template>
 
 <style lang="stylus" scoped>
+.panel-left::-webkit-scrollbar /* WebKit */
+  width 0
+  height 0
+
 .panel-left
+  overflow-y scroll
+  scrollbar-width none /* Firefox */
+  -ms-overflow-style none  /* IE 10+ */
+
   .page
     background #f5f5f5 !important
     padding-bottom 4rem

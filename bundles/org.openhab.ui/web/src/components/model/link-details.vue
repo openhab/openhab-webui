@@ -1,6 +1,6 @@
 <template>
   <f7-card v-if="item.type !== 'Group' && item.created !== false">
-    <f7-card-content v-if="!$theme.md || enrichedLinks.length > 0">
+    <f7-card-content v-if="enrichedLinks.length > 0">
       <f7-list media-list>
         <ul>
           <f7-list-item v-for="l in enrichedLinks" :key="l.itemName" media-item
@@ -10,11 +10,11 @@
             link="#" @click="editLink(l)">
             <span slot="media" class="item-initial">{{l.channel.label ? l.channel.label[0] : '?'}}</span>
           </f7-list-item>
-          <f7-list-button v-if="!$theme.md" color="blue" title="Add Link" @click="addLink"></f7-list-button>
+          <!-- <f7-list-button v-if="!$theme.md" color="blue" title="Add Link" @click="addLink"></f7-list-button> -->
         </ul>
       </f7-list>
     </f7-card-content>
-    <f7-card-footer v-if="$theme.md">
+    <f7-card-footer>
       <f7-button color="blue" @click="addLink">Add Link</f7-button>
     </f7-card-footer>
   </f7-card>

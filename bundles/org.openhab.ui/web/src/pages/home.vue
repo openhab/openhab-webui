@@ -41,6 +41,14 @@
 </template>
 
 <style lang="stylus">
+.theme-filled .home-title-large .title-large-text
+  color var(--f7-text-color)
+.theme-filled .navbar-large:not(.navbar-large-collapsed) .link.icon-only
+  color var(--f7-theme-color)
+  transition color 0.3s
+.theme-filled .navbar-large.navbar-large-collapsed .link.icon-only
+  color var(--f7-navbar-link-color)
+  transition color 0.3s
 .home-title-large .title-large-text
   line-height 0.95
   .today

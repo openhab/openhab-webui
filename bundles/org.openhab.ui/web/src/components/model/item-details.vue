@@ -1,15 +1,22 @@
 <template>
   <f7-card v-if="model">
     <f7-card-content>
-      <f7-list media-list>
+      <f7-list media-list accordion-list>
         <ul>
-          <item v-if="!createMode" :item="model.item" :link="'/settings/items/' + model.item.name" />
+          <item v-if="!createMode" :item="model.item" :link="'/settings/items/' + model.item.name" :no-state="true" />
           <!-- <f7-list-button v-if="!editMode && !createMode" color="blue" title="Edit Item" @click="editMode = true">Edit Item</f7-list-button> -->
         </ul>
       </f7-list>
 
       <div class="padding-top" v-if="editMode">
         <item-form :item="model.item" :hide-type="true" :force-semantics="forceSemantics"></item-form>
+        <f7-list accordion-list v-if="editMode" inset class="padding-top">
+          <f7-list-item accordion-item title="Metadata">
+            <f7-accordion-content>
+              <metadata-menu :item="model.item" />
+            </f7-accordion-content>
+          </f7-list-item>
+        </f7-list>
       </div>
       <div class="padding-top" v-else-if="createMode">
         <item-form :item="model.item" :enable-name="true" :force-semantics="forceSemantics"></item-form>
@@ -30,12 +37,14 @@
 <script>
 import Item from '@/components/item/item.vue'
 import ItemForm from '@/components/item/item-form.vue'
+import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 
 export default {
   props: ['model', 'links'],
   components: {
     Item,
-    ItemForm
+    ItemForm,
+    MetadataMenu
   },
   data () {
     return {

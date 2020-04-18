@@ -108,7 +108,7 @@
       <f7-tab id="channels" disabled="!thingType.channels" @tab:show="() => this.currentTab = 'channels'" :tab-active="currentTab === 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list :thingType="thingType" :thing="thing" :channelTypes="channelTypes"
-            @channels-updated="onChannelsUpdated"
+            @channels-updated="onChannelsUpdated" :context="context"
           />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>
@@ -242,10 +242,16 @@ export default {
     },
     textualDefinition () {
       return buildTextualDefinition(this.thing, this.thingType)
+    },
+    context () {
+      return {
+        store: this.$store.getters.trackedItems
+      }
     }
   },
   methods: {
     onPageAfterIn (event) {
+      this.$store.dispatch('startTrackingStates')
       // When coming back from the channel add/edit page with a change, let the handler below take care of the reloading logic (the thing has to be saved first)
       if (!event.pageFrom || !event.pageFrom.name || event.pageFrom.name.indexOf('channel') < 0) {
         console.log('Loading')
@@ -254,6 +260,7 @@ export default {
       }
     },
     onPageAfterOut (event) {
+      this.$store.dispatch('stopTrackingStates')
       this.stopEventSource()
     },
     load () {

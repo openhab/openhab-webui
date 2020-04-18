@@ -36,7 +36,7 @@
               @channel-opened="channelOpened">
               <template v-slot:default="{ channelId, channelType, channel, extensible }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId"
-                  :thing="thing" :channelId="channelId" :channelType="channelType" :channel="channel" :extensible="extensible"
+                  :thing="thing" :channelId="channelId" :channelType="channelType" :channel="channel" :extensible="extensible" :context="context"
                   @channel-updated="(e) => $emit('channels-updated', e)">
                 </channel-link>
               </template>
@@ -79,7 +79,7 @@ import ChannelLink from './channel-link.vue'
 import ItemForm from '@/components/item/item-form.vue'
 
 export default {
-  props: ['thingType', 'thing', 'channelTypes', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems'],
+  props: ['thingType', 'thing', 'channelTypes', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems', 'context'],
   components: {
     ChannelGroup,
     ChannelLink,
