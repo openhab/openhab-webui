@@ -8,7 +8,20 @@
          :title="(multiple) ? 'Alexa Classes' : 'Alexa Class'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }" ref="classes">
         <select name="parameters" @change="updateClasses" :multiple="multiple">
           <option v-if="!multiple" value=""></option>
-          <option v-for="cl in classesDefs" :value="cl" :key="cl" :selected="isSelected(cl)">{{cl}}</option>
+          <optgroup label="Labels" v-if="!multiple">
+            <option v-for="cl in classesDefs.filter((c) => c.indexOf('label:') === 0)"
+              :value="cl.replace('label:', '')" :key="cl"
+              :selected="isSelected(cl.replace('label:', ''))">
+              {{cl.replace('label:', '')}}
+            </option>
+          </optgroup>
+          <optgroup label="Capabilities">
+            <option v-for="cl in classesDefs.filter((c) => c.indexOf('label:') !== 0)"
+              :value="cl" :key="cl"
+              :selected="isSelected(cl)">
+              {{cl}}
+            </option>
+          </optgroup>
         </select>
       </f7-list-item>
     </f7-list>
@@ -41,7 +54,9 @@ export default {
     },
     parameters () {
       if (!this.classes) return []
-      if (!this.multiple) return [...AlexaDefinitions[this.classes]]
+      if (!this.multiple) {
+        return AlexaDefinitions['label:' + this.classes] || [...AlexaDefinitions[this.classes]]
+      }
       const params = []
       this.classes.forEach((c) => {
         for (const p of AlexaDefinitions[c]) {

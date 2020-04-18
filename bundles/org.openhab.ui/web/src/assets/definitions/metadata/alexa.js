@@ -36,6 +36,43 @@ const categories = [
   'WEARABLE'
 ]
 
+const labels = {
+  'Switchable': [],
+  'Lighting': [],
+  'Blind': [],
+  'Door': [],
+  'Lock': [],
+  'Outlet': [],
+  'CurrentHumidity': [],
+  'CurrentTemperature': [],
+  'TargetTemperature': [],
+  'LowerTemperature': [],
+  'UpperTemperature': [],
+  'HeatingCoolingMode': [],
+  'ColorTemperature': [],
+  'Activity': [],
+  'Scene': [],
+  'EntertainmentChannel': [],
+  'EntertainmentInput': [],
+  'EqualizerBass': [],
+  'EqualizerMidrange': [],
+  'EqualizerTreble': [],
+  'EqualizerMode': [],
+  'MediaPlayer': [],
+  'SpeakerMute': [],
+  'SpeakerVolume': [],
+  'ContactSensor': [],
+  'MotionSensor': [],
+  'SecurityAlarmMode': [],
+  'BurglaryAlarm': [],
+  'FireAlarm': [],
+  'CarbonMonoxideAlarm': [],
+  'WaterAlarm': [],
+  'ModeComponent': [],
+  'RangeComponent': [],
+  'ToggleComponent': []
+}
+
 const p = (type, name, label, description, options, advanced) => {
   return {
     name,
@@ -51,6 +88,7 @@ const p = (type, name, label, description, options, advanced) => {
   }
 }
 
+const categoryParameter = p('TEXT', 'category', 'Category', 'Override the default category for the class', categories.join(','), true)
 const scaleParameter = p('TEXT', 'scale', 'Scale', 'Temperature Unit', 'Celsius,Fahrenheit')
 const comfortRangeParameter = p('TEXT', 'comfortRange', 'Comfort Range', 'Number to define the comfort range, defaults: 2°F or 1°C')
 const setpointRangeParameter = p('TEXT', 'setpointRange', 'Setpoint Range', 'Format: <code>minRange:maxRange</code>')
@@ -62,7 +100,7 @@ const languageParameter = p('TEXT', 'language', 'Language', 'defaults to your se
 const actionMappingsParameter = p('TEXT', 'actionMappings', 'Action Mappings')
 const stateMappingsParameter = p('TEXT', 'stateMappings', 'State Mappings')
 
-const classes = {
+const capabilities = {
   'PowerController.powerState': [],
   'BrightnessController.brightness': [],
   'PowerLevelController.powerLevel': [],
@@ -189,8 +227,16 @@ const classes = {
   ]
 }
 
-for (let c in classes) {
-  classes[c].unshift(p('TEXT', 'category', 'Category', 'Override the default category for the class', categories.join(','), true))
+let classes = {}
+
+for (let l in labels) {
+  labels[l].unshift(categoryParameter)
+  classes['label:' + l] = labels[l]
+}
+
+for (let c in capabilities) {
+  capabilities[c].unshift(categoryParameter)
+  classes[c] = capabilities[c]
 }
 
 export default classes
