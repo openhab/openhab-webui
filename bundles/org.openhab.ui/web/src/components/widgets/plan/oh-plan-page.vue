@@ -174,13 +174,18 @@ export default {
       } : {})
     },
     markers () {
-      return this.context.component.slots.default.filter((e) => {
+      var newMarkers = this.context.component.slots.default.filter((e) => {
         const zoomVisibilityMin = parseFloat(e.config.zoomVisibilityMin)
         const zoomVisibilityMax = parseFloat(e.config.zoomVisibilityMax)
         const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
         const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
         return this.context.editmode != null || (isVisibleMin && isVisibleMax)
       })
+      // Only return new markers if the list has changed to avoid rendering on every zoom change
+      return this.context.component.slots.default.length !== newMarkers.length ||
+        JSON.stringify(this.context.component.slots.default) !== JSON.stringify(newMarkers)
+        ? newMarkers
+        : this.context.component.slots.default
     }
   },
   mounted () {
