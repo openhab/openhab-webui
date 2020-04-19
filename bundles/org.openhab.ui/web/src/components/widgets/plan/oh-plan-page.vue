@@ -153,7 +153,8 @@ export default {
       zoom: -0.5,
       crs: CRS.Simple,
       showMap: true,
-      mapKey: this.$f7.utils.id()
+      mapKey: this.$f7.utils.id(),
+      markers: []
     }
   },
   computed: {
@@ -172,20 +173,6 @@ export default {
         scrollWheelZoom: false,
         zoomControl: false
       } : {})
-    },
-    markers () {
-      var newMarkers = this.context.component.slots.default.filter((e) => {
-        const zoomVisibilityMin = parseFloat(e.config.zoomVisibilityMin)
-        const zoomVisibilityMax = parseFloat(e.config.zoomVisibilityMax)
-        const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
-        const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
-        return this.context.editmode != null || (isVisibleMin && isVisibleMax)
-      })
-      // Only return new markers if the list has changed to avoid rendering on every zoom change
-      return this.context.component.slots.default.length !== newMarkers.length ||
-        JSON.stringify(this.context.component.slots.default) !== JSON.stringify(newMarkers)
-        ? newMarkers
-        : this.context.component.slots.default
     }
   },
   mounted () {
@@ -199,6 +186,19 @@ export default {
   methods: {
     zoomUpdate (zoom) {
       this.currentZoom = zoom
+      const allMarkers = this.context.component.slots.default
+      const visibleMarkers = allMarkers.filter((e) => {
+        const zoomVisibilityMin = parseFloat(e.config.zoomVisibilityMin)
+        const zoomVisibilityMax = parseFloat(e.config.zoomVisibilityMax)
+        const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
+        const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
+        return this.context.editmode != null || (isVisibleMin && isVisibleMax)
+      })
+      // only update our markers if the list has changed to avoid unessesary rendering
+      if (visibleMarkers.length !== this.markers.length ||
+        visibleMarkers.every((e) => this.markers.indexOf(e) < 0)) {
+        this.markers = visibleMarkers
+      }
     },
     centerUpdate (center) {
       this.currentCenter = center
