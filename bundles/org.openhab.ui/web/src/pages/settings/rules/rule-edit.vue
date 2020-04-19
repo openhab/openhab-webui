@@ -472,7 +472,9 @@ export default {
       this.$refs.modulePopup.f7Popup.open()
     },
     reorderModule (ev, section) {
-      this.rule[section].splice(ev.detail.to, 0, this.rule[section].splice(ev.detail.from, 1)[0])
+      const newSection = [...this.rule[section]]
+      newSection.splice(ev.to, 0, newSection.splice(ev.from, 1)[0])
+      this.$set(this.rule, section, newSection)
     },
     saveModule () {
       if (!this.currentModule.type) return
