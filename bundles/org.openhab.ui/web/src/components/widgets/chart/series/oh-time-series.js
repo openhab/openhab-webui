@@ -29,7 +29,7 @@ export default {
 
     // other things
     if (component.slots && component.slots.markArea) {
-      series.markArea = MarkArea.get(component.slots.markArea[0], points)
+      series.markArea = MarkArea.get(component.slots.markArea[0], points, startTime, endTime, chart)
     }
 
     if (!component.config.showSymbol) series.showSymbol = false
