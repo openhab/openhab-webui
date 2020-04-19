@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.XMLConstants;
@@ -69,6 +71,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.sun.xml.bind.v2.ContextFactory;
+
 /**
  * Generates a CometVisu visu_config.xml settings file from an openHAB sitemap
  * the result of this automatic configuration should be taken as a basis for
@@ -119,9 +123,9 @@ public class VisuConfig {
 
         // set relative path to XSD file
         File rootFolder = new File(Config.cometvisuWebfolder);
-        File sitemap = new File(rootFolder, req.getPathInfo());
+        File file = new File(rootFolder, req.getPathInfo());
         String relXsd = "";
-        File parent = sitemap.getParentFile();
+        File parent = file.getParentFile();
         File schema = new File(parent, "visu_config.xsd");
         while (!parent.equals(rootFolder) && !schema.exists()) {
             parent = parent.getParentFile();
@@ -133,7 +137,7 @@ public class VisuConfig {
         Meta meta = new Meta();
         pagesBean.setMeta(meta);
 
-        configHelper = new ConfigHelper(pagesBean, app, sitemap.getName());
+        configHelper = new ConfigHelper(pagesBean, app, this.sitemap.getName());
         createPages(pagesBean);
 
         return marshal(pagesBean, schema.getPath());
@@ -142,7 +146,11 @@ public class VisuConfig {
     private String marshal(Pages bean, String xsdSchema) {
         String res = "";
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(bean.getClass());
+            Map<String, Object> properties = new HashMap<>();
+            Class<?>[] classes = new Class[1];
+            classes[0] = bean.getClass();
+            JAXBContext jaxbContext = ContextFactory.createContext(classes, properties);
+            // JAXBContext.newInstance(bean.getClass());
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = (xsdSchema == null || xsdSchema.trim().length() == 0) ? null
                     : schemaFactory.newSchema(new File(xsdSchema));
@@ -248,6 +256,9 @@ public class VisuConfig {
 
     private void processItemWidget(Object rootPage, Widget widget, Item item, Pages pages, int level) {
         if (widget instanceof org.openhab.core.model.sitemap.sitemap.Switch) {
+            if (item == null) {
+                return;
+            }
             org.openhab.core.model.sitemap.sitemap.Switch switchWidget = (org.openhab.core.model.sitemap.sitemap.Switch) widget;
 
             if (item instanceof RollershutterItem) {
@@ -305,12 +316,18 @@ public class VisuConfig {
             }
 
         } else if (widget instanceof org.openhab.core.model.sitemap.sitemap.Slider) {
+            if (item == null) {
+                return;
+            }
             Slide bean = new Slide();
             bean.setFormat("%d%%");
             configHelper.addAddress(bean, item, Transform.DIMMER);
             configHelper.addLabel(bean, widget);
             configHelper.addToRoot(rootPage, factory.createPageSlide(bean));
         } else if (widget instanceof Setpoint) {
+            if (item == null) {
+                return;
+            }
             Setpoint setpoint = (Setpoint) widget;
             Slide bean = new Slide();
             bean.setFormat("%d");
@@ -323,6 +340,9 @@ public class VisuConfig {
 
             configHelper.addToRoot(rootPage, factory.createPageSlide(bean));
         } else if (widget instanceof Selection) {
+            if (item == null) {
+                return;
+            }
             Selection selection = (Selection) widget;
             // Map a Selection to a Group of triggers
             Group bean = new Group();
@@ -374,6 +394,9 @@ public class VisuConfig {
 
             configHelper.addToRoot(rootPage, factory.createPageVideo(bean));
         } else if (widget instanceof org.openhab.core.model.sitemap.sitemap.Chart && item != null) {
+            if (item == null) {
+                return;
+            }
             Plugin plugin = new Plugin();
             plugin.setName("diagram");
             configHelper.addPlugin(plugin);
@@ -407,18 +430,19 @@ public class VisuConfig {
 
             configHelper.addToRoot(rootPage, factory.createPageDiagram(bean));
         } else if (widget instanceof org.openhab.core.model.sitemap.sitemap.Colorpicker) {
-            Plugin plugin = new Plugin();
-            plugin.setName("colorchooser");
-            configHelper.addPlugin(plugin);
+            if (item != null) {
+                Plugin plugin = new Plugin();
+                plugin.setName("colorchooser");
+                configHelper.addPlugin(plugin);
 
-            Colorchooser bean = new Colorchooser();
-            configHelper.addAddress(bean, item, Transform.COLOR, "rgb");
-            configHelper.addLabel(bean, widget);
+                Colorchooser bean = new Colorchooser();
+                configHelper.addAddress(bean, item, Transform.COLOR, "rgb");
+                configHelper.addLabel(bean, widget);
 
-            configHelper.addToRoot(rootPage, factory.createPageColorchooser(bean));
-        } else {
-            logger.error("unhandled widget '{}'", widget);
+                configHelper.addToRoot(rootPage, factory.createPageColorchooser(bean));
+            } else {
+                logger.error("unhandled widget '{}'", widget);
+            }
         }
     }
-
 }
