@@ -191,7 +191,7 @@ export const actionsMixin = {
         case 'sheet':
           const actionModal = this.config[prefix + 'actionModal']
           const actionModalConfig = this.config[prefix + 'actionModalConfig']
-          if (actionModal.indexOf('page:') !== 0 && actionModal.indexOf('widget:') !== 0) {
+          if (actionModal.indexOf('page:') !== 0 && actionModal.indexOf('widget:') !== 0 && actionModal.indexOf('oh-') !== 0) {
             console.log('Action target is not of the format page:uid or widget:uid')
             return
           }

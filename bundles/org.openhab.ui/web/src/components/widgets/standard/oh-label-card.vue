@@ -32,6 +32,7 @@
     .item-content
       flex-direction column
       padding-left 0
+      padding-right 0
   .item-inner
     padding 0 !important
     justify-content center !important

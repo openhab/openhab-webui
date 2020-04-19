@@ -33,8 +33,8 @@ export default {
               scale: true,
               label: true,
               scaleSubSteps: 5,
-              min: stateDescription.min,
-              max: stateDescription.max,
+              min: stateDescription.minimum,
+              max: stateDescription.maximum,
               step: stateDescription.step
             }
           }
@@ -53,6 +53,15 @@ export default {
         if (this.item.type === 'Rollershutter' && !stateDescription.readOnly) {
           ctx.component = {
             component: 'oh-rollershutter-card',
+            config: {
+              vertical: true
+            }
+          }
+        }
+
+        if (this.item.type === 'Player' && !stateDescription.readOnly) {
+          ctx.component = {
+            component: 'oh-player-card',
             config: {
               vertical: true
             }
