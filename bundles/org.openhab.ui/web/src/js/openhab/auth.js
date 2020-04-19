@@ -43,6 +43,8 @@ export default {
             'code': queryParams.code,
             'code_verifier': codeVerifier
           })
+
+          this.$oh.setAccessToken(null)
           this.$oh.api.postPlain('/rest/auth/token?useCookie=true', payload, 'application/json', 'application/x-www-form-urlencoded').then((data) => {
             const resp = JSON.parse(data)
             localStorage.setItem('openhab.ui:refreshToken', resp.refresh_token)
@@ -69,6 +71,8 @@ export default {
           'redirect_uri': window.location.origin,
           'refresh_token': refreshToken
         })
+
+        this.$oh.setAccessToken(null)
         this.$oh.api.postPlain('/rest/auth/token', payload, 'application/json', 'application/x-www-form-urlencoded').then((data) => {
           const resp = JSON.parse(data)
           this.$oh.setAccessToken(resp.access_token)
