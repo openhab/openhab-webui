@@ -26,7 +26,7 @@ export default {
   },
   computed: {
     isPlaying () {
-      const value = this.context.store[this.config.item]
+      const value = this.context.store[this.config.item].state
       return value === 'PLAY'
     }
   },

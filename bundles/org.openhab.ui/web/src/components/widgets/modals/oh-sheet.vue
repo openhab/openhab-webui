@@ -32,7 +32,7 @@ export default {
   computed: {
     context () {
       return {
-        component: this.page || this.widget,
+        component: Object.assign({}, this.page || this.widget || this.standard, { config: this.modalParams }),
         store: this.$store.getters.trackedItems,
         config: this.modalParams
       }
@@ -43,13 +43,16 @@ export default {
     widget () {
       return (this.uid.indexOf('widget:') === 0) ? this.$store.getters.widget(this.uid.substring(7)) : null
     },
+    standard () {
+      return (this.uid.indexOf('oh-') === 0) ? { component: this.uid } : null
+    },
     ready () {
-      return this.page || this.widget
+      return this.page || this.widget || this.standard
     },
     componentType () {
       if (this.page) {
         return this.page.component
-      } else if (this.widget) {
+      } else if (this.widget || this.standard) {
         return 'generic-widget-component'
       }
       return null

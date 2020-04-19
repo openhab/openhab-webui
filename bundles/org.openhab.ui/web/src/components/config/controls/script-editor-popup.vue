@@ -1,5 +1,5 @@
 <template>
-  <f7-popup :id="popupId" class="editor-popup" close-on-escape :tablet-fullscreen="fullscreen" @popup:opened="() => showEditor = true" @popup:closed="popupClosed" :opened="opened">
+  <f7-popup :id="popupId" class="editor-popup" :tablet-fullscreen="fullscreen" @popup:opened="() => showEditor = true" @popup:closed="popupClosed" :opened="opened">
     <f7-page class="code-editor-content">
       <f7-navbar :title="title">
         <f7-nav-right>

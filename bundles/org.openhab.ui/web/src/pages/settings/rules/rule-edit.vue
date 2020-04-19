@@ -17,7 +17,7 @@
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
               <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
-              <f7-link icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" color="blue" @click="runNow"></f7-link>
+              <f7-link :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" color="blue" @click="runNow"></f7-link>
             </div>
             Status:
             <f7-chip class="margin-left"
@@ -161,7 +161,7 @@
       </f7-page>
     </f7-popup>
 
-    <script-editor-popup v-if="currentModule" title="Edit Script" popup-id="edit-rule-script-direct-popup" :value="scriptCode" :fullscreen="false" :opened="codeEditorOpened" @closed="codePopupClosed"></script-editor-popup>
+    <script-editor-popup v-if="currentModule" title="Edit Script" ref="codePopup" popup-id="edit-rule-script-direct-popup" :value="scriptCode" :fullscreen="false" :opened="codeEditorOpened" @closed="codePopupClosed"></script-editor-popup>
     <cron-editor popup-id="edit-rule-cron-popup" :value="cronExpression" :opened="cronPopupOpened" @closed="cronPopupOpened = false" @input="(value) => updateCronExpression(value)" />
   </f7-page>
 </template>
@@ -310,9 +310,20 @@ export default {
           return
         }
       }
-      // TODO properly validate rule
-      if (!this.rule.uid) return
-      if (!this.rule.name) return
+      if (!this.rule.uid) {
+        this.$f7.dialog.alert('Please give an ID to the rule')
+        return
+      }
+      if (!this.rule.name) {
+        this.$f7.dialog.alert('Please give a name to the rule')
+        return
+      }
+      if (this.codeEditorOpened) {
+        // save the code currently being edited if the dialog is open
+        // this allows to hit ctrl-S to save (and ctrl-R to run the rule) while editing the code
+        // without closing the window
+        this.currentModule.configuration.script = this.$refs.codePopup.code
+      }
       const promise = (this.createMode)
         ? this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/rules/' + this.rule.uid, this.rule)
@@ -360,13 +371,12 @@ export default {
     runNow () {
       if (this.createMode) return
       if (this.rule.status === 'RUNNING') return
-      this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').then((data) => {
-        this.$f7.toast.create({
-          text: 'Running rule',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      }).catch((err) => {
+      this.$f7.toast.create({
+        text: 'Running rule',
+        destroyOnClose: true,
+        closeTimeout: 2000
+      }).open()
+      this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
         this.$f7.toast.create({
           text: 'Error while running rule: ' + err,
           destroyOnClose: true,
@@ -375,7 +385,7 @@ export default {
       })
     },
     startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/rules/*/*', null, (event) => {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/rules/' + this.ruleId + '/*', null, (event) => {
         console.log(event)
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {
@@ -390,10 +400,19 @@ export default {
       this.eventSource = null
     },
     keyDown (ev) {
-      if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey)) {
-        this.save(!this.createMode)
-        ev.stopPropagation()
-        ev.preventDefault()
+      if (ev.ctrlKey || ev.metakKey) {
+        switch (ev.keyCode) {
+          case 82:
+            this.runNow()
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
+          case 83:
+            this.save(!this.createMode)
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
+        }
       }
     },
     toggleModuleControls () {
@@ -453,7 +472,9 @@ export default {
       this.$refs.modulePopup.f7Popup.open()
     },
     reorderModule (ev, section) {
-      this.rule[section].splice(ev.detail.to, 0, this.rule[section].splice(ev.detail.from, 1)[0])
+      const newSection = [...this.rule[section]]
+      newSection.splice(ev.to, 0, newSection.splice(ev.from, 1)[0])
+      this.$set(this.rule, section, newSection)
     },
     saveModule () {
       if (!this.currentModule.type) return

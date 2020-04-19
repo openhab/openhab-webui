@@ -27,7 +27,7 @@
         :title="(link.item.label) ? link.item.label : link.item.name"
         :footer="(link.item.label) ? link.item.name : '\xa0'"
         :subtitle="getItemTypeAndMetaLabel(link.item)"
-        :after="context.store[link.item.name].displayState || context.store[link.item.name].state"
+        :after="context.store[link.item.name] ? context.store[link.item.name].displayState || context.store[link.item.name].state : link.item.state"
       >
         <oh-icon v-if="link.item.category" slot="media" :icon="link.item.category" height="32" width="32" />
         <span v-else slot="media" class="item-initial">{{link.item.name[0]}}</span>
