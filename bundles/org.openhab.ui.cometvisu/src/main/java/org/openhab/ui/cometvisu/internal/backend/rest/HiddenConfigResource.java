@@ -31,10 +31,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.openhab.core.io.rest.RESTResource;
-import org.openhab.ui.cometvisu.backend.rest.model.ConfigSection;
-import org.openhab.ui.cometvisu.backend.rest.model.HiddenConfig;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.ManagerSettings;
+import org.openhab.ui.cometvisu.internal.backend.model.rest.ConfigSection;
+import org.openhab.ui.cometvisu.internal.backend.model.rest.HiddenConfig;
 import org.openhab.ui.cometvisu.internal.util.FsUtil;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;

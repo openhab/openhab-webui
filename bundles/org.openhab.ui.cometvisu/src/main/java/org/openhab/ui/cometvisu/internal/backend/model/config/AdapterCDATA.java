@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.backend.sitemap;
+package org.openhab.ui.cometvisu.internal.backend.model.config;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 

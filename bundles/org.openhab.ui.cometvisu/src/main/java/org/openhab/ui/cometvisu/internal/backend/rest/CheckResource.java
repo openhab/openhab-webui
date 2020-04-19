@@ -22,10 +22,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.openhab.core.io.rest.RESTResource;
-import org.openhab.ui.cometvisu.backend.rest.model.CheckResponse;
-import org.openhab.ui.cometvisu.backend.rest.model.EnvironmentState;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.ManagerSettings;
+import org.openhab.ui.cometvisu.internal.backend.model.rest.CheckResponse;
+import org.openhab.ui.cometvisu.internal.backend.model.rest.EnvironmentState;
 import org.osgi.service.component.annotations.Component;
 
 import io.swagger.annotations.Api;

@@ -95,15 +95,15 @@
 			<executions>
 				<execution>
 					<goals>
-						<goal>generate</goal>
-					</goals>
+	                    <goal>xjc</goal>
+	                </goals>
 					<configuration>
 						<!-- The package of your generated sources -->
-						<packageName>org.openhab.ui.cometvisu.internal.backend.config</packageName>
+						<packageName>org.openhab.ui.cometvisu.internal.backend.model.config</packageName>
 						<sources>
 							<source>src/main/resources/visu_config.xsd</source>
 						</sources>
-						<outputDirectory>src/gen/java</outputDirectory>
+						<outputDirectory>src-gen/</outputDirectory>
 						<locale>en</locale>
 						<clearOutputDir>false</clearOutputDir>
 						<generateEpisode>false</generateEpisode>
@@ -133,14 +133,13 @@
                     <modelPackage>org.openhab.ui.cometvisu.internal.backend.model.rest</modelPackage>
                     <generateAliasAsModel>true</generateAliasAsModel>
 	                <configOptions>
-	                   <sourceFolder>src/gen/java</sourceFolder>
+	                   <sourceFolder>src-gen</sourceFolder>
 	                   <interfaceOnly>true</interfaceOnly>
 	                   <java8>true</java8>
 	                   <dateLibrary>java8</dateLibrary>
 	                   <generatePom>false</generatePom>
 	                   <useSwaggerAnnotations>false</useSwaggerAnnotations>
 	                   <useBeanValidation>false</useBeanValidation>
-	                   <hideGenerationTimestamp>true</hideGenerationTimestamp>
 	                </configOptions>
 	            </configuration>
 	        </execution>

@@ -36,11 +36,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.openhab.ui.cometvisu.backend.rest.model.FsEntry;
-import org.openhab.ui.cometvisu.backend.rest.model.FsEntry.TypeEnum;
-import org.openhab.ui.cometvisu.backend.rest.model.ReadResponse;
 import org.openhab.ui.cometvisu.internal.ManagerSettings;
 import org.openhab.ui.cometvisu.internal.MountPoint;
+import org.openhab.ui.cometvisu.internal.backend.model.rest.FsEntry;
+import org.openhab.ui.cometvisu.internal.backend.model.rest.FsEntry.TypeEnum;
+import org.openhab.ui.cometvisu.internal.backend.model.rest.ReadResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
