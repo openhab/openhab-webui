@@ -278,15 +278,11 @@ If you get an 403 - Access Denied error, when you try to open the CometVisu in y
 
 ### Hints for development
 
-For every change in the CometVisu XSD-schema the JAXB auto-generation job must be executed:
+Source file are automatically generated from CometVisu's visu_config.xsd and openapi.yaml files.
+For a manual update of these files copy them to the src/main/resources folder and run
+`mvn clean generated-sources`.
 
-*   Copy the new visu_config.xsd to src/main/resources/
-*   and call `mvn jaxb2:xjc`
-
-For every change in the CometVisu REST-API spec the openapi generator must be executed:
-
-* Copy the new openapi.yaml to src/main/resources/
-* and call `mvn 
+If the library version changes the value must be updated in `org.openhab.ui.cometvisu.internal.backend.model.config.LibVersion`.
 
 ## TODO
 
