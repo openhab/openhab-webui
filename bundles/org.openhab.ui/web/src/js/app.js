@@ -44,6 +44,10 @@ import store from './store'
 Vue.prototype.$store = store
 store.dispatch('initializeTrackingStore')
 
+// Import vuetrend
+import Trend from 'vuetrend'
+Vue.use(Trend)
+
 // Extend prototype with the openHAB API interface
 Vue.prototype.$oh = openhab
 

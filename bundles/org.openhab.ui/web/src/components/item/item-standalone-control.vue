@@ -74,7 +74,11 @@ export default {
           component: 'oh-label-card'
         }
 
-        if (this.item.commandDescription && this.item.commandDescription.commandOptions && !stateDescription.readOnly) {
+        if (this.item.type.indexOf('Number:') === 0) {
+          ctx.component.config = {
+            trendItem: this.item.name
+          }
+        } else if (this.item.commandDescription && this.item.commandDescription.commandOptions && !stateDescription.readOnly) {
           ctx.component.config = {
             action: 'options',
             actionItem: this.item.name,
