@@ -14,7 +14,8 @@ export default {
         currentArea = [ { name: component.config.name, xAxis: new Date(p.time) } ]
       } else if (((p.state !== 'ON' && rollingState === 'ON') || (p.state !== 'OPEN' && rollingState === 'OPEN')) && currentArea) {
         currentArea.push({ xAxis: new Date(p.time) })
-        currentArea[0].name = dayjs(currentArea[0].xAxis).format('llll') + ' > ' + dayjs(currentArea[1].xAxis).format('llll')
+        currentArea[0].name = component.config.name || component.config.item
+        currentArea[0].value = rollingState
         markArea.data.push(currentArea)
         currentArea = null
       }
@@ -22,7 +23,7 @@ export default {
     })
     if (currentArea) {
       currentArea.push({ xAxis: endTime.toDate() })
-      currentArea[0].name = dayjs(currentArea[0].xAxis).format('llll') + ' > ' + dayjs(currentArea[1].xAxis).format('llll')
+      currentArea[0].name = component.config.name || component.config.item
       markArea.data.push(currentArea)
       currentArea = null
     }

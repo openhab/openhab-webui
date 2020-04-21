@@ -1,4 +1,5 @@
 import MarkArea from './oh-mark-area'
+import Framework7 from 'framework7'
 
 export default {
   neededItems (component) {
@@ -25,6 +26,7 @@ export default {
       })
 
       series.data = data
+      series.id = `oh-time-series#${component.config.item}#${Framework7.utils.id()}`
     }
 
     // other things

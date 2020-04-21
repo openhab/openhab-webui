@@ -40,6 +40,7 @@ export default {
     const period = this.context.component.config.period || 'D'
     let endTime = (chartType) ? this.addOrSubtractPeriod(dayjs().startOf(chartType), 1) : dayjs()
     return {
+      items: {},
       period,
       endTime,
       orient: null
@@ -89,27 +90,27 @@ export default {
     },
     tooltip () {
       if (!this.context.component.slots || !this.context.component.slots.tooltip) return undefined
-      return this.context.component.slots.tooltip.map((c) => OhChartTooltip.get(c, this.startTime, this.endTime, this.$device))
+      return this.context.component.slots.tooltip.map((c) => OhChartTooltip.get(c, this.startTime, this.endTime, this, this.$device))
     },
     visualMap () {
       if (!this.context.component.slots || !this.context.component.slots.visualMap) return undefined
-      return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(c, this.startTime, this.endTime, this.$device))
+      return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(c, this.startTime, this.endTime, this, this.$device))
     },
     dataZoom () {
       if (!this.context.component.slots || !this.context.component.slots.dataZoom) return undefined
-      return this.context.component.slots.dataZoom.map((c) => OhChartDataZoom.get(c, this.startTime, this.endTime, this.$device))
+      return this.context.component.slots.dataZoom.map((c) => OhChartDataZoom.get(c, this.startTime, this.endTime, this, this.$device))
     },
     legend () {
       if (!this.context.component.slots || !this.context.component.slots.legend) return undefined
-      return this.context.component.slots.legend.map((c) => OhChartLegend.get(c, this.startTime, this.endTime, this.$device))
+      return this.context.component.slots.legend.map((c) => OhChartLegend.get(c, this.startTime, this.endTime, this, this.$device))
     },
     title () {
       if (!this.context.component.slots || !this.context.component.slots.title) return undefined
-      return this.context.component.slots.title.map((c) => OhChartTitle.get(c, this.startTime, this.endTime, this.$device))
+      return this.context.component.slots.title.map((c) => OhChartTitle.get(c, this.startTime, this.endTime, this, this.$device))
     },
     toolbox () {
       if (!this.context.component.slots || !this.context.component.slots.toolbox) return undefined
-      return this.context.component.slots.toolbox.map((c) => OhChartToolbox.get(c, this.startTime, this.endTime, this.$device))
+      return this.context.component.slots.toolbox.map((c) => OhChartToolbox.get(c, this.startTime, this.endTime, this, this.$device))
     }
   },
   asyncComputed: {
@@ -120,8 +121,16 @@ export default {
   },
   methods: {
     getSeriesPromises (component) {
-      const neededItems = seriesComponents[component.component].neededItems(component)
-      const promises = neededItems.filter(i => !!i).map((neededItem) => {
+      const neededItems = seriesComponents[component.component].neededItems(component).filter(i => !!i)
+      const itemPromises = neededItems.map((neededItem) => {
+        if (this.items[neededItem]) return Promise.resolve(this.items[neededItem])
+        return this.$oh.api.get(`/rest/items/${neededItem}`).then((item) => {
+          this.items[neededItem] = item
+          return item
+        })
+      })
+
+      const combinedPromises = neededItems.map((neededItem) => {
         let url = `/rest/persistence/items/${neededItem}`
         let seriesStartTime = this.startTime
         let seriesEndTime = this.endTime
@@ -135,11 +144,11 @@ export default {
           endtime: seriesEndTime.subtract(1, 'millisecond').toISOString()
         }
 
-        return this.$oh.api.get(url, query)
+        return Promise.all([itemPromises[neededItem], this.$oh.api.get(url, query)])
       })
 
-      return Promise.all(promises).then((data) => {
-        return seriesComponents[component.component].get(component, data, this.startTime, this.endTime, this.context.component)
+      return Promise.all(combinedPromises).then((data) => {
+        return seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this.context.component)
       })
     },
     setPeriod (period) {

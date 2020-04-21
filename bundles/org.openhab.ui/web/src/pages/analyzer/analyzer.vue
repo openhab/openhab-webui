@@ -20,7 +20,7 @@ export default {
     return {
       showChart: false,
       items: null,
-      period: 'D',
+      period: 'D'
       // chartType: 'day'
     }
   },
@@ -92,6 +92,7 @@ export default {
                     {
                       component: 'oh-mark-area',
                       config: {
+                        name: item.name,
                         item: item.name
                       }
                     }
@@ -111,7 +112,11 @@ export default {
               }
             }
           }),
-          tooltip: [{ component: 'oh-chart-tooltip', config: {} }],
+          tooltip: [{ component: 'oh-chart-tooltip',
+            config: {
+              confine: true,
+              smartFormatter: true
+            } }],
           dataZoom: [
             { component: 'oh-chart-datazoom', config: { type: 'inside' } }
           ],
