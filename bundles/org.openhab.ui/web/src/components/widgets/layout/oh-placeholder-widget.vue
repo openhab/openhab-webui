@@ -12,6 +12,7 @@
   display inline-block
   opacity 0.5
   height calc(2*3rem + 50px)
+  z-index 100
   .button
     width calc(100% - var(--f7-typography-margin))
     padding 3rem 0
