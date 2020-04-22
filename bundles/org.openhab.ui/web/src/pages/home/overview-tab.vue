@@ -1,63 +1,40 @@
 <template>
 <div>
+  <div class="hint-apps" v-if="!overviewPage && !$store.getters.user">
+    <f7-icon class="float-right margin-left" f7="arrow_turn_right_up" size="40"></f7-icon>
+    <p><em class="">Open the apps panel to launch other interfaces</em></p>
+  </div>
   <f7-block class="block-narrow">
     <habot v-if="showHABot" />
     <other-apps v-if="showApps" />
     <f7-col>
-      <f7-card
-        v-show="showSetup"
-        title="Welcome to openHAB!"
-        content="Congratulations, your server is up and running! However, it is not configured yet. Follow the setup wizard and let it guide you through the initial configuration. (Note: the wizard could also be started automatically on launch if no package is detected - services/org.openhab.addons > package)."
-      >
-        <f7-card-footer>
-          <f7-link color="blue" @click="skipSetupWizard()">No thanks</f7-link>
-          <!-- <f7-button color="blue" fill raised login-screen-open="#login-screen">Start Setup Wizard</f7-button> -->
-          <f7-button color="blue" fill raised href="/setup-wizard/">Start Setup Wizard</f7-button>
-        </f7-card-footer>
-      </f7-card>
-      <f7-card title="Suggested Tasks" v-show="showTasks">
-        <f7-card-content :padding="false">
-          <ol>
-            <li>
-              <f7-link no-link-class color="blue" href="#">Install Bindings &amp; other add-ons</f7-link>
-            </li>
-            <li>
-              <f7-link no-link-class color="blue" href="#">Discover &amp; configure Things</f7-link>
-            </li>
-            <li>
-              <f7-link
-                no-link-class
-                color="blue"
-                href="#"
-              >Design your home's conceptually with the semantic model builder and link the Things to Items</f7-link>
-            </li>
-            <li>
-              <f7-link
-                no-link-class
-                color="blue"
-                href="#"
-              >Connect to openHAB Cloud for remote access and integration with voice assistants</f7-link>
-            </li>
-          </ol>
-        </f7-card-content>
-        <f7-card-footer>
-          <f7-link color="blue" @click="dismissTasks">Dismiss</f7-link>
-        </f7-card-footer>
-      </f7-card>
-
     </f7-col>
   </f7-block>
 
-  <f7-block v-if="showCards && !ready" class="text-align-center">
+  <f7-block v-if="!$store" class="text-align-center">
     <f7-preloader></f7-preloader>
     <div>Loading...</div>
   </f7-block>
 
-  <div class="demo-expandable-cards" v-if="showCards && ready">
-    <h2 class="home-header">
-      <!-- <f7-icon aurora="f7:star_fill" ios="f7:star_fill" md="material:star" size="25" style="vertical-align: sub" /> -->
-      Now
-    </h2>
+  <component :is="overviewPage.component" v-if="overviewPage" :context="overviewPageContext" :class="{notready: !ready}" @command="onCommand" />
+  <div class="empty" v-else>
+    <empty-state-placeholder icon="rocket" title="overview.title" text="overview.text" />
+    <f7-row class="display-flex justify-content-center">
+      <f7-button large fill color="blue" external href="https://next.openhab.org/docs/" target="_blank">Documentation</f7-button>
+      <span style="width: 8px"></span>
+      <f7-button large color="blue" external href="https://next.openhab.org/docs/tutorial/" target="_blank">Tutorial</f7-button>
+    </f7-row>
+
+    <div class="hint-signin" v-if="!$store.getters.user">
+      <p class="padding-left"><em>Click on the shield to sign in as an administrator</em></p>
+      <f7-icon f7="arrow_down_left" size="40"></f7-icon>
+    </div>
+  </div>
+  <!-- <h2 class="home-header">
+    Now
+  </h2> -->
+
+  <!-- <div class="demo-expandable-cards" v-if="showCards && ready">
     <expandable-card color="teal" header="gauge" />
     <h2 class="home-header">Favorites</h2>
     <h3 class="home-header">Scenes</h3>
@@ -67,18 +44,13 @@
     <expandable-card color="blue" header="temperature" title="Thermostat Downstairs" />
     <expandable-card color="green" header="gauge" />
     <expandable-card color="deeppurple" />
-    <!-- <expandable-card color="gray" /> -->
     <expandable-card color="black" header="player" title="SONOS Multiroom" />
     <expandable-card color="blue" header="image" title="Webcam Front Door" />
-    <!-- <expandable-card color="orange" />
-    <expandable-card color="deeporange" />
-    <expandable-card color="pink" />
-    <expandable-card color="lightblue" /> -->
-  </div>
+  </div> -->
 
-  <f7-block v-if="showCards && ready">
+  <!-- <f7-block v-if="showCards && ready">
     <f7-button small @click="showSetup = true; showTasks = true; showCards = false; showHABot = false">Simulate first-time run</f7-button>
-  </f7-block>
+  </f7-block> -->
 </div>
 
 </template>
@@ -88,59 +60,63 @@
   display block
   width calc(100% - 30px)
   margin-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
+.hint-apps
+  position absolute
+  top calc(var(--f7-page-navbar-offset, 0px) + var(--f7-page-content-extra-padding-top, 0px))
+  right 1rem
+  width 60%
+  p
+    text-align right
+.hint-signin
+  position absolute
+  bottom calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
+  width 50%
+  height 10rem
+  left 1rem
+  p
+    margin-left 40px
 </style>
 
 <script>
-import ExpandableCard from '../../components/expandable-card.vue'
+// import ExpandableCard from '../../components/expandable-card.vue'
+// import OtherApps from '../../components/home/other-apps.vue'
+
+import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 import Habot from '../../components/home/habot.vue'
-import OtherApps from '../../components/home/other-apps.vue'
 
 export default {
-  props: ['items'],
+  props: ['context', 'items'],
   components: {
-    ExpandableCard,
-    OtherApps,
+    OhLayoutPage,
     Habot
   },
   data () {
     return {
       showSetup: false,
       showTasks: false,
-      showApps: true,
+      showApps: false,
       showCards: false,
       showHABot: false,
       ready: true
     }
   },
-  created () {
-    // if (Object.keys(this.items).length === 0) {
-    //   this.showSetup = true
-    // } else {
-    //   this.showCards = true
-    //   this.showHABot = true
-    //   setTimeout(() => { this.ready = true }, 1000)
-    // }
+  computed: {
+    overviewPage () {
+      const page = this.$store.getters.page('overview')
+      if (!page) return null
+      if (page.component !== 'oh-layout-page') return null
+      return page
+    },
+    overviewPageContext () {
+      return {
+        component: this.overviewPage,
+        store: this.context.store
+      }
+    }
   },
   methods: {
-    skipSetupWizard () {
-      const vm = this
-      this.$f7.dialog.confirm(
-        'Are you sure? You currently only have a minimal set of features available and you will need to install all essential add-ons by hand!',
-        'Skip Setup Wizard',
-        () => {
-          vm.showSetup = false
-          vm.showTasks = true
-        }
-      )
-    },
-    dismissTasks () {
-      this.showTasks = false
-      this.showHABot = true
-      this.showCards = true
-      setTimeout(() => { this.ready = true }, 1000)
-    },
-    displayCards () {
-      setTimeout(() => { this.showCards = true }, 3000)
+    onCommand (itemName, command) {
+      this.$store.dispatch('sendCommand', { itemName, command })
     }
   }
 }
