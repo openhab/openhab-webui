@@ -113,7 +113,6 @@
                 }).rendered.then(function () {
                     $timeout(function () {
                         $rootScope.$broadcast('openhab-update');
-                        OHService.reloadItems();
                     });
                 });
             }
