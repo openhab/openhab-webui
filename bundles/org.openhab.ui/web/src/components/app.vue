@@ -10,7 +10,6 @@
       <f7-list-item link="/" class="logo" panel-close v-else>
         <img src="../res/img/openhab-logo.png" width="100%">
       </f7-list-item>
-      <!-- <f7-block-title>Sitemaps</f7-block-title> -->
       <f7-list>
         <!-- <f7-list-item v-for="sitemap in sitemaps" :animate="false" :key="sitemap.name"
                 :class="{ currentsection: currentUrl.indexOf('/sitemap/' + sitemap.name) >= 0 }"
@@ -79,24 +78,18 @@
             :class="{ currentsection: currentUrl.indexOf('/about') >= 0 }">
           <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray"></f7-icon>
         </f7-list-item>
-        <!-- <f7-list-item v-if="loggedIn" link="/" title="Logout" @click="logout()" panel-close>
-          <f7-icon slot="media" ios="f7:square_arrow_right" md="material:exit_to_app" color="gray"></f7-icon>
-        </f7-list-item> -->
-        <!-- <f7-list-item title="Master-Details" view=".view-main" panel-close>
-          <f7-icon slot="media" ios="f7:exit" md="material:exit_to_app"></f7-icon>
-        </f7-list-item> -->
       </f7-list>
+
       <div class="account" v-if="ready">
         <div class="display-flex justify-content-center">
           <f7-button v-if="!loggedIn" large color="gray" icon-size="36" tooltip="Unlock Administration" icon-f7="lock_shield_fill" @click="authorize()" />
         </div>
-        <f7-list v-if="$store.getters.user" class="admin-links" media-list>
+        <f7-list v-if="$store.getters.user" media-list>
           <f7-list-item :title="$store.getters.user.name" :footer="serverDisplayUrl" io="f7:person_alt_circle_fill" link="/profile/" no-chevron panel-close view=".view-main"
               :class="{ currentsection: currentUrl.indexOf('/profile') >= 0 }">
             <f7-icon slot="media" size="36" ios="f7:person_alt_circle_fill" aurora="f7:person_alt_circle_fill" md="f7:person_alt_circle_fill" color="gray"></f7-icon>
           </f7-list-item>
         </f7-list>
-        <!-- <f7-link v-if="user" color="gray" icon-size="30" :text="accountLabel" tooltip="Sign out" icon-f7="person_alt_circle_fill" @click="logout()" /> -->
       </div>
     </f7-page>
   </f7-panel>
@@ -108,7 +101,7 @@
   </f7-panel>
 
   <!-- Your main view, should have "view-main" class -->
-  <f7-view main class="safe-areas" url="/" :master-detail-breakpoint="960" @routeChanged="console.log('hello')"></f7-view>
+  <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" @routeChanged="console.log('hello')"></f7-view>
 
   <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
     <f7-view name="login" v-if="$device.cordova">
@@ -155,13 +148,12 @@
   height 0
 
 .panel-left
-  overflow-y scroll
   scrollbar-width none /* Firefox */
   -ms-overflow-style none  /* IE 10+ */
 
   .page
     background #f5f5f5 !important
-    padding-bottom 4rem
+    padding-bottom calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
   .logo
     margin-top var(--f7-safe-area-top)
     list-style none
@@ -178,11 +170,18 @@
       color var(--f7-color-white) !important
   .account
     z-index 300
-    height 4rem
+    height calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
     background #f5f5f5 !important
     position fixed
     bottom calc(var(--f7-safe-area-bottom))
     width 100%
+    .list
+      position absolute
+      bottom 0
+      left 0
+      width 100%
+      margin-bottom 0
+      height calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
 
 .theme-dark
   .panel-left

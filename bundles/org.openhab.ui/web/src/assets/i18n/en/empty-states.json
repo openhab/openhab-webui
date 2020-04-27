@@ -1,4 +1,7 @@
 {
+  "overview.title": "Welcome to openHAB!",
+  "overview.text": "Once your system is configured, create a layout page with the ID <code>\"overview\"</code> to display it here.",
+
   "inbox.title": "The Inbox is empty",
   "inbox.text": "Discovery results from your bindings that can be added as things will appear here.<br><br>You can also start a scan for a certain binding or add things manually with the button below.",
 

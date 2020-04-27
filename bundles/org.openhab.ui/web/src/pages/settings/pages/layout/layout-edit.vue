@@ -322,20 +322,31 @@ export default {
         const standardWidgetOptions = Object.keys(StandardWidgets).map((k) => {
           return {
             text: StandardWidgets[k].widget.label,
+            color: 'blue',
             onClick: () => doAddWidget(StandardWidgets[k].widget.name)
           }
         })
         const customWidgetOptions = this.$store.state.components.widgets.map((w) => {
           return {
             text: w.uid,
+            color: 'blue',
             onClick: () => doAddWidget('widget:' + w.uid)
           }
         })
         actions = this.$f7.actions.create({
-          grid: true,
+          // grid: true,
           buttons: [
-            standardWidgetOptions,
-            customWidgetOptions
+            [
+              { label: true, text: 'Standard Library' },
+              ...standardWidgetOptions
+            ],
+            [
+              { label: true, text: 'Personal Widgets' },
+              ...customWidgetOptions
+            ],
+            [
+              { color: 'red', 'text': 'Cancel', close: true }
+            ]
           ]
         }).open()
       }
