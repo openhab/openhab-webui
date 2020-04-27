@@ -21,7 +21,7 @@ const handler = (context) => {
 
       const itemName = prop
       if (!context.getters.isItemTracked(itemName)) {
-        console.log(`Proxy: need ${itemName.toString()}`)
+        console.debug(`Proxy: need ${itemName.toString()}`)
         context.commit('addToTrackingList', itemName.toString())
 
         // Return the previous state anyway even if it might be outdated (it will be refreshed quickly after)
@@ -34,7 +34,7 @@ const handler = (context) => {
       return context.state.itemStates[itemName]
     },
     set (obj, prop, value) {
-      console.log(`Proxy: setting ${prop.toString()} to ${value}`)
+      console.debug(`Proxy: setting ${prop.toString()} to ${value}`)
       context.commit('setItemState', { itemName: prop.toString(), itemState: value })
       return true
     }
@@ -53,17 +53,23 @@ const getters = {
 const actions = {
   initializeTrackingStore (context) {
     if (stateTrackingProxy) return
-    console.log('Initializing state tracking store proxy')
+    console.debug('Initializing state tracking store proxy')
     stateTrackingProxy = new Proxy({}, handler(context))
   },
   startTrackingStates (context) {
-    console.log('Start tracking states, clearing tracking list')
+    console.debug('Start tracking states')
     context.commit('clearTrackingList')
+    if (context.state.trackerEventSource) {
+      console.debug('Closing existing state tracker connection')
+      this._vm.$oh.sse.close(context.state.trackerEventSource)
+      context.commit('clearStateTracker', null)
+    }
     const eventSource = this._vm.$oh.sse.connectStateTracker('/rest/events/states',
       (connectionId) => {
+        // only one state tracker at any given time!
         context.commit('setTrackerConnectionId', connectionId)
         const trackingListJson = JSON.stringify(context.state.trackingList)
-        console.log('Setting initial tracking list: ' + trackingListJson)
+        console.debug('Setting initial tracking list: ' + trackingListJson)
         this._vm.$oh.api.postPlain('/rest/events/states/' + connectionId, JSON.stringify(context.state.trackingList), 'text/plain', 'application/json')
       },
       (updates) => {
@@ -74,26 +80,31 @@ const actions = {
     context.commit('setTrackingEventSource', eventSource)
   },
   stopTrackingStates (context) {
-    console.log('Stop tracking states')
-    console.log('Start tracking states, clearing tracking list')
+    console.debug('Stop tracking states')
     context.commit('clearTrackingList')
-    this._vm.$oh.sse.close(context.state.trackerEventSource)
+    if (context.state.trackerEventSource) {
+      this._vm.$oh.sse.close(context.state.trackerEventSource)
+    }
+    context.commit('clearStateTracker', null)
   },
   updateTrackingList (context, payload) {
-    // context.commit('setTrackingList', payload)
     if (!context.state.trackerConnectionId) {
-      console.log('updateTrackingList: No connection id, not calling the API')
+      console.debug('updateTrackingList: No connection id, not calling the API')
       return
     }
     if (context.state.pendingTrackingListUpdate) {
-      console.log('updateTrackingList: Pending tracking list update, not calling the API')
+      console.debug('updateTrackingList: Pending tracking list update, not calling the API')
       return
     }
     context.commit('setPendingTrackingListUpdate', true)
     Vue.nextTick(() => {
       context.commit('setPendingTrackingListUpdate', false)
+      if (!context.state.trackerConnectionId) {
+        console.debug('updateTrackingList: No connection id, not calling the API')
+        return
+      }
       const trackingListJson = JSON.stringify(context.state.trackingList)
-      console.log('Updating tracking list: ' + trackingListJson)
+      console.debug('Updating tracking list: ' + trackingListJson)
       this._vm.$oh.api.postPlain('/rest/events/states/' + context.state.trackerConnectionId, trackingListJson, 'text/plain', 'application/json')
     })
   },
@@ -125,6 +136,11 @@ const mutations = {
   },
   setPendingTrackingListUpdate (state, payload) {
     state.pendingTrackingListUpdate = payload
+  },
+  clearStateTracker (state) {
+    Vue.set(state, 'trackingList', [])
+    state.trackerConnectionId = null
+    state.trackerEventSource = null
   }
 }
 
