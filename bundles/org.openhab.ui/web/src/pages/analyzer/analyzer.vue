@@ -8,7 +8,7 @@
       </f7-navbar>
       <f7-toolbar bottom>
         <span></span>
-        <f7-link color="blue" icon-f7="crop_rotate" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'" />
+        <f7-link v-if="coordSystem !== 'time'" color="blue" icon-f7="crop_rotate" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'" />
         <f7-link class="right controls-link padding-right" ref="detailsLink" @click="openControls">Controls&nbsp;<f7-icon f7="chevron_up"></f7-icon></f7-link>
       </f7-toolbar>
       <oh-chart-page v-if="showChart" class="analyzer-chart" :class="{ 'sheet-opened': controlsOpened }" :key="chartKey" :context="context" />
