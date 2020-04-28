@@ -17,7 +17,9 @@ export default {
       config: {
         gridIndex: 0,
         categoryType: (analyzer.chartType === 'isoWeek') ? 'week' : analyzer.chartType,
-        startOnSunday: (analyzer.chartType === 'week') ? true : undefined
+        startOnSunday: (analyzer.chartType === 'week') ? true : undefined,
+        monthFormat: 'short',
+        weekdayFormat: 'short'
       }
     }
 
@@ -28,15 +30,45 @@ export default {
             : (analyzer.chartType === 'year') ? 'month'
               : undefined
 
-    const axis2 = {
-      component: 'oh-value-axis',
-      config: {
-        gridIndex: 0
+    let axis2, dimension2
+    if (analyzer.aggregateDimensions === 2) {
+      const category2 = (analyzer.chartType === 'day') ? 'hour'
+        : (analyzer.chartType === 'week') ? 'day'
+          : (analyzer.chartType === 'isoWeek') ? 'day'
+            : (analyzer.chartType === 'month') ? 'day'
+              : (analyzer.chartType === 'year') ? 'month'
+                : undefined
+
+      dimension2 = (category2 === 'hour') ? 'minute'
+        : (category2 === 'day') ? 'hour'
+          : (category2 === 'month') ? 'date'
+            : undefined
+
+      axis2 = {
+        component: 'oh-category-axis',
+        config: {
+          gridIndex: 0,
+          categoryType: category2,
+          monthFormat: 'short',
+          weekdayFormat: 'short'
+        }
+      }
+    } else {
+      axis2 = {
+        component: 'oh-value-axis',
+        config: {
+          gridIndex: 0
+        }
       }
     }
 
-    page.slots.xAxis = [axis1]
-    page.slots.yAxis = [axis2]
+    if (analyzer.orientation === 'vertical') {
+      page.slots.xAxis = [axis2]
+      page.slots.yAxis = [axis1]
+    } else {
+      page.slots.xAxis = [axis1]
+      page.slots.yAxis = [axis2]
+    }
 
     page.slots.series = analyzer.items.map((item) => {
       return {
@@ -47,11 +79,26 @@ export default {
           gridIndex: 0,
           xAxisIndex: 0,
           yAxisIndex: 0,
-          type: 'bar',
-          dimension1
+          type: dimension2 ? 'heatmap' : 'bar',
+          dimension1,
+          dimension2,
+          transpose: analyzer.orientation === 'vertical' ? true : undefined
         }
       }
     })
+
+    if (dimension2) {
+      page.slots.visualMap = [
+        {
+          component: 'oh-chart-visualmap',
+          config: {
+            show: true,
+            calculable: true,
+            bottom: 40
+          }
+        }
+      ]
+    }
 
     page.slots.tooltip = [
       {

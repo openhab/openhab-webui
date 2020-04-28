@@ -11,6 +11,7 @@ export default {
     const calendar = {
       component: 'oh-calendar-axis',
       config: {
+        orient: analyzer.orientation
       }
     }
 

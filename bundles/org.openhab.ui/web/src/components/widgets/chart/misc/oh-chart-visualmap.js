@@ -16,12 +16,12 @@ export default {
     if (options.min !== undefined) {
       options.min = parseFloat(options.min)
     } else if (chart.series && chart.series[0]) {
-      options.min = Math.min(...chart.series[0].data.map((p) => p[1]))
+      options.min = Math.min(...chart.series[0].data.map((p) => p[p.length - 1]))
     }
     if (options.max !== undefined) {
       options.max = parseFloat(options.max)
     } else if (chart.series && chart.series[0]) {
-      options.max = Math.max(...chart.series[0].data.map((p) => p[1]))
+      options.max = Math.max(...chart.series[0].data.map((p) => p[p.length - 1]))
     }
     return options
   }
