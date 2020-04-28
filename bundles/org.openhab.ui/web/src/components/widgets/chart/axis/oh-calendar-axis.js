@@ -11,10 +11,10 @@ export default {
       margin: 5
     }
 
-    if (!calendar.top) calendar.top = 80
-    if (!calendar.bottom) calendar.bottom = 50
-    if (!calendar.left) calendar.left = 50
-    if (!calendar.right) calendar.right = 50
+    if (!calendar.top) calendar.top = 100
+    if (!calendar.bottom) calendar.bottom = 100
+    if (!calendar.left) calendar.left = 100
+    if (!calendar.right) calendar.right = 100
 
     return calendar
   }

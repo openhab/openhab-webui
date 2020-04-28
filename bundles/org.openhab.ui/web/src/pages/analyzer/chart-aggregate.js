@@ -9,15 +9,7 @@ export default {
     }
 
     if (!analyzer.chartType) {
-      page.slots.title = [
-        {
-          component: 'oh-chart-title',
-          config: {
-            text: 'The aggregate coordinate system cannot be used with a dynamic period chart'
-          }
-        }
-      ]
-      return page
+      throw new Error('The aggregate coordinate system cannot be used with a dynamic period chart')
     }
 
     const axis1 = {

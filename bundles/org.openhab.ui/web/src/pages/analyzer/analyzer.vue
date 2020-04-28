@@ -1,9 +1,9 @@
 <template>
-  <f7-popup tablet-fullscreen close-on-escape @popup:open="onOpen" @popup:close="onClose" @popup:opened="initChart">
+  <f7-popup tablet-fullscreen @popup:open="onOpen" @popup:close="onClose" @popup:opened="initChart">
     <f7-page class="analyzer-content">
       <f7-navbar :title="titleDisplayText" back-link="Back">
         <f7-nav-right>
-          <f7-link @click="openControls">Save Page</f7-link>
+          <f7-link @click="openControls">Controls</f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-toolbar bottom>
@@ -15,7 +15,7 @@
     </f7-page>
     <f7-sheet class="analyzer-controls" :backdrop="false" :close-on-escape="true" :opened="controlsOpened" @sheet:closed="controlsOpened = false">
       <f7-page>
-        <f7-toolbar tabbar>
+        <f7-toolbar tabbar :bottom="true">
           <f7-link class="padding-left padding-right" :tab-link-active="controlsTab === 'series'" @click="controlsTab = 'series'">Series</f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="controlsTab === 'coords'" @click="controlsTab = 'coords'">Coords</f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="controlsTab === 'chart'" @click="controlsTab = 'chart'">Chart</f7-link>
@@ -77,6 +77,7 @@
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ChartTime from './chart-time'
 import ChartAggregate from './chart-aggregate'
+import ChartCalendar from './chart-calendar'
 
 export default {
   components: {
@@ -160,20 +161,29 @@ export default {
       }
     },
     page () {
-      switch (this.coordSystem) {
-        case 'time':
-          return ChartTime.getChartPage(this)
-        case 'aggregate':
-          return ChartAggregate.getChartPage(this)
-        default:
-          return {
-            component: 'oh-chart-page',
-            slots: {
-              title: [
-                { component: 'oh-chart-title', config: { text: 'Invalid coordinate system' } }
-              ]
-            }
+      try {
+        switch (this.coordSystem) {
+          case 'time':
+            return ChartTime.getChartPage(this)
+          case 'aggregate':
+            return ChartAggregate.getChartPage(this)
+          case 'calendar':
+            return ChartCalendar.getChartPage(this)
+          default:
+            throw new Error('Invalid coordinate system')
+        }
+      } catch (e) {
+        return {
+          component: 'oh-chart-page',
+          config: {
+            chartType: this.chartType
+          },
+          slots: {
+            title: [
+              { component: 'oh-chart-title', config: { subtext: e, top: 'center', left: 'center' } }
+            ]
           }
+        }
       }
     }
   }
