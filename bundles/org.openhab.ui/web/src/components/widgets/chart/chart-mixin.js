@@ -148,7 +148,7 @@ export default {
       })
 
       return Promise.all(combinedPromises).then((data) => {
-        return seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this.context.component)
+        return seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this)
       })
     },
     setPeriod (period) {

@@ -6,7 +6,7 @@ export default {
     if (!component || !component.config || !component.config.item) return []
     return [component.config.item]
   },
-  get (component, points) {
+  get (component, points, startTime, endTime, chart) {
     const itemPoints = points.find(p => p.name === component.config.item).data
     const groups = itemPoints.reduce((acc, p) => {
       let day = dayjs(p.time).startOf('day')

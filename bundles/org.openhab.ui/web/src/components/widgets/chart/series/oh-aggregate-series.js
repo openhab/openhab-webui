@@ -20,7 +20,7 @@ export default {
     if (!component || !component.config || !component.config.item) return []
     return [component.config.item]
   },
-  get (component, points) {
+  get (component, points, startTime, endTime, chart) {
     let dimension1 = component.config.dimension1
     let dimension2 = component.config.dimension2
 
