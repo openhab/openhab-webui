@@ -52,7 +52,7 @@ export default {
         return [dimensionFromDate(arr[0], axisX), dimensionFromDate(arr[0], axisY, true), formatter.format(value)]
       } else {
         if (component.config.transpose) {
-          return [formatter.format(value), dimensionFromDate(arr[0], dimension1)]
+          return [formatter.format(value), dimensionFromDate(arr[0], dimension1, true)]
         } else {
           return [dimensionFromDate(arr[0], dimension1), formatter.format(value)]
         }
