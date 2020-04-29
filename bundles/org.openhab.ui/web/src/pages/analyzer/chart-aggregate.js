@@ -12,6 +12,8 @@ export default {
       throw new Error('The aggregate coordinate system cannot be used with a dynamic period chart')
     }
 
+    page.slots.grid = [{ component: 'oh-chart-grid', config: {} }]
+
     const axis1 = {
       component: 'oh-category-axis',
       config: {
@@ -93,8 +95,11 @@ export default {
           component: 'oh-chart-visualmap',
           config: {
             show: true,
+            orient: 'horizontal',
             calculable: true,
-            bottom: 40
+            bottom: 0,
+            left: 'center',
+            presetPalette: analyzer.visualMapPalette
           }
         }
       ]
@@ -110,9 +115,16 @@ export default {
       }
     ]
 
-    page.slots.legend = [
-      { component: 'oh-chart-legend', config: {} }
-    ]
+    if (!dimension2) {
+      page.slots.legend = [
+        {
+          component: 'oh-chart-legend',
+          config: {
+            bottom: 5
+          }
+        }
+      ]
+    }
 
     return page
   }

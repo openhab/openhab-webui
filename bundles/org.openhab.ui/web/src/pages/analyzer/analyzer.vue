@@ -18,7 +18,7 @@
         <f7-toolbar tabbar :bottom="true">
           <f7-link class="padding-left padding-right" :tab-link-active="controlsTab === 'series'" @click="controlsTab = 'series'">Series</f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="controlsTab === 'coords'" @click="controlsTab = 'coords'">Coords</f7-link>
-          <f7-link class="padding-left padding-right" :tab-link-active="controlsTab === 'chart'" @click="controlsTab = 'chart'">Chart</f7-link>
+          <f7-link class="padding-left padding-right" :tab-link-active="controlsTab === 'ranges'" @click="controlsTab = 'ranges'">Ranges</f7-link>
           <div class="right">
             <f7-link sheet-close class="padding-right"><f7-icon f7="chevron_down"></f7-icon></f7-link>
           </div>
@@ -29,31 +29,49 @@
           </f7-list>
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-show="controlsTab === 'coords'">
-          <f7-block-header>Type</f7-block-header>
-          <f7-col>
-            <f7-segmented strong>
-              <f7-button :active="coordSystem === 'time'" @click="changeCoordSystem('time')">Time</f7-button>
-              <f7-button :active="coordSystem === 'aggregate'" @click="changeCoordSystem('aggregate')">Aggregate</f7-button>
-              <f7-button :active="coordSystem === 'calendar'" @click="changeCoordSystem('calendar')">Calendar</f7-button>
-            </f7-segmented>
-          </f7-col>
-          <f7-col v-if="coordSystem === 'aggregate'" class="margin-top">
-            <f7-segmented strong>
-              <f7-button :active="aggregateDimensions === 1" @click="changeAggregateDimensions(1)">1 dimension</f7-button>
-              <f7-button :active="aggregateDimensions === 2" @click="changeAggregateDimensions(2)">2 dimensions</f7-button>
-            </f7-segmented>
-          </f7-col>
+          <f7-row>
+            <f7-col :width="100" :medium="50" class="margin-bottom">
+              <f7-block-header>Period</f7-block-header>
+              <f7-segmented strong class="margin-bottom">
+                <f7-button :active="chartType === ''" @click="changeChartType('')">Dynamic</f7-button>
+                <f7-button :active="chartType !== ''" @click="changeChartType('day')">Fixed</f7-button>
+              </f7-segmented>
+              <f7-segmented v-if="chartType !== ''">
+                <f7-button :disabled="coordSystem === 'calendar'" :active="chartType === 'day'" @click="changeChartType('day')">Day</f7-button>
+                <f7-button :disabled="coordSystem === 'calendar'" :active="chartType === 'isoWeek'" @click="changeChartType('isoWeek')">Week</f7-button>
+                <f7-button :active="chartType === 'month'" @click="changeChartType('month')">Month</f7-button>
+                <f7-button :active="chartType === 'year'" @click="changeChartType('year')">Year</f7-button>
+              </f7-segmented>
+            </f7-col>
+            <f7-col :width="100" :medium="50" class="margin-bottom">
+              <f7-block-header>Coordinate System</f7-block-header>
+              <f7-segmented strong class="margin-bottom">
+                <f7-button :active="coordSystem === 'time'" @click="changeCoordSystem('time')">Time</f7-button>
+                <f7-button :disabled="chartType === ''" :active="coordSystem === 'aggregate'" @click="changeCoordSystem('aggregate')">Aggregate</f7-button>
+                <f7-button :disabled="chartType === ''" :active="coordSystem === 'calendar'" @click="changeCoordSystem('calendar')">Calendar</f7-button>
+              </f7-segmented>
+              <f7-segmented v-if="coordSystem === 'aggregate'">
+                <f7-button :active="aggregateDimensions === 1" @click="changeAggregateDimensions(1)">1 dimension</f7-button>
+                <f7-button :active="aggregateDimensions === 2" @click="changeAggregateDimensions(2)">2 dimensions</f7-button>
+              </f7-segmented>
+            </f7-col>
+            <f7-col width="100" class="margin-top display-flex justify-content-center">
+              <f7-link v-if="coordSystem !== 'time'" color="blue" icon-f7="crop_rotate" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'" />
+            </f7-col>
+          </f7-row>
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-show="controlsTab === 'chart'">
-          <f7-block-header>Period</f7-block-header>
-          <f7-list>
-            <f7-list-item radio name="chartType" :checked="chartType === ''" @change="changeChartType('')">Dynamic Period</f7-list-item>
-            <f7-list-item radio name="chartType" :checked="chartType === 'day'" @change="changeChartType('day')">Day</f7-list-item>
-            <f7-list-item radio name="chartType" :checked="chartType === 'isoWeek'" @change="changeChartType('isoWeek')">Week (starting on Monday)</f7-list-item>
-            <f7-list-item radio name="chartType" :checked="chartType === 'week'" @change="changeChartType('week')">Week (starting on Sunday)</f7-list-item>
-            <f7-list-item radio name="chartType" :checked="chartType === 'month'" @change="changeChartType('month')">Month</f7-list-item>
-            <f7-list-item radio name="chartType" :checked="chartType === 'year'" @change="changeChartType('year')">Year</f7-list-item>
-          </f7-list>
+        <f7-block style="margin-bottom: 6rem" v-show="controlsTab === 'ranges'">
+          <f7-row v-if="(coordSystem === 'aggregate' && aggregateDimensions === 2) || coordSystem === 'calendar'">
+            <f7-col :width="100" :medium="50" class="margin-bottom">
+            <f7-list>
+              <f7-list-item divider>Visual Map Palette</f7-list-item>
+              <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === ''" @change="changeVisualMapPalette('')">Yellow-Red</f7-list-item>
+              <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === 'greenred'" @change="changeVisualMapPalette('greenred')">Green-Yellow-Red</f7-list-item>
+              <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === 'whiteblue'" @change="changeVisualMapPalette('whiteblue')">White-Blue</f7-list-item>
+              <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === 'bluered'" @change="changeVisualMapPalette('bluered')">Blue-Red</f7-list-item>
+            </f7-list>
+            </f7-col>
+          </f7-row>
         </f7-block>
       </f7-page>
     </f7-sheet>
@@ -64,6 +82,7 @@
 .analyzer-controls
   --f7-theme-color var(--f7-color-blue)
   --f7-theme-color-rgb var(--f7-color-blue-rgb)
+  --f7-theme-color-tint var(--f7-color-blue-tint)
   z-index 11000
 .analyzer-content
   .analyzer-chart.sheet-opened
@@ -94,6 +113,8 @@ export default {
       chartType: '',
       coordSystem: 'time',
       aggregateDimensions: 1,
+      visualMapPalette: '',
+
       controlsOpened: false,
       controlsTab: 'series',
       itemsPickerKey: null,
@@ -123,6 +144,7 @@ export default {
     changeChartType (type) {
       this.showChart = false
       this.chartType = type
+      if (type === '') this.coordSystem = 'time'
       this.$nextTick(() => {
         this.showChart = true
       })
@@ -130,6 +152,14 @@ export default {
     changeCoordSystem (coordSystem) {
       this.showChart = false
       this.coordSystem = coordSystem
+      if (this.coordSystem === 'calendar') this.chartType = 'month'
+      this.$nextTick(() => {
+        this.showChart = true
+      })
+    },
+    changeVisualMapPalette (palette) {
+      this.showChart = false
+      this.visualMapPalette = palette
       this.$nextTick(() => {
         this.showChart = true
       })

@@ -34,8 +34,11 @@ export default {
         component: 'oh-chart-visualmap',
         config: {
           show: true,
+          orient: 'horizontal',
           calculable: true,
-          bottom: 40
+          bottom: 0,
+          left: 'center',
+          presetPalette: analyzer.visualMapPalette
         }
       }
     ]
