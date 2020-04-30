@@ -42,6 +42,9 @@
                         <th class="label-cell">Label</th>
                         <th class="label-cell">Type</th>
                         <th class="label-cell">Axis</th>
+                        <th class="label-cell">Markers</th>
+                        <th v-if="coordSystem !== 'time'" class="label-cell">Aggregation</th>
+                        <th v-if="coordSystem === 'time'" class="label-cell">Silent</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -56,13 +59,25 @@
                             <f7-button v-if="!options.discrete && coordSystem === 'aggregate' && aggregateDimensions === 1" small outline style="width: 60px" :fill="options.type === 'bar'" @click="options.type = 'bar'">Bar</f7-button>
                             <f7-button v-if="!options.discrete && coordSystem !== 'calendar' && aggregateDimensions === 1" small outline style="width: 60px" :fill="options.type === 'line'" @click="options.type = 'line'">Line</f7-button>
                             <f7-button v-if="coordSystem === 'time' || (coordSystem === 'aggregate' && aggregateDimensions === 1)" small outline style="width: 60px" :fill="options.type === 'area'" @click="options.type = 'area'">Area</f7-button>
-                            <f7-button v-if="coordSystem === 'calendar' || (coordSystem === 'aggregate' && aggregateDimensions === 2)" small fill outline style="width: 80px">Heatmap</f7-button>
+                            <f7-button v-if="coordSystem === 'calendar' || (coordSystem === 'aggregate' && aggregateDimensions === 2)" small fill outline style="width: 90px">Heatmap</f7-button>
                           </f7-segmented>
                         </td>
                         <td class="label-cell">
-                          <f7-segmented round v-if="!options.discrete">
-                            <f7-button v-for="(axis, $idx) in valueAxesOptions" :key="$idx" small outline style="width: 60px" :fill="options.valueAxisIndex === $idx">{{axis.unit}}</f7-button>
+                          <f7-segmented round v-if="!options.discrete && options.type !== 'heatmap'">
+                            <f7-button v-for="(axis, $idx) in valueAxesOptions" :key="$idx" small outline style="width: 60px" :fill="options.valueAxisIndex === $idx" @click="options.valueAxisIndex = $idx">{{axis.unit}}</f7-button>
                           </f7-segmented>
+                          <span v-else>N/A</span>
+                        </td>
+                        <td class="label-cell">
+                          <f7-link v-if="!options.discrete && options.type !== 'heatmap'" @click="chooseMarkers(options)">{{options.markers || 'none'}}</f7-link>
+                          <span v-else>N/A</span>
+                        </td>
+                        <td v-if="coordSystem !== 'time'" class="label-cell">
+                          <f7-link @click="chooseAggregation(options)">{{options.aggregation || 'average'}}</f7-link>
+                        </td>
+                        <td v-if="coordSystem === 'time'" class="label-cell">
+                          <f7-checkbox v-if="options.discrete" @change="(value) => $set(options, 'silent', value)"></f7-checkbox>
+                          <span v-else>N/A</span>
                         </td>
                       </tr>
                     </tbody>
@@ -165,7 +180,18 @@ export default {
       controlsOpened: false,
       controlsTab: 'series',
       itemsPickerKey: null,
-      chartKey: this.$f7.utils.id()
+      chartKey: this.$f7.utils.id(),
+
+      aggregations: [
+        { value: 'average', label: 'Average' },
+        { value: 'sum', label: 'Sum' },
+        { value: 'min', label: 'Minimum' },
+        { value: 'max', label: 'Maximum' },
+        { value: 'first', label: 'First (earliest)' },
+        { value: 'last', label: 'Last (latest)' },
+        { value: 'diff_first', label: 'Difference of firsts' },
+        { value: 'diff_last', label: 'Difference of lasts' }
+      ]
     }
   },
   methods: {
@@ -205,10 +231,10 @@ export default {
                   : undefined
             let unitAxis = this.valueAxesOptions.findIndex((a) => a.unit === unit)
             if (unitAxis >= 0) {
-              seriesOptions.valueAxisIndex = unitAxis
+              this.$set(seriesOptions, 'valueAxisIndex', unitAxis)
             } else {
               this.valueAxesOptions.push({ unit })
-              seriesOptions.valueAxisIndex = this.valueAxesOptions.length - 1
+              this.$set(seriesOptions, 'valueAxisIndex', this.valueAxesOptions.length - 1)
             }
           }
         })
@@ -230,7 +256,12 @@ export default {
     changeChartType (type) {
       this.showChart = false
       this.chartType = type
-      if (type === '') this.coordSystem = 'time'
+      if (type === '') {
+        this.coordSystem = 'time'
+        for (let item in this.seriesOptions) {
+          if (!this.seriesOptions[item].discrete && this.seriesOptions[item].type !== 'line' && this.seriesOptions[item].type !== 'area') this.seriesOptions[item].type = 'line'
+        }
+      }
       this.$nextTick(() => {
         this.showChart = true
       })
@@ -277,6 +308,46 @@ export default {
       this.$nextTick(() => {
         this.showChart = true
       })
+    },
+    chooseMarkers (opt) {
+      const actions = ['none', 'avg', 'min-max', 'all'].map((m) => {
+        return {
+          text: m,
+          color: 'blue',
+          onClick: () => { this.$set(opt, 'markers', m) }
+        }
+      })
+      this.$f7.actions.create({
+        buttons: [
+          [
+            { label: true, text: 'Markers' },
+            ...actions
+          ],
+          [
+            { color: 'red', text: 'Cancel', close: true }
+          ]
+        ]
+      }).open()
+    },
+    chooseAggregation (opt) {
+      const actions = this.aggregations.map((a) => {
+        return {
+          text: a.label,
+          color: 'blue',
+          onClick: () => { this.$set(opt, 'aggregation', a.value) }
+        }
+      })
+      this.$f7.actions.create({
+        buttons: [
+          [
+            { label: true, text: 'Aggregation Function' },
+            ...actions
+          ],
+          [
+            { color: 'red', text: 'Cancel', close: true }
+          ]
+        ]
+      }).open()
     },
     updateChart () {
       this.chartKey = this.$f7.utils.id()

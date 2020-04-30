@@ -32,6 +32,7 @@ export default {
 
     page.slots.series = analyzer.items.map((item) => {
       const seriesOptions = analyzer.seriesOptions[item.name]
+
       if (seriesOptions.discrete) {
         return {
           component: 'oh-time-series',
@@ -49,13 +50,30 @@ export default {
                 component: 'oh-mark-area',
                 config: {
                   name: item.name,
-                  item: item.name
+                  item: item.name,
+                  silent: seriesOptions.silent
                 }
               }
             ]
           }
         }
       }
+
+      const markLine = (seriesOptions.markers === 'avg' || seriesOptions.markers === 'all') ? {
+        data: [
+          { type: 'average' }
+        ]
+      } : undefined
+      const markPoint = (seriesOptions.markers === 'min-max' || seriesOptions.markers === 'all') ? {
+        label: {
+          backgroundColor: 'auto'
+        },
+        data: [
+          { type: 'min', name: 'min' },
+          { type: 'max', name: 'max' }
+        ]
+      } : undefined
+
       return {
         component: 'oh-time-series',
         config: {
@@ -65,7 +83,9 @@ export default {
           yAxisIndex: seriesOptions.valueAxisIndex,
           type: 'line',
           item: item.name,
-          areaStyle: seriesOptions.type === 'area' ? { opacity: 0.2 } : undefined
+          areaStyle: seriesOptions.type === 'area' ? { opacity: 0.2 } : undefined,
+          markLine,
+          markPoint
         }
       }
     })

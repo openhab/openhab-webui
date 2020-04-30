@@ -77,6 +77,22 @@ export default {
 
     page.slots.series = analyzer.items.map((item) => {
       const seriesOptions = analyzer.seriesOptions[item.name]
+
+      const markLine = (seriesOptions.markers === 'avg' || seriesOptions.markers === 'all') ? {
+        data: [
+          { type: 'average' }
+        ]
+      } : undefined
+      const markPoint = (seriesOptions.markers === 'min-max' || seriesOptions.markers === 'all') ? {
+        label: {
+          backgroundColor: 'auto'
+        },
+        data: [
+          { type: 'min', name: 'min' },
+          { type: 'max', name: 'max' }
+        ]
+      } : undefined
+
       return {
         component: 'oh-aggregate-series',
         config: {
@@ -88,8 +104,11 @@ export default {
           type: dimension2 ? 'heatmap' : (seriesOptions.type === 'bar') ? 'bar' : 'line',
           dimension1,
           dimension2,
+          markLine,
+          markPoint,
           transpose: analyzer.orientation === 'vertical' ? true : undefined,
-          areaStyle: seriesOptions.type === 'area' ? { opacity: 0.2 } : undefined
+          areaStyle: seriesOptions.type === 'area' ? { opacity: 0.2 } : undefined,
+          aggregationFunction: seriesOptions.aggregation
         }
       }
     })
