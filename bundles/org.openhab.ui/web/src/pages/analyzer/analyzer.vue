@@ -3,7 +3,7 @@
     <f7-page class="analyzer-content">
       <f7-navbar :title="titleDisplayText" back-link="Back">
         <f7-nav-right>
-          <f7-link @click="openControls">Controls</f7-link>
+          <f7-link v-if="$store.getters.isAdmin" icon-md="material:save">{{ $theme.md ? '' : 'Save' }}</f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-toolbar bottom>
@@ -24,9 +24,54 @@
           </div>
         </f7-toolbar>
         <f7-block style="margin-bottom: 6rem" v-show="controlsTab === 'series'">
-          <f7-list>
-            <item-picker :key="itemsPickerKey" title="Items" name="items-to-analyze" :value="itemNames" @input="updateItems" :multiple="true"></item-picker>
-          </f7-list>
+          <f7-row>
+            <f7-col :width="100">
+            </f7-col>
+            <f7-col :width="100" v-if="showChart">
+              <div class="card data-table">
+                <div class="card-header no-padding" style="min-height: auto">
+                  <f7-list style="width: 100%">
+                    <item-picker :key="itemsPickerKey" title="Items" name="items-to-analyze" :value="itemNames" @input="updateItems" :multiple="true"></item-picker>
+                  </f7-list>
+                  <!-- <div class="data-table-title">Options</div> -->
+                </div>
+                <div class="card-content">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th class="label-cell">Label</th>
+                        <th class="label-cell">Type</th>
+                        <th class="label-cell">Axis</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(options, item) in seriesOptions" :key="item">
+                        <td class="label-cell">
+                          <div class="input">
+                            <input type="text" v-model.lazy="options.name" style="min-width: 150px" />
+                          </div>
+                        </td>
+                        <td class="label-cell">
+                          <f7-segmented round>
+                            <f7-button v-if="!options.discrete && coordSystem === 'aggregate' && aggregateDimensions === 1" small outline style="width: 60px" :fill="options.type === 'bar'" @click="options.type = 'bar'">Bar</f7-button>
+                            <f7-button v-if="!options.discrete && coordSystem !== 'calendar' && aggregateDimensions === 1" small outline style="width: 60px" :fill="options.type === 'line'" @click="options.type = 'line'">Line</f7-button>
+                            <f7-button v-if="coordSystem === 'time' || (coordSystem === 'aggregate' && aggregateDimensions === 1)" small outline style="width: 60px" :fill="options.type === 'area'" @click="options.type = 'area'">Area</f7-button>
+                            <f7-button v-if="coordSystem === 'calendar' || (coordSystem === 'aggregate' && aggregateDimensions === 2)" small fill outline style="width: 80px">Heatmap</f7-button>
+                          </f7-segmented>
+                        </td>
+                        <td class="label-cell">
+                          <f7-segmented round v-if="!options.discrete">
+                            <f7-button v-for="(axis, $idx) in valueAxesOptions" :key="$idx" small outline style="width: 60px" :fill="options.valueAxisIndex === $idx">{{axis.unit}}</f7-button>
+                          </f7-segmented>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </f7-col>
+          </f7-row>
+
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-show="controlsTab === 'coords'">
           <f7-row>
@@ -56,7 +101,7 @@
               </f7-segmented>
             </f7-col>
             <f7-col width="100" class="margin-top display-flex justify-content-center">
-              <f7-link v-if="coordSystem !== 'time'" color="blue" icon-f7="crop_rotate" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'" />
+              <f7-button round raised fill color="black" v-if="coordSystem !== 'time'" icon-f7="crop_rotate" icon-size="20" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'">Rotate</f7-button>
             </f7-col>
           </f7-row>
         </f7-block>
@@ -108,6 +153,8 @@ export default {
       showChart: false,
       itemNames: [],
       items: null,
+      seriesOptions: {},
+      valueAxesOptions: {},
       orientation: (this.$device.desktop || this.$device.ipad) ? 'horizontal' : 'vertical',
       period: 'D',
       chartType: '',
@@ -137,9 +184,48 @@ export default {
       this.itemNames = itemNames
       const promises = itemNames.map((n) => this.$oh.api.get('/rest/items/' + n))
       Promise.all(promises).then((resp) => {
+        this.$set(this, 'items', [])
+        this.$set(this, 'valueAxesOptions', [])
+        resp.forEach((item) => {
+          this.items.push(item)
+
+          if (!this.seriesOptions[item.name]) {
+            this.initializeSeriesOptions(item)
+          }
+
+          // dynamically add value axes according to unit if determined
+          const seriesOptions = this.seriesOptions[item.name]
+          if (!seriesOptions.discrete && (seriesOptions.type === 'line' || seriesOptions.type === 'bar')) {
+            const unit = (item.transformedState && item.transformedState.split(' ').length === 2)
+              ? item.transformedState.split(' ')[1]
+              : (item.state.split(' ').length === 2)
+                ? item.state.split(' ')[1]
+                : (item.stateDescription && item.stateDescription.pattern && item.stateDescription.pattern.split(' ').length === 2)
+                  ? item.stateDescription.pattern.split(' ')[1]
+                  : undefined
+            let unitAxis = this.valueAxesOptions.findIndex((a) => a.unit === unit)
+            if (unitAxis >= 0) {
+              seriesOptions.valueAxisIndex = unitAxis
+            } else {
+              this.valueAxesOptions.push({ unit })
+              seriesOptions.valueAxisIndex = this.valueAxesOptions.length - 1
+            }
+          }
+        })
         this.$set(this, 'items', resp)
         this.showChart = true
       })
+    },
+    initializeSeriesOptions (item) {
+      let seriesOptions = {}
+      seriesOptions.name = item.label || item.name
+      seriesOptions.type = 'line'
+      seriesOptions.discrete = false
+      if ((item.type.indexOf('Number') !== 0 && item.type.indexOf('Dimmer') !== 0) || (item.stateDescription && item.stateDescription.options.length > 0)) seriesOptions.discrete = true
+      if (!seriesOptions.discrete && this.coordSystem === 'aggregate' && this.aggregateDimensions === 1) seriesOptions.type = 'bar'
+      if (!seriesOptions.discrete && (this.coordSystem === 'calendar' || (this.coordSystem === 'aggregate' && this.aggregateDimensions === 2))) seriesOptions.type = 'heatmap'
+
+      this.$set(this.seriesOptions, item.name, seriesOptions)
     },
     changeChartType (type) {
       this.showChart = false
@@ -152,7 +238,35 @@ export default {
     changeCoordSystem (coordSystem) {
       this.showChart = false
       this.coordSystem = coordSystem
-      if (this.coordSystem === 'calendar') this.chartType = 'month'
+      if (coordSystem !== 'aggregate') this.aggregateDimensions = 1
+      if (this.coordSystem === 'calendar') {
+        this.chartType = 'month'
+        for (let item in this.seriesOptions) {
+          if (!this.seriesOptions[item].discrete) this.seriesOptions[item].type = 'heatmap'
+        }
+      }
+      if (this.coordSystem === 'aggregate') {
+        for (let item in this.seriesOptions) {
+          if (!this.seriesOptions[item].discrete) this.seriesOptions[item].type = (this.aggregateDimensions === 2) ? 'heatmap' : 'bar'
+        }
+      }
+      if (this.coordSystem === 'time') {
+        for (let item in this.seriesOptions) {
+          if (!this.seriesOptions[item].discrete && this.seriesOptions[item].type !== 'line' && this.seriesOptions[item].type !== 'area') this.seriesOptions[item].type = 'line'
+        }
+      }
+      this.$nextTick(() => {
+        this.showChart = true
+      })
+    },
+    changeAggregateDimensions (dimensions) {
+      this.showChart = false
+      this.aggregateDimensions = dimensions
+      if (this.coordSystem === 'aggregate') {
+        for (let item in this.seriesOptions) {
+          if (!this.seriesOptions[item].discrete) this.seriesOptions[item].type = (this.aggregateDimensions === 2) ? 'heatmap' : 'bar'
+        }
+      }
       this.$nextTick(() => {
         this.showChart = true
       })
@@ -164,12 +278,8 @@ export default {
         this.showChart = true
       })
     },
-    changeAggregateDimensions (dimensions) {
-      this.showChart = false
-      this.aggregateDimensions = dimensions
-      this.$nextTick(() => {
-        this.showChart = true
-      })
+    updateChart () {
+      this.chartKey = this.$f7.utils.id()
     },
     openControls () {
       this.controlsOpened = true
@@ -195,11 +305,11 @@ export default {
       try {
         switch (this.coordSystem) {
           case 'time':
-            return ChartTime.getChartPage(this)
+            return ChartTime.getChartPage(this, this.seriesOptions)
           case 'aggregate':
-            return ChartAggregate.getChartPage(this)
+            return ChartAggregate.getChartPage(this, this.seriesOptions)
           case 'calendar':
-            return ChartCalendar.getChartPage(this)
+            return ChartCalendar.getChartPage(this, this.seriesOptions)
           default:
             throw new Error('Invalid coordinate system')
         }

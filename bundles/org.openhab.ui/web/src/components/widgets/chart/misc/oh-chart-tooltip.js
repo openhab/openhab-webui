@@ -21,7 +21,7 @@ export default {
         }
         if (!params[0] || !params[0].axisType) return
         if (params[0].axisType === 'xAxis.time') {
-          tooltip += `<div>${dayjs(params[0].axisValue).locale('de').format('llll')}</div>` // ('dd DD.MM.YYYY HH:mm:ss')
+          tooltip += `<div>${dayjs(params[0].axisValue).format('llll')}</div>` // ('dd DD.MM.YYYY HH:mm:ss')
         }
         params.forEach((s) => {
           if (s.seriesId) {

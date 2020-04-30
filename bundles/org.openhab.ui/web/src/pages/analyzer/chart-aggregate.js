@@ -14,7 +14,7 @@ export default {
 
     page.slots.grid = [{ component: 'oh-chart-grid', config: {} }]
 
-    const axis1 = {
+    const axis1 = [{
       component: 'oh-category-axis',
       config: {
         gridIndex: 0,
@@ -23,7 +23,7 @@ export default {
         monthFormat: 'short',
         weekdayFormat: 'short'
       }
-    }
+    }]
 
     const dimension1 = (analyzer.chartType === 'day') ? 'hour'
       : (analyzer.chartType === 'week') ? 'weekday'
@@ -46,7 +46,7 @@ export default {
           : (category2 === 'month') ? 'date'
             : undefined
 
-      axis2 = {
+      axis2 = [{
         component: 'oh-category-axis',
         config: {
           gridIndex: 0,
@@ -54,37 +54,42 @@ export default {
           monthFormat: 'short',
           weekdayFormat: 'short'
         }
-      }
+      }]
     } else {
-      axis2 = {
-        component: 'oh-value-axis',
-        config: {
-          gridIndex: 0
+      axis2 = analyzer.valueAxesOptions.map((a) => {
+        return {
+          component: 'oh-value-axis',
+          config: {
+            gridIndex: 0,
+            name: a.unit
+          }
         }
-      }
+      })
     }
 
     if (analyzer.orientation === 'vertical') {
-      page.slots.xAxis = [axis2]
-      page.slots.yAxis = [axis1]
+      page.slots.xAxis = axis2
+      page.slots.yAxis = axis1
     } else {
-      page.slots.xAxis = [axis1]
-      page.slots.yAxis = [axis2]
+      page.slots.xAxis = axis1
+      page.slots.yAxis = axis2
     }
 
     page.slots.series = analyzer.items.map((item) => {
+      const seriesOptions = analyzer.seriesOptions[item.name]
       return {
         component: 'oh-aggregate-series',
         config: {
-          name: item.label || item.name,
+          name: seriesOptions.name,
           item: item.name,
           gridIndex: 0,
-          xAxisIndex: 0,
-          yAxisIndex: 0,
-          type: dimension2 ? 'heatmap' : 'bar',
+          xAxisIndex: (analyzer.orientation === 'vertical' && !dimension2) ? seriesOptions.valueAxisIndex : 0,
+          yAxisIndex: (analyzer.orientation !== 'vertical' && !dimension2) ? seriesOptions.valueAxisIndex : 0,
+          type: dimension2 ? 'heatmap' : (seriesOptions.type === 'bar') ? 'bar' : 'line',
           dimension1,
           dimension2,
-          transpose: analyzer.orientation === 'vertical' ? true : undefined
+          transpose: analyzer.orientation === 'vertical' ? true : undefined,
+          areaStyle: seriesOptions.type === 'area' ? { opacity: 0.2 } : undefined
         }
       }
     })
