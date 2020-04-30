@@ -455,6 +455,77 @@ Import-Package: \\
           </executions>
         </plugin>
 
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless.version}</version>
+          <configuration>
+            <java>
+              <eclipse>
+                <file>openhab_codestyle.xml</file>
+                <version>4.13.0</version>
+              </eclipse>
+              <removeUnusedImports/>
+              <importOrder>
+                <file>openhab.importorder</file>
+              </importOrder>
+              <endWithNewline/>
+            </java>
+            <formats>
+              <format>
+                <!-- *.xml -->
+                <includes>
+                  <include>src/**/*.xml</include>
+                </includes>
+                <excludes>
+                  <exclude>**/pom.xml</exclude>
+                  <exclude>src/test/resources/**/*.xml</exclude>
+                </excludes>
+                <eclipseWtp>
+                  <type>XML</type>
+                  <files>
+                    <file>openhab_wst_xml_files.prefs</file>
+                  </files>
+                  <version>4.13.0</version>
+                </eclipseWtp>
+                <trimTrailingWhitespace/>
+                <endWithNewline/>
+              </format>
+              <format>
+                <!-- pom.xml -->
+                <includes>
+                  <include>pom.xml</include>
+                </includes>
+                <eclipseWtp>
+                  <type>XML</type>
+                  <files>
+                    <file>openhab_wst_pom_file.prefs</file>
+                  </files>
+                  <version>4.13.0</version>
+                </eclipseWtp>
+                <trimTrailingWhitespace/>
+                <endWithNewline/>
+              </format>
+            </formats>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.openhab.tools</groupId>
+              <artifactId>openhab-codestyle</artifactId>
+              <version>${sat.version}</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <id>codestyle_check</id>
+              <goals>
+                <goal>check</goal>
+              </goals>
+              <phase>initialize</phase>
+            </execution>
+          </executions>
+        </plugin>
+
       </plugins>
     </pluginManagement>
 
@@ -504,6 +575,11 @@ Import-Package: \\
       <plugin>
         <groupId>com.github.ekryd.sortpom</groupId>
         <artifactId>sortpom-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
       </plugin>
     </plugins>
     <extensions>
