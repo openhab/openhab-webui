@@ -76,7 +76,7 @@
                           <f7-link @click="chooseAggregation(options)">{{options.aggregation || 'average'}}</f7-link>
                         </td>
                         <td v-if="coordSystem === 'time'" class="label-cell">
-                          <f7-checkbox v-if="options.discrete" @change="(value) => $set(options, 'silent', value)"></f7-checkbox>
+                          <f7-checkbox v-if="options.discrete" @change="(evt) => $set(options, 'silent', evt.target.checked)"></f7-checkbox>
                           <span v-else>N/A</span>
                         </td>
                       </tr>
@@ -239,6 +239,11 @@ export default {
           }
         })
         this.$set(this, 'items', resp)
+        for (let item in this.seriesOptions) {
+          if (itemNames.indexOf(item) < 0) {
+            this.$delete(this.seriesOptions, item)
+          }
+        }
         this.showChart = true
       })
     },
@@ -250,6 +255,7 @@ export default {
       if ((item.type.indexOf('Number') !== 0 && item.type.indexOf('Dimmer') !== 0) || (item.stateDescription && item.stateDescription.options.length > 0)) seriesOptions.discrete = true
       if (!seriesOptions.discrete && this.coordSystem === 'aggregate' && this.aggregateDimensions === 1) seriesOptions.type = 'bar'
       if (!seriesOptions.discrete && (this.coordSystem === 'calendar' || (this.coordSystem === 'aggregate' && this.aggregateDimensions === 2))) seriesOptions.type = 'heatmap'
+      if (seriesOptions.discrete) seriesOptions.type = 'area'
 
       this.$set(this.seriesOptions, item.name, seriesOptions)
     },
