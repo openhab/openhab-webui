@@ -29,6 +29,15 @@ export default {
         }
       }
     })
+    if (page.slots.yAxis.length === 0) {
+      // add a default axis if none was found (for instance, only discrete values)
+      page.slots.yAxis.push({
+        component: 'oh-value-axis',
+        config: {
+          gridIndex: 0
+        }
+      })
+    }
 
     page.slots.series = analyzer.items.map((item) => {
       const seriesOptions = analyzer.seriesOptions[item.name]
