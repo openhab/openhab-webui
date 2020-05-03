@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar :title="(createMode) ? 'Create rule' : rule.name" back-link="Back" no-hairline>
-      <f7-nav-right>
+      <f7-nav-right v-if="isEditable">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
       </f7-nav-right>
@@ -49,49 +49,50 @@
             <f7-list inline-labels no-hairlines-md>
               <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" required validate
                             :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                            @input="rule.uid = $event.target.value" clear-button>
+                            @input="rule.uid = $event.target.value" :clear-button="createMode">
               </f7-list-input>
               <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" required validate
-                            @input="rule.name = $event.target.value" clear-button>
+                            :disabled="!isEditable" @input="rule.name = $event.target.value" :clear-button="isEditable">
               </f7-list-input>
               <f7-list-input label="Description" type="text" :value="rule.description"
-                            @input="rule.description = $event.target.value" clear-button>
+                            :disabled="!isEditable" @input="rule.description = $event.target.value" :clear-button="isEditable">
               </f7-list-input>
             </f7-list>
           </f7-col>
-          <f7-col class="text-align-right justify-content-flex-end">
+          <f7-block-footer v-if="!isEditable" class="no-margin padding-left"><f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable because it has been provisioned from a file.</f7-block-footer>
+          <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
             <div class="no-padding float-right">
               <f7-button @click="toggleModuleControls" small outline :fill="showModuleControls" sortable-toggle=".sortable" style="margin-top: -3px; margin-right: 5px"
                 color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">&nbsp;Reorder</f7-button>
             </div>
           </f7-col>
           <f7-col class="rule-modules" v-for="section in ['triggers', 'actions', 'conditions']" :key="section">
-            <f7-block-title>{{sectionLabels[section][0]}}</f7-block-title>
+            <f7-block-title v-if="isEditable || rule[section].length > 0">{{sectionLabels[section][0]}}</f7-block-title>
             <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
               <f7-list-item media
                   :title="mod.label || suggestedModuleTitle(mod, null, section)"
                   :footer="mod.description || suggestedModuleDescription(mod, null, section)"
                   v-for="mod in rule[section]" :key="mod.id"
-                  :link="!showModuleControls" @click.native="(ev) => editModule(ev, section, mod)" swipeout>
-                <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
+                  :link="isEditable && !showModuleControls" @click.native="(ev) => editModule(ev, section, mod)" swipeout>
+                <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
                 <f7-link slot="after" v-if="mod.type === 'script.ScriptAction'" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editScriptDirect(ev, mod)" tooltip="Edit script"></f7-link>
-                <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger'" icon-f7="calendar" color="gray" @click.native="(ev) => buildCronExpression(ev, mod)" tooltip="Build cron expression"></f7-link>
-                <f7-swipeout-actions right>
+                <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="calendar" color="gray" @click.native="(ev) => buildCronExpression(ev, mod)" tooltip="Build cron expression"></f7-link>
+                <f7-swipeout-actions right v-if="isEditable">
                   <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">Delete</f7-swipeout-button>
                 </f7-swipeout-actions>
               </f7-list-item>
             </f7-list>
-            <f7-list>
+            <f7-list v-if="isEditable">
               <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="sectionLabels[section][1]" @click="addModule(section)">
                 <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point"></f7-icon>
               </f7-list-item>
               <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
             </f7-list>
           </f7-col>
-          <f7-col>
+          <f7-col v-if="isEditable || rule.tags.length > 0">
             <f7-block-title>Tags</f7-block-title>
-            <semantics-picker :item="rule"></semantics-picker>
-            <tag-input :item="rule"></tag-input>
+            <semantics-picker v-if="isEditable" :item="rule"></semantics-picker>
+            <tag-input :item="rule" :disabled="!isEditable"></tag-input>
           </f7-col>
         </f7-block>
       </f7-tab>
@@ -196,7 +197,6 @@
 </style>
 
 <script>
-import cronstrue from 'cronstrue'
 import YAML from 'yaml'
 
 // import ConfigParameter from '@/components/config/config-parameter.vue'
@@ -208,7 +208,10 @@ import TagInput from '@/components/tags/tag-input.vue'
 const ScriptEditorPopup = () => import('@/components/config/controls/script-editor-popup.vue')
 import CronEditor from '@/components/config/controls/cronexpression-editor.vue'
 
+import ModuleDescriptionSuggestions from './module-description-suggestions'
+
 export default {
+  mixins: [ModuleDescriptionSuggestions],
   components: {
     ConfigSheet,
     SemanticsPicker,
@@ -305,6 +308,7 @@ export default {
       })
     },
     save (stay) {
+      if (!this.isEditable) return
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) {
           return
@@ -431,6 +435,7 @@ export default {
     },
     editModule (ev, section, mod) {
       if (this.showModuleControls) return
+      if (!this.isEditable) return
       let swipeoutElement = ev.target
       ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
@@ -444,6 +449,7 @@ export default {
     },
     deleteModule (ev, section, mod) {
       let swipeoutElement = ev.target
+      if (!this.isEditable) return
       ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
         swipeoutElement = swipeoutElement.parentElement
@@ -455,6 +461,7 @@ export default {
     },
     addModule (section) {
       if (this.showModuleControls) return
+      if (!this.isEditable) return
       let moduleId = 1
       for (; ['triggers', 'actions', 'conditions'].some((s) => this.rule[s].some((m) => m.id === moduleId.toString())); moduleId++);
       console.debug('new moduleId=' + moduleId)
@@ -510,7 +517,7 @@ export default {
     },
     codePopupClosed (value) {
       this.codeEditorOpened = false
-      this.currentModule.configuration.script = value
+      if (this.isEditable) this.currentModule.configuration.script = value
       this.currentModule = null
       this.currentModuleType = null
     },
@@ -527,6 +534,7 @@ export default {
       })
     },
     fromYaml () {
+      if (!this.isEditable) return
       try {
         const updatedModules = YAML.parse(this.ruleYaml)
         this.$set(this.rule, 'triggers', updatedModules.triggers)
@@ -537,85 +545,12 @@ export default {
         this.$f7.dialog.alert(e).open()
         return false
       }
-    },
-    suggestedModuleTitle (mod, moduleType, section) {
-      if (!moduleType) {
-        moduleType = this.moduleTypes[section].find((m) => m.uid === mod.type)
-        if (!moduleType) return 'Name'
-      }
-      const config = mod.configuration
-      switch (moduleType.uid) {
-        // triggers
-        case 'timer.TimeOfDayTrigger':
-          if (!config.time) return moduleType.label
-          return 'When the time is ' + config.time
-        case 'timer.GenericCronTrigger':
-          if (!config.cronExpression) return moduleType.label
-          try {
-            return cronstrue.toString(config.cronExpression, {
-              use24HourTimeFormat: true
-            })
-          } catch (err) {
-            return err.toString()
-          }
-        case 'core.ItemCommandTrigger':
-          if (!config.itemName || !config.command) return moduleType.label
-          return 'When ' + config.itemName + ' received command ' + config.command
-        case 'core.ItemStateUpdateTrigger':
-          if (!config.itemName) return moduleType.label
-          return 'When ' + config.itemName + ' was updated' +
-                        ((config.state) ? ' to ' + config.state : '')
-        case 'core.ItemStateChangeTrigger':
-          if (!config.itemName) return moduleType.label
-          return 'When ' + config.itemName + ' changed' +
-              ((config.previousState) ? ' from ' + config.previousState : '') +
-              ((config.state) ? ' to ' + config.state : '')
-        case 'core.ChannelEventTrigger':
-          if (!config.channelUID) return moduleType.label
-          return 'When channel ' + config.channelUID + ' was triggered'
-        // actions
-        case 'core.ItemCommandAction':
-          if (!config.itemName || !config.command) return moduleType.label
-          return 'Send command ' + config.command + ' to ' + config.itemName
-        case 'media.SayAction':
-          if (!config.text) return moduleType.label
-          return 'Say "' + config.text + '"'
-        case 'media.PlaySound':
-          if (!config.sound) return moduleType.label
-          return 'Say ' + config.sound
-        // conditions
-        case 'timer.DayOfWeekCondition':
-          if (!config.days || !config.days.join || !config.days.length) return moduleType.label
-          return 'If the day is ' + config.days.join(',')
-        case 'core.TimeOfDayCondition':
-          if (!config.startTime || !config.endTime) return moduleType.label
-          return 'If the time is between ' + config.startTime + ' and ' + config.endTime
-        case 'core.ItemStateCondition':
-          if (!config.itemName || !config.operator || !config.state) return moduleType.label
-          return 'If ' + config.itemName + ' ' + config.operator + ' ' + config.state
-
-        default:
-          return moduleType.label
-      }
-    },
-    suggestedModuleDescription (mod, moduleType, section) {
-      if (!moduleType) {
-        moduleType = this.moduleTypes[section].find((m) => m.uid === mod.type)
-        if (!moduleType) return 'Description'
-      }
-      const config = mod.configuration
-      switch (moduleType.uid) {
-        // triggers
-        case 'timer.GenericCronTrigger':
-          if (!config.cronExpression) return moduleType.description
-          return 'Cron: ' + config.cronExpression
-
-        default:
-          return moduleType.description
-      }
     }
   },
   computed: {
+    isEditable () {
+      return this.rule && this.rule.editable !== false
+    },
     currentSuggestedModuleTitle () {
       if (!this.currentModule || !this.currentModuleType) return 'Title'
       return this.suggestedModuleTitle(this.currentModule, this.currentModuleType)
