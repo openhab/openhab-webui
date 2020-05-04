@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Yannick Schaus - Initial contribution
  */
-@Component(immediate = true, name = "org.openhab.ui")
+@Component(immediate = true, name = "org.openhab.ui", property = { "httpContext.id:String=oh-ui-http-ctx" })
 public class UIService implements HttpContext {
 
     private static final String APP_BASE = "app";
