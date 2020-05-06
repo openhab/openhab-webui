@@ -19,5 +19,11 @@ package org.openhab.ui.cometvisu.internal;
  *
  */
 public interface IConfigChangeListener {
+
+    /**
+     * Called when an internal configuration setting of the CometVisu has changed
+     *
+     * @param key the key of the configuration option that has been changed
+     */
     public void handleConfigChange(String key);
 }

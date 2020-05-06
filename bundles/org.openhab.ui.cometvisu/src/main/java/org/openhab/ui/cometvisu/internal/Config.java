@@ -34,7 +34,7 @@ import org.openhab.core.types.State;
  *
  */
 public class Config {
-    private static ArrayList<IConfigChangeListener> listeners = new ArrayList<IConfigChangeListener>();
+    private static ArrayList<IConfigChangeListener> listeners = new ArrayList<>();
 
     public static void addConfigChangeListener(IConfigChangeListener listener) {
         listeners.add(listener);
@@ -47,7 +47,7 @@ public class Config {
     public static void setCometVisuFolder(String folder) {
         if (!Config.cometvisuWebfolder.equals(folder)) {
             Config.cometvisuWebfolder = folder;
-            Config.triggerConfigChange("cometvisuWebfolder");
+            Config.triggerConfigChange(COMETVISU_WEBFOLDER_PROPERTY);
         }
     }
 

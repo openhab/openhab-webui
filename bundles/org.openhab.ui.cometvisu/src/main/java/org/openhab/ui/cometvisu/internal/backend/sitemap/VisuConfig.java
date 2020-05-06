@@ -71,8 +71,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import com.sun.xml.bind.v2.ContextFactory;
-
 /**
  * Generates a CometVisu visu_config.xml settings file from an openHAB sitemap
  * the result of this automatic configuration should be taken as a basis for
@@ -149,8 +147,7 @@ public class VisuConfig {
             Map<String, Object> properties = new HashMap<>();
             Class<?>[] classes = new Class[1];
             classes[0] = bean.getClass();
-            JAXBContext jaxbContext = ContextFactory.createContext(classes, properties);
-            // JAXBContext.newInstance(bean.getClass());
+            JAXBContext jaxbContext = JAXBContext.newInstance(bean.getClass());
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = (xsdSchema == null || xsdSchema.trim().length() == 0) ? null
                     : schemaFactory.newSchema(new File(xsdSchema));

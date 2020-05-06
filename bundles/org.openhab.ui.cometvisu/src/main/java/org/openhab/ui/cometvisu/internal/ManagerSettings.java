@@ -188,7 +188,7 @@ public class ManagerSettings implements IConfigChangeListener {
 
     @Override
     public void handleConfigChange(String key) {
-        if (key.equals("cometvisuWebfolder")) {
+        if (key.equals(Config.COMETVISU_WEBFOLDER_PROPERTY)) {
             this.baseDir = new File(Config.cometvisuWebfolder);
         } else if (key.equals(Config.COMETVISU_MOUNTPOINTS)) {
             this.refreshMounts();

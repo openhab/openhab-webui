@@ -61,6 +61,8 @@ import io.swagger.annotations.ApiResponses;
 public class HiddenConfigResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(HiddenConfigResource.class);
     private Pattern dataPattern = Pattern.compile("\\$data\\s*=\\s*'(.+)';", Pattern.DOTALL | Pattern.MULTILINE);
+    private Pattern sectionPattern = Pattern.compile("\\s*(//)?\'([^']+)\'\\s*=>\\s*array\\s*\\(([^\\)]+)\\),?");
+    private Pattern optionPattern = Pattern.compile("\'([^']+)\'\\s*=>\\s*\\'([^']+)\\',?");
 
     @POST
     @Path("/hidden/{section}/{key}")
@@ -248,8 +250,7 @@ public class HiddenConfigResource implements RESTResource {
 
     private HiddenConfig loadPhpConfig(HiddenConfig config, List<String> content) {
         boolean inHidden = false;
-        Pattern sectionPattern = Pattern.compile("\\s*(//)?\'([^']+)\'\\s*=>\\s*array\\s*\\(([^\\)]+)\\),?");
-        Pattern optionPattern = Pattern.compile("\'([^']+)\'\\s*=>\\s*\\'([^']+)\\',?");
+
         for (final String line : content) {
             if (!inHidden) {
                 if (line.equalsIgnoreCase("$hidden = array(")) {
