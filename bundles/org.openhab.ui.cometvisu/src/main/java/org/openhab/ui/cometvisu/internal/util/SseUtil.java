@@ -15,8 +15,9 @@ package org.openhab.ui.cometvisu.internal.util;
 import java.util.Date;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.sse.OutboundSseEvent;
 
-import org.glassfish.jersey.media.sse.OutboundEvent;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.ui.cometvisu.internal.StateBeanMessageBodyWriter;
 import org.openhab.ui.cometvisu.internal.backend.model.StateBean;
 
@@ -24,8 +25,9 @@ import org.openhab.ui.cometvisu.internal.backend.model.StateBean;
  * Utility class containing helper methods for the SSE implementation.
  *
  * @author Tobias Bräutigam - Initial Contribution and API
- *
+ * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
  */
+@NonNullByDefault
 public class SseUtil {
 
     /**
@@ -33,29 +35,23 @@ public class SseUtil {
      * {@link StateBean} created for the given eventType, objectIdentifier,
      * eventObject.
      *
-     * @param eventType
-     *            - the event type for the event
-     * @param objectIdentifier
-     *            - the identifier for the main event object
-     * @param eventObject
-     *            - the eventObject to be included
-     * @return a new OutboundEvent.
+     * @param eventType the event type for the event
+     * @param objectIdentifier the identifier for the main event object
+     * @param eventObject the eventObject to be included
+     * @return a new OutboundSseEvent
      */
-    public static OutboundEvent buildEvent(Object eventObject) {
-        OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
+    public static OutboundSseEvent buildEvent(OutboundSseEvent.Builder eventBuilder, Object eventObject) {
         StateBeanMessageBodyWriter writer = new StateBeanMessageBodyWriter();
         Date date = new Date();
-        OutboundEvent event = eventBuilder.mediaType(MediaType.APPLICATION_JSON_TYPE)
-                .data(writer.serialize(eventObject)).id(String.valueOf(date.getTime())).build();
-
-        return event;
+        return eventBuilder.mediaType(MediaType.APPLICATION_JSON_TYPE).data(writer.serialize(eventObject))
+                .id(String.valueOf(date.getTime())).build();
     }
 
     /**
      * Used to mark our current thread(request processing) that SSE blocking
      * should be enabled.
      */
-    private static ThreadLocal<Boolean> blockingSseEnabled = new ThreadLocal<Boolean>() {
+    private static ThreadLocal<Boolean> blockingSseEnabled = new ThreadLocal<>() {
         @Override
         protected Boolean initialValue() {
             return false;

@@ -30,6 +30,10 @@ public class StateEventListener implements StateChangeListener {
 
     private EventBroadcaster eventBroadcaster;
 
+    public StateEventListener(EventBroadcaster eventBroadcaster) {
+        this.eventBroadcaster = eventBroadcaster;
+    }
+
     public void setEventBroadcaster(EventBroadcaster eventBroadcaster) {
         this.eventBroadcaster = eventBroadcaster;
     }

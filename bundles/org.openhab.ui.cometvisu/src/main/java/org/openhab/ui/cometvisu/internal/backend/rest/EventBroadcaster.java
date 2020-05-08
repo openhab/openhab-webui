@@ -14,6 +14,8 @@ package org.openhab.ui.cometvisu.internal.backend.rest;
 
 import java.util.Map;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.items.Item;
 import org.openhab.core.types.State;
 
@@ -22,6 +24,7 @@ import org.openhab.core.types.State;
  *
  * @author Tobias Bräutigam - Initial contribution
  */
+@NonNullByDefault
 public interface EventBroadcaster {
     /**
      * Broadcasts an event described by the given parameters to all currently
@@ -65,5 +68,5 @@ public interface EventBroadcaster {
      *            - the item that is listened to
      * @return
      */
-    public Map<String, Class<? extends State>> getClientItems(Item item);
+    public Map<String, @Nullable Class<? extends State>> getClientItems(Item item);
 }
