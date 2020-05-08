@@ -40,5 +40,4 @@ public class CreateRuleSkill extends AbstractItemIntentInterpreter {
         interpretation.setCard(card);
         return interpretation;
     }
-
 }

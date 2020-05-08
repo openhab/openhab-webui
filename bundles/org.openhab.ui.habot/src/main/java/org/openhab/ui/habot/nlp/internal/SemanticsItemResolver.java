@@ -39,8 +39,6 @@ import org.openhab.ui.habot.nlp.ItemResolver;
 import org.openhab.ui.habot.nlp.UnsupportedLanguageException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class resolves items and provide name samples using Eclipse SmartHome's semantics feature.
@@ -199,5 +197,4 @@ public class SemanticsItemResolver implements ItemResolver {
     public void unsetSemanticsService(SemanticsService semanticsService) {
         this.semanticsService = null;
     }
-
 }

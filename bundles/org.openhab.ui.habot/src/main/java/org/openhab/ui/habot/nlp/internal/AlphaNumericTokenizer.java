@@ -49,5 +49,4 @@ public class AlphaNumericTokenizer extends SimpleTokenizer {
 
         return filteredTokens.toArray(Span[]::new);
     }
-
 }

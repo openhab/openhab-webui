@@ -44,5 +44,4 @@ public class HomeBuilderTile implements Tile {
     public String getImageUrl() {
         return "../homebuilder/tile.png";
     }
-
 }

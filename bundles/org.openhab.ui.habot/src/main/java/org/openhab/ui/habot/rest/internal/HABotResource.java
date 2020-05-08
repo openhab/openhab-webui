@@ -37,10 +37,10 @@ import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.openhab.core.auth.Role;
-import org.openhab.core.voice.VoiceManager;
-import org.openhab.core.voice.text.InterpretationException;
 import org.openhab.core.io.rest.LocaleService;
 import org.openhab.core.io.rest.RESTResource;
+import org.openhab.core.voice.VoiceManager;
+import org.openhab.core.voice.text.InterpretationException;
 import org.openhab.ui.habot.card.Card;
 import org.openhab.ui.habot.card.internal.CardRegistry;
 import org.openhab.ui.habot.nlp.ChatReply;

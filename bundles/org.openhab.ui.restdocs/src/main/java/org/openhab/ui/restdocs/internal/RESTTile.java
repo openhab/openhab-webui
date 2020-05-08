@@ -50,5 +50,4 @@ public class RESTTile implements Tile {
     public String getImageUrl() {
         return "../doc/images/tile.png";
     }
-
 }

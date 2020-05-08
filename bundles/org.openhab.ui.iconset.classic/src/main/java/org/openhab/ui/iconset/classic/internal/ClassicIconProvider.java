@@ -95,5 +95,4 @@ public class ClassicIconProvider extends AbstractResourceIconProvider implements
     protected void unsetTranslationProvider(TranslationProvider i18nProvider) {
         super.unsetTranslationProvider(i18nProvider);
     }
-
 }

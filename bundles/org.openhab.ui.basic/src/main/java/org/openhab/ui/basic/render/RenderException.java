@@ -25,5 +25,4 @@ public class RenderException extends Exception {
     public RenderException(String msg) {
         super(msg);
     }
-
 }

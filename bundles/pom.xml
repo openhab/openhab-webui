@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -25,6 +27,30 @@
     <module>org.openhab.ui.iconset.classic</module>
     <module>org.openhab.ui.restdocs</module>
   </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.openhab.core.bom</groupId>
+      <artifactId>org.openhab.core.bom.compile</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openhab.core.bom</groupId>
+      <artifactId>org.openhab.core.bom.compile-model</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openhab.core.bom</groupId>
+      <artifactId>org.openhab.core.bom.test</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
   <build>
     <pluginManagement>
@@ -60,29 +86,5 @@
       </plugin>
     </plugins>
   </build>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.openhab.core.bom</groupId>
-      <artifactId>org.openhab.core.bom.compile</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openhab.core.bom</groupId>
-      <artifactId>org.openhab.core.bom.compile-model</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openhab.core.bom</groupId>
-      <artifactId>org.openhab.core.bom.test</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 
 </project>

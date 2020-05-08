@@ -19,12 +19,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openhab.core.items.Item;
+import org.openhab.core.model.persistence.extensions.PersistenceExtensions;
 import org.openhab.core.persistence.HistoricItem;
 import org.openhab.core.transform.TransformationException;
 import org.openhab.core.transform.TransformationHelper;
 import org.openhab.core.types.State;
 import org.openhab.core.types.StateDescription;
-import org.openhab.core.model.persistence.extensions.PersistenceExtensions;
 import org.openhab.ui.habot.card.Card;
 import org.openhab.ui.habot.card.Component;
 import org.openhab.ui.habot.card.internal.CardRegistry;
@@ -164,5 +164,4 @@ public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
     protected void unsetCardRegistry(CardRegistry cardRegistry) {
         this.cardRegistry = null;
     }
-
 }

@@ -41,7 +41,7 @@ public class HABotHttpContext implements HttpContext {
      * Constructs an {@link HABotHttpContext} with will another {@link HttpContext} as a base.
      *
      * @param defaultHttpContext the base {@link HttpContext} - use {@link HttpService#createDefaultHttpContext()} to
-     *                               create a default one
+     *            create a default one
      */
     public HABotHttpContext(HttpContext defaultHttpContext, String resourcesBase, boolean useGzipCompression) {
         this.defaultHttpContext = defaultHttpContext;
@@ -96,5 +96,4 @@ public class HABotHttpContext implements HttpContext {
 
         return false;
     }
-
 }

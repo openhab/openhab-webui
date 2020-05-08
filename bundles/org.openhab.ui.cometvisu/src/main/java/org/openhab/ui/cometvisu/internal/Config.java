@@ -109,5 +109,4 @@ public class Config {
         itemTypeMapper.put("color", HSBType.class);
         itemTypeMapper.put("location", PointType.class);
     }
-
 }

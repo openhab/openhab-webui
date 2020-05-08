@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -27,6 +29,12 @@
       <url>https://www.eclipse.org/legal/epl-2.0/</url>
     </license>
   </licenses>
+
+  <modules>
+    <module>bom</module>
+    <module>bundles</module>
+    <module>features</module>
+  </modules>
 
   <scm>
     <connection>scm:git:https://github.com/openhab/openhab-webui.git</connection>
@@ -61,7 +69,8 @@
 
     <bnd.version>4.3.0</bnd.version>
     <karaf.version>4.2.7</karaf.version>
-    <sat.version>0.9.0</sat.version>
+    <sat.version>0.10.0</sat.version>
+    <spotless.version>1.30.0</spotless.version>
   </properties>
 
   <build>
@@ -76,8 +85,7 @@
           <artifactId>bnd-maven-plugin</artifactId>
           <version>${bnd.version}</version>
           <configuration>
-            <bnd><![CDATA[
-Bundle-SymbolicName: ${project.artifactId}
+            <bnd><![CDATA[Bundle-SymbolicName: ${project.artifactId}
 Automatic-Module-Name: ${def;bsn}
 Import-Package: \\
   io.swagger.annotations.*;resolution:=optional,\\
@@ -93,11 +101,10 @@ Import-Package: \\
   org.openhab.*
 -sources: false
 -contract: *
--includeresource: -${.}/NOTICE, -${.}/*.xsd
-]]></bnd>
-<!--
--dsannotations-options: norequirements
--->
+-includeresource: -${.}/NOTICE, -${.}/*.xsd]]></bnd>
+            <!--
+              -dsannotations-options: norequirements
+            -->
             <!-- Bundle-SymbolicName: ${project.groupId}.${project.artifactId} -->
           </configuration>
           <executions>
@@ -153,8 +160,7 @@ Import-Package: \\
           <version>${bnd.version}</version>
           <configuration>
             <failOnChanges>false</failOnChanges>
-            <bndruns>
-            </bndruns>
+            <bndruns></bndruns>
           </configuration>
           <executions>
             <execution>
@@ -384,7 +390,7 @@ Import-Package: \\
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore></ignore>
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -397,13 +403,14 @@ Import-Package: \\
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore></ignore>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>
           </configuration>
         </plugin>
+
         <plugin>
           <groupId>org.openhab.tools.sat</groupId>
           <artifactId>sat-plugin</artifactId>
@@ -425,6 +432,101 @@ Import-Package: \\
             </execution>
           </executions>
         </plugin>
+
+        <plugin>
+          <groupId>com.github.ekryd.sortpom</groupId>
+          <artifactId>sortpom-maven-plugin</artifactId>
+          <version>2.10.0</version>
+          <configuration>
+            <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
+            <createBackupFile>false</createBackupFile>
+            <keepBlankLines>true</keepBlankLines>
+          </configuration>
+          <executions>
+            <execution>
+              <id>sortpom-verify</id>
+              <goals>
+                <goal>verify</goal>
+              </goals>
+              <phase>verify</phase>
+              <configuration>
+                <verifyFail>Stop</verifyFail>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless.version}</version>
+          <configuration>
+            <java>
+              <eclipse>
+                <file>openhab_codestyle.xml</file>
+                <version>4.13.0</version>
+              </eclipse>
+              <removeUnusedImports/>
+              <importOrder>
+                <file>openhab.importorder</file>
+              </importOrder>
+              <endWithNewline/>
+            </java>
+            <formats>
+              <format>
+                <!-- *.xml -->
+                <includes>
+                  <include>src/**/*.xml</include>
+                </includes>
+                <excludes>
+                  <exclude>**/pom.xml</exclude>
+                  <exclude>src/test/resources/**/*.xml</exclude>
+                </excludes>
+                <eclipseWtp>
+                  <type>XML</type>
+                  <files>
+                    <file>openhab_wst_xml_files.prefs</file>
+                  </files>
+                  <version>4.13.0</version>
+                </eclipseWtp>
+                <trimTrailingWhitespace/>
+                <endWithNewline/>
+              </format>
+              <format>
+                <!-- pom.xml -->
+                <includes>
+                  <include>pom.xml</include>
+                </includes>
+                <eclipseWtp>
+                  <type>XML</type>
+                  <files>
+                    <file>openhab_wst_pom_file.prefs</file>
+                  </files>
+                  <version>4.13.0</version>
+                </eclipseWtp>
+                <trimTrailingWhitespace/>
+                <endWithNewline/>
+              </format>
+            </formats>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.openhab.tools</groupId>
+              <artifactId>openhab-codestyle</artifactId>
+              <version>${sat.version}</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <id>codestyle_check</id>
+              <goals>
+                <goal>check</goal>
+              </goals>
+              <phase>initialize</phase>
+            </execution>
+          </executions>
+        </plugin>
+
       </plugins>
     </pluginManagement>
 
@@ -470,13 +572,23 @@ Import-Package: \\
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>com.github.ekryd.sortpom</groupId>
+        <artifactId>sortpom-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+      </plugin>
     </plugins>
     <extensions>
-       <extension>
-          <groupId>org.openhab.tools.sat</groupId>
-          <artifactId>sat-extension</artifactId>
-          <version>${sat.version}</version>
-       </extension>
+      <extension>
+        <groupId>org.openhab.tools.sat</groupId>
+        <artifactId>sat-extension</artifactId>
+        <version>${sat.version}</version>
+      </extension>
     </extensions>
   </build>
 
@@ -523,11 +635,5 @@ Import-Package: \\
       </build>
     </profile>
   </profiles>
-
-  <modules>
-    <module>bom</module>
-    <module>bundles</module>
-    <module>features</module>
-  </modules>
 
 </project>

@@ -169,5 +169,4 @@ public class ChatReply {
     public void setCard(Card card) {
         this.card = card;
     }
-
 }

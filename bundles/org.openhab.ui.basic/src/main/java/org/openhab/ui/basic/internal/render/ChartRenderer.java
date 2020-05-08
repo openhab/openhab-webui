@@ -146,5 +146,4 @@ public class ChartRenderer extends AbstractWidgetRenderer {
     protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
         super.unsetItemUIRegistry(ItemUIRegistry);
     }
-
 }

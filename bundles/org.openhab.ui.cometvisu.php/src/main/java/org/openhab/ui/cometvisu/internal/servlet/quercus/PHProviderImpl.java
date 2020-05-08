@@ -339,5 +339,4 @@ public class PHProviderImpl implements PHProvider {
             throw new QuercusRuntimeException(L.l("Quercus requires Servlet API 2.4+."));
         }
     }
-
 }

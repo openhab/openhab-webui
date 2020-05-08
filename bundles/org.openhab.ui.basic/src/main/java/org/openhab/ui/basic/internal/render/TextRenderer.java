@@ -78,5 +78,4 @@ public class TextRenderer extends AbstractWidgetRenderer {
     protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
         super.unsetItemUIRegistry(ItemUIRegistry);
     }
-
 }

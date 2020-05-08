@@ -58,5 +58,4 @@ public class SwaggerService {
     protected void deactivate() {
         httpService.unregister(ALIAS);
     }
-
 }

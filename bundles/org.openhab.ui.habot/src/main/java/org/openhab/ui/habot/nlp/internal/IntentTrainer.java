@@ -60,7 +60,7 @@ public class IntentTrainer {
      * Trains a new IntentTrainer instance with intents sourced from a collection of skills for the specified language
      *
      * @param language the ISO-639 language code
-     * @param skills   the collection of skills providing training data
+     * @param skills the collection of skills providing training data
      * @throws Exception
      */
     public IntentTrainer(String language, Collection<Skill> skills) throws Exception {
@@ -71,10 +71,10 @@ public class IntentTrainer {
      * Trains a new IntentTrainer instance with intents sourced from a collection of skills for the specified language,
      * and additional name samples
      *
-     * @param language              the ISO-639 language code
-     * @param skills                the collection of skills providing training data
+     * @param language the ISO-639 language code
+     * @param skills the collection of skills providing training data
      * @param additionalNameSamples additional user-provided name samples to train the token name finder
-     * @param tokenizerId           tokenizer to use ("alphanumeric" or "whitespace")
+     * @param tokenizerId tokenizer to use ("alphanumeric" or "whitespace")
      * @throws Exception
      */
     public IntentTrainer(String language, Collection<Skill> skills, InputStream additionalNameSamples,
@@ -114,8 +114,8 @@ public class IntentTrainer {
         trainingParams.put(AbstractTrainer.VERBOSE_PARAM, false);
 
         /* train the categorizer! */
-        DoccatModel doccatModel = DocumentCategorizerME.train(language, combinedDocumentSampleStream,
-                trainingParams, new DoccatFactory());
+        DoccatModel doccatModel = DocumentCategorizerME.train(language, combinedDocumentSampleStream, trainingParams,
+                new DoccatFactory());
         combinedDocumentSampleStream.close();
 
         List<TokenNameFinderModel> tokenNameFinderModels = new ArrayList<TokenNameFinderModel>();
@@ -196,5 +196,4 @@ public class IntentTrainer {
         String[] tokens = this.tokenizer.tokenize(query.toLowerCase());
         return categorizer.sortedScoreMap(tokens);
     }
-
 }

@@ -34,5 +34,4 @@ public class SchemaPages extends Pages {
     public void setNoNamespaceSchemaLocation(String noNamespaceSchemaLocation) {
         this.noNamespaceSchemaLocation = noNamespaceSchemaLocation;
     }
-
 }

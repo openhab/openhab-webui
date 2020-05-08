@@ -162,5 +162,4 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
 
         return item;
     }
-
 }

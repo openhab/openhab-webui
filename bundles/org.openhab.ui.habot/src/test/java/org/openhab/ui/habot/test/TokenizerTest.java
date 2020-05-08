@@ -85,5 +85,4 @@ public class TokenizerTest {
         assertEquals("nell", actual[5]);
         assertEquals("attico", actual[6]);
     }
-
 }

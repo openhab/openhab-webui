@@ -5,8 +5,8 @@
     <!-- These suppressions define which files to be suppressed for which checks. -->
     <suppress files=".+[\\/]pom\.xml" checks="OnlyTabIndentationCheck"/>
     <suppress files=".+[\\/]gen[\\/].+\.java" checks="AuthorTagCheck"/>
-    <suppress files=".+[\\/]internal[\\/].+\.java" checks="JavadocType|JavadocVariable|JavadocMethod|JavadocFilterCheck"/>
-    <suppress files=".+Impl\.java" checks="JavadocType|JavadocVariable|JavadocMethod|JavadocFilterCheck"/>
+    <suppress files=".+[\\/]internal[\\/].+\.java" checks="JavadocType|JavadocVariable|JavadocMethod|MissingJavadocFilterCheck"/>
+    <suppress files=".+Impl\.java" checks="JavadocType|JavadocVariable|JavadocMethod|MissingJavadocFilterCheck"/>
     <suppress files=".+.test[\\/].+" checks="RequireBundleCheck"/>
 
     <!-- The CometVisu UI contains files in the resources folder that are used only during the build -->

@@ -222,7 +222,6 @@ public class FsUtil {
             logger.error("{}", e1.getMessage());
             throw new FileOperationException("error reading content", Status.METHOD_NOT_ALLOWED);
         }
-
     }
 
     public void saveFile(File file, String content, String hash) throws FileOperationException {
@@ -304,5 +303,4 @@ public class FsUtil {
     public static Response createErrorResponse(Status status, String message) {
         return Response.status(status).entity(new ErrorResponse(message)).type(MediaType.APPLICATION_JSON).build();
     }
-
 }

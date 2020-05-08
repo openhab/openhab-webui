@@ -29,5 +29,4 @@ public class CDataStatus extends Status {
 
     @XmlJavaTypeAdapter(AdapterCDATA.class)
     protected String value;
-
 }

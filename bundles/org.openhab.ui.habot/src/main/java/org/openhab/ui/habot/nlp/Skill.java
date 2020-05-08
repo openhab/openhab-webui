@@ -44,7 +44,7 @@ public interface Skill {
     /**
      * Interprets the recognized intent.
      *
-     * @param intent   the intent to interpret
+     * @param intent the intent to interpret
      * @param language the language of the query (ISO-639 code)
      * @return the {@link IntentInterpretation} containing the results of the interpretation
      */

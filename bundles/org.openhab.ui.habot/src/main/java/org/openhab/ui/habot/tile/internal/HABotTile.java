@@ -90,5 +90,4 @@ public class HABotTile implements Tile {
     protected void unsetHttpService(HttpService httpService) {
         this.httpService = null;
     }
-
 }

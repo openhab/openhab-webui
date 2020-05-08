@@ -31,5 +31,4 @@ public class AdapterCDATA extends XmlAdapter<String, String> {
     public String marshal(String v) throws Exception {
         return v;
     }
-
 }

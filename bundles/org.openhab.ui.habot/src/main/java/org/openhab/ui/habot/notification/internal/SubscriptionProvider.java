@@ -45,5 +45,4 @@ public class SubscriptionProvider extends DefaultAbstractManagedProvider<Subscri
     protected String keyToString(Keys key) {
         return String.format("%s.%s", key.p256dh, key.auth);
     }
-
 }

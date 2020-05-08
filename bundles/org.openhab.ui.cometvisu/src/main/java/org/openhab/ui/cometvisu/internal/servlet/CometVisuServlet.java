@@ -1189,6 +1189,5 @@ public class CometVisuServlet extends HttpServlet {
             this.length = end - start + 1;
             this.total = total;
         }
-
     }
 }
