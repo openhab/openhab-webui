@@ -12,6 +12,7 @@
  */
 package org.openhab.ui.cometvisu.internal;
 
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.sse.SseFeature;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -35,6 +36,8 @@ public class CvActivator implements BundleActivator {
 
     private ServiceRegistration<?> blockingAsyncFeatureRegistration;
 
+    private ServiceRegistration<?> multiPartRegistration;
+
     /**
      * Called whenever the OSGi framework starts our bundle
      */
@@ -46,9 +49,16 @@ public class CvActivator implements BundleActivator {
         if (bc.getServiceReference(featureName) == null) {
             sseFeatureRegistration = bc.registerService(featureName, new SseFeature(), null);
 
-            logger.debug("SSE API - SseFeature registered.");
+            logger.debug("CometVisu - SseFeature registered.");
         }
-        logger.debug("SSE API has been started.");
+        featureName = MultiPartFeature.class.getName();
+        if (bc.getServiceReference(featureName) == null) {
+            multiPartRegistration = bc.registerService(featureName, new MultiPartFeature(), null);
+
+            logger.debug("CometVisu - MultiPartFeature registered.");
+        }
+
+        logger.debug("CometVisu has been started.");
     }
 
     /**
@@ -60,15 +70,20 @@ public class CvActivator implements BundleActivator {
 
         if (sseFeatureRegistration != null) {
             sseFeatureRegistration.unregister();
-            logger.debug("SseFeature unregistered.");
+            logger.debug("CometVisu - SseFeature unregistered.");
         }
 
         if (blockingAsyncFeatureRegistration != null) {
             blockingAsyncFeatureRegistration.unregister();
-            logger.debug("BlockingAsyncFeature unregistered.");
+            logger.debug("CometVisu - BlockingAsyncFeature unregistered.");
         }
 
-        logger.debug("SSE API has been stopped.");
+        if (multiPartRegistration != null) {
+            multiPartRegistration.unregister();
+            logger.debug("CometVisu - MultiPartFeature unregistered.");
+        }
+
+        logger.debug("CometVisu has been stopped.");
     }
 
     /**

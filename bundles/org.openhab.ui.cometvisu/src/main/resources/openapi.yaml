@@ -1,0 +1,502 @@
+openapi: 3.0.1
+info:
+  description: ''
+  version: 1.0.0
+  title: CometVisu Manager backend
+tags:
+  - name: fs
+    description: Filesystem handling
+  - name: config
+    description: Configuration and Settings
+  - name: dataprovider
+    description: Dataproviders for config editor.
+paths:
+  '/fs/check':
+    get:
+      tags:
+        - fs
+      summary: Check filesystem environment (access rights, etc)
+      operationId: checkEnvironment
+      x-exegesis-controller: FsController
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckResponse'
+  '/fs/move':
+    put:
+      tags:
+        - fs
+      summary: Move folder or file to a new place
+      parameters:
+        - name: src
+          in: query
+          description: current path of the filesystem entry
+          required: true
+          schema:
+            type: string
+        - name: target
+          in: query
+          description: new path of the filesystem entry
+          required: true
+          schema:
+            type: string
+      operationId: move
+      x-exegesis-controller: FsController
+      responses:
+        '200':
+           description: successful operation
+        '403':
+           description: Not allowed
+        '404':
+          description: Source does not exist
+        '405':
+          description: Error occurred
+        '406':
+           description: Target does exist
+  '/fs':
+    parameters:
+      - name: path
+        in: query
+        description: Relative path inside the config folder
+        required: true
+        schema:
+          type: string
+      - name: hash
+        in: query
+        description: CRC32 hash value of the file content
+        required: false
+        schema:
+          type: number
+    get:
+      tags:
+        - fs
+      summary: Return directory listing or file content
+      description: Returns a list of files/directories if the requested path pointed to a directory or the content of the file otherwise
+      parameters:
+        - name: download
+          in: query
+          description: should the file be downloaded?
+          required: false
+          schema:
+            type: boolean
+        - name: recursive
+          in: query
+          description: also include all sub-folders in the directory listing
+          required: false
+          schema:
+            type: boolean
+      operationId: read
+      x-exegesis-controller: FsController
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadResponse'
+            text/*:
+              schema:
+                type: string
+        '403':
+          description: Not allowed
+        '404':
+          description: Path not found
+    post:
+      tags:
+        - fs
+      parameters:
+        - name: type
+          in: query
+          description: type to create (file or folder)
+          required: true
+          schema:
+            type: string
+            enum: ['dir', 'file']
+      summary: Create a new file or folder on the host
+      description: ''
+      operationId: create
+      x-exegesis-controller: FsController
+      requestBody:
+        description: Content of the file (empty when creating folder)
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                filename:
+                  type: string
+                  description: filename to use (if it should be another one than the original filename)
+                force:
+                  type: boolean
+                  description: replace existing file
+          text/*:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: successful operation
+        '403':
+          description: Not allowed
+        '406':
+          description: File exists
+    put:
+      tags:
+        - fs
+      summary: Update an existing file
+      description: ''
+      operationId: update
+      x-exegesis-controller: FsController
+      requestBody:
+        description: Content of the file
+        required: true
+        content:
+          text/*:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: successful operation
+        '403':
+          description: Not allowed
+        '404':
+          description: File does not exist
+    delete:
+      tags:
+        - fs
+      parameters:
+        - name: force
+          in: query
+          description: force deletion of non empty folders
+          required: false
+          schema:
+            type: boolean
+      summary: Deletes a file/folder
+      description: ''
+      operationId: delete
+      x-exegesis-controller: FsController
+      responses:
+        '200':
+          description: successful operation
+        '403':
+          description: Not allowed
+        '404':
+          description: File/Folder not found
+        '406':
+          description: Folder not empty
+  '/config/hidden':
+    put:
+      tags:
+        - config
+      summary: Save the hidden config
+      operationId: saveHiddenConfig
+      x-exegesis-controller: HiddenConfigController
+      requestBody:
+        description: Complete config content
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HiddenConfig'
+      responses:
+        '200':
+          description: successful operation
+        '403':
+          description: Not allowed
+        '404':
+          description: Config option does not exist
+  '/config/hidden/{section}/{key}':
+    parameters:
+      - name: section
+        in: path
+        description: Section of the config option, ('*' for all sections)
+        required: true
+        schema:
+          type: string
+      - name: key
+        in: path
+        description: Key (ID) of the config option in the section, ('*' for all options)
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - config
+      summary: Provides the value of a config option
+      operationId: getHiddenConfig
+      x-exegesis-controller: HiddenConfigController
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/HiddenConfig'
+                  - $ref: '#/components/schemas/ConfigSection'
+                  - $ref: '#/components/schemas/ConfigOptionValue'
+        '403':
+          description: Not allowed
+        '404':
+          description: Config option does not exist
+    put:
+      tags:
+        - config
+      summary: Changes the value of an existing config option
+      operationId: updateHiddenConfig
+      x-exegesis-controller: HiddenConfigController
+      requestBody:
+        description: Value of the config option
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: successful operation
+        '403':
+          description: Not allowed
+        '404':
+          description: Config option does not exist
+    post:
+      tags:
+        - config
+      summary: Creates a new config option
+      operationId: createHiddenConfig
+      x-exegesis-controller: HiddenConfigController
+      requestBody:
+        description: Value of the config option
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: successful operation
+        '403':
+          description: Not allowed
+        '404':
+          description: Config option does exist
+    delete:
+      tags:
+        - config
+      summary: Delete config option
+      operationId: deleteHiddenConfig
+      x-exegesis-controller: HiddenConfigController
+      responses:
+        '200':
+          description: successful operation
+        '403':
+          description: Not allowed
+        '404':
+          description: Config option does not exist
+  /data/designs:
+    get:
+      tags:
+        - dataprovider
+      summary: Returns the list of available designs.
+      operationId: getDesigns
+      x-exegesis-controller: DataProviderController
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /data/addresses:
+    get:
+      tags:
+        - dataprovider
+      summary: Returns the list of available addresses.
+      operationId: getAddresses
+      x-exegesis-controller: DataProviderController
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataProviderResponse'
+  /data/rrds:
+    get:
+      tags:
+        - dataprovider
+      summary: Returns the list of available RRDs.
+      operationId: getRRDs
+      x-exegesis-controller: DataProviderController
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataProviderResponse'
+  /data/influxdbs:
+    get:
+      tags:
+        - dataprovider
+      parameters:
+        - name: auth
+          in: query
+          schema:
+            type: string
+      summary: Returns the list of available influx databases.
+      operationId: getInfluxDBs
+      x-exegesis-controller: DataProviderController
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataProviderResponse'
+  /data/influxdbfields:
+    get:
+      tags:
+        - dataprovider
+      parameters:
+        - name: auth
+          in: query
+          schema:
+            type: string
+        - name: measurement
+          in: query
+          schema:
+            type: string
+      summary: Returns the list of available influx database fields.
+      operationId: getInfluxDBFields
+      x-exegesis-controller: DataProviderController
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataProviderResponse'
+        '406':
+          description: wrong measurement parameter
+  /data/influxdbtags:
+    get:
+      tags:
+        - dataprovider
+      parameters:
+        - name: auth
+          in: query
+          schema:
+            type: string
+        - name: measurement
+          in: query
+          schema:
+            type: string
+      summary: Returns the list of available influx database tags.
+      operationId: getInfluxDBTags
+      x-exegesis-controller: DataProviderController
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataProviderResponse'
+        '406':
+          description: wrong measurement parameter
+components:
+  schemas:
+    DataProviderResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/DataProviderEntry'
+    DataProviderEntry:
+      type: object
+      properties:
+        value:
+          type: string
+        label:
+          type: string
+        hints:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataProviderHint'
+    DataProviderHint:
+      type: object
+      additionalProperties:
+        type: string
+    ReadResponse:
+      oneOf:
+        - $ref: '#/components/schemas/DirContent'
+    DirContent:
+      type: array
+      items:
+        $ref: '#/components/schemas/FsEntry'
+    HiddenConfig:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/ConfigSection'
+    ConfigSection:
+      type: object
+      additionalProperties:
+        type: string
+    ConfigOptionValue:
+      type: string
+    CheckResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/EnvironmentState'
+    EnvironmentState:
+      type: object
+      properties:
+        entity:
+          type: string
+        state:
+          type: number
+          description: bitmask with a list of states <writeable,readable,exists>
+    FsEntry:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: ['DIR', 'FILE']
+        parentFolder:
+          type: string
+        hasChildren:
+          type: boolean
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/FsEntry'
+        readable:
+          type: boolean
+          default: false
+        writeable:
+          type: boolean
+          default: false
+        mounted:
+          type: boolean
+          description: true when this file/folder is inside a mounted folder
+          default: false
+        trash:
+          type: boolean
+          description: marks the trash folder
+          default: false
+        inTrash:
+          type: boolean
+          description: true when this entry is inside the trash folder
+          default: false
+        hash:
+          type: number
+          description: hash value for file content (CRC32)
+externalDocs:
+  description: Find out more about CometVisu
+  url: 'https://www.cometvisu.org'

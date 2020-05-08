@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.openhab.ui.cometvisu.internal.StateBeanMessageBodyWriter;
-import org.openhab.ui.cometvisu.internal.backend.beans.StateBean;
+import org.openhab.ui.cometvisu.internal.backend.model.StateBean;
 
 /**
  * Utility class containing helper methods for the SSE implementation.

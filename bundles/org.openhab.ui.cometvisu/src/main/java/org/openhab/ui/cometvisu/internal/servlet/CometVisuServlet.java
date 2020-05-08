@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -63,19 +62,19 @@ import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.items.events.ItemEventFactory;
 import org.openhab.core.library.types.StringType;
+import org.openhab.core.model.sitemap.SitemapProvider;
+import org.openhab.core.model.sitemap.sitemap.Sitemap;
 import org.openhab.core.persistence.FilterCriteria;
 import org.openhab.core.persistence.FilterCriteria.Ordering;
 import org.openhab.core.persistence.HistoricItem;
 import org.openhab.core.persistence.QueryablePersistenceService;
 import org.openhab.core.types.Command;
-import org.openhab.core.model.sitemap.SitemapProvider;
-import org.openhab.core.model.sitemap.sitemap.Sitemap;
 import org.openhab.ui.cometvisu.internal.Config;
-import org.openhab.ui.cometvisu.internal.config.ConfigHelper.Transform;
-import org.openhab.ui.cometvisu.internal.config.VisuConfig;
-import org.openhab.ui.cometvisu.internal.editor.dataprovider.beans.DataBean;
-import org.openhab.ui.cometvisu.internal.editor.dataprovider.beans.ItemBean;
-import org.openhab.ui.cometvisu.internal.rss.beans.Feed;
+import org.openhab.ui.cometvisu.internal.backend.model.editor.dataprovider.DataBean;
+import org.openhab.ui.cometvisu.internal.backend.model.editor.dataprovider.ItemBean;
+import org.openhab.ui.cometvisu.internal.backend.model.rss.Feed;
+import org.openhab.ui.cometvisu.internal.backend.sitemap.ConfigHelper.Transform;
+import org.openhab.ui.cometvisu.internal.backend.sitemap.VisuConfig;
 import org.openhab.ui.cometvisu.internal.util.ClientInstaller;
 import org.openhab.ui.cometvisu.php.PHProvider;
 import org.slf4j.Logger;
@@ -189,6 +188,7 @@ public class CometVisuServlet extends HttpServlet {
      *      javax.servlet.http.HttpServletResponse)
      */
     @Override
+    @Deprecated
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         File requestedFile = getRequestedFile(req);
         Matcher match = configStorePattern.matcher(req.getParameter("config"));
@@ -249,7 +249,11 @@ public class CometVisuServlet extends HttpServlet {
                 }
             }
         }
-        if (path.matches(".*editor/dataproviders/.+\\.(php|json)$") || path.matches(".*designs/get_designs\\.php$")) {
+        if (requestedFile.getName().equalsIgnoreCase("hidden.php")) {
+            // do not deliver the hidden php
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+        } else if (path.matches(".*editor/dataproviders/.+\\.(php|json)$")
+                || path.matches(".*designs/get_designs\\.php$")) {
             dataProviderService(requestedFile, req, resp);
         } else if (path.endsWith(rssLogPath)) {
             processRssLogRequest(requestedFile, req, resp);
@@ -260,6 +264,7 @@ public class CometVisuServlet extends HttpServlet {
         }
     }
 
+    @Deprecated
     protected void processPhpRequest(File file, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!this.phpEnabled) {
@@ -428,7 +433,7 @@ public class CometVisuServlet extends HttpServlet {
                         if (historicItem.getState() == null || historicItem.getState().toString().isEmpty()) {
                             continue;
                         }
-                        org.openhab.ui.cometvisu.internal.rss.beans.Entry entry = new org.openhab.ui.cometvisu.internal.rss.beans.Entry();
+                        org.openhab.ui.cometvisu.internal.backend.model.rss.Entry entry = new org.openhab.ui.cometvisu.internal.backend.model.rss.Entry();
                         entry.publishedDate = historicItem.getTimestamp().getTime();
                         entry.tags.add(historicItem.getName());
                         String[] content = historicItem.getState().toString().split(rssLogMessageSeparator);
@@ -456,10 +461,10 @@ public class CometVisuServlet extends HttpServlet {
                             && FilterCriteria.Ordering.DESCENDING.equals(filter.getOrdering())) {
                         // the RRD4j PersistenceService does not support descending ordering so we do it manually
                         Collections.sort(feed.entries,
-                                new Comparator<org.openhab.ui.cometvisu.internal.rss.beans.Entry>() {
+                                new Comparator<org.openhab.ui.cometvisu.internal.backend.model.rss.Entry>() {
                                     @Override
-                                    public int compare(org.openhab.ui.cometvisu.internal.rss.beans.Entry o1,
-                                            org.openhab.ui.cometvisu.internal.rss.beans.Entry o2) {
+                                    public int compare(org.openhab.ui.cometvisu.internal.backend.model.rss.Entry o1,
+                                            org.openhab.ui.cometvisu.internal.backend.model.rss.Entry o2) {
                                         return Long.compare(o2.publishedDate, o1.publishedDate);
                                     }
                                 });
@@ -482,7 +487,7 @@ public class CometVisuServlet extends HttpServlet {
                     rss += "<link>" + feed.link + "</link>\n";
                     rss += "<desrciption>" + feed.description + "</desription>\n";
 
-                    for (org.openhab.ui.cometvisu.internal.rss.beans.Entry entry : feed.entries) {
+                    for (org.openhab.ui.cometvisu.internal.backend.model.rss.Entry entry : feed.entries) {
                         rss += "<item>";
                         rss += "<title>" + entry.title + "</title>";
                         rss += "<description>" + entry.content + "</description>";
@@ -698,7 +703,6 @@ public class CometVisuServlet extends HttpServlet {
         // Get content type by file name and set default GZIP support and
         // content disposition.
         String contentType = getServletContext().getMimeType(fileName);
-        boolean acceptsGzip = false;
         String disposition = "inline";
 
         // If content type is unknown, then set the default value.
@@ -714,8 +718,6 @@ public class CometVisuServlet extends HttpServlet {
         // the browser and expand content type with the one and right character
         // encoding.
         if (contentType.startsWith("text")) {
-            String acceptEncoding = request.getHeader("Accept-Encoding");
-            acceptsGzip = acceptEncoding != null && accepts(acceptEncoding, "gzip");
             contentType += ";charset=UTF-8";
         }
 
@@ -754,17 +756,7 @@ public class CometVisuServlet extends HttpServlet {
                 response.setHeader("Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total);
 
                 if (content) {
-                    if (acceptsGzip) {
-                        // The browser accepts GZIP, so GZIP the content.
-                        response.setHeader("Content-Encoding", "gzip");
-                        output = new GZIPOutputStream(output, DEFAULT_BUFFER_SIZE);
-                    } else {
-                        // Content length is not directly predictable in case of
-                        // GZIP.
-                        // So only add it if there is no means of GZIP, else
-                        // browser will hang.
-                        response.setHeader("Content-Length", String.valueOf(r.length));
-                    }
+                    response.setHeader("HA", String.valueOf(r.length));
 
                     // Copy full range.
                     copy(input, output, r.start, r.length);
@@ -901,7 +893,9 @@ public class CometVisuServlet extends HttpServlet {
      * @param response
      * @throws ServletException
      * @throws IOException
+     * @deprecated replaced by the CV REST backend in CometVisu versions >=0.12.0
      */
+    @Deprecated
     private final void dataProviderService(File file, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         logger.debug("dataprovider '{}' requested", file.getPath());

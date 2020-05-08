@@ -23,7 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 /**
  *
  * @author Tobias Bräutigam - Initial contribution
+ * @deprecated PHP support in CometVisu backend is deprecated and replaces by native REST API
  */
+@Deprecated
 public interface PHProvider {
     public void createQuercusEngine();
 
