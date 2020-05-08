@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -27,6 +28,12 @@
       <url>https://www.eclipse.org/legal/epl-2.0/</url>
     </license>
   </licenses>
+
+  <modules>
+    <module>bom</module>
+    <module>bundles</module>
+    <module>features</module>
+  </modules>
 
   <scm>
     <connection>scm:git:https://github.com/openhab/openhab-webui.git</connection>
@@ -77,8 +84,7 @@
           <artifactId>bnd-maven-plugin</artifactId>
           <version>${bnd.version}</version>
           <configuration>
-            <bnd><![CDATA[
-Bundle-SymbolicName: ${project.artifactId}
+            <bnd><![CDATA[Bundle-SymbolicName: ${project.artifactId}
 Automatic-Module-Name: ${def;bsn}
 Import-Package: \\
   io.swagger.annotations.*;resolution:=optional,\\
@@ -94,9 +100,8 @@ Import-Package: \\
   org.openhab.*
 -sources: false
 -contract: *
--includeresource: -${.}/NOTICE, -${.}/*.xsd
-]]></bnd>
-<!--
+-includeresource: -${.}/NOTICE, -${.}/*.xsd]]></bnd>
+            <!--
 -dsannotations-options: norequirements
 -->
             <!-- Bundle-SymbolicName: ${project.groupId}.${project.artifactId} -->
@@ -154,8 +159,7 @@ Import-Package: \\
           <version>${bnd.version}</version>
           <configuration>
             <failOnChanges>false</failOnChanges>
-            <bndruns>
-            </bndruns>
+            <bndruns></bndruns>
           </configuration>
           <executions>
             <execution>
@@ -385,7 +389,7 @@ Import-Package: \\
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore></ignore>
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -398,7 +402,7 @@ Import-Package: \\
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore></ignore>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -503,11 +507,11 @@ Import-Package: \\
       </plugin>
     </plugins>
     <extensions>
-       <extension>
-          <groupId>org.openhab.tools.sat</groupId>
-          <artifactId>sat-extension</artifactId>
-          <version>${sat.version}</version>
-       </extension>
+      <extension>
+        <groupId>org.openhab.tools.sat</groupId>
+        <artifactId>sat-extension</artifactId>
+        <version>${sat.version}</version>
+      </extension>
     </extensions>
   </build>
 
@@ -554,11 +558,5 @@ Import-Package: \\
       </build>
     </profile>
   </profiles>
-
-  <modules>
-    <module>bom</module>
-    <module>bundles</module>
-    <module>features</module>
-  </modules>
 
 </project>
