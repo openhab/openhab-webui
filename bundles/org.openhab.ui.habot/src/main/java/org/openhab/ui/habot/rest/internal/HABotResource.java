@@ -75,6 +75,7 @@ import io.swagger.annotations.ApiResponses;
  * This class describes the /habot resource of the REST API.
  *
  * @author Yannick Schaus - Initial contribution
+ * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
  */
 @Component
 @JaxrsResource
