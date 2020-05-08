@@ -44,5 +44,4 @@ public class CardProvider extends DefaultAbstractManagedProvider<Card, String> {
     protected String keyToString(String key) {
         return key;
     }
-
 }

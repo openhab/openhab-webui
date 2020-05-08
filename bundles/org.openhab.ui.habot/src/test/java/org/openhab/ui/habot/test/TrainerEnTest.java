@@ -92,5 +92,4 @@ public class TrainerEnTest extends AbstractTrainerTest {
         assertIs("create-rule", "set up a new rule to run tomorrow at 8");
         assertIs("create-rule", "set up a new rule to run on Wednesday at 11h30");
     }
-
 }

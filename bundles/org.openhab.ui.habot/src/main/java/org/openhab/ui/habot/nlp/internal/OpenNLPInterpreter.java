@@ -136,7 +136,7 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
      * This variant of interpret() returns a more complete interpretation result.
      *
      * @param locale the locale of the query
-     * @param text   the query text
+     * @param text the query text
      * @return the interpretation result as a {@link ChatReply} object
      * @throws InterpretationException
      */
@@ -157,7 +157,6 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
                                 }
                                 return o1.getIntentId().compareTo(o2.getIntentId());
                             }
-
                         }).collect(Collectors.toList()), getNameSamples(), this.tokenizerId);
                 currentLocale = locale;
             } catch (Exception e) {

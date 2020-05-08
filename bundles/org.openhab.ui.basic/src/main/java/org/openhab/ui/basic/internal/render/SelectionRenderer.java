@@ -18,13 +18,13 @@ import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.model.sitemap.sitemap.Mapping;
+import org.openhab.core.model.sitemap.sitemap.Selection;
+import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.CommandDescription;
 import org.openhab.core.types.CommandOption;
 import org.openhab.core.types.State;
 import org.openhab.core.types.util.UnitUtils;
-import org.openhab.core.model.sitemap.sitemap.Mapping;
-import org.openhab.core.model.sitemap.sitemap.Selection;
-import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
@@ -165,5 +165,4 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
     protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
         super.unsetItemUIRegistry(ItemUIRegistry);
     }
-
 }

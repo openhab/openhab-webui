@@ -98,5 +98,4 @@ public class HABPanelResource implements RESTResource {
 
         return Response.ok(item).build();
     }
-
 }

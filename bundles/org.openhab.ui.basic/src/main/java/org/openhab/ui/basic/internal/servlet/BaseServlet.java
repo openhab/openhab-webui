@@ -12,8 +12,8 @@
  */
 package org.openhab.ui.basic.internal.servlet;
 
-import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.io.http.servlet.SmartHomeBundleServlet;
+import org.openhab.core.items.ItemRegistry;
 
 /**
  * This is the base servlet class for other servlet in the Basic UI.
@@ -36,5 +36,4 @@ public abstract class BaseServlet extends SmartHomeBundleServlet {
     public void unsetItemRegistry(ItemRegistry itemRegistry) {
         this.itemRegistry = null;
     }
-
 }

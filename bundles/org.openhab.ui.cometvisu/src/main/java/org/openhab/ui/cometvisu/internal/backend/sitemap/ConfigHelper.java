@@ -956,7 +956,6 @@ public class ConfigHelper {
         } catch (InvocationTargetException e) {
             logger.error("{}", e.getMessage());
         }
-
     }
 
     /**

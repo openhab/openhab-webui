@@ -39,8 +39,8 @@ import org.bouncycastle.jce.interfaces.ECPrivateKey;
 import org.bouncycastle.jce.interfaces.ECPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
-import org.openhab.core.config.core.ConfigConstants;
 import org.jose4j.lang.JoseException;
+import org.openhab.core.config.core.ConfigConstants;
 import org.openhab.ui.habot.notification.internal.webpush.Notification;
 import org.openhab.ui.habot.notification.internal.webpush.PushService;
 import org.openhab.ui.habot.notification.internal.webpush.Subscription;
@@ -116,7 +116,7 @@ public class NotificationService {
      * Sends a web push notification to a specified subscription
      *
      * @param subscription the subscription to send the notification to
-     * @param payload      the payload to push
+     * @param payload the payload to push
      * @return the {@link Future} for the {@link Response} to the push server
      * @throws GeneralSecurityException
      */
@@ -210,5 +210,4 @@ public class NotificationService {
         }
         return this.pushService;
     }
-
 }

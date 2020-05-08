@@ -60,5 +60,4 @@ public class HomeBuilderServlet {
     protected void unsetHttpService(HttpService httpService) {
         this.httpService = null;
     }
-
 }

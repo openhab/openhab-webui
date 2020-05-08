@@ -22,5 +22,4 @@ public class StateBean {
     public String name;
 
     public String state;
-
 }

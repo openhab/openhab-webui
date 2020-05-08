@@ -82,5 +82,4 @@ public class HABPanelTile implements Tile {
     protected void unsetHttpService(HttpService httpService) {
         this.httpService = null;
     }
-
 }

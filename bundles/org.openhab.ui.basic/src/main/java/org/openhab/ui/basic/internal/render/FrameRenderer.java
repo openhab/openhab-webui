@@ -94,5 +94,4 @@ public class FrameRenderer extends AbstractWidgetRenderer {
     protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
         super.unsetItemUIRegistry(ItemUIRegistry);
     }
-
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config-description:config-descriptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<config-description:config-descriptions
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0
 		https://openhab.org/schemas/config-description-1.0.0.xsd">
@@ -11,14 +12,18 @@
 		</parameter>
 		<parameter name="webAlias" type="text">
 			<label>Browser path</label>
-			<description>The relative browser path where you can access the client e.g http://&lt;openhab-server&gt;:8080/&lt;webAlias&gt;/</description>
+			<description>The relative browser path where you can access the client e.g
+				http://&lt;openhab-server&gt;:8080/&lt;webAlias&gt;/</description>
 			<default>/cometvisu</default>
 		</parameter>
 		<parameter name="autoDownload" type="boolean">
 			<label>Auto-Download</label>
 			<description>
-			If you enable this feature, the current release of CometVisu client (GNU General Public License v3.0) will be automatically
-			downloaded to your openHAB server and extracted into the folder you defined in the Filesystem path, if it is not found there. 
+				If you enable this feature, the current release of CometVisu client (GNU General Public License v3.0)
+				will be
+				automatically
+				downloaded to your openHAB server and extracted into the folder you defined in the Filesystem
+				path, if it is not found there.
 			</description>
 			<default>false</default>
 		</parameter>

@@ -45,7 +45,7 @@ public interface ItemResolver {
      * If a non-null object and a non-null location are provided,
      * items shall match both.
      *
-     * @param object   the object extracted from the intent (or null)
+     * @param object the object extracted from the intent (or null)
      * @param location the location extracted from the intent (or null)
      * @return a stream of matching items (groups included)
      */

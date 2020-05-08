@@ -183,7 +183,6 @@ public class TrainerDeTest extends AbstractTrainerTest {
         assertEquals(Skills.GET_HISTORY_DAILY, actual.getName());
         assertEquals(1, actual.getEntities().size());
         assertEquals("luftfeuchtigkeit", actual.getEntities().get("object"));
-
     }
 
     @Test
@@ -415,6 +414,5 @@ public class TrainerDeTest extends AbstractTrainerTest {
 
         actual = interpret("Erstelle eine Regel, die um 8 Uhr läuft.");
         assertEquals(Skills.CREATE_RULE, actual.getName());
-
     }
 }

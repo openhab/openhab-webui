@@ -26,9 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.common.util.EList;
 import org.openhab.core.config.core.ConfigurableService;
-import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.io.http.HttpContextFactoryService;
 import org.openhab.core.io.rest.sitemap.SitemapSubscriptionService;
+import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.model.sitemap.SitemapProvider;
 import org.openhab.core.model.sitemap.sitemap.LinkableWidget;
 import org.openhab.core.model.sitemap.sitemap.Sitemap;
@@ -254,5 +254,4 @@ public class WebAppServlet extends BaseServlet {
     public void unsetHttpContextFactoryService(HttpContextFactoryService HttpContextFactoryService) {
         super.unsetHttpContextFactoryService(HttpContextFactoryService);
     }
-
 }

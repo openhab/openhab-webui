@@ -43,5 +43,4 @@ public final class WebAppActivator implements BundleActivator {
     public static BundleContext getContext() {
         return context;
     }
-
 }

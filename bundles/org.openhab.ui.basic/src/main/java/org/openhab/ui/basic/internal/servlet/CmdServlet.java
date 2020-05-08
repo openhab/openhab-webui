@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openhab.core.events.EventPublisher;
+import org.openhab.core.io.http.HttpContextFactoryService;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
@@ -28,7 +29,6 @@ import org.openhab.core.library.items.SwitchItem;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.TypeParser;
-import org.openhab.core.io.http.HttpContextFactoryService;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -136,5 +136,4 @@ public class CmdServlet extends BaseServlet {
     public void unsetHttpContextFactoryService(HttpContextFactoryService HttpContextFactoryService) {
         super.unsetHttpContextFactoryService(HttpContextFactoryService);
     }
-
 }

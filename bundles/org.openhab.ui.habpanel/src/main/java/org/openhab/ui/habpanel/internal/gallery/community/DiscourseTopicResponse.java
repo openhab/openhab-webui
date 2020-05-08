@@ -71,6 +71,5 @@ public class DiscourseTopicResponse {
         public DiscoursePostAuthor last_poster;
 
         public DiscoursePostLink[] links;
-
     }
 }

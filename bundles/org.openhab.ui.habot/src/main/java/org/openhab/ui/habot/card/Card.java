@@ -410,5 +410,4 @@ public class Card extends Component implements Identifiable<String> {
         }
         return true;
     }
-
 }

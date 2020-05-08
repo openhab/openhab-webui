@@ -116,5 +116,4 @@ public class SliderRenderer extends AbstractWidgetRenderer {
     protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
         super.unsetItemUIRegistry(ItemUIRegistry);
     }
-
 }

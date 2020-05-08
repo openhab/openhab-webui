@@ -104,5 +104,4 @@ public class IntentInterpretation {
     public void setCard(Card card) {
         this.card = card;
     }
-
 }

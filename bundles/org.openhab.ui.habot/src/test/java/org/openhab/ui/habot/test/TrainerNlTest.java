@@ -66,7 +66,6 @@ public class TrainerNlTest extends AbstractTrainerTest {
         assertIsActivate("zet het licht aan op de zolder", "licht", "zolder");
         assertIsActivate("zet het licht op de gang aan", "licht", "gang");
         assertIsActivate("zet de verwarmng aan", "verwarmng", null);
-
     }
 
     @Test
@@ -119,7 +118,6 @@ public class TrainerNlTest extends AbstractTrainerTest {
         assertEquals(Skills.GET_HISTORY_DAILY, actual.getName());
         assertEquals(1, actual.getEntities().size());
         assertEquals("temperatuur", actual.getEntities().get("object"));
-
     }
 
     @Test
@@ -284,7 +282,6 @@ public class TrainerNlTest extends AbstractTrainerTest {
         assertEquals(2, actual.getEntities().size());
         assertEquals("licht", actual.getEntities().get("object"));
         assertEquals("wit", actual.getEntities().get("color"));
-
     }
 
     @Test
@@ -297,7 +294,5 @@ public class TrainerNlTest extends AbstractTrainerTest {
 
         actual = interpret("Maak een regel die om 8 uur afgaat");
         assertEquals(Skills.CREATE_RULE, actual.getName());
-
     }
-
 }

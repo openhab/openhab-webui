@@ -33,5 +33,4 @@ public class BlockingAsyncBinder extends AbstractBinder {
         bind(new BlockingAsyncContextDelegateProvider()).to(AsyncContextDelegateProvider.class)
                 .qualifiedBy(CustomAnnotationLiteral.INSTANCE);
     }
-
 }

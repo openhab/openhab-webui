@@ -62,9 +62,9 @@ public class WebPushNotificationAction implements ActionService {
      * Sends a web push notification to all HABot subscribed clients with a reference to tags used to retrieve a card
      *
      * @param message the message to send
-     * @param tags    the tags associated with the notification - cards matching these tags will be displayed alongside
-     *                    the
-     *                    message
+     * @param tags the tags associated with the notification - cards matching these tags will be displayed alongside
+     *            the
+     *            message
      */
     @ActionDoc(text = "Sends a web push notification to all HABot subscribed clients")
     public static void sendHABotNotificationWithTags(String message, List<Object> tags) {
@@ -74,12 +74,12 @@ public class WebPushNotificationAction implements ActionService {
     /**
      * Sends a web push notification to all HABot subscribed clients (extended version)
      *
-     * @param title   the title of the notification (will only be used for native notifications, won't appear in the
-     *                    chat)
+     * @param title the title of the notification (will only be used for native notifications, won't appear in the
+     *            chat)
      * @param message the message to send
      * @param cardUID the optional card UID to display with the message
-     * @param tags    the optional tags associated with the notification - cards matching these tags will be displayed
-     *                    alongside the message
+     * @param tags the optional tags associated with the notification - cards matching these tags will be displayed
+     *            alongside the message
      */
     @ActionDoc(text = "Sends a web push notification to all HABot subscribed clients")
     public static void sendHABotNotificationExt(String title, String message, String cardUID, List<Object> tags) {

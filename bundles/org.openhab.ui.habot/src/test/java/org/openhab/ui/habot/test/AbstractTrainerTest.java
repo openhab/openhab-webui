@@ -46,7 +46,6 @@ public class AbstractTrainerTest {
         public final static String GET_HISTORY_LAST_CHANGES = "get-history-last-changes";
         public final static String SET_VALUE = "set-value";
         public final static String CREATE_RULE = "create-rule";
-
     }
 
     @Before
@@ -150,5 +149,4 @@ public class AbstractTrainerTest {
     protected void assertIsSetValue(String query) {
         checkInterpretation(Skills.SET_VALUE, query, null, null);
     }
-
 }
