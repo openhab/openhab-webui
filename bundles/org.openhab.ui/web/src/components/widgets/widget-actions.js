@@ -49,6 +49,10 @@ export const actionProps = (groupName, paramPrefix) => {
           label: 'Open sheet'
         },
         {
+          value: 'analyzer',
+          label: 'Analyze item(s)'
+        },
+        {
           value: 'url',
           label: 'External URL'
         }
@@ -129,6 +133,52 @@ export const actionProps = (groupName, paramPrefix) => {
       visible: (value, configuration, configDescription, parameters) => {
         return ['navigate', 'popup', 'popover', 'sheet'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }
+    },
+    {
+      name: paramPrefix + 'actionAnalyzerItems',
+      label: 'Item(s) to Analyze',
+      groupName,
+      context: 'item',
+      type: 'TEXT',
+      multiple: true,
+      description: 'Start analyzing with the specified (set of) item(s)',
+      visible: (value, configuration, configDescription, parameters) => {
+        return ['analyzer'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }
+    },
+    {
+      name: paramPrefix + 'actionAnalyzerChartType',
+      label: 'Chart Type',
+      groupName,
+      type: 'TEXT',
+      limitToOptions: true,
+      description: 'The initial analyzing period - dynamic or a predefined fixed period: day, week, month or year',
+      visible: (value, configuration, configDescription, parameters) => {
+        return ['analyzer'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      },
+      options: [
+        { value: '', label: 'Dynamic' },
+        { value: 'day', label: 'Day' },
+        { value: 'isoWeek', label: 'Week (starting on Mondays)' },
+        { value: 'month', label: 'Month' },
+        { value: 'year', label: 'Year' }
+      ]
+    },
+    {
+      name: paramPrefix + 'actionAnalyzerCoordSystem',
+      label: 'Initial Coordinate System',
+      groupName,
+      type: 'TEXT',
+      limitToOptions: true,
+      description: 'The initial coordinate system of the analyzer - time, aggregate or calendar (only time is supported for dynamic periods)',
+      visible: (value, configuration, configDescription, parameters) => {
+        return ['analyzer'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      },
+      options: [
+        { value: 'time', label: 'Time' },
+        { value: 'aggregate', label: 'Aggregate' },
+        { value: 'calendar', label: 'Calendar' }
+      ]
     }
   ]
 }
@@ -213,6 +263,14 @@ export const actionsMixin = {
             }
           }
           this.$f7router.navigate(modalRoute, modalProps)
+          break
+        case 'analyze':
+        case 'analyzer':
+          const actionAnalyzerItems = this.config[prefix + 'actionAnalyzerItems']
+          const actionAnalyzerChartType = this.config[prefix + 'actionAnalyzerChartType']
+          const actionAnalyzerCoordSystem = this.config[prefix + 'actionAnalyzerCoordSystem']
+          this.$f7router.navigate(`/analyzer/?items=${actionAnalyzerItems.join(',')}&chartType=${actionAnalyzerChartType || ''}&coordSystem=${actionAnalyzerCoordSystem || ''}`)
+          console.log('Opening the analyzer')
           break
         case 'url':
           const actionUrl = this.config[prefix + 'actionUrl']

@@ -265,13 +265,16 @@ export default {
       // this.$store.dispatch('stopTrackingStates')
     },
     initChart () {
-      this.updateItems(this.$f7route.query.items.split(','))
+      this.updateItems(this.$f7route.query.items.split(',')).then(() => {
+        if (this.$f7route.query.chartType) this.changeChartType(this.$f7route.query.chartType)
+        if (this.$f7route.query.coordSystem) this.changeCoordSystem(this.$f7route.query.coordSystem)
+      })
       this.itemsPickerKey = this.$f7.utils.id()
     },
     updateItems (itemNames) {
       this.itemNames = itemNames
       const promises = itemNames.map((n) => this.$oh.api.get('/rest/items/' + n))
-      Promise.all(promises).then((resp) => {
+      return Promise.all(promises).then((resp) => {
         this.$set(this, 'items', [])
         this.$set(this, 'valueAxesOptions', [])
         resp.forEach((item) => {
