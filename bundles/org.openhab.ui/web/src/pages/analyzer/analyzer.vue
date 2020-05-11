@@ -3,7 +3,7 @@
     <f7-page class="analyzer-content">
       <f7-navbar :title="titleDisplayText" back-link="Back">
         <f7-nav-right>
-          <f7-link v-if="$store.getters.isAdmin" icon-md="material:save">{{ $theme.md ? '' : 'Save' }}</f7-link>
+          <f7-link v-if="$store.getters.isAdmin" icon-md="material:save" @click="savePage">{{ $theme.md ? '' : 'Save' }}</f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-toolbar bottom>
@@ -452,6 +452,54 @@ export default {
     },
     closeControls () {
       this.controlsOpened = false
+    },
+    savePage () {
+      if (!this.$store.getters.isAdmin) return // shouldn't get here if not an admin
+
+      const self = this
+      this.$f7.dialog.prompt('Enter the ID of the chart page you wish to create from the current status of the Analyzer',
+        'Save as Page',
+        (uid) => {
+          if (!uid.match(/^[A-Za-z0-9_]+$/)) {
+            self.$f7.dialog.alert('The UID should only contain alphanumeric characters and underscores')
+            return
+          }
+          if (self.$store.getters.page(uid)) {
+            self.$f7.dialog.confirm(
+              `A page with the ID ${uid} already exists, would you like to overwrite it?`,
+              'Page already exists',
+              () => { self.doSavePage(uid, true) })
+          }
+
+          this.doSavePage(uid)
+        })
+    },
+    doSavePage (uid, overwrite) {
+      let chartPage = Object.assign({
+        uid: uid
+      }, this.page)
+      chartPage.config.label = this.titleDisplayText
+
+      const promise = (!overwrite)
+        ? this.$oh.api.postPlain('/rest/ui/components/ui:page', JSON.stringify(chartPage), 'text/plain', 'application/json')
+        : this.$oh.api.put('/rest/ui/components/ui:page/' + uid, chartPage)
+      promise.then((data) => {
+        if (overwrite) {
+          this.$f7.toast.create({
+            text: 'Chart page updated',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+          this.load()
+        } else {
+          this.$f7.toast.create({
+            text: 'Chart page created',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        }
+        this.$f7.emit('sidebarRefresh', null)
+      })
     }
   },
   computed: {
