@@ -24,7 +24,8 @@ export default {
           name: item.label || item.name,
           item: item.name,
           calendarIndex: 0,
-          type: 'heatmap'
+          type: 'heatmap',
+          aggregationFunction: analyzer.seriesOptions[item.name].aggregation
         }
       }
     })
@@ -38,7 +39,10 @@ export default {
           calculable: true,
           bottom: 0,
           left: 'center',
-          presetPalette: analyzer.visualMapPalette
+          presetPalette: analyzer.visualMapPalette,
+          type: analyzer.visualMapType,
+          ...(analyzer.visualMapMin && analyzer.visualMapMin !== '') && { min: parseFloat(analyzer.visualMapMin) },
+          ...(analyzer.visualMapMax && analyzer.visualMapMax !== '') && { max: parseFloat(analyzer.visualMapMax) }
         }
       }
     ]

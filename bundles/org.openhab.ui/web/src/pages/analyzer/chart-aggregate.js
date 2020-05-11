@@ -61,7 +61,13 @@ export default {
           component: 'oh-value-axis',
           config: {
             gridIndex: 0,
-            name: a.unit
+            name: a.name || a.unit,
+            ...(a.min && a.min !== '') && { min: parseFloat(a.min) },
+            ...(a.max && a.max !== '') && { max: parseFloat(a.max) },
+            scale: a.scale,
+            ...(a.split === 'none' || a.split === 'area' || a.split === 'area+minor') && { splitLine: { show: false } },
+            ...(a.split === 'line+minor' || a.split === 'area+minor' || a.split === 'all') && { minorTick: { show: true }, minorSplitLine: { show: true } },
+            ...(a.split === 'area' || a.split === 'line+area' || a.split === 'area+minor' || a.split === 'all') && { splitArea: { show: true } }
           }
         }
       })
@@ -123,7 +129,10 @@ export default {
             calculable: true,
             bottom: 0,
             left: 'center',
-            presetPalette: analyzer.visualMapPalette
+            presetPalette: analyzer.visualMapPalette,
+            type: analyzer.visualMapType,
+            ...(analyzer.visualMapMin && analyzer.visualMapMin !== '') && { min: parseFloat(analyzer.visualMapMin) },
+            ...(analyzer.visualMapMax && analyzer.visualMapMax !== '') && { max: parseFloat(analyzer.visualMapMax) }
           }
         }
       ]

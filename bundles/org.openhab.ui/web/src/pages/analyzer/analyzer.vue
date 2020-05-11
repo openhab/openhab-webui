@@ -8,8 +8,9 @@
       </f7-navbar>
       <f7-toolbar bottom>
         <span></span>
-        <f7-link v-if="coordSystem !== 'time'" color="blue" icon-f7="crop_rotate" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'" />
         <f7-link class="right controls-link padding-right" ref="detailsLink" @click="openControls">Controls&nbsp;<f7-icon f7="chevron_up"></f7-icon></f7-link>
+        <f7-link v-if="coordSystem !== 'time'" color="blue" icon-f7="crop_rotate" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'" />
+        <span v-else></span>
       </f7-toolbar>
       <oh-chart-page v-if="showChart" class="analyzer-chart" :class="{ 'sheet-opened': controlsOpened }" :key="chartKey" :context="context" />
     </f7-page>
@@ -23,7 +24,7 @@
             <f7-link sheet-close class="padding-right"><f7-icon f7="chevron_down"></f7-icon></f7-link>
           </div>
         </f7-toolbar>
-        <f7-block style="margin-bottom: 6rem" v-show="controlsTab === 'series'">
+        <f7-block class="no-margin no-padding" v-show="controlsTab === 'series'">
           <f7-row>
             <f7-col :width="100">
             </f7-col>
@@ -86,9 +87,9 @@
               </div>
             </f7-col>
           </f7-row>
-
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-show="controlsTab === 'coords'">
+
+        <f7-block class="no-margin" v-show="controlsTab === 'coords'">
           <f7-row>
             <f7-col :width="100" :medium="50" class="margin-bottom">
               <f7-block-header>Period</f7-block-header>
@@ -115,21 +116,79 @@
                 <f7-button :active="aggregateDimensions === 2" @click="changeAggregateDimensions(2)">2 dimensions</f7-button>
               </f7-segmented>
             </f7-col>
-            <f7-col width="100" class="margin-top display-flex justify-content-center">
+            <f7-col width="100" class="margin-top display-flex justify-content-center margin-bottom">
               <f7-button round raised fill color="black" v-if="coordSystem !== 'time'" icon-f7="crop_rotate" icon-size="20" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'">Rotate</f7-button>
             </f7-col>
           </f7-row>
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-show="controlsTab === 'ranges'">
+
+        <f7-block class="no-margin no-padding" v-show="controlsTab === 'ranges'">
           <f7-row v-if="(coordSystem === 'aggregate' && aggregateDimensions === 2) || coordSystem === 'calendar'">
-            <f7-col :width="100" :medium="50" class="margin-bottom">
-            <f7-list>
-              <f7-list-item divider>Visual Map Palette</f7-list-item>
-              <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === ''" @change="changeVisualMapPalette('')">Yellow-Red</f7-list-item>
-              <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === 'greenred'" @change="changeVisualMapPalette('greenred')">Green-Yellow-Red</f7-list-item>
-              <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === 'whiteblue'" @change="changeVisualMapPalette('whiteblue')">White-Blue</f7-list-item>
-              <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === 'bluered'" @change="changeVisualMapPalette('bluered')">Blue-Red</f7-list-item>
-            </f7-list>
+            <f7-col :width="100" :medium="50">
+              <f7-list class="no-margin-vertical">
+                <f7-list-item divider>Visual Map Palette</f7-list-item>
+                <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === ''" @change="changeVisualMapPalette('')">Yellow-Red</f7-list-item>
+                <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === 'greenred'" @change="changeVisualMapPalette('greenred')">Green-Yellow-Red</f7-list-item>
+                <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === 'whiteblue'" @change="changeVisualMapPalette('whiteblue')">White-Blue</f7-list-item>
+                <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === 'bluered'" @change="changeVisualMapPalette('bluered')">Blue-Red</f7-list-item>
+              </f7-list>
+            </f7-col>
+            <f7-col :width="100" :medium="50">
+              <f7-list class="no-margin-vertical" inline-labels no-hairlines-md>
+                <f7-list-item divider>Range</f7-list-item>
+                <f7-list-input label="Min" :value="visualMapMin" type="number" @input="visualMapMin = $event.target.value" placeholder="Auto" clear-button />
+                <f7-list-input label="Max" :value="visualMapMax" type="number" @input="visualMapMax = $event.target.value" placeholder="Auto" clear-button />
+                <f7-list-item divider>Type</f7-list-item>
+                <f7-list-item radio name="visualMapType" :checked="visualMapType === 'continuous'" @change="changeVisualMapType('continuous')">Continuous</f7-list-item>
+                <f7-list-item radio name="visualMapType" :checked="visualMapType === 'piecewise'" @change="changeVisualMapType('piecewise')">Piecewise</f7-list-item>
+              </f7-list>
+            </f7-col>
+          </f7-row>
+          <f7-row v-else-if="valueAxesOptions.length > 0">
+            <f7-col :width="100">
+              <div class="card data-table">
+                <div class="card-header">
+                  Value Axes
+                </div>
+                <div class="card-content">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th class="label-cell">Label</th>
+                        <th class="label-cell">Min</th>
+                        <th class="label-cell">Max</th>
+                        <th class="label-cell">Scale</th>
+                        <th class="label-cell">Split</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="axis in valueAxesOptions" :key="axis.unit">
+                        <td class="label-cell">
+                          <div class="input">
+                            <input type="text" v-model.lazy="axis.name" style="min-width: 150px" />
+                          </div>
+                        </td>
+                        <td class="label-cell">
+                          <div class="input">
+                            <input type="number" v-model.lazy="axis.min" style="min-width: 100px" placeholder="Auto" />
+                          </div>
+                        </td>
+                        <td class="label-cell">
+                          <div class="input">
+                            <input type="number" v-model.lazy="axis.max" style="min-width: 100px" placeholder="Auto" />
+                          </div>
+                        </td>
+                        <td class="label-cell">
+                          <f7-checkbox :checked="axis.scale" @change="(evt) => $set(axis, 'scale', evt.target.checked)"></f7-checkbox>
+                        </td>
+                        <td class="label-cell">
+                          <f7-link @click="chooseAxisSplit(axis)">{{axis.split || 'none'}}</f7-link>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </f7-col>
           </f7-row>
         </f7-block>
@@ -176,6 +235,9 @@ export default {
       coordSystem: 'time',
       aggregateDimensions: 1,
       visualMapPalette: '',
+      visualMapMin: null,
+      visualMapMax: null,
+      visualMapType: 'continuous',
 
       controlsOpened: false,
       controlsTab: 'series',
@@ -233,7 +295,7 @@ export default {
             if (unitAxis >= 0) {
               this.$set(seriesOptions, 'valueAxisIndex', unitAxis)
             } else {
-              this.valueAxesOptions.push({ unit })
+              this.valueAxesOptions.push({ name: unit, unit, split: 'line' })
               this.$set(seriesOptions, 'valueAxisIndex', this.valueAxesOptions.length - 1)
             }
           }
@@ -315,6 +377,13 @@ export default {
         this.showChart = true
       })
     },
+    changeVisualMapType (type) {
+      this.showChart = false
+      this.visualMapType = type
+      this.$nextTick(() => {
+        this.showChart = true
+      })
+    },
     chooseMarkers (opt) {
       const actions = ['none', 'avg', 'min-max', 'all'].map((m) => {
         return {
@@ -355,6 +424,26 @@ export default {
         ]
       }).open()
     },
+    chooseAxisSplit (axis) {
+      const actions = ['none', 'line', 'area', 'line+area', 'line+minor', 'area+minor', 'all'].map((m) => {
+        return {
+          text: m,
+          color: 'blue',
+          onClick: () => { this.$set(axis, 'split', m) }
+        }
+      })
+      this.$f7.actions.create({
+        buttons: [
+          [
+            { label: true, text: 'Axis Split' },
+            ...actions
+          ],
+          [
+            { color: 'red', text: 'Cancel', close: true }
+          ]
+        ]
+      }).open()
+    },
     updateChart () {
       this.chartKey = this.$f7.utils.id()
     },
@@ -375,18 +464,17 @@ export default {
       return {
         component: this.page,
         analyzer: true
-        // store: this.$store.getters.trackedItems
       }
     },
     page () {
       try {
         switch (this.coordSystem) {
           case 'time':
-            return ChartTime.getChartPage(this, this.seriesOptions)
+            return ChartTime.getChartPage(this)
           case 'aggregate':
-            return ChartAggregate.getChartPage(this, this.seriesOptions)
+            return ChartAggregate.getChartPage(this)
           case 'calendar':
-            return ChartCalendar.getChartPage(this, this.seriesOptions)
+            return ChartCalendar.getChartPage(this)
           default:
             throw new Error('Invalid coordinate system')
         }
