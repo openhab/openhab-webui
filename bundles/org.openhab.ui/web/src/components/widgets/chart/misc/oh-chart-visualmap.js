@@ -13,8 +13,16 @@ export default {
         options.inRange.color = presetPalettes[component.config.presetPalette]
       }
     }
-    options.min = parseFloat(options.min)
-    options.max = parseFloat(options.max)
+    if (options.min !== undefined) {
+      options.min = parseFloat(options.min)
+    } else if (chart.series && chart.series[0]) {
+      options.min = Math.min(...chart.series[0].data.map((p) => p[p.length - 1]))
+    }
+    if (options.max !== undefined) {
+      options.max = parseFloat(options.max)
+    } else if (chart.series && chart.series[0]) {
+      options.max = Math.max(...chart.series[0].data.map((p) => p[p.length - 1]))
+    }
     return options
   }
 }

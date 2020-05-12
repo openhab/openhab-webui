@@ -20,7 +20,7 @@ export default {
     if (!component || !component.config || !component.config.item) return []
     return [component.config.item]
   },
-  get (component, points) {
+  get (component, points, startTime, endTime, chart) {
     let dimension1 = component.config.dimension1
     let dimension2 = component.config.dimension2
 
@@ -46,12 +46,16 @@ export default {
       const aggregationFunction = component.config.aggregationFunction || 'average'
       let value = aggregate(aggregationFunction, arr, idx, groups)
       if (value.toFixed) value = value.toFixed(3)
-      const axisX = (component.config.transpose) ? dimension2 : dimension1
-      const axisY = (component.config.transpose) ? dimension1 : dimension2
-      if (axisY) {
+      if (dimension2) {
+        const axisX = (component.config.transpose) ? dimension2 : dimension1
+        const axisY = (component.config.transpose) ? dimension1 : dimension2
         return [dimensionFromDate(arr[0], axisX), dimensionFromDate(arr[0], axisY, true), formatter.format(value)]
       } else {
-        return [dimensionFromDate(arr[0], axisX), formatter.format(value)]
+        if (component.config.transpose) {
+          return [formatter.format(value), dimensionFromDate(arr[0], dimension1, true)]
+        } else {
+          return [dimensionFromDate(arr[0], dimension1), formatter.format(value)]
+        }
       }
     })
 

@@ -24,11 +24,13 @@ export default {
     axis.data = []
     switch (config.categoryType) {
       case 'hour':
+        axis.name = 'min'
         for (let i = 0; i < 60; i++) {
           axis.data.push(i)
         }
         break
       case 'day':
+        axis.name = 'h'
         for (let i = 0; i < 24; i++) {
           axis.data.push(i)
         }
@@ -41,6 +43,7 @@ export default {
         }
         break
       case 'month':
+        axis.name = 'day'
         for (let i = 1; i <= 31; i++) {
           axis.data.push(i)
         }

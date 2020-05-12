@@ -83,7 +83,7 @@
 
     <f7-sheet class="model-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
       <f7-page>
-        <f7-toolbar tabbar>
+        <f7-toolbar tabbar bottom>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'state'" @click="detailsTab = 'state'">State</f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'item'" @click="detailsTab = 'item'">Item</f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'links'" @click="detailsTab = 'links'">Links</f7-link>
@@ -92,7 +92,7 @@
           </div>
         </f7-toolbar>
         <f7-block style="margin-bottom: 6rem" v-if="selectedItem">
-          <item-state-preview v-if="detailsTab === 'state'" :item="selectedItem.item" :context="context" />
+          <item-state-preview v-if="detailsTab === 'state' && !newItem" :item="selectedItem.item" :context="context" />
           <item-details v-if="detailsTab === 'item'" :model="selectedItem" :links="links" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)"/>
           <link-details v-if="detailsTab === 'links'" :item="selectedItem.item" :links="links" />
         </f7-block>
@@ -122,6 +122,9 @@
       font-size 8pt
       color var(--f7-list-item-footer-text-color)
 .model-details-sheet
+  .toolbar
+    --f7-theme-color var(--f7-color-blue)
+    --f7-theme-color-rgb var(--f7-color-blue-rgb)
   z-index 10900
 .md .model-details-sheet .toolbar .link
   width 28%
@@ -435,6 +438,7 @@ export default {
 
         this.newItemParent = this.selectedItem.item.name
       }
+      this.detailsTab = 'item'
       this.load()
     },
     addNonSemanticItem (group) {
@@ -451,6 +455,7 @@ export default {
         this.newItem.groupNames = [this.selectedItem.item.name]
         this.newItemParent = this.selectedItem.item.name
       }
+      this.detailsTab = 'item'
       this.load()
     },
     addFromThing (createEquipment) {

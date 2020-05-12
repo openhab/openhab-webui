@@ -77,7 +77,7 @@
 
     <f7-sheet class="sitemap-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
       <f7-page>
-        <f7-toolbar tabbar>
+        <f7-toolbar tabbar bottom>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'widget'" @click="detailsTab = 'widget'">Widget</f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'mappings'" @click="detailsTab = 'mappings'">Mappings</f7-link>
           <div class="right">
@@ -119,6 +119,9 @@
       font-size 8pt
       color var(--f7-list-item-footer-text-color)
 .sitemap-details-sheet
+  .toolbar
+    --f7-theme-color var(--f7-color-blue)
+    --f7-theme-color-rgb var(--f7-color-blue-rgb)
   z-index 10900
 .md .sitemap-details-sheet .toolbar .link
   width 35%
@@ -370,6 +373,7 @@ export default {
       }
       this.selectedWidget.slots.widgets.push(widget)
       this.selectWidget([widget, this.selectedWidget])
+      this.detailsTab = 'widget'
     }
   }
 }

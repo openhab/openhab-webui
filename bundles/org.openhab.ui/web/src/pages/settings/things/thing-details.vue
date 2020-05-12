@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="thing.label" back-link="Back" no-hairline>
       <f7-nav-right v-if="dirty">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
@@ -259,7 +259,7 @@ export default {
         this.load()
       }
     },
-    onPageAfterOut (event) {
+    onPageBeforeOut (event) {
       this.$store.dispatch('stopTrackingStates')
       this.stopEventSource()
     },

@@ -1,4 +1,5 @@
 import MarkArea from './oh-mark-area'
+import Framework7 from 'framework7'
 
 export default {
   neededItems (component) {
@@ -25,11 +26,12 @@ export default {
       })
 
       series.data = data
+      series.id = `oh-time-series#${component.config.item}#${Framework7.utils.id()}`
     }
 
     // other things
     if (component.slots && component.slots.markArea) {
-      series.markArea = MarkArea.get(component.slots.markArea[0], points)
+      series.markArea = MarkArea.get(component.slots.markArea[0], points, startTime, endTime, chart)
     }
 
     if (!component.config.showSymbol) series.showSymbol = false

@@ -5,7 +5,7 @@
       v-if="ready"
       :options="options"
       class="oh-chart-page-chart"
-      :class="{ 'with-tabbar': context.tab }"
+      :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
       :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize></chart>
     <f7-menu class="padding float-right">
       <f7-menu-item @click="earlierPeriod()" icon-f7="chevron_left" />
@@ -33,6 +33,10 @@
   height calc(100% - var(--f7-navbar-height)) !important
   &.with-tabbar
     height calc(100% - var(--f7-navbar-height) - var(--f7-tabbar-labels-height)) !important
+  &.with-toolbar
+    height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height)) !important
+  &.with-sheet
+    height calc(100% - var(--f7-navbar-height) - var(--f7-sheet-height)) !important
   .echarts
     width calc(100% - 20px)
     height 100%

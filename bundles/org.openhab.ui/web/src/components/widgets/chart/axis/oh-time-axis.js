@@ -13,6 +13,9 @@ export default {
       axis.max = (v) => {
         return isFinite(v.min) ? dayjs(v.min).startOf(chart.config.chartType).add(1, chart.config.chartType === 'isoWeek' ? 'week' : chart.config.chartType).toDate().getTime() : v.max
       }
+    } else {
+      axis.min = startTime.toDate().getTime()
+      axis.max = endTime.toDate().getTime()
     }
 
     if (!component.config.axisPointer) {

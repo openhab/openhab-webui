@@ -3,7 +3,8 @@
     <f7-card-header v-if="config.title">
       <div>{{config.title}}</div>
     </f7-card-header>
-    <f7-card-content @click.native="performAction" class="label-card-content" :style="{ background: config.background }" :class="{ 'vertical-arrangement': config.vertical }">
+    <f7-card-content ref="cardContent" @click.native="performAction" class="label-card-content" :style="{ background: config.background }" :class="{ 'vertical-arrangement': config.vertical }">
+      <trend :key="'trend' + config.item" v-if="showTrend" :width="trendWidth" class="trend" :data="trendData" :gradient="trendGradient" :stroke-width="trendStrokeWidth" auto-draw smooth />
       <f7-list>
         <f7-list-item :link="config.action ? true : false" no-chevron>
           <oh-icon slot="media" v-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" :height="config.iconSize || 32" :width="config.iconSize || 32" />
@@ -38,6 +39,13 @@
     justify-content center !important
     text-align center
     --f7-list-item-media-margin 0
+  .trend
+    position absolute
+    left 0
+    top 0
+    width 100%
+    height 100%
+    opacity 0.2
 </style>
 
 <script>
@@ -128,7 +136,48 @@ export default {
   },
   data () {
     return {
-      value: Math.random()
+      trendData: [],
+      showTrend: false
+    }
+  },
+  computed: {
+    trendItem () {
+      return this.config.trendItem
+    },
+    trendWidth () {
+      return this.$refs.cardContent.$el.clientWidth
+    },
+    trendGradient () {
+      return this.config.trendGradient || ['#2196f3', '#5ac8fa']
+    },
+    trendStrokeWidth () {
+      return this.config.trendStrokeWidth || 3
+    }
+  },
+  mounted () {
+    this.buildTrend()
+  },
+  watch: {
+    trendItem (item) {
+      this.buildTrend()
+    }
+  },
+  methods: {
+    buildTrend () {
+      this.trendData = []
+      this.showTrend = false
+      if (!this.trendItem) return []
+      const sampling = this.config.trendSampling || 60
+      return this.$oh.api.get('/rest/persistence/items/' + this.config.trendItem).then((resp) => {
+        if (resp.data && resp.data.length) {
+          let data = []
+          for (let i = 0; i < resp.data.length; i += sampling) {
+            data.push(parseFloat(resp.data[i].state))
+          }
+          this.trendData = data
+          this.showTrend = true
+        }
+      })
     }
   }
 }
