@@ -82,45 +82,8 @@
       </f7-tab>
     </f7-tabs>
 
-    <f7-popup ref="widgetConfig" class="widgetconfig-popup" close-on-escape :opened="widgetConfigOpened" @popup:closed="widgetConfigClosed">
-      <f7-page v-if="currentComponent && currentWidget">
-        <f7-navbar>
-          <f7-nav-left>
-            <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
-          </f7-nav-left>
-          <f7-nav-title>Edit {{currentWidget.label || currentWidget.uid}}</f7-nav-title>
-          <f7-nav-right>
-            <f7-link @click="updateWidgetConfig">Done</f7-link>
-          </f7-nav-right>
-        </f7-navbar>
-        <f7-block v-if="currentWidget.props">
-          <f7-col>
-            <config-sheet
-              :parameterGroups="currentWidget.props.parameterGroups || []"
-              :parameters="currentWidget.props.parameters || []"
-              :configuration="currentComponentConfig"
-              @updated="dirty = true"
-            />
-          </f7-col>
-        </f7-block>
-      </f7-page>
-    </f7-popup>
-
-    <f7-popup ref="widgetCode" class="widgetcode-popup" close-on-escape :opened="widgetCodeOpened" @popup:closed="widgetCodeClosed">
-      <f7-page v-if="currentComponent && widgetCodeOpened">
-        <f7-navbar>
-          <f7-nav-left>
-            <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
-          </f7-nav-left>
-          <f7-nav-title>Edit Widget Code</f7-nav-title>
-          <f7-nav-right>
-            <f7-link @click="updateWidgetCode">Done</f7-link>
-          </f7-nav-right>
-        </f7-navbar>
-        <editor class="page-code-editor" mode="text/x-yaml" :value="widgetYaml" @input="(value) => widgetYaml = value" />
-        <pre class="yaml-message padding-horizontal" :class="[widgetYamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{widgetYamlError}}</pre>
-      </f7-page>
-    </f7-popup>
+    <widget-config-popup :opened="widgetConfigOpened" :component="currentComponent" :widget="currentWidget" @closed="widgetConfigClosed" @update="updateWidgetConfig" />
+    <widget-code-popup :opened="widgetCodeOpened" :component="currentComponent" :widget-yaml="widgetYaml" @closed="widgetCodeClosed" @update="updateWidgetCode" />
   </f7-page>
 </template>
 
@@ -154,8 +117,8 @@ const ConfigurableWidgets = {
 }
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
-
-import ConfigSheet from '@/components/config/config-sheet.vue'
+import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
+import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
 
 export default {
   mixins: [PageDesigner],
@@ -163,12 +126,14 @@ export default {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
     OhPlanPage,
     PageSettings,
-    ConfigSheet
+    WidgetConfigPopup,
+    WidgetCodePopup
   },
   props: ['createMode', 'uid'],
   data () {
     return {
       pageWidgetDefinition: OhPlanPage.widget,
+      forceEditMode: true,
       page: {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-plan-page',

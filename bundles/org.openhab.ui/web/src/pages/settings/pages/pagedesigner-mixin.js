@@ -12,11 +12,9 @@ export default {
       clipboard: null,
       clipboardType: null,
       currentComponent: null,
-      currentComponentConfig: null,
       currentWidget: null,
       widgetConfigOpened: false,
-      widgetCodeOpened: false,
-      widgetYaml: null
+      widgetCodeOpened: false
     }
   },
   computed: {
@@ -27,7 +25,7 @@ export default {
       return {
         component: this.page,
         store: this.$store.getters.trackedItems,
-        editmode: (!this.previewMode) ? {
+        editmode: (!this.previewMode || this.forceEditMode) ? {
           addWidget: this.addWidget,
           configureWidget: this.configureWidget,
           configureSlot: this.configureSlot,
@@ -46,15 +44,6 @@ export default {
       if (this.currentTab !== 'code') return null
       try {
         YAML.parse(this.pageYaml, { prettyErrors: true })
-        return 'OK'
-      } catch (e) {
-        return e
-      }
-    },
-    widgetYamlError () {
-      if (!this.widgetCodeOpened) return null
-      try {
-        YAML.parse(this.widgetYaml, { prettyErrors: true })
         return 'OK'
       } catch (e) {
         return e
@@ -154,8 +143,8 @@ export default {
       this.currentWidget = null
       this.widgetConfigOpened = false
     },
-    updateWidgetConfig () {
-      this.$set(this.currentComponent, 'config', this.currentComponentConfig)
+    updateWidgetConfig (config) {
+      this.$set(this.currentComponent, 'config', config)
       this.forceUpdate()
       this.widgetConfigClosed()
     },
@@ -164,8 +153,8 @@ export default {
       this.currentWidget = null
       this.widgetCodeOpened = false
     },
-    updateWidgetCode () {
-      const updatedWidget = YAML.parse(this.widgetYaml)
+    updateWidgetCode (code) {
+      const updatedWidget = YAML.parse(code)
       this.$set(this.currentComponent, 'config', updatedWidget.config)
       this.$set(this.currentComponent, 'slots', updatedWidget.slots)
       this.forceUpdate()
@@ -200,14 +189,12 @@ export default {
         this.currentWidget = widgetDefinition
       }
       this.currentComponent = component
-      this.currentComponentConfig = JSON.parse(JSON.stringify(this.currentComponent.config))
       this.widgetConfigOpened = true
     },
     editWidgetCode (component, parentContext, slot) {
       if (slot && !component.slots) component.slots = {}
       if (slot && !component.slots[slot]) component.slots[slot] = []
       this.currentComponent = component
-      this.widgetYaml = YAML.stringify(component)
       this.widgetCodeOpened = true
     },
     cutWidget (component, parentContext, slot = 'default') {
