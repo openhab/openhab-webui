@@ -88,7 +88,7 @@
 
 	<feature name="openhab-ui-restdocs" description="REST Documentation" version="${project.version}">
 		<feature>openhab-core-ui</feature>
-		<feature>openhab-core-io-rest-swagger1</feature>
+		<feature>openhab-core-io-rest-swagger</feature>
 		<bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.restdocs/${project.version}</bundle>
 	</feature>
 
