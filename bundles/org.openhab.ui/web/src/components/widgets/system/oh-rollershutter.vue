@@ -12,6 +12,8 @@
   .button
     height 48px
     width 48px
+  .segmented-highlight
+    display none
 .aurora .rollershutter-controls
   .button
     height 37px
