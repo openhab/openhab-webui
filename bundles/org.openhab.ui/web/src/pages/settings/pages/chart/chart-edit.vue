@@ -122,6 +122,8 @@ import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
 import ChartDesigner from '@/components/pagedesigner/chart/chart-designer.vue'
 import ChartWidgetsDefinitions from './chart-widgets-definitions'
 
+import ConfigSheet from '@/components/config/config-sheet.vue'
+
 export default {
   mixins: [PageDesigner],
   components: {
@@ -130,7 +132,8 @@ export default {
     PageSettings,
     WidgetConfigPopup,
     WidgetCodePopup,
-    ChartDesigner
+    ChartDesigner,
+    ConfigSheet
   },
   props: ['createMode', 'uid'],
   data () {

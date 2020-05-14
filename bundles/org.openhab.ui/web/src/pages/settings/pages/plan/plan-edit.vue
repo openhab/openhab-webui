@@ -120,6 +120,8 @@ import PageSettings from '@/components/pagedesigner/page-settings.vue'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
 import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
 
+import ConfigSheet from '@/components/config/config-sheet.vue'
+
 export default {
   mixins: [PageDesigner],
   components: {
@@ -127,7 +129,8 @@ export default {
     OhPlanPage,
     PageSettings,
     WidgetConfigPopup,
-    WidgetCodePopup
+    WidgetCodePopup,
+    ConfigSheet
   },
   props: ['createMode', 'uid'],
   data () {
