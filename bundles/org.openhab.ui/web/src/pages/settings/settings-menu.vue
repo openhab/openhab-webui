@@ -53,6 +53,7 @@
             <f7-list-item
               link="pages/"
               title="Pages"
+              :after="$store.getters.pages.length + sitemapsCount"
               badge-color="blue"
               :footer="objectsSubtitles.pages">
               <f7-icon slot="media" f7="tv" color="gray"></f7-icon>
@@ -149,7 +150,8 @@ export default {
       },
       inboxCount: '',
       thingsCount: '',
-      itemsCount: ''
+      itemsCount: '',
+      sitemapsCount: 0
     }
   },
   methods: {
@@ -173,6 +175,7 @@ export default {
       this.$oh.api.get('/rest/inbox').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
       this.$oh.api.get('/rest/things').then((data) => { this.thingsCount = data.length.toString() })
       this.$oh.api.get('/rest/items').then((data) => { this.itemsCount = data.length.toString() })
+      this.$oh.api.get('/rest/ui/components/system:sitemap').then((data) => { this.sitemapsCount = data.length })
     },
     onPageInit () {
       this.loadMenu()
