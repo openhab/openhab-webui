@@ -26,9 +26,17 @@
       </div>
       <div class="right" v-if="$theme.md">
         <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
-        <f7-link icon-md="material:more_vert" icon-color="white" @click="removeSelected"></f7-link>
       </div>
     </f7-toolbar>
+
+    <f7-list-index
+      v-if="ready"
+      ref="listIndex" :key="'pages-index'"
+      v-show="groupBy === 'alphabetical'"
+      list-el=".pages-list"
+      :scroll-list="true"
+      :label="true"
+    ></f7-list-index>
 
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found"></f7-list-item>
@@ -36,9 +44,9 @@
 
     <!-- skeleton for not ready -->
     <f7-block class="block-narrow">
-      <f7-col v-show="!ready">
+      <f7-col v-if="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
-        <f7-list media-list class="col wide">
+        <f7-list contacts-list class="col wide pages-list">
           <f7-list-group>
             <f7-list-item
               media-item
@@ -53,34 +61,47 @@
           </f7-list-group>
         </f7-list>
       </f7-col>
-      <f7-col v-if="ready">
+      <f7-col v-else>
         <f7-block-title class="searchbar-hide-on-search">{{pages.length}} pages</f7-block-title>
+        <div class="padding-left padding-right" v-show="!ready || pages.length > 0">
+          <f7-segmented strong tag="p">
+            <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'; $nextTick(() => $refs.listIndex.update())">Alphabetical</f7-button>
+            <f7-button :active="groupBy === 'type'" @click="groupBy = 'type'">By type</f7-button>
+          </f7-segmented>
+        </div>
         <f7-list
           v-show="pages.length > 0"
           class="searchbar-found col pages-list"
           ref="pagesList"
-          media-list>
-          <f7-list-item
-            v-for="(page, index) in pages"
-            :key="index"
-            media-item
-            class="pagelist-item"
-            :checkbox="showCheckboxes"
-            :checked="isChecked(page.uid)"
-            @change="(e) => toggleItemCheck(e, page.uid, page)"
-            :link="showCheckboxes ? null : getPageType(page).type + '/' + page.uid"
-            :title="page.config.label"
-            :subtitle="getPageType(page).label"
-            :footer="page.uid"
-          >
-            <div slot="subtitle">
-              <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
-                <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
-              </f7-chip>
-            </div>
-            <!-- <span slot="media" class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
-            <f7-icon slot="media" color="gray" :f7="getPageIcon(page)" :size="32"></f7-icon>
-          </f7-list-item>
+          :contacts-list="groupBy === 'alphabetical'" media-list>
+          <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
+            <f7-list-item v-if="pagesWithInitial.length" :title="initial" group-title></f7-list-item>
+            <f7-list-item
+              v-for="(page, index) in pagesWithInitial"
+              :key="index"
+              media-item
+              class="pagelist-item"
+              :checkbox="showCheckboxes"
+              :checked="isChecked(page.uid)"
+              @change="(e) => toggleItemCheck(e, page.uid, page)"
+              :link="showCheckboxes ? null : getPageType(page).type + '/' + page.uid"
+              :title="page.config.label"
+              :subtitle="getPageType(page).label"
+              :footer="page.uid"
+              :badge="page.config.order"
+            >
+              <div slot="subtitle">
+                <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                  <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
+                </f7-chip>
+                <f7-chip v-for="userrole in page.config.visibleTo || []" :key="userrole" :text="userrole" media-bg-color="green" style="margin-right: 6px">
+                  <f7-icon slot="media" f7="person_crop_circle_fill_badge_checkmark"></f7-icon>
+                </f7-chip>
+              </div>
+              <!-- <span slot="media" class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
+              <f7-icon slot="media" :color="page.config.sidebar ? '' : 'gray'" :f7="getPageIcon(page)" :size="32"></f7-icon>
+            </f7-list-item>
+          </f7-list-group>
         </f7-list>
       </f7-col>
     </f7-block>
@@ -111,6 +132,7 @@ export default {
       pages: [],
       initSearchbar: false,
       selectedItems: [],
+      groupBy: 'alphabetical',
       showCheckboxes: false,
       pageTypes: [
         { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap', icon: 'menu' },
@@ -122,8 +144,31 @@ export default {
       ]
     }
   },
-  created () {
+  computed: {
+    indexedPages () {
+      if (this.groupBy === 'alphabetical') {
+        return this.pages.reduce((prev, page, i, pages) => {
+          const label = page.config.label || page.uid
+          const initial = label.substring(0, 1).toUpperCase()
+          if (!prev[initial]) {
+            prev[initial] = []
+          }
+          prev[initial].push(page)
 
+          return prev
+        }, {})
+      } else {
+        return this.pages.reduce((prev, page, i, things) => {
+          const type = this.getPageType(page).label
+          if (!prev[type]) {
+            prev[type] = []
+          }
+          prev[type].push(page)
+
+          return prev
+        }, {})
+      }
+    }
   },
   methods: {
     onPageAfterIn () {
@@ -135,6 +180,8 @@ export default {
     load () {
       if (this.loading) return
       this.loading = true
+      this.$set(this, 'selectedItems', [])
+      this.showCheckboxes = false
       var promises = [
         this.$oh.api.get('/rest/ui/components/system:sitemap'),
         this.$oh.api.get('/rest/ui/components/ui:page')
@@ -144,9 +191,10 @@ export default {
         this.pages = pagesAndSitemaps.sort((a, b) => {
           return a.config.label.localeCompare(b.config.label)
         })
+
         this.loading = false
         this.ready = true
-        setTimeout(() => { this.initSearchbar = true })
+        setTimeout(() => { this.initSearchbar = true; this.$refs.listIndex.update() })
       })
     },
     toggleCheck () {
