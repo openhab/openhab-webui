@@ -44,9 +44,15 @@
 
     <!-- skeleton for not ready -->
     <f7-block class="block-narrow">
-      <f7-col v-if="!ready">
-        <f7-block-title>&nbsp;Loading...</f7-block-title>
-        <f7-list contacts-list class="col wide pages-list">
+      <f7-col>
+        <f7-block-title class="searchbar-hide-on-search"><span v-if="ready">{{pages.length}} pages</span><span v-else>Loading...</span></f7-block-title>
+        <div class="padding-left padding-right" v-show="!ready || pages.length > 0">
+          <f7-segmented strong tag="p">
+            <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'; $nextTick(() => $refs.listIndex.update())">Alphabetical</f7-button>
+            <f7-button :active="groupBy === 'type'" @click="groupBy = 'type'">By type</f7-button>
+          </f7-segmented>
+        </div>
+        <f7-list v-if="!ready" contacts-list class="col wide pages-list">
           <f7-list-group>
             <f7-list-item
               media-item
@@ -54,22 +60,15 @@
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Title of the page"
-              subtitle="Type of the page"
-              after="status badge"
+              subtitle="Page type"
+              after="The item state"
+              footer="Page UID"
             >
+              <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media"></f7-skeleton-block>
             </f7-list-item>
           </f7-list-group>
         </f7-list>
-      </f7-col>
-      <f7-col v-else>
-        <f7-block-title class="searchbar-hide-on-search">{{pages.length}} pages</f7-block-title>
-        <div class="padding-left padding-right" v-show="!ready || pages.length > 0">
-          <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'; $nextTick(() => $refs.listIndex.update())">Alphabetical</f7-button>
-            <f7-button :active="groupBy === 'type'" @click="groupBy = 'type'">By type</f7-button>
-          </f7-segmented>
-        </div>
-        <f7-list
+        <f7-list v-else
           v-show="pages.length > 0"
           class="searchbar-found col pages-list"
           ref="pagesList"
