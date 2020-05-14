@@ -22,41 +22,18 @@
           <div>Loading...</div>
         </f7-block>
         <f7-block class="block-narrow" v-if="ready && !previewMode">
-          <f7-col>
-            <f7-list inline-labels>
-              <f7-list-input label="ID" type="text" placeholder="ID" :value="page.uid" @input="page.uid = $event.target.value"
-                required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only" :disabled="!createMode">
-              </f7-list-input>
-              <f7-list-input label="Label" type="text" placeholder="Label" :value="page.config.label" @input="page.config.label = $event.target.value" clear-button>
-              </f7-list-input>
-              <f7-list-item title="Show on sidebar">
-                <f7-toggle slot="after" :checked="page.config.sidebar" @toggle:change="page.config.sidebar = $event"></f7-toggle>
-              </f7-list-item>
-              <f7-list-input label="Sidebar order" type="number" placeholder="Assign order index to rearrange pages on sidebar" :value="page.config.order" @input="page.config.order = $event.target.value" clear-button>
-              </f7-list-input>
-            </f7-list>
-          </f7-col>
+          <page-settings :page="page" :createMode="createMode" />
         </f7-block>
 
         <oh-layout-page class="layout-page" v-if="ready" :context="context" :key="pageKey"
           @add-block="addBlock"
           @add-masonry="addMasonry"
         />
-
-        <!-- <f7-actions ref="widgetTypeSelection" id="widget-type-selection" :grid="true">
-          <f7-actions-group>
-            <f7-actions-button v-for="widgetType in widgetTypes" :key="widgetType.type" @click="addWidget(widgetType.type)">
-              <f7-icon :f7="widgetType.icon" slot="media" />
-              <span>{{widgetType.type}}</span>
-            </f7-actions-button>
-          </f7-actions-group>
-        </f7-actions> -->
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'" class="page-code-editor" mode="text/x-yaml" :value="pageYaml" @input="(value) => pageYaml = value" />
         <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre>
       </f7-tab>
-
     </f7-tabs>
 
     <f7-popup ref="widgetConfig" class="widgetconfig-popup" close-on-escape :opened="widgetConfigOpened" @popup:closed="widgetConfigClosed">
@@ -129,6 +106,8 @@
 </style>
 
 <script>
+import PageDesigner from '../pagedesigner-mixin'
+
 import YAML from 'yaml'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
@@ -136,168 +115,30 @@ import * as SystemWidgets from '@/components/widgets/system/index'
 import * as StandardWidgets from '@/components/widgets/standard/index'
 import * as LayoutWidgets from '@/components/widgets/layout/index'
 
+import PageSettings from '@/components/pagedesigner/page-settings.vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
+  mixins: [PageDesigner],
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
     OhLayoutPage,
+    PageSettings,
     ConfigSheet
   },
   props: ['createMode', 'uid'],
   data () {
     return {
-      pageReady: false,
-      loading: false,
       page: {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-layout-page',
         config: {},
         slots: { default: [] }
-      },
-      pageKey: this.$f7.utils.id(),
-      pageYaml: null,
-      previewMode: false,
-      currentTab: 'design',
-      clipboard: null,
-      clipboardType: null,
-      currentComponent: null,
-      currentComponentConfig: null,
-      currentWidget: null,
-      widgetConfigOpened: false,
-      widgetCodeOpened: false,
-      widgetYaml: null
-    }
-  },
-  computed: {
-    ready () {
-      return this.pageReady && this.$store.state.components.widgets != null
-    },
-    context () {
-      return {
-        component: this.page,
-        store: this.$store.getters.trackedItems,
-        // states: this.stateTracking.store,
-        editmode: (!this.previewMode) ? {
-          addWidget: this.addWidget,
-          configureWidget: this.configureWidget,
-          editWidgetCode: this.editWidgetCode,
-          cutWidget: this.cutWidget,
-          copyWidget: this.copyWidget,
-          pasteWidget: this.pasteWidget,
-          moveWidgetUp: this.moveWidgetUp,
-          moveWidgetDown: this.moveWidgetDown,
-          removeWidget: this.removeWidget
-        } : null,
-        clipboardtype: this.clipboardType
-      }
-    },
-    yamlError () {
-      if (this.currentTab !== 'code') return null
-      try {
-        YAML.parse(this.pageYaml, { prettyErrors: true })
-        return 'OK'
-      } catch (e) {
-        return e
-      }
-    },
-    widgetYamlError () {
-      if (!this.widgetCodeOpened) return null
-      try {
-        YAML.parse(this.widgetYaml, { prettyErrors: true })
-        return 'OK'
-      } catch (e) {
-        return e
       }
     }
   },
   methods: {
-    onPageAfterIn () {
-      if (window) {
-        window.addEventListener('keydown', this.keyDown)
-      }
-      this.$store.dispatch('startTrackingStates')
-      this.load()
-    },
-    onPageBeforeOut () {
-      if (window) {
-        window.removeEventListener('keydown', this.keyDown)
-      }
-      this.$store.dispatch('stopTrackingStates')
-    },
-    keyDown (ev) {
-      if (ev.ctrlKey || ev.metakKey) {
-        switch (ev.keyCode) {
-          case 82:
-            this.previewMode = !this.previewMode
-            ev.stopPropagation()
-            ev.preventDefault()
-            break
-          case 83:
-            this.save(!this.createMode)
-            ev.stopPropagation()
-            ev.preventDefault()
-            break
-        }
-      }
-    },
-    load () {
-      if (this.loading) return
-      this.loading = true
-
-      if (this.createMode) {
-        this.loading = false
-        this.pageReady = true
-      } else {
-        this.$oh.api.get('/rest/ui/components/ui:page/' + this.uid).then((data) => {
-          this.$set(this, 'page', data)
-          this.pageReady = true
-          this.loading = false
-        })
-      }
-    },
-    save (stay) {
-      if (!this.page.uid) {
-        this.$f7.dialog.alert('Please give an ID to the page')
-        return
-      }
-      if (!this.page.config.label) {
-        this.$f7.dialog.alert('Please give an label to the page')
-        return
-      }
-      if (!this.createMode && this.uid !== this.page.uid) {
-        this.$f7.dialog.alert('You cannot change the ID of an existing page. Duplicate it with the new ID then delete this one.')
-        return
-      }
-
-      const promise = (this.createMode)
-        ? this.$oh.api.postPlain('/rest/ui/components/ui:page', JSON.stringify(this.page), 'text/plain', 'application/json')
-        : this.$oh.api.put('/rest/ui/components/ui:page/' + this.page.uid, this.page)
-      promise.then((data) => {
-        if (this.createMode) {
-          this.$f7.toast.create({
-            text: 'Page created',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-          this.load()
-        } else {
-          this.$f7.toast.create({
-            text: 'Page updated',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        }
-        this.$f7.emit('sidebarRefresh', null)
-        if (!stay) this.$f7router.back()
-      }).catch((err) => {
-        this.$f7.toast.create({
-          text: 'Error while saving page: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
-    },
     addWidget (component, widgetType, parentContext, slot) {
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
@@ -351,28 +192,6 @@ export default {
         }).open()
       }
     },
-    widgetConfigClosed () {
-      this.currentComponent = null
-      this.currentWidget = null
-      this.widgetConfigOpened = false
-    },
-    updateWidgetConfig () {
-      this.$set(this.currentComponent, 'config', this.currentComponentConfig)
-      this.forceUpdate()
-      this.widgetConfigClosed()
-    },
-    widgetCodeClosed () {
-      this.currentComponent = null
-      this.currentWidget = null
-      this.widgetCodeOpened = false
-    },
-    updateWidgetCode () {
-      const updatedWidget = YAML.parse(this.widgetYaml)
-      this.$set(this.currentComponent, 'config', updatedWidget.config)
-      this.$set(this.currentComponent, 'slots', updatedWidget.slots)
-      this.forceUpdate()
-      this.widgetCodeClosed()
-    },
     addBlock (component) {
       component.slots.default.push({
         component: 'oh-block',
@@ -389,83 +208,10 @@ export default {
         }])
       }
     },
-    configureWidget (component, parentContext, forceComponentType) {
-      const componentType = forceComponentType || component.component
-      this.currentComponent = null
-      this.currentWidget = null
-      let widgetDefinition
-      if (componentType.indexOf('widget:') === 0) {
-        this.currentWidget = this.$store.getters.widget(componentType.substring(7))
-      } else {
-        widgetDefinition = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets }).find((w) => w.widget && w.widget.name === componentType)
-        if (!widgetDefinition) {
-          // widgetDefinition = Object.values(LayoutWidgets).find((w) => w.widget.name === component.component)
-          if (!widgetDefinition) {
-            console.warn('Widget not found: ' + componentType)
-            this.$f7.toast.create({
-              text: `This type of component cannot be configured: ${componentType}.`,
-              destroyOnClose: true,
-              closeTimeout: 3000,
-              closeButton: true,
-              closeButtonText: 'Edit YAML',
-              on: {
-                closeButtonClick: () => {
-                  this.editWidgetCode(component, parentContext)
-                }
-              }
-            }).open()
-            return
-          }
-        }
-        this.currentWidget = widgetDefinition.widget
-      }
-      this.currentComponent = component
-      this.currentComponentConfig = JSON.parse(JSON.stringify(this.currentComponent.config))
-      this.widgetConfigOpened = true
-    },
-    editWidgetCode (component, parentContext, slot) {
-      if (slot && !component.slots) component.slots = {}
-      if (slot && !component.slots[slot]) component.slots[slot] = []
-      this.currentComponent = component
-      this.widgetYaml = YAML.stringify(component)
-      this.widgetCodeOpened = true
-    },
-    cutWidget (component, parentContext) {
-      this.copyWidget(component, parentContext)
-      this.removeWidget(component, parentContext)
-    },
-    copyWidget (component, parentContext) {
-      let newClipboard = JSON.stringify(component)
-      this.$set(this, 'clipboard', newClipboard)
-      this.clipboardType = component.component
-    },
-    pasteWidget (component, parentContext) {
-      if (!this.clipboard) return
-      component.slots.default.push(JSON.parse(this.clipboard))
-      this.forceUpdate()
-    },
-    moveWidgetUp (component, parentContext) {
-      let siblings = parentContext.component.slots.default
-      let pos = siblings.indexOf(component)
-      if (pos <= 0) return
-      siblings.splice(pos, 1)
-      siblings.splice(pos - 1, 0, component)
-      this.forceUpdate()
-    },
-    moveWidgetDown (component, parentContext) {
-      let siblings = parentContext.component.slots.default
-      let pos = siblings.indexOf(component)
-      if (pos >= siblings.length - 1) return
-      siblings.splice(pos, 1)
-      siblings.splice(pos + 1, 0, component)
-      this.forceUpdate()
-    },
-    removeWidget (component, parentContext) {
-      parentContext.component.slots.default.splice(parentContext.component.slots.default.indexOf(component), 1)
-      this.forceUpdate()
-    },
-    forceUpdate () {
-      this.pageKey = this.$f7.utils.id()
+    getWidgetDefinition (componentType) {
+      const component = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets }).find((w) => w.widget && w.widget.name === componentType)
+      if (!component) return null
+      return component.widget
     },
     toYaml () {
       this.pageYaml = YAML.stringify({
