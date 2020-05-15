@@ -29,12 +29,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.sse.Sse;
+import javax.ws.rs.sse.SseEventSink;
 
-import org.glassfish.jersey.media.sse.EventOutput;
-import org.glassfish.jersey.media.sse.SseBroadcaster;
-import org.glassfish.jersey.media.sse.SseFeature;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
+import org.openhab.core.io.rest.SseBroadcaster;
 import org.openhab.core.items.GenericItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemFactory;
@@ -45,8 +49,15 @@ import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.backend.model.StateBean;
 import org.openhab.ui.cometvisu.internal.listeners.StateEventListener;
 import org.openhab.ui.cometvisu.internal.util.SseUtil;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JSONRequired;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsApplicationSelect;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsName;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,48 +71,56 @@ import io.swagger.annotations.ApiResponses;
  * SSE communication
  *
  * @author Tobias Bräutigam - Initial contribution
+ * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
  */
 @Component(immediate = true)
+@JaxrsResource
+@JaxrsName(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_READ_ALIAS)
+@JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
+@JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_READ_ALIAS)
 @Api(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_READ_ALIAS)
+@NonNullByDefault
 public class ReadResource implements EventBroadcaster, RESTResource {
     private final Logger logger = LoggerFactory.getLogger(ReadResource.class);
 
-    private SseBroadcaster broadcaster = new SseBroadcaster();
+    private SseBroadcaster<SseSinkInfo> broadcaster = new SseBroadcaster<>();
 
-    private final ExecutorService executorService;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    private ItemRegistry itemRegistry;
+    private final ItemRegistry itemRegistry;
 
-    private StateEventListener stateEventListener;
+    private final StateEventListener stateEventListener = new StateEventListener(this);
 
     private List<String> itemNames = new ArrayList<>();
-    private Map<Item, Map<String, Class<? extends State>>> items = new HashMap<>();
+    private Map<Item, Map<String, @Nullable Class<? extends State>>> items = new HashMap<>();
 
     @Context
-    private UriInfo uriInfo;
+    private @NonNullByDefault({}) UriInfo uriInfo;
 
     @Context
-    private HttpServletResponse response;
+    private @NonNullByDefault({}) HttpServletResponse response;
 
     @Context
-    private HttpServletRequest request;
+    private @NonNullByDefault({}) HttpServletRequest request;
+
+    private @NonNullByDefault({}) Sse sse;
 
     private Collection<ItemFactory> itemFactories = new CopyOnWriteArrayList<>();
 
-    public ReadResource() {
-        this.executorService = Executors.newSingleThreadExecutor();
-        this.stateEventListener = new StateEventListener();
-        this.stateEventListener.setEventBroadcaster(this);
-    }
-
-    @Reference
-    protected void setItemRegistry(ItemRegistry itemRegistry) {
+    @Activate
+    public ReadResource(@Reference ItemRegistry itemRegistry) {
         this.itemRegistry = itemRegistry;
     }
 
-    protected void unsetItemRegistry(ItemRegistry itemRegistry) {
-        this.itemRegistry = null;
+    @Deactivate
+    public void deactivate() {
+        broadcaster.close();
+    }
+
+    @Context
+    public void setSse(final Sse sse) {
+        this.sse = sse;
     }
 
     protected void addItemFactory(ItemFactory itemFactory) {
@@ -123,16 +142,15 @@ public class ReadResource implements EventBroadcaster, RESTResource {
      * @throws InterruptedException
      */
     @GET
-    @Produces(SseFeature.SERVER_SENT_EVENTS)
+    @Produces(MediaType.SERVER_SENT_EVENTS)
     @ApiOperation(value = "Creates the SSE stream for item states, sends all requested states once and then only changes states")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
-    public Object getStates(@QueryParam("a") List<String> itemNames, @QueryParam("i") long index,
-            @QueryParam("t") long time) throws IOException, InterruptedException {
-        final EventOutput eventOutput = new EventOutput();
+    public void getStates(@Context final SseEventSink sseEventSink, @QueryParam("a") List<String> itemNames,
+            @QueryParam("i") long index, @QueryParam("t") long time) throws IOException, InterruptedException {
 
         this.itemNames = itemNames;
 
-        broadcaster.add(eventOutput);
+        broadcaster.add(sseEventSink, new SseSinkInfo(itemNames, index, time));
 
         // get all requested items and send their states to the client
         items = new HashMap<>();
@@ -175,12 +193,10 @@ public class ReadResource implements EventBroadcaster, RESTResource {
                 }
             }
             logger.debug("initially broadcasting {}/{} item states", states.size(), itemNames.size());
-            broadcaster.broadcast(SseUtil.buildEvent(states));
+            broadcaster.send(SseUtil.buildEvent(sse.newEventBuilder(), states));
         }
         // listen to state changes of the requested items
         registerItems();
-
-        return eventOutput;
     }
 
     /**
@@ -196,11 +212,9 @@ public class ReadResource implements EventBroadcaster, RESTResource {
     }
 
     /**
-     * listens to state changes of the given item, if it is part of the
-     * requested items
+     * listens to state changes of the given item, if it is part of the requested items
      *
-     * @param item
-     *            - the new item, that should be listened to
+     * @param item the new item, that should be listened to
      */
     @Override
     public void registerItem(Item item) {
@@ -216,8 +230,7 @@ public class ReadResource implements EventBroadcaster, RESTResource {
      * listens to state changes of the given item, if it is part of the
      * requested items
      *
-     * @param item
-     *            - the new item, that should be listened to
+     * @param item the new item, that should be listened to
      */
     @Override
     public void unregisterItem(Item item) {
@@ -234,20 +247,23 @@ public class ReadResource implements EventBroadcaster, RESTResource {
      * Broadcasts an event described by the given parameters to all currently
      * listening clients.
      *
-     * @param item
-     *            - the item which has changed
-     * @param eventObject
-     *            - bean that can be converted to a JSON object.
+     * @param item the item which has changed
+     * @param eventObject bean that can be converted to a JSON object.
      */
     @Override
     public void broadcastEvent(final Object eventObject) {
+        if (sse == null) {
+            logger.trace("broadcast skipped (no one listened since activation)");
+            return;
+        }
+
         executorService.execute(() -> {
-            broadcaster.broadcast(SseUtil.buildEvent(eventObject));
+            broadcaster.send(SseUtil.buildEvent(sse.newEventBuilder(), eventObject));
         });
     }
 
     @Override
-    public Map<String, Class<? extends State>> getClientItems(Item item) {
+    public Map<String, @Nullable Class<? extends State>> getClientItems(Item item) {
         return items.get(item);
     }
 }

@@ -38,6 +38,7 @@ import javax.ws.rs.core.Response.Status;
 import org.eclipse.jdt.annotation.NonNull;
 import org.openhab.core.auth.Role;
 import org.openhab.core.io.rest.LocaleService;
+import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.core.voice.VoiceManager;
 import org.openhab.core.voice.text.InterpretationException;
@@ -54,6 +55,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JSONRequired;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsApplicationSelect;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsName;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,8 +75,13 @@ import io.swagger.annotations.ApiResponses;
  * This class describes the /habot resource of the REST API.
  *
  * @author Yannick Schaus - Initial contribution
+ * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
  */
 @Component
+@JaxrsResource
+@JaxrsName(HABotResource.PATH_HABOT)
+@JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
+@JSONRequired
 @RolesAllowed({ Role.USER, Role.ADMIN })
 @Path(HABotResource.PATH_HABOT)
 @Api(HABotResource.PATH_HABOT)

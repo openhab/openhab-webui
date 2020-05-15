@@ -13,27 +13,29 @@
 package org.openhab.ui.cometvisu.internal.backend.rest;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.ManagerSettings;
@@ -42,6 +44,11 @@ import org.openhab.ui.cometvisu.internal.util.FileOperationException;
 import org.openhab.ui.cometvisu.internal.util.FsUtil;
 import org.openhab.ui.cometvisu.internal.util.MountedFile;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JSONRequired;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsApplicationSelect;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsName;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +62,13 @@ import io.swagger.annotations.ApiResponses;
  * Filesystem backend for the cometvisu manager.
  *
  * @author Tobias Bräutigam - Initial contribution
- *
+ * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
  */
 @Component
+@JaxrsResource
+@JaxrsName(Config.COMETVISU_BACKEND_ALIAS + "/fs")
+@JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
+@JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/fs")
 @Api(Config.COMETVISU_BACKEND_ALIAS + "/fs")
 public class FsResource implements RESTResource {
@@ -103,21 +114,22 @@ public class FsResource implements RESTResource {
     @ApiOperation(value = "Create a binary file")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
             @ApiResponse(code = 406, message = "File already exists") })
-    public Response createBinary(
+    public Response createBinary(@Context HttpServletRequest request,
             @ApiParam(value = "Relative path inside the config folder", required = true) @QueryParam("path") String path,
             @QueryParam("type") String type,
             @ApiParam(value = "CRC32 hash of the file content") @QueryParam("hash") String hash,
-            @ApiParam(value = "force overriding existing file") @DefaultValue("false") @FormDataParam("force") Boolean force,
-            @ApiParam(value = "file content") @FormDataParam("file") InputStream fileInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileMetaData) {
+            @ApiParam(value = "force overriding existing file") @DefaultValue("false") @FormParam("force") Boolean force,
+            @ApiParam(value = "file content") @FormParam("file") Object fileParam) {
         MountedFile target;
         try {
-            target = new MountedFile(Paths.get(path, fileMetaData.getFileName()).toString());
+            MultipartRequestMap map = new MultipartRequestMap(request);
+            File file = map.getFileParameter("file");
+            target = new MountedFile(Paths.get(path, file.getName()).toString());
             File folder = target.toFile().toPath().getParent().toFile();
             if (!target.exists() || force) {
                 if (!target.isReadonlyMount() && folder.canWrite()) {
                     try {
-                        FsUtil.getInstance().saveFile(target.toFile(), fileInputStream, hash);
+                        FsUtil.getInstance().saveFile(target.toFile(), new FileInputStream(file), hash);
                         return Response.ok().build();
                     } catch (FileOperationException e) {
                         return FsUtil.createErrorResponse(e);

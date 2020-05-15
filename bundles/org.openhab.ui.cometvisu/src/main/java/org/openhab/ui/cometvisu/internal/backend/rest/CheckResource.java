@@ -21,12 +21,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.ManagerSettings;
 import org.openhab.ui.cometvisu.internal.backend.model.rest.CheckResponse;
 import org.openhab.ui.cometvisu.internal.backend.model.rest.EnvironmentState;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JSONRequired;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsApplicationSelect;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsName;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,9 +43,13 @@ import io.swagger.annotations.ApiResponses;
  * Check filesystem backend for the cometvisu manager.
  *
  * @author Tobias Bräutigam - Initial contribution
- *
+ * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
  */
 @Component
+@JaxrsResource
+@JaxrsName(Config.COMETVISU_BACKEND_ALIAS + "/fs/check")
+@JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
+@JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/fs/check")
 @Api(Config.COMETVISU_BACKEND_ALIAS + "/fs/check")
 public class CheckResource implements RESTResource {

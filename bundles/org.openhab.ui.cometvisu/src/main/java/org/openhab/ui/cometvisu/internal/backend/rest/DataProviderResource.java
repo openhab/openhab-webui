@@ -26,6 +26,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
@@ -43,6 +44,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JSONRequired;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsApplicationSelect;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsName;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +61,13 @@ import io.swagger.annotations.ApiResponses;
  * DataProvider backend for the cometvisu manager.
  *
  * @author Tobias Bräutigam - Initial contribution
- *
+ * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
  */
 @Component
+@JaxrsResource
+@JaxrsName(Config.COMETVISU_BACKEND_ALIAS + "/data")
+@JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
+@JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/data")
 @Api(Config.COMETVISU_BACKEND_ALIAS + "/data")
 public class DataProviderResource implements RESTResource {

@@ -32,7 +32,6 @@
 		<feature>openhab-core-ui</feature>
 		<feature dependency="true">openhab.tp-jaxb</feature>
 		<feature dependency="true">openhab.tp-jackson</feature>
-		<feature dependency="true">openhab.tp-kat.cpy-jersey-min-2.22.2</feature>
 		<bundle dependency="true">mvn:org.rrd4j/rrd4j/3.4</bundle>
 		<bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.cometvisu/${project.version}</bundle>
 		<config name="cometvisu">
@@ -89,7 +88,7 @@
 
 	<feature name="openhab-ui-restdocs" description="REST Documentation" version="${project.version}">
 		<feature>openhab-core-ui</feature>
-		<feature>openhab.tp-swagger-jax-rs-provider</feature>
+		<feature>openhab-core-io-rest-swagger</feature>
 		<bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.restdocs/${project.version}</bundle>
 	</feature>
 
