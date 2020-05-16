@@ -23,20 +23,17 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.auth.Role;
 import org.openhab.core.io.rest.LocaleService;
 import org.openhab.core.io.rest.RESTConstants;
@@ -122,9 +119,8 @@ public class HABotResource implements RESTResource {
     @ApiOperation(value = "Retrieves a first greeting message from the bot in the specified or configured language.")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ChatReply.class),
             @ApiResponse(code = 500, message = "There is no support for the configured language") })
-    public Response greet(
-            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) @ApiParam(value = "language") @Nullable String language) {
-        final Locale locale = this.localeService.getLocale(null);
+    public Response greet() {
+        final Locale locale = localeService.getLocale(null);
 
         AnswerFormatter answerFormatter = new AnswerFormatter(locale);
 
@@ -143,10 +139,8 @@ public class HABotResource implements RESTResource {
     @ApiOperation(value = "Send a query to HABot to interpret.")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ChatReply.class),
             @ApiResponse(code = 500, message = "An interpretation error occurred") })
-    public Response chat(
-            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) @ApiParam(value = "language") @Nullable String language,
-            @ApiParam(value = "human language query", required = true) String query) throws Exception {
-        final Locale locale = this.localeService.getLocale(null);
+    public Response chat(@ApiParam(value = "human language query", required = true) String query) throws Exception {
+        final Locale locale = localeService.getLocale(null);
 
         // interpret
         OpenNLPInterpreter hli = (OpenNLPInterpreter) voiceManager.getHLI(OPENNLP_HLI);
@@ -166,13 +160,11 @@ public class HABotResource implements RESTResource {
     @ApiOperation(value = "Gets all item named attributes.")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ChatReply.class),
             @ApiResponse(code = 500, message = "An error occurred") })
-    public Response getAttributes(
-            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) @ApiParam(value = "language") @Nullable String language)
-            throws Exception {
-        final Locale locale = this.localeService.getLocale(null);
+    public Response getAttributes() throws Exception {
+        final Locale locale = localeService.getLocale(null);
 
         this.itemResolver.setLocale(locale);
-        Map<String, Set<ItemNamedAttribute>> attributesByItemName = new HashMap<String, Set<ItemNamedAttribute>>();
+        Map<String, Set<ItemNamedAttribute>> attributesByItemName = new HashMap<>();
         this.itemResolver.getAllItemNamedAttributes().entrySet().stream()
                 .forEach(entry -> attributesByItemName.put(entry.getKey().getName(), entry.getValue()));
 
