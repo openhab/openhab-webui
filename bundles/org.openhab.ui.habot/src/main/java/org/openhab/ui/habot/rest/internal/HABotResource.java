@@ -163,9 +163,9 @@ public class HABotResource implements RESTResource {
     public Response getAttributes() throws Exception {
         final Locale locale = localeService.getLocale(null);
 
-        this.itemResolver.setLocale(locale);
+        itemResolver.setLocale(locale);
         Map<String, Set<ItemNamedAttribute>> attributesByItemName = new HashMap<>();
-        this.itemResolver.getAllItemNamedAttributes().entrySet().stream()
+        itemResolver.getAllItemNamedAttributes().entrySet().stream()
                 .forEach(entry -> attributesByItemName.put(entry.getKey().getName(), entry.getValue()));
 
         return Response.ok(attributesByItemName).build();
@@ -213,7 +213,7 @@ public class HABotResource implements RESTResource {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "An error occured") })
     public Response getAllCards() {
-        Collection<Card> cards = this.cardRegistry.getNonEphemeral();
+        Collection<Card> cards = cardRegistry.getNonEphemeral();
 
         return Response.ok(cards).build();
     }
@@ -226,7 +226,7 @@ public class HABotResource implements RESTResource {
             @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
             @ApiResponse(code = 500, message = "An error occured") })
     public Response getCardByUid(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
-        Card card = this.cardRegistry.get(cardUID);
+        Card card = cardRegistry.get(cardUID);
         if (card == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
@@ -243,11 +243,11 @@ public class HABotResource implements RESTResource {
     public Response createCard(@ApiParam(value = "card", required = true) Card card) {
         card.updateTimestamp();
         card.setEphemeral(false);
-        Card existingCard = this.cardRegistry.get(card.getUID());
+        Card existingCard = cardRegistry.get(card.getUID());
         if (existingCard != null && existingCard.isEphemeral()) {
-            this.cardRegistry.remove(card.getUID());
+            cardRegistry.remove(card.getUID());
         }
-        Card createdCard = this.cardRegistry.add(card);
+        Card createdCard = cardRegistry.add(card);
 
         return Response.ok(createdCard).build();
     }
@@ -263,7 +263,7 @@ public class HABotResource implements RESTResource {
                     "The card UID in the body of the request should match the UID in the URL");
         }
         card.updateTimestamp();
-        Card updatedCard = this.cardRegistry.update(card);
+        Card updatedCard = cardRegistry.update(card);
 
         return Response.ok(updatedCard).build();
     }
@@ -273,7 +273,7 @@ public class HABotResource implements RESTResource {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Deletes a card from the card deck.")
     public Response deleteCard(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
-        this.cardRegistry.remove(cardUID);
+        cardRegistry.remove(cardUID);
 
         return Response.ok().build();
     }
@@ -285,12 +285,12 @@ public class HABotResource implements RESTResource {
             @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
             @ApiResponse(code = 500, message = "An error occured") })
     public Response setCardBookmark(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
-        Card card = this.cardRegistry.get(cardUID);
+        Card card = cardRegistry.get(cardUID);
         if (card == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         card.setBookmark(true);
-        this.cardRegistry.update(card);
+        cardRegistry.update(card);
 
         return Response.ok().build();
     }
@@ -302,7 +302,7 @@ public class HABotResource implements RESTResource {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "The card was created"),
             @ApiResponse(code = 500, message = "An error occured") })
     public Response createCard(@QueryParam(value = "skip") int skip, @QueryParam(value = "count") int count) {
-        Collection<Card> cards = this.cardRegistry.getRecent(skip, count);
+        Collection<Card> cards = cardRegistry.getRecent(skip, count);
 
         return Response.ok(cards).build();
     }
@@ -314,12 +314,12 @@ public class HABotResource implements RESTResource {
             @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
             @ApiResponse(code = 500, message = "An error occured") })
     public Response unsetCardBookmark(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
-        Card card = this.cardRegistry.get(cardUID);
+        Card card = cardRegistry.get(cardUID);
         if (card == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         card.setBookmark(false);
-        this.cardRegistry.update(card);
+        cardRegistry.update(card);
 
         return Response.ok().build();
     }
@@ -331,12 +331,12 @@ public class HABotResource implements RESTResource {
             @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
             @ApiResponse(code = 500, message = "An error occured") })
     public Response updateCardTimestamp(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
-        Card card = this.cardRegistry.get(cardUID);
+        Card card = cardRegistry.get(cardUID);
         if (card == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         card.updateTimestamp();
-        this.cardRegistry.update(card);
+        cardRegistry.update(card);
 
         return Response.ok().build();
     }
@@ -354,7 +354,7 @@ public class HABotResource implements RESTResource {
             @ApiResponse(code = 500, message = "An error occured") })
     public Response createCard(@ApiParam(value = "card", required = true) String card) {
         Gson gson = new Gson();
-        return this.createCard(gson.fromJson(card, Card.class));
+        return createCard(gson.fromJson(card, Card.class));
     }
 
     @POST
@@ -365,7 +365,7 @@ public class HABotResource implements RESTResource {
     public Response updateCard(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID,
             @ApiParam(value = "card", required = true) String card) {
         Gson gson = new Gson();
-        return this.updateCard(cardUID, gson.fromJson(card, Card.class));
+        return updateCard(cardUID, gson.fromJson(card, Card.class));
     }
 
     @POST
@@ -373,7 +373,7 @@ public class HABotResource implements RESTResource {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Deletes a card from the card deck (compatibility endpoint).")
     public Response deleteCardPost(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
-        return this.deleteCard(cardUID);
+        return deleteCard(cardUID);
     }
 
     @POST
@@ -383,6 +383,6 @@ public class HABotResource implements RESTResource {
             @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
             @ApiResponse(code = 500, message = "An error occured") })
     public Response unsetCardBookmarkCompat(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
-        return this.unsetCardBookmark(cardUID);
+        return unsetCardBookmark(cardUID);
     }
 }
