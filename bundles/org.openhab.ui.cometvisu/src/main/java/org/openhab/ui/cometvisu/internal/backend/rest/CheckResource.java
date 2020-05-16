@@ -21,6 +21,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.internal.Config;
@@ -52,6 +53,7 @@ import io.swagger.annotations.ApiResponses;
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/fs/check")
 @Api(Config.COMETVISU_BACKEND_ALIAS + "/fs/check")
+@NonNullByDefault
 public class CheckResource implements RESTResource {
 
     /**

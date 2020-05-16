@@ -23,8 +23,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.auth.Role;
 import org.openhab.core.io.rest.JSONResponse;
+import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.core.io.rest.Stream2JSONInputStream;
 import org.openhab.ui.habpanel.internal.gallery.GalleryItem;
@@ -32,8 +34,10 @@ import org.openhab.ui.habpanel.internal.gallery.GalleryProviderFactory;
 import org.openhab.ui.habpanel.internal.gallery.GalleryWidgetProvider;
 import org.openhab.ui.habpanel.internal.gallery.GalleryWidgetsListItem;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JSONRequired;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsApplicationSelect;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsName;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,11 +53,13 @@ import io.swagger.annotations.ApiResponses;
  *
  */
 @Component
+@JaxrsName(HABPanelResource.PATH_HABPANEL)
+@JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
+@JSONRequired
 @Path(HABPanelResource.PATH_HABPANEL)
 @Api(HABPanelResource.PATH_HABPANEL)
+@NonNullByDefault
 public class HABPanelResource implements RESTResource {
-
-    private final Logger logger = LoggerFactory.getLogger(HABPanelResource.class);
 
     public static final String PATH_HABPANEL = "habpanel";
 
@@ -65,7 +71,7 @@ public class HABPanelResource implements RESTResource {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
             @ApiResponse(code = 404, message = "Unknown gallery") })
     public Response getGalleryWidgetList(
-            @PathParam("galleryName") @ApiParam(value = "gallery name e.g. 'community'", required = true) String galleryName)
+            @PathParam("galleryName") @ApiParam(value = "gallery name e.g. 'community'") String galleryName)
             throws Exception {
         GalleryWidgetProvider galleryProvider = GalleryProviderFactory.getWidgetGalleryProvider(galleryName);
 
@@ -86,8 +92,8 @@ public class HABPanelResource implements RESTResource {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
             @ApiResponse(code = 404, message = "Unknown gallery or gallery item not found") })
     public Response getGalleryWidgetsItem(
-            @PathParam("galleryName") @ApiParam(value = "gallery name e.g. 'community'", required = true) String galleryName,
-            @PathParam("id") @ApiParam(value = "id within the gallery", required = true) String id) throws Exception {
+            @PathParam("galleryName") @ApiParam(value = "gallery name e.g. 'community'") String galleryName,
+            @PathParam("id") @ApiParam(value = "id within the gallery") String id) throws Exception {
         GalleryWidgetProvider galleryProvider = GalleryProviderFactory.getWidgetGalleryProvider(galleryName);
 
         if (galleryProvider == null) {

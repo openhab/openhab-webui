@@ -35,7 +35,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.auth.Role;
 import org.openhab.core.io.rest.LocaleService;
 import org.openhab.core.io.rest.RESTConstants;
@@ -51,10 +52,9 @@ import org.openhab.ui.habot.nlp.internal.AnswerFormatter;
 import org.openhab.ui.habot.nlp.internal.OpenNLPInterpreter;
 import org.openhab.ui.habot.notification.internal.NotificationService;
 import org.openhab.ui.habot.notification.internal.webpush.Subscription;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
 import org.osgi.service.jaxrs.whiteboard.propertytypes.JSONRequired;
 import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsApplicationSelect;
@@ -85,68 +85,35 @@ import io.swagger.annotations.ApiResponses;
 @RolesAllowed({ Role.USER, Role.ADMIN })
 @Path(HABotResource.PATH_HABOT)
 @Api(HABotResource.PATH_HABOT)
+@NonNullByDefault
 public class HABotResource implements RESTResource {
 
-    private final Logger logger = LoggerFactory.getLogger(HABotResource.class);
+    /** The URI path to this resource */
+    public static final String PATH_HABOT = "habot";
 
     private static final String OPENNLP_HLI = "opennlp";
 
-    private VoiceManager voiceManager;
+    private final Logger logger = LoggerFactory.getLogger(HABotResource.class);
 
-    private LocaleService localeService;
+    private final CardRegistry cardRegistry;
+    private final ItemResolver itemResolver;
+    private final LocaleService localeService;
+    private final NotificationService notificationService;
+    private final VoiceManager voiceManager;
 
-    private NotificationService notificationService;
-
-    private CardRegistry cardRegistry;
-
-    private ItemResolver itemResolver;
-
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
-    public void setVoiceManager(VoiceManager voiceManager) {
+    @Activate
+    public HABotResource( //
+            final @Reference CardRegistry cardRegistry, //
+            final @Reference ItemResolver itemResolver, //
+            final @Reference LocaleService localeService, //
+            final @Reference NotificationService notificationService, //
+            final @Reference VoiceManager voiceManager) {
+        this.cardRegistry = cardRegistry;
+        this.itemResolver = itemResolver;
+        this.localeService = localeService;
+        this.notificationService = notificationService;
         this.voiceManager = voiceManager;
     }
-
-    public void unsetVoiceManager(VoiceManager voiceManager) {
-        this.voiceManager = null;
-    }
-
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
-    public void setLocaleService(LocaleService localeService) {
-        this.localeService = localeService;
-    }
-
-    public void unsetLocaleService(LocaleService localeService) {
-        this.localeService = null;
-    }
-
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
-    public void setNotificationService(NotificationService notificationService) {
-        this.notificationService = notificationService;
-    }
-
-    public void unsetNotificationService(NotificationService notificationService) {
-        this.notificationService = null;
-    }
-
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
-    public void setCardRegistry(CardRegistry cardRegistry) {
-        this.cardRegistry = cardRegistry;
-    }
-
-    public void unsetCardRegistry(CardRegistry cardRegistry) {
-        this.cardRegistry = null;
-    }
-
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
-    protected void setItemNamedAttributesResolver(ItemResolver itemResolver) {
-        this.itemResolver = itemResolver;
-    }
-
-    protected void unsetItemNamedAttributesResolver(ItemResolver itemResolver) {
-        this.itemResolver = null;
-    }
-
-    public static final String PATH_HABOT = "habot";
 
     @GET
     @RolesAllowed({ Role.USER, Role.ADMIN })
@@ -156,7 +123,7 @@ public class HABotResource implements RESTResource {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ChatReply.class),
             @ApiResponse(code = 500, message = "There is no support for the configured language") })
     public Response greet(
-            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) @ApiParam(value = "language (will use the default if omitted)") String language) {
+            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) @ApiParam(value = "language") @Nullable String language) {
         final Locale locale = this.localeService.getLocale(null);
 
         AnswerFormatter answerFormatter = new AnswerFormatter(locale);
@@ -175,8 +142,9 @@ public class HABotResource implements RESTResource {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Send a query to HABot to interpret.")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ChatReply.class),
-            @ApiResponse(code = 500, message = "An interpretation error occured") })
-    public Response chat(@HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) @ApiParam(value = "language") String language,
+            @ApiResponse(code = 500, message = "An interpretation error occurred") })
+    public Response chat(
+            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) @ApiParam(value = "language") @Nullable String language,
             @ApiParam(value = "human language query", required = true) String query) throws Exception {
         final Locale locale = this.localeService.getLocale(null);
 
@@ -199,7 +167,8 @@ public class HABotResource implements RESTResource {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ChatReply.class),
             @ApiResponse(code = 500, message = "An error occurred") })
     public Response getAttributes(
-            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) @ApiParam(value = "language") String language) throws Exception {
+            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) @ApiParam(value = "language") @Nullable String language)
+            throws Exception {
         final Locale locale = this.localeService.getLocale(null);
 
         this.itemResolver.setLocale(locale);
@@ -264,7 +233,7 @@ public class HABotResource implements RESTResource {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
             @ApiResponse(code = 500, message = "An error occured") })
-    public Response getCardByUid(@PathParam("cardUID") @ApiParam(value = "cardUID", required = true) String cardUID) {
+    public Response getCardByUid(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
         Card card = this.cardRegistry.get(cardUID);
         if (card == null) {
             return Response.status(Status.NOT_FOUND).build();
@@ -295,7 +264,7 @@ public class HABotResource implements RESTResource {
     @Path("/cards/{cardUID}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Updates a card in the card deck.")
-    public Response updateCard(@PathParam("cardUID") @ApiParam(value = "cardUID", required = true) String cardUID,
+    public Response updateCard(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID,
             @ApiParam(value = "card", required = true) Card card) {
         if (!card.getUID().equals(cardUID)) {
             throw new InvalidParameterException(
@@ -311,8 +280,7 @@ public class HABotResource implements RESTResource {
     @Path("/cards/{cardUID}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Deletes a card from the card deck.")
-    public Response deleteCard(
-            @PathParam("cardUID") @ApiParam(value = "cardUID", required = true) @NonNull String cardUID) {
+    public Response deleteCard(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
         this.cardRegistry.remove(cardUID);
 
         return Response.ok().build();
@@ -324,8 +292,7 @@ public class HABotResource implements RESTResource {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
             @ApiResponse(code = 500, message = "An error occured") })
-    public Response setCardBookmark(
-            @PathParam("cardUID") @ApiParam(value = "cardUID", required = true) String cardUID) {
+    public Response setCardBookmark(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
         Card card = this.cardRegistry.get(cardUID);
         if (card == null) {
             return Response.status(Status.NOT_FOUND).build();
@@ -354,8 +321,7 @@ public class HABotResource implements RESTResource {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
             @ApiResponse(code = 500, message = "An error occured") })
-    public Response unsetCardBookmark(
-            @PathParam("cardUID") @ApiParam(value = "cardUID", required = true) String cardUID) {
+    public Response unsetCardBookmark(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
         Card card = this.cardRegistry.get(cardUID);
         if (card == null) {
             return Response.status(Status.NOT_FOUND).build();
@@ -372,8 +338,7 @@ public class HABotResource implements RESTResource {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
             @ApiResponse(code = 500, message = "An error occured") })
-    public Response updateCardTimestamp(
-            @PathParam("cardUID") @ApiParam(value = "cardUID", required = true) String cardUID) {
+    public Response updateCardTimestamp(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
         Card card = this.cardRegistry.get(cardUID);
         if (card == null) {
             return Response.status(Status.NOT_FOUND).build();
@@ -405,7 +370,7 @@ public class HABotResource implements RESTResource {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Updates a card in the card deck (compatibility endpoint).")
-    public Response updateCard(@PathParam("cardUID") @ApiParam(value = "cardUID", required = true) String cardUID,
+    public Response updateCard(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID,
             @ApiParam(value = "card", required = true) String card) {
         Gson gson = new Gson();
         return this.updateCard(cardUID, gson.fromJson(card, Card.class));
@@ -415,8 +380,7 @@ public class HABotResource implements RESTResource {
     @Path("/compat/cards/{cardUID}/delete")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Deletes a card from the card deck (compatibility endpoint).")
-    public Response deleteCardPost(
-            @PathParam("cardUID") @ApiParam(value = "cardUID", required = true) @NonNull String cardUID) {
+    public Response deleteCardPost(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
         return this.deleteCard(cardUID);
     }
 
@@ -426,13 +390,7 @@ public class HABotResource implements RESTResource {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
             @ApiResponse(code = 500, message = "An error occured") })
-    public Response unsetCardBookmarkCompat(
-            @PathParam("cardUID") @ApiParam(value = "cardUID", required = true) @NonNull String cardUID) {
+    public Response unsetCardBookmarkCompat(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
         return this.unsetCardBookmark(cardUID);
-    }
-
-    @Override
-    public boolean isSatisfied() {
-        return localeService != null && voiceManager != null && notificationService != null && cardRegistry != null;
     }
 }

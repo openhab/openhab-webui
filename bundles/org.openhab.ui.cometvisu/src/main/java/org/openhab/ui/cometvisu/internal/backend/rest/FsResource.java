@@ -35,6 +35,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.internal.Config;
@@ -71,6 +72,7 @@ import io.swagger.annotations.ApiResponses;
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/fs")
 @Api(Config.COMETVISU_BACKEND_ALIAS + "/fs")
+@NonNullByDefault
 public class FsResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(FsResource.class);
 

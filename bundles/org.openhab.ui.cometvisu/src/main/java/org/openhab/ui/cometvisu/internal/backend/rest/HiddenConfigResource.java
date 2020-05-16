@@ -30,6 +30,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.internal.Config;
@@ -68,11 +69,12 @@ import io.swagger.annotations.ApiResponses;
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/config")
 @Api(Config.COMETVISU_BACKEND_ALIAS + "/config")
+@NonNullByDefault
 public class HiddenConfigResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(HiddenConfigResource.class);
-    private Pattern dataPattern = Pattern.compile("\\$data\\s*=\\s*'(.+)';", Pattern.DOTALL | Pattern.MULTILINE);
-    private Pattern sectionPattern = Pattern.compile("\\s*(//)?\'([^']+)\'\\s*=>\\s*array\\s*\\(([^\\)]+)\\),?");
-    private Pattern optionPattern = Pattern.compile("\'([^']+)\'\\s*=>\\s*\\'([^']+)\\',?");
+    private final Pattern dataPattern = Pattern.compile("\\$data\\s*=\\s*'(.+)';", Pattern.DOTALL | Pattern.MULTILINE);
+    private final Pattern sectionPattern = Pattern.compile("\\s*(//)?\'([^']+)\'\\s*=>\\s*array\\s*\\(([^\\)]+)\\),?");
+    private final Pattern optionPattern = Pattern.compile("\'([^']+)\'\\s*=>\\s*\\'([^']+)\\',?");
 
     @POST
     @Path("/hidden/{section}/{key}")

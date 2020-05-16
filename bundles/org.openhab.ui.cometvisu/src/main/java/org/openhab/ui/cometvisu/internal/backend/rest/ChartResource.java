@@ -39,6 +39,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.core.items.GroupItem;
@@ -52,6 +53,7 @@ import org.openhab.core.persistence.HistoricItem;
 import org.openhab.core.persistence.PersistenceService;
 import org.openhab.core.persistence.QueryablePersistenceService;
 import org.openhab.ui.cometvisu.internal.Config;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -88,6 +90,7 @@ import io.swagger.annotations.ApiResponses;
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CHART_ALIAS)
 @Api(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CHART_ALIAS)
+@NonNullByDefault
 public class ChartResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(ChartResource.class);
 
@@ -104,12 +107,16 @@ public class ChartResource implements RESTResource {
         DECIMAL_FORMAT.applyPattern(PATTERN);
     }
 
-    protected static Map<String, QueryablePersistenceService> persistenceServices = new HashMap<>();
+    protected static final Map<String, QueryablePersistenceService> persistenceServices = new HashMap<>();
 
-    private ItemRegistry itemRegistry;
+    private final ItemRegistry itemRegistry;
 
-    @Context
-    private UriInfo uriInfo;
+    @Activate
+    public ChartResource(final @Reference ItemRegistry itemRegistry) {
+        this.itemRegistry = itemRegistry;
+    }
+
+    private @Context @NonNullByDefault({}) UriInfo uriInfo;
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addPersistenceService(PersistenceService service) {
@@ -124,15 +131,6 @@ public class ChartResource implements RESTResource {
 
     public static Map<String, QueryablePersistenceService> getPersistenceServices() {
         return persistenceServices;
-    }
-
-    @Reference
-    protected void setItemRegistry(ItemRegistry itemRegistry) {
-        this.itemRegistry = itemRegistry;
-    }
-
-    protected void unsetItemRegistry(ItemRegistry itemRegistry) {
-        this.itemRegistry = null;
     }
 
     @GET
