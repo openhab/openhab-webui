@@ -59,7 +59,7 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
 
         State state = itemUIRegistry.getState(w);
         Selection selection = (Selection) w;
-        String mappedValue = "";
+        String mappedValue = null;
         String rowMappedValue;
 
         Item item = null;
