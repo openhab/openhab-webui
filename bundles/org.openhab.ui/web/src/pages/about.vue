@@ -12,12 +12,6 @@
             <p><f7-link external target="_blank" href="https://www.openhab.org/docs/">Documentation</f7-link></p>
             <p><f7-link external target="_blank" href="https://community.openhab.org/">Community forum</f7-link></p>
           </f7-block>
-          <!-- <f7-block>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni molestiae laudantium dignissimos est nobis delectus nemo ea alias voluptatum architecto, amet similique, saepe iste consectetur in repellat ut minus quibusdam!</p>
-            <p>Molestias et distinctio porro nesciunt ratione similique, magni doloribus, rerum nobis, aliquam quae reiciendis quasi modi. Nam a recusandae, fugiat in ea voluptates fuga eius, velit corrupti reprehenderit dignissimos consequatur!</p>
-            <p>Blanditiis, cumque quo adipisci. Molestiae, dolores dolorum quos doloremque ipsa ullam eligendi commodi deserunt doloribus inventore magni? Ea mollitia veniam nostrum nihil, iusto doloribus a at! Ea molestiae ullam delectus!</p>
-          </f7-block> -->
-
         </f7-col>
       </f7-row>
 
@@ -26,19 +20,16 @@
 
       <f7-block-title><h4>Reload</h4></f7-block-title>
       <f7-col v-if="showCachePurgeOption">
-        <p class="padding-horizontal">If an active service worker is in place, to cache the assets of this app to make it load faster, however it may not detect when it has been updated to a new version, even if you refresh the page.</p>
-        <p class="padding-horizontal">Click Purge the Application Cache below to clear the cache and download everything from the server again.</p>
+        <p class="padding-horizontal">Caches and/or service workers are in use to store resources locally and make this app load faster, however it may not reliably detect when it has been updated to a new version.</p>
+        <p class="padding-horizontal">Select Purge Caches and Refresh below to clear all caches, unregister service workers and download everything from the server again.</p>
       </f7-col>
       <f7-col>
         <f7-list>
-          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches()">Purge the Application Cache and Reload</f7-list-button>
+          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches()">Purge Caches and Refresh</f7-list-button>
           <f7-list-button color="blue" @click="reload">Reload the App</f7-list-button>
         </f7-list>
       </f7-col>
     </f7-block>
-
-    <!-- <f7-button href="/analyzer/?items=MultiSensorSalon_Temperature">Analyzer</f7-button> -->
-
   </f7-page>
 </template>
 
@@ -62,8 +53,8 @@ export default {
         }
       })
     }
-    if (caches) {
-      caches.keys().then((cachesNames) => {
+    if (window.caches) {
+      window.caches.keys().then((cachesNames) => {
         if (cachesNames.length > 0) {
           this.showCachePurgeOption = true
         }
@@ -88,7 +79,7 @@ export default {
               })
             }
           })
-          caches.keys().then(function (cachesNames) {
+          window.caches.keys().then(function (cachesNames) {
             console.log('Deleting caches')
             return Promise.all(cachesNames.map(function (cacheName) {
               return caches.delete(cacheName).then(function () {

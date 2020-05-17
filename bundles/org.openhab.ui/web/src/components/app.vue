@@ -1,5 +1,5 @@
 <template>
-<f7-app v-if="init" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled', 'no-page-transitions': this.themeOptions.pageTransitionAnimation === 'disabled' }">
+<f7-app v-if="init" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
 
   <!-- Left Panel -->
   <f7-panel left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
@@ -100,8 +100,7 @@
     <!-- <f7-view url="/panel-right/"></f7-view> -->
   </f7-panel>
 
-  <!-- Your main view, should have "view-main" class -->
-  <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" @routeChanged="console.log('hello')"></f7-view>
+  <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="this.themeOptions.pageTransitionAnimation !== 'disabled'" @routeChanged="console.log('hello')"></f7-view>
 
   <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
     <f7-view name="login" v-if="$device.cordova">
