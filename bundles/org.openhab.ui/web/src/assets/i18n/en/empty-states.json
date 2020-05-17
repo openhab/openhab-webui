@@ -33,5 +33,8 @@
   "rules.missingengine.text": "The rule engine must be installed before rules can be created.",
 
   "addons.title": "No add-ons installed",
-  "addons.text": "Add-ons add functionality to your openHAB system.<br><br>Install them with the button below."
+  "addons.text": "Add-ons add functionality to your openHAB system.<br><br>Install them with the button below.",
+
+  "page.unavailable.title": "Page Unavailable",
+  "page.unavailable.text": "You are not allowed to view this page because of visibility restrictions."
 }

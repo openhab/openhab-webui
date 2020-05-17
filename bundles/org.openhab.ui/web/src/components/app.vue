@@ -323,7 +323,7 @@ export default {
         this.sitemaps = data[0]
         this.$store.commit('setPages', { pages: data[1] })
         this.$store.commit('setWidgets', { widgets: data[2] })
-        this.pages = data[1].filter((p) => p.config.sidebar)
+        this.pages = data[1].filter((p) => p.config.sidebar && this.pageIsVisible(p))
           .sort((p1, p2) => {
             const order1 = p1.config.order || 1000
             const order2 = p2.config.order || 1000
@@ -332,6 +332,14 @@ export default {
 
         this.ready = true
       })
+    },
+    pageIsVisible (page) {
+      if (!page.config.visibleTo) return true
+      const user = this.$store.getters.user
+      if (!user) return false
+      if (user.roles && user.roles.some(r => page.config.visibleTo.indexOf('role:' + r) >= 0)) return true
+      if (page.config.visibleTo.indexOf('user:' + user.name) >= 0) return true
+      return false
     },
     pageIcon (page) {
       switch (page.component) {

@@ -27,7 +27,7 @@
     </f7-list>
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block-title class="searchbar-hide-on-search"><span v-if="ready">{{things.length}} things</span></f7-block-title>
+        <f7-block-title class="searchbar-hide-on-search"><span v-if="ready">{{things.length}} things</span><span v-else>Loading...</span></f7-block-title>
         <div class="padding-left padding-right" v-show="!ready || things.length > 0">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'; $nextTick(() => $refs.listIndex.update())">Alphabetical</f7-button>
