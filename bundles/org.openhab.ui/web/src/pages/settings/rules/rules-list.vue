@@ -26,9 +26,15 @@
       </div>
       <div class="right" v-if="$theme.md">
         <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
-        <f7-link icon-md="material:more_vert" icon-color="white" @click="removeSelected"></f7-link>
       </div>
     </f7-toolbar>
+
+    <f7-list-index
+      ref="listIndex"
+      list-el=".rules-list"
+      :scroll-list="true"
+      :label="true"
+    ></f7-list-index>
 
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found"></f7-list-item>
@@ -38,9 +44,9 @@
 
     <!-- skeleton for not ready -->
     <f7-block class="block-narrow" v-show="!noRuleEngine">
-      <f7-col v-show="!ready">
+      <f7-col v-if="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
-        <f7-list media-list class="col wide">
+        <f7-list contacts-list class="col rules-list">
           <f7-list-group>
             <f7-list-item
               media-item
@@ -56,34 +62,39 @@
           </f7-list-group>
         </f7-list>
       </f7-col>
-      <f7-col v-if="ready">
+      <f7-col v-else>
         <f7-block-title class="searchbar-hide-on-search">{{rules.length}} rules</f7-block-title>
         <f7-list
           v-show="rules.length > 0"
           class="searchbar-found col rules-list"
           ref="rulesList"
-          media-list>
-          <f7-list-item
-            v-for="(rule, index) in rules"
-            :key="index"
-            media-item
-            class="rulelist-item"
-            :checkbox="showCheckboxes"
-            :checked="isChecked(rule.uid)"
-            @change="(e) => toggleItemCheck(e, rule.uid)"
-            :link="showCheckboxes ? null : rule.uid"
-            :title="rule.name"
-            :footer="rule.description"
-            :badge="rule.status.status"
-            :badge-color="(rule.status.status === 'RUNNING') ? 'orange' : (rule.status.status != 'IDLE') ? 'red' : ''"
-          >
-            <div slot="subtitle">
-              <f7-chip v-for="tag in rule.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
-                <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
-              </f7-chip>
-            </div>
-            <span slot="media" class="item-initial">{{rule.name[0]}}</span>
-          </f7-list-item>
+          media-list contacts-list>
+          <f7-list-group v-for="(rulesWithInitial, initial) in indexedRules" :key="initial">
+            <f7-list-item v-if="rulesWithInitial.length" :title="initial" group-title></f7-list-item>
+            <f7-list-item
+              v-for="rule in rulesWithInitial"
+              :key="rule.uid"
+              media-item
+              class="rulelist-item"
+              :checkbox="showCheckboxes"
+              :checked="isChecked(rule.uid)"
+              @change="(e) => toggleItemCheck(e, rule.uid)"
+              :link="showCheckboxes ? null : rule.uid"
+              :title="rule.name"
+              :text="rule.uid"
+              :footer="rule.description"
+              :badge="rule.status.status"
+              :badge-color="(rule.status.status === 'RUNNING') ? 'orange' : (rule.status.status != 'IDLE') ? 'red' : ''"
+            >
+              <div slot="footer">
+                <f7-chip v-for="tag in rule.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                  <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
+                </f7-chip>
+              </div>
+              <!-- <span slot="media" class="item-initial">{{initial}}</span> -->
+              <f7-icon v-if="rule.editable === false" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
+            </f7-list-item>
+          </f7-list-group>
         </f7-list>
       </f7-col>
     </f7-block>
@@ -111,8 +122,18 @@ export default {
       eventSource: null
     }
   },
-  created () {
+  computed: {
+    indexedRules () {
+      return this.rules.reduce((prev, rule, i, rules)=> {
+        const initial = rule.name.substring(0, 1).toUpperCase()
+        if (!prev[initial]) {
+          prev[initial] = []
+        }
+        prev[initial].push(rule)
 
+        return prev
+      }, {})
+    }
   },
   methods: {
     onPageAfterIn () {
@@ -121,13 +142,16 @@ export default {
     load () {
       if (this.loading) return
       this.loading = true
+      this.$set(this, 'selectedItems', [])
+      this.showCheckboxes = false
       this.$oh.api.get('/rest/rules').then(data => {
         this.rules = data.sort((a, b) => {
           return a.name.localeCompare(b.name)
         })
+
         this.loading = false
         this.ready = true
-        setTimeout(() => { this.initSearchbar = true })
+        setTimeout(() => { this.initSearchbar = true; this.$refs.listIndex.update() })
 
         if (!this.eventSource) this.startEventSource()
       }).catch((err, status) => {
@@ -183,6 +207,11 @@ export default {
       )
     },
     doRemoveSelected () {
+      if (this.selectedItems.some((i) => this.rules.find((rule) => rule.uid === i).editable === false)) {
+        this.$f7.dialog.alert('Some of the selected rules are not modifiable because they have been provisioned by files')
+        return
+      }
+
       let dialog = this.$f7.dialog.progress('Deleting Rules...')
 
       const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
@@ -201,11 +230,6 @@ export default {
         console.error(err)
         this.$f7.dialog.alert('An error occurred while deleting: ' + err)
       })
-    }
-  },
-  asyncComputed: {
-    iconUrl () {
-      return icon => this.$oh.media.getIcon(icon)
     }
   }
 }

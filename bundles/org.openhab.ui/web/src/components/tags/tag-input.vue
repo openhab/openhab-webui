@@ -1,7 +1,15 @@
 <template>
-  <div v-if="item && item.tags" class="tag-editor" style="margin-top: 0">
-    <f7-list no-hairlines>
+  <div v-if="item && item.tags" class="tag-editor">
+    <f7-list>
+      <f7-list-item>
+        <div slot="inner">
+          <f7-chip v-for="tag in item.tags.filter((t) => !isSemanticTag(t))" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="blue">
+            <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
+          </f7-chip>
+        </div>
+      </f7-list-item>
       <f7-list-input
+        v-if="!disabled"
         type="text"
         placeholder="Add tag"
         :value="pendingTag"
@@ -14,11 +22,6 @@
         <input slot="input" type="text" placeholder="Add tag" @keypress="keyPressed" />
       </f7-list-input>
     </f7-list>
-    <f7-block strong no-hairlines-md v-if="item.tags" style="margin-top: 0" class="tags">
-      <f7-chip v-for="tag in item.tags.filter((t) => !isSemanticTag(t))" :key="tag" :text="tag" deleteable @delete="deleteTag" media-bg-color="blue">
-        <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
-      </f7-chip>
-    </f7-block>
   </div>
 </template>
 
@@ -26,7 +29,7 @@
 import * as SemanticClasses from '@/assets/semantics.js'
 
 export default {
-  props: ['item'],
+  props: ['item', 'disabled'],
   data () {
     return {
       pendingTag: ''
@@ -54,7 +57,8 @@ export default {
       }
     },
     deleteTag (ev) {
-      const tag = ev.target.previousSibling.innerText
+      let tag = ev.target.previousSibling.innerText
+      if (tag === 'tag_fill') tag = ''
       if (this.item.tags.indexOf(tag) >= 0) {
         this.item.tags.splice(this.item.tags.indexOf(tag), 1)
       }
@@ -64,7 +68,7 @@ export default {
 </script>
 
 <style lang="stylus">
-.tags-editor
+.tag-editor
   margin-bottom 0
   .tags
     text-align center
@@ -73,7 +77,6 @@ export default {
     margin-bottom 0
     border 0
   .chip
-    margin-left 3px
-    margin-right 3px
+    margin-right 6px !important
 
 </style>
