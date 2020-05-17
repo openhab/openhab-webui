@@ -100,7 +100,7 @@
     <!-- <f7-view url="/panel-right/"></f7-view> -->
   </f7-panel>
 
-  <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="this.themeOptions.pageTransitionAnimation !== 'disabled'" @routeChanged="console.log('hello')"></f7-view>
+  <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="this.themeOptions.pageTransitionAnimation !== 'disabled'"></f7-view>
 
   <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
     <f7-view name="login" v-if="$device.cordova">
