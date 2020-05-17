@@ -23,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.internal.Config;
@@ -57,6 +58,7 @@ import io.swagger.annotations.ApiResponses;
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/fs/move")
 @Api(Config.COMETVISU_BACKEND_ALIAS + "/fs/move")
+@NonNullByDefault
 public class MoveResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(MoveResource.class);
 
@@ -65,7 +67,7 @@ public class MoveResource implements RESTResource {
     @ApiOperation(value = "Move folder or file to a new place")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "forbidden"),
             @ApiResponse(code = 404, message = "not found"), @ApiResponse(code = 406, message = "target exists"),
-            @ApiResponse(code = 500, message = "rename/move failed\"") })
+            @ApiResponse(code = 500, message = "rename/move failed") })
     public Response move(
             @ApiParam(value = "current path of the filesystem entry", required = true) @QueryParam("src") String src,
             @ApiParam(value = " new path of the filesystem entry", required = true) @QueryParam("target") String target) {

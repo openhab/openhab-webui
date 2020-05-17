@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.events.EventPublisher;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
@@ -34,6 +35,7 @@ import org.openhab.core.types.Command;
 import org.openhab.core.types.TypeParser;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.backend.model.SuccessBean;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
@@ -63,15 +65,20 @@ import io.swagger.annotations.ApiResponses;
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_WRITE_ALIAS)
 @Api(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_WRITE_ALIAS)
+@NonNullByDefault
 public class WriteResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(WriteResource.class);
 
-    private ItemRegistry itemRegistry;
+    private final EventPublisher eventPublisher;
+    private final ItemRegistry itemRegistry;
 
-    private EventPublisher eventPublisher;
+    private @Context @NonNullByDefault({}) UriInfo uriInfo;
 
-    @Context
-    private UriInfo uriInfo;
+    @Activate
+    public WriteResource(final @Reference EventPublisher eventPublisher, final @Reference ItemRegistry itemRegistry) {
+        this.eventPublisher = eventPublisher;
+        this.itemRegistry = itemRegistry;
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -102,23 +109,5 @@ public class WriteResource implements RESTResource {
             logger.error("{}", e.getLocalizedMessage());
             return Response.status(Status.NOT_FOUND).build();
         }
-    }
-
-    @Reference
-    protected void setItemRegistry(ItemRegistry itemRegistry) {
-        this.itemRegistry = itemRegistry;
-    }
-
-    protected void unsetItemRegistry(ItemRegistry itemRegistry) {
-        this.itemRegistry = null;
-    }
-
-    @Reference
-    protected void setEventPublisher(EventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
-    }
-
-    protected void unsetEventPublisher(EventPublisher eventPublisher) {
-        this.eventPublisher = null;
     }
 }

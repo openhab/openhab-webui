@@ -26,6 +26,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.core.items.GroupItem;
@@ -40,6 +41,7 @@ import org.openhab.ui.cometvisu.internal.backend.model.rest.DataProviderEntry;
 import org.openhab.ui.cometvisu.internal.backend.model.rest.DataProviderHint;
 import org.openhab.ui.cometvisu.internal.backend.model.rest.DataProviderResponse;
 import org.openhab.ui.cometvisu.internal.backend.sitemap.ConfigHelper.Transform;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -70,19 +72,16 @@ import io.swagger.annotations.ApiResponses;
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/data")
 @Api(Config.COMETVISU_BACKEND_ALIAS + "/data")
+@NonNullByDefault
 public class DataProviderResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(DataProviderResource.class);
 
-    private ItemRegistry itemRegistry;
-    protected static Map<String, QueryablePersistenceService> persistenceServices = new HashMap<>();
+    private final ItemRegistry itemRegistry;
+    protected static final Map<String, QueryablePersistenceService> persistenceServices = new HashMap<>();
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
-    protected void setItemRegistry(ItemRegistry itemRegistry) {
+    @Activate
+    public DataProviderResource(final @Reference ItemRegistry itemRegistry) {
         this.itemRegistry = itemRegistry;
-    }
-
-    protected void unsetItemRegistry(ItemRegistry itemRegistry) {
-        this.itemRegistry = null;
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
