@@ -704,6 +704,7 @@
 			valueMapString = parentNode.getAttribute("data-value-map");
 
 		_t.value = null;
+		_t.hasValue = _t.parentNode.getAttribute("data-has-value") === "true";
 		_t.valueNode = parentNode.parentNode.querySelector(o.formValue);
 
 		if (valueMapString !== null) {
@@ -776,6 +777,8 @@
 			_t.value = "" + itemState;
 			if (_t.valueMap[itemState] !== undefined) {
 				_t.valueNode.innerHTML = smarthome.UI.escapeHtml(_t.valueMap[itemState]);
+			} else if (_t.hasValue) {
+				_t.valueNode.innerHTML = value;
 			} else {
 				_t.valueNode.innerHTML = "";
 			}

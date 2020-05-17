@@ -110,7 +110,7 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
         snippet = StringUtils.replace(snippet, "%rows%", rowSB.toString());
         snippet = StringUtils.replace(snippet, "%value_map%", escapeHtml(jsonObject.toString()));
         snippet = StringUtils.replace(snippet, "%label_header%", getLabel(w));
-        snippet = StringUtils.replace(snippet, "%value_header%", mappingLabel != null ? mappingLabel : "");
+        snippet = StringUtils.replace(snippet, "%value_header%", mappingLabel != null ? mappingLabel : getValue(w));
 
         // Process the color tags
         snippet = processColor(w, snippet);
