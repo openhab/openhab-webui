@@ -20,7 +20,7 @@
         </f7-menu-item>
       </f7-menu>
     </div>
-    <f7-row no-gap>
+    <f7-row no-gap v-if="visible">
       <oh-grid-col v-for="(component, idx) in context.component.slots.default"
         :key="idx"
         :context="childContext(component)"
