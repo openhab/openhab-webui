@@ -1,8 +1,7 @@
 <template>
 <div>
   <div class="hint-apps" v-if="!overviewPage && !$store.getters.user">
-    <f7-icon class="float-right margin-left" f7="arrow_turn_right_up" size="40"></f7-icon>
-    <p><em class="">Open the apps panel to launch other interfaces</em></p>
+    <p><em><f7-icon class="float-right margin-left margin-bottom" f7="arrow_turn_right_up" size="20" />Open the apps panel to launch other interfaces</em></p>
   </div>
   <f7-block class="block-narrow">
     <habot v-if="showHABot" />
@@ -17,18 +16,13 @@
   </f7-block>
 
   <component :is="overviewPage.component" v-if="overviewPage" :context="overviewPageContext" :class="{notready: !ready}" @command="onCommand" />
-  <div class="empty" v-else>
-    <empty-state-placeholder icon="rocket" title="overview.title" text="overview.text" />
+  <div class="empty-overview" v-else>
+    <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
     <f7-row class="display-flex justify-content-center">
       <f7-button large fill color="blue" external href="https://next.openhab.org/docs/" target="_blank">Documentation</f7-button>
       <span style="width: 8px"></span>
       <f7-button large color="blue" external href="https://next.openhab.org/docs/tutorial/" target="_blank">Tutorial</f7-button>
     </f7-row>
-
-    <div class="hint-signin" v-if="!$store.getters.user">
-      <p class="padding-left"><em>Click on the shield to sign in as an administrator</em></p>
-      <f7-icon f7="arrow_down_left" size="40"></f7-icon>
-    </div>
   </div>
   <!-- <h2 class="home-header">
     Now
@@ -67,14 +61,8 @@
   width 60%
   p
     text-align right
-.hint-signin
-  position absolute
-  bottom calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
-  width 50%
-  height 10rem
-  left 1rem
-  p
-    margin-left 40px
+.empty-overview
+  padding-top 0.3rem
 </style>
 
 <script>

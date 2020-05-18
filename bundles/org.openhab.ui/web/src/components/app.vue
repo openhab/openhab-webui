@@ -4,13 +4,16 @@
   <!-- Left Panel -->
   <f7-panel left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
     <f7-page>
-      <f7-list-item link="/" class="logo" panel-close v-if="themeOptions.dark === 'dark'">
-        <img src="../res/img/openhab-logo-white.png" width="100%">
-      </f7-list-item>
-      <f7-list-item link="/" class="logo" panel-close v-else>
-        <img src="../res/img/openhab-logo.png" width="100%">
-      </f7-list-item>
-      <f7-list>
+      <f7-link href="/" class="logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
+        <div class="logo-inner"><img src="../res/img/openhab-logo-white.png" width="100%"></div>
+      </f7-link>
+      <f7-link href="/" class="logo no-ripple" panel-close v-else>
+        <div class="logo-inner"><img src="../res/img/openhab-logo.png" width="100%"></div>
+      </f7-link>
+      <f7-list v-if="ready">
+        <f7-list-item v-if="!pages || !pages.filter(p => p.config.sidebar).length">
+          <span><em>No pages</em></span>
+        </f7-list-item>
         <!-- <f7-list-item v-for="sitemap in sitemaps" :animate="false" :key="sitemap.name"
                 :class="{ currentsection: currentUrl.indexOf('/sitemap/' + sitemap.name) >= 0 }"
                 :link="'/sitemap/' + sitemap.name + '/' + sitemap.name"
@@ -82,6 +85,9 @@
 
       <div class="account" v-if="ready">
         <div class="display-flex justify-content-center">
+          <div class="hint-signin" v-if="!$store.getters.user && !$store.getters.pages.length">
+            <em>Sign in as an administrator to access settings<br /><f7-icon f7="arrow_down" size="20"></f7-icon></em>
+          </div>
           <f7-button v-if="!loggedIn" large color="gray" icon-size="36" tooltip="Unlock Administration" icon-f7="lock_shield_fill" @click="authorize()" />
         </div>
         <f7-list v-if="$store.getters.user" media-list>
@@ -155,10 +161,9 @@
     padding-bottom calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
   .logo
     margin-top var(--f7-safe-area-top)
-    list-style none
-    padding 2.5rem 2rem
-    background-color #fff
-    height 50px
+    .logo-inner
+      background-color #fff
+      padding 2.25rem 2rem
   .list
     margin-top 0
   .currentsection
@@ -174,6 +179,11 @@
     position fixed
     bottom calc(var(--f7-safe-area-bottom))
     width 100%
+    .hint-signin
+      position absolute
+      bottom calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
+      width 50%
+      text-align center
     .list
       position absolute
       bottom 0
@@ -191,7 +201,8 @@
     .currentsection
       background-color var(--f7-color-blue-shade)
   .logo
-    background #111111 !important
+    .logo-inner
+      background #111111 !important
 
 .menu-sublinks
   color var(--f7-list-item-footer-text-color)
