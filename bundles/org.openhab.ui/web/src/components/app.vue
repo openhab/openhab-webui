@@ -11,7 +11,7 @@
         <div class="logo-inner"><img src="../res/img/openhab-logo.png" width="100%"></div>
       </f7-link>
       <f7-list v-if="ready">
-        <f7-list-item v-if="!pages || !pages.filter(p => p.config.sidebar).length">
+        <f7-list-item v-if="!pages || !pages.length">
           <span><em>No pages</em></span>
         </f7-list-item>
         <!-- <f7-list-item v-for="sitemap in sitemaps" :animate="false" :key="sitemap.name"
