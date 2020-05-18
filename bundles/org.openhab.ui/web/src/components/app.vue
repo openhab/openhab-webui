@@ -2,7 +2,7 @@
 <f7-app v-if="init" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
 
   <!-- Left Panel -->
-  <f7-panel left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
+  <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
     <f7-page>
       <f7-link href="/" class="logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
         <div class="logo-inner"><img src="../res/img/openhab-logo-white.png" width="100%"></div>
@@ -409,6 +409,11 @@ export default {
     }
   },
   created () {
+    this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || 'light'
+    this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((!this.$theme.ios) ? 'filled' : 'light')
+    this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
+    this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
+    this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
     // this.loginScreenOpened = true
     const refreshToken = this.getRefreshToken()
     if (refreshToken) {
@@ -426,11 +431,6 @@ export default {
     }
   },
   mounted () {
-    this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || 'light'
-    this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((!this.$theme.ios) ? 'filled' : 'light')
-    this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
-    this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
-    this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
     this.$f7ready((f7) => {
       this.$f7.data.themeOptions = this.themeOptions
 
