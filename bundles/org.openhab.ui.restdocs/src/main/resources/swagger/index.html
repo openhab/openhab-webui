@@ -47,11 +47,10 @@
         onComplete: function(swaggerApi, swaggerUi){
           if(typeof initOAuth == "function") {
             initOAuth({
-              clientId: "your-client-id",
-              clientSecret: "your-client-secret-if-required",
-              realm: "your-realms",
-              appName: "your-app-name", 
-              scopeSeparator: ","
+              clientId: window.location.origin + "/doc/o2c.html",
+              realm: "openhab",
+              appName: "openHAB",
+              scopeSeparator: " "
             });
           }
 
