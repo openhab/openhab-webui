@@ -19,6 +19,7 @@ function prepareRequest (uri) {
 }
 
 export default {
+  prepareRequest,
   get (uri, data) {
     const fullUri = prepareRequest(uri)
     if (fullUri) {

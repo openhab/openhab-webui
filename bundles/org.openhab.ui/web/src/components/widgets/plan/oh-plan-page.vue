@@ -20,7 +20,7 @@
     @update:center="centerUpdate"
     @update:zoom="zoomUpdate">
       <l-image-overlay
-        :url="config.imageUrl"
+        :url="prepareRequest(config.imageUrl)"
         :bounds="bounds"
       />
       <l-feature-group ref="featureGroup" v-if="context.component.slots && ready">
@@ -216,6 +216,10 @@ export default {
       this.$nextTick(() => {
         this.fitMapBounds()
       })
+    },
+    prepareRequest (url) {
+      // format the URL for codova if not a relative link
+      return !url || url.indexOf('http') === 0 ? url : this.$oh.api.prepareRequest(url)
     }
   }
 }

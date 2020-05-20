@@ -60,6 +60,9 @@ export default {
     accessToken = token
   },
   api: {
+    prepareRequest (uri) {
+      return uri
+    },
     get (uri, data) {
       return wrapPromise(Framework7.request.promise.json(uri, data))
     },
