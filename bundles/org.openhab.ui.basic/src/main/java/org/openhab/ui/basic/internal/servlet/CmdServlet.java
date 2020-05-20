@@ -18,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.events.EventPublisher;
 import org.openhab.core.io.http.HttpContextFactoryService;
 import org.openhab.core.items.GroupItem;
@@ -34,7 +35,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.http.HttpService;
 
 /**
@@ -46,21 +46,21 @@ import org.osgi.service.http.HttpService;
  *
  */
 @Component(immediate = true, service = {})
+@NonNullByDefault
 public class CmdServlet extends BaseServlet {
 
     private static final long serialVersionUID = 4813813926991230571L;
 
     public static final String SERVLET_NAME = "CMD";
 
-    private EventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
-    @Reference(policy = ReferencePolicy.DYNAMIC)
-    public void setEventPublisher(EventPublisher eventPublisher) {
+    @Activate
+    public CmdServlet(final @Reference HttpService httpService,
+            final @Reference HttpContextFactoryService httpContextFactoryService,
+            final @Reference ItemRegistry itemRegistry, final @Reference EventPublisher eventPublisher) {
+        super(httpService, httpContextFactoryService, itemRegistry);
         this.eventPublisher = eventPublisher;
-    }
-
-    public void unsetEventPublisher(EventPublisher eventPublisher) {
-        this.eventPublisher = null;
     }
 
     @Activate
@@ -74,7 +74,8 @@ public class CmdServlet extends BaseServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(@NonNullByDefault({}) HttpServletRequest req, @NonNullByDefault({}) HttpServletResponse resp)
+            throws ServletException, IOException {
         for (Object key : req.getParameterMap().keySet()) {
             String itemName = key.toString();
 
@@ -102,38 +103,5 @@ public class CmdServlet extends BaseServlet {
                 }
             }
         }
-    }
-
-    @Override
-    @Reference
-    public void setItemRegistry(ItemRegistry ItemRegistry) {
-        super.setItemRegistry(ItemRegistry);
-    }
-
-    @Override
-    public void unsetItemRegistry(ItemRegistry ItemRegistry) {
-        super.unsetItemRegistry(ItemRegistry);
-    }
-
-    @Override
-    @Reference
-    public void setHttpService(HttpService HttpService) {
-        super.setHttpService(HttpService);
-    }
-
-    @Override
-    public void unsetHttpService(HttpService HttpService) {
-        super.unsetHttpService(HttpService);
-    }
-
-    @Override
-    @Reference
-    public void setHttpContextFactoryService(HttpContextFactoryService HttpContextFactoryService) {
-        super.setHttpContextFactoryService(HttpContextFactoryService);
-    }
-
-    @Override
-    public void unsetHttpContextFactoryService(HttpContextFactoryService HttpContextFactoryService) {
-        super.unsetHttpContextFactoryService(HttpContextFactoryService);
     }
 }
