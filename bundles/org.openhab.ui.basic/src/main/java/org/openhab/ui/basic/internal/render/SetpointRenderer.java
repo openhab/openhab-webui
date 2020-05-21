@@ -15,18 +15,19 @@ package org.openhab.ui.basic.internal.render;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
-import org.openhab.core.library.types.DecimalType;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.core.i18n.LocaleProvider;
+import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.model.sitemap.sitemap.Setpoint;
 import org.openhab.core.model.sitemap.sitemap.Widget;
-import org.openhab.core.types.State;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -35,21 +36,15 @@ import org.osgi.service.component.annotations.Reference;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
- *
  */
 @Component(service = WidgetRenderer.class)
+@NonNullByDefault
 public class SetpointRenderer extends AbstractWidgetRenderer {
 
-    @Override
     @Activate
-    protected void activate(BundleContext bundleContext) {
-        super.activate(bundleContext);
-    }
-
-    @Override
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        super.deactivate(bundleContext);
+    public SetpointRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
+            final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {
+        super(bundleContext, i18nProvider, itemUIRegistry, localeProvider);
     }
 
     @Override
@@ -60,10 +55,6 @@ public class SetpointRenderer extends AbstractWidgetRenderer {
     @Override
     public EList<Widget> renderWidget(Widget w, StringBuilder sb) throws RenderException {
         Setpoint sp = (Setpoint) w;
-
-        State state = itemUIRegistry.getState(w);
-        String newLowerState = state.toString();
-        String newHigherState = state.toString();
 
         // set defaults for min, max and step
         BigDecimal step = sp.getStep();
@@ -79,29 +70,11 @@ public class SetpointRenderer extends AbstractWidgetRenderer {
             maxValue = BigDecimal.valueOf(100);
         }
 
-        // if the current state is a valid value, we calculate the up and down step values
-        if (state instanceof DecimalType) {
-            DecimalType actState = (DecimalType) state;
-            BigDecimal newLower = actState.toBigDecimal().subtract(step);
-            BigDecimal newHigher = actState.toBigDecimal().add(step);
-            if (newLower.compareTo(minValue) < 0) {
-                newLower = minValue;
-            }
-            if (newHigher.compareTo(maxValue) > 0) {
-                newHigher = maxValue;
-            }
-            newLowerState = newLower.toString();
-            newHigherState = newHigher.toString();
-        }
-
         String unit = getUnitForWidget(w);
 
-        String snippetName = "setpoint";
-        String snippet = getSnippet(snippetName);
+        String snippet = getSnippet("setpoint");
 
         snippet = preprocessSnippet(snippet, w);
-        snippet = StringUtils.replace(snippet, "%newlowerstate%", newLowerState);
-        snippet = StringUtils.replace(snippet, "%newhigherstate%", newHigherState);
         snippet = StringUtils.replace(snippet, "%value%", getValue(w));
         snippet = StringUtils.replace(snippet, "%minValue%", minValue.toString());
         snippet = StringUtils.replace(snippet, "%maxValue%", maxValue.toString());
@@ -112,17 +85,6 @@ public class SetpointRenderer extends AbstractWidgetRenderer {
         snippet = processColor(w, snippet);
 
         sb.append(snippet);
-        return null;
-    }
-
-    @Override
-    @Reference
-    protected void setItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.setItemUIRegistry(ItemUIRegistry);
-    }
-
-    @Override
-    protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.unsetItemUIRegistry(ItemUIRegistry);
+        return ECollections.emptyEList();
     }
 }

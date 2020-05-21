@@ -12,6 +12,7 @@
  */
 package org.openhab.ui.homebuilder.internal;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -28,16 +29,18 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Component(immediate = true)
+@NonNullByDefault
 public class HomeBuilderServlet {
 
     public static final String HOMEBUILDER_ALIAS = "/homebuilder";
 
     private final Logger logger = LoggerFactory.getLogger(HomeBuilderServlet.class);
 
-    protected HttpService httpService;
+    private final HttpService httpService;
 
     @Activate
-    protected void activate() {
+    public HomeBuilderServlet(final @Reference HttpService httpService) {
+        this.httpService = httpService;
         try {
             httpService.registerResources(HOMEBUILDER_ALIAS, "web", null);
             logger.info("Started Home Builder at {}", HOMEBUILDER_ALIAS);
@@ -50,14 +53,5 @@ public class HomeBuilderServlet {
     protected void deactivate() {
         httpService.unregister(HOMEBUILDER_ALIAS);
         logger.info("Stopped Home Builder");
-    }
-
-    @Reference
-    protected void setHttpService(HttpService httpService) {
-        this.httpService = httpService;
-    }
-
-    protected void unsetHttpService(HttpService httpService) {
-        this.httpService = null;
     }
 }

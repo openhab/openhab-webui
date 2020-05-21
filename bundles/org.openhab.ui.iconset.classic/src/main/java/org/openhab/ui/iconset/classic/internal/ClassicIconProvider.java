@@ -20,11 +20,15 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.ui.icon.AbstractResourceIconProvider;
 import org.openhab.core.ui.icon.IconProvider;
 import org.openhab.core.ui.icon.IconSet;
 import org.openhab.core.ui.icon.IconSet.Format;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -37,26 +41,42 @@ import org.slf4j.LoggerFactory;
  * @author Kai Kreuzer - Initial contribution
  */
 @Component
+@NonNullByDefault
 public class ClassicIconProvider extends AbstractResourceIconProvider implements IconProvider {
+
+    static final String ICONSET_ID = "classic";
+    private static final String DEFAULT_LABEL = "Classic Icons";
+    private static final String DEFAULT_DESCRIPTION = "This is a modernized version of the original icon set of openHAB 1.";
 
     private final Logger logger = LoggerFactory.getLogger(ClassicIconProvider.class);
 
-    static final String ICONSET_ID = "classic";
+    private final BundleContext context;
+
+    @Activate
+    public ClassicIconProvider(final BundleContext context, final @Reference TranslationProvider i18nProvider) {
+        super(i18nProvider);
+        this.context = context;
+    }
 
     @Override
-    public Set<IconSet> getIconSets(Locale locale) {
+    public Set<IconSet> getIconSets(@Nullable Locale locale) {
         Set<Format> formats = new HashSet<>(2);
         formats.add(Format.PNG);
         formats.add(Format.SVG);
-        String label = i18nProvider.getText(context.getBundle(), "iconset.label", "Classic Icons", locale);
-        String description = i18nProvider.getText(context.getBundle(), "iconset.description",
-                "This is a modernized version of the original icon set of openHAB 1.", locale);
+
+        String label = i18nProvider.getText(context.getBundle(), "iconset.label", DEFAULT_LABEL, locale);
+        label = label == null ? DEFAULT_LABEL : label;
+
+        String description = i18nProvider.getText(context.getBundle(), "iconset.description", DEFAULT_DESCRIPTION,
+                locale);
+        description = description == null ? DEFAULT_DESCRIPTION : description;
+
         IconSet iconSet = new IconSet(ICONSET_ID, label, description, formats);
         return Collections.singleton(iconSet);
     }
 
     @Override
-    protected InputStream getResource(String iconSetId, String resourceName) {
+    protected @Nullable InputStream getResource(String iconSetId, String resourceName) {
         if (ClassicIconProvider.ICONSET_ID.equals(iconSetId)) {
             URL iconResource = context.getBundle().getEntry("icons/" + resourceName);
             try {
@@ -83,16 +103,5 @@ public class ClassicIconProvider extends AbstractResourceIconProvider implements
     @Override
     protected Integer getPriority() {
         return 0;
-    }
-
-    @Override
-    @Reference
-    protected void setTranslationProvider(TranslationProvider i18nProvider) {
-        super.setTranslationProvider(i18nProvider);
-    }
-
-    @Override
-    protected void unsetTranslationProvider(TranslationProvider i18nProvider) {
-        super.unsetTranslationProvider(i18nProvider);
     }
 }

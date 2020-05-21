@@ -13,6 +13,7 @@
 package org.openhab.ui.basic.render;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.ui.basic.internal.WebAppConfig;
 
@@ -21,8 +22,8 @@ import org.openhab.ui.basic.internal.WebAppConfig;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
- *
  */
+@NonNullByDefault
 public interface WidgetRenderer {
 
     /**

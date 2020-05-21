@@ -12,12 +12,14 @@
  */
 package org.openhab.ui.basic.render;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * An exception used by {@link WidgetRenderer}s, if an error occurs.
  *
  * @author Kai Kreuzer - Initial contribution and API
- *
  */
+@NonNullByDefault
 public class RenderException extends Exception {
 
     private static final long serialVersionUID = -3801828613192343641L;

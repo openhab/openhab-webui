@@ -18,8 +18,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.model.sitemap.SitemapProvider;
@@ -34,7 +36,6 @@ import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
@@ -50,25 +51,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
- *
  */
 @Component(service = { PageRenderer.class })
+@NonNullByDefault
 public class PageRenderer extends AbstractWidgetRenderer {
 
     private final Logger logger = LoggerFactory.getLogger(PageRenderer.class);
 
-    List<WidgetRenderer> widgetRenderers = new ArrayList<WidgetRenderer>();
+    private List<WidgetRenderer> widgetRenderers = new ArrayList<>();
 
-    @Override
     @Activate
-    protected void activate(BundleContext bundleContext) {
-        super.activate(bundleContext);
-    }
-
-    @Override
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        super.deactivate(bundleContext);
+    public PageRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
+            final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {
+        super(bundleContext, i18nProvider, itemUIRegistry, localeProvider);
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
@@ -158,7 +153,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
             StringBuilder newPost = new StringBuilder();
             StringBuilder widgetSB = new StringBuilder();
             EList<Widget> nextChildren = renderWidget(w, widgetSB);
-            if (nextChildren != null) {
+            if (!nextChildren.isEmpty()) {
                 String[] parts = widgetSB.toString().split("%children%");
                 // no %children% placeholder found or at the end
                 if (parts.length == 1) {
@@ -194,7 +189,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
                 return renderer.renderWidget(w, sb);
             }
         }
-        return null;
+        return ECollections.emptyEList();
     }
 
     @Override
@@ -250,38 +245,5 @@ public class PageRenderer extends AbstractWidgetRenderer {
         pageSnippet = StringUtils.replace(pageSnippet, "%content%", listSnippet);
 
         return pageSnippet;
-    }
-
-    @Override
-    @Reference
-    protected void setItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.setItemUIRegistry(ItemUIRegistry);
-    }
-
-    @Override
-    protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.unsetItemUIRegistry(ItemUIRegistry);
-    }
-
-    @Override
-    @Reference
-    protected void setLocaleProvider(LocaleProvider LocaleProvider) {
-        super.setLocaleProvider(LocaleProvider);
-    }
-
-    @Override
-    protected void unsetLocaleProvider(LocaleProvider LocaleProvider) {
-        super.unsetLocaleProvider(LocaleProvider);
-    }
-
-    @Override
-    @Reference
-    protected void setTranslationProvider(TranslationProvider TranslationProvider) {
-        super.setTranslationProvider(TranslationProvider);
-    }
-
-    @Override
-    protected void unsetTranslationProvider(TranslationProvider TranslationProvider) {
-        super.unsetTranslationProvider(TranslationProvider);
     }
 }

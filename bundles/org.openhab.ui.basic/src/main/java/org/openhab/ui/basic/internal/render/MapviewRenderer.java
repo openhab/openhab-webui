@@ -13,7 +13,11 @@
 package org.openhab.ui.basic.internal.render;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.core.i18n.LocaleProvider;
+import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.library.types.PointType;
 import org.openhab.core.model.sitemap.sitemap.Mapview;
 import org.openhab.core.model.sitemap.sitemap.Widget;
@@ -24,7 +28,6 @@ import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -32,24 +35,18 @@ import org.osgi.service.component.annotations.Reference;
  * can produce HTML code for Text widgets.
  *
  * @author Gaël L'hopital - Initial contribution
- *
  */
 @Component(service = WidgetRenderer.class)
+@NonNullByDefault
 public class MapviewRenderer extends AbstractWidgetRenderer {
 
     private static final String MAP_URL = "//www.openstreetmap.org/export/embed.html?bbox=%lonminus%,%latminus%,%lonplus%,%latplus%&marker=%lat%,%lon%";
     private static final double MAP_ZOOM = 0.01;
 
-    @Override
     @Activate
-    protected void activate(BundleContext bundleContext) {
-        super.activate(bundleContext);
-    }
-
-    @Override
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        super.deactivate(bundleContext);
+    public MapviewRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
+            final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {
+        super(bundleContext, i18nProvider, itemUIRegistry, localeProvider);
     }
 
     @Override
@@ -92,17 +89,6 @@ public class MapviewRenderer extends AbstractWidgetRenderer {
         snippet = StringUtils.replace(snippet, "%height%", Integer.toString(height));
 
         sb.append(snippet);
-        return null;
-    }
-
-    @Override
-    @Reference
-    protected void setItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.setItemUIRegistry(ItemUIRegistry);
-    }
-
-    @Override
-    protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.unsetItemUIRegistry(ItemUIRegistry);
+        return ECollections.emptyEList();
     }
 }

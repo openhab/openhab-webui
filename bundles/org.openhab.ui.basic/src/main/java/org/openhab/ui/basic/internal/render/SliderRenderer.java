@@ -13,7 +13,11 @@
 package org.openhab.ui.basic.internal.render;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.core.i18n.LocaleProvider;
+import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.model.sitemap.sitemap.Slider;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.ui.items.ItemUIRegistry;
@@ -22,7 +26,6 @@ import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -36,21 +39,15 @@ import org.osgi.service.component.annotations.Reference;
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
  * @author Florian Schmidt - Make min and max value configurable in Sitemap
- *
  */
 @Component(service = WidgetRenderer.class)
+@NonNullByDefault
 public class SliderRenderer extends AbstractWidgetRenderer {
 
-    @Override
     @Activate
-    protected void activate(BundleContext bundleContext) {
-        super.activate(bundleContext);
-    }
-
-    @Override
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        super.deactivate(bundleContext);
+    public SliderRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
+            final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {
+        super(bundleContext, i18nProvider, itemUIRegistry, localeProvider);
     }
 
     @Override
@@ -82,7 +79,7 @@ public class SliderRenderer extends AbstractWidgetRenderer {
         snippet = processColor(w, snippet);
 
         sb.append(snippet);
-        return null;
+        return ECollections.emptyEList();
     }
 
     private String maxValueOf(Slider slider) {
@@ -104,16 +101,5 @@ public class SliderRenderer extends AbstractWidgetRenderer {
             return slider.getStep().toString();
         }
         return "1";
-    }
-
-    @Override
-    @Reference
-    protected void setItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.setItemUIRegistry(ItemUIRegistry);
-    }
-
-    @Override
-    protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.unsetItemUIRegistry(ItemUIRegistry);
     }
 }

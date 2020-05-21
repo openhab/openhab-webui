@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.config.core.ConfigConstants;
 import org.openhab.core.net.HttpServiceUtil;
 import org.osgi.framework.BundleContext;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
  * @author Yannick Schaus - Initial contribution
  */
 @Component(immediate = true, name = "org.openhab.ui", property = { "httpContext.id:String=oh-ui-http-ctx" })
+@NonNullByDefault
 public class UIService implements HttpContext {
 
     private static final String APP_BASE = "app";
@@ -48,16 +50,23 @@ public class UIService implements HttpContext {
 
     private final Logger logger = LoggerFactory.getLogger(UIService.class);
 
-    protected HttpService httpService;
-    protected HttpContext defaultHttpContext;
+    private final HttpService httpService;
+    private final HttpContext defaultHttpContext;
+
+    @Activate
+    public UIService(final @Reference HttpService httpService) {
+        this.httpService = httpService;
+        defaultHttpContext = httpService.createDefaultHttpContext();
+    }
 
     @Override
-    public boolean handleSecurity(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public boolean handleSecurity(@NonNullByDefault({}) HttpServletRequest request,
+            @NonNullByDefault({}) HttpServletResponse response) throws IOException {
         return defaultHttpContext.handleSecurity(request, response);
     }
 
     @Override
-    public URL getResource(String name) {
+    public URL getResource(@NonNullByDefault({}) String name) {
         if (name.startsWith(APP_BASE + STATIC_PATH) && !name.endsWith("/")) {
             try {
                 URL url = new java.io.File(STATIC_BASE + name.substring(new String(APP_BASE + STATIC_PATH).length()))
@@ -74,14 +83,13 @@ public class UIService implements HttpContext {
     }
 
     @Override
-    public String getMimeType(String name) {
+    public String getMimeType(@NonNullByDefault({}) String name) {
         return defaultHttpContext.getMimeType(name);
     }
 
     @Activate
     protected void activate(ComponentContext componentContext, Map<String, Object> properties) {
         BundleContext bundleContext = componentContext.getBundleContext();
-        defaultHttpContext = httpService.createDefaultHttpContext();
         try {
             httpService.registerResources("/", APP_BASE, this);
             if (HttpServiceUtil.getHttpServicePort(bundleContext) > 0) {
@@ -98,14 +106,5 @@ public class UIService implements HttpContext {
     protected void deactivate(ComponentContext componentContext) {
         httpService.unregister("/");
         logger.info("Stopped UI");
-    }
-
-    @Reference
-    protected void setHttpService(HttpService httpService) {
-        this.httpService = httpService;
-    }
-
-    protected void unsetHttpService(HttpService httpService) {
-        this.httpService = null;
     }
 }

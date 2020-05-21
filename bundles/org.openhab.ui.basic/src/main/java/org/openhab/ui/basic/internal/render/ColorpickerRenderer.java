@@ -13,7 +13,11 @@
 package org.openhab.ui.basic.internal.render;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.core.i18n.LocaleProvider;
+import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.library.types.HSBType;
 import org.openhab.core.model.sitemap.sitemap.Colorpicker;
 import org.openhab.core.model.sitemap.sitemap.Widget;
@@ -25,7 +29,6 @@ import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -39,21 +42,15 @@ import org.osgi.service.component.annotations.Reference;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
- *
  */
 @Component(service = WidgetRenderer.class)
+@NonNullByDefault
 public class ColorpickerRenderer extends AbstractWidgetRenderer {
 
-    @Override
     @Activate
-    protected void activate(BundleContext bundleContext) {
-        super.activate(bundleContext);
-    }
-
-    @Override
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        super.deactivate(bundleContext);
+    public ColorpickerRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
+            final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {
+        super(bundleContext, i18nProvider, itemUIRegistry, localeProvider);
     }
 
     @Override
@@ -65,9 +62,7 @@ public class ColorpickerRenderer extends AbstractWidgetRenderer {
     public EList<Widget> renderWidget(Widget w, StringBuilder sb) throws RenderException {
         Colorpicker cp = (Colorpicker) w;
 
-        String snippetName = "colorpicker";
-
-        String snippet = getSnippet(snippetName);
+        String snippet = getSnippet("colorpicker");
 
         // set the default send-update frequency to 200ms
         String frequency = cp.getFrequency() == 0 ? "200" : Integer.toString(cp.getFrequency());
@@ -80,7 +75,9 @@ public class ColorpickerRenderer extends AbstractWidgetRenderer {
             hexValue = "#" + Integer.toHexString(hsbState.getRGB()).substring(2);
         }
         String purelabel = itemUIRegistry.getLabel(w);
-        purelabel = purelabel.replaceAll("\\\"", "\\\\'");
+        if (purelabel != null) {
+            purelabel = purelabel.replaceAll("\\\"", "\\\\'");
+        }
 
         // Should be called before preprocessSnippet
         snippet = StringUtils.replace(snippet, "%state%", hexValue);
@@ -106,17 +103,6 @@ public class ColorpickerRenderer extends AbstractWidgetRenderer {
         snippet = StringUtils.replace(snippet, "%valuestyle%", style);
 
         sb.append(snippet);
-        return null;
-    }
-
-    @Override
-    @Reference
-    protected void setItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.setItemUIRegistry(ItemUIRegistry);
-    }
-
-    @Override
-    protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.unsetItemUIRegistry(ItemUIRegistry);
+        return ECollections.emptyEList();
     }
 }

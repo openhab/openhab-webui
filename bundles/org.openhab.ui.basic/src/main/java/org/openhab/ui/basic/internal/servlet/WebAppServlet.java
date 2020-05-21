@@ -96,11 +96,11 @@ public class WebAppServlet extends BaseServlet {
 
     @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE, policy = ReferencePolicy.DYNAMIC)
     public void addSitemapProvider(SitemapProvider sitemapProvider) {
-        this.sitemapProviders.add(sitemapProvider);
+        sitemapProviders.add(sitemapProvider);
     }
 
     public void removeSitemapProvider(SitemapProvider sitemapProvider) {
-        this.sitemapProviders.remove(sitemapProvider);
+        sitemapProviders.remove(sitemapProvider);
     }
 
     @Activate
