@@ -17,12 +17,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * This class holds BasicUI configuration values
  * and validates newly applied values.
  *
  * @author Vlad Ivanov - Initial contribution
  */
+@NonNullByDefault
 public class WebAppConfig {
     private static final String DEFAULT_SITEMAP = "default";
 

@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.config.core.ConfigurableService;
 import org.openhab.core.io.http.HttpContextFactoryService;
 import org.openhab.core.io.rest.sitemap.SitemapSubscriptionService;
@@ -65,6 +66,7 @@ import org.slf4j.LoggerFactory;
         ConfigurableService.SERVICE_PROPERTY_CATEGORY + "=ui", //
         ConfigurableService.SERVICE_PROPERTY_LABEL + "=Basic UI" //
 })
+@NonNullByDefault
 public class WebAppServlet extends BaseServlet {
 
     private final Logger logger = LoggerFactory.getLogger(WebAppServlet.class);
@@ -77,18 +79,19 @@ public class WebAppServlet extends BaseServlet {
     private static final String CONTENT_TYPE_ASYNC = "application/xml;charset=UTF-8";
     private static final String CONTENT_TYPE = "text/html;charset=UTF-8";
 
-    private PageRenderer renderer;
-    private SitemapSubscriptionService subscriptions;
+    private final PageRenderer renderer;
+    private final SitemapSubscriptionService subscriptions;
     private final WebAppConfig config = new WebAppConfig();
-    protected Set<SitemapProvider> sitemapProviders = new CopyOnWriteArraySet<>();
+    protected final Set<SitemapProvider> sitemapProviders = new CopyOnWriteArraySet<>();
 
-    @Reference
-    public void setSitemapSubscriptionService(SitemapSubscriptionService subscriptions) {
+    @Activate
+    public WebAppServlet(final @Reference HttpService httpService,
+            final @Reference HttpContextFactoryService httpContextFactoryService,
+            final @Reference ItemRegistry itemRegistry, final @Reference SitemapSubscriptionService subscriptions,
+            final @Reference PageRenderer renderer) {
+        super(httpService, httpContextFactoryService, itemRegistry);
         this.subscriptions = subscriptions;
-    }
-
-    public void unsetSitemapSubscriptionService(SitemapSubscriptionService subscriptions) {
-        this.subscriptions = null;
+        this.renderer = renderer;
     }
 
     @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE, policy = ReferencePolicy.DYNAMIC)
@@ -98,16 +101,6 @@ public class WebAppServlet extends BaseServlet {
 
     public void removeSitemapProvider(SitemapProvider sitemapProvider) {
         this.sitemapProviders.remove(sitemapProvider);
-    }
-
-    @Reference
-    public void setPageRenderer(PageRenderer renderer) {
-        renderer.setConfig(config);
-        this.renderer = renderer;
-    }
-
-    public void unsetPageRenderer(PageRenderer renderer) {
-        this.renderer = null;
     }
 
     @Activate
@@ -121,12 +114,13 @@ public class WebAppServlet extends BaseServlet {
             logger.error("Could not register static resources under {}", WEBAPP_ALIAS, e);
         }
 
-        config.applyConfig(configProps);
+        modified(configProps);
     }
 
     @Modified
     protected void modified(Map<String, Object> configProps) {
         config.applyConfig(configProps);
+        renderer.setConfig(config);
     }
 
     @Deactivate
@@ -145,7 +139,8 @@ public class WebAppServlet extends BaseServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    protected void service(@NonNullByDefault({}) HttpServletRequest req, @NonNullByDefault({}) HttpServletResponse res)
+            throws ServletException, IOException {
         logger.debug("Servlet request received!");
 
         // read request parameters
@@ -220,38 +215,5 @@ public class WebAppServlet extends BaseServlet {
         }
         res.getWriter().append(result);
         res.getWriter().close();
-    }
-
-    @Override
-    @Reference
-    public void setItemRegistry(ItemRegistry ItemRegistry) {
-        super.setItemRegistry(ItemRegistry);
-    }
-
-    @Override
-    public void unsetItemRegistry(ItemRegistry ItemRegistry) {
-        super.unsetItemRegistry(ItemRegistry);
-    }
-
-    @Override
-    @Reference
-    public void setHttpService(HttpService HttpService) {
-        super.setHttpService(HttpService);
-    }
-
-    @Override
-    public void unsetHttpService(HttpService HttpService) {
-        super.unsetHttpService(HttpService);
-    }
-
-    @Override
-    @Reference
-    public void setHttpContextFactoryService(HttpContextFactoryService HttpContextFactoryService) {
-        super.setHttpContextFactoryService(HttpContextFactoryService);
-    }
-
-    @Override
-    public void unsetHttpContextFactoryService(HttpContextFactoryService HttpContextFactoryService) {
-        super.unsetHttpContextFactoryService(HttpContextFactoryService);
     }
 }

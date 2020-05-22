@@ -12,28 +12,30 @@
  */
 package org.openhab.ui.basic.internal.servlet;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.core.io.http.HttpContextFactoryService;
 import org.openhab.core.io.http.servlet.SmartHomeBundleServlet;
 import org.openhab.core.items.ItemRegistry;
+import org.osgi.service.http.HttpService;
 
 /**
  * This is the base servlet class for other servlet in the Basic UI.
  *
  * @author Thomas.Eichstaedt-Engelen
  */
+@NonNullByDefault
 public abstract class BaseServlet extends SmartHomeBundleServlet {
 
     private static final long serialVersionUID = -4012800772403491132L;
 
+    protected final ItemRegistry itemRegistry;
+
     /** the root path of this web application */
     public static final String WEBAPP_ALIAS = "/basicui";
 
-    protected ItemRegistry itemRegistry;
-
-    public void setItemRegistry(ItemRegistry itemRegistry) {
+    public BaseServlet(HttpService httpService, HttpContextFactoryService httpContextFactoryService,
+            ItemRegistry itemRegistry) {
+        super(httpService, httpContextFactoryService);
         this.itemRegistry = itemRegistry;
-    }
-
-    public void unsetItemRegistry(ItemRegistry itemRegistry) {
-        this.itemRegistry = null;
     }
 }
