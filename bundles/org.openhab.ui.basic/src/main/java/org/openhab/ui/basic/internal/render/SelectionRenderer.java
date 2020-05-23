@@ -13,7 +13,12 @@
 package org.openhab.ui.basic.internal.render;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.core.i18n.LocaleProvider;
+import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.library.items.NumberItem;
@@ -31,7 +36,6 @@ import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,20 +50,15 @@ import com.google.gson.JsonObject;
  * @author Vlad Ivanov - BasicUI changes
  */
 @Component(service = WidgetRenderer.class)
+@NonNullByDefault
 public class SelectionRenderer extends AbstractWidgetRenderer {
 
     private final Logger logger = LoggerFactory.getLogger(SelectionRenderer.class);
 
-    @Override
     @Activate
-    protected void activate(BundleContext bundleContext) {
-        super.activate(bundleContext);
-    }
-
-    @Override
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        super.deactivate(bundleContext);
+    public SelectionRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
+            final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {
+        super(bundleContext, i18nProvider, itemUIRegistry, localeProvider);
     }
 
     @Override
@@ -116,11 +115,11 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
         snippet = processColor(w, snippet);
 
         sb.append(snippet);
-        return null;
+        return ECollections.emptyEList();
     }
 
-    private String buildRow(Selection w, String lab, String cmd, Item item, State state, StringBuilder rowSB)
-            throws RenderException {
+    private @Nullable String buildRow(Selection w, @Nullable String lab, String cmd, @Nullable Item item,
+            @Nullable State state, StringBuilder rowSB) throws RenderException {
         String mappingLabel = null;
         String rowSnippet = getSnippet("selection_row");
 
@@ -143,7 +142,7 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
             compareMappingState = convertStateToLabelUnit((QuantityType<?>) state, command);
         }
 
-        if (compareMappingState.toString().equals(command)) {
+        if (compareMappingState != null && compareMappingState.toString().equals(command)) {
             mappingLabel = label;
             rowSnippet = StringUtils.replace(rowSnippet, "%checked%", "checked=\"true\"");
         } else {
@@ -153,16 +152,5 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
         rowSB.append(rowSnippet);
 
         return mappingLabel;
-    }
-
-    @Override
-    @Reference
-    protected void setItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.setItemUIRegistry(ItemUIRegistry);
-    }
-
-    @Override
-    protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.unsetItemUIRegistry(ItemUIRegistry);
     }
 }

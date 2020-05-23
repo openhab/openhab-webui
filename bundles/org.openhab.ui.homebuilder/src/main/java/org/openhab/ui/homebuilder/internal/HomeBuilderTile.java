@@ -12,6 +12,8 @@
  */
 package org.openhab.ui.homebuilder.internal;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.ui.tiles.Tile;
 import org.osgi.service.component.annotations.Component;
 
@@ -20,9 +22,9 @@ import org.osgi.service.component.annotations.Component;
  *
  * @author Kuba Wolanin - Initial contribution
  * @author Yannick Schaus - remove dependency to dashboard
- *
  */
 @Component
+@NonNullByDefault
 public class HomeBuilderTile implements Tile {
 
     @Override
@@ -36,7 +38,7 @@ public class HomeBuilderTile implements Tile {
     }
 
     @Override
-    public String getOverlay() {
+    public @Nullable String getOverlay() {
         return null;
     }
 

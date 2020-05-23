@@ -12,6 +12,7 @@
  */
 package org.openhab.ui.restdocs.internal;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -25,28 +26,21 @@ import org.slf4j.LoggerFactory;
  * This service registers the Swagger UI as a web resource on the HTTP service.
  *
  * @author Kai Kreuzer - Initial contribution
- *
  */
 @Component(immediate = true)
+@NonNullByDefault
 public class SwaggerService {
 
     private static final String ALIAS = "/doc";
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(SwaggerService.class);
 
-    private HttpService httpService;
-
-    @Reference
-    protected void setHttpService(HttpService httpService) {
-        this.httpService = httpService;
-    }
-
-    protected void unsetHttpService(HttpService httpService) {
-        this.httpService = null;
-    }
+    private final HttpService httpService;
 
     @Activate
-    protected void activate() {
+    public SwaggerService(final @Reference HttpService httpService) {
+        this.httpService = httpService;
+
         try {
             httpService.registerResources(ALIAS, "swagger", httpService.createDefaultHttpContext());
         } catch (NamespaceException e) {

@@ -12,6 +12,8 @@
  */
 package org.openhab.ui.restdocs.internal;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.ui.tiles.Tile;
 import org.osgi.service.component.annotations.Component;
 
@@ -20,16 +22,10 @@ import org.osgi.service.component.annotations.Component;
  *
  * @author Kai Kreuzer - Initial contribution
  * @author Yannick Schaus - remove dependency to dashboard
- *
  */
 @Component
+@NonNullByDefault
 public class RESTTile implements Tile {
-
-    protected void activate() {
-    }
-
-    protected void deactivate() {
-    }
 
     @Override
     public String getName() {
@@ -42,7 +38,7 @@ public class RESTTile implements Tile {
     }
 
     @Override
-    public String getOverlay() {
+    public @Nullable String getOverlay() {
         return null;
     }
 

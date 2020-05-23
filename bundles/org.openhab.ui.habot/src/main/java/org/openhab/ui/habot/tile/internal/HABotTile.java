@@ -14,6 +14,8 @@ package org.openhab.ui.habot.tile.internal;
 
 import java.util.Map;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.ui.tiles.Tile;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
@@ -33,37 +35,19 @@ import org.slf4j.LoggerFactory;
  */
 @Component(service = Tile.class, immediate = true, name = "org.openhab.habot", property = {
         "service.config.description.uri=ui:habot", "service.config.label=HABot", "service.config.category=ui" })
+@NonNullByDefault
 public class HABotTile implements Tile {
-
-    @Override
-    public String getName() {
-        return "HABot";
-    }
-
-    @Override
-    public String getUrl() {
-        return "../habot/";
-    }
-
-    @Override
-    public String getOverlay() {
-        return null;
-    }
-
-    @Override
-    public String getImageUrl() {
-        return "../habot/statics/tile.png";
-    }
 
     public static final String HABOT_ALIAS = "/habot";
     public static final String RESOURCES_BASE = "web/dist/pwa-mat";
 
     private final Logger logger = LoggerFactory.getLogger(HABotTile.class);
 
-    protected HttpService httpService;
+    private final HttpService httpService;
 
     @Activate
-    protected void activate(Map<String, Object> configProps, BundleContext context) {
+    public HABotTile(Map<String, Object> configProps, BundleContext context, final @Reference HttpService httpService) {
+        this.httpService = httpService;
         try {
             Object useGzipCompression = configProps.get("useGzipCompression");
             HttpContext httpContext = new HABotHttpContext(httpService.createDefaultHttpContext(), RESOURCES_BASE,
@@ -82,12 +66,23 @@ public class HABotTile implements Tile {
         logger.info("Stopped HABot");
     }
 
-    @Reference
-    protected void setHttpService(HttpService httpService) {
-        this.httpService = httpService;
+    @Override
+    public String getName() {
+        return "HABot";
     }
 
-    protected void unsetHttpService(HttpService httpService) {
-        this.httpService = null;
+    @Override
+    public String getUrl() {
+        return "../habot/";
+    }
+
+    @Override
+    public @Nullable String getOverlay() {
+        return null;
+    }
+
+    @Override
+    public String getImageUrl() {
+        return "../habot/statics/tile.png";
     }
 }

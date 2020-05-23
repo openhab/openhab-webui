@@ -24,6 +24,8 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.I18nUtil;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
@@ -31,11 +33,12 @@ import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
 import org.openhab.core.ui.items.ItemUIRegistry;
-import org.openhab.ui.basic.internal.WebAppActivator;
 import org.openhab.ui.basic.internal.WebAppConfig;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,21 +49,29 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
- *
  */
+@NonNullByDefault
 public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
     private final Logger logger = LoggerFactory.getLogger(AbstractWidgetRenderer.class);
 
     public static final String ICON_TYPE = "svg";
 
-    protected ItemUIRegistry itemUIRegistry;
-    protected TranslationProvider i18nProvider;
-    protected LocaleProvider localeProvider;
+    private final BundleContext bundleContext;
+    protected final TranslationProvider i18nProvider;
+    protected final ItemUIRegistry itemUIRegistry;
+    protected final LocaleProvider localeProvider;
 
-    protected WebAppConfig config;
+    protected WebAppConfig config = new WebAppConfig();
 
-    private BundleContext bundleContext;
+    @Activate
+    public AbstractWidgetRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
+            final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {
+        this.bundleContext = bundleContext;
+        this.i18nProvider = i18nProvider;
+        this.itemUIRegistry = itemUIRegistry;
+        this.localeProvider = localeProvider;
+    }
 
     /* the file extension of the snippets */
     protected static final String SNIPPET_EXT = ".html";
@@ -69,42 +80,10 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     protected static final String SNIPPET_LOCATION = "snippets/";
 
     /* a local cache so we do not have to read the snippets over and over again from the bundle */
-    protected static final Map<String, String> SNIPPET_CACHE = new HashMap<String, String>();
-
-    protected void setItemUIRegistry(ItemUIRegistry itemUIRegistry) {
-        this.itemUIRegistry = itemUIRegistry;
-    }
-
-    protected void unsetItemUIRegistry(ItemUIRegistry itemUIRegistry) {
-        this.itemUIRegistry = null;
-    }
+    protected static final Map<String, String> SNIPPET_CACHE = new HashMap<>(30);
 
     public ItemUIRegistry getItemUIRegistry() {
         return itemUIRegistry;
-    }
-
-    protected void setLocaleProvider(LocaleProvider localeProvider) {
-        this.localeProvider = localeProvider;
-    }
-
-    protected void unsetLocaleProvider(final LocaleProvider localeProvider) {
-        this.localeProvider = null;
-    }
-
-    protected void setTranslationProvider(TranslationProvider i18nProvider) {
-        this.i18nProvider = i18nProvider;
-    }
-
-    protected void unsetTranslationProvider(TranslationProvider i18nProvider) {
-        this.i18nProvider = null;
-    }
-
-    protected void activate(BundleContext context) {
-        this.bundleContext = context;
-    }
-
-    protected void deactivate(BundleContext context) {
-        this.bundleContext = null;
     }
 
     /**
@@ -123,12 +102,12 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         String text = itemUIRegistry.getLabel(w);
         snippet = StringUtils.replace(snippet, "%label%", getLabel(text));
         snippet = StringUtils.replace(snippet, "%value%", getValue(text));
-        snippet = StringUtils.replace(snippet, "%has_value%", new Boolean(hasValue(text)).toString());
+        snippet = StringUtils.replace(snippet, "%has_value%", Boolean.valueOf(hasValue(text)).toString());
         snippet = StringUtils.replace(snippet, "%visibility_class%",
                 itemUIRegistry.getVisiblity(w) ? "" : "mdl-form__row--hidden");
 
         String state = getState(w);
-        snippet = StringUtils.replace(snippet, "%state%", state == null ? "" : escapeURL(state));
+        snippet = StringUtils.replace(snippet, "%state%", escapeURL(state));
 
         String category = getCategory(w);
         snippet = StringUtils.replace(snippet, "%category%", escapeURL(category));
@@ -148,7 +127,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         String snippet = SNIPPET_CACHE.get(lowerTypeElementType);
         if (snippet == null) {
             String snippetLocation = SNIPPET_LOCATION + lowerTypeElementType + SNIPPET_EXT;
-            URL entry = WebAppActivator.getContext().getBundle().getEntry(snippetLocation);
+            URL entry = bundleContext.getBundle().getEntry(snippetLocation);
             if (entry != null) {
                 try {
                     snippet = IOUtils.toString(entry.openStream());
@@ -179,7 +158,11 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      * @param text the text containing the label and an optional value around []
      * @return the label extracted from the text
      */
-    protected String getLabel(String text) {
+    protected String getLabel(@Nullable String text) {
+        if (text == null) {
+            return "";
+        }
+
         int index = text.indexOf('[');
 
         if (index != -1) {
@@ -205,7 +188,11 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      * @param text the text containing the label and an optional value around []
      * @return the value extracted from the text or "" if not present
      */
-    protected String getValue(String text) {
+    protected String getValue(@Nullable String text) {
+        if (text == null) {
+            return "";
+        }
+
         int index = text.indexOf('[');
 
         if (index != -1) {
@@ -231,8 +218,8 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      * @param text the text containing the label and an optional value around []
      * @return true if the text contains a value
      */
-    protected boolean hasValue(String text) {
-        return (text.indexOf('[') != -1);
+    protected boolean hasValue(@Nullable String text) {
+        return text != null && text.indexOf('[') != -1;
     }
 
     /**
@@ -242,9 +229,9 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      * @param string The string that has to be escaped
      * @return The escaped string
      */
-    protected String escapeURL(String string) {
+    protected String escapeURL(@Nullable String string) {
         if (string == null) {
-            return null;
+            return "";
         }
 
         try {
@@ -287,7 +274,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         return snippet;
     }
 
-    protected String getCategory(Widget w) {
+    protected @Nullable String getCategory(Widget w) {
         return itemUIRegistry.getCategory(w);
     }
 
@@ -300,7 +287,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         }
     }
 
-    protected String escapeHtml(String s) {
+    protected String escapeHtml(@Nullable String s) {
         return StringEscapeUtils.escapeHtml(s);
     }
 
@@ -309,24 +296,24 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         this.config = config;
     }
 
-    protected String localizeText(String key) {
+    protected @Nullable String localizeText(String key) {
         String result = "";
         if (I18nUtil.isConstant(key)) {
-            result = this.i18nProvider.getText(this.bundleContext.getBundle(), I18nUtil.stripConstant(key), "",
-                    this.localeProvider.getLocale());
+            result = i18nProvider.getText(bundleContext.getBundle(), I18nUtil.stripConstant(key), "",
+                    localeProvider.getLocale());
         }
         return result;
     }
 
-    protected String getUnitForWidget(Widget widget) {
+    protected @Nullable String getUnitForWidget(Widget widget) {
         return itemUIRegistry.getUnitForWidget(widget);
     }
 
-    protected State convertStateToLabelUnit(QuantityType<?> state, String label) {
+    protected @Nullable State convertStateToLabelUnit(QuantityType<?> state, String label) {
         return itemUIRegistry.convertStateToLabelUnit(state, label);
     }
 
-    protected boolean isValidURL(String url) {
+    protected boolean isValidURL(@Nullable String url) {
         if (url != null && !url.isEmpty()) {
             try {
                 return new URL(url).toURI() != null ? true : false;

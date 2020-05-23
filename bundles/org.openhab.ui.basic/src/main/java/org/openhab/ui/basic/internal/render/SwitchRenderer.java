@@ -13,7 +13,12 @@
 package org.openhab.ui.basic.internal.render;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.core.i18n.LocaleProvider;
+import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
@@ -35,7 +40,6 @@ import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +52,7 @@ import org.slf4j.LoggerFactory;
  * @author Vlad Ivanov - BasicUI changes
  */
 @Component(service = WidgetRenderer.class)
+@NonNullByDefault
 public class SwitchRenderer extends AbstractWidgetRenderer {
 
     private final Logger logger = LoggerFactory.getLogger(SwitchRenderer.class);
@@ -56,16 +61,10 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
     private static final int MAX_LABEL_SIZE = 9;
     private static final String ELLIPSIS = "\u2026";
 
-    @Override
     @Activate
-    protected void activate(BundleContext bundleContext) {
-        super.activate(bundleContext);
-    }
-
-    @Override
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        super.deactivate(bundleContext);
+    public SwitchRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
+            final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {
+        super(bundleContext, i18nProvider, itemUIRegistry, localeProvider);
     }
 
     @Override
@@ -116,7 +115,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         snippet = preprocessSnippet(snippet, w);
 
         if (nbButtons == 0) {
-            if (state.equals(OnOffType.ON)) {
+            if (OnOffType.ON.equals(state)) {
                 snippet = snippet.replaceAll("%checked%", "checked=true");
             } else {
                 snippet = snippet.replaceAll("%checked%", "");
@@ -145,11 +144,11 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         snippet = processColor(w, snippet);
 
         sb.append(snippet);
-        return null;
+        return ECollections.emptyEList();
     }
 
-    private void buildButton(Switch w, String lab, String cmd, int maxLabelSize, boolean severalButtons, Item item,
-            State state, StringBuilder buttons) throws RenderException {
+    private void buildButton(Switch w, @Nullable String lab, String cmd, int maxLabelSize, boolean severalButtons,
+            @Nullable Item item, @Nullable State state, StringBuilder buttons) throws RenderException {
         String button = getSnippet("button");
 
         String command = cmd;
@@ -176,7 +175,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
             compareMappingState = convertStateToLabelUnit((QuantityType<?>) state, command);
         }
 
-        if (severalButtons && compareMappingState.toString().equals(command)) {
+        if (severalButtons && compareMappingState != null && compareMappingState.toString().equals(command)) {
             buttonClass = "mdl-button--accent";
         } else {
             buttonClass = "mdl-button";
@@ -184,16 +183,5 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         button = StringUtils.replace(button, "%class%", buttonClass);
 
         buttons.append(button);
-    }
-
-    @Override
-    @Reference
-    protected void setItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.setItemUIRegistry(ItemUIRegistry);
-    }
-
-    @Override
-    protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.unsetItemUIRegistry(ItemUIRegistry);
     }
 }

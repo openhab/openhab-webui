@@ -13,16 +13,20 @@
 package org.openhab.ui.basic.internal.render;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.core.i18n.LocaleProvider;
+import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.model.sitemap.sitemap.List;
 import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.types.State;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -31,21 +35,15 @@ import org.osgi.service.component.annotations.Reference;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
- *
  */
 @Component(service = WidgetRenderer.class)
+@NonNullByDefault
 public class ListRenderer extends AbstractWidgetRenderer {
 
-    @Override
     @Activate
-    protected void activate(BundleContext bundleContext) {
-        super.activate(bundleContext);
-    }
-
-    @Override
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        super.deactivate(bundleContext);
+    public ListRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
+            final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {
+        super(bundleContext, i18nProvider, itemUIRegistry, localeProvider);
     }
 
     @Override
@@ -59,29 +57,22 @@ public class ListRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replaceAll("%label%", getLabel(w));
 
         String rowSnippet = getSnippet("list_row");
-        String state = itemUIRegistry.getState(w).toString();
-        String[] rowContents = state.split(((List) w).getSeparator());
+
+        State state = itemUIRegistry.getState(w);
         StringBuilder rowSB = new StringBuilder();
-        for (String row : rowContents) {
-            rowSB.append(StringUtils.replace(rowSnippet, "%title%", escapeHtml(row)));
+
+        if (state != null) {
+            for (String row : state.toString().split(((List) w).getSeparator())) {
+                rowSB.append(StringUtils.replace(rowSnippet, "%title%", escapeHtml(row)));
+            }
         }
+
         snippet = StringUtils.replace(snippet, "%rows%", rowSB.toString());
 
         // Process the color tags
         snippet = processColor(w, snippet);
 
         sb.append(snippet);
-        return null;
-    }
-
-    @Override
-    @Reference
-    protected void setItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.setItemUIRegistry(ItemUIRegistry);
-    }
-
-    @Override
-    protected void unsetItemUIRegistry(ItemUIRegistry ItemUIRegistry) {
-        super.unsetItemUIRegistry(ItemUIRegistry);
+        return ECollections.emptyEList();
     }
 }

@@ -21,7 +21,7 @@ import org.osgi.service.http.HttpService;
 /**
  * This is the base servlet class for other servlet in the Basic UI.
  *
- * @author Thomas.Eichstaedt-Engelen
+ * @author Thomas.Eichstaedt-Engelen - Initial contribution
  */
 @NonNullByDefault
 public abstract class BaseServlet extends SmartHomeBundleServlet {

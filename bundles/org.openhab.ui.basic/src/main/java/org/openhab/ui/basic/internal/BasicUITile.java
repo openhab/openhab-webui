@@ -12,17 +12,19 @@
  */
 package org.openhab.ui.basic.internal;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.ui.tiles.Tile;
 import org.osgi.service.component.annotations.Component;
 
 /**
  * The tile for the Basic UI
  *
- * @author Kai Kreuzer
- * @author Yannick Schaus - remove dependency to dashboard
- *
+ * @author Kai Kreuzer - Initial contribution
+ * @author Yannick Schaus - Remove dependency to dashboard
  */
 @Component
+@NonNullByDefault
 public class BasicUITile implements Tile {
 
     @Override
@@ -36,7 +38,7 @@ public class BasicUITile implements Tile {
     }
 
     @Override
-    public String getOverlay() {
+    public @Nullable String getOverlay() {
         return null;
     }
 

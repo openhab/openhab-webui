@@ -36,7 +36,7 @@ public class WebAppConfig {
     private String defaultSitemap = DEFAULT_SITEMAP;
     private String theme = DEFAULT_THEME;
 
-    private List<String> cssClassList = new ArrayList<String>();
+    private List<String> cssClassList = new ArrayList<>();
 
     private static final Map<String, String> CSS_CLASSES;
     private static final Map<String, Boolean> CSS_DEFAULT_VALUES;
@@ -46,12 +46,12 @@ public class WebAppConfig {
     private static final String CONFIG_CAPITALIZE = "capitalizeValues";
 
     static {
-        CSS_CLASSES = new HashMap<String, String>();
+        CSS_CLASSES = new HashMap<>();
         CSS_CLASSES.put(CONFIG_ENABLE_ICONS, "ui-icons-enabled");
         CSS_CLASSES.put(CONFIG_CONDENSED_LAYOUT, "ui-layout-condensed");
         CSS_CLASSES.put(CONFIG_CAPITALIZE, "ui-capitalize-values");
 
-        CSS_DEFAULT_VALUES = new HashMap<String, Boolean>();
+        CSS_DEFAULT_VALUES = new HashMap<>();
         CSS_DEFAULT_VALUES.put(CONFIG_ENABLE_ICONS, true);
         CSS_DEFAULT_VALUES.put(CONFIG_CONDENSED_LAYOUT, false);
         CSS_DEFAULT_VALUES.put(CONFIG_CAPITALIZE, false);

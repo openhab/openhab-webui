@@ -16,6 +16,8 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.model.sitemap.SitemapProvider;
 import org.openhab.core.ui.tiles.Tile;
 import org.osgi.service.component.annotations.Component;
@@ -29,8 +31,9 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  * @author Yannick Schaus - remove dependency to dashboard
  */
 @Component
+@NonNullByDefault
 public class CometVisuTile implements Tile {
-    private Set<SitemapProvider> sitemapProviders = new HashSet<>();
+    private final Set<SitemapProvider> sitemapProviders = new HashSet<>();
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addSitemapProvider(SitemapProvider provider) {
@@ -89,7 +92,7 @@ public class CometVisuTile implements Tile {
     }
 
     @Override
-    public String getOverlay() {
+    public @Nullable String getOverlay() {
         return "html5";
     }
 

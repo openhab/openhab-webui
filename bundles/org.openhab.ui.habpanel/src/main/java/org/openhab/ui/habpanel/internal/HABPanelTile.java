@@ -12,6 +12,8 @@
  */
 package org.openhab.ui.habpanel.internal;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.ui.tiles.Tile;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -30,36 +32,18 @@ import org.slf4j.LoggerFactory;
  */
 @Component(service = Tile.class, immediate = true, name = "org.openhab.habpanel", property = {
         "service.config.description.uri=ui:habpanel", "service.config.label=HABPanel", "service.config.category=ui" })
+@NonNullByDefault
 public class HABPanelTile implements Tile {
-
-    @Override
-    public String getName() {
-        return "HABPanel";
-    }
-
-    @Override
-    public String getUrl() {
-        return "../habpanel/index.html";
-    }
-
-    @Override
-    public String getOverlay() {
-        return null;
-    }
-
-    @Override
-    public String getImageUrl() {
-        return "../habpanel/tile.png";
-    }
 
     public static final String HABPANEL_ALIAS = "/habpanel";
 
     private final Logger logger = LoggerFactory.getLogger(HABPanelTile.class);
 
-    protected HttpService httpService;
+    private final HttpService httpService;
 
     @Activate
-    protected void activate() {
+    public HABPanelTile(final @Reference HttpService httpService) {
+        this.httpService = httpService;
         try {
             httpService.registerResources(HABPANEL_ALIAS, "web", null);
             logger.info("Started HABPanel at {}", HABPANEL_ALIAS);
@@ -74,12 +58,23 @@ public class HABPanelTile implements Tile {
         logger.info("Stopped HABPanel");
     }
 
-    @Reference
-    protected void setHttpService(HttpService httpService) {
-        this.httpService = httpService;
+    @Override
+    public String getName() {
+        return "HABPanel";
     }
 
-    protected void unsetHttpService(HttpService httpService) {
-        this.httpService = null;
+    @Override
+    public String getUrl() {
+        return "../habpanel/index.html";
+    }
+
+    @Override
+    public @Nullable String getOverlay() {
+        return null;
+    }
+
+    @Override
+    public String getImageUrl() {
+        return "../habpanel/tile.png";
     }
 }
