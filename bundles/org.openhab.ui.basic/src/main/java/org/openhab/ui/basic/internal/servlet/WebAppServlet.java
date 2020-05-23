@@ -60,18 +60,17 @@ import org.slf4j.LoggerFactory;
  * @author Vlad Ivanov - Basic UI changes
  *
  */
-@Component(immediate = true, service = Servlet.class, configurationPid = "org.openhab.basicui", property = { //
-        Constants.SERVICE_PID + "=org.openhab.basicui", //
-        ConfigurableService.SERVICE_PROPERTY_DESCRIPTION_URI + "=ui:basic", //
-        ConfigurableService.SERVICE_PROPERTY_CATEGORY + "=ui", //
-        ConfigurableService.SERVICE_PROPERTY_LABEL + "=Basic UI" //
-})
+@Component(immediate = true, service = Servlet.class, configurationPid = "org.openhab.basicui", //
+        property = Constants.SERVICE_PID + "=org.openhab.basicui")
+@ConfigurableService(category = "ui", label = "Basic UI", description_uri = WebAppServlet.CONFIG_URI)
 @NonNullByDefault
 public class WebAppServlet extends BaseServlet {
 
     private final Logger logger = LoggerFactory.getLogger(WebAppServlet.class);
 
     private static final long serialVersionUID = 3443749654545136365L;
+
+    protected static final String CONFIG_URI = "ui:basic";
 
     /** the name of the servlet to be used in the URL */
     public static final String SERVLET_NAME = "app";

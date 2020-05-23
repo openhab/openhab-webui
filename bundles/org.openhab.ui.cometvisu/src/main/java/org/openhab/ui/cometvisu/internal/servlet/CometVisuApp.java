@@ -55,14 +55,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tobias Bräutigam - Initial contribution
  */
-@Component(immediate = true, service = CometVisuApp.class, configurationPid = "org.openhab.cometvisu", property = {
-        Constants.SERVICE_PID + "=org.openhab.cometvisu",
-        ConfigurableService.SERVICE_PROPERTY_DESCRIPTION_URI + "=ui:cometvisu",
-        ConfigurableService.SERVICE_PROPERTY_CATEGORY + "=ui",
-        ConfigurableService.SERVICE_PROPERTY_LABEL + "=CometVisu" })
+@Component(immediate = true, service = CometVisuApp.class, configurationPid = "org.openhab.cometvisu", //
+        property = Constants.SERVICE_PID + "=org.openhab.cometvisu")
+@ConfigurableService(category = "ui", label = "CometVisu", description_uri = CometVisuApp.CONFIG_URI)
 public class CometVisuApp {
 
     private final Logger logger = LoggerFactory.getLogger(CometVisuApp.class);
+
+    protected static final String CONFIG_URI = "ui:cometvisu";
 
     protected HttpService httpService;
 
