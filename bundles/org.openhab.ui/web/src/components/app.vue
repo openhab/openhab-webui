@@ -406,19 +406,20 @@ export default {
         this.$f7.preloader.hide()
         this.$f7.dialog.alert('Error while signing out: ' + err)
       })
+    },
+    updateColorTheme () {
+      let colorTheme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'
+      this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || colorTheme
     }
   },
   created () {
-    let colorTheme = 'light'
     if (window.matchMedia) {
-      colorTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        if (!localStorage.getItem('openhab.ui:theme.dark')) {
-          this.themeOptions.dark = e.matches ? 'dark' : 'light'
-        }
+      // see https://github.com/mdn/sprints/issues/858 why we can't use addEventListener here
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(() => {
+        this.updateColorTheme()
       })
     }
-    this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || colorTheme
+    this.updateColorTheme()
     this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((!this.$theme.ios) ? 'filled' : 'light')
     this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
     this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
