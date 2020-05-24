@@ -248,6 +248,7 @@ export default {
         //   : (document.documentURI && document.documentURI.indexOf('?theme=md') > 0) ? 'md'
         //     : 'auto', // Automatic theme detection
         // App root data
+        autoDarkTheme: true,
         data () {
           return {
           }
@@ -407,23 +408,19 @@ export default {
         this.$f7.dialog.alert('Error while signing out: ' + err)
       })
     },
-    updateColorTheme () {
-      let colorTheme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'
-      this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || colorTheme
+    updateThemeOptions () {
+      this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || (this.$f7.darkTheme ? 'dark' : 'light')
+      this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((!this.$theme.ios) || (!this.$f7.darkTheme) ? 'filled' : 'light')
+      this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
+      this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
+      this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
+      // f7 adds theme-dark to the class list if autoDarkTheme is enabled
+      if (this.$f7.darkTheme && this.themeOptions.dark === 'light') {
+        document.querySelector('html').classList.remove('theme-dark')
+      }
     }
   },
   created () {
-    if (window.matchMedia) {
-      // see https://github.com/mdn/sprints/issues/858 why we can't use addEventListener here
-      window.matchMedia('(prefers-color-scheme: dark)').addListener(() => {
-        this.updateColorTheme()
-      })
-    }
-    this.updateColorTheme()
-    this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((!this.$theme.ios) ? 'filled' : 'light')
-    this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
-    this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
-    this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
     // this.loginScreenOpened = true
     const refreshToken = this.getRefreshToken()
     if (refreshToken) {
@@ -442,6 +439,7 @@ export default {
   },
   mounted () {
     this.$f7ready((f7) => {
+      this.updateThemeOptions()
       this.$f7.data.themeOptions = this.themeOptions
 
       // Init cordova APIs (see cordova-app.js)
@@ -480,6 +478,10 @@ export default {
 
       this.$f7.on('sidebarRefresh', () => {
         this.loadSidebarPages()
+      })
+
+      this.$f7.on('darkThemeChange', () => {
+        this.updateThemeOptions()
       })
     })
   }
