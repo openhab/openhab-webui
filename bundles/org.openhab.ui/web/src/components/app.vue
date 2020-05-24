@@ -409,7 +409,16 @@ export default {
     }
   },
   created () {
-    this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || 'light'
+    let colorTheme = 'light'
+    if (window.matchMedia) {
+      colorTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (!localStorage.getItem('openhab.ui:theme.dark')) {
+          this.themeOptions.dark = e.matches ? 'dark' : 'light'
+        }
+      })
+    }
+    this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || colorTheme
     this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((!this.$theme.ios) ? 'filled' : 'light')
     this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
     this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
