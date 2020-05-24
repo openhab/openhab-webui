@@ -414,8 +414,8 @@ export default {
       this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
       this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
       this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
-      // f7 adds theme-dark to the class list if autoDarkTheme is enabled
-      if (this.$f7.darkTheme && this.themeOptions.dark === 'light') {
+      // f7 adds theme-dark to the class list if autoDarkTheme is enabled and dark mode is true
+      if (this.themeOptions.dark === 'light') {
         document.querySelector('html').classList.remove('theme-dark')
       }
     }
