@@ -8,14 +8,11 @@
       <f7-button round color="blue" raised :fill="theme === 'aurora'" @click="switchTheme('aurora')">Aurora</f7-button>
     </f7-segmented>
     <f7-block-title>Dark mode</f7-block-title>
-    <f7-row>
-      <f7-col width="50" class="bg-color-white demo-theme-picker" @click="setThemeDark('light')">
-        <f7-checkbox checked disabled v-if="darkMode === 'light'" />
-      </f7-col>
-      <f7-col width="50" class="bg-color-black demo-theme-picker" @click="setThemeDark('dark')">
-        <f7-checkbox checked disabled v-if="darkMode === 'dark'" />
-      </f7-col>
-    </f7-row>
+    <f7-segmented>
+      <f7-button round color="blue" raised :fill="darkMode === 'auto'" @click="setThemeDark('auto')">Auto</f7-button>
+      <f7-button round color="blue" raised :fill="darkMode === 'light'" @click="setThemeDark('light')">Light</f7-button>
+      <f7-button round color="blue" raised :fill="darkMode === 'dark'" @click="setThemeDark('dark')">Dark</f7-button>
+    </f7-segmented>
     <f7-block-title>Navigation bars style</f7-block-title>
     <f7-row>
       <f7-col width="50" class="demo-bars-picker demo-bars-picker-fill" @click="setBarsStyle('filled')">
@@ -58,7 +55,8 @@ export default {
       // document.location = document.location.origin + document.location.pathname + '?theme=' + theme
     },
     setThemeDark (value) {
-      localStorage.setItem('openhab.ui:theme.dark', value)
+      value === 'auto'
+        ? localStorage.removeItem('openhab.ui:theme.dark') : localStorage.setItem('openhab.ui:theme.dark', value)
       localStorage.setItem('openhab.ui:theme.bars', 'light') // dark theme with filled bars is ugly, switch to light bars too
       location.reload()
     },
@@ -84,7 +82,7 @@ export default {
       return localStorage.getItem('openhab.ui:theme') || 'auto'
     },
     darkMode () {
-      return localStorage.getItem('openhab.ui:theme.dark') || 'light'
+      return localStorage.getItem('openhab.ui:theme.dark') || 'auto'
     },
     barsStyle () {
       return localStorage.getItem('openhab.ui:theme.bars') || ((!this.$theme.ios) ? 'filled' : 'light')
