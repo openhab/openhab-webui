@@ -58,6 +58,7 @@ import ItemMetadataSynonyms from '@/components/item/metadata/item-metadata-synon
 import ItemMetadataWidget from '@/components/item/metadata/item-metadata-widget.vue'
 import ItemMetadataAutoUpdate from '@/components/item/metadata/item-metadata-autoupdate.vue'
 import ItemMetadataAlexa from '@/components/item/metadata/item-metadata-alexa.vue'
+import ItemMetadataHomeKit from '@/components/item/metadata/item-metadata-homekit.vue'
 import ItemMetadataGa from '@/components/item/metadata/item-metadata-ga.vue'
 
 export default {
@@ -91,6 +92,8 @@ export default {
           return ItemMetadataAutoUpdate
         case 'alexa':
           return ItemMetadataAlexa
+        case 'homekit':
+          return ItemMetadataHomeKit
         case 'ga':
           return ItemMetadataGa
         default:
