@@ -83,7 +83,7 @@
         </f7-list-item>
       </f7-list>
 
-      <div class="account" v-if="ready">
+      <div slot="fixed" class="account" v-if="ready">
         <div class="display-flex justify-content-center">
           <div class="hint-signin" v-if="!$store.getters.user && !$store.getters.pages.length">
             <em>Sign in as an administrator to access settings<br /><f7-icon f7="arrow_down" size="20"></f7-icon></em>

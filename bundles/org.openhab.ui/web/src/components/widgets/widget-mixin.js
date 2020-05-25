@@ -52,6 +52,19 @@ export default {
       }
       this.$emit('component-ready', this.context.component)
       return evalConfig
+    },
+    visible () {
+      if (this.context.editmode) return true
+      if (this.config.visible === undefined && this.config.visibleTo === undefined) return true
+      if (this.config.visible === false) return false
+      if (this.config.visibleTo) {
+        const user = this.$store.getters.user
+        if (!user) return false
+        if (user.roles && user.roles.some(r => this.config.visibleTo.indexOf('role:' + r) >= 0)) return true
+        if (this.config.visibleTo.indexOf('user:' + user.name) >= 0) return true
+        return false
+      }
+      return true
     }
   },
   methods: {
