@@ -100,24 +100,6 @@ export default {
 }
 </script>
 <style>
-.demo-theme-picker {
-  cursor: pointer;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
-  border: 1px solid rgba(255,255,255,0.2);
-  box-sizing: border-box;
-  position: relative;
-}
-.demo-theme-picker .checkbox {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-}
-.demo-color-picker-button {
-  margin-bottom: 1em;
-  text-transform: capitalize;
-}
 .demo-bars-picker {
   height: 200px;
   border-radius: 10px;
