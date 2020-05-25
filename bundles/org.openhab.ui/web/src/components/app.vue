@@ -247,6 +247,7 @@ export default {
         // theme: (document.documentURI && document.documentURI.indexOf('?theme=ios') > 0) ? 'ios'
         //   : (document.documentURI && document.documentURI.indexOf('?theme=md') > 0) ? 'md'
         //     : 'auto', // Automatic theme detection
+        autoDarkTheme: !(localStorage.getItem('openhab.ui:theme.dark')),
         // App root data
         data () {
           return {
@@ -406,14 +407,16 @@ export default {
         this.$f7.preloader.hide()
         this.$f7.dialog.alert('Error while signing out: ' + err)
       })
+    },
+    updateThemeOptions () {
+      this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || (this.$f7.darkTheme ? 'dark' : 'light')
+      this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((!this.$theme.ios) || (!this.$f7.darkTheme) ? 'filled' : 'light')
+      this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
+      this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
+      this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
     }
   },
   created () {
-    this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || 'light'
-    this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((!this.$theme.ios) ? 'filled' : 'light')
-    this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
-    this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
-    this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
     // this.loginScreenOpened = true
     const refreshToken = this.getRefreshToken()
     if (refreshToken) {
@@ -432,6 +435,7 @@ export default {
   },
   mounted () {
     this.$f7ready((f7) => {
+      this.updateThemeOptions()
       this.$f7.data.themeOptions = this.themeOptions
 
       // Init cordova APIs (see cordova-app.js)
@@ -470,6 +474,10 @@ export default {
 
       this.$f7.on('sidebarRefresh', () => {
         this.loadSidebarPages()
+      })
+
+      this.$f7.on('darkThemeChange', () => {
+        this.updateThemeOptions()
       })
     })
   }
