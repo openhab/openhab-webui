@@ -247,7 +247,7 @@ export default {
         // theme: (document.documentURI && document.documentURI.indexOf('?theme=ios') > 0) ? 'ios'
         //   : (document.documentURI && document.documentURI.indexOf('?theme=md') > 0) ? 'md'
         //     : 'auto', // Automatic theme detection
-        autoDarkTheme: true,
+        autoDarkTheme: !(localStorage.getItem('openhab.ui:theme.dark')),
         // App root data
         data () {
           return {
@@ -414,10 +414,6 @@ export default {
       this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
       this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
       this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
-      // f7 adds theme-dark to the class list if autoDarkTheme is enabled and dark mode is true
-      if (this.themeOptions.dark === 'light') {
-        document.querySelector('html').classList.remove('theme-dark')
-      }
     }
   },
   created () {
