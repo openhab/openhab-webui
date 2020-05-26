@@ -28,15 +28,15 @@
   position absolute
   background-color white
   overflow-x hidden
-  top calc(var(--f7-navbar-height))
+  top calc(var(--f7-safe-area-top) + var(--f7-navbar-height))
   width 100%
-  height calc(100% - var(--f7-navbar-height)) !important
+  height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height)) !important
   &.with-tabbar
-    height calc(100% - var(--f7-navbar-height) - var(--f7-tabbar-labels-height)) !important
+    height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height) - var(--f7-tabbar-labels-height)) !important
   &.with-toolbar
-    height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height)) !important
+    height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height) - var(--f7-toolbar-height)) !important
   &.with-sheet
-    height calc(100% - var(--f7-navbar-height) - var(--f7-sheet-height)) !important
+    height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height) - var(--f7-sheet-height)) !important
   .echarts
     width calc(100% - 20px)
     height 100%

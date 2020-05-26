@@ -24,10 +24,10 @@
 .oh-map-page-lmap
   position absolute
   background-color var(--f7-page-bg-color)
-  top calc(var(--f7-navbar-height))
-  height calc(100% - var(--f7-navbar-height)) !important
+  top calc(var(--f7-safe-area-top) + var(--f7-navbar-height))
+  height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height)) !important
   &.with-tabbar
-    height calc(100% - var(--f7-navbar-height) - var(--f7-tabbar-labels-height)) !important
+    height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height) - var(--f7-tabbar-labels-height)) !important
 </style>
 
 <script>

@@ -13,7 +13,7 @@
           color="white"
           class="card-opened-fade-in"
           :style="{position: 'absolute', right: '15px', top: '15px'}"
-          icon-f7="close_round_fill"
+          icon-f7="multiply_circle_fill"
         ></f7-link>
       </div>
       <!-- <div class="card-content-padding" v-if="opened">
