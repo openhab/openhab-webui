@@ -106,7 +106,7 @@
     <!-- <f7-view url="/panel-right/"></f7-view> -->
   </f7-panel>
 
-  <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="this.themeOptions.pageTransitionAnimation !== 'disabled'"></f7-view>
+  <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'"></f7-view>
 
   <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
     <f7-view name="login" v-if="$device.cordova">
@@ -410,13 +410,15 @@ export default {
     },
     updateThemeOptions () {
       this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || (this.$f7.darkTheme ? 'dark' : 'light')
-      this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((!this.$theme.ios) || (!this.$f7.darkTheme) ? 'filled' : 'light')
+      this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.ios || this.$f7.darkTheme || this.themeOptions.dark === 'dark') ? 'light' : 'filled')
       this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
+      this.themeOptions.homeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
       this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
-      this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
     }
   },
   created () {
+    // special treatment for this option because it's needed to configure the app initialization
+    this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.pagetransition') || 'default'
     // this.loginScreenOpened = true
     const refreshToken = this.getRefreshToken()
     if (refreshToken) {

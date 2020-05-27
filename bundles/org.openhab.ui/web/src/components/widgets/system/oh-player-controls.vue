@@ -10,11 +10,11 @@
 .player-controls
   .button
     height 48px
+  .segmented-highlight
+    display none
 .aurora .player-controls
   .button
     height 37px
-  .segmented-highlight
-    display none
 </style>
 
 <script>

@@ -113,6 +113,27 @@ export const actionProps = (groupName, paramPrefix) => {
       }
     },
     {
+      name: paramPrefix + 'actionPageTransition',
+      label: 'Transition Effect',
+      groupName,
+      type: 'TEXT',
+      limitToOptions: true,
+      description: 'Use a specific <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a>',
+      options: [
+        { value: 'f7-circle', label: 'Circle' },
+        { value: 'f7-cover', label: 'Cover' },
+        { value: 'f7-cover-v', label: 'Cover from bottom' },
+        { value: 'f7-dive', label: 'Dive' },
+        { value: 'f7-fade', label: 'Fade' },
+        { value: 'f7-flip', label: 'Flip' },
+        { value: 'f7-parallax', label: 'Parallax' },
+        { value: 'f7-push', label: 'Push' }
+      ],
+      visible: (value, configuration, configDescription, parameters) => {
+        return ['navigate'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }
+    },
+    {
       name: paramPrefix + 'actionModal',
       label: 'Modal Page or Widget',
       groupName,
@@ -197,12 +218,15 @@ export const actionsMixin = {
       switch (action) {
         case 'navigate':
           const actionPage = this.config[prefix + 'actionPage']
+          const actionPageTransition = this.config[prefix + 'actionPageTransition']
           console.log('Navigating to ' + actionPage)
           if (actionPage.indexOf('page:') !== 0) {
             console.log('Action target is not of the format page:uid')
             return
           }
-          this.$f7router.navigate('/page/' + actionPage.substring(5), { props: { deep: true } })
+          let navigateOptions = { props: { deep: true } }
+          if (actionPageTransition) navigateOptions.transition = actionPageTransition
+          this.$f7router.navigate('/page/' + actionPage.substring(5), navigateOptions)
           break
         case 'command':
           const actionItem = this.config[prefix + 'actionItem']
