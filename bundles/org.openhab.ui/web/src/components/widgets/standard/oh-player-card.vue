@@ -35,7 +35,7 @@ export default {
   },
   widget: {
     name: 'oh-player-card',
-    label: 'Simple player',
+    label: 'Player Card',
     description: 'Display player controls in a card',
     props: {
       parameters: [

@@ -26,7 +26,7 @@ export default {
   },
   widget: {
     name: 'oh-colorpicker-card',
-    label: 'Simple color picker',
+    label: 'Color Picker Card',
     description: 'Display a color picker in a card',
     props: {
       parameters: [

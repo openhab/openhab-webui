@@ -28,7 +28,7 @@ export default {
   },
   widget: {
     name: 'oh-stepper-card',
-    label: 'Simple stepper',
+    label: 'Stepper Card',
     description: 'Display a stepper in a card',
     props: {
       parameters: [

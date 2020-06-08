@@ -28,7 +28,7 @@ export default {
   },
   widget: {
     name: 'oh-list-card',
-    label: 'List card',
+    label: 'List Card',
     description: 'Display a list in a card',
     props: {
       parameters: [

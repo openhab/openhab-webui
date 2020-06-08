@@ -215,6 +215,7 @@ export const actionsMixin = {
       if (this.context.editmode) return
       prefix = (prefix) ? prefix += '_' : ''
       const action = this.config[prefix + 'action']
+      if (!action) return
       switch (action) {
         case 'navigate':
           const actionPage = this.config[prefix + 'actionPage']

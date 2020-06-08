@@ -24,6 +24,18 @@
         </f7-menu-dropdown>
       </f7-menu-item>
     </f7-menu>
+    <slot name="inner" v-slot:inner>
+    </slot>
+    <slot name="after" v-slot:after>
+    </slot>
+    <slot name="content" v-slot:content>
+    </slot>
+    <slot name="root-end" v-slot:root-end>
+    </slot>
+    <slot name="footer" v-slot:footer>
+    </slot>
+    <generic-widget-component slot="after" v-if="context.component.slots && context.component.slots.after && context.component.slots.after.length"
+      :context="childContext(context.component.slots.after[0])" v-on="$listeners" />
     <f7-accordion-content v-if="context.parent.component.config.accordionList && !context.editmode">
       <generic-widget-component v-if="context.component.slots && context.component.slots.accordion && context.component.slots.accordion.length"
         :context="childContext(context.component.slots.accordion[0])" v-on="$listeners" />

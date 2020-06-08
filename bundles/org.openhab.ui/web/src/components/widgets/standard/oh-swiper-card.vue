@@ -28,7 +28,7 @@ export default {
   },
   widget: {
     name: 'oh-swiper-card',
-    label: 'Swiper card',
+    label: 'Swiper Card',
     description: 'Display a swiper in a card',
     props: {
       parameters: [

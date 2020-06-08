@@ -56,7 +56,7 @@ export default {
   mixins: [mixin, actionsMixin],
   widget: {
     name: 'oh-label-card',
-    label: 'Simple label',
+    label: 'Label Card',
     description: 'Display the state of an item in a card',
     props: {
       parameterGroups: [
