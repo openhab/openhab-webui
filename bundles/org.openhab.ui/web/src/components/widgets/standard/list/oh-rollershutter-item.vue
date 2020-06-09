@@ -1,32 +1,24 @@
 <template>
-  <oh-listitem :context="context" class="slider-listitem">
-    <div slot="footer" class="padding">
-      <generic-widget-component :context="childContext(sliderComponent)" v-on="$listeners" />
+  <oh-list-item :context="context">
+    <div slot="after">
+      <generic-widget-component :context="childContext(afterComponent)" v-on="$listeners" />
     </div>
-  </oh-listitem>
+  </oh-list-item>
 </template>
-
-<style lang="stylus">
-.slider-listitem
-  .item-title
-    width 100%
-    .item-footer
-      height inherit
-</style>
 
 <script>
 import mixin from '../../widget-mixin'
-import OhListitem from '../../system/oh-listitem.vue'
+import OhListItem from './oh-list-item.vue'
 
 export default {
   components: {
-    OhListitem
+    OhListItem
   },
   mixins: [mixin],
   widget: {
-    name: 'oh-slider-listitem',
-    label: 'Slider List Item',
-    description: 'Display a slider in a list',
+    name: 'oh-rollershutter-item',
+    label: 'RollerShutter List Item',
+    description: 'Display rollershutter controls in a list',
     props: {
       parameterGroups: [],
       parameters: [
@@ -47,9 +39,9 @@ export default {
     }
   },
   computed: {
-    sliderComponent () {
+    afterComponent () {
       return {
-        component: 'oh-slider',
+        component: 'oh-rollershutter',
         config: this.config
       }
     }

@@ -1,22 +1,22 @@
 <template>
-  <oh-listitem :context="context">
+  <oh-list-item :context="context">
     <div slot="after">
       <generic-widget-component :context="childContext(afterComponent)" v-on="$listeners" />
     </div>
-  </oh-listitem>
+  </oh-list-item>
 </template>
 
 <script>
 import mixin from '../../widget-mixin'
-import OhListitem from '../../system/oh-listitem.vue'
+import OhListItem from './oh-list-item.vue'
 
 export default {
   components: {
-    OhListitem
+    OhListItem
   },
   mixins: [mixin],
   widget: {
-    name: 'oh-player-listitem',
+    name: 'oh-player-item',
     label: 'Player List Item',
     description: 'Display player controls in a list',
     props: {

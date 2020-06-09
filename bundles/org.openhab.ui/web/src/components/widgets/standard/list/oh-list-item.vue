@@ -47,8 +47,8 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
-import { actionGroup, actionProps, actionsMixin } from '../widget-actions'
+import mixin from '../../widget-mixin'
+import { actionGroup, actionProps, actionsMixin } from '../../widget-actions'
 
 export default {
   name: 'oh-list-item',

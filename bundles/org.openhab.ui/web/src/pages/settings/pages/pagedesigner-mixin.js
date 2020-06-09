@@ -27,7 +27,6 @@ export default {
         store: this.$store.getters.trackedItems,
         editmode: (!this.previewMode || this.forceEditMode) ? {
           addWidget: this.addWidget,
-          addListWidget: this.addListWidget,
           configureWidget: this.configureWidget,
           configureSlot: this.configureSlot,
           editWidgetCode: this.editWidgetCode,

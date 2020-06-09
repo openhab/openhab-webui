@@ -1,7 +1,7 @@
 <template>
   <f7-list v-bind="config">
     <f7-menu v-if="context.editmode" slot="before-list" class="configure-layout-menu margin-vertical padding-left">
-      <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-list-item')" icon-f7="plus" />
+      <f7-menu-item @click="context.editmode.addWidget(context.component)" icon-f7="plus" />
       <f7-menu-item style="margin-left: auto" icon-f7="square_list" dropdown>
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context.parent, 'oh-list')" href="#" text="Configure List"></f7-menu-dropdown-item>

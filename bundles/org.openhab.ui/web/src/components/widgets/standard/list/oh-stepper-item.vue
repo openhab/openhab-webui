@@ -1,26 +1,25 @@
 <template>
-  <oh-listitem :context="context">
+  <oh-list-item :context="context">
     <div slot="after">
       <generic-widget-component :context="childContext(afterComponent)" v-on="$listeners" />
     </div>
-  </oh-listitem>
+  </oh-list-item>
 </template>
 
 <script>
 import mixin from '../../widget-mixin'
-import OhListitem from '../../system/oh-listitem.vue'
+import OhListItem from './oh-list-item.vue'
 
 export default {
   components: {
-    OhListitem
+    OhListItem
   },
   mixins: [mixin],
   widget: {
-    name: 'oh-toggle-listitem',
-    label: 'Toggle List Item',
-    description: 'Display a toggle switch in a list',
+    name: 'oh-stepper-item',
+    label: 'Stepper List Item',
+    description: 'Display stepper controls in a list',
     props: {
-      parameterGroups: [],
       parameters: [
         {
           name: 'title',
@@ -41,7 +40,7 @@ export default {
   computed: {
     afterComponent () {
       return {
-        component: 'oh-toggle',
+        component: 'oh-stepper',
         config: this.config
       }
     }

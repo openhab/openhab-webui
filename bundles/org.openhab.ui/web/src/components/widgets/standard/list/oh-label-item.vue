@@ -1,24 +1,23 @@
 <template>
-  <oh-listitem :context="context">
+  <oh-list-item :context="context">
     <div slot="after">
       {{context.store[config.item].displayState || context.store[config.item].state}}
     </div>
-  </oh-listitem>
+  </oh-list-item>
 </template>
 
 <script>
 import mixin from '../../widget-mixin'
 import { actionGroup, actionProps, actionsMixin } from '../../widget-actions'
-import OhListitem from '../../system/oh-listitem.vue'
+import OhListItem from './oh-list-item.vue'
 
 export default {
-  name: 'oh-label-listitem',
   components: {
-    OhListitem
+    OhListItem
   },
   mixins: [mixin, actionsMixin],
   widget: {
-    name: 'oh-label-listitem',
+    name: 'oh-label-item',
     label: 'Label List Item',
     description: 'Display the state of an item in a list',
     props: {

@@ -1,25 +1,34 @@
 <template>
-  <oh-listitem :context="context">
-    <div slot="after">
-      <generic-widget-component :context="childContext(afterComponent)" v-on="$listeners" />
+  <oh-list-item :context="context" class="slider-listitem">
+    <div slot="footer" class="padding">
+      <generic-widget-component :context="childContext(sliderComponent)" v-on="$listeners" />
     </div>
-  </oh-listitem>
+  </oh-list-item>
 </template>
+
+<style lang="stylus">
+.slider-listitem
+  .item-title
+    width 100%
+    .item-footer
+      height inherit
+</style>
 
 <script>
 import mixin from '../../widget-mixin'
-import OhListitem from '../../system/oh-listitem.vue'
+import OhListItem from './oh-list-item.vue'
 
 export default {
   components: {
-    OhListitem
+    OhListItem
   },
   mixins: [mixin],
   widget: {
-    name: 'oh-stepper-listitem',
-    label: 'Stepper List Item',
-    description: 'Display stepper controls in a list',
+    name: 'oh-slider-item',
+    label: 'Slider List Item',
+    description: 'Display a slider in a list',
     props: {
+      parameterGroups: [],
       parameters: [
         {
           name: 'title',
@@ -38,9 +47,9 @@ export default {
     }
   },
   computed: {
-    afterComponent () {
+    sliderComponent () {
       return {
-        component: 'oh-stepper',
+        component: 'oh-slider',
         config: this.config
       }
     }

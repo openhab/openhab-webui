@@ -65,10 +65,10 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import * as SystemWidgets from '@/components/widgets/system/index'
 import * as StandardWidgets from '@/components/widgets/standard/index'
-import * as StandardListWidgets from '@/components/widgets/standard/listitem/index'
+import * as StandardListWidgets from '@/components/widgets/standard/list/index'
 
-import itemDefaultStandaloneComponent from '@/components/widgets/standard/item-default-standalone'
-import itemDefaultListComponent from '@/components/widgets/standard/listitem/item-default-list'
+import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
+import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
 
 export default {
   props: ['item', 'metadata', 'namespace'],

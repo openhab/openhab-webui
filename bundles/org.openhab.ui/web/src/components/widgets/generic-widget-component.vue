@@ -19,17 +19,17 @@ import mixin from './widget-mixin'
 
 import * as SystemWidgets from './system/index'
 import * as StandardWidgets from './standard/index'
-import * as StandardListItemWidgets from './standard/listitem/index'
+import * as StandardListWidgets from './standard/list/index'
 import * as LayoutWidgets from './layout/index'
 
 console.log(SystemWidgets)
-console.log(StandardListItemWidgets)
+console.log(StandardListWidgets)
 export default {
   mixins: [mixin],
   components: {
     ...SystemWidgets,
     ...StandardWidgets,
-    ...StandardListItemWidgets,
+    ...StandardListWidgets,
     ...LayoutWidgets
   }
 }

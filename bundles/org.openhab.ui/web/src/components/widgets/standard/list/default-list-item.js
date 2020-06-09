@@ -15,13 +15,13 @@ export default function itemDefaultListComponent (item) {
   } else {
     if (item.type === 'Switch' && !stateDescription.readOnly) {
       component = {
-        component: 'oh-toggle-listitem'
+        component: 'oh-toggle-item'
       }
     }
 
     if (item.type === 'Dimmer' && !stateDescription.readOnly) {
       component = {
-        component: 'oh-slider-listitem',
+        component: 'oh-slider-item',
         config: {
           scale: true,
           label: true,
@@ -35,7 +35,7 @@ export default function itemDefaultListComponent (item) {
 
     // if (item.type === 'Color' && !stateDescription.readOnly) {
     //   component = {
-    //     component: 'oh-colorpicker-listitem',
+    //     component: 'oh-colorpicker-item',
     //     config: {
     //       sliderLabel: true,
     //       sliderValue: true
@@ -45,20 +45,20 @@ export default function itemDefaultListComponent (item) {
 
     if (item.type === 'Rollershutter' && !stateDescription.readOnly) {
       component = {
-        component: 'oh-rollershutter-listitem'
+        component: 'oh-rollershutter-item'
       }
     }
 
     if (item.type === 'Player' && !stateDescription.readOnly) {
       component = {
-        component: 'oh-player-listitem'
+        component: 'oh-player-item'
       }
     }
   }
 
   if (!component) {
     component = {
-      component: 'oh-label-listitem'
+      component: 'oh-label-item'
     }
 
     if (item.type.indexOf('Number:') === 0) {

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import itemDefaultStandaloneComponent from '@/components/widgets/standard/item-default-standalone'
+import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
 
 export default {
   props: ['item', 'context'],
