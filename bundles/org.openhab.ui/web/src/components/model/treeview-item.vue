@@ -9,9 +9,13 @@
           model.children.equipments, model.children.points,
           model.children.groups, model.children.items].flat()"
       :key="node.item.name"
-      :model="node" @selected="(event) => $emit('selected', event)"
-      :selected="selected" />
+      :model="node"
+      @selected="(event) => $emit('selected', event)"
+      :selected="selected"
+      />
     <div slot="label" class="semantic-class"> {{className()}}</div>
+    <f7-checkbox slot="content-start" v-if="model.checkable"
+      :checked="model.checked === true" @change="check" />
   </f7-treeview-item>
 </template>
 
@@ -45,6 +49,10 @@ export default {
       var $ = self.$$
       if ($(event.target).is('.treeview-toggle')) return
       this.$emit('selected', this.model)
+    },
+    check (event) {
+      this.model.checked = event.target.checked
+      this.$emit('checked', this.model, event.target.checked)
     }
   },
   computed: {
