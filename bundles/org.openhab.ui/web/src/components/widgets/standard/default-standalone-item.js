@@ -79,6 +79,11 @@ export default function itemDefaultStandaloneComponent (item) {
         actionItem: item.name,
         actionOptions: item.commandDescription.commandOptions.map((o) => (o.label) ? o.command + '=' + o.label : o.command).join(',')
       }
+    } else if (item.type.indexOf('Group') === 0) {
+      component.config = {
+        action: 'group',
+        actionGroupPopupItem: item.name
+      }
     }
   }
 

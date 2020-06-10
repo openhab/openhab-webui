@@ -72,12 +72,19 @@ export default function itemDefaultListComponent (item) {
         actionItem: item.name,
         actionOptions: item.commandDescription.commandOptions.map((o) => (o.label) ? o.command + '=' + o.label : o.command).join(',')
       }
+    } else if (item.type.indexOf('Group') === 0) {
+      component.config = {
+        action: 'group',
+        actionGroupPopupItem: item.name
+      }
     }
   }
 
   if (!component.config) component.config = {}
   component.config.item = item.name
   component.config.title = item.label || item.name
+  if (item.category) component.config.icon = 'oh:' + item.category
+  if (item.label) component.config.footer = item.name
 
   return component
 }

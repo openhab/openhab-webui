@@ -2,6 +2,8 @@ import OhPopup from './modals/oh-popup.vue'
 import OhSheet from './modals/oh-sheet.vue'
 import OhPopover from './modals/oh-popover.vue'
 
+import GroupPopup from '@/pages/group/group-popup.vue'
+
 export const actionGroup = (label, description, groupPrefix) => {
   groupPrefix = (groupPrefix) ? groupPrefix += '_' : ''
   return {
@@ -47,6 +49,10 @@ export const actionProps = (groupName, paramPrefix) => {
         {
           value: 'sheet',
           label: 'Open sheet'
+        },
+        {
+          value: 'group',
+          label: 'Group details'
         },
         {
           value: 'analyzer',
@@ -156,6 +162,17 @@ export const actionProps = (groupName, paramPrefix) => {
       }
     },
     {
+      name: paramPrefix + 'actionGroupPopupItem',
+      label: 'Group Popup Item',
+      groupName,
+      type: 'TEXT',
+      context: 'item',
+      description: 'Group item whose members to show in a popup',
+      visible: (value, configuration, configDescription, parameters) => {
+        return ['group'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }
+    },
+    {
       name: paramPrefix + 'actionAnalyzerItems',
       label: 'Item(s) to Analyze',
       groupName,
@@ -208,7 +225,8 @@ export const actionsMixin = {
   components: {
     OhPopup,
     OhSheet,
-    OhPopover
+    OhPopover,
+    GroupPopup
   },
   methods: {
     performAction (evt, prefix) {
@@ -288,6 +306,19 @@ export const actionsMixin = {
             }
           }
           this.$f7router.navigate(modalRoute, modalProps)
+          break
+        case 'group':
+          const actionGroupItem = this.config[prefix + 'actionGroupPopupItem']
+          console.log(`Opening ${actionGroupItem} details in popup`)
+          let groupPopupRoute = {
+            url: '/group/' + actionGroupItem,
+            route: {
+              popup: {
+                component: GroupPopup
+              }
+            }
+          }
+          this.$f7router.navigate(groupPopupRoute, { props: { groupItem: actionGroupItem } })
           break
         case 'analyze':
         case 'analyzer':
