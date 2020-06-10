@@ -33,15 +33,14 @@ export default function itemDefaultListComponent (item, itemNameAsFooter) {
       }
     }
 
-    // if (item.type === 'Color' && !stateDescription.readOnly) {
-    //   component = {
-    //     component: 'oh-colorpicker-item',
-    //     config: {
-    //       sliderLabel: true,
-    //       sliderValue: true
-    //     }
-    //   }
-    // }
+    if (item.type === 'Color' && !stateDescription.readOnly) {
+      component = {
+        component: 'oh-colorpicker-item',
+        config: {
+          navbarTitleText: item.label || item.name
+        }
+      }
+    }
 
     if (item.type === 'Rollershutter' && !stateDescription.readOnly) {
       component = {
