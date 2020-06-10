@@ -1,5 +1,6 @@
 <template>
   <f7-list-button v-if="config.listButton && !context.editmode" :title="config.title || 'Action'" :color="config.color || 'blue'" @click="performAction" />
+  <f7-list-item divider :title="config.title" v-else-if="config.divider && !context.editmode" />
   <f7-list-item v-else v-bind="config" :divider="config.divider && !context.editmode"
       :media-item="context.parent.component.config.mediaList && !config.divider"
       :badge="(config.divider) ? 'Divider' : (config.listButton) ? 'List button' : config.badge"

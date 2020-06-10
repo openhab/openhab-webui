@@ -117,7 +117,7 @@ export default {
       this.$f7.panel.get('left').enableVisibleBreakpoint()
     },
     load () {
-      this.$oh.api.get('/rest/items?metadata=semantics').then((data) => {
+      this.$oh.api.get('/rest/items?metadata=semantics,listWidget').then((data) => {
         this.items = data
         // get the location items
         this.semanticItems.locations = data.filter((item, index, items) => {
