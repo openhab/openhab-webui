@@ -1,7 +1,8 @@
 <template>
   <oh-list-item :context="context">
-    <div slot="after">
-      <generic-widget-component :context="childContext(afterComponent)" v-on="$listeners" />
+    <div slot="after" class="display-flex">
+      <generic-widget-component :context="childContext(colorPickerComponent)" v-on="$listeners" />
+      <generic-widget-component class="margin-left" :context="childContext(switchComponent)" v-on="$listeners" />
     </div>
   </oh-list-item>
 </template>
@@ -39,12 +40,18 @@ export default {
     }
   },
   computed: {
-    afterComponent () {
+    colorPickerComponent () {
       return {
         component: 'oh-colorpicker',
         config: Object.assign({}, this.config, {
           openIn: this.config.openIn || 'auto'
         })
+      }
+    },
+    switchComponent () {
+      return {
+        component: 'oh-toggle',
+        config: this.config
       }
     }
   }
