@@ -38,7 +38,7 @@
 
     <widget-config-popup :opened="widgetConfigOpened" :component="currentComponent" :widget="currentWidget" @closed="widgetConfigClosed" @update="updateWidgetConfig" />
     <widget-code-popup :opened="widgetCodeOpened" :component="currentComponent" @closed="widgetCodeClosed" @update="updateWidgetCode" />
-    <model-picker-popup :opened="modelPickerOpened" :multiple="true" @closed="modelPickerOpened = false" @input="doAddFromModel" />
+    <model-picker-popup :opened="modelPickerOpened" :multiple="true" @closed="modelPickerOpened = false" @input="doAddFromModel" action-label="Add" />
   </f7-page>
 </template>
 

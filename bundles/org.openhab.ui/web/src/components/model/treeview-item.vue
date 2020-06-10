@@ -12,6 +12,7 @@
       :model="node"
       @selected="(event) => $emit('selected', event)"
       :selected="selected"
+      @checked="(item, check) => $emit('checked', item, check)"
       />
     <div slot="label" class="semantic-class"> {{className()}}</div>
     <f7-checkbox slot="content-start" v-if="model.checkable"
@@ -22,6 +23,16 @@
 <script>
 export default {
   props: ['model', 'selected'],
+  computed: {
+    children () {
+      return [this.model.children.locations,
+        this.model.children.equipments, this.model.children.points,
+        this.model.children.groups, this.model.children.items].flat()
+    },
+    iconColor () {
+      return (this.model.item.metadata && this.model.item.metadata.semantics) ? '' : 'gray'
+    }
+  },
   methods: {
     icon (theme) {
       if (this.model.class.indexOf('Location') === 0) {
@@ -48,16 +59,13 @@ export default {
       var self = this
       var $ = self.$$
       if ($(event.target).is('.treeview-toggle')) return
+      if ($(event.target).is('.checkbox') || $(event.target).is('.icon-checkbox') || $(event.target).is('input')) return
       this.$emit('selected', this.model)
+      if (this.model.checkable && !this.children.length) this.check({ target: { checked: !this.model.checked } })
     },
     check (event) {
       this.model.checked = event.target.checked
       this.$emit('checked', this.model, event.target.checked)
-    }
-  },
-  computed: {
-    iconColor () {
-      return (this.model.item.metadata) ? '' : 'gray'
     }
   }
 }

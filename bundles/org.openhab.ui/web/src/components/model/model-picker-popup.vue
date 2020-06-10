@@ -3,34 +3,38 @@
     :opened="opened" @popup:open="onOpen" @popup:close="onClose">
     <f7-page>
       <f7-navbar>
-        <f7-subnavbar :inner="false" v-show="initSearchbar">
-          <f7-searchbar
-            v-if="initSearchbar"
-            :init="initSearchbar"
-            search-container=".model-treeview"
-            search-item=".treeview-item"
-            search-in=".treeview-item-label"
-            :disable-button="!$theme.aurora"
-          ></f7-searchbar>
-        </f7-subnavbar>
         <f7-nav-left>
           <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
         </f7-nav-left>
         <f7-nav-title>Add from Model</f7-nav-title>
         <f7-nav-right>
-          <f7-link v-if="ready && ((multiple && checkedItems.length > 0) || selectedItem)" @click="pickItems">Pick<span v-if="multiple && checkedItems.length > 0">&nbsp;{{checkedItems.length}}</span></f7-link>
+          <f7-link v-if="ready && ((multiple && checkedItems.length > 0) || selectedItem)" @click="pickItems">{{actionLabel || 'Pick'}}<span v-if="multiple && checkedItems.length > 0">&nbsp;{{checkedItems.length}}</span></f7-link>
         </f7-nav-right>
       </f7-navbar>
+      <f7-subnavbar :inner="false" v-show="initSearchbar">
+        <f7-searchbar
+          v-if="initSearchbar"
+          :init="initSearchbar"
+          search-container=".model-treeview"
+          search-item=".treeview-item"
+          search-in=".treeview-item-label"
+          :disable-button="!$theme.aurora"
+        ></f7-searchbar>
+      </f7-subnavbar>
       <f7-toolbar bottom class="toolbar-details">
         <f7-link v-if="!multiple" :disabled="selectedItem != null" class="left" @click="selectedItem = null">Clear</f7-link>
+        <span v-else></span>
         <div class="padding-right text-align-right">
           <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic"></f7-checkbox>
           <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
         </div>
+        <span></span>
         <!-- <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link> -->
       </f7-toolbar>
-      <model-treeview class="model-picker-treeview" v-if="ready && opened" :root-nodes="[rootLocations, rootEquipments, rootPoints, rootGroups, rootItems].flat()"
-        :selected-item="selectedItem" @selected="selectItem" @checked="checkItem" />
+      <f7-block strong class="no-padding" v-if="ready && opened">
+        <model-treeview class="model-picker-treeview" :root-nodes="rootNodes"
+          :selected-item="selectedItem" @selected="selectItem" @checked="checkItem" />
+      </f7-block>
       <f7-block v-else-if="!ready" class="text-align-center">
         <f7-preloader></f7-preloader>
         <div>Loading...</div>
@@ -39,18 +43,13 @@
   </f7-popup>
 </template>
 
-<style lang="stylus">
-.model-picker-treeview
-  margin-top var(--f7-searchbar-height)
-</style>
-
 <script>
 import ModelTreeview from '@/components/model/model-treeview.vue'
 
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 
 export default {
-  props: ['opened', 'multiple'],
+  props: ['opened', 'multiple', 'actionLabel'],
   components: {
     ModelTreeview
   },
@@ -71,6 +70,11 @@ export default {
       rootItems: [],
       selectedItem: null,
       checkedItems: []
+    }
+  },
+  computed: {
+    rootNodes () {
+      return [this.rootLocations, this.rootEquipments, this.rootPoints, this.rootGroups, this.rootItems].flat()
     }
   },
   methods: {
@@ -95,7 +99,8 @@ export default {
     modelItem (item) {
       const modelItem = {
         item: item,
-        opened: null,
+        opened: (item.type.indexOf('Group') === 0) ? false : undefined,
+        checked: undefined,
         class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
         children: {
           locations: [],
@@ -160,6 +165,7 @@ export default {
 
         this.loading = false
         this.ready = true
+        this.$set(this, 'checkedItems', [])
         this.$nextTick(() => { this.initSearchbar = true })
       })
     },
@@ -219,6 +225,8 @@ export default {
     selectItem (item) {
       if (!this.multiple) {
         this.selectedItem = item
+      } else if (item.children && item.opened !== undefined) {
+        item.opened = !item.opened
       }
     },
     checkItem (item, check) {
