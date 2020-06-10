@@ -36,7 +36,7 @@ export default {
   },
   widget: {
     name: 'oh-rollershutter-card',
-    label: 'Simple rollershutter',
+    label: 'Rollershutter Card',
     description: 'Display a rollershutter control in a card',
     props: {
       parameters: [

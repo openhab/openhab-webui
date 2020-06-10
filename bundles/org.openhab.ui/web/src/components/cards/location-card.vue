@@ -1,11 +1,10 @@
 <template>
-  <f7-card expandable :animate="$f7.data.themeOptions.expandableCardAnimation !== 'disabled'" card-tablet-fullscreen v-on:card:opened="cardOpening" v-on:card:closed="cardClosed">
+  <f7-card expandable class="location-card" :animate="$f7.data.themeOptions.expandableCardAnimation !== 'disabled'" card-tablet-fullscreen v-on:card:opened="cardOpening" v-on:card:closed="cardClosed">
     <f7-card-content :padding="false">
-      <div :class="`bg-color-${color}`" :style="{height: '300px'}">
+      <div :class="`bg-color-${color}`" :style="{height: '200px'}">
         <f7-card-header text-color="white" class="display-block">
           {{title || 'Something'}}
           <div><small>{{subtitle || '&nbsp;'}}</small></div>
-          <br>
           <div class="location-stats" v-if="items.equipments.length > 0"><small>{{items.equipments.length}} equipment{{items.equipments.length === 1 ? '' : 's'}}</small></div>
           <div class="location-stats" v-if="items.properties.length > 0"><small>{{items.properties.length}} propert{{items.properties.length === 1 ? 'y' : 'ies'}}</small></div>
         </f7-card-header>
@@ -23,28 +22,11 @@
           <f7-button round outline :active="activeTab === 'properties'" :color="color" @click="activeTab = 'properties'">Properties</f7-button>
         </f7-segmented>
       </div>
-      <div class="card-content-padding" v-if="opened">
-        <f7-list v-if="activeTab === 'equipments'">
-          <ul>
-            <sitemap-widget-generic v-for="model in standaloneEquipments" :key="model.item"
-              :model="model" />
-          </ul>
-          <ul v-for="equipment in equipmentsWithPoints" :key="equipment.item">
-            <f7-list-item divider :title="equipment.title"></f7-list-item>
-            <sitemap-widget-generic v-for="model in equipment.points" :key="model.item"
-              :model="model" />
-          </ul>
-        </f7-list>
-        <f7-list v-if="activeTab === 'properties' || items.equipments.length === 0">
-          <ul>
-            <sitemap-widget-generic v-for="model in properties" :key="model.item"
-              :model="model" />
-          </ul>
-        </f7-list>
-      </div>
-      <div class="card-content-padding" v-if="opened">
+      <div v-if="opened">
+        <generic-widget-component v-if="activeTab === 'equipments'" :context="equipmentsListContext" />
+        <generic-widget-component v-if="activeTab === 'properties'" :context="propertiesListContext" />
         <p>
-          <f7-button fill round large card-close :color="color">Close</f7-button>
+          <f7-button fill round large card-close :color="color" class="margin-horizontal">Close</f7-button>
         </p>
       </div>
     </f7-card-content>
@@ -52,12 +34,14 @@
 </template>
 
 <style lang="stylus">
+.location-card
+  height 200px
 .location-stats
   font-weight normal
 </style>
 
 <script>
-import item2SitemapModel from './item2SitemapModel.js'
+import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
 
 export default {
   props: ['color', 'type', 'header', 'title', 'subtitle', 'items'],
@@ -71,11 +55,6 @@ export default {
     cardOpening () {
       console.log('card opened')
       setTimeout(() => { this.opened = true })
-      this.$f7.toast.create({
-        text: 'The semantic cards rendering is currently for demonstration purposes only. It is not functional nor updates in real time. Please use another app like Basic UI or HABPanel to interact with your items.',
-        closeButton: true,
-        destroyOnClose: true
-      }).open()
     },
     cardClosed () {
       console.log('card closed')
@@ -83,20 +62,47 @@ export default {
     }
   },
   computed: {
-    properties () {
-      return this.items.properties.map(item2SitemapModel)
-    },
-    standaloneEquipments () {
-      return this.items.equipments.filter((i) => i.points.length === 0).map((i) => item2SitemapModel(i.item))
-    },
-    equipmentsWithPoints () {
-      return this.items.equipments.filter((i) => i.points.length !== 0).map((i) => {
-        return {
-          item: i.item.name,
-          title: (i.item.label || i.item.name),
-          points: i.points.map(item2SitemapModel)
+    propertiesListContext () {
+      return {
+        store: this.$store.getters.trackedItems,
+        component: {
+          component: 'oh-list',
+          config: {
+            mediaList: true
+          },
+          slots: {
+            default: this.items.properties.map(itemDefaultListComponent)
+          }
         }
+      }
+    },
+    equipmentsListContext () {
+      const standaloneEquipments = this.items.equipments.filter((i) => i.points.length === 0).map((i) => itemDefaultListComponent(i.item))
+      const equipmentsWithPoints = this.items.equipments.filter((i) => i.points.length !== 0).map((i) => {
+        return [
+          {
+            component: 'oh-list-item',
+            config: {
+              title: i.item.label || i.item.name,
+              divider: true
+            }
+          },
+          ...i.points.map((p) => itemDefaultListComponent(p))
+        ]
       })
+
+      return {
+        store: this.$store.getters.trackedItems,
+        component: {
+          component: 'oh-list',
+          config: {
+            mediaList: true
+          },
+          slots: {
+            default: [...standaloneEquipments, ...equipmentsWithPoints].flat()
+          }
+        }
+      }
     }
   }
 }

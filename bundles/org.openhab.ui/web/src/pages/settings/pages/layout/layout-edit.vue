@@ -37,7 +37,8 @@
     </f7-tabs>
 
     <widget-config-popup :opened="widgetConfigOpened" :component="currentComponent" :widget="currentWidget" @closed="widgetConfigClosed" @update="updateWidgetConfig" />
-    <widget-code-popup :opened="widgetCodeOpened" :component="currentComponent" :widget-yaml="widgetYaml" @closed="widgetCodeClosed" @update="updateWidgetCode" />
+    <widget-code-popup :opened="widgetCodeOpened" :component="currentComponent" @closed="widgetCodeClosed" @update="updateWidgetCode" />
+    <model-picker-popup :opened="modelPickerOpened" :multiple="true" @closed="modelPickerOpened = false" @input="doAddFromModel" action-label="Add" />
   </f7-page>
 </template>
 
@@ -76,11 +77,16 @@ import YAML from 'yaml'
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 import * as SystemWidgets from '@/components/widgets/system/index'
 import * as StandardWidgets from '@/components/widgets/standard/index'
+import * as StandardListWidgets from '@/components/widgets/standard/list/index'
 import * as LayoutWidgets from '@/components/widgets/layout/index'
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
 import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
+import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
+
+import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
+import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
 
 export default {
   mixins: [PageDesigner],
@@ -89,7 +95,8 @@ export default {
     OhLayoutPage,
     PageSettings,
     WidgetConfigPopup,
-    WidgetCodePopup
+    WidgetCodePopup,
+    ModelPickerPopup
   },
   props: ['createMode', 'uid'],
   data () {
@@ -99,11 +106,14 @@ export default {
         component: 'oh-layout-page',
         config: {},
         slots: { default: [] }
-      }
+      },
+      addFromModelContext: {},
+      modelPickerOpened: false
     }
   },
   methods: {
     addWidget (component, widgetType, parentContext, slot) {
+      const isList = component.component.indexOf('oh-list') === 0
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -116,7 +126,7 @@ export default {
         this.forceUpdate()
       } else {
         let actions
-        var doAddWidget = (choice) => {
+        const doAddWidget = (choice) => {
           component.slots[slot].push({
             component: choice,
             config: {}
@@ -124,11 +134,17 @@ export default {
           this.$nextTick(() => actions.destroy())
           this.forceUpdate()
         }
-        const standardWidgetOptions = Object.keys(StandardWidgets).map((k) => {
+        const addFromModel = () => {
+          this.addFromModelContext = { component, slot, isList }
+          this.modelPickerOpened = true
+          this.$nextTick(() => actions.destroy())
+        }
+        const stdWidgets = (isList) ? StandardListWidgets : StandardWidgets
+        const standardWidgetOptions = Object.keys(stdWidgets).map((k) => {
           return {
-            text: StandardWidgets[k].widget.label,
+            text: stdWidgets[k].widget.label,
             color: 'blue',
-            onClick: () => doAddWidget(StandardWidgets[k].widget.name)
+            onClick: () => doAddWidget(stdWidgets[k].widget.name)
           }
         })
         const customWidgetOptions = this.$store.state.components.widgets.map((w) => {
@@ -142,7 +158,7 @@ export default {
           // grid: true,
           buttons: [
             [
-              { label: true, text: 'Standard Library' },
+              { label: true, text: (isList) ? 'Standard Library (List)' : 'Standard Library' },
               ...standardWidgetOptions
             ],
             [
@@ -150,11 +166,32 @@ export default {
               ...customWidgetOptions
             ],
             [
+              {
+                color: 'blue',
+                text: 'Add from Model...',
+                onClick: addFromModel
+              }
+            ],
+            [
               { color: 'red', 'text': 'Cancel', close: true }
             ]
           ]
         }).open()
       }
+    },
+    doAddFromModel (value) {
+      const defaultWidgetFn = (this.addFromModelContext.isList) ? itemDefaultListComponent : itemDefaultStandaloneComponent
+      const component = this.addFromModelContext.component
+      const slot = this.addFromModelContext.slot
+      if (Array.isArray(value)) {
+        value.forEach((i) => {
+          component.slots[slot].push(defaultWidgetFn(i))
+        })
+      } else {
+        component.slots[slot].push(defaultWidgetFn(value))
+      }
+      this.addFromModelContext = {}
+      this.forceUpdate()
     },
     addBlock (component) {
       component.slots.default.push({
@@ -173,7 +210,7 @@ export default {
       }
     },
     getWidgetDefinition (componentType) {
-      const component = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets }).find((w) => w.widget && w.widget.name === componentType)
+      const component = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets }).find((w) => w.widget && w.widget.name === componentType)
       if (!component) return null
       return component.widget
     },

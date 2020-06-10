@@ -1,5 +1,5 @@
 <template>
-  <f7-button v-bind="config" @clicked="performAction" />
+  <f7-button v-bind="config" @click="performAction" />
 </template>
 
 <script>

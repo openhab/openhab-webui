@@ -28,7 +28,7 @@ export default {
   },
   widget: {
     name: 'oh-slider-card',
-    label: 'Simple slider',
+    label: 'Slider Card',
     description: 'Display a slider in a card',
     props: {
       parameters: [

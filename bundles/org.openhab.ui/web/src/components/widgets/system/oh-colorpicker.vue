@@ -1,5 +1,11 @@
 <template>
-  <div ref="container" style="width: 100%"></div>
+  <div v-if="!config.openIn" ref="container" style="width: 100%"></div>
+  <div v-else ref="swatch" :class="config.swatchClasses || ['elevation-4', 'elevation-hover-8', 'elevation-pressed-1', 'elevation-transition']" :style="{
+    width: (config.swatchSize) ? config.swatchSize + 'px' : '32px',
+    height: (config.swatchSize) ? config.swatchSize + 'px' : '32px',
+    borderRadius: (config.swatchBorderRadius) ? config.swatchBorderRadius + 'px' : '6px',
+    cursor: 'pointer'
+  }"></div>
 </template>
 
 <script>
@@ -24,7 +30,9 @@ export default {
     }
   },
   beforeDestroy () {
-    this.colorpicker.destroy()
+    if (this.colorpicker) {
+      this.colorpicker.destroy()
+    }
   },
   computed: {
     color () {
@@ -52,8 +60,11 @@ export default {
     initColorpicker () {
       const vm = this
       this.colorpicker = this.$f7.colorPicker.create(Object.assign({}, this.config, {
-        containerEl: this.$refs.container,
-        modules: this.config.modules || ['hsb-sliders'],
+        containerEl: (!this.config.openIn) ? this.$refs.container : undefined,
+        targetEl: (this.config.openIn) ? this.$refs.swatch : undefined,
+        targetElSetBackgroundColor: true,
+        openIn: this.config.openIn,
+        modules: this.config.modules || (this.config.openIn) ? ['wheel'] : ['hsb-sliders'],
         value: {
           hsb: this.color
         },

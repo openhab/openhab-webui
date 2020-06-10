@@ -472,6 +472,7 @@ export default {
               `A page with the ID ${uid} already exists, would you like to overwrite it?`,
               'Page already exists',
               () => { self.doSavePage(uid, true) })
+            return
           }
 
           this.doSavePage(uid)

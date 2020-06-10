@@ -9,15 +9,30 @@
           model.children.equipments, model.children.points,
           model.children.groups, model.children.items].flat()"
       :key="node.item.name"
-      :model="node" @selected="(event) => $emit('selected', event)"
-      :selected="selected" />
+      :model="node"
+      @selected="(event) => $emit('selected', event)"
+      :selected="selected"
+      @checked="(item, check) => $emit('checked', item, check)"
+      />
     <div slot="label" class="semantic-class"> {{className()}}</div>
+    <f7-checkbox slot="content-start" v-if="model.checkable"
+      :checked="model.checked === true" @change="check" />
   </f7-treeview-item>
 </template>
 
 <script>
 export default {
   props: ['model', 'selected'],
+  computed: {
+    children () {
+      return [this.model.children.locations,
+        this.model.children.equipments, this.model.children.points,
+        this.model.children.groups, this.model.children.items].flat()
+    },
+    iconColor () {
+      return (this.model.item.metadata && this.model.item.metadata.semantics) ? '' : 'gray'
+    }
+  },
   methods: {
     icon (theme) {
       if (this.model.class.indexOf('Location') === 0) {
@@ -33,7 +48,7 @@ export default {
       }
     },
     className () {
-      if (!this.model.item.metadata) return
+      if (!this.model.item.metadata || !this.model.item.metadata.semantics) return
       const semantics = this.model.item.metadata.semantics
       const property = (semantics.config && semantics.config.relatesTo)
         ? semantics.config.relatesTo : null
@@ -44,12 +59,13 @@ export default {
       var self = this
       var $ = self.$$
       if ($(event.target).is('.treeview-toggle')) return
+      if ($(event.target).is('.checkbox') || $(event.target).is('.icon-checkbox') || $(event.target).is('input')) return
       this.$emit('selected', this.model)
-    }
-  },
-  computed: {
-    iconColor () {
-      return (this.model.item.metadata) ? '' : 'gray'
+      if (this.model.checkable && !this.children.length) this.check({ target: { checked: !this.model.checked } })
+    },
+    check (event) {
+      this.model.checked = event.target.checked
+      this.$emit('checked', this.model, event.target.checked)
     }
   }
 }

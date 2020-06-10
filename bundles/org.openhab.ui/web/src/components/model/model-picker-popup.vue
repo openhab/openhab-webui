@@ -1,0 +1,247 @@
+<template>
+  <f7-popup ref="modelPicker" class="modelpicker-popup" close-on-escape
+    :opened="opened" @popup:open="onOpen" @popup:close="onClose">
+    <f7-page>
+      <f7-navbar>
+        <f7-nav-left>
+          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
+        </f7-nav-left>
+        <f7-nav-title>Add from Model</f7-nav-title>
+        <f7-nav-right>
+          <f7-link v-if="ready && ((multiple && checkedItems.length > 0) || selectedItem)" @click="pickItems">{{actionLabel || 'Pick'}}<span v-if="multiple && checkedItems.length > 0">&nbsp;{{checkedItems.length}}</span></f7-link>
+        </f7-nav-right>
+      </f7-navbar>
+      <f7-subnavbar :inner="false" v-show="initSearchbar">
+        <f7-searchbar
+          v-if="initSearchbar"
+          :init="initSearchbar"
+          search-container=".model-treeview"
+          search-item=".treeview-item"
+          search-in=".treeview-item-label"
+          :disable-button="!$theme.aurora"
+        ></f7-searchbar>
+      </f7-subnavbar>
+      <f7-toolbar bottom class="toolbar-details">
+        <f7-link v-if="!multiple" :disabled="selectedItem != null" class="left" @click="selectedItem = null">Clear</f7-link>
+        <span v-else></span>
+        <div class="padding-right text-align-right">
+          <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic"></f7-checkbox>
+          <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
+        </div>
+        <span></span>
+        <!-- <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link> -->
+      </f7-toolbar>
+      <f7-block strong class="no-padding" v-if="ready && opened">
+        <model-treeview class="model-picker-treeview" :root-nodes="rootNodes"
+          :selected-item="selectedItem" @selected="selectItem" @checked="checkItem" />
+      </f7-block>
+      <f7-block v-else-if="!ready" class="text-align-center">
+        <f7-preloader></f7-preloader>
+        <div>Loading...</div>
+      </f7-block>
+    </f7-page>
+  </f7-popup>
+</template>
+
+<script>
+import ModelTreeview from '@/components/model/model-treeview.vue'
+
+import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
+
+export default {
+  props: ['opened', 'multiple', 'actionLabel'],
+  components: {
+    ModelTreeview
+  },
+  data () {
+    return {
+      ready: false,
+      loading: false,
+      initSearchbar: false,
+      includeNonSemantic: false,
+      items: [],
+      links: [],
+      locations: [],
+      rootLocations: [],
+      equipments: {},
+      rootEquipments: [],
+      rootPoints: [],
+      rootGroups: [],
+      rootItems: [],
+      selectedItem: null,
+      checkedItems: []
+    }
+  },
+  computed: {
+    rootNodes () {
+      return [this.rootLocations, this.rootEquipments, this.rootPoints, this.rootGroups, this.rootItems].flat()
+    }
+  },
+  methods: {
+    onOpen () {
+      this.selectedItem = null
+      this.initSearchbar = false
+      this.$set(this, 'checkedItems', [])
+      this.load()
+    },
+    onClose () {
+      this.ready = false
+      this.$emit('closed')
+    },
+    pickItems () {
+      if (this.multiple) {
+        this.$emit('input', this.checkedItems.map((i) => i.item))
+      } else {
+        this.$emit('input', this.selectedItem.item)
+      }
+      this.onClose()
+    },
+    modelItem (item) {
+      const modelItem = {
+        item: item,
+        opened: (item.type.indexOf('Group') === 0) ? false : undefined,
+        checked: undefined,
+        class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
+        children: {
+          locations: [],
+          equipments: [],
+          points: [],
+          groups: [],
+          items: []
+        }
+      }
+      // force the selection of the placeholder for a item being created
+      if (item.created === false) {
+        this.selectItem(modelItem)
+      }
+      if (this.previousSelection && item.name === this.previousSelection.item.name) {
+        this.selectedItem = parent
+        this.previousSelection = null
+        this.selectItem(modelItem)
+      }
+
+      modelItem.checkable = this.multiple
+
+      return modelItem
+    },
+    load (update) {
+      // if (this.ready) return
+      this.loading = true
+      const items = this.$oh.api.get('/rest/items?metadata=semantics,' + MetadataNamespaces.map((n) => n.name).join(','))
+      const links = this.$oh.api.get('/rest/links')
+      Promise.all([items, links]).then((data) => {
+        this.items = data[0]
+        this.links = data[1]
+
+        if (this.newItem) {
+          this.items.push(this.newItem)
+        }
+
+        this.locations = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Location') === 0)
+        this.equipments = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Equipment') === 0)
+        this.points = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Point') === 0)
+
+        this.rootLocations = this.locations
+          .filter((i) => !i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf)
+          .map(this.modelItem)
+        this.rootLocations.forEach(this.getChildren)
+        this.rootEquipments = this.equipments
+          .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPartOf && !i.metadata.semantics.config.hasLocation))
+          .map(this.modelItem)
+        this.rootEquipments.forEach(this.getChildren)
+        this.rootPoints = this.points
+          .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPointOf && !i.metadata.semantics.config.hasLocation))
+          .map(this.modelItem)
+
+        if (this.includeNonSemantic) {
+          this.rootGroups = this.items
+            .filter((i) => i.type === 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
+            .map(this.modelItem)
+          this.rootGroups.forEach(this.getChildren)
+          this.rootItems = this.items
+            .filter((i) => i.type !== 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
+            .map(this.modelItem)
+        }
+
+        this.loading = false
+        this.ready = true
+        this.$set(this, 'checkedItems', [])
+        this.$nextTick(() => { this.initSearchbar = true })
+      })
+    },
+    getChildren (parent) {
+      // open the parent node of the placeholder
+      if (this.newItemParent && this.newItemParent === parent.item.name) {
+        parent.opened = true
+      }
+
+      // restore previous selection
+      if (this.previousSelection && parent.item.name === this.previousSelection.item.name) {
+        this.selectedItem = parent
+        this.previousSelection = null
+        this.selectItem(parent)
+      }
+
+      if (parent.class.indexOf('Location') === 0) {
+        parent.children.locations = this.locations
+          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
+          .map(this.modelItem)
+        parent.children.locations.forEach(this.getChildren)
+        parent.children.equipments = this.equipments
+          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
+          .map(this.modelItem)
+        parent.children.equipments.forEach(this.getChildren)
+
+        parent.children.points = this.points
+          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
+          .map(this.modelItem)
+      } else {
+        parent.children.equipments = this.equipments
+          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
+          .map(this.modelItem)
+        parent.children.equipments.forEach(this.getChildren)
+
+        parent.children.points = this.points
+          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPointOf === parent.item.name)
+          .map(this.modelItem)
+      }
+
+      if (this.includeNonSemantic) {
+        parent.children.groups = this.items
+          .filter((i) => i.type === 'Group' && (!i.metadata) && i.groupNames.indexOf(parent.item.name) >= 0)
+          .map(this.modelItem)
+        parent.children.groups.forEach(this.getChildren)
+        if (parent.item.metadata) {
+          parent.children.items = this.items
+            .filter((i) => i.type !== 'Group' && (!i.metadata) && i.groupNames.indexOf(parent.item.name) >= 0)
+            .map(this.modelItem)
+        } else {
+          parent.children.items = this.items
+            .filter((i) => i.type !== 'Group' && i.groupNames.indexOf(parent.item.name) >= 0)
+            .map(this.modelItem)
+        }
+      }
+    },
+    selectItem (item) {
+      if (!this.multiple) {
+        this.selectedItem = item
+      } else if (item.children && item.opened !== undefined) {
+        item.opened = !item.opened
+      }
+    },
+    checkItem (item, check) {
+      if (check) {
+        this.checkedItems.push(item)
+      } else {
+        this.checkedItems.splice(this.checkedItems.indexOf(item), 1)
+      }
+    },
+    toggleNonSemantic () {
+      this.rootGroups = []
+      this.rootItems = []
+      this.includeNonSemantic = !this.includeNonSemantic
+      this.load()
+    }
+  }
+}
+</script>

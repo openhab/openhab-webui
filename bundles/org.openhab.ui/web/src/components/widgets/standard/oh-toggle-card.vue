@@ -29,7 +29,7 @@ export default {
   },
   widget: {
     name: 'oh-toggle-card',
-    label: 'Simple toggle',
+    label: 'Toggle Card',
     description: 'Display a switch in a card',
     props: {
       parameters: [

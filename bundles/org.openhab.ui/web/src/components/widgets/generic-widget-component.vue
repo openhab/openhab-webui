@@ -1,10 +1,11 @@
 <template>
   <component v-if="componentType && componentType.startsWith('f7-') && visible" :is="componentType" v-bind="config" @command="onCommand">
+    <!-- eslint-disable-next-line vue/no-unused-vars -->
     <template v-for="(slotComponents, slotName) in context.component.slots" v-slot:[slotName]>
-      <ul v-if="componentType === 'f7-list'">
-        <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in slotComponents" :key="idx" @command="onCommand" />
+      <ul :key="slotName" v-if="componentType === 'f7-list'">
+        <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in slotComponents" :key="slotName + '-' + idx" @command="onCommand" />
       </ul>
-      <generic-widget-component v-else :context="childContext(slotComponent)" v-for="(slotComponent, idx) in slotComponents" :key="idx" @command="onCommand" />
+      <generic-widget-component v-else :context="childContext(slotComponent)" v-for="(slotComponent, idx) in slotComponents" :key="slotName + '-' + idx" @command="onCommand" />
     </template>
   </component>
   <generic-widget-component v-else-if="componentType && componentType.startsWith('widget:') && visible" :context="childWidgetContext()" @command="onCommand" />
@@ -18,14 +19,17 @@ import mixin from './widget-mixin'
 
 import * as SystemWidgets from './system/index'
 import * as StandardWidgets from './standard/index'
+import * as StandardListWidgets from './standard/list/index'
 import * as LayoutWidgets from './layout/index'
 
 console.log(SystemWidgets)
+console.log(StandardListWidgets)
 export default {
   mixins: [mixin],
   components: {
     ...SystemWidgets,
     ...StandardWidgets,
+    ...StandardListWidgets,
     ...LayoutWidgets
   }
 }
