@@ -48,7 +48,7 @@ export default {
       }
     },
     className () {
-      if (!this.model.item.metadata) return
+      if (!this.model.item.metadata || !this.model.item.metadata.semantics) return
       const semantics = this.model.item.metadata.semantics
       const property = (semantics.config && semantics.config.relatesTo)
         ? semantics.config.relatesTo : null

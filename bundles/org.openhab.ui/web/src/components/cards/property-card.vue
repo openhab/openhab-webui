@@ -55,9 +55,6 @@ export default {
     }
   },
   computed: {
-    sitemapModels () {
-      return this.items.map(item2SitemapModel)
-    },
     listContext () {
       let pointsByType = []
       for (let pointType in this.itemsByPointType) {
@@ -69,7 +66,7 @@ export default {
               divider: true
             }
           },
-          ...this.itemsByPointType[pointType].map((p) => itemDefaultListComponent(p))
+          ...this.itemsByPointType[pointType].map((p) => itemDefaultListComponent(p, true))
         ])
       }
 

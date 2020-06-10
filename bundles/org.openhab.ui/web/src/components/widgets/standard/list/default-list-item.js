@@ -3,7 +3,7 @@
    in the "listWidget" metadata namespace of the item
  */
 
-export default function itemDefaultListComponent (item) {
+export default function itemDefaultListComponent (item, itemNameAsFooter) {
   const stateDescription = item.stateDescription || {}
   let component = null
 
@@ -84,7 +84,8 @@ export default function itemDefaultListComponent (item) {
   component.config.item = item.name
   component.config.title = item.label || item.name
   if (item.category) component.config.icon = 'oh:' + item.category
-  if (item.label) component.config.footer = item.name
+  if (item.label && itemNameAsFooter) component.config.footer = item.name
+  if (!item.category) component.config.fallbackIconToInitial = true
 
   return component
 }

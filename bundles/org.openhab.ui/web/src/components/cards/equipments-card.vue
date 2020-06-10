@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     listContext () {
-      const standaloneEquipments = this.items.filter((i) => i.points.length === 0).map((i) => itemDefaultListComponent(i.item))
+      const standaloneEquipments = this.items.filter((i) => i.points.length === 0).map((i) => itemDefaultListComponent(i.item, true))
       const equipmentsWithPoints = this.items.filter((i) => i.points.length !== 0).map((i) => {
         return [
           {
