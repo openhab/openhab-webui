@@ -265,6 +265,7 @@ export default {
       // this.$store.dispatch('stopTrackingStates')
     },
     initChart () {
+      if (this.$f7route.query.period) this.period = this.$f7route.query.period
       this.updateItems(this.$f7route.query.items.split(',')).then(() => {
         if (this.$f7route.query.chartType) this.changeChartType(this.$f7route.query.chartType)
         if (this.$f7route.query.coordSystem) this.changeCoordSystem(this.$f7route.query.coordSystem)
@@ -534,7 +535,8 @@ export default {
         return {
           component: 'oh-chart-page',
           config: {
-            chartType: this.chartType
+            chartType: this.chartType,
+            period: this.period
           },
           slots: {
             title: [

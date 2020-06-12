@@ -326,13 +326,15 @@ export default {
     }
   },
   methods: {
-    loadSidebarPages () {
+    loadData () {
       return Promise.all([
-        this.$oh.api.get('/rest/sitemaps'),
+        this.$oh.api.get('/rest/'),
+        // this.$oh.api.get('/rest/sitemaps'),
         this.$oh.api.get('/rest/ui/components/ui:page'),
         this.$oh.api.get('/rest/ui/components/ui:widget')
       ]).then((data) => {
-        this.sitemaps = data[0]
+        // this.sitemaps = data[0]
+        this.$store.commit('setApiEndpoints', { endpoints: data[0] })
         this.$store.commit('setPages', { pages: data[1] })
         this.$store.commit('setWidgets', { widgets: data[2] })
         this.pages = data[1].filter((p) => p.config.sidebar && this.pageIsVisible(p))
@@ -375,7 +377,7 @@ export default {
       localStorage.setItem('openhab.ui:serverUrl', this.serverUrl)
       localStorage.setItem('openhab.ui:username', this.username)
       localStorage.setItem('openhab.ui:password', this.password)
-      this.loadSidebarPages().then((data) => {
+      this.loadData().then((data) => {
         // this.sitemaps = data
         this.loginScreenOpened = false
         this.loggedIn = true
@@ -424,7 +426,7 @@ export default {
     if (refreshToken) {
       this.refreshAccessToken().then((user) => {
         this.loggedIn = true
-        this.loadSidebarPages()
+        this.loadData()
         this.init = true
       }).catch((err) => {
         console.warn('Error while using the stored refresh_token to get a new access_token: ' + err + '. Logging out & cleaning session.')
@@ -455,13 +457,13 @@ export default {
       if (!this.user) {
         this.tryExchangeAuthorizationCode().then((user) => {
           this.loggedIn = true
-          this.loadSidebarPages()
+          this.loadData()
         }).catch((err) => {
           if (err) {
             this.$f7.dialog.alert('An error occurred while getting authorization: ' + err)
           } else {
             // we're just not signed in
-            this.loadSidebarPages()
+            this.loadData()
           }
         })
       }
@@ -475,7 +477,7 @@ export default {
       })
 
       this.$f7.on('sidebarRefresh', () => {
-        this.loadSidebarPages()
+        this.loadData()
       })
 
       this.$f7.on('darkThemeChange', () => {
