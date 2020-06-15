@@ -220,7 +220,7 @@ import cordovaApp from '../js/cordova-app.js'
 import routes from '../js/routes.js'
 import PanelRight from '../pages/panel-right.vue'
 
-import auth from '@/js/openhab/auth.js'
+import auth from './auth-mixin.js'
 
 export default {
   mixins: [auth],

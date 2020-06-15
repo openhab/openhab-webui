@@ -89,7 +89,7 @@
 </style>
 
 <script>
-import auth from '@/js/openhab/auth.js'
+import auth from '@/components/auth-mixin.js'
 
 export default {
   mixins: [auth],
