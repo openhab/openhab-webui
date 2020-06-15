@@ -1,7 +1,7 @@
 <template>
   <div class="habot-wrapper col">
     <div style="display: block">
-      <f7-input type="text" :placeholder="interimSpeechResult || greeting" class="habot-chatbar searchbar" :class="{ highlight: focused || value }" clear-button @focus="chatboxFocused" :value="value" @change="chatboxSend" @blur="chatboxBlur">
+      <f7-input type="text" :placeholder="greeting" class="habot-chatbar searchbar" :class="{ highlight: focused || value }" clear-button @focus="chatboxFocused" :value="value" @change="chatboxSend" @blur="chatboxBlur">
       </f7-input>
       <speech-button class="habot-icon" v-show="!focused" :lang="language" @result="speechResult"></speech-button>
     </div>
@@ -10,11 +10,12 @@
         :key="suggestion" @click="chooseSuggestion(suggestion)" link :title="suggestion" :footer="history.length === 0 ? 'suggestion' : ''" no-chevron></f7-list-item>
       <f7-list-button v-if="history.length > 0" color="red" title="Clear history" @click="clearHistory"></f7-list-button>
     </f7-list>
-    <f7-message v-if="query && !focused" type="sent" class="habot-query margin-bottom" :text="query" color="blue" first tail></f7-message>
-    <f7-message v-if="(answer || busy) && !focused" type="received" :typing="busy" :text="(!busy) ? answer : null" last :tail="!hint"></f7-message>
-    <f7-message v-if="hint && !focused" type="received" :text="hint" last tail></f7-message>
-    <generic-widget-component v-if="cardContext && !focused" :context="cardContext" />
-    <div v-if="query && !focused && answer && !busy" class="display-flex justify-content-space-between padding">
+    <f7-message v-if="interimSpeechResult" type="sent" class="habot-query margin-bottom" :text="interimSpeechResult" color="gray" first tail></f7-message>
+    <f7-message v-if="query && !focused && !interimSpeechResult" type="sent" class="habot-query margin-bottom" :text="query" color="blue" first tail></f7-message>
+    <f7-message v-if="!interimSpeechResult && (answer || busy) && !focused" type="received" :typing="busy" :text="(!busy) ? answer : null" last :tail="!hint"></f7-message>
+    <f7-message v-if="hint && !focused && !interimSpeechResult" type="received" :text="hint" last tail></f7-message>
+    <generic-widget-component v-if="cardContext && !focused && !interimSpeechResult" :context="cardContext" />
+    <div v-if="query && !focused && answer && !busy && !interimSpeechResult" class="display-flex justify-content-space-between padding">
       <span></span>
       <f7-button outline round color="blue" @click="endSession">Dismiss</f7-button>
     </div>
@@ -92,7 +93,7 @@ export default {
       hint: '',
       card: null,
       language: 'en',
-      interimSpeechResult: '',
+      interimSpeechResult: null,
       history: [],
       busy: false,
       focused: false
@@ -168,7 +169,7 @@ export default {
     sendQuery (fromSpeech) {
       this.answer = ''
       this.hint = ''
-      this.interimSpeechResult = ''
+      this.interimSpeechResult = null
       this.card = null
       this.focused = false
       if (!this.query) {
