@@ -102,6 +102,7 @@ export default {
           case 'uninstalled':
             this.stopEventSource()
             this.load()
+            this.$f7.emit('addonChange', null)
             break
           case 'failed':
             this.$f7.toast.create({

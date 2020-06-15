@@ -132,6 +132,7 @@ export default {
         switch (topicParts[3]) {
           case 'installed':
           case 'uninstalled':
+            this.$f7.emit('addonChange', null)
             this.stopEventSource()
             this.load()
             break

@@ -24,6 +24,7 @@
           <f7-block-title>Configuration &amp; Automation</f7-block-title>
           <f7-list media-list class="search-list">
             <f7-list-item
+              v-if="$store.getters.apiEndpoint('things')"
               media-item
               link="things/"
               title="Things"
@@ -34,6 +35,7 @@
               <f7-icon slot="media" f7="lightbulb" color="gray"></f7-icon>
             </f7-list-item>
             <f7-list-item
+              v-if="$store.getters.apiEndpoint('items')"
               media-item
               link="model/"
               title="Model"
@@ -42,6 +44,7 @@
               <f7-icon slot="media" f7="list_bullet_indent" color="gray"></f7-icon>
             </f7-list-item>
             <f7-list-item
+              v-if="$store.getters.apiEndpoint('items')"
               media-item
               link="items/"
               title="Items"
@@ -51,6 +54,7 @@
               <f7-icon slot="media" f7="square_on_circle" color="gray"></f7-icon>
             </f7-list-item>
             <f7-list-item
+              v-if="$store.getters.apiEndpoint('ui')"
               link="pages/"
               title="Pages"
               :after="$store.getters.pages.length + sitemapsCount"
@@ -59,6 +63,7 @@
               <f7-icon slot="media" f7="tv" color="gray"></f7-icon>
             </f7-list-item>
             <f7-list-item
+              v-if="$store.getters.apiEndpoint('rules')"
               media-item
               link="rules/"
               title="Rules"
@@ -67,6 +72,7 @@
               <f7-icon slot="media" f7="wand_rays" color="gray"></f7-icon>
             </f7-list-item>
             <f7-list-item
+              v-if="$store.getters.apiEndpoint('rules')"
               media-item
               link="schedule/"
               title="Schedule"
@@ -75,8 +81,10 @@
               <f7-icon slot="media" f7="calendar" color="gray"></f7-icon>
             </f7-list-item>
           </f7-list>
-          <f7-block-title>Add-ons</f7-block-title>
-          <f7-list media-list class="search-list">
+          <f7-block-title v-if="addonsLoaded">Add-ons</f7-block-title>
+          <f7-list media-list class="search-list"
+            v-if="$store.getters.apiEndpoint('extensions')"
+          >
             <f7-list-item
               media-item
               v-for="type in addonTypes"
@@ -154,15 +162,31 @@ export default {
       sitemapsCount: 0
     }
   },
+  computed: {
+    apiEndpoints () {
+      return this.$store.state.apiEndpoints
+    }
+  },
+  watch: {
+    apiEndpoints () {
+      this.loadMenu()
+      this.loadCounters()
+    }
+  },
   methods: {
     loadMenu () {
+      if (!this.apiEndpoints) return
+
+      const servicesPromise = (this.$store.getters.apiEndpoint('services')) ? this.$oh.api.get('/rest/services') : Promise.resolve([])
+      const extensionsPromise = (this.$store.getters.apiEndpoint('extensions')) ? this.$oh.api.get('/rest/extensions/types') : Promise.resolve([])
+
       // can be done in parallel!
-      this.$oh.api.get('/rest/services').then((data) => {
+      servicesPromise.then((data) => {
         this.systemServices = data.filter(s => s.category === 'system')
         this.otherServices = data.filter(s => s.category !== 'system')
         this.servicesLoaded = true
       })
-      this.$oh.api.get('/rest/extensions/types').then((data) => {
+      extensionsPromise.then((data) => {
         this.addonTypes = data
         this.addonsLoaded = true
       }).catch((err) => {
@@ -172,10 +196,11 @@ export default {
       })
     },
     loadCounters () {
-      this.$oh.api.get('/rest/inbox').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
-      this.$oh.api.get('/rest/things').then((data) => { this.thingsCount = data.length.toString() })
-      this.$oh.api.get('/rest/items').then((data) => { this.itemsCount = data.length.toString() })
-      this.$oh.api.get('/rest/ui/components/system:sitemap').then((data) => { this.sitemapsCount = data.length })
+      if (!this.apiEndpoints) return
+      if (this.$store.getters.apiEndpoint('inbox')) this.$oh.api.get('/rest/inbox').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
+      if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things').then((data) => { this.thingsCount = data.length.toString() })
+      if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items').then((data) => { this.itemsCount = data.length.toString() })
+      if (this.$store.getters.apiEndpoint('ui')) this.$oh.api.get('/rest/ui/components/system:sitemap').then((data) => { this.sitemapsCount = data.length })
     },
     onPageInit () {
       this.loadMenu()
