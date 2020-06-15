@@ -7,6 +7,8 @@ export default {
     return 'webkitSpeechRecognition' in window
   },
   startRecognition (lang, startCallback, errorCallback, activityCallback, resultCallback, endCallback) {
+    let interimResult = ''
+
     // eslint-disable-next-line new-cap
     wksr = new window.webkitSpeechRecognition()
     wksr.continous = false
@@ -16,9 +18,13 @@ export default {
 
     wksr.onstart = startCallback
     wksr.onerror = errorCallback
-    wksr.onend = endCallback
+    wksr.onend = () => {
+      if (Framework7.device.android && interimResult) {
+        resultCallback({ final: true, text: interimResult })
+      }
+      endCallback()
+    }
     wksr.onresult = (event) => {
-      let interimResult = ''
       if (Framework7.device.android) {
         console.log(event.results)
         let bestConfidence = 0

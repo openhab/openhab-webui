@@ -49,6 +49,7 @@ export default {
           (ev) => {
             this.listening = true
           },
+          // error
           (ev) => {
             self.$f7.toast.create({
               icon: '<i class="f7-icons">mic_slash_fill</i>',
@@ -58,17 +59,20 @@ export default {
               closeTimeout: 2000
             }).open()
           },
+          // activity
           (ev) => {
             if (ev.type === 'soundstart') self.activity = true
             if (ev.type === 'soundend') self.activity = false
           },
+          // result
           (result) => {
             self.$emit('result', result)
           },
+          // end
           (ev) => {
-            console.log('end: ' + ev)
             self.listening = false
             self.activity = false
+            this.$oh.speech.stopRecognition()
           }
         )
       } else {
