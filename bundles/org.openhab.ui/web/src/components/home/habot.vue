@@ -1,14 +1,16 @@
 <template>
   <div class="habot-wrapper col">
-    <f7-input type="text" :placeholder="greeting" class="habot-chatbar searchbar" :class="{ highlight: focused || value }" clear-button @focus="chatboxFocused" :value="value" @change="chatboxSend" @blur="chatboxBlur">
-    </f7-input>
-    <f7-icon class="habot-icon" md="material:chat"></f7-icon>
+    <div style="display: block">
+      <f7-input type="text" :placeholder="interimSpeechResult || greeting" class="habot-chatbar searchbar" :class="{ highlight: focused || value }" clear-button @focus="chatboxFocused" :value="value" @change="chatboxSend" @blur="chatboxBlur">
+      </f7-input>
+      <speech-button class="habot-icon" v-show="!focused" :lang="language" @result="speechResult"></speech-button>
+    </div>
     <f7-list v-if="focused && !value" class="chat-suggestions" no-hairlines-md>
       <f7-list-item v-for="suggestion in suggestions"
         :key="suggestion" @click="chooseSuggestion(suggestion)" link :title="suggestion" :footer="history.length === 0 ? 'suggestion' : ''" no-chevron></f7-list-item>
       <f7-list-button v-if="history.length > 0" color="red" title="Clear history" @click="clearHistory"></f7-list-button>
     </f7-list>
-    <f7-message v-if="query && !focused" type="sent" class="margin-bottom" :text="query" color="blue" first tail></f7-message>
+    <f7-message v-if="query && !focused" type="sent" class="habot-query margin-bottom" :text="query" color="blue" first tail></f7-message>
     <f7-message v-if="(answer || busy) && !focused" type="received" :typing="busy" :text="(!busy) ? answer : null" last :tail="!hint"></f7-message>
     <f7-message v-if="hint && !focused" type="received" :text="hint" last tail></f7-message>
     <generic-widget-component v-if="cardContext && !focused" :context="cardContext" />
@@ -41,12 +43,20 @@
   transform none !important
   top 0 !important
 
-.ios .habot-chatbar input
-  border-radius 22px !important
+.aurora
+  .habot-query
+    margin-top 2rem
+
+.ios
+  .habot-chatbar input
+    border-radius 22px !important
+  .habot-query
+    margin-top 2rem
 
 .md
   .habot-chatbar
-    --f7-searchbar-input-font-size: 16px
+    --f7-searchbar-input-font-size 16px
+    --f7-searchbar-input-extra-padding-left -16px
     border-radius 22px
     box-shadow none !important
     margin-left -2px !important
@@ -61,23 +71,18 @@
     &.searchbar:after
       display none
   .chat-suggestions
-    margin-top -2.2rem
-
-.habot-icon
-  // position absolute !important
-  top -3.6rem
-  padding 16px
-  height 0
-  // margin-top 12px
-  z-index 10000
-  color #5f6368
+    margin-top -0.5rem
 </style>
 
 <script>
 import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
 import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
+import SpeechButton from './speech-button.vue'
 
 export default {
+  components: {
+    SpeechButton
+  },
   data () {
     return {
       greeting: null,
@@ -87,6 +92,7 @@ export default {
       hint: '',
       card: null,
       language: 'en',
+      interimSpeechResult: '',
       history: [],
       busy: false,
       focused: false
@@ -150,9 +156,19 @@ export default {
       this.$set(this, 'history', [])
       this.endSession()
     },
-    sendQuery () {
+    speechResult (result) {
+      if (result.final) {
+        this.query = result.text
+        this.sendQuery(true)
+      } else {
+        if (!this.interimSpeechResult) this.$emit('session-started')
+        this.interimSpeechResult = result.text
+      }
+    },
+    sendQuery (fromSpeech) {
       this.answer = ''
       this.hint = ''
+      this.interimSpeechResult = ''
       this.card = null
       this.focused = false
       if (!this.query) {
