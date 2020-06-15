@@ -335,7 +335,8 @@ export default {
         case 'approve':
           progressMessage = 'Approving Inbox Entries...'
           successMessage = `${this.selectedItems.length} entries approved`
-          promises = this.selectedItems.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i + '/approve', i.label))
+          promises = this.selectedItems.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i + '/approve',
+            this.inbox.find(e => e.thingUID === i))?.label)
           break
         case 'ignore':
           progressMessage = 'Ignoring Inbox Entries...'
