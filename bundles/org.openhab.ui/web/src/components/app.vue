@@ -327,23 +327,61 @@ export default {
   },
   methods: {
     loadSidebarPages () {
-      return Promise.all([
-        this.$oh.api.get('/rest/sitemaps'),
-        this.$oh.api.get('/rest/ui/components/ui:page'),
-        this.$oh.api.get('/rest/ui/components/ui:widget')
-      ]).then((data) => {
-        this.sitemaps = data[0]
-        this.$store.commit('setPages', { pages: data[1] })
-        this.$store.commit('setWidgets', { widgets: data[2] })
-        this.pages = data[1].filter((p) => p.config.sidebar && this.pageIsVisible(p))
-          .sort((p1, p2) => {
-            const order1 = p1.config.order || 1000
-            const order2 = p2.config.order || 1000
-            return order1 - order2
-          })
+      var that = this;
+      return new Promise(
+        function (resolve, reject) {
+          var restRoot = that.$oh.api.get('/rest').then((root) => {
+            that.$oh.servicesSupported = new Array();
+            for (var link in root.links) {
+              that.$oh.servicesSupported.push(root.links[link].type);
+            }
 
-        this.ready = true
-      })
+            var requestUris = new Array();
+            if(that.$oh.servicesSupported.includes('sitemaps')) {
+              requestUris.push('/rest/sitemaps');
+            }
+            if(that.$oh.servicesSupported.includes('ui')) {
+              requestUris.push('/rest/ui/components/ui:page');
+              requestUris.push('/rest/ui/components/ui:widget');
+            }
+
+            var requestPromises = new Array();
+            for (var uri in requestUris) {
+              requestPromises.push(that.$oh.api.get(requestUris[uri]));
+            }
+
+            Promise.all(
+              requestPromises
+            ).then((data) => {
+              var index;
+              index = requestUris.indexOf('/rest/sitemaps');
+              if(index != -1) {
+                that.sitemaps = data[index];
+              }
+              index = requestUris.indexOf('/rest/ui/components/ui:page');
+              if(index != -1) {
+                that.$store.commit('setPages', { pages: data[index] })
+                that.pages = data[index].filter((p) => p.config.sidebar && that.pageIsVisible(p))
+                  .sort((p1, p2) => {
+                    const order1 = p1.config.order || 1000
+                    const order2 = p2.config.order || 1000
+                  return order1 - order2;
+                })
+              }
+              index = requestUris.indexOf('/rest/ui/components/ui:page');
+              if(index != -1) {
+                that.$store.commit('setWidgets', { widgets: data[index] });
+              }
+          
+              that.ready = true;
+
+              resolve();
+            }).catch((error) => {
+              reject();
+            })
+          })
+        }
+      )
     },
     pageIsVisible (page) {
       if (!page.config.visibleTo) return true
