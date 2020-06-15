@@ -72,7 +72,7 @@ export default {
           'refresh_token': refreshToken
         })
 
-        this.$oh.setAccessToken(null)
+        this.$oh.api.setAccessToken(null)
         this.$oh.api.postPlain('/rest/auth/token', payload, 'application/json', 'application/x-www-form-urlencoded').then((data) => {
           const resp = JSON.parse(data)
           this.$oh.api.setAccessToken(resp.access_token)
