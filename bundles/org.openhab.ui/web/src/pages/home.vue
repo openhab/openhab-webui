@@ -23,7 +23,7 @@
       <f7-link tab-link @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" text="Properties"></f7-link>
     </f7-toolbar>
 
-    <f7-tabs :class="{ 'after-big-title': $f7.data.themeOptions.homeNavbar !== 'simple' }" v-if="items">
+    <f7-tabs v-if="items">
       <f7-tab id="tab-overview" :tab-active="currentTab === 'overview'" @tab:show="() => this.currentTab = 'overview'">
         <overview-tab v-if="currentTab === 'overview'" :context="context" :items="items" />
       </f7-tab>

@@ -19,6 +19,9 @@ function prepareRequest (uri) {
 }
 
 export default {
+  setAccessToken () {
+    console.warn('Not supported in Cordova yet')
+  },
   get (uri, data) {
     const fullUri = prepareRequest(uri)
     if (fullUri) {

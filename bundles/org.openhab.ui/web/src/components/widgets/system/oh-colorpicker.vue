@@ -64,7 +64,7 @@ export default {
         targetEl: (this.config.openIn) ? this.$refs.swatch : undefined,
         targetElSetBackgroundColor: true,
         openIn: this.config.openIn,
-        modules: this.config.modules || (this.config.openIn) ? ['wheel'] : ['hsb-sliders'],
+        modules: this.config.modules || ((this.config.openIn) ? ['wheel'] : ['hsb-sliders']),
         value: {
           hsb: this.color
         },

@@ -58,6 +58,10 @@
             <span>Standard home page background color</span>
             <f7-toggle :checked="homePageBackground === 'standard'" @toggle:change="setHomePageBackground"></f7-toggle>
           </f7-list-item>
+          <f7-list-item v-show="$store.getters.apiEndpoint('habot')">
+            <span>Hide chat input box on home page</span>
+            <f7-toggle :checked="hideChatInput === 'true'" @toggle:change="setHideChatInput"></f7-toggle>
+          </f7-list-item>
           <f7-list-item>
             <span>Disable card expansion animations</span>
             <f7-toggle :checked="expandableCardsAnimation === 'disabled'" @toggle:change="setExpandableCardAnimation"></f7-toggle>
@@ -100,6 +104,10 @@ export default {
       localStorage.setItem('openhab.ui:theme.home.background', (value) ? 'standard' : 'default')
       location.reload()
     },
+    setHideChatInput (value) {
+      localStorage.setItem('openhab.ui:theme.home.hidechatinput', (value) ? 'true' : 'false')
+      location.reload()
+    },
     setExpandableCardAnimation (value) {
       localStorage.setItem('openhab.ui:theme.home.cardanimation', (value) ? 'disabled' : 'default')
       location.reload()
@@ -124,6 +132,9 @@ export default {
     },
     homePageBackground () {
       return localStorage.getItem('openhab.ui:theme.home.background') || 'default'
+    },
+    hideChatInput () {
+      return localStorage.getItem('openhab.ui:theme.home.hidechatinput') || 'default'
     },
     expandableCardsAnimation () {
       return localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'

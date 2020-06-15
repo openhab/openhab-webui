@@ -11,7 +11,7 @@
         <div class="logo-inner"><img src="../res/img/openhab-logo.png" width="100%"></div>
       </f7-link>
       <f7-list v-if="ready">
-        <f7-list-item v-if="!pages || !pages.length">
+        <f7-list-item v-if="$store.getters.apiEndpoint('ui') && (!pages || !pages.length)">
           <span><em>No pages</em></span>
         </f7-list-item>
         <!-- <f7-list-item v-for="sitemap in sitemaps" :animate="false" :key="sitemap.name"
@@ -35,27 +35,27 @@
         </f7-list-item>
         <li v-if="showSettingsSubmenu">
           <ul class="menu-sublinks">
-          <f7-list-item link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false" no-chevron
+          <f7-list-item v-if="$store.getters.apiEndpoint('things')" link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false" no-chevron
               :class="{ currentsection: currentUrl.indexOf('/settings/things') >= 0 }">
             <f7-icon slot="media" f7="lightbulb" color="gray"></f7-icon>
           </f7-list-item>
-          <f7-list-item link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false" no-chevron
+          <f7-list-item v-if="$store.getters.apiEndpoint('items')" link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false" no-chevron
               :class="{ currentsection: currentUrl.indexOf('/settings/model') >= 0 }">
             <f7-icon slot="media" f7="list_bullet_indent" color="gray"></f7-icon>
           </f7-list-item>
-          <f7-list-item link="/settings/items/" title="Items" view=".view-main" panel-close :animate="false" no-chevron
+          <f7-list-item v-if="$store.getters.apiEndpoint('items')" link="/settings/items/" title="Items" view=".view-main" panel-close :animate="false" no-chevron
               :class="{ currentsection: currentUrl.indexOf('/settings/items') >= 0 }">
             <f7-icon slot="media" f7="square_on_circle" color="gray"></f7-icon>
           </f7-list-item>
-          <f7-list-item link="/settings/pages/" title="Pages" view=".view-main" panel-close :animate="false" no-chevron
+          <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/settings/pages/" title="Pages" view=".view-main" panel-close :animate="false" no-chevron
               :class="{ currentsection: currentUrl.indexOf('/settings/pages') >= 0 }">
             <f7-icon slot="media" f7="tv" color="gray"></f7-icon>
           </f7-list-item>
-          <f7-list-item link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false" no-chevron
+          <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false" no-chevron
               :class="{ currentsection: currentUrl.indexOf('/settings/rules') >= 0 }">
             <f7-icon slot="media" f7="wand_rays" color="gray"></f7-icon>
           </f7-list-item>
-          <f7-list-item link="/settings/schedule/" title="Schedule" view=".view-main" panel-close :animate="false" no-chevron
+          <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/schedule/" title="Schedule" view=".view-main" panel-close :animate="false" no-chevron
               :class="{ currentsection: currentUrl.indexOf('/settings/schedule') >= 0 }">
             <f7-icon slot="media" f7="calendar" color="gray"></f7-icon>
           </f7-list-item>
@@ -68,7 +68,7 @@
         </f7-list-item>
         <li v-if="showDeveloperSubmenu">
           <ul class="menu-sublinks">
-          <f7-list-item link="/developer/widgets/" title="Widgets" view=".view-main" panel-close :animate="false" no-chevron
+          <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/widgets/" title="Widgets" view=".view-main" panel-close :animate="false" no-chevron
               :class="{ currentsection: currentUrl.indexOf('/developer/widgets') >= 0 }">
             <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray"></f7-icon>
           </f7-list-item>
@@ -220,7 +220,7 @@ import cordovaApp from '../js/cordova-app.js'
 import routes from '../js/routes.js'
 import PanelRight from '../pages/panel-right.vue'
 
-import auth from '@/js/openhab/auth.js'
+import auth from './auth-mixin.js'
 
 export default {
   mixins: [auth],
@@ -326,24 +326,32 @@ export default {
     }
   },
   methods: {
-    loadSidebarPages () {
-      return Promise.all([
-        this.$oh.api.get('/rest/sitemaps'),
-        this.$oh.api.get('/rest/ui/components/ui:page'),
-        this.$oh.api.get('/rest/ui/components/ui:widget')
-      ]).then((data) => {
-        this.sitemaps = data[0]
-        this.$store.commit('setPages', { pages: data[1] })
-        this.$store.commit('setWidgets', { widgets: data[2] })
-        this.pages = data[1].filter((p) => p.config.sidebar && this.pageIsVisible(p))
-          .sort((p1, p2) => {
-            const order1 = p1.config.order || 1000
-            const order2 = p2.config.order || 1000
-            return order1 - order2
-          })
+    loadData () {
+      return this.$oh.api.get('/rest/')
+        .then((endpoints) => {
+          // store the REST API services present on the system
+          this.$store.commit('setApiEndpoints', { endpoints })
+          return Promise.resolve(endpoints)
+        }).then(() => {
+          // load the pages & widgets, only if the 'ui' endpoint exists (or empty arrays otherwise)
+          return Promise.all(
+            this.$store.getters.apiEndpoint('ui')
+              ? [this.$oh.api.get('/rest/ui/components/ui:page'), this.$oh.api.get('/rest/ui/components/ui:widget')]
+              : [Promise.resolve([]), Promise.resolve([])])
+        }).then((data) => {
+          // store the pages & widgets
+          this.$store.commit('setPages', { pages: data[0] })
+          this.$store.commit('setWidgets', { widgets: data[1] })
+          this.pages = data[0].filter((p) => p.config.sidebar && this.pageIsVisible(p))
+            .sort((p1, p2) => {
+              const order1 = p1.config.order || 1000
+              const order2 = p2.config.order || 1000
+              return order1 - order2
+            })
 
-        this.ready = true
-      })
+          this.ready = true
+          return Promise.resolve()
+        })
     },
     pageIsVisible (page) {
       if (!page.config.visibleTo) return true
@@ -375,7 +383,7 @@ export default {
       localStorage.setItem('openhab.ui:serverUrl', this.serverUrl)
       localStorage.setItem('openhab.ui:username', this.username)
       localStorage.setItem('openhab.ui:password', this.password)
-      this.loadSidebarPages().then((data) => {
+      this.loadData().then((data) => {
         // this.sitemaps = data
         this.loginScreenOpened = false
         this.loggedIn = true
@@ -424,7 +432,7 @@ export default {
     if (refreshToken) {
       this.refreshAccessToken().then((user) => {
         this.loggedIn = true
-        this.loadSidebarPages()
+        this.loadData()
         this.init = true
       }).catch((err) => {
         console.warn('Error while using the stored refresh_token to get a new access_token: ' + err + '. Logging out & cleaning session.')
@@ -455,13 +463,13 @@ export default {
       if (!this.user) {
         this.tryExchangeAuthorizationCode().then((user) => {
           this.loggedIn = true
-          this.loadSidebarPages()
+          this.loadData()
         }).catch((err) => {
           if (err) {
             this.$f7.dialog.alert('An error occurred while getting authorization: ' + err)
           } else {
             // we're just not signed in
-            this.loadSidebarPages()
+            this.loadData()
           }
         })
       }
@@ -475,7 +483,11 @@ export default {
       })
 
       this.$f7.on('sidebarRefresh', () => {
-        this.loadSidebarPages()
+        this.loadData()
+      })
+
+      this.$f7.on('addonChange', () => {
+        this.loadData()
       })
 
       this.$f7.on('darkThemeChange', () => {

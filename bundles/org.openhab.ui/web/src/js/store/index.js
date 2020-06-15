@@ -14,6 +14,17 @@ const store = new Vuex.Store({
     components,
     states,
     user
+  },
+  state: {
+    apiEndpoints: null
+  },
+  getters: {
+    apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.links.find((e) => e.type === type)
+  },
+  mutations: {
+    setApiEndpoints (state, { endpoints }) {
+      state.apiEndpoints = endpoints
+    }
   }
   // strict: debug
 })

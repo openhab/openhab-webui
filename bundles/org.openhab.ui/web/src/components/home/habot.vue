@@ -1,21 +1,24 @@
 <template>
   <div class="habot-wrapper col">
-    <!-- Chat with HABot
-    <f7-list>
-      <f7-list-input placeholder="Hello">
-      </f7-list-input>
-    </f7-list>
-    <br /> -->
-    <f7-input type="text" :placeholder="greeting" class="habot-chatbar searchbar" :class="{ highlight: focused || value }" clear-button @focus="chatboxFocused" :value="value" @change="chatboxSend" @blur="chatboxBlur">
-    </f7-input>
-    <f7-icon class="habot-icon" md="material:chat"></f7-icon>
+    <div style="display: block">
+      <f7-input type="text" :placeholder="greeting" class="habot-chatbar searchbar" :class="{ highlight: focused || value }" clear-button @focus="chatboxFocused" :value="value" @change="chatboxSend" @blur="chatboxBlur">
+      </f7-input>
+      <speech-button class="habot-icon" v-show="!focused" :lang="language" @result="speechResult"></speech-button>
+    </div>
     <f7-list v-if="focused && !value" class="chat-suggestions" no-hairlines-md>
-      <f7-list-item v-for="suggestion in ['What\'s the temperature in the kitchen?', 'Set the thermostat to 21 degrees', 'Turn off the lights on the first floor']"
-        :key="suggestion" @click="chooseSuggestion(suggestion)" link :title="suggestion"></f7-list-item>
+      <f7-list-item v-for="suggestion in suggestions"
+        :key="suggestion" @click="chooseSuggestion(suggestion)" link :title="suggestion" :footer="history.length === 0 ? 'suggestion' : ''" no-chevron></f7-list-item>
+      <f7-list-button v-if="history.length > 0" color="red" title="Clear history" @click="clearHistory"></f7-list-button>
     </f7-list>
-    <f7-message v-if="query && !focused" type="sent" :text="query" color="blue" first tail></f7-message>
-    <f7-message v-if="(answer || busy) && !focused" type="received" :typing="busy" :text="answer" last tail></f7-message>
-    <!-- <f7-searchbar placeholder="Hello" clear-button></f7-searchbar> -->
+    <f7-message v-if="interimSpeechResult" type="sent" class="habot-query margin-bottom" :text="interimSpeechResult" color="gray" first tail></f7-message>
+    <f7-message v-if="query && !focused && !interimSpeechResult" type="sent" class="habot-query margin-bottom" :text="query" color="blue" first tail></f7-message>
+    <f7-message v-if="!interimSpeechResult && (answer || busy) && !focused" type="received" :typing="busy" :text="(!busy) ? answer : null" last :tail="!hint"></f7-message>
+    <f7-message v-if="hint && !focused && !interimSpeechResult" type="received" :text="hint" last tail></f7-message>
+    <generic-widget-component v-if="cardContext && !focused && !interimSpeechResult" :context="cardContext" />
+    <div v-if="query && !focused && answer && !busy && !interimSpeechResult" class="display-flex justify-content-space-between padding">
+      <span></span>
+      <f7-button outline round color="blue" @click="endSession">Dismiss</f7-button>
+    </div>
   </div>
 </template>
 
@@ -41,12 +44,20 @@
   transform none !important
   top 0 !important
 
-.ios .habot-chatbar input
-  border-radius 22px !important
+.aurora
+  .habot-query
+    margin-top 2rem
+
+.ios
+  .habot-chatbar input
+    border-radius 22px !important
+  .habot-query
+    margin-top 2rem
 
 .md
   .habot-chatbar
-    --f7-searchbar-input-font-size: 16px
+    --f7-searchbar-input-font-size 16px
+    --f7-searchbar-input-extra-padding-left -16px
     border-radius 22px
     box-shadow none !important
     margin-left -2px !important
@@ -61,37 +72,75 @@
     &.searchbar:after
       display none
   .chat-suggestions
-    margin-top -2.2rem
-
-.habot-icon
-  // position absolute !important
-  top -3.6rem
-  padding 16px
-  height 0
-  // margin-top 12px
-  z-index 10000
-  color #5f6368
+    margin-top -0.5rem
 </style>
 
 <script>
+import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
+import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
+import SpeechButton from './speech-button.vue'
+
 export default {
+  components: {
+    SpeechButton
+  },
   data () {
     return {
-      greeting: 'Hi, what can I do for you?',
+      greeting: null,
       value: '',
       query: '',
       answer: '',
+      hint: '',
+      card: null,
+      language: 'en',
+      interimSpeechResult: null,
+      history: [],
       busy: false,
       focused: false
     }
   },
+  mounted () {
+    this.greet()
+    const savedHistory = localStorage.getItem('openhab.ui:chat.history')
+    this.$set(this, 'history', (savedHistory) ? savedHistory.split('|') : [])
+  },
+  computed: {
+    cardContext () {
+      if (!this.card) return null
+      return {
+        store: this.$store.getters.trackedItems,
+        component: this.card
+      }
+    },
+    suggestions () {
+      return (this.history.length > 0) ? this.history : ['What\'s the temperature in the kitchen?', 'Set the thermostat to 21 degrees', 'Turn off the lights on the first floor']
+    }
+  },
   methods: {
+    greet () {
+      this.$oh.api.get('/rest/habot/greet').then((resp) => {
+        this.greeting = resp.answer
+        this.language = resp.language
+      })
+    },
     chatboxFocused () {
       this.focused = true
+      this.$emit('session-started')
     },
     chatboxBlur (ev) {
       // delay in order to give a chance to choose a suggestion...
-      setTimeout(() => this.focused = false, 200)
+      setTimeout(() => {
+        this.focused = false
+        if (!this.query && !this.busy) this.$emit('session-end')
+      }, 200)
+    },
+    endSession () {
+      this.query = ''
+      this.answer = ''
+      this.hint = ''
+      this.card = null
+      this.greet()
+      this.$emit('session-end')
     },
     chatboxSend (ev) {
       this.query = this.value = ev.target.value
@@ -102,21 +151,150 @@ export default {
       this.query = this.value = suggestion
       this.sendQuery()
     },
-    sendQuery () {
+    clearHistory () {
+      this.focused = false
+      localStorage.setItem('openhab.ui:chat.history', '')
+      this.$set(this, 'history', [])
+      this.endSession()
+    },
+    speechResult (result) {
+      if (result.final) {
+        this.query = result.text
+        this.sendQuery(true)
+      } else {
+        if (!this.interimSpeechResult) this.$emit('session-started')
+        this.interimSpeechResult = result.text
+      }
+    },
+    sendQuery (fromSpeech) {
       this.answer = ''
+      this.hint = ''
+      this.interimSpeechResult = null
+      this.card = null
+      this.focused = false
       if (!this.query) {
         return
       }
       this.busy = true
-      new Promise((resolve, reject) => {
-        // this.value = ''
-        setTimeout(resolve, 1000)
-      }).then((resp) => {
-        this.answer = 'HABot is not integrated yet!'
-        this.busy = false
+
+      // store in history
+      if (this.history.indexOf(this.query) < 0) {
+        this.history.unshift(this.query)
+        this.$set(this, 'history', this.history.splice(0, 5))
+        localStorage.setItem('openhab.ui:chat.history', this.history.join('|'))
+      }
+
+      this.$oh.api.postPlain('/rest/habot/chat?useCardRegistry=false', this.query, 'application/json', 'text/plain').then((resp) => {
+        const reply = JSON.parse(resp)
+        this.answer = reply.answer
+        this.hint = reply.hint
+        this.value = ''
+        if (reply.card) {
+          this.convertHABotCard(reply.card)
+        } else {
+          this.busy = false
+        }
+        this.greeting = 'Anything else?'
       })
+    },
+    convertHABotCard (habotCard) {
+      if (!habotCard.ephemeral) {
+        this.busy = false
+        this.card = {
+          component: 'f7-card',
+          config: {
+            title: habotCard.title,
+            footer: 'Sorry, cards saved to the card deck cannot be displayed here, use the dedicated HABot app to see it.'
+          }
+        }
+        return
+      }
+      if (habotCard.component !== 'HbCard') {
+        this.busy = false
+        this.card = {
+          component: 'f7-card',
+          config: {
+            title: habotCard.title,
+            footer: 'Sorry, this card cannot be displayed here, use the dedicated HABot app to see it.'
+          }
+        }
+        return
+      }
+      if (habotCard.slots.media && habotCard.slots.media[0].component === 'HbChartImage') {
+        // there's a chart to display - image widgets are not implemented yet so simply open the analyzer
+        const items = habotCard.slots.media[0].config.items.join(',')
+        const period = habotCard.slots.media[0].config.period
+        this.$f7router.navigate(`/analyzer/?items=${items}&period=${period}`)
+        this.card = {
+          component: 'f7-card',
+          config: {
+            title: habotCard.title,
+            footer: habotCard.subtitle
+          },
+          slots: {
+            default: [
+              {
+                component: 'f7-card-content',
+                config: {
+                  class: ['display-flex', 'justify-content-center']
+                },
+                slots: {
+                  default: [
+                    {
+                      component: 'f7-button',
+                      config: {
+                        text: 'Open Analyzer',
+                        large: true,
+                        raised: true,
+                        fill: true,
+                        iconF7: 'graph_circle',
+                        link: true,
+                        href: `/analyzer/?items=${items}&period=${period}`
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+        this.busy = false
+      } else if (!habotCard.slots.list) {
+        // a single item was returned
+        let item = null
+        if (habotCard.slots.right && habotCard.slots.right.length > 0) {
+          item = habotCard.slots.right[0].config.item
+        } else if (habotCard.slots.main && habotCard.slots.main.length > 0) {
+          item = habotCard.slots.main[0].config.item
+        }
+
+        if (item) {
+          return this.$oh.api.get(`/rest/items/${item}?metadata=semantics,widget`).then((item) => {
+            this.card = Object.assign({}, itemDefaultStandaloneComponent(item))
+            if (!this.card.config.title) this.card.config.title = habotCard.title
+            if (!this.card.config.footer) this.card.config.footer = habotCard.subtitle
+            this.busy = false
+          })
+        }
+      } else {
+        // there's a list to display
+        let items = habotCard.slots.list[0].slots.items.map((c) => c.config.item).filter((i) => i)
+        return Promise.all(items.map((i) => this.$oh.api.get(`/rest/items/${i}?metadata=semantics,widget`))).then((items) => {
+          this.card = {
+            component: 'oh-list-card',
+            config: {
+              title: habotCard.title,
+              footer: habotCard.subtitle,
+              mediaList: true
+            },
+            slots: {
+              default: items.map((i) => itemDefaultListComponent(i, true))
+            }
+          }
+          this.busy = false
+        })
+      }
     }
   }
 }
 </script>
-
