@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="hint-apps" v-if="!overviewPage && !$store.getters.user && !inChatSession">
+  <div class="hint-apps" v-if="!overviewPage && !$store.getters.user && !showHABot">
     <p><em><f7-icon class="float-right margin-left margin-bottom" f7="arrow_turn_right_up" size="20" />Open the apps panel to launch other interfaces</em></p>
   </div>
   <f7-block class="block-narrow">
