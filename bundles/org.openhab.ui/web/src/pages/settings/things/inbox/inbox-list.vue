@@ -330,23 +330,26 @@ export default {
         case 'delete':
           progressMessage = 'Removing Inbox Entries...'
           successMessage = `${this.selectedItems.length} entries removed`
-          promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/inbox/' + i))
+          promises = this.inbox.filter((e) => this.selectedItems.indexOf(e.thingUID) >= 0)
+            .map((e) => this.$oh.api.delete('/rest/inbox/' + e.thingUID))
           break
         case 'approve':
           progressMessage = 'Approving Inbox Entries...'
           successMessage = `${this.selectedItems.length} entries approved`
-          promises = this.selectedItems.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i + '/approve',
-            this.inbox.find(e => e.thingUID === i)?.label))
+          promises = this.inbox.filter((e) => this.selectedItems.indexOf(e.thingUID) >= 0)
+            .map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/approve', e.label))
           break
         case 'ignore':
           progressMessage = 'Ignoring Inbox Entries...'
           successMessage = `${this.selectedItems.length} entries ignored`
-          promises = this.selectedItems.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i + '/ignore'))
+          promises = this.inbox.filter((e) => this.selectedItems.indexOf(e.thingUID) >= 0)
+            .map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/ignore'))
           break
         case 'unignore':
           progressMessage = 'Unignoring Inbox Entries...'
           successMessage = `${this.selectedItems.length} entries unignored`
-          promises = this.selectedItems.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i + '/unignore'))
+          promises = this.inbox.filter((e) => this.selectedItems.indexOf(e.thingUID) >= 0)
+            .map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/unignore'))
           break
       }
 
