@@ -330,26 +330,22 @@ export default {
         case 'delete':
           progressMessage = 'Removing Inbox Entries...'
           successMessage = `${this.selectedItems.length} entries removed`
-          promises = this.inbox.filter((e) => this.selectedItems.indexOf(e.thingUID) >= 0)
-            .map((e) => this.$oh.api.delete('/rest/inbox/' + e.thingUID))
+          promises = this.filterSelectedItems().map((e) => this.$oh.api.delete('/rest/inbox/' + e.thingUID))
           break
         case 'approve':
           progressMessage = 'Approving Inbox Entries...'
           successMessage = `${this.selectedItems.length} entries approved`
-          promises = this.inbox.filter((e) => this.selectedItems.indexOf(e.thingUID) >= 0)
-            .map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/approve', e.label))
+          promises = this.filterSelectedItems().map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/approve', e.label))
           break
         case 'ignore':
           progressMessage = 'Ignoring Inbox Entries...'
           successMessage = `${this.selectedItems.length} entries ignored`
-          promises = this.inbox.filter((e) => this.selectedItems.indexOf(e.thingUID) >= 0)
-            .map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/ignore'))
+          promises = this.filterSelectedItems().map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/ignore'))
           break
         case 'unignore':
           progressMessage = 'Unignoring Inbox Entries...'
           successMessage = `${this.selectedItems.length} entries unignored`
-          promises = this.inbox.filter((e) => this.selectedItems.indexOf(e.thingUID) >= 0)
-            .map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/unignore'))
+          promises = this.filterSelectedItems().map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/unignore'))
           break
       }
 
@@ -370,6 +366,9 @@ export default {
         console.error(err)
         this.$f7.dialog.alert('An error occurred: ' + err)
       })
+    },
+    filterSelectedItems () {
+      return this.inbox.filter((e) => this.selectedItems.indexOf(e.thingUID) >= 0)
     }
   }
 }
