@@ -39,6 +39,7 @@ export default {
         resultCallback({ final: false, text: interimResult })
       } else {
         console.log(event.results)
+        interimResult = ''
         for (let result of event.results) {
           if (result.isFinal) {
             resultCallback({ final: true, text: result[0].transcript })
