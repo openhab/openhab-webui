@@ -10,16 +10,20 @@
   </ul>
   <ul v-else>
     <f7-block-header class="no-margin">
-      <span class="margin">{{configDescription.label}}</span>
+      <div class="margin-horizontal item-label"
+        style="padding-top: var(--f7-list-item-padding-vertical); color: var(--f7-text-color)">
+        {{configDescription.label}}
+      </div>
       <f7-link
-          :style="{
-            top: '1rem',
-            float: 'right',
-            visibility: configDescription.required ? 'hidden' : 'visible',
-            opacity: configDescription.required ? 0 : 1,
-            cursor: 'pointer',
-            pointerEvents: 'initial'
-          }" class="input-clear-button margin-right" @click="updateValue(undefined)"></f7-link>
+        v-if="value"
+        :style="{
+          top: '1rem',
+          float: 'right',
+          visibility: configDescription.required ? 'hidden' : 'visible',
+          opacity: configDescription.required ? 0 : 1,
+          cursor: 'pointer',
+          pointerEvents: 'initial'
+        }" class="input-clear-button margin-right" @click="updateValue(undefined)"></f7-link>
     </f7-block-header>
     <f7-list-item radio v-for="option in configDescription.options"  no-hairline
       :value="option.value" :checked="isSelected(option)" radio-icon="start"
