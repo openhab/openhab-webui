@@ -6,9 +6,9 @@
         <f7-nav-left>
           <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
         </f7-nav-left>
-        <f7-nav-title>Add from Model</f7-nav-title>
+        <f7-nav-title>{{popupTitle || 'Pick from Model'}}</f7-nav-title>
         <f7-nav-right>
-          <f7-link v-if="ready && ((multiple && checkedItems.length > 0) || selectedItem)" @click="pickItems">{{actionLabel || 'Pick'}}<span v-if="multiple && checkedItems.length > 0">&nbsp;{{checkedItems.length}}</span></f7-link>
+          <f7-link v-if="ready && ((multiple && checkedItems.length > 0) || selectedItem || allowEmpty)" @click="pickItems">{{actionLabel || 'Pick'}}<span v-if="multiple && checkedItems.length > 0">&nbsp;{{checkedItems.length}}</span></f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
@@ -49,7 +49,7 @@ import ModelTreeview from '@/components/model/model-treeview.vue'
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 
 export default {
-  props: ['opened', 'multiple', 'actionLabel'],
+  props: ['value', 'opened', 'multiple', 'semanticOnly', 'groupsOnly', 'allowEmpty', 'popupTitle', 'actionLabel'],
   components: {
     ModelTreeview
   },
@@ -69,12 +69,17 @@ export default {
       rootGroups: [],
       rootItems: [],
       selectedItem: null,
+      previousSelection: null,
       checkedItems: []
     }
   },
   computed: {
     rootNodes () {
-      return [this.rootLocations, this.rootEquipments, this.rootPoints, this.rootGroups, this.rootItems].flat()
+      if (this.semanticOnly) {
+        return [this.rootLocations, this.rootEquipments, (!this.groupsOnly) ? this.rootPoints : []]
+      } else {
+        return [this.rootLocations, this.rootEquipments, (!this.groupsOnly) ? this.rootPoints : [], this.rootGroups, (!this.groupsOnly) ? this.rootItems : []].flat()
+      }
     }
   },
   methods: {
@@ -92,7 +97,7 @@ export default {
       if (this.multiple) {
         this.$emit('input', this.checkedItems.map((i) => i.item))
       } else {
-        this.$emit('input', this.selectedItem.item)
+        this.$emit('input', (this.selectedItem) ? this.selectedItem.item : null)
       }
       this.onClose()
     },
@@ -121,6 +126,9 @@ export default {
       }
 
       modelItem.checkable = this.multiple
+      if (!this.multiple && this.value === item.name) {
+        this.selectItem(modelItem)
+      }
 
       return modelItem
     },
@@ -153,7 +161,7 @@ export default {
           .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPointOf && !i.metadata.semantics.config.hasLocation))
           .map(this.modelItem)
 
-        if (this.includeNonSemantic) {
+        if (this.includeNonSemantic && !this.semanticOnly) {
           this.rootGroups = this.items
             .filter((i) => i.type === 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
             .map(this.modelItem)
@@ -192,18 +200,22 @@ export default {
           .map(this.modelItem)
         parent.children.equipments.forEach(this.getChildren)
 
-        parent.children.points = this.points
-          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
-          .map(this.modelItem)
+        if (!this.groupsOnly) {
+          parent.children.points = this.points
+            .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
+            .map(this.modelItem)
+        }
       } else {
         parent.children.equipments = this.equipments
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
           .map(this.modelItem)
         parent.children.equipments.forEach(this.getChildren)
 
-        parent.children.points = this.points
-          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPointOf === parent.item.name)
-          .map(this.modelItem)
+        if (!this.groupsOnly) {
+          parent.children.points = this.points
+            .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPointOf === parent.item.name)
+            .map(this.modelItem)
+        }
       }
 
       if (this.includeNonSemantic) {
@@ -216,9 +228,11 @@ export default {
             .filter((i) => i.type !== 'Group' && (!i.metadata) && i.groupNames.indexOf(parent.item.name) >= 0)
             .map(this.modelItem)
         } else {
-          parent.children.items = this.items
-            .filter((i) => i.type !== 'Group' && i.groupNames.indexOf(parent.item.name) >= 0)
-            .map(this.modelItem)
+          if (!this.groupsOnly) {
+            parent.children.items = this.items
+              .filter((i) => i.type !== 'Group' && i.groupNames.indexOf(parent.item.name) >= 0)
+              .map(this.modelItem)
+          }
         }
       }
     },

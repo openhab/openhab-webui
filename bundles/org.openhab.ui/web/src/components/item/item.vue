@@ -7,6 +7,7 @@
   :footer="(item.label) ? item.name : '\xa0'"
   :subtitle="getItemTypeAndMetaLabel(item)"
   :after="state"
+  v-on="$listeners"
 >
   <oh-icon v-if="item.category" slot="media" :icon="item.category" height="32" width="32" />
   <span v-else slot="media" class="item-initial">{{item.name[0]}}</span>

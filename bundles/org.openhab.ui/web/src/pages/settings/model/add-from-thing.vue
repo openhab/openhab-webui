@@ -16,13 +16,26 @@
           </ul>
         </f7-list>
         <f7-block-footer v-if="thingId" class="padding-left padding-right">
-          Select a parent group, preferably part of the semantic model like a Location or Equipment group, under which the new items will be inserted (optional, but recommended).
+          Select the parent Location or Equipment group in the semantic model, under which the new items will be inserted (optional, but recommended).
         </f7-block-footer>
         <f7-list v-if="thingId">
-          <item-picker title="Create Items Under" name="parent-group" :value="parentGroup" @input="(value) => parentGroup = value" :multiple="false" filterType="Group"></item-picker>
+          <ul v-if="parentGroup">
+            <item :item="parentGroup" :link="true" @click="modelPickerOpened = true" />
+          </ul>
+          <f7-list-item v-else title="Pick From Model" link @click="modelPickerOpened = true" />
+          <model-picker-popup :value="(parentGroup) ? parentGroup.name : null" popup-title="Parent Group"
+            :allow-empty="true" :groups-only="true" :opened="modelPickerOpened"
+            @input="(item) => parentGroup = item" @closed="modelPickerOpened = false" />
+        </f7-list>
+        <f7-block-title v-if="selectedThing.statusInfo">Source Thing</f7-block-title>
+        <f7-list v-if="selectedThing.statusInfo" media-list>
+          <f7-list-item
+              :title="selectedThing.label"
+              :footer="selectedThing.UID"
+              :badge="selectedThing.statusInfo.status"
+              :badge-color="selectedThing.statusInfo.status === 'ONLINE' ? 'green' : 'red'" />
         </f7-list>
         <f7-block-title v-if="createEquipment">Equipment</f7-block-title>
-        <f7-block-title v-else-if="!thingId">Source Thing</f7-block-title>
         <f7-block-footer v-if="createEquipment && !thingId" class="padding-left padding-right">
           Select the Thing you wish to create as a new Equipment group in the model. It will be placed under the parent group above, if any.
           You can alter the new group's details and change its equipment class.
@@ -61,7 +74,7 @@
 
 <script>
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
-import ItemPicker from '@/components/config/controls/item-picker.vue'
+import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
 import ItemForm from '@/components/item/item-form.vue'
 
@@ -70,7 +83,7 @@ import Item from '@/components/item/item.vue'
 export default {
   components: {
     Item,
-    ItemPicker,
+    ModelPickerPopup,
     ThingPicker,
     ChannelList,
     ItemForm
@@ -85,7 +98,8 @@ export default {
       selectedThingType: {},
       selectedThingChannelTypes: {},
       newEquipmentItem: {},
-      newPointItems: []
+      newPointItems: [],
+      modelPickerOpened: false
     }
   },
   methods: {
@@ -113,14 +127,14 @@ export default {
 
       let valid = true
       if (this.parentGroup && this.createEquipment) {
-        this.newEquipmentItem.groupNames = [this.parentGroup]
+        this.newEquipmentItem.groupNames = [this.parentGroup.name]
       }
       this.newPointItems.forEach((p) => {
         if (!p.name) valid = false
         if (this.createEquipment) {
           p.groupNames = [this.newEquipmentItem.name]
         } else {
-          p.groupNames = (this.parent) ? [this.parent.item.name] : (this.parentGroup) ? [this.parentGroup] : []
+          p.groupNames = (this.parent) ? [this.parent.item.name] : (this.parentGroup) ? [this.parentGroup.name] : []
         }
       })
 
