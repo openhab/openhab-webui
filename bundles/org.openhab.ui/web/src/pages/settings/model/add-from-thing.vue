@@ -64,7 +64,7 @@
               (you will be able to configure the links individually later if needed).
             </f7-block-footer>
             <channel-list :thing="selectedThing" :thingType="selectedThingType" :channelTypes="selectedThingChannelTypes"
-              :multiple-links-mode="true" :new-items-prefix="(createEquipment) ? newEquipmentItem.name : (parentGroup) ? parentGroup : ''"
+              :multiple-links-mode="true" :new-items-prefix="(createEquipment) ? newEquipmentItem.name : (parentGroup) ? parentGroup.name : ''"
               @selected="(channel) => toggleSelect(channel)" :new-items="newPointItems" />
         </div>
       </f7-col>
