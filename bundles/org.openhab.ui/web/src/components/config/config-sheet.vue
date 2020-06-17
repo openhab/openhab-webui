@@ -85,8 +85,12 @@ export default {
       this.showAdvanced = !this.showAdvanced // event.target.checked
     },
     updateParameter (parameter, value) {
-      // this.configuration[parameter.name] = value
-      this.$set(this.configuration, parameter.name, value)
+      if (!value) {
+        // deleting the parameter sometimes lead to saves not updating it, so set it explicitely to null
+        this.$set(this.configuration, parameter.name, null)
+      } else {
+        this.$set(this.configuration, parameter.name, value)
+      }
       console.debug(JSON.stringify(this.configuration))
       this.$emit('updated')
     }

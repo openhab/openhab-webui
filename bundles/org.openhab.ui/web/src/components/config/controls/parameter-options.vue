@@ -1,5 +1,5 @@
 <template>
-  <ul>
+  <ul v-if="!inlineList">
       <f7-list-item
          :title="configDescription.label" smart-select :smart-select-params="smartSelectParams" ref="item">
         <select :name="configDescription.name" @change="updateValue" :multiple="configDescription.multiple">
@@ -8,6 +8,28 @@
         </select>
       </f7-list-item>
   </ul>
+  <ul v-else>
+    <f7-block-header class="no-margin">
+      <div class="margin-horizontal item-label"
+        style="padding-top: var(--f7-list-item-padding-vertical); color: var(--f7-text-color)">
+        {{configDescription.label}}
+      </div>
+      <f7-link
+        v-if="value"
+        :style="{
+          top: '1rem',
+          float: 'right',
+          visibility: configDescription.required ? 'hidden' : 'visible',
+          opacity: configDescription.required ? 0 : 1,
+          cursor: 'pointer',
+          pointerEvents: 'initial'
+        }" class="input-clear-button margin-right" @click="updateValue(undefined)"></f7-link>
+    </f7-block-header>
+    <f7-list-item radio v-for="option in configDescription.options"  no-hairline
+      :value="option.value" :checked="isSelected(option)" radio-icon="start"
+      @change="(!configDescription.required && isSelected(option)) ? updateValue(undefined) : updateValue(option.value)"
+      :key="option.value" :title="option.label" :name="configDescription.name"></f7-list-item>
+  </ul>
 </template>
 
 <script>
@@ -15,13 +37,16 @@ export default {
   props: ['configDescription', 'value'],
   data () {
     return {
+      inlineList: false,
       smartSelectParams: {
         view: (this.$f7) ? this.$f7.view.main : null
       }
     }
   },
   created () {
-    if (this.configDescription.options.length < 10) {
+    if (this.configDescription.options.length <= 5 && !this.configDescription.multiple) {
+      this.inlineList = true
+    } else if (this.configDescription.options.length <= 10) {
       this.smartSelectParams.openIn = (this.configDescription.options.some((o) => o.label.length > 25)) ? 'sheet' : 'popover'
     } else if (this.configDescription.options.length > 100) {
       this.smartSelectParams.openIn = 'popup'
@@ -39,8 +64,8 @@ export default {
     }
   },
   methods: {
-    updateValue (event) {
-      let value = this.$refs.item.f7SmartSelect.getValue()
+    updateValue (evt) {
+      let value = (this.inlineList) ? evt : this.$refs.item.f7SmartSelect.getValue()
       if (!this.configDescription.multiple && this.configDescription.type === 'INTEGER') {
         value = parseInt(value)
       }
