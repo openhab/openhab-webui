@@ -23,7 +23,7 @@
             <f7-chip class="margin-left"
               :text="thing.statusInfo.status"
               :color="thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'"
-            >{{thing.statusInfo.status}}</f7-chip>
+            ></f7-chip>
             <div v-if="thing.statusInfo.statusDetail !== 'NONE' || thing.statusInfo.description">
               <strong
                 v-if="thing.statusInfo.statusDetail !== 'NONE'"
