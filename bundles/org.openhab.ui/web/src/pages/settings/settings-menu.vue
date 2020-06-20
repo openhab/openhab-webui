@@ -81,10 +81,11 @@
               <f7-icon slot="media" f7="calendar" color="gray"></f7-icon>
             </f7-list-item>
           </f7-list>
-          <f7-block-title v-if="addonsLoaded">Add-ons</f7-block-title>
+          <f7-block-title v-if="$store.getters.apiEndpoint('extensions') && addonsLoaded">Add-ons</f7-block-title>
           <f7-list media-list class="search-list"
             v-if="$store.getters.apiEndpoint('extensions')"
           >
+            <f7-list media-list class="search-list">
             <f7-list-item
               media-item
               v-for="type in addonTypes"
@@ -96,7 +97,7 @@
             </f7-list-item>
           </f7-list>
         </f7-col>
-        <f7-col width="100" medium="50">
+        <f7-col width="100" medium="50" v-if="$store.getters.apiEndpoint('services') && servicesLoaded">
           <f7-block-title>System Services</f7-block-title>
           <f7-list class="search-list">
             <f7-list-item
