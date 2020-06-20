@@ -54,6 +54,8 @@
         </f7-list>
 
       </f7-col>
+    </f7-block>
+    <f7-block class="block-narrow" v-if="$store.getters.apiEndpoint('extensions')">
       <f7-col v-if="bindings.length">
         <f7-list>
           <f7-list-button color="blue" title="Install More Bindings" href="install-binding" />
