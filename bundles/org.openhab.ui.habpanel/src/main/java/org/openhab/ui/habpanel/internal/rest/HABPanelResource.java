@@ -53,6 +53,7 @@ import io.swagger.annotations.ApiResponses;
  *
  */
 @Component
+@JaxrsResource
 @JaxrsName(HABPanelResource.PATH_HABPANEL)
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
