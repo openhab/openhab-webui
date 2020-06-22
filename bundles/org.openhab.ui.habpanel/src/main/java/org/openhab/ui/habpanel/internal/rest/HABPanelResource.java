@@ -38,6 +38,7 @@ import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
 import org.osgi.service.jaxrs.whiteboard.propertytypes.JSONRequired;
 import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsApplicationSelect;
 import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsName;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
