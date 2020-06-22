@@ -85,7 +85,6 @@
           <f7-list media-list class="search-list"
             v-if="$store.getters.apiEndpoint('extensions')"
           >
-            <f7-list media-list class="search-list">
             <f7-list-item
               media-item
               v-for="type in addonTypes"
