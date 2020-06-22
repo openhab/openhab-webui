@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="thing.label" back-link="Back" no-hairline>
-      <f7-nav-right v-if="dirty">
+      <f7-nav-right v-if="dirty || thingDirty">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
       </f7-nav-right>
@@ -95,7 +95,7 @@
 
       <f7-tab id="config" :disabled="!(thing.configuration && thingType.configParameters)" @tab:show="() => this.currentTab = 'config'" :tab-active="currentTab === 'config'">
         <f7-block v-if="currentTab === 'config'" class="block-narrow">
-          <thing-general-settings :thing="thing" :thing-type="thingType" @updated="dirty = true" />
+          <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" />
           <config-sheet
             :parameter-groups="configDescriptions.parameterGroups"
             :parameters="configDescriptions.parameters"
@@ -218,6 +218,7 @@ export default {
       ready: false,
       loading: false,
       dirty: false,
+      thingDirty: false,
       currentTab: 'info',
       thing: {},
       thingType: {},
@@ -282,6 +283,7 @@ export default {
             this.ready = true
             this.loading = false
             this.dirty = false
+            this.thingDirty = false
 
             // special treatment for Z-Wave actions
             if (this.thingType.UID.indexOf('zwave') === 0) {
@@ -295,6 +297,7 @@ export default {
             this.ready = true
             this.loading = false
             this.dirty = false
+            this.thingDirty = false
             this.configDescriptions = {
               parameterGroups: this.thingType.parameterGroups,
               parameters: this.thingType.configParameters
@@ -305,14 +308,30 @@ export default {
         })
       })
     },
-    save () {
+    save (saveThing) {
       if (!this.ready) return
-      console.log('Saving thing')
-      this.$oh.api.put('/rest/things/' + this.thingId, this.thing).then(data => {
+      // if set dirty flag is set, assume the config has to be saved with PUT /rest/things/:thingId/config
+      // otherwise (for example, channels or label) use the regular PUT /rest/thing/:thingId
+      let endpoint, payload, successMessage
+      if (this.dirty && !this.thingDirty && !saveThing) {
+        endpoint = '/rest/things/' + this.thingId + '/config'
+        payload = this.thing.configuration
+        successMessage = 'Thing configuration updated'
+      } else {
+        endpoint = '/rest/things/' + this.thingId
+        payload = this.thing
+        successMessage = 'Thing updated'
+      }
+      this.$oh.api.put(endpoint, payload).then(data => {
         // this.$set(this, 'thing', data)
-        this.dirty = false
+        if (this.dirty && !this.thingDirty && !saveThing) this.dirty = false
+        this.thingDirty = false
+        if (this.dirty) {
+          // if still dirty, save again to save the configuration
+          this.save()
+        }
         this.$f7.toast.create({
-          text: 'Thing updated',
+          text: successMessage,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
@@ -328,6 +347,7 @@ export default {
         () => {
           console.log(action)
           thing.configuration[action.name] = true
+          this.dirty = true
           save()
         }
       )
@@ -421,7 +441,7 @@ export default {
       })
     },
     onChannelsUpdated (save) {
-      if (save) this.save()
+      if (save) this.save(true)
       if (!this.eventSource) this.startEventSource()
     },
     unlinkAll (removeItems) {
