@@ -48,7 +48,7 @@ Item -> Type _ Name Label Icon Groups Tags Metadata
 
 # Type
 # basic
-Type -> %itemtype                                   {% (d) => [d[0].text] %}
+Type -> %itemtype                                   {% (d) => [d[0].text.trim()] %}
   | "Number" ":" %identifier %WS                    {% (d) => ['Number:' + d[2].text] %}
   | "Group" %membertype                             {% (d) => ['Group', d[1].text.substring(1)] %}
   | "Group" %membertype ":" %identifier AggArgs     {% (d) => ['Group', d[1].text.substring(1), {name: d[3].text, args: d[4]}] %}
