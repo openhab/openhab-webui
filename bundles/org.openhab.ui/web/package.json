@@ -77,6 +77,7 @@
     "vue-async-computed": "^3.8.2",
     "vue-codemirror": "^4.0.6",
     "vue-echarts": "^4.1.0",
+    "vue-knob-control": "^1.6.0",
     "vue-magic-grid": "0.0.4",
     "vue2-leaflet": "^2.5.2",
     "vuetrend": "^0.3.4",
