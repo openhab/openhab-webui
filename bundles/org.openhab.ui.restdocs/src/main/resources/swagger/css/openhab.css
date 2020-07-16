@@ -1,15 +1,42 @@
-.swagger-section .icon-btn {
-	cursor: pointer;
+.swagger-ui .topbar {
+    visibility: hidden;
+    height: 0;
+    padding: 0 0 !important;
 }
 
-.swagger-section #header {
-	background-color: #ff6600;
+.swagger-ui .topbar .topbar-wrapper {
+    visibility: hidden;
+    height: 0;
 }
 
-.swagger-section #header a#logo {
-	padding-left: 124px;
+.swagger-ui .topbar a {
+	visibility: hidden;
 }
 
-.swagger-section #header form#api_selector .input a#explore {
-	background-color: #d2121c;
+.swagger-ui .information-container {
+    background: #e64a19 !important;
+    margin: 30 0 0 0 !important;
+    padding: 0 20px;
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 0px;
+    padding-left: 20px;
+}
+
+.swagger-ui .info .title {
+    color: #ffffff !important;
+    font-size: 28px !important;
+    padding-top: 20px !important;
+}
+
+.swagger-ui .info {
+	margin: 0 0 !important;
+}
+
+.swagger-ui .info hgroup.main a {
+    visibility: hidden;
+}
+
+.swagger-ui .opblock-tag {
+    font-size: 20px !important;
 }
