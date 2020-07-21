@@ -105,7 +105,7 @@ export default {
           return
         }
         self.$f7.preloader.show()
-        this.$oh.api.get('/rest/extensions/' + this.addonId).then(data => {
+        this.$oh.api.get('/rest/addons/' + this.addonId).then(data => {
           this.addon = data
 
           if (this.addon.type === 'binding' && this.addon.installed) {
@@ -143,12 +143,12 @@ export default {
       self.$refs.sheet.f7Sheet.stepToggle('.demo-sheet-swipe-to-step')
     },
     install () {
-      this.$oh.api.post('/rest/extensions/' + this.addonId + '/install', {}, 'text').then((data) => {
+      this.$oh.api.post('/rest/addons/' + this.addonId + '/install', {}, 'text').then((data) => {
         this.$emit('install', this.addon)
       })
     },
     uninstall () {
-      this.$oh.api.post('/rest/extensions/' + this.addonId + '/uninstall', {}, 'text').then((data) => {
+      this.$oh.api.post('/rest/addons/' + this.addonId + '/uninstall', {}, 'text').then((data) => {
         this.$emit('uninstall', this.addon)
       })
     }

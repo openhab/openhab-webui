@@ -81,9 +81,9 @@
               <f7-icon slot="media" f7="calendar" color="gray"></f7-icon>
             </f7-list-item>
           </f7-list>
-          <f7-block-title v-if="$store.getters.apiEndpoint('extensions') && addonsLoaded">Add-ons</f7-block-title>
+          <f7-block-title v-if="$store.getters.apiEndpoint('addons') && addonsLoaded">Add-ons</f7-block-title>
           <f7-list media-list class="search-list"
-            v-if="$store.getters.apiEndpoint('extensions')"
+            v-if="$store.getters.apiEndpoint('addons')"
           >
             <f7-list-item
               media-item
@@ -178,7 +178,7 @@ export default {
       if (!this.apiEndpoints) return
 
       const servicesPromise = (this.$store.getters.apiEndpoint('services')) ? this.$oh.api.get('/rest/services') : Promise.resolve([])
-      const extensionsPromise = (this.$store.getters.apiEndpoint('extensions')) ? this.$oh.api.get('/rest/extensions/types') : Promise.resolve([])
+      const addonsPromise = (this.$store.getters.apiEndpoint('addons')) ? this.$oh.api.get('/rest/addons/types') : Promise.resolve([])
 
       // can be done in parallel!
       servicesPromise.then((data) => {
@@ -186,7 +186,7 @@ export default {
         this.otherServices = data.filter(s => s.category !== 'system')
         this.servicesLoaded = true
       })
-      extensionsPromise.then((data) => {
+      addonsPromise.then((data) => {
         this.addonTypes = data
         this.addonsLoaded = true
       }).catch((err) => {
