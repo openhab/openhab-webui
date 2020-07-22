@@ -38,10 +38,14 @@
     window.onload = function() {
       // Begin Swagger UI call region
       const ui = SwaggerUIBundle({
-        url: window.location.protocol + "//" + window.location.host + "/rest/swagger.json",
+        url: window.location.origin + "/rest/swagger.json",
+        oauth2RedirectUrl: window.location.origin + "/doc/o2c.html",
         dom_id: '#swagger-ui',
         deepLinking: true,
         defaultModelsExpandDepth: 0,
+        tagsSorter: 'alpha',
+        operationsSorter: 'alpha',
+        filter: true,
         docExpansion: 'none',
         presets: [
           SwaggerUIBundle.presets.apis,
