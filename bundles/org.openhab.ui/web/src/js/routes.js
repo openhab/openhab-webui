@@ -40,6 +40,7 @@ import Analyzer from '../pages/analyzer/analyzer.vue'
 
 import DeveloperToolsPage from '../pages/developer/developer-tools.vue'
 import WidgetsListPage from '../pages/developer/widgets/widget-list.vue'
+import ApiExplorerPage from '../pages/developer/api-explorer.vue'
 
 export default [
   {
@@ -336,6 +337,10 @@ export default [
       {
         path: 'add-items-dsl',
         component: ItemsAddFromTextualDefinition
+      },
+      {
+        path: 'api-explorer',
+        component: ApiExplorerPage
       }
     ]
   },

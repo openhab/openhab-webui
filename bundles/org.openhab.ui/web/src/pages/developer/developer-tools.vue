@@ -24,6 +24,14 @@
               </f7-list-item>
             </f7-list>
           </f7-col>
+          <f7-col width="100" medium="50">
+            <f7-block-title>Maintenance Tools</f7-block-title>
+            <f7-list media-item>
+              <f7-list-item media-item title="API Explorer" footer="Discover and access the REST API directly" link="api-explorer">
+                <f7-icon slot="media" f7="wrench" color="gray"></f7-icon>
+              </f7-list-item>
+            </f7-list>
+          </f7-col>
         </f7-row>
       </f7-block>
       </f7-tab>
