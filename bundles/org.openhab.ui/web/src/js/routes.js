@@ -121,7 +121,7 @@ export default [
                 path: 'metadata/:namespace',
                 async (routeTo, routeFrom, resolve, reject) {
                   // dynamic import component; returns promise
-                  const editorComponent = () => import(`../pages/settings/items/metadata/item-metadata-edit.vue`)
+                  const editorComponent = () => import(/* webpackChunkName: "metadata-edit" */ `../pages/settings/items/metadata/item-metadata-edit.vue`)
                   // resolve promise
                   editorComponent().then((vc) => {
                     // resolve with component
@@ -143,7 +143,7 @@ export default [
             path: ':type/:uid',
             async (routeTo, routeFrom, resolve, reject) {
               // dynamic import component; returns promise
-              const editorComponent = () => import(`../pages/settings/pages/${routeTo.params.type}/${routeTo.params.type}-edit.vue`)
+              const editorComponent = () => import(/* webpackChunkName: "[request]" */ `../pages/settings/pages/${routeTo.params.type}/${routeTo.params.type}-edit.vue`)
               // resolve promise
               editorComponent().then((vc) => {
                 // resolve with component
@@ -225,7 +225,7 @@ export default [
             path: ':ruleId',
             async (routeTo, routeFrom, resolve, reject) {
               // dynamic import component; returns promise
-              const ruleEditComponent = () => import('../pages/settings/rules/rule-edit.vue')
+              const ruleEditComponent = () => import(/* webpackChunkName: "rule-edit" */ '../pages/settings/rules/rule-edit.vue')
               // resolve promise
               ruleEditComponent().then((vc) => {
                 // resolve with component
@@ -246,7 +246,7 @@ export default [
         path: 'schedule/',
         async (routeTo, routeFrom, resolve, reject) {
           // dynamic import component; returns promise
-          const scheduleComponent = () => import('../pages/settings/schedule/schedule.vue')
+          const scheduleComponent = () => import(/* webpackChunkName: "schedule" */ '../pages/settings/schedule/schedule.vue')
           // resolve promise
           scheduleComponent().then((vc) => {
             // resolve with component
@@ -260,7 +260,7 @@ export default [
             path: 'add',
             async (routeTo, routeFrom, resolve, reject) {
               // dynamic import component; returns promise
-              const ruleEditComponent = () => import('../pages/settings/rules/rule-edit.vue')
+              const ruleEditComponent = () => import(/* webpackChunkName: "rule-edit" */ '../pages/settings/rules/rule-edit.vue')
               // resolve promise
               ruleEditComponent().then((vc) => {
                 // resolve with component
@@ -317,7 +317,7 @@ export default [
             path: ':uid',
             async (routeTo, routeFrom, resolve, reject) {
               // dynamic import component; returns promise
-              const widgetEditComponent = () => import('../pages/developer/widgets/widget-edit.vue')
+              const widgetEditComponent = () => import(/* webpackChunkName: "widget-edit" */ '../pages/developer/widgets/widget-edit.vue')
               // resolve promise
               widgetEditComponent().then((vc) => {
                 // resolve with component

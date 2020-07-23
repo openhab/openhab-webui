@@ -32,7 +32,7 @@
 
 export default {
   components: {
-    'config-sheet': () => import('@/components/config/config-sheet.vue')
+    'config-sheet': () => import(/* webpackChunkName: "config-sheet" */ '@/components/config/config-sheet.vue')
   },
   props: ['configDescription', 'value', 'parameters', 'configuration'],
   data () {

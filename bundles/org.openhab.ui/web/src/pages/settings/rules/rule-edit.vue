@@ -205,7 +205,7 @@ import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import TagInput from '@/components/tags/tag-input.vue'
 // import RuleConfigureModulePage from './rule-configure-module.vue'
 
-const ScriptEditorPopup = () => import('@/components/config/controls/script-editor-popup.vue')
+import ScriptEditorPopup from '@/components/config/controls/script-editor-popup.vue'
 import CronEditor from '@/components/config/controls/cronexpression-editor.vue'
 
 import ModuleDescriptionSuggestions from './module-description-suggestions'

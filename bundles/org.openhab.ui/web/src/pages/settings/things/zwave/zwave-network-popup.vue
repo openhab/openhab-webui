@@ -19,7 +19,7 @@
 <script>
 export default {
   components: {
-    'zwave-network': () => import('@/components/thing/zwave/zwave-network.vue')
+    'zwave-network': () => import(/* webpackChunkName: "zwave-network" */ '@/components/thing/zwave/zwave-network.vue')
   },
   props: ['opened'],
   data () {

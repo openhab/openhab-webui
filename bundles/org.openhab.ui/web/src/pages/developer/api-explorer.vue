@@ -116,12 +116,12 @@ export default {
   mixins: [auth],
   methods: {
     onPageAfterIn () {
-      const swaggerCss = import('swagger-ui/dist/swagger-ui.css')
-      const swaggerModule = import('swagger-ui')
+      const swaggerCss = import(/* webpackChunkName: "swagger-css" */ 'swagger-ui-dist/swagger-ui.css')
+      const swaggerModule = import(/* webpackChunkName: "swagger" */'swagger-ui-dist')
       const refreshToken = this.refreshAccessToken()
 
       Promise.all([swaggerModule, swaggerCss, refreshToken]).then((results) => {
-        const SwaggerUI = results[0].default
+        const SwaggerUI = results[0].SwaggerUIBundle
         const tokenResponse = results[2]
         SwaggerUI({
           url: '/rest/swagger.json',
@@ -132,6 +132,7 @@ export default {
           operationsSorter: 'alpha',
           filter: true,
           docExpansion: 'none',
+          syntaxHighlight: false,
           requestInterceptor: (req) => {
             req.headers['Authorization'] = 'Bearer ' + tokenResponse.access_token
             return req
