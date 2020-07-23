@@ -44,8 +44,6 @@ export default {
   components: {
     ThingPicker
   },
-  computed: {
-  },
   methods: {
     computedThingUid () {
       return (this.thing.bridgeUID)
