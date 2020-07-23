@@ -111,7 +111,7 @@ export default {
       this.load()
     },
     load () {
-      this.$oh.api.get('/rest/extensions').then(data => {
+      this.$oh.api.get('/rest/addons').then(data => {
         this.addons = data.filter(addon => addon.installed && addon.type === this.addonType)
         this.ready = true
         this.startEventSource()
@@ -126,7 +126,7 @@ export default {
       this.currentlyUninstalling.push(addon.id)
     },
     startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/extensions/*/*', null, (event) => {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/addons/*/*', null, (event) => {
         console.log(event)
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {
