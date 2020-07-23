@@ -47,7 +47,7 @@ export default {
   methods: {
     computedThingUid () {
       return (this.thing.bridgeUID)
-        ? [this.thing.thingTypeUID, this.thing.bridgeUID.substring(this.thing.bridgeUID.lastIndexOf(':')), this.thing.ID].join(':')
+        ? [this.thing.thingTypeUID, this.thing.bridgeUID.substring(this.thing.bridgeUID.lastIndexOf(':') + 1), this.thing.ID].join(':')
         : [this.thing.thingTypeUID, this.thing.ID].join(':')
     },
     changeUID (event) {
