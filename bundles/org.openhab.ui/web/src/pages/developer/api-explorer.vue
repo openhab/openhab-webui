@@ -124,7 +124,7 @@ export default {
         const SwaggerUI = results[0].SwaggerUIBundle
         const tokenResponse = results[2]
         SwaggerUI({
-          url: '/rest/swagger.json',
+          url: '/rest/spec',
           dom_id: '#swaggerUi',
           deepLinking: false,
           defaultModelsExpandDepth: 0,
