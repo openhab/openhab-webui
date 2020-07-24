@@ -64,7 +64,7 @@
 export default {
   props: ['parameterGroups', 'parameters', 'configuration'],
   components: {
-    'config-parameter': () => import('./config-parameter.vue')
+    'config-parameter': () => import(/* webpackChunkName: "config-parameter" */ './config-parameter.vue')
   },
   data () {
     return {
