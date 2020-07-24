@@ -19,7 +19,7 @@
   .wrapper
     padding 0
     max-width inherit
-  .information-container
+  .information-container, .scheme-container, .authorization__btn
     display none
   .operation-filter-input
     border 0
