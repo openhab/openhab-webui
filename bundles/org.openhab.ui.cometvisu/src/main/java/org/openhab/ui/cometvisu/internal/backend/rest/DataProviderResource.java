@@ -54,16 +54,19 @@ import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * DataProvider backend for the cometvisu manager.
  *
  * @author Tobias Bräutigam - Initial contribution
  * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
+ * @author Wouter Born - Migrated to OpenAPI annotations
  */
 @Component
 @JaxrsResource
@@ -71,7 +74,7 @@ import io.swagger.annotations.ApiResponses;
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/data")
-@Api(Config.COMETVISU_BACKEND_ALIAS + "/data")
+@Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/data")
 @NonNullByDefault
 public class DataProviderResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(DataProviderResource.class);
@@ -98,8 +101,8 @@ public class DataProviderResource implements RESTResource {
     @GET
     @Path("/addresses")
     @Produces({ MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Returns the list of available addresses.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Map.class) })
+    @Operation(summary = "Returns the list of available addresses.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = Map.class))) })
     public Response getAddresses() {
         // collect all available transform types
         List<String> transformTypes = new ArrayList<>();
@@ -144,8 +147,8 @@ public class DataProviderResource implements RESTResource {
     @GET
     @Path("/designs")
     @Produces({ MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Returns the list of available designs.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = List.class) })
+    @Operation(summary = "Returns the list of available designs.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))) })
     public List<String> getDesigns() {
         // all designs
         File designDir = ManagerSettings.getInstance().getDesignFolder();
@@ -165,8 +168,8 @@ public class DataProviderResource implements RESTResource {
     @GET
     @Path("/influxdbfields")
     @Produces({ MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Returns the list of available influx database tags.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
+    @Operation(summary = "Returns the list of available influx database tags.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK") })
     public Response getInfluxDBFields(@QueryParam("auth") String auth, @QueryParam("measurement") String measurement) {
         // this is not supported by the openHAB backend
         return Response.ok().build();
@@ -175,8 +178,8 @@ public class DataProviderResource implements RESTResource {
     @GET
     @Path("/influxdbtags")
     @Produces({ MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Returns the list of available influx database fields.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
+    @Operation(summary = "Returns the list of available influx database fields.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK") })
     public Response getInfluxDBTags(@QueryParam("auth") String auth, @QueryParam("measurement") String measurement) {
         // this is not supported by the openHAB backend
         return Response.ok().build();
@@ -185,8 +188,8 @@ public class DataProviderResource implements RESTResource {
     @GET
     @Path("/influxdbs")
     @Produces({ MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Returns the list of available influx databases.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
+    @Operation(summary = "Returns the list of available influx databases.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK") })
     public Response getInfluxDBs(@QueryParam("auth") String auth) {
         // this is not supported by the openHAB backend
         return Response.ok().build();
@@ -195,8 +198,8 @@ public class DataProviderResource implements RESTResource {
     @GET
     @Path("/rrds")
     @Produces({ MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Returns the list of available RRDs.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = DataProviderResponse.class) })
+    @Operation(summary = "Returns the list of available RRDs.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = DataProviderResponse.class))) })
     public Response getRRDs() {
         DataProviderResponse res = new DataProviderResponse();
         for (final QueryablePersistenceService service : persistenceServices.values()) {

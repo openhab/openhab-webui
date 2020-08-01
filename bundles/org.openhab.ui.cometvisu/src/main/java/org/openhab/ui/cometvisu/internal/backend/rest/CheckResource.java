@@ -15,6 +15,7 @@ package org.openhab.ui.cometvisu.internal.backend.rest;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -35,16 +36,18 @@ import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsApplicationSelect;
 import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsName;
 import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Check filesystem backend for the cometvisu manager.
  *
  * @author Tobias Bräutigam - Initial contribution
  * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
+ * @author Wouter Born - Migrated to OpenAPI annotations
  */
 @Component
 @JaxrsResource
@@ -52,7 +55,7 @@ import io.swagger.annotations.ApiResponses;
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/fs/check")
-@Api(Config.COMETVISU_BACKEND_ALIAS + "/fs/check")
+@Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/fs/check")
 @NonNullByDefault
 public class CheckResource implements RESTResource {
 
@@ -63,12 +66,12 @@ public class CheckResource implements RESTResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Check filesystem environment (access rights, etc)")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = CheckResponse.class) })
+    @Operation(summary = "Check filesystem environment (access rights, etc)", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CheckResponse.class))) })
     public CheckResponse checkEnvironment() {
         CheckResponse res = new CheckResponse();
         File configFolder = ManagerSettings.getInstance().getConfigFolder();
-        ArrayList<File> filesToCheck = new ArrayList<File>();
+        List<File> filesToCheck = new ArrayList<>();
         filesToCheck.add(configFolder);
         filesToCheck.add(new File(configFolder.getAbsoluteFile() + File.separator + "media"));
         filesToCheck.add(new File(configFolder.getAbsoluteFile() + File.separator + "backup"));

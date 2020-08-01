@@ -50,17 +50,17 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Hidden configuration backend for the cometvisu manager.
  *
  * @author Tobias Bräutigam - Initial contribution
  * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
+ * @author Wouter Born - Migrated to OpenAPI annotations
  */
 @Component
 @JaxrsResource
@@ -68,7 +68,7 @@ import io.swagger.annotations.ApiResponses;
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/config")
-@Api(Config.COMETVISU_BACKEND_ALIAS + "/config")
+@Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/config")
 @NonNullByDefault
 public class HiddenConfigResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(HiddenConfigResource.class);
@@ -79,14 +79,15 @@ public class HiddenConfigResource implements RESTResource {
     @POST
     @Path("/hidden/{section}/{key}")
     @Consumes(MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Creates a new config option")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
-            @ApiResponse(code = 404, message = "section not found"),
-            @ApiResponse(code = 406, message = "config option exists") })
+    @Operation(summary = "Creates a new config option", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "403", description = "not allowed"),
+            @ApiResponse(responseCode = "404", description = "section not found"),
+            @ApiResponse(responseCode = "406", description = "config option exists") })
     public Response createHiddenConfig(
-            @ApiParam(value = "Section of the config option") @PathParam("section") String section,
-            @ApiParam(value = "Key (ID) of the config option in the section, ('*' for all options)") @PathParam("key") String key,
-            @ApiParam(value = "value of the option", required = true) String body) {
+            @Parameter(description = "Section of the config option") @PathParam("section") String section,
+            @Parameter(description = "Key (ID) of the config option in the section, ('*' for all options)") @PathParam("key") String key,
+            @Parameter(description = "value of the option", required = true) String body) {
         if (section.equals("*") || key.equals("*")) {
             return FsUtil.createErrorResponse(Status.NOT_ACCEPTABLE, "wildcard not allowed");
         }
@@ -110,12 +111,12 @@ public class HiddenConfigResource implements RESTResource {
 
     @DELETE
     @Path("/hidden/{section}/{key}")
-    @ApiOperation(value = "Delete config option")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
-            @ApiResponse(code = 404, message = "config option does not exist") })
+    @Operation(summary = "Delete config option", responses = { @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "403", description = "not allowed"),
+            @ApiResponse(responseCode = "404", description = "config option does not exist") })
     public Response deleteHiddenConfig(
-            @ApiParam(value = "Section of the config option, ('*' for all sections)") @PathParam("section") String section,
-            @ApiParam(value = "Key (ID) of the config option in the section, ('*' for all options)") @PathParam("key") String key) {
+            @Parameter(description = "Section of the config option, ('*' for all sections)") @PathParam("section") String section,
+            @Parameter(description = "Key (ID) of the config option in the section, ('*' for all options)") @PathParam("key") String key) {
         HiddenConfig config = this.loadHiddenConfig();
         if (section.equals("*")) {
             config.clear();
@@ -143,12 +144,13 @@ public class HiddenConfigResource implements RESTResource {
     @GET
     @Path("/hidden/{section}/{key}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Provides the value of a config option")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
-            @ApiResponse(code = 404, message = "config option does not exist") })
+    @Operation(summary = "Provides the value of a config option", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "403", description = "not allowed"),
+            @ApiResponse(responseCode = "404", description = "config option does not exist") })
     public Response getHiddenConfig(
-            @ApiParam(value = "Section of the config option, ('*' for all sections)") @PathParam("section") String sectionKey,
-            @ApiParam(value = "Key (ID) of the config option in the section, ('*' for all options)") @PathParam("key") String key) {
+            @Parameter(description = "Section of the config option, ('*' for all sections)") @PathParam("section") String sectionKey,
+            @Parameter(description = "Key (ID) of the config option in the section, ('*' for all options)") @PathParam("key") String key) {
         HiddenConfig config = this.loadHiddenConfig();
         if (sectionKey.contentEquals("*")) {
             if (key.contentEquals("*")) {
@@ -179,11 +181,11 @@ public class HiddenConfigResource implements RESTResource {
     @PUT
     @Path("/hidden")
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Save the hidden config")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
-            @ApiResponse(code = 500, message = "error saving hidden config") })
+    @Operation(summary = "Save the hidden config", responses = { @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "403", description = "not allowed"),
+            @ApiResponse(responseCode = "500", description = "error saving hidden config") })
     public Response saveHiddenConfig(
-            @ApiParam(value = "Complete config content", required = true) HiddenConfig config) {
+            @Parameter(description = "Complete config content", required = true) HiddenConfig config) {
         try {
             this.writeHiddenConfig(config);
             return Response.ok().build();
@@ -196,15 +198,16 @@ public class HiddenConfigResource implements RESTResource {
     @PUT
     @Path("/hidden/{section}/{key}")
     @Consumes(MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Changes the value of an existing config option")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
-            @ApiResponse(code = 404, message = "config option does not exist"),
-            @ApiResponse(code = 406, message = "wildcard not allowed"),
-            @ApiResponse(code = 500, message = "error saving hidden config") })
+    @Operation(summary = "Changes the value of an existing config option", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "403", description = "not allowed"),
+            @ApiResponse(responseCode = "404", description = "config option does not exist"),
+            @ApiResponse(responseCode = "406", description = "wildcard not allowed"),
+            @ApiResponse(responseCode = "500", description = "error saving hidden config") })
     public Response updateHiddenConfig(
-            @ApiParam(value = "Section of the config option") @PathParam("section") String section,
-            @ApiParam(value = "Key (ID) of the config option in the section") @PathParam("key") String key,
-            @ApiParam(value = "value of the option", required = true) String body) {
+            @Parameter(description = "Section of the config option") @PathParam("section") String section,
+            @Parameter(description = "Key (ID) of the config option in the section") @PathParam("key") String key,
+            @Parameter(description = "value of the option", required = true) String body) {
         if (section.equals("*") || key.equals("*")) {
             return FsUtil.createErrorResponse(Status.NOT_ACCEPTABLE, "wildcard not allowed");
         }
