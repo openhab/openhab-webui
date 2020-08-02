@@ -46,17 +46,17 @@ import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * handles state updates send by the CometVisu client and forwars them to the EventPublisher
  *
  * @author Tobias Bräutigam - Initial contribution
  * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
+ * @author Wouter Born - Migrated to OpenAPI annotations
  */
 @Component
 @JaxrsResource
@@ -64,7 +64,7 @@ import io.swagger.annotations.ApiResponses;
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_WRITE_ALIAS)
-@Api(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_WRITE_ALIAS)
+@Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_WRITE_ALIAS)
 @NonNullByDefault
 public class WriteResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(WriteResource.class);
@@ -82,13 +82,13 @@ public class WriteResource implements RESTResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "starts defined actions e.g. downloading the CometVisu client")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "Item not found") })
+    @Operation(summary = "starts defined actions e.g. downloading the CometVisu client", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Item not found") })
     public Response setState(@Context HttpHeaders headers,
-            @ApiParam(value = "Item name", required = true) @QueryParam("a") String itemName,
-            @ApiParam(value = "Item value", required = true) @QueryParam("v") String value,
-            @ApiParam(value = "timestamp") @QueryParam("ts") long timestamp) {
+            @Parameter(description = "Item name", required = true) @QueryParam("a") String itemName,
+            @Parameter(description = "Item value", required = true) @QueryParam("v") String value,
+            @Parameter(description = "timestamp") @QueryParam("ts") long timestamp) {
         if (logger.isDebugEnabled()) {
             logger.debug("Received CV write request at '{}' for item '{}' with value '{}'.", uriInfo.getPath(),
                     itemName, value);
