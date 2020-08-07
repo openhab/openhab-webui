@@ -12,7 +12,7 @@
  */
 package org.openhab.ui.habot.test;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 
 /**
