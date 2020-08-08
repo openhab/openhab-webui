@@ -21,46 +21,14 @@
 <script>
 import mixin from '../widget-mixin'
 import OhToggle from '../system/oh-toggle.vue'
+import { OhToggleCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
     OhToggle
   },
-  widget: {
-    name: 'oh-toggle-card',
-    label: 'Toggle Card',
-    description: 'Display a switch in a card',
-    props: {
-      parameters: [
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT',
-          description: 'Title of the card'
-        },
-        {
-          name: 'item',
-          label: 'Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'Item to control'
-        },
-        {
-          name: 'color',
-          label: 'Color',
-          type: 'TEXT',
-          description: 'Color of the control'
-        },
-        {
-          name: 'footer',
-          label: 'Footer text',
-          type: 'TEXT',
-          description: 'Footer of the card'
-        }
-      ]
-    }
-  },
+  widget: OhToggleCardDefinition,
   data () {
     return {
       value: Math.random()

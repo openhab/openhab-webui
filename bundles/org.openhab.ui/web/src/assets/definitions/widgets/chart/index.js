@@ -1,3 +1,5 @@
+// definitions for the chart widgets
+
 const positionGroup = {
   name: 'position',
   label: 'Position',

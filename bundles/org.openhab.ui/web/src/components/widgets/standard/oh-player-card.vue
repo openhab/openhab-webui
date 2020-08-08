@@ -27,53 +27,13 @@
 <script>
 import mixin from '../widget-mixin'
 import OhPlayerControls from '../system/oh-player-controls.vue'
+import { OhPlayerCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
     OhPlayerControls
   },
-  widget: {
-    name: 'oh-player-card',
-    label: 'Player Card',
-    description: 'Display player controls in a card',
-    props: {
-      parameters: [
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT',
-          description: 'Title of the card'
-        },
-        {
-          name: 'item',
-          label: 'Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'Item to control (player)'
-        },
-        {
-          name: 'footer',
-          label: 'Footer text',
-          type: 'TEXT',
-          description: 'Footer of the card'
-        },
-        {
-          name: 'artistItem',
-          label: 'Artist Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'Item holding the artist name'
-        },
-        {
-          name: 'trackItem',
-          label: 'Track Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'Item holding the track name'
-        }
-      ]
-    }
-  }
+  widget: OhPlayerCardDefinition
 }
 </script>

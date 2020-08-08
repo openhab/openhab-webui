@@ -9,35 +9,14 @@
 <script>
 import mixin from '../../widget-mixin'
 import OhListItem from './oh-list-item.vue'
+import { OhToggleItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
 
 export default {
   components: {
     OhListItem
   },
   mixins: [mixin],
-  widget: {
-    name: 'oh-toggle-item',
-    label: 'Toggle List Item',
-    description: 'Display a toggle switch in a list',
-    props: {
-      parameterGroups: [],
-      parameters: [
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT',
-          description: 'Title of the list item'
-        },
-        {
-          name: 'item',
-          label: 'Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'Item to control'
-        }
-      ]
-    }
-  },
+  widget: OhToggleItemDefinition,
   computed: {
     afterComponent () {
       return {

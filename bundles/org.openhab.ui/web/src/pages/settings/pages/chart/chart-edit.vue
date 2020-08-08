@@ -120,7 +120,7 @@ import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue
 import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
 
 import ChartDesigner from '@/components/pagedesigner/chart/chart-designer.vue'
-import ChartWidgetsDefinitions from './chart-widgets-definitions'
+import ChartWidgetsDefinitions from '@/assets/definitions/widgets/chart/index'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 

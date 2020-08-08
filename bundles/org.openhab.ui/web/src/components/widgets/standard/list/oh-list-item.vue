@@ -50,93 +50,12 @@
 
 <script>
 import mixin from '../../widget-mixin'
-import { actionGroup, actionProps, actionsMixin } from '../../widget-actions'
+import { actionsMixin } from '../../widget-actions'
+import { OhListItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
 
 export default {
   name: 'oh-list-item',
   mixins: [mixin, actionsMixin],
-  widget: {
-    name: 'oh-list-item',
-    label: 'List Item',
-    description: 'A list item',
-    props: {
-      parameterGroups: [
-        actionGroup(null, 'Action to perform when the element is clicked'),
-        {
-          name: 'modifiers',
-          label: 'Modifiers',
-          description: 'Special simplified rendering for this item'
-        }
-      ],
-      parameters: [
-        ...actionProps(),
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT'
-        },
-        {
-          name: 'divider',
-          groupName: 'modifiers',
-          label: 'Divider',
-          type: 'BOOLEAN',
-          description: 'This item will be styled as a divider between sections. All other options except title will be ignored.'
-        },
-        {
-          name: 'listButton',
-          groupName: 'modifiers',
-          label: 'List Button',
-          type: 'BOOLEAN',
-          description: 'This item will be styled as a list button (clickable link). All other options except title and color will be ignored.'
-        },
-        {
-          name: 'subtitle',
-          label: 'Subtitle',
-          type: 'TEXT'
-        },
-        {
-          name: 'text',
-          label: 'Text',
-          type: 'TEXT'
-        },
-        {
-          name: 'after',
-          label: 'After (either set this or a badge)',
-          type: 'TEXT'
-        },
-        {
-          name: 'badge',
-          label: 'Badge',
-          type: 'TEXT'
-        },
-        {
-          name: 'badgeColor',
-          label: 'Badge Color',
-          type: 'TEXT'
-        },
-        {
-          name: 'color',
-          label: 'Color',
-          type: 'TEXT',
-          description: 'Color (for list buttons)',
-          visible: (value, configuration, configDescription, parameters) => {
-            return configuration.listButton
-          }
-        },
-        {
-          name: 'icon',
-          label: 'Icon',
-          type: 'TEXT',
-          description: 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/configuration/iconsets/classic/">openHAB icon</a>) or <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'
-        },
-        {
-          name: 'iconColor',
-          label: 'Icon Color',
-          type: 'TEXT',
-          description: 'Not applicable to openHAB icons'
-        }
-      ]
-    }
-  }
+  widget: OhListItemDefinition
 }
 </script>
