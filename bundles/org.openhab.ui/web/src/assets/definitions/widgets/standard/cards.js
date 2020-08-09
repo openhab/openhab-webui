@@ -95,3 +95,10 @@ import ToggleParameters from '../system/toggle'
 export const OhToggleCardDefinition = () => new WidgetDefinition('oh-toggle-card', 'Toggle Card', 'Display a toggle swtich in a card to send ON/OFF commands')
   .paramGroup(CardParameterGroup(), CardParameters())
   .paramGroup(pg('toggle', 'Toggle'), ToggleParameters())
+
+// OhImageCard
+import ImageParameters from '../system/image'
+export const OhImageCardDefinition = () => new WidgetDefinition('oh-image-card', 'Image Card', 'Display an image (URL or Image item ) in a card')
+  .paramGroup(CardParameterGroup(), CardParameters())
+  .paramGroup(pg('image', 'Image'), ImageParameters())
+  .paramGroup(actionGroup(null, 'Action to perform when the image is clicked'), actionParams())

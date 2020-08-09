@@ -26,6 +26,15 @@ export default {
   get (uri, data) {
     return wrapPromise(Framework7.request.promise.json(uri, data))
   },
+  getPlain (uri, data, contentType) {
+    return wrapPromise(Framework7.request.promise({
+      method: 'GET',
+      url: uri,
+      data,
+      processData: false,
+      contentType: contentType || 'text/plain'
+    }))
+  },
   post (uri, data, dataType) {
     return wrapPromise(Framework7.request.promise.postJSON(uri, data, dataType))
   },

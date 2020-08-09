@@ -15,5 +15,19 @@ export default {
     //   })
     // })
     return Promise.resolve(url)
+  },
+  getImage: (url) => {
+    return url
+
+    // TODO handle basic auth with blobs and data URIs if necessary
+    // return new Promise((resolve, reject) => {
+    //   Framework7.request.promise({ url, xhrFields: { responseType: 'blob' } }).then((resp) => {
+    //     let reader = new FileReader()
+    //     reader.readAsDataURL(resp.data)
+    //     reader.onload = () => {
+    //       return resolve(reader.result)
+    //     }
+    //   })
+    // })
   }
 }
