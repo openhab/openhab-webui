@@ -32,3 +32,13 @@ export function OhGridColDefinition () {
       po('xlarge', 'Width (XL)', 'Column width when app width >= 1200px', columnOptions)
     ])
 }
+
+export function OhMasonryDefinition () {
+  return new WidgetDefinition('oh-masonry', 'Masonry Layout', 'Arranges widgets automatically depending on the screen size')
+    .params([
+      po('flavor', 'Flavor', 'Choose the implementation of the masonry layout', [
+        { value: 'vue-masonry-css', label: 'vue-masonry-css' },
+        { value: 'css-grid', label: 'CSS Grid (no library)' }
+      ])
+    ])
+}
