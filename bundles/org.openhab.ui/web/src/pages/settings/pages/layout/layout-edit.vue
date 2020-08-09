@@ -201,10 +201,9 @@ export default {
       })
     },
     addMasonry (component) {
-      if (!component.slots.masonry) {
+      if (!component.slots.masonry || !component.slots.masonry.length) {
         this.$set(this.page.slots, 'masonry', [{
           component: 'oh-masonry',
-          config: { nbTestCards: 10 },
           slots: { default: [] }
         }])
       }

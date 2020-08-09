@@ -1,10 +1,13 @@
 <template>
   <div>
-    <f7-menu v-if="context.editmode &&  context.clipboardtype !== 'oh-block' && context.clipboardtype !== 'oh-grid-row' && context.clipboardtype !== 'oh-grid-col'" class="configure-layout-menu margin-bottom">
+    <f7-menu v-if="context.editmode" class="configure-layout-menu margin-bottom">
       <f7-menu-item style="margin-left: auto" icon-f7="rectangle_grid_3x2" dropdown>
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context)" href="#" text="Configure Masonry"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item v-if="context.clipboardtype" @click="context.editmode.pasteWidget(context.component, context.parent)" href="#" text="Paste"></f7-menu-dropdown-item>
+          <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
+          <f7-menu-dropdown-item v-if="context.clipboardtype && context.clipboardtype !== 'oh-block' && context.clipboardtype !== 'oh-grid-row' && context.clipboardtype !== 'oh-grid-col'" @click="context.editmode.pasteWidget(context.component, context.parent)" href="#" text="Paste"></f7-menu-dropdown-item>
+          <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
+          <f7-menu-dropdown-item @click="context.editmode.removeWidget(context.component, context.parent, 'masonry')" href="#" text="Remove Masonry"></f7-menu-dropdown-item>
         </f7-menu-dropdown>
       </f7-menu-item>
     </f7-menu>
