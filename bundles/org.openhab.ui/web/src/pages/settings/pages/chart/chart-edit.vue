@@ -138,7 +138,7 @@ export default {
   props: ['createMode', 'uid'],
   data () {
     return {
-      pageWidgetDefinition: OhChartPage.widget,
+      pageWidgetDefinition: OhChartPage.widget(),
       page: {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-chart-page',

@@ -88,13 +88,13 @@ import PageDesigner from '../pagedesigner-mixin'
 
 import YAML from 'yaml'
 
-import OhTab from './oh-tab'
+import { OhTabDefinition } from '@/assets/definitions/widgets/tabs'
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
 import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
 
-const ConfigurableWidgets = { OhTab }
+const ConfigurableWidgets = { OhTabDefinition }
 
 export default {
   mixins: [PageDesigner],
@@ -130,9 +130,9 @@ export default {
       }
     },
     getWidgetDefinition (componentType) {
-      const component = Object.values(ConfigurableWidgets).find((w) => w.widget && w.widget.name === componentType)
-      if (!component) return null
-      return component.widget
+      const definition = Object.values(ConfigurableWidgets).find((wd) => typeof wd === 'function' && wd().name === componentType)
+      if (!definition) return null
+      return definition()
     },
     toYaml () {
       this.pageYaml = YAML.stringify({

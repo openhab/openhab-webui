@@ -1,4 +1,5 @@
 // definitions for the chart widgets
+// TODO: migrate to WidgetDefinition & use helpers
 
 const positionGroup = {
   name: 'position',

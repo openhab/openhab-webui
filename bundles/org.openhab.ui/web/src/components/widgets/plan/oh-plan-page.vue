@@ -14,6 +14,7 @@
     class="oh-plan-page-lmap"
     :class="{ 'with-tabbar': context.tab,
       'oh-plan-white-background': config.backgroundColor === 'white',
+      'oh-plan-black-background': config.backgroundColor === 'black',
       'oh-plan-blackwhite-background': config.backgroundColor === 'blackwhite',
       'oh-plan-dark-mode-invert': config.darkModeInvert,
        }"
@@ -49,6 +50,8 @@
     height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height) - var(--f7-tabbar-labels-height)) !important
   &.oh-plan-white-background, &.oh-plan-blackwhite-background
     background-color white
+  &.oh-plan-black-background
+    background-color black
 .theme-dark
   .oh-plan-page-lmap
     &.oh-plan-blackwhite-background
@@ -64,6 +67,7 @@ import { LMap, LImageOverlay, LFeatureGroup, LControl } from 'vue2-leaflet'
 import 'leaflet/dist/leaflet.css'
 
 import OhPlanMarker from './oh-plan-marker.vue'
+import { OhPlanPageDefinition } from '@/assets/definitions/widgets/plan'
 
 export default {
   mixins: [mixin],
@@ -74,76 +78,7 @@ export default {
     LFeatureGroup,
     OhPlanMarker
   },
-  widget: {
-    name: 'oh-plan-page',
-    label: 'Floor plan',
-    description: 'Displays markers on an image overlay',
-    props: {
-      parameterGroups: [
-        {
-          name: 'background',
-          label: 'Background'
-        }
-      ],
-      parameters: [
-        {
-          name: 'imageUrl',
-          label: 'Image URL',
-          type: 'TEXT',
-          context: 'url',
-          description: 'The URL of the image to display as background'
-        },
-        {
-          name: 'imageWidth',
-          label: 'Image Width',
-          type: 'INTEGER',
-          description: 'The width of the image (by default 1000 pixels). Please specify if the image is not square to compute the aspect ratio'
-        },
-        {
-          name: 'imageHeight',
-          label: 'Image Height',
-          type: 'INTEGER',
-          description: 'The width of the image (by default 1000 pixels). Please specify if the image is not square to compute the aspect ratio'
-        },
-        {
-          name: 'noZoomOrDrag',
-          label: 'Disable Zooming & Dragging',
-          type: 'BOOLEAN',
-          description: 'Disable the ability to zoom and drag'
-        },
-        {
-          name: 'noZoomAnimation',
-          label: 'No Zoom Animation',
-          type: 'BOOLEAN',
-          description: 'Change zoom levels without animation, can also avoid graphic glitches with persistent tooltips'
-        },
-        {
-          name: 'noMarkerZoomAnimation',
-          label: 'Hide Markers during Zoom Animation',
-          type: 'BOOLEAN',
-          description: 'Hide the markers while zooming'
-        },
-        {
-          name: 'backgroundColor',
-          label: 'Background Color',
-          type: 'TEXT',
-          limitToOptions: true,
-          description: 'Color outside the bounds of the image. "Black or White" means it will be black in dark mode and white in light mode',
-          options: [
-            { value: '', label: 'Default' },
-            { value: 'white', label: 'White' },
-            { value: 'blackwhite', label: 'Black or White' }
-          ]
-        },
-        {
-          name: 'darkModeInvert',
-          label: 'Invert Image in Dark Mode',
-          type: 'BOOLEAN',
-          description: 'Apply an invert filter to the image in dark mode - use with images in black & white or grayscale for best results'
-        }
-      ]
-    }
-  },
+  widget: OhPlanPageDefinition,
   data () {
     return {
       ready: false,

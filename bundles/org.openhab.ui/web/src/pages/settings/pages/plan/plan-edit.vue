@@ -135,7 +135,7 @@ export default {
   props: ['createMode', 'uid'],
   data () {
     return {
-      pageWidgetDefinition: OhPlanPage.widget,
+      pageWidgetDefinition: OhPlanPage.widget(),
       forceEditMode: true,
       page: {
         uid: 'page_' + this.$f7.utils.id(),
@@ -147,9 +147,9 @@ export default {
   },
   methods: {
     markerDefaultIcon (marker) {
-      const widgetDefinition = Object.values(ConfigurableWidgets).find((c) => c.widget.name === marker.component)
+      const widgetDefinition = Object.values(ConfigurableWidgets).find((c) => c.widget && typeof c.widget === 'function' && c.widget().name === marker.component)
       if (widgetDefinition) {
-        return widgetDefinition.widget.icon
+        return widgetDefinition.widget().icon
       }
       return null
     },
@@ -167,9 +167,9 @@ export default {
       }
     },
     getWidgetDefinition (componentType) {
-      const component = Object.values(ConfigurableWidgets).find((w) => w.widget && w.widget.name === componentType)
+      const component = Object.values(ConfigurableWidgets).find((w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType)
       if (!component) return null
-      return component.widget
+      return component.widget()
     },
     toYaml () {
       this.pageYaml = YAML.stringify({

@@ -24,7 +24,8 @@
 <script>
 import mixin from '../widget-mixin'
 import { LMarker, LTooltip, LIcon, LPopup } from 'vue2-leaflet'
-import { actionGroup, actionProps, actionsMixin } from '../widget-actions'
+import { actionsMixin } from '../widget-actions'
+import { OhPlanMarkerDefinition } from '@/assets/definitions/widgets/plan'
 
 export default {
   mixins: [mixin, actionsMixin],
@@ -34,126 +35,7 @@ export default {
     LIcon,
     LPopup
   },
-  widget: {
-    name: 'oh-plan-marker',
-    label: 'Floor Plan Marker',
-    icon: 'map_pin',
-    description: 'A marker on a floor plan',
-    props: {
-      parameterGroups: [
-        {
-          name: 'icon',
-          label: 'Icon'
-        },
-        {
-          name: 'tooltip',
-          label: 'Tooltip / Label',
-          description: 'You can customize the styles further with CSS attributes in the <code>tooltipStyle</code> parameter (in YAML only)'
-        },
-        actionGroup(null, 'Action to perform when the marker is clicked')
-      ],
-      parameters: [
-        ...actionProps(),
-        {
-          name: 'name',
-          label: 'Name',
-          type: 'TEXT',
-          description: 'The name of the marker (for identification)'
-        },
-        {
-          name: 'coords',
-          label: 'Coordinates',
-          type: 'TEXT',
-          description: 'The coordinates of this marker in the floor plan Coordinate Reference System; usually set by dragging the marker at design time'
-        },
-        {
-          name: 'item',
-          label: 'Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'The item whose state to display on this marker'
-        },
-        {
-          name: 'icon',
-          label: 'Icon',
-          groupName: 'icon',
-          type: 'TEXT',
-          description: 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/configuration/iconsets/classic/">openHAB icon</a>) or <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'
-        },
-        {
-          name: 'iconUseState',
-          label: 'Use state to get icon',
-          groupName: 'icon',
-          type: 'BOOLEAN',
-          description: 'Pass the state of the item to get a dynamic icon (for openHAB icons only) - can cause the icon to flicker when the state changes'
-        },
-        {
-          name: 'iconSize',
-          label: 'Icon Size',
-          groupName: 'icon',
-          type: 'NUMBER',
-          description: 'Size of the icon in pixels (40 by default)'
-        },
-        {
-          name: 'iconColor',
-          label: 'Icon Color',
-          groupName: 'icon',
-          type: 'TEXT',
-          description: 'Color of the icon (for Framework7/Material icons); use expression for dynamic colors'
-        },
-        {
-          name: 'tooltip',
-          label: 'Tooltip Text',
-          groupName: 'tooltip',
-          type: 'TEXT',
-          description: 'The tooltip text - leave blank to display the state of the item'
-        },
-        {
-          name: 'tooltipPermanent',
-          label: 'Permanent Tooltip',
-          groupName: 'tooltip',
-          type: 'BOOLEAN',
-          description: 'Always display the tooltip'
-        },
-        {
-          name: 'useTooltipAsLabel',
-          label: 'Use Tooltip as Label',
-          groupName: 'tooltip',
-          type: 'BOOLEAN',
-          description: 'Put the tooltip text directly over the plan instead of displaying an icon'
-        },
-        {
-          name: 'tooltipFontSize',
-          label: 'Tooltip Font Size',
-          groupName: 'tooltip',
-          type: 'TEXT',
-          description: 'Font size of the tooltip text'
-        },
-        {
-          name: 'tooltipColor',
-          label: 'Tooltip Color',
-          groupName: 'tooltip',
-          type: 'TEXT',
-          context: 'color',
-          description: 'Color of the tooltip'
-        },
-        {
-          name: 'zoomVisibilityMin',
-          label: 'Zoom Visibility Minimum',
-          type: 'NUMBER',
-          description: 'Visible only when zoomed to above this level (empty by default)',
-          advanced: true
-        },
-        {
-          name: 'zoomVisibilityMax',
-          label: 'Zoom Visibility Maximum',
-          type: 'NUMBER',
-          description: 'Visible only when zoomed to below this level (empty by default)',
-          advanced: true
-        }
-      ]
-    }
-  },
+  widget: OhPlanMarkerDefinition,
   data () {
     return {
       markerKey: 'marker-' + this.$f7.utils.id(),

@@ -7,7 +7,7 @@ const LabelParam = () => pt('label', 'Label', 'The label on the marker')
 const ItemParam = () => pi('item', 'Item', 'The Location item this marker will be centered on')
 const LocationParam = () => pt('location', 'Fixed location', 'The fixed position of the marker if no item is configured or its coordinates are invalid').c('location')
 
-export const MapMarkerDefinition = () => new WidgetDefinition('oh-map-marker', 'Map Marker', 'An icon on a map', 'map_pin')
+export const OhMapMarkerDefinition = () => new WidgetDefinition('oh-map-marker', 'Map Marker', 'An icon on a map', 'map_pin')
   .paramGroup(pg('marker', 'Marker', 'General marker settings'), [
     LabelParam(),
     pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/configuration/iconsets/classic/">openHAB icon</a>)')
@@ -18,7 +18,7 @@ export const MapMarkerDefinition = () => new WidgetDefinition('oh-map-marker', '
   ])
   .paramGroup(actionGroup(null, 'Action to perform when the marker is clicked'), actionParams())
 
-export const MapCircleMarkerDefinition = () => new WidgetDefinition('oh-map-circle-marker', 'Circle Marker', 'A circle on a map, to represent a radius', 'map_pin_ellipse')
+export const OhMapCircleMarkerDefinition = () => new WidgetDefinition('oh-map-circle-marker', 'Circle Marker', 'A circle on a map, to represent a radius', 'map_pin_ellipse')
   .paramGroup(pg('marker', 'Marker', 'General marker settings'), [
     LabelParam(),
     pt('color', 'Circle color', 'The color of the circle (e.g. "blue", "red", "yellow"...)')
