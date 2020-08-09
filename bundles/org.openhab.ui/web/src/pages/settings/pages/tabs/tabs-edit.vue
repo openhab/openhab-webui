@@ -31,11 +31,12 @@
               </f7-menu-item>
             </f7-menu>
 
-            <f7-list media-list>
+            <f7-list media-list class="tabs-list">
               <f7-list-item media-item v-for="(tab, idx) in page.slots.default" :key="idx"
-                :title="tab.config.title" :subtitle="tab.config.page">
-                <f7-icon slot="media" :ios="tab.config.icon" :md="tab.config.icon" :aurora="tab.config.icon" color="gray" />
-                <f7-menu slot="content-start">
+                :title="tab.config.title" :subtitle="tab.config.page"
+                link="#" @click.native="(ev) => configureTab(ev, tab, context)">
+                <f7-icon slot="media" :ios="tab.config.icon" :md="tab.config.icon" :aurora="tab.config.icon" color="gray" :size="32" />
+                <f7-menu slot="content-start" class="configure-layout-menu">
                   <f7-menu-item icon-f7="list_bullet" dropdown>
                     <f7-menu-dropdown>
                       <f7-menu-dropdown-item @click="configureWidget(tab,  { component: page })" href="#" text="Configure Tab"></f7-menu-dropdown-item>
@@ -81,6 +82,10 @@
   position absolute
   top 80%
   white-space pre-wrap
+.tabs-list
+  .item-link
+    overflow inherit
+    z-index inherit !important
 </style>
 
 <script>
@@ -123,7 +128,10 @@ export default {
       if (widgetType) {
         component.slots[slot].push({
           component: widgetType,
-          config: {},
+          config: {
+            title: 'New Tab',
+            icon: 'f7:squares_below_rectangle'
+          },
           slots: { default: [] }
         })
         this.forceUpdate()
@@ -133,6 +141,15 @@ export default {
       const definition = Object.values(ConfigurableWidgets).find((wd) => typeof wd === 'function' && wd().name === componentType)
       if (!definition) return null
       return definition()
+    },
+    configureTab (ev, tab, context) {
+      let el = ev.target
+      ev.cancelBubble = true
+      while (!el.classList.contains('media-item')) {
+        if (el && el.classList.contains('menu')) return
+        el = el.parentElement
+      }
+      this.context.editmode.configureWidget(tab, context)
     },
     toYaml () {
       this.pageYaml = YAML.stringify({
