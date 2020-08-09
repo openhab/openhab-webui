@@ -6,8 +6,11 @@ import { actionGroup, actionParams } from '../actions'
 export const CardParameterGroup = () => pg('card', 'Card', 'Parameters of the card')
 
 export const CardParameters = () => [
-  pt('title', 'Title', 'Title of the card (you can also customize the <code>header</code> slot'),
-  pt('footer', 'Footer text', 'Footer of the card (you can also customize the <code>footer</code> slot')
+  pt('title', 'Title', 'Title of the card'),
+  pt('footer', 'Footer text', 'Footer of the card'),
+  pb('noBorder', 'No Border', 'Do not render the card border').a(),
+  pb('noShadow', 'No Shadow', 'Do not render a shadow effect to the card').a(),
+  pb('outline', 'Outline', 'Show the card outline').a()
 ]
 
 // OhLabelCard
@@ -67,7 +70,7 @@ export const OhSliderCardDefinition = () => new WidgetDefinition('oh-slider-card
 import GaugeParameters from '../system/gauge'
 export const OhGaugeCardDefinition = () => new WidgetDefinition('oh-gauge-card', 'Gauge Card', 'Display a read-only gauge in a card to visualize a quantifiable item')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('slider', 'Slider'), GaugeParameters())
+  .paramGroup(pg('gauge', 'Gauge', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://framework7.io/vue/gauge.html#gauge-properties">Gauge control</a>'), GaugeParameters())
 
 // OhKnobCard
 import KnobParameters from '../system/knob'
