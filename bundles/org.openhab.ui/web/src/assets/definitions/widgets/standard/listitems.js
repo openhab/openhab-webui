@@ -41,13 +41,13 @@ export const OhLabelItemDefinition = () => new WidgetDefinition('oh-label-item',
 import ColorPickerParameters from '../system/colorpicker'
 export const OhColorpickerItemDefinition = () => new WidgetDefinition('oh-colorpicker-item', 'Color Picker Item', 'Display a color picker in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
-  .paramGroup(pg('colorpicker', 'Color picker'), ColorPickerParameters)
+  .paramGroup(pg('colorpicker', 'Color picker'), ColorPickerParameters())
 
 // OhPlayerItem
 import PlayerParameters from '../system/player'
 export const OhPlayerItemDefinition = () => new WidgetDefinition('oh-player-item', 'Player Item', 'Display player controls in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
-  .paramGroup(pg('player', 'Player Controls'), PlayerParameters)
+  .paramGroup(pg('player', 'Player Controls'), PlayerParameters())
   .paramGroup(pg('Current Track Info', 'Currently playing track information'), [
     pi('artistItem', 'Artist Item', 'Item holding the artist name'),
     pi('trackItem', 'Track Item', 'Item holding the track name')
@@ -60,22 +60,22 @@ export const OhRollershutterItemDefinition = () => new WidgetDefinition('oh-roll
   .paramGroup(pg('orientation', 'Orientation'), [
     pb('vertical', 'Vertical', 'Vertical orientation')
   ])
-  .paramGroup(pg('controls', 'Rollershutter Controls'), RollershutterParameters)
+  .paramGroup(pg('controls', 'Rollershutter Controls'), RollershutterParameters())
 
 // OhSliderItem
 import SliderParameters from '../system/slider'
 export const OhSliderItemDefinition = () => new WidgetDefinition('oh-slider-item', 'Rollershutter Item', 'Display a slider in a Item to control an list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
-  .paramGroup(pg('slider', 'Slider'), SliderParameters)
+  .paramGroup(pg('slider', 'Slider'), SliderParameters())
 
 // OhStepperItem
 import StepperParameters from '../system/stepper'
 export const OhStepperItemDefinition = () => new WidgetDefinition('oh-stepper-item', 'Stepper Item', 'Display a stepper control in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
-  .paramGroup(pg('stepper', 'Stepper'), StepperParameters)
+  .paramGroup(pg('stepper', 'Stepper'), StepperParameters())
 
 // OhToggleItem
 import ToggleParameters from '../system/toggle'
 export const OhToggleItemDefinition = () => new WidgetDefinition('oh-toggle-item', 'Stepper Item', 'Display a toggle switch in a list item')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
-  .paramGroup(pg('toggle', 'Toggle'), ToggleParameters)
+  .paramGroup(pg('toggle', 'Toggle'), ToggleParameters())

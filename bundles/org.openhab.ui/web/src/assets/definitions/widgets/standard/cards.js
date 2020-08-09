@@ -30,19 +30,19 @@ export const OhLabelCardDefinition = () => new WidgetDefinition('oh-label-card',
 import ListParameters from '../system/list'
 export const OhListCardDefinition = () => new WidgetDefinition('oh-list-card', 'List Card', 'Display a list in a card')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('list', 'List'), ListParameters)
+  .paramGroup(pg('list', 'List'), ListParameters())
 
 // OhColorpickerCard
 import ColorPickerParameters from '../system/colorpicker'
 export const OhColorpickerCardDefinition = () => new WidgetDefinition('oh-colorpicker-card', 'Color Picker Card', 'Display a color picker in a card')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('colorpicker', 'Color picker'), ColorPickerParameters)
+  .paramGroup(pg('colorpicker', 'Color picker'), ColorPickerParameters())
 
 // OhPlayerCard
 import PlayerParameters from '../system/player'
 export const OhPlayerCardDefinition = () => new WidgetDefinition('oh-player-card', 'Player Card', 'Display player controls in a card')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('player', 'Player Controls'), PlayerParameters)
+  .paramGroup(pg('player', 'Player Controls'), PlayerParameters())
   .paramGroup(pg('Current Track Info', 'Currently playing track information'), [
     pi('artistItem', 'Artist Item', 'Item holding the artist name'),
     pi('trackItem', 'Track Item', 'Item holding the track name')
@@ -55,28 +55,28 @@ export const OhRollershutterCardDefinition = () => new WidgetDefinition('oh-roll
   .paramGroup(pg('orientation', 'Orientation'), [
     pb('vertical', 'Vertical', 'Vertical orientation')
   ])
-  .paramGroup(pg('controls', 'Rollershutter Controls'), RollershutterParameters)
+  .paramGroup(pg('controls', 'Rollershutter Controls'), RollershutterParameters())
 
 // OhSliderCard
 import SliderParameters from '../system/slider'
 export const OhSliderCardDefinition = () => new WidgetDefinition('oh-slider-card', 'Rollershutter Card', 'Display a slider in a card to control an item')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('slider', 'Slider'), SliderParameters)
+  .paramGroup(pg('slider', 'Slider'), SliderParameters())
 
 // OhStepperCard
 import StepperParameters from '../system/stepper'
 export const OhStepperCardDefinition = () => new WidgetDefinition('oh-stepper-card', 'Stepper Card', 'Display a stepper in a card to control an item')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('stepper', 'Stepper'), StepperParameters)
+  .paramGroup(pg('stepper', 'Stepper'), StepperParameters())
 
 // OhSwiperCard
 import SwiperParameters from '../system/swiper'
 export const OhSwiperCardDefinition = () => new WidgetDefinition('oh-swiper-card', 'Swiper Card', 'Display a swiper allowing to browse slides, in a card')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('swiper', 'Swiper'), SwiperParameters)
+  .paramGroup(pg('swiper', 'Swiper'), SwiperParameters())
 
 // OhToggleCard
 import ToggleParameters from '../system/toggle'
 export const OhToggleCardDefinition = () => new WidgetDefinition('oh-toggle-card', 'Toggle Card', 'Display a toggle swtich in a card to send ON/OFF commands')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('toggle', 'Toggle'), ToggleParameters)
+  .paramGroup(pg('toggle', 'Toggle'), ToggleParameters())

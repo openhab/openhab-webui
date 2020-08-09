@@ -159,11 +159,13 @@ export function pt (name, label, description) {
  * @param {string} name the name of the widget (in kebab case)
  * @param {string} label the untranslated (English) name of the widget
  * @param {string} description the untranslated (English) description of the widget
+ * @param {string} icon an optional icon to illustrate the widget, used for map/plan markers
  */
-export function WidgetDefinition (name, label, description) {
+export function WidgetDefinition (name, label, description, icon) {
   this.name = name
   this.label = label
   this.description = description
+  if (icon) this.icon = icon
   this.props = {
     parameterGroups: [],
     parameters: []

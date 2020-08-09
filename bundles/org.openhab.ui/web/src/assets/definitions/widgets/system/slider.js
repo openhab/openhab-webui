@@ -1,6 +1,6 @@
 import { pi, pb, pn, pd } from '../helpers'
 
-export default [
+export default () => [
   pi('item', 'Item', 'Item to control'),
   pn('min', 'Min', 'Minimum value'),
   pn('max', 'Max', 'Maximum value'),

@@ -1,6 +1,6 @@
 import { pt } from '../helpers'
 
-export default [
+export default () => [
   pt('modules', 'Modules', 'Modules to display').o([
     { value: 'wheel', label: 'Color wheel' },
     { value: 'sb-spectrum', label: 'Saturation/brightness spectrum' },

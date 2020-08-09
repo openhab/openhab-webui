@@ -1,6 +1,6 @@
 import { pt, pi, pb } from '../helpers'
 
-export default [
+export default () => [
   pi('item', 'Item', 'Rollershutter item to control'),
   pt('dirIconsStyle', 'Direction Icons Style', 'Icons to use for the UP/DOWN buttons').o([
     'arrowtriangle_{dir}',
