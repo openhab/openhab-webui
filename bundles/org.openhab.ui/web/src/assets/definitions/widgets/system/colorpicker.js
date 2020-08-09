@@ -1,6 +1,7 @@
-import { pt } from '../helpers'
+import { pt, pi } from '../helpers'
 
 export default () => [
+  pi('item', 'Item', 'Item to control'),
   pt('modules', 'Modules', 'Modules to display').o([
     { value: 'wheel', label: 'Color wheel' },
     { value: 'sb-spectrum', label: 'Saturation/brightness spectrum' },

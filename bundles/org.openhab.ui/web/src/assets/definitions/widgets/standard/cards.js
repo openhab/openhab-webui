@@ -59,9 +59,21 @@ export const OhRollershutterCardDefinition = () => new WidgetDefinition('oh-roll
 
 // OhSliderCard
 import SliderParameters from '../system/slider'
-export const OhSliderCardDefinition = () => new WidgetDefinition('oh-slider-card', 'Rollershutter Card', 'Display a slider in a card to control an item')
+export const OhSliderCardDefinition = () => new WidgetDefinition('oh-slider-card', 'Slider Card', 'Display a slider in a card to control an item')
   .paramGroup(CardParameterGroup(), CardParameters())
   .paramGroup(pg('slider', 'Slider'), SliderParameters())
+
+// OhGaugeCard
+import GaugeParameters from '../system/gauge'
+export const OhGaugeCardDefinition = () => new WidgetDefinition('oh-gauge-card', 'Gauge Card', 'Display a read-only gauge in a card to visualize a quantifiable item')
+  .paramGroup(CardParameterGroup(), CardParameters())
+  .paramGroup(pg('slider', 'Slider'), GaugeParameters())
+
+// OhKnobCard
+import KnobParameters from '../system/knob'
+export const OhKnobCardDefinition = () => new WidgetDefinition('oh-knob-card', 'Knob Card', 'Display a knob in a card to visualize and control a quantifiable item')
+  .paramGroup(CardParameterGroup(), CardParameters())
+  .paramGroup(pg('knob', 'Knob', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://github.com/kramer99/vue-knob-control#properties">Knob control</a>'), KnobParameters())
 
 // OhStepperCard
 import StepperParameters from '../system/stepper'
