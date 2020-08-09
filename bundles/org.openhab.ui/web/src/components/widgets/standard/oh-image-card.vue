@@ -22,7 +22,10 @@
   --f7-list-item-padding-horizontal: 0px
 .oh-image-card
   .oh-image
-    width 100%
+    margin-top 5px
+    margin-left 5px
+    margin-right 5px
+    width calc(100% - 10px)
 </style>
 
 <script>
