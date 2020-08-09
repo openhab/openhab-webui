@@ -64,7 +64,7 @@ export const OhRollershutterItemDefinition = () => new WidgetDefinition('oh-roll
 
 // OhSliderItem
 import SliderParameters from '../system/slider'
-export const OhSliderItemDefinition = () => new WidgetDefinition('oh-slider-item', 'Rollershutter Item', 'Display a slider in a Item to control an list')
+export const OhSliderItemDefinition = () => new WidgetDefinition('oh-slider-item', 'Slider Item', 'Display a slider in a Item to control an list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('slider', 'Slider'), SliderParameters())
 
