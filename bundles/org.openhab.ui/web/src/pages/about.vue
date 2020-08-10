@@ -7,11 +7,25 @@
           <!-- <f7-block-title>About openHAB</f7-block-title> -->
           <f7-block>
             <img src="res/icons/128x128.png" width="96" class="padding float-right">
-            <h2 class="block-title-medium">openHAB version {{this.$f7.version}}</h2>
+            <h2 v-if="this.$store.state.runtimeInfo" class="block-title-medium">openHAB {{this.$store.state.runtimeInfo.version}}<br/><small>{{this.$store.state.runtimeInfo.buildString}}</small></h2>
             <p><f7-link external target="_blank" href="https://www.openhab.org/">Home page</f7-link></p>
             <p><f7-link external target="_blank" href="https://www.openhab.org/docs/">Documentation</f7-link></p>
             <p><f7-link external target="_blank" href="https://community.openhab.org/">Community forum</f7-link></p>
           </f7-block>
+        </f7-col>
+      </f7-row>
+      <f7-row v-if="this.$store.state.runtimeInfo && this.$store.state.runtimeInfo.configFolder && this.$store.state.runtimeInfo.userdataFolder">
+        <f7-col>
+          <f7-list accordion-list>
+            <f7-list-item title="System Information" accordion-item>
+              <f7-accordion-content>
+                <f7-list>
+                  <f7-list-item title="Configuration Folder" :after="this.$store.state.runtimeInfo.configFolder"></f7-list-item>
+                  <f7-list-item title="User Data Folder" :after="this.$store.state.runtimeInfo.userdataFolder"></f7-list-item>
+                </f7-list>
+              </f7-accordion-content>
+            </f7-list-item>
+          </f7-list>
         </f7-col>
       </f7-row>
 

@@ -332,10 +332,10 @@ export default {
   methods: {
     loadData () {
       return this.$oh.api.get('/rest/')
-        .then((endpoints) => {
+        .then((rootResponse) => {
           // store the REST API services present on the system
-          this.$store.commit('setApiEndpoints', { endpoints })
-          return Promise.resolve(endpoints)
+          this.$store.commit('setRootResource', { rootResponse })
+          return Promise.resolve(rootResponse)
         }).then(() => {
           // load the pages & widgets, only if the 'ui' endpoint exists (or empty arrays otherwise)
           return Promise.all(
