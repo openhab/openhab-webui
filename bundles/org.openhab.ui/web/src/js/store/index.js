@@ -16,14 +16,18 @@ const store = new Vuex.Store({
     user
   },
   state: {
-    apiEndpoints: null
+    apiVersion: null,
+    apiEndpoints: null,
+    runtimeInfo: null
   },
   getters: {
-    apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.links.find((e) => e.type === type)
+    apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type)
   },
   mutations: {
-    setApiEndpoints (state, { endpoints }) {
-      state.apiEndpoints = endpoints
+    setRootResource (state, { rootResponse }) {
+      state.apiVersion = rootResponse.version
+      state.runtimeInfo = rootResponse.runtimeInfo
+      state.apiEndpoints = rootResponse.links
     }
   }
   // strict: debug
