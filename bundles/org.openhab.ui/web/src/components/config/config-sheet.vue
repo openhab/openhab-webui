@@ -11,9 +11,10 @@
               v-for="parameter in displayedParameters.filter((p) => !p.groupName)"
               :key="parameter.name"
               :config-description="parameter"
-              :value="configuration[parameter.name]"
+              :value="configurationWithDefaults[parameter.name]"
               :parameters="parameters"
-              :configuration="configuration"
+              :configuration="configurationWithDefaults"
+              :status="parameterStatus(parameter)"
               @update="(value) => updateParameter(parameter, value)"
             />
           </f7-col>
@@ -33,9 +34,10 @@
               v-for="parameter in displayedParameters.filter((p) => p.groupName === group.name)"
               :key="parameter.name"
               :config-description="parameter"
-              :value="configuration[parameter.name]"
+              :value="configurationWithDefaults[parameter.name]"
               :parameters="parameters"
-              :configuration="configuration"
+              :configuration="configurationWithDefaults"
+              :status="parameterStatus(parameter)"
               @update="(value) => updateParameter(parameter, value)"
             />
           </f7-col>
@@ -62,7 +64,7 @@
 
 <script>
 export default {
-  props: ['parameterGroups', 'parameters', 'configuration'],
+  props: ['parameterGroups', 'parameters', 'configuration', 'status'],
   components: {
     'config-parameter': () => import(/* webpackChunkName: "config-parameter" */ './config-parameter.vue')
   },
@@ -72,6 +74,13 @@ export default {
     }
   },
   computed: {
+    configurationWithDefaults () {
+      let conf = Object.assign({}, this.configuration)
+      this.parameters.forEach((p) => {
+        if (conf[p.name] === undefined && p.defaultValue !== undefined) conf[p.name] = p.defaultValue
+      })
+      return conf
+    },
     hasAdvanced () {
       return this.parameters.length > 0 && this.parameters.some((p) => p.advanced)
     },
@@ -93,6 +102,10 @@ export default {
       }
       console.debug(JSON.stringify(this.configuration))
       this.$emit('updated')
+    },
+    parameterStatus (parameter) {
+      if (!this.status || !this.status.length) return null
+      return this.status.find((ps) => ps.parameterName === parameter.name)
     }
   }
 }

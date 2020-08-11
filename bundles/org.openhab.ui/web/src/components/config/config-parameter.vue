@@ -3,6 +3,11 @@
       v-show="(configDescription.visible) ? configDescription.visible(value, configuration, configDescription, parameters) : true">
       <component :is="control" :config-description="configDescription" :value="value" :parameters="parameters" :configuration="configuration" :title="configDescription.title" @input="updateValue" />
       <f7-block-footer slot="after-list" class="param-description">
+        <div v-if="status" class="param-status-info">
+          <f7-chip v-if="status.type !== 'INFORMATION'" :color="status.type === 'WARNING' ? 'orange' : (status.type === 'ERROR') ? 'red' : 'gray'" style="float: right" :text="status.type"></f7-chip>
+          <span v-if="status.statusCode">Status Code: &nbsp;{{status.statusCode}}&nbsp;&nbsp;</span>
+          <span v-if="status.message">{{status.message}}</span>
+        </div>
         <small v-html="configDescription.description"></small>
       </f7-block-footer>
     </f7-list>
@@ -34,7 +39,8 @@ export default {
     'configDescription',
     'value',
     'parameters',
-    'configuration'
+    'configuration',
+    'status'
   ],
   data () {
     return {
@@ -100,6 +106,10 @@ export default {
     margin-bottom 1rem
   p
     margin 0 !important
+  .param-status-info
+    font-weight 500
+    span
+      color var(--f7-block-title-text-color) !important
 .smart-select-popover.popover
   --f7-popover-width 320px
 </style>

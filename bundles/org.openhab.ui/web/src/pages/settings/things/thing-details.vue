@@ -100,6 +100,7 @@
             :parameter-groups="configDescriptions.parameterGroups"
             :parameters="configDescriptions.parameters"
             :configuration="thing.configuration"
+            :status="configStatusInfo"
             @updated="dirty = true"
           />
         </f7-block>
@@ -224,6 +225,7 @@ export default {
       thingType: {},
       channelTypes: {},
       configDescriptions: {},
+      configStatusInfo: [],
       zwaveActions: {},
       thingEnabled: true,
       codePopupOpened: false,
@@ -304,6 +306,11 @@ export default {
             }
 
             if (!this.eventSource) this.startEventSource()
+          })
+
+          // config status unrelated to the other queries, so load it in parallel with the types
+          this.$oh.api.get('/rest/things/' + this.thingId + '/config/status').then(statusData => {
+            this.configStatusInfo = statusData
           })
         })
       })
