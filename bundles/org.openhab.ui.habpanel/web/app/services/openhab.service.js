@@ -165,7 +165,7 @@
         
         function registerEventSource() {
             if (typeof(EventSource) !== "undefined") {
-                var source = new EventSource('/rest/events?topics=smarthome/items/*/statechanged,smarthome/items/*/*/statechanged,smarthome/webaudio/playurl');
+                var source = new EventSource('/rest/events?topics=openhab/items/*/statechanged,openhab/items/*/*/statechanged,openhab/webaudio/playurl');
                 liveUpdatesEnabled = true;
 
                 source.onmessage = function (event) {
@@ -211,7 +211,7 @@
 
                                 });
                             }
-                        } else if (evtdata.topic === "smarthome/webaudio/playurl") {
+                        } else if (evtdata.topic === "openhab/webaudio/playurl") {
                             var context, audioBuffer;
                             try {
                                 window.AudioContext = window.AudioContext || window.webkitAudioContext;

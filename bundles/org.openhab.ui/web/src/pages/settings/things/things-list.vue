@@ -156,7 +156,7 @@ export default {
       })
     },
     startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/things/*/added,smarthome/things/*/removed,smarthome/things/*/updated,smarthome/things/*/status,smarthome/inbox/*', null, (event) => {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/things/*/added,openhab/things/*/removed,openhab/things/*/updated,openhab/things/*/status,openhab/inbox/*', null, (event) => {
         console.log(event)
         const topicParts = event.topic.split('/')
         if (topicParts[2] === 'inbox') {
