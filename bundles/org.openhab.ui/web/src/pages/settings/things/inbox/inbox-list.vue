@@ -171,7 +171,7 @@ export default {
       this.startEventSource()
     },
     startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/inbox/*', null, (event) => {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/inbox/*', null, (event) => {
         console.log(event)
         // const topicParts = event.topic.split('/')
         this.load()

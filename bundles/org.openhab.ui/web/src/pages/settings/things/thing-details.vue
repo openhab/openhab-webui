@@ -499,7 +499,7 @@ export default {
     },
     startEventSource () {
       if (this.eventSource) this.stopEventSource()
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/things/*/*,smarthome/links/*/*' /* + encodeURIComponent(this.thingId) */, null, (event) => {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/things/*/*,openhab/links/*/*' /* + encodeURIComponent(this.thingId) */, null, (event) => {
         // console.log(event)
         const topicParts = event.topic.split('/')
         switch (topicParts[1]) {
