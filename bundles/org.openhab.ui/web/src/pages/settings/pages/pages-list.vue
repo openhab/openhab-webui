@@ -80,7 +80,7 @@
               :key="index"
               media-item
               class="pagelist-item"
-              :checkbox="showCheckboxes"
+              :checkbox="showCheckboxes && page.uid !== 'ui:page:overview'"
               :checked="isChecked(page.uid)"
               @change="(e) => toggleItemCheck(e, page.uid, page)"
               :link="showCheckboxes ? null : getPageType(page).type + '/' + page.uid"
@@ -220,6 +220,11 @@ export default {
     },
     removeSelected () {
       const vm = this
+
+      if (this.selectedItems.indexOf('ui:page:overview') >= 0) {
+        this.$f7.dialog.alert('The overview page cannot be deleted!')
+        return
+      }
 
       this.$f7.dialog.confirm(
         `Remove ${this.selectedItems.length} selected pages?`,

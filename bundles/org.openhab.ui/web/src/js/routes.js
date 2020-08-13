@@ -7,8 +7,7 @@ import UserProfilePage from '../pages/profile.vue'
 import SitemapViewPage from '../pages/page/sitemap-view.vue'
 import PageViewPage from '../pages/page/page-view.vue'
 
-import SetupWizard from '../pages/wizards/setup-wizard.vue'
-import SetupWizardPage from '../pages/wizards/setup-wizard-page.vue'
+import SetupWizardPage from '../pages/wizards/setup-wizard.vue'
 import SettingsMenuPage from '../pages/settings/settings-menu.vue'
 import ServiceSettingsPage from '../pages/settings/services/service-settings.vue'
 import AddonsListPage from '../pages/settings/addons/addons-list.vue'
@@ -50,12 +49,6 @@ export default [
     options: {
       // animate: false
       transition: 'f7-dive'
-    }
-  },
-  {
-    path: '/setup/',
-    loginScreen: {
-      component: SetupWizard
     }
   },
   {
