@@ -7,9 +7,11 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
 import { LCircle, LTooltip } from 'vue2-leaflet'
-import { actionGroup, actionProps, actionsMixin } from '../widget-actions'
+
+import mixin from '../widget-mixin'
+import { actionsMixin } from '../widget-actions'
+import { OhMapCircleMarkerDefinition } from '@/assets/definitions/widgets/map'
 
 export default {
   mixins: [mixin, actionsMixin],
@@ -17,59 +19,7 @@ export default {
     LCircle,
     LTooltip
   },
-  widget: {
-    name: 'oh-map-circle-marker',
-    label: 'Circle Marker',
-    icon: 'map_pin_ellipse',
-    description: 'A circle on a map, to represent a radius',
-    props: {
-      parameterGroups: [
-        actionGroup(null, 'Action to perform when the circle is clicked')
-      ],
-      parameters: [
-        ...actionProps(),
-        {
-          name: 'label',
-          label: 'Label',
-          type: 'TEXT',
-          description: 'The label on the marker'
-        },
-        {
-          name: 'item',
-          label: 'Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'The Location item this circle will be centered on'
-        },
-        {
-          name: 'location',
-          label: 'Fixed location',
-          type: 'TEXT',
-          context: 'location',
-          description: 'The fixed center of the circle if no item is configured or its coordinates are invalid'
-        },
-        {
-          name: 'radiusItem',
-          label: 'Radius Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'The item whose state holds the radius of the circle, in meters'
-        },
-        {
-          name: 'radius',
-          label: 'Fixed radius',
-          type: 'DECIMAL',
-          description: 'The fixed radius of the circle in meters if no item is configured or its state is invalid'
-        },
-        {
-          name: 'color',
-          label: 'Circle color',
-          type: 'TEXT',
-          description: 'The color of the circle (e.g. "blue", "red", "yellow"...)'
-        }
-      ]
-    }
-  },
+  widget: OhMapCircleMarkerDefinition,
   data () {
     return {
       markerKey: this.$f7.utils.id()

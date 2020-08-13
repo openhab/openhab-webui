@@ -5,7 +5,7 @@
     </div>
     <f7-col>
       <f7-block width="100" class="parameter-group">
-        <f7-row>
+        <f7-row v-if="displayedParameters.some((p) => !p.groupName)">
           <f7-col>
             <config-parameter
               v-for="parameter in displayedParameters.filter((p) => !p.groupName)"
@@ -23,8 +23,8 @@
     </f7-col>
     <f7-col v-if="parameterGroups.length">
       <f7-block width="100" class="parameter-group" v-for="group in parameterGroups" :key="group.name">
-        <f7-row>
-          <f7-col v-if="displayedParameters.some((p) => p.groupName === group.name)">
+        <f7-row v-if="displayedParameters.some((p) => p.groupName === group.name)">
+          <f7-col>
             <f7-block-title class="parameter-group-title">{{group.label}}</f7-block-title>
             <f7-block-footer class="param-description" v-if="group.description">
               <div v-html="group.description"></div>

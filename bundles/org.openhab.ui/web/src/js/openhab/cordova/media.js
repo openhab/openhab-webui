@@ -32,5 +32,8 @@ export default {
         })
       }
     }
+  },
+  getImage (url) {
+    return url
   }
 }

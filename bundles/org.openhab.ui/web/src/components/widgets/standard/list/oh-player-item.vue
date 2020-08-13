@@ -9,35 +9,14 @@
 <script>
 import mixin from '../../widget-mixin'
 import OhListItem from './oh-list-item.vue'
+import { OhPlayerItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
 
 export default {
   components: {
     OhListItem
   },
   mixins: [mixin],
-  widget: {
-    name: 'oh-player-item',
-    label: 'Player List Item',
-    description: 'Display player controls in a list',
-    props: {
-      parameterGroups: [],
-      parameters: [
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT',
-          description: 'Title of the list item'
-        },
-        {
-          name: 'item',
-          label: 'Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'Item to control'
-        }
-      ]
-    }
-  },
+  widget: OhPlayerItemDefinition,
   computed: {
     afterComponent () {
       return {

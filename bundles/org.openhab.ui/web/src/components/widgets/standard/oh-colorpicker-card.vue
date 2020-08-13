@@ -18,67 +18,14 @@
 <script>
 import mixin from '../widget-mixin'
 import OhColorpicker from '../system/oh-colorpicker.vue'
+import { OhColorpickerCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
     OhColorpicker
   },
-  widget: {
-    name: 'oh-colorpicker-card',
-    label: 'Color Picker Card',
-    description: 'Display a color picker in a card',
-    props: {
-      parameters: [
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT',
-          description: 'Title of the card'
-        },
-        {
-          name: 'item',
-          label: 'Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'Item to control'
-        },
-        {
-          name: 'color',
-          label: 'Color',
-          type: 'TEXT',
-          description: 'Color of the control'
-        },
-        {
-          name: 'footer',
-          label: 'Footer text',
-          type: 'TEXT',
-          description: 'Footer of the card'
-        },
-        {
-          name: 'modules',
-          label: 'Modules',
-          type: 'TEXT',
-          description: 'Modules to display',
-          multiple: true,
-          limitToOptions: true,
-          options: [
-            { value: 'wheel', label: 'Color wheel' },
-            { value: 'sb-spectrum', label: 'Saturation/brightness spectrum' },
-            { value: 'hue-slider', label: 'Hue slider' },
-            { value: 'hs-spectrum', label: 'Hue/saturation spectrum' },
-            { value: 'brightness-slider', label: 'Brightness spectrum' },
-            { value: 'rgb-sliders', label: 'RGB sliders' },
-            { value: 'hsb-sliders', label: 'HSB sliders' },
-            { value: 'rgb-bars', label: 'RGB bars' },
-            { value: 'palette', label: 'Palette' },
-            { value: 'current-color', label: 'Current color' },
-            { value: 'initial-current-colors', label: 'Initial current colors' }
-          ]
-        }
-      ]
-    }
-  },
+  widget: OhColorpickerCardDefinition,
   data () {
     return {
       value: Math.random()

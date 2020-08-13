@@ -20,63 +20,13 @@
 <script>
 import mixin from '../widget-mixin'
 import OhSlider from '../system/oh-slider.vue'
+import { OhSliderCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
     OhSlider
   },
-  widget: {
-    name: 'oh-slider-card',
-    label: 'Slider Card',
-    description: 'Display a slider in a card',
-    props: {
-      parameters: [
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT',
-          description: 'Title of the card'
-        },
-        {
-          name: 'item',
-          label: 'Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'Item to control'
-        },
-        {
-          name: 'footer',
-          label: 'Footer text',
-          type: 'TEXT',
-          description: 'Footer of the card'
-        },
-        {
-          name: 'color',
-          label: 'Color',
-          type: 'TEXT',
-          description: 'Color of the control'
-        },
-        {
-          name: 'vertical',
-          label: 'Vertical slider',
-          type: 'BOOLEAN',
-          description: 'Display the slider vertically'
-        },
-        {
-          name: 'label',
-          label: 'Label on slider',
-          type: 'BOOLEAN',
-          description: 'Display a label on the slider'
-        },
-        {
-          name: 'scale',
-          label: 'Scale on slider',
-          type: 'BOOLEAN',
-          description: 'Display a scale on the slider'
-        }
-      ]
-    }
-  }
+  widget: OhSliderCardDefinition
 }
 </script>

@@ -80,9 +80,9 @@ export default {
       viewMode: 'design',
       previewOpened: false,
       componentSelectKey: this.$f7.utils.id(),
-      standardWidgets: Object.values(StandardWidgets).filter((c) => c.widget).map((c) => c.widget),
-      standardListWidgets: Object.values(StandardListWidgets).filter((c) => c.widget).map((c) => c.widget),
-      systemWidgets: Object.values(SystemWidgets).filter((c) => c.widget).map((c) => c.widget)
+      standardWidgets: Object.values(StandardWidgets).filter((c) => c.widget).map((c) => c.widget()),
+      standardListWidgets: Object.values(StandardListWidgets).filter((c) => c.widget && typeof c.widget === 'function').map((c) => c.widget()),
+      systemWidgets: Object.values(SystemWidgets).filter((c) => c.widget & typeof c.widget === 'function').map((c) => c.widget())
     }
   },
   computed: {

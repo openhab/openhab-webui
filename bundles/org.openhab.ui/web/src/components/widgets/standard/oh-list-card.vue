@@ -20,32 +20,13 @@
 <script>
 import mixin from '../widget-mixin'
 import OhList from '../system/oh-list.vue'
+import { OhListCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
     OhList
   },
-  widget: {
-    name: 'oh-list-card',
-    label: 'List Card',
-    description: 'Display a list in a card',
-    props: {
-      parameters: [
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT',
-          description: 'Title of the card'
-        },
-        {
-          name: 'footer',
-          label: 'Footer text',
-          type: 'TEXT',
-          description: 'Footer of the card'
-        }
-      ]
-    }
-  }
+  widget: OhListCardDefinition
 }
 </script>
