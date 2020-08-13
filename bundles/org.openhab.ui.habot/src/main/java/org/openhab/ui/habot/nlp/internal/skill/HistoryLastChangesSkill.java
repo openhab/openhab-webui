@@ -19,8 +19,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openhab.core.items.Item;
-import org.openhab.core.model.persistence.extensions.PersistenceExtensions;
 import org.openhab.core.persistence.HistoricItem;
+import org.openhab.core.persistence.extensions.PersistenceExtensions;
 import org.openhab.core.transform.TransformationException;
 import org.openhab.core.transform.TransformationHelper;
 import org.openhab.core.types.State;
