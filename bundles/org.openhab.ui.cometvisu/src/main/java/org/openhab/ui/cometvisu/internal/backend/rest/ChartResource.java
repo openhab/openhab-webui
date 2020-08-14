@@ -40,6 +40,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.core.OpenHAB;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.core.items.GroupItem;
@@ -99,8 +100,8 @@ public class ChartResource implements RESTResource {
 
     private static final DecimalFormat DECIMAL_FORMAT;
 
-    protected static final String RRD_FOLDER = org.openhab.core.config.core.ConfigConstants.getUserDataFolder()
-            + File.separator + "persistence" + File.separator + "rrd4j";
+    protected static final String RRD_FOLDER = OpenHAB.getUserDataFolder() + File.separator + "persistence"
+            + File.separator + "rrd4j";
 
     static {
         DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
