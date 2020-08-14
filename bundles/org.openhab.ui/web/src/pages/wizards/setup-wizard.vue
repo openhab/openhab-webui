@@ -52,8 +52,8 @@
               </f7-list>
               <f7-block class="display-flex flex-direction-column padding">
                 <div>
-                  <f7-button large fill color="blue" text="Start" @click="start" />
-                  <f7-button large color="red" text="Skip Setup" class="margin-top" @click="skipSetup" />
+                  <f7-button large fill color="blue" text="Begin Setup" @click="beginSetup" />
+                  <f7-button large color="blue" text="Skip Setup" class="margin-top" @click="skipSetup" />
                 </div>
               </f7-block>
             </f7-tab>
@@ -68,7 +68,10 @@
                   color="blue"
                   tab-link-active
                 ></f7-link>
-                <f7-login-screen-title>Set your location</f7-login-screen-title>
+                <f7-login-screen-title>
+                  <div class="padding"><f7-icon size="48" color="blue" f7="map_pin_ellipse" /></div>
+                  Set your Location
+                </f7-login-screen-title>
               </f7-block>
               <f7-block
                 strong
@@ -105,7 +108,10 @@
                   color="blue"
                   tab-link-active
                 ></f7-link>
-                <f7-login-screen-title ref="selectAddons">Install Add-ons</f7-login-screen-title>
+                <f7-login-screen-title>
+                  <div class="padding"><f7-icon size="48" color="blue" f7="bag_badge_plus" /></div>
+                  Install Add-ons
+                </f7-login-screen-title>
               </f7-block>
               <f7-block
                 strong
@@ -117,7 +123,7 @@
               <f7-block class="padding">
                 <f7-row>
                   <f7-col width="100">
-                    <f7-button large icon-f7="checkmark_seal_fill" icon-size="24" @click="selectAddons" text="Select Add-ons to Install"></f7-button>
+                    <f7-button ref="selectAddons" large icon-f7="cart_fill" icon-size="24" @click="selectAddons" text="Select Add-ons to Install"></f7-button>
                   </f7-col>
                 </f7-row>
                 <f7-list class="search-list searchbar-found" ref="selectAddons" media-list>
@@ -150,7 +156,10 @@
                   style="visibility: hidden"
                 ></f7-link>
                 <f7-login-screen-title class="text-color-gray">Please Wait...</f7-login-screen-title>
-                <div class="display-flex justify-content-center" style="margin-top: 4rem"><f7-preloader :size="42"></f7-preloader></div>
+                <div class="display-flex justify-content-center flex-direction-column text-align-center text-color-gray" style="margin-top: 4rem">
+                  <div class="display-flex justify-content-center margin-bottom"><f7-preloader size="24"></f7-preloader></div>
+                  <div>It may take a few minutes to install the add-ons you selected.</div>
+                </div>
               </f7-block>
             </f7-tab>
 
@@ -170,7 +179,7 @@
 
               <f7-block class="display-flex flex-direction-column padding" style="margin-top: 4rem">
                 <div>
-                  <f7-button large color="blue" text="Finish" @click="finish" />
+                  <f7-button large color="blue" text="Get Started" @click="finish" />
                 </div>
               </f7-block>
             </f7-tab>
@@ -221,7 +230,7 @@ export default {
     }
   },
   methods: {
-    start () {
+    beginSetup () {
       this.$oh.api.put('/rest/services/org.openhab.i18n/config', {
         language: this.language,
         region: this.region,
@@ -247,12 +256,12 @@ export default {
     skipSetup () {
       const self = this
       this.$f7.dialog.confirm(
-        `Are you sure? If you skip the setup wizard, you will only have a minimal system and will still need to configure it.`,
+        `Are you sure? Setup saves you time by performing just a few basic configuration tasks. You should only skip it if you know what you're doing.`,
         'Skip Setup',
         () => {
           self.$f7.panel.get('left').enableVisibleBreakpoint()
           this.$nextTick(() => {
-            self.$f7.views.main.router.navigate('/', { clearPreviousHistory: true })
+            self.$f7.views.main.router.navigate('/', { transition: 'f7-cover-v', clearPreviousHistory: true })
           })
         })
     },
@@ -334,7 +343,7 @@ export default {
     finish () {
       this.$f7.panel.get('left').enableVisibleBreakpoint()
       this.$nextTick(() => {
-        this.$f7.views.main.router.navigate('/', { clearPreviousHistory: true })
+        this.$f7.views.main.router.navigate('/', { transition: 'f7-cover-v', clearPreviousHistory: true })
       })
     },
     pageBeforeIn () {
@@ -385,7 +394,7 @@ export default {
         searchbarPlaceholder: 'Try: astro, mqtt, hue, knx...',
         openerEl: this.$refs.selectAddons,
         multiple: true,
-        autoFocus: true,
+        requestSourceOnOpen: true,
         source: (query, render) => {
           if (query.length === 0) {
             render(self.addons.filter((a) => !a.installed).map((a) => a.label))
