@@ -5,7 +5,7 @@
               <f7-login-screen-title>
                 <img class="intro-logo" src="res/img/openhab-logo.png">
               </f7-login-screen-title>
-              <f7-list form style="margin-top: 4rem">
+              <f7-list form style="margin-top: 4rem" v-if="i18nReady">
                 <f7-list-item
                   title="Language"
                   smart-select
@@ -16,6 +16,7 @@
                       v-for="option in availableLanguages"
                       :key="option.value"
                       :value="option.value"
+                      :selected="language === option.value"
                     >{{option.label}}</option>
                   </select>
                 </f7-list-item>
@@ -29,6 +30,7 @@
                       v-for="option in availableRegions"
                       :key="option.value"
                       :value="option.value"
+                      :selected="region === option.value"
                     >{{option.label}}</option>
                   </select>
                 </f7-list-item>
@@ -38,10 +40,12 @@
                   :smart-select-params="{openIn: 'popup', searchbar: true, virtualList: true, closeOnSelect: true, virtualListHeight: ($theme.aurora) ? 32 : undefined }"
                 >
                   <select name="timezone" @change="(evt) => timezone = evt.target.value">
+                    <option value=''></option>
                     <option
                       v-for="option in availableTimezones"
                       :key="option.value"
                       :value="option.value"
+                      :selected="timezone === option.value"
                     >{{option.label}}</option>
                   </select>
                 </f7-list-item>
@@ -203,6 +207,7 @@ export default {
   },
   data () {
     return {
+      i18nReady: false,
       availableLanguages: null,
       availableRegions: null,
       availableTimezones: null,
@@ -359,6 +364,17 @@ export default {
       this.availableLanguages = data.parameters.find(p => p.name === 'language').options
       this.availableRegions = data.parameters.find(p => p.name === 'region').options
       this.availableTimezones = data.parameters.find(p => p.name === 'timezone').options
+      if (Intl && Intl.DateTimeFormat().resolvedOptions()) {
+        const intlOptions = Intl.DateTimeFormat().resolvedOptions()
+        if (intlOptions.locale) {
+          this.language = intlOptions.locale.split('-')[0]
+          if (intlOptions.locale.split('-')[1]) this.region = intlOptions.locale.split('-')[1]
+        }
+        if (intlOptions.timeZone) {
+          if (this.availableTimezones.find((tz) => tz.value === intlOptions.timeZone)) this.timezone = intlOptions.timeZone
+        }
+        this.i18nReady = true
+      }
     })
     this.$oh.api.get('/rest/addons').then((data) => {
       this.addons = data
