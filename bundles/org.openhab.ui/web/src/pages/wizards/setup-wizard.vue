@@ -361,7 +361,7 @@ export default {
           label: 'Overview'
         },
         slots: {
-          default: null,
+          default: [],
           masonry: null
         }
       }).then((data) => {
