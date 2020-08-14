@@ -227,7 +227,7 @@ public class ChartResource implements RESTResource {
             if (state instanceof DecimalType) {
                 List<String> vals = new ArrayList<>();
                 vals.add(formatDouble(((DecimalType) state).doubleValue(), "null", true));
-                data.put(historicItem.getTimestamp().getTime(), vals);
+                data.put(historicItem.getTimestamp().toInstant().toEpochMilli(), vals);
             }
         }
         logger.debug("'{}' querying item '{}' from '{}' to '{}' => '{}' results", persistenceService.getId(),

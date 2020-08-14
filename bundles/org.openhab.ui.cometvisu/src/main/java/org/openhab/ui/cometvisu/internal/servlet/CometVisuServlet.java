@@ -434,7 +434,7 @@ public class CometVisuServlet extends HttpServlet {
                             continue;
                         }
                         org.openhab.ui.cometvisu.internal.backend.model.rss.Entry entry = new org.openhab.ui.cometvisu.internal.backend.model.rss.Entry();
-                        entry.publishedDate = historicItem.getTimestamp().getTime();
+                        entry.publishedDate = historicItem.getTimestamp().toInstant().toEpochMilli();
                         entry.tags.add(historicItem.getName());
                         String[] content = historicItem.getState().toString().split(rssLogMessageSeparator);
                         if (content.length == 0) {
