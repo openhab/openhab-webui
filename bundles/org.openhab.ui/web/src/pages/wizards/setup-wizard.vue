@@ -126,7 +126,7 @@
                     <f7-button ref="selectAddons" large icon-f7="cart_fill" icon-size="24" @click="selectAddons" text="Select Add-ons to Install"></f7-button>
                   </f7-col>
                 </f7-row>
-                <f7-list class="search-list searchbar-found" ref="selectAddons" media-list>
+                <f7-list class="search-list searchbar-found" ref="selectAddons" media-list v-show="!installingAddons">
                   <f7-list-item media-item v-for="addon in selectedAddons" :key="addon.id"
                     :header="addon.id" :title="addon.label" :footer="addon.version">
                     <f7-link slot="after" v-if="addon.link" icon-f7="doc_text_search" :external="true" color="gray" target="_blank" :href="addon.link"></f7-link>
@@ -226,7 +226,8 @@ export default {
       location: null,
       autocompleteAddons: null,
       addons: [],
-      selectedAddons: []
+      selectedAddons: [],
+      installingAddons: false
     }
   },
   methods: {
@@ -282,6 +283,7 @@ export default {
       const self = this
       const checkInterval = 2 // check the add-ons statuses every 2 seconds
 
+      this.installingAddons = true
       this.$refs.wait.show(false)
 
       const addonsCount = this.selectedAddons.length
