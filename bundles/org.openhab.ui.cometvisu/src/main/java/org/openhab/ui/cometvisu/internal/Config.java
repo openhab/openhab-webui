@@ -16,7 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import org.openhab.core.config.core.ConfigConstants;
+import org.openhab.core.OpenHAB;
 import org.openhab.core.library.types.DateTimeType;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.HSBType;
@@ -67,7 +67,7 @@ public class Config {
     public static final String COMETVISU_WEBAPP_USERFILE_FOLDER = File.separator + "cometvisu";
     public static final String COMETVISU_MOUNTPOINTS = "mount";
 
-    public static String cometvisuWebfolder = ConfigConstants.getUserDataFolder() + "/cometvisu";
+    public static String cometvisuWebfolder = OpenHAB.getUserDataFolder() + "/cometvisu";
     public static String cometvisuWebappAlias = "/cometvisu";
     public static boolean cometvisuAutoDownload = false;
 
