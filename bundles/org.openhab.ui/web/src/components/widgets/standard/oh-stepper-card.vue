@@ -20,45 +20,13 @@
 <script>
 import mixin from '../widget-mixin'
 import OhStepper from '../system/oh-stepper.vue'
+import { OhStepperCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
     OhStepper
   },
-  widget: {
-    name: 'oh-stepper-card',
-    label: 'Stepper Card',
-    description: 'Display a stepper in a card',
-    props: {
-      parameters: [
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT',
-          description: 'Title of the card'
-        },
-        {
-          name: 'item',
-          label: 'Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'Item to control'
-        },
-        {
-          name: 'footer',
-          label: 'Footer text',
-          type: 'TEXT',
-          description: 'Footer of the card'
-        },
-        {
-          name: 'color',
-          label: 'Color',
-          type: 'TEXT',
-          description: 'Color of the control'
-        }
-      ]
-    }
-  }
+  widget: OhStepperCardDefinition
 }
 </script>

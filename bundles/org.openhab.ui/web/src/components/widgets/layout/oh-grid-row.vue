@@ -44,17 +44,13 @@
 import mixin from '../widget-mixin'
 import OhGridCol from './oh-grid-col.vue'
 
+import { OhGridRowDefinition } from '@/assets/definitions/widgets/layout'
+
 export default {
   mixins: [mixin],
   components: {
     OhGridCol
   },
-  widget: {
-    name: 'oh-grid-rown',
-    label: 'Layout Grid Row',
-    description: 'A row in a grid layout',
-    props: {
-    }
-  }
+  widget: OhGridRowDefinition
 }
 </script>

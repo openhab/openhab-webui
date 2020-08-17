@@ -58,10 +58,9 @@ import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * handles read request from the CometVisu client every request initializes a
@@ -69,6 +68,7 @@ import io.swagger.annotations.ApiResponses;
  *
  * @author Tobias Bräutigam - Initial contribution
  * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
+ * @author Wouter Born - Migrated to OpenAPI annotations
  */
 @Component(immediate = true)
 @JaxrsResource
@@ -76,7 +76,7 @@ import io.swagger.annotations.ApiResponses;
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_READ_ALIAS)
-@Api(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_READ_ALIAS)
+@Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_READ_ALIAS)
 @NonNullByDefault
 public class ReadResource implements EventBroadcaster, RESTResource {
     private final Logger logger = LoggerFactory.getLogger(ReadResource.class);
@@ -131,8 +131,8 @@ public class ReadResource implements EventBroadcaster, RESTResource {
      */
     @GET
     @Produces(MediaType.SERVER_SENT_EVENTS)
-    @ApiOperation(value = "Creates the SSE stream for item states, sends all requested states once and then only changes states")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
+    @Operation(summary = "Creates the SSE stream for item states, sends all requested states once and then only changes states", responses = {
+            @ApiResponse(responseCode = "200", description = "OK") })
     public void getStates(@Context final SseEventSink sseEventSink, @QueryParam("a") List<String> itemNames,
             @QueryParam("i") long index, @QueryParam("t") long time) throws IOException, InterruptedException {
 

@@ -86,12 +86,6 @@
 		<bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.homebuilder/${project.version}</bundle>
 	</feature>
 
-	<feature name="openhab-ui-restdocs" description="REST Documentation" version="${project.version}">
-		<feature>openhab-core-ui</feature>
-		<feature>openhab-core-io-rest-swagger</feature>
-		<bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.restdocs/${project.version}</bundle>
-	</feature>
-
 	<feature name="openhab-iconset-classic" version="${project.version}">
 		<feature>openhab-core-ui-icon</feature>
 		<bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.iconset.classic/${project.version}</bundle>

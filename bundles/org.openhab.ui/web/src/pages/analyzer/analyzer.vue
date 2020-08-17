@@ -219,7 +219,7 @@ import ChartCalendar from './chart-calendar'
 
 export default {
   components: {
-    'oh-chart-page': () => import('../../components/widgets/chart/oh-chart-page.vue'),
+    'oh-chart-page': () => import(/* webpackChunkName: "chart-page" */ '../../components/widgets/chart/oh-chart-page.vue'),
     ItemPicker
   },
   data () {

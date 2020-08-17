@@ -63,7 +63,7 @@
         </li>
 
         <f7-list-item link="/developer/" title="Developer Tools" panel-close
-            :class="{ currentsection: currentUrl.indexOf('/developer/') >= 0 && currentUrl.indexOf('/developer/widgets') < 0 }">
+            :class="{ currentsection: currentUrl.indexOf('/developer/') >= 0 && currentUrl.indexOf('/developer/widgets') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 }">
           <f7-icon slot="media" ios="f7:exclamationmark_shield_fill" aurora="f7:exclamationmark_shield_fill" md="material:extension" color="gray"></f7-icon>
         </f7-list-item>
         <li v-if="showDeveloperSubmenu">
@@ -71,6 +71,10 @@
           <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/widgets/" title="Widgets" view=".view-main" panel-close :animate="false" no-chevron
               :class="{ currentsection: currentUrl.indexOf('/developer/widgets') >= 0 }">
             <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray"></f7-icon>
+          </f7-list-item>
+          <f7-list-item link="/developer/api-explorer" title="API Explorer" view=".view-main" panel-close :animate="false" no-chevron
+              :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') >= 0 }">
+            <f7-icon slot="media" f7="wrench" color="gray"></f7-icon>
           </f7-list-item>
           </ul>
         </li>
@@ -328,10 +332,10 @@ export default {
   methods: {
     loadData () {
       return this.$oh.api.get('/rest/')
-        .then((endpoints) => {
+        .then((rootResponse) => {
           // store the REST API services present on the system
-          this.$store.commit('setApiEndpoints', { endpoints })
-          return Promise.resolve(endpoints)
+          this.$store.commit('setRootResource', { rootResponse })
+          return Promise.resolve(rootResponse)
         }).then(() => {
           // load the pages & widgets, only if the 'ui' endpoint exists (or empty arrays otherwise)
           return Promise.all(
@@ -430,7 +434,7 @@ export default {
     // this.loginScreenOpened = true
     const refreshToken = this.getRefreshToken()
     if (refreshToken) {
-      this.refreshAccessToken().then((user) => {
+      this.refreshAccessToken().then(() => {
         this.loggedIn = true
         this.loadData()
         this.init = true

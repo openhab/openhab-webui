@@ -12,14 +12,14 @@
  */
 package org.openhab.ui.habot.test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.IntentInterpretation;
 import org.openhab.ui.habot.nlp.Skill;
@@ -48,7 +48,7 @@ public class AbstractTrainerTest {
         public final static String CREATE_RULE = "create-rule";
     }
 
-    @Before
+    @BeforeEach
     public void initializeMockSkills() {
         skills = new ArrayList<Skill>();
 

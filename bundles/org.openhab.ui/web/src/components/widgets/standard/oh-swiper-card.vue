@@ -20,33 +20,13 @@
 <script>
 import mixin from '../widget-mixin'
 import OhSwiper from '../system/oh-swiper.vue'
+import { OhSwiperCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
     OhSwiper
   },
-  widget: {
-    name: 'oh-swiper-card',
-    label: 'Swiper Card',
-    description: 'Display a swiper in a card',
-    props: {
-      parameters: [
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT',
-          description: 'Title of the card'
-        },
-        {
-          name: 'footer',
-          label: 'Footer text',
-          type: 'TEXT',
-          description: 'Footer of the card'
-        },
-        ...OhSwiper.widget.props.parameters
-      ]
-    }
-  }
+  widget: OhSwiperCardDefinition
 }
 </script>
