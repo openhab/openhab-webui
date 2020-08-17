@@ -142,9 +142,9 @@ export default {
         const stdWidgets = (isList) ? StandardListWidgets : StandardWidgets
         const standardWidgetOptions = Object.keys(stdWidgets).map((k) => {
           return {
-            text: stdWidgets[k].widget.label,
+            text: stdWidgets[k].widget().label,
             color: 'blue',
-            onClick: () => doAddWidget(stdWidgets[k].widget.name)
+            onClick: () => doAddWidget(stdWidgets[k].widget().name)
           }
         })
         const customWidgetOptions = this.$store.state.components.widgets.map((w) => {
@@ -201,18 +201,18 @@ export default {
       })
     },
     addMasonry (component) {
-      if (!component.slots.masonry) {
+      if (!component.slots.masonry || !component.slots.masonry.length) {
         this.$set(this.page.slots, 'masonry', [{
           component: 'oh-masonry',
-          config: { nbTestCards: 10 },
           slots: { default: [] }
         }])
       }
     },
     getWidgetDefinition (componentType) {
-      const component = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets }).find((w) => w.widget && w.widget.name === componentType)
+      const component = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets })
+        .find((w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType)
       if (!component) return null
-      return component.widget
+      return component.widget()
     },
     toYaml () {
       this.pageYaml = YAML.stringify({

@@ -19,7 +19,7 @@
 <script>
 export default {
   components: {
-    'editor': () => import('./script-editor.vue')
+    'editor': () => import(/* webpackChunkName: "script-editor" */ './script-editor.vue')
   },
   props: ['title', 'value', 'opened', 'fullscreen', 'popupId'],
   data () {

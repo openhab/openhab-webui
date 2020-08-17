@@ -32,75 +32,13 @@
 import mixin from '../widget-mixin'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 
-const columnOptions = [5, 10, 15, 20, 25, 30, 33, 35, 40, 45,
-  50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100].map((c) => {
-  return {
-    value: c.toString(),
-    label: `${c} %`
-  }
-})
+import { OhGridColDefinition } from '@/assets/definitions/widgets/layout/index'
 
 export default {
   mixins: [mixin],
   components: {
     OhPlaceholderWidget
   },
-  widget: {
-    name: 'oh-grid-col',
-    label: 'Layout Grid Column',
-    description: 'A column in a grid layout',
-    props: {
-      parameters: [
-        {
-          name: 'width',
-          label: 'Width',
-          type: 'INTEGER',
-          description: 'Standard width',
-          options: columnOptions,
-          limitToOptions: true
-        },
-        {
-          name: 'xsmall',
-          label: 'Width (XS)',
-          type: 'INTEGER',
-          description: 'Column width when app width >= 480px',
-          options: columnOptions,
-          limitToOptions: true
-        },
-        {
-          name: 'small',
-          label: 'Width (S)',
-          type: 'INTEGER',
-          description: 'Column width when app width >= 568px',
-          options: columnOptions,
-          limitToOptions: true
-        },
-        {
-          name: 'medium',
-          label: 'Width (M)',
-          type: 'INTEGER',
-          description: 'Column width when app width >= 1024px',
-          options: columnOptions,
-          limitToOptions: true
-        },
-        {
-          name: 'large',
-          label: 'Width (L)',
-          type: 'INTEGER',
-          description: 'Column width when app width >= 1024px',
-          options: columnOptions,
-          limitToOptions: true
-        },
-        {
-          name: 'xlarge',
-          label: 'Width (XL)',
-          type: 'INTEGER',
-          description: 'Column width when app width >= 1200px',
-          options: columnOptions,
-          limitToOptions: true
-        }
-      ]
-    }
-  }
+  widget: OhGridColDefinition
 }
 </script>

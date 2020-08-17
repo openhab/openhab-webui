@@ -40,7 +40,7 @@ import org.bouncycastle.jce.interfaces.ECPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.jose4j.lang.JoseException;
-import org.openhab.core.config.core.ConfigConstants;
+import org.openhab.core.OpenHAB;
 import org.openhab.ui.habot.notification.internal.webpush.Notification;
 import org.openhab.ui.habot.notification.internal.webpush.PushService;
 import org.openhab.ui.habot.notification.internal.webpush.Subscription;
@@ -174,7 +174,7 @@ public class NotificationService {
         encodedKeys.add(BaseEncoding.base64Url().encode(privateKey));
 
         // write the public key, then the private key in encoded form on separate lines in the file
-        File file = new File(ConfigConstants.getUserDataFolder() + File.separator + VAPID_KEYS_FILE_NAME);
+        File file = new File(OpenHAB.getUserDataFolder() + File.separator + VAPID_KEYS_FILE_NAME);
         file.getParentFile().mkdirs();
         IOUtils.writeLines(encodedKeys, System.lineSeparator(), new FileOutputStream(file));
 
@@ -188,7 +188,7 @@ public class NotificationService {
     private void loadVAPIDKeys() {
         try {
             List<String> encodedKeys = IOUtils.readLines(
-                    new FileInputStream(ConfigConstants.getUserDataFolder() + File.separator + VAPID_KEYS_FILE_NAME));
+                    new FileInputStream(OpenHAB.getUserDataFolder() + File.separator + VAPID_KEYS_FILE_NAME));
             this.publicVAPIDKey = encodedKeys.get(0);
             this.privateVAPIDKey = encodedKeys.get(1);
         } catch (IOException e) {

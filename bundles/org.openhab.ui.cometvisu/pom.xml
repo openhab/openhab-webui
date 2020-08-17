@@ -35,12 +35,12 @@
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
-      <artifactId>org.openhab.core.boot</artifactId>
+      <artifactId>org.openhab.core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
-      <artifactId>org.openhab.core</artifactId>
+      <artifactId>org.openhab.core.io.net</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

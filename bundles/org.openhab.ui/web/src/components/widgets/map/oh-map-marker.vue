@@ -13,7 +13,8 @@
 <script>
 import mixin from '../widget-mixin'
 import { LMarker, LTooltip, LIcon } from 'vue2-leaflet'
-import { actionGroup, actionProps, actionsMixin } from '../widget-actions'
+import { actionsMixin } from '../widget-actions'
+import { OhMapMarkerDefinition } from '@/assets/definitions/widgets/map'
 
 export default {
   mixins: [mixin, actionsMixin],
@@ -22,46 +23,7 @@ export default {
     LTooltip,
     LIcon
   },
-  widget: {
-    name: 'oh-map-marker',
-    label: 'Map Marker',
-    icon: 'map_pin',
-    description: 'A marker on a map',
-    props: {
-      parameterGroups: [
-        actionGroup(null, 'Action to perform when the marker is clicked')
-      ],
-      parameters: [
-        ...actionProps(),
-        {
-          name: 'label',
-          label: 'Label',
-          type: 'TEXT',
-          description: 'The label on the marker'
-        },
-        {
-          name: 'item',
-          label: 'Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'The Location item this marker will show'
-        },
-        {
-          name: 'location',
-          label: 'Fixed location',
-          type: 'TEXT',
-          context: 'location',
-          description: 'The fixed location to show if no item is configured or its coordinates are invalid'
-        },
-        {
-          name: 'icon',
-          label: 'Icon',
-          type: 'TEXT',
-          description: 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/configuration/iconsets/classic/">openHAB icon</a>)'
-        }
-      ]
-    }
-  },
+  widget: OhMapMarkerDefinition,
   data () {
     return {
       markerKey: this.$f7.utils.id()

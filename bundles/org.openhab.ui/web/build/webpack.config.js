@@ -59,6 +59,10 @@ module.exports = {
       '/static': apiBaseUrl
     }
   },
+  performance: {
+    maxAssetSize: 2048000,
+    maxEntrypointSize: 2500000
+  },
   optimization: {
     minimizer: [new TerserPlugin({
       sourceMap: true

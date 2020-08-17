@@ -60,6 +60,16 @@ export default function itemDefaultStandaloneComponent (item) {
         }
       }
     }
+
+    if (item.type === 'Image') {
+      component = {
+        component: 'oh-image-card',
+        config: {
+          lazy: true,
+          lazyFadeIn: true
+        }
+      }
+    }
   }
 
   if (!component) {

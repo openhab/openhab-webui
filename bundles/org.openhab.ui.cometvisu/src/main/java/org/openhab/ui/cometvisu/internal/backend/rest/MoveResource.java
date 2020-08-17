@@ -39,17 +39,17 @@ import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Move/renames files for the CometVisu manager.
  *
  * @author Tobias Bräutigam - Initial contribution
  * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
+ * @author Wouter Born - Migrated to OpenAPI annotations
  */
 @Component
 @JaxrsResource
@@ -57,20 +57,22 @@ import io.swagger.annotations.ApiResponses;
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/fs/move")
-@Api(Config.COMETVISU_BACKEND_ALIAS + "/fs/move")
+@Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/fs/move")
 @NonNullByDefault
 public class MoveResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(MoveResource.class);
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Move folder or file to a new place")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "forbidden"),
-            @ApiResponse(code = 404, message = "not found"), @ApiResponse(code = 406, message = "target exists"),
-            @ApiResponse(code = 500, message = "rename/move failed") })
+    @Operation(summary = "Move folder or file to a new place", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "403", description = "forbidden"),
+            @ApiResponse(responseCode = "404", description = "not found"),
+            @ApiResponse(responseCode = "406", description = "target exists"),
+            @ApiResponse(responseCode = "500", description = "rename/move failed") })
     public Response move(
-            @ApiParam(value = "current path of the filesystem entry", required = true) @QueryParam("src") String src,
-            @ApiParam(value = " new path of the filesystem entry", required = true) @QueryParam("target") String target) {
+            @Parameter(description = "current path of the filesystem entry", required = true) @QueryParam("src") String src,
+            @Parameter(description = " new path of the filesystem entry", required = true) @QueryParam("target") String target) {
         MountedFile sourceFile;
         MountedFile targetFile;
         try {

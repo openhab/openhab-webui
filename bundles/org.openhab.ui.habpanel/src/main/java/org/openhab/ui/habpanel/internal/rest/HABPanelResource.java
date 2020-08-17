@@ -38,26 +38,30 @@ import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
 import org.osgi.service.jaxrs.whiteboard.propertytypes.JSONRequired;
 import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsApplicationSelect;
 import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsName;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * This class describes the /habpanel resource of the REST API, currently holding facilities for browsing widget
  * galleries.
  *
  * @author Yannick Schaus - Initial contribution
- *
+ * @author Wouter Born - Migrated to OpenAPI annotations
  */
 @Component
+@JaxrsResource
 @JaxrsName(HABPanelResource.PATH_HABPANEL)
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
 @Path(HABPanelResource.PATH_HABPANEL)
-@Api(HABPanelResource.PATH_HABPANEL)
+@Tag(name = HABPanelResource.PATH_HABPANEL)
 @NonNullByDefault
 public class HABPanelResource implements RESTResource {
 
@@ -67,11 +71,11 @@ public class HABPanelResource implements RESTResource {
     @RolesAllowed({ Role.USER, Role.ADMIN })
     @Path("/gallery/{galleryName: [a-zA-Z_0-9]*}/widgets")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Gets the list of widget gallery items.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
-            @ApiResponse(code = 404, message = "Unknown gallery") })
+    @Operation(summary = "Gets the list of widget gallery items.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(array = @ArraySchema(schema = @Schema(implementation = GalleryWidgetsListItem.class)))),
+            @ApiResponse(responseCode = "404", description = "Unknown gallery") })
     public Response getGalleryWidgetList(
-            @PathParam("galleryName") @ApiParam(value = "gallery name e.g. 'community'") String galleryName)
+            @PathParam("galleryName") @Parameter(description = "gallery name e.g. 'community'") String galleryName)
             throws Exception {
         GalleryWidgetProvider galleryProvider = GalleryProviderFactory.getWidgetGalleryProvider(galleryName);
 
@@ -88,12 +92,12 @@ public class HABPanelResource implements RESTResource {
     @RolesAllowed({ Role.USER, Role.ADMIN })
     @Path("/gallery/{galleryName: [a-zA-Z_0-9]*}/widgets/{id: [a-zA-Z_0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Gets the details about a widget gallery item.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
-            @ApiResponse(code = 404, message = "Unknown gallery or gallery item not found") })
+    @Operation(summary = "Gets the details about a widget gallery item.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = GalleryItem.class))),
+            @ApiResponse(responseCode = "404", description = "Unknown gallery or gallery item not found") })
     public Response getGalleryWidgetsItem(
-            @PathParam("galleryName") @ApiParam(value = "gallery name e.g. 'community'") String galleryName,
-            @PathParam("id") @ApiParam(value = "id within the gallery") String id) throws Exception {
+            @PathParam("galleryName") @Parameter(description = "gallery name e.g. 'community'") String galleryName,
+            @PathParam("id") @Parameter(description = "id within the gallery") String id) throws Exception {
         GalleryWidgetProvider galleryProvider = GalleryProviderFactory.getWidgetGalleryProvider(galleryName);
 
         if (galleryProvider == null) {

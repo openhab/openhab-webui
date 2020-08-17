@@ -50,90 +50,12 @@
 
 <script>
 import mixin from '../widget-mixin'
-import { actionGroup, actionProps, actionsMixin } from '../widget-actions'
+import { actionsMixin } from '../widget-actions'
+import { OhLabelCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin, actionsMixin],
-  widget: {
-    name: 'oh-label-card',
-    label: 'Label Card',
-    description: 'Display the state of an item in a card',
-    props: {
-      parameterGroups: [
-        actionGroup(null, 'Action to perform when the element is clicked')
-      ],
-      parameters: [
-        ...actionProps(),
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT',
-          description: 'Title of the card'
-        },
-        {
-          name: 'item',
-          label: 'Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'Item to display'
-        },
-        {
-          name: 'footer',
-          label: 'Footer text',
-          type: 'TEXT',
-          description: 'Footer of the card'
-        },
-        {
-          name: 'label',
-          label: 'Label',
-          type: 'TEXT',
-          description: 'Display this text (or expression result) instead of the item\'s state'
-        },
-        {
-          name: 'background',
-          label: 'Background style',
-          type: 'TEXT',
-          description: 'Background style (in CSS "background" attribute format)'
-        },
-        {
-          name: 'fontSize',
-          label: 'Font Size',
-          type: 'TEXT',
-          description: 'Font size (e.g. "34px")'
-        },
-        {
-          name: 'fontWeight',
-          label: 'Font Size',
-          type: 'TEXT',
-          description: 'Font size (e.g. "normal" or "bold")'
-        },
-        {
-          name: 'icon',
-          label: 'Icon',
-          type: 'TEXT',
-          description: 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/configuration/iconsets/classic/">openHAB icon</a>) or <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'
-        },
-        {
-          name: 'iconColor',
-          label: 'Icon Color',
-          type: 'TEXT',
-          description: 'Not applicable to openHAB icons'
-        },
-        {
-          name: 'iconSize',
-          label: 'Icon Size',
-          type: 'NUMBER',
-          description: 'Size of the icon in px'
-        },
-        {
-          name: 'vertical',
-          label: 'Vertical arrangement',
-          type: 'BOOLEAN',
-          description: 'Display label below icon'
-        }
-      ]
-    }
-  },
+  widget: OhLabelCardDefinition,
   data () {
     return {
       trendData: [],

@@ -12,7 +12,7 @@
 </template>
 
 <script>
-const ScriptEditorPopup = () => import('./script-editor-popup.vue')
+import ScriptEditorPopup from './script-editor-popup.vue'
 
 export default {
   props: ['configDescription', 'value'],

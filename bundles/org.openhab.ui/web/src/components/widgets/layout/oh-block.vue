@@ -38,26 +38,13 @@
 <script>
 import mixin from '../widget-mixin'
 import OhGridRow from './oh-grid-row'
+import { OhBlockDescription } from '@/assets/definitions/widgets/layout'
 
 export default {
   mixins: [mixin],
   components: {
     OhGridRow
   },
-  widget: {
-    name: 'oh-block',
-    label: 'Layout Grid Block',
-    description: 'A block in a grid layout',
-    props: {
-      parameters: [
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT',
-          description: 'Title of the block, displayed above it'
-        }
-      ]
-    }
-  }
+  widget: OhBlockDescription
 }
 </script>

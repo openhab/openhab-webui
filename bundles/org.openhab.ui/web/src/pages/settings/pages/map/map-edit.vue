@@ -37,12 +37,13 @@
               </f7-menu-item>
             </f7-menu>
 
-            <f7-list media-list>
+            <f7-list media-list class="markers-list">
               <f7-list-item media-item v-for="(marker, idx) in page.slots.default" :key="idx"
-                :title="marker.config.label" :subtitle="marker.config.item || marker.config.location">
+                :title="marker.config.label" :subtitle="marker.config.item || marker.config.location"
+                link="#" @click.native="(ev) => configureMarker(ev, marker, context)">
                 <oh-icon v-if="marker.config.icon && marker.config.icon.indexOf('oh:') === 0" slot="media" :icon="marker.config.icon.substring(3)" height="32" width="32" />
                 <f7-icon v-else slot="media" :f7="markerDefaultIcon(marker)" :size="32" />
-                <f7-menu slot="content-start">
+                <f7-menu slot="content-start" class="configure-layout-menu">
                   <f7-menu-item icon-f7="list_bullet" dropdown>
                     <f7-menu-dropdown>
                       <f7-menu-dropdown-item @click="configureWidget(marker,  { component: page })" href="#" text="Configure marker"></f7-menu-dropdown-item>
@@ -94,6 +95,10 @@
   .oh-map-page-lmap
     top calc(var(--f7-navbar-height) + var(--f7-toolbar-height)) !important
     height calc(100% - var(--f7-navbar-height) - 2 * var(--f7-toolbar-height)) !important
+.markers-list
+  .item-link
+    overflow inherit
+    z-index inherit !important
 </style>
 
 <script>
@@ -136,9 +141,9 @@ export default {
   },
   methods: {
     markerDefaultIcon (marker) {
-      const widgetDefinition = Object.values(ConfigurableWidgets).find((c) => c.widget.name === marker.component)
+      const widgetDefinition = Object.values(ConfigurableWidgets).find((c) => c.widget && typeof c.widget === 'function' && c.widget().name === marker.component)
       if (widgetDefinition) {
-        return widgetDefinition.widget.icon
+        return widgetDefinition.widget().icon
       }
       return null
     },
@@ -149,16 +154,27 @@ export default {
       if (widgetType) {
         component.slots[slot].push({
           component: widgetType,
-          config: {},
+          config: {
+            label: 'New Marker'
+          },
           slots: { default: [] }
         })
         this.forceUpdate()
       }
     },
     getWidgetDefinition (componentType) {
-      const component = Object.values(ConfigurableWidgets).find((w) => w.widget && w.widget.name === componentType)
+      const component = Object.values(ConfigurableWidgets).find((w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType)
       if (!component) return null
-      return component.widget
+      return component.widget()
+    },
+    configureMarker (ev, marker, context) {
+      let el = ev.target
+      ev.cancelBubble = true
+      while (!el.classList.contains('media-item')) {
+        if (el && el.classList.contains('menu')) return
+        el = el.parentElement
+      }
+      this.context.editmode.configureWidget(marker, context)
     },
     toYaml () {
       this.pageYaml = YAML.stringify({

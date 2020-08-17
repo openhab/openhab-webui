@@ -26,7 +26,7 @@
             <f7-list v-if="thingType.supportedBridgeTypeUIDs.length" inline-labels no-hairlines-md>
               <thing-picker
                 title="Bridge" name="bridge" :value="thing.bridgeUID"
-                @input="(value) => { thing.bridgeUID = value; $emit('updated') }"
+                @input="updateBridge"
                 :filterType="thingType.supportedBridgeTypeUIDs" />
             </f7-list>
           </f7-col>
@@ -45,9 +45,19 @@ export default {
     ThingPicker
   },
   methods: {
+    computedThingUid () {
+      return (this.thing.bridgeUID)
+        ? [this.thing.thingTypeUID, this.thing.bridgeUID.substring(this.thing.bridgeUID.lastIndexOf(':') + 1), this.thing.ID].join(':')
+        : [this.thing.thingTypeUID, this.thing.ID].join(':')
+    },
     changeUID (event) {
       this.thing.ID = event.target.value
-      this.thing.UID = this.thing.thingTypeUID + ':' + this.thing.ID
+      if (this.createMode) this.thing.UID = this.computedThingUid()
+    },
+    updateBridge (value) {
+      this.thing.bridgeUID = value
+      this.$emit('updated')
+      if (this.createMode) this.thing.UID = this.computedThingUid()
     }
   }
 }

@@ -24,9 +24,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -57,6 +57,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.openhab.core.OpenHAB;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
@@ -122,8 +123,7 @@ public class CometVisuServlet extends HttpServlet {
     public CometVisuServlet(String filesystemDir, CometVisuApp cometVisuApp) {
         root = filesystemDir;
         rootFolder = new File(root);
-        userFileFolder = new File(org.openhab.core.config.core.ConfigConstants.getConfigFolder()
-                + Config.COMETVISU_WEBAPP_USERFILE_FOLDER);
+        userFileFolder = new File(OpenHAB.getConfigFolder() + Config.COMETVISU_WEBAPP_USERFILE_FOLDER);
         defaultUserDir = System.getProperty("user.dir");
         this.cometVisuApp = cometVisuApp;
 
@@ -390,14 +390,11 @@ public class CometVisuServlet extends HttpServlet {
                 feed.author = "";
                 feed.description = "RSS supplied logs";
                 feed.type = "rss20";
+
                 // Define the data filter
                 FilterCriteria filter = new FilterCriteria();
-                Calendar start = Calendar.getInstance();
                 // retrieve only the historic states from the last 7 days + BeginDate is required for RRD4j service
-                start.add(Calendar.DAY_OF_YEAR, -7);
-                // Date end = new Date();
-                filter.setBeginDate(start.getTime());
-                // filter.setEndDate(end);
+                filter.setBeginDate(ZonedDateTime.now().minusDays(7));
                 filter.setPageSize(25);
                 filter.setOrdering(Ordering.DESCENDING);
 
@@ -434,7 +431,7 @@ public class CometVisuServlet extends HttpServlet {
                             continue;
                         }
                         org.openhab.ui.cometvisu.internal.backend.model.rss.Entry entry = new org.openhab.ui.cometvisu.internal.backend.model.rss.Entry();
-                        entry.publishedDate = historicItem.getTimestamp().getTime();
+                        entry.publishedDate = historicItem.getTimestamp().toInstant().toEpochMilli();
                         entry.tags.add(historicItem.getName());
                         String[] content = historicItem.getState().toString().split(rssLogMessageSeparator);
                         if (content.length == 0) {
@@ -470,7 +467,7 @@ public class CometVisuServlet extends HttpServlet {
                                 });
                     }
                     logger.debug("querying {} item from {} to {} => {} results on service {}", filter.getItemName(),
-                            filter.getBeginDate(), filter.getEndDate(), i, persistenceService.getId());
+                            filter.getBeginDateZoned(), filter.getEndDateZoned(), i, persistenceService.getId());
                 }
                 if (request.getParameter("j") != null) {
                     // request data in JSON format

@@ -33,17 +33,17 @@ import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Allows certain actions to configure the CometVisu backend through the REST api.
  *
  * @author Tobias Bräutigam - Initial contribution
  * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
+ * @author Wouter Born - Migrated to OpenAPI annotations
  */
 @Component
 @JaxrsResource
@@ -51,7 +51,7 @@ import io.swagger.annotations.ApiResponses;
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CONFIG_ALIAS)
-@Api(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CONFIG_ALIAS)
+@Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CONFIG_ALIAS)
 @NonNullByDefault
 public class ConfigResource implements RESTResource {
 
@@ -60,10 +60,10 @@ public class ConfigResource implements RESTResource {
     @GET
     @Path("/{actionName}")
     @Produces({ MediaType.TEXT_PLAIN })
-    @ApiOperation(value = "starts defined actions e.g. downloading the CometVisu client")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
+    @Operation(summary = "starts defined actions e.g. downloading the CometVisu client", responses = {
+            @ApiResponse(responseCode = "200", description = "OK") })
     public Response getValue(
-            @ApiParam(value = "name of the action, currently only 'download-client' is implemented") @PathParam("actionName") String actionName) {
+            @Parameter(description = "name of the action, currently only 'download-client' is implemented") @PathParam("actionName") String actionName) {
         if ("download-client".equalsIgnoreCase(actionName)) {
             logger.debug("calling installation checker with config overriding");
             ClientInstaller.getInstance().check(true);

@@ -40,6 +40,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.core.OpenHAB;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.core.items.GroupItem;
@@ -71,10 +72,9 @@ import org.rrd4j.core.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * handles requests for chart series data from the CometVisu client
@@ -82,6 +82,7 @@ import io.swagger.annotations.ApiResponses;
  *
  * @author Tobias Bräutigam - Initial contribution
  * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
+ * @author Wouter Born - Migrated to OpenAPI annotations
  */
 @Component
 @JaxrsResource
@@ -89,7 +90,7 @@ import io.swagger.annotations.ApiResponses;
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CHART_ALIAS)
-@Api(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CHART_ALIAS)
+@Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CHART_ALIAS)
 @NonNullByDefault
 public class ChartResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(ChartResource.class);
@@ -99,8 +100,8 @@ public class ChartResource implements RESTResource {
 
     private static final DecimalFormat DECIMAL_FORMAT;
 
-    protected static final String RRD_FOLDER = org.openhab.core.config.core.ConfigConstants.getUserDataFolder()
-            + File.separator + "persistence" + File.separator + "rrd4j";
+    protected static final String RRD_FOLDER = OpenHAB.getUserDataFolder() + File.separator + "persistence"
+            + File.separator + "rrd4j";
 
     static {
         DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
@@ -135,9 +136,9 @@ public class ChartResource implements RESTResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "returns chart data from persistence service for an item")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 500, message = "Server error") })
+    @Operation(summary = "returns chart data from persistence service for an item", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "500", description = "Server error") })
     public Response getChartSeries(@Context HttpHeaders headers, @QueryParam("rrd") String itemName,
             @QueryParam("ds") String consFunction, @QueryParam("start") String start, @QueryParam("end") String end,
             @QueryParam("res") long resolution) {
@@ -227,7 +228,7 @@ public class ChartResource implements RESTResource {
             if (state instanceof DecimalType) {
                 List<String> vals = new ArrayList<>();
                 vals.add(formatDouble(((DecimalType) state).doubleValue(), "null", true));
-                data.put(historicItem.getTimestamp().getTime(), vals);
+                data.put(historicItem.getTimestamp().toInstant().toEpochMilli(), vals);
             }
         }
         logger.debug("'{}' querying item '{}' from '{}' to '{}' => '{}' results", persistenceService.getId(),

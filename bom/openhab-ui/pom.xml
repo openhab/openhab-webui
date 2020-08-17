@@ -60,12 +60,6 @@
     </dependency>
     <dependency>
       <groupId>org.openhab.ui.bundles</groupId>
-      <artifactId>org.openhab.ui.restdocs</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openhab.ui.bundles</groupId>
       <artifactId>org.openhab.ui.iconset.classic</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>

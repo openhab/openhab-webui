@@ -82,7 +82,7 @@ export default {
           this.currentTokenExpireTime = new Date().getTime() + resp.expires_in * 950
           document.addEventListener('visibilitychange', this.checkTokenAfterVisibilityChange)
           this.$store.commit('setUser', { user: resp.user })
-          resolve(resp.user)
+          resolve(resp)
         }).catch((err) => {
           console.log(err)
           reject(err)

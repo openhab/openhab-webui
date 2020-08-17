@@ -5,15 +5,16 @@
     </div>
     <f7-col>
       <f7-block width="100" class="parameter-group">
-        <f7-row>
+        <f7-row v-if="displayedParameters.some((p) => !p.groupName)">
           <f7-col>
             <config-parameter
               v-for="parameter in displayedParameters.filter((p) => !p.groupName)"
               :key="parameter.name"
               :config-description="parameter"
-              :value="configuration[parameter.name]"
+              :value="configurationWithDefaults[parameter.name]"
               :parameters="parameters"
-              :configuration="configuration"
+              :configuration="configurationWithDefaults"
+              :status="parameterStatus(parameter)"
               @update="(value) => updateParameter(parameter, value)"
             />
           </f7-col>
@@ -22,8 +23,8 @@
     </f7-col>
     <f7-col v-if="parameterGroups.length">
       <f7-block width="100" class="parameter-group" v-for="group in parameterGroups" :key="group.name">
-        <f7-row>
-          <f7-col v-if="displayedParameters.some((p) => p.groupName === group.name)">
+        <f7-row v-if="displayedParameters.some((p) => p.groupName === group.name)">
+          <f7-col>
             <f7-block-title class="parameter-group-title">{{group.label}}</f7-block-title>
             <f7-block-footer class="param-description" v-if="group.description">
               <div v-html="group.description"></div>
@@ -33,9 +34,10 @@
               v-for="parameter in displayedParameters.filter((p) => p.groupName === group.name)"
               :key="parameter.name"
               :config-description="parameter"
-              :value="configuration[parameter.name]"
+              :value="configurationWithDefaults[parameter.name]"
               :parameters="parameters"
-              :configuration="configuration"
+              :configuration="configurationWithDefaults"
+              :status="parameterStatus(parameter)"
               @update="(value) => updateParameter(parameter, value)"
             />
           </f7-col>
@@ -62,9 +64,9 @@
 
 <script>
 export default {
-  props: ['parameterGroups', 'parameters', 'configuration'],
+  props: ['parameterGroups', 'parameters', 'configuration', 'status'],
   components: {
-    'config-parameter': () => import('./config-parameter.vue')
+    'config-parameter': () => import(/* webpackChunkName: "config-parameter" */ './config-parameter.vue')
   },
   data () {
     return {
@@ -72,6 +74,13 @@ export default {
     }
   },
   computed: {
+    configurationWithDefaults () {
+      let conf = Object.assign({}, this.configuration)
+      this.parameters.forEach((p) => {
+        if (conf[p.name] === undefined && p.defaultValue !== undefined) conf[p.name] = p.defaultValue
+      })
+      return conf
+    },
     hasAdvanced () {
       return this.parameters.length > 0 && this.parameters.some((p) => p.advanced)
     },
@@ -93,6 +102,10 @@ export default {
       }
       console.debug(JSON.stringify(this.configuration))
       this.$emit('updated')
+    },
+    parameterStatus (parameter) {
+      if (!this.status || !this.status.length) return null
+      return this.status.find((ps) => ps.parameterName === parameter.name)
     }
   }
 }

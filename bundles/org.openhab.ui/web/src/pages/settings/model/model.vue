@@ -303,7 +303,7 @@ export default {
       // this.newItemParent = null
     },
     startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/items/*/added,smarthome/items/*/updated,smarthome/items/*/removed', null, (event) => {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/items/*/added,openhab/items/*/updated,openhab/items/*/removed', null, (event) => {
         console.log(event)
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {

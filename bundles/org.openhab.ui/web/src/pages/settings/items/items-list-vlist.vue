@@ -157,7 +157,7 @@ export default {
       })
     },
     startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/items/*/added,smarthome/items/*/removed,smarthome/items/*/updated', null, (event) => {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/items/*/added,openhab/items/*/removed,openhab/items/*/updated', null, (event) => {
         console.log(event)
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {

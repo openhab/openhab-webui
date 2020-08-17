@@ -28,105 +28,14 @@
 <script>
 import mixin from '../widget-mixin'
 import OhRollershutter from '../system/oh-rollershutter.vue'
+import { OhRollershutterCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
     OhRollershutter
   },
-  widget: {
-    name: 'oh-rollershutter-card',
-    label: 'Rollershutter Card',
-    description: 'Display a rollershutter control in a card',
-    props: {
-      parameters: [
-        {
-          name: 'title',
-          label: 'Title',
-          type: 'TEXT',
-          description: 'Title of the card'
-        },
-        {
-          name: 'item',
-          label: 'Item',
-          type: 'TEXT',
-          context: 'item',
-          description: 'Item to control'
-        },
-        {
-          name: 'color',
-          label: 'Color',
-          type: 'TEXT',
-          description: 'Color of the control'
-        },
-        {
-          name: 'footer',
-          label: 'Footer text',
-          type: 'TEXT',
-          description: 'Footer of the card'
-        },
-        {
-          name: 'vertical',
-          label: 'Vertical',
-          type: 'BOOLEAN',
-          description: 'Vertical arrangement'
-        },
-        {
-          name: 'dirIconsStyle',
-          label: 'Direction Icons Style',
-          type: 'TEXT',
-          limitToOptions: true,
-          options: [
-            'arrowtriangle_{dir}',
-            'arrowtriangle_{dir}_fill',
-            'arrowtriangle_{dir}_circle',
-            'arrowtriangle_{dir}_circle_fill',
-            'arrowtriangle_{dir}_square',
-            'arrowtriangle_{dir}_square_fill',
-            'chevron_{dir}',
-            'chevron_{dir}_2',
-            'chevron_compact_{dir}_2',
-            'chevron_{dir}_fill',
-            'chevron_{dir}_circle',
-            'chevron_{dir}_circle_fill',
-            'chevron_{dir}_square',
-            'chevron_{dir}_square_fill',
-            'arrow_{dir}',
-            'arrow_{dir}_2',
-            'arrow_{dir}_fill',
-            'arrow_{dir}_circle',
-            'arrow_{dir}_circle_fill',
-            'arrow_{dir}_square',
-            'arrow_{dir}_square_fill',
-            'arrow_{dir}_to_line',
-            'arrow_{dir}_to_line_alt'
-          ].map((o) => { return { value: o, label: o } })
-        },
-        {
-          name: 'stopIconStyle',
-          label: 'Stop Icon Style',
-          type: 'TEXT',
-          limitToOptions: true,
-          options: [
-            'stop',
-            'stop_fill',
-            'stop_circle',
-            'stop_circle_fill',
-            'multiply',
-            'multiply_fill',
-            'multiply_circle',
-            'multiply_circle_fill'
-          ].map((o) => { return { value: o, label: o } })
-        },
-        {
-          name: 'stateInCenter',
-          label: 'State in Center',
-          type: 'BOOLEAN',
-          description: 'Display state value'
-        }
-      ]
-    }
-  },
+  widget: OhRollershutterCardDefinition,
   data () {
     return {
       value: Math.random()

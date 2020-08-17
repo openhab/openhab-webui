@@ -33,8 +33,11 @@ import AsyncComputed from 'vue-async-computed'
 Vue.use(AsyncComputed)
 
 // Import vue-magic-grid
-import MagicGrid from 'vue-magic-grid'
-Vue.use(MagicGrid)
+// import MagicGrid from 'vue-magic-grid'
+// Vue.use(MagicGrid)
+
+import VueMasonry from 'vue-masonry-css'
+Vue.use(VueMasonry)
 
 // Init Framework7-Vue Plugin
 Framework7.use(Framework7Vue)

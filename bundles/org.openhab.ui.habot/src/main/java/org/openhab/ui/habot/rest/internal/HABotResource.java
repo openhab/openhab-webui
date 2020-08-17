@@ -62,17 +62,20 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * This class describes the /habot resource of the REST API.
  *
  * @author Yannick Schaus - Initial contribution
  * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
+ * @author Wouter Born - Migrated to OpenAPI annotations
  */
 @Component
 @JaxrsResource
@@ -81,7 +84,7 @@ import io.swagger.annotations.ApiResponses;
 @JSONRequired
 @RolesAllowed({ Role.USER, Role.ADMIN })
 @Path(HABotResource.PATH_HABOT)
-@Api(HABotResource.PATH_HABOT)
+@Tag(name = HABotResource.PATH_HABOT)
 @NonNullByDefault
 public class HABotResource implements RESTResource {
 
@@ -116,9 +119,9 @@ public class HABotResource implements RESTResource {
     @RolesAllowed({ Role.USER, Role.ADMIN })
     @Path("/greet")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieves a first greeting message from the bot in the specified or configured language.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ChatReply.class),
-            @ApiResponse(code = 500, message = "There is no support for the configured language") })
+    @Operation(summary = "Retrieves a first greeting message from the bot in the specified or configured language.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ChatReply.class))),
+            @ApiResponse(responseCode = "500", description = "There is no support for the configured language") })
     public Response greet() {
         final Locale locale = localeService.getLocale(null);
 
@@ -136,10 +139,11 @@ public class HABotResource implements RESTResource {
     @Path("/chat")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Send a query to HABot to interpret.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ChatReply.class),
-            @ApiResponse(code = 500, message = "An interpretation error occurred") })
-    public Response chat(@ApiParam(value = "human language query", required = true) String query) throws Exception {
+    @Operation(summary = "Send a query to HABot to interpret.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ChatReply.class))),
+            @ApiResponse(responseCode = "500", description = "An interpretation error occurred") })
+    public Response chat(@Parameter(description = "human language query", required = true) String query)
+            throws Exception {
         final Locale locale = localeService.getLocale(null);
 
         // interpret
@@ -157,9 +161,9 @@ public class HABotResource implements RESTResource {
     @Path("/attributes")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Gets all item named attributes.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ChatReply.class),
-            @ApiResponse(code = 500, message = "An error occurred") })
+    @Operation(summary = "Gets all item named attributes.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ChatReply.class))),
+            @ApiResponse(responseCode = "500", description = "An error occurred") })
     public Response getAttributes() throws Exception {
         final Locale locale = localeService.getLocale(null);
 
@@ -175,9 +179,9 @@ public class HABotResource implements RESTResource {
     @Path("/notifications/subscribe")
     // TEXT_PLAIN to work around https://github.com/openhab/openhab-cloud/issues/31
     @Consumes(MediaType.TEXT_PLAIN) // @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Subscribes a new client for push notifications.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 500, message = "An error occured") })
+    @Operation(summary = "Subscribes a new client for push notifications.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
     public Response webPushSubscribe(String subscriptionJson) throws Exception {
         Gson gson = new Gson();
         Subscription subscription = gson.fromJson(subscriptionJson, Subscription.class);
@@ -197,9 +201,9 @@ public class HABotResource implements RESTResource {
     @GET
     @Path("/notifications/vapid")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Gets or generates the public VAPID key used for push notifications.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 500, message = "An error occured") })
+    @Operation(summary = "Gets or generates the public VAPID key used for push notifications.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
     public Response webPushConfig() throws Exception {
         String publicVAPIDKey = notificationService.getVAPIDPublicKey();
 
@@ -209,9 +213,9 @@ public class HABotResource implements RESTResource {
     @GET
     @Path("/cards")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Gets all cards of the card deck.", response = Card.class, responseContainer = "List")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 500, message = "An error occured") })
+    @Operation(summary = "Gets all cards of the card deck.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Card.class)))),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
     public Response getAllCards() {
         Collection<Card> cards = cardRegistry.getNonEphemeral();
 
@@ -221,11 +225,11 @@ public class HABotResource implements RESTResource {
     @GET
     @Path("/cards/{cardUID}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Gets a card from the card deck by its UID.", response = Card.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
-            @ApiResponse(code = 500, message = "An error occured") })
-    public Response getCardByUid(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
+    @Operation(summary = "Gets a card from the card deck by its UID.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = Card.class))),
+            @ApiResponse(responseCode = "404", description = "The card with the provided UID doesn't exist"),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
+    public Response getCardByUid(@PathParam("cardUID") @Parameter(description = "cardUID") String cardUID) {
         Card card = cardRegistry.get(cardUID);
         if (card == null) {
             return Response.status(Status.NOT_FOUND).build();
@@ -237,10 +241,10 @@ public class HABotResource implements RESTResource {
     @POST
     @Path("/cards")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Creates a new card in the card deck.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "The card was created"),
-            @ApiResponse(code = 500, message = "An error occured") })
-    public Response createCard(@ApiParam(value = "card", required = true) Card card) {
+    @Operation(summary = "Creates a new card in the card deck.", responses = {
+            @ApiResponse(responseCode = "200", description = "The card was created", content = @Content(schema = @Schema(implementation = Card.class))),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
+    public Response createCard(@Parameter(description = "card", required = true) Card card) {
         card.updateTimestamp();
         card.setEphemeral(false);
         Card existingCard = cardRegistry.get(card.getUID());
@@ -255,9 +259,11 @@ public class HABotResource implements RESTResource {
     @PUT
     @Path("/cards/{cardUID}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Updates a card in the card deck.")
-    public Response updateCard(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID,
-            @ApiParam(value = "card", required = true) Card card) {
+    @Operation(summary = "Updates a card in the card deck.", responses = {
+            @ApiResponse(responseCode = "200", description = "The card was updated", content = @Content(schema = @Schema(implementation = Card.class))),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
+    public Response updateCard(@PathParam("cardUID") @Parameter(description = "cardUID") String cardUID,
+            @Parameter(description = "card", required = true) Card card) {
         if (!card.getUID().equals(cardUID)) {
             throw new InvalidParameterException(
                     "The card UID in the body of the request should match the UID in the URL");
@@ -271,8 +277,10 @@ public class HABotResource implements RESTResource {
     @DELETE
     @Path("/cards/{cardUID}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Deletes a card from the card deck.")
-    public Response deleteCard(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
+    @Operation(summary = "Deletes a card from the card deck.", responses = {
+            @ApiResponse(responseCode = "200", description = "The card was deleted"),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
+    public Response deleteCard(@PathParam("cardUID") @Parameter(description = "cardUID") String cardUID) {
         cardRegistry.remove(cardUID);
 
         return Response.ok().build();
@@ -280,11 +288,11 @@ public class HABotResource implements RESTResource {
 
     @PUT
     @Path("/cards/{cardUID}/bookmark")
-    @ApiOperation(value = "Sets a bookmark on a card.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
-            @ApiResponse(code = 500, message = "An error occured") })
-    public Response setCardBookmark(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
+    @Operation(summary = "Sets a bookmark on a card.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "The card with the provided UID doesn't exist"),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
+    public Response setCardBookmark(@PathParam("cardUID") @Parameter(description = "cardUID") String cardUID) {
         Card card = cardRegistry.get(cardUID);
         if (card == null) {
             return Response.status(Status.NOT_FOUND).build();
@@ -298,10 +306,10 @@ public class HABotResource implements RESTResource {
     @GET
     @Path("/cards/recent")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Creates a new card in the card deck.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "The card was created"),
-            @ApiResponse(code = 500, message = "An error occured") })
-    public Response createCard(@QueryParam(value = "skip") int skip, @QueryParam(value = "count") int count) {
+    @Operation(summary = "Gets the most recent cards from the card deck", responses = {
+            @ApiResponse(responseCode = "200", description = "The most recent cards", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Card.class)))),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
+    public Response recentCards(@QueryParam(value = "skip") int skip, @QueryParam(value = "count") int count) {
         Collection<Card> cards = cardRegistry.getRecent(skip, count);
 
         return Response.ok(cards).build();
@@ -309,11 +317,11 @@ public class HABotResource implements RESTResource {
 
     @DELETE
     @Path("/cards/{cardUID}/bookmark")
-    @ApiOperation(value = "Removes the bookmark on a card.")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
-            @ApiResponse(code = 500, message = "An error occured") })
-    public Response unsetCardBookmark(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
+    @Operation(summary = "Removes the bookmark on a card.", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "The card with the provided UID doesn't exist"),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
+    public Response unsetCardBookmark(@PathParam("cardUID") @Parameter(description = "cardUID") String cardUID) {
         Card card = cardRegistry.get(cardUID);
         if (card == null) {
             return Response.status(Status.NOT_FOUND).build();
@@ -326,11 +334,11 @@ public class HABotResource implements RESTResource {
 
     @PUT
     @Path("/cards/{cardUID}/timestamp")
-    @ApiOperation(value = "Updates the timestamp on a card to the current time")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
-            @ApiResponse(code = 500, message = "An error occured") })
-    public Response updateCardTimestamp(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
+    @Operation(summary = "Updates the timestamp on a card to the current time", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "The card with the provided UID doesn't exist"),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
+    public Response updateCardTimestamp(@PathParam("cardUID") @Parameter(description = "cardUID") String cardUID) {
         Card card = cardRegistry.get(cardUID);
         if (card == null) {
             return Response.status(Status.NOT_FOUND).build();
@@ -349,10 +357,10 @@ public class HABotResource implements RESTResource {
     @Path("/compat/cards")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Creates a new card in the card deck (compatibility endpoint).")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "The card was created"),
-            @ApiResponse(code = 500, message = "An error occured") })
-    public Response createCard(@ApiParam(value = "card", required = true) String card) {
+    @Operation(summary = "Creates a new card in the card deck (compatibility endpoint).", responses = {
+            @ApiResponse(responseCode = "200", description = "The card was created", content = @Content(schema = @Schema(implementation = Card.class))),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
+    public Response createCard(@Parameter(description = "card", required = true) String card) {
         Gson gson = new Gson();
         return createCard(gson.fromJson(card, Card.class));
     }
@@ -361,9 +369,11 @@ public class HABotResource implements RESTResource {
     @Path("/compat/cards/{cardUID}")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Updates a card in the card deck (compatibility endpoint).")
-    public Response updateCard(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID,
-            @ApiParam(value = "card", required = true) String card) {
+    @Operation(summary = "Updates a card in the card deck (compatibility endpoint).", responses = {
+            @ApiResponse(responseCode = "200", description = "The card was updated", content = @Content(schema = @Schema(implementation = Card.class))),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
+    public Response updateCard(@PathParam("cardUID") @Parameter(description = "cardUID") String cardUID,
+            @Parameter(description = "card", required = true) String card) {
         Gson gson = new Gson();
         return updateCard(cardUID, gson.fromJson(card, Card.class));
     }
@@ -371,18 +381,20 @@ public class HABotResource implements RESTResource {
     @POST
     @Path("/compat/cards/{cardUID}/delete")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Deletes a card from the card deck (compatibility endpoint).")
-    public Response deleteCardPost(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
+    @Operation(summary = "Deletes a card from the card deck (compatibility endpoint).", responses = {
+            @ApiResponse(responseCode = "200", description = "The card was updated", content = @Content(schema = @Schema(implementation = Card.class))),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
+    public Response deleteCardPost(@PathParam("cardUID") @Parameter(description = "cardUID") String cardUID) {
         return deleteCard(cardUID);
     }
 
     @POST
     @Path("/compat/cards/{cardUID}/unbookmark")
-    @ApiOperation(value = "Removes the bookmark on a card (compatibility endpoint).")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "The card with the provided UID doesn't exist"),
-            @ApiResponse(code = 500, message = "An error occured") })
-    public Response unsetCardBookmarkCompat(@PathParam("cardUID") @ApiParam(value = "cardUID") String cardUID) {
+    @Operation(summary = "Removes the bookmark on a card (compatibility endpoint).", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "The card with the provided UID doesn't exist"),
+            @ApiResponse(responseCode = "500", description = "An error occured") })
+    public Response unsetCardBookmarkCompat(@PathParam("cardUID") @Parameter(description = "cardUID") String cardUID) {
         return unsetCardBookmark(cardUID);
     }
 }

@@ -53,17 +53,19 @@ import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Filesystem backend for the cometvisu manager.
  *
  * @author Tobias Bräutigam - Initial contribution
  * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
+ * @author Wouter Born - Migrated to OpenAPI annotations
  */
 @Component
 @JaxrsResource
@@ -71,7 +73,7 @@ import io.swagger.annotations.ApiResponses;
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/fs")
-@Api(Config.COMETVISU_BACKEND_ALIAS + "/fs")
+@Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/fs")
 @NonNullByDefault
 public class FsResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(FsResource.class);
@@ -79,11 +81,11 @@ public class FsResource implements RESTResource {
     @POST
     @Consumes("text/*")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create a text file")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
-            @ApiResponse(code = 406, message = "File already exists") })
+    @Operation(summary = "Create a text file", responses = { @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "403", description = "not allowed"),
+            @ApiResponse(responseCode = "406", description = "File already exists") })
     public Response create(@QueryParam("path") String path, @QueryParam("type") String type,
-            @QueryParam("hash") String hash, @ApiParam(value = "file content") String body,
+            @QueryParam("hash") String hash, @Parameter(description = "file content") String body,
             @DefaultValue("false") @QueryParam("force") Boolean force) {
         MountedFile file;
         try {
@@ -113,15 +115,15 @@ public class FsResource implements RESTResource {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create a binary file")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
-            @ApiResponse(code = 406, message = "File already exists") })
+    @Operation(summary = "Create a binary file", responses = { @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "403", description = "not allowed"),
+            @ApiResponse(responseCode = "406", description = "File already exists") })
     public Response createBinary(@Context HttpServletRequest request,
-            @ApiParam(value = "Relative path inside the config folder", required = true) @QueryParam("path") String path,
+            @Parameter(description = "Relative path inside the config folder", required = true) @QueryParam("path") String path,
             @QueryParam("type") String type,
-            @ApiParam(value = "CRC32 hash of the file content") @QueryParam("hash") String hash,
-            @ApiParam(value = "force overriding existing file") @DefaultValue("false") @FormParam("force") Boolean force,
-            @ApiParam(value = "file content") @FormParam("file") Object fileParam) {
+            @Parameter(description = "CRC32 hash of the file content") @QueryParam("hash") String hash,
+            @Parameter(description = "force overriding existing file") @DefaultValue("false") @FormParam("force") Boolean force,
+            @Parameter(description = "file content") @FormParam("file") Object fileParam) {
         MountedFile target;
         try {
             MultipartRequestMap map = new MultipartRequestMap(request);
@@ -151,13 +153,13 @@ public class FsResource implements RESTResource {
 
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Deletes a file/folder")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
-            @ApiResponse(code = 404, message = "File/Folder not found"),
-            @ApiResponse(code = 406, message = "Folder not empty") })
+    @Operation(summary = "Deletes a file/folder", responses = { @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "403", description = "not allowed"),
+            @ApiResponse(responseCode = "404", description = "File/Folder not found"),
+            @ApiResponse(responseCode = "406", description = "Folder not empty") })
     public Response delete(
-            @ApiParam(value = "Relative path inside the config folder", required = true) @QueryParam("path") String path,
-            @ApiParam(value = "force deletion of non empty folders") @QueryParam("force") Boolean force) {
+            @Parameter(description = "Relative path inside the config folder", required = true) @QueryParam("path") String path,
+            @Parameter(description = "force deletion of non empty folders") @QueryParam("force") Boolean force) {
         MountedFile file;
         try {
             file = new MountedFile(path);
@@ -200,14 +202,14 @@ public class FsResource implements RESTResource {
 
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.APPLICATION_OCTET_STREAM })
-    @ApiOperation(value = "Return directory listing or file content")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
-            @ApiResponse(code = 404, message = "File/Folder not found") })
+    @Operation(summary = "Return directory listing or file content", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "403", description = "not allowed"),
+            @ApiResponse(responseCode = "404", description = "File/Folder not found") })
     public Response read(
-            @ApiParam(value = "Relative path inside the config folder", required = true, defaultValue = "") @QueryParam("path") String path,
-            @ApiParam(value = "should the file be downloaded?", defaultValue = "false") @DefaultValue("false") @QueryParam("download") Boolean download,
-            @ApiParam(value = "also include all sub-folders in the directory listing", defaultValue = "false") @DefaultValue("false") @QueryParam("recursive") Boolean recursive) {
-
+            @Parameter(description = "Relative path inside the config folder", required = true, content = @Content(schema = @Schema(implementation = String.class, defaultValue = ""))) @QueryParam("path") String path,
+            @Parameter(description = "should the file be downloaded?", content = @Content(schema = @Schema(implementation = Boolean.class, defaultValue = "false"))) @DefaultValue("false") @QueryParam("download") Boolean download,
+            @Parameter(description = "also include all sub-folders in the directory listing", content = @Content(schema = @Schema(implementation = Boolean.class, defaultValue = "false"))) @DefaultValue("false") @QueryParam("recursive") Boolean recursive) {
         try {
             MountedFile file = new MountedFile(path);
             logger.debug("read request for: {}", file.getAbsolutePath());
@@ -244,13 +246,14 @@ public class FsResource implements RESTResource {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({ MediaType.TEXT_PLAIN, MediaType.TEXT_XML })
-    @ApiOperation(value = "Update an existing file")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 403, message = "not allowed"),
-            @ApiResponse(code = 404, message = "File does not exist") })
+    @Operation(summary = "Update an existing file", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "403", description = "not allowed"),
+            @ApiResponse(responseCode = "404", description = "File does not exist") })
     public Response update(
-            @ApiParam(value = "Relative path inside the config folder", required = true) @QueryParam("path") String path,
-            @ApiParam(value = "file content") String body,
-            @ApiParam(value = "CRC32 hash value of the file content", defaultValue = "ignore") @DefaultValue("ignore") @QueryParam("hash") String hash) {
+            @Parameter(description = "Relative path inside the config folder", required = true) @QueryParam("path") String path,
+            @Parameter(description = "file content") String body,
+            @Parameter(description = "CRC32 hash value of the file content", content = @Content(schema = @Schema(implementation = String.class, defaultValue = "ignore"))) @DefaultValue("ignore") @QueryParam("hash") String hash) {
         File target = new File(
                 ManagerSettings.getInstance().getConfigFolder().getAbsolutePath() + File.separator + path);
         if (target.exists()) {
