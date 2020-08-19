@@ -10,10 +10,13 @@ export default {
     getRefreshToken () {
       return localStorage.getItem('openhab.ui:refreshToken') || null
     },
-    authorize () {
+    authorize (setup) {
       import('pkce-challenge').then((PkceChallenge) => {
         const pkceChallenge = PkceChallenge.default()
+        const authState = (setup ? 'setup-' : '') + this.$f7.utils.id()
+
         sessionStorage.setItem('openhab.ui:codeVerifier', pkceChallenge.code_verifier)
+        sessionStorage.setItem('openhab.ui:authState', authState)
 
         window.location = '/auth' +
           '?response_type=code' +
@@ -21,17 +24,22 @@ export default {
           '&redirect_uri=' + encodeURIComponent(window.location.origin) +
           '&scope=admin' +
           '&code_challenge_method=S256' +
-          '&code_challenge=' + encodeURIComponent(pkceChallenge.code_challenge)
+          '&code_challenge=' + encodeURIComponent(pkceChallenge.code_challenge) +
+          '&state=' + authState
       })
     },
     tryExchangeAuthorizationCode () {
       return new Promise((resolve, reject) => {
         const queryParams = Utils.parseUrlQuery(window.location.href)
-        if (queryParams.code) {
-          if (window.history) {
-            window.history.replaceState(null, window.title, window.location.href.replace('?code=' + queryParams.code, ''))
+        if (queryParams.code && queryParams.state) {
+          const authState = sessionStorage.getItem('openhab.ui:authState')
+          sessionStorage.removeItem('openhab.ui:authState')
+          if (authState !== queryParams.state) {
+            reject('Invalid state')
           }
-          this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
+          if (window.history) {
+            window.history.replaceState(null, window.title, window.location.href.replace('?code=' + queryParams.code, '').replace('&state=' + authState, ''))
+          }
 
           const codeVerifier = sessionStorage.getItem('openhab.ui:codeVerifier')
           sessionStorage.removeItem('openhab.ui:codeVerifier')
@@ -52,6 +60,10 @@ export default {
             // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
             setTimeout(this.refreshAccessToken, resp.expires_in * 950)
             this.$store.commit('setUser', { user: resp.user })
+
+            const nextRoute = authState.indexOf('setup') === 0 ? '/setup-wizard/' : '/'
+            this.$f7.views.main.router.navigate(nextRoute, { animate: false, clearPreviousHistory: true })
+
             resolve(resp.user)
           }).catch((err) => {
             console.log(err)

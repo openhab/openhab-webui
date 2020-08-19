@@ -1,6 +1,6 @@
 {
-  "overview.title": "Welcome to openHAB!",
-  "overview.text": "Configure your system, then create a layout page with the ID <code>\"overview\"</code> to display it here.",
+  "overview.title": "Overview Page Not Configured Yet",
+  "overview.text": "Edit the layout page with the ID <code>\"overview\"</code> to display important controls here.",
 
   "inbox.title": "The Inbox is empty",
   "inbox.text": "Discovery results from your bindings that can be added as things will appear here.<br><br>You can also start a scan for a certain binding or add things manually with the button below.",

@@ -1,5 +1,5 @@
 <template>
-<f7-app v-if="init" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
+<f7-app v-if="init" :style="{ visibility: !($store.getters.user || $store.getters.page('overview')) ? 'hidden' : '' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
 
   <!-- Left Panel -->
   <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
@@ -89,7 +89,7 @@
 
       <div slot="fixed" class="account" v-if="ready">
         <div class="display-flex justify-content-center">
-          <div class="hint-signin" v-if="!$store.getters.user && !$store.getters.pages.length">
+          <div class="hint-signin" v-if="!$store.getters.user && !$store.getters.pages.filter((p) => p.uid !== 'overview').length">
             <em>Sign in as an administrator to access settings<br /><f7-icon f7="arrow_down" size="20"></f7-icon></em>
           </div>
           <f7-button v-if="!loggedIn" large color="gray" icon-size="36" tooltip="Unlock Administration" icon-f7="lock_shield_fill" @click="authorize()" />
@@ -473,7 +473,13 @@ export default {
             this.$f7.dialog.alert('An error occurred while getting authorization: ' + err)
           } else {
             // we're just not signed in
-            this.loadData()
+            const refreshToken = this.getRefreshToken()
+            this.loadData().then(() => {
+              if (!refreshToken && this.$store.getters.apiEndpoint('ui') && (!this.$store.getters.page('overview'))) {
+                // as there is no overview page, assume the setup wizard hasn't run yet so launch it right away
+                this.authorize(true)
+              }
+            })
           }
         })
       }

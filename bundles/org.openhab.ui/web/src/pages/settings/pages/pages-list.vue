@@ -82,6 +82,7 @@
               class="pagelist-item"
               :checkbox="showCheckboxes"
               :checked="isChecked(page.uid)"
+              :disabled="showCheckboxes && page.uid === 'overview'"
               @change="(e) => toggleItemCheck(e, page.uid, page)"
               :link="showCheckboxes ? null : getPageType(page).type + '/' + page.uid"
               :title="page.config.label"
@@ -98,7 +99,7 @@
                 </f7-chip>
               </div>
               <!-- <span slot="media" class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
-              <f7-icon slot="media" :color="page.config.sidebar ? '' : 'gray'" :f7="getPageIcon(page)" :size="32"></f7-icon>
+              <f7-icon slot="media" :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'" :f7="getPageIcon(page)" :size="32"></f7-icon>
             </f7-list-item>
           </f7-list-group>
         </f7-list>
@@ -215,11 +216,17 @@ export default {
       return this.pageTypes.find(t => t.componentType === page.component)
     },
     getPageIcon (page) {
+      if (page.uid === 'overview') return 'house'
       const pageType = this.pageTypes.find(t => t.componentType === page.component)
       return (pageType) ? pageType.icon : 'tv'
     },
     removeSelected () {
       const vm = this
+
+      if (this.selectedItems.indexOf('ui:page:overview') >= 0) {
+        this.$f7.dialog.alert('The overview page cannot be deleted!')
+        return
+      }
 
       this.$f7.dialog.confirm(
         `Remove ${this.selectedItems.length} selected pages?`,

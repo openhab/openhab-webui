@@ -6,7 +6,7 @@
       </f7-list-input>
       <f7-list-input label="Label" type="text" placeholder="Label" :value="page.config.label" @input="page.config.label = $event.target.value" clear-button>
       </f7-list-input>
-      <f7-list-item accordion-item title="Sidebar &amp; Visibility">
+      <f7-list-item accordion-item title="Sidebar &amp; Visibility" :disabled="page.uid === 'overview'">
         <f7-accordion-content>
           <f7-list-item ref="pageVisibility" title="Visible only to" smart-select :smart-select-params="{openIn: 'popover'}">
             <select name="pagevisibility" multiple @change="updatePageVisibility">
