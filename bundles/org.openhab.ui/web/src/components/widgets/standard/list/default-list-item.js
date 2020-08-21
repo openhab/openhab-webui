@@ -53,6 +53,16 @@ export default function itemDefaultListComponent (item, itemNameAsFooter) {
         component: 'oh-player-item'
       }
     }
+
+    if (item.type === 'Image') {
+      component = {
+        component: 'oh-list-item',
+        config: {
+          action: 'photos',
+          actionPhotos: [{ item: item.name }]
+        }
+      }
+    }
   }
 
   if (!component) {
@@ -68,8 +78,8 @@ export default function itemDefaultListComponent (item, itemNameAsFooter) {
     } else if (item.commandDescription && item.commandDescription.commandOptions && !stateDescription.readOnly) {
       component.config = {
         action: 'options',
-        actionItem: item.name,
-        actionOptions: item.commandDescription.commandOptions.map((o) => (o.label) ? o.command + '=' + o.label : o.command).join(',')
+        actionItem: item.name
+        // command options will be retrieved on click from the API
       }
     } else if (item.type.indexOf('Group') === 0) {
       component.config = {

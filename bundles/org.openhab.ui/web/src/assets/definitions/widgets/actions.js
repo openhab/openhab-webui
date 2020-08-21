@@ -18,9 +18,12 @@ export const actionParams = (groupName, paramPrefix) => {
       { value: 'navigate', label: 'Navigate to page' },
       { value: 'command', label: 'Send command' },
       { value: 'toggle', label: 'Toggle item' },
+      { value: 'options', label: 'Command options' },
+      { value: 'rule', label: 'Run rule' },
       { value: 'popup', label: 'Open popup' },
       { value: 'popover', label: 'Open popover' },
       { value: 'sheet', label: 'Open sheet' },
+      { value: 'photos', label: 'Open photo browser' },
       { value: 'group', label: 'Group details' },
       { value: 'analyzer', label: 'Analyze item(s)' },
       { value: 'url', label: 'External URL' }
@@ -29,9 +32,9 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['url'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pi(paramPrefix + 'actionItem', 'Action Item', 'Item to perform the aciton on')
+    pi(paramPrefix + 'actionItem', 'Action Item', 'Item to perform the action on')
       .v((value, configuration, configDescription, parameters) => {
-        return ['command', 'toggle'].indexOf(configuration[paramPrefix + 'action']) >= 0
+        return ['command', 'toggle', 'options'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
     pt(paramPrefix + 'actionCommand', 'Action Command', 'Command to send to the item. If "toggle item" is selected as the action, only send the command when the state is different')
       .v((value, configuration, configDescription, parameters) => {
@@ -40,6 +43,14 @@ export const actionParams = (groupName, paramPrefix) => {
     pt(paramPrefix + 'actionCommandAlt', 'Action Toggle Command', 'Command to send to the item when "toggle item" is selected as the action, and the item\'s state is equal to the command above')
       .v((value, configuration, configDescription, parameters) => {
         return ['toggle'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
+    pt(paramPrefix + 'actionOptions', 'Command Options', 'Comma-separated list of options; if omitted, retrieve the command options from the item dynamically. Use <code>value=label</code> format to provide a label different than the option.')
+      .v((value, configuration, configDescription, parameters) => {
+        return ['options'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
+    pt(paramPrefix + 'actionRule', 'Rule', 'Rule to run').c('rule')
+      .v((value, configuration, configDescription, parameters) => {
+        return ['rule'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
     pt(paramPrefix + 'actionPage', 'Page', 'Page to navigate to').c('page')
       .v((value, configuration, configDescription, parameters) => {
@@ -65,6 +76,14 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['navigate', 'popup', 'popover', 'sheet'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
+    pt(paramPrefix + 'actionPhotos', 'Images to show', 'Array of URLs or objects representing the images. Auto-refresh is not supported.<br />Edit in YAML or provide a JSON array, e.g.<br /><code>[ "url1", { "item": "ImageItem1", "caption": "Camera" } ]</code><br />Objects are in the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photos-array">photos array format</a> with an additional <code>item</code> property to specify an item to view.')
+      .v((value, configuration, configDescription, parameters) => {
+        return ['photos'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
+    pt(paramPrefix + 'actionPhotoBrowserConfig', 'Photo browser configuration', 'Configuration for the photo browser.<br />Edit in YAML or provide a JSON object, e.g.<br /><code>{ "exposition": false, "type": "popup", "theme": "dark" }</code><br /> See <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photo-browser-parameters">photo browser parameters</a> (not all are supported).')
+      .v((value, configuration, configDescription, parameters) => {
+        return ['photos'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
     pi(paramPrefix + 'actionGroupPopupItem', 'Group Popup Item', 'Group item whose members to show in a popup')
       .v((value, configuration, configDescription, parameters) => {
         return ['group'].indexOf(configuration[paramPrefix + 'action']) >= 0
@@ -88,6 +107,10 @@ export const actionParams = (groupName, paramPrefix) => {
       { value: 'calendar', label: 'Calendar' }
     ]).v((value, configuration, configDescription, parameters) => {
       return ['analyzer'].indexOf(configuration[paramPrefix + 'action']) >= 0
-    })
+    }),
+    pt(paramPrefix + 'actionFeedback', 'Action feedback', 'Shows a toast popup when the action has been executed. Can either be a text to show or a JSON object including some of the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/toast.html#toast-parameters">supported parameters</a>').a()
+      .v((value, configuration, configDescription, parameters) => {
+        return ['command', 'toggle', 'options', 'rule'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      })
   ]
 }

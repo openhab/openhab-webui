@@ -66,7 +66,9 @@ export default function itemDefaultStandaloneComponent (item) {
         component: 'oh-image-card',
         config: {
           lazy: true,
-          lazyFadeIn: true
+          lazyFadeIn: true,
+          action: 'photos',
+          actionPhotos: [{ item: item.name }]
         }
       }
     }
@@ -86,8 +88,8 @@ export default function itemDefaultStandaloneComponent (item) {
     } else if (item.commandDescription && item.commandDescription.commandOptions && !stateDescription.readOnly) {
       component.config = {
         action: 'options',
-        actionItem: item.name,
-        actionOptions: item.commandDescription.commandOptions.map((o) => (o.label) ? o.command + '=' + o.label : o.command).join(',')
+        actionItem: item.name
+        // command options will be retrieved on click from the API
       }
     } else if (item.type.indexOf('Group') === 0) {
       component.config = {

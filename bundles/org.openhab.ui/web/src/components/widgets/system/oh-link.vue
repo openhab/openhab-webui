@@ -4,7 +4,8 @@
 
 <script>
 import mixin from '../widget-mixin'
-import { actionGroup, actionProps, actionsMixin } from '../widget-actions'
+import { actionGroup, actionParams } from '@/assets/definitions/widgets/actions'
+import { actionsMixin } from '../widget-actions'
 
 export default {
   mixins: [mixin, actionsMixin],
@@ -17,7 +18,7 @@ export default {
         actionGroup(null, 'Action to perform when the element is clicked')
       ],
       parameters: [
-        ...actionProps()
+        ...actionParams()
       ]
     }
   }
