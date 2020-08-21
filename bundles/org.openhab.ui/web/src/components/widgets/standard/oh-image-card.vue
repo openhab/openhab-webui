@@ -4,7 +4,7 @@
       <div>{{config.title}}</div>
     </f7-card-header>
     <f7-card-content :padding="false" class="oh-image-card">
-      <f7-list v-if="config.action">
+      <f7-list v-if="config.action" class="image-link">
         <f7-list-item class="oh-image-clickable" link="#" no-chevron @click="performAction">
           <oh-image slot="content-start" :context="childContext(context.component)" />
         </f7-list-item>
@@ -26,6 +26,11 @@
     margin-left 5px
     margin-right 5px
     width calc(100% - 10px)
+  .image-link
+    .item-inner
+      display none
+    .oh-image
+      margin-bottom 5px
 </style>
 
 <script>

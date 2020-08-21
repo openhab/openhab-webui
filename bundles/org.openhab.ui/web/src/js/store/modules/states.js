@@ -110,7 +110,7 @@ const actions = {
   },
   sendCommand (context, { itemName, cmd }) {
     console.log(`Sending command to ${itemName}: ${cmd}`)
-    this._vm.$oh.api.postPlain('/rest/items/' + itemName, cmd, 'text/plain', 'text/plain')
+    return this._vm.$oh.api.postPlain('/rest/items/' + itemName, cmd, 'text/plain', 'text/plain')
   }
 }
 

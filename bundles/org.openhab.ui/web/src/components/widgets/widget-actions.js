@@ -4,223 +4,6 @@ import OhPopover from './modals/oh-popover.vue'
 
 import GroupPopup from '@/pages/group/group-popup.vue'
 
-export const actionGroup = (label, description, groupPrefix) => {
-  groupPrefix = (groupPrefix) ? groupPrefix += '_' : ''
-  return {
-    name: groupPrefix + 'actions',
-    label: label || 'Action',
-    description
-  }
-}
-
-export const actionProps = (groupName, paramPrefix) => {
-  paramPrefix = (paramPrefix) ? paramPrefix += '_' : ''
-  if (!groupName) groupName = 'actions'
-  return [
-    {
-      name: paramPrefix + 'action',
-      label: 'Action',
-      groupName,
-      type: 'TEXT',
-      context: 'widgetaction',
-      description: 'Type of action to perform',
-      limitToOptions: true,
-      options: [
-        {
-          value: 'navigate',
-          label: 'Navigate to page'
-        },
-        {
-          value: 'command',
-          label: 'Send command'
-        },
-        {
-          value: 'toggle',
-          label: 'Toggle item'
-        },
-        {
-          value: 'popup',
-          label: 'Open popup'
-        },
-        {
-          value: 'popover',
-          label: 'Open popover'
-        },
-        {
-          value: 'sheet',
-          label: 'Open sheet'
-        },
-        {
-          value: 'group',
-          label: 'Group details'
-        },
-        {
-          value: 'analyzer',
-          label: 'Analyze item(s)'
-        },
-        {
-          value: 'url',
-          label: 'External URL'
-        }
-      ]
-    },
-    {
-      name: paramPrefix + 'actionUrl',
-      label: 'Action URL',
-      groupName,
-      type: 'TEXT',
-      context: 'url',
-      description: 'URL to navigate to',
-      visible: (value, configuration, configDescription, parameters) => {
-        return ['url'].indexOf(configuration[paramPrefix + 'action']) >= 0
-      }
-
-    },
-    {
-      name: paramPrefix + 'actionItem',
-      label: 'Action Item',
-      groupName,
-      type: 'TEXT',
-      context: 'item',
-      description: 'Item to perform the action on',
-      visible: (value, configuration, configDescription, parameters) => {
-        return ['command', 'toggle'].indexOf(configuration[paramPrefix + 'action']) >= 0
-      }
-    },
-    {
-      name: paramPrefix + 'actionCommand',
-      label: 'Action Command',
-      groupName,
-      type: 'TEXT',
-      description: 'Command to send to the item. If "toggle item" is selected as the action, only send the command when the state is different',
-      visible: (value, configuration, configDescription, parameters) => {
-        return ['command', 'toggle'].indexOf(configuration[paramPrefix + 'action']) >= 0
-      }
-    },
-    {
-      name: paramPrefix + 'actionCommandAlt',
-      label: 'Action Toggle Command',
-      groupName,
-      type: 'TEXT',
-      description: 'Command to send to the item when "toggle item" is selected as the action, and the item\'s state is equal to the command above',
-      visible: (value, configuration, configDescription, parameters) => {
-        return ['toggle'].indexOf(configuration[paramPrefix + 'action']) >= 0
-      }
-    },
-    {
-      name: paramPrefix + 'actionPage',
-      label: 'Page',
-      groupName,
-      type: 'TEXT',
-      context: 'page',
-      description: 'Page to navigate to',
-      visible: (value, configuration, configDescription, parameters) => {
-        return ['navigate'].indexOf(configuration[paramPrefix + 'action']) >= 0
-      }
-    },
-    {
-      name: paramPrefix + 'actionPageTransition',
-      label: 'Transition Effect',
-      groupName,
-      type: 'TEXT',
-      limitToOptions: true,
-      description: 'Use a specific <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a>',
-      options: [
-        { value: 'f7-circle', label: 'Circle' },
-        { value: 'f7-cover', label: 'Cover' },
-        { value: 'f7-cover-v', label: 'Cover from bottom' },
-        { value: 'f7-dive', label: 'Dive' },
-        { value: 'f7-fade', label: 'Fade' },
-        { value: 'f7-flip', label: 'Flip' },
-        { value: 'f7-parallax', label: 'Parallax' },
-        { value: 'f7-push', label: 'Push' }
-      ],
-      visible: (value, configuration, configDescription, parameters) => {
-        return ['navigate'].indexOf(configuration[paramPrefix + 'action']) >= 0
-      }
-    },
-    {
-      name: paramPrefix + 'actionModal',
-      label: 'Modal Page or Widget',
-      groupName,
-      type: 'TEXT',
-      context: 'pagewidget',
-      description: 'Page or widget to display in the modal',
-      visible: (value, configuration, configDescription, parameters) => {
-        return ['popup', 'popover', 'sheet'].indexOf(configuration[paramPrefix + 'action']) >= 0
-      }
-    },
-    {
-      name: paramPrefix + 'actionModalConfig',
-      label: 'Modal component configuration',
-      groupName,
-      context: 'props',
-      type: 'TEXT',
-      description: 'Configuration (prop values) for the target modal page or widget',
-      visible: (value, configuration, configDescription, parameters) => {
-        return ['navigate', 'popup', 'popover', 'sheet'].indexOf(configuration[paramPrefix + 'action']) >= 0
-      }
-    },
-    {
-      name: paramPrefix + 'actionGroupPopupItem',
-      label: 'Group Popup Item',
-      groupName,
-      type: 'TEXT',
-      context: 'item',
-      description: 'Group item whose members to show in a popup',
-      visible: (value, configuration, configDescription, parameters) => {
-        return ['group'].indexOf(configuration[paramPrefix + 'action']) >= 0
-      }
-    },
-    {
-      name: paramPrefix + 'actionAnalyzerItems',
-      label: 'Item(s) to Analyze',
-      groupName,
-      context: 'item',
-      type: 'TEXT',
-      multiple: true,
-      description: 'Start analyzing with the specified (set of) item(s)',
-      visible: (value, configuration, configDescription, parameters) => {
-        return ['analyzer'].indexOf(configuration[paramPrefix + 'action']) >= 0
-      }
-    },
-    {
-      name: paramPrefix + 'actionAnalyzerChartType',
-      label: 'Chart Type',
-      groupName,
-      type: 'TEXT',
-      limitToOptions: true,
-      description: 'The initial analyzing period - dynamic or a predefined fixed period: day, week, month or year',
-      visible: (value, configuration, configDescription, parameters) => {
-        return ['analyzer'].indexOf(configuration[paramPrefix + 'action']) >= 0
-      },
-      options: [
-        { value: '', label: 'Dynamic' },
-        { value: 'day', label: 'Day' },
-        { value: 'isoWeek', label: 'Week (starting on Mondays)' },
-        { value: 'month', label: 'Month' },
-        { value: 'year', label: 'Year' }
-      ]
-    },
-    {
-      name: paramPrefix + 'actionAnalyzerCoordSystem',
-      label: 'Initial Coordinate System',
-      groupName,
-      type: 'TEXT',
-      limitToOptions: true,
-      description: 'The initial coordinate system of the analyzer - time, aggregate or calendar (only time is supported for dynamic periods)',
-      visible: (value, configuration, configDescription, parameters) => {
-        return ['analyzer'].indexOf(configuration[paramPrefix + 'action']) >= 0
-      },
-      options: [
-        { value: 'time', label: 'Time' },
-        { value: 'aggregate', label: 'Aggregate' },
-        { value: 'calendar', label: 'Calendar' }
-      ]
-    }
-  ]
-}
-
 export const actionsMixin = {
   components: {
     OhPopup,
@@ -229,6 +12,22 @@ export const actionsMixin = {
     GroupPopup
   },
   methods: {
+    showActionFeedback (prefix) {
+      let toastConfig = this.config[prefix + 'actionFeedback']
+      if (typeof toastConfig === 'string' && toastConfig.startsWith('{')) toastConfig = JSON.parse(toastConfig)
+      if (typeof toastConfig === 'string') {
+        this.$f7.toast.create({
+          text: toastConfig,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      } else if (typeof toastConfig === 'object') {
+        this.$f7.toast.create(Object.assign({}, toastConfig, {
+          destroyOnClose: true,
+          closeTimeout: (toastConfig.icon || !toastConfig.closeButton) ? 2000 : toastConfig.closeTimeout
+        })).open()
+      }
+    },
     performAction (evt, prefix) {
       if (this.context.editmode) return
       prefix = (prefix) ? prefix += '_' : ''
@@ -251,6 +50,7 @@ export const actionsMixin = {
           const actionItem = this.config[prefix + 'actionItem']
           const actionCommand = this.config[prefix + 'actionCommand']
           this.$store.dispatch('sendCommand', { itemName: actionItem, cmd: actionCommand })
+            .then(() => this.showActionFeedback(prefix))
           break
         case 'toggle':
           const actionToggleItem = this.config[prefix + 'actionItem']
@@ -258,26 +58,65 @@ export const actionsMixin = {
           const actionToggleCommandAlt = this.config[prefix + 'actionCommandAlt']
           const cmd = this.context.store[actionToggleItem].state === actionToggleCommand ? actionToggleCommandAlt : actionToggleCommand
           this.$store.dispatch('sendCommand', { itemName: actionToggleItem, cmd })
+            .then(() => this.showActionFeedback(prefix))
           break
         case 'options':
           const actionCommandOptionsItem = this.config[prefix + 'actionItem']
           const actionCommandOptions = this.config[prefix + 'actionOptions']
-          const actions = actionCommandOptions.split(',').map((o) => {
-            const parts = o.split('=')
-            return {
-              text: parts[1] || parts[0],
-              color: 'blue',
-              onClick: () => {
-                this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd: parts[0] })
-              }
+          const actionsPromise = new Promise((resolve, reject) => {
+            if (actionCommandOptions && typeof actionCommandOptions === 'string') {
+              resolve(actionCommandOptions.split(',').map((o) => {
+                const parts = o.split('=')
+                return {
+                  text: parts[1] || parts[0],
+                  color: 'blue',
+                  onClick: () => {
+                    this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd: parts[0] })
+                      .then(() => this.showActionFeedback(prefix))
+                  }
+                }
+              }))
+            } else if (actionCommandOptions && typeof actionCommandOptions === 'object') {
+              resolve(actionCommandOptions)
+            } else {
+              this.$oh.api.get('/rest/items/' + actionCommandOptionsItem).then((item) => {
+                if (item.commandDescription && item.commandDescription.commandOptions) {
+                  resolve(item.commandDescription.commandOptions.map((cd) => {
+                    return {
+                      text: cd.label || cd.command,
+                      color: 'blue',
+                      onClick: () => {
+                        this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd: cd.command })
+                          .then(() => this.showActionFeedback(prefix))
+                      }
+                    }
+                  }))
+                }
+              })
             }
           })
-          this.$f7.actions.create({
-            buttons: [
-              actions,
-              [{ text: 'Cancel', color: 'red' }]
-            ]
-          }).open()
+
+          actionsPromise.then((actions) => {
+            this.$f7.actions.create({
+              buttons: [
+                actions,
+                [{ text: 'Cancel', color: 'red' }]
+              ]
+            }).open()
+          })
+          break
+        case 'rule':
+          const actionRule = this.config[prefix + 'actionRule']
+          if (!actionRule) break
+          this.$oh.api.postPlain('/rest/rules/' + actionRule + '/runnow', '')
+            .then(() => this.showActionFeedback(prefix))
+            .catch((err) => {
+              this.$f7.toast.create({
+                text: 'Error while running rule: ' + err,
+                destroyOnClose: true,
+                closeTimeout: 2000
+              }).open()
+            })
           break
         case 'popup':
         case 'popover':
@@ -306,6 +145,42 @@ export const actionsMixin = {
             }
           }
           this.$f7router.navigate(modalRoute, modalProps)
+          break
+        case 'photos':
+          const self = this
+          let photos = this.config[prefix + 'actionPhotos']
+          let photoBrowserConfig = this.config[prefix + 'actionPhotoBrowserConfig']
+          if (typeof photos === 'string' && photos.startsWith('{')) photos = JSON.parse(photos)
+          if (typeof photoBrowserConfig === 'string' && photoBrowserConfig.startsWith('{')) photoBrowserConfig = JSON.parse(photoBrowserConfig)
+          if (photos && photos.length > 0) {
+            const promises = photos.map((el) => {
+              if (typeof el === 'string') return Promise.resolve(el)
+              if (typeof el === 'object') {
+                if (el.item) {
+                  return new Promise((resolve, reject) => {
+                    self.$oh.api.getPlain(`/rest/items/${el.item}/state`, 'text/plain').then((data) => {
+                      resolve({
+                        url: data,
+                        caption: el.caption
+                      })
+                    }).catch((err) => {
+                      console.warn('Error while resolving image from item: ' + err)
+                      reject(err)
+                    })
+                  })
+                } else {
+                  return Promise.resolve(el)
+                }
+              }
+            })
+
+            Promise.all(promises).then((resolvedPhotos) => {
+              let photoBrowserParams = Object.assign({}, photoBrowserConfig, { photos: resolvedPhotos })
+              // automatically select the dark theme if not specified
+              if (!photoBrowserParams.theme && self.$f7.darkTheme) photoBrowserParams.theme = 'dark'
+              self.$f7.photoBrowser.create(photoBrowserParams).open()
+            })
+          }
           break
         case 'group':
           const actionGroupItem = this.config[prefix + 'actionGroupPopupItem']
