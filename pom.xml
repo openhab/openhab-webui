@@ -70,7 +70,7 @@
     <bnd.version>5.1.2</bnd.version>
     <karaf.version>4.2.7</karaf.version>
     <sat.version>0.10.0</sat.version>
-    <spotless.version>1.30.0</spotless.version>
+    <spotless.version>2.0.3</spotless.version>
   </properties>
 
   <build>
