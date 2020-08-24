@@ -1,5 +1,5 @@
 <template>
-  <f7-page name="about" class="page-about">
+  <f7-page name="about" class="page-about" @page:beforein="beforePageIn">
     <f7-navbar large title-large="About" title="About" back-link="Back"></f7-navbar>
     <f7-block class="block-narrow after-big-title">
       <f7-row>
@@ -14,14 +14,23 @@
           </f7-block>
         </f7-col>
       </f7-row>
-      <f7-row v-if="$store.state.runtimeInfo && $store.state.runtimeInfo.configFolder && $store.state.runtimeInfo.userdataFolder">
+      <f7-row v-if="systemInfo">
         <f7-col>
           <f7-list accordion-list>
             <f7-list-item title="System Information" accordion-item>
               <f7-accordion-content>
                 <f7-list>
-                  <f7-list-item title="Configuration Folder" :after="$store.state.runtimeInfo.configFolder"></f7-list-item>
-                  <f7-list-item title="User Data Folder" :after="$store.state.runtimeInfo.userdataFolder"></f7-list-item>
+                  <f7-list-item title="Configuration Folder" :after="systemInfo.configFolder"></f7-list-item>
+                  <f7-list-item title="User Data Folder" :after="systemInfo.userdataFolder"></f7-list-item>
+                  <f7-list-item title="Operating System" :after="`${systemInfo.osName}/${systemInfo.osVersion} (${systemInfo.osArchitecture})`"></f7-list-item>
+                  <f7-list-item title="Java Runtime" :after="systemInfo.javaVersion">
+                    <div slot="root-end" class="item-content" style="flex-direction: column">
+                      <f7-progressbar class="margin-top" style="width: 90%" color="blue" :progress="systemInfo.freeMemory * 100 / systemInfo.totalMemory" />
+                      <small class="margin-bottom text-color-gray">
+                        {{systemInfo.availableProcessors}} available processors · {{Math.round(systemInfo.freeMemory / 1024 / 1024)}}/{{Math.round(systemInfo.totalMemory / 1024 / 1024)}}MB available memory<br />
+                      </small>
+                    </div>
+                  </f7-list-item>
                 </f7-list>
               </f7-accordion-content>
             </f7-list-item>
@@ -56,26 +65,32 @@ export default {
   },
   data () {
     return {
+      systemInfo: null,
       showCachePurgeOption: false
     }
   },
   mounted () {
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker.getRegistrations().then((registrations) => {
-        if (registrations.length > 0) {
-          this.showCachePurgeOption = true
-        }
-      })
-    }
-    if (window.caches) {
-      window.caches.keys().then((cachesNames) => {
-        if (cachesNames.length > 0) {
-          this.showCachePurgeOption = true
-        }
-      })
-    }
   },
   methods: {
+    beforePageIn () {
+      if (this.$store.getters.isAdmin) {
+        this.$oh.api.get('/rest/systeminfo').then((data) => { this.systemInfo = data.systemInfo })
+      }
+      if (navigator.serviceWorker) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          if (registrations.length > 0) {
+            this.showCachePurgeOption = true
+          }
+        })
+      }
+      if (window.caches) {
+        window.caches.keys().then((cachesNames) => {
+          if (cachesNames.length > 0) {
+            this.showCachePurgeOption = true
+          }
+        })
+      }
+    },
     purgeServiceWorkerAndCaches () {
       this.$f7.dialog.confirm(
         'Purge all application caches and unregister the service workers? This will also reload the page from the server, which might take a few seconds.',
