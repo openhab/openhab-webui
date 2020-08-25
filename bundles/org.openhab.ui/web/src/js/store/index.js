@@ -18,6 +18,7 @@ const store = new Vuex.Store({
   state: {
     apiVersion: null,
     apiEndpoints: null,
+    locale: null,
     runtimeInfo: null
   },
   getters: {
@@ -26,6 +27,7 @@ const store = new Vuex.Store({
   mutations: {
     setRootResource (state, { rootResponse }) {
       state.apiVersion = rootResponse.version
+      state.locale = rootResponse.locale
       state.runtimeInfo = rootResponse.runtimeInfo
       state.apiEndpoints = rootResponse.links
     }
