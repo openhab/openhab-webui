@@ -57,7 +57,7 @@
                 if (item.type === "DateTime" || item.type === "DateTimeItem") {
                     value = $filter('date')(value, vm.widget.value_format);
                 } else if (item.type.indexOf('Number:') === 0 && value.indexOf(' ') > 0) {
-                    var format = vm.widget.format.replace('%unit%', value.split(' ')[1].replace('%', '%%'));
+                    var format = vm.widget.value_format.replace('%unit%', value.split(' ')[1].replace('%', '%%'));
                     value = sprintf(format, value.split(' ')[0]);
                 } else {
                     value = sprintf(vm.widget.value_format, value);
