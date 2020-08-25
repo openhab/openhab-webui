@@ -116,20 +116,20 @@ export default {
         bindings: this.bindings,
         clientInfo: {
           device: Object.assign({}, this.$device, { prefersColorScheme: this.$device.prefersColorScheme() }),
-          support: this.$f7.support,
-          screen: { width: window.screen.width, height: window.screen.height, colorDepth: window.screen.colorDepth },
           isSecureContext: window.isSecureContext,
           locationbarVisible: (window.locationbar) ? window.locationbar.visible : '?',
           menubarVisible: (window.menubar) ? window.menubar.visible : '?',
           navigator: {
-            deviceMemory: navigator.deviceMemory,
-            hardwareConcurrency: navigator.hardwareConcurrency,
             cookieEnabled: navigator.cookieEnabled,
+            deviceMemory: navigator.deviceMemory || '?',
+            hardwareConcurrency: navigator.hardwareConcurrency || '?',
             language: navigator.language,
             languages: navigator.languages,
             onLine: navigator.onLine,
             platform: navigator.platform
           },
+          screen: { width: window.screen.width, height: window.screen.height, colorDepth: window.screen.colorDepth },
+          support: this.$f7.support,
           userAgent: window.navigator.userAgent
         },
         timestamp: new Date()
