@@ -22,8 +22,9 @@
                 <f7-list>
                   <f7-list-item title="Configuration Folder" :after="systemInfo.configFolder"></f7-list-item>
                   <f7-list-item title="User Data Folder" :after="systemInfo.userdataFolder"></f7-list-item>
+                  <f7-list-item title="Logs Folder" :after="systemInfo.logFolder"></f7-list-item>
                   <f7-list-item title="Operating System" :after="`${systemInfo.osName}/${systemInfo.osVersion} (${systemInfo.osArchitecture})`"></f7-list-item>
-                  <f7-list-item title="Java Runtime" :after="systemInfo.javaVersion">
+                  <f7-list-item title="Java Runtime" :footer="systemInfo.javaVendor" :after="`${systemInfo.javaVersion} (${systemInfo.javaVendorVersion})`">
                     <div slot="root-end" class="item-content" style="flex-direction: column">
                       <f7-progressbar class="margin-top" style="width: 90%" color="blue" :progress="systemInfo.freeMemory * 100 / systemInfo.totalMemory" />
                       <small class="margin-bottom text-color-gray">
@@ -31,6 +32,7 @@
                       </small>
                     </div>
                   </f7-list-item>
+                  <f7-list-button color="blue" @click="textualSystemInfoOpened = true">View as YAML</f7-list-button>
                 </f7-list>
               </f7-accordion-content>
             </f7-list-item>
@@ -53,11 +55,44 @@
         </f7-list>
       </f7-col>
     </f7-block>
+    <f7-popup :opened="textualSystemInfoOpened" close-on-escape @popup:closed="textualSystemInfoOpened = false">
+      <f7-page>
+        <f7-toolbar>
+          <div class="left">
+            <f7-link @click="copyTextualSystemInfo">Copy</f7-link>
+          </div>
+          <div class="right">
+            <f7-link popup-close>Close</f7-link>
+          </div>
+        </f7-toolbar>
+        <!-- <pre class="textual-definition" v-html="textualDefinition"></pre> -->
+        <textarea readonly class="textual-systeminfo" id="textual-systeminfo" :value="textualSystemInfo"></textarea>
+      </f7-page>
+    </f7-popup>
   </f7-page>
 </template>
 
+<style lang="stylus" scoped>
+code.textual-systeminfo pre
+  overflow-x auto
+  white-space normal
+
+pre.textual-systeminfo
+  padding 5px
+
+textarea.textual-systeminfo
+  position absolute
+  top calc(var(--f7-safe-area-top) + var(--f7-toolbar-height))
+  left 5px
+  right 5px
+  bottom 0
+  width calc(100% - 10px)
+  font-family monospace
+</style>
+
 <script>
 import ThemeSwitcher from '../components/theme-switcher.vue'
+import YAML from 'yaml'
 
 export default {
   components: {
@@ -66,15 +101,28 @@ export default {
   data () {
     return {
       systemInfo: null,
-      showCachePurgeOption: false
+      textualSystemInfoOpened: false,
+      showCachePurgeOption: false,
+      bindings: null
     }
   },
-  mounted () {
+  computed: {
+    textualSystemInfo () {
+      if (!this.textualSystemInfoOpened) return ''
+      return YAML.stringify({
+        runtimeInfo: this.$store.state.runtimeInfo,
+        locale: this.$store.state.locale,
+        systemInfo: this.systemInfo,
+        bindings: this.bindings,
+        timestamp: new Date()
+      })
+    }
   },
   methods: {
     beforePageIn () {
       if (this.$store.getters.isAdmin) {
         this.$oh.api.get('/rest/systeminfo').then((data) => { this.systemInfo = data.systemInfo })
+        this.$oh.api.get('/rest/bindings').then((data) => { this.bindings = data.map((b) => b.id).sort() })
       }
       if (navigator.serviceWorker) {
         navigator.serviceWorker.getRegistrations().then((registrations) => {
@@ -124,6 +172,16 @@ export default {
     },
     reload () {
       document.location.reload()
+    },
+    copyTextualSystemInfo () {
+      let el = document.getElementById('textual-systeminfo')
+      el.select()
+      document.execCommand('copy')
+      this.$f7.toast.create({
+        text: 'Copied to clipboard',
+        destroyOnClose: true,
+        closeTimeout: 2000
+      }).open()
     }
   }
 }
