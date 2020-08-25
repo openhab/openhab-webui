@@ -119,12 +119,12 @@ export default {
         clientInfo: {
           device: Object.assign({}, this.$device, { prefersColorScheme: this.$device.prefersColorScheme() }),
           isSecureContext: window.isSecureContext,
-          locationbarVisible: (window.locationbar) ? window.locationbar.visible : '?',
-          menubarVisible: (window.menubar) ? window.menubar.visible : '?',
+          locationbarVisible: (window.locationbar) ? window.locationbar.visible : 'N/A',
+          menubarVisible: (window.menubar) ? window.menubar.visible : 'N/A',
           navigator: {
             cookieEnabled: navigator.cookieEnabled,
-            deviceMemory: navigator.deviceMemory || '?',
-            hardwareConcurrency: navigator.hardwareConcurrency || '?',
+            deviceMemory: navigator.deviceMemory || 'N/A',
+            hardwareConcurrency: navigator.hardwareConcurrency || 'N/A',
             language: navigator.language,
             languages: navigator.languages,
             onLine: navigator.onLine,
