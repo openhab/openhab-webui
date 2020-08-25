@@ -17,7 +17,7 @@
       <f7-row v-if="systemInfo">
         <f7-col>
           <f7-list accordion-list>
-            <f7-list-item title="System Information" accordion-item>
+            <f7-list-item title="Technical Information" accordion-item>
               <f7-accordion-content>
                 <f7-list>
                   <f7-list-item title="Configuration Folder" :after="systemInfo.configFolder"></f7-list-item>
@@ -74,7 +74,7 @@
 
 <style lang="stylus" scoped>
 code.textual-systeminfo pre
-  overflow-x auto
+  overflow auto
   white-space normal
 
 pre.textual-systeminfo
@@ -83,11 +83,13 @@ pre.textual-systeminfo
 textarea.textual-systeminfo
   position absolute
   top calc(var(--f7-safe-area-top) + var(--f7-toolbar-height))
-  left 5px
-  right 5px
   bottom 0
-  width calc(100% - 10px)
+  padding-left 5px
+  width calc(100% - var(--f7-safe-area-left) - var(--f7-safe-area-right))
+  height calc(100% - var(--f7-safe-area-top) - var(--f7-safe-area-bottom) - var(--f7-toolbar-height))
+  top calc(var(--f7-safe-area-top) + var(--f7-toolbar-height))
   font-family monospace
+  font-size 12px
 </style>
 
 <script>
@@ -130,6 +132,7 @@ export default {
           },
           screen: { width: window.screen.width, height: window.screen.height, colorDepth: window.screen.colorDepth },
           support: this.$f7.support,
+          themeOptions: this.$f7.data.themeOptions,
           userAgent: window.navigator.userAgent
         },
         timestamp: new Date()
