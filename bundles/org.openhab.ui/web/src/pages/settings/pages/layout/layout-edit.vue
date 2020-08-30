@@ -220,7 +220,7 @@ export default {
       }
     },
     getWidgetDefinition (componentType) {
-      const component = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets })
+      const component = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets, ...StandardCellWidgets })
         .find((w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType)
       if (!component) return null
       return component.widget()

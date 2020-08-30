@@ -20,7 +20,23 @@
       </f7-menu>
     </div>
     <masonry v-if="visible" :cols="config.cols || {default: 5, 1400: 4, 1280: 3, 576: 3, 480: 2}">
-      <div v-for="(slotComponent, idx) in context.component.slots.default" :key="idx" class="oh-masonry-item">
+      <div v-for="(slotComponent, idx) in context.component.slots.default" :key="idx" class="oh-cell-container">
+        <f7-menu v-if="context.editmode" class="configure-layout-menu">
+          <f7-menu-item style="margin-left: auto" icon-f7="slider_horizontal_below_rectangle" dropdown @menu:opened="dropdownMenuOpened = idx" @menu:closed="dropdownMenuOpened = null">
+            <f7-menu-dropdown right>
+            <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Configure Cell"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(slotComponent, context)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.cutWidget(slotComponent, context)" href="#" text="Cut"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.copyWidget(slotComponent, context)" href="#" text="Copy"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(slotComponent, context)" href="#" text="Move Up"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(slotComponent, context)" href="#" text="Move Down"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.removeWidget(slotComponent, context)" href="#" text="Remove cell"></f7-menu-dropdown-item>
+            </f7-menu-dropdown>
+          </f7-menu-item>
+        </f7-menu>
         <generic-widget-component :context="childContext(slotComponent)" v-on="$listeners" />
       </div>
       <oh-placeholder-widget v-if="context.editmode" class="cell-placeholder placeholder" @click="context.editmode.addWidget(context.component, null, context.parent)" />
@@ -29,12 +45,19 @@
 </template>
 
 <style lang="stylus">
+.oh-cell-container
+  display block
+  .configure-layout-menu
+    position relative
+    right 0
+    top 10px
+    z-index 1000
 .cell-placeholder
-  margin-top 0 !important
-  height 100px
+  margin-top calc(var(--f7-menu-item-height) + var(--f7-card-expandable-margin-vertical)) !important
+  height 120px
   .button
-    height 100px
-    padding 25px
+    height 120px
+    padding 35px
 
 </style>
 

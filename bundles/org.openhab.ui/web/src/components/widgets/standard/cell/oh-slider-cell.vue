@@ -1,0 +1,63 @@
+<template>
+  <oh-cell class="cell-expanded-thin" :context="context" :no-swipe-to-close="true">
+    <f7-row>
+      <f7-col width="100" class="cell-slider display-flex flex-direction-column justify-content-center">
+        <slot name="beforeSlider">
+          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+            <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.beforeSlider" :key="'beforeSlider-' + idx" @command="onCommand" />
+          </div>
+        </slot>
+        <oh-slider :context="sliderContext">
+        </oh-slider>
+        <slot name="afterSlider">
+          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+            <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.afterSlider" :key="'afterSlider-' + idx" @command="onCommand" />
+          </div>
+        </slot>
+      </f7-col>
+    </f7-row>
+  </oh-cell>
+</template>
+
+<style lang="stylus">
+.cell-expanded-thin
+  --f7-card-expandable-tablet-width 400px
+.cell-slider
+  --f7-range-bar-bg-color #eeeeee
+  --f7-range-scale-text-color #eeeeee
+  --f7-range-bar-size 150px
+  --f7-range-knob-size 0px
+  --f7-range-label-size 60px
+  --f7-range-label-font-size 40px
+  height 400px
+</style>
+
+<script>
+import mixin from '../../widget-mixin'
+import { OhSliderCellDefinition } from '@/assets/definitions/widgets/standard/cells'
+import OhCell from './oh-cell.vue'
+import OhSlider from '../../system/oh-slider.vue'
+
+export default {
+  mixins: [mixin],
+  components: {
+    OhCell,
+    OhSlider
+  },
+  widget: OhSliderCellDefinition,
+  computed: {
+    sliderContext () {
+      return Object.assign({}, this.context, {
+        component: {
+          component: 'oh-slider',
+          config: Object.assign({}, this.context.component.config, {
+            vertical: true,
+            label: true,
+            scale: true
+          })
+        }
+      })
+    }
+  }
+}
+</script>
