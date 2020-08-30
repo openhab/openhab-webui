@@ -19,7 +19,8 @@ import mixin from './widget-mixin'
 
 import * as SystemWidgets from './system/index'
 import * as StandardWidgets from './standard/index'
-import * as StandardListWidgets from './standard/list/index'
+import * as StandardListWidgets from './standard/list'
+import * as StandardCellWidgets from './standard/cell'
 import * as LayoutWidgets from './layout/index'
 
 console.log(SystemWidgets)
@@ -30,6 +31,7 @@ export default {
     ...SystemWidgets,
     ...StandardWidgets,
     ...StandardListWidgets,
+    ...StandardCellWidgets,
     ...LayoutWidgets
   }
 }

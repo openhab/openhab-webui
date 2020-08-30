@@ -1,5 +1,5 @@
 <template>
-  <div class="placeholder-widget margin">
+  <div class="placeholder-widget">
     <f7-button class="button" icon-f7="plus" color="gray" :icon-size="50" outline
       @click="$emit('click')">
     </f7-button>
@@ -8,13 +8,14 @@
 
 <style lang="stylus">
 .placeholder-widget
-  width 100%
+  margin var(--f7-typography-margin)
+  width calc(100% - 2 * var(--f7-typography-margin))
   display inline-block
   opacity 0.5
   height calc(2*3rem + 50px)
   z-index 100
   .button
-    width calc(100% - var(--f7-typography-margin))
+    width 100%
     padding 3rem 0
     height calc(2*3rem + 50px)
 </style>

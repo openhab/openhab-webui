@@ -288,6 +288,9 @@ export default {
           overlay: (this.$device.cordova && this.$device.ios) || 'auto',
           iosOverlaysWebView: true,
           androidOverlaysWebView: false
+        },
+        touch: {
+          tapHold: true
         }
 
         // smartSelect: {
@@ -426,6 +429,11 @@ export default {
       this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
       this.themeOptions.homeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
       this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
+      if (this.themeOptions.dark === 'dark') {
+        this.$$('html').addClass('theme-dark')
+      } else {
+        this.$$('html').removeClass('theme-dark')
+      }
     }
   },
   created () {

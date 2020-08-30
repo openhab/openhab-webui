@@ -78,6 +78,7 @@ import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 import * as SystemWidgets from '@/components/widgets/system/index'
 import * as StandardWidgets from '@/components/widgets/standard/index'
 import * as StandardListWidgets from '@/components/widgets/standard/list/index'
+import * as StandardCellWidgets from '@/components/widgets/standard/cell/index'
 import * as LayoutWidgets from '@/components/widgets/layout/index'
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
@@ -115,6 +116,7 @@ export default {
   methods: {
     addWidget (component, widgetType, parentContext, slot) {
       const isList = component.component.indexOf('oh-list') === 0
+      const isCells = component.component.indexOf('oh-grid-cells') === 0
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -141,7 +143,7 @@ export default {
           this.modelPickerOpened = true
           this.$nextTick(() => actions.destroy())
         }
-        const stdWidgets = (isList) ? StandardListWidgets : StandardWidgets
+        const stdWidgets = (isList) ? StandardListWidgets : (isCells) ? StandardCellWidgets : StandardWidgets
         const standardWidgetOptions = Object.keys(stdWidgets).map((k) => {
           return {
             text: stdWidgets[k].widget().label,
@@ -160,7 +162,14 @@ export default {
           // grid: true,
           buttons: [
             [
-              { label: true, text: (isList) ? 'Standard Library (List)' : 'Standard Library' },
+              {
+                label: true,
+                text: (isList)
+                  ? 'Standard Library (List)'
+                  : (isCells)
+                    ? 'Standard Library (Cells)'
+                    : 'Standard Library'
+              },
               ...standardWidgetOptions
             ],
             [

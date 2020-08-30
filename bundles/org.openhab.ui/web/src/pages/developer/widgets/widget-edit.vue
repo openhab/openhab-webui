@@ -63,6 +63,7 @@
 .widget-editor
   margin-top 0 !important
   padding 0
+  z-index auto !important
   height calc(100vh - 2*var(--f7-navbar-height) - var(--f7-toolbar-height) - 2.5*var(--f7-block-margin-vertical))
   .notready
     visibility hidden
@@ -70,6 +71,8 @@
     top 0
     height calc(100% - var(--f7-grid-gap))
   &.vertical
+    .block
+      z-index auto !important
     .row
       height 100%
       .widget-preview
