@@ -39,7 +39,6 @@
   height 120px
   min-height 120px
   max-height 120px
-  touch-action none
   user-select none
   .cell-background
     position absolute
