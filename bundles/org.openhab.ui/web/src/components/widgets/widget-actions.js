@@ -56,7 +56,13 @@ export const actionsMixin = {
           const actionToggleItem = this.config[prefix + 'actionItem']
           const actionToggleCommand = this.config[prefix + 'actionCommand']
           const actionToggleCommandAlt = this.config[prefix + 'actionCommandAlt']
-          const cmd = this.context.store[actionToggleItem].state === actionToggleCommand ? actionToggleCommandAlt : actionToggleCommand
+          const state = this.context.store[actionToggleItem].state
+          let cmd = this.context.store[actionToggleItem].state === actionToggleCommand ? actionToggleCommandAlt : actionToggleCommand
+          // special behavior for Color, Dimmer
+          if (actionToggleCommand === 'OFF' && state.split(',').length === 3 && parseInt(state.split(',')[2]) === 0) cmd = actionToggleCommandAlt
+          if (actionToggleCommand === 'ON' && state.split(',').length === 3 && parseInt(state.split(',')[2]) > 0) cmd = actionToggleCommandAlt
+          if (actionToggleCommand === 'OFF' && state.indexOf(',') < 0 && parseInt(state) === 0) cmd = actionToggleCommandAlt
+          if (actionToggleCommand === 'ON' && state.indexOf(',') < 0 && parseInt(state) > 0) cmd = actionToggleCommandAlt
           this.$store.dispatch('sendCommand', { itemName: actionToggleItem, cmd })
             .then(() => this.showActionFeedback(prefix))
           break

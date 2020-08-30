@@ -3,7 +3,8 @@
       :swipeToClose="!(noSwipeToClose || config.swipeToClose === false)"
       :animate="(config.animate === false || $f7.data.themeOptions.expandableCardAnimation === 'disabled') ? false : undefined"
       @card:open="cellOpen" @card:close="cellClose">
-    <div class="cell-background card-opened-fade-out" :class="(config.on) ? ['bg-color-' + config.color] : []" />
+    <div class="cell-background card-opened-fade-out" :class="[(config.color) ? 'bg-color-' + config.color : '', { 'on': config.on }]" />
+    <f7-link v-show="!opened && !$f7.support.touch && config.action" icon-f7="arrowshape_turn_up_right_circle_fill" icon-size="24" @click.native="openCell" class="float-right cell-open-button card-opened-fade-out no-ripple" />
     <f7-card-content ref="cell" class="cell-contents">
       <f7-card-header class="cell-button card-opened-fade-out no-padding" v-show="!opened">
         <f7-list media-list>
@@ -41,16 +42,26 @@
   max-height 120px
   user-select none
   .cell-background
+    cursor pointer !important
     position absolute
     top 0
     bottom 0
     width 100%
-    opacity 0.5
+    opacity 0
+    &.on
+      opacity 0.5
+      transition-duration 0.25s
+  .cell-open-button
+    opacity 0.6
+    margin 5px !important
+  .cell-open-button, .cell-close-button
+    margin-top var(--f7-safe-area-top)
+    --f7-theme-color var(--f7-text-color)
   .cell-contents
     height 100%
     width 100%
     .cell-button
-      cursor pointer
+      cursor pointer !important
       .item-content
         padding 0
         .item-inner
@@ -60,9 +71,6 @@
         line-height 20px
         .header-text
           margin-left 5px
-    .cell-close-button
-      margin-top var(--f7-safe-area-top)
-      --f7-theme-color var(--f7-text-color)
     .cell-expanded-header
       margin-top calc(var(--f7-safe-area-top) + 2rem)
       font-weight 500
@@ -83,7 +91,7 @@ export default {
     }
   },
   mounted () {
-    this.$$(this.$refs.card.$el).on('click', (ev) => { this.openCell() })
+    this.$$(this.$refs.card.$el).on('click', (ev) => { this.click() })
     this.$$(this.$refs.card.$el).on('taphold', (ev) => { this.openCell() })
   },
   beforeDestroy () {
@@ -91,9 +99,13 @@ export default {
     this.$$(this.$refs.card.$el).off('taphold')
   },
   methods: {
-    clicked (ev) {
-      console.dir(ev)
-      debugger
+    click () {
+      if (this.opened) return
+      if (this.config.action) {
+        this.performAction()
+      } else {
+        this.openCell()
+      }
     },
     openCell () {
       if (this.context.editmode) return
