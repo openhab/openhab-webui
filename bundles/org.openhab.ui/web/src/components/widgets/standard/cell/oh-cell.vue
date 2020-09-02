@@ -25,7 +25,7 @@
       </f7-card-header>
       <div v-if="opened" class="cell-expanded-contents card-opened-fade-in display-flex flex-direction-column align-items-center">
         <slot>
-          <div v-if="context.component.slots">
+          <div v-if="context.component.slots && context.component.slots.default">
             <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" @command="onCommand" />
           </div>
         </slot>
@@ -95,11 +95,13 @@ export default {
   },
   mounted () {
     this.$$(this.$refs.card.$el).on('click', this.click)
-    this.$$(this.$refs.card.$el).on('taphold', this.openCell)
+    this.$$(this.$refs.card.$el).on('dblclick', this.openCell)
+    this.$$(this.$refs.card.$el).on('contextmenu', this.openCell)
   },
   beforeDestroy () {
     this.$$(this.$refs.card.$el).off('click')
     this.$$(this.$refs.card.$el).off('taphold')
+    this.$$(this.$refs.card.$el).off('contextmenu')
   },
   computed: {
     header () {
@@ -127,11 +129,14 @@ export default {
       } else {
         this.openCell()
       }
+      return false
     },
-    openCell () {
-      if (this.context.editmode) return
-      if (!this.hasExpandedControls) return
+    openCell (evt) {
+      if (evt && evt.preventDefault) evt.preventDefault()
+      if (this.context.editmode) return false
+      if (!this.hasExpandedControls) return false
       this.$f7.card.open(this.$refs.card.$el)
+      return false
     },
     closeCell () {
       if (this.context.editmode) return

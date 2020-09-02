@@ -9,11 +9,11 @@
         </slot>
         <oh-slider class="slider-control" :context="sliderContext">
         </oh-slider>
-        <slot name="afterSlider">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+        <div class="after-slider" v-if="context.component.slots && context.component.slots.afterSlider">
+          <slot name="afterSlider">
             <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.afterSlider" :key="'afterSlider-' + idx" @command="onCommand" />
-          </div>
-        </slot>
+          </slot>
+        </div>
       </f7-col>
     </f7-row>
   </oh-cell>
@@ -33,6 +33,14 @@
     position absolute
     top calc(50% - 150px)
     height 350px !important
+  .after-slider
+    position absolute
+    top calc(50% + 200px)
+    left 0
+    width 100%
+    display flex
+    flex-direction column
+    align-items center
 </style>
 
 <script>
