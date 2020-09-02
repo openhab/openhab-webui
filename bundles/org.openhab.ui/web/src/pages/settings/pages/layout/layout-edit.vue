@@ -75,11 +75,11 @@ import PageDesigner from '../pagedesigner-mixin'
 import YAML from 'yaml'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
-import * as SystemWidgets from '@/components/widgets/system/index'
-import * as StandardWidgets from '@/components/widgets/standard/index'
-import * as StandardListWidgets from '@/components/widgets/standard/list/index'
-import * as StandardCellWidgets from '@/components/widgets/standard/cell/index'
-import * as LayoutWidgets from '@/components/widgets/layout/index'
+import * as SystemWidgets from '@/components/widgets/system'
+import * as StandardWidgets from '@/components/widgets/standard'
+import * as StandardListWidgets from '@/components/widgets/standard/list'
+import * as StandardCellWidgets from '@/components/widgets/standard/cell'
+import * as LayoutWidgets from '@/components/widgets/layout'
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
@@ -88,6 +88,7 @@ import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
 import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
+import itemDefaultCellComponent from '@/components/widgets/standard/cell/default-cell-item'
 
 export default {
   mixins: [PageDesigner],
@@ -138,7 +139,7 @@ export default {
           this.forceUpdate()
         }
         const addFromModel = () => {
-          this.addFromModelContext = { component, slot, isList }
+          this.addFromModelContext = { component, slot, isList, isCells }
           this.modelPickerAllowMultiple = component.component !== 'oh-grid-col'
           this.modelPickerOpened = true
           this.$nextTick(() => actions.destroy())
@@ -191,7 +192,11 @@ export default {
       }
     },
     doAddFromModel (value) {
-      const defaultWidgetFn = (this.addFromModelContext.isList) ? itemDefaultListComponent : itemDefaultStandaloneComponent
+      const defaultWidgetFn = (this.addFromModelContext.isList)
+        ? itemDefaultListComponent
+        : (this.addFromModelContext.isCells)
+          ? itemDefaultCellComponent
+          : itemDefaultStandaloneComponent
       const component = this.addFromModelContext.component
       const slot = this.addFromModelContext.slot
       if (Array.isArray(value)) {

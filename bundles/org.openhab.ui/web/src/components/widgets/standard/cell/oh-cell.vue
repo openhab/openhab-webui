@@ -2,16 +2,16 @@
   <f7-card ref="card" :expandable="true" class="card-prevent-open oh-cell"
       :swipeToClose="!(noSwipeToClose || config.swipeToClose === false)"
       :animate="(config.animate === false || $f7.data.themeOptions.expandableCardAnimation === 'disabled') ? false : undefined"
-      @card:open="cellOpen" @card:close="cellClose">
-    <div class="cell-background card-opened-fade-out" :class="[(config.color) ? 'bg-color-' + config.color : '', { 'on': config.on }]" />
-    <f7-link v-show="!opened && !$f7.support.touch && config.action" icon-f7="arrowshape_turn_up_right_circle_fill" icon-size="24" @click.native="openCell" class="float-right cell-open-button card-opened-fade-out no-ripple" />
+      @card:open="cellOpen" @card:opened="cellOpened" @card:close="cellClose" @card:closed="cellClosed">
+    <div class="cell-background" :class="[(config.color) ? 'bg-color-' + config.color : '', { 'on': config.on }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
+    <f7-link v-show="!opened && !transitioning && hasExpandedControls && !$f7.support.touch && config.action" icon-f7="ellipsis_circle" icon-size="30" @click.native="openCell" class="float-right cell-open-button card-opened-fade-out no-ripple" />
     <f7-card-content ref="cell" class="cell-contents">
       <f7-card-header class="cell-button card-opened-fade-out no-padding" v-show="!opened">
         <f7-list media-list>
           <f7-list-item media-item :title="config.title" :subtitle="config.subtitle" :footer="config.footer">
             <div slot="header" class="button-header display-flex">
-              <f7-icon :f7="config.buttonIcon || 'lightbulb'" size="20"></f7-icon>
-              <span class="header-text">{{config.header}}</span>
+              <f7-icon class="header-icon" v-if="config.buttonIcon" :f7="config.buttonIcon" size="20"></f7-icon>
+              <span class="header-text">{{header}}</span>
               <f7-badge v-if="config.headerBadge" color="config.headerBadgeColor">{{config.headerBadge}}</f7-badge>
             </div>
           </f7-list-item>
@@ -40,6 +40,7 @@
   height 120px
   min-height 120px
   max-height 120px
+  // margin 4px !important
   user-select none
   .cell-background
     cursor pointer !important
@@ -62,6 +63,7 @@
     width 100%
     .cell-button
       cursor pointer !important
+      position absolute
       .item-content
         padding 0
         .item-inner
@@ -69,8 +71,8 @@
       .button-header
         padding-bottom 0.3rem
         line-height 20px
-        .header-text
-          margin-left 5px
+        .header-icon
+          margin-right 5px
     .cell-expanded-header
       margin-top calc(var(--f7-safe-area-top) + 2rem)
       font-weight 500
@@ -87,19 +89,38 @@ export default {
   props: ['noSwipeToClose'],
   data () {
     return {
+      transitioning: false,
       opened: false
     }
   },
   mounted () {
-    this.$$(this.$refs.card.$el).on('click', (ev) => { this.click() })
-    this.$$(this.$refs.card.$el).on('taphold', (ev) => { this.openCell() })
+    this.$$(this.$refs.card.$el).on('click', this.click)
+    this.$$(this.$refs.card.$el).on('taphold', this.openCell)
   },
   beforeDestroy () {
     this.$$(this.$refs.card.$el).off('click')
     this.$$(this.$refs.card.$el).off('taphold')
   },
+  computed: {
+    header () {
+      if (this.config.header) return this.config.header
+      if (this.config.item && this.config.stateAsHeader) {
+        return this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
+      }
+      return null
+    },
+    hasExpandedControls () {
+      return this.context.component.component !== 'oh-cell' ||
+        (this.context.component.slots && this.context.component.slots.default && this.context.component.slots.default.length > 0)
+    }
+  },
   methods: {
-    click () {
+    click (evt) {
+      if (evt.target && evt.target.parentElement &&
+        (this.$$(evt.target.parentElement).hasClass('cell-open-button') ||
+        this.$$(evt.target.parentElement).hasClass('cell-close-button'))) {
+        return
+      }
       if (this.opened) return
       if (this.config.action) {
         this.performAction()
@@ -109,6 +130,7 @@ export default {
     },
     openCell () {
       if (this.context.editmode) return
+      if (!this.hasExpandedControls) return
       this.$f7.card.open(this.$refs.card.$el)
     },
     closeCell () {
@@ -116,10 +138,18 @@ export default {
       setTimeout(() => { this.$f7.card.close(this.$refs.card.$el) }, 100)
     },
     cellOpen () {
+      this.transitioning = true
+    },
+    cellOpened () {
+      this.transitioning = false
       this.opened = true
     },
     cellClose () {
+      this.transitioning = true
       this.opened = false
+    },
+    cellClosed () {
+      this.transitioning = false
     }
   }
 }

@@ -4,6 +4,7 @@ export default [
   { name: 'synonyms', label: 'Synonyms' },
   { name: 'widget', label: 'Default Standalone Widget' },
   { name: 'listWidget', label: 'Default List Item Widget' },
+  { name: 'cellWidget', label: 'Default Cell Widget' },
   { name: 'autoupdate', label: 'Auto-update' },
   { name: 'alexa', label: 'Amazon Alexa' },
   { name: 'homekit', label: 'Apple HomeKit' },

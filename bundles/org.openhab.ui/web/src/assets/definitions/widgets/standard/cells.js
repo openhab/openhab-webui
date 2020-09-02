@@ -7,7 +7,9 @@ export const CellParameterGroup = () => pg('cell', 'Cell', 'General settings of 
 
 export const CellParameters = () => [
   pt('header', 'Header', 'Header of the cell'),
-  pt('text', 'Text', 'Text in the cell'),
+  pt('title', 'Title', 'Title of the cell'),
+  pt('subtitle', 'Subtitle', 'Subtitle of the cell'),
+  pt('footer', 'Footer', 'Footer of the cell'),
   pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/configuration/iconsets/classic/">openHAB icon</a>) or <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'),
 ]
 
@@ -28,5 +30,10 @@ export const OhKnobCellDefinition = () => new WidgetDefinition('oh-knob-cell', '
 
 // OhColorpickerCell
 export const OhColorpickerCellDefinition = () => new WidgetDefinition('oh-colorpicker-cell', 'Colorpicker Cell', 'A cell expanding to a color picker')
+  .paramGroup(CellParameterGroup(), CellParameters())
+  .paramGroup(actionGroup(), actionParams())
+
+// OhRollershutterCell
+export const OhRollershutterCellDefinition = () => new WidgetDefinition('oh-rollershutter-cell', 'Rollershutter Cell', 'A cell expanding to rollershutter controls')
   .paramGroup(CellParameterGroup(), CellParameters())
   .paramGroup(actionGroup(), actionParams())

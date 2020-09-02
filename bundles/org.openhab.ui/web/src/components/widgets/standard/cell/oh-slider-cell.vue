@@ -7,7 +7,7 @@
             <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.beforeSlider" :key="'beforeSlider-' + idx" @command="onCommand" />
           </div>
         </slot>
-        <oh-slider :context="sliderContext">
+        <oh-slider class="slider-control" :context="sliderContext">
         </oh-slider>
         <slot name="afterSlider">
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
@@ -29,7 +29,10 @@
   --f7-range-knob-size 0px
   --f7-range-label-size 60px
   --f7-range-label-font-size 40px
-  height 400px
+  .slider-control
+    position absolute
+    top calc(50% - 150px)
+    height 350px !important
 </style>
 
 <script>
