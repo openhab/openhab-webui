@@ -20,9 +20,9 @@
       </f7-card-header>
       <f7-link class="card-opened-fade-in cell-close-button float-right" icon-size="30" icon-f7="multiply_circle_fill" @click.native="closeCell" />
       <f7-card-header v-if="opened" class="cell-expanded-header card-opened-fade-in display-flex flex-direction-column">
-        <div class="text-align-center">{{config.title}}</div>
-        <div class="text-align-center text-color-gray">{{config.subtitle}}</div>
-        <div class="text-align-center text-color-gray"><small>{{config.footer}}</small></div>
+        <div class="text-align-center cell-expanded-title">{{config.title}}</div>
+        <div class="text-align-center cell-expanded-subtitle">{{config.subtitle}}</div>
+        <div class="text-align-center cell-expanded-footer">{{config.footer}}</div>
       </f7-card-header>
       <div v-if="opened" class="cell-expanded-contents card-opened-fade-in display-flex flex-direction-column align-items-center">
         <slot>
@@ -38,6 +38,9 @@
 <style lang="stylus">
 .oh-cell
   --f7-card-expandable-tablet-border-radius 2px
+  --f7-card-expandable-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.15)
+  --f7-card-expandable-margin-horizontal 5px
+  --f7-card-expandable-margin-vertical 10px
   height 120px
   min-height 120px
   max-height 120px
@@ -77,6 +80,14 @@
     .cell-expanded-header
       margin-top calc(var(--f7-safe-area-top) + 2rem)
       font-weight 500
+      .cell-expanded-subtitle
+        font-size 20px
+        opacity 0.7
+        font-weight 600
+      .cell-expanded-footer
+        font-size 18px
+        opacity 0.4
+        font-weight 400
 </style>
 
 <script>
