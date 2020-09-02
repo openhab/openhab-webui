@@ -4,7 +4,7 @@
       :animate="(config.animate === false || $f7.data.themeOptions.expandableCardAnimation === 'disabled') ? false : undefined"
       @card:open="cellOpen" @card:opened="cellOpened" @card:close="cellClose" @card:closed="cellClosed">
     <div class="cell-background" :class="[(config.color) ? 'bg-color-' + config.color : '', { 'on': config.on }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
-    <f7-link v-show="!opened && !transitioning && hasExpandedControls && !$f7.support.touch && config.action" icon-f7="ellipsis_circle" icon-size="30" @click.native="openCell" class="float-right cell-open-button card-opened-fade-out no-ripple" />
+    <f7-link v-show="!opened && hasExpandedControls && !$f7.support.touch && config.action" icon-f7="ellipsis_vertical" icon-size="30" @click.native="openCell" class="float-right cell-open-button card-opened-fade-out no-ripple" />
     <f7-card-content ref="cell" class="cell-contents">
       <f7-card-header class="cell-button card-opened-fade-out no-padding" v-show="!opened">
         <f7-list media-list>
@@ -90,18 +90,21 @@ export default {
   data () {
     return {
       transitioning: false,
-      opened: false
+      opened: false,
+      cardId: this.$f7.utils.id()
     }
   },
   mounted () {
     this.$$(this.$refs.card.$el).on('click', this.click)
     this.$$(this.$refs.card.$el).on('dblclick', this.openCell)
     this.$$(this.$refs.card.$el).on('contextmenu', this.openCell)
+    window.addEventListener('popstate', this.back)
   },
   beforeDestroy () {
     this.$$(this.$refs.card.$el).off('click')
     this.$$(this.$refs.card.$el).off('taphold')
     this.$$(this.$refs.card.$el).off('contextmenu')
+    window.removeEventListener('popstate', this.back)
   },
   computed: {
     header () {
@@ -136,6 +139,7 @@ export default {
       if (this.context.editmode) return false
       if (!this.hasExpandedControls) return false
       this.$f7.card.open(this.$refs.card.$el)
+      history.pushState({ cardId: this.cardId }, null, window.location.href.split('#cell=')[0] + '#' + this.$f7.utils.serializeObject({ cell: this.cardId }))
       return false
     },
     closeCell () {
@@ -150,11 +154,15 @@ export default {
       this.opened = true
     },
     cellClose () {
+      if (history.state.cardId) history.back()
       this.transitioning = true
       this.opened = false
     },
     cellClosed () {
       this.transitioning = false
+    },
+    back (evt) {
+      if (this.opened) this.closeCell()
     }
   }
 }
