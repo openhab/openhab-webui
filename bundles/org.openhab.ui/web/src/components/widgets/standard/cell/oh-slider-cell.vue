@@ -1,5 +1,5 @@
 <template>
-  <oh-cell class="cell-expanded-thin" :context="context" :no-swipe-to-close="true">
+  <oh-cell class="cell-expanded-thin" :context="context" :no-swipe-to-close="true" :style="{ '--oh-slider-cell-height': config.sliderHeight || '400px' }">
     <f7-row>
       <f7-col width="100" class="cell-slider display-flex flex-direction-column justify-content-center">
         <slot name="beforeSlider">
@@ -29,13 +29,14 @@
   --f7-range-knob-size 0px
   --f7-range-label-size 60px
   --f7-range-label-font-size 40px
+  // --oh-slider-cell-height 350px
   .slider-control
     position absolute
-    top calc(50% - 150px)
-    height 350px !important
+    top calc(50% - var(--oh-slider-cell-height)/2)
+    height var(--oh-slider-cell-height) !important
   .after-slider
     position absolute
-    top calc(50% + 200px)
+    top calc(50% + var(--oh-slider-cell-height)/2)
     left 0
     width 100%
     display flex

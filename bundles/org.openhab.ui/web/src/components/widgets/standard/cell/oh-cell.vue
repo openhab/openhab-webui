@@ -1,10 +1,11 @@
 <template>
   <f7-card ref="card" :expandable="true" class="card-prevent-open oh-cell"
       :swipeToClose="!(noSwipeToClose || config.swipeToClose === false)"
+      :backdrop="config.backdrop === undefined || config.backdrop"
       :animate="(config.animate === false || $f7.data.themeOptions.expandableCardAnimation === 'disabled') ? false : undefined"
       @card:open="cellOpen" @card:opened="cellOpened" @card:close="cellClose" @card:closed="cellClosed">
     <div class="cell-background" :class="[(config.color) ? 'bg-color-' + config.color : '', { 'on': config.on }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
-    <f7-link v-show="!opened && hasExpandedControls && !$f7.support.touch && config.action" icon-f7="ellipsis_vertical" icon-size="30" @click.native="openCell" class="float-right cell-open-button card-opened-fade-out no-ripple" />
+    <f7-link v-show="!opened && hasExpandedControls && config.action" icon-f7="ellipsis_vertical" icon-size="30" @click.native="openCell" class="float-right cell-open-button card-opened-fade-out no-ripple" />
     <f7-card-content ref="cell" class="cell-contents">
       <f7-card-header class="cell-button card-opened-fade-out no-padding" v-show="!opened">
         <f7-list media-list>
@@ -96,7 +97,7 @@ export default {
   },
   mounted () {
     this.$$(this.$refs.card.$el).on('click', this.click)
-    this.$$(this.$refs.card.$el).on('dblclick', this.openCell)
+    this.$$(this.$refs.card.$el).on('taphold', this.openCell)
     this.$$(this.$refs.card.$el).on('contextmenu', this.openCell)
     window.addEventListener('popstate', this.back)
   },
