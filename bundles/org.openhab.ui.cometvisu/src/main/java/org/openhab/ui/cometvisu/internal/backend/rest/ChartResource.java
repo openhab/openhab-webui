@@ -232,7 +232,7 @@ public class ChartResource implements RESTResource {
             }
         }
         logger.debug("'{}' querying item '{}' from '{}' to '{}' => '{}' results", persistenceService.getId(),
-                filter.getItemName(), filter.getBeginDateZoned(), filter.getEndDateZoned(), dataCounter);
+                filter.getItemName(), filter.getBeginDate(), filter.getEndDate(), dataCounter);
         return convertToRrd(data);
     }
 
