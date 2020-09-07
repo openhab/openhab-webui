@@ -467,7 +467,7 @@ public class CometVisuServlet extends HttpServlet {
                                 });
                     }
                     logger.debug("querying {} item from {} to {} => {} results on service {}", filter.getItemName(),
-                            filter.getBeginDateZoned(), filter.getEndDateZoned(), i, persistenceService.getId());
+                            filter.getBeginDate(), filter.getEndDate(), i, persistenceService.getId());
                 }
                 if (request.getParameter("j") != null) {
                     // request data in JSON format
