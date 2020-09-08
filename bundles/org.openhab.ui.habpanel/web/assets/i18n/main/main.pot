@@ -146,14 +146,14 @@ msgctxt "tutorial.saveonserver"
 msgid "Save on the openHAB server when done!"
 msgstr ""
 
-#. Displayed when no dashboard is present and editing is locked in the service configuration
-msgctxt "tutorial.editingdisabled"
-msgid "Editing is disabled on the server!"
+#. Displayed when no default panel configuration has been set and editing is locked (because there was no refresh token found)
+msgctxt "tutorial.nodefaultpanel"
+msgid "No default panel configuration!"
 msgstr ""
 
 #. Displayed when no dashboard is present and editing is locked in the service configuration
-msgctxt "tutorial.unlockedit"
-msgid "Please go to Paper UI and unlock editing to use HABPanel on this device."
+msgctxt "tutorial.setdefault"
+msgid "Sign in with the main UI to enable editing in HABPanel and set a default panel configuration."
 msgstr ""
 
 

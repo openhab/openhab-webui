@@ -5,12 +5,11 @@
         .module('app')
         .controller('SettingsCtrl', SettingsController);
 
-    SettingsController.$inject = ['$rootScope', '$timeout', '$window', 'OHService', 'OH2ServiceConfiguration', 'OH2StorageService', 'PersistenceService', 'SpeechService', 'themes', 'prompt', 'TranslationService'];
-    function SettingsController($rootScope, $timeout, $window, OHService, OH2ServiceConfiguration, OH2StorageService, PersistenceService, SpeechService, themes, prompt, TranslationService) {
+    SettingsController.$inject = ['$rootScope', '$timeout', '$window', 'OHService', 'OH3StorageService', 'PersistenceService', 'SpeechService', 'themes', 'prompt', 'TranslationService'];
+    function SettingsController($rootScope, $timeout, $window, OHService, OH3StorageService, PersistenceService, SpeechService, themes, prompt, TranslationService) {
         var vm = this;
 
         vm.themes = themes.data;
-        //vm.voices = SpeechService.getVoices();
         if (!$rootScope.settings.theme)
             $rootScope.settings.theme = 'default';
 
@@ -21,7 +20,6 @@
 
         vm.rawLocalConfig = JSON.stringify($rootScope.dashboards, null, 4);
 
-        //vm.serviceConfiguration = OH2ServiceConfiguration;
         vm.useRegistry = $rootScope.useRegistry;
         vm.panelsRegistry = $rootScope.panelsRegistry;
 
@@ -39,34 +37,43 @@
                     "updatedTime"  : new Date().toISOString()
                 };
                 vm.storageOption = name;
-                OH2StorageService.setCurrentPanelConfig(name);
-                OH2StorageService.saveCurrentPanelConfig();
+                OH3StorageService.setCurrentPanelConfig(name);
+                OH3StorageService.saveCurrentPanelConfig();
             });
-
         };
 
         vm.deletePanelConfig = function (name) {
             prompt({
-                title: "Remove panel configuration",
-                message: "Please confirm you wish to delete this panel configuration from the server's registry: " + name + ". Make sure no other instances are using this panel set!",
+                title: TranslationService.translate("settings.storage.panelconfiguration.dialog.remove.title", "Remove panel configuration"),
+                message: TranslationService.translate("settings.storage.panelconfiguration.dialog.remove.message", "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!").replace('{{name}}', name),
             }).then(function () {
                 delete vm.panelsRegistry[name];
-                OH2StorageService.saveServiceConfiguration();
+                OH3StorageService.deletePanelConfig(name);
             });
         };
 
         vm.switchToPanelConfig = function (evt) {
             if (vm.storageOption === '(localStorage)') {
-                OH2StorageService.useLocalStorage();
+                OH3StorageService.useLocalStorage();
             } else {
-                if (!OH2StorageService.getCurrentPanelConfig() && !confirm("Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?")) {
+                if (!OH3StorageService.getCurrentPanelConfig() &&
+                    !confirm(TranslationService.translate("settings.storage.panelconfiguration.dialog.switch.message", "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"))) {
                     vm.storageOption = '(localStorage)';
                     evt.preventDefault();
                 } else {
-                    OH2StorageService.setCurrentPanelConfig(vm.storageOption);
+                    OH3StorageService.setCurrentPanelConfig(vm.storageOption);
                 }
             }
         };
+
+        vm.isDefault = function (name) {
+            return $rootScope.default;
+        }
+
+        vm.setCurrentAsDefault = function (value) {
+            $rootScope.default = value;
+            PersistenceService.saveDashboards();
+        }
 
         vm.saveOptions = function () {
             $rootScope.settings.additional_stylesheet_url = vm.additional_stylesheet_url;
@@ -107,8 +114,8 @@
 
         function activate() {
             vm.storageOption = "(localStorage)";
-            if (OH2StorageService.getCurrentPanelConfig()) {
-                vm.storageOption = OH2StorageService.getCurrentPanelConfig();
+            if (OH3StorageService.getCurrentPanelConfig()) {
+                vm.storageOption = OH3StorageService.getCurrentPanelConfig();
             }
 
             $timeout(function () {

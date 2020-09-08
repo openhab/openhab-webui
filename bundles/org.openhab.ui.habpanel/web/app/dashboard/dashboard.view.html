@@ -42,7 +42,7 @@
 </a>
 <div class="scrollable" ng-show="vm.ready" gridster="vm.gridsterOptions">
     <ul>
-        <li gridster-item="widget" ng-repeat="widget in vm.dashboard.widgets">
+        <li gridster-item="widget" ng-repeat="widget in vm.dashboard.widgets track by $index">
             <div class="box" ng-style="{'font-size': vm.dashboard.font_scale ? vm.dashboard.font_scale + '%' : undefined }">
                 <generic-widget type="widget.type" ng-model="widget"></generic-widget>
             </div>
