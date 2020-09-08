@@ -134,7 +134,11 @@ export default {
           docExpansion: 'none',
           syntaxHighlight: false,
           requestInterceptor: (req) => {
-            req.headers['Authorization'] = 'Bearer ' + tokenResponse.access_token
+            if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) {
+              req.headers['X-OPENHAB-TOKEN'] = tokenResponse.access_token
+            } else {
+              req.headers['Authorization'] = 'Bearer ' + tokenResponse.access_token
+            }
             return req
           }
         })
