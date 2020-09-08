@@ -70,13 +70,20 @@
                     customwidgets: angular.copy($rootScope.customwidgets)
                 };
 
+                var headers = { 'Content-Type': 'application/json' }
+                if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) {
+                    headers['X-OPENHAB-TOKEN'] = accessToken
+                } else {
+                    headers['Authorization'] = 'Bearer ' + accessToken
+                }
+
                 $http.get('/rest/ui/components/habpanel:panelconfig/' + getCurrentPanelConfig()).then(function (data) {
                     // update
                     $http({
                         method: 'PUT',
                         url: '/rest/ui/components/habpanel:panelconfig/' + getCurrentPanelConfig(),
                         data: transformPanelConfigurationToUIComponent(getCurrentPanelConfig(), panelConfiguration),
-                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + accessToken }
+                        headers: headers
                     }).then (function (resp) {
                         console.log('Panel configuration updated');
                         deferred.resolve();
@@ -90,7 +97,7 @@
                         method: 'POST',
                         url: '/rest/ui/components/habpanel:panelconfig',
                         data: transformPanelConfigurationToUIComponent(getCurrentPanelConfig(), panelConfiguration),
-                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + accessToken }
+                        headers: headers
                     }).then (function (resp) {
                         console.log('Panel configuration created');
                         deferred.resolve();
@@ -111,10 +118,17 @@
             var deferred = $q.defer();
 
             getAccessToken().then(function (accessToken) {
+                var headers = {}
+                if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) {
+                    headers['X-OPENHAB-TOKEN'] = accessToken
+                } else {
+                    headers['Authorization'] = 'Bearer ' + accessToken
+                }
+
                 $http({
                     method: 'DELETE',
                     url: '/rest/ui/components/habpanel:panelconfig/' + id,
-                    headers: { 'Authorization': 'Bearer ' + accessToken }
+                    headers: headers
                 }).then (function (resp) {
                     console.log('Panel configuration deleted');
                     deferred.resolve();

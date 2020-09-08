@@ -22,10 +22,17 @@
             var deferred = $q.defer();
 
             OH3StorageService.getAccessToken().then(function (accessToken) {
+                var headers = { 'Content-Type': 'application/json' }
+                if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) {
+                    headers['X-OPENHAB-TOKEN'] = accessToken
+                } else {
+                    headers['Authorization'] = 'Bearer ' + accessToken
+                }
+
                 $http({
                     method: 'GET',
                     url: '/rest/services/' + SERVICE_NAME + '/config',
-                    headers: { 'Authorization': 'Bearer ' + accessToken }
+                    headers: headers
                 }).then(function (resp) {
                     console.log('openHAB 2 service configuration loaded');
                     OH2ServiceConfiguration = resp.data;
