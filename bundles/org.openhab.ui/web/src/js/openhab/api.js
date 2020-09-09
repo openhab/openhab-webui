@@ -14,7 +14,11 @@ Framework7.request.setup({
   xhrFields: { withCredentials: true },
   beforeSend (xhr) {
     if (accessToken) {
-      xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+      if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) {
+        xhr.setRequestHeader('X-OPENHAB-TOKEN', accessToken)
+      } else {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+      }
     }
   }
 })
