@@ -5,8 +5,8 @@
         .module('app')
         .controller('SettingsLocalConfigCtrl', SettingsLocalConfigController);
 
-    SettingsLocalConfigController.$inject = ['$rootScope', '$timeout', 'OH2ServiceConfiguration', 'OH2StorageService', 'PersistenceService', 'prompt', 'clipboard', 'Blob', 'FileSaver', 'LocalFileReader', 'TranslationService'];
-    function SettingsLocalConfigController($rootScope, $timeout, OH2ServiceConfiguration, OH2StorageService, PersistenceService, prompt, clipboard, Blob, FileSaver, LocalFileReader, TranslationService) {
+    SettingsLocalConfigController.$inject = ['$rootScope', '$timeout', 'PersistenceService', 'prompt', 'clipboard', 'Blob', 'FileSaver', 'LocalFileReader', 'TranslationService'];
+    function SettingsLocalConfigController($rootScope, $timeout, PersistenceService, prompt, clipboard, Blob, FileSaver, LocalFileReader, TranslationService) {
         var vm = this;
 
         vm.editorOptions = {
@@ -42,6 +42,7 @@
         vm.rawLocalConfig = JSON.stringify({
             dashboards: $rootScope.dashboards,
             menucolumns: $rootScope.menucolumns,
+            default: $rootScope.default || false,
             settings: $rootScope.settings,
             customwidgets: $rootScope.customwidgets
         }, null, 4);
@@ -92,6 +93,7 @@
                 angular.copy(newconf.settings, $rootScope.settings);
                 angular.copy(newconf.customwidgets, $rootScope.customwidgets);
                 $rootScope.menucolumns = newconf.menucolumns;
+                $rootScope.default = newconf.default;
 
                 PersistenceService.saveDashboards();
                 PersistenceService.getDashboards();

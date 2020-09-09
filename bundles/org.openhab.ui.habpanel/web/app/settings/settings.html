@@ -20,8 +20,13 @@
                 <br /><br />
             </li>
             <li ng-if="useRegistry" ng-repeat="(name, data) in vm.panelsRegistry">
-                <a class="pull-right" ng-if="vm.storageOption != name" ng-click="vm.deletePanelConfig(name)"><i class="glyphicon glyphicon-trash"></i></a> 
-                <input type="radio" ng-click="vm.switchToPanelConfig($event)" ng-model="vm.storageOption" value="{{name}}" />&nbsp;<strong><span translate-keep-content translate="settings.storage.panelconfiguration">Panel configuration:</span> <em>{{name}}</em></strong>
+                <a class="pull-right" ng-if="vm.storageOption !== name" ng-click="vm.deletePanelConfig(name)"><i class="glyphicon glyphicon-trash"></i></a>
+                <input type="radio" ng-click="vm.switchToPanelConfig($event)" ng-model="vm.storageOption" value="{{name}}" />&nbsp;
+                <strong><span translate-keep-content translate="settings.storage.panelconfiguration">Panel configuration:</span>
+                    <em>{{name}}</em>
+                    <a ng-if="vm.storageOption === name && !vm.isDefault(name)" ng-click="vm.setCurrentAsDefault(true)"><i class="glyphicon glyphicon-star-empty"></i></a>
+                    <a ng-if="vm.storageOption === name && vm.isDefault(name)" ng-click="vm.setCurrentAsDefault(false)"><i class="glyphicon glyphicon-star"></i></a>
+                </strong>
                 <br /><small><span translate-keep-content translate="settings.storage.panelconfiguration.lastsynced">Last synced on</span> {{data.updatedTime | date:'medium'}}</small>
                 <div translate-keep-content translate="settings.storage.panelconfiguration.contains">Contains:</div>
                 <ul>
@@ -33,7 +38,7 @@
             </li>
         </ul>
         <a ng-if="vm.useRegistry" ng-click="vm.saveAsNewPanelConfig()"><i class="glyphicon glyphicon-save">&nbsp;</i><span translate-keep-content translate="settings.storage.panelconfiguration.save">Save the current configuration to a new panel configuration</span></a>
-        <div ng-if="!vm.useRegistry" class="alert alert-warning">Panel configurations are not available: not running openHAB 2 or service not installed?</div>
+        <div ng-if="!vm.useRegistry" class="alert alert-warning">Panel configurations are not available: not running openHAB or service not installed?</div>
 
         <br />
         <br />

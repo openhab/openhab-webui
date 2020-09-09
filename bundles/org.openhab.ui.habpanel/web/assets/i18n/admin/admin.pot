@@ -270,6 +270,21 @@ msgctxt "settings.storage.panelconfiguration.dialog.message"
 msgid "Please choose a name for the new panel configuration (letters and digits only please):"
 msgstr ""
 
+#. Title of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.title"
+msgid "Remove panel configuration"
+msgstr ""
+
+#. Message of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
+msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
+msgstr ""
+
+#. Message of the dialog box when switching from local storage to a server-based panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
+msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
+msgstr ""
+
 #. Panel name (section header)
 msgctxt "settings.panel.name"
 msgid "Panel name"

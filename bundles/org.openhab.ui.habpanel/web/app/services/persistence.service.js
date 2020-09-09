@@ -5,8 +5,8 @@
         .module('app.services')
         .service('PersistenceService', PersistenceService);
 
-    PersistenceService.$inject = ['$rootScope', '$q', '$filter', 'OH2StorageService', 'localStorageService'];
-    function PersistenceService($rootScope, $q, $filter, OH2StorageService, localStorageService) {
+    PersistenceService.$inject = ['$rootScope', '$q', '$filter', 'OH3StorageService', 'localStorageService'];
+    function PersistenceService($rootScope, $q, $filter, OH3StorageService, localStorageService) {
         this.getDashboards = getDashboards;
         this.getDashboard = getDashboard;
         this.getCustomWidgets = getCustomWidgets;
@@ -34,11 +34,11 @@
 
         function loadDashboards(rejectIfEditingLocked) {
             var deferred = $q.defer();
-            OH2StorageService.tryGetServiceConfiguration().then(function (data) {
+            OH3StorageService.getPanelRegistry().then(function (data) {
                 $rootScope.useRegistry = true;
 
-                if (OH2StorageService.getCurrentPanelConfig()) {
-                    OH2StorageService.useCurrentPanelConfig();
+                if (OH3StorageService.getCurrentPanelConfig()) {
+                    OH3StorageService.useCurrentPanelConfig();
                 } else {
                     loadConfigurationFromLocalStorage();
                 }
@@ -50,7 +50,7 @@
 
                 deferred.resolve($rootScope.dashboards);
             }, function (err) {
-                // No OH2 service, use local storage
+                // No service, use local storage
                 loadConfigurationFromLocalStorage();
                 deferred.resolve($rootScope.dashboards);
             });
@@ -105,12 +105,12 @@
             var deferred = $q.defer();
 
             saveConfigurationToLocalStorage();
-            if ($rootScope.useRegistry && OH2StorageService.getCurrentPanelConfig()) {
-                OH2StorageService.saveCurrentPanelConfig().then(function (data) {
-                    console.log('Saved to openHAB 2 service configuration');
+            if ($rootScope.useRegistry && OH3StorageService.getCurrentPanelConfig()) {
+                OH3StorageService.saveCurrentPanelConfig().then(function (data) {
+                    console.log('Saved to the server as UI components');
                     deferred.resolve();
                 }, function (err) {
-                    console.log('Error while saving to openHAB 2 configuration');
+                    console.log('Error while saving to UI components');
                     deferred.reject(err);
                 });
             } else {
