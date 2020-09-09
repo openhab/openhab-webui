@@ -23,7 +23,7 @@
             <f7-chip class="margin-left"
               :text="rule.status.status"
               :color="(rule.status.status === 'RUNNING') ? 'orange' : (rule.status.status != 'IDLE') ? 'red' : ''"
-            >{{rule.status.status}}</f7-chip>
+            />
             <div v-if="rule.status.statusDetail !== 'NONE' || rule.status.description">
               <strong
                 v-if="rule.status.statusDetail !== 'NONE'"
