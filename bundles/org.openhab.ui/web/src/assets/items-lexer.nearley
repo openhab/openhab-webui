@@ -72,14 +72,14 @@ Icon -> null                                        {% (d) => undefined %}
 Groups -> null                                      {% (d) => undefined %}
   | __ "(" GroupList ")"                            {% (d) => d[2] %}
 GroupList -> _ GroupName _                          {% (d) => [d[1]] %}
-  | GroupList "," GroupList                         {% (d) => d[0].concat(d[2]) %}
+  | GroupList "," _ GroupName _                     {% (d) => d[0].concat(d[3]) %}
 GroupName -> %identifier                            {% (d) => d[0].text %}
 
 # Tags
 Tags -> null                                        {% (d) => undefined %}
   | __ "[" TagList "]"                              {% (d) => d[2] %}
 TagList -> _ Tag _                                  {% (d) => [d[1]] %}
-  | TagList "," TagList                             {% (d) => d[0].concat(d[2]) %}
+  | TagList "," _ Tag _                             {% (d) => d[0].concat(d[3]) %}
 Tag -> %identifier                                  {% (d) => d[0].text %}
   | %string                                         {% (d) => d[0].value %}
 
@@ -87,7 +87,7 @@ Tag -> %identifier                                  {% (d) => d[0].text %}
 Metadata -> null                                    {% (d) => undefined %}
   | __ "{" MetadataList "}"                         {% (d) => d[2] %}
 MetadataList -> _ MetadataEntry _                   {% (d) => [d[1]] %}
-  | MetadataList "," MetadataList                   {% (d) => d[0].concat(d[2]) %}
+  | MetadataList "," _ MetadataEntry _              {% (d) => d[0].concat(d[3]) %}
 
 MetadataEntry -> MetadataKey _ "=" _ MetadataValue  {% (d) => { return { key: d[0], value: d[4] } } %}
 MetadataKey -> %identifier                          {% (d) => d[0].text %}
@@ -97,7 +97,7 @@ MetadataValue -> %string                            {% (d) => d[0].value %}
 
 MetadataConfig -> "[" MetadataConfigList "]"        {% (d) => d[1] %}
 MetadataConfigList -> _ MetadataConfigItem _        {% (d) => [d[1]] %}
-  | MetadataConfigList "," MetadataConfigList       {% (d) => d[0].concat(d[2]) %}
+  | MetadataConfigList "," _ MetadataConfigItem _   {% (d) => d[0].concat(d[3]) %}
 MetadataConfigItem -> MetadataConfigKey _ "=" _ MetadataConfigValue  {% (d) => { return { key: d[0], value: d[4] } } %}
 MetadataConfigKey -> %identifier                    {% (d) => d[0].text %}
 MetadataConfigValue -> %string                      {% (d) => d[0].value %}
