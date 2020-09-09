@@ -19,7 +19,7 @@ export default {
     }
 
     if (!component.config.axisPointer) {
-      axis.axisPointer = { show: true }
+      axis.axisPointer = { show: true, label: { backgroundColor: '#2196f3' } }
     }
 
     return axis
