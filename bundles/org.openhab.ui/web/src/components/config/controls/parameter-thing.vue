@@ -1,5 +1,5 @@
 <template>
-  <thing-picker :title="configDescription.label" :value="value" @input="updateValue" />
+  <thing-picker :title="configDescription.label" :value="value" @input="updateValue" :filter-uid="configDescription.options.map((o) => o.value)" />
 </template>
 
 <script>

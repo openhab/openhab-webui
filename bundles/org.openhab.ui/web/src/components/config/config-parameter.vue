@@ -49,7 +49,7 @@ export default {
   computed: {
     control () {
       const configDescription = this.configDescription
-      if (configDescription.options && configDescription.options.length && configDescription.limitToOptions) {
+      if (configDescription.options && configDescription.options.length && configDescription.limitToOptions && !configDescription.context) {
         return ParameterOptions
       } else if (configDescription.type === 'INTEGER') {
         return ParameterInteger
