@@ -129,11 +129,14 @@
 
           <f7-block-title>Type of {{currentSection.replace(/.$/, '')}}</f7-block-title>
           <f7-list v-if="!currentModuleType">
-            <f7-list-item radio v-for="moduleType in moduleTypes[currentSection].filter((t) => t.visibility === 'VISIBLE')"
-              :value="moduleType.uid"
-              @change="currentModule.type = moduleType.uid; currentModuleType = moduleType; $set(currentModule, 'configuration', {})"
-              :checked="currentModule.type === moduleType.uid"
-              :key="moduleType.uid" :title="moduleType.label" name="module-type"></f7-list-item>
+            <ul v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope">
+              <f7-list-item divider :title="scope" />
+              <f7-list-item radio v-for="moduleType in mt"
+                :value="moduleType.uid"
+                @change="currentModule.type = moduleType.uid; currentModuleType = moduleType; $set(currentModule, 'configuration', {})"
+                :checked="currentModule.type === moduleType.uid"
+                :key="moduleType.uid" :title="moduleType.label" name="module-type"></f7-list-item>
+            </ul>
           </f7-list>
           <f7-list v-else>
             <f7-list-item :title="sectionLabels[currentSection][0]" ref="moduleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
@@ -142,10 +145,12 @@
                          currentModule.type = currentModuleType.uid;
                          currentModule.label = currentModule.description = '';
                          $set(currentModule, 'configuration', {})">
-                <option v-for="moduleType in moduleTypes[currentSection].filter((t) => t.visibility === 'VISIBLE')"
-                  :value="moduleType.uid" :key="moduleType.uid" :selected="currentModuleType.uid === moduleType.uid">
-                  {{moduleType.label}}
-                </option>
+                <optgroup v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope" :label="scope">
+                  <option v-for="moduleType in mt"
+                    :value="moduleType.uid" :key="moduleType.uid" :selected="currentModuleType.uid === moduleType.uid">
+                    {{moduleType.label}}
+                  </option>
+                </optgroup>
               </select>
             </f7-list-item>
           </f7-list>
@@ -545,6 +550,23 @@ export default {
         this.$f7.dialog.alert(e).open()
         return false
       }
+    },
+    groupedModuleTypes (section) {
+      const moduleTypes = this.moduleTypes[section].filter((t) => t.visibility === 'VISIBLE')
+      let moduleTypesByScope = moduleTypes.reduce((prev, type, i, types) => {
+        const scope = type.uid.split('.')[0]
+        if (!prev[scope]) {
+          prev[scope] = [type]
+        } else {
+          prev[scope] = [...prev[scope], type].sort((t1, t2) => t1.label.localeCompare(t2.label))
+        }
+        return prev
+      }, {})
+      return Object.keys(moduleTypesByScope).sort((s1, s2) => (s1 === 'core') ? -1 : (s2 === 'core') ? 1 : s1.localeCompare(s2))
+        .reduce((prev, key) => {
+          prev[key] = moduleTypesByScope[key]
+          return prev
+        }, {})
     }
   },
   computed: {

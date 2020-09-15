@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  props: ['title', 'name', 'value', 'multiple', 'filterType'],
+  props: ['title', 'name', 'value', 'multiple', 'filterType', 'filterUid'],
   data () {
     return {
       ready: false,
@@ -46,6 +46,9 @@ export default {
           this.smartSelectParams.openIn = 'sheet'
           this.smartSelectParams.searchbar = false
         }
+      }
+      if (this.filterUid && this.filterUid.length) {
+        this.things = this.things.filter((t) => this.filterUid.indexOf(t.UID) >= 0)
       }
       this.ready = true
     })
