@@ -4,6 +4,9 @@
         :name="configDescription.name"
         :label="configDescription.label"
         :floating-label="$theme.md"
+        :min="configDescription.min"
+        :max="configDescription.max"
+        :step="configDescription.step"
         :value="actualValue"
         @input="updateValue"
         :required="configDescription.required" validate

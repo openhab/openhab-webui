@@ -94,7 +94,7 @@ export default {
       this.showAdvanced = !this.showAdvanced // event.target.checked
     },
     updateParameter (parameter, value) {
-      if (!value) {
+      if ((typeof value === 'number' && isNaN(value)) || value === '') {
         // deleting the parameter sometimes lead to saves not updating it, so set it explicitely to null
         this.$set(this.configuration, parameter.name, null)
       } else {
