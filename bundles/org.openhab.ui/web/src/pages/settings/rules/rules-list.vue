@@ -83,8 +83,8 @@
               :title="rule.name"
               :text="rule.uid"
               :footer="rule.description"
-              :badge="rule.status.status"
-              :badge-color="(rule.status.status === 'RUNNING') ? 'orange' : (rule.status.status != 'IDLE') ? 'red' : ''"
+              :badge="ruleStatusBadgeText(rule.status)"
+              :badge-color="ruleStatusBadgeColor(rule.status)"
             >
               <div slot="footer">
                 <f7-chip v-for="tag in rule.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
@@ -109,7 +109,10 @@
 </template>
 
 <script>
+import RuleStatus from '@/components/rule/rule-status-mixin'
+
 export default {
+  mixins: [RuleStatus],
   data () {
     return {
       ready: false,

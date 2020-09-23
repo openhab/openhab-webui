@@ -22,7 +22,7 @@
             Status:
             <f7-chip class="margin-left"
               :text="rule.status.status"
-              :color="(rule.status.status === 'RUNNING') ? 'orange' : (rule.status.status != 'IDLE') ? 'red' : ''"
+              :color="ruleStatusBadgeColor(rule.status)"
             />
             <div v-if="rule.status.statusDetail !== 'NONE' || rule.status.description">
               <strong
@@ -215,8 +215,10 @@ import CronEditor from '@/components/config/controls/cronexpression-editor.vue'
 
 import ModuleDescriptionSuggestions from './module-description-suggestions'
 
+import RuleStatus from '@/components/rule/rule-status-mixin'
+
 export default {
-  mixins: [ModuleDescriptionSuggestions],
+  mixins: [ModuleDescriptionSuggestions, RuleStatus],
   components: {
     ConfigSheet,
     SemanticsPicker,
