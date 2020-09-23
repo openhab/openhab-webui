@@ -22,8 +22,8 @@
                 :title="channel.label || channelType.label"
                 :footer="channel.uid"
                 :subtitle="thing.label"
-                :badge="thing.statusInfo.status"
-                :badge-color="thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'">
+                :badge="thingStatusBadgeText(thing.statusInfo)"
+                :badge-color="thingStatusBadgeColor(thing.statusInfo)">
                 <span slot="media" class="item-initial">{{(channel.label) ? channel.label[0] : (channelType.label) ? channelType.label[0] : '?'}}</span>
               </f7-list-item>
               <f7-list-item divider title="Item"></f7-list-item>
@@ -71,8 +71,10 @@
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import Item from '@/components/item/item.vue'
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
+import ThingStatus from '@/components/thing/thing-status-mixin'
 
 export default {
+  mixins: [ThingStatus],
   components: {
     ConfigSheet,
     Item,

@@ -22,17 +22,15 @@
 <script>
 
 // import ECharts modules manually to reduce bundle size
-import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/graph'
 import 'echarts/lib/component/tooltip'
 
 import ECharts from 'vue-echarts/components/ECharts'
 
-// import mixin from './index'
-
-// import { sprintf } from 'sprintf-js'
+import ThingStatus from '@/components/thing/thing-status-mixin'
 
 export default {
+  mixins: [ThingStatus],
   components: {
     'chart': ECharts
   },
@@ -106,7 +104,7 @@ export default {
             value: t.label,
             symbolSize: bridgeUID ? 28 : 42,
             itemStyle: {
-              color: t.statusInfo.status === 'ONLINE' ? 'green' : t.statusInfo.status === 'OFFLINE' ? 'crimson' : 'gray',
+              color: this.thingStatusBadgeColor(t.statusInfo),
               borderColor: !bridgeUID ? 'orange' : listening ? 'yellow' : 'none',
               borderWidth: 3
             }

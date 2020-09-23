@@ -22,7 +22,7 @@
             Status:
             <f7-chip class="margin-left"
               :text="thing.statusInfo.status"
-              :color="thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'"
+              :color="thingStatusBadgeColor(thing.statusInfo)"
             ></f7-chip>
             <div v-if="thing.statusInfo.statusDetail !== 'NONE' || thing.statusInfo.description">
               <strong
@@ -62,8 +62,8 @@
           <f7-col>
             <f7-block-title v-if="Object.keys(thing.properties).length > 0">Properties</f7-block-title>
             <f7-list>
-              <!-- <f7-list-item v-if="Object.keys(thing.properties).length > 0" divider>Properties</f7-list-item> -->
               <f7-list-item
+                class="thing-property"
                 v-for="(value, key) in thing.properties"
                 :key="key"
                 :title="key"
@@ -147,48 +147,48 @@
 </template>
 
 <style lang="stylus">
-code.textual-definition pre {
-  overflow-x: auto;
-  white-space: normal;
-}
+code.textual-definition pre
+  overflow-x auto
+  white-space normal
 
-pre.textual-definition {
-  padding: 5px;
-}
+pre.textual-definition
+  padding 5px
 
-textarea.textual-definition {
-  position: absolute;
-  top: var(--f7-toolbar-height);
-  left: 5px;
-  right: 5px;
-  bottom: 0;
-  width: calc(100% - 10px);
-  font-family: monospace;
-}
+textarea.textual-definition
+  position absolute
+  top var(--f7-toolbar-height)
+  left 5px
+  right 5px
+  bottom 0
+  width calc(100% - 10px)
+  font-family monospace
 
-.md .code-popup {
-  margin-bottom: 0 !important;
-}
+.md .code-popup
+  margin-bottom 0 !important
 
-.ios .code-popup {
-  margin-bottom: 44px !important;
-}
+.ios .code-popup
+  margin-bottom 44px !important
 
-.code-popup {
-  width: 100%;
-  position: fixed;
-  bottom: 0 !important;
-  top: var(--f7-toolbar-height) !important;
-  // margin -2px !important
-  background-color: white !important;
-  border-top: 2px solid #555;
+.code-popup
+  width 100%
+  position fixed
+  bottom 0 !important
+  top var(--f7-toolbar-height) !important
+  background-color white !important
+  border-top 2px solid #555
 
-  // z-index 1000 !important
-  code {
-    max-height: 50% !important;
-    overflow-y: auto !important;
-  }
-}
+  code
+    max-height 50% !important
+    overflow-y auto !important
+
+.thing-property
+  .item-after
+    max-width 75%
+
+    span
+      max-width 100%
+      overflow hidden
+      text-overflow ellipsis
 </style>
 
 <script>
@@ -204,9 +204,12 @@ import AddFromThingPage from '@/pages/settings/model/add-from-thing.vue'
 
 import buildTextualDefinition from './thing-textual-definition'
 
+import ThingStatus from '@/components/thing/thing-status-mixin'
+
 let copyToast = null
 
 export default {
+  mixins: [ThingStatus],
   components: {
     ConfigSheet,
     ChannelList,
