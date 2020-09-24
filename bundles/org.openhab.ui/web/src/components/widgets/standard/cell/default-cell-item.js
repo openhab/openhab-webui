@@ -1,16 +1,16 @@
-/* Determine the appropriate default representation of an item when displayed in a list.
+/* Determine the appropriate default representation of an item when displayed in a cell.
    Users may override it by specifying the component's name and configuration
-   in the "listWidget" metadata namespace of the item
+   in the "cellWidget" metadata namespace of the item
  */
 
 export default function itemDefaultCellComponent (item, itemNameAsFooter) {
   const stateDescription = item.stateDescription || {}
   let component = null
 
-  if (item.metadata && item.metadata.listWidget) {
+  if (item.metadata && item.metadata.cellWidget) {
     component = {
-      component: item.metadata.listWidget.value,
-      config: item.metadata.listWidget.config
+      component: item.metadata.cellWidget.value,
+      config: item.metadata.cellWidget.config
     }
   } else {
     if (item.type === 'Switch' && !stateDescription.readOnly) {
@@ -81,11 +81,12 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
 
   if (!component) {
     component = {
-      component: 'oh-cell'
+      component: 'oh-label-cell'
     }
 
     if (item.type.indexOf('Number:') === 0) {
       component.config = {
+        trendItem: item.name,
         action: 'analyze',
         actionAnalyzerItems: [item.name]
       }
@@ -106,9 +107,9 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
   if (!component.config) component.config = {}
   component.config.item = item.name
   component.config.title = item.label || item.name
-  if (item.category) component.config.icon = 'oh:' + item.category
   if (item.label && itemNameAsFooter) component.config.footer = item.name
   component.config.stateAsHeader = true
+  if (component.component === 'oh-label-cell') component.config.expandable = false
 
   return component
 }

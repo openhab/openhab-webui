@@ -149,8 +149,8 @@ export default {
       return null
     },
     hasExpandedControls () {
-      return this.context.component.component !== 'oh-cell' ||
-        (this.context.component.slots && this.context.component.slots.default && this.context.component.slots.default.length > 0)
+      return this.config.expandable !== false && (this.context.component.component !== 'oh-cell' ||
+        (this.context.component.slots && this.context.component.slots.default && this.context.component.slots.default.length > 0))
     }
   },
   methods: {

@@ -18,6 +18,11 @@ export const OhCellDefinition = () => new WidgetDefinition('oh-cell', 'Cell', 'A
   .paramGroup(CellParameterGroup(), CellParameters())
   .paramGroup(actionGroup(), actionParams())
 
+// OhLabelCell
+export const OhLabelCellDefinition = () => new WidgetDefinition('oh-label-cell', 'Label Cell', 'A cell with a big label to show a short item state value')
+  .paramGroup(CellParameterGroup(), CellParameters())
+  .paramGroup(actionGroup(), actionParams())
+
 // OhSliderCell
 export const OhSliderCellDefinition = () => new WidgetDefinition('oh-slider-cell', 'Slider Cell', 'A cell expanding to a big vertical slider')
   .paramGroup(CellParameterGroup(), CellParameters())

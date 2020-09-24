@@ -55,6 +55,9 @@
 .cell-placeholder
   margin-top calc(var(--f7-menu-item-height) + var(--f7-card-expandable-margin-vertical)) !important
   height 120px
+  margin-left 3px
+  margin-right 3px
+  width calc(100% - 6px)
   .button
     height 120px
     padding 35px
