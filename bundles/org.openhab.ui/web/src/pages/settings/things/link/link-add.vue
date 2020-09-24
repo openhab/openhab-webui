@@ -64,9 +64,9 @@
         </div>
       </f7-col>
 
-      <f7-block v-if="!itemTypeCompatible()" class="text-color-red">
+      <!-- <f7-block v-if="!itemTypeCompatible()" class="text-color-red">
         The channel and the item type are not compatible.
-      </f7-block>
+      </f7-block> -->
 
       <f7-block v-if="!ready" class="text-align-center">
         <f7-preloader></f7-preloader>
@@ -90,7 +90,7 @@
       </f7-col>
       <f7-col v-if="profileTypeConfiguration != null">
         <f7-block-title>Profile Configuration</f7-block-title>
-          <config-sheet
+          <config-sheet ref="profileConfiguration"
             :parameter-groups="profileTypeConfiguration.parameterGroups"
             :parameters="profileTypeConfiguration.parameters"
             :configuration="configuration"
@@ -109,7 +109,6 @@ import ItemForm from '@/components/item/item-form.vue'
 
 import Item from '@/components/item/item.vue'
 
-import { Categories } from '@/assets/categories.js'
 import * as Types from '@/assets/item-types.js'
 import * as SemanticClasses from '@/assets/semantics.js'
 
@@ -242,6 +241,10 @@ export default {
       }
       if (!link.channelUID) {
         this.$f7.dialog.alert('Please configure the channel to link')
+        return
+      }
+      if (this.$refs.profileConfiguration && !this.$refs.profileConfiguration.isValid()) {
+        this.$f7.dialog.alert('Please review the profile configuration and correct validation errors')
         return
       }
       // temporarily disabled
