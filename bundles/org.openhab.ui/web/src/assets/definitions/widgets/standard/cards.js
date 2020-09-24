@@ -14,6 +14,7 @@ export const CardParameters = () => [
 ]
 
 // OhLabelCard
+import TrendParameters from '../system/trend'
 export const OhLabelCardDefinition = () => new WidgetDefinition('oh-label-card', 'Label Card', 'Display the state of an item in a card')
   .paramGroup(CardParameterGroup(), CardParameters())
   .paramGroup(actionGroup(), actionParams())
@@ -28,6 +29,7 @@ export const OhLabelCardDefinition = () => new WidgetDefinition('oh-label-card',
     pn('iconSize', 'Icon Size', 'Size of the icon in px'),
     pb('vertical', 'Vertical arrangement', 'Display label below icon')
   ])
+  .paramGroup(pg('trend', 'Trend Line', 'Show a trend line in the background'), TrendParameters())
 
 // OhListCard
 import ListParameters from '../system/list'

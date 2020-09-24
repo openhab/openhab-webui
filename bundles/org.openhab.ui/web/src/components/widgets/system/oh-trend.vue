@@ -19,7 +19,7 @@ export default {
       return this.config.trendItem
     },
     trendWidth () {
-      return this.width || this.config.width
+      return this.width || this.config.trendWidth
     },
     trendGradient () {
       return this.config.trendGradient || ['#2196f3', '#5ac8fa']
