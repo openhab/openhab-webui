@@ -38,7 +38,7 @@
 
     <widget-config-popup :opened="widgetConfigOpened" :component="currentComponent" :widget="currentWidget" @closed="widgetConfigClosed" @update="updateWidgetConfig" />
     <widget-code-popup :opened="widgetCodeOpened" :component="currentComponent" @closed="widgetCodeClosed" @update="updateWidgetCode" />
-    <model-picker-popup :opened="modelPickerOpened" :multiple="true" @closed="modelPickerOpened = false" @input="doAddFromModel" action-label="Add" />
+    <model-picker-popup :opened="modelPickerOpened" :multiple="modelPickerAllowMultiple" @closed="modelPickerOpened = false" @input="doAddFromModel" action-label="Add" />
   </f7-page>
 </template>
 
@@ -108,6 +108,7 @@ export default {
         slots: { default: [] }
       },
       addFromModelContext: {},
+      modelPickerAllowMultiple: true,
       modelPickerOpened: false
     }
   },
@@ -136,6 +137,7 @@ export default {
         }
         const addFromModel = () => {
           this.addFromModelContext = { component, slot, isList }
+          this.modelPickerAllowMultiple = component.component !== 'oh-grid-col'
           this.modelPickerOpened = true
           this.$nextTick(() => actions.destroy())
         }
