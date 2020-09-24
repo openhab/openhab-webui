@@ -234,7 +234,7 @@ export default {
     parsedItems () {
       try {
         const parser = new Parser(Grammar.fromCompiled(grammar))
-        parser.feed(this.itemsDsl.trim())
+        parser.feed(this.itemsDsl.trim().replace(/\t/g, ' '))
         if (!parser.results.length) return { error: 'Unable to parse, check your input' }
         // return parser.results[0].map((i) => i.name).join('\n')
         return parser.results[0]
