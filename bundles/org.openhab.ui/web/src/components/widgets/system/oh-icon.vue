@@ -1,6 +1,8 @@
 <template>
-  <img :src="iconUrl" :width="width" :height="height"
-    :style="{ width: (width) ? width + 'px' : 'auto', height: (height) ? height + 'px' : 'auto' }"
+  <img :src="iconUrl"
+    :style="{
+      width: (context && config && config.width) ? config.width + 'px' : (width) ? width + 'px' : 'auto',
+      height: (context && config && config.height) ? config.height + 'px' : (height) ? height + 'px' : 'auto' }"
     onload="this.className=''" onerror="this.className='no-icon'" />
 </template>
 
@@ -10,7 +12,9 @@
 </style>
 
 <script>
+import mixin from '../widget-mixin'
 export default {
+  mixins: [mixin],
   props: ['icon', 'width', 'height', 'state'],
   data () {
     return {
@@ -38,7 +42,7 @@ export default {
   },
   methods: {
     updateIcon () {
-      this.$oh.media.getIcon(this.icon, 'svg', this.currentState).then((url) => {
+      this.$oh.media.getIcon((this.context) ? this.config.icon : this.icon, 'svg', (this.context) ? this.config.state : this.currentState).then((url) => {
         if (url !== this.iconUrl) {
           this.iconUrl = url
         }
