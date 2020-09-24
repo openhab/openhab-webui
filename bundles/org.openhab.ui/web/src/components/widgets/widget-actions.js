@@ -12,8 +12,8 @@ export const actionsMixin = {
     GroupPopup
   },
   methods: {
-    showActionFeedback (prefix) {
-      let toastConfig = this.config[prefix + 'actionFeedback']
+    showActionFeedback (prefix, config) {
+      let toastConfig = config || this.config[prefix + 'actionFeedback']
       if (typeof toastConfig === 'string' && toastConfig.startsWith('{')) toastConfig = JSON.parse(toastConfig)
       if (typeof toastConfig === 'string') {
         this.$f7.toast.create({
@@ -29,9 +29,12 @@ export const actionsMixin = {
       }
     },
     performAction (evt, prefix) {
-      if (this.context.editmode) return
       prefix = (prefix) ? prefix += '_' : ''
       const action = this.config[prefix + 'action']
+      if (this.context.editmode) {
+        this.showActionFeedback(prefix, `Action '${action}' not performed while in edit mode`)
+        return
+      }
       if (!action) return
       switch (action) {
         case 'navigate':
