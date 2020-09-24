@@ -9,7 +9,7 @@
         <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.background" :key="'background-' + idx" @command="onCommand" />
       </div>
       <oh-trend v-else-if="config.trendItem" :key="'trend' + config.item" class="trend card-opened-fade-out" :width="($refs.card) ? $refs.card.$el.clientWidth : 0" :context="context" />
-      <div v-else class="cell-background" :class="[(config.color) ? 'bg-color-' + config.color : '', { 'on': config.on }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
+      <div v-else class="cell-background" :class="[(config.color) ? 'bg-color-' + config.color : '', { 'on': isOn }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
     </slot>
     <f7-link v-show="!opened && hasExpandedControls && config.action" icon-f7="ellipsis_vertical" icon-size="30" @click.native="openCell" class="float-right cell-open-button card-opened-fade-out no-ripple" />
     <f7-card-content ref="cell" class="cell-contents">
@@ -152,6 +152,22 @@ export default {
     hasExpandedControls () {
       return this.config.expandable !== false && (this.context.component.component !== 'oh-cell' ||
         (this.context.component.slots && this.context.component.slots.default && this.context.component.slots.default.length > 0))
+    },
+    isOn () {
+      if (this.config.on) return this.config.on
+      if (this.config.item) {
+        const itemState = this.context.store[this.config.item]
+        if (itemState === 'ON') return true
+        if (itemState === 'OFF') return false
+        const stateParts = itemState.state.split(',')
+        if (stateParts.length === 3) {
+          return (parseFloat(stateParts[2]) > 0)
+        } else {
+          if (!isNaN(parseFloat(stateParts[0]))) return parseFloat(stateParts[2]) > 0
+        }
+        return stateParts[0]
+      }
+      return false
     }
   },
   methods: {

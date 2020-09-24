@@ -47,7 +47,7 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
       component = {
         component: 'oh-colorpicker-cell',
         config: {
-          color: 'blue',
+          color: 'yellow',
           action: 'toggle',
           actionItem: item.name,
           actionCommand: 'ON',
