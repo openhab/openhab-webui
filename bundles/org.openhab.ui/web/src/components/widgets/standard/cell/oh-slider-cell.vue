@@ -29,7 +29,6 @@
   --f7-range-knob-size 0px
   --f7-range-label-size 60px
   --f7-range-label-font-size 40px
-  // --oh-slider-cell-height 350px
   .slider-control
     position absolute
     top calc(50% - var(--oh-slider-cell-height)/2 + 2rem)
