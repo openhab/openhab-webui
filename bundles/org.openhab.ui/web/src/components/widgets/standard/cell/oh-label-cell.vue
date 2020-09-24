@@ -28,18 +28,6 @@ export default {
   components: {
     OhCell
   },
-  widget: OhLabelCellDefinition,
-  computed: {
-    colorpickerContext () {
-      return Object.assign({}, this.context, {
-        component: {
-          component: 'oh-colorpicker',
-          config: Object.assign({}, this.context.component.config, {
-            modules: this.context.component.config.modules || ['wheel']
-          })
-        }
-      })
-    }
-  }
+  widget: OhLabelCellDefinition
 }
 </script>
