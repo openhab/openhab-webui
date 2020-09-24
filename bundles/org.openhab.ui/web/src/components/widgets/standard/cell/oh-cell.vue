@@ -120,7 +120,7 @@ export default {
     OhTrend
   },
   widget: OhCellDefinition,
-  props: ['noSwipeToClose'],
+  props: ['noSwipeToClose', 'state'],
   data () {
     return {
       transitioning: false,
@@ -144,6 +144,7 @@ export default {
     header () {
       if (this.config.header) return this.config.header
       if (this.config.item && this.config.stateAsHeader) {
+        if (this.state) return this.state
         return this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
       }
       return null

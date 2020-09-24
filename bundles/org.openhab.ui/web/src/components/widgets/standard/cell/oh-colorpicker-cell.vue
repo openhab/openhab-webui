@@ -1,5 +1,5 @@
 <template>
-  <oh-cell :context="context" :no-swipe-to-close="true">
+  <oh-cell :context="context" :no-swipe-to-close="true" :state="state">
     <f7-row>
       <f7-col width="100" class="cell-colorpicker display-flex flex-direction-column justify-content-center">
         <slot name="beforeColorpicker">
@@ -42,6 +42,16 @@ export default {
           })
         }
       })
+    },
+    state () {
+      const stateParts = this.context.store[this.config.item].state.split(',')
+      if (stateParts.length === 3) {
+        if (parseFloat(stateParts[2]) === 0) return 'Off'
+        return `On · ${stateParts[2]}%`
+      } else {
+        if (!isNaN(parseFloat(stateParts[0]))) return stateParts[0] + '%'
+      }
+      return stateParts[0]
     }
   }
 }
