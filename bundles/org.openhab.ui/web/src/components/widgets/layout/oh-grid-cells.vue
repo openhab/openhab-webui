@@ -2,7 +2,7 @@
   <div>
     <hr v-if="context.editmode" style="opacity: 0.5; border-top: 1px #777 dashed" />
     <div width="100%">
-      <f7-menu v-if="context.editmode" class="configure-layout-menu margin-bottom padding-horizontal">
+      <f7-menu v-if="context.editmode" class="configure-layout-menu padding-horizontal">
         <f7-menu-item style="margin-left: auto" icon-f7="rectangle_grid_2x2" dropdown>
           <f7-menu-dropdown right>
           <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
@@ -21,7 +21,7 @@
     </div>
     <masonry v-if="visible" :cols="config.cols || {default: 5, 1400: 4, 1280: 3, 576: 3, 480: 2}">
       <div v-for="(slotComponent, idx) in context.component.slots.default" :key="idx" class="oh-cell-container">
-        <f7-menu v-if="context.editmode" class="configure-layout-menu">
+        <f7-menu v-if="context.editmode" class="configure-layout-menu margin-bottom">
           <f7-menu-item style="margin-left: auto" icon-f7="slider_horizontal_below_rectangle" dropdown @menu:opened="dropdownMenuOpened = idx" @menu:closed="dropdownMenuOpened = null">
             <f7-menu-dropdown right>
             <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Configure Cell"></f7-menu-dropdown-item>
