@@ -87,6 +87,7 @@ export default {
           return ItemMetadataSynonyms
         case 'widget':
         case 'listWidget':
+        case 'cellWidget':
           return ItemMetadataWidget
         case 'autoupdate':
           return ItemMetadataAutoUpdate

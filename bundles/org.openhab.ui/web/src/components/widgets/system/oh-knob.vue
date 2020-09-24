@@ -1,5 +1,5 @@
 <template>
-  <knob-control v-bind="config" :value="value" @input="onChange" />
+  <knob-control v-bind="config" :text-color="config.textColor || ($f7.data.themeOptions.dark === 'dark') ? '#ffffff' : undefined" :value="value" @input="onChange" />
 </template>
 
 <script>

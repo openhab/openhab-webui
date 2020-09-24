@@ -75,10 +75,11 @@ import PageDesigner from '../pagedesigner-mixin'
 import YAML from 'yaml'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
-import * as SystemWidgets from '@/components/widgets/system/index'
-import * as StandardWidgets from '@/components/widgets/standard/index'
-import * as StandardListWidgets from '@/components/widgets/standard/list/index'
-import * as LayoutWidgets from '@/components/widgets/layout/index'
+import * as SystemWidgets from '@/components/widgets/system'
+import * as StandardWidgets from '@/components/widgets/standard'
+import * as StandardListWidgets from '@/components/widgets/standard/list'
+import * as StandardCellWidgets from '@/components/widgets/standard/cell'
+import * as LayoutWidgets from '@/components/widgets/layout'
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
@@ -87,6 +88,7 @@ import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
 import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
+import itemDefaultCellComponent from '@/components/widgets/standard/cell/default-cell-item'
 
 export default {
   mixins: [PageDesigner],
@@ -115,6 +117,7 @@ export default {
   methods: {
     addWidget (component, widgetType, parentContext, slot) {
       const isList = component.component.indexOf('oh-list') === 0
+      const isCells = component.component.indexOf('oh-grid-cells') === 0
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -136,12 +139,12 @@ export default {
           this.forceUpdate()
         }
         const addFromModel = () => {
-          this.addFromModelContext = { component, slot, isList }
+          this.addFromModelContext = { component, slot, isList, isCells }
           this.modelPickerAllowMultiple = component.component !== 'oh-grid-col'
           this.modelPickerOpened = true
           this.$nextTick(() => actions.destroy())
         }
-        const stdWidgets = (isList) ? StandardListWidgets : StandardWidgets
+        const stdWidgets = (isList) ? StandardListWidgets : (isCells) ? StandardCellWidgets : StandardWidgets
         const standardWidgetOptions = Object.keys(stdWidgets).map((k) => {
           return {
             text: stdWidgets[k].widget().label,
@@ -160,7 +163,14 @@ export default {
           // grid: true,
           buttons: [
             [
-              { label: true, text: (isList) ? 'Standard Library (List)' : 'Standard Library' },
+              {
+                label: true,
+                text: (isList)
+                  ? 'Standard Library (List)'
+                  : (isCells)
+                    ? 'Standard Library (Cells)'
+                    : 'Standard Library'
+              },
               ...standardWidgetOptions
             ],
             [
@@ -182,7 +192,11 @@ export default {
       }
     },
     doAddFromModel (value) {
-      const defaultWidgetFn = (this.addFromModelContext.isList) ? itemDefaultListComponent : itemDefaultStandaloneComponent
+      const defaultWidgetFn = (this.addFromModelContext.isList)
+        ? itemDefaultListComponent
+        : (this.addFromModelContext.isCells)
+          ? itemDefaultCellComponent
+          : itemDefaultStandaloneComponent
       const component = this.addFromModelContext.component
       const slot = this.addFromModelContext.slot
       if (Array.isArray(value)) {
@@ -211,7 +225,7 @@ export default {
       }
     },
     getWidgetDefinition (componentType) {
-      const component = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets })
+      const component = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets, ...StandardCellWidgets })
         .find((w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType)
       if (!component) return null
       return component.widget()

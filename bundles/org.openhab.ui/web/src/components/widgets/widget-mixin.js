@@ -26,48 +26,61 @@ export default {
       let evalConfig = {}
       if (this.context.component.config) {
         for (const key in this.context.component.config) {
-          if (typeof sourceConfig[key] === 'string' && sourceConfig[key].startsWith('=')) {
-            try {
-              // we cache the parsed abstract tree to prevent it from being parsed again at runtime
-              // in we're edit mode according to the context do not cache because the expression is subject to change
-              if (!this.exprAst[key] || this.context.editmode) {
-                this.exprAst[key] = expr.parse(sourceConfig[key].substring(1))
-              }
-              evalConfig[key] = expr.eval(this.exprAst[key], {
-                items: this.context.store,
-                props: this.context.props,
-                Math: Math,
-                theme: this.$theme,
-                themeOptions: this.$f7.data.themeOptions,
-                device: this.$device,
-                JSON: JSON
-              })
-            } catch (e) {
-              evalConfig[key] = e
-            }
-          } else {
-            evalConfig[key] = sourceConfig[key]
-          }
+          if (key === 'visible' || key === 'visibleTo') continue
+          this.$set(evalConfig, key, this.evaluateExpression(key, sourceConfig[key]))
         }
       }
       this.$emit('component-ready', this.context.component)
       return evalConfig
     },
     visible () {
-      if (this.context.editmode) return true
-      if (this.config.visible === undefined && this.config.visibleTo === undefined) return true
-      if (this.config.visible === false) return false
-      if (this.config.visibleTo) {
+      if (this.context.editmode || !this.context.component.config) return true
+      const visible = this.evaluateExpression('visible', this.context.component.config.visible)
+      const visibleTo = this.context.component.config.visibleTo
+      if (visible === undefined && visibleTo === undefined) return true
+      if (visible === false) return false
+      if (visibleTo) {
         const user = this.$store.getters.user
         if (!user) return false
-        if (user.roles && user.roles.some(r => this.config.visibleTo.indexOf('role:' + r) >= 0)) return true
-        if (this.config.visibleTo.indexOf('user:' + user.name) >= 0) return true
+        if (user.roles && user.roles.some(r => visibleTo.indexOf('role:' + r) >= 0)) return true
+        if (visibleTo.indexOf('user:' + user.name) >= 0) return true
         return false
       }
       return true
     }
   },
   methods: {
+    evaluateExpression (key, value) {
+      if (typeof value === 'string' && value.startsWith('=')) {
+        try {
+          // we cache the parsed abstract tree to prevent it from being parsed again at runtime
+          // in we're edit mode according to the context do not cache because the expression is subject to change
+          if (!this.exprAst[key] || this.context.editmode) {
+            this.exprAst[key] = expr.parse(value.substring(1))
+          }
+          return expr.eval(this.exprAst[key], {
+            items: this.context.store,
+            props: this.context.props,
+            Math: Math,
+            Number: Number,
+            theme: this.$theme,
+            themeOptions: this.$f7.data.themeOptions,
+            device: this.$device,
+            JSON: JSON
+          })
+        } catch (e) {
+          return e
+        }
+      } else if (typeof value === 'object' && !Array.isArray(value)) {
+        const evalObj = {}
+        for (const objKey in value) {
+          this.$set(evalObj, objKey, this.evaluateExpression(key + '.' + objKey, value[objKey]))
+        }
+        return evalObj
+      } else {
+        return value
+      }
+    },
     childContext (component) {
       return {
         component: component,

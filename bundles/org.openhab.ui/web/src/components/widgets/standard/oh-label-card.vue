@@ -4,7 +4,7 @@
       <div>{{config.title}}</div>
     </f7-card-header>
     <f7-card-content ref="cardContent" @click.native="performAction" class="label-card-content" :style="{ background: config.background }" :class="{ 'vertical-arrangement': config.vertical }">
-      <trend :key="'trend' + config.item" v-if="showTrend" :width="trendWidth" class="trend" :data="trendData" :gradient="trendGradient" :stroke-width="trendStrokeWidth" auto-draw smooth />
+      <oh-trend v-if="config.trendItem" :key="'trend' + config.item" class="trend" :width="($refs.cardContent) ? $refs.cardContent.$el.clientWidth : 0" :context="context" />
       <f7-list>
         <f7-list-item :link="config.action ? true : false" no-chevron>
           <oh-icon slot="media" v-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" :height="config.iconSize || 32" :width="config.iconSize || 32" />
@@ -53,54 +53,13 @@ import mixin from '../widget-mixin'
 import { actionsMixin } from '../widget-actions'
 import { OhLabelCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
+import OhTrend from '../system/oh-trend'
+
 export default {
   mixins: [mixin, actionsMixin],
-  widget: OhLabelCardDefinition,
-  data () {
-    return {
-      trendData: [],
-      showTrend: false
-    }
+  components: {
+    OhTrend
   },
-  computed: {
-    trendItem () {
-      return this.config.trendItem
-    },
-    trendWidth () {
-      return this.$refs.cardContent.$el.clientWidth
-    },
-    trendGradient () {
-      return this.config.trendGradient || ['#2196f3', '#5ac8fa']
-    },
-    trendStrokeWidth () {
-      return this.config.trendStrokeWidth || 3
-    }
-  },
-  mounted () {
-    this.buildTrend()
-  },
-  watch: {
-    trendItem (item) {
-      this.buildTrend()
-    }
-  },
-  methods: {
-    buildTrend () {
-      this.trendData = []
-      this.showTrend = false
-      if (!this.trendItem) return []
-      const sampling = this.config.trendSampling || 60
-      return this.$oh.api.get('/rest/persistence/items/' + this.config.trendItem).then((resp) => {
-        if (resp.data && resp.data.length) {
-          let data = []
-          for (let i = 0; i < resp.data.length; i += sampling) {
-            data.push(parseFloat(resp.data[i].state))
-          }
-          this.trendData = data
-          this.showTrend = true
-        }
-      })
-    }
-  }
+  widget: OhLabelCardDefinition
 }
 </script>
