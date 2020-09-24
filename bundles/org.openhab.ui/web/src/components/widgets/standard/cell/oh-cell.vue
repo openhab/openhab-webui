@@ -8,6 +8,7 @@
       <div v-if="context.component.slots && context.component.slots.background">
         <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.background" :key="'background-' + idx" @command="onCommand" />
       </div>
+      <oh-trend v-else-if="config.trendItem" :key="'trend' + config.item" class="trend card-opened-fade-out" :width="($refs.card) ? $refs.card.$el.clientWidth : 0" :context="context" />
       <div v-else class="cell-background" :class="[(config.color) ? 'bg-color-' + config.color : '', { 'on': config.on }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
     </slot>
     <f7-link v-show="!opened && hasExpandedControls && config.action" icon-f7="ellipsis_vertical" icon-size="30" @click.native="openCell" class="float-right cell-open-button card-opened-fade-out no-ripple" />
@@ -56,6 +57,13 @@
   max-height 120px
   // margin 4px !important
   user-select none
+  .trend
+    position absolute
+    left 0
+    top 0
+    width 100%
+    height 100%
+    filter opacity(20%)
   .cell-background
     cursor pointer !important
     position absolute
@@ -104,9 +112,13 @@
 import mixin from '../../widget-mixin'
 import { actionsMixin } from '../../widget-actions'
 import { OhCellDefinition } from '@/assets/definitions/widgets/standard/cells'
+import OhTrend from '../../system/oh-trend.vue'
 
 export default {
   mixins: [mixin, actionsMixin],
+  components: {
+    OhTrend
+  },
   widget: OhCellDefinition,
   props: ['noSwipeToClose'],
   data () {
