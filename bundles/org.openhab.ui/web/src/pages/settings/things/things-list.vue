@@ -57,8 +57,8 @@
               :link="thing.UID"
               :title="thing.label"
               :footer="thing.UID"
-              :badge="thing.statusInfo.status"
-              :badge-color="thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'"
+              :badge="thingStatusBadgeText(thing.statusInfo)"
+              :badge-color="thingStatusBadgeColor(thing.statusInfo)"
             >
               <f7-icon v-if="!thing.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
             </f7-list-item>
@@ -90,7 +90,10 @@
 </style>
 
 <script>
+import thingStatus from '@/components/thing/thing-status-mixin'
+
 export default {
+  mixins: [thingStatus],
   data () {
     return {
       ready: false,

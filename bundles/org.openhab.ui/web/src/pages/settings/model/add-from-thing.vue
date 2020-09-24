@@ -32,8 +32,8 @@
           <f7-list-item
               :title="selectedThing.label"
               :footer="selectedThing.UID"
-              :badge="selectedThing.statusInfo.status"
-              :badge-color="selectedThing.statusInfo.status === 'ONLINE' ? 'green' : 'red'" />
+              :badge="thingStatusBadgeText(selectedThing.statusInfo)"
+              :badge-color="thingStatusBadgeColor(selectedThing.statusInfo)" />
         </f7-list>
         <f7-block-title v-if="createEquipment">Equipment</f7-block-title>
         <f7-block-footer v-if="createEquipment && !thingId" class="padding-left padding-right">
@@ -80,7 +80,10 @@ import ItemForm from '@/components/item/item-form.vue'
 
 import Item from '@/components/item/item.vue'
 
+import ThingStatus from '@/components/thing/thing-status-mixin'
+
 export default {
+  mixins: [ThingStatus],
   components: {
     Item,
     ModelPickerPopup,

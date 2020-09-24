@@ -5,8 +5,8 @@
         <ul>
           <f7-list-item v-for="l in enrichedLinks" :key="l.itemName" media-item
             :title="l.thing.label" :subtitle="l.channel.label || '?'" :footer="l.link.channelUID"
-            :badge="l.thing.statusInfo.status"
-            :badge-color="l.thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'"
+            :badge="thingStatusBadgeText(l.thing.statusInfo)"
+            :badge-color="thingStatusBadgeColor(l.thing.statusInfo)"
             link="#" @click="editLink(l)">
             <span slot="media" class="item-initial">{{l.channel.label ? l.channel.label[0] : '?'}}</span>
           </f7-list-item>
@@ -23,8 +23,10 @@
 <script>
 import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
 import EditLinkPage from '@/pages/settings/things/link/link-edit.vue'
+import ThingStatus from '@/components/thing/thing-status-mixin'
 
 export default {
+  mixins: [ThingStatus],
   props: ['item', 'links'],
   data () {
     return {
