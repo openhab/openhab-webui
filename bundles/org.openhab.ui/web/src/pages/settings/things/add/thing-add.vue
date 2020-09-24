@@ -23,7 +23,7 @@
 
     <f7-block v-if="ready" class="block-narrow">
       <thing-general-settings :thing="thing" :thing-type="thingType" :createMode="true" />
-      <config-sheet
+      <config-sheet ref="parameters"
         :parameter-groups="thingType.parameterGroups"
         :parameters="thingType.configParameters"
         :configuration="thing.configuration"
@@ -128,6 +128,11 @@ export default {
         this.$f7.dialog.alert('Please give a name')
         return
       }
+      if (!this.$refs.parameters.isValid()) {
+        this.$f7.dialog.alert('Please review the configuration and correct validation errors')
+        return
+      }
+
       this.thing.UID = this.thingTypeId + ':' + this.thing.ID
 
       this.$oh.api.post('/rest/things', this.thing).then(() => {

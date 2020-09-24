@@ -57,7 +57,7 @@
       </f7-col>
       <f7-col v-if="profileTypeConfiguration != null">
         <f7-block-title>Profile Configuration</f7-block-title>
-          <config-sheet
+          <config-sheet ref="profileConfiguration"
             :parameter-groups="profileTypeConfiguration.parameterGroups"
             :parameters="profileTypeConfiguration.parameters"
             :configuration="link.configuration"
@@ -191,6 +191,10 @@ export default {
       const link = this.link
       if (this.currentProfileType) {
         link.configuration.profile = this.currentProfileType.uid
+      }
+      if (this.$refs.profileConfiguration && !this.$refs.profileConfiguration.isValid()) {
+        this.$f7.dialog.alert('Please review the profile configuration and correct validation errors')
+        return
       }
 
       // delete then recreate the link

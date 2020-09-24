@@ -7,12 +7,13 @@
             <f7-block-title>General Settings</f7-block-title>
             <f7-list inline-labels no-hairlines-md>
               <f7-list-input label="Unique ID" v-if="createMode" type="text" placeholder="Required" :value="thing.ID"
-                              @input="changeUID" info="Note: cannot be changed after the creation">
+                              @input="changeUID" info="Note: cannot be changed after the creation"
+                              required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only">
               </f7-list-input>
               <f7-list-input label="Identifier" type="text" placeholder="Name" :value="thing.UID" disabled>
               </f7-list-input>
               <f7-list-input label="Label" type="text" placeholder="e.g. My Thing" :value="thing.label"
-                              @input="thing.label = $event.target.value; $emit('updated')">
+                              @input="thing.label = $event.target.value; $emit('updated')" required validate>
               </f7-list-input>
               <f7-list-input label="Location" type="text" placeholder="e.g. Kitchen" :value="thing.location"
                               @input="thing.location = $event.target.value; $emit('updated')" clear-button>

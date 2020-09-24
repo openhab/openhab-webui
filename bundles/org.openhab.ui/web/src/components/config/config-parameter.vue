@@ -1,5 +1,5 @@
 <template>
-    <f7-list class="config-parameter" :no-hairlines-md="configDescription.type !== 'BOOLEAN' && (!configDescription.options || !configDescription.options.length) && ['item'].indexOf(configDescription.context) < 0"
+    <f7-list ref="parameter" class="config-parameter" :no-hairlines-md="configDescription.type !== 'BOOLEAN' && (!configDescription.options || !configDescription.options.length) && ['item'].indexOf(configDescription.context) < 0"
       v-show="(configDescription.visible) ? configDescription.visible(value, configuration, configDescription, parameters) : true">
       <component :is="control" :config-description="configDescription" :value="value" :parameters="parameters" :configuration="configuration" :title="configDescription.title" @input="updateValue" />
       <f7-block-footer slot="after-list" class="param-description">
@@ -85,6 +85,9 @@ export default {
 
       return ParameterText
     }
+  },
+  mounted () {
+    this.$f7.input.validateInputs(this.$refs.parameter.$el)
   },
   methods: {
     updateValue (value) {

@@ -1,5 +1,5 @@
 <template>
-  <f7-block v-if="parameters" class="config-sheet">
+  <f7-block v-if="parameters" class="config-sheet" ref="sheet">
     <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
       <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox :checked="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
     </div>
@@ -90,6 +90,9 @@ export default {
     }
   },
   methods: {
+    isValid () {
+      return this.$f7.input.validateInputs(this.$refs.sheet.$el)
+    },
     toggleAdvanced (event) {
       this.showAdvanced = !this.showAdvanced // event.target.checked
     },
