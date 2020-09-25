@@ -31,7 +31,7 @@
             :center="center"
             :options="mapOptions"
             @click="mapClicked"
-            class="oh-map-page-lmap">
+            class="oh-map-picker-lmap">
               <l-tile-layer
                 :url="url"
                 :attribution="attribution"
@@ -46,7 +46,12 @@
 </template>
 
 <style lang="stylus">
-
+.mappicker-popup .oh-map-picker-lmap
+  background-color var(--f7-page-bg-color)
+  &.leaflet-grab
+    cursor crosshair
+.leaflet-dragging .oh-map-picker-lmap.leaflet-grab
+  cursor grabbing !important
 </style>
 
 <script>
@@ -58,7 +63,7 @@ delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 })
 
 export default {
