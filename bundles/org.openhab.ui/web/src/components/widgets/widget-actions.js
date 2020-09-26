@@ -216,6 +216,11 @@ export const actionsMixin = {
           const actionUrl = this.config[prefix + 'actionUrl']
           console.log('opening URL: ' + actionUrl)
           break
+        case 'variable':
+          const actionVariable = this.config[prefix + 'actionVariable']
+          const actionVariableValue = this.config[prefix + 'actionVariableValue']
+          this.$set(this.context.vars, actionVariable, actionVariableValue)
+          break
         default:
           console.log('Invalid action: ' + action)
           break

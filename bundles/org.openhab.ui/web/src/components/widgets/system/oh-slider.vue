@@ -22,7 +22,11 @@ export default {
   methods: {
     onChange (value) {
       if (value === this.value) return
-      this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: value.toString() })
+      if (this.config.variable) {
+        this.$set(this.context.vars, this.config.variable, value)
+      } else if (this.config.item) {
+        this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: value.toString() })
+      }
     }
   }
 }

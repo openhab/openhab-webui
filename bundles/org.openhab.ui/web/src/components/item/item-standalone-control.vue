@@ -7,13 +7,19 @@ import itemDefaultStandaloneComponent from '@/components/widgets/standard/defaul
 
 export default {
   props: ['item', 'context'],
+  data () {
+    return {
+      vars: {}
+    }
+  },
   computed: {
     widgetContext () {
       if (!this.item) return
 
       let ctx = {
         component: itemDefaultStandaloneComponent(this.item),
-        store: this.context.store
+        store: this.context.store,
+        vars: this.vars
       }
 
       return ctx

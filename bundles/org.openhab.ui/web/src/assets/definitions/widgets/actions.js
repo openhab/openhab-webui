@@ -26,7 +26,8 @@ export const actionParams = (groupName, paramPrefix) => {
       { value: 'photos', label: 'Open photo browser' },
       { value: 'group', label: 'Group details' },
       { value: 'analyzer', label: 'Analyze item(s)' },
-      { value: 'url', label: 'External URL' }
+      { value: 'url', label: 'External URL' },
+      { value: 'variable', label: 'Set Variable' }
     ]),
     pt(paramPrefix + 'actionUrl', 'Action URL', 'URL to navigate to').c('url')
       .v((value, configuration, configDescription, parameters) => {
@@ -111,6 +112,14 @@ export const actionParams = (groupName, paramPrefix) => {
     pt(paramPrefix + 'actionFeedback', 'Action feedback', 'Shows a toast popup when the action has been executed. Can either be a text to show or a JSON object including some of the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/toast.html#toast-parameters">supported parameters</a>').a()
       .v((value, configuration, configDescription, parameters) => {
         return ['command', 'toggle', 'options', 'rule'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
+    pt(paramPrefix + 'actionVariable', 'Variable', 'The variable name to set').a()
+      .v((value, configuration, configDescription, parameters) => {
+        return ['variable'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
+    pt(paramPrefix + 'actionVariableValue', 'Variable Value', 'The value to set the variable to').a()
+      .v((value, configuration, configDescription, parameters) => {
+        return ['variable'].indexOf(configuration[paramPrefix + 'action']) >= 0
       })
-  ]
+  ].map((p) => { p.groupName = groupName; return p })
 }

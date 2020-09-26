@@ -24,6 +24,7 @@ export default {
   },
   computed: {
     value () {
+      if (this.config.variable) return this.context.vars[this.config.variable]
       if (this.delayUpdate && this.pendingCommand) return this.pendingCommand // to keep the control reactive when operating
       const value = this.context.store[this.config.item].state
       // use as a brightness control for HSB values
@@ -34,6 +35,10 @@ export default {
   methods: {
     onChange (value) {
       if (value === this.value) return
+      if (this.config.variable) {
+        this.$set(this.context.vars, this.config.variable, value)
+        return
+      }
       this.pendingCommand = value
       if (!this.delayCommand) {
         this.delayCommand = true

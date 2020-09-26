@@ -106,6 +106,7 @@ export default {
       ready: true,
       split: 'vertical',
       props: {},
+      vars: {},
       blockKey: this.$f7.utils.id(),
       widgetKey: this.$f7.utils.id(),
       widgetPropsOpened: false
@@ -116,7 +117,8 @@ export default {
       return {
         component: this.widget,
         store: this.$store.getters.trackedItems,
-        props: this.props
+        props: this.props,
+        vars: this.vars
       }
     },
     widget () {

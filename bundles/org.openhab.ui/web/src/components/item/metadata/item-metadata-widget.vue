@@ -73,7 +73,8 @@ export default {
       standardWidgets: Object.values(StandardWidgets).filter((c) => c.widget).map((c) => c.widget()),
       standardListWidgets: Object.values(StandardListWidgets).filter((c) => c.widget && typeof c.widget === 'function').map((c) => c.widget()),
       standardCellWidgets: Object.values(StandardCellWidgets).filter((c) => c.widget && typeof c.widget === 'function').map((c) => c.widget()),
-      systemWidgets: Object.values(SystemWidgets).filter((c) => c.widget & typeof c.widget === 'function').map((c) => c.widget())
+      systemWidgets: Object.values(SystemWidgets).filter((c) => c.widget & typeof c.widget === 'function').map((c) => c.widget()),
+      widgetVars: {}
     }
   },
   computed: {
@@ -105,6 +106,7 @@ export default {
       if (this.namespace === 'listWidget') {
         return {
           store: this.$store.getters.trackedItems,
+          vars: this.widgetVars,
           component: {
             component: 'oh-list-card',
             config: {},
@@ -116,6 +118,7 @@ export default {
       } else if (this.namespace === 'cellWidget') {
         return {
           store: this.$store.getters.trackedItems,
+          vars: this.widgetVars,
           component: {
             component: 'oh-grid-cells',
             config: {},
@@ -127,6 +130,7 @@ export default {
       } else {
         return {
           store: this.$store.getters.trackedItems,
+          vars: this.widgetVars,
           component: componentFromMetadata || itemDefaultStandaloneComponent(this.item)
         }
       }

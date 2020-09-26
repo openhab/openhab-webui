@@ -46,6 +46,7 @@ export default {
   data () {
     return {
       currentTab: 0,
+      vars: {},
       // ready: false,
       loading: false
       // page: {}
@@ -55,6 +56,7 @@ export default {
     context () {
       return {
         component: this.page,
+        vars: this.vars,
         store: this.$store.getters.trackedItems
       }
     },
@@ -112,6 +114,7 @@ export default {
     },
     tabContext (tab) {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
+      this.$set(this, 'vars', {})
       return {
         component: page,
         tab: tab,
