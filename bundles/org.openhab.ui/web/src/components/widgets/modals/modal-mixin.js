@@ -18,9 +18,9 @@ export default {
   computed: {
     context () {
       const component = this.page || this.widget || this.standard
-      const config = Object.assign({}, component.config || {}, this.modalParams)
+      const config = Object.assign({}, component.config || {})
       return {
-        component: Object.assign({}, component, config),
+        component: Object.assign({}, component, { config }),
         store: this.$store.getters.trackedItems,
         props: this.modalParams,
         vars: this.vars
@@ -57,9 +57,12 @@ export default {
     }
   },
   methods: {
+    onTabChange (idx) {
+      this.currentTab = idx
+      this.$set(this, 'vars', {})
+    },
     tabContext (tab) {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
-      this.$set(this, 'vars', {})
       return {
         component: page,
         tab: tab,
