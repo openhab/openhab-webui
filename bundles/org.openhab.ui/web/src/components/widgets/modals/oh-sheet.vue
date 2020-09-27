@@ -1,7 +1,7 @@
 <template>
   <f7-sheet>
     <f7-toolbar>
-      <div class="left padding-left">{{(page) ? page.config.label : ''}}</div>
+      <div class="left padding-left">{{(context.component.config && context.component.config.label) ? context.component.config.label : ''}}</div>
       <div class="right"><f7-link sheet-close>Close</f7-link></div>
     </f7-toolbar>
 
