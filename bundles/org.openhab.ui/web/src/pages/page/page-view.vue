@@ -118,7 +118,6 @@ export default {
     },
     tabContext (tab) {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
-      this.$set(this, 'vars', {})
       return {
         component: page,
         tab: tab,
