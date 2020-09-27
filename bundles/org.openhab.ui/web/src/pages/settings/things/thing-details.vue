@@ -94,7 +94,7 @@
       </f7-tab>
 
       <f7-tab id="config" :disabled="!(thing.configuration && thingType.configParameters)" @tab:show="() => this.currentTab = 'config'" :tab-active="currentTab === 'config'">
-        <f7-block v-if="currentTab === 'config'" class="block-narrow">
+        <f7-block v-if="thing.UID && thingType.UID" v-show="currentTab === 'config'" class="block-narrow">
           <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" />
           <config-sheet ref="thingConfiguration"
             :parameter-groups="configDescriptions.parameterGroups"
@@ -244,9 +244,11 @@ export default {
   },
   computed: {
     isExtensible () {
+      if (!this.thingType || !this.thingType.extensibleChannelTypeIds) return false
       return this.thingType.extensibleChannelTypeIds.length > 0
     },
     textualDefinition () {
+      if (!this.thingType || !this.thing) return
       return buildTextualDefinition(this.thing, this.thingType)
     },
     context () {
