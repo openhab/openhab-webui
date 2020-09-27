@@ -1,9 +1,10 @@
 <template>
-  <img :src="iconUrl"
+  <img :src="iconUrl" v-bind="config" @click="performAction()"
     :style="{
       width: (context && config && config.width) ? config.width + 'px' : (width) ? width + 'px' : 'auto',
-      height: (context && config && config.height) ? config.height + 'px' : (height) ? height + 'px' : 'auto' }"
-    onload="this.className=''" onerror="this.className='no-icon'" />
+      height: (context && config && config.height) ? config.height + 'px' : (height) ? height + 'px' : 'auto',
+      ...(config) ? config.style : {} }"
+    onload="this.classList.remove('no-icon')" onerror="this.classList.add('no-icon')" />
 </template>
 
 <style lang="stylus">
@@ -13,8 +14,10 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { actionsMixin } from '../widget-actions'
+
 export default {
-  mixins: [mixin],
+  mixins: [mixin, actionsMixin],
   props: ['icon', 'width', 'height', 'state'],
   data () {
     return {
