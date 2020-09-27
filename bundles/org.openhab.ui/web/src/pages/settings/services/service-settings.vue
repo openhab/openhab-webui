@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <f7-page class="service-config">
     <f7-navbar :title="service.label" back-link="Settings">
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
@@ -14,26 +14,16 @@
           :configuration="config"
         />
       </f7-col>
-      <!-- <f7-list-input
-
-        :label="parameter.label"
-        type="text" />
-      <f7-block-footer>
-        <div :v-html="parameter.description"></div>
-      </f7-block-footer>-->
-      <!-- <f7-list-input
-          :v-for="param in configDescriptions.parameters"
-          :key="param.name"
-          :label="param.label"
-          :info="param.description"
-      type="text" />-->
-      <!-- placeholder="Your name"
-          required
-          validate
-      clear-button-->
     </f7-block>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.service-config
+  overflow-x hidden !important
+  .item-input-info
+    white-space normal
+</style>
 
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
@@ -79,9 +69,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-.service-config
-  .item-input-info
-    white-space  normal
-</style>

@@ -11,8 +11,8 @@
           <f7-link @click="updateWidgetConfig">Done</f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <f7-block v-if="widget.props">
-        <f7-col>
+      <f7-block v-if="widget.props" class="no-margin no-padding">
+        <f7-col class="margin-top">
           <config-sheet
             :parameterGroups="widget.props.parameterGroups || []"
             :parameters="widget.props.parameters || []"

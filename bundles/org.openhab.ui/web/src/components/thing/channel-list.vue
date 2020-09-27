@@ -1,26 +1,24 @@
 <template>
-  <f7-block v-if="thingType" class="channel-list">
+  <f7-block v-if="thingType" class="channel-list no-margin">
     <f7-block v-show="thing.channels.length > 0">
-      <f7-row>
-        <f7-col class="padding-left">
-          <f7-searchbar
-            :disable-button="false"
-            inline
-            disable-link-text="Cancel"
-            placeholder="Search channels"
-            search-container=".channel-group"
-            search-in=".channel-item .item-title, .channel-item .item-subtitle, .channel-item .item-footer"
-            search-group=".channel-group .row"
-            :clear-button="true"
-          ></f7-searchbar>
-        </f7-col>
-      </f7-row>
+      <f7-col>
+        <f7-searchbar
+          :disable-button="false"
+          inline
+          disable-link-text="Cancel"
+          placeholder="Search channels"
+          search-container=".channel-group"
+          search-in=".channel-item .item-title, .channel-item .item-subtitle, .channel-item .item-footer"
+          search-group=".channel-group .row"
+          :clear-button="true"
+        ></f7-searchbar>
+      </f7-col>
     </f7-block>
     <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
       <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox name="channel-advanced" :checked="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
     </div>
     <f7-col v-if="thing.channels.length > 0">
-      <f7-block width="100" class="channel-group">
+      <f7-block width="100" class="channel-group no-margin no-padding">
         <f7-row v-for="group in channelGroups" :key="group.id">
           <f7-col>
             <!-- <f7-block-title class="channel-group-title">{{group.label}}</f7-block-title>

@@ -114,8 +114,8 @@
             <f7-link v-show="currentModuleType" @click="saveModule">Done</f7-link>
           </f7-nav-right>
         </f7-navbar>
-        <f7-block v-if="currentModule">
-          <f7-col>
+        <f7-block v-if="currentModule" class="no-margin no-padding">
+          <f7-col class="margin-top">
             <f7-list inline-labels no-hairlines-md class="no-margin">
               <f7-list-input type="text" :placeholder="currentSuggestedModuleTitle" :value="currentModule.label" required
                             @input="currentModule.label = $event.target.value" clear-button>
@@ -176,6 +176,8 @@
 .enable-toggle
   vertical-align inherit
 .moduleconfig-popup
+  .page-content
+    overflow-x hidden !important
   .config-sheet, .parameter-group
     margin-top 0 !important
 .rule-modules
