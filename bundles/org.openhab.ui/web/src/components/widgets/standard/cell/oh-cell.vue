@@ -178,7 +178,7 @@ export default {
         return
       }
       if (this.opened) return
-      if (this.config.action) {
+      if (this.config.action || this.config.actionPropsParameterGroup) {
         this.performAction()
       } else {
         this.openCell()

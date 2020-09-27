@@ -1,10 +1,10 @@
 <template>
-  <f7-block v-if="parameters" class="config-sheet" ref="sheet">
+  <f7-block v-if="parameters" class="config-sheet no-margin" ref="sheet">
     <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
       <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox :checked="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
     </div>
     <f7-col>
-      <f7-block width="100" class="parameter-group">
+      <f7-block width="100" class="parameter-group no-margin no-padding">
         <f7-row v-if="displayedParameters.some((p) => !p.groupName)">
           <f7-col>
             <config-parameter
@@ -55,6 +55,10 @@
   padding-right 0
 .parameter-group
   padding-right 0
+  padding-left 0
+  .smart-select > .item-content > .item-inner:after
+    display none !important
+
 .param-description.block-footer h1
   font-size 1em
 
@@ -63,6 +67,8 @@
 </style>
 
 <script>
+import { actionParams } from '@/assets/definitions/widgets/actions'
+
 export default {
   props: ['parameterGroups', 'parameters', 'configuration', 'status'],
   components: {
@@ -86,7 +92,14 @@ export default {
     },
     displayedParameters () {
       if (!this.parameters.length) return []
-      return (this.showAdvanced) ? this.parameters : this.parameters.filter((p) => !p.advanced)
+      let finalParameters = [...this.parameters]
+      if (this.parameterGroups && this.parameterGroups.some((g) => g.context === 'action')) {
+        this.parameterGroups.filter((g) => g.context === 'action').forEach((g) => {
+          const prefix = g.name.replace(/action/gi, '')
+          finalParameters = [...finalParameters, ...actionParams(g.name, prefix)]
+        })
+      }
+      return (this.showAdvanced) ? finalParameters : finalParameters.filter((p) => !p.advanced)
     }
   },
   methods: {

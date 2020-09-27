@@ -10,7 +10,7 @@ export default {
   mixins: [mixin, actionsMixin],
   methods: {
     clicked () {
-      if (this.config.action) {
+      if (this.config.action || this.config.actionPropsParameterGroup) {
         this.performAction()
       }
       if (this.config.clearVariable) {

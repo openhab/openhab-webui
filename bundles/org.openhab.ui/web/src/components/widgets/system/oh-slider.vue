@@ -13,6 +13,7 @@ export default {
   },
   computed: {
     value () {
+      if (this.config.variable) return this.context.vars[this.config.variable]
       const value = this.context.store[this.config.item].state
       // use as a brightness control for HSB values
       if (value.split && value.split(',').length === 3) return parseFloat(value.split(',')[2])
