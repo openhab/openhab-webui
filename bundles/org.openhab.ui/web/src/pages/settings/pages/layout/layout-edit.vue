@@ -36,8 +36,6 @@
       </f7-tab>
     </f7-tabs>
 
-    <widget-config-popup :opened="widgetConfigOpened" :component="currentComponent" :widget="currentWidget" @closed="widgetConfigClosed" @update="updateWidgetConfig" />
-    <widget-code-popup :opened="widgetCodeOpened" :component="currentComponent" @closed="widgetCodeClosed" @update="updateWidgetCode" />
     <model-picker-popup :opened="modelPickerOpened" :multiple="modelPickerAllowMultiple" @closed="modelPickerOpened = false" @input="doAddFromModel" action-label="Add" />
   </f7-page>
 </template>
@@ -82,8 +80,6 @@ import * as StandardCellWidgets from '@/components/widgets/standard/cell'
 import * as LayoutWidgets from '@/components/widgets/layout'
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
-import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
-import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
@@ -96,8 +92,6 @@ export default {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
     OhLayoutPage,
     PageSettings,
-    WidgetConfigPopup,
-    WidgetCodePopup,
     ModelPickerPopup
   },
   props: ['createMode', 'uid'],

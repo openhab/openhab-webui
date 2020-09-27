@@ -1,5 +1,8 @@
 import YAML from 'yaml'
 
+import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
+import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
+
 export default {
   data () {
     return {
@@ -192,14 +195,58 @@ export default {
         }
         this.currentWidget = widgetDefinition
       }
+
       this.currentComponent = component
-      this.widgetConfigOpened = true
+      const popup = {
+        component: WidgetConfigPopup
+      }
+
+      this.$f7router.navigate({
+        url: 'configure-widget',
+        route: {
+          path: 'configure-widget',
+          popup
+        }
+      }, {
+        props: {
+          component: this.currentComponent,
+          widget: this.currentWidget
+        }
+      })
+
+      this.$f7.once('widgetConfigUpdate', this.updateWidgetConfig)
+      this.$f7.once('widgetConfigClosed', () => {
+        this.$f7.off('widgetConfigUpdate', this.updateWidgetConfig)
+        this.widgetConfigClosed()
+      })
+      // this.widgetConfigOpened = true
     },
     editWidgetCode (component, parentContext, slot) {
       if (slot && !component.slots) component.slots = {}
       if (slot && !component.slots[slot]) component.slots[slot] = []
       this.currentComponent = component
       this.widgetCodeOpened = true
+      const popup = {
+        component: WidgetCodePopup
+      }
+
+      this.$f7router.navigate({
+        url: 'widget-code',
+        route: {
+          path: 'widget-code',
+          popup
+        }
+      }, {
+        props: {
+          component: this.currentComponent
+        }
+      })
+
+      this.$f7.once('widgetCodeUpdate', this.updateWidgetCode)
+      this.$f7.once('widgetCodeClosed', () => {
+        this.$f7.off('widgetCodeUpdate', this.updateWidgetCode)
+        this.widgetCodeClosed()
+      })
     },
     cutWidget (component, parentContext, slot = 'default') {
       this.copyWidget(component, parentContext)

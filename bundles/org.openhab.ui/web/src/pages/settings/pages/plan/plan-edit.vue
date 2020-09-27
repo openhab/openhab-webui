@@ -82,9 +82,6 @@
         <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre>
       </f7-tab>
     </f7-tabs>
-
-    <widget-config-popup :opened="widgetConfigOpened" :component="currentComponent" :widget="currentWidget" @closed="widgetConfigClosed" @update="updateWidgetConfig" />
-    <widget-code-popup :opened="widgetCodeOpened" :component="currentComponent" :widget-yaml="widgetYaml" @closed="widgetCodeClosed" @update="updateWidgetCode" />
   </f7-page>
 </template>
 
@@ -122,8 +119,6 @@ const ConfigurableWidgets = {
 }
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
-import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
-import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
@@ -133,8 +128,6 @@ export default {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
     OhPlanPage,
     PageSettings,
-    WidgetConfigPopup,
-    WidgetCodePopup,
     ConfigSheet
   },
   props: ['createMode', 'uid'],
