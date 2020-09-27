@@ -24,6 +24,7 @@ export default {
       return widget.component
     },
     config () {
+      if (!this.context || !this.context.component) return null
       const sourceConfig = this.context.component.config
       let evalConfig = {}
       if (this.context.component.config) {
