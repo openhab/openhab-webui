@@ -8,7 +8,7 @@
           <span v-if="status.statusCode">Status Code: &nbsp;{{status.statusCode}}&nbsp;&nbsp;</span>
           <span v-if="status.message">{{status.message}}</span>
         </div>
-        <small v-html="configDescription.description"></small>
+        <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${configDescription.description || ''}`"></small>
       </f7-block-footer>
     </f7-list>
 </template>
@@ -87,7 +87,8 @@ export default {
     }
   },
   mounted () {
-    this.$f7.input.validateInputs(this.$refs.parameter.$el)
+    // Uncomment to perform initial validation on the field
+    // this.$f7.input.validateInputs(this.$refs.parameter.$el)
   },
   methods: {
     updateValue (value) {

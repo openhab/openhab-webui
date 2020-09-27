@@ -24,19 +24,21 @@ export default {
   },
   mounted () {
     if (this.configDescription.options && this.configDescription.options.length > 0) {
-      const options = this.configDescription.options.map((o) => o.value)
+      const options = this.configDescription.options.map((o) => {
+        return {
+          id: o.value,
+          text: (o.label) ? (o.value !== o.label) ? `${o.label} (${o.value})` : o.label : o.value
+        }
+      })
       const inputControl = this.$refs.input
       if (!inputControl || !inputControl.$el) return
       const inputElement = this.$$(inputControl.$el).find('input')
       this.autoCompleteOptions = this.$f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
+        requestSourceOnOpen: true,
         source (query, render) {
-          if (!query || !query.length) {
-            render((options.length <= 10) ? options : [])
-          } else {
-            render(options.filter((o) => o.toLowerCase().indexOf(query.toLowerCase()) >= 0))
-          }
+          render(options.filter((o) => o.text.toLowerCase().indexOf(query.toLowerCase()) >= 0))
         }
       })
     }
