@@ -77,6 +77,9 @@ import tern from 'tern'
 import EcmascriptDefs from 'tern/defs/ecmascript.json'
 import OpenhabDefs from '@/assets/openhab-tern-defs.json'
 
+import componentsHint from '../editor/hint-components'
+import rulesHint from '../editor/hint-rules'
+
 // Adapted from https://github.com/lkcampbell/brackets-indent-guides (MIT)
 var indentGuidesOverlay = {
   token: function (stream, state) {
@@ -124,7 +127,7 @@ export default {
       cmOptions: {
         // codemirror options
         tabSize: 4,
-        mode: this.mode || 'text/javascript',
+        mode: ((this.mode && this.mode.indexOf('yaml')) ? 'text/x-yaml' : this.mode) || 'text/javascript',
         theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'gruvbox-dark' : 'default',
         lineNumbers: true,
         line: true,
@@ -141,6 +144,7 @@ export default {
       // debugger
     },
     onCmReady (cm) {
+      const self = this
       let extraKeys = {}
       if (!this.mode) {
         window.tern = tern
@@ -158,6 +162,21 @@ export default {
         }
         cm.on('cursorActivity', function (cm) {
           server.updateArgHints(cm)
+        })
+      } else {
+        extraKeys = {
+          'Ctrl-Space': 'autocomplete'
+        }
+        cm.state.$oh = this.$oh
+        cm.setOption('hintOptions', {
+          closeOnUnfocus: false,
+          hint (cm, option) {
+            if (self.mode.indexOf('application/vnd.openhab.uicomponent-definition') === 0) {
+              return componentsHint(cm, option, self.mode)
+            } else if (self.mode === 'application/vnd.openhab.rule-definition') {
+              return rulesHint(cm, option, self.mode)
+            }
+          }
         })
       }
       extraKeys.Tab = function (cm) {

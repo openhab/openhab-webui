@@ -1,5 +1,5 @@
 <template>
-  <f7-popup ref="widgetCode" class="widgetcode-popup" close-on-escape @popup:open="widgetCodeOpened" @popup:closed="widgetCodeClosed">
+  <f7-popup ref="widgetCode" class="widgetcode-popup" @popup:open="widgetCodeOpened" @popup:closed="widgetCodeClosed">
     <f7-page v-if="component && code">
       <f7-navbar>
         <f7-nav-left>
@@ -10,7 +10,7 @@
           <f7-link @click="updateWidgetCode" popup-close>Done</f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <editor class="page-code-editor" mode="text/x-yaml" :value="code" @input="(value) => code = value" />
+      <editor class="page-code-editor" mode="application/vnd.openhab.uicomponent-definition+yaml?type=widget" :value="code" @input="(value) => code = value" />
       <pre class="yaml-message padding-horizontal" :class="[widgetYamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{widgetYamlError}}</pre>
     </f7-page>
   </f7-popup>
