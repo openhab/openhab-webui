@@ -149,7 +149,7 @@
         } else {
             if ($scope.widget.customwidget) {
                 // get settings from custom widget
-                if ($rootScope.configWidgets[$scope.widget.customwidget]) {
+                if ($rootScope.configWidgets && $rootScope.configWidgets[$scope.widget.customwidget]) {
                     $scope.widgetsettings = angular.copy($rootScope.configWidgets[$scope.widget.customwidget].settings);
                     $scope.customwidget_name = $rootScope.configWidgets[$scope.widget.customwidget].name;
                     $scope.customwidget_helpUrl = $rootScope.configWidgets[$scope.widget.customwidget].readme_url;
