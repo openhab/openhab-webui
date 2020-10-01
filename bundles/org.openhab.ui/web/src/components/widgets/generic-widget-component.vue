@@ -23,8 +23,6 @@ import * as StandardListWidgets from './standard/list'
 import * as StandardCellWidgets from './standard/cell'
 import * as LayoutWidgets from './layout/index'
 
-console.log(SystemWidgets)
-console.log(StandardListWidgets)
 export default {
   mixins: [mixin],
   components: {

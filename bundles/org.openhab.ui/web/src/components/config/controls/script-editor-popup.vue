@@ -1,9 +1,9 @@
 <template>
-  <f7-popup :id="popupId" class="editor-popup" :tablet-fullscreen="fullscreen" @popup:opened="() => showEditor = true" @popup:closed="popupClosed" :opened="opened">
+  <f7-popup :id="popupId" class="editor-popup" :tablet-fullscreen="fullscreen" @popup:opened="() => showEditor = true" @popup:closed="popupClosed">
     <f7-page class="code-editor-content">
       <f7-navbar :title="title">
         <f7-nav-right>
-          <f7-link :popup-close="(popupId) ? '#' + popupId : '.editor-popup'">Close</f7-link>
+          <f7-link class="popup-close" @click="update">Close</f7-link>
         </f7-nav-right>
       </f7-navbar>
       <editor v-if="showEditor" v-model="code"></editor>
@@ -30,8 +30,11 @@ export default {
   },
   methods: {
     popupClosed () {
+      this.$f7.emit('scriptEditorClosed')
       this.showEditor = false
-      this.$emit('closed', this.code)
+    },
+    update () {
+      this.$f7.emit('scriptEditorUpdate', this.code)
     }
   }
 }

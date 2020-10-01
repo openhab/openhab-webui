@@ -205,7 +205,7 @@ export default {
               e.makePretty()
               found.push({
                 message: message,
-                from: (e.linePos.end) ?  { line: e.linePos.start.line - 1, ch: e.linePos.start.col - 1 } : undefined,
+                from: (e.linePos.end) ? { line: e.linePos.start.line - 1, ch: e.linePos.start.col - 1 } : undefined,
                 to: (e.linePos.end) ? { line: e.linePos.end.line - 1, ch: e.linePos.end.col - 1 } : undefined
               })
             })
@@ -240,7 +240,7 @@ export default {
     }
   },
   mounted () {
-    console.log('codemirror ready: ', this.codemirror)
+    // console.log('codemirror ready: ', this.codemirror)
   }
 }
 </script>

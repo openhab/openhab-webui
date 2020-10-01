@@ -18,7 +18,6 @@ export default {
   computed: {
     context () {
       const component = this.page || this.widget || this.standard
-      component.config = this.modalParams
       return {
         component: component,
         root: component,
