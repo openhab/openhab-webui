@@ -62,27 +62,33 @@
 <style lang="stylus">
 .widget-editor
   margin-top 0 !important
+  margin-bottom 0 !important
   padding 0
   z-index auto !important
-  height calc(100vh - 2*var(--f7-navbar-height) - var(--f7-toolbar-height) - 2.5*var(--f7-block-margin-vertical))
+  top 0
+  height calc(100%)
   .notready
     visibility hidden
   .code-editor-fit
-    top 0
     height calc(100% - var(--f7-grid-gap))
+  .row
+    height 100%
+    .widget-preview
+      height 100%
+      overflow auto
+    .widget-code
+      height 100%
+  .vue-codemirror
+    top 0
+    height 100%
   &.vertical
     .block
       z-index auto !important
-    .row
-      height 100%
-      .widget-preview
-        height 100%
-        overflow auto
-      .widget-code
-        height 100%
   &.horizontal
     .row
       height 50%
+    .vue-codemirror
+      height calc(100% - var(--f7-grid-gap))
 </style>
 
 <script>
@@ -126,7 +132,7 @@ export default {
         if (!this.widgetDefinition) return {}
         return YAML.parse(this.widgetDefinition, { prettyErrors: true })
       } catch (e) {
-        return { component: 'Error', config: { error: e } }
+        return { component: 'Error', config: { error: e.message } }
       }
     }
   },

@@ -58,7 +58,7 @@ function findModuleType (cm) {
   const cursor = cm.getCursor()
   for (let l = cursor.line + 1; l < cm.doc.size; l++) {
     const line = cm.getLine(l)
-    if (line.match(/ {4}type: /)) {
+    if (line.match(/^ {4}type: /)) {
       return line.split(':')[1].trim()
     }
   }
@@ -75,17 +75,23 @@ function hintConfig (cm, line, parentLineNr) {
   const section = sectionRootLine.replace('s:', '').trim()
   console.debug(`section: ${section}`)
   if (!section) return
-  const afterColon = line.indexOf(':') > 0 && cursor.ch > line.indexOf(':')
+  const colonPos = line.indexOf(':')
+  const afterColon = colonPos > 0 && cursor.ch > colonPos
   return getModuleTypes(cm, section).then((moduleTypes) => {
     const moduleType = moduleTypes.find((m) => m.uid === moduleTypeUid)
     if (!moduleType) return null
     const parameters = moduleType.configDescriptions
     if (afterColon) {
-      const parameterName = line.substring(0, line.indexOf(':')).trim()
+      const parameterName = line.substring(0, colonPos).trim()
       const parameter = parameters.find((p) => p.name === parameterName)
       if (parameter) {
         if (parameter.type === 'BOOLEAN') {
-          return { list: [ { text: 'true' }, { text: 'false' } ] }
+          if (line.endsWith('true') || line.endsWith('false')) return
+          return {
+            list: [ { text: 'true' }, { text: 'false' } ],
+            from: { line: cursor.line, ch: colonPos + 2 },
+            to: { line: cursor.line, ch: line.length }
+          }
         } else if (parameter.context === 'item') {
           return hintItems(cm, line, true)
         } else if (parameter.options) {

@@ -16,7 +16,7 @@
           <f7-col v-if="!createMode">
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
-              <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
+              <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
               <f7-link :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" color="blue" @click="runNow"></f7-link>
             </div>
             Status:
@@ -98,7 +98,7 @@
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.rule-definition" :value="ruleYaml" @input="(value) => ruleYaml = value" />
-        <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre>
+        <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
 
@@ -193,7 +193,7 @@
 .rule-code-editor.vue-codemirror
   display block
   top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(80% - 2*var(--f7-navbar-height))
+  height calc(100% - 2*var(--f7-navbar-height))
   width 100%
 .yaml-message
   display block
@@ -415,6 +415,11 @@ export default {
     keyDown (ev) {
       if (ev.ctrlKey || ev.metakKey) {
         switch (ev.keyCode) {
+          case 68:
+            this.toggleDisabled()
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
           case 82:
             this.runNow()
             ev.stopPropagation()

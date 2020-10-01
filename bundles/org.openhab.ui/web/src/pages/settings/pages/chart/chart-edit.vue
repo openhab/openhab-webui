@@ -40,7 +40,7 @@
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="text/x-yaml" :value="pageYaml" @input="(value) => pageYaml = value" />
-        <pre v-show="!previewMode" class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre>
+        <!-- <pre v-show="!previewMode" class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
         <oh-chart-page class="chart-page" v-if="ready && previewMode" :context="context" :key="pageKey" />
       </f7-tab>
@@ -88,7 +88,7 @@
 .page-code-editor.vue-codemirror
   display block
   top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(80% - 2 * var(--f7-navbar-height))
+  height calc(100% - 3*var(--f7-navbar-height))
   width 100%
 .yaml-message
   display block

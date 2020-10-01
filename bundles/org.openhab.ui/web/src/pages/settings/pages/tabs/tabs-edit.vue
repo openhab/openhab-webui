@@ -62,7 +62,7 @@
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'" class="page-code-editor" mode="text/x-yaml" :value="pageYaml" @input="(value) => pageYaml = value" />
-        <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre>
+        <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
   </f7-page>
@@ -72,7 +72,7 @@
 .page-code-editor.vue-codemirror
   display block
   top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(80% - 2*var(--f7-navbar-height))
+  height calc(100% - 2*var(--f7-navbar-height))
   width 100%
 .yaml-message
   display block

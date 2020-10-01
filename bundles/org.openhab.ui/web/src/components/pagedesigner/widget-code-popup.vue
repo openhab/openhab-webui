@@ -11,7 +11,7 @@
         </f7-nav-right>
       </f7-navbar>
       <editor class="page-code-editor" mode="application/vnd.openhab.uicomponent-definition+yaml?type=widget" :value="code" @input="(value) => code = value" />
-      <pre class="yaml-message padding-horizontal" :class="[widgetYamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{widgetYamlError}}</pre>
+      <!-- <pre class="yaml-message padding-horizontal" :class="[widgetYamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{widgetYamlError}}</pre> -->
     </f7-page>
   </f7-popup>
 </template>
@@ -20,8 +20,8 @@
 .widgetcode-popup
   .page-code-editor.vue-codemirror
     display block
-    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-    height calc(80% - 2*var(--f7-navbar-height))
+    top calc(var(--f7-navbar-height))
+    height calc(100% - var(--f7-navbar-height))
     width 100%
   .yaml-message
     display block

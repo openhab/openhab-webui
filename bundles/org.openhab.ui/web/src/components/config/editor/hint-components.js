@@ -24,8 +24,8 @@ function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix) {
     let ret = {
       list: data.map((item) => {
         return {
-          text: item.name,
-          displayText: item.name + ((addStatePropertySuffix ? '.state' : '')),
+          text: item.name + ((addStatePropertySuffix ? '.state' : '')),
+          displayText: item.name,
           description: `${(item.label) ? item.label + ' ' : ''}(${item.type})<br />${item.state}`
         }
       })
@@ -116,7 +116,8 @@ function hintConfig (cm, line, parentLineNr) {
   console.debug(`hinting config for component type: ${componentType}`)
   const indent = lineIndent(cm, parentLineNr)
   if (!componentType) return
-  const afterColon = line.indexOf(':') > 0 && cursor.ch > line.indexOf(':')
+  const colonPos = line.indexOf(':')
+  const afterColon = colonPos > 0 && cursor.ch > colonPos
   const widgetDefinition = getWidgetDefinitions().find((d) => d.name === componentType)
   const parameters = (componentType.indexOf('f7-') === 0) ? f7ComponentParameters(componentType)
     : (widgetDefinition && widgetDefinition.props) ? widgetDefinition.props.parameters : []
@@ -124,11 +125,16 @@ function hintConfig (cm, line, parentLineNr) {
     if (line.indexOf('=') > 0) {
       return hintExpression(cm, line)
     }
-    const parameterName = line.substring(0, line.indexOf(':')).trim()
+    const parameterName = line.substring(0, colonPos).trim()
     const parameter = parameters.find((p) => p.name === parameterName)
     if (parameter) {
       if (parameter.type === 'BOOLEAN') {
-        return { list: [ { text: 'true' }, { text: 'false' } ] }
+        if (line.endsWith('true') || line.endsWith('false')) return
+        return {
+          list: [ { text: 'true' }, { text: 'false' } ],
+          from: { line: cursor.line, ch: colonPos + 2 },
+          to: { line: cursor.line, ch: line.length }
+        }
       } else if (parameter.context === 'item') {
         return hintItems(cm, line, true)
       } else if (parameter.options) {

@@ -46,7 +46,12 @@ export function addTooltipHandlers (cm, ret) {
 
   CodeMirror.on(ret, 'close', function () { remove(tooltip) })
   CodeMirror.on(ret, 'update', function () { remove(tooltip) })
-  CodeMirror.on(ret, 'pick', function () { cm.scrollIntoView(cm.getCursor()) })
+  CodeMirror.on(ret, 'pick', function () {
+    setTimeout(() => {
+      cm.scrollIntoView(cm.getCursor())
+      CodeMirror.commands.autocomplete(cm)
+    }, 100)
+  })
   CodeMirror.on(ret, 'select', function (cur, node) {
     remove(tooltip)
     var content = cur.description

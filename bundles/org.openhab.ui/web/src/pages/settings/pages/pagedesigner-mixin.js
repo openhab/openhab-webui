@@ -75,7 +75,7 @@ export default {
       if (ev.ctrlKey || ev.metakKey) {
         switch (ev.keyCode) {
           case 82:
-            this.previewMode = !this.previewMode
+            this.togglePreviewMode()
             ev.stopPropagation()
             ev.preventDefault()
             break
