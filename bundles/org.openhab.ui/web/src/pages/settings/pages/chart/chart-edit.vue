@@ -81,9 +81,6 @@
         </f7-block>
       </f7-page>
     </f7-popup>
-
-    <widget-config-popup :opened="widgetConfigOpened" :component="currentComponent" :widget="currentWidget" @closed="widgetConfigClosed" @update="updateWidgetConfig" />
-    <widget-code-popup :opened="widgetCodeOpened" :component="currentComponent" :widget-yaml="widgetYaml" @closed="widgetCodeClosed" @update="updateWidgetCode" />
   </f7-page>
 </template>
 
@@ -116,8 +113,6 @@ import YAML from 'yaml'
 import OhChartPage from '@/components/widgets/chart/oh-chart-page.vue'
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
-import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
-import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
 
 import ChartDesigner from '@/components/pagedesigner/chart/chart-designer.vue'
 import ChartWidgetsDefinitions from '@/assets/definitions/widgets/chart/index'
@@ -130,8 +125,6 @@ export default {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
     OhChartPage,
     PageSettings,
-    WidgetConfigPopup,
-    WidgetCodePopup,
     ChartDesigner,
     ConfigSheet
   },

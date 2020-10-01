@@ -1,11 +1,11 @@
 <template>
   <f7-popup>
     <f7-page>
-      <f7-navbar :title="(page) ? page.config.label : ''" back-link="Back">
+      <f7-navbar :title="(context.component.config && context.component.config.label) ? context.component.config.label : ''" back-link="Back">
       </f7-navbar>
 
       <f7-toolbar tabbar labels bottom v-if="page && page.component === 'oh-tabs-page' && visibleToCurrentUser">
-        <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="currentTab = idx" :tab-link-active="currentTab === idx" :icon-ios="tab.config.icon" :icon-md="tab.config.icon" :icon-aurora="tab.config.icon" :text="tab.config.title"></f7-link>
+        <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tab.config.icon" :icon-md="tab.config.icon" :icon-aurora="tab.config.icon" :text="tab.config.title"></f7-link>
       </f7-toolbar>
 
       <f7-tabs v-if="page && page.component === 'oh-tabs-page' && visibleToCurrentUser" :class="{notready: !ready}">

@@ -11,7 +11,7 @@
     </f7-navbar>
 
     <f7-toolbar tabbar labels bottom v-if="page && pageType === 'tabs' && visibleToCurrentUser">
-      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="currentTab = idx" :tab-link-active="currentTab === idx" :icon-ios="tab.config.icon" :icon-md="tab.config.icon" :icon-aurora="tab.config.icon" :text="tab.config.title"></f7-link>
+      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tab.config.icon" :icon-md="tab.config.icon" :icon-aurora="tab.config.icon" :text="tab.config.title"></f7-link>
     </f7-toolbar>
 
     <f7-tabs v-if="page && pageType === 'tabs' && visibleToCurrentUser" :class="{notready: !ready}">
@@ -20,7 +20,7 @@
       </f7-tab>
     </f7-tabs>
 
-    <component :is="page.component" v-if="page && visibleToCurrentUser" :context="context" :class="{notready: !ready}" @command="onCommand" />
+    <component :is="page.component" v-else-if="page && visibleToCurrentUser" :context="context" :class="{notready: !ready}" @command="onCommand" />
 
     <empty-state-placeholder v-if="!visibleToCurrentUser" icon="multiply_circle_fill" title="page.unavailable.title" text="page.unavailable.text" />
 
@@ -46,6 +46,7 @@ export default {
   data () {
     return {
       currentTab: 0,
+      vars: {},
       // ready: false,
       loading: false
       // page: {}
@@ -55,6 +56,7 @@ export default {
     context () {
       return {
         component: this.page,
+        vars: this.vars,
         store: this.$store.getters.trackedItems
       }
     },
@@ -105,6 +107,10 @@ export default {
     onPageBeforeOut () {
       this.$store.dispatch('stopTrackingStates')
     },
+    onTabChange (idx) {
+      this.currentTab = idx
+      this.$set(this, 'vars', {})
+    },
     onCommand (itemName, command) {
       this.$store.dispatch('sendCommand', { itemName, command })
     },
@@ -115,6 +121,7 @@ export default {
       return {
         component: page,
         tab: tab,
+        vars: this.vars,
         props: tab.config.pageConfig,
         store: this.$store.getters.trackedItems
       }

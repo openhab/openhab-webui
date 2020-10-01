@@ -6,7 +6,9 @@ export default {
   props: ['context'],
   data () {
     return {
-      exprAst: {}
+      exprAst: {},
+      vars: (this.context) ? this.context.vars : {},
+      widgetVars: {}
     }
   },
   computed: {
@@ -22,6 +24,7 @@ export default {
       return widget.component
     },
     config () {
+      if (!this.context || !this.context.component) return null
       const sourceConfig = this.context.component.config
       let evalConfig = {}
       if (this.context.component.config) {
@@ -30,7 +33,6 @@ export default {
           this.$set(evalConfig, key, this.evaluateExpression(key, sourceConfig[key]))
         }
       }
-      this.$emit('component-ready', this.context.component)
       return evalConfig
     },
     visible () {
@@ -61,6 +63,7 @@ export default {
           return expr.eval(this.exprAst[key], {
             items: this.context.store,
             props: this.context.props,
+            vars: this.context.vars,
             Math: Math,
             Number: Number,
             theme: this.$theme,
@@ -85,6 +88,7 @@ export default {
       return {
         component: component,
         props: this.context.props,
+        vars: this.context.vars,
         store: this.context.store,
         config: this.context.config,
         editmode: this.context.editmode,
@@ -98,15 +102,22 @@ export default {
       if (!widget) {
         console.warn('widget not found, cannot render: ' + this.componentType)
       }
-      return {
+      if (this.context.vars) {
+        for (const varKey in this.context.vars) {
+          this.$set(this.widgetVars, varKey, this.context.vars[varKey])
+        }
+      }
+      const widgetContext = {
         component: widget,
         props: this.config,
+        vars: this.widgetVars,
         store: this.context.store,
         config: this.context.config,
         editmode: this.context.editmode,
         clipboardtype: this.context.clipboardtype,
         parent: this.context.parent
       }
+      return widgetContext
     },
     onCommand (itemName, cmd) {
       this.$store.dispatch('sendCommand', { itemName, cmd })

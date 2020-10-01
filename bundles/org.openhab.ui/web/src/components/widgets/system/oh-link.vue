@@ -1,25 +1,25 @@
 <template>
-  <f7-link v-bind="config" @clicked="performAction" />
+  <f7-link v-bind="config" @click="clicked" />
 </template>
 
 <script>
 import mixin from '../widget-mixin'
-import { actionGroup, actionParams } from '@/assets/definitions/widgets/actions'
 import { actionsMixin } from '../widget-actions'
 
 export default {
   mixins: [mixin, actionsMixin],
-  widget: {
-    name: 'oh-link',
-    label: 'Link',
-    description: 'A text link performing an action on click',
-    props: {
-      parameterGroups: [
-        actionGroup(null, 'Action to perform when the element is clicked')
-      ],
-      parameters: [
-        ...actionParams()
-      ]
+  methods: {
+    clicked () {
+      if (this.config.action || this.config.actionPropsParameterGroup) {
+        this.performAction()
+      }
+      if (this.config.clearVariable) {
+        if (Array.isArray(this.config.clearVariable)) {
+          this.config.clearVariable.forEach((v) => this.$set(this.context.vars, v, undefined))
+        } else if (typeof this.config.clearVariable === 'string') {
+          this.$set(this.context.vars, this.config.clearVariable, undefined)
+        }
+      }
     }
   }
 }

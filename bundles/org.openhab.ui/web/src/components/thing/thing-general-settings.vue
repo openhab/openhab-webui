@@ -1,7 +1,7 @@
 <template>
-  <f7-block class="config-sheet" style="margin-bottom: 0">
+  <f7-block class="config-sheet no-margin" style="margin-bottom: 0">
     <f7-col>
-      <f7-block width="100" class="parameter-group">
+      <f7-block width="100" class="parameter-group no-margin">
         <f7-row>
           <f7-col>
             <f7-block-title>General Settings</f7-block-title>

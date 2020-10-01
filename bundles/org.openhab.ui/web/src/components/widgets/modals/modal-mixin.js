@@ -10,15 +10,20 @@ export default {
   props: ['uid', 'el', 'modalParams'],
   data () {
     return {
-      currentTab: 0
+      currentTab: 0,
+      vars: {},
+      tabVars: {}
     }
   },
   computed: {
     context () {
+      const component = this.page || this.widget || this.standard
+      const config = Object.assign({}, component.config || {})
       return {
-        component: Object.assign({}, this.page || this.widget || this.standard, { config: this.modalParams }),
+        component: Object.assign({}, component, { config }),
         store: this.$store.getters.trackedItems,
-        props: this.modalParams
+        props: this.modalParams,
+        vars: this.vars
       }
     },
     page () {
@@ -52,6 +57,10 @@ export default {
     }
   },
   methods: {
+    onTabChange (idx) {
+      this.currentTab = idx
+      this.$set(this, 'vars', {})
+    },
     tabContext (tab) {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
       return {

@@ -13,6 +13,7 @@ export default {
   },
   computed: {
     value () {
+      if (this.config.variable) return this.context.vars[this.config.variable]
       if (!this.context.store[this.config.item]) return
       const value = this.context.store[this.config.item].state
       if (value === 'ON') return true
@@ -24,7 +25,11 @@ export default {
   methods: {
     onChange (value) {
       if (value === this.value) return
-      this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: (value) ? 'ON' : 'OFF' })
+      if (this.config.variable) {
+        this.$set(this.context.vars, this.config.variable, value)
+      } else if (this.config.item) {
+        this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: (value) ? 'ON' : 'OFF' })
+      }
     }
   }
 }

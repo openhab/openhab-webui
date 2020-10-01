@@ -9,6 +9,7 @@ export default {
   mixins: [mixin],
   computed: {
     value () {
+      if (this.config.variable) return this.context.vars[this.config.variable]
       let value = (this.config.item) ? this.context.store[this.config.item].state : this.config.value
       // use as a brightness indicator for HSB values
       if (value.split && value.split(',').length === 3) value = value.split(',')[2]
