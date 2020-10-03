@@ -18,9 +18,9 @@ export default {
   computed: {
     context () {
       const component = this.page || this.widget || this.standard
-      const config = Object.assign({}, component.config || {})
       return {
-        component: Object.assign({}, component, { config }),
+        component: component,
+        root: component,
         store: this.$store.getters.trackedItems,
         props: this.modalParams,
         vars: this.vars
@@ -65,6 +65,7 @@ export default {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
       return {
         component: page,
+        root: page,
         tab: tab,
         props: tab.config.pageConfig,
         store: this.$store.getters.trackedItems

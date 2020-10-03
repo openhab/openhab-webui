@@ -1,0 +1,16 @@
+import { pt, pb, pn } from '../helpers'
+
+export default () => [
+  pt('text', 'Text', 'Button label'),
+  pb('round', 'Round', 'Makes button round'),
+  pb('large', 'Large', 'Makes button large'),
+  pb('small', 'Small', 'Makes button small'),
+  pb('fill', 'Fill', 'Makes button filled with color'),
+  pb('raised', 'Raised', 'Makes button raised'),
+  pb('outline', 'Outline', 'Makes button outline'),
+  pt('active', 'Active', 'Button is active (when part of a f7-segmented').a(),
+  pt('icon', 'Icon', 'Use  <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'),
+  pt('iconColor', 'Icon Color', 'Not applicable to openHAB icons'),
+  pn('iconSize', 'Icon Size', 'Size of the icon in px'),
+  pt('tooltip', 'Tooltip', 'Button tooltip text to show on button hover/press').a()
+]

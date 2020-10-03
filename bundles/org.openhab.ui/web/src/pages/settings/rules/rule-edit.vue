@@ -16,7 +16,7 @@
           <f7-col v-if="!createMode">
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
-              <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
+              <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
               <f7-link :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" color="blue" @click="runNow"></f7-link>
             </div>
             Status:
@@ -97,78 +97,11 @@
         </f7-block>
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="text/x-yaml" :value="ruleYaml" @input="(value) => ruleYaml = value" />
-        <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre>
+        <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.rule" :value="ruleYaml" @input="(value) => ruleYaml = value" />
+        <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
 
-    <f7-popup ref="modulePopup" class="moduleconfig-popup" close-on-escape :opened="moduleConfigOpened" @popupClosed="moduleConfigClosed">
-      <f7-page>
-        <f7-navbar>
-          <f7-nav-left>
-            <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
-          </f7-nav-left>
-          <f7-nav-title v-if="currentModule && currentModule.new">{{sectionLabels[currentSection][1]}}</f7-nav-title>
-          <f7-nav-title v-else>Edit module</f7-nav-title>
-          <f7-nav-right>
-            <f7-link v-show="currentModuleType" @click="saveModule">Done</f7-link>
-          </f7-nav-right>
-        </f7-navbar>
-        <f7-block v-if="currentModule" class="no-margin no-padding">
-          <f7-col class="margin-top">
-            <f7-list inline-labels no-hairlines-md class="no-margin">
-              <f7-list-input type="text" :placeholder="currentSuggestedModuleTitle" :value="currentModule.label" required
-                            @input="currentModule.label = $event.target.value" clear-button>
-              </f7-list-input>
-              <f7-list-input type="text" :placeholder="currentSuggestedModuleDescription" :value="currentModule.description"
-                            @input="currentModule.description = $event.target.value" clear-button>
-              </f7-list-input>
-            </f7-list>
-          </f7-col>
-          <f7-block-footer class="no-margin padding-left"><small>Tip: leave fields blank to set automatically to the suggested name and description. <f7-link @click="currentModule.label = null; currentModule.description = null">Clear</f7-link></small></f7-block-footer>
-
-          <f7-block-title>Type of {{currentSection.replace(/.$/, '')}}</f7-block-title>
-          <f7-list v-if="!currentModuleType">
-            <ul v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope">
-              <f7-list-item divider :title="scope" />
-              <f7-list-item radio v-for="moduleType in mt"
-                :value="moduleType.uid"
-                @change="currentModule.type = moduleType.uid; currentModuleType = moduleType; $set(currentModule, 'configuration', {})"
-                :checked="currentModule.type === moduleType.uid"
-                :key="moduleType.uid" :title="moduleType.label" name="module-type"></f7-list-item>
-            </ul>
-          </f7-list>
-          <f7-list v-else>
-            <f7-list-item :title="sectionLabels[currentSection][0]" ref="moduleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
-              <select name="currentModuleType"
-                @change="currentModuleType = moduleTypes[currentSection].find((t) => t.uid === $refs.moduleTypeSmartSelect.f7SmartSelect.getValue());
-                         currentModule.type = currentModuleType.uid;
-                         currentModule.label = currentModule.description = '';
-                         $set(currentModule, 'configuration', {})">
-                <optgroup v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope" :label="scope">
-                  <option v-for="moduleType in mt"
-                    :value="moduleType.uid" :key="moduleType.uid" :selected="currentModuleType.uid === moduleType.uid">
-                    {{moduleType.label}}
-                  </option>
-                </optgroup>
-              </select>
-            </f7-list-item>
-          </f7-list>
-          <f7-block-title v-if="currentModule && currentModuleType" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">Configuration</f7-block-title>
-          <f7-col v-if="currentModule && currentModuleType">
-            <config-sheet :key="currentSection + currentModule.id"
-              :parameterGroups="[]"
-              :parameters="currentModuleType.configDescriptions"
-              :configuration="currentModule.configuration"
-              @updated="dirty = true"
-            />
-          </f7-col>
-        </f7-block>
-      </f7-page>
-    </f7-popup>
-
-    <script-editor-popup v-if="currentModule" title="Edit Script" ref="codePopup" popup-id="edit-rule-script-direct-popup" :value="scriptCode" :fullscreen="false" :opened="codeEditorOpened" @closed="codePopupClosed"></script-editor-popup>
-    <cron-editor popup-id="edit-rule-cron-popup" :value="cronExpression" :opened="cronPopupOpened" @closed="cronPopupOpened = false" @input="(value) => updateCronExpression(value)" />
   </f7-page>
 </template>
 
@@ -193,7 +126,7 @@
 .rule-code-editor.vue-codemirror
   display block
   top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(80% - 2*var(--f7-navbar-height))
+  height calc(100% - 2*var(--f7-navbar-height))
   width 100%
 .yaml-message
   display block
@@ -206,27 +139,21 @@
 <script>
 import YAML from 'yaml'
 
-// import ConfigParameter from '@/components/config/config-parameter.vue'
-import ConfigSheet from '@/components/config/config-sheet.vue'
 import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import TagInput from '@/components/tags/tag-input.vue'
-// import RuleConfigureModulePage from './rule-configure-module.vue'
 
+import RuleModulePopup from './rule-module-popup.vue'
 import ScriptEditorPopup from '@/components/config/controls/script-editor-popup.vue'
 import CronEditor from '@/components/config/controls/cronexpression-editor.vue'
 
 import ModuleDescriptionSuggestions from './module-description-suggestions'
-
 import RuleStatus from '@/components/rule/rule-status-mixin'
 
 export default {
   mixins: [ModuleDescriptionSuggestions, RuleStatus],
   components: {
-    ConfigSheet,
     SemanticsPicker,
     TagInput,
-    ScriptEditorPopup,
-    CronEditor,
     'editor': () => import('@/components/config/controls/script-editor.vue')
   },
   props: ['ruleId', 'createMode', 'schedule'],
@@ -242,7 +169,6 @@ export default {
         conditions: [],
         triggers: []
       },
-      moduleConfigOpened: false,
       showModuleControls: false,
       currentSection: 'actions',
       currentTab: 'design',
@@ -347,6 +273,7 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
+          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.rule.uid), { reloadCurrent: true })
           this.load()
         } else {
           this.$f7.toast.create({
@@ -355,7 +282,7 @@ export default {
             closeTimeout: 2000
           }).open()
         }
-        if (!stay) this.$f7router.back()
+        // if (!stay) this.$f7router.back()
       }).catch((err) => {
         this.$f7.toast.create({
           text: 'Error while saving rule: ' + err,
@@ -415,6 +342,11 @@ export default {
     keyDown (ev) {
       if (ev.ctrlKey || ev.metakKey) {
         switch (ev.keyCode) {
+          case 68:
+            this.toggleDisabled()
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
           case 82:
             this.runNow()
             ev.stopPropagation()
@@ -454,7 +386,30 @@ export default {
       this.currentSection = section
       this.currentModule = Object.assign({}, mod)
       this.currentModuleType = this.moduleTypes[section].find((m) => m.uid === mod.type)
-      this.$refs.modulePopup.f7Popup.open()
+
+      const popup = {
+        component: RuleModulePopup
+      }
+      this.$f7router.navigate({
+        url: 'module-config',
+        route: {
+          path: 'module-config',
+          popup
+        }
+      }, {
+        props: {
+          currentSection: this.currentSection,
+          ruleModule: this.currentModule,
+          ruleModuleType: this.currentModuleType,
+          moduleTypes: this.moduleTypes
+        }
+      })
+
+      this.$f7.once('ruleModuleConfigUpdate', this.saveModule)
+      this.$f7.once('ruleModuleConfigClosed', () => {
+        this.$f7.off('ruleModuleConfigUpdate', this.saveModule)
+        this.moduleConfigClosed()
+      })
     },
     deleteModule (ev, section, mod) {
       let swipeoutElement = ev.target
@@ -485,26 +440,47 @@ export default {
       this.currentSection = section
       this.currentModule = newModule
       this.currentModuleType = null
-      this.$refs.modulePopup.f7Popup.open()
+
+      const popup = {
+        component: RuleModulePopup
+      }
+      this.$f7router.navigate({
+        url: 'module-config',
+        route: {
+          path: 'module-config',
+          popup
+        }
+      }, {
+        props: {
+          currentSection: this.currentSection,
+          ruleModule: this.currentModule,
+          ruleModuleType: this.currentModuleType,
+          moduleTypes: this.moduleTypes
+        }
+      })
+
+      this.$f7.once('ruleModuleConfigUpdate', this.saveModule)
+      this.$f7.once('ruleModuleConfigClosed', () => {
+        this.$f7.off('ruleModuleConfigUpdate', this.saveModule)
+        this.moduleConfigClosed()
+      })
     },
     reorderModule (ev, section) {
       const newSection = [...this.rule[section]]
       newSection.splice(ev.to, 0, newSection.splice(ev.from, 1)[0])
       this.$set(this.rule, section, newSection)
     },
-    saveModule () {
-      if (!this.currentModule.type) return
-      if (this.currentModule.new) {
-        delete this.currentModule.new
-        this.rule[this.currentSection].push(this.currentModule)
+    saveModule (updatedModule) {
+      if (!updatedModule.type) return
+      if (!updatedModule.label) delete updatedModule.label
+      if (!updatedModule.description) delete updatedModule.description
+      if (updatedModule.new) {
+        delete updatedModule.new
+        this.rule[this.currentSection].push(updatedModule)
       } else {
-        const idx = this.rule[this.currentSection].findIndex((m) => m.id === this.currentModule.id)
-        this.$set(this.rule[this.currentSection], idx, this.currentModule)
+        const idx = this.rule[this.currentSection].findIndex((m) => m.id === updatedModule.id)
+        this.$set(this.rule[this.currentSection], idx, updatedModule)
       }
-      // if (!this.currentModule.label) this.currentModule.label = this.suggestedModuleTitle
-      // if (!this.currentModule.description) this.currentModule.description = this.suggestedModuleDescription
-      this.moduleConfigOpened = false
-      this.$refs.modulePopup.f7Popup.close()
     },
     moduleConfigClosed () {
       this.currentModule = null
@@ -515,25 +491,68 @@ export default {
       this.currentModule = mod
       this.currentModuleType = mod.type
       this.scriptCode = mod.configuration.script
-      setTimeout(() => { this.codeEditorOpened = true })
+
+      const popup = {
+        component: ScriptEditorPopup
+      }
+
+      this.$f7router.navigate({
+        url: 'script-edit',
+        route: {
+          path: 'script-edit',
+          popup
+        }
+      }, {
+        props: {
+          title: 'Edit Script',
+          fullscreen: false,
+          value: this.scriptCode
+        }
+      })
+
+      this.$f7.once('scriptEditorUpdate', this.updateScript)
+      this.$f7.once('scriptEditorClosed', () => {
+        this.$f7.off('scriptEditorUpdate', this.updateScript)
+        this.$nextTick(() => {
+          this.currentModule = null
+          this.currentModuleType = null
+        })
+      })
     },
     buildCronExpression (ev, mod) {
       ev.cancelBubble = true
       this.currentModule = mod
       this.currentModuleType = mod.type
       this.cronExpression = mod.configuration.cronExpression
-      this.cronPopupOpened = true
+      const popup = {
+        component: CronEditor
+      }
+      this.$f7router.navigate({
+        url: 'cron-edit',
+        route: {
+          path: 'cron-edit',
+          popup
+        }
+      }, {
+        props: {
+          value: this.cronExpression
+        }
+      })
+
+      this.$f7.once('cronEditorUpdate', this.updateCronExpression)
+      this.$f7.once('cronEditorClosed', () => {
+        this.$f7.off('cronEditorUpdate', this.updateCronExpression)
+        this.$nextTick(() => {
+          this.currentModule = null
+          this.currentModuleType = null
+        })
+      })
     },
-    codePopupClosed (value) {
-      this.codeEditorOpened = false
+    updateScript (value) {
       if (this.isEditable) this.currentModule.configuration.script = value
-      this.currentModule = null
-      this.currentModuleType = null
     },
     updateCronExpression (value) {
       this.currentModule.configuration.cronExpression = value
-      this.currentModule = null
-      this.currentModuleType = null
     },
     toYaml () {
       this.ruleYaml = YAML.stringify({
@@ -554,36 +573,11 @@ export default {
         this.$f7.dialog.alert(e).open()
         return false
       }
-    },
-    groupedModuleTypes (section) {
-      const moduleTypes = this.moduleTypes[section].filter((t) => t.visibility === 'VISIBLE')
-      let moduleTypesByScope = moduleTypes.reduce((prev, type, i, types) => {
-        const scope = type.uid.split('.')[0]
-        if (!prev[scope]) {
-          prev[scope] = [type]
-        } else {
-          prev[scope] = [...prev[scope], type].sort((t1, t2) => t1.label.localeCompare(t2.label))
-        }
-        return prev
-      }, {})
-      return Object.keys(moduleTypesByScope).sort((s1, s2) => (s1 === 'core') ? -1 : (s2 === 'core') ? 1 : s1.localeCompare(s2))
-        .reduce((prev, key) => {
-          prev[key] = moduleTypesByScope[key]
-          return prev
-        }, {})
     }
   },
   computed: {
     isEditable () {
       return this.rule && this.rule.editable !== false
-    },
-    currentSuggestedModuleTitle () {
-      if (!this.currentModule || !this.currentModuleType) return 'Title'
-      return this.suggestedModuleTitle(this.currentModule, this.currentModuleType)
-    },
-    currentSuggestedModuleDescription () {
-      if (!this.currentModule || !this.currentModuleType) return 'Description'
-      return this.suggestedModuleDescription(this.currentModule, this.currentModuleType)
     },
     yamlError () {
       if (this.currentTab !== 'code') return null

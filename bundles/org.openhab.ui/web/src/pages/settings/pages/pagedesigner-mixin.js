@@ -75,7 +75,7 @@ export default {
       if (ev.ctrlKey || ev.metakKey) {
         switch (ev.keyCode) {
           case 82:
-            this.previewMode = !this.previewMode
+            this.togglePreviewMode()
             ev.stopPropagation()
             ev.preventDefault()
             break
@@ -127,6 +127,7 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
+          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.page.uid), { reloadCurrent: true })
           this.load()
         } else {
           this.$f7.toast.create({
@@ -136,7 +137,7 @@ export default {
           }).open()
         }
         this.$f7.emit('sidebarRefresh', null)
-        if (!stay) this.$f7router.back()
+        // if (!stay) this.$f7router.back()
       }).catch((err) => {
         this.$f7.toast.create({
           text: 'Error while saving page: ' + err,
@@ -238,6 +239,7 @@ export default {
         }
       }, {
         props: {
+          componentType: this.$f7router.currentRoute.params.type,
           component: this.currentComponent
         }
       })

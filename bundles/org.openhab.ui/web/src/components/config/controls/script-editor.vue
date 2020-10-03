@@ -20,7 +20,7 @@
     .CodeMirror-line
       line-height 1.3
 
-    .cm-lkcampbell-indent-guides
+    .cm-lkcampbell-indent-guides:not(.CodeMirror-lint-mark-error)
       margin-top -5px
       background-repeat repeat-y
       background-image url("data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='1px' height='2px'><rect width='1' height='1' style='fill:%2377777777' /></svg>")
@@ -29,6 +29,10 @@
 .CodeMirror-hints
   z-index 999999
 .CodeMirror-Tern-tooltip
+  z-index 999998
+  opacity 1 !important
+  position absolute
+.CodeMirror-lint-tooltip
   z-index 999998
   opacity 1 !important
   position absolute
@@ -65,6 +69,11 @@ import 'codemirror/addon/fold/foldcode.js'
 import 'codemirror/addon/fold/foldgutter.js'
 import 'codemirror/addon/fold/indent-fold.js'
 
+// for linting
+import 'codemirror/addon/lint/lint.js'
+import 'codemirror/addon/lint/lint.css'
+import YAML from 'yaml'
+
 import tern from 'tern'
 
 // import 'tern/lib/signal.js'
@@ -76,6 +85,9 @@ import tern from 'tern'
 
 import EcmascriptDefs from 'tern/defs/ecmascript.json'
 import OpenhabDefs from '@/assets/openhab-tern-defs.json'
+
+import componentsHint from '../editor/hint-components'
+import rulesHint from '../editor/hint-rules'
 
 // Adapted from https://github.com/lkcampbell/brackets-indent-guides (MIT)
 var indentGuidesOverlay = {
@@ -124,7 +136,7 @@ export default {
       cmOptions: {
         // codemirror options
         tabSize: 4,
-        mode: this.mode || 'text/javascript',
+        mode: ((this.mode && this.mode.indexOf('yaml')) ? 'text/x-yaml' : this.mode) || 'text/javascript',
         theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'gruvbox-dark' : 'default',
         lineNumbers: true,
         line: true,
@@ -132,8 +144,14 @@ export default {
         autoCloseBrackets: true,
         viewportMargin: Infinity,
         foldGutter: true,
-        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
+        lint: false,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers']
       }
+    }
+  },
+  beforeDestroy () {
+    if (this.codemirror && this.codemirror.closeHint) {
+      this.codemirror.closeHint()
     }
   },
   methods: {
@@ -141,6 +159,7 @@ export default {
       // debugger
     },
     onCmReady (cm) {
+      const self = this
       let extraKeys = {}
       if (!this.mode) {
         window.tern = tern
@@ -159,6 +178,50 @@ export default {
         cm.on('cursorActivity', function (cm) {
           server.updateArgHints(cm)
         })
+      } else {
+        const autocomplete = function (cm) {
+          setTimeout(function () { _CodeMirror.commands.autocomplete(cm) }, 250)
+          return _CodeMirror.Pass // tell CodeMirror we didn't handle the key
+        }
+        extraKeys = {
+          'Ctrl-Space': 'autocomplete',
+          "'.'": autocomplete,
+          "'='": autocomplete,
+          'Space': autocomplete
+        }
+        cm.state.$oh = this.$oh
+        cm.state.originalMode = this.mode
+        cm.setOption('hintOptions', {
+          closeOnUnfocus: false,
+          hint (cm, option) {
+            if (self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
+              return componentsHint(cm, option, self.mode)
+            } else if (self.mode === 'application/vnd.openhab.rule') {
+              return rulesHint(cm, option, self.mode)
+            }
+          }
+        })
+
+        _CodeMirror.registerHelper('lint', 'yaml', function (text) {
+          const found = []
+          const parsed = YAML.parseDocument(text)
+          if (parsed.errors.length > 0) {
+            parsed.errors.forEach((e) => {
+              const message = e.message
+              e.makePretty()
+              found.push({
+                message: message,
+                from: (e.linePos.end) ? { line: e.linePos.start.line - 1, ch: e.linePos.start.col - 1 } : undefined,
+                to: (e.linePos.end) ? { line: e.linePos.end.line - 1, ch: e.linePos.end.col - 1 } : undefined
+              })
+            })
+          }
+
+          return found
+        })
+
+        this.cmOptions.gutters.push('CodeMirror-lint-markers')
+        this.cmOptions.lint = true
       }
       extraKeys.Tab = function (cm) {
         if (cm.somethingSelected()) {
@@ -183,7 +246,7 @@ export default {
     }
   },
   mounted () {
-    console.log('codemirror ready: ', this.codemirror)
+    // console.log('codemirror ready: ', this.codemirror)
   }
 }
 </script>

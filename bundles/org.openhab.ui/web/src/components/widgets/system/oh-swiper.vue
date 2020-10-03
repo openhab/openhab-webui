@@ -20,6 +20,7 @@
 <script>
 
 import mixin from '../widget-mixin'
+import { OhSwiperDefinition } from '@/assets/definitions/widgets/system'
 
 import OhSwiperSlide from './oh-swiper-slide.vue'
 import OhPlaceholderWidget from '../layout/oh-placeholder-widget.vue'
@@ -30,33 +31,7 @@ export default {
     OhSwiperSlide,
     OhPlaceholderWidget
   },
-  widget: {
-    name: 'oh-swiper',
-    label: 'Swiper',
-    description: 'Allows to swipe slides',
-    props: {
-      parameters: [
-        {
-          name: 'pagination',
-          label: 'Pagination',
-          type: 'BOOLEAN',
-          description: 'Enable pagination'
-        },
-        {
-          name: 'navigation',
-          label: 'Navigation',
-          type: 'BOOLEAN',
-          description: 'Enable navigation'
-        },
-        {
-          name: 'scrollbar',
-          label: 'Scrollbar',
-          type: 'BOOLEAN',
-          description: 'Enable scrollbar'
-        }
-      ]
-    }
-  },
+  widget: OhSwiperDefinition,
   computed: {
     slides () {
       if (!this.context.component.slots || !this.context.component.slots.default) return []

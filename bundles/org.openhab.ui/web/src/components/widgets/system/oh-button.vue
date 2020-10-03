@@ -4,10 +4,12 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { OhButtonDefinition } from '@/assets/definitions/widgets/system'
 import { actionsMixin } from '../widget-actions'
 
 export default {
   mixins: [mixin, actionsMixin],
+  widget: OhButtonDefinition,
   methods: {
     clicked () {
       if (this.config.action || this.config.actionPropsParameterGroup) {

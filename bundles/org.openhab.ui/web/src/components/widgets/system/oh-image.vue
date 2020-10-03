@@ -10,9 +10,11 @@
 <script>
 import mixin from '../widget-mixin'
 import { actionsMixin } from '../widget-actions'
+import { OhImageDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   mixins: [mixin, actionsMixin],
+  widget: OhImageDefinition,
   data () {
     return {
       t: this.$utils.id(),

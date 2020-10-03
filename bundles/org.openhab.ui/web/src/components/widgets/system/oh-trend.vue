@@ -4,10 +4,12 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { OhTrendDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   mixins: [mixin],
   props: ['width'],
+  widget: OhTrendDefinition,
   data () {
     return {
       trendData: [],

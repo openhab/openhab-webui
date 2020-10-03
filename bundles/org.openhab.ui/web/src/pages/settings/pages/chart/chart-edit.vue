@@ -39,48 +39,13 @@
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="text/x-yaml" :value="pageYaml" @input="(value) => pageYaml = value" />
-        <pre v-show="!previewMode" class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre>
+        <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent;type=chart" :value="pageYaml" @input="(value) => pageYaml = value" />
+        <!-- <pre v-show="!previewMode" class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
         <oh-chart-page class="chart-page" v-if="ready && previewMode" :context="context" :key="pageKey" />
       </f7-tab>
 
     </f7-tabs>
-
-    <f7-popup ref="slotConfig" class="slotconfig-popup" close-on-escape :opened="widgetSlotConfigOpened" @popup:closed="widgetConfigClosed">
-      <f7-page v-if="currentSlot">
-        <f7-navbar>
-          <f7-nav-left>
-            <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
-          </f7-nav-left>
-          <f7-nav-title>Edit {{currentSlot}}</f7-nav-title>
-          <f7-nav-right>
-            <f7-link @click="updateWidgetSlotConfig">Done</f7-link>
-          </f7-nav-right>
-        </f7-navbar>
-        <f7-block>
-          <f7-col v-for="(slotComponent, idx) in currentSlotConfig" :key="idx">
-            <config-sheet v-if="getWidgetDefinition(slotComponent.component)"
-              :parameterGroups="getWidgetDefinition(slotComponent.component).props.parameterGroups || []"
-              :parameters="getWidgetDefinition(slotComponent.component).props.parameters || []"
-              :configuration="slotComponent.config"
-              @updated="dirty = true"
-            />
-            <f7-block v-else strong>
-              This type of component cannot be configured: {{slotComponent.component}}.
-            </f7-block>
-            <f7-list>
-              <f7-list-button color="blue" @click="editWidgetCode(slotComponent)">Edit YAML</f7-list-button>
-              <f7-list-button color="Remove" @click="removeComponentFromSlot(slotComponent, currentSlotConfig)">Remove</f7-list-button>
-            </f7-list>
-            <hr />
-          </f7-col>
-          <f7-list>
-            <f7-list-button color="blue" @click="currentSlotConfig.push({ component: currentSlotDefaultComponentType, config: { show: true }})">Add Another</f7-list-button>
-          </f7-list>
-        </f7-block>
-      </f7-page>
-    </f7-popup>
   </f7-page>
 </template>
 
@@ -88,7 +53,7 @@
 .page-code-editor.vue-codemirror
   display block
   top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(80% - 2 * var(--f7-navbar-height))
+  height calc(100% - 3*var(--f7-navbar-height))
   width 100%
 .yaml-message
   display block
@@ -118,6 +83,8 @@ import ChartDesigner from '@/components/pagedesigner/chart/chart-designer.vue'
 import ChartWidgetsDefinitions from '@/assets/definitions/widgets/chart/index'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
+
+import WidgetSlotConfigPopup from '@/components/pagedesigner/widget-slot-config-popup.vue'
 
 export default {
   mixins: [PageDesigner],
@@ -184,16 +151,43 @@ export default {
       if (this.currentSlotParent.slots[slotName] && this.currentSlotParent.slots[slotName].length > 0) {
         this.currentSlotConfig = JSON.parse(JSON.stringify(this.currentSlotParent.slots[slotName]))
       } else {
-        this.currentSlotConfig = [
+        this.$set(this, 'currentSlotConfig', [
           {
             component: defaultSlotComponentType,
             config: {
               show: true
             }
           }
-        ]
+        ])
       }
-      this.widgetSlotConfigOpened = true
+
+      const popup = {
+        component: WidgetSlotConfigPopup
+      }
+
+      this.$f7router.navigate({
+        url: 'configure-slot',
+        route: {
+          path: 'configure-slot',
+          popup
+        }
+      }, {
+        props: {
+          currentSlot: this.currentSlot,
+          slotConfig: this.currentSlotConfig,
+          getWidgetDefinition: this.getWidgetDefinition,
+          removeComponentFromSlot: this.removeComponentFromSlot,
+          editWidgetCode: this.editWidgetCode,
+          currentSlotDefaultComponentType: this.currentSlotDefaultComponentType,
+          initialConfig: { show: true }
+        }
+      })
+
+      this.$f7.once('widgetSlotConfigUpdate', this.updateWidgetSlotConfig)
+      this.$f7.once('widgetSlotConfigClosed', () => {
+        this.$f7.off('widgetSlotConfigUpdate', this.updateWidgetSlotConfig)
+        this.widgetConfigClosed()
+      })
     },
     removeComponentFromSlot (component, slot) {
       slot.splice(slot.indexOf(component), 1)

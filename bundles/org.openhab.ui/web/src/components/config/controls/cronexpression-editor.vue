@@ -1,11 +1,11 @@
 <!-- Adapted from https://github.com/1615450788/vue-cron - license: MIT -->
 
 <template>
-  <f7-popup :id="popupId" class="cron-select" close-on-escape @popup:closed="$emit('closed')" :opened="opened">
+  <f7-popup class="cron-select" close-on-escape @popup:closed="close">
     <f7-page class="cron-select-content">
       <f7-navbar :title="'Cron: ' + cron" :subtitle="translation">
         <f7-nav-right>
-          <f7-link :popup-close="(popupId) ? '#' + popupId : '.cron-select'" @click.native="$emit('input', cron)">Done</f7-link>
+          <f7-link class="popup-close" @click="change">Done</f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-toolbar tabbar position="top">
@@ -16,14 +16,7 @@
         <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'month'" @click="currentTab = 'month'">Month</f7-link>
         <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'year'" @click="currentTab = 'year'">Year</f7-link>
       </f7-toolbar>
-      <!-- <f7-toolbar bottom>
-        <div>
-          <h4 class="value">
-            <small>At 12:00 AM, on the weekday nearest day 20 of the month, only in October, only in 2019</small>
-          </h4>
-        </div>
-      </f7-toolbar> -->
-      <f7-tabs type="border-card" v-if="opened">
+      <f7-tabs type="border-card">
         <f7-tab :tab-active="currentTab === 'seconds'">
           <span slot="label">
             <i class="el-icon-date"></i>
@@ -267,7 +260,7 @@ import cronstrue from 'cronstrue'
 
 export default {
   name: 'vueCron',
-  props: ['value', 'opened', 'popupId', 'i18n'],
+  props: ['value'],
   data () {
     return {
       currentTab: 'seconds',
@@ -548,11 +541,10 @@ export default {
       return this.cron
     },
     change () {
-      this.$emit('change', this.cron)
-      this.close()
+      this.$f7.emit('cronEditorUpdate', this.cron)
     },
     close () {
-      this.$emit('close')
+      this.$f7.emit('cronEditorClosed')
     },
     rest (data) {
       for (let i in data) {

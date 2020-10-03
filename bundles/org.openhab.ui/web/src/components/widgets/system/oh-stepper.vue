@@ -5,10 +5,11 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { OhStepperDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
-  name: 'oh-stepper',
   mixins: [mixin],
+  widget: OhStepperDefinition,
   mounted () {
     delete this.config.value
   },

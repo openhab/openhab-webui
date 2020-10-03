@@ -19,10 +19,11 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
-  name: 'oh-slider',
   mixins: [mixin],
+  widget: OhPlayerDefinition,
   mounted () {
     delete this.config.value
   },

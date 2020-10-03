@@ -26,7 +26,7 @@
     <f7-block v-else :key="blockKey + 'b'" class="widget-editor vertical">
       <f7-row resizable>
         <f7-col resizable style="min-width: 20px" class="widget-code">
-          <editor class="widget-component-editor" :mode="'text/x-yaml'" :value="widgetDefinition" @input="(value) => widgetDefinition = value" />
+          <editor class="widget-component-editor" mode="application/vnd.openhab.uicomponent-definition+yaml?type=widget" :value="widgetDefinition" @input="(value) => widgetDefinition = value" />
         </f7-col>
         <f7-col v-if="ready" resizable style="min-width: 20px" class="widget-preview padding-right margin-bottom">
           <generic-widget-component :key="widgetKey" :context="context" @command="onCommand" />
@@ -62,27 +62,33 @@
 <style lang="stylus">
 .widget-editor
   margin-top 0 !important
+  margin-bottom 0 !important
   padding 0
   z-index auto !important
-  height calc(100vh - 2*var(--f7-navbar-height) - var(--f7-toolbar-height) - 2.5*var(--f7-block-margin-vertical))
+  top 0
+  height calc(100%)
   .notready
     visibility hidden
   .code-editor-fit
-    top 0
     height calc(100% - var(--f7-grid-gap))
+  .row
+    height 100%
+    .widget-preview
+      height 100%
+      overflow auto
+    .widget-code
+      height 100%
+  .vue-codemirror
+    top 0
+    height 100%
   &.vertical
     .block
       z-index auto !important
-    .row
-      height 100%
-      .widget-preview
-        height 100%
-        overflow auto
-      .widget-code
-        height 100%
   &.horizontal
     .row
       height 50%
+    .vue-codemirror
+      height calc(100% - var(--f7-grid-gap))
 </style>
 
 <script>
@@ -126,7 +132,7 @@ export default {
         if (!this.widgetDefinition) return {}
         return YAML.parse(this.widgetDefinition, { prettyErrors: true })
       } catch (e) {
-        return { component: 'Error', config: { error: e } }
+        return { component: 'Error', config: { error: e.message } }
       }
     }
   },
@@ -237,6 +243,7 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
+          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.widget.uid), { reloadCurrent: true })
           this.load()
         } else {
           this.$f7.toast.create({
@@ -246,7 +253,7 @@ export default {
           }).open()
         }
         this.$f7.emit('sidebarRefresh', null)
-        if (!stay) this.$f7router.back()
+        // if (!stay) this.$f7router.back()
       }).catch((err) => {
         this.$f7.toast.create({
           text: 'Error while saving page: ' + err,

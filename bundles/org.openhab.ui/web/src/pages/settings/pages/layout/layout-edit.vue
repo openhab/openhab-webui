@@ -10,9 +10,9 @@
       <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
       <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
     </f7-toolbar>
-    <f7-toolbar bottom class="toolbar-details" v-show="currentTab === 'design'">
+    <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode" @toggle:change="(value) => previewMode = value"></f7-toggle> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)"></f7-toggle> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
     <f7-tabs class="layout-editor-tabs">
@@ -31,8 +31,10 @@
         />
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" class="page-code-editor" mode="text/x-yaml" :value="pageYaml" @input="(value) => pageYaml = value" />
-        <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre>
+        <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent-definition+yaml?type=layout" :value="pageYaml" @input="(value) => pageYaml = value" />
+        <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
+
+        <oh-layout-page class="layout-page" v-if="ready && previewMode" :context="context" :key="pageKey" />
       </f7-tab>
     </f7-tabs>
 
@@ -49,7 +51,7 @@
 .page-code-editor.vue-codemirror
   display block
   top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(80% - 2*var(--f7-navbar-height))
+  height calc(100% - 3*var(--f7-navbar-height))
   width 100%
 .yaml-message
   display block

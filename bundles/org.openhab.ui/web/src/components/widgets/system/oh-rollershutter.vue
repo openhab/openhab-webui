@@ -21,10 +21,11 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { OhRollershutterDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
-  name: 'oh-rollershutter',
   mixins: [mixin],
+  widget: OhRollershutterDefinition,
   mounted () {
     delete this.config.value
   },

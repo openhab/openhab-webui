@@ -68,13 +68,10 @@
 import mixin from '../widget-mixin'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 
-import { OhGridRowDefinition } from '@/assets/definitions/widgets/layout'
-
 export default {
   mixins: [mixin],
   components: {
     OhPlaceholderWidget
-  },
-  widget: OhGridRowDefinition
+  }
 }
 </script>

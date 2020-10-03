@@ -28,6 +28,7 @@ export default {
       const sourceConfig = this.context.component.config
       let evalConfig = {}
       if (this.context.component.config) {
+        if (typeof this.context.component.config !== 'object') return {}
         for (const key in this.context.component.config) {
           if (key === 'visible' || key === 'visibleTo') continue
           this.$set(evalConfig, key, this.evaluateExpression(key, sourceConfig[key]))
@@ -87,6 +88,7 @@ export default {
     childContext (component) {
       return {
         component: component,
+        rootcomponent: this.context.root || this.context.component,
         props: this.context.props,
         vars: this.context.vars,
         store: this.context.store,
@@ -109,6 +111,7 @@ export default {
       }
       const widgetContext = {
         component: widget,
+        root: widget,
         props: this.config,
         vars: this.widgetVars,
         store: this.context.store,

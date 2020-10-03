@@ -77,7 +77,7 @@
           <f7-col>
             <f7-block-title>Z-Wave</f7-block-title>
             <f7-list>
-              <f7-list-button color="blue" title="View Network Map" @click="zwaveNetworkPopupOpened = true"></f7-list-button>
+              <f7-list-button color="blue" title="View Network Map" @click="openZWaveNetworkPopup"></f7-list-button>
               <f7-list-button color="blue" v-for="action in zwaveActions" :key="action.name" :title="action.label" @click="doZWaveAction(action)"></f7-list-button>
             </f7-list>
           </f7-col>
@@ -367,6 +367,18 @@ export default {
           save()
         }
       )
+    },
+    openZWaveNetworkPopup () {
+      const popup = {
+        component: ZWaveNetworkPopup
+      }
+      this.$f7router.navigate({
+        url: 'zwave-network',
+        route: {
+          path: 'zwave-network',
+          popup
+        }
+      })
     },
     deleteThing () {
       let url, message
