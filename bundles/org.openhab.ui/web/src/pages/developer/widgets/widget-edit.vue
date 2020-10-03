@@ -243,6 +243,7 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
+          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.widget.uid), { reloadCurrent: true })
           this.load()
         } else {
           this.$f7.toast.create({
@@ -252,7 +253,7 @@ export default {
           }).open()
         }
         this.$f7.emit('sidebarRefresh', null)
-        if (!stay) this.$f7router.back()
+        // if (!stay) this.$f7router.back()
       }).catch((err) => {
         this.$f7.toast.create({
           text: 'Error while saving page: ' + err,
