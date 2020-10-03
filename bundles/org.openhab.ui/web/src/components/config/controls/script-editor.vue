@@ -149,6 +149,11 @@ export default {
       }
     }
   },
+  beforeDestroy () {
+    if (this.codemirror && this.codemirror.closeHint) {
+      this.codemirror.closeHint()
+    }
+  },
   methods: {
     ternComplete (file, query) {
       // debugger
@@ -185,12 +190,13 @@ export default {
           'Space': autocomplete
         }
         cm.state.$oh = this.$oh
+        cm.state.originalMode = this.mode
         cm.setOption('hintOptions', {
           closeOnUnfocus: false,
           hint (cm, option) {
-            if (self.mode.indexOf('application/vnd.openhab.uicomponent-definition') === 0) {
+            if (self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
               return componentsHint(cm, option, self.mode)
-            } else if (self.mode === 'application/vnd.openhab.rule-definition') {
+            } else if (self.mode === 'application/vnd.openhab.rule') {
               return rulesHint(cm, option, self.mode)
             }
           }

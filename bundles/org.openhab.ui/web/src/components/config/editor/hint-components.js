@@ -9,12 +9,35 @@ import * as StandardWidgets from '@/components/widgets/standard'
 import * as StandardListWidgets from '@/components/widgets/standard/list'
 import * as StandardCellWidgets from '@/components/widgets/standard/cell'
 import * as LayoutWidgets from '@/components/widgets/layout'
+import * as PlanWidgets from '@/components/widgets/plan'
+import * as MapWidgets from '@/components/widgets/map'
+import { OhChartPageDefinition } from '@/assets/definitions/widgets/chart/page'
+import ChartWidgetsDefinitions from '@/assets/definitions/widgets/chart/index'
 
-function getWidgetDefinitions () {
-  const ohComponents = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets, ...StandardCellWidgets })
-    .filter((w) => w.widget && typeof w.widget === 'function')
-  const f7Components = Object.values(f7vue).filter((m) => m.name && m.name.indexOf('f7-') === 0)
-  return [...ohComponents.map((c) => c.widget()), ...f7Components]
+function getWidgetDefinitions (cm) {
+  const mode = cm.state.originalMode
+  const componentType = (mode.indexOf(';type=') > 0) ? mode.split('=')[1] : undefined
+  switch (componentType) {
+    case 'chart':
+      return [
+        OhChartPageDefinition,
+        ...Object.keys(ChartWidgetsDefinitions).map((name) => {
+          return Object.assign({}, ChartWidgetsDefinitions[name], { name })
+        })
+      ]
+    case 'plan':
+      return Object.values(PlanWidgets).map((c) => c.widget()).sort((c1, c2) => c1.name.localeCompare(c2.name))
+    case 'map':
+      return Object.values(MapWidgets).map((c) => c.widget()).sort((c1, c2) => c1.name.localeCompare(c2.name))
+    default:
+      const ohComponents = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets, ...StandardCellWidgets })
+        .filter((w) => w.widget && typeof w.widget === 'function')
+      const f7Components = Object.values(f7vue).filter((m) => m.name && m.name.indexOf('f7-') === 0)
+      return [
+        ...ohComponents.map((c) => c.widget()).sort((c1, c2) => c1.name.localeCompare(c2.name)),
+        ...f7Components.sort((c1, c2) => c1.name.localeCompare(c2.name))
+      ]
+  }
 }
 
 function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix) {
@@ -118,7 +141,7 @@ function hintConfig (cm, line, parentLineNr) {
   if (!componentType) return
   const colonPos = line.indexOf(':')
   const afterColon = colonPos > 0 && cursor.ch > colonPos
-  const widgetDefinition = getWidgetDefinitions().find((d) => d.name === componentType)
+  const widgetDefinition = getWidgetDefinitions(cm).find((d) => d.name === componentType)
   const parameters = (componentType.indexOf('f7-') === 0) ? f7ComponentParameters(componentType)
     : (widgetDefinition && widgetDefinition.props) ? widgetDefinition.props.parameters : []
   if (afterColon) {
@@ -189,7 +212,7 @@ function hintComponentStructure (cm, line, parentLineNr) {
 function hintSlots (cm, line, parentLineNr) {
   const cursor = cm.getCursor()
   const indent = lineIndent(cm, parentLineNr)
-  const definitions = getWidgetDefinitions()
+  const definitions = getWidgetDefinitions(cm)
   let completions = definitions.map((c) => {
     return {
       text: ' '.repeat(indent + 2) + `- component: ${c.name}\n` +

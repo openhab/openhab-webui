@@ -4,9 +4,11 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { OhInputDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   mixins: [mixin],
+  widget: OhInputDefinition,
   computed: {
     value () {
       if (this.config.variable && this.context.vars[this.config.variable] !== undefined) {

@@ -14,11 +14,13 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { OhIconDefinition } from '@/assets/definitions/widgets/system'
 import { actionsMixin } from '../widget-actions'
 
 export default {
   mixins: [mixin, actionsMixin],
   props: ['icon', 'width', 'height', 'state'],
+  widget: OhIconDefinition,
   data () {
     return {
       currentState: this.state,

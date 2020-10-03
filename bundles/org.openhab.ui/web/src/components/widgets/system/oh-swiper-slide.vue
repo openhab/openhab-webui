@@ -31,7 +31,6 @@
 </style>
 
 <script>
-
 import mixin from '../widget-mixin'
 
 export default {

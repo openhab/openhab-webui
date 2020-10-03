@@ -10,10 +10,11 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { OhColorpickerDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
-  name: 'oh-colorpicker',
   mixins: [mixin],
+  widget: OhColorpickerDefinition,
   data () {
     return {
       colorpicker: null,

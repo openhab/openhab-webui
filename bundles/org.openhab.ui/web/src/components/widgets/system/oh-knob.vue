@@ -4,6 +4,7 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { OhKnobDefinition } from '@/assets/definitions/widgets/system'
 
 import KnobControl from 'vue-knob-control'
 
@@ -12,6 +13,7 @@ export default {
   components: {
     KnobControl
   },
+  widget: OhKnobDefinition,
   data () {
     return {
       pendingCommand: null,

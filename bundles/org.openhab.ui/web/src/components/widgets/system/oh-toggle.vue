@@ -4,10 +4,11 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { OhToggleDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
-  name: 'oh-toggle',
   mixins: [mixin],
+  widget: OhToggleDefinition,
   mounted () {
     delete this.config.value
   },

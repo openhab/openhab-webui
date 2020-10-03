@@ -4,9 +4,11 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { OhGaugeDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   mixins: [mixin],
+  widget: OhGaugeDefinition,
   computed: {
     value () {
       if (this.config.variable) return this.context.vars[this.config.variable]

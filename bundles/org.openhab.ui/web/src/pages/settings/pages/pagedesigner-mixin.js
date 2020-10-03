@@ -238,6 +238,7 @@ export default {
         }
       }, {
         props: {
+          componentType: this.$f7router.currentRoute.params.type,
           component: this.currentComponent
         }
       })

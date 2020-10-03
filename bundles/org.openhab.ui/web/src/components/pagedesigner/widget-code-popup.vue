@@ -10,7 +10,7 @@
           <f7-link @click="updateWidgetCode" popup-close>Done</f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <editor class="page-code-editor" mode="application/vnd.openhab.uicomponent-definition+yaml?type=widget" :value="code" @input="(value) => code = value" />
+      <editor class="page-code-editor" :mode="`application/vnd.openhab.uicomponent+yaml;type=${componentType || 'widget'}`" :value="code" @input="(value) => code = value" />
       <!-- <pre class="yaml-message padding-horizontal" :class="[widgetYamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{widgetYamlError}}</pre> -->
     </f7-page>
   </f7-popup>
@@ -34,7 +34,7 @@
 import YAML from 'yaml'
 
 export default {
-  props: ['component'],
+  props: ['component', 'componentType'],
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue')
   },

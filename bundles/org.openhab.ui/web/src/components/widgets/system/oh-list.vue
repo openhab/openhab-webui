@@ -18,35 +18,10 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { OhListDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   mixins: [mixin],
-  widget: {
-    name: 'oh-list',
-    label: 'List',
-    description: 'A list of vertically arranged items',
-    props: {
-      parameters: [
-        {
-          name: 'simpleList',
-          label: 'Simple list',
-          type: 'BOOLEAN',
-          description: 'Use for simple lists'
-        },
-        {
-          name: 'mediaList',
-          label: 'Media List',
-          type: 'BOOLEAN',
-          description: 'Use for list with rich list items with icons'
-        },
-        {
-          name: 'accordionList',
-          label: 'Accordion List',
-          type: 'BOOLEAN',
-          description: 'Use for lists with accordion (collapsible) items'
-        }
-      ]
-    }
-  }
+  widget: OhListDefinition
 }
 </script>
