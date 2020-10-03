@@ -51,7 +51,7 @@ function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix) {
           displayText: item.name,
           description: `${(item.label) ? item.label + ' ' : ''}(${item.type})<br />${item.state}`
         }
-      })
+      }).sort((i1, i2) => i1.text.localeCompare(i2.text))
     }
     ret.list = filterPartialCompletions(cm, line, ret.list)
     if (replaceAfterColon) {

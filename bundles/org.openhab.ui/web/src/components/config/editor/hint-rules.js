@@ -16,11 +16,11 @@ function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix) {
     let ret = {
       list: data.map((item) => {
         return {
-          text: item.name,
-          displayText: item.name + ((addStatePropertySuffix ? '.state' : '')),
+          text: item.name + ((addStatePropertySuffix ? '.state' : '')),
+          displayText: item.name,
           description: `${(item.label) ? item.label + ' ' : ''}(${item.type})<br />${item.state}`
         }
-      })
+      }).sort((i1, i2) => i1.text.localeCompare(i2.text))
     }
     ret.list = filterPartialCompletions(cm, line, ret.list)
     if (replaceAfterColon) {
