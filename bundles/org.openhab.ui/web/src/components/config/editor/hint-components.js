@@ -175,11 +175,13 @@ function hintConfig (cm, line, parentLineNr) {
       }
     })
     completions = filterPartialCompletions(cm, line, completions)
-    return {
+    const ret = {
       list: completions,
       from: { line: cursor.line, ch: indent + 2 },
       to: { line: cursor.line, ch: line.length }
     }
+    addTooltipHandlers(cm, ret, true)
+    return ret
   }
 }
 
@@ -206,6 +208,7 @@ function hintComponentStructure (cm, line, parentLineNr) {
   }
   ret.from = { line: cursor.line, ch: 0 }
   ret.to = { line: cursor.line, ch: cm.getLine(cursor.line).length }
+  addTooltipHandlers(cm, ret, true)
   return ret
 }
 
@@ -230,6 +233,7 @@ function hintSlots (cm, line, parentLineNr) {
   }
   ret.from = { line: cursor.line, ch: 0 }
   ret.to = { line: cursor.line, ch: cm.getLine(cursor.line).length }
+  addTooltipHandlers(cm, ret, true)
   return ret
 }
 

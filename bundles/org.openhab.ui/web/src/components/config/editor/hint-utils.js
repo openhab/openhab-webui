@@ -36,20 +36,23 @@ export function filterPartialCompletions (cm, line, completions, property = 'tex
   return completions.filter((c) => c[property] && c[property].toLowerCase().indexOf(partialCompletion.toLowerCase()) >= 0)
 }
 
-export function addTooltipHandlers (cm, ret) {
+export function addTooltipHandlers (cm, ret, retriggerHint) {
   let tooltip = null
   const cursor = cm.getCursor()
+
+  if (ret.tooltip) return
 
   if (!ret) return
   if (!ret.from) ret.from = cursor
   if (!ret.to) ret.to = cursor
+  ret.tooltip = true
 
   CodeMirror.on(ret, 'close', function () { remove(tooltip) })
   CodeMirror.on(ret, 'update', function () { remove(tooltip) })
   CodeMirror.on(ret, 'pick', function () {
     setTimeout(() => {
       cm.scrollIntoView(cm.getCursor())
-      CodeMirror.commands.autocomplete(cm)
+      if (retriggerHint) CodeMirror.commands.autocomplete(cm)
     }, 100)
   })
   CodeMirror.on(ret, 'select', function (cur, node) {

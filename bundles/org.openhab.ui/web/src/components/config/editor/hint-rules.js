@@ -114,7 +114,7 @@ function hintConfig (cm, line, parentLineNr) {
         from: { line: cursor.line, ch: 6 },
         to: { line: cursor.line, ch: line.length }
       }
-      addTooltipHandlers(cm, ret)
+      addTooltipHandlers(cm, ret, true)
       return ret
     }
   })
