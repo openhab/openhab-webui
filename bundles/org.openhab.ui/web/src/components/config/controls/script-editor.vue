@@ -195,7 +195,6 @@ export default {
         if (this.hintContext) cm.state.hintContext = Object.assign({}, this.hintContext)
         cm.setOption('hintOptions', {
           closeOnUnfocus: false,
-          completeSingle: false,
           hint (cm, option) {
             if (self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
               return componentsHint(cm, option, self.mode)
