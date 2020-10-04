@@ -47,7 +47,7 @@
           <div>Loading...</div>
         </f7-block>
         <f7-list v-else>
-          <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="No Profile (Default)" name="profile-type" />
+          <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="(No Profile)" name="profile-type" />
           <f7-list-item radio v-for="profileType in profileTypes"
             :checked="profileType.uid === currentProfileType.uid"
             @change="onProfileTypeChange(profileType.uid)"

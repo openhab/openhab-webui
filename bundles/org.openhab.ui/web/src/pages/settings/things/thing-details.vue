@@ -1,33 +1,31 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
     <f7-navbar :title="thing.label" back-link="Back" no-hairline>
-      <f7-nav-right v-if="dirty || thingDirty">
+      <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
+        <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'info'" :tab-link-active="currentTab === 'info'" class="tab-link">Info</f7-link>
-      <f7-link @click="currentTab = 'config'" :tab-link-active="currentTab === 'config'" class="tab-link">Config</f7-link>
-      <f7-link @click="currentTab = 'channels'" :tab-link-active="currentTab === 'channels'" class="tab-link">Channels</f7-link>
+      <f7-link @click="switchTab('thing')" :tab-link-active="currentTab === 'thing'" class="tab-link">Thing</f7-link>
+      <f7-link @click="switchTab('channels')" :tab-link-active="currentTab === 'channels'" class="tab-link">Channels</f7-link>
+      <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
     </f7-toolbar>
 
     <f7-tabs>
-      <f7-tab id="info" @tab:show="() => this.currentTab = 'info'" :tab-active="currentTab === 'info'">
+      <f7-tab id="thing" @tab:show="() => this.currentTab = 'thing'" :tab-active="currentTab === 'thing'">
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow padding-left padding-right" strong>
           <f7-col>
             <div class="float-right align-items-flex-start align-items-center">
-              <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
+              <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
             </div>
             Status:
             <f7-chip class="margin-left"
               :text="thing.statusInfo.status"
               :color="thingStatusBadgeColor(thing.statusInfo)"
             ></f7-chip>
-            <div v-if="thing.statusInfo.statusDetail !== 'NONE' || thing.statusInfo.description">
-              <strong
-                v-if="thing.statusInfo.statusDetail !== 'NONE'"
-              >{{thing.statusInfo.statusDetail}}</strong>
+            <div>
+              <strong>{{(thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;'}}</strong>
               <br>
               <div v-if="thing.statusInfo.description">{{thing.statusInfo.description}}</div>
             </div>
@@ -44,32 +42,47 @@
           </f7-col>
         </f7-block>
 
-        <f7-block v-if="ready" class="block-narrow padding-left padding-right">
+        <f7-block v-if="ready" class="block-narrow">
           <f7-col>
-            <h3>{{thingType.label}}</h3>
-            <div v-html="thingType.description"></div>
+            <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" :ready="true" />
+            <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">Information</f7-block-title>
+            <f7-list accordion-opposite>
+              <f7-list-item accordion-item title="Thing Type" :after="thingType.label">
+                <f7-accordion-content class="thing-type-description">
+                  <div class="margin" v-html="thingType.description"></div>
+                </f7-accordion-content>
+              </f7-list-item>
+              <f7-list-item accordion-item v-if="Object.keys(thing.properties).length > 0" title="Thing Properties" :badge="Object.keys(thing.properties).length">
+                <f7-accordion-content>
+                  <f7-list>
+                    <f7-list-item
+                      class="thing-property"
+                      v-for="(value, key) in thing.properties"
+                      :key="key"
+                      :title="key"
+                      :after="value"
+                    ></f7-list-item>
+                  </f7-list>
+                </f7-accordion-content>
+              </f7-list-item>
+            </f7-list>
+
+            <f7-block-title medium>Configuration</f7-block-title>
+            <config-sheet ref="thingConfiguration"
+              :parameter-groups="configDescriptions.parameterGroups"
+              :parameters="configDescriptions.parameters"
+              :configuration="thing.configuration"
+              :status="configStatusInfo"
+              @updated="dirty = true"
+            />
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
-        <f7-block v-else class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink">
+        <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink">
           <f7-col>
-            <h3>____ _______</h3>
-            <div>____ ____ ____ _____ ___ __ ____ __ ________ __ ____ ___ ____</div>
-          </f7-col>
-        </f7-block>
-
-        <f7-block class="block-narrow" v-if="ready && thing.properties">
-          <f7-col>
-            <f7-block-title v-if="Object.keys(thing.properties).length > 0">Properties</f7-block-title>
-            <f7-list>
-              <f7-list-item
-                class="thing-property"
-                v-for="(value, key) in thing.properties"
-                :key="key"
-                :title="key"
-                :after="value"
-              ></f7-list-item>
-            </f7-list>
+            <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" :ready="false" />
+            <f7-block-title medium>____ _______</f7-block-title>
+            <div class="margin-left">____ ____ ____ _____ ___ __ ____ __ ________ __ ____ ___ ____</div>
           </f7-col>
         </f7-block>
 
@@ -93,19 +106,6 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="config" :disabled="!(thing.configuration && thingType.configParameters)" @tab:show="() => this.currentTab = 'config'" :tab-active="currentTab === 'config'">
-        <f7-block v-if="thing.UID && thingType.UID" v-show="currentTab === 'config'" class="block-narrow">
-          <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" />
-          <config-sheet ref="thingConfiguration"
-            :parameter-groups="configDescriptions.parameterGroups"
-            :parameters="configDescriptions.parameters"
-            :configuration="thing.configuration"
-            :status="configStatusInfo"
-            @updated="dirty = true"
-          />
-        </f7-block>
-      </f7-tab>
-
       <f7-tab id="channels" disabled="!thingType.channels" @tab:show="() => this.currentTab = 'channels'" :tab-active="currentTab === 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list :thingType="thingType" :thing="thing" :channelTypes="channelTypes"
@@ -122,13 +122,17 @@
           </f7-col>
         </f7-block>
       </f7-tab>
+
+      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
+        <editor v-if="currentTab === 'code'" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="(value) => thingYaml = value" />
+        <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
+      </f7-tab>
     </f7-tabs>
 
-    <f7-fab position="right-bottom" color="blue" slot="fixed" @click="codePopupOpened = true">
+    <!-- <f7-fab position="right-bottom" color="blue" slot="fixed" @click="codePopupOpened = true">
       <f7-icon ios="f7:document_text" md="material:assignment" aurora="f7:document_text"></f7-icon>
       <f7-icon ios="f7:close" md="material:close"></f7-icon>
     </f7-fab>
-
     <f7-popup tablet-fullscreen :opened="codePopupOpened" close-on-escape @popup:closed="codePopupOpened = false">
       <f7-page>
         <f7-toolbar>
@@ -139,10 +143,9 @@
             <f7-link popup-close>Close</f7-link>
           </div>
         </f7-toolbar>
-        <!-- <pre class="textual-definition" v-html="textualDefinition"></pre> -->
         <textarea class="textual-definition" id="textual-definition" :value="textualDefinition"></textarea>
       </f7-page>
-    </f7-popup>
+    </f7-popup> -->
   </f7-page>
 </template>
 
@@ -181,17 +184,37 @@ textarea.textual-definition
     max-height 50% !important
     overflow-y auto !important
 
-.thing-property
-  .item-after
-    max-width 75%
+.thing-details-page
+  .page-content
+    overflow-x hidden
 
-    span
-      max-width 100%
-      overflow hidden
-      text-overflow ellipsis
+  .thing-type-description
+    h1
+      font-size 16px
+    h2
+      font-size 12px
+    h3
+      font-size 11px
+
+  .thing-property
+    .item-after
+      max-width 75%
+
+      span
+        max-width 100%
+        overflow hidden
+        text-overflow ellipsis
+
+  .thing-code-editor.vue-codemirror
+    display block
+    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
+    height calc(100% - 2*var(--f7-navbar-height))
+    width 100%
 </style>
 
 <script>
+import YAML from 'yaml'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import ChannelList from '@/components/thing/channel-list.vue'
@@ -214,7 +237,8 @@ export default {
     ConfigSheet,
     ChannelList,
     ThingGeneralSettings,
-    ZWaveNetworkPopup
+    ZWaveNetworkPopup,
+    'editor': () => import('@/components/config/controls/script-editor.vue')
   },
   props: ['thingId'],
   data () {
@@ -223,7 +247,7 @@ export default {
       loading: false,
       dirty: false,
       thingDirty: false,
-      currentTab: 'info',
+      currentTab: 'thing',
       thing: {},
       thingType: {},
       channelTypes: {},
@@ -233,7 +257,8 @@ export default {
       thingEnabled: true,
       codePopupOpened: false,
       zwaveNetworkPopupOpened: false,
-      eventSource: null
+      eventSource: null,
+      thingYaml: null
     }
   },
   created () {
@@ -255,11 +280,23 @@ export default {
       return {
         store: this.$store.getters.trackedItems
       }
+    },
+    yamlError () {
+      if (this.currentTab !== 'code') return null
+      try {
+        YAML.parse(this.ruleYaml, { prettyErrors: true })
+        return 'OK'
+      } catch (e) {
+        return e
+      }
     }
   },
   methods: {
     onPageAfterIn (event) {
       this.$store.dispatch('startTrackingStates')
+      if (window) {
+        window.addEventListener('keydown', this.keyDown)
+      }
       // When coming back from the channel add/edit page with a change, let the handler below take care of the reloading logic (the thing has to be saved first)
       if (!event.pageFrom || !event.pageFrom.name || event.pageFrom.name.indexOf('channel') < 0) {
         console.log('Loading')
@@ -270,6 +307,21 @@ export default {
     onPageBeforeOut (event) {
       this.$store.dispatch('stopTrackingStates')
       this.stopEventSource()
+      if (window) {
+        window.removeEventListener('keydown', this.keyDown)
+      }
+    },
+    switchTab (tab) {
+      if (this.currentTab === tab) return
+      if (this.currentTab === 'code') {
+        if (this.fromYaml()) {
+          this.save()
+        }
+      }
+      this.currentTab = tab
+      if (this.currentTab === 'code') {
+        this.toYaml()
+      }
     },
     load () {
       // if (this.ready) return
@@ -322,6 +374,13 @@ export default {
     },
     save (saveThing) {
       if (!this.ready) return
+
+      if (this.currentTab === 'code') {
+        if (!this.fromYaml()) {
+          return
+        }
+      }
+
       // if set dirty flag is set, assume the config has to be saved with PUT /rest/things/:thingId/config
       // otherwise (for example, channels or label) use the regular PUT /rest/thing/:thingId
       let endpoint, payload, successMessage
@@ -415,6 +474,22 @@ export default {
         }).open()
       })
     },
+    keyDown (ev) {
+      if (ev.ctrlKey || ev.metakKey) {
+        switch (ev.keyCode) {
+          case 68:
+            this.toggleDisabled()
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
+          case 83:
+            this.save()
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
+        }
+      }
+    },
     addChannel () {
       const self = this
       this.$f7router.navigate({
@@ -447,7 +522,6 @@ export default {
       })
     },
     addToModel (createEquipment) {
-      const self = this
       this.$f7router.navigate({
         url: 'add-to-model',
         route: {
@@ -562,6 +636,123 @@ export default {
       el.select()
       document.execCommand('copy')
       copyToast.open()
+    },
+    toYaml () {
+      const editableThing = {
+        UID: this.thing.UID,
+        label: this.thing.label,
+        thingTypeUID: this.thing.thingTypeUID,
+        configuration: this.thing.configuration
+      }
+
+      if (this.thing.bridgeUID) editableThing.bridgeUID = this.thing.bridgeUID
+      if (this.thing.location) editableThing.location = this.thing.location
+
+      const editableChannels = []
+
+      const isExtensible = (channel, thingType) => {
+        const bindingId = thingType.UID.split(':')[0]
+        return thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t).indexOf(channel.channelTypeUID) >= 0
+      }
+
+      for (const channel of this.thing.channels) {
+        if (isExtensible(channel, this.thingType)) {
+          console.debug(`Adding ${channel.uid} to code because it is extensible`)
+          const editableChannel = {
+            id: channel.id,
+            channelTypeUID: channel.channelTypeUID,
+            label: channel.label,
+            description: channel.description,
+            configuration: channel.configuration
+          }
+          editableChannels.push(editableChannel)
+        }
+      }
+
+      if (editableChannels.length > 0) editableThing.channels = editableChannels
+
+      this.thingYaml = YAML.stringify(editableThing)
+    },
+    fromYaml () {
+      const updatedThing = YAML.parse(this.thingYaml)
+      let dirty = false
+
+      const isExtensible = (channel, thingType) => {
+        if (!channel || !channel.channelTypeUID) return false
+        const bindingId = thingType.UID.split(':')[0]
+        return thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t).indexOf(channel.channelTypeUID) >= 0
+      }
+
+      try {
+        if (updatedThing.UID !== this.thing.UID) throw new Error('Changing the thing UID is not supported')
+        if (updatedThing.thingTypeUID !== this.thing.thingTypeUID) throw new Error('Changing the thing type is not supported')
+        if (updatedThing.label) { this.$set(this.thing, 'label', updatedThing.label); this.thingDirty = dirty = true }
+        if (updatedThing.location) { this.$set(this.thing, 'location', updatedThing.location); this.thingDirty = dirty = true }
+        if (updatedThing.bridgeUID) { this.$set(this.thing, 'bridgeUID', updatedThing.bridgeUID); this.thingDirty = dirty = true }
+
+        if (updatedThing.configuration && JSON.stringify(this.thing.configuration) !== JSON.stringify(updatedThing.configuration)) {
+          this.$set(this.thing, 'configuration', updatedThing.configuration)
+          this.dirty = dirty = true
+        }
+
+        if (updatedThing.channels && Array.isArray(updatedThing.channels)) {
+          for (const updatedChannel of updatedThing.channels) {
+            const existingChannel = this.thing.channels.find((c) => c.id === updatedChannel.id)
+            if (existingChannel) {
+              if (isExtensible(existingChannel, this.thingType)) {
+                if (existingChannel.channelTypeUID) this.$set(existingChannel, 'channelTypeUID', updatedChannel.channelTypeUID)
+                if (existingChannel.label) this.$set(existingChannel, 'label', updatedChannel.label)
+                if (existingChannel.description) this.$set(existingChannel, 'description', updatedChannel.description)
+              }
+              if (existingChannel.configuration && JSON.stringify(existingChannel.configuration) !== JSON.stringify(updatedChannel.configuration)) {
+                this.$set(existingChannel, 'configuration', updatedChannel.configuration)
+              }
+            } else {
+              if (!updatedChannel.id || !updatedChannel.label || !updatedChannel.channelTypeUID) continue
+              const channelType = this.channelTypes.find((ct) => ct.UID === updatedChannel.channelTypeUID)
+              if (!channelType) continue
+              const newChannel = {
+                id: updatedChannel.id,
+                label: updatedChannel.label,
+                description: updatedChannel.description || undefined,
+                uid: this.thing.UID + ':' + updatedChannel.id,
+                channelTypeUID: channelType.UID,
+                kind: channelType.kind,
+                itemType: channelType.itemType,
+                linkedItems: [],
+                properties: [],
+                defaultTags: [],
+                configuration: updatedChannel.configuration
+              }
+              if (!isExtensible(newChannel, this.thingType)) continue
+              this.thing.channels.push(newChannel)
+              this.thingDirty = dirty = true
+            }
+          }
+
+          // deleting channels which are not in the updated thing anymore - but only if they are extensible and no items are linked to it
+          let existingChannels = [...this.thing.channels]
+          for (let i = 0; i < existingChannels.length; i++) {
+            const existingChannel = existingChannels[i]
+            if (isExtensible(existingChannel, this.thingType)) {
+              const foundIdx = updatedThing.channels.findIndex((c) => c.id === existingChannel.id)
+              if (foundIdx < 0) {
+                if (existingChannel.linkedItems && existingChannel.linkedItems.length > 0) {
+                  this.$f7.dialog.alert(`Not removing channel ${existingChannel.id} because there are items linked to it`).open()
+                  continue
+                }
+                this.thing.channels.splice(this.thing.channels.findIndex((c) => c.id === existingChannel.id), 1)
+                this.thingDirty = dirty = true
+              }
+            }
+          }
+        }
+
+        return dirty
+      } catch (e) {
+        this.$f7.dialog.alert(e).open()
+        return false
+      }
     }
   }
 }

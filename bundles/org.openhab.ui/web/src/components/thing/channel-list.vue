@@ -14,7 +14,7 @@
         ></f7-searchbar>
       </f7-col>
     </f7-block>
-    <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
+    <div style="text-align:right" class="padding-right padding-bottom" v-if="hasAdvanced">
       <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox name="channel-advanced" :checked="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
     </div>
     <f7-col v-if="thing.channels.length > 0">

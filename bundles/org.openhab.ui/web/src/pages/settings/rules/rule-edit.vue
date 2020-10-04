@@ -24,10 +24,8 @@
               :text="rule.status.status"
               :color="ruleStatusBadgeColor(rule.status)"
             />
-            <div v-if="rule.status.statusDetail !== 'NONE' || rule.status.description">
-              <strong
-                v-if="rule.status.statusDetail !== 'NONE'"
-              >{{rule.status.statusDetail}}</strong>
+            <div>
+              <strong>{{(rule.status.statusDetail !== 'NONE') ? rule.status.statusDetail : '&nbsp;'}}</strong>
               <br>
               <div v-if="rule.status.description">{{rule.status.description}}</div>
             </div>
@@ -44,7 +42,25 @@
           </f7-col>
         </f7-block>
 
-        <f7-block v-if="ready" class="block-narrow">
+        <!-- skeletons -->
+        <f7-block v-if="!ready" class="block-narrow">
+          <f7-col class="skeleton-text skeleton-effect-blink">
+            <f7-list inline-labels no-hairlines-md>
+              <f7-list-input label="Unique ID" type="text" placeholder="Required" value="_______" required validate
+                            :disabled="true" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+                            @input="rule.uid = $event.target.value" :clear-button="createMode">
+              </f7-list-input>
+              <f7-list-input label="Name" type="text" placeholder="Required" required validate
+                            :disabled="true" @input="rule.name = $event.target.value" :clear-button="isEditable">
+              </f7-list-input>
+              <f7-list-input label="Description" type="text" value="__ _____ ___ __ ___"
+                            :disabled="true" @input="rule.description = $event.target.value" :clear-button="isEditable">
+              </f7-list-input>
+            </f7-list>
+          </f7-col>
+        </f7-block>
+
+        <f7-block v-else class="block-narrow">
           <f7-col>
             <f7-list inline-labels no-hairlines-md>
               <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" required validate
@@ -59,6 +75,7 @@
               </f7-list-input>
             </f7-list>
           </f7-col>
+
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left"><f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable because it has been provisioned from a file.</f7-block-footer>
           <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
             <div class="no-padding float-right">
@@ -67,7 +84,7 @@
             </div>
           </f7-col>
           <f7-col class="rule-modules" v-for="section in ['triggers', 'actions', 'conditions']" :key="section">
-            <f7-block-title v-if="isEditable || rule[section].length > 0">{{sectionLabels[section][0]}}</f7-block-title>
+            <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)" v-if="isEditable || rule[section].length > 0">{{sectionLabels[section][0]}}</f7-block-title>
             <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
               <f7-list-item media
                   :title="mod.label || suggestedModuleTitle(mod, null, section)"

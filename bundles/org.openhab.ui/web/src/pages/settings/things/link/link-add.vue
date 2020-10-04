@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Link Channel to Item" back-link="Cancel">
-      <f7-nav-right>
+      <f7-nav-right class="if-not-aurora">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Link</f7-link>
       </f7-nav-right>
@@ -81,7 +81,7 @@
           <f7-link external color="blue" target="_blank" href="https://www.openhab.org/docs/configuration/items.html#profiles">Learn more about profiles.</f7-link>
         </f7-block-footer>
         <f7-list>
-          <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="No Profile (Default)" name="profile-type" />
+          <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="(No Profile)" name="profile-type" />
           <f7-list-item radio v-for="profileType in profileTypes"
             :value="profileType.uid"
             @change="onProfileTypeChange(profileType.uid)"
@@ -97,6 +97,13 @@
           />
       </f7-col>
     </f7-block>
+
+    <div v-if="ready && profileTypes.length" class="if-aurora display-flex justify-content-center padding margin">
+      <div class="flex-shrink-0">
+        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save">Link</f7-button>
+      </div>
+    </div>
+
   </f7-page>
 </template>
 
