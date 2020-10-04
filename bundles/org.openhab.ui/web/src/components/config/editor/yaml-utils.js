@@ -49,3 +49,8 @@ export function isRuleSection (line) {
   if (!line) return false
   return line.match(/^(triggers|conditions|actions):/)
 }
+
+export function isChannelsSection (line) {
+  if (!line) return false
+  return line.match(/^channels:/)
+}

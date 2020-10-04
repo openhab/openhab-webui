@@ -88,6 +88,7 @@ import OpenhabDefs from '@/assets/openhab-tern-defs.json'
 
 import componentsHint from '../editor/hint-components'
 import rulesHint from '../editor/hint-rules'
+import thingsHint from '../editor/hint-things'
 
 // Adapted from https://github.com/lkcampbell/brackets-indent-guides (MIT)
 var indentGuidesOverlay = {
@@ -129,7 +130,7 @@ export default {
   components: {
     codemirror
   },
-  props: ['value', 'mode'],
+  props: ['value', 'mode', 'hintContext'],
   data () {
     return {
       code: this.value,
@@ -191,13 +192,17 @@ export default {
         }
         cm.state.$oh = this.$oh
         cm.state.originalMode = this.mode
+        if (this.hintContext) cm.state.hintContext = Object.assign({}, this.hintContext)
         cm.setOption('hintOptions', {
           closeOnUnfocus: false,
+          completeSingle: false,
           hint (cm, option) {
             if (self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
               return componentsHint(cm, option, self.mode)
             } else if (self.mode === 'application/vnd.openhab.rule') {
               return rulesHint(cm, option, self.mode)
+            } else if (self.mode === 'application/vnd.openhab.thing+yaml') {
+              return thingsHint(cm, option, self.mode)
             }
           }
         })

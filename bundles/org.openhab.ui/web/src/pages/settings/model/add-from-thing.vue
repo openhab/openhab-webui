@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Add Items from Thing" back-link="Back">
-      <f7-nav-right>
+      <f7-nav-right class="if-not-aurora">
         <f7-link @click="add()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="add()" v-if="!$theme.md">Add</f7-link>
       </f7-nav-right>
@@ -69,6 +69,13 @@
         </div>
       </f7-col>
     </f7-block>
+
+    <div v-if="ready && selectedThing.UID" class="if-aurora display-flex justify-content-center margin padding">
+      <div class="flex-shrink-0">
+        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="add">Add to Model</f7-button>
+      </div>
+    </div>
+
   </f7-page>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" name="channel-add">
     <f7-navbar title="Add Channel" back-link="Cancel">
-      <f7-nav-right>
+      <f7-nav-right class="if-not-aurora">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Done</f7-link>
       </f7-nav-right>
@@ -39,6 +39,13 @@
           />
       </f7-col>
     </f7-block>
+
+    <div v-if="ready && currentChannelType" class="if-aurora display-flex justify-content-center margin padding">
+      <div class="flex-shrink-0">
+        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save">Create</f7-button>
+      </div>
+    </div>
+
   </f7-page>
 </template>
 

@@ -208,11 +208,9 @@
 </style>
 
 <script>
-import ParameterLocation from '@/components/config/controls/parameter-location.vue'
-
 export default {
   components: {
-    ParameterLocation
+    'parameter-location': () => import('@/components/config/controls/parameter-location.vue')
   },
   data () {
     return {
