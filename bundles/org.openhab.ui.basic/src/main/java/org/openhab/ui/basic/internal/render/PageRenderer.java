@@ -242,6 +242,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
         pageSnippet = StringUtils.replace(pageSnippet, "%title%", "BasicUI");
         pageSnippet = StringUtils.replace(pageSnippet, "%htmlclass%",
                 config.getCssClassList() + " page-welcome-sitemaps");
+        pageSnippet = StringUtils.replace(pageSnippet, "%theme%", config.getTheme());
         pageSnippet = StringUtils.replace(pageSnippet, "%content%", listSnippet);
 
         return pageSnippet;
