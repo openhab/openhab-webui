@@ -105,7 +105,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
                 nbButtons = s.getMappings().size();
             }
         } catch (ItemNotFoundException e) {
-            logger.warn("Cannot determine item type of '{}'", w.getItem(), e);
+            logger.debug("Failed to retrieve item during widget rendering: {}", e.getMessage());
             snippetName = "switch";
         }
 
