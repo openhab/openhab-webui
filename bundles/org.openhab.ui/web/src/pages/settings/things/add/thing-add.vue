@@ -106,8 +106,6 @@ export default {
         return
       }
 
-      this.thing.UID = this.thingTypeId + ':' + this.thing.ID
-
       this.$oh.api.post('/rest/things', this.thing).then(() => {
         this.$f7.toast.create({
           text: 'Thing created',
