@@ -79,7 +79,7 @@ export default {
     },
     load () {
       this.$oh.api.get('/rest/addons').then(data => {
-        this.addons = data.filter(addon => !addon.installed && addon.type === this.addonType)
+        this.addons = data.filter(addon => !addon.installed && addon.type === this.addonType).sort((a,b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
         this.ready = true
         setTimeout(() => { this.initSearchbar = true })
         this.startEventSource()
