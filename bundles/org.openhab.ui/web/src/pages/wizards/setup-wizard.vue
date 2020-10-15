@@ -386,7 +386,7 @@ export default {
       }
     })
     this.$oh.api.get('/rest/addons').then((data) => {
-      this.addons = data
+      this.addons = data.sort((a,b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
       const self = this
       this.autocompleteAddons = this.$f7.autocomplete.create({
         openIn: 'popup',
