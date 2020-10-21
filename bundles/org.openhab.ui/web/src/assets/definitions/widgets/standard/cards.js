@@ -104,3 +104,9 @@ export const OhImageCardDefinition = () => new WidgetDefinition('oh-image-card',
   .paramGroup(CardParameterGroup(), CardParameters())
   .paramGroup(pg('image', 'Image'), ImageParameters())
   .paramGroup(actionGroup(null, 'Action to perform when the image is clicked'), actionParams())
+  
+// OhInputCard
+import InputParameters from '../system/input'
+export const OhInputCardDefinition = () => new WidgetDefinition('oh-input-card', 'Input Card', 'Display an input in a card')
+  .paramGroup(CardParameterGroup(), CardParameters())
+  .paramGroup(pg('input', 'Input'), InputParameters())

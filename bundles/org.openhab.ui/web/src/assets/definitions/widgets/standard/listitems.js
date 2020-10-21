@@ -64,7 +64,7 @@ export const OhRollershutterItemDefinition = () => new WidgetDefinition('oh-roll
 
 // OhSliderItem
 import SliderParameters from '../system/slider'
-export const OhSliderItemDefinition = () => new WidgetDefinition('oh-slider-item', 'Slider List Item', 'Display a slider in a Item to control an list')
+export const OhSliderItemDefinition = () => new WidgetDefinition('oh-slider-item', 'Slider List Item', 'Display a slider control an list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('slider', 'Slider'), SliderParameters())
 
@@ -76,6 +76,12 @@ export const OhStepperItemDefinition = () => new WidgetDefinition('oh-stepper-it
 
 // OhToggleItem
 import ToggleParameters from '../system/toggle'
-export const OhToggleItemDefinition = () => new WidgetDefinition('oh-toggle-item', 'Toggle List Item', 'Display a toggle switch in a list item')
+export const OhToggleItemDefinition = () => new WidgetDefinition('oh-toggle-item', 'Toggle List Item', 'Display a toggle switch in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('toggle', 'Toggle'), ToggleParameters())
+
+// OhInputItem
+import InputParameters from '../system/input'
+export const OhInputItemDefinition = () => new WidgetDefinition('oh-input-item', 'Input List Item', 'Display an input in a list')
+  .paramGroup(ListItemParameterGroup(), ListItemParameters())
+  .paramGroup(pg('input', 'Input'), InputParameters())
