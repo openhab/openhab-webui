@@ -82,8 +82,8 @@ export default {
       addonPopupOpened: false,
       currentlyUninstalling: [],
       addonsLabels: {
+        automation: 'automation add-ons',
         binding: 'bindings',
-        action: 'actions',
         persistence: 'persistence services',
         transformation: 'transformations',
         misc: 'miscellaneous add-ons',
@@ -91,8 +91,8 @@ export default {
         voice: 'voice services'
       },
       addonsIcons: {
+        automation: 'sparkles',
         binding: 'circle_grid_hex',
-        action: 'bolt_horizontal',
         persistence: 'download_circle',
         transformation: 'function',
         misc: 'rectangle_3_offgrid',
