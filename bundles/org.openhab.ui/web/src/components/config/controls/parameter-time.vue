@@ -33,7 +33,7 @@ export default {
       toolbar: false,
       inputReadOnly: false,
       rotateEffect: true,
-      value: (self.value && self.value.indexOf(':') >= 0) ? self.value.split(':') : ['0', '00'],
+      value: (self.value && self.value.indexOf(':') >= 0) ? self.value.split(':') : ['00', '00'],
       formatValue: function (values, displayValues) {
         return values[0] + ':' + values[1]
       },
@@ -42,7 +42,7 @@ export default {
         {
           values: (function () {
             var arr = []
-            for (var i = 0; i <= 23; i++) { arr.push(i) }
+            for (var i = 0; i <= 23; i++) { arr.push(i < 10 ? `0${i}` : i) }
             return arr
           })()
         },

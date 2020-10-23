@@ -2,8 +2,8 @@ import { pi, pb, pn, pd } from '../helpers'
 
 export default () => [
   pi('item', 'Item', 'Item to control'),
-  pn('min', 'Min', 'Minimum value'),
-  pn('max', 'Max', 'Maximum value'),
+  pd('min', 'Min', 'Minimum value'),
+  pd('max', 'Max', 'Maximum value'),
   pd('step', 'Step', 'Minimum interval between values'),
   pb('buttonsOnly', 'Buttons Only', 'Display the buttons without the value in the middle'),
   pb('small', 'Small', 'Smaller size'),
