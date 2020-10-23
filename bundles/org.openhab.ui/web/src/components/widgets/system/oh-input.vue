@@ -11,7 +11,7 @@
 </template>
 
 <style lang="stylus">
-.oh-input-with-confirm-button
+.oh-input-with-send-button
   .input-field
     padding-left 8px
     padding-right 8px
