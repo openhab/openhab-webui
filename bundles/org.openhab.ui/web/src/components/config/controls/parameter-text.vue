@@ -7,6 +7,7 @@
         :name="configDescription.name"
         :value="value"
         :autocomplete="autoCompleteOptions ? 'off' : ''"
+        :pattern="configDescription.pattern"
         :required="configDescription.required" validate
         :clear-button="!configDescription.required && configDescription.context !== 'password'"
         @input="updateValue"

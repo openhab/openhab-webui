@@ -17,7 +17,7 @@
 // import ScriptEditorPopup from './config/script-editor-popup.vue'
 import ParameterThing from './controls/parameter-thing.vue'
 import ParameterBoolean from './controls/parameter-boolean.vue'
-import ParameterInteger from './controls/parameter-integer.vue'
+import ParameterNumber from './controls/parameter-number.vue'
 import ParameterOptions from './controls/parameter-options.vue'
 import ParameterItem from './controls/parameter-item.vue'
 import ParameterScript from './controls/parameter-script.vue'
@@ -51,8 +51,8 @@ export default {
       const configDescription = this.configDescription
       if (configDescription.options && configDescription.options.length && configDescription.limitToOptions && !configDescription.context) {
         return ParameterOptions
-      } else if (configDescription.type === 'INTEGER') {
-        return ParameterInteger
+      } else if (configDescription.type === 'INTEGER' || configDescription.type === 'DECIMAL') {
+        return ParameterNumber
       } else if (configDescription.type === 'BOOLEAN') {
         return ParameterBoolean
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'script') {

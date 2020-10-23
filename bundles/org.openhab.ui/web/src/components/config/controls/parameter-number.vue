@@ -6,7 +6,7 @@
         :floating-label="$theme.md"
         :min="configDescription.min"
         :max="configDescription.max"
-        :step="configDescription.step"
+        :step="configDescription.step || (configDescription.type === 'DECIMAL') ? 0.01 : undefined"
         :value="actualValue"
         @input="updateValue"
         :required="configDescription.required" validate
@@ -20,12 +20,12 @@ export default {
   props: ['configDescription', 'value'],
   computed: {
     actualValue () {
-      return parseInt(this.value)
+      return (this.configDescription.type === 'DECIMAL') ? parseFloat(this.value) : parseInt(this.value)
     }
   },
   methods: {
     updateValue (event) {
-      const value = parseInt(event.target.value)
+      const value = (this.configDescription.type === 'DECIMAL') ? parseFloat(event.target.value) : parseInt(event.target.value)
       this.$emit('input', value)
     }
   }
