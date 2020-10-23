@@ -1,22 +1,23 @@
 <template>
-  <f7-row no-gap>
+  <f7-input v-if="!config.item || !config.sendButton" class="input-field" ref="input" v-bind="config" :value="value" @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated" />
+  <f7-row no-gap v-else class="oh-input-with-send-button">
     <f7-col width="90">
       <f7-input class="input-field" ref="input" v-bind="config" :value="value" @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated" />
     </f7-col>
     <f7-col width="10">
-      <f7-button class="ok-button" v-if="this.config.showOK" @click="clicked" small icon-material="done" icon-color="gray" />
+      <f7-button class="send-button" v-if="this.config.sendButton" @click="clicked" v-bind="config.sendButtonConfig || { iconMaterial: 'done', iconColor: 'gray' }" />
     </f7-col>
   </f7-row>
 </template>
 
 <style lang="stylus">
-.input-field
-  padding-left 8px
-  padding-right 8px
-  --f7-input-font-size 1rem
-.ok-button
-  --f7-button-padding-horizontal 0px
-
+.oh-input-with-confirm-button
+  .input-field
+    padding-left 8px
+    padding-right 8px
+    --f7-input-font-size 1rem
+  .send-button
+    --f7-button-padding-horizontal 0px
 </style>
 
 <script>
@@ -31,7 +32,7 @@ export default {
   },
   computed: {
     value () {
-       if (this.config.variable && this.context.vars[this.config.variable] !== undefined) {
+      if (this.config.variable && this.context.vars[this.config.variable] !== undefined) {
         return this.context.vars[this.config.variable]
       } else if (this.config.showOK && this.context.vars[this.config.value] !== undefined) {
         return this.context.vars[this.config.value]
