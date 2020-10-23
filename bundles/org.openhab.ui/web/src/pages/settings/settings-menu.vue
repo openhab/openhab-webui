@@ -69,7 +69,7 @@
               title="Rules"
               badge-color="blue"
               :footer="objectsSubtitles.rules">
-              <f7-icon slot="media" f7="wand_rays" color="gray"></f7-icon>
+              <f7-icon slot="media" f7="wand_stars" color="gray"></f7-icon>
             </f7-list-item>
             <f7-list-item
               v-if="$store.getters.apiEndpoint('rules')"
@@ -139,8 +139,8 @@ export default {
         schedule: 'View upcoming time-based rules'
       },
       addonsSubtitles: {
+        automation: 'Scripting languages and module types for rules',
         binding: 'Connect and control hardware and online services',
-        action: 'Predefined methods for rules and scripts',
         persistence: 'Backend connectors to store historical data',
         transformation: 'Translate between technical and human-readable values',
         misc: 'Integrations to external systems and more',
@@ -148,8 +148,8 @@ export default {
         voice: 'Convert between text and speech, interpret human language queries'
       },
       addonsIcons: {
+        automation: 'sparkles',
         binding: 'circle_grid_hex',
-        action: 'bolt_horizontal',
         persistence: 'download_circle',
         transformation: 'function',
         misc: 'rectangle_3_offgrid',
