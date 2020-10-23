@@ -37,6 +37,12 @@ export const OhLabelItemDefinition = () => new WidgetDefinition('oh-label-item',
     pi('item', 'Item', 'Item to display')
   ])
 
+// OhInputItem
+import InputParameters from '../system/input'
+export const OhInputItemDefinition = () => new WidgetDefinition('oh-input-item', 'Input List Item', 'Display an input field in a list')
+  .paramGroup(ListItemParameterGroup(), ListItemParameters())
+  .paramGroup(pg('input', 'Input'), InputParameters())
+
 // OhColorpickerItem
 import ColorPickerParameters from '../system/colorpicker'
 export const OhColorpickerItemDefinition = () => new WidgetDefinition('oh-colorpicker-item', 'Color Picker List Item', 'Display a color picker in a list')
@@ -64,7 +70,7 @@ export const OhRollershutterItemDefinition = () => new WidgetDefinition('oh-roll
 
 // OhSliderItem
 import SliderParameters from '../system/slider'
-export const OhSliderItemDefinition = () => new WidgetDefinition('oh-slider-item', 'Slider List Item', 'Display a slider in a Item to control an list')
+export const OhSliderItemDefinition = () => new WidgetDefinition('oh-slider-item', 'Slider List Item', 'Display a slider control in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('slider', 'Slider'), SliderParameters())
 
@@ -76,6 +82,6 @@ export const OhStepperItemDefinition = () => new WidgetDefinition('oh-stepper-it
 
 // OhToggleItem
 import ToggleParameters from '../system/toggle'
-export const OhToggleItemDefinition = () => new WidgetDefinition('oh-toggle-item', 'Toggle List Item', 'Display a toggle switch in a list item')
+export const OhToggleItemDefinition = () => new WidgetDefinition('oh-toggle-item', 'Toggle List Item', 'Display a toggle switch in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('toggle', 'Toggle'), ToggleParameters())

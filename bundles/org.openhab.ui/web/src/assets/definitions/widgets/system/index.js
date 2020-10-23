@@ -28,7 +28,7 @@ export const OhImageDefinition = () => new WidgetDefinition('oh-image', 'Image',
   .params(ImageParameters())
 
 import InputParameters from './input'
-export const OhInputDefinition = () => new WidgetDefinition('oh-input', 'Input', 'Displays an input field, used to set of variable')
+export const OhInputDefinition = () => new WidgetDefinition('oh-input', 'Input', 'Displays an input field, used to set a variable')
   .params(InputParameters())
 
 import KnobParameters from './knob'
