@@ -114,6 +114,10 @@
     <!-- <f7-view url="/panel-right/"></f7-view> -->
   </f7-panel>
 
+  <f7-panel v-if="showDeveloperSidebar" right :visible-breakpoint="1280" resizable>
+    <developer-sidebar />
+  </f7-panel>
+
   <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'"></f7-view>
 
   <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
@@ -227,13 +231,15 @@
 import cordovaApp from '../js/cordova-app.js'
 import routes from '../js/routes.js'
 import PanelRight from '../pages/panel-right.vue'
+import DeveloperSidebar from './developer/developer-sidebar.vue'
 
 import auth from './auth-mixin.js'
 
 export default {
   mixins: [auth],
   components: {
-    PanelRight
+    PanelRight,
+    DeveloperSidebar
   },
   data () {
     let theme = localStorage.getItem('openhab.ui:theme')
@@ -272,7 +278,8 @@ export default {
         },
         // Enable panel left visibility breakpoint
         panel: {
-          leftBreakpoint: 960
+          leftBreakpoint: 960,
+          rightBreakpoint: 1280
         },
 
         // Register service worker
@@ -325,6 +332,7 @@ export default {
 
       showSettingsSubmenu: false,
       showDeveloperSubmenu: false,
+      showDeveloperSidebar: false,
       currentUrl: ''
     }
   },
@@ -438,6 +446,20 @@ export default {
       } else {
         this.$$('html').removeClass('theme-dark')
       }
+    },
+    toggleDeveloperSidebar () {
+      if (!this.$store.getters.isAdmin) return
+      this.showDeveloperSidebar = !this.showDeveloperSidebar
+      this.$store.commit('keepConnectionOpen', this.showDeveloperSidebar)
+      if (this.showDeveloperSidebar) this.$store.dispatch('startTrackingStates')
+      this.$store.commit('setDeveloperSidebar', this.showDeveloperSidebar)
+    },
+    keyDown (ev) {
+      if (ev.keyCode === 68 && ev.shiftKey && ev.altKey) {
+        this.toggleDeveloperSidebar()
+        ev.stopPropagation()
+        ev.preventDefault()
+      }
     }
   },
   created () {
@@ -515,6 +537,14 @@ export default {
       this.$f7.on('darkThemeChange', () => {
         this.updateThemeOptions()
       })
+
+      this.$f7.on('toggleDeveloperSidebar', () => {
+        this.toggleDeveloperSidebar()
+      })
+
+      if (window) {
+        window.addEventListener('keydown', this.keyDown)
+      }
     })
   }
 }
