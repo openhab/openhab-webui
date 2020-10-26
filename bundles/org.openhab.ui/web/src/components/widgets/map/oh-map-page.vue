@@ -88,8 +88,13 @@ export default {
       }
     },
     onMarkerUpdate () {
-      this.$refs.map.mapObject.fitBounds(this.$refs.featureGroup.mapObject.getBounds().pad(0.5))
-      this.$refs.map.mapObject.invalidateSize()
+      this.$nextTick(() => {
+        const bounds = this.$refs.featureGroup.mapObject.getBounds()
+        if (bounds.isValid()) {
+          this.$refs.map.mapObject.fitBounds(bounds.pad(0.5))
+          this.$refs.map.mapObject.invalidateSize()
+        }
+      })
     }
   }
 }

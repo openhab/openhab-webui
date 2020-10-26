@@ -1,5 +1,5 @@
 <template>
-  <l-marker ref="marker" v-if="coords" :key="markerKey" :lat-lng="coords" @update:latLng="$emit('update', $event)" @click="performAction">
+  <l-marker ref="marker" v-if="coords" :key="markerKey" :lat-lng="coords" @click="performAction">
     <l-tooltip v-if="config.label">
       {{config.label}}
     </l-tooltip>
@@ -59,8 +59,12 @@ export default {
       return null
     }
   },
-  mounted () {
-    this.$emit('update', this.coords)
+  watch: {
+    coords (val) {
+      if (val) {
+        this.$emit('update', val)
+      }
+    }
   }
 }
 </script>
