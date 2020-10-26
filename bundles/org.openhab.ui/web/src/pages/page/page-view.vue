@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" hide-bars-on-scroll>
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" hide-bars-on-scroll :style="pageStyle">
     <f7-navbar :back-link="(showBackButton) ? 'Back' : undefined">
       <f7-nav-left v-if="!showBackButton">
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
@@ -53,6 +53,12 @@ export default {
     }
   },
   computed: {
+    pageStyle () {
+      if (!this.context) return null
+      const pageComponent = (this.pageType === 'tabs') ? this.tabContext(this.context.component.slots.default[this.currentTab].component) : this.context.component
+      if (!pageComponent || !pageComponent.config || !pageComponent.config.style) return null
+      return pageComponent.config.style
+    },
     context () {
       return {
         component: this.page,
