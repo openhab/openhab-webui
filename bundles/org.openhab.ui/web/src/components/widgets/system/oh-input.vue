@@ -58,6 +58,7 @@ export default {
     updated (value) {
       if (this.config.type === 'texteditor') {
         value = this.$$(this.$refs.input.$el).find('.text-editor-content')[0].innerHTML
+        if (value === this.value) return
       }
       if (this.config.type === 'datepicker' && Array.isArray(value) && this.valueForDatepicker[0].getTime() === value[0].getTime()) return
       if (this.config.sendButton) {
