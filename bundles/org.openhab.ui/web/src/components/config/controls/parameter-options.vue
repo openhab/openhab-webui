@@ -2,7 +2,7 @@
   <ul v-if="!inlineList">
       <f7-list-item
          :title="configDescription.label" smart-select :smart-select-params="smartSelectParams" ref="item">
-        <select :name="configDescription.name" @change="updateValue" :multiple="configDescription.multiple">
+        <select :name="configDescription.name" @change="updateValue" :multiple="configDescription.multiple" :required="configDescription.required">
           <option v-if="!configDescription.required && !configDescription.multiple" :value="undefined" :selected="value === null || value === undefined"></option>
           <option v-for="option in configDescription.options" :value="option.value" :key="option.value" :selected="isSelected(option)">{{option.label}}</option>
         </select>
@@ -65,6 +65,7 @@ export default {
   },
   methods: {
     updateValue (evt) {
+      this.$f7.input.validateInputs(this.$refs.item.$el)
       let value = (this.inlineList) ? evt : this.$refs.item.f7SmartSelect.getValue()
       if (!this.configDescription.multiple && this.configDescription.type === 'INTEGER') {
         value = parseInt(value)

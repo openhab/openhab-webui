@@ -1,8 +1,8 @@
 <template>
 <ul>
   <f7-list-item :title="title || 'Rule'" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect">
-    <select :name="name" :multiple="multiple" @change="select">
-      <option value=""></option>
+    <select :name="name" :multiple="multiple" @change="select" :required="required">
+      <option v-if="!multiple" value=""></option>
       <option v-for="rule in rules" :value="rule.uid" :key="rule.uid" :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid">
         {{rule.name}}
       </option>
@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  props: ['title', 'name', 'value', 'multiple'],
+  props: ['title', 'name', 'value', 'multiple', 'required'],
   data () {
     return {
       ready: false,
@@ -44,6 +44,7 @@ export default {
   },
   methods: {
     select (e) {
+      this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
       const value = this.$refs.smartSelect.f7SmartSelect.getValue()
       this.$emit('input', value)
     }

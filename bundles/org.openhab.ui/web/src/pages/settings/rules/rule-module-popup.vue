@@ -8,7 +8,7 @@
         <f7-nav-title v-if="ruleModule && ruleModule.new">{{sectionLabels[currentSection][1]}}</f7-nav-title>
         <f7-nav-title v-else>Edit module</f7-nav-title>
         <f7-nav-right>
-          <f7-link v-show="currentRuleModuleType" @click="updateModuleConfig" class="popup-close">Done</f7-link>
+          <f7-link v-show="currentRuleModuleType" @click="updateModuleConfig">Done</f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-block v-if="ruleModule" class="no-margin no-padding">
@@ -51,6 +51,7 @@
         <f7-block-title v-if="ruleModule && currentRuleModuleType" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">Configuration</f7-block-title>
         <f7-col v-if="ruleModule && currentRuleModuleType">
           <config-sheet :key="currentSection + ruleModule.id"
+            ref="parameters"
             :parameterGroups="[]"
             :parameters="currentRuleModuleType.configDescriptions"
             :configuration="ruleModule.configuration"
@@ -94,7 +95,12 @@ export default {
       this.$f7.emit('ruleModuleConfigClosed')
     },
     updateModuleConfig () {
+      if (!this.$refs.parameters.isValid()) {
+        this.$f7.dialog.alert('Please review the configuration and correct validation errors')
+        return
+      }
       this.$f7.emit('ruleModuleConfigUpdate', this.ruleModule)
+      this.$refs.modulePopup.close()
     },
     groupedModuleTypes (section) {
       const moduleTypes = this.moduleTypes[section].filter((t) => t.visibility === 'VISIBLE')

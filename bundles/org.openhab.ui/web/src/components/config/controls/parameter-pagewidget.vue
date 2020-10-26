@@ -2,7 +2,7 @@
   <ul>
       <f7-list-item
          :title="configDescription.label" smart-select :smart-select-params="smartSelectParams" ref="item">
-        <select :name="configDescription.name" @change="updateValue" :multiple="configDescription.multiple">
+        <select :name="configDescription.name" @change="updateValue" :multiple="configDescription.multiple" :required="configDescription.required">
           <option v-if="!configDescription.required" :value="undefined" :selected="value === null || value === undefined"></option>
           <optgroup v-if="configDescription.context.indexOf('page') >= 0" label="Pages">
             <option v-for="option in $store.getters.pages" :value="'page:' + option.uid" :key="option.uid" :selected="isSelected(option, 'page')">{{option.config.label}}</option>
@@ -35,6 +35,7 @@ export default {
   },
   methods: {
     updateValue (event) {
+      this.$f7.input.validateInputs(this.$refs.item.$el)
       let value = this.$refs.item.f7SmartSelect.getValue()
       if (!this.configDescription.multiple && this.configDescription.type === 'INTEGER') {
         value = parseInt(value)
