@@ -10,7 +10,8 @@ export const ListItemParameters = () => [
   pt('subtitle', 'Subtitle', 'Subtitle of the item'),
   pt('after', 'After', 'Text to display on the opposite side of the item (set either this or a badge)').a(),
   pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/configuration/iconsets/classic/">openHAB icon</a>) or <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'),
-  pt('iconColor', 'Icon Color', 'Not applicable to openHAB icons').a()
+  pt('iconColor', 'Icon Color', 'Not applicable to openHAB icons').a(),
+  pb('iconUseState', 'Icon depends on state', 'Use the state of the item to get a dynamic icon (for openHAB icons only)').a()
 ]
 
 // OhListItem

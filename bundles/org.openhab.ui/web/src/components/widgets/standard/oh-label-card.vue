@@ -7,7 +7,7 @@
       <oh-trend v-if="config.trendItem" :key="'trend' + config.item" class="trend" :width="($refs.cardContent) ? $refs.cardContent.$el.clientWidth : 0" :context="context" />
       <f7-list>
         <f7-list-item :link="config.action ? true : false" no-chevron>
-          <oh-icon slot="media" v-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" :height="config.iconSize || 32" :width="config.iconSize || 32" />
+          <oh-icon slot="media" v-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" :height="config.iconSize || 32" :width="config.iconSize || 32" :state="(config.item && config.iconUseState) ? context.store[config.item].state : null" />
           <f7-icon slot="media" v-else-if="config.icon" :ios="config.icon" :md="config.icon" :aurora="config.icon" :size="config.iconSize || 32" :color="config.iconColor" />
           <div :class="config.class">
             <span :style="{ 'font-size': config.fontSize || '24px', 'font-weight': config.fontWeight || 'normal' }">
