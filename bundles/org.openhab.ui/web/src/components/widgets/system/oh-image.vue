@@ -22,6 +22,12 @@ export default {
     }
   },
   watch: {
+    url (val) {
+      this.src = this.$oh.media.getImage(val)
+    },
+    src (val) {
+      if (this.config.lazy) this.$nextTick(() => { this.$f7.lazy.loadImage(this.$refs.lazyImage) })
+    },
     itemState (value) {
       if (value) {
         this.loadItemImage()
@@ -29,6 +35,9 @@ export default {
     }
   },
   computed: {
+    url () {
+      return this.config.url
+    },
     itemState () {
       if (this.config.item) return this.$utils.id() + '|' + this.context.store[this.config.item].state
       return null
@@ -39,7 +48,6 @@ export default {
       this.loadItemImage()
     } else {
       this.src = this.$oh.media.getImage(this.config.url)
-      if (this.config.lazy) this.$nextTick(() => { this.$f7.lazy.loadImage(this.$refs.lazyImage) })
     }
   },
   methods: {
