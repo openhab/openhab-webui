@@ -36,8 +36,10 @@ export default {
         return this.context.vars[this.config.variable]
       } else if (this.config.sendButton && this.pendingUpdate !== null) {
         return this.pendingUpdate
+      } else if (this.config.item && this.context.store[this.config.item].state !== 'NULL' && this.context.store[this.config.item].state !== 'UNDEF') {
+        return this.context.store[this.config.item].state
       }
-      return (this.config.item) ? this.context.store[this.config.item].state : this.config.defaultValue
+      return this.config.defaultValue
     },
     valueForDatepicker () {
       const value = this.value
