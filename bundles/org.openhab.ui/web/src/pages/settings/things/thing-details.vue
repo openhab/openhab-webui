@@ -1,22 +1,22 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
     <f7-navbar :title="thing.label" back-link="Back" no-hairline>
-      <f7-nav-right>
+      <f7-nav-right v-show="!error">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="switchTab('thing')" :tab-link-active="currentTab === 'thing'" class="tab-link">Thing</f7-link>
-      <f7-link @click="switchTab('channels')" :tab-link-active="currentTab === 'channels'" class="tab-link">Channels</f7-link>
-      <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
+      <f7-link @click="switchTab('channels')" :tab-link-active="currentTab === 'channels'" v-show="!error" class="tab-link">Channels</f7-link>
+      <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" v-show="!error" class="tab-link">Code</f7-link>
     </f7-toolbar>
 
     <f7-tabs>
       <f7-tab id="thing" @tab:show="() => this.currentTab = 'thing'" :tab-active="currentTab === 'thing'">
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow padding-left padding-right" strong>
           <f7-col>
-            <div class="float-right align-items-flex-start align-items-center">
+            <div v-show="!error" class="float-right align-items-flex-start align-items-center">
               <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
             </div>
             Status:
@@ -42,7 +42,7 @@
           </f7-col>
         </f7-block>
 
-        <f7-block v-if="ready" class="block-narrow">
+        <f7-block v-if="ready && !error" class="block-narrow">
           <f7-col>
             <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" :ready="true" />
             <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">Information</f7-block-title>
@@ -78,7 +78,7 @@
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
-        <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink">
+        <f7-block v-else-if="!error" class="block-narrow skeleton-text skeleton-effect-blink">
           <f7-col>
             <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" :ready="false" />
             <f7-block-title medium>____ _______</f7-block-title>
@@ -86,7 +86,7 @@
           </f7-col>
         </f7-block>
 
-        <f7-block class="block-narrow" v-if="ready && thingType && thingType.UID.indexOf('zwave') === 0">
+        <f7-block class="block-narrow" v-if="ready && !error && thingType && thingType.UID.indexOf('zwave') === 0">
           <f7-col>
             <f7-block-title>Z-Wave</f7-block-title>
             <f7-list>
@@ -245,6 +245,7 @@ export default {
     return {
       ready: false,
       loading: false,
+      error: false,
       dirty: false,
       thingDirty: false,
       currentTab: 'thing',
@@ -369,6 +370,10 @@ export default {
           this.$oh.api.get('/rest/things/' + this.thingId + '/config/status').then(statusData => {
             this.configStatusInfo = statusData
           })
+        }).catch((err) => {
+          console.warn('Cannot load the related info: ' + err)
+          this.error = true
+          this.ready = true
         })
       })
     },
