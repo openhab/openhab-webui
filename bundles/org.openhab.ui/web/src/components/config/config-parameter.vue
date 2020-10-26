@@ -116,4 +116,16 @@ export default {
       color var(--f7-block-title-text-color) !important
 .smart-select-popover.popover
   --f7-popover-width 320px
+.config-parameter
+  .smart-select
+    .input-invalid + .item-input-error-message
+      display block
+      max-width 80%
+      overflow hidden
+      text-overflow ellipsis
+      position relative
+      display block
+      white-space nowrap
+      margin-top 0
+      margin-bottom 0
 </style>
