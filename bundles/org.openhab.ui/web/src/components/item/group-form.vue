@@ -3,10 +3,15 @@
     <f7-list inline-labels no-hairlines-md>
       <f7-list-item v-if="item.type === 'Group'" title="Members Base Type" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
         <select name="select-basetype" @change="setGroupType($event.target.value)">
-          <option v-for="type in types.GroupTypes" :key="type" :value="type" :selected="type === item.groupType">{{type}}</option>
+          <optgroup label="Basic Types">
+            <option v-for="type in types.GroupTypes" :key="type" :value="type" :selected="type === item.groupType">{{type}}</option>
+          </optgroup>
+          <optgroup label="Numbers with Dimensions">
+            <option v-for="dimension in types.Dimensions" :key="dimension" :value="'Number:' + dimension" :selected="item.groupType === 'Number:' + dimension">{{'Number:' + dimension}}</option>
+          </optgroup>
         </select>
       </f7-list-item>
-      <f7-list-item key="function-picker-arithmetic" v-if="item.type === 'Group' && ['Number', 'Dimmer', 'Rollershutter'].indexOf(item.groupType) >= 0" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
+      <f7-list-item key="function-picker-arithmetic" v-if="item.type === 'Group' && (['Dimmer', 'Rollershutter'].indexOf(item.groupType) >= 0 || item.groupType.indexOf('Number') === 0)" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
         <select name="select-function" @change="setFunction($event.target.value)">
           <option v-for="type in types.ArithmeticFunctions" :key="type.name" :value="type.name" :selected="type.name === item.functionKey">{{type.value}}</option>
         </select>
@@ -55,7 +60,7 @@ export default {
       this.$set(this.item, 'groupType', '')
       this.$set(this.item, 'functionKey', 'None')
       this.$nextTick(() => {
-        this.$set(this.item, 'groupType', type)
+        if (type !== 'None') this.$set(this.item, 'groupType', type)
       })
     },
     setFunction (key) {
