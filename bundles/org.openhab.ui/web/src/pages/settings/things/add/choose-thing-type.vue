@@ -17,7 +17,7 @@
       <f7-col>
         <div v-if="discoverySupported" class="display-flex justify-content-center">
           <div class="flex-shrink-0">
-            <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill :disabled="scanning" @click="scan">{{(scanning) ? 'Scanning...' : 'Scan Again'}}</f7-button>
+            <f7-button class="padding-left padding-right" style="width: 150px" :color="(scanning) ? 'red' : 'blue'" large raised fill @click="scan">{{(scanning) ? 'Stop Scanning' : 'Scan'}}</f7-button>
           </div>
         </div>
         <p class="margin-left margin-right" style="height: 30px" id="scan-progress"></p>
@@ -89,7 +89,8 @@ export default {
       scanResults: [],
       scanTimeout: 0,
       scanProgress: 0,
-      intervalId: 0
+      intervalId: 0,
+      scanTimeoutId: 0
     }
   },
   created () {
@@ -118,12 +119,25 @@ export default {
         this.$oh.api.get('/rest/discovery').then((data) => {
           if (data.indexOf(this.bindingId) >= 0) {
             this.discoverySupported = true
-            this.scan()
+            // this.scan()
           }
         })
       })
     },
+    finishScanning () {
+      this.scanning = false
+      if (this.intervalId) clearInterval(this.intervalId)
+      if (this.scanTimeoutId) clearTimeout(this.scanTimeoutId)
+      this.intervalId = 0
+      this.scanTimeoutId = 0
+      this.$f7.progressbar.hide('#scan-progress')
+      this.loadInbox()
+    },
     scan () {
+      if (this.scanning) {
+        this.finishScanning()
+        return
+      }
       this.scanning = true
       this.$oh.api.postPlain('/rest/discovery/bindings/' + this.bindingId + '/scan', null, 'text/plain', 'text/plain').then((data) => {
         try {
@@ -135,13 +149,7 @@ export default {
             this.$f7.progressbar.set(progressBarEl, this.scanProgress * 100 / this.scanTimeout)
             this.loadInbox()
           }, 1000)
-          setTimeout(() => {
-            this.scanning = false
-            clearInterval(this.intervalId)
-            this.intervalId = 0
-            this.$f7.progressbar.hide(progressBarEl)
-            this.loadInbox()
-          }, this.scanTimeout * 1000)
+          this.scanTimeoutId = setTimeout(this.finishScanning, this.scanTimeout * 1000)
         } catch (e) {
           this.scanning = false
         }
