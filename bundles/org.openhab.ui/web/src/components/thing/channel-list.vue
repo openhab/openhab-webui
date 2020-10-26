@@ -3,6 +3,7 @@
     <f7-block v-show="thing.channels.length > 0">
       <f7-col>
         <f7-searchbar
+          ref="searchbar"
           :disable-button="false"
           inline
           disable-link-text="Cancel"
@@ -22,9 +23,9 @@
         <f7-row class="searchbar-ignore">
           <f7-col class="padding-left padding-right searchbar-ignore">
             <f7-segmented class="searchbar-ignore" strong tag="p">
-              <f7-button class="searchbar-ignore" @click="showLinked = undefined" small :active="showLinked === undefined" text="All"></f7-button>
-              <f7-button class="searchbar-ignore" @click="showLinked = true" small :active="showLinked === true" text="Linked"></f7-button>
-              <f7-button class="searchbar-ignore" @click="showLinked = false" small :active="showLinked === false" text="Unlinked"></f7-button>
+              <f7-button class="searchbar-ignore" @click="toggleLinkFilter(undefined)" small :active="showLinked === undefined" text="All"></f7-button>
+              <f7-button class="searchbar-ignore" @click="toggleLinkFilter(true)" small :active="showLinked === true" text="Linked"></f7-button>
+              <f7-button class="searchbar-ignore" @click="toggleLinkFilter(false)" small :active="showLinked === false" text="Unlinked"></f7-button>
             </f7-segmented>
           </f7-col>
         </f7-row>
@@ -146,6 +147,13 @@ export default {
   methods: {
     toggleAdvanced (event) {
       this.showAdvanced = !this.showAdvanced // event.target.checked
+    },
+    toggleLinkFilter (val) {
+      this.showLinked = val
+      const searchbar = this.$refs.searchbar.$el.f7Searchbar
+      const filterQuery = searchbar.query
+      searchbar.clear()
+      if (filterQuery) this.$nextTick(() => { searchbar.search(filterQuery) })
     },
     selectChannel (channel, channelType) {
       if (this.pickerMode) {
