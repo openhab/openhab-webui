@@ -386,7 +386,7 @@ export default {
       }
     })
     this.$oh.api.get('/rest/addons').then((data) => {
-      this.addons = data.sort((a,b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+      this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
       const self = this
       this.autocompleteAddons = this.$f7.autocomplete.create({
         openIn: 'popup',
@@ -399,7 +399,7 @@ export default {
           if (query.length === 0) {
             render(self.addons.filter((a) => !a.installed).map((a) => a.label))
           } else {
-            render(self.addons.filter((a) => !a.installed && (a.label.indexOf(query) >= 0 || a.id.indexOf(query) >= 0)).map((a) => a.label))
+            render(self.addons.filter((a) => !a.installed && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.id.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map((a) => a.label))
           }
         },
         on: {
