@@ -42,7 +42,7 @@
         :context="childContext(context.component.slots.accordion[0])" v-on="$listeners" />
       <!-- <oh-placeholder-widget v-else-if="context.editmode" class="oh-column-item placeholder" @click="context.editmode.addWidget(context.component, null, context.parent, 'accordion')" /> -->
     </f7-accordion-content>
-    <oh-icon slot="media" v-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" height="32" width="32" />
+    <oh-icon slot="media" v-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" height="32" width="32" :state="(config.item && config.iconUseState) ? context.store[config.item].state : null" />
     <f7-icon slot="media" v-else-if="config.icon" :ios="config.icon" :md="config.icon" :aurora="config.icon" :size="32" :color="config.iconColor" />
     <span slot="media" v-else-if="config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList" class="item-initial">{{config.title[0].toUpperCase()}}</span>
   </f7-list-item>

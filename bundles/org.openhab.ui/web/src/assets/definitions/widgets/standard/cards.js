@@ -25,8 +25,9 @@ export const OhLabelCardDefinition = () => new WidgetDefinition('oh-label-card',
     pt('fontSize', 'Font Size', 'Font size (e.g. "34px")'),
     pt('fontWeight', 'Font Weight', 'Font weight (e.g. "normal" or "bold")'),
     pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/configuration/iconsets/classic/">openHAB icon</a>) or <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'),
-    pt('iconColor', 'Icon Color', 'Not applicable to openHAB icons'),
-    pn('iconSize', 'Icon Size', 'Size of the icon in px'),
+    pt('iconColor', 'Icon Color', 'Not applicable to openHAB icons').a(),
+    pn('iconSize', 'Icon Size', 'Size of the icon in px').a(),
+    pb('iconUseState', 'Icon depends on state', 'Use the state of the item to get a dynamic icon (for openHAB icons only)').a(),
     pb('vertical', 'Vertical arrangement', 'Display label below icon')
   ])
   .paramGroup(pg('trend', 'Trend Line', 'Show a trend line in the background'), TrendParameters())
