@@ -13,8 +13,11 @@
 </template>
 
 <style lang="stylus">
-.input-card-content .input-field
-  font-size 1.2rem
+
+.input-card-content
+  width calc(100% - 2*var(--f7-card-content-padding)) !important
+  .input-field
+    font-size 1.2rem
 </style>
 
 <script>
