@@ -1,6 +1,6 @@
 <template>
   <f7-popup>
-    <f7-page>
+    <f7-page :style="modalStyle">
       <f7-navbar :title="(context.component.config && context.component.config.label) ? context.component.config.label : ''" back-link="Back">
       </f7-navbar>
 

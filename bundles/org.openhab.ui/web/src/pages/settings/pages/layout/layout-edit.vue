@@ -228,15 +228,17 @@ export default {
     },
     toYaml () {
       this.pageYaml = YAML.stringify({
+        config: this.page.config,
         blocks: this.page.slots.default,
         masonry: this.page.slots.masonry
       })
     },
     fromYaml () {
       try {
-        const updatedSlots = YAML.parse(this.pageYaml)
-        this.$set(this.page.slots, 'default', updatedSlots.blocks)
-        this.$set(this.page.slots, 'masonry', updatedSlots.masonry)
+        const updatedPage = YAML.parse(this.pageYaml)
+        this.$set(this.page, 'config', updatedPage.config)
+        this.$set(this.page.slots, 'default', updatedPage.blocks)
+        this.$set(this.page.slots, 'masonry', updatedPage.masonry)
         this.forceUpdate()
         return true
       } catch (e) {

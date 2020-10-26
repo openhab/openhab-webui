@@ -184,13 +184,15 @@ export default {
     },
     toYaml () {
       this.pageYaml = YAML.stringify({
+        config: this.page.config,
         markers: this.page.slots.default
       })
     },
     fromYaml () {
       try {
-        const updatedMarkers = YAML.parse(this.pageYaml)
-        this.$set(this.page.slots, 'default', updatedMarkers.markers)
+        const updatedPage = YAML.parse(this.pageYaml)
+        this.$set(this.page, 'config', updatedPage.config)
+        this.$set(this.page.slots, 'default', updatedPage.markers)
         this.forceUpdate()
         return true
       } catch (e) {
