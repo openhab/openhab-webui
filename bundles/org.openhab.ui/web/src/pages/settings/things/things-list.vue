@@ -57,9 +57,8 @@
               :link="thing.UID"
               :title="thing.label"
               :footer="thing.UID"
-              :badge="thingStatusBadgeText(thing.statusInfo)"
-              :badge-color="thingStatusBadgeColor(thing.statusInfo)"
             >
+              <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">{{thingStatusBadgeText(thing.statusInfo)}}</f7-badge>
               <f7-icon v-if="!thing.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
             </f7-list-item>
           </f7-list-group>
@@ -160,7 +159,6 @@ export default {
     },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/things/*/added,openhab/things/*/removed,openhab/things/*/updated,openhab/things/*/status,openhab/inbox/*', null, (event) => {
-        console.log(event)
         const topicParts = event.topic.split('/')
         if (topicParts[1] === 'inbox') {
           this.loadInbox()
@@ -168,8 +166,11 @@ export default {
           switch (topicParts[3]) {
             case 'status':
               const updatedThing = this.things.find((t) => t.UID === topicParts[2])
+              const newStatus = JSON.parse(event.payload)
               if (updatedThing) {
-                this.$set(updatedThing, 'statusInfo', JSON.parse(event.payload))
+                if (updatedThing.statusInfo.status !== newStatus.status) updatedThing.statusInfo.status = newStatus.status
+                if (updatedThing.statusInfo.statusDetail !== newStatus.statusDetail) updatedThing.statusInfo.statusDetail = newStatus.statusDetail
+                if (updatedThing.statusInfo.description !== newStatus.description) updatedThing.statusInfo.description = newStatus.description
               }
               break
             case 'added':
