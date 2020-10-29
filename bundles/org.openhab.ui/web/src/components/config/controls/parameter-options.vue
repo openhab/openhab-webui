@@ -65,7 +65,6 @@ export default {
   },
   methods: {
     updateValue (evt) {
-      this.$f7.input.validateInputs(this.$refs.item.$el)
       let value = (this.inlineList) ? evt : this.$refs.item.f7SmartSelect.getValue()
       if (!this.configDescription.multiple && this.configDescription.type === 'INTEGER') {
         value = parseInt(value)
