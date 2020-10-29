@@ -231,6 +231,58 @@ export default [
                   }
                 } : {})
               })
+            },
+            routes: [
+              {
+                path: 'script/:moduleId',
+                async (routeTo, routeFrom, resolve, reject) {
+                  // dynamic import component; returns promise
+                  const ruleEditComponent = () => import(/* webpackChunkName: "rule-script-edit" */ '../pages/settings/rules/script/script-edit.vue')
+                  // resolve promise
+                  ruleEditComponent().then((vc) => {
+                    // resolve with component
+                    resolve({
+                      component: vc.default
+                    },
+                    (routeTo.params.ruleId === 'add') ? {
+                      props: {
+                        createMode: true
+                      }
+                    } : {})
+                  })
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        path: 'scripts/',
+        component: RulesListPage,
+        keepAlive: true,
+        options: {
+          props: {
+            showScripts: true
+          }
+        },
+        routes: [
+          {
+            path: ':ruleId',
+            async (routeTo, routeFrom, resolve, reject) {
+              // dynamic import component; returns promise
+              const ruleEditComponent = () => import(/* webpackChunkName: "script-edit" */ '../pages/settings/rules/script/script-edit.vue')
+              // resolve promise
+              ruleEditComponent().then((vc) => {
+                // resolve with component
+                resolve({
+                  component: vc.default
+                },
+                (routeTo.params.ruleId === 'add') ? {
+                  props: {
+                    createMode: true
+                  }
+                } : {})
+              })
             }
           }
         ]
@@ -286,7 +338,6 @@ export default [
             path: ':bindingId/config',
             component: AddonsConfigureBindingPage
           }
-
         ]
       },
       {
