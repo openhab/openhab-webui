@@ -14,6 +14,7 @@ package org.openhab.ui.habot.nlp.internal;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.ResourceBundle;
 
@@ -50,8 +51,8 @@ public class AnswerFormatter {
         String answer = alternatives[random.nextInt(alternatives.length)].trim();
 
         if (placeholderValues != null) {
-            for (String placeholder : placeholderValues.keySet()) {
-                answer = answer.replace("{" + placeholder + "}", placeholderValues.get(placeholder));
+            for (Entry<String, String> entry : placeholderValues.entrySet()) {
+                answer = answer.replace("{" + entry.getKey() + "}", entry.getValue());
             }
         }
 

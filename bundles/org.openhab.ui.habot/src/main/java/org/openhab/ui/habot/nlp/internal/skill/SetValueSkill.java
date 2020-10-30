@@ -69,10 +69,12 @@ public class SetValueSkill extends AbstractItemIntentInterpreter {
         } else {
             interpretation.setMatchedItems(matchedItems);
 
-            if (intent.getEntities().containsKey("color")) {
-                interpretSetColor(intent, language, interpretation, matchedItems);
-            } else if (intent.getEntities().containsKey("value")) {
-                interpretSetValue(intent, language, interpretation, matchedItems);
+            String colorString = intent.getEntities().get("color");
+            String valueString = intent.getEntities().get("value");
+            if (colorString != null) {
+                interpretSetColor(intent, language, interpretation, matchedItems, colorString);
+            } else if (valueString != null) {
+                interpretSetValue(intent, language, interpretation, matchedItems, valueString);
             } else {
                 interpretation.setAnswer(answerFormatter.getRandomAnswer("value_misunderstood"));
             }
@@ -82,9 +84,7 @@ public class SetValueSkill extends AbstractItemIntentInterpreter {
     }
 
     private void interpretSetColor(Intent intent, String language, IntentInterpretation interpretation,
-            Set<Item> matchedItems) {
-        String colorString = intent.getEntities().get("color");
-
+            Set<Item> matchedItems, String colorString) {
         // filter out the items which can't receive an HSB command
         List<Item> filteredItems = matchedItems.stream()
                 .filter(i -> !(i instanceof GroupItem) && i.getAcceptedCommandTypes().contains(HSBType.class))
@@ -121,9 +121,7 @@ public class SetValueSkill extends AbstractItemIntentInterpreter {
     }
 
     private void interpretSetValue(Intent intent, String language, IntentInterpretation interpretation,
-            Set<Item> matchedItems) {
-        String rawValue = intent.getEntities().get("value");
-
+            Set<Item> matchedItems, String rawValue) {
         // Set a color
         String cleanedValue = rawValue.replaceAll("[^0-9\\.,]", "");
 

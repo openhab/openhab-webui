@@ -125,21 +125,23 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     protected synchronized String getSnippet(String elementType) throws RenderException {
         String lowerTypeElementType = elementType.toLowerCase();
         String snippet = SNIPPET_CACHE.get(lowerTypeElementType);
-        if (snippet == null) {
-            String snippetLocation = SNIPPET_LOCATION + lowerTypeElementType + SNIPPET_EXT;
-            URL entry = bundleContext.getBundle().getEntry(snippetLocation);
-            if (entry != null) {
-                try {
-                    snippet = IOUtils.toString(entry.openStream());
-                    SNIPPET_CACHE.put(lowerTypeElementType, snippet);
-                } catch (IOException e) {
-                    logger.warn("Cannot load snippet for element type '{}'", lowerTypeElementType, e);
-                }
-            } else {
-                throw new RenderException("Cannot find a snippet for element type '" + lowerTypeElementType + "'");
-            }
+        if (snippet != null) {
+            return snippet;
         }
-        return snippet;
+
+        String snippetLocation = SNIPPET_LOCATION + lowerTypeElementType + SNIPPET_EXT;
+        URL entry = bundleContext.getBundle().getEntry(snippetLocation);
+        if (entry == null) {
+            throw new RenderException("Cannot find a snippet for element type '" + lowerTypeElementType + "'");
+        }
+
+        try {
+            snippet = IOUtils.toString(entry.openStream());
+            SNIPPET_CACHE.put(lowerTypeElementType, snippet);
+            return snippet;
+        } catch (IOException e) {
+            throw new RenderException("Cannot load snippet for element type '" + lowerTypeElementType + "'");
+        }
     }
 
     /**

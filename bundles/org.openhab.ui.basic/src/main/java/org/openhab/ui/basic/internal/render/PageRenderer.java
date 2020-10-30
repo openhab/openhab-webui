@@ -90,8 +90,14 @@ public class PageRenderer extends AbstractWidgetRenderer {
     public StringBuilder processPage(String id, String sitemap, String label, EList<Widget> children, boolean async)
             throws RenderException {
         String snippet = getSnippet(async ? "layer" : "main");
-        snippet = snippet.replaceAll("%main.offline-msg%", localizeText("@text/main.offline-msg"));
-        snippet = snippet.replaceAll("%main.long-polling-mode-msg%", localizeText("@text/main.long-polling-mode-msg"));
+        String offlineMsg = localizeText("@text/main.offline-msg");
+        if (offlineMsg != null) {
+            snippet = snippet.replaceAll("%main.offline-msg%", offlineMsg);
+        }
+        String longPollingModeMsg = localizeText("@text/main.long-polling-mode-msg");
+        if (longPollingModeMsg != null) {
+            snippet = snippet.replaceAll("%main.long-polling-mode-msg%", longPollingModeMsg);
+        }
         snippet = snippet.replaceAll("%id%", id);
 
         // if the label contains a value span, we remove this span as
