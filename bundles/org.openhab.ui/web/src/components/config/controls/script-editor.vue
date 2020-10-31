@@ -47,6 +47,8 @@ import 'codemirror/lib/codemirror.css'
 
 // language js
 import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/clike/clike.js'
+import 'codemirror/mode/groovy/groovy.js'
 import 'codemirror/mode/yaml/yaml.js'
 
 // theme css
@@ -75,6 +77,7 @@ import 'codemirror/addon/lint/lint.css'
 import YAML from 'yaml'
 
 import tern from 'tern'
+import infer from 'tern/lib/infer'
 
 // import 'tern/lib/signal.js'
 // import * as Tern from 'tern/lib/tern.js'
@@ -130,14 +133,15 @@ export default {
   components: {
     codemirror
   },
-  props: ['value', 'mode', 'hintContext'],
+  props: ['value', 'mode', 'hintContext', 'ternAutocompletionHook'],
   data () {
     return {
       code: this.value,
+      itemsCache: [],
       cmOptions: {
         // codemirror options
         tabSize: 4,
-        mode: ((this.mode && this.mode.indexOf('yaml')) ? 'text/x-yaml' : this.mode) || 'text/javascript',
+        mode: this.translateMode(this.mode),
         theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'gruvbox-dark' : 'default',
         lineNumbers: true,
         line: true,
@@ -156,16 +160,69 @@ export default {
     }
   },
   methods: {
+    translateMode (mode) {
+      if (this.mode && this.mode.indexOf('yaml') >= 0) return 'text/x-yaml'
+      if (this.mode && this.mode === 'application/javascript') return 'text/javascript'
+      if (this.mode && this.mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
+      if (this.mode && this.mode === 'application/x-groovy') return 'text/x-groovy'
+      return this.mode
+    },
     ternComplete (file, query) {
-      // debugger
+      var pos = tern.resolvePos(file, query.end)
+      var lit = infer.findExpressionAround(file.ast, null, pos, file.scope, 'Literal')
+      if (!lit || !lit.node) return
+      var call = infer.findExpressionAround(file.ast, null, lit.node.start - 2, file.scope)
+      if (!call || !call.node) return
+      if (call.node.type !== 'MemberExpression' || (!call.node.object && !call.node.property)) return
+      if ((call.node.object.name === 'events' && call.node.property.name === 'postUpdate') ||
+      (call.node.object.name === 'events' && call.node.property.name === 'sendCommand') ||
+      (call.node.object.name === 'itemRegistry' && call.node.property.name === 'getItem') ||
+      (call.node.object.name === 'ir' && call.node.property.name === 'getItem')) {
+        console.debug('Completing item names!')
+
+        var before = lit.node.value.slice(0, pos - lit.node.start - 1)
+        var matches = []
+        this.itemsCache.sort((a, b) => a.name.localeCompare(b.name)).forEach((item) => {
+          if (item.name.length > before.length && item.name.toLowerCase().indexOf(before.toLowerCase()) >= 0) {
+            if (query.types || query.docs || query.urls || query.origins) {
+              var rec = {
+                name: JSON.stringify(item.name),
+                displayName: item.name,
+                doc: (item.label ? item.label + ' ' : '') + '[' + item.type + ']'
+              }
+              matches.push(rec)
+              if (query.types) rec.type = 'string'
+              if (query.origins) rec.origin = item.name
+            }
+          }
+        })
+
+        return {
+          start: tern.outputPos(query, file, lit.node.start),
+          end: tern.outputPos(query, file, pos + (file.text.charAt(pos) === file.text.charAt(lit.node.start) ? 1 : 0)),
+          isProperty: false,
+          completions: matches
+        }
+      }
     },
     onCmReady (cm) {
       const self = this
       let extraKeys = {}
-      if (!this.mode) {
+      if (this.mode === 'application/javascript') {
         window.tern = tern
+        if (this.ternAutocompletionHook) {
+          tern.registerPlugin('openhab-tern-hook', (server, options) => {
+            server.mod.completeStrings = {
+              maxLen: (options && options.maxLength) || 15,
+              seen: Object.create(null)
+            }
+            server.on('completion', this.ternComplete)
+          })
+          this.$oh.api.get('/rest/items').then((data) => { this.$set(this, 'itemsCache', data) })
+        }
         const server = new _CodeMirror.TernServer({
           defs: [EcmascriptDefs, OpenhabDefs],
+          plugins: (this.ternAutocompletionHook) ? { 'openhab-tern-hook': {} } : undefined,
           ecmaVersion: 5
         })
         extraKeys = {

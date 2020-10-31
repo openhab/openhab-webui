@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
-    <f7-navbar title="Rules" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar :title="(showScripts) ? 'Scripts' : 'Rules'" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
         :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
@@ -63,7 +63,8 @@
         </f7-list>
       </f7-col>
       <f7-col v-else>
-        <f7-block-title class="searchbar-hide-on-search">{{rules.length}} rules</f7-block-title>
+        <f7-block-title v-if="showScripts" class="searchbar-hide-on-search">{{rules.length}} scripts</f7-block-title>
+        <f7-block-title v-else class="searchbar-hide-on-search">{{rules.length}} rules</f7-block-title>
         <f7-list
           v-show="rules.length > 0"
           class="searchbar-found col rules-list"
@@ -87,7 +88,7 @@
               :badge-color="ruleStatusBadgeColor(rule.status)"
             >
               <div slot="footer">
-                <f7-chip v-for="tag in rule.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                   <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
                 </f7-chip>
               </div>
@@ -99,7 +100,8 @@
       </f7-col>
     </f7-block>
     <f7-block v-if="ready && !noRuleEngine && !rules.length" class="service-config block-narrow">
-      <empty-state-placeholder icon="wand_rays" title="rules.title" text="rules.text" />
+      <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
+      <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
     </f7-block>
     <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
@@ -113,6 +115,7 @@ import RuleStatus from '@/components/rule/rule-status-mixin'
 
 export default {
   mixins: [RuleStatus],
+  props: ['showScripts'],
   data () {
     return {
       ready: false,
@@ -127,7 +130,7 @@ export default {
   },
   computed: {
     indexedRules () {
-      return this.rules.reduce((prev, rule, i, rules)=> {
+      return this.rules.reduce((prev, rule, i, rules) => {
         const initial = rule.name.substring(0, 1).toUpperCase()
         if (!prev[initial]) {
           prev[initial] = []
@@ -147,10 +150,14 @@ export default {
       this.loading = true
       this.$set(this, 'selectedItems', [])
       this.showCheckboxes = false
-      this.$oh.api.get('/rest/rules').then(data => {
+      this.$oh.api.get('/rest/rules' + (this.showScripts ? '?tags=Script' : '')).then(data => {
         this.rules = data.sort((a, b) => {
           return a.name.localeCompare(b.name)
         })
+
+        if (!this.showScripts) {
+          this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Script') < 0)
+        }
 
         this.loading = false
         this.ready = true

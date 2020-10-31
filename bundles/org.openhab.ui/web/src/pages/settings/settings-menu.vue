@@ -21,7 +21,7 @@
     <f7-block class="block-narrow after-big-title settings-menu" v-show="addonsLoaded && servicesLoaded">
       <f7-row>
         <f7-col width="100" medium="50">
-          <f7-block-title>Configuration &amp; Automation</f7-block-title>
+          <f7-block-title>Configuration</f7-block-title>
           <f7-list media-list class="search-list">
             <f7-list-item
               v-if="$store.getters.apiEndpoint('things')"
@@ -62,8 +62,10 @@
               :footer="objectsSubtitles.pages">
               <f7-icon slot="media" f7="tv" color="gray"></f7-icon>
             </f7-list-item>
+          </f7-list>
+          <f7-block-title v-if="$store.getters.apiEndpoint('rules')">Automation</f7-block-title>
+          <f7-list media-list class="search-list">
             <f7-list-item
-              v-if="$store.getters.apiEndpoint('rules')"
               media-item
               link="rules/"
               title="Rules"
@@ -72,7 +74,14 @@
               <f7-icon slot="media" f7="wand_stars" color="gray"></f7-icon>
             </f7-list-item>
             <f7-list-item
-              v-if="$store.getters.apiEndpoint('rules')"
+              media-item
+              link="scripts/"
+              title="Scripts"
+              badge-color="blue"
+              :footer="objectsSubtitles.scripts">
+              <f7-icon slot="media" f7="doc_plaintext" color="gray"></f7-icon>
+            </f7-list-item>
+            <f7-list-item
               media-item
               link="schedule/"
               title="Schedule"
@@ -136,6 +145,7 @@ export default {
         items: 'Manage the functional layer',
         pages: 'Design displays for user control & monitoring',
         rules: 'Automate with triggers and actions',
+        scripts: 'Rules dedicated to running code',
         schedule: 'View upcoming time-based rules'
       },
       addonsSubtitles: {

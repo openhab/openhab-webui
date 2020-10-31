@@ -92,8 +92,8 @@
                   v-for="mod in rule[section]" :key="mod.id"
                   :link="isEditable && !showModuleControls" @click.native="(ev) => editModule(ev, section, mod)" swipeout>
                 <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
-                <f7-link slot="after" v-if="mod.type === 'script.ScriptAction'" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editScriptDirect(ev, mod)" tooltip="Edit script"></f7-link>
-                <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="calendar" color="gray" @click.native="(ev) => buildCronExpression(ev, mod)" tooltip="Build cron expression"></f7-link>
+                <f7-link slot="after" v-if="!createMode && mod.type && mod.type.indexOf('script') === 0" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editScriptDirect(ev, mod)" tooltip="Edit script"></f7-link>
+                <f7-link slot="after" v-if="!createMode && mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="calendar" color="gray" @click.native="(ev) => buildCronExpression(ev, mod)" tooltip="Build cron expression"></f7-link>
                 <f7-swipeout-actions right v-if="isEditable">
                   <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">Delete</f7-swipeout-button>
                 </f7-swipeout-actions>
@@ -160,7 +160,6 @@ import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import TagInput from '@/components/tags/tag-input.vue'
 
 import RuleModulePopup from './rule-module-popup.vue'
-import ScriptEditorPopup from '@/components/config/controls/script-editor-popup.vue'
 import CronEditor from '@/components/config/controls/cronexpression-editor.vue'
 
 import ModuleDescriptionSuggestions from './module-description-suggestions'
@@ -208,7 +207,6 @@ export default {
   },
   methods: {
     onPageAfterIn () {
-      if (this.ready) return
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
@@ -274,16 +272,10 @@ export default {
         this.$f7.dialog.alert('Please give a name to the rule')
         return
       }
-      if (this.codeEditorOpened) {
-        // save the code currently being edited if the dialog is open
-        // this allows to hit ctrl-S to save (and ctrl-R to run the rule) while editing the code
-        // without closing the window
-        this.currentModule.configuration.script = this.$refs.codePopup.code
-      }
       const promise = (this.createMode)
         ? this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/rules/' + this.rule.uid, this.rule)
-      promise.then((data) => {
+      return promise.then((data) => {
         if (this.createMode) {
           this.$f7.toast.create({
             text: 'Rule created',
@@ -509,31 +501,8 @@ export default {
       this.currentModuleType = mod.type
       this.scriptCode = mod.configuration.script
 
-      const popup = {
-        component: ScriptEditorPopup
-      }
-
-      this.$f7router.navigate({
-        url: 'script-edit',
-        route: {
-          path: 'script-edit',
-          popup
-        }
-      }, {
-        props: {
-          title: 'Edit Script',
-          fullscreen: false,
-          value: this.scriptCode
-        }
-      })
-
-      this.$f7.once('scriptEditorUpdate', this.updateScript)
-      this.$f7.once('scriptEditorClosed', () => {
-        this.$f7.off('scriptEditorUpdate', this.updateScript)
-        this.$nextTick(() => {
-          this.currentModule = null
-          this.currentModuleType = null
-        })
+      this.save().then(() => {
+        this.$f7router.navigate('script/' + mod.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
       })
     },
     buildCronExpression (ev, mod) {

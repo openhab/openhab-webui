@@ -26,6 +26,9 @@
   "rules.title": "No rules yet",
   "rules.text": "Rules are the basic building blocks to automate your home - they define which actions to perform when certain events occur.<br><br>Create your first rule with the button below; for more advanced scenarios, you can also write script files in your configuration folder.",
 
+  "scripts.title": "No scripts yet",
+  "scripts.text": "Scripts are a special kind of rules, with no triggers and a single action module to execute code.<br />You can run them on-demand or call them from other rules.<br><br>Create your first script with the button below.",
+
   "schedule.title": "Nothing in the schedule",
   "schedule.text": "The schedule displays when rules specifically tagged \"Schedule\" are expected to run, up to 30 days.<br><br>Click the button below to create your first scheduled rule.",
 

@@ -55,6 +55,10 @@
               :class="{ currentsection: currentUrl.indexOf('/settings/rules') >= 0 }">
             <f7-icon slot="media" f7="wand_rays" color="gray"></f7-icon>
           </f7-list-item>
+          <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scripts/" title="Scripts" view=".view-main" panel-close :animate="false" no-chevron
+              :class="{ currentsection: currentUrl.indexOf('/settings/scripts') >= 0 }">
+            <f7-icon slot="media" f7="doc_plaintext" color="gray"></f7-icon>
+          </f7-list-item>
           <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/schedule/" title="Schedule" view=".view-main" panel-close :animate="false" no-chevron
               :class="{ currentsection: currentUrl.indexOf('/settings/schedule') >= 0 }">
             <f7-icon slot="media" f7="calendar" color="gray"></f7-icon>
