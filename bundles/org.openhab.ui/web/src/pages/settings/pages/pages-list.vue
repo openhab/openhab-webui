@@ -8,6 +8,7 @@
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
+          ref="searchbar"
           class="searchbar-pages"
           :init="initSearchbar"
           search-container=".pages-list"
@@ -48,8 +49,8 @@
         <f7-block-title class="searchbar-hide-on-search"><span v-if="ready">{{pages.length}} pages</span><span v-else>Loading...</span></f7-block-title>
         <div class="padding-left padding-right" v-show="!ready || pages.length > 0">
           <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'; $nextTick(() => $refs.listIndex.update())">Alphabetical</f7-button>
-            <f7-button :active="groupBy === 'type'" @click="groupBy = 'type'">By type</f7-button>
+            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">Alphabetical</f7-button>
+            <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')">By type</f7-button>
           </f7-segmented>
         </div>
         <f7-list v-if="!ready" contacts-list class="col wide pages-list">
@@ -195,6 +196,16 @@ export default {
         this.loading = false
         this.ready = true
         setTimeout(() => { this.initSearchbar = true; this.$refs.listIndex.update() })
+      })
+    },
+    switchGroupOrder (groupBy) {
+      this.groupBy = groupBy
+      const searchbar = this.$refs.searchbar.$el.f7Searchbar
+      const filterQuery = searchbar.query
+      searchbar.clear()
+      this.$nextTick(() => {
+        if (filterQuery) searchbar.search(filterQuery)
+        if (groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
     },
     toggleCheck () {

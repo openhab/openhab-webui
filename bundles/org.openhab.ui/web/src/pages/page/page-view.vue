@@ -55,7 +55,7 @@ export default {
   computed: {
     pageStyle () {
       if (!this.context) return null
-      const pageComponent = (this.pageType === 'tabs') ? this.tabContext(this.context.component.slots.default[this.currentTab].component) : this.context.component
+      const pageComponent = (this.pageType === 'tabs') ? this.tabContext(this.context.component.slots.default[this.currentTab]).component : this.context.component
       if (!pageComponent || !pageComponent.config || !pageComponent.config.style) return null
       return pageComponent.config.style
     },

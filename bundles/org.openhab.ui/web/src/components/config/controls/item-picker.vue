@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  props: ['title', 'name', 'value', 'multiple', 'filterType', 'required'],
+  props: ['title', 'name', 'value', 'multiple', 'filterType', 'required', 'editableOnly'],
   data () {
     return {
       ready: false,
@@ -42,6 +42,9 @@ export default {
       })
       if (this.filterType) {
         this.items = this.items.filter((i) => i.type === this.filterType)
+      }
+      if (this.editableOnly) {
+        this.items = this.items.filter((i) => i.editable)
       }
       this.ready = true
     })

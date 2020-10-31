@@ -4,6 +4,7 @@
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
+          ref="searchbar"
           class="searchbar-things"
           :init="initSearchbar"
           search-container=".contacts-list"
@@ -30,8 +31,8 @@
         <f7-block-title class="searchbar-hide-on-search"><span v-if="ready">{{things.length}} things</span><span v-else>Loading...</span></f7-block-title>
         <div class="padding-left padding-right" v-show="!ready || things.length > 0">
           <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'; $nextTick(() => $refs.listIndex.update())">Alphabetical</f7-button>
-            <f7-button :active="groupBy === 'binding'" @click="groupBy = 'binding'">By binding</f7-button>
+            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">Alphabetical</f7-button>
+            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">By binding</f7-button>
           </f7-segmented>
         </div>
         <f7-list v-if="!ready" contacts-list class="col things-list">
@@ -155,6 +156,16 @@ export default {
     loadInbox () {
       this.$oh.api.get('/rest/inbox').then((data) => {
         this.inbox = data
+      })
+    },
+    switchGroupOrder (groupBy) {
+      this.groupBy = groupBy
+      const searchbar = this.$refs.searchbar.$el.f7Searchbar
+      const filterQuery = searchbar.query
+      searchbar.clear()
+      this.$nextTick(() => {
+        if (filterQuery) searchbar.search(filterQuery)
+        if (groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
     },
     startEventSource () {
