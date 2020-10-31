@@ -87,6 +87,8 @@
 </style>
 
 <script>
+import diacritic from 'diacritic'
+
 import ChannelGroup from './channel-group.vue'
 import ChannelLink from './channel-link.vue'
 import ItemForm from '@/components/item/item-form.vue'
@@ -176,9 +178,9 @@ export default {
         this.newItems.splice(this.newItems.findIndex((i) => i.channel === channel), 1)
       } else {
         this.selectedChannels.push(channel)
-        let newItemName = (this.newItemsPrefix) ? this.newItemsPrefix : this.thing.label.replace(/[^0-9a-z]/gi, '')
+        let newItemName = (this.newItemsPrefix) ? this.newItemsPrefix : diacritic.clean(this.thing.label).replace(/[^0-9a-z]/gi, '')
         newItemName += '_'
-        newItemName += (channel.label) ? channel.label.replace(/[^0-9a-z]/gi, '') : channelType.label.replace(/[^0-9a-z]/gi, '')
+        newItemName += (channel.label) ? diacritic.clean(channel.label).replace(/[^0-9a-z]/gi, '') : diacritic.clean(channelType.label).replace(/[^0-9a-z]/gi, '')
         const newItem = {
           channel: channel,
           channelType: channelType,

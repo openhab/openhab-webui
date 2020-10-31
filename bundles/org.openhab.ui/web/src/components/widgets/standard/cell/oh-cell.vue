@@ -19,10 +19,17 @@
             <div v-if="context.component.slots && context.component.slots.header">
               <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.header" :key="'header-' + idx" @command="onCommand" />
             </div>
-            <f7-list-item v-else media-item :title="config.title" :subtitle="config.subtitle" :footer="config.footer">
-              <div slot="header" class="button-header display-flex">
-                <f7-icon class="header-icon" v-if="config.buttonIcon" :f7="config.buttonIcon" size="20"></f7-icon>
+            <f7-list-item v-else media-item :subtitle="config.subtitle" :footer="config.footer">
+              <div slot="header" v-if="header" class="button-header display-flex">
+                <oh-icon class="header-icon" v-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" width="20" height="20"></oh-icon>
+                <f7-icon class="header-icon" v-if="config.icon && config.icon.indexOf('oh:') < 0" :f7="config.icon.substring(3)" size="20"></f7-icon>
                 <span class="header-text">{{header}}</span>
+                <f7-badge v-if="config.headerBadge" color="config.headerBadgeColor">{{config.headerBadge}}</f7-badge>
+              </div>
+              <div slot="title" v-if="config.title" class="button-header display-flex">
+                <oh-icon class="header-icon" v-if="!header && config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" width="20" height="20"></oh-icon>
+                <f7-icon class="header-icon" v-if="!header && config.icon && config.icon.indexOf('oh:') < 0" :f7="config.icon.substring(3)" size="20"></f7-icon>
+                <span class="header-text">{{config.title}}</span>
                 <f7-badge v-if="config.headerBadge" color="config.headerBadgeColor">{{config.headerBadge}}</f7-badge>
               </div>
             </f7-list-item>

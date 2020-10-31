@@ -7,7 +7,7 @@
             <f7-list inline-labels no-hairlines-md class="no-margin">
               <f7-list-input label="Unique ID" v-if="createMode" type="text" placeholder="Required" :value="thing.ID"
                               @input="changeUID" info="Note: cannot be changed after the creation"
-                              required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only">
+                              required validate pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only">
               </f7-list-input>
               <f7-list-input label="Identifier" type="text" placeholder="Name" :value="thing.UID" disabled>
               </f7-list-input>

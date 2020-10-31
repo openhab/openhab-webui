@@ -80,6 +80,8 @@
 </template>
 
 <script>
+import diacritic from 'diacritic'
+
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
@@ -211,7 +213,7 @@ export default {
 
           if (this.createEquipment) {
             this.newEquipmentItem = {
-              name: this.selectedThing.label.replace(/[^0-9a-z]/gi, ''),
+              name: diacritic.clean(this.selectedThing.label).replace(/[^0-9a-z]/gi, ''),
               label: this.selectedThing.label,
               tags: ['Equipment'],
               type: 'Group',

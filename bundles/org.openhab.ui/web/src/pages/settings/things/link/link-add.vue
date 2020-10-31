@@ -32,7 +32,7 @@
         <f7-list>
           <!-- TODO: filter with compatible item types -->
           <item-picker key="itemLink" title="Item to Link" name="item" :value="selectedItemName" :multiple="false"
-            @input="(value) => selectedItemName = value"></item-picker>
+            @input="(value) => selectedItemName = value" :editable-only="true"></item-picker>
         </f7-list>
       </f7-col>
 
@@ -108,6 +108,8 @@
 </template>
 
 <script>
+import diacritic from 'diacritic'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
@@ -158,9 +160,9 @@ export default {
     onPageAfterIn (event) {
       if (!this.channel) return
       this.loadProfileTypes(this.channel)
-      let newItemName = this.thing.label.replace(/[^0-9a-z]/gi, '')
+      let newItemName = diacritic.clean(this.thing.label).replace(/[^0-9a-z]/gi, '')
       newItemName += '_'
-      newItemName += (this.channel.label) ? this.channel.label.replace(/[^0-9a-z]/gi, '') : this.channelType.label.replace(/[^0-9a-z]/gi, '')
+      newItemName += (this.channel.label) ? diacritic.clean(this.channel.label).replace(/[^0-9a-z]/gi, '') : diacritic.clean(this.channelType.label).replace(/[^0-9a-z]/gi, '')
       this.$set(this, 'newItem', {
         name: newItemName,
         label: this.channel.label || this.channelType.label,

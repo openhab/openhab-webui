@@ -28,7 +28,7 @@ export default {
     },
     modalStyle () {
       if (!this.context) return null
-      const pageComponent = (this.context.component === 'oh-tabs-page') ? this.tabContext(this.context.component.slots.default[this.currentTab].component) : this.context.component
+      const pageComponent = (this.context.component === 'oh-tabs-page') ? this.tabContext(this.context.component.slots.default[this.currentTab]).component : this.context.component
       if (!pageComponent || !pageComponent.config || !pageComponent.config.style) return null
       return pageComponent.config.style
     },
