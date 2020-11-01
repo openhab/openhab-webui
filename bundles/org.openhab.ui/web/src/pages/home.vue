@@ -19,7 +19,7 @@
     <f7-toolbar tabbar labels bottom>
       <f7-link tab-link @click="currentTab = 'overview'" :tab-link-active="currentTab === 'overview'" icon-ios="f7:house_fill" icon-aurora="f7:house_fill" icon-md="material:home" text="Overview"></f7-link>
       <f7-link tab-link @click="currentTab = 'locations'" :tab-link-active="currentTab === 'locations'" icon-ios="f7:placemark_fill" icon-aurora="f7:placemark_fill" icon-md="material:place" text="Locations"></f7-link>
-      <f7-link tab-link @click="currentTab = 'equipments'" :tab-link-active="currentTab === 'equipments'" icon-ios="f7:lightbulb_fill" icon-aurora="f7:lightbulb_fill" icon-md="material:highlight" text="Equipment"></f7-link>
+      <f7-link tab-link @click="currentTab = 'equipments'" :tab-link-active="currentTab === 'equipments'" icon-ios="f7:cube_box_fill" icon-aurora="f7:cube_box_fill" icon-md="material:payments" text="Equipment"></f7-link>
       <f7-link tab-link @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" text="Properties"></f7-link>
     </f7-toolbar>
 
@@ -97,7 +97,7 @@ export default {
         case 'locations':
           return 'Locations'
         case 'equipments':
-          return 'Equipments'
+          return 'Equipment'
         case 'properties':
           return 'Properties'
         default:
