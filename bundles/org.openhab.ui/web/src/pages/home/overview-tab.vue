@@ -81,7 +81,8 @@ export default {
     overviewPageContext () {
       return {
         component: this.overviewPage,
-        store: this.context.store
+        store: this.context.store,
+        vars: {}
       }
     }
   },
