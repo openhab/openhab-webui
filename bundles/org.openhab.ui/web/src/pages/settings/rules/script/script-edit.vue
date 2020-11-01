@@ -327,7 +327,7 @@ export default {
       }
     },
     convertToBlockly () {
-      if (this.script || this.isBlockly) return
+      if (this.script || this.isBlockly || this.mode !== 'application/javascript') return
       this.$set(this.currentModule.configuration, 'blockSource', '<xml xmlns="https://developers.google.com/blockly/xml"></xml>')
     },
     updateScript (value) {
