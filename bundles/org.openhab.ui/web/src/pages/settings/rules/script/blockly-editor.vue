@@ -316,6 +316,8 @@
   width 100%
   .blockly
     height 100%
+    .blocklyMainBackground
+      stroke inherit
 .blocklyDropDownDiv
   z-index 9000
 </style>
@@ -338,7 +340,10 @@ export default {
   mounted () {
     defineOHBlocks()
     this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
-      toolbox: this.$refs.toolbox
+      toolbox: this.$refs.toolbox,
+      horizontalLayout: !this.$device.desktop,
+      theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'dark' : undefined,
+      trashcan: false
     })
     const xml = Blockly.Xml.textToDom(this.blocks)
     Blockly.Xml.domToWorkspace(xml, this.workspace)
