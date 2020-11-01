@@ -202,9 +202,11 @@ export default {
       this.groupBy = groupBy
       const searchbar = this.$refs.searchbar.$el.f7Searchbar
       const filterQuery = searchbar.query
-      searchbar.clear()
       this.$nextTick(() => {
-        if (filterQuery) searchbar.search(filterQuery)
+        if (filterQuery) {
+          searchbar.clear()
+          searchbar.search(filterQuery)
+        }
         if (groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
     },
