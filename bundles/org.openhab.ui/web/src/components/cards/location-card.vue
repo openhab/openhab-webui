@@ -5,8 +5,8 @@
         <f7-card-header text-color="white" class="display-block">
           {{title || 'Something'}}
           <div><small>{{subtitle || '&nbsp;'}}</small></div>
-          <div class="location-stats" v-if="items.equipments.length > 0"><small>{{items.equipments.length}} equipment{{items.equipments.length === 1 ? '' : 's'}}</small></div>
-          <div class="location-stats" v-if="items.properties.length > 0"><small>{{items.properties.length}} propert{{items.properties.length === 1 ? 'y' : 'ies'}}</small></div>
+          <div class="location-stats" v-if="items.equipments.length > 0"><small>Equipment: {{items.equipments.length}}</small></div>
+          <div class="location-stats" v-if="items.properties.length > 0"><small>Properties: {{items.properties.length}}</small></div>
         </f7-card-header>
         <f7-link
           card-close
@@ -18,7 +18,7 @@
       </div>
       <div class="card-content-padding" v-if="opened && items.equipments.length > 0 && items.properties.length > 0">
         <f7-segmented round tag="p">
-          <f7-button round outline :active="activeTab === 'equipments'" :color="color" @click="activeTab = 'equipments'">Equipments</f7-button>
+          <f7-button round outline :active="activeTab === 'equipments'" :color="color" @click="activeTab = 'equipments'">Equipment</f7-button>
           <f7-button round outline :active="activeTab === 'properties'" :color="color" @click="activeTab = 'properties'">Properties</f7-button>
         </f7-segmented>
       </div>

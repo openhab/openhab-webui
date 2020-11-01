@@ -12,7 +12,7 @@
   "things.nobindings.text": "To add things to your system, you first need to install binding add-ons.",
 
   "model.title": "Start modelling your home",
-  "model.text": "Build a model from your items to organize them and relate them to each other semantically.<br><br>Begin with a hierarchy of locations: buildings, outside areas, floors and rooms, as needed. Then, insert equipments and points from your things (or manually).",
+  "model.text": "Build a model from your items to organize them and relate them to each other semantically.<br><br>Begin with a hierarchy of locations: buildings, outside areas, floors and rooms, as needed. Then, insert equipment and points from your things (or manually).",
 
   "items.title": "No items yet",
   "items.text": "Items represent the functional side of your home - you can link them to the channels defined by your things. Start with the Model view to create a clean initial structure.<br><br>You can also define items with configuration files, or with the button below.",

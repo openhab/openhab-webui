@@ -19,7 +19,7 @@
     <f7-toolbar tabbar labels bottom>
       <f7-link tab-link @click="currentTab = 'overview'" :tab-link-active="currentTab === 'overview'" icon-ios="f7:house_fill" icon-aurora="f7:house_fill" icon-md="material:home" text="Overview"></f7-link>
       <f7-link tab-link @click="currentTab = 'locations'" :tab-link-active="currentTab === 'locations'" icon-ios="f7:placemark_fill" icon-aurora="f7:placemark_fill" icon-md="material:place" text="Locations"></f7-link>
-      <f7-link tab-link @click="currentTab = 'equipments'" :tab-link-active="currentTab === 'equipments'" icon-ios="f7:lightbulb_fill" icon-aurora="f7:lightbulb_fill" icon-md="material:highlight" text="Equipments"></f7-link>
+      <f7-link tab-link @click="currentTab = 'equipments'" :tab-link-active="currentTab === 'equipments'" icon-ios="f7:lightbulb_fill" icon-aurora="f7:lightbulb_fill" icon-md="material:highlight" text="Equipment"></f7-link>
       <f7-link tab-link @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" text="Properties"></f7-link>
     </f7-toolbar>
 
@@ -122,7 +122,7 @@ export default {
         // get the location items
         this.semanticItems.locations = data.filter((item, index, items) => {
           return item.metadata && item.metadata.semantics &&
-            item.metadata.semantics.value.indexOf('Location_') === 0
+            item.metadata.semantics.value.indexOf('Location') === 0
         }).sort((a, b) => {
           const titleA = a.label || a.name
           const titleB = b.label || b.name
@@ -139,7 +139,7 @@ export default {
             equipments: data.filter((item, index, items) => {
               return item.metadata && item.metadata.semantics &&
                 item.metadata.semantics && item.metadata.semantics.config &&
-                item.metadata.semantics.value.indexOf('Equipment_') === 0 &&
+                item.metadata.semantics.value.indexOf('Equipment') === 0 &&
                 item.metadata.semantics.config.hasLocation === l.name
             }).map((item) => {
               return {
@@ -158,9 +158,9 @@ export default {
         this.semanticItems.equipments = data.filter((item, index, items) => {
           return item.metadata && item.metadata.semantics &&
             item.metadata.semantics &&
-            item.metadata.semantics.value.indexOf('Equipment_') === 0
+            item.metadata.semantics.value.indexOf('Equipment') === 0
         }).reduce((prev, item, i, properties) => {
-          const equipmentType = item.metadata.semantics.value.split('_')[1]
+          const equipmentType = item.metadata.semantics.value.split('_')[1] || 'Equipment'
           if (!prev[equipmentType]) prev[equipmentType] = []
           const equipmentWithPoints = {
             item: item,
