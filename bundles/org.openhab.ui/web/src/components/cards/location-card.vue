@@ -5,8 +5,8 @@
         <f7-card-header text-color="white" class="display-block">
           {{title || 'Something'}}
           <div><small>{{subtitle || '&nbsp;'}}</small></div>
-          <div class="location-stats" v-if="items.equipments.length > 0"><small>Equipment: {{items.equipments.length}}</small></div>
-          <div class="location-stats" v-if="items.properties.length > 0"><small>Properties: {{items.properties.length}}</small></div>
+          <div class="location-stats" v-if="items.equipments.length > 0"><small><f7-icon ios="f7:cube_box" aurora="f7:cube_box" md="material:payments" />&nbsp;{{items.equipments.length}}</small></div>
+          <div class="location-stats" v-if="items.properties.length > 0"><small><f7-icon ios="f7:bolt" aurora="f7:bolt" md="material:flash_on" />&nbsp;{{items.properties.length}}</small></div>
         </f7-card-header>
         <f7-link
           card-close

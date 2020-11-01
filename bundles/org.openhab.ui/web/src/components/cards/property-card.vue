@@ -4,7 +4,7 @@
       <div :class="`bg-color-${color}`" :style="{height: '150px'}">
         <f7-card-header text-color="white" class="display-block">
           {{title || 'Something'}}
-          <div><small v-if="subtitle">{{subtitle}}</small></div>
+          <div class="property-stats"><small v-if="subtitle">{{subtitle}}</small></div>
           <br>
           <!-- <h1>State</h1> -->
         </f7-card-header>
@@ -32,6 +32,8 @@
 <style lang="stylus">
 .property-card
   height 150px
+.property-stats
+  font-weight normal
 </style>
 
 <script>

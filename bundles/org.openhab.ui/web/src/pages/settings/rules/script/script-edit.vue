@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="pageTitle" :subtitle="mode" back-link="Back">
+    <f7-navbar :title="pageTitle" :subtitle="(!newScript) ? mode : undefined" back-link="Back">
       <f7-nav-right v-if="isEditable && !newScript">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
@@ -26,7 +26,7 @@
       </span>
     </f7-toolbar>
     <editor v-if="ready && !newScript" class="rule-script-editor" :mode="mode" :value="script" @input="(value) => { script = value; dirty = true }" :tern-autocompletion-hook="true" />
-    <script-general-settings v-else-if="createMode" :createMode="newScript" :rule="rule" />
+    <script-general-settings v-else-if="createMode" :createMode="true" :rule="rule" />
     <f7-block class="block-narrow" v-if="newScript">
       <f7-col>
         <f7-block-title medium class="margin-bottom">Script Language</f7-block-title>
@@ -105,7 +105,7 @@ export default {
   },
   computed: {
     pageTitle () {
-      if (this.newScript) return 'Add Script'
+      if (this.newScript) return 'Create Script'
       if (this.isScriptRule) return this.rule.name
       if (this.currentModule && this.currentModule.label) return this.currentModule.label
       return 'Edit Script'
@@ -135,7 +135,7 @@ export default {
     },
     initializeNewScript () {
       this.rule = {
-        uid: '',
+        uid: this.$f7.utils.id(),
         name: '',
         description: '',
         triggers: [],
