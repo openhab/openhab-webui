@@ -154,8 +154,12 @@ export default {
       this.showLinked = val
       const searchbar = this.$refs.searchbar.$el.f7Searchbar
       const filterQuery = searchbar.query
-      searchbar.clear()
-      if (filterQuery) this.$nextTick(() => { searchbar.search(filterQuery) })
+      this.$nextTick(() => {
+        if (filterQuery) {
+          searchbar.clear()
+          searchbar.search(filterQuery)
+        }
+      })
     },
     selectChannel (channel, channelType) {
       if (this.pickerMode) {
