@@ -48,7 +48,7 @@ export default {
   data () {
     return {
       opened: false,
-      activeTab: 'equipments'
+      activeTab: (this.items.equipments.length === 0 && this.items.properties.length > 0) ? 'properties' : 'equipments'
     }
   },
   methods: {
