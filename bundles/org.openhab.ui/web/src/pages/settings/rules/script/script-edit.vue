@@ -25,7 +25,8 @@
         <f7-link v-if="isScriptRule" class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link>
       </span>
     </f7-toolbar>
-    <editor v-if="ready && !newScript" class="rule-script-editor" :mode="mode" :value="script" @input="(value) => { script = value; dirty = true }" :tern-autocompletion-hook="true" />
+    <editor v-if="ready && !newScript && (!isBlockly || blocklyCodePreview)" class="rule-script-editor" :mode="mode" :value="script" @input="updateScript" :tern-autocompletion-hook="true" />
+    <blockly-editor ref="blocklyEditor" v-else-if="ready && !newScript && isBlockly" :blocks="currentModule.configuration.blockSource"></blockly-editor>
     <script-general-settings v-else-if="createMode" :createMode="true" :rule="rule" />
     <f7-block class="block-narrow" v-if="newScript">
       <f7-col>
@@ -35,6 +36,9 @@
             :value="mode" :checked="mode === language.contentType" @change="mode = language.contentType"
             v-for="language in languages" :key="language.contentType"
             :title="language.name" :after="language.version" :footer="language.contentType"></f7-list-item>
+          <!-- <f7-list-item media-item radio radio-icon="start"
+            :value="mode" :checked="mode === 'application/vnd.openhab.blockly.rule'" @change="mode = 'application/vnd.openhab.blockly.rule'"
+            :title="'Blockly editor'"></f7-list-item> -->
         </f7-list>
       </f7-col>
     </f7-block>
@@ -43,6 +47,17 @@
         <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="createScript">Create Script</f7-button>
       </div>
     </div>
+
+    <f7-fab v-show="isBlockly && !blocklyCodePreview" position="right-bottom" slot="fixed" color="blue" @click="showBlocklyCode">
+      <f7-icon f7="doc_text"></f7-icon>
+    </f7-fab>
+    <f7-fab v-show="isBlockly && blocklyCodePreview" position="right-bottom" slot="fixed" color="blue" @click="blocklyCodePreview = false">
+      <f7-icon f7="ticket"></f7-icon>
+    </f7-fab>
+    <f7-fab v-show="!script && mode === 'application/javascript' && !isBlockly" position="right-bottom" slot="fixed" color="blue" @click="convertToBlockly" tooltip="Convert to Blockly">
+      <f7-icon f7="ticket_fill"></f7-icon>
+    </f7-fab>
+
     <f7-sheet ref="detailsSheet" class="script-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
       <f7-page>
         <f7-toolbar tabbar bottom>
@@ -75,7 +90,8 @@ export default {
   mixins: [RuleStatus],
   components: {
     ScriptGeneralSettings,
-    'editor': () => import('@/components/config/controls/script-editor.vue')
+    'editor': () => import('@/components/config/controls/script-editor.vue'),
+    'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ './blockly-editor.vue')
   },
   props: ['ruleId', 'moduleId', 'createMode'],
   data () {
@@ -100,7 +116,8 @@ export default {
       mode: '',
       eventSource: null,
       keyHandler: null,
-      detailsOpened: false
+      detailsOpened: false,
+      blocklyCodePreview: false
     }
   },
   computed: {
@@ -112,6 +129,9 @@ export default {
     },
     isEditable () {
       return this.rule && this.rule.editable !== false
+    },
+    isBlockly () {
+      return this.currentModule && this.currentModule.configuration.blockSource
     }
   },
   methods: {
@@ -169,14 +189,19 @@ export default {
         return
       }
 
-      this.rule.actions.push({
+      const actionModule = {
         id: 'script',
         type: 'script.ScriptAction',
         configuration: {
           type: this.mode,
           script: ''
         }
-      })
+      }
+      if (this.mode === 'application/vnd.openhab.blockly.rule') {
+        actionModule.configuration.type = 'application/javascript'
+        actionModule.configuration.blockSource = '<xml xmlns="https://developers.google.com/blockly/xml"></xml>'
+      }
+      this.rule.actions.push(actionModule)
 
       this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json').then(() => {
         this.$f7.toast.create({
@@ -223,6 +248,15 @@ export default {
       if (!this.isEditable) return
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) {
+          return
+        }
+      }
+      if (this.isBlockly) {
+        try {
+          this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
+          this.script = this.$refs.blocklyEditor.getCode()
+        } catch (e) {
+          this.$f7.dialog.alert(e)
           return
         }
       }
@@ -282,6 +316,35 @@ export default {
         })
       })
     },
+    showBlocklyCode () {
+      try {
+        this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
+        this.script = this.$refs.blocklyEditor.getCode()
+        this.currentModule.configuration.blockSource = (this.script) ? this.$refs.blocklyEditor.getBlocks() : undefined
+        if (this.isBlockly) this.blocklyCodePreview = true
+      } catch (e) {
+        this.$f7.dialog.alert(e)
+      }
+    },
+    convertToBlockly () {
+      if (this.script || this.isBlockly || this.mode !== 'application/javascript') return
+      this.$set(this.currentModule.configuration, 'blockSource', '<xml xmlns="https://developers.google.com/blockly/xml"></xml>')
+    },
+    updateScript (value) {
+      if (this.isBlockly) {
+        this.$f7.toast.create({
+          text: 'Cannot update the code of a Blockly script',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        const script = String(this.script)
+        this.script = null
+        this.$nextTick(() => { this.$set(this, 'script', script) })
+      } else {
+        this.script = value
+        this.dirty = true
+      }
+    },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/' + this.ruleId + '/*', null, (event) => {
         console.log(event)
@@ -300,6 +363,19 @@ export default {
     keyDown (ev) {
       if (ev.ctrlKey || ev.metakKey) {
         switch (ev.keyCode) {
+          case 66:
+            if (this.isBlockly) {
+              if (this.blocklyCodePreview) {
+                this.blocklyCodePreview = false
+              } else {
+                this.showBlocklyCode()
+              }
+            } else {
+              this.convertToBlockly()
+            }
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
           case 68:
             this.toggleDisabled()
             ev.stopPropagation()
