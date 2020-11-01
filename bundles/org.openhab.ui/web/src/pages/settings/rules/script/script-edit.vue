@@ -25,7 +25,8 @@
         <f7-link v-if="isScriptRule" class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link>
       </span>
     </f7-toolbar>
-    <editor v-if="ready && !newScript" class="rule-script-editor" :mode="mode" :value="script" @input="(value) => { script = value; dirty = true }" :tern-autocompletion-hook="true" />
+    <editor v-if="ready && !newScript && !isBlockly" class="rule-script-editor" :mode="mode" :value="script" @input="(value) => { script = value; dirty = true }" :tern-autocompletion-hook="true" />
+    <blockly-editor ref="blocklyEditor" v-else-if="ready && !newScript && isBlockly" :blocks="currentModule.configuration.blockSource"></blockly-editor>
     <script-general-settings v-else-if="createMode" :createMode="true" :rule="rule" />
     <f7-block class="block-narrow" v-if="newScript">
       <f7-col>
@@ -35,6 +36,9 @@
             :value="mode" :checked="mode === language.contentType" @change="mode = language.contentType"
             v-for="language in languages" :key="language.contentType"
             :title="language.name" :after="language.version" :footer="language.contentType"></f7-list-item>
+          <f7-list-item media-item radio radio-icon="start"
+            :value="mode" :checked="mode === 'application/vnd.openhab.blockly.rule'" @change="mode = 'application/vnd.openhab.blockly.rule'"
+            :title="'Blockly editor'"></f7-list-item>
         </f7-list>
       </f7-col>
     </f7-block>
@@ -75,7 +79,8 @@ export default {
   mixins: [RuleStatus],
   components: {
     ScriptGeneralSettings,
-    'editor': () => import('@/components/config/controls/script-editor.vue')
+    'editor': () => import('@/components/config/controls/script-editor.vue'),
+    'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ './blockly-editor.vue')
   },
   props: ['ruleId', 'moduleId', 'createMode'],
   data () {
@@ -112,6 +117,9 @@ export default {
     },
     isEditable () {
       return this.rule && this.rule.editable !== false
+    },
+    isBlockly () {
+      return this.currentModule && this.currentModule.configuration.blockSource
     }
   },
   methods: {
@@ -169,14 +177,19 @@ export default {
         return
       }
 
-      this.rule.actions.push({
+      const actionModule = {
         id: 'script',
         type: 'script.ScriptAction',
         configuration: {
           type: this.mode,
           script: ''
         }
-      })
+      }
+      if (this.mode === 'application/vnd.openhab.blockly.rule') {
+        actionModule.configuration.type = 'application/javascript'
+        actionModule.configuration.blockSource = '<xml xmlns="https://developers.google.com/blockly/xml"></xml>'
+      }
+      this.rule.actions.push(actionModule)
 
       this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json').then(() => {
         this.$f7.toast.create({
@@ -225,6 +238,10 @@ export default {
         if (!this.fromYaml()) {
           return
         }
+      }
+      if (this.isBlockly) {
+        this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
+        this.script = this.$refs.blocklyEditor.getCode()
       }
       this.currentModule.configuration.script = this.script
       return this.$oh.api.put('/rest/rules/' + this.rule.uid, this.rule).then((data) => {
