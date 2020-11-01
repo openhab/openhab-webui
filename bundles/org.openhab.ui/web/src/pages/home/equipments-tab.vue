@@ -2,7 +2,7 @@
   <div v-if="showCards">
     <div class="demo-expandable-cards">
       <equipments-card v-for="(items, equipmentType) in semanticItems.equipments" :key="equipmentType"
-        :title="equipmentType" :items="items" :subtitle="`${items.length} equipment${items.length > 1 ? 's' : ''}`" :color="color(equipmentType)" />
+        :title="equipmentType" :items="items" :subtitle="`${items.length} item${items.length > 1 ? 's' : ''}`" :color="color(equipmentType)" />
     </div>
   </div>
 </template>
