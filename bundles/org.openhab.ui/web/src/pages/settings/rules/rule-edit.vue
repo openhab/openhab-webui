@@ -114,7 +114,7 @@
         </f7-block>
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.rule" :value="ruleYaml" @input="(value) => ruleYaml = value" />
+        <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.rule+yaml" :value="ruleYaml" @input="(value) => ruleYaml = value" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>

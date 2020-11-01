@@ -255,7 +255,7 @@ export default {
           hint (cm, option) {
             if (self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
               return componentsHint(cm, option, self.mode)
-            } else if (self.mode === 'application/vnd.openhab.rule') {
+            } else if (self.mode === 'application/vnd.openhab.rule+yaml') {
               return rulesHint(cm, option, self.mode)
             } else if (self.mode === 'application/vnd.openhab.thing+yaml') {
               return thingsHint(cm, option, self.mode)
