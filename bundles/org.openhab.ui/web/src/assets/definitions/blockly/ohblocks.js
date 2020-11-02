@@ -50,6 +50,7 @@ export default function defineOHBlocks () {
         // .appendField('send command')
       this.appendValueInput('itemName')
         .appendField('to')
+        .setAlign(Blockly.ALIGN_RIGHT)
         .setCheck('String')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
