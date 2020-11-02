@@ -133,7 +133,7 @@ export default {
   components: {
     codemirror
   },
-  props: ['value', 'mode', 'hintContext', 'ternAutocompletionHook'],
+  props: ['value', 'mode', 'hintContext', 'ternAutocompletionHook', 'readOnly'],
   data () {
     return {
       code: this.value,
@@ -145,6 +145,7 @@ export default {
         theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'gruvbox-dark' : 'default',
         lineNumbers: true,
         line: true,
+        readOnly: this.readOnly,
         matchBrackets: true,
         autoCloseBrackets: true,
         viewportMargin: Infinity,
