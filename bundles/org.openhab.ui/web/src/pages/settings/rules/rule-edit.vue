@@ -92,7 +92,7 @@
                   v-for="mod in rule[section]" :key="mod.id"
                   :link="isEditable && !showModuleControls" @click.native="(ev) => editModule(ev, section, mod)" swipeout>
                 <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
-                <f7-link slot="after" v-if="!createMode && mod.type && mod.type.indexOf('script') === 0" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editScriptDirect(ev, mod)" tooltip="Edit script"></f7-link>
+                <f7-link slot="after" v-if="!createMode && mod.type && mod.type.indexOf('script') === 0" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editScriptDirect(ev, mod)" :tooltip="(isEditable) ? 'Edit script' : 'View script'"></f7-link>
                 <f7-link slot="after" v-if="!createMode && mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="calendar" color="gray" @click.native="(ev) => buildCronExpression(ev, mod)" tooltip="Build cron expression"></f7-link>
                 <f7-swipeout-actions right v-if="isEditable">
                   <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">Delete</f7-swipeout-button>
@@ -501,7 +501,8 @@ export default {
       this.currentModuleType = mod.type
       this.scriptCode = mod.configuration.script
 
-      this.save().then(() => {
+      const updatePromise = (this.rule.editable) ? this.save() : Promise.resolve()
+      updatePromise.then(() => {
         this.$f7router.navigate('script/' + mod.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
       })
     },

@@ -296,7 +296,8 @@
         </category>
         <category name="openHAB" colour="0">
           <block type="oh_getitem_state" />
-          <block type="oh_sendcommand" />
+          <block type="oh_event" />
+          <block type="oh_log" />
           <block type="oh_print" />
         </category>
 
