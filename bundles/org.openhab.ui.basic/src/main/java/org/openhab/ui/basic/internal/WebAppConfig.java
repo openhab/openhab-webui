@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
@@ -60,13 +61,15 @@ public class WebAppConfig {
     private void applyCssClasses(Map<String, Object> configProps) {
         cssClassList.clear();
 
-        for (String key : CSS_CLASSES.keySet()) {
+        for (Entry<String, String> entry : CSS_CLASSES.entrySet()) {
+            String key = entry.getKey();
             Boolean value = CSS_DEFAULT_VALUES.get(key);
-            if (configProps.containsKey(key)) {
-                value = configProps.get(key).toString().equalsIgnoreCase("true");
+            Object configValue = configProps.get(key);
+            if (configValue != null) {
+                value = configValue.toString().equalsIgnoreCase("true");
             }
-            if (value) {
-                cssClassList.add(CSS_CLASSES.get(key));
+            if (value != null && value) {
+                cssClassList.add(entry.getValue());
             }
         }
     }
