@@ -128,6 +128,9 @@ export default {
       modelItem.checkable = this.multiple
       if (!this.multiple && this.value === item.name) {
         this.selectItem(modelItem)
+      } else if (this.multiple && Array.isArray(this.value) && this.value.findIndex((i) => i.name === item.name) >= 0) {
+        modelItem.checked = true
+        modelItem.disabled = true
       }
 
       return modelItem

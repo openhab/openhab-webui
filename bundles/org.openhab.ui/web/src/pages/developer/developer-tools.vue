@@ -30,9 +30,11 @@
               <f7-list-item media-item title="API Explorer" footer="Discover and access the REST API directly" link="api-explorer">
                 <f7-icon slot="media" f7="wrench" color="gray"></f7-icon>
               </f7-list-item>
-              <f7-list-item media-item title="Toggle Developer Sidebar" footer="Show a sidebar with various tools" link="" no-chevron @click="$f7.emit('toggleDeveloperSidebar')">
+              <f7-list-item media-item title="Toggle Developer Sidebar" class="developer-sidebar-toggle" footer="Show a sidebar with various tools" link="" no-chevron @click="$f7.emit('toggleDeveloperSidebar')">
                 <f7-icon slot="media" f7="gear" color="gray"></f7-icon>
-                <f7-toggle slot="header" color="blue" class="float-right" :checked="$store.state.developerSidebar"></f7-toggle>
+                <div slot="header" style="height: 100%; height: 32px" class="display-flex float-right flex-direction-column justify-content-center">
+                  <f7-toggle color="blue" :checked="$store.state.developerSidebar"></f7-toggle>
+                </div>
               </f7-list-item>
             </f7-list>
           </f7-col>
@@ -84,6 +86,9 @@
 </template>
 
 <style lang="stylus">
+@media (max-width 1279px)
+  .developer-sidebar-toggle
+    display none
 
 </style>
 
