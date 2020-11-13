@@ -1,23 +1,27 @@
 <template>
   <f7-page class="developer-sidebar">
-    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" color="black">
+    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'">
       <f7-subnavbar :inner="false" v-if="!$theme.md">
-        <f7-searchbar custom-search placeholder="Search to Pin" :backdrop="false" :disable-button="false" @searchbar:search="search" @searchbar:clear="clearSearch"></f7-searchbar>
+        <f7-searchbar custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch"></f7-searchbar>
       </f7-subnavbar>
     </f7-navbar>
     <f7-subnavbar :inner="false" v-if="$theme.md">
-      <f7-searchbar custom-search placeholder="Search to Pin" :backdrop="false" :disable-button="false" @searchbar:search="search" @searchbar:clear="clearSearch"></f7-searchbar>
+      <f7-searchbar custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch"></f7-searchbar>
     </f7-subnavbar>
     <div v-if="!searching" class="developer-sidebar-content">
       <f7-segmented strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left))">
         <f7-button :active="activeTab === 'pin'" icon-f7="pin_fill" icon-size="18" @click="activeTab = 'pin'"></f7-button>
         <f7-button :active="activeTab === 'events'" icon-f7="bolt_horizontal_fill" icon-size="18" @click="activeTab = 'events'"></f7-button>
-        <f7-button :active="activeTab === 'tools'" icon-f7="wrench_fill" icon-size="18" @click="activeTab = 'tools'"></f7-button>
+        <f7-button :active="activeTab === 'scripting'" icon-f7="pencil_ellipsis_rectangle" icon-size="18" @click="activeTab = 'scripting'"></f7-button>
+        <f7-button :active="activeTab === 'tools'" icon-f7="rectangle_stack_badge_plus" icon-size="18" @click="activeTab = 'tools'"></f7-button>
       </f7-segmented>
       <div v-if="activeTab === 'pin'">
-        <f7-block v-if="!pinnedObjects.items.length && !pinnedObjects.things.length && !pinnedObjects.rules.length && !pinnedObjects.pages.length">
-          <p>Use the search box above or the button below to temporarily pin objects here for quick access.</p>
-          <p><f7-button fill color="blue" @click="modelPickerOpened = true">Add Items from Model</f7-button></p>
+        <f7-block class="no-margin no-padding">
+          <f7-block-title class="padding-horizontal" medium>Pinned Objects</f7-block-title>
+        </f7-block>
+        <f7-block class="no-margin no-padding" v-if="!pinnedObjects.items.length && !pinnedObjects.things.length && !pinnedObjects.rules.length && !pinnedObjects.pages.length">
+          <p class="padding-horizontal">Use the search box above or the button below to temporarily pin objects here for quick access.</p>
+          <p class="padding-horizontal"><f7-button fill color="blue" @click="modelPickerOpened = true">Pin Items from Model</f7-button></p>
         </f7-block>
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.items.length">
           <f7-block-title class="padding-horizontal display-flex">
@@ -108,11 +112,11 @@
 
       <div v-else-if="activeTab === 'events'">
         <f7-block class="no-margin no-padding">
-          <f7-block-title class="padding-horizontal display-flex">
+          <f7-block-title class="padding-horizontal display-flex" medium>
             <span>Events Monitor</span>
-            <!-- <span style="margin-left:auto">
-              <f7-link color="gray" icon-f7="rectangle_compress_vertical" icon-size="14" @click="modelPickerOpened = true"></f7-link>
-            </span> -->
+            <span style="margin-left:auto">
+              <f7-link :color="eventTopicFilter ? 'blue' : 'gray'" :icon-f7="eventTopicFilter ? 'line_horizontal_3_decrease_circle_fill' : 'line_horizontal_3_decrease_circle'" icon-size="14" tooltip="Filter topics" @click="changeEventTopicFilter"></f7-link>
+            </span>
           </f7-block-title>
           <f7-block>
             <p v-if="!sseClient"><f7-button fill color="blue" @click="startSSE">Stream Events</f7-button></p>
@@ -125,7 +129,10 @@
         </f7-block>
       </div>
 
-      <div v-else-if="activeTab === 'tools'">
+      <div v-else-if="activeTab === 'scripting'">
+        <f7-block class="no-margin no-padding">
+          <f7-block-title class="padding-horizontal" medium>Code Tools</f7-block-title>
+        </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal">Widgets Expression Tester</f7-block-title>
           <f7-list media-list>
@@ -136,17 +143,64 @@
             <generic-widget-component :context="expressionTesterContext" />
           </f7-block>
         </f7-block>
+        <f7-block class="no-margin no-padding">
+          <f7-block-title class="padding-horizontal">Scripting Scratchpad</f7-block-title>
+          <f7-list>
+            <f7-list-button @click="openScriptingScratchpad" color="blue">Open Scratchpad</f7-list-button>
+          </f7-list>
+        </f7-block>
+      </div>
+
+      <div v-else-if="activeTab === 'tools'">
+        <f7-block class="no-margin no-padding">
+          <f7-block-title class="padding-horizontal" medium>Create Shortcuts</f7-block-title>
+        </f7-block>
+        <f7-block class="no-margin no-padding">
+          <f7-list>
+            <f7-list-item divider title="Things" />
+            <f7-list-button href="/settings/things/add" color="blue" :animate="false">Add thing</f7-list-button>
+            <f7-list-button @click="quickAddThing" color="blue">Add thing (quick)</f7-list-button>
+            <f7-list-button href="/settings/things/inbox" color="blue" :animate="false">Inbox</f7-list-button>
+            <f7-list-item divider title="Items" />
+            <f7-list-button href="/settings/items/add" color="blue" :animate="false">Create item</f7-list-button>
+            <f7-list-button href="/settings/items/add-from-textual-definition" color="blue" :animate="false">Add items (textual)</f7-list-button>
+            <f7-list-item divider title="Pages" />
+            <f7-list-button href="/settings/pages/layout/add" color="blue" :animate="false">Create layout</f7-list-button>
+            <f7-list-button href="/settings/pages/tabs/add" color="blue" :animate="false">Create tabbed page</f7-list-button>
+            <f7-list-button href="/settings/pages/map/add" color="blue" :animate="false">Create map view</f7-list-button>
+            <f7-list-button href="/settings/pages/plan/add" color="blue" :animate="false">Create floor plan</f7-list-button>
+            <f7-list-button href="/settings/pages/chart/add" color="blue" :animate="false">Create chart</f7-list-button>
+            <f7-list-button href="/settings/pages/sitemap/add" color="blue" :animate="false">Create sitemap</f7-list-button>
+            <f7-list-item divider title="Automation" />
+            <f7-list-button href="/settings/rules/add" color="blue" :animate="false">Create rule</f7-list-button>
+            <f7-list-button href="/settings/scripts/add" color="blue" :animate="false">Create script</f7-list-button>
+            <f7-list-button href="/settings/schedule/add" color="blue" :animate="false">Create scheduled rule</f7-list-button>
+            <f7-list-item divider title="Advanced" />
+            <f7-list-button href="/developer/widgets/add" color="blue" :animate="false">Create widget</f7-list-button>
+          </f7-list>
+        </f7-block>
       </div>
     </div>
+
     <f7-popover ref="itemPopover" class="item-popover">
       <item-standalone-control v-if="openedItem" :item="openedItem" :context="context" :no-border="true" />
     </f7-popover>
-    <search-results v-if="searching" :searchResults="searchResults" :pinnedObjects="pinnedObjects" @pin="pin" @unpin="unpin" />
-    <model-picker-popup :value="pinnedObjects.items" :opened="modelPickerOpened" :multiple="true" @closed="modelPickerOpened = false" @input="addItemsFromModel" action-label="Add" />
+    <search-results v-if="searching" :searchResults="searchResults" :pinnedObjects="pinnedObjects" @pin="pin" @unpin="unpin" :cachedObjects="cachedObjects" :loading="searchResultsLoading" />
+    <model-picker-popup :value="pinnedObjects.items" :opened="modelPickerOpened" :multiple="true" @closed="modelPickerOpened = false" @input="addItemsFromModel" action-label="Pin" popup-title="Pin Items from Model" />
   </f7-page>
 </template>
 
 <style lang="stylus">
+.panel-right.panel-in-breakpoint:before
+  position absolute
+  left 0
+  top 0
+  height 100%
+  width 1px
+  background rgba(0,0,0,0.1)
+  content ''
+  z-index 6000
+
 .developer-sidebar
   scrollbar-width none /* Firefox */
   -ms-overflow-style none  /* IE 10+ */
@@ -187,12 +241,16 @@ export default {
   },
   data () {
     return {
+      searchQuery: '',
+      searchResultsLoading: false,
       searching: false,
       activeTab: 'pin',
       modelPickerOpened: false,
       monitoredItems: [],
       sseClient: null,
+      eventTopicFilter: '',
       eventSource: null,
+      cachedObjects: null,
       searchResults: {
         items: [],
         things: [],
@@ -215,7 +273,8 @@ export default {
         { type: 'plan', label: 'Floor plan', componentType: 'oh-plan-page', icon: 'square_stack_3d_up' },
         { type: 'chart', label: 'Chart', componentType: 'oh-chart-page', icon: 'graph_square' }
       ],
-      testExpression: ''
+      testExpression: '',
+      addThingAutocomplete: null
     }
   },
   computed: {
@@ -248,6 +307,7 @@ export default {
   },
   beforeDestroy () {
     this.stopEventSource()
+    if (this.addThingAutocomplete) this.addThingAutocomplete.destroy()
   },
   methods: {
     itemContext (item) {
@@ -260,22 +320,35 @@ export default {
     },
     search (searchbar, query, previousQuery) {
       if (!query) {
-        this.searching = false
+        this.clearSearch()
         return
       }
       this.searching = true
-      const promises = [
-        this.$oh.api.get('/rest/items'),
-        this.$oh.api.get('/rest/things'),
-        this.$oh.api.get('/rest/rules'),
-        this.$oh.api.get('/rest/ui/components/ui:page')
-      ]
+      this.searchQuery = query
 
+      if (this.searchResultsLoading) return
+
+      const promises = (this.cachedObjects)
+        ? [
+          Promise.resolve(this.cachedObjects[0]),
+          Promise.resolve(this.cachedObjects[1]),
+          Promise.resolve(this.cachedObjects[2]),
+          Promise.resolve(this.cachedObjects[3])
+        ] : [
+          this.$oh.api.get('/rest/items'),
+          this.$oh.api.get('/rest/things'),
+          this.$oh.api.get('/rest/rules'),
+          this.$oh.api.get('/rest/ui/components/ui:page')
+        ]
+
+      this.searchResultsLoading = true
       Promise.all(promises).then((data) => {
-        const items = data[0].filter((i) => i.name.toLowerCase().indexOf(query.toLowerCase()) >= 0 || (i.label && i.label.toLowerCase().indexOf(query.toLowerCase()) >= 0))
-        const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(query.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(query.toLowerCase()) >= 0)
-        const rules = data[2].filter((r) => r.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0 || r.name.toLowerCase().indexOf(query.toLowerCase()) >= 0)
-        const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)
+        this.$set(this, 'cachedObjects', data)
+        this.searchResultsLoading = false
+        const items = data[0].filter((i) => i.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || (i.label && i.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0))
+        const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
+        const rules = data[2].filter((r) => r.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || r.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
+        const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
         this.$set(this, 'searchResults', {
           items,
           things,
@@ -286,6 +359,9 @@ export default {
     },
     clearSearch () {
       this.searching = false
+      this.searchResultsLoading = false
+      this.searchSuery = ''
+      this.$set(this, 'cachedObjects', null)
       this.$set(this, 'searchResults', { items: [], things: [], rules: [], pages: [] })
     },
     pin (type, obj) {
@@ -344,7 +420,7 @@ export default {
       })
     },
     runRuleNow (rule) {
-      if (this.rule.status === 'RUNNING') return
+      if (rule.status === 'RUNNING') return
       this.$f7.toast.create({
         text: 'Running rule',
         destroyOnClose: true,
@@ -358,9 +434,111 @@ export default {
         }).open()
       })
     },
+    openScriptingScratchpad () {
+      this.$oh.api.get('/rest/rules/scratchpad')
+        .then((data) => {
+          this.$f7.views.main.router.navigate('/settings/scripts/scratchpad', { animate: false })
+        })
+        .catch(() => {
+          this.$oh.api.get('/rest/module-types/script.ScriptAction').then((data) => {
+            const languages = data.configDescriptions.find((c) => c.name === 'type').options
+            this.$f7.actions.create({
+              buttons: [
+                [
+                  { label: true, text: 'Scripting Language' },
+                  ...languages.map((l) => {
+                    return {
+                      text: l.label,
+                      color: 'blue',
+                      onClick: () => {
+                        const scratchpad = {
+                          uid: 'scratchpad',
+                          name: '-Scratchpad-',
+                          description: 'Created from the developer sidebar on ' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
+                          triggers: [],
+                          conditions: [],
+                          actions: [
+                            {
+                              id: 'script',
+                              type: 'script.ScriptAction',
+                              configuration: {
+                                type: l.value,
+                                script: ''
+                              }
+                            }
+                          ],
+                          tags: ['Script', 'Scratchpad']
+                        }
+                        this.$oh.api.postPlain('/rest/rules', JSON.stringify(scratchpad), 'text/plain', 'application/json').then(() => {
+                          this.$f7.toast.create({
+                            text: 'Scratchpad script created',
+                            destroyOnClose: true,
+                            closeTimeout: 2000
+                          }).open()
+                          this.$f7.views.main.router.navigate('/settings/scripts/scratchpad', { animate: false })
+                        })
+                      }
+                    }
+                  })
+                ],
+                [
+                  { color: 'red', text: 'Cancel', close: true }
+                ]
+              ]
+            }).open()
+          })
+        })
+    },
+    quickAddThing () {
+      if (this.addThingAutocomplete) {
+        this.addThingAutocomplete.value = []
+        this.addThingAutocomplete.open()
+      } else {
+        this.$f7.preloader.show()
+        const self = this
+        this.$oh.api.get('/rest/thing-types').then((data) => {
+          const listedThingTypes = data.filter((t) => t.listed).map((t) => { return { UID: t.UID, label: `${t.label} (${t.UID})` } }).sort((a, b) => a.label.localeCompare(b.label))
+          this.$f7.preloader.hide()
+          this.addThingAutocomplete = this.$f7.autocomplete.create({
+            openIn: 'popup',
+            autoFocus: true,
+            value: [],
+            pageTitle: 'Select Thing Type',
+            searchbarPlaceholder: 'Search thing types',
+            requestSourceOnOpen: true,
+            multiple: false,
+            valueProperty: 'UID',
+            textProperty: 'label',
+            url: 'quick-add-thing/',
+            source (query, render) {
+              if (query.length === 0) {
+                render(listedThingTypes)
+              } else {
+                render(listedThingTypes.filter((t) => (t.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || t.UID.toLowerCase().indexOf(query.toLowerCase()) >= 0)))
+              }
+            },
+            on: {
+              change (value) {
+                if (!value.length) return
+                self.$f7.views.main.router.navigate('/settings/things/add/' + value[0].UID.split(':')[0] + '/' + value[0].UID, { animate: false })
+              }
+            }
+          }).open()
+        })
+      }
+    },
+    changeEventTopicFilter () {
+      this.$f7.dialog.prompt(`Filter events by topics (comma-separated, wildcards accepted):`,
+        'Event Monitor',
+        (filter) => {
+          this.eventTopicFilter = filter
+        },
+        null,
+        this.eventTopicFilter)
+    },
     startSSE () {
       this.$set(this, 'sseEvents', [])
-      this.sseClient = this.$oh.sse.connect('/rest/events', '', (event) => {
+      this.sseClient = this.$oh.sse.connect('/rest/events' + (this.eventTopicFilter ? '?topics=' + this.eventTopicFilter : ''), '', (event) => {
         event.time = new Date()
         this.sseEvents.unshift(...[event])
         this.sseEvents.splice(20)
@@ -371,9 +549,12 @@ export default {
       this.sseClient = null
     },
     startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/*/*,openhab/things/*/*', null, (event) => {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/*/*,openhab/things/*/*,openhab/addons/*/*', null, (event) => {
         const topicParts = event.topic.split('/')
         switch (topicParts[1]) {
+          case 'addons':
+            if (this.addThingAutocomplete) this.addThingAutocomplete.destroy()
+            break
           case 'things':
             switch (topicParts[3]) {
               case 'removed':
