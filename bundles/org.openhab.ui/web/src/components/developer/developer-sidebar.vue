@@ -113,7 +113,7 @@
       <div v-else-if="activeTab === 'events'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex" medium>
-            <span>Events Monitor</span>
+            <span>Event Monitor</span>
             <span style="margin-left:auto">
               <f7-link :color="eventTopicFilter ? 'blue' : 'gray'" :icon-f7="eventTopicFilter ? 'line_horizontal_3_decrease_circle_fill' : 'line_horizontal_3_decrease_circle'" icon-size="14" tooltip="Filter topics" @click="changeEventTopicFilter"></f7-link>
             </span>
