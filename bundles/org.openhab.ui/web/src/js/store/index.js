@@ -19,7 +19,8 @@ const store = new Vuex.Store({
     apiVersion: null,
     apiEndpoints: null,
     locale: null,
-    runtimeInfo: null
+    runtimeInfo: null,
+    developerSidebar: false
   },
   getters: {
     apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type)
@@ -30,6 +31,10 @@ const store = new Vuex.Store({
       state.locale = rootResponse.locale
       state.runtimeInfo = rootResponse.runtimeInfo
       state.apiEndpoints = rootResponse.links
+    },
+    setDeveloperSidebar (state, value) {
+      state.developerSidebar = value
+      state.states.keepConnectionOpen = value
     }
   }
   // strict: debug

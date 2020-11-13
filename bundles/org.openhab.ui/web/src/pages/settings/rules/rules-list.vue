@@ -31,7 +31,8 @@
 
     <f7-list-index
       ref="listIndex"
-      list-el=".rules-list"
+      v-if="$refs.rulesList"
+      :listEl="$refs.rulesList ? $$($refs.rulesList.$el) : undefined"
       :scroll-list="true"
       :label="true"
     ></f7-list-index>
@@ -161,7 +162,10 @@ export default {
 
         this.loading = false
         this.ready = true
-        setTimeout(() => { this.initSearchbar = true; this.$refs.listIndex.update() })
+        setTimeout(() => {
+          this.initSearchbar = true
+          this.$refs.listIndex.update()
+        })
 
         if (!this.eventSource) this.startEventSource()
       }).catch((err, status) => {

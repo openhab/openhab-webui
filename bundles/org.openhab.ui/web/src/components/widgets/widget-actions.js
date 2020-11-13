@@ -51,7 +51,7 @@ export const actionsMixin = {
           }
           let navigateOptions = { props: { deep: true } }
           if (actionPageTransition) navigateOptions.transition = actionPageTransition
-          this.$f7router.navigate('/page/' + actionPage.substring(5), navigateOptions)
+          this.$f7.views.main.router.navigate('/page/' + actionPage.substring(5), navigateOptions)
           break
         case 'command':
           const actionItem = actionConfig[prefix + 'actionItem']
@@ -157,7 +157,7 @@ export const actionsMixin = {
               modalParams: actionModalConfig || {}
             }
           }
-          this.$f7router.navigate(modalRoute, modalProps)
+          this.$f7.views.main.router.navigate(modalRoute, modalProps)
           break
         case 'photos':
           const self = this
@@ -206,14 +206,14 @@ export const actionsMixin = {
               }
             }
           }
-          this.$f7router.navigate(groupPopupRoute, { props: { groupItem: actionGroupItem } })
+          this.$f7.views.main.router.navigate(groupPopupRoute, { props: { groupItem: actionGroupItem } })
           break
         case 'analyze':
         case 'analyzer':
           const actionAnalyzerItems = actionConfig[prefix + 'actionAnalyzerItems']
           const actionAnalyzerChartType = actionConfig[prefix + 'actionAnalyzerChartType']
           const actionAnalyzerCoordSystem = actionConfig[prefix + 'actionAnalyzerCoordSystem']
-          this.$f7router.navigate(`/analyzer/?items=${actionAnalyzerItems.join(',')}&chartType=${actionAnalyzerChartType || ''}&coordSystem=${actionAnalyzerCoordSystem || ''}`)
+          this.$f7.views.main.router.navigate(`/analyzer/?items=${actionAnalyzerItems.join(',')}&chartType=${actionAnalyzerChartType || ''}&coordSystem=${actionAnalyzerCoordSystem || ''}`)
           console.log('Opening the analyzer')
           break
         case 'url':

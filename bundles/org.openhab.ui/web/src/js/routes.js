@@ -212,7 +212,6 @@ export default [
       {
         path: 'rules/',
         component: RulesListPage,
-        keepAlive: true,
         routes: [
           {
             path: ':ruleId',
@@ -259,7 +258,6 @@ export default [
       {
         path: 'scripts/',
         component: RulesListPage,
-        keepAlive: true,
         options: {
           props: {
             showScripts: true
