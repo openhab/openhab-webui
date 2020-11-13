@@ -34,6 +34,7 @@ const store = new Vuex.Store({
     },
     setDeveloperSidebar (state, value) {
       state.developerSidebar = value
+      state.states.keepConnectionOpen = value
     }
   }
   // strict: debug

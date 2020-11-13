@@ -450,7 +450,6 @@ export default {
     toggleDeveloperSidebar () {
       if (!this.$store.getters.isAdmin) return
       this.showDeveloperSidebar = !this.showDeveloperSidebar
-      this.$store.commit('keepConnectionOpen', this.showDeveloperSidebar)
       if (this.showDeveloperSidebar) this.$store.dispatch('startTrackingStates')
       this.$store.commit('setDeveloperSidebar', this.showDeveloperSidebar)
     },

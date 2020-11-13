@@ -6,7 +6,7 @@ const state = {
   trackerConnectionId: null,
   trackerEventSource: null,
   pendingTrackingListUpdate: false,
-  keepConnectionOpen: true
+  keepConnectionOpen: false
 }
 
 let stateTrackingProxy = null
