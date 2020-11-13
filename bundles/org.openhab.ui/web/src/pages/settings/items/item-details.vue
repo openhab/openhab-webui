@@ -165,8 +165,7 @@ export default {
       this.load()
     },
     onPageAfterIn () {
-      this.$oh.api.get('/rest/links?itemName=' + this.item.name).then((data) => {
-        console.dir(data.filter((l) => l.itemName === this.item.name))
+      this.$oh.api.get('/rest/links?itemName=' + this.itemName).then((data) => {
         this.links = data
       })
     },
