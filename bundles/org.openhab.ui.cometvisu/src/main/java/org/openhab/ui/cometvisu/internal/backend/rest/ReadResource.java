@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -143,46 +144,46 @@ public class ReadResource implements EventBroadcaster, RESTResource {
         // get all requested items and send their states to the client
         items = new HashMap<>();
         // send the current states of all items to the client
-        if (this.itemRegistry != null) {
-            List<StateBean> states = new ArrayList<>();
-            for (String cvItemName : itemNames) {
-                try {
-                    String[] parts = cvItemName.split(":");
-                    String ohItemName = cvItemName;
-                    Class<? extends State> stateClass = null;
-                    if (parts.length == 2) {
-                        String classPrefix = parts[0].toLowerCase();
-                        if (Config.itemTypeMapper.containsKey(classPrefix)) {
-                            stateClass = Config.itemTypeMapper.get(classPrefix);
-                            classPrefix += ":";
-                        } else {
-                            logger.debug("no type found for '{}'", classPrefix);
-                            classPrefix = "";
-                        }
-                        ohItemName = parts[1];
-                    }
-                    Item item = this.itemRegistry.getItem(ohItemName);
-                    if (!items.containsKey(item)) {
-                        items.put(item, new HashMap<>());
-                    }
-                    items.get(item).put(cvItemName, stateClass);
-                    StateBean itemState = new StateBean();
-                    itemState.name = cvItemName;
-
-                    if (stateClass != null) {
-                        itemState.state = item.getStateAs(stateClass).toString();
-                        logger.trace("get state of '{}' as '{}' == '{}'", item, stateClass, itemState.state);
+        List<StateBean> states = new ArrayList<>();
+        for (String cvItemName : itemNames) {
+            try {
+                String[] parts = cvItemName.split(":");
+                String ohItemName = cvItemName;
+                Class<? extends State> stateClass = null;
+                if (parts.length == 2) {
+                    String classPrefix = parts[0].toLowerCase();
+                    if (Config.itemTypeMapper.containsKey(classPrefix)) {
+                        stateClass = Config.itemTypeMapper.get(classPrefix);
+                        classPrefix += ":";
                     } else {
-                        itemState.state = item.getState().toString();
+                        logger.debug("no type found for '{}'", classPrefix);
+                        classPrefix = "";
                     }
-                    states.add(itemState);
-                } catch (ItemNotFoundException e) {
-                    logger.error("{}", e.getLocalizedMessage());
+                    ohItemName = parts[1];
                 }
+                Item item = this.itemRegistry.getItem(ohItemName);
+                if (!items.containsKey(item)) {
+                    items.put(item, new HashMap<>());
+                }
+                items.get(item).put(cvItemName, stateClass);
+                StateBean itemState = new StateBean();
+                itemState.name = cvItemName;
+
+                if (stateClass != null) {
+                    itemState.state = item.getStateAs(stateClass).toString();
+                    logger.trace("get state of '{}' as '{}' == '{}'", item, stateClass, itemState.state);
+                } else {
+                    itemState.state = item.getState().toString();
+                }
+                states.add(itemState);
+            } catch (ItemNotFoundException e) {
+                logger.error("{}", e.getLocalizedMessage());
             }
-            logger.debug("initially broadcasting {}/{} item states", states.size(), itemNames.size());
-            broadcaster.send(SseUtil.buildEvent(sse.newEventBuilder(), states));
         }
+
+        logger.debug("initially broadcasting {}/{} item states", states.size(), itemNames.size());
+        broadcaster.send(SseUtil.buildEvent(sse.newEventBuilder(), states));
+
         // listen to state changes of the requested items
         registerItems();
     }
@@ -206,7 +207,7 @@ public class ReadResource implements EventBroadcaster, RESTResource {
      */
     @Override
     public void registerItem(Item item) {
-        if (item == null || items.containsKey(item) || !itemNames.contains(item.getName())) {
+        if (items.containsKey(item) || !itemNames.contains(item.getName())) {
             return;
         }
         if (item instanceof GenericItem) {
@@ -222,7 +223,7 @@ public class ReadResource implements EventBroadcaster, RESTResource {
      */
     @Override
     public void unregisterItem(Item item) {
-        if (item == null || items.containsKey(item) || !itemNames.contains(item.getName())) {
+        if (items.containsKey(item) || !itemNames.contains(item.getName())) {
             return;
         }
         if (item instanceof GenericItem) {
@@ -252,6 +253,6 @@ public class ReadResource implements EventBroadcaster, RESTResource {
 
     @Override
     public Map<String, @Nullable Class<? extends State>> getClientItems(Item item) {
-        return items.get(item);
+        return Objects.requireNonNullElse(items.get(item), Map.of());
     }
 }

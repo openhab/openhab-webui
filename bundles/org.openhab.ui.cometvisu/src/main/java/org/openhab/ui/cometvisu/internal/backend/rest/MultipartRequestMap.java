@@ -75,12 +75,12 @@ public class MultipartRequestMap extends HashMap<String, List<Object>> {
 
     public String getStringParameter(String name) {
         List<Object> list = get(name);
-        return (list != null) ? (String) get(name).get(0) : null;
+        return list != null ? (String) list.get(0) : null;
     }
 
     public File getFileParameter(String name) {
         List<Object> list = get(name);
-        return (list != null) ? (File) get(name).get(0) : null;
+        return list != null ? (File) list.get(0) : null;
     }
 
     private void processFilePart(Part part, String fileName) throws IOException {

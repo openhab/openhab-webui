@@ -318,7 +318,8 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     protected boolean isValidURL(@Nullable String url) {
         if (url != null && !url.isEmpty()) {
             try {
-                return new URL(url).toURI() != null ? true : false;
+                new URL(url).toURI();
+                return true;
             } catch (MalformedURLException | URISyntaxException ex) {
             }
         }

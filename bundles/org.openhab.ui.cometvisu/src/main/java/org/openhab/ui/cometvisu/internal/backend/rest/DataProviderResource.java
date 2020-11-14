@@ -135,10 +135,13 @@ public class DataProviderResource implements RESTResource {
                 logger.debug("no transform type found for item type {}, skipping this item", type);
                 continue;
             }
-            if (!groups.containsKey(type)) {
-                groups.put(type, new ArrayList<>());
+
+            List<Object> group = groups.get(type);
+            if (group == null) {
+                group = new ArrayList<>();
+                groups.put(type, group);
             }
-            groups.get(type).add(entry);
+            group.add(entry);
         }
         System.out.println(groups.size() + "/" + this.itemRegistry.getItems().size());
         return Response.ok(groups).build();

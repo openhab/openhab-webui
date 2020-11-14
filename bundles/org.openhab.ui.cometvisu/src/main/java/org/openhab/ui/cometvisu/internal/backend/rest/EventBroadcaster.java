@@ -30,10 +30,8 @@ public interface EventBroadcaster {
      * Broadcasts an event described by the given parameters to all currently
      * listening clients.
      *
-     * @param item
-     *            - the item that should be broadcasted
-     * @param eventObject
-     *            - bean that can be converted to a JSON object.
+     * @param item the item that should be broadcasted
+     * @param eventObject bean that can be converted to a JSON object.
      */
     public void broadcastEvent(final Object eventObject);
 
@@ -41,8 +39,7 @@ public interface EventBroadcaster {
      * listens to state changes of the given item, if it is part of the
      * requested items
      *
-     * @param item
-     *            - the new item, that should be listened to
+     * @param item the new item, that should be listened to
      */
     public void registerItem(Item item);
 
@@ -50,8 +47,7 @@ public interface EventBroadcaster {
      * listens to state changes of the given item, if it is part of the
      * requested items
      *
-     * @param item
-     *            - the new item, that should be listened to
+     * @param item the new item, that should be listened to
      */
     public void unregisterItem(Item item);
 
@@ -64,8 +60,7 @@ public interface EventBroadcaster {
      * lists all client item names and the associated type which must be notified
      * when the item changes
      *
-     * @param item
-     *            - the item that is listened to
+     * @param item the item that is listened to
      * @return
      */
     public Map<String, @Nullable Class<? extends State>> getClientItems(Item item);
