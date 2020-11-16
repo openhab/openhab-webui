@@ -65,6 +65,7 @@
             <f7-list inline-labels no-hairlines-md>
               <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" required validate
                             :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+                            pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
                             @input="rule.uid = $event.target.value" :clear-button="createMode">
               </f7-list-input>
               <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" required validate

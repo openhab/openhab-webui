@@ -91,8 +91,9 @@ export default function itemDefaultListComponent (item, itemNameAsFooter) {
 
   if (!component.config) component.config = {}
   component.config.item = item.name
-  component.config.title = item.label || item.name
-  if (item.category) component.config.icon = 'oh:' + item.category
+  if (!component.config.title) component.config.title = item.label || item.name
+  if (item.category && !component.config.icon) component.config.icon = 'oh:' + item.category
+  if (item.category && ['Switch', 'Rollershutter', 'Contact', 'Dimmer', 'Group'].indexOf(item.type) >= 0) component.config.iconUseState = true
   if (item.label && itemNameAsFooter) component.config.footer = item.name
   if (!item.category) component.config.fallbackIconToInitial = true
 

@@ -106,8 +106,8 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
 
   if (!component.config) component.config = {}
   component.config.item = item.name
-  component.config.title = item.label || item.name
-  if (item.label && itemNameAsFooter) component.config.footer = item.name
+  if (!component.config.title) component.config.title = item.label || item.name
+  if (item.label && itemNameAsFooter && !component.config.footer) component.config.footer = item.name
   component.config.stateAsHeader = true
   if (component.component === 'oh-label-cell') component.config.expandable = false
 

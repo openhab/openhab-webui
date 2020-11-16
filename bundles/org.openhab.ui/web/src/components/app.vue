@@ -78,7 +78,7 @@
           </f7-list-item>
           <f7-list-item link="/developer/api-explorer" title="API Explorer" view=".view-main" panel-close :animate="false" no-chevron
               :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') >= 0 }">
-            <f7-icon slot="media" f7="wrench" color="gray"></f7-icon>
+            <f7-icon slot="media" f7="burn" color="gray"></f7-icon>
           </f7-list-item>
           </ul>
         </li>

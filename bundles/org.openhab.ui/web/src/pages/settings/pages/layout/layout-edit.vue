@@ -60,12 +60,11 @@
   white-space pre-wrap
 .layout-editor-design-tab
   .layout-page
+    margin-bottom calc(var(--f7-toolbar-height) + 1rem)
     .oh-masonry
       z-index inherit
-      padding-bottom 5rem
 .layout-editor
   .page-content
-    padding-bottom 5rem
     z-index inherit
 </style>
 

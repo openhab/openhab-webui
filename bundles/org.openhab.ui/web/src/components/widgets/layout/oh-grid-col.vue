@@ -1,7 +1,7 @@
 <template>
-  <f7-col v-bind="config" v-if="visible">
-    <div width="100%">
-      <f7-menu v-if="context.editmode" class="configure-layout-menu padding-horizontal">
+  <f7-col v-bind="config" v-if="visible" class="oh-col">
+    <div width="100%" v-if="context.editmode">
+      <f7-menu class="configure-layout-menu padding-horizontal">
         <f7-menu-item style="margin-left: auto" icon-f7="rectangle_split_3x1" dropdown>
           <f7-menu-dropdown right>
           <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="context.editmode.configureWidget(context.component.slots.default[0], context)" href="#" text="Configure Widget"></f7-menu-dropdown-item>
@@ -23,10 +23,6 @@
     <generic-widget-component v-else-if="context.component.slots.default.length" :context="childContext(context.component.slots.default[0])" @command="onCommand" />
   </f7-col>
 </template>
-
-<style>
-
-</style>
 
 <script>
 import mixin from '../widget-mixin'

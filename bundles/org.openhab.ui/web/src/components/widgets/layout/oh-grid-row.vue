@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="oh-row">
     <hr v-if="context.editmode" style="opacity: 0.5; border-top: 1px #777 dashed" />
-    <div width="100%">
-      <f7-menu v-if="context.editmode" class="configure-layout-menu margin-bottom padding-horizontal">
+    <div width="100%" v-if="context.editmode">
+      <f7-menu class="configure-layout-menu margin-bottom padding-horizontal">
         <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-grid-col')" icon-f7="plus" text="Add Column" />
         <f7-menu-item style="margin-left: auto" icon-f7="square_split_1x2" dropdown>
           <f7-menu-dropdown right>
@@ -36,8 +36,13 @@
   </div>
 </template>
 
-<style>
-
+<style lang="stylus">
+.oh-row
+  --f7-orig-grid-gap var(--f7-grid-gap)
+  --f7-orig-grid-row-gap var(--f7-grid-row-gap)
+  .oh-col .row:not(.no-gap)
+    --f7-grid-gap var(--f7-orig-grid-gap)
+    --f7-grid-row-gap var(--f7-orig-grid-row-gap)
 </style>
 
 <script>
