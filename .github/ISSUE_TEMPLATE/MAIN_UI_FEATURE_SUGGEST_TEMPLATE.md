@@ -1,7 +1,7 @@
 ---
 name: Suggest a feature for the main UI
 about: Use when you have a idea of improvement for the openHAB main web UI.
-labels: improvement,main ui
+labels: enhancement,main ui
 ---
 
 <!--
