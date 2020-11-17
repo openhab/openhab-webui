@@ -111,7 +111,7 @@
             <semantics-picker v-if="isEditable" :item="rule"></semantics-picker>
             <tag-input :item="rule" :disabled="!isEditable"></tag-input>
           </f7-col>
-          <f7-col v-if="isEditable">
+          <f7-col v-if="isEditable && !createMode">
             <f7-list>
               <f7-list-button color="red" @click="deleteRule">Remove Rule</f7-list-button>
             </f7-list>
