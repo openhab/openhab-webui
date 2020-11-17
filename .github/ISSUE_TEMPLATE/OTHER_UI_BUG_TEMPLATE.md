@@ -1,39 +1,36 @@
 ---
 name: Report a bug with another UI
-about: Use when you have a problem related to another UI than the openHAB main web UI.
+about: Use when you encountered a problem related to another UI than the openHAB main web UI.
 labels: bug
 ---
 
 <!--
-Please DO NOT ERASE this template, but fill in the details as requested. This will ensure your issue is properly considered. If not, we reserve the right to close it without further action.
+Please DO NOT ERASE this template, but fill in the details as requested. This will ensure your issue is properly filed and will be considered. Otherwise, we may reserve the right to close it without further action.
 -->
-
-## Your environment
-
-<!--
-As an admin, in the main UI, choose *Help & About* on the left sidebar, expand *Technical information* and click on *View details*, then click *Copy* and paste the results here. You may omit information that is not pertinent to this issue if you feel it's divulging information you'd like not to share.
--->
-
-```yaml
-
-```
 
 ## Which UI are you reporting an issue for?
 
-[ ] Basic UI
-[ ] HABPanel
-[ ] HABot
-[ ] CometVisu
+<!-- Note: legacy UIs such as Paper UI, Classic UI or HABmin are not maintained anymore, we don't accept issues for them -->
+
+- [ ] Basic UI
+- [ ] HABPanel
+- [ ] HABot
+- [ ] CometVisu
 
 ## The problem
 
 <!--
 Describe the issue you're having. In most cases it is appreciated to share screenshots or
 even animated GIFs of your issue.
+
+To make screenshots:
+* On Windows: use Win+Shift+S
+* On macOS: use Cmd+Shift+4
+
 To make animated GIFs we recommend:
 * On Windows: ShareX - https://getsharex.com/
 * On macOS: Giphy Capture - https://giphy.com/apps/giphycapture
-* On Linux: peek - https://github.com/phw/peek#about
+* On GNU/Linux: Peek - https://github.com/phw/peek
 -->
 
 ## Expected behavior
@@ -49,6 +46,16 @@ Provide accurate steps to reproduce the issue, including pastes of widget/page c
 -->
 
 1. 
+
+## Your environment
+
+<!--
+As an admin, in the main UI, choose *Help & About* on the left sidebar, expand *Technical information* and click on *View details*, then click *Copy* and paste the results here. You may omit information that is not pertinent to this issue if you feel it's divulging information you'd like not to share.
+-->
+
+```yaml
+
+```
 
 ## JavaScript Console Output
 

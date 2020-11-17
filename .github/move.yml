@@ -8,4 +8,17 @@ closeSourceIssue: true
 lockSourceIssue: false
 # Set custom aliases for targets
 aliases:
-   core: openhab-core
+  core: openhab-core
+  addons: openhab-addons
+  distro: openhab-distro
+  docs: openhab-docs
+  website: website
+  android: openhab-android
+  ios: openhab-ios
+  zwave: org.openhab.binding.zwave
+  zigbee: org.openhab.binding.zigbee
+  openhabian: openhabian
+  docker: openhab-docker
+  linuxpkg: openhab-linuxpkg
+  snap: openhab-snap
+  vscode: openhab-vscode

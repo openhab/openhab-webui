@@ -13,11 +13,10 @@ openHAB has a main web UI but more can be installed thanks to its modular add-on
 Most UIs rely on openHAB's REST API which is largely implemented in openHAB Core bundles, but sometimes on individual add-ons.
 Therefore, a significant chunk of issues that can be mistakenly assumed to be UI issues could in fact be depending on an extension of the REST API.
 
-Therefore, if your issue is not strictly UI-related it will eventually be transferred or closed with an indication that it requires a change in openHAB Core to be implemented.
+If your issue is not strictly UI-related be aware it could eventually be transferred or closed with an indication that it requires a change in openHAB Core to be implemented.
+Should you be interested in openHAB Core development, we invite you to check out https://github.com/openhab/openhab-core.
 
-If you are interested in openHAB Core development, we invite you to come by on https://github.com/openhab/openhab-core.
-
-If you have a problem with the web UIs, head over to https://github.com/openhab/openhab-webui/issues.
+That being said, if you feel you have a genuine problem with one of the web UIs, please review the existing issues at https://github.com/openhab/openhab-webui/issues first, then file a new one at https://github.com/openhab/openhab-webui/issues/new/choose if appropriate - the menu will guide you.
 
 ## Development / Repository Organization
 
@@ -54,14 +53,14 @@ You find the following repository structure:
 
 ### How to contribute
 
-You **don't** need a Java development for UI development, in most cases.
+In most cases, you **don't** need a Java development environment for UI development.
 
 Instead, make sure you have NodeJS 12.16 or later and npm 6.14 or later installed.
 
 Then identify in the `bundles` directories where the frontend code is - for instance, for the main UI it is `bundles/org.openhab.ui/web/`.
 Then follow the instructions in the specific add-on's `CONTRIBUTING.md` file to get started. In the main UI's case, it is located in [bundles/org.openhab.ui/CONTRIBUTING.md](https://github.com/openhab/openhab-webui/blob/master/bundles/org.openhab.ui/CONTRIBUTING.md). In many cases it will involve executing some `npm` commands to install dependencies and start a development server.
 
-However, if you want to compile the final .jar add-ons, we have assembled some step-by-step guides for different IDEs on our developer documentation website:
+However, if you want to compile the final `.jar` add-ons, we have assembled some step-by-step guides for different IDEs on our developer documentation website:
 
 https://www.openhab.org/docs/developer/#setup-the-development-environment
 
