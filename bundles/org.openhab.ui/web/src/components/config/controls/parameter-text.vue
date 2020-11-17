@@ -29,7 +29,7 @@ export default {
       return 'text'
     },
     formattedValue () {
-      if (this.configDescription.multiple) return this.value.join('\n')
+      if (this.configDescription.multiple) return (this.value) ? this.value.join('\n') : ''
       return this.value
     }
   },
