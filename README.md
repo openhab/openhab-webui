@@ -17,7 +17,7 @@ Therefore, if your issue is not strictly UI-related it will eventually be transf
 
 If you are interested in openHAB Core development, we invite you to come by on https://github.com/openhab/openhab-core.
 
-If you have a problem with the web UIs, head over to 
+If you have a problem with the web UIs, head over to https://github.com/openhab/openhab-webui/issues.
 
 ## Development / Repository Organization
 
