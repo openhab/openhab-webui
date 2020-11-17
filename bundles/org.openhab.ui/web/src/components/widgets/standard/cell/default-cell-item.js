@@ -84,7 +84,7 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
       component: 'oh-label-cell'
     }
 
-    if (item.type.indexOf('Number:') === 0) {
+    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.options || stateDescription.readOnly)) {
       component.config = {
         trendItem: item.name,
         action: 'analyze',

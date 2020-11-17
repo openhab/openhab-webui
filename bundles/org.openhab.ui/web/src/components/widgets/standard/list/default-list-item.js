@@ -70,7 +70,7 @@ export default function itemDefaultListComponent (item, itemNameAsFooter) {
       component: 'oh-label-item'
     }
 
-    if (item.type.indexOf('Number:') === 0) {
+    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.options || stateDescription.readOnly)) {
       component.config = {
         action: 'analyze',
         actionAnalyzerItems: [item.name]
