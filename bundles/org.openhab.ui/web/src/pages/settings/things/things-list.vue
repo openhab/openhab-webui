@@ -1,6 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
     <f7-navbar title="Things" back-link="Settings" back-link-url="/settings/" back-link-force>
+      <f7-nav-right>
+        <f7-link icon-md="material:done_all" @click="toggleCheck()"
+        :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+      </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
@@ -14,6 +18,20 @@
         ></f7-searchbar>
       </f7-subnavbar>
     </f7-navbar>
+    <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
+      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">Remove {{selectedItems.length}}</f7-link>
+      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">&nbsp;Disable {{selectedItems.length}}</f7-link>
+      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">&nbsp;Enable {{selectedItems.length}}</f7-link>
+      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false"></f7-link>
+      <div class="title" v-if="$theme.md">
+        {{selectedItems.length}} selected
+      </div>
+      <div class="right" v-if="$theme.md">
+        <f7-link v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)"></f7-link>
+        <f7-link v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)"></f7-link>
+        <f7-link v-show="selectedItems.length" tooltip="Remove selected" icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
+      </div>
+    </f7-toolbar>
 
     <f7-list-index
       ref="listIndex"
@@ -52,10 +70,16 @@
         <f7-list v-else class="searchbar-found col things-list" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
             <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title></f7-list-item>
-            <f7-list-item v-for="thing in thingsWithInitial"
-              :key="thing.UID"
+            <f7-list-item
+              v-for="(thing, index) in thingsWithInitial"
+              :key="index"
               media-item
-              :link="thing.UID"
+              class="thinglist-item"
+              :checkbox="showCheckboxes"
+              :checked="isChecked(thing.UID)"
+              @click.ctrl="(e) => ctrlClick(e, thing)"
+              @click.exact="(e) => click(e, thing)"
+              link=""
               :title="thing.label"
               :footer="thing.UID"
             >
@@ -101,7 +125,8 @@ export default {
       initSearchbar: false,
       things: [],
       inbox: [],
-      // indexedThings: {},
+      selectedItems: [],
+      showCheckboxes: false,
       groupBy: 'alphabetical',
       eventSource: null
     }
@@ -168,6 +193,87 @@ export default {
           searchbar.search(filterQuery)
         }
         if (groupBy === 'alphabetical') this.$refs.listIndex.update()
+      })
+    },
+    toggleCheck () {
+      this.showCheckboxes = !this.showCheckboxes
+    },
+    isChecked (item) {
+      return this.selectedItems.indexOf(item) >= 0
+    },
+    click (event, item) {
+      if (this.showCheckboxes) {
+        this.toggleItemCheck(event, item.UID, item)
+      } else {
+        this.$f7router.navigate(item.UID)
+      }
+    },
+    ctrlClick (event, item) {
+      this.toggleItemCheck(event, item.UID, item)
+      if (!this.selectedItems.length) this.showCheckboxes = false
+    },
+    toggleItemCheck (event, item) {
+      if (!this.showCheckboxes) this.showCheckboxes = true
+      if (this.isChecked(item)) {
+        this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
+      } else {
+        this.selectedItems.push(item)
+      }
+    },
+    removeSelected () {
+      const vm = this
+
+      this.$f7.dialog.confirm(
+        `Remove ${this.selectedItems.length} selected things?`,
+        'Remove Things',
+        () => {
+          vm.doRemoveSelected()
+        }
+      )
+    },
+    doRemoveSelected () {
+      if (this.selectedItems.some((i) => this.things.find((thing) => thing.UID === i).editable === false)) {
+        this.$f7.dialog.alert('Some of the selected things are not modifiable because they have been provisioned by files')
+        return
+      }
+
+      let dialog = this.$f7.dialog.progress('Deleting Things...')
+
+      const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/things/' + i))
+      Promise.all(promises).then((data) => {
+        this.$f7.toast.create({
+          text: 'Things removed',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        this.selectedItems = []
+        dialog.close()
+        this.load()
+      }).catch((err) => {
+        dialog.close()
+        this.load()
+        console.error(err)
+        this.$f7.dialog.alert('An error occurred while deleting: ' + err)
+      })
+    },
+    doDisableEnableSelected (enable) {
+      let dialog = this.$f7.dialog.progress('Please Wait...')
+
+      const promises = this.selectedItems.map((i) => this.$oh.api.putPlain('/rest/things/' + i + '/enable', enable.toString(), 'application/json', 'application/json'))
+      Promise.all(promises).then((data) => {
+        this.$f7.toast.create({
+          text: (enable) ? 'Things enabled' : 'Things disabled',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        this.selectedItems = []
+        dialog.close()
+        this.load()
+      }).catch((err) => {
+        dialog.close()
+        this.load()
+        console.error(err)
+        this.$f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
       })
     },
     startEventSource () {

@@ -24,7 +24,7 @@
         {{selectedItems.length}} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
+        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
       </div>
     </f7-toolbar>
 
@@ -70,8 +70,9 @@
               class="itemlist-item"
               :checkbox="showCheckboxes"
               :checked="isChecked(item.name)"
-              @change="(e) => toggleItemCheck(e, item.name)"
-              :link="showCheckboxes ? null : item.name"
+              @click.ctrl="(e) => ctrlClick(e, item)"
+              @click.exact="(e) => click(e, item)"
+              link=""
               :title="(item.label) ? item.label : item.name"
               :footer="(item.label) ? item.name : '\xa0'"
               :subtitle="getItemTypeAndMetaLabel(item)"
@@ -207,8 +208,19 @@ export default {
     isChecked (item) {
       return this.selectedItems.indexOf(item) >= 0
     },
+    click (event, item) {
+      if (this.showCheckboxes) {
+        this.toggleItemCheck(event, item.name, item)
+      } else {
+        this.$f7router.navigate(item.name)
+      }
+    },
+    ctrlClick (event, item) {
+      this.toggleItemCheck(event, item.name, item)
+      if (!this.selectedItems.length) this.showCheckboxes = false
+    },
     toggleItemCheck (event, item) {
-      console.log('toggle check')
+      if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
         this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
       } else {

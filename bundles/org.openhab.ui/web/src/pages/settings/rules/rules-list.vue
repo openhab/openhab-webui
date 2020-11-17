@@ -20,12 +20,16 @@
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
       <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">Remove {{selectedItems.length}}</f7-link>
+      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">&nbsp;Disable {{selectedItems.length}}</f7-link>
+      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">&nbsp;Enable {{selectedItems.length}}</f7-link>
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false"></f7-link>
       <div class="title" v-if="$theme.md">
         {{selectedItems.length}} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
+        <f7-link v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)"></f7-link>
+        <f7-link v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)"></f7-link>
+        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
       </div>
     </f7-toolbar>
 
@@ -80,8 +84,9 @@
               class="rulelist-item"
               :checkbox="showCheckboxes"
               :checked="isChecked(rule.uid)"
-              @change="(e) => toggleItemCheck(e, rule.uid)"
-              :link="showCheckboxes ? null : rule.uid"
+              @click.ctrl="(e) => ctrlClick(e, rule)"
+              @click.exact="(e) => click(e, rule)"
+              link=""
               :title="rule.name"
               :text="rule.uid"
               :footer="rule.description"
@@ -201,8 +206,19 @@ export default {
     isChecked (item) {
       return this.selectedItems.indexOf(item) >= 0
     },
+    click (event, item) {
+      if (this.showCheckboxes) {
+        this.toggleItemCheck(event, item.uid, item)
+      } else {
+        this.$f7router.navigate(item.uid)
+      }
+    },
+    ctrlClick (event, item) {
+      this.toggleItemCheck(event, item.uid, item)
+      if (!this.selectedItems.length) this.showCheckboxes = false
+    },
     toggleItemCheck (event, item) {
-      console.log('toggle check')
+      if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
         this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
       } else {
@@ -243,6 +259,26 @@ export default {
         this.load()
         console.error(err)
         this.$f7.dialog.alert('An error occurred while deleting: ' + err)
+      })
+    },
+    doDisableEnableSelected (enable) {
+      let dialog = this.$f7.dialog.progress('Please Wait...')
+
+      const promises = this.selectedItems.map((i) => this.$oh.api.postPlain('/rest/rules/' + i + '/enable', enable.toString()))
+      Promise.all(promises).then((data) => {
+        this.$f7.toast.create({
+          text: (enable) ? 'Rules enabled' : 'Rules disabled',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        this.selectedItems = []
+        dialog.close()
+        this.load()
+      }).catch((err) => {
+        dialog.close()
+        this.load()
+        console.error(err)
+        this.$f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
       })
     }
   }

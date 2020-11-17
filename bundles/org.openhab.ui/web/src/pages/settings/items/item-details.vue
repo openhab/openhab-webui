@@ -79,6 +79,13 @@
           <link-details :item="item" :links="links" />
         </f7-col>
       </f7-row>
+      <f7-row v-if="item.editable">
+        <f7-col>
+          <f7-list>
+            <f7-list-button color="red" @click="deleteItem">Remove Item</f7-list-button>
+          </f7-list>
+        </f7-col>
+      </f7-row>
     </f7-block>
   </f7-page>
 </template>
@@ -177,6 +184,17 @@ export default {
         this.item = data
         this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
       })
+    },
+    deleteItem () {
+      this.$f7.dialog.confirm(
+        `Are you sure you want to delete ${this.item.label || this.item.name}?`,
+        'Delete Item',
+        () => {
+          this.$oh.api.delete('/rest/items/' + this.item.name).then(() => {
+            this.$f7router.back('/settings/items/', { force: true })
+          })
+        }
+      )
     }
   }
 }

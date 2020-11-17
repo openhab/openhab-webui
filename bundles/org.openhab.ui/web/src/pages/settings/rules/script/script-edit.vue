@@ -67,8 +67,13 @@
             <f7-link sheet-close class="padding-right"><f7-icon f7="chevron_down"></f7-icon></f7-link>
           </div>
         </f7-toolbar>
-        <f7-block>
+        <f7-block class="block-narrow">
           <script-general-settings :createMode="newScript" :rule="rule" />
+          <f7-col v-if="isEditable">
+            <f7-list>
+              <f7-list-button color="red" @click="deleteRule">Remove Script</f7-list-button>
+            </f7-list>
+          </f7-col>
         </f7-block>
       </f7-page>
     </f7-sheet>
@@ -311,6 +316,17 @@ export default {
           }).open()
         })
       })
+    },
+    deleteRule () {
+      this.$f7.dialog.confirm(
+        `Are you sure you want to delete ${this.rule.name}?`,
+        'Delete Rule',
+        () => {
+          this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
+            this.$f7router.back('/settings/scripts/', { force: true })
+          })
+        }
+      )
     },
     showBlocklyCode () {
       try {

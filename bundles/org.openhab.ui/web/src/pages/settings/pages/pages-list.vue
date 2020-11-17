@@ -26,7 +26,7 @@
         {{selectedItems.length}} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
+        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
       </div>
     </f7-toolbar>
 
@@ -82,10 +82,11 @@
               media-item
               class="pagelist-item"
               :checkbox="showCheckboxes"
-              :checked="isChecked(page.uid)"
+              :checked="isChecked(((page.component === 'Sitemap') ? 'system:sitemap:' : 'ui:page:') + page.uid)"
               :disabled="showCheckboxes && page.uid === 'overview'"
-              @change="(e) => toggleItemCheck(e, page.uid, page)"
-              :link="showCheckboxes ? null : getPageType(page).type + '/' + page.uid"
+              @click.ctrl="(e) => ctrlClick(e, page)"
+              @click.exact="(e) => click(e, page)"
+              link=""
               :title="page.config.label"
               :subtitle="getPageType(page).label"
               :footer="page.uid"
@@ -216,8 +217,19 @@ export default {
     isChecked (item) {
       return this.selectedItems.indexOf(item) >= 0
     },
+    click (event, item) {
+      if (this.showCheckboxes) {
+        this.toggleItemCheck(event, item.uid, item)
+      } else {
+        this.$f7router.navigate(this.getPageType(item).type + '/' + item.uid)
+      }
+    },
+    ctrlClick (event, item) {
+      this.toggleItemCheck(event, item.uid, item)
+      if (!this.selectedItems.length) this.showCheckboxes = false
+    },
     toggleItemCheck (event, itemName, item) {
-      console.log('toggle check')
+      if (!this.showCheckboxes) this.showCheckboxes = true
       itemName = (item.component === 'Sitemap') ? 'system:sitemap:' + itemName : 'ui:page:' + itemName
       if (this.isChecked(itemName)) {
         this.selectedItems.splice(this.selectedItems.indexOf(itemName), 1)
