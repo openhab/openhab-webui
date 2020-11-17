@@ -111,6 +111,12 @@
             <semantics-picker v-if="isEditable" :item="rule"></semantics-picker>
             <tag-input :item="rule" :disabled="!isEditable"></tag-input>
           </f7-col>
+          <f7-col v-if="isEditable">
+            <f7-list>
+              <f7-list-button color="red" @click="deleteRule">Remove Rule</f7-list-button>
+            </f7-list>
+          </f7-col>
+
         </f7-block>
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
@@ -332,6 +338,17 @@ export default {
           closeTimeout: 2000
         }).open()
       })
+    },
+    deleteRule () {
+      this.$f7.dialog.confirm(
+        `Are you sure you want to delete ${this.rule.name}?`,
+        'Delete Rule',
+        () => {
+          this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
+            this.$f7router.back('/settings/rules/', { force: true })
+          })
+        }
+      )
     },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/' + this.ruleId + '/*', null, (event) => {
