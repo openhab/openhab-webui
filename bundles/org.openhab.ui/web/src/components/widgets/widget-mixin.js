@@ -54,6 +54,7 @@ export default {
   },
   methods: {
     evaluateExpression (key, value) {
+      if (value === null) return null
       if (typeof value === 'string' && value.startsWith('=')) {
         try {
           // we cache the parsed abstract tree to prevent it from being parsed again at runtime

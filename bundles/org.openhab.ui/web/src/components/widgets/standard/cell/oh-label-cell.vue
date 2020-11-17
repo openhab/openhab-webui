@@ -9,7 +9,7 @@
             <span>{{config.title || config.header}}</span>
             <f7-badge v-if="config.headerBadge" color="config.headerBadgeColor">{{config.headerBadge}}</f7-badge>
           </div>
-          <div class="state" :style="config.stateStyle">{{config.label || context.store[config.item].displayState || context.store[config.item].state}}</div>
+          <div class="state" :style="config.stateStyle">{{label}}</div>
         </f7-list-item>
       </f7-list>
     </template>
@@ -34,6 +34,11 @@ export default {
   components: {
     OhCell
   },
-  widget: OhLabelCellDefinition
+  widget: OhLabelCellDefinition,
+  computed: {
+    label () {
+      return  this.config.label || this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
+    }
+  }
 }
 </script>

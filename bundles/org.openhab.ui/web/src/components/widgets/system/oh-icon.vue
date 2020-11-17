@@ -24,18 +24,29 @@ export default {
   data () {
     return {
       currentState: this.state,
-      currentIcon: this.icon,
+      currentIcon: this.actualIcon,
       iconUrl: null
     }
   },
+  computed: {
+    actualIcon () {
+      return (this.context) ? this.config.icon : this.icon
+    },
+    actualState () {
+      return (this.context) ? this.config.state : this.state
+    },
+    iconFormat () {
+      return (this.context) ? (this.config.iconFormat || 'svg') : 'svg'
+    }
+  },
   watch: {
-    state (val) {
+    actualState (val) {
       if (val !== this.currentState) {
         this.currentState = val
         this.updateIcon()
       }
     },
-    icon (val) {
+    actualIcon (val) {
       if (val !== this.currentIcon) {
         this.currentIcon = val
         this.updateIcon()
@@ -43,11 +54,14 @@ export default {
     }
   },
   mounted () {
+    this.currentIcon = this.actualIcon
+    this.currentState = this.actualState
     this.updateIcon()
   },
   methods: {
     updateIcon () {
-      this.$oh.media.getIcon((this.context) ? this.config.icon : this.icon, 'svg', (this.context) ? this.config.state : this.currentState).then((url) => {
+      if (!this.currentIcon) return
+      this.$oh.media.getIcon(this.currentIcon, this.iconFormat, this.currentState).then((url) => {
         if (url !== this.iconUrl) {
           this.iconUrl = url
         }

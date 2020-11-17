@@ -79,7 +79,7 @@ export default function itemDefaultStandaloneComponent (item) {
       component: 'oh-label-card'
     }
 
-    if (item.type.indexOf('Number:') === 0) {
+    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.options || stateDescription.readOnly)) {
       component.config = {
         trendItem: item.name,
         action: 'analyze',
