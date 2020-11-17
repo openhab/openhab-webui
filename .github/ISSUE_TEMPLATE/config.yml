@@ -2,7 +2,7 @@ blank_issues_enabled: false
 contact_links:
   - name: Discuss a problem you have with the web UI, unless you're positive it's an actual bug or missing feature
     url: https://community.openhab.org/c/add-ons/uis/30
-    about: Share a problem that you have with a community, if it's not necessarily an actual issue.
+    about: Share a problem that you have with our community, if it's not necessarily an actual issue.
   - name: Report a bug that is not strictly related to the UI, but you feel involves some backend changes
     url: https://github.com/openhab/openhab-core/issues
     about: In that case it's best to file your issue in the openhab-core repository.
@@ -14,4 +14,4 @@ contact_links:
     about: In that case it's best to file your issue in the openhab-docs repository.
   - name: I have a general question or need support
     url: https://community.openhab.org/
-    about: GitHub is in general not the right place to ask questions; in most case, head to our community forum and it will be quickly answered!
+    about: GitHub is in general not the right place to ask questions; in most cases, head to our community forum and it will be quickly answered!
