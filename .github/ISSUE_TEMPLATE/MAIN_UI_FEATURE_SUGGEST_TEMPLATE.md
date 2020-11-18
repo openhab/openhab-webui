@@ -42,5 +42,5 @@ As an admin, in the main UI, choose *Help & About* on the left sidebar, expand *
 ## Additional information
 
 <!--
-Provide any information not pertinent in the above sections that you'd like to share.
+Provide any information not pertinent to the above sections that you'd still like to share.
 -->

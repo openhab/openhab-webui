@@ -72,11 +72,11 @@ You may also paste a screenshot if you prefer.
 
 <!--
 Open the developer tools in your browser, go to the Network tab and paste
-screenshots of the network traffic and the details individual request that failed.
+screenshots of the network traffic and the details of individual requests that failed.
 -->
 
 ## Additional information
 
 <!--
-Provide any information not pertinent in the above sections that you'd like to share.
+Provide any information not pertinent to the above sections that you'd still like to share.
 -->

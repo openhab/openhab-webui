@@ -70,5 +70,5 @@ screenshots of the network traffic and the details individual request that faile
 ## Additional information
 
 <!--
-Provide any information not pertinent in the above sections that you'd like to share.
+Provide any information not pertinent to the above sections that you'd still like to share.
 -->
