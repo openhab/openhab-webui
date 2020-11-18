@@ -49,7 +49,7 @@ As an admin, in the main UI, choose *Help & About* on the left sidebar, expand *
 
 ```
 
-## JavaScript Console Output
+## Browser console
 
 <!--
 Open the developer tools in your browser, go to the Console tab and paste errors and other messages that might be relevant to this issue.
@@ -60,11 +60,11 @@ You may also paste a screenshot if you prefer.
 
 ```
 
-## JavaScript Network Output
+## Browser network traffic
 
 <!--
 Open the developer tools in your browser, go to the Network tab and paste
-screenshots of the network traffic and the details individual request that failed.
+screenshots of the network traffic and the details of individual requests that failed.
 -->
 
 ## Additional information
