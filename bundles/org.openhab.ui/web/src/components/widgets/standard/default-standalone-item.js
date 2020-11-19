@@ -5,12 +5,13 @@
 
 export default function itemDefaultStandaloneComponent (item) {
   const stateDescription = item.stateDescription || {}
+  const metadata = (item.metadata && item.metadata.widget) ? item.metadata.widget : {}
   let component = null
 
-  if (item.metadata && item.metadata.widget) {
+  if (metadata.value && metadata.value !== ' ') {
     component = {
-      component: item.metadata.widget.value,
-      config: item.metadata.widget.config
+      component: metadata.value,
+      config: Object.assign({}, metadata.config)
     }
   } else {
     if (item.type === 'Switch' && !stateDescription.readOnly) {
@@ -79,7 +80,7 @@ export default function itemDefaultStandaloneComponent (item) {
       component: 'oh-label-card'
     }
 
-    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.options || stateDescription.readOnly)) {
+    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)) {
       component.config = {
         trendItem: item.name,
         action: 'analyze',
@@ -100,7 +101,10 @@ export default function itemDefaultStandaloneComponent (item) {
   }
 
   if (!component.config) component.config = {}
-  component.config.item = item.name
+  if ((!metadata.value || metadata.value === ' ') && typeof metadata.config === 'object') {
+    component.config = Object.assign({}, component.config, metadata.config)
+  }
+  if (!component.config.item) component.config.item = item.name
 
   return component
 }

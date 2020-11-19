@@ -57,6 +57,7 @@ import ItemMetadataItemDescription from '@/components/item/metadata/item-metadat
 import ItemMetadataSynonyms from '@/components/item/metadata/item-metadata-synonyms.vue'
 import ItemMetadataWidget from '@/components/item/metadata/item-metadata-widget.vue'
 import ItemMetadataAutoUpdate from '@/components/item/metadata/item-metadata-autoupdate.vue'
+import ItemMetadataExpire from '@/components/item/metadata/item-metadata-expire.vue'
 import ItemMetadataAlexa from '@/components/item/metadata/item-metadata-alexa.vue'
 import ItemMetadataHomeKit from '@/components/item/metadata/item-metadata-homekit.vue'
 import ItemMetadataGa from '@/components/item/metadata/item-metadata-ga.vue'
@@ -91,6 +92,8 @@ export default {
           return ItemMetadataWidget
         case 'autoupdate':
           return ItemMetadataAutoUpdate
+        case 'expire':
+          return ItemMetadataExpire
         case 'alexa':
           return ItemMetadataAlexa
         case 'homekit':

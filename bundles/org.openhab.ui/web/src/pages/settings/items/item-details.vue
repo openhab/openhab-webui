@@ -32,6 +32,20 @@
           </f7-block>
         </f7-col>
       </f7-row>
+      <f7-row v-if="item && item.metadata && item.metadata.semantics">
+        <f7-col>
+          <f7-block-title>Semantic Classification</f7-block-title>
+          <f7-list>
+            <f7-list-item title="class" :after="item.metadata.semantics.value"></f7-list-item>
+            <f7-list-item
+              v-for="(value, key) in item.metadata.semantics.config"
+              :key="key"
+              :title="key"
+              :after="value"
+            ></f7-list-item>
+          </f7-list>
+        </f7-col>
+      </f7-row>
       <f7-row  v-if="item && item.groupNames && item.groupNames.length > 0">
         <f7-col>
           <f7-block-title>Direct Parent Groups</f7-block-title>
@@ -51,20 +65,6 @@
         <f7-col>
           <f7-block-title>Direct Group Members</f7-block-title>
           <group-members :group-item="item" :context="context" @updated="load" />
-        </f7-col>
-      </f7-row>
-      <f7-row v-if="item && item.metadata && item.metadata.semantics">
-        <f7-col>
-          <f7-block-title>Semantic Classification</f7-block-title>
-          <f7-list>
-            <f7-list-item title="class" :after="item.metadata.semantics.value"></f7-list-item>
-            <f7-list-item
-              v-for="(value, key) in item.metadata.semantics.config"
-              :key="key"
-              :title="key"
-              :after="value"
-            ></f7-list-item>
-          </f7-list>
         </f7-col>
       </f7-row>
       <f7-row v-if="item.name">

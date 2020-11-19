@@ -5,12 +5,13 @@
 
 export default function itemDefaultListComponent (item, itemNameAsFooter) {
   const stateDescription = item.stateDescription || {}
+  const metadata = (item.metadata && item.metadata.listWidget) ? item.metadata.listWidget : {}
   let component = null
 
-  if (item.metadata && item.metadata.listWidget) {
+  if (metadata.value && metadata.value !== ' ') {
     component = {
-      component: item.metadata.listWidget.value,
-      config: item.metadata.listWidget.config
+      component: metadata.value,
+      config: Object.assign({}, metadata.config)
     }
   } else {
     if (item.type === 'Switch' && !stateDescription.readOnly) {
@@ -70,7 +71,7 @@ export default function itemDefaultListComponent (item, itemNameAsFooter) {
       component: 'oh-label-item'
     }
 
-    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.options || stateDescription.readOnly)) {
+    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)) {
       component.config = {
         action: 'analyze',
         actionAnalyzerItems: [item.name]
@@ -90,7 +91,10 @@ export default function itemDefaultListComponent (item, itemNameAsFooter) {
   }
 
   if (!component.config) component.config = {}
-  component.config.item = item.name
+  if ((!metadata.value || metadata.value === ' ') && typeof metadata.config === 'object') {
+    component.config = Object.assign({}, component.config, metadata.config)
+  }
+  if (!component.config.item) component.config.item = item.name
   if (!component.config.title) component.config.title = item.label || item.name
   if (item.category && !component.config.icon) component.config.icon = 'oh:' + item.category
   if (item.category && ['Switch', 'Rollershutter', 'Contact', 'Dimmer', 'Group'].indexOf(item.type) >= 0) component.config.iconUseState = true
