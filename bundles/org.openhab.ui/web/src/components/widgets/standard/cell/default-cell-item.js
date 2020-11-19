@@ -5,12 +5,13 @@
 
 export default function itemDefaultCellComponent (item, itemNameAsFooter) {
   const stateDescription = item.stateDescription || {}
+  const metadata = (item.metadata && item.metadata.cellWidget) ? item.metadata.cellWidget : {}
   let component = null
 
-  if (item.metadata && item.metadata.cellWidget) {
+  if (metadata.value && metadata.value !== ' ') {
     component = {
-      component: item.metadata.cellWidget.value,
-      config: item.metadata.cellWidget.config
+      component: metadata.value,
+      config: Object.assign({}, metadata.config)
     }
   } else {
     if (item.type === 'Switch' && !stateDescription.readOnly) {
@@ -84,7 +85,7 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
       component: 'oh-label-cell'
     }
 
-    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.options || stateDescription.readOnly)) {
+    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)) {
       component.config = {
         trendItem: item.name,
         action: 'analyze',
@@ -105,7 +106,10 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
   }
 
   if (!component.config) component.config = {}
-  component.config.item = item.name
+  if ((!metadata.value || metadata.value === ' ') && typeof metadata.config === 'object') {
+    component.config = Object.assign({}, component.config, metadata.config)
+  }
+  if (!component.config.item) component.config.item = item.name
   if (!component.config.title) component.config.title = item.label || item.name
   if (item.label && itemNameAsFooter && !component.config.footer) component.config.footer = item.name
   component.config.stateAsHeader = true

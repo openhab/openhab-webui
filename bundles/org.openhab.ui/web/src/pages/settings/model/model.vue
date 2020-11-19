@@ -82,6 +82,7 @@
         <f7-toolbar tabbar bottom>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'state'" @click="detailsTab = 'state'">State</f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'item'" @click="detailsTab = 'item'">Item</f7-link>
+          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'meta'" @click="detailsTab = 'meta'">Meta</f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'links'" @click="detailsTab = 'links'">Links</f7-link>
           <div class="right">
             <f7-link sheet-close class="padding-right"><f7-icon f7="chevron_down"></f7-icon></f7-link>
@@ -90,6 +91,7 @@
         <f7-block style="margin-bottom: 6rem" v-if="selectedItem">
           <item-state-preview v-if="detailsTab === 'state' && !newItem" :item="selectedItem.item" :context="context" />
           <item-details v-if="detailsTab === 'item'" :model="selectedItem" :links="links" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)"/>
+          <metadata-menu v-if="detailsTab === 'meta'" :item="selectedItem.item" />
           <link-details v-if="detailsTab === 'links'" :item="selectedItem.item" :links="links" />
         </f7-block>
         <f7-block v-else>
@@ -123,7 +125,7 @@
     --f7-theme-color-rgb var(--f7-color-blue-rgb)
   z-index 10900
 .md .model-details-sheet .toolbar .link
-  width 28%
+  width 17%
 
 @media (min-width: 768px)
   .semantic-tree-wrapper
@@ -162,6 +164,7 @@ import AddFromThing from './add-from-thing.vue'
 
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import ItemDetails from '@/components/model/item-details.vue'
+import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
@@ -171,6 +174,7 @@ export default {
     ModelDetailsPane,
     ItemStatePreview,
     ItemDetails,
+    MetadataMenu,
     LinkDetails
   },
   data () {

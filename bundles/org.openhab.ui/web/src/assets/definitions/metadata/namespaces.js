@@ -6,6 +6,7 @@ export default [
   { name: 'listWidget', label: 'Default List Item Widget' },
   { name: 'cellWidget', label: 'Default Cell Widget' },
   { name: 'autoupdate', label: 'Auto-update' },
+  { name: 'expire', label: 'Expiration timer' },
   { name: 'alexa', label: 'Amazon Alexa' },
   { name: 'homekit', label: 'Apple HomeKit' },
   { name: 'ga', label: 'Google Assistant' }
