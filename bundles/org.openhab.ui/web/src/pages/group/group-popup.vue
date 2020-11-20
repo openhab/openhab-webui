@@ -21,6 +21,7 @@
 <script>
 import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
 import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
+import { compareItems } from '@/components/widgets/widget-order'
 
 export default {
   props: ['groupItem'],
@@ -88,8 +89,10 @@ export default {
 
     },
     load () {
-      this.$oh.api.get(`/rest/items/${this.groupItem}?metadata=semantics,widget,listWidget`).then((data) => {
+      this.$oh.api.get(`/rest/items/${this.groupItem}?metadata=semantics,widget,listWidget,widgetOrder`).then((data) => {
         this.item = data
+        // array is sorted in-place
+        this.item.members.sort(compareItems)
       })
     }
   }

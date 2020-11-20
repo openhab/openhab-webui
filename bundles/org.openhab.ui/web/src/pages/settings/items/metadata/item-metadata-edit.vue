@@ -56,6 +56,7 @@ import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 import ItemMetadataItemDescription from '@/components/item/metadata/item-metadata-itemdescription.vue'
 import ItemMetadataSynonyms from '@/components/item/metadata/item-metadata-synonyms.vue'
 import ItemMetadataWidget from '@/components/item/metadata/item-metadata-widget.vue'
+import ItemMetadataWidgetOrder from '@/components/item/metadata/item-metadata-widgetorder.vue'
 import ItemMetadataAutoUpdate from '@/components/item/metadata/item-metadata-autoupdate.vue'
 import ItemMetadataExpire from '@/components/item/metadata/item-metadata-expire.vue'
 import ItemMetadataAlexa from '@/components/item/metadata/item-metadata-alexa.vue'
@@ -90,6 +91,8 @@ export default {
         case 'listWidget':
         case 'cellWidget':
           return ItemMetadataWidget
+        case 'widgetOrder':
+          return ItemMetadataWidgetOrder
         case 'autoupdate':
           return ItemMetadataAutoUpdate
         case 'expire':

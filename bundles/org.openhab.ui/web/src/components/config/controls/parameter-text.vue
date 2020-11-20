@@ -49,7 +49,7 @@ export default {
       })
       const inputControl = this.$refs.input
       if (!inputControl || !inputControl.$el) return
-      const inputElement = this.$$(inputControl.$el).find('input')
+      const inputElement = this.$$(inputControl.$el).find(this.configDescription.multiple ? 'textarea' : 'input')
       this.autoCompleteOptions = this.$f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',

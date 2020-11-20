@@ -87,6 +87,8 @@ import itemDefaultStandaloneComponent from '@/components/widgets/standard/defaul
 import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
 import itemDefaultCellComponent from '@/components/widgets/standard/cell/default-cell-item'
 
+import { compareItems } from '@/components/widgets/widget-order'
+
 export default {
   mixins: [PageDesigner],
   components: {
@@ -195,7 +197,7 @@ export default {
       const component = this.addFromModelContext.component
       const slot = this.addFromModelContext.slot
       if (Array.isArray(value)) {
-        value.forEach((i) => {
+        value.sort(compareItems).forEach((i) => {
           component.slots[slot].push(defaultWidgetFn(i))
         })
       } else {

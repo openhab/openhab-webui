@@ -1,5 +1,5 @@
 <template>
-  <f7-card expandable class="equipments-card" :animate="$f7.data.themeOptions.expandableCardAnimation !== 'disabled'" card-tablet-fullscreen v-on:card:opened="cardOpening" v-on:card:closed="cardClosed">
+  <f7-card expandable ref="card" class="equipments-card" :animate="$f7.data.themeOptions.expandableCardAnimation !== 'disabled'" card-tablet-fullscreen v-on:card:opened="cardOpening" v-on:card:closed="cardClosed">
     <f7-card-content :padding="false">
       <div :class="`bg-color-${color}`" :style="{height: '150px'}">
         <f7-card-header text-color="white" class="display-block">
@@ -35,24 +35,10 @@
 
 <script>
 import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
+import CardMixin from './card-mixin'
 
 export default {
-  props: ['color', 'type', 'header', 'title', 'subtitle', 'items'],
-  data () {
-    return {
-      opened: false
-    }
-  },
-  methods: {
-    cardOpening () {
-      console.log('card opened')
-      setTimeout(() => { this.opened = true })
-    },
-    cardClosed () {
-      console.log('card closed')
-      this.opened = false
-    }
-  },
+  mixins: [CardMixin],
   computed: {
     listContext () {
       const standaloneEquipments = this.items.filter((i) => i.points.length === 0).map((i) => itemDefaultListComponent(i.item, true))

@@ -48,6 +48,12 @@ import ModelTreeview from '@/components/model/model-treeview.vue'
 
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 
+import { compareItems } from '@/components/widgets/widget-order'
+
+function compareModelItems (o1, o2) {
+  return compareItems(o1.item || o1, o2.item || o2)
+}
+
 export default {
   props: ['value', 'opened', 'multiple', 'semanticOnly', 'groupsOnly', 'allowEmpty', 'popupTitle', 'actionLabel'],
   components: {
@@ -154,24 +160,24 @@ export default {
 
         this.rootLocations = this.locations
           .filter((i) => !i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf)
-          .map(this.modelItem)
+          .map(this.modelItem).sort(compareModelItems)
         this.rootLocations.forEach(this.getChildren)
         this.rootEquipments = this.equipments
           .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPartOf && !i.metadata.semantics.config.hasLocation))
-          .map(this.modelItem)
+          .map(this.modelItem).sort(compareModelItems)
         this.rootEquipments.forEach(this.getChildren)
         this.rootPoints = this.points
           .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPointOf && !i.metadata.semantics.config.hasLocation))
-          .map(this.modelItem)
+          .map(this.modelItem).sort(compareModelItems)
 
         if (this.includeNonSemantic && !this.semanticOnly) {
           this.rootGroups = this.items
             .filter((i) => i.type === 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
-            .map(this.modelItem)
+            .map(this.modelItem).sort(compareModelItems)
           this.rootGroups.forEach(this.getChildren)
           this.rootItems = this.items
             .filter((i) => i.type !== 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
-            .map(this.modelItem)
+            .map(this.modelItem).sort(compareModelItems)
         }
 
         this.loading = false
@@ -196,45 +202,45 @@ export default {
       if (parent.class.indexOf('Location') === 0) {
         parent.children.locations = this.locations
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
-          .map(this.modelItem)
+          .map(this.modelItem).sort(compareModelItems)
         parent.children.locations.forEach(this.getChildren)
         parent.children.equipments = this.equipments
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
-          .map(this.modelItem)
+          .map(this.modelItem).sort(compareModelItems)
         parent.children.equipments.forEach(this.getChildren)
 
         if (!this.groupsOnly) {
           parent.children.points = this.points
             .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
-            .map(this.modelItem)
+            .map(this.modelItem).sort(compareModelItems)
         }
       } else {
         parent.children.equipments = this.equipments
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
-          .map(this.modelItem)
+          .map(this.modelItem).sort(compareModelItems)
         parent.children.equipments.forEach(this.getChildren)
 
         if (!this.groupsOnly) {
           parent.children.points = this.points
             .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPointOf === parent.item.name)
-            .map(this.modelItem)
+            .map(this.modelItem).sort(compareModelItems)
         }
       }
 
       if (this.includeNonSemantic) {
         parent.children.groups = this.items
           .filter((i) => i.type === 'Group' && (!i.metadata) && i.groupNames.indexOf(parent.item.name) >= 0)
-          .map(this.modelItem)
+          .map(this.modelItem).sort(compareModelItems)
         parent.children.groups.forEach(this.getChildren)
         if (parent.item.metadata) {
           parent.children.items = this.items
             .filter((i) => i.type !== 'Group' && (!i.metadata) && i.groupNames.indexOf(parent.item.name) >= 0)
-            .map(this.modelItem)
+            .map(this.modelItem).sort(compareModelItems)
         } else {
           if (!this.groupsOnly) {
             parent.children.items = this.items
               .filter((i) => i.type !== 'Group' && i.groupNames.indexOf(parent.item.name) >= 0)
-              .map(this.modelItem)
+              .map(this.modelItem).sort(compareModelItems)
           }
         }
       }

@@ -1,8 +1,11 @@
 <template>
   <div v-if="showCards">
     <div class="demo-expandable-cards">
-      <property-card v-for="(items, property) in semanticItems.properties" :key="property"
-        :title="property" :items="items" :subtitle="`${items.length} item${items.length > 1 ? 's' : ''}`" :color="color(property)" />
+      <property-card v-for="property in Object.keys(semanticItems.properties).sort()" :key="property"
+        :title="property"
+        :subtitle="`${semanticItems.properties[property].length} item${semanticItems.properties[property].length > 1 ? 's' : ''}`"
+        :color="color(property)"
+        :items="semanticItems.properties[property]" />
     </div>
   </div>
 </template>
