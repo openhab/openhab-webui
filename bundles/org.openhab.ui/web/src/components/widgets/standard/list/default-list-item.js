@@ -73,7 +73,7 @@ export default function itemDefaultListComponent (item, itemNameAsFooter) {
 
     if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)) {
       component.config = {
-        action: 'analyze',
+        action: 'analyzer',
         actionAnalyzerItems: [item.name]
       }
     } else if (item.commandDescription && item.commandDescription.commandOptions && !stateDescription.readOnly) {

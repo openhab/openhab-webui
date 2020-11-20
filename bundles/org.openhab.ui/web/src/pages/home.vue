@@ -67,6 +67,12 @@ import LocationsTab from './home/locations-tab.vue'
 import EquipmentsTab from './home/equipments-tab.vue'
 import PropertiesTab from './home/properties-tab.vue'
 
+import { compareItems } from '@/components/widgets/widget-order'
+
+function compareObjects (o1, o2) {
+  return compareItems(o1.item || o1, o2.item || o2)
+}
+
 export default {
   components: {
     OverviewTab,
@@ -117,17 +123,13 @@ export default {
       this.$f7.panel.get('left').enableVisibleBreakpoint()
     },
     load () {
-      this.$oh.api.get('/rest/items?metadata=semantics,listWidget').then((data) => {
+      this.$oh.api.get('/rest/items?metadata=semantics,listWidget,widgetOrder').then((data) => {
         this.items = data
         // get the location items
         this.semanticItems.locations = data.filter((item, index, items) => {
           return item.metadata && item.metadata.semantics &&
             item.metadata.semantics.value.indexOf('Location') === 0
-        }).sort((a, b) => {
-          const titleA = a.label || a.name
-          const titleB = b.label || b.name
-          return titleA.localeCompare(titleB)
-        }).map((l) => {
+        }).sort(compareObjects).map((l) => {
           return {
             item: l,
             properties: data.filter((item, index, items) => {
@@ -135,20 +137,20 @@ export default {
                 item.metadata.semantics && item.metadata.semantics.config &&
                 item.metadata.semantics.config.relatesTo &&
                 item.metadata.semantics.config.hasLocation === l.name
-            }),
+            }).sort(compareObjects),
             equipments: data.filter((item, index, items) => {
               return item.metadata && item.metadata.semantics &&
                 item.metadata.semantics && item.metadata.semantics.config &&
                 item.metadata.semantics.value.indexOf('Equipment') === 0 &&
                 item.metadata.semantics.config.hasLocation === l.name
-            }).map((item) => {
+            }).sort(compareObjects).map((item) => {
               return {
                 item: item,
                 points: data.filter((item2, index, items) => {
                   return item2.metadata && item2.metadata.semantics &&
                     item2.metadata.semantics && item2.metadata.semantics.config &&
                     item2.metadata.semantics.config.isPointOf === item.name
-                })
+                }).sort(compareObjects)
               }
             })
           }
@@ -159,7 +161,7 @@ export default {
           return item.metadata && item.metadata.semantics &&
             item.metadata.semantics &&
             item.metadata.semantics.value.indexOf('Equipment') === 0
-        }).reduce((prev, item, i, properties) => {
+        }).sort(compareObjects).reduce((prev, item, i, properties) => {
           const equipmentType = item.metadata.semantics.value.split('_')[1] || 'Equipment'
           if (!prev[equipmentType]) prev[equipmentType] = []
           const equipmentWithPoints = {
@@ -168,7 +170,7 @@ export default {
               return item2.metadata && item2.metadata.semantics &&
                 item2.metadata.semantics && item2.metadata.semantics.config &&
                 item2.metadata.semantics.config.isPointOf === item.name
-            })
+            }).sort(compareObjects)
           }
           prev[equipmentType].push(equipmentWithPoints)
           return prev
@@ -179,7 +181,7 @@ export default {
           return item.metadata && item.metadata.semantics &&
             item.metadata.semantics && item.metadata.semantics.config &&
             item.metadata.semantics.config.relatesTo
-        }).reduce((prev, item, i, properties) => {
+        }).sort(compareObjects).reduce((prev, item, i, properties) => {
           const property = item.metadata.semantics.config.relatesTo.split('_')[1]
           if (!prev[property]) prev[property] = []
           prev[property].push(item)

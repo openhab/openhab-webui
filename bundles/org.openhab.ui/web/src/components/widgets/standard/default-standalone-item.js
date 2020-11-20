@@ -83,7 +83,7 @@ export default function itemDefaultStandaloneComponent (item) {
     if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)) {
       component.config = {
         trendItem: item.name,
-        action: 'analyze',
+        action: 'analyzer',
         actionAnalyzerItems: [item.name]
       }
     } else if (item.commandDescription && item.commandDescription.commandOptions && !stateDescription.readOnly) {

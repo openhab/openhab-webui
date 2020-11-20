@@ -33,7 +33,7 @@
       <f7-block-title>Configuration</f7-block-title>
       <f7-block-footer class="padding-horizontal margin-bottom">Note: the parameter named 'item' will be set automatically with the name of the item ({{this.item.name}}) unless it's set explicitely.</f7-block-footer>
       <f7-block-footer v-if="currentComponent.component && currentComponent.component.indexOf('widget:') === 0" class="padding-horizontal margin-bottom">Make sure the personal widget is of the expected type (cell, list item or standalone).</f7-block-footer>
-      <config-sheet :parameterGroups="configDescriptions.parameterGroups" :parameters="configDescriptions.parameters" :configuration="metadata.config" />
+      <config-sheet :parameterGroups="configDescriptions.parameterGroups" :parameters="configDescriptions.parameters" :configuration="metadata.config" @updated="widgetConfigUpdated" />
     </div>
     <div v-if="viewMode === 'preview'">
       <generic-widget-component v-if="previewContext.component" :context="previewContext" />
@@ -60,6 +60,8 @@ import * as StandardCellWidgets from '@/components/widgets/standard/cell'
 import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
 import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
 import itemDefaultCellComponent from '@/components/widgets/standard/cell/default-cell-item'
+
+import { VisibilityGroup, VisibilityParameters } from '@/assets/definitions/widgets/visibility'
 
 export default {
   props: ['item', 'metadata', 'namespace'],
@@ -109,6 +111,11 @@ export default {
         // for user-specified widgets, set a default value for the 'item' parameter only
         const itemParameter = ret.parameters.find((p) => p.name === 'item')
         if (itemParameter) itemParameter.defaultValue = this.item.name
+      }
+
+      if (!ret.parameterGroups.length || ret.parameterGroups[ret.parameterGroups.length - 1].name !== 'visibility') {
+        ret.parameterGroups.push(VisibilityGroup())
+        ret.parameters.push(...VisibilityParameters())
       }
 
       return ret
@@ -193,8 +200,14 @@ export default {
       this.metadata.value = value
       this.$set(this.metadata, 'config', {})
     },
-    togglePreview () {
-      this.previewOpened = !this.previewOpened
+    widgetConfigUpdated () {
+      for (let key in this.metadata.config) {
+        // set to '' when the default defines the option but the metadata doesn't (null would be better but the API then removes it)
+        if (!this.metadata.config[key] && this.defaultComponent.config[key]) this.$set(this.metadata.config, key, '')
+        else if (this.metadata.config[key] === undefined || this.metadata.config[key] === null) delete this.metadata.config[key]
+
+        if (key === 'visibleTo' && this.metadata.config.visibleTo.length === 0) delete this.metadata.config.visibleTo
+      }
     }
   }
 }
