@@ -77,11 +77,6 @@
 		<bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.habpanel/${project.version}</bundle>
 	</feature>
 
-	<feature name="openhab-ui-homebuilder" description="Home Builder" version="${project.version}">
-		<feature>openhab-core-ui</feature>
-		<bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.homebuilder/${project.version}</bundle>
-	</feature>
-
 	<feature name="openhab-iconset-classic" version="${project.version}">
 		<feature>openhab-core-ui-icon</feature>
 		<bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.iconset.classic/${project.version}</bundle>
