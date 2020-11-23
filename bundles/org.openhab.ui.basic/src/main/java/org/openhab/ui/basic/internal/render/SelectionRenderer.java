@@ -123,8 +123,8 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
         String mappingLabel = null;
         String rowSnippet = getSnippet("selection_row");
 
-        String command = cmd != null ? cmd : "";
-        String label = lab;
+        String command = cmd;
+        String label = lab == null ? cmd : lab;
 
         if (item instanceof NumberItem && ((NumberItem) item).getDimension() != null) {
             String unit = getUnitForWidget(w);
@@ -134,7 +134,7 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
 
         rowSnippet = StringUtils.replace(rowSnippet, "%item%", w.getItem() != null ? w.getItem() : "");
         rowSnippet = StringUtils.replace(rowSnippet, "%cmd%", escapeHtml(command));
-        rowSnippet = StringUtils.replace(rowSnippet, "%label%", label != null ? escapeHtml(label) : "");
+        rowSnippet = StringUtils.replace(rowSnippet, "%label%", escapeHtml(label));
 
         State compareMappingState = state;
         if (state instanceof QuantityType) { // convert the item state to the command value for proper

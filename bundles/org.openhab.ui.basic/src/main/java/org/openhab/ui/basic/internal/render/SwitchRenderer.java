@@ -152,7 +152,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         String button = getSnippet("button");
 
         String command = cmd;
-        String label = lab;
+        String label = lab == null ? cmd : lab;
 
         if (item instanceof NumberItem && ((NumberItem) item).getDimension() != null) {
             String unit = getUnitForWidget(w);
@@ -160,13 +160,13 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
             label = StringUtils.replace(label, UnitUtils.UNIT_PLACEHOLDER, unit);
         }
 
-        if (label != null && maxLabelSize >= 1 && label.length() > maxLabelSize) {
+        if (maxLabelSize >= 1 && label.length() > maxLabelSize) {
             label = label.substring(0, maxLabelSize - 1) + ELLIPSIS;
         }
 
         button = StringUtils.replace(button, "%item%", w.getItem());
         button = StringUtils.replace(button, "%cmd%", escapeHtml(command));
-        button = StringUtils.replace(button, "%label%", label != null ? escapeHtml(label) : "");
+        button = StringUtils.replace(button, "%label%", escapeHtml(label));
 
         String buttonClass;
         State compareMappingState = state;
