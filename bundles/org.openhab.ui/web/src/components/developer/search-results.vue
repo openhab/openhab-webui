@@ -74,6 +74,7 @@ export default {
       pageTypes: [
         { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap', icon: 'menu' },
         { type: 'layout', label: 'Layout', componentType: 'oh-layout-page', icon: 'rectangle_grid_2x2' },
+        { type: 'home', label: 'Home', componentType: 'oh-home-page', icon: 'house' },
         { type: 'tabs', label: 'Tabbed', componentType: 'oh-tabs-page', icon: 'squares_below_rectangle' },
         { type: 'map', label: 'Map', componentType: 'oh-map-page', icon: 'map' },
         { type: 'plan', label: 'Floor plan', componentType: 'oh-plan-page', icon: 'square_stack_3d_up' },

@@ -1,27 +1,24 @@
 <template>
-  <model-card type="property" :context="context" :element="element" header-height="150px">
+  <model-card type="equipment" :context="context" :element="element" header-height="150px">
     <template v-slot:glance>
       <div v-if="context && context.component.slots && context.component.slots.glance" class="display-flex flex-direction-column align-items-flex-start">
         <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.glance" :key="'glance-' + idx" @command="onCommand" />
       </div>
-      <!-- <div class="property-stats" v-else><small v-if="element.points">{{element.points.length}}</small></div> -->
+      <!-- <div class="equipment-stats" v-else><small v-if="element.equipment">{{element.equipment.length}}</small></div> -->
     </template>
     <div class="card-content-padding">
       <generic-widget-component :context="listContext" />
-      <p class="padding-top margin-horizontal">
-        <f7-button outline round :color="color" :href="`/analyzer/?items=${element.points.map((m) => m.name).join(',')}`">Analyze{{element.points.length > 1 ? ' all' : ''}}</f7-button>
-      </p>
-      <p class="margin-horizontal">
-        <f7-button fill round large card-close :color="color">Close</f7-button>
+      <p>
+        <f7-button fill round large card-close :color="color" class="margin-horizontal">Close</f7-button>
       </p>
     </div>
   </model-card>
 </template>
 
 <style lang="stylus">
-.property-card
+.equipment-card
   height 150px
-.property-stats
+.equipment-stats
   font-weight normal
 </style>
 
@@ -38,19 +35,19 @@ export default {
   },
   computed: {
     listContext () {
-      let pointsByType = []
-      for (let pointType in this.itemsByPointType) {
-        pointsByType.push([
+      const standaloneEquipment = this.element.equipment.filter((i) => i.points.length === 0).map((i) => itemDefaultListComponent(i.item, true))
+      const equipmentWithPoints = this.element.equipment.filter((i) => i.points.length !== 0).map((i) => {
+        return [
           {
             component: 'oh-list-item',
             config: {
-              title: pointType,
+              title: i.item.label || i.item.name,
               divider: true
             }
           },
-          ...this.itemsByPointType[pointType].map((p) => itemDefaultListComponent(p, true))
-        ])
-      }
+          ...i.points.map((p) => itemDefaultListComponent(p))
+        ]
+      })
 
       return {
         store: this.$store.getters.trackedItems,
@@ -60,19 +57,10 @@ export default {
             mediaList: true
           },
           slots: {
-            default: pointsByType.flat()
+            default: [...standaloneEquipment, ...equipmentWithPoints].flat()
           }
         }
       }
-    },
-    itemsByPointType () {
-      const points = {}
-      this.element.points.forEach((item) => {
-        const pointType = item.metadata.semantics.value.replace('Point_', '')
-        if (!points[pointType]) points[pointType] = []
-        points[pointType].push(item)
-      })
-      return points
     }
   }
 }

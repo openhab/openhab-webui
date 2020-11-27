@@ -222,61 +222,6 @@ html
 .aurora .after-big-title
   margin-top 5rem !important
 
-.demo-expandable-cards
-  justify-content center
-
-  .card-header
-    padding-top calc(var(--f7-safe-area-top) + var(--f7-card-header-padding-vertical))
-    padding-left calc(var(--f7-safe-area-left) + var(--f7-card-header-padding-horizontal))
-
-/* Demo Expandable Cards */
-@media (min-width 768px)
-  .demo-expandable-cards
-    display flex
-    flex-wrap wrap
-
-  .demo-expandable-cards .card
-    flex-shrink 10
-    min-width 0
-
-@media (min-width 768px) and (max-width 1023px)
-  .demo-expandable-cards .card
-    width 340px
-
-  // .demo-expandable-cards .card
-  //   width calc((100% - var(--f7-card-expandable-margin-horizontal) * 3) / 2)
-  //
-  .demo-expandable-cards .card:nth-child(n),
-  .demo-expandable-cards .card:nth-child(n + 1)
-    margin-left 0
-
-  .demo-expandable-cards .card:nth-child(n + 3)
-    margin-top 0
-
-@media (min-width 1024px)
-  .demo-expandable-cards
-    margin-top 2rem
-    .card
-      width 340px
-      margin-top 0
-
-  .demo-expandable-cards .card:nth-child(n),
-  .demo-expandable-cards .card:nth-child(n + 1)
-    margin-left 0
-
-  .demo-expandable-cards .card:nth-child(n + 3)
-    margin-top 0
-
-  // hide scrollbar
-  .card-expandable.card-opened .card-content
-      overflow-y scroll
-      scrollbar-width none /* Firefox */
-      -ms-overflow-style none  /* IE 10+ */
-
-  .card-expandable.card-opened .card-content::-webkit-scrollbar /* WebKit */
-      width 0
-      height 0
-
 // Remove the borders and background for admin links in sidebar
 .list.admin-links
   ul
