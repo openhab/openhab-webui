@@ -50,9 +50,9 @@ export default {
         case 'humidity':
           direct = findPoints(this.element.properties, 'Point_Measurement', true, 'Property_Humidity')
           if (direct.length) return direct
-          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_Light')
+          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_Humidity')
         case 'luminance':
-          direct = findPoints(this.element.properties, 'Point_Measurement', true, 'Property_Luminance')
+          direct = findPoints(this.element.properties, 'Point_Measurement', true, 'Property_Light')
           if (direct.length) return direct
           return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_Light')
         default:
