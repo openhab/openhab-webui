@@ -65,7 +65,7 @@ export default {
         case 'temperature':
           direct = findPoints(this.element.properties, 'Point_Setpoint', true, 'Property_Temperature')
           if (direct.length) return direct
-          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_Temperature')
+          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Setpoint', true, 'Property_Temperature')
         default:
           return []
       }
