@@ -243,6 +243,11 @@ export default {
   },
   data () {
     let theme = localStorage.getItem('openhab.ui:theme')
+
+    if ((!theme || theme === 'auto') && window.OHApp && window.OHApp.preferTheme) {
+      theme = window.OHApp.preferTheme()
+    }
+
     // choose Aurora as default theme for desktops
     if ((!theme || theme === 'auto') && this.$device.desktop) {
       theme = 'aurora'
