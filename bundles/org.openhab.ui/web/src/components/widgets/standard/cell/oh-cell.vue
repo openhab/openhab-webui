@@ -163,10 +163,10 @@ export default {
     isOn () {
       if (this.config.on) return this.config.on
       if (this.config.item) {
-        const itemState = this.context.store[this.config.item]
+        const itemState = this.context.store[this.config.item].state
         if (itemState === 'ON') return true
         if (itemState === 'OFF') return false
-        const stateParts = itemState.state.split(',')
+        const stateParts = itemState.split(',')
         if (stateParts.length === 3) {
           return (parseFloat(stateParts[2]) > 0)
         } else {
@@ -212,7 +212,7 @@ export default {
       this.opened = true
     },
     cellClose () {
-      if (history.state.cardId) history.back()
+      if (history.state.cardId && history.state.cardId === this.cardId) history.back()
       this.transitioning = true
       this.opened = false
     },

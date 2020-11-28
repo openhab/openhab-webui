@@ -73,6 +73,7 @@
               :parameters="configDescriptions.parameters"
               :configuration="thing.configuration"
               :status="configStatusInfo"
+              :set-empty-config-as-null="true"
               @updated="dirty = true"
             />
           </f7-col>

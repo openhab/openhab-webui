@@ -7,7 +7,7 @@
           <option v-for="type in semanticClasses.Locations" :key="type" :value="type" :selected="type === semanticClass">{{type}}</option>
         </optgroup>
         <optgroup label="Equipment" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Equipment')">
-          <option v-for="type in semanticClasses.Equipments" :key="type" :value="type" :selected="type === semanticClass">{{type}}</option>
+          <option v-for="type in semanticClasses.Equipment" :key="type" :value="type" :selected="type === semanticClass">{{type}}</option>
         </optgroup>
         <optgroup label="Point" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Point')">
           <option v-for="type in semanticClasses.Points" :key="type" :value="type" :selected="type === semanticClass">{{type}}</option>
@@ -42,7 +42,7 @@ export default {
   methods: {
     semanticType (tag) {
       if (this.semanticClasses.Locations.indexOf(tag) >= 0) return 'Location'
-      if (this.semanticClasses.Equipments.indexOf(tag) >= 0) return 'Equipment'
+      if (this.semanticClasses.Equipment.indexOf(tag) >= 0) return 'Equipment'
       if (this.semanticClasses.Points.indexOf(tag) >= 0) return 'Point'
       return ''
     },

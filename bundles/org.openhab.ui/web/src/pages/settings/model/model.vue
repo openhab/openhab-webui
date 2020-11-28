@@ -31,7 +31,7 @@
           <f7-block v-show="!empty" strong class="semantic-tree" no-gap @click.native="clearSelection">
             <!-- <empty-state-placeholder v-if="empty" icon="list_bullet_indent" title="model.title" text="model.text" /> -->
             <f7-treeview>
-              <model-treeview-item v-for="node in [rootLocations, rootEquipments, rootPoints, rootGroups, rootItems].flat()"
+              <model-treeview-item v-for="node in [rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
                 :key="node.item.name" :model="node"
                 @selected="selectItem" :selected="selectedItem">
               </model-treeview-item>
@@ -192,8 +192,8 @@ export default {
       links: [],
       locations: [],
       rootLocations: [],
-      equipments: {},
-      rootEquipments: [],
+      equipment: {},
+      rootEquipment: [],
       rootPoints: [],
       rootGroups: [],
       rootItems: [],
@@ -213,7 +213,7 @@ export default {
   },
   computed: {
     empty () {
-      let emptySemantic = !this.rootLocations.length && !this.rootEquipments.length && !this.rootPoints.length
+      let emptySemantic = !this.rootLocations.length && !this.rootEquipment.length && !this.rootPoints.length
       return (this.includeNonSemantic) ? emptySemantic && !this.rootGroups.length && !this.rootItems.length : emptySemantic
     },
     context () {
@@ -243,7 +243,7 @@ export default {
         class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
         children: {
           locations: [],
-          equipments: [],
+          equipment: [],
           points: [],
           groups: [],
           items: []
@@ -275,17 +275,17 @@ export default {
         }
 
         this.locations = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Location') === 0)
-        this.equipments = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Equipment') === 0)
+        this.equipment = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Equipment') === 0)
         this.points = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Point') === 0)
 
         this.rootLocations = this.locations
           .filter((i) => !i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf)
           .map(this.modelItem).sort(compareModelItems)
         this.rootLocations.forEach(this.getChildren)
-        this.rootEquipments = this.equipments
+        this.rootEquipment = this.equipment
           .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPartOf && !i.metadata.semantics.config.hasLocation))
           .map(this.modelItem).sort(compareModelItems)
-        this.rootEquipments.forEach(this.getChildren)
+        this.rootEquipment.forEach(this.getChildren)
         this.rootPoints = this.points
           .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPointOf && !i.metadata.semantics.config.hasLocation))
           .map(this.modelItem).sort(compareModelItems)
@@ -348,19 +348,19 @@ export default {
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
           .map(this.modelItem).sort(compareModelItems)
         parent.children.locations.forEach(this.getChildren)
-        parent.children.equipments = this.equipments
+        parent.children.equipment = this.equipment
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
           .map(this.modelItem).sort(compareModelItems)
-        parent.children.equipments.forEach(this.getChildren)
+        parent.children.equipment.forEach(this.getChildren)
 
         parent.children.points = this.points
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
           .map(this.modelItem).sort(compareModelItems)
       } else {
-        parent.children.equipments = this.equipments
+        parent.children.equipment = this.equipment
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
           .map(this.modelItem).sort(compareModelItems)
-        parent.children.equipments.forEach(this.getChildren)
+        parent.children.equipment.forEach(this.getChildren)
 
         parent.children.points = this.points
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPointOf === parent.item.name)

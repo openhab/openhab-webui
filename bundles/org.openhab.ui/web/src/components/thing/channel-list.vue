@@ -184,7 +184,11 @@ export default {
         this.selectedChannels.push(channel)
         let newItemName = (this.newItemsPrefix) ? this.newItemsPrefix : diacritic.clean(this.thing.label).replace(/[^0-9a-z]/gi, '')
         newItemName += '_'
-        newItemName += (channel.label) ? diacritic.clean(channel.label).replace(/[^0-9a-z]/gi, '') : diacritic.clean(channelType.label).replace(/[^0-9a-z]/gi, '')
+        let suffix = channel.label || channelType.label || channel.id
+        if (this.thing.channels.filter((c) => c.label === suffix).length > 1 || this.channelTypes.filter((c) => c.label === suffix).length > 1) {
+          suffix = channel.id.replace('#', '_')
+        }
+        newItemName += diacritic.clean(suffix).replace(/[^0-9a-z_]/gi, '')
         const newItem = {
           channel: channel,
           channelType: channelType,

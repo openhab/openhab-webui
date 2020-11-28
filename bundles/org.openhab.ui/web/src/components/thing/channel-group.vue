@@ -14,7 +14,7 @@
       :checked="isSelected(c.channel)"
       name="channel-picker"
       media-item class="channel-item"
-      :footer="c.channelType.description"
+      :footer="c.channel.description || c.channelType.description"
       :subtitle="c.channel.id + ' (' + getItemType(c.channelType) + ')'"
       :badge="getLinkedItems(c.channel).length || ''" badge-color="blue"
       @change="$emit('selected', c.channel, c.channelType)"
