@@ -1,7 +1,7 @@
 export default {
   getIcon: (icon, format, state) => {
     if (!format) format = 'svg'
-    let url = `/icon/${icon}?format=${format}`
+    let url = `/icon/${icon}?format=${format}&anyFormat=true`
     if (state) url += `&state=${state}`
 
     // TODO handle basic auth with blobs and data URIs if necessary

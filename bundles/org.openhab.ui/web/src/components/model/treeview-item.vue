@@ -6,7 +6,7 @@
     :opened="model.opened"
     @click="select">
     <model-treeview-item v-for="node in [model.children.locations,
-          model.children.equipments, model.children.points,
+          model.children.equipment, model.children.points,
           model.children.groups, model.children.items].flat()"
       :key="node.item.name"
       :model="node"
@@ -26,7 +26,7 @@ export default {
   computed: {
     children () {
       return [this.model.children.locations,
-        this.model.children.equipments, this.model.children.points,
+        this.model.children.equipment, this.model.children.points,
         this.model.children.groups, this.model.children.items].flat()
     },
     iconColor () {

@@ -1,6 +1,8 @@
 import { lineIndent, findParent, findParentRoot, isConfig, isRuleSection } from './yaml-utils'
 import { filterPartialCompletions, addTooltipHandlers, getClassNamesForParameter } from './hint-utils'
 
+let itemsCache = null
+
 function getModuleTypes (cm, section) {
   if (cm.state['moduleTypes' + section]) return Promise.resolve(cm.state['moduleTypes' + section])
   return cm.state.$oh.api.get('/rest/module-types' + ((section) ? '?type=' + section : '')).then((data) => {
@@ -12,7 +14,9 @@ function getModuleTypes (cm, section) {
 function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix) {
   const cursor = cm.getCursor()
   if (!cm.state.$oh) return
-  return cm.state.$oh.api.get('/rest/items').then((data) => {
+  const promise = (itemsCache) ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items')
+  return promise.then((data) => {
+    if (!itemsCache) itemsCache = data
     let ret = {
       list: data.map((item) => {
         return {

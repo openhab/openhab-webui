@@ -38,7 +38,7 @@ export default {
   methods: {
     isSemanticTag (tag) {
       return [SemanticClasses.Locations,
-        SemanticClasses.Equipments,
+        SemanticClasses.Equipment,
         SemanticClasses.Points,
         SemanticClasses.Properties].some((t) => t.indexOf(tag) >= 0)
     },

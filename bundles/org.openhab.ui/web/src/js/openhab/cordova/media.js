@@ -22,7 +22,7 @@ export default {
             resolve(entry.toURL())
           }, () => {
             // download icon to cache
-            cordova.plugin.http.downloadFile(`${serverUrl}/icon/${icon}`, { format: format },
+            cordova.plugin.http.downloadFile(`${serverUrl}/icon/${icon}`, { format: format, anyFormat: true },
               {}, `${directory}/icon_${icon}.${format}`, (entry) => {
                 resolve(entry.toURL())
               }, (response) => {

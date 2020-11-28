@@ -69,8 +69,8 @@ export default {
       links: [],
       locations: [],
       rootLocations: [],
-      equipments: {},
-      rootEquipments: [],
+      equipment: {},
+      rootEquipment: [],
       rootPoints: [],
       rootGroups: [],
       rootItems: [],
@@ -82,9 +82,9 @@ export default {
   computed: {
     rootNodes () {
       if (this.semanticOnly) {
-        return [this.rootLocations, this.rootEquipments, (!this.groupsOnly) ? this.rootPoints : []]
+        return [this.rootLocations, this.rootEquipment, (!this.groupsOnly) ? this.rootPoints : []]
       } else {
-        return [this.rootLocations, this.rootEquipments, (!this.groupsOnly) ? this.rootPoints : [], this.rootGroups, (!this.groupsOnly) ? this.rootItems : []].flat()
+        return [this.rootLocations, this.rootEquipment, (!this.groupsOnly) ? this.rootPoints : [], this.rootGroups, (!this.groupsOnly) ? this.rootItems : []].flat()
       }
     }
   },
@@ -115,7 +115,7 @@ export default {
         class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
         children: {
           locations: [],
-          equipments: [],
+          equipment: [],
           points: [],
           groups: [],
           items: []
@@ -155,17 +155,17 @@ export default {
         }
 
         this.locations = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Location') === 0)
-        this.equipments = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Equipment') === 0)
+        this.equipment = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Equipment') === 0)
         this.points = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Point') === 0)
 
         this.rootLocations = this.locations
           .filter((i) => !i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf)
           .map(this.modelItem).sort(compareModelItems)
         this.rootLocations.forEach(this.getChildren)
-        this.rootEquipments = this.equipments
+        this.rootEquipment = this.equipment
           .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPartOf && !i.metadata.semantics.config.hasLocation))
           .map(this.modelItem).sort(compareModelItems)
-        this.rootEquipments.forEach(this.getChildren)
+        this.rootEquipment.forEach(this.getChildren)
         this.rootPoints = this.points
           .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPointOf && !i.metadata.semantics.config.hasLocation))
           .map(this.modelItem).sort(compareModelItems)
@@ -204,10 +204,10 @@ export default {
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
           .map(this.modelItem).sort(compareModelItems)
         parent.children.locations.forEach(this.getChildren)
-        parent.children.equipments = this.equipments
+        parent.children.equipment = this.equipment
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
           .map(this.modelItem).sort(compareModelItems)
-        parent.children.equipments.forEach(this.getChildren)
+        parent.children.equipment.forEach(this.getChildren)
 
         if (!this.groupsOnly) {
           parent.children.points = this.points
@@ -215,10 +215,10 @@ export default {
             .map(this.modelItem).sort(compareModelItems)
         }
       } else {
-        parent.children.equipments = this.equipments
+        parent.children.equipment = this.equipment
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
           .map(this.modelItem).sort(compareModelItems)
-        parent.children.equipments.forEach(this.getChildren)
+        parent.children.equipment.forEach(this.getChildren)
 
         if (!this.groupsOnly) {
           parent.children.points = this.points

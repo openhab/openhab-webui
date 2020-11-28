@@ -40,9 +40,8 @@ export function addTooltipHandlers (cm, ret, retriggerHint) {
   let tooltip = null
   const cursor = cm.getCursor()
 
-  if (ret.tooltip) return
-
   if (!ret) return
+  if (ret.tooltip) return
   if (!ret.from) ret.from = cursor
   if (!ret.to) ret.to = cursor
   ret.tooltip = true

@@ -12,6 +12,7 @@
           :parameter-groups="configDescriptions.parameterGroups"
           :parameters="configDescriptions.parameters"
           :configuration="config"
+          :set-empty-config-as-null="true"
         />
       </f7-col>
     </f7-block>
