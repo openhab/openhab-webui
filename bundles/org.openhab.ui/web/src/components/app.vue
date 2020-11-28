@@ -243,6 +243,11 @@ export default {
   },
   data () {
     let theme = localStorage.getItem('openhab.ui:theme')
+
+    if ((!theme || theme === 'auto') && window.OHApp && window.OHApp.preferTheme) {
+      theme = window.OHApp.preferTheme()
+    }
+
     // choose Aurora as default theme for desktops
     if ((!theme || theme === 'auto') && this.$device.desktop) {
       theme = 'aurora'
@@ -436,7 +441,7 @@ export default {
       })
     },
     updateThemeOptions () {
-      this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || (this.$f7.darkTheme ? 'dark' : 'light')
+      this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || ((window.OHApp && window.OHApp.preferDarkMode) ? window.OHApp.preferDarkMode().toString() === 'dark' : (this.$f7.darkTheme ? 'dark' : 'light'))
       this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.ios || this.$f7.darkTheme || this.themeOptions.dark === 'dark') ? 'light' : 'filled')
       this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
       this.themeOptions.homeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
