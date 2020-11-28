@@ -38,7 +38,7 @@
 .location-stats
   font-weight normal
   font-size 16px
-  max-width 340px
+  max-width calc(340px - 2*var(--f7-card-header-padding-horizontal))
   display flex
   flex-wrap wrap
 </style>
