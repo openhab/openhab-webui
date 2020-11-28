@@ -32,7 +32,7 @@ export default {
         lights: { icon: 'oh:lightbulb' },
         windows: { icon: 'oh:window', state: 'open' },
         doors: { icon: 'oh:door', state: 'open' },
-        garagedoors: { icon: 'oh:garagedoors', state: 'open' },
+        garagedoors: { icon: 'oh:garagedoor', state: 'open' },
         blinds: { icon: 'oh:cinemascreen', state: '100' },
         presence: { icon: 'oh:motion', state: 'on' },
         lock: { icon: 'oh:lock', state: 'open', stateOff: 'closed' },
@@ -62,7 +62,10 @@ export default {
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'doors':
-          equipment = findEquipment(this.element.equipment, 'Equipment_Door', false)
+          equipment =  [
+            ...findEquipment(this.element.equipment, 'Equipment_Door', false),
+            ...findEquipment(this.element.equipment, 'Equipment_Door_FrontDoor', false)
+          ]
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
           points = findPoints(allPoints, 'Point_Status_OpenState', false)
@@ -76,7 +79,7 @@ export default {
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'blinds':
-          equipment = findEquipment(this.element.equipment, 'Equipment_Door_Blinds', false)
+          equipment = findEquipment(this.element.equipment, 'Equipment_Blinds', false)
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
           points = findPoints(allPoints, 'Point_Status_OpenState', false)
@@ -149,8 +152,8 @@ export default {
     },
     reduce () {
       switch (this.type) {
-        case 'light':
-          return this.map.filter((state) => state === 'ON' || (state.split(',').length === 3 && state.split(',')[2] !== '0') || Number.parseInt(state) > 0).length
+        case 'lights':
+          return this.map.filter((state) => state === 'ON' || (state.split(',').length === 3 && state.split(',')[2] !== '0') || (state.indexOf(',') < 0 && Number.parseInt(state) > 0)).length
         case 'blinds':
           return this.map.filter((state) => state === 'OPEN' || Number.parseInt(state) > 0).length
         default:

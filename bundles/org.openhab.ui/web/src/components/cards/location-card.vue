@@ -5,13 +5,17 @@
       <div v-if="context && context.component.slots && context.component.slots.glance" class="display-flex flex-direction-column align-items-flex-start">
         <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.glance" :key="'glance-' + idx" @command="onCommand" />
       </div>
-      <div class="location-stats margin-top" :class="config.invertText ? 'invert-text' : ''">
-        <status-badge :store="context.store" :element="element" :type="badgeType" :key="badgeType" :invert-color="config.invertText"
-          v-for="badgeType in ['lights', 'windows', 'doors', 'garagedoors', 'blinds', 'presence', 'lock', 'climate', 'screens', 'projectors', 'speakers']" />
+      <div class="location-stats margin-top" :class="config.invertText ? 'invert-text' : ''" v-if="!config.disableBadges">
+        <span v-for="badgeType in ['lights', 'windows', 'doors', 'garagedoors', 'blinds', 'presence', 'lock', 'climate', 'screens', 'projectors', 'speakers']" :key="badgeType">
+          <status-badge v-if="!config.badges || !config.badges.length || config.badges.indexOf(badgeType) >= 0"
+            :store="context.store" :element="element" :type="badgeType" :invert-color="config.invertText" />
+        </span>
       </div>
-      <div class="location-stats margin-top-half">
-        <measurement-badge :store="context.store" :element="element" :type="badgeType" :key="badgeType" :invert-color="config.invertText"
-          v-for="badgeType in ['temperature', 'humidity', 'luminance']" />
+      <div class="location-stats margin-top-half" v-if="!config.disableBadges">
+        <span v-for="badgeType in ['temperature', 'humidity', 'luminance']" :key="badgeType">
+          <measurement-badge v-if="!config.badges || !config.badges.length || config.badges.indexOf(badgeType) >= 0"
+            :store="context.store" :element="element" :type="badgeType" :invert-color="config.invertText" />
+        </span>
       </div>
     </template>
     <div class="card-content-padding">

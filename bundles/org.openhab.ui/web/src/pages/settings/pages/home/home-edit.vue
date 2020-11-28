@@ -52,7 +52,7 @@
               </div>
             </div>
 
-            <f7-list media-list v-id="cardListId" class="homecards-list" sortable :key="'cards-' + currentModelTab + cardListId" @sortable:sort="reorderCard">
+            <f7-list media-list class="homecards-list" sortable :key="'cards-' + currentModelTab + cardListId" @sortable:sort="reorderCard">
               <f7-list-item media-item :link="(showCardControls) ? undefined : ''"
                 @click.native="(ev) => cardClicked(ev, card, idx)"
                 v-for="(card, idx) in cardGroups(currentModelTab, page).flat()" :key="idx"
@@ -143,7 +143,7 @@ export default {
       ],
       currentModelTab: 'locations',
       showCardControls: false,
-      cardListId: this.$f7.utils.id,
+      cardListId: this.$f7.utils.id(),
       page: {
         uid: 'home',
         component: 'oh-home-page',
@@ -254,7 +254,7 @@ export default {
       this.cardListId = null
       this.showCardControls = false
       this.$nextTick(() => {
-        this.cardListId = this.$f7.utils.id
+        this.cardListId = this.$f7.utils.id()
       })
     },
     isCardExcluded (card) {

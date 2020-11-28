@@ -49,6 +49,26 @@ const ModelCardParameters = () => [
 
 export const OhLocationCardParameters = () => new WidgetDefinition('oh-location-card', 'Location Card', 'A card showing model items in a certain location')
   .paramGroup(ModelCardParameterGroup(), ModelCardParameters())
+  .paramGroup(pg('glance', 'Card at-a-glance badges'), [
+    pb('disableBadges', 'Disable badges', 'Do not examine items to display badges - can help with performance if you don\'t need them.'),
+    pt('badges', 'Enabled badges', 'Select the badges you wish to show in the header of the card. Display all if none are selected.')
+      .o([
+        { value: 'lights', label: 'Lights On' },
+        { value: 'windows', label: 'Open Windows' },
+        { value: 'doors', label: 'Open Doors' },
+        { value: 'garagedoors', label: 'Open Garage Doors' },
+        { value: 'blinds', label: 'Open Blinds' },
+        { value: 'presence', label: 'Presence Detected' },
+        { value: 'lock', label: 'Locks' },
+        { value: 'climate', label: 'Climate Control Powered On' },
+        { value: 'screens', label: 'Screens Powered On' },
+        { value: 'projectors', label: 'Projectors Powered On' },
+        { value: 'speakers', label: 'Speakers/AV Receivers Powered On' },
+        { value: 'temperature', label: 'Average Temperature (+ Setpoint)' },
+        { value: 'humidity', label: 'Average Humidity' },
+        { value: 'luminance', label: 'Average Luminance' }
+      ], true, true)
+  ])
 
 export const OhEquipmentCardParameters = () => new WidgetDefinition('oh-equipment-card', 'Equipment Class Card', 'A card showing model items belonging to a certain equipment class')
   .paramGroup(ModelCardParameterGroup(), ModelCardParameters())
