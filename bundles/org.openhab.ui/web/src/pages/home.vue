@@ -12,8 +12,10 @@
         {{title}}
       </f7-nav-title>
       <f7-nav-right>
-        <f7-link v-if="this.$store.getters.isAdmin" icon-ios="f7:pencil" icon-aurora="f7:pencil" icon-md="material:edit" :href="(homePageComponent) ? '/settings/pages/home/home' : '/settings/pages/home/add'"></f7-link>
-        <f7-link icon-ios="f7:sidebar_right" icon-aurora="f7:sidebar_right" icon-md="material:exit_to_app" panel-open="right"></f7-link>
+        <f7-link v-if="this.$store.getters.isAdmin" icon-ios="f7:pencil" icon-aurora="f7:pencil" icon-md="material:edit" tooltip="Edit Home Page" :href="(homePageComponent) ? '/settings/pages/home/home' : '/settings/pages/home/add'"></f7-link>
+        <f7-link v-if="showPinToHome" icon-ios="f7:pin_fill" icon-aurora="f7:pin_fill" icon-md="material:add_location" tooltip="Pin to Home" @click="pinToHome"></f7-link>
+        <f7-link v-if="showExitToApp" icon-ios="f7:square_arrow_right" icon-aurora="f7:square_arrow_right" icon-md="material:exit_to_app" tooltip="Return to App" @click="exitToApp"></f7-link>
+        <f7-link v-else icon-ios="f7:sidebar_right" icon-aurora="f7:sidebar_right" icon-md="material:exit_to_app" tooltip="Other Apps" panel-open="right"></f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar labels bottom v-if="tabsVisible">
@@ -82,6 +84,8 @@ export default {
       showSetup: true,
       showTasks: true,
       showCards: false,
+      showPinToHome: false,
+      showExitToApp: false,
       currentTab: 'overview',
       items: []
     }
@@ -143,6 +147,16 @@ export default {
     },
     onPageInit () {
       this.$f7.panel.get('left').enableVisibleBreakpoint()
+      if (window.OHApp) {
+        if (window.OHApp.pinToHome) this.showPinToHome = true
+        if (window.OHApp.exitToApp) this.showExitToApp = true
+      }
+    },
+    pinToHome () {
+      window.OHApp.pinToHome()
+    },
+    exitToApp () {
+      window.OHApp.exitToApp()
     },
     tabVisible (tab) {
       if (!this.tabsVisible) return false

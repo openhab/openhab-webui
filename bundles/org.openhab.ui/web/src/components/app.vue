@@ -436,7 +436,7 @@ export default {
       })
     },
     updateThemeOptions () {
-      this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || (this.$f7.darkTheme ? 'dark' : 'light')
+      this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || ((window.OHApp && window.OHApp.preferTheme) ? window.OHApp.preferTheme() : (this.$f7.darkTheme ? 'dark' : 'light'))
       this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.ios || this.$f7.darkTheme || this.themeOptions.dark === 'dark') ? 'light' : 'filled')
       this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
       this.themeOptions.homeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
