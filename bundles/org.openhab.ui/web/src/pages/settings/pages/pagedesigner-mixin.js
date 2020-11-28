@@ -199,7 +199,8 @@ export default {
 
       this.currentComponent = component
       const popup = {
-        component: WidgetConfigPopup
+        component: WidgetConfigPopup,
+        componentType: this.type
       }
 
       this.$f7router.navigate({

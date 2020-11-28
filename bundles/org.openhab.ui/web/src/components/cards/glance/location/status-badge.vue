@@ -1,0 +1,165 @@
+<template>
+  <span class="padding-right location-status-badge" v-show="reduce" :class="{ invert: invertColor }">
+    <oh-icon v-if="config.icon.indexOf('oh:') === 0" :icon="config.icon.replace('oh:', '')" :state="config.state" class="oh-icon-badge" width="20" height="20" />
+    <f7-icon v-else-if="config.icon.indexOf('f7:') === 0" :f7="config.icon.replace('f7:', '')" :color="config.invertText ? 'black' : 'white'" class="f7-icon-badge" size="20" />
+    <!-- <oh-icon v-if="config.icon.indexOf('oh:') === 0 && config.stateOff" v-show="!reduce" icon="config.icon.replace('oh:', '')"  :state="config.stateOff" class="oh-icon-badge" width="20" height="20" /> -->
+    <span class="glance-label" v-show="reduce > 1">{{reduce}}</span>
+  </span>
+</template>
+
+<style lang="stylus">
+.location-status-badge
+  .oh-icon-badge
+    filter brightness(100)
+  &.invert .oh-icon-badge
+    filter brightness(0)
+  .f7-icon-badge
+    line-height 20px
+    margin-top -7px
+  .glance-label
+    line-height 20px
+    vertical-align top
+</style>
+
+<script>
+import { findEquipment, allEquipmentPoints, findPoints } from '../glance-helpers'
+
+export default {
+  props: ['element', 'type', 'customConfig', 'invertColor', 'store'],
+  data () {
+    return {
+      badgeConfigs: {
+        lights: { icon: 'oh:lightbulb' },
+        windows: { icon: 'oh:window', state: 'open' },
+        doors: { icon: 'oh:door', state: 'open' },
+        garagedoors: { icon: 'oh:garagedoor', state: 'open' },
+        blinds: { icon: 'oh:cinemascreen', state: '100' },
+        presence: { icon: 'oh:motion', state: 'on' },
+        lock: { icon: 'oh:lock', state: 'open', stateOff: 'closed' },
+        climate: { icon: 'oh:climate', state: 'on' },
+        screens: { icon: 'f7:tv' },
+        projectors: { icon: 'f7:videocam_fill' },
+        speakers: { icon: 'f7:speaker_2_fill' }
+      }
+    }
+  },
+  computed: {
+    config () {
+      return this.badgeConfigs[this.type]
+    },
+    query () {
+      let direct, equipment, allPoints, points
+      switch (this.type) {
+        case 'lights':
+          direct = findPoints(this.element.properties, 'Point_Control', true, 'Property_Light')
+          if (direct.length) return direct
+          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Control', true, 'Property_Light')
+        case 'windows':
+          equipment = findEquipment(this.element.equipment, 'Equipment_Window', false)
+          if (!equipment.length) return []
+          allPoints = allEquipmentPoints(equipment)
+          points = findPoints(allPoints, 'Point_Status_OpenState', false)
+          if (points.length) return points
+          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+        case 'doors':
+          equipment =  [
+            ...findEquipment(this.element.equipment, 'Equipment_Door', false),
+            ...findEquipment(this.element.equipment, 'Equipment_Door_FrontDoor', false)
+          ]
+          if (!equipment.length) return []
+          allPoints = allEquipmentPoints(equipment)
+          points = findPoints(allPoints, 'Point_Status_OpenState', false)
+          if (points.length) return points
+          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+        case 'garagedoors':
+          equipment = findEquipment(this.element.equipment, 'Equipment_Door_GarageDoor', false)
+          if (!equipment.length) return []
+          allPoints = allEquipmentPoints(equipment)
+          points = findPoints(allPoints, 'Point_Status_OpenState', false)
+          if (points.length) return points
+          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+        case 'blinds':
+          equipment = findEquipment(this.element.equipment, 'Equipment_Blinds', false)
+          if (!equipment.length) return []
+          allPoints = allEquipmentPoints(equipment)
+          points = findPoints(allPoints, 'Point_Status_OpenState', false)
+          if (points.length) return points
+          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+        case 'presence':
+          direct = findPoints(this.element.properties, 'Point_Status', false, 'Property_Presence')
+          if (direct.length) return direct
+          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Status', true, 'Property_Presence')
+        case 'lock':
+          equipment = findEquipment(this.element.equipment, 'Equipment_Lock', false)
+          if (!equipment.length) return []
+          allPoints = allEquipmentPoints(equipment)
+          points = [
+            ...findPoints(allPoints, 'Point_Status_OpenState', false),
+            ...findPoints(allPoints, 'Point_Status', false),
+            ...findPoints(allPoints, 'Point_Control', true)
+          ]
+          if (points.length) return points
+          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+        case 'climate':
+          equipment = findEquipment(this.element.equipment, 'Equipment_HVAC', true)
+          if (!equipment.length) return []
+          allPoints = allEquipmentPoints(equipment)
+          points = [
+            ...findPoints(allPoints, 'Point_Status', false),
+            ...findPoints(allPoints, 'Point_Control', true)
+          ]
+          if (points.length) return points
+          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+        case 'screens':
+          equipment = findEquipment(this.element.equipment, 'Equipment_Screen', true)
+          if (!equipment.length) return []
+          allPoints = allEquipmentPoints(equipment)
+          points = [
+            ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
+            ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
+          ]
+          if (points.length) return points
+          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+        case 'speakers':
+          equipment = [
+            ...findEquipment(this.element.equipment, 'Equipment_Receiver', false),
+            ...findEquipment(this.element.equipment, 'Equipment_Speaker', false)
+          ]
+          if (!equipment.length) return []
+          allPoints = allEquipmentPoints(equipment)
+          points = [
+            ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
+            ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
+          ]
+          if (points.length) return points
+          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+        case 'projectors':
+          equipment = findEquipment(this.element.equipment, 'Equipment_Projector', false)
+          if (!equipment.length) return []
+          allPoints = allEquipmentPoints(equipment)
+          points = [
+            ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
+            ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
+          ]
+          if (points.length) return points
+          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+        default:
+          return []
+      }
+    },
+    map () {
+      return this.query.map((item) => this.store[item.name].state)
+    },
+    reduce () {
+      switch (this.type) {
+        case 'lights':
+          return this.map.filter((state) => state === 'ON' || (state.split(',').length === 3 && state.split(',')[2] !== '0') || (state.indexOf(',') < 0 && Number.parseInt(state) > 0)).length
+        case 'blinds':
+          return this.map.filter((state) => state === 'OPEN' || Number.parseInt(state) > 0).length
+        default:
+          return this.map.filter((state) => state === 'ON' || state === 'OPEN').length
+      }
+    }
+  }
+}
+</script>

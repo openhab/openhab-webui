@@ -13,6 +13,7 @@ import * as PlanWidgets from '@/components/widgets/plan'
 import * as MapWidgets from '@/components/widgets/map'
 import { OhChartPageDefinition } from '@/assets/definitions/widgets/chart/page'
 import ChartWidgetsDefinitions from '@/assets/definitions/widgets/chart/index'
+import { OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
 
 function getWidgetDefinitions (cm) {
   const mode = cm.state.originalMode
@@ -34,6 +35,7 @@ function getWidgetDefinitions (cm) {
         .filter((w) => w.widget && typeof w.widget === 'function')
       const f7Components = Object.values(f7vue).filter((m) => m.name && m.name.indexOf('f7-') === 0)
       return [
+        ...(componentType === 'home') ? [OhLocationCardParameters(), OhEquipmentCardParameters(), OhPropertyCardParameters()] : [],
         ...ohComponents.map((c) => c.widget()).sort((c1, c2) => c1.name.localeCompare(c2.name)),
         ...f7Components.sort((c1, c2) => c1.name.localeCompare(c2.name))
       ]

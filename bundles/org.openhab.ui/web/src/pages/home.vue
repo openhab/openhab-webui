@@ -12,29 +12,29 @@
         {{title}}
       </f7-nav-title>
       <f7-nav-right>
+        <f7-link v-if="this.$store.getters.isAdmin" icon-ios="f7:pencil" icon-aurora="f7:pencil" icon-md="material:edit" :href="(homePageComponent) ? '/settings/pages/home/home' : '/settings/pages/home/add'"></f7-link>
         <f7-link icon-ios="f7:sidebar_right" icon-aurora="f7:sidebar_right" icon-md="material:exit_to_app" panel-open="right"></f7-link>
       </f7-nav-right>
     </f7-navbar>
-
-    <f7-toolbar tabbar labels bottom>
+    <f7-toolbar tabbar labels bottom v-if="tabsVisible">
       <f7-link tab-link @click="currentTab = 'overview'" :tab-link-active="currentTab === 'overview'" icon-ios="f7:house_fill" icon-aurora="f7:house_fill" icon-md="material:home" text="Overview"></f7-link>
-      <f7-link tab-link @click="currentTab = 'locations'" :tab-link-active="currentTab === 'locations'" icon-ios="f7:placemark_fill" icon-aurora="f7:placemark_fill" icon-md="material:place" text="Locations"></f7-link>
-      <f7-link tab-link @click="currentTab = 'equipments'" :tab-link-active="currentTab === 'equipments'" icon-ios="f7:cube_box_fill" icon-aurora="f7:cube_box_fill" icon-md="material:payments" text="Equipment"></f7-link>
-      <f7-link tab-link @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" text="Properties"></f7-link>
+      <f7-link tab-link v-if="tabVisible('locations')" @click="currentTab = 'locations'" :tab-link-active="currentTab === 'locations'" icon-ios="f7:placemark_fill" icon-aurora="f7:placemark_fill" icon-md="material:place" text="Locations"></f7-link>
+      <f7-link tab-link v-if="tabVisible('equipment')" @click="currentTab = 'equipment'" :tab-link-active="currentTab === 'equipment'" icon-ios="f7:cube_box_fill" icon-aurora="f7:cube_box_fill" icon-md="material:payments" text="Equipment"></f7-link>
+      <f7-link tab-link v-if="tabVisible('properties')" @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" text="Properties"></f7-link>
     </f7-toolbar>
 
-    <f7-tabs v-if="items">
+    <f7-tabs>
       <f7-tab id="tab-overview" :tab-active="currentTab === 'overview'" @tab:show="() => this.currentTab = 'overview'">
-        <overview-tab v-if="currentTab === 'overview'" :context="context" :items="items" />
+          <overview-tab v-if="currentTab === 'overview'" :context="context" :allow-chat="allowChat" />
       </f7-tab>
       <f7-tab id="tab-locations" :tab-active="currentTab === 'locations'" @tab:show="() => this.currentTab = 'locations'">
-        <locations-tab v-if="currentTab === 'locations'" :context="context" :semantic-items="semanticItems" />
+        <model-tab v-if="currentTab === 'locations'" :context="context" type="locations" :model="model" :page="homePageComponent" />
       </f7-tab>
-      <f7-tab id="tab-equipments" :tab-active="currentTab === 'equipments'" @tab:show="() => this.currentTab = 'equipments'">
-        <equipments-tab v-if="currentTab === 'equipments'" :context="context" :semantic-items="semanticItems" />
+      <f7-tab id="tab-equipment" :tab-active="currentTab === 'equipment'" @tab:show="() => this.currentTab = 'equipment'">
+        <model-tab v-if="currentTab === 'equipment'" :context="context" type="equipment" :model="model" :page="homePageComponent" />
       </f7-tab>
       <f7-tab id="tab-properties" :tab-active="currentTab === 'properties'" @tab:show="() => this.currentTab = 'properties'">
-        <properties-tab v-if="currentTab === 'properties'" :context="context" :semantic-items="semanticItems" />
+        <model-tab v-if="currentTab === 'properties'" :context="context" type="properties" :model="model" :page="homePageComponent" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
@@ -59,26 +59,23 @@
     top -6px
     letter-spacing 1px
     color var(--f7-list-item-footer-text-color)
+.edit-home-button
+  float right
+  display absolute
+  z-index 9000
 </style>
 
 <script>
 import OverviewTab from './home/overview-tab.vue'
-import LocationsTab from './home/locations-tab.vue'
-import EquipmentsTab from './home/equipments-tab.vue'
-import PropertiesTab from './home/properties-tab.vue'
+import ModelTab from './home/model-tab.vue'
 
-import { compareItems } from '@/components/widgets/widget-order'
-
-function compareObjects (o1, o2) {
-  return compareItems(o1.item || o1, o2.item || o2)
-}
+import HomeCards from './home/homecards-mixin'
 
 export default {
+  mixins: [HomeCards],
   components: {
     OverviewTab,
-    LocationsTab,
-    EquipmentsTab,
-    PropertiesTab
+    ModelTab
   },
   data () {
     return {
@@ -86,8 +83,7 @@ export default {
       showTasks: true,
       showCards: false,
       currentTab: 'overview',
-      items: [],
-      semanticItems: {}
+      items: []
     }
   },
   computed: {
@@ -96,13 +92,39 @@ export default {
         store: this.$store.getters.trackedItems
       }
     },
+    homePageComponent () {
+      const page = this.$store.getters.page('home')
+      if (!page) return null
+      if (page.component !== 'oh-home-page') return null
+      return page
+    },
+    tabsVisible () {
+      if (!this.homePageComponent) return true
+      const visibleTo = this.homePageComponent.config.displayModelCardsTo
+      if (visibleTo === undefined || !visibleTo.length) return true
+      const user = this.$store.getters.user
+      if (!user) return false
+      if (user.roles && user.roles.some(r => visibleTo.indexOf('role:' + r) >= 0)) return true
+      if (visibleTo.indexOf('user:' + user.name) >= 0) return true
+      return false
+    },
+    allowChat () {
+      if (!this.homePageComponent) return true
+      const visibleTo = this.homePageComponent.config.allowChatInputTo
+      if (visibleTo === undefined || !visibleTo.length) return true
+      const user = this.$store.getters.user
+      if (!user) return false
+      if (user.roles && user.roles.some(r => visibleTo.indexOf('role:' + r) >= 0)) return true
+      if (visibleTo.indexOf('user:' + user.name) >= 0) return true
+      return false
+    },
     title () {
       switch (this.currentTab) {
         case 'overview':
           return 'Home'
         case 'locations':
           return 'Locations'
-        case 'equipments':
+        case 'equipment':
           return 'Equipment'
         case 'properties':
           return 'Properties'
@@ -114,7 +136,7 @@ export default {
   methods: {
     onPageAfterIn () {
       this.$store.dispatch('startTrackingStates')
-      this.load()
+      this.loadModel()
     },
     onPageBeforeOut () {
       this.$store.dispatch('stopTrackingStates')
@@ -122,72 +144,12 @@ export default {
     onPageInit () {
       this.$f7.panel.get('left').enableVisibleBreakpoint()
     },
-    load () {
-      this.$oh.api.get('/rest/items?metadata=semantics,listWidget,widgetOrder').then((data) => {
-        this.items = data
-        // get the location items
-        this.semanticItems.locations = data.filter((item, index, items) => {
-          return item.metadata && item.metadata.semantics &&
-            item.metadata.semantics.value.indexOf('Location') === 0
-        }).sort(compareObjects).map((l) => {
-          return {
-            item: l,
-            properties: data.filter((item, index, items) => {
-              return item.metadata && item.metadata.semantics &&
-                item.metadata.semantics && item.metadata.semantics.config &&
-                item.metadata.semantics.config.relatesTo &&
-                item.metadata.semantics.config.hasLocation === l.name
-            }).sort(compareObjects),
-            equipments: data.filter((item, index, items) => {
-              return item.metadata && item.metadata.semantics &&
-                item.metadata.semantics && item.metadata.semantics.config &&
-                item.metadata.semantics.value.indexOf('Equipment') === 0 &&
-                item.metadata.semantics.config.hasLocation === l.name
-            }).sort(compareObjects).map((item) => {
-              return {
-                item: item,
-                points: data.filter((item2, index, items) => {
-                  return item2.metadata && item2.metadata.semantics &&
-                    item2.metadata.semantics && item2.metadata.semantics.config &&
-                    item2.metadata.semantics.config.isPointOf === item.name
-                }).sort(compareObjects)
-              }
-            })
-          }
-        })
-
-        // get the equipment items
-        this.semanticItems.equipments = data.filter((item, index, items) => {
-          return item.metadata && item.metadata.semantics &&
-            item.metadata.semantics &&
-            item.metadata.semantics.value.indexOf('Equipment') === 0
-        }).sort(compareObjects).reduce((prev, item, i, properties) => {
-          const equipmentType = item.metadata.semantics.value.split('_')[1] || 'Equipment'
-          if (!prev[equipmentType]) prev[equipmentType] = []
-          const equipmentWithPoints = {
-            item: item,
-            points: data.filter((item2, index, items) => {
-              return item2.metadata && item2.metadata.semantics &&
-                item2.metadata.semantics && item2.metadata.semantics.config &&
-                item2.metadata.semantics.config.isPointOf === item.name
-            }).sort(compareObjects)
-          }
-          prev[equipmentType].push(equipmentWithPoints)
-          return prev
-        }, {})
-
-        // get the property items
-        this.semanticItems.properties = data.filter((item, index, items) => {
-          return item.metadata && item.metadata.semantics &&
-            item.metadata.semantics && item.metadata.semantics.config &&
-            item.metadata.semantics.config.relatesTo
-        }).sort(compareObjects).reduce((prev, item, i, properties) => {
-          const property = item.metadata.semantics.config.relatesTo.split('_')[1]
-          if (!prev[property]) prev[property] = []
-          prev[property].push(item)
-          return prev
-        }, {})
-      })
+    tabVisible (tab) {
+      if (!this.tabsVisible) return false
+      if (!this.homePageComponent) return true
+      const hiddenTabs = this.homePageComponent.config.hiddenModelTabs
+      if (hiddenTabs === undefined || !hiddenTabs.length) return true
+      return hiddenTabs.indexOf(tab) < 0
     }
   }
 }

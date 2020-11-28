@@ -52,7 +52,7 @@ import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 import Habot from '../../components/home/habot.vue'
 
 export default {
-  props: ['context', 'items'],
+  props: ['context', 'allowChat'],
   components: {
     OhLayoutPage,
     Habot
@@ -69,7 +69,7 @@ export default {
   },
   computed: {
     showHABot () {
-      return this.$store.getters.apiEndpoint('habot') && localStorage.getItem('openhab.ui:theme.home.hidechatinput') !== 'true'
+      return this.$store.getters.apiEndpoint('habot') && this.allowChat && localStorage.getItem('openhab.ui:theme.home.hidechatinput') !== 'true'
     },
     overviewPage () {
       const page = this.$store.getters.page('overview')
