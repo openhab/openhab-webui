@@ -1,6 +1,6 @@
 <template>
   <ul v-if="config.listContainer" :class="config.containerClasses" :style="config.containerStyle">
-    <generic-widget-component :context="iterationContext" v-for="(slotComponent, idx) in context.component.slots.default" :key="'repeater-' + idx" @command="onCommand" />
+    <generic-widget-component :context="ctx" v-for="(ctx, idx) in childrenContexts" :key="'repeater-' + idx" @command="onCommand" />
   </ul>
   <div v-else :class="config.containerClasses" :style="config.containerStyle">
     <generic-widget-component :context="ctx" v-for="(ctx, idx) in childrenContexts" :key="'repeater-' + idx" @command="onCommand" />
