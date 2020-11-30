@@ -85,7 +85,7 @@ export default {
             item.metadata.semantics &&
             item.metadata.semantics.value.indexOf('Equipment') === 0
         }).sort(this.compareObjects).reduce((prev, item, i, properties) => {
-          const equipmentType = item.metadata.semantics.value.split('_')[1] || 'Equipment'
+          const equipmentType = item.metadata.semantics.value.substring(item.metadata.semantics.value.lastIndexOf('_')).replace('_', '')
           if (!prev[equipmentType]) prev[equipmentType] = []
           const equipmentWithPoints = {
             item: item,
