@@ -58,7 +58,7 @@
   ],
   "dependencies": {
     "cronstrue": "^1.100.0",
-    "dayjs": "^1.8.35",
+    "dayjs": "^1.9.6",
     "dom7": "^2.1.5",
     "echarts": "^4.9.0",
     "expression-eval": "^2.1.0",

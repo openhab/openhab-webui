@@ -1,6 +1,22 @@
 // Import into widget components as a mixin!
 
 import expr from 'expression-eval'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import calendar from 'dayjs/plugin/calendar'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+import isoWeek from 'dayjs/plugin/isoWeek'
+import isToday from 'dayjs/plugin/isToday'
+import isYesterday from 'dayjs/plugin/isYesterday'
+import isTomorrow from 'dayjs/plugin/isTomorrow'
+
+dayjs.extend(relativeTime)
+dayjs.extend(calendar)
+dayjs.extend(localizedFormat)
+dayjs.extend(isoWeek)
+dayjs.extend(isToday)
+dayjs.extend(isYesterday)
+dayjs.extend(isTomorrow)
 
 export default {
   props: ['context'],
@@ -53,25 +69,27 @@ export default {
     }
   },
   methods: {
-    evaluateExpression (key, value) {
+    evaluateExpression (key, value, context) {
       if (value === null) return null
+      const ctx = context || this.context
       if (typeof value === 'string' && value.startsWith('=')) {
         try {
           // we cache the parsed abstract tree to prevent it from being parsed again at runtime
           // in we're edit mode according to the context do not cache because the expression is subject to change
-          if (!this.exprAst[key] || this.context.editmode) {
+          if (!this.exprAst[key] || ctx.editmode) {
             this.exprAst[key] = expr.parse(value.substring(1))
           }
           return expr.eval(this.exprAst[key], {
-            items: this.context.store,
-            props: this.context.props,
-            vars: this.context.vars,
+            items: ctx.store,
+            props: ctx.props,
+            vars: ctx.vars,
             Math: Math,
             Number: Number,
             theme: this.$theme,
             themeOptions: this.$f7.data.themeOptions,
             device: this.$device,
-            JSON: JSON
+            JSON: JSON,
+            dayjs: dayjs
           })
         } catch (e) {
           return e
