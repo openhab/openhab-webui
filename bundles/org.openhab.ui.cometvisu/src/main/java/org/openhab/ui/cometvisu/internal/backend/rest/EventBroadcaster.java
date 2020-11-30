@@ -61,12 +61,10 @@ public interface EventBroadcaster {
     public void registerItems();
 
     /**
-     * lists all client item names and the associated type which must be notified
-     * when the item changes
+     * Lists all client item names and the associated type which must be notified when the item changes.
      *
-     * @param item
-     *            - the item that is listened to
-     * @return
+     * @param item the item that is listened to
+     * @return an unmodifiable map containing the result
      */
-    public Map<String, @Nullable Class<? extends State>> getClientItems(Item item);
+    Map<String, @Nullable Class<? extends State>> getClientItems(Item item);
 }

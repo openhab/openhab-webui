@@ -15,6 +15,7 @@ package org.openhab.ui.cometvisu.internal.backend.rest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -252,6 +253,6 @@ public class ReadResource implements EventBroadcaster, RESTResource {
 
     @Override
     public Map<String, @Nullable Class<? extends State>> getClientItems(Item item) {
-        return items.get(item);
+        return items.getOrDefault(item, Collections.emptyMap());
     }
 }
