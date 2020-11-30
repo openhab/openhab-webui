@@ -235,6 +235,9 @@ import DeveloperSidebar from './developer/developer-sidebar.vue'
 
 import auth from './auth-mixin.js'
 
+import dayjs from 'dayjs'
+import dayjsLocales from 'dayjs/locale.json'
+
 export default {
   mixins: [auth],
   components: {
@@ -357,11 +360,19 @@ export default {
           this.$store.commit('setRootResource', { rootResponse })
           return Promise.resolve(rootResponse)
         }).then(() => {
+          let locale = this.$store.state.locale
+          if (!locale) return
+          let dayjsLocale = dayjsLocales.find((l) => l.key === locale.replace('_', '-').toLowerCase())
+          if (!dayjsLocale) dayjsLocale = dayjsLocales.find((l) => l.key === locale.split('_')[0].toLowerCase())
+          if (!dayjsLocale) return
+          let dayjsLocalePromise = (dayjsLocale) ? import('dayjs/locale/' + dayjsLocale.key + '.js').then(() => Promise.resolve(dayjsLocale)) : Promise.resolve(null)
           // load the pages & widgets, only if the 'ui' endpoint exists (or empty arrays otherwise)
-          return Promise.all(
-            this.$store.getters.apiEndpoint('ui')
+          return Promise.all([
+            ...this.$store.getters.apiEndpoint('ui')
               ? [this.$oh.api.get('/rest/ui/components/ui:page'), this.$oh.api.get('/rest/ui/components/ui:widget')]
-              : [Promise.resolve([]), Promise.resolve([])])
+              : [Promise.resolve([]), Promise.resolve([])],
+            dayjsLocalePromise
+          ])
         }).then((data) => {
           // store the pages & widgets
           this.$store.commit('setPages', { pages: data[0] })
@@ -372,6 +383,8 @@ export default {
               const order2 = p2.config.order || 1000
               return order1 - order2
             })
+
+          if (data[2]) dayjs.locale(data[2].key)
 
           this.ready = true
           return Promise.resolve()

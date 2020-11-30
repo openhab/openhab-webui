@@ -1,0 +1,25 @@
+import { pt, pb, pn } from '../helpers'
+
+export default () => [
+  pt('for', 'Current element variable', 'Name of the variable holding the current element in the iteration, it will be propagated to the children components in the default slot. ' +
+    '2 additional variables with the <code>"_idx"</code> and <code>"_source"</code> suffixes will also be defined to hold the current index and source array, respectively.'),
+  pt('sourceType', 'Source type', 'What to iterate on')
+    .o([
+      { value: 'array', label: 'Array (default) in the "in" parameter' },
+      { value: 'range', label: 'Range of integers defined by "rangeStart", "rangeStop", "rangeStep"' },
+      { value: 'itemsInGroup', label: 'Member of the group defined in the "groupItem" parameter' },
+      { value: 'itemsWithTags', label: 'Items with tags in the "itemTags" parameter' }
+    ]),
+  pt('in', 'Source array', 'Source array (for "array" source type)'),
+  pn('rangeStart', 'Range Start', 'Start of range (for "range" source type)'),
+  pn('rangeStop', 'Range Stop', 'End of range (for "range" source type)'),
+  pn('rangeStep', 'Range Step', 'Step of range (for "range" source type)'),
+  pt('groupItem', 'Group Item', 'Group item to whose members will be iterated (for "itemsInGroup" source type)'),
+  pt('itemTags', 'Item Tags', 'Iterate over items with the given tags (comma-separated, for "itemsWithTags" source type)'),
+  pt('fetchMetadata', 'Fetch Item Metadata Namespaces', 'Fetch the metadata from these namespaces (for "itemsInGroup" and "itemsWithTags" source types)'),
+  pt('filter', 'Filter expression', 'Specify an expression WITHOUT THE = PREFIX to filter the resulting array'),
+  pt('map', 'Map expression', 'Specify an expression WITHOUT THE = PREFIX to transform the resulting array elements'),
+  pb('listContainer', 'List container', 'The child components will be wrapped in a <code>ul</code> HTML elements instead of a <code>div</code>'),
+  pt('containerClasses', 'Classes of the container', 'Add these CSS classes to the container'),
+  pt('containerStyle', 'Styles of the container', 'Add these CSS styles to the container')
+]
