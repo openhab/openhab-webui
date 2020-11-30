@@ -93,6 +93,8 @@ import ChannelGroup from './channel-group.vue'
 import ChannelLink from './channel-link.vue'
 import ItemForm from '@/components/item/item-form.vue'
 
+import Points from '@/assets/semantics'
+
 export default {
   props: ['thingType', 'thing', 'channelTypes', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems', 'context'],
   components: {
@@ -189,6 +191,7 @@ export default {
           suffix = channel.id.replace('#', '_')
         }
         newItemName += diacritic.clean(suffix).replace(/[^0-9a-z_]/gi, '')
+        const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
         const newItem = {
           channel: channel,
           channelType: channelType,
@@ -196,7 +199,7 @@ export default {
           label: channel.label || channelType.label,
           category: (channelType) ? channelType.category : '',
           type: channel.itemType,
-          tags: ['Point']
+          tags: (defaultTags.find((t) => Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
         }
         this.newItems.push(newItem)
       }
