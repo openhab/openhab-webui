@@ -52,20 +52,7 @@ export default {
       let idx = 0
       for (let i of source) {
         contexts.push(...this.context.component.slots.default.map((c) => {
-          let itCtx = this.childContext(c)
-          const itVars = {}
-          if (itCtx.vars) {
-            for (const varKey in this.context.vars) {
-              this.$set(itVars, varKey, this.context.vars[varKey])
-            }
-          }
-          itVars[this.config.for] = i
-          itVars[this.config.for + 'Idx'] = idx
-          itVars[this.config.for + 'Source'] = source
-
-          this.$set(itCtx, 'vars', itVars)
-
-          return itCtx
+          return iterationContext(this.childContext(c), i, idx, source)
         }))
 
         idx++
