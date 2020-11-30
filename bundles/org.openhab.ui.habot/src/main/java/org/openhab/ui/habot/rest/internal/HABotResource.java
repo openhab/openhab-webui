@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
@@ -362,7 +363,7 @@ public class HABotResource implements RESTResource {
             @ApiResponse(responseCode = "500", description = "An error occured") })
     public Response createCard(@Parameter(description = "card", required = true) String card) {
         Gson gson = new Gson();
-        return createCard(gson.fromJson(card, Card.class));
+        return createCard(Objects.requireNonNull(gson.fromJson(card, Card.class)));
     }
 
     @POST
@@ -375,7 +376,7 @@ public class HABotResource implements RESTResource {
     public Response updateCard(@PathParam("cardUID") @Parameter(description = "cardUID") String cardUID,
             @Parameter(description = "card", required = true) String card) {
         Gson gson = new Gson();
-        return updateCard(cardUID, gson.fromJson(card, Card.class));
+        return updateCard(cardUID, Objects.requireNonNull(gson.fromJson(card, Card.class)));
     }
 
     @POST

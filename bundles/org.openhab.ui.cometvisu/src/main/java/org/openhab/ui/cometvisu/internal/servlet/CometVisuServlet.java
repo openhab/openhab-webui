@@ -834,8 +834,6 @@ public class CometVisuServlet extends HttpServlet {
      */
     private final void saveConfig(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String fileName = request.getParameter("config");
-        File file = new File(userFileFolder, URLDecoder.decode(fileName, "UTF-8"));
 
         response.setContentType(MediaType.APPLICATION_JSON);
 
@@ -848,7 +846,10 @@ public class CometVisuServlet extends HttpServlet {
         }
         Response resp = new Response();
 
-        if (file.exists()) {
+        String fileName = request.getParameter("config");
+        File file = fileName != null ? new File(userFileFolder, URLDecoder.decode(fileName, "UTF-8")) : null;
+
+        if (file != null && file.exists()) {
             // file exists and we only write if the file exists (creating new files this way is prohibited for security
             // reasons
             logger.debug("save config file'{}' requested", file);

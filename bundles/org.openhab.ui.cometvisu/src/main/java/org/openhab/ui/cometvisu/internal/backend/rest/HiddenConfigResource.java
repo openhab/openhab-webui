@@ -15,6 +15,7 @@ package org.openhab.ui.cometvisu.internal.backend.rest;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -260,7 +261,7 @@ public class HiddenConfigResource implements RESTResource {
             content = m.group(1);
         }
 
-        return gson.fromJson(content, HiddenConfig.class);
+        return Objects.requireNonNull(gson.fromJson(content, HiddenConfig.class));
     }
 
     private HiddenConfig loadPhpConfig(HiddenConfig config, List<String> content) {
