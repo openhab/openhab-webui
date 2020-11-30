@@ -1,4 +1,4 @@
-import { pt, pb, pn } from '../helpers'
+import { pt, pb, pi, pn } from '../helpers'
 
 export default () => [
   pt('for', 'Current element variable', 'Name of the variable holding the current element in the iteration, it will be propagated to the children components in the default slot. ' +
@@ -14,12 +14,13 @@ export default () => [
   pn('rangeStart', 'Range Start', 'Start of range (for "range" source type)'),
   pn('rangeStop', 'Range Stop', 'End of range (for "range" source type)'),
   pn('rangeStep', 'Range Step', 'Step of range (for "range" source type)'),
-  pt('groupItem', 'Group Item', 'Group item to whose members will be iterated (for "itemsInGroup" source type)'),
+  pi('groupItem', 'Group Item', 'Group item to whose members will be iterated (for "itemsInGroup" source type)'),
   pt('itemTags', 'Item Tags', 'Iterate over items with the given tags (comma-separated, for "itemsWithTags" source type)'),
   pt('fetchMetadata', 'Fetch Item Metadata Namespaces', 'Fetch the metadata from these namespaces (for "itemsInGroup" and "itemsWithTags" source types)'),
   pt('filter', 'Filter expression', 'Specify an expression WITHOUT THE = PREFIX to filter the resulting array'),
   pt('map', 'Map expression', 'Specify an expression WITHOUT THE = PREFIX to transform the resulting array elements'),
   pb('listContainer', 'List container', 'The child components will be wrapped in a <code>ul</code> HTML elements instead of a <code>div</code>'),
   pt('containerClasses', 'Classes of the container', 'Add these CSS classes to the container'),
-  pt('containerStyle', 'Styles of the container', 'Add these CSS styles to the container')
+  pt('containerStyle', 'Styles of the container', 'Add these CSS styles to the container'),
+  pb('fragment', 'No container (fragment)', 'Render all children directly under the repeater\'s parent, without any container')
 ]
