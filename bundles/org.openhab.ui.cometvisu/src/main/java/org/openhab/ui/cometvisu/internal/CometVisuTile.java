@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  * @author Tobias Bräutigam - Initial contribution
  * @author Yannick Schaus - remove dependency to dashboard
  */
-@Component
+@Component(service = Tile.class, immediate = true)
 @NonNullByDefault
 public class CometVisuTile implements Tile {
     private final Set<SitemapProvider> sitemapProviders = new HashSet<>();
