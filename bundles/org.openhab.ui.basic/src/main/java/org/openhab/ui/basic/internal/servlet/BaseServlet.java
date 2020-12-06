@@ -14,7 +14,7 @@ package org.openhab.ui.basic.internal.servlet;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.io.http.HttpContextFactoryService;
-import org.openhab.core.io.http.servlet.SmartHomeBundleServlet;
+import org.openhab.core.io.http.servlet.OpenHABBundleServlet;
 import org.openhab.core.items.ItemRegistry;
 import org.osgi.service.http.HttpService;
 
@@ -24,7 +24,7 @@ import org.osgi.service.http.HttpService;
  * @author Thomas.Eichstaedt-Engelen - Initial contribution
  */
 @NonNullByDefault
-public abstract class BaseServlet extends SmartHomeBundleServlet {
+public abstract class BaseServlet extends OpenHABBundleServlet {
 
     private static final long serialVersionUID = -4012800772403491132L;
 
