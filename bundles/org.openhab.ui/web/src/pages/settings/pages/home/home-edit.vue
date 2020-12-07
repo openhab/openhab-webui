@@ -136,12 +136,8 @@ export default {
   data () {
     return {
       pageWidgetDefinition: OhHomePageDefinition(),
-      modelTabs: [
-        { value: 'locations', label: 'Locations' },
-        { value: 'equipment', label: 'Equipment' },
-        { value: 'properties', label: 'Properties' }
-      ],
       currentModelTab: 'locations',
+      modelTabs: [],
       showCardControls: false,
       cardListId: this.$f7.utils.id(),
       page: {
@@ -161,6 +157,11 @@ export default {
   watch: {
     pageReady (val) {
       if (val) {
+        this.$set(this, 'modelTabs', [
+          { value: 'locations', label: this.$t('home.locations.tab') },
+          { value: 'equipment', label: this.$t('home.equipment.tab') },
+          { value: 'properties', label: this.$t('home.properties.tab') }
+        ])
         this.loadModel(this.page)
       }
     }
