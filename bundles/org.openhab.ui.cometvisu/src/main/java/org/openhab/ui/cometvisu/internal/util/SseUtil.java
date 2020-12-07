@@ -43,7 +43,7 @@ public class SseUtil {
     public static OutboundSseEvent buildEvent(OutboundSseEvent.Builder eventBuilder, Object eventObject) {
         StateBeanMessageBodyWriter writer = new StateBeanMessageBodyWriter();
         Date date = new Date();
-        return eventBuilder.mediaType(MediaType.APPLICATION_JSON_TYPE).data(writer.serialize(eventObject))
+        return eventBuilder.mediaType(MediaType.TEXT_PLAIN_TYPE).data(writer.serialize(eventObject))
                 .id(String.valueOf(date.getTime())).build();
     }
 
