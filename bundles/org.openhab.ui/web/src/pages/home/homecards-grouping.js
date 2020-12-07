@@ -1,4 +1,5 @@
 export default (model, type, page) => {
+  if (!model || !model[type]) return []
   const cardOrder = (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.cardOrder) ? page.slots[type][0].config.cardOrder : []
   const elements = [...model[type]].map((e) => {
     if (e.separator) return e

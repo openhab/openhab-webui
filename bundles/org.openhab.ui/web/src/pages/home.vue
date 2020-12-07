@@ -150,7 +150,7 @@ export default {
   methods: {
     onPageAfterIn () {
       this.$store.dispatch('startTrackingStates')
-      // this.loadModel()
+      if (this.ready) this.loadModel()
     },
     onPageBeforeOut () {
       this.$store.dispatch('stopTrackingStates')
