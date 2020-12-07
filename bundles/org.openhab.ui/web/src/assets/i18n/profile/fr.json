@@ -6,9 +6,14 @@
   "profile.sessions.signOut": "Se déconnecter de cette session",
   "profile.sessions.created": "Créée le ",
   "profile.sessions.lastRefreshed": "Dernière mise à jour le ",
+  "profile.sessions.delete.success": "Session supprimée",
+  "profile.sessions.delete.error": "Erreur pendant la suppression de la session : ",
+  "profile.sessions.signOut.error": "Erreur pendant la déconnexion: ",
   "profile.apiTokens": "Jetons d'API",
   "profile.apiTokens.header": "Créer des jetons d'API pour donner un accès permanent en votre nom à des outils et services qui ne supportent pas la méthode d'authorisation OAuth2.",
   "profile.apiTokens.created": "Créé le ",
   "profile.apiTokens.validForScope": "Valide pour (portée) : ",
-  "profile.apiTokens.create": "Créer un nouveau jeton d'API"
+  "profile.apiTokens.create": "Créer un nouveau jeton d'API",
+  "profile.apiTokens.delete.success": "Jeton d'API supprimé",
+  "profile.apiTokens.delete.error": "Erreur pendant la suppression du jeton : "
 }

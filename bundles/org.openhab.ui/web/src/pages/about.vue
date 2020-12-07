@@ -166,7 +166,7 @@ export default {
     },
     purgeServiceWorkerAndCaches () {
       this.$f7.dialog.confirm(
-        'Purge all application caches and unregister the service workers? This will also reload the page from the server, which might take a few seconds.',
+        this.$t('about.reload.confirmPurge'),
         () => {
           navigator.serviceWorker.getRegistrations().then(function (registrations) {
             for (let registration of registrations) {

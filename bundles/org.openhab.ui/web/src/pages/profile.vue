@@ -174,12 +174,12 @@ export default {
         this.$f7.swipeout.delete(swipeoutElement, () => {
         })
         this.$f7.toast.create({
-          text: 'Session deleted',
+          text: this.$t('profile.sessions.delete.success'),
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       }).catch((err) => {
-        this.$f7.dialog.alert('Error while deleting the session: ' + err)
+        this.$f7.dialog.alert(this.$t('profile.sessions.delete.error') + err)
       })
     },
     deleteApiToken (ev, apiToken) {
@@ -192,12 +192,12 @@ export default {
         this.$f7.swipeout.delete(swipeoutElement, () => {
         })
         this.$f7.toast.create({
-          text: 'API token deleted',
+          text: this.$t('profile.apiTokens.delete.success'),
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       }).catch((err) => {
-        this.$f7.dialog.alert('Error while deleting the API token: ' + err)
+        this.$f7.dialog.alert(this.$t('profile.apiTokens.delete.error') + err)
       })
     },
     logout () {
@@ -214,7 +214,7 @@ export default {
         }
       }).catch((err) => {
         this.$f7.preloader.hide()
-        this.$f7.dialog.alert('Error while signing out: ' + err)
+        this.$f7.dialog.alert(this.$t('profile.sessions.signOut.error') + err)
       })
     }
   }
