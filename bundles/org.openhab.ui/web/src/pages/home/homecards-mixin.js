@@ -1,7 +1,11 @@
 import cardGroups from './homecards-grouping'
 import { compareItems } from '@/components/widgets/widget-order'
+import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
+  i18n: {
+    messages: loadLocaleMessages(require.context('@/assets/i18n/semantics'))
+  },
   data () {
     return {
       model: {},
@@ -28,7 +32,7 @@ export default {
             defaultTitle: defaultLocationTitle
           })
         case 'equipment':
-          let defaultEquipmentTitle = key
+          let defaultEquipmentTitle = this.$t(key)
           return {
             key,
             card,
@@ -36,7 +40,7 @@ export default {
             equipment: source
           }
         case 'property':
-          let defaultPropertyTitle = key
+          let defaultPropertyTitle = this.$t(key)
           return {
             key,
             card,

@@ -25,7 +25,7 @@
       <f7-link tab-link v-if="tabVisible('properties')" @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" :text="$t('home.properties.tab')"></f7-link>
     </f7-toolbar>
 
-    <f7-tabs>
+    <f7-tabs v-if="ready">
       <f7-tab id="tab-overview" :tab-active="currentTab === 'overview'" @tab:show="() => this.currentTab = 'overview'">
           <overview-tab v-if="currentTab === 'overview'" :context="context" :allow-chat="allowChat" />
       </f7-tab>
@@ -91,6 +91,9 @@ export default {
     }
   },
   computed: {
+    ready () {
+      return this.$store.state.apiVersion > 0
+    },
     context () {
       return {
         store: this.$store.getters.trackedItems
@@ -137,10 +140,17 @@ export default {
       }
     }
   },
+  watch: {
+    ready (val) {
+      if (val) {
+        this.loadModel()
+      }
+    }
+  },
   methods: {
     onPageAfterIn () {
       this.$store.dispatch('startTrackingStates')
-      this.loadModel()
+      // this.loadModel()
     },
     onPageBeforeOut () {
       this.$store.dispatch('stopTrackingStates')

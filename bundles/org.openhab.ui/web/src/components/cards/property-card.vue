@@ -30,9 +30,13 @@ import mixin from '@/components/widgets/widget-mixin'
 import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
+import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
   mixins: [mixin, CardMixin],
+  i18n: {
+    messages: loadLocaleMessages(require.context('@/assets/i18n/semantics'))
+  },
   components: {
     ModelCard
   },
@@ -44,7 +48,7 @@ export default {
           {
             component: 'oh-list-item',
             config: {
-              title: pointType,
+              title: this.$t(pointType),
               divider: true
             }
           },
@@ -68,7 +72,7 @@ export default {
     itemsByPointType () {
       const points = {}
       this.element.points.forEach((item) => {
-        const pointType = item.metadata.semantics.value.replace('Point_', '')
+        const pointType = item.metadata.semantics.value.replace(/^.*_/g, '')
         if (!points[pointType]) points[pointType] = []
         points[pointType].push(item)
       })
