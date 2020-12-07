@@ -28,6 +28,14 @@
 
         <f7-block class="block-narrow" style="padding-bottom: 8rem" v-if="ready && !previewMode">
           <f7-col>
+            <f7-block-title>Page Configuration</f7-block-title>
+            <config-sheet
+              :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
+              :parameters="pageWidgetDefinition.props.parameters || []"
+              :configuration="page.config"
+              @updated="dirty = true"
+            />
+
             <f7-block-title>Markers</f7-block-title>
             <f7-menu v-if="clipboardType === 'oh-map-marker'">
               <f7-menu-item style="margin-left: auto" icon-f7="map" dropdown>
@@ -105,6 +113,10 @@ import PageDesigner from '../pagedesigner-mixin'
 
 import YAML from 'yaml'
 
+import { TileLayer } from 'leaflet'
+import 'leaflet-providers'
+
+import OhMapPage from '@/components/widgets/map/oh-map-page.vue'
 import OhMapMarker from '@/components/widgets/map/oh-map-marker.vue'
 import OhMapCircleMarker from '@/components/widgets/map/oh-map-circle-marker.vue'
 
@@ -115,16 +127,40 @@ const ConfigurableWidgets = {
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
 
+import ConfigSheet from '@/components/config/config-sheet.vue'
+
 export default {
   mixins: [PageDesigner],
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
-    'oh-map-page': () => import('@/components/widgets/map/oh-map-page.vue'),
-    PageSettings
+    OhMapPage,
+    PageSettings,
+    ConfigSheet
   },
   props: ['createMode', 'uid'],
   data () {
+    // populate the list of tile providers with variants
+    const tileProviders = TileLayer.Provider.providers
+    let pageWidgetDefinition = OhMapPage.widget()
+    let tileLayerProviderOptions = []
+    for (const providerKey in tileProviders) {
+      let option
+      if (tileProviders[providerKey].variants) {
+        for (const providerVariantKey in tileProviders[providerKey].variants) {
+          option = providerKey + '.' + providerVariantKey
+          tileLayerProviderOptions.push({ value: option, label: option })
+        }
+      } else {
+        option = providerKey
+        tileLayerProviderOptions.push({ value: option, label: option })
+      }
+    }
+    const tileProviderParam = pageWidgetDefinition.props.parameters.find((p) => p.name === 'tileLayerProvider')
+    tileProviderParam.limitToOptions = true
+    tileProviderParam.options = tileLayerProviderOptions
+
     return {
+      pageWidgetDefinition: pageWidgetDefinition,
       forceEditMode: true,
       page: {
         uid: 'page_' + this.$f7.utils.id(),
