@@ -8,7 +8,7 @@
   "profile.sessions.lastRefreshed": "Dernière mise à jour le ",
   "profile.sessions.delete.success": "Session supprimée",
   "profile.sessions.delete.error": "Erreur pendant la suppression de la session : ",
-  "profile.sessions.signOut.error": "Erreur pendant la déconnexion: ",
+  "profile.sessions.signOut.error": "Erreur pendant la déconnexion : ",
   "profile.apiTokens": "Jetons d'API",
   "profile.apiTokens.header": "Créer des jetons d'API pour donner un accès permanent en votre nom à des outils et services qui ne supportent pas la méthode d'authorisation OAuth2.",
   "profile.apiTokens.created": "Créé le ",
