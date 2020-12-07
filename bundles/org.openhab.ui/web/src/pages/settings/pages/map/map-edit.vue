@@ -78,7 +78,7 @@
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent;type=map" :value="pageYaml" @input="(value) => pageYaml = value" />
+        <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml;type=map" :value="pageYaml" @input="(value) => pageYaml = value" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
         <oh-map-page class="map-page" v-if="ready && previewMode" :context="context" :key="pageKey + '2'" />
@@ -209,6 +209,7 @@ export default {
     },
     toYaml () {
       this.pageYaml = YAML.stringify({
+        component: this.page.component,
         config: this.page.config,
         markers: this.page.slots.default
       })
