@@ -156,13 +156,14 @@ export default {
       }
 
       let dialog = this.$f7.dialog.progress('Creating the Equipment and Points...')
-      const payload = [this.newEquipmentItem,
-        ...this.newPointItems.map((p) => {
-          let copy = Object.assign({}, p)
-          delete (copy.channel)
-          delete (copy.channelType)
-          return copy
-        })]
+      const payload = [...this.newPointItems.map((p) => {
+        let copy = Object.assign({}, p)
+        delete (copy.channel)
+        delete (copy.channelType)
+        return copy
+      })]
+      if (this.createEquipment) payload.unshift(this.newEquipmentItem)
+
       this.$oh.api.put('/rest/items/', payload).then((data) => {
         dialog.setText('Creating links...')
         dialog.setProgress(50)
