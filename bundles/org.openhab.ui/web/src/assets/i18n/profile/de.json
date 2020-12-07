@@ -1,6 +1,6 @@
 {
   "profile.title": "Dein Profil",
-  "profile.changePassword": "Paswort ändern",
+  "profile.changePassword": "Passwort ändern",
   "profile.sessions": "Sitzungen",
   "profile.sessions.header": "Achtung, eine gelöschte Sitzung kann aktiv bleiben, bis alle gültigen Zugriffstokens abgelaufen sind.",
   "profile.sessions.signOut": "Von aktiver Sitzung abmelden",
