@@ -91,20 +91,26 @@ export default {
     setBackgroundLayer () {
       const defaultProvider = (this.$f7.data.themeOptions.dark === 'dark') ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
       const provider = this.config.tileLayerProvider || defaultProvider
-      let layer
+      let layer, overlayLayer
       try {
         layer = tileLayer.provider(provider, this.config.tileLayerProviderOptions)
       } catch {
         layer = tileLayer.provider(defaultProvider)
       }
-      // Workaround for OpenWeatherMap - the old URLs need the "_new" suffix
-      // See: https://openweathermap.org/api/weathermaps
-      // also add a base layer too
-      if (layer._url.indexOf('openweather')) {
-        tileLayer.provider(defaultProvider).addTo(this.$refs.map.mapObject)
-        layer._url = layer._url.replace('{variant}', '{variant}_new')
-      }
       layer.addTo(this.$refs.map.mapObject)
+
+      if (this.config.overlayTileLayerProvider) {
+        try {
+          overlayLayer = tileLayer.provider(this.config.overlayTileLayerProvider, this.config.overlayTileLayerProviderOptions)
+        } catch {}
+        // Workaround for OpenWeatherMap - the old URLs need the "_new" suffix
+        // See: https://openweathermap.org/api/weathermaps
+        // also add a base layer too
+        if (overlayLayer._url.indexOf('openweather') > 0) {
+          overlayLayer._url = overlayLayer._url.replace('{variant}', '{variant}_new')
+        }
+        overlayLayer.addTo(this.$refs.map.mapObject)
+      }
       this.$refs.map.mapObject.invalidateSize()
     },
     zoomUpdate (zoom) {

@@ -140,24 +140,47 @@ export default {
   props: ['createMode', 'uid'],
   data () {
     // populate the list of tile providers with variants
+    const isOverlay = function (providerName) {
+      // https://github.com/leaflet-extras/leaflet-providers/blob/bc7482c62f1bbe3737682777716ec946e052deb6/preview/preview.js#L56
+      var overlayPatterns = [
+        '^(OpenWeatherMap|OpenSeaMap)',
+        'OpenMapSurfer.(Hybrid|AdminBounds|ContourLines|Hillshade|ElementsAtRisk)',
+        'Stamen.Toner(Hybrid|Lines|Labels)',
+        'Hydda.RoadsAndLabels',
+        '^JusticeMap',
+        'OpenPtMap',
+        'OpenRailwayMap',
+        'OpenFireMap',
+        'SafeCast',
+        'WaymarkedTrails.(hiking|cycling|mtb|slopes|riding|skating)'
+      ]
+
+      return providerName.match('(' + overlayPatterns.join('|') + ')') !== null
+    }
     const tileProviders = TileLayer.Provider.providers
     let pageWidgetDefinition = OhMapPage.widget()
     let tileLayerProviderOptions = []
+    let overlayTileLayerProviderOptions = []
     for (const providerKey in tileProviders) {
-      let option
+      let option, options
       if (tileProviders[providerKey].variants) {
         for (const providerVariantKey in tileProviders[providerKey].variants) {
           option = providerKey + '.' + providerVariantKey
-          tileLayerProviderOptions.push({ value: option, label: option })
+          options = isOverlay(option) ? overlayTileLayerProviderOptions : tileLayerProviderOptions
+          options.push({ value: option, label: option })
         }
       } else {
         option = providerKey
-        tileLayerProviderOptions.push({ value: option, label: option })
+        options = isOverlay(option) ? overlayTileLayerProviderOptions : tileLayerProviderOptions
+        options.push({ value: option, label: option })
       }
     }
     const tileProviderParam = pageWidgetDefinition.props.parameters.find((p) => p.name === 'tileLayerProvider')
     tileProviderParam.limitToOptions = true
     tileProviderParam.options = tileLayerProviderOptions
+    const overlayTileProviderParam = pageWidgetDefinition.props.parameters.find((p) => p.name === 'overlayTileLayerProvider')
+    overlayTileProviderParam.limitToOptions = true
+    overlayTileProviderParam.options = overlayTileLayerProviderOptions
 
     return {
       pageWidgetDefinition: pageWidgetDefinition,
