@@ -22,7 +22,7 @@ export const OhMapPageDefinition = () => new WidgetDefinition('oh-map-page', 'Ma
     pt('overlayTileLayerProvider', 'Provider for the overlay tiles', 'The provider of tiles to use for the overlay layer above the background of the map. ' +
       'Use one from <a class="external text-color-blue" target="_blank" href="http://leaflet-extras.github.io/leaflet-providers/preview/">Leaflet Providers</a>, ' +
       'Some providers will not work until you set options, like access tokens, in the <code>overlayTileLayerProviderOptions</code> parameter (in Code view). ' +
-      'See <a class="external text-color-blue" target="_blank" href="https://github.com/leaflet-extras/leaflet-providers#providers-requiring-registration">here</a> for more info. ').a()
+      'See <a class="external text-color-blue" target="_blank" href="https://github.com/leaflet-extras/leaflet-providers#providers-requiring-registration">here</a> for more info. ')
   ])
 
 export const OhMapMarkerDefinition = () => new WidgetDefinition('oh-map-marker', 'Map Marker', 'An icon on a map', 'map_pin')
