@@ -126,6 +126,7 @@
           </f7-list>
         </f7-col>
       </f7-row>
+      <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center"><small v-t="'admin.notTranslatedYet'"></small></f7-block-footer>
     </f7-block>
   </f7-page>
 </template>

@@ -5,24 +5,24 @@
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
       </f7-nav-left>
       <f7-nav-title-large v-if="$f7.data.themeOptions.homeNavbar !== 'simple'" class="home-title-large">
-        <span class="today">{{new Date().toLocaleString('default', { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
+        <span class="today">{{new Date().toLocaleString(($store.state.locale) ? $store.state.locale.replace('_', '-') : 'default', { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
         {{title}}
       </f7-nav-title-large>
       <f7-nav-title>
         {{title}}
       </f7-nav-title>
       <f7-nav-right>
-        <f7-link v-if="this.$store.getters.isAdmin" icon-ios="f7:pencil" icon-aurora="f7:pencil" icon-md="material:edit" tooltip="Edit Home Page" :href="(homePageComponent) ? '/settings/pages/home/home' : '/settings/pages/home/add'"></f7-link>
-        <f7-link v-if="showPinToHome" icon-ios="f7:pin_fill" icon-aurora="f7:pin_fill" icon-md="material:add_location" tooltip="Pin to Home" @click="pinToHome"></f7-link>
-        <f7-link v-if="showExitToApp" icon-ios="f7:square_arrow_right" icon-aurora="f7:square_arrow_right" icon-md="material:exit_to_app" tooltip="Return to App" @click="exitToApp"></f7-link>
-        <f7-link v-else icon-ios="f7:sidebar_right" icon-aurora="f7:sidebar_right" icon-md="material:exit_to_app" tooltip="Other Apps" panel-open="right"></f7-link>
+        <f7-link v-if="this.$store.getters.isAdmin" icon-ios="f7:pencil" icon-aurora="f7:pencil" icon-md="material:edit" :tooltip="$t('home.editHome')" :href="(homePageComponent) ? '/settings/pages/home/home' : '/settings/pages/home/add'"></f7-link>
+        <f7-link v-if="showPinToHome" icon-ios="f7:pin_fill" icon-aurora="f7:pin_fill" icon-md="material:add_location" :tooltip="$t('home.pinToHome')" @click="pinToHome"></f7-link>
+        <f7-link v-if="showExitToApp" icon-ios="f7:square_arrow_right" icon-aurora="f7:square_arrow_right" icon-md="material:exit_to_app" :tooltip="$t('home.exitToApp')" @click="exitToApp"></f7-link>
+        <f7-link v-else icon-ios="f7:sidebar_right" icon-aurora="f7:sidebar_right" icon-md="material:exit_to_app" :tooltip="$t('home.otherApps')" panel-open="right"></f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar labels bottom v-if="tabsVisible">
-      <f7-link tab-link @click="currentTab = 'overview'" :tab-link-active="currentTab === 'overview'" icon-ios="f7:house_fill" icon-aurora="f7:house_fill" icon-md="material:home" text="Overview"></f7-link>
-      <f7-link tab-link v-if="tabVisible('locations')" @click="currentTab = 'locations'" :tab-link-active="currentTab === 'locations'" icon-ios="f7:placemark_fill" icon-aurora="f7:placemark_fill" icon-md="material:place" text="Locations"></f7-link>
-      <f7-link tab-link v-if="tabVisible('equipment')" @click="currentTab = 'equipment'" :tab-link-active="currentTab === 'equipment'" icon-ios="f7:cube_box_fill" icon-aurora="f7:cube_box_fill" icon-md="material:payments" text="Equipment"></f7-link>
-      <f7-link tab-link v-if="tabVisible('properties')" @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" text="Properties"></f7-link>
+      <f7-link tab-link @click="currentTab = 'overview'" :tab-link-active="currentTab === 'overview'" icon-ios="f7:house_fill" icon-aurora="f7:house_fill" icon-md="material:home" :text="$t('home.overview.tab')"></f7-link>
+      <f7-link tab-link v-if="tabVisible('locations')" @click="currentTab = 'locations'" :tab-link-active="currentTab === 'locations'" icon-ios="f7:placemark_fill" icon-aurora="f7:placemark_fill" icon-md="material:place" :text="$t('home.locations.tab')"></f7-link>
+      <f7-link tab-link v-if="tabVisible('equipment')" @click="currentTab = 'equipment'" :tab-link-active="currentTab === 'equipment'" icon-ios="f7:cube_box_fill" icon-aurora="f7:cube_box_fill" icon-md="material:payments" :text="$t('home.equipment.tab')"></f7-link>
+      <f7-link tab-link v-if="tabVisible('properties')" @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" :text="$t('home.properties.tab')"></f7-link>
     </f7-toolbar>
 
     <f7-tabs>
@@ -125,15 +125,15 @@ export default {
     title () {
       switch (this.currentTab) {
         case 'overview':
-          return 'Home'
+          return this.$t('home.overview.title')
         case 'locations':
-          return 'Locations'
+          return this.$t('home.locations.title')
         case 'equipment':
-          return 'Equipment'
+          return this.$t('home.equipment.title')
         case 'properties':
-          return 'Properties'
+          return this.$t('home.properties.title')
         default:
-          return 'Home'
+          return this.$t('home.overview.title')
       }
     }
   },

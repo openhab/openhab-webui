@@ -32,6 +32,9 @@ const store = new Vuex.Store({
       state.runtimeInfo = rootResponse.runtimeInfo
       state.apiEndpoints = rootResponse.links
     },
+    setLocale (state, locale) {
+      state.locale = locale
+    },
     setDeveloperSidebar (state, value) {
       state.developerSidebar = value
       state.states.keepConnectionOpen = value

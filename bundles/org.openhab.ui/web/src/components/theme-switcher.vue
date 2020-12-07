@@ -1,9 +1,9 @@
 <template>
   <f7-block>
-    <f7-block-title class="padding-left">Theme</f7-block-title>
+    <f7-block-title class="padding-left" v-t="'about.theme'"></f7-block-title>
     <f7-row>
       <f7-col width="25" class="theme-picker auto" @click="switchTheme('auto')">
-        <span class="text-color-gray">Auto</span>
+        <span class="text-color-gray" v-t="'about.theme.auto'">Auto</span>
         <f7-checkbox checked disabled v-if="theme === 'auto'" />
       </f7-col>
       <f7-col width="25" class="theme-picker" @click="switchTheme('md')">
@@ -19,22 +19,22 @@
         <f7-checkbox checked disabled v-if="theme === 'aurora'" />
       </f7-col>
     </f7-row>
-    <f7-block-title>Dark mode</f7-block-title>
+    <f7-block-title v-t="'about.darkMode'"></f7-block-title>
     <f7-row>
       <f7-col width="33" class="theme-picker auto" @click="setThemeDark('auto')">
-        <span class="text-color-gray">Auto</span>
+        <span class="text-color-gray" v-t="'about.darkMode.auto'"></span>
         <f7-checkbox checked disabled v-if="darkMode === 'auto'" />
       </f7-col>
       <f7-col width="33" class="bg-color-white theme-picker" @click="setThemeDark('light')">
-        <span class="text-color-gray">Light</span>
+        <span class="text-color-gray" v-t="'about.darkMode.light'"></span>
         <f7-checkbox checked disabled v-if="darkMode === 'light'" />
       </f7-col>
       <f7-col width="33" class="bg-color-black theme-picker" @click="setThemeDark('dark')">
-        <span class="text-color-gray">Dark</span>
+        <span class="text-color-gray" v-t="'about.darkMode.dark'"></span>
         <f7-checkbox checked disabled v-if="darkMode === 'dark'" />
       </f7-col>
     </f7-row>
-    <f7-block-title>Navigation bars style</f7-block-title>
+    <f7-block-title v-t="'about.navigationBarsStyle'"></f7-block-title>
     <f7-row>
       <f7-col width="50" class="nav-bars-picker nav-bars-picker-fill" @click="setBarsStyle('filled')">
         <div class="demo-navbar"></div>
@@ -48,26 +48,26 @@
 
     <f7-row>
       <f7-col>
-        <f7-block-title>Miscellaneous</f7-block-title>
+        <f7-block-title v-t="'about.miscellaneous'"></f7-block-title>
         <f7-list>
           <f7-list-item>
-            <span>Simple navigation bar on home page</span>
+            <span v-t="'about.miscellaneous.home.navbar'"></span>
             <f7-toggle :checked="homePageNavbarStyle === 'simple'" @toggle:change="setHomePageNavbarStyle"></f7-toggle>
           </f7-list-item>
           <f7-list-item>
-            <span>Standard home page background color</span>
+            <span v-t="'about.miscellaneous.home.background'"></span>
             <f7-toggle :checked="homePageBackground === 'standard'" @toggle:change="setHomePageBackground"></f7-toggle>
           </f7-list-item>
           <f7-list-item v-show="$store.getters.apiEndpoint('habot')">
-            <span>Hide chat input box on home page</span>
+            <span v-t="'about.miscellaneous.home.hideChatInput'"></span>
             <f7-toggle :checked="hideChatInput === 'true'" @toggle:change="setHideChatInput"></f7-toggle>
           </f7-list-item>
           <f7-list-item>
-            <span>Disable card expansion animations</span>
+            <span v-t="'about.miscellaneous.home.disableCardExpansionAnimation'"></span>
             <f7-toggle :checked="expandableCardsAnimation === 'disabled'" @toggle:change="setExpandableCardAnimation"></f7-toggle>
           </f7-list-item>
           <f7-list-item>
-            <span>Disable page transition animations</span>
+            <span v-t="'about.miscellaneous.theme.disablePageTransition'"></span>
             <f7-toggle :checked="pageTransitionAnimation === 'disabled'" @toggle:change="setPageTransitionAnimation"></f7-toggle>
           </f7-list-item>
         </f7-list>
@@ -76,7 +76,11 @@
   </f7-block>
 </template>
 <script>
+import { loadLocaleMessages } from '@/js/i18n'
 export default {
+  i18n: {
+    messages: loadLocaleMessages(require.context('@/assets/i18n/theme-switcher'))
+  },
   methods: {
     switchTheme (theme) {
       localStorage.setItem('openhab.ui:theme', theme)

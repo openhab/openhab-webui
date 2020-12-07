@@ -50,6 +50,9 @@ export default {
           closeTimeout: 2000
         }).open()
       })
+      if (this.serviceId === 'org.openhab.i18n') {
+        this.$f7.emit('sidebarRefresh', this.config.locale)
+      }
       this.$f7router.back()
     }
   },

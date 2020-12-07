@@ -1,12 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" hide-bars-on-scroll :style="pageStyle">
-    <f7-navbar :back-link="(showBackButton) ? 'Back' : undefined">
+    <f7-navbar :back-link="(showBackButton) ? $t('page.navbar.back') : undefined">
       <f7-nav-left v-if="!showBackButton">
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
       </f7-nav-left>
       <f7-nav-title>{{(ready) ? page.config.label : ''}}</f7-nav-title>
       <f7-nav-right>
-        <f7-link v-if="isAdmin" icon-md="material:edit" :href="'/settings/pages/' + pageType + '/' + uid">{{ $theme.md ? '' : 'Edit' }}</f7-link>
+        <f7-link v-if="isAdmin" icon-md="material:edit" :href="'/settings/pages/' + pageType + '/' + uid">{{ $theme.md ? '' : $t('page.navbar.edit') }}</f7-link>
       </f7-nav-right>
     </f7-navbar>
 

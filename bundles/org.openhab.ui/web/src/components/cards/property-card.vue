@@ -9,10 +9,10 @@
     <div class="card-content-padding">
       <generic-widget-component :context="listContext" />
       <p class="padding-top margin-horizontal">
-        <f7-button outline round :color="color" :href="`/analyzer/?items=${element.points.map((m) => m.name).join(',')}`">Analyze{{element.points.length > 1 ? ' all' : ''}}</f7-button>
+        <f7-button outline round :color="color" :href="`/analyzer/?items=${element.points.map((m) => m.name).join(',')}`">{{element.points.length > 1 ? $t('home.cards.analyzeAll') : $t('home.cards.analyze')}}</f7-button>
       </p>
       <p class="margin-horizontal">
-        <f7-button fill round large card-close :color="color">Close</f7-button>
+        <f7-button fill round large card-close :color="color" :text="$t('home.cards.close')"></f7-button>
       </p>
     </div>
   </model-card>
