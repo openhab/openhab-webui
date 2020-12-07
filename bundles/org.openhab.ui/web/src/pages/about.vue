@@ -23,7 +23,7 @@
                   <f7-list-item :title="$t('about.technicalInformation.configurationFolder')" :after="systemInfo.configFolder"></f7-list-item>
                   <f7-list-item :title="$t('about.technicalInformation.userdataFolder')" :after="systemInfo.userdataFolder"></f7-list-item>
                   <f7-list-item :title="$t('about.technicalInformation.logsFolder')" :after="systemInfo.logFolder"></f7-list-item>
-                  <f7-list-item :title="$t('about.technicalInformation.userdataFolder')" :after="`${systemInfo.osName}/${systemInfo.osVersion} (${systemInfo.osArchitecture})`"></f7-list-item>
+                  <f7-list-item :title="$t('about.technicalInformation.operatingSystem')" :after="`${systemInfo.osName}/${systemInfo.osVersion} (${systemInfo.osArchitecture})`"></f7-list-item>
                   <f7-list-item :title="$t('about.technicalInformation.javaRuntime')" :footer="systemInfo.javaVendor" :after="`${systemInfo.javaVersion} (${systemInfo.javaVendorVersion})`">
                     <div slot="root-end" class="item-content" style="flex-direction: column">
                       <f7-progressbar class="margin-top" style="width: 90%" color="blue" :progress="systemInfo.freeMemory * 100 / systemInfo.totalMemory" />
