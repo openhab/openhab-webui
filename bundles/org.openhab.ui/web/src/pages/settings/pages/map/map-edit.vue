@@ -28,6 +28,14 @@
 
         <f7-block class="block-narrow" style="padding-bottom: 8rem" v-if="ready && !previewMode">
           <f7-col>
+            <f7-block-title>Page Configuration</f7-block-title>
+            <config-sheet
+              :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
+              :parameters="pageWidgetDefinition.props.parameters || []"
+              :configuration="page.config"
+              @updated="dirty = true"
+            />
+
             <f7-block-title>Markers</f7-block-title>
             <f7-menu v-if="clipboardType === 'oh-map-marker'">
               <f7-menu-item style="margin-left: auto" icon-f7="map" dropdown>
@@ -70,7 +78,7 @@
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent;type=map" :value="pageYaml" @input="(value) => pageYaml = value" />
+        <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml;type=map" :value="pageYaml" @input="(value) => pageYaml = value" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
         <oh-map-page class="map-page" v-if="ready && previewMode" :context="context" :key="pageKey + '2'" />
@@ -105,6 +113,10 @@ import PageDesigner from '../pagedesigner-mixin'
 
 import YAML from 'yaml'
 
+import { TileLayer } from 'leaflet'
+import 'leaflet-providers'
+
+import OhMapPage from '@/components/widgets/map/oh-map-page.vue'
 import OhMapMarker from '@/components/widgets/map/oh-map-marker.vue'
 import OhMapCircleMarker from '@/components/widgets/map/oh-map-circle-marker.vue'
 
@@ -115,16 +127,63 @@ const ConfigurableWidgets = {
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
 
+import ConfigSheet from '@/components/config/config-sheet.vue'
+
 export default {
   mixins: [PageDesigner],
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
-    'oh-map-page': () => import('@/components/widgets/map/oh-map-page.vue'),
-    PageSettings
+    OhMapPage,
+    PageSettings,
+    ConfigSheet
   },
   props: ['createMode', 'uid'],
   data () {
+    // populate the list of tile providers with variants
+    const isOverlay = function (providerName) {
+      // https://github.com/leaflet-extras/leaflet-providers/blob/bc7482c62f1bbe3737682777716ec946e052deb6/preview/preview.js#L56
+      var overlayPatterns = [
+        '^(OpenWeatherMap|OpenSeaMap)',
+        'OpenMapSurfer.(Hybrid|AdminBounds|ContourLines|Hillshade|ElementsAtRisk)',
+        'Stamen.Toner(Hybrid|Lines|Labels)',
+        'Hydda.RoadsAndLabels',
+        '^JusticeMap',
+        'OpenPtMap',
+        'OpenRailwayMap',
+        'OpenFireMap',
+        'SafeCast',
+        'WaymarkedTrails.(hiking|cycling|mtb|slopes|riding|skating)'
+      ]
+
+      return providerName.match('(' + overlayPatterns.join('|') + ')') !== null
+    }
+    const tileProviders = TileLayer.Provider.providers
+    let pageWidgetDefinition = OhMapPage.widget()
+    let tileLayerProviderOptions = []
+    let overlayTileLayerProviderOptions = []
+    for (const providerKey in tileProviders) {
+      let option, options
+      if (tileProviders[providerKey].variants) {
+        for (const providerVariantKey in tileProviders[providerKey].variants) {
+          option = providerKey + '.' + providerVariantKey
+          options = isOverlay(option) ? overlayTileLayerProviderOptions : tileLayerProviderOptions
+          options.push({ value: option, label: option })
+        }
+      } else {
+        option = providerKey
+        options = isOverlay(option) ? overlayTileLayerProviderOptions : tileLayerProviderOptions
+        options.push({ value: option, label: option })
+      }
+    }
+    const tileProviderParam = pageWidgetDefinition.props.parameters.find((p) => p.name === 'tileLayerProvider')
+    tileProviderParam.limitToOptions = true
+    tileProviderParam.options = tileLayerProviderOptions
+    const overlayTileProviderParam = pageWidgetDefinition.props.parameters.find((p) => p.name === 'overlayTileLayerProvider')
+    overlayTileProviderParam.limitToOptions = true
+    overlayTileProviderParam.options = overlayTileLayerProviderOptions
+
     return {
+      pageWidgetDefinition: pageWidgetDefinition,
       forceEditMode: true,
       page: {
         uid: 'page_' + this.$f7.utils.id(),
@@ -173,6 +232,7 @@ export default {
     },
     toYaml () {
       this.pageYaml = YAML.stringify({
+        component: this.page.component,
         config: this.page.config,
         markers: this.page.slots.default
       })

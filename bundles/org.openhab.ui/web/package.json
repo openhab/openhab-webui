@@ -67,6 +67,7 @@
     "framework7-vue": "^5.7.12",
     "later-again": "^0.1.1",
     "leaflet": "^1.7.1",
+    "leaflet-providers": "^1.11.0",
     "moo": "^0.5.1",
     "nearley": "^2.19.6",
     "pkce-challenge": "^2.1.0",
