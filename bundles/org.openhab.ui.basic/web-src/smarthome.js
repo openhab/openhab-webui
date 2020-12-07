@@ -918,7 +918,7 @@
 		_t.up = _t.parentNode.querySelector(o.setpoint.up);
 		_t.down = _t.parentNode.querySelector(o.setpoint.down);
 
-		_t.value = _t.parentNode.getAttribute("data-value");
+		_t.value = decodeURIComponent(_t.parentNode.getAttribute("data-value"));
 		_t.max = parseFloat(_t.parentNode.getAttribute("data-max"));
 		_t.min = parseFloat(_t.parentNode.getAttribute("data-min"));
 		_t.step = parseFloat(_t.parentNode.getAttribute("data-step"));
