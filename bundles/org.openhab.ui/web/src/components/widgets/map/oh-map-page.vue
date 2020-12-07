@@ -105,7 +105,6 @@ export default {
         } catch {}
         // Workaround for OpenWeatherMap - the old URLs need the "_new" suffix
         // See: https://openweathermap.org/api/weathermaps
-        // also add a base layer too
         if (overlayLayer._url.indexOf('openweather') > 0) {
           overlayLayer._url = overlayLayer._url.replace('{variant}', '{variant}_new')
         }
