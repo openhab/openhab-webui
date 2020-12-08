@@ -1,0 +1,19 @@
+{
+  "profile.title": "Your Profile",
+  "profile.changePassword": "Change your password",
+  "profile.sessions": "Sessions",
+  "profile.sessions.header": "Note: even if you delete a session, it might still remain active until all valid access tokens expire.",
+  "profile.sessions.signOut": "Sign out of this session",
+  "profile.sessions.created": "Created: ",
+  "profile.sessions.lastRefreshed": "Last refreshed: ",
+  "profile.sessions.delete.success": "Session deleted",
+  "profile.sessions.delete.error": "Error while deleting the session: ",
+  "profile.sessions.signOut.error": "Error while signing out: ",
+  "profile.apiTokens": "API Tokens",
+  "profile.apiTokens.header": "Create API tokens to give external tools and services which don't support the OAuth2 Authorization Framework permanent access on your behalf.",
+  "profile.apiTokens.created": "Created: ",
+  "profile.apiTokens.validForScope": "Valid for scope: ",
+  "profile.apiTokens.create": "Create new API token",
+  "profile.apiTokens.delete.success": "API token deleted",
+  "profile.apiTokens.delete.error": "Error while deleting the API token: "
+}
