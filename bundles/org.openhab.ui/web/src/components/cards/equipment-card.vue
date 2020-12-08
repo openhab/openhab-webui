@@ -9,7 +9,7 @@
     <div class="card-content-padding">
       <generic-widget-component :context="listContext" />
       <p>
-        <f7-button fill round large card-close :color="color" class="margin-horizontal">Close</f7-button>
+        <f7-button fill round large card-close :color="color" class="margin-horizontal" :text="$t('home.cards.close')"></f7-button>
       </p>
     </div>
   </model-card>

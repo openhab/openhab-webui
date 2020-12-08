@@ -47,6 +47,9 @@ import store from './store'
 Vue.prototype.$store = store
 store.dispatch('initializeTrackingStore')
 
+// initialize i18n
+import i18n from './i18n'
+
 // Import vuetrend
 import Trend from 'vuetrend'
 Vue.use(Trend)
@@ -58,6 +61,7 @@ Vue.prototype.$oh = openhab
 // eslint-disable-next-line no-unused-vars
 const app = new Vue({
   el: '#app',
+  i18n,
   render: (h) => h(App),
 
   // Register App Component

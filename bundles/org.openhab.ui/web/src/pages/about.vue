@@ -1,6 +1,6 @@
 <template>
   <f7-page name="about" class="page-about" @page:beforein="beforePageIn">
-    <f7-navbar large title-large="About" title="About" back-link="Back"></f7-navbar>
+    <f7-navbar large :title-large="$t('about.title')" title="About" :back-link="$t('dialogs.back')"></f7-navbar>
     <f7-block class="block-narrow after-big-title">
       <f7-row>
         <f7-col>
@@ -8,31 +8,31 @@
           <f7-block>
             <img src="res/icons/128x128.png" width="96" class="padding float-right">
             <h2 v-if="$store.state.runtimeInfo" class="block-title-medium">openHAB {{$store.state.runtimeInfo.version}}<br/><small>{{$store.state.runtimeInfo.buildString}}</small></h2>
-            <p><f7-link external target="_blank" href="https://www.openhab.org/">Home page</f7-link></p>
-            <p><f7-link external target="_blank" href="https://www.openhab.org/docs/">Documentation</f7-link></p>
-            <p><f7-link external target="_blank" href="https://community.openhab.org/">Community forum</f7-link></p>
+            <p><f7-link external target="_blank" href="https://www.openhab.org/" v-t="'about.homePage'"></f7-link></p>
+            <p><f7-link external target="_blank" href="https://www.openhab.org/docs/" v-t="'about.documentation'"></f7-link></p>
+            <p><f7-link external target="_blank" href="https://community.openhab.org/" v-t="'about.communityForum'"></f7-link></p>
           </f7-block>
         </f7-col>
       </f7-row>
       <f7-row v-if="systemInfo">
         <f7-col>
           <f7-list accordion-list>
-            <f7-list-item title="Technical Information" accordion-item>
+            <f7-list-item :title="$t('about.technicalInformation')" accordion-item>
               <f7-accordion-content>
                 <f7-list>
-                  <f7-list-item title="Configuration Folder" :after="systemInfo.configFolder"></f7-list-item>
-                  <f7-list-item title="User Data Folder" :after="systemInfo.userdataFolder"></f7-list-item>
-                  <f7-list-item title="Logs Folder" :after="systemInfo.logFolder"></f7-list-item>
-                  <f7-list-item title="Operating System" :after="`${systemInfo.osName}/${systemInfo.osVersion} (${systemInfo.osArchitecture})`"></f7-list-item>
-                  <f7-list-item title="Java Runtime" :footer="systemInfo.javaVendor" :after="`${systemInfo.javaVersion} (${systemInfo.javaVendorVersion})`">
+                  <f7-list-item :title="$t('about.technicalInformation.configurationFolder')" :after="systemInfo.configFolder"></f7-list-item>
+                  <f7-list-item :title="$t('about.technicalInformation.userdataFolder')" :after="systemInfo.userdataFolder"></f7-list-item>
+                  <f7-list-item :title="$t('about.technicalInformation.logsFolder')" :after="systemInfo.logFolder"></f7-list-item>
+                  <f7-list-item :title="$t('about.technicalInformation.operatingSystem')" :after="`${systemInfo.osName}/${systemInfo.osVersion} (${systemInfo.osArchitecture})`"></f7-list-item>
+                  <f7-list-item :title="$t('about.technicalInformation.javaRuntime')" :footer="systemInfo.javaVendor" :after="`${systemInfo.javaVersion} (${systemInfo.javaVendorVersion})`">
                     <div slot="root-end" class="item-content" style="flex-direction: column">
                       <f7-progressbar class="margin-top" style="width: 90%" color="blue" :progress="systemInfo.freeMemory * 100 / systemInfo.totalMemory" />
                       <small class="margin-bottom text-color-gray">
-                        {{systemInfo.availableProcessors}} available processors · {{Math.round(systemInfo.freeMemory / 1024 / 1024)}}/{{Math.round(systemInfo.totalMemory / 1024 / 1024)}}MB available memory<br />
+                        {{ $t('about.technicalInformation.resourceStats', { nbproc: systemInfo.availableProcessors, ram: Math.round(systemInfo.freeMemory / 1024 / 1024) + '/' + Math.round(systemInfo.totalMemory / 1024 / 1024) + 'MB' }) }}
                       </small>
                     </div>
                   </f7-list-item>
-                  <f7-list-button color="blue" @click="textualSystemInfoOpened = true">View details</f7-list-button>
+                  <f7-list-button color="blue" @click="textualSystemInfoOpened = true">{{$t('about.technicalInformation.viewDetails')}}</f7-list-button>
                 </f7-list>
               </f7-accordion-content>
             </f7-list-item>
@@ -40,18 +40,18 @@
         </f7-col>
       </f7-row>
 
-      <f7-block-title><h4>Appearance Options (local to this device)</h4></f7-block-title>
+      <f7-block-title><h4 v-t="'about.appearanceOptions'"></h4></f7-block-title>
       <theme-switcher />
 
-      <f7-block-title><h4>Reload</h4></f7-block-title>
+      <f7-block-title><h4 v-t="'about.reload'">Reload</h4></f7-block-title>
       <f7-col v-if="showCachePurgeOption">
-        <p class="padding-horizontal">Caches and/or service workers are in use to store resources locally and make this app load faster, however it may not reliably detect when it has been updated to a new version.</p>
-        <p class="padding-horizontal">Select Purge Caches and Refresh below to clear all caches, unregister service workers and download everything from the server again.</p>
+        <p class="padding-horizontal" v-t="'about.reload.purgeExplanation1'"></p>
+        <p class="padding-horizontal" v-t="'about.reload.purgeExplanation2'"></p>
       </f7-col>
       <f7-col>
         <f7-list>
-          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches()">Purge Caches and Refresh</f7-list-button>
-          <f7-list-button color="blue" @click="reload">Reload the App</f7-list-button>
+          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches()">{{ $t('about.reload.purgeCachesAndRefresh') }}</f7-list-button>
+          <f7-list-button color="blue" @click="reload">{{ $t('about.reload.reloadApp') }}</f7-list-button>
         </f7-list>
       </f7-col>
     </f7-block>
@@ -59,10 +59,10 @@
       <f7-page>
         <f7-toolbar>
           <div class="left">
-            <f7-link @click="copyTextualSystemInfo">Copy</f7-link>
+            <f7-link @click="copyTextualSystemInfo" v-t="'dialogs.copy'"></f7-link>
           </div>
           <div class="right">
-            <f7-link popup-close>Close</f7-link>
+            <f7-link popup-close v-t="'dialogs.close'"></f7-link>
           </div>
         </f7-toolbar>
         <!-- <pre class="textual-definition" v-html="textualDefinition"></pre> -->
@@ -95,6 +95,7 @@ textarea.textual-systeminfo
 <script>
 import ThemeSwitcher from '../components/theme-switcher.vue'
 import YAML from 'yaml'
+import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
   components: {
@@ -107,6 +108,9 @@ export default {
       showCachePurgeOption: false,
       bindings: null
     }
+  },
+  i18n: {
+    messages: loadLocaleMessages(require.context('@/assets/i18n/about'))
   },
   computed: {
     textualSystemInfo () {
@@ -162,7 +166,7 @@ export default {
     },
     purgeServiceWorkerAndCaches () {
       this.$f7.dialog.confirm(
-        'Purge all application caches and unregister the service workers? This will also reload the page from the server, which might take a few seconds.',
+        this.$t('about.reload.confirmPurge'),
         () => {
           navigator.serviceWorker.getRegistrations().then(function (registrations) {
             for (let registration of registrations) {

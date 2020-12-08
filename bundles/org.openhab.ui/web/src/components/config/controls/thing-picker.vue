@@ -25,7 +25,7 @@ export default {
         view: this.$f7.view.main,
         openIn: 'popup',
         searchbar: true,
-        searchbarPlaceholder: 'Search things',
+        searchbarPlaceholder: this.$t('dialogs.search.things'),
         virtualList: true,
         virtualListHeight: (this.$theme.aurora) ? 32 : undefined
       }

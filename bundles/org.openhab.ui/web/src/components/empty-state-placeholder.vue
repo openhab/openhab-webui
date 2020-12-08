@@ -3,8 +3,8 @@
     <f7-row>
       <f7-col>
         <f7-icon :f7="icon" size="64" color="gray"  />
-        <h1>{{texts[title] || title}}</h1>
-        <p v-html="texts[text] || text"></p>
+        <h1>{{$t(title) || title}}</h1>
+        <p v-html="$t(text) || text"></p>
       </f7-col>
     </f7-row>
   </f7-block>
@@ -17,15 +17,12 @@
 </style>
 
 <script>
-// TODO: i18n
-import texts from '@/assets/i18n/en/empty-states.json'
+import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
   props: ['icon', 'title', 'text'],
-  data () {
-    return {
-      texts
-    }
+  i18n: {
+    messages: loadLocaleMessages(require.context('@/assets/i18n/empty-states'))
   }
 }
 </script>

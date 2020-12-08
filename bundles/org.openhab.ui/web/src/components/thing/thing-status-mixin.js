@@ -1,4 +1,4 @@
-import ThingStatusLabels from '@/assets/i18n/en/thing-status'
+import ThingStatusLabels from '@/assets/i18n/thing-status/en'
 
 export default {
   methods: {

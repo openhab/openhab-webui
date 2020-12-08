@@ -7,7 +7,6 @@ import UserProfilePage from '../pages/profile.vue'
 import SitemapViewPage from '../pages/page/sitemap-view.vue'
 import PageViewPage from '../pages/page/page-view.vue'
 
-import SetupWizardPage from '../pages/wizards/setup-wizard.vue'
 import SettingsMenuPage from '../pages/settings/settings-menu.vue'
 import ServiceSettingsPage from '../pages/settings/services/service-settings.vue'
 import AddonsListPage from '../pages/settings/addons/addons-list.vue'
@@ -68,9 +67,21 @@ export default [
   },
   {
     path: '/setup-wizard/',
-    component: SetupWizardPage,
-    options: {
-      transition: 'f7-cover-v'
+    async (routeTo, routeFrom, resolve, reject) {
+      // dynamic import component; returns promise
+      const widgetEditComponent = () => import(/* webpackChunkName: "setup-wizard" */ '../pages/wizards/setup-wizard.vue')
+      // resolve promise
+      widgetEditComponent().then((vc) => {
+        // resolve with component
+        resolve({
+          component: vc.default
+        },
+        (routeTo.params.uid === 'add') ? {
+          props: {
+            createMode: true
+          }
+        } : {})
+      })
     }
   },
   {

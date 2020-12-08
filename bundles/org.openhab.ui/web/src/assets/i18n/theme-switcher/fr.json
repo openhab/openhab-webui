@@ -1,0 +1,13 @@
+{
+  "about.theme": "Thème",
+  "about.darkMode": "Mode sombre",
+  "about.darkMode.light": "Clair",
+  "about.darkMode.dark": "Sombre",
+  "about.navigationBarsStyle": "Style des barres de navigation",
+  "about.miscellaneous": "Divers",
+  "about.miscellaneous.home.navbar": "Barre de navigation simple sur page d'accueil",
+  "about.miscellaneous.home.background": "Couleur de fond standard sur page d'accueil",
+  "about.miscellaneous.home.hideChatInput": "Cacher la barre de chat sur la page d'accueil",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Désactiver les animations d'expansion des cartes",
+  "about.miscellaneous.theme.disablePageTransition": "Désactiver les animations de transition de page"
+}

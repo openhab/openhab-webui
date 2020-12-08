@@ -7,8 +7,8 @@
     </div>
     <f7-list v-if="focused && !value" class="chat-suggestions" no-hairlines-md>
       <f7-list-item v-for="suggestion in suggestions"
-        :key="suggestion" @click="chooseSuggestion(suggestion)" link :title="suggestion" :footer="history.length === 0 ? 'suggestion' : ''" no-chevron></f7-list-item>
-      <f7-list-button v-if="history.length > 0" color="red" title="Clear history" @click="clearHistory"></f7-list-button>
+        :key="suggestion" @click="chooseSuggestion(suggestion)" link :title="suggestion" :footer="history.length === 0 ? $t('habot.example.label') : ''" no-chevron></f7-list-item>
+      <f7-list-button v-if="history.length > 0" color="red" :title="$t('habot.clearHistory')" @click="clearHistory"></f7-list-button>
     </f7-list>
     <f7-message v-if="interimSpeechResult" type="sent" class="habot-query margin-bottom" :text="interimSpeechResult" color="gray" first tail></f7-message>
     <f7-message v-if="query && !focused && !interimSpeechResult" type="sent" class="habot-query margin-bottom" :text="query" color="blue" first tail></f7-message>
@@ -17,7 +17,7 @@
     <generic-widget-component v-if="cardContext && !focused && !interimSpeechResult" :context="cardContext" />
     <div v-if="query && !focused && answer && !busy && !interimSpeechResult" class="display-flex justify-content-space-between padding">
       <span></span>
-      <f7-button outline round color="blue" @click="endSession">Dismiss</f7-button>
+      <f7-button outline round color="blue" @click="endSession">{{ $t('habot.dismiss' )}}</f7-button>
     </div>
   </div>
 </template>
@@ -79,6 +79,7 @@
 import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
 import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
 import SpeechButton from './speech-button.vue'
+import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
   components: {
@@ -99,6 +100,9 @@ export default {
       focused: false
     }
   },
+  i18n: {
+    messages: loadLocaleMessages(require.context('@/assets/i18n/habot'))
+  },
   mounted () {
     this.greet()
     const savedHistory = localStorage.getItem('openhab.ui:chat.history')
@@ -113,7 +117,7 @@ export default {
       }
     },
     suggestions () {
-      return (this.history.length > 0) ? this.history : ['What\'s the temperature in the kitchen?', 'Set the thermostat to 21 degrees', 'Turn off the lights on the first floor']
+      return (this.history.length > 0) ? this.history : [this.$t('habot.example1'), this.$t('habot.example2'), this.$t('habot.example3')]
     }
   },
   methods: {
@@ -194,7 +198,7 @@ export default {
         } else {
           this.busy = false
         }
-        this.greeting = 'Anything else?'
+        this.greeting = this.$t('habot.anythingElse')
       })
     },
     convertHABotCard (habotCard) {
@@ -204,7 +208,7 @@ export default {
           component: 'f7-card',
           config: {
             title: habotCard.title,
-            footer: 'Sorry, cards saved to the card deck cannot be displayed here, use the dedicated HABot app to see it.'
+            footer: this.$t('habot.cardDeckIsIncompatible')
           }
         }
         return
@@ -215,7 +219,7 @@ export default {
           component: 'f7-card',
           config: {
             title: habotCard.title,
-            footer: 'Sorry, this card cannot be displayed here, use the dedicated HABot app to see it.'
+            footer: this.$t('habot.cardIsIncompatible')
           }
         }
         return

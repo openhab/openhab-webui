@@ -1,4 +1,4 @@
-import RuleStatusLabels from '@/assets/i18n/en/thing-status'
+import RuleStatusLabels from '@/assets/i18n/rule-status/en'
 
 export default {
   methods: {

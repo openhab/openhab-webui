@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="hint-apps" v-if="!overviewPage && !$store.getters.user && !showHABot">
-    <p><em><f7-icon class="float-right margin-left margin-bottom" f7="arrow_turn_right_up" size="20" />Open the apps panel to launch other interfaces</em></p>
+    <p><em><f7-icon class="float-right margin-left margin-bottom" f7="arrow_turn_right_up" size="20" />{{ $t('home.tip.otherApps') }}</em></p>
   </div>
   <f7-block class="block-narrow">
     <habot v-if="showHABot" @session-started="inChatSession = true" @session-end="inChatSession = false" />
@@ -19,9 +19,9 @@
   <div class="empty-overview" v-else-if="!inChatSession">
     <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
     <f7-row class="display-flex justify-content-center">
-      <f7-button large fill color="blue" external href="https://next.openhab.org/docs/" target="_blank">Documentation</f7-button>
+      <f7-button large fill color="blue" external href="https://next.openhab.org/docs/" target="_blank" v-t="'home.overview.button.documentation'"></f7-button>
       <span style="width: 8px"></span>
-      <f7-button large color="blue" external href="https://next.openhab.org/docs/tutorial/" target="_blank">Tutorial</f7-button>
+      <f7-button large color="blue" external href="https://next.openhab.org/docs/tutorial/" target="_blank" v-t="'home.overview.button.tutorial'"></f7-button>
     </f7-row>
   </div>
 </div>

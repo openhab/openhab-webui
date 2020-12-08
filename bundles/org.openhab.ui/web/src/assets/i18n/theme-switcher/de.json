@@ -1,0 +1,15 @@
+{
+  "about.theme": "Erscheinungsbild",
+  "about.theme.auto": "Auto.",
+  "about.darkMode": "Dunkelmodus",
+  "about.darkMode.auto": "Auto.",
+  "about.darkMode.light": "Hell",
+  "about.darkMode.dark": "Dunkel",
+  "about.navigationBarsStyle": "Navigationsleisten Stil",
+  "about.miscellaneous": "Verschiedenes",
+  "about.miscellaneous.home.navbar": "Einfache Navigationsleiste auf dem Startbildschirm",
+  "about.miscellaneous.home.background": "Standardfarbe für den Startbildschirm",
+  "about.miscellaneous.home.hideChatInput": "Chat Eingabebox auf dem Startbildschirm nicht anzeigen",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Animation für Kartenerweiterung abschalten",
+  "about.miscellaneous.theme.disablePageTransition": "Animation für Seitenübergänge abschalten"  
+}

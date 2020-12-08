@@ -9,10 +9,10 @@
     <div class="card-content-padding">
       <generic-widget-component :context="listContext" />
       <p class="padding-top margin-horizontal">
-        <f7-button outline round :color="color" :href="`/analyzer/?items=${element.points.map((m) => m.name).join(',')}`">Analyze{{element.points.length > 1 ? ' all' : ''}}</f7-button>
+        <f7-button outline round :color="color" :href="`/analyzer/?items=${element.points.map((m) => m.name).join(',')}`">{{element.points.length > 1 ? $t('home.cards.analyzeAll') : $t('home.cards.analyze')}}</f7-button>
       </p>
       <p class="margin-horizontal">
-        <f7-button fill round large card-close :color="color">Close</f7-button>
+        <f7-button fill round large card-close :color="color" :text="$t('home.cards.close')"></f7-button>
       </p>
     </div>
   </model-card>
@@ -30,9 +30,13 @@ import mixin from '@/components/widgets/widget-mixin'
 import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
+import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
   mixins: [mixin, CardMixin],
+  i18n: {
+    messages: loadLocaleMessages(require.context('@/assets/i18n/semantics'))
+  },
   components: {
     ModelCard
   },
@@ -44,7 +48,7 @@ export default {
           {
             component: 'oh-list-item',
             config: {
-              title: pointType,
+              title: this.$t(pointType),
               divider: true
             }
           },
@@ -68,7 +72,7 @@ export default {
     itemsByPointType () {
       const points = {}
       this.element.points.forEach((item) => {
-        const pointType = item.metadata.semantics.value.replace('Point_', '')
+        const pointType = item.metadata.semantics.value.replace(/^.*_/g, '')
         if (!points[pointType]) points[pointType] = []
         points[pointType].push(item)
       })

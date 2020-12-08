@@ -1,7 +1,7 @@
 <template>
   <f7-popup>
     <f7-page :style="modalStyle">
-      <f7-navbar :title="(context.component.config && context.component.config.label) ? context.component.config.label : ''" back-link="Back">
+      <f7-navbar :title="(context.component.config && context.component.config.label) ? context.component.config.label : ''" :back-link="$t('dialogs.back')">
       </f7-navbar>
 
       <f7-toolbar tabbar labels bottom v-if="page && page.component === 'oh-tabs-page' && visibleToCurrentUser">
