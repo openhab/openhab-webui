@@ -2,7 +2,7 @@
   "profile.title": "Votre profil",
   "profile.changePassword": "Changer votre mot de passe",
   "profile.sessions": "Sessions",
-  "profile.sessions.header": "Note : même si vous supprimez une session, elle peut rester valide tant que tous les jetons d'accès n'ont pas expiré.",
+  "profile.sessions.header": "Remarque : même si vous supprimez une session, elle peut rester active jusqu'à ce que tous les jetons d'accès valides expirent.",
   "profile.sessions.signOut": "Se déconnecter de cette session",
   "profile.sessions.created": "Créée le ",
   "profile.sessions.lastRefreshed": "Dernière mise à jour le ",
