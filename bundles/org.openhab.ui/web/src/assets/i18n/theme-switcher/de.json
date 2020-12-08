@@ -1,8 +1,8 @@
 {
   "about.theme": "Erscheinungsbild",
-  "about.theme.auto": "Auto",
+  "about.theme.auto": "Auto.",
   "about.darkMode": "Dunkelmodus",
-  "about.darkMode.auto": "Auto",
+  "about.darkMode.auto": "Auto.",
   "about.darkMode.light": "Hell",
   "about.darkMode.dark": "Dunkel",
   "about.navigationBarsStyle": "Navigationsleisten Stil",

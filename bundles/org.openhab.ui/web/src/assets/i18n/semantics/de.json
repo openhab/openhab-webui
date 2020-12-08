@@ -1,6 +1,6 @@
 {
   "Temperature": "Temperaturen",
-  "Light": "Lichtleuchtung",
+  "Light": "Licht",
   "ColorTemperature": "Farbtemperaturen",
   "Humidity": "Feuchtigkeit",
   "Presence": "Anwesenheit",
@@ -37,7 +37,7 @@
   "OpenState": "Offener Zustand",
   "Tampered": "Manipuliert",
   "Tilt": "Neigung",
-  "Equipment": "Sonstiges",
+  "Equipment": "Gerät",
   "AlarmSystem": "Alarmanlagen",
   "Battery": "Batterien",
   "Blinds": "Jalousien & Rollläden",

@@ -5,7 +5,7 @@
   "setupwizard.beginSetup": "Starte Setup",
   "setupwizard.skipSetup": "Überspringe Setup",
   "setupwizard.skipSetup.confirm.title": "Überspringe Setup",
-  "setupwizard.skipSetup.confirm.message": "Bist Du sicher ? Der Setupassistent spart Dir Zeit indem einige Grundlegende Einstellungen gemacht werden. Du solltest nur Überspringen wählen, wenn Du Dir absolut sicher bist.",
+  "setupwizard.skipSetup.confirm.message": "Bist Du sicher? Der Setupassistent spart Dir Zeit indem einige grundlegende Einstellungen gemacht werden. Du solltest nur überspringen wählen, wenn Du Dir absolut sicher bist.",
   "setupwizard.location.title": "Eigener Standort",
   "setupwizard.location.header1": "Möchtest Du Deinen eigenen Standort teilen?",
   "setupwizard.location.header2": "Standort teilen ist hilfreich bei der Ermittlung positionsabhängiger Informationen wie Sonnenauf-/untergang oder Wetterdaten.",
