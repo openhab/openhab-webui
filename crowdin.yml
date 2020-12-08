@@ -1,3 +1,6 @@
 files:
   - source: /bundles/org.openhab.ui/web/src/assets/i18n/**/en.json
     translation: /%original_path%/%two_letters_code%.json
+  - source: >-
+      /bundles/org.openhab.ui.basic/src/main/resources/OH-INF/i18n/basic.properties
+    translation: /%original_path%/basic_%two_letters_code%.properties
