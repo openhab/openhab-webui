@@ -3,1152 +3,1152 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: hu\n"
-"X-Crowdin-File: /master/web/assets/i18n/widgets/widgets.pot\n"
+"X-Crowdin-File: /master/bundles/org.openhab.ui.habpanel/web/assets/i18n/widgets/widgets.pot\n"
+"X-Crowdin-File-ID: 268\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
-"PO-Revision-Date: 2019-06-16 09:54\n"
+"PO-Revision-Date: 2020-12-08 20:46\n"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.min"
 msgid "Min"
-msgstr "Min"
+msgstr ""
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.max"
 msgid "Max"
-msgstr "Max"
+msgstr ""
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.step"
 msgid "Step"
-msgstr "Lépés"
+msgstr ""
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.unit"
 msgid "Unit"
-msgstr "Mértékegység"
+msgstr ""
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.format"
 msgid "Format"
-msgstr "Formátum"
+msgstr ""
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.format.useserverprovided"
 msgid "Use server-provided format if available"
-msgstr "Kiszolgáló által biztosított formátumot használja, ha elérhető"
+msgstr ""
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.dontwrap"
 msgid "Value right of label"
-msgstr "Érték a címke jobb oldalán"
+msgstr ""
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.backdrop_center"
 msgid "Center backdrop horizontally"
-msgstr "Háttér vízszintesen középre"
+msgstr ""
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.icon_nolinebreak"
 msgid "Icon left of label instead of below"
-msgstr "Ikon a címke bal oldalán, nem alatta"
+msgstr ""
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.icon_replacestext"
 msgid "Icon replaces textual value display"
-msgstr "Ikon helyettesíti a szöveges értéket megjelenítéskor"
+msgstr ""
 
 #. Common tab header label
 msgctxt "widget.common.general"
 msgid "General"
-msgstr "Általános"
+msgstr ""
 
 #. Common tab header label
 msgctxt "widget.common.advanced"
 msgid "Advanced"
-msgstr "Haladó"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.button"
 msgid "Button"
-msgstr "Gomb"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.button.description"
 msgid "A button performing a certain action, like sending a command to an openHAB item"
-msgstr "Egy bizonyos műveletet végrehajtó gomb, például parancs küldése egy openHAB elemnek"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.button.settings.header"
 msgid "Button Settings"
-msgstr "Nyomógomb beállítások"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.button.general"
 msgid "General"
-msgstr "Általános"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.button.general.action_type"
 msgid "Action type"
-msgstr "Művelet típusa"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.button.general.action_type.command"
 msgid "Send a fixed command to an item"
-msgstr "Rögzített parancs küldése egy elemnek"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.button.general.action_type.toggle"
 msgid "Alternate item between 2 states"
-msgstr "Alternatív elem 2 állapot között"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.button.general.action_type.navigate"
 msgid "Navigate"
-msgstr "Navigáció"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.button.general.command"
 msgid "Command value"
-msgstr "Parancs értéke"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.button.general.command_alt"
 msgid "Alternate command value"
-msgstr "Alternatív parancs értéke"
+msgstr ""
 
 #. Radio buttons header
 msgctxt "widget.button.general.navigation_type"
 msgid "Navigation type"
-msgstr "Navigáció típus"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.button.general.navigation_type.dashboard"
 msgid "Dashboard"
-msgstr "Műszerfal"
+msgstr ""
 
 #. Radio buttons header
 msgctxt "widget.button.general.navigation_target"
 msgid "Open in"
-msgstr "Megnyitás ..."
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.button.general.navigation_target.self"
 msgid "Current tab"
-msgstr "Az aktuális lap"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.button.general.navigation_target.new_tab"
 msgid "New tab"
-msgstr "Új lap"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.button.general.navigation_target.new_window"
 msgid "New window"
-msgstr "Új ablak"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.button.display"
 msgid "Display"
-msgstr "Kijelző"
+msgstr ""
 
 #. Section header
 msgctxt "widget.button.display.label"
 msgid "Label"
-msgstr "Címke"
+msgstr ""
 
 #. Section header
 msgctxt "widget.button.display.value"
 msgid "Value"
-msgstr "Érték"
+msgstr ""
 
 #. Checkbox label (when there's an item configured in the General tab)
 msgctxt "widget.button.display.value.showitemvalue"
 msgid "Show the item's state value"
-msgstr "Mutassa az elem értékét"
+msgstr ""
 
 #. Checkbox label (when there's no item configured in the General tab)
 msgctxt "widget.button.display.value.showitemvalue_noitem"
 msgid "Show an item's state value"
-msgstr "Mutassa az elem értékét"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.button.display.value.active_state"
 msgid "Active state"
-msgstr "Aktív állapotban"
+msgstr ""
 
 #. Checkboxes header
 msgctxt "widget.button.display.value.layout"
 msgid "Layout"
-msgstr "Elrendezés"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.button.inactive"
 msgid "Inactive"
-msgstr "Inaktív"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.button.active"
 msgid "Active"
-msgstr "Aktív"
+msgstr ""
 
 #. Tab header (when there's no item configured in the General tab)
 msgctxt "widget.button.colors"
 msgid "Colors"
-msgstr "Színek"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.button.background_color"
 msgid "Background color"
-msgstr "Háttérszín"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.button.foreground_color"
 msgid "Label color"
-msgstr "Címke színe"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.button.value_color"
 msgid "Value color"
-msgstr "Érték színe"
+msgstr ""
 
 msgctxt "widget.button.preview.state"
 msgid "State"
-msgstr "Állapot"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.chart"
 msgid "Chart"
-msgstr "Grafikon"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.chart.description"
 msgid "Displays a chart"
-msgstr "Diagram megjelenítése"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.chart.settings.header"
 msgid "Chart Settings"
-msgstr "Diagram beállításai"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.chart.general"
 msgid "General"
-msgstr "Általános"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.chart.general.type"
 msgid "Type"
-msgstr "Típus"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.chart.general.type.default"
 msgid "Default"
-msgstr "Alapértelmezett"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.chart.general.type.rrd4j"
 msgid "RRD4j (rrd4j persistence service only)"
-msgstr "RRD4j (csak rrd4j tárolási szolgáltatás)"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.chart.general.type.interactive"
 msgid "n3-line-chart (interactive)"
-msgstr "n3-line-diagram (interaktív)"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.chart.general.service"
 msgid "Persistence service"
-msgstr "Tárolási szolgáltatás"
+msgstr ""
 
 #. Textbox placeholder
 msgctxt "widget.chart.general.service.hint"
 msgid "rrd4j, mysql, influxdb... Leave blank for default"
-msgstr "rrd4j, mysql, influxdb... Hagyja üresen az alapértelmezetthez"
+msgstr ""
 
 #. Item picker header
 msgctxt "widget.chart.general.itemgroup"
 msgid "openHAB Item or Group"
-msgstr "openHAB elem vagy csoport"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.chart.general.period"
 msgid "Period"
-msgstr "Időszak"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.chart.axis"
 msgid "Axis"
-msgstr "Tengely"
+msgstr ""
 
 #. Section header
 msgctxt "widget.chart.axis.primary"
 msgid "Primary axis (y)"
-msgstr "Elsődleges tengely (y)"
+msgstr ""
 
 #. Section header
 msgctxt "widget.chart.axis.secondary"
 msgid "Secondary axis (y2)"
-msgstr "Másodlagos tengely (y2)"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.chart.axis.enabled"
 msgid "Enabled"
-msgstr "Engedélyezve"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.chart.axis.includezero"
 msgid "Include zero"
-msgstr "Tartalmazza a nullát"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.chart.series"
 msgid "Series"
-msgstr "Sorozat"
+msgstr ""
 
 #. Radio buttons header
 msgctxt "widget.chart.series.axis"
 msgid "Axis"
-msgstr "Tengely"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.chart.series.axis.primary"
 msgid "Primary"
-msgstr "Elsődleges"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.chart.series.axis.secondary"
 msgid "Secondary"
-msgstr "Másodlagos"
+msgstr ""
 
 #. Radio buttons header
 msgctxt "widget.chart.series.display"
 msgid "Display"
-msgstr "Kijelző"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.chart.series.display.line"
 msgid "Line"
-msgstr "Vonal"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.chart.series.display.area"
 msgid "Area"
-msgstr "Terület"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.chart.series.display.dots"
 msgid "Dots"
-msgstr "Pontok"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.chart.series.liveupdate"
 msgid "Live update (experimental)"
-msgstr "Működés közbeni frissítés (kísérleti)"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.chart.series.liveupdate.fillvalues"
 msgid "Repeat other series' current values on update if necessary"
-msgstr "Ismételje meg más sorozat aktuális értékeit, frissítsen ha szükséges"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.clock"
 msgid "Clock"
-msgstr "Óra"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.clock.description"
 msgid "A clock widget - displays an analog or digital clock"
-msgstr "Óra widget - egy analóg vagy digitális órát jelenít meg"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.clock.settings.header"
 msgid "Clock Settings"
-msgstr "Óra beállítások"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.clock.mode"
 msgid "Mode"
-msgstr "Mód"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.clock.mode.analog"
 msgid "Analog"
-msgstr "Analóg"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.clock.mode.digital"
 msgid "Digital"
-msgstr "Digitális"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.clock.theme"
 msgid "Analog Theme"
-msgstr "Analóg téma"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.clock.theme.light"
 msgid "light"
-msgstr "világos"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.clock.theme.dark"
 msgid "dark"
-msgstr "sötét"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.clock.digital_format"
 msgid "Digital Format"
-msgstr "Digitális formátum"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.clock.font_size"
 msgid "Digital Font Size"
-msgstr "Digitális betű méret"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.colorpicker"
 msgid "Color Picker"
-msgstr "Szín választó"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.colorpicker.description"
 msgid "Displays an color picker"
-msgstr "Színválasztó megjelenítése"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.colorpicker.settings.header"
 msgid "Color Picker Settings"
-msgstr "Színválasztó beállítások"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.colorpicker.type"
 msgid "Type"
-msgstr "Típus"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.colorpicker.type.hsl"
 msgid "HSL Sliders"
-msgstr "HSL csúszkák"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.colorpicker.type.ackolor"
 msgid "aCKolor style (modal picker)"
-msgstr "aCKolor stílus (modális választó)"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.colorpicker.blur_background"
 msgid "Apply blurring effect to background"
-msgstr "Alkalmazzon elmosódó hatást a háttérre"
+msgstr ""
 
 #. Displayed below the checkbox in small text
 msgctxt "widget.colorpicker.blur_background.warning"
 msgid "Warning: This can cause performance problems on tablets"
-msgstr "Figyelmeztetés: Ez teljesítménybeli problémákat okozhat tablet-en"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.dummy"
 msgid "Dummy"
-msgstr "Dummy"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.dummy.description"
 msgid "A dummy widget - displays the value of an openHAB item"
-msgstr "Dummy widget - egy openHAB elem értékét jeleníti meg"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.dummy.settings.header"
 msgid "Dummy Settings"
-msgstr "Dummy beállítások"
+msgstr ""
 
 #. Checkboxes header
 msgctxt "widget.dummy.layout"
 msgid "Layout"
-msgstr "Elrendezés"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.frame"
 msgid "Frame"
-msgstr "Keret"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.frame.description"
 msgid "Embedded website from predefined URL or openHAB item."
-msgstr "Beágyazott website-ból előre megadott URL-cím vagy az openHAB elem."
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.frame.settings.header"
 msgid "Frame Settings"
-msgstr "Keret beállítások"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.frame.url_source"
 msgid "URL Source"
-msgstr "Forrás URL-címe"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.frame.url_source.static"
 msgid "Static URL"
-msgstr "Statikus URL"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.frame.url_source.item"
 msgid "openHAB String Item"
-msgstr "openHAB karakterlánc elem"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.frame.refresh_interval"
 msgid "Refresh interval (seconds)"
-msgstr "Frissítés intervallum (másodperc)"
+msgstr ""
 
 #. Checkbox header - appears only if the refresh interval is set
 msgctxt "widget.frame.nosuffix"
 msgid "No cache busting (advanced)"
-msgstr "Nincs gyorsítótár (haladó)"
+msgstr ""
 
 #. Checkbox label - appears only if the refresh interval is set
 msgctxt "widget.frame.nosuffix.description"
 msgid "Don't add URL suffixes to prevent reusing cached pages"
-msgstr "Ne adjon hozzá URL-utótagokat a tárolt oldalak újrafelhasználásának megakadályozása érdekében"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.frame.background_color"
 msgid "Frame background color"
-msgstr "Keret háttérszín"
+msgstr ""
 
 #. Checkbox header
 msgctxt "widget.frame.frameless"
 msgid "Frameless"
-msgstr "Keret nélküli"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.frame.frameless.description"
 msgid "Fill to edges"
-msgstr "Kitöltés az élekig"
+msgstr ""
 
 #. Checkbox header
 msgctxt "widget.frame.label"
 msgid "Label"
-msgstr "Címke"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.frame.label.description"
 msgid "Hide title label"
-msgstr "Cím felirat elrejtése"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.image"
 msgid "Image"
-msgstr "Kép"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.image.description"
 msgid "Displays an image (not necessarily from openHAB)"
-msgstr "Kép megjelenítése (nem feltétlenül openHAB-ból)"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.image.settings.header"
 msgid "Image Settings"
-msgstr "Képbeállítások"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.image.image_source"
 msgid "Image source"
-msgstr "Kép forrása"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.image.image_source.static"
 msgid "Static image URL"
-msgstr "Statikus kép URL-címe"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.image.image_source.item-string"
 msgid "openHAB String Item"
-msgstr "openHAB karakterlánc elem"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.image.image_source.item-image"
 msgid "openHAB Image Item"
-msgstr "openHAB kép elem"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.image.refresh_interval"
 msgid "Refresh interval"
-msgstr "Frissítési gyakoriság"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.image.refresh_interval.seconds"
 msgid "seconds"
-msgstr "másodperc"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.image.refresh_interval.milliseconds"
 msgid "milliseconds"
-msgstr "milliszekundum"
+msgstr ""
 
 #. Checkbox header - appears only if the refresh interval is set
 msgctxt "widget.image.nosuffix"
 msgid "No cache busting (advanced)"
-msgstr "Nincs gyorsítótár (haladó)"
+msgstr ""
 
 #. Checkbox label - appears only if the refresh interval is set
 msgctxt "widget.image.nosuffix.description"
 msgid "Don't add URL suffixes to prevent reusing cached images"
-msgstr "Ne adjon hozzá URL-utótagokat a tárolt oldalak újrafelhasználásának megakadályozása érdekében"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.image.background_color"
 msgid "Background color"
-msgstr "Háttérszín"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.knob"
 msgid "Knob"
-msgstr "Knob"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.knob.description"
 msgid "A knob for setting numerical openHAB items"
-msgstr "Knob gomb az openHAB numerikus elemekhez"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.knob.settings.header"
 msgid "Knob Settings"
-msgstr "Knob gomb beállítások"
+msgstr ""
 
 #. Checkbox header
 msgctxt "widget.knob.general.readonly"
 msgid "Read only"
-msgstr "Csak olvasható"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.general.readonly.description"
 msgid "Disable interaction"
-msgstr "Interakció tiltása"
+msgstr ""
 
 #. Checkboxes header
 msgctxt "widget.knob.general.centraldisplay"
 msgid "Central display"
-msgstr "Központi kijelző"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.general.centraldisplay.showvalue"
 msgid "Show value"
-msgstr "Érték megjelenítése"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.general.centraldisplay.showlabel"
 msgid "Show name (below value)"
-msgstr "Név megjelenítése (az érték alatt)"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.knob.bartrack"
 msgid "Bar & Track"
-msgstr "Oszlop & pálya"
+msgstr ""
 
 #. Section header
 msgctxt "widget.knob.bartrack.angles"
 msgid "Angles (°)"
-msgstr "Szög (°)"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.angles.start"
 msgid "Start"
-msgstr "Kezdet"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.angles.end"
 msgid "End"
-msgstr "Vég"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.width"
 msgid "Width"
-msgstr "Szélesség"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.cap"
 msgid "Cap"
-msgstr "Lekerekítés"
+msgstr ""
 
 #. Section header
 msgctxt "widget.knob.bartrack.bar"
 msgid "Bar"
-msgstr "Oszlop"
+msgstr ""
 
 #. Section header
 msgctxt "widget.knob.bartrack.track"
 msgid "Track"
-msgstr "Sáv"
+msgstr ""
 
 #. Section header
 msgctxt "widget.knob.bartrack.previousvalue"
 msgid "Previous value"
-msgstr "Előző érték"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.bartrack.previousvalue.description"
 msgid "Display previous value when dragging"
-msgstr "Előző érték megjelenítése húzás közben"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.knob.scale"
 msgid "Scale"
-msgstr "Skála"
+msgstr ""
 
 #. Checkbox header
 msgctxt "widget.knob.scale.display"
 msgid "Display scale"
-msgstr "Skála megjelenítés"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.scale.display.enabled"
 msgid "Enabled"
-msgstr "Engedélyezve"
+msgstr ""
 
 #. Radio buttons header
 msgctxt "widget.knob.scale.type"
 msgid "Scale Type"
-msgstr "Skála típusa"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.knob.scale.type.lines"
 msgid "Lines"
-msgstr "Vonalak"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.scale.type.dots"
 msgid "Dots"
-msgstr "Pontok"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.scale.width"
 msgid "Width"
-msgstr "Szélesség"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.scale.qty"
 msgid "Qty."
-msgstr "Mennyiség"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.scale.space"
 msgid "Space"
-msgstr "Hely"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.knob.skin"
 msgid "Skin"
-msgstr "Kinézet"
+msgstr ""
 
 #. Radio buttons header
 msgctxt "widget.knob.skin.type"
 msgid "Type"
-msgstr "Típus"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.knob.skin.type.simple"
 msgid "Simple"
-msgstr "Egyszerű"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.knob.skin.type.tron"
 msgid "Tron"
-msgstr "Tron"
+msgstr ""
 
 #. Section header
 msgctxt "widget.knob.skin.tronsettings"
 msgid "Tron skin settings"
-msgstr "Tron kinézet beállítások"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.skin.tronsettings.width"
 msgid "Width"
-msgstr "Szélesség"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.skin.tronsettings.space"
 msgid "Space"
-msgstr "Hely"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.knob.ranges"
 msgid "Ranges"
-msgstr "Tartományok"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.ranges.enable"
 msgid "Enable Ranges"
-msgstr "Tartományok engedélyezése"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.ranges.match_text_color"
 msgid "Match Text Color to Range"
-msgstr "Egyezzen a szöveg színe a tartományban"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.ranges.from"
 msgid "from"
-msgstr "ettől"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.ranges.to"
 msgid "to"
-msgstr "eddig"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.knob.ranges.bar"
 msgid "Bar"
-msgstr "Oszlop"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.knob.misc"
 msgid "Misc."
-msgstr "Egyéb."
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.knob.misc.text"
 msgid "Text"
-msgstr "Szöveg"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.knob.misc.background"
 msgid "Background"
-msgstr "Háttér"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.label"
 msgid "Label"
-msgstr "Címke"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.label.description"
 msgid "A fixed label used for headers etc. (no openHAB item binding)"
-msgstr "A fejlécek stb. rögzített címkéje (nincs openHAB elem kötés)"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.label.settings.header"
 msgid "Label Settings"
-msgstr "Címke beállítások"
+msgstr ""
 
 #. Preview widget label in the top-right corner
 msgctxt "widget.label.preview"
 msgid "Preview"
-msgstr "Előnézet"
+msgstr ""
 
 #. Color picker label
 msgctxt "widget.label.background_color"
 msgid "Background color"
-msgstr "Háttérszín"
+msgstr ""
 
 #. Color picker label
 msgctxt "widget.label.foreground_color"
 msgid "Text color"
-msgstr "Szöveg színe"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.selection"
 msgid "Selection"
-msgstr "Kijelölés"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.selection.description"
 msgid "A widget allowing a selection between multiple choices"
-msgstr "A widget több lehetőség közül enged választást"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.selection.settings.header"
 msgid "Selection Settings"
-msgstr "Beállítások kiválasztása"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.selection.choices_source"
 msgid "Choices source"
-msgstr "Választási forrás"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.selection.choices_source.server"
 msgid "Server-provided item options"
-msgstr "Kiszolgáló által biztosított elem beállításai"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.selection.choices_source.csv"
 msgid "Comma-separated list"
-msgstr "Vesszővel elválasztott lista"
+msgstr ""
 
 #. Textbox header - appears only when the "comma-separated list" choice source is selected
 msgctxt "widget.selection.choices"
 msgid "List of comma-separated choices"
-msgstr "Vesszővel elválasztott választási lehetőségek listája"
+msgstr ""
 
 #. Displayed in small text below the textbox
 msgctxt "widget.selection.choices.hint"
 msgid "You can optionally use the syntax: 'cmd=label' for each choice<br />Example: 18=Cold,20,22,24,26,28=Warm"
-msgstr "Szükség szerint használható szintaxis: 'parancs=címke' minden értékhez<br />példa: 18 = hideg, 20, 22, 24, 26, 28 = meleg"
+msgstr ""
 
 #. Header
 msgctxt "widget.selection.display"
 msgid "Display options"
-msgstr "Megjelenítési opciók"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.selection.display.hidelabel"
 msgid "Hide name"
-msgstr "Név elrejtése"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.selection.display.hideicon"
 msgid "Hide icon"
-msgstr "Ikon elrejtése"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.selection.display.hidestate"
 msgid "Hide current value"
-msgstr "Jelenlegi érték elrejtése"
+msgstr ""
 
 #. Header
 msgctxt "widget.selection.choices_window"
 msgid "Choices window"
-msgstr "Kiválasztó ablak"
+msgstr ""
 
 #. Textbox (very small)
 msgctxt "widget.selection.choices_window.columns"
 msgid "Columns"
-msgstr "Oszlopok"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.selection.choices_window.disable_mobile"
 msgid "Disable mobile mode"
-msgstr "Mobil mód letiltása"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.selection.choices_window.no_squares"
 msgid "No square tiles"
-msgstr "Nincsenek négyzet alakú csempék"
+msgstr ""
 
 #. Header
 msgctxt "widget.selection.selection_options"
 msgid "Selection options"
-msgstr "Beállítások kiválasztása"
+msgstr ""
 
 #. Checkbox label (small)
 msgctxt "widget.selection.selection_options.no_highlight"
 msgid "Don't highlight current selection"
-msgstr "Nem kiemelt aktuális választás"
+msgstr ""
 
 #. Checkbox label (small)
 msgctxt "widget.selection.selection_options.keep_open"
 msgid "Keep window open upon selection"
-msgstr "Ablak nyitva marad a kiválasztáskor"
+msgstr ""
 
 #. Displayed when running the widget if no choices available
 msgctxt "widget.selection.nochoices"
 msgid "No choices available - check widget config"
-msgstr "Nincsenek választási lehetőségek - ellenőrizze a widget beállításokat"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.slider"
 msgid "Slider"
-msgstr "Csúszka"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.slider.description"
 msgid "A slider for setting numerical openHAB items"
-msgstr "Beállító csúszka az openHAB numerikus elemekhez"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.slider.settings.header"
 msgid "Slider Settings"
-msgstr "Csúszka beállításai"
+msgstr ""
 
 #. Checkbox header
 msgctxt "widget.slider.general.orientation"
 msgid "Orientation"
-msgstr "Tájolás"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.general.orientation.vertical"
 msgid "Vertical slider"
-msgstr "Függőleges csúszka"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.hidelabel"
 msgid "Hide title label"
-msgstr "Cím felirat elrejtése"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.hidelimits"
 msgid "Hide limits labels"
-msgstr "Határérték címkék elrejtése"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.hidepointer"
 msgid "Hide current value label"
-msgstr "Jelenlegi érték címke elrejtése"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.showticks"
 msgid "Show ticks"
-msgstr "Mutassa az ütemet"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.showticksvalues"
 msgid "Show ticks labels"
-msgstr "Ütem-címkék mutatása"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.inverted"
 msgid "Reverse direction"
-msgstr "Fordított irányban"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.bigslider"
 msgid "Big slider (horizontal only)"
-msgstr "Nagy csúszka (csak vízszintes)"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.slider.backdrop"
 msgid "Backdrop"
-msgstr "Háttér"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.switch"
 msgid "Switch"
-msgstr "Kapcsoló"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.switch.description"
 msgid "A ON/OFF toggle for openHAB switches"
-msgstr "BE/KI váltó openHAB kapcsolókhoz"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.switch.settings.header"
 msgid "Switch Settings"
-msgstr "Kapcsoló beállításai"
+msgstr ""
 
 #. Header
 msgctxt "widget.switch.display"
 msgid "Display options"
-msgstr "Megjelenítési beállítások"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.switch.display.hidelabel"
 msgid "Hide name"
-msgstr "Név elrejtése"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.switch.display.hideicon"
 msgid "Hide icon"
-msgstr "Ikon elrejtése"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.switch.display.hideonoff"
 msgid "Hide ON/OFF"
-msgstr "KI/Be elrejtése"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.template"
 msgid "Template"
-msgstr "Sablon"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.template.description"
 msgid "A template widget - displays a custom dynamic template"
-msgstr "Sablon widget - egyéni dinamikus sablon megjelenítése"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.template.settings.header"
 msgid "Template Settings"
-msgstr "Sablonbeállítások"
+msgstr ""
 
 #. Settings dialog title for a custom widget (don't translate the variable)
 msgctxt "widget.template.settings.header.customwidget"
 msgid "{{customwidget_name}} Settings"
-msgstr "{{customwidget_name}} -beállítások"
+msgstr ""
 
 #. Checkbox label (small)
 msgctxt "widget.template.dontwrap"
 msgid "Don't wrap in container"
-msgstr "Ne csomagolja be a konténert"
+msgstr ""
 
 #. Checkbox label (small)
 msgctxt "widget.template.nobackground"
 msgid "No background"
-msgstr "Nincs háttér"
+msgstr ""
 
 #. Section header (displayed above the code editor)
 msgctxt "widget.template.template"
 msgid "Template"
-msgstr "Sablon"
+msgstr ""
 
 #. Menu entry (top-right above the code editor)
 msgctxt "widget.template.importfromfile"
 msgid "Import from file..."
-msgstr "Importálás fájlból..."
+msgstr ""
 
 #. Menu entry (top-right above the code editor)
 msgctxt "widget.template.exporttofile"
 msgid "Export to file"
-msgstr "Exportálás fájlba"
+msgstr ""
 
 #. Menu entry (top-right above the code editor)
 msgctxt "widget.template.communitysupport"
 msgid "Community support"
-msgstr "Közösségi támogatás"
+msgstr ""
 
 #. Menu entry (top-right above the code editor)
 msgctxt "widget.template.knowledgebase"
 msgid "Knowledge base"
-msgstr "Tudásbázis"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.timeline"
 msgid "Timeline"
-msgstr "Idővonal"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.timeline.description"
 msgid "Displays a timeline of several items"
-msgstr "Több elem idővonalát jeleníti meg"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.timeline.settings.header"
 msgid "Timeline Settings"
-msgstr "Idővonal-beállítások"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.timeline.general.service"
 msgid "Persistence service"
-msgstr "Tárolási szolgáltatás"
+msgstr ""
 
 #. Textbox placeholder
 msgctxt "widget.timeline.general.service.hint"
 msgid "rrd4j, mysql, influxdb... Leave blank for default"
-msgstr "rrd4j, mysql, influxdb... Hagyja üresen az alapértelmezetthez"
+msgstr ""
 
 #. Dropdown placeholder
 msgctxt "widget.timeline.general.period"
 msgid "Period"
-msgstr "Időszak"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.timeline.colors"
 msgid "Colors"
-msgstr "Színek"
+msgstr ""
 
 #. Accordion header (followed by the state value)
 msgctxt "widget.timeline.colors.state"
 msgid "State"
-msgstr "Állapot"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.timeline.series"
 msgid "Series"
-msgstr "Sorozat"
+msgstr ""
 
