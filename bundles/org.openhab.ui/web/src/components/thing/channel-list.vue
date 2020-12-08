@@ -93,7 +93,7 @@ import ChannelGroup from './channel-group.vue'
 import ChannelLink from './channel-link.vue'
 import ItemForm from '@/components/item/item-form.vue'
 
-import Points from '@/assets/semantics'
+import { Points } from '@/assets/semantics'
 
 export default {
   props: ['thingType', 'thing', 'channelTypes', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems', 'context'],

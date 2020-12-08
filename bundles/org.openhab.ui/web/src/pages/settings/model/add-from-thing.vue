@@ -62,6 +62,7 @@
               You can alter the suggested names and labels as well as the semantic class and related property.<br/><br/>
               The newly created Points will be linked to their respective channels with the default profile
               (you will be able to configure the links individually later if needed).
+              <f7-link class="display-block margin-top-half" @click="switchToExpertMode" color="blue">Expert Mode</f7-link>
             </f7-block-footer>
             <channel-list :thing="selectedThing" :thingType="selectedThingType" :channelTypes="selectedThingChannelTypes"
               :multiple-links-mode="true" :new-items-prefix="(createEquipment) ? newEquipmentItem.name : (parentGroup) ? parentGroup.name : ''"
@@ -90,6 +91,8 @@ import ItemForm from '@/components/item/item-form.vue'
 import Item from '@/components/item/item.vue'
 
 import ThingStatus from '@/components/thing/thing-status-mixin'
+
+import generateTextualDefinition from './generate-textual-definition'
 
 export default {
   mixins: [ThingStatus],
@@ -120,8 +123,30 @@ export default {
         this.selectedThingId = this.thingId
       }
     },
-    toggleSelect (channel) {
+    switchToExpertMode () {
+      try {
+        let parentGroupsForEquipment, parentGroupsForPoints
+        if (this.createEquipment) {
+          parentGroupsForEquipment = (this.parentGroup) ? [this.parentGroup.name] : []
+          parentGroupsForPoints = [this.newEquipmentItem.name]
+        } else {
+          parentGroupsForEquipment = []
+          parentGroupsForPoints = (this.parent) ? [this.parent.item.name] : (this.parentGroup) ? [this.parentGroup.name] : []
+        }
 
+        const itemsDefinition = generateTextualDefinition(this.selectedThing, this.selectedThingChannelTypes, (this.createEquipment) ? this.newEquipmentItem : null, parentGroupsForEquipment, parentGroupsForPoints)
+
+        this.$f7router.navigate('/settings/items/add-from-textual-definition', {
+          props: {
+            textualDefinition: itemsDefinition
+          },
+          pushState: false,
+          reloadCurrent: true
+        })
+      } catch (e) {
+        console.error(e)
+        this.$f7.dialog.alert('There was an error generating the items definition: ' + e)
+      }
     },
     add () {
       if (!this.selectedThingId) {

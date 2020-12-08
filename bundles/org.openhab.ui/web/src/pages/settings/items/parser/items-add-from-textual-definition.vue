@@ -112,9 +112,10 @@ export default {
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue')
   },
+  props: ['textualDefinition'],
   data () {
     return {
-      itemsDsl: '',
+      itemsDsl: this.textualDefinition || '',
       items: [],
       things: [],
       links: [],
