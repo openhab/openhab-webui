@@ -1,0 +1,21 @@
+{
+  "about.title": "About",
+  "about.homePage": "Website",
+  "about.documentation": "Documentation",
+  "about.communityForum": "Community Forum",
+  "about.technicalInformation": "Technical Information",
+  "about.technicalInformation.configurationFolder": "Configuration folder",
+  "about.technicalInformation.userdataFolder": "User data folder",
+  "about.technicalInformation.logsFolder": "Logs folder",
+  "about.technicalInformation.operatingSystem": "Operating system",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} available processors - {ram} available memory",
+  "about.technicalInformation.viewDetails": "View Details",
+  "about.appearanceOptions": "Appearance (for this device only)",
+  "about.reload": "Reload",
+  "about.reload.purgeExplanation1": "Caches and/or service workers are in use to store resources locally and make this app load faster, however it may not reliably detect when it has been updated to a new version.",
+  "about.reload.purgeExplanation2": "Select Purge Caches and Refresh below to clear all caches, unregister service workers and download everything from the server again.",
+  "about.reload.purgeCachesAndRefresh": "Purge Caches and Refresh",
+  "about.reload.confirmPurge": "Purge all application caches and unregister the service workers? This will also reload the page from the server, which might take a few seconds.",
+  "about.reload.reloadApp": "Reload App"
+}
