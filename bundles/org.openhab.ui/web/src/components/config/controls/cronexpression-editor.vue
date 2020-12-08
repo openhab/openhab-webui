@@ -255,7 +255,7 @@
 </style>
 
 <script>
-import Labels from '@/assets/i18n/en/cron.js'
+import Labels from '@/assets/i18n/cron/en.js'
 import cronstrue from 'cronstrue'
 
 export default {

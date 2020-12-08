@@ -7,7 +7,7 @@
               </f7-login-screen-title>
               <f7-list form style="margin-top: 4rem" v-if="i18nReady">
                 <f7-list-item
-                  title="Language"
+                  :title="$t('setupwizard.language')"
                   smart-select
                   :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: true}"
                 >
@@ -21,7 +21,7 @@
                   </select>
                 </f7-list-item>
                 <f7-list-item
-                  title="Region"
+                  :title="$t('setupwizard.region')"
                   smart-select
                   :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: true}"
                 >
@@ -35,7 +35,7 @@
                   </select>
                 </f7-list-item>
                 <f7-list-item
-                  title="Timezone"
+                  :title="$t('setupwizard.timezone')"
                   smart-select
                   :smart-select-params="{openIn: 'popup', searchbar: true, virtualList: true, closeOnSelect: true, virtualListHeight: ($theme.aurora) ? 32 : undefined }"
                 >
@@ -52,8 +52,8 @@
               </f7-list>
               <f7-block class="display-flex flex-direction-column padding">
                 <div>
-                  <f7-button large fill color="blue" text="Begin Setup" @click="beginSetup" />
-                  <f7-button large color="blue" text="Skip Setup" class="margin-top" @click="skipSetup" />
+                  <f7-button large fill color="blue" :text="$t('setupwizard.beginSetup')" @click="beginSetup" />
+                  <f7-button large color="blue" :text="$t('setupwizard.skipSetup')" class="margin-top" @click="skipSetup" />
                 </div>
               </f7-block>
             </f7-tab>
@@ -70,30 +70,27 @@
                 ></f7-link>
                 <f7-login-screen-title>
                   <div class="padding"><f7-icon size="48" color="blue" f7="map_pin_ellipse" /></div>
-                  Set your Location
+                  {{ $t('setupwizard.location.title') }}
                 </f7-login-screen-title>
               </f7-block>
-              <f7-block
-                strong
-              >Would you like to share your home's location?<br />It will help determining data dependent on your position, like sunrise/sunset times or the weather.
-              </f7-block>
+              <f7-block strong>{{ $t('setupwizard.location.header1') }}<br />{{ $t('setupwizard.location.header2') }}</f7-block>
               <f7-list>
-                <parameter-location :value="location" :config-description="{ label: 'Location of your home', name: 'Location' }" @input="(value) => location = value" />
+                <parameter-location :value="location" :config-description="{ label: $t('setupwizard.location.parameterLabel'), name: 'Location' }" @input="(value) => location = value" />
               </f7-list>
               <f7-block class="padding">
                 <f7-row>
                   <f7-col width="100">
-                    <f7-button large icon-f7="location_fill" icon-size="24" @click="getCurrentPosition()" text="Retrieve from Device"></f7-button>
+                    <f7-button large icon-f7="location_fill" icon-size="24" @click="getCurrentPosition()" :text="$t('setupwizard.location.retrieveFromDevice')"></f7-button>
                   </f7-col>
                 </f7-row>
                 <f7-block-footer>
-                  <small>This will ask your device for the permission to use its current location, only to help you fill in your current latitude and longitude above. You can revoke the permission afterwards.</small>
+                  <small v-t="'setupwizard.location.footer'"></small>
                 </f7-block-footer>
               </f7-block>
               <f7-block class="display-flex flex-direction-column padding">
                 <div>
-                  <f7-button v-if="location" large fill color="blue" text="Set Location" @click="setLocation" />
-                  <f7-button large color="blue" text="Configure in Settings Later" class="margin-top" @click="skipLocation" />
+                  <f7-button v-if="location" large fill color="blue" :text="$t('setupwizard.location.setLocation')" @click="setLocation" />
+                  <f7-button large color="blue" :text="$t('setupwizard.location.configureLater')" class="margin-top" @click="skipLocation" />
                 </div>
               </f7-block>
             </f7-tab>
@@ -110,20 +107,16 @@
                 ></f7-link>
                 <f7-login-screen-title>
                   <div class="padding"><f7-icon size="48" color="blue" f7="bag_badge_plus" /></div>
-                  Install Add-ons
+                  {{ $t('setupwizard.addons.title') }}
                 </f7-login-screen-title>
               </f7-block>
-              <f7-block
-                strong
-              >
-                Most of openHAB's functionality is provided by add-ons.
-                Choose which ones you'd like to install right away.<br /><br />
-                <a class="text-color-blue external" target="_blank" href="https://next.openhab.org/addons/">Browse Add-ons on openhab.org</a>
+              <f7-block strong>{{ $t('setupwizard.addons.header1') }}<br />{{ $t('setupwizard.addons.header2') }}<br /><br />
+                <a class="text-color-blue external" target="_blank" href="https://next.openhab.org/addons/" v-t="'setupwizard.addons.browseAddonsOnWebsite'"></a>
               </f7-block>
               <f7-block class="padding">
                 <f7-row>
                   <f7-col width="100">
-                    <f7-button ref="selectAddons" large icon-f7="cart_fill" icon-size="24" @click="selectAddons" text="Select Add-ons to Install"></f7-button>
+                    <f7-button ref="selectAddons" large icon-f7="cart_fill" icon-size="24" @click="selectAddons" :text="$t('setupwizard.addons.selectAddons')"></f7-button>
                   </f7-col>
                 </f7-row>
                 <f7-list class="search-list searchbar-found" ref="selectAddons" media-list v-show="!installingAddons">
@@ -133,13 +126,11 @@
                   </f7-list-item>
                 </f7-list>
                 <f7-block-footer class="margin-bottom">
-                  <small>
-                    To optimize your system resources, install only the add-ons you need! Installing add-ons can take a while. Please be patient and stay on this page until the operation finishes.
-                  </small>
+                  <small v-t="'setupwizard.addons.footer'"></small>
                 </f7-block-footer>
                 <div>
-                  <f7-button v-if="selectedAddons.length > 0" large fill color="blue" :text="`Install ${selectedAddons.length} Add-on${selectedAddons.length > 1 ? 's' : ''}`" @click="installAddons" />
-                  <f7-button large color="blue" text="Install Add-ons Later" class="margin-top" @click="skipAddons" />
+                  <f7-button v-if="selectedAddons.length > 0" large fill color="blue" :text="$tc('setupwizard.addons.installAddons', selectedAddons.length)" @click="installAddons" />
+                  <f7-button large color="blue" :text="$t('setupwizard.addons.installLater')" class="margin-top" @click="skipAddons" />
                 </div>
               </f7-block>
             </f7-tab>
@@ -155,10 +146,10 @@
                   tab-link-active
                   style="visibility: hidden"
                 ></f7-link>
-                <f7-login-screen-title class="text-color-gray">Please Wait...</f7-login-screen-title>
+                <f7-login-screen-title class="text-color-gray">{{ $t('setupwizard.addons.pleaseWait') }}</f7-login-screen-title>
                 <div class="display-flex justify-content-center flex-direction-column text-align-center text-color-gray" style="margin-top: 4rem">
                   <div class="display-flex justify-content-center margin-bottom"><f7-preloader size="24"></f7-preloader></div>
-                  <div>It may take a few minutes to install the add-ons you selected.</div>
+                  <div v-t="'setupwizard.addons.waitMessage'"></div>
                 </div>
               </f7-block>
             </f7-tab>
@@ -174,12 +165,12 @@
                   color="blue"
                   tab-link-active
                 ></f7-link>-->
-                <f7-login-screen-title>Welcome to openHAB!</f7-login-screen-title>
+                <f7-login-screen-title>{{ $t('setupwizard.welcome.title') }}</f7-login-screen-title>
               </f7-block>
 
               <f7-block class="display-flex flex-direction-column padding" style="margin-top: 4rem">
                 <div>
-                  <f7-button large color="blue" text="Get Started" @click="finish" />
+                  <f7-button large color="blue" :text="$t('setupwizard.welcome.getStarted')" @click="finish" />
                 </div>
               </f7-block>
             </f7-tab>
@@ -208,7 +199,10 @@
 </style>
 
 <script>
+import i18n from '@/components/i18n-mixin'
+import { loadLocaleMessages } from '@/js/i18n'
 export default {
+  mixins: [i18n],
   components: {
     'parameter-location': () => import('@/components/config/controls/parameter-location.vue')
   },
@@ -228,6 +222,23 @@ export default {
       installingAddons: false
     }
   },
+  i18n: {
+    messages: loadLocaleMessages(require.context('@/assets/i18n/setup-wizard'))
+  },
+  computed: {
+    locale () {
+      if (!this.language) return null
+      if (!this.region) return this.language
+      return this.language + '-' + this.region.toLowerCase()
+    }
+  },
+  watch: {
+    locale (val) {
+      this.$store.commit('setLocale', this.locale)
+      this.updateLocale()
+      this.$i18n.locale = val
+    }
+  },
   methods: {
     beginSetup () {
       this.$oh.api.put('/rest/services/org.openhab.i18n/config', {
@@ -235,6 +246,15 @@ export default {
         region: this.region,
         timezone: this.timezone
       }).then(() => {
+        this.$f7.emit('localeChange')
+        if (this.autocompleteAddons) {
+          this.autocompleteAddons.params.pageTitle = this.$t('setupwizard.addons.selectAddons')
+          this.autocompleteAddons.params.searchbarPlaceholder = this.$t('setupwizard.addons.selectAddons.placeholder')
+          this.autocompleteAddons.params.searchbarDisableText = this.$t('dialogs.cancel')
+          this.autocompleteAddons.params.popupCloseLinkText = this.$t('dialogs.close')
+          this.autocompleteAddons.params.pageBackLinkText = this.$t('dialogs.back')
+          this.autocompleteAddons.params.notFoundText = this.$t('dialogs.search.nothingFound')
+        }
         this.$refs.location.show()
       })
     },
@@ -245,18 +265,17 @@ export default {
         }, (error) => {
           this.$f7.dialog.alert(
             error.message,
-            'Error while retrieving current position'
+            this.$t('setupwizard.location.retrieveFromDevice.error')
           )
         })
       } else {
-        this.$f7.dialog.alert('Geolocation is not available', 'Sorry')
+        this.$f7.dialog.alert(this.$t('setupwizard.location.retrieveFromDevice.notAvailable.message'), this.$t('setupwizard.location.retrieveFromDevice.notAvailable.title'))
       }
     },
     skipSetup () {
       const self = this
       this.$f7.dialog.confirm(
-        `Are you sure? Setup saves you time by performing just a few basic configuration tasks. You should only skip it if you know what you're doing.`,
-        'Skip Setup',
+        this.$t('setupwizard.skipSetup.confirm.message'), this.$t('setupwizard.skipSetup.confirm.title'),
         () => {
           self.$f7.panel.get('left').enableVisibleBreakpoint()
           this.$nextTick(() => {
@@ -287,7 +306,7 @@ export default {
       const addonsCount = this.selectedAddons.length
       let progress = 0
 
-      const progressDialog = this.$f7.dialog.progress('Installing add-ons...', progress)
+      const progressDialog = this.$f7.dialog.progress(this.$t('setupwizard.addons.installing'), progress)
 
       const checkAddonStatus = function (addon) {
         return new Promise((resolve, reject) => {
@@ -316,11 +335,11 @@ export default {
         }
 
         // install next add-on
-        progressDialog.setText(`${addonsCount - self.selectedAddons.length + 1} of ${addonsCount}`)
+        progressDialog.setText(self.$t('setupwizard.addons.progress', { current: addonsCount - self.selectedAddons.length + 1, total: addonsCount }))
         progressDialog.setProgress(((addonsCount - self.selectedAddons.length + 1) / addonsCount) * 100)
         const addon = self.selectedAddons.shift()
         console.log('Installing add-on: ' + addon.id)
-        progressDialog.setTitle(`Installing ${addon.label}...`)
+        progressDialog.setTitle(self.$t('setupwizard.addons.installingAddon', { addon: addon.label }))
 
         self.$oh.api.post('/rest/addons/' + addon.id + '/install', {}, 'text').then((data) => {
           const checkTimer = setInterval(() => {
@@ -343,7 +362,7 @@ export default {
     finish () {
       this.$f7.panel.get('left').enableVisibleBreakpoint()
       this.$nextTick(() => {
-        this.$f7.views.main.router.navigate('/', { transition: 'f7-cover-v', clearPreviousHistory: true })
+        this.$f7.views.main.router.navigate('/', { transition: 'f7-circle', clearPreviousHistory: true })
       })
     },
     pageBeforeIn () {
@@ -390,8 +409,8 @@ export default {
       const self = this
       this.autocompleteAddons = this.$f7.autocomplete.create({
         openIn: 'popup',
-        pageTitle: 'Select Add-ons to Install',
-        searchbarPlaceholder: 'Try: astro, mqtt, hue, knx...',
+        pageTitle: this.$t('setupwizard.addons.selectAddons'),
+        searchbarPlaceholder: this.$t('setupwizard.addons.selectAddons.placeholder'),
         openerEl: this.$refs.selectAddons,
         multiple: true,
         requestSourceOnOpen: true,

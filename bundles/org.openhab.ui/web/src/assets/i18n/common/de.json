@@ -10,6 +10,7 @@
   "dialogs.search.items": "Items Suchen",
   "dialogs.search.things": "Things Suchen",
   "dialogs.search.rules": "Rules Suchen",
+  "dialogs.search.nothingFound": "Nichts gefunden",
   "home.overview.title": "Übersicht",
   "home.overview.tab": "Übersicht",
   "home.overview.button.documentation": "Dokumentation",
