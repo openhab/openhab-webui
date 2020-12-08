@@ -3,927 +3,942 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: el\n"
-"X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File: /master/bundles/org.openhab.ui.habpanel/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File-ID: 264\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
-"PO-Revision-Date: 2019-06-16 09:54\n"
+"PO-Revision-Date: 2020-12-08 20:46\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
 msgid "Save"
-msgstr "Αποθήκευση"
+msgstr ""
 
 #. Run button in the dashboard designer
 msgctxt "designer.run"
 msgid "Run"
-msgstr "Εκτέλεση"
+msgstr ""
 
 #. Add widget button in the dashboard designer
 msgctxt "designer.addwidget"
 msgid "Add Widget"
-msgstr "Προσθήκη Widget"
+msgstr ""
 
 #. Tutorial text with arrow when on an empty dashboard
 msgctxt "designer.addwidget.hint"
 msgid "Add some widgets"
-msgstr "Προσθέστε κάποια widget"
+msgstr ""
 
 #. Header of the custom widget section (beware, it might overlap the cogs icon on the right)
 msgctxt "designer.addwidget.customwidgets"
 msgid "Custom widgets"
-msgstr "Προσαρμοσμένα widget"
+msgstr ""
 
 #. Open widget gallery
 msgctxt "designer.addwidget.getmore"
 msgid "Get more..."
-msgstr "Λήψη περισσότερων..."
+msgstr ""
 
 #. Tooltip when hovering the "Get more" menu entry
 msgctxt "designer.addwidget.getmore.tooltip"
 msgid "Open the widget gallery to import more widgets"
-msgstr "Ανοίξτε τη συλλογή widget για να εισαγάγετε περισσότερα"
+msgstr ""
 
 #. Edit option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.edit"
 msgid "Edit..."
-msgstr "Επεξεργασία..."
+msgstr ""
 
 #. Copy/move option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.copymove"
 msgid "Copy/move to..."
-msgstr "Αντιγραφή/μετακίνηση σε..."
+msgstr ""
 
 #. Delete option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.delete"
 msgid "Delete"
-msgstr "Διαγραφή"
+msgstr ""
 
 #. Title of copy/move widget dialog
 msgctxt "designer.copymove.header"
 msgid "Copy/move {{widgetName}}"
-msgstr "Αντιγραφή/μετακίνηση {{widgetName}}"
+msgstr ""
 
 #. Alongside the dropdown dashboard selection
 msgctxt "designer.copymove.todashboard"
 msgid "To dashboard"
-msgstr "Στο πινακίδιο"
+msgstr ""
 
 #. Move button
 msgctxt "designer.copymove.move"
 msgid "Move"
-msgstr "Μετακίνηση"
+msgstr ""
 
 #. Copy button
 msgctxt "designer.copymove.copy"
 msgid "Copy"
-msgstr "Αντιγραφή"
+msgstr ""
 
 #. Default name of a newly created widget
 msgctxt "designer.newwidget.defaultname"
 msgid "New Widget"
-msgstr "Νέο Widget"
+msgstr ""
 
 msgctxt "designer.serversavefailed"
 msgid "Server save failed!"
-msgstr "Απέτυχε η αποθήκευση στο διακομιστή!"
+msgstr ""
 
 #. Title of the dashboard settings dialog
 msgctxt "dashboard.settings.dialog.title"
 msgid "Dashboard Settings"
-msgstr "Ρυθμίσεις πινακιδίου"
+msgstr ""
 
 #. Tab header
 msgctxt "dashboard.settings.tile"
 msgid "Menu tile"
-msgstr "Πλακίδιο μενού"
+msgstr ""
 
 #. Textbox header
 msgctxt "dashboard.settings.tile.background_image_url"
 msgid "Background Image URL"
-msgstr "Διεύθυνση URL εικόνας φόντου"
+msgstr ""
 
 #. Color picker header
 msgctxt "dashboard.settings.tile.title_text_color"
 msgid "Title Text color"
-msgstr "Χρώμα κειμένου τίτλου"
+msgstr ""
 
 #. Checkbox header
 msgctxt "dashboard.settings.tile.click_feedback"
 msgid "Click feedback"
-msgstr "Κλικ στο feedback"
+msgstr ""
 
 #. Checkbox label
 msgctxt "dashboard.settings.tile.click_feedback.description"
 msgid "Don't brighten tile on click/tap"
-msgstr "Να μη φωτίζεται το πλακίδιο όταν το πατάτε"
+msgstr ""
 
 #. Tab header
 msgctxt "dashboard.settings.advanced"
 msgid "Advanced"
-msgstr "Για προχωρημένους"
+msgstr ""
 
 #. Alert display at the top
 msgctxt "dashboard.settings.advanced.warning"
 msgid "These options are currently experimental, unstable or targeted at advanced users! Use at your own risk."
-msgstr "Αποτελούν πειραματικές επιλογές με τυχόν αστάθειες και απευθύνεται σε προχωρημένους χρήστες! Χρησιμοποιήστε τις με δική σας ευθύνη."
+msgstr ""
 
 #. Tab header
 msgctxt "dashboard.settings.customwidgets"
 msgid "Custom widgets"
-msgstr "Προσαρμοσμένα widget"
+msgstr ""
 
 #. Alert displayed at the top
 msgctxt "dashboard.settings.customwidgets.warning"
 msgid "This feature is currently experimental, and targeted at advanced users! Use at your own risk."
-msgstr "Είναι μια πειραματική λειτουργία προς το παρόν και απευθύνεται σε προχωρημένους χρήστες! Χρησιμοποιήστε τη με δική σας ευθύνη."
+msgstr ""
 
 #. Checkbox header
 msgctxt "dashboard.settings.customwidgets.usecustomwidget"
 msgid "Use a custom widget"
-msgstr "Χρήση ενός προσαρμοσμένου widget"
+msgstr ""
 
 #. Dropdown header
 msgctxt "dashboard.settings.customwidgets.customwidget"
 msgid "Custom Widget"
-msgstr "Προσαρμοσμένο widget"
+msgstr ""
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.tile"
 msgid "Main menu tile"
-msgstr "Πλακίδιο κυρίως μενού"
+msgstr ""
 
 #. Checkbox label
 msgctxt "dashboard.settings.customwidgets.tile.description"
 msgid "Replace the tile contents by a custom widget"
-msgstr "Αντικαταστήστε τα περιεχόμενα του πλακιδίου με ένα προσαρμοσμένο widget"
+msgstr ""
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.drawer"
 msgid "Drawer"
-msgstr "Συρταρωτό μενού"
+msgstr ""
 
 #. Checkbox label
 msgctxt "dashboard.settings.customwidgets.drawer.description"
 msgid "Replace the contents of the drawer menu by a custom widget"
-msgstr "Αντικαταστήστε το αυτόματο περιεχόμενο του συρταρωτού μενού με ένα προσαρμοσμένο widget"
+msgstr ""
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.header"
 msgid "Dashboard header"
-msgstr "Κεφαλίδα πινακιδίου"
+msgstr ""
 
 #. Checkbox label
 msgctxt "dashboard.settings.customwidgets.header.description"
 msgid "Replace the contents of the dashboard header by a custom widget"
-msgstr "Αντικαταστήστε τα περιεχόμενα της κεφαλίδας πινακιδίου με ένα προσαρμοσμένο widget"
+msgstr ""
 
 #. Displayed in the item picker when no item selected
 msgctxt "itempicker.placeholder"
 msgid "Search or select an openHAB item"
-msgstr "Αναζήτηση ή επιλογή ενός στοιχείου openHAB"
+msgstr ""
 
 #. Icon picker dropdown placeholder
 msgctxt "iconpicker.selecticonset"
 msgid "Select icon set"
-msgstr "Επιλέξτε σετ εικονιδίων"
+msgstr ""
 
 #. Icon picker dropdown entry
 msgctxt "iconpicker.customicon"
 msgid "Custom icon"
-msgstr "Προσαρμοσμένο εικονίδιο"
+msgstr ""
 
 #. Icon picker dropdown entry
 msgctxt "iconpicker.customurl"
 msgid "Custom URL"
-msgstr "Προσαρμοσμένη διεύθυνση URL"
+msgstr ""
 
 #. Icon picker dropdown entry
 msgctxt "iconpicker.none"
 msgid "(none)"
-msgstr "(κανένα)"
+msgstr ""
 
 #. Appears when focusing the icon textbox when the "Custom icon" iconset is selected
 msgctxt "iconpicker.customicontooltip"
 msgid "Type the name of a <a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'>registered icon</a> (only SVG supported)<br />Examples: <em>switch</em>, <em>temperature</em> or an additional icon in your configuration's <code>icons/classic</code> folder"
-msgstr "Πληκτρολογήστε το όνομα ενός <a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'>εγγεγραμμένου εικονιδίου</a> (υποστηρίζεται μόνο SVG)<br /> Παραδείγματα : <em>switch</em>, <em>temperature</em> ή ένα πρόσθετο εικονίδιο στο φάκελο <code>icons/classic</code>"
+msgstr ""
 
 #. Screen title
 msgctxt "settings.header"
 msgid "Settings"
-msgstr "Ρυθμίσεις"
+msgstr ""
 
 #. Header of the storage section
 msgctxt "settings.storage.header"
 msgid "Current storage configuration"
-msgstr "Τρέχουσες παράμετροι αποθήκευσης"
+msgstr ""
 
 #. Radio button for local storage
 msgctxt "settings.storage.localstorage"
 msgid "Local storage"
-msgstr "Τοπική αποθήκευση"
+msgstr ""
 
 #. Explanation of the "local storage only" option
 msgctxt "settings.storage.localstorage.hint"
 msgid "The configuration is saved for this browser and device only. It will be kept as long as you don't clean up the browser's historical data."
-msgstr "Η διαμόρφωση αποθηκεύεται μόνο σε αυτό το πρόγραμμα περιήγησης αυτής της συσκευής. Θα διατηρηθεί για όσο διάστημα δεν καθαρίσετε το ιστορικό του προγράμματος περιήγησης."
+msgstr ""
 
 #. Link below the "local storage" option
 msgctxt "settings.storage.localstorage.edit"
 msgid "Edit the local panel configuration (experts only)"
-msgstr "Επεξεργασία της τοπικής διαμόρφωσης σε αυτό τον πίνακα (μόνο για προχωρημένους)"
+msgstr ""
 
 #. Prefix of a panel configuration before its name
 msgctxt "settings.storage.panelconfiguration"
 msgid "Panel configuration:"
-msgstr "Διαμόρφωση πίνακα:"
+msgstr ""
 
 #. Prefix of the last synced line, before the date
 msgctxt "settings.storage.panelconfiguration.lastsynced"
 msgid "Last synced on"
-msgstr "Τελευταίος συγχρονισμός στις"
+msgstr ""
 
 #. Displayed before the list of dashboard the panel configuration contains
 msgctxt "settings.storage.panelconfiguration.contains"
 msgid "Contains:"
-msgstr "Περιέχει:"
+msgstr ""
 
 #. Link to create a panel configuration from the current configuration
 msgctxt "settings.storage.panelconfiguration.save"
 msgid "Save the current configuration to a new panel configuration"
-msgstr "Αποθηκεύστε τις τρέχουσες παραμέτρους σε μια νέα διαμόρφωση πίνακα"
+msgstr ""
 
 #. Title of the dialog box when creating a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.title"
 msgid "New panel configuration"
-msgstr "Νέα διαμόρφωση πίνακα"
+msgstr ""
 
 #. Message of the dialog box when creating a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.message"
 msgid "Please choose a name for the new panel configuration (letters and digits only please):"
-msgstr "Παρακαλώ συμπληρώστε ένα όνομα για τη νέα διαμόρφωση πίνακα (μόνο γράμματα και ψηφία):"
+msgstr ""
+
+#. Title of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.title"
+msgid "Remove panel configuration"
+msgstr ""
+
+#. Message of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
+msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
+msgstr ""
+
+#. Message of the dialog box when switching from local storage to a server-based panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
+msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
+msgstr ""
 
 #. Panel name (section header)
 msgctxt "settings.panel.name"
 msgid "Panel name"
-msgstr "Όνομα πίνακα"
+msgstr ""
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.name.hint"
 msgid "Replaces 'HABPanel' in the side drawer when set"
-msgstr "Αντικαθιστά το 'HABPanel' στο πλευρικό συρταρωτό μενού, όταν έχει ρυθμιστεί"
+msgstr ""
 
 #. Appearance (section header)
 msgctxt "settings.panel.appearance.header"
 msgid "Appearance"
-msgstr "Εμφάνιση"
+msgstr ""
 
 #. Dropown menu header
 msgctxt "settings.panel.appearance.theme"
 msgid "Theme"
-msgstr "Θέμα"
+msgstr ""
 
 #. Alert banner displayed when the browsers doesn't support themes (CSS variables)
 msgctxt "settings.panel.appearance.theme.not_supported"
 msgid "Themes are not compatible with this browser."
-msgstr "Τα Θέματα δεν είναι συμβατά με αυτό το πρόγραμμα περιήγησης."
+msgstr ""
 
 #. Setting header
 msgctxt "settings.panel.appearance.additional_stylesheet"
 msgid "Additional stylesheet (optional)"
-msgstr "Επιπλέον stylesheet (προαιρετικά)"
+msgstr ""
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.additional_stylesheet.hint"
 msgid "Relative URL only; example: /static/example.css"
-msgstr "Μόνο σχετική διεύθυνση URL. Παράδειγμα: /static/example.css"
+msgstr ""
 
 #. Setting header
 msgctxt "settings.panel.appearance.background_image"
 msgid "Background image (optional)"
-msgstr "Εικόνα φόντου (προαιρετικά)"
+msgstr ""
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.background_image.hint"
 msgid "Example: //source.unsplash.com/random"
-msgstr "Παράδειγμα: //source.unsplash.com/random"
+msgstr ""
 
 #. Setting header
 msgctxt "settings.panel.appearance.drawer_heading_image"
 msgid "Drawer heading image (optional)"
-msgstr "Εικόνα κεφαλίδας στο συρταρωτό μενού (προαιρετικό)"
+msgstr ""
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.drawer_heading_image.hint"
 msgid "Example: //via.placeholder.com/265x95"
-msgstr "Παράδειγμα: //via.placeholder.com/265x95"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.prevent_scrolling"
 msgid "Prevent scrolling (when not editing)"
-msgstr "Αποτροπή κύλισης (όταν δεν γίνεται επεξεργασία)"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.hide_drawer_footer"
 msgid "Hide the drawer's footer"
-msgstr "Απόκρυψη υποσέλιδου στο συρταρωτό μενού"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.hide_toolbar_buttons"
 msgid "Hide toolbar buttons:"
-msgstr "Απόκρυψη κουμπιών στη γραμμή εργαλείων:"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.show_clock"
 msgid "Show a clock on the header"
-msgstr "Εμφανίζει ένα ρολόι στην κεφαλίδα"
+msgstr ""
 
 #. Textbox setting header, only displayed when the "Show a clock on the header" option is checked
 msgctxt "settings.panel.appearance.show_clock.header_format"
 msgid "Header clock format"
-msgstr "Μορφή ρολογιού κεφαλίδας"
+msgstr ""
 
 #. Textbox placeholder, only displayed when the "Show a clock on the header" option is checked
 msgctxt "settings.panel.appearance.show_clock.header_format.hint"
 msgid "Default: shortTime, use AngularJS date format"
-msgstr "Προεπιλογή: shortTime, χρήση μορφής ημερομηνίας AngularJS"
+msgstr ""
 
 #. Custom widgets settings (section header)
 msgctxt "settings.panel.customwidgets.header"
 msgid "Custom Widgets"
-msgstr "Προσαρμοσμένα widget"
+msgstr ""
 
 #. Big "manage" button label (a > suffix is added)
 msgctxt "settings.panel.customwidgets.manage"
 msgid "Manage"
-msgstr "Διαχείριση"
+msgstr ""
 
 #. Voice support (section header) - formerly (<=2.2.0) : "Voice feedback"
 msgctxt "settings.panel.voicesupport.header"
 msgid "Voice Support"
-msgstr "Φωνητική υποστήριξη"
+msgstr ""
 
 #. Dropdown header - formerly (<=2.2.0) : "Voice"
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice"
 msgid "Speech synthesis voice"
-msgstr "Σύνθεση φωνής ομιλίας"
+msgstr ""
 
 #. Displayed below the voice dropdown
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice.hint"
 msgid "Available voices depend on the operating system and browser environments."
-msgstr "Οι διαθέσιμες φωνές εξαρτώνται από το λειτουργικό σύστημα και το πρόγραμμα περιήγησης."
+msgstr ""
 
 #. Test button below the voice selection - make the voice say "habpanel 1 2 3"
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice.test"
 msgid "Test"
-msgstr "Δοκιμή"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.voicesupport.floating_speech_button"
 msgid "Display a floating speech button at the bottom of the screen"
-msgstr "Εμφάνιση ενός πλωτού κουμπιού ομιλίας στο κάτω μέρος της οθόνης"
+msgstr ""
 
 #. Dropdown header
 msgctxt "settings.panel.voicesupport.speech_synthesis_item"
 msgid "Speak the new value of the following item when it changes:"
-msgstr "Εκφώνηση της νέας τιμής του ακόλουθου αντικειμένου, όταν αυτή αλλάζει:"
+msgstr ""
 
 #. Section header
 msgctxt "settings.panel.dashboard_control.header"
 msgid "Switch dashboard with item value"
-msgstr "Αλλαγή του πινακιδίου με τιμή αντικειμένου"
+msgstr ""
 
 #. Dropdown header
 msgctxt "settings.panel.dashboard_control.item"
 msgid "When this item changes to a dashboard's name, switch to it:"
-msgstr "Όταν αλλάξει αυτό το αντικείμενο με τιμή το όνομα ενός πινακιδίου, τότε να μεταβεί σε αυτό:"
+msgstr ""
 
 #. Local panel configuration editor header
 msgctxt "settings.localconfig.title"
 msgid "Local panel configuration editor"
-msgstr "Επεξεργασία τοπικής διαμόρφωσης πίνακα"
+msgstr ""
 
 #. Displayed in a tooltip when hovering the exclamation mark in the local panel config editor
 msgctxt "settings.localconfig.warning"
 msgid "This is the raw configuration object representing your current configuration. Be careful while editing it by hand!"
-msgstr "Αυτό είναι το ακατέργαστο αντικείμενο παραμέτρων που αντιπροσωπεύει την τρέχουσα διαμόρφωση. Να είστε προσεκτικοί κατά τη χειροκίνητη επεξεργασία!"
+msgstr ""
 
 #. Blue button
 msgctxt "settings.localconfig.import"
 msgid "Import"
-msgstr "Εισαγωγή"
+msgstr ""
 
 #. Blue button
 msgctxt "settings.localconfig.export"
 msgid "Export"
-msgstr "Εξαγωγή"
+msgstr ""
 
 #. Default label for the white button on the right
 msgctxt "settings.localconfig.copy"
 msgid "Copy"
-msgstr "Αντιγραφή"
+msgstr ""
 
 #. Label displayed on the button for a few seconds after a successful copy to clipboard
 msgctxt "settings.localconfig.copied"
 msgid "Copied!"
-msgstr "Αντιγράφηκε!"
+msgstr ""
 
 #. Default label for the red button on the right
 msgctxt "settings.localconfig.save"
 msgid "Save"
-msgstr "Αποθήκευση"
+msgstr ""
 
 #. Label displayed on the button for a few seconds after a successful save
 msgctxt "settings.localconfig.saved"
 msgid "Saved!"
-msgstr "Αποθηκεύτηκε!"
+msgstr ""
 
 #. Label displayed for a few seconds on the copy or save button if an error occurred
 msgctxt "settings.localconfig.failed"
 msgid "FAILED!"
-msgstr "ΑΠΕΤΥΧΕ!"
+msgstr ""
 
 #. Displayed in a dialog box
 msgctxt "settings.localconfig.error.nodashboardsfound"
 msgid "No dashboards found!"
-msgstr "Δε βρέθηκαν πινακίδια!"
+msgstr ""
 
 #. Title of a a dialog box
 msgctxt "settings.localconfig.parsingerror.dialog.title"
 msgid "Error"
-msgstr "Σφάλμα"
+msgstr ""
 
 #. Message in a dialog box
 msgctxt "settings.localconfig.parsingerror.dialog.message"
 msgid "Configuration parsing error, nothing has been modified: "
-msgstr "Καμία τροποποίηση λόγω σφάλματος κατά την ανάλυση των παραμέτρων: "
+msgstr ""
 
 #. Title of a a dialog box
 msgctxt "settings.localconfig.importerror.dialog.title"
 msgid "Error"
-msgstr "Σφάλμα"
+msgstr ""
 
 #. Message in a dialog box
 msgctxt "settings.localconfig.importerror.dialog.message"
 msgid "Problem while importing: "
-msgstr "Πρόβλημα κατά την εισαγωγή: "
+msgstr ""
 
 #. Screen title
 msgctxt "customwidgets.list.header"
 msgid "Custom widgets"
-msgstr "Προσαρμοσμένα widget"
+msgstr ""
 
 #. Prefix displayed before the author's name
 msgctxt "customwidgets.list.byauthor"
 msgid "by"
-msgstr "από"
+msgstr ""
 
 #. Displayed in a tooltip when hovering the icon indicating a globally provisioned widget
 msgctxt "customwidgets.list.globallyprovisioned.hint"
 msgid "This widget was provisioned globally via a bundle. It cannot be modified, but may be cloned to an user-defined widget with another name."
-msgstr "Αυτό το widget παρέχεται σε παγκόσμιο επίπεδο μέσω ενός πακέτου. Δεν μπορεί να τροποποιηθεί, αλλά μπορεί να κλωνοποιηθεί σε ένα προσαρμοσμένο widget από το χρήστη, με διαφορετικό αναγνωριστικό."
+msgstr ""
 
 #. Displayed in a tooltip when hovering the icon indicating a user defined widget
 msgctxt "customwidgets.list.userdefined.hint"
 msgid "This widget has been defined manually in this panel configuration and can be modified."
-msgstr "Αυτό το widget έχει αλλαγή ρυθμίσεων σε αυτή τη διαμόρφωση πίνακα και μπορεί να τροποποιηθεί."
+msgstr ""
 
 #. Custom widget context menu entry - clone a globally-provisioned widget
 msgctxt "customwidgets.list.contextmenu.clone"
 msgid "Clone widget..."
-msgstr "Κλώνοποίηση widget..."
+msgstr ""
 
 #. Custom widget context menu entry - downloads a widget's .widget.json file
 msgctxt "customwidgets.list.contextmenu.exporttofile"
 msgid "Export to file"
-msgstr "Εξαγωγή σε αρχείο"
+msgstr ""
 
 #. Custom widget context menu entry - opens a forum topic or GitHub readme
 msgctxt "customwidgets.list.contextmenu.openhelp"
 msgid "Open Help"
-msgstr "Άνοιγμα Βοήθειας"
+msgstr ""
 
 #. Custom widget context menu entry - update the widget from its source
 msgctxt "customwidgets.list.contextmenu.update"
 msgid "Update..."
-msgstr "Ενημέρωση..."
+msgstr ""
 
 #. Blue button opening a dialog
 msgctxt "customwidgets.list.newwidget"
 msgid "New widget"
-msgstr "Νέο widget"
+msgstr ""
 
 #. Blue button with a dropdown menu
 msgctxt "customwidgets.list.importwidget"
 msgid "Import widget"
-msgstr "Εισαγωγή widget"
+msgstr ""
 
 #. Import button menu entry - opens a dialog
 msgctxt "customwidgets.list.importwidget.fromfile"
 msgid "Import from file..."
-msgstr "Εισαγωγή από αρχείο..."
+msgstr ""
 
 #. Import button menu entry - opens a dialog
 msgctxt "customwidgets.list.importwidget.fromgallery"
 msgid "Import from gallery..."
-msgstr "Εισαγωγή από τη συλλογή..."
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.add.dialog.title"
 msgid "New custom widget"
-msgstr "Νέο προσαρμοσμένο widget"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.add.dialog.message"
 msgid "Please choose a short name as an identifier for your widget (for example, 'window-shutter=up-down-button, 'weather-forecast' etc.). If a widget with the same identifier already exists, it will be replaced!"
-msgstr "Επιλέξτε ένα σύντομο όνομα ως αναγνωριστικό για το widget (για παράδειγμα, 'window-shutter=up-down-button, 'weather-forecast' κτλ.). Εάν υπάρχει ήδη ένα widget με το ίδιο αναγνωριστικό, αυτό θα αντικατασταθεί!"
+msgstr ""
 
 #. Error message, displayed in an alert box
 msgctxt "customwidgets.list.import.nojson"
 msgid "The file must have a .json extension!"
-msgstr "Το αρχείο πρέπει να έχει κατάληξη .json!"
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.import.dialog.title"
 msgid "Import widget"
-msgstr "Εισαγωγή widget"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.import.dialog.message"
 msgid "Please confirm or change the identifier of your widget (avoid spaces and special chars!). If a widget with the same identifier already exists, it will be replaced!"
-msgstr "Παρακαλώ να επιβεβαιώσετε ή να αλλάξετε το αναγνωριστικό του widget (αποφύγετε διαστήματα και ειδικούς χαρακτήρες!). Εάν υπάρχει ήδη ένα widget με το ίδιο αναγνωριστικό, αυτό θα αντικατασταθεί!"
+msgstr ""
 
 #. Prefix of an error message - followed by a technical exception message
 msgctxt "customwidgets.list.import.error"
 msgid "Widget import error: "
-msgstr "Σφάλμα εισαγωγής widget: "
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.update.dialog.title"
 msgid "Update widget"
-msgstr "Ενημέρωση widget"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.update.dialog.message"
 msgid "This will update widget <id> from <source_url>. Any changes you made will be overwritten! Continue?"
-msgstr "Αυτό θα ενημερώσει το widget <id> από το <source_url>. Οι αλλαγές που τυχόν κάνατε θα αντικατασταθούν! Συνέχεια;"
+msgstr ""
 
 #. Alert banner message
 msgctxt "customwidgets.list.update.error.notemplatefound"
 msgid "Couldn't update widget <id> from <source_url>: no template found"
-msgstr "Δεν ήταν δυνατή η ενημέρωση του widget <id> από το <source_url>: δεν βρέθηκε πρότυπο"
+msgstr ""
 
 #. Alert banner message
 msgctxt "customwidgets.list.update.error.unknown"
 msgid "Couldn't update widget <id> from <source_url>: "
-msgstr "Δεν ήταν δυνατή η ενημέρωση του widget <id> από το <source_url>: "
+msgstr ""
 
 #. Alert banner message
 msgctxt "customwidgets.list.update.success"
 msgid "Widget <id> updated successfully from <source_url>"
-msgstr "Επιτυχής ενημέρωση του widget <id> από <source_url>"
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.delete.dialog.title"
 msgid "Remove widget"
-msgstr "Αφαίρεση widget"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.delete.dialog.message"
 msgid "Please confirm you want to delete this widget: "
-msgstr "Παρακαλώ επιβεβαιώστε ότι θέλετε να διαγράψετε αυτό το widget: "
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.clone.dialog.title"
 msgid "Clone widget"
-msgstr "Κλωνοποίηση widget"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.clone.dialog.message"
 msgid "This will clone the globally provisioned widget: <id> to be modified as part of the panel configuration. Enter an unique identifier below - it must be different from the widget being cloned, and should avoid spaces and special chars. If an user-defined widget with the same identifier already exists, it will be replaced!"
-msgstr "Αυτό θα κλωνοποιήσει το παρεχόμενο widget: <id> για να τροποποιηθεί ως μέρος της διαμόρφωσης του πίνακα. Εισαγάγετε ένα μοναδικό αναγνωριστικό παρακάτω (θα πρέπει να είναι διαφορετικό από το παρεχόμενο widget) και θα πρέπει να αποφεύγετε διαστήματα και ειδικούς χαρακτήρες. Εάν βρεθεί widget που έχει οριστεί από το χρήστη με το ίδιο αναγνωριστικό, θα αντικατασταθεί!"
+msgstr ""
 
 #. Screen title, followed by the widget name - beware of size!
 msgctxt "customwidgets.designer.heading"
 msgid "Widget:"
-msgstr "Widget:"
+msgstr ""
 
 #. Save button on the right, default label - can be hidden on phones
 msgctxt "customwidgets.designer.save"
 msgid "Save"
-msgstr "Αποθήκευση"
+msgstr ""
 
 #. Save button on the right, displayed for a few seconds after a save - can be hidden on phones
 msgctxt "customwidgets.designer.saved"
 msgid "Saved!"
-msgstr "Αποθηκεύτηκε!"
+msgstr ""
 
 #. Tab header
 msgctxt "customwidgets.designer.code"
 msgid "Code"
-msgstr "Κώδικας"
+msgstr ""
 
 #. Tab header
 msgctxt "customwidgets.designer.settings"
 msgid "Settings"
-msgstr "Ρυθμίσεις"
+msgstr ""
 
 #. Section header in the Settings tab
 msgctxt "customwidgets.designer.settings.general"
 msgid "General settings"
-msgstr "Γενικές ρυθμίσεις"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.general.display_name"
 msgid "Display name"
-msgstr "Εμφανιζόμενο όνομα"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.general.author"
 msgid "Author"
-msgstr "Συγγραφέας"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.general.description"
 msgid "Description"
-msgstr "Περιγραφή"
+msgstr ""
 
 #. Section header in the Settings tab
 msgctxt "customwidgets.designer.settings.config"
 msgid "Configuration settings"
-msgstr "Ρυθμίσεις διαμόρφωσης"
+msgstr ""
 
 #. Displayed in small text below the section header, with an information icon
 msgctxt "customwidgets.designer.settings.config.warning"
 msgid "Beware: always bear in mind instances of this widget might be existing when altering configuration settings!"
-msgstr "Προσοχή: Να θυμάστε πάντα ότι ενδέχεται να υπάρχουν αναπτύξεις αυτού του widget όταν αλλάζετε ρυθμίσεις διαμόρφωσης!"
+msgstr ""
 
 #. Button label
 msgctxt "customwidgets.designer.settings.config.add"
 msgid "Add setting"
-msgstr "Προσθήκη ρύθμισης"
+msgstr ""
 
 #. Dropdown header
 msgctxt "customwidgets.designer.settings.config.type"
 msgid "Type"
-msgstr "Τύπος"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.string"
 msgid "String"
-msgstr "Συμβολοσειρά"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.number"
 msgid "Number"
-msgstr "Αριθμός"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.checkbox"
 msgid "Checkbox"
-msgstr "Κουτάκι επιλογής"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.item"
 msgid "Item"
-msgstr "Αντικείμενο"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.color"
 msgid "Color"
-msgstr "Χρώμα"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.choices"
 msgid "Choices"
-msgstr "Λίστα επιλογής"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.icon"
 msgid "Icon"
-msgstr "Εικονίδιο"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.heading"
 msgid "Heading"
-msgstr "Κεφαλίδα"
+msgstr ""
 
 #. Tooltip displayed when hovering the help icon alongside the ID field
 msgctxt "customwidgets.designer.settings.config.id.hint"
 msgid "Enter a JSON friendly key for this setting - ideally, use only lowercase letters, digits and underscores. Examples: my_setting, first_item, text_size, font_color"
-msgstr "Πληκτρολογήστε ένα φιλικό κλειδί JSON για αυτή τη ρύθμιση - στην ιδανική περίπτωση, χρησιμοποιήστε μόνο πεζά γράμματα, ψηφία και χαρακτήρα υπογράμμισης. Παραδείγματα: my_setting, first_item, text_size, font_color"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.label"
 msgid "Label"
-msgstr "Ετικέτα"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.default"
 msgid "Default value"
-msgstr "Προεπιλεγμένη τιμή"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.choices"
 msgid "Choices"
-msgstr "Επιλογές λίστας"
+msgstr ""
 
 #. Textbox placeholder
 msgctxt "customwidgets.designer.settings.config.choices.hint"
 msgid "Comma-separated possible values"
-msgstr "Τιμές επιλογών διαχωρισμένες με κόμμα"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.description"
 msgid "Description"
-msgstr "Περιγραφή"
+msgstr ""
 
 #. Banner displayed when selecting the Icon type for the settings, followed by the defined settings themselves
 msgctxt "customwidgets.designer.settings.config.icon.hint"
 msgid "This will define 2 config elements:"
-msgstr "Αυτό θα καθορίσει 2 στοιχεία ρύθμισης:"
+msgstr ""
 
 #. Tab header
 msgctxt "customwidgets.designer.preview"
 msgid "Preview"
-msgstr "Προεπισκόπηση"
+msgstr ""
 
 #. Dialog box title
 msgctxt "widgetgallery.heading"
 msgid "Widget Gallery"
-msgstr "Συλλογή widget"
+msgstr ""
 
 #. Dialog box title (when displaying a repository)
 msgctxt "widgetgallery.heading.importrepo"
 msgid "Import GitHub Repository"
-msgstr "Εισαγωγή αποθετηρίου GitHub"
+msgstr ""
 
 #. Dialog box title (when displaying a community gallery item)
 msgctxt "widgetgallery.heading.importgallery"
 msgid "Import Gallery Item"
-msgstr "Εισαγωγή αντικειμένου συλλογής"
+msgstr ""
 
 #. Alert banner message
 msgctxt "widgetgallery.warning.githubratelimit"
 msgid "Warning: rate limiting on the GitHub API will temporarily block further requests!"
-msgstr "Προειδοποίηση: τυχόν περιορισμός στο ρυθμό κλήσεων του GitHub API, θα εμποδίσει προσωρινά περαιτέρω αιτήματα!"
+msgstr ""
 
 #. Alert banner message (2nd part)
 msgctxt "widgetgallery.warning.githubratelimit.wait"
 msgid "Wait until this time and try again:"
-msgstr "Περιμένετε τόσο και δοκιμάστε ξανά:"
+msgstr ""
 
 #. Textbox placeholder
 msgctxt "widgetgallery.addressbar.hint"
 msgid "GitHub repository full name (owner/name) or URL"
-msgstr "Πλήρες όνομα αποθετηρίου GitHub (ιδιοκτήτης/όνομα) ή διεύθυνση URL"
+msgstr ""
 
 #. Button on the right of the addressbar
 msgctxt "widgetgallery.addressbar.go"
 msgid "Go"
-msgstr "Μετάβαση"
+msgstr ""
 
 #. Suffix displayed after a number, i.e. "24 community contributions"
 msgctxt "widgetgallery.toolbar.communitycontributions"
 msgid "community&nbsp;contributions"
-msgstr "συνεισφορές&nbsp;κοινότητας"
+msgstr ""
 
 #. On the right with the sort options
 msgctxt "widgetgallery.toolbar.sortby"
 msgid "sort by:"
-msgstr "ταξινόμηση κατά:"
+msgstr ""
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostrecent"
 msgid "most&nbsp;recent"
-msgstr "πιο&nbsp;πρόσφατα"
+msgstr ""
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostliked"
 msgid "most&nbsp;liked"
-msgstr "πιο&nbsp;ψηφισμένα"
+msgstr ""
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostpopular"
 msgid "most&nbsp;popular"
-msgstr "πιο&nbsp;δημοφιλή"
+msgstr ""
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostdiscussed"
 msgid "most&nbsp;discussed"
-msgstr "πιο&nbsp;συζητημένα"
+msgstr ""
 
 #. Prefix before the author's name
 msgctxt "widgetgallery.details.authorby"
 msgid "by"
-msgstr "από"
+msgstr ""
 
 #. Suffix displayed after a number, i.e. "24 posts on this topic"
 msgctxt "widgetgallery.details.forumposts"
 msgid "post(s) on this topic - discuss on community.openhab.org"
-msgstr "δημοσιεύσεις σε αυτό το θέμα - συζητήστε στο community.openhab.org"
+msgstr ""
 
 #. Label of the big green button when nothing to import
 msgctxt "widgetgallery.details.nothingtoimport"
 msgid "Nothing to import"
-msgstr "Δεν υπάρχει κάτι για εισαγωγή"
+msgstr ""
 
 #. Label of the big green button when 1 widget was found
 msgctxt "widgetgallery.details.importwidget"
 msgid "Import Widget"
-msgstr "Εισαγωγή widget"
+msgstr ""
 
 #. Label of the big green button when 2 or more widgets were found
 msgctxt "widgetgallery.details.importwidgets"
 msgid "Import {} Widgets"
-msgstr "Εισαγωγή {} Widgets"
+msgstr ""
 
 #. Label of the big blue button when there is a referenced GitHub repo
 msgctxt "widgetgallery.details.gotorepository"
 msgid "Go to the repository"
-msgstr "Μετάβαση στο αποθετήριο"
+msgstr ""
 
 #. Displyed in orange inside the big green button after a number, when some widgets are already present
 msgctxt "widgetgallery.details.toupdate"
 msgid "to update"
-msgstr "προς ενημέρωση"
+msgstr ""
 
 #. Little white button label with a down caret
 msgctxt "widgetgallery.details.showdetails"
 msgid "Show details"
-msgstr "Προβολή λεπτομερειών"
+msgstr ""
 
 #. Little white button label with a up caret
 msgctxt "widgetgallery.details.hidedetails"
 msgid "Hide details"
-msgstr "Απόκρυψη λεπτομερειών"
+msgstr ""
 
 #. Little white button label
 msgctxt "widgetgallery.details.downloadzip"
 msgid "Download ZIP"
-msgstr "Κατεβάστε σε ZIP"
+msgstr ""
 
 #. 1. Prefix of the explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.prefix"
 msgid "This"
-msgstr " "
+msgstr ""
 
 #. 2a. Name of a community contribution
 msgctxt "widgetgallery.details.widget.hint.communitycontribution"
 msgid "community contribution"
-msgstr "Αυτή η συνεισφορά κοινότητας"
+msgstr ""
 
 #. 2b. Name of a community contribution
 msgctxt "widgetgallery.details.widget.hint.repository"
 msgid "repository"
-msgstr "Αυτό το αποθετήριο"
+msgstr ""
 
 #. 3. Suffix of the explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.suffix"
 msgid "contains the following widgets; you can import them individually:"
-msgstr "περιέχει τα ακόλουθα widget που μπορείτε να τα εισαγάγετε μεμονωμένα:"
+msgstr ""
 
 #. Explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.nowidgets"
 msgid "No widgets were found (*.widget.json files)! Please report this."
-msgstr "Δεν βρέθηκαν widgets (αρχεία *.widget.json)! Παρακαλώ να το αναφέρετε."
+msgstr ""
 
 #. Explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.checkrepo"
 msgid "The widgets are likely in the referenced GitHub repository. Click the 'Go to the repository' button to open it."
-msgstr "Τα widgets είναι πιθανώς στο σχετικό αποθετήριο GitHub. Κάντε κλικ στο κουμπί \"Μετάβαση στο αποθετήριο\" για να το ανοίξετε."
+msgstr ""
 
 #. Green button in the expanded details section
 msgctxt "widgetgallery.details.widget.import"
 msgid "Import widget"
-msgstr "Εισαγωγή widget"
+msgstr ""
 
 #. Orange button in the expanded details section
 msgctxt "widgetgallery.details.widget.update"
 msgid "Update widget"
-msgstr "Ενημέρωση widget"
+msgstr ""
 
 #. Disabled button in the expanded details section after a widget was imported/updated
 msgctxt "widgetgallery.details.widget.imported"
 msgid "Widget imported!"
-msgstr "Το widget έχει εισαχθεί!"
+msgstr ""
 
 #. Alert banner, followed by a technical exception message
 msgctxt "widgetgallery.error"
 msgid "Error:"
-msgstr "Σφάλμα:"
+msgstr ""
 
 #. Dialog box title
 msgctxt "widgetgallery.widgetsdetected.dialog.title"
 msgid "Existing widgets detected"
-msgstr "Ανιχνεύθηκαν υπάρχοντα widget"
+msgstr ""
 
 #. Dialog box message
 msgctxt "widgetgallery.widgetsdetected.dialog.message"
 msgid "Warning: please confirm you wish to update <nbexisting> existing widgets, overwriting any eventual changes made locally! If unsure, cancel and click Show details to review the list of affected widgets."
-msgstr "Προειδοποίηση: επιβεβαιώστε ότι επιθυμείτε να ενημερώσετε <nbexisting> υπάρχοντα widget, αντικαθιστώντας τυχόν αλλαγές σε τοπικό επίπεδο! Αν δεν είστε σίγουροι, ακυρώστε και κάντε κλικ στην επιλογή Εμφάνιση λεπτομερειών για να δείτε τη λίστα των widgets που επηρεάζονται."
+msgstr ""
 
