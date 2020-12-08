@@ -3,1152 +3,1152 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: el\n"
-"X-Crowdin-File: /master/web/assets/i18n/widgets/widgets.pot\n"
+"X-Crowdin-File: /master/bundles/org.openhab.ui.habpanel/web/assets/i18n/widgets/widgets.pot\n"
+"X-Crowdin-File-ID: 268\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
-"PO-Revision-Date: 2019-06-16 09:54\n"
+"PO-Revision-Date: 2020-12-08 20:46\n"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.min"
 msgid "Min"
-msgstr "Ελάχιστο"
+msgstr ""
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.max"
 msgid "Max"
-msgstr "Μέγιστο"
+msgstr ""
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.step"
 msgid "Step"
-msgstr "Βήμα"
+msgstr ""
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.unit"
 msgid "Unit"
-msgstr "Μονάδα"
+msgstr ""
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.format"
 msgid "Format"
-msgstr "Μορφή"
+msgstr ""
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.format.useserverprovided"
 msgid "Use server-provided format if available"
-msgstr "Χρήση μορφής από το διακομιστή, εάν είναι διαθέσιμη"
+msgstr ""
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.dontwrap"
 msgid "Value right of label"
-msgstr "Τιμή δεξιά από την ετικέτα"
+msgstr ""
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.backdrop_center"
 msgid "Center backdrop horizontally"
-msgstr "Οριζόντια στοίχιση στο κέντρο"
+msgstr ""
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.icon_nolinebreak"
 msgid "Icon left of label instead of below"
-msgstr "Εικονίδιο αριστερά της ετικέτας αντί από κάτω"
+msgstr ""
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.icon_replacestext"
 msgid "Icon replaces textual value display"
-msgstr "Το εικονίδιο αντικαθιστά το κείμενο με την τιμή"
+msgstr ""
 
 #. Common tab header label
 msgctxt "widget.common.general"
 msgid "General"
-msgstr "Γενικά"
+msgstr ""
 
 #. Common tab header label
 msgctxt "widget.common.advanced"
 msgid "Advanced"
-msgstr "Για προχωρημένους"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.button"
 msgid "Button"
-msgstr "Πλήκτρο"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.button.description"
 msgid "A button performing a certain action, like sending a command to an openHAB item"
-msgstr "Ένα πλήκτρο που εκτελεί μια συγκεκριμένη ενέργεια, όπως το να στέλνει μια εντολή σε ένα στοιχείο openHAB"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.button.settings.header"
 msgid "Button Settings"
-msgstr "Ρυθμίσεις του πλήκτρου"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.button.general"
 msgid "General"
-msgstr "Γενικά"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.button.general.action_type"
 msgid "Action type"
-msgstr "Τύπος ενέργειας"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.button.general.action_type.command"
 msgid "Send a fixed command to an item"
-msgstr "Αποστολή εντολής σε ένα στοιχείο"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.button.general.action_type.toggle"
 msgid "Alternate item between 2 states"
-msgstr "Εναλλαγή στοιχείου ανάμεσα σε 2 καταστάσεις"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.button.general.action_type.navigate"
 msgid "Navigate"
-msgstr "Πλοήγηση"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.button.general.command"
 msgid "Command value"
-msgstr "Εντολή"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.button.general.command_alt"
 msgid "Alternate command value"
-msgstr "Εναλλακτική εντολή"
+msgstr ""
 
 #. Radio buttons header
 msgctxt "widget.button.general.navigation_type"
 msgid "Navigation type"
-msgstr "Τύπος πλοήγησης"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.button.general.navigation_type.dashboard"
 msgid "Dashboard"
-msgstr "Πινακίδιο"
+msgstr ""
 
 #. Radio buttons header
 msgctxt "widget.button.general.navigation_target"
 msgid "Open in"
-msgstr "Άνοιγμα σε"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.button.general.navigation_target.self"
 msgid "Current tab"
-msgstr "Τρέχουσα καρτέλα"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.button.general.navigation_target.new_tab"
 msgid "New tab"
-msgstr "Νέα καρτέλα"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.button.general.navigation_target.new_window"
 msgid "New window"
-msgstr "Νέο παράθυρο"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.button.display"
 msgid "Display"
-msgstr "Εμφάνιση"
+msgstr ""
 
 #. Section header
 msgctxt "widget.button.display.label"
 msgid "Label"
-msgstr "Ετικέτα"
+msgstr ""
 
 #. Section header
 msgctxt "widget.button.display.value"
 msgid "Value"
-msgstr "Τιμή"
+msgstr ""
 
 #. Checkbox label (when there's an item configured in the General tab)
 msgctxt "widget.button.display.value.showitemvalue"
 msgid "Show the item's state value"
-msgstr "Εμφάνιση της τιμής κατάστασης του στοιχείου"
+msgstr ""
 
 #. Checkbox label (when there's no item configured in the General tab)
 msgctxt "widget.button.display.value.showitemvalue_noitem"
 msgid "Show an item's state value"
-msgstr "Εμφάνιση της τιμής κατάστασης ενός στοιχείου"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.button.display.value.active_state"
 msgid "Active state"
-msgstr "Ενεργή κατάσταση"
+msgstr ""
 
 #. Checkboxes header
 msgctxt "widget.button.display.value.layout"
 msgid "Layout"
-msgstr "Διάταξη"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.button.inactive"
 msgid "Inactive"
-msgstr "Ανενεργό"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.button.active"
 msgid "Active"
-msgstr "Ενεργό"
+msgstr ""
 
 #. Tab header (when there's no item configured in the General tab)
 msgctxt "widget.button.colors"
 msgid "Colors"
-msgstr "Χρώματα"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.button.background_color"
 msgid "Background color"
-msgstr "Χρώμα φόντου"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.button.foreground_color"
 msgid "Label color"
-msgstr "Χρώμα ετικέτας"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.button.value_color"
 msgid "Value color"
-msgstr "Χρώμα τιμής"
+msgstr ""
 
 msgctxt "widget.button.preview.state"
 msgid "State"
-msgstr "Κατάσταση"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.chart"
 msgid "Chart"
-msgstr "Γράφημα"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.chart.description"
 msgid "Displays a chart"
-msgstr "Εμφανίζει ένα γράφημα"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.chart.settings.header"
 msgid "Chart Settings"
-msgstr "Ρυθμίσεις γραφήματος"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.chart.general"
 msgid "General"
-msgstr "Γενικά"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.chart.general.type"
 msgid "Type"
-msgstr "Τύπος"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.chart.general.type.default"
 msgid "Default"
-msgstr "Προεπιλογή"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.chart.general.type.rrd4j"
 msgid "RRD4j (rrd4j persistence service only)"
-msgstr "RRD4j (μόνο με υπηρεσία διατήρησης rrd4j)"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.chart.general.type.interactive"
 msgid "n3-line-chart (interactive)"
-msgstr "n3-line-chart (διαδραστικό)"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.chart.general.service"
 msgid "Persistence service"
-msgstr "Υπηρεσία διατήρησης"
+msgstr ""
 
 #. Textbox placeholder
 msgctxt "widget.chart.general.service.hint"
 msgid "rrd4j, mysql, influxdb... Leave blank for default"
-msgstr "rrd4j, mysql, influxdb... Αφήστε το κενό για την προεπιλογή"
+msgstr ""
 
 #. Item picker header
 msgctxt "widget.chart.general.itemgroup"
 msgid "openHAB Item or Group"
-msgstr "Στοιχείο ή ομάδα openHAB"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.chart.general.period"
 msgid "Period"
-msgstr "Περίοδος"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.chart.axis"
 msgid "Axis"
-msgstr "Άξονας"
+msgstr ""
 
 #. Section header
 msgctxt "widget.chart.axis.primary"
 msgid "Primary axis (y)"
-msgstr "Πρωτεύων άξονας (y)"
+msgstr ""
 
 #. Section header
 msgctxt "widget.chart.axis.secondary"
 msgid "Secondary axis (y2)"
-msgstr "Δευτερεύων άξονας (y2)"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.chart.axis.enabled"
 msgid "Enabled"
-msgstr "Ενεργοποιημένο"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.chart.axis.includezero"
 msgid "Include zero"
-msgstr "Περιλαμβάνονται μηδενικά"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.chart.series"
 msgid "Series"
-msgstr "Σειρά"
+msgstr ""
 
 #. Radio buttons header
 msgctxt "widget.chart.series.axis"
 msgid "Axis"
-msgstr "Άξονας"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.chart.series.axis.primary"
 msgid "Primary"
-msgstr "Πρωτεύων"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.chart.series.axis.secondary"
 msgid "Secondary"
-msgstr "Δευτερεύων"
+msgstr ""
 
 #. Radio buttons header
 msgctxt "widget.chart.series.display"
 msgid "Display"
-msgstr "Εμφάνιση"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.chart.series.display.line"
 msgid "Line"
-msgstr "Γραμμή"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.chart.series.display.area"
 msgid "Area"
-msgstr "Περιοχή"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.chart.series.display.dots"
 msgid "Dots"
-msgstr "Κουκκίδες"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.chart.series.liveupdate"
 msgid "Live update (experimental)"
-msgstr "Live update (πειραματικό)"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.chart.series.liveupdate.fillvalues"
 msgid "Repeat other series' current values on update if necessary"
-msgstr "Επανάληψη των τρεχουσών τιμών άλλων σειρών στην ενημέρωση, εάν είναι απαραίτητο"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.clock"
 msgid "Clock"
-msgstr "Ρολόι"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.clock.description"
 msgid "A clock widget - displays an analog or digital clock"
-msgstr "Ένα widget ρολογιού - εμφανίζει ένα αναλογικό ή ψηφιακό ρολόι"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.clock.settings.header"
 msgid "Clock Settings"
-msgstr "Ρυθμίσεις ρολογιού"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.clock.mode"
 msgid "Mode"
-msgstr "Λειτουργία"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.clock.mode.analog"
 msgid "Analog"
-msgstr "Αναλογικό"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.clock.mode.digital"
 msgid "Digital"
-msgstr "Ψηφιακό"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.clock.theme"
 msgid "Analog Theme"
-msgstr "Αναλογικό Θέμα"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.clock.theme.light"
 msgid "light"
-msgstr "ανοιχτόχρωμο"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.clock.theme.dark"
 msgid "dark"
-msgstr "σκοτεινό"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.clock.digital_format"
 msgid "Digital Format"
-msgstr "Μορφή ψηφίων"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.clock.font_size"
 msgid "Digital Font Size"
-msgstr "Μέγεθος γραμματοσειράς ψηφίων"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.colorpicker"
 msgid "Color Picker"
-msgstr "Επιλογέας χρώματος"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.colorpicker.description"
 msgid "Displays an color picker"
-msgstr "Εμφανίζει έναν επιλογέα χρώματος"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.colorpicker.settings.header"
 msgid "Color Picker Settings"
-msgstr "Ρυθμίσεις επιλογέα χρώματος"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.colorpicker.type"
 msgid "Type"
-msgstr "Τύπος"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.colorpicker.type.hsl"
 msgid "HSL Sliders"
-msgstr "Ρυθμιστικά HSL"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.colorpicker.type.ackolor"
 msgid "aCKolor style (modal picker)"
-msgstr "aCKolor style (modal picker)"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.colorpicker.blur_background"
 msgid "Apply blurring effect to background"
-msgstr "Εφαρμογή εφέ θόλωσης (blur) στο φόντο"
+msgstr ""
 
 #. Displayed below the checkbox in small text
 msgctxt "widget.colorpicker.blur_background.warning"
 msgid "Warning: This can cause performance problems on tablets"
-msgstr "Προειδοποίηση: Αυτό μπορεί να προκαλέσει προβλήματα επιδόσεων σε φορητές συσκευές"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.dummy"
 msgid "Dummy"
-msgstr "Dummy"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.dummy.description"
 msgid "A dummy widget - displays the value of an openHAB item"
-msgstr "Dummy widget - εμφανίζει την τιμή ενός στοιχείου openHAB"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.dummy.settings.header"
 msgid "Dummy Settings"
-msgstr "Ρυθμίσεις Dummy"
+msgstr ""
 
 #. Checkboxes header
 msgctxt "widget.dummy.layout"
 msgid "Layout"
-msgstr "Διάταξη"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.frame"
 msgid "Frame"
-msgstr "Πλαίσιο"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.frame.description"
 msgid "Embedded website from predefined URL or openHAB item."
-msgstr "Ενσωματωμένη ιστοσελίδα από καθορισμένη διεύθυνση URL ή στοιχείο openHAB."
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.frame.settings.header"
 msgid "Frame Settings"
-msgstr "Ρυθμίσεις πλαισίου"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.frame.url_source"
 msgid "URL Source"
-msgstr "Διεύθυνση URL"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.frame.url_source.static"
 msgid "Static URL"
-msgstr "Στατική διεύθυνση URL"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.frame.url_source.item"
 msgid "openHAB String Item"
-msgstr "Στοιχείο κειμένου στο openHAB"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.frame.refresh_interval"
 msgid "Refresh interval (seconds)"
-msgstr "Χρονικό διάστημα ανανέωσης (δευτερόλεπτα)"
+msgstr ""
 
 #. Checkbox header - appears only if the refresh interval is set
 msgctxt "widget.frame.nosuffix"
 msgid "No cache busting (advanced)"
-msgstr "No cache busting (για προχωρημένους)"
+msgstr ""
 
 #. Checkbox label - appears only if the refresh interval is set
 msgctxt "widget.frame.nosuffix.description"
 msgid "Don't add URL suffixes to prevent reusing cached pages"
-msgstr "Μην προσθέτετε επιθήματα διευθύνσεων URL για να αποφύγετε την επαναχρησιμοποίηση προσωρινά αποθηκευμένων σελίδων (cache)"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.frame.background_color"
 msgid "Frame background color"
-msgstr "Χρώμα φόντου του πλαισίου"
+msgstr ""
 
 #. Checkbox header
 msgctxt "widget.frame.frameless"
 msgid "Frameless"
-msgstr "Χωρίς πλαίσιο"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.frame.frameless.description"
 msgid "Fill to edges"
-msgstr "Γέμισμα στις άκρες"
+msgstr ""
 
 #. Checkbox header
 msgctxt "widget.frame.label"
 msgid "Label"
-msgstr "Ετικέτα"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.frame.label.description"
 msgid "Hide title label"
-msgstr "Απόκρυψη ετικέτας τίτλου"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.image"
 msgid "Image"
-msgstr "Εικόνα"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.image.description"
 msgid "Displays an image (not necessarily from openHAB)"
-msgstr "Εμφανίζει μια εικόνα (όχι απαραίτητα από το openHAB)"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.image.settings.header"
 msgid "Image Settings"
-msgstr "Ρυθμίσεις εικόνας"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.image.image_source"
 msgid "Image source"
-msgstr "Πηγή εικόνας"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.image.image_source.static"
 msgid "Static image URL"
-msgstr "Στατική διεύθυνση URL της εικόνας "
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.image.image_source.item-string"
 msgid "openHAB String Item"
-msgstr "Στοιχείο κειμένου στο openHAB"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.image.image_source.item-image"
 msgid "openHAB Image Item"
-msgstr "Στοιχείο εικόνας στο openHAB"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.image.refresh_interval"
 msgid "Refresh interval"
-msgstr "Χρονικό διάστημα ανανέωσης"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.image.refresh_interval.seconds"
 msgid "seconds"
-msgstr "δευτερόλεπτα"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.image.refresh_interval.milliseconds"
 msgid "milliseconds"
-msgstr "χιλιοστά του δευτερολέπτου"
+msgstr ""
 
 #. Checkbox header - appears only if the refresh interval is set
 msgctxt "widget.image.nosuffix"
 msgid "No cache busting (advanced)"
-msgstr "No cache busting (για προχωρημένους)"
+msgstr ""
 
 #. Checkbox label - appears only if the refresh interval is set
 msgctxt "widget.image.nosuffix.description"
 msgid "Don't add URL suffixes to prevent reusing cached images"
-msgstr "Μην προσθέτετε επιθήματα διευθύνσεων URL για να αποφύγετε την επαναχρησιμοποίηση προσωρινά αποθηκευμένων σελίδων (cache)"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.image.background_color"
 msgid "Background color"
-msgstr "Χρώμα φόντου"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.knob"
 msgid "Knob"
-msgstr "Περιστροφικό"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.knob.description"
 msgid "A knob for setting numerical openHAB items"
-msgstr "Ένα περιστροφικό κουμπί για τον ορισμό αριθμητικών στοιχείων openHAB"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.knob.settings.header"
 msgid "Knob Settings"
-msgstr "Ρυθμίσεις περιστροφικού"
+msgstr ""
 
 #. Checkbox header
 msgctxt "widget.knob.general.readonly"
 msgid "Read only"
-msgstr "Μόνο για ανάγνωση"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.general.readonly.description"
 msgid "Disable interaction"
-msgstr "Απενεργοποίηση αλληλεπίδρασης"
+msgstr ""
 
 #. Checkboxes header
 msgctxt "widget.knob.general.centraldisplay"
 msgid "Central display"
-msgstr "Κεντρική παρουσίαση"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.general.centraldisplay.showvalue"
 msgid "Show value"
-msgstr "Εμφάνιση τιμής"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.general.centraldisplay.showlabel"
 msgid "Show name (below value)"
-msgstr "Εμφάνιση ονομασίας (κάτω από την τιμή)"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.knob.bartrack"
 msgid "Bar & Track"
-msgstr "Μπάρα & Ίχνος"
+msgstr ""
 
 #. Section header
 msgctxt "widget.knob.bartrack.angles"
 msgid "Angles (°)"
-msgstr "Γωνίες (°)"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.angles.start"
 msgid "Start"
-msgstr "Αρχή"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.angles.end"
 msgid "End"
-msgstr "Τέλος"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.width"
 msgid "Width"
-msgstr "Πάχος"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.cap"
 msgid "Cap"
-msgstr "Άκρα"
+msgstr ""
 
 #. Section header
 msgctxt "widget.knob.bartrack.bar"
 msgid "Bar"
-msgstr "Μπάρα"
+msgstr ""
 
 #. Section header
 msgctxt "widget.knob.bartrack.track"
 msgid "Track"
-msgstr "Ίχνος"
+msgstr ""
 
 #. Section header
 msgctxt "widget.knob.bartrack.previousvalue"
 msgid "Previous value"
-msgstr "Προηγούμενη τιμή"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.bartrack.previousvalue.description"
 msgid "Display previous value when dragging"
-msgstr "Εμφανίζει την προηγούμενη τιμή κατά τη μεταφορά"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.knob.scale"
 msgid "Scale"
-msgstr "Κλίμακα"
+msgstr ""
 
 #. Checkbox header
 msgctxt "widget.knob.scale.display"
 msgid "Display scale"
-msgstr "Κλίμακα εμφάνισης"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.scale.display.enabled"
 msgid "Enabled"
-msgstr "Ενεργό"
+msgstr ""
 
 #. Radio buttons header
 msgctxt "widget.knob.scale.type"
 msgid "Scale Type"
-msgstr "Τύπος κλίμακας"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.knob.scale.type.lines"
 msgid "Lines"
-msgstr "Γραμμές"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.scale.type.dots"
 msgid "Dots"
-msgstr "Κουκκίδες"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.scale.width"
 msgid "Width"
-msgstr "Πλάτος"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.scale.qty"
 msgid "Qty."
-msgstr "Ποσ."
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.scale.space"
 msgid "Space"
-msgstr "Διάστημα"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.knob.skin"
 msgid "Skin"
-msgstr "Εμφάνιση"
+msgstr ""
 
 #. Radio buttons header
 msgctxt "widget.knob.skin.type"
 msgid "Type"
-msgstr "Τύπος"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.knob.skin.type.simple"
 msgid "Simple"
-msgstr "Απλό"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.knob.skin.type.tron"
 msgid "Tron"
-msgstr "Tron"
+msgstr ""
 
 #. Section header
 msgctxt "widget.knob.skin.tronsettings"
 msgid "Tron skin settings"
-msgstr "Ρυθμίσεις θέματος Tron"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.skin.tronsettings.width"
 msgid "Width"
-msgstr "Πλάτος"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.skin.tronsettings.space"
 msgid "Space"
-msgstr "Διάστημα"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.knob.ranges"
 msgid "Ranges"
-msgstr "Εύρος"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.ranges.enable"
 msgid "Enable Ranges"
-msgstr "Ενεργοποίηση εύρους"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.knob.ranges.match_text_color"
 msgid "Match Text Color to Range"
-msgstr "Ταίριασμα χρώματος κειμένου με εύρος"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.ranges.from"
 msgid "from"
-msgstr "από"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.ranges.to"
 msgid "to"
-msgstr "έως"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.knob.ranges.bar"
 msgid "Bar"
-msgstr "Μπάρα"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.knob.misc"
 msgid "Misc."
-msgstr "Διάφορα"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.knob.misc.text"
 msgid "Text"
-msgstr "Κείμενο"
+msgstr ""
 
 #. Color picker header
 msgctxt "widget.knob.misc.background"
 msgid "Background"
-msgstr "Παρασκήνιο"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.label"
 msgid "Label"
-msgstr "Ετικέτα"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.label.description"
 msgid "A fixed label used for headers etc. (no openHAB item binding)"
-msgstr "Μια σταθερή ετικέτα χρήσιμη για κεφαλίδες κλπ (καμία σύνδεση σε στοιχείο openHAB)"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.label.settings.header"
 msgid "Label Settings"
-msgstr "Ρυθμίσεις Ετικέτας"
+msgstr ""
 
 #. Preview widget label in the top-right corner
 msgctxt "widget.label.preview"
 msgid "Preview"
-msgstr "Προεπισκόπηση"
+msgstr ""
 
 #. Color picker label
 msgctxt "widget.label.background_color"
 msgid "Background color"
-msgstr "Χρώμα φόντου"
+msgstr ""
 
 #. Color picker label
 msgctxt "widget.label.foreground_color"
 msgid "Text color"
-msgstr "Χρώμα κειμένου"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.selection"
 msgid "Selection"
-msgstr "Επιλογή"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.selection.description"
 msgid "A widget allowing a selection between multiple choices"
-msgstr "Ένα widget που επιτρέπει επιλογή από μια λίστα"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.selection.settings.header"
 msgid "Selection Settings"
-msgstr "Ρυθμίσεις Επιλογής"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.selection.choices_source"
 msgid "Choices source"
-msgstr "Πηγή των επιλογών"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.selection.choices_source.server"
 msgid "Server-provided item options"
-msgstr "Λίστα στοιχείων από το διακομιστή"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.selection.choices_source.csv"
 msgid "Comma-separated list"
-msgstr "Λίστα στοιχείων χωρισμένα με κόμμα"
+msgstr ""
 
 #. Textbox header - appears only when the "comma-separated list" choice source is selected
 msgctxt "widget.selection.choices"
 msgid "List of comma-separated choices"
-msgstr "Κείμενο στοιχείων λίστας"
+msgstr ""
 
 #. Displayed in small text below the textbox
 msgctxt "widget.selection.choices.hint"
 msgid "You can optionally use the syntax: 'cmd=label' for each choice<br />Example: 18=Cold,20,22,24,26,28=Warm"
-msgstr "Μπορείτε να χρησιμοποιήσετε σύνταξη όπως: 'cmd=label' για κάθε επιλογή<br />Πχ: 18=Κρύο,20,22,24,26,28=Ζεστό"
+msgstr ""
 
 #. Header
 msgctxt "widget.selection.display"
 msgid "Display options"
-msgstr "Επιλογές εμφάνισης"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.selection.display.hidelabel"
 msgid "Hide name"
-msgstr "Απόκρυψη ονόματος"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.selection.display.hideicon"
 msgid "Hide icon"
-msgstr "Απόκρυψη εικονιδίου"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.selection.display.hidestate"
 msgid "Hide current value"
-msgstr "Απόκρυψη τρέχουσας τιμής"
+msgstr ""
 
 #. Header
 msgctxt "widget.selection.choices_window"
 msgid "Choices window"
-msgstr "Παράθυρο επιλογών"
+msgstr ""
 
 #. Textbox (very small)
 msgctxt "widget.selection.choices_window.columns"
 msgid "Columns"
-msgstr "Στήλες"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.selection.choices_window.disable_mobile"
 msgid "Disable mobile mode"
-msgstr "Απενεργοποίηση για φορητές συσκευές"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.selection.choices_window.no_squares"
 msgid "No square tiles"
-msgstr "Χωρίς πλακίδια"
+msgstr ""
 
 #. Header
 msgctxt "widget.selection.selection_options"
 msgid "Selection options"
-msgstr "Ρυθμίσεις επιλογής"
+msgstr ""
 
 #. Checkbox label (small)
 msgctxt "widget.selection.selection_options.no_highlight"
 msgid "Don't highlight current selection"
-msgstr "Χωρίς επισήμανση της τρέχουσας επιλογής"
+msgstr ""
 
 #. Checkbox label (small)
 msgctxt "widget.selection.selection_options.keep_open"
 msgid "Keep window open upon selection"
-msgstr "Κράτα ανοιχτό το παράθυρο μετά την επιλογή"
+msgstr ""
 
 #. Displayed when running the widget if no choices available
 msgctxt "widget.selection.nochoices"
 msgid "No choices available - check widget config"
-msgstr "Δεν υπάρχουν διαθέσιμες επιλογές - ελέγξτε τη ρύθμιση του widget"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.slider"
 msgid "Slider"
-msgstr "Ρυθμιστικό"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.slider.description"
 msgid "A slider for setting numerical openHAB items"
-msgstr "Ένα ρυθμιστικό για τον ορισμό αριθμητικών στοιχείων openHAB"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.slider.settings.header"
 msgid "Slider Settings"
-msgstr "Ρυθμίσεις ρυθμιστικού"
+msgstr ""
 
 #. Checkbox header
 msgctxt "widget.slider.general.orientation"
 msgid "Orientation"
-msgstr "Προσανατολισμός"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.general.orientation.vertical"
 msgid "Vertical slider"
-msgstr "Κάθετο ρυθμιστικό"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.hidelabel"
 msgid "Hide title label"
-msgstr "Απόκρυψη ετικέτας τίτλου"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.hidelimits"
 msgid "Hide limits labels"
-msgstr "Απόκρυψη ετικετών ορίων"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.hidepointer"
 msgid "Hide current value label"
-msgstr "Απόκρυψη ετικέτας τρέχουσας τιμής"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.showticks"
 msgid "Show ticks"
-msgstr "Εμφάνιση σημαδιών"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.showticksvalues"
 msgid "Show ticks labels"
-msgstr "Εμφάνιση ετικετών των σημαδιών"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.inverted"
 msgid "Reverse direction"
-msgstr "Αντίθετη κατεύθυνση"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.advanced.bigslider"
 msgid "Big slider (horizontal only)"
-msgstr "Μεγάλο ρυθμιστικό (μόνο οριζόντια)"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.slider.backdrop"
 msgid "Backdrop"
-msgstr "Φόντο"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.switch"
 msgid "Switch"
-msgstr "Διακόπτης"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.switch.description"
 msgid "A ON/OFF toggle for openHAB switches"
-msgstr "Ένας διακόπτης εναλλαγής ON/OFF"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.switch.settings.header"
 msgid "Switch Settings"
-msgstr "Ρυθμίσεις διακόπτη"
+msgstr ""
 
 #. Header
 msgctxt "widget.switch.display"
 msgid "Display options"
-msgstr "Επιλογές εμφάνισης"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.switch.display.hidelabel"
 msgid "Hide name"
-msgstr "Απόκρυψη ονόματος"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.switch.display.hideicon"
 msgid "Hide icon"
-msgstr "Απόκρυψη εικονιδίου"
+msgstr ""
 
 #. Checkbox label (very small)
 msgctxt "widget.switch.display.hideonoff"
 msgid "Hide ON/OFF"
-msgstr "Απόκρυψη ON/OFF"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.template"
 msgid "Template"
-msgstr "Πρότυπο"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.template.description"
 msgid "A template widget - displays a custom dynamic template"
-msgstr "Ένα widget για πρότυπα - εμφανίζει ένα προσαρμοσμένο δυναμικό πρότυπο"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.template.settings.header"
 msgid "Template Settings"
-msgstr "Ρυθμίσεις προτύπου"
+msgstr ""
 
 #. Settings dialog title for a custom widget (don't translate the variable)
 msgctxt "widget.template.settings.header.customwidget"
 msgid "{{customwidget_name}} Settings"
-msgstr "Ρυθμίσεις {{customwidget_name}}"
+msgstr ""
 
 #. Checkbox label (small)
 msgctxt "widget.template.dontwrap"
 msgid "Don't wrap in container"
-msgstr "Don't wrap in container"
+msgstr ""
 
 #. Checkbox label (small)
 msgctxt "widget.template.nobackground"
 msgid "No background"
-msgstr "Χωρίς φόντο"
+msgstr ""
 
 #. Section header (displayed above the code editor)
 msgctxt "widget.template.template"
 msgid "Template"
-msgstr "Πρότυπο"
+msgstr ""
 
 #. Menu entry (top-right above the code editor)
 msgctxt "widget.template.importfromfile"
 msgid "Import from file..."
-msgstr "Εισαγωγή από αρχείο..."
+msgstr ""
 
 #. Menu entry (top-right above the code editor)
 msgctxt "widget.template.exporttofile"
 msgid "Export to file"
-msgstr "Εξαγωγή σε αρχείο"
+msgstr ""
 
 #. Menu entry (top-right above the code editor)
 msgctxt "widget.template.communitysupport"
 msgid "Community support"
-msgstr "Υποστήριξη κοινότητας"
+msgstr ""
 
 #. Menu entry (top-right above the code editor)
 msgctxt "widget.template.knowledgebase"
 msgid "Knowledge base"
-msgstr "Βάση γνώσεων"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.timeline"
 msgid "Timeline"
-msgstr "Χρονολόγιο"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.timeline.description"
 msgid "Displays a timeline of several items"
-msgstr "Εμφανίζει ένα χρονολόγιο από ένα πλήθος στοιχείων"
+msgstr ""
 
 #. Settings dialog title
 msgctxt "widget.timeline.settings.header"
 msgid "Timeline Settings"
-msgstr "Ρυθμίσεις Χρονολογίου"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.timeline.general.service"
 msgid "Persistence service"
-msgstr "Υπηρεσία διατήρησης"
+msgstr ""
 
 #. Textbox placeholder
 msgctxt "widget.timeline.general.service.hint"
 msgid "rrd4j, mysql, influxdb... Leave blank for default"
-msgstr "rrd4j, mysql, influxdb... Αφήστε το κενό για την προεπιλογή"
+msgstr ""
 
 #. Dropdown placeholder
 msgctxt "widget.timeline.general.period"
 msgid "Period"
-msgstr "Περίοδος"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.timeline.colors"
 msgid "Colors"
-msgstr "Χρώματα"
+msgstr ""
 
 #. Accordion header (followed by the state value)
 msgctxt "widget.timeline.colors.state"
 msgid "State"
-msgstr "Κατάσταση"
+msgstr ""
 
 #. Tab header
 msgctxt "widget.timeline.series"
 msgid "Series"
-msgstr "Σειρά"
+msgstr ""
 
