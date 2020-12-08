@@ -3,927 +3,942 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: tl\n"
-"X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File: /master/bundles/org.openhab.ui.habpanel/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File-ID: 264\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Tagalog\n"
 "Language: tl_PH\n"
-"PO-Revision-Date: 2019-06-16 09:55\n"
+"PO-Revision-Date: 2020-12-08 20:45\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
 msgid "Save"
-msgstr "I-save"
+msgstr ""
 
 #. Run button in the dashboard designer
 msgctxt "designer.run"
 msgid "Run"
-msgstr "Patakbuhin"
+msgstr ""
 
 #. Add widget button in the dashboard designer
 msgctxt "designer.addwidget"
 msgid "Add Widget"
-msgstr "Magdagdag ng Widget"
+msgstr ""
 
 #. Tutorial text with arrow when on an empty dashboard
 msgctxt "designer.addwidget.hint"
 msgid "Add some widgets"
-msgstr "Magdagdag ng iilang mga widgets"
+msgstr ""
 
 #. Header of the custom widget section (beware, it might overlap the cogs icon on the right)
 msgctxt "designer.addwidget.customwidgets"
 msgid "Custom widgets"
-msgstr "Custom ng mga widget"
+msgstr ""
 
 #. Open widget gallery
 msgctxt "designer.addwidget.getmore"
 msgid "Get more..."
-msgstr "Kumuha ng higit pa..."
+msgstr ""
 
 #. Tooltip when hovering the "Get more" menu entry
 msgctxt "designer.addwidget.getmore.tooltip"
 msgid "Open the widget gallery to import more widgets"
-msgstr "Buksan ang galerya ng widget para makapag-import ng marami pang mga widget"
+msgstr ""
 
 #. Edit option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.edit"
 msgid "Edit..."
-msgstr "Mag-edit..."
+msgstr ""
 
 #. Copy/move option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.copymove"
 msgid "Copy/move to..."
-msgstr "Kopyahin/Ilipat sa..."
+msgstr ""
 
 #. Delete option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.delete"
 msgid "Delete"
-msgstr "Tanggalin"
+msgstr ""
 
 #. Title of copy/move widget dialog
 msgctxt "designer.copymove.header"
 msgid "Copy/move {{widgetName}}"
-msgstr "Kopyahin/Ilipat {{widgetName}}"
+msgstr ""
 
 #. Alongside the dropdown dashboard selection
 msgctxt "designer.copymove.todashboard"
 msgid "To dashboard"
-msgstr "Sa talaan"
+msgstr ""
 
 #. Move button
 msgctxt "designer.copymove.move"
 msgid "Move"
-msgstr "Ilipat"
+msgstr ""
 
 #. Copy button
 msgctxt "designer.copymove.copy"
 msgid "Copy"
-msgstr "Kopyahin"
+msgstr ""
 
 #. Default name of a newly created widget
 msgctxt "designer.newwidget.defaultname"
 msgid "New Widget"
-msgstr "Bagong Widget"
+msgstr ""
 
 msgctxt "designer.serversavefailed"
 msgid "Server save failed!"
-msgstr "Bigo ang pagsave ng server!"
+msgstr ""
 
 #. Title of the dashboard settings dialog
 msgctxt "dashboard.settings.dialog.title"
 msgid "Dashboard Settings"
-msgstr "Settings ng Talaan"
+msgstr ""
 
 #. Tab header
 msgctxt "dashboard.settings.tile"
 msgid "Menu tile"
-msgstr "Tile ng Listahan"
+msgstr ""
 
 #. Textbox header
 msgctxt "dashboard.settings.tile.background_image_url"
 msgid "Background Image URL"
-msgstr "URL ng Likurang Imahe"
+msgstr ""
 
 #. Color picker header
 msgctxt "dashboard.settings.tile.title_text_color"
 msgid "Title Text color"
-msgstr "Kulay ng Pamagat na teksto"
+msgstr ""
 
 #. Checkbox header
 msgctxt "dashboard.settings.tile.click_feedback"
 msgid "Click feedback"
-msgstr "Pindutin ang Tugon"
+msgstr ""
 
 #. Checkbox label
 msgctxt "dashboard.settings.tile.click_feedback.description"
 msgid "Don't brighten tile on click/tap"
-msgstr "Wag mo paliwanagin ang tile sa pamamagitan ng pagpindot/pagtap"
+msgstr ""
 
 #. Tab header
 msgctxt "dashboard.settings.advanced"
 msgid "Advanced"
-msgstr "Advanced"
+msgstr ""
 
 #. Alert display at the top
 msgctxt "dashboard.settings.advanced.warning"
 msgid "These options are currently experimental, unstable or targeted at advanced users! Use at your own risk."
-msgstr "Ang mga pagpipiliang ito ay kasalukuyang pang-experimento lamang, hindi matatag o kaya para sa advanced na mga taggagamit! Gamitin sa sarili mong kagustuhan."
+msgstr ""
 
 #. Tab header
 msgctxt "dashboard.settings.customwidgets"
 msgid "Custom widgets"
-msgstr "Custom ng mga widget"
+msgstr ""
 
 #. Alert displayed at the top
 msgctxt "dashboard.settings.customwidgets.warning"
 msgid "This feature is currently experimental, and targeted at advanced users! Use at your own risk."
-msgstr "Ang mga tampok na katangiang ito ay kasalukuyang pang-experimento lamang, at para sa advanced na mga taggagamit! Gamitin sa sarili mong kagustuhan."
+msgstr ""
 
 #. Checkbox header
 msgctxt "dashboard.settings.customwidgets.usecustomwidget"
 msgid "Use a custom widget"
-msgstr "Gumamit ng custom ng widget"
+msgstr ""
 
 #. Dropdown header
 msgctxt "dashboard.settings.customwidgets.customwidget"
 msgid "Custom Widget"
-msgstr "Custom ng Widget"
+msgstr ""
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.tile"
 msgid "Main menu tile"
-msgstr "Tile ng Pangunahing Listahan"
+msgstr ""
 
 #. Checkbox label
 msgctxt "dashboard.settings.customwidgets.tile.description"
 msgid "Replace the tile contents by a custom widget"
-msgstr "Palitan ang mga nilalaman ng tile sa pamamagitan ng custom ng widget"
+msgstr ""
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.drawer"
 msgid "Drawer"
-msgstr "Drawer"
+msgstr ""
 
 #. Checkbox label
 msgctxt "dashboard.settings.customwidgets.drawer.description"
 msgid "Replace the contents of the drawer menu by a custom widget"
-msgstr "Palitan ang mga nilalaman ng listahan ng drawer sa pamamagitan ng custom ng widget"
+msgstr ""
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.header"
 msgid "Dashboard header"
-msgstr "Header ng talaan"
+msgstr ""
 
 #. Checkbox label
 msgctxt "dashboard.settings.customwidgets.header.description"
 msgid "Replace the contents of the dashboard header by a custom widget"
-msgstr "Palitan ang mga nilalaman ng header ng talaan sa pamamagaitan ng custom ng widget"
+msgstr ""
 
 #. Displayed in the item picker when no item selected
 msgctxt "itempicker.placeholder"
 msgid "Search or select an openHAB item"
-msgstr "Humanap o pumili ng openHAB na aytem"
+msgstr ""
 
 #. Icon picker dropdown placeholder
 msgctxt "iconpicker.selecticonset"
 msgid "Select icon set"
-msgstr "Piliin ang ikon set"
+msgstr ""
 
 #. Icon picker dropdown entry
 msgctxt "iconpicker.customicon"
 msgid "Custom icon"
-msgstr "Custom ng ikon"
+msgstr ""
 
 #. Icon picker dropdown entry
 msgctxt "iconpicker.customurl"
 msgid "Custom URL"
-msgstr "Custom ng URL"
+msgstr ""
 
 #. Icon picker dropdown entry
 msgctxt "iconpicker.none"
 msgid "(none)"
-msgstr "(wala ni isa)"
+msgstr ""
 
 #. Appears when focusing the icon textbox when the "Custom icon" iconset is selected
 msgctxt "iconpicker.customicontooltip"
 msgid "Type the name of a <a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'>registered icon</a> (only SVG supported)<br />Examples: <em>switch</em>, <em>temperature</em> or an additional icon in your configuration's <code>icons/classic</code> folder"
-msgstr "I-type ang pangalan ng isang<a href='http://docs.openhab.org/configuration/items.html#icons' target='_blank'>nakarehistrong ikon</a>(suportado lamang ng SVG)<br/>Halimbawa:<em>palitan</em>,<em>temperatura</em>o isang dadag na ikon sa iyong kompigurasyon <code>ikons/klasik</code> folder"
+msgstr ""
 
 #. Screen title
 msgctxt "settings.header"
 msgid "Settings"
-msgstr "Mga setting"
+msgstr ""
 
 #. Header of the storage section
 msgctxt "settings.storage.header"
 msgid "Current storage configuration"
-msgstr "Kasalukuyang kompigurasyon ng imbakan"
+msgstr ""
 
 #. Radio button for local storage
 msgctxt "settings.storage.localstorage"
 msgid "Local storage"
-msgstr "Lokal na imbakan"
+msgstr ""
 
 #. Explanation of the "local storage only" option
 msgctxt "settings.storage.localstorage.hint"
 msgid "The configuration is saved for this browser and device only. It will be kept as long as you don't clean up the browser's historical data."
-msgstr "Ang kompigurasyon ay nakasaved para sa browser at kagamitan lamang. Ito ay itatago hanggang hindi mo nililinis ang iyong nakaraang datos ng panginain."
+msgstr ""
 
 #. Link below the "local storage" option
 msgctxt "settings.storage.localstorage.edit"
 msgid "Edit the local panel configuration (experts only)"
-msgstr "I-edit ang lokal na kompigurasyon ng panel (mga eksperto lamang)"
+msgstr ""
 
 #. Prefix of a panel configuration before its name
 msgctxt "settings.storage.panelconfiguration"
 msgid "Panel configuration:"
-msgstr "Kompigurasyon ng Panel:"
+msgstr ""
 
 #. Prefix of the last synced line, before the date
 msgctxt "settings.storage.panelconfiguration.lastsynced"
 msgid "Last synced on"
-msgstr "Huling naka-synced on"
+msgstr ""
 
 #. Displayed before the list of dashboard the panel configuration contains
 msgctxt "settings.storage.panelconfiguration.contains"
 msgid "Contains:"
-msgstr "Mga nilalaman:"
+msgstr ""
 
 #. Link to create a panel configuration from the current configuration
 msgctxt "settings.storage.panelconfiguration.save"
 msgid "Save the current configuration to a new panel configuration"
-msgstr "I-save ang kasalukuyang kompigurasyon sa bagong kompigurasyon ng panel"
+msgstr ""
 
 #. Title of the dialog box when creating a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.title"
 msgid "New panel configuration"
-msgstr "Bagong kompigurasyon ng panel"
+msgstr ""
 
 #. Message of the dialog box when creating a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.message"
 msgid "Please choose a name for the new panel configuration (letters and digits only please):"
-msgstr "Pakiusap pumili ng pangalan para sa bagong kompigurasyon ng panel (letra at bilang lamang ang pwede):"
+msgstr ""
+
+#. Title of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.title"
+msgid "Remove panel configuration"
+msgstr ""
+
+#. Message of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
+msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
+msgstr ""
+
+#. Message of the dialog box when switching from local storage to a server-based panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
+msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
+msgstr ""
 
 #. Panel name (section header)
 msgctxt "settings.panel.name"
 msgid "Panel name"
-msgstr "Pangalan ng panel"
+msgstr ""
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.name.hint"
 msgid "Replaces 'HABPanel' in the side drawer when set"
-msgstr "Pinapalitan ang 'HABPanel' mula sa side drawer kung naka-set"
+msgstr ""
 
 #. Appearance (section header)
 msgctxt "settings.panel.appearance.header"
 msgid "Appearance"
-msgstr "Htsura"
+msgstr ""
 
 #. Dropown menu header
 msgctxt "settings.panel.appearance.theme"
 msgid "Theme"
-msgstr "Tema"
+msgstr ""
 
 #. Alert banner displayed when the browsers doesn't support themes (CSS variables)
 msgctxt "settings.panel.appearance.theme.not_supported"
 msgid "Themes are not compatible with this browser."
-msgstr "Ang mga tema ay hindi tugma sa browser na ito."
+msgstr ""
 
 #. Setting header
 msgctxt "settings.panel.appearance.additional_stylesheet"
 msgid "Additional stylesheet (optional)"
-msgstr "Karagdanagang stylesheet (opsyonal)"
+msgstr ""
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.additional_stylesheet.hint"
 msgid "Relative URL only; example: /static/example.css"
-msgstr "Relatibong URL lamang; halibawa: /static/example.css"
+msgstr ""
 
 #. Setting header
 msgctxt "settings.panel.appearance.background_image"
 msgid "Background image (optional)"
-msgstr "Likurang Imahe (opsyonal)"
+msgstr ""
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.background_image.hint"
 msgid "Example: //source.unsplash.com/random"
-msgstr "Halimbawa: //source.unsplash.com/random"
+msgstr ""
 
 #. Setting header
 msgctxt "settings.panel.appearance.drawer_heading_image"
 msgid "Drawer heading image (optional)"
-msgstr "Imahe ng Drawer heading (opsyonal)"
+msgstr ""
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.drawer_heading_image.hint"
 msgid "Example: //via.placeholder.com/265x95"
-msgstr "Halimbawa: //via.placeholder.com/265x95"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.prevent_scrolling"
 msgid "Prevent scrolling (when not editing)"
-msgstr "Iwasan ang pag-scroll (Kung hindi nag-eedit)"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.hide_drawer_footer"
 msgid "Hide the drawer's footer"
-msgstr "Itago ang drawer's footer"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.hide_toolbar_buttons"
 msgid "Hide toolbar buttons:"
-msgstr "Itago ang mga pindutan ng toolbar:"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.show_clock"
 msgid "Show a clock on the header"
-msgstr "Ipakita ang orasan sa header"
+msgstr ""
 
 #. Textbox setting header, only displayed when the "Show a clock on the header" option is checked
 msgctxt "settings.panel.appearance.show_clock.header_format"
 msgid "Header clock format"
-msgstr "Format ng header ng orasan"
+msgstr ""
 
 #. Textbox placeholder, only displayed when the "Show a clock on the header" option is checked
 msgctxt "settings.panel.appearance.show_clock.header_format.hint"
 msgid "Default: shortTime, use AngularJS date format"
-msgstr "Default: shortTime, gamitin ang AngularJS date format"
+msgstr ""
 
 #. Custom widgets settings (section header)
 msgctxt "settings.panel.customwidgets.header"
 msgid "Custom Widgets"
-msgstr "Custom ng mga Widgets"
+msgstr ""
 
 #. Big "manage" button label (a > suffix is added)
 msgctxt "settings.panel.customwidgets.manage"
 msgid "Manage"
-msgstr "Pangasiwaan"
+msgstr ""
 
 #. Voice support (section header) - formerly (<=2.2.0) : "Voice feedback"
 msgctxt "settings.panel.voicesupport.header"
 msgid "Voice Support"
-msgstr "Suporta ng Boses"
+msgstr ""
 
 #. Dropdown header - formerly (<=2.2.0) : "Voice"
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice"
 msgid "Speech synthesis voice"
-msgstr "Boses ng pagbubuo ng salita"
+msgstr ""
 
 #. Displayed below the voice dropdown
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice.hint"
 msgid "Available voices depend on the operating system and browser environments."
-msgstr "Ang magagamit na mga boses ay nagdedepende sa sistemang operatibo at ng browser environments."
+msgstr ""
 
 #. Test button below the voice selection - make the voice say "habpanel 1 2 3"
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice.test"
 msgid "Test"
-msgstr "Subukan"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.voicesupport.floating_speech_button"
 msgid "Display a floating speech button at the bottom of the screen"
-msgstr "Nagpapakita ng lumulutang na pindutan ng salita sa ibaba ng screen"
+msgstr ""
 
 #. Dropdown header
 msgctxt "settings.panel.voicesupport.speech_synthesis_item"
 msgid "Speak the new value of the following item when it changes:"
-msgstr "Magsalita ng bagong balyu ng mga sumusunod na aytem kung ito ay nagbabago:"
+msgstr ""
 
 #. Section header
 msgctxt "settings.panel.dashboard_control.header"
 msgid "Switch dashboard with item value"
-msgstr "Ipagpalit ang talaan sa aytem balyu"
+msgstr ""
 
 #. Dropdown header
 msgctxt "settings.panel.dashboard_control.item"
 msgid "When this item changes to a dashboard's name, switch to it:"
-msgstr "Kung ang item na ito ay nagbago bilang isang pangalan ng talaan, palitan ito:"
+msgstr ""
 
 #. Local panel configuration editor header
 msgctxt "settings.localconfig.title"
 msgid "Local panel configuration editor"
-msgstr "Lokal na kompigurasyon ng panel editor"
+msgstr ""
 
 #. Displayed in a tooltip when hovering the exclamation mark in the local panel config editor
 msgctxt "settings.localconfig.warning"
 msgid "This is the raw configuration object representing your current configuration. Be careful while editing it by hand!"
-msgstr "Ito ay ang hilaw na kompigurasyon na bagay na representasyon ng kasalukuyan mong kompigurasyon. Mag-ingat sa pag-edit nito gamit ang kamay!"
+msgstr ""
 
 #. Blue button
 msgctxt "settings.localconfig.import"
 msgid "Import"
-msgstr "Mag-angkat"
+msgstr ""
 
 #. Blue button
 msgctxt "settings.localconfig.export"
 msgid "Export"
-msgstr "Mag-eksport"
+msgstr ""
 
 #. Default label for the white button on the right
 msgctxt "settings.localconfig.copy"
 msgid "Copy"
-msgstr "Kopyahin"
+msgstr ""
 
 #. Label displayed on the button for a few seconds after a successful copy to clipboard
 msgctxt "settings.localconfig.copied"
 msgid "Copied!"
-msgstr "Nakopya!"
+msgstr ""
 
 #. Default label for the red button on the right
 msgctxt "settings.localconfig.save"
 msgid "Save"
-msgstr "I-save"
+msgstr ""
 
 #. Label displayed on the button for a few seconds after a successful save
 msgctxt "settings.localconfig.saved"
 msgid "Saved!"
-msgstr "Nai-save!"
+msgstr ""
 
 #. Label displayed for a few seconds on the copy or save button if an error occurred
 msgctxt "settings.localconfig.failed"
 msgid "FAILED!"
-msgstr "Na bigo!"
+msgstr ""
 
 #. Displayed in a dialog box
 msgctxt "settings.localconfig.error.nodashboardsfound"
 msgid "No dashboards found!"
-msgstr "Walang nakitang mga talaan!"
+msgstr ""
 
 #. Title of a a dialog box
 msgctxt "settings.localconfig.parsingerror.dialog.title"
 msgid "Error"
-msgstr "Eror"
+msgstr ""
 
 #. Message in a dialog box
 msgctxt "settings.localconfig.parsingerror.dialog.message"
 msgid "Configuration parsing error, nothing has been modified: "
-msgstr "Pagkakamali sa pag-parse ng kompigurasyon, walang nagbago: "
+msgstr ""
 
 #. Title of a a dialog box
 msgctxt "settings.localconfig.importerror.dialog.title"
 msgid "Error"
-msgstr "Eror"
+msgstr ""
 
 #. Message in a dialog box
 msgctxt "settings.localconfig.importerror.dialog.message"
 msgid "Problem while importing: "
-msgstr "Problema habang nag-aangkat: "
+msgstr ""
 
 #. Screen title
 msgctxt "customwidgets.list.header"
 msgid "Custom widgets"
-msgstr "Custom ng mga widgets"
+msgstr ""
 
 #. Prefix displayed before the author's name
 msgctxt "customwidgets.list.byauthor"
 msgid "by"
-msgstr "ni"
+msgstr ""
 
 #. Displayed in a tooltip when hovering the icon indicating a globally provisioned widget
 msgctxt "customwidgets.list.globallyprovisioned.hint"
 msgid "This widget was provisioned globally via a bundle. It cannot be modified, but may be cloned to an user-defined widget with another name."
-msgstr "Ang widget na ito ay provisioned globally sa pamamagitan ng isang bundle. Ito ay hindi na maaring baguhin, pero pwde ihalintulad sa isang user-defined na widget na may ibang pangalan."
+msgstr ""
 
 #. Displayed in a tooltip when hovering the icon indicating a user defined widget
 msgctxt "customwidgets.list.userdefined.hint"
 msgid "This widget has been defined manually in this panel configuration and can be modified."
-msgstr "Ang widget na ito ay mano-manong itinakda sa kompigurasyon ng panel na ito at pwedeng mabago."
+msgstr ""
 
 #. Custom widget context menu entry - clone a globally-provisioned widget
 msgctxt "customwidgets.list.contextmenu.clone"
 msgid "Clone widget..."
-msgstr "I-clone ang widget..."
+msgstr ""
 
 #. Custom widget context menu entry - downloads a widget's .widget.json file
 msgctxt "customwidgets.list.contextmenu.exporttofile"
 msgid "Export to file"
-msgstr "I-eksport ang file"
+msgstr ""
 
 #. Custom widget context menu entry - opens a forum topic or GitHub readme
 msgctxt "customwidgets.list.contextmenu.openhelp"
 msgid "Open Help"
-msgstr "Buksan ang Tulong"
+msgstr ""
 
 #. Custom widget context menu entry - update the widget from its source
 msgctxt "customwidgets.list.contextmenu.update"
 msgid "Update..."
-msgstr "Mag-update..."
+msgstr ""
 
 #. Blue button opening a dialog
 msgctxt "customwidgets.list.newwidget"
 msgid "New widget"
-msgstr "Bagong widget"
+msgstr ""
 
 #. Blue button with a dropdown menu
 msgctxt "customwidgets.list.importwidget"
 msgid "Import widget"
-msgstr "Mag-angkat ng widget"
+msgstr ""
 
 #. Import button menu entry - opens a dialog
 msgctxt "customwidgets.list.importwidget.fromfile"
 msgid "Import from file..."
-msgstr "Mag-angkat mula sa file..."
+msgstr ""
 
 #. Import button menu entry - opens a dialog
 msgctxt "customwidgets.list.importwidget.fromgallery"
 msgid "Import from gallery..."
-msgstr "Mag-angkat mula sa galeriya..."
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.add.dialog.title"
 msgid "New custom widget"
-msgstr "Bagong custom ng widget"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.add.dialog.message"
 msgid "Please choose a short name as an identifier for your widget (for example, 'window-shutter=up-down-button, 'weather-forecast' etc.). If a widget with the same identifier already exists, it will be replaced!"
-msgstr "Paki-usap pumuli ng maiksing pangalan bilang pagkakilanlan ng iyong widget ( halimbawa, 'window-shutter=pindutan ng pataas-pababa, 'tagabalita-panahon' etc.). Kung mayroon ng widget na may parehong pagkakilanlan, ito ay papalitan!"
+msgstr ""
 
 #. Error message, displayed in an alert box
 msgctxt "customwidgets.list.import.nojson"
 msgid "The file must have a .json extension!"
-msgstr "Ang file ay dapat mayroong isang .json karugtong!"
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.import.dialog.title"
 msgid "Import widget"
-msgstr "Mag-angkat ng widget"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.import.dialog.message"
 msgid "Please confirm or change the identifier of your widget (avoid spaces and special chars!). If a widget with the same identifier already exists, it will be replaced!"
-msgstr "Pakiusap kumpirmahin o palitang ang pagkakilanlan ng iyong widget (iwasan ang patlang o puwang at espesyal na mga karakter!). Kung mayroon ng widget na may parehong pagkakilanlan, ito ay papalitan!"
+msgstr ""
 
 #. Prefix of an error message - followed by a technical exception message
 msgctxt "customwidgets.list.import.error"
 msgid "Widget import error: "
-msgstr "Eror sa pag-angkat ng widget: "
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.update.dialog.title"
 msgid "Update widget"
-msgstr "Mag-update ng widget"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.update.dialog.message"
 msgid "This will update widget <id> from <source_url>. Any changes you made will be overwritten! Continue?"
-msgstr "Ito ay mag-uupdate ng widget<id>mula sa<source_url>. Ano mang pagbabago na ginawa mo ay mapapatungan! Magpatuloy?"
+msgstr ""
 
 #. Alert banner message
 msgctxt "customwidgets.list.update.error.notemplatefound"
 msgid "Couldn't update widget <id> from <source_url>: no template found"
-msgstr "Hindi mai-update ang widget<id>mula sa<source_url>: walang makitang template"
+msgstr ""
 
 #. Alert banner message
 msgctxt "customwidgets.list.update.error.unknown"
 msgid "Couldn't update widget <id> from <source_url>: "
-msgstr "Hindi mai-update ang widget<id>mula sa<source_url>: "
+msgstr ""
 
 #. Alert banner message
 msgctxt "customwidgets.list.update.success"
 msgid "Widget <id> updated successfully from <source_url>"
-msgstr "Ang widget<id>ay matagumpay na nai-update mula sa<source_url>"
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.delete.dialog.title"
 msgid "Remove widget"
-msgstr "Alisin ang widget"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.delete.dialog.message"
 msgid "Please confirm you want to delete this widget: "
-msgstr "Pakikumpirma na gusto mong alisin ang widget na ito: "
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.clone.dialog.title"
 msgid "Clone widget"
-msgstr "I-clone and widget"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.clone.dialog.message"
 msgid "This will clone the globally provisioned widget: <id> to be modified as part of the panel configuration. Enter an unique identifier below - it must be different from the widget being cloned, and should avoid spaces and special chars. If an user-defined widget with the same identifier already exists, it will be replaced!"
-msgstr "I-cloclone nito ang globally provisioned na widget:<id>babaguhin bilang isang parte ng kompigurasyon ng panel. Magbigay ng walang katulad na pagkakilanlan sa baba- ito ay dapat iba sa widget na nai-clone, at dapat iwasan ang puwang at espesyal na mga karakter. Kung mayroon ng widget na may parehong pagkakilanlan, ito ay papalitan!"
+msgstr ""
 
 #. Screen title, followed by the widget name - beware of size!
 msgctxt "customwidgets.designer.heading"
 msgid "Widget:"
-msgstr "Widget:"
+msgstr ""
 
 #. Save button on the right, default label - can be hidden on phones
 msgctxt "customwidgets.designer.save"
 msgid "Save"
-msgstr "I-save"
+msgstr ""
 
 #. Save button on the right, displayed for a few seconds after a save - can be hidden on phones
 msgctxt "customwidgets.designer.saved"
 msgid "Saved!"
-msgstr "Nai-save!"
+msgstr ""
 
 #. Tab header
 msgctxt "customwidgets.designer.code"
 msgid "Code"
-msgstr "Code"
+msgstr ""
 
 #. Tab header
 msgctxt "customwidgets.designer.settings"
 msgid "Settings"
-msgstr "Mga setting"
+msgstr ""
 
 #. Section header in the Settings tab
 msgctxt "customwidgets.designer.settings.general"
 msgid "General settings"
-msgstr "Pangkalahatang mga setting"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.general.display_name"
 msgid "Display name"
-msgstr "Pagpakita ng pangalan"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.general.author"
 msgid "Author"
-msgstr "May-akda"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.general.description"
 msgid "Description"
-msgstr "Deskripsyon"
+msgstr ""
 
 #. Section header in the Settings tab
 msgctxt "customwidgets.designer.settings.config"
 msgid "Configuration settings"
-msgstr "Kompigurasyon ng mga setting"
+msgstr ""
 
 #. Displayed in small text below the section header, with an information icon
 msgctxt "customwidgets.designer.settings.config.warning"
 msgid "Beware: always bear in mind instances of this widget might be existing when altering configuration settings!"
-msgstr "Babala: palaging tandaan na mayroon ng umiiral na mga instances ng widget na ito kapag iniiba ang kompigurasyon ng mga setting!"
+msgstr ""
 
 #. Button label
 msgctxt "customwidgets.designer.settings.config.add"
 msgid "Add setting"
-msgstr "Magdagdag ng setting"
+msgstr ""
 
 #. Dropdown header
 msgctxt "customwidgets.designer.settings.config.type"
 msgid "Type"
-msgstr "Uri"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.string"
 msgid "String"
-msgstr "String"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.number"
 msgid "Number"
-msgstr "Numero"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.checkbox"
 msgid "Checkbox"
-msgstr "Tsekbox"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.item"
 msgid "Item"
-msgstr "Aytem"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.color"
 msgid "Color"
-msgstr "Kulay"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.choices"
 msgid "Choices"
-msgstr "Mga pagpipilian"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.icon"
 msgid "Icon"
-msgstr "Ikon"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.heading"
 msgid "Heading"
-msgstr "Heading"
+msgstr ""
 
 #. Tooltip displayed when hovering the help icon alongside the ID field
 msgctxt "customwidgets.designer.settings.config.id.hint"
 msgid "Enter a JSON friendly key for this setting - ideally, use only lowercase letters, digits and underscores. Examples: my_setting, first_item, text_size, font_color"
-msgstr "Mag-enter ng isang JSON friendly key para sa setting na ito - ideally, gumamit lamang ng maliliit na mga letra, bilang at mga salungguhit. Halimbawa: aking_setting, unang_item, teksto_sukat, font_kulay"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.label"
 msgid "Label"
-msgstr "Tatak"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.default"
 msgid "Default value"
-msgstr "Default na balyu"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.choices"
 msgid "Choices"
-msgstr "Mga pagpipilian"
+msgstr ""
 
 #. Textbox placeholder
 msgctxt "customwidgets.designer.settings.config.choices.hint"
 msgid "Comma-separated possible values"
-msgstr "Posibleng mga balyu ng pinaghihiwalay ng comma"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.description"
 msgid "Description"
-msgstr "Deskripsiyon"
+msgstr ""
 
 #. Banner displayed when selecting the Icon type for the settings, followed by the defined settings themselves
 msgctxt "customwidgets.designer.settings.config.icon.hint"
 msgid "This will define 2 config elements:"
-msgstr "Ito ay magtatakda ng 2 nakompigura na mga elemets:"
+msgstr ""
 
 #. Tab header
 msgctxt "customwidgets.designer.preview"
 msgid "Preview"
-msgstr "Pribyu"
+msgstr ""
 
 #. Dialog box title
 msgctxt "widgetgallery.heading"
 msgid "Widget Gallery"
-msgstr "Galeriya ng Widget"
+msgstr ""
 
 #. Dialog box title (when displaying a repository)
 msgctxt "widgetgallery.heading.importrepo"
 msgid "Import GitHub Repository"
-msgstr "Mag-angkat ng repositoryo ng Github"
+msgstr ""
 
 #. Dialog box title (when displaying a community gallery item)
 msgctxt "widgetgallery.heading.importgallery"
 msgid "Import Gallery Item"
-msgstr "Mag-angket ng Galeriya ng Aytem"
+msgstr ""
 
 #. Alert banner message
 msgctxt "widgetgallery.warning.githubratelimit"
 msgid "Warning: rate limiting on the GitHub API will temporarily block further requests!"
-msgstr "Babala: Ang antas ng paglilimita sa sa GitHub API ay pansamantalang hinaharang ang karagdagang mga hinihiling!"
+msgstr ""
 
 #. Alert banner message (2nd part)
 msgctxt "widgetgallery.warning.githubratelimit.wait"
 msgid "Wait until this time and try again:"
-msgstr "Maghintay hanggang sa oras na ito at subukan ulit:"
+msgstr ""
 
 #. Textbox placeholder
 msgctxt "widgetgallery.addressbar.hint"
 msgid "GitHub repository full name (owner/name) or URL"
-msgstr "Ang buong pangalan ng repositoryo ng GitHub (may-ari/pangalan) o URL"
+msgstr ""
 
 #. Button on the right of the addressbar
 msgctxt "widgetgallery.addressbar.go"
 msgid "Go"
-msgstr "Magpatuloy"
+msgstr ""
 
 #. Suffix displayed after a number, i.e. "24 community contributions"
 msgctxt "widgetgallery.toolbar.communitycontributions"
 msgid "community&nbsp;contributions"
-msgstr "komunidad&nbsp;mga kontribusyon"
+msgstr ""
 
 #. On the right with the sort options
 msgctxt "widgetgallery.toolbar.sortby"
 msgid "sort by:"
-msgstr "isinaayos ni:"
+msgstr ""
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostrecent"
 msgid "most&nbsp;recent"
-msgstr "pinaka&nbsp;kasalukuyan"
+msgstr ""
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostliked"
 msgid "most&nbsp;liked"
-msgstr "pinaka&nbsp;gusto"
+msgstr ""
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostpopular"
 msgid "most&nbsp;popular"
-msgstr "pinaka&nbsp;sikat"
+msgstr ""
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostdiscussed"
 msgid "most&nbsp;discussed"
-msgstr "pinaka&nbsp;pinag-uusapan"
+msgstr ""
 
 #. Prefix before the author's name
 msgctxt "widgetgallery.details.authorby"
 msgid "by"
-msgstr "ni"
+msgstr ""
 
 #. Suffix displayed after a number, i.e. "24 posts on this topic"
 msgctxt "widgetgallery.details.forumposts"
 msgid "post(s) on this topic - discuss on community.openhab.org"
-msgstr "magpost sa paksang ito - at pag-usapan sa community.openhab.org"
+msgstr ""
 
 #. Label of the big green button when nothing to import
 msgctxt "widgetgallery.details.nothingtoimport"
 msgid "Nothing to import"
-msgstr "Walang mai-angkat"
+msgstr ""
 
 #. Label of the big green button when 1 widget was found
 msgctxt "widgetgallery.details.importwidget"
 msgid "Import Widget"
-msgstr "Mag-angkat ng widget"
+msgstr ""
 
 #. Label of the big green button when 2 or more widgets were found
 msgctxt "widgetgallery.details.importwidgets"
 msgid "Import {} Widgets"
-msgstr "Mag-angkat {} ng mga Widgets"
+msgstr ""
 
 #. Label of the big blue button when there is a referenced GitHub repo
 msgctxt "widgetgallery.details.gotorepository"
 msgid "Go to the repository"
-msgstr "Pumunta sa repositoryo"
+msgstr ""
 
 #. Displyed in orange inside the big green button after a number, when some widgets are already present
 msgctxt "widgetgallery.details.toupdate"
 msgid "to update"
-msgstr "mag-update"
+msgstr ""
 
 #. Little white button label with a down caret
 msgctxt "widgetgallery.details.showdetails"
 msgid "Show details"
-msgstr "Ipakita ang mga detalye"
+msgstr ""
 
 #. Little white button label with a up caret
 msgctxt "widgetgallery.details.hidedetails"
 msgid "Hide details"
-msgstr "Itago ang mga detalye"
+msgstr ""
 
 #. Little white button label
 msgctxt "widgetgallery.details.downloadzip"
 msgid "Download ZIP"
-msgstr "I-download ang ZIP"
+msgstr ""
 
 #. 1. Prefix of the explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.prefix"
 msgid "This"
-msgstr "Ito ay"
+msgstr ""
 
 #. 2a. Name of a community contribution
 msgctxt "widgetgallery.details.widget.hint.communitycontribution"
 msgid "community contribution"
-msgstr "kontribusyon ng komunidad"
+msgstr ""
 
 #. 2b. Name of a community contribution
 msgctxt "widgetgallery.details.widget.hint.repository"
 msgid "repository"
-msgstr "repositoryo"
+msgstr ""
 
 #. 3. Suffix of the explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.suffix"
 msgid "contains the following widgets; you can import them individually:"
-msgstr "naglalaman ng mga sumusunod na mga widgets: kaya mo itong i-angkat ng hiwa-hiwalay:"
+msgstr ""
 
 #. Explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.nowidgets"
 msgid "No widgets were found (*.widget.json files)! Please report this."
-msgstr "Walang nakitang mga widget (*.widget.json files)! Paki-ulat ito."
+msgstr ""
 
 #. Explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.checkrepo"
 msgid "The widgets are likely in the referenced GitHub repository. Click the 'Go to the repository' button to open it."
-msgstr "Ang mga widgets ay maaaring nasa naisangguni na Github na repositoryo. I-klik ang 'Pumunta sa reporsitoryo' na pindutan para buksan ito."
+msgstr ""
 
 #. Green button in the expanded details section
 msgctxt "widgetgallery.details.widget.import"
 msgid "Import widget"
-msgstr "Mag-angkat ng widget"
+msgstr ""
 
 #. Orange button in the expanded details section
 msgctxt "widgetgallery.details.widget.update"
 msgid "Update widget"
-msgstr "Mag-update ng widget"
+msgstr ""
 
 #. Disabled button in the expanded details section after a widget was imported/updated
 msgctxt "widgetgallery.details.widget.imported"
 msgid "Widget imported!"
-msgstr "Nai-angkat na ang widget!"
+msgstr ""
 
 #. Alert banner, followed by a technical exception message
 msgctxt "widgetgallery.error"
 msgid "Error:"
-msgstr "Eror:"
+msgstr ""
 
 #. Dialog box title
 msgctxt "widgetgallery.widgetsdetected.dialog.title"
 msgid "Existing widgets detected"
-msgstr "May nakitang umiiral na mga widgets"
+msgstr ""
 
 #. Dialog box message
 msgctxt "widgetgallery.widgetsdetected.dialog.message"
 msgid "Warning: please confirm you wish to update <nbexisting> existing widgets, overwriting any eventual changes made locally! If unsure, cancel and click Show details to review the list of affected widgets."
-msgstr "Babala: pakikumpirma ang iyong hiling na mag-update<nbexisting>umiiral na mga widgets, pinapalitan ang anumang mga kalaunang pagbabago na ginawa ng lokal! Kung d sigurado, ikansela at i-klik ang Ipakita ang mga detalye para siyasatin ang mga apektadong mga widget."
+msgstr ""
 
