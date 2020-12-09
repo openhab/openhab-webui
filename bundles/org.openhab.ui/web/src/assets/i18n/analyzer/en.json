@@ -1,7 +1,7 @@
 {
   "analyzer.title": "Analyze",
-  "analyzer.back": "@:dialogs.back",
-  "analyzer.save": "@:dialogs.save",
+  "analyzer.back": "Back",
+  "analyzer.save": "Save",
   "analyzer.controls": "Controls",
   "analyzer.series": "Series",
   "analyzer.series.table.header.label": "Label",
@@ -44,7 +44,7 @@
   "analyzer.ranges.range.type.piecewise": "Piecewise",
   "analyzer.ranges.valueAxes": "Value Axes",
   "analyzer.ranges.valueAxes.table.header.label": "Label",
-  "analyzer.ranges.valueAxes.table.header.min": "Max",
+  "analyzer.ranges.valueAxes.table.header.min": "Min",
   "analyzer.ranges.valueAxes.table.header.max": "Max",
   "analyzer.ranges.valueAxes.table.header.scale": "Scale",
   "analyzer.ranges.valueAxes.table.header.split": "Split",
