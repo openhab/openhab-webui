@@ -526,8 +526,6 @@ export default {
   },
   mounted () {
     this.$f7ready((f7) => {
-      localStorage.getItem('openhab.ui:sidebar.noBreakpoint')
-
       this.updateThemeOptions()
       this.$f7.data.themeOptions = this.themeOptions
 
