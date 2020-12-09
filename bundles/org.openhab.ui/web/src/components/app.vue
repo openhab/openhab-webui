@@ -90,6 +90,9 @@
           <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray"></f7-icon>
         </f7-list-item>
       </f7-list>
+      <f7-link class="breakpointPin" @click="toggleVisibleBreakpoint">
+        <f7-icon slot="media" size="14" :f7="this.visibleBreakpointDisabled ? 'pin_fill' : 'pin'" color="gray"></f7-icon>
+      </f7-link>
 
       <div slot="fixed" class="account" v-if="ready">
         <div class="display-flex justify-content-center">
@@ -203,6 +206,15 @@
       width 100%
       margin-bottom 0
       height calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
+  .breakpointPin
+    position fixed
+    top calc(var(--f7-safe-area-top))
+    right 0
+    margin 10px
+    opacity 0
+  @media (min-width 960px)
+    .breakpointPin
+      opacity 0.75
 
 .theme-dark
   .panel-left
@@ -331,6 +343,7 @@ export default {
       sitemaps: null,
       pages: null,
       showSidebar: true,
+      visibleBreakpointDisabled: false,
       loginScreenOpened: false,
       loggedIn: false,
 
@@ -468,12 +481,21 @@ export default {
       } else {
         this.$$('html').removeClass('theme-dark')
       }
+      if (localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true') {
+        this.visibleBreakpointDisabled = true
+        this.$nextTick(() => this.$f7.panel.get('left').disableVisibleBreakpoint())
+      }
     },
     toggleDeveloperSidebar () {
       if (!this.$store.getters.isAdmin) return
       this.showDeveloperSidebar = !this.showDeveloperSidebar
       if (this.showDeveloperSidebar) this.$store.dispatch('startTrackingStates')
       this.$store.commit('setDeveloperSidebar', this.showDeveloperSidebar)
+    },
+    toggleVisibleBreakpoint () {
+      this.$f7.panel.get('left').toggleVisibleBreakpoint()
+      this.visibleBreakpointDisabled = this.$f7.panel.get('left').visibleBreakpointDisabled
+      localStorage.setItem('openhab.ui:panel.visibleBreakpointDisabled', this.visibleBreakpointDisabled)
     },
     keyDown (ev) {
       if (ev.keyCode === 68 && ev.shiftKey && ev.altKey) {
@@ -504,6 +526,8 @@ export default {
   },
   mounted () {
     this.$f7ready((f7) => {
+      localStorage.getItem('openhab.ui:sidebar.noBreakpoint')
+
       this.updateThemeOptions()
       this.$f7.data.themeOptions = this.themeOptions
 
