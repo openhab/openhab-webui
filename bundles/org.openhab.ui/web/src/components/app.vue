@@ -90,7 +90,7 @@
           <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray"></f7-icon>
         </f7-list-item>
       </f7-list>
-      <f7-link class="breakpointPin" @click="toggleVisibleBreakpoint">
+      <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
         <f7-icon slot="media" size="14" :f7="this.visibleBreakpointDisabled ? 'pin_fill' : 'pin'" color="gray"></f7-icon>
       </f7-link>
 
@@ -206,14 +206,14 @@
       width 100%
       margin-bottom 0
       height calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
-  .breakpointPin
+  .breakpoint-pin
     position fixed
     top calc(var(--f7-safe-area-top))
     right 0
-    margin 10px
+    margin 12px 10px
     opacity 0
   @media (min-width 960px)
-    .breakpointPin
+    .breakpoint-pin
       opacity 0.75
 
 .theme-dark
