@@ -360,13 +360,16 @@ export default {
           // store the REST API services present on the system
           this.$store.commit('setRootResource', { rootResponse })
           this.updateLocale()
-        }).then(() => {
+          return rootResponse
+        }).then((rootResponse) => {
           let locale = this.$store.state.locale
-          if (!locale) return
-          let dayjsLocale = dayjsLocales.find((l) => l.key === locale.replace('_', '-').toLowerCase())
-          if (!dayjsLocale) dayjsLocale = dayjsLocales.find((l) => l.key === locale.split('_')[0].toLowerCase())
-          if (!dayjsLocale) return
-          let dayjsLocalePromise = (dayjsLocale) ? import('dayjs/locale/' + dayjsLocale.key + '.js').then(() => Promise.resolve(dayjsLocale)) : Promise.resolve(null)
+          let dayjsLocalePromise = Promise.resolve(null)
+          // try to resolve the dayjs file to load if it exists
+          if (locale) {
+            let dayjsLocale = dayjsLocales.find((l) => l.key === locale.replace('_', '-').toLowerCase())
+            if (!dayjsLocale) dayjsLocale = dayjsLocales.find((l) => l.key === locale.split('_')[0].toLowerCase())
+            dayjsLocalePromise = (dayjsLocale) ? import('dayjs/locale/' + dayjsLocale.key + '.js').then(() => Promise.resolve(dayjsLocale)) : Promise.resolve(null)
+          }
           // load the pages & widgets, only if the 'ui' endpoint exists (or empty arrays otherwise)
           return Promise.all([
             ...this.$store.getters.apiEndpoint('ui')

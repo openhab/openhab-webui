@@ -22,7 +22,7 @@
   "home.equipment.tab": "Equipment",
   "home.properties.title": "Properties",
   "home.properties.tab": "Properties",
-  "home.cards.close": "@:dialogs.close",
+  "home.cards.close": "Close",
   "home.cards.analyze": "Analyze",
   "home.cards.analyzeAll": "Analyze All",
   "home.otherApps": "Other Apps",
@@ -37,7 +37,7 @@
   "sidebar.helpAbout": "Help & About",
   "sidebar.unlockAdmin": "Unlock Administration",
   "sidebar.tip.signIn": "Sign in as an administrator to access settings",
-  "page.navbar.back": "@:dialogs.back",
+  "page.navbar.back": "Back",
   "page.navbar.edit": "Edit",
   "admin.notTranslatedYet": "The administration area is not translated yet."
 }
