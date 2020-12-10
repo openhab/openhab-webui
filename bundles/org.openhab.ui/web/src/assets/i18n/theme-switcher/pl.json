@@ -1,0 +1,15 @@
+{
+  "about.theme": "Motyw",
+  "about.theme.auto": "Automatyczny",
+  "about.darkMode": "Tryb ciemny",
+  "about.darkMode.auto": "Automatyczny",
+  "about.darkMode.light": "Jasny",
+  "about.darkMode.dark": "Ciemny",
+  "about.navigationBarsStyle": "Styl paska nawigacji",
+  "about.miscellaneous": "Pozostałe",
+  "about.miscellaneous.home.navbar": "Prosty pasek nawigacji na stronie głównej",
+  "about.miscellaneous.home.background": "Standardowy kolor tła strony głównej",
+  "about.miscellaneous.home.hideChatInput": "Ukryj pasek czatu na stronie głównej",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Wyłącz animacje rozszerzenia kart",
+  "about.miscellaneous.theme.disablePageTransition": "Wyłącz animacje przejść między stronami"
+}
