@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(voorbeeld)",
+  "habot.clearHistory": "Geschiedenis wissen",
+  "habot.dismiss": "Sluit",
+  "habot.example1": "Wat is de temperatuur in de keuken?",
+  "habot.example2": "Stel de thermostaat in op 21 graden",
+  "habot.example3": "Zet de lichten op de eerste verdieping uit",
+  "habot.anythingElse": "Nog iets anders?",
+  "habot.cardDeckIsIncompatible": "Sorry, kaarten die zijn opgeslagen in het kaartdek kunnen hier niet worden weergegeven, gebruik de HABot app om deze te zien.",
+  "habot.cardIsIncompatible": "Sorry, deze kaart kan hier niet worden weergegeven, gebruik de HABot app om deze te zien."
+}
