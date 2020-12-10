@@ -10,12 +10,10 @@
 </template>
 
 <script>
- import VueQrcode from 'vue-qrcode'
-
 export default {
   props: ['configDescription', 'value'],
   components: {
-      VueQrcode
-    }
+    'vue-qrcode': () => import(/* webpackChunkName: "vue-qrcode" */ 'vue-qrcode')
+  }
 }
 </script>
