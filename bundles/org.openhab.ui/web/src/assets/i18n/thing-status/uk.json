@@ -1,0 +1,13 @@
+{
+  "HANDLER_MISSING_ERROR": "ПОМИЛКА: HANDLER",
+  "HANDLER_CONFIGURATION_PENDING": "ПОМИЛКА: HANDLER",
+  "HANDLER_INITIALIZING_ERROR": "ПОМИЛКА: HANDLER",
+  "BRIDGE_UNINITIALIZED": "ПОМИЛКА: BRIDGE",
+  "DISABLED": "ВИМКНЕНО",
+  "CONFIGURATION_PENDING": "ОЧІКУВАННЯ НАЛАШТУВАННЯ",
+  "COMMUNICATION_ERROR": "ПОМИЛКА: COMM",
+  "CONFIGURATION_ERROR": "ПОМИЛКА: CONFIG",
+  "BRIDGE_OFFLINE": "ПОМИЛКА: BRIDGE",
+  "FIRMWARE_UPDATING": "ОНОВЛЕННЯ ПРОШИВКИ",
+  "GONE": "ВТРАЧЕНО"
+}
