@@ -1,0 +1,19 @@
+{
+  "profile.title": "Däi Profil",
+  "profile.changePassword": "Passwuert änneren",
+  "profile.sessions": "Sessioun",
+  "profile.sessions.header": "Opgepasst: och wann s du deng Sessioun läschs, kann se aktiv bleiwen bis all gülteg Access-Token ofgelaf sinn.",
+  "profile.sessions.signOut": "Vun dëser Sessioun ofmelden",
+  "profile.sessions.created": "Erstallt: ",
+  "profile.sessions.lastRefreshed": "Lescht Aktualiséierung: ",
+  "profile.sessions.delete.success": "Sessioun geläscht",
+  "profile.sessions.delete.error": "Feeler beim Läsche vun der Sessioun: ",
+  "profile.sessions.signOut.error": "Feeler beim Ausloggen: ",
+  "profile.apiTokens": "API Token",
+  "profile.apiTokens.header": "Erstell API-Token fir externe Programmer a Servicer ouni OAuth2-Ënnerstëtzung permanenten Zougrëff ze erlaben.",
+  "profile.apiTokens.created": "Erstallt: ",
+  "profile.apiTokens.validForScope": "Gëlt fir d'Uwendung: ",
+  "profile.apiTokens.create": "Neien API-Token erstellen",
+  "profile.apiTokens.delete.success": "API-Token geläscht",
+  "profile.apiTokens.delete.error": "Feeler beim Läsche vum API-Token: "
+}
