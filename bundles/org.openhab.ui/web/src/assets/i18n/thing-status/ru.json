@@ -1,0 +1,13 @@
+{
+  "HANDLER_MISSING_ERROR": "ОШИБКА: ОБРАБОТЧИКА",
+  "HANDLER_CONFIGURATION_PENDING": "ОШИБКА: ОБРАБОТЧИКА",
+  "HANDLER_INITIALIZING_ERROR": "ОШИБКА: ОБРАБОТЧИКА",
+  "BRIDGE_UNINITIALIZED": "ОШИБКА: БРИДЖА",
+  "DISABLED": "ОТКЛЮЧЕНО",
+  "CONFIGURATION_PENDING": "ОЖИДАНИЕ КОНФИГУРАЦИИ",
+  "COMMUNICATION_ERROR": "ОШИБКА: СВЯЗИ",
+  "CONFIGURATION_ERROR": "ОШИБКА: КОНФИГУРАЦИИ",
+  "BRIDGE_OFFLINE": "ОШИБКА: МОСТА",
+  "FIRMWARE_UPDATING": "ОБНОВЛЕНИЕ ПРОШИВКИ",
+  "GONE": "УШЕЛ"
+}
