@@ -1,0 +1,21 @@
+{
+  "about.title": "Acerca de",
+  "about.homePage": "Sitio Web",
+  "about.documentation": "Documentación",
+  "about.communityForum": "Foro de la Comunidad",
+  "about.technicalInformation": "Información Técnica",
+  "about.technicalInformation.configurationFolder": "Carpeta de configuración",
+  "about.technicalInformation.userdataFolder": "Carpeta de datos de usuario",
+  "about.technicalInformation.logsFolder": "Carpeta de registros",
+  "about.technicalInformation.operatingSystem": "Sistema Operativo",
+  "about.technicalInformation.javaRuntime": "Runtime de Java",
+  "about.technicalInformation.resourceStats": "{nbproc} procesadores disponibles - {ram} memoria disponible",
+  "about.technicalInformation.viewDetails": "Ver Detalles",
+  "about.appearanceOptions": "Apariencia (sólo para este dispositivo)",
+  "about.reload": "Recargar",
+  "about.reload.purgeExplanation1": "Se están empleando las cachés y/o los trabajos de servicio para almacenar recursos localmente y hacer que la aplicación cargue más rápido, sin embargo, esto puede hacer que no se detecte correctamente cuando se ha actualizado a una nueva versión.",
+  "about.reload.purgeExplanation2": "Seleccione Eliminar Cachés y Refrescar para borrar todas las cachés, desregistrar todos los trabajos y descargar de nuevo todo del servidor.",
+  "about.reload.purgeCachesAndRefresh": "Eliminar Cachés y Actualizar",
+  "about.reload.confirmPurge": "¿Eliminar todas las cachés y desregistrar todos los trabajos? Esto también recargará la página del servidor, que puede tardar unos segundos.",
+  "about.reload.reloadApp": "Recargar App"
+}
