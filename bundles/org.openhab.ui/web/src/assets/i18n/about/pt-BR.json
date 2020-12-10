@@ -8,7 +8,7 @@
   "about.technicalInformation.userdataFolder": "Pasta de dados do usuário",
   "about.technicalInformation.logsFolder": "Pasta de logs",
   "about.technicalInformation.operatingSystem": "Sistema operacional",
-  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.javaRuntime": "Versão do Java",
   "about.technicalInformation.resourceStats": "{nbproc} processadores disponíveis - {ram} memória disponível",
   "about.technicalInformation.viewDetails": "Ver detalhes",
   "about.appearanceOptions": "Aparência (apenas para este dispositivo)",
