@@ -1,0 +1,8 @@
+{
+  "CONFIGURATION_ERROR": "ПОМИЛКА: CONFIG",
+  "HANDLER_INITIALIZING_ERROR": "ПОМИЛКА: HANDLER",
+  "HANDLER_MISSING_ERROR": "ПОМИЛКА: HANDLER",
+  "TEMPLATE_MISSING_ERROR": "ПОМИЛКА: TEMPLATE",
+  "INVALID_RULE": "НЕДІЙСНИЙ",
+  "DISABLED": "ВИМКНЕНО"
+}
