@@ -1,0 +1,15 @@
+{
+  "about.theme": "Тема",
+  "about.theme.auto": "Авто",
+  "about.darkMode": "Темний режим",
+  "about.darkMode.auto": "Авто",
+  "about.darkMode.light": "Світла",
+  "about.darkMode.dark": "Темна",
+  "about.navigationBarsStyle": "Стиль панелі навігації",
+  "about.miscellaneous": "Інше",
+  "about.miscellaneous.home.navbar": "Проста панель навігації на головній сторінці",
+  "about.miscellaneous.home.background": "Стандартний колір фону домашньої сторінки",
+  "about.miscellaneous.home.hideChatInput": "Приховати поле вводу чату на головній сторінці",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Вимкнути анімацію розширення карт",
+  "about.miscellaneous.theme.disablePageTransition": "Вимкнути анімацію переходу між сторінками"
+}
