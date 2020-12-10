@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(exempel)",
+  "habot.clearHistory": "Rensa historik",
+  "habot.dismiss": "Avfärda",
+  "habot.example1": "Vad är temperaturen i köket?",
+  "habot.example2": "Ställ in termostaten på 21 grader",
+  "habot.example3": "Släck lamporna på övervåningen",
+  "habot.anythingElse": "Någonting annat?",
+  "habot.cardDeckIsIncompatible": "Kort som sparats på kortleken kan tyvärr inte visas här, använd den dedikerade HABot-appen för att se dem.",
+  "habot.cardIsIncompatible": "Detta kort kan tyvärr inte visas här, använd HABot-appen för att se det."
+}
