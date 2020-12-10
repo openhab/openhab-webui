@@ -1,0 +1,15 @@
+{
+  "about.theme": "Tema",
+  "about.theme.auto": "Auto",
+  "about.darkMode": "Mörkt läge",
+  "about.darkMode.auto": "Auto",
+  "about.darkMode.light": "Ljust",
+  "about.darkMode.dark": "Mörkt",
+  "about.navigationBarsStyle": "Stil på navigeringsfält",
+  "about.miscellaneous": "Diverse",
+  "about.miscellaneous.home.navbar": "Enkelt navigeringsfält på startsidan",
+  "about.miscellaneous.home.background": "Standard bakgrundsfärg på startsidan",
+  "about.miscellaneous.home.hideChatInput": "Dölj fältet för chatt på startsidan",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Inaktivera animationer vid expansion av kort",
+  "about.miscellaneous.theme.disablePageTransition": "Inaktivera sidövergångsanimationer"
+}
