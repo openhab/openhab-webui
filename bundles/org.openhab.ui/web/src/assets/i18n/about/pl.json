@@ -1,0 +1,21 @@
+{
+  "about.title": "O programie",
+  "about.homePage": "Strona WWW",
+  "about.documentation": "Dokumentacja",
+  "about.communityForum": "Forum społeczności",
+  "about.technicalInformation": "Informacje techniczne",
+  "about.technicalInformation.configurationFolder": "Folder konfiguracyjny",
+  "about.technicalInformation.userdataFolder": "Folder danych użytkownika",
+  "about.technicalInformation.logsFolder": "Folder logów",
+  "about.technicalInformation.operatingSystem": "System operacyjny",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} dostępnych procesorów - {ram} dostępnej pamięci",
+  "about.technicalInformation.viewDetails": "Wyświetl szczegóły",
+  "about.appearanceOptions": "Wygląd (tylko dla tego urządzenia)",
+  "about.reload": "Odśwież",
+  "about.reload.purgeExplanation1": "Pamięć podręczna i/lub service workery są w użyciu do lokalnego przechowywania zasobów i szybszego ładowania aplikacji. Nie może jednak w wiarygodny sposób wykryć kiedy nastąpiła aktualizacja do nowej wersji.",
+  "about.reload.purgeExplanation2": "Wybierz \"Wyczyść pamięć podręczną i odśwież\", aby wyczyścić całą pamięć cache, wyrejestrować service workery i ponownie pobrać wszystko z serwera.",
+  "about.reload.purgeCachesAndRefresh": "Wyczyść pamięć podręczną i odśwież",
+  "about.reload.confirmPurge": "Wyczyścić całą pamięć podręczną aplikacji i wyrejestrować service workery? To spowoduje odświeżenie strony i pobranie danych z serwera, co może potrwać kilka sekund.",
+  "about.reload.reloadApp": "Przeładuj aplikację"
+}
