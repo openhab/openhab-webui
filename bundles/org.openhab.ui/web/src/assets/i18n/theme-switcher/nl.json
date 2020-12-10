@@ -1,0 +1,15 @@
+{
+  "about.theme": "Thema",
+  "about.theme.auto": "Auto",
+  "about.darkMode": "Donkere modus",
+  "about.darkMode.auto": "Auto",
+  "about.darkMode.light": "Licht",
+  "about.darkMode.dark": "Donker",
+  "about.navigationBarsStyle": "Stijl navigatiebalken",
+  "about.miscellaneous": "Diverse",
+  "about.miscellaneous.home.navbar": "Eenvoudige navigatiebalk op de startpagina",
+  "about.miscellaneous.home.background": "Standaard achtergrond kleur startpagina",
+  "about.miscellaneous.home.hideChatInput": "Chat-invoervak op startpagina verbergen",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Kaart animaties uitschakelen",
+  "about.miscellaneous.theme.disablePageTransition": "Pagina-overgang animaties uitschakelen"
+}
