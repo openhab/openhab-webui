@@ -1,0 +1,19 @@
+{
+  "profile.title": "Ваш профіль",
+  "profile.changePassword": "Змінити пароль",
+  "profile.sessions": "Сесії",
+  "profile.sessions.header": "Примітка: навіть якщо ви видалите сесію, вона все ще залишатиметься активною, до закінчення всіх дійсних маркерів (tokens) доступу.",
+  "profile.sessions.signOut": "Вийти з цієї сесії",
+  "profile.sessions.created": "Створено: ",
+  "profile.sessions.lastRefreshed": "Останнє оновлення: ",
+  "profile.sessions.delete.success": "Сесію видалено",
+  "profile.sessions.delete.error": "Помилка при видаленні сесії: ",
+  "profile.sessions.signOut.error": "Помилка при виході: ",
+  "profile.apiTokens": "Ключі API",
+  "profile.apiTokens.header": "Створюйте API-токени, щоб надати зовнішнім інструментам та сервісам, які не підтримують OAuth2 Authorization Framework, постійний доступ від вашого імені.",
+  "profile.apiTokens.created": "Створено: ",
+  "profile.apiTokens.validForScope": "Дійсно для: ",
+  "profile.apiTokens.create": "Створити новий ключ API",
+  "profile.apiTokens.delete.success": "Ключ API видалено",
+  "profile.apiTokens.delete.error": "Помилка під час видалення ключа API: "
+}
