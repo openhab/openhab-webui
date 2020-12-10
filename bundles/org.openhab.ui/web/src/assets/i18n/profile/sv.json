@@ -1,0 +1,19 @@
+{
+  "profile.title": "Din profil",
+  "profile.changePassword": "Byt lösenord",
+  "profile.sessions": "Sessioner",
+  "profile.sessions.header": "Obs: även om du tar bort en session, kan den fortfarande vara aktiv tills alla giltiga tokens löper ut.",
+  "profile.sessions.signOut": "Logga ut från denna session",
+  "profile.sessions.created": "Skapades: ",
+  "profile.sessions.lastRefreshed": "Senast uppdaterad: ",
+  "profile.sessions.delete.success": "Sessionen borttagen",
+  "profile.sessions.delete.error": "Fel vid borttagning av sessionen: ",
+  "profile.sessions.signOut.error": "Fel vid utloggning: ",
+  "profile.apiTokens": "API-token",
+  "profile.apiTokens.header": "Skapa API-tokens för att ge permanent åtkomst för din räkning till externa verktyg och tjänster som inte stöder OAuth2.",
+  "profile.apiTokens.created": "Skapades: ",
+  "profile.apiTokens.validForScope": "Giltig för omfattning: ",
+  "profile.apiTokens.create": "Skapa ny API-token",
+  "profile.apiTokens.delete.success": "API-token raderad",
+  "profile.apiTokens.delete.error": "Fel vid borttagning av API-token: "
+}
