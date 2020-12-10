@@ -1,0 +1,15 @@
+{
+  "about.theme": "Tema",
+  "about.theme.auto": "Auto",
+  "about.darkMode": "Mørk tilstand",
+  "about.darkMode.auto": "Auto",
+  "about.darkMode.light": "Lys",
+  "about.darkMode.dark": "Mørk",
+  "about.navigationBarsStyle": "Navigationsbjælker stil",
+  "about.miscellaneous": "Diverse",
+  "about.miscellaneous.home.navbar": "Simpel navigationsbjælke på startsiden",
+  "about.miscellaneous.home.background": "Standard baggrundsfarve for startsiden",
+  "about.miscellaneous.home.hideChatInput": "Skjul chat input boks på startsiden",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Deaktivér kort udvidelses animationer",
+  "about.miscellaneous.theme.disablePageTransition": "Deaktivér side overgangs animationer"
+}
