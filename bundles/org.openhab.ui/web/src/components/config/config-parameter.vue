@@ -31,6 +31,7 @@ import ParameterPersistenceService from './controls/parameter-persistenceservice
 import ParameterProps from './controls/parameter-props.vue'
 import ParameterTriggerChannel from './controls/parameter-triggerchannel.vue'
 import ParameterText from './controls/parameter-text.vue'
+import ParameterQrcode from './controls/parameter-qrcode.vue'
 
 export default {
   components: {
@@ -81,8 +82,9 @@ export default {
         return ParameterTriggerChannel
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'persistenceService') {
         return ParameterPersistenceService
+      } else if (configDescription.type === 'TEXT' && configDescription.context === 'qrcode') {
+        return ParameterQrcode
       }
-
       return ParameterText
     }
   },
