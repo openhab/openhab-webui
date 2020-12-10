@@ -1,0 +1,21 @@
+{
+  "about.title": "Iwwert",
+  "about.homePage": "Websäit",
+  "about.documentation": "Dokumentatioun",
+  "about.communityForum": "Community-Forum",
+  "about.technicalInformation": "Technesch Informatioun",
+  "about.technicalInformation.configurationFolder": "Konfiguratiounsdossier",
+  "about.technicalInformation.userdataFolder": "User data-Dossier",
+  "about.technicalInformation.logsFolder": "Logsdossier",
+  "about.technicalInformation.operatingSystem": "Betribssystem",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} verfügbar Prozessoren - {ram} verfügbare Späicher",
+  "about.technicalInformation.viewDetails": "Detailer kucken",
+  "about.appearanceOptions": "Ausgesinn (just fir dëst Gerät)",
+  "about.reload": "Nei lueden",
+  "about.reload.purgeExplanation1": "Cache an/oder Service Worker gi fir déi lokal Späicherung vu Ressource genotzt, fir d'Luedzäiten ze verkierzen. Eng zouverlässeg Erkennung vun engem Update op eng nei Versioun konnt net séchergestallt ginn.",
+  "about.reload.purgeExplanation2": "Wiel 'Cache eidel maachen an nei lueden' hei ënnendrënner fir all Cache eidel ze maachen, Service Worker ofzemellen an all Informatiounen nei vum Server ze lueden.",
+  "about.reload.purgeCachesAndRefresh": "Cache eidel maachen an nei lueden",
+  "about.reload.confirmPurge": "All Cache eidel maachen a Service Worker ofmellen? Dëst wäert d'Säit nei vum Server lueden a kann e puer Sekonnen daueren.",
+  "about.reload.reloadApp": "App nei lueden"
+}
