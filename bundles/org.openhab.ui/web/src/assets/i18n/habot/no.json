@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(eksempel)",
+  "habot.clearHistory": "Tøm historikken",
+  "habot.dismiss": "Avvise",
+  "habot.example1": "Hva er temperaturen på kjøkkenet?",
+  "habot.example2": "Sett termostaten til 21 grader",
+  "habot.example3": "Slå av lysene i første etasje",
+  "habot.anythingElse": "Noe annet?",
+  "habot.cardDeckIsIncompatible": "Beklager, kort lagret på kortstokken kan ikke vises her, bruk den dedikerte HABot-appen for å se det.",
+  "habot.cardIsIncompatible": "Beklager, kort lagret på kortstokken kan ikke vises her, bruk den dedikerte HABot-appen for å se det."
+}
