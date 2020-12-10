@@ -91,7 +91,7 @@
         </f7-list-item>
       </f7-list>
       <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
-        <f7-icon slot="media" size="14" :f7="this.visibleBreakpointDisabled ? 'pin_fill' : 'pin'" color="gray"></f7-icon>
+        <f7-icon slot="media" size="14" :f7="this.visibleBreakpointDisabled ? 'pin_slash' : 'pin'" color="gray"></f7-icon>
       </f7-link>
 
       <div slot="fixed" class="account" v-if="ready">
