@@ -1,0 +1,21 @@
+{
+  "about.title": "Névjegy",
+  "about.homePage": "Honlap",
+  "about.documentation": "Dokumentáció",
+  "about.communityForum": "Közösségi Fórum",
+  "about.technicalInformation": "Technikai információk",
+  "about.technicalInformation.configurationFolder": "Konfigurációs mappa",
+  "about.technicalInformation.userdataFolder": "Felhasználói adatok mappa",
+  "about.technicalInformation.logsFolder": "Napló mappa",
+  "about.technicalInformation.operatingSystem": "Operációs rendszer",
+  "about.technicalInformation.javaRuntime": "Java futtatókörnyezet",
+  "about.technicalInformation.resourceStats": "{nbproc} elérhető processzor - {ram} szabad memória",
+  "about.technicalInformation.viewDetails": "Részletek",
+  "about.appearanceOptions": "Megjelenítés (csak ezen az eszközön)",
+  "about.reload": "Újratöltés",
+  "about.reload.purgeExplanation1": "Az alkalmazás gyorsabb betöltése érdekében gyorsítótárat és helyi szolgáltatásokat alkalmazunk, ezért előfordulhat hogy verzió váltás után egyes elemek nem frissülnek megfelelően.",
+  "about.reload.purgeExplanation2": "Válassza ki az alábbi Gyorsítótárak tisztítása és frissítés lehetőséget a gyorsítótárak tisztításához, a szolgáltatások törléséhez és a szerverről történő minden adat újbóli letöltéséhez.",
+  "about.reload.purgeCachesAndRefresh": "Gyorsítótárak tisztítása és frissítés",
+  "about.reload.confirmPurge": "Kiüríti az összes alkalmazás gyorsítótárat és törli a szolgáltatásokat? Ez az oldalt is újratölti a szerverről, ami igénybe vehet néhány másodpercet.",
+  "about.reload.reloadApp": "Alkalmazás újratöltése"
+}
