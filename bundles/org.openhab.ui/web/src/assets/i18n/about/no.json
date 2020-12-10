@@ -1,0 +1,21 @@
+{
+  "about.title": "Om",
+  "about.homePage": "Nettside",
+  "about.documentation": "Dokumentasjon",
+  "about.communityForum": "Brukerforum",
+  "about.technicalInformation": "Teknisk informasjon",
+  "about.technicalInformation.configurationFolder": "Konfigurasjons mappe",
+  "about.technicalInformation.userdataFolder": "Mappe for brukerdata",
+  "about.technicalInformation.logsFolder": "Loggmappe",
+  "about.technicalInformation.operatingSystem": "Operativsystem",
+  "about.technicalInformation.javaRuntime": "Java kjøretid",
+  "about.technicalInformation.resourceStats": "{nbproc} tilgjengelige prosessorer - {ram} tilgjengelig minne",
+  "about.technicalInformation.viewDetails": "Vis detaljer",
+  "about.appearanceOptions": "Utseende (kun for denne enheten)",
+  "about.reload": "Last på nytt",
+  "about.reload.purgeExplanation1": "Cacher og/eller tjenestearbeidere er i bruk for å lagre ressurser lokalt og gjør denne applasten raskere, Men den kan ikke pålitelig oppdage når den er oppdatert til en ny versjon.",
+  "about.reload.purgeExplanation2": "Velg Rens Cacher og Oppdater nedenfor for å slette alle cacher, fjern registreringen og last ned alt fra serveren igjen.",
+  "about.reload.purgeCachesAndRefresh": "Tøm mellomlager og oppdater",
+  "about.reload.confirmPurge": "Tøm alle programcacher og fjern registreringen av tjenestearbeidere? Dette vil også laste siden på nytt fra tjeneren, som kan ta noen sekunder.",
+  "about.reload.reloadApp": "Oppdater app"
+}
