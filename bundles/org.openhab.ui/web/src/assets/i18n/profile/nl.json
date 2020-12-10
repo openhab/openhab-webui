@@ -1,0 +1,19 @@
+{
+  "profile.title": "Jouw profiel",
+  "profile.changePassword": "Je wachtwoord wijzigen",
+  "profile.sessions": "Sessies",
+  "profile.sessions.header": "Opmerking: zelfs als je een sessie verwijdert, blijft deze mogelijk nog steeds actief totdat alle geldige toegangstokens verlopen zijn.",
+  "profile.sessions.signOut": "Log uit bij deze sessie",
+  "profile.sessions.created": "Aangemaakt: ",
+  "profile.sessions.lastRefreshed": "Laatste keer vernieuwd: ",
+  "profile.sessions.delete.success": "Sessie verwijderd",
+  "profile.sessions.delete.error": "Fout bij het verwijderen van de sessie: ",
+  "profile.sessions.signOut.error": "Fout bij het afmelden: ",
+  "profile.apiTokens": "API Tokens",
+  "profile.apiTokens.header": "Genereer API-tokens om externe tools en diensten, wanneer deze het OAuth2 Authorization Framework niet ondersteunen, in jouw naam permanent toegang te geven.",
+  "profile.apiTokens.created": "Aangemaakt: ",
+  "profile.apiTokens.validForScope": "Geldig voor bereik: ",
+  "profile.apiTokens.create": "Nieuw API token genereren",
+  "profile.apiTokens.delete.success": "API token verwijderd",
+  "profile.apiTokens.delete.error": "Fout bij het verwijderen van het API-token: "
+}
