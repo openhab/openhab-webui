@@ -1,0 +1,13 @@
+{
+  "HANDLER_MISSING_ERROR": "Fehler: Handler fehlt",
+  "HANDLER_CONFIGURATION_PENDING": "Fehler: Handler Konfiguration ausstehend",
+  "HANDLER_INITIALIZING_ERROR": "Fehler: Handler Initialisierung",
+  "BRIDGE_UNINITIALIZED": "Fehler: Bridge nicht initialisiert",
+  "DISABLED": "DEAKTIVIERT",
+  "CONFIGURATION_PENDING": "Konfiguration ausstehend",
+  "COMMUNICATION_ERROR": "Fehler: Kommunikation fehlgeschlagen",
+  "CONFIGURATION_ERROR": "Fehler: Konfiguration",
+  "BRIDGE_OFFLINE": "Fehler: Bridge OFFLINE",
+  "FIRMWARE_UPDATING": "FIRMWARE AKTUALISIEREN",
+  "GONE": "Entfernt"
+}
