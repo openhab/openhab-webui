@@ -9,7 +9,7 @@
   "analyzer.series.table.header.axis": "Вісь",
   "analyzer.series.table.header.markers": "Маркери",
   "analyzer.series.table.header.aggregation": "Об'єднання",
-  "analyzer.series.table.header.silent": "Без звуку",
+  "analyzer.series.table.header.silent": "Тихий",
   "analyzer.series.table.type.bar": "Колона",
   "analyzer.series.table.type.line": "Лінія",
   "analyzer.series.table.type.area": "Область",
