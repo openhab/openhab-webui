@@ -1,6 +1,6 @@
 {
   "about.title": "אודות",
-  "about.homePage": "אתר",
+  "about.homePage": "אתר אינטרנט",
   "about.documentation": "תיעוד",
   "about.communityForum": "פורום הקהילה",
   "about.technicalInformation": "מידע טכני",
@@ -11,7 +11,7 @@
   "about.technicalInformation.javaRuntime": "Java Runtime",
   "about.technicalInformation.resourceStats": "{nbproc} מעבדים זמינים - {ram} זיכרון זמין",
   "about.technicalInformation.viewDetails": "הצג פרטים",
-  "about.appearanceOptions": "תצוגה (למכשיר זה בלבד)",
+  "about.appearanceOptions": "ניראות (למכשיר זה בלבד)",
   "about.reload": "רענן",
   "about.reload.purgeExplanation1": "זיכרון זמני/תהליכי שירות בשימוש כדי לאחסן משאבים באופן מקומי ולגרום לטעינה של אפליקציה זו מהר יותר, אולם ייתכן והם יתגלו כלא עדכניים כשהתעכנה גרסא חדשה.",
   "about.reload.purgeExplanation2": "בחר ניקוי זיכרון מטמון ורענן למטה כדי לנקות את כל זיכרון המטמון, לבטל את רישום תהליכי השירות ולהוריד הכל מהשרת שוב.",
