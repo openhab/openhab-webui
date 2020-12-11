@@ -21,14 +21,14 @@
         </f7-block>
         <f7-block class="no-margin no-padding" v-if="!pinnedObjects.items.length && !pinnedObjects.things.length && !pinnedObjects.rules.length && !pinnedObjects.pages.length">
           <p class="padding-horizontal">Use the search box above or the button below to temporarily pin objects here for quick access.</p>
-          <p class="padding-horizontal"><f7-button fill color="blue" @click="modelPickerOpened = true">Pin Items from Model</f7-button></p>
+          <p class="padding-horizontal"><f7-button fill color="blue" @click="openModelPicker">Pin Items from Model</f7-button></p>
         </f7-block>
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.items.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Items</span>
             <span style="margin-left:auto">
               <!-- <f7-link color="gray" icon-f7="eye" icon-size="14"></f7-link> -->
-              <f7-link color="gray" icon-f7="plus" icon-size="14" @click="modelPickerOpened = true"></f7-link>
+              <f7-link color="gray" icon-f7="list_bullet_indent" icon-size="14" @click="openModelPicker"></f7-link>
               <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('items')"></f7-link>
             </span>
           </f7-block-title>
@@ -186,7 +186,6 @@
       <item-standalone-control v-if="openedItem" :item="openedItem" :context="context" :no-border="true" />
     </f7-popover>
     <search-results v-if="searching" :searchResults="searchResults" :pinnedObjects="pinnedObjects" @pin="pin" @unpin="unpin" :cachedObjects="cachedObjects" :loading="searchResultsLoading" />
-    <model-picker-popup :value="pinnedObjects.items" :opened="modelPickerOpened" :multiple="true" @closed="modelPickerOpened = false" @input="addItemsFromModel" action-label="Pin" popup-title="Pin Items from Model" />
   </f7-page>
 </template>
 
@@ -236,8 +235,7 @@ export default {
   components: {
     Item,
     ItemStandaloneControl,
-    SearchResults,
-    ModelPickerPopup
+    SearchResults
   },
   data () {
     return {
@@ -245,7 +243,6 @@ export default {
       searchResultsLoading: false,
       searching: false,
       activeTab: 'pin',
-      modelPickerOpened: false,
       monitoredItems: [],
       sseClient: null,
       eventTopicFilter: '',
@@ -317,7 +314,33 @@ export default {
       }
     },
     addItemsFromModel (value) {
-      this.pinnedObjects.items.push(...value)
+      this.$set(this.pinnedObjects, 'items', [...value])
+    },
+    openModelPicker () {
+      const popup = {
+        component: ModelPickerPopup
+      }
+
+      this.$f7.views.main.router.navigate({
+        url: 'pick-from-model',
+        route: {
+          path: 'pick-from-model',
+          popup
+        }
+      }, {
+        props: {
+          value: this.pinnedObjects.items,
+          multiple: true,
+          allowEmpty: true,
+          popupTitle: 'Pin Items from Model',
+          actionLabel: 'Pin'
+        }
+      })
+
+      this.$f7.once('itemsPicked', this.addItemsFromModel)
+      this.$f7.once('modelPickerClosed', () => {
+        this.$f7.off('itemsPicked', this.addItemsFromModel)
+      })
     },
     search (searchbar, query, previousQuery) {
       if (!query) {

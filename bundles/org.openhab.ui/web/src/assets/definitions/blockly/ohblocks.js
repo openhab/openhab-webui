@@ -1,6 +1,25 @@
 import Blockly from 'blockly'
+import { FieldItemModelPicker } from './ohitemfield'
 
-export default function defineOHBlocks () {
+export default function defineOHBlocks (f7) {
+  Blockly.Blocks['oh_item'] = {
+    init: function () {
+      this.appendDummyInput()
+        .appendField('item')
+        .appendField(new FieldItemModelPicker('MyItem', null, { f7 }), 'itemName')
+      this.setColour(0)
+      this.setInputsInline(true)
+      this.setTooltip('Pick an item from the Model')
+      this.setOutput(true, null)
+    }
+  }
+
+  Blockly.JavaScript['oh_item'] = function (block) {
+    const itemName = block.getFieldValue('itemName')
+    var code = '\'' + itemName + '\''
+    return [code, 0]
+  }
+
   Blockly.Blocks['oh_getitem_state'] = {
     init: function () {
       this.appendValueInput('itemName')
