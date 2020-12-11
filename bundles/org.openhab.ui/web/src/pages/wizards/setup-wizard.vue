@@ -279,7 +279,7 @@ export default {
         () => {
           self.$f7.panel.get('left').enableVisibleBreakpoint()
           this.$nextTick(() => {
-            self.$f7.views.main.router.navigate('/', { transition: 'f7-cover-v', clearPreviousHistory: true })
+            self.$f7.views.main.router.navigate('/', { transition: 'f7-circle', clearPreviousHistory: true })
           })
         })
     },

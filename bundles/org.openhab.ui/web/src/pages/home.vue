@@ -156,7 +156,6 @@ export default {
       this.$store.dispatch('stopTrackingStates')
     },
     onPageInit () {
-      this.$f7.panel.get('left').enableVisibleBreakpoint()
       if (window.OHApp) {
         if (window.OHApp.pinToHome) this.showPinToHome = true
         if (window.OHApp.exitToApp) this.showExitToApp = true
