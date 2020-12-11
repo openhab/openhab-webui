@@ -22,7 +22,7 @@
   "home.equipment.tab": "Équipements",
   "home.properties.title": "Propriétés",
   "home.properties.tab": "Propriétés",
-  "home.cards.close": "@:dialogs.close",
+  "home.cards.close": "Fermer",
   "home.cards.analyze": "Analyser",
   "home.cards.analyzeAll": "Analyser tout",
   "home.otherApps": "Autres apps",
@@ -37,7 +37,7 @@
   "sidebar.helpAbout": "À propos et aide",
   "sidebar.unlockAdmin": "Déverrouiller l'administration",
   "sidebar.tip.signIn": "Connectez-vous pour accéder aux paramètres",
-  "page.navbar.back": "@:dialogs.back",
+  "page.navbar.back": "Retour",
   "page.navbar.edit": "Editer",
   "admin.notTranslatedYet": "Les écrans d'administration ne sont pas traduits pour le moment."
 }
