@@ -1,0 +1,19 @@
+{
+  "profile.title": "Oma profiili",
+  "profile.changePassword": "Vaihda salasana",
+  "profile.sessions": "Istunnot",
+  "profile.sessions.header": "Huomautus: vaikka poistaisit istunnon, se saattaa silti säilyä aktiivisena, kunnes kaikki kelvolliset valtuudet vanhenevat.",
+  "profile.sessions.signOut": "Kirjaudu ulos tästä istunnosta",
+  "profile.sessions.created": "Luotu: ",
+  "profile.sessions.lastRefreshed": "Viimeksi päivitetty: ",
+  "profile.sessions.delete.success": "Istunto poistettu",
+  "profile.sessions.delete.error": "Virhe poistettaessa istuntoa: ",
+  "profile.sessions.signOut.error": "Virhe kirjauduttaessa ulos: ",
+  "profile.apiTokens": "API-valtuustunnukset",
+  "profile.apiTokens.header": "Luo API-valtuustunnuksia antaaksesi pysyvä pääsy ulkoisille työkaluille ja palveluille, jotka eivät tue OAuth2-authorisointijärjestelmää.",
+  "profile.apiTokens.created": "Luotu: ",
+  "profile.apiTokens.validForScope": "Voimassa soveltamisalan osalta: ",
+  "profile.apiTokens.create": "Luo uusi API-valtuustunnus",
+  "profile.apiTokens.delete.success": "API-valtuustunnus poistettu",
+  "profile.apiTokens.delete.error": "Virhe poistettaessa API-valtuustunnusta: "
+}
