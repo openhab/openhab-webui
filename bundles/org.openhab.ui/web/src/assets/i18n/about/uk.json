@@ -12,7 +12,7 @@
   "about.technicalInformation.resourceStats": "{nbproc} доступних процесорів - {ram} доступна пам'ять",
   "about.technicalInformation.viewDetails": "Переглянути подробиці",
   "about.appearanceOptions": "Зовнішній вигляд (тільки для цього пристрою)",
-  "about.reload": "Оновити",
+  "about.reload": "Перезавантажити",
   "about.reload.purgeExplanation1": "Кеш та/або service workers використовуються для локального зберігання ресурсів та прискорення завантаження цього додатка, однак він може не надійно виявити оновлення до нової версії.",
   "about.reload.purgeExplanation2": "Оберіть Очистити кеш та Оновити, щоб очистити кеш, скасувати реєстрацію service workers і знову завантажити все з сервера.",
   "about.reload.purgeCachesAndRefresh": "Очистити кеш та обновити",
