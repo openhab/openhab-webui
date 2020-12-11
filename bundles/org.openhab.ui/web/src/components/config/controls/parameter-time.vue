@@ -9,7 +9,9 @@
         :required="configDescription.required" validate
         :clear-button="!configDescription.required"
         @input="updateValue" />
-        <div slot="content-end" ref="picker" />
+        <div slot="content-end" class="display-flex justify-content-center">
+          <div ref="picker"></div>
+        </div>
   </ul>
 </template>
 
@@ -27,44 +29,46 @@ export default {
     const containerControl = this.$refs.picker
     if (!inputControl || !inputControl.$el || !containerControl) return
     const inputElement = this.$$(inputControl.$el).find('input')
-    this.picker = this.$f7.picker.create({
-      containerEl: containerControl,
-      inputEl: inputElement,
-      toolbar: false,
-      inputReadOnly: false,
-      rotateEffect: true,
-      value: (self.value && self.value.indexOf(':') >= 0) ? self.value.split(':') : ['00', '00'],
-      formatValue: function (values, displayValues) {
-        return values[0] + ':' + values[1]
-      },
-      cols: [
-        // Hours
-        {
-          values: (function () {
-            var arr = []
-            for (var i = 0; i <= 23; i++) { arr.push(i < 10 ? `0${i}` : i) }
-            return arr
-          })()
+    this.$nextTick(() => {
+      this.picker = this.$f7.picker.create({
+        containerEl: containerControl,
+        inputEl: inputElement,
+        toolbar: false,
+        inputReadOnly: false,
+        rotateEffect: true,
+        value: (self.value && self.value.indexOf(':') >= 0) ? self.value.split(':') : ['00', '00'],
+        formatValue: function (values, displayValues) {
+          return values[0] + ':' + values[1]
         },
-        // Divider
-        {
-          divider: true,
-          content: ':'
-        },
-        // Minutes
-        {
-          values: (function () {
-            var arr = []
-            for (var i = 0; i <= 59; i++) { arr.push(i < 10 ? `0${i}` : i) }
-            return arr
-          })()
+        cols: [
+          // Hours
+          {
+            values: (function () {
+              var arr = []
+              for (var i = 0; i <= 23; i++) { arr.push(i < 10 ? `0${i}` : i) }
+              return arr
+            })()
+          },
+          // Divider
+          {
+            divider: true,
+            content: ':'
+          },
+          // Minutes
+          {
+            values: (function () {
+              var arr = []
+              for (var i = 0; i <= 59; i++) { arr.push(i < 10 ? `0${i}` : i) }
+              return arr
+            })()
+          }
+        ],
+        on: {
+          change: function (picker, values, displayValues) {
+            self.$emit('input', displayValues[0] + ':' + displayValues[1])
+          }
         }
-      ],
-      on: {
-        change: function (picker, values, displayValues) {
-          self.$emit('input', displayValues[0] + ':' + displayValues[1])
-        }
-      }
+      })
     })
   },
   beforeDestroy () {

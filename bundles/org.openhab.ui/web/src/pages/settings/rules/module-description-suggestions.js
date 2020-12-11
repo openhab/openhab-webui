@@ -41,10 +41,10 @@ export default {
         case 'core.GroupCommandTrigger':
           if (!config.groupName && !config.command) return moduleType.label
           if (!config.command) return 'When a member of ' + config.groupName + ' received a command'
-          return 'When a member of ' + config.itemName + ' received command ' + config.command
+          return 'When a member of ' + config.groupName + ' received command ' + config.command
         case 'core.GroupStateUpdateTrigger':
           if (!config.groupName) return moduleType.label
-          return 'When ' + config.groupName + ' was updated' +
+          return 'When a member of ' + config.groupName + ' was updated' +
                         ((config.state) ? ' to ' + config.state : '')
         case 'core.GroupStateChangeTrigger':
           if (!config.groupName) return moduleType.label

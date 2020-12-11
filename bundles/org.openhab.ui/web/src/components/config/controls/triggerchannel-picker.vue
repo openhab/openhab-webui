@@ -3,7 +3,7 @@
   <f7-list-item :title="title || 'Thing'" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect">
     <select :name="name" :multiple="multiple" @change="select" :required="required">
       <option v-if="!multiple" value=""></option>
-      <optgroup v-for="thing in things" :label="thing.label" :key="thing.UID">
+      <optgroup v-for="thing in things.filter((t) => (filterThing) ? t.UID === filterThing : true)" :label="thing.label" :key="thing.UID">
         <option v-for="channel in thing.triggerChannels" :value="channel.uid" :key="channel.uid" :selected="(multiple) ? value.indexOf(channel.uid) >= 0 : value === channel.uid">
           {{channel.id}} ({{channel.label}})
         </option>
@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  props: ['title', 'name', 'value', 'multiple', 'required', 'filterType'],
+  props: ['title', 'name', 'value', 'multiple', 'required', 'filterThing'],
   data () {
     return {
       ready: false,

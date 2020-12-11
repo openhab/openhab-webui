@@ -55,7 +55,7 @@
     <f7-fab v-show="!newScript && isBlockly && blocklyCodePreview" position="right-bottom" slot="fixed" color="blue" @click="blocklyCodePreview = false">
       <f7-icon f7="ticket"></f7-icon>
     </f7-fab>
-    <f7-fab v-show="!newScript && !script && mode === 'application/javascript' && !isBlockly" position="center-center" slot="fixed" color="blue" @click="convertToBlockly" text="Design with Blockly">
+    <f7-fab v-show="!newScript && !script && mode === 'application/javascript' && !isBlockly" position="center-bottom" slot="fixed" color="blue" @click="convertToBlockly" text="Design with Blockly">
       <f7-icon f7="ticket_fill"></f7-icon>
     </f7-fab>
 

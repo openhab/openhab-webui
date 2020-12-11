@@ -1,11 +1,7 @@
 <template>
   <ul>
-      <f7-list-item
-         :title="configDescription.label" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popover', multiple: configDescription.multiple, closeOnSelect: !configDescription.multiple }" ref="item">
-        <select :name="configDescription.name" @change="updateValue" :multiple="configDescription.multiple">
-          <option v-for="(day, $idx) in values" :value="day" :key="day" :selected="isSelected(day)">{{labels[$idx]}}</option>
-        </select>
-      </f7-list-item>
+      <f7-list-item v-for="(day, $idx) in values" :value="day" :key="day"
+        :title="labels[$idx]" checkbox :checked="isSelected(day)" @change="(evt) => select(day, evt.target.checked)" />
   </ul>
 </template>
 
@@ -19,10 +15,6 @@ export default {
     }
   },
   methods: {
-    updateValue (event) {
-      let value = this.$refs.item.f7SmartSelect.getValue()
-      this.$emit('input', value)
-    },
     isSelected (option) {
       if (this.value === null || this.value === undefined) return
       if (!this.configDescription.multiple) {
@@ -30,6 +22,15 @@ export default {
       } else {
         return this.value && this.value.indexOf(option) >= 0
       }
+    },
+    select (day, value) {
+      const newValuesSet = (this.value) ? new Set([...this.value]) : new Set()
+      if (value) newValuesSet.add(day)
+      if (!value) newValuesSet.delete(day)
+      let newValues = new Array(...newValuesSet).sort((a, b) => this.values.indexOf(a) < this.values.indexOf(b))
+      newValues.sort((a, b) => this.values.indexOf(a) - this.values.indexOf(b))
+      console.log(newValues)
+      this.$emit('input', newValues)
     }
   }
 }
