@@ -20,12 +20,9 @@
         </f7-block-footer>
         <f7-list v-if="thingId">
           <ul v-if="parentGroup">
-            <item :item="parentGroup" :link="true" @click="modelPickerOpened = true" />
+            <item :item="parentGroup" :link="true" @click="openModelPicker" />
           </ul>
-          <f7-list-item v-else title="Pick From Model" link @click="modelPickerOpened = true" />
-          <model-picker-popup :value="(parentGroup) ? parentGroup.name : null" popup-title="Parent Group"
-            :allow-empty="true" :groups-only="true" :opened="modelPickerOpened"
-            @input="(item) => parentGroup = item" @closed="modelPickerOpened = false" />
+          <f7-list-item v-else title="Pick From Model" link @click="openModelPicker" />
         </f7-list>
         <f7-block-title v-if="selectedThing.statusInfo">Source Thing</f7-block-title>
         <f7-list v-if="selectedThing.statusInfo" media-list>
@@ -98,7 +95,6 @@ export default {
   mixins: [ThingStatus],
   components: {
     Item,
-    ModelPickerPopup,
     ThingPicker,
     ChannelList,
     ItemForm
@@ -113,8 +109,7 @@ export default {
       selectedThingType: {},
       selectedThingChannelTypes: {},
       newEquipmentItem: {},
-      newPointItems: [],
-      modelPickerOpened: false
+      newPointItems: []
     }
   },
   methods: {
@@ -217,6 +212,35 @@ export default {
         dialog.close()
         console.error(err)
         this.$f7.dialog.alert('An error occurred while creating the items: ' + err)
+      })
+    },
+    pickParentFromModel (value) {
+      this.parentGroup = value
+    },
+    openModelPicker () {
+      const popup = {
+        component: ModelPickerPopup
+      }
+
+      this.$f7router.navigate({
+        url: 'pick-from-model',
+        route: {
+          path: 'pick-from-model',
+          popup
+        }
+      }, {
+        props: {
+          value: (this.parentGroup) ? this.parentGroup.name : null,
+          multiple: false,
+          allowEmpty: true,
+          popupTitle: 'Parent Group',
+          groupsOnly: true
+        }
+      })
+
+      this.$f7.once('itemsPicked', this.pickParentFromModel)
+      this.$f7.once('modelPickerClosed', () => {
+        this.$f7.off('itemsPicked', this.pickParentFromModel)
       })
     }
   },

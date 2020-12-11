@@ -37,8 +37,6 @@
         <oh-layout-page class="layout-page" v-if="ready && previewMode" :context="context" :key="pageKey" />
       </f7-tab>
     </f7-tabs>
-
-    <model-picker-popup :opened="modelPickerOpened" :multiple="modelPickerAllowMultiple" @closed="modelPickerOpened = false" @input="doAddFromModel" action-label="Add" />
   </f7-page>
 </template>
 
@@ -138,7 +136,28 @@ export default {
         const addFromModel = () => {
           this.addFromModelContext = { component, slot, isList, isCells }
           this.modelPickerAllowMultiple = component.component !== 'oh-grid-col'
-          this.modelPickerOpened = true
+          const popup = {
+            component: ModelPickerPopup
+          }
+
+          this.$f7router.navigate({
+            url: 'pick-from-model',
+            route: {
+              path: 'pick-from-model',
+              popup
+            }
+          }, {
+            props: {
+              multiple: this.modelPickerAllowMultiple,
+              popupTitle: 'Add from Model'
+            }
+          })
+
+          this.$f7.once('itemsPicked', this.doAddFromModel)
+          this.$f7.once('modelPickerClosed', () => {
+            this.$f7.off('itemsPicked', this.doAddFromModel)
+          })
+
           this.$nextTick(() => actions.destroy())
         }
         const stdWidgets = (isList) ? StandardListWidgets : (isCells) ? StandardCellWidgets : StandardWidgets

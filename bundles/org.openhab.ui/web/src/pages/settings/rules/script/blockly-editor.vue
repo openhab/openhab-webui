@@ -295,10 +295,38 @@
           </block>
         </category>
         <category name="openHAB" colour="0">
-          <block type="oh_getitem_state" />
-          <block type="oh_event" />
-          <block type="oh_log" />
-          <block type="oh_print" />
+          <block type="oh_item" />
+          <block type="oh_getitem_state">
+            <value name="itemName">
+              <shadow type="oh_item">
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_event">
+            <value name="value">
+              <shadow type="text">
+                <field name="TEXT">value</field>
+              </shadow>
+            </value>
+            <value name="itemName">
+              <shadow type="oh_item">
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_log">
+            <value name="message">
+              <shadow type="text">
+                <field name="TEXT">abc</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_print">
+            <value name="message">
+              <shadow type="text">
+                <field name="TEXT">abc</field>
+              </shadow>
+            </value>
+          </block>
         </category>
 
         <sep></sep>
@@ -339,7 +367,7 @@ export default {
     }
   },
   mounted () {
-    defineOHBlocks()
+    defineOHBlocks(this.$f7)
     this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
       toolbox: this.$refs.toolbox,
       horizontalLayout: !this.$device.desktop,

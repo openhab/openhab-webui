@@ -1,6 +1,6 @@
 <template>
   <f7-popup ref="modelPicker" class="modelpicker-popup" close-on-escape
-    :opened="opened" @popup:open="onOpen" @popup:close="onClose">
+    @popup:open="onOpen" @popup:close="onClose">
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
@@ -31,7 +31,7 @@
         <span></span>
         <!-- <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link> -->
       </f7-toolbar>
-      <f7-block strong class="no-padding" v-if="ready && opened">
+      <f7-block strong class="no-padding" v-if="ready">
         <model-treeview class="model-picker-treeview" :root-nodes="rootNodes"
           :selected-item="selectedItem" @selected="selectItem" @checked="checkItem" />
       </f7-block>
@@ -55,7 +55,7 @@ function compareModelItems (o1, o2) {
 }
 
 export default {
-  props: ['value', 'opened', 'multiple', 'semanticOnly', 'groupsOnly', 'allowEmpty', 'popupTitle', 'actionLabel'],
+  props: ['value', 'multiple', 'semanticOnly', 'groupsOnly', 'allowEmpty', 'popupTitle', 'actionLabel'],
   components: {
     ModelTreeview
   },
@@ -98,14 +98,18 @@ export default {
     onClose () {
       this.ready = false
       this.$emit('closed')
+      this.$f7.emit('modelPickerClosed')
     },
     pickItems () {
+      let pickedItems
       if (this.multiple) {
-        this.$emit('input', this.checkedItems.map((i) => i.item))
+        pickedItems = this.checkedItems.map((i) => i.item)
       } else {
-        this.$emit('input', (this.selectedItem) ? this.selectedItem.item : null)
+        pickedItems = (this.selectedItem) ? this.selectedItem.item : null
       }
-      this.onClose()
+      this.$emit('input', pickedItems)
+      this.$f7.emit('itemsPicked', pickedItems)
+      this.$refs.modelPicker.close()
     },
     modelItem (item) {
       const modelItem = {
@@ -134,9 +138,9 @@ export default {
       modelItem.checkable = this.multiple
       if (!this.multiple && this.value === item.name) {
         this.selectItem(modelItem)
-      } else if (this.multiple && Array.isArray(this.value) && this.value.findIndex((i) => i.name === item.name) >= 0) {
+      } else if (this.multiple && Array.isArray(this.value) && this.value.findIndex((i) => typeof i === 'string' ? i === item.name : i.name === item.name) >= 0) {
         modelItem.checked = true
-        modelItem.disabled = true
+        this.checkedItems.push(modelItem)
       }
 
       return modelItem
@@ -182,7 +186,6 @@ export default {
 
         this.loading = false
         this.ready = true
-        this.$set(this, 'checkedItems', [])
         this.$nextTick(() => { this.initSearchbar = true })
       })
     },

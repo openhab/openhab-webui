@@ -1,5 +1,5 @@
 <template>
-<ul>
+<ul class="item-picker-container">
   <f7-list-item :title="title" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect" class="item-picker">
     <select :name="name" :multiple="multiple" @change="select" :required="required">
       <option value="" v-if="!multiple"></option>
@@ -7,13 +7,26 @@
         {{item.label ? item.label + ' (' + item.name + ')' : item.name}}
       </option>
     </select>
+    <f7-button slot="media" icon-f7="list_bullet_indent" @click.native="pickFromModel"></f7-button>
   </f7-list-item>
   <!-- for placeholder purposes before items are loaded -->
-  <f7-list-item link v-show="!ready" :title="title" />
+  <f7-list-item link v-show="!ready" :title="title">
+    <f7-button slot="media" icon-f7="list_bullet_indent" @click.native="pickFromModel"></f7-button>
+  </f7-list-item>
 </ul>
 </template>
 
+<style lang="stylus">
+.item-picker-container
+  .item-media
+    padding 0
+  .item-inner:after
+    display none
+</style>
+
 <script>
+import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
+
 export default {
   props: ['title', 'name', 'value', 'multiple', 'filterType', 'required', 'editableOnly'],
   data () {
@@ -54,6 +67,42 @@ export default {
       this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
       const value = this.$refs.smartSelect.f7SmartSelect.getValue()
       this.$emit('input', value)
+    },
+    updateFromModelPicker (value) {
+      if (this.multiple) {
+        this.$emit('input', value.map((i) => i.name))
+      } else {
+        this.$emit('input', value.name)
+      }
+      this.ready = false
+      this.$nextTick(() => { this.ready = true })
+    },
+    pickFromModel (evt) {
+      evt.cancelBubble = true
+      const popup = {
+        component: ModelPickerPopup
+      }
+
+      this.$f7router.navigate({
+        url: 'pick-from-model',
+        route: {
+          path: 'pick-from-model',
+          popup
+        }
+      }, {
+        props: {
+          value: this.value,
+          multiple: this.multiple,
+          allowEmpty: true,
+          popupTitle: this.title,
+          groupsOnly: this.filterType && this.filterType === 'Group'
+        }
+      })
+
+      this.$f7.once('itemsPicked', this.updateFromModelPicker)
+      this.$f7.once('modelPickerClosed', () => {
+        this.$f7.off('itemsPicked', this.updateFromModelPicker)
+      })
     }
   }
 }
