@@ -51,6 +51,18 @@ export default {
           return 'When a member of ' + config.groupName + ' changed' +
               ((config.previousState) ? ' from ' + config.previousState : '') +
               ((config.state) ? ' to ' + config.state : '')
+        case 'core.ThingStatusUpdateTrigger':
+          if (!config.thingUID) return moduleType.label
+          return 'When ' + config.thingUID + ' status was updated' +
+                        ((config.status) ? ' to ' + config.status : '')
+        case 'core.ThingStatusChangeTrigger':
+          if (!config.thingUID) return moduleType.label
+          return 'When ' + config.thingUID + ' changed' +
+              ((config.previousStatus) ? ' from ' + config.previousStatus : '') +
+              ((config.status) ? ' to ' + config.status : '')
+        case 'core.SystemStartlevelTrigger':
+          if (config.startLevel === undefined) return moduleType.label
+          return 'When the system has reached start level ' + config.startLevel
         // actions
         case 'core.ItemCommandAction':
           if (!config.itemName || !config.command) return moduleType.label
@@ -71,7 +83,6 @@ export default {
         case 'core.ItemStateCondition':
           if (!config.itemName || !config.operator || !config.state) return moduleType.label
           return 'If ' + config.itemName + ' ' + config.operator + ' ' + config.state
-
         default:
           return moduleType.label
       }

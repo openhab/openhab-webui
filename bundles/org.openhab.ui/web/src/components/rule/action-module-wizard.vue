@@ -34,16 +34,40 @@
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
     <f7-list>
-      <item-picker :value="currentModule.configuration.itemName" title="Item" @input="(val) => $set(currentModule.configuration, 'itemName', val)" />
+      <item-picker :value="currentModule.configuration.itemName" title="Item" @input="(val) => $set(currentModule.configuration, 'itemName', val)" @itemSelected="(value) => { $set(this, 'currentItem', value); updateItemEventType('command') }" />
     </f7-list>
     <f7-list>
       <f7-list-input
         label="Command to send"
         name="command"
         type="text"
-        :value="currentModule.configuration.state"
+        :value="currentModule.configuration.command"
         @blur="(evt) => $set(currentModule.configuration, 'command', evt.target.value)"
         />
+    </f7-list>
+    <f7-list v-if="commandSuggestions.length">
+      <f7-list-item radio :checked="currentModule.configuration.command === suggestion.command" v-for="suggestion in commandSuggestions" :key="suggestion.command"
+        :title="suggestion.label" @click="$set(currentModule.configuration, 'command', suggestion.command)" />
+    </f7-list>
+    <f7-block v-if="currentItem && (currentItem.type === 'Dimmer' || currentItem.type === 'Rollershutter' || (currentItem.type === 'Number' && currentItem.stateDescription && currentItem.stateDescription.minimum !== undefined))">
+      <f7-range :value="currentModule.configuration.command" @range:changed="(val) => $set(currentModule.configuration, 'command', val)"
+        :min="(currentItem.stateDescription && currentItem.stateDescription.minimum) ? currentItem.stateDescription.minimum : 0"
+        :max="(currentItem.stateDescription && currentItem.stateDescription.maximum) ? currentItem.stateDescription.maximum : 100"
+        :step="(currentItem.stateDescription && currentItem.stateDescription.step) ? currentItem.stateDescription.step : 1"
+        :scale="true" :label="true" :scaleSubSteps="5" />
+    </f7-block>
+    <f7-list v-if="currentItem && currentItem.type === 'Color'" media-list>
+      <f7-list-input media-item type="colorpicker" label="Pick a color" :color-picker-params="{
+          targetEl: '#color-picker-value',
+          targetElSetBackgroundColor: true,
+          modules: ['hsb-sliders', 'wheel'],
+          formatValue: colorToCommand
+        }"
+        :value="commandToColor()"
+        @change="updateColorCommand"
+        >
+        <i slot="media" style="width: 32px; height: 32px" class="icon demo-list-icon" id="color-picker-value"></i>
+      </f7-list-input>
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'script'">
@@ -51,12 +75,12 @@
     <f7-list media-list>
       <f7-list-item media-item
         title="Design with Blockly"
-        footer="Beginner-friendly tool to build scripts visually by assembling blocks"
+        footer="A beginner-friendly way to build scripts visually by assembling blocks"
         link="" @click="scriptLanguagePicked('blockly')">
         <img src="res/img/blockly.svg" height="32" width="32" slot="media" />
       </f7-list-item>
     </f7-list>
-    <f7-block-footer class="padding-horizontal">or choose the scripting language:</f7-block-footer>
+    <f7-block-footer class="padding-horizontal margin-vertical">or choose the scripting language:</f7-block-footer>
     <f7-list media-list>
       <f7-list-item media-item v-for="language in languages" :key="language.contentType"
         :title="language.name" :after="language.version" :footer="language.contentType" link="" @click="scriptLanguagePicked(language.contentType)">
@@ -67,8 +91,8 @@
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'rules'">
     <f7-list>
-      <f7-list-item radio :checked="rulesEventType === 'run'" name="rulesEventType" title="run rule(s)" @click="updateRulesEventType('run')" />
-      <f7-list-item radio :checked="rulesEventType === 'enable'" name="rulesEventType" title="enable or disable rule(s)" @click="updateRulesEventType('enable')" />
+      <f7-list-item radio :checked="rulesEventType === 'run'" name="rulesEventType" title="run these rule(s)" @click="updateRulesEventType('run')" />
+      <f7-list-item radio :checked="rulesEventType === 'enable'" name="rulesEventType" title="enable or disable these rule(s)" @click="updateRulesEventType('enable')" />
     </f7-list>
     <config-sheet v-if="currentModuleType" :key="currentModule.id"
       :parameterGroups="[]"
@@ -118,7 +142,32 @@ export default {
       itemEventType: 'command',
       rulesEventType: 'cron',
       mediaEventType: 'say',
-      languages: []
+      languages: [],
+      currentItem: null
+    }
+  },
+  computed: {
+    commandSuggestions () {
+      if (!this.currentItem || this.category !== 'item') return []
+      let type = (this.currentItem.type === 'Group' && this.currentItem.groupType) ? this.currentItem.groupType : this.currentItem.type
+
+      if (this.currentItem.commandDescription && this.currentItem.commandDescription.commandOptions) {
+        return this.currentItem.commandDescription.commandOptions
+      }
+      if (type === 'Switch') {
+        return ['ON', 'OFF'].map((c) => { return { command: c, label: c } })
+      }
+      if (type === 'Rollershutter') {
+        return ['UP', 'DOWN', 'STOP'].map((c) => { return { command: c, label: c } })
+      }
+      if (type === 'Contact') {
+        return ['UP', 'DOWN', 'STOP'].map((c) => { return { command: c, label: c } })
+      }
+      if (type === 'Color') {
+        return ['ON', 'OFF'].map((c) => { return { command: c, label: c } })
+      }
+
+      return []
     }
   },
   methods: {
@@ -178,11 +227,31 @@ export default {
           break
       }
     },
+    updateColorCommand (evt) {
+      this.$set(this.currentModule.configuration, 'command', evt.target.value)
+    },
+    commandToColor (evt) {
+      if (!this.currentModule.configuration.command || this.currentModule.configuration.command.split(',').length !== 3) return null
+      let color = this.currentModule.configuration.command.split(',')
+      color[0] = parseInt(color[0])
+      color[1] = color[1] / 100
+      color[2] = color[2] / 100
+      return { hsb: color }
+    },
+    colorToCommand (val) {
+      let hsb = [...val.hsb]
+      hsb[0] = Math.round(hsb[0]) % 360
+      hsb[1] = Math.round(hsb[1] * 100)
+      hsb[2] = Math.round(hsb[2] * 100)
+      return hsb
+      // this.$set(this.currentModule.configuration, 'command', hsb.join(','))
+    },
     scriptLanguagePicked (value) {
       this.$emit('startScript', value)
     },
     itemPicked (value) {
       this.category = 'item'
+      this.currentItem = value
       this.$set(this.currentModule.configuration, 'itemName', value.name)
       this.$emit('typeSelect', 'core.ItemCommandAction')
     },

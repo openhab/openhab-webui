@@ -57,12 +57,12 @@
     <f7-list media-list>
       <f7-list-item media-item
         title="Design with Blockly"
-        footer="Beginner-friendly tool to build scripts visually by assembling blocks"
+        footer="A beginner-friendly way to build scripts visually by assembling blocks"
         link="" @click="scriptLanguagePicked('blockly')">
         <img src="res/img/blockly.svg" height="32" width="32" slot="media" />
       </f7-list-item>
     </f7-list>
-    <f7-block-footer class="padding-horizontal">or choose the scripting language:</f7-block-footer>
+    <f7-block-footer class="padding-horizontal margin-vertical">or choose the scripting language:</f7-block-footer>
     <f7-list media-list>
       <f7-list-item media-item v-for="language in languages" :key="language.contentType"
         :title="language.name" :after="language.version" :footer="language.contentType" link="" @click="scriptLanguagePicked(language.contentType)">
@@ -85,10 +85,10 @@
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'ephemeris'">
     <f7-list>
-      <f7-list-item radio :checked="ephemerisEventType === 'weekdays'" name="EphemerisEventType" title="on weekdays" @click="updateEphemerisEventType('weekdays')" />
-      <f7-list-item radio :checked="ephemerisEventType === 'weekends'" name="EphemerisEventType" title="on weekends" @click="updateEphemerisEventType('weekends')" />
-      <f7-list-item radio :checked="ephemerisEventType === 'holidays'" name="EphemerisEventType" title="on holidays" @click="updateEphemerisEventType('holidays')" />
-      <f7-list-item radio :checked="ephemerisEventType === 'dayset'" name="EphemerisEventType" title="on days in a specific dayset" @click="updateEphemerisEventType('dayset')" />
+      <f7-list-item radio :checked="ephemerisEventType === 'weekdays'" name="EphemerisEventType" title="it's a weekday" @click="updateEphemerisEventType('weekdays')" />
+      <f7-list-item radio :checked="ephemerisEventType === 'weekends'" name="EphemerisEventType" title="it's the weekend" @click="updateEphemerisEventType('weekends')" />
+      <f7-list-item radio :checked="ephemerisEventType === 'holidays'" name="EphemerisEventType" title="it's a holiday" @click="updateEphemerisEventType('holidays')" />
+      <f7-list-item radio :checked="ephemerisEventType === 'dayset'" name="EphemerisEventType" title="today is in a specific dayset" @click="updateEphemerisEventType('dayset')" />
     </f7-list>
     <f7-block-footer class="padding-horizontal">Remember to configure Ephemeris in Settings before using these conditions.</f7-block-footer>
     <config-sheet v-if="currentModuleType" :key="currentModule.id"

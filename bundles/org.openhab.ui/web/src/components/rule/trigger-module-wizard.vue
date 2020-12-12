@@ -10,7 +10,7 @@
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
         <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseThingCategory">
           <f7-icon size="35" f7="lightbulb" class="margin" />
-          Thing/Channel<br />Event
+          Thing<br />Event
         </f7-link>
       </f7-col>
     </f7-row>
@@ -43,6 +43,8 @@
       <f7-list-item radio v-if="currentItem && currentItem.type === 'Group'" :checked="itemEventType === 'memberCommand'" name="itemEventType" title="had a member receive a command" @click="updateItemEventType('memberCommand')" />
       <f7-list-item radio v-if="currentItem && currentItem.type === 'Group'" :checked="itemEventType === 'memberUpdated'" name="itemEventType" title="had a member update" @click="updateItemEventType('memberUpdated')" />
       <f7-list-item radio v-if="currentItem && currentItem.type === 'Group'" :checked="itemEventType === 'memberChanged'" name="itemEventType" title="had a member change" @click="updateItemEventType('memberChanged')" />
+    </f7-list>
+    <f7-list>
       <f7-list-input
         v-if="itemEventType === 'command' || itemEventType === 'memberCommand'"
         label="Command"
@@ -91,6 +93,49 @@
       <f7-list-item radio :checked="thingEventType === 'triggerChannelFired'" name="thingEventType" title="a trigger channel fired" @click="updateThingEventType('triggerChannelFired')" />
       <f7-list-item radio v-if="currentModule.configuration.thingUID" :checked="thingEventType === 'statusUpdated'" name="thingEventType" title="status was updated" @click="updateThingEventType('statusUpdated')" />
       <f7-list-item radio v-if="currentModule.configuration.thingUID" :checked="thingEventType === 'statusChanged'" name="thingEventType" title="status changed" @click="updateThingEventType('statusChanged')" />
+    </f7-list>
+    <f7-list>
+      <f7-list-item
+        v-if="thingEventType === 'statusUpdated'"
+        title="to"
+        smart-select :smart-select-params="{ view: $f7.view.main, openIn: 'popover' }">
+        <select name="thingStatus" required @change="(evt) => $set(currentModule.configuration, 'status', evt.target.value)">
+          <option v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'status').options]"
+            :value="status.value" :key="status.value"
+            :selected="currentModule.configuration.status === status.value">
+            {{status.label}}
+          </option>
+        </select>
+      </f7-list-item>
+      <f7-list-item
+        v-if="thingEventType === 'statusChanged'"
+        title="from"
+        smart-select :smart-select-params="{ view: $f7.view.main, openIn: 'popover' }">
+        <select name="thingStatus" required @change="(evt) => $set(currentModule.configuration, 'previousStatus', evt.target.value)">
+          <option v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'previousStatus').options]"
+            :value="status.value" :key="status.value"
+            :selected="currentModule.configuration.previousStatus === status.value">
+            {{status.label}}
+          </option>
+        </select>
+      </f7-list-item>
+      <f7-list-item
+        v-if="thingEventType === 'statusChanged'"
+        title="to"
+        smart-select :smart-select-params="{ view: $f7.view.main, openIn: 'popover' }">
+        <select name="thingStatus" required @change="(evt) => $set(currentModule.configuration, 'status', evt.target.value)">
+          <option v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'status').options]"
+            :value="status.value" :key="status.value"
+            :selected="currentModule.configuration.status === status.value">
+            {{status.label}}
+          </option>
+        </select>
+      </f7-list-item>
+    </f7-list>
+    <f7-list>
+      <trigger-channel-picker v-if="thingEventType === 'triggerChannelFired'" :value="currentModule.configuration.channelUID" title="Channel" @input="(val) => $set(currentModule.configuration, 'channelUID', val)" :filter-thing="currentModule.configuration.thingUID" />
+    </f7-list>
+    <f7-list>
       <f7-list-input
         v-if="thingEventType === 'triggerChannelFired'"
         label="Event"
@@ -100,36 +145,6 @@
         :value="currentModule.configuration.event"
         @blur="(evt) => $set(currentModule.configuration, 'event', evt.target.value)"
         />
-      <f7-list-input
-        v-if="thingEventType === 'statusUpdated'"
-        label="to status"
-        name="updatedState"
-        type="text"
-        placeholder="Any"
-        :value="currentModule.configuration.status"
-        @blur="(evt) => $set(currentModule.configuration, 'status', evt.target.value)"
-        />
-      <f7-list-input
-        v-if="thingEventType === 'statusChanged'"
-        label="from status"
-        name="changedFromState"
-        type="text"
-        placeholder="Any"
-        :value="currentModule.configuration.previousStatus"
-        @blur="(evt) => $set(currentModule.configuration, 'previousStatus', evt.target.value)"
-        />
-      <f7-list-input
-        v-if="thingEventType === 'statusChanged'"
-        label="to status"
-        name="changedToState"
-        type="text"
-        placeholder="Any"
-        :value="currentModule.configuration.status"
-        @blur="(evt) => $set(currentModule.configuration, 'status', evt.target.value)"
-        />
-    </f7-list>
-    <f7-list>
-      <trigger-channel-picker v-if="thingEventType === 'triggerChannelFired'" :value="currentModule.configuration.channelUID" title="Channel" @click="$set(currentModule.configuration, 'channelUID', val)" :filter-thing="currentModule.configuration.thingUID" />
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'time'">
@@ -146,7 +161,20 @@
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'system'">
     <f7-list>
-      <f7-list-item radio :checked="systemEventType === 'start'" name="systemEventType" title="System started" @click="updateSystemEventType('start')" />
+      <f7-list-item radio :checked="systemEventType === 'start'" name="systemEventType" title="the system is being initialized" @click="updateSystemEventType('start')" />
+    </f7-list>
+    <f7-block-footer class="padding-horizontal margin-vertical">and this start level has been reached:</f7-block-footer>
+    <f7-list v-if="systemEventType === 'start' && currentModule">
+      <f7-list-item radio :checked="currentModule.configuration.startLevel === 0" name="startLevel" title="00 - OSGi framework started" @click="$set(currentModule.configuration, 'startLevel', 0)" />
+      <f7-list-item radio :checked="currentModule.configuration.startLevel === 10" name="startLevel" title="10 - OSGi bundles activated" @click="$set(currentModule.configuration, 'startLevel', 10)" />
+      <f7-list-item radio :checked="currentModule.configuration.startLevel === 20" name="startLevel" title="20 - Entities (items, things...) loaded" @click="$set(currentModule.configuration, 'startLevel', 20)" />
+      <f7-list-item radio :checked="currentModule.configuration.startLevel === 30" name="startLevel" title="30 - Items states restored from persistence" @click="$set(currentModule.configuration, 'startLevel', 30)" />
+      <f7-list-item radio :checked="currentModule.configuration.startLevel === 40" name="startLevel" title="40 - Rules loaded" @click="$set(currentModule.configuration, 'startLevel', 40)" />
+      <f7-list-item radio :checked="currentModule.configuration.startLevel === 50" name="startLevel" title="50 - Rule engine ready" @click="$set(currentModule.configuration, 'startLevel', 50)" />
+      <f7-list-item radio :checked="currentModule.configuration.startLevel === 70" name="startLevel" title="70 - User interface running" @click="$set(currentModule.configuration, 'startLevel', 70)" />
+      <f7-list-item radio :checked="currentModule.configuration.startLevel === 80" name="startLevel" title="80 - Things initialized" @click="$set(currentModule.configuration, 'startLevel', 90)" />
+      <f7-list-item radio :checked="currentModule.configuration.startLevel === 100" name="startLevel" title="100 - Startup complete" @click="$set(currentModule.configuration, 'startLevel', 100)" />
+      <f7-block-footer class="padding-horizontal"><small>Start levels below 40 are provided for completeness but will not make a difference since the rules engine is not initialized yet at these levels.</small></f7-block-footer>
     </f7-list>
   </f7-block>
 </template>
