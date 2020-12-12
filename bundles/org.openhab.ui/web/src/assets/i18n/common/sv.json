@@ -1,5 +1,5 @@
 {
-  "dialogs.ok": "OK",
+  "dialogs.ok": "Ok",
   "dialogs.cancel": "Avbryt",
   "dialogs.back": "Tillbaka",
   "dialogs.done": "Färdig",
@@ -10,8 +10,8 @@
   "dialogs.search": "Sök",
   "dialogs.search.items": "Sök efter Items",
   "dialogs.search.things": "Sök efter Things",
-  "dialogs.search.rules": "Sök efter regler",
-  "dialogs.search.nothingFound": "Ingenting hittades",
+  "dialogs.search.rules": "Sök efter Rules",
+  "dialogs.search.nothingFound": "Inga sökträffar",
   "home.overview.title": "Översikt",
   "home.overview.tab": "Översikt",
   "home.overview.button.documentation": "Dokumentation",
@@ -39,5 +39,5 @@
   "sidebar.tip.signIn": "Logga in som administratör för att komma åt inställningar",
   "page.navbar.back": "Tillbaka",
   "page.navbar.edit": "Redigera",
-  "admin.notTranslatedYet": "Administrationsområdet är ännu inte översatt."
+  "admin.notTranslatedYet": "Administrationsvyn är ännu inte översatt."
 }
