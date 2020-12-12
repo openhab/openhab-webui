@@ -18,6 +18,8 @@
 
 <style lang="stylus">
 .item-picker-container
+  .item-content
+    padding-left calc(var(--f7-list-item-padding-horizontal)/2 + var(--f7-safe-area-left))
   .item-media
     padding 0
   .item-inner:after
@@ -67,12 +69,14 @@ export default {
       this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
       const value = this.$refs.smartSelect.f7SmartSelect.getValue()
       this.$emit('input', value)
+      if (!this.multiple) this.$emit('itemSelected', this.items.find((i) => i.name === value))
     },
     updateFromModelPicker (value) {
       if (this.multiple) {
         this.$emit('input', value.map((i) => i.name))
       } else {
         this.$emit('input', value.name)
+        this.$emit('itemSelected', value)
       }
       this.ready = false
       this.$nextTick(() => { this.ready = true })

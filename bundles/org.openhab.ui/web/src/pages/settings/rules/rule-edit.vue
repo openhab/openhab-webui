@@ -91,10 +91,11 @@
                   :title="mod.label || suggestedModuleTitle(mod, null, section)"
                   :footer="mod.description || suggestedModuleDescription(mod, null, section)"
                   v-for="mod in rule[section]" :key="mod.id"
-                  :link="isEditable && !showModuleControls" @click.native="(ev) => editModule(ev, section, mod)" swipeout>
+                  :link="isEditable && !showModuleControls"
+                  @click.native="(ev) => editModule(ev, section, mod)" swipeout>
                 <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
-                <f7-link slot="after" v-if="!createMode && mod.type && mod.type.indexOf('script') === 0" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editScriptDirect(ev, mod)" :tooltip="(isEditable) ? 'Edit script' : 'View script'"></f7-link>
-                <f7-link slot="after" v-if="!createMode && mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="calendar" color="gray" @click.native="(ev) => buildCronExpression(ev, mod)" tooltip="Build cron expression"></f7-link>
+                <f7-link slot="after" v-if="mod.type && mod.type.indexOf('script') === 0" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" :tooltip="'Edit module'"></f7-link>
+                <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" tooltip="Edit module"></f7-link>
                 <f7-swipeout-actions right v-if="isEditable">
                   <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">Delete</f7-swipeout-button>
                 </f7-swipeout-actions>
@@ -265,19 +266,19 @@ export default {
       })
     },
     save (stay) {
-      if (!this.isEditable) return
+      if (!this.isEditable) return Promise.reject()
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) {
-          return
+          return Promise.reject()
         }
       }
       if (!this.rule.uid) {
         this.$f7.dialog.alert('Please give an ID to the rule')
-        return
+        return Promise.reject()
       }
       if (!this.rule.name) {
         this.$f7.dialog.alert('Please give a name to the rule')
-        return
+        return Promise.reject()
       }
       const promise = (this.createMode)
         ? this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json')
@@ -401,7 +402,7 @@ export default {
         this.$f7.swipeout.open(swipeoutElement)
       }
     },
-    editModule (ev, section, mod) {
+    editModule (ev, section, mod, force) {
       if (this.showModuleControls) return
       if (!this.isEditable) return
       let swipeoutElement = ev.target
@@ -413,6 +414,15 @@ export default {
       this.currentSection = section
       this.currentModule = Object.assign({}, mod)
       this.currentModuleType = this.moduleTypes[section].find((m) => m.uid === mod.type)
+
+      if (mod.type && mod.type.indexOf('script') === 0 && !force) {
+        this.editScriptDirect(ev, mod)
+        return
+      }
+      if (mod.type && mod.type === 'timer.GenericCronTrigger' && !force) {
+        this.buildCronExpression(ev, mod)
+        return
+      }
 
       const popup = {
         component: RuleModulePopup
@@ -487,8 +497,10 @@ export default {
       })
 
       this.$f7.once('ruleModuleConfigUpdate', this.saveModule)
+      this.$f7.once('editNewScript', this.saveAndEditNewScript)
       this.$f7.once('ruleModuleConfigClosed', () => {
         this.$f7.off('ruleModuleConfigUpdate', this.saveModule)
+        this.$f7.off('editNewScript', this.saveAndEditNewScript)
         this.moduleConfigClosed()
       })
     },
@@ -509,6 +521,12 @@ export default {
         this.$set(this.rule[this.currentSection], idx, updatedModule)
       }
     },
+    saveAndEditNewScript (updatedModule) {
+      this.saveModule(updatedModule)
+      this.save().then(() => {
+        this.$f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + updatedModule.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
+      })
+    },
     moduleConfigClosed () {
       this.currentModule = null
       this.currentModuleType = null
@@ -519,9 +537,9 @@ export default {
       this.currentModuleType = mod.type
       this.scriptCode = mod.configuration.script
 
-      const updatePromise = (this.rule.editable) ? this.save() : Promise.resolve()
+      const updatePromise = (this.rule.editable || this.createMode) ? this.save() : Promise.resolve()
       updatePromise.then(() => {
-        this.$f7router.navigate('script/' + mod.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
+        this.$f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + mod.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
       })
     },
     buildCronExpression (ev, mod) {

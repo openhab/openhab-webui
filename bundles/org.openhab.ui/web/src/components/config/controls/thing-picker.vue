@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  props: ['title', 'name', 'value', 'multiple', 'required', 'filterType', 'filterUid'],
+  props: ['title', 'name', 'value', 'multiple', 'required', 'filterType', 'filterUid', 'openOnReady'],
   data () {
     return {
       ready: false,
@@ -51,9 +51,17 @@ export default {
         this.things = this.things.filter((t) => this.filterUid.indexOf(t.UID) >= 0)
       }
       this.ready = true
+      if (this.openOnReady) {
+        this.$nextTick(() => {
+          this.$refs.smartSelect.f7SmartSelect.open()
+        })
+      }
     })
   },
   methods: {
+    open () {
+      this.$refs.smartSelect.f7SmartSelect.open()
+    },
     select (e) {
       this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
       this.$emit('input', e.target.value)
