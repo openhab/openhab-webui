@@ -3,7 +3,7 @@
   "profile.changePassword": "Modifica la password",
   "profile.sessions": "Sessioni",
   "profile.sessions.header": "Nota: anche se si elimina una sessione, potrebbe rimanere attiva fino alla scadenza di tutti i token di accesso.",
-  "profile.sessions.signOut": "Chiudi questa sessione",
+  "profile.sessions.signOut": "Esci da questa sessione",
   "profile.sessions.created": "Creata: ",
   "profile.sessions.lastRefreshed": "Ultimo aggiornamento: ",
   "profile.sessions.delete.success": "Sessione eliminata",
