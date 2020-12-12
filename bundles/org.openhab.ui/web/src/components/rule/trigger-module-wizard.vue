@@ -82,6 +82,14 @@
         @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)"
         />
     </f7-list>
+    <f7-list v-if="(itemEventType === 'command' || itemEventType === 'memberCommand') && commandSuggestions.length">
+      <f7-list-item radio :checked="currentModule.configuration.command === suggestion.command" v-for="suggestion in commandSuggestions" :key="suggestion.command"
+        :title="suggestion.label" @click="$set(currentModule.configuration, 'command', suggestion.command)" />
+    </f7-list>
+    <f7-list v-else-if="stateSuggestions.length">
+      <f7-list-item radio :checked="currentModule.configuration.state === suggestion.value" v-for="suggestion in stateSuggestions" :key="suggestion.value"
+        :title="suggestion.label" @click="$set(currentModule.configuration, 'state', suggestion.value)" />
+    </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'thing'">
     <f7-list>
@@ -190,13 +198,14 @@
 </style>
 
 <script>
-import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
+import ModuleWizard from './module-wizard-mixin'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
 import TriggerChannelPicker from '@/components/config/controls/triggerchannel-picker.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
+  mixins: [ModuleWizard],
   props: ['currentModule', 'currentModuleType'],
   components: {
     ItemPicker,
@@ -262,13 +271,13 @@ export default {
       this.thingEventType = type
       switch (type) {
         case 'triggerChannelFired':
-          this.$emit('typeSelect', 'core.ChannelEventTrigger')
+          this.$emit('typeSelect', 'core.ChannelEventTrigger', true)
           break
         case 'statusUpdated':
-          this.$emit('typeSelect', 'core.ThingStatusUpdateTrigger')
+          this.$emit('typeSelect', 'core.ThingStatusUpdateTrigger', true)
           break
         case 'statusChanged':
-          this.$emit('typeSelect', 'core.ThingStatusChangeTrigger')
+          this.$emit('typeSelect', 'core.ThingStatusChangeTrigger', true)
           break
       }
     },
@@ -276,10 +285,10 @@ export default {
       this.timeEventType = type
       switch (type) {
         case 'cron':
-          this.$emit('typeSelect', 'timer.GenericCronTrigger')
+          this.$emit('typeSelect', 'timer.GenericCronTrigger', true)
           break
         case 'timeOfDay':
-          this.$emit('typeSelect', 'timer.TimeOfDayTrigger')
+          this.$emit('typeSelect', 'timer.TimeOfDayTrigger', true)
           break
       }
     },
@@ -287,7 +296,7 @@ export default {
       this.systemEventType = type
       switch (type) {
         case 'start':
-          this.$emit('typeSelect', 'core.SystemStartlevelTrigger')
+          this.$emit('typeSelect', 'core.SystemStartlevelTrigger', true)
           this.$set(this.currentModule.configuration, 'startlevel', 20)
           break
       }
@@ -297,28 +306,6 @@ export default {
       this.currentItem = value
       this.$set(this.currentModule.configuration, 'itemName', value.name)
       this.updateItemEventType('command')
-    },
-    openModelPicker () {
-      const popup = {
-        component: ModelPickerPopup
-      }
-
-      this.$f7router.navigate({
-        url: 'pick-from-model',
-        route: {
-          path: 'pick-from-model',
-          popup
-        }
-      }, {
-        props: {
-          multiple: false
-        }
-      })
-
-      this.$f7.once('itemsPicked', this.itemPicked)
-      this.$f7.once('modelPickerClosed', () => {
-        this.$f7.off('itemsPicked', this.itemPicked)
-      })
     }
   }
 }

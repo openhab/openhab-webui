@@ -60,7 +60,11 @@
       <f7-list-input media-item type="colorpicker" label="Pick a color" :color-picker-params="{
           targetEl: '#color-picker-value',
           targetElSetBackgroundColor: true,
-          modules: ['hsb-sliders', 'wheel'],
+          openIn: 'auto',
+          modules: ['hsb-sliders', 'wheel', 'palette'],
+          sliderValue: true,
+          sliderValueEditable: true,
+          sliderLabel: true,
           formatValue: colorToCommand
         }"
         :value="commandToColor()"
@@ -126,11 +130,12 @@
 </style>
 
 <script>
-import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
+import ModuleWizard from './module-wizard-mixin'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
+  mixins: [ModuleWizard],
   props: ['currentModule', 'currentModuleType'],
   components: {
     ItemPicker,
@@ -254,28 +259,6 @@ export default {
       this.currentItem = value
       this.$set(this.currentModule.configuration, 'itemName', value.name)
       this.$emit('typeSelect', 'core.ItemCommandAction')
-    },
-    openModelPicker () {
-      const popup = {
-        component: ModelPickerPopup
-      }
-
-      this.$f7router.navigate({
-        url: 'pick-from-model',
-        route: {
-          path: 'pick-from-model',
-          popup
-        }
-      }, {
-        props: {
-          multiple: false
-        }
-      })
-
-      this.$f7.once('itemsPicked', this.itemPicked)
-      this.$f7.once('modelPickerClosed', () => {
-        this.$f7.off('itemsPicked', this.itemPicked)
-      })
     }
   }
 }

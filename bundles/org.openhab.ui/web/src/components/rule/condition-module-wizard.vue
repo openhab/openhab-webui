@@ -51,6 +51,10 @@
         @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)"
         />
     </f7-list>
+    <f7-list v-if="stateSuggestions.length">
+      <f7-list-item radio :checked="currentModule.configuration.state === suggestion.value" v-for="suggestion in stateSuggestions" :key="suggestion.value"
+        :title="suggestion.label" @click="$set(currentModule.configuration, 'state', suggestion.value)" />
+    </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'script'">
     <f7-block-title class="padding-horizontal">A script evaluates to true</f7-block-title>
@@ -111,11 +115,12 @@
 </style>
 
 <script>
-import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
+import ModuleWizard from './module-wizard-mixin'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
+  mixins: [ModuleWizard],
   props: ['currentModule', 'currentModuleType'],
   components: {
     ItemPicker,
@@ -213,31 +218,10 @@ export default {
     },
     itemPicked (value) {
       this.category = 'item'
+      this.currentItem = value
       this.$set(this.currentModule.configuration, 'itemName', value.name)
       this.$set(this.currentModule.configuration, 'operator', '=')
       this.$emit('typeSelect', 'core.ItemStateCondition')
-    },
-    openModelPicker () {
-      const popup = {
-        component: ModelPickerPopup
-      }
-
-      this.$f7router.navigate({
-        url: 'pick-from-model',
-        route: {
-          path: 'pick-from-model',
-          popup
-        }
-      }, {
-        props: {
-          multiple: false
-        }
-      })
-
-      this.$f7.once('itemsPicked', this.itemPicked)
-      this.$f7.once('modelPickerClosed', () => {
-        this.$f7.off('itemsPicked', this.itemPicked)
-      })
     }
   }
 }
