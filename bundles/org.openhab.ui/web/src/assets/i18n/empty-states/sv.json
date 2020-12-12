@@ -1,5 +1,5 @@
 {
-  "overview.title": "Översiktssida har inte konfigurerats ännu",
+  "overview.title": "Översiktssidan har inte konfigurerats ännu",
   "overview.text": "Redigera layoutsidan med ID <code>\"översikt\"</code> för att välja vad som ska visas här.",
   "inbox.title": "Inkorgen är tom",
   "inbox.text": "Saker som upptäcks av dina Bindings kommer att visas här.<br><br>Du kan också starta en sökning med en specifik Binding eller lägga till saker manuellt med knappen nedan.",
