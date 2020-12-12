@@ -9,7 +9,7 @@
   "analyzer.series.table.header.axis": "Achse",
   "analyzer.series.table.header.markers": "Markierungen",
   "analyzer.series.table.header.aggregation": "Aggregation",
-  "analyzer.series.table.header.silent": "Ruhemodus",
+  "analyzer.series.table.header.silent": "Stumm",
   "analyzer.series.table.type.bar": "Balken",
   "analyzer.series.table.type.line": "Linie",
   "analyzer.series.table.type.area": "Fläche",
