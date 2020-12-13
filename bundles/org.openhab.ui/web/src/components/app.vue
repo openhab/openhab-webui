@@ -471,7 +471,7 @@ export default {
       })
     },
     updateThemeOptions () {
-      this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || ((window.OHApp && window.OHApp.preferDarkMode) ? window.OHApp.preferDarkMode().toString() === 'dark' : (this.$f7.darkTheme ? 'dark' : 'light'))
+      this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || ((window.OHApp && window.OHApp.preferDarkMode) ? window.OHApp.preferDarkMode().toString() : (this.$f7.darkTheme ? 'dark' : 'light'))
       this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.ios || this.$f7.darkTheme || this.themeOptions.dark === 'dark') ? 'light' : 'filled')
       this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
       this.themeOptions.homeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
@@ -508,6 +508,12 @@ export default {
   created () {
     // special treatment for this option because it's needed to configure the app initialization
     this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.pagetransition') || 'default'
+    // tell the app to go fullscreen (if the OHApp is supported)
+    if (window.OHApp && typeof window.OHApp.goFullscreen === 'function') {
+      try {
+        window.OHApp.goFullscreen()
+      } catch {}
+    }
     // this.loginScreenOpened = true
     const refreshToken = this.getRefreshToken()
     if (refreshToken) {
