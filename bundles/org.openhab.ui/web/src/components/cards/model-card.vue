@@ -9,7 +9,7 @@
               <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.header" :key="'header-' + idx" @command="onCommand" />
             </div>
             <div v-else>
-              {{title}}
+              <div class="title">{{title}}</div>
               <div v-if="subtitle" class="subtitle"><small>{{subtitle || '&nbsp;'}}</small></div>
             </div>
           </slot>
@@ -69,7 +69,10 @@
     .card-background
       transform translateX(0)
 
+  .title
+    max-width calc(340px - 2*var(--f7-card-header-padding-horizontal))
   .subtitle
+    max-width calc(340px - 2*var(--f7-card-header-padding-horizontal))
     font-weight normal
     font-size normal
     line-height 0.7

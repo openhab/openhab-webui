@@ -1,6 +1,6 @@
 <template>
   <f7-page name="about" class="page-about" @page:beforein="beforePageIn">
-    <f7-navbar large :title-large="$t('about.title')" title="About" :back-link="$t('dialogs.back')"></f7-navbar>
+    <f7-navbar large :title-large="$t('about.title')" :title="$t('about.title')" :back-link="$t('dialogs.back')"></f7-navbar>
     <f7-block class="block-narrow after-big-title">
       <f7-row>
         <f7-col>
