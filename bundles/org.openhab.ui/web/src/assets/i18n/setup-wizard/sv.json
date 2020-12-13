@@ -16,7 +16,7 @@
   "setupwizard.location.retrieveFromDevice.notAvailable.message": "Position är inte tillgänglig",
   "setupwizard.location.footer": "Detta kommer att be din enhet om tillstånd att använda sin nuvarande plats för att hjälpa dig att fylla i din nuvarande latitud och longitud ovan. Du kan återkalla denna behörighet efteråt.",
   "setupwizard.location.setLocation": "Ställ in plats",
-  "setupwizard.location.configureLater": "Konfigurera i Inställningar senare",
+  "setupwizard.location.configureLater": "Konfigurera i inställningar senare",
   "setupwizard.addons.title": "Installera tillägg",
   "setupwizard.addons.header1": "Merparten av funktionaliteten i openHAB tillhandahålls av tillägg.",
   "setupwizard.addons.header2": "Välj vilka du vill installera direkt.",
