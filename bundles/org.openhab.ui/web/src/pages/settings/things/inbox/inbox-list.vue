@@ -78,7 +78,8 @@
               :checkbox="showCheckboxes"
               :checked="isChecked(entry.thingUID)"
               @change="(e) => toggleItemCheck(e, entry.thingUID)"
-              @click="(e) => openEntryActions(e, entry)"
+              @click.ctrl="(e) => ctrlClick(e, entry)"
+              @click.exact="(e) => click(e, entry)"
               :title="entry.label"
               :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
               :footer="entry.thingTypeUID"
@@ -194,12 +195,22 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
+    click (event, item) {
+      if (this.showCheckboxes) {
+        this.toggleItemCheck(event, item.thingUID, item)
+      } else {
+        this.openEntryActions(event, item)
+      }
+    },
+    ctrlClick (event, item) {
+      this.toggleItemCheck(event, item.thingUID, item)
+      if (!this.selectedItems.length) this.showCheckboxes = false
+    },
     openEntryActions (e, entry) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(e, entry.thingUID)
         return
       }
-      let self = this
       let ignored = entry.flag === 'IGNORED'
       let actions = this.$f7.actions.create({
         convertToPopover: true,
@@ -221,21 +232,7 @@ export default {
                 this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID} with the following name:`,
                   'Add as Thing',
                   (name) => {
-                    this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve`, name).then((res) => {
-                      this.$f7.toast.create({
-                        text: 'Entry approved',
-                        destroyOnClose: true,
-                        closeTimeout: 2000
-                      }).open()
-                      self.load()
-                    }).catch((err) => {
-                      this.$f7.toast.create({
-                        text: 'Error during thing creation: ' + err,
-                        destroyOnClose: true,
-                        closeTimeout: 2000
-                      }).open()
-                      self.load()
-                    })
+                    this.approveEntry(entry, name)
                   },
                   null,
                   entry.label)
@@ -245,21 +242,11 @@ export default {
               text: (!ignored) ? 'Ignore' : 'Unignore',
               color: (!ignored) ? 'orange' : 'blue',
               onClick: () => {
-                this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/${(!ignored) ? 'ignore' : 'unignore'}`).then((res) => {
-                  this.$f7.toast.create({
-                    text: (!ignored) ? 'Entry ignored' : 'Entry unignored',
-                    destroyOnClose: true,
-                    closeTimeout: 2000
-                  }).open()
-                  self.load()
-                }).catch((err) => {
-                  this.$f7.toast.create({
-                    text: 'Error while updating ignore flag: ' + err,
-                    destroyOnClose: true,
-                    closeTimeout: 2000
-                  }).open()
-                  self.load()
-                })
+                if (ignored) {
+                  this.unignoreEntry(entry)
+                } else {
+                  this.ignoreEntry(entry)
+                }
               }
             }
           ],
@@ -269,21 +256,7 @@ export default {
               color: 'red',
               onClick: () => {
                 this.$f7.dialog.confirm(`Remove ${entry.label} from the Inbox?`, 'Remove Entry', () => {
-                  this.$oh.api.delete('/rest/inbox/' + entry.thingUID).then((res) => {
-                    this.$f7.toast.create({
-                      text: 'Entry removed',
-                      destroyOnClose: true,
-                      closeTimeout: 2000
-                    }).open()
-                    self.load()
-                  }).catch((err) => {
-                    this.$f7.toast.create({
-                      text: 'Error while removing entry: ' + err,
-                      destroyOnClose: true,
-                      closeTimeout: 2000
-                    }).open()
-                    self.load()
-                  })
+                  this.removeEntry(entry)
                 })
               }
             }
@@ -292,6 +265,74 @@ export default {
       })
 
       actions.open()
+    },
+    approveEntry (entry, name) {
+      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve`, name).then((res) => {
+        this.$f7.toast.create({
+          text: 'Entry approved',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        this.load()
+      }).catch((err) => {
+        this.$f7.toast.create({
+          text: 'Error during thing creation: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        this.load()
+      })
+    },
+    ignoreEntry (entry) {
+      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/ignore`).then((res) => {
+        this.$f7.toast.create({
+          text: 'Entry ignored',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        this.load()
+      }).catch((err) => {
+        this.$f7.toast.create({
+          text: 'Error while ignoring entry: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        this.load()
+      })
+    },
+    unignoreEntry (entry) {
+      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/unignore`).then((res) => {
+        this.$f7.toast.create({
+          text: 'Entry unignored',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        this.load()
+      }).catch((err) => {
+        this.$f7.toast.create({
+          text: 'Error while unignoring entry: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        this.load()
+      })
+    },
+    removeEntry (entry) {
+      this.$oh.api.delete('/rest/inbox/' + entry.thingUID).then((res) => {
+        this.$f7.toast.create({
+          text: 'Entry removed',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        self.load()
+      }).catch((err) => {
+        this.$f7.toast.create({
+          text: 'Error while removing entry: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        self.load()
+      })
     },
     toggleIgnored () {
       this.showIgnored = !this.showIgnored
@@ -305,7 +346,7 @@ export default {
       return this.selectedItems.indexOf(item) >= 0
     },
     toggleItemCheck (event, item) {
-      console.log('toggle check')
+      if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
         this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
       } else {
@@ -386,6 +427,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>
