@@ -116,8 +116,8 @@ export default {
         }, {})
 
         this.model.locations = locations.map(l => this.buildModelCard('location', l, l.item.name, page))
-        this.model.equipment = Object.keys(equipment).sort().map(k => this.buildModelCard('equipment', equipment[k], k, page))
-        this.model.properties = Object.keys(properties).sort().map(k => this.buildModelCard('property', properties[k], k, page))
+        this.model.equipment = Object.keys(equipment).sort((a, b) => this.$t(a).localeCompare(this.$t(b))).map(k => this.buildModelCard('equipment', equipment[k], k, page))
+        this.model.properties = Object.keys(properties).sort((a, b) => this.$t(a).localeCompare(this.$t(b))).map(k => this.buildModelCard('property', properties[k], k, page))
         this.modelReady = true
       })
     }

@@ -52,7 +52,7 @@
   color var(--f7-navbar-link-color)
   transition color 0.3s
 .home-nav .home-title-large .title-large-text
-  line-height 0.95
+  line-height 0.98
   .today
     position absolute
     font-size 8pt

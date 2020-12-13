@@ -60,7 +60,7 @@
           ref="itemsList"
           media-list
           virtual-list
-          :virtual-list-params="{ items, searchAll, renderExternal, height: $theme.ios ? 78 : $theme.aurora ? 60 : 87}"
+          :virtual-list-params="{ items, searchAll, renderExternal, height: vlData.height }"
         >
           <ul>
             <f7-list-item
@@ -114,6 +114,11 @@
 <script>
 export default {
   data () {
+    let vlHeight
+    if (this.$theme.ios) vlHeight = 78
+    if (this.$theme.aurora) vlHeight = 60
+    if (this.$theme.md) vlHeight = 87
+    if (this.$device.firefox) vlHeight += 1
     return {
       ready: false,
       loading: false,
@@ -121,7 +126,8 @@ export default {
       indexedItems: {},
       initSearchbar: false,
       vlData: {
-        items: []
+        items: [],
+        height: vlHeight
       },
       selectedItems: [],
       showCheckboxes: false,
