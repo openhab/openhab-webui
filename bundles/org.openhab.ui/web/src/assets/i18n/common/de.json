@@ -9,8 +9,8 @@
   "dialogs.delete": "Löschen",
   "dialogs.search": "Suchen",
   "dialogs.search.items": "Items Suchen",
-  "dialogs.search.things": "Things Suchen",
-  "dialogs.search.rules": "Rules Suchen",
+  "dialogs.search.things": "Things suchen",
+  "dialogs.search.rules": "Rules suchen",
   "dialogs.search.nothingFound": "Nichts gefunden",
   "home.overview.title": "Übersicht",
   "home.overview.tab": "Übersicht",
@@ -22,7 +22,7 @@
   "home.equipment.tab": "Geräte",
   "home.properties.title": "Eigenschaften",
   "home.properties.tab": "Eigenschaften",
-  "home.cards.close": "@:dialogs.close",
+  "home.cards.close": "Schließen",
   "home.cards.analyze": "Analysieren",
   "home.cards.analyzeAll": "Alles analysieren",
   "home.otherApps": "Andere Apps",
@@ -37,7 +37,7 @@
   "sidebar.helpAbout": "Über & Hilfe",
   "sidebar.unlockAdmin": "Administration entsperren",
   "sidebar.tip.signIn": "Anmelden für Administration",
-  "page.navbar.back": "@:dialogs.back",
+  "page.navbar.back": "Zurück",
   "page.navbar.edit": "Bearbeiten",
   "admin.notTranslatedYet": "Der Administrationsbereich ist noch nicht übersetzt."
 }

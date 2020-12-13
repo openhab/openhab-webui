@@ -1,0 +1,15 @@
+{
+  "about.theme": "Vzhled",
+  "about.theme.auto": "Automaticky",
+  "about.darkMode": "Tmavý režim",
+  "about.darkMode.auto": "Automaticky",
+  "about.darkMode.light": "Světlý",
+  "about.darkMode.dark": "Tmavý",
+  "about.navigationBarsStyle": "Styl navigační lišty",
+  "about.miscellaneous": "Ostatní",
+  "about.miscellaneous.home.navbar": "Jednoduchý navigační panel na domovské stránce",
+  "about.miscellaneous.home.background": "Standardní barva pozadí domovské stránky",
+  "about.miscellaneous.home.hideChatInput": "Skrýt chat na domovské stránce",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Zakázat animace rozbalování karet",
+  "about.miscellaneous.theme.disablePageTransition": "Zakázat animace přechodu stránek"
+}

@@ -1,0 +1,15 @@
+{
+  "about.theme": "Скин",
+  "about.theme.auto": "Авто",
+  "about.darkMode": "Темный режим",
+  "about.darkMode.auto": "Авто",
+  "about.darkMode.light": "Светлая",
+  "about.darkMode.dark": "Темная",
+  "about.navigationBarsStyle": "Стиль панели навигации",
+  "about.miscellaneous": "Другие настройки",
+  "about.miscellaneous.home.navbar": "Простая панель навигации на главной странице",
+  "about.miscellaneous.home.background": "Стандартный цвет фона домашней страницы",
+  "about.miscellaneous.home.hideChatInput": "Скрыть окно ввода чата на главной странице",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Отключить анимацию перехода карточек",
+  "about.miscellaneous.theme.disablePageTransition": "Отключить анимацию перехода между страницами"
+}

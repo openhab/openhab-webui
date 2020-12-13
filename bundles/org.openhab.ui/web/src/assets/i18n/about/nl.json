@@ -1,0 +1,21 @@
+{
+  "about.title": "Over",
+  "about.homePage": "Website",
+  "about.documentation": "Documentatie",
+  "about.communityForum": "Community forum",
+  "about.technicalInformation": "Technische informatie",
+  "about.technicalInformation.configurationFolder": "Configuratie folder",
+  "about.technicalInformation.userdataFolder": "Gebruikersdata folder",
+  "about.technicalInformation.logsFolder": "Logfolder",
+  "about.technicalInformation.operatingSystem": "Besturingssysteem",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} beschikbare processoren - {ram} beschikbaar geheugen",
+  "about.technicalInformation.viewDetails": "Details bekijken",
+  "about.appearanceOptions": "Uiterlijk (alleen voor dit apparaat)",
+  "about.reload": "Herladen",
+  "about.reload.purgeExplanation1": "Caches en/of service processen zijn in gebruik om resources lokaal op te slaan en deze app sneller te laden. Een update naar een nieuwe versie kan mogelijk niet herkend worden.",
+  "about.reload.purgeExplanation2": "Selecteer Caches Wissen en Herladen om caches leeg te maken, service processen af te melden en alle informatie opnieuw van de server op te halen.",
+  "about.reload.purgeCachesAndRefresh": "Caches Wissen en Herladen",
+  "about.reload.confirmPurge": "Alle applicatie-caches wissen en de service processen afmelden? Dit zal ook de pagina van de server herladen en kan een paar seconden duren.",
+  "about.reload.reloadApp": "Herlaad App"
+}

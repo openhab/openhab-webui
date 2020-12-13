@@ -1,0 +1,15 @@
+{
+  "about.theme": "Theme",
+  "about.theme.auto": "Automatesch",
+  "about.darkMode": "Donkelmodus",
+  "about.darkMode.auto": "Automatesch",
+  "about.darkMode.light": "Hell",
+  "about.darkMode.dark": "Däischter",
+  "about.navigationBarsStyle": "Stil vun der Navigatiounsleescht",
+  "about.miscellaneous": "Verschiddenes",
+  "about.miscellaneous.home.navbar": "Einfach Navigatiounsleescht op der Startsäit",
+  "about.miscellaneous.home.background": "Standardhannergrondfaarw fir d'Startsäit",
+  "about.miscellaneous.home.hideChatInput": "Chatformular op der Startsäit verstoppen",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Animatioun fir dKaartenerweiderung ofschalten",
+  "about.miscellaneous.theme.disablePageTransition": "Animatioun fir Säiteniwwergäng ofschalten"
+}

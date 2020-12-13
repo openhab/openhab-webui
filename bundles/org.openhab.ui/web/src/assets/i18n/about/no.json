@@ -1,0 +1,21 @@
+{
+  "about.title": "Om",
+  "about.homePage": "Nettside",
+  "about.documentation": "Dokumentasjon",
+  "about.communityForum": "Brukerforum",
+  "about.technicalInformation": "Teknisk informasjon",
+  "about.technicalInformation.configurationFolder": "Konfigurasjons mappe",
+  "about.technicalInformation.userdataFolder": "Mappe for brukerdata",
+  "about.technicalInformation.logsFolder": "Loggmappe",
+  "about.technicalInformation.operatingSystem": "Operativsystem",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} tilgjengelige prosessorer - {ram} tilgjengelig minne",
+  "about.technicalInformation.viewDetails": "Vis detaljer",
+  "about.appearanceOptions": "Utseende (kun for denne enheten)",
+  "about.reload": "Last på nytt",
+  "about.reload.purgeExplanation1": "Mellomlagring og/eller tjeneste arbeidere er i bruk for å lagre ressurser lokalt for at appen skal laste raskere. Det kan også føre til at den ikke detekterer at den er oppdatert til en nyere versjon.",
+  "about.reload.purgeExplanation2": "Velg \"Tøm mellomlager og oppdater\" nedenfor for å slette alle mellomlagrene, fjern registreringen og last ned alt fra serveren igjen.",
+  "about.reload.purgeCachesAndRefresh": "Tøm mellomlager og oppdater",
+  "about.reload.confirmPurge": "Tøm alle app mellomlagrer og fjern registreringen av tjenestearbeidere? Dette vil også laste siden på nytt fra tjeneren, som kan ta noen sekunder.",
+  "about.reload.reloadApp": "Oppdater app"
+}

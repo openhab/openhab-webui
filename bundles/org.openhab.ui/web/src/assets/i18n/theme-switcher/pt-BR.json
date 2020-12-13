@@ -1,0 +1,15 @@
+{
+  "about.theme": "Tema",
+  "about.theme.auto": "Auto",
+  "about.darkMode": "Modo escuro",
+  "about.darkMode.auto": "Auto",
+  "about.darkMode.light": "Claro",
+  "about.darkMode.dark": "Escuro",
+  "about.navigationBarsStyle": "Estilo das barras de navegação",
+  "about.miscellaneous": "Diversos",
+  "about.miscellaneous.home.navbar": "Barra de navegação simples na página inicial",
+  "about.miscellaneous.home.background": "Cor de fundo padrão da página inicial",
+  "about.miscellaneous.home.hideChatInput": "Ocultar chat da caixa de entrada na página inicial",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Desativar animações de expansão de cards",
+  "about.miscellaneous.theme.disablePageTransition": "Desativar animações de transição de página"
+}

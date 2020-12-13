@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(példa)",
+  "habot.clearHistory": "Előzmények törlése",
+  "habot.dismiss": "Mégsem",
+  "habot.example1": "Milyen a hőmérséklet a konyhában?",
+  "habot.example2": "Állítsd be a termosztátot 21 fokra",
+  "habot.example3": "Oltsd le a lámpákat az első emeleten",
+  "habot.anythingElse": "Más egyéb?",
+  "habot.cardDeckIsIncompatible": "Az elmentett kártyák itt nem jeleníthetők meg, használja a HABot alkalmazást a megtekintéshez.",
+  "habot.cardIsIncompatible": "A kártya itt nem jeleníthető meg, használja a HABot alkalmazást."
+}

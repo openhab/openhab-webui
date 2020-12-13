@@ -1,0 +1,21 @@
+{
+  "about.title": "O aplikaci",
+  "about.homePage": "Web",
+  "about.documentation": "Dokumentace",
+  "about.communityForum": "Komunitní fórum",
+  "about.technicalInformation": "Technické informace",
+  "about.technicalInformation.configurationFolder": "Složka konfigurace",
+  "about.technicalInformation.userdataFolder": "Složka s uživatelskými daty",
+  "about.technicalInformation.logsFolder": "Složka s logy",
+  "about.technicalInformation.operatingSystem": "Operační systém",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} dostupných procesorů - {ram} dostupné paměti",
+  "about.technicalInformation.viewDetails": "Zobrazit podrobnosti",
+  "about.appearanceOptions": "Vzhled (pouze pro toto zařízení)",
+  "about.reload": "Znovu načíst",
+  "about.reload.purgeExplanation1": "Keš a/nebo service workers se používají k ukládání zdrojů na lokální disk k rychlejšímu načtení této aplikace, ale nemusí spolehlivě zjistit, kdy byla aktualizována na novou verzi.",
+  "about.reload.purgeExplanation2": "Vyberte \"Vymazat keše a obnovit\" níže pro vymazání všech keší, registrovaných service workerů a opětovné načtení dat ze serveru.",
+  "about.reload.purgeCachesAndRefresh": "Vymazat keše a obnovit",
+  "about.reload.confirmPurge": "Vymazat všechny aplikační keše a zrušit registraci service workerů? Znovu načte stránku ze serveru, což může trvat několik sekund.",
+  "about.reload.reloadApp": "Znovu načíst aplikaci"
+}

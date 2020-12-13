@@ -1,0 +1,21 @@
+{
+  "about.title": "Om",
+  "about.homePage": "Hemsida",
+  "about.documentation": "Dokumentation",
+  "about.communityForum": "Forum",
+  "about.technicalInformation": "Teknisk information",
+  "about.technicalInformation.configurationFolder": "Konfigurationsmapp",
+  "about.technicalInformation.userdataFolder": "Mapp för användardata",
+  "about.technicalInformation.logsFolder": "Loggmapp",
+  "about.technicalInformation.operatingSystem": "Operativsystem",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} tillgängliga processorer - {ram} tillgängligt minne",
+  "about.technicalInformation.viewDetails": "Visa detaljer",
+  "about.appearanceOptions": "Utseende (endast för den här enheten)",
+  "about.reload": "Ladda om",
+  "about.reload.purgeExplanation1": "Cacheminne och servicetjänster används för att lagra resurser lokalt vilket kan göra inläsning av denna app snabbare men kan även innebära problem vid uppdatering till en ny version.",
+  "about.reload.purgeExplanation2": "Välj Rensa cachar och Uppdatera nedan för att rensa alla cachar, avregistrera servicetjänster och hämta allt från servern igen.",
+  "about.reload.purgeCachesAndRefresh": "Rensa cachar och uppdatera",
+  "about.reload.confirmPurge": "Rensa alla cacher och avregistrera servicetjänster? Detta kommer också läsa om sidan från servern vilket kan ta några sekunder.",
+  "about.reload.reloadApp": "Ladda om appen"
+}

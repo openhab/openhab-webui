@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(esimerkki)",
+  "habot.clearHistory": "Tyhjennä historia",
+  "habot.dismiss": "Hylkää",
+  "habot.example1": "Mikä on keittiössä oleva lämpötila?",
+  "habot.example2": "Aseta termostaatti 21 asteeseen",
+  "habot.example3": "Sammuta valot ensimmäisessä kerroksessa",
+  "habot.anythingElse": "Muuta mainittavaa?",
+  "habot.cardDeckIsIncompatible": "Valitettavasti korttipakkaan tallennettuja kortteja ei voida näyttää tässä, käytä HABot-sovellusta nähdäksesi sen.",
+  "habot.cardIsIncompatible": "Valitettavasti tätä korttia ei voi näyttää tässä, käytä HABot-sovellusta nähdäksesi sen."
+}

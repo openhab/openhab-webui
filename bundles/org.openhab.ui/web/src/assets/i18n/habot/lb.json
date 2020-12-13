@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(Beispill)",
+  "habot.clearHistory": "Historique läschen",
+  "habot.dismiss": "Verwerfen",
+  "habot.example1": "Wéi ass d'Temperatur an der Kichen?",
+  "habot.example2": "Setz den Thermostat op 21 Grad",
+  "habot.example3": "Maach d'Luuchten um éischte Stack aus",
+  "habot.anythingElse": "Soss nach eppes?",
+  "habot.cardDeckIsIncompatible": "Sorry, Kaarten déi am Kaartestapel gespäichert sinn, kënnen hei net ugewise ginn. Benotz déi speziell HABot-app fir se ze gesinn.",
+  "habot.cardIsIncompatible": "Sorry, dës Kaart kann hei net ugewise ginn. Benotz déi speziell HABot-app fir se ze gesinn."
+}

@@ -1,0 +1,21 @@
+{
+  "about.title": "Sobre",
+  "about.homePage": "Website",
+  "about.documentation": "Documentação",
+  "about.communityForum": "Fórum da Comunidade",
+  "about.technicalInformation": "Informações técnicas",
+  "about.technicalInformation.configurationFolder": "Pasta de Configuração",
+  "about.technicalInformation.userdataFolder": "Pasta de dados do usuário",
+  "about.technicalInformation.logsFolder": "Pasta de logs",
+  "about.technicalInformation.operatingSystem": "Sistema operacional",
+  "about.technicalInformation.javaRuntime": "Versão do Java",
+  "about.technicalInformation.resourceStats": "{nbproc} processadores disponíveis - {ram} memória disponível",
+  "about.technicalInformation.viewDetails": "Ver detalhes",
+  "about.appearanceOptions": "Aparência (apenas para este dispositivo)",
+  "about.reload": "Recarregar",
+  "about.reload.purgeExplanation1": "Caches e/ou serviços estão em uso para guardar os recursos localmente e fazer com que este aplicativo seja carregado mais rápido, mas pode não detectar de forma confiável quando foi atualizado para uma nova versão.",
+  "about.reload.purgeExplanation2": "Selecione Limpar Caches e Atualizar abaixo para limpar todos os caches, cancelar o registro de serviços e baixar tudo do servidor novamente.",
+  "about.reload.purgeCachesAndRefresh": "Limpar Caches e Atualizar",
+  "about.reload.confirmPurge": "Limpar todos os caches de aplicativos e cancelar o registro dos serviços? Isso também irá recarregar a página do servidor, o que pode demorar alguns segundos.",
+  "about.reload.reloadApp": "Recarregar o App"
+}

@@ -1,0 +1,19 @@
+{
+  "profile.title": "Tu perfil",
+  "profile.changePassword": "Cambiar contraseña",
+  "profile.sessions": "Sesiones",
+  "profile.sessions.header": "Nota: incluso si borra una sesión, podría permanecer activa hasta que todos los tokens de acceso válidos caduquen.",
+  "profile.sessions.signOut": "Cerrar sesión",
+  "profile.sessions.created": "Creado: ",
+  "profile.sessions.lastRefreshed": "Última actualización: ",
+  "profile.sessions.delete.success": "Sesión eliminada",
+  "profile.sessions.delete.error": "Error al eliminar la sesión: ",
+  "profile.sessions.signOut.error": "Error al cerrar sesión: ",
+  "profile.apiTokens": "Tokens API",
+  "profile.apiTokens.header": "Crea tokens API para dar herramientas y servicios externos que no soporten el OAuth2 Authorization Framework acceso permanente en tu nombre.",
+  "profile.apiTokens.created": "Creado: ",
+  "profile.apiTokens.validForScope": "Válido para el ámbito de: ",
+  "profile.apiTokens.create": "Crear nuevo token API",
+  "profile.apiTokens.delete.success": "Token API eliminado",
+  "profile.apiTokens.delete.error": "Error al eliminar el token API: "
+}

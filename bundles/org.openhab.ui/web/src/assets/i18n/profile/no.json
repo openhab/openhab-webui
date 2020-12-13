@@ -1,0 +1,19 @@
+{
+  "profile.title": "Din profil",
+  "profile.changePassword": "Endre passordet",
+  "profile.sessions": "Økter",
+  "profile.sessions.header": "Merk: Selv om du sletter en sesjon kan det hende at den fortsatt er aktiv til alle gyldige tilgangsnøkler utløper.",
+  "profile.sessions.signOut": "Logg ut av denne sesjonen",
+  "profile.sessions.created": "Opprettet: ",
+  "profile.sessions.lastRefreshed": "Sist oppdatert: ",
+  "profile.sessions.delete.success": "Økt slettet",
+  "profile.sessions.delete.error": "Feil under sletting av økt: ",
+  "profile.sessions.signOut.error": "Feil under avlogging: ",
+  "profile.apiTokens": "API Tokens",
+  "profile.apiTokens.header": "Opprett API-tokens for å gi eksterne verktøy og tjenester som ikke støtter OAuth2 Authorization Framework permanent tilgang på dine vegne.",
+  "profile.apiTokens.created": "Opprettet: ",
+  "profile.apiTokens.validForScope": "Gyldig for omfang: ",
+  "profile.apiTokens.create": "Opprette nytt API-token",
+  "profile.apiTokens.delete.success": "API token slettet",
+  "profile.apiTokens.delete.error": "Feil under sletting av API-token: "
+}

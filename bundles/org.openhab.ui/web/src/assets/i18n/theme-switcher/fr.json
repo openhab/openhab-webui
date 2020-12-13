@@ -1,6 +1,8 @@
 {
   "about.theme": "Thème",
+  "about.theme.auto": "Auto",
   "about.darkMode": "Mode sombre",
+  "about.darkMode.auto": "Auto",
   "about.darkMode.light": "Clair",
   "about.darkMode.dark": "Sombre",
   "about.navigationBarsStyle": "Style des barres de navigation",

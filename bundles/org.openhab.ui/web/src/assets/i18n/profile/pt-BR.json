@@ -1,0 +1,19 @@
+{
+  "profile.title": "Seu Perfil",
+  "profile.changePassword": "Alterar sua senha",
+  "profile.sessions": "Sessões",
+  "profile.sessions.header": "Nota: mesmo que você exclua uma sessão, ela ainda pode permanecer ativa até que todos os tokens de acesso válidos expirem.",
+  "profile.sessions.signOut": "Sair desta sessão",
+  "profile.sessions.created": "Criado: ",
+  "profile.sessions.lastRefreshed": "Última atualização: ",
+  "profile.sessions.delete.success": "Sessão apagada",
+  "profile.sessions.delete.error": "Erro ao apagar a sessão: ",
+  "profile.sessions.signOut.error": "Erro ao sair: ",
+  "profile.apiTokens": "API Tokens",
+  "profile.apiTokens.header": "Crie tokens de API para dar às ferramentas e serviços externos que não suportam o acesso permanente da Estrutura de Autorização OAuth2 em seu nome.",
+  "profile.apiTokens.created": "Criado: ",
+  "profile.apiTokens.validForScope": "Válido para o escopo: ",
+  "profile.apiTokens.create": "Criar novo token de API",
+  "profile.apiTokens.delete.success": "Token de API excluído",
+  "profile.apiTokens.delete.error": "Erro ao excluir o token de API: "
+}

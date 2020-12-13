@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(przykład)",
+  "habot.clearHistory": "Wyczyść historię",
+  "habot.dismiss": "Odrzuć",
+  "habot.example1": "Jaka jest temperatura w kuchni?",
+  "habot.example2": "Ustaw termostat na 21 stopni",
+  "habot.example3": "Wyłącz światła na pierwszym piętrze",
+  "habot.anythingElse": "Coś jeszcze?",
+  "habot.cardDeckIsIncompatible": "Przepraszamy, karty zapisane na karcie nie mogą być tutaj wyświetlane, użyj dedykowanej aplikacji HABot, aby ją zobaczyć.",
+  "habot.cardIsIncompatible": "Przepraszamy, ta karta nie może być tutaj wyświetlana, użyj dedykowanej aplikacji HABot, aby ją zobaczyć."
+}

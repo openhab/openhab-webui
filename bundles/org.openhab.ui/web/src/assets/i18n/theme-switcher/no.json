@@ -1,0 +1,15 @@
+{
+  "about.theme": "Tema",
+  "about.theme.auto": "Auto",
+  "about.darkMode": "Mørkmodus",
+  "about.darkMode.auto": "Auto",
+  "about.darkMode.light": "Lyst",
+  "about.darkMode.dark": "Mørk",
+  "about.navigationBarsStyle": "Stil for navigasjonsfelt",
+  "about.miscellaneous": "Diverse",
+  "about.miscellaneous.home.navbar": "Enkelt navigasjonsfelt på hjemmesiden",
+  "about.miscellaneous.home.background": "Standard bakgrunnsfarge for hjemmeside",
+  "about.miscellaneous.home.hideChatInput": "Skjul boks for chat på hjemmesiden",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Deaktiver kort ekspansjonsanimasjoner",
+  "about.miscellaneous.theme.disablePageTransition": "Deaktivere animasjoner på side overganger"
+}

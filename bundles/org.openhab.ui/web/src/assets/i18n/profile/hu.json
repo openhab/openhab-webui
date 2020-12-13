@@ -1,0 +1,19 @@
+{
+  "profile.title": "Adatlap",
+  "profile.changePassword": "Jelszó módosítása",
+  "profile.sessions": "Munkamenetek",
+  "profile.sessions.header": "Megjegyzés: a munkamenet törlése után is maradhat aktív kapcsolat amíg az ellenőrzött tokenek le nem járnak.",
+  "profile.sessions.signOut": "Kilépés a munkamenetből",
+  "profile.sessions.created": "Létrehozva: ",
+  "profile.sessions.lastRefreshed": "Utoljára frissítve: ",
+  "profile.sessions.delete.success": "Munkamenet törölve",
+  "profile.sessions.delete.error": "Hiba a munkamenet törlése közben: ",
+  "profile.sessions.signOut.error": "Hiba a kijelentkezés során: ",
+  "profile.apiTokens": "API tokenek",
+  "profile.apiTokens.header": "Az OAuth2-t nem támogató külsö eszközök és szolgáltatások hozzáférésének engedélyezéséhez hozzon létre API tokeneket.",
+  "profile.apiTokens.created": "Létrehozva: ",
+  "profile.apiTokens.validForScope": "A hatókör érvényes: ",
+  "profile.apiTokens.create": "Új API token létrehozása",
+  "profile.apiTokens.delete.success": "API token törölve",
+  "profile.apiTokens.delete.error": "Hiba az API token törlésekor: "
+}

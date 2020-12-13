@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(eksempel)",
+  "habot.clearHistory": "Ryd historik",
+  "habot.dismiss": "Afvis",
+  "habot.example1": "Hvad er temperaturen i køkkenet?",
+  "habot.example2": "Sæt termostaten til 21 grader",
+  "habot.example3": "Sluk lyset på første sal",
+  "habot.anythingElse": "Noget andet?",
+  "habot.cardDeckIsIncompatible": "Beklager, kort gemt på kort dækket kan ikke vises her, brug den dedikerede HABot app til at vise det.",
+  "habot.cardIsIncompatible": "Beklager, dette kort kan ikke vises her, brug den dedikerede HABot app til at vise den."
+}

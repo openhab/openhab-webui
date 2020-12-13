@@ -1,0 +1,8 @@
+{
+  "CONFIGURATION_ERROR": "Fehler: Konfiguration",
+  "HANDLER_INITIALIZING_ERROR": "Fehler: Handler Initialisierung",
+  "HANDLER_MISSING_ERROR": "Fehler: Handler fehlt",
+  "TEMPLATE_MISSING_ERROR": "Fehler: Vorlage fehlt",
+  "INVALID_RULE": "UNGÜLTIG",
+  "DISABLED": "DEAKTIVIERT"
+}

@@ -1,0 +1,21 @@
+{
+  "about.title": "Інформація",
+  "about.homePage": "Веб-сторінка",
+  "about.documentation": "Документація",
+  "about.communityForum": "Форум спільноти",
+  "about.technicalInformation": "Технічна інформація",
+  "about.technicalInformation.configurationFolder": "Папка конфігурації",
+  "about.technicalInformation.userdataFolder": "Папка даних користувача",
+  "about.technicalInformation.logsFolder": "Папка журналу",
+  "about.technicalInformation.operatingSystem": "Операційна система",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} доступних процесорів - {ram} доступна пам'ять",
+  "about.technicalInformation.viewDetails": "Переглянути подробиці",
+  "about.appearanceOptions": "Зовнішній вигляд (тільки для цього пристрою)",
+  "about.reload": "Перезавантажити",
+  "about.reload.purgeExplanation1": "Кеш та/або service workers використовуються для локального зберігання ресурсів та прискорення завантаження цього додатка, однак він може не надійно виявити оновлення до нової версії.",
+  "about.reload.purgeExplanation2": "Оберіть Очистити кеш та Оновити, щоб очистити кеш, скасувати реєстрацію service workers і знову завантажити все з сервера.",
+  "about.reload.purgeCachesAndRefresh": "Очистити кеш та обновити",
+  "about.reload.confirmPurge": "Очистити кеш додатку та скасувати реєстрацію service workers? Це також перезавантажить сторінку з сервера, що може зайняти кілька секунд.",
+  "about.reload.reloadApp": "Перезавантажити програму"
+}

@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(esempio)",
+  "habot.clearHistory": "Cancella Cronologia",
+  "habot.dismiss": "Chiudi",
+  "habot.example1": "Qual è la temperatura in cucina?",
+  "habot.example2": "Imposta il termostato a 21 gradi",
+  "habot.example3": "Spegni le luci al primo piano",
+  "habot.anythingElse": "Qualcos'altro?",
+  "habot.cardDeckIsIncompatible": "Spiacente, le card salvate nel nel contenitore delle card non possono essere visualizzate qui. Usa l'app dedicata HABot per vederle.",
+  "habot.cardIsIncompatible": "Spiacente, questa card non può essere visualizzata qui. Usa l'app dedicata HABot per vederla."
+}

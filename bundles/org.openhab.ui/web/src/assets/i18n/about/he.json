@@ -1,0 +1,21 @@
+{
+  "about.title": "אודות",
+  "about.homePage": "אתר אינטרנט",
+  "about.documentation": "תיעוד",
+  "about.communityForum": "פורום הקהילה",
+  "about.technicalInformation": "מידע טכני",
+  "about.technicalInformation.configurationFolder": "תיקיית הגדרות",
+  "about.technicalInformation.userdataFolder": "תיקיית נתוני משתמש",
+  "about.technicalInformation.logsFolder": "תיקיית תיעוד",
+  "about.technicalInformation.operatingSystem": "מערכת הפעלה",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} מעבדים זמינים - {ram} זיכרון זמין",
+  "about.technicalInformation.viewDetails": "הצג פרטים",
+  "about.appearanceOptions": "ניראות (למכשיר זה בלבד)",
+  "about.reload": "רענן",
+  "about.reload.purgeExplanation1": "זיכרון זמני/תהליכי שירות בשימוש כדי לאחסן משאבים באופן מקומי ולגרום לטעינה של אפליקציה זו מהר יותר, אולם ייתכן והם יתגלו כלא עדכניים כשהתעכנה גרסא חדשה.",
+  "about.reload.purgeExplanation2": "בחר ניקוי זיכרון מטמון ורענן למטה כדי לנקות את כל זיכרון המטמון, לבטל את רישום תהליכי השירות ולהוריד הכל מהשרת שוב.",
+  "about.reload.purgeCachesAndRefresh": "נקה זיכרון מטמון ורענן",
+  "about.reload.confirmPurge": "האם לנקות את כל זיכרון המטמון של היישום ובטל את הרישום של תהליכי השירות? פעולה זו תטען מחדש את הדף מהשרת, ועשויה להימשך מספר שניות.",
+  "about.reload.reloadApp": "טען יישום מחדש"
+}

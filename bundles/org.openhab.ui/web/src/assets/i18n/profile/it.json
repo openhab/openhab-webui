@@ -1,0 +1,19 @@
+{
+  "profile.title": "Il Tuo Profilo",
+  "profile.changePassword": "Modifica la password",
+  "profile.sessions": "Sessioni",
+  "profile.sessions.header": "Nota: anche se si elimina una sessione, potrebbe rimanere attiva fino alla scadenza di tutti i token di accesso.",
+  "profile.sessions.signOut": "Esci da questa sessione",
+  "profile.sessions.created": "Creata: ",
+  "profile.sessions.lastRefreshed": "Ultimo aggiornamento: ",
+  "profile.sessions.delete.success": "Sessione eliminata",
+  "profile.sessions.delete.error": "Errore durante l'eliminazione della sessione: ",
+  "profile.sessions.signOut.error": "Errore durante la disconnessione: ",
+  "profile.apiTokens": "Token API",
+  "profile.apiTokens.header": "Crea token API per fornire accesso permanente a tutti gli strumenti e servizi esterni che non supportano il Framework OAuth2 per l'autenticazione.",
+  "profile.apiTokens.created": "Creato: ",
+  "profile.apiTokens.validForScope": "Valido per l'ambito: ",
+  "profile.apiTokens.create": "Crea nuovo token API",
+  "profile.apiTokens.delete.success": "Token API eliminato",
+  "profile.apiTokens.delete.error": "Errore durante l'eliminazione del token API: "
+}

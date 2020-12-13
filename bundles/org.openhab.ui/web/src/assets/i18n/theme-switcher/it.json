@@ -1,0 +1,15 @@
+{
+  "about.theme": "Tema",
+  "about.theme.auto": "Auto",
+  "about.darkMode": "Modalità Scura",
+  "about.darkMode.auto": "Auto",
+  "about.darkMode.light": "Chiaro",
+  "about.darkMode.dark": "Scuro",
+  "about.navigationBarsStyle": "Stile barra di navigazione",
+  "about.miscellaneous": "Altro",
+  "about.miscellaneous.home.navbar": "Barra di navigazione semplice su Home page",
+  "about.miscellaneous.home.background": "Colore sfondo Home page standard",
+  "about.miscellaneous.home.hideChatInput": "Nascondi casella della chat su Home page",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Disabilita animazione espansione card",
+  "about.miscellaneous.theme.disablePageTransition": "Disabilita animazioni transizione di pagina"
+}

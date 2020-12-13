@@ -2,7 +2,7 @@
   "about.title": "Über",
   "about.homePage": "Internetseite",
   "about.documentation": "Dokumentation",
-  "about.communityForum": "Community Forum",
+  "about.communityForum": "Community-Forum",
   "about.technicalInformation": "Technische Information",
   "about.technicalInformation.configurationFolder": "Konfigurationsverzeichnis",
   "about.technicalInformation.userdataFolder": "Verzeichnis für Anwenderdaten",
@@ -16,6 +16,6 @@
   "about.reload.purgeExplanation1": "Zwischenspeicher und/oder Service Worker werden zur lokalen Speicherung von Resourcen verwendet, um die Ladezeiten zu verkürzen. Eine zuverlässige Erkennung eines Updates auf eine neue Version kann nicht sichergestellt werden.",
   "about.reload.purgeExplanation2": "Wähle unten Zwischenspeicher löschen und aktualisieren um alle Zwischenspeicher zu löschen, Service Worker abzumelden und alle Informationen erneut vom Server zu laden.",
   "about.reload.purgeCachesAndRefresh": "Zwischenspeicher löschen und aktualisieren",
-  "about.reload.confirmPurge": "Dies wird den Zwischenspeicher löschen und die Service Worker abmelden. Es führt zum Neuladen der Seite und dauert einige Sekunden.",  
+  "about.reload.confirmPurge": "Dies wird den Zwischenspeicher löschen und die Service Worker abmelden. Es führt zum Neuladen der Seite und dauert einige Sekunden.",
   "about.reload.reloadApp": "Anwendung neu laden"
 }

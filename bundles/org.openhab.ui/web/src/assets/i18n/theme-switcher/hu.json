@@ -1,0 +1,15 @@
+{
+  "about.theme": "Téma",
+  "about.theme.auto": "Automatikus",
+  "about.darkMode": "Sötét mód",
+  "about.darkMode.auto": "Automatikus",
+  "about.darkMode.light": "Világos",
+  "about.darkMode.dark": "Sötét",
+  "about.navigationBarsStyle": "Navigációs sáv stílusa",
+  "about.miscellaneous": "Egyéb",
+  "about.miscellaneous.home.navbar": "Egyszerű navigációs sáv a honlapon",
+  "about.miscellaneous.home.background": "Standard háttérszín a honlapon",
+  "about.miscellaneous.home.hideChatInput": "Chat ablak elrejtése a honapon",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Kártya megnyitás animációk tiltása",
+  "about.miscellaneous.theme.disablePageTransition": "Áttűnési animációk letiltása"
+}

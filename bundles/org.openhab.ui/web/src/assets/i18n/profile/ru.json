@@ -1,0 +1,19 @@
+{
+  "profile.title": "Ваш профиль",
+  "profile.changePassword": "Изменить пароль",
+  "profile.sessions": "Сеансы",
+  "profile.sessions.header": "Примечание: даже если вы закрываете сессию, она может оставаться активной до тех пор, пока не закончится срок действия ключа.",
+  "profile.sessions.signOut": "Закрыть сессию",
+  "profile.sessions.created": "Создано: ",
+  "profile.sessions.lastRefreshed": "Дата последнего обновления: ",
+  "profile.sessions.delete.success": "Сеанс связи завершён",
+  "profile.sessions.delete.error": "Ошибка при закрытии сессии: ",
+  "profile.sessions.signOut.error": "Ошибка при выходе: ",
+  "profile.apiTokens": "API ключи",
+  "profile.apiTokens.header": "Создайте API ключи для предоставления внешних инструментов и сервисов, которые не поддерживают постоянный доступ OAuth2 Authorization Framework от вашего имени.",
+  "profile.apiTokens.created": "Создано: ",
+  "profile.apiTokens.validForScope": "Действителен для области: ",
+  "profile.apiTokens.create": "Создать новый ключ API",
+  "profile.apiTokens.delete.success": "API ключ удалён",
+  "profile.apiTokens.delete.error": "Ошибка при удалении ключа API: "
+}
