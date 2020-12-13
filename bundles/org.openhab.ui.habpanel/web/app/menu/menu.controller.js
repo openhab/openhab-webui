@@ -13,6 +13,14 @@
         vm.editMode = false;
         vm.customWidgetsModels = {};
         vm.customDrawerWidgetsModels = {};
+        vm.canPinToHome = (window.OHApp && typeof window.OHApp.pinToHome === 'function');
+        vm.canExitToApp = (window.OHApp && typeof window.OHApp.exitToApp === 'function');
+        if (window.OHApp && typeof window.OHApp.goFullscreen === 'function') {
+            try {
+                window.OHApp.goFullscreen();
+            } catch (e) {
+            }
+        }
 
         activate();
 
@@ -87,8 +95,19 @@
 
 		vm.goFullscreen = function () {
 			Fullscreen.toggleAll();
-		}
+        }
+        
+        vm.pinToHome = function () {
+            if (window.OHApp && window.OHApp.pinToHome) {
+                window.OHApp.pinToHome();
+            }
+        }
 
+        vm.exitToApp = function () {
+            if (window.OHApp && window.OHApp.exitToApp) {
+                window.OHApp.exitToApp();
+            }
+        }
 
         vm.openDashboardSettings = function(dashboard) {
             $modal.open({

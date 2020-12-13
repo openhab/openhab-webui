@@ -11,6 +11,16 @@
         ng-hide="lockEditing" ng-click="vm.toggleEditMode()" ng-class="{ 'btn-danger': vm.editMode }">
         <i class="glyphicon glyphicon-cog"></i>
     </a>
+    <a class="btn pull-right" 
+        title="Pin to Home"
+        ng-hide="!vm.canPinToHome" ng-click="vm.pinToHome()">
+        <i class="glyphicon glyphicon-pushpin"></i>
+    </a>
+    <a class="btn pull-right" 
+        title="Return to App"
+        ng-hide="!vm.canExitToApp" ng-click="vm.exitToApp()">
+        <i class="glyphicon glyphicon-log-out"></i>
+    </a>
     <h2 class="dashboard-title">
         <small class="header-clock" ng-if="settings.show_header_clock"><ds-widget-clock show-digital digital-format="settings.header_clock_format || 'shortTime'"></ds-widget-clock></small>
     </h2>
