@@ -281,10 +281,24 @@ export default {
       }
 
       calendarOptions.range = [startTime.toDate(), endTime.subtract(1, 'second').toDate()]
-      calendarOptions.top = 60
-      calendarOptions.bottom = 60
+      calendarOptions.top = 20
+      calendarOptions.bottom = 20
       calendarOptions.left = 60
       calendarOptions.right = 60
+
+      if (document && document.documentElement.classList.contains('theme-dark')) {
+        if (!calendarOptions.itemStyle) calendarOptions.itemStyle = {}
+        if (!calendarOptions.itemStyle.color) calendarOptions.itemStyle.color = '#202020'
+        if (!calendarOptions.itemStyle.borderColor) calendarOptions.itemStyle.borderColor = '#555'
+        if (!calendarOptions.itemStyle) calendarOptions.itemStyle = {}
+        if (!calendarOptions.dayLabel) calendarOptions.dayLabel = {}
+        if (!calendarOptions.dayLabel.color) calendarOptions.dayLabel.color = '#aaa'
+        if (!calendarOptions.monthLabel) calendarOptions.monthLabel = {}
+        if (!calendarOptions.monthLabel.color) calendarOptions.monthLabel.color = '#aaa'
+        if (!calendarOptions.splitLine) calendarOptions.splitLine = {}
+        if (!calendarOptions.splitLine.lineStyle) calendarOptions.splitLine.lineStyle = {}
+        if (!calendarOptions.splitLine.lineStyle.color) calendarOptions.splitLine.lineStyle.color = '#aaa'
+      }
 
       options.calendar = calendarOptions
 
