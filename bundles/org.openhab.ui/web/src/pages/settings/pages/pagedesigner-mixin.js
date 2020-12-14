@@ -11,7 +11,6 @@ export default {
       pageKey: this.$f7.utils.id(),
       pageYaml: null,
       props: {},
-      vars: {},
       previewMode: false,
       currentTab: 'design',
       clipboard: null,
@@ -31,7 +30,7 @@ export default {
         component: this.page,
         store: this.$store.getters.trackedItems,
         props: this.props,
-        vars: this.vars,
+        vars: (this.page && this.page.config && this.page.config.defineVars) ? this.page.config.defineVars : {},
         editmode: (!this.previewMode || this.forceEditMode) ? {
           addWidget: this.addWidget,
           configureWidget: this.configureWidget,

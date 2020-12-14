@@ -26,17 +26,17 @@ export default {
     childrenContexts () {
       const iterationContext = (ctx, el, idx, source) => {
         // takes the context with the added variables
-        const itVars = {}
-        if (ctx.vars) {
-          for (const varKey in this.context.vars) {
-            this.$set(itVars, varKey, this.context.vars[varKey])
+        const loopVars = {}
+        if (ctx.loop) {
+          for (const loopKey in this.context.loop) {
+            this.$set(loopVars, loopKey, this.context.loop[loopKey])
           }
         }
-        itVars[this.config.for] = el
-        itVars[this.config.for + '_idx'] = idx
-        itVars[this.config.for + '_source'] = source
+        loopVars[this.config.for] = el
+        loopVars[this.config.for + '_idx'] = idx
+        loopVars[this.config.for + '_source'] = source
 
-        this.$set(ctx, 'vars', itVars)
+        this.$set(ctx, 'loop', loopVars)
 
         return ctx
       }
@@ -79,6 +79,10 @@ export default {
         return this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((d) => d.sort(compareItems))
       } else if (this.config.sourceType === 'itemsInGroup') {
         return this.$oh.api.get('/rest/items/' + this.config.groupItem + '?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((i) => Promise.resolve(i.members.sort(compareItems)))
+      } else if (this.config.sourceType === 'itemStateOptions') {
+        return this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.stateDescription) ? i.stateDescription.options : []))
+      } else if (this.config.sourceType === 'itemCommandOptions') {
+        return this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.commandDescription) ? i.commandDescription.commandOptions : []))
       } else {
         return Promise.resolve(this.config.in)
       }
