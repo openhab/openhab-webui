@@ -153,7 +153,8 @@ export default {
         {
           component: 'oh-chart-legend',
           config: {
-            bottom: 5
+            bottom: 3,
+            type: 'scroll'
           }
         }
       ]
