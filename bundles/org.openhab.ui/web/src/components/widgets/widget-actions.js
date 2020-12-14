@@ -218,7 +218,8 @@ export const actionsMixin = {
           break
         case 'url':
           const actionUrl = actionConfig[prefix + 'actionUrl']
-          console.log('opening URL: ' + actionUrl)
+          const actionUrlSameWindow = actionConfig[prefix + 'actionUrlSameWindow']
+          window.open(actionUrl, (actionUrlSameWindow) ? '_top' : '_blank')
           break
         case 'variable':
           const actionVariable = actionConfig[prefix + 'actionVariable']
