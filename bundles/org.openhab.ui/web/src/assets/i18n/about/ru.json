@@ -9,7 +9,7 @@
   "about.technicalInformation.logsFolder": "Папка с логами",
   "about.technicalInformation.operatingSystem": "Операционная система",
   "about.technicalInformation.javaRuntime": "Среда выполнения Java",
-  "about.technicalInformation.resourceStats": "{nbproc} доступные процессоры - {ram} доступная память",
+  "about.technicalInformation.resourceStats": "{nbproc} доступные процессоры - {ram} доступная оперативная память",
   "about.technicalInformation.viewDetails": "Посмотреть детали",
   "about.appearanceOptions": "Оформление (только для этого устройства)",
   "about.reload": "Обновить",
