@@ -168,7 +168,7 @@ export default {
     },
     load () {
       this.loading = true
-      this.$oh.api.get('/rest/things').then((data) => {
+      this.$oh.api.get('/rest/things?summary=true').then((data) => {
         this.things = data.sort((a, b) => a.label.localeCompare(b.label))
         this.initSearchbar = true
         this.loading = false

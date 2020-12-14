@@ -360,9 +360,9 @@ export default {
           Promise.resolve(this.cachedObjects[3])
         ] : [
           this.$oh.api.get('/rest/items'),
-          this.$oh.api.get('/rest/things'),
-          this.$oh.api.get('/rest/rules'),
-          this.$oh.api.get('/rest/ui/components/ui:page')
+          this.$oh.api.get('/rest/things?summary=true'),
+          this.$oh.api.get('/rest/rules?summary=true'),
+          Promise.resolve(this.$store.getters.pages)
         ]
 
       this.searchResultsLoading = true
