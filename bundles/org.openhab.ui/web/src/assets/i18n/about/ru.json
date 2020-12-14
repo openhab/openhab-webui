@@ -1,0 +1,21 @@
+{
+  "about.title": "О системе",
+  "about.homePage": "Веб-сайт",
+  "about.documentation": "Документация",
+  "about.communityForum": "Форум сообщества",
+  "about.technicalInformation": "Техническая информация",
+  "about.technicalInformation.configurationFolder": "Папка с настройками",
+  "about.technicalInformation.userdataFolder": "Папка с данными пользователя",
+  "about.technicalInformation.logsFolder": "Папка с логами",
+  "about.technicalInformation.operatingSystem": "Операционная система",
+  "about.technicalInformation.javaRuntime": "Среда выполнения Java",
+  "about.technicalInformation.resourceStats": "{nbproc} доступные процессоры - {ram} доступная память",
+  "about.technicalInformation.viewDetails": "Посмотреть детали",
+  "about.appearanceOptions": "Оформление (только для этого устройства)",
+  "about.reload": "Обновить",
+  "about.reload.purgeExplanation1": "Локальное хранение кэшей и сервисов используются для ускорения загрузки системы. Иногда не получается определить что система обновилась.",
+  "about.reload.purgeExplanation2": "Выберите \"Очистить кэш\" и \"Обновить\" ниже, чтобы сбросить все кэши и службы и снова загрузить всё с сервера.",
+  "about.reload.purgeCachesAndRefresh": "Сбросить кэш и обновить",
+  "about.reload.confirmPurge": "Сбросить кэш и службы? Произойдет перезагрузка страницы с сервера, что может занять несколько секунд.",
+  "about.reload.reloadApp": "Перезагрузить приложение"
+}
