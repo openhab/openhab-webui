@@ -173,15 +173,15 @@
     </f7-list>
     <f7-block-footer class="padding-horizontal margin-vertical">and this start level has been reached:</f7-block-footer>
     <f7-list v-if="systemEventType === 'start' && currentModule">
-      <f7-list-item radio :checked="currentModule.configuration.startLevel === 0" name="startLevel" title="00 - OSGi framework started" @click="$set(currentModule.configuration, 'startLevel', 0)" />
-      <f7-list-item radio :checked="currentModule.configuration.startLevel === 10" name="startLevel" title="10 - OSGi bundles activated" @click="$set(currentModule.configuration, 'startLevel', 10)" />
-      <f7-list-item radio :checked="currentModule.configuration.startLevel === 20" name="startLevel" title="20 - Entities (items, things...) loaded" @click="$set(currentModule.configuration, 'startLevel', 20)" />
-      <f7-list-item radio :checked="currentModule.configuration.startLevel === 30" name="startLevel" title="30 - Items states restored from persistence" @click="$set(currentModule.configuration, 'startLevel', 30)" />
-      <f7-list-item radio :checked="currentModule.configuration.startLevel === 40" name="startLevel" title="40 - Rules loaded" @click="$set(currentModule.configuration, 'startLevel', 40)" />
-      <f7-list-item radio :checked="currentModule.configuration.startLevel === 50" name="startLevel" title="50 - Rule engine ready" @click="$set(currentModule.configuration, 'startLevel', 50)" />
-      <f7-list-item radio :checked="currentModule.configuration.startLevel === 70" name="startLevel" title="70 - User interface running" @click="$set(currentModule.configuration, 'startLevel', 70)" />
-      <f7-list-item radio :checked="currentModule.configuration.startLevel === 80" name="startLevel" title="80 - Things initialized" @click="$set(currentModule.configuration, 'startLevel', 90)" />
-      <f7-list-item radio :checked="currentModule.configuration.startLevel === 100" name="startLevel" title="100 - Startup complete" @click="$set(currentModule.configuration, 'startLevel', 100)" />
+      <f7-list-item radio :checked="currentModule.configuration.startlevel === 0" name="startlevel" title="00 - OSGi framework started" @click="$set(currentModule.configuration, 'startlevel', 0)" />
+      <f7-list-item radio :checked="currentModule.configuration.startlevel === 10" name="startlevel" title="10 - OSGi bundles activated" @click="$set(currentModule.configuration, 'startlevel', 10)" />
+      <f7-list-item radio :checked="currentModule.configuration.startlevel === 20" name="startlevel" title="20 - Entities (items, things...) loaded" @click="$set(currentModule.configuration, 'startlevel', 20)" />
+      <f7-list-item radio :checked="currentModule.configuration.startlevel === 30" name="startlevel" title="30 - Items states restored from persistence" @click="$set(currentModule.configuration, 'startlevel', 30)" />
+      <f7-list-item radio :checked="currentModule.configuration.startlevel === 40" name="startlevel" title="40 - Rules loaded" @click="$set(currentModule.configuration, 'startlevel', 40)" />
+      <f7-list-item radio :checked="currentModule.configuration.startlevel === 50" name="startlevel" title="50 - Rule engine ready" @click="$set(currentModule.configuration, 'startlevel', 50)" />
+      <f7-list-item radio :checked="currentModule.configuration.startlevel === 70" name="startlevel" title="70 - User interface running" @click="$set(currentModule.configuration, 'startlevel', 70)" />
+      <f7-list-item radio :checked="currentModule.configuration.startlevel === 80" name="startlevel" title="80 - Things initialized" @click="$set(currentModule.configuration, 'startlevel', 90)" />
+      <f7-list-item radio :checked="currentModule.configuration.startlevel === 100" name="startlevel" title="100 - Startup complete" @click="$set(currentModule.configuration, 'startlevel', 100)" />
       <f7-block-footer class="padding-horizontal"><small>Start levels below 40 are provided for completeness but will not make a difference since the rules engine is not initialized yet at these levels.</small></f7-block-footer>
     </f7-list>
   </f7-block>
