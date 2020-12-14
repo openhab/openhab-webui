@@ -156,7 +156,7 @@ export default {
       this.loading = true
       this.$set(this, 'selectedItems', [])
       this.showCheckboxes = false
-      this.$oh.api.get('/rest/rules' + (this.showScripts ? '?tags=Script' : '')).then(data => {
+      this.$oh.api.get('/rest/rules?summary=true' + (this.showScripts ? '&tags=Script' : '')).then(data => {
         this.rules = data.sort((a, b) => {
           return a.name.localeCompare(b.name)
         })
