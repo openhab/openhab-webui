@@ -106,11 +106,13 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         snippet = StringUtils.replace(snippet, "%visibility_class%",
                 itemUIRegistry.getVisiblity(w) ? "" : "mdl-form__row--hidden");
 
-        String state = getState(w);
-        snippet = StringUtils.replace(snippet, "%state%", escapeURL(state));
+        String rawState = getRawState(w);
+        snippet = StringUtils.replace(snippet, "%state%", escapeHtml(rawState));
+        snippet = StringUtils.replace(snippet, "%stateUrlEnc%", escapeURL(rawState));
 
-        String category = getCategory(w);
-        snippet = StringUtils.replace(snippet, "%category%", escapeURL(category));
+        String rawCategory = getRawCategory(w);
+        snippet = StringUtils.replace(snippet, "%category%", escapeHtml(rawCategory));
+        snippet = StringUtils.replace(snippet, "%categoryUrlEnc%", escapeURL(rawCategory));
 
         return snippet;
     }
@@ -276,11 +278,11 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         return snippet;
     }
 
-    protected @Nullable String getCategory(Widget w) {
+    protected @Nullable String getRawCategory(Widget w) {
         return itemUIRegistry.getCategory(w);
     }
 
-    protected String getState(Widget w) {
+    protected String getRawState(Widget w) {
         State state = itemUIRegistry.getState(w);
         if (state != null) {
             return state.toString();
