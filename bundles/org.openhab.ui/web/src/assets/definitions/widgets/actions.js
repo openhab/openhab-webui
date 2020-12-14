@@ -1,5 +1,5 @@
 // parameter group & parameters definitions for actions
-import { po, pt, pi } from './helpers'
+import { po, pt, pi, pb } from './helpers'
 
 export const actionGroup = (label, description, groupPrefix) => {
   groupPrefix = (groupPrefix) ? groupPrefix += '_' : ''
@@ -30,6 +30,10 @@ export const actionParams = (groupName, paramPrefix) => {
       { value: 'variable', label: 'Set Variable' }
     ]),
     pt(paramPrefix + 'actionUrl', 'Action URL', 'URL to navigate to').c('url')
+      .v((value, configuration, configDescription, parameters) => {
+        return ['url'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
+    pb(paramPrefix + 'actionUrlSameWindow', 'Open in same tab/window', 'Open the URL in the same tab/window instead of a new one. This will exit the app.')
       .v((value, configuration, configDescription, parameters) => {
         return ['url'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
