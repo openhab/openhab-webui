@@ -61,8 +61,8 @@ export default {
               ((config.previousStatus) ? ' from ' + config.previousStatus : '') +
               ((config.status) ? ' to ' + config.status : '')
         case 'core.SystemStartlevelTrigger':
-          if (config.startLevel === undefined) return moduleType.label
-          return 'When the system has reached start level ' + config.startLevel
+          if (config.startlevel === undefined) return moduleType.label
+          return 'When the system has reached start level ' + config.startlevel
         // actions
         case 'core.ItemCommandAction':
           if (!config.itemName || !config.command) return moduleType.label
