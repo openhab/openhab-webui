@@ -8,7 +8,9 @@ export default () => [
       { value: 'array', label: 'Array (default) in the "in" parameter' },
       { value: 'range', label: 'Range of integers defined by "rangeStart", "rangeStop", "rangeStep"' },
       { value: 'itemsInGroup', label: 'Member of the group defined in the "groupItem" parameter' },
-      { value: 'itemsWithTags', label: 'Items with tags in the "itemTags" parameter' }
+      { value: 'itemsWithTags', label: 'Items with tags in the "itemTags" parameter' },
+      { value: 'itemStateOptions', label: 'State options of the item specified in "itemOptions"' },
+      { value: 'itemCommandOptions', label: 'Command options of the item specified in "itemOptions"' },
     ]),
   pt('in', 'Source array', 'Source array (for "array" source type)'),
   pn('rangeStart', 'Range Start', 'Start of range (for "range" source type)'),
@@ -16,6 +18,7 @@ export default () => [
   pn('rangeStep', 'Range Step', 'Step of range (for "range" source type)'),
   pi('groupItem', 'Group Item', 'Group item to whose members will be iterated (for "itemsInGroup" source type)'),
   pt('itemTags', 'Item Tags', 'Iterate over items with the given tags (comma-separated, for "itemsWithTags" source type)'),
+  pt('itemOptions', 'Item with Options', 'Iterate over the state options or command options of this item (for "itemStateOptions" or "itemCommandOptions" source type)'),
   pt('fetchMetadata', 'Fetch Item Metadata Namespaces', 'Fetch the metadata from these namespaces (for "itemsInGroup" and "itemsWithTags" source types)'),
   pt('filter', 'Filter expression', 'Specify an expression WITHOUT THE = PREFIX to filter the resulting array'),
   pt('map', 'Map expression', 'Specify an expression WITHOUT THE = PREFIX to transform the resulting array elements'),

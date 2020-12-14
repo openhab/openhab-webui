@@ -92,8 +92,7 @@ export default {
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
     OhLayoutPage,
-    PageSettings,
-    ModelPickerPopup
+    PageSettings
   },
   props: ['createMode', 'uid'],
   data () {
