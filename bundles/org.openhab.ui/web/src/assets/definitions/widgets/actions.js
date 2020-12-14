@@ -33,7 +33,7 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['url'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pb(paramPrefix + 'actionUrlSameWindow', 'Open in same tab/window', 'Open the URL in the same tab/window instead of a new one. This will exit the app.').c('url')
+    pb(paramPrefix + 'actionUrlSameWindow', 'Open in same tab/window', 'Open the URL in the same tab/window instead of a new one. This will exit the app.')
       .v((value, configuration, configDescription, parameters) => {
         return ['url'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
