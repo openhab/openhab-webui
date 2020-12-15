@@ -1,6 +1,6 @@
 <template>
   <div>
-    <item-state-preview v-if="model.item.created !== false" :item="model.item" :context="context" />
+    <item-state-preview v-if="model.item.created !== false" :item="model.item" :context="context" :key="$utils.id()" />
 
     <f7-block-title>Item</f7-block-title>
     <item-details :model="model" :links="links" @item-updated="$emit('item-updated')" @item-created="$emit('item-created')" @item-removed="$emit('item-removed')" @cancel-create="$emit('cancel-create')" />

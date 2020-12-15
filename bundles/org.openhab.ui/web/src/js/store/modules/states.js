@@ -111,8 +111,11 @@ const actions = {
       this._vm.$oh.api.postPlain('/rest/events/states/' + context.state.trackerConnectionId, trackingListJson, 'text/plain', 'application/json')
     })
   },
-  sendCommand (context, { itemName, cmd }) {
+  sendCommand (context, { itemName, cmd, updateState }) {
     console.log(`Sending command to ${itemName}: ${cmd}`)
+    if (updateState) {
+      context.commit('setItemState', { itemName, itemState: { state: cmd } })
+    }
     return this._vm.$oh.api.postPlain('/rest/items/' + itemName, cmd, 'text/plain', 'text/plain')
   }
 }

@@ -21,6 +21,7 @@ export default {
       delayCommand: false,
       delayUpdate: false,
       pendingCommand: null,
+      lastCommand: null,
       pendingUpdate: null,
       init: false
     }
@@ -38,7 +39,7 @@ export default {
   computed: {
     color () {
       const state = this.context.store[this.config.item].state
-      if (state.split(',').length === 3) {
+      if (state && state.split(',').length === 3) {
         let color = this.context.store[this.config.item].state.split(',')
         color[0] = parseInt(color[0])
         color[1] = color[1] / 100
@@ -83,19 +84,21 @@ export default {
       }))
     },
     sendCommand (hsb) {
+      const state = this.commandFromHSB(hsb)
       this.pendingUpdate = [...hsb]
       this.pendingCommand = [...hsb]
-      const state = this.commandFromHSB(hsb)
-      if (state !== this.context.store[this.config.item].state) {
+      if (!this.areHSBEqual(this.roundedHSB(state), this.roundedHSB(this.context.store[this.config.item].state))) {
         if (!this.delayCommand) {
           this.delayCommand = true
           this.delayUpdate = true
-          this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: state })
+          console.debug(this.context.store[this.config.item].state + ' -> ' + state)
+          this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: state, updateState: true })
+          this.lastCommand = state
           setTimeout(() => {
             const pendingCommand = [...this.pendingCommand]
             this.pendingCommand = null
             this.delayCommand = false
-            if (pendingCommand != null) {
+            if (pendingCommand != null && this.commandFromHSB(pendingCommand) !== this.lastCommand) {
               this.sendCommand(pendingCommand)
             }
           }, 200)
@@ -113,6 +116,18 @@ export default {
       state[2] = Math.round(state[2] * 100)
       state = state.join(',')
       return state
+    },
+    areHSBEqual (hsb1, hsb2) {
+      // for the purposes of NOT entering an endless loop, we consider transient non-HSB values to be equal
+      if (hsb1.length !== hsb2.length) return true
+      if (hsb1.length !== 3 || hsb2.length !== 3) return true
+      return (hsb1[0] === hsb2[0] && hsb1[1] === hsb2[1] && hsb1[2] === hsb2[2])
+    },
+    roundedHSB (state) {
+      if (!state) return []
+      let hsb = state.split(',')
+      if (hsb.length !== 3) return hsb
+      return hsb.map((c) => Math.round(c))
     },
     updateValue (val) {
       if (!this.delayUpdate) {
