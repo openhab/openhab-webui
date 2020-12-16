@@ -27,6 +27,11 @@ export const OhImageDefinition = () => new WidgetDefinition('oh-image', 'Image',
   .paramGroup(actionGroup(), actionParams())
   .params(ImageParameters())
 
+import VideoParameters from './video'
+export const OhVideoDefinition = () => new WidgetDefinition('oh-video', 'Video', 'Displays a video player from a URL or an item')
+    .paramGroup(actionGroup(), actionParams())
+    .params(VideoParameters())
+
 import InputParameters from './input'
 export const OhInputDefinition = () => new WidgetDefinition('oh-input', 'Input', 'Displays an input field, used to set a variable')
   .params(InputParameters())
