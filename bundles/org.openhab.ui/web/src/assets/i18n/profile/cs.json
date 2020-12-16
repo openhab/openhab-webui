@@ -1,0 +1,19 @@
+{
+  "profile.title": "Váš profil",
+  "profile.changePassword": "Změnit heslo",
+  "profile.sessions": "Relace",
+  "profile.sessions.header": "Poznámka: i když odstraníte relaci, může zůstat aktivní, dokud všechny platné přístupové tokeny nevyprší.",
+  "profile.sessions.signOut": "Odhlásit z této relace",
+  "profile.sessions.created": "Vytvořeno: ",
+  "profile.sessions.lastRefreshed": "Poslední aktualizace: ",
+  "profile.sessions.delete.success": "Relace smazána",
+  "profile.sessions.delete.error": "Chyba při mazání relace: ",
+  "profile.sessions.signOut.error": "Chyba při odhlášení: ",
+  "profile.apiTokens": "API Tokeny",
+  "profile.apiTokens.header": "Vytvořte API tokeny pro poskytnutí trvalého přístupu pro nástroje a služby, které nepodporují OAuth2 autorizační framework.",
+  "profile.apiTokens.created": "Vytvořeno: ",
+  "profile.apiTokens.validForScope": "Platné pro rozsah: ",
+  "profile.apiTokens.create": "Vytvořit nový API token",
+  "profile.apiTokens.delete.success": "Token API byl smazán",
+  "profile.apiTokens.delete.error": "Chyba při mazání API tokenu: "
+}
