@@ -1,0 +1,19 @@
+{
+  "profile.title": "Vaš profil",
+  "profile.changePassword": "Spremenite geslo",
+  "profile.sessions": "Seje",
+  "profile.sessions.header": "Opomba: tudi ko izbrišete sejo lahko le ta ostane aktivna vse dokler ne potečejo aktivni dostopni žetoni.",
+  "profile.sessions.signOut": "Odjavi se iz seje",
+  "profile.sessions.created": "Ustvarjeno: ",
+  "profile.sessions.lastRefreshed": "Nazadnje osveženo: ",
+  "profile.sessions.delete.success": "Seja izbrisana",
+  "profile.sessions.delete.error": "Napaka pri brisanju seje: ",
+  "profile.sessions.signOut.error": "Napaka pri odjavi: ",
+  "profile.apiTokens": "API žetoni",
+  "profile.apiTokens.header": "Ustvari API žetone v kolikor želite omogočiti trajen dostop zunanjim orodjem in servisom v vašem imenu, ki ne podpirajo OAuth2 avtorizacije.",
+  "profile.apiTokens.created": "Ustvarjeno: ",
+  "profile.apiTokens.validForScope": "Veljaven za okvir: ",
+  "profile.apiTokens.create": "Ustvari nov API žeton",
+  "profile.apiTokens.delete.success": "API žeton izbrisan",
+  "profile.apiTokens.delete.error": "Napaka pri brisanju API žetona: "
+}
