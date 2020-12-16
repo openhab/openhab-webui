@@ -1,0 +1,21 @@
+{
+  "about.title": "O programu",
+  "about.homePage": "Spletne strani",
+  "about.documentation": "Dokumentacija",
+  "about.communityForum": "Klepetalnica skupnosti",
+  "about.technicalInformation": "Tehnične informacije",
+  "about.technicalInformation.configurationFolder": "Odpri &Configuration mapo",
+  "about.technicalInformation.userdataFolder": "Podatkovna mapa uporabnika",
+  "about.technicalInformation.logsFolder": "Mapa dnevnikov",
+  "about.technicalInformation.operatingSystem": "Operacijski sistem",
+  "about.technicalInformation.javaRuntime": "Java okolje",
+  "about.technicalInformation.resourceStats": "{nbproc} procesorji na voljo - {ram} delovni spomin na voljo",
+  "about.technicalInformation.viewDetails": "Podrobnosti",
+  "about.appearanceOptions": "Izgled (samo na tej napravi)",
+  "about.reload": "Osveži",
+  "about.reload.purgeExplanation1": "Medpomnilnik in/ali servisni delavci se uporabljajo za lokalno hranjenje potrebnih delov za hitrejše nalaganje aplikacije. Ta rešitev pa ni zmožna zaznati na zanesljiv način posodobitve na novejšo verzijo.",
+  "about.reload.purgeExplanation2": "Izberite \"Izbriši medpomnilnik in osveži\" spodaj za izbris medpomnilnika, odjavo vseh servisnih delavcev in ponovno osvežitev podatkov s strežnika.",
+  "about.reload.purgeCachesAndRefresh": "Izbriši medpomnilnik in osveži",
+  "about.reload.confirmPurge": "Izbriši medpomnilnik za aplikacijo in odjavi vse servisne delavce? Posledično se bo ponovno naložila celotna stran kar zna trajati nekaj sekund.",
+  "about.reload.reloadApp": "Ponovno zaženi aplikacijo"
+}
