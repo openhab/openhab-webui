@@ -1,13 +1,22 @@
 <template>
-  <span class="padding-right location-status-badge" v-show="reduce" :class="{ invert: invertColor }">
-    <oh-icon v-if="config.icon.indexOf('oh:') === 0" :icon="config.icon.replace('oh:', '')" :state="config.state" class="oh-icon-badge" width="20" height="20" />
+  <f7-chip v-if="type === 'alarms' && reduce > 0" class="alarm-badge" color="red" icon-f7="exclamationmark_triangle_fill">{{reduce}}</f7-chip>
+  <span v-else class="padding-right location-status-badge" v-show="reduce || (type === 'lock' && map.length > 0)" :class="{ invert: invertColor }">
+    <oh-icon v-if="config.icon.indexOf('oh:') === 0 && reduce > 0" :key="type" :icon="config.icon.replace('oh:', '')" :state="config.state" class="oh-icon-badge" width="20" height="20" />
     <f7-icon v-else-if="config.icon.indexOf('f7:') === 0" :f7="config.icon.replace('f7:', '')" :color="invertColor ? 'black' : 'white'" class="f7-icon-badge" size="20" />
-    <!-- <oh-icon v-if="config.icon.indexOf('oh:') === 0 && config.stateOff" v-show="!reduce" icon="config.icon.replace('oh:', '')"  :state="config.stateOff" class="oh-icon-badge" width="20" height="20" /> -->
+    <oh-icon v-if="config.icon.indexOf('oh:') === 0 && config.stateOff && reduce < 1" :key="type + 'off'" :icon="config.icon.replace('oh:', '')"  :state="config.stateOff" class="oh-icon-badge" width="20" height="20" />
     <span class="glance-label" v-show="reduce > 1">{{reduce}}</span>
   </span>
 </template>
 
 <style lang="stylus">
+.alarm-badge
+  vertical-align top !important
+  margin-right 7px
+  margin-top 0
+.ios .alarm-badge
+  margin-top -2px
+.md .alarm-badge
+  margin-top -7px
 .location-status-badge
   .oh-icon-badge
     filter brightness(100)
@@ -29,6 +38,7 @@ export default {
   data () {
     return {
       badgeConfigs: {
+        alarms: { icon: 'f7:exclamationmark_triangle_fill' },
         lights: { icon: 'oh:lightbulb' },
         windows: { icon: 'oh:window', state: 'open' },
         doors: { icon: 'oh:door', state: 'open' },
@@ -143,6 +153,8 @@ export default {
           ]
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+        case 'alarms':
+          return findPoints(this.element.properties, 'Point_Alarm', true)
         default:
           return []
       }
