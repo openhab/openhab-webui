@@ -27,8 +27,8 @@ export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment,
     let newItemName = (newEquipmentItem) ? newEquipmentItem.name : diacritic.clean(thing.label).replace(/[^0-9a-z]/gi, '')
     newItemName += '_'
     let suffix = channel.label || channel.id
-    if (thing.channels.filter((c) => c.label === suffix).length > 1) {
-      suffix = channel.id.replace('#', '_')
+    if (thing.channels.filter((c) => c.label === suffix || (c.channelTypeUID && channelTypesMap[c.channelTypeUID] && channelTypesMap[c.channelTypeUID].label === suffix)).length > 1) {
+      suffix = channel.id.replace('#', '_').replace(/(^\w{1})|(_+\w{1})/g, letter => letter.toUpperCase())
     }
     newItemName += diacritic.clean(suffix).replace(/[^0-9a-z_]/gi, '')
     const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
