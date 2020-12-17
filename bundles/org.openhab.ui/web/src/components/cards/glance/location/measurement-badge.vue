@@ -4,7 +4,7 @@
     <f7-icon v-else-if="config.icon.indexOf('f7:') === 0" :f7="config.icon.replace('f7:', '')" :color="invertColor ? 'black' : 'white'" class="f7-icon-badge" size="20" />
     <!-- <oh-icon v-if="config.icon.indexOf('oh:') === 0 && config.stateOff" v-show="!reduce" icon="config.icon.replace('oh:', '')"  :state="config.stateOff" class="oh-icon-badge" width="20" height="20" /> -->
     <span class="glance-label" v-show="reduce">{{reduce}} {{config.unit}}</span>
-    <span class="glance-label" v-show="reduceAux"><small>({{reduceAux}} {{config.unit}})</small></span>
+    <span class="glance-label" v-show="reduceAux" style="opacity: 0.7">({{reduceAux}} {{config.unit}})</span>
   </span>
 </template>
 
@@ -20,6 +20,8 @@
   .glance-label
     line-height 20px
     vertical-align top
+  .glance-label-aux
+    vertical-align super
 </style>
 
 <script>
@@ -71,10 +73,10 @@ export default {
       }
     },
     map () {
-      return this.query.map((item) => this.store[item.name].state)
+      return this.query.map((item) => this.store[item.name].state).filter((state) => Number.isFinite(Number.parseFloat(state.split(' ')[0])))
     },
     mapAux () {
-      return this.queryAux.map((item) => this.store[item.name].state)
+      return this.queryAux.map((item) => this.store[item.name].state).filter((state) => Number.isFinite(Number.parseFloat(state.split(' ')[0])))
     },
     reduce () {
       const ret = this.map.reduce((avg, state, arr, { length }) => {
