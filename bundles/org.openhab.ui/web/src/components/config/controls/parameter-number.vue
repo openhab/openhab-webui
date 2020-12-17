@@ -9,8 +9,8 @@
         :step="configDescription.step || ((configDescription.type === 'DECIMAL') ? 0.01 : undefined)"
         :value="actualValue"
         @input="updateValue"
-        :required="configDescription.required" validate
-        :clear-button="!configDescription.required"
+        :required="configDescription.required" validate validate-on-blur
+        :clear-button="false"
         type="number" />
   </ul>
 </template>
