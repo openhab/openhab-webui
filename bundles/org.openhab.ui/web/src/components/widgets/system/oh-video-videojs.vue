@@ -5,55 +5,56 @@
 </template>
 
 <script>
-import videojs from "video.js";
-import "video.js/dist/video-js.css";
+import videojs from 'video.js'
+import 'video.js/dist/video-js.css'
 
 export default {
-  name: "OhVideoVideojs",
+  name: 'OhVideoVideojs',
   props: {
     src: { type: String },
-    type: { type : String },
+    type: { type: String },
+    config: { type: Object },
     startManually: { type: Boolean },
     hideControls: { type: Boolean }
   },
-  data() {
+  data () {
     return {
-      player: null,
-    };
+      player: null
+    }
   },
   watch: {
-    src(value) {
+    src (value) {
       if (this.player) {
-        this.player.src({type: this.type, src: this.src});
+        this.player.src({ type: this.type, src: this.src })
       }
-    },
+    }
   },
-  mounted() {
-      this.createPlayer()
+  mounted () {
+    this.createPlayer()
   },
-  beforeDestroy() {
+  beforeDestroy () {
     if (this.player) {
-      this.player.dispose();
+      this.player.dispose()
     }
   },
   methods: {
-    createPlayer() {
+    createPlayer () {
       if (this.player) {
-        this.player.dispose();
+        this.player.dispose()
       }
-      const playerOpts = {
+      const playerOpts = Object.assign({}, {
         liveui: true,
-        autoplay: this.startManually ? false : "muted",
-        controls: !this.hideControls,
-      }
+        autoplay: this.startManually ? false : 'muted',
+        controls: !this.hideControls
+      }, this.config || {})
       this.player = videojs(
         this.$refs.videoPlayer,
         playerOpts
-      );
+      )
       if (this.src) {
-        this.player.src({type: this.type, src: this.src});
+        this.player.src({ type: this.type, src: this.src })
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>

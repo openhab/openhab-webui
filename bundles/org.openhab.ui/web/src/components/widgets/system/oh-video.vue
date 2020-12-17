@@ -1,17 +1,18 @@
 <template>
   <div class="player">
     <oh-video-videojs
-      :src="this.src"
-      :type="this.config.type"
-      :startManually="this.config.startManually"
-      :hideControls="this.config.hideControls"
+      :src="src"
+      :type="config.type"
+      :config="config.videoOptions"
+      :startManually="config.startManually"
+      :hideControls="config.hideControls"
     />
   </div>
 </template>
 
 <script>
-import mixin from "../widget-mixin";
-import { OhVideoDefinition } from "@/assets/definitions/widgets/system";
+import mixin from '../widget-mixin'
+import { OhVideoDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   mixins: [mixin],
@@ -19,43 +20,44 @@ export default {
   components: {
     'oh-video-videojs': () => import(/* webpackChunkName: "oh-video-videojs" */ './oh-video-videojs.vue')
   },
-  data() {
+  data () {
     return {
       t: this.$utils.id(),
-      src: null,
-    };
+      src: null
+    }
   },
   watch: {
-    itemState(value) {
+    itemState (value) {
       if (value) {
-        this.loadItemURL();
+        this.loadItemURL()
       }
-    },
+    }
   },
   computed: {
-    itemState() {
-      if (this.config.item)
+    itemState () {
+      if (this.config.item) {
         return (
-          this.$utils.id() + "|" + this.context.store[this.config.item].state
-        );
-      return null;
-    },
+          this.$utils.id() + '|' + this.context.store[this.config.item].state
+        )
+      }
+      return null
+    }
   },
-  mounted() {
+  mounted () {
     if (this.config.item) {
-      this.loadItemURL();
+      this.loadItemURL()
     } else {
-      this.src = this.config.url;
+      this.src = this.config.url
     }
   },
   methods: {
-    loadItemURL() {
+    loadItemURL () {
       this.$oh.api
-        .getPlain(`/rest/items/${this.config.item}/state`, "text/plain")
+        .getPlain(`/rest/items/${this.config.item}/state`, 'text/plain')
         .then((data) => {
-          this.src = data;
-        });
-    },
-  },
-};
+          this.src = data
+        })
+    }
+  }
+}
 </script>

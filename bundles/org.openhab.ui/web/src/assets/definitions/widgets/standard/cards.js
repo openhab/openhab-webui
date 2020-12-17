@@ -112,7 +112,7 @@ export const OhImageCardDefinition = () => new WidgetDefinition('oh-image-card',
   .paramGroup(pg('image', 'Image'), ImageParameters())
   .paramGroup(actionGroup(null, 'Action to perform when the image is clicked'), actionParams())
 
-  // OhVideoCard
+// OhVideoCard
 import VideoParameters from '../system/video'
 export const OhVideoCardDefinition = () => new WidgetDefinition('oh-video-card', 'Video Card', 'Display a video (URL or URL from String item) in a card')
   .paramGroup(CardParameterGroup(), CardParameters())
