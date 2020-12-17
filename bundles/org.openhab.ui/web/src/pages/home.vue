@@ -1,5 +1,5 @@
 <template>
-  <f7-page stacked name="HomePage" class="page-home" :class="{ 'standard-background': $f7.data.themeOptions.homeBackground === 'standard' }" @page:init="onPageInit" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page stacked name="HomePage" class="page-home" :class="{ 'standard-background': $f7.data.themeOptions.homeBackground === 'standard' }" @page:init="onPageInit" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :large="$f7.data.themeOptions.homeNavbar !== 'simple'" :large-transparent="$f7.data.themeOptions.homeNavbar !== 'simple'" class="home-nav">
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
@@ -27,7 +27,7 @@
 
     <f7-tabs v-if="ready">
       <f7-tab id="tab-overview" :tab-active="currentTab === 'overview'" @tab:show="() => this.currentTab = 'overview'">
-          <overview-tab v-if="currentTab === 'overview'" :context="context" :allow-chat="allowChat" />
+          <overview-tab v-if="currentTab === 'overview'" :context="context" :key="overviewPageKey" :allow-chat="allowChat" />
       </f7-tab>
       <f7-tab id="tab-locations" :tab-active="currentTab === 'locations'" @tab:show="() => this.currentTab = 'locations'">
         <model-tab v-if="currentTab === 'locations'" :context="context" type="locations" :model="model" :page="homePageComponent" />
@@ -87,6 +87,7 @@ export default {
       showPinToHome: false,
       showExitToApp: false,
       currentTab: 'overview',
+      overviewPageKey: this.$utils.id(),
       items: []
     }
   },
@@ -148,6 +149,9 @@ export default {
     }
   },
   methods: {
+    onPageBeforeIn () {
+      this.overviewPageKey = this.$utils.id()
+    },
     onPageAfterIn () {
       this.$store.dispatch('startTrackingStates')
       if (this.ready) this.loadModel()
