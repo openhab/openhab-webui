@@ -41,7 +41,7 @@
         <f7-block-title>Profile</f7-block-title>
         <f7-block-footer class="padding-left padding-right">
           Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
-          <f7-link external color="blue" target="_blank" href="https://www.openhab.org/docs/configuration/items.html#profiles">Learn more about profiles.</f7-link>
+          <f7-link external color="blue" target="_blank" href="https://www.openhab.org/link/profiles">Learn more about profiles.</f7-link>
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader></f7-preloader>
           <div>Loading...</div>

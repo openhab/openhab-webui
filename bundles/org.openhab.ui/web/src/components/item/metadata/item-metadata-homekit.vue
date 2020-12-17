@@ -20,7 +20,7 @@
       <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" />
     </div>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" href="https://www.openhab.org/addons/integrations/homekit/">HomeKit integration documentation</f7-link>
+      <f7-link color="blue" external target="_blank" href="https://www.openhab.org/link/homekit">HomeKit integration documentation</f7-link>
     </p>
   </div>
 </template>

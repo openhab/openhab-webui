@@ -19,9 +19,9 @@
   <div class="empty-overview" v-else-if="!inChatSession">
     <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
     <f7-row class="display-flex justify-content-center">
-      <f7-button large fill color="blue" external href="https://next.openhab.org/docs/" target="_blank" v-t="'home.overview.button.documentation'"></f7-button>
+      <f7-button large fill color="blue" external href="https://openhab.org/link/docs" target="_blank" v-t="'home.overview.button.documentation'"></f7-button>
       <span style="width: 8px"></span>
-      <f7-button large color="blue" external href="https://next.openhab.org/docs/tutorial/" target="_blank" v-t="'home.overview.button.tutorial'"></f7-button>
+      <f7-button large color="blue" external href="https://openhab.org/link/tutorial" target="_blank" v-t="'home.overview.button.tutorial'"></f7-button>
     </f7-row>
   </div>
 </div>
