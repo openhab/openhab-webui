@@ -7,7 +7,7 @@
     number:     /0|[1-9][0-9]*/,
     string:     { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) },
     itemtype:   ['Group ', 'Number ', 'Switch ', 'Rollershutter ', 'String ', 'Dimmer ', 'Contact ', 'DateTime ', 'Color ', 'Player ', 'Location ', 'Call ', 'Image '],
-    membertype: [':Number', ':Switch', ':Rollershutter', ':Dimmer', ':Contact', ':DateTime'],
+    membertype: [':Number', ':Switch', ':Rollershutter', ':String', ':Dimmer', ':Contact', ':DateTime', ':Color', ':Player', ':Location', ':Call', ':Image'],
     identifier: /[A-Za-z0-9_-]+/,
     lparen:     '(',
     rparen:     ')',
