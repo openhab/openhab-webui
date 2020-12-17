@@ -163,7 +163,7 @@ export const actionsMixin = {
           const self = this
           let photos = actionConfig[prefix + 'actionPhotos']
           let photoBrowserConfig = actionConfig[prefix + 'actionPhotoBrowserConfig']
-          if (typeof photos === 'string' && photos.startsWith('{')) photos = JSON.parse(photos)
+          if (typeof photos === 'string' && photos.startsWith('[')) photos = JSON.parse(photos)
           if (typeof photoBrowserConfig === 'string' && photoBrowserConfig.startsWith('{')) photoBrowserConfig = JSON.parse(photoBrowserConfig)
           if (photos && photos.length > 0) {
             const promises = photos.map((el) => {
