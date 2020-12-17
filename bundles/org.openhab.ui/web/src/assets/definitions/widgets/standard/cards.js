@@ -117,3 +117,11 @@ import VideoParameters from '../system/video'
 export const OhVideoCardDefinition = () => new WidgetDefinition('oh-video-card', 'Video Card', 'Display a video (URL or URL from String item) in a card')
   .paramGroup(CardParameterGroup(), CardParameters())
   .paramGroup(pg('video', 'Video'), VideoParameters())
+
+// OhWebFrameCard
+import WebFrameParameters from '../system/webframe'
+export const OhWebFrameCardDefinition = () => new WidgetDefinition('oh-webframe-card', 'Web Frame Card', 'Display a web page in a card')
+  .paramGroup(CardParameterGroup(), [...CardParameters(),
+    pb('borders', 'Borders', 'Show borders around the frame')
+  ])
+  .paramGroup(pg('webframe', 'Web Frame'), WebFrameParameters())
