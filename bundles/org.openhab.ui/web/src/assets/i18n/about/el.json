@@ -1,0 +1,21 @@
+{
+  "about.title": "Σχετικά",
+  "about.homePage": "Ιστοσελίδα",
+  "about.documentation": "Τεκμηρίωση",
+  "about.communityForum": "Φόρουμ κοινότητας",
+  "about.technicalInformation": "Τεχνικές πληροφορίες",
+  "about.technicalInformation.configurationFolder": "Φάκελος διαμόρφωσης",
+  "about.technicalInformation.userdataFolder": "Φάκελος δεδομένων χρήστη",
+  "about.technicalInformation.logsFolder": "Φάκελος καταγραφής",
+  "about.technicalInformation.operatingSystem": "Λειτουργικό σύστημα",
+  "about.technicalInformation.javaRuntime": "Έκδοση Java",
+  "about.technicalInformation.resourceStats": "{nbproc} διαθέσιμοι επεξεργαστές - {ram} διαθέσιμη μνήμη",
+  "about.technicalInformation.viewDetails": "Περισσότερες πληροφορίες",
+  "about.appearanceOptions": "Εμφάνιση (για αυτή τη συσκευή μόνο)",
+  "about.reload": "Επαναφόρτωση",
+  "about.reload.purgeExplanation1": "Τοπική μνήμη ή / και υπηρεσίες εργασίας χρησιμοποιούνται για να αποθηκεύουν πόρους τοπικά για να κάνουν αυτή την εφαρμογή να φορτώνει γρηγορότερα, όμως μπορεί να μην ανιχνεύσουν επιτυχώς πότε αυτοί έχουν ενημερωθεί σε νέα έκδοση.",
+  "about.reload.purgeExplanation2": "Επιλέξτε Διαγραφή Τοπικής Μνήμης και Ανανέωση πιο κάτω για να καθαρίσει τοπική μνήμη, οι υπηρεσίες εργασίας και να κατέβουν τα πάντα από τον διακομιστή εκ νέου.",
+  "about.reload.purgeCachesAndRefresh": "Διαγραφή Τοπικής Μνήμης και Ανανέωση",
+  "about.reload.confirmPurge": "Διαγραφή όλων των στοιχείων των εφαρμογών και καθαρισμός των υπηρεσιών εργασίας; Αυτή η ενέργεια θα ανανεώσει επίσης τη σελίδα από τον διακομιστή, πράγμα που μπορεί να πάρει κάποια δευτερόλεπτα.",
+  "about.reload.reloadApp": "Επαναφόρτωση"
+}

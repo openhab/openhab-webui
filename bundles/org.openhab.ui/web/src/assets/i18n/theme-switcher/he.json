@@ -1,0 +1,15 @@
+{
+  "about.theme": "ערכת עיצוב",
+  "about.theme.auto": "אוטומטי",
+  "about.darkMode": "מצב כהה",
+  "about.darkMode.auto": "אוטומטי",
+  "about.darkMode.light": "בהיר",
+  "about.darkMode.dark": "כהה",
+  "about.navigationBarsStyle": "סגנון סרגלי הניווט",
+  "about.miscellaneous": "שונות",
+  "about.miscellaneous.home.navbar": "סרגל ניווט פשוט בדף הבית",
+  "about.miscellaneous.home.background": "רקע רגיל בדף הבית",
+  "about.miscellaneous.home.hideChatInput": "הסתר חלונית שיחות בדף הבית",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "בטל אנימציה בפתיחת כרטיסיות",
+  "about.miscellaneous.theme.disablePageTransition": "בטל אנימציה במעבר עמוד"
+}

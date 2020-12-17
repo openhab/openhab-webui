@@ -1,0 +1,15 @@
+{
+  "about.theme": "Θέμα",
+  "about.theme.auto": "Αυτόματο",
+  "about.darkMode": "Σκούρα εμφάνιση",
+  "about.darkMode.auto": "Αυτόματο",
+  "about.darkMode.light": "Ανοικτό",
+  "about.darkMode.dark": "Σκούρα",
+  "about.navigationBarsStyle": "Στυλ γραμμής πλοήγησης",
+  "about.miscellaneous": "Διάφορα",
+  "about.miscellaneous.home.navbar": "Απλή μπάρα εμφάνισης στην αρχική σελίδα",
+  "about.miscellaneous.home.background": "Τυπικό χρώμα φόντου αρχικής σελίδας",
+  "about.miscellaneous.home.hideChatInput": "Απόκρυψη πλαισίου συνομιλίας στην αρχική σελίδα",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Απενεργοποίηση εφέ επέκτασης καρτών",
+  "about.miscellaneous.theme.disablePageTransition": "Απενεργοποίηση εφέ μετάβασης σελίδας"
+}

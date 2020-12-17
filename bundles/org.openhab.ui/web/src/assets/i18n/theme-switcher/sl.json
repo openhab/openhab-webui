@@ -1,0 +1,15 @@
+{
+  "about.theme": "Tema",
+  "about.theme.auto": "Samodejno",
+  "about.darkMode": "Temni način",
+  "about.darkMode.auto": "Samodejno",
+  "about.darkMode.light": "Svetla",
+  "about.darkMode.dark": "Temna",
+  "about.navigationBarsStyle": "Stil navigacijske vrstice",
+  "about.miscellaneous": "Razno",
+  "about.miscellaneous.home.navbar": "Enostavna navigacijska vrstica na domači strani",
+  "about.miscellaneous.home.background": "Običajna barva ozadja domače strani",
+  "about.miscellaneous.home.hideChatInput": "Skrij pogovorno okno na domači strani",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Onemogoči animacijo raztezanja kartice",
+  "about.miscellaneous.theme.disablePageTransition": "Onemogoči animacijo prehoda med stranemi"
+}

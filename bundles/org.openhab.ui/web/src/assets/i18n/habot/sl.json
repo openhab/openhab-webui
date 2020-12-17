@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(primer)",
+  "habot.clearHistory": "Počisti zgodovino",
+  "habot.dismiss": "Razveljavi",
+  "habot.example1": "Kakšna je temperatura v kuhinji?",
+  "habot.example2": "Nastavi termostat na 21 stopinj",
+  "habot.example3": "Ugasni luči v prvem nadstropju",
+  "habot.anythingElse": "Morda še kaj?",
+  "habot.cardDeckIsIncompatible": "Žal kartice shranjene na kupu kart ne morejo biti prikazane tukaj. Za to uporabite HABot aplikacijo.",
+  "habot.cardIsIncompatible": "Žal ta kartica ne more biti prikazana tukaj. Za to uporabite HABot aplikacijo."
+}
