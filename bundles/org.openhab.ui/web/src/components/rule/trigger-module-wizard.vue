@@ -44,7 +44,7 @@
       <f7-list-item radio v-if="currentItem && currentItem.type === 'Group'" :checked="itemEventType === 'memberUpdated'" name="itemEventType" title="had a member update" @click="updateItemEventType('memberUpdated')" />
       <f7-list-item radio v-if="currentItem && currentItem.type === 'Group'" :checked="itemEventType === 'memberChanged'" name="itemEventType" title="had a member change" @click="updateItemEventType('memberChanged')" />
     </f7-list>
-    <f7-list>
+    <f7-list :key="itemEventType">
       <f7-list-input
         v-if="itemEventType === 'command' || itemEventType === 'memberCommand'"
         label="Command"
@@ -102,7 +102,7 @@
       <f7-list-item radio v-if="currentModule.configuration.thingUID" :checked="thingEventType === 'statusUpdated'" name="thingEventType" title="status was updated" @click="updateThingEventType('statusUpdated')" />
       <f7-list-item radio v-if="currentModule.configuration.thingUID" :checked="thingEventType === 'statusChanged'" name="thingEventType" title="status changed" @click="updateThingEventType('statusChanged')" />
     </f7-list>
-    <f7-list>
+    <f7-list :key="thingEventType">
       <f7-list-item
         v-if="thingEventType === 'statusUpdated'"
         title="to"
@@ -263,15 +263,19 @@ export default {
     },
     updateThingEventType (type) {
       this.thingEventType = type
+      const currentThingUID = this.currentModule.configuration.thingUID
       switch (type) {
         case 'triggerChannelFired':
           this.$emit('typeSelect', 'core.ChannelEventTrigger', true)
+          if (currentThingUID) this.$set(this.currentModule, 'configuration', Object.assign({}, { thingUID: currentThingUID }))
           break
         case 'statusUpdated':
           this.$emit('typeSelect', 'core.ThingStatusUpdateTrigger', true)
+          if (currentThingUID) this.$set(this.currentModule, 'configuration', Object.assign({}, { thingUID: currentThingUID }))
           break
         case 'statusChanged':
           this.$emit('typeSelect', 'core.ThingStatusChangeTrigger', true)
+          if (currentThingUID) this.$set(this.currentModule, 'configuration', Object.assign({}, { thingUID: currentThingUID }))
           break
       }
     },

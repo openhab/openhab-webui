@@ -49,13 +49,13 @@
       <f7-list-item radio :checked="currentModule.configuration.command === suggestion.command" v-for="suggestion in commandSuggestions" :key="suggestion.command"
         :title="suggestion.label" @click="$set(currentModule.configuration, 'command', suggestion.command)" />
     </f7-list>
-    <f7-block v-if="currentItem && (currentItem.type === 'Dimmer' || currentItem.type === 'Rollershutter' || (currentItem.type === 'Number' && currentItem.stateDescription && currentItem.stateDescription.minimum !== undefined))">
+    <!-- <f7-block v-if="currentItem && (currentItem.type === 'Dimmer' || currentItem.type === 'Rollershutter' || (currentItem.type === 'Number' && currentItem.stateDescription && currentItem.stateDescription.minimum !== undefined))">
       <f7-range :value="currentModule.configuration.command" @range:changed="(val) => $set(currentModule.configuration, 'command', val)"
         :min="(currentItem.stateDescription && currentItem.stateDescription.minimum) ? currentItem.stateDescription.minimum : 0"
         :max="(currentItem.stateDescription && currentItem.stateDescription.maximum) ? currentItem.stateDescription.maximum : 100"
         :step="(currentItem.stateDescription && currentItem.stateDescription.step) ? currentItem.stateDescription.step : 1"
         :scale="true" :label="true" :scaleSubSteps="5" />
-    </f7-block>
+    </f7-block> -->
     <f7-list v-if="currentItem && currentItem.type === 'Color'" media-list>
       <f7-list-input media-item type="colorpicker" label="Pick a color" :color-picker-params="{
           targetEl: '#color-picker-value',
