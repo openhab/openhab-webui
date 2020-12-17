@@ -20,6 +20,7 @@
 
 .model-cards-section
   justify-content center
+  margin-top 2rem
 
 @media (min-width 768px)
   .model-cards-section
@@ -47,7 +48,6 @@
 
 @media (min-width 1024px)
   .model-cards-section
-    margin-top 2rem
     .card
       width 340px
       margin-top 0
