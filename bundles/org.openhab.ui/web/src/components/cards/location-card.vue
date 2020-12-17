@@ -23,8 +23,8 @@
         <f7-button round outline :active="activeTab === 'equipment'" :color="color" @click="activeTab = 'equipment'" :text="$t('home.equipment.tab')"></f7-button>
         <f7-button round outline :active="activeTab === 'properties'" :color="color" @click="activeTab = 'properties'" :text="$t('home.properties.tab')"></f7-button>
       </f7-segmented>
-      <generic-widget-component v-if="activeTab === 'equipment'" :context="equipmentListContext" />
-      <generic-widget-component v-if="activeTab === 'properties'" :context="propertiesListContext" />
+      <generic-widget-component v-if="activeTab === 'equipment'" class="margin-vertical" :key="cardId + '-equipment'" :context="equipmentListContext" />
+      <generic-widget-component v-if="activeTab === 'properties'" class="margin-vertical" key="'cardId + '-properties'" :context="propertiesListContext" />
       <p>
         <f7-button fill round large card-close :color="color" class="margin-horizontal" :text="$t('home.cards.close')"></f7-button>
       </p>
