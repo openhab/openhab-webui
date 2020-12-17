@@ -1,7 +1,7 @@
 import { pb, pt } from '../helpers'
 
 export default () => [
-  pb('icon', 'Icon', '<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/configuration/iconsets/classic/">openHAB icon</a>'),
+  pb('icon', 'Icon', '<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>'),
   pt('width', 'Width', ''),
   pt('inputmode', 'Input Mode', 'Type of data that might be entered: see <a class="external text-color-blue" target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode">MDN docs</a>'),
   pt('placeholder', 'Placeholder', 'Placeholder text'),

@@ -11,7 +11,7 @@ export const CellParameters = () => [
   pt('title', 'Title', 'Title of the cell'),
   pt('subtitle', 'Subtitle', 'Subtitle of the cell'),
   pt('footer', 'Footer', 'Footer of the cell'),
-  pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/configuration/iconsets/classic/">openHAB icon</a>) or <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'),
+  pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>) or <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'),
   pt('color', 'Highlight Color', 'Color to use when highlighted'),
   pt('on', '"On" expression', 'Expression to determine when the card should be highlighted. If blank, determine automatically from the primary bound item if applicable.').a()
 ]
