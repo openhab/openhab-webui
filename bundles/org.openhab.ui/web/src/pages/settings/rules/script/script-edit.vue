@@ -31,15 +31,22 @@
     <script-general-settings v-else-if="createMode" :createMode="true" :rule="rule" />
     <f7-block class="block-narrow" v-if="newScript">
       <f7-col>
-        <f7-block-title medium class="margin-bottom">Script Language</f7-block-title>
+        <f7-list media-list>
+          <f7-block-title medium class="margin-bottom">Scripting Method</f7-block-title>
+          <f7-list-item media-item radio radio-icon="start"
+            title="Design with Blockly"
+            footer="A beginner-friendly way to build scripts visually by assembling blocks"
+            :value="'application/javascript+blockly'" :checked="mode === 'application/javascript+blockly'"
+            @change="mode = 'application/javascript+blockly'">
+            <img src="res/img/blockly.svg" height="32" width="32" slot="media" />
+          </f7-list-item>
+        </f7-list>
+        <f7-block-footer class="margin-vertical">or choose the scripting language:</f7-block-footer>
         <f7-list media-list>
           <f7-list-item media-item radio radio-icon="start"
             :value="mode" :checked="mode === language.contentType" @change="mode = language.contentType"
             v-for="language in languages" :key="language.contentType"
             :title="language.name" :after="language.version" :footer="language.contentType"></f7-list-item>
-          <!-- <f7-list-item media-item radio radio-icon="start"
-            :value="mode" :checked="mode === 'application/vnd.openhab.blockly.rule'" @change="mode = 'application/vnd.openhab.blockly.rule'"
-            :title="'Blockly editor'"></f7-list-item> -->
         </f7-list>
       </f7-col>
     </f7-block>
@@ -169,7 +176,7 @@ export default {
         actions: [],
         tags: ['Script']
       }
-      this.mode = 'application/javascript'
+      this.mode = 'application/javascript+blockly'
       this.$oh.api.get('/rest/module-types/script.ScriptAction').then((data) => {
         this.$set(this, 'scriptModuleType', data)
         this.$set(this, 'languages',
@@ -203,7 +210,7 @@ export default {
           script: ''
         }
       }
-      if (this.mode === 'application/vnd.openhab.blockly.rule') {
+      if (this.mode === 'application/javascript+blockly') {
         actionModule.configuration.type = 'application/javascript'
         actionModule.configuration.blockSource = '<xml xmlns="https://developers.google.com/blockly/xml"></xml>'
       }
@@ -348,7 +355,6 @@ export default {
     },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/' + this.ruleId + '/*', null, (event) => {
-        console.log(event)
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {
           case 'state':

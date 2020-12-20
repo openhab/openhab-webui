@@ -34,29 +34,42 @@
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
     <f7-list>
+      <f7-list-item radio :checked="itemEventType === 'command'" name="MediaEventType" title="send a command to" @click="updateItemEventType('command')" />
+      <f7-list-item radio :checked="itemEventType === 'update'" name="MediaEventType" title="update the state of" @click="updateItemEventType('update')" />
+    </f7-list>
+    <f7-list>
       <item-picker :value="currentModule.configuration.itemName" title="Item" @input="(val) => $set(currentModule.configuration, 'itemName', val)" @itemSelected="(value) => { $set(this, 'currentItem', value); updateItemEventType('command') }" />
     </f7-list>
     <f7-list>
       <f7-list-input
+        v-if="itemEventType === 'command'"
         label="Command to send"
         name="command"
         type="text"
         :value="currentModule.configuration.command"
         @blur="(evt) => $set(currentModule.configuration, 'command', evt.target.value)"
         />
+      <f7-list-input
+        v-else-if="itemEventType === 'update'"
+        label="to state"
+        name="state"
+        type="text"
+        :value="currentModule.configuration.state"
+        @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)"
+        />
     </f7-list>
-    <f7-list v-if="commandSuggestions.length">
+    <f7-list v-if="itemEventType === 'command' && commandSuggestions.length">
       <f7-list-item radio :checked="currentModule.configuration.command === suggestion.command" v-for="suggestion in commandSuggestions" :key="suggestion.command"
         :title="suggestion.label" @click="$set(currentModule.configuration, 'command', suggestion.command)" />
     </f7-list>
-    <!-- <f7-block v-if="currentItem && (currentItem.type === 'Dimmer' || currentItem.type === 'Rollershutter' || (currentItem.type === 'Number' && currentItem.stateDescription && currentItem.stateDescription.minimum !== undefined))">
+    <!-- <f7-block v-if="itemEventType === 'command' && currentItem && (currentItem.type === 'Dimmer' || currentItem.type === 'Rollershutter' || (currentItem.type === 'Number' && currentItem.stateDescription && currentItem.stateDescription.minimum !== undefined))">
       <f7-range :value="currentModule.configuration.command" @range:changed="(val) => $set(currentModule.configuration, 'command', val)"
         :min="(currentItem.stateDescription && currentItem.stateDescription.minimum) ? currentItem.stateDescription.minimum : 0"
         :max="(currentItem.stateDescription && currentItem.stateDescription.maximum) ? currentItem.stateDescription.maximum : 100"
         :step="(currentItem.stateDescription && currentItem.stateDescription.step) ? currentItem.stateDescription.step : 1"
         :scale="true" :label="true" :scaleSubSteps="5" />
     </f7-block> -->
-    <f7-list v-if="currentItem && currentItem.type === 'Color'" media-list>
+    <f7-list v-if="itemEventType === 'command' && currentItem && currentItem.type === 'Color'" media-list>
       <f7-list-input media-item type="colorpicker" label="Pick a color" :color-picker-params="{
           targetEl: '#color-picker-value',
           targetElSetBackgroundColor: true,
@@ -206,7 +219,12 @@ export default {
       this.itemEventType = type
       switch (type) {
         case 'command':
-          this.$emit('typeSelect', 'core.ItemCommandAction')
+          this.$emit('typeSelect', 'core.ItemCommandAction', true)
+          if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { itemName: this.currentItem.name }))
+          break
+        case 'update':
+          this.$emit('typeSelect', 'core.ItemStateUpdateAction', true)
+          if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { itemName: this.currentItem.name }))
           break
       }
     },
@@ -214,10 +232,10 @@ export default {
       this.rulesEventType = type
       switch (type) {
         case 'run':
-          this.$emit('typeSelect', 'core.RunRuleAction')
+          this.$emit('typeSelect', 'core.RunRuleAction', true)
           break
         case 'enable':
-          this.$emit('typeSelect', 'core.RuleEnablementAction')
+          this.$emit('typeSelect', 'core.RuleEnablementAction', true)
           break
       }
     },
@@ -225,10 +243,10 @@ export default {
       this.mediaEventType = type
       switch (type) {
         case 'say':
-          this.$emit('typeSelect', 'media.SayAction')
+          this.$emit('typeSelect', 'media.SayAction', true)
           break
         case 'play':
-          this.$emit('typeSelect', 'media.PlayAction')
+          this.$emit('typeSelect', 'media.PlayAction', true)
           break
       }
     },
