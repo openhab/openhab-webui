@@ -125,3 +125,10 @@ export const OhWebFrameCardDefinition = () => new WidgetDefinition('oh-webframe-
     pb('borders', 'Borders', 'Show borders around the frame')
   ])
   .paramGroup(pg('webframe', 'Web Frame'), WebFrameParameters())
+
+// OhClockCard
+import ClockParameters from '../system/clock'
+export const OhClockCardDefinition = () => new WidgetDefinition('oh-clock-card', 'Digital Clock Card', 'Display a digital clock in a card')
+  .paramGroup(CardParameterGroup(), CardParameters())
+  .paramGroup(pg('clock', 'Clock'), ClockParameters())
+  .paramGroup(actionGroup(null, 'Action to perform when the clock is clicked'), actionParams())
