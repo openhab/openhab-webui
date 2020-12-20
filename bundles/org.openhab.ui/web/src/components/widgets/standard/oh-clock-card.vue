@@ -4,13 +4,13 @@
       <div>{{config.title}}</div>
     </f7-card-header>
     <f7-card-content @click.native="performAction" class="clock-card-content text-align-center">
-      <f7-row v-if="config.datepos === 'above'">
+      <f7-row v-if="config.showDate && config.datePos !== 'below'">
         <f7-col :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }" v-text="date"></f7-col>
       </f7-row>
       <f7-row>
         <f7-col :style="{ 'font-size': config.timeFontSize || '2vw', 'font-weight': config.timeFontWeight || 'normal' }" v-text="time"></f7-col>
       </f7-row>
-      <f7-row v-if="config.datepos === 'below'">
+      <f7-row v-if="config.showDate && config.datePos === 'below'">
         <f7-col :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }" v-text="date"></f7-col>
       </f7-row>
     </f7-card-content>
@@ -30,23 +30,22 @@ export default {
   data () {
     return {
       time: '',
-      date: '',
-      datepos: ''
+      date: ''
     }
   },
   mixins: [mixin, actionsMixin],
   widget: OhClockCardDefinition,
   methods: {
     updateTime () {
-      this.time = dayjs().format(this.config.timeformat || 'LTS')
-      this.date = dayjs().format(this.config.dateformat || 'LL' )
+      this.time = dayjs().format(this.config.timeFormat || 'LTS')
+      this.date = dayjs().format(this.config.dateFormat || 'LL')
     }
   },
-  mounted() {
+  mounted () {
     this.updateTime()
     this.timer = setInterval(this.updateTime, 1000)
   },
-  beforeDestroy() {
+  beforeDestroy () {
     clearInterval(this.timer)
   }
 }
