@@ -474,7 +474,6 @@ export default {
           },
           on: {
             pageAfterOut (event, page) {
-              console.log('Add from thing page closed')
             }
           }
         }

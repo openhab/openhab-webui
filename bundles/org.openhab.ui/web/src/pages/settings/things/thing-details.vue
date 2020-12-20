@@ -425,7 +425,6 @@ export default {
         `${action.label}?`,
         this.thing.label,
         () => {
-          console.log(action)
           thing.configuration[action.name] = true
           this.dirty = true
           save()
@@ -536,7 +535,6 @@ export default {
           },
           on: {
             pageAfterOut (event, page) {
-              console.log('Add to model page closed')
             }
           }
         }
@@ -600,7 +598,6 @@ export default {
     startEventSource () {
       if (this.eventSource) this.stopEventSource()
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/things/*/*,openhab/links/*/*' /* + encodeURIComponent(this.thingId) */, null, (event) => {
-        // console.log(event)
         const topicParts = event.topic.split('/')
         switch (topicParts[1]) {
           case 'things':
