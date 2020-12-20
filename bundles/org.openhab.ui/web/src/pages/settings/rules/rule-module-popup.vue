@@ -97,8 +97,7 @@ export default {
   },
   methods: {
     setModuleType (val, clearConfig) {
-      let moduleType = (typeof val === 'string') ? this.moduleTypes[this.currentSection].find((t) => t.uid === val) : val
-      if (val === 'core.ItemStateUpdateAction') moduleType = { uid: 'core.ItemStateUpdateAction', configDescriptions: [] }
+      const moduleType = (typeof val === 'string') ? this.moduleTypes[this.currentSection].find((t) => t.uid === val) : val
       this.ruleModule.type = moduleType.uid
       this.$set(this, 'currentRuleModuleType', moduleType)
       if (clearConfig) this.$set(this.ruleModule, 'configuration', {})
