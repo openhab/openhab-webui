@@ -301,7 +301,6 @@ export default {
       }
       // When coming back from the channel add/edit page with a change, let the handler below take care of the reloading logic (the thing has to be saved first)
       if (!event.pageFrom || !event.pageFrom.name || event.pageFrom.name.indexOf('channel') < 0) {
-        console.log('Loading')
         if (!this.eventSource) this.stopEventSource()
         this.load()
       }

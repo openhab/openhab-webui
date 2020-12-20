@@ -225,11 +225,9 @@ export default {
   },
   methods: {
     cardOpening () {
-      console.log('card opened')
       setTimeout(() => { this.opened = true }, 200)
     },
     cardClosed () {
-      console.log('card closed')
       this.opened = false
     }
   }

@@ -186,7 +186,6 @@ export default {
     },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/inbox/*', null, (event) => {
-        console.log(event)
         // const topicParts = event.topic.split('/')
         this.load()
       })

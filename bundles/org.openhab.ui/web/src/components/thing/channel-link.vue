@@ -108,7 +108,6 @@ export default {
           },
           on: {
             pageAfterOut (event, page) {
-              console.log('page closed')
               // const finalChannel = page.app.data.finalChannel
               // if (finalChannel) {
               //   delete page.app.data.finalChannel
@@ -138,7 +137,6 @@ export default {
           },
           on: {
             pageAfterOut (event, page) {
-              console.log('page closed')
             }
           }
         }
