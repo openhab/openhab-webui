@@ -178,7 +178,6 @@ export default {
       return channel.linkedItems && channel.linkedItems.length > 0
     },
     toggleItemCheck (channel, channelType) {
-      console.log('toggle check')
       if (this.isChecked(channel)) {
         this.selectedChannels.splice(this.selectedChannels.indexOf(channel), 1)
         this.newItems.splice(this.newItems.findIndex((i) => i.channel === channel), 1)
@@ -220,7 +219,6 @@ export default {
       return this.newItems.find((i) => i.channel === channel)
     },
     channelOpened (payload) {
-      console.log('caught channel-opened')
       this.openedChannelId = payload.channelId
       this.openedChannel = payload.channel
     }

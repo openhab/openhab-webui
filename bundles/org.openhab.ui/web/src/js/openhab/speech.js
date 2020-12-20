@@ -26,7 +26,6 @@ export default {
     }
     wksr.onresult = (event) => {
       if (Framework7.device.android) {
-        console.log(event.results)
         let bestConfidence = 0
         for (let result of event.results) {
           for (let alternative of result) {
@@ -38,7 +37,6 @@ export default {
         }
         resultCallback({ final: false, text: interimResult })
       } else {
-        console.log(event.results)
         interimResult = ''
         for (let result of event.results) {
           if (result.isFinal) {

@@ -66,7 +66,6 @@ export default {
       return ''
     },
     opened (channel) {
-      console.log('channel opened:' + channel.id)
       this.$emit('channel-opened', {
         channelId: channel.id,
         channel: channel

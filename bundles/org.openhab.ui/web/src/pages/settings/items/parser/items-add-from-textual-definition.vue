@@ -169,7 +169,7 @@ export default {
             // remove existing links unless they're about to be recreated
             item.existingLinks.forEach((el) => {
               if (item.links && item.links.some((l) => l === el.channelUID || (l.value === el.channelUID))) return
-              console.log(`DELETE /rest/links/${item.name}/${encodeURIComponent(el.channelUID)}`)
+              console.debug(`DELETE /rest/links/${item.name}/${encodeURIComponent(el.channelUID)}`)
               linksAndMetadataPromises.push(this.$oh.api.delete(`/rest/links/${item.name}/${encodeURIComponent(el.channelUID)}`))
             })
           }
@@ -187,7 +187,7 @@ export default {
                 channelUID: channelUID,
                 configuration: config
               }
-              console.log(`PUT ${url}: ` + JSON.stringify(linkPayload))
+              console.debug(`PUT ${url}: ` + JSON.stringify(linkPayload))
               linksAndMetadataPromises.push(this.$oh.api.put(url, linkPayload))
             })
           }
@@ -204,7 +204,7 @@ export default {
                 value: value,
                 config: config
               }
-              console.log(`PUT ${url}` + JSON.stringify(metadataPayload))
+              console.debug(`PUT ${url}` + JSON.stringify(metadataPayload))
               linksAndMetadataPromises.push(this.$oh.api.put(url, metadataPayload))
             })
           }

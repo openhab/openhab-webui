@@ -186,7 +186,6 @@ export default {
     },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/inbox/*', null, (event) => {
-        console.log(event)
         // const topicParts = event.topic.split('/')
         this.load()
       })
@@ -228,7 +227,6 @@ export default {
               color: 'green',
               bold: true,
               onClick: () => {
-                console.log(`Add ${entry.thingUID} as thing`)
                 this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID} with the following name:`,
                   'Add as Thing',
                   (name) => {

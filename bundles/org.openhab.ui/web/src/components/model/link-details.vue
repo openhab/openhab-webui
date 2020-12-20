@@ -75,7 +75,6 @@ export default {
           },
           on: {
             pageAfterOut (event, page) {
-              console.log('page closed')
             }
           }
         }
@@ -96,7 +95,6 @@ export default {
           },
           on: {
             pageAfterOut (event, page) {
-              console.log('page closed')
             }
           }
         }
@@ -116,7 +114,6 @@ export default {
       }
     },
     links () {
-      console.log('LinkDetails: links changed')
       this.load()
     }
   }

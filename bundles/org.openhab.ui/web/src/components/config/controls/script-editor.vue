@@ -308,7 +308,6 @@ export default {
     }
   },
   mounted () {
-    // console.log('codemirror ready: ', this.codemirror)
   }
 }
 </script>

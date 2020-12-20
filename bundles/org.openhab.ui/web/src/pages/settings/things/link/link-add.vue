@@ -193,7 +193,7 @@ export default {
         this.profileTypeConfiguration = data
       }).catch((err) => {
         // just clear out the config sheet
-        console.log(`No configuration for profile type ${profileTypeUid}: ` + err)
+        console.warn(`No configuration for profile type ${profileTypeUid}: ` + err)
         this.profileTypeConfiguration = null
       })
     },

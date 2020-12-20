@@ -10,7 +10,6 @@ export default {
 
     if (component.config.smartFormatter) {
       options.formatter = (params, ticket, callback) => {
-        // console.log(params)
         let tooltip = ''
         if (params.componentType === 'markArea') {
           tooltip += `<div>${dayjs(params.data.coord[0][0]).format('llll')}<br />${dayjs(params.data.coord[1][0]).format('llll')}</div>`

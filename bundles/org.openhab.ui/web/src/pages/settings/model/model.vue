@@ -314,7 +314,6 @@ export default {
     },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/items/*/added,openhab/items/*/updated,openhab/items/*/removed', null, (event) => {
-        console.log(event)
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {
           case 'added':
@@ -475,7 +474,6 @@ export default {
           },
           on: {
             pageAfterOut (event, page) {
-              console.log('Add from thing page closed')
             }
           }
         }

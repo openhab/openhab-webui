@@ -118,7 +118,6 @@ export default {
         value: [value],
         on: {
           change (calendar, value) {
-            console.log(value)
             if (value.length < 1) return
             if (dayjs(value[0]).isSame(self.startTime)) return
             self.setDate(value[0])

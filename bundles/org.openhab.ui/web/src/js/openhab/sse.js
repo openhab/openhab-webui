@@ -18,8 +18,7 @@ function newSSEConnection (path, readyCallback, messageCallback, errorCallback) 
   }
 
   eventSource.onerror = () => {
-    console.log('SSE error')
-    console.log(eventSource)
+    console.warn('SSE error')
     if (errorCallback) {
       errorCallback()
     }
@@ -29,7 +28,7 @@ function newSSEConnection (path, readyCallback, messageCallback, errorCallback) 
   }
 
   openSSEClients.push(eventSource)
-  console.log(`new SSE connection: ${eventSource.url}, ${openSSEClients.length} open`)
+  console.debug(`new SSE connection: ${eventSource.url}, ${openSSEClients.length} open`)
   console.debug(openSSEClients)
   return eventSource
 }
@@ -46,7 +45,7 @@ export default {
     if (openSSEClients.indexOf(client) >= 0) {
       openSSEClients.splice(openSSEClients.indexOf(client), 1)
     }
-    console.log(`SSE connection closed: ${client.url}, ${openSSEClients.length} open`)
+    console.debug(`SSE connection closed: ${client.url}, ${openSSEClients.length} open`)
     console.debug(openSSEClients)
 
     client.close()
