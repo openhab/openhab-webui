@@ -111,7 +111,7 @@
                 </f7-login-screen-title>
               </f7-block>
               <f7-block strong>{{ $t('setupwizard.addons.header1') }}<br />{{ $t('setupwizard.addons.header2') }}<br /><br />
-                <a class="text-color-blue external" target="_blank" href="https://next.openhab.org/addons/" v-t="'setupwizard.addons.browseAddonsOnWebsite'"></a>
+                <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/addons/" v-t="'setupwizard.addons.browseAddonsOnWebsite'"></a>
               </f7-block>
               <f7-block class="padding">
                 <f7-row>
