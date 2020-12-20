@@ -67,6 +67,9 @@ export default {
         case 'core.ItemCommandAction':
           if (!config.itemName || !config.command) return moduleType.label
           return 'Send command ' + config.command + ' to ' + config.itemName
+        case 'core.ItemStateUpdateAction':
+          if (!config.itemName || !config.state) return moduleType.label
+          return 'Update the state of ' + config.itemName + ' to ' + config.state
         case 'media.SayAction':
           if (!config.text) return moduleType.label
           return 'Say "' + config.text + '"'
