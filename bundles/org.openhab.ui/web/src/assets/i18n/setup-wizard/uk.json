@@ -8,7 +8,7 @@
   "setupwizard.skipSetup.confirm.message": "Ви впевнені? Налаштування економить ваш час, виконуючи лише кілька основних завдань конфігурації. Пропускати його слід лише тоді, коли ви знаєте, що робите.",
   "setupwizard.location.title": "Задати місцезнаходження",
   "setupwizard.location.header1": "Ви хотіли б поділитися місцезнаходженням вашого будинку?",
-  "setupwizard.location.header2": "Це допоможе визначити дані, які залежать від вашого розташування, наприклад, час сходу / заходу сонця або погоди.",
+  "setupwizard.location.header2": "Це допоможе визначити дані, які залежать від вашого розташування, наприклад: час сходу / заходу сонця, або погода.",
   "setupwizard.location.parameterLabel": "Розташування вашого дому",
   "setupwizard.location.retrieveFromDevice": "Отримати з цього пристрою",
   "setupwizard.location.retrieveFromDevice.error": "Помилка під час отримання поточної позиції",
