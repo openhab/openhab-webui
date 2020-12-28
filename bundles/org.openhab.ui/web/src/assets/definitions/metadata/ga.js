@@ -53,6 +53,8 @@ const classes = {
   'thermostatTemperatureAmbient': [],
   'thermostatHumidityAmbient': [],
   'thermostatTemperatureSetpoint': [],
+  'thermostatTemperatureSetpointHigh': [],
+  'thermostatTemperatureSetpointLow': [],
   'thermostatMode': [],
   'Camera': []
 }
