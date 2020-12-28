@@ -13,7 +13,6 @@
           search-container=".widgets-list"
           search-item=".widgetlist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
-          remove-diacritics
           :disable-button="!$theme.aurora"
         ></f7-searchbar>
       </f7-subnavbar>
