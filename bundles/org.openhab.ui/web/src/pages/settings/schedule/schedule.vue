@@ -13,7 +13,6 @@
           search-container=".timeline"
           search-item=".timeline-item-inner"
           search-in=".timeline-item-title"
-          remove-diacritics
           :disable-button="!$theme.aurora"
         ></f7-searchbar>
       </f7-subnavbar>

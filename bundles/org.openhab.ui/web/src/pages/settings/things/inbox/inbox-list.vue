@@ -13,7 +13,6 @@
           :init="initSearchbar"
           search-container=".contacts-list"
           search-in=".item-inner"
-          remove-diacritics
           :disable-button="!$theme.aurora"
         ></f7-searchbar>
       </f7-subnavbar>

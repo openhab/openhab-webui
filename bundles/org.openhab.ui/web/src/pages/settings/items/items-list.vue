@@ -20,7 +20,6 @@
         expandable
         search-container=".contacts-list"
         search-in=".item-title"
-        remove-diacritics
       ></f7-searchbar> -->
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -29,7 +28,6 @@
           :init="initSearchbar"
           search-container=".contacts-list"
           search-in=".item-title"
-          remove-diacritics
           :disable-button="!$theme.aurora"
         ></f7-searchbar>
       </f7-subnavbar>
