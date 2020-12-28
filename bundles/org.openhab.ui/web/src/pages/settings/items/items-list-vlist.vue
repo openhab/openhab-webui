@@ -12,7 +12,6 @@
           :init="initSearchbar"
           search-container=".virtual-list"
           search-in=".item-title, .item-subtitle, .item-footer"
-          remove-diacritics
           :disable-button="!$theme.aurora"
         ></f7-searchbar>
       </f7-subnavbar>
