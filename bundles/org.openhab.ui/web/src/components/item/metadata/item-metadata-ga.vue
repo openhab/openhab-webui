@@ -34,6 +34,9 @@ export default {
     }
   },
   computed: {
+    classes () {
+      return this.metadata.value
+    },
     parameters () {
       if (!this.metadata.value) return []
       return [...GoogleDefinitions[this.metadata.value]]
