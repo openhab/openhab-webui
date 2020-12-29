@@ -8,23 +8,23 @@
 
     <f7-list v-if="viewMode === 'design' && defaultComponent.component">
       <f7-list-item :key="componentSelectKey"
-         :title="'Widget'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }" ref="widgets">
+         :title="'Widget'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="widgets">
         <select name="widgets" @change="updateComponent">
           <option value="">Default ({{defaultComponent.component}})</option>
           <optgroup label="Standard Library (List)" v-if="namespace === 'listWidget'">
-            <option v-for="widget in standardListWidgets" :key="widget.name" :value="widget.name" :selected="metadata.value === widget.name">{{widget.label}}</option>
+            <option v-for="widget in orderedStandardListWidgets" :key="widget.name" :value="widget.name" :selected="metadata.value === widget.name">{{widget.label}}</option>
           </optgroup>
           <optgroup label="Standard Library (Cell)" v-else-if="namespace === 'cellWidget'">
-            <option v-for="widget in standardCellWidgets" :key="widget.name" :value="widget.name" :selected="metadata.value === widget.name">{{widget.label}}</option>
+            <option v-for="widget in orderedStandardCellWidgets" :key="widget.name" :value="widget.name" :selected="metadata.value === widget.name">{{widget.label}}</option>
           </optgroup>
           <optgroup label="Standard Library" v-else>
-            <option v-for="widget in standardWidgets" :key="widget.name" :value="widget.name" :selected="metadata.value === widget.name">{{widget.label}}</option>
+            <option v-for="widget in orderedStandardWidgets" :key="widget.name" :value="widget.name" :selected="metadata.value === widget.name">{{widget.label}}</option>
           </optgroup>
           <optgroup v-if="$store.getters.widgets.length" label="Personal Widgets">
-            <option v-for="widget in $store.getters.widgets" :value="'widget:' + widget.uid" :key="widget.uid" :selected="metadata.value.replace('widget:', '') === widget.uid">{{widget.uid}}</option>
+            <option v-for="widget in orderedPersonalWidgets" :value="'widget:' + widget.uid" :key="widget.uid" :selected="metadata.value.replace('widget:', '') === widget.uid">{{widget.uid}}</option>
           </optgroup>
           <!-- <optgroup label="System Widgets">
-            <option v-for="widget in systemWidgets" :key="widget.name" :value="widget.name">{{widget.label}}</option>
+            <option v-for="widget in orderedSystemWidgets" :key="widget.name" :value="widget.name">{{widget.label}}</option>
           </optgroup> -->
         </select>
       </f7-list-item>
@@ -81,6 +81,31 @@ export default {
     }
   },
   computed: {
+    orderedStandardWidgets () {
+      return [...this.standardWidgets].sort((a, b) => {
+        return a.name.localeCompare(b.name);
+      })
+    },
+    orderedStandardListWidgets () {
+      return [...this.standardListWidgets].sort((a, b) => {
+        return a.name.localeCompare(b.name);
+      })
+    },
+    orderedStandardCellWidgets () {
+      return [...this.standardCellWidgets].sort((a, b) => {
+        return a.name.localeCompare(b.name);
+      })
+    },
+    orderedSystemWidgets () {
+      return [...this.systemWidgets].sort((a, b) => {
+        return a.name.localeCompare(b.name);
+      })
+    },
+    orderedPersonalWidgets () {
+      return [...$store.getters.widgets].sort((a, b) => {
+        return a.name.localeCompare(b.name);
+      })
+    },
     configDescriptions () {
       let ret = {}
       if (!this.currentComponent || !this.currentComponent.component) return ret
