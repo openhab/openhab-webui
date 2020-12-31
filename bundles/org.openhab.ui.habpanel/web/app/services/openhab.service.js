@@ -165,7 +165,7 @@
         
         function registerEventSource() {
             if (typeof(EventSource) !== "undefined") {
-                var source = new EventSource('/rest/events?topics=smarthome/items/*/statechanged,smarthome/items/*/*/statechanged,smarthome/webaudio/playurl');
+                var source = new EventSource('/rest/events?topics=smarthome/items/*/state,smarthome/items/*/statechanged,smarthome/items/*/*/statechanged,smarthome/webaudio/playurl');
                 liveUpdatesEnabled = true;
 
                 source.onmessage = function (event) {
