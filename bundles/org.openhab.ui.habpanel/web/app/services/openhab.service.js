@@ -169,7 +169,7 @@
                         var evtdata = JSON.parse(event.data);
                         var topicparts = evtdata.topic.split('/');
 
-                        if (evtdata.type === 'ItemStateEvent' || evtdata.type === 'ItemStateChangedEvent' || evtdata.type === 'GroupItemStateChangedEvent') {
+                        if (evtdata.type === 'ItemStateChangedEvent' || evtdata.type === 'GroupItemStateChangedEvent') {
                             var payload = JSON.parse(evtdata.payload);
                             var newstate = payload.value;
                             var item = $filter('filter')($rootScope.items, {name: topicparts[2]}, true)[0];
