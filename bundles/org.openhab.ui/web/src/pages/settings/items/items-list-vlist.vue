@@ -11,7 +11,6 @@
           class="searchbar-items"
           :init="initSearchbar"
           search-container=".virtual-list"
-          search-in=".item-title, .item-subtitle, .item-footer"
           :disable-button="!$theme.aurora"
         ></f7-searchbar>
       </f7-subnavbar>
@@ -183,7 +182,7 @@ export default {
       for (let i = 0; i < items.length; i += 1) {
         var haystack = items[i].name
         if (items[i].label) haystack += ' ' + items[i].label
-        haystack += this.getItemTypeAndMetaLabel(items[i])
+        haystack += ' ' + this.getItemTypeAndMetaLabel(items[i])
         if (
           haystack.toLowerCase().indexOf(query.toLowerCase()) >= 0 ||
           query.trim() === ''
