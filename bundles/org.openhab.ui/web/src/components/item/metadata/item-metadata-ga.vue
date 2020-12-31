@@ -2,10 +2,10 @@
   <div>
     <f7-list>
       <f7-list-item :key="classSelectKey"
-         :title="'Google Assistant Class'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }" ref="classes">
+         :title="'Google Assistant Class'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="classes">
         <select name="classes" @change="updateClass">
           <option value=""></option>
-          <option v-for="cl in classesDefs" :value="cl" :key="cl" :selected="isSelected(cl)">{{cl}}</option>
+          <option v-for="cl in orderedClasses" :value="cl" :key="cl" :selected="isSelected(cl)">{{cl}}</option>
         </select>
       </f7-list-item>
     </f7-list>
@@ -36,6 +36,11 @@ export default {
   computed: {
     classes () {
       return this.metadata.value
+    },
+    orderedClasses () {
+      return [...this.classesDefs].sort((a, b) => {
+        return a.localeCompare(b);
+      })
     },
     parameters () {
       if (!this.metadata.value) return []

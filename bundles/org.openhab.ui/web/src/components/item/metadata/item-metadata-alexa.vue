@@ -5,18 +5,18 @@
     </div>
     <f7-list>
       <f7-list-item :key="classSelectKey"
-         :title="(multiple) ? 'Alexa Classes' : 'Alexa Class'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }" ref="classes">
+         :title="(multiple) ? 'Alexa Classes' : 'Alexa Class'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }" ref="classes">
         <select name="parameters" @change="updateClasses" :multiple="multiple">
           <option v-if="!multiple" value=""></option>
           <optgroup label="Labels" v-if="!multiple">
-            <option v-for="cl in classesDefs.filter((c) => c.indexOf('label:') === 0)"
+            <option v-for="cl in orderedClasses.filter((c) => c.indexOf('label:') === 0)"
               :value="cl.replace('label:', '')" :key="cl"
               :selected="isSelected(cl.replace('label:', ''))">
               {{cl.replace('label:', '')}}
             </option>
           </optgroup>
           <optgroup label="Capabilities">
-            <option v-for="cl in classesDefs.filter((c) => c.indexOf('label:') !== 0)"
+            <option v-for="cl in orderedClasses.filter((c) => c.indexOf('label:') !== 0)"
               :value="cl" :key="cl"
               :selected="isSelected(cl)">
               {{cl}}
@@ -54,6 +54,11 @@ export default {
     classes () {
       if (!this.multiple) return this.metadata.value
       return (this.metadata.value) ? this.metadata.value.split(',') : []
+    },
+    orderedClasses () {
+      return [...this.classesDefs].sort((a, b) => {
+        return a.localeCompare(b);
+      })
     },
     parameters () {
       if (!this.classes) return []

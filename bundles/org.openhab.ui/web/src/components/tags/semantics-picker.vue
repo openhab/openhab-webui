@@ -1,24 +1,24 @@
 <template>
   <f7-list no-hairlines-md v-if="show">
-    <f7-list-item title="Semantic Class" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item title="Semantic Class" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
       <select name="select-semantics-class" @change="update('class', $event.target.value)">
         <option v-if="!hideNone" :value="''">None</option>
         <optgroup label="Location" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Location')">
-          <option v-for="type in semanticClasses.Locations" :key="type" :value="type" :selected="type === semanticClass">{{type}}</option>
+          <option v-for="type in orderedLocations" :key="type" :value="type" :selected="type === semanticClass">{{type}}</option>
         </optgroup>
         <optgroup label="Equipment" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Equipment')">
-          <option v-for="type in semanticClasses.Equipment" :key="type" :value="type" :selected="type === semanticClass">{{type}}</option>
+          <option v-for="type in orderedEquipment" :key="type" :value="type" :selected="type === semanticClass">{{type}}</option>
         </optgroup>
         <optgroup label="Point" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Point')">
-          <option v-for="type in semanticClasses.Points" :key="type" :value="type" :selected="type === semanticClass">{{type}}</option>
+          <option v-for="type in orderedPoints" :key="type" :value="type" :selected="type === semanticClass">{{type}}</option>
         </optgroup>
       </select>
     </f7-list-item>
     <f7-list-item v-if="currentSemanticType && !hideType" title="Semantic Type" :after="currentSemanticType" />
-    <f7-list-item v-if="currentSemanticType == 'Point'" title="Semantic Property" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item v-if="currentSemanticType == 'Point'" title="Semantic Property" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
       <select name="select-semantics-proerty" :value="semanticProperty" @change="update('property', $event.target.value)">
         <option :value="''">None</option>
-        <option v-for="type in semanticClasses.Properties" :key="type" :value="type" :selected="type === semanticProperty">{{type}}</option>
+        <option v-for="type in orderedProperties" :key="type" :value="type" :selected="type === semanticProperty">{{type}}</option>
       </select>
     </f7-list-item>
   </f7-list>
@@ -96,6 +96,26 @@ export default {
     }
   },
   computed: {
+    orderedLocations () {
+      return [...this.semanticClasses.Locations].sort((a, b) => {
+        return a.localeCompare(b);
+      })
+    },
+    orderedEquipment () {
+      return [...this.semanticClasses.Equipment].sort((a, b) => {
+        return a.localeCompare(b);
+      })
+    },
+    orderedPoints () {
+      return [...this.semanticClasses.Points].sort((a, b) => {
+        return a.localeCompare(b);
+      })
+    },
+    orderedProperties () {
+      return [...this.semanticClasses.Properties].sort((a, b) => {
+        return a.localeCompare(b);
+      })
+    },
     currentSemanticType () {
       return this.semanticType(this.semanticClass)
     }
