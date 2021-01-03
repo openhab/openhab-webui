@@ -74,7 +74,11 @@ export default {
         case 'doors':
           equipment =  [
             ...findEquipment(this.element.equipment, 'Equipment_Door', false),
-            ...findEquipment(this.element.equipment, 'Equipment_Door_FrontDoor', false)
+            ...findEquipment(this.element.equipment, 'Equipment_Door_FrontDoor', false),
+	          ...findEquipment(this.element.equipment, 'Equipment_Door_BackDoor', false),
+	          ...findEquipment(this.element.equipment, 'Equipment_Door_InnerDoor', false),
+	          ...findEquipment(this.element.equipment, 'Equipment_Door_CellarDoor', false),
+	          ...findEquipment(this.element.equipment, 'Equipment_Door_SideDoor', false)
           ]
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
