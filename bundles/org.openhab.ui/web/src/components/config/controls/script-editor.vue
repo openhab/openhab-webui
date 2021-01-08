@@ -49,6 +49,8 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/mode/clike/clike.js'
 import 'codemirror/mode/groovy/groovy.js'
+import 'codemirror/mode/python/python.js'
+import 'codemirror/mode/ruby/ruby.js'
 import 'codemirror/mode/yaml/yaml.js'
 
 // theme css
@@ -165,6 +167,8 @@ export default {
       if (this.mode && this.mode.indexOf('yaml') >= 0) return 'text/x-yaml'
       if (this.mode && this.mode === 'application/javascript') return 'text/javascript'
       if (this.mode && this.mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
+      if (this.mode && this.mode === 'application/python') return 'text/x-python'
+      if (this.mode && this.mode === 'application/x-ruby') return 'text/x-ruby'
       if (this.mode && this.mode === 'application/x-groovy') return 'text/x-groovy'
       return this.mode
     },
