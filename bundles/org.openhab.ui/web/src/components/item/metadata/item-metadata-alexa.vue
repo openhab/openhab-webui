@@ -16,7 +16,7 @@
             </option>
           </optgroup>
           <optgroup label="Capabilities">
-            <option v-for="cl in orderedClasses.filter((c) => c.indexOf('label:') !== 0 && c.indexOf('endpoint:') === (itemType === 'Group'? 0: -1))"
+            <option v-for="cl in orderedClasses.filter((c) => c.indexOf('label:') !== 0 && c.indexOf('endpoint:') === (itemType === 'Group'? 0 : -1))"
               :value="cl.replace('endpoint:', '')" :key="cl"
               :selected="isSelected(cl.replace('endpoint:', ''))">
               {{cl.replace('endpoint:', '')}}
@@ -47,7 +47,7 @@ export default {
     return {
       itemType: this.item.type,
       classesDefs: Object.keys(AlexaDefinitions),
-      multiple: this.item.type!=='Group' && !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
+      multiple: this.item.type !== 'Group' && !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
       classSelectKey: this.$f7.utils.id()
     }
   },

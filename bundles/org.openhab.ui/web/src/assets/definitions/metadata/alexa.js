@@ -35,6 +35,7 @@ const categories = [
   'TV',
   'WEARABLE'
 ]
+
 // Group endpoints are generated from the display categories. Example from the docs: SECURITY_PANEL => Endpoint.SecurityPanel.
 const groupEndpoints = categories
   .map(category => {
@@ -42,9 +43,9 @@ const groupEndpoints = categories
     let capitalizeNext = false
     for (var i = 0; i < category.length; i++) {
       const currentChar = category.charAt(i)
-      if (i == 0) {
+      if (i === 0) {
         convertedChars.push(currentChar.toUpperCase())
-      } else if (currentChar == '_') {
+      } else if (currentChar === '_') {
         capitalizeNext = true
       } else if (capitalizeNext) {
         convertedChars.push(currentChar.toUpperCase())
@@ -95,8 +96,6 @@ const labels = {
   'RangeComponent': [],
   'ToggleComponent': []
 }
-
-
 
 const p = (type, name, label, description, options, advanced) => {
   return {
