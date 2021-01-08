@@ -34,7 +34,7 @@
 
     <f7-list-index
       ref="listIndex"
-      v-show="groupBy === 'alphabetical'"
+      v-show="groupBy === 'alphabetical' && !$device.desktop"
       list-el=".inbox-list"
       :scroll-list="true"
       :label="true"

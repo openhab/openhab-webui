@@ -35,6 +35,7 @@
     <f7-list-index
       ref="listIndex"
       v-if="$refs.rulesList"
+      v-show="!$device.desktop"
       :listEl="$refs.rulesList ? $$($refs.rulesList.$el) : undefined"
       :scroll-list="true"
       :label="true"
@@ -168,7 +169,7 @@ export default {
         this.ready = true
         setTimeout(() => {
           this.initSearchbar = true
-          this.$refs.listIndex.update()
+          if (this.$refs.listIndex) this.$refs.listIndex.update()
         })
 
         if (!this.eventSource) this.startEventSource()
