@@ -17,12 +17,12 @@
     </f7-card-content>
     <f7-card-footer v-if="createMode || editMode" key="item-card-buttons">
       <f7-button v-if="createMode" color="blue" fill raised @click="create">Create</f7-button>
-      <f7-button v-else color="blue" fill raised @click="save">Save</f7-button>
+      <f7-button v-else color="blue" fill raised @click="save" v-show="model.item.editable">Save</f7-button>
       <f7-button v-if="createMode || editMode" color="blue" @click="cancel">Cancel</f7-button>
     </f7-card-footer>
     <f7-card-footer v-else key="item-card-buttons-edit-mode">
       <f7-button v-if="!editMode && !createMode" color="blue" @click="editMode = true" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">Edit</f7-button>
-      <f7-button v-if="!editMode && !createMode" color="red" @click="remove">Remove</f7-button>
+      <f7-button v-if="!editMode && !createMode && model.item.editable" color="red" @click="remove">Remove</f7-button>
     </f7-card-footer>
   </f7-card>
 </template>
@@ -30,14 +30,12 @@
 <script>
 import Item from '@/components/item/item.vue'
 import ItemForm from '@/components/item/item-form.vue'
-import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 
 export default {
   props: ['model', 'links'],
   components: {
     Item,
-    ItemForm,
-    MetadataMenu
+    ItemForm
   },
   data () {
     return {
