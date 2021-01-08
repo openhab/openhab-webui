@@ -158,7 +158,9 @@ export default {
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'alarms':
-          return findPoints(this.element.properties, 'Point_Alarm', true)
+          direct = findPoints(this.element.properties, 'Point_Alarm', true)
+          if (direct.length) return direct
+          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Alarm', true)
         default:
           return []
       }
