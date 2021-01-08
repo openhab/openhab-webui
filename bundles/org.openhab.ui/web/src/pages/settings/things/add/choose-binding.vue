@@ -13,13 +13,6 @@
       </f7-subnavbar>
     </f7-navbar>
 
-    <f7-list-index
-      ref="listIndex"
-      list-el=".binding-list"
-      :scroll-list="true"
-      :label="true"
-    ></f7-list-index>
-
     <empty-state-placeholder v-if="ready && !bindings.length" icon="circle_grid_hex" title="things.nobindings.title" text="things.nobindings.text" />
 
     <f7-block class="block-narrow">
