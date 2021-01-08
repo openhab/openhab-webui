@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="text-align:right" class="padding-right">
+    <div style="text-align:right" class="padding-right" v-if="itemType !== 'Group'">
       <label @click="toggleMultiple" style="cursor:pointer">Multiple</label> <f7-checkbox :checked="multiple" @change="toggleMultiple"></f7-checkbox>
     </div>
     <f7-list>
@@ -8,7 +8,7 @@
          :title="(multiple) ? 'Alexa Classes' : 'Alexa Class'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }" ref="classes">
         <select name="parameters" @change="updateClasses" :multiple="multiple">
           <option v-if="!multiple" value=""></option>
-          <optgroup label="Labels" v-if="!multiple">
+          <optgroup label="Labels" v-if="!multiple && itemType !== 'Group'">
             <option v-for="cl in orderedClasses.filter((c) => c.indexOf('label:') === 0)"
               :value="cl.replace('label:', '')" :key="cl"
               :selected="isSelected(cl.replace('label:', ''))">
@@ -16,10 +16,10 @@
             </option>
           </optgroup>
           <optgroup label="Capabilities">
-            <option v-for="cl in orderedClasses.filter((c) => c.indexOf('label:') !== 0)"
-              :value="cl" :key="cl"
-              :selected="isSelected(cl)">
-              {{cl}}
+            <option v-for="cl in orderedClasses.filter((c) => c.indexOf('label:') !== 0 && c.indexOf('endpoint:') === (itemType === 'Group'? 0 : -1))"
+              :value="cl.replace('endpoint:', '')" :key="cl"
+              :selected="isSelected(cl.replace('endpoint:', ''))">
+              {{cl.replace('endpoint:', '')}}
             </option>
           </optgroup>
         </select>
@@ -39,14 +39,15 @@ import AlexaDefinitions from '@/assets/definitions/metadata/alexa'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
-  props: ['itemName', 'metadata', 'namespace'],
+  props: ['item', 'metadata', 'namespace'],
   components: {
     ConfigSheet
   },
   data () {
     return {
+      itemType: this.item.type,
       classesDefs: Object.keys(AlexaDefinitions),
-      multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
+      multiple: this.item.type !== 'Group' && !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
       classSelectKey: this.$f7.utils.id()
     }
   },
@@ -63,7 +64,7 @@ export default {
     parameters () {
       if (!this.classes) return []
       if (!this.multiple) {
-        return AlexaDefinitions['label:' + this.classes] || [...AlexaDefinitions[this.classes]]
+        return AlexaDefinitions['label:' + this.classes] || AlexaDefinitions['endpoint:' + this.classes] || [...AlexaDefinitions[this.classes]]
       }
       const params = []
       this.classes.forEach((c) => {

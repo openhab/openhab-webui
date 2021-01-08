@@ -36,6 +36,30 @@ const categories = [
   'WEARABLE'
 ]
 
+// Group endpoints are generated from the display categories. Example from the docs: SECURITY_PANEL => Endpoint.SecurityPanel.
+const groupEndpoints = categories
+  .map(category => {
+    const convertedChars = []
+    let capitalizeNext = false
+    for (var i = 0; i < category.length; i++) {
+      const currentChar = category.charAt(i)
+      if (i === 0) {
+        convertedChars.push(currentChar.toUpperCase())
+      } else if (currentChar === '_') {
+        capitalizeNext = true
+      } else if (capitalizeNext) {
+        convertedChars.push(currentChar.toUpperCase())
+        capitalizeNext = false
+      } else {
+        convertedChars.push(currentChar.toLocaleLowerCase())
+      }
+    }
+    return 'Endpoint.' + convertedChars.join('')
+  }).reduce((endpoints, endpointName) => {
+    endpoints[endpointName] = []
+    return endpoints
+  }, {})
+
 const labels = {
   'Switchable': [],
   'Lighting': [],
@@ -232,6 +256,11 @@ let classes = {}
 for (let l in labels) {
   labels[l].unshift(categoryParameter)
   classes['label:' + l] = labels[l]
+}
+
+for (let l in groupEndpoints) {
+  groupEndpoints[l].unshift(categoryParameter)
+  classes['endpoint:' + l] = groupEndpoints[l]
 }
 
 for (let c in capabilities) {
