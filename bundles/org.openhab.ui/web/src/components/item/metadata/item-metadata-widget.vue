@@ -83,27 +83,27 @@ export default {
   computed: {
     orderedStandardWidgets () {
       return [...this.standardWidgets].sort((a, b) => {
-        return a.name.localeCompare(b.name);
+        return a.name.localeCompare(b.name)
       })
     },
     orderedStandardListWidgets () {
       return [...this.standardListWidgets].sort((a, b) => {
-        return a.name.localeCompare(b.name);
+        return a.name.localeCompare(b.name)
       })
     },
     orderedStandardCellWidgets () {
       return [...this.standardCellWidgets].sort((a, b) => {
-        return a.name.localeCompare(b.name);
+        return a.name.localeCompare(b.name)
       })
     },
     orderedSystemWidgets () {
       return [...this.systemWidgets].sort((a, b) => {
-        return a.name.localeCompare(b.name);
+        return a.name.localeCompare(b.name)
       })
     },
     orderedPersonalWidgets () {
-      return [...$store.getters.widgets].sort((a, b) => {
-        return a.name.localeCompare(b.name);
+      return [...this.$store.getters.widgets].sort((a, b) => {
+        return a.name.localeCompare(b.name)
       })
     },
     configDescriptions () {

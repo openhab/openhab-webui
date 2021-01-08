@@ -48,7 +48,7 @@ export default {
     },
     orderedClasses () {
       return [...this.classesDefs].sort((a, b) => {
-        return a.localeCompare(b);
+        return a.localeCompare(b)
       })
     },
     parameters () {
