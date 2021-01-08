@@ -98,22 +98,22 @@ export default {
   computed: {
     orderedLocations () {
       return [...this.semanticClasses.Locations].sort((a, b) => {
-        return a.localeCompare(b);
+        return a.localeCompare(b)
       })
     },
     orderedEquipment () {
       return [...this.semanticClasses.Equipment].sort((a, b) => {
-        return a.localeCompare(b);
+        return a.localeCompare(b)
       })
     },
     orderedPoints () {
       return [...this.semanticClasses.Points].sort((a, b) => {
-        return a.localeCompare(b);
+        return a.localeCompare(b)
       })
     },
     orderedProperties () {
       return [...this.semanticClasses.Properties].sort((a, b) => {
-        return a.localeCompare(b);
+        return a.localeCompare(b)
       })
     },
     currentSemanticType () {
