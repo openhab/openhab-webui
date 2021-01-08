@@ -39,6 +39,7 @@
 
     <f7-list-index
       ref="listIndex"
+      v-show="!$device.desktop"
       list-el=".items-list"
       :scroll-list="true"
       :label="true"

@@ -32,7 +32,7 @@
     <f7-list-index
       v-if="ready"
       ref="listIndex" :key="'pages-index'"
-      v-show="groupBy === 'alphabetical'"
+      v-show="groupBy === 'alphabetical' && !$device.desktop"
       list-el=".pages-list"
       :scroll-list="true"
       :label="true"
