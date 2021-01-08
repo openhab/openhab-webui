@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
-    <f7-navbar :title="thing.label" back-link="Back" no-hairline>
+    <f7-navbar :title="thing.label || thing.UID" back-link="Back" no-hairline>
       <f7-nav-right v-show="!error">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
@@ -446,10 +446,10 @@ export default {
     deleteThing () {
       let url, message
       if (this.thing.statusInfo.status === 'REMOVING') {
-        message = `${this.thing.label} is currently being removed but the binding has not confirmed it has finished the operation yet. Would you like to force its removal? Warning: this could cause stability issues with the binding!`
+        message = `${this.thing.label || this.thing.UID} is currently being removed but the binding has not confirmed it has finished the operation yet. Would you like to force its removal? Warning: this could cause stability issues with the binding!`
         url = '/rest/things/' + this.thingId + '?force=true'
       } else {
-        message = `Are you sure you want to delete ${this.thing.label}?`
+        message = `Are you sure you want to delete ${this.thing.label || this.thing.UID}?`
         url = '/rest/things/' + this.thingId
       }
       this.$f7.dialog.confirm(

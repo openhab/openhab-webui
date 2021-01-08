@@ -79,7 +79,7 @@
               @click.ctrl="(e) => ctrlClick(e, thing)"
               @click.exact="(e) => click(e, thing)"
               link=""
-              :title="thing.label"
+              :title="thing.label || thing.UID"
               :footer="thing.UID"
             >
               <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">{{thingStatusBadgeText(thing.statusInfo)}}</f7-badge>
@@ -137,7 +137,7 @@ export default {
     indexedThings () {
       if (this.groupBy === 'alphabetical') {
         return this.things.reduce((prev, thing, i, things) => {
-          const initial = thing.label.substring(0, 1).toUpperCase()
+          const initial = (thing.label || thing.UID).substring(0, 1).toUpperCase()
           if (!prev[initial]) {
             prev[initial] = []
           }
@@ -168,7 +168,7 @@ export default {
     load () {
       this.loading = true
       this.$oh.api.get('/rest/things?summary=true').then((data) => {
-        this.things = data.sort((a, b) => a.label.localeCompare(b.label))
+        this.things = data.sort((a, b) => (a.label || a.UID).localeCompare(b.label || a.UID))
         this.initSearchbar = true
         this.loading = false
         this.ready = true
