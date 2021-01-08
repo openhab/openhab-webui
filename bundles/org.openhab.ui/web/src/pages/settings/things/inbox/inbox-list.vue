@@ -236,6 +236,26 @@ export default {
               }
             },
             {
+              text: 'Add as Thing (with custom ID)',
+              color: 'blue',
+              bold: true,
+              onClick: () => {
+                this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID}. You can change the suggested thing ID below:`,
+                  'Add as Thing',
+                  (newThingId) => {
+                    this.$f7.dialog.prompt(`Enter the desired name of the new Thing:`,
+                      'Add as Thing',
+                      (name) => {
+                        this.approveEntry(entry, name, newThingId)
+                      },
+                      null,
+                      entry.label)
+                  },
+                  null,
+                  entry.thingUID.substring(entry.thingUID.indexOf(':', entry.thingUID.indexOf(':') + 1) + 1))
+              }
+            },
+            {
               text: (!ignored) ? 'Ignore' : 'Unignore',
               color: (!ignored) ? 'orange' : 'blue',
               onClick: () => {
@@ -263,8 +283,8 @@ export default {
 
       actions.open()
     },
-    approveEntry (entry, name) {
-      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve`, name).then((res) => {
+    approveEntry (entry, name, newThingId) {
+      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve${newThingId ? '?newThingId=' + newThingId : ''}`, name).then((res) => {
         this.$f7.toast.create({
           text: 'Entry approved',
           destroyOnClose: true,
@@ -321,14 +341,14 @@ export default {
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-        self.load()
+        this.load()
       }).catch((err) => {
         this.$f7.toast.create({
           text: 'Error while removing entry: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-        self.load()
+        this.load()
       })
     },
     toggleIgnored () {
