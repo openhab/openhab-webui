@@ -212,7 +212,7 @@ export default {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
       } else {
-        this.$f7router.navigate(item.uid)
+        this.$f7router.navigate((item.editable) ? item.uid : '/settings/scripts/' + item.uid)
       }
     },
     ctrlClick (event, item) {
