@@ -1,0 +1,19 @@
+{
+  "profile.title": "Το προφίλ σας",
+  "profile.changePassword": "Αλλάξτε τον κωδικό σας",
+  "profile.sessions": "Συνεδρίες",
+  "profile.sessions.header": "Σημείωση: ακόμα και αν διαγράψετε μια συνεδρία, ενδέχεται να παραμείνει ενεργή έως ότου λήξουν όλα τα έγκυρα διακριτικά πρόσβασης.",
+  "profile.sessions.signOut": "Αποσυνδεθείτε από αυτή τη συνεδρία",
+  "profile.sessions.created": "Δημιουργήθηκε: ",
+  "profile.sessions.lastRefreshed": "Τελευταία ανανέωση: ",
+  "profile.sessions.delete.success": "Η συνεδρία διαγράφηκε",
+  "profile.sessions.delete.error": "Σφάλμα κατά την διαγραφή της συνεδρίας: ",
+  "profile.sessions.signOut.error": "Σφάλμα κατά την αποσύνδεση: ",
+  "profile.apiTokens": "Διακριτικά API",
+  "profile.apiTokens.header": "Δημιουργήστε διακριτικά API για να δώσετε μόνιμη πρόσβαση εκ μέρους σας σε εξωτερικά εργαλεία και υπηρεσίες που δεν υποστηρίζουν το OAuth2 Authorization Framework.",
+  "profile.apiTokens.created": "Δημιουργήθηκε: ",
+  "profile.apiTokens.validForScope": "Έγκυρο για σκοπό: ",
+  "profile.apiTokens.create": "Δημιουργία νέου διακριτικού API",
+  "profile.apiTokens.delete.success": "Το διακριτικό API διαγράφηκε",
+  "profile.apiTokens.delete.error": "Σφάλμα κατά τη διαγραφή του διακριτικού API: "
+}
