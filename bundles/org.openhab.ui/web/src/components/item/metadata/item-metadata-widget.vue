@@ -103,7 +103,7 @@ export default {
     },
     orderedPersonalWidgets () {
       return [...this.$store.getters.widgets].sort((a, b) => {
-        return a.name.localeCompare(b.name)
+        return a.uid.localeCompare(b.uid)
       })
     },
     configDescriptions () {
