@@ -62,6 +62,7 @@ import 'codemirror/addon/edit/closebrackets.js'
 // for autocomplete
 import 'codemirror/addon/hint/show-hint.js'
 import 'codemirror/addon/hint/show-hint.css'
+import 'codemirror/addon/hint/anyword-hint.js'
 import 'codemirror/addon/dialog/dialog.js'
 import 'codemirror/addon/dialog/dialog.css'
 import 'codemirror/addon/tern/tern.js'
@@ -94,6 +95,7 @@ import OpenhabDefs from '@/assets/openhab-tern-defs.json'
 import componentsHint from '../editor/hint-components'
 import rulesHint from '../editor/hint-rules'
 import thingsHint from '../editor/hint-things'
+import pythonHint from '../editor/hint-python'
 
 // Adapted from https://github.com/lkcampbell/brackets-indent-guides (MIT)
 var indentGuidesOverlay = {
@@ -257,6 +259,7 @@ export default {
         if (this.hintContext) cm.state.hintContext = Object.assign({}, this.hintContext)
         cm.setOption('hintOptions', {
           closeOnUnfocus: false,
+          completeSingle: self.mode && self.mode.indexOf('yaml') > 0,
           hint (cm, option) {
             if (self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
               return componentsHint(cm, option, self.mode)
@@ -264,6 +267,10 @@ export default {
               return rulesHint(cm, option, self.mode)
             } else if (self.mode === 'application/vnd.openhab.thing+yaml') {
               return thingsHint(cm, option, self.mode)
+            } else if (self.mode === 'application/python') {
+              return pythonHint(cm, option, self.mode)
+            } else {
+              return _CodeMirror.hint.anyword(cm, option, self.mode)
             }
           }
         })

@@ -10,12 +10,12 @@
       <f7-link @click="currentTab = 'tree'" :tab-link-active="currentTab === 'tree'" class="tab-link">Design</f7-link>
       <f7-link @click="currentTab = 'code'" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
     </f7-toolbar>
-    <f7-toolbar bottom class="toolbar-details" v-show="currentTab === 'tree'">
+    <f7-toolbar bottom class="toolbar-details" v-if="currentTab === 'tree'">
       <f7-link :disabled="selectedWidget != null" class="left" @click="selectedWidget = null">Clear</f7-link>
       <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link>
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
-      <f7-tab id="tree" @tab:show="() => this.currentTab = 'tree'" :tab-active="currentTab === 'tree'">
+      <f7-tab class="design" id="tree" @tab:show="() => this.currentTab = 'tree'" :tab-active="currentTab === 'tree'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader></f7-preloader>
           <div>Loading...</div>
@@ -98,10 +98,13 @@
 
 <style lang="stylus">
 .sitemap-editor-tabs
-  --f7-grid-gap 0px
-  height calc(100% - var(--f7-toolbar-height))
+  height calc(100%)
+  overflow hidden
   .tab
     height 100%
+  .design
+    --f7-grid-gap 0px
+    height calc(100% - var(--f7-toolbar-height))
 
 .sitemap-tree-wrapper
   padding 0
