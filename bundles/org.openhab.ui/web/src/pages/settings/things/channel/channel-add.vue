@@ -10,7 +10,8 @@
       <f7-col>
         <f7-list inline-labels no-hairlines-md>
           <f7-list-input type="text" placeholder="Channel Identifier" :value="channel.id"
-                         @input="channel.id = $event.target.value" clear-button>
+                         @input="channel.id = $event.target.value" clear-button
+                         required validate pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only">
           </f7-list-input>
           <f7-list-input type="text" placeholder="Label" :value="channel.label"
                          @input="channel.label = $event.target.value" clear-button>
@@ -81,6 +82,10 @@ export default {
     save () {
       if (!this.channel.id) {
         this.$f7.dialog.alert('Please give an unique identifier')
+        return
+      }
+      if (!this.channel.id.match(/^[a-zA-Z0-9_]*$/)) {
+        this.$f7.dialog.alert('The identifier should only contain alphanumeric characters')
         return
       }
       if (!this.channel.label) {
