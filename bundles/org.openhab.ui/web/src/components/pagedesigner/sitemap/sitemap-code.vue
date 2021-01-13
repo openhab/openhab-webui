@@ -1,35 +1,49 @@
 <template>
-  <div class="row">
-    <div class="col">
-      <editor class="sitemap-parser" :value="sitemapDsl" @input="updateSitemap" />
-      <div v-if="parsedSitemap.error" class="sitemap-results error">
-        <pre><code class="text-color-red">{{parsedSitemap.error}}</code></pre>
+  <f7-block class="sitemap-code">
+    <div class="row sitemap-parser resizable">
+      <div class="col">
+        <editor :value="sitemapDsl" @input="updateSitemap" mode="application/vnd.openhab.sitemap+dsl" />
       </div>
-      <div v-else class="sitemap-results">
-        <pre><code class="text-color-teal">Your sitemap definition looks valid.</code></pre>
-        <pre><code>{{parsedSitemap}}</code></pre>
-      </div>
+      <span class="resize-handler"></span>
     </div>
-  </div>
+    <div class="row sitemap-results resizable">
+      <div class="col">
+        <div v-if="parsedSitemap.error" class="error">
+          <pre><code class="text-color-red">{{parsedSitemap.error}}</code></pre>
+        </div>
+        <div v-else>
+          <pre><code class="text-color-teal">Your sitemap definition looks valid.</code></pre>
+          <pre><code>{{parsedSitemap}}</code></pre>
+        </div>
+      </div>
+      <span class="resize-handler"></span>
+    </div>
+  </f7-block>
 </template>
 
 <style lang="stylus">
-.sitemap-parser.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(50% - 2*var(--f7-navbar-height))
-  width 100%
-.sitemap-results
-  position absolute
-  top 50%
-  height 50%
-  overflow-y auto
-  width 100%
-  &.error
+.sitemap-code
+  margin-top 0 !important
+  margin-bottom 0 !important
+  padding 0
+  z-index auto !important
+  top 0
+  height calc(100%)
+  .sitemap-parser
+    height 50%
+    width 100%
+    .vue-codemirror
+      top 0
+      height calc(100% - var(--f7-grid-gap))
+  .sitemap-results
+    height 50%
+    width 100%
+    overflow-y auto
+    .error
+      pre
+        padding 0 1rem
     pre
       padding 0 1rem
-  pre
-    padding 0 1rem
 </style>
 
 <script>

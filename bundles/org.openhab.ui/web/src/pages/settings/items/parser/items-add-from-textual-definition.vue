@@ -6,102 +6,110 @@
         <f7-link @click="add()" v-if="!$theme.md">Add</f7-link>
       </f7-nav-right>
     </f7-navbar>
-    <div class="row" v-if="ready">
-      <div class="col">
-        <editor class="items-parser" :value="itemsDsl" @input="(value) => itemsDsl = value" />
-        <div v-if="parsedItems.error" class="items-results error">
-          <div v-if="!itemsDsl">
-            <empty-state-placeholder icon="text_badge_plus" title="items.add.title" text="items.add.text" />
-          </div>
-          <pre v-else><code>{{parsedItems.error}}</code></pre>
+    <f7-block class="items-add-from-textual-definition">
+      <div class="row items-parser resizable" v-if="ready">
+        <div class="col">
+          <editor class="editor" :value="itemsDsl" @input="(value) => itemsDsl = value" mode="application/vnd.openhab.items+dsl" />
         </div>
-        <div v-else class="items-results">
-          <div class="card data-table data-table-init">
-            <table>
-              <thead>
-                <tr>
-                  <th class="label-cell">Type</th>
-                  <th class="label-cell">Name</th>
-                  <th class="label-cell">Label</th>
-                  <th class="label-cell">Icon</th>
-                  <th class="label-cell">Groups</th>
-                  <th class="label-cell">Tags</th>
-                  <th class="numerical-cell">Link(s)</th>
-                  <th class="numerical-cell">Metadata</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(item, idx) in parsedItems" :key="idx" class="background-yellow">
-                  <td class="label-cell">{{item.type}}</td>
-                  <td class="label-cell">
-                    {{item.name}}
-                    <f7-icon v-if="item.existing && item.existing.editable" f7="exclamationmark_octagon_fill" color="yellow" size="22" tooltip="Item already exists" />
-                    <f7-icon v-if="item.existing && !item.existing.editable" f7="multiply_circle_fill" color="red" size="22" tooltip="Item already exists and is not editable" />
-                  </td>
-                  <td class="label-cell">{{item.label}}</td>
-                  <td class="label-cell"><oh-icon v-if="item.category" :icon="item.category" :width="20" :height="20" /></td>
-                  <td class="label-cell">{{(item.groupNames) ? item.groupNames.join(', ') : ''}}</td>
-                  <td class="label-cell" v-if="item.tags">
-                    <f7-chip class="margin-right" v-for="tag in item.tags" :key="tag" :text="tag" media-bg-color="blue">
-                      <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
-                    </f7-chip>
-                  </td>
-                  <td class="label-cell" v-else></td>
-                  <!-- links -->
-                  <td class="label-cell" v-if="item.links">
-                    <div class="margin-right" v-for="(link, lidx) in item.links" :key="lidx">
-                      <div v-if="link.value">
-                        <div><em>{{link.value}}</em></div>
-                        <small>{{link.config.map((c) => c.key + '=' + c.value).join(', ')}}</small>
-                      </div>
-                      <em v-else>{{link}}</em>
-                    </div>
-                  </td>
-                  <td class="label-cell" v-else></td>
-                  <!-- metadata -->
-                  <td class="label-cell" v-if="item.metadata">
-                    <div class="margin-right" v-for="(metadata, lidx) in item.metadata" :key="lidx">
-                      <div v-if="metadata.value.value">
-                        <div>{{metadata.key}}="{{metadata.value.value}}"</div>
-                        <small>{{metadata.value.config.map((c) => c.key + '=' + c.value).join(', ')}}</small>
-                      </div>
-                      <div v-else>{{metadata.key}}="{{metadata.value}}"</div>
-                    </div>
-                  </td>
-                  <td class="label-cell" v-else></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <span class="resize-handler"></span>
       </div>
-    </div>
+      <div class="row items-results resizable" v-if="ready">
+        <div class="col">
+          <div v-if="parsedItems.error" class="error">
+            <div v-if="!itemsDsl">
+              <empty-state-placeholder icon="text_badge_plus" title="items.add.title" text="items.add.text" />
+            </div>
+            <pre v-else><code>{{parsedItems.error}}</code></pre>
+          </div>
+          <div v-if="!parsedItems.error" class="items-table">
+            <div class="card data-table data-table-init">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="label-cell">Type</th>
+                    <th class="label-cell">Name</th>
+                    <th class="label-cell">Label</th>
+                    <th class="label-cell">Icon</th>
+                    <th class="label-cell">Groups</th>
+                    <th class="label-cell">Tags</th>
+                    <th class="numerical-cell">Link(s)</th>
+                    <th class="numerical-cell">Metadata</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, idx) in parsedItems" :key="idx" class="background-yellow">
+                    <td class="label-cell">{{item.type}}</td>
+                    <td class="label-cell">
+                      {{item.name}}
+                      <f7-icon v-if="item.existing && item.existing.editable" f7="exclamationmark_octagon_fill" color="yellow" size="22" tooltip="Item already exists" />
+                      <f7-icon v-if="item.existing && !item.existing.editable" f7="multiply_circle_fill" color="red" size="22" tooltip="Item already exists and is not editable" />
+                    </td>
+                    <td class="label-cell">{{item.label}}</td>
+                    <td class="label-cell"><oh-icon v-if="item.category" :icon="item.category" :width="20" :height="20" /></td>
+                    <td class="label-cell">{{(item.groupNames) ? item.groupNames.join(', ') : ''}}</td>
+                    <td class="label-cell" v-if="item.tags">
+                      <f7-chip class="margin-right" v-for="tag in item.tags" :key="tag" :text="tag" media-bg-color="blue">
+                        <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
+                      </f7-chip>
+                    </td>
+                    <td class="label-cell" v-else></td>
+                    <!-- links -->
+                    <td class="label-cell" v-if="item.links">
+                      <div class="margin-right" v-for="(link, lidx) in item.links" :key="lidx">
+                        <div v-if="link.value">
+                          <div><em>{{link.value}}</em></div>
+                          <small>{{link.config.map((c) => c.key + '=' + c.value).join(', ')}}</small>
+                        </div>
+                        <em v-else>{{link}}</em>
+                      </div>
+                    </td>
+                    <td class="label-cell" v-else></td>
+                    <!-- metadata -->
+                    <td class="label-cell" v-if="item.metadata">
+                      <div class="margin-right" v-for="(metadata, lidx) in item.metadata" :key="lidx">
+                        <div v-if="metadata.value.value">
+                          <div>{{metadata.key}}="{{metadata.value.value}}"</div>
+                          <small>{{metadata.value.config.map((c) => c.key + '=' + c.value).join(', ')}}</small>
+                        </div>
+                        <div v-else>{{metadata.key}}="{{metadata.value}}"</div>
+                      </div>
+                    </td>
+                    <td class="label-cell" v-else></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <span class="resize-handler"></span>
+      </div>
+    </f7-block>
   </f7-page>
 </template>
 
 <style lang="stylus">
-.items-parser.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height))
-  height calc(50% - var(--f7-navbar-height))
-  width 100%
-.items-results
-  position absolute
-  top 50%
-  height 50%
-  overflow-y auto
-  width 100%
-  &.error
-    pre
-      padding 0 1rem
-.parse-results
-  position relative
-  left 0
-  width 100%
-  pre
-    font-size 12px
-    height calc(100% - var(--f7-navbar-height) + var(--f7-toolbar-height) - 100px)
-    overflow auto
+.items-add-from-textual-definition
+  margin-top 0 !important
+  margin-bottom 0 !important
+  padding 0
+  z-index auto !important
+  top 0
+  height calc(100%)
+  .items-parser
+    height 50%
+    width 100%
+    .editor.vue-codemirror
+      top 0
+      height calc(100% - var(--f7-grid-gap))
+  .items-results
+    height 50%
+    width 100%
+    overflow-y auto
+    .error
+      pre
+        padding 1rem
+        font-size 12px
+        overflow auto
 </style>
 
 <script>
