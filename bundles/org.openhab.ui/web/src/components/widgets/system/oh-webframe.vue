@@ -10,10 +10,10 @@
 
 <script>
 import mixin from '../widget-mixin'
-import { OhWebframeDefinition } from '@/assets/definitions/widgets/system'
+import { OhWebFrameDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   mixins: [mixin],
-  widget: OhWebframeDefinition
+  widget: OhWebFrameDefinition
 }
 </script>
