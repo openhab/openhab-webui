@@ -47,7 +47,7 @@
           <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label> <f7-checkbox :checked="showIgnored" @change="toggleIgnored"></f7-checkbox>
         </div>
         </f7-block-title>
-        <div class="padding-left padding-right" v-show="!ready || inboxCount > 0">
+        <div class="padding-left padding-right searchbar-found" v-show="!ready || inboxCount > 0">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">Alphabetical</f7-button>
             <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">By binding</f7-button>
@@ -164,7 +164,14 @@ export default {
         this.initSearchbar = true
         this.loading = false
         this.ready = true
-        setTimeout(() => { this.$refs.listIndex.update() })
+        setTimeout(() => {
+          this.$refs.listIndex.update()
+          this.$nextTick(() => {
+            if (this.$device.desktop && this.$refs.searchbar) {
+              this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+            }
+          })
+        })
       })
     },
     switchGroupOrder (groupBy) {

@@ -46,7 +46,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title class="searchbar-hide-on-search"><span v-if="ready">{{pages.length}} pages</span><span v-else>Loading...</span></f7-block-title>
-        <div class="padding-left padding-right" v-show="!ready || pages.length > 0">
+        <div class="padding-left padding-right searchbar-found" v-show="!ready || pages.length > 0">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">Alphabetical</f7-button>
             <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')">By type</f7-button>
@@ -196,7 +196,15 @@ export default {
 
         this.loading = false
         this.ready = true
-        setTimeout(() => { this.initSearchbar = true; this.$refs.listIndex.update() })
+        setTimeout(() => {
+          this.initSearchbar = true
+          this.$refs.listIndex.update()
+          this.$nextTick(() => {
+            if (this.$device.desktop && this.$refs.searchbar) {
+              this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+            }
+          })
+        })
       })
     },
     switchGroupOrder (groupBy) {

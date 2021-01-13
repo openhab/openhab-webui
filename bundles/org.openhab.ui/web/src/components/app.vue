@@ -481,6 +481,9 @@ export default {
       } else {
         this.$$('html').removeClass('theme-dark')
       }
+      if (this.themeOptions.pageTransitionAnimation === 'disabled') {
+        this.$$('html').addClass('no-page-transitions')
+      }
       if (localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true') {
         this.visibleBreakpointDisabled = true
         this.$nextTick(() => this.$f7.panel.get('left').disableVisibleBreakpoint())
@@ -593,6 +596,12 @@ export default {
 
       this.$f7.on('toggleDeveloperSidebar', () => {
         this.toggleDeveloperSidebar()
+      })
+
+      this.$f7.on('smartSelectOpened', (smartSelect) => {
+        if (smartSelect && smartSelect.searchbar && this.$device.desktop) {
+          smartSelect.searchbar.$inputEl.focus()
+        }
       })
 
       if (window) {
