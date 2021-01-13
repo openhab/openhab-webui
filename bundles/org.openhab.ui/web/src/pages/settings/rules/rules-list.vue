@@ -8,6 +8,7 @@
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
+          ref="searchbar"
           class="searchbar-rules"
           :init="initSearchbar"
           search-container=".rules-list"
@@ -170,6 +171,11 @@ export default {
         setTimeout(() => {
           this.initSearchbar = true
           if (this.$refs.listIndex) this.$refs.listIndex.update()
+          this.$nextTick(() => {
+            if (this.$device.desktop && this.$refs.searchbar) {
+              this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+            }
+          })
         })
 
         if (!this.eventSource) this.startEventSource()

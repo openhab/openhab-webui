@@ -4,9 +4,11 @@
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
+          ref="searchbar"
           class="searchbar-things"
           :init="initSearchbar"
           search-container=".thing-type-list"
+          search-item=".media-item"
           search-in=".item-title, .item-header, .item-footer"
           :disable-button="!$theme.aurora"
         ></f7-searchbar>
@@ -21,7 +23,7 @@
         </div>
         <p class="margin-left margin-right" style="height: 30px" id="scan-progress"></p>
         <f7-block-title v-if="discoverySupported && scanResults.length">Discovered Things</f7-block-title>
-        <f7-list class="col" v-if="scanResults.length">
+        <f7-list class="col thing-type-list" v-if="scanResults.length">
           <f7-list-item v-for="entry in scanResults"
             :key="entry.thingUID"
             :link="true"
@@ -160,6 +162,14 @@ export default {
       this.$oh.api.get('/rest/inbox').then((data) => {
         this.loading = false
         this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.bindingId && e.flag !== 'IGNORED')
+        const searchbar = this.$refs.searchbar.$el.f7Searchbar
+        const filterQuery = searchbar.query
+        this.initSearchbar = false
+        this.$nextTick(() => {
+          this.initSearchbar = true
+          searchbar.clear()
+          searchbar.search(filterQuery)
+        })
       })
     },
     approve (entry) {

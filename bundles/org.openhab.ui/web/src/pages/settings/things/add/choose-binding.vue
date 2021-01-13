@@ -4,6 +4,7 @@
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
+          ref="searchbar"
           class="searchbar-things"
           :init="initSearchbar"
           search-container=".binding-list"
@@ -80,6 +81,11 @@ export default {
         this.loading = false
         this.initSearchbar = true
         this.ready = true
+        this.$nextTick(() => {
+          if (this.$device.desktop && this.$refs.searchbar) {
+            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+          }
+        })
       })
       this.$oh.api.get('/rest/inbox').then((data) => {
         this.inbox = data
