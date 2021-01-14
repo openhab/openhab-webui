@@ -5,6 +5,7 @@
       :label="configDescription.label"
       :name="configDescription.name"
       :value="value"
+      :placeholder="placeholder"
       :required="configDescription.required" validate
       :clear-button="!configDescription.required"
       @input="updateValue"
@@ -23,7 +24,7 @@
 import LocationPicker from './location-picker.vue'
 
 export default {
-  props: ['configDescription', 'value'],
+  props: ['configDescription', 'value', 'placeholder'],
   methods: {
     updateValue (event) {
       if (event.lat && event.lng) {

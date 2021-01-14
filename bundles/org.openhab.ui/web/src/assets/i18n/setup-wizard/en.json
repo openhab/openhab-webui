@@ -10,6 +10,7 @@
   "setupwizard.location.header1": "Would you like to share your home's location?",
   "setupwizard.location.header2": "It will help determining data dependent on your position, like sunrise/sunset times or the weather.",
   "setupwizard.location.parameterLabel": "Location of your home",
+  "setupwizard.location.placeholder": "<latitude>,<longitude>[,<altitude>]",
   "setupwizard.location.retrieveFromDevice": "Retrieve from This Device",
   "setupwizard.location.retrieveFromDevice.error": "Error while retrieving current position",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Sorry",
