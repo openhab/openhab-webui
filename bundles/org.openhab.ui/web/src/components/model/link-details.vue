@@ -8,9 +8,8 @@
             :badge="thingStatusBadgeText(l.thing.statusInfo)"
             :badge-color="thingStatusBadgeColor(l.thing.statusInfo)"
             link="#" @click="editLink(l)">
-            <span slot="media" class="item-initial">{{l.channel.label ? l.channel.label[0] : '?'}}</span>
+            <span slot="media" class="item-initial">{{!l._invalid && l.channel.label ? l.channel.label[0] : '?'}}</span>
           </f7-list-item>
-          <!-- <f7-list-button v-if="!$theme.md" color="blue" title="Add Link" @click="addLink"></f7-list-button> -->
         </ul>
       </f7-list>
     </f7-card-content>
@@ -45,7 +44,13 @@ export default {
       this.currentItemName = this.item.name
       const itemLinks = this.links.filter((l) => l.itemName === this.item.name)
       const thingNames = itemLinks.map((l) => l.channelUID.substring(0, l.channelUID.lastIndexOf(':')))
-      const promises = thingNames.map((t) => this.$oh.api.get('/rest/things/' + t))
+      const promises = thingNames.map((t) => {
+        return new Promise((resolve, reject) => {
+          this.$oh.api.get('/rest/things/' + t)
+            .then((thing) => resolve(thing))
+            .catch((thing) => resolve({ UID: t, label: '(unknown)', channels: [], _invalid: true }))
+        })
+      })
       this.ready = false
       Promise.all(promises).then((things) => {
         this.enrichedLinks = [
@@ -58,6 +63,13 @@ export default {
                 thing: thing,
                 channel: channel
               }
+            } else {
+              return {
+                link: l,
+                thing: { label: '(unknown)', channels: [], statusInfo: { status: 'UNKNOWN' }, _invalid: true },
+                channel: { UID: l.channelUID, label: 'Invalid Link', _invalid: true },
+                _invalid: true
+              }
             }
           })
         ]
@@ -65,18 +77,11 @@ export default {
       })
     },
     addLink () {
-      const self = this
       this.$f7router.navigate({
         url: 'links/new',
         route: {
           component: AddLinkPage,
-          path: 'links/new',
-          props: {
-          },
-          on: {
-            pageAfterOut (event, page) {
-            }
-          }
+          path: 'links/new'
         }
       }, {
         props: {
@@ -85,18 +90,26 @@ export default {
       })
     },
     editLink (link) {
-      const self = this
+      if (link._invalid) {
+        this.$f7.dialog.confirm('This link is invalid, remove it?', 'Invalid Link',
+          () => {
+            this.$oh.api.delete('/rest/links/' + link.link.itemName + '/' + encodeURIComponent(link.link.channelUID)).then(() => {
+              this.$f7.toast.create({
+                text: 'Link deleted',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              }).open()
+              this.$f7router.back()
+            })
+          })
+        return
+      }
+
       this.$f7router.navigate({
         url: 'links/edit/' + link.channel.uid,
         route: {
           component: EditLinkPage,
-          path: 'links/edit/' + link.channel.uid,
-          props: {
-          },
-          on: {
-            pageAfterOut (event, page) {
-            }
-          }
+          path: 'links/edit/' + link.channel.uid
         }
       }, {
         props: {
