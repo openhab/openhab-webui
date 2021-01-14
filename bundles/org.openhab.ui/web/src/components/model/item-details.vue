@@ -9,10 +9,10 @@
       </f7-list>
 
       <div class="padding-top" v-if="editMode">
-        <item-form :item="model.item" :hide-type="true" :force-semantics="forceSemantics"></item-form>
+        <item-form :item="editedItem" :hide-type="true" :force-semantics="forceSemantics"></item-form>
       </div>
       <div class="padding-top" v-else-if="createMode">
-        <item-form :item="model.item" :enable-name="true" :force-semantics="forceSemantics"></item-form>
+        <item-form :item="editedItem" :enable-name="true" :force-semantics="forceSemantics"></item-form>
       </div>
     </f7-card-content>
     <f7-card-footer v-if="createMode || editMode" key="item-card-buttons">
@@ -21,7 +21,7 @@
       <f7-button v-if="createMode || editMode" color="blue" @click="cancel">Cancel</f7-button>
     </f7-card-footer>
     <f7-card-footer v-else key="item-card-buttons-edit-mode">
-      <f7-button v-if="!editMode && !createMode" color="blue" @click="editMode = true" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">Edit</f7-button>
+      <f7-button v-if="!editMode && !createMode" color="blue" @click="edit" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">Edit</f7-button>
       <f7-button v-if="!editMode && !createMode && model.item.editable" color="red" @click="remove">Remove</f7-button>
     </f7-card-footer>
   </f7-card>
@@ -41,7 +41,8 @@ export default {
     return {
       editMode: false,
       createMode: false,
-      forceSemantics: false
+      forceSemantics: false,
+      editedItem: {}
     }
   },
   mounted () {
@@ -61,14 +62,14 @@ export default {
     },
     save () {
       this.editMode = false
-      this.$oh.api.put('/rest/items/' + this.model.item.name, this.model.item).then((data) => {
+      this.$oh.api.put('/rest/items/' + this.editedItem.name, this.editedItem).then((data) => {
         this.$f7.toast.create({
           text: 'Item updated',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       })
-      this.$emit('item-updated', this.model.item)
+      this.$emit('item-updated', this.editedItem)
     },
     create () {
       this.editMode = false
@@ -126,12 +127,17 @@ export default {
         }).open()
       })
     },
+    edit () {
+      this.editMode = true
+      this.$set(this, 'editedItem', Object.assign({}, this.model.item))
+    },
     cancel () {
       if (this.createMode) {
         this.$emit('cancel-create')
       }
       this.createMode = false
       this.editMode = false
+      this.$set(this, 'editedItem', {})
     }
   },
   watch: {
