@@ -12,6 +12,7 @@
                   :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: true}"
                 >
                   <select name="language" @change="(evt) => language = evt.target.value">
+                    <option value="" :selected="!language"></option>
                     <option
                       v-for="option in availableLanguages"
                       :key="option.value"
@@ -26,6 +27,7 @@
                   :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: true}"
                 >
                   <select name="region" @change="(evt) => region = evt.target.value">
+                    <option value="" :selected="!region"></option>
                     <option
                       v-for="option in availableRegions"
                       :key="option.value"
@@ -75,7 +77,7 @@
               </f7-block>
               <f7-block strong>{{ $t('setupwizard.location.header1') }}<br />{{ $t('setupwizard.location.header2') }}</f7-block>
               <f7-list>
-                <parameter-location :value="location" :config-description="{ label: $t('setupwizard.location.parameterLabel'), name: 'Location' }" @input="(value) => location = value" />
+                <parameter-location :value="location" :config-description="{ label: $t('setupwizard.location.parameterLabel'), name: 'Location' }" @input="(value) => location = value" :placeholder="$t('setupwizard.location.placeholder')" />
               </f7-list>
               <f7-block class="padding">
                 <f7-row>
