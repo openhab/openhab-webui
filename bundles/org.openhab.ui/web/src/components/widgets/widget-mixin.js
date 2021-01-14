@@ -136,7 +136,6 @@ export default {
         props: this.config,
         vars: this.widgetVars,
         store: this.context.store,
-        loop: this.context.loop,
         config: this.context.config,
         editmode: this.context.editmode,
         clipboardtype: this.context.clipboardtype,
