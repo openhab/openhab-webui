@@ -1,6 +1,5 @@
 import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
-
-let accessToken = null
+import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from './auth'
 
 function wrapPromise (f7promise) {
   return new Promise((resolve, reject) => {
@@ -13,20 +12,21 @@ function wrapPromise (f7promise) {
 Framework7.request.setup({
   xhrFields: { withCredentials: true },
   beforeSend (xhr) {
-    if (accessToken) {
-      if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) {
-        xhr.setRequestHeader('X-OPENHAB-TOKEN', accessToken)
+    if (getAccessToken()) {
+      if (getTokenInCustomHeader()) {
+        xhr.setRequestHeader('X-OPENHAB-TOKEN', getAccessToken())
       } else {
-        xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+        xhr.setRequestHeader('Authorization', 'Bearer ' + getAccessToken())
       }
+    }
+    if (getBasicCredentials()) {
+      const creds = getBasicCredentials()
+      xhr.setRequestHeader('Authorization', 'Basic ' + btoa(creds.id + ':' + creds.password))
     }
   }
 })
 
 export default {
-  setAccessToken (token) {
-    accessToken = token
-  },
   get (uri, data) {
     return wrapPromise(Framework7.request.promise.json(uri, data))
   },

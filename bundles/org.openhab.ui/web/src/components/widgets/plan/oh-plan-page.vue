@@ -21,7 +21,7 @@
     @update:center="centerUpdate"
     @update:zoom="zoomUpdate">
       <l-image-overlay
-        :url="config.imageUrl"
+        :url="backgroundImageUrl"
         :bounds="bounds"
       />
       <l-feature-group ref="featureGroup" v-if="context.component.slots && ready">
@@ -87,7 +87,7 @@ export default {
       minZoom: -2,
       zoom: -0.5,
       crs: CRS.Simple,
-      showMap: true,
+      showMap: false,
       mapKey: this.$f7.utils.id(),
       markers: []
     }
@@ -110,11 +110,17 @@ export default {
       } : {})
     }
   },
-  mounted () {
-    this.fitMapBounds()
+  asyncComputed: {
+    backgroundImageUrl () {
+      return this.$oh.media.getImage(this.config.imageUrl)
+    }
   },
   watch: {
     'config.noZoomOrDrag': function (val) {
+      this.refreshMap()
+    },
+    backgroundImageUrl (val) {
+      this.showMap = true
       this.refreshMap()
     }
   },
@@ -144,7 +150,7 @@ export default {
     onMarkerUpdate () {
     },
     fitMapBounds () {
-      this.$refs.map.mapObject.fitBounds(this.bounds)
+      if (this.$refs.map) this.$refs.map.mapObject.fitBounds(this.bounds)
     },
     refreshMap () {
       this.mapKey = this.$f7.utils.id()

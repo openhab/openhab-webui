@@ -145,6 +145,7 @@ export default {
     ready (val) {
       if (val) {
         this.loadModel()
+        this.$store.dispatch('startTrackingStates')
       }
     }
   },
@@ -153,8 +154,10 @@ export default {
       this.overviewPageKey = this.$utils.id()
     },
     onPageAfterIn () {
-      this.$store.dispatch('startTrackingStates')
-      if (this.ready) this.loadModel()
+      if (this.ready) {
+        this.loadModel()
+        this.$store.dispatch('startTrackingStates')
+      }
     },
     onPageBeforeOut () {
       this.$store.dispatch('stopTrackingStates')

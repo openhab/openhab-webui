@@ -1,33 +1,39 @@
+import { getBasicCredentials } from '@/js/openhab/auth'
+import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
+
 export default {
   getIcon: (icon, format, state) => {
     if (!format) format = 'svg'
     let url = `/icon/${icon}?format=${format}&anyFormat=true`
     if (state) url += `&state=${encodeURIComponent(state)}`
 
-    // TODO handle basic auth with blobs and data URIs if necessary
-    // return new Promise((resolve, reject) => {
-    //   Framework7.request.promise({ url, xhrFields: { responseType: 'blob' } }).then((resp) => {
-    //     let reader = new FileReader()
-    //     reader.readAsDataURL(resp.data)
-    //     reader.onload = () => {
-    //       return resolve(reader.result)
-    //     }
-    //   })
-    // })
-    return Promise.resolve(url)
+    if (getBasicCredentials()) {
+      return new Promise((resolve, reject) => {
+        Framework7.request.promise({ url, xhrFields: { responseType: 'blob' } }).then((resp) => {
+          let reader = new FileReader()
+          reader.readAsDataURL(resp.data)
+          reader.onload = () => {
+            return resolve(reader.result)
+          }
+        })
+      })
+    } else {
+      return Promise.resolve(url)
+    }
   },
   getImage: (url) => {
-    return url
-
-    // TODO handle basic auth with blobs and data URIs if necessary
-    // return new Promise((resolve, reject) => {
-    //   Framework7.request.promise({ url, xhrFields: { responseType: 'blob' } }).then((resp) => {
-    //     let reader = new FileReader()
-    //     reader.readAsDataURL(resp.data)
-    //     reader.onload = () => {
-    //       return resolve(reader.result)
-    //     }
-    //   })
-    // })
+    if (getBasicCredentials()) {
+      return new Promise((resolve, reject) => {
+        Framework7.request.promise({ url, xhrFields: { responseType: 'blob' } }).then((resp) => {
+          let reader = new FileReader()
+          reader.readAsDataURL(resp.data)
+          reader.onload = () => {
+            return resolve(reader.result)
+          }
+        })
+      })
+    } else {
+      return Promise.resolve(url)
+    }
   }
 }

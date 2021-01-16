@@ -1,9 +1,27 @@
+import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill'
+import { getAccessToken, getTokenInCustomHeader, getBasicCredentials, getRequireToken } from './auth'
+
 let openSSEClients = []
 
 function newSSEConnection (path, readyCallback, messageCallback, errorCallback) {
   let eventSource
-  // TODO handle basic auth with polyfill if necessary
-  eventSource = new EventSource(path)
+  const headers = {}
+  if (getAccessToken() && getRequireToken()) {
+    if (getTokenInCustomHeader()) {
+      headers['Authorization'] = 'Bearer ' + getAccessToken()
+    } else {
+      headers['X-OPENHAB-TOKEN'] = getAccessToken()
+    }
+  }
+  if (getBasicCredentials()) {
+    const creds = getBasicCredentials()
+    headers['Authorization'] = 'Basic ' + btoa(creds.id + ':' + creds.password)
+  }
+  if (Object.keys(headers).length > 0) {
+    eventSource = new EventSourcePolyfill(path, { headers })
+  } else {
+    eventSource = new NativeEventSource(path)
+  }
 
   eventSource.addEventListener('ready', (e) => {
     readyCallback(e.data)

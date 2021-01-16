@@ -1,5 +1,5 @@
 <template>
-<f7-app v-if="init" :style="{ visibility: !($store.getters.user || $store.getters.page('overview')) ? 'hidden' : '' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
+<f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || loginScreenOpened) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
 
   <!-- Left Panel -->
   <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
@@ -94,7 +94,7 @@
         <f7-icon slot="media" size="14" :f7="this.visibleBreakpointDisabled ? 'pin_slash' : 'pin'" color="gray"></f7-icon>
       </f7-link>
 
-      <div slot="fixed" class="account" v-if="ready">
+      <div slot="fixed" class="account" v-if="ready && this.$store.getters.apiEndpoint('auth')">
         <div class="display-flex justify-content-center">
           <div class="hint-signin" v-if="!$store.getters.user && !$store.getters.pages.filter((p) => p.uid !== 'overview').length">
             <em>{{ $t('sidebar.tip.signIn') }}<br /><f7-icon f7="arrow_down" size="20"></f7-icon></em>
@@ -112,7 +112,7 @@
   </f7-panel>
 
   <!-- Right Panel -->
-  <f7-panel right reveal theme-dark>
+  <f7-panel right reveal theme-dark v-if="ready">
     <panel-right />
     <!-- <f7-view url="/panel-right/"></f7-view> -->
   </f7-panel>
@@ -123,7 +123,7 @@
 
   <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'"></f7-view>
 
-  <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
+  <!-- <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
     <f7-view name="login" v-if="$device.cordova">
       <f7-page login-screen>
         <f7-login-screen-title><img width="200px" src="res/img/openhab-logo.png"><br>Login</f7-login-screen-title>
@@ -158,7 +158,7 @@
         </f7-list>
       </f7-page>
     </f7-view>
-  </f7-login-screen>
+  </f7-login-screen> -->
 </f7-app>
 </template>
 
@@ -360,6 +360,7 @@ export default {
   },
   computed: {
     isAdmin () {
+      if (!this.$store.getters.apiEndpoint('auth')) return true
       return this.ready && this.user && this.user.roles && this.user.roles.indexOf('administrator') >= 0
     },
     serverDisplayUrl () {
@@ -367,12 +368,48 @@ export default {
     }
   },
   methods: {
-    loadData () {
-      return this.$oh.api.get('/rest/')
+    loadData (useCredentials) {
+      const useCredentialsPromise = (useCredentials) ? this.setBasicCredentials() : Promise.resolve()
+      return useCredentialsPromise
+        .then(() => { return this.$oh.api.get('/rest/') })
+        .catch((err) => {
+          if (err === 'Unauthorized') {
+            if (!useCredentials) {
+              // try again with credentials
+              this.loadData(true)
+              return Promise.reject()
+            }
+            this.loginScreenOpened = true
+            this.$nextTick(() => {
+              this.$f7.dialog.login(
+                window.location.host,
+                'openHAB',
+                (username, password) => {
+                  this.setBasicCredentials(username, password)
+                  this.$oh.api.get('/rest/').then((rootResponse) => {
+                    this.storeBasicCredentials()
+                    this.loadData()
+                  }).catch((err) => {
+                    if (err === 'Unauthorized') {
+                      this.clearBasicCredentials()
+                      this.loadData()
+                      return Promise.reject()
+                    }
+                  })
+                },
+                () => {
+                  return Promise.reject()
+                }
+              )
+            })
+            return Promise.reject()
+          }
+        })
         .then((rootResponse) => {
           // store the REST API services present on the system
           this.$store.commit('setRootResource', { rootResponse })
           this.updateLocale()
+          if (!this.$store.getters.apiEndpoint('auth')) this.$store.commit('setNoAuth', true)
           return rootResponse
         }).then((rootResponse) => {
           let locale = this.$store.state.locale
@@ -409,6 +446,7 @@ export default {
     },
     pageIsVisible (page) {
       if (!page.config.visibleTo) return true
+      if (this.$store.getters.noAuth) return true
       const user = this.$store.getters.user
       if (!user) return false
       if (user.roles && user.roles.some(r => page.config.visibleTo.indexOf('role:' + r) >= 0)) return true

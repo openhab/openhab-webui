@@ -24,7 +24,9 @@ export default {
   },
   watch: {
     url (val) {
-      this.src = this.$oh.media.getImage(val)
+      this.$oh.media.getImage(val).then((url) => {
+        this.src = url
+      })
     },
     src (val) {
       if (this.config.lazy) this.$nextTick(() => { this.$f7.lazy.loadImage(this.$refs.lazyImage) })
@@ -51,7 +53,9 @@ export default {
     if (this.config.item) {
       this.loadItemImage()
     } else {
-      this.src = this.$oh.media.getImage(this.config.url)
+      this.$oh.media.getImage(this.config.url).then((url) => {
+        this.src = url
+      })
     }
     if (this.config.refreshInterval) {
       this.refreshInterval = setInterval(() => { this.ts = (new Date()).toISOString() }, this.config.refreshInterval)

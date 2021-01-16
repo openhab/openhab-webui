@@ -1,15 +1,20 @@
 const state = {
-  user: null
+  user: null,
+  noAuth: false
 }
 
 const getters = {
   user: (state) => state.user,
-  isAdmin: (state) => state.user && state.user.roles && state.user.roles.indexOf('administrator') >= 0
+  noAuth: (state) => state.noAuth,
+  isAdmin: (state) => state.noAuth || (state.user && state.user.roles && state.user.roles.indexOf('administrator') >= 0)
 }
 
 const mutations = {
   setUser (state, { user }) {
     state.user = user
+  },
+  setNoAuth (state, value) {
+    state.noAuth = value
   }
 }
 
