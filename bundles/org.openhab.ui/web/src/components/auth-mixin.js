@@ -1,5 +1,7 @@
 import { Utils } from 'framework7'
 
+import { authorize, setBasicCredentials, clearBasicCredentials, storeBasicCredentials } from '@/js/openhab/auth'
+
 export default {
   data () {
     return {
@@ -7,26 +9,9 @@ export default {
     }
   },
   methods: {
+    authorize,
     getRefreshToken () {
       return localStorage.getItem('openhab.ui:refreshToken') || null
-    },
-    authorize (setup) {
-      import('pkce-challenge').then((PkceChallenge) => {
-        const pkceChallenge = PkceChallenge.default()
-        const authState = (setup ? 'setup-' : '') + this.$f7.utils.id()
-
-        sessionStorage.setItem('openhab.ui:codeVerifier', pkceChallenge.code_verifier)
-        sessionStorage.setItem('openhab.ui:authState', authState)
-
-        window.location = '/auth' +
-          '?response_type=code' +
-          '&client_id=' + encodeURIComponent(window.location.origin) +
-          '&redirect_uri=' + encodeURIComponent(window.location.origin) +
-          '&scope=admin' +
-          '&code_challenge_method=S256' +
-          '&code_challenge=' + encodeURIComponent(pkceChallenge.code_challenge) +
-          '&state=' + authState
-      })
     },
     tryExchangeAuthorizationCode () {
       return new Promise((resolve, reject) => {
@@ -52,11 +37,11 @@ export default {
             'code_verifier': codeVerifier
           })
 
-          this.$oh.api.setAccessToken(null)
+          this.$oh.auth.setAccessToken(null)
           this.$oh.api.postPlain('/rest/auth/token?useCookie=true', payload, 'application/json', 'application/x-www-form-urlencoded').then((data) => {
             const resp = JSON.parse(data)
             localStorage.setItem('openhab.ui:refreshToken', resp.refresh_token)
-            this.$oh.api.setAccessToken(resp.access_token)
+            this.$oh.auth.setAccessToken(resp.access_token)
             // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
             setTimeout(this.refreshAccessToken, resp.expires_in * 950)
             this.$store.commit('setUser', { user: resp.user })
@@ -84,10 +69,10 @@ export default {
           'refresh_token': refreshToken
         })
 
-        this.$oh.api.setAccessToken(null)
+        this.$oh.auth.setAccessToken(null)
         this.$oh.api.postPlain('/rest/auth/token', payload, 'application/json', 'application/x-www-form-urlencoded').then((data) => {
           const resp = JSON.parse(data)
-          this.$oh.api.setAccessToken(resp.access_token)
+          this.$oh.auth.setAccessToken(resp.access_token)
           // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
           setTimeout(this.refreshAccessToken, resp.expires_in * 950)
           // also make sure to check the token and renew it when the app becomes visible again
@@ -116,16 +101,19 @@ export default {
         localStorage.removeItem('openhab.ui:refreshToken')
         this.$oh.api.postPlain('/rest/auth/logout', payload, 'application/json', 'application/x-www-form-urlencoded').then((data) => {
           console.log('Logged out')
-          this.$oh.api.setAccessToken(null)
+          this.$oh.auth.setAccessToken(null)
           this.$store.commit('setUser', { user: null })
           resolve()
         }).catch((err) => {
           console.log(err)
-          this.$oh.api.setAccessToken(null)
+          this.$oh.auth.setAccessToken(null)
           this.$store.commit('setUser', { user: null })
           reject(err)
         })
       })
-    }
+    },
+    setBasicCredentials,
+    clearBasicCredentials,
+    storeBasicCredentials
   }
 }
