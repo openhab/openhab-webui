@@ -9,6 +9,7 @@ import OhCalendarAxis from './axis/oh-calendar-axis'
 import OhCategoryAxis from './axis/oh-category-axis'
 
 // Series components
+import OhDataSeries from './series/oh-data-series'
 import OhTimeSeries from './series/oh-time-series'
 import OhAggregateSeries from './series/oh-aggregate-series'
 import OhCalendarSeries from './series/oh-calendar-series'
@@ -29,6 +30,7 @@ const axisComponents = {
 }
 
 const seriesComponents = {
+  'oh-data-series': OhDataSeries,
   'oh-time-series': OhTimeSeries,
   'oh-aggregate-series': OhAggregateSeries,
   'oh-calendar-series': OhCalendarSeries
@@ -121,7 +123,13 @@ export default {
   },
   methods: {
     getSeriesPromises (component) {
+      const getter = (data) => seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this)
+
       const neededItems = seriesComponents[component.component].neededItems(component).filter(i => !!i)
+      if (neededItems.length === 0) {
+        return Promise.resolve(getter([]))
+      }
+
       const itemPromises = neededItems.map((neededItem) => {
         if (this.items[neededItem]) return Promise.resolve(this.items[neededItem])
         return this.$oh.api.get(`/rest/items/${neededItem}`).then((item) => {
@@ -147,9 +155,7 @@ export default {
         return Promise.all([itemPromises[neededItem], this.$oh.api.get(url, query)])
       })
 
-      return Promise.all(combinedPromises).then((data) => {
-        return seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this)
-      })
+      return Promise.all(combinedPromises).then(getter)
     },
     setPeriod (period) {
       this.period = period

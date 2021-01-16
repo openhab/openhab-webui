@@ -375,6 +375,18 @@ export default {
     }
   },
 
+  'oh-data-series': {
+    label: 'Data Series',
+    docLink: 'https://echarts.apache.org/en/option.html#series',
+    props: {
+      parameterGroups: [componentRelationsGroup],
+      parameters: [
+        ...seriesParameters,
+        seriesTypeParameter('gauge')
+      ]
+    }
+  },
+
   'oh-time-series': {
     label: 'Time Series',
     docLink: 'https://echarts.apache.org/en/option.html#series',
