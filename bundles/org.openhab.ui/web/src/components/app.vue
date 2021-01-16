@@ -370,7 +370,7 @@ export default {
   methods: {
     loadData (useCredentials) {
       const useCredentialsPromise = (useCredentials) ? this.setBasicCredentials() : Promise.resolve()
-      useCredentialsPromise
+      return useCredentialsPromise
         .then(() => { return this.$oh.api.get('/rest/') })
         .catch((err) => {
           if (err === 'Unauthorized') {
