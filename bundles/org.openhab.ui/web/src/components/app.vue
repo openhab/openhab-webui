@@ -368,11 +368,17 @@ export default {
     }
   },
   methods: {
-    loadData () {
-      this.setBasicCredentials()
+    loadData (useCredentials) {
+      const useCredentialsPromise = (useCredentials) ? this.setBasicCredentials() : Promise.resolve()
+      useCredentialsPromise
         .then(() => { return this.$oh.api.get('/rest/') })
         .catch((err) => {
           if (err === 'Unauthorized') {
+            if (!useCredentials) {
+              // try again with credentials
+              this.loadData(true)
+              return Promise.reject()
+            }
             this.loginScreenOpened = true
             this.$nextTick(() => {
               this.$f7.dialog.login(
