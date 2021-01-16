@@ -34,6 +34,6 @@ export default {
     }
   },
   getImage (url) {
-    return url
+    return Promise.resolve(url)
   }
 }
