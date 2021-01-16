@@ -37,19 +37,20 @@ export default {
             'code_verifier': codeVerifier
           })
 
-          this.$oh.auth.setAccessToken(null)
+          this.$oh.auth.clearAccessToken()
           this.$oh.api.postPlain('/rest/auth/token?useCookie=true', payload, 'application/json', 'application/x-www-form-urlencoded').then((data) => {
             const resp = JSON.parse(data)
             localStorage.setItem('openhab.ui:refreshToken', resp.refresh_token)
-            this.$oh.auth.setAccessToken(resp.access_token)
-            // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
-            setTimeout(this.refreshAccessToken, resp.expires_in * 950)
-            this.$store.commit('setUser', { user: resp.user })
+            return this.$oh.auth.setAccessToken(resp.access_token).then(() => {
+              // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
+              setTimeout(this.refreshAccessToken, resp.expires_in * 950)
+              this.$store.commit('setUser', { user: resp.user })
 
-            const nextRoute = authState.indexOf('setup') === 0 ? '/setup-wizard/' : '/'
-            this.$f7.views.main.router.navigate(nextRoute, { animate: false, clearPreviousHistory: true })
+              const nextRoute = authState.indexOf('setup') === 0 ? '/setup-wizard/' : '/'
+              this.$f7.views.main.router.navigate(nextRoute, { animate: false, clearPreviousHistory: true })
 
-            resolve(resp.user)
+              resolve(resp.user)
+            })
           }).catch((err) => {
             console.log(err)
             reject(err)
@@ -69,17 +70,18 @@ export default {
           'refresh_token': refreshToken
         })
 
-        this.$oh.auth.setAccessToken(null)
+        this.$oh.auth.clearAccessToken()
         this.$oh.api.postPlain('/rest/auth/token', payload, 'application/json', 'application/x-www-form-urlencoded').then((data) => {
           const resp = JSON.parse(data)
-          this.$oh.auth.setAccessToken(resp.access_token)
-          // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
-          setTimeout(this.refreshAccessToken, resp.expires_in * 950)
-          // also make sure to check the token and renew it when the app becomes visible again
-          this.currentTokenExpireTime = new Date().getTime() + resp.expires_in * 950
-          document.addEventListener('visibilitychange', this.checkTokenAfterVisibilityChange)
-          this.$store.commit('setUser', { user: resp.user })
-          resolve(resp)
+          return this.$oh.auth.setAccessToken(resp.access_token).then(() => {
+            // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
+            setTimeout(this.refreshAccessToken, resp.expires_in * 950)
+            // also make sure to check the token and renew it when the app becomes visible again
+            this.currentTokenExpireTime = new Date().getTime() + resp.expires_in * 950
+            document.addEventListener('visibilitychange', this.checkTokenAfterVisibilityChange)
+            this.$store.commit('setUser', { user: resp.user })
+            resolve(resp)
+          })
         }).catch((err) => {
           console.log(err)
           reject(err)
@@ -101,12 +103,12 @@ export default {
         localStorage.removeItem('openhab.ui:refreshToken')
         this.$oh.api.postPlain('/rest/auth/logout', payload, 'application/json', 'application/x-www-form-urlencoded').then((data) => {
           console.log('Logged out')
-          this.$oh.auth.setAccessToken(null)
+          this.$oh.auth.clearAccessToken()
           this.$store.commit('setUser', { user: null })
           resolve()
         }).catch((err) => {
           console.log(err)
-          this.$oh.auth.setAccessToken(null)
+          this.$oh.auth.clearAccessToken()
           this.$store.commit('setUser', { user: null })
           reject(err)
         })

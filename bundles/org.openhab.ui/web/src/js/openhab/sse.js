@@ -1,12 +1,12 @@
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill'
-import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from './auth'
+import { getAccessToken, getTokenInCustomHeader, getBasicCredentials, getRequireToken } from './auth'
 
 let openSSEClients = []
 
 function newSSEConnection (path, readyCallback, messageCallback, errorCallback) {
   let eventSource
   const headers = {}
-  if (getAccessToken()) {
+  if (getAccessToken() && getRequireToken()) {
     if (getTokenInCustomHeader()) {
       headers['Authorization'] = 'Bearer ' + getAccessToken()
     } else {

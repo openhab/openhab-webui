@@ -25,9 +25,6 @@ export function getTokenInCustomHeader () { return tokenInCustomHeader }
 export function getBasicCredentials () { return basicCredentials }
 export function getRequireToken () { return requireToken }
 
-export function setAccessToken (token) { accessToken = token }
-export function setRequireToken (require) { requireToken = require }
-
 if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER')) tokenInCustomHeader = true
 
 export function authorize (setup) {
@@ -86,8 +83,31 @@ export function storeBasicCredentials () {
   }
 }
 
+export function setAccessToken (token) {
+  accessToken = token
+
+  // determine whether the token is required for user operations
+  let headers = {}
+  if (getBasicCredentials()) {
+    const creds = getBasicCredentials()
+    headers.Authorization = 'Basic ' + btoa(creds.id + ':' + creds.password)
+  }
+  return fetch('rest/events', { method: 'HEAD', credentials: 'include', headers })
+    .then((resp) => {
+      if (resp.status === 401) {
+        requireToken = true
+        if (!token) authorize()
+      }
+      return Promise.resolve()
+    })
+}
+
+export function clearAccessToken () {
+  accessToken = null
+}
+
 export default {
   setAccessToken,
-  setBasicCredentials,
-  setRequireToken
+  clearAccessToken,
+  setBasicCredentials
 }
