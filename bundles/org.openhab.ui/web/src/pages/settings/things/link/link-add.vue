@@ -32,7 +32,7 @@
         <f7-list>
           <!-- TODO: filter with compatible item types -->
           <item-picker key="itemLink" title="Item to Link" name="item" :value="selectedItemName" :multiple="false"
-            @input="(value) => selectedItemName = value" :editable-only="true"></item-picker>
+            @input="(value) => selectedItemName = value"></item-picker>
         </f7-list>
       </f7-col>
 
