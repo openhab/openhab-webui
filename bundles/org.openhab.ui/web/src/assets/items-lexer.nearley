@@ -8,6 +8,7 @@
     string:     { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) },
     itemtype:   ['Group ', 'Number ', 'Switch ', 'Rollershutter ', 'String ', 'Dimmer ', 'Contact ', 'DateTime ', 'Color ', 'Player ', 'Location ', 'Call ', 'Image '],
     membertype: [':Number', ':Switch', ':Rollershutter', ':String', ':Dimmer', ':Contact', ':DateTime', ':Color', ':Player', ':Location', ':Call', ':Image'],
+    aggfunc:    ['AVG', 'SUM', 'MIN', 'MAX', 'OR', 'AND', 'COUNT', 'LATEST', 'EARLIEST', 'EQUALITY'],
     identifier: /[A-Za-z0-9_-]+/,
     lparen:     '(',
     rparen:     ')',
@@ -51,7 +52,9 @@ Item -> Type _ Name Label Icon Groups Tags Metadata
 Type -> %itemtype                                   {% (d) => [d[0].text.trim()] %}
   | "Number" ":" %identifier %WS                    {% (d) => ['Number:' + d[2].text] %}
   | "Group" %membertype                             {% (d) => ['Group', d[1].text.substring(1)] %}
-  | "Group" %membertype ":" %identifier AggArgs     {% (d) => ['Group', d[1].text.substring(1), {name: d[3].text, args: d[4]}] %}
+  | "Group" %membertype ":" %aggfunc AggArgs        {% (d) => ['Group', d[1].text.substring(1), {name: d[3].text, params: d[4]}] %}
+  | "Group" %membertype ":" %identifier             {% (d) => ['Group', 'Number:' + d[3].text] %}
+  | "Group" %membertype ":" %identifier ":" %aggfunc AggArgs     {% (d) => ['Group', 'Number:' + d[3].text, {name: d[5].text, params: d[6]}] %}
 # group function aggregation arguments
 AggArgs -> null                                     {% (d) => undefined %}
   | "(" %identifier ")"                             {% (d) => [d[1].text] %}
