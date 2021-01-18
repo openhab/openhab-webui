@@ -8,9 +8,9 @@ function newSSEConnection (path, readyCallback, messageCallback, errorCallback) 
   const headers = {}
   if (getAccessToken() && getRequireToken()) {
     if (getTokenInCustomHeader()) {
-      headers['Authorization'] = 'Bearer ' + getAccessToken()
-    } else {
       headers['X-OPENHAB-TOKEN'] = getAccessToken()
+    } else {
+      headers['Authorization'] = 'Bearer ' + getAccessToken()
     }
   }
   if (getBasicCredentials()) {
