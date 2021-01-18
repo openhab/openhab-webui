@@ -97,6 +97,7 @@ function hintExpression (cm, line) {
         { text: 'items.', displayText: 'items', description: 'Access to item states' },
         { text: 'props.', displayText: 'props', description: 'Access to the props of the parent root component' },
         { text: 'vars.', displayText: 'vars', description: 'Access to context vars' },
+        { text: 'loop.', displayText: 'loop', description: 'Access to oh-repeater loop variables' },
         { text: 'JSON.', displayText: 'JSON', description: 'Access to the JSON object functions' },
         { text: 'Math.', displayText: 'Math', description: 'Access to the Math object functions' },
         { text: 'Number.', displayText: 'Number', description: 'Access to the Number object functions' },
