@@ -31,9 +31,9 @@
             </ul>
           </f7-list>
           </f7-card-content>
-          <f7-card-footer v-if="item && item.editable">
-            <f7-button color="red" fill @click="unlinkAndDelete()" v-if="source === 'thing'">Unlink &amp; Remove Item</f7-button>
-            <f7-button color="red" @click="unlink()">{{source === 'thing' ? 'Unlink Only' : 'Unlink'}}</f7-button>
+          <f7-card-footer v-if="item">
+            <f7-button color="red" fill @click="unlinkAndDelete()" v-if="source === 'thing' && item.editable">Unlink &amp; Remove Item</f7-button>
+            <f7-button color="red" @click="unlink()">{{source === 'thing' && item.editable ? 'Unlink Only' : 'Unlink'}}</f7-button>
           </f7-card-footer>
         </f7-card>
       </f7-col>
@@ -159,6 +159,12 @@ export default {
               closeTimeout: 2000
             }).open()
             this.$f7router.back()
+          }).catch((err) => {
+            this.$f7.toast.create({
+              text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
           })
         })
     },
@@ -184,6 +190,12 @@ export default {
               }).open()
             })
             this.$f7router.back()
+          }).catch((err) => {
+            this.$f7.toast.create({
+              text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
           })
         })
     },
@@ -209,6 +221,12 @@ export default {
           }).open()
           this.$f7router.back()
         })
+      }).catch((err) => {
+        this.$f7.toast.create({
+          text: 'Link not updated (links defined in a .items file are not editable from this screen): ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
       })
     }
   }
