@@ -10,6 +10,7 @@
   "setupwizard.location.header1": "Möchtest Du Deinen eigenen Standort teilen?",
   "setupwizard.location.header2": "Standort teilen ist hilfreich bei der Ermittlung positionsabhängiger Informationen wie Sonnenauf-/untergang oder Wetterdaten.",
   "setupwizard.location.parameterLabel": "Eigener Standort",
+  "setupwizard.location.placeholder": "<Breitengrad>,<Längengrad>[,<Höhe>]",
   "setupwizard.location.retrieveFromDevice": "Ermittlung über Dein Gerät",
   "setupwizard.location.retrieveFromDevice.error": "Fehler bei der Positionsbestimmung",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Entschuldigung",
