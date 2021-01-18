@@ -38,8 +38,9 @@ const seriesComponents = {
 
 export default {
   data () {
-    const chartType = this.context.component.config.chartType
-    const period = this.context.component.config.period || 'D'
+    const config = this.context.component.config || {}
+    const chartType = config.chartType
+    const period = config.period || 'D'
     let endTime = (chartType) ? this.addOrSubtractPeriod(dayjs().startOf(chartType), 1) : dayjs()
     return {
       items: {},
@@ -53,6 +54,7 @@ export default {
       return this.addOrSubtractPeriod(this.endTime, -1)
     },
     options () {
+      if (!this.config) return {}
       const chartConfig = this.config.options || {}
       return {
         ...chartConfig,
@@ -173,6 +175,7 @@ export default {
       this.endTime = this.addOrSubtractPeriod(this.endTime, 1)
     },
     addOrSubtractPeriod (day, direction) {
+      if (!this.context.component.config) return
       const fn = (direction < 0) ? day.subtract : day.add
       const chartType = this.context.component.config.chartType
       for (let i = 0; i < Math.abs(direction); i++) {
