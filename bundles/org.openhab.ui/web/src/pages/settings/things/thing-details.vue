@@ -13,7 +13,7 @@
     </f7-toolbar>
 
     <f7-tabs>
-      <f7-tab id="thing" @tab:show="() => this.currentTab = 'thing'" :tab-active="currentTab === 'thing'">
+      <f7-tab id="thing" :tab-active="currentTab === 'thing'">
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow padding-left padding-right" strong>
           <f7-col>
             <div v-show="!error" class="float-right align-items-flex-start align-items-center">
@@ -107,7 +107,7 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="channels" disabled="!thingType.channels" @tab:show="() => this.currentTab = 'channels'" :tab-active="currentTab === 'channels'">
+      <f7-tab id="channels" disabled="!thingType.channels" :tab-active="currentTab === 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list :thingType="thingType" :thing="thing" :channelTypes="channelTypes"
             @channels-updated="onChannelsUpdated" :context="context"
@@ -124,7 +124,7 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="(value) => thingYaml = value" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
@@ -315,13 +315,14 @@ export default {
     switchTab (tab) {
       if (this.currentTab === tab) return
       if (this.currentTab === 'code') {
-        if (this.fromYaml()) {
+        const previousYaml = this.toYaml()
+        if (this.thingYaml !== previousYaml && this.fromYaml()) {
           this.save()
         }
       }
       this.currentTab = tab
       if (this.currentTab === 'code') {
-        this.toYaml()
+        this.thingYaml = this.toYaml()
       }
     },
     load () {
@@ -673,7 +674,7 @@ export default {
 
       if (editableChannels.length > 0) editableThing.channels = editableChannels
 
-      this.thingYaml = YAML.stringify(editableThing)
+      return YAML.stringify(editableThing)
     },
     fromYaml () {
       const updatedThing = YAML.parse(this.thingYaml)
