@@ -85,7 +85,7 @@ export function storeBasicCredentials () {
 
 export function setAccessToken (token, api) {
   accessToken = token
-  if (!token || !api || requireToken !== undefined) return
+  if (!token || !api || requireToken !== undefined) return Promise.resolve()
 
   // determine whether the token is required for user operations
   return api.head('/rest/sitemaps').then((resp) => {
