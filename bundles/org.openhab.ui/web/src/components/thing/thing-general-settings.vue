@@ -11,10 +11,10 @@
               </f7-list-input>
               <f7-list-input label="Identifier" type="text" placeholder="Name" :value="thing.UID" disabled>
               </f7-list-input>
-              <f7-list-input label="Label" type="text" :disabled="!ready" placeholder="e.g. My Thing" :value="thing.label"
+              <f7-list-input label="Label" type="text" :disabled="!ready || readOnly" placeholder="e.g. My Thing" :value="thing.label"
                               @input="thing.label = $event.target.value; $emit('updated')" required validate>
               </f7-list-input>
-              <f7-list-input label="Location" type="text" :disabled="!ready" placeholder="e.g. Kitchen" :value="thing.location"
+              <f7-list-input label="Location" type="text" :disabled="!ready || readOnly" placeholder="e.g. Kitchen" :value="thing.location"
                               @input="thing.location = $event.target.value; $emit('updated')" clear-button>
               </f7-list-input>
             </f7-list>
@@ -40,7 +40,7 @@
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
 
 export default {
-  props: ['thing', 'thingType', 'createMode', 'ready'],
+  props: ['thing', 'thingType', 'createMode', 'ready', 'readOnly'],
   components: {
     ThingPicker
   },

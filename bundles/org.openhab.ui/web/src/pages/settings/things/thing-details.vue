@@ -2,8 +2,8 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
     <f7-navbar :title="thing.label || thing.UID" back-link="Back" no-hairline>
       <f7-nav-right v-show="!error">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
+        <f7-link @click="save()" v-if="$theme.md && thing.editable" icon-md="material:save" icon-only></f7-link>
+        <f7-link @click="save()" v-if="!$theme.md && thing.editable">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
@@ -13,7 +13,7 @@
     </f7-toolbar>
 
     <f7-tabs>
-      <f7-tab id="thing" @tab:show="() => this.currentTab = 'thing'" :tab-active="currentTab === 'thing'">
+      <f7-tab id="thing" :tab-active="currentTab === 'thing'">
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow padding-left padding-right" strong>
           <f7-col>
             <div v-show="!error" class="float-right align-items-flex-start align-items-center">
@@ -44,8 +44,9 @@
 
         <f7-block v-if="ready && !error" class="block-narrow">
           <f7-col>
-            <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" :ready="true" />
+            <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" :ready="true" :read-only="thing.editable === false" />
             <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">Information</f7-block-title>
+            <f7-block-footer v-if="thing.editable === false" class="no-margin padding-left"><f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this thing is not editable because it has been provisioned from a file.</f7-block-footer>
             <f7-list accordion-opposite>
               <f7-list-item accordion-item title="Thing Type" :after="thingType.label">
                 <f7-accordion-content class="thing-type-description">
@@ -74,6 +75,7 @@
               :configuration="thing.configuration"
               :status="configStatusInfo"
               :set-empty-config-as-null="true"
+              :read-only="thing.editable === false"
               @updated="dirty = true"
             />
           </f7-col>
@@ -98,7 +100,7 @@
           <z-wave-network-popup :opened="zwaveNetworkPopupOpened" @closed="zwaveNetworkPopupOpened = false" />
         </f7-block>
 
-        <f7-block class="block-narrow" v-if="ready">
+        <f7-block class="block-narrow" v-if="ready && thing.editable">
           <f7-col>
             <f7-list>
               <f7-list-button color="red" title="Delete Thing" @click="deleteThing"></f7-list-button>
@@ -107,14 +109,14 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="channels" disabled="!thingType.channels" @tab:show="() => this.currentTab = 'channels'" :tab-active="currentTab === 'channels'">
+      <f7-tab id="channels" disabled="!thingType.channels" :tab-active="currentTab === 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list :thingType="thingType" :thing="thing" :channelTypes="channelTypes"
             @channels-updated="onChannelsUpdated" :context="context"
           />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible" @click="addChannel()"></f7-list-button>
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible && thing.editable" @click="addChannel()"></f7-list-button>
               <f7-list-button class="searchbar-ignore" color="blue" title="Add Equipment to Model" @click="addToModel(true)"></f7-list-button>
               <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model" @click="addToModel(false)"></f7-list-button>
               <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items" @click="unlinkAll(false)"></f7-list-button>
@@ -124,7 +126,7 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="(value) => thingYaml = value" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
@@ -315,13 +317,14 @@ export default {
     switchTab (tab) {
       if (this.currentTab === tab) return
       if (this.currentTab === 'code') {
-        if (this.fromYaml()) {
+        const previousYaml = this.toYaml()
+        if (this.thingYaml !== previousYaml && this.fromYaml()) {
           this.save()
         }
       }
       this.currentTab = tab
       if (this.currentTab === 'code') {
-        this.toYaml()
+        this.thingYaml = this.toYaml()
       }
     },
     load () {
@@ -673,7 +676,7 @@ export default {
 
       if (editableChannels.length > 0) editableThing.channels = editableChannels
 
-      this.thingYaml = YAML.stringify(editableThing)
+      return YAML.stringify(editableThing)
     },
     fromYaml () {
       const updatedThing = YAML.parse(this.thingYaml)
