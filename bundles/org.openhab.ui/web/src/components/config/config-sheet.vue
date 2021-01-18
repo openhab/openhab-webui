@@ -14,6 +14,7 @@
               :value="configurationWithDefaults[parameter.name]"
               :parameters="parameters"
               :configuration="configurationWithDefaults"
+              :read-only="readOnly"
               :status="parameterStatus(parameter)"
               @update="(value) => updateParameter(parameter, value)"
             />
@@ -37,6 +38,7 @@
               :value="configurationWithDefaults[parameter.name]"
               :parameters="parameters"
               :configuration="configurationWithDefaults"
+              :read-only="readOnly"
               :status="parameterStatus(parameter)"
               @update="(value) => updateParameter(parameter, value)"
             />
@@ -70,7 +72,7 @@
 import { actionParams } from '@/assets/definitions/widgets/actions'
 
 export default {
-  props: ['parameterGroups', 'parameters', 'configuration', 'status', 'setEmptyConfigAsNull'],
+  props: ['parameterGroups', 'parameters', 'configuration', 'status', 'readOnly', 'setEmptyConfigAsNull'],
   components: {
     'config-parameter': () => import(/* webpackChunkName: "config-parameter" */ './config-parameter.vue')
   },

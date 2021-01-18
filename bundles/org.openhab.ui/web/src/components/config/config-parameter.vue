@@ -1,7 +1,8 @@
 <template>
     <f7-list ref="parameter" class="config-parameter" :no-hairlines-md="configDescription.type !== 'BOOLEAN' && (!configDescription.options || !configDescription.options.length) && ['item'].indexOf(configDescription.context) < 0"
       v-show="(configDescription.visible) ? configDescription.visible(value, configuration, configDescription, parameters) : true">
-      <component :is="control" :config-description="configDescription" :value="value" :parameters="parameters" :configuration="configuration" :title="configDescription.title" @input="updateValue" />
+      <component v-if="!readOnly && !configDescription.readOnly" :is="control" :config-description="configDescription" :value="value" :parameters="parameters" :configuration="configuration" :title="configDescription.title" @input="updateValue" />
+      <f7-list-item v-else :title="configDescription.label" :after="(value !== undefined && value !== null) ? value.toString() : 'N/A'" />
       <f7-block-footer slot="after-list" class="param-description">
         <div v-if="status" class="param-status-info">
           <f7-chip v-if="status.type !== 'INFORMATION'" :color="status.type === 'WARNING' ? 'orange' : (status.type === 'ERROR') ? 'red' : 'gray'" style="float: right" :text="status.type"></f7-chip>
@@ -41,6 +42,7 @@ export default {
     'value',
     'parameters',
     'configuration',
+    'readOnly',
     'status'
   ],
   data () {
