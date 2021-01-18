@@ -39,7 +39,10 @@ function getWidgetDefinitions (cm) {
       return [
         ...(componentType === 'home') ? [OhLocationCardParameters(), OhEquipmentCardParameters(), OhPropertyCardParameters()] : [],
         ...ohComponents.map((c) => c.widget()).sort((c1, c2) => c1.name.localeCompare(c2.name)),
-        ...f7Components.sort((c1, c2) => c1.name.localeCompare(c2.name))
+        ...f7Components.sort((c1, c2) => c1.name.localeCompare(c2.name)),
+        ...Object.keys(ChartWidgetsDefinitions).map((name) => {
+          return Object.assign({}, ChartWidgetsDefinitions[name], { name })
+        })
       ]
   }
 }

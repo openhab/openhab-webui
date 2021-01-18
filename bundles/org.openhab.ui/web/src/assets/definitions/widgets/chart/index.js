@@ -379,9 +379,8 @@ export default {
     label: 'Data Series',
     docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
-      parameterGroups: [componentRelationsGroup],
+      parameterGroups: [],
       parameters: [
-        ...seriesParameters,
         seriesTypeParameter('gauge')
       ]
     }
