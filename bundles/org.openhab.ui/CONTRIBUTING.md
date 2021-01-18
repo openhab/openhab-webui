@@ -1,6 +1,6 @@
 # Contributing to the openHAB UI
 
-The [standard contributing and community guidelines for the openHAB project](https://github.com/openhab/openhab-core/blob/master/CONTRIBUTING.md), including signing off your commits, also apply for the development of the UI.
+The [standard contributing and community guidelines for the openHAB project](https://github.com/openhab/openhab-core/blob/main/CONTRIBUTING.md), including signing off your commits, also apply for the development of the UI.
 
 The repository for web user interfaces, including this project, is located at https://github.com/openhab/openhab-webui and the code of this project, including this file, is found in the `bundles/org.openhab.ui` folder.
 
