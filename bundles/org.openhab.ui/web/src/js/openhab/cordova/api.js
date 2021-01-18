@@ -93,6 +93,10 @@ export default {
       })
     }
   },
+  head (uri) {
+    // Not implemented
+    return Promise.resolve()
+  },
   delete (uri, data) {
     const fullUri = prepareRequest(uri)
     if (fullUri) {

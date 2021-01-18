@@ -41,7 +41,7 @@ export default {
           this.$oh.api.postPlain('/rest/auth/token?useCookie=true', payload, 'application/json', 'application/x-www-form-urlencoded').then((data) => {
             const resp = JSON.parse(data)
             localStorage.setItem('openhab.ui:refreshToken', resp.refresh_token)
-            return this.$oh.auth.setAccessToken(resp.access_token).then(() => {
+            return this.$oh.auth.setAccessToken(resp.access_token, this.$oh.api).then(() => {
               // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
               setTimeout(this.refreshAccessToken, resp.expires_in * 950)
               this.$store.commit('setUser', { user: resp.user })
@@ -73,7 +73,7 @@ export default {
         this.$oh.auth.clearAccessToken()
         this.$oh.api.postPlain('/rest/auth/token', payload, 'application/json', 'application/x-www-form-urlencoded').then((data) => {
           const resp = JSON.parse(data)
-          return this.$oh.auth.setAccessToken(resp.access_token).then(() => {
+          return this.$oh.auth.setAccessToken(resp.access_token, this.$oh.api).then(() => {
             // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
             setTimeout(this.refreshAccessToken, resp.expires_in * 950)
             // also make sure to check the token and renew it when the app becomes visible again

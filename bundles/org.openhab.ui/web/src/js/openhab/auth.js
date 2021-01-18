@@ -18,14 +18,14 @@ let basicCredentials = null
 /**
  * The token is required for all requests, including SSE
  */
-let requireToken = false
+let requireToken
 
 export function getAccessToken () { return accessToken }
 export function getTokenInCustomHeader () { return tokenInCustomHeader }
 export function getBasicCredentials () { return basicCredentials }
 export function getRequireToken () { return requireToken }
 
-if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER')) tokenInCustomHeader = true
+if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) tokenInCustomHeader = true
 
 export function authorize (setup) {
   import('pkce-challenge').then((PkceChallenge) => {
@@ -74,7 +74,7 @@ export function setBasicCredentials (username, password) {
 
 export function clearBasicCredentials () {
   basicCredentials = null
-  tokenInCustomHeader = document.cookie.indexOf('X-OPENHAB-AUTH-HEADER')
+  tokenInCustomHeader = document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0
 }
 
 export function storeBasicCredentials () {
@@ -83,23 +83,18 @@ export function storeBasicCredentials () {
   }
 }
 
-export function setAccessToken (token) {
+export function setAccessToken (token, api) {
   accessToken = token
+  if (!token || !api || requireToken !== undefined) return
 
   // determine whether the token is required for user operations
-  let headers = {}
-  if (getBasicCredentials()) {
-    const creds = getBasicCredentials()
-    headers.Authorization = 'Basic ' + btoa(creds.id + ':' + creds.password)
-  }
-  return fetch('rest/events', { method: 'HEAD', credentials: 'include', headers })
-    .then((resp) => {
-      if (resp.status === 401) {
-        requireToken = true
-        if (!token) authorize()
-      }
-      return Promise.resolve()
-    })
+  return api.head('/rest/sitemaps').then((resp) => {
+    requireToken = false
+    return Promise.resolve()
+  }).catch((err) => {
+    if (err === 'Unauthorized') requireToken = true
+    return Promise.resolve()
+  })
 }
 
 export function clearAccessToken () {
