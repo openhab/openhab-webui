@@ -54,6 +54,7 @@ export default {
       this.createMode = false
       this.forceSemantics = false
       if (this.model.item.created === false) {
+        this.$set(this, 'editedItem', Object.assign({}, this.model.item))
         this.createMode = true
         if (this.model.item.metadata && this.model.item.metadata.semantics) {
           this.forceSemantics = true
@@ -75,14 +76,15 @@ export default {
       this.editMode = false
 
       // TODO properly validate item
-      if (!this.model.item.name) return
+      if (!this.editedItem.name) return
 
-      this.$oh.api.put('/rest/items/' + this.model.item.name, this.model.item).then((data) => {
+      this.$oh.api.put('/rest/items/' + this.editedItem.name, this.editedItem).then((data) => {
         this.$f7.toast.create({
           text: 'Item created',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
+        this.$set(this.model, 'item', JSON.parse(data))
         this.model.item.created = true
         this.model.item.editable = true
         this.$emit('item-created', this.model.item)
