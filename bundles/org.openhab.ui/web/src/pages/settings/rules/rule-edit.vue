@@ -368,6 +368,7 @@ export default {
     },
     keyDown (ev) {
       if (ev.ctrlKey || ev.metakKey) {
+        if (this.currentModule) return
         switch (ev.keyCode) {
           case 68:
             this.toggleDisabled()
