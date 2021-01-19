@@ -28,12 +28,8 @@
   position relative
   .oh-chart
     position absolute
-    overflow hidden
     width 100%
     height 100%
-    .echarts
-      width 100%
-      height 100%
 </style>
 
 <script>

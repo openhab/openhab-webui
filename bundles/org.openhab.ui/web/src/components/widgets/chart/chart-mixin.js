@@ -56,6 +56,9 @@ export default {
     options () {
       if (!this.config) return {}
       const chartConfig = this.config.options || {}
+      if (!chartConfig.backgroundColor && this.$f7.data.themeOptions.dark === 'dark') {
+        chartConfig.backgroundColor = '#121212'
+      }
       return {
         ...chartConfig,
         grid: this.grid,
