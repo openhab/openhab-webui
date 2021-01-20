@@ -6,12 +6,12 @@ msgstr ""
 "X-Crowdin-Project: openhab-habpanel\n"
 "X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: hu\n"
-"X-Crowdin-File: /master/bundles/org.openhab.ui.habpanel/web/assets/i18n/widgets/widgets.pot\n"
-"X-Crowdin-File-ID: 268\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/widgets/widgets.pot\n"
+"X-Crowdin-File-ID: 536\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
-"PO-Revision-Date: 2020-12-09 13:03\n"
+"PO-Revision-Date: 2021-01-20 22:00\n"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.min"
@@ -76,7 +76,7 @@ msgstr ""
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.button"
 msgid "Button"
-msgstr "Gomb"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.button.description"
@@ -91,7 +91,7 @@ msgstr ""
 #. Tab header
 msgctxt "widget.button.general"
 msgid "General"
-msgstr "Általános"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.button.general.action_type"
@@ -111,7 +111,7 @@ msgstr ""
 #. Dropdown option
 msgctxt "widget.button.general.action_type.navigate"
 msgid "Navigate"
-msgstr "Navigáció"
+msgstr ""
 
 #. Textbox header
 msgctxt "widget.button.general.command"
@@ -141,7 +141,7 @@ msgstr ""
 #. Radio button label
 msgctxt "widget.button.general.navigation_target.self"
 msgid "Current tab"
-msgstr "Az aktuális lap"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.button.general.navigation_target.new_tab"
