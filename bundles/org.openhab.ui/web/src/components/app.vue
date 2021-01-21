@@ -412,7 +412,7 @@ export default {
           if (!this.$store.getters.apiEndpoint('auth')) this.$store.commit('setNoAuth', true)
           return rootResponse
         }).then((rootResponse) => {
-          let locale = this.$store.getters.locale.toLocaleLowerCase()
+          const locale = this.$store.getters.locale.toLocaleLowerCase()
           let dayjsLocalePromise = Promise.resolve(null)
           // try to resolve the dayjs file to load if it exists
           if (locale) {
