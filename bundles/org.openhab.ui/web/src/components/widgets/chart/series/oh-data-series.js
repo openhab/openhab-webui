@@ -5,32 +5,26 @@ export default {
     return []
   },
   get (component, points, startTime, endTime, chart) {
-    let series = {}
-
+    if (!component.config || typeof component.config !== 'object') return {}
+      
     if (!component.dataSeriesId) {
-      component.dataSeriesId = Framework7.utils.id() + '.'
+      component.dataSeriesId = Framework7.utils.id()
+    }
+    
+    let series = chart.evaluateExpression(component.dataSeriesId, component.config)
+
+    if (series.data && Array.isArray(series.data)) {
+      series.data = series.data.map((v, index) =>  {
+        const item = chart.evaluateExpression(component.dataSeriesId + 'data.' + index, v)
+        return Number.isNaN(item.value) ? {} : item
+      })
     }
 
-    if (component.config) {
-      if (typeof component.config !== 'object') return {}
-      
-      for (const key in component.config) {
-        chart.$set(series, key, chart.evaluateExpression(component.dataSeriesId + key, component.config[key]))
-      }
-
-      if (component.config.data && Array.isArray(component.config.data)) {
-        series.data = component.config.data.map((v, index) =>  {
-          const item = chart.evaluateExpression(component.dataSeriesId + 'data.' + index, v)
-          return Number.isNaN(item.value) ? {} : item
-        })
-      }
-
-      if (component.config.axisLine && component.config.axisLine.lineStyle && component.config.axisLine.lineStyle.color && Array.isArray(component.config.axisLine.lineStyle.color)) {
-        series.axisLine.lineStyle.color = component.config.axisLine.lineStyle.color.map((v, index) => {
-          if (!Array.isArray(v)) return v
-          return v.map((s, subindex) => chart.evaluateExpression(component.dataSeriesId + 'axisLine.lineStyle.color.' + index + '.' + subindex, s))
-        })
-      }
+    if (series.axisLine && series.axisLine.lineStyle && series.axisLine.lineStyle.color && Array.isArray(series.axisLine.lineStyle.color)) {
+      series.axisLine.lineStyle.color = series.axisLine.lineStyle.color.map((v, index) => {
+        if (!Array.isArray(v)) return v
+        return v.map((s, subindex) => chart.evaluateExpression(component.dataSeriesId + 'axisLine.lineStyle.color.' + index + '.' + subindex, s))
+      })
     }
 
     return series
