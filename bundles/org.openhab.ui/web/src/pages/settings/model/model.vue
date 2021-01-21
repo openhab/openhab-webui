@@ -228,10 +228,16 @@ export default {
       if (this.selectedItem) {
         this.update()
       } else {
+	    if (window) {
+          window.addEventListener('keydown', this.keyDown)
+        }
         this.load()
       }
     },
     onPageBeforeOut () {
+	  if (window) {
+        window.removeEventListener('keydown', this.keyDown)
+      }
       this.detailsOpened = false
       this.$store.dispatch('stopTrackingStates')
       this.stopEventSource()
@@ -311,6 +317,40 @@ export default {
       this.newItem = null
       this.load()
       // this.newItemParent = null
+    },
+	keyDown (ev) {
+      if (ev.keyCode == 46) {       // delete key
+        if (this.selectedItem) {       
+          const vm = this
+          this.$f7.dialog.confirm(
+            'Remove ' + this.selectedItem.item.name + '?','Remove Item',() => {
+              vm.doRemove()
+            }
+          )
+        }
+        ev.stopPropagation()
+        ev.preventDefault()
+      }
+    },
+    doRemove () {
+      this.$oh.api.delete('/rest/items/' + this.selectedItem.item.name).then((data) => {
+        this.$f7.toast.create({
+          text: 'Item removed',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        this.selectedItem.item.created = true
+        this.selectedItem.item.editable = true
+        this.$emit('item-removed', this.selectedItem.item)
+        this.selectedItem = null
+        this.load()
+      }).catch((err) => {
+        this.$f7.toast.create({
+          text: 'Item not removed: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
     },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/items/*/added,openhab/items/*/updated,openhab/items/*/removed', null, (event) => {
