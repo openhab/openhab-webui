@@ -5,7 +5,7 @@
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
       </f7-nav-left>
       <f7-nav-title-large v-if="$f7.data.themeOptions.homeNavbar !== 'simple'" class="home-title-large">
-        <span class="today">{{new Date().toLocaleString(($store.state.locale) ? $store.state.locale.replace('_', '-') : 'default', { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
+        <span class="today">{{ new Date().toLocaleString(transformLocale($store.state.locale), { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
         {{title}}
       </f7-nav-title-large>
       <f7-nav-title>
@@ -180,6 +180,14 @@ export default {
       const hiddenTabs = this.homePageComponent.config.hiddenModelTabs
       if (hiddenTabs === undefined || !hiddenTabs.length) return true
       return hiddenTabs.indexOf(tab) < 0
+    },
+    transformLocale (locale) {
+      const parts = locale.split('_')
+      switch (parts.length) {
+        case 3: return `${parts[0]}-${parts[2].substring(1)}-${parts[1]}`
+        case 2: return `${parts[0]}-${parts[1]}`
+        default: return 'default'
+      }
     }
   }
 }
