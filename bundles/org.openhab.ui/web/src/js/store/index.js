@@ -25,7 +25,7 @@ const store = new Vuex.Store({
   getters: {
     apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type),
     locale: (state, getters) => {
-      const segments = state.locale?.split('_') || []
+      const segments = (state.locale) ? state.locale.split('_') : []
       switch (segments.length) {
         case 3: return `${segments[0]}-${segments[2].substring(1)}-${segments[1]}`
         case 2: return `${segments[0]}-${segments[1]}`
