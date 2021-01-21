@@ -1,4 +1,18 @@
 const accessories = {
+  'AirQualitySensor': [
+    'AirQuality',
+    'OzoneDensity',
+    'NitrogenDioxideDensity',
+    'SulphurDioxideDensity',
+    'PM25Density',
+    'PM10Density',
+    'VOCDensity',
+    'Name',
+    'ActiveStatus',
+    'FaultStatus',
+    'TamperedStatus',
+    'BatteryLowStatus'
+  ],
   'LeakSensor': [
     'LeakDetectedState',
     'Name',
@@ -33,6 +47,14 @@ const accessories = {
   ],
   'SmokeSensor': [
     'SmokeDetectedState',
+    'Name',
+    'ActiveStatus',
+    'FaultStatus',
+    'TamperedStatus',
+    'BatteryLowStatus'
+  ],
+  'LightSensor': [
+    'LightLevel',
     'Name',
     'ActiveStatus',
     'FaultStatus',
@@ -74,6 +96,22 @@ const accessories = {
     'FaultStatus',
     'TamperedStatus',
     'BatteryLowStatus'
+  ],
+  'Door': [
+    'CurrentPosition',
+    'TargetPosition',
+    'PositionState',
+    'Name',
+    'HoldPosition',
+    'ObstructionStatus'
+  ],
+  'Window': [
+    'CurrentPosition',
+    'TargetPosition',
+    'PositionState',
+    'Name',
+    'HoldPosition',
+    'ObstructionStatus'
   ],
   'WindowCovering': [
     'CurrentPosition',
@@ -117,7 +155,22 @@ const accessories = {
     'CurrentTemperature',
     'TargetTemperature',
     'CurrentHeatingCoolingMode',
-    'TargetHeatingCoolingMode'
+    'TargetHeatingCoolingMode',
+    'Name',
+    'CoolingThresholdTemperature',
+    'HeatingThresholdTemperature'
+  ],
+  'HeaterCooler': [
+    'ActiveStatus',
+    'CurrentTemperature',
+    'CurrentHeaterCoolerState',
+    'TargetHeaterCoolerState',
+    'Name',
+    'RotationSpeed',
+    'SwingMode',
+    'LockControl',
+    'CoolingThresholdTemperature',
+    'HeatingThresholdTemperature'
   ],
   'Lock': [
     'LockCurrentState',
