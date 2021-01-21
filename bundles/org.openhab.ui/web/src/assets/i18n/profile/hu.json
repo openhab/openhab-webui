@@ -10,7 +10,7 @@
   "profile.sessions.delete.error": "Hiba a munkamenet törlése közben: ",
   "profile.sessions.signOut.error": "Hiba a kijelentkezés során: ",
   "profile.apiTokens": "API tokenek",
-  "profile.apiTokens.header": "Az OAuth2-t nem támogató külsö eszközök és szolgáltatások hozzáférésének engedélyezéséhez hozzon létre API tokeneket.",
+  "profile.apiTokens.header": "Az OAuth2-t nem támogató külső eszközök és szolgáltatások hozzáférésének engedélyezéséhez hozzon létre API tokeneket.",
   "profile.apiTokens.created": "Létrehozva: ",
   "profile.apiTokens.validForScope": "A hatókör érvényes: ",
   "profile.apiTokens.create": "Új API token létrehozása",
