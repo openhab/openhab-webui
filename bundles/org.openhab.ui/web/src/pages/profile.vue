@@ -37,8 +37,8 @@
                 v-for="session in sessions"
                 :key="session.sessionId"
                 :title="session.clientId"
-                :subtitle="$t('profile.sessions.created') +  new Date(session.createdTime).toLocaleString($store.state.locale ? $store.state.locale.replace('_', '-') : 'default')"
-                :text="$t('profile.sessions.lastRefreshed') + new Date(session.lastRefreshTime).toLocaleString($store.state.locale ? $store.state.locale.replace('_', '-') : 'default')"
+                :subtitle="$t('profile.sessions.created') + new Date(session.createdTime).toLocaleString($store.getters.locale)"
+                :text="$t('profile.sessions.lastRefreshed') + new Date(session.lastRefreshTime).toLocaleString($store.getters.locale)"
               >
                 <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
                 <f7-swipeout-actions right>
@@ -63,7 +63,7 @@
                 v-for="apiToken in apiTokens"
                 :key="apiToken.name"
                 :title="apiToken.name"
-                :subtitle="$t('profile.apiTokens.created') + new Date(apiToken.createdTime).toLocaleString($store.state.locale ? $store.state.locale.replace('_', '-') : 'default')"
+                :subtitle="$t('profile.apiTokens.created') + new Date(apiToken.createdTime).toLocaleString($store.getters.locale)"
                 :text="$t('profile.apiTokens.validForScope') + (apiToken.scope || 'N/A')"
               >
                 <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
