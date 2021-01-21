@@ -228,14 +228,14 @@ export default {
       if (this.selectedItem) {
         this.update()
       } else {
-	    if (window) {
+        if (window) {
           window.addEventListener('keydown', this.keyDown)
         }
         this.load()
       }
     },
     onPageBeforeOut () {
-	  if (window) {
+      if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
       this.detailsOpened = false
@@ -318,7 +318,7 @@ export default {
       this.load()
       // this.newItemParent = null
     },
-	keyDown (ev) {
+    keyDown (ev) {
       if (ev.keyCode == 46) {       // delete key
         if (this.selectedItem) {       
           const vm = this
