@@ -1,6 +1,6 @@
 // definitions for the layout widgets
 
-import { WidgetDefinition, po, pt } from '../helpers.js'
+import { WidgetDefinition, po, pt, pn, pb, pg } from '../helpers'
 
 export function OhBlockDescription () {
   return new WidgetDefinition('oh-block', 'Layout Grid Block', 'A block in a grid layout')
@@ -40,5 +40,30 @@ export function OhMasonryDefinition () {
         { value: 'vue-masonry-css', label: 'vue-masonry-css' },
         { value: 'css-grid', label: 'CSS Grid (no library)' }
       ])
+    ])
+}
+
+export function OhGridLayoutDefinition () {
+  return new WidgetDefinition('oh-grid-layout', 'Grid Layout', 'A grid layout')
+    .paramGroup(pg('layout', 'Layout Settings'), [
+      pn('colNum', 'Number of Columns', 'Number of columns across the page (default 16, limited to a minimum widget width of 50px)'),
+      pn('margin', 'Margin', 'Margin between items and to screen (default 10)'),
+      pb('verticalCompact', 'Vertical Compact', 'Automatically align items from top to bottom (default false)')
+        .v((value, configuration, configDescription, parameters) => { return configuration.layoutType !== 'fixed' })
+    ])
+    .paramGroup(pg('screenSettings', 'Screen Settings'), [
+      pn('screenWidth', 'Screen Width', 'Screen width in pixels (default 1280)')
+        .v((value, configuration, configDescription, parameters) => { return configuration.layoutType === 'fixed' }),
+      pn('screenHeight', 'Screen Height', 'Screen width in pixels (default 720)')
+        .v((value, configuration, configDescription, parameters) => { return configuration.layoutType === 'fixed' }),
+      pb('scale', 'Scaling', 'Scale content to other screen widths (can lead to unexpected styling issues) (default false)')
+        .v((value, configuration, configDescription, parameters) => { return configuration.layoutType === 'fixed' })
+    ])
+    .paramGroup(pg('appearance', 'Appearance'), [
+      pb('hideNavbar', 'Hide Navigation bar', 'Hide navigation bar on top when page is displayed (You can additionally hide the sidebar using its pin icon) (default false)')
+        .v((value, configuration, configDescription, parameters) => { return configuration.layoutType === 'fixed' }),
+      pb('hideSidebarButton', 'Hide Sidebar Button', 'Don\'t show a menu icon button in the top left corner when the sidebar is closed (default false)')
+        .v((value, configuration, configDescription, parameters) => { return configuration.hideNavbar === true }),
+      pb('showFullscreenButton', 'Show Fullscreen Button', 'Show a fullscreen button on the top right corner (default false)')
     ])
 }

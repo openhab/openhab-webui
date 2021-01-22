@@ -295,6 +295,7 @@ export default {
         }
       }
       this.previewMode = value
+      this.forceUpdate()
     }
   }
 }

@@ -21,13 +21,15 @@
           <f7-preloader></f7-preloader>
           <div>Loading...</div>
         </f7-block>
-        <f7-block class="block-narrow" v-if="ready && !previewMode">
+        <f7-block id="page-settings" class="block-narrow" v-if="ready && !previewMode">
           <page-settings :page="page" :createMode="createMode" />
         </f7-block>
 
         <oh-layout-page class="layout-page" v-if="ready" :context="context" :key="pageKey"
                         @add-block="addBlock"
                         @add-masonry="addMasonry"
+                        @set-layout-type="setLayoutType"
+                        @add-grid-item="addGridItem"
         />
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
@@ -101,7 +103,10 @@ export default {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-layout-page',
         config: {},
-        slots: { default: [] }
+        slots: {
+          default: [],
+          grid: []
+        }
       },
       addFromModelContext: {},
       modelPickerAllowMultiple: true,
@@ -224,6 +229,10 @@ export default {
       this.addFromModelContext = {}
       this.forceUpdate()
     },
+    setLayoutType (layoutType, component) {
+      this.page.config.layoutType = layoutType
+      this.forceUpdate()
+    },
     addBlock (component) {
       component.slots.default.push({
         component: 'oh-block',
@@ -239,6 +248,14 @@ export default {
         }])
       }
     },
+    addGridItem (component) {
+      component.slots['grid'].push({
+        component: 'oh-grid-item',
+        config: { x: 5, y: 3, h: 2, w: 2 },
+        slots: { default: [] }
+      })
+      this.forceUpdate()
+    },
     getWidgetDefinition (componentType) {
       const component = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets, ...StandardCellWidgets })
         .find((w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType)
@@ -249,15 +266,22 @@ export default {
       this.pageYaml = YAML.stringify({
         config: this.page.config,
         blocks: this.page.slots.default,
-        masonry: this.page.slots.masonry
+        masonry: this.page.slots.masonry,
+        grid: this.page.slots.grid
       })
     },
     fromYaml () {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
+        if (updatedPage.config && updatedPage.config.layoutType && updatedPage.config.layoutType === 'fixed' &&
+           ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))) {
+          throw new Error('Using blocks and masonry in fixed-size layouts is not possible')
+        }
+
         this.$set(this.page, 'config', updatedPage.config)
         this.$set(this.page.slots, 'default', updatedPage.blocks)
         this.$set(this.page.slots, 'masonry', updatedPage.masonry)
+        this.$set(this.page.slots, 'grid', updatedPage.grid)
         this.forceUpdate()
         return true
       } catch (e) {
