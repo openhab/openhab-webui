@@ -12,6 +12,9 @@
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details" v-if="currentTab === 'tree'">
       <f7-link :disabled="selectedWidget != null" class="left" @click="selectedWidget = null">Clear</f7-link>
+      <div style="margin-left: auto">
+          <f7-link class="right" color="red" @click="deleteItem">Remove Sitemap</f7-link>
+      </div>
       <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link>
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
@@ -311,6 +314,17 @@ export default {
       if (widget.slots && widget.slots.widgets) {
         widget.slots.widgets.forEach(this.cleanConfig)
       }
+    },
+    deleteItem () {
+      this.$f7.dialog.confirm(
+        `Are you sure you want to delete ${this.sitemap.config.label || this.sitemap.config.name}?`,
+        'Delete Item',
+        () => {
+          this.$oh.api.delete('/rest/ui/components/system:sitemap/' + this.sitemap.uid).then(() => {
+            this.$f7router.back('/settings/pages/', { force: true })
+          })
+        }
+      )
     },
     update (value) {
       this.selectedWidget = null
