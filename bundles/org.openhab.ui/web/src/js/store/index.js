@@ -25,11 +25,34 @@ const store = new Vuex.Store({
   getters: {
     apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type),
     locale: (state, getters) => {
-      const segments = (state.locale) ? state.locale.split('_') : []
-      switch (segments.length) {
-        case 3: return `${segments[0]}-${segments[2].substring(1)}-${segments[1]}`
-        case 2: return `${segments[0]}-${segments[1]}`
-        default: return 'default'
+      const javaLocale = (state.locale) ? state.locale : ''
+      let jsLocale = ''
+      let language = ''
+      let country = ''
+      let script = ''
+
+      // determine country, language and script
+      javaLocale.split('_').forEach(segment => {
+        if (segment === segment.toLowerCase() && segment.length === 2) {
+          language = segment
+        } else if (segment === segment.toUpperCase() && segment.length === 2) {
+          country = segment
+        } else if (segment.charAt(0) === '#') {
+          script = segment.substring(1)
+        }
+      })
+
+      // assemble js locale string representation
+      jsLocale += (language) || jsLocale
+      jsLocale += (script) ? `-${script}` : `${script}`
+      jsLocale += (country && jsLocale.length > 0) ? `-${country}` : `${country}`
+
+      // check whether the browser support the returned locale
+      try {
+        new Date().toLocaleDateString(jsLocale)
+        return jsLocale
+      } catch (e) {
+        return 'default'
       }
     }
   },
