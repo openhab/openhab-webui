@@ -3,7 +3,7 @@
     <f7-navbar :title="createMode ? 'Create New Item': 'Edit Item'" back-link="Cancel">
       <f7-nav-right v-if="!$theme.aurora || !createMode">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
+        <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-block class="block-narrow" v-if="item.name || item.created === false">
@@ -96,6 +96,21 @@ export default {
           this.item = data
           this.ready = true
         })
+      }
+      if (window) {
+        window.addEventListener('keydown', this.keyDown)
+      }
+    },
+    onPageBeforeOut () {
+      if (window) {
+        window.removeEventListener('keydown', this.keyDown)
+      }
+    },
+    keyDown (ev) {
+      if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey)) {
+        this.save()
+        ev.stopPropagation()
+        ev.preventDefault()
       }
     },
     save () {
