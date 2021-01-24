@@ -9,7 +9,7 @@
   "about.technicalInformation.logsFolder": "Logfolder",
   "about.technicalInformation.operatingSystem": "Besturingssysteem",
   "about.technicalInformation.javaRuntime": "Java Runtime",
-  "about.technicalInformation.resourceStats": "{nbproc} beschikbare processoren - {ram} beschikbaar geheugen",
+  "about.technicalInformation.resourceStats": "{nbproc} beschikbare processors - {ram} beschikbaar geheugen",
   "about.technicalInformation.viewDetails": "Details bekijken",
   "about.appearanceOptions": "Uiterlijk (alleen voor dit apparaat)",
   "about.reload": "Herladen",
