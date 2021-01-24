@@ -27,7 +27,7 @@
                 <span slot="media" class="item-initial">{{(channel.label) ? channel.label[0] : (channelType.label) ? channelType.label[0] : '?'}}</span>
               </f7-list-item>
               <f7-list-item divider title="Item"></f7-list-item>
-              <item :item="item" :context="context" :no-state="true" />
+              <item :item="item" :context="context" :no-state="true" :link="'/settings/items/' + item.name" />
             </ul>
           </f7-list>
           </f7-card-content>
