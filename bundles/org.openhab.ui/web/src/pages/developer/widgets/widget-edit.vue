@@ -26,7 +26,7 @@
     <f7-block v-else :key="blockKey + 'b'" class="widget-editor vertical">
       <f7-row resizable>
         <f7-col resizable style="min-width: 20px" class="widget-code">
-          <editor class="widget-component-editor" mode="application/vnd.openhab.uicomponent-definition+yaml?type=widget" :value="widgetDefinition" @input="(value) => widgetDefinition = value" />
+          <editor class="widget-component-editor" mode="application/vnd.openhab.uicomponent+yaml?type=widget" :value="widgetDefinition" @input="(value) => widgetDefinition = value" />
         </f7-col>
         <f7-col v-if="ready" resizable style="min-width: 20px" class="widget-preview padding-right margin-bottom">
           <generic-widget-component :key="widgetKey" :context="context" @command="onCommand" />
