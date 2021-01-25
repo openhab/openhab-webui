@@ -6,15 +6,15 @@ export default {
   },
   get (component, points, startTime, endTime, chart) {
     if (!component.config || typeof component.config !== 'object') return {}
-      
+
     if (!component.dataSeriesId) {
       component.dataSeriesId = Framework7.utils.id()
     }
-    
+
     let series = chart.evaluateExpression(component.dataSeriesId, component.config)
 
     if (series.data && Array.isArray(series.data)) {
-      series.data = series.data.map((v, index) =>  {
+      series.data = series.data.map((v, index) => {
         const item = chart.evaluateExpression(component.dataSeriesId + 'data.' + index, v)
         return Number.isNaN(item.value) ? {} : item
       })

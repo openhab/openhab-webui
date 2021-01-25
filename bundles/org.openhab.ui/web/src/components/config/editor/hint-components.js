@@ -23,7 +23,7 @@ function getWidgetDefinitions (cm) {
   switch (componentType) {
     case 'chart':
       return [
-        OhChartPageDefinition,
+        OhChartPageDefinition(),
         ...Object.keys(ChartWidgetsDefinitions).map((name) => {
           return Object.assign({}, ChartWidgetsDefinitions[name], { name })
         })

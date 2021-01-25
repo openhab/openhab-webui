@@ -59,14 +59,12 @@ import 'echarts/lib/component/visualMap'
 import 'echarts/lib/component/calendar'
 
 import ECharts from 'vue-echarts/components/ECharts'
-import { OhChartDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   mixins: [mixin, chart],
   components: {
     'chart': ECharts
   },
-  widget: OhChartDefinition,
   computed: {
     activeHeight () {
       const config = this.config || {}
