@@ -1,10 +1,10 @@
 {
   "overview.title": "Az Áttekintő Lap még nincs beállítva",
-  "overview.text": "Szerkessze meg a <code>\"Áttekintés\"</code> lapot a fontos eszközök megjelenítéséhez.",
+  "overview.text": "Szerkessze meg a <code>\"overview\"</code> lapot a fontos eszközök megjelenítéséhez.",
   "inbox.title": "A Postaláda üres",
   "inbox.text": "Itt a kötések által felfedezett dolgok listája jelenik meg. <br><br>A lenti gomb segítségével a kiválasztott kötéssel végezhet keresést vagy kézzel adhatja meg az új dolog adatait.",
   "things.title": "Nincsenek még dolgok",
-  "things.text": "Dolgoknak hívjuk az openHAB-el kapcsolatban álló eszközök és szolgáltatások összeségét, melyeket a telepített kötések biztosítanak.<br><br>Az automatikus felderítést támogató telepített kötések a lehetséges dolgokat a Bejövő mappában sorolják fel. A lenti gomb segítségével kezdeményezhet egy kötéssel kapcsolatos keresést vagy kézzel adhat hozzá dolgot.",
+  "things.text": "Dolgoknak hívjuk az openHAB-el kapcsolatban álló eszközök és szolgáltatások összességét, melyeket a telepített kötések biztosítanak.<br><br>Az automatikus felderítést támogató telepített kötések a lehetséges dolgokat a Bejövő mappában sorolják fel. A lenti gomb segítségével kezdeményezhet egy kötéssel kapcsolatos keresést vagy kézzel adhat hozzá dolgot.",
   "things.nobindings.title": "Nincsenek kötések",
   "things.nobindings.text": "Új dolog hozzáadásához először a megfelelő kötés telepítése szükséges.",
   "model.title": "Az otthon modelljének felépítése",
