@@ -48,7 +48,7 @@
   "analyzer.ranges.valueAxes.table.header.max": "Max",
   "analyzer.ranges.valueAxes.table.header.scale": "Skala",
   "analyzer.ranges.valueAxes.table.header.split": "Aufteilen",
-  "analyzer.ranges.valueAxes.placeholder.auto": "Auto",
+  "analyzer.ranges.valueAxes.placeholder.auto": "Auto.",
   "analyzer.aggregations.average": "Durchschnitt",
   "analyzer.aggregations.sum": "Summe",
   "analyzer.aggregations.min": "Minimum",
