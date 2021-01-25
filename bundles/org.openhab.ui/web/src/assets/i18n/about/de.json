@@ -8,7 +8,7 @@
   "about.technicalInformation.userdataFolder": "Verzeichnis für Anwenderdaten",
   "about.technicalInformation.logsFolder": "Verzeichnis für Protokolldateien",
   "about.technicalInformation.operatingSystem": "Betriebssystem",
-  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.javaRuntime": "Java Laufzeit",
   "about.technicalInformation.resourceStats": "{nbproc} Verfügbare Prozessorleistung - {ram} Verfügbarer Arbeitsspeicher",
   "about.technicalInformation.viewDetails": "Details",
   "about.appearanceOptions": "Erscheinungsbild (nur für dieses Gerät)",

@@ -1,0 +1,21 @@
+{
+  "about.title": "O aplikácii",
+  "about.homePage": "Web",
+  "about.documentation": "Dokumentácia",
+  "about.communityForum": "Komunitné fórum",
+  "about.technicalInformation": "Technické informácie",
+  "about.technicalInformation.configurationFolder": "Priečinok s konfiguračnými súbormi",
+  "about.technicalInformation.userdataFolder": "Priečinok s používateľskými dátami",
+  "about.technicalInformation.logsFolder": "Priečinok s logmi",
+  "about.technicalInformation.operatingSystem": "Operačný systém",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} dostupných procesorov - {ram} dostupnej pamäti",
+  "about.technicalInformation.viewDetails": "Zobraziť podrobnosti",
+  "about.appearanceOptions": "Vzhľad (iba pre toto zariadenie)",
+  "about.reload": "Znovu načítať",
+  "about.reload.purgeExplanation1": "Cache sú používané na lokálne ukladanie zdrojov a pomáhajú aplikácii k rýchlejšiemu spusteniu, avšak nemusia vždy spoľahlivo detekovať nové verzie.",
+  "about.reload.purgeExplanation2": "Zvoľte \"Zmazať vyrovnávaciu pamäť a obnoviť\", aby ste vymazali celú vyrovnávaciu pamäť, registrované služby a opätovne načítali všetky dáta zo serveru.",
+  "about.reload.purgeCachesAndRefresh": "Vymazať vyrovnávajúcu pamäť a obnoviť",
+  "about.reload.confirmPurge": "Vymazať celú vyrovnávajúcu pamäť a registráciu servisných služieb? Toto tiež znovu načíta stránku zo serveru, čo môže trvať niekoľko sekúnd.",
+  "about.reload.reloadApp": "Znovu načítať aplikáciu"
+}
