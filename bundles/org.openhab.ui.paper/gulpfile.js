@@ -122,7 +122,7 @@ var paths = {
     ]
 };
 
-gulp.task('default', ['test']);
+gulp.task('default', ['inject']);
 gulp.task('build', ['uglify', 'concat', 'copyCSSLibs', 'copyFontLibs', 'copyJSLibs', 'copyJQUI', 'copyJSMisc', 'copyStatic', 'copyPartials']);
 
 gulp.task('uglify', function () {
