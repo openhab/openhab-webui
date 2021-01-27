@@ -9,6 +9,7 @@ import OhCalendarAxis from './axis/oh-calendar-axis'
 import OhCategoryAxis from './axis/oh-category-axis'
 
 // Series components
+import OhDataSeries from './series/oh-data-series'
 import OhTimeSeries from './series/oh-time-series'
 import OhAggregateSeries from './series/oh-aggregate-series'
 import OhCalendarSeries from './series/oh-calendar-series'
@@ -29,6 +30,7 @@ const axisComponents = {
 }
 
 const seriesComponents = {
+  'oh-data-series': OhDataSeries,
   'oh-time-series': OhTimeSeries,
   'oh-aggregate-series': OhAggregateSeries,
   'oh-calendar-series': OhCalendarSeries
@@ -36,8 +38,9 @@ const seriesComponents = {
 
 export default {
   data () {
-    const chartType = this.context.component.config.chartType
-    const period = this.context.component.config.period || 'D'
+    const config = this.context.component.config || {}
+    const chartType = config.chartType
+    const period = config.period || 'D'
     let endTime = (chartType) ? this.addOrSubtractPeriod(dayjs().startOf(chartType), 1) : dayjs()
     return {
       items: {},
@@ -51,7 +54,11 @@ export default {
       return this.addOrSubtractPeriod(this.endTime, -1)
     },
     options () {
+      if (!this.config) return {}
       const chartConfig = this.config.options || {}
+      if (!chartConfig.backgroundColor && this.$f7.data.themeOptions.dark === 'dark') {
+        chartConfig.backgroundColor = '#121212'
+      }
       return {
         ...chartConfig,
         grid: this.grid,
@@ -121,7 +128,13 @@ export default {
   },
   methods: {
     getSeriesPromises (component) {
+      const getter = (data) => seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this)
+
       const neededItems = seriesComponents[component.component].neededItems(component).filter(i => !!i)
+      if (neededItems.length === 0) {
+        return Promise.resolve(getter([]))
+      }
+
       const itemPromises = neededItems.map((neededItem) => {
         if (this.items[neededItem]) return Promise.resolve(this.items[neededItem])
         return this.$oh.api.get(`/rest/items/${neededItem}`).then((item) => {
@@ -147,9 +160,7 @@ export default {
         return Promise.all([itemPromises[neededItem], this.$oh.api.get(url, query)])
       })
 
-      return Promise.all(combinedPromises).then((data) => {
-        return seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this)
-      })
+      return Promise.all(combinedPromises).then(getter)
     },
     setPeriod (period) {
       this.period = period
@@ -167,6 +178,7 @@ export default {
       this.endTime = this.addOrSubtractPeriod(this.endTime, 1)
     },
     addOrSubtractPeriod (day, direction) {
+      if (!this.context.component.config) return
       const fn = (direction < 0) ? day.subtract : day.add
       const chartType = this.context.component.config.chartType
       for (let i = 0; i < Math.abs(direction); i++) {

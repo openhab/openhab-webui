@@ -42,6 +42,7 @@ export default {
           confine: true,
           position: [10, 10]
         },
+        backgroundColor: (this.$f7.data.themeOptions.dark === 'dark') ? '#121212' : undefined,
         series: this.series
       }
     }
@@ -93,7 +94,7 @@ export default {
         }
       }
       return this.$oh.api.get('/rest/things').then((data) => {
-        let zWaveNodes = data.filter((t) => t.properties && t.properties.zwave_nodeid)
+        let zWaveNodes = data.filter((t) => t.properties && t.properties.zwave_nodeid && t.properties.zwave_neighbours)
 
         zWaveNodes.forEach((t) => {
           let nodeid = t.properties.zwave_nodeid
