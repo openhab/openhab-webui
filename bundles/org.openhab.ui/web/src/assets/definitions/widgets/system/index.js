@@ -9,6 +9,10 @@ export const OhButtonDefinition = () => new WidgetDefinition('oh-button', 'Butto
   .paramGroup(actionGroup(), actionParams())
   .params([...ButtonParameters(), VariableParameter, ClearVariableParameter])
 
+import ChartParameters from './chart'
+export const OhChartDefinition = () => new WidgetDefinition('oh-chart', 'Chart', 'Visualize series of data')
+  .params(ChartParameters())
+
 import ColorpickerParameters from './colorpicker'
 export const OhColorpickerDefinition = () => new WidgetDefinition('oh-colorpicker', 'Colorpicker', 'Control to pick a color')
   .params(ColorpickerParameters())

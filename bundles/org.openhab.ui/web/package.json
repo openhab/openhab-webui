@@ -60,7 +60,7 @@
     "cronstrue": "^1.100.0",
     "dayjs": "^1.9.6",
     "dom7": "^2.1.5",
-    "echarts": "^4.9.0",
+    "echarts": "^5.0.1",
     "event-source-polyfill": "^1.0.22",
     "expression-eval": "^2.1.0",
     "framework7": "^5.7.12",
