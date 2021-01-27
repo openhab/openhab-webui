@@ -381,7 +381,7 @@ export default {
     props: {
       parameterGroups: [],
       parameters: [
-        seriesTypeParameter('gauge')
+        seriesTypeParameter('gauge', 'pie')
       ]
     }
   },
