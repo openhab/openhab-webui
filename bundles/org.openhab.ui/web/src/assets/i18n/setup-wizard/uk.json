@@ -10,6 +10,7 @@
   "setupwizard.location.header1": "Ви хотіли б поділитися місцезнаходженням вашого будинку?",
   "setupwizard.location.header2": "Це допоможе визначити дані, які залежать від вашого розташування, наприклад: час сходу / заходу сонця, або погода.",
   "setupwizard.location.parameterLabel": "Розташування вашого дому",
+  "setupwizard.location.placeholder": "<latitude>,<longitude>[,<altitude>]",
   "setupwizard.location.retrieveFromDevice": "Отримати з цього пристрою",
   "setupwizard.location.retrieveFromDevice.error": "Помилка під час отримання поточної позиції",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Вибачте",
