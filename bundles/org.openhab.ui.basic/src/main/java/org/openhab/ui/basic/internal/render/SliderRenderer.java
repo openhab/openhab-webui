@@ -56,7 +56,7 @@ public class SliderRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb) throws RenderException {
+    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Slider s = (Slider) w;
 
         String snippetName = "slider";

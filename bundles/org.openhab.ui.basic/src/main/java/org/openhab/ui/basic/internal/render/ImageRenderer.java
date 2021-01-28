@@ -32,6 +32,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is an implementation of the {@link WidgetRenderer} interface, which
@@ -46,6 +48,8 @@ public class ImageRenderer extends AbstractWidgetRenderer {
 
     private static final String URL_NONE_ICON = "images/none.png";
 
+    private final Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
+
     @Activate
     public ImageRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
             final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {
@@ -58,7 +62,7 @@ public class ImageRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb) throws RenderException {
+    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Image image = (Image) w;
         String snippet = (image.getChildren().size() > 0) ? getSnippet("image_link") : getSnippet("image");
 
@@ -72,10 +76,6 @@ public class ImageRenderer extends AbstractWidgetRenderer {
         snippet = StringUtils.replace(snippet, "%id%", widgetId);
         snippet = preprocessSnippet(snippet, w);
 
-        String sitemap = null;
-        if (w.eResource() != null) {
-            sitemap = w.eResource().getURI().path();
-        }
         boolean validUrl = isValidURL(image.getUrl());
         String proxiedUrl = "../proxy?sitemap=" + sitemap + "&amp;widgetId=" + widgetId;
         State state = itemUIRegistry.getState(w);
@@ -98,7 +98,7 @@ public class ImageRenderer extends AbstractWidgetRenderer {
         snippet = StringUtils.replace(snippet, "%proxied_url%", proxiedUrl);
         snippet = StringUtils.replace(snippet, "%ignore_refresh%", ignoreRefresh ? "true" : "false");
         snippet = StringUtils.replace(snippet, "%url%", url);
-
+        // logger.warn(snippet);
         sb.append(snippet);
         return ECollections.emptyEList();
     }
