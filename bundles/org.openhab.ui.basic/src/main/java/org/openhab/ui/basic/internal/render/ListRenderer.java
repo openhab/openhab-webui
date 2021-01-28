@@ -52,7 +52,7 @@ public class ListRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb) throws RenderException {
+    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         String snippet = getSnippet("list");
         snippet = snippet.replaceAll("%label%", getLabel(w));
 

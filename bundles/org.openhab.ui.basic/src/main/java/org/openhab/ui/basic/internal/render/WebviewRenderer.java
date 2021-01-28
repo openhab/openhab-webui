@@ -50,7 +50,7 @@ public class WebviewRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb) throws RenderException {
+    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Webview webview = (Webview) w;
         String snippet = getSnippet("webview");
         snippet = preprocessSnippet(snippet, webview);
