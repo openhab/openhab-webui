@@ -61,7 +61,6 @@ public class VideoRenderer extends AbstractWidgetRenderer {
         String snippet = null;
 
         String widgetId = itemUIRegistry.getWidgetId(w);
-        // String sitemap = w.eResource().getURI().path();
 
         // we handle mjpeg streams as an html image as browser can usually handle this
         String snippetName = (videoWidget.getEncoding() != null
@@ -100,7 +99,6 @@ public class VideoRenderer extends AbstractWidgetRenderer {
             snippet = StringUtils.replace(snippet, "%url%", url);
             snippet = StringUtils.replace(snippet, "%media_type%", mediaType);
         }
-
         sb.append(snippet);
         return ECollections.emptyEList();
     }

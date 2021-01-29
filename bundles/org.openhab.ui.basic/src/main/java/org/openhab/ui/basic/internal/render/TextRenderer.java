@@ -41,8 +41,6 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 public class TextRenderer extends AbstractWidgetRenderer {
 
-    private final Logger logger = LoggerFactory.getLogger(TextRenderer.class);
-
     @Activate
     public TextRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
             final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {

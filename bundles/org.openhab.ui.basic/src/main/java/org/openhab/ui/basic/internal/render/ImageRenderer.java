@@ -48,8 +48,6 @@ public class ImageRenderer extends AbstractWidgetRenderer {
 
     private static final String URL_NONE_ICON = "images/none.png";
 
-    private final Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
-
     @Activate
     public ImageRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
             final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {
@@ -98,7 +96,7 @@ public class ImageRenderer extends AbstractWidgetRenderer {
         snippet = StringUtils.replace(snippet, "%proxied_url%", proxiedUrl);
         snippet = StringUtils.replace(snippet, "%ignore_refresh%", ignoreRefresh ? "true" : "false");
         snippet = StringUtils.replace(snippet, "%url%", url);
-        // logger.warn(snippet);
+        
         sb.append(snippet);
         return ECollections.emptyEList();
     }
