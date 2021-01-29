@@ -1,0 +1,8 @@
+# {componentType}
+
+{componentDescription}
+
+## Configuration
+
+{props}
+
