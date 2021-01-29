@@ -130,7 +130,7 @@ export default {
     getSeriesPromises (component) {
       const getter = (data) => seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this)
 
-      const neededItems = seriesComponents[component.component].neededItems(component).filter(i => !!i)
+      const neededItems = seriesComponents[component.component].neededItems(component, this).filter(i => !!i)
       if (neededItems.length === 0) {
         return Promise.resolve(getter([]))
       }
