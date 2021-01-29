@@ -1,53 +1,83 @@
-# oh-link - Link
+# oh-plan-marker - Floor Plan Marker
 
-Link performing an action
+A marker on a floor plan
 
 ## Configuration
 
 
-- `text` <small>TEXT</small> _Text_
+### Marker Settings
 
-  Link label
 
-- `iconF7` <small>TEXT</small> _Icon_
+- `name` <small>TEXT</small> _Name_
 
-  Framework7 icon to display (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)
+  The name of the marker (for identification)
 
-- `iconMaterial` <small>TEXT</small> _Icon_
+- `coords` <small>TEXT</small> _Coordinates_
 
-  Material design icon to display
+  The coordinates of this marker in the floor plan Coordinate Reference System; usually set by dragging the marker at design time
 
-- `iconColor` <small>TEXT</small> _Icon Color_
+- `item` <small>TEXT</small> _Item_
 
-  Color of the icon
+  The item whose state to display on this marker
+
+### Icon
+
+
+- `icon` <small>TEXT</small> _Icon_
+
+  Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>) or <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)
+
+- `iconUseState` <small>BOOLEAN</small> _Icon depends on state_
+
+  Use the state of the item to get a dynamic icon (for openHAB icons only)
 
 - `iconSize` <small>INTEGER</small> _Icon Size_
 
-  Size of the icon in px
+  Size of the icon in pixels (40 by default)
 
-- `badge` <small>TEXT</small> _Badge_
+- `iconColor` <small>TEXT</small> _Icon Color_
 
-  Text to display in a badge on the opposite side of the item (set either this or "after")
+  Color of the icon (for Framework7/Material icons); use expression for dynamic colors
 
-- `badgeColor` <small>TEXT</small> _Badge color_
+### Tooltip
 
-  Color of the badge
+You can customize the styles further with CSS attributes in the <code>tooltipStyle</code> parameter (in YAML only)
 
-- `tooltip` <small>TEXT</small> _Tooltip_
 
-  Button tooltip text to show on button hover/press
+- `tooltip` <small>TEXT</small> _Tooltip Text_
 
-- `variable` <small>TEXT</small> _Variable_
+  The tooltip text - leave blank to display the state of the item
 
-  Name of the variable to set on input change
+- `tooltipPermanent` <small>BOOLEAN</small> _Always display the tooltip_
 
-- `clearVariable` <small>BOOLEAN</small> _Clear Variable After Action_
+- `useTooltipAsLabel` <small>BOOLEAN</small> _Use Tooltip as Label_
 
-  Name of the variable to clear after performing the action
+  Put the tooltip text directly over the plan instead of displaying an icon
+
+- `tooltipFontSize` <small>TEXT</small> _Tooltip Font Size_
+
+  Font size of the tooltip text
+
+- `tooltipColor` <small>TEXT</small> _Tooltip color_
+
+  Color of the tooltip
+
+### Zoom Visibility
+
+Hide this marker outside certain zoom labels
+
+
+- `zoomVisibilityMin` <small>INTEGER</small> _Zoom Visibility Minimum_
+
+  Visible only when zoomed to above this level (no limit if empty)
+
+- `zoomVisibilityMin` <small>INTEGER</small> _Zoom Visibility Maximum_
+
+  Visible only when zoomed to below this level (no limit if empty)
 
 ### Action
 
-Action to perform when the element is clicked
+Action to perform when the marker is clicked
 
 
 - `action` <small>TEXT</small> _Action_

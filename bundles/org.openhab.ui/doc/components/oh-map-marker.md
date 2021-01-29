@@ -1,53 +1,39 @@
-# oh-link - Link
+# oh-map-marker - Map Marker
 
-Link performing an action
+An icon on a map
 
 ## Configuration
 
 
-- `text` <small>TEXT</small> _Text_
+### Marker
 
-  Link label
+General marker settings
 
-- `iconF7` <small>TEXT</small> _Icon_
 
-  Framework7 icon to display (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)
+- `label` <small>TEXT</small> _Label_
 
-- `iconMaterial` <small>TEXT</small> _Icon_
+  The label on the marker
 
-  Material design icon to display
+- `icon` <small>TEXT</small> _Icon_
 
-- `iconColor` <small>TEXT</small> _Icon Color_
+  Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>)
 
-  Color of the icon
+### Position
 
-- `iconSize` <small>INTEGER</small> _Icon Size_
+Position
 
-  Size of the icon in px
 
-- `badge` <small>TEXT</small> _Badge_
+- `item` <small>TEXT</small> _Item_
 
-  Text to display in a badge on the opposite side of the item (set either this or "after")
+  The Location item this marker will be centered on
 
-- `badgeColor` <small>TEXT</small> _Badge color_
+- `location` <small>TEXT</small> _Fixed location_
 
-  Color of the badge
-
-- `tooltip` <small>TEXT</small> _Tooltip_
-
-  Button tooltip text to show on button hover/press
-
-- `variable` <small>TEXT</small> _Variable_
-
-  Name of the variable to set on input change
-
-- `clearVariable` <small>BOOLEAN</small> _Clear Variable After Action_
-
-  Name of the variable to clear after performing the action
+  The fixed position of the marker if no item is configured or its coordinates are invalid
 
 ### Action
 
-Action to perform when the element is clicked
+Action to perform when the marker is clicked
 
 
 - `action` <small>TEXT</small> _Action_

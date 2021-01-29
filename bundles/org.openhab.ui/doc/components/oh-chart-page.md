@@ -1,6 +1,6 @@
-# oh-chart - Chart
+# oh-chart-page - Chart Page
 
-Visualize series of data
+Visualize historical series
 
 ## Configuration
 

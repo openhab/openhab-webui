@@ -48,10 +48,47 @@ General settings of the cell
 - `dirIconsStyle` <small>TEXT</small> _Direction Icons Style_
 
   Icons to use for the UP/DOWN buttons
+  | Option | Label |
+  |--------|-------|
+  | `arrowtriangle_{dir}` | arrowtriangle_{dir} |
+  | `arrowtriangle_{dir}_fill` | arrowtriangle_{dir}_fill |
+  | `arrowtriangle_{dir}_circle` | arrowtriangle_{dir}_circle |
+  | `arrowtriangle_{dir}_circle_fill` | arrowtriangle_{dir}_circle_fill |
+  | `arrowtriangle_{dir}_square` | arrowtriangle_{dir}_square |
+  | `arrowtriangle_{dir}_square_fill` | arrowtriangle_{dir}_square_fill |
+  | `chevron_{dir}` | chevron_{dir} |
+  | `chevron_{dir}_2` | chevron_{dir}_2 |
+  | `chevron_compact_{dir}_2` | chevron_compact_{dir}_2 |
+  | `chevron_{dir}_fill` | chevron_{dir}_fill |
+  | `chevron_{dir}_circle` | chevron_{dir}_circle |
+  | `chevron_{dir}_circle_fill` | chevron_{dir}_circle_fill |
+  | `chevron_{dir}_square` | chevron_{dir}_square |
+  | `chevron_{dir}_square_fill` | chevron_{dir}_square_fill |
+  | `arrow_{dir}` | arrow_{dir} |
+  | `arrow_{dir}_2` | arrow_{dir}_2 |
+  | `arrow_{dir}_fill` | arrow_{dir}_fill |
+  | `arrow_{dir}_circle` | arrow_{dir}_circle |
+  | `arrow_{dir}_circle_fill` | arrow_{dir}_circle_fill |
+  | `arrow_{dir}_square` | arrow_{dir}_square |
+  | `arrow_{dir}_square_fill` | arrow_{dir}_square_fill |
+  | `arrow_{dir}_to_line` | arrow_{dir}_to_line |
+  | `arrow_{dir}_to_line_alt` | arrow_{dir}_to_line_alt |
+
 
 - `stopIconStyle` <small>TEXT</small> _Stop Icon Style_
 
   Icons to use for the STOP button
+  | Option | Label |
+  |--------|-------|
+  | `stop` | stop |
+  | `stop_fill` | stop_fill |
+  | `stop_circle` | stop_circle |
+  | `stop_circle_fill` | stop_circle_fill |
+  | `multiply` | multiply |
+  | `multiply_fill` | multiply_fill |
+  | `multiply_circle` | multiply_circle |
+  | `multiply_circle_fill` | multiply_circle_fill |
+
 
 - `stateInCenter` <small>BOOLEAN</small> _State in Center_
 
@@ -65,6 +102,22 @@ Action to perform when the element is clicked
 - `action` <small>TEXT</small> _Action_
 
   Type of action to perform
+  | Option | Label |
+  |--------|-------|
+  | `navigate` | Navigate to page |
+  | `command` | Send command |
+  | `toggle` | Toggle item |
+  | `options` | Command options |
+  | `rule` | Run rule |
+  | `popup` | Open popup |
+  | `popover` | Open popover |
+  | `sheet` | Open sheet |
+  | `photos` | Open photo browser |
+  | `group` | Group details |
+  | `analyzer` | Analyze item(s) |
+  | `url` | External URL |
+  | `variable` | Set Variable |
+
 
 - `actionUrl` <small>TEXT</small> _Action URL_
 
@@ -101,6 +154,17 @@ Action to perform when the element is clicked
 - `actionPageTransition` <small>TEXT</small> _Transition Effect_
 
   Use a specific <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a>
+  | Option | Label |
+  |--------|-------|
+  | `f7-circle` | Circle |
+  | `f7-cover` | Cover |
+  | `f7-cover-v` | Cover from bottom |
+  | `f7-dive` | Dive |
+  | `f7-fade` | Fade |
+  | `f7-flip` | Flip |
+  | `f7-parallax` | Parallax |
+  | `f7-push` | Push |
+
 
 - `actionModal` <small>TEXT</small> _Modal Page or Widget_
 
@@ -129,10 +193,24 @@ Action to perform when the element is clicked
 - `actionAnalyzerChartType` <small>TEXT</small> _Chart Type_
 
   The initial analyzing period - dynamic or a predefined fixed period: day, week, month or year
+  | Option | Label |
+  |--------|-------|
+  | `` | Dynamic |
+  | `day` | Day |
+  | `isoWeek` | Week (starting on Mondays) |
+  | `month` | Month |
+  | `year` | Year |
+
 
 - `actionAnalyzerCoordSystem` <small>TEXT</small> _Initial Coordinate System_
 
   The initial coordinate system of the analyzer - time, aggregate or calendar (only time is supported for dynamic periods)
+  | Option | Label |
+  |--------|-------|
+  | `time` | Time |
+  | `aggregate` | Aggregate |
+  | `calendar` | Calendar |
+
 
 - `actionFeedback` <small>TEXT</small> _Action feedback_
 

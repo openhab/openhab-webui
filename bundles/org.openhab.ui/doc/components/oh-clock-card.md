@@ -36,6 +36,12 @@ Parameters of the card
 - `timeFormat` <small>TEXT</small> _Time Format_
 
   Time format, see <a class="external text-color-blue" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>
+  | Option | Label |
+  |--------|-------|
+  | `LTS` | Localized time including seconds ('LTS', e.g. '8:02:18 PM') |
+  | `LT` | Localized time ('LT'. e.g. '8:02 PM') |
+  | `HH:mm:ss` | Current time ('HH:mm:ss') |
+
 
 - `background` <small>TEXT</small> _Background style_
 
@@ -56,10 +62,21 @@ Parameters of the card
 - `dateFormat` <small>TEXT</small> _Date Format_
 
   Date format, see <a class="external text-color-blue" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>
+  | Option | Label |
+  |--------|-------|
+  | `LL` | Localized long date ('LL', e.g. 'August 16, 2018') |
+  | `L` | Localized short date ('L', e.g. '08/16/2018') |
+  | `MM/DD/YYYY` | Current date ('MM/DD/YYYY') |
+
 
 - `datePos` <small>TEXT</small> _Date Position_
 
   Where to show the date
+  | Option | Label |
+  |--------|-------|
+  | `above` | Above time |
+  | `below` | Below time |
+
 
 - `dateFontSize` <small>TEXT</small> _Date Font Size_
 
@@ -77,6 +94,22 @@ Action to perform when the clock is clicked
 - `action` <small>TEXT</small> _Action_
 
   Type of action to perform
+  | Option | Label |
+  |--------|-------|
+  | `navigate` | Navigate to page |
+  | `command` | Send command |
+  | `toggle` | Toggle item |
+  | `options` | Command options |
+  | `rule` | Run rule |
+  | `popup` | Open popup |
+  | `popover` | Open popover |
+  | `sheet` | Open sheet |
+  | `photos` | Open photo browser |
+  | `group` | Group details |
+  | `analyzer` | Analyze item(s) |
+  | `url` | External URL |
+  | `variable` | Set Variable |
+
 
 - `actionUrl` <small>TEXT</small> _Action URL_
 
@@ -113,6 +146,17 @@ Action to perform when the clock is clicked
 - `actionPageTransition` <small>TEXT</small> _Transition Effect_
 
   Use a specific <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a>
+  | Option | Label |
+  |--------|-------|
+  | `f7-circle` | Circle |
+  | `f7-cover` | Cover |
+  | `f7-cover-v` | Cover from bottom |
+  | `f7-dive` | Dive |
+  | `f7-fade` | Fade |
+  | `f7-flip` | Flip |
+  | `f7-parallax` | Parallax |
+  | `f7-push` | Push |
+
 
 - `actionModal` <small>TEXT</small> _Modal Page or Widget_
 
@@ -141,10 +185,24 @@ Action to perform when the clock is clicked
 - `actionAnalyzerChartType` <small>TEXT</small> _Chart Type_
 
   The initial analyzing period - dynamic or a predefined fixed period: day, week, month or year
+  | Option | Label |
+  |--------|-------|
+  | `` | Dynamic |
+  | `day` | Day |
+  | `isoWeek` | Week (starting on Mondays) |
+  | `month` | Month |
+  | `year` | Year |
+
 
 - `actionAnalyzerCoordSystem` <small>TEXT</small> _Initial Coordinate System_
 
   The initial coordinate system of the analyzer - time, aggregate or calendar (only time is supported for dynamic periods)
+  | Option | Label |
+  |--------|-------|
+  | `time` | Time |
+  | `aggregate` | Aggregate |
+  | `calendar` | Calendar |
+
 
 - `actionFeedback` <small>TEXT</small> _Action feedback_
 

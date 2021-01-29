@@ -1,26 +1,56 @@
 # Component Reference
 
-## System Library
+## System Widget Library
 
-| Widget | Name | Description |
+| Component | Name | Description |
 |--------|------|-------------|
 {SystemWidgets}
 
-## Standard Library (Standalone Cards)
+## Standard Widget Library (Standalone Cards)
 
-| Widget | Name | Description |
+| Component | Name | Description |
 |--------|------|-------------|
 {StdCardWidgets}
 
-## Standard Library (List Items)
+## Standard Widget Library (List Items)
 
-| Widget | Name | Description |
+| Component | Name | Description |
 |--------|------|-------------|
 {StdListItemWidgets}
 
-## Standard Library (Cells)
+## Standard Widget Library (Cells)
 
-| Widget | Name | Description |
+| Component | Name | Description |
 |--------|------|-------------|
 {StdCellWidgets}
+
+## Layout Components
+
+| Component | Name | Description |
+|--------|------|-------------|
+{LayoutWidgets}
+
+## Map Page & Markers
+
+| Component | Name | Description |
+|--------|------|-------------|
+{MapWidgets}
+
+## Floorplan Page & Markers
+
+| Component | Name | Description |
+|--------|------|-------------|
+{PlanWidgets}
+
+## Chart Page & Components
+
+| Component | Name | Description |
+|--------|------|-------------|
+{ChartWidgets}
+
+## Home Page Cards
+
+| Component | Name | Description |
+|--------|------|-------------|
+{HomePageWidgets}
 

@@ -12,6 +12,15 @@ Iterate over an array and repeat the children components in the default slot
 - `sourceType` <small>TEXT</small> _Source type_
 
   What to iterate on
+  | Option | Label |
+  |--------|-------|
+  | `array` | Array (default) in the "in" parameter |
+  | `range` | Range of integers defined by "rangeStart", "rangeStop", "rangeStep" |
+  | `itemsInGroup` | Member of the group defined in the "groupItem" parameter |
+  | `itemsWithTags` | Items with tags in the "itemTags" parameter |
+  | `itemStateOptions` | State options of the item specified in "itemOptions" |
+  | `itemCommandOptions` | Command options of the item specified in "itemOptions" |
+
 
 - `in` <small>TEXT</small> _Source array_
 

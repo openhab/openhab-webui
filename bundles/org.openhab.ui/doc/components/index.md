@@ -1,8 +1,8 @@
 # Component Reference
 
-## System Library
+## System Widget Library
 
-| Widget | Name | Description |
+| Component | Name | Description |
 |--------|------|-------------|
 | [`oh-button`](./oh-button.html) | Button | Button performing an action |
 | [`oh-chart`](./oh-chart.html) | Chart | Visualize series of data |
@@ -26,9 +26,9 @@
 | [`oh-webframe`](./oh-webframe.html) | Web frame | Displays a web page in a frame |
 
 
-## Standard Library (Standalone Cards)
+## Standard Widget Library (Standalone Cards)
 
-| Widget | Name | Description |
+| Component | Name | Description |
 |--------|------|-------------|
 | [`oh-clock-card`](./oh-clock-card.html) | Digital Clock Card | Display a digital clock in a card |
 | [`oh-colorpicker-card`](./oh-colorpicker-card.html) | Color Picker Card | Display a color picker in a card |
@@ -48,9 +48,9 @@
 | [`oh-webframe-card`](./oh-webframe-card.html) | Web Frame Card | Display a web page in a card |
 
 
-## Standard Library (List Items)
+## Standard Widget Library (List Items)
 
-| Widget | Name | Description |
+| Component | Name | Description |
 |--------|------|-------------|
 | [`oh-colorpicker-item`](./oh-colorpicker-item.html) | Color Picker List Item | Display a color picker in a list |
 | [`oh-input-item`](./oh-input-item.html) | Input List Item | Display an input field in a list |
@@ -63,9 +63,9 @@
 | [`oh-toggle-item`](./oh-toggle-item.html) | Toggle List Item | Display a toggle switch in a list |
 
 
-## Standard Library (Cells)
+## Standard Widget Library (Cells)
 
-| Widget | Name | Description |
+| Component | Name | Description |
 |--------|------|-------------|
 | [`oh-cell`](./oh-cell.html) | Cell | A regular or expandable cell |
 | [`oh-colorpicker-cell`](./oh-colorpicker-cell.html) | Colorpicker Cell | A cell expanding to a color picker |
@@ -73,5 +73,63 @@
 | [`oh-label-cell`](./oh-label-cell.html) | Label Cell | A cell with a big label to show a short item state value |
 | [`oh-rollershutter-cell`](./oh-rollershutter-cell.html) | Rollershutter Cell | A cell expanding to rollershutter controls |
 | [`oh-slider-cell`](./oh-slider-cell.html) | Slider Cell | A cell expanding to a big vertical slider |
+
+
+## Layout Components
+
+| Component | Name | Description |
+|--------|------|-------------|
+| [`oh-block`](./oh-block.html) | Layout Grid Block | A block in a grid layout |
+| [`oh-grid-col`](./oh-grid-col.html) | Layout Grid Column | A column in a grid layout |
+| [`oh-grid-row`](./oh-grid-row.html) | Layout Grid Row | A row in a grid layout |
+| [`oh-masonry`](./oh-masonry.html) | Masonry Layout | Arranges widgets automatically depending on the screen size |
+
+
+## Map Page & Markers
+
+| Component | Name | Description |
+|--------|------|-------------|
+| [`oh-map-circle-marker`](./oh-map-circle-marker.html) | Circle Marker | A circle on a map, to represent a radius |
+| [`oh-map-marker`](./oh-map-marker.html) | Map Marker | An icon on a map |
+| [`oh-map-page`](./oh-map-page.html) | Map page | Displays markers on a map |
+
+
+## Floorplan Page & Markers
+
+| Component | Name | Description |
+|--------|------|-------------|
+| [`oh-plan-marker`](./oh-plan-marker.html) | Floor Plan Marker | A marker on a floor plan |
+| [`oh-plan-page`](./oh-plan-page.html) | Floor plan | Displays markers on an image overlay |
+
+
+## Chart Page & Components
+
+| Component | Name | Description |
+|--------|------|-------------|
+| [`oh-chart-page`](./oh-chart-page.html) | Chart Page | Visualize historical series |
+| [`oh-chart-grid`](./oh-chart-grid.html) | Cartesian Grid |  |
+| [`oh-category-axis`](./oh-category-axis.html) | Category Axis |  |
+| [`oh-value-axis`](./oh-value-axis.html) | Value Axis |  |
+| [`oh-time-axis`](./oh-time-axis.html) | Time Axis |  |
+| [`oh-calendar-axis`](./oh-calendar-axis.html) | Calendar |  |
+| [`oh-data-series`](./oh-data-series.html) | Data Series |  |
+| [`oh-time-series`](./oh-time-series.html) | Time Series |  |
+| [`oh-aggregate-series`](./oh-aggregate-series.html) | Aggregate Series |  |
+| [`oh-calendar-series`](./oh-calendar-series.html) | Calendar Series |  |
+| [`oh-chart-tooltip`](./oh-chart-tooltip.html) | Tooltip |  |
+| [`oh-chart-visualmap`](./oh-chart-visualmap.html) | Visual Map |  |
+| [`oh-chart-datazoom`](./oh-chart-datazoom.html) | Data Zoom |  |
+| [`oh-chart-legend`](./oh-chart-legend.html) | Legend |  |
+| [`oh-chart-title`](./oh-chart-title.html) | Title |  |
+| [`oh-chart-toolbox`](./oh-chart-toolbox.html) | Toolbox |  |
+
+
+## Home Page Cards
+
+| Component | Name | Description |
+|--------|------|-------------|
+| [`oh-location-card`](./oh-location-card.html) | Location Card | A card showing model items in a certain location |
+| [`oh-equipment-card`](./oh-equipment-card.html) | Equipment Class Card | A card showing model items belonging to a certain equipment class |
+| [`oh-property-card`](./oh-property-card.html) | Property Card | A card showing model items related to a certain property |
 
 

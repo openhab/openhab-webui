@@ -50,6 +50,11 @@ Parameters are passed to the underlying <a target="_blank" class="external text-
 - `type` <small>TEXT</small> _Type_
 
   Type of the gauge
+  | Option | Label |
+  |--------|-------|
+  | `circle` | Circle |
+  | `semicircle` | Semicircle |
+
 
 - `value` <small>TEXT</small> _Value_
 

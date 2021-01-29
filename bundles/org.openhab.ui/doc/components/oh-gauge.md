@@ -20,6 +20,11 @@ Circular or semi-circular read-only gauge
 - `type` <small>TEXT</small> _Type_
 
   Type of the gauge
+  | Option | Label |
+  |--------|-------|
+  | `circle` | Circle |
+  | `semicircle` | Semicircle |
+
 
 - `value` <small>TEXT</small> _Value_
 
