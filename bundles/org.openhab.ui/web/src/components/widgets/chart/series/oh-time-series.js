@@ -1,24 +1,25 @@
+import ComponentId from '../../component-id'
 import MarkArea from './oh-mark-area'
 import Framework7 from 'framework7'
 
 export default {
-  neededItems (component) {
+  neededItems (component, chart) {
     const seriesItem = (!component || !component.config || !component.config.item) ? undefined : component.config.item
     let markAreaItems = []
     if (component.slots && component.slots.markArea) {
       markAreaItems = component.slots.markArea.map(a => a.config.item)
     }
     return [
-      seriesItem,
+      chart.evaluateExpression(ComponentId.get(component) + '.item', seriesItem),
       ...markAreaItems
     ]
   },
   get (component, points, startTime, endTime, chart) {
-    let series = Object.assign({}, component.config)
+    let series = chart.evaluateExpression(ComponentId.get(component), component.config)
     series.data = []
 
-    if (component.config.item) {
-      const itemPoints = points.find(p => p.name === component.config.item).data
+    if (series.item) {
+      const itemPoints = points.find(p => p.name === series.item).data
 
       const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
       const data = itemPoints.map((p) => {
@@ -26,7 +27,7 @@ export default {
       })
 
       series.data = data
-      series.id = `oh-time-series#${component.config.item}#${Framework7.utils.id()}`
+      series.id = `oh-time-series#${series.item}#${Framework7.utils.id()}`
     }
 
     // other things
