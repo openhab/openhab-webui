@@ -1,5 +1,5 @@
 import Blockly from 'blockly.js'
-import { FieldItemModelPicker } from './ohitemfield.js'
+import { FieldItemModelPicker } from './ohitemfield'
 
 export default function defineOHBlocks (f7) {
   Blockly.Blocks['oh_item'] = {
