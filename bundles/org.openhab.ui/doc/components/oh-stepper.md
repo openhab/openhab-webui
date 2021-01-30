@@ -1,9 +1,12 @@
 # oh-stepper - Stepper
 
+<!-- GENERATED componentDescription -->
 Stepper control, allows to input a number or decrement/increment it using buttons
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `item` <small>TEXT</small> _Item_
 
@@ -57,4 +60,4 @@ Stepper control, allows to input a number or decrement/increment it using button
 
   Name of the variable to set on input change
 
-
+<!-- GENERATED /props -->

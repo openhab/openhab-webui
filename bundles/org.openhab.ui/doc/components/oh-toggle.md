@@ -1,9 +1,12 @@
 # oh-toggle - Toggle
 
+<!-- GENERATED componentDescription -->
 Toggle control, allows to switch on or off
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `item` <small>TEXT</small> _Item_
 
@@ -17,4 +20,4 @@ Toggle control, allows to switch on or off
 
   Name of the variable to set on input change
 
-
+<!-- GENERATED /props -->

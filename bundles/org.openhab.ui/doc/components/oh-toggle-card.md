@@ -1,9 +1,12 @@
 # oh-toggle-card - Toggle Card
 
+<!-- GENERATED componentDescription -->
 Display a toggle swtich in a card to send ON/OFF commands
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -41,4 +44,4 @@ Parameters of the card
 
   Color of the control
 
-
+<!-- GENERATED /props -->

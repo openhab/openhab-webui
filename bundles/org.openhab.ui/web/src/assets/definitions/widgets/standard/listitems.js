@@ -1,7 +1,7 @@
 /* Definitions for the standard library's standalone (Item) widgets */
 
-import { WidgetDefinition, pb, pt, pi, pg } from '../helpers'
-import { actionGroup, actionParams } from '../actions'
+import { WidgetDefinition, pb, pt, pi, pg } from '../helpers.js'
+import { actionGroup, actionParams } from '../actions.js'
 
 export const ListItemParameterGroup = () => pg('listitem', 'List Item', 'General settings of the list item')
 
@@ -39,19 +39,19 @@ export const OhLabelItemDefinition = () => new WidgetDefinition('oh-label-item',
   ])
 
 // OhInputItem
-import InputParameters from '../system/input'
+import InputParameters from '../system/input.js'
 export const OhInputItemDefinition = () => new WidgetDefinition('oh-input-item', 'Input List Item', 'Display an input field in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('input', 'Input'), InputParameters())
 
 // OhColorpickerItem
-import ColorPickerParameters from '../system/colorpicker'
+import ColorPickerParameters from '../system/colorpicker.js'
 export const OhColorpickerItemDefinition = () => new WidgetDefinition('oh-colorpicker-item', 'Color Picker List Item', 'Display a color picker in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('colorpicker', 'Color picker'), ColorPickerParameters())
 
 // OhPlayerItem
-import PlayerParameters from '../system/player'
+import PlayerParameters from '../system/player.js'
 export const OhPlayerItemDefinition = () => new WidgetDefinition('oh-player-item', 'Player List Item', 'Display player controls in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('player', 'Player Controls'), PlayerParameters())
@@ -61,7 +61,7 @@ export const OhPlayerItemDefinition = () => new WidgetDefinition('oh-player-item
   ])
 
 // OhRollershutterItem
-import RollershutterParameters from '../system/rollershutter'
+import RollershutterParameters from '../system/rollershutter.js'
 export const OhRollershutterItemDefinition = () => new WidgetDefinition('oh-rollershutter-item', 'Rollershutter List Item', 'Display rollershutter controls in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('orientation', 'Orientation'), [
@@ -70,19 +70,19 @@ export const OhRollershutterItemDefinition = () => new WidgetDefinition('oh-roll
   .paramGroup(pg('controls', 'Rollershutter Controls'), RollershutterParameters())
 
 // OhSliderItem
-import SliderParameters from '../system/slider'
+import SliderParameters from '../system/slider.js'
 export const OhSliderItemDefinition = () => new WidgetDefinition('oh-slider-item', 'Slider List Item', 'Display a slider control in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('slider', 'Slider'), SliderParameters())
 
 // OhStepperItem
-import StepperParameters from '../system/stepper'
+import StepperParameters from '../system/stepper.js'
 export const OhStepperItemDefinition = () => new WidgetDefinition('oh-stepper-item', 'Stepper List Item', 'Display a stepper control in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('stepper', 'Stepper'), StepperParameters())
 
 // OhToggleItem
-import ToggleParameters from '../system/toggle'
+import ToggleParameters from '../system/toggle.js'
 export const OhToggleItemDefinition = () => new WidgetDefinition('oh-toggle-item', 'Toggle List Item', 'Display a toggle switch in a list')
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('toggle', 'Toggle'), ToggleParameters())

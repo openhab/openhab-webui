@@ -1,9 +1,12 @@
 # oh-equipment-card - Equipment Class Card
 
+<!-- GENERATED componentDescription -->
 A card showing model items belonging to a certain equipment class
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Model Card
 
@@ -21,6 +24,7 @@ General settings for this card
 - `backgroundColor` <small>TEXT</small> _Background Color_
 
   Color of the card's background; if unset, choose automatically from built-in defaults for certain semantic classes
+
   | Option | Label |
   |--------|-------|
   | `red` | Red |
@@ -28,7 +32,7 @@ General settings for this card
   | `blue` | Blue |
   | `pink` | Pink |
   | `yellow` | Yellow |
-  | `undefined` | Orange |
+  | `(empty)` | Orange |
   | `purple` | Purple |
   | `deeppurple` | Deep Purple |
   | `lightblue` | Light Blue |
@@ -47,4 +51,4 @@ General settings for this card
 
   Display the text in black (for light backgrounds)
 
-
+<!-- GENERATED /props -->

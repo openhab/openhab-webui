@@ -1,5 +1,5 @@
-import { WidgetDefinition, pt, pi, pg, pb, pn, po } from '../helpers'
-import { actionGroup, actionParams } from '../actions'
+import { WidgetDefinition, pt, pi, pg, pb, pn, po } from '../helpers.js'
+import { actionGroup, actionParams } from '../actions.js'
 
 export const OhHomePageDefinition = () => new WidgetDefinition('oh-home-page', 'Home page')
   .params([

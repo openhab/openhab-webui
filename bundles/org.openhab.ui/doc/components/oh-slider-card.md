@@ -1,9 +1,12 @@
 # oh-slider-card - Slider Card
 
+<!-- GENERATED componentDescription -->
 Display a slider in a card to control an item
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -73,4 +76,4 @@ Parameters of the card
 
   Text to append to the label while dragging the cursor
 
-
+<!-- GENERATED /props -->

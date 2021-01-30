@@ -1,9 +1,12 @@
 # oh-list - List
 
+<!-- GENERATED componentDescription -->
 List control, hosts list items
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `simpleList` <small>BOOLEAN</small> _Simple List_
 
@@ -17,4 +20,4 @@ List control, hosts list items
 
   Use for lists with accordion (collapsible) items
 
-
+<!-- GENERATED /props -->

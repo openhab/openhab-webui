@@ -1,9 +1,12 @@
 # oh-toggle-item - Toggle List Item
 
+<!-- GENERATED componentDescription -->
 Display a toggle switch in a list
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### List Item
 
@@ -45,4 +48,4 @@ General settings of the list item
 
   Color of the control
 
-
+<!-- GENERATED /props -->

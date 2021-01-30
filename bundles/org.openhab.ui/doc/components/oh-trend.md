@@ -1,9 +1,12 @@
 # oh-trend - Trend line
 
+<!-- GENERATED componentDescription -->
 Trend line to display the overall recent evoluation of an item
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `trendItem` <small>TEXT</small> _Trend Line Item_
 
@@ -21,4 +24,4 @@ Trend line to display the overall recent evoluation of an item
 
   Colors of the trend line (see <a target="_blank" class="external text-color-blue" href="https://github.com/QingWei-Li/vue-trend#props">vue-trend</a>)
 
-
+<!-- GENERATED /props -->

@@ -1,5 +1,5 @@
-import Blockly from 'blockly'
-import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
+import Blockly from 'blockly.js'
+import ModelPickerPopup from '@/components/model/model-picker-popup.vue.js'
 
 export class FieldItemModelPicker extends Blockly.FieldTextInput {
   constructor (optValue, optValidator, optConfig) {

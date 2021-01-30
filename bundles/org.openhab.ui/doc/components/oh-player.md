@@ -1,9 +1,12 @@
 # oh-player - Media player
 
+<!-- GENERATED componentDescription -->
 Media player controls, with previous track/pause/play/next buttons
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `item` <small>TEXT</small> _Item_
 
@@ -13,4 +16,4 @@ Media player controls, with previous track/pause/play/next buttons
 
   Show Rewind and Fast Forward buttons
 
-
+<!-- GENERATED /props -->

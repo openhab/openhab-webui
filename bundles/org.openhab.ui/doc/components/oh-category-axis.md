@@ -1,9 +1,12 @@
 # oh-category-axis - Category Axis
 
+<!-- GENERATED componentDescription -->
 
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `name` <small>TEXT</small> _Name_
 
@@ -12,6 +15,7 @@
 - `categoryType` <small>TEXT</small> _Categories_
 
   Type of categories to display
+
   | Option | Label |
   |--------|-------|
   | `hour` | Minutes of hour |
@@ -24,6 +28,7 @@
 - `weekdayFormat` <small>TEXT</small> _Weekday Format_
 
   Format of weekdays labels
+
   | Option | Label |
   |--------|-------|
   | `default` | Long (default) |
@@ -38,6 +43,7 @@
 - `monthFormat` <small>TEXT</small> _Month Format_
 
   Format of months labels
+
   | Option | Label |
   |--------|-------|
   | `default` | Long (default) |
@@ -50,6 +56,7 @@
 - `nameLocation` <small>TEXT</small> _Name Location_
 
   Location of axis name
+
   | Option | Label |
   |--------|-------|
   | `start` | Start |
@@ -76,4 +83,4 @@
 
   The index of the grid for this axis
 
-
+<!-- GENERATED /props -->

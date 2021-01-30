@@ -1,15 +1,19 @@
 # oh-chart-legend - Legend
 
+<!-- GENERATED componentDescription -->
 
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `show` <small>BOOLEAN</small> _Show_
 
   Whether to show or not this component
 
 - `orient` <small>TEXT</small> _Orientation_
+
   | Option | Label |
   |--------|-------|
   | `horizontal` | Horizontal |
@@ -33,4 +37,4 @@ Each parameter accepts pixel values or percentages. Additionally, top accepts "t
 
 - `height` <small>TEXT</small> _Height_
 
-
+<!-- GENERATED /props -->

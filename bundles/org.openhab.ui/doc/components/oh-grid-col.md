@@ -1,13 +1,17 @@
 # oh-grid-col - Layout Grid Column
 
+<!-- GENERATED componentDescription -->
 A column in a grid layout
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `width` <small>TEXT</small> _Width_
 
   Standard Width
+
   | Option | Label |
   |--------|-------|
   | `5` | 5 % |
@@ -37,6 +41,7 @@ A column in a grid layout
 - `xsmall` <small>TEXT</small> _Width (XS)_
 
   Column width when app width >= 480px
+
   | Option | Label |
   |--------|-------|
   | `5` | 5 % |
@@ -66,6 +71,7 @@ A column in a grid layout
 - `small` <small>TEXT</small> _Width (S)_
 
   Column width when app width >= 568px
+
   | Option | Label |
   |--------|-------|
   | `5` | 5 % |
@@ -95,6 +101,7 @@ A column in a grid layout
 - `medium` <small>TEXT</small> _Width (M)_
 
   Column width when app width >= 720px
+
   | Option | Label |
   |--------|-------|
   | `5` | 5 % |
@@ -124,6 +131,7 @@ A column in a grid layout
 - `large` <small>TEXT</small> _Width (L)_
 
   Column width when app width >= 1024px
+
   | Option | Label |
   |--------|-------|
   | `5` | 5 % |
@@ -153,6 +161,7 @@ A column in a grid layout
 - `xlarge` <small>TEXT</small> _Width (XL)_
 
   Column width when app width >= 1200px
+
   | Option | Label |
   |--------|-------|
   | `5` | 5 % |
@@ -179,4 +188,4 @@ A column in a grid layout
   | `100` | 100 % |
 
 
-
+<!-- GENERATED /props -->

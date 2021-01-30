@@ -1,9 +1,12 @@
 # oh-gauge - Gauge
 
+<!-- GENERATED componentDescription -->
 Circular or semi-circular read-only gauge
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `item` <small>TEXT</small> _Item_
 
@@ -20,6 +23,7 @@ Circular or semi-circular read-only gauge
 - `type` <small>TEXT</small> _Type_
 
   Type of the gauge
+
   | Option | Label |
   |--------|-------|
   | `circle` | Circle |
@@ -82,4 +86,4 @@ Circular or semi-circular read-only gauge
 
   Label text font weight
 
-
+<!-- GENERATED /props -->

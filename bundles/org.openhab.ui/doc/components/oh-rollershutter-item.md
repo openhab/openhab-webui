@@ -1,9 +1,12 @@
 # oh-rollershutter-item - Rollershutter List Item
 
+<!-- GENERATED componentDescription -->
 Display rollershutter controls in a list
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### List Item
 
@@ -51,6 +54,7 @@ General settings of the list item
 - `dirIconsStyle` <small>TEXT</small> _Direction Icons Style_
 
   Icons to use for the UP/DOWN buttons
+
   | Option | Label |
   |--------|-------|
   | `arrowtriangle_{dir}` | arrowtriangle_{dir} |
@@ -81,6 +85,7 @@ General settings of the list item
 - `stopIconStyle` <small>TEXT</small> _Stop Icon Style_
 
   Icons to use for the STOP button
+
   | Option | Label |
   |--------|-------|
   | `stop` | stop |
@@ -97,4 +102,4 @@ General settings of the list item
 
   Display state value inside the STOP button instead of icon
 
-
+<!-- GENERATED /props -->

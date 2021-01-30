@@ -1,9 +1,12 @@
 # oh-list-card - List Card
 
+<!-- GENERATED componentDescription -->
 Display a list in a card
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -45,4 +48,4 @@ Parameters of the card
 
   Use for lists with accordion (collapsible) items
 
-
+<!-- GENERATED /props -->

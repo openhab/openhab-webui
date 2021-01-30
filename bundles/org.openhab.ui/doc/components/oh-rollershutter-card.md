@@ -1,9 +1,12 @@
 # oh-rollershutter-card - Rollershutter Card
 
+<!-- GENERATED componentDescription -->
 Display rollershutter controls in a card
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -47,6 +50,7 @@ Parameters of the card
 - `dirIconsStyle` <small>TEXT</small> _Direction Icons Style_
 
   Icons to use for the UP/DOWN buttons
+
   | Option | Label |
   |--------|-------|
   | `arrowtriangle_{dir}` | arrowtriangle_{dir} |
@@ -77,6 +81,7 @@ Parameters of the card
 - `stopIconStyle` <small>TEXT</small> _Stop Icon Style_
 
   Icons to use for the STOP button
+
   | Option | Label |
   |--------|-------|
   | `stop` | stop |
@@ -93,4 +98,4 @@ Parameters of the card
 
   Display state value inside the STOP button instead of icon
 
-
+<!-- GENERATED /props -->

@@ -1,9 +1,12 @@
 # oh-colorpicker-item - Color Picker List Item
 
+<!-- GENERATED componentDescription -->
 Display a color picker in a list
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### List Item
 
@@ -44,6 +47,7 @@ General settings of the list item
 - `modules` <small>TEXT</small> _Modules_
 
   Modules to display
+
   | Option | Label |
   |--------|-------|
   | `wheel` | Color wheel |
@@ -61,4 +65,4 @@ General settings of the list item
   Multiple options are allowed.
 
 
-
+<!-- GENERATED /props -->

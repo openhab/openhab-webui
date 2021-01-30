@@ -1,4 +1,4 @@
-import { pt, pb, pi, pn } from '../helpers'
+import { pt, pb, pi, pn } from '../helpers.js'
 
 export default () => [
   pt('for', 'Current element variable', 'Name of the variable holding the current element in the iteration, it will be propagated to the children components in the default slot. ' +

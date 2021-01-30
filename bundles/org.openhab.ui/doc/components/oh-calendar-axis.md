@@ -1,11 +1,15 @@
 # oh-calendar-axis - Calendar
 
+<!-- GENERATED componentDescription -->
 
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `orient` <small>TEXT</small> _Orientation_
+
   | Option | Label |
   |--------|-------|
   | `horizontal` | Horizontal |
@@ -22,4 +26,4 @@
 
   The index of the grid for this axis
 
-
+<!-- GENERATED /props -->

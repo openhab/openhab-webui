@@ -1,9 +1,12 @@
 # oh-map-page - Map page
 
+<!-- GENERATED componentDescription -->
 Displays markers on a map
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `initialCenter` <small>TEXT</small> _Initial Center_
 
@@ -31,4 +34,4 @@ Displays markers on a map
 
   The provider of tiles to use for the overlay layer above the background of the map. Use one from <a class="external text-color-blue" target="_blank" href="http://leaflet-extras.github.io/leaflet-providers/preview/">Leaflet Providers</a>, Some providers will not work until you set options, like access tokens, in the <code>overlayTileLayerProviderOptions</code> parameter (in Code view). See <a class="external text-color-blue" target="_blank" href="https://github.com/leaflet-extras/leaflet-providers#providers-requiring-registration">here</a> for more info. 
 
-
+<!-- GENERATED /props -->

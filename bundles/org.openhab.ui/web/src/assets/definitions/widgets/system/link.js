@@ -1,4 +1,4 @@
-import { pt, pn } from '../helpers'
+import { pt, pn } from '../helpers.js'
 
 export default () => [
   pt('text', 'Text', 'Link label'),

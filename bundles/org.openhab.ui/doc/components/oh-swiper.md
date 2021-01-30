@@ -1,9 +1,12 @@
 # oh-swiper - Swiper
 
+<!-- GENERATED componentDescription -->
 Swiper control, allows to display multiple swipeable slides
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `pagination` <small>BOOLEAN</small> _Pagination_
 
@@ -17,4 +20,4 @@ Swiper control, allows to display multiple swipeable slides
 
   Enable scrollbar
 
-
+<!-- GENERATED /props -->

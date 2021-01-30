@@ -1,9 +1,12 @@
 # oh-slider-item - Slider List Item
 
+<!-- GENERATED componentDescription -->
 Display a slider control in a list
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### List Item
 
@@ -77,4 +80,4 @@ General settings of the list item
 
   Text to append to the label while dragging the cursor
 
-
+<!-- GENERATED /props -->

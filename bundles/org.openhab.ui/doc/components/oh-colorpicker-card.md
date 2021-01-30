@@ -1,9 +1,12 @@
 # oh-colorpicker-card - Color Picker Card
 
+<!-- GENERATED componentDescription -->
 Display a color picker in a card
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -40,6 +43,7 @@ Parameters of the card
 - `modules` <small>TEXT</small> _Modules_
 
   Modules to display
+
   | Option | Label |
   |--------|-------|
   | `wheel` | Color wheel |
@@ -57,4 +61,4 @@ Parameters of the card
   Multiple options are allowed.
 
 
-
+<!-- GENERATED /props -->

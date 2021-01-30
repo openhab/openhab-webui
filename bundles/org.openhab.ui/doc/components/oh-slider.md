@@ -1,9 +1,12 @@
 # oh-slider - Slider
 
+<!-- GENERATED componentDescription -->
 Slider control, allows to pick a number value on a scale
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `item` <small>TEXT</small> _Item_
 
@@ -49,4 +52,4 @@ Slider control, allows to pick a number value on a scale
 
   Name of the variable to set on input change
 
-
+<!-- GENERATED /props -->

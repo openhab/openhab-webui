@@ -1,9 +1,12 @@
 # oh-aggregate-series - Aggregate Series
 
+<!-- GENERATED componentDescription -->
 
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `name` <small>TEXT</small> _Name_
 
@@ -24,6 +27,7 @@
 - `offsetUnit` <small>STRING</small> _Offset Unit_
 
   Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Amount).
+
   | Option | Label |
   |--------|-------|
   | `hour` | Hour |
@@ -37,6 +41,7 @@
 - `type` <small>TEXT</small> _Type_
 
   The type of the series.<br/><em>Note: heatmap needs a configured visual map and is not supported for time series</em>
+
   | Option | Label |
   |--------|-------|
   | `line` | Line |
@@ -48,6 +53,7 @@
 - `dimension1` <small>TEXT</small> _First Dimension_
 
   The largest data point cluster size.<br />It should be consistent with the chart type, and match the type of a category axis where this series will appear.
+
   | Option | Label |
   |--------|-------|
   | `minute` | Minute of Hour |
@@ -61,6 +67,7 @@
 - `dimension2` <small>TEXT</small> _Second Dimension_
 
   The smallest data point cluster size.<br />Set only when you have 2 category axes (for instance day of the week and hour of the day), and make sure to match the type of the 2nd axis.
+
   | Option | Label |
   |--------|-------|
   | `minute` | Minute of Hour |
@@ -78,6 +85,7 @@
 - `aggregationFunction` <small>TEXT</small> _Aggregation Function_
 
   How to reduce the data points in a same aggregation cluster to a single value. If not specified, the average function will be used.
+
   | Option | Label |
   |--------|-------|
   | `average` | Average |
@@ -101,4 +109,4 @@
 
   The index of the Y axis for this series
 
-
+<!-- GENERATED /props -->

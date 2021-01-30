@@ -1,4 +1,4 @@
-import { pb, pt } from '../helpers'
+import { pb, pt } from '../helpers.js'
 
 export default () => [
   pb('icon', 'Icon', '<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>'),

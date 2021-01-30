@@ -1,9 +1,12 @@
 # oh-repeater - Repeater
 
+<!-- GENERATED componentDescription -->
 Iterate over an array and repeat the children components in the default slot
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `for` <small>TEXT</small> _Current element variable_
 
@@ -12,6 +15,7 @@ Iterate over an array and repeat the children components in the default slot
 - `sourceType` <small>TEXT</small> _Source type_
 
   What to iterate on
+
   | Option | Label |
   |--------|-------|
   | `array` | Array (default) in the "in" parameter |
@@ -78,4 +82,4 @@ Iterate over an array and repeat the children components in the default slot
 
   Render all children directly under the repeater's parent, without any container
 
-
+<!-- GENERATED /props -->

@@ -1,9 +1,12 @@
 # oh-knob-card - Knob Card
 
+<!-- GENERATED componentDescription -->
 Display a knob in a card to visualize and control a quantifiable item
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -79,4 +82,4 @@ Parameters are passed to the underlying <a target="_blank" class="external text-
 
   Size the control using percentages instead of pixels
 
-
+<!-- GENERATED /props -->

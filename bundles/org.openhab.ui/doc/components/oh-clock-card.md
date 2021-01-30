@@ -1,9 +1,12 @@
 # oh-clock-card - Digital Clock Card
 
+<!-- GENERATED componentDescription -->
 Display a digital clock in a card
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -36,6 +39,7 @@ Parameters of the card
 - `timeFormat` <small>TEXT</small> _Time Format_
 
   Time format, see <a class="external text-color-blue" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>
+
   | Option | Label |
   |--------|-------|
   | `LTS` | Localized time including seconds ('LTS', e.g. '8:02:18 PM') |
@@ -62,6 +66,7 @@ Parameters of the card
 - `dateFormat` <small>TEXT</small> _Date Format_
 
   Date format, see <a class="external text-color-blue" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>
+
   | Option | Label |
   |--------|-------|
   | `LL` | Localized long date ('LL', e.g. 'August 16, 2018') |
@@ -72,6 +77,7 @@ Parameters of the card
 - `datePos` <small>TEXT</small> _Date Position_
 
   Where to show the date
+
   | Option | Label |
   |--------|-------|
   | `above` | Above time |
@@ -94,6 +100,7 @@ Action to perform when the clock is clicked
 - `action` <small>TEXT</small> _Action_
 
   Type of action to perform
+
   | Option | Label |
   |--------|-------|
   | `navigate` | Navigate to page |
@@ -146,6 +153,7 @@ Action to perform when the clock is clicked
 - `actionPageTransition` <small>TEXT</small> _Transition Effect_
 
   Use a specific <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a>
+
   | Option | Label |
   |--------|-------|
   | `f7-circle` | Circle |
@@ -185,9 +193,10 @@ Action to perform when the clock is clicked
 - `actionAnalyzerChartType` <small>TEXT</small> _Chart Type_
 
   The initial analyzing period - dynamic or a predefined fixed period: day, week, month or year
+
   | Option | Label |
   |--------|-------|
-  | `` | Dynamic |
+  | `(empty)` | Dynamic |
   | `day` | Day |
   | `isoWeek` | Week (starting on Mondays) |
   | `month` | Month |
@@ -197,6 +206,7 @@ Action to perform when the clock is clicked
 - `actionAnalyzerCoordSystem` <small>TEXT</small> _Initial Coordinate System_
 
   The initial coordinate system of the analyzer - time, aggregate or calendar (only time is supported for dynamic periods)
+
   | Option | Label |
   |--------|-------|
   | `time` | Time |
@@ -216,4 +226,4 @@ Action to perform when the clock is clicked
 
   The value to set the variable to
 
-
+<!-- GENERATED /props -->

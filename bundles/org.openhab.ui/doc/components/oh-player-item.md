@@ -1,9 +1,12 @@
 # oh-player-item - Player List Item
 
+<!-- GENERATED componentDescription -->
 Display player controls in a list
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### List Item
 
@@ -56,4 +59,4 @@ General settings of the list item
 
   Item holding the track name
 
-
+<!-- GENERATED /props -->

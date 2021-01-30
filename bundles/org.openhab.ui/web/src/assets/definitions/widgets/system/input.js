@@ -1,4 +1,4 @@
-import { pi, pb, pt } from '../helpers'
+import { pi, pb, pt } from '../helpers.js'
 
 export default () => [
   pt('name', 'Name', 'Input name'),

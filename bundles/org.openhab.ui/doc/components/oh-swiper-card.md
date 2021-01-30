@@ -1,9 +1,12 @@
 # oh-swiper-card - Swiper Card
 
+<!-- GENERATED componentDescription -->
 Display a swiper allowing to browse slides, in a card
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -45,4 +48,4 @@ Parameters of the card
 
   Enable scrollbar
 
-
+<!-- GENERATED /props -->

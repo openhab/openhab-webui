@@ -1,9 +1,12 @@
 # oh-location-card - Location Card
 
+<!-- GENERATED componentDescription -->
 A card showing model items in a certain location
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Model Card
 
@@ -21,6 +24,7 @@ General settings for this card
 - `backgroundColor` <small>TEXT</small> _Background Color_
 
   Color of the card's background; if unset, choose automatically from built-in defaults for certain semantic classes
+
   | Option | Label |
   |--------|-------|
   | `red` | Red |
@@ -28,7 +32,7 @@ General settings for this card
   | `blue` | Blue |
   | `pink` | Pink |
   | `yellow` | Yellow |
-  | `undefined` | Orange |
+  | `(empty)` | Orange |
   | `purple` | Purple |
   | `deeppurple` | Deep Purple |
   | `lightblue` | Light Blue |
@@ -57,6 +61,7 @@ General settings for this card
 - `badges` <small>TEXT</small> _Enabled badges_
 
   Select the badges you wish to show in the header of the card. Display all if none are selected.
+
   | Option | Label |
   |--------|-------|
   | `lights` | Lights On |
@@ -77,4 +82,4 @@ General settings for this card
   Multiple options are allowed.
 
 
-
+<!-- GENERATED /props -->

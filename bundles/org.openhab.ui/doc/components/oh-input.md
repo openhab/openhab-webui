@@ -1,9 +1,12 @@
 # oh-input - Input
 
+<!-- GENERATED componentDescription -->
 Displays an input field, used to set a variable
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `name` <small>TEXT</small> _Name_
 
@@ -57,4 +60,4 @@ Displays an input field, used to set a variable
 
   Name of the variable to set when the input changes
 
-
+<!-- GENERATED /props -->

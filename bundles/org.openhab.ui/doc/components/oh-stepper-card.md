@@ -1,9 +1,12 @@
 # oh-stepper-card - Stepper Card
 
+<!-- GENERATED componentDescription -->
 Display a stepper in a card to control an item
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -81,4 +84,4 @@ Parameters of the card
 
   Speed up the increase/decrease over time while the buttons keep being pressed
 
-
+<!-- GENERATED /props -->

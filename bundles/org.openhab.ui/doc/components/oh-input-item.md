@@ -1,9 +1,12 @@
 # oh-input-item - Input List Item
 
+<!-- GENERATED componentDescription -->
 Display an input field in a list
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### List Item
 
@@ -89,4 +92,4 @@ General settings of the list item
 
   Name of the variable to set when the input changes
 
-
+<!-- GENERATED /props -->

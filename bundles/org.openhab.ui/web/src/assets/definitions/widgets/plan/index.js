@@ -1,7 +1,7 @@
 // definitions for the plan page & markers
 
-import { WidgetDefinition, pt, pi, pg, pb, pn, po } from '../helpers'
-import { actionGroup, actionParams } from '../actions'
+import { WidgetDefinition, pt, pi, pg, pb, pn, po } from '../helpers.js'
+import { actionGroup, actionParams } from '../actions.js'
 
 export const OhPlanPageDefinition = () => new WidgetDefinition('oh-plan-page', 'Floor plan', 'Displays markers on an image overlay')
   .params([

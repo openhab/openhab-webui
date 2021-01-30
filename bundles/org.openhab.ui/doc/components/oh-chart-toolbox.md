@@ -1,15 +1,19 @@
 # oh-chart-toolbox - Toolbox
 
+<!-- GENERATED componentDescription -->
 
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `show` <small>BOOLEAN</small> _Show_
 
   Whether to show or not this component
 
 - `presetFeatures` <small>TEXT</small> _Features_
+
   | Option | Label |
   |--------|-------|
   | `saveAsImage` | Save as Image |
@@ -38,4 +42,4 @@ Each parameter accepts pixel values or percentages. Additionally, top accepts "t
 
 - `height` <small>TEXT</small> _Height_
 
-
+<!-- GENERATED /props -->

@@ -1,4 +1,4 @@
-import { pb } from '../helpers'
+import { pb } from '../helpers.js'
 
 // omitted "params" accepting most parameters from https://swiperjs.com/
 

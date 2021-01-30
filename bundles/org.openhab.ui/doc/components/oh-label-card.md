@@ -1,9 +1,12 @@
 # oh-label-card - Label Card
 
+<!-- GENERATED componentDescription -->
 Display the state of an item in a card
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -38,6 +41,7 @@ Action to perform when the element is clicked
 - `action` <small>TEXT</small> _Action_
 
   Type of action to perform
+
   | Option | Label |
   |--------|-------|
   | `navigate` | Navigate to page |
@@ -90,6 +94,7 @@ Action to perform when the element is clicked
 - `actionPageTransition` <small>TEXT</small> _Transition Effect_
 
   Use a specific <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a>
+
   | Option | Label |
   |--------|-------|
   | `f7-circle` | Circle |
@@ -129,9 +134,10 @@ Action to perform when the element is clicked
 - `actionAnalyzerChartType` <small>TEXT</small> _Chart Type_
 
   The initial analyzing period - dynamic or a predefined fixed period: day, week, month or year
+
   | Option | Label |
   |--------|-------|
-  | `` | Dynamic |
+  | `(empty)` | Dynamic |
   | `day` | Day |
   | `isoWeek` | Week (starting on Mondays) |
   | `month` | Month |
@@ -141,6 +147,7 @@ Action to perform when the element is clicked
 - `actionAnalyzerCoordSystem` <small>TEXT</small> _Initial Coordinate System_
 
   The initial coordinate system of the analyzer - time, aggregate or calendar (only time is supported for dynamic periods)
+
   | Option | Label |
   |--------|-------|
   | `time` | Time |
@@ -226,4 +233,4 @@ Show a trend line in the background
 
   Colors of the trend line (see <a target="_blank" class="external text-color-blue" href="https://github.com/QingWei-Li/vue-trend#props">vue-trend</a>)
 
-
+<!-- GENERATED /props -->

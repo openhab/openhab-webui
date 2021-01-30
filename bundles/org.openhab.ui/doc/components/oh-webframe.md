@@ -1,9 +1,12 @@
 # oh-webframe - Web frame
 
+<!-- GENERATED componentDescription -->
 Displays a web page in a frame
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `src` <small>TEXT</small> _Source URL_
 
@@ -13,4 +16,4 @@ Displays a web page in a frame
 
   Height of the frame (by default 300px)
 
-
+<!-- GENERATED /props -->

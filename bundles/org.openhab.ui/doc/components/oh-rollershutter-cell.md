@@ -1,9 +1,12 @@
 # oh-rollershutter-cell - Rollershutter Cell
 
+<!-- GENERATED componentDescription -->
 A cell expanding to rollershutter controls
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Cell
 
@@ -48,6 +51,7 @@ General settings of the cell
 - `dirIconsStyle` <small>TEXT</small> _Direction Icons Style_
 
   Icons to use for the UP/DOWN buttons
+
   | Option | Label |
   |--------|-------|
   | `arrowtriangle_{dir}` | arrowtriangle_{dir} |
@@ -78,6 +82,7 @@ General settings of the cell
 - `stopIconStyle` <small>TEXT</small> _Stop Icon Style_
 
   Icons to use for the STOP button
+
   | Option | Label |
   |--------|-------|
   | `stop` | stop |
@@ -102,6 +107,7 @@ Action to perform when the element is clicked
 - `action` <small>TEXT</small> _Action_
 
   Type of action to perform
+
   | Option | Label |
   |--------|-------|
   | `navigate` | Navigate to page |
@@ -154,6 +160,7 @@ Action to perform when the element is clicked
 - `actionPageTransition` <small>TEXT</small> _Transition Effect_
 
   Use a specific <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a>
+
   | Option | Label |
   |--------|-------|
   | `f7-circle` | Circle |
@@ -193,9 +200,10 @@ Action to perform when the element is clicked
 - `actionAnalyzerChartType` <small>TEXT</small> _Chart Type_
 
   The initial analyzing period - dynamic or a predefined fixed period: day, week, month or year
+
   | Option | Label |
   |--------|-------|
-  | `` | Dynamic |
+  | `(empty)` | Dynamic |
   | `day` | Day |
   | `isoWeek` | Week (starting on Mondays) |
   | `month` | Month |
@@ -205,6 +213,7 @@ Action to perform when the element is clicked
 - `actionAnalyzerCoordSystem` <small>TEXT</small> _Initial Coordinate System_
 
   The initial coordinate system of the analyzer - time, aggregate or calendar (only time is supported for dynamic periods)
+
   | Option | Label |
   |--------|-------|
   | `time` | Time |
@@ -224,4 +233,4 @@ Action to perform when the element is clicked
 
   The value to set the variable to
 
-
+<!-- GENERATED /props -->

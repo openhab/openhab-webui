@@ -1,9 +1,12 @@
 # oh-rollershutter - Rollershutter
 
+<!-- GENERATED componentDescription -->
 Rollershutter control, with up/down/stop buttons
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `item` <small>TEXT</small> _Item_
 
@@ -12,6 +15,7 @@ Rollershutter control, with up/down/stop buttons
 - `dirIconsStyle` <small>TEXT</small> _Direction Icons Style_
 
   Icons to use for the UP/DOWN buttons
+
   | Option | Label |
   |--------|-------|
   | `arrowtriangle_{dir}` | arrowtriangle_{dir} |
@@ -42,6 +46,7 @@ Rollershutter control, with up/down/stop buttons
 - `stopIconStyle` <small>TEXT</small> _Stop Icon Style_
 
   Icons to use for the STOP button
+
   | Option | Label |
   |--------|-------|
   | `stop` | stop |
@@ -58,4 +63,4 @@ Rollershutter control, with up/down/stop buttons
 
   Display state value inside the STOP button instead of icon
 
-
+<!-- GENERATED /props -->

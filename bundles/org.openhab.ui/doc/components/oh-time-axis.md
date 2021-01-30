@@ -1,9 +1,12 @@
 # oh-time-axis - Time Axis
 
+<!-- GENERATED componentDescription -->
 
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `name` <small>TEXT</small> _Name_
 
@@ -15,6 +18,7 @@
 - `nameLocation` <small>TEXT</small> _Name Location_
 
   Location of axis name
+
   | Option | Label |
   |--------|-------|
   | `start` | Start |
@@ -37,4 +41,4 @@
 
   The index of the grid for this axis
 
-
+<!-- GENERATED /props -->

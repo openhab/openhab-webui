@@ -1,9 +1,12 @@
 # oh-gauge-card - Gauge Card
 
+<!-- GENERATED componentDescription -->
 Display a read-only gauge in a card to visualize a quantifiable item
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -50,6 +53,7 @@ Parameters are passed to the underlying <a target="_blank" class="external text-
 - `type` <small>TEXT</small> _Type_
 
   Type of the gauge
+
   | Option | Label |
   |--------|-------|
   | `circle` | Circle |
@@ -112,4 +116,4 @@ Parameters are passed to the underlying <a target="_blank" class="external text-
 
   Label text font weight
 
-
+<!-- GENERATED /props -->

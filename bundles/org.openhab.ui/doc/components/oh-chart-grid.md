@@ -1,9 +1,12 @@
 # oh-chart-grid - Cartesian Grid
 
+<!-- GENERATED componentDescription -->
 
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `show` <small>BOOLEAN</small> _Show_
 
@@ -28,4 +31,4 @@ Each parameter accepts pixel values or percentages. Additionally, top accepts "t
 
 - `height` <small>TEXT</small> _Height_
 
-
+<!-- GENERATED /props -->

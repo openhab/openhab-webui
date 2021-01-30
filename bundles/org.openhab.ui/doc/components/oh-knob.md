@@ -1,9 +1,12 @@
 # oh-knob - Knob
 
+<!-- GENERATED componentDescription -->
 Knob control, allow to change a number value on a circular track
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `item` <small>TEXT</small> _Item_
 
@@ -53,4 +56,4 @@ Knob control, allow to change a number value on a circular track
 
   Name of the variable to set on input change
 
-
+<!-- GENERATED /props -->

@@ -1,9 +1,12 @@
 # oh-input-card - Input Card
 
+<!-- GENERATED componentDescription -->
 Display an input in a card
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -85,4 +88,4 @@ Parameters of the card
 
   Name of the variable to set when the input changes
 
-
+<!-- GENERATED /props -->

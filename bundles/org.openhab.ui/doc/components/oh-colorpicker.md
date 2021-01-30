@@ -1,9 +1,12 @@
 # oh-colorpicker - Colorpicker
 
+<!-- GENERATED componentDescription -->
 Control to pick a color
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `item` <small>TEXT</small> _Item_
 
@@ -12,6 +15,7 @@ Control to pick a color
 - `modules` <small>TEXT</small> _Modules_
 
   Modules to display
+
   | Option | Label |
   |--------|-------|
   | `wheel` | Color wheel |
@@ -29,4 +33,4 @@ Control to pick a color
   Multiple options are allowed.
 
 
-
+<!-- GENERATED /props -->

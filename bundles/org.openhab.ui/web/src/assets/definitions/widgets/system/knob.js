@@ -1,4 +1,4 @@
-import { pi, pb, pn, pd, pt } from '../helpers'
+import { pi, pb, pn, pd, pt } from '../helpers.js'
 
 export default () => [
   pi('item', 'Item', 'Item to control'),

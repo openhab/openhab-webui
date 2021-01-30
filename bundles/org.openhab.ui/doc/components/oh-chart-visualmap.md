@@ -1,9 +1,12 @@
 # oh-chart-visualmap - Visual Map
 
+<!-- GENERATED componentDescription -->
 
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `show` <small>BOOLEAN</small> _Show_
 
@@ -28,6 +31,7 @@ Values considered in range for this visual map (by default [0, 200])<br/><strong
 - `type` <small>TEXT</small> _Type_
 
   Type of visual map - continuous or piecewise
+
   | Option | Label |
   |--------|-------|
   | `continuous` | Continuous |
@@ -35,6 +39,7 @@ Values considered in range for this visual map (by default [0, 200])<br/><strong
 
 
 - `orient` <small>TEXT</small> _Orientation_
+
   | Option | Label |
   |--------|-------|
   | `horizontal` | Horizontal |
@@ -52,6 +57,7 @@ Values considered in range for this visual map (by default [0, 200])<br/><strong
 - `presetPalette` <small>TEXT</small> _Preset color palette_
 
   Choose from a selection of preset color palettes for the values in range. The default is a yellow (low) to red (high) gradient
+
   | Option | Label |
   |--------|-------|
   | `greenred` | Green-Yellow-Red |
@@ -76,4 +82,4 @@ Each parameter accepts pixel values or percentages. Additionally, top accepts "t
 
 - `height` <small>TEXT</small> _Height_
 
-
+<!-- GENERATED /props -->

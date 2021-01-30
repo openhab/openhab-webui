@@ -1,9 +1,12 @@
 # oh-player-card - Player Card
 
+<!-- GENERATED componentDescription -->
 Display player controls in a card
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -52,4 +55,4 @@ Parameters of the card
 
   Item holding the track name
 
-
+<!-- GENERATED /props -->

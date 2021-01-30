@@ -1,9 +1,12 @@
 # oh-webframe-card - Web Frame Card
 
+<!-- GENERATED componentDescription -->
 Display a web page in a card
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -45,4 +48,4 @@ Parameters of the card
 
   Height of the frame (by default 300px)
 
-
+<!-- GENERATED /props -->

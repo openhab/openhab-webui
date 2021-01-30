@@ -1,7 +1,7 @@
 /* Definitions for the standard library's standalone (Item) widgets */
 
-import { WidgetDefinition, pb, pt, pi, pg } from '../helpers'
-import { actionGroup, actionParams } from '../actions'
+import { WidgetDefinition, pb, pt, pi, pg } from '../helpers.js'
+import { actionGroup, actionParams } from '../actions.js'
 
 export const CellParameterGroup = () => pg('cell', 'Cell', 'General settings of the cell')
 export const TrendLineParameterGroup = () => pg('trend', 'Trend Line', 'Trend Line Background Options')
@@ -16,7 +16,7 @@ export const CellParameters = () => [
   pt('on', '"On" expression', 'Expression to determine when the card should be highlighted. If blank, determine automatically from the primary bound item if applicable.').a()
 ]
 
-import TrendLineParameters from '../system/trend'
+import TrendLineParameters from '../system/trend.js'
 
 // OhCell
 export const OhCellDefinition = () => new WidgetDefinition('oh-cell', 'Cell', 'A regular or expandable cell')
@@ -35,28 +35,28 @@ export const OhLabelCellDefinition = () => new WidgetDefinition('oh-label-cell',
   .paramGroup(TrendLineParameterGroup(), TrendLineParameters())
 
 // OhSliderCell
-import SliderParameters from '../system/slider'
+import SliderParameters from '../system/slider.js'
 export const OhSliderCellDefinition = () => new WidgetDefinition('oh-slider-cell', 'Slider Cell', 'A cell expanding to a big vertical slider')
   .paramGroup(CellParameterGroup(), CellParameters())
   .paramGroup(pg('slider', 'Slider'), SliderParameters())
   .paramGroup(actionGroup(), actionParams())
 
 // OhKnobCell
-import KnobParameters from '../system/knob'
+import KnobParameters from '../system/knob.js'
 export const OhKnobCellDefinition = () => new WidgetDefinition('oh-knob-cell', 'Knob Cell', 'A cell expanding to a knob control')
   .paramGroup(CellParameterGroup(), CellParameters())
   .paramGroup(pg('knob', 'Knob'), KnobParameters())
   .paramGroup(actionGroup(), actionParams())
 
 // OhColorpickerCell
-import ColorpickerParameters from '../system/colorpicker'
+import ColorpickerParameters from '../system/colorpicker.js'
 export const OhColorpickerCellDefinition = () => new WidgetDefinition('oh-colorpicker-cell', 'Colorpicker Cell', 'A cell expanding to a color picker')
   .paramGroup(CellParameterGroup(), CellParameters())
   .paramGroup(pg('colorpicker', 'Color Picker'), ColorpickerParameters())
   .paramGroup(actionGroup(), actionParams())
 
 // OhRollershutterCell
-import RollershutterParameters from '../system/rollershutter'
+import RollershutterParameters from '../system/rollershutter.js'
 export const OhRollershutterCellDefinition = () => new WidgetDefinition('oh-rollershutter-cell', 'Rollershutter Cell', 'A cell expanding to rollershutter controls')
   .paramGroup(CellParameterGroup(), CellParameters())
   .paramGroup(pg('rollershutter', 'Roller Shutter'), RollershutterParameters())

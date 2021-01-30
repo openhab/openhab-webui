@@ -1,9 +1,12 @@
 # oh-plan-page - Floor plan
 
+<!-- GENERATED componentDescription -->
 Displays markers on an image overlay
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 - `imageUrl` <small>TEXT</small> _Image URL_
 
@@ -30,9 +33,10 @@ Displays markers on an image overlay
 - `backgroundColor` <small>TEXT</small> _Background Color_
 
   Color outside the bounds of the image. "Black or White" means it will be black in dark mode and white in light mode
+
   | Option | Label |
   |--------|-------|
-  | `` | Default |
+  | `(empty)` | Default |
   | `white` | Always White |
   | `black` | Always Black |
   | `blackwhite` | Black or White |
@@ -42,4 +46,4 @@ Displays markers on an image overlay
 
   Apply an invert filter to the image in dark mode - use with images in black & white or grayscale for best results
 
-
+<!-- GENERATED /props -->

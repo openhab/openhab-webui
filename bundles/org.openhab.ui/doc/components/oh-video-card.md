@@ -1,9 +1,12 @@
 # oh-video-card - Video Card
 
+<!-- GENERATED componentDescription -->
 Display a video (URL or URL from String item) in a card
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### Card
 
@@ -53,4 +56,4 @@ Parameters of the card
 
   Does not start playing the video automatically
 
-
+<!-- GENERATED /props -->

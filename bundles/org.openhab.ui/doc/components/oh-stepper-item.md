@@ -1,9 +1,12 @@
 # oh-stepper-item - Stepper List Item
 
+<!-- GENERATED componentDescription -->
 Display a stepper control in a list
+<!-- GENERATED /componentDescription -->
 
 ## Configuration
 
+<!-- GENERATED props -->
 
 ### List Item
 
@@ -85,4 +88,4 @@ General settings of the list item
 
   Speed up the increase/decrease over time while the buttons keep being pressed
 
-
+<!-- GENERATED /props -->
