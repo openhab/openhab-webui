@@ -1,0 +1,8 @@
+{
+  "CONFIGURATION_ERROR": "ОШИБКА: КОНФИГУРАЦИИ",
+  "HANDLER_INITIALIZING_ERROR": "ОШИБКА: ОБРАБОТЧИКА",
+  "HANDLER_MISSING_ERROR": "ОШИБКА: ОБРАБОТЧИКА",
+  "TEMPLATE_MISSING_ERROR": "ОШИБКА: ТЕМПЛЕТ",
+  "INVALID_RULE": "НЕКОРРЕКТНОЕ",
+  "DISABLED": "ОТКЛЮЧЕНО"
+}
