@@ -54,7 +54,7 @@ module.exports = {
     'space-in-parens': 'error',
     'vue/attribute-hyphenation': 'off',
     'vue/component-definition-name-casing': 'off',
-
+    'vue/no-v-html': 'off',
 
     // The following rules should be activated successively. Due to the large amount
     // of required changes, the activations should be clustered in several pull requests.
@@ -71,7 +71,7 @@ module.exports = {
     'no-useless-catch': 'off',
     'quotes': ['off', 'single'],
     'vue/attributes-order': 'off',
-    'vue/component-tags-order': 'off',
+    'vue/component-tags-order': ["off", { "order": ["template", "script", "style"] }],
     'vue/html-closing-bracket-newline': 'off',
     'vue/html-closing-bracket-spacing': 'off',
     'vue/html-indent': 'off',
@@ -84,7 +84,6 @@ module.exports = {
     'vue/no-mutating-props': 'off',
     'vue/no-parsing-error': 'off',
     'vue/no-template-shadow': 'off',
-    'vue/no-v-html': 'off',
     'vue/order-in-components': 'off',
     'vue/require-default-prop': 'off',
     'vue/require-prop-types': 'off',
