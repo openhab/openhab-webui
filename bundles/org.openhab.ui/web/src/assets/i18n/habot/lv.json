@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(piemērs)",
+  "habot.clearHistory": "Izdzēst vēsturi",
+  "habot.dismiss": "Atcelt",
+  "habot.example1": "Kāda ir temperatūra virtuvē?",
+  "habot.example2": "Uzstādīt termostatu uz 21 grādu",
+  "habot.example3": "Izslēgt gaismas pirmajā stāvā",
+  "habot.anythingElse": "Vai vēlaties vēl ko?",
+  "habot.cardDeckIsIncompatible": "Diemžēl kariņas, kas saglabātas kartiņu lapā, šeit nevar parādīt, izmantojiet speciālo HABot lietotni, lai tās redzētu.",
+  "habot.cardIsIncompatible": "Diemžēl šo kartiņu šeit nevar parādīt. Izmantojiet speciālo HABot lietotni, lai to redzētu."
+}
