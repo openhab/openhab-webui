@@ -117,8 +117,7 @@ export default {
       if (!this.textualSystemInfoOpened) return ''
       return YAML.stringify({
         runtimeInfo: this.$store.state.runtimeInfo,
-        apiLocale: this.$store.state.locale,
-        uiLocale: this.$store.getters.locale,
+        locale: this.$store.getters.locale,
         systemInfo: this.systemInfo,
         bindings: this.bindings,
         clientInfo: {

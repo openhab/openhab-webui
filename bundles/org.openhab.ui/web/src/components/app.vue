@@ -407,7 +407,7 @@ export default {
         })
         .then((rootResponse) => {
           // store the REST API services present on the system
-          this.$store.commit('setRootResource', { rootResponse })
+          this.$store.dispatch('loadRootResource', { rootResponse })
           this.updateLocale()
           if (!this.$store.getters.apiEndpoint('auth')) this.$store.commit('setNoAuth', true)
           return rootResponse
