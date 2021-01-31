@@ -1,0 +1,15 @@
+{
+  "about.theme": "Tēma",
+  "about.theme.auto": "Automātiski",
+  "about.darkMode": "Tumšā tēma",
+  "about.darkMode.auto": "Automātiski",
+  "about.darkMode.light": "Gaišā",
+  "about.darkMode.dark": "Tumšā",
+  "about.navigationBarsStyle": "Navigācijas joslu stils",
+  "about.miscellaneous": "Dažādi",
+  "about.miscellaneous.home.navbar": "Vienkārša navigācijas josla sākumlapā",
+  "about.miscellaneous.home.background": "Standarta sākumlapas fona krāsa",
+  "about.miscellaneous.home.hideChatInput": "Nerādīt sarunas ievades logu sākumlapā",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Nerādīt kartiņu atvēšanas animācijas",
+  "about.miscellaneous.theme.disablePageTransition": "Nerādīt lapu pārejas animācijas"
+}
