@@ -1,8 +1,9 @@
 import Blockly from 'blockly'
+import { FieldAudiosinkPicker } from './oh_audiosinkfield'
 import { FieldSlider } from '@blockly/field-slider'
 
-export default function defineOHBlocks_Audio(f7, sinks) { 
-  Blockly.Blocks['audioSlider'] = {
+export default function defineOHBlocks_Audio(f7) {
+  Blockly.Blocks["audioSlider"] = {
     init: function () {
       this.appendDummyInput()
         .appendField(new FieldSlider(50), "FIELDNAME")
@@ -10,10 +11,22 @@ export default function defineOHBlocks_Audio(f7, sinks) {
       this.setInputsInline(true)
       this.setOutput(true, null)
     }
+  };
+  
+  Blockly.Blocks['oh_audiosink'] = {
+    init: function () {
+      this.appendDummyInput()
+        .appendField('audiosink')
+        .appendField(new FieldAudiosinkPicker('MyAudioSink', null, { f7 }), 'sinkName')
+      this.setColour(0)
+      this.setInputsInline(true)
+      this.setTooltip('Pick an audio sink')
+      this.setOutput(true, null)
+    }
   }
 
-  Blockly.JavaScript['audioSlider'] = function (block) {
-    const itemName = block.getFieldValue('FIELDNAME')
+  Blockly.JavaScript['oh_audiosink'] = function (block) {
+    const itemName = block.getFieldValue('sinkName')
     var code = '\'' + itemName + '\''
     return [code, 0]
   }
@@ -55,7 +68,7 @@ export default function defineOHBlocks_Audio(f7, sinks) {
   }
 
   Blockly.Blocks['oh_playmedia'] = {
-    init: function () {
+    init: function() {
       this.appendDummyInput()
         .appendField('Play')
         .appendField(new Blockly.FieldTextInput('<audio file>'), 'fileName')
@@ -77,18 +90,18 @@ export default function defineOHBlocks_Audio(f7, sinks) {
   };
 
   Blockly.Blocks['oh_playmedia_volume'] = {
-    init: function () {
+    init: function() {
       this.appendValueInput('volume')
-        .setCheck(null)
-        .appendField('Play')
-        .appendField(new Blockly.FieldTextInput('filename'), 'fileName')
-        .appendField('at volume')
-      this.setInputsInline(true)
-      this.setPreviousStatement(true, null)
-      this.setNextStatement(true, null)
-      this.setColour(230)
-      this.setTooltip('')
-      this.setHelpUrl('')
+          .setCheck(null)
+          .appendField('Play')
+          .appendField(new Blockly.FieldTextInput('filename'), 'fileName')
+          .appendField('at volume');
+      this.setInputsInline(true);
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(230);
+      this.setTooltip('');
+      this.setHelpUrl('');
     }
   }
 
@@ -97,19 +110,18 @@ export default function defineOHBlocks_Audio(f7, sinks) {
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
     var fileName = block.getFieldValue('fileName')
-    var volume = block.getFieldValue('volume').replace(/'/g,'')
+    var volume = block.getFieldValue('volume')
     var code = audio + '.playSound("' + fileName + '", new PercentType(' + volume + '));\n'
     return code
   };  
 
   Blockly.Blocks['oh_playmedia_sink'] = {
-    init: function () {
+    init: function() {
       this.appendDummyInput()
         .appendField('Play')
         .appendField(new Blockly.FieldTextInput('<audio file>'), 'fileName')
-      this.appendValueInput('sinkName')
-        .setCheck(null)
         .appendField('on')
+        .appendField(new FieldAudiosinkPicker('AudioSink', null, { f7 }), 'itemName')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -123,7 +135,7 @@ export default function defineOHBlocks_Audio(f7, sinks) {
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
     var fileName = block.getFieldValue('fileName')
-    var sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC);
+    var sinkName = block.getFieldValue('itemName')
     // TODO : handle multiple sinks
     var code = audio + '.playSound("' + sinkName + '","' + fileName + '");\n'
     return code
@@ -131,38 +143,35 @@ export default function defineOHBlocks_Audio(f7, sinks) {
 
   Blockly.Blocks['oh_playmedia_sink_volume'] = {
     init: function() {
-      this.appendDummyInput()
-        .appendField('Play audio')
-        .appendField(new Blockly.FieldTextInput('filename'), 'fileName')
-      this.appendValueInput('sinkName')
-        .setCheck(null)
-        .appendField('on')
       this.appendValueInput('volume')
         .setCheck(null)
-        .appendField('at Voume')
+        .appendField('Play')
+        .appendField(new Blockly.FieldTextInput('filename'), 'fileName')
+        .appendField('on')
+        .appendField(new FieldAudiosinkPicker('AudioSink', null, { f7 }), 'sinkName')
+        .appendField('at volume')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(230)
-      this.setTooltip('')
-      this.setHelpUrl('')
+      this.setTooltip('plays a sound from the sounds folder to the given sink')
     }
-  };
+  }
 
   Blockly.JavaScript['oh_playmedia_sink_volume'] = function (block) {
     const audio = Blockly.JavaScript.provideFunction_(
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
     var fileName = block.getFieldValue('fileName')
-    var sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC);
-    var volume = Blockly.JavaScript.valueToCode(block, 'volume', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g,'')
+    var sinkName = block.getFieldValue('sinkName')
+    var volume = block.getFieldValue('volume')
     // TODO : handle multiple sinks
     var code = audio + '.playSound("' + sinkName + '","' + fileName + '",new PercentType(' + volume + '));\n'
     return code
   };  
 
   Blockly.Blocks['oh_playstream'] = {
-    init: function () {
+    init: function() {
       this.appendDummyInput()
         .appendField('Play stream')
         .appendField(new Blockly.FieldTextInput('<URL>'), 'url')
@@ -189,9 +198,8 @@ export default function defineOHBlocks_Audio(f7, sinks) {
       this.appendDummyInput()
         .appendField('Play stream')
         .appendField(new Blockly.FieldTextInput('<URL>'), 'url')
-      this.appendValueInput('sinkName')
-        .setCheck(null)
-        .appendField('on');
+        .appendField('on')
+        .appendField(new FieldAudiosinkPicker('AudioSink', null, { f7 }), 'sinkName')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -206,7 +214,7 @@ export default function defineOHBlocks_Audio(f7, sinks) {
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
     // TODO : handle multiple sinks
     var url = block.getFieldValue('url')
-    var sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC);
+    var sinkName = block.getFieldValue('sinkName')
     var code = audio + '.playStream("' + sinkName + '","' + url + '");\n'
     return code
   }
@@ -230,30 +238,5 @@ export default function defineOHBlocks_Audio(f7, sinks) {
     var code = audio + '.getMasterVolume()'
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
-
-  Blockly.Blocks['oh_audiosink_dropdown'] = {
-    init: function () {
-      var input = this.appendDummyInput()
-        .appendField('audio sink')
-        .appendField(new Blockly.FieldDropdown(this.generateOptions), 'sinks')
-      this.setOutput(true, null)
-    },
-    generateOptions: function () {
-      var options = []
-      if (sinks != null) {
-        for (var key in sinks) {
-          var tmp1 = sinks[key]
-          options.push([tmp1.label, tmp1.id])
-        }
-      }
-      return options
-    }
-  }
-
-  Blockly.JavaScript['oh_audiosink_dropdown'] = function (block) {
-    var sinkName = block.getFieldValue('sinks')
-    var code = sinkName
-    return [code, Blockly.JavaScript.ORDER_NONE]
-  }
-  // TODO : Handle Voice stuff
+  //TODO : Handle Voice stuff
 }
