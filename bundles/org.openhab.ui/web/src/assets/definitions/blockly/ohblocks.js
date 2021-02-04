@@ -39,95 +39,115 @@ export default function defineOHBlocks (f7) {
     return [code, 0]
   }
 
-  Blockly.Blocks['oh_sendcommand'] = {
+  Blockly.Blocks['oh_exec'] = {
     init: function () {
-      this.appendValueInput('command')
-        .appendField('send command')
-      this.appendValueInput('itemName')
-        .appendField('to')
+      this.appendValueInput('sendTo')
+        .setCheck(null)
+        .appendField('Execute command')
+        .appendField(new Blockly.FieldTextInput('/usr/bin/command'), 'execCommand')
+        .appendField('output to')
+      this.appendDummyInput()
+        .appendField('Timeout')
+        .appendField(new Blockly.FieldNumber(60), 'timeout')
+        .appendField('Seconds')        
+      this.setInputsInline(false);
+      this.setPreviousStatement(true, null)
+      this.setNextStatement(true, null)
+      this.setColour(230)
+      this.setTooltip('')
+      this.setHelpUrl('')
+    }
+  }
+
+  Blockly.JavaScript['oh_exec'] = function (block) {
+    var runCommand = block.getFieldValue('execCommand')
+    const itemName = Blockly.JavaScript.valueToCode(block, 'sendTo', Blockly.JavaScript.ORDER_ATOMIC)
+    // var statements_execute = Blockly.JavaScript.statementToCode(block, 'Execute');
+    // TODO: Assemble JavaScript into code variable.
+    var code = 'var exec = Java.type("org.openhab.core.model.script.actions.Exec");\n'
+    code += 'var duration = Java.type("java.time.Duration");\n'
+    code += 'var results = exec.executeCommandLine(duration.ofSeconds(1), "' + runCommand + '", "")\n'
+    code += 'events.sendCommand(' + itemName + ', results );\n'
+    return code
+  }
+
+  Blockly.Blocks['oh_exec2'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Execute command')
+        .appendField(new Blockly.FieldTextInput('/usr/bin/command'), 'cmdExecute');
+      this.appendDummyInput()
+        .appendField('Timeout')
+        .appendField(new Blockly.FieldNumber(60), 'timeout')
+        .appendField('Seconds')
+      this.setOutput(true, null);
+      this.setColour(230);
+      this.setTooltip('');
+      this.setHelpUrl('');
+    }
+  }
+
+  Blockly.JavaScript['oh_exec2'] = function(block) {
+    const exec = Blockly.JavaScript.provideFunction_(
+      'exec',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Exec");'])
+    const duration = Blockly.JavaScript.provideFunction_(
+      'duration',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.Duration");'])  
+    var runCommand = block.getFieldValue('cmdExecute').replace(/ /g, '","')
+    var timeout = block.getFieldValue('timeout')
+    var code = exec + '.executeCommandLine(' + duration + '.ofSeconds(' + timeout + '),"' + runCommand + '")\n'
+    return [code, Blockly.JavaScript.ORDER_NONE];
+  }
+
+  Blockly.Blocks['oh_exec3'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField('Execute command')
+        .appendField(new Blockly.FieldTextInput('/usr/bin/command'), 'cmdExecute');
+      this.appendDummyInput()
+        .appendField('Timeout')
+        .appendField(new Blockly.FieldNumber(60), 'timeout')
+        .appendField('Seconds')
+      this.setPreviousStatement(true, null)
+      this.setNextStatement(true, null)
+      this.setColour(230);
+      this.setTooltip('');
+      this.setHelpUrl('');
+    }
+  }
+
+  Blockly.JavaScript['oh_exec3'] = function(block) {
+    const exec = Blockly.JavaScript.provideFunction_(
+      'exec',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Exec");'])
+    const duration = Blockly.JavaScript.provideFunction_(
+      'duration',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.Duration");'])  
+    var runCommand = block.getFieldValue('cmdExecute').replace(/ /g, '","')
+    var timeout = block.getFieldValue('timeout')
+    var code = exec + '.executeCommandLine(' + duration + '.ofSeconds(' + timeout + '),"' + runCommand + '")\n'
+    return [code, Blockly.JavaScript.ORDER_NONE];
+  }  
+  
+  Blockly.Blocks['oh_ping'] = {
+    init: function() {
+      this.appendValueInput('hostName')
         .setCheck('String')
-      this.setInputsInline(true)
-      this.setPreviousStatement(true, null)
-      this.setNextStatement(true, null)
-      this.setColour(0)
-      this.setTooltip('Send a command to an item')
+        .appendField('Ping')
+      this.setOutput(true, null)
+      this.setColour(230)
+      this.setTooltip('')
       this.setHelpUrl('')
     }
   }
 
-  Blockly.JavaScript['oh_sendcommand'] = function (block) {
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    const command = Blockly.JavaScript.valueToCode(block, 'command', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = 'events.sendCommand(' + itemName + ', ' + command + ');\n'
-    return code
-  }
-
-  Blockly.Blocks['oh_event'] = {
-    init: function () {
-      this.appendValueInput('value')
-        .appendField(new Blockly.FieldDropdown([['send command', 'sendCommand'], ['post update', 'postUpdate']]), 'eventType')
-        // .appendField('send command')
-      this.appendValueInput('itemName')
-        .appendField('to')
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .setCheck('String')
-      this.setInputsInline(true)
-      this.setPreviousStatement(true, null)
-      this.setNextStatement(true, null)
-      this.setColour(0)
-      this.setTooltip('Send a command to an item')
-      this.setHelpUrl('')
-    }
-  }
-
-  Blockly.JavaScript['oh_event'] = function (block) {
-    const eventType = block.getFieldValue('eventType')
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    const value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = 'events.' + eventType + '(' + itemName + ', ' + value + ');\n'
-    return code
-  }
-
-  Blockly.Blocks['oh_print'] = {
-    init: function () {
-      this.appendValueInput('message')
-        // .setCheck('String')
-        .appendField('print')
-      this.setPreviousStatement(true, null)
-      this.setNextStatement(true, null)
-      this.setColour(0)
-      this.setTooltip('Print a message on the console')
-      this.setHelpUrl('')
-    }
-  }
-
-  Blockly.JavaScript['oh_print'] = function (block) {
-    const message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = 'print(' + message + ');\n'
-    return code
-  }
-
-  Blockly.Blocks['oh_log'] = {
-    init: function () {
-      this.appendValueInput('message')
-        .setCheck('String')
-        .appendField('log')
-        .appendField(new Blockly.FieldDropdown([['error', 'error'], ['warn', 'warn'], ['info', 'info'], ['debug', 'debug'], ['trace', 'trace']]), 'severity')
-      this.setPreviousStatement(true, null)
-      this.setNextStatement(true, null)
-      this.setColour(0)
-      this.setTooltip('Write a message in the openHAB log')
-      this.setHelpUrl('')
-    }
-  }
-
-  Blockly.JavaScript['oh_log'] = function (block) {
-    const loggerName = Blockly.JavaScript.provideFunction_(
-      'logger',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.slf4j.LoggerFactory\').getLogger(\'org.openhab.rule.\' + ctx.ruleUID);'])
-    const message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    const severity = block.getFieldValue('severity')
-    const code = loggerName + '.' + severity + '(' + message + ');\n'
-    return code
+  Blockly.JavaScript['oh_ping'] = function(block) {
+    const actions = Blockly.JavaScript.provideFunction_(
+      'actions',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ping");'])
+    var hostname = Blockly.JavaScript.valueToCode(block, 'hostName', Blockly.JavaScript.ORDER_ATOMIC);
+    var code = actions + '.checkVitality(' + hostname + ',0,10)'
+    return [code, Blockly.JavaScript.ORDER_NONE]
   }
 }
