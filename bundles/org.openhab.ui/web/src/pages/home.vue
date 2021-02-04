@@ -5,7 +5,7 @@
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
       </f7-nav-left>
       <f7-nav-title-large v-if="$f7.data.themeOptions.homeNavbar !== 'simple'" class="home-title-large">
-        <span class="today">{{new Date().toLocaleString(($store.state.locale) ? $store.state.locale.replace('_', '-') : 'default', { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
+        <span class="today">{{ new Date().toLocaleString($store.getters.locale, { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
         {{title}}
       </f7-nav-title-large>
       <f7-nav-title>

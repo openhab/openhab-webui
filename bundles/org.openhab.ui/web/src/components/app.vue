@@ -407,17 +407,16 @@ export default {
         })
         .then((rootResponse) => {
           // store the REST API services present on the system
-          this.$store.commit('setRootResource', { rootResponse })
+          this.$store.dispatch('loadRootResource', { rootResponse })
           this.updateLocale()
           if (!this.$store.getters.apiEndpoint('auth')) this.$store.commit('setNoAuth', true)
           return rootResponse
         }).then((rootResponse) => {
-          let locale = this.$store.state.locale
+          const locale = this.$store.getters.locale.toLocaleLowerCase()
           let dayjsLocalePromise = Promise.resolve(null)
           // try to resolve the dayjs file to load if it exists
           if (locale) {
-            let dayjsLocale = dayjsLocales.find((l) => l.key === locale.replace('_', '-').toLowerCase())
-            if (!dayjsLocale) dayjsLocale = dayjsLocales.find((l) => l.key === locale.split('_')[0].toLowerCase())
+            const dayjsLocale = dayjsLocales.find((l) => l.key === locale || l.key === locale.split('-')[0])
             dayjsLocalePromise = (dayjsLocale) ? import('dayjs/locale/' + dayjsLocale.key + '.js').then(() => Promise.resolve(dayjsLocale)) : Promise.resolve(null)
           }
           // load the pages & widgets, only if the 'ui' endpoint exists (or empty arrays otherwise)
