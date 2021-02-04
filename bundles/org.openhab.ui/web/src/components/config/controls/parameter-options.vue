@@ -76,7 +76,11 @@ export default {
       if (!this.configDescription.multiple) {
         return this.value.toString() === option.value
       } else {
-        return this.value && this.value.indexOf(option.value) >= 0
+        if (this.configDescription.type === 'INTEGER') {
+          return this.value && this.value.indexOf(parseInt(option.value)) >= 0
+        } else {
+          return this.value && this.value.indexOf(option.value) >= 0
+        }
       }
     }
   }
