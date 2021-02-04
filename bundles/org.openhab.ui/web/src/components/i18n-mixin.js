@@ -1,7 +1,7 @@
 export default {
   methods: {
     updateLocale () {
-      this.$root.$i18n.locale = this.$store.state.locale.replace('_', '-')
+      this.$root.$i18n.locale = this.$store.getters.locale
       this.$f7.params.dialog.buttonOk = this.$t('dialogs.ok')
       this.$f7.params.dialog.buttonCancel = this.$t('dialogs.cancel')
       this.$f7.params.smartSelect.searchbarDisableText = this.$t('dialogs.cancel')

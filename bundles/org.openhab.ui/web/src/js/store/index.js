@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import components from './modules/components'
 import states from './modules/states'
 import user from './modules/user'
+import { convertJavaLocale } from '@/js/i18n'
 
 Vue.use(Vuex)
 
@@ -23,12 +24,12 @@ const store = new Vuex.Store({
     developerSidebar: false
   },
   getters: {
-    apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type)
+    apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type),
+    locale: (state, getters) => state.locale ?? 'default'
   },
   mutations: {
     setRootResource (state, { rootResponse }) {
       state.apiVersion = rootResponse.version
-      state.locale = rootResponse.locale
       state.runtimeInfo = rootResponse.runtimeInfo
       state.apiEndpoints = rootResponse.links
     },
@@ -38,6 +39,12 @@ const store = new Vuex.Store({
     setDeveloperSidebar (state, value) {
       state.developerSidebar = value
       state.states.keepConnectionOpen = value
+    }
+  },
+  actions: {
+    loadRootResource ({ commit }, { rootResponse }) {
+      commit('setLocale', convertJavaLocale(rootResponse.locale))
+      commit('setRootResource', { rootResponse })
     }
   }
   // strict: debug
