@@ -1,4 +1,4 @@
-import Blockly from 'blockly.js'
+import Blockly from 'blockly'
 import { FieldItemModelPicker } from './ohitemfield'
 
 export default function defineOHBlocks (f7) {
