@@ -1,5 +1,5 @@
 <template>
-  <f7-card v-if="model">
+  <f7-card v-if="model" @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut">
     <f7-card-content>
       <f7-list media-list accordion-list>
         <ul>
@@ -49,6 +49,24 @@ export default {
     this.onModelChange()
   },
   methods: {
+    onPageBeforeIn () {
+      if (window) {
+          window.addEventListener('keydown', this.keyDown)
+      }
+      this.load()
+    },
+    onPageBeforeOut () {
+      if (window) {
+        window.removeEventListener('keydown', this.keyDown)
+      }
+    },
+    keyDown (ev) {
+      if (ev.keyCode == 46) {       // delete key
+        remove()
+        ev.stopPropagation()
+        ev.preventDefault()
+      }
+    },
     onModelChange () {
       this.editMode = false
       this.createMode = false
