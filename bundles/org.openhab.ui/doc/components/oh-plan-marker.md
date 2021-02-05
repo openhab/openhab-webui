@@ -1,3 +1,11 @@
+---
+title: oh-plan-marker - Floor Plan Marker
+component: oh-plan-marker
+label: Floor Plan Marker
+description: A marker on a floor plan
+source: https://github.com/openhab/openhab-webui/edit/main/bundles/org.openhab.ui/doc/components/oh-plan-marker.md
+---
+
 # oh-plan-marker - Floor Plan Marker
 
 <!-- GENERATED componentDescription -->
@@ -74,7 +82,7 @@ Hide this marker outside certain zoom labels
 
   Visible only when zoomed to above this level (no limit if empty)
 
-- `zoomVisibilityMin` <small>INTEGER</small> _Zoom Visibility Maximum_
+- `zoomVisibilityMax` <small>INTEGER</small> _Zoom Visibility Maximum_
 
   Visible only when zoomed to below this level (no limit if empty)
 
