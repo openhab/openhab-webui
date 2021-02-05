@@ -1,5 +1,5 @@
 <template>
-  <div class="oh-chart-container" v-bind:style="{ height: activeHeight }">
+  <div class="oh-chart-container" :style="{ height: activeHeight }">
     <chart
       ref="chart"
       v-if="ready"
