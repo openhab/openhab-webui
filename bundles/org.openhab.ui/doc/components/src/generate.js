@@ -82,6 +82,7 @@ const processComponent = (component, name) => {
   let final = doc
   final = final.replace(/\{componentType\}/g, componentType)
   final = final.replace(/\{componentLabel\}/g, component.label)
+  final = final.replace(/\{componentDescription\}/g, component.description || 'Reference documentation for the ' + componentType + ' component')
   final = replaceBetweenComments('componentDescription', final, component.description || '')
   final = replaceBetweenComments('props', final, buildProps(component))
   // final = final.replace(/\{componentDescription\}/g, component.description || '')
