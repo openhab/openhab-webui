@@ -1,0 +1,19 @@
+{
+  "profile.title": "Jūsu profils",
+  "profile.changePassword": "Mainīt paroli",
+  "profile.sessions": "Sesijas",
+  "profile.sessions.header": "Piezīme: pat ja jūs izdzēsīsiet sesiju, tā joprojām var būt aktīva, līdz beidzas visu derīgo piekļuves pilnvaru derīguma termiņš.",
+  "profile.sessions.signOut": "Izrakstieties no šīs sesijas",
+  "profile.sessions.created": "Izveidota: ",
+  "profile.sessions.lastRefreshed": "Pēdējoreiz atjaunota: ",
+  "profile.sessions.delete.success": "Sesija izdzēsta",
+  "profile.sessions.delete.error": "Kļūda dzēšot sesju: ",
+  "profile.sessions.signOut.error": "Kļūda izrakstoties: ",
+  "profile.apiTokens": "API piekļuves pilnvaras",
+  "profile.apiTokens.header": "Izveidojiet API piekļuves pilnvaras, lai ārējiem rīkiem un un servisiem, kas neatbalsta OAuth2 autorizāciju, dotu pastāvīgu piekļuvi jūsu vārdā.",
+  "profile.apiTokens.created": "Izveidots: ",
+  "profile.apiTokens.validForScope": "Derīgs jomai: ",
+  "profile.apiTokens.create": "Izveidot jaunu API piekļuves pilnvaru",
+  "profile.apiTokens.delete.success": "API piekļuves pilnvara nodzēsta",
+  "profile.apiTokens.delete.error": "Kļūda dzēšot API piekļuves pilnvaru: "
+}
