@@ -41,6 +41,6 @@ export const OhPlanMarkerDefinition = () => new WidgetDefinition('oh-plan-marker
   ])
   .paramGroup(pg('zoomVisibility', 'Zoom Visibility', 'Hide this marker outside certain zoom labels'), [
     pn('zoomVisibilityMin', 'Zoom Visibility Minimum', 'Visible only when zoomed to above this level (no limit if empty)').a(),
-    pn('zoomVisibilityMin', 'Zoom Visibility Maximum', 'Visible only when zoomed to below this level (no limit if empty)').a()
+    pn('zoomVisibilityMax', 'Zoom Visibility Maximum', 'Visible only when zoomed to below this level (no limit if empty)').a()
   ])
   .paramGroup(actionGroup(null, 'Action to perform when the marker is clicked'), actionParams())
