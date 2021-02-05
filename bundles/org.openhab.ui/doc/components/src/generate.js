@@ -96,7 +96,7 @@ Object.keys(widgetLibraries).forEach((l) => {
     const widget = (typeof library[w] === 'function') ? library[w]() : library[w]
     const widgetName = widget.name || w
     if (widgetName.indexOf('oh-') < 0) return
-    table += '| [`' + widgetName + '`](./' + widgetName + '.html) | ' + widget.label + ' | ' + (widget.description || '') + ' |\n'
+    table += '| [`' + widgetName + '`](./' + widgetName + '.html) |  [' + widget.label + '](./' + widgetName + '.html) | ' + (widget.description || '') + ' |\n'
     processComponent(widget, w)
   })
   index = index.replace('{' + l + '}', table)
