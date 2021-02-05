@@ -1,5 +1,5 @@
 // parameter group & parameters definitions for actions
-import { po, pt, pi, pb } from './helpers'
+import { po, pt, pi, pb } from './helpers.js'
 
 export const actionGroup = (label, description, groupPrefix) => {
   groupPrefix = (groupPrefix) ? groupPrefix += '_' : ''

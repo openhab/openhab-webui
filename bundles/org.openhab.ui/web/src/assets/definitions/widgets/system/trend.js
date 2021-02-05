@@ -1,4 +1,4 @@
-import { pi, pt } from '../helpers'
+import { pi, pt } from '../helpers.js'
 
 export default () => [
   pi('trendItem', 'Trend Line Item', 'Item to show as a trend line in the background'),

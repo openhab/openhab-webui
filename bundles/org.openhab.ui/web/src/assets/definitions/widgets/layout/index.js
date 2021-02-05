@@ -1,6 +1,6 @@
 // definitions for the layout widgets
 
-import { WidgetDefinition, po, pt } from '../helpers'
+import { WidgetDefinition, po, pt } from '../helpers.js'
 
 export function OhBlockDescription () {
   return new WidgetDefinition('oh-block', 'Layout Grid Block', 'A block in a grid layout')
