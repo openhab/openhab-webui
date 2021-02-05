@@ -46,7 +46,7 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'import/no-unresolved': 'off',
     'jsx-quotes': 'error',
-    'linebreak-style': 'error',
+    'linebreak-style': 'off',
     'no-case-declarations': 'off',
     'no-console': 'off',
     'no-debugger': 'off',
