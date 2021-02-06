@@ -92,6 +92,7 @@
       <f7-list-item radio :checked="ephemerisEventType === 'weekdays'" name="EphemerisEventType" title="it's a weekday" @click="updateEphemerisEventType('weekdays')" />
       <f7-list-item radio :checked="ephemerisEventType === 'weekends'" name="EphemerisEventType" title="it's the weekend" @click="updateEphemerisEventType('weekends')" />
       <f7-list-item radio :checked="ephemerisEventType === 'holidays'" name="EphemerisEventType" title="it's a holiday" @click="updateEphemerisEventType('holidays')" />
+      <f7-list-item radio :checked="ephemerisEventType === 'notHolidays'" name="EphemerisEventType" title="it's not a holiday" @click="updateEphemerisEventType('notHolidays')" />
       <f7-list-item radio :checked="ephemerisEventType === 'dayset'" name="EphemerisEventType" title="today is in a specific dayset" @click="updateEphemerisEventType('dayset')" />
     </f7-list>
     <f7-block-footer class="padding-horizontal">Remember to configure Ephemeris in Settings before using these conditions.</f7-block-footer>
@@ -207,6 +208,9 @@ export default {
           break
         case 'holidays':
           this.$emit('typeSelect', 'ephemeris.HolidayCondition')
+          break
+        case 'notHolidays':
+          this.$emit('typeSelect', 'ephemeris.NotHolidayCondition')
           break
         case 'dayset':
           this.$emit('typeSelect', 'ephemeris.DaysetCondition')
