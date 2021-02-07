@@ -47,14 +47,14 @@
 
             <f7-list media-list class="markers-list">
               <f7-list-item media-item v-for="(marker, idx) in page.slots.default" :key="idx"
-                :title="marker.config.label" :subtitle="marker.config.item || marker.config.location"
-                link="#" @click.native="(ev) => configureMarker(ev, marker, context)">
+                            :title="marker.config.label" :subtitle="marker.config.item || marker.config.location"
+                            link="#" @click.native="(ev) => configureMarker(ev, marker, context)">
                 <oh-icon v-if="marker.config.icon && marker.config.icon.indexOf('oh:') === 0" slot="media" :icon="marker.config.icon.substring(3)" height="32" width="32" />
                 <f7-icon v-else slot="media" :f7="markerDefaultIcon(marker)" :size="32" />
                 <f7-menu slot="content-start" class="configure-layout-menu">
                   <f7-menu-item icon-f7="list_bullet" dropdown>
                     <f7-menu-dropdown>
-                      <f7-menu-dropdown-item @click="configureWidget(marker,  { component: page })" href="#" text="Configure marker"></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item @click="configureWidget(marker, { component: page })" href="#" text="Configure marker"></f7-menu-dropdown-item>
                       <f7-menu-dropdown-item @click="editWidgetCode(marker, { component: page })" href="#" text="Edit YAML"></f7-menu-dropdown-item>
                       <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
                       <f7-menu-dropdown-item @click="cutWidget(marker, { component: page })" href="#" text="Cut"></f7-menu-dropdown-item>

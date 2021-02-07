@@ -38,38 +38,38 @@
     </f7-list>
     <f7-list>
       <f7-list-item radio
-        v-for="operator in operators" :key="operator.value"
-        :title="operator.label"
-        name="itemStateOperator"
-        :checked="currentModule.configuration.operator === operator.value"
-        @click="$set(currentModule.configuration, 'operator', operator.value)" />
+                    v-for="operator in operators" :key="operator.value"
+                    :title="operator.label"
+                    name="itemStateOperator"
+                    :checked="currentModule.configuration.operator === operator.value"
+                    @click="$set(currentModule.configuration, 'operator', operator.value)" />
       <f7-list-input
         label="State"
         name="itemState"
         type="text"
         :value="currentModule.configuration.state"
         @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)"
-        />
+      />
     </f7-list>
     <f7-list v-if="stateSuggestions.length">
       <f7-list-item radio :checked="currentModule.configuration.state === suggestion.value" v-for="suggestion in stateSuggestions" :key="suggestion.value"
-        :title="suggestion.label" @click="$set(currentModule.configuration, 'state', suggestion.value)" />
+                    :title="suggestion.label" @click="$set(currentModule.configuration, 'state', suggestion.value)" />
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'script'">
     <f7-block-title class="padding-horizontal">A script evaluates to true</f7-block-title>
     <f7-list media-list>
       <f7-list-item media-item
-        title="Design with Blockly"
-        footer="A beginner-friendly way to build scripts visually by assembling blocks"
-        link="" @click="scriptLanguagePicked('blockly')">
+                    title="Design with Blockly"
+                    footer="A beginner-friendly way to build scripts visually by assembling blocks"
+                    link="" @click="scriptLanguagePicked('blockly')">
         <img src="res/img/blockly.svg" height="32" width="32" slot="media" />
       </f7-list-item>
     </f7-list>
     <f7-block-footer class="padding-horizontal margin-vertical">or choose the scripting language:</f7-block-footer>
     <f7-list media-list>
       <f7-list-item media-item v-for="language in languages" :key="language.contentType"
-        :title="language.name" :after="language.version" :footer="language.contentType" link="" @click="scriptLanguagePicked(language.contentType)">
+                    :title="language.name" :after="language.version" :footer="language.contentType" link="" @click="scriptLanguagePicked(language.contentType)">
         <span slot="media" class="item-initial">{{language.name[0]}}</span>
       </f7-list-item>
     </f7-list>
@@ -81,10 +81,10 @@
       <f7-list-item radio :checked="timeEventType === 'timeOfDay'" name="timeEventType" title="inside a time range" @click="updateTimeEventType('timeOfDay')" />
     </f7-list>
     <config-sheet v-if="currentModuleType" :key="currentModule.id"
-      :parameterGroups="[]"
-      :parameters="currentModuleType.configDescriptions"
-      :configuration="currentModule.configuration"
-      @updated="dirty = true"
+                  :parameterGroups="[]"
+                  :parameters="currentModuleType.configDescriptions"
+                  :configuration="currentModule.configuration"
+                  @updated="dirty = true"
     />
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'ephemeris'">
@@ -97,10 +97,10 @@
     </f7-list>
     <f7-block-footer class="padding-horizontal">Remember to configure Ephemeris in Settings before using these conditions.</f7-block-footer>
     <config-sheet v-if="currentModuleType" :key="currentModule.id"
-      :parameterGroups="[]"
-      :parameters="currentModuleType.configDescriptions"
-      :configuration="currentModule.configuration"
-      @updated="dirty = true"
+                  :parameterGroups="[]"
+                  :parameters="currentModuleType.configDescriptions"
+                  :configuration="currentModule.configuration"
+                  @updated="dirty = true"
     />
   </f7-block>
 </template>

@@ -1,30 +1,30 @@
 <template>
-<div>
-  <div class="hint-apps" v-if="!overviewPage && !$store.getters.user && !showHABot">
-    <p><em><f7-icon class="float-right margin-left margin-bottom" f7="arrow_turn_right_up" size="20" />{{ $t('home.tip.otherApps') }}</em></p>
-  </div>
-  <f7-block class="block-narrow">
-    <habot v-if="showHABot" @session-started="inChatSession = true" @session-end="inChatSession = false" />
-    <other-apps v-if="showApps" />
-    <f7-col>
-    </f7-col>
-  </f7-block>
+  <div>
+    <div class="hint-apps" v-if="!overviewPage && !$store.getters.user && !showHABot">
+      <p><em><f7-icon class="float-right margin-left margin-bottom" f7="arrow_turn_right_up" size="20" />{{ $t('home.tip.otherApps') }}</em></p>
+    </div>
+    <f7-block class="block-narrow">
+      <habot v-if="showHABot" @session-started="inChatSession = true" @session-end="inChatSession = false" />
+      <other-apps v-if="showApps" />
+      <f7-col>
+      </f7-col>
+    </f7-block>
 
-  <f7-block v-if="!$store" class="text-align-center">
-    <f7-preloader></f7-preloader>
-    <div>Loading...</div>
-  </f7-block>
+    <f7-block v-if="!$store" class="text-align-center">
+      <f7-preloader></f7-preloader>
+      <div>Loading...</div>
+    </f7-block>
 
-  <component :is="overviewPage.component" v-if="overviewPage" v-show="!inChatSession" :context="overviewPageContext" :class="{notready: !ready}" @command="onCommand" />
-  <div class="empty-overview" v-else-if="!inChatSession">
-    <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
-    <f7-row class="display-flex justify-content-center">
-      <f7-button large fill color="blue" external href="https://openhab.org/link/docs" target="_blank" v-t="'home.overview.button.documentation'"></f7-button>
-      <span style="width: 8px"></span>
-      <f7-button large color="blue" external href="https://openhab.org/link/tutorial" target="_blank" v-t="'home.overview.button.tutorial'"></f7-button>
-    </f7-row>
+    <component :is="overviewPage.component" v-if="overviewPage" v-show="!inChatSession" :context="overviewPageContext" :class="{notready: !ready}" @command="onCommand" />
+    <div class="empty-overview" v-else-if="!inChatSession">
+      <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
+      <f7-row class="display-flex justify-content-center">
+        <f7-button large fill color="blue" external href="https://openhab.org/link/docs" target="_blank" v-t="'home.overview.button.documentation'"></f7-button>
+        <span style="width: 8px"></span>
+        <f7-button large color="blue" external href="https://openhab.org/link/tutorial" target="_blank" v-t="'home.overview.button.tutorial'"></f7-button>
+      </f7-row>
+    </div>
   </div>
-</div>
 
 </template>
 

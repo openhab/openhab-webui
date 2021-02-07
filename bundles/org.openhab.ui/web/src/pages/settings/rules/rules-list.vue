@@ -3,7 +3,7 @@
     <f7-navbar :title="(showScripts) ? 'Scripts' : 'Rules'" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-        :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -96,7 +96,7 @@
             >
               <div slot="footer">
                 <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
-                  <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
+                  <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill"></f7-icon>
                 </f7-chip>
               </div>
               <!-- <span slot="media" class="item-initial">{{initial}}</span> -->

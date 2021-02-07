@@ -51,7 +51,7 @@ export default {
   methods: {
     onPageBeforeIn () {
       if (window) {
-          window.addEventListener('keydown', this.keyDown)
+        window.addEventListener('keydown', this.keyDown)
       }
       this.load()
     },

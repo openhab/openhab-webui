@@ -32,8 +32,8 @@
             <!-- <empty-state-placeholder v-if="empty" icon="list_bullet_indent" title="model.title" text="model.text" /> -->
             <f7-treeview>
               <model-treeview-item v-for="node in [rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
-                :key="node.item.name" :model="node"
-                @selected="selectItem" :selected="selectedItem">
+                                   :key="node.item.name" :model="node"
+                                   @selected="selectItem" :selected="selectedItem">
               </model-treeview-item>
             </f7-treeview>
           </f7-block>
@@ -90,7 +90,7 @@
         </f7-toolbar>
         <f7-block style="margin-bottom: 6rem" v-if="selectedItem">
           <item-state-preview v-if="detailsTab === 'state' && !newItem" :item="selectedItem.item" :context="context" />
-          <item-details v-if="detailsTab === 'item'" :model="selectedItem" :links="links" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)"/>
+          <item-details v-if="detailsTab === 'item'" :model="selectedItem" :links="links" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" />
           <metadata-menu v-if="detailsTab === 'meta'" :item="selectedItem.item" />
           <link-details v-if="detailsTab === 'links'" :item="selectedItem.item" :links="links" />
         </f7-block>

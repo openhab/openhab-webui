@@ -19,10 +19,10 @@
       <f7-tabs>
         <f7-tab v-for="(slotComponent, idx) in slotConfig" :key="idx" :tab-active="currentTab === idx">
           <config-sheet v-if="currentTab === idx && getWidgetDefinition(slotComponent.component)"
-            :parameterGroups="getWidgetDefinition(slotComponent.component).props.parameterGroups || []"
-            :parameters="getWidgetDefinition(slotComponent.component).props.parameters || []"
-            :configuration="slotComponent.config"
-            @updated="dirty = true"
+                        :parameterGroups="getWidgetDefinition(slotComponent.component).props.parameterGroups || []"
+                        :parameters="getWidgetDefinition(slotComponent.component).props.parameters || []"
+                        :configuration="slotComponent.config"
+                        @updated="dirty = true"
           />
           <f7-block v-else strong>
             This type of component cannot be configured: {{slotComponent.component}}.

@@ -1,22 +1,22 @@
 <template>
   <f7-treeview-item selectable :label="(model.item.created === false) ? '(New Item)' : (model.item.label || model.item.name)"
-    :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
-    :textColor="iconColor" :color="(model.item.created !== false) ? 'blue' :'orange'"
-    :selected="selected && selected.item.name === model.item.name"
-    :opened="model.opened"
-    @click="select">
+                    :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
+                    :textColor="iconColor" :color="(model.item.created !== false) ? 'blue' :'orange'"
+                    :selected="selected && selected.item.name === model.item.name"
+                    :opened="model.opened"
+                    @click="select">
     <model-treeview-item v-for="node in [model.children.locations,
-          model.children.equipment, model.children.points,
-          model.children.groups, model.children.items].flat()"
-      :key="node.item.name"
-      :model="node"
-      @selected="(event) => $emit('selected', event)"
-      :selected="selected"
-      @checked="(item, check) => $emit('checked', item, check)"
-      />
+                                         model.children.equipment, model.children.points,
+                                         model.children.groups, model.children.items].flat()"
+                         :key="node.item.name"
+                         :model="node"
+                         @selected="(event) => $emit('selected', event)"
+                         :selected="selected"
+                         @checked="(item, check) => $emit('checked', item, check)"
+    />
     <div slot="label" class="semantic-class"> {{className()}}</div>
     <f7-checkbox slot="content-start" v-if="model.checkable"
-      :checked="model.checked === true" :disabled="model.disabled" @change="check" />
+                 :checked="model.checked === true" :disabled="model.disabled" @change="check" />
   </f7-treeview-item>
 </template>
 

@@ -1,17 +1,17 @@
 <template>
   <ul>
-      <f7-list-input
-        :name="configDescription.name"
-        :label="configDescription.label"
-        :floating-label="$theme.md"
-        :min="(configDescription.options && configDescription.options.length) ? undefined : configDescription.min"
-        :max="(configDescription.options && configDescription.options.length) ? undefined : configDescription.max"
-        :step="configDescription.stepsize || ((configDescription.type === 'DECIMAL') ? 0.01 : undefined)"
-        :value="actualValue"
-        @input="updateValue"
-        :required="configDescription.required" validate validate-on-blur
-        :clear-button="false"
-        type="number" />
+    <f7-list-input
+      :name="configDescription.name"
+      :label="configDescription.label"
+      :floating-label="$theme.md"
+      :min="(configDescription.options && configDescription.options.length) ? undefined : configDescription.min"
+      :max="(configDescription.options && configDescription.options.length) ? undefined : configDescription.max"
+      :step="configDescription.stepsize || ((configDescription.type === 'DECIMAL') ? 0.01 : undefined)"
+      :value="actualValue"
+      @input="updateValue"
+      :required="configDescription.required" validate validate-on-blur
+      :clear-button="false"
+      type="number" />
   </ul>
 </template>
 

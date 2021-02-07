@@ -25,9 +25,9 @@
 
     <f7-block v-if="ready" class="block-narrow">
       <config-sheet ref="parameters"
-        :parameter-groups="thingType.parameterGroups"
-        :parameters="thingType.configParameters"
-        :configuration="thing.configuration"
+                    :parameter-groups="thingType.parameterGroups"
+                    :parameters="thingType.configParameters"
+                    :configuration="thing.configuration"
       />
     </f7-block>
 

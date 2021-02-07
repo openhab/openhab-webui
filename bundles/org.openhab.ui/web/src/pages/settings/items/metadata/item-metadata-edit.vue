@@ -12,18 +12,18 @@
     </f7-toolbar>
     <f7-tabs class="metadata-editor-tabs">
       <f7-tab id="config" class="metadata-editor-config-tab" @tab:show="() => this.currentTab = 'config'" :tab-active="currentTab === 'config'">
-      <f7-block class="block-narrow" v-if="ready && currentTab === 'config'">
-        <f7-col>
-          <component :is="editorControl" :item="item" :metadata="metadata" :namespace="namespace" />
-        </f7-col>
-      </f7-block>
-      <f7-block class="block-narrow" v-if="ready">
-        <f7-col>
-          <f7-list>
-            <f7-list-button color="red" v-if="!creationMode" @click="remove()">Remove metadata</f7-list-button>
-          </f7-list>
-        </f7-col>
-      </f7-block>
+        <f7-block class="block-narrow" v-if="ready && currentTab === 'config'">
+          <f7-col>
+            <component :is="editorControl" :item="item" :metadata="metadata" :namespace="namespace" />
+          </f7-col>
+        </f7-block>
+        <f7-block class="block-narrow" v-if="ready">
+          <f7-col>
+            <f7-list>
+              <f7-list-button color="red" v-if="!creationMode" @click="remove()">Remove metadata</f7-list-button>
+            </f7-list>
+          </f7-col>
+        </f7-block>
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">

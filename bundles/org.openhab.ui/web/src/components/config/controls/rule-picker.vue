@@ -1,16 +1,16 @@
 <template>
-<ul>
-  <f7-list-item :title="title || 'Rule'" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect">
-    <select :name="name" :multiple="multiple" @change="select" :required="required">
-      <option v-if="!multiple" value=""></option>
-      <option v-for="rule in rules" :value="rule.uid" :key="rule.uid" :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid">
-        {{rule.name}}
-      </option>
-    </select>
-  </f7-list-item>
-  <!-- for placeholder purposes before items are loaded -->
-  <f7-list-item link v-show="!ready" :title="title" />
-</ul>
+  <ul>
+    <f7-list-item :title="title || 'Rule'" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect">
+      <select :name="name" :multiple="multiple" @change="select" :required="required">
+        <option v-if="!multiple" value=""></option>
+        <option v-for="rule in rules" :value="rule.uid" :key="rule.uid" :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid">
+          {{rule.name}}
+        </option>
+      </select>
+    </f7-list-item>
+    <!-- for placeholder purposes before items are loaded -->
+    <f7-list-item link v-show="!ready" :title="title" />
+  </ul>
 </template>
 
 <script>

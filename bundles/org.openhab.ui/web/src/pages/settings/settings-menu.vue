@@ -92,7 +92,7 @@
           </f7-list>
           <f7-block-title v-if="$store.getters.apiEndpoint('addons') && addonsLoaded">Add-ons</f7-block-title>
           <f7-list media-list class="search-list"
-            v-if="$store.getters.apiEndpoint('addons')"
+                   v-if="$store.getters.apiEndpoint('addons')"
           >
             <f7-list-item
               media-item

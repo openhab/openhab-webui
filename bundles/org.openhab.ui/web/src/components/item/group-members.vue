@@ -8,7 +8,7 @@
             :item="member" :link="'/settings/items/' + member.name"
             :context="context"
             :ignore-editable="true"
-            />
+          />
           <!-- <f7-list-button @click="enableEditMode" color="blue" title="Add or Remove Members" /> -->
         </ul>
         <item-picker v-if="editMembers" :multiple="true" name="groupMembers" :value="memberNames" title="Members" @input="(members) => memberNames = members" />

@@ -11,9 +11,9 @@
         <f7-block-title>Channel</f7-block-title>
         <f7-list media-list>
           <f7-list-item media-item class="channel-item"
-            :title="channel.label"
-            :footer="channel.description"
-            :subtitle="channel.uid">
+                        :title="channel.label"
+                        :footer="channel.description"
+                        :subtitle="channel.uid">
           </f7-list-item>
         </f7-list>
       </f7-col>

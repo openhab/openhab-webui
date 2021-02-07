@@ -21,8 +21,8 @@
             </div>
             Status:
             <f7-chip class="margin-left"
-              :text="thing.statusInfo.status"
-              :color="thingStatusBadgeColor(thing.statusInfo)"
+                     :text="thing.statusInfo.status"
+                     :color="thingStatusBadgeColor(thing.statusInfo)"
             ></f7-chip>
             <div>
               <strong>{{(thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;'}}</strong>
@@ -70,13 +70,13 @@
 
             <f7-block-title medium>Configuration</f7-block-title>
             <config-sheet ref="thingConfiguration"
-              :parameter-groups="configDescriptions.parameterGroups"
-              :parameters="configDescriptions.parameters"
-              :configuration="thing.configuration"
-              :status="configStatusInfo"
-              :set-empty-config-as-null="true"
-              :read-only="thing.editable === false"
-              @updated="dirty = true"
+                          :parameter-groups="configDescriptions.parameterGroups"
+                          :parameters="configDescriptions.parameters"
+                          :configuration="thing.configuration"
+                          :status="configStatusInfo"
+                          :set-empty-config-as-null="true"
+                          :read-only="thing.editable === false"
+                          @updated="dirty = true"
             />
           </f7-col>
         </f7-block>
@@ -112,7 +112,7 @@
       <f7-tab id="channels" disabled="!thingType.channels" :tab-active="currentTab === 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list :thingType="thingType" :thing="thing" :channelTypes="channelTypes"
-            @channels-updated="onChannelsUpdated" :context="context"
+                        @channels-updated="onChannelsUpdated" :context="context"
           />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>

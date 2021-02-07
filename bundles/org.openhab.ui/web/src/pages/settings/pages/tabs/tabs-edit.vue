@@ -33,13 +33,13 @@
 
             <f7-list media-list class="tabs-list">
               <f7-list-item media-item v-for="(tab, idx) in page.slots.default" :key="idx"
-                :title="tab.config.title" :subtitle="tab.config.page"
-                link="#" @click.native="(ev) => configureTab(ev, tab, context)">
+                            :title="tab.config.title" :subtitle="tab.config.page"
+                            link="#" @click.native="(ev) => configureTab(ev, tab, context)">
                 <f7-icon slot="media" :ios="tab.config.icon" :md="tab.config.icon" :aurora="tab.config.icon" color="gray" :size="32" />
                 <f7-menu slot="content-start" class="configure-layout-menu">
                   <f7-menu-item icon-f7="list_bullet" dropdown>
                     <f7-menu-dropdown>
-                      <f7-menu-dropdown-item @click="configureWidget(tab,  { component: page })" href="#" text="Configure Tab"></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item @click="configureWidget(tab, { component: page })" href="#" text="Configure Tab"></f7-menu-dropdown-item>
                       <f7-menu-dropdown-item @click="editWidgetCode(tab, { component: page })" href="#" text="Edit YAML"></f7-menu-dropdown-item>
                       <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
                       <f7-menu-dropdown-item @click="cutWidget(tab, { component: page })" href="#" text="Cut"></f7-menu-dropdown-item>

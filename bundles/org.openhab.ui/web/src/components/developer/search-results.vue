@@ -11,7 +11,7 @@
       <f7-block-title class="padding-left"><f7-icon class="margin-right" f7="square_on_circle" />Items ({{searchResults.items.length}})</f7-block-title>
       <f7-list media-list>
         <f7-list-item media-item v-for="item in filteredSearchResults.items" :key="item.name"
-          :title="item.label || item.name" :footer="(item.label) ? item.name : ''" link="" no-chevron @click="(evt) => togglePin(evt, 'items', item, 'name')">
+                      :title="item.label || item.name" :footer="(item.label) ? item.name : ''" link="" no-chevron @click="(evt) => togglePin(evt, 'items', item, 'name')">
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Details" :href="'/settings/items/' + item.name" :animate="false" />
           <f7-link slot="after" v-if="isPinned('items', item, 'name')" @click="$emit('unpin', 'items', item, 'name')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
           <f7-link slot="after" v-else @click="$emit('pin', 'items', item, 'name')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
@@ -23,7 +23,7 @@
       <f7-block-title class="padding-left"><f7-icon class="margin-right" f7="lightbulb" />Things ({{searchResults.things.length}})</f7-block-title>
       <f7-list media-list>
         <f7-list-item media-item v-for="thing in filteredSearchResults.things" :key="thing.UID"
-          :title="thing.label" :footer="thing.UID" link="" no-chevron @click="(evt) => togglePin(evt, 'things', thing, 'UID')">
+                      :title="thing.label" :footer="thing.UID" link="" no-chevron @click="(evt) => togglePin(evt, 'things', thing, 'UID')">
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/things/' + thing.UID" :animate="false" />
           <f7-link slot="after" v-if="isPinned('things', thing, 'UID')" @click="$emit('unpin', 'things', thing, 'UID')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
           <f7-link slot="after" v-else @click="$emit('pin', 'things', thing, 'UID')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
@@ -35,7 +35,7 @@
       <f7-block-title class="padding-left"><f7-icon class="margin-right" f7="wand_stars" />Rules ({{searchResults.rules.length}})</f7-block-title>
       <f7-list media-list>
         <f7-list-item media-item v-for="rule in filteredSearchResults.rules" :key="rule.uid"
-          :title="rule.name" :footer="rule.uid" link="" no-chevron @click="(evt) => togglePin(evt, 'rules', rule, 'uid')">
+                      :title="rule.name" :footer="rule.uid" link="" no-chevron @click="(evt) => togglePin(evt, 'rules', rule, 'uid')">
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
           <f7-link slot="after" v-if="isPinned('rules', rule, 'uid')" @click="$emit('unpin', 'rules', rule, 'uid')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
           <f7-link slot="after" v-else @click="$emit('pin', 'rules', rule, 'uid')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
@@ -47,7 +47,7 @@
       <f7-block-title class="padding-left"><f7-icon class="margin-right" f7="tv" />Pages ({{searchResults.pages.length}})</f7-block-title>
       <f7-list media-list>
         <f7-list-item media-item v-for="page in filteredSearchResults.pages" :key="page.uid"
-          :title="page.config.label" :footer="page.uid" link="" no-chevron @click="(evt) => togglePin(evt, 'pages', page, 'uid')">
+                      :title="page.config.label" :footer="page.uid" link="" no-chevron @click="(evt) => togglePin(evt, 'pages', page, 'uid')">
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/pages/' + getPageType(page).type + '/' + page.uid" :animate="false" />
           <f7-link slot="after" v-if="isPinned('pages', page, 'uid')" @click="$emit('unpin', 'pages', page, 'uid')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
           <f7-link slot="after" v-else @click="$emit('pin', 'pages', page, 'uid')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />

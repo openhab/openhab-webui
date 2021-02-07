@@ -27,10 +27,10 @@
         <f7-block-title v-if="selectedThing.statusInfo">Source Thing</f7-block-title>
         <f7-list v-if="selectedThing.statusInfo" media-list>
           <f7-list-item
-              :title="selectedThing.label"
-              :footer="selectedThing.UID"
-              :badge="thingStatusBadgeText(selectedThing.statusInfo)"
-              :badge-color="thingStatusBadgeColor(selectedThing.statusInfo)" />
+            :title="selectedThing.label"
+            :footer="selectedThing.UID"
+            :badge="thingStatusBadgeText(selectedThing.statusInfo)"
+            :badge-color="thingStatusBadgeColor(selectedThing.statusInfo)" />
         </f7-list>
         <f7-block-title v-if="createEquipment">Equipment</f7-block-title>
         <f7-block-footer v-if="createEquipment && !thingId" class="padding-left padding-right">
@@ -54,16 +54,16 @@
         <div v-else-if="selectedThing.UID && selectedThingType.UID">
           <item-form v-if="createEquipment" :item="newEquipmentItem" :enable-name="true" :hide-type="true" :force-semantics="true" />
           <f7-block-title>Channels</f7-block-title>
-            <f7-block-footer class="padding-left padding-right">
-              Check the channels you wish to create as new Point items.
-              You can alter the suggested names and labels as well as the semantic class and related property.<br/><br/>
-              The newly created Points will be linked to their respective channels with the default profile
-              (you will be able to configure the links individually later if needed).
-              <f7-link class="display-block margin-top-half" @click="switchToExpertMode" color="blue">Expert Mode</f7-link>
-            </f7-block-footer>
-            <channel-list :thing="selectedThing" :thingType="selectedThingType" :channelTypes="selectedThingChannelTypes"
-              :multiple-links-mode="true" :new-items-prefix="(createEquipment) ? newEquipmentItem.name : (parentGroup) ? parentGroup.name : ''"
-              :new-items="newPointItems" />
+          <f7-block-footer class="padding-left padding-right">
+            Check the channels you wish to create as new Point items.
+            You can alter the suggested names and labels as well as the semantic class and related property.<br /><br />
+            The newly created Points will be linked to their respective channels with the default profile
+            (you will be able to configure the links individually later if needed).
+            <f7-link class="display-block margin-top-half" @click="switchToExpertMode" color="blue">Expert Mode</f7-link>
+          </f7-block-footer>
+          <channel-list :thing="selectedThing" :thingType="selectedThingType" :channelTypes="selectedThingChannelTypes"
+                        :multiple-links-mode="true" :new-items-prefix="(createEquipment) ? newEquipmentItem.name : (parentGroup) ? parentGroup.name : ''"
+                        :new-items="newPointItems" />
         </div>
       </f7-col>
     </f7-block>

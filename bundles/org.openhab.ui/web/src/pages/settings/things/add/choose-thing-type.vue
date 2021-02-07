@@ -25,13 +25,13 @@
         <f7-block-title v-if="discoverySupported && scanResults.length">Discovered Things</f7-block-title>
         <f7-list class="col thing-type-list" v-if="scanResults.length">
           <f7-list-item v-for="entry in scanResults"
-            :key="entry.thingUID"
-            :link="true"
-            @click="approve(entry)"
-            media-item
-            :title="entry.label"
-            :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
-            :footer="entry.thingTypeUID">
+                        :key="entry.thingUID"
+                        :link="true"
+                        @click="approve(entry)"
+                        media-item
+                        :title="entry.label"
+                        :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
+                        :footer="entry.thingTypeUID">
           </f7-list-item>
           <f7-list-button v-show="scanResults.length > 1" title="Add All" @click="approveAll" color="blue"></f7-list-button>
         </f7-list>
@@ -39,26 +39,26 @@
         <f7-block-title>Add Manually</f7-block-title>
         <f7-list class="thing-type-list">
           <ul v-if="!ready">
-          <f7-list-item
-            v-for="n in 10"
-            :key="n"
-            :class="`skeleton-text skeleton-effect-blink`"
-            title="Label of the thing type"
-            footer="This contains the description of the thing type"
-            header="thingTypeUID"
-            media-item
-          >
-          </f7-list-item>
+            <f7-list-item
+              v-for="n in 10"
+              :key="n"
+              :class="`skeleton-text skeleton-effect-blink`"
+              title="Label of the thing type"
+              footer="This contains the description of the thing type"
+              header="thingTypeUID"
+              media-item
+            >
+            </f7-list-item>
           </ul>
           <ul v-else>
             <f7-list-item v-for="thingType in thingTypes"
-              :key="thingType.UID"
-              :link="thingType.UID"
-              :title="thingType.label"
-              :footer="thingType.description"
-              :header="thingType.UID"
-              :badge="thingType.bridge ? 'Bridge' : ''" badge-color="blue"
-              media-item
+                          :key="thingType.UID"
+                          :link="thingType.UID"
+                          :title="thingType.label"
+                          :footer="thingType.description"
+                          :header="thingType.UID"
+                          :badge="thingType.bridge ? 'Bridge' : ''" badge-color="blue"
+                          media-item
             >
             </f7-list-item>
           </ul>
@@ -198,10 +198,10 @@ export default {
     approveAll () {
       this.$f7.dialog.confirm('Add all discovered Things?', 'Add Things', () => {
         const promises = this.scanResults.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i.thingUID + '/approve', i.label))
-        let dialog = this.$f7.dialog.progress(`Adding Things`)
+        let dialog = this.$f7.dialog.progress('Adding Things')
         Promise.all(promises).then((data) => {
           this.$f7.toast.create({
-            text: `Things added`,
+            text: 'Things added',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
