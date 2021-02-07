@@ -54,23 +54,23 @@ export default {
         this.$f7.emit('sidebarRefresh', this.config.locale)
       }
       this.$f7router.back()
-    }
-  },
-  onPageAfterIn () {
-    if (window) {
-      window.addEventListener('keydown', this.keyDown)
-    }
-  },
-  onPageBeforeOut () {
-    if (window) {
-      window.removeEventListener('keydown', this.keyDown)
-    }
-  },   
-  keyDown (ev) {
-    if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey)) {
-      this.save()
-      ev.stopPropagation()
-      ev.preventDefault()
+    },
+    onPageAfterIn () {
+      if (window) {
+        window.addEventListener('keydown', this.keyDown)
+      }
+    },
+    onPageBeforeOut () {
+      if (window) {
+        window.removeEventListener('keydown', this.keyDown)
+      }
+    },   
+    keyDown (ev) {
+      if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey)) {
+        this.save()
+        ev.stopPropagation()
+        ev.preventDefault()
+      }
     }
   }, 
   created () {
