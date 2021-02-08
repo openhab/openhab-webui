@@ -40,6 +40,15 @@ import DeveloperToolsPage from '../pages/developer/developer-tools.vue'
 import WidgetsListPage from '../pages/developer/widgets/widget-list.vue'
 import ApiExplorerPage from '../pages/developer/api-explorer.vue'
 
+const checkDirtyBeforeLeave = function(routeTo, routeFrom, resolve, reject) {
+  if (this.currentPageEl && this.currentPageEl.__vue__ && this.currentPageEl.__vue__.$parent && this.currentPageEl.__vue__.$parent.beforeLeave &&
+      !routeTo.path.startsWith(routeFrom.path)) {
+    this.currentPageEl.__vue__.$parent.beforeLeave(resolve, reject)
+  } else {
+    resolve()
+  }
+};
+
 export default [
   {
     path: '/',
@@ -119,10 +128,12 @@ export default [
             routes: [
               {
                 path: 'edit',
-                component: ItemEditPage
+                component: ItemEditPage,
+                beforeLeave: checkDirtyBeforeLeave
               },
               {
                 path: 'metadata/:namespace',
+                beforeLeave: checkDirtyBeforeLeave,
                 async (routeTo, routeFrom, resolve, reject) {
                   // dynamic import component; returns promise
                   const editorComponent = () => import(/* webpackChunkName: "metadata-edit" */ '../pages/settings/items/metadata/item-metadata-edit.vue')
@@ -145,6 +156,7 @@ export default [
         routes: [
           {
             path: ':type/:uid',
+            beforeLeave: checkDirtyBeforeLeave,
             async (routeTo, routeFrom, resolve, reject) {
               // dynamic import component; returns promise
               const editorComponent = () => import(/* webpackChunkName: "[request]" */ `../pages/settings/pages/${routeTo.params.type}/${routeTo.params.type}-edit.vue`)
@@ -199,7 +211,8 @@ export default [
           },
           {
             path: ':thingId',
-            component: ThingDetailsPage
+            component: ThingDetailsPage,
+            beforeLeave: checkDirtyBeforeLeave
           }
         ]
       },
@@ -226,6 +239,7 @@ export default [
         routes: [
           {
             path: ':ruleId',
+            beforeLeave: checkDirtyBeforeLeave,
             async (routeTo, routeFrom, resolve, reject) {
               // dynamic import component; returns promise
               const ruleEditComponent = () => import(/* webpackChunkName: "rule-edit" */ '../pages/settings/rules/rule-edit.vue')
@@ -245,6 +259,7 @@ export default [
             routes: [
               {
                 path: 'script/:moduleId',
+                beforeLeave: checkDirtyBeforeLeave,
                 async (routeTo, routeFrom, resolve, reject) {
                   // dynamic import component; returns promise
                   const ruleEditComponent = () => import(/* webpackChunkName: "rule-script-edit" */ '../pages/settings/rules/script/script-edit.vue')
@@ -277,6 +292,7 @@ export default [
         routes: [
           {
             path: ':ruleId',
+            beforeLeave: checkDirtyBeforeLeave,
             async (routeTo, routeFrom, resolve, reject) {
               // dynamic import component; returns promise
               const ruleEditComponent = () => import(/* webpackChunkName: "script-edit" */ '../pages/settings/rules/script/script-edit.vue')
@@ -312,6 +328,7 @@ export default [
         routes: [
           {
             path: 'add',
+            beforeLeave: checkDirtyBeforeLeave,
             async (routeTo, routeFrom, resolve, reject) {
               // dynamic import component; returns promise
               const ruleEditComponent = () => import(/* webpackChunkName: "rule-edit" */ '../pages/settings/rules/rule-edit.vue')
@@ -351,7 +368,8 @@ export default [
       },
       {
         path: 'services/:serviceId',
-        component: ServiceSettingsPage
+        component: ServiceSettingsPage,
+        beforeLeave: checkDirtyBeforeLeave
       }
     ]
   },
@@ -368,6 +386,7 @@ export default [
         routes: [
           {
             path: ':uid',
+            beforeLeave: checkDirtyBeforeLeave,
             async (routeTo, routeFrom, resolve, reject) {
               // dynamic import component; returns promise
               const widgetEditComponent = () => import(/* webpackChunkName: "widget-edit" */ '../pages/developer/widgets/widget-edit.vue')

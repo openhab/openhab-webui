@@ -122,7 +122,7 @@
         </f7-block>
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.rule+yaml" :value="ruleYaml" @input="(value) => ruleYaml = value" />
+        <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.rule+yaml" :value="ruleYaml" @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
@@ -163,6 +163,8 @@
 
 <script>
 import YAML from 'yaml'
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
 
 import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import TagInput from '@/components/tags/tag-input.vue'
@@ -172,9 +174,10 @@ import CronEditor from '@/components/config/controls/cronexpression-editor.vue'
 
 import ModuleDescriptionSuggestions from './module-description-suggestions'
 import RuleStatus from '@/components/rule/rule-status-mixin'
+import DirtyMixin from '../dirty-mixin'
 
 export default {
-  mixins: [ModuleDescriptionSuggestions, RuleStatus],
+  mixins: [ModuleDescriptionSuggestions, RuleStatus, DirtyMixin],
   components: {
     SemanticsPicker,
     TagInput,
@@ -185,7 +188,6 @@ export default {
     return {
       ready: false,
       loading: false,
-      dirty: false,
       rule: {},
       ruleYaml: '',
       moduleTypes: {
@@ -213,6 +215,22 @@ export default {
       cronExpression: null
     }
   },
+  watch: {
+    rule: {
+      handler: function (newRule, oldRule) {
+        if (!this.loading) { // ignore initial rule assignment
+          // create rule object clone in order to be able to delete status part
+          // which can change from eventsource but doesn't mean a rule modification
+          let ruleClone = cloneDeep(this.rule)
+          delete ruleClone.status
+          delete this.savedRule.status
+
+          this.dirty = !fastDeepEqual(ruleClone, this.savedRule)
+        }
+      },
+      deep: true
+    }
+  },
   methods: {
     onPageAfterIn () {
       if (window) {
@@ -226,6 +244,10 @@ export default {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
+    onEditorInput (value) {
+      this.ruleYaml = value
+      this.dirty = true
+    },
     load () {
       if (this.loading) return
       this.loading = true
@@ -233,6 +255,15 @@ export default {
       const loadModules1 = this.$oh.api.get('/rest/module-types?type=action')
       const loadModules2 = this.$oh.api.get('/rest/module-types?type=condition')
       const loadModules3 = this.$oh.api.get('/rest/module-types?type=trigger')
+
+      const loadingFinished = () => {
+        this.$nextTick(() => {
+          this.savedRule = cloneDeep(this.rule)
+          this.ready = true
+          this.loading = false
+        })
+      }
+
       Promise.all([loadModules1, loadModules2, loadModules3]).then((data) => {
         this.moduleTypes.actions = data[0]
         this.moduleTypes.conditions = data[1]
@@ -251,18 +282,15 @@ export default {
               status: 'NEW'
             }
           })
-          this.ready = true
-          this.loading = false
+          loadingFinished()
           // no need for an event source, the rule doesn't exist yet
-          return
+        } else {
+          this.$oh.api.get('/rest/rules/' + this.ruleId).then((data2) => {
+            this.$set(this, 'rule', data2)
+            if (!this.eventSource) this.startEventSource()
+            loadingFinished()
+          })
         }
-        this.$oh.api.get('/rest/rules/' + this.ruleId).then((data2) => {
-          this.$set(this, 'rule', data2)
-          this.ready = true
-          this.loading = false
-
-          if (!this.eventSource) this.startEventSource()
-        })
       })
     },
     save (stay) {
@@ -298,7 +326,9 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
+          this.savedRule = cloneDeep(this.rule)
         }
+        this.dirty = false
         // if (!stay) this.$f7router.back()
       }).catch((err) => {
         this.$f7.toast.create({

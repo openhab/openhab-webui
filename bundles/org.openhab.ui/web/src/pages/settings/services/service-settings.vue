@@ -28,8 +28,10 @@
 
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import DirtyMixin from '../dirty-mixin'
 
 export default {
+  mixins: [DirtyMixin],
   components: {
     ConfigSheet
   },
@@ -38,7 +40,18 @@ export default {
     return {
       service: {},
       configDescriptions: null,
-      config: null
+      config: null,
+      loading: true
+    }
+  },
+  watch: {
+    config: {
+      handler: function () {
+        if (!this.loading) {
+          this.dirty = true
+        }
+      },
+      deep: true
     }
   },
   methods: {
@@ -53,6 +66,7 @@ export default {
       if (this.serviceId === 'org.openhab.i18n') {
         this.$f7.emit('sidebarRefresh', this.config.locale)
       }
+      this.dirty = false
       this.$f7router.back()
     },
     onPageAfterIn () {
@@ -83,6 +97,9 @@ export default {
 
           this.$oh.api.get('/rest/services/' + this.serviceId + '/config').then(data3 => {
             this.config = data3
+            this.$nextTick(() => {
+              this.loading = false
+            })
           })
         })
       }

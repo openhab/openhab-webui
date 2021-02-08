@@ -26,7 +26,7 @@
     <f7-block v-else :key="blockKey + 'b'" class="widget-editor vertical">
       <f7-row resizable>
         <f7-col resizable style="min-width: 20px" class="widget-code">
-          <editor class="widget-component-editor" mode="application/vnd.openhab.uicomponent+yaml?type=widget" :value="widgetDefinition" @input="(value) => widgetDefinition = value" />
+          <editor class="widget-component-editor" mode="application/vnd.openhab.uicomponent+yaml?type=widget" :value="widgetDefinition" @input="onEditorInput" />
         </f7-col>
         <f7-col v-if="ready" resizable style="min-width: 20px" class="widget-preview padding-right margin-bottom">
           <generic-widget-component :key="widgetKey" :context="context" @command="onCommand" />
@@ -96,10 +96,12 @@ import YAML from 'yaml'
 import { strOptions } from 'yaml/types'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import DirtyMixin from '@/pages/settings/dirty-mixin'
 
 strOptions.fold.lineWidth = 0
 
 export default {
+  mixins: [DirtyMixin],
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue'),
     ConfigSheet
@@ -155,6 +157,12 @@ export default {
       }
       this.$store.dispatch('stopTrackingStates')
     },
+    onEditorInput (value) {
+      this.widgetDefinition = value
+      if (!this.loading) {
+        this.dirty = true
+      }
+    },
     keyDown (ev) {
       if (ev.ctrlKey || ev.metaKey) {
         switch (ev.keyCode) {
@@ -181,8 +189,6 @@ export default {
       this.loading = true
 
       if (this.createMode) {
-        this.loading = false
-        this.ready = true
         this.widgetDefinition = YAML.stringify({
           uid: 'widget_' + this.$f7.utils.id(),
           props: {
@@ -211,11 +217,17 @@ export default {
             content: '=items[props.item].displayState || items[props.item].state'
           }
         })
+        this.$nextTick(() => {
+          this.loading = false
+          this.ready = true
+        })
       } else {
         this.$oh.api.get('/rest/ui/components/ui:widget/' + this.uid).then((data) => {
           this.$set(this, 'widgetDefinition', YAML.stringify(data))
-          this.ready = true
-          this.loading = false
+          this.$nextTick(() => {
+            this.loading = false
+            this.ready = true
+          })
         })
       }
     },
@@ -252,6 +264,7 @@ export default {
             closeTimeout: 2000
           }).open()
         }
+        this.dirty = false
         this.$f7.emit('sidebarRefresh', null)
         // if (!stay) this.$f7router.back()
       }).catch((err) => {

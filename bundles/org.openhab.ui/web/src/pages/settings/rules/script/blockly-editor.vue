@@ -363,7 +363,8 @@ export default {
   props: ['blocks'],
   data () {
     return {
-      workspace: null
+      workspace: null,
+      loading: true
     }
   },
   mounted () {
@@ -376,6 +377,11 @@ export default {
     })
     const xml = Blockly.Xml.textToDom(this.blocks)
     Blockly.Xml.domToWorkspace(xml, this.workspace)
+
+    this.workspace.addChangeListener(this.onChange);
+  },
+  beforeDestroy () {
+    this.workspace.removeChangeListener(this.onChange);
   },
   methods: {
     getBlocks () {
@@ -384,6 +390,13 @@ export default {
     },
     getCode () {
       return Blockly.JavaScript.workspaceToCode(this.workspace)
+    },
+    onChange (event) {
+      if (event.type == Blockly.Events.FINISHED_LOADING) {
+        this.loading = false
+      } else if (!this.loading && !event.isUiEvent) {
+        this.$emit('change')
+      }
     }
   }
 }
