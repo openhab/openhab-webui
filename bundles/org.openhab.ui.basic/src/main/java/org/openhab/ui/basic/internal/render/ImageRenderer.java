@@ -94,7 +94,7 @@ public class ImageRenderer extends AbstractWidgetRenderer {
         snippet = StringUtils.replace(snippet, "%proxied_url%", proxiedUrl);
         snippet = StringUtils.replace(snippet, "%ignore_refresh%", ignoreRefresh ? "true" : "false");
         snippet = StringUtils.replace(snippet, "%url%", url);
-        
+
         sb.append(snippet);
         return ECollections.emptyEList();
     }
