@@ -156,7 +156,7 @@ export default {
       this.$store.dispatch('stopTrackingStates')
     },
     keyDown (ev) {
-      if (ev.ctrlKey || ev.metakKey) {
+      if (ev.ctrlKey || ev.metaKey) {
         switch (ev.keyCode) {
           case 80:
             this.widgetPropsOpened = true
