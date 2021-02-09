@@ -6,26 +6,29 @@ export default function defineOHBlocks_Ephemeris(f7) {
   Blockly.Blocks['oh_ephemeris_basic'] = {
     init: function() {
       this.appendDummyInput()
-          .appendField(new Blockly.FieldDropdown([['isWeekend','isWeekend'], ['getBankHolidayName','getBankHolidayName'], ['getNextBankHoliday','getNextBankHoliday'], ['isBankHoliday','isBankHoliday']]), 'type')
+        .appendField(new Blockly.FieldDropdown([['isWeekend','isWeekend'], ['getBankHolidayName','getBankHolidayName'], ['getNextBankHoliday','getNextBankHoliday'], ['isBankHoliday','isBankHoliday']]), 'type')
       this.setOutput(true, null)
       this.setColour(230)
-   this.setTooltip('')
-   this.setHelpUrl('')
+      this.setTooltip('')
+      this.setHelpUrl('')
     }
   };
 
-  Blockly.JavaScript['oh_ephemeris_basic'] = function(block) {
-    var dropdown_type = block.getFieldValue('type');
-    var code = ephemeris + '.' + dropdown_type + '()';
+  Blockly.JavaScript['oh_ephemeris_basic'] = function (block) {
+    const ephemeris = Blockly.JavaScript.provideFunction_(
+      'Ephemeris',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
+    var type = block.getFieldValue('type');
+    var code = ephemeris + '.' + type + '()';
     return [code, Blockly.JavaScript.ORDER_NONE];
   };
   
   Blockly.Blocks['oh_ephemeris_offset'] = {
     init: function() {
       this.appendValueInput('offset')
-          .setCheck("Number")
-          .appendField(new Blockly.FieldDropdown([['isWeekend', 'isWeekend'], ['getBankHolidayName', 'getBankHolidayName'], ['getNextBankHoliday', 'getNextBankHoliday'], ['isBankHoliday', 'isBankHoliday']]), 'type')
-          .appendField("Offset Days")
+        .setCheck('Number')
+        .appendField(new Blockly.FieldDropdown([['isWeekend', 'isWeekend'], ['getBankHolidayName', 'getBankHolidayName'], ['getNextBankHoliday', 'getNextBankHoliday'], ['isBankHoliday', 'isBankHoliday']]), 'type')
+        .appendField('Offset Days')
       this.setOutput(true, null)
       this.setColour(230)
       this.setTooltip('')
@@ -36,10 +39,10 @@ export default function defineOHBlocks_Ephemeris(f7) {
   Blockly.JavaScript['oh_ephemeris_offset'] = function (block) {
     const ephemeris = Blockly.JavaScript.provideFunction_(
       'Ephemeris',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])    
-    var dropdown_type = block.getFieldValue('type')
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
+    var type = block.getFieldValue('type')
     var offsetValue = Blockly.JavaScript.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC)
-    var code = ephemeris + '.' + dropdown_type + '(' + offsetValue + ')'
+    var code = ephemeris + '.' + type + '(' + offsetValue + ')'
     return [code, Blockly.JavaScript.ORDER_NONE]
   };
 
