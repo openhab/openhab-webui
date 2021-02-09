@@ -13,9 +13,9 @@
   "about.technicalInformation.viewDetails": "Zobrazit podrobnosti",
   "about.appearanceOptions": "Vzhled (pouze pro toto zařízení)",
   "about.reload": "Znovu načíst",
-  "about.reload.purgeExplanation1": "Keš a/nebo service workers se používají k ukládání zdrojů na lokální disk k rychlejšímu načtení této aplikace, ale nemusí spolehlivě zjistit, kdy byla aktualizována na novou verzi.",
-  "about.reload.purgeExplanation2": "Vyberte \"Vymazat keše a obnovit\" níže pro vymazání všech keší, registrovaných service workerů a opětovné načtení dat ze serveru.",
-  "about.reload.purgeCachesAndRefresh": "Vymazat keše a obnovit",
-  "about.reload.confirmPurge": "Vymazat všechny aplikační keše a zrušit registraci service workerů? Znovu načte stránku ze serveru, což může trvat několik sekund.",
+  "about.reload.purgeExplanation1": "Caches a/nebo service workers se používají k ukládání zdrojů na lokální disk k rychlejšímu načtení této aplikace. Nemusí ale spolehlivě detekovat aktualizaci na novou verzi.",
+  "about.reload.purgeExplanation2": "Vyberte \"Vymazat cache a obnovit\" níže pro vymazání všech cache, neregistrovaných service workers a opětovné načtení dat ze serveru.",
+  "about.reload.purgeCachesAndRefresh": "Vymazat cache a obnovit",
+  "about.reload.confirmPurge": "Vymazat cache celé aplikace a zrušit registraci service workers? Znovu načte stránku ze serveru, což může trvat několik sekund.",
   "about.reload.reloadApp": "Znovu načíst aplikaci"
 }
