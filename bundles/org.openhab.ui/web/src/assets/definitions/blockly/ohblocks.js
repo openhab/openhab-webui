@@ -58,6 +58,25 @@ export default function defineOHBlocks (f7) {
     return [code, 0]
   }
 
+  Blockly.Blocks['oh_getitem'] = {
+    init: function () {
+      this.appendValueInput('itemName')
+        .appendField('get item')
+        .setCheck('String')
+      this.setInputsInline(true)
+      this.setOutput(true, 'String')
+      this.setColour(0)
+      this.setTooltip('Get an item from the item registry')
+      this.setHelpUrl('')
+    }
+  }
+
+  Blockly.JavaScript['oh_getitem'] = function (block) {
+    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
+    var code = 'itemRegistry.getItem("' + itemName + '")'
+    return [code, 0]
+  }
+
   Blockly.Blocks['oh_exec'] = {
     init: function () {
       this.appendValueInput('sendTo')
