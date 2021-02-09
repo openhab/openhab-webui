@@ -1,4 +1,4 @@
-import fs  from 'fs'
+import fs from 'fs'
 
 import * as SystemWidgets from '../../../web/src/assets/definitions/widgets/system/index.js'
 import * as StdCardWidgets from '../../../web/src/assets/definitions/widgets/standard/cards.js'
@@ -42,30 +42,39 @@ const replaceBetweenComments = (commentTag, text, value) => {
 }
 
 const buildProp = (prop) => {
-  let ret = '\n'
-  ret += '- `' + prop.name + '` <small>' + prop.type + '</small> _' + prop.label + '_\n'
-  if (prop.description) ret += '\n  ' + prop.description + '\n'
+  let ret = ''
+
+  ret += '| <a href="#' + prop.name + '">`' + prop.name + '`</a><br>' + prop.type + ' | ' + prop.label + ' | '
+  if (prop.description) {
+    ret += prop.description + ' | '
+  } else {
+    ret += ' | '
+  }
+  if (prop.type === 'BOOLEAN') ret += ' `true`<br>`false`'
   if (prop.options) {
-    ret += '\n'
-    ret += '  | Option | Label |\n'
-    ret += '  |--------|-------|\n'
     prop.options.forEach((o) => {
-      ret += '  | `' + (o.value || '(empty)') + '` | ' + o.label + ' |\n'
+      ret += '<a href="#' + prop.name + '-' + (o.value || '(empty)') + '">`' + (o.value || '(empty)') + '`&nbsp;</a>' + o.label + '<br>'
     })
-    if (prop.multiple) ret += '\n  Multiple options are allowed.\n'
-    ret += '\n'
+    if (prop.multiple) ret += '\n\n  Multiple options are allowed.\n'
+      ret += ' |\n'
+  } else {
+      ret += ' |\n'
   }
   return ret
 }
 
 const buildProps = (component) => {
-  let ret = ''
+  let ret = '\n'
+  ret += '| `Property name`<br>Data type | Label | Description | <div width=200px>Options</div> |\n'
+  ret += '|:---|:---|:----|:----|\n'
   const propsWithoutGroup = component.props.parameters.filter((p) => p.groupName === undefined)
   propsWithoutGroup.forEach((p) => ret += buildProp(p))
   if (component.props.parameterGroups) {
     component.props.parameterGroups.forEach((g) => {
       ret += '\n### ' + g.label + '\n\n'
       if (g.description) ret += g.description + '\n\n'
+      ret += '| `Property name`<br>Data type | Label | Description | Options |\n'
+      ret += '|:---|:---|:----|:----|\n'
       const propsInGroup = component.props.parameters.filter((p) => p.groupName === g.name)
       propsInGroup.forEach((p) => ret += buildProp(p))
     })
