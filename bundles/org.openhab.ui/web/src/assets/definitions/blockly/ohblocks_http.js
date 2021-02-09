@@ -1,12 +1,12 @@
 import Blockly from 'blockly'
 import { FieldItemModelPicker } from './ohitemfield'
 
-export default function defineOHBlocks_HTTP (f7) {
+export default function defineOHBlocks_HTTP(f7, scripts) {
   Blockly.Blocks['oh_callscript'] = {
     init: function () {
-      this.appendDummyInput()
+      this.appendValueInput('script')
+        .setCheck(null)
         .appendField('Call Script')
-        .appendField(new Blockly.FieldTextInput('<script name>'), 'script')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -17,9 +17,11 @@ export default function defineOHBlocks_HTTP (f7) {
   }
 
   Blockly.JavaScript['oh_callscript'] = function (block) {
-    var text_script = block.getFieldValue('script')
-
-    var code = '...;\n'
+    const scriptExecution = Blockly.JavaScript.provideFunction_(
+      'scriptExecution',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.ScriptExecution");'])
+    var script = Blockly.JavaScript.valueToCode(block, 'script', Blockly.JavaScript.ORDER_ATOMIC)
+    var code = scriptExecution + '.callScript(' + script + ');\n'
     return code
   }
 
@@ -57,6 +59,31 @@ export default function defineOHBlocks_HTTP (f7) {
     } else {
       code = http + '.' + requesttype + '(' + url + ',"' + contenttype + '","' + payload + '")'
     }
+    return [code, Blockly.JavaScript.ORDER_NONE]
+  }
+
+  Blockly.Blocks['oh_script_dropdown'] = {
+    init: function () {
+      var input = this.appendDummyInput()
+        .appendField('script')
+        .appendField(new Blockly.FieldDropdown(this.generateOptions), 'script')
+      this.setOutput(true, null)
+    },
+    generateOptions: function () {
+      var options = []
+      if (scripts != null) {
+        for (var key in scripts) {
+          var tmp1 = scripts[key]
+          options.push([tmp1.name, tmp1.uid])
+        }
+      }
+      return options
+    }
+  }
+
+  Blockly.JavaScript['oh_script_dropdown'] = function (block) {
+    var scriptName = block.getFieldValue('script')
+    var code = scriptName
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 }

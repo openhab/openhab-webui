@@ -309,6 +309,12 @@
           </category>
           <category name="Items">
             <block type="oh_item" />
+            <block type="oh_getitem">
+              <value name="itemName">
+                <shadow type="oh_item">
+                </shadow>
+              </value>
+            </block>
             <block type="oh_getitem_state">
               <value name="itemName">
                 <shadow type="oh_item">
@@ -422,7 +428,10 @@
           </category>
           <category name="Actions">
             <block type="oh_callscript">
-              <value name="script" />
+              <value name="script">
+                <shadow type="oh_script_dropdown">
+                </shadow>
+              </value>
             </block> 
             <block type="oh_httprequest">
               <value name="url">
@@ -507,13 +516,13 @@
             </block>
             <block type="oh_playmedia_sink">
               <value name="sinkName">
-                <shadow type="oh_audiosink">
+                <shadow type="oh_audiosink_dropdown">
                 </shadow>
               </value>
             </block>
             <block type="oh_playmedia_sink_volume">
               <value name="sinkName">
-                <shadow type="oh_audiosink">
+                <shadow type="oh_audiosink_dropdown">
                 </shadow>
               </value>
               <value name="volume">
@@ -525,7 +534,7 @@
             <block type="oh_playstream" />
             <block type="oh_playstream_sink">
               <value name="sinkName">
-                <shadow type="oh_audiosink">
+                <shadow type="oh_audiosink_dropdown">
                 </shadow>
               </value>
             </block>
@@ -575,15 +584,15 @@ import '@blockly/block-plus-minus'
 import Vue from 'vue'
 
 import defineOHBlocks from '@/assets/definitions/blockly/ohblocks'
-import defineOHBlocks_Timers from '@/assets/definitions/blockly/ohblocks_timers'
-import defineOHBlocks_Ephemeris from '@/assets/definitions/blockly/ohblocks_ephemeris'
-import defineOHBlocks_HTTP from '@/assets/definitions/blockly/ohblocks_http'
-import defineOHBlocks_Persistance from '@/assets/definitions/blockly/ohblocks_persistance'
-import defineOHBlocks_Notifications from '@/assets/definitions/blockly/ohblocks_notifications'                  
+import defineOHBlocksTimers from '@/assets/definitions/blockly/ohblocks_timers'
+import defineOHBlocksEphemeris from '@/assets/definitions/blockly/ohblocks_ephemeris'
+import defineOHBlocksHTTP from '@/assets/definitions/blockly/ohblocks_http'
+import defineOHBlocksPersistance from '@/assets/definitions/blockly/ohblocks_persistance'
+import defineOHBlocksNotifications from '@/assets/definitions/blockly/ohblocks_notifications'                  
 
-import defineOHBlocks_Audio from '@/assets/definitions/blockly/ohblocks_audio'
-import defineOHBlocks_BusEvents from '@/assets/definitions/blockly/ohblocks_busevents'
-import defineOHBlocks_Logging from '@/assets/definitions/blockly/ohblocks_logging'
+import defineOHBlocksAudio from '@/assets/definitions/blockly/ohblocks_audio'
+import defineOHBlocksBusEvents from '@/assets/definitions/blockly/ohblocks_busevents'
+import defineOHBlocksLogging from '@/assets/definitions/blockly/ohblocks_logging'
 
 Vue.config.ignoredElements = ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
 
@@ -592,35 +601,60 @@ export default {
   data () {
     return {
       workspace: null,
-      loading: true
+      sinks: [],
+      scripts: [],
+      rules: [],
+      loading: true,
+      ready: false
     }
   },
-  mounted () {
-    defineOHBlocks(this.$f7)
-    defineOHBlocks_Timers(this.$f7)
-    defineOHBlocks_Ephemeris(this.$f7)
-    defineOHBlocks_HTTP(this.$f7)
-    defineOHBlocks_Logging(this.$f7)
-    defineOHBlocks_Persistance(this.$f7)
-    defineOHBlocks_Notifications(this.$f7)
-
-    defineOHBlocks_Audio(this.$f7)
-    defineOHBlocks_BusEvents(this.$f7)
-    this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
-      toolbox: this.$refs.toolbox,
-      horizontalLayout: !this.$device.desktop,
-      theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'dark' : undefined,
-      trashcan: false
-    })
-    const xml = Blockly.Xml.textToDom(this.blocks)
-    Blockly.Xml.domToWorkspace(xml, this.workspace)
-
-    this.workspace.addChangeListener(this.onChange)
-  },
-  beforeDestroy () {
-    this.workspace.removeChangeListener(this.onChange)
+  created ()  {
+    this.getAltData()
   },
   methods: {
+    onPageAfterIn () {
+      this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
+        toolbox: this.$refs.toolbox,
+        horizontalLayout: !this.$device.desktop,
+        theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'dark' : undefined,
+        trashcan: false
+      })
+      const xml = Blockly.Xml.textToDom(this.blocks)
+      Blockly.Xml.domToWorkspace(xml, this.workspace)
+    },
+    loadPage () {
+      defineOHBlocks(this.$f7)
+      defineOHBlocksTimers(this.$f7)
+      defineOHBlocksEphemeris(this.$f7)
+      defineOHBlocksHTTP(this.$f7, this.scripts)
+      defineOHBlocksLogging(this.$f7)
+      defineOHBlocksPersistance(this.$f7)
+      defineOHBlocksNotifications(this.$f7)
+      defineOHBlocksAudio(this.$f7, this.sinks)
+      defineOHBlocksBusEvents(this.$f7)
+    },
+    getAltData () {
+      this.$oh.api.get('/rest/rules?summary=true&tags=Script').then(data => {
+        this.scripts = data.sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return labelA.localeCompare(labelB)
+        })
+        this.loadPage()
+        this.onPageAfterIn()
+      }).catch((err, status) => {
+        console.error('REST /rest/rules?summary=true&tags=Script failed ' + err + ':' + status)   
+      })
+      this.$oh.api.get('/rest/audio/sinks').then(data => {
+        this.sinks = data.sort((a, b) => {
+          const labelA = a.label
+          const labelB = b.label
+          return labelA.localeCompare(labelB)
+        })
+      }).catch((err, status) => {
+        console.error('REST /rest/audio/sinks failed ' + err + ':' + status)  
+      })
+    },
     getBlocks () {
       const xml = Blockly.Xml.workspaceToDom(this.workspace)
       return Blockly.Xml.domToText(xml)
