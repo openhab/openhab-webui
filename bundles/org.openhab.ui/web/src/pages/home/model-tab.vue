@@ -118,7 +118,7 @@ export default {
           component: (this.type === 'locations') ? 'oh-location-card' : (this.type === 'equipment') ? 'oh-equipment-card' : 'oh-property-card',
           config: {}
         },
-        store: this.$store.getters.trackedItems,
+        store: this.$store.getters.trackedItems
       }
       const page = this.page
       const type = this.type

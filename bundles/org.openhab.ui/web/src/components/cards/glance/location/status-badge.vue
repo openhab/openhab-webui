@@ -53,7 +53,8 @@ export default {
         screens: { icon: 'f7:tv' },
         projectors: { icon: 'f7:videocam_fill' },
         speakers: { icon: 'f7:speaker_2_fill' }
-      }
+      },
+      exprAst: null
     }
   },
   computed: {
@@ -178,12 +179,9 @@ export default {
       return this.query.map((item) => this.store[item.name].state)
     },
     reduce () {
-      if (this.badgeOverrides) {
-        const override = this.badgeOverrides[this.type]
-        if (override && override.expression) {
-          const ast = expr.parse(override.expression)
-          return this.map.filter((state) => expr.eval(ast, { state: state, Number: Number })).length
-        }
+      const ast = this.overrideExpression()
+      if (ast) {
+        return this.map.filter((state) => expr.eval(ast, { state: state, Number: Number })).length
       }
       switch (this.type) {
         case 'lights':
@@ -193,6 +191,17 @@ export default {
         default:
           return this.map.filter((state) => state === 'ON' || state === 'OPEN').length
       }
+    }
+  },
+  methods: {
+    overrideExpression () {
+      if (this.badgeOverrides && !this.exprAst) {
+        const override = this.badgeOverrides[this.type]
+        if (override && override.expression) {
+            this.exprAst = expr.parse(override.expression)
+        }
+      }
+      return this.exprAst
     }
   }
 }
