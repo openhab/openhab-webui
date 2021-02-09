@@ -10,6 +10,7 @@
   "setupwizard.location.header1": "Chcete sdílet své umístění domova?",
   "setupwizard.location.header2": "Pomůže určit data v závislosti na vaší poloze, jako je doba východu/západu slunce anebo počasí.",
   "setupwizard.location.parameterLabel": "Umístění vašeho domova",
+  "setupwizard.location.placeholder": "<latitude>,<longitude>[,<altitude>]",
   "setupwizard.location.retrieveFromDevice": "Získat z tohoto zařízení",
   "setupwizard.location.retrieveFromDevice.error": "Chyba při načítání aktuální pozice",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Omlouváme se",
