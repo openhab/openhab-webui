@@ -46,7 +46,7 @@ module.exports = {
     '^framework7$': '<rootDir>/node_modules/framework7/framework7.esm.bundle.js',
     '^f7vue$': '<rootDir>/node_modules/framework7-vue/framework7-vue.esm.bundle.js',
     '^src/(.*)$': '<rootDir>/src/$1',
-    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/(.*)$': '<rootDir>/src/$1'
     // '.*css$': '<rootDir>/test/jest/utils/stub.css'
   },
   transform: {

@@ -18,11 +18,11 @@
         :options="mapOptions"
         @click="mapClicked"
         class="oh-map-picker-lmap">
-          <l-tile-layer
-            :url="url"
-            :attribution="attribution"
-          />
-          <l-marker v-if="marker" :lat-lng="marker" />
+        <l-tile-layer
+          :url="url"
+          :attribution="attribution"
+        />
+        <l-marker v-if="marker" :lat-lng="marker" />
       </l-map>
     </f7-page>
   </f7-popup>

@@ -3,7 +3,7 @@
     <f7-card-content v-if="mappings.length">
       <f7-list inline-labels sortable @sortable:sort="onSort">
         <f7-list-input v-for="(mapping, idx) in mappings" :key="idx"
-            :label="`#${idx+1}`" type="text" placeholder="command=Label" :value="mapping" @input="updateMapping(idx, $event)" clear-button>
+                       :label="`#${idx+1}`" type="text" placeholder="command=Label" :value="mapping" @input="updateMapping(idx, $event)" clear-button>
         </f7-list-input>
       </f7-list>
     </f7-card-content>

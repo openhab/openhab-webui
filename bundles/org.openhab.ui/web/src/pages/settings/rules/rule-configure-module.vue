@@ -21,25 +21,25 @@
         <f7-block-title>Module type</f7-block-title>
         <f7-list>
           <f7-list-item radio v-for="moduleType in moduleTypes[currentSection].filter((t) => t.visibility === 'VISIBLE')"
-            :value="moduleType.uid"
-            @change="currentModuleType = moduleTypes[currentSection].find((m) => m.uid === $event.target.value)"
-            :key="moduleType.uid" :title="moduleType.label" name="module-type"></f7-list-item>
+                        :value="moduleType.uid"
+                        @change="currentModuleType = moduleTypes[currentSection].find((m) => m.uid === $event.target.value)"
+                        :key="moduleType.uid" :title="moduleType.label" name="module-type"></f7-list-item>
         </f7-list>
       </f7-col>
       <f7-col v-if="currentModuleType != null">
         <f7-block-title>Configuration</f7-block-title>
-          <!-- <config-parameter
+        <!-- <config-parameter
             v-for="parameter in currentModuleType.configDescriptions"
             :key="parameter.name"
             :config-description="parameter"
             :value="currentModuleConfig[parameter.name]"
           /> -->
-          <config-sheet
-            :parameterGroups="[]"
-            :parameters="currentModuleType.configDescriptions"
-            :configuration="currentModuleConfig"
-            @updated="dirty = true"
-          />
+        <config-sheet
+          :parameterGroups="[]"
+          :parameters="currentModuleType.configDescriptions"
+          :configuration="currentModuleConfig"
+          @updated="dirty = true"
+        />
       </f7-col>
     </f7-block>
   </f7-page>

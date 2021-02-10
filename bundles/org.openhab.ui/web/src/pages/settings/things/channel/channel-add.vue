@@ -26,18 +26,18 @@
         </f7-block>
         <f7-list v-else>
           <f7-list-item radio v-for="channelType in channelTypes"
-            :value="channelType.UID"
-            @change="currentChannelType = channelTypes.find((m) => m.UID === $event.target.value)"
-            :key="channelType.UID" :title="channelType.label" :footer="channelType.description" name="channel-type"></f7-list-item>
+                        :value="channelType.UID"
+                        @change="currentChannelType = channelTypes.find((m) => m.UID === $event.target.value)"
+                        :key="channelType.UID" :title="channelType.label" :footer="channelType.description" name="channel-type"></f7-list-item>
         </f7-list>
       </f7-col>
       <f7-col v-if="currentChannelType != null">
         <f7-block-title>Configuration</f7-block-title>
-          <config-sheet
-            :parameter-groups="currentChannelType.parameterGroups"
-            :parameters="currentChannelType.parameters"
-            :configuration="config"
-          />
+        <config-sheet
+          :parameter-groups="currentChannelType.parameterGroups"
+          :parameters="currentChannelType.parameters"
+          :configuration="config"
+        />
       </f7-col>
     </f7-block>
 

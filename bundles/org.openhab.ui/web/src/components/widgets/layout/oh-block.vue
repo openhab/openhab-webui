@@ -23,10 +23,10 @@
         </f7-menu-item>
       </f7-menu>
       <component v-for="(component, idx) in context.component.slots.default"
-        :is="component.component"
-        :key="idx"
-        :context="childContext(component)"
-        v-on="$listeners"
+                 :is="component.component"
+                 :key="idx"
+                 :context="childContext(component)"
+                 v-on="$listeners"
       ></component>
     </f7-block>
   </div>

@@ -7,8 +7,8 @@
       <f7-block>
         <f7-row>
           <f7-col class="col-100 margin-top padding-horizontal">
-            <f7-button large fill color="blue" v-if="state === 'UNINSTALLED'" @click="install()" >Install</f7-button>
-            <f7-button large fill color="red"  v-if="state !== 'UNINSTALLED'" @click="uninstall()" >Uninstall</f7-button>
+            <f7-button large fill color="blue" v-if="state === 'UNINSTALLED'" @click="install()">Install</f7-button>
+            <f7-button large fill color="red" v-if="state !== 'UNINSTALLED'" @click="uninstall()">Uninstall</f7-button>
           </f7-col>
         </f7-row>
       </f7-block>
@@ -18,7 +18,7 @@
     </div>
     <f7-page-content>
       <f7-block v-if="bindingInfo.description">
-        <div class="padding-left padding-right" v-html="bindingInfo.description"/>
+        <div class="padding-left padding-right" v-html="bindingInfo.description" />
         <!-- <p class="padding-left padding-right">
           <em>Author: {{bindingInfo.author}}</em>
         </p> -->

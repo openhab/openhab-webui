@@ -11,36 +11,36 @@
 
     <f7-tabs>
       <f7-tab id="menu-tab" @ tab:show="() => this.currentTab = 'menu'" :tab-active="currentTab === 'menu'">
-      <f7-block class="block-narrow after-big-title settings-menu">
-        <f7-row>
-          <f7-col width="100" medium="50">
-            <f7-block-title>Advanced Object Management</f7-block-title>
-            <f7-list media-item>
-              <f7-list-item media-item title="Widgets" footer="Develop custom widgets to use on pages" link="widgets/">
-                <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray"></f7-icon>
-              </f7-list-item>
-              <f7-list-item media-item title="Add Items from Textual Definition" footer="Create or update items &amp; links in bulk" link="add-items-dsl">
-                <f7-icon slot="media" f7="text_badge_plus" color="gray"></f7-icon>
-              </f7-list-item>
-            </f7-list>
-          </f7-col>
-          <f7-col width="100" medium="50">
-            <f7-block-title>Maintenance Tools</f7-block-title>
-            <f7-list media-item>
-              <f7-list-item media-item title="Developer Sidebar" class="developer-sidebar-toggle" footer="Show a panel with various tools" link="" no-chevron @click="$f7.emit('toggleDeveloperSidebar')">
-                <f7-icon slot="media" f7="wrench" color="gray"></f7-icon>
-                <div slot="header" style="height: 100%; height: 32px" class="display-flex float-right flex-direction-column justify-content-center">
-                  <f7-toggle color="blue" :checked="$store.state.developerSidebar"></f7-toggle>
-                </div>
-              </f7-list-item>
-              <f7-list-item media-item title="API Explorer" footer="Discover and access the REST API directly" link="api-explorer">
-                <f7-icon slot="media" f7="burn" color="gray"></f7-icon>
-              </f7-list-item>
-            </f7-list>
-          </f7-col>
-        </f7-row>
-        <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center"><small v-t="'admin.notTranslatedYet'"></small></f7-block-footer>
-      </f7-block>
+        <f7-block class="block-narrow after-big-title settings-menu">
+          <f7-row>
+            <f7-col width="100" medium="50">
+              <f7-block-title>Advanced Object Management</f7-block-title>
+              <f7-list media-item>
+                <f7-list-item media-item title="Widgets" footer="Develop custom widgets to use on pages" link="widgets/">
+                  <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray"></f7-icon>
+                </f7-list-item>
+                <f7-list-item media-item title="Add Items from Textual Definition" footer="Create or update items &amp; links in bulk" link="add-items-dsl">
+                  <f7-icon slot="media" f7="text_badge_plus" color="gray"></f7-icon>
+                </f7-list-item>
+              </f7-list>
+            </f7-col>
+            <f7-col width="100" medium="50">
+              <f7-block-title>Maintenance Tools</f7-block-title>
+              <f7-list media-item>
+                <f7-list-item media-item title="Developer Sidebar" class="developer-sidebar-toggle" footer="Show a panel with various tools" link="" no-chevron @click="$f7.emit('toggleDeveloperSidebar')">
+                  <f7-icon slot="media" f7="wrench" color="gray"></f7-icon>
+                  <div slot="header" style="height: 100%; height: 32px" class="display-flex float-right flex-direction-column justify-content-center">
+                    <f7-toggle color="blue" :checked="$store.state.developerSidebar"></f7-toggle>
+                  </div>
+                </f7-list-item>
+                <f7-list-item media-item title="API Explorer" footer="Discover and access the REST API directly" link="api-explorer">
+                  <f7-icon slot="media" f7="burn" color="gray"></f7-icon>
+                </f7-list-item>
+              </f7-list>
+            </f7-col>
+          </f7-row>
+          <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center"><small v-t="'admin.notTranslatedYet'"></small></f7-block-footer>
+        </f7-block>
       </f7-tab>
       <f7-tab id="debug-tab" @tab:show="() => this.currentTab = 'debug'" :tab-active="currentTab === 'debug'">
         <f7-block class="block-narrow">

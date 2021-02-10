@@ -1,6 +1,6 @@
 <template>
   <l-marker ref="marker" v-if="coords" :key="markerKey" :draggable="context.editmode != undefined" :lat-lng="coords"
-      @update:latLng="onMove" @click="onClick">
+            @update:latLng="onMove" @click="onClick">
     <l-tooltip v-if="tooltip && !config.useTooltipAsLabel" :options="tooltipOptions" @click="() => {}">
       <div style="white-space: nowrap" :style="tooltipStyle">{{tooltip}}</div>
     </l-tooltip>
@@ -8,7 +8,7 @@
       :icon-size="[config.iconSize || 40, config.iconSize || 40]">
       <div v-if="config.useTooltipAsLabel" style="white-space: nowrap" :style="tooltipStyle">{{tooltip}}</div>
       <oh-icon v-else-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.split(':')[1]" :width="config.iconSize || 40" :height="config.iconSize || 40" :state="config.iconUseState ? state : undefined" />
-      <f7-icon v-else-if="config.icon" :color="config.iconColor" :size="config.iconSize || 40" :ios="config.icon" :md="config.icon" :aurora="config.icon"  />
+      <f7-icon v-else-if="config.icon" :color="config.iconColor" :size="config.iconSize || 40" :ios="config.icon" :md="config.icon" :aurora="config.icon" />
     </l-icon>
     <l-popup v-if="context.editmode != null && !dragging">
       <div class="display-flex">

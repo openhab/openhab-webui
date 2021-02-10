@@ -10,7 +10,7 @@ export default () => [
       { value: 'itemsInGroup', label: 'Member of the group defined in the "groupItem" parameter' },
       { value: 'itemsWithTags', label: 'Items with tags in the "itemTags" parameter' },
       { value: 'itemStateOptions', label: 'State options of the item specified in "itemOptions"' },
-      { value: 'itemCommandOptions', label: 'Command options of the item specified in "itemOptions"' },
+      { value: 'itemCommandOptions', label: 'Command options of the item specified in "itemOptions"' }
     ]),
   pt('in', 'Source array', 'Source array (for "array" source type)'),
   pn('rangeStart', 'Range Start', 'Start of range (for "range" source type)'),

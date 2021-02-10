@@ -21,8 +21,8 @@
             </div>
             Status:
             <f7-chip class="margin-left"
-              :text="rule.status.status"
-              :color="ruleStatusBadgeColor(rule.status)"
+                     :text="rule.status.status"
+                     :color="ruleStatusBadgeColor(rule.status)"
             />
             <div>
               <strong>{{(rule.status.statusDetail !== 'NONE') ? rule.status.statusDetail : '&nbsp;'}}</strong>
@@ -47,14 +47,14 @@
           <f7-col class="skeleton-text skeleton-effect-blink">
             <f7-list inline-labels no-hairlines-md>
               <f7-list-input label="Unique ID" type="text" placeholder="Required" value="_______" required validate
-                            :disabled="true" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                            @input="rule.uid = $event.target.value" :clear-button="createMode">
+                             :disabled="true" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+                             @input="rule.uid = $event.target.value" :clear-button="createMode">
               </f7-list-input>
               <f7-list-input label="Name" type="text" placeholder="Required" required validate
-                            :disabled="true" @input="rule.name = $event.target.value" :clear-button="isEditable">
+                             :disabled="true" @input="rule.name = $event.target.value" :clear-button="isEditable">
               </f7-list-input>
               <f7-list-input label="Description" type="text" value="__ _____ ___ __ ___"
-                            :disabled="true" @input="rule.description = $event.target.value" :clear-button="isEditable">
+                             :disabled="true" @input="rule.description = $event.target.value" :clear-button="isEditable">
               </f7-list-input>
             </f7-list>
           </f7-col>
@@ -64,15 +64,15 @@
           <f7-col>
             <f7-list inline-labels no-hairlines-md>
               <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" required validate
-                            :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                            pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
-                            @input="rule.uid = $event.target.value" :clear-button="createMode">
+                             :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+                             pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
+                             @input="rule.uid = $event.target.value" :clear-button="createMode">
               </f7-list-input>
               <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" required validate
-                            :disabled="!isEditable" @input="rule.name = $event.target.value" :clear-button="isEditable">
+                             :disabled="!isEditable" @input="rule.name = $event.target.value" :clear-button="isEditable">
               </f7-list-input>
               <f7-list-input label="Description" type="text" :value="rule.description"
-                            :disabled="!isEditable" @input="rule.description = $event.target.value" :clear-button="isEditable">
+                             :disabled="!isEditable" @input="rule.description = $event.target.value" :clear-button="isEditable">
               </f7-list-input>
             </f7-list>
           </f7-col>
@@ -81,18 +81,18 @@
           <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
             <div class="no-padding float-right">
               <f7-button @click="toggleModuleControls" small outline :fill="showModuleControls" sortable-toggle=".sortable" style="margin-top: -3px; margin-right: 5px"
-                color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">&nbsp;Reorder</f7-button>
+                         color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">&nbsp;Reorder</f7-button>
             </div>
           </f7-col>
           <f7-col class="rule-modules" v-for="section in ['triggers', 'actions', 'conditions']" :key="section">
             <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)" v-if="isEditable || rule[section].length > 0">{{sectionLabels[section][0]}}</f7-block-title>
             <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
               <f7-list-item media
-                  :title="mod.label || suggestedModuleTitle(mod, null, section)"
-                  :footer="mod.description || suggestedModuleDescription(mod, null, section)"
-                  v-for="mod in rule[section]" :key="mod.id"
-                  :link="isEditable && !showModuleControls"
-                  @click.native="(ev) => editModule(ev, section, mod)" swipeout>
+                            :title="mod.label || suggestedModuleTitle(mod, null, section)"
+                            :footer="mod.description || suggestedModuleDescription(mod, null, section)"
+                            v-for="mod in rule[section]" :key="mod.id"
+                            :link="isEditable && !showModuleControls"
+                            @click.native="(ev) => editModule(ev, section, mod)" swipeout>
                 <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
                 <f7-link slot="after" v-if="mod.type && mod.type.indexOf('script') === 0" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" :tooltip="'Edit module'"></f7-link>
                 <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" tooltip="Edit module"></f7-link>

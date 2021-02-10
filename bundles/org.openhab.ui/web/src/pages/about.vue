@@ -7,7 +7,7 @@
           <!-- <f7-block-title>About openHAB</f7-block-title> -->
           <f7-block>
             <img src="res/icons/128x128.png" width="96" class="padding float-right">
-            <h2 v-if="$store.state.runtimeInfo" class="block-title-medium">openHAB {{$store.state.runtimeInfo.version}}<br/><small>{{$store.state.runtimeInfo.buildString}}</small></h2>
+            <h2 v-if="$store.state.runtimeInfo" class="block-title-medium">openHAB {{$store.state.runtimeInfo.version}}<br /><small>{{$store.state.runtimeInfo.buildString}}</small></h2>
             <p><f7-link external target="_blank" href="https://www.openhab.org/" v-t="'about.homePage'"></f7-link></p>
             <p><f7-link external target="_blank" href="https://www.openhab.org/docs/" v-t="'about.documentation'"></f7-link></p>
             <p><f7-link external target="_blank" href="https://community.openhab.org/" v-t="'about.communityForum'"></f7-link></p>

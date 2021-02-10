@@ -54,7 +54,7 @@
           <f7-list media-list>
             <ul>
               <f7-list-item v-for="thing in pinnedObjects.things" :key="thing.UID" media-item
-                :title="thing.label" :footer="thing.UID">
+                            :title="thing.label" :footer="thing.UID">
                 <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">{{thingStatusBadgeText(thing.statusInfo)}}</f7-badge>
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
                   <f7-link class="margin-right" :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleThingDisabled(thing)" />
@@ -75,7 +75,7 @@
           <f7-list media-list>
             <ul>
               <f7-list-item v-for="rule in pinnedObjects.rules" :key="rule.uid" media-item
-                :title="rule.name" :footer="rule.uid">
+                            :title="rule.name" :footer="rule.uid">
                 <f7-badge slot="after" :color="ruleStatusBadgeColor(rule.status)" :tooltip="rule.status.description">{{ruleStatusBadgeText(rule.status)}}</f7-badge>
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
                   <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
@@ -97,7 +97,7 @@
           <f7-list media-list>
             <ul>
               <f7-list-item v-for="page in pinnedObjects.pages" :key="page.uid" media-item
-                :title="page.config.label" :footer="page.uid">
+                            :title="page.config.label" :footer="page.uid">
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
                   <!-- <f7-link class="margin-right" color="blue" icon-f7="rectangle_on_rectangle" icon-size="18" tooltip="Open in Popup" /> -->
                   <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="View" :href="'/page/' + page.uid" :animate="false" />
@@ -552,7 +552,7 @@ export default {
       }
     },
     changeEventTopicFilter () {
-      this.$f7.dialog.prompt(`Filter events by topics (comma-separated, wildcards accepted):`,
+      this.$f7.dialog.prompt('Filter events by topics (comma-separated, wildcards accepted):',
         'Event Monitor',
         (filter) => {
           this.eventTopicFilter = filter

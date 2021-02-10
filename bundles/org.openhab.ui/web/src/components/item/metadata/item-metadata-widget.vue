@@ -8,7 +8,7 @@
 
     <f7-list v-if="viewMode === 'design' && defaultComponent.component">
       <f7-list-item :key="componentSelectKey"
-         :title="'Widget'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="widgets">
+                    :title="'Widget'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="widgets">
         <select name="widgets" @change="updateComponent">
           <option value="">Default ({{defaultComponent.component}})</option>
           <optgroup label="Standard Library (List)" v-if="namespace === 'listWidget'">

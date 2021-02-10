@@ -1,9 +1,9 @@
 <template>
   <f7-list :accordion-list="!pickerMode">
     <f7-list-item group-title v-if="group && group.label && group.channels.length > 0"
-      :title="group.label"
-      :description="group.description"
-      :footer="group.description" />
+                  :title="group.label"
+                  :description="group.description"
+                  :footer="group.description" />
     <f7-list-item
       v-for="c in group.channels"
       :key="c.channel.id" :title="c.channel.label || c.channelType.label"

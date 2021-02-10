@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     editCustomMetadata () {
-      this.$f7.dialog.prompt(`Please type in the namespace you would like to edit:`,
+      this.$f7.dialog.prompt('Please type in the namespace you would like to edit:',
         'Edit Custom Metadata',
         (namespace) => {
           if (namespace) this.$f7.views.main.router.navigate('/settings/items/' + this.item.name + '/metadata/' + namespace)

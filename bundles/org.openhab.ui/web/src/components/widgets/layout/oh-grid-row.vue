@@ -6,25 +6,25 @@
         <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-grid-col')" icon-f7="plus" text="Add Column" />
         <f7-menu-item style="margin-left: auto" icon-f7="square_split_1x2" dropdown>
           <f7-menu-dropdown right>
-          <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-col'" @click="context.editmode.pasteWidget(context.component, context.parent)" href="#" text="Paste"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Up"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move Down"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item @click="context.editmode.removeWidget(context.component, context.parent)" href="#" text="Remove Row"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-col'" @click="context.editmode.pasteWidget(context.component, context.parent)" href="#" text="Paste"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Up"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move Down"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.removeWidget(context.component, context.parent)" href="#" text="Remove Row"></f7-menu-dropdown-item>
           </f7-menu-dropdown>
         </f7-menu-item>
       </f7-menu>
     </div>
     <f7-row no-gap v-if="visible">
       <oh-grid-col v-for="(component, idx) in context.component.slots.default"
-        :key="idx"
-        :context="childContext(component)"
-        v-on="$listeners"
+                   :key="idx"
+                   :context="childContext(component)"
+                   v-on="$listeners"
       ></oh-grid-col>
       <f7-block-title v-if="config.title"></f7-block-title>
     </f7-row>

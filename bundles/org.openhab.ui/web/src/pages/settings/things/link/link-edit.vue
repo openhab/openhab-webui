@@ -15,21 +15,21 @@
         <f7-block-title>Link</f7-block-title>
         <f7-card>
           <f7-card-content>
-          <f7-list media-list>
-            <ul>
-              <f7-list-item divider title="Channel"></f7-list-item>
-              <f7-list-item media-item class="channel-item"
-                :title="channel.label || channelType.label"
-                :footer="channel.uid"
-                :subtitle="thing.label"
-                :badge="thingStatusBadgeText(thing.statusInfo)"
-                :badge-color="thingStatusBadgeColor(thing.statusInfo)">
-                <span slot="media" class="item-initial">{{(channel.label) ? channel.label[0] : (channelType.label) ? channelType.label[0] : '?'}}</span>
-              </f7-list-item>
-              <f7-list-item divider title="Item"></f7-list-item>
-              <item :item="item" :context="context" :no-state="true" :link="'/settings/items/' + item.name" />
-            </ul>
-          </f7-list>
+            <f7-list media-list>
+              <ul>
+                <f7-list-item divider title="Channel"></f7-list-item>
+                <f7-list-item media-item class="channel-item"
+                              :title="channel.label || channelType.label"
+                              :footer="channel.uid"
+                              :subtitle="thing.label"
+                              :badge="thingStatusBadgeText(thing.statusInfo)"
+                              :badge-color="thingStatusBadgeColor(thing.statusInfo)">
+                  <span slot="media" class="item-initial">{{(channel.label) ? channel.label[0] : (channelType.label) ? channelType.label[0] : '?'}}</span>
+                </f7-list-item>
+                <f7-list-item divider title="Item"></f7-list-item>
+                <item :item="item" :context="context" :no-state="true" :link="'/settings/items/' + item.name" />
+              </ul>
+            </f7-list>
           </f7-card-content>
           <f7-card-footer v-if="item">
             <f7-button color="red" fill @click="unlinkAndDelete()" v-if="source === 'thing' && item.editable">Unlink &amp; Remove Item</f7-button>
@@ -42,26 +42,26 @@
         <f7-block-footer class="padding-left padding-right">
           Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
           <f7-link external color="blue" target="_blank" href="https://www.openhab.org/link/profiles">Learn more about profiles.</f7-link>
-        <f7-block v-if="!ready" class="text-align-center">
-          <f7-preloader></f7-preloader>
-          <div>Loading...</div>
-        </f7-block>
-        <f7-list v-else>
-          <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="(No Profile)" name="profile-type" />
-          <f7-list-item radio v-for="profileType in profileTypes"
-            :checked="currentProfileType && profileType.uid === currentProfileType.uid"
-            @change="onProfileTypeChange(profileType.uid)"
-            :key="profileType.uid" :title="profileType.label" name="profile-type"></f7-list-item>
-        </f7-list>
+          <f7-block v-if="!ready" class="text-align-center">
+            <f7-preloader></f7-preloader>
+            <div>Loading...</div>
+          </f7-block>
+          <f7-list v-else>
+            <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="(No Profile)" name="profile-type" />
+            <f7-list-item radio v-for="profileType in profileTypes"
+                          :checked="currentProfileType && profileType.uid === currentProfileType.uid"
+                          @change="onProfileTypeChange(profileType.uid)"
+                          :key="profileType.uid" :title="profileType.label" name="profile-type"></f7-list-item>
+          </f7-list>
         </f7-block-footer>
       </f7-col>
       <f7-col v-if="profileTypeConfiguration != null">
         <f7-block-title>Profile Configuration</f7-block-title>
-          <config-sheet ref="profileConfiguration"
-            :parameter-groups="profileTypeConfiguration.parameterGroups"
-            :parameters="profileTypeConfiguration.parameters"
-            :configuration="link.configuration"
-          />
+        <config-sheet ref="profileConfiguration"
+                      :parameter-groups="profileTypeConfiguration.parameterGroups"
+                      :parameters="profileTypeConfiguration.parameters"
+                      :configuration="link.configuration"
+        />
       </f7-col>
     </f7-block>
   </f7-page>
