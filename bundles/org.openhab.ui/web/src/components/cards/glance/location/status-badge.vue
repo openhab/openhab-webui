@@ -198,7 +198,7 @@ export default {
       if (this.badgeOverrides && !this.exprAst) {
         const override = this.badgeOverrides[this.type]
         if (override && override.expression) {
-            this.exprAst = expr.parse(override.expression)
+          this.exprAst = expr.parse(override.expression)
         }
       }
       return this.exprAst
