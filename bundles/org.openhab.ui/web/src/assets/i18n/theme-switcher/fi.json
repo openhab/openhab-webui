@@ -1,8 +1,8 @@
 {
   "about.theme": "Teema",
-  "about.theme.auto": "Auto",
+  "about.theme.auto": "Automaattinen",
   "about.darkMode": "Tumma",
-  "about.darkMode.auto": "Auto",
+  "about.darkMode.auto": "Automaattinen",
   "about.darkMode.light": "Vaalea",
   "about.darkMode.dark": "Tumma",
   "about.navigationBarsStyle": "Navigointipalkkien tyyli",
