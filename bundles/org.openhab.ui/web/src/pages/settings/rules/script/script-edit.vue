@@ -380,7 +380,7 @@ export default {
       this.eventSource = null
     },
     keyDown (ev) {
-      if (ev.ctrlKey || ev.metakKey) {
+      if (ev.ctrlKey || ev.metaKey) {
         switch (ev.keyCode) {
           case 66:
             if (this.isBlockly) {

@@ -367,7 +367,7 @@ export default {
       this.eventSource = null
     },
     keyDown (ev) {
-      if (ev.ctrlKey || ev.metakKey) {
+      if (ev.ctrlKey || ev.metaKey) {
         if (this.currentModule) return
         switch (ev.keyCode) {
           case 68:
