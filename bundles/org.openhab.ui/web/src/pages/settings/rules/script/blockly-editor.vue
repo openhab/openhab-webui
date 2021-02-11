@@ -332,6 +332,13 @@
                 </shadow>
               </value>
             </block>
+            <block type="oh_thing" />
+            <block type="oh_getthing_state">
+              <value name="itemName">
+                <shadow type="oh_thing">
+                </shadow>
+              </value>
+            </block>
           </category>
           <category name="Network Tools">
             <block type="oh_exec">
@@ -589,6 +596,8 @@ import defineOHBlocksEphemeris from '@/assets/definitions/blockly/ohblocks_ephem
 import defineOHBlocksHTTP from '@/assets/definitions/blockly/ohblocks_http'
 import defineOHBlocksPersistance from '@/assets/definitions/blockly/ohblocks_persistance'
 import defineOHBlocksNotifications from '@/assets/definitions/blockly/ohblocks_notifications'                  
+import defineOHBlocksExec from '@/assets/definitions/blockly/ohblocks_exec'    
+import defineOHBlocksSubsystem from '@/assets/definitions/blockly/ohblocks_subsystem'    
 
 import defineOHBlocksAudio from '@/assets/definitions/blockly/ohblocks_audio'
 import defineOHBlocksBusEvents from '@/assets/definitions/blockly/ohblocks_busevents'
@@ -604,12 +613,14 @@ export default {
       sinks: [],
       scripts: [],
       rules: [],
+      addons: [],
       loading: true,
       ready: false
     }
   },
   created ()  {
     this.getAltData()
+    this.getAddons()
   },
   methods: {
     startBlockly () {
@@ -632,7 +643,20 @@ export default {
       defineOHBlocksNotifications(this.$f7)
       defineOHBlocksAudio(this.$f7, this.sinks)
       defineOHBlocksBusEvents(this.$f7)
+      defineOHBlocksExec(this.$f7)
+      defineOHBlocksSubsystem(this.$f7)
       this.startBlockly()
+    },
+    getAddons() {
+      this.$oh.api.get('/rest/addons').then(data => {
+        this.addons = data.filter(addon => addon.installed).sort((a,b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+        console.error('fetched addons' + this.addons.length)
+      }).catch((err) => {
+        // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
+        console.error('Error while accessing the API, retrying every 5 seconds: ', err)
+        setTimeout(this.load, 5000)
+      })
+      
     },
     getAltData () {
       this.$oh.api.get('/rest/rules?summary=true').then(data => { // fetch rules
