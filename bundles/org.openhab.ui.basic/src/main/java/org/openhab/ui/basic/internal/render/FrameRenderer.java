@@ -54,7 +54,7 @@ public class FrameRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb) throws RenderException {
+    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         String snippet = getSnippet("frame");
         String label = StringEscapeUtils.escapeHtml(itemUIRegistry.getLabel(w));
         List<String> frameClassList = new ArrayList<>();

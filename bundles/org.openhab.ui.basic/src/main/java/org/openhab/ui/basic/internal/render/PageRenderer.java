@@ -122,7 +122,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
         StringBuilder postChildren = new StringBuilder(parts[1]);
 
         if (parts.length == 2) {
-            processChildren(preChildren, postChildren, children);
+            processChildren(preChildren, postChildren, children, sitemap);
         } else if (parts.length > 2) {
             logger.error("Snippet '{}' contains multiple %children% sections, but only one is allowed!",
                     async ? "layer" : "main");
@@ -130,7 +130,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
         return preChildren.append(postChildren);
     }
 
-    private void processChildren(StringBuilder sb_pre, StringBuilder sb_post, EList<Widget> children)
+    private void processChildren(StringBuilder sb_pre, StringBuilder sb_post, EList<Widget> children, String sitemap)
             throws RenderException {
         // put a single frame around all children widgets, if there are no explicit frames
         if (!children.isEmpty()) {
@@ -158,7 +158,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
             StringBuilder newPre = new StringBuilder();
             StringBuilder newPost = new StringBuilder();
             StringBuilder widgetSB = new StringBuilder();
-            EList<Widget> nextChildren = renderWidget(w, widgetSB);
+            EList<Widget> nextChildren = renderWidget(w, widgetSB, sitemap);
             if (!nextChildren.isEmpty()) {
                 String[] parts = widgetSB.toString().split("%children%");
                 // no %children% placeholder found or at the end
@@ -179,7 +179,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
                             "Snippet for widget '{}' contains multiple %children% sections, but only one is allowed!",
                             widgetType);
                 }
-                processChildren(newPre, newPost, nextChildren);
+                processChildren(newPre, newPost, nextChildren, sitemap);
                 sb_pre.append(newPre);
                 sb_pre.append(newPost);
             } else {
@@ -189,10 +189,10 @@ public class PageRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb) throws RenderException {
+    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         for (WidgetRenderer renderer : widgetRenderers) {
             if (renderer.canRender(w)) {
-                return renderer.renderWidget(w, sb);
+                return renderer.renderWidget(w, sb, sitemap);
             }
         }
         return ECollections.emptyEList();

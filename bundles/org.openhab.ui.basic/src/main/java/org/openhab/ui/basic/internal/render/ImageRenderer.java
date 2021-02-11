@@ -58,7 +58,7 @@ public class ImageRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb) throws RenderException {
+    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Image image = (Image) w;
         String snippet = (image.getChildren().size() > 0) ? getSnippet("image_link") : getSnippet("image");
 
@@ -72,10 +72,6 @@ public class ImageRenderer extends AbstractWidgetRenderer {
         snippet = StringUtils.replace(snippet, "%id%", widgetId);
         snippet = preprocessSnippet(snippet, w);
 
-        String sitemap = null;
-        if (w.eResource() != null) {
-            sitemap = w.eResource().getURI().path();
-        }
         boolean validUrl = isValidURL(image.getUrl());
         String proxiedUrl = "../proxy?sitemap=" + sitemap + "&amp;widgetId=" + widgetId;
         State state = itemUIRegistry.getState(w);
