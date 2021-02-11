@@ -612,7 +612,7 @@ export default {
     this.getAltData()
   },
   methods: {
-    onPageAfterIn () {
+    startBlockly () {
       this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
         toolbox: this.$refs.toolbox,
         horizontalLayout: !this.$device.desktop,
@@ -632,25 +632,35 @@ export default {
       defineOHBlocksNotifications(this.$f7)
       defineOHBlocksAudio(this.$f7, this.sinks)
       defineOHBlocksBusEvents(this.$f7)
+      this.startBlockly()
     },
     getAltData () {
-      this.$oh.api.get('/rest/rules?summary=true&tags=Script').then(data => {
+      this.$oh.api.get('/rest/rules?summary=true').then(data => { // fetch rules
+          this.rules = data.sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return labelA.localeCompare(labelB)
+        })
+        this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Script') < 0)
+      }).catch((err, status) => {
+        console.error('REST /rest/rules?summary=true' + err + ':' + status)   
+      })
+      this.$oh.api.get('/rest/rules?summary=true&tags=Script').then(data => { // fetch scripts
         this.scripts = data.sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
           return labelA.localeCompare(labelB)
         })
-        this.loadPage()
-        this.onPageAfterIn()
       }).catch((err, status) => {
-        console.error('REST /rest/rules?summary=true&tags=Script failed ' + err + ':' + status)   
+        console.error('REST /rest/rules?summary=true&tags=Script' + err + ':' + status)   
       })
-      this.$oh.api.get('/rest/audio/sinks').then(data => {
+      this.$oh.api.get('/rest/audio/sinks').then(data => { // fetch audio sinks
         this.sinks = data.sort((a, b) => {
           const labelA = a.label
           const labelB = b.label
           return labelA.localeCompare(labelB)
         })
+        this.loadPage()
       }).catch((err, status) => {
         console.error('REST /rest/audio/sinks failed ' + err + ':' + status)  
       })
