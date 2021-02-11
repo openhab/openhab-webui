@@ -56,12 +56,11 @@ public class VideoRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb) throws RenderException {
+    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Video videoWidget = (Video) w;
         String snippet = null;
 
         String widgetId = itemUIRegistry.getWidgetId(w);
-        String sitemap = w.eResource().getURI().path();
 
         // we handle mjpeg streams as an html image as browser can usually handle this
         String snippetName = (videoWidget.getEncoding() != null
@@ -100,7 +99,6 @@ public class VideoRenderer extends AbstractWidgetRenderer {
             snippet = StringUtils.replace(snippet, "%url%", url);
             snippet = StringUtils.replace(snippet, "%media_type%", mediaType);
         }
-
         sb.append(snippet);
         return ECollections.emptyEList();
     }
