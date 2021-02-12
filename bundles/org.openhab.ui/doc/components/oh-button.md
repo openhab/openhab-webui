@@ -6,21 +6,90 @@ description: Button performing an action
 source: https://github.com/openhab/openhab-webui/edit/main/bundles/org.openhab.ui/doc/components/oh-button.md
 ---
 
+<style>
+
+ul.prop {
+  background-color: rgba(230,72,25,0.3); 
+  border-radius: 5px 5px 0px 0px;
+  list-style-type: none;
+  padding: 5px;
+  margin-bottom: 0px;
+}
+
+.options {
+  background-color: rgb(250,250,252);
+  border-radius: 0px 0px 5px 5px;
+	display: flex;
+	flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.options .item {
+	flex: 1 0 400px;
+  box-sizing: border-box;
+  /* background: #e0ddd5; */
+}
+
+.options .item code {
+  background-color: white;
+  margin: 5px;
+}
+
+.options .fullw {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 5px;
+}
+
+@media (min-width: 410px) {
+  .options .item {
+    max-width: calc(100% - 5px);
+  }
+}
+@media (min-width: 620px) {
+  .options .item {
+    max-width: calc(50% - 10px);
+  }
+}
+@media (min-width: 830px) {
+  .options .item {
+    max-width: calc(50% - 10px);
+  }
+}
+@media (min-width: 1040px) {
+  .options .item {
+    max-width: calc(33% - 10px);
+  }
+}
+@media (min-width: 1250px) {
+  .options .item {
+    max-width: calc(25% - 10px);
+  }
+}
+@media (min-width: 1460px) {
+  .options .item {
+    max-width: calc(20% - 10px);
+  }
+}
+</style>
+
+
+
+
 # oh-button - Button
-
-
 
 <!-- GENERATED componentDescription -->
 Button performing an action
 <!-- GENERATED /componentDescription -->
 
-<a href="#header">![oh-button header](./img/oh-button/header.png)</a>
+<a href="#header">![oh-button header](./images/oh-button/header.png)</a>
+
+[[toc]]
 
 ## Usage / reference documents
 
-* The `oh-button` component is based upon the [Framework 7 Vue button control (`f7-button`)](https://framework7.io/vue/button.html).
-* The standard `f7-button` capabilities are enhanced by the addition of specific actions to provide user interface functionality / work with openHAB objects etc. 
-* Component style is applied by the [Framework 7 CSS variables](https://framework7.io/docs/button.html#css-variables).
+* The `oh-button` component is based upon the [Framework 7 v5 Vue button control (`f7-button`)](https://v5.framework7.io/vue/button.html).
+* Component styles are applied by the [Framework 7 CSS variables](https://v5.framework7.io/docs/button.html#css-variables).  For guidance on how to customise styles see the [CSS Styles](https://openhab.org/docs/ui/building-pages.html#css-variables) section.  
 * Use the [`f7-segmented`](#f7-segmented) wrapper component to group buttons together.  Buttons with the property  `active: true` set will be highlighted/marked as selected.
 
 ### Slots
@@ -29,58 +98,297 @@ There are no slots supported by this control.
 ## Configuration
 
 ### General / Style
+
 <!-- GENERATED props -->
 
-| `Property name`<br>Data type | Label | Description | <div width=200px>Options</div> |
-|:---|:---|:----|:----|
-| <a href="#text">`text`</a><br>TEXT | Text | Button label |  |
-| <a href="#round">`round`</a><br>BOOLEAN | Round | Makes button round |  `true`<br>`false` |
-| <a href="#large">`large`</a><br>BOOLEAN | Large | Makes button large |  `true`<br>`false` |
-| <a href="#small">`small`</a><br>BOOLEAN | Small | Makes button small |  `true`<br>`false` |
-| <a href="#fill">`fill`</a><br>BOOLEAN | Fill | Makes button filled with color |  `true`<br>`false` |
-| <a href="#raised">`raised`</a><br>BOOLEAN | Raised | Makes button raised |  `true`<br>`false` |
-| <a href="#outline">`outline`</a><br>BOOLEAN | Outline | Makes button outline |  `true`<br>`false` |
-| <a href="#active">`active`</a><br>TEXT | Active | Button is active (when part of a f7-segmented |  |
-| <a href="#iconF7">`iconF7`</a><br>TEXT | Icon | Framework7 icon to display (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>) |  |
-| <a href="#iconMaterial">`iconMaterial`</a><br>TEXT | Icon | Material design icon to display |  |
-| <a href="#iconColor">`iconColor`</a><br>TEXT | Icon Color | Not applicable to openHAB icons |  |
-| <a href="#iconSize">`iconSize`</a><br>INTEGER | Icon Size | Size of the icon in px |  |
-| <a href="#tooltip">`tooltip`</a><br>TEXT | Tooltip | Button tooltip text to show on button hover/press |  |
-| <a href="#variable">`variable`</a><br>TEXT | Variable | Name of the variable to set on input change |  |
-| <a href="#clearVariable">`clearVariable`</a><br>BOOLEAN | Clear Variable After Action | Name of the variable to clear after performing the action |  `true`<br>`false` |
+<ul class="prop"><li><code>text</code> <b>Text:</b> Button label</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>round</code> <b>Round:</b> Makes button round</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>BOOLEAN</code></div>
+</div>
+
+<ul class="prop"><li><code>large</code> <b>Large:</b> Makes button large</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>BOOLEAN</code></div>
+</div>
+
+<ul class="prop"><li><code>small</code> <b>Small:</b> Makes button small</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>BOOLEAN</code></div>
+</div>
+
+<ul class="prop"><li><code>fill</code> <b>Fill:</b> Makes button filled with color</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>BOOLEAN</code></div>
+</div>
+
+<ul class="prop"><li><code>raised</code> <b>Raised:</b> Makes button raised</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>BOOLEAN</code></div>
+</div>
+
+<ul class="prop"><li><code>outline</code> <b>Outline:</b> Makes button outline</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>BOOLEAN</code></div>
+</div>
+
+<ul class="prop"><li><code>active</code> <b>Active:</b> Button is active (when part of a f7-segmented</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>iconF7</code> <b>Icon:</b> Framework7 icon to display (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>iconMaterial</code> <b>Icon:</b> Material design icon to display</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>iconColor</code> <b>Icon Color:</b> Not applicable to openHAB icons</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>iconSize</code> <b>Icon Size:</b> Size of the icon in px</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>INTEGER</code></div>
+</div>
+
+<ul class="prop"><li><code>tooltip</code> <b>Tooltip:</b> Button tooltip text to show on button hover/press</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>variable</code> <b>Variable:</b> Name of the variable to set on input change</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>clearVariable</code> <b>Clear Variable After Action:</b> Name of the variable to clear after performing the action</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>BOOLEAN</code></div>
+</div>
 
 ### Action
 
 Action to perform when the element is clicked
 
-| `Property name`<br>Data type | Label | Description | Options |
-|:---|:---|:----|:----|
-| <a href="#action">`action`</a><br>TEXT | Action | Type of action to perform | <a href="#action-navigate">`navigate`&nbsp;</a>Navigate to page<br><a href="#action-command">`command`&nbsp;</a>Send command<br><a href="#action-toggle">`toggle`&nbsp;</a>Toggle item<br><a href="#action-options">`options`&nbsp;</a>Command options<br><a href="#action-rule">`rule`&nbsp;</a>Run rule<br><a href="#action-popup">`popup`&nbsp;</a>Open popup<br><a href="#action-popover">`popover`&nbsp;</a>Open popover<br><a href="#action-sheet">`sheet`&nbsp;</a>Open sheet<br><a href="#action-photos">`photos`&nbsp;</a>Open photo browser<br><a href="#action-group">`group`&nbsp;</a>Group details<br><a href="#action-analyzer">`analyzer`&nbsp;</a>Analyze item(s)<br><a href="#action-url">`url`&nbsp;</a>External URL<br><a href="#action-variable">`variable`&nbsp;</a>Set Variable<br> |
-| <a href="#actionUrl">`actionUrl`</a><br>TEXT | Action URL | URL to navigate to |  |
-| <a href="#actionUrlSameWindow">`actionUrlSameWindow`</a><br>BOOLEAN | Open in same tab/window | Open the URL in the same tab/window instead of a new one. This will exit the app. |  `true`<br>`false` |
-| <a href="#actionItem">`actionItem`</a><br>TEXT | Action Item | Item to perform the action on |  |
-| <a href="#actionCommand">`actionCommand`</a><br>TEXT | Action Command | Command to send to the item. If "toggle item" is selected as the action, only send the command when the state is different |  |
-| <a href="#actionCommandAlt">`actionCommandAlt`</a><br>TEXT | Action Toggle Command | Command to send to the item when "toggle item" is selected as the action, and the item's state is equal to the command above |  |
-| <a href="#actionOptions">`actionOptions`</a><br>TEXT | Command Options | Comma-separated list of options; if omitted, retrieve the command options from the item dynamically. Use <code>value=label</code> format to provide a label different than the option. |  |
-| <a href="#actionRule">`actionRule`</a><br>TEXT | Rule | Rule to run |  |
-| <a href="#actionPage">`actionPage`</a><br>TEXT | Page | Page to navigate to |  |
-| <a href="#actionPageTransition">`actionPageTransition`</a><br>TEXT | Transition Effect | Use a specific <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a> | <a href="#actionPageTransition-f7-circle">`f7-circle`&nbsp;</a>Circle<br><a href="#actionPageTransition-f7-cover">`f7-cover`&nbsp;</a>Cover<br><a href="#actionPageTransition-f7-cover-v">`f7-cover-v`&nbsp;</a>Cover from bottom<br><a href="#actionPageTransition-f7-dive">`f7-dive`&nbsp;</a>Dive<br><a href="#actionPageTransition-f7-fade">`f7-fade`&nbsp;</a>Fade<br><a href="#actionPageTransition-f7-flip">`f7-flip`&nbsp;</a>Flip<br><a href="#actionPageTransition-f7-parallax">`f7-parallax`&nbsp;</a>Parallax<br><a href="#actionPageTransition-f7-push">`f7-push`&nbsp;</a>Push<br> |
-| <a href="#actionModal">`actionModal`</a><br>TEXT | Modal Page or Widget | Page or widget to display in the modal |  |
-| <a href="#actionModalConfig">`actionModalConfig`</a><br>TEXT | Modal component configuration | Configuration (prop values) for the target modal page or widget |  |
-| <a href="#actionPhotos">`actionPhotos`</a><br>TEXT | Images to show | Array of URLs or objects representing the images. Auto-refresh is not supported.<br />Edit in YAML or provide a JSON array, e.g.<br /><code>[ "url1", { "item": "ImageItem1", "caption": "Camera" } ]</code><br />Objects are in the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photos-array">photos array format</a> with an additional <code>item</code> property to specify an item to view. |  |
-| <a href="#actionPhotoBrowserConfig">`actionPhotoBrowserConfig`</a><br>TEXT | Photo browser configuration | Configuration for the photo browser.<br />Edit in YAML or provide a JSON object, e.g.<br /><code>{ "exposition": false, "type": "popup", "theme": "dark" }</code><br /> See <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photo-browser-parameters">photo browser parameters</a> (not all are supported). |  |
-| <a href="#actionGroupPopupItem">`actionGroupPopupItem`</a><br>TEXT | Group Popup Item | Group item whose members to show in a popup |  |
-| <a href="#actionAnalyzerItems">`actionAnalyzerItems`</a><br>TEXT | Item(s) to Analyze | Start analyzing with the specified (set of) item(s) |  |
-| <a href="#actionAnalyzerChartType">`actionAnalyzerChartType`</a><br>TEXT | Chart Type | The initial analyzing period - dynamic or a predefined fixed period: day, week, month or year | <a href="#actionAnalyzerChartType-(empty)">`(empty)`&nbsp;</a>Dynamic<br><a href="#actionAnalyzerChartType-day">`day`&nbsp;</a>Day<br><a href="#actionAnalyzerChartType-isoWeek">`isoWeek`&nbsp;</a>Week (starting on Mondays)<br><a href="#actionAnalyzerChartType-month">`month`&nbsp;</a>Month<br><a href="#actionAnalyzerChartType-year">`year`&nbsp;</a>Year<br> |
-| <a href="#actionAnalyzerCoordSystem">`actionAnalyzerCoordSystem`</a><br>TEXT | Initial Coordinate System | The initial coordinate system of the analyzer - time, aggregate or calendar (only time is supported for dynamic periods) | <a href="#actionAnalyzerCoordSystem-time">`time`&nbsp;</a>Time<br><a href="#actionAnalyzerCoordSystem-aggregate">`aggregate`&nbsp;</a>Aggregate<br><a href="#actionAnalyzerCoordSystem-calendar">`calendar`&nbsp;</a>Calendar<br> |
-| <a href="#actionFeedback">`actionFeedback`</a><br>TEXT | Action feedback | Shows a toast popup when the action has been executed. Can either be a text to show or a JSON object including some of the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/toast.html#toast-parameters">supported parameters</a> |  |
-| <a href="#actionVariable">`actionVariable`</a><br>TEXT | Variable | The variable name to set |  |
-| <a href="#actionVariableValue">`actionVariableValue`</a><br>TEXT | Variable Value | The value to set the variable to |  |
+
+<ul class="prop"><li><code>action</code> <b>Action:</b> Type of action to perform</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code> using the following options:</div>
+  <div class="item">
+    <code>navigate</code> Navigate to page
+  </div>
+  <div class="item">
+    <code>command</code> Send command
+  </div>
+  <div class="item">
+    <code>toggle</code> Toggle item
+  </div>
+  <div class="item">
+    <code>options</code> Command options
+  </div>
+  <div class="item">
+    <code>rule</code> Run rule
+  </div>
+  <div class="item">
+    <code>popup</code> Open popup
+  </div>
+  <div class="item">
+    <code>popover</code> Open popover
+  </div>
+  <div class="item">
+    <code>sheet</code> Open sheet
+  </div>
+  <div class="item">
+    <code>photos</code> Open photo browser
+  </div>
+  <div class="item">
+    <code>group</code> Group details
+  </div>
+  <div class="item">
+    <code>analyzer</code> Analyze item(s)
+  </div>
+  <div class="item">
+    <code>url</code> External URL
+  </div>
+  <div class="item">
+    <code>variable</code> Set Variable
+  </div>
+</div>
+
+</div>
+
+<ul class="prop"><li><code>actionUrl</code> <b>Action URL:</b> URL to navigate to</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionUrlSameWindow</code> <b>Open in same tab/window:</b> Open the URL in the same tab/window instead of a new one. This will exit the app.</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>BOOLEAN</code></div>
+</div>
+
+<ul class="prop"><li><code>actionItem</code> <b>Action Item:</b> Item to perform the action on</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionCommand</code> <b>Action Command:</b> Command to send to the item. If "toggle item" is selected as the action, only send the command when the state is different</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionCommandAlt</code> <b>Action Toggle Command:</b> Command to send to the item when "toggle item" is selected as the action, and the item's state is equal to the command above</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionOptions</code> <b>Command Options:</b> Comma-separated list of options; if omitted, retrieve the command options from the item dynamically. Use <code>value=label</code> format to provide a label different than the option.</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionRule</code> <b>Rule:</b> Rule to run</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionPage</code> <b>Page:</b> Page to navigate to</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionPageTransition</code> <b>Transition Effect:</b> Use a specific <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a></li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code> using the following options:</div>
+  <div class="item">
+    <code>f7-circle</code> Circle
+  </div>
+  <div class="item">
+    <code>f7-cover</code> Cover
+  </div>
+  <div class="item">
+    <code>f7-cover-v</code> Cover from bottom
+  </div>
+  <div class="item">
+    <code>f7-dive</code> Dive
+  </div>
+  <div class="item">
+    <code>f7-fade</code> Fade
+  </div>
+  <div class="item">
+    <code>f7-flip</code> Flip
+  </div>
+  <div class="item">
+    <code>f7-parallax</code> Parallax
+  </div>
+  <div class="item">
+    <code>f7-push</code> Push
+  </div>
+</div>
+
+</div>
+
+<ul class="prop"><li><code>actionModal</code> <b>Modal Page or Widget:</b> Page or widget to display in the modal</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionModalConfig</code> <b>Modal component configuration:</b> Configuration (prop values) for the target modal page or widget</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionPhotos</code> <b>Images to show:</b> Array of URLs or objects representing the images. Auto-refresh is not supported.<br />Edit in YAML or provide a JSON array, e.g.<br /><code>[ "url1", { "item": "ImageItem1", "caption": "Camera" } ]</code><br />Objects are in the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photos-array">photos array format</a> with an additional <code>item</code> property to specify an item to view.</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionPhotoBrowserConfig</code> <b>Photo browser configuration:</b> Configuration for the photo browser.<br />Edit in YAML or provide a JSON object, e.g.<br /><code>{ "exposition": false, "type": "popup", "theme": "dark" }</code><br /> See <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photo-browser-parameters">photo browser parameters</a> (not all are supported).</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionGroupPopupItem</code> <b>Group Popup Item:</b> Group item whose members to show in a popup</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionAnalyzerItems</code> <b>Item(s) to Analyze:</b> Start analyzing with the specified (set of) item(s)</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionAnalyzerChartType</code> <b>Chart Type:</b> The initial analyzing period - dynamic or a predefined fixed period: day, week, month or year</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code> using the following options:</div>
+  <div class="item">
+    <code>(empty)</code> Dynamic
+  </div>
+  <div class="item">
+    <code>day</code> Day
+  </div>
+  <div class="item">
+    <code>isoWeek</code> Week (starting on Mondays)
+  </div>
+  <div class="item">
+    <code>month</code> Month
+  </div>
+  <div class="item">
+    <code>year</code> Year
+  </div>
+</div>
+
+</div>
+
+<ul class="prop"><li><code>actionAnalyzerCoordSystem</code> <b>Initial Coordinate System:</b> The initial coordinate system of the analyzer - time, aggregate or calendar (only time is supported for dynamic periods)</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code> using the following options:</div>
+  <div class="item">
+    <code>time</code> Time
+  </div>
+  <div class="item">
+    <code>aggregate</code> Aggregate
+  </div>
+  <div class="item">
+    <code>calendar</code> Calendar
+  </div>
+</div>
+
+</div>
+
+<ul class="prop"><li><code>actionFeedback</code> <b>Action feedback:</b> Shows a toast popup when the action has been executed. Can either be a text to show or a JSON object including some of the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/toast.html#toast-parameters">supported parameters</a></li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionVariable</code> <b>Variable:</b> The variable name to set</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
+
+<ul class="prop"><li><code>actionVariableValue</code> <b>Variable Value:</b> The value to set the variable to</li></ul>
+<div class="options">
+  <div class="fullw">Data type: <code>TEXT</code></div>
+</div>
 
 <!-- GENERATED /props -->
 
+### Inherited Properties
+The configuration is passed to the underlying `f7-button` component from Framework7 v5.  All compatible scalar [properties](https://v5.framework7.io/vue/button.html#button-properties) (except functions) not listed above are available for use.
+
 ## Examples
-### Header 
+### Header Image Source Code
+
 <!-- BOOKMARKS to this example -->
 <div id="text">
 <div id="round">
@@ -98,9 +406,10 @@ Action to perform when the element is clicked
 <div id="variable"></div>
 <div id="clearVariable"></div>
 <div id="f7-segemented"></div>
+
 This example code generates the example button image used at the top of this page:
 
-<details><summary>YAML Source Code:</summary>
+::: Click to view the source code:
 
 ```yaml
 uid: oh-button
@@ -229,22 +538,23 @@ slots:
                       width: 200px
 ```
 
-</details>
+:::
 
 ### action: variable
+<!-- BOOKMARKS to this example -->
 <div id="action-variable"></div>
 
-![Coming soon](./img/examplerequired.png)
+![Coming soon](./images/examplerequired.png)
 
 Example required:
-<details><summary>YAML Source Code:</summary>
+
+::: Click to view the source code:
 
 ```yaml
 Source code does here. 
 ```
 
-</details>
-
+:::
 
 ### Community posts
 The following posts contain great examples of the use of this control:
