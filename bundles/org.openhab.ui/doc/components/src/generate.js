@@ -43,57 +43,27 @@ const replaceBetweenComments = (commentTag, text, value) => {
 
 const buildProp = (prop) => {
   let ret = '\n'
-  ret += '<ul class="prop">'
-  ret += '<li><code>' + prop.name + '</code> <b>' + prop.label + ':</b> '
-  if (prop.description) ret += '' + prop.description + '</li>'
-  ret+= '</ul>\n'
- 
-  ret += '<div class="options">\n'
-  ret += '  <div class="fullw">Data type: <code>' + prop.type + '</code>'
+  ret += '::: prop-head\n'
+  ret += '- [`' + prop.name + '`](\#' + prop.name + ') **' + prop.label + '** | Data type: ' + prop.type
+  if (prop.multiple) ret += ' (multiple options are allowed)'
+  ret += '\n'
+  ret += ':::\n'
+  ret += '::: prop-opt\n'
+  if (prop.description) ret += prop.description
+  ret += '\n'
   if (prop.options) {
-    ret += ' using the following options'
-    if (prop.multiple) ret += ' (multiple options are allowed)'
-    ret += ":</div>\n"
     prop.options.forEach((o) => {
-      ret += '  <div class="item">\n'
-      ret += '    <code>' + (o.value || '(empty)') + '</code> ' + o.label + '\n' 
-      ret += '  </div>\n'
-        })
-    ret += '</div>\n'
-    ret += '\n'
-  } else {
-    ret += "</div>\n"
+      ret += '- [`' + (o.value || '(empty)') + '`](\#' + prop.name + '-' + (o.value || 'empty') + ') ' + o.label + '\n'
+    })
   }
-
-  ret += '</div>\n'
+  ret += ':::\n'
   return ret
 }
-
-/* const buildProp = (prop) => {
-  let ret = ''
-
-  ret += '| <a href="#' + prop.name + '">`' + prop.name + '`</a><br>' + prop.type + ' | ' + prop.label + ' | '
-  if (prop.description) {
-    ret += prop.description + ' | '
-  } else {
-    ret += ' | '
-  }
-  if (prop.type === 'BOOLEAN') ret += ' `true`<br>`false`'
-  if (prop.options) {
-    prop.options.forEach((o) => {
-      ret += '<a href="#' + prop.name + '-' + (o.value || '(empty)') + '">`' + (o.value || '(empty)') + '`&nbsp;</a>' + o.label + '<br>'
-    })
-    if (prop.multiple) ret += '\n\n  Multiple options are allowed.\n'
-      ret += ' |\n'
-  } else {
-      ret += ' |\n'
-  }
-  return ret
-} */
 
 const buildProps = (component) => {
   let ret = ''
   const propsWithoutGroup = component.props.parameters.filter((p) => p.groupName === undefined)
+  if(propsWithoutGroup) ret += '\n### General properties / Style\n'
   propsWithoutGroup.forEach((p) => ret += buildProp(p))
   if (component.props.parameterGroups) {
     component.props.parameterGroups.forEach((g) => {
@@ -105,25 +75,6 @@ const buildProps = (component) => {
   }
   return ret
 }
-
-/* const buildProps = (component) => {
-  let ret = '\n'
-  ret += '| `Property name`<br>Data type | Label | Description | <div width=200px>Options</div> |\n'
-  ret += '|:---|:---|:----|:----|\n'
-  const propsWithoutGroup = component.props.parameters.filter((p) => p.groupName === undefined)
-  propsWithoutGroup.forEach((p) => ret += buildProp(p))
-  if (component.props.parameterGroups) {
-    component.props.parameterGroups.forEach((g) => {
-      ret += '\n### ' + g.label + '\n\n'
-      if (g.description) ret += g.description + '\n\n'
-      ret += '| `Property name`<br>Data type | Label | Description | Options |\n'
-      ret += '|:---|:---|:----|:----|\n'
-      const propsInGroup = component.props.parameters.filter((p) => p.groupName === g.name)
-      propsInGroup.forEach((p) => ret += buildProp(p))
-    })
-  }
-  return ret
-} */
 
 const processComponent = (component, name) => {
   const componentType = component.name || name
