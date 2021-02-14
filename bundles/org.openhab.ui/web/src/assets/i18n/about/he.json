@@ -8,7 +8,7 @@
   "about.technicalInformation.userdataFolder": "תיקיית נתוני משתמש",
   "about.technicalInformation.logsFolder": "תיקיית תיעוד",
   "about.technicalInformation.operatingSystem": "מערכת הפעלה",
-  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.javaRuntime": "זמן הריצה של Java",
   "about.technicalInformation.resourceStats": "{nbproc} מעבדים זמינים - {ram} זיכרון זמין",
   "about.technicalInformation.viewDetails": "הצג פרטים",
   "about.appearanceOptions": "ניראות (למכשיר זה בלבד)",
