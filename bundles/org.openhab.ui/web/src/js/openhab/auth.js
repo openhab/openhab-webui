@@ -88,7 +88,7 @@ export function setAccessToken (token, api) {
   if (!token || !api || requireToken !== undefined) return Promise.resolve()
 
   // determine whether the token is required for user operations
-  return api.head('/rest/sitemaps').then((resp) => {
+  return api.get('/rest/sitemaps').then((resp) => {
     requireToken = false
     return Promise.resolve()
   }).catch((err) => {
