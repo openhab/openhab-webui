@@ -538,12 +538,16 @@ slots:
 
 ![Coming soon](./images/examplerequired.png)
 Example required:
+
 ::: details Click to view the source code:
 ```yaml
-Source code does here. 
+<<< @/code/oh-button/header.yml{21-125} 
 ```
 :::
 
 ### Community posts
 The following posts contain great examples of the use of this control:
 * [BoGoB: Big Ol' Grid O' Buttons](https://community.openhab.org/t/bogob-big-ol-grid-o-buttons-is-this-even-possible-yes-yes-it-is/115343/7?u=andymb) - using the `oh-button` and `oh-repeater` objects together with YAML arrays to create large grids of buttons (emulating remote control operation).
+* [OH3 Widget : Four Button List Item Widget](https://community.openhab.org/t/oh3-widget-four-button-list-item-widget/117012?u=andymb) - a four button list item widget to set the sound volume to pne of four preset levels.
+
+<EditPageLink/>
