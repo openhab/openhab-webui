@@ -14,7 +14,7 @@
   "analyzer.series.table.type.line": "Linje",
   "analyzer.series.table.type.area": "Yta",
   "analyzer.series.table.type.heatmap": "Värmekarta",
-  "analyzer.series.table.na": "N/A",
+  "analyzer.series.table.na": "Ej tillämpligt",
   "analyzer.coords": "Koordinater",
   "analyzer.coords.period": "Period",
   "analyzer.coords.period.dynamic": "Dynamisk",
