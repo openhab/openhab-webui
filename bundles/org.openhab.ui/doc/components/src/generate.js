@@ -102,6 +102,10 @@ Object.keys(widgetLibraries).forEach((l) => {
     if (widgetName.indexOf('oh-') < 0) return
     table += '| [`' + widgetName + '`](./' + widgetName + '.html) |  [' + widget.label + '](./' + widgetName + '.html) | ' + (widget.description || '') + ' |\n'
     processComponent(widget, w)
+
+    if (!fs.existsSync('..\\images\\' + widget.name)) fs.mkdirSync('..\\images\\' + widget.name)
+    //if (!fs.existsSync('..\\code\\' + widget.name)) fs.mkdirSync('..\\code\\' + widget.name)
+
   })
   index = index.replace('{' + l + '}', table)
 })
