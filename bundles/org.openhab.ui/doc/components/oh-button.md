@@ -6,72 +6,13 @@ description: Button performing an action
 source: https://github.com/openhab/openhab-webui/edit/main/bundles/org.openhab.ui/doc/components/oh-button.md
 ---
 
-<style>
-  .prop > ul {
-    background-color: rgba(230,72,25,0.3); 
-    border-radius: 5px 5px 0px 0px;
-    list-style-type: none;
-    padding: 5px;
-    margin-bottom: 0px;
-  }
-  .prop > ul > li > a > code {
-    background-color: rgba(255,255,255, 1)
-  }
-  .options {
-    background-color: #eaecef;
-    border-radius: 0px 0px 5px 5px;
-    display: flex;
-    flex-wrap: wrap;
-    padding-left: 5px;
-    margin-bottom: 15px;
-  }
-  .options > ul {
-    list-style-type: none;
-    padding-left: 5px;
-    margin: 0px;
-    columns: 1;
-    column-gap: 0px;
-  }
-  .options > p {
-    width: 100%;
-    box-sizing: border-box;
-    margin: 5px;
-  }
-  .options > p > br {
-    content: '';
-  }
-  .options > p > br::after{
-    content: ' ';
-  }
-  /* 410, 620, 900, 1200 */
-  @media (min-width: 620px) {
-  .options ul {
-    columns: 1;
-    column-gap: 0px;
-    }
-  }
-  @media (min-width: 900px) {
-  .options ul {
-    columns: 2;
-    column-gap: 60px;
-    }
-  }
-  @media (min-width: 1200px) {
-  .options ul {
-    columns: 3;
-    column-gap: 80px;
-    }
-  }
-</style>
-
-
 # oh-button - Button
 
 <!-- GENERATED componentDescription -->
 Button performing an action
 <!-- GENERATED /componentDescription -->
 
-<a href="#header">![oh-button header](./images/oh-button/header.png)</a>
+[![oh-button header](./images/oh-button/header.png)](#header)</a>
 
 [[toc]]
 
@@ -382,6 +323,9 @@ The configuration is passed to the underlying `f7-button` component from Framewo
 There are no slots supported by this control.
 
 ## Examples
+
+<div id="header"></div>
+
 ### Header Image Source Code
 
 <!-- BOOKMARKS to this example -->
@@ -532,22 +476,597 @@ slots:
 ```
 :::
 
-### action: variable
+### action: navigate
 <!-- BOOKMARKS to this example -->
-<div id="action-variable"></div>
+<div id="action-navigate"></div>
+<div id="actionPage"></div>
 
-![Coming soon](./images/examplerequired.png)
-Example required:
+![action navigate](./images/oh-button/action-navigate.png)
 
-::: details Click to view the source code:
-```yaml
-<<< @/code/oh-button/header.yml{21-125} 
+`action: navigate` allows you to navigate to another page (Administration -> Settings -> Pages) within the openHAB application.  The target page is specified with the name of the page in the `actionPage` property.  For example to create a button to take users to the main overview (home) page, set `actionPage: page:overview`.  The value after the `page:` is the page **ID** not the page **Label**.
+
+::: details Click to view the YAML source code:
+``` yaml{26-27}
+uid: oh-button-action-navigate
+tags: []
+timestamp: Feb 15, 2021, 8:32:44 PM
+component: f7-card
+config:
+  title: "oh-button > action: navigate"
+slots:
+  default:
+    - component: f7-block
+      config:
+        class: bog
+        style:
+          display: flex
+          flex-wrap: wrap
+          justify-content: space-between
+          align-content: space-between
+          padding: 20px
+      slots:
+        default:
+          - component: oh-button
+            config:
+              width: 400px
+              iconF7: house_fill
+              text: Home Page
+              outline: true
+              action: navigate
+              actionPage: page:overview
+              style:
+                width: 250px
 ```
 :::
 
-### Community posts
+### action: command
+<!-- BOOKMARKS to this example -->
+<div id="action-command"></div>
+<div id="actionCommand"></div>
+<div id="actionItem"></div>
+
+![action command](./images/oh-button/action-command.png)
+
+`action: command` allows you to send a command `actionCommand` to an item, specified in the `actionItem`. This example shows how to send ON and OFF commands to an item e.g. a light, using two buttons.    
+
+::: details Click to view the YAML source code:
+``` yaml{40-43,50-53}
+uid: oh-button-action-command
+tags: []
+props:
+  parameters:
+    - context: item
+      description: Select the item to use with these buttons.
+      label: Item
+      name: item
+      required: true
+      type: TEXT
+      groupName: general
+  parameterGroups:
+    - name: general
+      label: Display options
+timestamp: Feb 15, 2021, 9:21:10 PM
+component: f7-card
+config:
+  title: "oh-button > action: command"
+  footer: Set the properties to any item that accepts an ON/OFF commands
+slots:
+  default:
+    - component: f7-block
+      config:
+        class: bog
+        style:
+          display: flex
+          flex-wrap: wrap
+          justify-content: space-between
+          align-content: space-between
+          padding: 20px
+      slots:
+        default:
+          - component: f7-segmented
+            slots:
+              default:
+                - component: oh-button
+                  config:
+                    text: On
+                    outline: true
+                    action: command
+                    actionItem: =props.item
+                    actionCommand: ON
+                    active: "=(items[props.item].state === 'ON') ? true : false"
+                    style:
+                      width: 100px
+                - component: oh-button
+                  config:
+                    text: Off
+                    outline: true
+                    action: command
+                    actionItem: =props.item
+                    actionCommand: OFF
+                    active: "=(items[props.item].state === 'OFF') ? true : false"
+                    style:
+                      width: 100px
+```
+:::
+
+### action: toggle
+<!-- BOOKMARKS to this example -->
+<div id="action-toggle"></div>
+<div id="actionAlt"></div>
+
+![action toggle](./images/oh-button/action-toggle.png)
+
+`action: toggle` is used to change any item that supports two states e.g. a lamp that is either ON or OFF or blinds that are OPEN or CLOSED.  Use `actionCommand` and `actionCommandAlt` to specify the commands to switch between. 
+
+If you need the item to change to more than two states e.g. a dimmable light, see the [previous example](#action-command) and specify a button for each of the dimming levels required e.g. 0%, 25%, 50% 75%, 100% or use [`actionOptions`](#action-options) to select the required option.
+
+::: details Click to view the YAML source code:
+``` yaml{37-40}
+uid: oh-button-action-toggle
+tags: []
+props:
+  parameters:
+    - context: item
+      description: Select the item to use with these buttons.
+      label: Item
+      name: item
+      required: true
+      type: TEXT
+      groupName: general
+  parameterGroups:
+    - name: general
+      label: Display options
+timestamp: Feb 15, 2021, 9:55:56 PM
+component: f7-card
+config:
+  title: "oh-button > action: toggle"
+  footer: Set the properties to any item that accepts an ON/OFF commands
+slots:
+  default:
+    - component: f7-block
+      config:
+        class: bog
+        style:
+          display: flex
+          flex-wrap: wrap
+          justify-content: space-between
+          align-content: space-between
+          padding: 20px
+      slots:
+        default:
+          - component: oh-button
+            config:
+              text: Off
+              outline: true
+              action: toggle
+              actionItem: =props.item
+              actionCommand: ON
+              actionCommandAlt: OFF
+              style:
+                width: 100px
+```
+:::
+
+### action: options
+<!-- BOOKMARKS to this exam<<< @/filepath{highlightLines}ple -->
+<div id="action-options"></div>
+<div id="actionOptions"></div>
+
+![action options](./images/oh-button/action-options.png)
+
+`action: options` provides the ability to send a command from a list of options.  Options are displayed at the bottom of the screen when the button is clicked.  Options are specified either in the `actionOptions` property or if this is omitted from the `Command Options` metadata specified on the item.
+
+::: details Click to view the YAML source code:
+``` yaml
+uid: oh-button-action-options
+tags: []
+props:
+  parameters:
+    - context: item
+      description: Select the item to use with these buttons.
+      label: Item
+      name: item
+      required: true
+      type: TEXT
+      groupName: general
+  parameterGroups:
+    - name: general
+      label: Display options
+timestamp: Feb 15, 2021, 11:57:34 PM
+component: f7-card
+config:
+  title: "oh-button > action: options"
+  footer: Set the properties to any item that accepts percentage commands e.g. dimmable light
+slots:
+  default:
+    - component: f7-block
+      config:
+        class: bog
+        style:
+          display: flex
+          flex-wrap: wrap
+          justify-content: left
+          padding: 20px
+      slots:
+        default:
+          - component: f7-segmented
+            slots:
+              default:
+                - component: oh-button
+                  config:
+                    text: Dimming Level
+                    outline: true
+                    action: options
+                    actionOptions: 0=Off, 25=25%, 50=50%, 75=75%, 100=Full
+                    actionItem: =props.item
+                    style:
+                      width: 300px
+```
+:::
+
+### action: rule
+<!-- BOOKMARKS to this example -->
+<div id="action-rule"></div>
+<div id="actionRule"></div>
+
+`action: rule` is used with the `actionRule` property to run a rule (Administration > Settings > Rules).
+
+::: details Click to view the YAML source code:
+``` yaml {5,39-40}
+uid: oh-button-action-rule
+tags: []
+props:
+  parameters:
+    - context: rule
+      description: Click the button to run a rule.
+      label: Rule Name
+      name: rule
+      required: true
+      type: TEXT
+      groupName: general
+  parameterGroups:
+    - name: general
+      label: Display options
+timestamp: Feb 16, 2021, 12:10:45 AM
+component: f7-card
+config:
+  title: "oh-button > action: rule"
+  footer: Set the properties to a rule to run.
+slots:
+  default:
+    - component: f7-block
+      config:
+        class: bog
+        style:
+          display: flex
+          flex-wrap: wrap
+          justify-content: left
+          padding: 20px
+      slots:
+        default:
+          - component: f7-segmented
+            slots:
+              default:
+                - component: oh-button
+                  config:
+                    text: Run automation rule
+                    fill: true
+                    action: rule
+                    actionRule: =props.rule
+                    style:
+                      width: 300px
+```
+:::
+
+### action: popup / action: popover / action: sheet
+<!-- BOOKMARKS to this example -->
+<div id="action-popup"></div>
+<div id="action-popover"></div>
+<div id="action-sheet"></div>
+<div id="actionModal"></div>
+
+The popup, popover and sheet actions provide a way to display user interface pages in specific window formats.  Typically these screens are used to display additional detail or access additional settings that have been omitted for brevity from the parent page. 
+
+Pages should normally be specifically designed for your chosen display method. The popover area favours organisation of widgets in columns, but the sheet window occupies the full width of the lower part of the screen and therefore a horizontal layout is preferable.  
+
+The example code simply displays a copy of your main 'Overview' page (as all users have this page) in each window style.  As this page is rarely designed with this purpose in mind the design challenge is usually clear!   
+
+* `action: popup` is used with the `actionModal` property to open a page as a modal popup window in the centre of the screen.  Clicking on the `Back` button or anywhere else on the screen will close the popup window.  
+* `action: popover` is used with the `actionModal` property to open a page as a modal popup window as a vertical rectangle to the left of the screen (over the menu area, if displayed).
+* `action: sheet` is used with the `actionModal`  property to open a page as a modal popup windows as a horizontal rectangle across the bottom of the screen.
+
+::: details Click to view the YAML source code:
+``` yaml
+uid: oh-button-action-popup-popover-sheet
+tags: []
+timestamp: Feb 16, 2021, 1:01:08 AM
+component: f7-card
+config:
+  title: "oh-button > action: popup | action: popover | action: sheet"
+  footer: Set the properties to any item that accepts percentage commands e.g. dimmable light
+slots:
+  default:
+    - component: f7-block
+      config:
+        class: bog
+        style:
+          display: flex
+          justify-content: left
+          padding: 20px
+      slots:
+        default:
+          - component: oh-button
+            config:
+              text: Open PopUp
+              outline: true
+              action: popup
+              actionModal: page:overview
+              style:
+                width: 300px
+                margin-right: 10px
+          - component: oh-button
+            config:
+              text: Open PopOver
+              outline: true
+              action: popover
+              actionModal: page:overview
+              style:
+                width: 300px
+                margin-right: 10px
+          - component: oh-button
+            config:
+              text: Open Sheet
+              outline: true
+              action: sheet
+              actionModal: page:overview
+              style:
+                width: 300px
+```
+:::
+
+### action: photos
+<!-- BOOKMARKS to this example -->
+<div id="action-photos"></div>
+<div id="actionPhotos"></div>
+<div id="actionPhotoBrowserConfig"></div>
+
+![action photos](./images/oh-button/action-photos.png)
+
+`action: photos` allows you to open a [Framework 7 (v5) Photo Browser object](https://v5.framework7.io/vue/photo-browser.html).  This component displays a collection of photos and video images. Photos can be zoomed and panned.  Typical applications for this control include the display of security camera images or videos.
+
+`actionPhotos` accepts a YAML or JSON object that specifies the URL or HTML and captions for your images and videos. 
+
+``` yaml
+  actionPhotos:
+    - url: http://openhabian:8080/static/photos/image1.jpg
+      caption: Image 1
+    - url: http://openhabian:8080/static/photos/image2.jpg
+    - html: <video src="http://openhabian:8080/static/videos/video1.mp4"></video>
+      caption: Garden Camera
+```
+
+The `actionPhotoBrowserConfig` accepts a YAML or JSON array that specifies the configuration properties for the Photo Browser object.
+
+``` yaml
+  actionPhotoBrowserConfig:
+    exposition: false
+    type: popup
+    theme: dark
+```
+
+::: details Click to view the YAML source code:
+Amend the file names / URL to your image file names before testing!  Nothing will be displayed if the image/video locations are not valid. 
+
+``` yaml
+uid: oh-button-action-photos
+tags: []
+timestamp: Feb 16, 2021, 3:17:05 PM
+component: f7-card
+config:
+  title: "oh-button > action: photos"
+  footer: Click to open the Photo Browser dialogue
+slots:
+  default:
+    - component: f7-block
+      config:
+        class: bog
+        style:
+          display: flex
+          flex-wrap: wrap
+          justify-content: space-between
+          align-content: space-between
+          padding: 20px
+      slots:
+        default:
+          - component: oh-button
+            config:
+              text: Camera 1
+              outline: true
+              action: photos
+              actionItem: =props.item
+              actionPhotos:
+                - url: http://openhabian:8080/static/photos/image1.jpg
+                  caption: Image 1
+                - url: http://openhabian:8080/static/photos/image2.jpg
+                - html: <video src="http://openhabian:8080/static/videos/video1.mp4"></video>
+                  caption: Garden Camera
+              actionPhotoBrowserConfig:
+                exposition: false
+                type: popup
+                theme: dark
+```
+:::
+
+### action: group
+<!-- BOOKMARKS to this example -->
+<div id="action-group"></div>
+<div id="actionGroupPopupItem"></div>
+
+![action-group](./images/oh-button/action-group.png)
+
+`action: group` opens a popup which displays the items that are members of the group specified by the `actionGroupPopupItem`.
+
+::: details Click to view the YAML source code:
+Change `actionGroupPopupItem` property to a value that matches a group defined in your own configuration.
+``` yaml
+uid: oh-button-action-group
+tags: []
+timestamp: Feb 16, 2021, 4:20:16 PM
+component: f7-card
+config:
+  title: "oh-button > action: group"
+  footer: Click to show the items in the Lounge
+slots:
+  default:
+    - component: f7-block
+      config:
+        class: bog
+        style:
+          display: flex
+          flex-wrap: wrap
+          justify-content: space-between
+          align-content: space-between
+          padding: 20px
+      slots:
+        default:
+          - component: oh-button
+            config:
+              text: Lounge
+              outline: true
+              action: group
+              actionGroupPopupItem: gLounge
+```
+:::
+
+### action: analyzer
+<!-- BOOKMARKS to this example -->
+<div id="action-analyzer"></div>
+<div id="actionAnalyzerItems"></div>
+<div id="actionAnalyzerChartType"></div>
+<div id="actionAnalyzerCoordSystem"></div>
+
+![action-analyzer](./images/oh-button/action-analyzer.png) 
+
+`action: analyzer` opens a popup which displays a graph based on the values of the items listed in `actionAnalyzerItems`.  Multiple items can be specified in `actionAnalyzerItems` using the YAML list format i.e. `[item1,item2,item3]`.
+
+`actionAnalyzerChartType` specifies the initial period to analyze. If no value is specified initial period is dynamic. Periods can be adjusted after the graph is displayed, using the standard controls.
+
+`actionAnalyzerCoordSystem` specifies the initial coordinate system of the analyzer. Only time is supported for dynamic periods.
+
+::: warning Beware NULL values
+If your graph does not display any data, check that none of items added to the graph are NULL.  A single NULL item prevents all data from being displayed.
+:::
+
+::: details Click to view the YAML source code:
+Change `actionAnalyzerItems` property to a value that matches an item defined in your own configuration.
+``` yaml
+uid: oh-button-action-analyzer
+tags: []
+timestamp: Feb 16, 2021, 5:37:45 PM
+component: f7-card
+config:
+  title: "oh-button > action: analyzer"
+  footer: Click to analyze ground floor HVAC temperatures
+slots:
+  default:
+    - component: f7-block
+      config:
+        class: bog
+        style:
+          display: flex
+          flex-wrap: wrap
+          justify-content: space-between
+          align-content: space-between
+          padding: 20px
+      slots:
+        default:
+          - component: oh-button
+            config:
+              text: HVAC Ground Floor
+              fill: true
+              action: analyzer
+              actionAnalyzerItems: [ZWaveNode002StellaZThermostaticValve_Sensortemperature, ZWaveNode005StellaZThermostaticValve_Sensortemperature]
+```
+:::
+
+### action: url
+<!-- BOOKMARKS to this example -->
+<div id="action-url"></div>
+<div id="actionUrl"></div>
+<div id="actionUrlSameWindow"></div>
+
+![action-url](./images/oh-button/action-url.png) 
+
+`action: url` navigates to the web page specified in the `actionUrl` property. `actionUrlSameWindow` set to `true` to open in the same window, or `false` to open in a seperate window\tab.
+
+::: details Click to view the YAML source code:
+``` yaml
+uid: oh-button-action-url
+tags: []
+timestamp: Feb 16, 2021, 6:52:30 PM
+component: f7-card
+config:
+  title: "oh-button > action: url"
+  footer: Click to open the specified website
+slots:
+  default:
+    - component: f7-block
+      config:
+        class: bog
+        style:
+          display: flex
+          justify-content: left
+          padding: 20px
+      slots:
+        default:
+          - component: oh-button
+            config:
+              text: OpenHAB Community
+              fill: true
+              action: url
+              actionUrl: https://community.openhab.org/
+              actionUrlSameWindow: false
+              style:
+                width: 300px
+                margin-right: 10px
+          - component: oh-button
+            config:
+              text: Documentation (same window)
+              fill: true
+              action: url
+              actionUrl: https://www.openhab.org/docs/
+              actionUrlSameWindow: treu
+              style:
+                width: 300px
+                margin-right: 10px
+```
+:::
+
+### action: variable
+<!-- BOOKMARKS to this example -->
+<div id="action-variable"></div>
+<div id="actionVariableValue"></div>
+<div id="actionVariable"></div>
+
+<!-- ![action-variable](./images/oh-button/action-variable.png) --> 
+
+`action: variable` creates and/or sets the variable specified in `actionVariable` to the value specified in `actionVariableValue`.  Variables are stored in the `vars` object and can be accessed by other objects using `vars.[your variable name]`.
+
+::: details Click to view the YAML source code:
+``` yaml
+TBA
+```
+:::
+
+## Community posts
 The following posts contain great examples of the use of this control:
-* [BoGoB: Big Ol' Grid O' Buttons](https://community.openhab.org/t/bogob-big-ol-grid-o-buttons-is-this-even-possible-yes-yes-it-is/115343/7?u=andymb) - using the `oh-button` and `oh-repeater` objects together with YAML arrays to create large grids of buttons (emulating remote control operation).
-* [OH3 Widget : Four Button List Item Widget](https://community.openhab.org/t/oh3-widget-four-button-list-item-widget/117012?u=andymb) - a four button list item widget to set the sound volume to pne of four preset levels.
+
+![UI Widget: Keypad](./images/oh-button/keypad.png)
+
+[UI Widget: Keypad](https://community.openhab.org/t/ui-widget-keypad/106820) -  using `action: command` and `action: variable`, this widget will allow users to enter a numerical PIN code (plus * and #) and send a command with the result to a predefined item when pressing the Send button.
+
+![Big Ol' Grid O' Buttons](./images/oh-button/bogob.png)
+
+[BoGoB: Big Ol' Grid O' Buttons](https://community.openhab.org/t/bogob-big-ol-grid-o-buttons-is-this-even-possible-yes-yes-it-is/115343/7) - using the `oh-button` and `oh-repeater` objects together with YAML arrays to create large grids of buttons (emulating remote control operation).
 
 <EditPageLink/>
