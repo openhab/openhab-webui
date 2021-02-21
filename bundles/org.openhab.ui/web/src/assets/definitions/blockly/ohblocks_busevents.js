@@ -45,11 +45,11 @@ export default function defineOHBlocks_BusEvents(f7) {
   }
 
   Blockly.JavaScript['oh_storestates'] = function (block) {
-    var item = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g,'')
+    var item = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
     var variableName = Blockly.JavaScript.valueToCode(block, 'variableName', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
     if (item.indexOf(',') > -1) { // We're handling a list of items
       item = item.replace(/\[/g, '').replace(/]/g, '')
-    } 
+    }
     var code = 'var ' + variableName + ' = events.storeStates(' + item + ');\n'
     return code
   }
@@ -65,10 +65,10 @@ export default function defineOHBlocks_BusEvents(f7) {
       this.setTooltip('')
       this.setHelpUrl('')
     }
-  };
+  }
 
   Blockly.JavaScript['oh_restorestates'] = function (block) {
-    var variableName = Blockly.JavaScript.valueToCode(block, 'variableName', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g,'')
+    var variableName = Blockly.JavaScript.valueToCode(block, 'variableName', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
     var code = 'events.restoreStates(' + variableName + ');\n'
     return code
   }

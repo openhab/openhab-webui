@@ -6,7 +6,7 @@ export default function defineOHBlocks_Ephemeris(f7) {
   Blockly.Blocks['oh_ephemeris_basic'] = {
     init: function() {
       this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([['isWeekend','isWeekend'], ['getBankHolidayName','getBankHolidayName'], ['getNextBankHoliday','getNextBankHoliday'], ['isBankHoliday','isBankHoliday']]), 'type')
+        .appendField(new Blockly.FieldDropdown([['isWeekend', 'isWeekend'], ['getBankHolidayName', 'getBankHolidayName'], ['getNextBankHoliday', 'getNextBankHoliday'], ['isBankHoliday', 'isBankHoliday']]), 'type')
       this.setOutput(true, null)
       this.setColour(230)
       this.setTooltip('')
@@ -21,8 +21,8 @@ export default function defineOHBlocks_Ephemeris(f7) {
     var type = block.getFieldValue('type');
     var code = ephemeris + '.' + type + '()';
     return [code, Blockly.JavaScript.ORDER_NONE];
-  };
-  
+  }
+
   Blockly.Blocks['oh_ephemeris_offset'] = {
     init: function() {
       this.appendValueInput('offset')
@@ -34,7 +34,7 @@ export default function defineOHBlocks_Ephemeris(f7) {
       this.setTooltip('')
       this.setHelpUrl('')
     }
-  };  
+  }
 
   Blockly.JavaScript['oh_ephemeris_offset'] = function (block) {
     const ephemeris = Blockly.JavaScript.provideFunction_(
@@ -44,7 +44,7 @@ export default function defineOHBlocks_Ephemeris(f7) {
     var offsetValue = Blockly.JavaScript.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC)
     var code = ephemeris + '.' + type + '(' + offsetValue + ')'
     return [code, Blockly.JavaScript.ORDER_NONE]
-  };
+  }
 
 
   Blockly.Blocks['oh_Ephemeris_getBankHolidayName'] = {

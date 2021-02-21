@@ -18,14 +18,14 @@ export default function defineOHBlocks_Persistance(f7) {
     }
   }
 
-  Blockly.JavaScript['oh_setpersist'] = function(block) {
+  Blockly.JavaScript['oh_setpersist'] = function (block) {
     var varname = block.getFieldValue('varName')
     var value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
     // TODO: Assemble JavaScript into code variable.
     var code = 'this.' + varname + ' = (this.' + varname + ' === undefined) ? ' + value + ' : this.' + varname + ';\n'
     // TODO: Change ORDER_NONE to the correct strength.
     return code
-  }  
+  }
 
   Blockly.Blocks['oh_getpersist'] = {
     init: function() {
@@ -38,13 +38,13 @@ export default function defineOHBlocks_Persistance(f7) {
       this.setTooltip('');
       this.setHelpUrl('');
     }
-  }  
+  }
 
   Blockly.JavaScript['oh_getpersist'] = function(block) {
     var varName = block.getFieldValue('varName');
     var code = 'this.' + varName;
     return [code, Blockly.JavaScript.ORDER_NONE];
-  };  
+  }
 
   Blockly.Blocks['oh_persistanceLastUpdate'] = {
     init: function () {

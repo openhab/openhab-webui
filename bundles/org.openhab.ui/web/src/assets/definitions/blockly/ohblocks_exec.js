@@ -12,7 +12,7 @@ export default function defineOHBlocks_Exec(f7) {
       this.appendDummyInput()
         .appendField('Timeout')
         .appendField(new Blockly.FieldNumber(60), 'timeout')
-        .appendField('Seconds')        
+        .appendField('Seconds')
       this.setInputsInline(false);
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -54,7 +54,7 @@ export default function defineOHBlocks_Exec(f7) {
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Exec");'])
     const duration = Blockly.JavaScript.provideFunction_(
       'duration',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.Duration");'])  
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.Duration");'])
     var runCommand = block.getFieldValue('cmdExecute').replace(/ /g, '","')
     var timeout = block.getFieldValue('timeout')
     var code = exec + '.executeCommandLine(' + duration + '.ofSeconds(' + timeout + '),"' + runCommand + '")\n'
@@ -84,10 +84,10 @@ export default function defineOHBlocks_Exec(f7) {
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Exec");'])
     const duration = Blockly.JavaScript.provideFunction_(
       'duration',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.Duration");'])  
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.Duration");'])
     var runCommand = block.getFieldValue('cmdExecute').replace(/ /g, '","')
     var timeout = block.getFieldValue('timeout')
     var code = exec + '.executeCommandLine(' + duration + '.ofSeconds(' + timeout + '),"' + runCommand + '")\n'
     return [code, Blockly.JavaScript.ORDER_NONE];
-  }  
+  }
 }

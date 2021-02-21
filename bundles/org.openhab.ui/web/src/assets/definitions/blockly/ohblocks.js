@@ -117,7 +117,7 @@ export default function defineOHBlocks (f7) {
     var code = 'itemRegistry.getItem("' + itemName + '")'
     return [code, 0]
   }
-  
+
   Blockly.Blocks['oh_ping'] = {
     init: function() {
       this.appendValueInput('hostName')

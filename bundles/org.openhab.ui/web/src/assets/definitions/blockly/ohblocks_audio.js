@@ -1,11 +1,11 @@
 import Blockly from 'blockly'
 import { FieldSlider } from '@blockly/field-slider'
 
-export default function defineOHBlocks_Audio(f7, sinks) { 
+export default function defineOHBlocks_Audio(f7, sinks) {
   Blockly.Blocks['audioSlider'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField(new FieldSlider(50), "FIELDNAME")
+        .appendField(new FieldSlider(50), 'FIELDNAME')
       this.setColour(0)
       this.setInputsInline(true)
       this.setOutput(true, null)
@@ -97,10 +97,10 @@ export default function defineOHBlocks_Audio(f7, sinks) {
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
     var fileName = block.getFieldValue('fileName')
-    var volume = block.getFieldValue('volume').replace(/'/g,'')
+    var volume = block.getFieldValue('volume').replace(/'/g, '')
     var code = audio + '.playSound("' + fileName + '", new PercentType(' + volume + '));\n'
     return code
-  };  
+  }
 
   Blockly.Blocks['oh_playmedia_sink'] = {
     init: function () {
@@ -155,11 +155,11 @@ export default function defineOHBlocks_Audio(f7, sinks) {
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
     var fileName = block.getFieldValue('fileName')
     var sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC);
-    var volume = Blockly.JavaScript.valueToCode(block, 'volume', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g,'')
+    var volume = Blockly.JavaScript.valueToCode(block, 'volume', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
     // TODO : handle multiple sinks
     var code = audio + '.playSound("' + sinkName + '","' + fileName + '",new PercentType(' + volume + '));\n'
     return code
-  };  
+  }
 
   Blockly.Blocks['oh_playstream'] = {
     init: function () {
@@ -182,7 +182,7 @@ export default function defineOHBlocks_Audio(f7, sinks) {
     var url = block.getFieldValue('url')
     var code = audio + '.playStream("' + url + '");\n'
     return code;
-  };  
+  }
 
   Blockly.Blocks['oh_playstream_sink'] = {
     init: function() {
@@ -255,5 +255,4 @@ export default function defineOHBlocks_Audio(f7, sinks) {
     var code = sinkName
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
-  // TODO : Handle Voice stuff
 }
