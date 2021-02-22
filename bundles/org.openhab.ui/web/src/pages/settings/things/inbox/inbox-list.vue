@@ -81,7 +81,7 @@
                           @click.exact="(e) => click(e, entry)"
                           :title="entry.label"
                           :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
-                          :footer="entry.thingTypeUID"
+                          :footer="entry.thingUID"
                           :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''"
             >
               <!-- <f7-button icon-f7="add_round" color="blue" slot="after"></f7-button>
