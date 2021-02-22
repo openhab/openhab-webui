@@ -31,7 +31,7 @@
                         media-item
                         :title="entry.label"
                         :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
-                        :footer="entry.thingTypeUID">
+                        :footer="entry.thingUID">
           </f7-list-item>
           <f7-list-button v-show="scanResults.length > 1" title="Add All" @click="approveAll" color="blue"></f7-list-button>
         </f7-list>
