@@ -54,6 +54,10 @@ import i18n from './i18n'
 import Trend from 'vuetrend'
 Vue.use(Trend)
 
+// Import Fulscreen Plugin
+import fullscreen from 'vue-fullscreen'
+Vue.use(fullscreen)
+
 // Extend prototype with the openHAB API interface
 Vue.prototype.$oh = openhab
 

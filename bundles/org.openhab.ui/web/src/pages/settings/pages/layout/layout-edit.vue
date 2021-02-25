@@ -1,16 +1,17 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="layout-editor">
-    <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create layout page' : page.config.label" back-link="Back" no-hairline>
+    <f7-navbar v-if="!(previewMode && page.config.hideNavbar) && !fullscreen" :title="(!ready) ? '' : (createMode) ? 'Create layout page' : page.config.label" back-link="Back" no-hairline>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
       </f7-nav-right>
     </f7-navbar>
-    <f7-toolbar tabbar position="top">
+    <f7-toolbar v-if="!previewMode && !fullscreen" tabbar position="top">
       <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
       <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
     </f7-toolbar>
-    <f7-toolbar bottom class="toolbar-details">
+    <f7-toolbar v-if="!fullscreen" bottom class="toolbar-details">
+      <f7-link v-if="$fullscreen.support" class="fullscreen-link" icon-f7="arrow_up_left_arrow_down_right" text="Fullscreen" @click="toggleFullscreen" />
       <div style="margin-left: auto">
         <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)"></f7-toggle> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
@@ -21,7 +22,7 @@
           <f7-preloader></f7-preloader>
           <div>Loading...</div>
         </f7-block>
-        <f7-block id="page-settings" class="block-narrow" v-if="ready && !previewMode">
+        <f7-block id="page-settings" class="block-narrow" v-if="ready && !(previewMode || fullscreen)">
           <page-settings :page="page" :createMode="createMode" />
         </f7-block>
 
@@ -66,6 +67,8 @@
 .layout-editor
   .page-content
     z-index inherit
+.fullscreen-link > *
+  color var(--f7-toolbar-text-color, var(--f7-bars-text-color))
 </style>
 
 <script>
@@ -110,7 +113,8 @@ export default {
       },
       addFromModelContext: {},
       modelPickerAllowMultiple: true,
-      modelPickerOpened: false
+      modelPickerOpened: false,
+      fullscreen: this.$fullscreen.getState()
     }
   },
   methods: {
@@ -288,6 +292,22 @@ export default {
         this.$f7.dialog.alert(e).open()
         return false
       }
+    },
+    toggleFullscreen () {
+      this.$fullscreen.toggle(document.body, {
+        wrap: false,
+        callback: (fullscreen) => {
+          this.fullscreen = fullscreen
+          if (fullscreen) {
+            this.$f7.panel.get('left').disableVisibleBreakpoint()
+          } else {
+            if (localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') !== 'true') {
+              this.$f7.panel.get('left').enableVisibleBreakpoint()
+            }
+          }
+          this.forceUpdate()
+        }
+      })
     }
   }
 }

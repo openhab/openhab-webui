@@ -1,8 +1,8 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" hide-bars-on-scroll :style="pageStyle">
-    <f7-navbar :back-link="(showBackButton) ? $t('page.navbar.back') : undefined">
+    <f7-navbar v-if="!page.config.hideNavbar" :back-link="(showBackButton) ? $t('page.navbar.back') : undefined">
       <f7-nav-left v-if="!showBackButton">
-        <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
+        <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
       </f7-nav-left>
       <f7-nav-title>{{(ready) ? page.config.label : ''}}</f7-nav-title>
       <f7-nav-right>
@@ -10,8 +10,12 @@
       </f7-nav-right>
     </f7-navbar>
 
+    <f7-link v-else-if="!page.config.hideSidebarIcon" class="sidebar-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
+
+    <f7-link v-if="$fullscreen.support && page.config.showFullscreenIcon && !fullscreen" class="fullscreen-icon" :icon-f7="fullscreen ? 'arrow_down_right_arrow_up_left' : 'arrow_up_left_arrow_down_right'" @click="toggleFullscreen" />
+
     <f7-toolbar tabbar labels bottom v-if="page && pageType === 'tabs' && visibleToCurrentUser">
-      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tab.config.icon" :icon-md="tab.config.icon" :icon-aurora="tab.config.icon" :text="tab.config.title"></f7-link>
+      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tab.config.icon" :icon-md="tab.config.icon" :icon-aurora="tab.config.icon" :text="tab.config.title" />
     </f7-toolbar>
 
     <f7-tabs v-if="page && pageType === 'tabs' && visibleToCurrentUser" :class="{notready: !ready}">
@@ -30,6 +34,14 @@
 <style lang="stylus">
 .notready
   visibility hidden
+.sidebar-icon
+  position fixed
+  top 8px
+  left 8px
+.fullscreen-icon
+  position absolute
+  top 8px
+  right 8px
 </style>
 
 <script>
@@ -47,8 +59,9 @@ export default {
     return {
       currentTab: 0,
       // ready: false,
-      loading: false
+      loading: false,
       // page: {}
+      fullscreen: this.$fullscreen.getState()
     }
   },
   computed: {
@@ -134,6 +147,22 @@ export default {
     tabComponent (tab) {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
       return page.component
+    },
+    toggleFullscreen () {
+      this.$fullscreen.toggle(document.body, {
+        wrap: false,
+        callback: (fullscreen) => {
+          console.log("callback method, fullscreen:", fullscreen)
+          this.fullscreen = fullscreen
+          if (fullscreen) {
+            this.$f7.panel.get('left').disableVisibleBreakpoint()
+          } else {
+            if (localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') !== 'true') {
+              this.$f7.panel.get('left').enableVisibleBreakpoint()
+            }
+          }
+        }
+      })
     }
   }
 }

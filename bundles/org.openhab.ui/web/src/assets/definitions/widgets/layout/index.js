@@ -62,8 +62,8 @@ export function OhGridLayoutDefinition () {
     .paramGroup(pg('appearance', 'Appearance'), [
       pb('hideNavbar', 'Hide Navigation bar', 'Hide navigation bar on top when page is displayed (You can additionally hide the sidebar using its pin icon) (default false)')
         .v((value, configuration, configDescription, parameters) => { return configuration.layoutType === 'fixed' }),
-      pb('hideSidebarButton', 'Hide Sidebar Button', 'Don\'t show a menu icon button in the top left corner when the sidebar is closed (default false)')
+      pb('hideSidebarIcon', 'Hide Sidebar Icon', 'Don\'t show a menu icon in the top left corner when the sidebar is closed (default false)')
         .v((value, configuration, configDescription, parameters) => { return configuration.hideNavbar === true }),
-      pb('showFullscreenButton', 'Show Fullscreen Button', 'Show a fullscreen button on the top right corner (default false)')
+      pb('showFullscreenIcon', 'Show Fullscreen Icon', 'Show a fullscreen icon on the top right corner (default false)')
     ])
 }
