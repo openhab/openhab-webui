@@ -10,6 +10,7 @@
   "setupwizard.location.header1": "Vuoi condividere la posizione della tua casa?",
   "setupwizard.location.header2": "Aiuterà a determinare i dati dipendenti dalla tua posizione come gli orari di alba e tramonto o il meteo.",
   "setupwizard.location.parameterLabel": "Posizione della tua casa",
+  "setupwizard.location.placeholder": "<latitudine>,<longitudine>[,<altitudine>]",
   "setupwizard.location.retrieveFromDevice": "Recupera da questo dispositivo",
   "setupwizard.location.retrieveFromDevice.error": "Errore durante il recupero della posizione corrente",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Spiacente",
