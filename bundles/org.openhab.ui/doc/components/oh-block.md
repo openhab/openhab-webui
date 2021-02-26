@@ -4,13 +4,10 @@ component: oh-block
 label: Layout Grid Block
 description: A block in a grid layout
 source: https://github.com/openhab/openhab-webui/edit/main/bundles/org.openhab.ui/doc/components/oh-block.md
+prev: /docs/ui/components/
 ---
 
 # oh-block - Layout Grid Block
-
-<!-- GENERATED componentDescription -->
-A block in a grid layout
-<!-- GENERATED /componentDescription -->
 
 ![oh-block header](./images/oh-block/header.png)
 
@@ -18,12 +15,18 @@ A block in a grid layout
 
 ## Usage / reference documents
 
-Grids elements provide a way to organize and position other visual components on the page in relation to each other.  Some of the key design concepts are explored [here (print)](https://visme.co/blog/layout-design/) or [here (UI design)](https://material.io/design/layout/responsive-layout-grid.html).  
+Grids elements provide a way to organize and position other visual components on the page in relation to each other.
+Some of the key design concepts are explored [here (print)](https://visme.co/blog/layout-design/) or [here (UI design)](https://material.io/design/layout/responsive-layout-grid.html).  
 
-In openHAB grid is used within [layout pages](../layout-pages.html) to organize and align controls.  Grids can also be used to layout the controls that make up a custom widget.  Both layout pages and individual controls can be made [responsive](/docs/ui/layout-pages.html#designing-responsive-layout-pages)) (their design changes based on the screen size).  A layout that is optimal on a mobile phone screen is often not on a laptop or large monitor. 
+In openHAB grid is used within [layout pages](../layout-pages.html) to organize and align controls.
+Grids can also be used to layout the controls that make up a custom widget.
+Both layout pages and individual controls can be made [responsive](/docs/ui/layout-pages.html#designing-responsive-layout-pages)) (their design changes based on the screen size).
+A layout that is optimal on a mobile phone screen is often not on a laptop or large monitor.
 
 ::: warning Widget design
-`oh-block`, [`oh-grid-row`](./oh-grid-row.html) and [`oh-grid-col`](./oh-grid-col.html) are used for layout page design.  These controls are not suitable when designing custom widgets.  Use the [f7-block](https://v5.framework7.io/vue/block.html), [f7-row](https://v5.framework7.io/vue/grid.html) and [f7-column](https://v5.framework7.io/vue/grid.html) to organize components in custom widget designs.
+`oh-block`, [`oh-grid-row`](./oh-grid-row.html) and [`oh-grid-col`](./oh-grid-col.html) are used for layout page design.
+These controls are not suitable when designing custom widgets.
+Use the [f7-block](https://v5.framework7.io/vue/block.html), [f7-row](https://v5.framework7.io/vue/grid.html) and [f7-column](https://v5.framework7.io/vue/grid.html) to organize components in custom widget designs.
 :::
 
 * Layout pages are discussed within the main documentation [here](/docs/ui/layout-pages.html).
@@ -34,42 +37,51 @@ In openHAB grid is used within [layout pages](../layout-pages.html) to organize 
 ![Layout page code editor](./images/oh-block/oh-block-editor.png)
 
 * These components are based upon the corresponding [Framework 7 (v5) block control](https://v5.framework7.io/docs/block.html).
-* Component styles are applied by the [Framework 7 CSS variables](https://v5.framework7.io/docs/block.html#css-variables).  Not all styles are implemented/available for use in this customised version of the control.  For guidance on how to customise styles see the [CSS Styles](https://openhab.org/docs/ui/building-pages.html#css-variables) section.
+* Component styles are applied by the [Framework 7 CSS variables](https://v5.framework7.io/docs/block.html#css-variables).
+Not all styles are implemented/available for use in this customised version of the control.
+For guidance on how to customise styles see the [CSS Styles](https://openhab.org/docs/ui/building-pages.html#css-variables) section.
 
 ::: tip
-Grid is not a table!  Grid components are virtual containers, so you can not view them or add borders as you would be able to do with a HTML table.
+Grid is not a table!
+Grid components are virtual containers, so you can not view them or add borders as you would be able to do with a HTML table.
 :::
 
 ## Configuration
 
+<!-- DO NOT REMOVE the following comments -->
 <!-- GENERATED props -->
+### General
+<div class="props">
+<PropGroup label="General">
+<PropBlock type="TEXT" name="title" label="Title">
+  <PropDescription>
+    Title of the block, displayed above it
+  </PropDescription>
+</PropBlock>
+</PropGroup>
+</div>
 
-### General properties / Style
-
-::: prop-head
-- [`title`](#title) **Title** | Data type: TEXT
-:::
-::: prop-opt
-Title of the block, displayed above it
-:::
 
 <!-- GENERATED /props -->
 
 ### Inherited Properties
+
 The configuration is passed to the underlying `f7-block` component from Framework7 v5, however there are no compatible scalar properties available, due to the application specific purpose for this control.
 
 ### Slots
-* `Default` hosts all child content to be placed within this container.
-* There are no other slots supported by this control.
+
+#### `default`
+
+Hosts all child content to be placed within this container.
 
 ## Examples
-
-<div id="header"></div>
 
 ### Header Image Source Code
 
 This example code generates the example block and grid image used at the top of this page:
-::: details Click to view the YAML source code:
+
+::: details YAML
+
 ```yaml{4-8}
 config:
   label: testGrid
@@ -115,9 +127,6 @@ masonry: []
 ```
 :::
 
-## Community posts
-The following posts contain great examples of the use of this control:
+## Community Resources
 
 * Got a cool example from the Community pages?  Use the GitHub edit page link to add links to this page!
-
-<EditPageLink/>
