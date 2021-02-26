@@ -30,7 +30,7 @@ const widgetLibraries = {
   }
 }
 
-console.log(widgetLibraries)
+// console.log(widgetLibraries)
 
 let index = fs.readFileSync('./index.md', 'utf8')
 
@@ -42,35 +42,51 @@ const replaceBetweenComments = (commentTag, text, value) => {
 }
 
 const buildProp = (prop) => {
-  let ret = '\n'
-  ret += '::: prop-head\n'
-  ret += '- [`' + prop.name + '`](\#' + prop.name + ') **' + prop.label + '** | Data type: ' + prop.type
-  if (prop.multiple) ret += ' (multiple options are allowed)'
-  ret += '\n'
-  ret += ':::\n'
-  ret += '::: prop-opt\n'
-  if (prop.description) ret += prop.description
-  ret += '\n'
-  if (prop.options) {
-    prop.options.forEach((o) => {
-      ret += '- [`' + (o.value || '(empty)') + '`](\#' + prop.name + '-' + (o.value || 'empty') + ') ' + o.label + '\n'
-    })
+  let ret = ''
+  ret += '<PropBlock type="' + prop.type + '" '
+  if (prop.name) ret += 'name="' + prop.name + '" '
+  if (prop.label) ret += 'label="' + prop.label + '" '
+  if (prop.required) ret += 'required="true" '
+  if (prop.context) ret += 'context="' + prop.context + '" '
+  ret = ret.trim() + '>\n'
+
+  if (prop.description) {
+    ret += '  <PropDescription>\n'
+    ret += '    ' + prop.description + '\n'
+    ret += '  </PropDescription>\n'
   }
-  ret += ':::\n'
+
+  if (prop.options) {
+    ret += '  <PropOptions'
+    if (prop.multiple) ret += ' multiple="true"'
+    ret += '>\n'
+    prop.options.forEach((o) => {
+      ret += '    <PropOption value="' + (o.value || '(empty)') + '" label="' + o.label + '" />\n'
+    })
+    ret +='  </PropOptions>\n'
+  }
+
+  ret += '</PropBlock>\n'
   return ret
 }
 
 const buildProps = (component) => {
   let ret = ''
   const propsWithoutGroup = component.props.parameters.filter((p) => p.groupName === undefined)
-  if(propsWithoutGroup) ret += '\n### General properties / Style\n'
-  propsWithoutGroup.forEach((p) => ret += buildProp(p))
+  if (propsWithoutGroup.length) {
+    ret += '### General\n'
+    ret += '<div class="props">\n<PropGroup label="General">\n'
+    propsWithoutGroup.forEach((p) => ret += buildProp(p))
+    ret += '</PropGroup>\n</div>\n\n'
+  }
   if (component.props.parameterGroups) {
     component.props.parameterGroups.forEach((g) => {
-      ret += '\n### ' + g.label + '\n\n'
-      if (g.description) ret += g.description + '\n\n'
+      ret += '### ' + g.label + '\n'
+      ret += '<div class="props">\n<PropGroup name="' + g.name + '" label="' + g.label + '">\n'
+      if (g.description) ret += '  ' + g.description + '\n'
       const propsInGroup = component.props.parameters.filter((p) => p.groupName === g.name)
       propsInGroup.forEach((p) => ret += buildProp(p))
+      ret += '</PropGroup>\n</div>\n\n'
     })
   }
   return ret
