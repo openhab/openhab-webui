@@ -20,48 +20,48 @@
 <style lang="stylus">
 .oh-grid-item
   // TODO: revise
-  touch-action: none
-  transition: all 0s ease 0s
+  touch-action none
+  transition all 0s ease 0s
 
   .oh-grid-item-content
     width 100%                // use full width and
     height 100%               // height of item
     margin 0                  // without any margin
     box-sizing border-box     // include padding
-    overflow: hidden          // cut content that extends item
-    touch-action: manipulation
+    overflow hidden           // cut content that extends item
+    touch-action manipulation
 
-    &.card                    // apply to card items
+    &.card
       display flex            // use flexbox to distribute card elements
       flex-direction column   // from top to bottom
       .card-content           // with content centered
-        margin-top: auto      // indepentent of presence
-        margin-bottom: auto   // of header or footer
+        margin-top auto       // independent of presence
+        margin-bottom auto    // of header or footer
 
       // oh-image-card
       .oh-image-card
         flex 1
         overflow hidden
         *
-          height: 100%
+          height 100%
 
         .oh-image
-          object-fit: contain
+          object-fit contain
           height calc(100% - 10px)
 
       // oh-swiper-card
       .oh-swiper-slide.editmode
-        min-height: 0
+        min-height 0
 
   .placeholder-widget a
-    height: 100%
-    padding: 0
-    display: flex
+    height 100%
+    padding 0
+    display flex
 
   .vue-resizable-handle       // replace default handle by gray handle
     width 30px
     height 30px
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNnB4IiBoZWlnaHQ9IjZweCIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6I2ZmZmZmZjAwIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA2IDYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0ibTYgNmgtNnYtMS44aDQuMnYtNC4yaDEuOHoiIGZpbGw9IiM4ZThlOTMiLz48L3N2Zz4=')
+    background-image url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNnB4IiBoZWlnaHQ9IjZweCIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6I2ZmZmZmZjAwIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA2IDYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0ibTYgNmgtNnYtMS44aDQuMnYtNC4yaDEuOHoiIGZpbGw9IiM4ZThlOTMiLz48L3N2Zz4=')
     z-index 10                // always on top
     touch-action none
   .configure-item-menu
@@ -78,32 +78,32 @@
       text-align right
   .drag-handle                // show drag handle on upper left corner
     font-size 15px !important
-    width: 30px
-    height: 30px
-    text-align: left
-    position: absolute !important
-    top: 0px
-    left: 0px
-    padding: 2px
-    color: gray
-    z-index: 10
-    touch-action: none
+    width 30px
+    height 30px
+    text-align left
+    position absolute !important
+    top 0px
+    left 0px
+    padding 2px
+    color gray
+    z-index 10
+    touch-action none
   .configure-grid-menu        // show menu icon on upper right corner
-    position: absolute
-    top: 2px
-    right: 2px
+    position absolute
+    top 2px
+    right 2px
     .menu-inner
-      padding: 0px
+      padding 0px
     .menu-inner:after
-      width: 0px
-[class*="item-popover-"]
+      width 0px
+[class*="item-popover-"]      // nicer popover list icons
   --f7-list-item-padding-horizontal 8px
 .md [class*="item-popover-"] .list .item-media
     min-width 28px
 </style>
 
 <script>
-import mixin from '../widget-mixin';
+import mixin from '../widget-mixin'
 import VueGridLayout from 'vue-grid-layout'
 import OhPlaceholderWidget from '../layout/oh-placeholder-widget.vue'
 

@@ -1,5 +1,5 @@
 <template>
-  <div ref="ohGridLayout" class="oh-grid-layout" style="{ 'overflow-x': config.layoutType === 'fixed' ? 'auto' : 'visible' }">
+  <div ref="ohGridLayout" class="oh-grid-layout">
     <template v-if="context.editmode">
       <!-- normal menu -->
       <f7-block v-if="!fullscreen">
@@ -17,9 +17,9 @@
           <f7-icon ios="f7:plus" aurora="f7:plus" md="material:add" />
           <f7-icon ios="f7:xmark" aurora="f7:xmark" md="material:close" />
           <f7-fab-buttons position="top">
-            <f7-fab-button fab-close @click="exitFullscreen" label="Exit Fullscreen"><f7-icon size="20" f7="arrow_down_right_arrow_up_left" /></f7-fab-button>
-            <f7-fab-button fab-close @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')" label="Configure Layout"><f7-icon size="20" f7="gear_alt" /></f7-fab-button>
-            <f7-fab-button fab-close @click="addItem" label="Add Widget"><f7-icon size="20" f7="plus" /></f7-fab-button>
+            <f7-fab-button label="Exit Fullscreen" fab-close @click="exitFullscreen"><f7-icon size="20" f7="arrow_down_right_arrow_up_left" /></f7-fab-button>
+            <f7-fab-button label="Configure Layout" fab-close @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')"><f7-icon size="20" f7="gear_alt" /></f7-fab-button>
+            <f7-fab-button label="Add Widget" fab-close @click="addItem"><f7-icon size="20" f7="plus" /></f7-fab-button>
           </f7-fab-buttons>
         </f7-fab>
       </template>
@@ -69,17 +69,16 @@
   .vue-grid-layout
     margin auto                                             // center grid layout when smaller than current screen
     background-color var(--f7-page-bg-color)                // theme bg (for fullscreen)
-  .fab                                                      // make smaller fabs to not interfere with layouting
+  .fab.fab-right-bottom                                     // make smaller fabs to not interfere with layouting
     margin 0 !important
     --f7-fab-margin 8px
     --f7-fab-size 32px
     --f7-fab-button-size 32px
-    &.fab-right-bottom
-      position: fixed
-.configure-layout-menu
-  .menu-item .menu-item-content .icon                       // nicer menu icons
+    position: fixed
+.configure-layout-menu                                      // nicer menu icons
+  .menu-item .menu-item-content .icon
     font-size calc(var(--f7-menu-font-size) + 2px)
-    margin-left: 4px
+    margin-left 4px
   .menu-inner .menu-item:first-child
     margin-right var(--f7-menu-item-spacing)
 </style>
@@ -132,7 +131,7 @@ export default {
       }
     }
 
-    this.computeLayout();
+    this.computeLayout()
   },
   mounted () {
     this.$nextTick(() => {
@@ -143,6 +142,11 @@ export default {
     this.windowWidth = window.screen.width
     this.windowHeight = window.screen.height
   },
+  beforeDestroy () {
+    if (!this.context.editmode) {
+      window.removeEventListener('resize', this.setDimensions)
+    }
+  },
   methods: {
     isRetina () {
       return window.devicePixelRatio > 1
@@ -152,7 +156,7 @@ export default {
     },
     addItem () {
       // find free spot for new widget
-      var free = true;
+      var free = true
       var x = 0; var y = 0
       if (this.layout.length !== 0) {
         for (y = 0; y < this.maxRows; y++) {
@@ -181,19 +185,14 @@ export default {
       this.computeLayout()
     },
     setDimensions () {
-      // TODO:
-      // handler also gets called for each griditem, with refs undefined (???)
-      // and gets called multiple times on changes, possibly on rendering, fix later
-      if (this.$refs.vueGridLayout && this.$refs.vueGridLayout.$el.clientWidth !== 0) {
-        if (this.config.layoutType === 'fixed') {
-          if (this.config.scale && !this.context.editmode) {
-            this.style.width = this.$el.clientWidth
-            this.style.height = (this.$el.clientWidth * this.screenHeight) / this.screenWidth
-          }
-          this.rowHeight = (this.style.height - this.margin) / this.maxRows - this.margin
-        } else {
-          this.rowHeight = (this.$refs.vueGridLayout.$el.clientWidth - this.margin * this.colNum + 1) / this.colNum
+      if (this.config.layoutType === 'fixed') {
+        if (this.config.scale && !this.context.editmode) {
+          this.style.width = this.$el.clientWidth
+          this.style.height = (this.$el.clientWidth * this.screenHeight) / this.screenWidth
         }
+        this.rowHeight = (this.style.height - this.margin) / this.maxRows - this.margin
+      } else {
+        this.rowHeight = (this.$refs.vueGridLayout.$el.clientWidth - this.margin * this.colNum + 1) / this.colNum
       }
     },
     computeLayout () {
