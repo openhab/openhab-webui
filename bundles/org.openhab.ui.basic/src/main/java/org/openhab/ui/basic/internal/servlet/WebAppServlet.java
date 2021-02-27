@@ -168,7 +168,6 @@ public class WebAppServlet extends BaseServlet {
                 return;
             }
 
-            logger.debug("reading sitemap {}", sitemap.getName());
             if (widgetId == null || widgetId.isEmpty() || widgetId.equals(sitemapName)) {
                 // we are at the homepage, so we render the children of the sitemap root node
                 if (subscriptionId != null) {

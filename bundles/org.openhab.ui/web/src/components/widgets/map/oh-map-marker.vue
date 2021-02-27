@@ -4,8 +4,8 @@
       {{config.label}}
     </l-tooltip>
     <l-icon v-if="icon"
-      :icon-size="[40,40]"
-      :icon-url="icon"
+            :icon-size="[40,40]"
+            :icon-url="icon"
     />
   </l-marker>
 </template>

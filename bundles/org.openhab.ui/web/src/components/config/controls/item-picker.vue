@@ -1,19 +1,19 @@
 <template>
-<ul class="item-picker-container">
-  <f7-list-item :title="title" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect" class="item-picker">
-    <select :name="name" :multiple="multiple" @change="select" :required="required">
-      <option value="" v-if="!multiple"></option>
-      <option v-for="item in items" :value="item.name" :key="item.name" :selected="(multiple) ? Array.isArray(value) && value.indexOf(item.name) >= 0 : value === item.name">
-        {{item.label ? item.label + ' (' + item.name + ')' : item.name}}
-      </option>
-    </select>
-    <f7-button slot="media" icon-f7="list_bullet_indent" @click.native="pickFromModel"></f7-button>
-  </f7-list-item>
-  <!-- for placeholder purposes before items are loaded -->
-  <f7-list-item link v-show="!ready" :title="title">
-    <f7-button slot="media" icon-f7="list_bullet_indent" @click.native="pickFromModel"></f7-button>
-  </f7-list-item>
-</ul>
+  <ul class="item-picker-container">
+    <f7-list-item :title="title" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect" class="item-picker">
+      <select :name="name" :multiple="multiple" @change="select" :required="required">
+        <option value="" v-if="!multiple"></option>
+        <option v-for="item in items" :value="item.name" :key="item.name" :selected="(multiple) ? Array.isArray(value) && value.indexOf(item.name) >= 0 : value === item.name">
+          {{item.label ? item.label + ' (' + item.name + ')' : item.name}}
+        </option>
+      </select>
+      <f7-button slot="media" icon-f7="list_bullet_indent" @click.native="pickFromModel"></f7-button>
+    </f7-list-item>
+    <!-- for placeholder purposes before items are loaded -->
+    <f7-list-item link v-show="!ready" :title="title">
+      <f7-button slot="media" icon-f7="list_bullet_indent" @click.native="pickFromModel"></f7-button>
+    </f7-list-item>
+  </ul>
 </template>
 
 <style lang="stylus">

@@ -8,7 +8,7 @@
         type="text"
         :value="metadata.value"
         @input="(ev) => metadata.value = ev.target.value"
-        >
+      >
       </f7-list-input>
     </f7-list>
     <f7-block-footer class="param-description padding-left">

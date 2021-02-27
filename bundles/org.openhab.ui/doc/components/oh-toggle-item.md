@@ -72,7 +72,7 @@ Display a toggle switch in a list
 </PropBlock>
 <PropBlock type="TEXT" name="color" label="Color">
   <PropDescription>
-    Color of the control
+    Color of the control (supported values: red, green, blue, pink, yellow, orange, purple, deeppurple, lightblue, teal, lime, deeporange, gray, white, black)
   </PropDescription>
 </PropBlock>
 </PropGroup>

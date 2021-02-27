@@ -64,7 +64,7 @@ export default {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
-    },   
+    },
     keyDown (ev) {
       if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey)) {
         this.save()
@@ -72,7 +72,7 @@ export default {
         ev.preventDefault()
       }
     }
-  }, 
+  },
   created () {
     this.$oh.api.get('/rest/services/' + this.serviceId).then(data => {
       this.service = data

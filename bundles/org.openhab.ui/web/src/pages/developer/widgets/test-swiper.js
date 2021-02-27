@@ -25,7 +25,7 @@ export default {
       keyboard: {
         enabled: true,
         onlyInViewport: false
-      }      
+      }
     }
   },
   slots: {

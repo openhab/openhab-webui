@@ -15,10 +15,10 @@
         <f7-col class="margin-top">
           <f7-list inline-labels no-hairlines-md class="no-margin">
             <f7-list-input type="text" :placeholder="moduleTitleSuggestion" :value="ruleModule.label" required
-                          @input="ruleModule.label = $event.target.value" clear-button>
+                           @input="ruleModule.label = $event.target.value" clear-button>
             </f7-list-input>
             <f7-list-input type="text" :placeholder="moduleDescriptionSuggestion" :value="ruleModule.description"
-                          @input="ruleModule.description = $event.target.value" clear-button>
+                           @input="ruleModule.description = $event.target.value" clear-button>
             </f7-list-input>
           </f7-list>
         </f7-col>
@@ -30,10 +30,10 @@
             <ul v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope">
               <f7-list-item divider :title="scope" />
               <f7-list-item radio v-for="moduleType in mt"
-                :value="moduleType.uid"
-                @change="setModuleType(moduleType)"
-                :checked="ruleModule.type === moduleType.uid"
-                :key="moduleType.uid" :title="moduleType.label" name="module-type"></f7-list-item>
+                            :value="moduleType.uid"
+                            @change="setModuleType(moduleType)"
+                            :checked="ruleModule.type === moduleType.uid"
+                            :key="moduleType.uid" :title="moduleType.label" name="module-type"></f7-list-item>
             </ul>
           </f7-list>
           <trigger-module-wizard v-else-if="!advancedTypePicker && currentSection === 'triggers'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" />
@@ -43,10 +43,10 @@
         <f7-list v-if="ruleModule.type && (!ruleModule.new || advancedTypePicker)">
           <f7-list-item :title="sectionLabels[currentSection][0]" ref="ruleModuleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
             <select name="ruleModuleType"
-              @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)">
+                    @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)">
               <optgroup v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope" :label="scope">
                 <option v-for="moduleType in mt"
-                  :value="moduleType.uid" :key="moduleType.uid" :selected="currentRuleModuleType.uid === moduleType.uid">
+                        :value="moduleType.uid" :key="moduleType.uid" :selected="currentRuleModuleType.uid === moduleType.uid">
                   {{moduleType.label}}
                 </option>
               </optgroup>
@@ -56,11 +56,11 @@
         <f7-block-title v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">Configuration</f7-block-title>
         <f7-col v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)">
           <config-sheet :key="currentSection + ruleModule.id"
-            ref="parameters"
-            :parameterGroups="[]"
-            :parameters="currentRuleModuleType.configDescriptions"
-            :configuration="ruleModule.configuration"
-            @updated="dirty = true"
+                        ref="parameters"
+                        :parameterGroups="[]"
+                        :parameters="currentRuleModuleType.configDescriptions"
+                        :configuration="ruleModule.configuration"
+                        @updated="dirty = true"
           />
         </f7-col>
       </f7-block>

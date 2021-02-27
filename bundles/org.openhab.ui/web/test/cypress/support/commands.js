@@ -26,9 +26,9 @@ Cypress.Commands.add('restoreLocalStorage', () => {
 })
 
 Cypress.Commands.add('testRoute', (route) => {
-    cy.location().should((loc) => {
-      expect(loc.hash).to.contain(route)
-    })
+  cy.location().should((loc) => {
+    expect(loc.hash).to.contain(route)
+  })
 })
 
 // Cypress.Commands.add('loadStore', () => {});

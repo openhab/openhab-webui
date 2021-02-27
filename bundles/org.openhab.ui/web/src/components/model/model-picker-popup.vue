@@ -1,6 +1,6 @@
 <template>
   <f7-popup ref="modelPicker" class="modelpicker-popup" close-on-escape
-    @popup:open="onOpen" @popup:close="onClose">
+            @popup:open="onOpen" @popup:close="onClose">
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
@@ -33,7 +33,7 @@
       </f7-toolbar>
       <f7-block strong class="no-padding" v-if="ready">
         <model-treeview class="model-picker-treeview" :root-nodes="rootNodes"
-          :selected-item="selectedItem" @selected="selectItem" @checked="checkItem" />
+                        :selected-item="selectedItem" @selected="selectItem" @checked="checkItem" />
       </f7-block>
       <f7-block v-else-if="!ready" class="text-align-center">
         <f7-preloader></f7-preloader>

@@ -35,7 +35,7 @@ Toggle control, allows to switch on or off
 </PropBlock>
 <PropBlock type="TEXT" name="color" label="Color">
   <PropDescription>
-    Color of the control
+    Color of the control (supported values: red, green, blue, pink, yellow, orange, purple, deeppurple, lightblue, teal, lime, deeporange, gray, white, black)
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="variable" label="Variable">

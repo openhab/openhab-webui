@@ -2,12 +2,12 @@
   <f7-page name="apiexplorer" @page:afterin="onPageAfterIn">
     <f7-navbar title="API Explorer" back-link="Developer Tools" back-link-url="/developer/" back-link-force>
     </f7-navbar>
-  <f7-block>
-    <f7-col>
-      <f7-card id="swaggerUi">
-      </f7-card>
-    </f7-col>
-  </f7-block>
+    <f7-block>
+      <f7-col>
+        <f7-card id="swaggerUi">
+        </f7-card>
+      </f7-col>
+    </f7-block>
   </f7-page>
 </template>
 

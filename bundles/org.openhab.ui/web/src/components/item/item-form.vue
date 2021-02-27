@@ -4,11 +4,11 @@
       <f7-list-input v-if="!enableName" label="Name" type="text" placeholder="Name" :value="item.name" disabled>
       </f7-list-input>
       <f7-list-input v-else label="Name" type="text" placeholder="Name" :value="item.name"
-                      @input="item.name = $event.target.value" clear-button
-                      required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only">
+                     @input="item.name = $event.target.value" clear-button
+                     required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only">
       </f7-list-input>
       <f7-list-input label="Label" type="text" placeholder="Label" :value="item.label"
-                      @input="item.label = $event.target.value" clear-button>
+                     @input="item.label = $event.target.value" clear-button>
       </f7-list-input>
       <f7-list-item v-if="item.type && !hideType" title="Type" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
         <select name="select-type" @change="item.type = $event.target.value">
@@ -21,7 +21,7 @@
         </select>
       </f7-list-item>
       <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
-                      @input="item.category = $event.target.value" clear-button>
+                     @input="item.category = $event.target.value" clear-button>
         <div slot="root-end" style="margin-left: calc(35% + 8px)">
           <oh-icon :icon="item.category" height="32" width="32" />
         </div>

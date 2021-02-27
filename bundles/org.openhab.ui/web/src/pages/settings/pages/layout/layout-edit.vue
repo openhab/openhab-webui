@@ -26,8 +26,8 @@
         </f7-block>
 
         <oh-layout-page class="layout-page" v-if="ready" :context="context" :key="pageKey"
-          @add-block="addBlock"
-          @add-masonry="addMasonry"
+                        @add-block="addBlock"
+                        @add-masonry="addMasonry"
         />
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">

@@ -12,7 +12,7 @@
         placeholder="UNDEF if unset"
         :value="parsedAction.value"
         @blur="(evt) => updateActionValue(evt.target.value)"
-        />
+      />
     </f7-list>
     <f7-block-footer class="param-description padding-left">
       <small>After a different command or state update is received, perform the chosen action when the duration specified below has passed. The timer is reset if another state update or command is received before it expires.</small>

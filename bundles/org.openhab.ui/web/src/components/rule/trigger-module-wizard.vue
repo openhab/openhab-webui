@@ -53,7 +53,7 @@
         placeholder="Any"
         :value="currentModule.configuration.command"
         @blur="(evt) => $set(currentModule.configuration, 'command', evt.target.value)"
-        />
+      />
       <f7-list-input
         v-if="itemEventType === 'updated' || itemEventType === 'memberUpdated'"
         label="to state"
@@ -62,7 +62,7 @@
         placeholder="Any"
         :value="currentModule.configuration.state"
         @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)"
-        />
+      />
       <f7-list-input
         v-if="itemEventType === 'changed' || itemEventType === 'memberChanged'"
         label="from state"
@@ -71,7 +71,7 @@
         placeholder="Any"
         :value="currentModule.configuration.previousState"
         @blur="(evt) => $set(currentModule.configuration, 'previousState', evt.target.value)"
-        />
+      />
       <f7-list-input
         v-if="itemEventType === 'changed' || itemEventType === 'memberChanged'"
         label="to state"
@@ -80,15 +80,15 @@
         placeholder="Any"
         :value="currentModule.configuration.state"
         @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)"
-        />
+      />
     </f7-list>
     <f7-list v-if="(itemEventType === 'command' || itemEventType === 'memberCommand') && commandSuggestions.length">
       <f7-list-item radio :checked="currentModule.configuration.command === suggestion.command" v-for="suggestion in commandSuggestions" :key="suggestion.command"
-        :title="suggestion.label" @click="$set(currentModule.configuration, 'command', suggestion.command)" />
+                    :title="suggestion.label" @click="$set(currentModule.configuration, 'command', suggestion.command)" />
     </f7-list>
     <f7-list v-else-if="stateSuggestions.length">
       <f7-list-item radio :checked="currentModule.configuration.state === suggestion.value" v-for="suggestion in stateSuggestions" :key="suggestion.value"
-        :title="suggestion.label" @click="$set(currentModule.configuration, 'state', suggestion.value)" />
+                    :title="suggestion.label" @click="$set(currentModule.configuration, 'state', suggestion.value)" />
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'thing'">
@@ -109,8 +109,8 @@
         smart-select :smart-select-params="{ view: $f7.view.main, openIn: 'popover' }">
         <select name="thingStatus" required @change="(evt) => $set(currentModule.configuration, 'status', evt.target.value)">
           <option v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'status').options]"
-            :value="status.value" :key="status.value"
-            :selected="currentModule.configuration.status === status.value">
+                  :value="status.value" :key="status.value"
+                  :selected="currentModule.configuration.status === status.value">
             {{status.label}}
           </option>
         </select>
@@ -121,8 +121,8 @@
         smart-select :smart-select-params="{ view: $f7.view.main, openIn: 'popover' }">
         <select name="thingStatus" required @change="(evt) => $set(currentModule.configuration, 'previousStatus', evt.target.value)">
           <option v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'previousStatus').options]"
-            :value="status.value" :key="status.value"
-            :selected="currentModule.configuration.previousStatus === status.value">
+                  :value="status.value" :key="status.value"
+                  :selected="currentModule.configuration.previousStatus === status.value">
             {{status.label}}
           </option>
         </select>
@@ -133,8 +133,8 @@
         smart-select :smart-select-params="{ view: $f7.view.main, openIn: 'popover' }">
         <select name="thingStatus" required @change="(evt) => $set(currentModule.configuration, 'status', evt.target.value)">
           <option v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'status').options]"
-            :value="status.value" :key="status.value"
-            :selected="currentModule.configuration.status === status.value">
+                  :value="status.value" :key="status.value"
+                  :selected="currentModule.configuration.status === status.value">
             {{status.label}}
           </option>
         </select>
@@ -152,7 +152,7 @@
         placeholder="Any"
         :value="currentModule.configuration.event"
         @blur="(evt) => $set(currentModule.configuration, 'event', evt.target.value)"
-        />
+      />
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'time'">
@@ -161,10 +161,10 @@
       <f7-list-item radio :checked="timeEventType === 'timeOfDay'" name="timeEventType" title="at a fixed time of the day" @click="updateTimeEventType('timeOfDay')" />
     </f7-list>
     <config-sheet v-if="currentModuleType" :key="currentSection + currentModule.id"
-      :parameterGroups="[]"
-      :parameters="currentModuleType.configDescriptions"
-      :configuration="currentModule.configuration"
-      @updated="dirty = true"
+                  :parameterGroups="[]"
+                  :parameters="currentModuleType.configDescriptions"
+                  :configuration="currentModule.configuration"
+                  @updated="dirty = true"
     />
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'system'">
@@ -173,10 +173,10 @@
     </f7-list>
     <f7-block-footer class="padding-horizontal margin-vertical">and this start level has been reached:</f7-block-footer>
     <config-sheet v-if="currentModuleType" :key="currentSection + currentModule.id"
-      :parameterGroups="[]"
-      :parameters="currentModuleType.configDescriptions"
-      :configuration="currentModule.configuration"
-      @updated="dirty = true"
+                  :parameterGroups="[]"
+                  :parameters="currentModuleType.configDescriptions"
+                  :configuration="currentModule.configuration"
+                  @updated="dirty = true"
     />
   </f7-block>
 </template>

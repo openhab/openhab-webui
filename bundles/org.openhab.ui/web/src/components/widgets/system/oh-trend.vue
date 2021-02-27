@@ -47,10 +47,10 @@ export default {
       return this.$oh.api.get('/rest/persistence/items/' + this.config.trendItem).then((resp) => {
         if (resp.data && resp.data.length) {
           let data = []
-          for (let i = 0; i < resp.data.length; i += sampling) {
+          for (let i = resp.data.length - 1; i >= 0; i -= sampling) {
             data.push(parseFloat(resp.data[i].state))
           }
-          this.trendData = data
+          this.trendData = data.reverse()
           this.showTrend = true
         }
       })

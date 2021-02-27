@@ -3,7 +3,7 @@
     <f7-navbar title="Pages" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-        :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -69,10 +69,10 @@
           </f7-list-group>
         </f7-list>
         <f7-list v-else
-          v-show="pages.length > 0"
-          class="searchbar-found col pages-list"
-          ref="pagesList"
-          :contacts-list="groupBy === 'alphabetical'" media-list>
+                 v-show="pages.length > 0"
+                 class="searchbar-found col pages-list"
+                 ref="pagesList"
+                 :contacts-list="groupBy === 'alphabetical'" media-list>
           <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
             <f7-list-item v-if="pagesWithInitial.length" :title="initial" group-title></f7-list-item>
             <f7-list-item
@@ -93,7 +93,7 @@
             >
               <div slot="subtitle">
                 <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
-                  <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
+                  <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill"></f7-icon>
                 </f7-chip>
                 <f7-chip v-for="userrole in page.config.visibleTo || []" :key="userrole" :text="userrole" media-bg-color="green" style="margin-right: 6px">
                   <f7-icon slot="media" f7="person_crop_circle_fill_badge_checkmark"></f7-icon>

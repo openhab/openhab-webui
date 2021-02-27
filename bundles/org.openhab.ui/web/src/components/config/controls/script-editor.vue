@@ -235,7 +235,7 @@ export default {
         extraKeys = {
           'Ctrl-Space': function (cm) { server.complete(cm) },
           'Ctrl-Q': function (cm) { server.showDocs(cm) },
-          "'.'": function (cm) {
+          '\'.\'': function (cm) {
             setTimeout(function () { server.complete(cm) }, 100)
             return _CodeMirror.Pass // tell CodeMirror we didn't handle the key
           }
@@ -250,8 +250,8 @@ export default {
         }
         extraKeys = {
           'Ctrl-Space': 'autocomplete',
-          "'.'": autocomplete,
-          "'='": autocomplete,
+          '\'.\'': autocomplete,
+          '\'=\'': autocomplete,
           'Space': autocomplete
         }
         cm.state.$oh = this.$oh

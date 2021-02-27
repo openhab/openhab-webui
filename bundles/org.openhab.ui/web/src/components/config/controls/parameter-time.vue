@@ -1,17 +1,17 @@
 <template>
   <ul>
-      <f7-list-input
-        ref="input"
-        :floating-label="$theme.md"
-        :label="configDescription.label"
-        :name="configDescription.name"
-        :value="value"
-        :required="configDescription.required" validate
-        :clear-button="!configDescription.required"
-        @input="updateValue" />
-        <div slot="content-end" class="display-flex justify-content-center">
-          <div ref="picker"></div>
-        </div>
+    <f7-list-input
+      ref="input"
+      :floating-label="$theme.md"
+      :label="configDescription.label"
+      :name="configDescription.name"
+      :value="value"
+      :required="configDescription.required" validate
+      :clear-button="!configDescription.required"
+      @input="updateValue" />
+    <div slot="content-end" class="display-flex justify-content-center">
+      <div ref="picker"></div>
+    </div>
   </ul>
 </template>
 

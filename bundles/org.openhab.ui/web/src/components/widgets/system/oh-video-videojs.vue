@@ -1,7 +1,7 @@
 <template>
-    <video ref="videoPlayer" class="video-js vjs-fluid">
-      Sorry, your browser doesn't support embedded videos.
-    </video>
+  <video ref="videoPlayer" class="video-js vjs-fluid">
+    Sorry, your browser doesn't support embedded videos.
+  </video>
 </template>
 
 <script>

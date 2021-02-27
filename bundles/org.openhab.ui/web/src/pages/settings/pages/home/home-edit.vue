@@ -48,15 +48,15 @@
             <div class="display-block padding">
               <div class="no-padding float-right">
                 <f7-button @click="showCardControls = !showCardControls" small outline :fill="showCardControls" sortable-toggle=".sortable" style="margin-top: -3px; margin-right: 5px"
-                  color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">&nbsp;Reorder</f7-button>
+                           color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">&nbsp;Reorder</f7-button>
               </div>
             </div>
 
             <f7-list media-list class="homecards-list" sortable :key="'cards-' + currentModelTab + cardListId" @sortable:sort="reorderCard">
               <f7-list-item media-item :link="(showCardControls) ? undefined : ''"
-                @click.native="(ev) => cardClicked(ev, card, idx)"
-                v-for="(card, idx) in cardGroups(currentModelTab, page).flat()" :key="idx"
-                :title="card.separator || card.defaultTitle" :footer="(card.separator) ? '(separator)' : card.key">
+                            @click.native="(ev) => cardClicked(ev, card, idx)"
+                            v-for="(card, idx) in cardGroups(currentModelTab, page).flat()" :key="idx"
+                            :title="card.separator || card.defaultTitle" :footer="(card.separator) ? '(separator)' : card.key">
                 <f7-menu slot="content-start" class="configure-layout-menu">
                   <f7-menu-item icon-f7="list_bullet" dropdown>
                     <f7-menu-dropdown>

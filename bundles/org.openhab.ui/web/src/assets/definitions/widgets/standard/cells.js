@@ -11,7 +11,7 @@ export const CellParameters = () => [
   pt('title', 'Title', 'Title of the cell'),
   pt('subtitle', 'Subtitle', 'Subtitle of the cell'),
   pt('footer', 'Footer', 'Footer of the cell'),
-  pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>) or <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'),
+  pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>) or <code>material:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>)'),
   pt('color', 'Highlight Color', 'Color to use when highlighted'),
   pt('on', '"On" expression', 'Expression to determine when the card should be highlighted. If blank, determine automatically from the primary bound item if applicable.').a()
 ]
@@ -29,7 +29,7 @@ export const OhLabelCellDefinition = () => new WidgetDefinition('oh-label-cell',
   .paramGroup(CellParameterGroup(), CellParameters())
   .paramGroup(pg('label', 'Label'), [
     pi('item', 'Item', 'Item to display'),
-    pt('label', 'Label', 'Display this text (or expression result) instead of the item\'s state'),
+    pt('label', 'Label', 'Display this text (or expression result) instead of the item\'s state')
   ])
   .paramGroup(actionGroup(), actionParams())
   .paramGroup(TrendLineParameterGroup(), TrendLineParameters())

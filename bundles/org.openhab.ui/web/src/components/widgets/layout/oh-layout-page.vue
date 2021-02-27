@@ -1,10 +1,10 @@
 <template>
   <div class="margin-top">
     <oh-block v-for="(component, idx) in context.component.slots.default"
-      :key="idx"
-      :context="childContext(component)"
-      v-on="$listeners"
-      style="z-index: 5000 !important"
+              :key="idx"
+              :context="childContext(component)"
+              v-on="$listeners"
+              style="z-index: 5000 !important"
     ></oh-block>
     <div v-if="context.editmode">
       <f7-block>

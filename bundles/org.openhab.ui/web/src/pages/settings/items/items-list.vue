@@ -3,7 +3,7 @@
     <f7-navbar title="Items" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-        :text="($theme.ios) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+                 :text="($theme.ios) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
       </f7-nav-right>
       <!-- <f7-nav-right>
         <f7-link
@@ -70,11 +70,11 @@
         <f7-list-group v-for="(itemsWithInitial, initial) in indexedItems" :key="initial">
           <f7-list-item v-if="itemsWithInitial.length" :title="initial" group-title></f7-list-item>
           <f7-list-item v-for="item in itemsWithInitial" :checkbox="showCheckboxes" :key="item.name"
-              media-item
-              :link="showCheckboxes ? null : item.name"
-              :title="(item.label) ? item.label : item.name"
-              :subtitle="(item.label) ? item.name : ''"
-              :after="item.type"
+                        media-item
+                        :link="showCheckboxes ? null : item.name"
+                        :title="(item.label) ? item.label : item.name"
+                        :subtitle="(item.label) ? item.name : ''"
+                        :after="item.type"
           >
           </f7-list-item>
         </f7-list-group>

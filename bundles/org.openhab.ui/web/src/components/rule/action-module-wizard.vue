@@ -48,7 +48,7 @@
         type="text"
         :value="currentModule.configuration.command"
         @blur="(evt) => $set(currentModule.configuration, 'command', evt.target.value)"
-        />
+      />
       <f7-list-input
         v-else-if="itemEventType === 'update'"
         label="to state"
@@ -56,11 +56,11 @@
         type="text"
         :value="currentModule.configuration.state"
         @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)"
-        />
+      />
     </f7-list>
     <f7-list v-if="itemEventType === 'command' && commandSuggestions.length">
       <f7-list-item radio :checked="currentModule.configuration.command === suggestion.command" v-for="suggestion in commandSuggestions" :key="suggestion.command"
-        :title="suggestion.label" @click="$set(currentModule.configuration, 'command', suggestion.command)" />
+                    :title="suggestion.label" @click="$set(currentModule.configuration, 'command', suggestion.command)" />
     </f7-list>
     <!-- <f7-block v-if="itemEventType === 'command' && currentItem && (currentItem.type === 'Dimmer' || currentItem.type === 'Rollershutter' || (currentItem.type === 'Number' && currentItem.stateDescription && currentItem.stateDescription.minimum !== undefined))">
       <f7-range :value="currentModule.configuration.command" @range:changed="(val) => $set(currentModule.configuration, 'command', val)"
@@ -71,18 +71,18 @@
     </f7-block> -->
     <f7-list v-if="itemEventType === 'command' && currentItem && currentItem.type === 'Color'" media-list>
       <f7-list-input media-item type="colorpicker" label="Pick a color" :color-picker-params="{
-          targetEl: '#color-picker-value',
-          targetElSetBackgroundColor: true,
-          openIn: 'auto',
-          modules: ['hsb-sliders', 'wheel', 'palette'],
-          sliderValue: true,
-          sliderValueEditable: true,
-          sliderLabel: true,
-          formatValue: colorToCommand
-        }"
-        :value="commandToColor()"
-        @change="updateColorCommand"
-        >
+                       targetEl: '#color-picker-value',
+                       targetElSetBackgroundColor: true,
+                       openIn: 'auto',
+                       modules: ['hsb-sliders', 'wheel', 'palette'],
+                       sliderValue: true,
+                       sliderValueEditable: true,
+                       sliderLabel: true,
+                       formatValue: colorToCommand
+                     }"
+                     :value="commandToColor()"
+                     @change="updateColorCommand"
+      >
         <i slot="media" style="width: 32px; height: 32px" class="icon demo-list-icon" id="color-picker-value"></i>
       </f7-list-input>
     </f7-list>
@@ -91,16 +91,16 @@
     <f7-block-title class="padding-horizontal">Run a script</f7-block-title>
     <f7-list media-list>
       <f7-list-item media-item
-        title="Design with Blockly"
-        footer="A beginner-friendly way to build scripts visually by assembling blocks"
-        link="" @click="scriptLanguagePicked('blockly')">
+                    title="Design with Blockly"
+                    footer="A beginner-friendly way to build scripts visually by assembling blocks"
+                    link="" @click="scriptLanguagePicked('blockly')">
         <img src="res/img/blockly.svg" height="32" width="32" slot="media" />
       </f7-list-item>
     </f7-list>
     <f7-block-footer class="padding-horizontal margin-vertical">or choose the scripting language:</f7-block-footer>
     <f7-list media-list>
       <f7-list-item media-item v-for="language in languages" :key="language.contentType"
-        :title="language.name" :after="language.version" :footer="language.contentType" link="" @click="scriptLanguagePicked(language.contentType)">
+                    :title="language.name" :after="language.version" :footer="language.contentType" link="" @click="scriptLanguagePicked(language.contentType)">
         <span slot="media" class="item-initial">{{language.name[0]}}</span>
       </f7-list-item>
     </f7-list>
@@ -112,10 +112,10 @@
       <f7-list-item radio :checked="rulesEventType === 'enable'" name="rulesEventType" title="enable or disable these rule(s)" @click="updateRulesEventType('enable')" />
     </f7-list>
     <config-sheet v-if="currentModuleType" :key="currentModule.id"
-      :parameterGroups="[]"
-      :parameters="currentModuleType.configDescriptions"
-      :configuration="currentModule.configuration"
-      @updated="dirty = true"
+                  :parameterGroups="[]"
+                  :parameters="currentModuleType.configDescriptions"
+                  :configuration="currentModule.configuration"
+                  @updated="dirty = true"
     />
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'media'">
@@ -124,10 +124,10 @@
       <f7-list-item radio :checked="mediaEventType === 'play'" name="MediaEventType" title="play an audio file" @click="updateMediaEventType('play')" />
     </f7-list>
     <config-sheet v-if="currentModuleType" :key="currentModule.id"
-      :parameterGroups="[]"
-      :parameters="currentModuleType.configDescriptions"
-      :configuration="currentModule.configuration"
-      @updated="dirty = true"
+                  :parameterGroups="[]"
+                  :parameters="currentModuleType.configDescriptions"
+                  :configuration="currentModule.configuration"
+                  @updated="dirty = true"
     />
   </f7-block>
 </template>

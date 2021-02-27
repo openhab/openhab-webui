@@ -3,7 +3,7 @@
     <f7-navbar title="Inbox" back-link="Things" back-link-url="/settings/things/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-        :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -43,9 +43,9 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title><span v-if="ready">{{inboxCount}} entries</span>
-        <div style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
-          <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label> <f7-checkbox :checked="showIgnored" @change="toggleIgnored"></f7-checkbox>
-        </div>
+          <div style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
+            <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label> <f7-checkbox :checked="showIgnored" @change="toggleIgnored"></f7-checkbox>
+          </div>
         </f7-block-title>
         <div class="padding-left padding-right searchbar-found" v-show="!ready || inboxCount > 0">
           <f7-segmented strong tag="p">
@@ -71,18 +71,18 @@
           <f7-list-group v-for="(inboxWithInitial, initial) in indexedInbox" :key="initial">
             <f7-list-item v-if="inboxWithInitial.length" :title="initial" group-title></f7-list-item>
             <f7-list-item v-for="entry in inboxWithInitial"
-              :key="entry.thingUID"
-              :link="true"
-              media-item
-              :checkbox="showCheckboxes"
-              :checked="isChecked(entry.thingUID)"
-              @change="(e) => toggleItemCheck(e, entry.thingUID)"
-              @click.ctrl="(e) => ctrlClick(e, entry)"
-              @click.exact="(e) => click(e, entry)"
-              :title="entry.label"
-              :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
-              :footer="entry.thingTypeUID"
-              :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''"
+                          :key="entry.thingUID"
+                          :link="true"
+                          media-item
+                          :checkbox="showCheckboxes"
+                          :checked="isChecked(entry.thingUID)"
+                          @change="(e) => toggleItemCheck(e, entry.thingUID)"
+                          @click.ctrl="(e) => ctrlClick(e, entry)"
+                          @click.exact="(e) => click(e, entry)"
+                          :title="entry.label"
+                          :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
+                          :footer="entry.thingUID"
+                          :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''"
             >
               <!-- <f7-button icon-f7="add_round" color="blue" slot="after"></f7-button>
               <f7-button icon-f7="eye_off" color="blue" slot="after"></f7-button>
@@ -90,9 +90,9 @@
             </f7-list-item>
           </f7-list-group>
         </f7-list>
-      <f7-list class="searchbar-not-found">
-        <f7-list-item title="Nothing found"></f7-list-item>
-      </f7-list>
+        <f7-list class="searchbar-not-found">
+          <f7-list-item title="Nothing found"></f7-list-item>
+        </f7-list>
 
       </f7-col>
     </f7-block>
@@ -250,7 +250,7 @@ export default {
                 this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID}. You can change the suggested thing ID below:`,
                   'Add as Thing',
                   (newThingId) => {
-                    this.$f7.dialog.prompt(`Enter the desired name of the new Thing:`,
+                    this.$f7.dialog.prompt('Enter the desired name of the new Thing:',
                       'Add as Thing',
                       (name) => {
                         this.approveEntry(entry, name, newThingId)

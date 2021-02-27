@@ -1,9 +1,9 @@
 <template>
   <f7-card ref="card" :expandable="true" class="card-prevent-open oh-cell"
-      :swipeToClose="!(noSwipeToClose || config.swipeToClose === false)"
-      :backdrop="config.backdrop === undefined || config.backdrop"
-      :animate="(config.animate === false || $f7.data.themeOptions.expandableCardAnimation === 'disabled') ? false : undefined"
-      @card:open="cellOpen" @card:opened="cellOpened" @card:close="cellClose" @card:closed="cellClosed">
+           :swipeToClose="!(noSwipeToClose || config.swipeToClose === false)"
+           :backdrop="config.backdrop === undefined || config.backdrop"
+           :animate="(config.animate === false || $f7.data.themeOptions.expandableCardAnimation === 'disabled') ? false : undefined"
+           @card:open="cellOpen" @card:opened="cellOpened" @card:close="cellClose" @card:closed="cellClosed">
     <slot name="background">
       <div v-if="context.component.slots && context.component.slots.background">
         <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.background" :key="'background-' + idx" @command="onCommand" />

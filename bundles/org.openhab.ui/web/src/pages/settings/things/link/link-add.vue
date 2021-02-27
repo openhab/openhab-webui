@@ -11,9 +11,9 @@
         <f7-block-title>Channel</f7-block-title>
         <f7-list media-list>
           <f7-list-item media-item class="channel-item"
-            :title="channel.label || channelType.label"
-            :footer="channel.description || channelType.description"
-            :subtitle="channel.uid">
+                        :title="channel.label || channelType.label"
+                        :footer="channel.description || channelType.description"
+                        :subtitle="channel.uid">
           </f7-list-item>
         </f7-list>
       </f7-col>
@@ -32,7 +32,7 @@
         <f7-list>
           <!-- TODO: filter with compatible item types -->
           <item-picker key="itemLink" title="Item to Link" name="item" :value="selectedItemName" :multiple="false"
-            @input="(value) => selectedItemName = value"></item-picker>
+                       @input="(value) => selectedItemName = value"></item-picker>
         </f7-list>
       </f7-col>
 
@@ -58,9 +58,9 @@
         </f7-list>
         <div v-if="selectedThing.UID && selectedThingType.UID">
           <f7-block-title>Channel</f7-block-title>
-            <channel-list :thing="selectedThing" :thingType="selectedThingType"
-              :picker-mode="true" :item-type-filter="item.type" :channel-types="selectedThingChannelTypes"
-              @selected="(channel) => loadProfileTypes(channel)" />
+          <channel-list :thing="selectedThing" :thingType="selectedThingType"
+                        :picker-mode="true" :item-type-filter="item.type" :channel-types="selectedThingChannelTypes"
+                        @selected="(channel) => loadProfileTypes(channel)" />
         </div>
       </f7-col>
 
@@ -83,18 +83,18 @@
         <f7-list>
           <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="(No Profile)" name="profile-type" />
           <f7-list-item radio v-for="profileType in profileTypes"
-            :value="profileType.uid"
-            @change="onProfileTypeChange(profileType.uid)"
-            :key="profileType.uid" :title="profileType.label" name="profile-type"></f7-list-item>
+                        :value="profileType.uid"
+                        @change="onProfileTypeChange(profileType.uid)"
+                        :key="profileType.uid" :title="profileType.label" name="profile-type"></f7-list-item>
         </f7-list>
       </f7-col>
       <f7-col v-if="profileTypeConfiguration != null">
         <f7-block-title>Profile Configuration</f7-block-title>
-          <config-sheet ref="profileConfiguration"
-            :parameter-groups="profileTypeConfiguration.parameterGroups"
-            :parameters="profileTypeConfiguration.parameters"
-            :configuration="configuration"
-          />
+        <config-sheet ref="profileConfiguration"
+                      :parameter-groups="profileTypeConfiguration.parameterGroups"
+                      :parameters="profileTypeConfiguration.parameters"
+                      :configuration="configuration"
+        />
       </f7-col>
     </f7-block>
 
