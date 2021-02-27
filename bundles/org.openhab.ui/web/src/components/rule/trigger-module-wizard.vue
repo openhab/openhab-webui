@@ -4,13 +4,13 @@
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
         <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseItemCategory">
           <f7-icon size="35" f7="square_on_circle" class="margin" />
-          Item<br />Event
+          Item<br>Event
         </f7-link>
       </f7-col>
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
         <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseThingCategory">
           <f7-icon size="35" f7="lightbulb" class="margin" />
-          Thing<br />Event
+          Thing<br>Event
         </f7-link>
       </f7-col>
     </f7-row>
@@ -18,18 +18,18 @@
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
         <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseTimeCategory">
           <f7-icon size="35" f7="clock" class="margin" />
-          Time<br />Event
+          Time<br>Event
         </f7-link>
       </f7-col>
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
         <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseSystemCategory">
           <f7-icon size="35" f7="gear" class="margin" />
-          System<br />Event
+          System<br>Event
         </f7-link>
       </f7-col>
     </f7-row>
     <f7-list>
-      <f7-list-button title="Show All" color="blue" @click="$emit('showAdvanced')"></f7-list-button>
+      <f7-list-button title="Show All" color="blue" @click="$emit('showAdvanced')" />
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
@@ -84,19 +84,20 @@
     </f7-list>
     <f7-list v-if="(itemEventType === 'command' || itemEventType === 'memberCommand') && commandSuggestions.length">
       <f7-list-item radio :checked="currentModule.configuration.command === suggestion.command" v-for="suggestion in commandSuggestions" :key="suggestion.command"
-                    :title="suggestion.label" @click="$set(currentModule.configuration, 'command', suggestion.command)" />
+                    :title="suggestion.label" @click="$set(currentModule.configuration, 'command', suggestion.command)"
+      />
     </f7-list>
     <f7-list v-else-if="stateSuggestions.length">
       <f7-list-item radio :checked="currentModule.configuration.state === suggestion.value" v-for="suggestion in stateSuggestions" :key="suggestion.value"
-                    :title="suggestion.label" @click="$set(currentModule.configuration, 'state', suggestion.value)" />
+                    :title="suggestion.label" @click="$set(currentModule.configuration, 'state', suggestion.value)"
+      />
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'thing'">
     <f7-list>
       <thing-picker ref="thingPicker" :value="currentModule.configuration.thingUID" title="Thing" @input="(val) => $set(currentModule.configuration, 'thingUID', val)" :open-on-ready="true" />
     </f7-list>
-    <f7-list>
-    </f7-list>
+    <f7-list />
     <f7-list>
       <f7-list-item radio :checked="thingEventType === 'triggerChannelFired'" name="thingEventType" title="a trigger channel fired" @click="updateThingEventType('triggerChannelFired')" />
       <f7-list-item radio v-if="currentModule.configuration.thingUID" :checked="thingEventType === 'statusUpdated'" name="thingEventType" title="status was updated" @click="updateThingEventType('statusUpdated')" />
@@ -106,36 +107,42 @@
       <f7-list-item
         v-if="thingEventType === 'statusUpdated'"
         title="to"
-        smart-select :smart-select-params="{ view: $f7.view.main, openIn: 'popover' }">
+        smart-select :smart-select-params="{ view: $f7.view.main, openIn: 'popover' }"
+      >
         <select name="thingStatus" required @change="(evt) => $set(currentModule.configuration, 'status', evt.target.value)">
           <option v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'status').options]"
                   :value="status.value" :key="status.value"
-                  :selected="currentModule.configuration.status === status.value">
-            {{status.label}}
+                  :selected="currentModule.configuration.status === status.value"
+          >
+            {{ status.label }}
           </option>
         </select>
       </f7-list-item>
       <f7-list-item
         v-if="thingEventType === 'statusChanged'"
         title="from"
-        smart-select :smart-select-params="{ view: $f7.view.main, openIn: 'popover' }">
+        smart-select :smart-select-params="{ view: $f7.view.main, openIn: 'popover' }"
+      >
         <select name="thingStatus" required @change="(evt) => $set(currentModule.configuration, 'previousStatus', evt.target.value)">
           <option v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'previousStatus').options]"
                   :value="status.value" :key="status.value"
-                  :selected="currentModule.configuration.previousStatus === status.value">
-            {{status.label}}
+                  :selected="currentModule.configuration.previousStatus === status.value"
+          >
+            {{ status.label }}
           </option>
         </select>
       </f7-list-item>
       <f7-list-item
         v-if="thingEventType === 'statusChanged'"
         title="to"
-        smart-select :smart-select-params="{ view: $f7.view.main, openIn: 'popover' }">
+        smart-select :smart-select-params="{ view: $f7.view.main, openIn: 'popover' }"
+      >
         <select name="thingStatus" required @change="(evt) => $set(currentModule.configuration, 'status', evt.target.value)">
           <option v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'status').options]"
                   :value="status.value" :key="status.value"
-                  :selected="currentModule.configuration.status === status.value">
-            {{status.label}}
+                  :selected="currentModule.configuration.status === status.value"
+          >
+            {{ status.label }}
           </option>
         </select>
       </f7-list-item>
@@ -171,7 +178,9 @@
     <f7-list>
       <f7-list-item radio :checked="systemEventType === 'start'" name="systemEventType" title="the system is being initialized" @click="updateSystemEventType('start')" />
     </f7-list>
-    <f7-block-footer class="padding-horizontal margin-vertical">and this start level has been reached:</f7-block-footer>
+    <f7-block-footer class="padding-horizontal margin-vertical">
+      and this start level has been reached:
+    </f7-block-footer>
     <config-sheet v-if="currentModuleType" :key="currentSection + currentModule.id"
                   :parameterGroups="[]"
                   :parameters="currentModuleType.configDescriptions"

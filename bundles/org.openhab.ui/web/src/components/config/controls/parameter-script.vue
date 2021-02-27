@@ -1,9 +1,12 @@
 <template>
   <ul>
     <f7-list-item
-      :title="configDescription.label">
-      <f7-button slot="after" v-if="$device.desktop" @click="openPopup(true)" icon-material="fullscreen"></f7-button>
-      <f7-button slot="after" @click="openPopup(false)">Edit script</f7-button>
+      :title="configDescription.label"
+    >
+      <f7-button slot="after" v-if="$device.desktop" @click="openPopup(true)" icon-material="fullscreen" />
+      <f7-button slot="after" @click="openPopup(false)">
+        Edit script
+      </f7-button>
     </f7-list-item>
   </ul>
 </template>

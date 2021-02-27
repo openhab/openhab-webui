@@ -3,7 +3,8 @@
            :swipeToClose="!(noSwipeToClose || config.swipeToClose === false)"
            :backdrop="config.backdrop === undefined || config.backdrop"
            :animate="(config.animate === false || $f7.data.themeOptions.expandableCardAnimation === 'disabled') ? false : undefined"
-           @card:open="cellOpen" @card:opened="cellOpened" @card:close="cellClose" @card:closed="cellClosed">
+           @card:open="cellOpen" @card:opened="cellOpened" @card:close="cellClose" @card:closed="cellClosed"
+  >
     <slot name="background">
       <div v-if="context.component.slots && context.component.slots.background">
         <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.background" :key="'background-' + idx" @command="onCommand" />
@@ -21,16 +22,20 @@
             </div>
             <f7-list-item v-else media-item :subtitle="config.subtitle" :footer="config.footer">
               <div slot="header" v-if="header" class="button-header display-flex">
-                <oh-icon class="header-icon" v-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" width="20" height="20"></oh-icon>
-                <f7-icon class="header-icon" v-if="config.icon && config.icon.indexOf('oh:') < 0" :f7="config.icon.substring(3)" size="20"></f7-icon>
-                <span class="header-text">{{header}}</span>
-                <f7-badge v-if="config.headerBadge" color="config.headerBadgeColor">{{config.headerBadge}}</f7-badge>
+                <oh-icon class="header-icon" v-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" width="20" height="20" />
+                <f7-icon class="header-icon" v-if="config.icon && config.icon.indexOf('oh:') < 0" :f7="config.icon.substring(3)" size="20" />
+                <span class="header-text">{{ header }}</span>
+                <f7-badge v-if="config.headerBadge" color="config.headerBadgeColor">
+                  {{ config.headerBadge }}
+                </f7-badge>
               </div>
               <div slot="title" v-if="config.title" class="button-header display-flex">
-                <oh-icon class="header-icon" v-if="!header && config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" width="20" height="20"></oh-icon>
-                <f7-icon class="header-icon" v-if="!header && config.icon && config.icon.indexOf('oh:') < 0" :f7="config.icon.substring(3)" size="20"></f7-icon>
-                <span class="header-text">{{config.title}}</span>
-                <f7-badge v-if="config.headerBadge" color="config.headerBadgeColor">{{config.headerBadge}}</f7-badge>
+                <oh-icon class="header-icon" v-if="!header && config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" width="20" height="20" />
+                <f7-icon class="header-icon" v-if="!header && config.icon && config.icon.indexOf('oh:') < 0" :f7="config.icon.substring(3)" size="20" />
+                <span class="header-text">{{ config.title }}</span>
+                <f7-badge v-if="config.headerBadge" color="config.headerBadgeColor">
+                  {{ config.headerBadge }}
+                </f7-badge>
               </div>
             </f7-list-item>
           </f7-list>
@@ -38,9 +43,15 @@
       </f7-card-header>
       <f7-link class="card-opened-fade-in cell-close-button float-right" icon-size="30" icon-f7="multiply_circle_fill" @click.native="closeCell" />
       <f7-card-header v-if="opened" class="cell-expanded-header card-opened-fade-in display-flex flex-direction-column">
-        <div class="text-align-center cell-expanded-title">{{config.title}}</div>
-        <div class="text-align-center cell-expanded-subtitle">{{config.subtitle}}</div>
-        <div class="text-align-center cell-expanded-footer">{{config.footer}}</div>
+        <div class="text-align-center cell-expanded-title">
+          {{ config.title }}
+        </div>
+        <div class="text-align-center cell-expanded-subtitle">
+          {{ config.subtitle }}
+        </div>
+        <div class="text-align-center cell-expanded-footer">
+          {{ config.footer }}
+        </div>
       </f7-card-header>
       <div v-if="opened" class="cell-expanded-contents card-opened-fade-in display-flex flex-direction-column align-items-center">
         <slot>

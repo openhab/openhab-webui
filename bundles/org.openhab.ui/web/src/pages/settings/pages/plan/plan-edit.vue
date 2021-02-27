@@ -2,24 +2,30 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="plan-editor">
     <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create plan page' : page.config.label" back-link="Back" no-hairline>
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md">
+          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
-      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
+      <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">
+        Design
+      </f7-link>
+      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">
+        Code
+      </f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)"></f7-toggle> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)" /> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
 
     <f7-tabs class="plan-editor-tabs">
       <f7-tab id="design" class="plan-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
-          <f7-preloader></f7-preloader>
+          <f7-preloader />
           <div>Loading...</div>
         </f7-block>
         <f7-block class="block-narrow" v-if="ready && !previewMode">
@@ -36,11 +42,13 @@
               @updated="dirty = true"
             />
 
-            <f7-block-title class="padding-bottom">Markers</f7-block-title>
+            <f7-block-title class="padding-bottom">
+              Markers
+            </f7-block-title>
             <f7-menu v-if="clipboardType === 'oh-plan-marker'" class="padding-bottom">
               <f7-menu-item style="margin-left: auto" icon-f7="square_on_square" dropdown>
                 <f7-menu-dropdown right>
-                  <f7-menu-dropdown-item @click="pasteWidget(page, null)" href="#" text="Paste"></f7-menu-dropdown-item>
+                  <f7-menu-dropdown-item @click="pasteWidget(page, null)" href="#" text="Paste" />
                 </f7-menu-dropdown>
               </f7-menu-item>
             </f7-menu>
@@ -48,29 +56,34 @@
             <f7-list media-list class="markers-list">
               <f7-list-item media-item v-for="(marker, idx) in page.slots.default" :key="idx"
                             :title="marker.config.name" :subtitle="marker.config.item || marker.config.location"
-                            link="#" @click.native="(ev) => configureMarker(ev, marker, context)">
+                            link="#" @click.native="(ev) => configureMarker(ev, marker, context)"
+              >
                 <oh-icon v-if="marker.config.icon && marker.config.icon.indexOf('oh:') === 0" slot="media" :icon="marker.config.icon.substring(3)" height="32" width="32" />
                 <f7-icon v-else slot="media" :f7="markerDefaultIcon(marker)" :size="32" />
                 <f7-menu slot="content-start" class="configure-layout-menu">
                   <f7-menu-item icon-f7="list_bullet" dropdown>
                     <f7-menu-dropdown>
-                      <f7-menu-dropdown-item @click="configureWidget(marker, { component: page })" href="#" text="Configure marker"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="editWidgetCode(marker, { component: page })" href="#" text="Edit YAML"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="cutWidget(marker, { component: page })" href="#" text="Cut"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="copyWidget(marker, { component: page })" href="#" text="Copy"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="moveWidgetUp(marker, { component: page })" href="#" text="Move Up"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="moveWidgetDown(marker, { component: page })" href="#" text="Move Down"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="removeWidget(marker, { component: page })" href="#" text="Remove marker"></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item @click="configureWidget(marker, { component: page })" href="#" text="Configure marker" />
+                      <f7-menu-dropdown-item @click="editWidgetCode(marker, { component: page })" href="#" text="Edit YAML" />
+                      <f7-menu-dropdown-item divider />
+                      <f7-menu-dropdown-item @click="cutWidget(marker, { component: page })" href="#" text="Cut" />
+                      <f7-menu-dropdown-item @click="copyWidget(marker, { component: page })" href="#" text="Copy" />
+                      <f7-menu-dropdown-item divider />
+                      <f7-menu-dropdown-item @click="moveWidgetUp(marker, { component: page })" href="#" text="Move Up" />
+                      <f7-menu-dropdown-item @click="moveWidgetDown(marker, { component: page })" href="#" text="Move Down" />
+                      <f7-menu-dropdown-item divider />
+                      <f7-menu-dropdown-item @click="removeWidget(marker, { component: page })" href="#" text="Remove marker" />
                     </f7-menu-dropdown>
                   </f7-menu-item>
                 </f7-menu>
               </f7-list-item>
               <f7-list-button color="blue" title="Add marker" @click="addWidget(page, 'oh-plan-marker')" />
             </f7-list>
-            <f7-block-footer class="param-description">You can also <f7-link style="z-index: inherit" href="#" @click="previewMode = true">switch to Run mode</f7-link> to add markers and position them on the plan.</f7-block-footer>
+            <f7-block-footer class="param-description">
+              You can also <f7-link style="z-index: inherit" href="#" @click="previewMode = true">
+                switch to Run mode
+              </f7-link> to add markers and position them on the plan.
+            </f7-block-footer>
           </f7-col>
         </f7-block>
 

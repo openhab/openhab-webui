@@ -2,30 +2,34 @@
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar :title="createMode ? 'Create New Item': 'Edit Item'" back-link="Cancel">
       <f7-nav-right v-if="!$theme.aurora || !createMode">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md">
+          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-block class="block-narrow" v-if="item.name || item.created === false">
       <f7-col v-if="item.editable === false">
-        <div class="padding-left">Note: this item is not editable because it has been created with textual configuration.</div>
+        <div class="padding-left">
+          Note: this item is not editable because it has been created with textual configuration.
+        </div>
       </f7-col>
       <f7-col>
-        <item-form :item="item" :enable-name="createMode"></item-form>
+        <item-form :item="item" :enable-name="createMode" />
       </f7-col>
       <f7-col>
         <f7-block-title>Group Membership</f7-block-title>
         <f7-list v-if="ready">
-          <item-picker title="Parent Group(s)" name="parent-groups" :value="item.groupNames" @input="(value) => item.groupNames = value" :multiple="true" filterType="Group"></item-picker>
+          <item-picker title="Parent Group(s)" name="parent-groups" :value="item.groupNames" @input="(value) => item.groupNames = value" :multiple="true" filterType="Group" />
         </f7-list>
       </f7-col>
       <f7-col v-if="item && item.type === 'Group'">
         <f7-block-title>Group Settings</f7-block-title>
-        <group-form :item="item"></group-form>
+        <group-form :item="item" />
       </f7-col>
       <f7-col class="tags-editor">
         <f7-block-title>Non-Semantic Tags</f7-block-title>
-        <tag-input :item="item"></tag-input>
+        <tag-input :item="item" />
       </f7-col>
       <f7-col>
         <!-- <f7-list>
@@ -39,7 +43,9 @@
 
     <div v-if="ready && createMode" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save">Create</f7-button>
+        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save">
+          Create
+        </f7-button>
       </div>
     </div>
   </f7-page>

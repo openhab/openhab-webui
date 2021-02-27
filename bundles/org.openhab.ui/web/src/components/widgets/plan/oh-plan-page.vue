@@ -19,14 +19,16 @@
               'oh-plan-dark-mode-invert': config.darkModeInvert,
     }"
     @update:center="centerUpdate"
-    @update:zoom="zoomUpdate">
+    @update:zoom="zoomUpdate"
+  >
     <l-image-overlay
       :url="backgroundImageUrl"
       :bounds="bounds"
     />
     <l-feature-group ref="featureGroup" v-if="context.component.slots && ready">
       <component v-for="(marker, idx) in markers" :key="idx"
-                 :is="markerComponent(marker)" :context="childContext(marker)" @update="onMarkerUpdate" />
+                 :is="markerComponent(marker)" :context="childContext(marker)" @update="onMarkerUpdate"
+      />
     </l-feature-group>
     <l-control v-if="context.editmode != null" position="topright">
       <f7-menu class="padding">
@@ -35,7 +37,7 @@
       </f7-menu>
     </l-control>
     <l-control v-if="context.editmode != null" position="bottomleft">
-      <span>Zoom Level: {{currentZoom.toFixed(2)}}</span>
+      <span>Zoom Level: {{ currentZoom.toFixed(2) }}</span>
     </l-control>
   </l-map>
 </template>

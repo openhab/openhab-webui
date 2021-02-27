@@ -1,21 +1,35 @@
 <template>
   <l-marker ref="marker" v-if="coords" :key="markerKey" :draggable="context.editmode != undefined" :lat-lng="coords"
-            @update:latLng="onMove" @click="onClick">
+            @update:latLng="onMove" @click="onClick"
+  >
     <l-tooltip v-if="tooltip && !config.useTooltipAsLabel" :options="tooltipOptions" @click="() => {}">
-      <div style="white-space: nowrap" :style="tooltipStyle">{{tooltip}}</div>
+      <div style="white-space: nowrap" :style="tooltipStyle">
+        {{ tooltip }}
+      </div>
     </l-tooltip>
     <l-icon
-      :icon-size="[config.iconSize || 40, config.iconSize || 40]">
-      <div v-if="config.useTooltipAsLabel" style="white-space: nowrap" :style="tooltipStyle">{{tooltip}}</div>
+      :icon-size="[config.iconSize || 40, config.iconSize || 40]"
+    >
+      <div v-if="config.useTooltipAsLabel" style="white-space: nowrap" :style="tooltipStyle">
+        {{ tooltip }}
+      </div>
       <oh-icon v-else-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.split(':')[1]" :width="config.iconSize || 40" :height="config.iconSize || 40" :state="config.iconUseState ? state : undefined" />
       <f7-icon v-else-if="config.icon" :color="config.iconColor" :size="config.iconSize || 40" :ios="config.icon" :md="config.icon" :aurora="config.icon" />
     </l-icon>
     <l-popup v-if="context.editmode != null && !dragging">
       <div class="display-flex">
-        <f7-link href="#" class="text-color-blue display-flex flex-direction-column margin-right" @click="context.editmode.configureWidget(context.component, context.parent)" icon-f7="square_pencil">Configure</f7-link>
-        <f7-link href="#" class="text-color-blue display-flex flex-direction-column margin-right" @click="context.editmode.editWidgetCode(context.component, context.parent)" icon-f7="doc_text">YAML</f7-link>
-        <f7-link href="#" class="text-color-blue display-flex flex-direction-column margin-right" @click="context.editmode.copyWidget(context.component, context.parent)" icon-f7="scissors_alt">Copy</f7-link>
-        <f7-link href="#" class="text-color-red display-flex flex-direction-column" @click="context.editmode.removeWidget(context.component, context.parent)" icon-f7="trash">Remove</f7-link>
+        <f7-link href="#" class="text-color-blue display-flex flex-direction-column margin-right" @click="context.editmode.configureWidget(context.component, context.parent)" icon-f7="square_pencil">
+          Configure
+        </f7-link>
+        <f7-link href="#" class="text-color-blue display-flex flex-direction-column margin-right" @click="context.editmode.editWidgetCode(context.component, context.parent)" icon-f7="doc_text">
+          YAML
+        </f7-link>
+        <f7-link href="#" class="text-color-blue display-flex flex-direction-column margin-right" @click="context.editmode.copyWidget(context.component, context.parent)" icon-f7="scissors_alt">
+          Copy
+        </f7-link>
+        <f7-link href="#" class="text-color-red display-flex flex-direction-column" @click="context.editmode.removeWidget(context.component, context.parent)" icon-f7="trash">
+          Remove
+        </f7-link>
       </div>
     </l-popup>
   </l-marker>

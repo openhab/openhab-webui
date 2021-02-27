@@ -3,29 +3,37 @@
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
+          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
         </f7-nav-left>
-        <f7-nav-title v-if="ruleModule && ruleModule.new">{{sectionLabels[currentSection][1]}}</f7-nav-title>
-        <f7-nav-title v-else>Edit module</f7-nav-title>
+        <f7-nav-title v-if="ruleModule && ruleModule.new">
+          {{ sectionLabels[currentSection][1] }}
+        </f7-nav-title>
+        <f7-nav-title v-else>
+          Edit module
+        </f7-nav-title>
         <f7-nav-right>
-          <f7-link v-show="currentRuleModuleType" @click="updateModuleConfig">Done</f7-link>
+          <f7-link v-show="currentRuleModuleType" @click="updateModuleConfig">
+            Done
+          </f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-block v-if="ruleModule" class="no-margin no-padding">
         <f7-col class="margin-top">
           <f7-list inline-labels no-hairlines-md class="no-margin">
             <f7-list-input type="text" :placeholder="moduleTitleSuggestion" :value="ruleModule.label" required
-                           @input="ruleModule.label = $event.target.value" clear-button>
-            </f7-list-input>
+                           @input="ruleModule.label = $event.target.value" clear-button
+            />
             <f7-list-input type="text" :placeholder="moduleDescriptionSuggestion" :value="ruleModule.description"
-                           @input="ruleModule.description = $event.target.value" clear-button>
-            </f7-list-input>
+                           @input="ruleModule.description = $event.target.value" clear-button
+            />
           </f7-list>
         </f7-col>
         <!-- <f7-block-footer class="no-margin padding-left"><small>Tip: leave fields blank to set automatically to the suggested name and description. <f7-link @click="ruleModule.label = null; ruleModule.description = null">Clear</f7-link></small></f7-block-footer> -->
 
         <div v-if="ruleModule.new">
-          <f7-block-title class="no-margin padding-horizontal margin-vertical" v-if="!advancedTypePicker" medium>{{sectionLabels[currentSection][0]}}</f7-block-title>
+          <f7-block-title class="no-margin padding-horizontal margin-vertical" v-if="!advancedTypePicker" medium>
+            {{ sectionLabels[currentSection][0] }}
+          </f7-block-title>
           <f7-list v-if="advancedTypePicker && !ruleModule.type">
             <ul v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope">
               <f7-list-item divider :title="scope" />
@@ -33,7 +41,8 @@
                             :value="moduleType.uid"
                             @change="setModuleType(moduleType)"
                             :checked="ruleModule.type === moduleType.uid"
-                            :key="moduleType.uid" :title="moduleType.label" name="module-type"></f7-list-item>
+                            :key="moduleType.uid" :title="moduleType.label" name="module-type"
+              />
             </ul>
           </f7-list>
           <trigger-module-wizard v-else-if="!advancedTypePicker && currentSection === 'triggers'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" />
@@ -43,17 +52,21 @@
         <f7-list v-if="ruleModule.type && (!ruleModule.new || advancedTypePicker)">
           <f7-list-item :title="sectionLabels[currentSection][0]" ref="ruleModuleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
             <select name="ruleModuleType"
-                    @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)">
+                    @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)"
+            >
               <optgroup v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope" :label="scope">
                 <option v-for="moduleType in mt"
-                        :value="moduleType.uid" :key="moduleType.uid" :selected="currentRuleModuleType.uid === moduleType.uid">
-                  {{moduleType.label}}
+                        :value="moduleType.uid" :key="moduleType.uid" :selected="currentRuleModuleType.uid === moduleType.uid"
+                >
+                  {{ moduleType.label }}
                 </option>
               </optgroup>
             </select>
           </f7-list-item>
         </f7-list>
-        <f7-block-title v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">Configuration</f7-block-title>
+        <f7-block-title v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">
+          Configuration
+        </f7-block-title>
         <f7-col v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)">
           <config-sheet :key="currentSection + ruleModule.id"
                         ref="parameters"

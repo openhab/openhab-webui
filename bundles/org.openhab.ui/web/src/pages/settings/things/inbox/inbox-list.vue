@@ -3,7 +3,8 @@
     <f7-navbar title="Inbox" back-link="Things" back-link-url="/settings/things/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"
+        />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -14,21 +15,27 @@
           search-container=".contacts-list"
           search-in=".item-inner"
           :disable-button="!$theme.aurora"
-        ></f7-searchbar>
+        />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="confirmActionOnSelection('delete')">&nbsp;Remove {{selectedItems.length}}</f7-link>
-      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="ignore" @click="confirmActionOnSelection('ignore')" icon-ios="f7:eye_slash" icon-aurora="f7:eye_slash">&nbsp;Ignore {{selectedItems.length}}</f7-link>
-      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="approve" @click="confirmActionOnSelection('approve')" icon-ios="f7:hand_thumbsup" icon-aurora="f7:hand_thumbsup">&nbsp;Approve {{selectedItems.length}}</f7-link>
-      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false"></f7-link>
+      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="confirmActionOnSelection('delete')">
+        &nbsp;Remove {{ selectedItems.length }}
+      </f7-link>
+      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="ignore" @click="confirmActionOnSelection('ignore')" icon-ios="f7:eye_slash" icon-aurora="f7:eye_slash">
+        &nbsp;Ignore {{ selectedItems.length }}
+      </f7-link>
+      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="approve" @click="confirmActionOnSelection('approve')" icon-ios="f7:hand_thumbsup" icon-aurora="f7:hand_thumbsup">
+        &nbsp;Approve {{ selectedItems.length }}
+      </f7-link>
+      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
-        {{selectedItems.length}} selected
+        {{ selectedItems.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="confirmActionOnSelection('delete')"></f7-link>
-        <f7-link v-show="selectedItems.length" icon-md="material:visibility_off" icon-color="white" @click="confirmActionOnSelection('ignore')"></f7-link>
-        <f7-link v-show="selectedItems.length" icon-md="material:thumb_up" icon-color="white" @click="confirmActionOnSelection('approve')"></f7-link>
+        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="confirmActionOnSelection('delete')" />
+        <f7-link v-show="selectedItems.length" icon-md="material:visibility_off" icon-color="white" @click="confirmActionOnSelection('ignore')" />
+        <f7-link v-show="selectedItems.length" icon-md="material:thumb_up" icon-color="white" @click="confirmActionOnSelection('approve')" />
       </div>
     </f7-toolbar>
 
@@ -38,19 +45,24 @@
       list-el=".inbox-list"
       :scroll-list="true"
       :label="true"
-    ></f7-list-index>
+    />
 
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block-title><span v-if="ready">{{inboxCount}} entries</span>
+        <f7-block-title>
+          <span v-if="ready">{{ inboxCount }} entries</span>
           <div style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
-            <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label> <f7-checkbox :checked="showIgnored" @change="toggleIgnored"></f7-checkbox>
+            <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label> <f7-checkbox :checked="showIgnored" @change="toggleIgnored" />
           </div>
         </f7-block-title>
         <div class="padding-left padding-right searchbar-found" v-show="!ready || inboxCount > 0">
           <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">Alphabetical</f7-button>
-            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">By binding</f7-button>
+            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
+              Alphabetical
+            </f7-button>
+            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
+              By binding
+            </f7-button>
           </f7-segmented>
         </div>
         <f7-list v-if="!ready" contacts-list class="col inbox-list">
@@ -63,13 +75,12 @@
               title="Label of the thing"
               subtitle="This contains the inbox UID"
               footer="binding:thingUID"
-            >
-            </f7-list-item>
+            />
           </f7-list-group>
         </f7-list>
         <f7-list v-else class="searchbar-found col" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(inboxWithInitial, initial) in indexedInbox" :key="initial">
-            <f7-list-item v-if="inboxWithInitial.length" :title="initial" group-title></f7-list-item>
+            <f7-list-item v-if="inboxWithInitial.length" :title="initial" group-title />
             <f7-list-item v-for="entry in inboxWithInitial"
                           :key="entry.thingUID"
                           :link="true"
@@ -91,17 +102,16 @@
           </f7-list-group>
         </f7-list>
         <f7-list class="searchbar-not-found">
-          <f7-list-item title="Nothing found"></f7-list-item>
+          <f7-list-item title="Nothing found" />
         </f7-list>
-
       </f7-col>
     </f7-block>
     <f7-block v-if="ready && inboxCount === 0" class="block-narrow">
       <empty-state-placeholder icon="tray" title="inbox.title" text="inbox.text" />
     </f7-block>
     <f7-fab v-show="!showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="/settings/things/add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
+      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+      <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
       <!-- <f7-fab-buttons position="top">
         <f7-fab-button label="Scan and add to Inbox">S</f7-fab-button>
         <f7-fab-button label="Add thing manually">M</f7-fab-button>

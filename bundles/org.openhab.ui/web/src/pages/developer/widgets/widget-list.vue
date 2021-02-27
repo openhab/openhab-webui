@@ -3,7 +3,8 @@
     <f7-navbar title="Widgets" back-link="Developer Tools" back-link-url="/developer/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"
+        />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -15,22 +16,24 @@
           search-item=".widgetlist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
           :disable-button="!$theme.aurora"
-        ></f7-searchbar>
+        />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">Remove {{selectedItems.length}}</f7-link>
-      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false"></f7-link>
+      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
+        Remove {{ selectedItems.length }}
+      </f7-link>
+      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
-        {{selectedItems.length}} selected
+        {{ selectedItems.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
+        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
       </div>
     </f7-toolbar>
 
     <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found"></f7-list-item>
+      <f7-list-item title="Nothing found" />
     </f7-list>
 
     <!-- skeleton for not ready -->
@@ -46,18 +49,20 @@
               :class="`skeleton-text skeleton-effect-blink`"
               title="Title of the widget"
               subtitle="Tag1, Tag2, Tag3..."
-            >
-            </f7-list-item>
+            />
           </f7-list-group>
         </f7-list>
       </f7-col>
       <f7-col v-if="ready">
-        <f7-block-title class="searchbar-hide-on-search">{{widgets.length}} widgets</f7-block-title>
+        <f7-block-title class="searchbar-hide-on-search">
+          {{ widgets.length }} widgets
+        </f7-block-title>
         <f7-list
           v-show="widgets.length > 0"
           class="searchbar-found col widgets-list"
           ref="widgetsList"
-          media-list>
+          media-list
+        >
           <f7-list-item
             v-for="(widget, index) in widgets"
             :key="index"
@@ -72,17 +77,17 @@
           >
             <div slot="subtitle">
               <f7-chip v-for="tag in widget.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
-                <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill"></f7-icon>
+                <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
               </f7-chip>
             </div>
-            <span slot="media" class="item-initial">{{widget.uid[0].toUpperCase()}}</span>
+            <span slot="media" class="item-initial">{{ widget.uid[0].toUpperCase() }}</span>
           </f7-list-item>
         </f7-list>
       </f7-col>
     </f7-block>
     <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
+      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+      <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
     </f7-fab>
   </f7-page>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <ul>
     <f7-list-item :title="configDescription.label">
-      <f7-toggle slot="after" :name="configDescription.name" :checked="actualValue" @toggle:change="updateValue"></f7-toggle>
+      <f7-toggle slot="after" :name="configDescription.name" :checked="actualValue" @toggle:change="updateValue" />
     </f7-list-item>
   </ul>
 </template>

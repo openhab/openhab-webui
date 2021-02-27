@@ -2,16 +2,18 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" hide-bars-on-scroll :style="pageStyle">
     <f7-navbar :back-link="(showBackButton) ? $t('page.navbar.back') : undefined">
       <f7-nav-left v-if="!showBackButton">
-        <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
+        <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
       </f7-nav-left>
-      <f7-nav-title>{{(ready) ? page.config.label : ''}}</f7-nav-title>
+      <f7-nav-title>{{ (ready) ? page.config.label : '' }}</f7-nav-title>
       <f7-nav-right>
-        <f7-link v-if="isAdmin" icon-md="material:edit" :href="'/settings/pages/' + pageType + '/' + uid">{{ $theme.md ? '' : $t('page.navbar.edit') }}</f7-link>
+        <f7-link v-if="isAdmin" icon-md="material:edit" :href="'/settings/pages/' + pageType + '/' + uid">
+          {{ $theme.md ? '' : $t('page.navbar.edit') }}
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
 
     <f7-toolbar tabbar labels bottom v-if="page && pageType === 'tabs' && visibleToCurrentUser">
-      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tab.config.icon" :icon-md="tab.config.icon" :icon-aurora="tab.config.icon" :text="tab.config.title"></f7-link>
+      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tab.config.icon" :icon-md="tab.config.icon" :icon-aurora="tab.config.icon" :text="tab.config.title" />
     </f7-toolbar>
 
     <f7-tabs v-if="page && pageType === 'tabs' && visibleToCurrentUser" :class="{notready: !ready}">
@@ -23,7 +25,6 @@
     <component :is="page.component" v-else-if="page && visibleToCurrentUser" :context="context" :class="{notready: !ready}" @command="onCommand" />
 
     <empty-state-placeholder v-if="!visibleToCurrentUser" icon="multiply_circle_fill" title="page.unavailable.title" text="page.unavailable.text" />
-
   </f7-page>
 </template>
 

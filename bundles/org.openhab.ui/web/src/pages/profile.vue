@@ -6,21 +6,23 @@
       </f7-nav-right> -->
       <f7-subnavbar sliding class="profile-header">
         <div class="profile-icon">
-          <f7-icon slot="media" size="60" ios="f7:person_alt_circle_fill" aurora="f7:person_alt_circle_fill" md="f7:person_alt_circle_fill" color="gray"></f7-icon>
+          <f7-icon slot="media" size="60" ios="f7:person_alt_circle_fill" aurora="f7:person_alt_circle_fill" md="f7:person_alt_circle_fill" color="gray" />
         <!-- <span v-else>
           {{item.label ? item.label[0] : item.name[0]}}
         </span> -->
         </div>
-        <h2>{{user.name}}</h2>
+        <h2>{{ user.name }}</h2>
         <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
-        <h5><small>{{user.roles.join(', ')}}</small></h5>
+        <h5><small>{{ user.roles.join(', ') }}</small></h5>
       </f7-subnavbar>
     </f7-navbar>
     <f7-block class="block-narrow after-profile-header">
       <f7-row>
         <f7-col>
           <f7-list>
-            <f7-list-button color="blue" :external="true" href="changePassword">{{ $t('profile.changePassword') }}</f7-list-button>
+            <f7-list-button color="blue" :external="true" href="changePassword">
+              {{ $t('profile.changePassword') }}
+            </f7-list-button>
           </f7-list>
         </f7-col>
       </f7-row>
@@ -28,8 +30,8 @@
     <f7-block class="block-narrow">
       <f7-row>
         <f7-col>
-          <f7-block-title v-t="'profile.sessions'"></f7-block-title>
-          <f7-block-footer class="padding-horizontal" v-t="'profile.sessions.header'"></f7-block-footer>
+          <f7-block-title v-t="'profile.sessions'" />
+          <f7-block-footer class="padding-horizontal" v-t="'profile.sessions.header'" />
           <f7-card>
             <f7-list media-list swipeout>
               <f7-list-item
@@ -40,12 +42,16 @@
                 :subtitle="$t('profile.sessions.created') + new Date(session.createdTime).toLocaleString($store.getters.locale)"
                 :text="$t('profile.sessions.lastRefreshed') + new Date(session.lastRefreshTime).toLocaleString($store.getters.locale)"
               >
-                <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
+                <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout" />
                 <f7-swipeout-actions right>
-                  <f7-swipeout-button @click="(ev) => deleteSession(ev, session)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">{{ $t('dialogs.delete') }}</f7-swipeout-button>
+                  <f7-swipeout-button @click="(ev) => deleteSession(ev, session)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                    {{ $t('dialogs.delete') }}
+                  </f7-swipeout-button>
                 </f7-swipeout-actions>
               </f7-list-item>
-              <f7-list-button color="red" @click="logout()">{{ $t('profile.sessions.signOut') }}</f7-list-button>
+              <f7-list-button color="red" @click="logout()">
+                {{ $t('profile.sessions.signOut') }}
+              </f7-list-button>
             </f7-list>
           </f7-card>
         </f7-col>
@@ -54,8 +60,8 @@
     <f7-block class="block-narrow margin-bottom padding-bottom">
       <f7-row>
         <f7-col>
-          <f7-block-title v-t="'profile.apiTokens'"></f7-block-title>
-          <f7-block-footer class="padding-horizontal" v-t="'profile.apiTokens.header'"></f7-block-footer>
+          <f7-block-title v-t="'profile.apiTokens'" />
+          <f7-block-footer class="padding-horizontal" v-t="'profile.apiTokens.header'" />
           <f7-card>
             <f7-list media-list swipeout>
               <f7-list-item
@@ -66,12 +72,16 @@
                 :subtitle="$t('profile.apiTokens.created') + new Date(apiToken.createdTime).toLocaleString($store.getters.locale)"
                 :text="$t('profile.apiTokens.validForScope') + (apiToken.scope || 'N/A')"
               >
-                <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
+                <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout" />
                 <f7-swipeout-actions right>
-                  <f7-swipeout-button @click="(ev) => deleteApiToken(ev, apiToken)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">{{ $t('dialogs.delete') }}</f7-swipeout-button>
+                  <f7-swipeout-button @click="(ev) => deleteApiToken(ev, apiToken)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                    {{ $t('dialogs.delete') }}
+                  </f7-swipeout-button>
                 </f7-swipeout-actions>
               </f7-list-item>
-              <f7-list-button color="blue" :external="true" href="createApiToken">{{ $t('profile.apiTokens.create') }}</f7-list-button>
+              <f7-list-button color="blue" :external="true" href="createApiToken">
+                {{ $t('profile.apiTokens.create') }}
+              </f7-list-button>
             </f7-list>
           </f7-card>
         </f7-col>

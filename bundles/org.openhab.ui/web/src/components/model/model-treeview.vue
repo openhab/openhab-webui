@@ -3,8 +3,8 @@
     <model-treeview-item v-for="node in rootNodes"
                          :key="node.item.name" :model="node"
                          @selected="nodeSelected" :selected="selectedItem"
-                         @checked="(item, check) => $emit('checked', item, check)">
-    </model-treeview-item>
+                         @checked="(item, check) => $emit('checked', item, check)"
+    />
   </f7-treeview>
 </template>
 

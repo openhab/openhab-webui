@@ -4,7 +4,8 @@
                     :textColor="iconColor" :color="(model.item.created !== false) ? 'blue' :'orange'"
                     :selected="selected && selected.item.name === model.item.name"
                     :opened="model.opened"
-                    @click="select">
+                    @click="select"
+  >
     <model-treeview-item v-for="node in [model.children.locations,
                                          model.children.equipment, model.children.points,
                                          model.children.groups, model.children.items].flat()"
@@ -14,9 +15,12 @@
                          :selected="selected"
                          @checked="(item, check) => $emit('checked', item, check)"
     />
-    <div slot="label" class="semantic-class"> {{className()}}</div>
+    <div slot="label" class="semantic-class">
+      {{ className() }}
+    </div>
     <f7-checkbox slot="content-start" v-if="model.checkable"
-                 :checked="model.checked === true" :disabled="model.disabled" @change="check" />
+                 :checked="model.checked === true" :disabled="model.disabled" @change="check"
+    />
   </f7-treeview-item>
 </template>
 

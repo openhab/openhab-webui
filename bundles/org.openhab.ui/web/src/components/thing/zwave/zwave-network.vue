@@ -1,6 +1,6 @@
 <template>
   <div class="network-fit">
-    <chart :options="finalOptions" :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize></chart>
+    <chart :options="finalOptions" :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize />
   </div>
 </template>
 

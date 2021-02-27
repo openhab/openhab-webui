@@ -1,16 +1,18 @@
 <template>
   <f7-page name="about" class="page-about" @page:beforein="beforePageIn">
-    <f7-navbar large :title-large="$t('about.title')" :title="$t('about.title')" :back-link="$t('dialogs.back')"></f7-navbar>
+    <f7-navbar large :title-large="$t('about.title')" :title="$t('about.title')" :back-link="$t('dialogs.back')" />
     <f7-block class="block-narrow after-big-title">
       <f7-row>
         <f7-col>
           <!-- <f7-block-title>About openHAB</f7-block-title> -->
           <f7-block>
             <img src="res/icons/128x128.png" width="96" class="padding float-right">
-            <h2 v-if="$store.state.runtimeInfo" class="block-title-medium">openHAB {{$store.state.runtimeInfo.version}}<br /><small>{{$store.state.runtimeInfo.buildString}}</small></h2>
-            <p><f7-link external target="_blank" href="https://www.openhab.org/" v-t="'about.homePage'"></f7-link></p>
-            <p><f7-link external target="_blank" href="https://www.openhab.org/docs/" v-t="'about.documentation'"></f7-link></p>
-            <p><f7-link external target="_blank" href="https://community.openhab.org/" v-t="'about.communityForum'"></f7-link></p>
+            <h2 v-if="$store.state.runtimeInfo" class="block-title-medium">
+              openHAB {{ $store.state.runtimeInfo.version }}<br><small>{{ $store.state.runtimeInfo.buildString }}</small>
+            </h2>
+            <p><f7-link external target="_blank" href="https://www.openhab.org/" v-t="'about.homePage'" /></p>
+            <p><f7-link external target="_blank" href="https://www.openhab.org/docs/" v-t="'about.documentation'" /></p>
+            <p><f7-link external target="_blank" href="https://community.openhab.org/" v-t="'about.communityForum'" /></p>
           </f7-block>
         </f7-col>
       </f7-row>
@@ -20,10 +22,10 @@
             <f7-list-item :title="$t('about.technicalInformation')" accordion-item>
               <f7-accordion-content>
                 <f7-list>
-                  <f7-list-item :title="$t('about.technicalInformation.configurationFolder')" :after="systemInfo.configFolder"></f7-list-item>
-                  <f7-list-item :title="$t('about.technicalInformation.userdataFolder')" :after="systemInfo.userdataFolder"></f7-list-item>
-                  <f7-list-item :title="$t('about.technicalInformation.logsFolder')" :after="systemInfo.logFolder"></f7-list-item>
-                  <f7-list-item :title="$t('about.technicalInformation.operatingSystem')" :after="`${systemInfo.osName}/${systemInfo.osVersion} (${systemInfo.osArchitecture})`"></f7-list-item>
+                  <f7-list-item :title="$t('about.technicalInformation.configurationFolder')" :after="systemInfo.configFolder" />
+                  <f7-list-item :title="$t('about.technicalInformation.userdataFolder')" :after="systemInfo.userdataFolder" />
+                  <f7-list-item :title="$t('about.technicalInformation.logsFolder')" :after="systemInfo.logFolder" />
+                  <f7-list-item :title="$t('about.technicalInformation.operatingSystem')" :after="`${systemInfo.osName}/${systemInfo.osVersion} (${systemInfo.osArchitecture})`" />
                   <f7-list-item :title="$t('about.technicalInformation.javaRuntime')" :footer="systemInfo.javaVendor" :after="`${systemInfo.javaVersion} (${systemInfo.javaVendorVersion})`">
                     <div slot="root-end" class="item-content" style="flex-direction: column">
                       <f7-progressbar class="margin-top" style="width: 90%" color="blue" :progress="systemInfo.freeMemory * 100 / systemInfo.totalMemory" />
@@ -32,7 +34,9 @@
                       </small>
                     </div>
                   </f7-list-item>
-                  <f7-list-button color="blue" @click="textualSystemInfoOpened = true">{{$t('about.technicalInformation.viewDetails')}}</f7-list-button>
+                  <f7-list-button color="blue" @click="textualSystemInfoOpened = true">
+                    {{ $t('about.technicalInformation.viewDetails') }}
+                  </f7-list-button>
                 </f7-list>
               </f7-accordion-content>
             </f7-list-item>
@@ -40,18 +44,26 @@
         </f7-col>
       </f7-row>
 
-      <f7-block-title><h4 v-t="'about.appearanceOptions'"></h4></f7-block-title>
+      <f7-block-title><h4 v-t="'about.appearanceOptions'" /></f7-block-title>
       <theme-switcher />
 
-      <f7-block-title><h4 v-t="'about.reload'">Reload</h4></f7-block-title>
+      <f7-block-title>
+        <h4 v-t="'about.reload'">
+          Reload
+        </h4>
+      </f7-block-title>
       <f7-col v-if="showCachePurgeOption">
-        <p class="padding-horizontal" v-t="'about.reload.purgeExplanation1'"></p>
-        <p class="padding-horizontal" v-t="'about.reload.purgeExplanation2'"></p>
+        <p class="padding-horizontal" v-t="'about.reload.purgeExplanation1'" />
+        <p class="padding-horizontal" v-t="'about.reload.purgeExplanation2'" />
       </f7-col>
       <f7-col>
         <f7-list>
-          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches()">{{ $t('about.reload.purgeCachesAndRefresh') }}</f7-list-button>
-          <f7-list-button color="blue" @click="reload">{{ $t('about.reload.reloadApp') }}</f7-list-button>
+          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches()">
+            {{ $t('about.reload.purgeCachesAndRefresh') }}
+          </f7-list-button>
+          <f7-list-button color="blue" @click="reload">
+            {{ $t('about.reload.reloadApp') }}
+          </f7-list-button>
         </f7-list>
       </f7-col>
     </f7-block>
@@ -59,14 +71,14 @@
       <f7-page>
         <f7-toolbar>
           <div class="left">
-            <f7-link @click="copyTextualSystemInfo" v-t="'dialogs.copy'"></f7-link>
+            <f7-link @click="copyTextualSystemInfo" v-t="'dialogs.copy'" />
           </div>
           <div class="right">
-            <f7-link popup-close v-t="'dialogs.close'"></f7-link>
+            <f7-link popup-close v-t="'dialogs.close'" />
           </div>
         </f7-toolbar>
         <!-- <pre class="textual-definition" v-html="textualDefinition"></pre> -->
-        <textarea readonly class="textual-systeminfo" id="textual-systeminfo" :value="textualSystemInfo"></textarea>
+        <textarea readonly class="textual-systeminfo" id="textual-systeminfo" :value="textualSystemInfo" />
       </f7-page>
     </f7-popup>
   </f7-page>
