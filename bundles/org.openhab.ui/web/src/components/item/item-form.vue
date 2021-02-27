@@ -1,27 +1,31 @@
 <template>
   <div v-if="item" class="quick-link-form no-padding">
     <f7-list inline-labels no-hairlines-md>
-      <f7-list-input v-if="!enableName" label="Name" type="text" placeholder="Name" :value="item.name" disabled>
-      </f7-list-input>
+      <f7-list-input v-if="!enableName" label="Name" type="text" placeholder="Name" :value="item.name" disabled />
       <f7-list-input v-else label="Name" type="text" placeholder="Name" :value="item.name"
                      @input="item.name = $event.target.value" clear-button
-                     required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only">
-      </f7-list-input>
+                     required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only"
+      />
       <f7-list-input label="Label" type="text" placeholder="Label" :value="item.label"
-                     @input="item.label = $event.target.value" clear-button>
-      </f7-list-input>
+                     @input="item.label = $event.target.value" clear-button
+      />
       <f7-list-item v-if="item.type && !hideType" title="Type" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
         <select name="select-type" @change="item.type = $event.target.value">
           <optgroup label="Basic Types">
-            <option v-for="type in types.ItemTypes" :key="type" :value="type" :selected="type === item.type">{{type}}</option>
+            <option v-for="type in types.ItemTypes" :key="type" :value="type" :selected="type === item.type">
+              {{ type }}
+            </option>
           </optgroup>
           <optgroup label="Numbers with Dimensions">
-            <option v-for="dimension in types.Dimensions" :key="dimension" :value="'Number:' + dimension" :selected="item.type === 'Number:' + dimension">{{'Number:' + dimension}}</option>
+            <option v-for="dimension in types.Dimensions" :key="dimension" :value="'Number:' + dimension" :selected="item.type === 'Number:' + dimension">
+              {{ 'Number:' + dimension }}
+            </option>
           </optgroup>
         </select>
       </f7-list-item>
       <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
-                     @input="item.category = $event.target.value" clear-button>
+                     @input="item.category = $event.target.value" clear-button
+      >
         <div slot="root-end" style="margin-left: calc(35% + 8px)">
           <oh-icon :icon="item.category" height="32" width="32" />
         </div>

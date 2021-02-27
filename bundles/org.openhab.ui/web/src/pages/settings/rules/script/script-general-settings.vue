@@ -5,18 +5,17 @@
         <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" required validate
                        :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
                        pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
-                       @input="rule.uid = $event.target.value" :clear-button="createMode">
-        </f7-list-input>
+                       @input="rule.uid = $event.target.value" :clear-button="createMode"
+        />
         <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" required validate
-                       @input="rule.name = $event.target.value" clear-button>
-        </f7-list-input>
+                       @input="rule.name = $event.target.value" clear-button
+        />
         <f7-list-input label="Description" type="text" :value="rule.description"
-                       @input="rule.description = $event.target.value" clear-button>
-        </f7-list-input>
+                       @input="rule.description = $event.target.value" clear-button
+        />
       </f7-list>
     </f7-col>
   </f7-block>
-
 </template>
 
 <script>

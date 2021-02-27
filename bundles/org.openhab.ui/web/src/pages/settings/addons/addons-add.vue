@@ -8,16 +8,20 @@
           v-if="initSearchbar"
           search-in=".item-title"
           :disable-button="!$theme.aurora"
-        ></f7-searchbar>
+        />
       </f7-subnavbar>
     </f7-navbar>
     <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found"></f7-list-item>
+      <f7-list-item title="Nothing found" />
     </f7-list>
     <f7-block class="block-narrow searchbar-found">
       <f7-col>
-        <f7-block-title v-if="!ready">Loading...</f7-block-title>
-        <f7-block-title v-else>{{addons.length}} add-on{{addons.length > 1 ? 's' : ''}} available</f7-block-title>
+        <f7-block-title v-if="!ready">
+          Loading...
+        </f7-block-title>
+        <f7-block-title v-else>
+          {{ addons.length }} add-on{{ addons.length > 1 ? 's' : '' }} available
+        </f7-block-title>
         <f7-list media-list v-if="!ready">
           <f7-list-item
             v-for="n in 10"
@@ -27,8 +31,7 @@
             header="BindingID"
             footer="Binding version"
             media-item
-          >
-          </f7-list-item>
+          />
         </f7-list>
         <f7-list v-else media-list class="addons-list">
           <f7-list-item
@@ -41,8 +44,7 @@
             :footer="addon.version"
             :after="(currentlyInstalling.indexOf(addon.id) >= 0) ? 'Installing...' : ''"
             :title="addon.label"
-          >
-          </f7-list-item>
+          />
         </f7-list>
       </f7-col>
     </f7-block>

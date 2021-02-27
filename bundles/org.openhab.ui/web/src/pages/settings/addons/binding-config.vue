@@ -2,8 +2,10 @@
   <f7-page>
     <f7-navbar :title="'Configure ' + binding.name" back-link="Bindings">
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md">
+          Save
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-block form v-if="configDescriptions && config" class="service-config block-narrow">

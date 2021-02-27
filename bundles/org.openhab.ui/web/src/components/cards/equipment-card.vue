@@ -1,6 +1,6 @@
 <template>
   <model-card type="equipment" :context="context" :element="element" header-height="150px">
-    <template v-slot:glance>
+    <template #glance>
       <div v-if="context && context.component.slots && context.component.slots.glance" class="display-flex flex-direction-column align-items-flex-start">
         <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.glance" :key="'glance-' + idx" @command="onCommand" />
       </div>
@@ -9,7 +9,7 @@
     <div class="card-content-padding">
       <generic-widget-component :context="listContext" />
       <p>
-        <f7-button fill round large card-close :color="color" class="margin-horizontal" :text="$t('home.cards.close')"></f7-button>
+        <f7-button fill round large card-close :color="color" class="margin-horizontal" :text="$t('home.cards.close')" />
       </p>
     </div>
   </model-card>

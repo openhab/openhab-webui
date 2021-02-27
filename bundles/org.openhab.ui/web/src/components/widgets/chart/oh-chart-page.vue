@@ -2,7 +2,8 @@
   <oh-chart
     class="oh-chart-page-chart"
     :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
-    :context="this.context" />
+    :context="this.context"
+  />
 </template>
 
 <style lang="stylus">

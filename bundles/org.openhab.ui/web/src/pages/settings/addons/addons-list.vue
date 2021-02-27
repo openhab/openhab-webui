@@ -7,8 +7,12 @@
     </f7-navbar>
     <f7-block form class="service-config block-narrow">
       <f7-col>
-        <f7-block-title v-if="!ready">Loading...</f7-block-title>
-        <f7-block-title v-else-if="addons.length">{{addons.length}} add-on{{addons.length > 1 ? 's' : ''}} installed</f7-block-title>
+        <f7-block-title v-if="!ready">
+          Loading...
+        </f7-block-title>
+        <f7-block-title v-else-if="addons.length">
+          {{ addons.length }} add-on{{ addons.length > 1 ? 's' : '' }} installed
+        </f7-block-title>
         <f7-list media-list v-if="!ready">
           <f7-list-item
             v-for="n in 10"
@@ -18,8 +22,7 @@
             header="BindingID"
             footer="Binding version"
             media-item
-          >
-          </f7-list-item>
+          />
         </f7-list>
         <f7-list v-else>
           <f7-list-item
@@ -47,8 +50,8 @@
       <empty-state-placeholder :icon="addonsIcons[addonType]" :title="'No ' + addonsLabels[addonType] + ' installed yet'" text="addons.text" />
     </f7-block>
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
+      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+      <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
     </f7-fab>
     <!-- <addon-details-popup
       :addon-id="currentAddonId"

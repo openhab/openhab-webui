@@ -1,7 +1,6 @@
 <template>
   <ul>
-    <f7-list-item :title="configDescription.label" link="#" @click="openPropsSheet">
-    </f7-list-item>
+    <f7-list-item :title="configDescription.label" link="#" @click="openPropsSheet" />
   </ul>
 </template>
 

@@ -4,14 +4,20 @@
       <ul>
         <li class="item-content skeleton-text searchbar-ignore">
           <div class="item-media searchbar-ignore">
-            <div class="skeleton-block searchbar-ignore" style="width: 40px; height: 40px; border-radius: 50%"></div>
+            <div class="skeleton-block searchbar-ignore" style="width: 40px; height: 40px; border-radius: 50%" />
           </div>
           <div class="item-inner searchbar-ignore">
             <div class="item-title-row searchbar-ignore">
-              <div class="item-title searchbar-ignore">Item Title</div>
+              <div class="item-title searchbar-ignore">
+                Item Title
+              </div>
             </div>
-            <div class="item-subtitle searchbar-ignore">Item Subtitle</div>
-            <div class="item-text searchbar-ignore">Item text goes here, and it will be rendered as gray box too.</div>
+            <div class="item-subtitle searchbar-ignore">
+              Item Subtitle
+            </div>
+            <div class="item-text searchbar-ignore">
+              Item text goes here, and it will be rendered as gray box too.
+            </div>
           </div>
         </li>
       </ul>
@@ -19,8 +25,9 @@
   </div>
   <f7-list media-list v-else inset class="margin-left searchbar-ignore">
     <f7-list-item v-if="channelKind === 'TRIGGER'"
-                  subtitle="This is a trigger channel, use rules to react to events emitted by it.">
-      <f7-icon slot="media" color="gray" f7="bolt_circle_fill"></f7-icon>
+                  subtitle="This is a trigger channel, use rules to react to events emitted by it."
+    >
+      <f7-icon slot="media" color="gray" f7="bolt_circle_fill" />
     </f7-list-item>
     <f7-list-group v-if="links">
       <f7-list-item
@@ -34,16 +41,16 @@
         :after="context.store[link.item.name] ? context.store[link.item.name].displayState || context.store[link.item.name].state : link.item.state"
       >
         <oh-icon v-if="link.item.category" slot="media" :icon="link.item.category" height="32" width="32" />
-        <span v-else slot="media" class="item-initial">{{link.item.name[0]}}</span>
-        <f7-icon v-if="!link.item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
+        <span v-else slot="media" class="item-initial">{{ link.item.name[0] }}</span>
+        <f7-icon v-if="!link.item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
         <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
       </f7-list-item>
     </f7-list-group>
     <f7-list-item class="searchbar-ignore" link v-if="channelKind !== 'TRIGGER'" color="blue" subtitle="Add Link to Item..." @click="addLink()">
-      <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point"></f7-icon>
+      <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
     </f7-list-item>
-    <f7-list-button class="searchbar-ignore" color="blue" :title="(channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'" @click="configureChannel()"></f7-list-button>
-    <f7-list-button class="searchbar-ignore" v-if="extensible" color="red" title="Remove Channel" @click="removeChannel()"></f7-list-button>
+    <f7-list-button class="searchbar-ignore" color="blue" :title="(channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'" @click="configureChannel()" />
+    <f7-list-button class="searchbar-ignore" v-if="extensible" color="red" title="Remove Channel" @click="removeChannel()" />
   </f7-list>
 </template>
 

@@ -4,13 +4,17 @@
                     :textColor="iconColor" :color="'blue'"
                     :selected="selected && selected === widget"
                     :opened="!widget.closed"
-                    @click="select">
+                    @click="select"
+  >
     <sitemap-treeview-item v-for="(childwidget, idx) in children"
                            :key="idx"
                            :widget="childwidget" :parent-widget="widget"
                            @selected="(event) => $emit('selected', event)"
-                           :selected="selected" />
-    <div slot="label" class="subtitle"> {{subtitle()}}</div>
+                           :selected="selected"
+    />
+    <div slot="label" class="subtitle">
+      {{ subtitle() }}
+    </div>
   </f7-treeview-item>
 </template>
 

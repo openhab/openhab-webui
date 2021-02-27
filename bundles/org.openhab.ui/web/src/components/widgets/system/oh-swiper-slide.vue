@@ -3,16 +3,16 @@
     <f7-menu v-if="context.editmode" class="configure-layout-menu padding-horizontal">
       <f7-menu-item style="margin-left: auto" icon-f7="rectangle_on_rectangle" dropdown>
         <f7-menu-dropdown right>
-          <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context.parent)" href="#" text="Configure Widget"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Before"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move After"></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-          <f7-menu-dropdown-item @click="context.editmode.removeWidget(context.component, context.parent)" href="#" text="Remove Slide"></f7-menu-dropdown-item>
+          <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context.parent)" href="#" text="Configure Widget" />
+          <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML" />
+          <f7-menu-dropdown-item divider />
+          <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut" />
+          <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy" />
+          <f7-menu-dropdown-item divider />
+          <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Before" />
+          <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move After" />
+          <f7-menu-dropdown-item divider />
+          <f7-menu-dropdown-item @click="context.editmode.removeWidget(context.component, context.parent)" href="#" text="Remove Slide" />
         </f7-menu-dropdown>
       </f7-menu-item>
     </f7-menu>

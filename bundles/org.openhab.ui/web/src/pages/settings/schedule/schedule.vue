@@ -3,7 +3,8 @@
     <f7-navbar title="Schedule" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"
+        />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -14,18 +15,20 @@
           search-item=".timeline-item-inner"
           search-in=".timeline-item-title"
           :disable-button="!$theme.aurora"
-        ></f7-searchbar>
+        />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">Remove {{selectedItems.length}}</f7-link>
-      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false"></f7-link>
+      <f7-link v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
+        Remove {{ selectedItems.length }}
+      </f7-link>
+      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
-        {{selectedItems.length}} selected
+        {{ selectedItems.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
-        <f7-link icon-md="material:more_vert" icon-color="white" @click="removeSelected"></f7-link>
+        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link icon-md="material:more_vert" icon-color="white" @click="removeSelected" />
       </div>
     </f7-toolbar>
 
@@ -33,17 +36,27 @@
     <empty-state-placeholder v-else-if="ready && !rules.length" icon="calendar" title="schedule.title" text="schedule.text" />
     <div v-else class="timeline timeline-horizontal col-33 tablet-15">
       <div class="timeline-year" v-for="(yearObj, year) in calendar" :key="year">
-        <div class="timeline-year-title"><span>{{year}}</span></div>
+        <div class="timeline-year-title">
+          <span>{{ year }}</span>
+        </div>
         <div class="timeline-month" v-for="(monthObj, month) in yearObj" :key="month">
-          <div class="timeline-month-title"><span>{{month}}</span></div>
+          <div class="timeline-month-title">
+            <span>{{ month }}</span>
+          </div>
           <div class="timeline-item" v-for="(dayObj, day) in monthObj" :key="day">
-            <div class="timeline-item-date"><span>{{day}}</span></div>
+            <div class="timeline-item-date">
+              <span>{{ day }}</span>
+            </div>
             <div class="timeline-item-content">
               <div class="timeline-item-inner" v-for="(occurrence, $idx) in calendar[year][month][day]" :key="$idx">
-                <div class="timeline-item-time">{{occurrence[0].substring(11, 16)}}</div>
-                <div class="timeline-item-title">{{occurrence[1].name}}</div>
+                <div class="timeline-item-time">
+                  {{ occurrence[0].substring(11, 16) }}
+                </div>
+                <div class="timeline-item-title">
+                  {{ occurrence[1].name }}
+                </div>
                 <!-- <div class="timeline-item-text">{{occurrence[1].description}}</div> -->
-                <f7-link :href="'/settings/rules/' + occurrence[1].uid" small text="edit"></f7-link>
+                <f7-link :href="'/settings/rules/' + occurrence[1].uid" small text="edit" />
               </div>
             </div>
           </div>
@@ -51,8 +64,8 @@
       </div>
     </div>
     <f7-fab v-if="ready" position="right-bottom" slot="fixed" color="blue" href="add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
+      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+      <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
     </f7-fab>
   </f7-page>
 </template>

@@ -11,9 +11,12 @@
       :required="configDescription.required" validate
       :clear-button="!configDescription.required && configDescription.context !== 'password'"
       @input="updateValue"
-      :type="controlType">
+      :type="controlType"
+    >
       <div v-if="configDescription.context === 'password'" class="padding-left" slot="content-end">
-        <f7-link class="margin" color="gray" slot="content-end" @click="showPassword = !showPassword"><f7-icon size="20" :f7="(showPassword) ? 'eye_slash_fill' : 'eye_fill'" /></f7-link>
+        <f7-link class="margin" color="gray" slot="content-end" @click="showPassword = !showPassword">
+          <f7-icon size="20" :f7="(showPassword) ? 'eye_slash_fill' : 'eye_fill'" />
+        </f7-link>
       </div>
     </f7-list-input>
   </ul>

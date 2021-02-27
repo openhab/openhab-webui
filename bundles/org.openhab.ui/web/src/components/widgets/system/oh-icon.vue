@@ -4,7 +4,8 @@
          width: (context && config && config.width) ? config.width + 'px' : (width) ? width + 'px' : 'auto',
          height: (context && config && config.height) ? config.height + 'px' : (height) ? height + 'px' : 'auto',
          ...(config) ? config.style : {} }"
-       onload="this.classList.remove('no-icon')" onerror="this.classList.add('no-icon')" />
+       onload="this.classList.remove('no-icon')" onerror="this.classList.add('no-icon')"
+  >
 </template>
 
 <style lang="stylus">

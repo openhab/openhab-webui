@@ -1,14 +1,17 @@
 <template>
   <f7-popup ref="modelPicker" class="modelpicker-popup" close-on-escape
-            @popup:open="onOpen" @popup:close="onClose">
+            @popup:open="onOpen" @popup:close="onClose"
+  >
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
+          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
         </f7-nav-left>
-        <f7-nav-title>{{popupTitle || 'Pick from Model'}}</f7-nav-title>
+        <f7-nav-title>{{ popupTitle || 'Pick from Model' }}</f7-nav-title>
         <f7-nav-right>
-          <f7-link v-if="ready && ((multiple && checkedItems.length > 0) || selectedItem || allowEmpty)" @click="pickItems">{{actionLabel || 'Pick'}}<span v-if="multiple && checkedItems.length > 0">&nbsp;{{checkedItems.length}}</span></f7-link>
+          <f7-link v-if="ready && ((multiple && checkedItems.length > 0) || selectedItem || allowEmpty)" @click="pickItems">
+            {{ actionLabel || 'Pick' }}<span v-if="multiple && checkedItems.length > 0">&nbsp;{{ checkedItems.length }}</span>
+          </f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
@@ -19,24 +22,27 @@
           search-item=".treeview-item"
           search-in=".treeview-item-label"
           :disable-button="!$theme.aurora"
-        ></f7-searchbar>
+        />
       </f7-subnavbar>
       <f7-toolbar bottom class="toolbar-details">
-        <f7-link v-if="!multiple" :disabled="selectedItem != null" class="left" @click="selectedItem = null">Clear</f7-link>
-        <span v-else></span>
+        <f7-link v-if="!multiple" :disabled="selectedItem != null" class="left" @click="selectedItem = null">
+          Clear
+        </f7-link>
+        <span v-else />
         <div class="padding-right text-align-right">
-          <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic"></f7-checkbox>
+          <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
           <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
         </div>
-        <span></span>
+        <span />
         <!-- <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link> -->
       </f7-toolbar>
       <f7-block strong class="no-padding" v-if="ready">
         <model-treeview class="model-picker-treeview" :root-nodes="rootNodes"
-                        :selected-item="selectedItem" @selected="selectItem" @checked="checkItem" />
+                        :selected-item="selectedItem" @selected="selectItem" @checked="checkItem"
+        />
       </f7-block>
       <f7-block v-else-if="!ready" class="text-align-center">
-        <f7-preloader></f7-preloader>
+        <f7-preloader />
         <div>Loading...</div>
       </f7-block>
     </f7-page>

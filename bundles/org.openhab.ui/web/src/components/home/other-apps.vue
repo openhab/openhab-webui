@@ -11,10 +11,12 @@
                   'background-image': 'url(' + app.imageUrl.replace(/^\.\./, '') + ')',
                   'background-size': 'cover',
                   'background-repeat': 'no-repeat'
-                }">
-                </f7-card-content>
+                }"
+                />
                 <f7-card-footer>
-                  <div class="app-card-name">{{app.name}}</div>
+                  <div class="app-card-name">
+                    {{ app.name }}
+                  </div>
                 </f7-card-footer>
               </f7-card>
             </f7-link>

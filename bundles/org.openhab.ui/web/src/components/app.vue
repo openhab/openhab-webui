@@ -1,18 +1,21 @@
 <template>
   <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || loginScreenOpened) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
-
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
         <f7-link href="/" class="logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
-          <div class="logo-inner"><img src="../res/img/openhab-logo-white.png" width="100%"></div>
+          <div class="logo-inner">
+            <img src="../res/img/openhab-logo-white.png" width="100%">
+          </div>
         </f7-link>
         <f7-link href="/" class="logo no-ripple" panel-close v-else>
-          <div class="logo-inner"><img src="../res/img/openhab-logo.png" width="100%"></div>
+          <div class="logo-inner">
+            <img src="../res/img/openhab-logo.png" width="100%">
+          </div>
         </f7-link>
         <f7-list v-if="ready">
           <f7-list-item v-if="$store.getters.apiEndpoint('ui') && (!pages || !pages.length)">
-            <span><em>{{$t('sidebar.noPages')}}</em></span>
+            <span><em>{{ $t('sidebar.noPages') }}</em></span>
           </f7-list-item>
           <!-- <f7-list-item v-for="sitemap in sitemaps" :animate="false" :key="sitemap.name"
                 :class="{ currentsection: currentUrl.indexOf('/sitemap/' + sitemap.name) >= 0 }"
@@ -23,62 +26,74 @@
           <f7-list-item v-for="page in pages" :animate="false" :key="page.uid"
                         :class="{ currentsection: currentUrl.indexOf('/page/' + page.uid) >= 0 }"
                         :link="'/page/' + page.uid"
-                        :title="page.config.label" view=".view-main" panel-close>
-            <f7-icon slot="media" :f7="pageIcon(page)"></f7-icon>
+                        :title="page.config.label" view=".view-main" panel-close
+          >
+            <f7-icon slot="media" :f7="pageIcon(page)" />
           </f7-list-item>
         </f7-list>
-        <f7-block-title v-if="$store.getters.isAdmin" v-t="'sidebar.administration'"></f7-block-title>
+        <f7-block-title v-if="$store.getters.isAdmin" v-t="'sidebar.administration'" />
         <f7-list class="admin-links" v-if="$store.getters.isAdmin">
           <f7-list-item link="/settings/" :title="$t('sidebar.settings')" view=".view-main" panel-close :animate="false"
-                        :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/addons/') >= 0 || currentUrl.indexOf('/settings/services/') >= 0 }">
-            <f7-icon slot="media" ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray"></f7-icon>
+                        :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/addons/') >= 0 || currentUrl.indexOf('/settings/services/') >= 0 }"
+          >
+            <f7-icon slot="media" ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
           </f7-list-item>
           <li v-if="showSettingsSubmenu">
             <ul class="menu-sublinks">
               <f7-list-item v-if="$store.getters.apiEndpoint('things')" link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/things') >= 0 }">
-                <f7-icon slot="media" f7="lightbulb" color="gray"></f7-icon>
+                            :class="{ currentsection: currentUrl.indexOf('/settings/things') >= 0 }"
+              >
+                <f7-icon slot="media" f7="lightbulb" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('items')" link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/model') >= 0 }">
-                <f7-icon slot="media" f7="list_bullet_indent" color="gray"></f7-icon>
+                            :class="{ currentsection: currentUrl.indexOf('/settings/model') >= 0 }"
+              >
+                <f7-icon slot="media" f7="list_bullet_indent" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('items')" link="/settings/items/" title="Items" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/items') >= 0 }">
-                <f7-icon slot="media" f7="square_on_circle" color="gray"></f7-icon>
+                            :class="{ currentsection: currentUrl.indexOf('/settings/items') >= 0 }"
+              >
+                <f7-icon slot="media" f7="square_on_circle" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/settings/pages/" title="Pages" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/pages') >= 0 }">
-                <f7-icon slot="media" f7="tv" color="gray"></f7-icon>
+                            :class="{ currentsection: currentUrl.indexOf('/settings/pages') >= 0 }"
+              >
+                <f7-icon slot="media" f7="tv" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/rules') >= 0 }">
-                <f7-icon slot="media" f7="wand_stars" color="gray"></f7-icon>
+                            :class="{ currentsection: currentUrl.indexOf('/settings/rules') >= 0 }"
+              >
+                <f7-icon slot="media" f7="wand_stars" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scripts/" title="Scripts" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/scripts') >= 0 }">
-                <f7-icon slot="media" f7="doc_plaintext" color="gray"></f7-icon>
+                            :class="{ currentsection: currentUrl.indexOf('/settings/scripts') >= 0 }"
+              >
+                <f7-icon slot="media" f7="doc_plaintext" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/schedule/" title="Schedule" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/schedule') >= 0 }">
-                <f7-icon slot="media" f7="calendar" color="gray"></f7-icon>
+                            :class="{ currentsection: currentUrl.indexOf('/settings/schedule') >= 0 }"
+              >
+                <f7-icon slot="media" f7="calendar" color="gray" />
               </f7-list-item>
             </ul>
           </li>
 
           <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close
-                        :class="{ currentsection: currentUrl.indexOf('/developer/') >= 0 && currentUrl.indexOf('/developer/widgets') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 }">
-            <f7-icon slot="media" ios="f7:exclamationmark_shield_fill" aurora="f7:exclamationmark_shield_fill" md="material:extension" color="gray"></f7-icon>
+                        :class="{ currentsection: currentUrl.indexOf('/developer/') >= 0 && currentUrl.indexOf('/developer/widgets') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 }"
+          >
+            <f7-icon slot="media" ios="f7:exclamationmark_shield_fill" aurora="f7:exclamationmark_shield_fill" md="material:extension" color="gray" />
           </f7-list-item>
           <li v-if="showDeveloperSubmenu">
             <ul class="menu-sublinks">
               <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/widgets/" title="Widgets" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/developer/widgets') >= 0 }">
-                <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray"></f7-icon>
+                            :class="{ currentsection: currentUrl.indexOf('/developer/widgets') >= 0 }"
+              >
+                <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray" />
               </f7-list-item>
               <f7-list-item link="/developer/api-explorer" title="API Explorer" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') >= 0 }">
-                <f7-icon slot="media" f7="burn" color="gray"></f7-icon>
+                            :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') >= 0 }"
+              >
+                <f7-icon slot="media" f7="burn" color="gray" />
               </f7-list-item>
             </ul>
           </li>
@@ -86,25 +101,27 @@
 
         <f7-list class="admin-links">
           <f7-list-item link="/about/" :title="$t('sidebar.helpAbout')" view=".view-main" panel-close
-                        :class="{ currentsection: currentUrl.indexOf('/about') >= 0 }">
-            <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray"></f7-icon>
+                        :class="{ currentsection: currentUrl.indexOf('/about') >= 0 }"
+          >
+            <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray" />
           </f7-list-item>
         </f7-list>
         <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
-          <f7-icon slot="media" size="14" :f7="this.visibleBreakpointDisabled ? 'pin_slash' : 'pin'" color="gray"></f7-icon>
+          <f7-icon slot="media" size="14" :f7="this.visibleBreakpointDisabled ? 'pin_slash' : 'pin'" color="gray" />
         </f7-link>
 
         <div slot="fixed" class="account" v-if="ready && this.$store.getters.apiEndpoint('auth')">
           <div class="display-flex justify-content-center">
             <div class="hint-signin" v-if="!$store.getters.user && !$store.getters.pages.filter((p) => p.uid !== 'overview').length">
-              <em>{{ $t('sidebar.tip.signIn') }}<br /><f7-icon f7="arrow_down" size="20"></f7-icon></em>
+              <em>{{ $t('sidebar.tip.signIn') }}<br><f7-icon f7="arrow_down" size="20" /></em>
             </div>
             <f7-button v-if="!loggedIn" large color="gray" icon-size="36" :tooltip="$t('sidebar.unlockAdmin')" icon-f7="lock_shield_fill" @click="authorize()" />
           </div>
           <f7-list v-if="$store.getters.user" media-list>
             <f7-list-item :title="$store.getters.user.name" :footer="serverDisplayUrl" io="f7:person_alt_circle_fill" link="/profile/" no-chevron panel-close view=".view-main"
-                          :class="{ currentsection: currentUrl.indexOf('/profile') >= 0 }">
-              <f7-icon slot="media" size="36" ios="f7:person_alt_circle_fill" aurora="f7:person_alt_circle_fill" md="f7:person_alt_circle_fill" color="gray"></f7-icon>
+                          :class="{ currentsection: currentUrl.indexOf('/profile') >= 0 }"
+            >
+              <f7-icon slot="media" size="36" ios="f7:person_alt_circle_fill" aurora="f7:person_alt_circle_fill" md="f7:person_alt_circle_fill" color="gray" />
             </f7-list-item>
           </f7-list>
         </div>
@@ -121,7 +138,7 @@
       <developer-sidebar />
     </f7-panel>
 
-    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'"></f7-view>
+    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
 
   <!-- <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
     <f7-view name="login" v-if="$device.cordova">

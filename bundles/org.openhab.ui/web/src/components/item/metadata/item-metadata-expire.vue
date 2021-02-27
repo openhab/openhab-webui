@@ -1,6 +1,8 @@
 <template>
   <div>
-    <f7-block-title medium>Do</f7-block-title>
+    <f7-block-title medium>
+      Do
+    </f7-block-title>
     <f7-list>
       <f7-list-item radio :checked="parsedAction.action === 'state'" name="action" title="update state" @click="updateAction('state')" />
       <f7-list-item radio :checked="parsedAction.action === 'command'" name="action" title="send command" @click="updateAction('command')" />
@@ -17,7 +19,9 @@
     <f7-block-footer class="param-description padding-left">
       <small>After a different command or state update is received, perform the chosen action when the duration specified below has passed. The timer is reset if another state update or command is received before it expires.</small>
     </f7-block-footer>
-    <f7-block-title medium>After</f7-block-title>
+    <f7-block-title medium>
+      After
+    </f7-block-title>
     <f7-list>
       <f7-list-input
         :floating-label="$theme.md"
@@ -27,8 +31,8 @@
         type="text"
         :value="sanitizedDuration"
         @blur="(evt) => updateDuration(evt.target.value)"
-        pattern="(\d+h)*(\d+m)*(\d+s)*" validate validate-on-blur>
-      </f7-list-input>
+        pattern="(\d+h)*(\d+m)*(\d+s)*" validate validate-on-blur
+      />
       <f7-list-item class="display-flex justify-content-center">
         <div ref="picker" />
       </f7-list-item>

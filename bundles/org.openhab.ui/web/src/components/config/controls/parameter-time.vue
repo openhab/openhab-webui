@@ -8,9 +8,10 @@
       :value="value"
       :required="configDescription.required" validate
       :clear-button="!configDescription.required"
-      @input="updateValue" />
+      @input="updateValue"
+    />
     <div slot="content-end" class="display-flex justify-content-center">
-      <div ref="picker"></div>
+      <div ref="picker" />
     </div>
   </ul>
 </template>

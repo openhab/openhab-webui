@@ -7,27 +7,30 @@
             <f7-list inline-labels no-hairlines-md class="no-margin">
               <f7-list-input label="Unique ID" v-if="createMode" type="text" placeholder="Required" :value="thing.ID"
                              @input="changeUID" info="Note: cannot be changed after the creation"
-                             required validate pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only">
-              </f7-list-input>
-              <f7-list-input label="Identifier" type="text" placeholder="Name" :value="thing.UID" disabled>
-              </f7-list-input>
+                             required validate pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
+              />
+              <f7-list-input label="Identifier" type="text" placeholder="Name" :value="thing.UID" disabled />
               <f7-list-input label="Label" type="text" :disabled="!ready || readOnly" placeholder="e.g. My Thing" :value="thing.label"
-                             @input="thing.label = $event.target.value; $emit('updated')" required validate>
-              </f7-list-input>
+                             @input="thing.label = $event.target.value; $emit('updated')" required validate
+              />
               <f7-list-input label="Location" type="text" :disabled="!ready || readOnly" placeholder="e.g. Kitchen" :value="thing.location"
-                             @input="thing.location = $event.target.value; $emit('updated')" clear-button>
-              </f7-list-input>
+                             @input="thing.location = $event.target.value; $emit('updated')" clear-button
+              />
             </f7-list>
-            <f7-block-title v-if="ready && thingType.supportedBridgeTypeUIDs.length">Parent Bridge</f7-block-title>
+            <f7-block-title v-if="ready && thingType.supportedBridgeTypeUIDs.length">
+              Parent Bridge
+            </f7-block-title>
             <f7-block-footer v-if="ready && thingType.supportedBridgeTypeUIDs.length && !thing.bridgeUID"
-                             class="padding-left padding-right">
+                             class="padding-left padding-right"
+            >
               This type of Thing needs to be associated to a working Bridge to function properly.
             </f7-block-footer>
             <f7-list v-if="ready && thingType.supportedBridgeTypeUIDs.length" inline-labels no-hairlines-md>
               <thing-picker
                 title="Bridge" name="bridge" :value="thing.bridgeUID"
                 @input="updateBridge"
-                :filterType="thingType.supportedBridgeTypeUIDs" />
+                :filterType="thingType.supportedBridgeTypeUIDs"
+              />
             </f7-list>
           </f7-col>
         </f7-row>
