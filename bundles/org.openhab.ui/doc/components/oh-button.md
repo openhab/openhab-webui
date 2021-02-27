@@ -274,7 +274,7 @@ The contents of the button.
 
 ### Header Image Source Code
 
-This example code generates the example button image used at the top of this page:
+This example code generates the button image used at the top of this page:
 
 ::: details YAML
 
