@@ -1,5 +1,5 @@
 <template>
-  <f7-swiper v-bind="config">
+  <f7-swiper v-bind="config" :params="{ observer: true, observeParents: true }">
     <oh-swiper-slide :context="childContext(slide)" v-for="(slide, idx) in slides" :key="idx" v-on="$listeners" />
     <f7-swiper-slide v-if="context.editmode">
       <oh-placeholder-widget @click="context.editmode.addWidget(context.component, null, context.parent)" />

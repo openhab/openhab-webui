@@ -11,7 +11,10 @@
       </f7-popover>
     </template>
     <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length" @click="context.editmode.addWidget(context.component, null, context.parent)" class="oh-grid-item-content" />
-    <generic-widget-component v-else-if="context.component.slots.default.length" :context="childContext(context.component.slots.default[0])" @command="onCommand" class="oh-grid-item-content" />
+    <generic-widget-component v-else-if="context.component.slots.default.length" @command="onCommand" class="oh-grid-item-content"
+      :context="childContext(context.component.slots.default[0])" 
+      :style="{ overflow: context.editmode ? 'visible' : 'hidden' }"
+    />
 
     <f7-icon v-if="context.editmode" class="drag-handle" f7="move" />
   </grid-item>
@@ -28,7 +31,6 @@
     height 100%               // height of item
     margin 0                  // without any margin
     box-sizing border-box     // include padding
-    overflow hidden           // cut content that extends item
     touch-action manipulation
 
     &.card
