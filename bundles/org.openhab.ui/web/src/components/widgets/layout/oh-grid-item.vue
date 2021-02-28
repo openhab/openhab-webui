@@ -2,12 +2,12 @@
   <grid-item v-bind="$attrs" v-if="visible" class="oh-grid-item card no-margin" @moved="movedEvent" @resized="resizedEvent" dragAllowFrom=".drag-handle">
     <template v-if="context.editmode">
       <f7-link :popover-open="'.item-popover-' + _uid" class="configure-item-menu" ><f7-icon f7="menu"></f7-icon></f7-link>
-      <f7-popover :class="'item-popover-' + _uid">
-        <f7-list>
-          <f7-list-item v-if="context.component.slots.default.length > 0" title="Configure Widget" @click="context.editmode.configureWidget(context.component.slots.default[0], context)" link="#" popover-close no-chevron><f7-icon slot="media" f7="gear_alt" /></f7-list-item>
-          <f7-list-item v-if="context.component.slots.default.length > 0" title="Edit YAML" @click="context.editmode.editWidgetCode(context.component.slots.default[0], context)" link="#" popover-close no-chevron><f7-icon slot="media" f7="square_pencil" /></f7-list-item>
-          <f7-list-item title="Remove Item" @click="context.editmode.removeWidget(context.component, context.parent, 'grid')" link="#" popover-close no-chevron><f7-icon slot="media" f7="xmark_circle" /></f7-list-item>
-        </f7-list>
+      <f7-popover :class="'item-popover-' + _uid" :backdrop="false" :style="{ width: context.component.slots.default.length > 0 ? '208px' : '76px' }">
+        <div class="display-flex margin justify-content-center">
+          <f7-link href="#" v-if="context.component.slots.default.length > 0" class="text-color-blue display-flex flex-direction-column margin-right" :popover-close="'.item-popover-' + _uid" @click="context.editmode.configureWidget(context.component.slots.default[0], context)" icon-f7="square_pencil">Configure</f7-link>
+          <f7-link href="#" v-if="context.component.slots.default.length > 0" class="text-color-blue display-flex flex-direction-column margin-right" :popover-close="'.item-popover-' + _uid" @click="context.editmode.editWidgetCode(context.component.slots.default[0], context)" icon-f7="doc_text">YAML</f7-link>
+          <f7-link href="#" class="text-color-red display-flex flex-direction-column" :popover-close="'.item-popover-' + _uid" @click="context.editmode.removeWidget(context.component, context.parent, 'grid')" icon-f7="trash">Remove</f7-link>
+        </div>
       </f7-popover>
     </template>
     <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length" @click="context.editmode.addWidget(context.component, null, context.parent)" class="oh-grid-item-content" />
@@ -97,9 +97,8 @@
     .menu-inner:after
       width 0px
 [class*="item-popover-"]      // nicer popover list icons
-  --f7-list-item-padding-horizontal 8px
-.md [class*="item-popover-"] .list .item-media
-    min-width 28px
+  --f7-popover-border-radius 12px
+  --f7-popover-box-shadow 0 3px 14px rgb(0 0 0 / 40%)
 </style>
 
 <script>
