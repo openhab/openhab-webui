@@ -1,0 +1,8 @@
+{
+  "CONFIGURATION_ERROR": "Hata:Yapılandırma",
+  "HANDLER_INITIALIZING_ERROR": "Hata: Satıcı",
+  "HANDLER_MISSING_ERROR": "Hata: Satıcılar",
+  "TEMPLATE_MISSING_ERROR": "Hata: Tema",
+  "INVALID_RULE": "Geçersiz",
+  "DISABLED": "Kapalı"
+}
