@@ -1,9 +1,9 @@
 <template>
   <div>
     <f7-block v-if="context.editmode &&
-                      !(context.component.slots.default && context.component.slots.default.length) &&
-                      !(context.component.slots.masonry && context.component.slots.masonry.length) &&
-                      !['responsive', 'fixed'].includes(config.layoutType)"
+                !(context.component.slots.default && context.component.slots.default.length) &&
+                !(context.component.slots.masonry && context.component.slots.masonry.length) &&
+                !['responsive', 'fixed'].includes(config.layoutType)"
               class="block-narrow margin-bottom" inset>
       <f7-block-title class="margin text-align-center">Choose a layout style</f7-block-title>
       <f7-row class="text-align-center align-items-stretch">
@@ -27,10 +27,10 @@
     <template v-else>
       <template v-if="config.layoutType !== 'fixed'">
         <oh-block v-for="(component, idx) in context.component.slots.default"
-          :key="idx"
-          :context="childContext(component)"
-          v-on="$listeners"
-          style="z-index: 5000 !important"
+                  :key="idx"
+                  :context="childContext(component)"
+                  v-on="$listeners"
+                  style="z-index: 5000 !important"
         ></oh-block>
         <f7-block v-if="context.editmode">
           <f7-list>

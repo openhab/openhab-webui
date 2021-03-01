@@ -1,7 +1,7 @@
 <template>
   <grid-item v-bind="$attrs" v-if="visible" class="oh-grid-item card no-margin" @moved="movedEvent" @resized="resizedEvent" dragAllowFrom=".drag-handle">
     <template v-if="context.editmode">
-      <f7-link :popover-open="'.item-popover-' + _uid" class="configure-item-menu" ><f7-icon f7="menu"></f7-icon></f7-link>
+      <f7-link :popover-open="'.item-popover-' + _uid" class="configure-item-menu"><f7-icon f7="menu"></f7-icon></f7-link>
       <f7-popover :class="'item-popover-' + _uid" :backdrop="false" :style="{ width: context.component.slots.default.length > 0 ? '208px' : '76px' }">
         <div class="display-flex margin justify-content-center">
           <f7-link href="#" v-if="context.component.slots.default.length > 0" class="text-color-blue display-flex flex-direction-column margin-right" :popover-close="'.item-popover-' + _uid" @click="context.editmode.configureWidget(context.component.slots.default[0], context)" icon-f7="square_pencil">Configure</f7-link>
@@ -12,8 +12,8 @@
     </template>
     <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length" @click="context.editmode.addWidget(context.component, null, context.parent)" class="oh-grid-item-content" />
     <generic-widget-component v-else-if="context.component.slots.default.length" @command="onCommand" class="oh-grid-item-content"
-      :context="childContext(context.component.slots.default[0])" 
-      :style="{ overflow: context.editmode ? 'visible' : 'hidden' }"
+                              :context="childContext(context.component.slots.default[0])"
+                              :style="{ overflow: context.editmode ? 'visible' : 'hidden' }"
     />
 
     <f7-icon v-if="context.editmode" class="drag-handle" f7="move" />
@@ -40,8 +40,16 @@
         margin-top auto       // independent of presence
         margin-bottom auto    // of header or footer
 
+        // oh-swiper-card
+        .swiper-container .placeholder-widget
+          margin 0
+          height 100%
+          width 100%
+        .oh-swiper-slide.edit-mode
+          min-height 0
+
       // oh-image-card
-      .oh-image-card
+      .oh-image-card, .oh-gauge-card
         flex 1
         overflow hidden
         *
@@ -50,10 +58,6 @@
         .oh-image
           object-fit contain
           height calc(100% - 10px)
-
-      // oh-swiper-card
-      .oh-swiper-slide.editmode
-        min-height 0
 
   .placeholder-widget a
     height 100%

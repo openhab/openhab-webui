@@ -152,7 +152,6 @@ export default {
       this.$fullscreen.toggle(document.body, {
         wrap: false,
         callback: (fullscreen) => {
-          console.log("callback method, fullscreen:", fullscreen)
           this.fullscreen = fullscreen
           if (fullscreen) {
             this.$f7.panel.get('left').disableVisibleBreakpoint()
