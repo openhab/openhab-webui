@@ -77,14 +77,13 @@
 import mixin from '../widget-mixin'
 import OhBlock from './oh-block.vue'
 import OhMasonry from './oh-masonry.vue'
-import OhGridLayout from './oh-grid-layout.vue'
 
 export default {
   mixins: [mixin],
   components: {
     OhBlock,
     OhMasonry,
-    OhGridLayout
+    OhGridLayout: () => import('./oh-grid-layout.vue')
   }
 }
 </script>

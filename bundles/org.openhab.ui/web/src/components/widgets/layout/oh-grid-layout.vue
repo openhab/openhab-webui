@@ -5,7 +5,7 @@
       <f7-block v-if="!fullscreen">
         <f7-menu class="configure-layout-menu">
           <f7-menu-item @click="addItem" icon-f7="plus" text="Add Widget" />
-          <f7-menu-item @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')" text="Configure Layout" icon-f7="gear_alt" />
+          <f7-menu-item @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')" text="Configure Layout" icon-f7="square_pencil" />
         </f7-menu>
         <hr />
       </f7-block>
@@ -13,12 +13,12 @@
       <!-- fullscreen fab menu -->
       <template v-if="fullscreen">
         <f7-fab-backdrop></f7-fab-backdrop>
-        <f7-fab v-if="context.editmode" position="right-bottom">
-          <f7-icon ios="f7:plus" aurora="f7:plus" md="material:add" />
+        <f7-fab v-if="context.editmode" position="right-bottom" color="blue">
+          <f7-icon f7="menu" />
           <f7-icon ios="f7:xmark" aurora="f7:xmark" md="material:close" />
           <f7-fab-buttons position="top">
-            <f7-fab-button label="Exit Fullscreen" fab-close @click="exitFullscreen"><f7-icon size="20" f7="arrow_down_right_arrow_up_left" /></f7-fab-button>
-            <f7-fab-button label="Configure Layout" fab-close @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')"><f7-icon size="20" f7="gear_alt" /></f7-fab-button>
+            <f7-fab-button label="Exit Fullscreen" fab-close @click="exitFullscreen"><f7-icon size="20" f7="rectangle_arrow_up_right_arrow_down_left_slash" /></f7-fab-button>
+            <f7-fab-button label="Configure Layout" fab-close @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')"><f7-icon size="20" f7="square_pencil" /></f7-fab-button>
             <f7-fab-button label="Add Widget" fab-close @click="addItem"><f7-icon size="20" f7="plus" /></f7-fab-button>
           </f7-fab-buttons>
         </f7-fab>
@@ -39,7 +39,7 @@
       :responsive="config.layoutType !== 'fixed'"
       :prevent-collision="config.layoutType === 'fixed'"
       :style="{
-        background: context.editmode ? 'rgba(var(--f7-theme-color-rgb), 0.1)' : false,
+        background: context.editmode ? 'var(--f7-page-master-border-color)' : false,
         width: style.width + 'px',
         height: style.height + 'px',
         textAlign: 'center'

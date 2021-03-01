@@ -11,7 +11,7 @@
       <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="!fullscreen" bottom class="toolbar-details">
-      <f7-link v-if="$fullscreen.support" class="fullscreen-link" icon-f7="arrow_up_left_arrow_down_right" text="Fullscreen" @click="toggleFullscreen" />
+      <f7-link v-if="$fullscreen.support" class="fullscreen-link" icon-f7="rectangle_arrow_up_right_arrow_down_left" text="Fullscreen" color="blue" @click="toggleFullscreen" />
       <div style="margin-left: auto">
         <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)"></f7-toggle> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
@@ -67,8 +67,6 @@
 .layout-editor
   .page-content
     z-index inherit
-.fullscreen-link > *
-  color var(--f7-toolbar-text-color, var(--f7-bars-text-color))
 </style>
 
 <script>

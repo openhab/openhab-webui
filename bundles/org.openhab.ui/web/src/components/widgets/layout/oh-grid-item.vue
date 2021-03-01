@@ -1,7 +1,7 @@
 <template>
   <grid-item v-bind="$attrs" v-if="visible" class="oh-grid-item card no-margin" @moved="movedEvent" @resized="resizedEvent" dragAllowFrom=".drag-handle">
     <template v-if="context.editmode">
-      <f7-link :popover-open="'.item-popover-' + _uid" class="configure-item-menu"><f7-icon f7="menu"></f7-icon></f7-link>
+      <f7-link :popover-open="'.item-popover-' + _uid" class="configure-item-menu"><f7-icon f7="gear_alt"></f7-icon></f7-link>
       <f7-popover :class="'item-popover-' + _uid" :backdrop="false" :style="{ width: context.component.slots.default.length > 0 ? '208px' : '76px' }">
         <div class="display-flex margin justify-content-center">
           <f7-link href="#" v-if="context.component.slots.default.length > 0" class="text-color-blue display-flex flex-direction-column margin-right" :popover-close="'.item-popover-' + _uid" @click="context.editmode.configureWidget(context.component.slots.default[0], context)" icon-f7="square_pencil">Configure</f7-link>

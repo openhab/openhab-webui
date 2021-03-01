@@ -12,7 +12,7 @@
 
     <f7-link v-else-if="!page.config.hideSidebarIcon" class="sidebar-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
 
-    <f7-link v-if="$fullscreen.support && page.config.showFullscreenIcon && !fullscreen" class="fullscreen-icon" :icon-f7="fullscreen ? 'arrow_down_right_arrow_up_left' : 'arrow_up_left_arrow_down_right'" @click="toggleFullscreen" />
+    <f7-link v-if="$fullscreen.support && page.config.showFullscreenIcon" class="fullscreen-icon" :icon-f7="fullscreen ? 'rectangle_arrow_up_right_arrow_down_left_slash' : 'rectangle_arrow_up_right_arrow_down_left'" @click="toggleFullscreen" />
 
     <f7-toolbar tabbar labels bottom v-if="page && pageType === 'tabs' && visibleToCurrentUser">
       <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tab.config.icon" :icon-md="tab.config.icon" :icon-aurora="tab.config.icon" :text="tab.config.title" />
