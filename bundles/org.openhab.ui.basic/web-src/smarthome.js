@@ -354,7 +354,7 @@
 				if (state.length < 200) {
 					_t.icon.setAttribute("src",
 						"/icon/" +
-						_t.iconName +
+						encodeURIComponent(_t.iconName) +
 						"?state=" +
 						encodeURIComponent(state) +
 						"&format=" +
@@ -364,7 +364,7 @@
 				} else {
 					_t.icon.setAttribute("src",
 						"/icon/" +
-						_t.iconName +
+						encodeURIComponent(_t.iconName) +
 						"?format=" +
 						smarthome.UI.iconType +
 						"&anyFormat=true"
