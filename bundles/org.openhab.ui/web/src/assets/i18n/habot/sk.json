@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(príklad)",
+  "habot.clearHistory": "Vymazať históriu",
+  "habot.dismiss": "Zrušiť",
+  "habot.example1": "Aká je teplota v kuchyni?",
+  "habot.example2": "Nastav termostat na 21 stupňov",
+  "habot.example3": "Vypni svetlá na prvom poschodí",
+  "habot.anythingElse": "Niečo ďalšie?",
+  "habot.cardDeckIsIncompatible": "Uložené karty sa tu nedajú zobraziť. Použite aplikáciu HABot pre zobrazenie.",
+  "habot.cardIsIncompatible": "Uložené karty sa tu nedajú zobraziť. Použite aplikáciu HABot pre zobrazenie."
+}
