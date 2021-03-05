@@ -85,7 +85,6 @@
 
 <script>
 import mixin from '../widget-mixin'
-import VueGridLayout from 'vue-grid-layout'
 import OhGridItem from './oh-grid-item'
 import { OhGridLayoutDefinition } from '@/assets/definitions/widgets/layout'
 
@@ -93,7 +92,7 @@ export default {
   mixins: [mixin],
   widget: OhGridLayoutDefinition,
   components: {
-    GridLayout: VueGridLayout.GridLayout,
+    'grid-layout': () => import('vue-grid-layout').then((mod) => mod.GridLayout),
     OhGridItem: OhGridItem
   },
   data () {

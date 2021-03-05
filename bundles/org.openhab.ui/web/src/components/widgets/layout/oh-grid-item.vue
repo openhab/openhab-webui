@@ -24,7 +24,7 @@
 .oh-grid-item
   // TODO: revise
   touch-action none
-  transition all 0s ease 0s
+  transition all 0s ease 0s !important
 
   .oh-grid-item-content
     width 100%                // use full width and
@@ -109,13 +109,12 @@
 
 <script>
 import mixin from '../widget-mixin'
-import VueGridLayout from 'vue-grid-layout'
 import OhPlaceholderWidget from '../layout/oh-placeholder-widget.vue'
 
 export default {
   mixins: [mixin],
   components: {
-    GridItem: VueGridLayout.GridItem,
+    'grid-item': () => import('vue-grid-layout').then((mod) => mod.GridItem),
     OhPlaceholderWidget
   },
   methods: {
