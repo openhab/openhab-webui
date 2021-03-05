@@ -1,16 +1,17 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="layout-editor">
-    <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create layout page' : page.config.label" back-link="Back" no-hairline>
+    <f7-navbar v-if="!(previewMode && page.config.hideNavbar) && !fullscreen" :title="(!ready) ? '' : (createMode) ? 'Create layout page' : page.config.label" back-link="Back" no-hairline>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
       </f7-nav-right>
     </f7-navbar>
-    <f7-toolbar tabbar position="top">
+    <f7-toolbar v-if="!previewMode && !fullscreen" tabbar position="top">
       <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
       <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
     </f7-toolbar>
-    <f7-toolbar bottom class="toolbar-details">
+    <f7-toolbar v-if="!fullscreen" bottom class="toolbar-details">
+      <f7-link v-if="$fullscreen.support" class="fullscreen-link" icon-f7="rectangle_arrow_up_right_arrow_down_left" text="Fullscreen" color="blue" @click="toggleFullscreen" />
       <div style="margin-left: auto">
         <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)"></f7-toggle> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
@@ -21,13 +22,39 @@
           <f7-preloader></f7-preloader>
           <div>Loading...</div>
         </f7-block>
-        <f7-block class="block-narrow" v-if="ready && !previewMode">
+        <f7-block id="page-settings" class="block-narrow" v-if="ready && !(previewMode || fullscreen)">
           <page-settings :page="page" :createMode="createMode" />
         </f7-block>
 
-        <oh-layout-page class="layout-page" v-if="ready" :context="context" :key="pageKey"
+        <f7-block v-if="ready &&
+                    !(context.component.slots.default && context.component.slots.default.length) &&
+                    !(context.component.slots.masonry && context.component.slots.masonry.length) &&
+                    !(context.component.slots.grid && context.component.slots.grid.length) &&
+                    !['responsive', 'fixed'].includes(page.config.layoutType)"
+                  class="block-narrow margin-bottom" inset>
+          <f7-block-title class="margin text-align-center">Choose a layout style</f7-block-title>
+          <f7-row class="text-align-center align-items-stretch">
+            <f7-col width="50" class="elevation-2 elevation-hover-6 elevation-pressed-1" style="background-color: var(--f7-card-bg-color)">
+              <f7-link @click="setLayoutType('responsive')" class="flex-direction-column padding" style="color: var(--f7-theme-color-text-color)">
+                <f7-icon size="70px" f7="rectangle_3_offgrid"></f7-icon>
+                <div class="margin-bottom">Responsive</div>
+                <div class="margin-top">Create a page that automatically adjusts to the size of the screen. Suitable for use with any device.</div>
+              </f7-link>
+            </f7-col>
+            <f7-col width="50" class="elevation-2 elevation-hover-6 elevation-pressed-1" style="background-color: var(--f7-card-bg-color)">
+              <f7-link @click="setLayoutType('fixed')" class="flex-direction-column padding" style="color: var(--f7-theme-color-text-color)">
+                <f7-icon size="70px" f7="rectangle"></f7-icon>
+                <div class="margin-bottom">Fixed</div>
+                <div class="margin-top">Create a panel-like page for a specific screen size. Suitable for e.g. wall mounted tablets.</div>
+              </f7-link>
+            </f7-col>
+          </f7-row>
+        </f7-block>
+
+        <oh-layout-page class="layout-page" v-else-if="ready" :context="context" :key="pageKey"
                         @add-block="addBlock"
                         @add-masonry="addMasonry"
+                        @add-grid-item="addGridItem"
         />
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
@@ -101,11 +128,15 @@ export default {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-layout-page',
         config: {},
-        slots: { default: [] }
+        slots: {
+          default: [],
+          grid: []
+        }
       },
       addFromModelContext: {},
       modelPickerAllowMultiple: true,
-      modelPickerOpened: false
+      modelPickerOpened: false,
+      fullscreen: this.$fullscreen.getState()
     }
   },
   methods: {
@@ -224,6 +255,15 @@ export default {
       this.addFromModelContext = {}
       this.forceUpdate()
     },
+    setLayoutType (layoutType) {
+      this.page.config.layoutType = layoutType
+      if (layoutType === 'responsive') {
+        this.page.slots.default = []
+      } else {
+        this.page.slots.grid = []
+      }
+      this.forceUpdate()
+    },
     addBlock (component) {
       component.slots.default.push({
         component: 'oh-block',
@@ -239,6 +279,14 @@ export default {
         }])
       }
     },
+    addGridItem (component) {
+      component.slots['grid'].push({
+        component: 'oh-grid-item',
+        config: { x: 5, y: 3, h: 2, w: 2 },
+        slots: { default: [] }
+      })
+      this.forceUpdate()
+    },
     getWidgetDefinition (componentType) {
       const component = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets, ...StandardCellWidgets })
         .find((w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType)
@@ -249,21 +297,44 @@ export default {
       this.pageYaml = YAML.stringify({
         config: this.page.config,
         blocks: this.page.slots.default,
-        masonry: this.page.slots.masonry
+        masonry: this.page.slots.masonry,
+        grid: this.page.slots.grid
       })
     },
     fromYaml () {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
+        if (updatedPage.config && updatedPage.config.layoutType && updatedPage.config.layoutType === 'fixed' &&
+           ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))) {
+          throw new Error('Using blocks and masonry in fixed-size layouts is not possible')
+        }
+
         this.$set(this.page, 'config', updatedPage.config)
         this.$set(this.page.slots, 'default', updatedPage.blocks)
         this.$set(this.page.slots, 'masonry', updatedPage.masonry)
+        this.$set(this.page.slots, 'grid', updatedPage.grid)
         this.forceUpdate()
         return true
       } catch (e) {
         this.$f7.dialog.alert(e).open()
         return false
       }
+    },
+    toggleFullscreen () {
+      this.$fullscreen.toggle(document.body, {
+        wrap: false,
+        callback: (fullscreen) => {
+          this.fullscreen = fullscreen
+          if (fullscreen) {
+            this.$f7.panel.get('left').disableVisibleBreakpoint()
+          } else {
+            if (localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') !== 'true') {
+              this.$f7.panel.get('left').enableVisibleBreakpoint()
+            }
+          }
+          this.forceUpdate()
+        }
+      })
     }
   }
 }

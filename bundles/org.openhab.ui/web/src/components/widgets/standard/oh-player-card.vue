@@ -3,8 +3,8 @@
     <f7-card-header v-if="config.title">
       <div>{{config.title}}</div>
     </f7-card-header>
-    <f7-card-content v-if="config.artistItem && config.trackItem">
-      <f7-list>
+    <f7-card-content>
+      <f7-list v-if="config.artistItem && config.trackItem">
         <f7-list-item>
           <div class="display-block">
             <div class="no-padding no-margin font-weight-normal">{{this.context.store[config.artistItem].state}}</div>
