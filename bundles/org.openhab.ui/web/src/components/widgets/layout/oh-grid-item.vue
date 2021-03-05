@@ -2,11 +2,11 @@
   <grid-item v-bind="$attrs" v-if="visible" class="oh-grid-item card no-margin" @moved="movedEvent" @resized="resizedEvent" dragAllowFrom=".drag-handle">
     <template v-if="context.editmode">
       <f7-link :popover-open="'.item-popover-' + _uid" class="configure-item-menu"><f7-icon f7="gear_alt"></f7-icon></f7-link>
-      <f7-popover :class="'item-popover-' + _uid" :backdrop="false" :style="{ width: context.component.slots.default.length > 0 ? '208px' : '76px' }">
+      <f7-popover :class="'item-popover-' + _uid" ref="popover" :backdrop="false" :style="{ width: context.component.slots.default.length > 0 ? '208px' : '76px' }" :animate="false">
         <div class="display-flex margin justify-content-center">
-          <f7-link href="#" v-if="context.component.slots.default.length > 0" class="text-color-blue display-flex flex-direction-column margin-right" :popover-close="'.item-popover-' + _uid" @click="context.editmode.configureWidget(context.component.slots.default[0], context)" icon-f7="square_pencil">Configure</f7-link>
-          <f7-link href="#" v-if="context.component.slots.default.length > 0" class="text-color-blue display-flex flex-direction-column margin-right" :popover-close="'.item-popover-' + _uid" @click="context.editmode.editWidgetCode(context.component.slots.default[0], context)" icon-f7="doc_text">YAML</f7-link>
-          <f7-link href="#" class="text-color-red display-flex flex-direction-column" :popover-close="'.item-popover-' + _uid" @click="context.editmode.removeWidget(context.component, context.parent, 'grid')" icon-f7="trash">Remove</f7-link>
+          <f7-link href="#" v-if="context.component.slots.default.length > 0" class="text-color-blue display-flex flex-direction-column margin-right" :popover-close="'.item-popover-' + _uid" @click="$refs.popover.f7Popover.close(false); context.editmode.configureWidget(context.component.slots.default[0], context)" icon-f7="square_pencil">Configure</f7-link>
+          <f7-link href="#" v-if="context.component.slots.default.length > 0" class="text-color-blue display-flex flex-direction-column margin-right" :popover-close="'.item-popover-' + _uid" @click="$refs.popover.f7Popover.close(false); context.editmode.editWidgetCode(context.component.slots.default[0], context)" icon-f7="doc_text">YAML</f7-link>
+          <f7-link href="#" class="text-color-red display-flex flex-direction-column" @click="$refs.popover.f7Popover.close(false); context.editmode.removeWidget(context.component, context.parent, 'grid')" icon-f7="trash">Remove</f7-link>
         </div>
       </f7-popover>
     </template>

@@ -5,7 +5,11 @@
       <f7-block v-if="!fullscreen">
         <f7-menu class="configure-layout-menu">
           <f7-menu-item @click="addItem" icon-f7="plus" text="Add Widget" />
-          <f7-menu-item @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')" text="Configure Layout" icon-f7="square_pencil" />
+          <f7-menu-item style="margin-left: auto" icon-f7="rectangle_3_offgrid" dropdown>
+            <f7-menu-dropdown right>
+              <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')" href="#" text="Configure Grid Layout"></f7-menu-dropdown-item>
+            </f7-menu-dropdown>
+          </f7-menu-item>
         </f7-menu>
         <hr />
       </f7-block>
@@ -18,7 +22,7 @@
           <f7-icon ios="f7:xmark" aurora="f7:xmark" md="material:close" />
           <f7-fab-buttons position="top">
             <f7-fab-button label="Exit Fullscreen" fab-close @click="exitFullscreen"><f7-icon size="20" f7="rectangle_arrow_up_right_arrow_down_left_slash" /></f7-fab-button>
-            <f7-fab-button label="Configure Layout" fab-close @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')"><f7-icon size="20" f7="square_pencil" /></f7-fab-button>
+            <f7-fab-button label="Configure Grid Layout" fab-close @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')"><f7-icon size="20" f7="square_pencil" /></f7-fab-button>
             <f7-fab-button label="Add Widget" fab-close @click="addItem"><f7-icon size="20" f7="plus" /></f7-fab-button>
           </f7-fab-buttons>
         </f7-fab>
@@ -34,7 +38,7 @@
       :col-num="colNum"
       :row-height="rowHeight"
       :max-rows="maxRows"
-      :vertical-compact="typeof config.verticalCompact !== 'undefined' ? config.verticalCompact : false"
+      :vertical-compact="config.verticalCompact || false"
       :margin="[margin, margin]"
       :responsive="config.layoutType !== 'fixed'"
       :prevent-collision="config.layoutType === 'fixed'"
@@ -46,9 +50,8 @@
       }"
       :use-css-transforms="false"
     >
-      <div v-if="context.editmode" style="opacity: 0.3; padding: 4px">{{ getCurrentScreenResolution() }}<!--
-        --><template v-if="isRetina()"> (Retina <f7-icon tooltip="Screen resolution shown is the fullscreen resolution for websites. Real screen resolution is bigger." f7="info_circle" />)</template><!--
-        -->)
+      <div v-if="context.editmode" style="opacity: 0.3; padding: 4px;">{{ getCurrentScreenResolution() }}
+        <span v-if="isRetina()"><f7-icon tooltip="Screen resolution shown is the fullscreen resolution for websites. Real screen resolution is bigger." f7="info_circle" /></span>
       </div>
       <oh-grid-item
         v-for="item in layout"
@@ -75,12 +78,6 @@
     --f7-fab-size 32px
     --f7-fab-button-size 32px
     position: fixed
-.configure-layout-menu                                      // nicer menu icons
-  .menu-item .menu-item-content .icon
-    font-size calc(var(--f7-menu-font-size) + 2px)
-    margin-left 4px
-  .menu-inner .menu-item:first-child
-    margin-right var(--f7-menu-item-spacing)
 </style>
 
 <script>
@@ -151,7 +148,7 @@ export default {
       return window.devicePixelRatio > 1
     },
     getCurrentScreenResolution () {
-      return 'Layout Size: ' + this.screenWidth + ' x ' + this.screenHeight + ' (Current Screen: ' + this.windowWidth + ' x ' + this.windowHeight
+      return 'Layout Size: ' + this.screenWidth + ' x ' + this.screenHeight + ' (Current Screen: ' + this.windowWidth + ' x ' + this.windowHeight + ')'
     },
     addItem () {
       // find free spot for new widget
@@ -162,8 +159,8 @@ export default {
           for (x = 0; x < this.colNum; x++) {
             free = true
             for (let i = 0; i < this.layout.length; i++) {
-              if (!((this.layout[i].x + this.layout[i].w <= x) || (this.layout[i].x >= x + 1) ||
-                    (this.layout[i].y + this.layout[i].h <= y) || (this.layout[i].y >= y + 1))) {
+              if (!((this.layout[i].x + this.layout[i].w <= x) || (this.layout[i].x >= x + 2) ||
+                    (this.layout[i].y + this.layout[i].h <= y) || (this.layout[i].y >= y + 2))) {
                 free = false
                 break
               }
@@ -176,7 +173,7 @@ export default {
       if (free) {
         this.context.component.slots['grid'].push({
           component: 'oh-grid-item',
-          config: { x: x, y: y, h: 1, w: 1 },
+          config: { x: x, y: y, h: 2, w: 2 },
           slots: { default: [] }
         })
       } else this.$f7.dialog.alert('No more space available', 'Unable to add widget')
