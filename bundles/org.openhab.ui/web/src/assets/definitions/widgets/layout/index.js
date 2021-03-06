@@ -1,6 +1,6 @@
 // definitions for the layout widgets
 
-import { WidgetDefinition, po, pt, pn, pb, pg } from '../helpers'
+import { WidgetDefinition, po, pt, pn, pb, pg } from '../helpers.js'
 
 export function OhBlockDescription () {
   return new WidgetDefinition('oh-block', 'Layout Grid Block', 'A block in a grid layout')
@@ -44,7 +44,7 @@ export function OhMasonryDefinition () {
 }
 
 export function OhGridLayoutDefinition () {
-  return new WidgetDefinition('oh-grid-layout', 'Grid Layout', 'A grid layout')
+  return new WidgetDefinition('oh-grid-layout', 'Fixed Grid Layout', 'Arranges widgets on a grid of squares with user-defined sizes')
     .paramGroup(pg('layout', 'Layout Settings'), [
       pn('colNum', 'Number of Columns', 'Number of columns across the page (default 16, limited to a minimum widget width of 50px)'),
       pn('margin', 'Margin', 'Margin between items and to screen (default 10)'),
