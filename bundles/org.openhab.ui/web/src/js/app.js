@@ -1,3 +1,5 @@
+import './compatibility'
+
 // Import Vue
 import Vue from 'vue'
 
