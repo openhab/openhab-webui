@@ -186,15 +186,15 @@ module.exports = {
     ]
   },
   plugins: [
-    new ESLintPlugin({
-      extensions: ['js','vue'],
-    }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env),
       'process.env.TARGET': JSON.stringify(target)
     }),
     new VueLoaderPlugin(),
     ...(env === 'production' ? [
+      new ESLintPlugin({
+        extensions: ['js', 'vue']
+      }),
       new OptimizeCSSPlugin({
         cssProcessorOptions: {
           safe: true,

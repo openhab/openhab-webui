@@ -43,8 +43,8 @@
             </f7-col>
             <f7-col width="50" class="elevation-2 elevation-hover-6 elevation-pressed-1" style="background-color: var(--f7-card-bg-color)">
               <f7-link @click="setLayoutType('fixed')" class="flex-direction-column padding" style="color: var(--f7-theme-color-text-color)">
-                <f7-icon size="70px" f7="rectangle"></f7-icon>
-                <div class="margin-bottom">Fixed</div>
+                <f7-icon size="70px" f7="grid"></f7-icon>
+                <div class="margin-bottom">Fixed Grid</div>
                 <div class="margin-top">Create a panel-like page for a specific screen size. Suitable for e.g. wall mounted tablets.</div>
               </f7-link>
             </f7-col>
@@ -91,6 +91,9 @@
 .layout-editor
   .page-content
     z-index inherit
+  .toolbar-details
+    .tab-link-highlight
+      display none
 </style>
 
 <script>

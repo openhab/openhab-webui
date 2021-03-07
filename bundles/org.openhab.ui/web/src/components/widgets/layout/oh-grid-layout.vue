@@ -5,7 +5,7 @@
       <f7-block v-if="!fullscreen">
         <f7-menu class="configure-layout-menu">
           <f7-menu-item @click="addItem" icon-f7="plus" text="Add Widget" />
-          <f7-menu-item style="margin-left: auto" icon-f7="rectangle_3_offgrid" dropdown>
+          <f7-menu-item style="margin-left: auto" icon-f7="grid" dropdown>
             <f7-menu-dropdown right>
               <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')" href="#" text="Configure Grid Layout"></f7-menu-dropdown-item>
             </f7-menu-dropdown>
@@ -50,7 +50,7 @@
       }"
       :use-css-transforms="false"
     >
-      <div v-if="context.editmode" style="opacity: 0.3; padding: 4px;">{{ getCurrentScreenResolution() }}
+      <div v-if="context.editmode" style="opacity: 0.3; padding: 4px; user-select: none;">{{ getCurrentScreenResolution() }}
         <span v-if="isRetina()"><f7-icon tooltip="Screen resolution shown is the fullscreen resolution for websites. Real screen resolution is bigger." f7="info_circle" /></span>
       </div>
       <oh-grid-item
@@ -150,35 +150,28 @@ export default {
     getCurrentScreenResolution () {
       return 'Layout Size: ' + this.screenWidth + ' x ' + this.screenHeight + ' (Current Screen: ' + this.windowWidth + ' x ' + this.windowHeight + ')'
     },
-    addItem () {
-      // find free spot for new widget
-      var free = true
-      var x = 0; var y = 0
-      if (this.layout.length !== 0) {
-        for (y = 0; y < this.maxRows; y++) {
-          for (x = 0; x < this.colNum; x++) {
-            free = true
-            for (let i = 0; i < this.layout.length; i++) {
-              if (!((this.layout[i].x + this.layout[i].w <= x) || (this.layout[i].x >= x + 2) ||
-                    (this.layout[i].y + this.layout[i].h <= y) || (this.layout[i].y >= y + 2))) {
-                free = false
-                break
-              }
+    createItem (size) {
+      // find a free spot for a new square widget of "size" on a side
+      for (let y = 0; y <= this.maxRows - size; y++) {
+        for (let x = 0; x <= this.colNum - size; x++) {
+          if (!this.layout.some((item) => item.x + item.w > x && item.x < x + size && item.y + item.h > y && item.y < y + size)) {
+            const newItem = {
+              component: 'oh-grid-item',
+              config: { x: x, y: y, h: size, w: size },
+              slots: { default: [] }
             }
-            if (free) break
+            this.context.component.slots['grid'].push(newItem)
+            this.computeLayout()
+            return newItem
           }
-          if (free) break
         }
       }
-      if (free) {
-        this.context.component.slots['grid'].push({
-          component: 'oh-grid-item',
-          config: { x: x, y: y, h: 2, w: 2 },
-          slots: { default: [] }
-        })
-      } else this.$f7.dialog.alert('No more space available', 'Unable to add widget')
-
-      this.computeLayout()
+    },
+    addItem () {
+      // try adding a 2x2 widget, or a 1x1 widget if there's no room left
+      if (!this.createItem(2) && !this.createItem(1)) {
+        this.$f7.dialog.alert('No more space available', 'Unable to add widget')
+      }
     },
     setDimensions () {
       if (this.config.layoutType === 'fixed') {
@@ -192,8 +185,8 @@ export default {
       }
     },
     computeLayout () {
-      var layout = []
-      if (this.context.component.slots?.grid) {
+      let layout = []
+      if (this.context.component.slots && this.context.component.slots.grid) {
         this.context.component.slots.grid.forEach((item, index) => {
           layout.push({
             x: item.config.x,
