@@ -42,7 +42,8 @@ jobs:
             ${{ runner.os }}-
 
       - name: Install Dependencies
-        run: npm install
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm i
         
       - name: Run ESLint
-        run: npx eslint src/**/*.js src/**/*.vue
+        run: npx eslint --ext js --ext vue src
