@@ -43,7 +43,7 @@ jobs:
 
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
+        run: npm i
         
       - name: Run ESLint
         run: npx eslint --format stylish --no-color src/**/*.js src/**/*.vue
