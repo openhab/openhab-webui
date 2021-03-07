@@ -45,4 +45,4 @@ jobs:
         run: npm install
         
       - name: Run ESLint
-        run: npx eslint src/**/*.js src/**/*.vue
+        run: npx eslint --format json src/**/*.js src/**/*.vue
