@@ -46,4 +46,4 @@ jobs:
         run: npm i
         
       - name: Run ESLint
-        run: npx eslint --format compact --ext js --ext vue src
+        run: npx eslint --ext js --ext vue src
