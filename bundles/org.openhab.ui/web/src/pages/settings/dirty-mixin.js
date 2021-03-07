@@ -5,13 +5,19 @@ export default {
     }
   },
   methods: {
-    beforeLeave (resolve, reject) {
+    beforeLeave (router, routeTo, routeFrom, resolve, reject) {
       if (this.dirty) {
         this.$f7.dialog.confirm(
           'Do you want to leave this page without saving?',
           'Changes have not been saved',
           function () { resolve() },
-          function () { reject() }
+          function () {
+            const { pushStateRoot = '', pushStateSeparator } = router.params
+            let url = routeFrom.url
+            history.pushState({ 'view_main': { 'url': url } }, '', pushStateRoot + pushStateSeparator + url)
+            reject()
+            router.allowPageChange = true
+          }
         )
       } else {
         resolve()
