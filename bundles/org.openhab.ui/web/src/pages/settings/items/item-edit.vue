@@ -53,8 +53,10 @@ import ItemForm from '@/components/item/item-form.vue'
 import GroupForm from '@/components/item/group-form.vue'
 import TagInput from '@/components/tags/tag-input.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
+import DirtyMixin from '../dirty-mixin'
 
 export default {
+  mixins: [DirtyMixin],
   props: ['itemName', 'createMode'],
   components: {
     ItemPicker,
@@ -75,6 +77,16 @@ export default {
   },
   created () {
   },
+  watch: {
+    item: {
+      handler: function () {
+        if (this.ready) {
+          this.dirty = true
+        }
+      },
+      deep: true
+    }
+  },
   methods: {
     onPageAfterIn () {
       if (this.createMode) {
@@ -94,7 +106,9 @@ export default {
         loadItem.then((data) => {
           if (!data.groupType) data.groupType = 'None'
           this.item = data
-          this.ready = true
+          this.$nextTick(() => {
+            this.ready = true
+          })
         })
       }
       if (window) {
@@ -134,6 +148,7 @@ export default {
             closeTimeout: 2000
           }).open()
         }
+        this.dirty = false
         this.$f7router.back()
       }).catch((err) => {
         this.$f7.toast.create({

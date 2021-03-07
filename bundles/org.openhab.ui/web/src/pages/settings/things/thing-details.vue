@@ -76,7 +76,7 @@
                           :status="configStatusInfo"
                           :set-empty-config-as-null="true"
                           :read-only="thing.editable === false"
-                          @updated="dirty = true"
+                          @updated="configDirty = true"
             />
           </f7-col>
         </f7-block>
@@ -232,10 +232,12 @@ import buildTextualDefinition from './thing-textual-definition'
 
 import ThingStatus from '@/components/thing/thing-status-mixin'
 
+import DirtyMixin from '../dirty-mixin'
+
 let copyToast = null
 
 export default {
-  mixins: [ThingStatus],
+  mixins: [ThingStatus, DirtyMixin],
   components: {
     ConfigSheet,
     ChannelList,
@@ -249,7 +251,7 @@ export default {
       ready: false,
       loading: false,
       error: false,
-      dirty: false,
+      configDirty: false,
       thingDirty: false,
       currentTab: 'thing',
       thing: {},
@@ -294,6 +296,10 @@ export default {
         return e
       }
     }
+  },
+  watch: {
+    configDirty: function () { this.dirty = this.configDirty || this.thingDirty },
+    thingDirty:  function () { this.dirty = this.configDirty || this.thingDirty }
   },
   methods: {
     onPageAfterIn (event) {
@@ -345,7 +351,7 @@ export default {
             this.configDescriptions = data3
             this.ready = true
             this.loading = false
-            this.dirty = false
+            this.configDirty = false
             this.thingDirty = false
 
             // special treatment for Z-Wave actions
@@ -359,7 +365,7 @@ export default {
             console.log('No config descriptions for this thing, using those on the thing type: ' + err)
             this.ready = true
             this.loading = false
-            this.dirty = false
+            this.configDirty = false
             this.thingDirty = false
             this.configDescriptions = {
               parameterGroups: this.thingType.parameterGroups,
@@ -392,7 +398,7 @@ export default {
       // if set dirty flag is set, assume the config has to be saved with PUT /rest/things/:thingId/config
       // otherwise (for example, channels or label) use the regular PUT /rest/thing/:thingId
       let endpoint, payload, successMessage
-      if (this.dirty && !this.thingDirty && !saveThing) {
+      if (this.configDirty && !this.thingDirty && !saveThing) {
         endpoint = '/rest/things/' + this.thingId + '/config'
         payload = this.thing.configuration
         successMessage = 'Thing configuration updated'
@@ -407,9 +413,9 @@ export default {
       }
       this.$oh.api.put(endpoint, payload).then(data => {
         // this.$set(this, 'thing', data)
-        if (this.dirty && !this.thingDirty && !saveThing) this.dirty = false
+        if (this.configDirty && !this.thingDirty && !saveThing) this.configDirty = false
         this.thingDirty = false
-        if (this.dirty) {
+        if (this.configDirty) {
           // if still dirty, save again to save the configuration
           this.save()
         }
@@ -429,7 +435,7 @@ export default {
         this.thing.label,
         () => {
           thing.configuration[action.name] = true
-          this.dirty = true
+          this.configDirty = true
           save()
         }
       )
@@ -697,7 +703,7 @@ export default {
 
         if (updatedThing.configuration && JSON.stringify(this.thing.configuration) !== JSON.stringify(updatedThing.configuration)) {
           this.$set(this.thing, 'configuration', updatedThing.configuration)
-          this.dirty = dirty = true
+          this.configDirty = dirty = true
         }
 
         if (updatedThing.channels && Array.isArray(updatedThing.channels)) {

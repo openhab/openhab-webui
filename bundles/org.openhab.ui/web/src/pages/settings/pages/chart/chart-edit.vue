@@ -28,7 +28,6 @@
             :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
             :parameters="pageWidgetDefinition.props.parameters || []"
             :configuration="page.config"
-            @updated="dirty = true"
           />
         </f7-block>
 
@@ -39,7 +38,7 @@
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml;type=chart" :value="pageYaml" @input="(value) => pageYaml = value" />
+        <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml;type=chart" :value="pageYaml" @input="onEditorInput" />
         <!-- <pre v-show="!previewMode" class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
         <oh-chart-page class="chart-page" v-if="ready && previewMode" :context="context" :key="pageKey" />

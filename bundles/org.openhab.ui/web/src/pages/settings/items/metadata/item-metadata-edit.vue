@@ -27,7 +27,7 @@
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" class="metadata-code-editor" mode="text/x-yaml" :value="yaml" @input="(value) => yaml = value" />
+        <editor v-if="currentTab === 'code'" class="metadata-code-editor" mode="text/x-yaml" :value="yaml" @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
@@ -62,8 +62,10 @@ import ItemMetadataExpire from '@/components/item/metadata/item-metadata-expire.
 import ItemMetadataAlexa from '@/components/item/metadata/item-metadata-alexa.vue'
 import ItemMetadataHomeKit from '@/components/item/metadata/item-metadata-homekit.vue'
 import ItemMetadataGa from '@/components/item/metadata/item-metadata-ga.vue'
+import DirtyMixin from '../../dirty-mixin'
 
 export default {
+  mixins: [DirtyMixin],
   props: ['itemName', 'namespace'],
   components: {
     'editor': () => import('@/components/config/controls/script-editor.vue')
@@ -77,6 +79,16 @@ export default {
       item: {},
       metadata: { value: '', config: {} },
       yaml: null
+    }
+  },
+  watch: {
+    metadata: {
+      handler: function () {
+        if (this.ready) {
+          this.dirty = true
+        }
+      },
+      deep: true
     }
   },
   computed: {
@@ -129,12 +141,18 @@ export default {
           if (!this.metadata.config) this.$set(this.metadata, 'config', {})
           this.creationMode = false
         }
-        this.ready = true
         if (this.generic) {
           this.currentTab = 'code'
           this.toYaml()
         }
+        this.$nextTick(() => {
+          this.ready = true
+        })
       })
+    },
+    onEditorInput (value) {
+      this.yaml = value
+      this.dirty = true
     },
     save () {
       if (this.currentTab === 'code' && !this.fromYaml()) return
@@ -153,6 +171,7 @@ export default {
             closeTimeout: 2000
           }).open()
         }
+        this.dirty = false
         this.$f7router.back()
       }).catch((err) => {
         this.$f7.toast.create({

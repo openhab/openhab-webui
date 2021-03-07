@@ -164,8 +164,10 @@
 import SitemapCode from '@/components/pagedesigner/sitemap/sitemap-code.vue'
 import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
 import MappingDetails from '@/components/pagedesigner/sitemap/mapping-details.vue'
+import DirtyMixin from '../../dirty-mixin'
 
 export default {
+  mixins: [DirtyMixin],
   components: {
     SitemapCode,
     WidgetDetails,
@@ -222,6 +224,16 @@ export default {
       return true
     }
   },
+  watch: {
+    sitemap: {
+      handler: function () {
+        if (!this.loading) {
+          this.dirty = true
+        }
+      },
+      deep: true
+    }
+  },
   methods: {
     onPageAfterIn () {
       if (window) {
@@ -252,8 +264,10 @@ export default {
       } else {
         this.$oh.api.get('/rest/ui/components/system:sitemap/' + this.uid).then((data) => {
           this.$set(this, 'sitemap', data)
-          this.ready = true
-          this.loading = false
+          this.$nextTick(() => {
+            this.ready = true
+            this.loading = false
+          })
         })
       }
     },
@@ -290,6 +304,7 @@ export default {
             closeTimeout: 2000
           }).open()
         }
+        this.dirty = false
         this.$f7.emit('sidebarRefresh', null)
         // if (!stay) this.$f7router.back()
       }).catch((err) => {

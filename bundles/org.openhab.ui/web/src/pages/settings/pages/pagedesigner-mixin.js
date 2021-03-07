@@ -2,8 +2,10 @@ import YAML from 'yaml'
 
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
 import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
+import DirtyMixin from '../dirty-mixin'
 
 export default {
+  mixins: [DirtyMixin],
   data () {
     return {
       pageReady: false,
@@ -56,6 +58,16 @@ export default {
       }
     }
   },
+  watch: {
+    page: {
+      handler: function () {
+        if (!this.loading) {
+          this.dirty = true
+        }
+      },
+      deep: true
+    }
+  },
   methods: {
     onPageAfterIn () {
       if (window) {
@@ -86,6 +98,10 @@ export default {
         }
       }
     },
+    onEditorInput (value) {
+      this.pageYaml = value
+      this.dirty = true
+    },
     load () {
       if (this.loading) return
       this.loading = true
@@ -96,8 +112,10 @@ export default {
       } else {
         this.$oh.api.get('/rest/ui/components/ui:page/' + this.uid).then((data) => {
           this.$set(this, 'page', data)
-          this.pageReady = true
-          this.loading = false
+          this.$nextTick(() => {
+            this.pageReady = true
+            this.loading = false
+          })
         })
       }
     },
@@ -120,6 +138,7 @@ export default {
         ? this.$oh.api.postPlain('/rest/ui/components/ui:page', JSON.stringify(this.page), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/ui/components/ui:page/' + this.page.uid, this.page)
       promise.then((data) => {
+        this.dirty = false
         if (this.createMode) {
           this.$f7.toast.create({
             text: 'Page created',
