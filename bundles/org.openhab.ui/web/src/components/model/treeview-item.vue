@@ -56,8 +56,8 @@ export default {
         ((property) ? ' (' + property.replace('Property_', '') + ')' : '')
     },
     select (event) {
-      var self = this
-      var $ = self.$$
+      let self = this
+      let $ = self.$$
       if ($(event.target).is('.treeview-toggle')) return
       if ($(event.target).is('.checkbox') || $(event.target).is('.icon-checkbox') || $(event.target).is('input')) return
       this.$emit('selected', this.model)

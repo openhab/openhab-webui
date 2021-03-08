@@ -3,10 +3,10 @@ import CodeMirror from 'codemirror'
 export const cls = 'CodeMirror-Tern-'
 
 function elt (tagname, cls /*, ... elts */) {
-  var e = document.createElement(tagname)
+  let e = document.createElement(tagname)
   if (cls) e.className = cls
-  for (var i = 2; i < arguments.length; ++i) {
-    var elt = arguments[i]
+  for (let i = 2; i < arguments.length; ++i) {
+    let elt = arguments[i]
     if (typeof elt === 'string') elt = document.createTextNode(elt)
     e.appendChild(elt)
   }
@@ -14,17 +14,17 @@ function elt (tagname, cls /*, ... elts */) {
 }
 
 export function makeTooltip (x, y, content, cm) {
-  var node = elt('div', cls + 'tooltip')
+  let node = elt('div', cls + 'tooltip')
   node.innerHTML = content
   node.style.left = x + 'px'
   node.style.top = y + 'px'
-  var container = ((cm.options || {}).hintOptions || {}).container || document.body
+  let container = ((cm.options || {}).hintOptions || {}).container || document.body
   container.appendChild(node)
   return node
 }
 
 export function remove (node) {
-  var p = node && node.parentNode
+  let p = node && node.parentNode
   if (p) p.removeChild(node)
 }
 
@@ -56,7 +56,7 @@ export function addTooltipHandlers (cm, ret, retriggerHint) {
   })
   CodeMirror.on(ret, 'select', function (cur, node) {
     remove(tooltip)
-    var content = cur.description
+    let content = cur.description
     if (content) {
       tooltip = makeTooltip(node.parentNode.getBoundingClientRect().right + window.pageXOffset,
         node.getBoundingClientRect().top + window.pageYOffset, content, cm)

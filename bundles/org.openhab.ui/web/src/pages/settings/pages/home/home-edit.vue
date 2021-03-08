@@ -147,9 +147,9 @@ export default {
           label: 'Home Page'
         },
         slots: {
-          locations: [ { component: 'oh-locations-tab', config: {}, slots: {} } ],
-          equipment: [ { component: 'oh-equipment-tab', config: {}, slots: {} } ],
-          properties: [ { component: 'oh-properties-tab', config: {}, slots: {} } ]
+          locations: [{ component: 'oh-locations-tab', config: {}, slots: {} }],
+          equipment: [{ component: 'oh-equipment-tab', config: {}, slots: {} }],
+          properties: [{ component: 'oh-properties-tab', config: {}, slots: {} }]
         }
       }
     }

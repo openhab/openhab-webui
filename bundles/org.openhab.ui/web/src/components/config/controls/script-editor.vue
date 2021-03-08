@@ -98,9 +98,9 @@ import thingsHint from '../editor/hint-things'
 import pythonHint from '../editor/hint-python'
 
 // Adapted from https://github.com/lkcampbell/brackets-indent-guides (MIT)
-var indentGuidesOverlay = {
+let indentGuidesOverlay = {
   token: function (stream, state) {
-    var char = '',
+    let char = '',
       colNum = 0,
       spaceUnits = 0,
       isTabStart = false
@@ -175,10 +175,10 @@ export default {
       return this.mode
     },
     ternComplete (file, query) {
-      var pos = tern.resolvePos(file, query.end)
-      var lit = infer.findExpressionAround(file.ast, null, pos, file.scope, 'Literal')
+      let pos = tern.resolvePos(file, query.end)
+      let lit = infer.findExpressionAround(file.ast, null, pos, file.scope, 'Literal')
       if (!lit || !lit.node) return
-      var call = infer.findExpressionAround(file.ast, null, lit.node.start - 2, file.scope)
+      let call = infer.findExpressionAround(file.ast, null, lit.node.start - 2, file.scope)
       if (!call || !call.node) return
       if (call.node.type !== 'MemberExpression' || (!call.node.object && !call.node.property)) return
       if ((call.node.object.name === 'events' && call.node.property.name === 'postUpdate') ||
@@ -187,12 +187,12 @@ export default {
       (call.node.object.name === 'ir' && call.node.property.name === 'getItem')) {
         console.debug('Completing item names!')
 
-        var before = lit.node.value.slice(0, pos - lit.node.start - 1)
-        var matches = []
+        let before = lit.node.value.slice(0, pos - lit.node.start - 1)
+        let matches = []
         this.itemsCache.sort((a, b) => a.name.localeCompare(b.name)).forEach((item) => {
           if (item.name.length > before.length && item.name.toLowerCase().indexOf(before.toLowerCase()) >= 0) {
             if (query.types || query.docs || query.urls || query.origins) {
-              var rec = {
+              let rec = {
                 name: JSON.stringify(item.name),
                 displayName: item.name,
                 doc: (item.label ? item.label + ' ' : '') + '[' + item.type + ']'

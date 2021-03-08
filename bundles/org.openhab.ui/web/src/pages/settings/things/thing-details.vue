@@ -299,7 +299,7 @@ export default {
   },
   watch: {
     configDirty: function () { this.dirty = this.configDirty || this.thingDirty },
-    thingDirty:  function () { this.dirty = this.configDirty || this.thingDirty }
+    thingDirty: function () { this.dirty = this.configDirty || this.thingDirty }
   },
   methods: {
     onPageAfterIn (event) {

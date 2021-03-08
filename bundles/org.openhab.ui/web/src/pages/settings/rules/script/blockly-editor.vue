@@ -378,10 +378,10 @@ export default {
     const xml = Blockly.Xml.textToDom(this.blocks)
     Blockly.Xml.domToWorkspace(xml, this.workspace)
 
-    this.workspace.addChangeListener(this.onChange);
+    this.workspace.addChangeListener(this.onChange)
   },
   beforeDestroy () {
-    this.workspace.removeChangeListener(this.onChange);
+    this.workspace.removeChangeListener(this.onChange)
   },
   methods: {
     getBlocks () {
@@ -392,7 +392,7 @@ export default {
       return Blockly.JavaScript.workspaceToCode(this.workspace)
     },
     onChange (event) {
-      if (event.type == Blockly.Events.FINISHED_LOADING) {
+      if (event.type === Blockly.Events.FINISHED_LOADING) {
         this.loading = false
       } else if (!this.loading && !event.isUiEvent) {
         this.$emit('change')

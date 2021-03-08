@@ -72,7 +72,7 @@ export default {
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'doors':
-          equipment =  [
+          equipment = [
             ...findEquipment(this.element.equipment, 'Equipment_Door', false),
             ...findEquipment(this.element.equipment, 'Equipment_Door_FrontDoor', false),
             ...findEquipment(this.element.equipment, 'Equipment_Door_BackDoor', false),

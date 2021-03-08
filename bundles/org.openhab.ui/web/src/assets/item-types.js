@@ -1,8 +1,8 @@
-export const ItemTypes = [ 'Switch', 'Contact', 'String', 'Number', 'Dimmer', 'DateTime', 'Color', 'Image', 'Player', 'Location', 'Rollershutter', 'Call', 'Group' ]
-export const GroupTypes = [ 'None', 'Switch', 'Contact', 'Number', 'Dimmer', 'Rollershutter', 'DateTime' ]
-export const Dimensions = [ 'Area', 'Length', 'Mass', 'Pressure', 'Speed', 'Temperature', 'Volume', 'Dimensionless', 'Acceleration', 'AmountOfSubstance', 'Angle', 'ArealDensity', 'CatalyticActivity', 'DataAmount', 'DataTransferRate', 'Density', 'ElectricCapacitance', 'ElectricCharge', 'ElectricConductance', 'ElectricCurrent', 'ElectricInductance', 'ElectricPotential', 'ElectricResistance', 'Energy', 'Force', 'Frequency', 'Illuminance', 'Intensity', 'LuminousFlux', 'LuminousIntensity', 'MagneticFlux', 'MagneticFluxDensity', 'Power', 'RadiationDoseAbsorbed', 'RadiationDoseEffective', 'Radioactivity', 'SolidAngle', 'Time', 'VolumetricFlowRate' ]
+export const ItemTypes = ['Switch', 'Contact', 'String', 'Number', 'Dimmer', 'DateTime', 'Color', 'Image', 'Player', 'Location', 'Rollershutter', 'Call', 'Group']
+export const GroupTypes = ['None', 'Switch', 'Contact', 'Number', 'Dimmer', 'Rollershutter', 'DateTime']
+export const Dimensions = ['Area', 'Length', 'Mass', 'Pressure', 'Speed', 'Temperature', 'Volume', 'Dimensionless', 'Acceleration', 'AmountOfSubstance', 'Angle', 'ArealDensity', 'CatalyticActivity', 'DataAmount', 'DataTransferRate', 'Density', 'ElectricCapacitance', 'ElectricCharge', 'ElectricConductance', 'ElectricCurrent', 'ElectricInductance', 'ElectricPotential', 'ElectricResistance', 'Energy', 'Force', 'Frequency', 'Illuminance', 'Intensity', 'LuminousFlux', 'LuminousIntensity', 'MagneticFlux', 'MagneticFluxDensity', 'Power', 'RadiationDoseAbsorbed', 'RadiationDoseEffective', 'Radioactivity', 'SolidAngle', 'Time', 'VolumetricFlowRate']
 
-export const ArithmeticFunctions = [ {
+export const ArithmeticFunctions = [{
   name: '',
   value: 'None'
 }, {
@@ -17,9 +17,9 @@ export const ArithmeticFunctions = [ {
 }, {
   name: 'SUM',
   value: 'SUM'
-} ]
+}]
 
-export const LogicalOnOffFunctions = [ {
+export const LogicalOnOffFunctions = [{
   name: '',
   value: 'None'
 }, {
@@ -46,9 +46,9 @@ export const LogicalOnOffFunctions = [ {
 }, {
   name: 'NOR_OFF_ON',
   value: 'One OFF then ON else OFF'
-} ]
+}]
 
-export const LogicalOpenClosedFunctions = [ {
+export const LogicalOpenClosedFunctions = [{
   name: '',
   value: 'None'
 }, {
@@ -75,9 +75,9 @@ export const LogicalOpenClosedFunctions = [ {
 }, {
   name: 'NOR_CLOSED_OPEN',
   value: 'One CLOSED then OPEN else CLOSED'
-} ]
+}]
 
-export const DateTimeFunctions = [ {
+export const DateTimeFunctions = [{
   name: '',
   value: 'None'
 }, {
@@ -86,4 +86,4 @@ export const DateTimeFunctions = [ {
 }, {
   name: 'LATEST',
   value: 'LATEST'
-} ]
+}]

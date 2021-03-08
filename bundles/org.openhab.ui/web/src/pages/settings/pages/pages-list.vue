@@ -184,7 +184,7 @@ export default {
       this.loading = true
       this.$set(this, 'selectedItems', [])
       this.showCheckboxes = false
-      var promises = [
+      let promises = [
         this.$oh.api.get('/rest/ui/components/system:sitemap'),
         this.$oh.api.get('/rest/ui/components/ui:page')
       ]

@@ -93,8 +93,8 @@ export default {
         // Hours
         {
           values: (function () {
-            var arr = []
-            for (var i = 0; i <= 99; i++) { arr.push(i.toString()) }
+            let arr = []
+            for (let i = 0; i <= 99; i++) { arr.push(i.toString()) }
             return arr
           })()
         },
@@ -106,8 +106,8 @@ export default {
         // Minutes
         {
           values: (function () {
-            var arr = []
-            for (var i = 0; i <= 59; i++) { arr.push(i.toString()) }
+            let arr = []
+            for (let i = 0; i <= 59; i++) { arr.push(i.toString()) }
             return arr
           })()
         },
@@ -119,8 +119,8 @@ export default {
         // Seconds
         {
           values: (function () {
-            var arr = []
-            for (var i = 0; i <= 59; i++) { arr.push(i.toString()) }
+            let arr = []
+            for (let i = 0; i <= 59; i++) { arr.push(i.toString()) }
             return arr
           })()
         },

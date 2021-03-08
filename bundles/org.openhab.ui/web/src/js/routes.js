@@ -40,14 +40,14 @@ import DeveloperToolsPage from '../pages/developer/developer-tools.vue'
 import WidgetsListPage from '../pages/developer/widgets/widget-list.vue'
 import ApiExplorerPage from '../pages/developer/api-explorer.vue'
 
-const checkDirtyBeforeLeave = function(routeTo, routeFrom, resolve, reject) {
+const checkDirtyBeforeLeave = function (routeTo, routeFrom, resolve, reject) {
   if (this.currentPageEl && this.currentPageEl.__vue__ && this.currentPageEl.__vue__.$parent && this.currentPageEl.__vue__.$parent.beforeLeave &&
       !routeTo.path.startsWith(routeFrom.path)) {
     this.currentPageEl.__vue__.$parent.beforeLeave(this, routeTo, routeFrom, resolve, reject)
   } else {
     resolve()
   }
-};
+}
 
 export default [
   {

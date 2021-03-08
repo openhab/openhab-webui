@@ -61,7 +61,7 @@ export default {
       }
     },
     keyDown (ev) {
-      if (ev.keyCode == 46) {       // delete key
+      if (ev.keyCode === 46) { // delete key
         this.remove()
         ev.stopPropagation()
         ev.preventDefault()

@@ -11,7 +11,7 @@ export default {
     let currentArea = null
     itemPoints.forEach((p) => {
       if ((p.state === 'ON' && rollingState !== 'ON') || (p.state === 'OPEN' && rollingState !== 'OPEN')) {
-        currentArea = [ { name: component.config.name, xAxis: new Date(p.time) } ]
+        currentArea = [{ name: component.config.name, xAxis: new Date(p.time) }]
       } else if (((p.state !== 'ON' && rollingState === 'ON') || (p.state !== 'OPEN' && rollingState === 'OPEN')) && currentArea) {
         currentArea.push({ xAxis: new Date(p.time) })
         currentArea[0].name = component.config.name || component.config.item

@@ -188,7 +188,7 @@ export default {
     searchAll (query, items) {
       const found = []
       for (let i = 0; i < items.length; i += 1) {
-        var haystack = items[i].name
+        let haystack = items[i].name
         if (items[i].label) haystack += ' ' + items[i].label
         haystack += ' ' + this.getItemTypeAndMetaLabel(items[i])
         if (

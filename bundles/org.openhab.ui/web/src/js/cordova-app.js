@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import openhab from './openhab/cordova/index'
 
-var cordovaApp = {
+const cordovaApp = {
   f7: null,
   /*
   This method hides splashscreen after 2 seconds
@@ -38,8 +38,8 @@ var cordovaApp = {
   */
   handleKeyboard: function () {
     if (!window.Keyboard || !window.Keyboard.shrinkView) return
-    var f7 = cordovaApp.f7
-    var $ = f7.$
+    let f7 = cordovaApp.f7
+    let $ = f7.$
     window.Keyboard.shrinkView(false)
     window.Keyboard.disableScrollingInShrinkView(true)
     window.Keyboard.hideFormAccessoryBar(true)
@@ -56,7 +56,7 @@ var cordovaApp = {
       window.Keyboard.hideFormAccessoryBar(false)
     })
     window.addEventListener('keyboardHeightWillChange', (event) => {
-      var keyboardHeight = event.keyboardHeight
+      let keyboardHeight = event.keyboardHeight
       if (keyboardHeight > 0) {
         // Keyboard is going to be opened
         document.body.style.height = `calc(100% - ${keyboardHeight}px)`
@@ -68,9 +68,9 @@ var cordovaApp = {
       }
     })
     $(document).on('touchstart', 'input, textarea, select', function (e) {
-      var nodeName = e.target.nodeName.toLowerCase()
-      var type = e.target.type
-      var showForTypes = ['datetime-local', 'time', 'date', 'datetime']
+      let nodeName = e.target.nodeName.toLowerCase()
+      let type = e.target.type
+      let showForTypes = ['datetime-local', 'time', 'date', 'datetime']
       if (nodeName === 'select' || showForTypes.indexOf(type) >= 0) {
         window.Keyboard.hideFormAccessoryBar(false)
       } else {

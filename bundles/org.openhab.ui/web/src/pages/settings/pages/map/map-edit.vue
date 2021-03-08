@@ -142,7 +142,7 @@ export default {
     // populate the list of tile providers with variants
     const isOverlay = function (providerName) {
       // https://github.com/leaflet-extras/leaflet-providers/blob/bc7482c62f1bbe3737682777716ec946e052deb6/preview/preview.js#L56
-      var overlayPatterns = [
+      let overlayPatterns = [
         '^(OpenWeatherMap|OpenSeaMap)',
         'OpenMapSurfer.(Hybrid|AdminBounds|ContourLines|Hillshade|ElementsAtRisk)',
         'Stamen.Toner(Hybrid|Lines|Labels)',

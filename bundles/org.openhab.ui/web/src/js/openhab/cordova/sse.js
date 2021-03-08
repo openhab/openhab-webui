@@ -19,7 +19,7 @@ export default {
     const requestString = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\n\r\n`
     const request = new ArrayBuffer(requestString.length)
     const reqView = new Uint8Array(request)
-    for (var i = 0, strLen = requestString.length; i < strLen; i++) {
+    for (let i = 0, strLen = requestString.length; i < strLen; i++) {
       reqView[i] = requestString.charCodeAt(i)
     }
 
