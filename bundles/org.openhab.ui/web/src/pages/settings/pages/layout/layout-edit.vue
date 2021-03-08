@@ -305,22 +305,24 @@ export default {
       })
     },
     fromYaml () {
-      try {
-        const updatedPage = YAML.parse(this.pageYaml)
-        if (updatedPage.config && updatedPage.config.layoutType && updatedPage.config.layoutType === 'fixed' &&
-           ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))) {
-          throw new Error('Using blocks and masonry in fixed-size layouts is not possible')
-        }
+      if(this.pageYaml) {
+        try {
+          const updatedPage = YAML.parse(this.pageYaml)
+          if (updatedPage.config && updatedPage.config.layoutType && updatedPage.config.layoutType === 'fixed' &&
+            ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))) {
+            throw new Error('Using blocks and masonry in fixed-size layouts is not possible')
+          }
 
-        this.$set(this.page, 'config', updatedPage.config)
-        this.$set(this.page.slots, 'default', updatedPage.blocks)
-        this.$set(this.page.slots, 'masonry', updatedPage.masonry)
-        this.$set(this.page.slots, 'grid', updatedPage.grid)
-        this.forceUpdate()
-        return true
-      } catch (e) {
-        this.$f7.dialog.alert(e).open()
-        return false
+          this.$set(this.page, 'config', updatedPage.config)
+          this.$set(this.page.slots, 'default', updatedPage.blocks)
+          this.$set(this.page.slots, 'masonry', updatedPage.masonry)
+          this.$set(this.page.slots, 'grid', updatedPage.grid)
+          this.forceUpdate()
+          return true
+        } catch (e) {
+          this.$f7.dialog.alert(e).open()
+          return false
+        }
       }
     },
     toggleFullscreen () {
