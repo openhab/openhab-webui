@@ -15,6 +15,7 @@ module.exports = {
 
   extends: [
     'eslint:recommended',
+    '@vue/standard',
     'plugin:cypress/recommended',
     'plugin:vue/recommended'
   ],
@@ -38,6 +39,7 @@ module.exports = {
     'arrow-parens': 'off',
     'comma-dangle': 'error',
     'comma-spacing': 'error',
+    'dot-notation': 'off',
     'eol-last': 'error',
     'generator-star-spacing': 'off',
     'import/default': 'error',
@@ -51,6 +53,7 @@ module.exports = {
     'indent': ['error', 2, { 'SwitchCase': 1 }],
     'jsx-quotes': 'error',
     'linebreak-style': 'off',
+    'multiline-ternary': 'off',
     'no-case-declarations': 'off',
     'no-console': 'off',
     'no-debugger': 'off',
@@ -59,6 +62,7 @@ module.exports = {
     'no-whitespace-before-property': 'error',
     'one-var': 'off',
     'prefer-promise-reject-errors': 'off',
+    'quote-props': 'off',
     'quotes': ['error', 'single'],
     'space-in-parens': 'error',
     'vue/attribute-hyphenation': 'off',
@@ -74,6 +78,7 @@ module.exports = {
     'no-empty': ['off', { 'allowEmptyCatch': true }],
     'no-unused-vars': 'off',
     'no-useless-catch': 'off',
+    'prefer-const': 'off',
     'vue/attributes-order': 'off',
     'vue/component-tags-order': ['off', { 'order': ['template', 'script', 'style'] }],
     'vue/html-closing-bracket-newline': 'off',
