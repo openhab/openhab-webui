@@ -185,6 +185,7 @@ export const actionsMixin = {
                   return Promise.resolve(el)
                 }
               }
+              return Promise.reject('invalid actionPhotos parameter format')
             })
 
             Promise.all(promises).then((resolvedPhotos) => {

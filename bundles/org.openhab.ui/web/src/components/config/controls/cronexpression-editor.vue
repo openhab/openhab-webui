@@ -355,7 +355,7 @@ export default {
             this.second.incrementStart + '/' + this.second.incrementIncrement
           break
         case '3':
-          this.second.specificSpecific.map(val => {
+          this.second.specificSpecific.forEach(val => {
             seconds += val + ','
           })
           seconds = seconds.slice(0, -1)
@@ -378,7 +378,7 @@ export default {
             this.minute.incrementStart + '/' + this.minute.incrementIncrement
           break
         case '3':
-          this.minute.specificSpecific.map(val => {
+          this.minute.specificSpecific.forEach(val => {
             minutes += val + ','
           })
           minutes = minutes.slice(0, -1)
@@ -400,7 +400,7 @@ export default {
           hours = this.hour.incrementStart + '/' + this.hour.incrementIncrement
           break
         case '3':
-          this.hour.specificSpecific.map(val => {
+          this.hour.specificSpecific.forEach(val => {
             hours += val + ','
           })
           hours = hours.slice(0, -1)
@@ -426,7 +426,7 @@ export default {
           days = this.day.incrementStart + '/' + this.day.incrementIncrement
           break
         case '5':
-          this.day.specificSpecific.map(val => {
+          this.day.specificSpecific.forEach(val => {
             days += val + ','
           })
           days = days.slice(0, -1)
@@ -462,7 +462,7 @@ export default {
           weeks = this.week.incrementStart + '/' + this.week.incrementIncrement
           break
         case '4':
-          this.week.specificSpecific.map(val => {
+          this.week.specificSpecific.forEach(val => {
             weeks += val + ','
           })
           weeks = weeks.slice(0, -1)
@@ -492,7 +492,7 @@ export default {
             this.month.incrementStart + '/' + this.month.incrementIncrement
           break
         case '3':
-          this.month.specificSpecific.map(val => {
+          this.month.specificSpecific.forEach(val => {
             months += val + ','
           })
           months = months.slice(0, -1)
@@ -514,7 +514,7 @@ export default {
           years = this.year.incrementStart + '/' + this.year.incrementIncrement
           break
         case '3':
-          this.year.specificSpecific.map(val => {
+          this.year.specificSpecific.forEach(val => {
             years += val + ','
           })
           years = years.slice(0, -1)
