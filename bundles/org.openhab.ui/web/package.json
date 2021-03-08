@@ -40,6 +40,7 @@
     "build-prod": "cross-env NODE_ENV=production node ./build/build.js",
     "build-cordova-prod": "cross-env TARGET=cordova cross-env NODE_ENV=production node ./build/build.js && cd cordova && cordova build",
     "webpack-analyzer": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 node ./build/build.js",
+    "webpack-analyzer-report": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 WEBPACK_ANALYZER_REPORT=1 node ./build/build.js",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config ./build/webpack.config.js",
     "start": "npm run dev",
     "lint": "npx eslint './**/*.{js,vue}'",

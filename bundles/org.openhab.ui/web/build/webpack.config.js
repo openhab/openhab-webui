@@ -239,7 +239,18 @@ module.exports = {
       })
     ] : []),
     ...(process.env.WEBPACK_ANALYZER ? [
-      new WebpackAnalyzerPlugin()
+      new WebpackAnalyzerPlugin(process.env.WEBPACK_ANALYZER_REPORT ? {
+        analyzerMode: 'static',
+        reportFilename: '../report.html',
+        generateStatsFile: true,
+        statsFilename: '../stats.json',
+        statsOptions: {
+          assets: true,
+          entrypoints: true,
+          chunks: true,
+          modules: true,
+        }
+      } : {})
     ] : [])
   ]
 }
