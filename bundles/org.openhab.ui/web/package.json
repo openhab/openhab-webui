@@ -88,6 +88,7 @@
     "vue": "^2.6.12",
     "vue-async-computed": "^3.9.0",
     "vue-codemirror": "^4.0.6",
+    "vue-draggable-resizable": "^2.3.0",
     "vue-echarts": "^4.1.0",
     "vue-fragment": "^1.5.1",
     "vue-fullscreen": "^2.2.0",

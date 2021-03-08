@@ -58,6 +58,11 @@ Vue.use(Trend)
 // Import Fulscreen Plugin
 import fullscreen from 'vue-fullscreen'
 Vue.use(fullscreen)
+// Import Vue Draggable Resizable
+import VueDraggableResizable from 'vue-draggable-resizable'
+// optionally import default styles
+import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
+Vue.component('vue-draggable-resizable', VueDraggableResizable)
 
 // Extend prototype with the openHAB API interface
 Vue.prototype.$oh = openhab

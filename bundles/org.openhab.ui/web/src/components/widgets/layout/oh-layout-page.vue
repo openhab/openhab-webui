@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="config.layoutType !== 'fixed'">
+    <template v-if="config.layoutType === 'responsive'">
       <oh-block v-for="(component, idx) in context.component.slots.default"
                 :key="idx"
                 :context="childContext(component)"
@@ -30,27 +30,31 @@
         </f7-block>
       </template>
     </template>
-    <template v-else>
+    <template v-else-if="config.layoutType === 'fixed'">
       <oh-grid-layout :context="context" />
+    </template>
+    <template v-else-if="config.layoutType === 'plan'">
+      <oh-plan-layout :context="context" />
     </template>
   </div>
 </template>
 
-<style lang="stylus">
-</style>
+<style lang="stylus"></style>
 
 <script>
 import mixin from '../widget-mixin'
 import OhBlock from './oh-block.vue'
 import OhMasonry from './oh-masonry.vue'
 import OhGridLayout from './oh-grid-layout.vue'
+import OhPlanLayout from './oh-plan-layout.vue'
 
 export default {
   mixins: [mixin],
   components: {
     OhBlock,
     OhMasonry,
-    OhGridLayout
+    OhGridLayout,
+    OhPlanLayout
   }
 }
 </script>
