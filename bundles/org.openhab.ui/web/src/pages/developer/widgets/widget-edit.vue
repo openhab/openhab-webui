@@ -249,6 +249,7 @@ export default {
         ? this.$oh.api.postPlain('/rest/ui/components/ui:widget', JSON.stringify(this.widget), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/ui/components/ui:widget/' + this.widget.uid, this.widget)
       promise.then((data) => {
+        this.dirty = false
         if (this.createMode) {
           this.$f7.toast.create({
             text: 'Widget created',
@@ -264,7 +265,6 @@ export default {
             closeTimeout: 2000
           }).open()
         }
-        this.dirty = false
         this.$f7.emit('sidebarRefresh', null)
         // if (!stay) this.$f7router.back()
       }).catch((err) => {
