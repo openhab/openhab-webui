@@ -67,3 +67,31 @@ export function OhGridLayoutDefinition () {
       pb('showFullscreenIcon', 'Show Fullscreen Icon', 'Show a fullscreen icon on the top right corner (default false)')
     ])
 }
+
+export function OhCanvasItemDefinition () {
+  return new WidgetDefinition('oh-canvas-item', 'Canvas Item', 'Specific attributes to display widgets on a canvas.')
+    .paramGroup(pg('appearance', 'Layout Settings'), [
+      pb('notStyled', 'Preserve classic style', 'Preserve classic appearance of widgets as in standard layout pages.'),
+      pb('noCanvasShadow', 'No elements shadow', 'Do not shadow inner elements of standard widgets')
+        .v((value, configuration, configDescription, parameters) => { return configuration.notStyled !== true })
+    ])
+}
+
+export function OhCanvasLayoutDefinition () {
+  return new WidgetDefinition('oh-canvas-layout', 'Canvas Layout', 'Position widgets on a canvas layout with arbitrary position and size down to pixel resolution')
+    .paramGroup(pg('layout', 'Layout Settings'), [
+      pn('grid', 'Grid size', 'Grid size in pixels used to snap content (default 5)')
+    ])
+    .paramGroup(pg('screenSettings', 'Screen Settings'), [
+      pn('screenWidth', 'Screen Width', 'Screen width in pixels (default 1280)'),
+      pn('screenHeight', 'Screen Height', 'Screen width in pixels (default 720)'),
+      pb('scale', 'Scaling', 'Scale content to screen width (can lead to unexpected styling issues) (default false)'),
+      pt('imageUrl', 'Image URL', 'The URL of the image to display as background').c('url'),
+      pt('imageSrcSet', 'Image Source Set', 'The src-set attribute of background image element to take into account mulitple device resolutions. For example: "/static/floorplans/floor-0.jpg, /static/floorplans/floor-0@2x.jpg 2x"')
+    ])
+    .paramGroup(pg('shadow', 'Canvas items shadow'), [
+      pt('boxShadow', 'Box shadow', 'Shadow applied to box elements (box-shadow CSS syntax).').a(),
+      pt('textShadow', 'Text shadow', 'Shadow applied to text elements or font icons (text-shadow CSS syntax)').a(),
+      pt('filterShadow', 'Fitler Shadow', 'Shadow applied to raster or SVG image elements (filter: drop-shadow() CSS syntax)').a()
+    ])
+}

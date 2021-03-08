@@ -36,13 +36,14 @@
                     !(context.component.slots.default && context.component.slots.default.length) &&
                     !(context.component.slots.masonry && context.component.slots.masonry.length) &&
                     !(context.component.slots.grid && context.component.slots.grid.length) &&
+                    !(context.component.slots.canvas && context.component.slots.canvas.length) &&
                     !['responsive', 'fixed'].includes(page.config.layoutType)"
                   class="block-narrow margin-bottom" inset>
           <f7-block-title class="margin text-align-center">
             Choose a layout style
           </f7-block-title>
           <f7-row class="text-align-center align-items-stretch">
-            <f7-col width="50" class="elevation-2 elevation-hover-6 elevation-pressed-1" style="background-color: var(--f7-card-bg-color)">
+            <f7-col width="30" class="elevation-2 elevation-hover-6 elevation-pressed-1" style="background-color: var(--f7-card-bg-color)">
               <f7-link @click="setLayoutType('responsive')" class="flex-direction-column padding" style="color: var(--f7-theme-color-text-color)">
                 <f7-icon size="70px" f7="rectangle_3_offgrid" />
                 <div class="margin-bottom">
@@ -53,8 +54,8 @@
                 </div>
               </f7-link>
             </f7-col>
-            <f7-col width="50" class="elevation-2 elevation-hover-6 elevation-pressed-1" style="background-color: var(--f7-card-bg-color)">
-              <f7-link @click="setLayoutType('fixed')" class="flex-direction-column padding" style="color: var(--f7-theme-color-text-color)">
+            <f7-col width="30" class="elevation-2 elevation-hover-6 elevation-pressed-1" style="background-color: var(--f7-card-bg-color)">
+              <f7-link @click="setLayoutType('fixed', 'grid')" class="flex-direction-column padding" style="color: var(--f7-theme-color-text-color)">
                 <f7-icon size="70px" f7="grid" />
                 <div class="margin-bottom">
                   Fixed Grid
@@ -64,13 +65,25 @@
                 </div>
               </f7-link>
             </f7-col>
+            <f7-col width="30" class="elevation-2 elevation-hover-6 elevation-pressed-1" style="background-color: var(--f7-card-bg-color)">
+              <f7-link @click="setLayoutType('fixed', 'canvas')" class="flex-direction-column padding" style="color: var(--f7-theme-color-text-color)">
+                <f7-icon size="70px" f7="square_stack_3d_up" />
+                <div class="margin-bottom">
+                  Canvas
+                </div>
+                <div class="margin-top">
+                  Create a canvas-like page for a specific screen size, with pixel positionning of widgets. Suitable for e.g. wall mounted tablets.
+                </div>
+              </f7-link>
+            </f7-col>
           </f7-row>
         </f7-block>
 
         <oh-layout-page class="layout-page" v-else-if="ready" :context="context" :key="pageKey" :style="page.config.style"
                         @add-block="addBlock"
                         @add-masonry="addMasonry"
-                        @add-grid-item="addGridItem" />
+                        @add-grid-item="addGridItem"
+                        @add-canvas-item="addCanvasItem" />
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml?type=layout" :value="pageYaml" @input="onEditorInput" />
@@ -148,7 +161,8 @@ export default {
         config: {},
         slots: {
           default: [],
-          grid: []
+          grid: [],
+          canvas: []
         }
       },
       addFromModelContext: {},
@@ -273,12 +287,15 @@ export default {
       this.addFromModelContext = {}
       this.forceUpdate()
     },
-    setLayoutType (layoutType) {
+    setLayoutType (layoutType, fixedType) {
       this.page.config.layoutType = layoutType
+      this.page.config.fixedType = fixedType
       if (layoutType === 'responsive') {
         this.page.slots.default = []
-      } else {
+      } else if (layoutType === 'fixed' && fixedType === 'grid') {
         this.page.slots.grid = []
+      } else if (layoutType === 'fixed' && fixedType === 'canvas') {
+        this.page.slots.canvas = []
       }
       this.forceUpdate()
     },
@@ -300,7 +317,13 @@ export default {
     addGridItem (component) {
       component.slots['grid'].push({
         component: 'oh-grid-item',
-        config: { x: 5, y: 3, h: 2, w: 2 },
+        config: { x: 5, y: 3, h: 2, w: 2 }
+      })
+    },
+    addCanvasItem (component) {
+      component.slots['canvas'].push({
+        component: 'oh-canvas-item',
+        config: { x: 10, y: 10, h: 50, w: 50 },
         slots: { default: [] }
       })
       this.forceUpdate()
@@ -316,21 +339,24 @@ export default {
         config: this.page.config,
         blocks: this.page.slots.default,
         masonry: this.page.slots.masonry,
-        grid: this.page.slots.grid
+        grid: this.page.slots.grid,
+        canvas: this.page.slots.canvas
       })
     },
     fromYaml () {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
-        if (updatedPage.config && updatedPage.config.layoutType && updatedPage.config.layoutType === 'fixed' &&
+        if (updatedPage.config && updatedPage.config.layoutType &&
+            updatedPage.config.layoutType === 'fixed' &&
            ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))) {
-          throw new Error('Using blocks and masonry in fixed-size layouts is not possible')
+          throw new Error('Using blocks and masonry in fixed layouts is not possible')
         }
 
         this.$set(this.page, 'config', updatedPage.config)
         this.$set(this.page.slots, 'default', updatedPage.blocks)
         this.$set(this.page.slots, 'masonry', updatedPage.masonry)
         this.$set(this.page.slots, 'grid', updatedPage.grid)
+        this.$set(this.page.slots, 'canvas', updatedPage.canvas)
         this.forceUpdate()
         return true
       } catch (e) {
