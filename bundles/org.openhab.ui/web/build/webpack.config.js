@@ -247,8 +247,7 @@ module.exports = {
         statsOptions: {
           assets: true,
           entrypoints: true,
-          chunks: true,
-          modules: true,
+          chunks: true
         }
       } : {})
     ] : [])
