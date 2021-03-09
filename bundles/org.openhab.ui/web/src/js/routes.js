@@ -11,44 +11,44 @@ const AddonsListPage = () => import(/* webpackChunkName: "admin-base" */ '../pag
 const AddonsAddPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-add.vue')
 const AddonsConfigureBindingPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/binding-config.vue')
 
-const ItemsListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/items/items-list-vlist.vue')
-const ItemDetailsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/items/item-details.vue')
-const ItemEditPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/items/item-edit.vue')
-const ItemMetadataEditPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/items/metadata/item-metadata-edit.vue')
-const ItemsAddFromTextualDefinition = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/items/parser/items-add-from-textual-definition.vue')
+const ItemsListPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/items-list-vlist.vue')
+const ItemDetailsPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/item-details.vue')
+const ItemEditPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/item-edit.vue')
+const ItemMetadataEditPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/metadata/item-metadata-edit.vue')
+const ItemsAddFromTextualDefinition = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/parser/items-add-from-textual-definition.vue')
 
-const ThingsListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/things/things-list.vue')
-const ThingDetailsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/things/thing-details.vue')
-const AddThingChooseBindingPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/things/add/choose-binding.vue')
-const AddThingChooseThingTypePage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/things/add/choose-thing-type.vue')
-const AddThingPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/things/add/thing-add.vue')
+const ThingsListPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/things-list.vue')
+const ThingDetailsPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/thing-details.vue')
+const AddThingChooseBindingPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/add/choose-binding.vue')
+const AddThingChooseThingTypePage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/add/choose-thing-type.vue')
+const AddThingPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/add/thing-add.vue')
 
-const InboxListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/things/inbox/inbox-list.vue')
+const InboxListPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/inbox/inbox-list.vue')
 
-const SemanticModelPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/model/model.vue')
+const SemanticModelPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/model/model.vue')
 
-const PagesListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/pages-list.vue')
+const PagesListPage = () => import(/* webpackChunkName: "admin-pages" */ '../pages/settings/pages/pages-list.vue')
 const PageEditors = {
-  home: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/home/home-edit.vue'),
-  layout: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/layout/layout-edit.vue'),
-  tabs: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/tabs/tabs-edit.vue'),
-  map: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/map/map-edit.vue'),
-  plan: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/plan/plan-edit.vue'),
-  chart: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/chart/chart-edit.vue'),
-  sitemap: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/sitemap/sitemap-edit.vue')
+  home: () => import(/* webpackChunkName: "admin-pages" */ '../pages/settings/pages/home/home-edit.vue'),
+  layout: () => import(/* webpackChunkName: "admin-pages" */ '../pages/settings/pages/layout/layout-edit.vue'),
+  tabs: () => import(/* webpackChunkName: "admin-pages" */ '../pages/settings/pages/tabs/tabs-edit.vue'),
+  map: () => import(/* webpackChunkName: "admin-pages-leaflet" */ '../pages/settings/pages/map/map-edit.vue'),
+  plan: () => import(/* webpackChunkName: "admin-pages-leaflet" */ '../pages/settings/pages/plan/plan-edit.vue'),
+  chart: () => import(/* webpackChunkName: "admin-pages-echarts" */ '../pages/settings/pages/chart/chart-edit.vue'),
+  sitemap: () => import(/* webpackChunkName: "admin-pages" */ '../pages/settings/pages/sitemap/sitemap-edit.vue')
 }
 
-const RulesListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/rules/rules-list.vue')
-const RuleEditPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/rules/rule-edit.vue')
-const ScriptEditPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/rules/script/script-edit.vue')
-const SchedulePage = () => import(/* webpackChunkName: "admin-schedule" */ '../pages/settings/schedule/schedule.vue')
+const RulesListPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/rules/rules-list.vue')
+const RuleEditPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/rules/rule-edit.vue')
+const ScriptEditPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/rules/script/script-edit.vue')
+const SchedulePage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/schedule/schedule.vue')
 
 const AnalyzerPage = () => import(/* webpackChunkName: "analyzer" */ '../pages/analyzer/analyzer.vue')
 
-const DeveloperToolsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/developer/developer-tools.vue')
-const WidgetsListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/developer/widgets/widget-list.vue')
-const WidgetEditPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/developer/widgets/widget-edit.vue')
-const ApiExplorerPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/developer/api-explorer.vue')
+const DeveloperToolsPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/developer-tools.vue')
+const WidgetsListPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/widgets/widget-list.vue')
+const WidgetEditPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/widgets/widget-edit.vue')
+const ApiExplorerPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/api-explorer.vue')
 
 const SetupWizardPage = () => import(/* webpackChunkName: "setup-wizard" */ '../pages/wizards/setup-wizard.vue')
 
