@@ -47,13 +47,12 @@
 // import OtherApps from '../../components/home/other-apps.vue'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
-import Habot from '../../components/home/habot.vue'
 
 export default {
   props: ['context', 'allowChat'],
   components: {
     OhLayoutPage,
-    Habot
+    'habot': () => import(/* webpackChunkName: "habot" */ '../../components/home/habot.vue')
   },
   data () {
     return {
