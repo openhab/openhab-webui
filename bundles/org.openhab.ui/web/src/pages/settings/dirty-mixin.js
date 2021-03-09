@@ -22,6 +22,12 @@ export default {
       } else {
         resolve()
       }
+    },
+    switchTab (tab, onSuccessCallback) {
+      if (this.currentTab !== tab) {
+        this.currentTab = tab
+        onSuccessCallback()
+      }
     }
   }
 }

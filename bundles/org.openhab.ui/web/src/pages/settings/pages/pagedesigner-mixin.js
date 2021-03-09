@@ -303,12 +303,6 @@ export default {
       parentContext.component.slots[slot].splice(parentContext.component.slots[slot].indexOf(component), 1)
       this.forceUpdate()
     },
-    switchTab (tab, onSuccessCallback) {
-      if (this.currentTab !== tab) {
-        this.currentTab = tab
-        onSuccessCallback()
-      }
-    },
     forceUpdate () {
       this.pageKey = this.$f7.utils.id()
     },
