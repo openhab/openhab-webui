@@ -2,24 +2,30 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="map-editor">
     <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create map page' : page.config.label" back-link="Back" no-hairline>
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md">
+          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
-      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
+      <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">
+        Design
+      </f7-link>
+      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">
+        Code
+      </f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)"></f7-toggle> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)" /> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
 
     <f7-tabs class="map-editor-tabs">
       <f7-tab id="design" class="map-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
-          <f7-preloader></f7-preloader>
+          <f7-preloader />
           <div>Loading...</div>
         </f7-block>
         <f7-block class="block-narrow" v-if="ready && !previewMode">
@@ -33,14 +39,13 @@
               :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
               :parameters="pageWidgetDefinition.props.parameters || []"
               :configuration="page.config"
-              @updated="dirty = true"
-            />
+              @updated="dirty = true" />
 
             <f7-block-title>Markers</f7-block-title>
             <f7-menu v-if="clipboardType === 'oh-map-marker'">
               <f7-menu-item style="margin-left: auto" icon-f7="map" dropdown>
                 <f7-menu-dropdown right>
-                  <f7-menu-dropdown-item @click="pasteWidget(page, null)" href="#" text="Paste"></f7-menu-dropdown-item>
+                  <f7-menu-dropdown-item @click="pasteWidget(page, null)" href="#" text="Paste" />
                 </f7-menu-dropdown>
               </f7-menu-item>
             </f7-menu>
@@ -54,16 +59,16 @@
                 <f7-menu slot="content-start" class="configure-layout-menu">
                   <f7-menu-item icon-f7="list_bullet" dropdown>
                     <f7-menu-dropdown>
-                      <f7-menu-dropdown-item @click="configureWidget(marker, { component: page })" href="#" text="Configure marker"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="editWidgetCode(marker, { component: page })" href="#" text="Edit YAML"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="cutWidget(marker, { component: page })" href="#" text="Cut"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="copyWidget(marker, { component: page })" href="#" text="Copy"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="moveWidgetUp(marker, { component: page })" href="#" text="Move Up"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="moveWidgetDown(marker, { component: page })" href="#" text="Move Down"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="removeWidget(marker, { component: page })" href="#" text="Remove marker"></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item @click="configureWidget(marker, { component: page })" href="#" text="Configure marker" />
+                      <f7-menu-dropdown-item @click="editWidgetCode(marker, { component: page })" href="#" text="Edit YAML" />
+                      <f7-menu-dropdown-item divider />
+                      <f7-menu-dropdown-item @click="cutWidget(marker, { component: page })" href="#" text="Cut" />
+                      <f7-menu-dropdown-item @click="copyWidget(marker, { component: page })" href="#" text="Copy" />
+                      <f7-menu-dropdown-item divider />
+                      <f7-menu-dropdown-item @click="moveWidgetUp(marker, { component: page })" href="#" text="Move Up" />
+                      <f7-menu-dropdown-item @click="moveWidgetDown(marker, { component: page })" href="#" text="Move Down" />
+                      <f7-menu-dropdown-item divider />
+                      <f7-menu-dropdown-item @click="removeWidget(marker, { component: page })" href="#" text="Remove marker" />
                     </f7-menu-dropdown>
                   </f7-menu-item>
                 </f7-menu>
@@ -142,7 +147,7 @@ export default {
     // populate the list of tile providers with variants
     const isOverlay = function (providerName) {
       // https://github.com/leaflet-extras/leaflet-providers/blob/bc7482c62f1bbe3737682777716ec946e052deb6/preview/preview.js#L56
-      var overlayPatterns = [
+      let overlayPatterns = [
         '^(OpenWeatherMap|OpenSeaMap)',
         'OpenMapSurfer.(Hybrid|AdminBounds|ContourLines|Hillshade|ElementsAtRisk)',
         'Stamen.Toner(Hybrid|Lines|Labels)',

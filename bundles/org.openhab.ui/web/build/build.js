@@ -19,7 +19,7 @@ rm(isCordova ? './cordova/www' : './www/', (removeErr) => {
     spinner.stop();
 
     process.stdout.write(`${stats.toString({
-      colors: true,
+      colors: env === 'development',
       modules: false,
       children: false, // If you are using ts-loader, setting this to true will make TypeScript errors show up during build.
       chunks: false,

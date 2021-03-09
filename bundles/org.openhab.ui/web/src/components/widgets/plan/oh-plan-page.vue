@@ -22,8 +22,7 @@
     @update:zoom="zoomUpdate">
     <l-image-overlay
       :url="backgroundImageUrl"
-      :bounds="bounds"
-    />
+      :bounds="bounds" />
     <l-feature-group ref="featureGroup" v-if="context.component.slots && ready">
       <component v-for="(marker, idx) in markers" :key="idx"
                  :is="markerComponent(marker)" :context="childContext(marker)" @update="onMarkerUpdate" />
@@ -35,7 +34,7 @@
       </f7-menu>
     </l-control>
     <l-control v-if="context.editmode != null" position="bottomleft">
-      <span>Zoom Level: {{currentZoom.toFixed(2)}}</span>
+      <span>Zoom Level: {{ currentZoom.toFixed(2) }}</span>
     </l-control>
   </l-map>
 </template>

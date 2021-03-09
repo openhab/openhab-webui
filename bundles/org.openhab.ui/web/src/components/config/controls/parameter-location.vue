@@ -11,7 +11,9 @@
       @input="updateValue"
       type="text">
       <div class="padding-left" slot="content-end">
-        <f7-button slot="content-end" @click="openMapPicker"><f7-icon f7="placemark" /> Map</f7-button>
+        <f7-button slot="content-end" @click="openMapPicker">
+          <f7-icon f7="placemark" /> Map
+        </f7-button>
       </div>
     </f7-list-input>
   </ul>

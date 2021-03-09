@@ -7,8 +7,7 @@
             <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.beforeRollershutter" :key="'beforeRollershutter-' + idx" @command="onCommand" />
           </div>
         </slot>
-        <oh-rollershutter class="rollershutter-controls" :context="rollershutterContext">
-        </oh-rollershutter>
+        <oh-rollershutter class="rollershutter-controls" :context="rollershutterContext" />
         <slot name="afterRollershutter">
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.afterRollershutter" :key="'afterRollershutter-' + idx" @command="onCommand" />

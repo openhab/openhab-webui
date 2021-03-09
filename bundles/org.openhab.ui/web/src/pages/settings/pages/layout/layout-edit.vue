@@ -2,24 +2,30 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="layout-editor">
     <f7-navbar v-if="!(previewMode && page.config.hideNavbar) && !fullscreen" :title="(!ready) ? '' : (createMode) ? 'Create layout page' : page.config.label" back-link="Back" no-hairline>
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md">
+          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar v-if="!previewMode && !fullscreen" tabbar position="top">
-      <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
-      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
+      <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">
+        Design
+      </f7-link>
+      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">
+        Code
+      </f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="!fullscreen" bottom class="toolbar-details">
       <f7-link v-if="$fullscreen.support" class="fullscreen-link" icon-f7="rectangle_arrow_up_right_arrow_down_left" text="Fullscreen" color="blue" @click="toggleFullscreen" />
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)"></f7-toggle> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)" /> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
     <f7-tabs class="layout-editor-tabs">
       <f7-tab id="design" class="layout-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
-          <f7-preloader></f7-preloader>
+          <f7-preloader />
           <div>Loading...</div>
         </f7-block>
         <f7-block id="page-settings" class="block-narrow" v-if="ready && !(previewMode || fullscreen)">
@@ -32,20 +38,30 @@
                     !(context.component.slots.grid && context.component.slots.grid.length) &&
                     !['responsive', 'fixed'].includes(page.config.layoutType)"
                   class="block-narrow margin-bottom" inset>
-          <f7-block-title class="margin text-align-center">Choose a layout style</f7-block-title>
+          <f7-block-title class="margin text-align-center">
+            Choose a layout style
+          </f7-block-title>
           <f7-row class="text-align-center align-items-stretch">
             <f7-col width="50" class="elevation-2 elevation-hover-6 elevation-pressed-1" style="background-color: var(--f7-card-bg-color)">
               <f7-link @click="setLayoutType('responsive')" class="flex-direction-column padding" style="color: var(--f7-theme-color-text-color)">
-                <f7-icon size="70px" f7="rectangle_3_offgrid"></f7-icon>
-                <div class="margin-bottom">Responsive</div>
-                <div class="margin-top">Create a page that automatically adjusts to the size of the screen. Suitable for use with any device.</div>
+                <f7-icon size="70px" f7="rectangle_3_offgrid" />
+                <div class="margin-bottom">
+                  Responsive
+                </div>
+                <div class="margin-top">
+                  Create a page that automatically adjusts to the size of the screen. Suitable for use with any device.
+                </div>
               </f7-link>
             </f7-col>
             <f7-col width="50" class="elevation-2 elevation-hover-6 elevation-pressed-1" style="background-color: var(--f7-card-bg-color)">
               <f7-link @click="setLayoutType('fixed')" class="flex-direction-column padding" style="color: var(--f7-theme-color-text-color)">
-                <f7-icon size="70px" f7="grid"></f7-icon>
-                <div class="margin-bottom">Fixed Grid</div>
-                <div class="margin-top">Create a panel-like page for a specific screen size. Suitable for e.g. wall mounted tablets.</div>
+                <f7-icon size="70px" f7="grid" />
+                <div class="margin-bottom">
+                  Fixed Grid
+                </div>
+                <div class="margin-top">
+                  Create a panel-like page for a specific screen size. Suitable for e.g. wall mounted tablets.
+                </div>
               </f7-link>
             </f7-col>
           </f7-row>
@@ -54,8 +70,7 @@
         <oh-layout-page class="layout-page" v-else-if="ready" :context="context" :key="pageKey"
                         @add-block="addBlock"
                         @add-masonry="addMasonry"
-                        @add-grid-item="addGridItem"
-        />
+                        @add-grid-item="addGridItem" />
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml?type=layout" :value="pageYaml" @input="onEditorInput" />

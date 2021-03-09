@@ -1,7 +1,9 @@
 <template>
   <div v-if="showCards && groups">
     <div v-for="(elements, idx) in groups" :key="idx">
-      <f7-block-title medium v-if="elements.length > 0 && elements[0].separator">{{elements[0].separator}}</f7-block-title>
+      <f7-block-title medium v-if="elements.length > 0 && elements[0].separator">
+        {{ elements[0].separator }}
+      </f7-block-title>
       <div class="model-cards-section" v-if="elements.length > 0">
         <div v-for="(element, idx) in elements.filter((e) => !isCardExcluded(e))" :key="idx">
           <location-card v-if="type === 'locations' && !element.separator && (element.equipment.length > 0 || element.properties.length > 0)" :key="element.key"

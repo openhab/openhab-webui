@@ -2,14 +2,20 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create Widget' : 'Widget: ' + widget.uid" back-link="Back">
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md">
+          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar position="bottom">
-      <f7-link @click="widgetPropsOpened = true">Set Props<span v-if="$device.desktop">&nbsp;(Ctrl-P)</span></f7-link>
-      <f7-link icon-f7="uiwindow_split_2x1" @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = $f7.utils.id()"></f7-link>
-      <f7-link @click="redrawWidget">Redraw<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span></f7-link>
+      <f7-link @click="widgetPropsOpened = true">
+        Set Props<span v-if="$device.desktop">&nbsp;(Ctrl-P)</span>
+      </f7-link>
+      <f7-link icon-f7="uiwindow_split_2x1" @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = $f7.utils.id()" />
+      <f7-link @click="redrawWidget">
+        Redraw<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+      </f7-link>
     </f7-toolbar>
     <f7-block :key="blockKey + '-h'" v-if="split === 'horizontal'" class="widget-editor horizontal">
       <f7-row resizable>
@@ -38,11 +44,13 @@
       <f7-page v-if="widgetPropsOpened">
         <f7-navbar>
           <f7-nav-left>
-            <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
+            <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
           </f7-nav-left>
           <f7-nav-title>Set Widget Props</f7-nav-title>
           <f7-nav-right>
-            <f7-link @click="updateWidgetProps">Done</f7-link>
+            <f7-link @click="updateWidgetProps">
+              Done
+            </f7-link>
           </f7-nav-right>
         </f7-navbar>
         <f7-block v-if="widget.props">
@@ -50,8 +58,7 @@
             <config-sheet
               :parameterGroups="widget.props.parameterGroups || []"
               :parameters="widget.props.parameters || []"
-              :configuration="props"
-            />
+              :configuration="props" />
           </f7-col>
         </f7-block>
       </f7-page>

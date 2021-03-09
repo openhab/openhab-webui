@@ -2,13 +2,19 @@
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar :title="(createMode) ? 'Create rule' : rule.name" back-link="Back" no-hairline>
       <f7-nav-right v-if="isEditable">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md">
+          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
-      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
+      <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">
+        Design
+      </f7-link>
+      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">
+        Code
+      </f7-link>
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
       <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
@@ -16,25 +22,27 @@
           <f7-col v-if="!createMode">
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
-              <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
-              <f7-link :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" color="blue" @click="runNow"></f7-link>
+              <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled" />
+              <f7-link :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" color="blue" @click="runNow" />
             </div>
             Status:
             <f7-chip class="margin-left"
                      :text="rule.status.status"
-                     :color="ruleStatusBadgeColor(rule.status)"
-            />
+                     :color="ruleStatusBadgeColor(rule.status)" />
             <div>
-              <strong>{{(rule.status.statusDetail !== 'NONE') ? rule.status.statusDetail : '&nbsp;'}}</strong>
+              <strong>{{ (rule.status.statusDetail !== 'NONE') ? rule.status.statusDetail : '&nbsp;' }}</strong>
               <br>
-              <div v-if="rule.status.description">{{rule.status.description}}</div>
+              <div v-if="rule.status.description">
+                {{ rule.status.description }}
+              </div>
             </div>
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
         <f7-block v-else-if="!createMode" class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
-          <f7-col>______:
-            <f7-chip class="margin-left" text="________"></f7-chip>
+          <f7-col>
+            ______:
+            <f7-chip class="margin-left" text="________" />
             <div>
               <strong>____ _______</strong>
               <br>
@@ -48,14 +56,11 @@
             <f7-list inline-labels no-hairlines-md>
               <f7-list-input label="Unique ID" type="text" placeholder="Required" value="_______" required validate
                              :disabled="true" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                             @input="rule.uid = $event.target.value" :clear-button="createMode">
-              </f7-list-input>
+                             @input="rule.uid = $event.target.value" :clear-button="createMode" />
               <f7-list-input label="Name" type="text" placeholder="Required" required validate
-                             :disabled="true" @input="rule.name = $event.target.value" :clear-button="isEditable">
-              </f7-list-input>
+                             :disabled="true" @input="rule.name = $event.target.value" :clear-button="isEditable" />
               <f7-list-input label="Description" type="text" value="__ _____ ___ __ ___"
-                             :disabled="true" @input="rule.description = $event.target.value" :clear-button="isEditable">
-              </f7-list-input>
+                             :disabled="true" @input="rule.description = $event.target.value" :clear-button="isEditable" />
             </f7-list>
           </f7-col>
         </f7-block>
@@ -66,26 +71,29 @@
               <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" required validate
                              :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
                              pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
-                             @input="rule.uid = $event.target.value" :clear-button="createMode">
-              </f7-list-input>
+                             @input="rule.uid = $event.target.value" :clear-button="createMode" />
               <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" required validate
-                             :disabled="!isEditable" @input="rule.name = $event.target.value" :clear-button="isEditable">
-              </f7-list-input>
+                             :disabled="!isEditable" @input="rule.name = $event.target.value" :clear-button="isEditable" />
               <f7-list-input label="Description" type="text" :value="rule.description"
-                             :disabled="!isEditable" @input="rule.description = $event.target.value" :clear-button="isEditable">
-              </f7-list-input>
+                             :disabled="!isEditable" @input="rule.description = $event.target.value" :clear-button="isEditable" />
             </f7-list>
           </f7-col>
 
-          <f7-block-footer v-if="!isEditable" class="no-margin padding-left"><f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable because it has been provisioned from a file.</f7-block-footer>
+          <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
+            <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable because it has been provisioned from a file.
+          </f7-block-footer>
           <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
             <div class="no-padding float-right">
               <f7-button @click="toggleModuleControls" small outline :fill="showModuleControls" sortable-toggle=".sortable" style="margin-top: -3px; margin-right: 5px"
-                         color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">&nbsp;Reorder</f7-button>
+                         color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">
+                &nbsp;Reorder
+              </f7-button>
             </div>
           </f7-col>
           <f7-col class="rule-modules" v-for="section in ['triggers', 'actions', 'conditions']" :key="section">
-            <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)" v-if="isEditable || rule[section].length > 0">{{sectionLabels[section][0]}}</f7-block-title>
+            <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)" v-if="isEditable || rule[section].length > 0">
+              {{ sectionLabels[section][0] }}
+            </f7-block-title>
             <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
               <f7-list-item media
                             :title="mod.label || suggestedModuleTitle(mod, null, section)"
@@ -93,32 +101,35 @@
                             v-for="mod in rule[section]" :key="mod.id"
                             :link="isEditable && !showModuleControls"
                             @click.native="(ev) => editModule(ev, section, mod)" swipeout>
-                <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
-                <f7-link slot="after" v-if="mod.type && mod.type.indexOf('script') === 0" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" :tooltip="'Edit module'"></f7-link>
-                <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" tooltip="Edit module"></f7-link>
+                <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout" />
+                <f7-link slot="after" v-if="mod.type && mod.type.indexOf('script') === 0" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" :tooltip="'Edit module'" />
+                <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" tooltip="Edit module" />
                 <f7-swipeout-actions right v-if="isEditable">
-                  <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">Delete</f7-swipeout-button>
+                  <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                    Delete
+                  </f7-swipeout-button>
                 </f7-swipeout-actions>
               </f7-list-item>
             </f7-list>
             <f7-list v-if="isEditable">
               <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="sectionLabels[section][1]" @click="addModule(section)">
-                <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point"></f7-icon>
+                <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
               </f7-list-item>
               <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
             </f7-list>
           </f7-col>
           <f7-col v-if="isEditable || rule.tags.length > 0">
             <f7-block-title>Tags</f7-block-title>
-            <semantics-picker v-if="isEditable" :item="rule"></semantics-picker>
-            <tag-input :item="rule" :disabled="!isEditable"></tag-input>
+            <semantics-picker v-if="isEditable" :item="rule" />
+            <tag-input :item="rule" :disabled="!isEditable" />
           </f7-col>
           <f7-col v-if="isEditable && !createMode">
             <f7-list>
-              <f7-list-button color="red" @click="deleteRule">Remove Rule</f7-list-button>
+              <f7-list-button color="red" @click="deleteRule">
+                Remove Rule
+              </f7-list-button>
             </f7-list>
           </f7-col>
-
         </f7-block>
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
@@ -126,7 +137,6 @@
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
-
   </f7-page>
 </template>
 

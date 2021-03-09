@@ -1,7 +1,7 @@
 <template>
   <f7-block v-if="parameters" class="config-sheet no-margin" ref="sheet">
     <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
-      <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox :checked="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
+      <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox :checked="showAdvanced" @change="toggleAdvanced" />
     </div>
     <f7-col>
       <f7-block width="100" class="parameter-group no-margin no-padding">
@@ -16,8 +16,7 @@
               :configuration="configurationWithDefaults"
               :read-only="readOnly"
               :status="parameterStatus(parameter)"
-              @update="(value) => updateParameter(parameter, value)"
-            />
+              @update="(value) => updateParameter(parameter, value)" />
           </f7-col>
         </f7-row>
       </f7-block>
@@ -26,9 +25,11 @@
       <f7-block width="100" class="parameter-group" v-for="group in parameterGroups" :key="group.name">
         <f7-row v-if="displayedParameters.some((p) => p.groupName === group.name)">
           <f7-col>
-            <f7-block-title class="parameter-group-title">{{group.label}}</f7-block-title>
+            <f7-block-title class="parameter-group-title">
+              {{ group.label }}
+            </f7-block-title>
             <f7-block-footer class="param-description" v-if="group.description">
-              <div v-html="group.description"></div>
+              <div v-html="group.description" />
             </f7-block-footer>
 
             <config-parameter
@@ -40,8 +41,7 @@
               :configuration="configurationWithDefaults"
               :read-only="readOnly"
               :status="parameterStatus(parameter)"
-              @update="(value) => updateParameter(parameter, value)"
-            />
+              @update="(value) => updateParameter(parameter, value)" />
           </f7-col>
         </f7-row>
       </f7-block>

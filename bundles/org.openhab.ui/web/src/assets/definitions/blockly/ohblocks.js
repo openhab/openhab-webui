@@ -16,7 +16,7 @@ export default function defineOHBlocks (f7) {
 
   Blockly.JavaScript['oh_item'] = function (block) {
     const itemName = block.getFieldValue('itemName')
-    var code = '\'' + itemName + '\''
+    let code = '\'' + itemName + '\''
     return [code, 0]
   }
 
@@ -35,7 +35,7 @@ export default function defineOHBlocks (f7) {
 
   Blockly.JavaScript['oh_getitem_state'] = function (block) {
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    var code = 'itemRegistry.getItem(' + itemName + ').getState()'
+    let code = 'itemRegistry.getItem(' + itemName + ').getState()'
     return [code, 0]
   }
 
@@ -58,7 +58,7 @@ export default function defineOHBlocks (f7) {
   Blockly.JavaScript['oh_sendcommand'] = function (block) {
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
     const command = Blockly.JavaScript.valueToCode(block, 'command', Blockly.JavaScript.ORDER_ATOMIC)
-    var code = 'events.sendCommand(' + itemName + ', ' + command + ');\n'
+    let code = 'events.sendCommand(' + itemName + ', ' + command + ');\n'
     return code
   }
 
@@ -84,7 +84,7 @@ export default function defineOHBlocks (f7) {
     const eventType = block.getFieldValue('eventType')
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
     const value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
-    var code = 'events.' + eventType + '(' + itemName + ', ' + value + ');\n'
+    let code = 'events.' + eventType + '(' + itemName + ', ' + value + ');\n'
     return code
   }
 
@@ -103,7 +103,7 @@ export default function defineOHBlocks (f7) {
 
   Blockly.JavaScript['oh_print'] = function (block) {
     const message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    var code = 'print(' + message + ');\n'
+    let code = 'print(' + message + ');\n'
     return code
   }
 

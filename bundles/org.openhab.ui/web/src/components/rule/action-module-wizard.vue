@@ -4,13 +4,13 @@
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
         <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseItemCategory">
           <f7-icon size="35" f7="square_on_circle" class="margin" />
-          Item<br />Action
+          Item<br>Action
         </f7-link>
       </f7-col>
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
         <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseScriptCategory">
           <f7-icon size="35" f7="doc_plaintext" class="margin" />
-          Run<br />Script
+          Run<br>Script
         </f7-link>
       </f7-col>
     </f7-row>
@@ -18,18 +18,18 @@
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
         <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseRulesCategory">
           <f7-icon size="35" f7="wand_stars" class="margin" />
-          Other<br />Rules
+          Other<br>Rules
         </f7-link>
       </f7-col>
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
         <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseMediaCategory">
           <f7-icon size="35" f7="music_note_list" class="margin" />
-          Audio &amp;<br />Voice
+          Audio &amp;<br>Voice
         </f7-link>
       </f7-col>
     </f7-row>
     <f7-list>
-      <f7-list-button title="Show All" color="blue" @click="$emit('showAdvanced')"></f7-list-button>
+      <f7-list-button title="Show All" color="blue" @click="$emit('showAdvanced')" />
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
@@ -47,16 +47,14 @@
         name="command"
         type="text"
         :value="currentModule.configuration.command"
-        @blur="(evt) => $set(currentModule.configuration, 'command', evt.target.value)"
-      />
+        @blur="(evt) => $set(currentModule.configuration, 'command', evt.target.value)" />
       <f7-list-input
         v-else-if="itemEventType === 'update'"
         label="to state"
         name="state"
         type="text"
         :value="currentModule.configuration.state"
-        @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)"
-      />
+        @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)" />
     </f7-list>
     <f7-list v-if="itemEventType === 'command' && commandSuggestions.length">
       <f7-list-item radio :checked="currentModule.configuration.command === suggestion.command" v-for="suggestion in commandSuggestions" :key="suggestion.command"
@@ -81,30 +79,35 @@
                        formatValue: colorToCommand
                      }"
                      :value="commandToColor()"
-                     @change="updateColorCommand"
-      >
-        <i slot="media" style="width: 32px; height: 32px" class="icon demo-list-icon" id="color-picker-value"></i>
+                     @change="updateColorCommand">
+        <i slot="media" style="width: 32px; height: 32px" class="icon demo-list-icon" id="color-picker-value" />
       </f7-list-input>
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'script'">
-    <f7-block-title class="padding-horizontal">Run a script</f7-block-title>
+    <f7-block-title class="padding-horizontal">
+      Run a script
+    </f7-block-title>
     <f7-list media-list>
       <f7-list-item media-item
                     title="Design with Blockly"
                     footer="A beginner-friendly way to build scripts visually by assembling blocks"
                     link="" @click="scriptLanguagePicked('blockly')">
-        <img src="res/img/blockly.svg" height="32" width="32" slot="media" />
+        <img src="res/img/blockly.svg" height="32" width="32" slot="media">
       </f7-list-item>
     </f7-list>
-    <f7-block-footer class="padding-horizontal margin-vertical">or choose the scripting language:</f7-block-footer>
+    <f7-block-footer class="padding-horizontal margin-vertical">
+      or choose the scripting language:
+    </f7-block-footer>
     <f7-list media-list>
       <f7-list-item media-item v-for="language in languages" :key="language.contentType"
                     :title="language.name" :after="language.version" :footer="language.contentType" link="" @click="scriptLanguagePicked(language.contentType)">
-        <span slot="media" class="item-initial">{{language.name[0]}}</span>
+        <span slot="media" class="item-initial">{{ language.name[0] }}</span>
       </f7-list-item>
     </f7-list>
-    <f7-block-footer class="padding-horizontal margin-bottom"><small><strong>Note:</strong> Creating a new scripted module will <em>save the rule</em> before launching the script editor.</small></f7-block-footer>
+    <f7-block-footer class="padding-horizontal margin-bottom">
+      <small><strong>Note:</strong> Creating a new scripted module will <em>save the rule</em> before launching the script editor.</small>
+    </f7-block-footer>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'rules'">
     <f7-list>
@@ -115,8 +118,7 @@
                   :parameterGroups="[]"
                   :parameters="currentModuleType.configDescriptions"
                   :configuration="currentModule.configuration"
-                  @updated="dirty = true"
-    />
+                  @updated="dirty = true" />
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'media'">
     <f7-list>
@@ -127,8 +129,7 @@
                   :parameterGroups="[]"
                   :parameters="currentModuleType.configDescriptions"
                   :configuration="currentModule.configuration"
-                  @updated="dirty = true"
-    />
+                  @updated="dirty = true" />
   </f7-block>
 </template>
 

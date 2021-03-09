@@ -2,8 +2,10 @@
   <f7-page @page:afterin="onPageAfterIn" name="channel-edit">
     <f7-navbar :title="channel.label" :subtitle="thing.label" back-link="Cancel">
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Done</f7-link>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md">
+          Done
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-block class="block-narrow">
@@ -13,18 +15,22 @@
           <f7-list-item media-item class="channel-item"
                         :title="channel.label"
                         :footer="channel.description"
-                        :subtitle="channel.uid">
-          </f7-list-item>
+                        :subtitle="channel.uid" />
         </f7-list>
       </f7-col>
       <f7-col v-if="channelType != null">
-        <f7-block-title v-if="configDescription.parameters">Configuration</f7-block-title>
-        <f7-block-footer v-else-if="noConfig" class="padding">This channel has no configuration.<br /><br /><f7-link back>Go Back</f7-link></f7-block-footer>
+        <f7-block-title v-if="configDescription.parameters">
+          Configuration
+        </f7-block-title>
+        <f7-block-footer v-else-if="noConfig" class="padding">
+          This channel has no configuration.<br><br><f7-link back>
+            Go Back
+          </f7-link>
+        </f7-block-footer>
         <config-sheet
           :parameter-groups="configDescription.parameterGroups"
           :parameters="configDescription.parameters"
-          :configuration="config"
-        />
+          :configuration="config" />
       </f7-col>
     </f7-block>
   </f7-page>

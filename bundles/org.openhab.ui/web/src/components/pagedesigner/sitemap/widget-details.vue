@@ -1,14 +1,11 @@
 <template>
   <f7-card v-if="widget">
     <f7-card-content>
-
       <f7-list inline-labels>
         <f7-list-input v-if="widget.component === 'Sitemap'" label="ID" type="text" placeholder="ID" :value="widget.uid" @input="widget.uid = $event.target.value"
-                       required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only" :disabled="!createMode">
-        </f7-list-input>
-        <f7-list-input label="Label" type="text" placeholder="Label" :value="widget.config.label" @input="updateParameter('label', $event)" clear-button>
-        </f7-list-input>
-        <item-picker v-if="widget.component !== 'Sitemap'" title="Item" :value="widget.config.item" @input="(value) => widget.config.item = value"></item-picker>
+                       required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only" :disabled="!createMode" />
+        <f7-list-input label="Label" type="text" placeholder="Label" :value="widget.config.label" @input="updateParameter('label', $event)" clear-button />
+        <item-picker v-if="widget.component !== 'Sitemap'" title="Item" :value="widget.config.item" @input="(value) => widget.config.item = value" />
         <ul v-if="widget.component !== 'Sitemap'">
           <f7-list-input ref="icon" label="Icon" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="widget.config.icon"
                          @input="updateParameter('icon', $event)" clear-button>
@@ -32,7 +29,7 @@
           <f7-list-input v-if="supports('step')" label="Step" type="number" :value="widget.config.step" @input="updateParameter('step', $event)" clear-button />
           <f7-list-input v-if="supports('separator')" label="Separator" type="number" :value="widget.config.separator" @input="updateParameter('separator', $event)" clear-button />
           <f7-list-item v-if="supports('switchEnabled')" title="Switch enabled">
-            <f7-toggle slot="after" :checked="widget.config.switchEnabled" @toggle:change="widget.config.switchEnabled = $event"></f7-toggle>
+            <f7-toggle slot="after" :checked="widget.config.switchEnabled" @toggle:change="widget.config.switchEnabled = $event" />
           </f7-list-item>
         </ul>
       </f7-list>
@@ -40,10 +37,12 @@
     <f7-card-footer key="sitemap-widget-buttons-edit-mode" v-if="widget.component !== 'Sitemap'">
       <!-- <f7-button v-if="!editMode && !createMode" color="blue" @click="editMode = true" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">Edit</f7-button> -->
       <f7-segmented>
-        <f7-button color="blue" @click="$emit('moveup', widget)" icon-f7="chevron_up"></f7-button>
-        <f7-button color="blue" @click="$emit('movedown', widget)" icon-f7="chevron_down"></f7-button>
+        <f7-button color="blue" @click="$emit('moveup', widget)" icon-f7="chevron_up" />
+        <f7-button color="blue" @click="$emit('movedown', widget)" icon-f7="chevron_down" />
       </f7-segmented>
-      <f7-button v-if="widget.component !== 'Sitemap'" color="red" @click="$emit('remove', widget)">Remove</f7-button>
+      <f7-button v-if="widget.component !== 'Sitemap'" color="red" @click="$emit('remove', widget)">
+        Remove
+      </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>
