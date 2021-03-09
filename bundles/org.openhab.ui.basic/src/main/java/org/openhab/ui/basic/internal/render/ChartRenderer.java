@@ -14,7 +14,6 @@ package org.openhab.ui.basic.internal.render;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -115,16 +114,16 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             snippet = preprocessSnippet(snippet, w);
 
             if (chart.getRefresh() > 0) {
-                snippet = StringUtils.replace(snippet, "%update_interval%", Integer.toString(chart.getRefresh()));
+                snippet = snippet.replace("%update_interval%", Integer.toString(chart.getRefresh()));
             } else {
-                snippet = StringUtils.replace(snippet, "%update_interval%", "0");
+                snippet = snippet.replace("%update_interval%", "0");
             }
 
-            snippet = StringUtils.replace(snippet, "%id%", itemUIRegistry.getWidgetId(w));
-            snippet = StringUtils.replace(snippet, "%proxied_url%", chartUrl);
-            snippet = StringUtils.replace(snippet, "%valid_url%", "true");
-            snippet = StringUtils.replace(snippet, "%ignore_refresh%", ignoreRefresh ? "true" : "false");
-            snippet = StringUtils.replace(snippet, "%url%", url);
+            snippet = snippet.replace("%id%", itemUIRegistry.getWidgetId(w));
+            snippet = snippet.replace("%proxied_url%", chartUrl);
+            snippet = snippet.replace("%valid_url%", "true");
+            snippet = snippet.replace("%ignore_refresh%", ignoreRefresh ? "true" : "false");
+            snippet = snippet.replace("%url%", url);
 
             sb.append(snippet);
         } catch (ItemNotFoundException e) {

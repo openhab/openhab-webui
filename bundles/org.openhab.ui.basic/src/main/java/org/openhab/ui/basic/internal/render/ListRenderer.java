@@ -12,7 +12,6 @@
  */
 package org.openhab.ui.basic.internal.render;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -63,11 +62,11 @@ public class ListRenderer extends AbstractWidgetRenderer {
 
         if (state != null) {
             for (String row : state.toString().split(((List) w).getSeparator())) {
-                rowSB.append(StringUtils.replace(rowSnippet, "%title%", escapeHtml(row)));
+                rowSB.append(rowSnippet.replace("%title%", escapeHtml(row)));
             }
         }
 
-        snippet = StringUtils.replace(snippet, "%rows%", rowSB.toString());
+        snippet = snippet.replace("%rows%", rowSB.toString());
 
         // Process the color tags
         snippet = processColor(w, snippet);

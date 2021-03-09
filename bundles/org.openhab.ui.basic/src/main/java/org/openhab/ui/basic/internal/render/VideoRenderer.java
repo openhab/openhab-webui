@@ -14,7 +14,6 @@ package org.openhab.ui.basic.internal.render;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -81,11 +80,11 @@ public class VideoRenderer extends AbstractWidgetRenderer {
             } else {
                 url = URL_NONE_ICON;
             }
-            snippet = StringUtils.replace(snippet, "%valid_url%", validUrl ? "true" : "false");
-            snippet = StringUtils.replace(snippet, "%proxied_url%", proxiedUrl);
-            snippet = StringUtils.replace(snippet, "%update_interval%", "0");
-            snippet = StringUtils.replace(snippet, "%ignore_refresh%", "true");
-            snippet = StringUtils.replace(snippet, "%url%", url);
+            snippet = snippet.replace("%valid_url%", validUrl ? "true" : "false");
+            snippet = snippet.replace("%proxied_url%", proxiedUrl);
+            snippet = snippet.replace("%update_interval%", "0");
+            snippet = snippet.replace("%ignore_refresh%", "true");
+            snippet = snippet.replace("%url%", url);
         } else {
             String mediaType;
             if (videoWidget.getEncoding() != null && videoWidget.getEncoding().toLowerCase().contains("hls")) {
@@ -96,8 +95,8 @@ public class VideoRenderer extends AbstractWidgetRenderer {
                 url = "../proxy?sitemap=" + sitemap + "&widgetId=" + widgetId;
                 mediaType = "";
             }
-            snippet = StringUtils.replace(snippet, "%url%", url);
-            snippet = StringUtils.replace(snippet, "%media_type%", mediaType);
+            snippet = snippet.replace("%url%", url);
+            snippet = snippet.replace("%media_type%", mediaType);
         }
         sb.append(snippet);
         return ECollections.emptyEList();

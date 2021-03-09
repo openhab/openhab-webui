@@ -87,11 +87,12 @@ public class CmdServlet extends BaseServlet {
                     // we need a special treatment for the "TOGGLE" command of switches;
                     // this is no command officially supported and must be translated
                     // into real commands by the webapp.
-                    if ((item instanceof SwitchItem || item instanceof GroupItem) && commandName.equals("TOGGLE")) {
+                    if ((item instanceof SwitchItem || item instanceof GroupItem) && "TOGGLE".equals(commandName)) {
                         commandName = OnOffType.ON.equals(item.getStateAs(OnOffType.class)) ? "OFF" : "ON";
                     }
 
-                    Command command = TypeParser.parseCommand(item.getAcceptedCommandTypes(), commandName);
+                    Command command = commandName == null ? null
+                            : TypeParser.parseCommand(item.getAcceptedCommandTypes(), commandName);
                     if (command != null) {
                         eventPublisher.post(ItemEventFactory.createCommandEvent(itemName, command));
                     } else {
