@@ -7,8 +7,8 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar v-if="!previewMode && !fullscreen" tabbar position="top">
-      <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
-      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="!fullscreen" bottom class="toolbar-details">
       <f7-link v-if="$fullscreen.support" class="fullscreen-link" icon-f7="rectangle_arrow_up_right_arrow_down_left" text="Fullscreen" color="blue" @click="toggleFullscreen" />
@@ -305,24 +305,22 @@ export default {
       })
     },
     fromYaml () {
-      if(this.pageYaml) {
-        try {
-          const updatedPage = YAML.parse(this.pageYaml)
-          if (updatedPage.config && updatedPage.config.layoutType && updatedPage.config.layoutType === 'fixed' &&
-            ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))) {
-            throw new Error('Using blocks and masonry in fixed-size layouts is not possible')
-          }
-
-          this.$set(this.page, 'config', updatedPage.config)
-          this.$set(this.page.slots, 'default', updatedPage.blocks)
-          this.$set(this.page.slots, 'masonry', updatedPage.masonry)
-          this.$set(this.page.slots, 'grid', updatedPage.grid)
-          this.forceUpdate()
-          return true
-        } catch (e) {
-          this.$f7.dialog.alert(e).open()
-          return false
+      try {
+        const updatedPage = YAML.parse(this.pageYaml)
+        if (updatedPage.config && updatedPage.config.layoutType && updatedPage.config.layoutType === 'fixed' &&
+          ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))) {
+          throw new Error('Using blocks and masonry in fixed-size layouts is not possible')
         }
+
+        this.$set(this.page, 'config', updatedPage.config)
+        this.$set(this.page.slots, 'default', updatedPage.blocks)
+        this.$set(this.page.slots, 'masonry', updatedPage.masonry)
+        this.$set(this.page.slots, 'grid', updatedPage.grid)
+        this.forceUpdate()
+        return true
+      } catch (e) {
+        this.$f7.dialog.alert(e).open()
+        return false
       }
     },
     toggleFullscreen () {

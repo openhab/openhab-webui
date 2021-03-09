@@ -7,8 +7,8 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top" v-if="!previewMode">
-      <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
-      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
     </f7-toolbar>
     <f7-toolbar v-else tabbar position="top">
       <f7-link v-for="tab in modelTabs" :key="tab.value" @click="showCardControls = false; currentModelTab = tab.value" :tab-link-active="currentModelTab === tab.value" class="tab-link">{{tab.label}}</f7-link>

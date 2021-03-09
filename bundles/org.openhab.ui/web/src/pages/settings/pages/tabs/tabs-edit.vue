@@ -7,8 +7,8 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'design'; fromYaml()" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
-      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
     </f7-toolbar>
     <f7-tabs class="tabs-editor-tabs">
       <f7-tab id="design" class="tabs-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
@@ -105,6 +105,7 @@ export default {
   props: ['createMode', 'uid'],
   data () {
     return {
+      currentTab: 'design',
       page: {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-tabs-page',
@@ -149,15 +150,18 @@ export default {
         tabs: this.page.slots.default
       })
     },
-    fromYaml () {
-      try {
-        const updatedTabs = YAML.parse(this.pageYaml)
-        this.$set(this.page.slots, 'default', updatedTabs.tabs)
-        this.forceUpdate()
-        return true
-      } catch (e) {
-        this.$f7.dialog.alert(e).open()
-        return false
+    fromYaml (){
+      if(this.currentTab === 'code')
+      {
+        try {
+          const updatedTabs = YAML.parse(this.pageYaml)
+          this.$set(this.page.slots, 'default', updatedTabs.tabs)
+          this.forceUpdate()
+          return true
+        } catch (e) {
+          this.$f7.dialog.alert(e).open()
+          return false
+        }
       }
     }
   }
