@@ -28,11 +28,19 @@ const InboxListPage = () => import(/* webpackChunkName: "admin-base" */ '../page
 const SemanticModelPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/model/model.vue')
 
 const PagesListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/pages-list.vue')
+const PageEditors = {
+  layout: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/layout/layout-edit.vue'),
+  tabs: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/tabs/tabs-edit.vue'),
+  map: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/map/map-edit.vue'),
+  plan: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/plan/plan-edit.vue'),
+  chart: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/chart/chart-edit.vue'),
+  sitemap: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/sitemap/sitemap-edit.vue')
+}
 
 const RulesListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/rules/rules-list.vue')
 const RuleEditPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/rules/rule-edit.vue')
 const ScriptEditPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/rules/script/script-edit.vue')
-const SchedulePage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/schedule/schedule.vue')
+const SchedulePage = () => import(/* webpackChunkName: "admin-schedule" */ '../pages/settings/schedule/schedule.vue')
 
 const AnalyzerPage = () => import(/* webpackChunkName: "analyzer" */ '../pages/analyzer/analyzer.vue')
 
@@ -138,8 +146,7 @@ export default [
             path: ':type/:uid',
             beforeLeave: checkDirtyBeforeLeave,
             async (routeTo, routeFrom, resolve, reject) {
-              const component = () => import(/* webpackChunkName: "admin-base" */ `../pages/settings/pages/${routeTo.params.type}/${routeTo.params.type}-edit.vue`)
-              component().then((c) => { resolve({ component: c.default }, (routeTo.params.uid === 'add') ? { props: { createMode: true } } : {}) })
+              PageEditors[routeTo.params.type]().then((c) => { resolve({ component: c.default }, (routeTo.params.uid === 'add') ? { props: { createMode: true } } : {}) })
             }
           }
         ]
