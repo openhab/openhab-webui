@@ -138,7 +138,7 @@ export default [
             path: ':type/:uid',
             beforeLeave: checkDirtyBeforeLeave,
             async (routeTo, routeFrom, resolve, reject) {
-              const component = () => import(/* webpackChunkName: "[request]" */ `../pages/settings/pages/${routeTo.params.type}/${routeTo.params.type}-edit.vue`)
+              const component = () => import(/* webpackChunkName: "admin-base" */ `../pages/settings/pages/${routeTo.params.type}/${routeTo.params.type}-edit.vue`)
               component().then((c) => { resolve({ component: c.default }, (routeTo.params.uid === 'add') ? { props: { createMode: true } } : {}) })
             }
           }
