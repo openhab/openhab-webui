@@ -41,7 +41,7 @@ jobs:
       - name: Run ESLint
         run: npx eslint --ext js --ext vue src
 
-  report:
+  webpack-stats:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -68,15 +68,12 @@ jobs:
         run: npm ci
         
       - name: Build and generate report
-        run: npm run webpack-analyzer-report
+        run: npm run webpack-analyzer-report-stats
 
       - uses: actions/upload-artifact@v2
         with:
           name: report
           path: /home/runner/work/openhab-webui/openhab-webui/bundles/org.openhab.ui/web/report.html
-
-      - name: Install RelativeCI Agent
-        run: npm i @relative-ci/agent
 
       - name: Upload stats to RelativeCI
         run: npx relative-ci-agent
@@ -85,5 +82,5 @@ jobs:
           # but wouldn't work for PRs made from forks...
           # Bad practice (!), however since the service itself as well as
           # what can be done with the key (add new bundle stats) is not
-          # critical, not hiding the key is deemed acceptable for now/
+          # critical, not hiding the key is deemed acceptable for now!
           RELATIVE_CI_KEY: f8e0e450-804c-11eb-b7f5-510e2634a5c9

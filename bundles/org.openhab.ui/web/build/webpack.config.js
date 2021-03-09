@@ -242,7 +242,7 @@ module.exports = {
       new WebpackAnalyzerPlugin(process.env.WEBPACK_ANALYZER_REPORT ? {
         analyzerMode: 'static',
         reportFilename: '../report.html',
-        generateStatsFile: true,
+        generateStatsFile: (process.env.WEBPACK_ANALYZER_REPORT_STATS) ? true : false,
         statsFilename: '../stats.json',
         statsOptions: {
           assets: true,
