@@ -29,6 +29,7 @@ const SemanticModelPage = () => import(/* webpackChunkName: "admin-base" */ '../
 
 const PagesListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/pages-list.vue')
 const PageEditors = {
+  home: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/home/home-edit.vue'),
   layout: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/layout/layout-edit.vue'),
   tabs: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/tabs/tabs-edit.vue'),
   map: () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/map/map-edit.vue'),
