@@ -21,8 +21,7 @@
             title="Label of the binding"
             header="BindingID"
             footer="Binding version"
-            media-item
-          />
+            media-item />
         </f7-list>
         <f7-list v-else>
           <f7-list-item
@@ -34,8 +33,7 @@
             :header="addon.id"
             :footer="addon.version"
             :after="(currentlyUninstalling.indexOf(addon.id) >= 0) ? 'Uninstalling...' : ''"
-            :title="addon.label"
-          >
+            :title="addon.label">
             <!-- <f7-swipeout-actions left>
               <f7-swipeout-button v-if="addon.link" color="blue">Documentation</f7-swipeout-button>
               <f7-swipeout-button color="red">Uninstall</f7-swipeout-button>
@@ -63,8 +61,7 @@
       :addon-id="currentAddonId"
       :opened="addonPopupOpened"
       @closed="addonPopupOpened = false"
-      @uninstall="uninstallAddon"
-    />
+      @uninstall="uninstallAddon" />
   </f7-page>
 </template>
 

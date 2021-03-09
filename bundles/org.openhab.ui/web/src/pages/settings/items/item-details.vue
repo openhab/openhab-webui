@@ -45,8 +45,7 @@
               v-for="(value, key) in item.metadata.semantics.config"
               :key="key"
               :title="key"
-              :after="value"
-            />
+              :after="value" />
           </f7-list>
         </f7-col>
       </f7-row>
@@ -59,8 +58,7 @@
                 v-for="group in item.groupNames"
                 :key="group"
                 :link="'/settings/items/' + group"
-                :title="group"
-              />
+                :title="group" />
             </f7-list>
           </f7-card>
         </f7-col>

@@ -5,14 +5,12 @@
     </div>
     <f7-list>
       <f7-list-item :key="classSelectKey"
-                    :title="(multiple) ? 'HomeKit Accessory/Charactistics' : 'HomeKit Accessory/Charactistic'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }" ref="classes"
-      >
+                    :title="(multiple) ? 'HomeKit Accessory/Charactistics' : 'HomeKit Accessory/Charactistic'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }" ref="classes">
         <select name="parameters" @change="updateClasses" :multiple="multiple">
           <option v-if="!multiple" value="" />
           <option v-for="cl in orderedClasses.filter((c) => c.indexOf('label:') !== 0)"
                   :value="cl" :key="cl"
-                  :selected="isSelected(cl)"
-          >
+                  :selected="isSelected(cl)">
             {{ cl }}
           </option>
         </select>

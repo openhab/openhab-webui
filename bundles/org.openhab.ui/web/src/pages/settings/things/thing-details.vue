@@ -30,8 +30,7 @@
             Status:
             <f7-chip class="margin-left"
                      :text="thing.statusInfo.status"
-                     :color="thingStatusBadgeColor(thing.statusInfo)"
-            />
+                     :color="thingStatusBadgeColor(thing.statusInfo)" />
             <div>
               <strong>{{ (thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
               <br>
@@ -76,8 +75,7 @@
                       v-for="(value, key) in thing.properties"
                       :key="key"
                       :title="key"
-                      :after="value"
-                    />
+                      :after="value" />
                   </f7-list>
                 </f7-accordion-content>
               </f7-list-item>
@@ -93,8 +91,7 @@
                           :status="configStatusInfo"
                           :set-empty-config-as-null="true"
                           :read-only="thing.editable === false"
-                          @updated="configDirty = true"
-            />
+                          @updated="configDirty = true" />
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
@@ -133,8 +130,7 @@
       <f7-tab id="channels" disabled="!thingType.channels" :tab-active="currentTab === 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list :thingType="thingType" :thing="thing" :channelTypes="channelTypes"
-                        @channels-updated="onChannelsUpdated" :context="context"
-          />
+                        @channels-updated="onChannelsUpdated" :context="context" />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>
               <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible && thing.editable" @click="addChannel()" />

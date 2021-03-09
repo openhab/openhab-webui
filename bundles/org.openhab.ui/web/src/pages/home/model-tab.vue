@@ -7,14 +7,11 @@
       <div class="model-cards-section" v-if="elements.length > 0">
         <div v-for="(element, idx) in elements.filter((e) => !isCardExcluded(e))" :key="idx">
           <location-card v-if="type === 'locations' && !element.separator && (element.equipment.length > 0 || element.properties.length > 0)" :key="element.key"
-                         type="location" :element="element" :context="cardContext(element)" :parent-location="parentLocationName(element.item)"
-          />
+                         type="location" :element="element" :context="cardContext(element)" :parent-location="parentLocationName(element.item)" />
           <equipment-card v-if="type === 'equipment' && !element.separator" :key="element.key"
-                          type="equipment" :element="element" :context="cardContext(element)"
-          />
+                          type="equipment" :element="element" :context="cardContext(element)" />
           <property-card v-if="type === 'properties' && !element.separator" :key="element.key"
-                         type="property" :element="element" :context="cardContext(element)"
-          />
+                         type="property" :element="element" :context="cardContext(element)" />
         </div>
       </div>
     </div>

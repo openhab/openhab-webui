@@ -10,11 +10,9 @@
       <f7-col>
         <f7-list inline-labels no-hairlines-md>
           <f7-list-input type="text" placeholder="Name" :value="rule.name"
-                         @input="rule.name = $event.target.value" clear-button
-          />
+                         @input="rule.name = $event.target.value" clear-button />
           <f7-list-input type="text" placeholder="Description" :value="rule.description"
-                         @input="rule.description = $event.target.value" clear-button
-          />
+                         @input="rule.description = $event.target.value" clear-button />
         </f7-list>
       </f7-col>
       <f7-col v-if="moduleTypes">
@@ -23,8 +21,7 @@
           <f7-list-item radio v-for="moduleType in moduleTypes[currentSection].filter((t) => t.visibility === 'VISIBLE')"
                         :value="moduleType.uid"
                         @change="currentModuleType = moduleTypes[currentSection].find((m) => m.uid === $event.target.value)"
-                        :key="moduleType.uid" :title="moduleType.label" name="module-type"
-          />
+                        :key="moduleType.uid" :title="moduleType.label" name="module-type" />
         </f7-list>
       </f7-col>
       <f7-col v-if="currentModuleType != null">
@@ -39,8 +36,7 @@
           :parameterGroups="[]"
           :parameters="currentModuleType.configDescriptions"
           :configuration="currentModuleConfig"
-          @updated="dirty = true"
-        />
+          @updated="dirty = true" />
       </f7-col>
     </f7-block>
   </f7-page>

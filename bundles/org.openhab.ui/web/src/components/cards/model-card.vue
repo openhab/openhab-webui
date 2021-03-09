@@ -23,8 +23,7 @@
           card-close
           color="white"
           class="card-opened-fade-in card-close-button"
-          icon-f7="multiply_circle_fill"
-        />
+          icon-f7="multiply_circle_fill" />
       </div>
       <div v-if="opened">
         <slot />

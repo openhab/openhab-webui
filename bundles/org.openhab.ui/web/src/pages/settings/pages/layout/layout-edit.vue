@@ -37,8 +37,7 @@
                     !(context.component.slots.masonry && context.component.slots.masonry.length) &&
                     !(context.component.slots.grid && context.component.slots.grid.length) &&
                     !['responsive', 'fixed'].includes(page.config.layoutType)"
-                  class="block-narrow margin-bottom" inset
-        >
+                  class="block-narrow margin-bottom" inset>
           <f7-block-title class="margin text-align-center">
             Choose a layout style
           </f7-block-title>
@@ -71,8 +70,7 @@
         <oh-layout-page class="layout-page" v-else-if="ready" :context="context" :key="pageKey"
                         @add-block="addBlock"
                         @add-masonry="addMasonry"
-                        @add-grid-item="addGridItem"
-        />
+                        @add-grid-item="addGridItem" />
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml?type=layout" :value="pageYaml" @input="onEditorInput" />

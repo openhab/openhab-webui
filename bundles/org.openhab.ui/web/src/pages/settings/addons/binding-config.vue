@@ -13,8 +13,7 @@
         <config-sheet
           :parameter-groups="configDescriptions.parameterGroups"
           :parameters="configDescriptions.parameters"
-          :configuration="config"
-        />
+          :configuration="config" />
       </f7-col>
     </f7-block>
   </f7-page>

@@ -3,8 +3,7 @@
     <f7-navbar title="Pages" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"
-        />
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -15,8 +14,7 @@
           search-container=".pages-list"
           search-item=".pagelist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
-          :disable-button="!$theme.aurora"
-        />
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
@@ -38,8 +36,7 @@
       v-show="groupBy === 'alphabetical' && !$device.desktop"
       list-el=".pages-list"
       :scroll-list="true"
-      :label="true"
-    />
+      :label="true" />
 
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found" />
@@ -71,8 +68,7 @@
               title="Title of the page"
               subtitle="Page type"
               after="The item state"
-              footer="Page UID"
-            >
+              footer="Page UID">
               <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media" />
             </f7-list-item>
           </f7-list-group>
@@ -81,8 +77,7 @@
                  v-show="pages.length > 0"
                  class="searchbar-found col pages-list"
                  ref="pagesList"
-                 :contacts-list="groupBy === 'alphabetical'" media-list
-        >
+                 :contacts-list="groupBy === 'alphabetical'" media-list>
           <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
             <f7-list-item v-if="pagesWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -99,8 +94,7 @@
               :title="page.config.label"
               :subtitle="getPageType(page).label"
               :footer="page.uid"
-              :badge="page.config.order"
-            >
+              :badge="page.config.order">
               <div slot="subtitle">
                 <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                   <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />

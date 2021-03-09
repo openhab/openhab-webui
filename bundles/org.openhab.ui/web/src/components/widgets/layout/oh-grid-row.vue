@@ -24,8 +24,7 @@
       <oh-grid-col v-for="(component, idx) in context.component.slots.default"
                    :key="idx"
                    :context="childContext(component)"
-                   v-on="$listeners"
-      />
+                   v-on="$listeners" />
       <f7-block-title v-if="config.title" />
     </f7-row>
     <!-- <f7-row v-if="context.editmode">

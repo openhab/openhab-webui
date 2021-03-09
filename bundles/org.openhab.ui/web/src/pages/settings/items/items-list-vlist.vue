@@ -3,8 +3,7 @@
     <f7-navbar title="Items" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"
-        />
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -13,8 +12,7 @@
           class="searchbar-items"
           :init="initSearchbar"
           search-container=".virtual-list"
-          :disable-button="!$theme.aurora"
-        />
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
@@ -47,8 +45,7 @@
               title="Label of the item"
               subtitle="type, semantic metadata"
               after="The item state"
-              footer="This contains the type of the item"
-            >
+              footer="This contains the type of the item">
               <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media" />
             </f7-list-item>
           </f7-list-group>
@@ -64,8 +61,7 @@
           ref="itemsList"
           media-list
           virtual-list
-          :virtual-list-params="{ items, searchAll, renderExternal, height: vlData.height }"
-        >
+          :virtual-list-params="{ items, searchAll, renderExternal, height: vlData.height }">
           <ul>
             <f7-list-item
               v-for="(item, index) in vlData.items"
@@ -81,8 +77,7 @@
               :footer="(item.label) ? item.name : '\xa0'"
               :subtitle="getItemTypeAndMetaLabel(item)"
               :style="`top: ${vlData.topPosition}px`"
-              :after="item.state"
-            >
+              :after="item.state">
               <oh-icon v-if="item.category" slot="media" :icon="item.category" height="32" width="32" />
               <span v-else slot="media" class="item-initial">{{ item.name[0] }}</span>
               <f7-icon v-if="!item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />

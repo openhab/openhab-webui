@@ -9,16 +9,14 @@
           <f7-list-item
             :title="$t('setupwizard.language')"
             smart-select
-            :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: true}"
-          >
+            :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: true}">
             <select name="language" @change="(evt) => language = evt.target.value">
               <option value="" :selected="!language" />
               <option
                 v-for="option in availableLanguages"
                 :key="option.value"
                 :value="option.value"
-                :selected="language === option.value"
-              >
+                :selected="language === option.value">
                 {{ option.label }}
               </option>
             </select>
@@ -26,16 +24,14 @@
           <f7-list-item
             :title="$t('setupwizard.region')"
             smart-select
-            :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: true}"
-          >
+            :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: true}">
             <select name="region" @change="(evt) => region = evt.target.value">
               <option value="" :selected="!region" />
               <option
                 v-for="option in availableRegions"
                 :key="option.value"
                 :value="option.value"
-                :selected="region === option.value"
-              >
+                :selected="region === option.value">
                 {{ option.label }}
               </option>
             </select>
@@ -43,16 +39,14 @@
           <f7-list-item
             :title="$t('setupwizard.timezone')"
             smart-select
-            :smart-select-params="{openIn: 'popup', searchbar: true, virtualList: true, closeOnSelect: true, virtualListHeight: ($theme.aurora) ? 32 : undefined }"
-          >
+            :smart-select-params="{openIn: 'popup', searchbar: true, virtualList: true, closeOnSelect: true, virtualListHeight: ($theme.aurora) ? 32 : undefined }">
             <select name="timezone" @change="(evt) => timezone = evt.target.value">
               <option value="" />
               <option
                 v-for="option in availableTimezones"
                 :key="option.value"
                 :value="option.value"
-                :selected="timezone === option.value"
-              >
+                :selected="timezone === option.value">
                 {{ option.label }}
               </option>
             </select>
@@ -74,8 +68,7 @@
             icon-md="material:arrow_back"
             tab-link="#intro"
             color="blue"
-            tab-link-active
-          />
+            tab-link-active />
           <f7-login-screen-title>
             <div class="padding">
               <f7-icon size="48" color="blue" f7="map_pin_ellipse" />
@@ -115,8 +108,7 @@
             icon-md="material:arrow_back"
             tab-link="#location"
             color="blue"
-            tab-link-active
-          />
+            tab-link-active />
           <f7-login-screen-title>
             <div class="padding">
               <f7-icon size="48" color="blue" f7="bag_badge_plus" />
@@ -136,8 +128,7 @@
           </f7-row>
           <f7-list class="search-list searchbar-found" ref="selectAddons" media-list v-show="!installingAddons">
             <f7-list-item media-item v-for="addon in selectedAddons" :key="addon.id"
-                          :header="addon.id" :title="addon.label" :footer="addon.version"
-            >
+                          :header="addon.id" :title="addon.label" :footer="addon.version">
               <f7-link slot="after" v-if="addon.link" icon-f7="doc_text_search" :external="true" color="gray" target="_blank" :href="addon.link" />
             </f7-list-item>
           </f7-list>
@@ -160,8 +151,7 @@
             tab-link="#intro"
             color="blue"
             tab-link-active
-            style="visibility: hidden"
-          />
+            style="visibility: hidden" />
           <f7-login-screen-title class="text-color-gray">
             {{ $t('setupwizard.addons.pleaseWait') }}
           </f7-login-screen-title>

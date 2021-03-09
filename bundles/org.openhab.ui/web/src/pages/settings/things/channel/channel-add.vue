@@ -13,11 +13,9 @@
         <f7-list inline-labels no-hairlines-md>
           <f7-list-input type="text" placeholder="Channel Identifier" :value="channel.id"
                          @input="channel.id = $event.target.value" clear-button
-                         required validate pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
-          />
+                         required validate pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only" />
           <f7-list-input type="text" placeholder="Label" :value="channel.label"
-                         @input="channel.label = $event.target.value" clear-button
-          />
+                         @input="channel.label = $event.target.value" clear-button />
         </f7-list>
       </f7-col>
       <f7-col>
@@ -30,8 +28,7 @@
           <f7-list-item radio v-for="channelType in channelTypes"
                         :value="channelType.UID"
                         @change="currentChannelType = channelTypes.find((m) => m.UID === $event.target.value)"
-                        :key="channelType.UID" :title="channelType.label" :footer="channelType.description" name="channel-type"
-          />
+                        :key="channelType.UID" :title="channelType.label" :footer="channelType.description" name="channel-type" />
         </f7-list>
       </f7-col>
       <f7-col v-if="currentChannelType != null">
@@ -39,8 +36,7 @@
         <config-sheet
           :parameter-groups="currentChannelType.parameterGroups"
           :parameters="currentChannelType.parameters"
-          :configuration="config"
-        />
+          :configuration="config" />
       </f7-col>
     </f7-block>
 

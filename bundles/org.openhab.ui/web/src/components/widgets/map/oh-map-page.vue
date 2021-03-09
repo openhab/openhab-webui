@@ -10,12 +10,10 @@
     class="oh-map-page-lmap"
     :class="{ 'with-tabbar': context.tab }"
     @update:center="centerUpdate"
-    @update:zoom="zoomUpdate"
-  >
+    @update:zoom="zoomUpdate">
     <l-feature-group ref="featureGroup" v-if="context.component.slots">
       <component v-for="(marker, idx) in context.component.slots.default" :key="idx"
-                 :is="markerComponent(marker)" :context="childContext(marker)" @update="onMarkerUpdate"
-      />
+                 :is="markerComponent(marker)" :context="childContext(marker)" @update="onMarkerUpdate" />
     </l-feature-group>
   </l-map>
 </template>

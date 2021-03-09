@@ -19,12 +19,10 @@
         :center="center"
         :options="mapOptions"
         @click="mapClicked"
-        class="oh-map-picker-lmap"
-      >
+        class="oh-map-picker-lmap">
         <l-tile-layer
           :url="url"
-          :attribution="attribution"
-        />
+          :attribution="attribution" />
         <l-marker v-if="marker" :lat-lng="marker" />
       </l-map>
     </f7-page>

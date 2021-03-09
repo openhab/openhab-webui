@@ -15,8 +15,7 @@
           <f7-list-item media-item class="channel-item"
                         :title="channel.label"
                         :footer="channel.description"
-                        :subtitle="channel.uid"
-          />
+                        :subtitle="channel.uid" />
         </f7-list>
       </f7-col>
       <f7-col v-if="channelType != null">
@@ -31,8 +30,7 @@
         <config-sheet
           :parameter-groups="configDescription.parameterGroups"
           :parameters="configDescription.parameters"
-          :configuration="config"
-        />
+          :configuration="config" />
       </f7-col>
     </f7-block>
   </f7-page>

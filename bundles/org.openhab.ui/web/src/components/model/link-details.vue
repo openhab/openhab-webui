@@ -7,8 +7,7 @@
                         :title="l.thing.label" :subtitle="l.channel.label || '?'" :footer="l.link.channelUID"
                         :badge="thingStatusBadgeText(l.thing.statusInfo)"
                         :badge-color="thingStatusBadgeColor(l.thing.statusInfo)"
-                        link="#" @click="editLink(l)"
-          >
+                        link="#" @click="editLink(l)">
             <span slot="media" class="item-initial">{{ !l._invalid && l.channel.label ? l.channel.label[0] : '?' }}</span>
           </f7-list-item>
         </ul>

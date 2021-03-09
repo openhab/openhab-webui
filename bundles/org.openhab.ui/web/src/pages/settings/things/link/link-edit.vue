@@ -25,8 +25,7 @@
                               :footer="channel.uid"
                               :subtitle="thing.label"
                               :badge="thingStatusBadgeText(thing.statusInfo)"
-                              :badge-color="thingStatusBadgeColor(thing.statusInfo)"
-                >
+                              :badge-color="thingStatusBadgeColor(thing.statusInfo)">
                   <span slot="media" class="item-initial">{{ (channel.label) ? channel.label[0] : (channelType.label) ? channelType.label[0] : '?' }}</span>
                 </f7-list-item>
                 <f7-list-item divider title="Item" />
@@ -60,8 +59,7 @@
             <f7-list-item radio v-for="profileType in profileTypes"
                           :checked="currentProfileType && profileType.uid === currentProfileType.uid"
                           @change="onProfileTypeChange(profileType.uid)"
-                          :key="profileType.uid" :title="profileType.label" name="profile-type"
-            />
+                          :key="profileType.uid" :title="profileType.label" name="profile-type" />
           </f7-list>
         </f7-block-footer>
       </f7-col>
@@ -70,8 +68,7 @@
         <config-sheet ref="profileConfiguration"
                       :parameter-groups="profileTypeConfiguration.parameterGroups"
                       :parameters="profileTypeConfiguration.parameters"
-                      :configuration="link.configuration"
-        />
+                      :configuration="link.configuration" />
       </f7-col>
     </f7-block>
   </f7-page>

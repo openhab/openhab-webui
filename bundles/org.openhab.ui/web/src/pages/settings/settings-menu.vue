@@ -7,16 +7,14 @@
           data-searchbar=".searchbar-demo"
           icon-ios="f7:search_strong"
           icon-aurora="f7:search_strong"
-          icon-md="material:search"
-        />
+          icon-md="material:search" />
       </f7-nav-right>
       <f7-searchbar
         class="searchbar-demo"
         expandable
         search-container=".search-list"
         search-in=".item-title"
-        :disable-button="!$theme.aurora"
-      />
+        :disable-button="!$theme.aurora" />
     </f7-navbar>
     <f7-block class="block-narrow after-big-title settings-menu" v-show="addonsLoaded && servicesLoaded">
       <f7-row>
@@ -31,8 +29,7 @@
               :badge="(inboxCount > 0) ? inboxCount : undefined"
               :after="(inboxCount > 0) ? undefined : thingsCount"
               :badge-color="inboxCount ? 'red' : 'blue'"
-              :footer="objectsSubtitles.things"
-            >
+              :footer="objectsSubtitles.things">
               <f7-icon slot="media" f7="lightbulb" color="gray" />
             </f7-list-item>
             <f7-list-item
@@ -41,8 +38,7 @@
               link="model/"
               title="Model"
               badge-color="blue"
-              :footer="objectsSubtitles.model"
-            >
+              :footer="objectsSubtitles.model">
               <f7-icon slot="media" f7="list_bullet_indent" color="gray" />
             </f7-list-item>
             <f7-list-item
@@ -52,8 +48,7 @@
               title="Items"
               :after="itemsCount"
               badge-color="blue"
-              :footer="objectsSubtitles.items"
-            >
+              :footer="objectsSubtitles.items">
               <f7-icon slot="media" f7="square_on_circle" color="gray" />
             </f7-list-item>
             <f7-list-item
@@ -62,8 +57,7 @@
               title="Pages"
               :after="$store.getters.pages.length + sitemapsCount"
               badge-color="blue"
-              :footer="objectsSubtitles.pages"
-            >
+              :footer="objectsSubtitles.pages">
               <f7-icon slot="media" f7="tv" color="gray" />
             </f7-list-item>
           </f7-list>
@@ -76,8 +70,7 @@
               link="rules/"
               title="Rules"
               badge-color="blue"
-              :footer="objectsSubtitles.rules"
-            >
+              :footer="objectsSubtitles.rules">
               <f7-icon slot="media" f7="wand_stars" color="gray" />
             </f7-list-item>
             <f7-list-item
@@ -85,8 +78,7 @@
               link="scripts/"
               title="Scripts"
               badge-color="blue"
-              :footer="objectsSubtitles.scripts"
-            >
+              :footer="objectsSubtitles.scripts">
               <f7-icon slot="media" f7="doc_plaintext" color="gray" />
             </f7-list-item>
             <f7-list-item
@@ -94,8 +86,7 @@
               link="schedule/"
               title="Schedule"
               badge-color="blue"
-              :footer="objectsSubtitles.schedule"
-            >
+              :footer="objectsSubtitles.schedule">
               <f7-icon slot="media" f7="calendar" color="gray" />
             </f7-list-item>
           </f7-list>
@@ -103,16 +94,14 @@
             Add-ons
           </f7-block-title>
           <f7-list media-list class="search-list"
-                   v-if="$store.getters.apiEndpoint('addons')"
-          >
+                   v-if="$store.getters.apiEndpoint('addons')">
             <f7-list-item
               media-item
               v-for="type in addonTypes"
               :key="type.id"
               :link="'addons/' + type.id"
               :title="type.label"
-              :footer="addonsSubtitles[type.id]"
-            >
+              :footer="addonsSubtitles[type.id]">
               <f7-icon slot="media" :f7="addonsIcons[type.id]" color="gray" />
             </f7-list-item>
           </f7-list>
@@ -124,8 +113,7 @@
               v-for="service in systemServices"
               :key="service.id"
               :link="'services/' + service.id"
-              :title="service.label"
-            />
+              :title="service.label" />
           </f7-list>
           <f7-block-title>Other Services</f7-block-title>
           <f7-list class="search-list">
@@ -133,8 +121,7 @@
               v-for="service in otherServices"
               :key="service.id"
               :link="'services/' + service.id"
-              :title="service.label"
-            />
+              :title="service.label" />
           </f7-list>
         </f7-col>
       </f7-row>

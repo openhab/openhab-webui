@@ -11,8 +11,7 @@
           search-container=".channel-group"
           search-in=".channel-item .item-title, .channel-item .item-subtitle, .channel-item .item-footer"
           search-group=".channel-group .row"
-          :clear-button="true"
-        />
+          :clear-button="true" />
       </f7-col>
     </f7-block>
     <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
@@ -42,13 +41,11 @@
               :picker-mode="pickerMode" :multiple-links-mode="multipleLinksMode" :item-type-filter="itemTypeFilter"
               :selection="(multipleLinksMode) ? selectedChannels : selectedChannel"
               @selected="selectChannel"
-              @channel-opened="channelOpened"
-            >
+              @channel-opened="channelOpened">
               <template #default="{ channelId, channelType, channel, extensible }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId"
                               :thing="thing" :channelId="channelId" :channelType="channelType" :channel="channel" :extensible="extensible" :context="context"
-                              @channel-updated="(e) => $emit('channels-updated', e)"
-                />
+                              @channel-updated="(e) => $emit('channels-updated', e)" />
               </template>
               <template #default="{ channel }" v-else-if="multipleLinksMode">
                 <item-form v-if="isChecked(channel)" :item="newItem(channel)" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />

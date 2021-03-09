@@ -77,8 +77,7 @@
                     @change="icon = $event.target.value"
                     placeholder="e.g. lightbulb, qualityofservice-2"
                     :info="iconUrl"
-                    clear-button
-                  >
+                    clear-button>
                     <img :src="iconUrl" width="44" slot="media">
                   </f7-list-input>
                 </f7-list>

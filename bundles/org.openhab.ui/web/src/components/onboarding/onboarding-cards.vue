@@ -3,8 +3,7 @@
     <f7-card
       v-show="showSetup"
       title="Welcome to openHAB!"
-      content="Congratulations, your server is up and running! However, it is not configured yet. Follow the setup wizard and let it guide you through the initial configuration. (Note: the wizard could also be started automatically on launch if no package is detected - services/org.openhab.addons > package)."
-    >
+      content="Congratulations, your server is up and running! However, it is not configured yet. Follow the setup wizard and let it guide you through the initial configuration. (Note: the wizard could also be started automatically on launch if no package is detected - services/org.openhab.addons > package).">
       <f7-card-footer>
         <f7-link color="blue" @click="skipSetupWizard()">
           No thanks
@@ -32,8 +31,7 @@
             <f7-link
               no-link-class
               color="blue"
-              href="#"
-            >
+              href="#">
               Design your home's conceptually with the semantic model builder and link the Things to Items
             </f7-link>
           </li>
@@ -41,8 +39,7 @@
             <f7-link
               no-link-class
               color="blue"
-              href="#"
-            >
+              href="#">
               Connect to openHAB Cloud for remote access and integration with voice assistants
             </f7-link>
           </li>

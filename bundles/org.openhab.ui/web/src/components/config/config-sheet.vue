@@ -16,8 +16,7 @@
               :configuration="configurationWithDefaults"
               :read-only="readOnly"
               :status="parameterStatus(parameter)"
-              @update="(value) => updateParameter(parameter, value)"
-            />
+              @update="(value) => updateParameter(parameter, value)" />
           </f7-col>
         </f7-row>
       </f7-block>
@@ -42,8 +41,7 @@
               :configuration="configurationWithDefaults"
               :read-only="readOnly"
               :status="parameterStatus(parameter)"
-              @update="(value) => updateParameter(parameter, value)"
-            />
+              @update="(value) => updateParameter(parameter, value)" />
           </f7-col>
         </f7-row>
       </f7-block>

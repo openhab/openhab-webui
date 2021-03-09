@@ -26,8 +26,7 @@
                         :parameterGroups="getWidgetDefinition(slotComponent.component).props.parameterGroups || []"
                         :parameters="getWidgetDefinition(slotComponent.component).props.parameters || []"
                         :configuration="slotComponent.config"
-                        @updated="dirty = true"
-          />
+                        @updated="dirty = true" />
           <f7-block v-else strong>
             This type of component cannot be configured: {{ slotComponent.component }}.
           </f7-block>

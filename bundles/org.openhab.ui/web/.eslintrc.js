@@ -68,7 +68,7 @@ module.exports = {
     'vue/attribute-hyphenation': 'off',
     'vue/attributes-order': 'off',
     'vue/component-definition-name-casing': 'off',
-    'vue/html-closing-bracket-newline': 'error',
+    'vue/html-closing-bracket-newline': ['error', { 'singleline': 'never', 'multiline': 'never' }],
     'vue/html-closing-bracket-spacing': 'error',
     'vue/html-indent': 'error',
     'vue/html-quotes': 'error',

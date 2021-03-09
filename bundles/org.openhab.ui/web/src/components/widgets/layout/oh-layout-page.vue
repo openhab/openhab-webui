@@ -5,8 +5,7 @@
                 :key="idx"
                 :context="childContext(component)"
                 v-on="$listeners"
-                style="z-index: 5000 !important"
-      />
+                style="z-index: 5000 !important" />
       <f7-block v-if="context.editmode">
         <f7-list>
           <f7-list-button color="blue" @click="$emit('add-block', context.component)">
@@ -19,8 +18,7 @@
       <f7-block v-if="context.component.slots.masonry && context.component.slots.masonry.length">
         <oh-masonry
           :context="childContext(context.component.slots.masonry[0])"
-          v-on="$listeners"
-        />
+          v-on="$listeners" />
       </f7-block>
       <template v-else-if="context.editmode">
         <f7-block>

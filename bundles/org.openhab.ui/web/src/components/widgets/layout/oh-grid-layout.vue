@@ -54,8 +54,7 @@
         height: style.height + 'px',
         textAlign: 'center'
       }"
-      :use-css-transforms="false"
-    >
+      :use-css-transforms="false">
       <div v-if="context.editmode" style="opacity: 0.3; padding: 4px; user-select: none;">
         {{ getCurrentScreenResolution() }}
         <span v-if="isRetina()"><f7-icon tooltip="Screen resolution shown is the fullscreen resolution for websites. Real screen resolution is bigger." f7="info_circle" /></span>
@@ -68,8 +67,7 @@
         :h="item.h"
         :i="item.i"
         :key="item.i"
-        :context="childContext(context.component.slots.grid[item.i])"
-      />
+        :context="childContext(context.component.slots.grid[item.i])" />
     </grid-layout>
   </div>
 </template>

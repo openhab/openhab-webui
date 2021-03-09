@@ -7,8 +7,7 @@
         ref="value"
         type="text"
         :value="metadata.value"
-        @input="(ev) => metadata.value = ev.target.value"
-      />
+        @input="(ev) => metadata.value = ev.target.value" />
     </f7-list>
     <f7-block-footer class="param-description padding-left">
       <small>Order index to give to the item's default widget when it is to be displayed in an automatically generated list with other items (semantic cards, group popups...), unless the order is explicitely configured.</small>

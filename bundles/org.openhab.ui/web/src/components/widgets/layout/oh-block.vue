@@ -28,8 +28,7 @@
                  :is="component.component"
                  :key="idx"
                  :context="childContext(component)"
-                 v-on="$listeners"
-      />
+                 v-on="$listeners" />
     </f7-block>
   </div>
 </template>

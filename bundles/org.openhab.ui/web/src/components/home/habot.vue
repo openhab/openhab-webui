@@ -6,8 +6,7 @@
     </div>
     <f7-list v-if="focused && !value" class="chat-suggestions" no-hairlines-md>
       <f7-list-item v-for="suggestion in suggestions"
-                    :key="suggestion" @click="chooseSuggestion(suggestion)" link :title="suggestion" :footer="history.length === 0 ? $t('habot.example.label') : ''" no-chevron
-      />
+                    :key="suggestion" @click="chooseSuggestion(suggestion)" link :title="suggestion" :footer="history.length === 0 ? $t('habot.example.label') : ''" no-chevron />
       <f7-list-button v-if="history.length > 0" color="red" :title="$t('habot.clearHistory')" @click="clearHistory" />
     </f7-list>
     <f7-message v-if="interimSpeechResult" type="sent" class="habot-query margin-bottom" :text="interimSpeechResult" color="gray" first tail />

@@ -21,8 +21,7 @@
     <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length" @click="context.editmode.addWidget(context.component, null, context.parent)" class="oh-grid-item-content" />
     <generic-widget-component v-else-if="context.component.slots.default.length" @command="onCommand" class="oh-grid-item-content"
                               :context="childContext(context.component.slots.default[0])"
-                              :style="{ overflow: context.editmode ? 'visible' : 'hidden' }"
-    />
+                              :style="{ overflow: context.editmode ? 'visible' : 'hidden' }" />
 
     <f7-icon v-if="context.editmode" class="drag-handle" f7="move" />
   </grid-item>

@@ -1,8 +1,7 @@
 <template>
   <ul>
     <f7-list-item
-      :title="configDescription.label" smart-select :smart-select-params="smartSelectParams" ref="item"
-    >
+      :title="configDescription.label" smart-select :smart-select-params="smartSelectParams" ref="item">
       <select :name="configDescription.name" @change="updateValue" :multiple="configDescription.multiple" :required="configDescription.required">
         <option v-if="!configDescription.required" :value="undefined" :selected="value === null || value === undefined" />
         <optgroup v-if="configDescription.context.indexOf('page') >= 0" label="Pages">

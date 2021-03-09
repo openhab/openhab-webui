@@ -3,8 +3,7 @@
     <f7-navbar title="Widgets" back-link="Developer Tools" back-link-url="/developer/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"
-        />
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -15,8 +14,7 @@
           search-container=".widgets-list"
           search-item=".widgetlist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
-          :disable-button="!$theme.aurora"
-        />
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
@@ -48,8 +46,7 @@
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Title of the widget"
-              subtitle="Tag1, Tag2, Tag3..."
-            />
+              subtitle="Tag1, Tag2, Tag3..." />
           </f7-list-group>
         </f7-list>
       </f7-col>
@@ -61,8 +58,7 @@
           v-show="widgets.length > 0"
           class="searchbar-found col widgets-list"
           ref="widgetsList"
-          media-list
-        >
+          media-list>
           <f7-list-item
             v-for="(widget, index) in widgets"
             :key="index"
@@ -73,8 +69,7 @@
             @click.ctrl="(e) => ctrlClick(e, widget)"
             @click.exact="(e) => click(e, widget)"
             link=""
-            :title="widget.uid"
-          >
+            :title="widget.uid">
             <div slot="subtitle">
               <f7-chip v-for="tag in widget.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                 <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />

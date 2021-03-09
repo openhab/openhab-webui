@@ -9,8 +9,7 @@
       :clear-button="!configDescription.required"
       @input="(evt) => updateValue(evt.target.value)"
       :error-message-force="exprError"
-      type="text"
-    >
+      type="text">
       <div class="padding-left" slot="content-end">
         <f7-button slot="content-end" @click="openPopup">
           <f7-icon f7="calendar" /> Build

@@ -33,8 +33,7 @@
       <config-sheet ref="parameters"
                     :parameter-groups="thingType.parameterGroups"
                     :parameters="thingType.configParameters"
-                    :configuration="thing.configuration"
-      />
+                    :configuration="thing.configuration" />
     </f7-block>
 
     <div v-if="ready" class="if-aurora display-flex justify-content-center margin">

@@ -17,8 +17,7 @@
         @blur="addTag()"
         @keyPressed.native="keyPressed"
         :input="false"
-        class="add-tag-input"
-      >
+        class="add-tag-input">
         <input slot="input" type="text" placeholder="Add tag" @keypress="keyPressed">
       </f7-list-input>
     </f7-list>

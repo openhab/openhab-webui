@@ -7,8 +7,7 @@
           :init="initSearchbar"
           v-if="initSearchbar"
           search-in=".item-title"
-          :disable-button="!$theme.aurora"
-        />
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-list class="searchbar-not-found">
@@ -30,8 +29,7 @@
             title="Label of the binding"
             header="BindingID"
             footer="Binding version"
-            media-item
-          />
+            media-item />
         </f7-list>
         <f7-list v-else media-list class="addons-list">
           <f7-list-item
@@ -43,8 +41,7 @@
             :header="addon.id"
             :footer="addon.version"
             :after="(currentlyInstalling.indexOf(addon.id) >= 0) ? 'Installing...' : ''"
-            :title="addon.label"
-          />
+            :title="addon.label" />
         </f7-list>
       </f7-col>
     </f7-block>
@@ -53,8 +50,7 @@
       :addon-id="currentAddonId"
       :opened="addonPopupOpened"
       @closed="addonPopupOpened = false"
-      @install="installAddon"
-    />
+      @install="installAddon" />
   </f7-page>
 </template>
 

@@ -8,8 +8,7 @@
         :label="'Synonyms'"
         name="synonyms"
         :value="synonyms"
-        @input="updateValue"
-      />
+        @input="updateValue" />
       <f7-block-footer class="param-description" slot="after-list">
         <small>Enter each synonym on a separate line.</small>
       </f7-block-footer>

@@ -21,11 +21,9 @@
         <f7-col class="margin-top">
           <f7-list inline-labels no-hairlines-md class="no-margin">
             <f7-list-input type="text" :placeholder="moduleTitleSuggestion" :value="ruleModule.label" required
-                           @input="ruleModule.label = $event.target.value" clear-button
-            />
+                           @input="ruleModule.label = $event.target.value" clear-button />
             <f7-list-input type="text" :placeholder="moduleDescriptionSuggestion" :value="ruleModule.description"
-                           @input="ruleModule.description = $event.target.value" clear-button
-            />
+                           @input="ruleModule.description = $event.target.value" clear-button />
           </f7-list>
         </f7-col>
         <!-- <f7-block-footer class="no-margin padding-left"><small>Tip: leave fields blank to set automatically to the suggested name and description. <f7-link @click="ruleModule.label = null; ruleModule.description = null">Clear</f7-link></small></f7-block-footer> -->
@@ -41,8 +39,7 @@
                             :value="moduleType.uid"
                             @change="setModuleType(moduleType)"
                             :checked="ruleModule.type === moduleType.uid"
-                            :key="moduleType.uid" :title="moduleType.label" name="module-type"
-              />
+                            :key="moduleType.uid" :title="moduleType.label" name="module-type" />
             </ul>
           </f7-list>
           <trigger-module-wizard v-else-if="!advancedTypePicker && currentSection === 'triggers'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" />
@@ -52,12 +49,10 @@
         <f7-list v-if="ruleModule.type && (!ruleModule.new || advancedTypePicker)">
           <f7-list-item :title="sectionLabels[currentSection][0]" ref="ruleModuleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
             <select name="ruleModuleType"
-                    @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)"
-            >
+                    @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)">
               <optgroup v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope" :label="scope">
                 <option v-for="moduleType in mt"
-                        :value="moduleType.uid" :key="moduleType.uid" :selected="currentRuleModuleType.uid === moduleType.uid"
-                >
+                        :value="moduleType.uid" :key="moduleType.uid" :selected="currentRuleModuleType.uid === moduleType.uid">
                   {{ moduleType.label }}
                 </option>
               </optgroup>
@@ -73,8 +68,7 @@
                         :parameterGroups="[]"
                         :parameters="currentRuleModuleType.configDescriptions"
                         :configuration="ruleModule.configuration"
-                        @updated="dirty = true"
-          />
+                        @updated="dirty = true" />
         </f7-col>
       </f7-block>
     </f7-page>

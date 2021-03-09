@@ -23,23 +23,20 @@
                 style="margin-left: 10px"
                 v-if="model.type === 'Setpoint'"
                 color="blue" small
-                :value="parseFloat(state)"
-    />
+                :value="parseFloat(state)" />
     <f7-list-item-cell style="max-width: 40%" v-else-if="model.type === 'Slider'">
       <f7-range
         :min="0"
         :max="100"
         :step="1"
-        :value="state"
-      />
+        :value="state" />
     </f7-list-item-cell>
     <f7-list-item-cell style="max-width: 40%; text-align: right;" v-else-if="model.type === 'Colorpicker'">
       <f7-list-input type="colorpicker" placeholder="Color" :value="state" hidden readonly
                      :color-picker-params="{
                        targetElSetBackgroundColor: true,
                        targetEl: '#colorswatch-' + model.widgetId
-                     }"
-      />
+                     }" />
       <i ref="colorcircle" style="background-color: black; width: 32px; height: 32px; border-radius: 6px; cursor: pointer" class="icon color-picker-target" :id="'colorswatch-' + model.widgetId" />
     </f7-list-item-cell>
   </f7-list-item>

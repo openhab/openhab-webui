@@ -3,8 +3,7 @@
     <f7-navbar :title="(showScripts) ? 'Scripts' : 'Rules'" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"
-        />
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -15,8 +14,7 @@
           search-container=".rules-list"
           search-item=".rulelist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
-          :disable-button="!$theme.aurora"
-        />
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
@@ -46,8 +44,7 @@
       v-show="!$device.desktop"
       :listEl="$refs.rulesList ? $$($refs.rulesList.$el) : undefined"
       :scroll-list="true"
-      :label="true"
-    />
+      :label="true" />
 
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found" />
@@ -69,8 +66,7 @@
               title="Title of the rule"
               subtitle="Tags, Schedule, Scene..."
               after="status badge"
-              footer="Description of the rule"
-            />
+              footer="Description of the rule" />
           </f7-list-group>
         </f7-list>
       </f7-col>
@@ -85,8 +81,7 @@
           v-show="rules.length > 0"
           class="searchbar-found col rules-list"
           ref="rulesList"
-          media-list contacts-list
-        >
+          media-list contacts-list>
           <f7-list-group v-for="(rulesWithInitial, initial) in indexedRules" :key="initial">
             <f7-list-item v-if="rulesWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -103,8 +98,7 @@
               :text="rule.uid"
               :footer="rule.description"
               :badge="ruleStatusBadgeText(rule.status)"
-              :badge-color="ruleStatusBadgeColor(rule.status)"
-            >
+              :badge-color="ruleStatusBadgeColor(rule.status)">
               <div slot="footer">
                 <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                   <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />

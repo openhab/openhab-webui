@@ -3,8 +3,7 @@
     <f7-navbar title="Things" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"
-        />
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -14,8 +13,7 @@
           :init="initSearchbar"
           search-container=".contacts-list"
           search-in=".item-inner"
-          :disable-button="!$theme.aurora"
-        />
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
@@ -44,8 +42,7 @@
       v-show="groupBy === 'alphabetical' && !$device.desktop"
       list-el=".things-list"
       :scroll-list="true"
-      :label="true"
-    />
+      :label="true" />
 
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found" />
@@ -74,8 +71,7 @@
               :class="`skeleton-text skeleton-effect-blink`"
               title="Label of the thing"
               subtitle="This contains the thing UID"
-              after="status badge"
-            />
+              after="status badge" />
           </f7-list-group>
         </f7-list>
         <f7-list v-else class="searchbar-found col things-list" :contacts-list="groupBy === 'alphabetical'">
@@ -92,8 +88,7 @@
               @click.exact="(e) => click(e, thing)"
               link=""
               :title="thing.label || thing.UID"
-              :footer="thing.UID"
-            >
+              :footer="thing.UID">
               <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
                 {{ thingStatusBadgeText(thing.statusInfo) }}
               </f7-badge>

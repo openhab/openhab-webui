@@ -36,8 +36,7 @@
             :title="selectedThing.label"
             :footer="selectedThing.UID"
             :badge="thingStatusBadgeText(selectedThing.statusInfo)"
-            :badge-color="thingStatusBadgeColor(selectedThing.statusInfo)"
-          />
+            :badge-color="thingStatusBadgeColor(selectedThing.statusInfo)" />
         </f7-list>
         <f7-block-title v-if="createEquipment">
           Equipment
@@ -74,8 +73,7 @@
           </f7-block-footer>
           <channel-list :thing="selectedThing" :thingType="selectedThingType" :channelTypes="selectedThingChannelTypes"
                         :multiple-links-mode="true" :new-items-prefix="(createEquipment) ? newEquipmentItem.name : (parentGroup) ? parentGroup.name : ''"
-                        :new-items="newPointItems"
-          />
+                        :new-items="newPointItems" />
         </div>
       </f7-col>
     </f7-block>

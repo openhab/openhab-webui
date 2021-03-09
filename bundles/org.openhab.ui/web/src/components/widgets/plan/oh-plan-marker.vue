@@ -1,15 +1,13 @@
 <template>
   <l-marker ref="marker" v-if="coords" :key="markerKey" :draggable="context.editmode != undefined" :lat-lng="coords"
-            @update:latLng="onMove" @click="onClick"
-  >
+            @update:latLng="onMove" @click="onClick">
     <l-tooltip v-if="tooltip && !config.useTooltipAsLabel" :options="tooltipOptions" @click="() => {}">
       <div style="white-space: nowrap" :style="tooltipStyle">
         {{ tooltip }}
       </div>
     </l-tooltip>
     <l-icon
-      :icon-size="[config.iconSize || 40, config.iconSize || 40]"
-    >
+      :icon-size="[config.iconSize || 40, config.iconSize || 40]">
       <div v-if="config.useTooltipAsLabel" style="white-space: nowrap" :style="tooltipStyle">
         {{ tooltip }}
       </div>

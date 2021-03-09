@@ -8,8 +8,7 @@
           search-container=".semantic-tree"
           search-item=".treeview-item"
           search-in=".treeview-item-label"
-          :disable-button="!$theme.aurora"
-        />
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar bottom class="toolbar-details">
@@ -35,8 +34,7 @@
             <f7-treeview>
               <model-treeview-item v-for="node in [rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
                                    :key="node.item.name" :model="node"
-                                   @selected="selectItem" :selected="selectedItem"
-              />
+                                   @selected="selectItem" :selected="selectedItem" />
             </f7-treeview>
           </f7-block>
         </f7-col>

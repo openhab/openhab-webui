@@ -10,8 +10,7 @@
           search-container=".thing-type-list"
           search-item=".media-item"
           search-in=".item-title, .item-header, .item-footer"
-          :disable-button="!$theme.aurora"
-        />
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-block class="block-narrow">
@@ -35,8 +34,7 @@
                         media-item
                         :title="entry.label"
                         :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
-                        :footer="entry.thingUID"
-          />
+                        :footer="entry.thingUID" />
           <f7-list-button v-show="scanResults.length > 1" title="Add All" @click="approveAll" color="blue" />
         </f7-list>
 
@@ -50,8 +48,7 @@
               title="Label of the thing type"
               footer="This contains the description of the thing type"
               header="thingTypeUID"
-              media-item
-            />
+              media-item />
           </ul>
           <ul v-else>
             <f7-list-item v-for="thingType in thingTypes"
@@ -61,8 +58,7 @@
                           :footer="thingType.description"
                           :header="thingType.UID"
                           :badge="thingType.bridge ? 'Bridge' : ''" badge-color="blue"
-                          media-item
-            />
+                          media-item />
           </ul>
         </f7-list>
       </f7-col>

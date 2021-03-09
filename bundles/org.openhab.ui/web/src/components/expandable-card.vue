@@ -14,8 +14,7 @@
           color="white"
           class="card-opened-fade-in"
           :style="{position: 'absolute', right: '15px', top: '15px'}"
-          icon-f7="close_round_fill"
-        />
+          icon-f7="close_round_fill" />
         <img src="https://ksassets.timeincuk.net/wp/uploads/sites/54/2018/07/Nest-Hello-daytime-sample.jpg" width="340px">
       </div>
       <div v-else-if="header === 'player'" :class="`bg-color-${color}`" :style="{height: '300px'}">
@@ -27,16 +26,14 @@
           <br>
           <img
             width="100"
-            src="https://images-na.ssl-images-amazon.com/images/I/61hw9WloObL._SY355_.jpg"
-          >
+            src="https://images-na.ssl-images-amazon.com/images/I/61hw9WloObL._SY355_.jpg">
         </f7-card-header>
         <f7-link
           card-close
           color="white"
           class="card-opened-fade-in"
           :style="{position: 'absolute', right: '15px', top: '15px'}"
-          icon-f7="close_round_fill"
-        />
+          icon-f7="close_round_fill" />
       </div>
       <div v-else :class="`bg-color-${color}`" :style="{height: '300px'}">
         <f7-card-header text-color="white" class="display-block">
@@ -53,8 +50,7 @@
             :borderWidth="10"
             :valueText="`${temperature}°C`"
             :valueFontSize="41"
-            valueTextColor="#ffffff"
-          />
+            valueTextColor="#ffffff" />
           <f7-gauge
             v-else-if="header==='gauge'"
             type="circle"
@@ -66,8 +62,7 @@
             :valueFontSize="41"
             valueTextColor="#ffffff"
             labelText="pressure"
-            labelTextColor="#ffffff"
-          />
+            labelTextColor="#ffffff" />
           <h1 v-else>
             State
           </h1>
@@ -78,44 +73,38 @@
           color="white"
           class="card-opened-fade-in"
           :style="{position: 'absolute', right: '15px', top: '15px'}"
-          icon-f7="close_round_fill"
-        />
+          icon-f7="close_round_fill" />
       </div>
       <div class="card-content-padding" v-if="opened">
         <f7-segmented v-if="header === 'temperature'" tag="p" raised>
           <f7-button
             :color="color"
             :active="temperature === 18"
-            @click="() => temperature = 18"
-          >
+            @click="() => temperature = 18">
             18°C
           </f7-button>
           <f7-button
             :color="color"
             :active="temperature === 19"
-            @click="() => temperature = 19"
-          >
+            @click="() => temperature = 19">
             19°C
           </f7-button>
           <f7-button
             :color="color"
             :active="temperature === 20"
-            @click="() => temperature = 20"
-          >
+            @click="() => temperature = 20">
             20°C
           </f7-button>
           <f7-button
             :color="color"
             :active="temperature === 21"
-            @click="() => temperature = 21"
-          >
+            @click="() => temperature = 21">
             21°C
           </f7-button>
           <f7-button
             :color="color"
             :active="temperature === 22"
-            @click="() => temperature = 22"
-          >
+            @click="() => temperature = 22">
             22°C
           </f7-button>
         </f7-segmented>
@@ -126,8 +115,7 @@
           <f7-button
             :color="color"
             :active="gaugeValue === 0.25"
-            @click="() => gaugeValue = 0.25"
-          >
+            @click="() => gaugeValue = 0.25">
             25%
           </f7-button>
           <f7-button :color="color" :active="gaugeValue === 0.5" @click="() => gaugeValue = 0.5">
@@ -136,8 +124,7 @@
           <f7-button
             :color="color"
             :active="gaugeValue === 0.75"
-            @click="() => gaugeValue = 0.75"
-          >
+            @click="() => gaugeValue = 0.75">
             75%
           </f7-button>
           <f7-button :color="color" :active="gaugeValue === 1" @click="() => gaugeValue = 1">
@@ -148,8 +135,7 @@
         <f7-list v-if="header === 'temperature'">
           <ul>
             <sitemap-widget-generic
-              :model="{ type: 'Setpoint', icon: 'temperature', label: 'Setpoint [21]' }"
-            />
+              :model="{ type: 'Setpoint', icon: 'temperature', label: 'Setpoint [21]' }" />
             <f7-list-item divider title="Mode" />
             <f7-list-item
               radio
@@ -157,32 +143,27 @@
               checked
               title="Heat"
               name="demo-thermostat-mode"
-              @click="thermostatMode = 'HEAT'"
-            />
+              @click="thermostatMode = 'HEAT'" />
             <f7-list-item
               radio
               :color="color"
               title="Cool"
               name="demo-thermostat-mode"
-              @click="thermostatMode = 'COOL'"
-            />
+              @click="thermostatMode = 'COOL'" />
             <f7-list-item
               radio
               :color="color"
               title="Eco"
               name="demo-thermostat-mode"
-              @click="thermostatMode = 'ECO'"
-            />
+              @click="thermostatMode = 'ECO'" />
           </ul>
         </f7-list>
         <f7-list v-else>
           <ul>
             <sitemap-widget-generic
-              :model="{ type: 'Slider', icon: 'soundvolume', label: 'Volume [53]' }"
-            />
+              :model="{ type: 'Slider', icon: 'soundvolume', label: 'Volume [53]' }" />
             <sitemap-widget-generic
-              :model="{ type: 'Switch', icon: 'soundvolume_mute', label: 'Mute sound [OFF]' }"
-            />
+              :model="{ type: 'Switch', icon: 'soundvolume_mute', label: 'Mute sound [OFF]' }" />
             <f7-list-item divider title="Scene" />
             <f7-list-item radio checked title="Morning" name="demo-radio" />
             <f7-list-item radio title="Evening" name="demo-radio" />
@@ -193,17 +174,13 @@
             <!-- <f7-list-item link="/load-something-that-doesnt-exist/" title="Default Route (404)"></f7-list-item> -->
             <f7-list-item divider title="Some fake data" />
             <sitemap-widget-generic
-              :model="{ type: 'String', icon: 'sunrise', label: 'Sunrise [07:02]' }"
-            />
+              :model="{ type: 'String', icon: 'sunrise', label: 'Sunrise [07:02]' }" />
             <sitemap-widget-generic
-              :model="{ type: 'String', icon: 'sunset', label: 'Sunset [17:36]' }"
-            />
+              :model="{ type: 'String', icon: 'sunset', label: 'Sunset [17:36]' }" />
             <sitemap-widget-generic
-              :model="{ type: 'String', icon: 'sun', label: 'Sun Azimuth [131.75 °]' }"
-            />
+              :model="{ type: 'String', icon: 'sun', label: 'Sun Azimuth [131.75 °]' }" />
             <sitemap-widget-generic
-              :model="{ type: 'String', icon: 'sun', label: 'Sun Elevation [17.05 °]' }"
-            />
+              :model="{ type: 'String', icon: 'sun', label: 'Sun Elevation [17.05 °]' }" />
           </ul>
         </f7-list>
 

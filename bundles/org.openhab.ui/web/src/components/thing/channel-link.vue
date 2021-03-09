@@ -25,8 +25,7 @@
   </div>
   <f7-list media-list v-else inset class="margin-left searchbar-ignore">
     <f7-list-item v-if="channelKind === 'TRIGGER'"
-                  subtitle="This is a trigger channel, use rules to react to events emitted by it."
-    >
+                  subtitle="This is a trigger channel, use rules to react to events emitted by it.">
       <f7-icon slot="media" color="gray" f7="bolt_circle_fill" />
     </f7-list-item>
     <f7-list-group v-if="links">
@@ -38,8 +37,7 @@
         :title="(link.item.label) ? link.item.label : link.item.name"
         :footer="(link.item.label) ? link.item.name : '\xa0'"
         :subtitle="getItemTypeAndMetaLabel(link.item)"
-        :after="context.store[link.item.name] ? context.store[link.item.name].displayState || context.store[link.item.name].state : link.item.state"
-      >
+        :after="context.store[link.item.name] ? context.store[link.item.name].displayState || context.store[link.item.name].state : link.item.state">
         <oh-icon v-if="link.item.category" slot="media" :icon="link.item.category" height="32" width="32" />
         <span v-else slot="media" class="item-initial">{{ link.item.name[0] }}</span>
         <f7-icon v-if="!link.item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />

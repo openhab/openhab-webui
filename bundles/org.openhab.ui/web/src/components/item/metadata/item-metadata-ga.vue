@@ -2,8 +2,7 @@
   <div>
     <f7-list>
       <f7-list-item :key="classSelectKey"
-                    :title="'Google Assistant Class'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="classes"
-      >
+                    :title="'Google Assistant Class'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="classes">
         <select name="classes" @change="updateClass">
           <option value="" />
           <option v-for="cl in orderedClasses" :value="cl" :key="cl" :selected="isSelected(cl)">

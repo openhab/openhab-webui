@@ -17,8 +17,7 @@
           <config-sheet
             :parameterGroups="props.parameterGroups || []"
             :parameters="props.parameters || []"
-            :configuration="config"
-          />
+            :configuration="config" />
         </f7-col>
       </f7-block>
     </f7-page>

@@ -5,8 +5,7 @@
     height: (config.swatchSize) ? config.swatchSize + 'px' : '32px',
     borderRadius: (config.swatchBorderRadius) ? config.swatchBorderRadius + 'px' : '6px',
     cursor: 'pointer'
-  }"
-  />
+  }" />
 </template>
 
 <script>

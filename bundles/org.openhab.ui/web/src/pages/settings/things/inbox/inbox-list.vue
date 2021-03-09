@@ -3,8 +3,7 @@
     <f7-navbar title="Inbox" back-link="Things" back-link-url="/settings/things/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"
-        />
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -14,8 +13,7 @@
           :init="initSearchbar"
           search-container=".contacts-list"
           search-in=".item-inner"
-          :disable-button="!$theme.aurora"
-        />
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
@@ -44,8 +42,7 @@
       v-show="groupBy === 'alphabetical' && !$device.desktop"
       list-el=".inbox-list"
       :scroll-list="true"
-      :label="true"
-    />
+      :label="true" />
 
     <f7-block class="block-narrow">
       <f7-col>
@@ -74,8 +71,7 @@
               :class="`skeleton-text skeleton-effect-blink`"
               title="Label of the thing"
               subtitle="This contains the inbox UID"
-              footer="binding:thingUID"
-            />
+              footer="binding:thingUID" />
           </f7-list-group>
         </f7-list>
         <f7-list v-else class="searchbar-found col" :contacts-list="groupBy === 'alphabetical'">
@@ -93,9 +89,8 @@
                           :title="entry.label"
                           :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
                           :footer="entry.thingUID"
-                          :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''"
-            >
-              <!-- <f7-button icon-f7="add_round" color="blue" slot="after"></f7-button>
+                          :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''">
+                          <!-- <f7-button icon-f7="add_round" color="blue" slot="after"></f7-button>
               <f7-button icon-f7="eye_off" color="blue" slot="after"></f7-button>
               <f7-button icon-f7="trash" color="blue" slot="after"></f7-button> -->
             </f7-list-item>

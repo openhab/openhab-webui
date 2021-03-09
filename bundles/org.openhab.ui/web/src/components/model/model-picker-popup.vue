@@ -1,7 +1,6 @@
 <template>
   <f7-popup ref="modelPicker" class="modelpicker-popup" close-on-escape
-            @popup:open="onOpen" @popup:close="onClose"
-  >
+            @popup:open="onOpen" @popup:close="onClose">
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
@@ -21,8 +20,7 @@
           search-container=".model-treeview"
           search-item=".treeview-item"
           search-in=".treeview-item-label"
-          :disable-button="!$theme.aurora"
-        />
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
       <f7-toolbar bottom class="toolbar-details">
         <f7-link v-if="!multiple" :disabled="selectedItem != null" class="left" @click="selectedItem = null">
@@ -38,8 +36,7 @@
       </f7-toolbar>
       <f7-block strong class="no-padding" v-if="ready">
         <model-treeview class="model-picker-treeview" :root-nodes="rootNodes"
-                        :selected-item="selectedItem" @selected="selectItem" @checked="checkItem"
-        />
+                        :selected-item="selectedItem" @selected="selectItem" @checked="checkItem" />
       </f7-block>
       <f7-block v-else-if="!ready" class="text-align-center">
         <f7-preloader />

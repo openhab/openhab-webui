@@ -33,8 +33,7 @@
           <config-sheet
             :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
             :parameters="pageWidgetDefinition.props.parameters || []"
-            :configuration="page.config"
-          />
+            :configuration="page.config" />
         </f7-block>
 
         <chart-designer class="chart-designer" v-if="ready && !previewMode && currentTab === 'design'" :context="context" />

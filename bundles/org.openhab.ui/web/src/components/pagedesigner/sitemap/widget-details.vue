@@ -3,14 +3,12 @@
     <f7-card-content>
       <f7-list inline-labels>
         <f7-list-input v-if="widget.component === 'Sitemap'" label="ID" type="text" placeholder="ID" :value="widget.uid" @input="widget.uid = $event.target.value"
-                       required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only" :disabled="!createMode"
-        />
+                       required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only" :disabled="!createMode" />
         <f7-list-input label="Label" type="text" placeholder="Label" :value="widget.config.label" @input="updateParameter('label', $event)" clear-button />
         <item-picker v-if="widget.component !== 'Sitemap'" title="Item" :value="widget.config.item" @input="(value) => widget.config.item = value" />
         <ul v-if="widget.component !== 'Sitemap'">
           <f7-list-input ref="icon" label="Icon" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="widget.config.icon"
-                         @input="updateParameter('icon', $event)" clear-button
-          >
+                         @input="updateParameter('icon', $event)" clear-button>
             <div slot="root-end" style="margin-left: calc(35% + 8px)">
               <oh-icon :icon="widget.config.icon" height="32" width="32" />
             </div>

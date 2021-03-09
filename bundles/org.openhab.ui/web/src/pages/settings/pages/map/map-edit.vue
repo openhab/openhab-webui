@@ -39,8 +39,7 @@
               :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
               :parameters="pageWidgetDefinition.props.parameters || []"
               :configuration="page.config"
-              @updated="dirty = true"
-            />
+              @updated="dirty = true" />
 
             <f7-block-title>Markers</f7-block-title>
             <f7-menu v-if="clipboardType === 'oh-map-marker'">
@@ -54,8 +53,7 @@
             <f7-list media-list class="markers-list">
               <f7-list-item media-item v-for="(marker, idx) in page.slots.default" :key="idx"
                             :title="marker.config.label" :subtitle="marker.config.item || marker.config.location"
-                            link="#" @click.native="(ev) => configureMarker(ev, marker, context)"
-              >
+                            link="#" @click.native="(ev) => configureMarker(ev, marker, context)">
                 <oh-icon v-if="marker.config.icon && marker.config.icon.indexOf('oh:') === 0" slot="media" :icon="marker.config.icon.substring(3)" height="32" width="32" />
                 <f7-icon v-else slot="media" :f7="markerDefaultIcon(marker)" :size="32" />
                 <f7-menu slot="content-start" class="configure-layout-menu">

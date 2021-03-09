@@ -58,8 +58,7 @@
             <config-sheet
               :parameterGroups="widget.props.parameterGroups || []"
               :parameters="widget.props.parameters || []"
-              :configuration="props"
-            />
+              :configuration="props" />
           </f7-col>
         </f7-block>
       </f7-page>
