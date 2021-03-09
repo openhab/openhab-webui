@@ -14,7 +14,7 @@ const AddonsConfigureBindingPage = () => import(/* webpackChunkName: "admin-base
 const ItemsListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/items/items-list-vlist.vue')
 const ItemDetailsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/items/item-details.vue')
 const ItemEditPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/items/item-edit.vue')
-const ItemMetadataEditPage = () => import(/* webpackChunkName: "metadata-edit" */ '../pages/settings/items/metadata/item-metadata-edit.vue')
+const ItemMetadataEditPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/items/metadata/item-metadata-edit.vue')
 const ItemsAddFromTextualDefinition = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/items/parser/items-add-from-textual-definition.vue')
 
 const ThingsListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/things/things-list.vue')
@@ -30,9 +30,9 @@ const SemanticModelPage = () => import(/* webpackChunkName: "admin-base" */ '../
 const PagesListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/pages/pages-list.vue')
 
 const RulesListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/rules/rules-list.vue')
-const RuleEditPage = () => import(/* webpackChunkName: "rule-edit" */ '../pages/settings/rules/rule-edit.vue')
-const ScriptEditPage = () => import(/* webpackChunkName: "script-edit" */ '../pages/settings/rules/script/script-edit.vue')
-const SchedulePage = () => import(/* webpackChunkName: "schedule" */ '../pages/settings/schedule/schedule.vue')
+const RuleEditPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/rules/rule-edit.vue')
+const ScriptEditPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/rules/script/script-edit.vue')
+const SchedulePage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/schedule/schedule.vue')
 
 const AnalyzerPage = () => import(/* webpackChunkName: "analyzer" */ '../pages/analyzer/analyzer.vue')
 
