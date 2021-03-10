@@ -308,7 +308,7 @@ export default {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
         if (updatedPage.config && updatedPage.config.layoutType && updatedPage.config.layoutType === 'fixed' &&
-          ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))) {
+        ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))) {
           throw new Error('Using blocks and masonry in fixed-size layouts is not possible')
         }
 

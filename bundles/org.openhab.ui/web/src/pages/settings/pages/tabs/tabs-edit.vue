@@ -105,7 +105,6 @@ export default {
   props: ['createMode', 'uid'],
   data () {
     return {
-      currentTab: 'design',
       page: {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-tabs-page',
