@@ -98,7 +98,7 @@ export default {
     },
     updateParameter (parameter, $event) {
       let value = $event.target.value
-      if (value && !isNaN(value)) {
+      if (value && $event.target.type === 'number' && !isNaN(value)) {
         value = parseFloat(value)
       }
       this.$set(this.widget.config, parameter, value)
