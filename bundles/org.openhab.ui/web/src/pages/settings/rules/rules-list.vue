@@ -128,6 +128,9 @@ import RuleStatus from '@/components/rule/rule-status-mixin'
 export default {
   mixins: [RuleStatus],
   props: ['showScripts'],
+  components: {
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+  },
   data () {
     return {
       ready: false,

@@ -75,7 +75,7 @@ export default {
   mixins: [DirtyMixin],
   props: ['itemName', 'namespace'],
   components: {
-    'editor': () => import('@/components/config/controls/script-editor.vue')
+    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
   data () {
     return {

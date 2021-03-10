@@ -116,6 +116,9 @@
 
 <script>
 export default {
+  components: {
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+  },
   data () {
     let vlHeight
     if (this.$theme.ios) vlHeight = 78

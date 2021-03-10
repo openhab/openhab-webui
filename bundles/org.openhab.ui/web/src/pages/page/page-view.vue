@@ -51,6 +51,7 @@ import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 export default {
   components: {
     'oh-layout-page': OhLayoutPage,
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
     'oh-map-page': () => import(/* webpackChunkName: "map-page" */ '@/components/widgets/map/oh-map-page.vue'),
     'oh-plan-page': () => import(/* webpackChunkName: "plan-page" */ '@/components/widgets/plan/oh-plan-page.vue'),
     'oh-chart-page': () => import(/* webpackChunkName: "chart-page" */ '@/components/widgets/chart/oh-chart-page.vue')

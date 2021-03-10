@@ -260,7 +260,7 @@ export default {
     ChannelList,
     ThingGeneralSettings,
     ZWaveNetworkPopup,
-    'editor': () => import('@/components/config/controls/script-editor.vue')
+    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
   props: ['thingId'],
   data () {

@@ -119,7 +119,7 @@ export default {
   mixins: [RuleStatus, ModuleDescriptionSuggestions, DirtyMixin],
   components: {
     ScriptGeneralSettings,
-    'editor': () => import('@/components/config/controls/script-editor.vue'),
+    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ './blockly-editor.vue')
   },
   props: ['ruleId', 'moduleId', 'createMode'],

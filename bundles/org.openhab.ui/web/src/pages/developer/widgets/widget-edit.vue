@@ -110,7 +110,7 @@ strOptions.fold.lineWidth = 0
 export default {
   mixins: [DirtyMixin],
   components: {
-    'editor': () => import('@/components/config/controls/script-editor.vue'),
+    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     ConfigSheet
   },
   props: ['uid', 'createMode'],

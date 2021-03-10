@@ -25,6 +25,9 @@
 import modal from './modal-mixin'
 
 export default {
-  mixins: [modal]
+  mixins: [modal],
+  components: {
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+  }
 }
 </script>
