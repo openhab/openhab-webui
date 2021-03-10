@@ -12,7 +12,6 @@
  */
 package org.openhab.ui.basic.internal.render;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -136,8 +135,8 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
                     buildButton(s, mapping.getLabel(), mapping.getCmd(), -1, nbButtons > 1, item, state, buttons);
                 }
             }
-            snippet = StringUtils.replace(snippet, "%buttons%", buttons.toString());
-            snippet = StringUtils.replace(snippet, "%count%", Integer.toString(nbButtons));
+            snippet = snippet.replace("%buttons%", buttons.toString());
+            snippet = snippet.replace("%count%", Integer.toString(nbButtons));
         }
 
         // Process the color tags
@@ -156,17 +155,19 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
 
         if (item instanceof NumberItem && ((NumberItem) item).getDimension() != null) {
             String unit = getUnitForWidget(w);
-            command = StringUtils.replace(command, UnitUtils.UNIT_PLACEHOLDER, unit);
-            label = StringUtils.replace(label, UnitUtils.UNIT_PLACEHOLDER, unit);
+            if (unit != null) {
+                command = command.replace(UnitUtils.UNIT_PLACEHOLDER, unit);
+                label = label.replace(UnitUtils.UNIT_PLACEHOLDER, unit);
+            }
         }
 
         if (maxLabelSize >= 1 && label.length() > maxLabelSize) {
             label = label.substring(0, maxLabelSize - 1) + ELLIPSIS;
         }
 
-        button = StringUtils.replace(button, "%item%", w.getItem());
-        button = StringUtils.replace(button, "%cmd%", escapeHtml(command));
-        button = StringUtils.replace(button, "%label%", escapeHtml(label));
+        button = button.replace("%item%", w.getItem());
+        button = button.replace("%cmd%", escapeHtml(command));
+        button = button.replace("%label%", escapeHtml(label));
 
         String buttonClass;
         State compareMappingState = state;
@@ -180,7 +181,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         } else {
             buttonClass = "mdl-button";
         }
-        button = StringUtils.replace(button, "%class%", buttonClass);
+        button = button.replace("%class%", buttonClass);
 
         buttons.append(button);
     }

@@ -12,7 +12,6 @@
  */
 package org.openhab.ui.basic.internal.render;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -55,7 +54,7 @@ public class GroupRenderer extends AbstractWidgetRenderer {
         String snippet = getSnippet("group");
 
         snippet = preprocessSnippet(snippet, w);
-        snippet = StringUtils.replace(snippet, "%id%", itemUIRegistry.getWidgetId(w));
+        snippet = snippet.replace("%id%", itemUIRegistry.getWidgetId(w));
 
         // Process the color tags
         snippet = processColor(w, snippet);

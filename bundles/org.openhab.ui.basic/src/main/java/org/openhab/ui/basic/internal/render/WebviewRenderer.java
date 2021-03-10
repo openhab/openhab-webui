@@ -12,7 +12,6 @@
  */
 package org.openhab.ui.basic.internal.render;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -57,14 +56,14 @@ public class WebviewRenderer extends AbstractWidgetRenderer {
         // Process the color tags
         snippet = processColor(w, snippet);
 
-        snippet = StringUtils.replace(snippet, "%url%", webview.getUrl());
+        snippet = snippet.replace("%url%", webview.getUrl());
 
         int height = webview.getHeight();
         if (height == 0) {
             height = 4; // set default height to something viewable
         }
         height = height * 36;
-        snippet = StringUtils.replace(snippet, "%height%", Integer.toString(height));
+        snippet = snippet.replace("%height%", Integer.toString(height));
 
         sb.append(snippet);
         return ECollections.emptyEList();

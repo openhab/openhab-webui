@@ -12,7 +12,6 @@
  */
 package org.openhab.ui.basic.internal.render;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -67,26 +66,26 @@ public class MapviewRenderer extends AbstractWidgetRenderer {
             PointType pointState = (PointType) state;
             double latitude = pointState.getLatitude().doubleValue();
             double longitude = pointState.getLongitude().doubleValue();
-            snippet = StringUtils.replace(snippet, "%url%", MAP_URL);
-            snippet = StringUtils.replace(snippet, "%lat%", Double.toString(latitude));
-            snippet = StringUtils.replace(snippet, "%lon%", Double.toString(longitude));
-            snippet = StringUtils.replace(snippet, "%lonminus%", Double.toString(longitude - MAP_ZOOM));
-            snippet = StringUtils.replace(snippet, "%lonplus%", Double.toString(longitude + MAP_ZOOM));
-            snippet = StringUtils.replace(snippet, "%latminus%", Double.toString(latitude - MAP_ZOOM));
-            snippet = StringUtils.replace(snippet, "%latplus%", Double.toString(latitude + MAP_ZOOM));
+            snippet = snippet.replace("%url%", MAP_URL);
+            snippet = snippet.replace("%lat%", Double.toString(latitude));
+            snippet = snippet.replace("%lon%", Double.toString(longitude));
+            snippet = snippet.replace("%lonminus%", Double.toString(longitude - MAP_ZOOM));
+            snippet = snippet.replace("%lonplus%", Double.toString(longitude + MAP_ZOOM));
+            snippet = snippet.replace("%latminus%", Double.toString(latitude - MAP_ZOOM));
+            snippet = snippet.replace("%latplus%", Double.toString(latitude + MAP_ZOOM));
         } else {
-            snippet = StringUtils.replace(snippet, "%url%", "images/map-marker-off.png");
+            snippet = snippet.replace("%url%", "images/map-marker-off.png");
         }
 
-        snippet = StringUtils.replace(snippet, "%map_url%", MAP_URL);
-        snippet = StringUtils.replace(snippet, "%map_zoom%", Double.toString(MAP_ZOOM));
+        snippet = snippet.replace("%map_url%", MAP_URL);
+        snippet = snippet.replace("%map_zoom%", Double.toString(MAP_ZOOM));
 
         int height = mapview.getHeight();
         if (height == 0) {
             height = 4; // set default height to something viewable
         }
         height = height * 36;
-        snippet = StringUtils.replace(snippet, "%height%", Integer.toString(height));
+        snippet = snippet.replace("%height%", Integer.toString(height));
 
         sb.append(snippet);
         return ECollections.emptyEList();
