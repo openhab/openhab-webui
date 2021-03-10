@@ -150,17 +150,14 @@ export default {
       })
     },
     fromYaml (){
-      if(this.currentTab === 'code')
-      {
-        try {
-          const updatedTabs = YAML.parse(this.pageYaml)
-          this.$set(this.page.slots, 'default', updatedTabs.tabs)
-          this.forceUpdate()
-          return true
-        } catch (e) {
-          this.$f7.dialog.alert(e).open()
-          return false
-        }
+      try {
+        const updatedTabs = YAML.parse(this.pageYaml)
+        this.$set(this.page.slots, 'default', updatedTabs.tabs)
+        this.forceUpdate()
+        return true
+      } catch (e) {
+        this.$f7.dialog.alert(e).open()
+        return false
       }
     }
   }
