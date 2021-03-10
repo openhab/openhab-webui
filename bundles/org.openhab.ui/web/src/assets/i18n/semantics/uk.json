@@ -1,7 +1,7 @@
 {
   "Temperature": "Температура",
   "Light": "Світло",
-  "ColorTemperature": "Температура кольору",
+  "ColorTemperature": "Колірна температура",
   "Humidity": "Вологість",
   "Presence": "Присутність",
   "Pressure": "Тиск",
