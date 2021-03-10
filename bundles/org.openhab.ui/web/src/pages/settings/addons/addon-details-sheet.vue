@@ -1,19 +1,24 @@
 <template>
   <f7-sheet ref="sheet" class="demo-sheet-swipe-to-step" @sheet:closed="$emit('closed')" swipe-to-close swipe-to-step backdrop>
     <div class="sheet-modal-swipe-step">
-
-      <div class="swipe-handler" @click="toggleSwipeStep"></div>
-      <f7-block-title><strong><big>{{addon.label}}</big></strong></f7-block-title>
+      <div class="swipe-handler" @click="toggleSwipeStep" />
+      <f7-block-title><strong><big>{{ addon.label }}</big></strong></f7-block-title>
       <f7-block>
         <f7-row>
           <f7-col class="col-100 margin-top padding-horizontal">
-            <f7-button large fill color="blue" v-if="state === 'UNINSTALLED'" @click="install()">Install</f7-button>
-            <f7-button large fill color="red" v-if="state !== 'UNINSTALLED'" @click="uninstall()">Uninstall</f7-button>
+            <f7-button large fill color="blue" v-if="state === 'UNINSTALLED'" @click="install()">
+              Install
+            </f7-button>
+            <f7-button large fill color="red" v-if="state !== 'UNINSTALLED'" @click="uninstall()">
+              Uninstall
+            </f7-button>
           </f7-col>
         </f7-row>
       </f7-block>
       <f7-block class="padding-bottom" @click.native="toggleSwipeStep" style="cursor:pointer">
-        <div class="margin-top margin-bottom text-align-center"><f7-icon f7="chevron_down_circle" />&nbsp;Expand for details</div>
+        <div class="margin-top margin-bottom text-align-center">
+          <f7-icon f7="chevron_down_circle" />&nbsp;Expand for details
+        </div>
       </f7-block>
     </div>
     <f7-page-content>
@@ -25,12 +30,12 @@
       </f7-block>
       <f7-block>
         <f7-list>
-          <f7-list-item v-if="bindingInfo.author" title="Author" :after="bindingInfo.author"></f7-list-item>
-          <f7-list-item title="Version" :after="addon.version"></f7-list-item>
+          <f7-list-item v-if="bindingInfo.author" title="Author" :after="bindingInfo.author" />
+          <f7-list-item title="Version" :after="addon.version" />
         </f7-list>
         <f7-list>
-          <f7-list-button v-if="bindingInfo.configDescriptionURI" color="blue" :href="bindingInfo.id + '/config'" title="Configure"></f7-list-button>
-          <f7-list-button v-if="addon.link" color="blue" external target="_blank" :href="addon.link" title="Documentation"></f7-list-button>
+          <f7-list-button v-if="bindingInfo.configDescriptionURI" color="blue" :href="bindingInfo.id + '/config'" title="Configure" />
+          <f7-list-button v-if="addon.link" color="blue" external target="_blank" :href="addon.link" title="Documentation" />
         </f7-list>
       </f7-block>
       <!-- <f7-block v-else>

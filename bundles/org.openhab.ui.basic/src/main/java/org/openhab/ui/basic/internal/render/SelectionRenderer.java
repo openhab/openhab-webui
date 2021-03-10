@@ -12,7 +12,6 @@
  */
 package org.openhab.ui.basic.internal.render;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -106,10 +105,10 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
                 }
             }
         }
-        snippet = StringUtils.replace(snippet, "%rows%", rowSB.toString());
-        snippet = StringUtils.replace(snippet, "%value_map%", escapeHtml(jsonObject.toString()));
-        snippet = StringUtils.replace(snippet, "%label_header%", getLabel(w));
-        snippet = StringUtils.replace(snippet, "%value_header%", mappingLabel != null ? mappingLabel : getValue(w));
+        snippet = snippet.replace("%rows%", rowSB.toString());
+        snippet = snippet.replace("%value_map%", escapeHtml(jsonObject.toString()));
+        snippet = snippet.replace("%label_header%", getLabel(w));
+        snippet = snippet.replace("%value_header%", mappingLabel != null ? mappingLabel : getValue(w));
 
         // Process the color tags
         snippet = processColor(w, snippet);
@@ -128,13 +127,15 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
 
         if (item instanceof NumberItem && ((NumberItem) item).getDimension() != null) {
             String unit = getUnitForWidget(w);
-            command = StringUtils.replace(command, UnitUtils.UNIT_PLACEHOLDER, unit);
-            label = StringUtils.replace(label, UnitUtils.UNIT_PLACEHOLDER, unit);
+            if (unit != null) {
+                command = command.replace(UnitUtils.UNIT_PLACEHOLDER, unit);
+                label = label.replace(UnitUtils.UNIT_PLACEHOLDER, unit);
+            }
         }
 
-        rowSnippet = StringUtils.replace(rowSnippet, "%item%", w.getItem() != null ? w.getItem() : "");
-        rowSnippet = StringUtils.replace(rowSnippet, "%cmd%", escapeHtml(command));
-        rowSnippet = StringUtils.replace(rowSnippet, "%label%", escapeHtml(label));
+        rowSnippet = rowSnippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
+        rowSnippet = rowSnippet.replace("%cmd%", escapeHtml(command));
+        rowSnippet = rowSnippet.replace("%label%", escapeHtml(label));
 
         State compareMappingState = state;
         if (state instanceof QuantityType) { // convert the item state to the command value for proper
@@ -144,9 +145,9 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
 
         if (compareMappingState != null && compareMappingState.toString().equals(command)) {
             mappingLabel = label;
-            rowSnippet = StringUtils.replace(rowSnippet, "%checked%", "checked=\"true\"");
+            rowSnippet = rowSnippet.replace("%checked%", "checked=\"true\"");
         } else {
-            rowSnippet = StringUtils.replace(rowSnippet, "%checked%", "");
+            rowSnippet = rowSnippet.replace("%checked%", "");
         }
 
         rowSB.append(rowSnippet);

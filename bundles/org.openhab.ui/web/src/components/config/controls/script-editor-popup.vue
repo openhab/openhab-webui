@@ -3,10 +3,12 @@
     <f7-page class="code-editor-content">
       <f7-navbar :title="title">
         <f7-nav-right>
-          <f7-link class="popup-close" @click="update">Close</f7-link>
+          <f7-link class="popup-close" @click="update">
+            Close
+          </f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <editor v-if="showEditor" v-model="code"></editor>
+      <editor v-if="showEditor" v-model="code" />
     </f7-page>
   </f7-popup>
 </template>

@@ -41,7 +41,7 @@ const groupEndpoints = categories
   .map(category => {
     const convertedChars = []
     let capitalizeNext = false
-    for (var i = 0; i < category.length; i++) {
+    for (let i = 0; i < category.length; i++) {
       const currentChar = category.charAt(i)
       if (i === 0) {
         convertedChars.push(currentChar.toUpperCase())

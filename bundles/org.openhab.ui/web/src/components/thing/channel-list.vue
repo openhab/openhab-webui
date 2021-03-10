@@ -11,21 +11,20 @@
           search-container=".channel-group"
           search-in=".channel-item .item-title, .channel-item .item-subtitle, .channel-item .item-footer"
           search-group=".channel-group .row"
-          :clear-button="true"
-        ></f7-searchbar>
+          :clear-button="true" />
       </f7-col>
     </f7-block>
     <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
-      <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox name="channel-advanced" :checked="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
+      <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox name="channel-advanced" :checked="showAdvanced" @change="toggleAdvanced" />
     </div>
     <f7-col v-if="thing.channels.length > 0">
       <f7-block width="100" class="channel-group no-margin no-padding" ref="channelList">
         <f7-row class="searchbar-ignore">
           <f7-col class="padding-left padding-right searchbar-ignore">
             <f7-segmented class="searchbar-ignore" strong tag="p">
-              <f7-button class="searchbar-ignore" @click="toggleLinkFilter(undefined)" small :active="showLinked === undefined" text="All"></f7-button>
-              <f7-button class="searchbar-ignore" @click="toggleLinkFilter(true)" small :active="showLinked === true" text="Linked"></f7-button>
-              <f7-button class="searchbar-ignore" @click="toggleLinkFilter(false)" small :active="showLinked === false" text="Unlinked"></f7-button>
+              <f7-button class="searchbar-ignore" @click="toggleLinkFilter(undefined)" small :active="showLinked === undefined" text="All" />
+              <f7-button class="searchbar-ignore" @click="toggleLinkFilter(true)" small :active="showLinked === true" text="Linked" />
+              <f7-button class="searchbar-ignore" @click="toggleLinkFilter(false)" small :active="showLinked === false" text="Unlinked" />
             </f7-segmented>
           </f7-col>
         </f7-row>
@@ -43,13 +42,12 @@
               :selection="(multipleLinksMode) ? selectedChannels : selectedChannel"
               @selected="selectChannel"
               @channel-opened="channelOpened">
-              <template v-slot:default="{ channelId, channelType, channel, extensible }" v-if="!pickerMode && !multipleLinksMode">
+              <template #default="{ channelId, channelType, channel, extensible }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId"
                               :thing="thing" :channelId="channelId" :channelType="channelType" :channel="channel" :extensible="extensible" :context="context"
-                              @channel-updated="(e) => $emit('channels-updated', e)">
-                </channel-link>
+                              @channel-updated="(e) => $emit('channels-updated', e)" />
               </template>
-              <template v-slot:default="{ channel }" v-else-if="multipleLinksMode">
+              <template #default="{ channel }" v-else-if="multipleLinksMode">
                 <item-form v-if="isChecked(channel)" :item="newItem(channel)" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
               </template>
               <!-- <channel-link #default="{ channelId }" /> -->
@@ -57,8 +55,12 @@
           </f7-col>
         </f7-row>
         <f7-list v-if="multipleLinksMode">
-          <f7-list-button color="blue" @click="toggleAllChecks(true)">Select All</f7-list-button>
-          <f7-list-button color="blue" @click="toggleAllChecks(false)">Unselect All</f7-list-button>
+          <f7-list-button color="blue" @click="toggleAllChecks(true)">
+            Select All
+          </f7-list-button>
+          <f7-list-button color="blue" @click="toggleAllChecks(false)">
+            Unselect All
+          </f7-list-button>
         </f7-list>
       </f7-block>
     </f7-col>

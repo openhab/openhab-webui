@@ -31,7 +31,7 @@ function hintThingConfig (cm, line, parentLineNr) {
       if (parameter.type === 'BOOLEAN') {
         if (line.endsWith('true') || line.endsWith('false')) return
         return {
-          list: [ { text: 'true' }, { text: 'false' } ],
+          list: [{ text: 'true' }, { text: 'false' }],
           from: { line: cursor.line, ch: colonPos + 2 },
           to: { line: cursor.line, ch: line.length }
         }
@@ -89,7 +89,7 @@ function hintChannelConfig (cm, line, parentLineNr) {
       if (parameter.type === 'BOOLEAN') {
         if (line.endsWith('true') || line.endsWith('false')) return
         return {
-          list: [ { text: 'true' }, { text: 'false' } ],
+          list: [{ text: 'true' }, { text: 'false' }],
           from: { line: cursor.line, ch: colonPos + 2 },
           to: { line: cursor.line, ch: line.length }
         }

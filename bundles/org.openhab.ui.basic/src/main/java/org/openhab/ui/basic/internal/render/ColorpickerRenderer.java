@@ -12,7 +12,6 @@
  */
 package org.openhab.ui.basic.internal.render;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -80,27 +79,29 @@ public class ColorpickerRenderer extends AbstractWidgetRenderer {
         }
 
         // Should be called before preprocessSnippet
-        snippet = StringUtils.replace(snippet, "%state%", hexValue);
-        snippet = StringUtils.replace(snippet, "%icon_state%", escapeURL(hexValue));
+        snippet = snippet.replace("%state%", hexValue);
+        snippet = snippet.replace("%icon_state%", escapeURL(hexValue));
 
         snippet = preprocessSnippet(snippet, w);
-        snippet = StringUtils.replace(snippet, "%purelabel%", purelabel);
-        snippet = StringUtils.replace(snippet, "%frequency%", frequency);
-        snippet = StringUtils.replace(snippet, "%servletname%", WebAppServlet.SERVLET_NAME);
+        if (purelabel != null) {
+            snippet = snippet.replace("%purelabel%", purelabel);
+        }
+        snippet = snippet.replace("%frequency%", frequency);
+        snippet = snippet.replace("%servletname%", WebAppServlet.SERVLET_NAME);
 
         String style = "";
         String color = itemUIRegistry.getLabelColor(w);
         if (color != null) {
             style = "color:" + color;
         }
-        snippet = StringUtils.replace(snippet, "%labelstyle%", style);
+        snippet = snippet.replace("%labelstyle%", style);
 
         style = "";
         color = itemUIRegistry.getValueColor(w);
         if (color != null) {
             style = "color:" + color;
         }
-        snippet = StringUtils.replace(snippet, "%valuestyle%", style);
+        snippet = snippet.replace("%valuestyle%", style);
 
         sb.append(snippet);
         return ECollections.emptyEList();

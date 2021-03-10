@@ -3,7 +3,7 @@
     <f7-navbar title="Items" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -12,23 +12,24 @@
           class="searchbar-items"
           :init="initSearchbar"
           search-container=".virtual-list"
-          :disable-button="!$theme.aurora"
-        ></f7-searchbar>
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">Remove {{selectedItems.length}}</f7-link>
-      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false"></f7-link>
+      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
+        Remove {{ selectedItems.length }}
+      </f7-link>
+      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
-        {{selectedItems.length}} selected
+        {{ selectedItems.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
+        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
       </div>
     </f7-toolbar>
 
     <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found"></f7-list-item>
+      <f7-list-item title="Nothing found" />
     </f7-list>
     <!-- skeleton for not ready -->
     <f7-block class="block-narrow">
@@ -44,23 +45,23 @@
               title="Label of the item"
               subtitle="type, semantic metadata"
               after="The item state"
-              footer="This contains the type of the item"
-            >
-              <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media"></f7-skeleton-block>
+              footer="This contains the type of the item">
+              <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media" />
             </f7-list-item>
           </f7-list-group>
         </f7-list>
       </f7-col>
       <f7-col v-if="ready">
-        <f7-block-title class="searchbar-hide-on-search">{{items.length}} items</f7-block-title>
+        <f7-block-title class="searchbar-hide-on-search">
+          {{ items.length }} items
+        </f7-block-title>
         <f7-list
           v-show="items.length > 0"
           class="searchbar-found col"
           ref="itemsList"
           media-list
           virtual-list
-          :virtual-list-params="{ items, searchAll, renderExternal, height: vlData.height }"
-        >
+          :virtual-list-params="{ items, searchAll, renderExternal, height: vlData.height }">
           <ul>
             <f7-list-item
               v-for="(item, index) in vlData.items"
@@ -76,11 +77,10 @@
               :footer="(item.label) ? item.name : '\xa0'"
               :subtitle="getItemTypeAndMetaLabel(item)"
               :style="`top: ${vlData.topPosition}px`"
-              :after="item.state"
-            >
+              :after="item.state">
               <oh-icon v-if="item.category" slot="media" :icon="item.category" height="32" width="32" />
-              <span v-else slot="media" class="item-initial">{{item.name[0]}}</span>
-              <f7-icon v-if="!item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
+              <span v-else slot="media" class="item-initial">{{ item.name[0] }}</span>
+              <f7-icon v-if="!item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
               <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
             </f7-list-item>
           </ul>
@@ -91,11 +91,15 @@
       <empty-state-placeholder icon="square_on_circle" title="items.title" text="items.text" />
     </f7-block>
     <f7-fab v-show="!showCheckboxes" position="right-bottom" slot="fixed" color="blue">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
-      <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply"></f7-icon>
+      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+      <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
       <f7-fab-buttons position="top">
-        <f7-fab-button fab-close label="Add Item" href="add"><f7-icon ios="material:label_outline" md="material:label_outline" aurora="material:label_outline"></f7-icon></f7-fab-button>
-        <f7-fab-button fab-close label="Add Items from Textual Definition" href="add-from-textual-definition"><f7-icon ios="f7:document_text" md="material:assignment" aurora="f7:text_badge_plus"></f7-icon></f7-fab-button>
+        <f7-fab-button fab-close label="Add Item" href="add">
+          <f7-icon ios="material:label_outline" md="material:label_outline" aurora="material:label_outline" />
+        </f7-fab-button>
+        <f7-fab-button fab-close label="Add Items from Textual Definition" href="add-from-textual-definition">
+          <f7-icon ios="f7:document_text" md="material:assignment" aurora="f7:text_badge_plus" />
+        </f7-fab-button>
       </f7-fab-buttons>
     </f7-fab>
   </f7-page>
@@ -188,7 +192,7 @@ export default {
     searchAll (query, items) {
       const found = []
       for (let i = 0; i < items.length; i += 1) {
-        var haystack = items[i].name
+        let haystack = items[i].name
         if (items[i].label) haystack += ' ' + items[i].label
         haystack += ' ' + this.getItemTypeAndMetaLabel(items[i])
         if (

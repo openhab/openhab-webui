@@ -1,7 +1,7 @@
 <template>
   <f7-card :no-border="config.noBorder" :no-shadow="config.noShadow" :outline="config.outline">
     <f7-card-header v-if="config.title">
-      <div>{{config.title}}</div>
+      <div>{{ config.title }}</div>
     </f7-card-header>
     <f7-card-content :padding="false" class="oh-image-card">
       <f7-list v-if="config.action" class="image-link">
@@ -12,7 +12,7 @@
       <oh-image v-else :context="childContext(context.component)" />
     </f7-card-content>
     <f7-card-footer v-if="config.footer">
-      {{config.footer}}
+      {{ config.footer }}
     </f7-card-footer>
   </f7-card>
 </template>

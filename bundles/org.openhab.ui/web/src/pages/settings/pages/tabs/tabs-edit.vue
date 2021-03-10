@@ -2,18 +2,24 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="tabs-editor">
     <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create tabbed page' : page.config.label" back-link="Back" no-hairline>
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md">
+          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">Design</f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">
+        Design
+      </f7-link>
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">
+        Code
+      </f7-link>
     </f7-toolbar>
     <f7-tabs class="tabs-editor-tabs">
       <f7-tab id="design" class="tabs-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
-          <f7-preloader></f7-preloader>
+          <f7-preloader />
           <div>Loading...</div>
         </f7-block>
         <f7-block class="block-narrow" v-if="ready && !previewMode">
@@ -26,7 +32,7 @@
             <f7-menu v-if="clipboardType === 'oh-tab'">
               <f7-menu-item style="margin-left: auto" icon-f7="squares_below_rectangle" dropdown>
                 <f7-menu-dropdown right>
-                  <f7-menu-dropdown-item @click="pasteWidget(page, null)" href="#" text="Paste"></f7-menu-dropdown-item>
+                  <f7-menu-dropdown-item @click="pasteWidget(page, null)" href="#" text="Paste" />
                 </f7-menu-dropdown>
               </f7-menu-item>
             </f7-menu>
@@ -39,16 +45,16 @@
                 <f7-menu slot="content-start" class="configure-layout-menu">
                   <f7-menu-item icon-f7="list_bullet" dropdown>
                     <f7-menu-dropdown>
-                      <f7-menu-dropdown-item @click="configureWidget(tab, { component: page })" href="#" text="Configure Tab"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="editWidgetCode(tab, { component: page })" href="#" text="Edit YAML"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="cutWidget(tab, { component: page })" href="#" text="Cut"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="copyWidget(tab, { component: page })" href="#" text="Copy"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="moveWidgetUp(tab, { component: page })" href="#" text="Move Up"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="moveWidgetDown(tab, { component: page })" href="#" text="Move Down"></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item divider></f7-menu-dropdown-item>
-                      <f7-menu-dropdown-item @click="removeWidget(tab, { component: page })" href="#" text="Remove Tab"></f7-menu-dropdown-item>
+                      <f7-menu-dropdown-item @click="configureWidget(tab, { component: page })" href="#" text="Configure Tab" />
+                      <f7-menu-dropdown-item @click="editWidgetCode(tab, { component: page })" href="#" text="Edit YAML" />
+                      <f7-menu-dropdown-item divider />
+                      <f7-menu-dropdown-item @click="cutWidget(tab, { component: page })" href="#" text="Cut" />
+                      <f7-menu-dropdown-item @click="copyWidget(tab, { component: page })" href="#" text="Copy" />
+                      <f7-menu-dropdown-item divider />
+                      <f7-menu-dropdown-item @click="moveWidgetUp(tab, { component: page })" href="#" text="Move Up" />
+                      <f7-menu-dropdown-item @click="moveWidgetDown(tab, { component: page })" href="#" text="Move Down" />
+                      <f7-menu-dropdown-item divider />
+                      <f7-menu-dropdown-item @click="removeWidget(tab, { component: page })" href="#" text="Remove Tab" />
                     </f7-menu-dropdown>
                   </f7-menu-item>
                 </f7-menu>
@@ -57,7 +63,6 @@
             </f7-list>
           </f7-col>
         </f7-block>
-
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">

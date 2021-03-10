@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
@@ -59,8 +58,8 @@ public class FrameRenderer extends AbstractWidgetRenderer {
         String label = StringEscapeUtils.escapeHtml(itemUIRegistry.getLabel(w));
         List<String> frameClassList = new ArrayList<>();
 
-        snippet = StringUtils.replace(snippet, "%label%", label);
-        snippet = StringUtils.replace(snippet, "%widget_id%", itemUIRegistry.getWidgetId(w));
+        snippet = snippet.replace("%label%", label);
+        snippet = snippet.replace("%widget_id%", itemUIRegistry.getWidgetId(w));
 
         if (label.isEmpty()) {
             frameClassList.add("mdl-form--no-label");
@@ -70,8 +69,8 @@ public class FrameRenderer extends AbstractWidgetRenderer {
             frameClassList.add("mdl-form--hidden");
         }
 
-        String frameClass = StringUtils.join(frameClassList, ' ');
-        snippet = StringUtils.replace(snippet, "%frame_class%", frameClass);
+        String frameClass = String.join(" ", frameClassList);
+        snippet = snippet.replace("%frame_class%", frameClass);
 
         // Process the color tags
         snippet = processColor(w, snippet);

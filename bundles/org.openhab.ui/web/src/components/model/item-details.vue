@@ -9,20 +9,30 @@
       </f7-list>
 
       <div class="padding-top" v-if="editMode">
-        <item-form :item="editedItem" :hide-type="true" :force-semantics="forceSemantics"></item-form>
+        <item-form :item="editedItem" :hide-type="true" :force-semantics="forceSemantics" />
       </div>
       <div class="padding-top" v-else-if="createMode">
-        <item-form :item="editedItem" :enable-name="true" :force-semantics="forceSemantics"></item-form>
+        <item-form :item="editedItem" :enable-name="true" :force-semantics="forceSemantics" />
       </div>
     </f7-card-content>
     <f7-card-footer v-if="createMode || editMode" key="item-card-buttons">
-      <f7-button v-if="createMode" color="blue" fill raised @click="create">Create</f7-button>
-      <f7-button v-else color="blue" fill raised @click="save" v-show="model.item.editable">Save</f7-button>
-      <f7-button v-if="createMode || editMode" color="blue" @click="cancel">Cancel</f7-button>
+      <f7-button v-if="createMode" color="blue" fill raised @click="create">
+        Create
+      </f7-button>
+      <f7-button v-else color="blue" fill raised @click="save" v-show="model.item.editable">
+        Save
+      </f7-button>
+      <f7-button v-if="createMode || editMode" color="blue" @click="cancel">
+        Cancel
+      </f7-button>
     </f7-card-footer>
     <f7-card-footer v-else key="item-card-buttons-edit-mode">
-      <f7-button v-if="!editMode && !createMode" color="blue" @click="edit" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">Edit</f7-button>
-      <f7-button v-if="!editMode && !createMode && model.item.editable" color="red" @click="remove">Remove</f7-button>
+      <f7-button v-if="!editMode && !createMode" color="blue" @click="edit" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">
+        Edit
+      </f7-button>
+      <f7-button v-if="!editMode && !createMode && model.item.editable" color="red" @click="remove">
+        Remove
+      </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>
@@ -61,7 +71,7 @@ export default {
       }
     },
     keyDown (ev) {
-      if (ev.keyCode == 46) {       // delete key
+      if (ev.keyCode === 46) { // delete key
         this.remove()
         ev.stopPropagation()
         ev.preventDefault()

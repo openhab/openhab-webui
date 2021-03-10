@@ -9,10 +9,9 @@
         :label="'Options'"
         name="options"
         :value="options"
-        @input="updateOptions"
-      />
+        @input="updateOptions" />
       <f7-block-footer class="param-description" alot="after-list">
-        <small>Enter each option on a separate line.<br />Use <code>value=label</code> format to provide a label different than the option.</small>
+        <small>Enter each option on a separate line.<br>Use <code>value=label</code> format to provide a label different than the option.</small>
       </f7-block-footer>
     </f7-list>
   </div>

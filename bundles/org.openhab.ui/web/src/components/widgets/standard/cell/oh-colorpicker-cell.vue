@@ -7,8 +7,7 @@
             <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.beforeColorpicker" :key="'beforeColorpicker-' + idx" @command="onCommand" />
           </div>
         </slot>
-        <oh-colorpicker :context="colorpickerContext">
-        </oh-colorpicker>
+        <oh-colorpicker :context="colorpickerContext" />
         <slot name="afterColorpicker">
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.afterColorpicker" :key="'afterColorpicker-' + idx" @command="onCommand" />

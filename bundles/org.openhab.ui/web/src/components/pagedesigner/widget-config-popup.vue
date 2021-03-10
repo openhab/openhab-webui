@@ -3,11 +3,13 @@
     <f7-page v-if="component && widget">
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
+          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
         </f7-nav-left>
-        <f7-nav-title>Edit {{widget.label || widget.uid}}</f7-nav-title>
+        <f7-nav-title>Edit {{ widget.label || widget.uid }}</f7-nav-title>
         <f7-nav-right>
-          <f7-link @click="updateWidgetConfig" popup-close>Done</f7-link>
+          <f7-link @click="updateWidgetConfig" popup-close>
+            Done
+          </f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-block v-if="widget.props && config" class="no-margin no-padding">
@@ -16,8 +18,7 @@
             :parameterGroups="widget.props.parameterGroups || []"
             :parameters="widget.props.parameters || []"
             :configuration="config"
-            @updated="dirty = true"
-          />
+            @updated="dirty = true" />
         </f7-col>
       </f7-block>
     </f7-page>

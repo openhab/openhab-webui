@@ -2,18 +2,22 @@
   <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline class="item-details-navbar">
       <f7-nav-right>
-        <f7-link icon-md="material:edit" href="edit">{{ $theme.md ? '' : 'Edit' }}</f7-link>
+        <f7-link icon-md="material:edit" href="edit">
+          {{ $theme.md ? '' : 'Edit' }}
+        </f7-link>
       </f7-nav-right>
       <f7-subnavbar sliding class="item-header">
         <div class="item-icon" v-if="item.name">
           <oh-icon v-if="item.category" :icon="item.category" height="60" width="60" />
           <span v-else>
-            {{item.label ? item.label[0] : item.name[0]}}
+            {{ item.label ? item.label[0] : item.name[0] }}
           </span>
         </div>
-        <h2>{{item.label}}</h2>
+        <h2>{{ item.label }}</h2>
         <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
-        <h5 v-show="item.type"><small>{{item.type}}</small></h5>
+        <h5 v-show="item.type">
+          <small>{{ item.type }}</small>
+        </h5>
       </f7-subnavbar>
     </f7-navbar>
     <f7-block class="block-narrow after-item-header" v-if="item">
@@ -27,7 +31,7 @@
           <f7-block-title>Tags</f7-block-title>
           <f7-block strong class="tags-block">
             <f7-chip v-for="tag in item.tags" :key="tag" :text="tag" media-bg-color="blue">
-              <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill"></f7-icon>
+              <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
             </f7-chip>
           </f7-block>
         </f7-col>
@@ -36,13 +40,12 @@
         <f7-col>
           <f7-block-title>Semantic Classification</f7-block-title>
           <f7-list>
-            <f7-list-item title="class" :after="item.metadata.semantics.value"></f7-list-item>
+            <f7-list-item title="class" :after="item.metadata.semantics.value" />
             <f7-list-item
               v-for="(value, key) in item.metadata.semantics.config"
               :key="key"
               :title="key"
-              :after="value"
-            ></f7-list-item>
+              :after="value" />
           </f7-list>
         </f7-col>
       </f7-row>
@@ -55,8 +58,7 @@
                 v-for="group in item.groupNames"
                 :key="group"
                 :link="'/settings/items/' + group"
-                :title="group"
-              ></f7-list-item>
+                :title="group" />
             </f7-list>
           </f7-card>
         </f7-col>
@@ -82,7 +84,9 @@
       <f7-row v-if="item.editable">
         <f7-col>
           <f7-list>
-            <f7-list-button color="red" @click="deleteItem">Remove Item</f7-list-button>
+            <f7-list-button color="red" @click="deleteItem">
+              Remove Item
+            </f7-list-button>
           </f7-list>
         </f7-col>
       </f7-row>

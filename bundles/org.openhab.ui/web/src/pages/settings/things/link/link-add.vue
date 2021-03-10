@@ -2,8 +2,10 @@
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Link Channel to Item" back-link="Cancel">
       <f7-nav-right class="if-not-aurora">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Link</f7-link>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md">
+          Link
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-block class="block-narrow">
@@ -13,8 +15,7 @@
           <f7-list-item media-item class="channel-item"
                         :title="channel.label || channelType.label"
                         :footer="channel.description || channelType.description"
-                        :subtitle="channel.uid">
-          </f7-list-item>
+                        :subtitle="channel.uid" />
         </f7-list>
       </f7-col>
 
@@ -32,7 +33,7 @@
         <f7-list>
           <!-- TODO: filter with compatible item types -->
           <item-picker key="itemLink" title="Item to Link" name="item" :value="selectedItemName" :multiple="false"
-                       @input="(value) => selectedItemName = value"></item-picker>
+                       @input="(value) => selectedItemName = value" />
         </f7-list>
       </f7-col>
 
@@ -40,7 +41,7 @@
       <f7-col v-else-if="createItem === true">
         <item-form :item="newItem" :enable-name="true" />
         <f7-list>
-          <item-picker key="newItem-groups" title="Parent Group(s)" name="parent-groups" :value="newItem.groupNames" @input="(value) => newItem.groupNames = value" :multiple="true" filterType="Group"></item-picker>
+          <item-picker key="newItem-groups" title="Parent Group(s)" name="parent-groups" :value="newItem.groupNames" @input="(value) => newItem.groupNames = value" :multiple="true" filterType="Group" />
         </f7-list>
       </f7-col>
 
@@ -69,7 +70,7 @@
       </f7-block> -->
 
       <f7-block v-if="!ready" class="text-align-center">
-        <f7-preloader></f7-preloader>
+        <f7-preloader />
         <div>Loading...</div>
       </f7-block>
 
@@ -78,14 +79,16 @@
         <f7-block-title>Profile</f7-block-title>
         <f7-block-footer class="padding-left padding-right">
           Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
-          <f7-link external color="blue" target="_blank" href="https://www.openhab.org/link/profiles">Learn more about profiles.</f7-link>
+          <f7-link external color="blue" target="_blank" href="https://www.openhab.org/link/profiles">
+            Learn more about profiles.
+          </f7-link>
         </f7-block-footer>
         <f7-list>
           <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="(No Profile)" name="profile-type" />
           <f7-list-item radio v-for="profileType in profileTypes"
                         :value="profileType.uid"
                         @change="onProfileTypeChange(profileType.uid)"
-                        :key="profileType.uid" :title="profileType.label" name="profile-type"></f7-list-item>
+                        :key="profileType.uid" :title="profileType.label" name="profile-type" />
         </f7-list>
       </f7-col>
       <f7-col v-if="profileTypeConfiguration != null">
@@ -93,17 +96,17 @@
         <config-sheet ref="profileConfiguration"
                       :parameter-groups="profileTypeConfiguration.parameterGroups"
                       :parameters="profileTypeConfiguration.parameters"
-                      :configuration="configuration"
-        />
+                      :configuration="configuration" />
       </f7-col>
     </f7-block>
 
     <div v-if="ready && profileTypes.length" class="if-aurora display-flex justify-content-center padding margin">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save">Link</f7-button>
+        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save">
+          Link
+        </f7-button>
       </div>
     </div>
-
   </f7-page>
 </template>
 

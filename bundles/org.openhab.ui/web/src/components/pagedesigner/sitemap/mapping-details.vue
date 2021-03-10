@@ -3,14 +3,14 @@
     <f7-card-content v-if="mappings.length">
       <f7-list inline-labels sortable @sortable:sort="onSort">
         <f7-list-input v-for="(mapping, idx) in mappings" :key="idx"
-                       :label="`#${idx+1}`" type="text" placeholder="command=Label" :value="mapping" @input="updateMapping(idx, $event)" clear-button>
-        </f7-list-input>
+                       :label="`#${idx+1}`" type="text" placeholder="command=Label" :value="mapping" @input="updateMapping(idx, $event)" clear-button />
       </f7-list>
     </f7-card-content>
     <f7-card-footer key="item-card-buttons-edit-mode" v-if="widget.component !== 'Sitemap'">
-      <f7-button color="blue" @click="addMapping">Add</f7-button>
+      <f7-button color="blue" @click="addMapping">
+        Add
+      </f7-button>
     </f7-card-footer>
-
   </f7-card>
 </template>
 

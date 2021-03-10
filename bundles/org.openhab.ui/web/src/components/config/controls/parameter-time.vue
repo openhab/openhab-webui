@@ -10,7 +10,7 @@
       :clear-button="!configDescription.required"
       @input="updateValue" />
     <div slot="content-end" class="display-flex justify-content-center">
-      <div ref="picker"></div>
+      <div ref="picker" />
     </div>
   </ul>
 </template>
@@ -44,8 +44,8 @@ export default {
           // Hours
           {
             values: (function () {
-              var arr = []
-              for (var i = 0; i <= 23; i++) { arr.push(i < 10 ? `0${i}` : i) }
+              let arr = []
+              for (let i = 0; i <= 23; i++) { arr.push(i < 10 ? `0${i}` : i) }
               return arr
             })()
           },
@@ -57,8 +57,8 @@ export default {
           // Minutes
           {
             values: (function () {
-              var arr = []
-              for (var i = 0; i <= 59; i++) { arr.push(i < 10 ? `0${i}` : i) }
+              let arr = []
+              for (let i = 0; i <= 59; i++) { arr.push(i < 10 ? `0${i}` : i) }
               return arr
             })()
           }

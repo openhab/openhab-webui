@@ -5,11 +5,11 @@
     <f7-list-item v-else :title="configDescription.label" :after="(value !== undefined && value !== null) ? value.toString() : 'N/A'" />
     <f7-block-footer slot="after-list" class="param-description">
       <div v-if="status" class="param-status-info">
-        <f7-chip v-if="status.type !== 'INFORMATION'" :color="status.type === 'WARNING' ? 'orange' : (status.type === 'ERROR') ? 'red' : 'gray'" style="float: right" :text="status.type"></f7-chip>
-        <span v-if="status.statusCode">Status Code: &nbsp;{{status.statusCode}}&nbsp;&nbsp;</span>
-        <span v-if="status.message">{{status.message}}</span>
+        <f7-chip v-if="status.type !== 'INFORMATION'" :color="status.type === 'WARNING' ? 'orange' : (status.type === 'ERROR') ? 'red' : 'gray'" style="float: right" :text="status.type" />
+        <span v-if="status.statusCode">Status Code: &nbsp;{{ status.statusCode }}&nbsp;&nbsp;</span>
+        <span v-if="status.message">{{ status.message }}</span>
       </div>
-      <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${configDescription.description || ''}`"></small>
+      <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${configDescription.description || ''}`" />
     </f7-block-footer>
   </f7-list>
 </template>

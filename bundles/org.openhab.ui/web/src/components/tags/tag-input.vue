@@ -4,7 +4,7 @@
       <f7-list-item>
         <div slot="inner">
           <f7-chip v-for="tag in item.tags.filter((t) => !isSemanticTag(t))" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="blue">
-            <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill"></f7-icon>
+            <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
           </f7-chip>
         </div>
       </f7-list-item>
@@ -17,9 +17,8 @@
         @blur="addTag()"
         @keyPressed.native="keyPressed"
         :input="false"
-        class="add-tag-input"
-      >
-        <input slot="input" type="text" placeholder="Add tag" @keypress="keyPressed" />
+        class="add-tag-input">
+        <input slot="input" type="text" placeholder="Add tag" @keypress="keyPressed">
       </f7-list-input>
     </f7-list>
   </div>

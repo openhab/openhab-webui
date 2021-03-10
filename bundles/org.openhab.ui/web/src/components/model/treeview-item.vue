@@ -12,9 +12,10 @@
                          :model="node"
                          @selected="(event) => $emit('selected', event)"
                          :selected="selected"
-                         @checked="(item, check) => $emit('checked', item, check)"
-    />
-    <div slot="label" class="semantic-class"> {{className()}}</div>
+                         @checked="(item, check) => $emit('checked', item, check)" />
+    <div slot="label" class="semantic-class">
+      {{ className() }}
+    </div>
     <f7-checkbox slot="content-start" v-if="model.checkable"
                  :checked="model.checked === true" :disabled="model.disabled" @change="check" />
   </f7-treeview-item>
@@ -56,8 +57,8 @@ export default {
         ((property) ? ' (' + property.replace('Property_', '') + ')' : '')
     },
     select (event) {
-      var self = this
-      var $ = self.$$
+      let self = this
+      let $ = self.$$
       if ($(event.target).is('.treeview-toggle')) return
       if ($(event.target).is('.checkbox') || $(event.target).is('.icon-checkbox') || $(event.target).is('input')) return
       this.$emit('selected', this.model)

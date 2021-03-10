@@ -7,16 +7,14 @@
           data-searchbar=".searchbar-demo"
           icon-ios="f7:search_strong"
           icon-aurora="f7:search_strong"
-          icon-md="material:search"
-        ></f7-link>
+          icon-md="material:search" />
       </f7-nav-right>
       <f7-searchbar
         class="searchbar-demo"
         expandable
         search-container=".search-list"
         search-in=".item-title"
-        :disable-button="!$theme.aurora"
-      ></f7-searchbar>
+        :disable-button="!$theme.aurora" />
     </f7-navbar>
     <f7-block class="block-narrow after-big-title settings-menu" v-show="addonsLoaded && servicesLoaded">
       <f7-row>
@@ -32,7 +30,7 @@
               :after="(inboxCount > 0) ? undefined : thingsCount"
               :badge-color="inboxCount ? 'red' : 'blue'"
               :footer="objectsSubtitles.things">
-              <f7-icon slot="media" f7="lightbulb" color="gray"></f7-icon>
+              <f7-icon slot="media" f7="lightbulb" color="gray" />
             </f7-list-item>
             <f7-list-item
               v-if="$store.getters.apiEndpoint('items')"
@@ -41,7 +39,7 @@
               title="Model"
               badge-color="blue"
               :footer="objectsSubtitles.model">
-              <f7-icon slot="media" f7="list_bullet_indent" color="gray"></f7-icon>
+              <f7-icon slot="media" f7="list_bullet_indent" color="gray" />
             </f7-list-item>
             <f7-list-item
               v-if="$store.getters.apiEndpoint('items')"
@@ -51,7 +49,7 @@
               :after="itemsCount"
               badge-color="blue"
               :footer="objectsSubtitles.items">
-              <f7-icon slot="media" f7="square_on_circle" color="gray"></f7-icon>
+              <f7-icon slot="media" f7="square_on_circle" color="gray" />
             </f7-list-item>
             <f7-list-item
               v-if="$store.getters.apiEndpoint('ui')"
@@ -60,10 +58,12 @@
               :after="$store.getters.pages.length + sitemapsCount"
               badge-color="blue"
               :footer="objectsSubtitles.pages">
-              <f7-icon slot="media" f7="tv" color="gray"></f7-icon>
+              <f7-icon slot="media" f7="tv" color="gray" />
             </f7-list-item>
           </f7-list>
-          <f7-block-title v-if="$store.getters.apiEndpoint('rules')">Automation</f7-block-title>
+          <f7-block-title v-if="$store.getters.apiEndpoint('rules')">
+            Automation
+          </f7-block-title>
           <f7-list media-list class="search-list">
             <f7-list-item
               media-item
@@ -71,7 +71,7 @@
               title="Rules"
               badge-color="blue"
               :footer="objectsSubtitles.rules">
-              <f7-icon slot="media" f7="wand_stars" color="gray"></f7-icon>
+              <f7-icon slot="media" f7="wand_stars" color="gray" />
             </f7-list-item>
             <f7-list-item
               media-item
@@ -79,7 +79,7 @@
               title="Scripts"
               badge-color="blue"
               :footer="objectsSubtitles.scripts">
-              <f7-icon slot="media" f7="doc_plaintext" color="gray"></f7-icon>
+              <f7-icon slot="media" f7="doc_plaintext" color="gray" />
             </f7-list-item>
             <f7-list-item
               media-item
@@ -87,13 +87,14 @@
               title="Schedule"
               badge-color="blue"
               :footer="objectsSubtitles.schedule">
-              <f7-icon slot="media" f7="calendar" color="gray"></f7-icon>
+              <f7-icon slot="media" f7="calendar" color="gray" />
             </f7-list-item>
           </f7-list>
-          <f7-block-title v-if="$store.getters.apiEndpoint('addons') && addonsLoaded">Add-ons</f7-block-title>
+          <f7-block-title v-if="$store.getters.apiEndpoint('addons') && addonsLoaded">
+            Add-ons
+          </f7-block-title>
           <f7-list media-list class="search-list"
-                   v-if="$store.getters.apiEndpoint('addons')"
-          >
+                   v-if="$store.getters.apiEndpoint('addons')">
             <f7-list-item
               media-item
               v-for="type in addonTypes"
@@ -101,7 +102,7 @@
               :link="'addons/' + type.id"
               :title="type.label"
               :footer="addonsSubtitles[type.id]">
-              <f7-icon slot="media" :f7="addonsIcons[type.id]" color="gray"></f7-icon>
+              <f7-icon slot="media" :f7="addonsIcons[type.id]" color="gray" />
             </f7-list-item>
           </f7-list>
         </f7-col>
@@ -112,8 +113,7 @@
               v-for="service in systemServices"
               :key="service.id"
               :link="'services/' + service.id"
-              :title="service.label"
-            ></f7-list-item>
+              :title="service.label" />
           </f7-list>
           <f7-block-title>Other Services</f7-block-title>
           <f7-list class="search-list">
@@ -121,12 +121,13 @@
               v-for="service in otherServices"
               :key="service.id"
               :link="'services/' + service.id"
-              :title="service.label"
-            ></f7-list-item>
+              :title="service.label" />
           </f7-list>
         </f7-col>
       </f7-row>
-      <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center"><small v-t="'admin.notTranslatedYet'"></small></f7-block-footer>
+      <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
+        <small v-t="'admin.notTranslatedYet'" />
+      </f7-block-footer>
     </f7-block>
   </f7-page>
 </template>

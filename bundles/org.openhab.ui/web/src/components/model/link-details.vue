@@ -8,13 +8,15 @@
                         :badge="thingStatusBadgeText(l.thing.statusInfo)"
                         :badge-color="thingStatusBadgeColor(l.thing.statusInfo)"
                         link="#" @click="editLink(l)">
-            <span slot="media" class="item-initial">{{!l._invalid && l.channel.label ? l.channel.label[0] : '?'}}</span>
+            <span slot="media" class="item-initial">{{ !l._invalid && l.channel.label ? l.channel.label[0] : '?' }}</span>
           </f7-list-item>
         </ul>
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
-      <f7-button color="blue" @click="addLink">Add Link</f7-button>
+      <f7-button color="blue" @click="addLink">
+        Add Link
+      </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>

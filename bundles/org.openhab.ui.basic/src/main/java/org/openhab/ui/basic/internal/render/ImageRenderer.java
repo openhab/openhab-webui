@@ -14,7 +14,6 @@ package org.openhab.ui.basic.internal.render;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -63,13 +62,13 @@ public class ImageRenderer extends AbstractWidgetRenderer {
         String snippet = (image.getChildren().size() > 0) ? getSnippet("image_link") : getSnippet("image");
 
         if (image.getRefresh() > 0) {
-            snippet = StringUtils.replace(snippet, "%update_interval%", Integer.toString(image.getRefresh()));
+            snippet = snippet.replace("%update_interval%", Integer.toString(image.getRefresh()));
         } else {
-            snippet = StringUtils.replace(snippet, "%update_interval%", "0");
+            snippet = snippet.replace("%update_interval%", "0");
         }
 
         String widgetId = itemUIRegistry.getWidgetId(w);
-        snippet = StringUtils.replace(snippet, "%id%", widgetId);
+        snippet = snippet.replace("%id%", widgetId);
         snippet = preprocessSnippet(snippet, w);
 
         boolean validUrl = isValidURL(image.getUrl());
@@ -90,10 +89,10 @@ public class ImageRenderer extends AbstractWidgetRenderer {
             url = URL_NONE_ICON;
             ignoreRefresh = true;
         }
-        snippet = StringUtils.replace(snippet, "%valid_url%", validUrl ? "true" : "false");
-        snippet = StringUtils.replace(snippet, "%proxied_url%", proxiedUrl);
-        snippet = StringUtils.replace(snippet, "%ignore_refresh%", ignoreRefresh ? "true" : "false");
-        snippet = StringUtils.replace(snippet, "%url%", url);
+        snippet = snippet.replace("%valid_url%", validUrl ? "true" : "false");
+        snippet = snippet.replace("%proxied_url%", proxiedUrl);
+        snippet = snippet.replace("%ignore_refresh%", ignoreRefresh ? "true" : "false");
+        snippet = snippet.replace("%url%", url);
 
         sb.append(snippet);
         return ECollections.emptyEList();
