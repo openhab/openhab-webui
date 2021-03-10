@@ -586,7 +586,7 @@ export default {
       this.currentModule = mod
       this.currentModuleType = mod.type
       this.cronExpression = mod.configuration.cronExpression
-      import(/* webpackChunkName: cronexpression-editor */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
+      import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
         const popup = {
           component: c.default
         }

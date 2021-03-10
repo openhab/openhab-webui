@@ -19,7 +19,6 @@
         {{ translation }}
       </div>
     </f7-list-input>
-    <!-- <cron-editor :value="value" :opened="popupOpened" :popup-id="`config-${configDescription.name}-fullscreen`" @closed="popupOpened = false" @input="(value) => { $emit('input', value) }" /> -->
   </ul>
 </template>
 
@@ -37,7 +36,7 @@ export default {
       this.$emit('input', value)
     },
     openPopup () {
-      import(/* webpackChunkName: cronexpression-editor */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
+      import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
         const popup = {
           component: c.default
         }
