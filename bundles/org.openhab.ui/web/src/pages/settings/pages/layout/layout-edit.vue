@@ -135,7 +135,7 @@ import { compareItems } from '@/components/widgets/widget-order'
 export default {
   mixins: [PageDesigner],
   components: {
-    'editor': () => import('@/components/config/controls/script-editor.vue'),
+    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     OhLayoutPage,
     PageSettings
   },

@@ -138,7 +138,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 export default {
   mixins: [PageDesigner],
   components: {
-    'editor': () => import('@/components/config/controls/script-editor.vue'),
+    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     OhPlanPage,
     PageSettings,
     ConfigSheet
