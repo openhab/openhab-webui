@@ -9,10 +9,10 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar v-if="ready" tabbar position="top">
-      <f7-link v-if="!generic" @click="currentTab = 'config'; fromYaml()" :tab-link-active="currentTab === 'config'" class="tab-link">
+      <f7-link v-if="!generic" @click="switchTab('config', fromYaml)" :tab-link-active="currentTab === 'config'" class="tab-link">
         Config
       </f7-link>
-      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">
         Code
       </f7-link>
     </f7-toolbar>
