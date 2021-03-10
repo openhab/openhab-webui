@@ -180,7 +180,6 @@ import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import TagInput from '@/components/tags/tag-input.vue'
 
 import RuleModulePopup from './rule-module-popup.vue'
-import CronEditor from '@/components/config/controls/cronexpression-editor.vue'
 
 import ModuleDescriptionSuggestions from './module-description-suggestions'
 import RuleStatus from '@/components/rule/rule-status-mixin'
@@ -587,27 +586,29 @@ export default {
       this.currentModule = mod
       this.currentModuleType = mod.type
       this.cronExpression = mod.configuration.cronExpression
-      const popup = {
-        component: CronEditor
-      }
-      this.$f7router.navigate({
-        url: 'cron-edit',
-        route: {
-          path: 'cron-edit',
-          popup
+      import(/* webpackChunkName: cronexpression-editor */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
+        const popup = {
+          component: c.default
         }
-      }, {
-        props: {
-          value: this.cronExpression
-        }
-      })
+        this.$f7router.navigate({
+          url: 'cron-edit',
+          route: {
+            path: 'cron-edit',
+            popup
+          }
+        }, {
+          props: {
+            value: this.cronExpression
+          }
+        })
 
-      this.$f7.once('cronEditorUpdate', this.updateCronExpression)
-      this.$f7.once('cronEditorClosed', () => {
-        this.$f7.off('cronEditorUpdate', this.updateCronExpression)
-        this.$nextTick(() => {
-          this.currentModule = null
-          this.currentModuleType = null
+        this.$f7.once('cronEditorUpdate', this.updateCronExpression)
+        this.$f7.once('cronEditorClosed', () => {
+          this.$f7.off('cronEditorUpdate', this.updateCronExpression)
+          this.$nextTick(() => {
+            this.currentModule = null
+            this.currentModuleType = null
+          })
         })
       })
     },

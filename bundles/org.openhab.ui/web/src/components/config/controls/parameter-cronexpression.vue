@@ -24,7 +24,6 @@
 </template>
 
 <script>
-import CronEditorPopup from './cronexpression-editor.vue'
 import cronstrue from 'cronstrue'
 
 export default {
@@ -38,25 +37,27 @@ export default {
       this.$emit('input', value)
     },
     openPopup () {
-      const popup = {
-        component: CronEditorPopup
-      }
-
-      this.$f7router.navigate({
-        url: 'widget-code',
-        route: {
-          path: 'widget-code',
-          popup
+      import(/* webpackChunkName: cronexpression-editor */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
+        const popup = {
+          component: c.default
         }
-      }, {
-        props: {
-          value: this.value
-        }
-      })
 
-      this.$f7.once('cronEditorUpdate', this.updateValue)
-      this.$f7.once('cronEditorClosed', () => {
-        this.$f7.off('cronEditorUpdate', this.updateValue)
+        this.$f7router.navigate({
+          url: 'cron-edit',
+          route: {
+            path: 'cron-edit',
+            popup
+          }
+        }, {
+          props: {
+            value: this.value
+          }
+        })
+
+        this.$f7.once('cronEditorUpdate', this.updateValue)
+        this.$f7.once('cronEditorClosed', () => {
+          this.$f7.off('cronEditorUpdate', this.updateValue)
+        })
       })
     }
   },
