@@ -149,7 +149,7 @@ export default {
         tabs: this.page.slots.default
       })
     },
-    fromYaml (){
+    fromYaml () {
       try {
         const updatedTabs = YAML.parse(this.pageYaml)
         this.$set(this.page.slots, 'default', updatedTabs.tabs)
