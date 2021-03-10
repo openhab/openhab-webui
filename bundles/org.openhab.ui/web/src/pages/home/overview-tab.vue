@@ -52,6 +52,7 @@ export default {
   props: ['context', 'allowChat'],
   components: {
     OhLayoutPage,
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
     'habot': () => import(/* webpackChunkName: "habot" */ '../../components/home/habot.vue')
   },
   data () {

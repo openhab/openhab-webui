@@ -82,6 +82,9 @@
 import later from 'later-again'
 
 export default {
+  components: {
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+  },
   data () {
     return {
       ready: false,

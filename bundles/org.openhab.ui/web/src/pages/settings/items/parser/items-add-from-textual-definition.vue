@@ -146,6 +146,7 @@ import grammar from '@/assets/items-lexer.nearley'
 
 export default {
   components: {
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
   props: ['textualDefinition'],

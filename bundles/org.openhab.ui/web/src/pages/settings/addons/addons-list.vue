@@ -71,6 +71,7 @@ import AddonDetailsSheet from './addon-details-sheet.vue'
 
 export default {
   components: {
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
     AddonDetailsSheet
   },
   props: ['addonType'],

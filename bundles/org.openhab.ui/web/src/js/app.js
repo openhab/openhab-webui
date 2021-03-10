@@ -8,7 +8,6 @@ import SitemapWidgetGeneric from '../components/sitemap/widget-generic.vue'
 import OHIconComponent from '../components/widgets/system/oh-icon.vue'
 import ModelTreeviewItem from '../components/model/treeview-item.vue'
 import SitemapTreeviewItem from '../components/pagedesigner/sitemap/treeview-item.vue'
-import EmptyStatePlaceholder from '../components/empty-state-placeholder.vue'
 import GenericWidgetComponent from '../components/widgets/generic-widget-component.vue'
 
 // Import Framework7
@@ -80,5 +79,4 @@ Vue.component('sitemap-widget-generic', SitemapWidgetGeneric)
 Vue.component('oh-icon', OHIconComponent)
 Vue.component('model-treeview-item', ModelTreeviewItem)
 Vue.component('sitemap-treeview-item', SitemapTreeviewItem)
-Vue.component('empty-state-placeholder', EmptyStatePlaceholder)
 Vue.component('generic-widget-component', GenericWidgetComponent)

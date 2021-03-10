@@ -202,6 +202,7 @@ function compareModelItems (o1, o2) {
 
 export default {
   components: {
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
     ModelDetailsPane,
     ItemStatePreview,
     ItemDetails,

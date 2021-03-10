@@ -124,6 +124,9 @@ import thingStatus from '@/components/thing/thing-status-mixin'
 
 export default {
   mixins: [thingStatus],
+  components: {
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+  },
   data () {
     return {
       ready: false,
