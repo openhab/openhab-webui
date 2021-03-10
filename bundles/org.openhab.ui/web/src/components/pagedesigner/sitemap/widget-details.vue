@@ -27,7 +27,7 @@
           <f7-list-input v-if="supports('minValue')" label="Minimum" type="number" :value="widget.config.minValue" @input="updateParameter('minValue', $event)" clear-button />
           <f7-list-input v-if="supports('maxValue')" label="Maximum" type="number" :value="widget.config.maxValue" @input="updateParameter('maxValue', $event)" clear-button />
           <f7-list-input v-if="supports('step')" label="Step" type="number" :value="widget.config.step" @input="updateParameter('step', $event)" clear-button />
-          <f7-list-input v-if="supports('separator')" label="Separator" type="number" :value="widget.config.separator" @input="updateParameter('separator', $event)" clear-button />
+          <f7-list-input v-if="supports('separator')" label="Separator" type="text" :value="widget.config.separator" @input="updateParameter('separator', $event)" clear-button />
           <f7-list-item v-if="supports('switchEnabled')" title="Switch enabled">
             <f7-toggle slot="after" :checked="widget.config.switchEnabled" @toggle:change="widget.config.switchEnabled = $event" />
           </f7-list-item>
@@ -98,7 +98,7 @@ export default {
     },
     updateParameter (parameter, $event) {
       let value = $event.target.value
-      if (value && !isNaN(value)) {
+      if (value && $event.target.type === 'number' && !isNaN(value)) {
         value = parseFloat(value)
       }
       this.$set(this.widget.config, parameter, value)
