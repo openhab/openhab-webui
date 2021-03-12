@@ -1,16 +1,14 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
+  <f7-page @page:init="load" @page:reinit="load" @page:afterout="stopEventSource">
     <f7-navbar title="Items" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar :inner="false" v-show="ready">
         <f7-searchbar
-          v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-items"
-          :init="initSearchbar"
           search-container=".virtual-list"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
@@ -51,7 +49,7 @@
           </f7-list-group>
         </f7-list>
       </f7-col>
-      <f7-col v-if="ready">
+      <f7-col v-show="ready">
         <f7-block-title class="searchbar-hide-on-search">
           {{ items.length }} items
         </f7-block-title>
@@ -127,10 +125,8 @@ export default {
     if (this.$device.firefox) vlHeight += 1
     return {
       ready: false,
-      loading: false,
       items: [], // [{ label: 'Staircase', name: 'Staircase'}],
       indexedItems: {},
-      initSearchbar: false,
       vlData: {
         items: [],
         height: vlHeight
@@ -140,40 +136,30 @@ export default {
       eventSource: null
     }
   },
-  created () {
-
-  },
   methods: {
-    onPageAfterIn () {
-      this.load()
-    },
     load () {
-      if (this.loading) return
-      this.loading = true
+      this.ready = false
       this.$oh.api.get('/rest/items?metadata=semantics').then(data => {
         this.items = data.sort((a, b) => {
           const labelA = a.label || a.name
           const labelB = b.label || b.name
           return labelA.localeCompare(labelB)
         })
-        this.loading = false
-        if (this.ready) {
-          this.$refs.itemsList.f7VirtualList.replaceAllItems(this.items)
-          // this.$refs.itemsList.f7VirtualList.clearCache()
-          // this.$refs.itemsList.f7VirtualList.update()
-        } else {
-          this.ready = true
-        }
-
-        setTimeout(() => {
-          this.initSearchbar = true
-          this.$nextTick(() => {
-            if (this.$device.desktop && this.$refs.searchbar) {
-              this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
-            }
-          })
-        })
+        this.$refs.itemsList.f7VirtualList.replaceAllItems(this.items)
         if (!this.eventSource) this.startEventSource()
+
+        // replaceAllItems() overrides search, run again
+        let searchbarQuery = this.$refs.searchbar.f7Searchbar.query
+        this.$refs.searchbar.clear() // same search doesn't get re-executed, reset first
+        this.$refs.searchbar.search(searchbarQuery)
+
+        this.$nextTick(() => {
+          if (this.$device.desktop) {
+            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+          }
+        })
+
+        this.ready = true
       })
     },
     startEventSource () {
