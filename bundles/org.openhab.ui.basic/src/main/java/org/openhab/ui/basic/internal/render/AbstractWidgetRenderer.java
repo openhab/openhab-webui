@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.I18nUtil;
@@ -288,7 +288,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     }
 
     protected String escapeHtml(@Nullable String s) {
-        return StringEscapeUtils.escapeHtml(s);
+        return StringEscapeUtils.escapeHtml4(s);
     }
 
     @Override
