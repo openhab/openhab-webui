@@ -15,7 +15,7 @@ package org.openhab.ui.basic.internal.render;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
@@ -55,7 +55,7 @@ public class FrameRenderer extends AbstractWidgetRenderer {
     @Override
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         String snippet = getSnippet("frame");
-        String label = StringEscapeUtils.escapeHtml(itemUIRegistry.getLabel(w));
+        String label = StringEscapeUtils.escapeHtml4(itemUIRegistry.getLabel(w));
         List<String> frameClassList = new ArrayList<>();
 
         snippet = snippet.replace("%label%", label);

@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBElement;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.common.util.EList;
 import org.openhab.core.items.Item;
 import org.openhab.core.library.types.DecimalType;
