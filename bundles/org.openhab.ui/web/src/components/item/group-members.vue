@@ -7,17 +7,22 @@
             v-for="member in groupItem.members" :key="member.name"
             :item="member" :link="'/settings/items/' + member.name"
             :context="context"
-            :ignore-editable="true"
-          />
+            :ignore-editable="true" />
           <!-- <f7-list-button @click="enableEditMode" color="blue" title="Add or Remove Members" /> -->
         </ul>
         <item-picker v-if="editMembers" :multiple="true" name="groupMembers" :value="memberNames" title="Members" @input="(members) => memberNames = members" />
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
-      <f7-button color="blue" v-if="!editMembers" @click="enableEditMode">Change</f7-button>
-      <f7-button color="blue" v-if="editMembers" fill raised @click="updateMembers">Apply</f7-button>
-      <f7-button color="blue" v-if="editMembers" @click="cancelEditMode">Cancel</f7-button>
+      <f7-button color="blue" v-if="!editMembers" @click="enableEditMode">
+        Change
+      </f7-button>
+      <f7-button color="blue" v-if="editMembers" fill raised @click="updateMembers">
+        Apply
+      </f7-button>
+      <f7-button color="blue" v-if="editMembers" @click="cancelEditMode">
+        Cancel
+      </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>

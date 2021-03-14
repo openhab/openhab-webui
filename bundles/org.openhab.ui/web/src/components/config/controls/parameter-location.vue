@@ -8,10 +8,12 @@
       :placeholder="placeholder"
       :required="configDescription.required" validate
       :clear-button="!configDescription.required"
-      @input="updateValue"
+      @input="(ev) => updateValue(ev.target.value)"
       type="text">
       <div class="padding-left" slot="content-end">
-        <f7-button slot="content-end" @click="openMapPicker"><f7-icon f7="placemark" /> Map</f7-button>
+        <f7-button slot="content-end" @click="openMapPicker">
+          <f7-icon f7="placemark" /> Map
+        </f7-button>
       </div>
     </f7-list-input>
   </ul>
@@ -21,21 +23,17 @@
 </style>
 
 <script>
-import LocationPicker from './location-picker.vue'
+import LocationPickerPopup from './location-picker-popup.vue'
 
 export default {
   props: ['configDescription', 'value', 'placeholder'],
   methods: {
-    updateValue (event) {
-      if (event.lat && event.lng) {
-        this.$emit('input', [event.lat, event.lng].join(','))
-      } else {
-        this.$emit('input', event.target.value)
-      }
+    updateValue (position) {
+      this.$emit('input', position)
     },
     openMapPicker () {
       const popup = {
-        component: LocationPicker
+        component: LocationPickerPopup
       }
 
       this.$f7router.navigate({

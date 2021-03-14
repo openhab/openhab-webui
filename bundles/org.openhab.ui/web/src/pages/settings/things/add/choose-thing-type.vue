@@ -10,19 +10,22 @@
           search-container=".thing-type-list"
           search-item=".media-item"
           search-in=".item-title, .item-header, .item-footer"
-          :disable-button="!$theme.aurora"
-        ></f7-searchbar>
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col>
         <div v-if="discoverySupported" class="display-flex justify-content-center">
           <div class="flex-shrink-0">
-            <f7-button class="padding-left padding-right" style="width: 150px" :color="(scanning) ? 'red' : 'blue'" large raised fill @click="scan">{{(scanning) ? 'Stop Scanning' : 'Scan'}}</f7-button>
+            <f7-button class="padding-left padding-right" style="width: 150px" :color="(scanning) ? 'red' : 'blue'" large raised fill @click="scan">
+              {{ (scanning) ? 'Stop Scanning' : 'Scan' }}
+            </f7-button>
           </div>
         </div>
-        <p class="margin-left margin-right" style="height: 30px" id="scan-progress"></p>
-        <f7-block-title v-if="discoverySupported && scanResults.length">Discovered Things</f7-block-title>
+        <p class="margin-left margin-right" style="height: 30px" id="scan-progress" />
+        <f7-block-title v-if="discoverySupported && scanResults.length">
+          Discovered Things
+        </f7-block-title>
         <f7-list class="col thing-type-list" v-if="scanResults.length">
           <f7-list-item v-for="entry in scanResults"
                         :key="entry.thingUID"
@@ -31,9 +34,8 @@
                         media-item
                         :title="entry.label"
                         :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
-                        :footer="entry.thingUID">
-          </f7-list-item>
-          <f7-list-button v-show="scanResults.length > 1" title="Add All" @click="approveAll" color="blue"></f7-list-button>
+                        :footer="entry.thingUID" />
+          <f7-list-button v-show="scanResults.length > 1" title="Add All" @click="approveAll" color="blue" />
         </f7-list>
 
         <f7-block-title>Add Manually</f7-block-title>
@@ -46,9 +48,7 @@
               title="Label of the thing type"
               footer="This contains the description of the thing type"
               header="thingTypeUID"
-              media-item
-            >
-            </f7-list-item>
+              media-item />
           </ul>
           <ul v-else>
             <f7-list-item v-for="thingType in thingTypes"
@@ -58,12 +58,9 @@
                           :footer="thingType.description"
                           :header="thingType.UID"
                           :badge="thingType.bridge ? 'Bridge' : ''" badge-color="blue"
-                          media-item
-            >
-            </f7-list-item>
+                          media-item />
           </ul>
         </f7-list>
-
       </f7-col>
     </f7-block>
     <f7-block v-if="!loading && ready && !thingTypes.length" class="block-narrow">

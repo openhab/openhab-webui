@@ -27,7 +27,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.commons.lang.StringUtils;
 import org.openhab.ui.cometvisu.internal.backend.model.StateBean;
 
 /**
@@ -83,7 +82,7 @@ public class StateBeanMessageBodyWriter implements MessageBodyWriter<Object> {
                 }
             }
             if (states.size() > 0) {
-                msg += StringUtils.join(states, ",");
+                msg += String.join(",", states);
             }
         }
         msg += "}}";

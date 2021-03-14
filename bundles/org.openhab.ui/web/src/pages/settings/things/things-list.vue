@@ -3,7 +3,7 @@
     <f7-navbar title="Things" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -13,22 +13,27 @@
           :init="initSearchbar"
           search-container=".contacts-list"
           search-in=".item-inner"
-          :disable-button="!$theme.aurora"
-        ></f7-searchbar>
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">Remove {{selectedItems.length}}</f7-link>
-      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">&nbsp;Disable {{selectedItems.length}}</f7-link>
-      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">&nbsp;Enable {{selectedItems.length}}</f7-link>
-      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false"></f7-link>
+      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
+        Remove {{ selectedItems.length }}
+      </f7-link>
+      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">
+        &nbsp;Disable {{ selectedItems.length }}
+      </f7-link>
+      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
+        &nbsp;Enable {{ selectedItems.length }}
+      </f7-link>
+      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
-        {{selectedItems.length}} selected
+        {{ selectedItems.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)"></f7-link>
-        <f7-link v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)"></f7-link>
-        <f7-link v-show="selectedItems.length" tooltip="Remove selected" icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
+        <f7-link v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)" />
+        <f7-link v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)" />
+        <f7-link v-show="selectedItems.length" tooltip="Remove selected" icon-md="material:delete" icon-color="white" @click="removeSelected" />
       </div>
     </f7-toolbar>
 
@@ -37,19 +42,24 @@
       v-show="groupBy === 'alphabetical' && !$device.desktop"
       list-el=".things-list"
       :scroll-list="true"
-      :label="true"
-    ></f7-list-index>
+      :label="true" />
 
     <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found"></f7-list-item>
+      <f7-list-item title="Nothing found" />
     </f7-list>
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block-title class="searchbar-hide-on-search"><span v-if="ready">{{things.length}} things</span><span v-else>Loading...</span></f7-block-title>
+        <f7-block-title class="searchbar-hide-on-search">
+          <span v-if="ready">{{ things.length }} things</span><span v-else>Loading...</span>
+        </f7-block-title>
         <div class="searchbar-found padding-left padding-right" v-show="!ready || things.length > 0">
           <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">Alphabetical</f7-button>
-            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">By binding</f7-button>
+            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
+              Alphabetical
+            </f7-button>
+            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
+              By binding
+            </f7-button>
           </f7-segmented>
         </div>
         <f7-list v-if="!ready" contacts-list class="col things-list">
@@ -61,14 +71,12 @@
               :class="`skeleton-text skeleton-effect-blink`"
               title="Label of the thing"
               subtitle="This contains the thing UID"
-              after="status badge"
-            >
-            </f7-list-item>
+              after="status badge" />
           </f7-list-group>
         </f7-list>
         <f7-list v-else class="searchbar-found col things-list" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
-            <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title></f7-list-item>
+            <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title />
             <f7-list-item
               v-for="(thing, index) in thingsWithInitial"
               :key="index"
@@ -80,22 +88,21 @@
               @click.exact="(e) => click(e, thing)"
               link=""
               :title="thing.label || thing.UID"
-              :footer="thing.UID"
-            >
-              <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">{{thingStatusBadgeText(thing.statusInfo)}}</f7-badge>
-              <f7-icon v-if="!thing.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
+              :footer="thing.UID">
+              <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
+                {{ thingStatusBadgeText(thing.statusInfo) }}
+              </f7-badge>
+              <f7-icon v-if="!thing.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
             </f7-list-item>
           </f7-list-group>
         </f7-list>
-
       </f7-col>
     </f7-block>
     <f7-block v-if="ready && !things.length" class="block-narrow">
       <empty-state-placeholder icon="lightbulb" title="things.title" text="things.text" />
     </f7-block>
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus">
-      </f7-icon>
+      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <!-- <f7-fab-buttons position="top">
         <f7-fab-button label="Scan and add to Inbox">S</f7-fab-button>
         <f7-fab-button label="Add thing manually">M</f7-fab-button>
@@ -117,6 +124,9 @@ import thingStatus from '@/components/thing/thing-status-mixin'
 
 export default {
   mixins: [thingStatus],
+  components: {
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+  },
   data () {
     return {
       ready: false,

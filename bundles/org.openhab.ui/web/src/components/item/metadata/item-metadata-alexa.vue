@@ -1,25 +1,25 @@
 <template>
   <div>
     <div style="text-align:right" class="padding-right" v-if="itemType !== 'Group'">
-      <label @click="toggleMultiple" style="cursor:pointer">Multiple</label> <f7-checkbox :checked="multiple" @change="toggleMultiple"></f7-checkbox>
+      <label @click="toggleMultiple" style="cursor:pointer">Multiple</label> <f7-checkbox :checked="multiple" @change="toggleMultiple" />
     </div>
     <f7-list>
       <f7-list-item :key="classSelectKey"
                     :title="(multiple) ? 'Alexa Classes' : 'Alexa Class'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }" ref="classes">
         <select name="parameters" @change="updateClasses" :multiple="multiple">
-          <option v-if="!multiple" value=""></option>
+          <option v-if="!multiple" value="" />
           <optgroup label="Labels" v-if="!multiple && itemType !== 'Group'">
             <option v-for="cl in orderedClasses.filter((c) => c.indexOf('label:') === 0)"
                     :value="cl.replace('label:', '')" :key="cl"
                     :selected="isSelected(cl.replace('label:', ''))">
-              {{cl.replace('label:', '')}}
+              {{ cl.replace('label:', '') }}
             </option>
           </optgroup>
           <optgroup label="Capabilities">
             <option v-for="cl in orderedClasses.filter((c) => c.indexOf('label:') !== 0 && c.indexOf('endpoint:') === (itemType === 'Group'? 0 : -1))"
                     :value="cl.replace('endpoint:', '')" :key="cl"
                     :selected="isSelected(cl.replace('endpoint:', ''))">
-              {{cl.replace('endpoint:', '')}}
+              {{ cl.replace('endpoint:', '') }}
             </option>
           </optgroup>
         </select>
@@ -29,7 +29,9 @@
       <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" />
     </div>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" href="https://www.openhab.org/link/alexa">Alexa Integration Documentation</f7-link>
+      <f7-link color="blue" external target="_blank" href="https://www.openhab.org/link/alexa">
+        Alexa Integration Documentation
+      </f7-link>
     </p>
   </div>
 </template>

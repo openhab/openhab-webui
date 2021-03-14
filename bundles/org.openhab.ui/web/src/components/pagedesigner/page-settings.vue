@@ -2,26 +2,27 @@
   <f7-col>
     <f7-list inline-labels accordion-list no-hairline-md>
       <f7-list-input label="ID" type="text" placeholder="ID" :value="page.uid" @input="page.uid = $event.target.value"
-                     required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only" :disabled="!createMode">
-      </f7-list-input>
-      <f7-list-input label="Label" type="text" placeholder="Label" :value="page.config.label" @input="page.config.label = $event.target.value" clear-button>
-      </f7-list-input>
+                     required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only" :disabled="!createMode" />
+      <f7-list-input label="Label" type="text" placeholder="Label" :value="page.config.label" @input="page.config.label = $event.target.value" clear-button />
       <f7-list-item accordion-item title="Sidebar &amp; Visibility" :disabled="page.uid === 'overview'">
         <f7-accordion-content>
           <f7-list-item ref="pageVisibility" title="Visible only to" smart-select :smart-select-params="{openIn: 'popover'}">
             <select name="pagevisibility" multiple @change="updatePageVisibility">
               <optgroup label="Roles">
-                <option value="role:administrator" :selected="isVisibleTo('role:administrator')">Administrators</option>
-                <option value="role:user" :selected="isVisibleTo('role:user')">Users</option>
+                <option value="role:administrator" :selected="isVisibleTo('role:administrator')">
+                  Administrators
+                </option>
+                <option value="role:user" :selected="isVisibleTo('role:user')">
+                  Users
+                </option>
               </optgroup>
             </select>
           </f7-list-item>
           <f7-list inline-labels no-hairline-md>
             <f7-list-item title="Show on sidebar">
-              <f7-toggle slot="after" :checked="page.config.sidebar" @toggle:change="page.config.sidebar = $event"></f7-toggle>
+              <f7-toggle slot="after" :checked="page.config.sidebar" @toggle:change="page.config.sidebar = $event" />
             </f7-list-item>
-            <f7-list-input label="Sidebar order" type="number" placeholder="Assign order index to rearrange pages on sidebar" :value="page.config.order" @input="page.config.order = $event.target.value" clear-button>
-            </f7-list-input>
+            <f7-list-input label="Sidebar order" type="number" placeholder="Assign order index to rearrange pages on sidebar" :value="page.config.order" @input="page.config.order = $event.target.value" clear-button />
           </f7-list>
         </f7-accordion-content>
       </f7-list-item>

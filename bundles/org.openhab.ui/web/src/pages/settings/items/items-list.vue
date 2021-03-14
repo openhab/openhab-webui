@@ -3,7 +3,7 @@
     <f7-navbar title="Items" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="($theme.ios) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+                 :text="($theme.ios) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <!-- <f7-nav-right>
         <f7-link
@@ -28,13 +28,12 @@
           :init="initSearchbar"
           search-container=".contacts-list"
           search-in=".item-title"
-          :disable-button="!$theme.aurora"
-        ></f7-searchbar>
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" v-if="showCheckboxes" bottom-ios>
-      <f7-link icon-md="material:close" @click="showCheckboxes = false"></f7-link>
-      <f7-link icon-md="material:delete"></f7-link>
+      <f7-link icon-md="material:close" @click="showCheckboxes = false" />
+      <f7-link icon-md="material:delete" />
     </f7-toolbar>
 
     <f7-list-index
@@ -42,15 +41,14 @@
       v-show="!$device.desktop"
       list-el=".items-list"
       :scroll-list="true"
-      :label="true"
-    ></f7-list-index>
+      :label="true" />
 
     <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found"></f7-list-item>
+      <f7-list-item title="Nothing found" />
     </f7-list>
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block-title>{{items.length}} items</f7-block-title>
+        <f7-block-title>{{ items.length }} items</f7-block-title>
       </f7-col>
       <f7-list v-if="loading" contacts-list class="col">
         <f7-list-group>
@@ -61,22 +59,18 @@
             :class="`skeleton-text skeleton-effect-blink`"
             title="Label of the item"
             subtitle="This contains the name of the item"
-            after="The item type"
-          >
-          </f7-list-item>
+            after="The item type" />
         </f7-list-group>
       </f7-list>
       <f7-list v-else class="searchbar-found col items-list" contacts-list>
         <f7-list-group v-for="(itemsWithInitial, initial) in indexedItems" :key="initial">
-          <f7-list-item v-if="itemsWithInitial.length" :title="initial" group-title></f7-list-item>
+          <f7-list-item v-if="itemsWithInitial.length" :title="initial" group-title />
           <f7-list-item v-for="item in itemsWithInitial" :checkbox="showCheckboxes" :key="item.name"
                         media-item
                         :link="showCheckboxes ? null : item.name"
                         :title="(item.label) ? item.label : item.name"
                         :subtitle="(item.label) ? item.name : ''"
-                        :after="item.type"
-          >
-          </f7-list-item>
+                        :after="item.type" />
         </f7-list-group>
       </f7-list>
     </f7-block>
@@ -88,8 +82,8 @@
       </f7-col>
     </f7-block>-->
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
+      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+      <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
     </f7-fab>
   </f7-page>
 </template>
@@ -138,7 +132,7 @@ export default {
     searchAll (query, items) {
       const found = []
       for (let i = 0; i < items.length; i += 1) {
-        var haystack = items[i].name
+        let haystack = items[i].name
         if (items[i].label) haystack += ' ' + items[i].label
         if (haystack.toLowerCase().indexOf(query.toLowerCase()) >= 0 || query.trim() === '') {
           found.push(i)

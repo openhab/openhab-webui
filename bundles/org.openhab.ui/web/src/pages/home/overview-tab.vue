@@ -6,12 +6,11 @@
     <f7-block class="block-narrow">
       <habot v-if="showHABot" @session-started="inChatSession = true" @session-end="inChatSession = false" />
       <other-apps v-if="showApps" />
-      <f7-col>
-      </f7-col>
+      <f7-col />
     </f7-block>
 
     <f7-block v-if="!$store" class="text-align-center">
-      <f7-preloader></f7-preloader>
+      <f7-preloader />
       <div>Loading...</div>
     </f7-block>
 
@@ -19,13 +18,12 @@
     <div class="empty-overview" v-else-if="!inChatSession">
       <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
       <f7-row class="display-flex justify-content-center">
-        <f7-button large fill color="blue" external href="https://openhab.org/link/docs" target="_blank" v-t="'home.overview.button.documentation'"></f7-button>
-        <span style="width: 8px"></span>
-        <f7-button large color="blue" external href="https://openhab.org/link/tutorial" target="_blank" v-t="'home.overview.button.tutorial'"></f7-button>
+        <f7-button large fill color="blue" external href="https://openhab.org/link/docs" target="_blank" v-t="'home.overview.button.documentation'" />
+        <span style="width: 8px" />
+        <f7-button large color="blue" external href="https://openhab.org/link/tutorial" target="_blank" v-t="'home.overview.button.tutorial'" />
       </f7-row>
     </div>
   </div>
-
 </template>
 
 <style lang="stylus">
@@ -49,13 +47,13 @@
 // import OtherApps from '../../components/home/other-apps.vue'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
-import Habot from '../../components/home/habot.vue'
 
 export default {
   props: ['context', 'allowChat'],
   components: {
     OhLayoutPage,
-    Habot
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
+    'habot': () => import(/* webpackChunkName: "habot" */ '../../components/home/habot.vue')
   },
   data () {
     return {

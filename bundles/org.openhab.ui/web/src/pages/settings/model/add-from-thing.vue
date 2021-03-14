@@ -2,14 +2,18 @@
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Add Items from Thing" back-link="Back">
       <f7-nav-right class="if-not-aurora">
-        <f7-link @click="add()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="add()" v-if="!$theme.md">Add</f7-link>
+        <f7-link @click="add()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="add()" v-if="!$theme.md">
+          Add
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
 
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block-title v-if="parent || thingId">Parent Group</f7-block-title>
+        <f7-block-title v-if="parent || thingId">
+          Parent Group
+        </f7-block-title>
         <f7-list media-list v-if="parent">
           <ul>
             <item :item="parent.item" />
@@ -24,7 +28,9 @@
           </ul>
           <f7-list-item v-else title="Pick From Model" link @click="openModelPicker" />
         </f7-list>
-        <f7-block-title v-if="selectedThing.statusInfo">Source Thing</f7-block-title>
+        <f7-block-title v-if="selectedThing.statusInfo">
+          Source Thing
+        </f7-block-title>
         <f7-list v-if="selectedThing.statusInfo" media-list>
           <f7-list-item
             :title="selectedThing.label"
@@ -32,7 +38,9 @@
             :badge="thingStatusBadgeText(selectedThing.statusInfo)"
             :badge-color="thingStatusBadgeColor(selectedThing.statusInfo)" />
         </f7-list>
-        <f7-block-title v-if="createEquipment">Equipment</f7-block-title>
+        <f7-block-title v-if="createEquipment">
+          Equipment
+        </f7-block-title>
         <f7-block-footer v-if="createEquipment && !thingId" class="padding-left padding-right">
           Select the Thing you wish to create as a new Equipment group in the model. It will be placed under the parent group above, if any.
           You can alter the new group's details and change its equipment class.
@@ -48,7 +56,7 @@
           <thing-picker title="Thing" name="thing" :value="selectedThingId" @input="(e) => selectedThingId = e" />
         </f7-list>
         <f7-block v-if="!ready" class="text-align-center">
-          <f7-preloader></f7-preloader>
+          <f7-preloader />
           <div>Loading...</div>
         </f7-block>
         <div v-else-if="selectedThing.UID && selectedThingType.UID">
@@ -56,10 +64,12 @@
           <f7-block-title>Channels</f7-block-title>
           <f7-block-footer class="padding-left padding-right">
             Check the channels you wish to create as new Point items.
-            You can alter the suggested names and labels as well as the semantic class and related property.<br /><br />
+            You can alter the suggested names and labels as well as the semantic class and related property.<br><br>
             The newly created Points will be linked to their respective channels with the default profile
             (you will be able to configure the links individually later if needed).
-            <f7-link class="display-block margin-top-half" @click="switchToExpertMode" color="blue">Expert Mode</f7-link>
+            <f7-link class="display-block margin-top-half" @click="switchToExpertMode" color="blue">
+              Expert Mode
+            </f7-link>
           </f7-block-footer>
           <channel-list :thing="selectedThing" :thingType="selectedThingType" :channelTypes="selectedThingChannelTypes"
                         :multiple-links-mode="true" :new-items-prefix="(createEquipment) ? newEquipmentItem.name : (parentGroup) ? parentGroup.name : ''"
@@ -70,10 +80,11 @@
 
     <div v-if="ready && selectedThing.UID" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="add">Add to Model</f7-button>
+        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="add">
+          Add to Model
+        </f7-button>
       </div>
     </div>
-
   </f7-page>
 </template>
 

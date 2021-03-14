@@ -4,19 +4,19 @@
       <div class="col">
         <editor :value="sitemapDsl" @input="updateSitemap" mode="application/vnd.openhab.sitemap+dsl" />
       </div>
-      <span class="resize-handler"></span>
+      <span class="resize-handler" />
     </div>
     <div class="row sitemap-results resizable">
       <div class="col">
         <div v-if="parsedSitemap.error" class="error">
-          <pre><code class="text-color-red">{{parsedSitemap.error}}</code></pre>
+          <pre><code class="text-color-red">{{ parsedSitemap.error }}</code></pre>
         </div>
         <div v-else>
           <pre><code class="text-color-teal">Your sitemap definition looks valid.</code></pre>
-          <pre><code>{{parsedSitemap}}</code></pre>
+          <pre><code>{{ parsedSitemap }}</code></pre>
         </div>
       </div>
-      <span class="resize-handler"></span>
+      <span class="resize-handler" />
     </div>
   </f7-block>
 </template>
@@ -53,7 +53,7 @@ import dslUtil from './dslUtil'
 
 export default {
   components: {
-    'editor': () => import('@/components/config/controls/script-editor.vue')
+    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
   props: ['sitemap'],
   data () {

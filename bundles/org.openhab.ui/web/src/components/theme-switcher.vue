@@ -1,6 +1,6 @@
 <template>
   <f7-block>
-    <f7-block-title class="padding-left" v-t="'about.theme'"></f7-block-title>
+    <f7-block-title class="padding-left" v-t="'about.theme'" />
     <f7-row>
       <f7-col width="25" class="theme-picker auto" @click="switchTheme('auto')">
         <span class="text-color-gray" v-t="'about.theme.auto'">Auto</span>
@@ -19,56 +19,56 @@
         <f7-checkbox checked disabled v-if="theme === 'aurora'" />
       </f7-col>
     </f7-row>
-    <f7-block-title v-t="'about.darkMode'"></f7-block-title>
+    <f7-block-title v-t="'about.darkMode'" />
     <f7-row>
       <f7-col width="33" class="theme-picker auto" @click="setThemeDark('auto')">
-        <span class="text-color-gray" v-t="'about.darkMode.auto'"></span>
+        <span class="text-color-gray" v-t="'about.darkMode.auto'" />
         <f7-checkbox checked disabled v-if="darkMode === 'auto'" />
       </f7-col>
       <f7-col width="33" class="bg-color-white theme-picker" @click="setThemeDark('light')">
-        <span class="text-color-gray" v-t="'about.darkMode.light'"></span>
+        <span class="text-color-gray" v-t="'about.darkMode.light'" />
         <f7-checkbox checked disabled v-if="darkMode === 'light'" />
       </f7-col>
       <f7-col width="33" class="bg-color-black theme-picker" @click="setThemeDark('dark')">
-        <span class="text-color-gray" v-t="'about.darkMode.dark'"></span>
+        <span class="text-color-gray" v-t="'about.darkMode.dark'" />
         <f7-checkbox checked disabled v-if="darkMode === 'dark'" />
       </f7-col>
     </f7-row>
-    <f7-block-title v-t="'about.navigationBarsStyle'"></f7-block-title>
+    <f7-block-title v-t="'about.navigationBarsStyle'" />
     <f7-row>
       <f7-col width="50" class="nav-bars-picker nav-bars-picker-fill" @click="setBarsStyle('filled')">
-        <div class="demo-navbar"></div>
+        <div class="demo-navbar" />
         <f7-checkbox checked disabled v-if="barsStyle === 'filled'" />
       </f7-col>
       <f7-col width="50" class="nav-bars-picker nav-bars-picker-empty" @click="setBarsStyle('light')">
-        <div class="demo-navbar"></div>
+        <div class="demo-navbar" />
         <f7-checkbox checked disabled v-if="barsStyle === 'light'" />
       </f7-col>
     </f7-row>
 
     <f7-row>
       <f7-col>
-        <f7-block-title v-t="'about.miscellaneous'"></f7-block-title>
+        <f7-block-title v-t="'about.miscellaneous'" />
         <f7-list>
           <f7-list-item>
-            <span v-t="'about.miscellaneous.home.navbar'"></span>
-            <f7-toggle :checked="homePageNavbarStyle === 'simple'" @toggle:change="setHomePageNavbarStyle"></f7-toggle>
+            <span v-t="'about.miscellaneous.home.navbar'" />
+            <f7-toggle :checked="homePageNavbarStyle === 'simple'" @toggle:change="setHomePageNavbarStyle" />
           </f7-list-item>
           <f7-list-item>
-            <span v-t="'about.miscellaneous.home.background'"></span>
-            <f7-toggle :checked="homePageBackground === 'standard'" @toggle:change="setHomePageBackground"></f7-toggle>
+            <span v-t="'about.miscellaneous.home.background'" />
+            <f7-toggle :checked="homePageBackground === 'standard'" @toggle:change="setHomePageBackground" />
           </f7-list-item>
           <f7-list-item v-show="$store.getters.apiEndpoint('habot')">
-            <span v-t="'about.miscellaneous.home.hideChatInput'"></span>
-            <f7-toggle :checked="hideChatInput === 'true'" @toggle:change="setHideChatInput"></f7-toggle>
+            <span v-t="'about.miscellaneous.home.hideChatInput'" />
+            <f7-toggle :checked="hideChatInput === 'true'" @toggle:change="setHideChatInput" />
           </f7-list-item>
           <f7-list-item>
-            <span v-t="'about.miscellaneous.home.disableCardExpansionAnimation'"></span>
-            <f7-toggle :checked="expandableCardsAnimation === 'disabled'" @toggle:change="setExpandableCardAnimation"></f7-toggle>
+            <span v-t="'about.miscellaneous.home.disableCardExpansionAnimation'" />
+            <f7-toggle :checked="expandableCardsAnimation === 'disabled'" @toggle:change="setExpandableCardAnimation" />
           </f7-list-item>
           <f7-list-item>
-            <span v-t="'about.miscellaneous.theme.disablePageTransition'"></span>
-            <f7-toggle :checked="pageTransitionAnimation === 'disabled'" @toggle:change="setPageTransitionAnimation"></f7-toggle>
+            <span v-t="'about.miscellaneous.theme.disablePageTransition'" />
+            <f7-toggle :checked="pageTransitionAnimation === 'disabled'" @toggle:change="setPageTransitionAnimation" />
           </f7-list-item>
         </f7-list>
       </f7-col>

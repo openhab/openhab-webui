@@ -7,13 +7,14 @@
             v-for="namespace in metadataNamespaces.filter((n) => item.metadata[n.name])" :key="namespace.name"
             :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
             :title="namespace.label"
-            :after="(item.metadata[namespace.name]) ? item.metadata[namespace.name].value : 'Not Set'"
-          />
+            :after="(item.metadata[namespace.name]) ? item.metadata[namespace.name].value : 'Not Set'" />
         </ul>
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
-      <f7-button color="blue" @click="addMetadata">Add Metadata</f7-button>
+      <f7-button color="blue" @click="addMetadata">
+        Add Metadata
+      </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>

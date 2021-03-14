@@ -11,16 +11,18 @@
       :error-message-force="exprError"
       type="text">
       <div class="padding-left" slot="content-end">
-        <f7-button slot="content-end" @click="openPopup"><f7-icon f7="calendar" /> Build</f7-button>
+        <f7-button slot="content-end" @click="openPopup">
+          <f7-icon f7="calendar" /> Build
+        </f7-button>
       </div>
-      <div slot="info">{{translation}}</div>
+      <div slot="info">
+        {{ translation }}
+      </div>
     </f7-list-input>
-    <!-- <cron-editor :value="value" :opened="popupOpened" :popup-id="`config-${configDescription.name}-fullscreen`" @closed="popupOpened = false" @input="(value) => { $emit('input', value) }" /> -->
   </ul>
 </template>
 
 <script>
-import CronEditorPopup from './cronexpression-editor.vue'
 import cronstrue from 'cronstrue'
 
 export default {
@@ -34,25 +36,27 @@ export default {
       this.$emit('input', value)
     },
     openPopup () {
-      const popup = {
-        component: CronEditorPopup
-      }
-
-      this.$f7router.navigate({
-        url: 'widget-code',
-        route: {
-          path: 'widget-code',
-          popup
+      import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
+        const popup = {
+          component: c.default
         }
-      }, {
-        props: {
-          value: this.value
-        }
-      })
 
-      this.$f7.once('cronEditorUpdate', this.updateValue)
-      this.$f7.once('cronEditorClosed', () => {
-        this.$f7.off('cronEditorUpdate', this.updateValue)
+        this.$f7router.navigate({
+          url: 'cron-edit',
+          route: {
+            path: 'cron-edit',
+            popup
+          }
+        }, {
+          props: {
+            value: this.value
+          }
+        })
+
+        this.$f7.once('cronEditorUpdate', this.updateValue)
+        this.$f7.once('cronEditorClosed', () => {
+          this.$f7.off('cronEditorUpdate', this.updateValue)
+        })
       })
     }
   },

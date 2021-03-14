@@ -9,46 +9,46 @@
           <f7-list-item
             :title="$t('setupwizard.language')"
             smart-select
-            :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: true}"
-          >
+            :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: true}">
             <select name="language" @change="(evt) => language = evt.target.value">
-              <option value="" :selected="!language"></option>
+              <option value="" :selected="!language" />
               <option
                 v-for="option in availableLanguages"
                 :key="option.value"
                 :value="option.value"
-                :selected="language === option.value"
-              >{{option.label}}</option>
+                :selected="language === option.value">
+                {{ option.label }}
+              </option>
             </select>
           </f7-list-item>
           <f7-list-item
             :title="$t('setupwizard.region')"
             smart-select
-            :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: true}"
-          >
+            :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: true}">
             <select name="region" @change="(evt) => region = evt.target.value">
-              <option value="" :selected="!region"></option>
+              <option value="" :selected="!region" />
               <option
                 v-for="option in availableRegions"
                 :key="option.value"
                 :value="option.value"
-                :selected="region === option.value"
-              >{{option.label}}</option>
+                :selected="region === option.value">
+                {{ option.label }}
+              </option>
             </select>
           </f7-list-item>
           <f7-list-item
             :title="$t('setupwizard.timezone')"
             smart-select
-            :smart-select-params="{openIn: 'popup', searchbar: true, virtualList: true, closeOnSelect: true, virtualListHeight: ($theme.aurora) ? 32 : undefined }"
-          >
+            :smart-select-params="{openIn: 'popup', searchbar: true, virtualList: true, closeOnSelect: true, virtualListHeight: ($theme.aurora) ? 32 : undefined }">
             <select name="timezone" @change="(evt) => timezone = evt.target.value">
-              <option value=""></option>
+              <option value="" />
               <option
                 v-for="option in availableTimezones"
                 :key="option.value"
                 :value="option.value"
-                :selected="timezone === option.value"
-              >{{option.label}}</option>
+                :selected="timezone === option.value">
+                {{ option.label }}
+              </option>
             </select>
           </f7-list-item>
         </f7-list>
@@ -68,25 +68,28 @@
             icon-md="material:arrow_back"
             tab-link="#intro"
             color="blue"
-            tab-link-active
-          ></f7-link>
+            tab-link-active />
           <f7-login-screen-title>
-            <div class="padding"><f7-icon size="48" color="blue" f7="map_pin_ellipse" /></div>
+            <div class="padding">
+              <f7-icon size="48" color="blue" f7="map_pin_ellipse" />
+            </div>
             {{ $t('setupwizard.location.title') }}
           </f7-login-screen-title>
         </f7-block>
-        <f7-block strong>{{ $t('setupwizard.location.header1') }}<br />{{ $t('setupwizard.location.header2') }}</f7-block>
+        <f7-block strong>
+          {{ $t('setupwizard.location.header1') }}<br>{{ $t('setupwizard.location.header2') }}
+        </f7-block>
         <f7-list>
           <parameter-location :value="location" :config-description="{ label: $t('setupwizard.location.parameterLabel'), name: 'Location' }" @input="(value) => location = value" :placeholder="$t('setupwizard.location.placeholder')" />
         </f7-list>
         <f7-block class="padding">
           <f7-row>
             <f7-col width="100">
-              <f7-button large icon-f7="location_fill" icon-size="24" @click="getCurrentPosition()" :text="$t('setupwizard.location.retrieveFromDevice')"></f7-button>
+              <f7-button large icon-f7="location_fill" icon-size="24" @click="getCurrentPosition()" :text="$t('setupwizard.location.retrieveFromDevice')" />
             </f7-col>
           </f7-row>
           <f7-block-footer>
-            <small v-t="'setupwizard.location.footer'"></small>
+            <small v-t="'setupwizard.location.footer'" />
           </f7-block-footer>
         </f7-block>
         <f7-block class="display-flex flex-direction-column padding">
@@ -105,30 +108,32 @@
             icon-md="material:arrow_back"
             tab-link="#location"
             color="blue"
-            tab-link-active
-          ></f7-link>
+            tab-link-active />
           <f7-login-screen-title>
-            <div class="padding"><f7-icon size="48" color="blue" f7="bag_badge_plus" /></div>
+            <div class="padding">
+              <f7-icon size="48" color="blue" f7="bag_badge_plus" />
+            </div>
             {{ $t('setupwizard.addons.title') }}
           </f7-login-screen-title>
         </f7-block>
-        <f7-block strong>{{ $t('setupwizard.addons.header1') }}<br />{{ $t('setupwizard.addons.header2') }}<br /><br />
-          <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/addons/" v-t="'setupwizard.addons.browseAddonsOnWebsite'"></a>
+        <f7-block strong>
+          {{ $t('setupwizard.addons.header1') }}<br>{{ $t('setupwizard.addons.header2') }}<br><br>
+          <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/addons/" v-t="'setupwizard.addons.browseAddonsOnWebsite'" />
         </f7-block>
         <f7-block class="padding">
           <f7-row>
             <f7-col width="100">
-              <f7-button ref="selectAddons" large icon-f7="cart_fill" icon-size="24" @click="selectAddons" :text="$t('setupwizard.addons.selectAddons')"></f7-button>
+              <f7-button ref="selectAddons" large icon-f7="cart_fill" icon-size="24" @click="selectAddons" :text="$t('setupwizard.addons.selectAddons')" />
             </f7-col>
           </f7-row>
           <f7-list class="search-list searchbar-found" ref="selectAddons" media-list v-show="!installingAddons">
             <f7-list-item media-item v-for="addon in selectedAddons" :key="addon.id"
                           :header="addon.id" :title="addon.label" :footer="addon.version">
-              <f7-link slot="after" v-if="addon.link" icon-f7="doc_text_search" :external="true" color="gray" target="_blank" :href="addon.link"></f7-link>
+              <f7-link slot="after" v-if="addon.link" icon-f7="doc_text_search" :external="true" color="gray" target="_blank" :href="addon.link" />
             </f7-list-item>
           </f7-list>
           <f7-block-footer class="margin-bottom">
-            <small v-t="'setupwizard.addons.footer'"></small>
+            <small v-t="'setupwizard.addons.footer'" />
           </f7-block-footer>
           <div>
             <f7-button v-if="selectedAddons.length > 0" large fill color="blue" :text="$tc('setupwizard.addons.installAddons', selectedAddons.length)" @click="installAddons" />
@@ -146,12 +151,15 @@
             tab-link="#intro"
             color="blue"
             tab-link-active
-            style="visibility: hidden"
-          ></f7-link>
-          <f7-login-screen-title class="text-color-gray">{{ $t('setupwizard.addons.pleaseWait') }}</f7-login-screen-title>
+            style="visibility: hidden" />
+          <f7-login-screen-title class="text-color-gray">
+            {{ $t('setupwizard.addons.pleaseWait') }}
+          </f7-login-screen-title>
           <div class="display-flex justify-content-center flex-direction-column text-align-center text-color-gray" style="margin-top: 4rem">
-            <div class="display-flex justify-content-center margin-bottom"><f7-preloader size="24"></f7-preloader></div>
-            <div v-t="'setupwizard.addons.waitMessage'"></div>
+            <div class="display-flex justify-content-center margin-bottom">
+              <f7-preloader size="24" />
+            </div>
+            <div v-t="'setupwizard.addons.waitMessage'" />
           </div>
         </f7-block>
       </f7-tab>

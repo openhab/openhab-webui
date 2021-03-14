@@ -10,7 +10,9 @@
                            :widget="childwidget" :parent-widget="widget"
                            @selected="(event) => $emit('selected', event)"
                            :selected="selected" />
-    <div slot="label" class="subtitle"> {{subtitle()}}</div>
+    <div slot="label" class="subtitle">
+      {{ subtitle() }}
+    </div>
   </f7-treeview-item>
 </template>
 
@@ -58,8 +60,8 @@ export default {
       return this.widget.component + ((this.widget.config && this.widget.config.item) ? ': ' + this.widget.config.item : '')
     },
     select (event) {
-      var self = this
-      var $ = self.$$
+      let self = this
+      let $ = self.$$
       if ($(event.target).is('.treeview-toggle')) return
       this.$emit('selected', [this.widget, this.parentWidget])
     }

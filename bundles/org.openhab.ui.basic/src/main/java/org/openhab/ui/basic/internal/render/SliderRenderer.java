@@ -12,7 +12,6 @@
  */
 package org.openhab.ui.basic.internal.render;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -68,12 +67,14 @@ public class SliderRenderer extends AbstractWidgetRenderer {
         String unit = getUnitForWidget(w);
 
         snippet = preprocessSnippet(snippet, w);
-        snippet = StringUtils.replace(snippet, "%frequency%", frequency);
-        snippet = StringUtils.replace(snippet, "%switch%", s.isSwitchEnabled() ? "1" : "0");
-        snippet = StringUtils.replace(snippet, "%unit%", unit);
-        snippet = StringUtils.replace(snippet, "%minValue%", minValueOf(s));
-        snippet = StringUtils.replace(snippet, "%maxValue%", maxValueOf(s));
-        snippet = StringUtils.replace(snippet, "%step%", stepOf(s));
+        snippet = snippet.replace("%frequency%", frequency);
+        snippet = snippet.replace("%switch%", s.isSwitchEnabled() ? "1" : "0");
+        if (unit != null) {
+            snippet = snippet.replace("%unit%", unit);
+        }
+        snippet = snippet.replace("%minValue%", minValueOf(s));
+        snippet = snippet.replace("%maxValue%", maxValueOf(s));
+        snippet = snippet.replace("%step%", stepOf(s));
 
         // Process the color tags
         snippet = processColor(w, snippet);

@@ -5,14 +5,14 @@
       <f7-row class="margin-bottom">
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addGrid">
-            <img src="@/res/img/chartdesigner/gridSimple.svg" width="80px" />
-            Add<br />Grid
+            <img src="@/res/img/chartdesigner/gridSimple.svg" width="80px">
+            Add<br>Grid
           </f7-link>
         </f7-col>
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addCalendar">
-            <img src="@/res/img/chartdesigner/calendar.svg" width="80px" />
-            Add<br />Calendar
+            <img src="@/res/img/chartdesigner/calendar.svg" width="80px">
+            Add<br>Calendar
           </f7-link>
         </f7-col>
       </f7-row>
@@ -20,7 +20,7 @@
 
     <!-- Grids -->
     <f7-block strong :style="{ zIndex: 100 - gridIdx }" v-for="(grid, gridIdx) in context.component.slots.grid" :key="gridIdx">
-      <f7-block-title>Grid {{gridIdx}}</f7-block-title>
+      <f7-block-title>Grid {{ gridIdx }}</f7-block-title>
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
           <span v-for="(yAxis, yAxisIdx) in context.component.slots.yAxis" :key="yAxisIdx">
@@ -58,8 +58,12 @@
                   <img slot="media" v-else src="@/res/img/chartdesigner/line.svg" width="32px">
                 </div>
               </f7-list-item>
-              <f7-list-button color="blue" @click="addSeries('oh-time-series', gridIdx)">Add Time Series</f7-list-button>
-              <f7-list-button color="blue" @click="addSeries('oh-aggregate-series', gridIdx)">Add Aggregate Series</f7-list-button>
+              <f7-list-button color="blue" @click="addSeries('oh-time-series', gridIdx)">
+                Add Time Series
+              </f7-list-button>
+              <f7-list-button color="blue" @click="addSeries('oh-aggregate-series', gridIdx)">
+                Add Aggregate Series
+              </f7-list-button>
             </f7-list>
           </f7-card>
         </div>
@@ -80,14 +84,13 @@
               <f7-menu-dropdown-item @click="addAxis(gridIdx, 'xAxis', 'oh-value-axis')" href="#" text="Add value axis" />
             </f7-menu-dropdown>
           </f7-menu-item>
-
         </f7-menu>
       </div>
     </f7-block>
 
     <!-- Calendars -->
     <f7-block strong :style="{ zIndex: 50 - calendarIdx }" v-for="(calendar, calendarIdx) in context.component.slots.calendar" :key="calendarIdx">
-      <f7-block-title>Calendar {{calendarIdx}}</f7-block-title>
+      <f7-block-title>Calendar {{ calendarIdx }}</f7-block-title>
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
           <edit-context-menu :context="context" :component="calendar" :parentSlot="'calendar'"
@@ -112,7 +115,9 @@
                   <img slot="media" v-else src="@/res/img/chartdesigner/line.svg" width="32px">
                 </div>
               </f7-list-item>
-              <f7-list-button color="blue" @click="addCalendarSeries('oh-calendar-series', calendarIdx)">Add Calendar Series</f7-list-button>
+              <f7-list-button color="blue" @click="addCalendarSeries('oh-calendar-series', calendarIdx)">
+                Add Calendar Series
+              </f7-list-button>
             </f7-list>
           </f7-card>
         </div>
@@ -125,22 +130,28 @@
       <f7-row class="margin-bottom">
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('tooltip')">
-            <f7-badge v-if="context.component.slots.tooltip" color="blue" class="count-badge">{{context.component.slots.tooltip.length}}</f7-badge>
-            <img src="@/res/img/chartdesigner/tooltip.svg" width="80px" />
+            <f7-badge v-if="context.component.slots.tooltip" color="blue" class="count-badge">
+              {{ context.component.slots.tooltip.length }}
+            </f7-badge>
+            <img src="@/res/img/chartdesigner/tooltip.svg" width="80px">
             Tooltip
           </f7-link>
         </f7-col>
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('visualMap')">
-            <f7-badge v-if="context.component.slots.visualMap" color="blue" class="count-badge">{{context.component.slots.visualMap.length}}</f7-badge>
-            <img src="@/res/img/chartdesigner/visualMap.svg" width="80px" />
+            <f7-badge v-if="context.component.slots.visualMap" color="blue" class="count-badge">
+              {{ context.component.slots.visualMap.length }}
+            </f7-badge>
+            <img src="@/res/img/chartdesigner/visualMap.svg" width="80px">
             Visual Map
           </f7-link>
         </f7-col>
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('dataZoom')">
-            <f7-badge v-if="context.component.slots.dataZoom" color="blue" class="count-badge">{{context.component.slots.dataZoom.length}}</f7-badge>
-            <img src="@/res/img/chartdesigner/dataZoom.svg" width="80px" />
+            <f7-badge v-if="context.component.slots.dataZoom" color="blue" class="count-badge">
+              {{ context.component.slots.dataZoom.length }}
+            </f7-badge>
+            <img src="@/res/img/chartdesigner/dataZoom.svg" width="80px">
             Data Zoom
           </f7-link>
         </f7-col>
@@ -148,22 +159,28 @@
       <f7-row class="margin-bottom">
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('legend')">
-            <f7-badge v-if="context.component.slots.legend" color="blue" class="count-badge">{{context.component.slots.legend.length}}</f7-badge>
-            <img src="@/res/img/chartdesigner/legend.svg" width="80px" />
+            <f7-badge v-if="context.component.slots.legend" color="blue" class="count-badge">
+              {{ context.component.slots.legend.length }}
+            </f7-badge>
+            <img src="@/res/img/chartdesigner/legend.svg" width="80px">
             Legend
           </f7-link>
         </f7-col>
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('title')">
-            <f7-badge v-if="context.component.slots.title" color="blue" class="count-badge">{{context.component.slots.title.length}}</f7-badge>
-            <img src="@/res/img/chartdesigner/title.svg" width="80px" />
+            <f7-badge v-if="context.component.slots.title" color="blue" class="count-badge">
+              {{ context.component.slots.title.length }}
+            </f7-badge>
+            <img src="@/res/img/chartdesigner/title.svg" width="80px">
             Title
           </f7-link>
         </f7-col>
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('toolbox')">
-            <f7-badge v-if="context.component.slots.toolbox" color="blue" class="count-badge">{{context.component.slots.toolbox.length}}</f7-badge>
-            <img src="@/res/img/chartdesigner/toolbox.svg" width="80px" />
+            <f7-badge v-if="context.component.slots.toolbox" color="blue" class="count-badge">
+              {{ context.component.slots.toolbox.length }}
+            </f7-badge>
+            <img src="@/res/img/chartdesigner/toolbox.svg" width="80px">
             Toolbox
           </f7-link>
         </f7-col>

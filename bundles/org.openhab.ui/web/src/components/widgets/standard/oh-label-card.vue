@@ -1,7 +1,7 @@
 <template>
   <f7-card :no-border="config.noBorder" :no-shadow="config.noShadow" :outline="config.outline">
     <f7-card-header v-if="config.title">
-      <div>{{config.title}}</div>
+      <div>{{ config.title }}</div>
     </f7-card-header>
     <f7-card-content ref="cardContent" @click.native="performAction" class="label-card-content" :style="{ background: config.background }" :class="{ 'vertical-arrangement': config.vertical }">
       <oh-trend v-if="config.trendItem" :key="'trend' + config.item" class="trend" :width="($refs.cardContent) ? $refs.cardContent.$el.clientWidth : 0" :context="context" />
@@ -11,7 +11,7 @@
           <f7-icon slot="media" v-else-if="config.icon" :ios="config.icon" :md="config.icon" :aurora="config.icon" :size="config.iconSize || 32" :color="config.iconColor" />
           <div :class="config.class">
             <span :style="{ 'font-size': config.fontSize || '24px', 'font-weight': config.fontWeight || 'normal' }">
-              {{label}}
+              {{ label }}
             </span>
           </div>
         </f7-list-item>
@@ -20,7 +20,7 @@
       <!-- <h2>{{context.store[config.item].displayState || context.store[config.item].state}}</h2> -->
     </f7-card-content>
     <f7-card-footer v-if="config.footer">
-      {{config.footer}}
+      {{ config.footer }}
     </f7-card-footer>
   </f7-card>
 </template>

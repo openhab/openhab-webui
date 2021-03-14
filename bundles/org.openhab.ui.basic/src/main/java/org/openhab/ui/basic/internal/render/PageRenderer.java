@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -109,12 +108,12 @@ public class PageRenderer extends AbstractWidgetRenderer {
         if (labelPlain.contains("[") && labelPlain.endsWith("]")) {
             labelPlain = labelPlain.replace("[", "").replace("]", "");
         }
-        snippet = StringUtils.replace(snippet, "%label%", escapeHtml(labelPlain));
-        snippet = StringUtils.replace(snippet, "%servletname%", WebAppServlet.SERVLET_NAME);
-        snippet = StringUtils.replace(snippet, "%sitemap%", sitemap);
-        snippet = StringUtils.replace(snippet, "%htmlclass%", config.getCssClassList());
-        snippet = StringUtils.replace(snippet, "%icon_type%", ICON_TYPE);
-        snippet = StringUtils.replace(snippet, "%theme%", config.getTheme());
+        snippet = snippet.replace("%label%", escapeHtml(labelPlain));
+        snippet = snippet.replace("%servletname%", WebAppServlet.SERVLET_NAME);
+        snippet = snippet.replace("%sitemap%", sitemap);
+        snippet = snippet.replace("%htmlclass%", config.getCssClassList());
+        snippet = snippet.replace("%icon_type%", ICON_TYPE);
+        snippet = snippet.replace("%theme%", config.getTheme());
 
         String[] parts = snippet.split("%children%");
 
@@ -139,9 +138,9 @@ public class PageRenderer extends AbstractWidgetRenderer {
             if (!(firstChild instanceof Frame || parent instanceof Frame || parent instanceof Sitemap
                     || parent instanceof org.openhab.core.model.sitemap.sitemap.List)) {
                 String frameSnippet = getSnippet("frame");
-                frameSnippet = StringUtils.replace(frameSnippet, "%widget_id%", "");
-                frameSnippet = StringUtils.replace(frameSnippet, "%label%", "");
-                frameSnippet = StringUtils.replace(frameSnippet, "%frame_class%", "mdl-form--no-label");
+                frameSnippet = frameSnippet.replace("%widget_id%", "");
+                frameSnippet = frameSnippet.replace("%label%", "");
+                frameSnippet = frameSnippet.replace("%frame_class%", "mdl-form--no-label");
 
                 String[] parts = frameSnippet.split("%children%");
                 if (parts.length > 1) {
@@ -230,26 +229,33 @@ public class PageRenderer extends AbstractWidgetRenderer {
         StringBuilder sb = new StringBuilder();
         if (sitemapList.isEmpty()) {
             String listEmptySnippet = getSnippet("sitemaps_list_empty");
-            listEmptySnippet = StringUtils.replace(listEmptySnippet, "%sitemaps-list-empty.info%",
-                    localizeText("@text/sitemaps-list-empty.info"));
+            String text = localizeText("@text/sitemaps-list-empty.info");
+            if (text != null) {
+                listEmptySnippet = listEmptySnippet.replace("%sitemaps-list-empty.info%", text);
+            }
             sb.append(listEmptySnippet);
         } else {
             for (String sitemap : sitemapList) {
-                sb.append(StringUtils.replace(sitemapSnippet, "%sitemap%", sitemap));
+                sb.append(sitemapSnippet.replace("%sitemap%", sitemap));
             }
         }
 
-        listSnippet = StringUtils.replace(listSnippet, "%sitemaps-list.welcome%",
-                localizeText("@text/sitemaps-list.welcome"));
-        listSnippet = StringUtils.replace(listSnippet, "%sitemaps-list.available-sitemaps%",
-                localizeText("@text/sitemaps-list.available-sitemaps"));
-        listSnippet = StringUtils.replace(listSnippet, "%items%", sb.toString());
+        String text = localizeText("@text/sitemaps-list.welcome");
+        if (text != null) {
+            listSnippet = listSnippet.replace("%sitemaps-list.welcome%", text);
+        }
 
-        pageSnippet = StringUtils.replace(pageSnippet, "%title%", "BasicUI");
-        pageSnippet = StringUtils.replace(pageSnippet, "%htmlclass%",
-                config.getCssClassList() + " page-welcome-sitemaps");
-        pageSnippet = StringUtils.replace(pageSnippet, "%theme%", config.getTheme());
-        pageSnippet = StringUtils.replace(pageSnippet, "%content%", listSnippet);
+        text = localizeText("@text/sitemaps-list.available-sitemaps");
+        if (text != null) {
+            listSnippet = listSnippet.replace("%sitemaps-list.available-sitemaps%", text);
+        }
+
+        listSnippet = listSnippet.replace("%items%", sb.toString());
+
+        pageSnippet = pageSnippet.replace("%title%", "BasicUI");
+        pageSnippet = pageSnippet.replace("%htmlclass%", config.getCssClassList() + " page-welcome-sitemaps");
+        pageSnippet = pageSnippet.replace("%theme%", config.getTheme());
+        pageSnippet = pageSnippet.replace("%content%", listSnippet);
 
         return pageSnippet;
     }

@@ -2,14 +2,22 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
     <f7-navbar :title="thing.label || thing.UID" back-link="Back" no-hairline>
       <f7-nav-right v-show="!error">
-        <f7-link @click="save()" v-if="$theme.md && thing.editable" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md && thing.editable">Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span></f7-link>
+        <f7-link @click="save()" v-if="$theme.md && thing.editable" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md && thing.editable">
+          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('thing')" :tab-link-active="currentTab === 'thing'" class="tab-link">Thing</f7-link>
-      <f7-link @click="switchTab('channels')" :tab-link-active="currentTab === 'channels'" v-show="!error" class="tab-link">Channels</f7-link>
-      <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" v-show="!error" class="tab-link">Code</f7-link>
+      <f7-link @click="switchTab('thing')" :tab-link-active="currentTab === 'thing'" class="tab-link">
+        Thing
+      </f7-link>
+      <f7-link @click="switchTab('channels')" :tab-link-active="currentTab === 'channels'" v-show="!error" class="tab-link">
+        Channels
+      </f7-link>
+      <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" v-show="!error" class="tab-link">
+        Code
+      </f7-link>
     </f7-toolbar>
 
     <f7-tabs>
@@ -17,24 +25,26 @@
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow padding-left padding-right" strong>
           <f7-col>
             <div v-show="!error" class="float-right align-items-flex-start align-items-center">
-              <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
+              <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled" />
             </div>
             Status:
             <f7-chip class="margin-left"
                      :text="thing.statusInfo.status"
-                     :color="thingStatusBadgeColor(thing.statusInfo)"
-            ></f7-chip>
+                     :color="thingStatusBadgeColor(thing.statusInfo)" />
             <div>
-              <strong>{{(thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;'}}</strong>
+              <strong>{{ (thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
               <br>
-              <div v-if="thing.statusInfo.description">{{thing.statusInfo.description}}</div>
+              <div v-if="thing.statusInfo.description">
+                {{ thing.statusInfo.description }}
+              </div>
             </div>
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
         <f7-block v-else class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
-          <f7-col>______:
-            <f7-chip class="margin-left" text="________"></f7-chip>
+          <f7-col>
+            ______:
+            <f7-chip class="margin-left" text="________" />
             <div>
               <strong>____ _______</strong>
               <br>
@@ -45,12 +55,16 @@
         <f7-block v-if="ready && !error" class="block-narrow">
           <f7-col>
             <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" :ready="true" :read-only="thing.editable === false" />
-            <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">Information</f7-block-title>
-            <f7-block-footer v-if="thing.editable === false" class="no-margin padding-left"><f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this thing is not editable because it has been provisioned from a file.</f7-block-footer>
+            <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">
+              Information
+            </f7-block-title>
+            <f7-block-footer v-if="thing.editable === false" class="no-margin padding-left">
+              <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this thing is not editable because it has been provisioned from a file.
+            </f7-block-footer>
             <f7-list accordion-opposite>
               <f7-list-item accordion-item title="Thing Type" :after="thingType.label">
                 <f7-accordion-content class="thing-type-description">
-                  <div class="margin" v-html="thingType.description"></div>
+                  <div class="margin" v-html="thingType.description" />
                 </f7-accordion-content>
               </f7-list-item>
               <f7-list-item accordion-item v-if="Object.keys(thing.properties).length > 0" title="Thing Properties" :badge="Object.keys(thing.properties).length">
@@ -61,14 +75,15 @@
                       v-for="(value, key) in thing.properties"
                       :key="key"
                       :title="key"
-                      :after="value"
-                    ></f7-list-item>
+                      :after="value" />
                   </f7-list>
                 </f7-accordion-content>
               </f7-list-item>
             </f7-list>
 
-            <f7-block-title medium>Configuration</f7-block-title>
+            <f7-block-title medium>
+              Configuration
+            </f7-block-title>
             <config-sheet ref="thingConfiguration"
                           :parameter-groups="configDescriptions.parameterGroups"
                           :parameters="configDescriptions.parameters"
@@ -76,16 +91,19 @@
                           :status="configStatusInfo"
                           :set-empty-config-as-null="true"
                           :read-only="thing.editable === false"
-                          @updated="configDirty = true"
-            />
+                          @updated="configDirty = true" />
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
         <f7-block v-else-if="!error" class="block-narrow skeleton-text skeleton-effect-blink">
           <f7-col>
             <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" :ready="false" />
-            <f7-block-title medium>____ _______</f7-block-title>
-            <div class="margin-left">____ ____ ____ _____ ___ __ ____ __ ________ __ ____ ___ ____</div>
+            <f7-block-title medium>
+              ____ _______
+            </f7-block-title>
+            <div class="margin-left">
+              ____ ____ ____ _____ ___ __ ____ __ ________ __ ____ ___ ____
+            </div>
           </f7-col>
         </f7-block>
 
@@ -93,8 +111,8 @@
           <f7-col>
             <f7-block-title>Z-Wave</f7-block-title>
             <f7-list>
-              <f7-list-button color="blue" title="View Network Map" @click="openZWaveNetworkPopup"></f7-list-button>
-              <f7-list-button color="blue" v-for="action in zwaveActions" :key="action.name" :title="action.label" @click="doZWaveAction(action)"></f7-list-button>
+              <f7-list-button color="blue" title="View Network Map" @click="openZWaveNetworkPopup" />
+              <f7-list-button color="blue" v-for="action in zwaveActions" :key="action.name" :title="action.label" @click="doZWaveAction(action)" />
             </f7-list>
           </f7-col>
           <z-wave-network-popup :opened="zwaveNetworkPopupOpened" @closed="zwaveNetworkPopupOpened = false" />
@@ -103,7 +121,7 @@
         <f7-block class="block-narrow" v-if="ready && thing.editable">
           <f7-col>
             <f7-list>
-              <f7-list-button color="red" title="Delete Thing" @click="deleteThing"></f7-list-button>
+              <f7-list-button color="red" title="Delete Thing" @click="deleteThing" />
             </f7-list>
           </f7-col>
         </f7-block>
@@ -112,15 +130,14 @@
       <f7-tab id="channels" disabled="!thingType.channels" :tab-active="currentTab === 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list :thingType="thingType" :thing="thing" :channelTypes="channelTypes"
-                        @channels-updated="onChannelsUpdated" :context="context"
-          />
+                        @channels-updated="onChannelsUpdated" :context="context" />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible && thing.editable" @click="addChannel()"></f7-list-button>
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Equipment to Model" @click="addToModel(true)"></f7-list-button>
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model" @click="addToModel(false)"></f7-list-button>
-              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items" @click="unlinkAll(false)"></f7-list-button>
-              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all and Remove Items" @click="unlinkAll(true)"></f7-list-button>
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible && thing.editable" @click="addChannel()" />
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Equipment to Model" @click="addToModel(true)" />
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model" @click="addToModel(false)" />
+              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items" @click="unlinkAll(false)" />
+              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all and Remove Items" @click="unlinkAll(true)" />
             </f7-list>
           </f7-col>
         </f7-block>
@@ -243,7 +260,7 @@ export default {
     ChannelList,
     ThingGeneralSettings,
     ZWaveNetworkPopup,
-    'editor': () => import('@/components/config/controls/script-editor.vue')
+    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
   props: ['thingId'],
   data () {
@@ -299,7 +316,7 @@ export default {
   },
   watch: {
     configDirty: function () { this.dirty = this.configDirty || this.thingDirty },
-    thingDirty:  function () { this.dirty = this.configDirty || this.thingDirty }
+    thingDirty: function () { this.dirty = this.configDirty || this.thingDirty }
   },
   methods: {
     onPageAfterIn (event) {

@@ -3,11 +3,13 @@
     <f7-page v-if="component && code">
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
+          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
         </f7-nav-left>
         <f7-nav-title>Edit Widget Code</f7-nav-title>
         <f7-nav-right>
-          <f7-link @click="updateWidgetCode" popup-close>Done</f7-link>
+          <f7-link @click="updateWidgetCode" popup-close>
+            Done
+          </f7-link>
         </f7-nav-right>
       </f7-navbar>
       <editor class="page-code-editor" :mode="`application/vnd.openhab.uicomponent+yaml;type=${componentType || 'widget'}`" :value="code" @input="(value) => code = value" />
@@ -36,7 +38,7 @@ import YAML from 'yaml'
 export default {
   props: ['component', 'componentType'],
   components: {
-    'editor': () => import('@/components/config/controls/script-editor.vue')
+    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
   data () {
     return {

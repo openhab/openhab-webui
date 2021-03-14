@@ -8,20 +8,21 @@
           search-container=".semantic-tree"
           search-item=".treeview-item"
           search-in=".treeview-item-label"
-          :disable-button="!$theme.aurora"
-        ></f7-searchbar>
+          :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar bottom class="toolbar-details">
-      <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">Clear</f7-link>
+      <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
+        Clear
+      </f7-link>
       <div class="padding-right text-align-right">
-        <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic"></f7-checkbox>
+        <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
         <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
       </div>
-      <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link>
+      <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
     <f7-block v-if="!ready" class="text-align-center">
-      <f7-preloader></f7-preloader>
+      <f7-preloader />
       <div>Loading...</div>
     </f7-block>
     <f7-block v-else class="semantic-tree-wrapper" :class="{ 'sheet-opened' : detailsOpened }">
@@ -33,8 +34,7 @@
             <f7-treeview>
               <model-treeview-item v-for="node in [rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
                                    :key="node.item.name" :model="node"
-                                   @selected="selectItem" :selected="selectedItem">
-              </model-treeview-item>
+                                   @selected="selectItem" :selected="selectedItem" />
             </f7-treeview>
           </f7-block>
         </f7-col>
@@ -43,19 +43,21 @@
             <model-details-pane :key="itemDetailsKey" :model="selectedItem" :links="links" :context="context" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" />
           </f7-block>
           <f7-block v-else>
-            <div class="padding text-align-center">Nothing selected</div>
+            <div class="padding text-align-center">
+              Nothing selected
+            </div>
           </f7-block>
           <f7-block v-if="!selectedItem || (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)">
             <div><f7-block-title>Add to Model</f7-block-title></div>
             <f7-card>
               <f7-card-content>
                 <f7-list>
-                  <f7-list-button color="blue" v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" title="Add Location" @click="addSemanticItem('Location')"></f7-list-button>
-                  <f7-list-button color="blue" title="Create Equipment from Thing" @click="addFromThing(true)"></f7-list-button>
-                  <f7-list-button color="blue" title="Create Points from Thing" @click="addFromThing(false)"></f7-list-button>
-                  <f7-list-button color="blue" title="Add Equipment" @click="addSemanticItem('Equipment')"></f7-list-button>
-                  <f7-list-button color="blue" title="Add Point" @click="addSemanticItem('Point')"></f7-list-button>
-                  <f7-list-button color="blue" v-if="includeNonSemantic" title="Add Item" @click="addNonSemanticItem(false)"></f7-list-button>
+                  <f7-list-button color="blue" v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" title="Add Location" @click="addSemanticItem('Location')" />
+                  <f7-list-button color="blue" title="Create Equipment from Thing" @click="addFromThing(true)" />
+                  <f7-list-button color="blue" title="Create Points from Thing" @click="addFromThing(false)" />
+                  <f7-list-button color="blue" title="Add Equipment" @click="addSemanticItem('Equipment')" />
+                  <f7-list-button color="blue" title="Add Point" @click="addSemanticItem('Point')" />
+                  <f7-list-button color="blue" v-if="includeNonSemantic" title="Add Item" @click="addNonSemanticItem(false)" />
                 </f7-list>
               </f7-card-content>
             </f7-card>
@@ -65,27 +67,49 @@
     </f7-block>
 
     <f7-fab class="add-to-model-fab" position="right-bottom" slot="fixed" color="blue" v-if="!selectedItem || (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
-      <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply"></f7-icon>
+      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+      <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
       <f7-fab-buttons position="top">
-        <f7-fab-button v-if="includeNonSemantic" fab-close label="Add Item" @click="addNonSemanticItem(false)"><f7-icon ios="material:label_outline" md="material:label_outline" aurora="material:label_outline"></f7-icon></f7-fab-button>
-        <f7-fab-button fab-close label="Add Point" @click="addSemanticItem('Point')"><f7-icon ios="f7:bolt_fill" md="material:flash_on" aurora="f7:bolt_fill"></f7-icon></f7-fab-button>
-        <f7-fab-button fab-close label="Add Equipment" @click="addSemanticItem('Equipment')"><f7-icon ios="f7:cube_box_fill" md="material:payments" aurora="f7:cube_box_fill"></f7-icon></f7-fab-button>
-        <f7-fab-button fab-close label="Create Points from Thing" @click="addFromThing(false)"><f7-icon ios="f7:layers" md="material:layers" aurora="f7:layers"></f7-icon></f7-fab-button>
-        <f7-fab-button fab-close label="Create Equipment from Thing" @click="addFromThing(true)"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
-        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" fab-close label="Add Location" @click="addSemanticItem('Location')"><f7-icon ios="f7:placemark_fill" md="material:place" aurora="f7:placemark_fill"></f7-icon></f7-fab-button>
+        <f7-fab-button v-if="includeNonSemantic" fab-close label="Add Item" @click="addNonSemanticItem(false)">
+          <f7-icon ios="material:label_outline" md="material:label_outline" aurora="material:label_outline" />
+        </f7-fab-button>
+        <f7-fab-button fab-close label="Add Point" @click="addSemanticItem('Point')">
+          <f7-icon ios="f7:bolt_fill" md="material:flash_on" aurora="f7:bolt_fill" />
+        </f7-fab-button>
+        <f7-fab-button fab-close label="Add Equipment" @click="addSemanticItem('Equipment')">
+          <f7-icon ios="f7:cube_box_fill" md="material:payments" aurora="f7:cube_box_fill" />
+        </f7-fab-button>
+        <f7-fab-button fab-close label="Create Points from Thing" @click="addFromThing(false)">
+          <f7-icon ios="f7:layers" md="material:layers" aurora="f7:layers" />
+        </f7-fab-button>
+        <f7-fab-button fab-close label="Create Equipment from Thing" @click="addFromThing(true)">
+          <f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill" />
+        </f7-fab-button>
+        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" fab-close label="Add Location" @click="addSemanticItem('Location')">
+          <f7-icon ios="f7:placemark_fill" md="material:place" aurora="f7:placemark_fill" />
+        </f7-fab-button>
       </f7-fab-buttons>
     </f7-fab>
 
     <f7-sheet class="model-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
       <f7-page>
         <f7-toolbar tabbar bottom>
-          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'state'" @click="detailsTab = 'state'">State</f7-link>
-          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'item'" @click="detailsTab = 'item'">Item</f7-link>
-          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'meta'" @click="detailsTab = 'meta'">Meta</f7-link>
-          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'links'" @click="detailsTab = 'links'">Links</f7-link>
+          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'state'" @click="detailsTab = 'state'">
+            State
+          </f7-link>
+          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'item'" @click="detailsTab = 'item'">
+            Item
+          </f7-link>
+          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'meta'" @click="detailsTab = 'meta'">
+            Meta
+          </f7-link>
+          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'links'" @click="detailsTab = 'links'">
+            Links
+          </f7-link>
           <div class="right">
-            <f7-link sheet-close class="padding-right"><f7-icon f7="chevron_down"></f7-icon></f7-link>
+            <f7-link sheet-close class="padding-right">
+              <f7-icon f7="chevron_down" />
+            </f7-link>
           </div>
         </f7-toolbar>
         <f7-block style="margin-bottom: 6rem" v-if="selectedItem">
@@ -95,11 +119,12 @@
           <link-details v-if="detailsTab === 'links'" :item="selectedItem.item" :links="links" />
         </f7-block>
         <f7-block v-else>
-          <div class="padding text-align-center">Nothing selected</div>
+          <div class="padding text-align-center">
+            Nothing selected
+          </div>
         </f7-block>
       </f7-page>
     </f7-sheet>
-
   </f7-page>
 </template>
 
@@ -177,6 +202,7 @@ function compareModelItems (o1, o2) {
 
 export default {
   components: {
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
     ModelDetailsPane,
     ItemStatePreview,
     ItemDetails,

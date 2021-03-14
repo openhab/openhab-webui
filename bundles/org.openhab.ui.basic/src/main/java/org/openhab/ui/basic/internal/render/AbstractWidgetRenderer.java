@@ -22,8 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.I18nUtil;
@@ -95,22 +94,21 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      */
     protected String preprocessSnippet(String originalSnippet, Widget w) {
         String snippet = originalSnippet;
-        snippet = StringUtils.replace(snippet, "%widget_id%", itemUIRegistry.getWidgetId(w));
-        snippet = StringUtils.replace(snippet, "%icon_type%", ICON_TYPE);
-        snippet = StringUtils.replace(snippet, "%item%", w.getItem() != null ? w.getItem() : "");
+        snippet = snippet.replace("%widget_id%", itemUIRegistry.getWidgetId(w));
+        snippet = snippet.replace("%icon_type%", ICON_TYPE);
+        snippet = snippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
         // Optimization: avoid calling 3 times itemUIRegistry.getLabel(w)
         String text = itemUIRegistry.getLabel(w);
-        snippet = StringUtils.replace(snippet, "%label%", getLabel(text));
-        snippet = StringUtils.replace(snippet, "%value%", getValue(text));
-        snippet = StringUtils.replace(snippet, "%has_value%", Boolean.valueOf(hasValue(text)).toString());
-        snippet = StringUtils.replace(snippet, "%visibility_class%",
-                itemUIRegistry.getVisiblity(w) ? "" : "mdl-form__row--hidden");
+        snippet = snippet.replace("%label%", getLabel(text));
+        snippet = snippet.replace("%value%", getValue(text));
+        snippet = snippet.replace("%has_value%", Boolean.valueOf(hasValue(text)).toString());
+        snippet = snippet.replace("%visibility_class%", itemUIRegistry.getVisiblity(w) ? "" : "mdl-form__row--hidden");
 
         String state = getState(w);
-        snippet = StringUtils.replace(snippet, "%state%", escapeURL(state));
+        snippet = snippet.replace("%state%", escapeURL(state));
 
         String category = getCategory(w);
-        snippet = StringUtils.replace(snippet, "%category%", escapeURL(category));
+        snippet = snippet.replace("%category%", escapeURL(category));
 
         return snippet;
     }
@@ -263,7 +261,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         if (color != null) {
             style = "style=\"color:" + color + "\"";
         }
-        snippet = StringUtils.replace(snippet, "%labelstyle%", style);
+        snippet = snippet.replace("%labelstyle%", style);
 
         style = "";
         color = itemUIRegistry.getValueColor(w);
@@ -271,7 +269,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         if (color != null) {
             style = "style=\"color:" + color + "\"";
         }
-        snippet = StringUtils.replace(snippet, "%valuestyle%", style);
+        snippet = snippet.replace("%valuestyle%", style);
 
         return snippet;
     }
@@ -290,7 +288,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     }
 
     protected String escapeHtml(@Nullable String s) {
-        return StringEscapeUtils.escapeHtml(s);
+        return StringEscapeUtils.escapeHtml4(s);
     }
 
     @Override

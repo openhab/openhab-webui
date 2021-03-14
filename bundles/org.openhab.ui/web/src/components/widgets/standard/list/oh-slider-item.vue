@@ -1,7 +1,7 @@
 <template>
   <oh-list-item :context="context" class="slider-listitem">
     <div slot="after">
-      {{context.store[config.item].displayState || context.store[config.item].state}}
+      {{ context.store[config.item].displayState || context.store[config.item].state }}
     </div>
     <div slot="footer" class="padding">
       <generic-widget-component :context="childContext(sliderComponent)" v-on="$listeners" />

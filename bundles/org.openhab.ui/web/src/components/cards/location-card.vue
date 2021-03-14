@@ -1,7 +1,9 @@
 <template>
   <model-card type="location" :context="context" :element="element" header-height="200px">
-    <template v-slot:glance>
-      <div v-if="!subtitle && parentLocation" class="subtitle"><small>{{parentLocation}}</small></div>
+    <template #glance>
+      <div v-if="!subtitle && parentLocation" class="subtitle">
+        <small>{{ parentLocation }}</small>
+      </div>
       <div v-if="context && context.component.slots && context.component.slots.glance" class="display-flex flex-direction-column align-items-flex-start">
         <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.glance" :key="'glance-' + idx" @command="onCommand" />
       </div>
@@ -20,13 +22,13 @@
     </template>
     <div class="card-content-padding">
       <f7-segmented round tag="p" v-if="element.equipment.length > 0 && element.properties.length > 0">
-        <f7-button round outline :active="activeTab === 'equipment'" :color="color" @click="activeTab = 'equipment'" :text="$t('home.equipment.tab')"></f7-button>
-        <f7-button round outline :active="activeTab === 'properties'" :color="color" @click="activeTab = 'properties'" :text="$t('home.properties.tab')"></f7-button>
+        <f7-button round outline :active="activeTab === 'equipment'" :color="color" @click="activeTab = 'equipment'" :text="$t('home.equipment.tab')" />
+        <f7-button round outline :active="activeTab === 'properties'" :color="color" @click="activeTab = 'properties'" :text="$t('home.properties.tab')" />
       </f7-segmented>
       <generic-widget-component v-if="activeTab === 'equipment'" class="margin-vertical" :key="cardId + '-equipment'" :context="equipmentListContext" />
       <generic-widget-component v-if="activeTab === 'properties'" class="margin-vertical" key="'cardId + '-properties'" :context="propertiesListContext" />
       <p>
-        <f7-button fill round large card-close :color="color" class="margin-horizontal" :text="$t('home.cards.close')"></f7-button>
+        <f7-button fill round large card-close :color="color" class="margin-horizontal" :text="$t('home.cards.close')" />
       </p>
     </div>
   </model-card>

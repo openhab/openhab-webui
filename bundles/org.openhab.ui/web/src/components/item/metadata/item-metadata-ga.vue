@@ -4,8 +4,10 @@
       <f7-list-item :key="classSelectKey"
                     :title="'Google Assistant Class'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="classes">
         <select name="classes" @change="updateClass">
-          <option value=""></option>
-          <option v-for="cl in orderedClasses" :value="cl" :key="cl" :selected="isSelected(cl)">{{cl}}</option>
+          <option value="" />
+          <option v-for="cl in orderedClasses" :value="cl" :key="cl" :selected="isSelected(cl)">
+            {{ cl }}
+          </option>
         </select>
       </f7-list-item>
     </f7-list>
@@ -13,7 +15,9 @@
       <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" />
     </div>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" href="https://www.openhab.org/link/google-assistant">Google Assistant Integration Documentation</f7-link>
+      <f7-link color="blue" external target="_blank" href="https://www.openhab.org/link/google-assistant">
+        Google Assistant Integration Documentation
+      </f7-link>
     </p>
   </div>
 </template>

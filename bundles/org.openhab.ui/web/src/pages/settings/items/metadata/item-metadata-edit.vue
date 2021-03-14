@@ -2,13 +2,19 @@
   <f7-page @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn">
     <f7-navbar :title="'Edit Item Metadata: ' + namespace" back-link="Cancel" no-hairline>
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md">
+          Save
+        </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar v-if="ready" tabbar position="top">
-      <f7-link v-if="!generic" @click="currentTab = 'config'; fromYaml()" :tab-link-active="currentTab === 'config'" class="tab-link">Config</f7-link>
-      <f7-link @click="currentTab = 'code'; toYaml()" :tab-link-active="currentTab === 'code'" class="tab-link">Code</f7-link>
+      <f7-link v-if="!generic" @click="switchTab('config', fromYaml)" :tab-link-active="currentTab === 'config'" class="tab-link">
+        Config
+      </f7-link>
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">
+        Code
+      </f7-link>
     </f7-toolbar>
     <f7-tabs class="metadata-editor-tabs">
       <f7-tab id="config" class="metadata-editor-config-tab" @tab:show="() => this.currentTab = 'config'" :tab-active="currentTab === 'config'">
@@ -20,7 +26,9 @@
         <f7-block class="block-narrow" v-if="ready">
           <f7-col>
             <f7-list>
-              <f7-list-button color="red" v-if="!creationMode" @click="remove()">Remove metadata</f7-list-button>
+              <f7-list-button color="red" v-if="!creationMode" @click="remove()">
+                Remove metadata
+              </f7-list-button>
             </f7-list>
           </f7-col>
         </f7-block>
@@ -31,7 +39,6 @@
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
-
   </f7-page>
 </template>
 
@@ -68,7 +75,7 @@ export default {
   mixins: [DirtyMixin],
   props: ['itemName', 'namespace'],
   components: {
-    'editor': () => import('@/components/config/controls/script-editor.vue')
+    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
   data () {
     return {

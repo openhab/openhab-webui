@@ -1,14 +1,16 @@
 <template>
   <div class="after-big-title">
     <f7-block v-if="loading" class="text-align-center">
-      <f7-preloader></f7-preloader>
+      <f7-preloader />
       <div>Loading...</div>
     </f7-block>
     <f7-block v-else-if="!searchResults.items.length && !searchResults.things.length && !searchResults.rules.length && !searchResults.pages.length" class="text-align-center">
       <div>Nothing found</div>
     </f7-block>
     <f7-block class="no-margin no-padding" v-if="searchResults.items.length">
-      <f7-block-title class="padding-left"><f7-icon class="margin-right" f7="square_on_circle" />Items ({{searchResults.items.length}})</f7-block-title>
+      <f7-block-title class="padding-left">
+        <f7-icon class="margin-right" f7="square_on_circle" />Items ({{ searchResults.items.length }})
+      </f7-block-title>
       <f7-list media-list>
         <f7-list-item media-item v-for="item in filteredSearchResults.items" :key="item.name"
                       :title="item.label || item.name" :footer="(item.label) ? item.name : ''" link="" no-chevron @click="(evt) => togglePin(evt, 'items', item, 'name')">
@@ -16,11 +18,15 @@
           <f7-link slot="after" v-if="isPinned('items', item, 'name')" @click="$emit('unpin', 'items', item, 'name')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
           <f7-link slot="after" v-else @click="$emit('pin', 'items', item, 'name')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('items')" color="blue" @click="$set(expandedTypes, 'items', true)">Show All</f7-list-button>
+        <f7-list-button v-if="!showingAll('items')" color="blue" @click="$set(expandedTypes, 'items', true)">
+          Show All
+        </f7-list-button>
       </f7-list>
     </f7-block>
     <f7-block class="no-margin no-padding" v-if="searchResults.things.length">
-      <f7-block-title class="padding-left"><f7-icon class="margin-right" f7="lightbulb" />Things ({{searchResults.things.length}})</f7-block-title>
+      <f7-block-title class="padding-left">
+        <f7-icon class="margin-right" f7="lightbulb" />Things ({{ searchResults.things.length }})
+      </f7-block-title>
       <f7-list media-list>
         <f7-list-item media-item v-for="thing in filteredSearchResults.things" :key="thing.UID"
                       :title="thing.label" :footer="thing.UID" link="" no-chevron @click="(evt) => togglePin(evt, 'things', thing, 'UID')">
@@ -28,11 +34,15 @@
           <f7-link slot="after" v-if="isPinned('things', thing, 'UID')" @click="$emit('unpin', 'things', thing, 'UID')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
           <f7-link slot="after" v-else @click="$emit('pin', 'things', thing, 'UID')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('things')" color="blue" @click="$set(expandedTypes, 'things', true)">Show All</f7-list-button>
+        <f7-list-button v-if="!showingAll('things')" color="blue" @click="$set(expandedTypes, 'things', true)">
+          Show All
+        </f7-list-button>
       </f7-list>
     </f7-block>
     <f7-block class="no-margin no-padding" v-if="searchResults.rules.length">
-      <f7-block-title class="padding-left"><f7-icon class="margin-right" f7="wand_stars" />Rules ({{searchResults.rules.length}})</f7-block-title>
+      <f7-block-title class="padding-left">
+        <f7-icon class="margin-right" f7="wand_stars" />Rules ({{ searchResults.rules.length }})
+      </f7-block-title>
       <f7-list media-list>
         <f7-list-item media-item v-for="rule in filteredSearchResults.rules" :key="rule.uid"
                       :title="rule.name" :footer="rule.uid" link="" no-chevron @click="(evt) => togglePin(evt, 'rules', rule, 'uid')">
@@ -40,11 +50,15 @@
           <f7-link slot="after" v-if="isPinned('rules', rule, 'uid')" @click="$emit('unpin', 'rules', rule, 'uid')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
           <f7-link slot="after" v-else @click="$emit('pin', 'rules', rule, 'uid')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('rules')" color="blue" @click="$set(expandedTypes, 'rules', true)">Show All</f7-list-button>
+        <f7-list-button v-if="!showingAll('rules')" color="blue" @click="$set(expandedTypes, 'rules', true)">
+          Show All
+        </f7-list-button>
       </f7-list>
     </f7-block>
     <f7-block class="no-margin no-padding" v-if="searchResults.pages.length">
-      <f7-block-title class="padding-left"><f7-icon class="margin-right" f7="tv" />Pages ({{searchResults.pages.length}})</f7-block-title>
+      <f7-block-title class="padding-left">
+        <f7-icon class="margin-right" f7="tv" />Pages ({{ searchResults.pages.length }})
+      </f7-block-title>
       <f7-list media-list>
         <f7-list-item media-item v-for="page in filteredSearchResults.pages" :key="page.uid"
                       :title="page.config.label" :footer="page.uid" link="" no-chevron @click="(evt) => togglePin(evt, 'pages', page, 'uid')">
@@ -52,10 +66,11 @@
           <f7-link slot="after" v-if="isPinned('pages', page, 'uid')" @click="$emit('unpin', 'pages', page, 'uid')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
           <f7-link slot="after" v-else @click="$emit('pin', 'pages', page, 'uid')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('pages')" color="blue" @click="$set(expandedTypes, 'pages', true)">Show All</f7-list-button>
+        <f7-list-button v-if="!showingAll('pages')" color="blue" @click="$set(expandedTypes, 'pages', true)">
+          Show All
+        </f7-list-button>
       </f7-list>
     </f7-block>
-
   </div>
 </template>
 
