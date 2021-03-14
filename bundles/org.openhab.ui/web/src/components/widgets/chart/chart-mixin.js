@@ -173,21 +173,9 @@ export default {
         if (chartType) {
           day = fn.apply(day, [1, chartType === 'isoWeek' ? 'week' : chartType])
         } else {
-          switch (this.period) {
-            case 'h': day = fn.apply(day, [1, 'hour']); break
-            case '2h': day = fn.apply(day, [2, 'hour']); break
-            case '4h': day = fn.apply(day, [4, 'hour']); break
-            case '12h': day = fn.apply(day, [12, 'hour']); break
-            case 'D': day = fn.apply(day, [1, 'day']); break
-            case '2D': day = fn.apply(day, [2, 'day']); break
-            case '3D': day = fn.apply(day, [3, 'day']); break
-            case 'W': day = fn.apply(day, [1, 'week']); break
-            case '2W': day = fn.apply(day, [2, 'week']); break
-            case 'M': day = fn.apply(day, [1, 'month']); break
-            case '2M': day = fn.apply(day, [2, 'month']); break
-            case '4M': day = fn.apply(day, [4, 'month']); break
-            case '6M': day = fn.apply(day, [6, 'month']); break
-            case 'Y': day = fn.apply(day, [365, 'day']); break
+          let span = this.period.match(/^([\d]*)([smhdDwWMQyY])$/)
+          if (span) {
+            day = fn.apply(day, [parseInt(span[1]) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase())])
           }
         }
       }
