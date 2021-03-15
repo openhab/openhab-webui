@@ -261,7 +261,7 @@ export default {
       this.detailsOpened = false
     },
     keyDown (ev) {
-      if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey)) {
+      if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         this.save(!this.createMode)
         ev.stopPropagation()
         ev.preventDefault()

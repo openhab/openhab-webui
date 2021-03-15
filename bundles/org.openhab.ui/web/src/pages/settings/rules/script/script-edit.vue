@@ -393,7 +393,7 @@ export default {
       this.eventSource = null
     },
     keyDown (ev) {
-      if (ev.ctrlKey || ev.metaKey) {
+      if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
           case 66:
             if (this.isBlockly) {
