@@ -83,7 +83,7 @@ export default {
       this.$store.dispatch('stopTrackingStates')
     },
     keyDown (ev) {
-      if (ev.ctrlKey || ev.metaKey) {
+      if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
           case 82:
             this.togglePreviewMode()

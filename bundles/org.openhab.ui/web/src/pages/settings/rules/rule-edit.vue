@@ -406,7 +406,7 @@ export default {
       this.eventSource = null
     },
     keyDown (ev) {
-      if (ev.ctrlKey || ev.metaKey) {
+      if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         if (this.currentModule) return
         switch (ev.keyCode) {
           case 68:

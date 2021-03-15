@@ -171,7 +171,7 @@ export default {
       }
     },
     keyDown (ev) {
-      if (ev.ctrlKey || ev.metaKey) {
+      if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
           case 80:
             this.widgetPropsOpened = true

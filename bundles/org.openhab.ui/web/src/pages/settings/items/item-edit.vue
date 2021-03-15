@@ -127,7 +127,7 @@ export default {
       }
     },
     keyDown (ev) {
-      if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey)) {
+      if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         this.save()
         ev.stopPropagation()
         ev.preventDefault()
