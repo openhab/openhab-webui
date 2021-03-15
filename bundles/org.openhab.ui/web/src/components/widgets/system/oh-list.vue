@@ -1,5 +1,5 @@
 <template>
-  <f7-list v-bind="config" :title="null">
+  <f7-list v-bind="config" :title="null" :style="{ 'z-index': context.editmode ? 'inherit' : undefined }">
     <f7-menu v-if="context.editmode" slot="before-list" class="configure-layout-menu margin-vertical padding-left">
       <f7-menu-item @click="context.editmode.addWidget(context.component)" icon-f7="plus" />
       <f7-menu-item style="margin-left: auto" icon-f7="square_list" dropdown>
@@ -13,7 +13,7 @@
     <ul v-if="context.component.slots && context.component.slots.default">
       <template v-for="(slotComponent, idx) in context.component.slots.default">
         <f7-menu v-if="context.editmode" style="float:left" :key="idx">
-          <f7-menu-item icon-f7="list_bullet" class="configure-layout-menu" dropdown>
+          <f7-menu-item icon-f7="list_bullet" class="margin-left configure-layout-menu" dropdown>
             <f7-menu-dropdown>
               <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component.slots.default[idx], context)" href="#" text="Configure Item" />
               <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component.slots.default[idx], context)" href="#" text="Edit YAML" />
