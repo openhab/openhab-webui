@@ -137,8 +137,7 @@ export default {
           ? {
             component: 'oh-list-card',
             config: {
-              mediaList: true,
-              footer: 'Detected list item as root component, wrapping in list card for preview'
+              mediaList: true
             },
             slots: {
               default: [this.widget]
