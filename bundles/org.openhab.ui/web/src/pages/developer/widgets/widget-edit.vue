@@ -105,6 +105,8 @@ import { strOptions } from 'yaml/types'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 
+import * as StandardListWidgets from '@/components/widgets/standard/list'
+
 strOptions.fold.lineWidth = 0
 
 export default {
@@ -124,13 +126,24 @@ export default {
       vars: {},
       blockKey: this.$f7.utils.id(),
       widgetKey: this.$f7.utils.id(),
-      widgetPropsOpened: false
+      widgetPropsOpened: false,
+      standardListWidgets: Object.values(StandardListWidgets).filter((c) => c.widget && typeof c.widget === 'function').map((c) => c.widget().name)
     }
   },
   computed: {
     context () {
       return {
-        component: this.widget,
+        component: !this.widget.component || this.standardListWidgets.includes(this.widget.component) || this.widget.component.startsWith('f7-list-item')
+          ? {
+            component: 'oh-list-card',
+            config: {
+              mediaList: true
+            },
+            slots: {
+              default: [this.widget]
+            }
+          }
+          : this.widget,
         store: this.$store.getters.trackedItems,
         props: this.props,
         vars: this.vars
