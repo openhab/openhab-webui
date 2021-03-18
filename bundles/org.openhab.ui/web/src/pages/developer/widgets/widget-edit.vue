@@ -20,7 +20,7 @@
     <f7-block :key="blockKey + '-h'" v-if="split === 'horizontal'" class="widget-editor horizontal">
       <f7-row resizable>
         <f7-col style="min-width: 20px" class="widget-code">
-          <editor class="widget-component-editor" :mode="'text/x-yaml'" :value="widgetDefinition" @input="(value) => widgetDefinition = value" />
+          <editor class="widget-component-editor" mode="application/vnd.openhab.uicomponent+yaml?type=widget" :value="widgetDefinition" @input="onEditorInput" />
         </f7-col>
       </f7-row>
       <f7-row v-if="ready" resizable>
