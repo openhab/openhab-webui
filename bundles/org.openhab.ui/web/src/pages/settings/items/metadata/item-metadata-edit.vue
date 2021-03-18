@@ -189,20 +189,28 @@ export default {
       })
     },
     remove () {
-      this.$oh.api.delete(`/rest/items/${this.itemName}/metadata/${this.namespace}`).then(() => {
-        this.$f7.toast.create({
-          text: 'Metadata deleted',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.$f7router.back()
-      }).catch((err) => {
-        this.$f7.toast.create({
-          text: 'Error while deleting metadata: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+      let nslabel = ([...MetadataNamespaces].find(ns => ns.name === this.namespace) || { label: this.namespace }).label
+      this.$f7.dialog.confirm(
+        `Are you sure you want to remove all metadata for "${nslabel}"?`,
+        'Remove metadata',
+        () => {
+          this.$oh.api.delete(`/rest/items/${this.itemName}/metadata/${this.namespace}`).then(() => {
+            this.$f7.toast.create({
+              text: 'Metadata deleted',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+            this.dirty = false
+            this.$f7router.back()
+          }).catch((err) => {
+            this.$f7.toast.create({
+              text: 'Error while deleting metadata: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+          })
+        }
+      )
     },
     toYaml () {
       this.yaml = YAML.stringify(this.metadata)
