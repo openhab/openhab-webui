@@ -20,7 +20,7 @@
       <f7-row>
         <f7-col>
           <f7-list>
-            <f7-list-button color="blue" :external="true" href="changePassword">
+            <f7-list-button color="blue" :external="true" href="/changePassword">
               {{ $t('profile.changePassword') }}
             </f7-list-button>
           </f7-list>
@@ -77,7 +77,7 @@
                   </f7-swipeout-button>
                 </f7-swipeout-actions>
               </f7-list-item>
-              <f7-list-button color="blue" :external="true" href="createApiToken">
+              <f7-list-button color="blue" :external="true" href="/createApiToken">
                 {{ $t('profile.apiTokens.create') }}
               </f7-list-button>
             </f7-list>

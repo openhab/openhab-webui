@@ -30,7 +30,7 @@ module.exports = {
   output: {
     path: resolvePath(isCordova ? 'cordova/www' : 'www'),
     filename: 'js/app.js',
-    publicPath: '',
+    publicPath: '/',
     hotUpdateChunkFilename: 'hot/hot-update.js',
     hotUpdateMainFilename: 'hot/hot-update.json'
   },
@@ -48,17 +48,14 @@ module.exports = {
     // compress: true,
     contentBase: '/www/',
     disableHostCheck: true,
+    historyApiFallback: true,
     // watchOptions: {
     //   poll: 1000,
     // },
-    proxy: {
-      '/auth': apiBaseUrl,
-      '/rest': apiBaseUrl,
-      '/chart': apiBaseUrl,
-      '/proxy': apiBaseUrl,
-      '/icon': apiBaseUrl,
-      '/static': apiBaseUrl
-    }
+    proxy: [{
+      context: ['/auth', '/rest', '/chart', '/proxy', '/icon', '/static', '/changePassword', '/createApiToken'],
+      target: apiBaseUrl
+    }]
   },
   performance: {
     maxAssetSize: 2048000,

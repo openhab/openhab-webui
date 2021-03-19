@@ -298,7 +298,8 @@ export default {
           // disable f7 swipeback on iOS (if not in cordova) because it's handled natively by Safari
           iosSwipeBack: !this.$device.ios || this.$device.cordova,
           auroraSwipeBack: !this.$device.ios || this.$device.cordova,
-          pushState: true // !this.$device.cordova
+          pushState: true, // !this.$device.cordova
+          pushStateSeparator: ''
         },
         // Enable panel left visibility breakpoint
         panel: {
