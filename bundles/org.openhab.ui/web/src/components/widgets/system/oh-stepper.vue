@@ -1,5 +1,5 @@
 <template>
-  <f7-stepper ref="stepper" v-bind="config" :value="value" @stepper:change="onChange"
+  <f7-stepper ref="stepper" v-bind="config" :value="(value)? value : defaultValue" @stepper:change="onChange"
               :manual-input-mode="false" :format-value="formatValue" />
 </template>
 
@@ -10,7 +10,13 @@ import { OhStepperDefinition } from '@/assets/definitions/widgets/system'
 export default {
   mixins: [mixin],
   widget: OhStepperDefinition,
+  data () {
+    return {
+      defaultValue: null
+    }
+  },
   mounted () {
+    this.defaultValue = this.config.value
     delete this.config.value
   },
   computed: {
