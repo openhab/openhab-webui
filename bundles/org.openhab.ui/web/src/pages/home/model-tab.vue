@@ -113,13 +113,19 @@ export default {
       return excludedIdx >= 0
     },
     cardContext (element) {
-      return {
+      let context = {
         component: element.card || {
           component: (this.type === 'locations') ? 'oh-location-card' : (this.type === 'equipment') ? 'oh-equipment-card' : 'oh-property-card',
           config: {}
         },
         store: this.$store.getters.trackedItems
       }
+      const page = this.page
+      const type = this.type
+      if (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.badges) {
+        context.badgeOverrides = page.slots[type][0].config.badges
+      }
+      return context
     },
     parentLocationName (item) {
       if (item.metadata.semantics.config && item.metadata.semantics.config.isPartOf) {

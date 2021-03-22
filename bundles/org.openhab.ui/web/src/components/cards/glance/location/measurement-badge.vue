@@ -73,14 +73,14 @@ export default {
       }
     },
     map () {
-      return this.query.map((item) => this.store[item.name].state).filter((state) => Number.isFinite(Number.parseFloat(state.split(' ')[0])))
+      return this.query.map((item) => this.store[item.name].state).filter((state) => Number.isFinite(Number.parseFloat(state)))
     },
     mapAux () {
-      return this.queryAux.map((item) => this.store[item.name].state).filter((state) => Number.isFinite(Number.parseFloat(state.split(' ')[0])))
+      return this.queryAux.map((item) => this.store[item.name].state).filter((state) => Number.isFinite(Number.parseFloat(state)))
     },
     reduce () {
       const ret = this.map.reduce((avg, state, arr, { length }) => {
-        const value = Number.parseFloat(state.split(' ')[0])
+        const value = Number.parseFloat(state)
         if (Number.isFinite(value)) {
           return avg + value / length
         }
@@ -92,7 +92,7 @@ export default {
     reduceAux () {
       if (this.type !== 'temperature') return undefined
       const ret = this.mapAux.reduce((avg, state, arr, { length }) => {
-        const value = Number.parseFloat(state.split(' ')[0])
+        const value = Number.parseFloat(state)
         if (Number.isFinite(value)) {
           return avg + value / length
         }
