@@ -67,7 +67,7 @@
           </f7-row>
         </f7-block>
 
-        <oh-layout-page class="layout-page" v-else-if="ready" :context="context" :key="pageKey"
+        <oh-layout-page class="layout-page" v-else-if="ready" :context="context" :key="pageKey" :style="page.config.style"
                         @add-block="addBlock"
                         @add-masonry="addMasonry"
                         @add-grid-item="addGridItem" />
@@ -76,7 +76,7 @@
         <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml?type=layout" :value="pageYaml" @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
-        <oh-layout-page class="layout-page" v-if="ready && previewMode" :context="context" :key="pageKey" />
+        <oh-layout-page class="layout-page" v-if="ready && previewMode" :context="context" :key="pageKey" :style="page.config.style" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
