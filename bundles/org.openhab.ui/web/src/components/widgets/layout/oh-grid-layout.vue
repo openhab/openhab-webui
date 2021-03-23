@@ -117,7 +117,7 @@ export default {
   },
   created () {
     this.colNum = this.config.colNum || 16
-    this.margin = this.config.margin || 10
+    this.margin = this.config.margin >= 0 ? this.config.margin : 10
 
     if (this.config.layoutType === 'fixed') {
       this.style.width = this.screenWidth = this.config.screenWidth || 1280

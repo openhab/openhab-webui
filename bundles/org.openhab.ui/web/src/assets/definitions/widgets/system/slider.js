@@ -6,7 +6,7 @@ export default () => [
   pd('max', 'Max', 'Maximum value'),
   pd('step', 'Step', 'Minimum interval between values'),
   pd('vertical', 'Vertical', 'Display the slider vertically'),
-  pb('label', 'Display Label', 'Display a label above the slider knob'),
+  pb('label', 'Display Label', 'Display a label above the slider knob while sliding'),
   pb('scale', 'Display Scale', 'Display a scale on the slider'),
   pn('scaleSteps', 'Scale steps', 'Number of (major) scale markers'),
   pn('scaleSubSteps', 'Scale sub-steps', 'Number of scale minor markers between each major marker'),
