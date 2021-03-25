@@ -317,13 +317,14 @@ export default {
           // dynamically add value axes according to unit if determined
           const seriesOptions = this.seriesOptions[item.name]
           if (!seriesOptions.discrete && (seriesOptions.type === 'line' || seriesOptions.type === 'bar')) {
-            const unit = (item.transformedState && item.transformedState.split(' ').length === 2)
+            let unit = (item.transformedState && item.transformedState.split(' ').length === 2)
               ? item.transformedState.split(' ')[1]
               : (item.state.split(' ').length === 2)
                 ? item.state.split(' ')[1]
                 : (item.stateDescription && item.stateDescription.pattern && item.stateDescription.pattern.split(' ').length === 2)
                   ? item.stateDescription.pattern.split(' ')[1]
                   : undefined
+            if (unit) unit = unit.replace(/^%%/, '%')
             let unitAxis = this.valueAxesOptions.findIndex((a) => a.unit === unit)
             if (unitAxis >= 0) {
               this.$set(seriesOptions, 'valueAxisIndex', unitAxis)
