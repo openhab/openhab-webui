@@ -74,8 +74,6 @@
   z-index auto !important
   top 0
   height calc(100%)
-  .notready
-    visibility hidden
   .code-editor-fit
     height calc(100% - var(--f7-grid-gap))
   .row
@@ -120,7 +118,7 @@ export default {
     return {
       widgetDefinition: null,
       items: [],
-      ready: true,
+      ready: false,
       split: 'vertical',
       props: {},
       vars: {},
@@ -207,7 +205,6 @@ export default {
     load () {
       if (this.loading) return
       this.loading = true
-
       if (this.createMode) {
         this.widgetDefinition = YAML.stringify({
           uid: 'widget_' + this.$f7.utils.id(),
