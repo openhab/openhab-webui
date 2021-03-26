@@ -5,13 +5,19 @@
     </f7-card-header>
     <f7-card-content @click.native="performAction" class="clock-card-content text-align-center">
       <f7-row v-if="config.showDate && config.datePos !== 'below'">
-        <f7-col :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }" v-text="date" />
+        <f7-col>
+          <oh-clock :context="{ component: 'oh-clock', config: {} }" :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }" :format="config.dateFormat" />
+        </f7-col>
       </f7-row>
       <f7-row>
-        <f7-col :style="{ 'font-size': config.timeFontSize || '2vw', 'font-weight': config.timeFontWeight || 'normal' }" v-text="time" />
+        <f7-col>
+          <oh-clock :context="{ component: 'oh-clock', config: {} }" :style="{ 'font-size': config.timeFontSize || '2vw', 'font-weight': config.timeFontWeight || 'normal' }" :format="config.timeFormat" />
+        </f7-col>
       </f7-row>
       <f7-row v-if="config.showDate && config.datePos === 'below'">
-        <f7-col :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }" v-text="date" />
+        <f7-col>
+          <oh-clock :context="{ component: 'oh-clock', config: {} }" :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }" :format="config.dateFormat" />
+        </f7-col>
       </f7-row>
     </f7-card-content>
     <f7-card-footer v-if="config.footer">
@@ -21,32 +27,16 @@
 </template>
 
 <script>
-import dayjs from 'dayjs'
 import mixin from '../widget-mixin'
 import { actionsMixin } from '../widget-actions'
+import OhClock from '../system/oh-clock.vue'
 import { OhClockCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  data () {
-    return {
-      time: '',
-      date: ''
-    }
-  },
   mixins: [mixin, actionsMixin],
-  widget: OhClockCardDefinition,
-  methods: {
-    updateTime () {
-      this.time = dayjs().format(this.config.timeFormat || 'LTS')
-      this.date = dayjs().format(this.config.dateFormat || 'LL')
-    }
+  components: {
+    OhClock
   },
-  mounted () {
-    this.updateTime()
-    this.timer = setInterval(this.updateTime, 1000)
-  },
-  beforeDestroy () {
-    clearInterval(this.timer)
-  }
+  widget: OhClockCardDefinition
 }
 </script>
