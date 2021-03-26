@@ -1,5 +1,5 @@
 <template>
-  <f7-range class="oh-slider" v-bind="config" :value="value" @range:changed="onChange" :format-label="formatLabel" :format-scale-label="formatScaleLabel" />
+  <f7-range ref="rangeslider" class="oh-slider" v-bind="config" :value="value" @range:changed="onChange" :format-label="formatLabel" :format-scale-label="formatScaleLabel" />
 </template>
 
 <style lang="stylus">
@@ -17,6 +17,13 @@ export default {
   widget: OhSliderDefinition,
   mounted () {
     delete this.config.value
+
+    // f7-range inside of masonry can get rendered faulty, as the masonry changes its breakpoint layout after being rendered
+    // re-calculate the range slider after masonry is updated
+    setTimeout(() => {
+      this.$refs.rangeslider.f7Range.calcSize()
+      this.$refs.rangeslider.f7Range.layout()
+    }, 0)
   },
   computed: {
     value () {
