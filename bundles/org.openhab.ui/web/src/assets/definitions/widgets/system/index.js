@@ -88,3 +88,7 @@ export const OhWebFrameDefinition = () => new WidgetDefinition('oh-webframe', 'W
 import RepeaterParameters from './repeater.js'
 export const OhRepeaterDefinition = () => new WidgetDefinition('oh-repeater', 'Repeater', 'Iterate over an array and repeat the children components in the default slot')
   .params(RepeaterParameters())
+
+import ClockParameters from './clock.js'
+export const OhClockDefinition = () => new WidgetDefinition('oh-clock', 'Digital Clock', 'Display a digital clock')
+  .params(ClockParameters())
