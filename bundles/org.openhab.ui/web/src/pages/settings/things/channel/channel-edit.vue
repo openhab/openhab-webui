@@ -14,8 +14,12 @@
         <f7-list media-list>
           <f7-list-item media-item class="channel-item"
                         :title="channel.label"
-                        :footer="channel.description"
-                        :subtitle="channel.uid" />
+                        :footer="channel.description">
+            <div slot="subtitle">
+              {{ channel.uid }}
+              <clipboard-icon :value="channel.uid" tooltip="Copy UID" />
+            </div>
+          </f7-list-item>
         </f7-list>
       </f7-col>
       <f7-col v-if="channelType != null">
@@ -38,10 +42,12 @@
 
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
   components: {
-    ConfigSheet
+    ConfigSheet,
+    ClipboardIcon
   },
   props: ['thing', 'thingType', 'channel', 'channelType', 'channelId'],
   data () {

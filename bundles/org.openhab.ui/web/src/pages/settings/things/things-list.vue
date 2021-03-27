@@ -87,8 +87,11 @@
               @click.ctrl="(e) => ctrlClick(e, thing)"
               @click.exact="(e) => click(e, thing)"
               link=""
-              :title="thing.label || thing.UID"
-              :footer="thing.UID">
+              :title="thing.label || thing.UID">
+              <div slot="footer">
+                {{ thing.UID }}
+                <clipboard-icon :value="thing.UID" tooltip="Copy UID" />
+              </div>
               <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
                 {{ thingStatusBadgeText(thing.statusInfo) }}
               </f7-badge>
@@ -121,11 +124,13 @@
 
 <script>
 import thingStatus from '@/components/thing/thing-status-mixin'
+import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
   mixins: [thingStatus],
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
+    ClipboardIcon
   },
   data () {
     return {

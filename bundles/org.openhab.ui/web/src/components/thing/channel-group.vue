@@ -30,12 +30,25 @@
       <div v-if="multipleLinksMode" slot="root-end">
         <slot :channelType="c.channelType" :channelId="c.channel.id" :channel="c.channel" :extensible="c.extensible" />
       </div>
+      <clipboard-icon class="channel-clipboard-icon" :value="c.channel.uid" tooltip="Copy UID" color="gray" />
     </f7-list-item>
   </f7-list>
 </template>
 
+<style lang="stylus">
+.channel-clipboard-icon
+  position absolute !important
+  right 60px
+  top 8px
+</style>
+
 <script>
+import ClipboardIcon from '@/components/util/clipboard-icon.vue'
+
 export default {
+  components: {
+    ClipboardIcon
+  },
   props: [
     'extensible',
     'group',
