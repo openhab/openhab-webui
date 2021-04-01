@@ -58,7 +58,6 @@ export default {
   data () {
     return {
       currentTab: 0,
-      loading: false,
       fullscreen: this.$fullscreen.getState()
     }
   },
@@ -115,7 +114,6 @@ export default {
   methods: {
     onPageAfterIn () {
       this.$store.dispatch('startTrackingStates')
-      this.load()
     },
     onPageBeforeOut () {
       this.$store.dispatch('stopTrackingStates')
@@ -126,8 +124,6 @@ export default {
     },
     onCommand (itemName, command) {
       this.$store.dispatch('sendCommand', { itemName, command })
-    },
-    load () {
     },
     tabContext (tab) {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
