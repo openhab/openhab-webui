@@ -1,9 +1,9 @@
 import Blockly from 'blockly'
 import { FieldItemModelPicker } from './ohitemfield'
 
-export default function defineOHBlocks_HTTP(f7, scripts) {
+export default function defineOHBlocks_HTTP (f7, scripts) {
   Blockly.Blocks['oh_httprequest'] = {
-    init: function() {
+    init: function () {
       this.appendValueInput('url')
         .setCheck('String')
         .appendField('Method')
@@ -22,15 +22,15 @@ export default function defineOHBlocks_HTTP(f7, scripts) {
     }
   }
 
-  Blockly.JavaScript['oh_httprequest'] = function(block) {
+  Blockly.JavaScript['oh_httprequest'] = function (block) {
     const http = Blockly.JavaScript.provideFunction_(
       'http',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.HTTP");'])
-    var requesttype = block.getFieldValue('requestType')
-    var contenttype = block.getFieldValue('contentType')
-    var url = Blockly.JavaScript.valueToCode(block, 'url', Blockly.JavaScript.ORDER_ATOMIC)
-    var payload = Blockly.JavaScript.valueToCode(block, 'payload', Blockly.JavaScript.ORDER_ATOMIC)
-    var code = ''
+    let requesttype = block.getFieldValue('requestType')
+    let contenttype = block.getFieldValue('contentType')
+    let url = Blockly.JavaScript.valueToCode(block, 'url', Blockly.JavaScript.ORDER_ATOMIC)
+    let payload = Blockly.JavaScript.valueToCode(block, 'payload', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = ''
     if (contenttype === 'none') {
       code = http + '.' + requesttype + '("' + url + '",60)'
     } else {
@@ -41,16 +41,16 @@ export default function defineOHBlocks_HTTP(f7, scripts) {
 
   Blockly.Blocks['oh_script_dropdown'] = {
     init: function () {
-      var input = this.appendDummyInput()
+      let input = this.appendDummyInput()
         .appendField('script')
         .appendField(new Blockly.FieldDropdown(this.generateOptions), 'script')
       this.setOutput(true, null)
     },
     generateOptions: function () {
-      var options = []
+      let options = []
       if (scripts != null) {
-        for (var key in scripts) {
-          var tmp1 = scripts[key]
+        for (let key in scripts) {
+          let tmp1 = scripts[key]
           options.push([tmp1.name, tmp1.uid])
         }
       }
@@ -59,8 +59,8 @@ export default function defineOHBlocks_HTTP(f7, scripts) {
   }
 
   Blockly.JavaScript['oh_script_dropdown'] = function (block) {
-    var scriptName = block.getFieldValue('script')
-    var code = scriptName
+    let scriptName = block.getFieldValue('script')
+    let code = scriptName
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 }

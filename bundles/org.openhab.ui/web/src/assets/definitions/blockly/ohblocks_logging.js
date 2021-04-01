@@ -17,7 +17,7 @@ export default function defineOHBlocks_Logging (f7) {
 
   Blockly.JavaScript['oh_print'] = function (block) {
     const message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    var code = 'print(' + message + ');\n'
+    let code = 'print(' + message + ');\n'
     return code
   }
 

@@ -1,7 +1,7 @@
 import Blockly from 'blockly'
 import { FieldItemModelPicker } from './ohitemfield'
 
-export default function defineOHBlocks_Subsystem(f7, scripts) {
+export default function defineOHBlocks_Subsystem (f7, scripts) {
   Blockly.Blocks['oh_callscript'] = {
     init: function () {
       this.appendValueInput('script')
@@ -20,8 +20,8 @@ export default function defineOHBlocks_Subsystem(f7, scripts) {
     const scriptExecution = Blockly.JavaScript.provideFunction_(
       'scriptExecution',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.ScriptExecution");'])
-    var script = Blockly.JavaScript.valueToCode(block, 'script', Blockly.JavaScript.ORDER_ATOMIC)
-    var code = scriptExecution + '.callScript(' + script + ');\n'
+    let script = Blockly.JavaScript.valueToCode(block, 'script', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = scriptExecution + '.callScript(' + script + ');\n'
     return code
   }
 }

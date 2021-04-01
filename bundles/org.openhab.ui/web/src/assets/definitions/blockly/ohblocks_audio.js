@@ -1,7 +1,7 @@
 import Blockly from 'blockly'
 import { FieldSlider } from '@blockly/field-slider'
 
-export default function defineOHBlocks_Audio(f7, sinks) {
+export default function defineOHBlocks_Audio (f7, sinks) {
   Blockly.Blocks['audioSlider'] = {
     init: function () {
       this.appendDummyInput()
@@ -14,7 +14,7 @@ export default function defineOHBlocks_Audio(f7, sinks) {
 
   Blockly.JavaScript['audioSlider'] = function (block) {
     const itemName = block.getFieldValue('FIELDNAME')
-    var code = '\'' + itemName + '\''
+    let code = '\'' + itemName + '\''
     return [code, 0]
   }
 
@@ -23,7 +23,7 @@ export default function defineOHBlocks_Audio(f7, sinks) {
       this.appendValueInput('floatValue')
         .setCheck('Number')
         .appendField(new Blockly.FieldDropdown([['setMasterVolume', 'setMasterVolume'], ['increaseMasterVolume', 'increaseMasterVolume'], ['decreaseMasterVolume', 'decreaseMasterVolume']]), 'functionSelect')
-        .appendField('%');
+        .appendField('%')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -37,9 +37,9 @@ export default function defineOHBlocks_Audio(f7, sinks) {
     const audio = Blockly.JavaScript.provideFunction_(
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
-    var functionSelect = block.getFieldValue('functionSelect')
-    var floatvalue = Blockly.JavaScript.valueToCode(block, 'floatValue', Blockly.JavaScript.ORDER_ATOMIC)
-    var code
+    let functionSelect = block.getFieldValue('functionSelect')
+    let floatvalue = Blockly.JavaScript.valueToCode(block, 'floatValue', Blockly.JavaScript.ORDER_ATOMIC)
+    let code
     switch (functionSelect) {
       case 'setMasterVolume' :
         code = audio + '.setMasterVolume(' + floatvalue + ');'
@@ -71,10 +71,10 @@ export default function defineOHBlocks_Audio(f7, sinks) {
     const audio = Blockly.JavaScript.provideFunction_(
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
-    var fileName = block.getFieldValue('fileName')
-    var code = audio + '.playSound("' + fileName + '");\n'
+    let fileName = block.getFieldValue('fileName')
+    let code = audio + '.playSound("' + fileName + '");\n'
     return code
-  };
+  }
 
   Blockly.Blocks['oh_playmedia_volume'] = {
     init: function () {
@@ -96,9 +96,9 @@ export default function defineOHBlocks_Audio(f7, sinks) {
     const audio = Blockly.JavaScript.provideFunction_(
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
-    var fileName = block.getFieldValue('fileName')
-    var volume = block.getFieldValue('volume').replace(/'/g, '')
-    var code = audio + '.playSound("' + fileName + '", new PercentType(' + volume + '));\n'
+    let fileName = block.getFieldValue('fileName')
+    let volume = block.getFieldValue('volume').replace(/'/g, '')
+    let code = audio + '.playSound("' + fileName + '", new PercentType(' + volume + '));\n'
     return code
   }
 
@@ -122,15 +122,15 @@ export default function defineOHBlocks_Audio(f7, sinks) {
     const audio = Blockly.JavaScript.provideFunction_(
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
-    var fileName = block.getFieldValue('fileName')
-    var sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC);
+    let fileName = block.getFieldValue('fileName')
+    let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC)
     // TODO : handle multiple sinks
-    var code = audio + '.playSound("' + sinkName + '","' + fileName + '");\n'
+    let code = audio + '.playSound("' + sinkName + '","' + fileName + '");\n'
     return code
-  };
+  }
 
   Blockly.Blocks['oh_playmedia_sink_volume'] = {
-    init: function() {
+    init: function () {
       this.appendDummyInput()
         .appendField('Play audio')
         .appendField(new Blockly.FieldTextInput('filename'), 'fileName')
@@ -147,17 +147,17 @@ export default function defineOHBlocks_Audio(f7, sinks) {
       this.setTooltip('')
       this.setHelpUrl('')
     }
-  };
+  }
 
   Blockly.JavaScript['oh_playmedia_sink_volume'] = function (block) {
     const audio = Blockly.JavaScript.provideFunction_(
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
-    var fileName = block.getFieldValue('fileName')
-    var sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC);
-    var volume = Blockly.JavaScript.valueToCode(block, 'volume', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
+    let fileName = block.getFieldValue('fileName')
+    let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC)
+    let volume = Blockly.JavaScript.valueToCode(block, 'volume', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
     // TODO : handle multiple sinks
-    var code = audio + '.playSound("' + sinkName + '","' + fileName + '",new PercentType(' + volume + '));\n'
+    let code = audio + '.playSound("' + sinkName + '","' + fileName + '",new PercentType(' + volume + '));\n'
     return code
   }
 
@@ -179,19 +179,19 @@ export default function defineOHBlocks_Audio(f7, sinks) {
     const audio = Blockly.JavaScript.provideFunction_(
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
-    var url = block.getFieldValue('url')
-    var code = audio + '.playStream("' + url + '");\n'
-    return code;
+    let url = block.getFieldValue('url')
+    let code = audio + '.playStream("' + url + '");\n'
+    return code
   }
 
   Blockly.Blocks['oh_playstream_sink'] = {
-    init: function() {
+    init: function () {
       this.appendDummyInput()
         .appendField('Play stream')
         .appendField(new Blockly.FieldTextInput('<URL>'), 'url')
       this.appendValueInput('sinkName')
         .setCheck(null)
-        .appendField('on');
+        .appendField('on')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -205,14 +205,14 @@ export default function defineOHBlocks_Audio(f7, sinks) {
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
     // TODO : handle multiple sinks
-    var url = block.getFieldValue('url')
-    var sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = audio + '.playStream("' + sinkName + '","' + url + '");\n'
+    let url = block.getFieldValue('url')
+    let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = audio + '.playStream("' + sinkName + '","' + url + '");\n'
     return code
   }
 
   Blockly.Blocks['oh_getmastervolume'] = {
-    init: function() {
+    init: function () {
       this.appendDummyInput()
         .appendField('Get Master Volume')
       this.setInputsInline(true)
@@ -227,22 +227,22 @@ export default function defineOHBlocks_Audio(f7, sinks) {
     const audio = Blockly.JavaScript.provideFunction_(
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
-    var code = audio + '.getMasterVolume()'
+    let code = audio + '.getMasterVolume()'
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
   Blockly.Blocks['oh_audiosink_dropdown'] = {
     init: function () {
-      var input = this.appendDummyInput()
+      let input = this.appendDummyInput()
         .appendField('audio sink')
         .appendField(new Blockly.FieldDropdown(this.generateOptions), 'sinks')
       this.setOutput(true, null)
     },
     generateOptions: function () {
-      var options = []
+      let options = []
       if (sinks != null) {
-        for (var key in sinks) {
-          var tmp1 = sinks[key]
+        for (let key in sinks) {
+          let tmp1 = sinks[key]
           options.push([tmp1.label, tmp1.id])
         }
       }
@@ -251,8 +251,8 @@ export default function defineOHBlocks_Audio(f7, sinks) {
   }
 
   Blockly.JavaScript['oh_audiosink_dropdown'] = function (block) {
-    var sinkName = block.getFieldValue('sinks')
-    var code = sinkName
+    let sinkName = block.getFieldValue('sinks')
+    let code = sinkName
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 }

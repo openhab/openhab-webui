@@ -1,7 +1,7 @@
 import Blockly from 'blockly'
 import { FieldItemModelPicker } from './ohitemfield'
 
-export default function defineOHBlocks_Timers(f7) {
+export default function defineOHBlocks_Timers (f7) {
   Blockly.Blocks['oh_timer_item'] = {
     init: function () {
       this.appendDummyInput()
@@ -16,7 +16,7 @@ export default function defineOHBlocks_Timers(f7) {
 
   Blockly.JavaScript['oh_timer_item'] = function (block) {
     const timerName = block.getFieldValue('timerName')
-    var code = timerName;
+    let code = timerName
     return [code, 0]
   }
 
@@ -34,9 +34,9 @@ export default function defineOHBlocks_Timers(f7) {
   }
 
   Blockly.JavaScript['oh_sleep'] = function (block) {
-    var milliseconds = block.getFieldValue('milliseconds')
+    let milliseconds = block.getFieldValue('milliseconds')
     // TODO: Assemble JavaScript into code variable.
-    var code = 'java.lang.Thread.sleep(' + milliseconds + ');\n'
+    let code = 'java.lang.Thread.sleep(' + milliseconds + ');\n'
     return code
   }
 
@@ -63,10 +63,10 @@ export default function defineOHBlocks_Timers(f7) {
     const zonedDateTime = Blockly.JavaScript.provideFunction_(
       'zonedDateTime',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.ZonedDateTime");'])
-    var numberDelay = block.getFieldValue('delay')
-    var dropdownTimeUnit = block.getFieldValue('time_unit')
-    var statementsTimer = Blockly.JavaScript.statementToCode(block, 'timer')
-    var unitsFunction = ''
+    let numberDelay = block.getFieldValue('delay')
+    let dropdownTimeUnit = block.getFieldValue('time_unit')
+    let statementsTimer = Blockly.JavaScript.statementToCode(block, 'timer')
+    let unitsFunction = ''
     switch (dropdownTimeUnit) {
       case 'seconds' :
         unitsFunction = 'plusSeconds'
@@ -78,7 +78,7 @@ export default function defineOHBlocks_Timers(f7) {
         unitsFunction = 'plusHours'
         break
     }
-    var code = 'var delayedTimer;\n'
+    let code = 'var delayedTimer;\n'
     code += 'this.delayedTimer = ' + scriptExecution + '.createTimer(' + zonedDateTime + '.now().' + unitsFunction + '(' + numberDelay + '), function(){\n'
     code += statementsTimer
     code += '});\n'
@@ -86,7 +86,7 @@ export default function defineOHBlocks_Timers(f7) {
   }
 
   Blockly.Blocks['oh_persistTimer'] = {
-    init: function() {
+    init: function () {
       this.appendStatementInput('runMe')
         .setCheck(null)
         .appendField('Timer')
@@ -102,20 +102,20 @@ export default function defineOHBlocks_Timers(f7) {
       this.setTooltip('')
       this.setHelpUrl('')
     }
-  };
+  }
 
-  Blockly.JavaScript['oh_persistTimer'] = function(block) {
+  Blockly.JavaScript['oh_persistTimer'] = function (block) {
     const scriptExecution = Blockly.JavaScript.provideFunction_(
       'scriptExecution',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.ScriptExecution");'])
     const zonedDateTime = Blockly.JavaScript.provideFunction_(
       'zonedDateTime',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.ZonedDateTime");'])
-    var timertype = block.getFieldValue('timerType')
-    var runme = Blockly.JavaScript.statementToCode(block, 'runMe')
-    var numberDelay = block.getFieldValue('delay')
-    var dropdownTimeUnit = block.getFieldValue('delayUnits')
-    var unitsFunction = ''
+    let timertype = block.getFieldValue('timerType')
+    let runme = Blockly.JavaScript.statementToCode(block, 'runMe')
+    let numberDelay = block.getFieldValue('delay')
+    let dropdownTimeUnit = block.getFieldValue('delayUnits')
+    let unitsFunction = ''
     switch (dropdownTimeUnit) {
       case 'seconds' :
         unitsFunction = 'plusSeconds'
@@ -127,8 +127,8 @@ export default function defineOHBlocks_Timers(f7) {
         unitsFunction = 'plusHours'
         break
     }
-    var code='';
-    if (timertype == 'simple') {
+    let code = ''
+    if (timertype === 'simple') {
       code = 'var delayedTimer;\n'
       code += 'this.delayedTimer = ' + scriptExecution + '.createTimer(' + zonedDateTime + '.now().' + unitsFunction + '(' + numberDelay + '), function(){\n'
       code += runme
@@ -137,7 +137,7 @@ export default function defineOHBlocks_Timers(f7) {
       code = 'if (this.delayedTimer == null) {\n'
       code += 'var delayedTimer;\n'
       code += 'this.delayedTimer = scriptExecution.createTimer(' + zonedDateTime + '.now().' + unitsFunction + '(' + numberDelay + '), function(){\n'
-      code += runme;
+      code += runme
       code += '});\n'
       code += '} else {\n'
       code += 'this.delayedTimer.reschedule(' + zonedDateTime + '.now().' + unitsFunction + '(' + numberDelay + '));\n'
@@ -147,22 +147,22 @@ export default function defineOHBlocks_Timers(f7) {
   }
 
   Blockly.Blocks['oh_namedTimer'] = {
-    init: function() {
+    init: function () {
       this.appendStatementInput('runMe')
         .setCheck(null)
-        .appendField('Run This');
+        .appendField('Run This')
       this.appendValueInput('delay')
         .setCheck(null)
         .appendField('After')
-        .appendField(new Blockly.FieldDropdown([['seconds', 'plusSeconds'], ['minutes', 'plusMinutes'], ['hours', 'plusHours'], ['days', 'plusDays'], ['weeks', 'plusWeeks'], ['months', 'plusMonths']]), 'delayUnits');
+        .appendField(new Blockly.FieldDropdown([['seconds', 'plusSeconds'], ['minutes', 'plusMinutes'], ['hours', 'plusHours'], ['days', 'plusDays'], ['weeks', 'plusWeeks'], ['months', 'plusMonths']]), 'delayUnits')
       this.appendValueInput('timerName')
         .setCheck(null)
-        .appendField('with Timer named');
-      this.setColour(230);
+        .appendField('with Timer named')
+      this.setColour(230)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setTooltip('Create a named timer');
-      this.setHelpUrl('');
+      this.setTooltip('Create a named timer')
+      this.setHelpUrl('')
     }
   }
 
@@ -173,24 +173,24 @@ export default function defineOHBlocks_Timers(f7) {
     const zonedDateTime = Blockly.JavaScript.provideFunction_(
       'zonedDateTime',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.ZonedDateTime");'])
-    var runme = Blockly.JavaScript.statementToCode(block, 'runMe');
-    var delayunits = block.getFieldValue('delayUnits');
-    var delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC);
-    var timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '');
+    let runme = Blockly.JavaScript.statementToCode(block, 'runMe')
+    let delayunits = block.getFieldValue('delayUnits')
+    let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
+    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
     // TODO: Assemble JavaScript into code variable.
-    var code = 'if (this.' + timerName + ' == null) {\n'
+    let code = 'if (this.' + timerName + ' == null) {\n'
     code += 'var ' + timerName + ';\n'
     code += 'this.' + timerName + ' = scriptExecution.createTimer(' + zonedDateTime + '.now().' + delayunits + '(' + delay + '), function(){\n'
-    code += runme;
+    code += runme
     code += '});\n'
     code += '} else {\n'
     code += 'this.' + timerName + '.reschedule(' + zonedDateTime + '.now().' + delayunits + '(' + delay + '));\n'
     code += '}\n'
-    return code;
-  };
+    return code
+  }
 
   Blockly.Blocks['oh_timer_isactive'] = {
-    init: function() {
+    init: function () {
       this.appendValueInput('timerName')
         .setCheck('String')
         .appendField('isActive')
@@ -201,17 +201,17 @@ export default function defineOHBlocks_Timers(f7) {
     }
   }
 
-  Blockly.JavaScript['oh_timer_isactive'] = function(block) {
+  Blockly.JavaScript['oh_timer_isactive'] = function (block) {
     const scriptExecution = Blockly.JavaScript.provideFunction_(
       'scriptExecution',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.ScriptExecution");'])
-    var timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = 'this.' + timerName + '.isActive()'
+    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = 'this.' + timerName + '.isActive()'
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
   Blockly.Blocks['oh_timer_isrunning'] = {
-    init: function() {
+    init: function () {
       this.appendValueInput('timerName')
         .setCheck('String')
         .appendField('isRunning')
@@ -222,17 +222,17 @@ export default function defineOHBlocks_Timers(f7) {
     }
   }
 
-  Blockly.JavaScript['oh_timer_isrunning'] = function(block) {
+  Blockly.JavaScript['oh_timer_isrunning'] = function (block) {
     const scriptExecution = Blockly.JavaScript.provideFunction_(
       'scriptExecution',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.ScriptExecution");'])
-    var timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = 'this.' + timerName + '.isRunning()'
+    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = 'this.' + timerName + '.isRunning()'
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
   Blockly.Blocks['oh_timer_hasterminated'] = {
-    init: function() {
+    init: function () {
       this.appendValueInput('timerName')
         .setCheck('String')
         .appendField('hasTerminated')
@@ -243,65 +243,65 @@ export default function defineOHBlocks_Timers(f7) {
     }
   }
 
-  Blockly.JavaScript['oh_timer_hasterminated'] = function(block) {
+  Blockly.JavaScript['oh_timer_hasterminated'] = function (block) {
     const scriptExecution = Blockly.JavaScript.provideFunction_(
       'scriptExecution',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.ScriptExecution");'])
-    var timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = 'this.' + timerName + '.hasTerminated()'
+    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = 'this.' + timerName + '.hasTerminated()'
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
   Blockly.Blocks['oh_timer_cancel'] = {
-    init: function() {
+    init: function () {
       this.appendValueInput('timerName')
         .setCheck('String')
         .appendField('cancel')
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
+      this.setPreviousStatement(true, null)
+      this.setNextStatement(true, null)
       this.setColour(230)
       this.setTooltip('returns true if the code is currently executing (i.e. the timer activated the code but it is not done running)')
       this.setHelpUrl('')
     }
   }
 
-  Blockly.JavaScript['oh_timer_cancel'] = function(block) {
+  Blockly.JavaScript['oh_timer_cancel'] = function (block) {
     const scriptExecution = Blockly.JavaScript.provideFunction_(
       'scriptExecution',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.ScriptExecution");'])
-    var timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = 'this.' + timerName + '.cancel()'
+    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = 'this.' + timerName + '.cancel()'
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
   Blockly.Blocks['oh_timer_reschedule'] = {
-    init: function() {
+    init: function () {
       this.appendValueInput('timerName')
         .setCheck('String')
         .appendField('reschedule')
       this.appendValueInput('delay')
         .setCheck(null)
         .appendField('After')
-        .appendField(new Blockly.FieldDropdown([['seconds', 'plusSeconds'], ['minutes', 'plusMinutes'], ['hours', 'plusHours'], ['days', 'plusDays'], ['weeks', 'plusWeeks'], ['months', 'plusMonths']]), 'delayUnits');
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
+        .appendField(new Blockly.FieldDropdown([['seconds', 'plusSeconds'], ['minutes', 'plusMinutes'], ['hours', 'plusHours'], ['days', 'plusDays'], ['weeks', 'plusWeeks'], ['months', 'plusMonths']]), 'delayUnits')
+      this.setPreviousStatement(true, null)
+      this.setNextStatement(true, null)
       this.setColour(230)
       this.setTooltip('reschedules the timer to execute at the new time. If the Timer has terminated this method does nothing.')
       this.setHelpUrl('')
     }
   }
 
-  Blockly.JavaScript['oh_timer_reschedule'] = function(block) {
+  Blockly.JavaScript['oh_timer_reschedule'] = function (block) {
     const scriptExecution = Blockly.JavaScript.provideFunction_(
       'scriptExecution',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.ScriptExecution");'])
     const zonedDateTime = Blockly.JavaScript.provideFunction_(
       'zonedDateTime',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.ZonedDateTime");'])
-    var delayunits = block.getFieldValue('delayUnits');
-    var delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC);
-    var timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = 'this.' + timerName + '.reschedule(' + zonedDateTime + '.now().' + delayunits + '(' + delay + '))'
+    let delayunits = block.getFieldValue('delayUnits')
+    let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
+    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = 'this.' + timerName + '.reschedule(' + zonedDateTime + '.now().' + delayunits + '(' + delay + '))'
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 }

@@ -35,7 +35,7 @@ export default function defineOHBlocks (f7) {
 
   Blockly.JavaScript['oh_thing'] = function (block) {
     const itemName = block.getFieldValue('itemName')
-    var code = '\'' + itemName + '\''
+    let code = '\'' + itemName + '\''
     return [code, 0]
   }
 
@@ -57,7 +57,7 @@ export default function defineOHBlocks (f7) {
       'things',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things");'])
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    var code = things + '.getThingStatusInfo(' + itemName + ').getStatus()'
+    let code = things + '.getThingStatusInfo(' + itemName + ').getStatus()'
     return [code, 0]
   }
 
@@ -95,7 +95,7 @@ export default function defineOHBlocks (f7) {
 
   Blockly.JavaScript['oh_getitem'] = function (block) {
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    var code = 'itemRegistry.getItem("' + itemName + '")'
+    let code = 'itemRegistry.getItem("' + itemName + '")'
     return [code, 0]
   }
 
@@ -114,12 +114,12 @@ export default function defineOHBlocks (f7) {
 
   Blockly.JavaScript['oh_getitem'] = function (block) {
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    var code = 'itemRegistry.getItem("' + itemName + '")'
+    let code = 'itemRegistry.getItem("' + itemName + '")'
     return [code, 0]
   }
 
   Blockly.Blocks['oh_ping'] = {
-    init: function() {
+    init: function () {
       this.appendValueInput('hostName')
         .setCheck('String')
         .appendField('Ping')
@@ -130,12 +130,12 @@ export default function defineOHBlocks (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_ping'] = function(block) {
+  Blockly.JavaScript['oh_ping'] = function (block) {
     const actions = Blockly.JavaScript.provideFunction_(
       'actions',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ping");'])
-    var hostname = Blockly.JavaScript.valueToCode(block, 'hostName', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = actions + '.checkVitality(' + hostname + ',0,10)'
+    let hostname = Blockly.JavaScript.valueToCode(block, 'hostName', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = actions + '.checkVitality(' + hostname + ',0,10)'
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 }

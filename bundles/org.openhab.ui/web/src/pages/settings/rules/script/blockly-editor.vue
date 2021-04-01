@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/singleline-html-element-content-newline -->
   <div class="blockly-editor">
     <div class="blockly" ref="blocklyEditor" />
     <xml xmlns="https://developers.google.com/blockly/xml" ref="toolbox" style="display: none">
@@ -15,9 +16,7 @@
         <block type="controls_repeat_ext">
           <value name="TIMES">
             <shadow type="math_number">
-              <field name="NUM">
-                10
-              </field>
+              <field name="NUM">10</field>
             </shadow>
           </value>
         </block>
@@ -25,23 +24,17 @@
         <block type="controls_for">
           <value name="FROM">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
           <value name="TO">
             <shadow type="math_number">
-              <field name="NUM">
-                10
-              </field>
+              <field name="NUM">10</field>
             </shadow>
           </value>
           <value name="BY">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
         </block>
@@ -50,41 +43,31 @@
       </category>
       <category name="Math" colour="%{BKY_MATH_HUE}">
         <block type="math_number">
-          <field name="NUM">
-            123
-          </field>
+          <field name="NUM">123</field>
         </block>
         <block type="math_arithmetic">
           <value name="A">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
           <value name="B">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
         </block>
         <block type="math_single">
           <value name="NUM">
             <shadow type="math_number">
-              <field name="NUM">
-                9
-              </field>
+              <field name="NUM">9</field>
             </shadow>
           </value>
         </block>
         <block type="math_trig">
           <value name="NUM">
             <shadow type="math_number">
-              <field name="NUM">
-                45
-              </field>
+              <field name="NUM">45</field>
             </shadow>
           </value>
         </block>
@@ -92,18 +75,14 @@
         <block type="math_number_property">
           <value name="NUMBER_TO_CHECK">
             <shadow type="math_number">
-              <field name="NUM">
-                0
-              </field>
+              <field name="NUM">0</field>
             </shadow>
           </value>
         </block>
         <block type="math_round">
           <value name="NUM">
             <shadow type="math_number">
-              <field name="NUM">
-                3.1
-              </field>
+              <field name="NUM">3.1</field>
             </shadow>
           </value>
         </block>
@@ -111,55 +90,41 @@
         <block type="math_modulo">
           <value name="DIVIDEND">
             <shadow type="math_number">
-              <field name="NUM">
-                64
-              </field>
+              <field name="NUM">64</field>
             </shadow>
           </value>
           <value name="DIVISOR">
             <shadow type="math_number">
-              <field name="NUM">
-                10
-              </field>
+              <field name="NUM">0</field>
             </shadow>
           </value>
         </block>
         <block type="math_constrain">
           <value name="VALUE">
             <shadow type="math_number">
-              <field name="NUM">
-                50
-              </field>
+              <field name="NUM">50</field>
             </shadow>
           </value>
           <value name="LOW">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
           <value name="HIGH">
             <shadow type="math_number">
-              <field name="NUM">
-                100
-              </field>
+              <field name="NUM">100</field>
             </shadow>
           </value>
         </block>
         <block type="math_random_int">
           <value name="FROM">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
           <value name="TO">
             <shadow type="math_number">
-              <field name="NUM">
-                100
-              </field>
+              <field name="NUM">100</field>
             </shadow>
           </value>
         </block>
@@ -167,16 +132,12 @@
         <block type="math_atan2">
           <value name="X">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
           <value name="Y">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
         </block>
@@ -192,9 +153,7 @@
         <block type="text_length">
           <value name="VALUE">
             <shadow type="text">
-              <field name="TEXT">
-                abc
-              </field>
+              <field name="TEXT">abc</field>
             </shadow>
           </value>
         </block>
@@ -208,52 +167,40 @@
         <block type="text_indexOf">
           <value name="VALUE">
             <block type="variables_get">
-              <field name="VAR">
-                {textVariable}
-              </field>
+              <field name="VAR">{textVariable}</field>
             </block>
           </value>
           <value name="FIND">
             <shadow type="text">
-              <field name="TEXT">
-                abc
-              </field>
+              <field name="TEXT">abc</field>
             </shadow>
           </value>
         </block>
         <block type="text_charAt">
           <value name="VALUE">
             <block type="variables_get">
-              <field name="VAR">
-                {textVariable}
-              </field>
+              <field name="VAR">{textVariable}</field>
             </block>
           </value>
         </block>
         <block type="text_getSubstring">
           <value name="STRING">
             <block type="variables_get">
-              <field name="VAR">
-                {textVariable}
-              </field>
+              <field name="VAR">{textVariable}</field>
             </block>
           </value>
         </block>
         <block type="text_changeCase">
           <value name="TEXT">
             <shadow type="text">
-              <field name="TEXT">
-                abc
-              </field>
+              <field name="TEXT">abc</field>
             </shadow>
           </value>
         </block>
         <block type="text_trim">
           <value name="TEXT">
             <shadow type="text">
-              <field name="TEXT">
-                abc
-              </field>
+              <field name="TEXT">abc</field>
             </shadow>
           </value>
         </block>
@@ -266,9 +213,7 @@
         <block type="lists_repeat">
           <value name="NUM">
             <shadow type="math_number">
-              <field name="NUM">
-                5
-              </field>
+              <field name="NUM">5</field>
             </shadow>
           </value>
         </block>
@@ -277,45 +222,35 @@
         <block type="lists_indexOf">
           <value name="VALUE">
             <block type="variables_get">
-              <field name="VAR">
-                {listVariable}
-              </field>
+              <field name="VAR">{listVariable}</field>
             </block>
           </value>
         </block>
         <block type="lists_getIndex">
           <value name="VALUE">
             <block type="variables_get">
-              <field name="VAR">
-                {listVariable}
-              </field>
+              <field name="VAR">{listVariable}</field>
             </block>
           </value>
         </block>
         <block type="lists_setIndex">
           <value name="LIST">
             <block type="variables_get">
-              <field name="VAR">
-                {listVariable}
-              </field>
+              <field name="VAR">{listVariable}</field>
             </block>
           </value>
         </block>
         <block type="lists_getSublist">
           <value name="LIST">
             <block type="variables_get">
-              <field name="VAR">
-                {listVariable}
-              </field>
+              <field name="VAR">{listVariable}</field>
             </block>
           </value>
         </block>
         <block type="lists_split">
           <value name="DELIM">
             <shadow type="text">
-              <field name="TEXT">
-                ,
-              </field>
+              <field name="TEXT">,</field>
             </shadow>
           </value>
         </block>
@@ -327,46 +262,34 @@
         <block type="colour_rgb">
           <value name="RED">
             <shadow type="math_number">
-              <field name="NUM">
-                100
-              </field>
+              <field name="NUM">100</field>
             </shadow>
           </value>
           <value name="GREEN">
             <shadow type="math_number">
-              <field name="NUM">
-                50
-              </field>
+              <field name="NUM">50</field>
             </shadow>
           </value>
           <value name="BLUE">
             <shadow type="math_number">
-              <field name="NUM">
-                0
-              </field>
+              <field name="NUM">0</field>
             </shadow>
           </value>
         </block>
         <block type="colour_blend">
           <value name="COLOUR1">
             <shadow type="colour_picker">
-              <field name="COLOUR">
-                #ff0000
-              </field>
+              <field name="COLOUR">#ff0000</field>
             </shadow>
           </value>
           <value name="COLOUR2">
             <shadow type="colour_picker">
-              <field name="COLOUR">
-                #3333ff
-              </field>
+              <field name="COLOUR">#3333ff</field>
             </shadow>
           </value>
           <value name="RATIO">
             <shadow type="math_number">
-              <field name="NUM">
-                0.5
-              </field>
+              <field name="NUM">0.5</field>
             </shadow>
           </value>
         </block>
@@ -376,9 +299,7 @@
           <block type="oh_setpersist">
             <value name="value">
               <shadow type="text">
-                <field name="TEXT">
-                  value
-                </field>
+                <field name="TEXT">value</field>
               </shadow>
             </value>
           </block>
@@ -428,9 +349,7 @@
           <block type="oh_ping">
             <value name="hostName">
               <shadow type="text">
-                <field name="hostName">
-                  192.168.0.1
-                </field>
+                <field name="hostName">192.168.0.1</field>
               </shadow>
             </value>
           </block>
@@ -439,27 +358,21 @@
           <block type="oh_sleep">
             <value name="milliseconds">
               <shadow type="text">
-                <field name="TEXT">
-                  1000
-                </field>
+                <field name="TEXT">1000</field>
               </shadow>
             </value>
           </block>
           <block type="oh_simpleTimer">
             <value name="delay">
               <shadow type="math_number">
-                <field name="NUM">
-                  10
-                </field>
+                <field name="NUM">10</field>
               </shadow>
             </value>
           </block>
           <block type="oh_persistTimer">
             <value name="delay">
               <shadow type="math_number">
-                <field name="NUM">
-                  10
-                </field>
+                <field name="NUM">10</field>
               </shadow>
             </value>
           </block>
@@ -467,68 +380,52 @@
           <block type="oh_namedTimer">
             <value name="delay">
               <shadow type="math_number">
-                <field name="NUM">
-                  10
-                </field>
+                <field name="NUM">10</field>
               </shadow>
             </value>
             <value name="timerName">
               <shadow type="oh_timer_item">
-                <field name="TEXT">
-                  MyTimer
-                </field>
+                <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
           </block>
           <block type="oh_timer_cancel">
             <value name="timerName">
               <shadow type="oh_timer_item">
-                <field name="TEXT">
-                  MyTimer
-                </field>
+                <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
           </block>
           <block type="oh_timer_isactive">
             <value name="timerName">
               <shadow type="oh_timer_item">
-                <field name="TEXT">
-                  MyTimer
-                </field>
+                <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
           </block>
           <block type="oh_timer_isrunning">
             <value name="timerName">
               <shadow type="oh_timer_item">
-                <field name="TEXT">
-                  MyTimer
-                </field>
+                <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
           </block>
           <block type="oh_timer_hasterminated">
             <value name="timerName">
               <shadow type="oh_timer_item">
-                <field name="TEXT">
-                  MyTimer
-                </field>
+                <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
           </block>
           <block type="oh_timer_reschedule">
             <value name="timerName">
               <shadow type="oh_timer_item">
-                <field name="TEXT">
-                  MyTimer
-                </field>
+                <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
             <value name="delay">
               <shadow type="math_number">
-                <field name="NUM">
-                  10
-                </field>
+                <field name="NUM">10</field>
               </shadow>
             </value>
           </block>
@@ -542,9 +439,7 @@
           <block type="oh_httprequest">
             <value name="url">
               <shadow type="text">
-                <field name="TEXT">
-                  http://yourURL.com
-                </field>
+                <field name="TEXT">http://yourURL.com</field>
               </shadow>
             </value>
             <value name="payload">
@@ -593,18 +488,14 @@
             </value>
             <value name="variableName">
               <shadow type="text">
-                <field name="TEXT">
-                  MyVariable
-                </field>
+                <field name="TEXT">MyVariable</field>
               </shadow>
             </value>
           </block>
           <block type="oh_restorestates">
             <value name="variableName">
               <shadow type="text">
-                <field name="TEXT">
-                  MyVariable
-                </field>
+                <field name="TEXT">MyVariable</field>
               </shadow>
             </value>
           </block>
@@ -613,9 +504,7 @@
           <block type="oh_mediaadjust">
             <value name="floatValue">
               <shadow type="audioSlider">
-                <field name="volume">
-                  5
-                </field>
+                <field name="volume">5</field>
               </shadow>
             </value>
           </block>
@@ -624,9 +513,7 @@
           <block type="oh_playmedia_volume">
             <value name="volume">
               <shadow type="audioSlider">
-                <field name="volume">
-                  5
-                </field>
+                <field name="volume">5</field>
               </shadow>
             </value>
           </block>
@@ -641,9 +528,7 @@
             </value>
             <value name="volume">
               <shadow type="audioSlider">
-                <field name="volume">
-                  5
-                </field>
+                <field name="volume">5</field>
               </shadow>
             </value>
           </block>
@@ -658,18 +543,14 @@
           <block type="oh_log">
             <value name="message">
               <shadow type="text">
-                <field name="TEXT">
-                  abc
-                </field>
+                <field name="TEXT">abc</field>
               </shadow>
             </value>
           </block>
           <block type="oh_print">
             <value name="message">
               <shadow type="text">
-                <field name="TEXT">
-                  abc
-                </field>
+                <field name="TEXT">abc</field>
               </shadow>
             </value>
           </block>

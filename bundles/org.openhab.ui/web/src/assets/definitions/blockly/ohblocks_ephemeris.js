@@ -1,10 +1,9 @@
 import Blockly from 'blockly'
 import { FieldItemModelPicker } from './ohitemfield'
 
-export default function defineOHBlocks_Ephemeris(f7) {
-
+export default function defineOHBlocks_Ephemeris (f7) {
   Blockly.Blocks['oh_ephemeris_basic'] = {
-    init: function() {
+    init: function () {
       this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([['isWeekend', 'isWeekend'], ['getBankHolidayName', 'getBankHolidayName'], ['getNextBankHoliday', 'getNextBankHoliday'], ['isBankHoliday', 'isBankHoliday']]), 'type')
       this.setOutput(true, null)
@@ -12,19 +11,19 @@ export default function defineOHBlocks_Ephemeris(f7) {
       this.setTooltip('')
       this.setHelpUrl('')
     }
-  };
+  }
 
   Blockly.JavaScript['oh_ephemeris_basic'] = function (block) {
     const ephemeris = Blockly.JavaScript.provideFunction_(
       'Ephemeris',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
-    var type = block.getFieldValue('type');
-    var code = ephemeris + '.' + type + '()';
-    return [code, Blockly.JavaScript.ORDER_NONE];
+    let type = block.getFieldValue('type')
+    let code = ephemeris + '.' + type + '()'
+    return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
   Blockly.Blocks['oh_ephemeris_offset'] = {
-    init: function() {
+    init: function () {
       this.appendValueInput('offset')
         .setCheck('Number')
         .appendField(new Blockly.FieldDropdown([['isWeekend', 'isWeekend'], ['getBankHolidayName', 'getBankHolidayName'], ['getNextBankHoliday', 'getNextBankHoliday'], ['isBankHoliday', 'isBankHoliday']]), 'type')
@@ -40,12 +39,11 @@ export default function defineOHBlocks_Ephemeris(f7) {
     const ephemeris = Blockly.JavaScript.provideFunction_(
       'Ephemeris',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
-    var type = block.getFieldValue('type')
-    var offsetValue = Blockly.JavaScript.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC)
-    var code = ephemeris + '.' + type + '(' + offsetValue + ')'
+    let type = block.getFieldValue('type')
+    let offsetValue = Blockly.JavaScript.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = ephemeris + '.' + type + '(' + offsetValue + ')'
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
-
 
   Blockly.Blocks['oh_Ephemeris_getBankHolidayName'] = {
     init: function () {
@@ -62,7 +60,7 @@ export default function defineOHBlocks_Ephemeris(f7) {
     const ephemeris = Blockly.JavaScript.provideFunction_(
       'Ephemeris',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
-    var code = ephemeris + '.getBankHolidayName'
+    let code = ephemeris + '.getBankHolidayName'
     return [code, 0]
   }
 
@@ -81,7 +79,7 @@ export default function defineOHBlocks_Ephemeris(f7) {
     const ephemeris = Blockly.JavaScript.provideFunction_(
       'Ephemeris',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
-    var code = ephemeris + '.getNextBankHoliday'
+    let code = ephemeris + '.getNextBankHoliday'
     return [code, 0]
   }
 
@@ -100,7 +98,7 @@ export default function defineOHBlocks_Ephemeris(f7) {
     const ephemeris = Blockly.JavaScript.provideFunction_(
       'Ephemeris',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
-    var code = ephemeris + '.isBankHoliday'
+    let code = ephemeris + '.isBankHoliday'
     return [code, 0]
   }
 
@@ -119,7 +117,7 @@ export default function defineOHBlocks_Ephemeris(f7) {
     const ephemeris = Blockly.JavaScript.provideFunction_(
       'Ephemeris',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
-    var code = ephemeris + '.isWeekend'
+    let code = ephemeris + '.isWeekend'
     return [code, 0]
   }
 }
