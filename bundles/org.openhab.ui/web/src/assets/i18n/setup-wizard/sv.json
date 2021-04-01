@@ -10,6 +10,7 @@
   "setupwizard.location.header1": "Vill du dela platsen för ditt hem?",
   "setupwizard.location.header2": "Det kommer att vara till nytta för data som beror på din position, som soluppgång/-nedgång och väder.",
   "setupwizard.location.parameterLabel": "Position för ditt hem",
+  "setupwizard.location.placeholder": "<latitude>,<longitude>[,<altitude>]",
   "setupwizard.location.retrieveFromDevice": "Använd denna enhets position",
   "setupwizard.location.retrieveFromDevice.error": "Fel vid hämtning av nuvarande position",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Tyvärr",

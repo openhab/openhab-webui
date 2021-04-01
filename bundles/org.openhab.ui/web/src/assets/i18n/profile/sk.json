@@ -1,0 +1,19 @@
+{
+  "profile.title": "Váš Profil",
+  "profile.changePassword": "Zmeňte si heslo",
+  "profile.sessions": "Relácie",
+  "profile.sessions.header": "Poznámka: aj keď zmažete Vašu reláciu, stále môže ostať aktívna, pokiaľ nevypršia všetky aktívne tokeny.",
+  "profile.sessions.signOut": "Odhlásiť sa z aktívnej relácie",
+  "profile.sessions.created": "Vytvorené: ",
+  "profile.sessions.lastRefreshed": "Naposledy obnovené: ",
+  "profile.sessions.delete.success": "Relácia bola vymazaná",
+  "profile.sessions.delete.error": "Chyba pri mazaní relácie: ",
+  "profile.sessions.signOut.error": "Chyba pri odhlasovaní: ",
+  "profile.apiTokens": "API Kľúče",
+  "profile.apiTokens.header": "Vytvorte API klúč pre externé aplikácia a služby, ktoré nepodporujú OAuth2 autorizáciu.",
+  "profile.apiTokens.created": "Vytvorené: ",
+  "profile.apiTokens.validForScope": "Platné pre rozsah: ",
+  "profile.apiTokens.create": "Vytvoriť nový API kľúč",
+  "profile.apiTokens.delete.success": "Kľúč API bol odstránený",
+  "profile.apiTokens.delete.error": "Chyba pri mazaní API kľúča: "
+}
