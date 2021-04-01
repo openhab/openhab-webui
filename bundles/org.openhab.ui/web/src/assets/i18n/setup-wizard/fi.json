@@ -10,6 +10,7 @@
   "setupwizard.location.header1": "Haluatko jakaa kotisi sijainnin?",
   "setupwizard.location.header2": "Se auttaa määrittämään tietoja sijaintisi mukaan, kuten auringonnousua/auringonlaskua tai säätä.",
   "setupwizard.location.parameterLabel": "Kotisi sijainti",
+  "setupwizard.location.placeholder": "<latitude>,<longitude>[,<altitude>]",
   "setupwizard.location.retrieveFromDevice": "Käytä laitteen sijaintia",
   "setupwizard.location.retrieveFromDevice.error": "Virhe haettaessa nykyistä sijaintia",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Pahoittelut",
