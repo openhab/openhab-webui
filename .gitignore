@@ -8,17 +8,3 @@ bin/
 features/*/src/main/history
 npm-debug.log
 node_modules/
-
-bundles/org.openhab.ui.cometvisu/.openapi-generator/openapi.yaml.sha256
-
-bundles/org.openhab.ui/.classpath
-
-bundles/org.openhab.ui/.factorypath
-
-bundles/org.openhab.ui/.project
-
-bundles/org.openhab.ui/.vscode/launch.json
-
-bundles/org.openhab.ui/.vscode/tasks.json
-
-bundles/org.openhab.ui/web/package-lock.json
