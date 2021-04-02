@@ -1,0 +1,21 @@
+{
+  "about.title": "Impormasyon",
+  "about.homePage": "Website",
+  "about.documentation": "Dokumentasyon",
+  "about.communityForum": "Community Forum",
+  "about.technicalInformation": "Impormasyong pang-teknikal",
+  "about.technicalInformation.configurationFolder": "Configuration folder",
+  "about.technicalInformation.userdataFolder": "User data folder",
+  "about.technicalInformation.logsFolder": "Logs folder",
+  "about.technicalInformation.operatingSystem": "Operating system",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} libreng processors - {ram} libreng memory",
+  "about.technicalInformation.viewDetails": "Tignan ang mga Detalye",
+  "about.appearanceOptions": "Hitsura (para sa device na ito)",
+  "about.reload": "I-reload",
+  "about.reload.purgeExplanation1": "Ginagamit ang mga cache at/o service workers para i-store ang mga resources sa lokal at maging mabilis ang pag-load ng app, ngunit maaring hindi nito matutukoy agad kung nagbago na ito ng bersyon.",
+  "about.reload.purgeExplanation2": "I-select ang Purge Caches at Refresh sa ibaba para matanggal lahat ng cache, i-unregister ang mga service workers, at i-download lahat sa server muli.",
+  "about.reload.purgeCachesAndRefresh": "I-Purge and mga Cache at I-Refresh",
+  "about.reload.confirmPurge": "I-purge lahat ng application caches at i-unregister ang mga service workers? I-rereload nito ang page mula sa server na maaring tumagal ng ilang segundo.",
+  "about.reload.reloadApp": "I-reload ang App"
+}

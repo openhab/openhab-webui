@@ -10,6 +10,7 @@
   "setupwizard.location.header1": "Souhaiteriez-vous partager la position de votre foyer ?",
   "setupwizard.location.header2": "Cela aidera à déterminer des informations qui en dépendent, comme la météo ou les heures de lever/coucher de soleil.",
   "setupwizard.location.parameterLabel": "Position de votre foyer",
+  "setupwizard.location.placeholder": "<latitude>,<longitude>[,<altitude>]",
   "setupwizard.location.retrieveFromDevice": "Récupérer depuis cet appareil",
   "setupwizard.location.retrieveFromDevice.error": "Erreur lors de la récupération de la position",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Désolé",

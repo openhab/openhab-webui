@@ -51,7 +51,7 @@
   <distributionManagement>
     <repository>
       <id>bintray</id>
-      <url>${oh.repo.distBaseUrl}/openhab2-addons/;publish=1</url>
+      <url>${oh.repo.distBaseUrl}/openhab-addons/;publish=1</url>
     </repository>
     <snapshotRepository>
       <id>jfrog</id>
@@ -68,7 +68,7 @@
     <maven.compiler.compilerVersion>${oh.java.version}</maven.compiler.compilerVersion>
 
     <bnd.version>5.3.0</bnd.version>
-    <eea.version>2.2.1</eea.version>
+    <eea.version>2.3.0</eea.version>
     <karaf.version>4.3.1</karaf.version>
     <sat.version>0.10.0</sat.version>
     <spotless.version>2.0.3</spotless.version>

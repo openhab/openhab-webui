@@ -1,0 +1,8 @@
+{
+  "CONFIGURATION_ERROR": "ГРЕШКА: ПОДЕШАВАЊЕ",
+  "HANDLER_INITIALIZING_ERROR": "ГРЕШКА: ИНЦИЈАЛИЗАЦИЈЕ ОБРАДЕ",
+  "HANDLER_MISSING_ERROR": "ГРЕШКА: ИНЦИЈАЛИЗАЦИЈЕ ОБРАДЕ",
+  "TEMPLATE_MISSING_ERROR": "ГРЕШКА: НЕДОСТАЈЕ ШАБЛОН",
+  "INVALID_RULE": "НЕИСПРАВНО",
+  "DISABLED": "ИСКЉУЧЕНО"
+}

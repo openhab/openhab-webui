@@ -9,6 +9,7 @@ import isoWeek from 'dayjs/plugin/isoWeek'
 import isToday from 'dayjs/plugin/isToday'
 import isYesterday from 'dayjs/plugin/isYesterday'
 import isTomorrow from 'dayjs/plugin/isTomorrow'
+import scope from 'scope-css'
 
 dayjs.extend(relativeTime)
 dayjs.extend(calendar)
@@ -46,7 +47,7 @@ export default {
       if (this.context.component.config) {
         if (typeof this.context.component.config !== 'object') return {}
         for (const key in this.context.component.config) {
-          if (key === 'visible' || key === 'visibleTo') continue
+          if (key === 'visible' || key === 'visibleTo' || key === 'stylesheet') continue
           this.$set(evalConfig, key, this.evaluateExpression(key, sourceConfig[key]))
         }
       }
@@ -66,6 +67,24 @@ export default {
         return false
       }
       return true
+    }
+  },
+  mounted () {
+    if (this.context.component.config && this.context.component.config.stylesheet) {
+      this.cssUid = 'scoped-' + this.$f7.utils.id()
+
+      this.$el.classList.add(this.cssUid)
+
+      let style = document.createElement('style')
+      style.id = this.cssUid
+      style.innerHTML = scope(this.context.component.config.stylesheet, '.' + this.cssUid)
+      document.head.appendChild(style)
+    }
+  },
+  beforeDestroy () {
+    if (this.cssUid) {
+      const scoped_stylesheet = document.getElementById(this.cssUid)
+      if (scoped_stylesheet) scoped_stylesheet.remove()
     }
   },
   methods: {

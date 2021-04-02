@@ -80,6 +80,7 @@
     "nearley": "^2.19.6",
     "pkce-challenge": "^2.1.0",
     "qrcode": "^1.0.0",
+    "scope-css": "^1.2.1",
     "sprintf-js": "^1.1.2",
     "template7": "^1.4.2",
     "tern": "^0.23.0",
