@@ -1,8 +1,8 @@
 {
   "about.theme": "Tema",
-  "about.theme.auto": "Auto",
+  "about.theme.auto": "Automatico",
   "about.darkMode": "Modalità Scura",
-  "about.darkMode.auto": "Auto",
+  "about.darkMode.auto": "Automatico",
   "about.darkMode.light": "Chiaro",
   "about.darkMode.dark": "Scuro",
   "about.navigationBarsStyle": "Stile barra di navigazione",
