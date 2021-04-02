@@ -107,7 +107,7 @@ export default {
       if (this.loading) return
       this.loading = true
       let occurrences = []
-      
+
       let start = new Date(), limit = new Date()
       limit.setDate(start.getDate() + 31)
 
@@ -118,9 +118,9 @@ export default {
 
         // map RulesExecutions per time
         this.rules.forEach((rule) => {
-            occurrences.push([new Date(rule.date).toISOString(), rule.rule])
+          occurrences.push([new Date(rule.date).toISOString(), rule.rule])
         })
-        
+
         this.$set(this, 'calendar', {})
 
         let day = start
