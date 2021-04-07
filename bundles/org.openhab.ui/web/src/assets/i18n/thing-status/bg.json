@@ -1,0 +1,13 @@
+{
+  "HANDLER_MISSING_ERROR": "ГРЕШКА: HANDLER",
+  "HANDLER_CONFIGURATION_PENDING": "ГРЕШКА: HANDLER",
+  "HANDLER_INITIALIZING_ERROR": "ГРЕШКА: HANDLER",
+  "BRIDGE_UNINITIALIZED": "ГРЕШКА: МОСТ",
+  "DISABLED": "ДЕАКТИВИРАН",
+  "CONFIGURATION_PENDING": "ИЗЧАКВА КОНФИГУРИРАНЕ",
+  "COMMUNICATION_ERROR": "ГРЕШКА: КОМУНИКАЦИЯ",
+  "CONFIGURATION_ERROR": "ГРЕШКА: КОНФИГУРАЦИЯ",
+  "BRIDGE_OFFLINE": "ГРЕШКА: МОСТ",
+  "FIRMWARE_UPDATING": "ФЪРМУЕЪР ОБНОВЯВАНЕ",
+  "GONE": "ЛИПСВА"
+}
