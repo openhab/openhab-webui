@@ -1,0 +1,21 @@
+{
+  "about.title": "Относно",
+  "about.homePage": "Уебсайт",
+  "about.documentation": "Документация",
+  "about.communityForum": "Форум на общността",
+  "about.technicalInformation": "Техническа информация",
+  "about.technicalInformation.configurationFolder": "Конфигурационнa Папка",
+  "about.technicalInformation.userdataFolder": "Папка потребителска информация",
+  "about.technicalInformation.logsFolder": "Папка за логове",
+  "about.technicalInformation.operatingSystem": "Операционна система",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} налични процеси - {ram} налична памет",
+  "about.technicalInformation.viewDetails": "Вижте подробностите",
+  "about.appearanceOptions": "Външен вид (само за това устройство)",
+  "about.reload": "Презареди",
+  "about.reload.purgeExplanation1": "Кешовете и/или изпълнителите на услуги се използват да съхраняват ресурси локално и това приложение да зарежда по-бързо, но може да не се разпознаят коректно при обновяване към по-нова версия.",
+  "about.reload.purgeExplanation2": "Изберете Почистване на Кеш и Обновяване по-долу, за да почистите всички кешове, да дерегистрирате изпълнителите на услуги и да изтегли всичко от сървъра отново.",
+  "about.reload.purgeCachesAndRefresh": "Почисти кешовете и Обнови",
+  "about.reload.confirmPurge": "Почистване на всички кешове на приложението и дерегистриране на изпълнителите на услуги? Това също ще презареди страницата от сървъра, което може да отнеме няколко секунди.",
+  "about.reload.reloadApp": "Презареди приложения"
+}
