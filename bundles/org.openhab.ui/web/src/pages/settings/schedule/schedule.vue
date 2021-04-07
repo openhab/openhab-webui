@@ -111,7 +111,7 @@ export default {
       let start = new Date(), limit = new Date()
       limit.setDate(start.getDate() + 31)
 
-      this.$oh.api.get('/rest/rules/simulation?from=' + start.toISOString() + '&until=' + limit.toISOString()).then(data => {
+      this.$oh.api.get('/rest/rules/schedule/simulations?from=' + start.toISOString() + '&until=' + limit.toISOString()).then(data => {
         this.rules = data
         this.initSearchbar = true
         this.loading = false
