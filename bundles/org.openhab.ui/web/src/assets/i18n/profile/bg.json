@@ -1,0 +1,19 @@
+{
+  "profile.title": "Вашият профил",
+  "profile.changePassword": "Променете паролата си",
+  "profile.sessions": "Сесии",
+  "profile.sessions.header": "Забележка: дори да изтриете сесия, тя може да остане активна, докато изтекат всички валидни маркери за достъп.",
+  "profile.sessions.signOut": "Излезте от тази сесия",
+  "profile.sessions.created": "Създаден: ",
+  "profile.sessions.lastRefreshed": "Последно опресняване: ",
+  "profile.sessions.delete.success": "Сесията изтрита",
+  "profile.sessions.delete.error": "Грешка при изтриване на сесията: ",
+  "profile.sessions.signOut.error": "Грешка докато излизате: ",
+  "profile.apiTokens": "API Маркер",
+  "profile.apiTokens.header": "Създайте API маркер за да дадете на външни инструменти и ослуги, които не поддържат OAuth2 оторизационна рамка, постоянен достъп от ваше име.",
+  "profile.apiTokens.created": "Създаден: ",
+  "profile.apiTokens.validForScope": "Важи за обхвата: ",
+  "profile.apiTokens.create": "Създай нов API маркер",
+  "profile.apiTokens.delete.success": "API маркер изтрит",
+  "profile.apiTokens.delete.error": "Грешка при изтриване на API маркера: "
+}
