@@ -30,6 +30,8 @@ export const OhPlanMarkerDefinition = () => new WidgetDefinition('oh-plan-marker
     pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>) or <code>material:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>)'),
     pb('iconUseState', 'Icon depends on state', 'Use the state of the item to get a dynamic icon (for openHAB icons only)'),
     pn('iconSize', 'Icon Size', 'Size of the icon in pixels (40 by default)'),
+    pn('iconWidth', 'Icon Width', 'Width of the icon in pixels (for openHAB icons only, 40 by default)').a(),
+    pn('iconHeight', 'Icon Height', 'Height of the icon in pixels (for openHAB icons only, 40 by default)').a(),
     pt('iconColor', 'Icon Color', 'Color of the icon (for Framework7/Material icons); use expression for dynamic colors')
   ])
   .paramGroup(pg('tooltip', 'Tooltip', 'You can customize the styles further with CSS attributes in the <code>tooltipStyle</code> parameter (in YAML only)'), [
