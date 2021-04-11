@@ -321,13 +321,14 @@ export default {
         ? this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/rules/' + this.rule.uid, this.rule)
       return promise.then((data) => {
+        this.dirty = false
         if (this.createMode) {
           this.$f7.toast.create({
             text: 'Rule created',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.rule.uid), { reloadCurrent: true })
+          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.rule.uid).replace('/schedule/', '/rules/'), { reloadCurrent: true })
           this.load()
         } else {
           this.$f7.toast.create({
@@ -337,7 +338,6 @@ export default {
           }).open()
           this.savedRule = cloneDeep(this.rule)
         }
-        this.dirty = false
         // if (!stay) this.$f7router.back()
       }).catch((err) => {
         this.$f7.toast.create({
