@@ -327,7 +327,8 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.rule.uid), { reloadCurrent: true })
+          this.dirty = false
+          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.rule.uid).replace('/schedule/', '/rules/'), { reloadCurrent: true })
           this.load()
         } else {
           this.$f7.toast.create({
