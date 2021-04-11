@@ -79,8 +79,6 @@
 </style>
 
 <script>
-import later from 'later-again'
-
 export default {
   components: {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
@@ -109,45 +107,22 @@ export default {
       if (this.loading) return
       this.loading = true
       let occurrences = []
-      this.$oh.api.get('/rest/rules?tags=Schedule').then(data => {
-        this.rules = data.sort((a, b) => {
-          return a.name.localeCompare(b.name)
-        })
+
+      let start = new Date(), limit = new Date()
+      limit.setDate(start.getDate() + 31)
+
+      this.$oh.api.get('/rest/rules/schedule/simulations?from=' + start.toISOString() + '&until=' + limit.toISOString()).then(data => {
+        this.rules = data
         this.initSearchbar = true
         this.loading = false
 
-        // compute occurrences for rules
+        // map RulesExecutions per time
         this.rules.forEach((rule) => {
-          rule.triggers.forEach((t) => {
-            if (t.type === 'timer.GenericCronTrigger') {
-              if (t.configuration && t.configuration.cronExpression) {
-                try {
-                  const laterSchedule = later.cron(t.configuration.cronExpression, true)
-                  const triggerNextOccurrences = later.schedule(laterSchedule).next(100)
-                  occurrences.push(...triggerNextOccurrences.map((o) => {
-                    return [o.toISOString(), rule]
-                  }))
-                } catch (err) {
-                  throw err
-                }
-              }
-            } else if (t.type === 'timer.TimeOfDayTrigger') {
-              if (t.configuration && t.configuration.time && t.configuration.time.match(/^\d\d:\d\d/)) {
-                for (let i = 0, d = new Date(); i < 31; i++) {
-                  d.setUTCHours(t.configuration.time.split(':')[0], t.configuration.time.split(':')[1])
-                  occurrences.push([d.toISOString().replace(), rule])
-                  d.setDate(d.getDate() + 1)
-                }
-              }
-            }
-          })
+          occurrences.push([new Date(rule.date).toISOString(), rule.rule])
         })
 
-        occurrences = occurrences.sort((o1, o2) => o1[0].localeCompare(o2[0]))
         this.$set(this, 'calendar', {})
 
-        let start = new Date(), limit = new Date()
-        limit.setDate(start.getDate() + 31)
         let day = start
         // eslint-disable-next-line no-unmodified-loop-condition
         while (day < limit) {
@@ -163,14 +138,6 @@ export default {
           const dayOccurrences = occurrences.filter((o) => {
             const occurrenceISODate = o[0].split('T')[0]
             const rule = o[1]
-
-            // filter out the occurrences not satisfying common rule conditions modules
-            if (rule.conditions.some((c) => c.type === 'timer.DayOfWeekCondition' &&
-                c.configuration && Array.isArray(c.configuration.days) &&
-                c.configuration.days.indexOf(['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][day.getDay()]) < 0)) {
-              return false
-            }
-
             return occurrenceISODate === dayISODate
           })
           cal[year][month][dayofmonth] = dayOccurrences
