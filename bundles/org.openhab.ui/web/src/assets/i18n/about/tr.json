@@ -1,0 +1,21 @@
+{
+  "about.title": "&Hakkında",
+  "about.homePage": "Web Sitesi",
+  "about.documentation": "Dokümantasyon",
+  "about.communityForum": "Forumlar",
+  "about.technicalInformation": "Teknik Bilgilendirme",
+  "about.technicalInformation.configurationFolder": "Yapılandırma Dosyası",
+  "about.technicalInformation.userdataFolder": "Kullanıcı Dosyası",
+  "about.technicalInformation.logsFolder": "Günlük Dosyası",
+  "about.technicalInformation.operatingSystem": "İşletim Sistemi",
+  "about.technicalInformation.javaRuntime": "Java",
+  "about.technicalInformation.resourceStats": "{nbproc} kullanılabilir işlemciler - {ram} kullanılabilir ram bellek",
+  "about.technicalInformation.viewDetails": "Detayları Gör",
+  "about.appearanceOptions": "Görünüm (yalnızca bu cihaz için)",
+  "about.reload": "Tekrar Yükle",
+  "about.reload.purgeExplanation1": "Önbellekler ve / veya hizmet kaynakları yerel olarak depolama ve bu uygulamanın daha hızlı yüklenmesini sağlamak için kullanılıyor, ancak yeni bir sürüme güncellendiğinde güvenilir bir şekilde algılanmayabilir.",
+  "about.reload.purgeExplanation2": "Tüm Önbellekleri temizlemek, çalışan hizmetlerin kaydını silmek ve sunucudan her şeyi yeniden indirmek için Önbellekleri Temizle ve Yenile'yi seçin.",
+  "about.reload.purgeCachesAndRefresh": "Önbellegi temizle ve yenile",
+  "about.reload.confirmPurge": "Tüm uygulama önbelleklerini temizlemek ve çalışan hizmetlerin kaydını silmek mi istiyorsunuz? Bu ayrıca sayfayı sunucudan yeniden yükleyecektir, bu da birkaç saniye sürebilir.",
+  "about.reload.reloadApp": "Uygulamayı yeniden yükle"
+}
