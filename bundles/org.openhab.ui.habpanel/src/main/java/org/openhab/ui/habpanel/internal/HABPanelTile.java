@@ -64,7 +64,7 @@ public class HABPanelTile implements Tile {
 
     @Override
     public String getUrl() {
-        return "../habpanel/index.html";
+        return "/habpanel/index.html";
     }
 
     @Override
@@ -74,6 +74,6 @@ public class HABPanelTile implements Tile {
 
     @Override
     public String getImageUrl() {
-        return "../habpanel/tile.png";
+        return "/habpanel/tile.png";
     }
 }

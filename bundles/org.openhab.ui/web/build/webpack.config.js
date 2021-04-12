@@ -152,7 +152,6 @@ module.exports = {
         options: {
           limit: 10000,
           name: 'images/[name].[ext]'
-
         }
       },
       {
@@ -161,7 +160,6 @@ module.exports = {
         options: {
           limit: 10000,
           name: 'media/[name].[ext]'
-
         }
       },
       {
@@ -170,7 +168,6 @@ module.exports = {
         options: {
           limit: 10000,
           name: 'fonts/[name].[ext]'
-
         }
       },
       {

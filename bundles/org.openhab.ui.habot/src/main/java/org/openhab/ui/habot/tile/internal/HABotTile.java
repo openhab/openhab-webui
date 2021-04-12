@@ -73,7 +73,7 @@ public class HABotTile implements Tile {
 
     @Override
     public String getUrl() {
-        return "../habot/";
+        return "/habot/";
     }
 
     @Override
@@ -83,6 +83,6 @@ public class HABotTile implements Tile {
 
     @Override
     public String getImageUrl() {
-        return "../habot/statics/tile.png";
+        return "/habot/statics/tile.png";
     }
 }
