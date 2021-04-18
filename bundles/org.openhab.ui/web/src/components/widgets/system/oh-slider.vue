@@ -43,13 +43,12 @@ export default {
     },
     toStepFixed (value) {
       // uses the number of decimals in the step config to round the provided number
-      if (!this.config.step) return value
-      const nbDecimals = Number(this.config.step).toString().replace(',', '.').split('.')[1]
+      const nbDecimals = this.config.step ? Number(this.config.step).toString().replace(',', '.').split('.')[1] : 0
       return parseFloat(Number(value).toFixed(nbDecimals))
     },
     onChange (value) {
       const newValue = this.toStepFixed(value)
-      if (newValue === this.value) return
+      if (newValue === this.toStepFixed(this.value)) return
       if (this.config.variable) {
         this.$set(this.context.vars, this.config.variable, value)
       } else if (this.config.item) {
