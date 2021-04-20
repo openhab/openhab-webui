@@ -114,20 +114,21 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     }
 
     /**
-     * This method provides the html snippet for a given elementType of the sitemap model.
+     * This method provides the snippet for a given elementType and snippetExt of the sitemap model.
      *
      * @param elementType the name of the model type (e.g. "Group" or "Switch")
-     * @return the html snippet to be used in the UI (including placeholders for variables)
+     * @param snippetExt the extension of the snippet file (e.g. ".html" or ".json")
+     * @return the snippet to be used in the UI (including placeholders for variables)
      * @throws RenderException if snippet could not be read
      */
-    protected synchronized String getSnippet(String elementType) throws RenderException {
+    protected synchronized String getSnippet(String elementType, String snippetExt) throws RenderException {
         String lowerTypeElementType = elementType.toLowerCase();
         String snippet = SNIPPET_CACHE.get(lowerTypeElementType);
         if (snippet != null) {
             return snippet;
         }
 
-        String snippetLocation = SNIPPET_LOCATION + lowerTypeElementType + SNIPPET_EXT;
+        String snippetLocation = SNIPPET_LOCATION + lowerTypeElementType + snippetExt;
         URL entry = bundleContext.getBundle().getEntry(snippetLocation);
         if (entry == null) {
             throw new RenderException("Cannot find a snippet for element type '" + lowerTypeElementType + "'");
@@ -140,6 +141,17 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         } catch (IOException e) {
             throw new RenderException("Cannot load snippet for element type '" + lowerTypeElementType + "'");
         }
+    }
+
+    /**
+     * This method provides the html snippet for a given elementType of the sitemap model.
+     *
+     * @param elementType the name of the model type (e.g. "Group" or "Switch")
+     * @return the html snippet to be used in the UI (including placeholders for variables)
+     * @throws RenderException if snippet could not be read
+     */
+    protected synchronized String getSnippet(String elementType) throws RenderException {
+        return getSnippet(elementType, SNIPPET_EXT);
     }
 
     /**
