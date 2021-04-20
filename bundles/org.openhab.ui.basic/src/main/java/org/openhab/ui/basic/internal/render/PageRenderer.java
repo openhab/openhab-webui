@@ -258,7 +258,6 @@ public class PageRenderer extends AbstractWidgetRenderer {
         pageSnippet = pageSnippet.replace("%htmlclass%", config.getCssClassList() + " page-welcome-sitemaps");
         pageSnippet = pageSnippet.replace("%theme%", config.getTheme());
         pageSnippet = pageSnippet.replace("%content%", listSnippet);
-        pageSnippet = pageSnippet.replace("%sitemapquery", "");
 
         return pageSnippet;
     }
