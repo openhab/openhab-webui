@@ -70,7 +70,7 @@ export default {
     }
   },
   mounted () {
-    if (this.context.component.config && this.context.component.config.stylesheet) {
+    if (this.context && this.context.component.config && this.context.component.config.stylesheet) {
       this.cssUid = 'scoped-' + this.$f7.utils.id()
 
       this.$el.classList.add(this.cssUid)
