@@ -40,7 +40,7 @@
         </f7-col>
         <f7-col width="100" medium="50" class="details-pane">
           <f7-block v-if="selectedItem" no-gap>
-            <model-details-pane :key="itemDetailsKey" :model="selectedItem" :links="links" :context="context" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" />
+            <model-details-pane :key="itemDetailsKey" :model="selectedItem" :links="links" :items="items" :context="context" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" />
           </f7-block>
           <f7-block v-else>
             <div class="padding text-align-center">
@@ -114,7 +114,7 @@
         </f7-toolbar>
         <f7-block style="margin-bottom: 6rem" v-if="selectedItem">
           <item-state-preview v-if="detailsTab === 'state' && !newItem" :item="selectedItem.item" :context="context" />
-          <item-details v-if="detailsTab === 'item'" :model="selectedItem" :links="links" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" />
+          <item-details v-if="detailsTab === 'item'" :model="selectedItem" :links="links" :items="items" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" />
           <metadata-menu v-if="detailsTab === 'meta'" :item="selectedItem.item" />
           <link-details v-if="detailsTab === 'links'" :item="selectedItem.item" :links="links" />
         </f7-block>

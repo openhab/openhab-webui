@@ -60,7 +60,7 @@
           <div>Loading...</div>
         </f7-block>
         <div v-else-if="selectedThing.UID && selectedThingType.UID">
-          <item-form v-if="createEquipment" :item="newEquipmentItem" :enable-name="true" :hide-type="true" :force-semantics="true" />
+          <item-form v-if="createEquipment" :item="newEquipmentItem" :items="items" :enable-name="true" :hide-type="true" :force-semantics="true" />
           <f7-block-title>Channels</f7-block-title>
           <f7-block-footer class="padding-left padding-right">
             Check the channels you wish to create as new Point items.
@@ -71,7 +71,7 @@
               Expert Mode
             </f7-link>
           </f7-block-footer>
-          <channel-list :thing="selectedThing" :thingType="selectedThingType" :channelTypes="selectedThingChannelTypes"
+          <channel-list :thing="selectedThing" :thingType="selectedThingType" :channelTypes="selectedThingChannelTypes" :items="items"
                         :multiple-links-mode="true" :new-items-prefix="(createEquipment) ? newEquipmentItem.name : (parentGroup) ? parentGroup.name : ''"
                         :new-items="newPointItems" />
         </div>
@@ -120,7 +120,8 @@ export default {
       selectedThingType: {},
       selectedThingChannelTypes: {},
       newEquipmentItem: {},
-      newPointItems: []
+      newPointItems: [],
+      items: null
     }
   },
   methods: {
@@ -281,7 +282,15 @@ export default {
               groupNames: (this.parent) ? [this.parent.item.name] : []
             }
           }
-          this.ready = true
+
+          if (this.items) {
+            this.ready = true
+          } else {
+            this.$oh.api.get('/rest/items').then((items) => {
+              this.items = items
+              this.ready = true
+            })
+          }
         })
       })
     }
