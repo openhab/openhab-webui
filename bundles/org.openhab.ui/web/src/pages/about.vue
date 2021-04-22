@@ -68,18 +68,16 @@
       </f7-col>
     </f7-block>
     <f7-popup :opened="textualSystemInfoOpened" close-on-escape @popup:closed="textualSystemInfoOpened = false">
-      <f7-page>
-        <f7-toolbar>
-          <div class="left">
-            <f7-link @click="copyTextualSystemInfo" v-t="'dialogs.copy'" />
-          </div>
-          <div class="right">
-            <f7-link popup-close v-t="'dialogs.close'" />
-          </div>
-        </f7-toolbar>
-        <!-- <pre class="textual-definition" v-html="textualDefinition"></pre> -->
-        <textarea readonly class="textual-systeminfo" id="textual-systeminfo" :value="textualSystemInfo" />
-      </f7-page>
+      <f7-navbar>
+        <div class="left">
+          <f7-link @click="copyTextualSystemInfo" v-t="'dialogs.copy'" />
+        </div>
+        <div class="right">
+          <f7-link popup-close v-t="'dialogs.close'" />
+        </div>
+      </f7-navbar>
+      <!-- <pre class="textual-definition" v-html="textualDefinition"></pre> -->
+      <textarea readonly class="textual-systeminfo" id="textual-systeminfo" :value="textualSystemInfo" />
     </f7-popup>
   </f7-page>
 </template>
