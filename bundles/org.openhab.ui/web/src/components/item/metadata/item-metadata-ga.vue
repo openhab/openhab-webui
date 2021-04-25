@@ -5,9 +5,22 @@
                     :title="'Google Assistant Class'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="classes">
         <select name="classes" @change="updateClass">
           <option value="" />
-          <option v-for="cl in orderedClasses" :value="cl" :key="cl" :selected="isSelected(cl)">
-            {{ cl }}
-          </option>
+          <optgroup label="Types">
+            <option v-for="cl in orderedClasses.filter((c) => c.indexOf('type:') === 0)"
+                    :value="cl.replace('type:', '')"
+                    :key="cl"
+                    :selected="isSelected(cl.replace('type:', ''))">
+              {{ cl.replace('type:', '') }}
+            </option>
+          </optgroup>
+          <optgroup label="Attributes">
+            <option v-for="cl in orderedClasses.filter((c) => c.indexOf('attribute:') === 0)"
+                    :value="cl.replace('attribute:', '')"
+                    :key="cl"
+                    :selected="isSelected(cl.replace('attribute:', ''))">
+              {{ cl.replace('attribute:', '') }}
+            </option>
+          </optgroup>
         </select>
       </f7-list-item>
     </f7-list>
@@ -48,7 +61,7 @@ export default {
     },
     parameters () {
       if (!this.metadata.value) return []
-      return [...GoogleDefinitions[this.metadata.value]]
+      return GoogleDefinitions['type:' + this.metadata.value] || GoogleDefinitions['attribute:' + this.metadata.value]
     }
   },
   methods: {
