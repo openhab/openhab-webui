@@ -302,6 +302,7 @@ export default {
         ? this.$oh.api.postPlain('/rest/ui/components/system:sitemap', JSON.stringify(this.sitemap), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/ui/components/system:sitemap/' + this.sitemap.uid, this.sitemap)
       promise.then((data) => {
+        this.dirty = false
         if (this.createMode) {
           this.$f7.toast.create({
             text: 'Sitemap created',
@@ -317,7 +318,6 @@ export default {
             closeTimeout: 2000
           }).open()
         }
-        this.dirty = false
         this.$f7.emit('sidebarRefresh', null)
         // if (!stay) this.$f7router.back()
       }).catch((err) => {
