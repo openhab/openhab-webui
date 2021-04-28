@@ -3,14 +3,18 @@
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
-        <f7-link href="/" class="logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
+        <f7-link href="/" class="logo no-ripple" panel-close>
           <div class="logo-inner">
+<<<<<<< HEAD
             <img src="@/images/openhab-logo-white.png" width="100%">
           </div>
         </f7-link>
         <f7-link href="/" class="logo no-ripple" panel-close v-else>
           <div class="logo-inner">
             <img src="@/images/openhab-logo.png" width="100%">
+=======
+            <img src="../res/img/openhab-logo.svg" width="100%">
+>>>>>>> 60724459 (Use vector version of openHAB logo)
           </div>
         </f7-link>
         <f7-list v-if="ready">
@@ -129,7 +133,7 @@
   <!-- <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
     <f7-view name="login" v-if="$device.cordova">
       <f7-page login-screen>
-        <f7-login-screen-title><img width="200px" src="res/img/openhab-logo.png"><br>Login</f7-login-screen-title>
+        <f7-login-screen-title><img width="200px" src="res/img/openhab-logo.svg"><br>Login</f7-login-screen-title>
         <f7-list form>
           <f7-list-input
             type="text"
