@@ -5,8 +5,6 @@
     </div>
     <f7-block class="block-narrow">
       <habot v-if="showHABot" @session-started="inChatSession = true" @session-end="inChatSession = false" />
-      <other-apps v-if="showApps" />
-      <f7-col />
     </f7-block>
 
     <f7-block v-if="!$store" class="text-align-center">
@@ -43,9 +41,6 @@
 </style>
 
 <script>
-// import ExpandableCard from '../../components/expandable-card.vue'
-// import OtherApps from '../../components/home/other-apps.vue'
-
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 
 export default {
@@ -57,10 +52,6 @@ export default {
   },
   data () {
     return {
-      showSetup: false,
-      showTasks: false,
-      showApps: false,
-      showCards: false,
       inChatSession: false,
       ready: true
     }
