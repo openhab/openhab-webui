@@ -12,16 +12,17 @@
  */
 package org.openhab.ui.habpanel.internal.gallery.community;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.IOUtils;
 import org.openhab.ui.habpanel.internal.gallery.GalleryWidgetAttachment;
 import org.openhab.ui.habpanel.internal.gallery.GalleryWidgetProvider;
 import org.openhab.ui.habpanel.internal.gallery.GalleryWidgetsItem;
@@ -61,8 +62,7 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
         while (url != null) {
             URLConnection connection = url.openConnection();
 
-            try {
-                Reader reader = new InputStreamReader(connection.getInputStream());
+            try (Reader reader = new InputStreamReader(connection.getInputStream())) {
                 DiscourseGalleryResponse parsed = gson.fromJson(reader, DiscourseGalleryResponse.class);
                 pages.add(parsed);
 
@@ -72,8 +72,6 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
                 } else {
                     url = null;
                 }
-            } finally {
-                IOUtils.closeQuietly(connection.getInputStream());
             }
         }
 
@@ -88,8 +86,7 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
         URL url = new URL(String.format("%s%s.json", COMMUNITY_TOPIC_URL, id));
         URLConnection connection = url.openConnection();
 
-        try {
-            Reader reader = new InputStreamReader(connection.getInputStream());
+        try (Reader reader = new InputStreamReader(connection.getInputStream())) {
             DiscourseTopicResponse parsed = gson.fromJson(reader, DiscourseTopicResponse.class);
 
             GalleryWidgetsItem item = new GalleryWidgetsItem();
@@ -104,7 +101,7 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
             item.views = parsed.views;
             item.posts = parsed.posts_count;
 
-            item.widgets = new ArrayList<GalleryWidgetAttachment>();
+            item.widgets = new ArrayList<>();
 
             if (parsed.post_stream.posts[0].link_counts != null) {
                 for (DiscoursePostLink link : parsed.post_stream.posts[0].link_counts) {
@@ -122,7 +119,8 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
                         URLConnection widgetDownload = widgetUrl.openConnection();
 
                         try {
-                            widget.contents = IOUtils.toString(widgetDownload.getInputStream());
+                            widget.contents = new String(widgetDownload.getInputStream().readAllBytes(),
+                                    StandardCharsets.UTF_8);
                             String cDisp = widgetDownload.getHeaderField("Content-Disposition");
                             if (cDisp != null && cDisp.indexOf("=") != -1 && cDisp.indexOf(".widget.json") != -1) {
                                 widget.id = cDisp.split("=")[1].replaceAll("\"", "").replaceAll("]", "")
@@ -131,15 +129,16 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
                                 item.widgets.add(widget);
                             }
                         } finally {
-                            IOUtils.closeQuietly(widgetDownload.getInputStream());
+                            try {
+                                widgetDownload.getInputStream().close();
+                            } catch (IOException e) {
+                            }
                         }
                     }
                 }
             }
 
             return item;
-        } finally {
-            IOUtils.closeQuietly(connection.getInputStream());
         }
     }
 

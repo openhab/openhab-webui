@@ -18,10 +18,10 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -134,7 +134,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         }
 
         try {
-            snippet = IOUtils.toString(entry.openStream());
+            snippet = new String(entry.openStream().readAllBytes(), StandardCharsets.UTF_8);
             SNIPPET_CACHE.put(lowerTypeElementType, snippet);
             return snippet;
         } catch (IOException e) {
