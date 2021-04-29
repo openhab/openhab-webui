@@ -5,16 +5,7 @@
       <f7-page>
         <f7-link href="/" class="logo no-ripple" panel-close>
           <div class="logo-inner">
-<<<<<<< HEAD
-            <img src="@/images/openhab-logo-white.png" width="100%">
-          </div>
-        </f7-link>
-        <f7-link href="/" class="logo no-ripple" panel-close v-else>
-          <div class="logo-inner">
-            <img src="@/images/openhab-logo.png" width="100%">
-=======
-            <img src="../res/img/openhab-logo.svg" width="100%">
->>>>>>> 60724459 (Use vector version of openHAB logo)
+            <img src="../res/img/openhab-logo.svg" width="196px">
           </div>
         </f7-link>
         <f7-list v-if="ready">
