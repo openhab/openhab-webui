@@ -1,12 +1,13 @@
 <template>
   <f7-page @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="item.label || item.name" :subtitle="thing.label" back-link="Cancel">
-      <f7-nav-right>
+      <f7-nav-right v-if="link.editable">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Save
         </f7-link>
       </f7-nav-right>
+      <f7-link v-else slot="right" icon-f7="lock_fill" icon-only tooltip="links defined in a .items file are not editable from this screen" />
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col>
@@ -33,12 +34,12 @@
               </ul>
             </f7-list>
           </f7-card-content>
-          <f7-card-footer v-if="item">
+          <f7-card-footer v-if="item && (item.editable || link.editable)">
             <f7-button color="red" fill @click="unlinkAndDelete()" v-if="source === 'thing' && item.editable">
               Unlink &amp; Remove Item
             </f7-button>
-            <f7-button color="red" @click="unlink()">
-              {{ source === 'thing' && item.editable ? 'Unlink Only' : 'Unlink' }}
+            <f7-button color="red" @click="unlink()" v-if="link.editable">
+              {{ source === 'thing' && link.editable ? 'Unlink Only' : 'Unlink' }}
             </f7-button>
           </f7-card-footer>
         </f7-card>
@@ -55,9 +56,10 @@
             <div>Loading...</div>
           </f7-block>
           <f7-list v-else>
-            <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="(No Profile)" name="profile-type" />
+            <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="(No Profile)" name="profile-type" :disabled="!link.editable" />
             <f7-list-item radio v-for="profileType in profileTypes"
                           :checked="currentProfileType && profileType.uid === currentProfileType.uid"
+                          :disabled="!link.editable"
                           @change="onProfileTypeChange(profileType.uid)"
                           :key="profileType.uid" :title="profileType.label" name="profile-type" />
           </f7-list>
@@ -68,7 +70,8 @@
         <config-sheet ref="profileConfiguration"
                       :parameter-groups="profileTypeConfiguration.parameterGroups"
                       :parameters="profileTypeConfiguration.parameters"
-                      :configuration="link.configuration" />
+                      :configuration="link.configuration"
+                      :read-only="!link.editable" />
       </f7-col>
     </f7-block>
   </f7-page>
