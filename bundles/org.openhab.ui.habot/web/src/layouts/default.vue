@@ -22,7 +22,7 @@
       content-class="bg-grey-2"
     >
       <div class="logo">
-        <img src="~assets/logo.svg" alt="HABot">
+        <img src="~assets/logo.png" alt="HABot">
       </div>
       <q-list
         no-border
