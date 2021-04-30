@@ -6,7 +6,7 @@
         <f7-col>
           <!-- <f7-block-title>About openHAB</f7-block-title> -->
           <f7-block>
-            <img src="/res/icons/128x128.png" width="96" class="padding float-right">
+            <img src="res/icons/favicon.svg" type="image/svg+xml" width="96" class="padding float-right">
             <h2 v-if="$store.state.runtimeInfo" class="block-title-medium">
               openHAB {{ $store.state.runtimeInfo.version }}<br><small>{{ $store.state.runtimeInfo.buildString }}</small>
             </h2>

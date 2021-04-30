@@ -3,7 +3,7 @@
     <f7-tabs animated>
       <f7-tab id="intro" ref="intro" tab-active>
         <f7-login-screen-title>
-          <img class="intro-logo" src="res/img/openhab-logo.svg">
+          <img class="intro-logo" src="res/img/openhab-logo.svg" type="image/svg+xml">
         </f7-login-screen-title>
         <f7-list form style="margin-top: 4rem" v-if="i18nReady">
           <f7-list-item
