@@ -3,10 +3,16 @@
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
-        <f7-link href="/" class="logo no-ripple" panel-close>
-          <div class="logo-inner">
-            <img src="../res/img/openhab-logo.svg" type="image/svg+xml" width="196px">
-          </div>
+        <f7-link href="/" class="logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
+           <div class="logo-inner">
+             <img src="../res/img/openhab-logo-white.svg" type="image/svg+xml" width="196px">
+           </div>
+        </f7-link>
+        <f7-link href="/" class="logo no-ripple" panel-close v-else>
+           <div class="logo-inner">
+             <img src="../res/img/openhab-logo.svg" type="image/svg+xml" width="196px">
+           </div>
+        </f7-link>
         </f7-link>
         <f7-list v-if="ready">
           <f7-list-item v-if="$store.getters.apiEndpoint('ui') && (!pages || !pages.length)">
