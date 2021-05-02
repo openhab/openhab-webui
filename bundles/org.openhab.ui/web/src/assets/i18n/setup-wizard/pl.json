@@ -10,6 +10,7 @@
   "setupwizard.location.header1": "Czy chcesz udostępnić lokalizację swojego domu?",
   "setupwizard.location.header2": "Pomoże to w konfiguracji danych zależnych od pozycji, takich jak czas wschodu i zachodu słońca lub pogoda.",
   "setupwizard.location.parameterLabel": "Lokalizacja Twojego domu",
+  "setupwizard.location.placeholder": "<latitude>,<longitude>[,<altitude>]",
   "setupwizard.location.retrieveFromDevice": "Pobierz z tego urządzenia",
   "setupwizard.location.retrieveFromDevice.error": "Błąd podczas pobierania bieżącej pozycji",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Przepraszamy",
