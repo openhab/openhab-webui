@@ -22,6 +22,8 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
@@ -56,7 +58,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.io.FileUtils;
 import org.openhab.core.OpenHAB;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
@@ -847,7 +848,8 @@ public class CometVisuServlet extends HttpServlet {
         Response resp = new Response();
 
         String fileName = request.getParameter("config");
-        File file = fileName != null ? new File(userFileFolder, URLDecoder.decode(fileName, "UTF-8")) : null;
+        File file = fileName != null ? new File(userFileFolder, URLDecoder.decode(fileName, StandardCharsets.UTF_8))
+                : null;
 
         if (file != null && file.exists()) {
             // file exists and we only write if the file exists (creating new files this way is prohibited for security
@@ -869,12 +871,12 @@ public class CometVisuServlet extends HttpServlet {
             if (backup) {
                 // Backup existing file
                 File backupFile = new File(backupFolder, file.getName() + "-" + System.currentTimeMillis());
-                FileUtils.copyFile(file, backupFile);
+                Files.copy(file.toPath(), backupFile.toPath());
             }
 
             // write data to file
             String data = request.getParameter("data");
-            FileUtils.writeStringToFile(file, data);
+            Files.writeString(file.toPath(), data, StandardCharsets.UTF_8);
             resp.success = true;
             resp.message = "File saved";
         }

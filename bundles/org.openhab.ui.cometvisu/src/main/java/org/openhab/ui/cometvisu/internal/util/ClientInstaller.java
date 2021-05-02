@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +29,6 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.commons.io.FileUtils;
 import org.openhab.core.io.net.http.HttpUtil;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.slf4j.Logger;
@@ -122,9 +122,10 @@ public class ClientInstaller {
 
                 // find version in local client
                 File version = findClientRoot(webFolder, "version");
+
                 if (version.exists()) {
                     try {
-                        String currentVersion = FileUtils.readFileToString(version);
+                        String currentVersion = Files.readString(version.toPath());
                         String currentRelease = (String) latestRelease.get("tag_name");
                         if (currentRelease.startsWith("v")) {
                             currentRelease = currentRelease.substring(1);
@@ -258,11 +259,12 @@ public class ClientInstaller {
             File releaseFile = new File("release.zip");
             try {
                 URL url = new URL((String) releaseAsset.get("browser_download_url"));
-
-                FileUtils.copyURLToFile(url, releaseFile);
+                try (FileOutputStream fos = new FileOutputStream(releaseFile)) {
+                    url.openStream().transferTo(fos);
+                    fos.flush();
+                }
 
                 ZipFile zip = new ZipFile(releaseFile, ZipFile.OPEN_READ);
-
                 extractFolder("cometvisu/release/", zip, Config.cometvisuWebfolder);
             } catch (IOException e) {
                 logger.error("error opening release zip file {}", e.getMessage(), e);

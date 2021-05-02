@@ -14,11 +14,11 @@ package org.openhab.ui.habot.notification.internal;
 
 import static org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
@@ -26,14 +26,13 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.interfaces.ECPrivateKey;
 import org.bouncycastle.jce.interfaces.ECPublicKey;
@@ -63,7 +62,7 @@ public class NotificationService {
 
     private final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
-    private static final String VAPID_KEYS_FILE_NAME = "habot" + File.separator + "vapid_keys";
+    private static final Path VAPID_KEYS_PATH = Path.of(OpenHAB.getUserDataFolder(), "habot", "vapid_keys");
     private static final String SUBJECT_NAME = "habot@openhab.org";
 
     private SubscriptionProvider subscriptionProvider;
@@ -95,8 +94,8 @@ public class NotificationService {
      * @param subscription the subscription to store
      */
     public void addSubscription(Subscription subscription) {
-        if (this.subscriptionProvider.get(subscription.keys) == null) {
-            this.subscriptionProvider.add(subscription);
+        if (subscriptionProvider.get(subscription.keys) == null) {
+            subscriptionProvider.add(subscription);
         }
     }
 
@@ -107,7 +106,7 @@ public class NotificationService {
      * @throws GeneralSecurityException
      */
     public void broadcastNotification(String payload) throws GeneralSecurityException {
-        for (Subscription subscription : this.subscriptionProvider.getAll()) {
+        for (Subscription subscription : subscriptionProvider.getAll()) {
             sendNotification(subscription, payload);
         }
     }
@@ -126,10 +125,10 @@ public class NotificationService {
 
         Notification notification = new Notification(subscription, payload);
         try {
-            return this.pushService.send(notification);
+            return pushService.send(notification);
         } catch (IOException | JoseException | ExecutionException | InterruptedException e) {
             logger.error("Unable to send the notification to {}: {}",
-                    this.subscriptionProvider.keyToString(subscription.keys), e.toString());
+                    subscriptionProvider.keyToString(subscription.keys), e.toString());
             return null;
         }
     }
@@ -169,17 +168,16 @@ public class NotificationService {
         byte[] publicKey = Utils.savePublicKey((ECPublicKey) keyPair.getPublic());
         byte[] privateKey = Utils.savePrivateKey((ECPrivateKey) keyPair.getPrivate());
 
-        List<String> encodedKeys = new ArrayList<String>();
-        encodedKeys.add(BaseEncoding.base64Url().encode(publicKey));
-        encodedKeys.add(BaseEncoding.base64Url().encode(privateKey));
+        List<String> encodedKeys = List.of(BaseEncoding.base64Url().encode(publicKey),
+                BaseEncoding.base64Url().encode(privateKey));
 
         // write the public key, then the private key in encoded form on separate lines in the file
-        File file = new File(OpenHAB.getUserDataFolder() + File.separator + VAPID_KEYS_FILE_NAME);
-        file.getParentFile().mkdirs();
-        IOUtils.writeLines(encodedKeys, System.lineSeparator(), new FileOutputStream(file));
+        Files.createDirectories(VAPID_KEYS_PATH.getParent());
+        String lines = encodedKeys.stream().collect(Collectors.joining(System.lineSeparator()));
+        Files.writeString(VAPID_KEYS_PATH, lines, StandardOpenOption.TRUNCATE_EXISTING);
 
-        this.publicVAPIDKey = encodedKeys.get(0);
-        this.privateVAPIDKey = encodedKeys.get(1);
+        publicVAPIDKey = encodedKeys.get(0);
+        privateVAPIDKey = encodedKeys.get(1);
     }
 
     /**
@@ -187,10 +185,9 @@ public class NotificationService {
      */
     private void loadVAPIDKeys() {
         try {
-            List<String> encodedKeys = IOUtils.readLines(
-                    new FileInputStream(OpenHAB.getUserDataFolder() + File.separator + VAPID_KEYS_FILE_NAME));
-            this.publicVAPIDKey = encodedKeys.get(0);
-            this.privateVAPIDKey = encodedKeys.get(1);
+            List<String> encodedKeys = Files.readAllLines(VAPID_KEYS_PATH);
+            publicVAPIDKey = encodedKeys.get(0);
+            privateVAPIDKey = encodedKeys.get(1);
         } catch (IOException e) {
             try {
                 generateVAPIDKeyPair();
@@ -204,10 +201,10 @@ public class NotificationService {
     }
 
     private PushService getPushService() throws GeneralSecurityException {
-        if (this.pushService == null) {
+        if (pushService == null) {
             loadVAPIDKeys();
-            this.pushService = new PushService(this.publicVAPIDKey, this.privateVAPIDKey, SUBJECT_NAME);
+            pushService = new PushService(publicVAPIDKey, privateVAPIDKey, SUBJECT_NAME);
         }
-        return this.pushService;
+        return pushService;
     }
 }

@@ -12,20 +12,18 @@
  */
 package org.openhab.ui.habot.nlp.internal;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.IOUtils;
-import org.eclipse.jdt.annotation.NonNull;
 import org.openhab.core.common.registry.RegistryChangeListener;
 import org.openhab.core.events.EventPublisher;
 import org.openhab.core.items.Item;
@@ -59,8 +57,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
         "service.config.category=voice" })
 public class OpenNLPInterpreter implements HumanLanguageInterpreter {
 
-    public static final Set<Locale> SUPPORTED_LOCALES = Collections
-            .unmodifiableSet(new HashSet<>(Arrays.asList(Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN)));
+    public static final Set<Locale> SUPPORTED_LOCALES = Set.of(Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN);
 
     private IntentTrainer intentTrainer = null;
     private Locale currentLocale = null;
@@ -70,9 +67,9 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
     private ItemResolver itemResolver;
     private EventPublisher eventPublisher;
 
-    private HashMap<String, Skill> skills = new HashMap<String, Skill>();
+    private Map<String, Skill> skills = new HashMap<>();
 
-    private @NonNull RegistryChangeListener<Item> registryChangeListener = new RegistryChangeListener<Item>() {
+    private RegistryChangeListener<Item> registryChangeListener = new RegistryChangeListener<>() {
         @Override
         public void added(Item element) {
             intentTrainer = null;
@@ -129,7 +126,7 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
             }
         });
 
-        return IOUtils.toInputStream(nameSamplesDoc.toString());
+        return new ByteArrayInputStream(nameSamplesDoc.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -145,7 +142,7 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
             try {
                 itemResolver.setLocale(locale);
                 intentTrainer = new IntentTrainer(locale.getLanguage(),
-                        skills.values().stream().sorted(new Comparator<Skill>() {
+                        skills.values().stream().sorted(new Comparator<>() {
 
                             @Override
                             public int compare(Skill o1, Skill o2) {
@@ -177,11 +174,11 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
         // misinterpretation by the categorizer.
         if (this.itemResolver.getMatchingItems(text, null).findAny().isPresent()) {
             intent = new Intent("get-status");
-            intent.setEntities(new HashMap<String, String>());
+            intent.setEntities(new HashMap<>());
             intent.getEntities().put("object", text.toLowerCase());
         } else if (this.itemResolver.getMatchingItems(null, text).findAny().isPresent()) {
             intent = new Intent("get-status");
-            intent.setEntities(new HashMap<String, String>());
+            intent.setEntities(new HashMap<>());
             intent.getEntities().put("location", text.toLowerCase());
         } else {
             // Else, run it through the IntentTrainer
