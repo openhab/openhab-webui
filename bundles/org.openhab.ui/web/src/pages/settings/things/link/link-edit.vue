@@ -56,9 +56,8 @@
             <div>Loading...</div>
           </f7-block>
           <f7-list v-else>
-            <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="(No Profile)" name="profile-type" :disabled="!link.editable" />
             <f7-list-item radio v-for="profileType in profileTypes"
-                          :checked="currentProfileType && profileType.uid === currentProfileType.uid"
+                          :checked="!currentProfileType && profileType.uid === 'system:default' || currentProfileType && profileType.uid === currentProfileType.uid"
                           :disabled="!link.editable"
                           @change="onProfileTypeChange(profileType.uid)"
                           :key="profileType.uid" :title="profileType.label" name="profile-type" />
@@ -123,9 +122,9 @@ export default {
       const itemName = this.item.name
       const itemType = this.item.type
       const channelUID = this.channel.uid.replace('#', '%23')
-      const getProfileTypes = this.$oh.api.get('/rest/profile-types?channelTypeUID=' + this.channel.channelTypeUID + '&itemType=' + itemType)
-      getProfileTypes.then((data) => {
+      this.$oh.api.get('/rest/profile-types?channelTypeUID=' + this.channel.channelTypeUID + '&itemType=' + itemType).then((data) => {
         this.profileTypes = data
+        this.profileTypes.unshift(data.splice(data.findIndex(p => p.uid === 'system:default'), 1)[0]) // move default to be first
 
         this.$oh.api.get('/rest/links/' + itemName + '/' + channelUID).then((data2) => {
           this.link = data2

@@ -89,9 +89,8 @@
           </f7-link>
         </f7-block-footer>
         <f7-list>
-          <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="(No Profile)" name="profile-type" />
           <f7-list-item radio v-for="profileType in profileTypes"
-                        :value="profileType.uid"
+                        :checked="!currentProfileType && profileType.uid === 'system:default' || currentProfileType && profileType.uid === currentProfileType.uid"
                         @change="onProfileTypeChange(profileType.uid)"
                         :key="profileType.uid" :title="profileType.label" name="profile-type" />
         </f7-list>
@@ -195,6 +194,7 @@ export default {
       const getProfileTypes = this.$oh.api.get('/rest/profile-types?channelTypeUID=' + channel.channelTypeUID)
       getProfileTypes.then((data) => {
         this.profileTypes = data
+        this.profileTypes.unshift(data.splice(data.findIndex(p => p.uid === 'system:default'), 1)[0]) // move default to be first
         this.ready = true
       })
     },
