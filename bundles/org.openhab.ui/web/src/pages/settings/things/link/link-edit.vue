@@ -23,7 +23,7 @@
                 <f7-list-item divider title="Channel" />
                 <f7-list-item media-item class="channel-item"
                               :title="channel.label || channelType.label"
-                              :footer="channel.uid"
+                              :footer="channel.uid + ' (' + getItemType(channel) + ')'"
                               :subtitle="thing.label"
                               :badge="thingStatusBadgeText(thing.statusInfo)"
                               :badge-color="thingStatusBadgeColor(thing.statusInfo)">
@@ -153,6 +153,11 @@ export default {
         console.log(`No configuration for profile type ${profileTypeUid}: ` + err)
         this.profileTypeConfiguration = null
       })
+    },
+    getItemType (channel) {
+      if (channel && channel.kind === 'TRIGGER') return 'Trigger'
+      if (!channel || !channel.itemType) return '?'
+      return channel.itemType
     },
     unlink () {
       this.$f7.dialog.confirm(

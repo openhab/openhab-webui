@@ -15,7 +15,7 @@
           <f7-list-item media-item class="channel-item"
                         :title="channel.label || channelType.label"
                         :footer="channel.description || channelType.description"
-                        :subtitle="channel.uid" />
+                        :subtitle="channel.uid + ' (' + getItemType(channel) + ')'" />
         </f7-list>
       </f7-col>
 
@@ -37,7 +37,8 @@
         <f7-col v-if="!createItem">
           <f7-list>
             <!-- TODO: filter with compatible item types -->
-            <item-picker key="itemLink" title="Item to Link" name="item" :value="selectedItemName" :multiple="false" :items="items" @input="(value) => selectedItemName = value" />
+            <item-picker key="itemLink" title="Item to Link" name="item" :value="selectedItemName" :multiple="false" :items="items" :filterType="getCompatibleItemTypes()"
+                         @input="(value) => selectedItemName = value" />
           </f7-list>
         </f7-col>
 
@@ -213,6 +214,17 @@ export default {
         console.warn(`No configuration for profile type ${profileTypeUid}: ` + err)
         this.profileTypeConfiguration = null
       })
+    },
+    getItemType (channel) {
+      if (channel && channel.kind === 'TRIGGER') return 'Trigger'
+      if (!channel || !channel.itemType) return '?'
+      return channel.itemType
+    },
+    getCompatibleItemTypes () {
+      let compatibleItemTypes = this.channel.itemType.split(':', 1)
+      if (this.channel.itemType === 'Color') { compatibleItemTypes.push('Switch', 'Dimmer') }
+      if (this.channel.itemType === 'Dimmer') { compatibleItemTypes.push('Switch') }
+      return compatibleItemTypes
     },
     itemTypeCompatible () {
       // debugger
