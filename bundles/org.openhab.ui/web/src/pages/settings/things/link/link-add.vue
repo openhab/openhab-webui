@@ -36,7 +36,6 @@
         <!-- Choose item to link -->
         <f7-col v-if="!createItem">
           <f7-list>
-            <!-- TODO: filter with compatible item types -->
             <item-picker key="itemLink" title="Item to Link" name="item" :value="selectedItemName" :multiple="false" :items="items" :filterType="getCompatibleItemTypes()"
                          @input="(value) => selectedItemName = value" />
           </f7-list>
@@ -71,17 +70,13 @@
         </div>
       </f7-col>
 
-      <!-- <f7-block v-if="!itemTypeCompatible()" class="text-color-red">
-        The channel and the item type are not compatible.
-      </f7-block> -->
-
       <f7-block v-if="!ready && !(!item && !items)" class="text-align-center">
         <f7-preloader />
         <div>Loading...</div>
       </f7-block>
 
       <!-- Profile configuration -->
-      <f7-col v-else-if="profileTypes.length">
+      <f7-col v-else-if="profileTypes.length && currentItem">
         <f7-block-title>Profile</f7-block-title>
         <f7-block-footer class="padding-left padding-right">
           Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
@@ -90,7 +85,7 @@
           </f7-link>
         </f7-block-footer>
         <f7-list>
-          <f7-list-item radio v-for="profileType in profileTypes"
+          <f7-list-item radio v-for="profileType in compatibleProfileTypes"
                         :checked="!currentProfileType && profileType.uid === 'system:default' || currentProfileType && profileType.uid === currentProfileType.uid"
                         @change="onProfileTypeChange(profileType.uid)"
                         :key="profileType.uid" :title="profileType.label" name="profile-type" />
@@ -173,6 +168,15 @@ export default {
       })
     }
   },
+  computed: {
+    currentItem () {
+      return this.item ? this.item : this.createItem ? this.newItem : this.selectedItemName
+    },
+    compatibleProfileTypes () {
+      let currentItemType = this.currentItem ? this.currentItem.type : null
+      return this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(currentItemType))
+    }
+  },
   methods: {
     onPageAfterIn (event) {
       if (!this.channel) return
@@ -226,31 +230,6 @@ export default {
       if (this.channel.itemType === 'Dimmer') { compatibleItemTypes.push('Switch') }
       return compatibleItemTypes
     },
-    itemTypeCompatible () {
-      // debugger
-      // TODO move to testable .js file
-      let item = this.item
-      if (!item) item = (this.createItem) ? this.newItem : this.selectedItem
-      if (!item) return true
-      if (!item.type) return true
-      if (!this.selectedChannel) return true
-      if (!this.selectedChannel.itemType) return false
-
-      if (this.currentProfileType && this.currentProfileType.supportedItemTypes && this.currentProfileType.supportedItemTypes.length > 0) {
-        return (this.currentProfileType.supportedItemTypes.indexOf(this.item.type) >= 0)
-      }
-
-      const channelItemType = this.selectedChannel.itemType
-      if (channelItemType === item.type) return true
-
-      // Exceptions
-      if (item.type.indexOf('Number') === 0 && channelItemType.indexOf('Number') === 0) return true
-      if (item.type.indexOf('Number') === 0 && channelItemType === 'Dimmer') return true
-      if (channelItemType === 'Color' && (item.type === 'Dimmer' || item.type === 'Switch')) return true
-      if (channelItemType === 'Dimmer' && item.type === 'Switch') return true
-
-      return false
-    },
     save () {
       const link = {}
       if (this.channel) {
@@ -289,11 +268,6 @@ export default {
         this.$f7.dialog.alert('Please review the profile configuration and correct validation errors')
         return
       }
-      // temporarily disabled
-      // if (!this.itemTypeCompatible()) {
-      //   this.$f7.dialog.alert('The channel and item type are not compatible')
-      //   return
-      // }
 
       if (this.createItem) {
         this.$oh.api.put('/rest/items/' + this.newItem.name, this.newItem).then((data) => {
@@ -339,6 +313,11 @@ export default {
           this.ready = true
         })
       })
+    },
+    currentItem () {
+      if (this.currentProfileType && !this.compatibleProfileTypes.find(p => p.uid === this.currentProfileType.uid)) {
+        this.currentProfileType = null
+      }
     }
   }
 }
