@@ -44,7 +44,7 @@
                         footer="A beginner-friendly way to build scripts visually by assembling blocks"
                         :value="'application/javascript+blockly'" :checked="mode === 'application/javascript+blockly'"
                         @change="mode = 'application/javascript+blockly'">
-            <img src="res/img/blockly.svg" height="32" width="32" slot="media">
+            <img src="@/images/blockly.svg" height="32" width="32" slot="media">
           </f7-list-item>
         </f7-list>
         <f7-block-footer class="margin-vertical">

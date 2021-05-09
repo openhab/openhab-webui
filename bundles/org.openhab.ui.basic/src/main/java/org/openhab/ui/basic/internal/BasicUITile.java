@@ -34,7 +34,7 @@ public class BasicUITile implements Tile {
 
     @Override
     public String getUrl() {
-        return "../basicui/app";
+        return "/basicui/app";
     }
 
     @Override
@@ -44,6 +44,6 @@ public class BasicUITile implements Tile {
 
     @Override
     public String getImageUrl() {
-        return "res/img/basicui.png";
+        return "/res/img/basicui.png";
     }
 }

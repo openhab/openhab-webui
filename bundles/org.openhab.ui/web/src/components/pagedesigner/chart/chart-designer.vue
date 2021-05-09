@@ -5,13 +5,13 @@
       <f7-row class="margin-bottom">
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addGrid">
-            <img src="@/res/img/chartdesigner/gridSimple.svg" width="80px">
+            <img src="./gridSimple.svg" width="80px">
             Add<br>Grid
           </f7-link>
         </f7-col>
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addCalendar">
-            <img src="@/res/img/chartdesigner/calendar.svg" width="80px">
+            <img src="./calendar.svg" width="80px">
             Add<br>Calendar
           </f7-link>
         </f7-col>
@@ -52,10 +52,10 @@
                                      icon-f7="list_bullet" :configureLabel="'Configure Series'" :removeLabel="'Remove Series'" />
                 </f7-menu>
                 <div slot="media">
-                  <img slot="media" v-if="series.config.type === 'bar'" src="@/res/img/chartdesigner/bar.svg" width="32px">
-                  <img slot="media" v-else-if="series.config.type === 'scatter'" src="@/res/img/chartdesigner/scatter.svg" width="32px">
-                  <img slot="media" v-else-if="series.config.type === 'heatmap'" src="@/res/img/chartdesigner/heatmap.svg" width="32px">
-                  <img slot="media" v-else src="@/res/img/chartdesigner/line.svg" width="32px">
+                  <img slot="media" v-if="series.config.type === 'bar'" src="./bar.svg" width="32px">
+                  <img slot="media" v-else-if="series.config.type === 'scatter'" src="./scatter.svg" width="32px">
+                  <img slot="media" v-else-if="series.config.type === 'heatmap'" src="./heatmap.svg" width="32px">
+                  <img slot="media" v-else src="./line.svg" width="32px">
                 </div>
               </f7-list-item>
               <f7-list-button color="blue" @click="addSeries('oh-time-series', gridIdx)">
@@ -110,9 +110,9 @@
                                      icon-f7="list_bullet" :configureLabel="'Configure Series'" :removeLabel="'Remove Series'" />
                 </f7-menu>
                 <div slot="media">
-                  <img slot="media" v-if="series.config.type === 'scatter'" src="@/res/img/chartdesigner/scatter.svg" width="32px">
-                  <img slot="media" v-else-if="series.config.type === 'heatmap'" src="@/res/img/chartdesigner/heatmap.svg" width="32px">
-                  <img slot="media" v-else src="@/res/img/chartdesigner/line.svg" width="32px">
+                  <img slot="media" v-if="series.config.type === 'scatter'" src="./scatter.svg" width="32px">
+                  <img slot="media" v-else-if="series.config.type === 'heatmap'" src="./heatmap.svg" width="32px">
+                  <img slot="media" v-else src="./line.svg" width="32px">
                 </div>
               </f7-list-item>
               <f7-list-button color="blue" @click="addCalendarSeries('oh-calendar-series', calendarIdx)">
@@ -133,7 +133,7 @@
             <f7-badge v-if="context.component.slots.tooltip" color="blue" class="count-badge">
               {{ context.component.slots.tooltip.length }}
             </f7-badge>
-            <img src="@/res/img/chartdesigner/tooltip.svg" width="80px">
+            <img src="./tooltip.svg" width="80px">
             Tooltip
           </f7-link>
         </f7-col>
@@ -142,7 +142,7 @@
             <f7-badge v-if="context.component.slots.visualMap" color="blue" class="count-badge">
               {{ context.component.slots.visualMap.length }}
             </f7-badge>
-            <img src="@/res/img/chartdesigner/visualMap.svg" width="80px">
+            <img src="./visualMap.svg" width="80px">
             Visual Map
           </f7-link>
         </f7-col>
@@ -151,7 +151,7 @@
             <f7-badge v-if="context.component.slots.dataZoom" color="blue" class="count-badge">
               {{ context.component.slots.dataZoom.length }}
             </f7-badge>
-            <img src="@/res/img/chartdesigner/dataZoom.svg" width="80px">
+            <img src="./dataZoom.svg" width="80px">
             Data Zoom
           </f7-link>
         </f7-col>
@@ -162,7 +162,7 @@
             <f7-badge v-if="context.component.slots.legend" color="blue" class="count-badge">
               {{ context.component.slots.legend.length }}
             </f7-badge>
-            <img src="@/res/img/chartdesigner/legend.svg" width="80px">
+            <img src="./legend.svg" width="80px">
             Legend
           </f7-link>
         </f7-col>
@@ -171,7 +171,7 @@
             <f7-badge v-if="context.component.slots.title" color="blue" class="count-badge">
               {{ context.component.slots.title.length }}
             </f7-badge>
-            <img src="@/res/img/chartdesigner/title.svg" width="80px">
+            <img src="./title.svg" width="80px">
             Title
           </f7-link>
         </f7-col>
@@ -180,7 +180,7 @@
             <f7-badge v-if="context.component.slots.toolbox" color="blue" class="count-badge">
               {{ context.component.slots.toolbox.length }}
             </f7-badge>
-            <img src="@/res/img/chartdesigner/toolbox.svg" width="80px">
+            <img src="./toolbox.svg" width="80px">
             Toolbox
           </f7-link>
         </f7-col>

@@ -78,7 +78,8 @@ public class UIService implements HttpContext {
                 return defaultHttpContext.getResource(name);
             }
         } else {
-            return defaultHttpContext.getResource(name);
+            URL url = defaultHttpContext.getResource(name);
+            return (url != null) ? url : defaultHttpContext.getResource(APP_BASE + "/index.html");
         }
     }
 
