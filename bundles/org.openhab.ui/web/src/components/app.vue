@@ -5,12 +5,12 @@
       <f7-page>
         <f7-link href="/" class="logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
            <div class="logo-inner">
-             <img src="../res/img/openhab-logo-white.svg" type="image/svg+xml" width="196px">
+             <img src="@images/openhab-logo-white.svg" type="image/svg+xml" width="196px">
            </div>
         </f7-link>
         <f7-link href="/" class="logo no-ripple" panel-close v-else>
            <div class="logo-inner">
-             <img src="../res/img/openhab-logo.svg" type="image/svg+xml" width="196px">
+             <img src="@images/openhab-logo.svg" type="image/svg+xml" width="196px">
            </div>
         </f7-link>
         </f7-link>
@@ -130,7 +130,7 @@
   <!-- <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
     <f7-view name="login" v-if="$device.cordova">
       <f7-page login-screen>
-        <f7-login-screen-title><img src="res/img/openhab-logo.svg" type="image/svg+xml" width="200px"><br>Login</f7-login-screen-title>
+        <f7-login-screen-title><img src="@images/openhab-logo.svg" type="image/svg+xml" width="200px"><br>Login</f7-login-screen-title>
         <f7-list form>
           <f7-list-input
             type="text"
