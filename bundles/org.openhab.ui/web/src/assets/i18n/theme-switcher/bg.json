@@ -1,0 +1,15 @@
+{
+  "about.theme": "Тема (скин)",
+  "about.theme.auto": "Авто",
+  "about.darkMode": "Тъмен режим",
+  "about.darkMode.auto": "Авто",
+  "about.darkMode.light": "Светло",
+  "about.darkMode.dark": "Тъмно",
+  "about.navigationBarsStyle": "Стил навигационна лента",
+  "about.miscellaneous": "Разни",
+  "about.miscellaneous.home.navbar": "Проста навигационна лента на главна страница",
+  "about.miscellaneous.home.background": "Стандартен цвят на фона на главната страница",
+  "about.miscellaneous.home.hideChatInput": "Скрий чата от главната страница",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Изключи анимацията на разширяването на картите",
+  "about.miscellaneous.theme.disablePageTransition": "Изключи анимацията преход на страница"
+}

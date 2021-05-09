@@ -1,0 +1,21 @@
+{
+  "about.title": "Opis",
+  "about.homePage": "Web stranica",
+  "about.documentation": "Dokumentacija",
+  "about.communityForum": "Forum zajednice",
+  "about.technicalInformation": "Tehničke informacije",
+  "about.technicalInformation.configurationFolder": "Mapa konfiguracija",
+  "about.technicalInformation.userdataFolder": "Mapa korisničkih podataka",
+  "about.technicalInformation.logsFolder": "Mapa logova",
+  "about.technicalInformation.operatingSystem": "Operativni sistem",
+  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.resourceStats": "{nbproc} dostupna procesora - {ram} dostupne memorije",
+  "about.technicalInformation.viewDetails": "Prikaži detalje",
+  "about.appearanceOptions": "Izgled ( samo za ovaj uređaj)",
+  "about.reload": "Ponovno učitaj",
+  "about.reload.purgeExplanation1": "Predmemorija i/ili servis workeri se upotrebljavaju za pohraniti resurse lokalno i omoguće brže učitavanje ove aplikacije, no možda se neće pouzdano otkriti kada je ažurirana na novu verziju.",
+  "about.reload.purgeExplanation2": "Odaberi predmemorije za raščistiti i Osvježi dole da bi iščistio sve, odjavi servis workere i ponovo preuzmi sve od servera.",
+  "about.reload.purgeCachesAndRefresh": "Raščisti predmemoriju i osvježi",
+  "about.reload.confirmPurge": "Raščisti sve predmemorije aplikacije i odjavi servis workere? To ce ponovo učitavat web stranicu od servera, što bi moglo potrajati nekoliko sekundi.",
+  "about.reload.reloadApp": "Ponovo učitaj aplikaciju"
+}

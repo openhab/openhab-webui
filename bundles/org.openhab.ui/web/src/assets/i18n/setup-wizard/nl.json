@@ -10,6 +10,7 @@
   "setupwizard.location.header1": "Wilt je je thuislocatie delen?",
   "setupwizard.location.header2": "Het zal helpen op positie afhankelijke data te bepalen, zoals zonsopgang/zonsondergang of het weer.",
   "setupwizard.location.parameterLabel": "Thuislocatie",
+  "setupwizard.location.placeholder": "<breedtegraad>,<lengtegraad>[,<hoogte>]",
   "setupwizard.location.retrieveFromDevice": "Ophalen van dit apparaat",
   "setupwizard.location.retrieveFromDevice.error": "Fout bij het ophalen van de huidige positie",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Sorry",

@@ -1,0 +1,8 @@
+{
+  "CONFIGURATION_ERROR": "ГРЕШКА: КОНФИГУРАЦИЯ",
+  "HANDLER_INITIALIZING_ERROR": "ГРЕШКА: HANDLER",
+  "HANDLER_MISSING_ERROR": "ГРЕШКА: HANDLER",
+  "TEMPLATE_MISSING_ERROR": "ГРЕШКА: ШАБЛОН",
+  "INVALID_RULE": "НЕВАЛИДЕН",
+  "DISABLED": "ДЕАКТИВИРАН"
+}
