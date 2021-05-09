@@ -14,8 +14,8 @@ const p = (type, name, label, description, options, advanced) => {
 }
 
 // Common
-const tfaAckParameter = p('BOOLEAN', 'tfaAck', 'Secondary User Verification - Acknowledgement needed', 'When this is set, Google will ask for acknowledgement (yes or no) before executing the action', null, true)
-const tfaPinParameter = p('TEXT', 'tfaPin', 'Secondary User Verification - PIN', 'When this is set, Google will require this PIN before executing the action', null, true)
+const tfaAckParameter = p('BOOLEAN', 'ackNeeded', 'Secondary User Verification - Acknowledgement needed', 'When this is set, Google will ask for acknowledgement (yes or no) before executing the action', null, true)
+const tfaPinParameter = p('TEXT', 'pinNeeded', 'Secondary User Verification - PIN', 'When this is set, Google will require this PIN before executing the action', null, true)
 const nameParameter = p('TEXT', 'name', 'Custom name', 'The name of the device used in Google (use synonyms instead if possible)', null, true)
 const roomHintParameter = p('TEXT', 'roomHint', 'Room hint', 'Suggested name for the room where this device is installed', null, true)
 const structureHintParameter = p('TEXT', 'structureHint', 'Structure hint', 'Suggested name for the structure where this device is installed', null, true)
