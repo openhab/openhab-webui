@@ -58,7 +58,7 @@ export default {
       const visible = this.evaluateExpression('visible', this.context.component.config.visible)
       const visibleTo = this.context.component.config.visibleTo
       if (visible === undefined && visibleTo === undefined) return true
-      if (visible === false) return false
+      if (visible === false || visible === 'false') return false
       if (visibleTo) {
         const user = this.$store.getters.user
         if (!user) return false
