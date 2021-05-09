@@ -54,7 +54,7 @@ export function OhGridLayoutDefinition () {
     .paramGroup(pg('screenSettings', 'Screen Settings'), [
       pn('screenWidth', 'Screen Width', 'Screen width in pixels (default 1280)')
         .v((value, configuration, configDescription, parameters) => { return configuration.layoutType === 'fixed' }),
-      pn('screenHeight', 'Screen Height', 'Screen width in pixels (default 720)')
+      pn('screenHeight', 'Screen Height', 'Screen height in pixels (default 720)')
         .v((value, configuration, configDescription, parameters) => { return configuration.layoutType === 'fixed' }),
       pb('scale', 'Scaling', 'Scale content to other screen widths (can lead to unexpected styling issues) (default false)')
         .v((value, configuration, configDescription, parameters) => { return configuration.layoutType === 'fixed' })
