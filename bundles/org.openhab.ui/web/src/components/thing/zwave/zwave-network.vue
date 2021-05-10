@@ -100,6 +100,7 @@ export default {
           let nodeid = t.properties.zwave_nodeid
           let bridgeUID = t.bridgeUID
           let listening = t.properties.zwave_listening === 'true'
+          let neighbours = t.properties.zwave_neighbours ? t.properties.zwave_neighbours : ''
           serie.data.push({
             name: nodeid,
             value: t.label,
@@ -110,7 +111,7 @@ export default {
               borderWidth: 3
             }
           })
-          t.properties.zwave_neighbours.split(',').forEach((n) => {
+          neighbours.split(',').forEach((n) => {
             let returnlink = serie.links.find((l) => l.target === nodeid && l.source === n)
             if (!returnlink) {
               serie.links.push({
