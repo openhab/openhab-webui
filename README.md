@@ -1,6 +1,6 @@
 # openHAB Web Interface Add-ons
 
-<img align="right" width="220" src="./logo.png" />
+<img align="right" width="220" src="./logo.svg" type="image/svg+xml"/>
 
 [![Build Status](https://ci.openhab.org/job/openHAB-WebUI/badge/icon)](https://ci.openhab.org/job/openHAB-WebUI/)
 [![EPL-2.0](https://img.shields.io/badge/license-EPL%202-green.svg)](https://opensource.org/licenses/EPL-2.0)
