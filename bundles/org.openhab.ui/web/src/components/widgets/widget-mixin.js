@@ -53,6 +53,20 @@ export default {
       }
       return evalConfig
     },
+    props () {
+      if (!this.context || !this.context.component) return {}
+      if (this.context.component.props && this.context.component.props.parameters) {
+        let defaultValues = {}
+        this.context.component.props.parameters.forEach((p) => {
+          if (p.defaultValue !== undefined) {
+            defaultValues[p.name] = p.defaultValue
+          }
+        })
+        return Object.assign({}, defaultValues, this.context.props || {})
+      } else {
+        return this.context.props || {}
+      }
+    },
     visible () {
       if (this.context.editmode || !this.context.component.config) return true
       const visible = this.evaluateExpression('visible', this.context.component.config.visible)
@@ -100,7 +114,7 @@ export default {
           }
           return expr.eval(this.exprAst[key], {
             items: ctx.store,
-            props: ctx.props,
+            props: this.props,
             vars: ctx.vars,
             loop: ctx.loop,
             Math: Math,
@@ -128,7 +142,7 @@ export default {
       return {
         component: component,
         rootcomponent: this.context.root || this.context.component,
-        props: this.context.props,
+        props: this.props,
         vars: this.context.vars,
         loop: this.context.loop,
         store: this.context.store,
