@@ -15,12 +15,12 @@
         </div>
       </f7-col>
       <f7-col>
-        <item-form :item="item" :enable-name="createMode" />
+        <item-form :item="item" :items="items" :enable-name="createMode" />
       </f7-col>
       <f7-col>
         <f7-block-title>Group Membership</f7-block-title>
         <f7-list v-if="ready">
-          <item-picker title="Parent Group(s)" name="parent-groups" :value="item.groupNames" @input="(value) => item.groupNames = value" :multiple="true" filterType="Group" />
+          <item-picker title="Parent Group(s)" name="parent-groups" :value="item.groupNames" @input="(value) => item.groupNames = value" :items="items" :multiple="true" filterType="Group" />
         </f7-list>
       </f7-col>
       <f7-col v-if="item && item.type === 'Group'">
@@ -74,6 +74,7 @@ export default {
     return {
       ready: false,
       item: {},
+      items: [],
       types: Types,
       semanticClasses: SemanticClasses,
       semanticClass: '',
@@ -106,7 +107,10 @@ export default {
           created: false
         }
         this.$set(this, 'item', newItem)
-        this.ready = true
+        this.$oh.api.get('/rest/items').then((items) => {
+          this.items = items
+          this.ready = true
+        })
       } else {
         const loadItem = this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=semantics')
         loadItem.then((data) => {

@@ -3,7 +3,7 @@
     <item-state-preview v-if="model.item.created !== false" :item="model.item" :context="context" :key="$utils.id()" />
 
     <f7-block-title>Item</f7-block-title>
-    <item-details :model="model" :links="links" @item-updated="$emit('item-updated')" @item-created="$emit('item-created')" @item-removed="$emit('item-removed')" @cancel-create="$emit('cancel-create')" />
+    <item-details :model="model" :links="links" :items="items" @item-updated="$emit('item-updated')" @item-created="$emit('item-created')" @item-removed="$emit('item-removed')" @cancel-create="$emit('cancel-create')" />
     <f7-block-title v-if="model.item.created !== false">
       Metadata
     </f7-block-title>
@@ -22,7 +22,7 @@ import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 
 export default {
-  props: ['model', 'links', 'context'],
+  props: ['model', 'links', 'items', 'context'],
   components: {
     ItemStatePreview,
     ItemDetails,

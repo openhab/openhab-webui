@@ -48,7 +48,7 @@
                               @channel-updated="(e) => $emit('channels-updated', e)" />
               </template>
               <template #default="{ channel }" v-else-if="multipleLinksMode">
-                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
+                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :items="items" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
               </template>
               <!-- <channel-link #default="{ channelId }" /> -->
             </channel-group>
@@ -98,7 +98,7 @@ import ItemForm from '@/components/item/item-form.vue'
 import { Points } from '@/assets/semantics'
 
 export default {
-  props: ['thingType', 'thing', 'channelTypes', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems', 'context'],
+  props: ['thingType', 'thing', 'channelTypes', 'items', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems', 'context'],
   components: {
     ChannelGroup,
     ChannelLink,

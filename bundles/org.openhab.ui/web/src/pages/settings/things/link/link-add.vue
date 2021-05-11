@@ -19,31 +19,36 @@
         </f7-list>
       </f7-col>
 
-      <!-- Option to create new item (if not supplied by prop) -->
-      <f7-col v-if="!item">
-        <f7-block-title>Item</f7-block-title>
-        <f7-list media-list>
-          <f7-list-item radio :checked="createItem === false" value="false" @change="createItem = false" title="Use an existing Item" name="item-creation-choice" />
-          <f7-list-item radio :checked="createItem === true" value="true" @change="createItem = true" title="Create a new Item" name="item-creation-choice" />
-        </f7-list>
-      </f7-col>
+      <div v-if="!item && !items" class="text-align-center">
+        <f7-preloader />
+        <div>Loading...</div>
+      </div>
+      <template v-if="!item && items">
+        <!-- Option to create new item (if not supplied by prop) -->
+        <f7-col>
+          <f7-block-title>Item</f7-block-title>
+          <f7-list media-list>
+            <f7-list-item radio :checked="!createItem" value="false" @change="createItem = false" title="Use an existing Item" name="item-creation-choice" />
+            <f7-list-item radio :checked="createItem" value="true" @change="createItem = true" title="Create a new Item" name="item-creation-choice" />
+          </f7-list>
+        </f7-col>
 
-      <!-- Choose item to link -->
-      <f7-col v-if="createItem === false && !item">
-        <f7-list>
-          <!-- TODO: filter with compatible item types -->
-          <item-picker key="itemLink" title="Item to Link" name="item" :value="selectedItemName" :multiple="false"
-                       @input="(value) => selectedItemName = value" />
-        </f7-list>
-      </f7-col>
+        <!-- Choose item to link -->
+        <f7-col v-if="!createItem">
+          <f7-list>
+            <!-- TODO: filter with compatible item types -->
+            <item-picker key="itemLink" title="Item to Link" name="item" :value="selectedItemName" :multiple="false" :items="items" @input="(value) => selectedItemName = value" />
+          </f7-list>
+        </f7-col>
 
-      <!-- Create new item -->
-      <f7-col v-else-if="createItem === true">
-        <item-form :item="newItem" :enable-name="true" />
-        <f7-list>
-          <item-picker key="newItem-groups" title="Parent Group(s)" name="parent-groups" :value="newItem.groupNames" @input="(value) => newItem.groupNames = value" :multiple="true" filterType="Group" />
-        </f7-list>
-      </f7-col>
+        <!-- Create new item -->
+        <f7-col v-else>
+          <item-form :item="newItem" :items="items" :enable-name="true" @valid="itemValid = $event" />
+          <f7-list>
+            <item-picker key="newItem-groups" title="Parent Group(s)" name="parent-groups" :value="newItem.groupNames" :items="items" @input="(value) => newItem.groupNames = value" :multiple="true" filterType="Group" />
+          </f7-list>
+        </f7-col>
+      </template>
 
       <!-- Item to link supplied as prop -->
       <f7-col v-else-if="item">
@@ -69,7 +74,7 @@
         The channel and the item type are not compatible.
       </f7-block> -->
 
-      <f7-block v-if="!ready" class="text-align-center">
+      <f7-block v-if="!ready && !(!item && !items)" class="text-align-center">
         <f7-preloader />
         <div>Loading...</div>
       </f7-block>
@@ -138,6 +143,8 @@ export default {
     return {
       ready: true,
       createItem: false,
+      items: null,
+      itemValid: true,
       link: {
         itemName: null,
         channelUID: null,
@@ -157,6 +164,13 @@ export default {
       configuration: {},
       types: Types,
       semanticClasses: SemanticClasses
+    }
+  },
+  created () {
+    if (!this.item) {
+      this.$oh.api.get('/rest/items').then((items) => {
+        this.items = items
+      })
     }
   },
   methods: {
@@ -247,6 +261,10 @@ export default {
       }
 
       // checks
+      if (this.createItem && !this.itemValid) {
+        this.$f7.dialog.alert('Please correct the item to link')
+        return
+      }
       if (!link.itemName) {
         this.$f7.dialog.alert('Please configure the item to link')
         return

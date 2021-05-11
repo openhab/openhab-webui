@@ -3,8 +3,7 @@
     <f7-list inline-labels no-hairlines-md>
       <f7-list-input v-if="!enableName" label="Name" type="text" placeholder="Name" :value="item.name" disabled />
       <f7-list-input v-else label="Name" type="text" placeholder="Name" :value="item.name"
-                     @input="item.name = $event.target.value" clear-button
-                     required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only" />
+                     @input="onNameInput" clear-button required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage" />
       <f7-list-input label="Label" type="text" placeholder="Label" :value="item.label"
                      @input="item.label = $event.target.value" clear-button />
       <f7-list-item v-if="item.type && !hideType" title="Type" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
@@ -46,7 +45,7 @@ import * as Types from '@/assets/item-types.js'
 import { Categories } from '@/assets/categories.js'
 
 export default {
-  props: ['item', 'enableName', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
+  props: ['item', 'items', 'enableName', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
   components: {
     SemanticsPicker
   },
@@ -54,7 +53,8 @@ export default {
     return {
       types: Types,
       categoryInputId: '',
-      categoryAutocomplete: null
+      categoryAutocomplete: null,
+      nameErrorMessage: ''
     }
   },
   methods: {
@@ -70,11 +70,30 @@ export default {
           }
         }
       })
+    },
+    onNameInput (event) {
+      this.item.name = event.target.value
+      this.validateName(this.item.name)
+    },
+    validateName (name) {
+      let oldError = this.nameErrorMessage
+      if (!/^[A-Za-z0-9_]+$/.test(name)) {
+        this.nameErrorMessage = 'Required. Alphanumeric & underscores only'
+      } else if (this.items.some(item => item.name === name)) {
+        this.nameErrorMessage = 'An item with this name already exists'
+      } else {
+        this.nameErrorMessage = ''
+      }
+      if (oldError !== this.nameErrorMessage) this.$emit('valid', !this.nameErrorMessage)
     }
   },
   mounted () {
     if (!this.item) return
     if (!this.item.category) this.$set(this.item, 'category', '')
+    if (this.enableName) {
+      if (!this.items) this.items = []
+      this.validateName(this.item.name)
+    }
     const categoryControl = this.$refs.category
     if (!categoryControl || !categoryControl.$el) return
     const inputElement = this.$$(categoryControl.$el).find('input')
