@@ -124,7 +124,7 @@ export default {
         })
         .catch((err) => {
           console.log('Error while loading model: ' + err)
-          if (err === 'Unauthorized') {
+          if (err === 'Unauthorized' || err === 401) {
             authorize()
           }
         })

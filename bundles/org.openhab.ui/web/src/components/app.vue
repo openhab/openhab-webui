@@ -378,7 +378,7 @@ export default {
       return useCredentialsPromise
         .then(() => { return this.$oh.api.get('/rest/') })
         .catch((err) => {
-          if (err === 'Unauthorized') {
+          if (err === 'Unauthorized' || err === 401) {
             if (!useCredentials) {
               // try again with credentials
               this.loadData(true)
@@ -395,7 +395,7 @@ export default {
                     this.storeBasicCredentials()
                     this.loadData()
                   }).catch((err) => {
-                    if (err === 'Unauthorized') {
+                    if (err === 'Unauthorized' || err === 401) {
                       this.clearBasicCredentials()
                       this.loadData()
                       return Promise.reject()
