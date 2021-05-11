@@ -92,7 +92,7 @@ export function setAccessToken (token, api) {
     requireToken = false
     return Promise.resolve()
   }).catch((err) => {
-    if (err === 'Unauthorized') requireToken = true
+    if (err === 'Unauthorized' || err === 401) requireToken = true
     return Promise.resolve()
   })
 }

@@ -376,8 +376,8 @@ export default {
       const useCredentialsPromise = (useCredentials) ? this.setBasicCredentials() : Promise.resolve()
       return useCredentialsPromise
         .then(() => { return this.$oh.api.get('/rest/') })
-        .catch((err, status) => {
-          if (status === 401) {
+        .catch((err) => {
+          if (err === 'Unauthorized' || err === 401) {
             if (!useCredentials) {
               // try again with credentials
               this.loadData(true)
@@ -393,8 +393,8 @@ export default {
                   this.$oh.api.get('/rest/').then((rootResponse) => {
                     this.storeBasicCredentials()
                     this.loadData()
-                  }).catch((err, status) => {
-                    if (status === 401) {
+                  }).catch((err) => {
+                    if (err === 'Unauthorized' || err === 401) {
                       this.clearBasicCredentials()
                       this.loadData()
                       return Promise.reject()

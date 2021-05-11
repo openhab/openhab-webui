@@ -4,8 +4,8 @@ import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from './a
 function wrapPromise (f7promise) {
   return new Promise((resolve, reject) => {
     f7promise
-      .then((data) => resolve(data.data, data.status, data.xhr))
-      .catch((err) => reject(err.message, err.status, err.xhr))
+      .then((data) => resolve(data.data))
+      .catch((err) => reject(err.message || err.status))
   })
 }
 
