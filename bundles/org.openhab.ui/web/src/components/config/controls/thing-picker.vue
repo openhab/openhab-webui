@@ -65,6 +65,7 @@ export default {
     select (e) {
       this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
       this.$emit('input', e.target.value)
+      this.$f7.emit('thingPicked', e.target.value)
     }
   }
 }
