@@ -84,9 +84,11 @@
             Learn more about profiles.
           </f7-link>
         </f7-block-footer>
-        <f7-list>
-          <f7-list-item radio v-for="profileType in compatibleProfileTypes"
+        <f7-list class="profile-list profile-disabled">
+          <f7-list-item radio v-for="profileType in profileTypes" class="profile-item"
                         :checked="!currentProfileType && profileType.uid === 'system:default' || currentProfileType && profileType.uid === currentProfileType.uid"
+                        :disabled="!compatibleProfileTypes.includes(profileType)"
+                        :class="{ 'profile-disabled': !compatibleProfileTypes.includes(profileType) }"
                         @change="onProfileTypeChange(profileType.uid)"
                         :key="profileType.uid" :title="profileType.label" name="profile-type" />
         </f7-list>
@@ -94,6 +96,7 @@
       <f7-col v-if="profileTypeConfiguration != null">
         <f7-block-title>Profile Configuration</f7-block-title>
         <config-sheet ref="profileConfiguration"
+                      :key="'profileTypeConfiguration-' + currentProfileType.uid"
                       :parameter-groups="profileTypeConfiguration.parameterGroups"
                       :parameters="profileTypeConfiguration.parameters"
                       :configuration="configuration" />
@@ -109,6 +112,16 @@
     </div>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.profile-list
+  .profile-item.profile-disabled
+    pointer-events none
+    .icon-radio
+      opacity 0.3
+    .item-title
+      opacity 0.55
+</style>
 
 <script>
 import diacritic from 'diacritic'
