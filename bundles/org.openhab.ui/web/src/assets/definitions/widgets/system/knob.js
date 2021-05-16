@@ -11,5 +11,7 @@ export default () => [
   pt('secondaryColor', 'Secondary Color', 'Color of the rest of the control (HTML value, default #dcdfe6)'),
   pt('textColor', 'Text Color', 'Color of the value text (HTML value, default #000000)'),
   pt('strokeWidth', 'Stroke Width', 'Thickness of the arcs, default 17'),
-  pb('responsive', 'Responsive', 'Size the control using percentages instead of pixels')
+  pb('responsive', 'Responsive', 'Size the control using percentages instead of pixels'),
+  pn('updateInterval', 'Update Interval', 'Time to wait between subsequent commands in ms (default 500)').a(),
+  pn('delayStateDisplay', 'Delay State Display', 'Time to wait before switching from displaying user input to displaying item state in ms (default 2000)').a()
 ]
