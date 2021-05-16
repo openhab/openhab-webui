@@ -10,5 +10,7 @@ export default () => [
   pb('scale', 'Display Scale', 'Display a scale on the slider'),
   pn('scaleSteps', 'Scale steps', 'Number of (major) scale markers'),
   pn('scaleSubSteps', 'Scale sub-steps', 'Number of scale minor markers between each major marker'),
-  pt('unit', 'Unit', 'Text to append to the label while dragging the cursor')
+  pt('unit', 'Unit', 'Text to append to the label while dragging the cursor'),
+  pn('updateInterval', 'Update Interval', 'Time to wait between subsequent commands in ms (default 500)').a(),
+  pn('delayStateDisplay', 'Delay State Display', 'Time to wait before switching from displaying user input to displaying item state in ms (default 2000)').a()
 ]
