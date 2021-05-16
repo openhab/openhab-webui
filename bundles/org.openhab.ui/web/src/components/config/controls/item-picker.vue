@@ -65,7 +65,11 @@ export default {
         return labelA.localeCompare(labelB)
       })
       if (this.filterType) {
-        this.preparedItems = this.preparedItems.filter((i) => i.type === this.filterType)
+        if (Array.isArray(this.filterType)) {
+          this.preparedItems = this.preparedItems.filter((i) => this.filterType.includes(i.type.split(':', 1)[0]))
+        } else {
+          this.preparedItems = this.preparedItems.filter((i) => i.type === this.filterType)
+        }
       }
       if (this.editableOnly) {
         this.preparedItems = this.preparedItems.filter((i) => i.editable)

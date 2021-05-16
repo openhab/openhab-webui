@@ -23,7 +23,7 @@
                 <f7-list-item divider title="Channel" />
                 <f7-list-item media-item class="channel-item"
                               :title="channel.label || channelType.label"
-                              :footer="channel.uid"
+                              :footer="channel.uid + ' (' + getItemType(channel) + ')'"
                               :subtitle="thing.label"
                               :badge="thingStatusBadgeText(thing.statusInfo)"
                               :badge-color="thingStatusBadgeColor(thing.statusInfo)">
@@ -56,9 +56,8 @@
             <div>Loading...</div>
           </f7-block>
           <f7-list v-else>
-            <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="(No Profile)" name="profile-type" :disabled="!link.editable" />
             <f7-list-item radio v-for="profileType in profileTypes"
-                          :checked="currentProfileType && profileType.uid === currentProfileType.uid"
+                          :checked="!currentProfileType && profileType.uid === 'system:default' || currentProfileType && profileType.uid === currentProfileType.uid"
                           :disabled="!link.editable"
                           @change="onProfileTypeChange(profileType.uid)"
                           :key="profileType.uid" :title="profileType.label" name="profile-type" />
@@ -68,6 +67,7 @@
       <f7-col v-if="profileTypeConfiguration != null">
         <f7-block-title>Profile Configuration</f7-block-title>
         <config-sheet ref="profileConfiguration"
+                      :key="'profileTypeConfiguration-' + currentProfileType.uid"
                       :parameter-groups="profileTypeConfiguration.parameterGroups"
                       :parameters="profileTypeConfiguration.parameters"
                       :configuration="link.configuration"
@@ -123,9 +123,10 @@ export default {
       const itemName = this.item.name
       const itemType = this.item.type
       const channelUID = this.channel.uid.replace('#', '%23')
-      const getProfileTypes = this.$oh.api.get('/rest/profile-types?channelTypeUID=' + this.channel.channelTypeUID + '&itemType=' + itemType)
-      getProfileTypes.then((data) => {
+      this.$oh.api.get('/rest/profile-types?channelTypeUID=' + this.channel.channelTypeUID + '&itemType=' + itemType).then((data) => {
         this.profileTypes = data
+        this.profileTypes.unshift(data.splice(data.findIndex(p => p.uid === 'system:default'), 1)[0]) // move default to be first
+        this.profileTypes = this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(this.item.type)) // only show compatible profile types
 
         this.$oh.api.get('/rest/links/' + itemName + '/' + channelUID).then((data2) => {
           this.link = data2
@@ -154,6 +155,11 @@ export default {
         console.log(`No configuration for profile type ${profileTypeUid}: ` + err)
         this.profileTypeConfiguration = null
       })
+    },
+    getItemType (channel) {
+      if (channel && channel.kind === 'TRIGGER') return 'Trigger'
+      if (!channel || !channel.itemType) return '?'
+      return channel.itemType
     },
     unlink () {
       this.$f7.dialog.confirm(
