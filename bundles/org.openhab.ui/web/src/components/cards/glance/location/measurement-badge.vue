@@ -34,7 +34,7 @@ export default {
       badgeConfigs: {
         temperature: { icon: 'f7:thermometer', unit: '°' },
         humidity: { icon: 'f7:drop', unit: '%' },
-        luminance: { icon: 'f7:sun_min', unit: 'lux' }
+        luminance: { icon: 'f7:sun_min', unit: 'lx' }
       }
     }
   },
