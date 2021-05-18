@@ -25,7 +25,7 @@
       <f7-link tab-link v-if="tabVisible('properties')" @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" :text="$t('home.properties.tab')" />
     </f7-toolbar>
 
-    <f7-tabs v-if="ready">
+    <f7-tabs v-if="modelReady">
       <f7-tab id="tab-overview" :tab-active="currentTab === 'overview'" @tab:show="() => this.currentTab = 'overview'">
         <overview-tab v-if="currentTab === 'overview'" :context="context" :key="overviewPageKey" :allow-chat="allowChat" />
       </f7-tab>
@@ -142,22 +142,19 @@ export default {
     }
   },
   watch: {
-    ready (val) {
-      if (val) {
-        this.loadModel()
-        this.$store.dispatch('startTrackingStates')
-      }
+    ready: {
+      handler (val) {
+        if (val) {
+          this.loadModel()
+          this.$store.dispatch('startTrackingStates')
+        }
+      },
+      immediate: true
     }
   },
   methods: {
     onPageBeforeIn () {
       this.overviewPageKey = this.$utils.id()
-    },
-    onPageAfterIn () {
-      if (this.ready) {
-        this.loadModel()
-        this.$store.dispatch('startTrackingStates')
-      }
     },
     onPageBeforeOut () {
       this.$store.dispatch('stopTrackingStates')
