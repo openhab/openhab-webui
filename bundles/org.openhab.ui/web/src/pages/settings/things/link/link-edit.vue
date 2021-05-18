@@ -126,7 +126,7 @@ export default {
       this.$oh.api.get('/rest/profile-types?channelTypeUID=' + this.channel.channelTypeUID + '&itemType=' + itemType).then((data) => {
         this.profileTypes = data
         this.profileTypes.unshift(data.splice(data.findIndex(p => p.uid === 'system:default'), 1)[0]) // move default to be first
-        this.profileTypes = this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(this.item.type)) // only show compatible profile types
+        this.profileTypes = this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(this.item.type.split(':', 1)[0])) // only show compatible profile types
 
         this.$oh.api.get('/rest/links/' + itemName + '/' + channelUID).then((data2) => {
           this.link = data2
