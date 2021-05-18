@@ -187,7 +187,7 @@ export default {
     },
     compatibleProfileTypes () {
       let currentItemType = this.currentItem ? this.currentItem.type : null
-      return this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(currentItemType))
+      return this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(currentItemType.split(':', 1)[0]))
     }
   },
   methods: {
