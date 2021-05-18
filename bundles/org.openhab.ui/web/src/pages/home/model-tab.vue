@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showCards && groups">
+  <div>
     <div v-for="(elements, idx) in groups" :key="idx">
       <f7-block-title medium v-if="elements.length > 0 && elements[0].separator">
         {{ elements[0].separator }}
@@ -87,23 +87,12 @@ export default {
     EquipmentCard,
     PropertyCard
   },
-  data () {
-    return {
-      showCards: false
-    }
-  },
-  created () {
-    this.showCards = true
-  },
   computed: {
     groups () {
       return cardGroups(this.model, this.type, this.page)
     }
   },
   methods: {
-    hideCards () {
-      this.showCards = false
-    },
     isCardExcluded (card) {
       if (!card.key) return
       const page = this.page
