@@ -171,7 +171,7 @@ export default {
         (this.context.component.slots && this.context.component.slots.default && this.context.component.slots.default.length > 0))
     },
     isOn () {
-      if (this.config.on) return this.config.on
+      if (this.config.on !== undefined) return this.config.on
       if (this.config.item) {
         const itemState = this.context.store[this.config.item].state
         if (itemState === 'ON') return true
