@@ -4,15 +4,6 @@
 	xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
-	<config-description uri="ui:habot">
-		<parameter name="useGzipCompression" type="boolean">
-			<label>Use Compression</label>
-			<description>Serves the compressed web app static files with Content-Encoding: gzip. This decreases significantly the
-				download size of the app. This is NOT supported by openHAB Cloud/myopenhab.org!</description>
-			<default>false</default>
-		</parameter>
-	</config-description>
-
 	<config-description uri="voice:opennlphli">
 		<parameter name="theme" type="text" required="true">
 			<label>Tokenizer</label>
