@@ -74,7 +74,7 @@ export default {
         case 'battery':
           direct = findPoints(this.element.properties, 'Point_Status_LowBattery', true)
           if (direct.length) return direct
-          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_LowBattery', true)
+          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Status_LowBattery', true)
         case 'lights':
           direct = findPoints(this.element.properties, 'Point_Control', true, 'Property_Light')
           if (direct.length) return direct
