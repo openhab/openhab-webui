@@ -53,6 +53,7 @@ export const OhLocationCardParameters = () => new WidgetDefinition('oh-location-
     pb('disableBadges', 'Disable badges', 'Do not examine items to display badges - can help with performance if you don\'t need them.'),
     pt('badges', 'Enabled badges', 'Select the badges you wish to show in the header of the card. Display all if none are selected.')
       .o([
+        { value: 'battery', label: 'Low Battery Warning' },
         { value: 'lights', label: 'Lights On' },
         { value: 'windows', label: 'Open Windows' },
         { value: 'doors', label: 'Open Doors' },
