@@ -42,7 +42,7 @@ export default {
     return {
       badgeConfigs: {
         alarms: { icon: 'f7:exclamationmark_triangle_fill' },
-        battery: { icon: 'oh:lowbattery', state: 'on' },
+        battery: { icon: 'f7:battery_25', state: 'on' },
         lights: { icon: 'oh:lightbulb' },
         windows: { icon: 'oh:window', state: 'open' },
         doors: { icon: 'oh:door', state: 'open' },
@@ -72,7 +72,7 @@ export default {
       let direct, equipment, allPoints, points
       switch (this.type) {
         case 'battery':
-          direct = findPoints(this.element.properties, 'Point_LowBattery', true)
+          direct = findPoints(this.element.properties, 'Point_Status_LowBattery', true)
           if (direct.length) return direct
           return findPoints(allEquipmentPoints(this.element.equipment), 'Point_LowBattery', true)
         case 'lights':
