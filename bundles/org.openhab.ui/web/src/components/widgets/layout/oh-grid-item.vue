@@ -75,7 +75,7 @@
     width 30px
     height 30px
     background-image url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNnB4IiBoZWlnaHQ9IjZweCIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6I2ZmZmZmZjAwIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA2IDYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0ibTYgNmgtNnYtMS44aDQuMnYtNC4yaDEuOHoiIGZpbGw9IiM4ZThlOTMiLz48L3N2Zz4=')
-    z-index 10                // always on top
+    z-index 10000             // always on top
     touch-action none
   .configure-item-menu
     position absolute
@@ -83,7 +83,7 @@
     right 0px
     padding 2px
     color gray
-    z-index 10
+    z-index 10000
     i
       font-size 18px
       height 30px
@@ -99,7 +99,7 @@
     left 0px
     padding 2px
     color gray
-    z-index 10
+    z-index 10000
     touch-action none
   .configure-grid-menu        // show menu icon on upper right corner
     position absolute

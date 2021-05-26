@@ -75,7 +75,7 @@
           <metadata-menu :item="item" />
         </f7-col>
       </f7-row>
-      <f7-row v-if="item.name && links.length && item.type !== 'Group'">
+      <f7-row v-if="item.name && item.type !== 'Group'">
         <f7-col>
           <f7-block-title>Channel Links</f7-block-title>
           <link-details :item="item" :links="links" />
