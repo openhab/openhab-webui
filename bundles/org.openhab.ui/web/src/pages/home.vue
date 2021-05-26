@@ -1,5 +1,5 @@
 <template>
-  <f7-page stacked name="HomePage" class="page-home" :class="{ 'standard-background': $f7.data.themeOptions.homeBackground === 'standard' }" @page:init="onPageInit" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page stacked name="HomePage" class="page-home" :class="{ 'standard-background': $f7.data.themeOptions.homeBackground === 'standard' }" @page:init="onPageInit" @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :large="$f7.data.themeOptions.homeNavbar !== 'simple'" :large-transparent="$f7.data.themeOptions.homeNavbar !== 'simple'" class="home-nav">
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
