@@ -1,0 +1,15 @@
+{
+  "about.theme": "主题",
+  "about.theme.auto": "自动",
+  "about.darkMode": "暗色主题",
+  "about.darkMode.auto": "自动",
+  "about.darkMode.light": "亮色",
+  "about.darkMode.dark": "暗色",
+  "about.navigationBarsStyle": "导航栏显示样式",
+  "about.miscellaneous": "其他选项",
+  "about.miscellaneous.home.navbar": "简化主页上导航栏",
+  "about.miscellaneous.home.background": "标准主页背景颜色",
+  "about.miscellaneous.home.hideChatInput": "在主页隐藏聊天输入框",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "禁用卡片过渡动画",
+  "about.miscellaneous.theme.disablePageTransition": "禁用页面过渡动画"
+}
