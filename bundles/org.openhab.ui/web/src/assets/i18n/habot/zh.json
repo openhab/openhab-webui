@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(示例)",
+  "habot.clearHistory": "清除历史记录",
+  "habot.dismiss": "忽略",
+  "habot.example1": "厨房温度如何？",
+  "habot.example2": "将恒温器设置为21度",
+  "habot.example3": "关闭一楼的灯",
+  "habot.anythingElse": "还有吗？",
+  "habot.cardDeckIsIncompatible": "抱歉，卡片牌组不能显示在这里，请使用 HABOt APP查看。",
+  "habot.cardIsIncompatible": "抱歉，此卡片不能显示在这里，请使用 Habot APP查看。"
+}
