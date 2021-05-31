@@ -58,8 +58,8 @@ export default {
       if (this.context.component.props && this.context.component.props.parameters) {
         let defaultValues = {}
         this.context.component.props.parameters.forEach((p) => {
-          if (p.defaultValue !== undefined) {
-            defaultValues[p.name] = p.defaultValue
+          if (p.default !== undefined) {
+            defaultValues[p.name] = p.default
           }
         })
         return Object.assign({}, defaultValues, this.context.props || {})
