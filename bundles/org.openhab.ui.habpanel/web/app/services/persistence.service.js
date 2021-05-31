@@ -34,6 +34,7 @@
 
         function loadDashboards(rejectIfEditingLocked) {
             var deferred = $q.defer();
+            $rootScope.configWidgets = {}; // for OH2 compatibility
             OH3StorageService.getPanelRegistry().then(function (data) {
                 $rootScope.useRegistry = true;
 
