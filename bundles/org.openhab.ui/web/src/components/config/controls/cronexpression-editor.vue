@@ -468,7 +468,6 @@ export default {
           days = 'LW'
           break
         case '8':
-          days = this.day.cronLastSpecificDomDay + 'L'
           break
         case '9':
           days = 'L-' + this.day.cronDaysBeforeEomMinus
@@ -499,10 +498,12 @@ export default {
           break
         case '6':
         case '7':
-        case '8':
         case '9':
         case '10':
           weeks = '?'
+          break
+        case '8':
+          weeks = this.day.cronLastSpecificDomDay + 'L'
           break
         case '11':
           weeks = this.week.cronNthDayDay + '#' + this.week.cronNthDayNth
