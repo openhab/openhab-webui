@@ -85,7 +85,7 @@ export default {
     configurationWithDefaults () {
       let conf = Object.assign({}, this.configuration)
       this.parameters.forEach((p) => {
-        if (conf[p.name] === undefined && p.defaultValue !== undefined) conf[p.name] = p.defaultValue
+        if (conf[p.name] === undefined && p.default !== undefined) conf[p.name] = p.default
       })
       return conf
     },

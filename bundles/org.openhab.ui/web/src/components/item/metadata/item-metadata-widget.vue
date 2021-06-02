@@ -186,12 +186,12 @@ export default {
         // for the default system-suggested widget, take the default config and put it as default value
         for (const key in this.defaultComponent.config) {
           const parameter = desc.parameters.find((p) => p.name === key)
-          if (parameter) parameter.defaultValue = this.defaultComponent.config[key]
+          if (parameter) parameter.default = this.defaultComponent.config[key]
         }
       } else {
         // for user-specified widgets, set a default value for the 'item' parameter only
         const itemParameter = desc.parameters.find((p) => p.name === 'item')
-        if (itemParameter) itemParameter.defaultValue = this.item.name
+        if (itemParameter) itemParameter.default = this.item.name
       }
 
       if (!desc.parameterGroups.length || desc.parameterGroups[desc.parameterGroups.length - 1].name !== 'visibility') {
