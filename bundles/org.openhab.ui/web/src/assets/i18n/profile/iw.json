@@ -1,0 +1,19 @@
+{
+  "profile.title": "הפרופיל שלך",
+  "profile.changePassword": "שינוי הסיסמא שלך",
+  "profile.sessions": "פעילות",
+  "profile.sessions.header": "הערה: גם אם הפעילות נמחקת, יתכן מצב בו היא עדיין תהיה פעילה עד שיפוגו תוקפם של כל האישורים.",
+  "profile.sessions.signOut": "התנתק מהפעלה זו",
+  "profile.sessions.created": "נוצר: ",
+  "profile.sessions.lastRefreshed": "ריענון אחרון: ",
+  "profile.sessions.delete.success": "פעילות נמחקה",
+  "profile.sessions.delete.error": "שגיאה במחיקת הפעלה: ",
+  "profile.sessions.signOut.error": "שגיאה בהתנתקות: ",
+  "profile.apiTokens": "אישורים לממשק תכנות היישומים",
+  "profile.apiTokens.header": "צור אישור לממשק תכנות היישומים (API) בכדי לתת גישה תמידית בשמך לכלים ושירותים חיצוניים שאינם תומכים במסגרת הרשאות OAuth2.",
+  "profile.apiTokens.created": "נוצר: ",
+  "profile.apiTokens.validForScope": "תקף למסגרת: ",
+  "profile.apiTokens.create": "צור אישור חדש לממשק תכנות היישומים (API)",
+  "profile.apiTokens.delete.success": "האישור לממשק תכנות היישומים נמחק",
+  "profile.apiTokens.delete.error": "שגיאה במחיקת האישור לממשק תכנות היישומים: "
+}

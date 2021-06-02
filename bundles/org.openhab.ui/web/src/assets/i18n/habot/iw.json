@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(דוגמה)",
+  "habot.clearHistory": "נקה הסטוריה",
+  "habot.dismiss": "בטל",
+  "habot.example1": "כמה מעלות במטבח?",
+  "habot.example2": "כוון טרמוסטט ל 21 מעלות",
+  "habot.example3": "כבה אורות בקומה הראשונה",
+  "habot.anythingElse": "משהו נוסף?",
+  "habot.cardDeckIsIncompatible": "מצטערים, במקום זה לא ניתן להציג כרטיסיה השמורה במחסנית הכרטיסיות, השתמש ביישום HABbot כדי לראות אותה.",
+  "habot.cardIsIncompatible": "מצטערים, במקום זה לא ניתן להציג כרטיסיה זו, השתמש ביישום HABbot כדי לראות אותה."
+}
