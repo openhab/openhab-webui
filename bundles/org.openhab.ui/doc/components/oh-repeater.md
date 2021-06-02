@@ -38,12 +38,12 @@ Iterate over an array and repeat the children components in the default slot
     What to iterate on
   </PropDescription>
   <PropOptions>
-    <PropOption value="array" label="Array (default) in the "in" parameter" />
-    <PropOption value="range" label="Range of integers defined by "rangeStart", "rangeStop", "rangeStep"" />
-    <PropOption value="itemsInGroup" label="Member of the group defined in the "groupItem" parameter" />
-    <PropOption value="itemsWithTags" label="Items with tags in the "itemTags" parameter" />
-    <PropOption value="itemStateOptions" label="State options of the item specified in "itemOptions"" />
-    <PropOption value="itemCommandOptions" label="Command options of the item specified in "itemOptions"" />
+    <PropOption value="array" label="Array (default) in the 'in' parameter" />
+    <PropOption value="range" label="Range of integers defined by 'rangeStart', 'rangeStop', 'rangeStep'" />
+    <PropOption value="itemsInGroup" label="Member of the group defined in the 'groupItem' parameter" />
+    <PropOption value="itemsWithTags" label="Items with tags in the 'itemTags' parameter" />
+    <PropOption value="itemStateOptions" label="State options of the item specified in 'itemOptions'" />
+    <PropOption value="itemCommandOptions" label="Command options of the item specified in 'itemOptions'" />
   </PropOptions>
 </PropBlock>
 <PropBlock type="TEXT" name="in" label="Source array">
