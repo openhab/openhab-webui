@@ -1,0 +1,8 @@
+{
+  "CONFIGURATION_ERROR": "错误：配置错误",
+  "HANDLER_INITIALIZING_ERROR": "错误: 处理器出错",
+  "HANDLER_MISSING_ERROR": "错误: 处理器出错",
+  "TEMPLATE_MISSING_ERROR": "错误: 模板错误",
+  "INVALID_RULE": "无效",
+  "DISABLED": "已禁用"
+}

@@ -1,0 +1,19 @@
+{
+  "profile.title": "您的个人资料",
+  "profile.changePassword": "更改密码",
+  "profile.sessions": "会话",
+  "profile.sessions.header": "注意：即使您删除了一个会话，它可能仍然处于活动状态，直到所有有效的访问令牌过期。",
+  "profile.sessions.signOut": "登出此会话",
+  "profile.sessions.created": "创建时间： ",
+  "profile.sessions.lastRefreshed": "上次刷新： ",
+  "profile.sessions.delete.success": "会话已删除",
+  "profile.sessions.delete.error": "删除会话时发生错误： ",
+  "profile.sessions.signOut.error": "退出时发生错误： ",
+  "profile.apiTokens": "API Tokens",
+  "profile.apiTokens.header": "创建 API tokens以提供不支持OAuth2 授权框架用于永久访问外部工具和服务。",
+  "profile.apiTokens.created": "创建时间： ",
+  "profile.apiTokens.validForScope": "有效范围： ",
+  "profile.apiTokens.create": "创建新的 API token",
+  "profile.apiTokens.delete.success": "API token已删除。",
+  "profile.apiTokens.delete.error": "删除API token时发生错误： "
+}

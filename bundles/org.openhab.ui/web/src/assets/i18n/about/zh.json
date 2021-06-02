@@ -1,0 +1,21 @@
+{
+  "about.title": "关于",
+  "about.homePage": "网站",
+  "about.documentation": "文档",
+  "about.communityForum": "社区论坛",
+  "about.technicalInformation": "技术信息",
+  "about.technicalInformation.configurationFolder": "配置文件夹",
+  "about.technicalInformation.userdataFolder": "用户数据文件夹",
+  "about.technicalInformation.logsFolder": "日志文件夹",
+  "about.technicalInformation.operatingSystem": "操作系统",
+  "about.technicalInformation.javaRuntime": "Java运行环境",
+  "about.technicalInformation.resourceStats": "{nbproc} 可用处理器 - {ram} 可用内存",
+  "about.technicalInformation.viewDetails": "查看详情",
+  "about.appearanceOptions": "外观 (仅限此设备)",
+  "about.reload": "重新载入",
+  "about.reload.purgeExplanation1": "使用缓存或本地存储服务线程能加快此应用程序的加载速度，但是可能无法可靠地检测此应用何时已更新到新版本。",
+  "about.reload.purgeExplanation2": "选择下面的“清除缓存并刷新”以清除所有缓存，注销服务并再次从服务器下载所有内容。",
+  "about.reload.purgeCachesAndRefresh": "清除缓存并刷新",
+  "about.reload.confirmPurge": "是否清除所有应用程序缓存并注销服务工作进程？这会重新加载页面，这可能需要几秒钟。",
+  "about.reload.reloadApp": "重新加载应用"
+}
