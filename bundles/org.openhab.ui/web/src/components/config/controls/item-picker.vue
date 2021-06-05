@@ -10,7 +10,7 @@
       <f7-button slot="media" icon-f7="list_bullet_indent" @click.native="pickFromModel" />
     </f7-list-item>
     <!-- for placeholder purposes before items are loaded -->
-    <f7-list-item link v-show="!ready" :title="title">
+    <f7-list-item link v-show="!ready" :title="title" disabled no-chevron>
       <f7-button slot="media" icon-f7="list_bullet_indent" @click.native="pickFromModel" />
     </f7-list-item>
   </ul>
@@ -50,7 +50,8 @@ export default {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
     if (!this.items || !this.items.length) {
       // TODO use a Vuex store
-      this.$oh.api.get('/rest/items').then((items) => {
+      const filter = Array.isArray(this.filterType) ? this.filterType.join(',') : this.filterType
+      this.$oh.api.get('/rest/items' + (filter ? '?type=' + filter : '')).then((items) => {
         this.sortAndFilterItems(items)
       })
     } else {
