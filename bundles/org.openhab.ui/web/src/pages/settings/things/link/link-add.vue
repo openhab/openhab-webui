@@ -158,7 +158,6 @@ export default {
         channelUID: null,
         configuration: {}
       },
-      selectedItem: null,
       selectedItemName: null,
       selectedThingId: '',
       selectedThing: {},
@@ -183,10 +182,10 @@ export default {
   },
   computed: {
     currentItem () {
-      return this.item ? this.item : this.createItem ? this.newItem : this.selectedItemName
+      return this.item ? this.item : this.createItem ? this.newItem : this.items.find(item => item.name === this.selectedItemName)
     },
     compatibleProfileTypes () {
-      let currentItemType = this.currentItem ? this.currentItem.type : null
+      let currentItemType = this.currentItem && this.currentItem.type ? this.currentItem.type : ''
       return this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(currentItemType.split(':', 1)[0]))
     }
   },
@@ -251,13 +250,7 @@ export default {
         link.channelUID = this.selectedChannel.uid
       }
 
-      if (this.item) {
-        link.itemName = this.item.name
-      } else if (this.createItem) {
-        link.itemName = this.newItem.name
-      } else if (this.selectedItemName) {
-        link.itemName = this.selectedItemName
-      }
+      link.itemName = this.currentItem.name
 
       link.configuration = Object.assign({}, this.configuration)
       if (this.currentProfileType) {
