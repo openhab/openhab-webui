@@ -3,7 +3,7 @@
     <f7-navbar title="Inbox" back-link="Things" back-link-url="/settings/things/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'MultiSelect') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -23,6 +23,9 @@
       <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="ignore" @click="confirmActionOnSelection('ignore')" icon-ios="f7:eye_slash" icon-aurora="f7:eye_slash">
         &nbsp;Ignore {{ selectedItems.length }}
       </f7-link>
+      <f7-link color="blue" v-show="selectedItems.length" v-if="!$theme.md" class="unignore" @click="confirmActionOnSelection('unignore')" icon-ios="f7:eye" icon-aurora="f7:eye">
+        &nbsp;Unignore {{ selectedItems.length }}
+      </f7-link>
       <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="approve" @click="confirmActionOnSelection('approve')" icon-ios="f7:hand_thumbsup" icon-aurora="f7:hand_thumbsup">
         &nbsp;Approve {{ selectedItems.length }}
       </f7-link>
@@ -33,6 +36,7 @@
       <div class="right" v-if="$theme.md">
         <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="confirmActionOnSelection('delete')" />
         <f7-link v-show="selectedItems.length" icon-md="material:visibility_off" icon-color="white" @click="confirmActionOnSelection('ignore')" />
+        <f7-link v-show="selectedItems.length" icon-md="material:visibility_off" icon-color="white" @click="confirmActionOnSelection('unignore')" />
         <f7-link v-show="selectedItems.length" icon-md="material:thumb_up" icon-color="white" @click="confirmActionOnSelection('approve')" />
       </div>
     </f7-toolbar>
@@ -61,6 +65,7 @@
               By binding
             </f7-button>
           </f7-segmented>
+        <f7-checkbox v-if="showCheckboxes" @change="masterToggle" />
         </div>
         <f7-list v-if="!ready" contacts-list class="col inbox-list">
           <f7-list-group>
@@ -131,6 +136,7 @@ export default {
       showIgnored: false,
       groupBy: 'alphabetical',
       showCheckboxes: false,
+      checkAll: false,
       eventSource: null
     }
   },
@@ -452,6 +458,15 @@ export default {
         console.error(err)
         this.$f7.dialog.alert('An error occurred: ' + err)
       })
+    masterToggle() {
+        this.checkAll = !this.checkAll
+        for (let e in this.inbox) {
+          if (this.checkAll) {
+            this.selectedItems.push(this.inbox[e].thingUID)
+          } else {
+            this.selectedItems = []
+          }
+        }
     },
     filterSelectedItems () {
       return this.inbox.filter((e) => this.selectedItems.indexOf(e.thingUID) >= 0)
