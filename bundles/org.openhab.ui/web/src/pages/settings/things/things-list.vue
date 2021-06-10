@@ -225,7 +225,6 @@ export default {
           searchbar.search(filterQuery)
         }
         if (groupBy === 'alphabetical') this.$refs.listIndex.update()
-        if (groupBy === 'state') this.$refs.listIndex.update()
       })
     },
     toggleCheck () {
