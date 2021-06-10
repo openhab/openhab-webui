@@ -36,7 +36,7 @@
       <div class="right" v-if="$theme.md">
         <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="confirmActionOnSelection('delete')" />
         <f7-link v-show="selectedItems.length" icon-md="material:visibility_off" icon-color="white" @click="confirmActionOnSelection('ignore')" />
-        <f7-link v-show="selectedItems.length" icon-md="material:visibility_off" icon-color="white" @click="confirmActionOnSelection('unignore')" />
+        <f7-link v-show="selectedItems.length" icon-md="material:visibility" icon-color="white" @click="confirmActionOnSelection('unignore')" />
         <f7-link v-show="selectedItems.length" icon-md="material:thumb_up" icon-color="white" @click="confirmActionOnSelection('approve')" />
       </div>
     </f7-toolbar>
