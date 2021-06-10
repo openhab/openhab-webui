@@ -1,23 +1,21 @@
 <template>
-  <f7-popup tablet-fullscreen @popup:open="onOpen" @popup:close="onClose" @popup:opened="initChart">
-    <f7-page class="analyzer-content">
-      <f7-navbar :title="titleDisplayText" :back-link="$t('analyzer.back')">
-        <f7-nav-right>
-          <f7-link v-if="$store.getters.isAdmin" icon-md="material:save" @click="savePage">
-            {{ $theme.md ? '' : $t('analyzer.save') }}
-          </f7-link>
-        </f7-nav-right>
-      </f7-navbar>
-      <f7-toolbar bottom>
-        <span />
-        <f7-link class="right controls-link padding-right" ref="detailsLink" @click="openControls">
-          {{ $t('analyzer.controls') }}&nbsp;<f7-icon f7="chevron_up" />
+  <f7-page class="analyzer-content">
+    <f7-navbar :title="titleDisplayText" :back-link="$t('analyzer.back')">
+      <f7-nav-right>
+        <f7-link v-if="$store.getters.isAdmin" icon-md="material:save" @click="savePage">
+          {{ $theme.md ? '' : $t('analyzer.save') }}
         </f7-link>
-        <f7-link v-if="coordSystem !== 'time'" color="blue" icon-f7="crop_rotate" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'" />
-        <span v-else />
-      </f7-toolbar>
-      <oh-chart-page v-if="showChart" class="analyzer-chart" :class="{ 'sheet-opened': controlsOpened }" :key="chartKey" :context="context" />
-    </f7-page>
+      </f7-nav-right>
+    </f7-navbar>
+    <f7-toolbar bottom>
+      <span />
+      <f7-link class="right controls-link padding-right" ref="detailsLink" @click="openControls">
+        {{ $t('analyzer.controls') }}&nbsp;<f7-icon f7="chevron_up" />
+      </f7-link>
+      <f7-link v-if="coordSystem !== 'time'" color="blue" icon-f7="crop_rotate" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'" />
+      <span v-else />
+    </f7-toolbar>
+    <oh-chart-page v-if="showChart" class="analyzer-chart" :class="{ 'sheet-opened': controlsOpened }" :key="chartKey" :context="context" />
     <f7-sheet class="analyzer-controls" :backdrop="false" :close-on-escape="true" :opened="controlsOpened" @sheet:closed="controlsOpened = false">
       <f7-page>
         <f7-toolbar tabbar :bottom="true">
@@ -219,7 +217,7 @@
         </f7-block>
       </f7-page>
     </f7-sheet>
-  </f7-popup>
+  </f7-page>
 </template>
 
 <style lang="stylus">
@@ -227,7 +225,7 @@
   --f7-theme-color var(--f7-color-blue)
   --f7-theme-color-rgb var(--f7-color-blue-rgb)
   --f7-theme-color-tint var(--f7-color-blue-tint)
-  z-index 11000
+  z-index 10499
 .analyzer-content
   .analyzer-chart.sheet-opened
     .oh-chart-page-chart
@@ -284,6 +282,9 @@ export default {
   },
   i18n: {
     messages: loadLocaleMessages(require.context('@/assets/i18n/analyzer'))
+  },
+  mounted () {
+    this.initChart()
   },
   methods: {
     onOpen () {

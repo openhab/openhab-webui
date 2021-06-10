@@ -1,6 +1,7 @@
 import HomePage from '../pages/home.vue'
 import NotFoundPage from '../pages/not-found.vue'
 import PageViewPage from '../pages/page/page-view.vue'
+import AnalyzerPopup from '../pages/analyzer/analyzer-popup.vue'
 
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '../pages/about.vue')
 const UserProfilePage = () => import(/* webpackChunkName: "profile-page" */ '../pages/profile.vue')
@@ -42,8 +43,6 @@ const RulesListPage = () => import(/* webpackChunkName: "admin-rules" */ '../pag
 const RuleEditPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/rules/rule-edit.vue')
 const ScriptEditPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/rules/script/script-edit.vue')
 const SchedulePage = () => import(/* webpackChunkName: "admin-schedule" */ '../pages/settings/schedule/schedule.vue')
-
-const AnalyzerPage = () => import(/* webpackChunkName: "analyzer" */ '../pages/analyzer/analyzer.vue')
 
 const DeveloperToolsPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/developer-tools.vue')
 const WidgetsListPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/widgets/widget-list.vue')
@@ -279,8 +278,8 @@ export default [
   },
   {
     path: '/analyzer/',
-    async (routeTo, routeFrom, resolve, reject) {
-      AnalyzerPage().then((c) => { resolve({ popup: { component: c.default } }) })
+    popup: {
+      component: AnalyzerPopup
     }
   },
   /* For Cordova */
