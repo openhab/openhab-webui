@@ -165,7 +165,7 @@ export default {
               return prev
             }, {})
             break;
-          case 'state' :
+          case 'state':
             return this.things.reduce((prev, thing, i, things) => {
               const statusInfo = thing.statusInfo.status
               if (!prev[statusInfo]) {
