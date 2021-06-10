@@ -154,7 +154,7 @@ export default {
   computed: {
     indexedThings () {
       switch (this.groupBy) {
-          case 'alphabetical' :
+          case 'alphabetical':
             return this.things.reduce((prev, thing, i, things) => {
               const initial = (thing.label || thing.UID).substring(0, 1).toUpperCase()
               if (!prev[initial]) {
