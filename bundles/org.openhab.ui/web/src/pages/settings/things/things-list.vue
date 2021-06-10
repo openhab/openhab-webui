@@ -58,7 +58,7 @@
               Alphabetical
             </f7-button>
             <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
-              By Binding
+              By binding
             </f7-button>
             <f7-button :active="groupBy === 'state'" @click="switchGroupOrder('state')">
               By State
