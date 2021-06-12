@@ -11,97 +11,97 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Ukrainian\n"
 "Language: uk_UA\n"
-"PO-Revision-Date: 2021-01-20 21:58\n"
+"PO-Revision-Date: 2021-06-12 15:01\n"
 
 #. Common term
 msgctxt "OK"
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #. Common term
 msgctxt "Cancel"
 msgid "Cancel"
-msgstr ""
+msgstr "Відміна"
 
 #. Common term
 msgctxt "Delete"
 msgid "Delete"
-msgstr ""
+msgstr "Видалити"
 
 #. Common term
 msgctxt "Save"
 msgid "Save"
-msgstr ""
+msgstr "Зберегти"
 
 #. Common term
 msgctxt "Name"
 msgid "Name"
-msgstr ""
+msgstr "Назва"
 
 #. Common term
 msgctxt "Icon"
 msgid "Icon"
-msgstr ""
+msgstr "Іконка"
 
 #. Common term (plural)
 msgctxt "Icons"
 msgid "Icons"
-msgstr ""
+msgstr "Іконки"
 
 #. Common term
 msgctxt "Backdrop Icon"
 msgid "Backdrop Icon"
-msgstr ""
+msgstr "Фоновий значок"
 
 #. Common term
 msgctxt "Size"
 msgid "Size"
-msgstr ""
+msgstr "Розмір"
 
 #. Common term
 msgctxt "Font size"
 msgid "Font Size"
-msgstr ""
+msgstr "Розмір шрифту"
 
 #. Common term
 msgctxt "Color"
 msgid "Color"
-msgstr ""
+msgstr "Колір"
 
 #. Common term (plural)
 msgctxt "Colors"
 msgid "Colors"
-msgstr ""
+msgstr "Кольори"
 
 #. Common term
 msgctxt "Transparent"
 msgid "Transparent"
-msgstr ""
+msgstr "Прозорий"
 
 #. Common term
 msgctxt "openHAB Item"
 msgid "openHAB Item"
-msgstr ""
+msgstr "об’єкт openHAB"
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Speak"
 msgid "Speak"
-msgstr ""
+msgstr "Говорити"
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Refresh"
 msgid "Refresh"
-msgstr ""
+msgstr "Оновити"
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Fullscreen"
 msgid "Fullscreen"
-msgstr ""
+msgstr "Повноекранний режим"
 
 #. Common term
 msgctxt "Help"
 msgid "Help"
-msgstr ""
+msgstr "Довідка"
 
 #. Appears in a red background in the bottom of the screen when openHAB is not responding
 msgctxt "error.connectionlost"
