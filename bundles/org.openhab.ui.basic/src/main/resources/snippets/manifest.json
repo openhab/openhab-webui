@@ -38,6 +38,6 @@
 			"density": 4.0
 		}
 	],
-	"start_url": "app",
+	"start_url": "app%sitemapquery%",
 	"display": "standalone"
 }

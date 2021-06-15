@@ -114,6 +114,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%htmlclass%", config.getCssClassList());
         snippet = snippet.replace("%icon_type%", ICON_TYPE);
         snippet = snippet.replace("%theme%", config.getTheme());
+        snippet = snippet.replace("%sitemapquery%", String.format("?sitemap=%s", sitemap));
 
         String[] parts = snippet.split("%children%");
 
@@ -258,5 +259,12 @@ public class PageRenderer extends AbstractWidgetRenderer {
         pageSnippet = pageSnippet.replace("%content%", listSnippet);
 
         return pageSnippet;
+    }
+
+    public CharSequence renderManifest(String sitemapName) throws RenderException {
+        String manifestSnippet = getSnippet("manifest", ".json");
+        manifestSnippet = manifestSnippet.replace("%sitemapquery%",
+                sitemapName == null ? "" : String.format("?sitemap=%s", sitemapName));
+        return manifestSnippet;
     }
 }
