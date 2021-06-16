@@ -24,10 +24,6 @@
     </div>
   </div>
   <f7-list media-list v-else inset class="margin-left searchbar-ignore">
-    <f7-list-item v-if="channelKind === 'TRIGGER'"
-                  subtitle="This is a trigger channel, use rules to react to events emitted by it.">
-      <f7-icon slot="media" color="gray" f7="bolt_circle_fill" />
-    </f7-list-item>
     <f7-list-group v-if="links">
       <f7-list-item
         v-for="link in links" :key="link.itemName"
@@ -44,7 +40,7 @@
         <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
       </f7-list-item>
     </f7-list-group>
-    <f7-list-item class="searchbar-ignore" link v-if="channelKind !== 'TRIGGER'" color="blue" subtitle="Add Link to Item..." @click="addLink()">
+    <f7-list-item class="searchbar-ignore" link color="blue" subtitle="Add Link to Item..." @click="addLink()">
       <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
     </f7-list-item>
     <f7-list-button class="searchbar-ignore" color="blue" :title="(channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'" @click="configureChannel()" />
