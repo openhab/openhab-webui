@@ -64,7 +64,7 @@ export default {
         const labelB = b.label || b.name
         return labelA.localeCompare(labelB)
       })
-      if (this.filterType) {
+      if (this.filterType && this.filterType.length) {
         if (Array.isArray(this.filterType)) {
           this.preparedItems = this.preparedItems.filter((i) => this.filterType.includes(i.type.split(':', 1)[0]))
         } else {

@@ -182,7 +182,7 @@ export default {
   },
   computed: {
     currentItem () {
-      return this.item ? this.item : this.createItem ? this.newItem : this.items.find(item => item.name === this.selectedItemName)
+      return this.item ? this.item : this.createItem ? this.newItem : this.items ? this.items.find(item => item.name === this.selectedItemName) : null
     },
     compatibleProfileTypes () {
       let currentItemType = this.currentItem && this.currentItem.type ? this.currentItem.type : ''
@@ -201,7 +201,7 @@ export default {
         label: this.channel.label || this.channelType.label,
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
-        type: this.channel.itemType,
+        type: this.channel.itemType || 'Switch',
         tags: ['Point']
       })
     },
@@ -237,9 +237,12 @@ export default {
       return channel.itemType
     },
     getCompatibleItemTypes () {
-      let compatibleItemTypes = this.channel.itemType.split(':', 1)
-      if (this.channel.itemType === 'Color') { compatibleItemTypes.push('Switch', 'Dimmer') }
-      if (this.channel.itemType === 'Dimmer') { compatibleItemTypes.push('Switch') }
+      let compatibleItemTypes = []
+      if (this.channel.itemType) {
+        this.channel.itemType.split(':', 1)
+        if (this.channel.itemType === 'Color') { compatibleItemTypes.push('Switch', 'Dimmer') }
+        if (this.channel.itemType === 'Dimmer') { compatibleItemTypes.push('Switch') }
+      }
       return compatibleItemTypes
     },
     save () {
@@ -273,6 +276,17 @@ export default {
       if (this.$refs.profileConfiguration && !this.$refs.profileConfiguration.isValid()) {
         this.$f7.dialog.alert('Please review the profile configuration and correct validation errors')
         return
+      }
+
+      if ((this.channel ? this.channel : this.selectedChannel).kind === 'TRIGGER') {
+        if (!this.compatibleProfileTypes.length) {
+          this.$f7.dialog.alert('There is no profile available for the selected item')
+          return
+        }
+        if (!this.currentProfileType || !this.compatibleProfileTypes.includes(this.currentProfileType)) {
+          this.$f7.dialog.alert('Please configure a valid profile')
+          return
+        }
       }
 
       if (this.createItem) {
