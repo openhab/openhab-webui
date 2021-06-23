@@ -14,6 +14,22 @@
           search-container=".contacts-list"
           search-in=".item-inner"
           :disable-button="!$theme.aurora" />
+        <f7-input
+          v-if="bindings.length"
+          class="bindings-filter"
+          type="select"
+          ref="bindings-filter"
+          @change="filterByBinding">
+          <option value="all">
+            All bindings
+          </option>
+          <option
+            v-for="(binding, index) in bindings"
+            :value="binding.id"
+            :key="index">
+            {{ binding.name }}
+          </option>
+        </f7-input>
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
@@ -50,7 +66,10 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title class="searchbar-hide-on-search">
-          <span v-if="ready">{{ things.length }} things</span><span v-else>Loading...</span>
+          <span v-if="ready">
+            {{ filteredThings.length }} things
+            {{ filteredThings.length !== things.length ? `(${things.length} in total)` : '' }}
+          </span><span v-else>Loading...</span>
         </f7-block-title>
         <div class="searchbar-found padding-left padding-right" v-show="!ready || things.length > 0">
           <f7-segmented strong tag="p">
@@ -99,6 +118,11 @@
             </f7-list-item>
           </f7-list-group>
         </f7-list>
+        <div class="block" v-if="selectedBinding !== 'all' && !filteredThings.length">
+          <div class="padding text-align-center">
+            There are no things for <code>{{ this.selectedBinding }}</code> binding.
+          </div>
+        </div>
       </f7-col>
     </f7-block>
     <f7-block v-if="ready && !things.length" class="block-narrow">
@@ -120,6 +144,8 @@
 <style lang="stylus">
 .things-list
   margin-bottom calc(var(--f7-fab-size) + 2 * calc(var(--f7-fab-margin) + var(--f7-safe-area-bottom)))
+.bindings-filter option
+  color var(--f7-text-color)
 </style>
 
 <script>
@@ -139,6 +165,8 @@ export default {
       initSearchbar: false,
       things: [],
       inbox: [],
+      bindings: [],
+      selectedBinding: 'all',
       selectedItems: [],
       showCheckboxes: false,
       groupBy: 'alphabetical',
@@ -149,9 +177,16 @@ export default {
 
   },
   computed: {
+    filteredThings () {
+      return this.selectedBinding === 'all'
+        ? this.things
+        : this.things.filter(thing => {
+          return thing.thingTypeUID.split(':')[0] === this.selectedBinding
+        })
+    },
     indexedThings () {
       if (this.groupBy === 'alphabetical') {
-        return this.things.reduce((prev, thing, i, things) => {
+        return this.filteredThings.reduce((prev, thing, i, things) => {
           const initial = (thing.label || thing.UID).substring(0, 1).toUpperCase()
           if (!prev[initial]) {
             prev[initial] = []
@@ -161,7 +196,7 @@ export default {
           return prev
         }, {})
       } else {
-        return this.things.reduce((prev, thing, i, things) => {
+        return this.filteredThings.reduce((prev, thing, i, things) => {
           const binding = thing.thingTypeUID.split(':')[0]
           if (!prev[binding]) {
             prev[binding] = []
@@ -193,7 +228,13 @@ export default {
         })
         if (!this.eventSource) this.startEventSource()
       })
+      this.loadBindings()
       this.loadInbox()
+    },
+    loadBindings () {
+      this.$oh.api.get('/rest/bindings').then((data) => {
+        this.bindings = data
+      })
     },
     loadInbox () {
       this.$oh.api.get('/rest/inbox').then((data) => {
@@ -292,6 +333,9 @@ export default {
         console.error(err)
         this.$f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
       })
+    },
+    filterByBinding (event) {
+      this.selectedBinding = event.target.value
     },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/things/*/added,openhab/things/*/removed,openhab/things/*/updated,openhab/things/*/status,openhab/inbox/*', null, (event) => {
