@@ -50,11 +50,11 @@ const escapeQuotes = (text) => {
 
 const buildProp = (prop) => {
   let ret = ''
-  ret += '<PropBlock type="' + prop.type + '" '
-  if (prop.name) ret += 'name="' + prop.name + '" '
-  if (prop.label) ret += 'label="' + prop.label + '" '
+  ret += '<PropBlock type="' + escapeQuotes(prop.type) + '" '
+  if (prop.name) ret += 'name="' + escapeQuotes(prop.name) + '" '
+  if (prop.label) ret += 'label="' + escapeQuotes(prop.label) + '" '
   if (prop.required) ret += 'required="true" '
-  if (prop.context) ret += 'context="' + prop.context + '" '
+  if (prop.context) ret += 'context="' + escapeQuotes(prop.context) + '" '
   ret = ret.trim() + '>\n'
 
   if (prop.description) {
@@ -89,7 +89,7 @@ const buildProps = (component) => {
   if (component.props.parameterGroups) {
     component.props.parameterGroups.forEach((g) => {
       ret += '### ' + g.label + '\n'
-      ret += '<div class="props">\n<PropGroup name="' + g.name + '" label="' + g.label + '">\n'
+      ret += '<div class="props">\n<PropGroup name="' + escapeQuotes(g.name) + '" label="' + escapeQuotes(g.label) + '">\n'
       if (g.description) ret += '  ' + g.description + '\n'
       const propsInGroup = component.props.parameters.filter((p) => p.groupName === g.name)
       propsInGroup.forEach((p) => ret += buildProp(p))
