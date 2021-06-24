@@ -4,10 +4,6 @@
   </f7-popup>
 </template>
 
-<style lang="stylus" scoped>
-.analyzer-popup
-  z-index 10490
-</style>
 <script>
 export default {
   components: {

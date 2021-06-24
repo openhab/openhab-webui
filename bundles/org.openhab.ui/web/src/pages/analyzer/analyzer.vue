@@ -225,7 +225,7 @@
   --f7-theme-color var(--f7-color-blue)
   --f7-theme-color-rgb var(--f7-color-blue-rgb)
   --f7-theme-color-tint var(--f7-color-blue-tint)
-  z-index 10499
+  z-index 11000
 .analyzer-content
   .analyzer-chart.sheet-opened
     .oh-chart-page-chart
