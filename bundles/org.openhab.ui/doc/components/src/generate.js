@@ -41,6 +41,13 @@ const replaceBetweenComments = (commentTag, text, value) => {
   return text.replace(regexp, '$1' + value + '$2')
 }
 
+const escapeQuotes = (text) => {
+  if (text !== undefined) {
+    return text.replace(/"/g, "&quot;");
+  }
+  return text
+}
+
 const buildProp = (prop) => {
   let ret = ''
   ret += '<PropBlock type="' + prop.type + '" '
@@ -61,7 +68,7 @@ const buildProp = (prop) => {
     if (prop.multiple) ret += ' multiple="true"'
     ret += '>\n'
     prop.options.forEach((o) => {
-      ret += '    <PropOption value="' + (o.value || '(empty)') + '" label="' + o.label + '" />\n'
+      ret += '    <PropOption value="' + (escapeQuotes(o.value) || '(empty)') + '" label="' + escapeQuotes(o.label) + '" />\n'
     })
     ret +='  </PropOptions>\n'
   }
@@ -127,3 +134,5 @@ Object.keys(widgetLibraries).forEach((l) => {
 })
 
 fs.writeFileSync('../index.md', index)
+
+
