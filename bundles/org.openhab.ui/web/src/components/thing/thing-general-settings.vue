@@ -8,15 +8,11 @@
               <f7-list-input label="Unique ID" v-if="createMode" type="text" placeholder="Required" :value="thing.ID"
                              @input="changeUID" info="Note: cannot be changed after the creation"
                              required validate pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only" />
-              <f7-list-item>
-                <div slot="inner" class="item-label">
-                  Identifier
-                </div>
-                <div slot="inner" class="item-input-wrap">
-                  {{ thing.UID ? thing.UID : 'Name' }}
-                  <clipboard-icon v-if="thing.UID" slot="inner-end" :value="thing.UID" tooltip="Copy UID" />
-                </div>
-              </f7-list-item>
+              <f7-list-input label="Identifier" type="text" placeholder="Name" :value="thing.UID" disabled>
+                <span slot="label">
+                  <clipboard-icon v-if="thing.UID && ready" slot="inner-end" :value="thing.UID" tooltip="Copy UID" class="margin-left-half" style="pointer-events: initial !important" />
+                </span>
+              </f7-list-input>
               <f7-list-input label="Label" type="text" :disabled="!ready || readOnly" placeholder="e.g. My Thing" :value="thing.label"
                              @input="thing.label = $event.target.value; $emit('updated')" required validate />
               <f7-list-input label="Location" type="text" :disabled="!ready || readOnly" placeholder="e.g. Kitchen" :value="thing.location"
