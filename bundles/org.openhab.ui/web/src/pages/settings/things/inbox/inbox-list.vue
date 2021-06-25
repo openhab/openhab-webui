@@ -267,7 +267,7 @@ export default {
                       entry.label)
                   },
                   null,
-                  entry.thingUID.substring(entry.thingUID.indexOf(':', entry.thingUID.indexOf(':') + 1) + 1))
+                  entry.thingUID.substring(entry.thingUID.lastIndexOf(':') + 1))
               }
             },
             {
