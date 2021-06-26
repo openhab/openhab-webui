@@ -134,5 +134,3 @@ Object.keys(widgetLibraries).forEach((l) => {
 })
 
 fs.writeFileSync('../index.md', index)
-
-
