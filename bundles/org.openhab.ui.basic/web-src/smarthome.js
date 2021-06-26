@@ -2035,6 +2035,12 @@
 				return;
 			}
 
+			if (data.descriptionChanged === true) {
+				window.location.reload(true);
+				_t.pause();
+				return;
+			}
+
 			if (data.item !== undefined) {
 				if (data.state === undefined) {
 					state = data.item.state;
