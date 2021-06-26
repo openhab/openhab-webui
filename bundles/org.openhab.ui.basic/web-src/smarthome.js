@@ -2300,9 +2300,11 @@
 				"&pageid=" + page);
 		};
 
-		_t.subscriberError = function() {
+		_t.subscriberError = function(xhr) {
 			var
-				notify = renderTemplate(o.notifyTemplateLongPollingMode, {});
+				notify = renderTemplate(o.notifyTemplateLongPollingMode, {
+					error: xhr.status + " " + xhr.statusText
+				});
 
 			// Failback to long polling mode
 			smarthome.UI.showNotification(notify);
