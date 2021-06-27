@@ -41,13 +41,20 @@ const replaceBetweenComments = (commentTag, text, value) => {
   return text.replace(regexp, '$1' + value + '$2')
 }
 
+const escapeQuotes = (text) => {
+  if (text !== undefined) {
+    return text.replace(/"/g, "&quot;");
+  }
+  return text
+}
+
 const buildProp = (prop) => {
   let ret = ''
-  ret += '<PropBlock type="' + prop.type + '" '
-  if (prop.name) ret += 'name="' + prop.name + '" '
-  if (prop.label) ret += 'label="' + prop.label + '" '
+  ret += '<PropBlock type="' + escapeQuotes(prop.type) + '" '
+  if (prop.name) ret += 'name="' + escapeQuotes(prop.name) + '" '
+  if (prop.label) ret += 'label="' + escapeQuotes(prop.label) + '" '
   if (prop.required) ret += 'required="true" '
-  if (prop.context) ret += 'context="' + prop.context + '" '
+  if (prop.context) ret += 'context="' + escapeQuotes(prop.context) + '" '
   ret = ret.trim() + '>\n'
 
   if (prop.description) {
@@ -61,7 +68,7 @@ const buildProp = (prop) => {
     if (prop.multiple) ret += ' multiple="true"'
     ret += '>\n'
     prop.options.forEach((o) => {
-      ret += '    <PropOption value="' + (o.value || '(empty)') + '" label="' + o.label + '" />\n'
+      ret += '    <PropOption value="' + (escapeQuotes(o.value) || '(empty)') + '" label="' + escapeQuotes(o.label) + '" />\n'
     })
     ret +='  </PropOptions>\n'
   }
@@ -82,7 +89,7 @@ const buildProps = (component) => {
   if (component.props.parameterGroups) {
     component.props.parameterGroups.forEach((g) => {
       ret += '### ' + g.label + '\n'
-      ret += '<div class="props">\n<PropGroup name="' + g.name + '" label="' + g.label + '">\n'
+      ret += '<div class="props">\n<PropGroup name="' + escapeQuotes(g.name) + '" label="' + escapeQuotes(g.label) + '">\n'
       if (g.description) ret += '  ' + g.description + '\n'
       const propsInGroup = component.props.parameters.filter((p) => p.groupName === g.name)
       propsInGroup.forEach((p) => ret += buildProp(p))
