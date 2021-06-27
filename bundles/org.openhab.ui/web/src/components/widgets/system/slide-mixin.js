@@ -7,13 +7,13 @@ export default {
   mounted () {
     delete this.config.value
 
-    this.updateInterval = this.config.updateInterval ? this.config.updateInterval : 200
+    this.commandInterval = this.config.commandInterval ? this.config.commandInterval : 200
     this.delayStateDisplay = this.config.delayStateDisplay ? this.config.delayStateDisplay : 2000
   },
   computed: {
     value () {
       if (this.config.variable) return this.context.vars[this.config.variable]
-      if (this.pendingCommand) return this.pendingCommand // to keep the control reactive when operating
+      if (this.pendingCommand !== null) return this.pendingCommand // to keep the control reactive when operating
       const value = this.context.store[this.config.item].state
       // use as a brightness control for HSB values
       if (value.split && value.split(',').length === 3) return parseFloat(value.split(',')[2])
@@ -32,8 +32,11 @@ export default {
       if (!this.config.item) return
 
       this.pendingCommand = value
-      let diff = this.lastDateSent ? Date.now() - this.lastDateSent : this.updateInterval
-      let delay = diff < this.updateInterval ? this.updateInterval - diff : stop ? 0 : this.updateInterval
+
+      if (this.config.releaseOnly && !stop) return
+
+      let diff = this.lastDateSent ? Date.now() - this.lastDateSent : this.commandInterval
+      let delay = diff < this.commandInterval ? this.commandInterval - diff : stop ? 0 : this.commandInterval
 
       if (this.sendCommandTimer && stop) {
         clearTimeout(this.sendCommandTimer)
