@@ -80,7 +80,7 @@ export default {
       this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
       const value = this.$refs.smartSelect.f7SmartSelect.getValue()
       this.$emit('input', value)
-      if (!this.multiple) this.$emit('itemSelected', this.items.find((i) => i.name === value))
+      if (!this.multiple) this.$emit('itemSelected', this.preparedItems.find((i) => i.name === value))
     },
     updateFromModelPicker (value) {
       if (this.multiple) {
