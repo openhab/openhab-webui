@@ -122,7 +122,7 @@ A cell expanding to a big vertical slider
 </PropBlock>
 <PropBlock type="BOOLEAN" name="releaseOnly" label="Send command only on release">
   <PropDescription>
-    If true, no commands are sent during sliding
+    If enabled, no commands are sent during sliding
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="commandInterval" label="Command Interval">

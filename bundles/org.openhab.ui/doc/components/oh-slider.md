@@ -80,7 +80,7 @@ Slider control, allows to pick a number value on a scale
 </PropBlock>
 <PropBlock type="BOOLEAN" name="releaseOnly" label="Send command only on release">
   <PropDescription>
-    If true, no commands are sent during sliding
+    If enabled, no commands are sent during sliding
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="commandInterval" label="Command Interval">
