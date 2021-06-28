@@ -79,7 +79,7 @@ export default {
       let oldError = this.nameErrorMessage
       if (!/^[A-Za-z0-9_]+$/.test(name)) {
         this.nameErrorMessage = 'Required. Alphanumeric & underscores only'
-      } else if (this.items.some(item => item.name === name)) {
+      } else if (Array.isArray(this.items) && this.items.some(item => item.name === name)) {
         this.nameErrorMessage = 'An item with this name already exists'
       } else {
         this.nameErrorMessage = ''
@@ -91,7 +91,6 @@ export default {
     if (!this.item) return
     if (!this.item.category) this.$set(this.item, 'category', '')
     if (this.enableName) {
-      if (!this.items) this.items = []
       this.validateName(this.item.name)
     }
     const categoryControl = this.$refs.category
