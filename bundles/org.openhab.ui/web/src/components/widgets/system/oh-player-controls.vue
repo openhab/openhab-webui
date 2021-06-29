@@ -1,10 +1,10 @@
 <template>
   <f7-segmented v-bind="config" round outline strong class="player-controls">
-    <f7-button color="blue" @click="skipPrevious()" large icon-material="skip_previous" icon-size="24" icon-color="gray" />
-    <f7-button v-if="this.config.showRewindFFward" color="blue" @click="rewind()" large icon-material="fast_rewind" icon-size="24" icon-color="gray" />
-    <f7-button color="blue" @click="playPause()" large round fill :icon-f7="(isPlaying) ? 'pause_fill' : 'play_fill'" icon-size="24" />
-    <f7-button v-if="this.config.showRewindFFward" color="blue" @click="fastForward()" large icon-material="fast_forward" icon-size="24" icon-color="gray" />
-    <f7-button color="blue" @click="skipNext()" large icon-material="skip_next" icon-size="24" icon-color="gray" />
+    <f7-button color="blue" @click="skipPrevious()" large icon-material="skip_previous" icon-size="24" icon-color="gray" tooltip="Previous"/>
+    <f7-button v-if="this.config.showRewindFFward" color="blue" @click="rewind()" large icon-material="fast_rewind" icon-size="24" icon-color="gray" tooltip="Rewind"/>
+    <f7-button color="blue" @click="playPause()" large round fill :icon-f7="(isPlaying) ? 'pause_fill' : 'play_fill'" icon-size="24" :tooltip="(isPlaying) ? 'Pause' : 'Play'"/>
+    <f7-button v-if="this.config.showRewindFFward" color="blue" @click="fastForward()" large icon-material="fast_forward" icon-size="24" icon-color="gray" tooltip="Fast Forward"/>
+    <f7-button color="blue" @click="skipNext()" large icon-material="skip_next" icon-size="24" icon-color="gray" tooltip="Next"/>
   </f7-segmented>
 </template>
 
