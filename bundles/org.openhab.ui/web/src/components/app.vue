@@ -71,7 +71,12 @@
           </li>
 
           <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close
-                        :class="{ currentsection: currentUrl.indexOf('/developer/') >= 0 && currentUrl.indexOf('/developer/widgets') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 }">
+                        :class="{
+                          currentsection: currentUrl.indexOf('/developer/') >= 0 &&
+                            currentUrl.indexOf('/developer/widgets') < 0 &&
+                            currentUrl.indexOf('/developer/api-explorer') < 0 &&
+                            currentUrl.indexOf('/developer/frontail') < 0
+                        }">
             <f7-icon slot="media" ios="f7:exclamationmark_shield_fill" aurora="f7:exclamationmark_shield_fill" md="material:extension" color="gray" />
           </f7-list-item>
           <li v-if="showDeveloperSubmenu">
@@ -83,6 +88,10 @@
               <f7-list-item link="/developer/api-explorer" title="API Explorer" view=".view-main" panel-close :animate="false" no-chevron
                             :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') >= 0 }">
                 <f7-icon slot="media" f7="burn" color="gray" />
+              </f7-list-item>
+              <f7-list-item link="/developer/frontail" title="Log Viewer" view=".view-main" panel-close :animate="false" no-chevron
+                            :class="{ currentsection: currentUrl.indexOf('/developer/frontail') >= 0 }">
+                <f7-icon slot="media" f7="list_bullet" color="gray" />
               </f7-list-item>
             </ul>
           </li>

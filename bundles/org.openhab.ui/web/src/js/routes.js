@@ -48,6 +48,7 @@ const DeveloperToolsPage = () => import(/* webpackChunkName: "admin-devtools" */
 const WidgetsListPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/widgets/widget-list.vue')
 const WidgetEditPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/widgets/widget-edit.vue')
 const ApiExplorerPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/api-explorer.vue')
+const FrontailPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/frontail.vue')
 
 const SetupWizardPage = () => import(/* webpackChunkName: "setup-wizard" */ '../pages/wizards/setup-wizard.vue')
 
@@ -273,6 +274,10 @@ export default [
       {
         path: 'api-explorer',
         async: loadAsync(ApiExplorerPage)
+      },
+      {
+        path: 'frontail',
+        async: loadAsync(FrontailPage)
       }
     ]
   },

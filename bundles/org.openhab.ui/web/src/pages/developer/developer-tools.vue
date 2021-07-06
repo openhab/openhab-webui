@@ -38,6 +38,9 @@
                 <f7-list-item media-item title="API Explorer" footer="Discover and access the REST API directly" link="api-explorer">
                   <f7-icon slot="media" f7="burn" color="gray" />
                 </f7-list-item>
+                <f7-list-item media-item title="Log Viewer" footer="Frontail - Real-time preview of openhab logs and events" link="frontail">
+                  <f7-icon slot="media" f7="list_bullet" color="gray" />
+                </f7-list-item>
               </f7-list>
             </f7-col>
           </f7-row>
