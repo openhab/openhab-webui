@@ -126,13 +126,12 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
                 if (commandDescription != null) {
                     for (CommandOption option : commandDescription.getCommandOptions()) {
                         // Truncate the button label to MAX_LABEL_SIZE characters
-                        buildButton(s, option.getLabel(), option.getCommand(), MAX_LABEL_SIZE, nbButtons > 1, item,
-                                state, buttons);
+                        buildButton(s, option.getLabel(), option.getCommand(), MAX_LABEL_SIZE, item, state, buttons);
                     }
                 }
             } else {
                 for (Mapping mapping : s.getMappings()) {
-                    buildButton(s, mapping.getLabel(), mapping.getCmd(), -1, nbButtons > 1, item, state, buttons);
+                    buildButton(s, mapping.getLabel(), mapping.getCmd(), -1, item, state, buttons);
                 }
             }
             snippet = snippet.replace("%buttons%", buttons.toString());
@@ -146,8 +145,8 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         return ECollections.emptyEList();
     }
 
-    private void buildButton(Switch w, @Nullable String lab, String cmd, int maxLabelSize, boolean severalButtons,
-            @Nullable Item item, @Nullable State state, StringBuilder buttons) throws RenderException {
+    private void buildButton(Switch w, @Nullable String lab, String cmd, int maxLabelSize, @Nullable Item item,
+            @Nullable State state, StringBuilder buttons) throws RenderException {
         String button = getSnippet("button");
 
         String command = cmd;
@@ -176,7 +175,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
             compareMappingState = convertStateToLabelUnit((QuantityType<?>) state, command);
         }
 
-        if (severalButtons && compareMappingState != null && compareMappingState.toString().equals(command)) {
+        if (compareMappingState != null && compareMappingState.toString().equals(command)) {
             buttonClass = "mdl-button--accent";
         } else {
             buttonClass = "mdl-button";
