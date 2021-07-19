@@ -1,0 +1,8 @@
+{
+  "CONFIGURATION_ERROR": "ΣΦΑΛΜΑ: CONFIG",
+  "HANDLER_INITIALIZING_ERROR": "ΣΦΑΛΜΑ: HANDLER",
+  "HANDLER_MISSING_ERROR": "ΣΦΑΛΜΑ: HANDLER",
+  "TEMPLATE_MISSING_ERROR": "ΣΦΑΛΜΑ: TEMPLATE",
+  "INVALID_RULE": "ΜΗ ΕΓΚΥΡΟ",
+  "DISABLED": "ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟ"
+}
