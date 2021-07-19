@@ -8,7 +8,7 @@
   "about.technicalInformation.userdataFolder": "Mappe for brukerdata",
   "about.technicalInformation.logsFolder": "Loggmappe",
   "about.technicalInformation.operatingSystem": "Operativsystem",
-  "about.technicalInformation.javaRuntime": "Java Runtime",
+  "about.technicalInformation.javaRuntime": "Java kjøremiljø",
   "about.technicalInformation.resourceStats": "{nbproc} tilgjengelige prosessorer - {ram} tilgjengelig minne",
   "about.technicalInformation.viewDetails": "Vis detaljer",
   "about.appearanceOptions": "Utseende (kun for denne enheten)",
@@ -17,5 +17,5 @@
   "about.reload.purgeExplanation2": "Velg \"Tøm mellomlager og oppdater\" nedenfor for å slette alle mellomlagrene, fjern registreringen og last ned alt fra serveren igjen.",
   "about.reload.purgeCachesAndRefresh": "Tøm mellomlager og oppdater",
   "about.reload.confirmPurge": "Tøm alle app mellomlagrer og fjern registreringen av tjenestearbeidere? Dette vil også laste siden på nytt fra tjeneren, som kan ta noen sekunder.",
-  "about.reload.reloadApp": "Oppdater app"
+  "about.reload.reloadApp": "Last app på nytt"
 }

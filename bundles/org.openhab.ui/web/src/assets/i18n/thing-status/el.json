@@ -1,0 +1,13 @@
+{
+  "HANDLER_MISSING_ERROR": "ΣΦΑΛΜΑ: HANDLER",
+  "HANDLER_CONFIGURATION_PENDING": "ΣΦΑΛΜΑ: HANDLER",
+  "HANDLER_INITIALIZING_ERROR": "ΣΦΑΛΜΑ: HANDLER",
+  "BRIDGE_UNINITIALIZED": "ΣΦΑΛΜΑ: BRIDGE",
+  "DISABLED": "ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟ",
+  "CONFIGURATION_PENDING": "ΕΚΚΡΕΜΕΙ ΔΙΑΜΟΡΦΩΣΗ",
+  "COMMUNICATION_ERROR": "ΣΦΑΛΜΑ: COMM",
+  "CONFIGURATION_ERROR": "ΣΦΑΛΜΑ: CONFIG",
+  "BRIDGE_OFFLINE": "ΣΦΑΛΜΑ: BRIDGE",
+  "FIRMWARE_UPDATING": "ΕΝΗΜΕΡΩΣΗ FIRMWARE",
+  "GONE": "ΕΦΥΓΕ"
+}

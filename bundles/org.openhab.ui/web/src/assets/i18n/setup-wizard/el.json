@@ -10,6 +10,7 @@
   "setupwizard.location.header1": "Θέλετε να μοιραστείτε την τοποθεσία του σπιτιού σας;",
   "setupwizard.location.header2": "Θα βοηθήσει στον προσδιορισμό των δεδομένων που εξαρτώνται από την τοποθεσία σας, όπως οι ώρες ανατολής / δύσης του ήλιου ή ο καιρός.",
   "setupwizard.location.parameterLabel": "Τοποθεσία του σπιτιού σας",
+  "setupwizard.location.placeholder": "<γεωγραφικό πλάτος>,<γεωγραφικό μήκος>[,<υψόμετρο>]",
   "setupwizard.location.retrieveFromDevice": "Ανάκτηση από αυτή τη συσκευή",
   "setupwizard.location.retrieveFromDevice.error": "Σφάλμα κατά την ανάκτηση της τρέχουσας τοποθεσίας",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Συγνώμη",
