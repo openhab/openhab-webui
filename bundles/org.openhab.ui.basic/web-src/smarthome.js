@@ -638,10 +638,8 @@
 			var
 				value = this.getAttribute("data-value") + "";
 
-			if (_t.count !== 1) {
-				_t.reset();
-				this.classList.add(o.buttonActiveClass);
-			}
+			_t.reset();
+			this.classList.add(o.buttonActiveClass);
 
 			_t.parentNode.dispatchEvent(createEvent(
 				"control-change", {
@@ -655,10 +653,6 @@
 		_t.setValuePrivate = function(value, itemState) {
 			if (_t.hasValue) {
 				_t.value.innerHTML = value;
-			}
-
-			if (_t.count === 1) {
-				return;
 			}
 
 			if (_t.suppressUpdateButtons) {
