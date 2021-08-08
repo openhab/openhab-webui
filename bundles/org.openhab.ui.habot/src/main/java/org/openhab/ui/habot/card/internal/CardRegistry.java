@@ -100,7 +100,7 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
                 .collect(Collectors.toList());
 
         for (Card card : oldCards) {
-            logger.info("Removing old ephemeral card {}", card.getUID());
+            logger.debug("Removing old ephemeral card {}", card.getUID());
             remove(card.getUID());
         }
 
