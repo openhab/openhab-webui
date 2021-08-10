@@ -70,12 +70,12 @@ public class VideoRenderer extends AbstractWidgetRenderer {
 
         State state = itemUIRegistry.getState(w);
         String url;
-        if (snippetName.equals("image")) {
+        if ("image".equals(snippetName)) {
             boolean validUrl = isValidURL(videoWidget.getUrl());
             String proxiedUrl = "../proxy?sitemap=" + sitemap + "&amp;widgetId=" + widgetId;
             if (!itemUIRegistry.getVisiblity(w)) {
                 url = URL_NONE_ICON;
-            } else if ((sitemap != null) && ((state instanceof StringType) || validUrl)) {
+            } else if (state instanceof StringType || validUrl) {
                 url = proxiedUrl + "&amp;t=" + (new Date()).getTime();
             } else {
                 url = URL_NONE_ICON;
