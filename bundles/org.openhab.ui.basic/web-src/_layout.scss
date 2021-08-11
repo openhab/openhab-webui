@@ -513,17 +513,15 @@ $colorpicker-mobile-size: 270px;
 	&__handle {
 		$handle-size: 24px;
 		position: absolute;
-		top: 50%;
-		left: 50%;
 		box-sizing: border-box;
 		-moz-box-sizing: border-box;
 		border: 4px solid white;
 		width: $handle-size;
 		height: $handle-size;
-		margin: -($handle-size / 2) -0 0 -($handle-size / 2);
 		border-radius: $handle-size / 2;
 		box-shadow: 0 0 0 2px #aaa inset, 0 0 0 2px #aaa;
 		pointer-events: none;
+		transform: translate(-50%, -50%);
 	}
 	&__controls {
 		position: relative;
