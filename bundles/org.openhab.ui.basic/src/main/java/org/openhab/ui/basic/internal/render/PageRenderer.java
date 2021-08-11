@@ -216,7 +216,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
         for (SitemapProvider sitemapProvider : sitemapProviders) {
             Set<String> sitemaps = sitemapProvider.getSitemapNames();
             for (String sitemap : sitemaps) {
-                if (!sitemap.equals("_default")) {
+                if (!"_default".equals(sitemap)) {
                     sitemapList.add(sitemap);
                 }
             }

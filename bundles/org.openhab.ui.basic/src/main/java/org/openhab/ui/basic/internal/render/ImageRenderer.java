@@ -82,7 +82,7 @@ public class ImageRenderer extends AbstractWidgetRenderer {
         } else if (state instanceof RawType) {
             url = state.toFullString();
             ignoreRefresh = true;
-        } else if ((sitemap != null) && ((state instanceof StringType) || validUrl)) {
+        } else if (state instanceof StringType || validUrl) {
             url = proxiedUrl + "&amp;t=" + (new Date()).getTime();
             ignoreRefresh = false;
         } else {
