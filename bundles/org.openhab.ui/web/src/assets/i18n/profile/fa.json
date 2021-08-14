@@ -1,0 +1,19 @@
+{
+  "profile.title": "مشخصات شما",
+  "profile.changePassword": "رمزعبور خود را تغییر دهید",
+  "profile.sessions": "نشست",
+  "profile.sessions.header": "توجه: حتی اگر یک نشست را حذف کنید ، ممکن است همچنان فعال باشد تا زمانی که همه نشانه های دسترسی معتبر منقضی شوند.",
+  "profile.sessions.signOut": "از این نشست خارج شوید",
+  "profile.sessions.created": "ایجاد شده: ",
+  "profile.sessions.lastRefreshed": "آخرین بازخوانی: ",
+  "profile.sessions.delete.success": "نشست حذف شد",
+  "profile.sessions.delete.error": "خطا هنگام حذف نشست: ",
+  "profile.sessions.signOut.error": "خطا هنگام خروج از سیستم: ",
+  "profile.apiTokens": "توکن های API",
+  "profile.apiTokens.header": "برای ارائه ابزارها و خدمات خارجی که دسترسی دائمی OAuth2 چارچوب مجوز از طرف شما را پشتیبانی نمی کنند ، نشانه های API ایجاد کنید.",
+  "profile.apiTokens.created": "ایجاد شده: ",
+  "profile.apiTokens.validForScope": "معتبر برای محدوده: ",
+  "profile.apiTokens.create": "ایجاد توکن API جدید",
+  "profile.apiTokens.delete.success": "توکن API حذف شد",
+  "profile.apiTokens.delete.error": "خطا هنگام حذف توکن API: "
+}
