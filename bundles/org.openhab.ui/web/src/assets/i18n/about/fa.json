@@ -1,0 +1,21 @@
+{
+  "about.title": "درباره",
+  "about.homePage": "وب سایت",
+  "about.documentation": "مستندات",
+  "about.communityForum": "انجمن گفتگو",
+  "about.technicalInformation": "اطلاعات فنی",
+  "about.technicalInformation.configurationFolder": "پوشۀ پیکربندی",
+  "about.technicalInformation.userdataFolder": "پوشه داده های کاربر",
+  "about.technicalInformation.logsFolder": "پوشه خطاها",
+  "about.technicalInformation.operatingSystem": "سیستم عامل",
+  "about.technicalInformation.javaRuntime": "جاوا ران تایم",
+  "about.technicalInformation.resourceStats": "{nbproc} پردازنده های موجود - {ram} حافظه در دسترس",
+  "about.technicalInformation.viewDetails": "مشاهده جزئیات",
+  "about.appearanceOptions": "ظاهر (فقط برای این دستگاه)",
+  "about.reload": "بارگزاری مجدد",
+  "about.reload.purgeExplanation1": "حافظه پنهان و/یا کارگران سرویس برای ذخیره منابع محلی و سریعتر بارگذاری این برنامه استفاده می شوند ، اما ممکن است به طور قابل اطمینان تشخیص ندهد که به نسخه جدید به روز شده است.",
+  "about.reload.purgeExplanation2": "برای پاک کردن همه حافظه پنهان ، لغو ثبت نام کارکنان سرویس و بارگیری مجدد همه چیز از سرور ، گزینه پاک کردن حافظه پنهان و تازه کردن را انتخاب کنید.",
+  "about.reload.purgeCachesAndRefresh": "پاک کردن حافظه پنهان و تازه کردن",
+  "about.reload.confirmPurge": "همه حافظه پنهان برنامه ها را پاک کرده و کارکنان خدمات را لغو ثبت نام کنید؟ این کار همچنین صفحه را از سرور بارگذاری می کند ، که ممکن است چند ثانیه طول بکشد.",
+  "about.reload.reloadApp": "بارگذاری مجدد برنامه"
+}
