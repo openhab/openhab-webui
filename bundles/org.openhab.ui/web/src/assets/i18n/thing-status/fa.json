@@ -1,0 +1,13 @@
+{
+  "HANDLER_MISSING_ERROR": "اشتباه: دستگیره",
+  "HANDLER_CONFIGURATION_PENDING": "اشتباه: دستگیره",
+  "HANDLER_INITIALIZING_ERROR": "اشتباه: دستگیره",
+  "BRIDGE_UNINITIALIZED": "اشتباه: پل",
+  "DISABLED": "غیرفعال شده",
+  "CONFIGURATION_PENDING": "پیکربندی در انتظار",
+  "COMMUNICATION_ERROR": "اشتباه: COMM",
+  "CONFIGURATION_ERROR": "اشتباه: پیکربندی",
+  "BRIDGE_OFFLINE": "اشتباه: پل",
+  "FIRMWARE_UPDATING": "به روز رسانی سیستم عامل",
+  "GONE": "رفته"
+}
