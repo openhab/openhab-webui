@@ -83,9 +83,11 @@ export default {
   },
   computed: {
     configurationWithDefaults () {
-      let conf = Object.assign({}, this.configuration)
+      const conf = Object.assign({}, this.configuration)
       this.parameters.forEach((p) => {
-        if (conf[p.name] === undefined && p.default !== undefined) conf[p.name] = p.default
+        if (conf[p.name] === undefined && p.default !== undefined) {
+          conf[p.name] = typeof p.default === 'function' ? p.default(this.configuration) : p.default
+        }
       })
       return conf
     },
