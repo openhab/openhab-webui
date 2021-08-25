@@ -48,5 +48,5 @@
 			.pipe(gulp.dest("./src/main/resources/web"));
 	});
 
-	gulp.task("default", [ "css", "copyFontLibs", "eslint", "js" ]);
+	gulp.task("default", gulp.parallel("css", "copyFontLibs", gulp.series("eslint", "js")));
 })();
