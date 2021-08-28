@@ -61,12 +61,19 @@
 
 <script>
 import mixin from '../widget-mixin'
-import { CRS } from 'leaflet'
+import { CRS, Icon } from 'leaflet'
 import { LMap, LImageOverlay, LFeatureGroup, LControl } from 'vue2-leaflet'
 import 'leaflet/dist/leaflet.css'
 
 import OhPlanMarker from './oh-plan-marker.vue'
 import { OhPlanPageDefinition } from '@/assets/definitions/widgets/plan'
+
+delete Icon.Default.prototype._getIconUrl
+Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+})
 
 export default {
   mixins: [mixin],

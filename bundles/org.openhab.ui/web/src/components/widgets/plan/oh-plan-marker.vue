@@ -11,8 +11,7 @@
       <div v-if="config.useTooltipAsLabel" style="white-space: nowrap" :style="tooltipStyle">
         {{ tooltip }}
       </div>
-      <oh-icon v-else-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.split(':')[1]" :width="config.iconWidth || config.iconSize || 40" :height="config.iconHeight || config.iconSize || 40" :state="config.iconUseState ? state : undefined" />
-      <f7-icon v-else-if="config.icon" :color="config.iconColor" :size="config.iconSize || 40" :ios="config.icon" :md="config.icon" :aurora="config.icon" />
+      <oh-icon v-else-if="config.icon" :icon="config.icon" :width="config.iconWidth || config.iconSize || 40" :height="config.iconHeight || config.iconSize || 40" :state="config.iconUseState ? state : undefined" />
     </l-icon>
     <l-popup v-if="context.editmode != null && !dragging">
       <div class="display-flex">

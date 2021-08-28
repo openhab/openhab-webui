@@ -1,10 +1,20 @@
 <template>
-  <img :src="iconUrl" v-bind="config" @click="performAction()"
+  <img v-if="iconType === 'oh'"
+       :src="iconUrl" v-bind="config" @click="performAction()"
        :style="{
          width: (context && config && config.width) ? config.width + 'px' : (width) ? width + 'px' : 'auto',
          height: (context && config && config.height) ? config.height + 'px' : (height) ? height + 'px' : 'auto',
          ...(config) ? config.style : {} }"
        onload="this.classList.remove('no-icon')" onerror="this.classList.add('no-icon')">
+  <f7-icon v-else-if="iconType === 'f7'"
+           :f7="icon || ((config) ? config.icon : null)" :material="icon || ((config) ? config.icon : null)" :aurora="icon || ((config) ? config.icon : null)"
+           :color="color || ((config) ? config.color : null)" :size="width || height || ((config) ? (config.width || config.height) : null)" />
+  <iconify-icon v-else-if="iconType === 'iconify'"
+                :icon="iconName"
+                :width="width || ((config) ? config.width : null)" :height="height || ((config) ? config.height : null)"
+                :color="color || ((config) ? config.color : null)" :rotate="rotate || ((config) ? config.rotate : null)"
+                :horizontal-flip="horizontalFlip || ((config) ? config.horizontalFlip : null)"
+                :vertical-flip="verticalFlip || ((config) ? config.verticalFlip : null)" />
 </template>
 
 <style lang="stylus">
@@ -16,10 +26,14 @@
 import mixin from '../widget-mixin'
 import { OhIconDefinition } from '@/assets/definitions/widgets/system'
 import { actionsMixin } from '../widget-actions'
+import { Icon } from '@iconify/vue2'
 
 export default {
   mixins: [mixin, actionsMixin],
-  props: ['icon', 'width', 'height', 'state'],
+  components: {
+    'iconify-icon': Icon
+  },
+  props: ['icon', 'width', 'height', 'color', 'flip', 'state', 'rotate', 'horizontalFlip', 'verticalFlip'],
   widget: OhIconDefinition,
   data () {
     return {
@@ -29,12 +43,23 @@ export default {
     }
   },
   computed: {
-    actualIcon () {
-      return (this.context) ? this.config.icon : this.icon
+    iconType () {
+      const icon = (this.context) ? this.config.icon : this.icon
+      if (!icon) return 'oh'
+      if (icon.indexOf('f7') === 0 || icon.indexOf('material') === 0) return 'f7'
+      if (icon.indexOf('if') === 0 || icon.indexOf('iconify') === 0) return 'iconify'
+      return 'oh'
     },
+    iconName () {
+      const icon = (this.context) ? this.config.icon : this.icon
+      if (icon.indexOf(':') >= 0) return icon.substring(icon.indexOf(':') + 1)
+      return icon
+    },
+    // for OH icons only
     actualState () {
       return (this.context) ? this.config.state : this.state
     },
+    // for OH icons only
     iconFormat () {
       return (this.context) ? (this.config.iconFormat || 'svg') : 'svg'
     }
@@ -54,9 +79,9 @@ export default {
     }
   },
   mounted () {
-    this.currentIcon = this.actualIcon
+    this.currentIcon = this.iconName
     this.currentState = this.actualState
-    this.updateIcon()
+    if (this.iconType === 'oh') this.updateIcon()
   },
   methods: {
     updateIcon () {
