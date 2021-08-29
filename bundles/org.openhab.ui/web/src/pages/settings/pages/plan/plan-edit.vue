@@ -56,8 +56,7 @@
               <f7-list-item media-item v-for="(marker, idx) in page.slots.default" :key="idx"
                             :title="marker.config.name" :subtitle="marker.config.item || marker.config.location"
                             link="#" @click.native="(ev) => configureMarker(ev, marker, context)">
-                <oh-icon v-if="marker.config.icon && marker.config.icon.indexOf('oh:') === 0" slot="media" :icon="marker.config.icon.substring(3)" height="32" width="32" />
-                <f7-icon v-else slot="media" :f7="markerDefaultIcon(marker)" :size="32" />
+                <oh-icon v-if="marker.config.icon" slot="media" :icon="marker.config.icon" height="32" width="32" />
                 <f7-menu slot="content-start" class="configure-layout-menu">
                   <f7-menu-item icon-f7="list_bullet" dropdown>
                     <f7-menu-dropdown>

@@ -21,16 +21,14 @@
             </div>
             <f7-list-item v-else media-item :subtitle="config.subtitle" :footer="config.footer">
               <div slot="header" v-if="header" class="button-header display-flex">
-                <oh-icon class="header-icon" v-if="config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" width="20" height="20" />
-                <f7-icon class="header-icon" v-if="config.icon && config.icon.indexOf('oh:') < 0" :f7="config.icon.substring(3)" size="20" />
+                <oh-icon class="header-icon" v-if="config.icon" :icon="config.icon" :color="config.iconColor" width="20" height="20" />
                 <span class="header-text">{{ header }}</span>
                 <f7-badge v-if="config.headerBadge" color="config.headerBadgeColor">
                   {{ config.headerBadge }}
                 </f7-badge>
               </div>
               <div slot="title" v-if="config.title" class="button-header display-flex">
-                <oh-icon class="header-icon" v-if="!header && config.icon && config.icon.indexOf('oh:') === 0" :icon="config.icon.substring(3)" width="20" height="20" />
-                <f7-icon class="header-icon" v-if="!header && config.icon && config.icon.indexOf('oh:') < 0" :f7="config.icon.substring(3)" size="20" />
+                <oh-icon class="header-icon" v-if="!header && config.icon" :icon="config.icon" :color="config.iconColor" width="20" height="20" />
                 <span class="header-text">{{ config.title }}</span>
                 <f7-badge v-if="config.headerBadge" color="config.headerBadgeColor">
                   {{ config.headerBadge }}
