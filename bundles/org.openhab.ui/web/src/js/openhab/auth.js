@@ -84,17 +84,22 @@ export function storeBasicCredentials () {
 }
 
 export function setAccessToken (token, api) {
-  accessToken = token
-  if (!token || !api || requireToken !== undefined) return Promise.resolve()
-
-  // determine whether the token is required for user operations
-  return api.get('/rest/sitemaps').then((resp) => {
-    requireToken = false
+  if (!token || !api) return Promise.resolve()
+  if (requireToken === undefined) {
+    // determine whether the token is required for user operations
+    return api.get('/rest/sitemaps').then((resp) => {
+      accessToken = token
+      requireToken = false
+      return Promise.resolve()
+    }).catch((err) => {
+      if (err === 'Unauthorized' || err === 401) requireToken = true
+      accessToken = token
+      return Promise.resolve()
+    })
+  } else {
+    accessToken = token
     return Promise.resolve()
-  }).catch((err) => {
-    if (err === 'Unauthorized' || err === 401) requireToken = true
-    return Promise.resolve()
-  })
+  }
 }
 
 export function clearAccessToken () {
