@@ -53,12 +53,12 @@
           </execution>
 
           <execution>
-            <id>npm install</id>
+            <id>npm ci</id>
             <goals>
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>install</arguments>
+              <arguments>ci</arguments>
             </configuration>
           </execution>
 
