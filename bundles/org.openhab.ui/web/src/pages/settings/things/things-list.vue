@@ -276,7 +276,7 @@ export default {
     doDisableEnableSelected (enable) {
       let dialog = this.$f7.dialog.progress('Please Wait...')
 
-      const promises = this.selectedItems.map((i) => this.$oh.api.putPlain('/rest/things/' + i + '/enable', enable.toString(), 'application/json', 'application/json'))
+      const promises = this.selectedItems.map((i) => this.$oh.api.putPlain('/rest/things/' + i + '/enable', enable.toString()))
       Promise.all(promises).then((data) => {
         this.$f7.toast.create({
           text: (enable) ? 'Things enabled' : 'Things disabled',

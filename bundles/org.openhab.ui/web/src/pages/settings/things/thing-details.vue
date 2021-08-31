@@ -490,7 +490,7 @@ export default {
     },
     toggleDisabled () {
       const enable = (this.thing.statusInfo.statusDetail === 'DISABLED')
-      this.$oh.api.putPlain('/rest/things/' + this.thingId + '/enable', enable.toString(), 'application/json', 'application/json').then((data) => {
+      this.$oh.api.putPlain('/rest/things/' + this.thingId + '/enable', enable.toString()).then((data) => {
         this.$f7.toast.create({
           text: (enable) ? 'Thing enabled' : 'Thing disabled',
           destroyOnClose: true,
