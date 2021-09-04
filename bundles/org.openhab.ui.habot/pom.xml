@@ -15,17 +15,17 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.67</version>
+      <version>1.69</version>
     </dependency>
     <dependency>
       <groupId>org.apache.opennlp</groupId>
       <artifactId>opennlp-tools</artifactId>
-      <version>1.8.3</version>
+      <version>1.9.3</version>
     </dependency>
     <dependency>
       <groupId>org.bitbucket.b_c</groupId>
       <artifactId>jose4j</artifactId>
-      <version>0.6.3</version>
+      <version>0.7.9</version>
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bundles</groupId>
