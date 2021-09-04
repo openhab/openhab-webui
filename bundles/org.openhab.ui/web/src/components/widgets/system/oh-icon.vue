@@ -7,7 +7,7 @@
          ...(config) ? config.style : {} }"
        onload="this.classList.remove('no-icon')" onerror="this.classList.add('no-icon')">
   <f7-icon v-else-if="iconType === 'f7'"
-           :f7="icon || ((config) ? config.icon : null)" :material="icon || ((config) ? config.icon : null)" :aurora="icon || ((config) ? config.icon : null)"
+           :ios="icon || ((config) ? config.icon : null)" :md="icon || ((config) ? config.icon : null)" :aurora="icon || ((config) ? config.icon : null)"
            :color="color || ((config) ? config.color : null)" :size="width || height || ((config) ? (config.width || config.height) : null)" />
   <iconify-icon v-else-if="iconType === 'iconify'"
                 :icon="iconName"
