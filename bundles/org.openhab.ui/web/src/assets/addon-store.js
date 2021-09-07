@@ -58,8 +58,18 @@ export function compareAddons (a1, a2) {
   if (a2.installed && !a1.installed) return 1
   if (a1.verifiedAuthor && !a2.verifiedAuthor) return -1
   if (a2.verifiedAuthor && !a1.verifiedAuthor) return 1
-  if (a1.properties && a2.properties && a1.properties.like_count >= 0 && a2.properties.like_count >= 0) return (a1.properties.like_count > a2.properties.like_count) ? 1 : -1
-  if (a1.properties && a2.properties && a1.properties.views >= 0 && a2.properties.views >= 0) return (a1.properties.views > a2.properties.views) ? 1 : -1
+  if (a2.properties && a2.properties) {
+    if (a1.properties.like_count >= 0 && a2.properties.like_count >= 0 &&
+      a1.properties.like_count !== a2.properties.like_count) {
+      return (a1.properties.like_count > a2.properties.like_count) ? -1 : 1
+    }
+
+    if (a1.properties.views >= 0 && a2.properties.views >= 0 &&
+      a1.properties.views !== a2.properties.views) {
+      return (a1.properties.views > a2.properties.views) ? -1 : 1
+    }
+  }
+
   const nameOrId1 = a1.label || a1.id
   const nameOrId2 = a2.label || a2.name
   return nameOrId1.localeCompare(nameOrId2)

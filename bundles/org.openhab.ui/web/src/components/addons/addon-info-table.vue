@@ -3,7 +3,7 @@
     <f7-list-item v-for="line in information" :key="line.id"
                   :title="line.title" :after="line.value"
                   :link="line.linkUrl" external no-chevron target="_blank">
-      <f7-icon slot="after" v-if="line.linkIcon" :f7="line.linkIcon" />
+      <f7-icon slot="after" v-if="line.afterIcon" :f7="line.afterIcon" />
     </f7-list-item>
   </f7-list>
 </template>
@@ -12,7 +12,10 @@
 .information-table
   --f7-list-bg-color transparent
   --f7-theme-color var(--f7-color-blue)
+  .item-title
+    --f7-list-item-title-text-color var(--f7-list-item-footer-text-color)
   .item-after
+    --f7-list-item-after-text-color var(--f7-list-item-title-text-color)
     align-items center
     i
       margin-left 3px
@@ -20,8 +23,10 @@
       &:first-child
         font-size x-large
   .item-link
-    --f7-list-item-title-text-color var(--f7-theme-color)
-    --f7-list-item-after-text-color: var(--f7-theme-color)
+    .item-title
+      --f7-list-item-title-text-color var(--f7-theme-color) !important
+    .item-after
+      --f7-list-item-after-text-color: var(--f7-theme-color) !important
 </style>
 
 <script>
@@ -36,16 +41,16 @@ export default {
       const marketplace = this.addon.id.indexOf('marketplace:') === 0
 
       info.push({
-        id: 'provider',
-        title: 'Provided By',
+        id: 'service',
+        title: 'Source',
         value: (marketplace) ? 'Community Marketplace' : 'openHAB Distribution'
       })
 
       info.push({
         id: 'author',
-        title: 'Author',
+        title: 'Provided By',
         value: this.addon.author,
-        linkIcon: (this.addon.verifiedAuthor) ? 'checkmark_seal_fill' : ''
+        afterIcon: (this.addon.verifiedAuthor) ? 'checkmark_seal_fill' : ''
       })
 
       if (this.addon.version) {
@@ -101,26 +106,26 @@ export default {
         info.push({
           id: 'communityTopicLink',
           title: 'Community Topic',
-          linkIcon: 'chat_bubble_2_fill',
+          afterIcon: 'chat_bubble_2_fill',
           linkUrl: this.addon.link
         })
       } else {
         info.push({
           id: 'documentationLink',
           title: 'Documentation',
-          linkIcon: 'question_circle_fill',
+          afterIcon: 'question_circle_fill',
           linkUrl: `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}` // this.addon.link
         })
         info.push({
           id: 'issuesLink',
           title: 'Issues',
-          linkIcon: 'exclamationmark_bubble_fill',
+          afterIcon: 'exclamationmark_bubble_fill',
           linkUrl: 'https://github.com/openhab/openhab-addons/issues?q=is%3Aopen+' + this.addon.id.substring(this.addon.id.indexOf('-') + 1)
         })
         info.push({
           id: 'discussionsLink',
           title: 'Community Discussions',
-          linkIcon: 'chat_bubble_2_fill',
+          afterIcon: 'chat_bubble_2_fill',
           linkUrl: 'https://community.openhab.org/search?q=' + this.addon.id.substring(this.addon.id.indexOf('-') + 1)
         })
       }

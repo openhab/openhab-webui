@@ -9,10 +9,10 @@
       <f7-row>
         <f7-col class="margin-left">
           <div class="addon-header">
-            <div class="logo-container">
+            <f7-link class="logo-container" :href="docLinkUrl" external target="_blank">
               <f7-icon v-show="!logoLoaded" size="100" color="gray" :f7="addonIcon" style="opacity: 0.2; position: absolute;" />
               <img v-if="!logoError" class="logo lazy" :style="{ visibility: logoLoaded ? 'visible': 'hidden' }" ref="logo" :data-src="imageUrl">
-            </div>
+            </f7-link>
             <div class="addon-header-content">
               <div class="addon-header-title">
                 {{ addon.label }}
@@ -30,29 +30,6 @@
                 <f7-button v-else class="install-button prevent-active-state-propagation" text="Install" color="blue" round small fill @click="openAddonPopup" />
               </div>
             </div>
-          </div>
-          <div v-if="addon.properties" class="addon-header-stats padding margin-top">
-            <f7-link v-if="addon.properties.like_count >= 0" :href="addon.link" target="_blank" external class="addon-header-stat">
-              <f7-icon f7="heart_fill" size="24" />
-              {{ addon.properties.like_count }}
-              <div class="addon-header-stat-sub">
-                Likes
-              </div>
-            </f7-link>
-            <f7-link v-if="addon.properties.views >= 0" :href="addon.link" target="_blank" external class="addon-header-stat">
-              <f7-icon f7="eye_fill" size="24" />
-              {{ addon.properties.views }}
-              <div class="addon-header-stat-sub">
-                Views
-              </div>
-            </f7-link>
-            <f7-link v-if="addon.properties.posts_count >= 0" :href="addon.link" target="_blank" external class="addon-header-stat">
-              <f7-icon f7="chat_bubble_fill" size="24" />
-              {{ addon.properties.posts_count }}
-              <div class="addon-header-stat-sub">
-                Posts
-              </div>
-            </f7-link>
           </div>
         </f7-col>
       </f7-row>
@@ -171,25 +148,6 @@
         --f7-button-text-transform uppercase
         min-width 100px
         font-size 16px
-  .addon-header-stats
-    width calc(100% - 2*var(--f7-block-padding-horizontal))
-    justify-content center
-    display flex
-    opacity 0.55
-    align-items center
-    position relative
-    --f7-theme-color var(--f7-color-gray)
-    .addon-header-stat
-      display flex
-      flex-direction column
-      align-items center
-      font-size 18px
-      font-weight bold
-      margin-right 4px
-      min-width 90px
-      .addon-header-stat-sub
-        font-size 10px
-        text-transform uppercase
   .addon-description
     --f7-block-strong-bg-color transparent
     width calc(100%)
@@ -208,19 +166,6 @@
     img
       max-width calc(100%)
       height auto
-  .information-table
-    --f7-list-bg-color transparent
-    --f7-theme-color var(--f7-color-blue)
-    .item-after
-      align-items center
-      i
-        margin-left 3px
-        font-size var(--f7-list-item-subtitle-font-size)
-        &:first-child
-          font-size x-large
-    .item-link
-      --f7-list-item-title-text-color var(--f7-theme-color)
-      --f7-list-item-after-text-color: var(--f7-theme-color)
 </style>
 
 <script>
@@ -272,6 +217,10 @@ export default {
         return this.parsedDescription
       }
       return 'No description found'
+    },
+    docLinkUrl () {
+      if (!this.addon) return ''
+      return (this.serviceId === 'marketplace') ? this.addon.link : `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}`
     }
   },
   methods: {
