@@ -366,6 +366,7 @@ export default {
         body = body.replace(/<table>/gm, '<div class="data-table"><table>')
         body = body.replace(/<\/table>/gm, '</table></div>')
         body = body.replace(/<a class="lightbox" href="/gm, '<a class="external" target="_blank" href="')
+        body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
         body = body.replace(/<img src="\/\/community-openhab-org/gm, '<img class="lazy lazy-fade-in" data-src="//community-openhab-org')
         this.parsedDescription = body
         this.descriptionReady = true
