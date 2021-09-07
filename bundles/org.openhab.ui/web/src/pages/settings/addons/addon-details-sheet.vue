@@ -30,8 +30,8 @@
       </f7-block>
       <f7-block>
         <f7-list>
-          <f7-list-item v-if="bindingInfo.author" title="Author" :after="bindingInfo.author" />
-          <f7-list-item title="Version" :after="addon.version" />
+          <f7-list-item v-if="addon.author" title="Author" :after="addon.author" />
+          <f7-list-item v-if="addon.version" title="Version" :after="addon.version" />
         </f7-list>
         <f7-list>
           <f7-list-button v-if="bindingInfo.configDescriptionURI" color="blue" :href="bindingInfo.id + '/config'" title="Configure" />
@@ -93,7 +93,7 @@
 
 <script>
 export default {
-  props: ['addonId', 'opened'],
+  props: ['addonId', 'serviceId', 'opened'],
   data () {
     return {
       addon: {},
@@ -110,7 +110,7 @@ export default {
           return
         }
         self.$f7.preloader.show()
-        this.$oh.api.get('/rest/addons/' + this.addonId).then(data => {
+        this.$oh.api.get('/rest/addons/' + this.addonId + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then(data => {
           this.addon = data
 
           if (this.addon.type === 'binding' && this.addon.installed) {
@@ -148,12 +148,12 @@ export default {
       self.$refs.sheet.f7Sheet.stepToggle('.demo-sheet-swipe-to-step')
     },
     install () {
-      this.$oh.api.post('/rest/addons/' + this.addonId + '/install', {}, 'text').then((data) => {
+      this.$oh.api.post('/rest/addons/' + this.addonId + '/install' + (this.serviceId ? '?serviceId=' + this.serviceId : ''), {}, 'text').then((data) => {
         this.$emit('install', this.addon)
       })
     },
     uninstall () {
-      this.$oh.api.post('/rest/addons/' + this.addonId + '/uninstall', {}, 'text').then((data) => {
+      this.$oh.api.post('/rest/addons/' + this.addonId + '/uninstall' + (this.serviceId ? '?serviceId=' + this.serviceId : ''), {}, 'text').then((data) => {
         this.$emit('uninstall', this.addon)
       })
     }

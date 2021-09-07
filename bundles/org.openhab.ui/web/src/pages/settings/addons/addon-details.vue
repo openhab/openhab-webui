@@ -1,0 +1,457 @@
+<template>
+  <f7-page @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut" ref="addondetails" class="page-addon-details">
+    <f7-navbar :transparent="true" back-link="Back" class="addon-details-nav">
+      <f7-nav-title v-if="addon">
+        {{ addon.label }}
+      </f7-nav-title>
+    </f7-navbar>
+    <f7-block class="block-narrow addon-details" v-if="ready && addon">
+      <f7-row>
+        <f7-col class="margin-left">
+          <div class="addon-header">
+            <div class="logo-container">
+              <f7-icon v-show="!logoLoaded" size="100" color="gray" :f7="addonIcon" style="opacity: 0.2; position: absolute;" />
+              <img v-if="!logoError" class="logo lazy" :style="{ visibility: logoLoaded ? 'visible': 'hidden' }" ref="logo" :data-src="imageUrl">
+            </div>
+            <div class="addon-header-content">
+              <div class="addon-header-title">
+                {{ addon.label }}
+              </div>
+              <div class="addon-header-author">
+                {{ addon.author }}
+                <f7-icon v-if="addon.verifiedAuthor" :color="$f7.data.themeOptions.dark === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" />
+              </div>
+              <div class="addon-header-actions">
+                <f7-preloader v-if="isPending(addon)" color="blue" />
+                <f7-button v-else-if="addon.installed" class="install-button prevent-active-state-propagation" text="Remove" color="red" round small fill @click="openAddonPopup" />
+                <f7-button v-else class="install-button prevent-active-state-propagation" text="Install" color="blue" round small fill @click="openAddonPopup" />
+              </div>
+            </div>
+          </div>
+          <div v-if="addon.properties" class="addon-header-stats padding margin-top">
+            <f7-link v-if="addon.properties.like_count >= 0" :href="addon.link" target="_blank" external class="addon-header-stat">
+              <f7-icon f7="heart_fill" size="24" />
+              {{ addon.properties.like_count }}
+              <div class="addon-header-stat-sub">
+                Likes
+              </div>
+            </f7-link>
+            <f7-link v-if="addon.properties.views >= 0" :href="addon.link" target="_blank" external class="addon-header-stat">
+              <f7-icon f7="eye_fill" size="24" />
+              {{ addon.properties.views }}
+              <div class="addon-header-stat-sub">
+                Views
+              </div>
+            </f7-link>
+            <f7-link v-if="addon.properties.posts_count >= 0" :href="addon.link" target="_blank" external class="addon-header-stat">
+              <f7-icon f7="chat_bubble_fill" size="24" />
+              {{ addon.properties.posts_count }}
+              <div class="addon-header-stat-sub">
+                Posts
+              </div>
+            </f7-link>
+          </div>
+        </f7-col>
+      </f7-row>
+      <f7-row>
+        <f7-col>
+          <f7-block strong class="addon-description" v-if="descriptionReady">
+            <div v-show="descriptionExpanded" v-html="parsedDescription" class="addon-description-text" />
+            <div v-show="!descriptionExpanded" v-html="addonDescription" class="addon-description-text" />
+            <div v-show="!descriptionExpanded" class="text-align-right">
+              <f7-link @click="descriptionExpanded = true">
+                more
+              </f7-link>
+            </div>
+          </f7-block>
+          <f7-block v-else class="skeleton-text skeleton-effect-blink">
+            <p>
+              Lorem ipsum dolor sit amet, an labore inermis est.
+              Mel ut dicant tamquam commune, duo id accumsan eleifend tractatos, ius purto vitae fabulas cu.
+              Te his vide omnis qualisque, in duo soluta persecuti instructior. Ex dicit detraxit voluptaria est. Aperiri reformidans comprehensam in vis.
+            </p>
+            <p>
+              Quo quas rebum dicta ad, in erant eruditi vim.
+              Mel no primis everti voluptatum, id utamur voluptatibus mea.
+              Nam deseruisse expetendis cotidieque at, vis oratio utroque cu.
+              Eu duo quod fuisset, ne fabulas hendrerit argumentum pro.
+              Errem dictas his ea, eos interesset efficiantur ei.
+            </p>
+          </f7-block>
+        </f7-col>
+      </f7-row>
+      <f7-row>
+        <f7-col>
+          <f7-block-title class="margin-left margin-bottom-half" medium>
+            Information
+          </f7-block-title>
+          <f7-list v-if="ready && information.length > 0" class="information-table">
+            <f7-list-item v-for="line in information" :key="line.id"
+                          :title="line.title" :after="line.value"
+                          :link="line.linkUrl" external no-chevron target="_blank">
+              <f7-icon slot="after" v-if="line.linkIcon" :f7="line.linkIcon" />
+            </f7-list-item>
+          </f7-list>
+        </f7-col>
+      </f7-row>
+    </f7-block>
+    <addon-details-sheet
+      v-if="ready"
+      :addon-id="realAddonId"
+      :service-id="serviceId"
+      :opened="addonPopupOpened"
+      @closed="addonPopupOpened = false"
+      @install="installAddon"
+      @uninstall="uninstallAddon" />
+  </f7-page>
+</template>
+
+<style lang="stylus">
+.theme-filled .addon-details-nav.navbar:not(.navbar-transparent-visible) .link
+  color var(--f7-theme-color)
+  transition color 0.3s
+.theme-filled .addon-details-nav.navbar.navbar-transparent-visible .link
+  color var(--f7-navbar-link-color)
+  transition color 0.3s
+.addon-details
+  width calc(100%)
+  .addon-header
+    display flex
+    align-items stretch
+    .logo-container
+      display flex
+      justify-content center
+      align-items center
+      width 118px
+      height 118px
+      border-radius 22%
+      margin-right var(--f7-block-padding-horizontal)
+      flex-shrink 0
+      background white
+      border 1px solid rgba(0, 0, 0, 0.1)
+      .logo
+        max-width 100px
+        max-height 100px
+    @media (min-width 768px)
+      .logo-container
+        width 191px
+        height 191px
+        .logo
+          max-width 165px
+          max-height 165px
+    .addon-header-content
+      display flex
+      flex-direction column
+      width calc(100% - 2*var(--f7-block-padding-horizontal))
+      flex-shrink 10
+      min-width 0
+      line-height 27px
+      .addon-header-title
+        font-size 22px
+        font-weight 600
+      @media (min-width 768px)
+        .addon-header-title
+          font-size 27px
+          line-height normal
+      .addon-header-author
+        font-size 16px
+        font-weight 600
+        color var(--f7-list-item-after-text-color)
+        i
+          font-size 16px
+      @media (min-width 768px)
+        .addon-header-author
+          font-size 20px
+          i
+            font-size 20px
+    .addon-header-actions
+      display flex
+      justify-content space-between
+      margin-top auto
+      margin-bottom auto
+      .install-button
+        --f7-button-text-transform uppercase
+        min-width 100px
+        font-size 16px
+  .addon-header-stats
+    width calc(100% - 2*var(--f7-block-padding-horizontal))
+    justify-content center
+    display flex
+    opacity 0.55
+    align-items center
+    position relative
+    --f7-theme-color var(--f7-color-gray)
+    .addon-header-stat
+      display flex
+      flex-direction column
+      align-items center
+      font-size 18px
+      font-weight bold
+      margin-right 4px
+      min-width 90px
+      .addon-header-stat-sub
+        font-size 10px
+        text-transform uppercase
+  .addon-description
+    --f7-block-strong-bg-color transparent
+    width calc(100%)
+    --f7-theme-color var(--f7-color-blue)
+  .addon-description-text
+    overflow-x clip
+    .emoji
+      height 1rem
+    .lightbox-wrapper .meta
+      display none
+    pre
+      overflow auto
+      width calc(100% - 2*var(--f7-block-padding-horizontal-half))
+      max-height 70vh
+      color var(--f7-block-footer-text-color)
+    img
+      max-width calc(100%)
+      height auto
+  .information-table
+    --f7-list-bg-color transparent
+    --f7-theme-color var(--f7-color-blue)
+    .item-link
+      --f7-list-item-title-text-color var(--f7-theme-color)
+      --f7-list-item-after-text-color: var(--f7-theme-color)
+</style>
+
+<script>
+import AddonStoreMixin from './addon-store-mixin'
+import { AddonIcons, ContentTypes, Formats } from '@/assets/addon-store'
+import dayjs from 'dayjs'
+
+export default {
+  mixins: [AddonStoreMixin],
+  props: ['addonId'],
+  data () {
+    return {
+      addon: null,
+      ready: false,
+      logoLoaded: false,
+      logoError: false,
+      addonIcon: null,
+      descriptionReady: false,
+      parsedDescription: '',
+      descriptionExpanded: false
+    }
+  },
+  computed: {
+    realAddonId () {
+      if (!this.addon) return null
+      return (this.addon.id.indexOf(':') > 0) ? this.addon.id.substring(this.addon.id.indexOf(':') + 1) : this.addon.id
+    },
+    serviceId () {
+      if (!this.addon) return null
+      return (this.addon.id.indexOf(':') > 0) ? this.addon.id.substring(0, this.addon.id.indexOf(':')) : undefined
+    },
+    imageUrl () {
+      if (!this.addon) return null
+      if (this.addon.imageLink) return this.addon.imageLink.replace(/^\/\//, 'https://')
+      return 'https://www.openhab.org/logos/' + this.addon.id.substring(this.addon.id.indexOf('-') + 1) + '.png'
+    },
+    addonDescription () {
+      if (!this.descriptionReady) return null
+      if (!this.addon) return null
+      if (this.addon.description) return this.addon.description
+      if (this.parsedDescription) {
+        const firstHeading = this.parsedDescription.match(/<h\d/m)
+        if (firstHeading && firstHeading.index > 0) return this.parsedDescription.substring(0, firstHeading.index)
+        return this.parsedDescription
+      }
+      return 'No description found'
+    },
+    information () {
+      let info = []
+      if (!this.ready || !this.addon) return info
+      const marketplace = this.addon.id.indexOf('marketplace:') === 0
+
+      info.push({
+        id: 'provider',
+        title: 'Provided By',
+        value: (marketplace) ? 'Community Marketplace' : 'openHAB Distribution'
+      })
+
+      if (this.addon.version) {
+        info.push({
+          id: 'version',
+          title: 'Version',
+          value: this.addon.version
+        })
+      }
+
+      info.push({
+        id: 'type',
+        title: 'Type',
+        value: this.addon.type
+      })
+
+      info.push({
+        id: 'contentType',
+        title: 'Content Type',
+        value: ContentTypes[this.addon.contentType] || this.addon.contentType
+      })
+
+      let format = Formats.karaf
+      if (marketplace && Object.keys(this.addon.properties).length > 0) {
+        for (const property in this.addon.properties) {
+          if (Formats[property]) format = Formats[property]
+        }
+      }
+
+      info.push({
+        id: 'format',
+        title: 'Provisioned With',
+        value: format
+      })
+
+      if (this.addon.properties && this.addon.properties.created_at) {
+        info.push({
+          id: 'createdAt',
+          title: 'Created At',
+          value: this.addon.properties.created_at
+        })
+      }
+
+      if (this.addon.properties && this.addon.properties.updated_at) {
+        info.push({
+          id: 'updated',
+          title: 'Updated At',
+          value: this.addon.properties.updated_at
+        })
+      }
+
+      if (marketplace) {
+        info.push({
+          id: 'communityTopicLink',
+          title: 'Community Topic',
+          linkIcon: 'chat_bubble_2_fill',
+          linkUrl: this.addon.link
+        })
+      } else {
+        info.push({
+          id: 'documentationLink',
+          title: 'Documentation',
+          linkIcon: 'question_circle_fill',
+          linkUrl: `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}` // this.addon.link
+        })
+        info.push({
+          id: 'issuesLink',
+          title: 'Issues',
+          linkIcon: 'exclamationmark_bubble_fill',
+          linkUrl: 'https://github.com/openhab/openhab-addons/issues?q=is%3Aopen+' + this.addon.id.substring(this.addon.id.indexOf('-') + 1)
+        })
+        info.push({
+          id: 'discussionsLink',
+          title: 'Community Discussions',
+          linkIcon: 'chat_bubble_2_fill',
+          linkUrl: 'https://community.openhab.org/search?q=' + this.addon.id.substring(this.addon.id.indexOf('-') + 1)
+        })
+      }
+
+      return info
+    }
+  },
+  methods: {
+    onPageBeforeIn () {
+      if (this.ready) return
+      this.load()
+    },
+    onPageBeforeOut () {
+      this.stopEventSource()
+    },
+    load () {
+      this.stopEventSource()
+      let addonId = this.addonId
+      let serviceId = null
+      if (addonId.indexOf('marketplace:') === 0) {
+        serviceId = 'marketplace'
+        addonId = addonId.substring(addonId.indexOf(':') + 1)
+      }
+      this.$oh.api.get('/rest/addons/' + addonId + (serviceId ? '?serviceId=' + serviceId : '')).then((data) => {
+        this.resetPending()
+        this.$set(this, 'addon', data)
+        this.addonIcon = AddonIcons[this.addon.type]
+        this.ready = true
+        this.processDescription()
+        this.startEventSource()
+
+        setTimeout(() => {
+          this.$$(this.$refs.logo).once('lazy:loaded', (e) => {
+            console.log(this.addon.id + ' logo lazy loaded')
+            this.logoLoaded = true
+          })
+          this.$$(this.$refs.logo).once('lazy:error', (e) => {
+            this.logoError = true
+          })
+          this.$f7.lazy.create('.page-addon-details')
+        })
+      })
+    },
+    processDescription () {
+      if (!this.addon.description && this.addon.author === 'openHAB') {
+        // assuming the add-on is an official one (distribution), try to fetch the documentation from GitHub
+        let docsBranch = 'final'
+        if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
+        let addonTypeFolder = '_addons_' + this.addon.type
+        if (this.addon.type === 'misc') addonTypeFolder = '_addons_io'
+        if (this.addon.type !== 'automation') addonTypeFolder += 's'
+        let addonId = this.addon.id.substring(this.addon.id.indexOf('-') + 1)
+        let docUrl = (this.$store.state.runtimeInfo.buildString === 'Release Build') ? 'https://www.openhab.org' : 'https://next.openhab.org'
+        docUrl += `/addons/${this.addon.type}/${addonId}`
+        let docSrcUrl = `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/${addonTypeFolder}/${addonId}`
+
+        fetch(docSrcUrl + '/readme.md').then((readme) => {
+          readme.text().then((text) => {
+            import('marked').then((marked) => {
+              const frontmatterSeparators = [...text.matchAll(/^---$/gm)]
+              let body
+
+              if (frontmatterSeparators.length !== 2) {
+                body = '<p>The description is not available for this add-on.</p><h3>Debug Information</h3><blockquote>' + text + '</blockquote>'
+              } else {
+                const frontmatter = text.substring(4, frontmatterSeparators[1].index)
+                body = marked.default(text.substring(frontmatterSeparators[1].index + 4))
+
+                // perform a few replaces on HTML body for Markdown readmes on GitHub
+                body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
+                body = body.replace(/<h1 .*$/gm, '')
+                body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
+                body = body.replace(/<\/pre>/gm, '</pre></div>')
+                body = body.replace(/<table>/gm, '<div class="data-table"><table>')
+                body = body.replace(/<\/table>/gm, '</table></div>')
+                body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
+                body = body.replace(/<img src="doc/gm, '<img class="lazy lazy-fade-in" data-src="' + docSrcUrl + '/doc')
+                body = body.replace(/<img src="contrib/gm, '<img class="lazy lazy-fade-in" data-src="' + docSrcUrl + '/contrib')
+              }
+
+              this.parsedDescription = body
+              this.descriptionReady = true
+              setTimeout(() => { this.$f7.lazy.create('.addon-description-text') })
+            })
+          })
+        }).catch((err) => {
+          this.parsedDescription = '<p>The description is unavailable for this add-on.</p><h3>Debug Information</h3><blockquote>' + err + '</blockquote>'
+          this.descriptionReady = true
+          setTimeout(() => { this.$f7.lazy.create('.addon-description-text') })
+        })
+      } else {
+        // perform a few replaces for Discourse "cooked" HTML
+        let body = this.addon.detailedDescription
+        if (!body) return
+        body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
+        body = body.replace(/<\/pre>/gm, '</pre></div>')
+        body = body.replace(/<table>/gm, '<div class="data-table"><table>')
+        body = body.replace(/<\/table>/gm, '</table></div>')
+        body = body.replace(/<a class="lightbox" href="/gm, '<a class="external" target="_blank" href="')
+        body = body.replace(/<img src="\/\/community-openhab-org/gm, '<img class="lazy lazy-fade-in" data-src="//community-openhab-org')
+        this.parsedDescription = body
+        this.descriptionReady = true
+        setTimeout(() => { this.$f7.lazy.create('.addon-description-text') })
+      }
+    }
+  }
+}
+</script>

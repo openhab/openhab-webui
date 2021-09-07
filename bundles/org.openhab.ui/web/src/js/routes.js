@@ -11,6 +11,8 @@ const ServiceSettingsPage = () => import(/* webpackChunkName: "admin-base" */ '.
 const AddonsListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-list.vue')
 const AddonsAddPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-add.vue')
 const AddonsConfigureBindingPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/binding-config.vue')
+const AddonsStorePage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-store.vue')
+const AddonDetailsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addon-details.vue')
 
 const ItemsListPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/items-list-vlist.vue')
 const ItemDetailsPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/item-details.vue')
@@ -231,12 +233,12 @@ export default [
         ]
       },
       {
-        path: 'addons/:addonType',
-        async: loadAsync(AddonsListPage),
+        path: 'addons',
+        async: loadAsync(AddonsStorePage),
         routes: [
           {
-            path: 'add',
-            async: loadAsync(AddonsAddPage)
+            path: ':addonId',
+            async: loadAsync(AddonDetailsPage)
           },
           {
             path: ':bindingId/config',

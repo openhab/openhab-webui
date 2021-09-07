@@ -16,7 +16,7 @@
         search-in=".item-title"
         :disable-button="!$theme.aurora" />
     </f7-navbar>
-    <f7-block class="block-narrow after-big-title settings-menu" v-show="addonsLoaded && servicesLoaded">
+    <f7-block class="block-narrow after-big-title settings-menu" v-show="servicesLoaded">
       <f7-row>
         <f7-col width="100" medium="50">
           <f7-block-title>Configuration</f7-block-title>
@@ -90,19 +90,20 @@
               <f7-icon slot="media" f7="calendar" color="gray" />
             </f7-list-item>
           </f7-list>
-          <f7-block-title v-if="$store.getters.apiEndpoint('addons') && addonsLoaded">
+          <f7-block-title v-if="$store.getters.apiEndpoint('addons')">
             Add-ons
           </f7-block-title>
           <f7-list media-list class="search-list"
                    v-if="$store.getters.apiEndpoint('addons')">
             <f7-list-item
               media-item
-              v-for="type in addonTypes"
-              :key="type.id"
-              :link="'addons/' + type.id"
-              :title="type.label"
-              :footer="addonsSubtitles[type.id]">
-              <f7-icon slot="media" :f7="addonsIcons[type.id]" color="gray" />
+              v-for="shortcut in addonStoreTabShortcuts"
+              :key="shortcut.id"
+              :link="true"
+              @click="navigateToStore(shortcut.id)"
+              :title="shortcut.label"
+              :footer="shortcut.subtitle">
+              <f7-icon slot="media" :f7="shortcut.icon" color="gray" />
             </f7-list-item>
           </f7-list>
         </f7-col>
@@ -133,12 +134,14 @@
 </template>
 
 <script>
+import { AddonStoreTabShortcuts } from '@/assets/addon-store'
+
 export default {
   data () {
     return {
       addonsLoaded: false,
       servicesLoaded: false,
-      addonTypes: {},
+      addonStoreTabShortcuts: AddonStoreTabShortcuts,
       systemServices: [],
       otherServices: [],
       objectsSubtitles: {
@@ -149,24 +152,6 @@ export default {
         rules: 'Automate with triggers and actions',
         scripts: 'Rules dedicated to running code',
         schedule: 'View upcoming time-based rules'
-      },
-      addonsSubtitles: {
-        automation: 'Scripting languages and module types for rules',
-        binding: 'Connect and control hardware and online services',
-        persistence: 'Backend connectors to store historical data',
-        transformation: 'Translate between technical and human-readable values',
-        misc: 'Integrations to external systems and more',
-        ui: 'Alternative frontends for user interaction',
-        voice: 'Convert between text and speech, interpret human language queries'
-      },
-      addonsIcons: {
-        automation: 'sparkles',
-        binding: 'circle_grid_hex',
-        persistence: 'download_circle',
-        transformation: 'function',
-        misc: 'rectangle_3_offgrid',
-        ui: 'play_rectangle',
-        voice: 'chat_bubble_2'
       },
       inboxCount: '',
       thingsCount: '',
@@ -198,14 +183,6 @@ export default {
         this.otherServices = data.filter(s => s.category !== 'system')
         this.servicesLoaded = true
       })
-      addonsPromise.then((data) => {
-        this.addonTypes = data
-        this.addonsLoaded = true
-      }).catch((err) => {
-        console.warn('Add-on types not loaded: ' + err)
-        this.addonTypes = []
-        this.addonsLoaded = true
-      })
     },
     loadCounters () {
       if (!this.apiEndpoints) return
@@ -213,6 +190,9 @@ export default {
       if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things?summary=true').then((data) => { this.thingsCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items').then((data) => { this.itemsCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('ui')) this.$oh.api.get('/rest/ui/components/system:sitemap?summary=true').then((data) => { this.sitemapsCount = data.length })
+    },
+    navigateToStore (tab) {
+      this.$f7.views.main.router.navigate('addons', { props: { initialTab: tab } })
     },
     onPageInit () {
       this.loadMenu()
