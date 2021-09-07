@@ -15,32 +15,14 @@
           </f7-col>
         </f7-row>
       </f7-block>
-      <f7-block class="padding-bottom" @click.native="toggleSwipeStep" style="cursor:pointer">
-        <div class="margin-top margin-bottom text-align-center">
+      <f7-block class="padding-bottom no-margin-vertical" @click.native="toggleSwipeStep">
+        <div v-if="!noDetails" class="margin-top margin-bottom text-align-center" style="cursor:pointer">
           <f7-icon f7="chevron_down_circle" />&nbsp;Expand for details
         </div>
       </f7-block>
     </div>
-    <f7-page-content>
-      <f7-block v-if="bindingInfo.description">
-        <div class="padding-left padding-right" v-html="bindingInfo.description" />
-        <!-- <p class="padding-left padding-right">
-          <em>Author: {{bindingInfo.author}}</em>
-        </p> -->
-      </f7-block>
-      <f7-block>
-        <f7-list>
-          <f7-list-item v-if="addon.author" title="Author" :after="addon.author" />
-          <f7-list-item v-if="addon.version" title="Version" :after="addon.version" />
-        </f7-list>
-        <f7-list>
-          <f7-list-button v-if="bindingInfo.configDescriptionURI" color="blue" :href="bindingInfo.id + '/config'" title="Configure" />
-          <f7-list-button v-if="addon.link" color="blue" external target="_blank" :href="addon.link" title="Documentation" />
-        </f7-list>
-      </f7-block>
-      <!-- <f7-block v-else>
-        <p>No description available.</p>
-      </f7-block> -->
+    <f7-page-content v-if="!noDetails" class="no-margin-top">
+      <addon-info-table :addon="addon" class="no-margin-top" />
     </f7-page-content>
   </f7-sheet>
 </template>
@@ -92,8 +74,13 @@
 </style>
 
 <script>
+import AddonInfoTable from '@/components/addons/addon-info-table.vue'
+
 export default {
-  props: ['addonId', 'serviceId', 'opened'],
+  props: ['addonId', 'serviceId', 'opened', 'noDetails'],
+  components: {
+    AddonInfoTable
+  },
   data () {
     return {
       addon: {},
@@ -118,14 +105,14 @@ export default {
               this.bindingInfo = data2.find(b => b.id === this.addonId.replace('binding-', '')) || {}
               self.$f7.preloader.hide()
               setTimeout(() => {
-                self.$refs.sheet.f7Sheet.setSwipeStep()
+                if (!this.noDetails) self.$refs.sheet.f7Sheet.setSwipeStep()
                 self.$refs.sheet.f7Sheet.open()
               })
             })
           } else {
             self.$f7.preloader.hide()
             setTimeout(() => {
-              self.$refs.sheet.f7Sheet.setSwipeStep()
+              if (!this.noDetails) self.$refs.sheet.f7Sheet.setSwipeStep()
               self.$refs.sheet.f7Sheet.open()
             })
           }

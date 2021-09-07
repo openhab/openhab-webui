@@ -14,9 +14,12 @@
       <div class="addon-card-label">
         {{ addon.label }}
       </div>
-      <div class="addon-card-author">
+      <div v-if="addon.verifiedAuthor" class="addon-card-subtitle">
         {{ addon.author }}
         <f7-icon v-if="addon.verifiedAuthor" size="15" :color="$f7.data.themeOptions.dark === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" style="margin-top: -3px;" />
+      </div>
+      <div v-else-if="addon.properties && addon.properties.views" class="addon-card-subtitle">
+        <addon-stats-line :addon="addon" :iconSize="15" />
       </div>
     </div>
     <div class="logo-square">
@@ -70,7 +73,7 @@
       justify-content center
       height var(--f7-button-small-height)
       --f7-preloader-size var(--f7-button-small-height)
-  .addon-card-author
+  .addon-card-subtitle
     color var(--f7-list-item-after-text-color)
     font-size var(--f7-list-item-subtitle-font-size) // 21px
     font-weight var(--f7-list-item-subtitle-font-weight)
@@ -107,9 +110,13 @@
 
 <script>
 import { AddonIcons } from '@/assets/addon-store'
+import AddonStatsLine from './addon-stats-line.vue'
 
 export default {
   props: ['addon', 'headline'],
+  components: {
+    AddonStatsLine
+  },
   data () {
     return {
       logoLoaded: false,

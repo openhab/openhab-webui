@@ -17,9 +17,12 @@
               <div class="addon-header-title">
                 {{ addon.label }}
               </div>
-              <div class="addon-header-author">
+              <div v-if="addon.verifiedAuthor" class="addon-header-subtitle">
                 {{ addon.author }}
-                <f7-icon v-if="addon.verifiedAuthor" :color="$f7.data.themeOptions.dark === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" />
+                <f7-icon :color="$f7.data.themeOptions.dark === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" />
+              </div>
+              <div v-else-if="addon.properties && addon.properties.views" class="addon-header-subtitle">
+                <addon-stats-line :addon="addon" :iconSize="15" />
               </div>
               <div class="addon-header-actions">
                 <f7-preloader v-if="isPending(addon)" color="blue" />
@@ -85,13 +88,7 @@
           <f7-block-title class="margin-left margin-bottom-half" medium>
             Information
           </f7-block-title>
-          <f7-list v-if="ready && information.length > 0" class="information-table">
-            <f7-list-item v-for="line in information" :key="line.id"
-                          :title="line.title" :after="line.value"
-                          :link="line.linkUrl" external no-chevron target="_blank">
-              <f7-icon slot="after" v-if="line.linkIcon" :f7="line.linkIcon" />
-            </f7-list-item>
-          </f7-list>
+          <addon-info-table v-if="ready && addon" :addon="addon" />
         </f7-col>
       </f7-row>
     </f7-block>
@@ -99,6 +96,7 @@
       v-if="ready"
       :addon-id="realAddonId"
       :service-id="serviceId"
+      :no-details="true"
       :opened="addonPopupOpened"
       @closed="addonPopupOpened = false"
       @install="installAddon"
@@ -153,7 +151,7 @@
         .addon-header-title
           font-size 27px
           line-height normal
-      .addon-header-author
+      .addon-header-subtitle
         font-size 16px
         font-weight 600
         color var(--f7-list-item-after-text-color)
@@ -213,6 +211,13 @@
   .information-table
     --f7-list-bg-color transparent
     --f7-theme-color var(--f7-color-blue)
+    .item-after
+      align-items center
+      i
+        margin-left 3px
+        font-size var(--f7-list-item-subtitle-font-size)
+        &:first-child
+          font-size x-large
     .item-link
       --f7-list-item-title-text-color var(--f7-theme-color)
       --f7-list-item-after-text-color: var(--f7-theme-color)
@@ -221,10 +226,15 @@
 <script>
 import AddonStoreMixin from './addon-store-mixin'
 import { AddonIcons, ContentTypes, Formats } from '@/assets/addon-store'
-import dayjs from 'dayjs'
+import AddonStatsLine from '@/components/addons/addon-stats-line.vue'
+import AddonInfoTable from '@/components/addons/addon-info-table.vue'
 
 export default {
   mixins: [AddonStoreMixin],
+  components: {
+    AddonStatsLine,
+    AddonInfoTable
+  },
   props: ['addonId'],
   data () {
     return {
@@ -262,96 +272,6 @@ export default {
         return this.parsedDescription
       }
       return 'No description found'
-    },
-    information () {
-      let info = []
-      if (!this.ready || !this.addon) return info
-      const marketplace = this.addon.id.indexOf('marketplace:') === 0
-
-      info.push({
-        id: 'provider',
-        title: 'Provided By',
-        value: (marketplace) ? 'Community Marketplace' : 'openHAB Distribution'
-      })
-
-      if (this.addon.version) {
-        info.push({
-          id: 'version',
-          title: 'Version',
-          value: this.addon.version
-        })
-      }
-
-      info.push({
-        id: 'type',
-        title: 'Type',
-        value: this.addon.type
-      })
-
-      info.push({
-        id: 'contentType',
-        title: 'Content Type',
-        value: ContentTypes[this.addon.contentType] || this.addon.contentType
-      })
-
-      let format = Formats.karaf
-      if (marketplace && Object.keys(this.addon.properties).length > 0) {
-        for (const property in this.addon.properties) {
-          if (Formats[property]) format = Formats[property]
-        }
-      }
-
-      info.push({
-        id: 'format',
-        title: 'Provisioned With',
-        value: format
-      })
-
-      if (this.addon.properties && this.addon.properties.created_at) {
-        info.push({
-          id: 'createdAt',
-          title: 'Created At',
-          value: this.addon.properties.created_at
-        })
-      }
-
-      if (this.addon.properties && this.addon.properties.updated_at) {
-        info.push({
-          id: 'updated',
-          title: 'Updated At',
-          value: this.addon.properties.updated_at
-        })
-      }
-
-      if (marketplace) {
-        info.push({
-          id: 'communityTopicLink',
-          title: 'Community Topic',
-          linkIcon: 'chat_bubble_2_fill',
-          linkUrl: this.addon.link
-        })
-      } else {
-        info.push({
-          id: 'documentationLink',
-          title: 'Documentation',
-          linkIcon: 'question_circle_fill',
-          linkUrl: `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}` // this.addon.link
-        })
-        info.push({
-          id: 'issuesLink',
-          title: 'Issues',
-          linkIcon: 'exclamationmark_bubble_fill',
-          linkUrl: 'https://github.com/openhab/openhab-addons/issues?q=is%3Aopen+' + this.addon.id.substring(this.addon.id.indexOf('-') + 1)
-        })
-        info.push({
-          id: 'discussionsLink',
-          title: 'Community Discussions',
-          linkIcon: 'chat_bubble_2_fill',
-          linkUrl: 'https://community.openhab.org/search?q=' + this.addon.id.substring(this.addon.id.indexOf('-') + 1)
-        })
-      }
-
-      return info
     }
   },
   methods: {

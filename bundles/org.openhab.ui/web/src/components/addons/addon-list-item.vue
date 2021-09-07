@@ -3,9 +3,14 @@
     v-if="addon"
     class="addon-list-item padding-right-half"
     :title="addon.label"
-    :link="addon.id"
-    :subtitle="addon.author">
-    <f7-icon v-if="addon.verifiedAuthor" slot="subtitle" size="15" :color="$f7.data.themeOptions.dark === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" style="margin-top: -3px; margin-left: 3px" />
+    :link="addon.id">
+    <div v-if="addon.verifiedAuthor" slot="subtitle">
+      {{ addon.author }}
+      <f7-icon v-if="addon.verifiedAuthor" size="15" :color="$f7.data.themeOptions.dark === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" style="margin-top: -3px" />
+    </div>
+    <div v-else-if="addon.properties && addon.properties.views" slot="subtitle">
+      <addon-stats-line :addon="addon" :iconSize="15" />
+    </div>
     <f7-icon v-show="!logoLoaded" slot="media" size="64" color="gray" :f7="addonIcon" class="item-default-icon" />
     <div class="item-logo" slot="media">
       <img v-if="!logoError" class="lazy" :style="{ visibility: logoLoaded ? 'visible': 'hidden' }" ref="logo" width="54" :data-src="imageUrl">
@@ -52,9 +57,13 @@
 
 <script>
 import { AddonIcons } from '@/assets/addon-store'
+import AddonStatsLine from './addon-stats-line.vue'
 
 export default {
   props: ['addon'],
+  components: {
+    AddonStatsLine
+  },
   data () {
     return {
       logoLoaded: false,
