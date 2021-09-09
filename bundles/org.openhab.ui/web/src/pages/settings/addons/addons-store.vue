@@ -70,6 +70,7 @@
         :subtitle="'Shared by the community to bootstrap your automation'" />
       <addons-section
         v-if="addons && addons.karaf"
+        @addonButtonClick="addonButtonClick"
         :addons="addons.karaf.filter((a) => a.type === 'automation')"
         :title="'Automation Add-ons'"
         :subtitle="'Add functionality with add-ons from the distribution'" />
