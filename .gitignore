@@ -4,6 +4,7 @@ target/
 src-gen/
 bin/
 .metadata/
+.openapi-generator/
 **/.settings/org.eclipse.*
 features/*/src/main/history
 npm-debug.log
