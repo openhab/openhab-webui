@@ -30,6 +30,10 @@
 </style>
 
 <script>
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+dayjs.extend(utc)
+
 import { ContentTypes, Formats } from '@/assets/addon-store'
 
 export default {
@@ -90,7 +94,7 @@ export default {
         info.push({
           id: 'createdAt',
           title: 'Created At',
-          value: this.addon.properties.created_at
+          value: dayjs(this.addon.properties.created_at).utc('z').local().format('LLL')
         })
       }
 
@@ -98,7 +102,7 @@ export default {
         info.push({
           id: 'updated',
           title: 'Updated At',
-          value: this.addon.properties.updated_at
+          value: dayjs(this.addon.properties.updated_at).utc('z').local().format('LLL')
         })
       }
 

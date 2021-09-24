@@ -12,6 +12,7 @@ export const ContentTypes = {
   'application/java-archive': 'Java Archive',
   'application/vnd.openhab.bundle': 'OSGi Bundle',
   'application/vnd.openhab.feature;type=karaf': 'Karaf Feature',
+  'application/vnd.openhab.feature;type=karfile': 'Karaf KAR Archive',
   'application/vnd.openhab.ruletemplate': 'Rule Template',
   'application/vnd.openhab.uicomponent;type=widget': 'UI Component - Widget'
 }

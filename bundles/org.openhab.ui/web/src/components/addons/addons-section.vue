@@ -1,5 +1,5 @@
 <template>
-  <f7-block class="addons-section" ref="addongroup">
+  <f7-block class="addons-section" ref="addongroup" v-if="addons && addons.length > 0">
     <f7-block-title medium>
       {{ title }}
       <f7-link v-if="canExpand" color="blue" class="see-all-button margin-right" @click="expand">
@@ -10,13 +10,13 @@
       {{ subtitle }}
     </f7-block-footer>
     <div class="addons-cards">
-      <addon-card v-for="addon in featuredAddons" :key="addon.id" :addon="addon" :headline="'Featured'" @addonButtonClick="addonButtonClick" />
+      <addon-card v-for="addon in featuredAddons" :key="addon.id" :addon="addon" :install-action-text="installActionText" :headline="'Featured'" @addonButtonClick="addonButtonClick" />
     </div>
     <div v-if="showAsCards" class="addons-cards">
-      <addon-card v-for="addon in addonsList" :key="addon.id" :addon="addon" @addonButtonClick="addonButtonClick" />
+      <addon-card v-for="addon in addonsList" :key="addon.id" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
     </div>
     <f7-list v-else media-list ref="addonlist" class="addons-table-list" no-chevron no-hairlines>
-      <addon-list-item v-for="addon in addonsList" :key="addon.id" :addon="addon" @addonButtonClick="addonButtonClick" />
+      <addon-list-item v-for="addon in addonsList" :key="addon.id" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
     </f7-list>
   </f7-block>
 </template>
@@ -91,7 +91,7 @@ import AddonCard from './addon-card.vue'
 import { compareAddons } from '@/assets/addon-store'
 
 export default {
-  props: ['addons', 'title', 'subtitle', 'showAll', 'featured', 'showAsCards'],
+  props: ['addons', 'title', 'subtitle', 'showAll', 'featured', 'showAsCards', 'installActionText'],
   components: {
     AddonListItem,
     AddonCard

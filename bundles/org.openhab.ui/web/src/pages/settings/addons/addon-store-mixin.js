@@ -34,6 +34,9 @@ export default {
       this.currentlyUninstalling.push(addon.id)
       if (this.currentAddon) this.$set(this.currentAddon, 'pending', 'UNINSTALL')
     },
+    installableAddon (addon) {
+      return (addon && (addon.contentType === 'application/vnd.openhab.bundle' || addon.contentType.indexOf('application/vnd.openhab.feature') === 0))
+    },
     isInstalling (addon) {
       return this.currentlyInstalling.indexOf(addon.id) >= 0
     },

@@ -161,10 +161,10 @@ export default [
             path: 'add',
             async: loadAsync(AddThingChooseBindingPage),
             routes: [
-              {
-                path: 'install-binding',
-                async: loadAsync(AddonsAddPage, { addonType: 'binding' })
-              },
+              // {
+              //   path: 'install-binding',
+              //   async: loadAsync(AddonsAddPage, { addonType: 'binding' })
+              // },
               {
                 path: ':bindingId',
                 async: loadAsync(AddThingChooseThingTypePage),

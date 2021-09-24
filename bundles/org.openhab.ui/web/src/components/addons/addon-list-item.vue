@@ -18,7 +18,7 @@
     <div slot="after">
       <f7-preloader v-if="addon.pending" color="blue" />
       <f7-button v-else-if="addon.installed" class="install-button prevent-active-state-propagation" text="Remove" color="red" round small @click="buttonClicked" />
-      <f7-button v-else class="install-button prevent-active-state-propagation" text="Install" color="blue" round small @click="buttonClicked" />
+      <f7-button v-else class="install-button prevent-active-state-propagation" :text="installActionText || 'Install'" color="blue" round small @click="buttonClicked" />
     </div>
   </f7-list-item>
 </template>
@@ -60,7 +60,7 @@ import { AddonIcons } from '@/assets/addon-store'
 import AddonStatsLine from './addon-stats-line.vue'
 
 export default {
-  props: ['addon'],
+  props: ['addon', 'installActionText'],
   components: {
     AddonStatsLine
   },
@@ -80,7 +80,6 @@ export default {
   mounted () {
     this.addonIcon = AddonIcons[this.addon.type]
     this.$$(this.$refs.logo).once('lazy:loaded', (e) => {
-      console.log(this.addon.id + ' logo lazy loaded')
       this.logoLoaded = true
     })
     this.$$(this.$refs.logo).once('lazy:error', (e) => {

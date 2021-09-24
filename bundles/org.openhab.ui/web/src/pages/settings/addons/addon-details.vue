@@ -16,6 +16,7 @@
             <div class="addon-header-content">
               <div class="addon-header-title">
                 {{ addon.label }}
+                <f7-link v-if="!isPending(addon) && bindingInfo && bindingInfo.configDescriptionURI" icon-f7="gears" tooltip="Configure Binding" color="gray" :href="'/settings/addons/' + bindingInfo.id + '/config'" round small />
               </div>
               <div v-if="addon.verifiedAuthor" class="addon-header-subtitle">
                 {{ addon.author }}
@@ -26,8 +27,8 @@
               </div>
               <div class="addon-header-actions">
                 <f7-preloader v-if="isPending(addon)" color="blue" />
-                <f7-button v-else-if="addon.installed" class="install-button prevent-active-state-propagation" text="Remove" color="red" round small fill @click="openAddonPopup" />
-                <f7-button v-else class="install-button prevent-active-state-propagation" text="Install" color="blue" round small fill @click="openAddonPopup" />
+                <f7-button v-else-if="addon.installed" class="install-button" text="Remove" color="red" round small fill @click="openAddonPopup" />
+                <f7-button v-else class="install-button" :text="installableAddon(addon) ? 'Install' : 'Add'" color="blue" round small fill @click="openAddonPopup" />
               </div>
             </div>
           </div>
@@ -48,7 +49,8 @@
             <p>
               Lorem ipsum dolor sit amet, an labore inermis est.
               Mel ut dicant tamquam commune, duo id accumsan eleifend tractatos, ius purto vitae fabulas cu.
-              Te his vide omnis qualisque, in duo soluta persecuti instructior. Ex dicit detraxit voluptaria est. Aperiri reformidans comprehensam in vis.
+              Te his vide omnis qualisque, in duo soluta persecuti instructior. Ex dicit detraxit voluptaria est.
+              Aperiri reformidans comprehensam in vis.
             </p>
             <p>
               Quo quas rebum dicta ad, in erant eruditi vim.
@@ -141,12 +143,13 @@
             font-size 20px
     .addon-header-actions
       display flex
-      justify-content space-between
+      justify-content flex-start
       margin-top auto
       margin-bottom auto
       .install-button
         --f7-button-text-transform uppercase
-        min-width 100px
+        padding-left 15px
+        padding-right 15px
         font-size 16px
   .addon-description
     --f7-block-strong-bg-color transparent
@@ -166,6 +169,8 @@
     img
       max-width calc(100%)
       height auto
+      &.lazy:not(.lazy-loaded)
+        opacity 0
 </style>
 
 <script>
@@ -190,7 +195,8 @@ export default {
       addonIcon: null,
       descriptionReady: false,
       parsedDescription: '',
-      descriptionExpanded: false
+      descriptionExpanded: false,
+      bindingInfo: null
     }
   },
   computed: {
@@ -220,12 +226,19 @@ export default {
     },
     docLinkUrl () {
       if (!this.addon) return ''
-      return (this.serviceId === 'marketplace') ? this.addon.link : `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}`
+      if (this.serviceId !== 'karaf' && this.addon.link) return this.addon.link
+      if (this.serviceId === 'karaf') {
+        let url = `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org` +
+          `/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}` +
+          `/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}`
+        return url
+      }
+      return ''
     }
   },
   methods: {
     onPageBeforeIn () {
-      if (this.ready) return
+      this.ready = false
       this.load()
     },
     onPageBeforeOut () {
@@ -239,6 +252,7 @@ export default {
         serviceId = 'marketplace'
         addonId = addonId.substring(addonId.indexOf(':') + 1)
       }
+      this.bindingInfo = null
       this.$oh.api.get('/rest/addons/' + addonId + (serviceId ? '?serviceId=' + serviceId : '')).then((data) => {
         this.resetPending()
         this.$set(this, 'addon', data)
@@ -257,6 +271,12 @@ export default {
           })
           this.$f7.lazy.create('.page-addon-details')
         })
+
+        if (this.addon.type === 'binding' && this.addonId.indexOf('binding-') === 0 && this.addon.installed) {
+          this.$oh.api.get('/rest/bindings').then(data2 => {
+            this.bindingInfo = data2.find(b => b.id === this.addonId.replace('binding-', '')) || {}
+          })
+        }
       })
     },
     processDescription () {

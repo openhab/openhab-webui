@@ -1,6 +1,6 @@
 <template>
   <f7-page>
-    <f7-navbar :title="'Configure ' + binding.name" back-link="Bindings">
+    <f7-navbar :title="'Configure ' + binding.name" back-link="Back">
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
