@@ -68,13 +68,13 @@ export default {
     actualState (val) {
       if (val !== this.currentState) {
         this.currentState = val
-        this.updateIcon()
+        if (this.iconType === 'oh') this.updateIcon()
       }
     },
-    actualIcon (val) {
+    iconName (val) {
       if (val !== this.currentIcon) {
         this.currentIcon = val
-        this.updateIcon()
+        if (this.iconType === 'oh') this.updateIcon()
       }
     }
   },
