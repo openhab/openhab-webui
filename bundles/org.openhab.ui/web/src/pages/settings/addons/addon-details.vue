@@ -16,7 +16,6 @@
             <div class="addon-header-content">
               <div class="addon-header-title">
                 {{ addon.label }}
-                <f7-link v-if="!isPending(addon) && bindingInfo && bindingInfo.configDescriptionURI" icon-f7="gears" tooltip="Configure Binding" color="gray" :href="'/settings/addons/' + bindingInfo.id + '/config'" round small />
               </div>
               <div v-if="addon.verifiedAuthor" class="addon-header-subtitle">
                 {{ addon.author }}
@@ -29,6 +28,7 @@
                 <f7-preloader v-if="isPending(addon)" color="blue" />
                 <f7-button v-else-if="addon.installed" class="install-button" text="Remove" color="red" round small fill @click="openAddonPopup" />
                 <f7-button v-else class="install-button" :text="installableAddon(addon) ? 'Install' : 'Add'" color="blue" round small fill @click="openAddonPopup" />
+                <f7-link v-if="!isPending(addon) && bindingInfo && bindingInfo.configDescriptionURI" icon-f7="gears" tooltip="Configure Binding" color="blue" :href="'/settings/addons/' + bindingInfo.id + '/config'" round small />
               </div>
             </div>
           </div>
@@ -143,9 +143,11 @@
             font-size 20px
     .addon-header-actions
       display flex
-      justify-content flex-start
+      justify-content space-between
+      align-items center
       margin-top auto
       margin-bottom auto
+      margin-right 15px
       .install-button
         --f7-button-text-transform uppercase
         padding-left 15px
