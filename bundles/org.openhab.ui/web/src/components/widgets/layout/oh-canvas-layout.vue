@@ -44,7 +44,7 @@
         width: style.width + 'px',
         height: style.height + 'px',
         transform: `scale(${style.scale})`,
-        textAlign: 'center',
+        'text-align': 'center',
         position: 'relative',
         '--oh-canvas-item-box-shadow': config.boxShadow
           ? config.boxShadow
@@ -77,9 +77,9 @@
           position: 'absolute',
           top: 0,
           left: 0,
-          backgroundImage:
+          'background-image':
             'linear-gradient(-90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px), linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px)',
-          backgroundSize: `${grid.pitch}px ${grid.pitch}px, ${grid.pitch}px ${grid.pitch}px`,
+          'background-size': `${grid.pitch}px ${grid.pitch}px, ${grid.pitch}px ${grid.pitch}px`,
           visibility: context.editmode && grid.enable ? 'inherit' : 'hidden',
         }" />
       <f7-button
@@ -108,36 +108,32 @@
         v-for="obj in layout"
         :key="obj.id"
         :id="obj.id"
-        :gridEnable="grid.enable"
-        :gridPitch="grid.pitch"
+        :grid-enable="grid.enable"
+        :grid-pitch="grid.pitch"
         :context="childContext(obj.item)" />
     </div>
   </div>
 </template>
 
 <style lang="stylus">
-.oh-canvas-layout {
-  overflow: visible; // prevent widget menus from scrolling page
+.oh-canvas-layout
+  overflow visible // prevent widget menus from scrolling page
 
-  .oh-canvas-layout-container {
-    margin: auto; // center layout when smaller than current screen
-    background-color: var(--f7-page-bg-color); // theme bg (for fullscreen)
-    transform-origin: top;
-  }
+  .oh-canvas-layout-container
+    margin auto // center layout when smaller than current screen
+    background-color var(--f7-page-bg-color) // theme bg (for fullscreen)
+    transform-origin top
 
-  .oh-canvas-background {
-    height: 100%;
-    width: 100%;
-    object-fit: contain;
-  }
+  .oh-canvas-background
+    height 100%
+    width 100%
+    object-fit contain
 
-  .fullscreen-icon {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    z-index: 1000;
-  }
-}
+  .fullscreen-icon
+    position absolute
+    top 2px
+    right 2px
+    z-index 1000
 </style>
 
 <script>
@@ -173,14 +169,11 @@ export default {
     if (this.config.layoutType === 'fixed' && this.config.fixedType === 'canvas') {
       this.style.width = this.screenWidth = this.config.screenWidth || 1280
       this.style.height = this.screenHeight = this.config.screenHeight || 720
-      this.grid.pitch = this.config.grid || 5
+      this.grid.pitch = this.config.grid || 20
       this.grid.enable = this.config.gridEnable || false
 
       if (!this.context.editmode) {
         window.addEventListener('resize', this.setDimensions)
-      } else {
-        window.addEventListener('keydown', this.doCommand)
-        console.log('Adding keydown window listener')
       }
     }
 
@@ -191,9 +184,6 @@ export default {
     // Chrome reports a wrong size in fullscreen, store initial resolution and use non-dynamically.
     this.windowWidth = window.screen.width
     this.windowHeight = window.screen.height
-  },
-  destroyed () {
-    window.removeEventListener('keydown', this.doCommand)
   },
   methods: {
     isRetina () {
@@ -232,7 +222,7 @@ export default {
     toggleGrid () {
       this.context.component.config.gridEnable = this.grid.enable = !this.grid.enable
     },
-    canvasLayoutStyle: function () {
+    canvasLayoutStyle () {
       if (this.config.scale && !this.context.editmode) {
         this.style.scale = parent.innerWidth / this.screenWidth
       } else {
@@ -250,10 +240,6 @@ export default {
         })
       }
       this.layout = layout
-    },
-    doCommand (e) {
-      let cmd = String.fromCharCode(e.keyCode).toLowerCase()
-      console.log(`Received key press code:${e.keyCode} string:${cmd}`)
     }
   }
 }

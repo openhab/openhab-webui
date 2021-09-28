@@ -80,7 +80,7 @@ export function OhCanvasItemDefinition () {
 export function OhCanvasLayoutDefinition () {
   return new WidgetDefinition('oh-canvas-layout', 'Canvas Layout', 'Position widgets on a canvas layout with arbitrary position and size down to pixel resolution')
     .paramGroup(pg('layout', 'Layout Settings'), [
-      pn('grid', 'Grid size', 'Grid size in pixels used to snap content (default 5)')
+      pn('grid', 'Grid size', 'Grid size in pixels used to snap content (default 20)')
     ])
     .paramGroup(pg('screenSettings', 'Screen Settings'), [
       pn('screenWidth', 'Screen Width', 'Screen width in pixels (default 1280)'),

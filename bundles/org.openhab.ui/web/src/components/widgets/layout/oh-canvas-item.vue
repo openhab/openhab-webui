@@ -11,6 +11,8 @@
     :resizable="!!context.editmode && !autosize"
     :class-name="!!context.editmode ? 'oh-canvas-item-editmode' : 'oh-canvas-item-runmode'"
     :grid="gridEnable ? [gridPitch,gridPitch] : undefined"
+    :min-height="gridEnable ? gridPitch : undefined"
+    :min-width="gridEnable ? gridPitch : undefined"
     v-if="visible" class="oh-canvas-item no-margin"
     @dragging="onDrag"
     @resizing="onResize"
@@ -59,7 +61,7 @@
     outline 1px dashed #F00
 
   .oh-canvas-item
-    position: absolute
+    position absolute
 
     .oh-canvas-item-content
       width 100%
@@ -68,50 +70,49 @@
 
     .oh-canvas-item-styled        // override background obscuring styles from system widgets
       &.card                    // apply to card items
-        box-shadow: none
-        background: none
+        box-shadow none
+        background none
         .card-content, .card-footer
           .segmented, .stepper, .toggle
-            background: var(--f7-card-bg-color);
+            background var(--f7-card-bg-color)
 
     .oh-canvas-item-shadow        // shadow tuned to various card widgets
       &.card                    // apply to card items
         .card-content, .card-footer
           .segmented, .stepper, .toggle
-            box-shadow:  var(--oh-canvas-item-box-shadow)
+            box-shadow  var(--oh-canvas-item-box-shadow)
           .oh-slider
             .range-bar, .range-knob, .range-knob-label
-              box-shadow:  var(--oh-canvas-item-box-shadow)
+              box-shadow  var(--oh-canvas-item-box-shadow)
           img, svg
-            filter: var(--oh-canvas-item-svg-shadow)
+            filter var(--oh-canvas-item-svg-shadow)
         .label-card-content
-          text-shadow: var(--oh-canvas-item-text-shadow)
+          text-shadow var(--oh-canvas-item-text-shadow)
 
     .placeholder-widget a
-      height: 100%
-      padding: 0
-      display: flex
+      height 100%
+      padding 0
+      display flex
 
     .drag-handle                // show drag handle on upper left corner
-      position: absolute !important
-      top: 0px
-      left: 0px
-      padding: 2px
-      z-index: 1000
+      position absolute !important
+      top 0px
+      left 0px
+      padding 2px
+      z-index 1000
 
     .configure-canvas-menu        // show menu icon on upper right corner
-      position: absolute
-      top: 2px
-      right: 2px
+      position absolute
+      top 2px
+      right 2px
       .menu-inner
-        padding: 0px
+        padding 0px
       .menu-inner:after
-        width: 0px
+        width 0px
  </style>
 
 <script>
 import mixin from '../widget-mixin'
-// import VueDraggableResizable from 'vue-draggable-resizable'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
 
@@ -156,8 +157,8 @@ export default {
     toggleAutoSize () {
       if (this.w === 'auto') {
         const elem = document.getElementById('oh-canvas-item-vdr-' + this.id)
-        this.w = this.context.component.config.w = elem.clientWidth
-        this.h = this.context.component.config.h = elem.clientHeight
+        this.w = this.context.component.config.w = Math.max(10, elem.clientWidth)
+        this.h = this.context.component.config.h = Math.max(10, elem.clientHeight)
       } else {
         this.w = this.context.component.config.w = 'auto'
         this.h = this.context.component.config.h = 'auto'
@@ -168,13 +169,13 @@ export default {
       this.shadow = !this.shadow
       this.context.component.config.noCanvasShadow = !this.shadow
     },
-    onResize: function (x, y, width, height) {
+    onResize (x, y, width, height) {
       this.x = this.context.component.config.x = x
       this.y = this.context.component.config.y = y
       this.w = this.context.component.config.w = width
       this.h = this.context.component.config.h = height
     },
-    onDrag: function (x, y) {
+    onDrag (x, y) {
       this.x = this.context.component.config.x = x
       this.y = this.context.component.config.y = y
     },
