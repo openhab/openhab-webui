@@ -440,6 +440,17 @@ import defineOHBlocks from '@/assets/definitions/blockly/ohblocks'
 
 Vue.config.ignoredElements = ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
 
+// Code to prepend to have a common API to openHAB objects when running GraalVM JS or Nashorn.
+const prependCode = `
+if (typeof(require) === "function") {
+  ctx = this;
+  var runtime = require("@runtime");
+  itemRegistry = runtime.itemRegistry;
+  events = runtime.events;
+}
+
+`
+
 export default {
   props: ['blocks'],
   data () {
@@ -470,7 +481,7 @@ export default {
       return Blockly.Xml.domToText(xml)
     },
     getCode () {
-      return Blockly.JavaScript.workspaceToCode(this.workspace)
+      return prependCode + Blockly.JavaScript.workspaceToCode(this.workspace)
     },
     onChange (event) {
       if (event.type === Blockly.Events.FINISHED_LOADING) {
