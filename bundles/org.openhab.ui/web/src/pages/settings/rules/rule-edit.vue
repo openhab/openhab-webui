@@ -107,7 +107,9 @@
             <f7-block-title v-if="hasTemplate" medium class="margin-vertical padding-top">
               Template Configuration
             </f7-block-title>
-            <f7-link v-if="templateTopicLink" target="_blank" class="external margin-left" color="blue" :href="templateTopicLink">Template Community Marketplace Topic</f7-link>
+            <f7-link v-if="templateTopicLink" target="_blank" class="external margin-left" color="blue" :href="templateTopicLink">
+              Template Community Marketplace Topic
+            </f7-link>
             <config-sheet v-if="hasTemplate"
                           :parameter-groups="[]" :parameters="currentTemplate.configDescriptions"
                           :configuration="rule.configuration" />
