@@ -35,10 +35,10 @@
     <script-general-settings v-else-if="createMode" :createMode="true" :rule="rule" />
     <f7-block class="block-narrow" v-if="newScript">
       <f7-col>
+        <f7-block-title medium class="margin-left margin-bottom">
+          Scripting Method
+        </f7-block-title>
         <f7-list media-list>
-          <f7-block-title medium class="margin-bottom">
-            Scripting Method
-          </f7-block-title>
           <f7-list-item media-item radio radio-icon="start"
                         title="Design with Blockly"
                         footer="A beginner-friendly way to build scripts visually by assembling blocks"
@@ -47,7 +47,7 @@
             <img src="@/images/blockly.svg" height="32" width="32" slot="media">
           </f7-list-item>
         </f7-list>
-        <f7-block-footer class="margin-vertical">
+        <f7-block-footer class="margin-vertical margin-left">
           or choose the scripting language:
         </f7-block-footer>
         <f7-list media-list>
