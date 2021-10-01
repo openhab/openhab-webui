@@ -116,12 +116,14 @@ import mixin from '../widget-mixin'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
 
+import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
+import VueDraggableResizable from 'vue-draggable-resizable'
+
 export default {
   mixins: [mixin],
   widget: OhCanvasItemDefinition,
   components: {
-    'vue-draggable-resizable':
-        () => import('vue-draggable-resizable'),
+    'vue-draggable-resizable': VueDraggableResizable,
     OhPlaceholderWidget
   },
   props: {
