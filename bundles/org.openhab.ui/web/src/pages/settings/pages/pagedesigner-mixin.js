@@ -43,6 +43,8 @@ export default {
           pasteWidget: this.pasteWidget,
           moveWidgetUp: this.moveWidgetUp,
           moveWidgetDown: this.moveWidgetDown,
+          sendWidgetToBack: this.sendWidgetToBack,
+          bringWidgetToFront: this.bringWidgetToFront,
           removeWidget: this.removeWidget
         } : null,
         clipboardtype: this.clipboardType
@@ -285,18 +287,25 @@ export default {
     },
     moveWidgetUp (component, parentContext, slot = 'default') {
       let siblings = parentContext.component.slots[slot]
-      let pos = siblings.indexOf(component)
-      if (pos <= 0) return
-      siblings.splice(pos, 1)
-      siblings.splice(pos - 1, 0, component)
-      this.forceUpdate()
+      this.moveWidget(component, parentContext, slot, siblings.indexOf(component) - 1)
     },
     moveWidgetDown (component, parentContext, slot = 'default') {
       let siblings = parentContext.component.slots[slot]
+      this.moveWidget(component, parentContext, slot, siblings.indexOf(component) + 1)
+    },
+    bringWidgetToFront (component, parentContext, slot = 'default') {
+      this.moveWidget(component, parentContext, slot, parentContext.component.slots[slot].length)
+    },
+    sendWidgetToBack (component, parentContext, slot = 'default') {
+      this.moveWidget(component, parentContext, slot, 0)
+    },
+    moveWidget (component, parentContext, slot = 'default', newPos) {
+      let siblings = parentContext.component.slots[slot]
       let pos = siblings.indexOf(component)
-      if (pos >= siblings.length - 1) return
+      newPos = Math.max(0, Math.min(siblings.length, newPos))
+      if (pos === newPos) return
       siblings.splice(pos, 1)
-      siblings.splice(pos + 1, 0, component)
+      siblings.splice(newPos, 0, component)
       this.forceUpdate()
     },
     removeWidget (component, parentContext, slot = 'default') {
