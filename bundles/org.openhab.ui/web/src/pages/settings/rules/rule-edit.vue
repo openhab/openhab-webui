@@ -104,9 +104,10 @@
                             radio :checked="hasTemplate && currentTemplate.uid === template.uid" radio-icon="start"
                             @change="selectTemplate(template.uid)" />
             </f7-list>
-            <f7-block-title v-if="hasTemplate" medium class="margin-vertical">
+            <f7-block-title v-if="hasTemplate" medium class="margin-vertical padding-top">
               Template Configuration
             </f7-block-title>
+            <f7-link v-if="templateTopicLink" target="_blank" class="external margin-left" color="blue" :href="templateTopicLink">Template Community Marketplace Topic</f7-link>
             <config-sheet v-if="hasTemplate"
                           :parameter-groups="[]" :parameters="currentTemplate.configDescriptions"
                           :configuration="rule.configuration" />
@@ -147,7 +148,7 @@
               </f7-list>
             </div>
           </f7-col>
-          <f7-col v-if="isEditable || rule.tags.length > 0">
+          <f7-col v-if="(isEditable || rule.tags.length > 0) && (!createMode || !hasTemplate)">
             <f7-block-title>Tags</f7-block-title>
             <semantics-picker v-if="isEditable" :item="rule" />
             <tag-input :item="rule" :disabled="!isEditable" />
@@ -697,6 +698,13 @@ export default {
     },
     hasTemplate () {
       return this.rule && this.currentTemplate !== null
+    },
+    templateTopicLink () {
+      if (!this.currentTemplate) return null
+      if (!this.currentTemplate.tags) return null
+      const marketplaceTag = this.currentTemplate.tags.find((t) => t.indexOf('marketplace:') === 0)
+      if (marketplaceTag) return 'https://community.openhab.org/t/' + marketplaceTag.replace('marketplace:', '')
+      return null
     },
     yamlError () {
       if (this.currentTab !== 'code') return null
