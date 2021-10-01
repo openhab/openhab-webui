@@ -19,17 +19,26 @@
           icon-f7="square_on_square" />
         <f7-menu-item
           @click="toggleGrid()"
+          icon="margin-left-half"
           :icon-f7="grid.enable ? 'circle_grid_3x3_fill' : 'scircle_grid_3x3'"
-          style="margin-left: auto" />
+          style="margin-left: auto"
+          text="Grid" />
         <f7-menu-item
-          @click="
-            context.editmode.configureWidget(
-              context.component,
-              context.parent,
-              'oh-canvas-layout'
-            )
-          "
-          text="Configure" />
+          dropdown
+          icon-f7="rectangle_3_offgrid">
+          <f7-menu-dropdown right>
+            <f7-menu-dropdown-item
+              @click="
+                context.editmode.configureWidget(
+                  context.component,
+                  context.parent,
+                  'oh-canvas-layout'
+                )
+              "
+              href="#"
+              text="Configure Canvas Layout" />
+          </f7-menu-dropdown>
+        </f7-menu-item>
       </f7-menu>
       <hr>
     </f7-block>

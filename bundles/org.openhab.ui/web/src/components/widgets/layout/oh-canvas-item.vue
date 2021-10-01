@@ -109,7 +109,7 @@
         padding 0px
       .menu-inner:after
         width 0px
- </style>
+</style>
 
 <script>
 import mixin from '../widget-mixin'
