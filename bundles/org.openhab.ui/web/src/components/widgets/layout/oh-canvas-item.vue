@@ -116,14 +116,16 @@ import mixin from '../widget-mixin'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
 
-import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
-import VueDraggableResizable from 'vue-draggable-resizable'
-
 export default {
   mixins: [mixin],
   widget: OhCanvasItemDefinition,
   components: {
-    'vue-draggable-resizable': VueDraggableResizable,
+    'vue-draggable-resizable': () => Promise.all([
+      import(/* webpackChunkName: "canvas-layout" */ 'vue-draggable-resizable/dist/VueDraggableResizable.css'),
+      import(/* webpackChunkName: "canvas-layout" */ 'vue-draggable-resizable')
+    ]).then((component) => {
+      return component[1].default
+    }),
     OhPlaceholderWidget
   },
   props: {

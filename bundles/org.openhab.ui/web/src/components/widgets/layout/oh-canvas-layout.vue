@@ -154,7 +154,7 @@ export default {
   mixins: [mixin],
   widget: OhCanvasLayoutDefinition,
   components: {
-    'oh-canvas-item': () => import('./oh-canvas-item')
+    OhCanvasItem
   },
   data () {
     return {
