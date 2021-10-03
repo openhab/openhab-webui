@@ -82,43 +82,75 @@
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
             <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable because it has been provisioned from a file.
           </f7-block-footer>
-          <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
-            <div class="no-padding float-right">
+          <!-- <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
+          </f7-col> -->
+          <f7-col v-if="createMode && templates.length > 0" class="new-rule-from-template">
+            <f7-block-title medium class="margin-bottom">
+              Create from Template
+            </f7-block-title>
+            <f7-list media-list>
+              <f7-list-item title="No template" footer="Create a new rule from scratch"
+                            radio :checked="!hasTemplate" radio-icon="start"
+                            :value="''"
+                            @change="selectTemplate(null)" />
+            </f7-list>
+            <f7-block-footer class="margin-left">
+              or choose a rule template:
+            </f7-block-footer>
+            <f7-list media-list>
+              <f7-list-item :key="template.uid" v-for="template in templates"
+                            :title="template.label" :footer="template.description"
+                            :value="template.uid"
+                            radio :checked="hasTemplate && currentTemplate.uid === template.uid" radio-icon="start"
+                            @change="selectTemplate(template.uid)" />
+            </f7-list>
+            <f7-block-title v-if="hasTemplate" medium class="margin-vertical padding-top">
+              Template Configuration
+            </f7-block-title>
+            <f7-link v-if="templateTopicLink" target="_blank" class="external margin-left" color="blue" :href="templateTopicLink">
+              Template Community Marketplace Topic
+            </f7-link>
+            <config-sheet v-if="hasTemplate"
+                          :parameter-groups="[]" :parameters="currentTemplate.configDescriptions"
+                          :configuration="rule.configuration" />
+          </f7-col>
+          <f7-col v-if="!hasTemplate" class="rule-modules">
+            <div v-if="isEditable" class="no-padding float-right">
               <f7-button @click="toggleModuleControls" small outline :fill="showModuleControls" sortable-toggle=".sortable" style="margin-top: -3px; margin-right: 5px"
                          color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">
                 &nbsp;Reorder
               </f7-button>
             </div>
+            <div v-for="section in ['triggers', 'actions', 'conditions']" :key="section">
+              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)" v-if="isEditable || rule[section].length > 0">
+                {{ sectionLabels[section][0] }}
+              </f7-block-title>
+              <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
+                <f7-list-item media
+                              :title="mod.label || suggestedModuleTitle(mod, null, section)"
+                              :footer="mod.description || suggestedModuleDescription(mod, null, section)"
+                              v-for="mod in rule[section]" :key="mod.id"
+                              :link="isEditable && !showModuleControls"
+                              @click.native="(ev) => editModule(ev, section, mod)" swipeout>
+                  <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout" />
+                  <f7-link slot="after" v-if="mod.type && mod.type.indexOf('script') === 0" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" :tooltip="'Edit module'" />
+                  <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" tooltip="Edit module" />
+                  <f7-swipeout-actions right v-if="isEditable">
+                    <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                      Delete
+                    </f7-swipeout-button>
+                  </f7-swipeout-actions>
+                </f7-list-item>
+              </f7-list>
+              <f7-list v-if="isEditable">
+                <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="sectionLabels[section][1]" @click="addModule(section)">
+                  <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
+                </f7-list-item>
+                <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
+              </f7-list>
+            </div>
           </f7-col>
-          <f7-col class="rule-modules" v-for="section in ['triggers', 'actions', 'conditions']" :key="section">
-            <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)" v-if="isEditable || rule[section].length > 0">
-              {{ sectionLabels[section][0] }}
-            </f7-block-title>
-            <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
-              <f7-list-item media
-                            :title="mod.label || suggestedModuleTitle(mod, null, section)"
-                            :footer="mod.description || suggestedModuleDescription(mod, null, section)"
-                            v-for="mod in rule[section]" :key="mod.id"
-                            :link="isEditable && !showModuleControls"
-                            @click.native="(ev) => editModule(ev, section, mod)" swipeout>
-                <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout" />
-                <f7-link slot="after" v-if="mod.type && mod.type.indexOf('script') === 0" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" :tooltip="'Edit module'" />
-                <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" tooltip="Edit module" />
-                <f7-swipeout-actions right v-if="isEditable">
-                  <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                    Delete
-                  </f7-swipeout-button>
-                </f7-swipeout-actions>
-              </f7-list-item>
-            </f7-list>
-            <f7-list v-if="isEditable">
-              <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="sectionLabels[section][1]" @click="addModule(section)">
-                <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
-              </f7-list-item>
-              <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
-            </f7-list>
-          </f7-col>
-          <f7-col v-if="isEditable || rule.tags.length > 0">
+          <f7-col v-if="(isEditable || rule.tags.length > 0) && (!createMode || !hasTemplate)">
             <f7-block-title>Tags</f7-block-title>
             <semantics-picker v-if="isEditable" :item="rule" />
             <tag-input :item="rule" :disabled="!isEditable" />
@@ -185,9 +217,12 @@ import ModuleDescriptionSuggestions from './module-description-suggestions'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import DirtyMixin from '../dirty-mixin'
 
+import ConfigSheet from '@/components/config/config-sheet.vue'
+
 export default {
   mixins: [ModuleDescriptionSuggestions, RuleStatus, DirtyMixin],
   components: {
+    ConfigSheet,
     SemanticsPicker,
     TagInput,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
@@ -221,7 +256,9 @@ export default {
       codeEditorOpened: false,
       cronPopupOpened: false,
       scriptCode: '',
-      cronExpression: null
+      cronExpression: null,
+      templates: null,
+      currentTemplate: null
     }
   },
   watch: {
@@ -286,12 +323,16 @@ export default {
             conditions: [],
             tags: (this.schedule) ? ['Schedule'] : [],
             configuration: {},
+            templateUID: null,
             visibility: 'VISIBLE',
             status: {
               status: 'NEW'
             }
           })
-          loadingFinished()
+          this.$oh.api.get('/rest/templates').then((data2) => {
+            this.$set(this, 'templates', data2)
+            loadingFinished()
+          })
           // no need for an event source, the rule doesn't exist yet
         } else {
           this.$oh.api.get('/rest/rules/' + this.ruleId).then((data2) => {
@@ -404,6 +445,18 @@ export default {
     stopEventSource () {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
+    },
+    selectTemplate (uid) {
+      this.$set(this.rule, 'configuration', {})
+      this.$set(this.rule, 'triggers', [])
+      this.$set(this.rule, 'conditions', [])
+      this.$set(this.rule, 'actions', [])
+      if (!uid) {
+        this.$set(this, 'currentTemplate', null)
+        return
+      }
+      this.$set(this, 'currentTemplate', this.templates.find((t) => t.uid === uid))
+      this.rule.templateUID = uid
     },
     keyDown (ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
@@ -620,6 +673,7 @@ export default {
     },
     toYaml () {
       this.ruleYaml = YAML.stringify({
+        configuration: this.rule.configuration,
         triggers: this.rule.triggers,
         conditions: this.rule.conditions,
         actions: this.rule.actions
@@ -628,10 +682,11 @@ export default {
     fromYaml () {
       if (!this.isEditable) return
       try {
-        const updatedModules = YAML.parse(this.ruleYaml)
-        this.$set(this.rule, 'triggers', updatedModules.triggers)
-        this.$set(this.rule, 'conditions', updatedModules.conditions)
-        this.$set(this.rule, 'actions', updatedModules.actions)
+        const updatedRule = YAML.parse(this.ruleYaml)
+        this.$set(this.rule, 'configuration', updatedRule.configuration)
+        this.$set(this.rule, 'triggers', updatedRule.triggers)
+        this.$set(this.rule, 'conditions', updatedRule.conditions)
+        this.$set(this.rule, 'actions', updatedRule.actions)
         return true
       } catch (e) {
         this.$f7.dialog.alert(e).open()
@@ -642,6 +697,16 @@ export default {
   computed: {
     isEditable () {
       return this.rule && this.rule.editable !== false
+    },
+    hasTemplate () {
+      return this.rule && this.currentTemplate !== null
+    },
+    templateTopicLink () {
+      if (!this.currentTemplate) return null
+      if (!this.currentTemplate.tags) return null
+      const marketplaceTag = this.currentTemplate.tags.find((t) => t.indexOf('marketplace:') === 0)
+      if (marketplaceTag) return 'https://community.openhab.org/t/' + marketplaceTag.replace('marketplace:', '')
+      return null
     },
     yamlError () {
       if (this.currentTab !== 'code') return null
