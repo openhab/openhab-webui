@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Ukrainian\n"
 "Language: uk_UA\n"
-"PO-Revision-Date: 2021-06-09 16:21\n"
+"PO-Revision-Date: 2021-10-04 13:51\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
@@ -260,62 +260,62 @@ msgstr "Зберегти поточну конфігурацію в конфіг
 #. Title of the dialog box when creating a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.title"
 msgid "New panel configuration"
-msgstr ""
+msgstr "Нова конфігурація панелі"
 
 #. Message of the dialog box when creating a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.message"
 msgid "Please choose a name for the new panel configuration (letters and digits only please):"
-msgstr ""
+msgstr "Будь ласка, оберіть ім'я для нової панелі конфігурації (лише букви і цифри, будь ласка):"
 
 #. Title of the dialog box when deleting a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.remove.title"
 msgid "Remove panel configuration"
-msgstr ""
+msgstr "Видалити конфігурацію панелі"
 
 #. Message of the dialog box when deleting a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
 msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
-msgstr ""
+msgstr "Будь ласка, підтвердіть, що бажаєте видалити цю панель конфігурації з реєстру сервера: {{name}}. Переконайтеся, що інші екземпляри не використовують цю конфігурацію панелі!"
 
 #. Message of the dialog box when switching from local storage to a server-based panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
 msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
-msgstr ""
+msgstr "Перемикання з локальної пам'яті на панель конфігурації перезапише ваші локальні конфігурації! Ви впевнені?"
 
 #. Panel name (section header)
 msgctxt "settings.panel.name"
 msgid "Panel name"
-msgstr ""
+msgstr "Назва панелі"
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.name.hint"
 msgid "Replaces 'HABPanel' in the side drawer when set"
-msgstr ""
+msgstr "При встановленні, замінює HABPanel в бічному випливаючому меню"
 
 #. Appearance (section header)
 msgctxt "settings.panel.appearance.header"
 msgid "Appearance"
-msgstr ""
+msgstr "Зовнішній вигляд"
 
 #. Dropown menu header
 msgctxt "settings.panel.appearance.theme"
 msgid "Theme"
-msgstr ""
+msgstr "Тема"
 
 #. Alert banner displayed when the browsers doesn't support themes (CSS variables)
 msgctxt "settings.panel.appearance.theme.not_supported"
 msgid "Themes are not compatible with this browser."
-msgstr ""
+msgstr "Теми не сумісні з цим браузером."
 
 #. Setting header
 msgctxt "settings.panel.appearance.additional_stylesheet"
 msgid "Additional stylesheet (optional)"
-msgstr ""
+msgstr "Додаткові таблиці стилів (опціонально)"
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.additional_stylesheet.hint"
 msgid "Relative URL only; example: /static/example.css"
-msgstr ""
+msgstr "Тільки відносна URL-адреса; наприклад: /static/example.css"
 
 #. Setting header
 msgctxt "settings.panel.appearance.background_image"
