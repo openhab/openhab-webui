@@ -3,7 +3,7 @@
     <f7-card-header v-if="config.title">
       <div>{{ config.title }}</div>
     </f7-card-header>
-    <f7-card-content class="oh-gauge-card display-flex justify-content-center" @click.native="performAction" >
+    <f7-card-content class="oh-gauge-card display-flex justify-content-center clickPointer" @click.native="performAction" >
       <oh-gauge :context="childContext(context.component)" @command="onCommand"  />
     </f7-card-content>
     <f7-card-footer v-if="config.footer">
@@ -13,6 +13,9 @@
 </template>
 
 <style lang="stylus">
+ .clickPointer {
+    cursor pointer
+  }
 </style>
 
 <script>
