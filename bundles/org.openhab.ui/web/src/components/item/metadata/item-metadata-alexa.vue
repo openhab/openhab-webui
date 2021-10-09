@@ -7,7 +7,7 @@
     <f7-list v-if="ready">
       <f7-list-item
         :key="classSelectKey"
-        :title="'Alexa Device Type' + (itemType !== 'Group' ? !multiple ? '/Attribute' : '/Attributes' : '')"
+        :title="'Alexa Device Type' + (itemType !== 'Group' ? (!multiple ? '/Attribute' : '/Attributes') : '')"
         smart-select
         :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }"
         ref="classes">
@@ -37,17 +37,16 @@
         </select>
       </f7-list-item>
       <f7-block-footer class="padding-left no-padding no-margin" v-if="item.groups.length">
-        <small>Part of group endpoint{{ item.groups.length > 1 ? 's' : '' }}: {{ groupsDescription }}</small>
+        <small v-html="`Part of group endpoint${item.groups.length > 1 ? 's' : ''}: ${groupLinks}`" />
       </f7-block-footer>
     </f7-list>
     <div v-if="ready">
       <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" />
     </div>
     <f7-block class="padding-top no-padding no-margin" v-if="itemType === 'Group' && classes.length">
-      <f7-block-title>Group Endpoint Capabilities</f7-block-title>
-      <f7-block-footer v-if="!groupCapabilities.length">
-        No direct group members of {{ item.name }} configured for Alexa
-      </f7-block-footer>
+      <f7-block-title class="padding-left">
+        Group Endpoint Capabilities
+      </f7-block-title>
       <f7-list>
         <f7-list-item
           v-for="cap in groupCapabilities"
@@ -57,9 +56,12 @@
           :disabled="cap.isIgnored"
           :link="`/settings/items/${cap.item}/metadata/alexa`" />
       </f7-list>
+      <f7-block-footer class="padding-left" v-if="!groupCapabilities.length">
+        No direct group members of {{ item.name }} configured for Alexa
+      </f7-block-footer>
     </f7-block>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" :href="link">
+      <f7-link color="blue" external target="_blank" :href="docLink">
         Alexa Integration Documentation
       </f7-link>
     </p>
@@ -81,6 +83,9 @@ export default {
       itemType: this.item.groupType || this.item.type,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
       classSelectKey: this.$f7.utils.id(),
+      docUrl:
+        `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org` +
+        '/link/alexa',
       ready: false
     }
   },
@@ -121,6 +126,7 @@ export default {
         const def = AlexaDefinitions[cl]
         const params = def ? this.itemType === 'Group' ? def.groupParameters : def.parameters : []
         for (const p of params.map((p) => p(this.item, this.metadata.config)).flat()) {
+          if (p.description) p.description = p.description.replace('%DOC_URL%', this.docUrl)
           if (!parameters.find((e) => e.name === p.name)) parameters.push(p)
         }
         return parameters
@@ -141,23 +147,26 @@ export default {
           }))
         ), [])
     },
-    groupsDescription () {
-      return this.item.groups.map((g) => `${g.label || g.name} (${g.metadata.alexa.value})`).join(', ')
+    groupLinks () {
+      return this.item.groups
+        .map((g) => `<a class="text-color-blue" href="/settings/items/${g.name}/metadata/alexa">${g.label || g.name}</a>`)
+        .join(', ')
     },
-    link () {
-      return 'https://www.openhab.org/link/alexa#'.concat(
-        this.itemType === 'Group'
-          ? 'group-endpoint'
-          : this.classes.length === 0 || !this.classesDefs.includes(this.classes[0])
-            ? this.item.groups.length
-              ? 'group-endpoint'
-              : 'single-endpoint'
-            : this.classes[0].indexOf('.') === -1
-              ? this.classes[0] === 'Scene' || this.classes[0] === 'Activity'
-                ? this.classes[0].toLowerCase()
-                : 'device-types'
-              : this.classes[0].split('.')[1].toLowerCase()
-      )
+    isPartOfGroupEndpoint () {
+      return this.item.groups.length > 0
+    },
+    docLink () {
+      if (this.itemType === 'Group') {
+        return `${this.docUrl}#group-endpoint`
+      } else if (this.classes.length === 0 || !this.classesDefs.includes(this.classes[0])) {
+        return `${this.docUrl}#${this.isPartOfGroupEndpoint ? 'group-endpoint' : 'single-endpoint'}`
+      } else if (this.classes[0].indexOf('.') >= 0) {
+        return `${this.docUrl}#${this.classes[0].split('.')[1].toLowerCase()}`
+      } else if (this.classes[0] === 'Scene' || this.classes[0] === 'Activity') {
+        return `${this.docUrl}#${this.classes[0].toLowerCase()}`
+      } else {
+        return `${this.docUrl}#device-types`
+      }
     }
   },
   methods: {
@@ -180,10 +189,10 @@ export default {
     },
     requiresGroupAttributes (cl) {
       const requires = this.getAlexaDef(cl).requires || []
-      return !this.item.groups.length && requires.length > 0
+      return !this.isPartOfGroupEndpoint && requires.length > 0
     },
     supportsGroupType (cl) {
-      return !this.item.groups.length || this.item.groups.some((g) => cl.startsWith(`${g.metadata.alexa.value}.`))
+      return !this.isPartOfGroupEndpoint || this.item.groups.some((g) => cl.startsWith(`${g.metadata.alexa.value}.`))
     },
     supportsItemType (cl) {
       const itemTypes = this.getAlexaDef(cl).itemTypes || []

@@ -9,12 +9,12 @@ import {
   UNITS_OF_MEASURE
 } from './constants.js'
 import {
+  docLink,
   getGroupParameter,
   getOptions,
   getSemanticFormat,
   getTemperatureScale,
   getUnitOfMeasure,
-  link,
   titleCase
 } from './helpers.js'
 
@@ -22,7 +22,7 @@ export default {
   actionMappings: (format, placeholder) => ({
     name: 'actionMappings',
     label: 'Action Mappings',
-    description: `Each mapping formatted as ${getSemanticFormat('action', format)} (${link('Semantic Extensions')})`,
+    description: `Each mapping formatted as ${getSemanticFormat('action', format)} (${docLink('Semantic Extensions')})`,
     type: 'TEXT',
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true
@@ -35,7 +35,7 @@ export default {
   capabilityNames: (label, placeholder) => ({
     name: 'capabilityNames',
     label: 'Capability Names',
-    description: `Each name formatted as <code>@assetIdOrName</code> (${link('Asset Catalog')})`,
+    description: `Each name formatted as <code>@assetIdOrName</code> (${docLink('Asset Catalog')})`,
     type: 'TEXT',
     default: [label],
     placeholder: placeholder.replace(/,/, '\n'),
@@ -184,7 +184,7 @@ export default {
     label: 'Presets',
     description:
       'Each preset formatted as <code>presetValue=@assetIdOrName1:@assetIdOrName2:...</code>' +
-      ` (${link('Asset Catalog')})`,
+      ` (${docLink('Asset Catalog')})`,
     type: 'TEXT',
     default:
       stateDescription &&
@@ -259,7 +259,7 @@ export default {
   stateMappings: (format, placeholder) => ({
     name: 'stateMappings',
     label: 'State Mappings',
-    description: `Each mapping formatted as ${getSemanticFormat('state', format)} (${link('Semantic Extensions')})`,
+    description: `Each mapping formatted as ${getSemanticFormat('state', format)} (${docLink('Semantic Extensions')})`,
     type: 'TEXT',
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true
@@ -286,7 +286,7 @@ export default {
     label: 'Supported Commands',
     description:
       'Each command formatted as <code>command</code> or <code>command=@assetIdOrName1:...</code>' +
-      ` (${link('Asset Catalog')})<br />Supported commands are ${commands.join(', ')}`,
+      ` (${docLink('Asset Catalog')})<br />Supported commands are ${commands.join(', ')}`,
     type: 'TEXT',
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true
@@ -328,7 +328,7 @@ export default {
     name: 'supportedModes',
     label: 'Supported Modes',
     description:
-      `Each mode formatted as <code>mode=@assetIdOrName1:@assetIdOrName2:...</code> (${link('Asset Catalog')})`,
+      `Each mode formatted as <code>mode=@assetIdOrName1:@assetIdOrName2:...</code> (${docLink('Asset Catalog')})`,
     type: 'TEXT',
     default:
       stateDescription &&

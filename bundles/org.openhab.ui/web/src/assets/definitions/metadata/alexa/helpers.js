@@ -14,6 +14,11 @@ export const titleCase = (string) =>
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
 
+export const docLink = (title, anchor) => {
+  const link = `%DOC_URL%#${anchor || title.replace(/[. ]/g, '-').toLowerCase()}`
+  return `<a class="external text-color-blue" target="_blank" href="${link}">${title}</a>`
+}
+
 export const getGroupParameter = (parameter, groups) => {
   for (const group of groups) {
     const config = group.metadata.alexa.config || {}
@@ -55,9 +60,4 @@ export const getUnitOfMeasure = (item) => {
     (itemType.startsWith('Number:') && state) ||
     statePresentation
   return Object.keys(UNITS_OF_MEASURE).find((id) => format.endsWith(UNITS_OF_MEASURE[id]))
-}
-
-export const link = (title, anchor) => {
-  const link = `https://www.openhab.org/link/alexa#${anchor || title.replace(/[. ]/g, '-').toLowerCase()}`
-  return `<a class="external text-color-blue" target="_blank" href="${link}">${title}</a>`
 }
