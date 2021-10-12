@@ -1,5 +1,5 @@
 <template>
-  <f7-page stacked name="HomePage" class="page-home" :class="{ 'standard-background': $f7.data.themeOptions.homeBackground === 'standard' }" @page:init="onPageInit" @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut">
+  <f7-page stacked name="HomePage" class="page-home" :class="{ 'standard-background': $f7.data.themeOptions.homeBackground === 'standard' }" @page:init="onPageInit" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :large="$f7.data.themeOptions.homeNavbar !== 'simple'" :large-transparent="$f7.data.themeOptions.homeNavbar !== 'simple'" class="home-nav">
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
@@ -25,7 +25,13 @@
       <f7-link tab-link v-if="tabVisible('properties')" @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" :text="$t('home.properties.tab')" />
     </f7-toolbar>
 
-    <f7-tabs v-if="modelReady">
+    <f7-block v-if="ready && !modelReady" class="text-align-center padding-top margin-top">
+      <f7-block-title>
+        <f7-preloader :size="30" />
+        <div>Loading...</div>
+      </f7-block-title>
+    </f7-block>
+    <f7-tabs v-else>
       <f7-tab id="tab-overview" :tab-active="currentTab === 'overview'" @tab:show="() => this.currentTab = 'overview'">
         <overview-tab v-if="currentTab === 'overview'" :context="context" :key="overviewPageKey" :allow-chat="allowChat" />
       </f7-tab>
@@ -142,19 +148,22 @@ export default {
     }
   },
   watch: {
-    ready: {
-      handler (val) {
-        if (val) {
-          this.loadModel()
-          this.$store.dispatch('startTrackingStates')
-        }
-      },
-      immediate: true
+    ready (val, oldVal) {
+      if (val && !oldVal) {
+        this.loadModel()
+        this.$store.dispatch('startTrackingStates')
+      }
     }
   },
   methods: {
     onPageBeforeIn () {
       this.overviewPageKey = this.$utils.id()
+    },
+    onPageAfterIn () {
+      if (this.ready) {
+        this.loadModel()
+        this.$store.dispatch('startTrackingStates')
+      }
     },
     onPageBeforeOut () {
       this.$store.dispatch('stopTrackingStates')
