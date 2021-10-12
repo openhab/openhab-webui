@@ -80,6 +80,7 @@ import GaugeParameters from '../system/gauge.js'
 export const OhGaugeCardDefinition = () => new WidgetDefinition('oh-gauge-card', 'Gauge Card', 'Display a read-only gauge in a card to visualize a quantifiable item')
   .paramGroup(CardParameterGroup(), CardParameters())
   .paramGroup(pg('gauge', 'Gauge', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://framework7.io/vue/gauge.html#gauge-properties">Gauge control</a>'), GaugeParameters())
+  .paramGroup(actionGroup(null, 'Action to perform when the gauge is clicked'), actionParams())
 
 // OhKnobCard
 import KnobParameters from '../system/knob.js'
