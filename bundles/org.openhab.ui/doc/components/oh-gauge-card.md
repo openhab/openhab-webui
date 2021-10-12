@@ -161,7 +161,7 @@ Display a read-only gauge in a card to visualize a quantifiable item
 ### Action
 <div class="props">
 <PropGroup name="actions" label="Action">
-  Action to perform when the element is clicked
+  Action to perform when the gauge is clicked
 <PropBlock type="TEXT" name="action" label="Action">
   <PropDescription>
     Type of action to perform
@@ -306,6 +306,7 @@ Display a read-only gauge in a card to visualize a quantifiable item
 </PropBlock>
 </PropGroup>
 </div>
+
 
 <!-- GENERATED /props -->
 
