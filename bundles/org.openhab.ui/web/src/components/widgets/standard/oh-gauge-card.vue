@@ -4,7 +4,10 @@
       <div>{{ config.title }}</div>
     </f7-card-header>
     <f7-card-content class="oh-gauge-card display-flex justify-content-center">
-      <oh-gauge :context="childContext(context.component)" @command="onCommand" />
+      <f7-link v-if="config.action" class="oh-gauge-link" @click="performAction">
+        <oh-gauge :context="childContext(context.component)" />
+      </f7-link>
+      <oh-gauge v-else :context="childContext(context.component)" />
     </f7-card-content>
     <f7-card-footer v-if="config.footer">
       {{ config.footer }}
@@ -13,15 +16,22 @@
 </template>
 
 <style lang="stylus">
+.oh-gauge-link
+  position absolute
+  top 0
+  left 0
+  width 100%
+  height 100%
 </style>
 
 <script>
 import mixin from '../widget-mixin'
 import OhGauge from '../system/oh-gauge.vue'
+import { actionsMixin } from '../widget-actions'
 import { OhGaugeCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin],
+  mixins: [mixin, actionsMixin],
   components: {
     OhGauge
   },
