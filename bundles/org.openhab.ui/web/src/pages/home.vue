@@ -25,7 +25,7 @@
       <f7-link tab-link v-if="tabVisible('properties')" @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" :text="$t('home.properties.tab')" />
     </f7-toolbar>
 
-    <f7-block v-if="ready && !modelReady" class="text-align-center padding-top margin-top">
+    <f7-block v-if="!ready || (currentTab !== 'overview' && !modelReady)" class="text-align-center padding-top margin-top">
       <f7-block-title>
         <f7-preloader :size="30" />
         <div>Loading...</div>
