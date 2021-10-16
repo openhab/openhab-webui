@@ -1,3 +1,8 @@
+/*
+* @author yannick.schaus
+* Item-Field-Picker
+*/
+
 import Blockly from 'blockly'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 

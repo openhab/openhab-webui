@@ -61,6 +61,8 @@
     "Samsung >= 5"
   ],
   "dependencies": {
+    "@blockly/block-plus-minus": "^2.0.19",
+    "@blockly/field-slider": "^2.1.10",
     "blockly": "^4.20201217.0",
     "cronstrue": "^1.100.0",
     "dayjs": "^1.9.6",
