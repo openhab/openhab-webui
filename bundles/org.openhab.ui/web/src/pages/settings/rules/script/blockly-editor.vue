@@ -1,8 +1,11 @@
+<!--
+TODO: getAddons throws error
+-->
 <template>
+  <!-- eslint-disable vue/singleline-html-element-content-newline -->
   <div class="blockly-editor">
     <div class="blockly" ref="blocklyEditor" />
-
-    <xml xmlns="https://developers.google.com/blockly/xml" ref="toolbox" style="display: none">
+      <xml xmlns="https://developers.google.com/blockly/xml" ref="toolbox" style="display: none">
       <category name="Logic" colour="%{BKY_LOGIC_HUE}">
         <block type="controls_if" />
         <block type="logic_compare" />
@@ -16,9 +19,7 @@
         <block type="controls_repeat_ext">
           <value name="TIMES">
             <shadow type="math_number">
-              <field name="NUM">
-                10
-              </field>
+              <field name="NUM">10</field>
             </shadow>
           </value>
         </block>
@@ -26,23 +27,17 @@
         <block type="controls_for">
           <value name="FROM">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
           <value name="TO">
             <shadow type="math_number">
-              <field name="NUM">
-                10
-              </field>
+              <field name="NUM">10</field>
             </shadow>
           </value>
           <value name="BY">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
         </block>
@@ -51,41 +46,31 @@
       </category>
       <category name="Math" colour="%{BKY_MATH_HUE}">
         <block type="math_number">
-          <field name="NUM">
-            123
-          </field>
+          <field name="NUM">123</field>
         </block>
         <block type="math_arithmetic">
           <value name="A">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
           <value name="B">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
         </block>
         <block type="math_single">
           <value name="NUM">
             <shadow type="math_number">
-              <field name="NUM">
-                9
-              </field>
+              <field name="NUM">9</field>
             </shadow>
           </value>
         </block>
         <block type="math_trig">
           <value name="NUM">
             <shadow type="math_number">
-              <field name="NUM">
-                45
-              </field>
+              <field name="NUM">45</field>
             </shadow>
           </value>
         </block>
@@ -93,18 +78,14 @@
         <block type="math_number_property">
           <value name="NUMBER_TO_CHECK">
             <shadow type="math_number">
-              <field name="NUM">
-                0
-              </field>
+              <field name="NUM">0</field>
             </shadow>
           </value>
         </block>
         <block type="math_round">
           <value name="NUM">
             <shadow type="math_number">
-              <field name="NUM">
-                3.1
-              </field>
+              <field name="NUM">3.1</field>
             </shadow>
           </value>
         </block>
@@ -112,55 +93,41 @@
         <block type="math_modulo">
           <value name="DIVIDEND">
             <shadow type="math_number">
-              <field name="NUM">
-                64
-              </field>
+              <field name="NUM">64</field>
             </shadow>
           </value>
           <value name="DIVISOR">
             <shadow type="math_number">
-              <field name="NUM">
-                10
-              </field>
+              <field name="NUM">0</field>
             </shadow>
           </value>
         </block>
         <block type="math_constrain">
           <value name="VALUE">
             <shadow type="math_number">
-              <field name="NUM">
-                50
-              </field>
+              <field name="NUM">50</field>
             </shadow>
           </value>
           <value name="LOW">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
           <value name="HIGH">
             <shadow type="math_number">
-              <field name="NUM">
-                100
-              </field>
+              <field name="NUM">100</field>
             </shadow>
           </value>
         </block>
         <block type="math_random_int">
           <value name="FROM">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
           <value name="TO">
             <shadow type="math_number">
-              <field name="NUM">
-                100
-              </field>
+              <field name="NUM">100</field>
             </shadow>
           </value>
         </block>
@@ -168,16 +135,12 @@
         <block type="math_atan2">
           <value name="X">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
           <value name="Y">
             <shadow type="math_number">
-              <field name="NUM">
-                1
-              </field>
+              <field name="NUM">1</field>
             </shadow>
           </value>
         </block>
@@ -193,9 +156,7 @@
         <block type="text_length">
           <value name="VALUE">
             <shadow type="text">
-              <field name="TEXT">
-                abc
-              </field>
+              <field name="TEXT">abc</field>
             </shadow>
           </value>
         </block>
@@ -209,52 +170,40 @@
         <block type="text_indexOf">
           <value name="VALUE">
             <block type="variables_get">
-              <field name="VAR">
-                {textVariable}
-              </field>
+              <field name="VAR">{textVariable}</field>
             </block>
           </value>
           <value name="FIND">
             <shadow type="text">
-              <field name="TEXT">
-                abc
-              </field>
+              <field name="TEXT">abc</field>
             </shadow>
           </value>
         </block>
         <block type="text_charAt">
           <value name="VALUE">
             <block type="variables_get">
-              <field name="VAR">
-                {textVariable}
-              </field>
+              <field name="VAR">{textVariable}</field>
             </block>
           </value>
         </block>
         <block type="text_getSubstring">
           <value name="STRING">
             <block type="variables_get">
-              <field name="VAR">
-                {textVariable}
-              </field>
+              <field name="VAR">{textVariable}</field>
             </block>
           </value>
         </block>
         <block type="text_changeCase">
           <value name="TEXT">
             <shadow type="text">
-              <field name="TEXT">
-                abc
-              </field>
+              <field name="TEXT">abc</field>
             </shadow>
           </value>
         </block>
         <block type="text_trim">
           <value name="TEXT">
             <shadow type="text">
-              <field name="TEXT">
-                abc
-              </field>
+              <field name="TEXT">abc</field>
             </shadow>
           </value>
         </block>
@@ -267,9 +216,7 @@
         <block type="lists_repeat">
           <value name="NUM">
             <shadow type="math_number">
-              <field name="NUM">
-                5
-              </field>
+              <field name="NUM">5</field>
             </shadow>
           </value>
         </block>
@@ -278,45 +225,35 @@
         <block type="lists_indexOf">
           <value name="VALUE">
             <block type="variables_get">
-              <field name="VAR">
-                {listVariable}
-              </field>
+              <field name="VAR">{listVariable}</field>
             </block>
           </value>
         </block>
         <block type="lists_getIndex">
           <value name="VALUE">
             <block type="variables_get">
-              <field name="VAR">
-                {listVariable}
-              </field>
+              <field name="VAR">{listVariable}</field>
             </block>
           </value>
         </block>
         <block type="lists_setIndex">
           <value name="LIST">
             <block type="variables_get">
-              <field name="VAR">
-                {listVariable}
-              </field>
+              <field name="VAR">{listVariable}</field>
             </block>
           </value>
         </block>
         <block type="lists_getSublist">
           <value name="LIST">
             <block type="variables_get">
-              <field name="VAR">
-                {listVariable}
-              </field>
+              <field name="VAR">{listVariable}</field>
             </block>
           </value>
         </block>
         <block type="lists_split">
           <value name="DELIM">
             <shadow type="text">
-              <field name="TEXT">
-                ,
-              </field>
+              <field name="TEXT">,</field>
             </shadow>
           </value>
         </block>
@@ -328,156 +265,323 @@
         <block type="colour_rgb">
           <value name="RED">
             <shadow type="math_number">
-              <field name="NUM">
-                100
-              </field>
+              <field name="NUM">100</field>
             </shadow>
           </value>
           <value name="GREEN">
             <shadow type="math_number">
-              <field name="NUM">
-                50
-              </field>
+              <field name="NUM">50</field>
             </shadow>
           </value>
           <value name="BLUE">
             <shadow type="math_number">
-              <field name="NUM">
-                0
-              </field>
+              <field name="NUM">0</field>
             </shadow>
           </value>
         </block>
         <block type="colour_blend">
           <value name="COLOUR1">
             <shadow type="colour_picker">
-              <field name="COLOUR">
-                #ff0000
-              </field>
+              <field name="COLOUR">#ff0000</field>
             </shadow>
           </value>
           <value name="COLOUR2">
             <shadow type="colour_picker">
-              <field name="COLOUR">
-                #3333ff
-              </field>
+              <field name="COLOUR">#3333ff</field>
             </shadow>
           </value>
           <value name="RATIO">
             <shadow type="math_number">
-              <field name="NUM">
-                0.5
-              </field>
+              <field name="NUM">0.5</field>
             </shadow>
           </value>
         </block>
       </category>
       <category name="openHAB" colour="0">
-        <block type="oh_item" />
-        <block type="oh_getitem_state">
-          <value name="itemName">
-            <shadow type="oh_item" />
-          </value>
-        </block>
-        <block type="oh_event">
-          <value name="value">
-            <shadow type="text">
-              <field name="TEXT">
-                value
-              </field>
-            </shadow>
-          </value>
-          <value name="itemName">
-            <shadow type="oh_item" />
-          </value>
-        </block>
-        <block type="oh_log">
-          <value name="message">
-            <shadow type="text">
-              <field name="TEXT">
-                abc
-              </field>
-            </shadow>
-          </value>
-        </block>
-        <block type="oh_print">
-          <value name="message">
-            <shadow type="text">
-              <field name="TEXT">
-                abc
-              </field>
-            </shadow>
-          </value>
-        </block>
+        <category name="Items & Things">
+          <block type="oh_item" />
+          <block type="oh_getitem">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_getitem_state">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_event">
+            <value name="value">
+              <shadow type="text">
+                <field name="TEXT">
+                  value
+                </field>
+              </shadow>
+            </value>
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_thing" />
+          <block type="oh_getthing_state">
+            <value name="itemName">
+              <shadow type="oh_thing" />
+            </value>
+          </block>
+        </category>
+        <category name="Timers and Delays">
+          <block type="oh_sleep">
+            <value name="milliseconds">
+              <shadow type="text">
+                <field name="TEXT">1000</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
+        <category name="Ephemeris">
+          <block type="oh_ephemeris_basic" />
+          <block type="oh_ephemeris_offset">
+            <value name="offset">
+              <shadow type="math_number">
+                <field name="NUM">
+                  0
+                </field>
+              </shadow>
+            </value>
+          </block>
+        </category>
+        <category name="Voice/Multimedia">
+          <block type="oh_playmedia_sink">
+            <value name="sinkName">
+              <shadow type="oh_audiosink_dropdown" />
+            </value>
+          </block>
+          <block type="oh_playmedia_sink_volume">
+            <value name="sinkName">
+              <shadow type="oh_audiosink_dropdown" />
+            </value>
+            <value name="volume">
+              <shadow type="audioSlider">
+                <field name="volume">5</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_playstream_sink">
+            <value name="sinkName">
+              <shadow type="oh_audiosink_dropdown" />
+            </value>
+          </block>
+          <block type="oh_stopstream_sink">
+              <value name="sinkName">
+                <shadow type="oh_audiosink_dropdown" />
+              </value>
+          </block>
+          <block type="oh_say">
+              <value name="textToSay">
+                <shadow type="text">
+                  <field name="TEXT">text to say</field>
+                </shadow>
+              </value>
+              <value name="deviceSink">
+                <shadow type="text">
+                  <field name="TEXT">device (sink)</field>
+                </shadow>
+              </value>
+          </block>
+        </category>
+        <category name="Logging/Output">
+          <block type="oh_log">
+            <value name="message">
+              <shadow type="text">
+                <field name="TEXT">abc</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_print">
+            <value name="message">
+              <shadow type="text">
+                <field name="TEXT">abc</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
       </category>
-
       <sep />
-      <category name="Variables" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE" />
-      <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE" />
+      <category
+        name="Variables"
+        colour="%{BKY_VARIABLES_HUE}"
+        custom="VARIABLE" />
+      <category
+        name="Functions"
+        colour="%{BKY_PROCEDURES_HUE}"
+        custom="PROCEDURE" />
     </xml>
   </div>
 </template>
 
 <style lang="stylus">
-.blockly-editor
-  display block
-  top calc(100%)
-  height calc(100%)
-  width 100%
-  .blockly
-    height 100%
-    .blocklyMainBackground
-      stroke inherit
-.blocklyDropDownDiv
-  z-index 9000
+.blockly-editor {
+  display: block;
+  top: calc(100%);
+  height: calc(100%);
+  width: 100%;
+
+  .blockly {
+    height: 100%;
+
+    .blocklyMainBackground {
+      stroke: inherit;
+    }
+  }
+}
+
+.blocklyDropDownDiv {
+  z-index: 9000;
+}
 </style>
 
 <script>
 import Blockly from 'blockly'
+import '@blockly/block-plus-minus'
+
 import Vue from 'vue'
 
 import defineOHBlocks from '@/assets/definitions/blockly/ohblocks'
+import defineOHBlocksTimers from '@/assets/definitions/blockly/ohblocks_timers'
+import defineOHBlocksEphemeris from '@/assets/definitions/blockly/ohblocks_ephemeris'
 
-Vue.config.ignoredElements = ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
+
+
+import defineOHBlocksAudio from '@/assets/definitions/blockly/ohblocks_audio'
+import defineOHBlocksBusEvents from '@/assets/definitions/blockly/ohblocks_busevents'
+import defineOHBlocksLogging from '@/assets/definitions/blockly/ohblocks_logging'
+
+Vue.config.ignoredElements = [
+  'field',
+  'block',
+  'category',
+  'xml',
+  'mutation',
+  'value',
+  'sep'
+]
 
 export default {
   props: ['blocks'],
   data () {
     return {
       workspace: null,
-      loading: true
+      sinks: [],
+      scripts: [],
+      rules: [],
+      addons: [],
+      loading: true,
+      ready: false
     }
   },
-  mounted () {
-    defineOHBlocks(this.$f7)
-    this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
-      toolbox: this.$refs.toolbox,
-      horizontalLayout: !this.$device.desktop,
-      theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'dark' : undefined,
-      trashcan: false
-    })
-    const xml = Blockly.Xml.textToDom(this.blocks)
-    Blockly.Xml.domToWorkspace(xml, this.workspace)
-
-    this.workspace.addChangeListener(this.onChange)
-  },
-  beforeDestroy () {
-    this.workspace.removeChangeListener(this.onChange)
+  created () {
+    this.getAltData()
+    this.getAddons()
   },
   methods: {
+    startBlockly () {
+      this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
+        toolbox: this.$refs.toolbox,
+        horizontalLayout: !this.$device.desktop,
+        theme: this.$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined,
+        trashcan: false
+      })
+      const xml = Blockly.Xml.textToDom(this.blocks)
+      Blockly.Xml.domToWorkspace(xml, this.workspace)
+    },
+    loadPage () {
+      defineOHBlocks(this.$f7)
+      defineOHBlocksTimers(this.$f7)
+      defineOHBlocksEphemeris(this.$f7)
+
+      defineOHBlocksLogging(this.$f7)
+
+
+      defineOHBlocksAudio(this.$f7, this.sinks)
+      defineOHBlocksBusEvents(this.$f7)
+
+      this.startBlockly()
+    },
+    getAddons () {
+      this.$oh.api
+        .get('/rest/addons')
+        .then((data) => {
+          this.addons = data
+            .filter((addon) => addon.installed)
+            .sort((a, b) =>
+              a.label.toUpperCase().localeCompare(b.label.toUpperCase())
+
+            )
+          console.log('fetched ' + this.addons.length + ' addons')
+          this.addons.forEach(element => console.log(element.id));
+        })
+        .catch((err) => {
+          // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
+          console.error(
+            'Error while accessing the API, retrying every 5 seconds: ',
+            err
+          )
+          setTimeout(this.load, 5000)
+        })
+    },
+    getAltData () {
+      this.$oh.api
+        .get('/rest/rules?summary=true')
+        .then((data) => {
+          // fetch rules
+          this.rules = data.sort((a, b) => {
+            const labelA = a.name
+            const labelB = b.name
+            return labelA.localeCompare(labelB)
+          })
+          this.rules = this.rules.filter(
+            (r) => !r.tags || r.tags.indexOf('Script') < 0
+          )
+        })
+        .catch((err, status) => {
+          console.error('REST /rest/rules?summary=true' + err + ':' + status)
+        })
+      this.$oh.api
+        .get('/rest/rules?summary=true&tags=Script')
+        .then((data) => {
+          // fetch scripts
+          this.scripts = data.sort((a, b) => {
+            const labelA = a.name
+            const labelB = b.name
+            return labelA.localeCompare(labelB)
+          })
+        })
+        .catch((err, status) => {
+          console.error(
+            'REST /rest/rules?summary=true&tags=Script' + err + ':' + status
+          )
+        })
+      this.$oh.api
+        .get('/rest/audio/sinks')
+        .then((data) => {
+          // fetch audio sinks
+          this.sinks = data.sort((a, b) => {
+            const labelA = a.label
+            const labelB = b.label
+            return labelA.localeCompare(labelB)
+          })
+          this.loadPage()
+        })
+        .catch((err, status) => {
+          console.error('REST /rest/audio/sinks failed ' + err + ':' + status)
+        })
+    },
     getBlocks () {
       const xml = Blockly.Xml.workspaceToDom(this.workspace)
       return Blockly.Xml.domToText(xml)
     },
     getCode () {
       return Blockly.JavaScript.workspaceToCode(this.workspace)
-    },
-    onChange (event) {
-      if (event.type === Blockly.Events.FINISHED_LOADING) {
-        this.loading = false
-      } else if (!this.loading && !event.isUiEvent) {
-        this.$emit('change')
-      }
     }
   }
 }
