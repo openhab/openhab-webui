@@ -31,6 +31,7 @@ const handler = (context) => {
         }
 
         context.dispatch('updateTrackingList')
+        context.dispatch('retrieveItemInfo', itemName)
       }
       return context.state.itemStates[itemName]
     },
@@ -52,6 +53,12 @@ const getters = {
 }
 
 const actions = {
+  retrieveItemInfo (context, itemName) {
+    console.debug(`retrieving item info ${itemName}`)
+    this._vm.$oh.api.get(`/rest/items/${itemName}`).then((item) => {
+      context.commit('setItemInfo', { itemName: itemName, itemInfo: item })
+    })
+  },
   initializeTrackingStore (context) {
     if (stateTrackingProxy) return
     console.debug('Initializing state tracking store proxy')
@@ -140,8 +147,16 @@ const mutations = {
     state.keepConnectionOpen = value
   },
   setItemState (state, { itemName, itemState }) {
+    // get the existing item state (potentially with extra info)
+    // and overwrite with recieved state
+    itemState = { ...state.itemStates[itemName], ...itemState }
     Vue.set(state.itemStates, itemName.toString(), itemState)
     // state.itemStates[itemName] = itemState
+  },
+  setItemInfo (state, { itemName, itemInfo }) {
+    // get the existing item state and set the info (keeping the original state intact)
+    itemInfo = { ...itemInfo, ...state.itemStates[itemName] }
+    Vue.set(state.itemStates, itemName.toString(), itemInfo)
   },
   setPendingTrackingListUpdate (state, payload) {
     state.pendingTrackingListUpdate = payload
