@@ -211,7 +211,9 @@ export const actionsMixin = {
           break
         case 'analyze':
         case 'analyzer':
-          const actionAnalyzerItems = actionConfig[prefix + 'actionAnalyzerItems']
+          const actionAnalyzerItems = actionConfig[prefix + 'actionAnalyzerItems'].map((item) => {
+            return this.evaluateExpression(item, item, this.config)
+          })
           const actionAnalyzerChartType = actionConfig[prefix + 'actionAnalyzerChartType']
           const actionAnalyzerCoordSystem = actionConfig[prefix + 'actionAnalyzerCoordSystem']
           this.$f7.views.main.router.navigate(`/analyzer/?items=${actionAnalyzerItems.join(',')}&chartType=${actionAnalyzerChartType || ''}&coordSystem=${actionAnalyzerCoordSystem || ''}`)
