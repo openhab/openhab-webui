@@ -10,7 +10,6 @@ import { FieldItemModelPicker } from './ohitemfield'
 import { FieldItemThingPicker } from './ohthingfield'
 
 export default function defineOHBlocks (f7) {
-
   // this single block can also be used e.g. to log out the chosen item name
   Blockly.Blocks['oh_item'] = {
     init: function () {

@@ -2,10 +2,10 @@
   <!-- eslint-disable vue/singleline-html-element-content-newline -->
   <div class="blockly-editor">
     <div class="blockly" ref="blocklyEditor" />
-      <xml xmlns="https://developers.google.com/blockly/xml" ref="toolbox" style="display: none">
+    <xml xmlns="https://developers.google.com/blockly/xml" ref="toolbox" style="display: none">
       <category name="Logic" colour="%{BKY_LOGIC_HUE}">
         <block type="controls_if">
-            <mutation elseif="1" else="1"></mutation>
+          <mutation elseif="1" else="1" />
         </block>
         <block type="logic_compare" />
         <block type="logic_operation" />
@@ -147,7 +147,7 @@
       <category name="Text" colour="%{BKY_TEXTS_HUE}">
         <block type="text" />
         <block type="text_join">
-            <mutation items="0"></mutation>
+          <mutation items="0" />
         </block>
         <block type="text_append">
           <value name="TEXT">
@@ -331,8 +331,7 @@
           </block>
         </category>
         <category name="Timers and Delays">
-          <block type="oh_sleep">
-          </block>
+          <block type="oh_sleep" />
           <block type="oh_simpleTimer">
             <value name="delay">
               <shadow type="math_number">
@@ -447,22 +446,22 @@
             </value>
           </block>
           <block type="oh_stopstream_sink">
-              <value name="sinkName">
-                <shadow type="oh_audiosink_dropdown" />
-              </value>
+            <value name="sinkName">
+              <shadow type="oh_audiosink_dropdown" />
+            </value>
           </block>
           <block type="oh_say">
-              <value name="textToSay">
-                <shadow type="text">
-                  <field name="TEXT">text to say</field>
-                </shadow>
-              </value>
-              <value name="deviceSink">
-                <shadow type="oh_audiosink_dropdown" />
-              </value>
-              <value name="voice">
-                  <shadow type="oh_voices_dropdown" />
-              </value>
+            <value name="textToSay">
+              <shadow type="text">
+                <field name="TEXT">text to say</field>
+              </shadow>
+            </value>
+            <value name="deviceSink">
+              <shadow type="oh_audiosink_dropdown" />
+            </value>
+            <value name="voice">
+              <shadow type="oh_voices_dropdown" />
+            </value>
           </block>
         </category>
         <category name="Logging/Output">
@@ -647,20 +646,20 @@ export default {
         .catch((err, status) => {
           console.error('REST /rest/voice/voices failed ' + err + ':' + status)
         })
-        this.$oh.api
-          .get('/rest/voice/voices')
-          .then((data) => {
-            // fetch rules
-            this.voices = data.sort((a, b) => {
-              const labelA = a.label
-              const labelB = b.label
-              return labelA.localeCompare(labelB)
-            })
+      this.$oh.api
+        .get('/rest/voice/voices')
+        .then((data) => {
+          // fetch rules
+          this.voices = data.sort((a, b) => {
+            const labelA = a.label
+            const labelB = b.label
+            return labelA.localeCompare(labelB)
+          })
           this.loadPage()
-          })
-          .catch((err, status) => {
-            console.error('REST /rest/voice/voices' + err + ':' + status)
-          })
+        })
+        .catch((err, status) => {
+          console.error('REST /rest/voice/voices' + err + ':' + status)
+        })
     },
     getBlocks () {
       const xml = Blockly.Xml.workspaceToDom(this.workspace)

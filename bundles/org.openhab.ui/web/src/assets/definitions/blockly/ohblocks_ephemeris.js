@@ -120,9 +120,9 @@ export default function defineOHBlocks_Ephemeris (f7) {
     return [code, 0]
   }
 
-    function addEphemeris() {
-       Blockly.JavaScript.provideFunction_(
-               'ephemeris',
-               ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris")'])
-    }
+  function addEphemeris () {
+    Blockly.JavaScript.provideFunction_(
+      'ephemeris',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris")'])
   }
+}

@@ -5,6 +5,7 @@
 * See more background info on openHAB multimedia here: https://www.openhab.org/docs/configuration/multimedia.html
 */
 import Blockly from 'blockly'
+import AudiosinkPickerPopup from '@/components/audio/audiosink-picker-popup.vue'
 
 export class FieldAudiosinkPicker extends Blockly.FieldTextInput {
   constructor (optValue, optValidator, optConfig) {
@@ -21,6 +22,9 @@ export class FieldAudiosinkPicker extends Blockly.FieldTextInput {
       const itemPicked = (value) => {
         this.value_ = value.id
         this.setEditorValue_(this.id)
+      }
+      const popup = {
+        component: AudiosinkPickerPopup
       }
 
       this.f7.views.main.router.navigate({

@@ -20,7 +20,7 @@ export default function defineOHBlocks_BusEvents (f7) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Send a command to an item')
-      this.setHelpUrl('')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#event-bus-actions')
     }
   }
 

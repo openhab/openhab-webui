@@ -7,7 +7,7 @@ import Blockly from 'blockly'
 import { FieldItemModelPicker } from './ohitemfield'
 
 export default function defineOHBlocks_Timers (f7) {
- /*
+  /*
   * Field to enter the timer name
   * Blockly part
   */
@@ -23,7 +23,7 @@ export default function defineOHBlocks_Timers (f7) {
     }
   }
 
- /*
+  /*
   * Field to enter the timer name
   * Blockly part
   */
@@ -33,7 +33,7 @@ export default function defineOHBlocks_Timers (f7) {
     return [code, 0]
   }
 
- /*
+  /*
   * sleeps for the number of milliseconds
   * Blockly part
   */
@@ -49,21 +49,21 @@ export default function defineOHBlocks_Timers (f7) {
     }
   }
 
- /*
+  /*
   * sleeps for the number of milliseconds
   * Code part using Thread.sleep
   */
   Blockly.JavaScript['oh_sleep'] = function (block) {
-   const voiceName = Blockly.JavaScript.provideFunction_(
-          'thread',
-          ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.lang.Thread\');'])
+    const voiceName = Blockly.JavaScript.provideFunction_(
+      'thread',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.lang.Thread\')'])
     let milliseconds = block.getFieldValue('milliseconds')
 
-    let code = `thread.sleep(${milliseconds});\n`
+    let code = `thread.sleep(${milliseconds})\n`
     return code
   }
 
- /*
+  /*
   * Simple Timer creation without further control of retriggering, canceling or the like
   * Blockly part
   */
@@ -83,7 +83,7 @@ export default function defineOHBlocks_Timers (f7) {
     }
   }
 
- /*
+  /*
   * Simple Timer creation without further control of retriggering, canceling or the like
   * Code part
   */
@@ -147,12 +147,12 @@ export default function defineOHBlocks_Timers (f7) {
     let delayunits = block.getFieldValue('delayUnits')
     let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
     let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
-    addGlobalVar(timerName)  // make sure the variable exists and we don't end up having undefines
+    addGlobalVar(timerName)
 
     let code = `if (this.${timerName} === null) {\n`
     code += `\tthis.${timerName} = scriptExecution.createTimer(zonedDateTime.now().${delayunits}(${delay}), function(){\n`
-    code += '\t'+ runme
-    code += '\t})\n'+'\n'
+    code += '\t' + runme
+    code += '\t})\n\n'
     code += '\t} else {\n'
     code += `\t\tthis.${timerName}.reschedule(zonedDateTime.now().${delayunits}(${delay}))\n`
     code += '}\n'
@@ -175,19 +175,19 @@ export default function defineOHBlocks_Timers (f7) {
     }
   }
 
- /*
+  /*
   * Checks if the named timer is active
   * Code part
   */
   Blockly.JavaScript['oh_timer_isactive'] = function (block) {
     let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    addGlobalVar(timerName)  // make sure the variable exists and we don't end up having undefines
+    addGlobalVar(timerName)
 
     let code = `!this.${timerName} || !this.${timerName}.isActive()`
-    return [code, Blockly.JavaScript.ORDER_NONE];
+    return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
- /*
+  /*
   * Checks if the named timer is running
   * Blockly part
   */
@@ -209,12 +209,12 @@ export default function defineOHBlocks_Timers (f7) {
     */
   Blockly.JavaScript['oh_timer_isrunning'] = function (block) {
     let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    addGlobalVar(timerName)  // make sure the variable exists and we don't end up having undefines
+    addGlobalVar(timerName)
     let code = `this.${timerName}.isRunning()`
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
- /*
+  /*
   * Checks if the named timer has terminated
   * Blockly part
   */
@@ -230,7 +230,7 @@ export default function defineOHBlocks_Timers (f7) {
     }
   }
 
- /*
+  /*
   * Checks if the named timer has terminated
   * Code part
   */
@@ -241,7 +241,7 @@ export default function defineOHBlocks_Timers (f7) {
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
- /*
+  /*
   * Allows cancelation of a named timer
   * Blockly part
   */
@@ -258,7 +258,7 @@ export default function defineOHBlocks_Timers (f7) {
     }
   }
 
- /*
+  /*
   * Allows cancelation of a named timer
   * Code part
   */
@@ -269,7 +269,7 @@ export default function defineOHBlocks_Timers (f7) {
     return code
   }
 
- /*
+  /*
   * Reschedules a timer with the given name
   * Code part
   */
@@ -290,39 +290,37 @@ export default function defineOHBlocks_Timers (f7) {
     }
   }
 
- /*
+  /*
   * Reschedules a timer with the given name
   * Blockly part
   */
   Blockly.JavaScript['oh_timer_reschedule'] = function (block) {
-    addZonedDateTime();
+    addZonedDateTime()
 
     let delayUnits = block.getFieldValue('delayUnits')
     let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
     let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    addGlobalVar(timerName)  // make sure the variable exists and we don't end up having undefines
+    addGlobalVar(timerName)
 
     let code = `this.${timerName}.reschedule(zonedDateTime.now().${delayUnits}(${delay}))\n`
     return code
   }
 
-  function addScriptExecution() {
-     Blockly.JavaScript.provideFunction_(
-          'scriptExecution',
-          ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.ScriptExecution")'])
+  function addScriptExecution () {
+    Blockly.JavaScript.provideFunction_(
+      'scriptExecution',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.ScriptExecution")'])
   }
 
-  function addZonedDateTime() {
-     Blockly.JavaScript.provideFunction_(
-          'zonedDateTime',
-          ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.ZonedDateTime")'])
+  function addZonedDateTime () {
+    Blockly.JavaScript.provideFunction_(
+      'zonedDateTime',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.ZonedDateTime")'])
   }
 
-   function addGlobalVar(varName) {
-       Blockly.JavaScript.provideFunction_(
-            varName,
-
-            [`if(this.${varName} === undefined){\n\t this.${varName} = null\n}`])
-    }
+  function addGlobalVar (varName) {
+    Blockly.JavaScript.provideFunction_(
+      varName,
+      [`if(this.${varName} === undefined){\n\t this.${varName} = null\n}`])
+  }
 }
-
