@@ -393,25 +393,6 @@
             </value>
           </block>
         </category>
-        <category name="Actions">
-          <block type="oh_callscript">
-            <value name="script">
-              <shadow type="oh_script_dropdown" />
-            </value>
-          </block>
-          <block type="oh_httprequest">
-            <value name="url">
-              <shadow type="text">
-                <field name="TEXT">http://yourURL.com</field>
-              </shadow>
-            </value>
-            <value name="payload">
-              <shadow type="text">
-                <field name="TEXT" />
-              </shadow>
-            </value>
-          </block>
-        </category>
         <category name="Ephemeris">
           <block type="oh_ephemeris_basic" />
           <block type="oh_ephemeris_offset">
