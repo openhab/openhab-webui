@@ -67,7 +67,7 @@ export default function defineOHBlocks (f7) {
   Blockly.JavaScript['oh_getthing_state'] = function (block) {
     const things = Blockly.JavaScript.provideFunction_(
       'things',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things");'])
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
     let code = things + '.getThingStatusInfo(' + itemName + ').getStatus()'
     return [code, 0]

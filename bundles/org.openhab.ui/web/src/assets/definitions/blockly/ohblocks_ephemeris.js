@@ -21,11 +21,9 @@ export default function defineOHBlocks_Ephemeris (f7) {
   }
 
   Blockly.JavaScript['oh_ephemeris_basic'] = function (block) {
-    const ephemeris = Blockly.JavaScript.provideFunction_(
-      'Ephemeris',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
+    addEphemeris()
     let type = block.getFieldValue('type')
-    let code = ephemeris + '.' + type + '()'
+    let code = `ephemeris.${type}()`
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
@@ -43,12 +41,10 @@ export default function defineOHBlocks_Ephemeris (f7) {
   }
 
   Blockly.JavaScript['oh_ephemeris_offset'] = function (block) {
-    const ephemeris = Blockly.JavaScript.provideFunction_(
-      'Ephemeris',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
+    addEphemeris()
     let type = block.getFieldValue('type')
-    let offsetValue = Blockly.JavaScript.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = ephemeris + '.' + type + '(' + offsetValue + ')'
+    let offsetValue = Blockly.JavaScript.valueToCode(block, 'offset', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = `ephemeris.${type}(${offsetValue})`
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
@@ -65,10 +61,8 @@ export default function defineOHBlocks_Ephemeris (f7) {
   }
 
   Blockly.JavaScript['oh_Ephemeris_getBankHolidayName'] = function (block) {
-    const ephemeris = Blockly.JavaScript.provideFunction_(
-      'Ephemeris',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
-    let code = ephemeris + '.getBankHolidayName'
+    addEphemeris()
+    let code = 'ephemeris.getBankHolidayName'
     return [code, 0]
   }
 
@@ -85,10 +79,8 @@ export default function defineOHBlocks_Ephemeris (f7) {
   }
 
   Blockly.JavaScript['oh_Ephemeris_getNextBankHoliday'] = function (block) {
-    const ephemeris = Blockly.JavaScript.provideFunction_(
-      'Ephemeris',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
-    let code = ephemeris + '.getNextBankHoliday'
+    addEphemeris()
+    let code = 'ephemeris.getNextBankHoliday'
     return [code, 0]
   }
 
@@ -105,10 +97,8 @@ export default function defineOHBlocks_Ephemeris (f7) {
   }
 
   Blockly.JavaScript['oh_Ephemeris_isBankHoliday'] = function (block) {
-    const ephemeris = Blockly.JavaScript.provideFunction_(
-      'Ephemeris',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
-    let code = ephemeris + '.isBankHoliday'
+    addEphemeris()
+    let code = 'ephemeris.isBankHoliday'
     return [code, 0]
   }
 
@@ -125,10 +115,14 @@ export default function defineOHBlocks_Ephemeris (f7) {
   }
 
   Blockly.JavaScript['oh_Ephemeris_isWeekend'] = function (block) {
-    const ephemeris = Blockly.JavaScript.provideFunction_(
-      'Ephemeris',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
-    let code = ephemeris + '.isWeekend'
+    addEphemeris()
+    let code = 'ephemeris.isWeekend'
     return [code, 0]
   }
-}
+
+    function addEphemeris() {
+       Blockly.JavaScript.provideFunction_(
+               'ephemeris',
+               ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris")'])
+    }
+  }

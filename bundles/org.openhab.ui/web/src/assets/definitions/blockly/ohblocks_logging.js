@@ -25,7 +25,7 @@ export default function defineOHBlocks_Logging (f7) {
 
   Blockly.JavaScript['oh_print'] = function (block) {
     const message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = 'print(' + message + ');\n'
+    let code = `print(${message})\n`
     return code
   }
 
@@ -46,10 +46,10 @@ export default function defineOHBlocks_Logging (f7) {
   Blockly.JavaScript['oh_log'] = function (block) {
     const loggerName = Blockly.JavaScript.provideFunction_(
       'logger',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.slf4j.LoggerFactory\').getLogger(\'org.openhab.rule.\' + ctx.ruleUID);'])
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.slf4j.LoggerFactory\').getLogger(\'org.openhab.rule.\' + ctx.ruleUID)'])
     const message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
     const severity = block.getFieldValue('severity')
-    const code = loggerName + '.' + severity + '(' + message + ');\n'
+    const code = `logger.${severity}(${message})\n`
     return code
   }
 }

@@ -1,13 +1,12 @@
-<!--
-TODO: getAddons throws error
--->
 <template>
   <!-- eslint-disable vue/singleline-html-element-content-newline -->
   <div class="blockly-editor">
     <div class="blockly" ref="blocklyEditor" />
       <xml xmlns="https://developers.google.com/blockly/xml" ref="toolbox" style="display: none">
       <category name="Logic" colour="%{BKY_LOGIC_HUE}">
-        <block type="controls_if" />
+        <block type="controls_if">
+            <mutation elseif="1" else="1"></mutation>
+        </block>
         <block type="logic_compare" />
         <block type="logic_operation" />
         <block type="logic_negate" />
@@ -147,7 +146,9 @@ TODO: getAddons throws error
       </category>
       <category name="Text" colour="%{BKY_TEXTS_HUE}">
         <block type="text" />
-        <block type="text_join" />
+        <block type="text_join">
+            <mutation items="0"></mutation>
+        </block>
         <block type="text_append">
           <value name="TEXT">
             <shadow type="text" />
@@ -331,9 +332,83 @@ TODO: getAddons throws error
         </category>
         <category name="Timers and Delays">
           <block type="oh_sleep">
-            <value name="milliseconds">
+          </block>
+          <block type="oh_simpleTimer">
+            <value name="delay">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_timer_item" />
+          <block type="oh_namedTimer">
+            <value name="delay">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+            <value name="timerName">
+              <shadow type="oh_timer_item">
+                <field name="TEXT">MyTimer</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_timer_cancel">
+            <value name="timerName">
+              <shadow type="oh_timer_item">
+                <field name="TEXT">MyTimer</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_timer_isactive">
+            <value name="timerName">
+              <shadow type="oh_timer_item">
+                <field name="TEXT">MyTimer</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_timer_isrunning">
+            <value name="timerName">
+              <shadow type="oh_timer_item">
+                <field name="TEXT">MyTimer</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_timer_hasterminated">
+            <value name="timerName">
+              <shadow type="oh_timer_item">
+                <field name="TEXT">MyTimer</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_timer_reschedule">
+            <value name="timerName">
+              <shadow type="oh_timer_item">
+                <field name="TEXT">MyTimer</field>
+              </shadow>
+            </value>
+            <value name="delay">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
+        <category name="Actions">
+          <block type="oh_callscript">
+            <value name="script">
+              <shadow type="oh_script_dropdown" />
+            </value>
+          </block>
+          <block type="oh_httprequest">
+            <value name="url">
               <shadow type="text">
-                <field name="TEXT">1000</field>
+                <field name="TEXT">http://yourURL.com</field>
+              </shadow>
+            </value>
+            <value name="payload">
+              <shadow type="text">
+                <field name="TEXT" />
               </shadow>
             </value>
           </block>
@@ -383,9 +458,10 @@ TODO: getAddons throws error
                 </shadow>
               </value>
               <value name="deviceSink">
-                <shadow type="text">
-                  <field name="TEXT">device (sink)</field>
-                </shadow>
+                <shadow type="oh_audiosink_dropdown" />
+              </value>
+              <value name="voice">
+                  <shadow type="oh_voices_dropdown" />
               </value>
           </block>
         </category>
@@ -449,9 +525,6 @@ import Vue from 'vue'
 import defineOHBlocks from '@/assets/definitions/blockly/ohblocks'
 import defineOHBlocksTimers from '@/assets/definitions/blockly/ohblocks_timers'
 import defineOHBlocksEphemeris from '@/assets/definitions/blockly/ohblocks_ephemeris'
-
-
-
 import defineOHBlocksAudio from '@/assets/definitions/blockly/ohblocks_audio'
 import defineOHBlocksBusEvents from '@/assets/definitions/blockly/ohblocks_busevents'
 import defineOHBlocksLogging from '@/assets/definitions/blockly/ohblocks_logging'
@@ -472,6 +545,7 @@ export default {
     return {
       workspace: null,
       sinks: [],
+      voices: [],
       scripts: [],
       rules: [],
       addons: [],
@@ -498,11 +572,8 @@ export default {
       defineOHBlocks(this.$f7)
       defineOHBlocksTimers(this.$f7)
       defineOHBlocksEphemeris(this.$f7)
-
       defineOHBlocksLogging(this.$f7)
-
-
-      defineOHBlocksAudio(this.$f7, this.sinks)
+      defineOHBlocksAudio(this.$f7, this.sinks, this.voices)
       defineOHBlocksBusEvents(this.$f7)
 
       this.startBlockly()
@@ -517,8 +588,7 @@ export default {
               a.label.toUpperCase().localeCompare(b.label.toUpperCase())
 
             )
-          console.log('fetched ' + this.addons.length + ' addons')
-          this.addons.forEach(element => console.log(element.id));
+          // console.log('fetched ' + this.addons.length + ' addons')
         })
         .catch((err) => {
           // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
@@ -570,11 +640,27 @@ export default {
             const labelB = b.label
             return labelA.localeCompare(labelB)
           })
-          this.loadPage()
         })
         .catch((err, status) => {
           console.error('REST /rest/audio/sinks failed ' + err + ':' + status)
         })
+        .catch((err, status) => {
+          console.error('REST /rest/voice/voices failed ' + err + ':' + status)
+        })
+        this.$oh.api
+          .get('/rest/voice/voices')
+          .then((data) => {
+            // fetch rules
+            this.voices = data.sort((a, b) => {
+              const labelA = a.label
+              const labelB = b.label
+              return labelA.localeCompare(labelB)
+            })
+          this.loadPage()
+          })
+          .catch((err, status) => {
+            console.error('REST /rest/voice/voices' + err + ':' + status)
+          })
     },
     getBlocks () {
       const xml = Blockly.Xml.workspaceToDom(this.workspace)
