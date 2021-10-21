@@ -47,7 +47,7 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setColour(230)
+      this.setColour(0)
       this.setTooltip('Plays a sound file from the sounds folder to the given sink.')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/multimedia.html')
     }
@@ -85,8 +85,8 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setColour(230)
-      this.setTooltip('Plays a sound file from the sounds folder to the given sink at a given volume. \n Note: rather set volume first via thing volume channel, then play sound without volume parameter as it may be more reliable..')
+      this.setColour(0)
+      this.setTooltip('Plays a sound file from the sounds folder to the given sink at a given volume. \n Note: rather set volume first via thing volume channel, then play sound without volume parameter as it may be more reliable.')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/multimedia.html')
     }
   }
@@ -121,7 +121,7 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setColour(230)
+      this.setColour(0)
       this.setTooltip('plays an audio stream from an url to the given sink(s)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/multimedia.html')
     }
@@ -153,7 +153,7 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setColour(230)
+      this.setColour(0)
       this.setTooltip('stops the audio stream at the given sink')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/multimedia.html')
     }

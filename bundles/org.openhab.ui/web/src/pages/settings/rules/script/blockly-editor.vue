@@ -330,9 +330,9 @@
             </value>
           </block>
         </category>
-        <category name="Timers and Delays">
+        <category name="Timers & Delays">
           <block type="oh_sleep" />
-          <block type="oh_simpleTimer">
+          <block type="oh_timer_simple">
             <value name="delay">
               <shadow type="math_number">
                 <field name="NUM">10</field>
@@ -340,7 +340,7 @@
             </value>
           </block>
           <block type="oh_timer_item" />
-          <block type="oh_namedTimer">
+          <block type="oh_Timer">
             <value name="delay">
               <shadow type="math_number">
                 <field name="NUM">10</field>
@@ -405,7 +405,7 @@
             </value>
           </block>
         </category>
-        <category name="Voice/Multimedia">
+        <category name="Voice & Multimedia">
           <block type="oh_playmedia_sink">
             <value name="sinkName">
               <shadow type="oh_audiosink_dropdown" />
@@ -648,6 +648,13 @@ export default {
     },
     getCode () {
       return Blockly.JavaScript.workspaceToCode(this.workspace)
+    },
+    onChange (event) {
+      if (event.type === Blockly.Events.FINISHED_LOADING) {
+        this.loading = false
+      } else if (!this.loading && !event.isUiEvent) {
+        this.$emit('change')
+      }
     }
   }
 }

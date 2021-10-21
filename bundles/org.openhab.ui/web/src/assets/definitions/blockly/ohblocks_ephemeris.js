@@ -14,7 +14,7 @@ export default function defineOHBlocks_Ephemeris (f7) {
       this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([['isWeekend', 'isWeekend'], ['getBankHolidayName', 'getBankHolidayName'], ['getNextBankHoliday', 'getNextBankHoliday'], ['isBankHoliday', 'isBankHoliday']]), 'type')
       this.setOutput(true, null)
-      this.setColour(230)
+      this.setColour(0)
       this.setTooltip('provides calendar related information')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
     }
@@ -34,7 +34,7 @@ export default function defineOHBlocks_Ephemeris (f7) {
         .appendField(new Blockly.FieldDropdown([['isWeekend', 'isWeekend'], ['getBankHolidayName', 'getBankHolidayName'], ['getNextBankHoliday', 'getNextBankHoliday'], ['isBankHoliday', 'isBankHoliday']]), 'type')
         .appendField('Offset Days')
       this.setOutput(true, null)
-      this.setColour(230)
+      this.setColour(0)
       this.setTooltip('the offset to the given type in days')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
     }
