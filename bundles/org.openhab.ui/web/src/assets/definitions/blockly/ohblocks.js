@@ -10,13 +10,12 @@ import { FieldItemModelPicker } from './ohitemfield'
 import { FieldItemThingPicker } from './ohthingfield'
 
 export default function defineOHBlocks (f7) {
-  // this single block can also be used e.g. to log out the chosen item name
   Blockly.Blocks['oh_item'] = {
     init: function () {
       this.appendDummyInput()
         .appendField('item')
         .appendField(new FieldItemModelPicker('MyItem', null, { f7 }), 'itemName')
-      this.setColour(248)
+      this.setColour(0)
       this.setInputsInline(true)
       this.setTooltip('Pick an item from the Model')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/items.html')
@@ -30,23 +29,22 @@ export default function defineOHBlocks (f7) {
     return [code, 0]
   }
 
-  // this single block can also be used e.g. to log out the chosen thing name
   Blockly.Blocks['oh_thing'] = {
     init: function () {
       this.appendDummyInput()
         .appendField('thing')
-        .appendField(new FieldItemThingPicker('MyThing', null, { f7 }), 'itemName')
-      this.setColour(248)
+        .appendField(new FieldItemThingPicker('MyThing', null, { f7 }), 'thingUid')
+      this.setColour(0)
       this.setInputsInline(true)
-      this.setTooltip('Pick an item from the Thing List')
+      this.setTooltip('Pick a thing from the Thing List')
       this.setHelpUrl('https://www.openhab.org/docs/concepts/things.html')
       this.setOutput(true, null)
     }
   }
 
   Blockly.JavaScript['oh_thing'] = function (block) {
-    const itemName = block.getFieldValue('itemName')
-    let code = '\'' + itemName + '\''
+    const thingUid = block.getFieldValue('thingUid')
+    let code = `'${thingUid}'`
     return [code, 0]
   }
 
@@ -68,7 +66,7 @@ export default function defineOHBlocks (f7) {
       'things',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = things + '.getThingStatusInfo(' + itemName + ').getStatus()'
+    let code = `things.getThingStatusInfo(${itemName}).getStatus()`
     return [code, 0]
   }
 
@@ -87,7 +85,7 @@ export default function defineOHBlocks (f7) {
 
   Blockly.JavaScript['oh_getitem_state'] = function (block) {
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = 'itemRegistry.getItem(' + itemName + ').getState()'
+    let code = `itemRegistry.getItem(${itemName}).getState()`
     return [code, 0]
   }
 
@@ -100,7 +98,7 @@ export default function defineOHBlocks (f7) {
       this.setOutput(true, 'String')
       this.setColour(0)
       this.setTooltip('Get an item from the item registry')
-      this.setHelpUrl('')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/items.html')
     }
   }
 

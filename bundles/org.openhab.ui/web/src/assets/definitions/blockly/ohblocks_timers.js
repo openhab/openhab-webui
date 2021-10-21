@@ -44,7 +44,7 @@ export default function defineOHBlocks_Timers (f7) {
         .appendField(new Blockly.FieldNumber(1000), 'milliseconds')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setColour(230)
+      this.setColour(0)
       this.setTooltip('Waits for the specified milliseconds')
     }
   }
@@ -67,17 +67,17 @@ export default function defineOHBlocks_Timers (f7) {
   * Simple Timer creation without further control of retriggering, canceling or the like
   * Blockly part
   */
-  Blockly.Blocks['oh_simpleTimer'] = {
+  Blockly.Blocks['oh_timer_simple'] = {
     init: function () {
       this.appendStatementInput('timer')
         .setCheck(null)
-        .appendField('After')
+        .appendField('after')
         .appendField(new Blockly.FieldNumber(10), 'delay')
-        .appendField(new Blockly.FieldDropdown([['seconds', 'seconds'], ['minutes', 'minutes'], ['hours', 'hours']]), 'time_unit')
+        .appendField(new Blockly.FieldDropdown([['seconds', 'seconds'], ['minutes', 'minutes'], ['hours', 'hours']]), 'timeUnit')
         .appendField('do')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setColour(230)
+      this.setColour(0)
       this.setTooltip('Simple Timer creation without further control of retriggering, canceling or the like')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#timers')
     }
@@ -87,11 +87,11 @@ export default function defineOHBlocks_Timers (f7) {
   * Simple Timer creation without further control of retriggering, canceling or the like
   * Code part
   */
-  Blockly.JavaScript['oh_simpleTimer'] = function (block) {
+  Blockly.JavaScript['oh_timer_simple'] = function (block) {
     addScriptExecution()
     addZonedDateTime()
     let numberDelay = block.getFieldValue('delay')
-    let dropdownTimeUnit = block.getFieldValue('time_unit')
+    let dropdownTimeUnit = block.getFieldValue('timeUnit')
     let statementsTimer = Blockly.JavaScript.statementToCode(block, 'timer')
     let unitsFunction = ''
     switch (dropdownTimeUnit) {
@@ -115,19 +115,20 @@ export default function defineOHBlocks_Timers (f7) {
   * Creates a named timer that starts after the defined delay provided my the number and the unit of time
   * Blockly part
   */
-  Blockly.Blocks['oh_namedTimer'] = {
+  Blockly.Blocks['oh_timer'] = {
     init: function () {
-      this.appendStatementInput('runMe')
-        .setCheck(null)
-        .appendField('Run This')
       this.appendValueInput('delay')
-        .setCheck(null)
-        .appendField('After')
+        .setCheck('Number')
+        .appendField('after')
+      this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([['seconds', 'plusSeconds'], ['minutes', 'plusMinutes'], ['hours', 'plusHours'], ['days', 'plusDays'], ['weeks', 'plusWeeks'], ['months', 'plusMonths']]), 'delayUnits')
+        .appendField('do')
       this.appendValueInput('timerName')
         .setCheck(null)
         .appendField('with Timer named')
-      this.setColour(230)
+      this.setColour(0)
+      this.appendStatementInput('runMe')
+        .setCheck(null)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setTooltip('Create a named timer')
@@ -139,7 +140,7 @@ export default function defineOHBlocks_Timers (f7) {
   * Creates a named timer that starts after the defined delay provided my the number and the unit of time
   * Code part
   */
-  Blockly.JavaScript['oh_namedTimer'] = function (block) {
+  Blockly.JavaScript['oh_timer'] = function (block) {
     addScriptExecution()
     addZonedDateTime()
 
@@ -169,7 +170,7 @@ export default function defineOHBlocks_Timers (f7) {
         .setCheck('String')
         .appendField('isActive')
       this.setOutput(true, null)
-      this.setColour(230)
+      this.setColour(0)
       this.setTooltip('returns true if the timer will be executed as scheduled, i.e. it has not been cancelled or completed')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#timers')
     }
@@ -197,7 +198,7 @@ export default function defineOHBlocks_Timers (f7) {
         .setCheck('String')
         .appendField('isRunning')
       this.setOutput(true, null)
-      this.setColour(230)
+      this.setColour(0)
       this.setTooltip('returns true if the code is currently executing (i.e. the timer activated the code but it is not done running)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#timers')
     }
@@ -224,7 +225,7 @@ export default function defineOHBlocks_Timers (f7) {
         .setCheck('String')
         .appendField('hasTerminated')
       this.setOutput(true, null)
-      this.setColour(230)
+      this.setColour(0)
       this.setTooltip('returns true if the code has run and completed.')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#timers')
     }
@@ -252,7 +253,7 @@ export default function defineOHBlocks_Timers (f7) {
         .appendField('cancel')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setColour(230)
+      this.setColour(0)
       this.setTooltip('Cancels a named timer')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#timers')
     }
@@ -284,7 +285,7 @@ export default function defineOHBlocks_Timers (f7) {
         .appendField(new Blockly.FieldDropdown([['seconds', 'plusSeconds'], ['minutes', 'plusMinutes'], ['hours', 'plusHours'], ['days', 'plusDays'], ['weeks', 'plusWeeks'], ['months', 'plusMonths']]), 'delayUnits')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setColour(230)
+      this.setColour(0)
       this.setTooltip('reschedules the timer to execute at the new time. If the Timer has terminated this method does nothing.')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#timers')
     }
