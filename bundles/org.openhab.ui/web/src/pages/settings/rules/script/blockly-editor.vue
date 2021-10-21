@@ -706,15 +706,11 @@
 
       <sep />
 
-      <category
-        name="Variables"
-        colour="%{BKY_VARIABLES_HUE}"
-        custom="VARIABLE" />
+      <category name="Variables" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE" />
+      <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE" />
 
-      <category
-        name="Functions"
-        colour="%{BKY_PROCEDURES_HUE}"
-        custom="PROCEDURE" />
+      <sep />
+      <category name="Library" ref="libraryCategory" />
     </xml>
   </div>
 </template>
@@ -738,6 +734,7 @@ import Blockly from 'blockly'
 import Vue from 'vue'
 
 import defineOHBlocks from '@/assets/definitions/blockly'
+import defineLibraryToolboxCategory from '@/assets/definitions/blockly/toolbox_library'
 
 Vue.config.ignoredElements = [
   'field',
@@ -750,7 +747,7 @@ Vue.config.ignoredElements = [
 ]
 
 export default {
-  props: ['blocks'],
+  props: ['blocks', 'libraryDefinitions'],
   data () {
     return {
       workspace: null,
@@ -770,7 +767,8 @@ export default {
       const dataPromises = [
         this.$oh.api.get('/rest/rules?summary=true'),
         this.$oh.api.get('/rest/audio/sinks'),
-        this.$oh.api.get('/rest/voice/voices')
+        this.$oh.api.get('/rest/voice/voices'),
+        this.$oh.api.get('/rest/ui/components/ui:blocks')
       ]
       Promise.all(dataPromises)
         .then((data) => {
@@ -799,17 +797,19 @@ export default {
             return labelA.localeCompare(labelB)
           })
 
-          this.initBlockly()
+          const blockLibraries = data[3]
+          this.initBlockly(blockLibraries)
         })
         .catch((err, status) => {
           console.error('Error while retrieving Blockly data - ' + err + ':' + status)
         })
     },
-    initBlockly () {
+    initBlockly (libraryDefinitions) {
       defineOHBlocks(this.$f7, {
         sinks: this.sinks,
         voices: this.voices
       })
+      this.addLibraryToToolbox(libraryDefinitions || [])
 
       this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
         toolbox: this.$refs.toolbox,
@@ -817,8 +817,24 @@ export default {
         theme: this.$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined,
         trashcan: false
       })
+      this.registerLibraryCallbacks(libraryDefinitions)
       const xml = Blockly.Xml.textToDom(this.blocks)
       Blockly.Xml.domToWorkspace(xml, this.workspace)
+      this.workspace.addChangeListener(this.onChange)
+    },
+    addLibraryToToolbox (definitions) {
+      const library = this.$refs.libraryCategory
+      definitions.forEach((definition) => {
+        const category = document.createElement('category')
+        category.setAttribute('name', definition.config.name)
+        category.setAttribute('custom', 'LIBRARY_' + definition.uid)
+        library.appendChild(category)
+      })
+    },
+    registerLibraryCallbacks (definitions) {
+      definitions.forEach((definition) => {
+        this.workspace.registerToolboxCategoryCallback('LIBRARY_' + definition.uid, defineLibraryToolboxCategory(definition, this.$f7))
+      })
     },
     getBlocks () {
       const xml = Blockly.Xml.workspaceToDom(this.workspace)
