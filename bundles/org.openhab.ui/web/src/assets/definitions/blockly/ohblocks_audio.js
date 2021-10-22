@@ -73,7 +73,7 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
   Blockly.Blocks['oh_playmedia_sink_volume'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('Play audio')
+        .appendField('play audio')
       this.appendValueInput('fileName')
         .setCheck('String')
       this.appendValueInput('sinkName')
@@ -113,7 +113,7 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
   Blockly.Blocks['oh_playstream_sink'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('Play stream')
+        .appendField('play stream')
         .appendField(new Blockly.FieldTextInput('<URL>'), 'url')
       this.appendValueInput('sinkName')
         .setCheck(null)
@@ -146,7 +146,7 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
   Blockly.Blocks['oh_stopstream_sink'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('Stop stream')
+        .appendField('stop stream')
       this.appendValueInput('sinkName')
         .setCheck(null)
         .appendField('on')

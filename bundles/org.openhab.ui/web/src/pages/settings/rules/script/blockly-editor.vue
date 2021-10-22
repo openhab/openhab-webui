@@ -4,9 +4,7 @@
     <div class="blockly" ref="blocklyEditor" />
     <xml xmlns="https://developers.google.com/blockly/xml" ref="toolbox" style="display: none">
       <category name="Logic" colour="%{BKY_LOGIC_HUE}">
-        <block type="controls_if">
-          <mutation elseif="1" else="1" />
-        </block>
+        <block type="controls_if" />
         <block type="logic_compare" />
         <block type="logic_operation" />
         <block type="logic_negate" />
@@ -300,6 +298,7 @@
       </category>
       <category name="openHAB" colour="0">
         <category name="Items & Things">
+          <block type="oh_items" />
           <block type="oh_item" />
           <block type="oh_getitem">
             <value name="itemName">
@@ -311,6 +310,7 @@
               <shadow type="oh_item" />
             </value>
           </block>
+          <block type="oh_getitem_attribute" />
           <block type="oh_event">
             <value name="value">
               <shadow type="text">
@@ -340,7 +340,7 @@
             </value>
           </block>
           <block type="oh_timer_item" />
-          <block type="oh_Timer">
+          <block type="oh_timer">
             <value name="delay">
               <shadow type="math_number">
                 <field name="NUM">10</field>
@@ -445,7 +445,7 @@
             </value>
           </block>
         </category>
-        <category name="Logging/Output">
+        <category name="Logging & Output">
           <block type="oh_log">
             <value name="message">
               <shadow type="text">
@@ -476,20 +476,18 @@
 </template>
 
 <style lang="stylus">
-.blockly-editor {
-  display: block;
-  top: calc(100%);
-  height: calc(100%);
-  width: 100%;
-
-  .blockly {
-    height: 100%;
-
-    .blocklyMainBackground {
-      stroke: inherit;
-    }
-  }
-}
+.blockly-editor
+  display block
+  top calc(100%)
+  height calc(100%)
+  width 100%
+  .blockly
+    height 100%
+    .blocklyMainBackground
+      stroke inherit
+.blocklyDropDownDiv
+  z-index 9000
+</style>
 
 .blocklyDropDownDiv {
   z-index: 9000;
@@ -498,8 +496,6 @@
 
 <script>
 import Blockly from 'blockly'
-import '@blockly/block-plus-minus'
-
 import Vue from 'vue'
 
 import defineOHBlocks from '@/assets/definitions/blockly/ohblocks'
@@ -535,7 +531,6 @@ export default {
   },
   created () {
     this.getAltData()
-    this.getAddons()
   },
   methods: {
     startBlockly () {
@@ -557,27 +552,6 @@ export default {
       defineOHBlocksBusEvents(this.$f7)
 
       this.startBlockly()
-    },
-    getAddons () {
-      this.$oh.api
-        .get('/rest/addons')
-        .then((data) => {
-          this.addons = data
-            .filter((addon) => addon.installed)
-            .sort((a, b) =>
-              a.label.toUpperCase().localeCompare(b.label.toUpperCase())
-
-            )
-          // console.log('fetched ' + this.addons.length + ' addons')
-        })
-        .catch((err) => {
-          // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
-          console.error(
-            'Error while accessing the API, retrying every 5 seconds: ',
-            err
-          )
-          setTimeout(this.load, 5000)
-        })
     },
     getAltData () {
       this.$oh.api

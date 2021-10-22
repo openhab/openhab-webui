@@ -29,6 +29,25 @@ export default function defineOHBlocks (f7) {
     return [code, 0]
   }
 
+  Blockly.Blocks['oh_items'] = {
+    init: function () {
+      this.appendDummyInput()
+        .appendField('items')
+        .appendField(new FieldItemModelPicker('MyItem', null, { f7 }), 'itemName')
+      this.setColour(0)
+      this.setInputsInline(true)
+      this.setTooltip('Retrieve a set of items from the Model')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/items.html')
+      this.setOutput(true, null)
+    }
+  }
+
+  Blockly.JavaScript['oh_items'] = function (block) {
+    const itemName = block.getFieldValue('itemName')
+    let code = `Java.from(itemRegistry.getItem('${itemName}').members)`
+    return [code, 0]
+  }
+
   Blockly.Blocks['oh_thing'] = {
     init: function () {
       this.appendDummyInput()
@@ -105,6 +124,27 @@ export default function defineOHBlocks (f7) {
   Blockly.JavaScript['oh_getitem'] = function (block) {
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
     let code = `itemRegistry.getItem(${itemName})`
+    return [code, 0]
+  }
+
+  Blockly.Blocks['oh_getitem_attribute'] = {
+    init: function () {
+      this.appendValueInput('the_item')
+        .appendField('get ')
+        .appendField(new Blockly.FieldDropdown([['name', 'Name'], ['label', 'Label'], ['state', 'State'], ['category', 'Category'], ['tags', 'Tags'], ['groups', 'GroupNames'], ['type', 'Type']]), 'attributeName')
+        .appendField('from item')
+      this.setInputsInline(true)
+      this.setOutput(true, 'String')
+      this.setColour(0)
+      this.setTooltip('Retrieve a specific attribute from the item')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/items.html')
+    }
+  }
+
+  Blockly.JavaScript['oh_getitem_attribute'] = function (block) {
+    const theItem = Blockly.JavaScript.valueToCode(block, 'the_item', Blockly.JavaScript.ORDER_ATOMIC)
+    const attributeName = block.getFieldValue('attributeName')
+    let code = `${theItem}.get${attributeName}()`
     return [code, 0]
   }
 }

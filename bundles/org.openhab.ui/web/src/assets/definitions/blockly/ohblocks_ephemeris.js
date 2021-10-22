@@ -32,7 +32,7 @@ export default function defineOHBlocks_Ephemeris (f7) {
       this.appendValueInput('offset')
         .setCheck('Number')
         .appendField(new Blockly.FieldDropdown([['isWeekend', 'isWeekend'], ['getBankHolidayName', 'getBankHolidayName'], ['getNextBankHoliday', 'getNextBankHoliday'], ['isBankHoliday', 'isBankHoliday']]), 'type')
-        .appendField('Offset Days')
+        .appendField('offset days')
       this.setOutput(true, null)
       this.setColour(0)
       this.setTooltip('the offset to the given type in days')
@@ -48,7 +48,7 @@ export default function defineOHBlocks_Ephemeris (f7) {
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
-  Blockly.Blocks['oh_Ephemeris_getBankHolidayName'] = {
+  Blockly.Blocks['oh_ephemeris_getBankHolidayName'] = {
     init: function () {
       this.appendValueInput('offsetDays')
         .appendField('getBankHolidayName')
@@ -60,7 +60,7 @@ export default function defineOHBlocks_Ephemeris (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_Ephemeris_getBankHolidayName'] = function (block) {
+  Blockly.JavaScript['oh_ephemeris_getBankHolidayName'] = function (block) {
     addEphemeris()
     let code = 'ephemeris.getBankHolidayName'
     return [code, 0]
