@@ -75,7 +75,7 @@ export default function defineOHBlocks_Timers (f7) {
       this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([['seconds', 'plusSeconds'], ['minutes', 'plusMinutes'], ['hours', 'plusHours'], ['days', 'plusDays'], ['weeks', 'plusWeeks'], ['months', 'plusMonths']]), 'delayUnits')
         .appendField('do')
-      this.appendStatementInput('timer')
+      this.appendStatementInput('runMe')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
@@ -94,10 +94,17 @@ export default function defineOHBlocks_Timers (f7) {
 
     let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
     let delayUnits = block.getFieldValue('delayUnits')
-    let statementsTimer = Blockly.JavaScript.statementToCode(block, 'timer')
-    let code = `scriptExecution.createTimer(zonedDateTime.now().${delayUnits}(${delay}), function(){\n`
-    code += statementsTimer
-    code += '})\n'
+    let runMe = Blockly.JavaScript.statementToCode(block, 'runMe')
+
+    addGlobalVar('simpleTimer')
+
+    let code = 'if (this.timers[\'simpleTimer\'] === null) {\n'
+    code += `\tthis.timers['simpleTimer'] = scriptExecution.createTimer(zonedDateTime.now().${delayUnits}(${delay}), function(){\n`
+    code += '\t' + runMe
+    code += '\t})\n\n'
+    code += '}else {\n'
+    code += `\t\tthis.timers['simpleTimer'].reschedule(zonedDateTime.now().${delayUnits}(${delay}))\n`
+    code += '}\n'
     return code
   }
 
@@ -140,12 +147,10 @@ export default function defineOHBlocks_Timers (f7) {
     let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
     addGlobalVar(timerName)
 
-    let code = `if (this.timers.${timerName} === null) {\n`
-    code += `\tthis.timers.${timerName} = scriptExecution.createTimer(zonedDateTime.now().${delayunits}(${delay}), function(){\n`
+    let code = `if (this.timers['${timerName}'] === null) {\n`
+    code += `\tthis.timers['${timerName}'] = scriptExecution.createTimer(zonedDateTime.now().${delayunits}(${delay}), function(){\n`
     code += '\t' + runme
     code += '\t})\n\n'
-    code += '\t} else {\n'
-    code += `\t\tthis.timers.${timerName}.reschedule(zonedDateTime.now().${delayunits}(${delay}))\n`
     code += '}\n'
     return code
   }
@@ -174,7 +179,7 @@ export default function defineOHBlocks_Timers (f7) {
     let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
     addGlobalVar(timerName)
 
-    let code = `!this.timers.${timerName} || !this.timers.${timerName}.isActive()`
+    let code = `this.timers['${timerName}'] && this.timers['${timerName}'].isActive()`
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
@@ -201,7 +206,7 @@ export default function defineOHBlocks_Timers (f7) {
   Blockly.JavaScript['oh_timer_isrunning'] = function (block) {
     let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
     addGlobalVar(timerName)
-    let code = `this.timers.${timerName}.isRunning()`
+    let code = `this.timers['${timerName}'] && this.timers['${timerName}'].isRunning()`
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
@@ -228,7 +233,7 @@ export default function defineOHBlocks_Timers (f7) {
   Blockly.JavaScript['oh_timer_hasterminated'] = function (block) {
     let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
     addGlobalVar(timerName)
-    let code = `this.timers.${timerName}.hasTerminated()`
+    let code = `this.timers['${timerName}'] && this.timers['${timerName}'].hasTerminated()`
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
@@ -256,7 +261,7 @@ export default function defineOHBlocks_Timers (f7) {
   Blockly.JavaScript['oh_timer_cancel'] = function (block) {
     let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
     addGlobalVar(timerName)
-    let code = `if (this.timers.${timerName} !== null) { this.timers.${timerName}.cancel()}\n`
+    let code = `if (this.timers['${timerName}'] !== null) { this.timers['${timerName}'].cancel()}\n`
     return code
   }
 
@@ -293,7 +298,7 @@ export default function defineOHBlocks_Timers (f7) {
     let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
     addGlobalVar(timerName)
 
-    let code = `this.timers.${timerName}.reschedule(zonedDateTime.now().${delayUnits}(${delay}))\n`
+    let code = `this.timers['${timerName}'].reschedule(zonedDateTime.now().${delayUnits}(${delay}))\n`
     return code
   }
 
@@ -310,8 +315,8 @@ export default function defineOHBlocks_Timers (f7) {
   }
 
   function addGlobalVar (varName) {
-    let code1 = 'if(this.timers === undefined){\n\t this.timers = new Object()\n}'
-    let code2 = `if(this.timers.${varName} === undefined){\n\t this.timers.${varName} = null\n}`
+    let code1 = 'if (this.timers === undefined) {\n\t this.timers =[]\n}'
+    let code2 = `if(this.timers['${varName}'] === undefined){\n\t this.timers['${varName}'] = null\n}`
     Blockly.JavaScript.provideFunction_('code1', [code1])
     Blockly.JavaScript.provideFunction_(`timers${varName}`, [code2])
   }

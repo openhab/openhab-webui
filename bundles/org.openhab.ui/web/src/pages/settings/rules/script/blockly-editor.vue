@@ -393,18 +393,6 @@
             </value>
           </block>
         </category>
-        <category name="Ephemeris">
-          <block type="oh_ephemeris_basic" />
-          <block type="oh_ephemeris_offset">
-            <value name="offset">
-              <shadow type="math_number">
-                <field name="NUM">
-                  0
-                </field>
-              </shadow>
-            </value>
-          </block>
-        </category>
         <category name="Voice & Multimedia">
           <block type="oh_playmedia_sink">
             <value name="sinkName">
@@ -500,7 +488,6 @@ import Vue from 'vue'
 
 import defineOHBlocks from '@/assets/definitions/blockly/ohblocks'
 import defineOHBlocksTimers from '@/assets/definitions/blockly/ohblocks_timers'
-import defineOHBlocksEphemeris from '@/assets/definitions/blockly/ohblocks_ephemeris'
 import defineOHBlocksAudio from '@/assets/definitions/blockly/ohblocks_audio'
 import defineOHBlocksBusEvents from '@/assets/definitions/blockly/ohblocks_busevents'
 import defineOHBlocksLogging from '@/assets/definitions/blockly/ohblocks_logging'
@@ -546,7 +533,6 @@ export default {
     loadPage () {
       defineOHBlocks(this.$f7)
       defineOHBlocksTimers(this.$f7)
-      defineOHBlocksEphemeris(this.$f7)
       defineOHBlocksLogging(this.$f7)
       defineOHBlocksAudio(this.$f7, this.sinks, this.voices)
       defineOHBlocksBusEvents(this.$f7)
