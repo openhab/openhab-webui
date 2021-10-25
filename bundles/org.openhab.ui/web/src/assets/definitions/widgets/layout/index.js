@@ -95,3 +95,10 @@ export function OhCanvasLayoutDefinition () {
       pt('filterShadow', 'Fitler Shadow', 'Shadow applied to raster or SVG image elements (filter: drop-shadow() CSS syntax)').a()
     ])
 }
+
+export function OhCanvasLayerDefinition () {
+  return new WidgetDefinition('oh-canvas-layer', 'Canvas Layer', 'Layer for grouping widgets in canvas')
+    .params([
+      pt('layerName', 'Name', 'Layer name (for editor)')
+    ])
+}
