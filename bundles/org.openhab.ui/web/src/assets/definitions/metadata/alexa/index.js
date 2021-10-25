@@ -4,23 +4,28 @@ import deviceTypes, { defaultParameters } from './devicetypes.js'
 const classes = {}
 
 for (const type of Object.keys(deviceTypes)) {
-  const { defaultAttributes = [], supportedAttributes = [], supportsGroup = true, groupParameters } = deviceTypes[type]
+  const { defaultAttributes = [], supportedAttributes = [], supportsGroup = true } = deviceTypes[type]
+  classes[type] = {}
 
-  classes[type] = {
-    itemTypes: supportsGroup ? ['Group'] : [],
-    parameters: [defaultParameters],
-    ...(supportsGroup && { groupParameters: [defaultParameters].concat(groupParameters || []) })
+  if (supportsGroup) {
+    const { groupParameters = [] } = deviceTypes[type]
+    classes[type]['Group'] = { parameters: [defaultParameters].concat(groupParameters) }
   }
 
   for (const attribute of defaultAttributes) {
     const { itemTypes = [], parameters } = deviceAttributes[attribute]
-    itemTypes.forEach((it) => classes[type].itemTypes.includes(it) || classes[type].itemTypes.push(it))
-    if (parameters) classes[type].parameters.push(parameters)
+    for (const itemType of itemTypes) {
+      if (!classes[type][itemType]) classes[type][itemType] = { parameters: [defaultParameters] }
+      if (parameters) classes[type][itemType].parameters.push(parameters)
+    }
   }
 
   for (const attribute of supportedAttributes) {
-    const { parameters, ...properties } = deviceAttributes[attribute]
-    classes[`${type}.${attribute}`] = { ...properties, parameters: [defaultParameters].concat(parameters || []) }
+    const { itemTypes = [], parameters = [], ...properties } = deviceAttributes[attribute]
+    classes[`${type}.${attribute}`] = {}
+    for (const itemType of itemTypes) {
+      classes[`${type}.${attribute}`][itemType] = { parameters: [defaultParameters].concat(parameters), ...properties }
+    }
   }
 }
 

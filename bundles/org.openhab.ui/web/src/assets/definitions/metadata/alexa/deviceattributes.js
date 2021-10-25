@@ -177,6 +177,15 @@ export default {
     ]
   },
 
+  // Networking Attributes
+  NetworkAccess: {
+    itemTypes: ['Switch'],
+    parameters: () => [p.inverted()],
+    visible: (item) => item.groups
+      .map((group) => group.metadata.alexa.config || {})
+      .some((config) => !!config.connectedTo && !!config.macAddress)
+  },
+
   // Scene Attributes
   Scene: {
     itemTypes: ['Switch'],
@@ -346,7 +355,10 @@ export default {
     itemTypes: ['Number', 'String', 'Switch'],
     supports: ['multiInstance'],
     parameters: (item, config) => [
-      p.capabilityNames(item.label, 'Wash Temperature,@Setting.WaterTemperature'),
+      p.capabilityNames(
+        item.groups.length ? item.label : '@Setting.Mode',
+        'Wash Temperature,@Setting.WaterTemperature'
+      ),
       p.nonControllable(item.stateDescription),
       p.retrievable(),
       p.supportedModes(item.stateDescription),
@@ -373,7 +385,7 @@ export default {
     ],
     supports: ['multiInstance'],
     parameters: (item) => [
-      p.capabilityNames(item.label, '@Setting.FanSpeed,Speed'),
+      p.capabilityNames(item.groups.length ? item.label : '@Setting.RangeValue', '@Setting.FanSpeed,Speed'),
       p.nonControllable(item.stateDescription),
       p.retrievable(),
       p.inverted(item.type === 'Rollershutter'),
@@ -397,7 +409,7 @@ export default {
     itemTypes: ['Switch'],
     supports: ['multiInstance'],
     parameters: (item) => [
-      p.capabilityNames(item.label, '@Setting.Oscillate,Rotate'),
+      p.capabilityNames(item.groups.length ? item.label : '@Setting.ToggleState', '@Setting.Oscillate,Rotate'),
       p.nonControllable(item.stateDescription),
       p.retrievable(),
       p.inverted(),

@@ -32,14 +32,15 @@ export default {
     label: `Basic Authentication ${titleCase(setting)}`,
     type: 'TEXT'
   }),
-  capabilityNames: (label, placeholder) => ({
+  capabilityNames: (defaultValue, placeholder) => ({
     name: 'capabilityNames',
     label: 'Capability Names',
     description: `Each name formatted as <code>@assetIdOrName</code> (${docLink('Asset Catalog')})`,
     type: 'TEXT',
-    default: [label],
+    default: [defaultValue],
     placeholder: placeholder.replace(/,/, '\n'),
-    multiple: true
+    multiple: true,
+    required: !defaultValue
   }),
   channelMappings: () => ({
     name: 'channelMappings',
@@ -91,6 +92,13 @@ export default {
       if (scale === 'FAHRENHEIT') return 2
     }
   }),
+  connectedTo: (connections) => ({
+    name: 'connectedTo',
+    label: 'Connected To',
+    type: 'TEXT',
+    options: getOptions(connections),
+    limitToOptions: true
+  }),
   deviceDescription: (defaultValue) => ({
     name: 'description',
     label: 'Device Description',
@@ -103,7 +111,8 @@ export default {
     label: 'Device Name',
     type: 'TEXT',
     default: defaultValue,
-    advanced: true
+    advanced: !!defaultValue,
+    required: !defaultValue
   }),
   equalizerDefaultLevel: (defaultValue) => ({
     name: 'defaultLevel',
@@ -132,6 +141,13 @@ export default {
     max: 255,
     advanced: true
   }),
+  hostname: () => ({
+    name: 'hostname',
+    label: 'Hostname',
+    type: 'TEXT',
+    default: 'N/A',
+    advanced: true
+  }),
   increment: (defaultValue) => ({
     name: 'increment',
     label: 'Default Increment',
@@ -155,6 +171,13 @@ export default {
     options: getOptions(LANGUAGES),
     limitToOptions: true,
     advanced: true
+  }),
+  macAddress: () => ({
+    name: 'macAddress',
+    label: 'MAC Address',
+    description: 'Formatted as EUI-48 or EUI-64 address with colon or dash separators',
+    type: 'TEXT',
+    pattern: '([0-9a-fA-F]{2}(-|:)){7}[0-9a-fA-F]{2}$|^([0-9a-fA-F]{2}(-|:)){5}[0-9a-fA-F]{2}'
   }),
   nonControllable: (stateDescription) => ({
     name: 'nonControllable',
@@ -312,7 +335,7 @@ export default {
       stateDescription.options.map((option) => `${option.value}=${option.label}`),
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true,
-    required: true
+    required: !stateDescription || !stateDescription.options || !stateDescription.options.length
   }),
   supportedKeys: () => ({
     name: 'supportedKeys',
@@ -335,14 +358,15 @@ export default {
       stateDescription.options &&
       stateDescription.options.map((option) => `${option.value}=${option.label}`),
     placeholder: 'Normal=Normal:Cottons\nWhites=Whites',
-    multiple: true
+    multiple: true,
+    required: !stateDescription || !stateDescription.options || !stateDescription.options.length
   }),
   supportedOperations: () => ({
     name: 'supportedOperations',
     label: 'Supported Operations',
     type: 'TEXT',
     default: PLAYBACK_OPERATIONS,
-    options: getOptions(PLAYBACK_OPERATIONS),
+    options: getOptions(PLAYBACK_OPERATIONS, true),
     limitToOptions: true,
     multiple: true,
     advanced: true

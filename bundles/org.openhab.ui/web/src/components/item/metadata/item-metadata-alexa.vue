@@ -91,15 +91,14 @@ export default {
   },
   created () {
     Promise.all([
-      this.$oh.api.get('/rest/services/org.openhab.i18n/config'),
-      ...(this.itemType !== 'Group'
-        ? this.item.groupNames.map((groupName) => this.$oh.api.get(`/rest/items/${groupName}?metadata=alexa`))
-        : [])
-    ]).then(([regional, ...groups]) => {
+      this.$oh.api.get('/rest/items?metadata=alexa&fields=name,label,type,groupNames,groupType,metadata'),
+      this.$oh.api.get('/rest/services/org.openhab.i18n/config')
+    ]).then(([items, regional]) => {
+      this.endpoints = items
+        .filter((i) => i.metadata && !items.find((e) => e.metadata && i.groupNames.includes(e.name) && !e.groupType))
+        .map((i) => ({ ...i, members: items.filter((e) => e.metadata && e.groupNames.includes(i.name) && !i.groupType) }))
+      this.item.groups = this.endpoints.filter((i) => this.item.groupNames.includes(i.name) && !i.groupType)
       this.item.settings = { regional }
-      this.item.groups = groups
-        .map((g) => ({ ...g, members: g.members.filter((mbr) => mbr.name !== this.item.name && mbr.metadata) }))
-        .filter((g) => g.metadata)
       this.ready = true
     })
   },
@@ -109,7 +108,7 @@ export default {
     },
     orderedClasses () {
       return [...this.classesDefs]
-        .filter((cl) => this.supportsItemType(cl) && this.supportsGroupType(cl) && !this.requiresGroupAttributes(cl))
+        .filter((cl) => this.isVisible(cl) && this.supportsGroupType(cl) && !this.requiresGroupAttributes(cl))
         .sort((a, b) => a.localeCompare(b))
     },
     defaultClasses () {
@@ -123,9 +122,8 @@ export default {
     },
     parameters () {
       return this.classes.reduce((parameters, cl) => {
-        const def = AlexaDefinitions[cl]
-        const params = def ? this.itemType === 'Group' ? def.groupParameters : def.parameters : []
-        for (const p of params.map((p) => p(this.item, this.metadata.config)).flat()) {
+        const { parameters: params = [] } = this.getDefinition(cl)
+        for (const p of params.map((p) => p(this.item, this.metadata.config, this.endpoints)).flat()) {
           if (p.description) p.description = p.description.replace('%DOC_URL%', this.docUrl)
           if (!parameters.find((e) => e.name === p.name)) parameters.push(p)
         }
@@ -141,7 +139,7 @@ export default {
             item: mbr.name,
             isIgnored:
               !this.isSupportedGroupAttribute(cl) ||
-              !this.hasRequiredGroupAttributes(cl, arr) ||
+              !this.hasRequiredGroupAttributes(cl, mbr, arr) ||
               (!this.supportsMultiInstance(cl) &&
                 arr.findIndex((mbr) => mbr.metadata.alexa.value.split(',').includes(cl)) !== idx)
           }))
@@ -174,32 +172,35 @@ export default {
       return this.classes.indexOf(cl) >= 0
     },
     isDefined (cl) {
-      return this.item.groups.some((g) => g.members.some((mbr) => mbr.metadata.alexa.value.split(',').includes(cl)))
+      return this.item.groups.some((g) =>
+        g.members.some((mbr) => mbr.name !== this.item.name && mbr.metadata.alexa.value.split(',').includes(cl))
+      )
     },
     isSupportedGroupAttribute (cl) {
       return this.metadata.value === cl.split('.')[0] && this.classesDefs.includes(cl)
     },
-    getAlexaDef (cl) {
-      return AlexaDefinitions[cl] || {}
+    isVisible (cl) {
+      const { visible = () => true } = this.getDefinition(cl)
+      return !!AlexaDefinitions[cl] && !!AlexaDefinitions[cl][this.itemType] && visible(this.item)
     },
-    hasRequiredGroupAttributes (cl, items) {
-      const requires = this.getAlexaDef(cl).requires || []
+    getDefinition (cl, item = {}) {
+      const itemType = item.groupType || item.type || this.itemType
+      return (AlexaDefinitions[cl] && AlexaDefinitions[cl][itemType]) || {}
+    },
+    hasRequiredGroupAttributes (cl, item, items) {
+      const { requires = [] } = this.getDefinition(cl, item)
       const type = cl.split('.')[0]
       return requires.every((attr) => items.find((i) => i.metadata.alexa.value.split(',').includes(`${type}.${attr}`)))
     },
     requiresGroupAttributes (cl) {
-      const requires = this.getAlexaDef(cl).requires || []
+      const { requires = [] } = this.getDefinition(cl)
       return !this.isPartOfGroupEndpoint && requires.length > 0
     },
     supportsGroupType (cl) {
       return !this.isPartOfGroupEndpoint || this.item.groups.some((g) => cl.startsWith(`${g.metadata.alexa.value}.`))
     },
-    supportsItemType (cl) {
-      const itemTypes = this.getAlexaDef(cl).itemTypes || []
-      return itemTypes.includes(this.itemType)
-    },
     supportsMultiInstance (cl) {
-      const supports = this.getAlexaDef(cl).supports || []
+      const { supports = [] } = this.getDefinition(cl)
       return supports.includes('multiInstance')
     },
     toggleMultiple () {
