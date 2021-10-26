@@ -1,0 +1,19 @@
+{
+  "profile.title": "El teu perfil",
+  "profile.changePassword": "Canvieu la contrasenya",
+  "profile.sessions": "Sessions",
+  "profile.sessions.header": "Nota: fins i tot si suprimiu una sessió, és possible que romangui activa fins que caduquin tots els tokens d'accés vàlids.",
+  "profile.sessions.signOut": "Tanca aquesta sessió",
+  "profile.sessions.created": "Creat: ",
+  "profile.sessions.lastRefreshed": "Darrera actualització: ",
+  "profile.sessions.delete.success": "Sessió eliminada",
+  "profile.sessions.delete.error": "S'ha produït un error mentre s'esborrava la sessió: ",
+  "profile.sessions.signOut.error": "S'ha produït un error tancant la sessió: ",
+  "profile.apiTokens": "Tokens de l'API",
+  "profile.apiTokens.header": "Creeu Tokens d'API per donar accés permanent en nom vostre a eines i serveis externs que no admeten el marc d'autorització OAuth2.",
+  "profile.apiTokens.created": "Creat: ",
+  "profile.apiTokens.validForScope": "Vàlid per a l'abast (Scope): ",
+  "profile.apiTokens.create": "Crea un token d'API",
+  "profile.apiTokens.delete.success": "Token d'API eliminat",
+  "profile.apiTokens.delete.error": "S'ha produït un error mentre s'esborrava el Token de l'API: "
+}
