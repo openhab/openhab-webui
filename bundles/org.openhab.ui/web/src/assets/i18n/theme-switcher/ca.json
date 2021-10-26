@@ -1,0 +1,15 @@
+{
+  "about.theme": "Tema",
+  "about.theme.auto": "Auto",
+  "about.darkMode": "Mode fosc",
+  "about.darkMode.auto": "Auto",
+  "about.darkMode.light": "Clar",
+  "about.darkMode.dark": "Fosc",
+  "about.navigationBarsStyle": "Estil de les barres de navegació",
+  "about.miscellaneous": "Miscel·lània",
+  "about.miscellaneous.home.navbar": "Barra de navegació senzilla a la pàgina d'inici",
+  "about.miscellaneous.home.background": "Color de fons estàndard de la pàgina d'inici",
+  "about.miscellaneous.home.hideChatInput": "Amaga el quadre del xat a la pàgina d'inici",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Desactiva les animacions d'expansió de les Cards",
+  "about.miscellaneous.theme.disablePageTransition": "Desactiva les animacions de transició de pàgina"
+}
