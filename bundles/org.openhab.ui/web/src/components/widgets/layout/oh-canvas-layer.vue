@@ -1,5 +1,5 @@
 <template>
-  <div v-if="(!this.context.editmode && visible) || (this.context.editmode && editVisible)" ref="ohCanvasLayer" class="oh-canvas-layer">
+  <div v-if="layerPreload || layerVisible" v-show="!layerPreload || layerVisible" ref="ohCanvasLayer" class="oh-canvas-layer">
     <oh-canvas-item
       v-for="obj in layer"
       :key="obj.id"
@@ -43,6 +43,12 @@ export default {
     this.computeLayer()
   },
   computed: {
+    layerPreload () {
+      return this.config?.preload === true
+    },
+    layerVisible () {
+      return (!this.context.editmode && this.visible) || (this.context.editmode && this.editVisible)
+    },
     editVisible () {
       return !(this.config && (this.config.editVisible === false))
     }

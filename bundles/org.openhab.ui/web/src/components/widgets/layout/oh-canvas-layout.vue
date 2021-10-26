@@ -35,29 +35,31 @@
               href="#"
               text="Configure Canvas Layout" />
             <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item class="justify-content-center" text="Layers" />
-            <f7-menu-dropdown-item
-              v-for="(obj, idx) in layout.slice().reverse()"
-              :key="idx"
-              @click="setActiveLayer(layout.length - idx - 1)"
-              href="#">
-              <span>{{ (obj.item.config && obj.item.config.layerName) ? obj.item.config.layerName : `Layer ${layout.length - idx}` }}</span>
-              <f7-icon class="margin-left" :f7="(layout.length - idx - 1) == actLyrIdx ? 'pencil_circle_fill' : ''" />
-              <f7-icon class="margin-left" :f7="!(obj.item.config && (obj.item.config.editVisible === false)) ? 'eye_fill' : 'eye_slash_fill'" />
-            </f7-menu-dropdown-item>
-            <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item @click="hideOtherLayers()" href="#" text="Hide Other Layers" />
-            <f7-menu-dropdown-item @click="showOtherLayers()" href="#" text="Show Other Layers" />
-            <f7-menu-dropdown-item divider />
             <f7-menu-dropdown-item @click="addLayer()" href="#" text="Add Layer" />
             <f7-menu-dropdown-item @click="configureLayer()" href="#" text="Configure Layer" />
-            <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.bringWidgetToFront(activeLayer, context, 'canvas'))" href="#" text="Bring Layer to Front" />
-            <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.moveWidgetDown(activeLayer, context, 'canvas'))" href="#" text="Move Layer Up" />
-            <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.moveWidgetUp(activeLayer, context, 'canvas'))" href="#" text="Move Layer Down" />
-            <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.sendWidgetToBack(activeLayer, context, 'canvas'))" href="#" text="Send Layer to Back" />
-            <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item @click="removeLayer()" href="#" text="Remove Layer" />
+            <template v-if="layerToolsVisible">
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item class="justify-content-center" text="Layers" />
+              <f7-menu-dropdown-item
+                v-for="(obj, idx) in layout.slice().reverse()"
+                :key="idx"
+                @click="setActiveLayer(layout.length - idx - 1)"
+                href="#">
+                <span>{{ (obj.item.config && obj.item.config.layerName) ? obj.item.config.layerName : `Layer ${layout.length - idx}` }}</span>
+                <f7-icon class="margin-left" :f7="(layout.length - idx - 1) == actLyrIdx ? 'pencil_circle_fill' : ''" />
+                <f7-icon class="margin-left" :f7="!(obj.item.config && (obj.item.config.editVisible === false)) ? 'eye_fill' : 'eye_slash_fill'" />
+              </f7-menu-dropdown-item>
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item @click="hideOtherLayers()" href="#" text="Hide Other Layers" />
+              <f7-menu-dropdown-item @click="showOtherLayers()" href="#" text="Show Other Layers" />
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.bringWidgetToFront(activeLayer, context, 'canvas'))" href="#" text="Bring Layer to Front" />
+              <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.moveWidgetDown(activeLayer, context, 'canvas'))" href="#" text="Move Layer Up" />
+              <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.moveWidgetUp(activeLayer, context, 'canvas'))" href="#" text="Move Layer Down" />
+              <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.sendWidgetToBack(activeLayer, context, 'canvas'))" href="#" text="Send Layer to Back" />
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item @click="removeLayer()" href="#" text="Remove Layer" />
+            </template>
           </f7-menu-dropdown>
         </f7-menu-item>
       </f7-menu>
@@ -199,6 +201,9 @@ export default {
   computed: {
     activeLayer () {
       return this.context.component.slots.canvas[this.actLyrIdx]
+    },
+    layerToolsVisible () {
+      return this.context.component.slots.canvas.length > 1
     }
   },
   created () {
