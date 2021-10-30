@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div v-if="ready">
     <div style="text-align:right" class="padding-right" v-if="itemType !== 'Group'">
       <label @click="toggleMultiple" style="cursor:pointer">Multiple</label>
       <f7-checkbox :checked="multiple" @change="toggleMultiple" />
     </div>
-    <f7-list v-if="ready">
+    <f7-list>
       <f7-list-item
         :key="classSelectKey"
         :title="'Alexa Device Type' + (itemType !== 'Group' ? (!multiple ? '/Attribute' : '/Attributes') : '')"
@@ -36,11 +36,11 @@
           </optgroup>
         </select>
       </f7-list-item>
-      <f7-block-footer class="padding-left no-padding no-margin" v-if="item.groups.length">
+      <f7-block-footer class="padding-left no-padding no-margin" v-if="isPartOfGroupEndpoint">
         <small v-html="`Part of group endpoint${item.groups.length > 1 ? 's' : ''}: ${groupLinks}`" />
       </f7-block-footer>
     </f7-list>
-    <div v-if="ready">
+    <div>
       <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" />
     </div>
     <f7-block class="padding-top no-padding no-margin" v-if="itemType === 'Group' && classes.length">
@@ -66,6 +66,10 @@
       </f7-link>
     </p>
   </div>
+  <div v-else class="text-align-center">
+    <f7-preloader />
+    <div>Loading...</div>
+  </div>
 </template>
 
 <script>
@@ -89,15 +93,14 @@ export default {
       ready: false
     }
   },
-  created () {
+  mounted () {
     Promise.all([
-      this.$oh.api.get('/rest/items?metadata=alexa&fields=name,label,type,groupNames,groupType,metadata'),
-      this.$oh.api.get('/rest/services/org.openhab.i18n/config')
-    ]).then(([items, regional]) => {
-      this.endpoints = items
-        .filter((i) => i.metadata && !items.find((e) => e.metadata && i.groupNames.includes(e.name) && !e.groupType))
-        .map((i) => ({ ...i, members: items.filter((e) => e.metadata && e.groupNames.includes(i.name) && !i.groupType) }))
-      this.item.groups = this.endpoints.filter((i) => this.item.groupNames.includes(i.name) && !i.groupType)
+      this.$oh.api.get('/rest/services/org.openhab.i18n/config'),
+      ...this.item.groupNames.map((groupName) => this.$oh.api.get(`/rest/items/${groupName}?metadata=alexa`))
+    ]).then(([regional, ...groups]) => {
+      this.item.groups = groups
+        .map((g) => ({ ...g, members: g.members.filter((mbr) => mbr.name !== this.item.name && mbr.metadata) }))
+        .filter((g) => g.metadata && !g.groupType)
       this.item.settings = { regional }
       this.ready = true
     })
@@ -123,7 +126,7 @@ export default {
     parameters () {
       return this.classes.reduce((parameters, cl) => {
         const { parameters: params = [] } = this.getDefinition(cl)
-        for (const p of params.map((p) => p(this.item, this.metadata.config, this.endpoints)).flat()) {
+        for (const p of params.map((p) => p(this.item, this.metadata.config)).flat()) {
           if (p.description) p.description = p.description.replace('%DOC_URL%', this.docUrl)
           if (!parameters.find((e) => e.name === p.name)) parameters.push(p)
         }
@@ -132,7 +135,7 @@ export default {
     },
     groupCapabilities () {
       return this.item.members
-        .filter((mbr) => mbr.metadata && mbr.metadata.alexa)
+        .filter((mbr) => mbr.metadata && (mbr.groupType || mbr.type) !== 'Group')
         .reduce((caps, mbr, idx, arr) => caps.concat(
           mbr.metadata.alexa.value.split(',').map((cl) => ({
             name: cl.split('.').pop().trim() || 'N/A',
@@ -151,7 +154,7 @@ export default {
         .join(', ')
     },
     isPartOfGroupEndpoint () {
-      return this.item.groups.length > 0
+      return this.itemType !== 'Group' && this.item.groups.length > 0
     },
     docLink () {
       if (this.itemType === 'Group') {
@@ -172,9 +175,7 @@ export default {
       return this.classes.indexOf(cl) >= 0
     },
     isDefined (cl) {
-      return this.item.groups.some((g) =>
-        g.members.some((mbr) => mbr.name !== this.item.name && mbr.metadata.alexa.value.split(',').includes(cl))
-      )
+      return this.item.groups.some((g) => g.members.some((mbr) => mbr.metadata.alexa.value.split(',').includes(cl)))
     },
     isSupportedGroupAttribute (cl) {
       return this.metadata.value === cl.split('.')[0] && this.classesDefs.includes(cl)
@@ -183,8 +184,8 @@ export default {
       const { visible = () => true } = this.getDefinition(cl)
       return !!AlexaDefinitions[cl] && !!AlexaDefinitions[cl][this.itemType] && visible(this.item)
     },
-    getDefinition (cl, item = {}) {
-      const itemType = item.groupType || item.type || this.itemType
+    getDefinition (cl, item) {
+      const itemType = item ? item.groupType || item.type : this.itemType
       return (AlexaDefinitions[cl] && AlexaDefinitions[cl][itemType]) || {}
     },
     hasRequiredGroupAttributes (cl, item, items) {

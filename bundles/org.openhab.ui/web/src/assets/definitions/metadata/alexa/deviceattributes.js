@@ -183,7 +183,7 @@ export default {
     parameters: () => [p.inverted()],
     visible: (item) => item.groups
       .map((group) => group.metadata.alexa.config || {})
-      .some((config) => !!config.connectedTo && !!config.macAddress)
+      .some((config) => !!config.macAddress)
   },
 
   // Scene Attributes

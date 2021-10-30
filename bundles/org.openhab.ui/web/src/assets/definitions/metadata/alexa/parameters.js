@@ -38,7 +38,7 @@ export default {
     description: `Each name formatted as <code>@assetIdOrName</code> (${docLink('Asset Catalog')})`,
     type: 'TEXT',
     default: [defaultValue],
-    placeholder: placeholder.replace(/,/, '\n'),
+    placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true,
     required: !defaultValue
   }),
@@ -92,12 +92,12 @@ export default {
       if (scale === 'FAHRENHEIT') return 2
     }
   }),
-  connectedTo: (connections) => ({
+  connectedTo: (value) => ({
     name: 'connectedTo',
     label: 'Connected To',
     type: 'TEXT',
-    options: getOptions(connections),
-    limitToOptions: true
+    default: value,
+    readOnly: true
   }),
   deviceDescription: (defaultValue) => ({
     name: 'description',
@@ -215,7 +215,7 @@ export default {
       stateDescription.options
         .filter((option) => !isNaN(option.value))
         .map((option) => `${option.value}=${option.label}`),
-    placeholder: placeholder.replace(/,/, '\n'),
+    placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true,
     advanced
   }),
