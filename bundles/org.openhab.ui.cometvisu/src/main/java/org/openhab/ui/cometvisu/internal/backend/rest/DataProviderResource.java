@@ -117,7 +117,7 @@ public class DataProviderResource implements RESTResource {
 
             String type = item.getType();
             System.out.println(item.toString() + "/" + item.getType());
-            if (item.getType() == "Group") {
+            if ("Group".equals(item.getType())) {
                 Item groupItem = ((GroupItem) item).getBaseItem();
                 if (groupItem != null) {
                     type = groupItem.getType();

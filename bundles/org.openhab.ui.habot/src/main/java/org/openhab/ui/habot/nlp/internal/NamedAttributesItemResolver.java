@@ -12,8 +12,6 @@
  */
 package org.openhab.ui.habot.nlp.internal;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -53,10 +51,9 @@ public class NamedAttributesItemResolver implements ItemResolver {
 
     private final Logger logger = LoggerFactory.getLogger(NamedAttributesItemResolver.class);
 
-    private static final Set<String> LOCATION_CATEGORIES = Collections
-            .unmodifiableSet(new HashSet<>(Arrays.asList("cellar", "livingroom", "kitchen", "bedroom", "bath", "toilet",
-                    "closet", "dressing", "office", "groundfloor", "firstfloor", "attic", "corridor", "garage",
-                    "garden", "terrace", "greenhouse", "pantry")));
+    private static final Set<String> LOCATION_CATEGORIES = Set.of("cellar", "livingroom", "kitchen", "bedroom", "bath",
+            "toilet", "closet", "dressing", "office", "groundfloor", "firstfloor", "attic", "corridor", "garage",
+            "garden", "terrace", "greenhouse", "pantry");
 
     private ItemRegistry itemRegistry;
     private MetadataRegistry metadataRegistry;
@@ -237,6 +234,7 @@ public class NamedAttributesItemResolver implements ItemResolver {
         }
     }
 
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     protected void unsetItemRegistry(ItemRegistry itemRegistry) {
         if (itemRegistry == this.itemRegistry) {
             this.itemRegistry.removeRegistryChangeListener(registryChangeListener);
@@ -252,6 +250,7 @@ public class NamedAttributesItemResolver implements ItemResolver {
         }
     }
 
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     protected void unsetMetadataRegistry(MetadataRegistry metadataRegistry) {
         if (metadataRegistry == this.metadataRegistry) {
             this.metadataRegistry.removeRegistryChangeListener(metadataRegistryChangeListener);

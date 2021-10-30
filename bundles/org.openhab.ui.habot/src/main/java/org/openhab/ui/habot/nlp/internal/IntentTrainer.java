@@ -79,7 +79,7 @@ public class IntentTrainer {
      */
     public IntentTrainer(String language, Collection<Skill> skills, InputStream additionalNameSamples,
             String tokenizerId) throws Exception {
-        this.tokenizer = (tokenizerId == "alphanumeric") ? AlphaNumericTokenizer.INSTANCE
+        this.tokenizer = "alphanumeric".equals(tokenizerId) ? AlphaNumericTokenizer.INSTANCE
                 : WhitespaceTokenizer.INSTANCE;
 
         /* Prepare the streams of document samples sourced from each skill's training data */

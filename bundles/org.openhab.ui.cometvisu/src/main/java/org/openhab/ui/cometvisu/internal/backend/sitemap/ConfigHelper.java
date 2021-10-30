@@ -273,7 +273,7 @@ public class ConfigHelper {
         for (String value : map.keySet()) {
             Entry entry = new Entry();
             entry.setValue(value);
-            if (value == "0") {
+            if ("0".equals(value)) {
                 entry.setDefault(true);
             }
             entry.getContent().add(map.get(value));
