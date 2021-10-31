@@ -69,23 +69,18 @@
       </f7-tab>
       <f7-tab :tab-active="currentTab === 'automation'">
         <addons-section
-          v-if="addons && addons.marketplace"
+          v-if="addons"
           @addonButtonClick="addonButtonClick"
-          :addons="addons.marketplace.filter((a) => a.type === 'automation')"
+          :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType === 'application/vnd.openhab.ruletemplate')"
           :install-action-text="'Add'"
           :title="'Rule Templates'"
           :subtitle="'Shared by the community to bootstrap your automation'" />
         <addons-section
-          v-if="addons && addons.karaf"
+          v-if="addons"
           @addonButtonClick="addonButtonClick"
-          :addons="addons.karaf.filter((a) => a.type === 'automation')"
-          :title="'Automation Add-ons'"
-          :subtitle="'Add functionality with add-ons from the distribution'" />
-        <addons-section
-          v-if="otherAddons && otherAddons.length"
-          @addonButtonClick="addonButtonClick"
-          :addons="otherAddons.filter((a) => a.type === 'automation')"
-          :title="'Other Add-ons'" />
+          :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType !== 'application/vnd.openhab.ruletemplate')"
+          :title="'Other Automation Add-ons'"
+          :subtitle="'Add new scripting languages and various functionality'" />
       </f7-tab>
       <f7-tab :tab-active="currentTab === 'ui'">
         <addons-section
@@ -99,14 +94,9 @@
         <addons-section
           v-if="addons && addons.karaf" :show-all="true"
           @addonButtonClick="addonButtonClick"
-          :addons="addons.karaf.filter((a) => a.type === 'ui')"
-          :title="'Other User Interfaces'"
-          :subtitle="'Official add-ons from the distribution'" />
-        <addons-section
-          v-if="otherAddons && otherAddons.length"
-          @addonButtonClick="addonButtonClick"
-          :addons="otherAddons.filter((a) => a.type === 'ui')"
-          :title="'Other Add-ons'" />
+          :addons="allAddons.filter((a) => a.type === 'ui' && a.contentType !== 'application/vnd.openhab.uicomponent;type=widget')"
+          :title="'Other UI Add-ons'"
+          :subtitle="'Alternative user interfaces and icon sets'" />
       </f7-tab>
       <f7-tab :tab-active="currentTab === 'other'">
         <addons-section

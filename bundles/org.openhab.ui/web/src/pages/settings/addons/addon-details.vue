@@ -171,6 +171,8 @@
     img
       max-width calc(100%)
       height auto
+      &[alt="logo"]
+        display none
       &.lazy:not(.lazy-loaded)
         opacity 0
 </style>
@@ -213,7 +215,9 @@ export default {
     imageUrl () {
       if (!this.addon) return null
       if (this.addon.imageLink) return this.addon.imageLink.replace(/^\/\//, 'https://')
-      return 'https://www.openhab.org/logos/' + this.addon.id.substring(this.addon.id.indexOf('-') + 1) + '.png'
+      let docsBranch = 'final'
+      if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
+      return `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/images/addons/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}.png`
     },
     addonDescription () {
       if (!this.descriptionReady) return null
@@ -228,8 +232,8 @@ export default {
     },
     docLinkUrl () {
       if (!this.addon) return ''
-      if (this.serviceId !== 'karaf' && this.addon.link) return this.addon.link
-      if (this.serviceId === 'karaf') {
+      if (this.serviceId && this.serviceId !== 'karaf' && this.addon.link) return this.addon.link
+      if (this.addon.id.indexOf('-') > 0) {
         let url = `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org` +
           `/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}` +
           `/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}`
