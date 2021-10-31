@@ -2,9 +2,9 @@
   <f7-block class="addons-section" ref="addongroup" v-if="addons && addons.length > 0">
     <f7-block-title medium>
       {{ title }}
-      <f7-link v-if="canExpand" color="blue" class="see-all-button margin-right" @click="expand">
-        See All
-      </f7-link>
+      <!-- <f7-link v-if="canExpand" color="blue" class="see-all-button margin-right" @click="expand">
+        Show All
+      </f7-link> -->
     </f7-block-title>
     <f7-block-footer v-if="subtitle">
       {{ subtitle }}
@@ -18,6 +18,9 @@
     <f7-list v-else media-list ref="addonlist" class="addons-table-list" no-chevron no-hairlines>
       <addon-list-item v-for="addon in addonsList" :key="addon.id" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
     </f7-list>
+    <f7-block v-if="canExpand" class="display-flex justify-content-center">
+      <f7-button class="" outline color="blue" @click="expand" :text="`Show ${addons.length - addonCollapsedLimit} More`" />
+    </f7-block>
   </f7-block>
 </template>
 
