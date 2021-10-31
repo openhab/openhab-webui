@@ -74,7 +74,9 @@ export default {
   computed: {
     imageUrl () {
       if (this.addon.imageLink) return this.addon.imageLink.replace(/^\/\//, 'https://')
-      return 'https://www.openhab.org/logos/' + this.addon.id.substring(this.addon.id.indexOf('-') + 1) + '.png'
+      let docsBranch = 'final'
+      if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
+      return `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/images/addons/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}.png`
     }
   },
   mounted () {
