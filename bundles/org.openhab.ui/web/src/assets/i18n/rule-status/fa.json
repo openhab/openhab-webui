@@ -1,0 +1,8 @@
+{
+  "CONFIGURATION_ERROR": "اشتباه: پیکربندی",
+  "HANDLER_INITIALIZING_ERROR": "اشتباه: دستگیره",
+  "HANDLER_MISSING_ERROR": "اشتباه: دستگیره",
+  "TEMPLATE_MISSING_ERROR": "اشتباه: قالب",
+  "INVALID_RULE": "بی اعتبار",
+  "DISABLED": "غیرفعال کردن"
+}

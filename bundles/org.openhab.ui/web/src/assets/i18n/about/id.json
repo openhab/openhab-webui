@@ -1,0 +1,21 @@
+{
+  "about.title": "Tentang",
+  "about.homePage": "Situs web",
+  "about.documentation": "Dokumentasi",
+  "about.communityForum": "Forum Komunitas",
+  "about.technicalInformation": "Informasi Teknis",
+  "about.technicalInformation.configurationFolder": "Folder Konfigurasi",
+  "about.technicalInformation.userdataFolder": "Folder data pengguna",
+  "about.technicalInformation.logsFolder": "Folder Catatan",
+  "about.technicalInformation.operatingSystem": "Sistem operasi",
+  "about.technicalInformation.javaRuntime": "Runtime Java",
+  "about.technicalInformation.resourceStats": "{nbproc} processor yg tersedia - {ram} memory yg tersedia",
+  "about.technicalInformation.viewDetails": "Melihat Rincian",
+  "about.appearanceOptions": "Tampilan(hanya untuk perangkat ini)",
+  "about.reload": "Reload",
+  "about.reload.purgeExplanation1": "Aplikasi ini menggunakan caches dan/atau layanan untuk menyimpan sumber daya secara lokal, tetapi bisa membuat aplikasi tidak mendeteksi perbaruan data jika ada data yang terbaru.",
+  "about.reload.purgeExplanation2": "Pilih Bersihkan Caches dan Segarkan untuk membersihkan semua caches, mematikan layanan dan mengunduh semuanya dari server lagi.",
+  "about.reload.purgeCachesAndRefresh": "Bersihkan caches dan segarkan",
+  "about.reload.confirmPurge": "Bersihkan semua aplikasi cache dan matikan layanan? Memuat ulang halaman dari server, membutuhkan beberapa saat.",
+  "about.reload.reloadApp": "Muat ulang aplikasi"
+}

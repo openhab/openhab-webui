@@ -1,0 +1,21 @@
+{
+  "about.title": "Quant a",
+  "about.homePage": "Lloc web",
+  "about.documentation": "Documentació",
+  "about.communityForum": "Fòrum de la Comunitat",
+  "about.technicalInformation": "Informació tècnica",
+  "about.technicalInformation.configurationFolder": "Carpeta de configuració",
+  "about.technicalInformation.userdataFolder": "Carpeta de dades d'usuari",
+  "about.technicalInformation.logsFolder": "Carpeta de registres",
+  "about.technicalInformation.operatingSystem": "Sistema operatiu",
+  "about.technicalInformation.javaRuntime": "Runtime de Java",
+  "about.technicalInformation.resourceStats": "{nbproc} processadors disponibles - {ram} memòria disponible",
+  "about.technicalInformation.viewDetails": "Mostra els detalls",
+  "about.appearanceOptions": "Aparença (només per a aquest dispositiu)",
+  "about.reload": "Torna a carregar",
+  "about.reload.purgeExplanation1": "La memòria cau i/o els \"service workers\" s'utilitzen per emmagatzemar recursos localment i fer que aquesta aplicació es carregui més ràpidament, però és possible que no detecti de manera fiable quan s'ha actualitzat a una versió nova.",
+  "about.reload.purgeExplanation2": "Seleccioneu Netejar les memòries cau i Actualitzar per esborrar totes les memòries cau, anul·lar el registre dels \"Service workers\" i tornar a baixar-ho tot del servidor.",
+  "about.reload.purgeCachesAndRefresh": "Netejar les memòries cau i Actualitzar",
+  "about.reload.confirmPurge": "Netejar totes les memòria cau d'aplicacions i anul·lar el registre dels \"Service workers\"? Això també tornarà a carregar la pàgina des del servidor, cosa que pot trigar uns segons.",
+  "about.reload.reloadApp": "Recarregar App"
+}

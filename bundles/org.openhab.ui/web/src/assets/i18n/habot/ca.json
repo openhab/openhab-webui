@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(exemple)",
+  "habot.clearHistory": "Esborra l’historial",
+  "habot.dismiss": "Descarta",
+  "habot.example1": "Quina és la temperatura de la cuina?",
+  "habot.example2": "Ajusta el termostat a 21 graus",
+  "habot.example3": "Apaga les llums del primer pis",
+  "habot.anythingElse": "Alguna cosa més?",
+  "habot.cardDeckIsIncompatible": "Ho sentim, les Cards desades no es poden mostrar aquí, utilitzeu l'aplicació HABot dedicada per veure-les.",
+  "habot.cardIsIncompatible": "Ho sentim, aquesta Card no es pot mostrar aquí, utilitzeu l'aplicació HABot dedicada per veure-la."
+}

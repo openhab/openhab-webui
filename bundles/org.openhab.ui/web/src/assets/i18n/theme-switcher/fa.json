@@ -1,0 +1,15 @@
+{
+  "about.theme": "پوسته",
+  "about.theme.auto": "خودکار",
+  "about.darkMode": "حالت تیره",
+  "about.darkMode.auto": "خودکار",
+  "about.darkMode.light": "روشن",
+  "about.darkMode.dark": "تیره",
+  "about.navigationBarsStyle": "سبک نوارهای ناوبری",
+  "about.miscellaneous": "متفرقه",
+  "about.miscellaneous.home.navbar": "نوار ناوبری ساده در صفحه اصلی",
+  "about.miscellaneous.home.background": "رنگ پس زمینه صفحه اصلی استاندارد",
+  "about.miscellaneous.home.hideChatInput": "پنهان کردن جعبه ورودی چت در صفحه اصلی",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "غیرفعال کردن انیمیشن های گسترش کارت",
+  "about.miscellaneous.theme.disablePageTransition": "غیرفعال کردن انیمیشن های انتقال صفحه"
+}
