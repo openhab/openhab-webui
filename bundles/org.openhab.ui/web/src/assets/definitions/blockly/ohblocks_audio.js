@@ -1,5 +1,4 @@
 /*
-* This code has been originally provided by https://github.com/bigbasec
 * @author stefan.hoehn
 *
 * Notes:
@@ -62,7 +61,7 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
     let fileName = Blockly.JavaScript.valueToCode(block, 'fileName', Blockly.JavaScript.ORDER_ATOMIC)
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    let code = `audio.playSound('${sinkName}',${fileName})\n`
+    let code = `audio.playSound('${sinkName}',${fileName});\n`
     return code
   }
 
@@ -102,7 +101,7 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
     let volume = Blockly.JavaScript.valueToCode(block, 'volume', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
 
-    let code = `audio.playSound('${sinkName}',${fileName},new PercentType(${volume}))\n`
+    let code = `audio.playSound('${sinkName}',${fileName},new PercentType(${volume}));\n`
     return code
   }
 
@@ -135,7 +134,7 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
     addAudio()
     let url = block.getFieldValue('url')
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
-    let code = `audio.playStream('${sinkName}','${url}')\n`
+    let code = `audio.playStream('${sinkName}','${url}');\n`
     return code
   }
 
@@ -167,7 +166,7 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
     addAudio()
     let url = block.getFieldValue('url')
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
-    let code = `audio.playStream('${sinkName}',null)\n`
+    let code = `audio.playStream('${sinkName}',null);\n`
     return code
   }
 
@@ -201,13 +200,13 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
   Blockly.JavaScript['oh_say'] = function (block) {
     const voiceName = Blockly.JavaScript.provideFunction_(
       'voice',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Voice\')'])
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Voice\');'])
 
     const textToSay = Blockly.JavaScript.valueToCode(block, 'textToSay', Blockly.JavaScript.ORDER_ATOMIC)
     const voice = Blockly.JavaScript.valueToCode(block, 'voice', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
     const deviceSink = Blockly.JavaScript.valueToCode(block, 'deviceSink', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    const code = `voice.say(${textToSay}, '${voice}', '${deviceSink}')\n`
+    const code = `voice.say(${textToSay}, '${voice}', '${deviceSink}');\n`
     return code
   }
 
@@ -271,6 +270,6 @@ export default function defineOHBlocks_Audio (f7, sinks, voices) {
   function addAudio () {
     Blockly.JavaScript.provideFunction_(
       'audio',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio")'])
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Audio");'])
   }
 }

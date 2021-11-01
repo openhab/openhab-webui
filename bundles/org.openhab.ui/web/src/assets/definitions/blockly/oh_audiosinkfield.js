@@ -1,5 +1,4 @@
 /*
-* This code has been originally provided by https://github.com/bigbasec
 * @author stefan.hoehn
 *
 * See more background info on openHAB multimedia here: https://www.openhab.org/docs/configuration/multimedia.html

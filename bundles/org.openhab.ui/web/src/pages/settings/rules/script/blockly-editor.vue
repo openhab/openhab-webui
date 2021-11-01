@@ -297,6 +297,27 @@
         </block>
       </category>
       <category name="openHAB" colour="0">
+        <category name="Variables">
+          <block type="oh_store_value">
+            <value name="value">
+              <shadow type="text">
+                <field name="TEXT">value</field>
+              </shadow>
+            </value>
+            <value name="varName">
+              <shadow type="text">
+                <field name="TEXT">variableName</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_get_value">
+            <value name="varName">
+              <shadow type="text">
+                <field name="TEXT">variableName</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
         <category name="Items & Things">
           <block type="oh_items" />
           <block type="oh_item" />
@@ -338,51 +359,55 @@
                 <field name="NUM">10</field>
               </shadow>
             </value>
+            <value name="timerName">
+              <shadow type="text">
+                <field name="TEXT">MyTimer</field>
+              </shadow>
+            </value>
           </block>
-          <block type="oh_timer_item" />
           <block type="oh_timer">
+            <value name="timerName">
+              <shadow type="text">
+                <field name="TEXT">MyTimer</field>
+              </shadow>
+            </value>
             <value name="delay">
               <shadow type="math_number">
                 <field name="NUM">10</field>
               </shadow>
             </value>
-            <value name="timerName">
-              <shadow type="oh_timer_item">
-                <field name="TEXT">MyTimer</field>
-              </shadow>
-            </value>
           </block>
           <block type="oh_timer_cancel">
             <value name="timerName">
-              <shadow type="oh_timer_item">
+              <shadow type="text">
                 <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
           </block>
           <block type="oh_timer_isactive">
             <value name="timerName">
-              <shadow type="oh_timer_item">
+              <shadow type="text">
                 <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
           </block>
           <block type="oh_timer_isrunning">
             <value name="timerName">
-              <shadow type="oh_timer_item">
+              <shadow type="text">
                 <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
           </block>
           <block type="oh_timer_hasterminated">
             <value name="timerName">
-              <shadow type="oh_timer_item">
+              <shadow type="text">
                 <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
           </block>
           <block type="oh_timer_reschedule">
             <value name="timerName">
-              <shadow type="oh_timer_item">
+              <shadow type="text">
                 <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
@@ -431,6 +456,47 @@
             <value name="voice">
               <shadow type="oh_voices_dropdown" />
             </value>
+          </block>
+        </category>
+        <category name="Notifications">
+          <block type="oh_sendNotification">
+            <value name="email">
+              <shadow type="text">
+                <field name="TEXT">email-address</field>
+              </shadow>
+            </value>
+            <value name="message">
+              <shadow type="text">
+                <field name="TEXT">message</field>
+              </shadow>
+            </value>
+            <value name="severity" />
+          </block>
+          <block type="oh_sendBroadcastNotification">
+            <value name="message">
+              <shadow type="text">
+                <field name="TEXT">message</field>
+              </shadow>
+            </value>
+            <value name="icon">
+              <shadow type="text">
+                <field name="TEXT">oh-iconname</field>
+              </shadow>
+            </value>
+            <value name="severity" />
+          </block>
+          <block type="oh_sendLogNotification">
+            <value name="message">
+              <shadow type="text">
+                <field name="TEXT">message</field>
+              </shadow>
+            </value>
+            <value name="icon">
+              <shadow type="text">
+                <field name="TEXT">oh-iconname</field>
+              </shadow>
+            </value>
+            <value name="severity" />
           </block>
         </category>
         <category name="Logging & Output">
@@ -491,6 +557,8 @@ import defineOHBlocksTimers from '@/assets/definitions/blockly/ohblocks_timers'
 import defineOHBlocksAudio from '@/assets/definitions/blockly/ohblocks_audio'
 import defineOHBlocksBusEvents from '@/assets/definitions/blockly/ohblocks_busevents'
 import defineOHBlocksLogging from '@/assets/definitions/blockly/ohblocks_logging'
+import defineOHBlocksVariables from '@/assets/definitions/blockly/ohblocks_variables'
+import defineOHBlocksNotifications from '@/assets/definitions/blockly/ohblocks_notifications'
 
 Vue.config.ignoredElements = [
   'field',
@@ -532,10 +600,12 @@ export default {
     },
     loadPage () {
       defineOHBlocks(this.$f7)
+      defineOHBlocksVariables(this.$f7)
       defineOHBlocksTimers(this.$f7)
       defineOHBlocksLogging(this.$f7)
       defineOHBlocksAudio(this.$f7, this.sinks, this.voices)
       defineOHBlocksBusEvents(this.$f7)
+      defineOHBlocksNotifications(this.$f7)
 
       this.startBlockly()
     },
