@@ -10,51 +10,51 @@ export default function defineOHBlocks_Variables (f7) {
   Blockly.Blocks['oh_store_value'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('store')
+        .appendField('store value')
       this.appendValueInput('value')
         .setCheck(['Number', 'Boolean', 'String'])
       this.appendDummyInput()
         .appendField('into')
-      this.appendValueInput('varName')
+      this.appendValueInput('key')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
-      this.setTooltip('stores a value into variable that can be reused if the particular rule is retriggered')
+      this.setTooltip('stores a value with a variable name that can be retrieved on subsequent runs of this rule/script')
       this.setHelpUrl('')
     }
   }
 
   Blockly.JavaScript['oh_store_value'] = function (block) {
-    let varName = Blockly.JavaScript.valueToCode(block, 'varName', Blockly.JavaScript.ORDER_ATOMIC)
+    let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
     let value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
-    addStoredVars()
+    addStoredValues()
 
-    let code = `this.storedvars[${varName}] = ${value};\n`
+    let code = `this.storedValues[${key}] = ${value};\n`
     return code
   }
 
   Blockly.Blocks['oh_get_value'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('stored value from')
-      this.appendValueInput('varName')
+        .appendField('stored value')
+      this.appendValueInput('key')
       this.setInputsInline(true)
       this.setOutput(true, null)
       this.setColour(0)
-      this.setTooltip('retrieves the value that was stored for that particular rule.')
+      this.setTooltip('retrieves the value that was previously stored for that particular script/rule')
       this.setHelpUrl('')
     }
   }
 
   Blockly.JavaScript['oh_get_value'] = function (block) {
-    let varName = Blockly.JavaScript.valueToCode(block, 'varName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `this.storedvars [${varName}]`
+    let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = `this.storedValues[${key}]`
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
-  function addStoredVars () {
-    let storedvars = 'if (typeof this.storedvars === \'undefined\') {\n\t this.storedvars =[];\n}'
-    Blockly.JavaScript.provideFunction_('storedvars', [storedvars])
+  function addStoredValues () {
+    let storedValues = 'if (typeof this.storedValues === \'undefined\') {\n  this.storedValues = [];\n}'
+    Blockly.JavaScript.provideFunction_('storedValues', [storedValues])
   }
 }

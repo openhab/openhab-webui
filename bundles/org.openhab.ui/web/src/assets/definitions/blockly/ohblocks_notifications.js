@@ -9,12 +9,12 @@ export default function defineOHBlocks_Notifications (f7) {
   Blockly.Blocks['oh_sendNotification'] = {
     init: function () {
       this.appendValueInput('message')
-        .appendField('Send')
-      this.appendDummyInput()
-        .appendField('as notification to')
+        .appendField('send notification')
       this.appendValueInput('email')
+        .appendField('to e-mail address')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
+      this.setInputsInline(false)
       this.setColour(0)
       this.setTooltip('Send a notification message to a specific openhab user')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#cloud-notification-actions')
@@ -25,23 +25,23 @@ export default function defineOHBlocks_Notifications (f7) {
     addNotificationAction()
     let email = Blockly.JavaScript.valueToCode(block, 'email', Blockly.JavaScript.ORDER_ATOMIC)
     let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `NotificationAction.sendNotification(${email},${message});\n`
+    let code = `notifications.sendNotification(${email},${message});\n`
     return code
   }
 
   Blockly.Blocks['oh_sendBroadcastNotification'] = {
     init: function () {
       this.appendValueInput('message')
-        .appendField('Send')
+        .appendField('send notification')
       this.appendValueInput('icon')
         .appendField('with icon')
       this.appendDummyInput()
         .appendField('as')
         .appendField(new Blockly.FieldDropdown([['info', 'info'], ['warning', 'warn'], ['highly important', 'high']]), 'severity')
         .appendField('to all devices')
-      this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
+      this.setInputsInline(false)
       this.setColour(0)
       this.setTooltip('send a notification to all clients. Provide icon name without prefix')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#cloud-notification-actions')
@@ -53,14 +53,14 @@ export default function defineOHBlocks_Notifications (f7) {
     let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
     let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
-    let code = `NotificationAction.sendBroadcastNotification(${message},${icon},'${severity}');\n`
+    let code = `notifications.sendBroadcastNotification(${message},${icon},'${severity}');\n`
     return code
   }
 
   Blockly.Blocks['oh_sendLogNotification'] = {
     init: function () {
       this.appendValueInput('message')
-        .appendField('Send')
+        .appendField('send notification')
       this.appendValueInput('icon')
         .appendField('with icon')
       this.appendDummyInput()
@@ -69,6 +69,7 @@ export default function defineOHBlocks_Notifications (f7) {
         .appendField('to log only')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
+      this.setInputsInline(false)
       this.setColour(0)
       this.setTooltip('Sends a notification to the log only not to any device')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#cloud-notification-actions')
@@ -80,13 +81,13 @@ export default function defineOHBlocks_Notifications (f7) {
     let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
     let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
-    let code = `NotificationAction.sendLogNotification(${message},${icon},'${severity}');\n`
+    let code = `notifications.sendLogNotification(${message},${icon},'${severity}');\n`
     return code
   }
 }
 
 function addNotificationAction () {
   Blockly.JavaScript.provideFunction_(
-    'NotificationAction',
-    ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.io.openhabcloud.NotificationAction");'])
+    'notifications',
+    ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.io.openhabcloud.NotificationAction\');'])
 }

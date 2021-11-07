@@ -1,19 +1,14 @@
-/*
-* @author yannick.schaus
-* Thing-Field-Picker
-*/
-
 import Blockly from 'blockly'
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
 
-export class FieldItemThingPicker extends Blockly.FieldTextInput {
+export class FieldThingPicker extends Blockly.FieldTextInput {
   constructor (optValue, optValidator, optConfig) {
     super(optValue, optValidator, optConfig)
     if (optConfig.f7) this.f7 = optConfig.f7
   }
 
   static fromJson (options) {
-    return new FieldItemThingPicker(options['options'], undefined, options)
+    return new FieldThingPicker(options['options'], undefined, options)
   }
 
   showEditor_ (options) {
@@ -44,4 +39,4 @@ export class FieldItemThingPicker extends Blockly.FieldTextInput {
   }
 }
 
-Blockly.fieldRegistry.register('oh_thing_field', FieldItemThingPicker)
+Blockly.fieldRegistry.register('oh_thing_field', FieldThingPicker)

@@ -12,6 +12,7 @@
         <block type="logic_null" />
         <block type="logic_ternary" />
       </category>
+
       <category name="Loops" colour="%{BKY_LOOPS_HUE}">
         <block type="controls_repeat_ext">
           <value name="TIMES">
@@ -41,6 +42,7 @@
         <block type="controls_forEach" />
         <block type="controls_flow_statements" />
       </category>
+
       <category name="Math" colour="%{BKY_MATH_HUE}">
         <block type="math_number">
           <field name="NUM">123</field>
@@ -142,6 +144,7 @@
           </value>
         </block>
       </category>
+
       <category name="Text" colour="%{BKY_TEXTS_HUE}">
         <block type="text" />
         <block type="text_join">
@@ -207,6 +210,7 @@
           </value>
         </block>
       </category>
+
       <category name="Lists" colour="%{BKY_LISTS_HUE}">
         <block type="lists_create_with">
           <mutation items="0" />
@@ -258,6 +262,7 @@
         </block>
         <block type="lists_sort" />
       </category>
+
       <category name="Color" colour="%{BKY_COLOUR_HUE}">
         <block type="colour_picker" />
         <block type="colour_random" />
@@ -296,33 +301,17 @@
           </value>
         </block>
       </category>
+
       <category name="openHAB" colour="0">
-        <category name="Variables">
-          <block type="oh_store_value">
-            <value name="value">
-              <shadow type="text">
-                <field name="TEXT">value</field>
-              </shadow>
-            </value>
-            <value name="varName">
-              <shadow type="text">
-                <field name="TEXT">variableName</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="oh_get_value">
-            <value name="varName">
-              <shadow type="text">
-                <field name="TEXT">variableName</field>
-              </shadow>
-            </value>
-          </block>
-        </category>
-        <category name="Items & Things">
-          <block type="oh_items" />
+        <category name="Items &amp; Things">
           <block type="oh_item" />
           <block type="oh_getitem">
             <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_groupmembers">
+            <value name="groupName">
               <shadow type="oh_item" />
             </value>
           </block>
@@ -331,19 +320,26 @@
               <shadow type="oh_item" />
             </value>
           </block>
-          <block type="oh_getitem_attribute" />
+          <block type="oh_getitem_attribute">
+            <value name="item">
+              <shadow type="oh_getitem">
+                <value name="itemName">
+                  <shadow type="oh_item" />
+                </value>
+              </shadow>
+            </value>
+          </block>
           <block type="oh_event">
             <value name="value">
               <shadow type="text">
-                <field name="TEXT">
-                  value
-                </field>
+                <field name="TEXT">value</field>
               </shadow>
             </value>
             <value name="itemName">
               <shadow type="oh_item" />
             </value>
           </block>
+          <sep gap="48" />
           <block type="oh_thing" />
           <block type="oh_getthing_state">
             <value name="itemName">
@@ -351,9 +347,10 @@
             </value>
           </block>
         </category>
-        <category name="Timers & Delays">
+
+        <category name="Timers &amp; Delays">
           <block type="oh_sleep" />
-          <block type="oh_timer_simple">
+          <block type="oh_timer">
             <value name="delay">
               <shadow type="math_number">
                 <field name="NUM">10</field>
@@ -365,15 +362,15 @@
               </shadow>
             </value>
           </block>
-          <block type="oh_timer">
-            <value name="timerName">
-              <shadow type="text">
-                <field name="TEXT">MyTimer</field>
-              </shadow>
-            </value>
+          <block type="oh_timer_ext">
             <value name="delay">
               <shadow type="math_number">
                 <field name="NUM">10</field>
+              </shadow>
+            </value>
+            <value name="timerName">
+              <shadow type="text">
+                <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
           </block>
@@ -384,21 +381,21 @@
               </shadow>
             </value>
           </block>
-          <block type="oh_timer_isactive">
+          <block type="oh_timer_isActive">
             <value name="timerName">
               <shadow type="text">
                 <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
           </block>
-          <block type="oh_timer_isrunning">
+          <block type="oh_timer_isRunning">
             <value name="timerName">
               <shadow type="text">
                 <field name="TEXT">MyTimer</field>
               </shadow>
             </value>
           </block>
-          <block type="oh_timer_hasterminated">
+          <block type="oh_timer_hasTerminated">
             <value name="timerName">
               <shadow type="text">
                 <field name="TEXT">MyTimer</field>
@@ -418,19 +415,30 @@
             </value>
           </block>
         </category>
-        <category name="Voice & Multimedia">
+
+        <category name="Voice &amp; Multimedia">
           <block type="oh_playmedia_sink">
+            <value name="fileName">
+              <shadow type="text">
+                <field name="TEXT">doorbell.mp3</field>
+              </shadow>
+            </value>
             <value name="sinkName">
               <shadow type="oh_audiosink_dropdown" />
             </value>
           </block>
           <block type="oh_playmedia_sink_volume">
+            <value name="fileName">
+              <shadow type="text">
+                <field name="TEXT">doorbell.mp3</field>
+              </shadow>
+            </value>
             <value name="sinkName">
               <shadow type="oh_audiosink_dropdown" />
             </value>
             <value name="volume">
-              <shadow type="audioSlider">
-                <field name="volume">5</field>
+              <shadow type="oh_volumeslider">
+                <field name="volume">50</field>
               </shadow>
             </value>
           </block>
@@ -458,11 +466,12 @@
             </value>
           </block>
         </category>
+
         <category name="Notifications">
           <block type="oh_sendNotification">
             <value name="email">
               <shadow type="text">
-                <field name="TEXT">email-address</field>
+                <field name="TEXT">test@example.org</field>
               </shadow>
             </value>
             <value name="message">
@@ -480,7 +489,7 @@
             </value>
             <value name="icon">
               <shadow type="text">
-                <field name="TEXT">oh-iconname</field>
+                <field name="TEXT">temperature_cold</field>
               </shadow>
             </value>
             <value name="severity" />
@@ -493,13 +502,36 @@
             </value>
             <value name="icon">
               <shadow type="text">
-                <field name="TEXT">oh-iconname</field>
+                <field name="TEXT">temperature_hot</field>
               </shadow>
             </value>
             <value name="severity" />
           </block>
         </category>
-        <category name="Logging & Output">
+
+        <category name="Value Storage">
+          <block type="oh_store_value">
+            <value name="value">
+              <shadow type="text">
+                <field name="TEXT">value</field>
+              </shadow>
+            </value>
+            <value name="key">
+              <shadow type="text">
+                <field name="TEXT">key</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_get_value">
+            <value name="key">
+              <shadow type="text">
+                <field name="TEXT">key</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
+
+        <category name="Logging &amp; Output">
           <block type="oh_log">
             <value name="message">
               <shadow type="text">
@@ -516,11 +548,14 @@
           </block>
         </category>
       </category>
+
       <sep />
+
       <category
         name="Variables"
         colour="%{BKY_VARIABLES_HUE}"
         custom="VARIABLE" />
+
       <category
         name="Functions"
         colour="%{BKY_PROCEDURES_HUE}"
@@ -541,11 +576,6 @@
       stroke inherit
 .blocklyDropDownDiv
   z-index 9000
-</style>
-
-.blocklyDropDownDiv {
-  z-index: 9000;
-}
 </style>
 
 <script>
