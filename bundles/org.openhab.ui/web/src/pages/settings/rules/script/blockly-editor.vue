@@ -589,13 +589,7 @@
 import Blockly from 'blockly'
 import Vue from 'vue'
 
-import defineOHBlocks from '@/assets/definitions/blockly/ohblocks'
-import defineOHBlocksTimers from '@/assets/definitions/blockly/ohblocks_timers'
-import defineOHBlocksAudio from '@/assets/definitions/blockly/ohblocks_audio'
-import defineOHBlocksBusEvents from '@/assets/definitions/blockly/ohblocks_busevents'
-import defineOHBlocksLogging from '@/assets/definitions/blockly/ohblocks_logging'
-import defineOHBlocksVariables from '@/assets/definitions/blockly/ohblocks_variables'
-import defineOHBlocksNotifications from '@/assets/definitions/blockly/ohblocks_notifications'
+import defineOHBlocks from '@/assets/definitions/blockly'
 
 Vue.config.ignoredElements = [
   'field',
@@ -616,16 +610,59 @@ export default {
       voices: [],
       scripts: [],
       rules: [],
-      addons: [],
       loading: true,
       ready: false
     }
   },
-  created () {
-    this.getAltData()
+  mounted () {
+    this.load()
   },
   methods: {
-    startBlockly () {
+    load () {
+      const dataPromises = [
+        this.$oh.api.get('/rest/rules?summary=true'),
+        this.$oh.api.get('/rest/audio/sinks'),
+        this.$oh.api.get('/rest/voice/voices')
+      ]
+      Promise.all(dataPromises)
+        .then((data) => {
+          // fetch rules
+          const rules = data[0].sort((a, b) => {
+            const labelA = a.name
+            const labelB = b.name
+            return labelA.localeCompare(labelB)
+          })
+          this.rules = rules.filter(
+            (r) => !r.tags || r.tags.indexOf('Script') < 0
+          )
+          this.scripts = rules.filter(
+            (r) => r.tags && r.tags.indexOf('Script') >= 0
+          )
+
+          this.sinks = data[1].sort((a, b) => {
+            const labelA = a.label
+            const labelB = b.label
+            return labelA.localeCompare(labelB)
+          })
+
+          this.voices = data[2].sort((a, b) => {
+            const labelA = a.label
+            const labelB = b.label
+            return labelA.localeCompare(labelB)
+          })
+
+          this.initBlockly()
+        })
+        .catch((err, status) => {
+          console.error('Error while retrieving Blockly data - ' + err + ':' + status)
+        })
+    },
+    initBlockly () {
+      defineOHBlocks(this.$f7, {
+        sinks: this.sinks,
+        voices: this.voices
+      })
+
       this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
         toolbox: this.$refs.toolbox,
         horizontalLayout: !this.$device.desktop,
@@ -634,80 +671,6 @@ export default {
       })
       const xml = Blockly.Xml.textToDom(this.blocks)
       Blockly.Xml.domToWorkspace(xml, this.workspace)
-    },
-    loadPage () {
-      defineOHBlocks(this.$f7)
-      defineOHBlocksVariables(this.$f7)
-      defineOHBlocksTimers(this.$f7)
-      defineOHBlocksLogging(this.$f7)
-      defineOHBlocksAudio(this.$f7, this.sinks, this.voices)
-      defineOHBlocksBusEvents(this.$f7)
-      defineOHBlocksNotifications(this.$f7)
-
-      this.startBlockly()
-    },
-    getAltData () {
-      this.$oh.api
-        .get('/rest/rules?summary=true')
-        .then((data) => {
-          // fetch rules
-          this.rules = data.sort((a, b) => {
-            const labelA = a.name
-            const labelB = b.name
-            return labelA.localeCompare(labelB)
-          })
-          this.rules = this.rules.filter(
-            (r) => !r.tags || r.tags.indexOf('Script') < 0
-          )
-        })
-        .catch((err, status) => {
-          console.error('REST /rest/rules?summary=true' + err + ':' + status)
-        })
-      this.$oh.api
-        .get('/rest/rules?summary=true&tags=Script')
-        .then((data) => {
-          // fetch scripts
-          this.scripts = data.sort((a, b) => {
-            const labelA = a.name
-            const labelB = b.name
-            return labelA.localeCompare(labelB)
-          })
-        })
-        .catch((err, status) => {
-          console.error(
-            'REST /rest/rules?summary=true&tags=Script' + err + ':' + status
-          )
-        })
-      this.$oh.api
-        .get('/rest/audio/sinks')
-        .then((data) => {
-          // fetch audio sinks
-          this.sinks = data.sort((a, b) => {
-            const labelA = a.label
-            const labelB = b.label
-            return labelA.localeCompare(labelB)
-          })
-        })
-        .catch((err, status) => {
-          console.error('REST /rest/audio/sinks failed ' + err + ':' + status)
-        })
-        .catch((err, status) => {
-          console.error('REST /rest/voice/voices failed ' + err + ':' + status)
-        })
-      this.$oh.api
-        .get('/rest/voice/voices')
-        .then((data) => {
-          // fetch rules
-          this.voices = data.sort((a, b) => {
-            const labelA = a.label
-            const labelB = b.label
-            return labelA.localeCompare(labelB)
-          })
-          this.loadPage()
-        })
-        .catch((err, status) => {
-          console.error('REST /rest/voice/voices' + err + ':' + status)
-        })
     },
     getBlocks () {
       const xml = Blockly.Xml.workspaceToDom(this.workspace)

@@ -2,12 +2,10 @@
 * General item and thing functionally for blockly
 */
 import Blockly from 'blockly'
-import { FieldItemModelPicker } from './ohitemfield'
-import { FieldThingPicker } from './ohthingfield'
+import { FieldItemModelPicker } from './fields/item-field'
+import { FieldThingPicker } from './fields/thing-field'
 
-export default function defineOHBlocks (f7) {
-  /* ITEMS */
-
+export default function (f7) {
   /* Helper block to allow selecting an item */
   Blockly.Blocks['oh_item'] = {
     init: function () {
@@ -107,50 +105,6 @@ export default function defineOHBlocks (f7) {
     const theItem = Blockly.JavaScript.valueToCode(block, 'item', Blockly.JavaScript.ORDER_ATOMIC)
     const attributeName = block.getFieldValue('attributeName')
     let code = `${theItem}.get${attributeName}()`
-    return [code, 0]
-  }
-
-  /* THINGS */
-
-  /* Helper block to allow selecting a thing */
-  Blockly.Blocks['oh_thing'] = {
-    init: function () {
-      this.appendDummyInput()
-        .appendField('thing')
-        .appendField(new FieldThingPicker('MyThing', null, { f7 }), 'thingUid')
-      this.setColour(160)
-      this.setInputsInline(true)
-      this.setTooltip('Pick a thing from the Thing List')
-      this.setHelpUrl('https://www.openhab.org/docs/concepts/things.html')
-      this.setOutput(true, null)
-    }
-  }
-
-  Blockly.JavaScript['oh_thing'] = function (block) {
-    const thingUid = block.getFieldValue('thingUid')
-    let code = `'${thingUid}'`
-    return [code, 0]
-  }
-
-  Blockly.Blocks['oh_getthing_state'] = {
-    init: function () {
-      this.appendValueInput('itemName')
-        .appendField('get thing state')
-        .setCheck('String')
-      this.setInputsInline(false)
-      this.setOutput(true, 'String')
-      this.setColour(0)
-      this.setTooltip('Gets status information of the given thing, e.g. if the thing is online')
-      this.setHelpUrl('https://www.openhab.org/docs/concepts/things.html#thing-status')
-    }
-  }
-
-  Blockly.JavaScript['oh_getthing_state'] = function (block) {
-    const things = Blockly.JavaScript.provideFunction_(
-      'things',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `things.getThingStatusInfo(${itemName}).getStatus()`
     return [code, 0]
   }
 }

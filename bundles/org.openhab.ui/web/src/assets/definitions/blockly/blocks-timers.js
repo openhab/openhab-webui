@@ -1,5 +1,4 @@
 import Blockly from 'blockly'
-import { FieldItemModelPicker } from './ohitemfield'
 
 export default function defineOHBlocks_Timers (f7) {
   /*

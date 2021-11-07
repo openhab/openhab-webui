@@ -13,7 +13,7 @@
 import Blockly from 'blockly'
 import { FieldSlider } from '@blockly/field-slider'
 
-export default function defineOHBlocks_Audio (f7, sinks, voices) {
+export default function (f7, sinks, voices) {
   Blockly.Blocks['oh_volumeslider'] = {
     init: function () {
       this.appendDummyInput()
