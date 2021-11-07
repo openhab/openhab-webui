@@ -350,6 +350,7 @@
 
         <category name="Timers &amp; Delays">
           <block type="oh_sleep" />
+          <sep gap="48" />
           <block type="oh_timer">
             <value name="delay">
               <shadow type="math_number">
@@ -457,6 +458,7 @@
               <shadow type="oh_audiosink_dropdown" />
             </value>
           </block>
+          <sep gap="48" />
           <block type="oh_say">
             <value name="textToSay">
               <shadow type="text">
