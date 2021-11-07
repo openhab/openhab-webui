@@ -287,17 +287,17 @@ export default {
     },
     moveWidgetUp (component, parentContext, slot = 'default') {
       let siblings = parentContext.component.slots[slot]
-      this.moveWidget(component, parentContext, slot, siblings.indexOf(component) - 1)
+      return this.moveWidget(component, parentContext, slot, siblings.indexOf(component) - 1)
     },
     moveWidgetDown (component, parentContext, slot = 'default') {
       let siblings = parentContext.component.slots[slot]
-      this.moveWidget(component, parentContext, slot, siblings.indexOf(component) + 1)
+      return this.moveWidget(component, parentContext, slot, siblings.indexOf(component) + 1)
     },
     bringWidgetToFront (component, parentContext, slot = 'default') {
-      this.moveWidget(component, parentContext, slot, parentContext.component.slots[slot].length)
+      return this.moveWidget(component, parentContext, slot, parentContext.component.slots[slot].length)
     },
     sendWidgetToBack (component, parentContext, slot = 'default') {
-      this.moveWidget(component, parentContext, slot, 0)
+      return this.moveWidget(component, parentContext, slot, 0)
     },
     moveWidget (component, parentContext, slot = 'default', newPos) {
       let siblings = parentContext.component.slots[slot]
@@ -307,6 +307,7 @@ export default {
       siblings.splice(pos, 1)
       siblings.splice(newPos, 0, component)
       this.forceUpdate()
+      return Math.min(siblings.length - 1, newPos)
     },
     removeWidget (component, parentContext, slot = 'default') {
       parentContext.component.slots[slot].splice(parentContext.component.slots[slot].indexOf(component), 1)

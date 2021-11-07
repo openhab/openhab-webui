@@ -11,11 +11,8 @@
           v-if="context.clipboardtype"
           @click="
             context.editmode.pasteWidget(
-              context.component,
-              context.component.parent,
-              'canvas'
-            )
-          "
+              activeLayer,
+              context.component)"
           icon-f7="square_on_square" />
         <f7-menu-item
           @click="toggleGrid()"
@@ -37,6 +34,32 @@
               "
               href="#"
               text="Configure Canvas Layout" />
+            <f7-menu-dropdown-item divider />
+            <f7-menu-dropdown-item @click="addLayer()" href="#" text="Add Layer" />
+            <f7-menu-dropdown-item @click="configureLayer()" href="#" text="Configure Layer" />
+            <template v-if="layerToolsVisible">
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item class="justify-content-center" text="Layers" />
+              <f7-menu-dropdown-item
+                v-for="(obj, idx) in layout.slice().reverse()"
+                :key="idx"
+                @click="setActiveLayer(layout.length - idx - 1)"
+                href="#">
+                <span>{{ (obj.item.config && obj.item.config.layerName) ? obj.item.config.layerName : `Layer ${layout.length - idx}` }}</span>
+                <f7-icon class="margin-left" :f7="(layout.length - idx - 1) == actLyrIdx ? 'pencil_circle_fill' : ''" />
+                <f7-icon class="margin-left" :f7="!(obj.item.config && (obj.item.config.editVisible === false)) ? 'eye_fill' : 'eye_slash_fill'" />
+              </f7-menu-dropdown-item>
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item @click="hideOtherLayers()" href="#" text="Hide Other Layers" />
+              <f7-menu-dropdown-item @click="showOtherLayers()" href="#" text="Show Other Layers" />
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.bringWidgetToFront(activeLayer, context, 'canvas'))" href="#" text="Bring Layer to Front" />
+              <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.moveWidgetDown(activeLayer, context, 'canvas'))" href="#" text="Move Layer Up" />
+              <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.moveWidgetUp(activeLayer, context, 'canvas'))" href="#" text="Move Layer Down" />
+              <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.sendWidgetToBack(activeLayer, context, 'canvas'))" href="#" text="Send Layer to Back" />
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item @click="removeLayer()" href="#" text="Remove Layer" />
+            </template>
           </f7-menu-dropdown>
         </f7-menu-item>
       </f7-menu>
@@ -113,7 +136,7 @@
           tooltip="Screen resolution shown is the fullscreen resolution for websites. Real screen resolution is bigger."
           f7="info_circle" /></span>
       </div>
-      <oh-canvas-item
+      <oh-canvas-layer
         v-for="obj in layout"
         :key="obj.id"
         :id="obj.id"
@@ -147,14 +170,14 @@
 
 <script>
 import mixin from '../widget-mixin'
-import OhCanvasItem from './oh-canvas-item'
+import OhCanvasLayer from './oh-canvas-layer'
 import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
   mixins: [mixin],
   widget: OhCanvasLayoutDefinition,
   components: {
-    OhCanvasItem
+    OhCanvasLayer
   },
   data () {
     return {
@@ -171,7 +194,16 @@ export default {
       grid: {
         pitch: Number,
         enable: false
-      }
+      },
+      actLyrIdx: 0
+    }
+  },
+  computed: {
+    activeLayer () {
+      return this.context.component.slots.canvas[this.actLyrIdx]
+    },
+    layerToolsVisible () {
+      return this.context.component.slots.canvas.length > 1
     }
   },
   created () {
@@ -180,6 +212,7 @@ export default {
       this.style.height = this.screenHeight = this.config.screenHeight || 720
       this.grid.pitch = this.config.grid || 20
       this.grid.enable = this.config.gridEnable || false
+      this.actLyrIdx = this.config.activeIdx || 0
 
       if (!this.context.editmode) {
         window.addEventListener('resize', this.setDimensions)
@@ -212,12 +245,52 @@ export default {
       )
     },
     addItem () {
-      this.context.component.slots['canvas'].push({
+      if (!this.context.component.slots?.canvas[0]) {
+        this.addLayer()
+      }
+      this.context.component.slots.canvas[this.actLyrIdx].slots.default.push({
         component: 'oh-canvas-item',
         config: { x: 20, y: 20, h: 150, w: 200 },
         slots: { default: [] }
       })
       this.computeLayout()
+    },
+    addLayer () {
+      this.context.component.slots.canvas.push({
+        component: 'oh-canvas-layer',
+        config: {},
+        slots: { default: [] }
+      })
+      this.actLyrIdx = this.context.component.slots.canvas.length - 1
+      this.computeLayout()
+    },
+    removeLayer () {
+      this.context.component.slots.canvas.splice(this.actLyrIdx, 1)
+      this.setActiveLayer(Math.min(0, this.actLyrIdx--))
+      this.computeLayout()
+    },
+    setActiveLayer (idx) {
+      this.actLyrIdx = this.context.component.config.activeIdx = idx
+      this.context.component.slots.canvas[this.actLyrIdx].config = this.context.component.slots.canvas[this.actLyrIdx].config || {}
+      delete this.context.component.slots.canvas[this.actLyrIdx].config.editVisible
+    },
+    configureLayer () {
+      this.context.editmode.configureWidget(this.context.component.slots.canvas[this.actLyrIdx], this.context.component, 'oh-canvas-layer')
+    },
+    hideOtherLayers () {
+      this.context.component.slots.canvas.forEach((layer, idx) => {
+        if (idx !== this.actLyrIdx) {
+          this.$set(layer, 'config', layer.config || {})
+          this.$set(layer.config, 'editVisible', false)
+        }
+      })
+    },
+    showOtherLayers () {
+      this.context.component.slots.canvas.forEach((layer, idx) => {
+        if (idx !== this.actLyrIdx) {
+          layer.config.editVisible = true
+        }
+      })
     },
     toggleFullscreen () {
       this.$fullscreen.toggle(this.$refs.ohCanvasLayout, {
@@ -242,10 +315,14 @@ export default {
       let layout = []
       if (this.context.component.slots?.canvas) {
         this.context.component.slots.canvas.forEach((item) => {
-          layout.push({
-            item: item,
-            id: Math.random().toString(36).substring(2)
-          })
+          if (item.component === 'oh-canvas-layer') {
+            layout.push({
+              item: item,
+              id: Math.random().toString(36).substring(2)
+            })
+          } else {
+            console.log('Wrong component type in canvas: ' + item.component)
+          }
         })
       }
       this.layout = layout

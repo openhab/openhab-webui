@@ -1,6 +1,7 @@
 // definitions for the layout widgets
 
 import { WidgetDefinition, po, pt, pn, pb, pg } from '../helpers.js'
+import { VisibilityGroup, VisibilityParameters } from '../visibility.js'
 
 export function OhBlockDescription () {
   return new WidgetDefinition('oh-block', 'Layout Grid Block', 'A block in a grid layout')
@@ -94,4 +95,13 @@ export function OhCanvasLayoutDefinition () {
       pt('textShadow', 'Text shadow', 'Shadow applied to text elements or font icons (text-shadow CSS syntax)').a(),
       pt('filterShadow', 'Fitler Shadow', 'Shadow applied to raster or SVG image elements (filter: drop-shadow() CSS syntax)').a()
     ])
+}
+
+export function OhCanvasLayerDefinition () {
+  return new WidgetDefinition('oh-canvas-layer', 'Canvas Layer', 'Layer for grouping widgets in canvas')
+    .params([
+      pt('layerName', 'Name', 'Layer name (for editor)'),
+      pb('preload', 'Pre-load', 'Pre-load layer contents so that switching layer visibility is faster and dynamic widgets are immediately displayed in their current state. Initial page load might be longer (default false)').a()
+    ])
+    .paramGroup(VisibilityGroup(), VisibilityParameters())
 }
