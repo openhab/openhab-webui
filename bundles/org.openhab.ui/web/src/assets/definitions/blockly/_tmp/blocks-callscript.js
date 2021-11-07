@@ -19,7 +19,7 @@ export default function defineOHBlocks_Subsystem (f7, scripts) {
   Blockly.JavaScript['oh_callscript'] = function (block) {
     const scriptExecution = Blockly.JavaScript.provideFunction_(
       'scriptExecution',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.ScriptExecution");'])
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.ScriptExecution\');'])
     let script = Blockly.JavaScript.valueToCode(block, 'script', Blockly.JavaScript.ORDER_ATOMIC)
     let code = scriptExecution + '.callScript(' + script + ');\n'
     return code

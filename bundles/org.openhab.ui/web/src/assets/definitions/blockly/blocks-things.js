@@ -1,6 +1,7 @@
 /*
 * General item and thing functionally for blockly
 */
+
 import Blockly from 'blockly'
 import { FieldItemModelPicker } from './fields/item-field'
 import { FieldThingPicker } from './fields/thing-field'
@@ -27,7 +28,7 @@ export default function defineOHBlocks (f7) {
 
   Blockly.Blocks['oh_getthing_state'] = {
     init: function () {
-      this.appendValueInput('itemName')
+      this.appendValueInput('thingUid')
         .appendField('get thing state')
         .setCheck('String')
       this.setInputsInline(false)
@@ -42,8 +43,8 @@ export default function defineOHBlocks (f7) {
     const things = Blockly.JavaScript.provideFunction_(
       'things',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `things.getThingStatusInfo(${itemName}).getStatus()`
+    const thingUid = Blockly.JavaScript.valueToCode(block, 'thingUid', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = `things.getThingStatusInfo(${thingUid}).getStatus()`
     return [code, 0]
   }
 }

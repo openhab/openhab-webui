@@ -1,8 +1,7 @@
 /*
-* @author stefan.hoehn
-*
 * These blocks allow to send notifications via openhab
 */
+
 import Blockly from 'blockly'
 
 export default function defineOHBlocks_Notifications (f7) {

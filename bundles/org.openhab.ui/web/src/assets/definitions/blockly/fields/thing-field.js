@@ -1,3 +1,7 @@
+/*
+ * Field allowing to pick the name of a thing from the model
+ */
+
 import Blockly from 'blockly'
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
 

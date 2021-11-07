@@ -1,9 +1,8 @@
 /*
-* @author stefan.hoehn
-*
 * These blocks allow values to be stored as "variables" in this.storedvars[] so they can "survive" when the rule is retriggered.
 * Note that the variables are only global to the individual rule not others.
 */
+
 import Blockly from 'blockly'
 
 export default function defineOHBlocks_Variables (f7) {

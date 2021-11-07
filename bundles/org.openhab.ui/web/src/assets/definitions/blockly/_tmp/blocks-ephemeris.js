@@ -1,10 +1,10 @@
 /*
 * Ephemeris provides calendar related information
 * This code has been originally provided by https://github.com/bigbasec
-* @author stefan.hoehn
 *
 * See more background info on openHAB ephemeris here: https://www.openhab.org/docs/configuration/actions.html#ephemeris
 */
+
 import Blockly from 'blockly'
 import { FieldItemModelPicker } from './ohitemfield'
 
@@ -123,6 +123,6 @@ export default function defineOHBlocks_Ephemeris (f7) {
   function addEphemeris () {
     Blockly.JavaScript.provideFunction_(
       'ephemeris',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris")'])
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Ephemeris\')'])
   }
 }

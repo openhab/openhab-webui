@@ -81,10 +81,10 @@ export default function defineOHBlocks_Exec (f7) {
   Blockly.JavaScript['oh_exec3'] = function (block) {
     const exec = Blockly.JavaScript.provideFunction_(
       'exec',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Exec");'])
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Exec\');'])
     const duration = Blockly.JavaScript.provideFunction_(
       'duration',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.Duration");'])
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.time.Duration\');'])
     let runCommand = block.getFieldValue('cmdExecute').replace(/ /g, '","')
     let timeout = block.getFieldValue('timeout')
     let code = exec + '.executeCommandLine(' + duration + '.ofSeconds(' + timeout + '),"' + runCommand + '")\n'

@@ -1,14 +1,10 @@
 /*
-* Provides logging functionality
-* @author yannick.schaus
-* @author stefan.hoehn
-*
 * Logging functionality for blockly
-*
 */
+
 import Blockly from 'blockly'
 
-export default function defineOHBlocks_Logging (f7) {
+export default function (f7) {
   Blockly.Blocks['oh_print'] = {
     init: function () {
       this.appendValueInput('message')

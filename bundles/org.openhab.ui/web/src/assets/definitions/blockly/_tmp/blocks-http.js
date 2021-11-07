@@ -25,7 +25,7 @@ export default function defineOHBlocks_HTTP (f7, scripts) {
   Blockly.JavaScript['oh_httprequest'] = function (block) {
     const http = Blockly.JavaScript.provideFunction_(
       'http',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.HTTP");'])
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.HTTP\');'])
     let requesttype = block.getFieldValue('requestType')
     let contenttype = block.getFieldValue('contentType')
     let url = Blockly.JavaScript.valueToCode(block, 'url', Blockly.JavaScript.ORDER_ATOMIC)

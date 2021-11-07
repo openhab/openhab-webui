@@ -1,12 +1,10 @@
 /*
-* @author yannick.schaus
-* send updates to items
-*/
+ * Interact with the event bus in Blockly
+ */
 
-import { convertJavaLocale } from '@/js/i18n'
 import Blockly from 'blockly'
 
-export default function defineOHBlocks_BusEvents (f7) {
+export default function (f7) {
   Blockly.Blocks['oh_event'] = {
     init: function () {
       this.appendValueInput('value')

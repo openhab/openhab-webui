@@ -1,6 +1,4 @@
 /*
-* @author stefan.hoehn
-*
 * Notes:
 * - Master volume has been removed as it isn't reliable in openhab: see https://github.com/openhab/openhab-distro/issues/1237
 * - Play or streaming from the default sink have been omitted as they are felt not be so useful.

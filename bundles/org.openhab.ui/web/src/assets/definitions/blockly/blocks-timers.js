@@ -1,3 +1,7 @@
+/*
+ * Blockly blocks to create timers & delays
+ */
+
 import Blockly from 'blockly'
 
 export default function defineOHBlocks_Timers (f7) {
