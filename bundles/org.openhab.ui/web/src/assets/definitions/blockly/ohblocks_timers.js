@@ -325,13 +325,13 @@ export default function defineOHBlocks_Timers (f7) {
   function addScriptExecution () {
     Blockly.JavaScript.provideFunction_(
       'scriptExecution',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.ScriptExecution");'])
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.ScriptExecution\');'])
   }
 
   function addZonedDateTime () {
     Blockly.JavaScript.provideFunction_(
       'zonedDateTime',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.ZonedDateTime");'])
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.time.ZonedDateTime\');'])
   }
 
   function addGlobalTimer () {
