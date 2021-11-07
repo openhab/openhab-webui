@@ -1,7 +1,7 @@
 // definitions for the layout widgets
 
 import { WidgetDefinition, po, pt, pn, pb, pg } from '../helpers.js'
-import { VisibilityGroup, VisibilityParameters } from '@/assets/definitions/widgets/visibility'
+import { VisibilityGroup, VisibilityParameters } from '../visibility.js'
 
 export function OhBlockDescription () {
   return new WidgetDefinition('oh-block', 'Layout Grid Block', 'A block in a grid layout')
