@@ -443,6 +443,11 @@
             </value>
           </block>
           <block type="oh_playstream_sink">
+            <value name="url">
+              <shadow type="text">
+                <field name="TEXT">https://example.org/stream.mp3</field>
+              </shadow>
+            </value>
             <value name="sinkName">
               <shadow type="oh_audiosink_dropdown" />
             </value>
