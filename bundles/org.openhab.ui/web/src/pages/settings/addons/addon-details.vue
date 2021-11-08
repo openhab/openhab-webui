@@ -255,7 +255,7 @@ export default {
       let addonId = this.addonId
       let serviceId = null
       if (addonId.indexOf(':') > 0) {
-        serviceId = addonId.substring(0, addonId.indexOf(":"))
+        serviceId = addonId.substring(0, addonId.indexOf(':'))
         addonId = addonId.substring(addonId.indexOf(':') + 1)
       }
       this.bindingInfo = null
