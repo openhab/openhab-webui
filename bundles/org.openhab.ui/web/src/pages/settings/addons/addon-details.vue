@@ -254,8 +254,8 @@ export default {
       this.stopEventSource()
       let addonId = this.addonId
       let serviceId = null
-      if (addonId.indexOf('marketplace:') === 0) {
-        serviceId = 'marketplace'
+      if (addonId.indexOf(':') > 0) {
+        serviceId = addonId.substring(0, addonId.indexOf(":"))
         addonId = addonId.substring(addonId.indexOf(':') + 1)
       }
       this.bindingInfo = null
