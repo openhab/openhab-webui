@@ -60,7 +60,7 @@ const blindParameters = (item) => {
   return attributes.every((attr) => metadata.includes(attr)) ? [p.primaryControl()] : []
 }
 
-const networkParameters = (item, config) => {
+const networkParameters = (item) => {
   const deviceTypes = ['NetworkHardware', 'Router']
   const connection = item.groups.find((g) => deviceTypes.includes(g.metadata.alexa.value))
   return connection ? [p.connectedTo(connection.label || connection.name), p.hostname(), p.macAddress()] : []
