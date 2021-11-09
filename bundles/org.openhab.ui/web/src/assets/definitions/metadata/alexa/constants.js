@@ -19,12 +19,6 @@ export const LANGUAGES = {
 
 export const LOCK_STATES = ['LOCKED', 'UNLOCKED', 'JAMMED']
 
-export const NAVIGATION_KEYS = [
-  'UP', 'DOWN', 'LEFT', 'RIGHT', 'SELECT',
-  'PAGE_UP', 'PAGE_DOWN', 'PAGE_LEFT', 'PAGE_RIGHT',
-  'INFO', 'MORE', 'BACK'
-]
-
 export const OPEN_STATES = ['CLOSED', 'OPEN']
 
 export const PLAYBACK_OPERATIONS = ['Play', 'Pause', 'Next', 'Previous', 'FastForward', 'Rewind']

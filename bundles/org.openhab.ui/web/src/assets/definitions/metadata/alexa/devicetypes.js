@@ -21,7 +21,6 @@ const entertainmentAttributes = [
   'Input',
   'Playback',
   'PlaybackStop',
-  'Navigation',
   'EqualizerBass',
   'EqualizerMidrange',
   'EqualizerTreble',
@@ -171,7 +170,7 @@ export default {
   },
   GarageDoor: {
     defaultAttributes: ['OpenState'],
-    supportedAttributes: ['ObstacleAlert', 'SafetyBeamAlert', ...doorAttributes]
+    supportedAttributes: ['ObstacleAlert', ...doorAttributes]
   },
   Headphones: {
     defaultAttributes: ['VolumeLevel'],

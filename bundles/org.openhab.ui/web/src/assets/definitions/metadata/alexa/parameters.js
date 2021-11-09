@@ -2,7 +2,6 @@ import {
   ARM_STATES,
   EQUALIZER_MODES,
   LANGUAGES,
-  NAVIGATION_KEYS,
   PLAYBACK_OPERATIONS,
   TEMPERATURE_SCALES,
   THERMOSTAT_MODES,
@@ -336,16 +335,6 @@ export default {
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true,
     required: !stateDescription || !stateDescription.options || !stateDescription.options.length
-  }),
-  supportedKeys: () => ({
-    name: 'supportedKeys',
-    label: 'Supported Keys',
-    type: 'TEXT',
-    default: (config) => NAVIGATION_KEYS.filter((key) => !!config[key]),
-    options: getOptions(NAVIGATION_KEYS),
-    limitToOptions: true,
-    multiple: true,
-    advanced: true
   }),
   supportedModes: (stateDescription) => ({
     name: 'supportedModes',

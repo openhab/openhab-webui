@@ -5,7 +5,6 @@ import {
   FAN_DIRECTIONS,
   FAN_SPEEDS,
   LOCK_STATES,
-  NAVIGATION_KEYS,
   OPEN_STATES,
   THERMOSTAT_MODES,
   THERMOSTAT_FAN_MODES,
@@ -38,11 +37,6 @@ export default {
         : OPEN_STATES.map((state) => p.valueMapping(state))
   },
   ObstacleAlert: {
-    itemTypes: ['Contact ', 'Switch'],
-    requires: ['OpenState'],
-    parameters: () => [p.inverted()]
-  },
-  SafetyBeamAlert: {
     itemTypes: ['Contact ', 'Switch'],
     requires: ['OpenState'],
     parameters: () => [p.inverted()]
@@ -129,10 +123,6 @@ export default {
     requires: ['Playback'],
     parameters: () => [p.inverted()]
   },
-  Navigation: {
-    itemTypes: ['String'],
-    parameters: () => [...NAVIGATION_KEYS.map((key) => p.valueMapping(key)), p.supportedKeys()]
-  },
 
   // Fan Attributes
   FanDirection: {
@@ -180,7 +170,7 @@ export default {
   // Networking Attributes
   NetworkAccess: {
     itemTypes: ['Switch'],
-    parameters: () => [p.inverted()],
+    parameters: () => [p.inverted(), p.retrievable()],
     visible: (item) => item.groups
       .map((group) => group.metadata.alexa.config || {})
       .some((config) => !!config.macAddress)
