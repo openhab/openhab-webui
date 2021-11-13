@@ -42,7 +42,7 @@ export default {
     information () {
       let info = []
       if (!this.addon || !this.addon.id) return info
-      const source = this.addon.id.indexOf(':') > 0 ? this.addon.id.substring(0, this.addon.id.indexOf(':')) : "karaf"
+      const source = this.addon.id.indexOf(':') > 0 ? this.addon.id.substring(0, this.addon.id.indexOf(':')) : 'karaf'
       let sourceName = 'openHAB Distribution'
       if (source === 'marketplace') {
         sourceName = 'Community Marketplace'
