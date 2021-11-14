@@ -42,12 +42,17 @@ export default {
     information () {
       let info = []
       if (!this.addon || !this.addon.id) return info
-      const marketplace = this.addon.id.indexOf('marketplace:') === 0
-
+      const source = this.addon.id.indexOf(':') > 0 ? this.addon.id.substring(0, this.addon.id.indexOf(':')) : 'karaf'
+      let sourceName = 'openHAB Distribution'
+      if (source === 'marketplace') {
+        sourceName = 'Community Marketplace'
+      } else if (source !== 'karaf') {
+        sourceName = '3rd Party (' + source + ')'
+      }
       info.push({
         id: 'service',
         title: 'Source',
-        value: (marketplace) ? 'Community Marketplace' : 'openHAB Distribution'
+        value: sourceName
       })
 
       info.push({
@@ -78,7 +83,7 @@ export default {
       })
 
       let format = Formats.karaf
-      if (marketplace && Object.keys(this.addon.properties).length > 0) {
+      if (source !== 'karaf' && Object.keys(this.addon.properties).length > 0) {
         for (const property in this.addon.properties) {
           if (Formats[property]) format = Formats[property]
         }
@@ -106,14 +111,14 @@ export default {
         })
       }
 
-      if (marketplace) {
+      if (source === 'marketplace') {
         info.push({
           id: 'communityTopicLink',
           title: 'Community Topic',
           afterIcon: 'chat_bubble_2_fill',
           linkUrl: this.addon.link
         })
-      } else {
+      } else if (source === 'karaf') {
         info.push({
           id: 'documentationLink',
           title: 'Documentation',
@@ -131,6 +136,13 @@ export default {
           title: 'Community Discussions',
           afterIcon: 'chat_bubble_2_fill',
           linkUrl: 'https://community.openhab.org/search?q=' + this.addon.id.substring(this.addon.id.indexOf('-') + 1)
+        })
+      } else {
+        info.push({
+          id: 'documentationLink',
+          title: 'Documentation',
+          afterIcon: 'question_circle_fill',
+          linkUrl: this.addon.link
         })
       }
 
