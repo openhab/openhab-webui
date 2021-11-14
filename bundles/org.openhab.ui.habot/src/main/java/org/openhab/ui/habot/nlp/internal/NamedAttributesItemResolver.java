@@ -281,7 +281,7 @@ public class NamedAttributesItemResolver implements ItemResolver {
     private @NonNull RegistryChangeListener<Metadata> metadataRegistryChangeListener = new RegistryChangeListener<Metadata>() {
         @Override
         public void added(Metadata element) {
-            if (element.getUID().getNamespace() == "habot") {
+            if ("habot".equals(element.getUID().getNamespace())) {
                 logger.debug("Invalidating cached item named attributes");
                 itemAttributes = null;
             }
@@ -289,7 +289,7 @@ public class NamedAttributesItemResolver implements ItemResolver {
 
         @Override
         public void removed(Metadata element) {
-            if (element.getUID().getNamespace() == "habot") {
+            if ("habot".equals(element.getUID().getNamespace())) {
                 logger.debug("Invalidating cached item named attributes");
                 itemAttributes = null;
             }
@@ -297,7 +297,7 @@ public class NamedAttributesItemResolver implements ItemResolver {
 
         @Override
         public void updated(Metadata oldElement, Metadata element) {
-            if (element.getUID().getNamespace() == "habot") {
+            if ("habot".equals(element.getUID().getNamespace())) {
                 logger.debug("Invalidating cached item named attributes");
                 itemAttributes = null;
             }
