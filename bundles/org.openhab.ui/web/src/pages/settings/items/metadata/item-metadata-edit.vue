@@ -139,6 +139,7 @@ export default {
   methods: {
     onPageBeforeIn () {
       this.generic = MetadataNamespaces.map((n) => n.name).indexOf(this.namespace) < 0
+      this.ready = false
     },
     onPageAfterIn () {
       this.$oh.api.get(`/rest/items/${this.itemName}?metadata=${this.namespace}`).then((data) => {
