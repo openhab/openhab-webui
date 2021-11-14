@@ -2,7 +2,6 @@
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: url(fonts/MaterialIcons-Regular.eot);
   src: local('Material Icons'),
        local('MaterialIcons-Regular'),
        url(fonts/MaterialIcons-Regular.woff2) format('woff2'),
