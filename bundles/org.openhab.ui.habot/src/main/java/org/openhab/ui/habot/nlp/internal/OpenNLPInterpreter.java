@@ -230,6 +230,7 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
         }
     }
 
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     protected void unsetItemRegistry(ItemRegistry itemRegistry) {
         if (itemRegistry == this.itemRegistry) {
             this.itemRegistry.removeRegistryChangeListener(registryChangeListener);
@@ -253,6 +254,7 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
         }
     }
 
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     protected void unsetEventPublisher(EventPublisher eventPublisher) {
         if (eventPublisher == this.eventPublisher) {
             this.eventPublisher = null;

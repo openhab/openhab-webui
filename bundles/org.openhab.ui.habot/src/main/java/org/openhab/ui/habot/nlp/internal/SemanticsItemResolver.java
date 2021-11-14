@@ -170,6 +170,7 @@ public class SemanticsItemResolver implements ItemResolver {
         }
     }
 
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     protected void unsetItemRegistry(ItemRegistry itemRegistry) {
         if (itemRegistry == this.itemRegistry) {
             this.itemRegistry = null;
@@ -183,6 +184,7 @@ public class SemanticsItemResolver implements ItemResolver {
         }
     }
 
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     protected void unsetMetadataRegistry(MetadataRegistry metadataRegistry) {
         if (metadataRegistry == this.metadataRegistry) {
             this.metadataRegistry = null;

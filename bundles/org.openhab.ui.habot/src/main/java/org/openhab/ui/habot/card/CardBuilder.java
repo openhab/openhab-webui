@@ -173,7 +173,7 @@ public class CardBuilder {
                     card.addComponent("main", brightnessDimmerContainerComponent);
                     break;
                 default:
-                    if (item.getType() == CoreItemFactory.IMAGE
+                    if (CoreItemFactory.IMAGE.equals(item.getType())
                             || (metadata != null && metadata.getConfiguration().containsKey("imageSitemap"))) {
                         /*
                          * If the item is an image (or a String with a tag indicating it's an image), build a
@@ -209,7 +209,7 @@ public class CardBuilder {
             if (commonGroup != null) {
                 card.setTitle(commonGroup.getLabel());
                 Item baseItem = commonGroup.getBaseItem();
-                if (baseItem != null && baseItem.getType() == CoreItemFactory.SWITCH) {
+                if (baseItem != null && CoreItemFactory.SWITCH.equals(baseItem.getType())) {
                     Component switchComponent = new Component("HbSwitch");
                     switchComponent.addConfig("item", commonGroup.getName());
                     card.addComponent("right", switchComponent);
@@ -287,7 +287,7 @@ public class CardBuilder {
             if (commonGroup != null) {
                 card.setTitle(commonGroup.getLabel());
                 Item baseItem = commonGroup.getBaseItem();
-                if (baseItem != null && baseItem.getType() == CoreItemFactory.SWITCH) {
+                if (baseItem != null && CoreItemFactory.SWITCH.equals(baseItem.getType())) {
                     Component switchComponent = new Component("HbSwitch");
                     switchComponent.addConfig("item", commonGroup.getName());
                     card.addComponent("right", switchComponent);

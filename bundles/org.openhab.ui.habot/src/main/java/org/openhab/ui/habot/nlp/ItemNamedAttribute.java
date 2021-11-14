@@ -42,7 +42,7 @@ public class ItemNamedAttribute {
 
     public ItemNamedAttribute(String type, String value, boolean inherited, AttributeSource source) {
         super();
-        this.type = (type == "location") ? AttributeType.LOCATION : AttributeType.OBJECT;
+        this.type = "location".equals(type) ? AttributeType.LOCATION : AttributeType.OBJECT;
         this.value = value;
         this.inherited = inherited;
         this.source = source;
@@ -50,7 +50,7 @@ public class ItemNamedAttribute {
 
     public ItemNamedAttribute(String type, String value, AttributeSource source) {
         super();
-        this.type = (type == "location") ? AttributeType.LOCATION : AttributeType.OBJECT;
+        this.type = "location".equals(type) ? AttributeType.LOCATION : AttributeType.OBJECT;
         this.value = value;
         this.inherited = false;
         this.source = source;

@@ -520,6 +520,7 @@ public class CometVisuServlet extends HttpServlet {
      *       http://balusc.blogspot.com/2009/02/fileservlet-supporting-resume-and
      *       .html
      */
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     private void processStaticRequest(File file, HttpServletRequest request, HttpServletResponse response,
             boolean content) throws IOException {
         // Validate the requested file
@@ -936,7 +937,7 @@ public class CometVisuServlet extends HttpServlet {
                 bean.value = item.getName();
 
                 String type = item.getType();
-                if (item.getType() == "Group") {
+                if ("Group".equals(item.getType())) {
                     if (((GroupItem) item).getBaseItem() != null) {
                         type = ((GroupItem) item).getBaseItem().getType();
                     } else {

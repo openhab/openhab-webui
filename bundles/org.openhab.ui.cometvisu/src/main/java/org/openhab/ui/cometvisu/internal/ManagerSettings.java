@@ -81,7 +81,7 @@ public class ManagerSettings implements IConfigChangeListener {
                 this.cometVisuVersion.major = Integer.parseInt(matcher.group(1));
                 this.cometVisuVersion.minor = Integer.parseInt(matcher.group(2));
                 this.cometVisuVersion.patch = Integer.parseInt(matcher.group(3));
-                this.cometVisuVersion.dev = matcher.group(4) == "dev";
+                this.cometVisuVersion.dev = "dev".equals(matcher.group(4));
             }
         } catch (FileNotFoundException e) {
             logger.error("{}", e.getMessage());
