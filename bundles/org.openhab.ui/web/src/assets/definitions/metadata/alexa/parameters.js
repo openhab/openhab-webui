@@ -26,11 +26,6 @@ export default {
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true
   }),
-  basicAuth: (setting) => ({
-    name: setting,
-    label: `Basic Authentication ${titleCase(setting)}`,
-    type: 'TEXT'
-  }),
   capabilityNames: (defaultValue, placeholder) => ({
     name: 'capabilityNames',
     label: 'Capability Names',
