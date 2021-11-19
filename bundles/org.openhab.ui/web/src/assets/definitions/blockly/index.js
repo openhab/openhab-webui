@@ -12,7 +12,23 @@ import defineEphemerisBlocks from './blocks-ephemeris'
 import defineScriptsBlocks from './blocks-scripts'
 import definePeristenceBlocks from './blocks-persistence'
 
-export default function (f7, data) {
+import Blockly from 'blockly'
+
+function defineLibraries (libraryDefinitions) {
+  libraryDefinitions.forEach((library) => {
+    if (library.slots && library.slots.blocks) {
+      library.slots.blocks.forEach((block) => {
+        Blockly.Blocks[block.config.type] = {
+          init: function () {
+            this.jsonInit(block.config)
+          }
+        }
+      })
+    }
+  })
+}
+
+export default function (f7, libraryDefinitions, data) {
   defineDictionaryBlocks(f7)
   defineDateOffsetsBlocks(f7)
   defineItemBlocks(f7)
@@ -26,4 +42,5 @@ export default function (f7, data) {
   defineEphemerisBlocks(f7)
   defineScriptsBlocks(f7)
   definePeristenceBlocks(f7)
+  defineLibraries(libraryDefinitions)
 }

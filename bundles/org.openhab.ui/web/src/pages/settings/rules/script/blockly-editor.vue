@@ -805,7 +805,7 @@ export default {
         })
     },
     initBlockly (libraryDefinitions) {
-      defineOHBlocks(this.$f7, {
+      defineOHBlocks(this.$f7, libraryDefinitions, {
         sinks: this.sinks,
         voices: this.voices
       })
