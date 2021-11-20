@@ -1,3 +1,4 @@
+import defineDictionaryBlocks from './blocks-dicts'
 import defineItemBlocks from './blocks-items'
 import defineThingsBlocks from './blocks-things'
 import defineAudioBlocks from './blocks-audio'
@@ -8,6 +9,7 @@ import defineTimerBlocks from './blocks-timers'
 import defineValueStorageBlocks from './blocks-valuestorage'
 
 export default function (f7, data) {
+  defineDictionaryBlocks(f7)
   defineItemBlocks(f7)
   defineThingsBlocks(f7)
   defineAudioBlocks(f7, data.sinks, data.voices)
