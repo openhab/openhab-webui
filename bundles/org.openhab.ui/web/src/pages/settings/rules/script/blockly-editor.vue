@@ -261,6 +261,8 @@
           </value>
         </block>
         <block type="lists_sort" />
+        <sep gap="48" />
+        <block type="dicts_create_with" />
       </category>
 
       <category name="Color" colour="%{BKY_COLOUR_HUE}">
