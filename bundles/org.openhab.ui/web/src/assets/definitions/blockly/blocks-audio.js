@@ -58,7 +58,7 @@ export default function (f7, sinks, voices) {
     let fileName = Blockly.JavaScript.valueToCode(block, 'fileName', Blockly.JavaScript.ORDER_ATOMIC)
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    let code = `audio.playSound('${sinkName}', ${fileName});\n`
+    let code = `audio.playSound(${sinkName}, ${fileName});\n`
     return code
   }
 
