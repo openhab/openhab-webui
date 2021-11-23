@@ -7,6 +7,9 @@ import defineLoggingBlocks from './blocks-logging'
 import defineNotificationBlocks from './blocks-notifications'
 import defineTimerBlocks from './blocks-timers'
 import defineValueStorageBlocks from './blocks-valuestorage'
+import defineEphemerisBlocks from './blocks-ephemeris'
+import defineOHBlocksScripts from './blocks-scripts'
+// import defineOHBlocksPersistence from './blocks-persistence'
 
 export default function (f7, data) {
   defineDictionaryBlocks(f7)
@@ -18,4 +21,7 @@ export default function (f7, data) {
   defineLoggingBlocks(f7)
   defineTimerBlocks(f7)
   defineValueStorageBlocks(f7)
+  defineEphemerisBlocks(f7)
+  defineOHBlocksScripts(f7)
+  // defineOHBlocksPersistence(f7)
 }

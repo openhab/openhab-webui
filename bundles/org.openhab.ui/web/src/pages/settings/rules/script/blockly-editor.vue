@@ -475,7 +475,22 @@
             </value>
           </block>
         </category>
-
+        <category name="Ephemeris">
+          <block type="oh_ephemeris_today" />
+          <block type="oh_ephemeris_today_offset">
+            <value name="offset">
+              <shadow type="math_number">
+                <field name="NUM">
+                  0
+                </field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_ephemeris_date" />
+          <block type="oh_ephemeris_check" />
+          <block type="oh_ephemeris_getBankHolidayName" />
+          <block type="oh_ephemeris_getDaysUntilBankHoliday" />
+        </category>
         <category name="Notifications">
           <block type="oh_sendNotification">
             <value name="email">
@@ -517,7 +532,9 @@
             <value name="severity" />
           </block>
         </category>
-
+        <!--category name="Persistence">
+          <block type="oh_getpersist" />
+        </category-->
         <category name="Value Storage">
           <block type="oh_store_value">
             <value name="value">
@@ -539,7 +556,23 @@
             </value>
           </block>
         </category>
-
+        <category name="Scripts">
+          <block type="oh_callscriptfile">
+            <value name="message">
+              <shadow type="text">
+                <field name="TEXT">scriptname.script</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_callscript">
+            <value name="message">
+              <shadow type="text">
+                <field name="TEXT">scriptname</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_transformation" />
+        </category>
         <category name="Logging &amp; Output">
           <block type="oh_log">
             <value name="message">
