@@ -65,27 +65,47 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   * Code part
   */
   Blockly.JavaScript['oh_callscript'] = function (block) {
-    let callCode = 'var FrameworkUtil = Java.type(\'org.osgi.framework.FrameworkUtil\');\n'
-    callCode += 'var _bundle = FrameworkUtil.getBundle(scriptExtension.class);\n'
-    callCode += 'var bundle_context = _bundle.getBundleContext()\n'
-    callCode += 'var ruleManager_Ref = bundle_context.getServiceReference(\'org.openhab.core.automation.RuleManager\');\n'
-    callCode += 'var ruleManager = bundle_context.getService(ruleManager_Ref);\n'
-
-    let scriptParameters = Blockly.JavaScript.valueToCode(block, 'parameters', Blockly.JavaScript.ORDER_ATOMIC)
-
-    Blockly.JavaScript.provideFunction_('callCode', [callCode])
+    const ruleManager = addOSGiService('ruleManager', 'org.openhab.core.automation.RuleManager')
     let scriptname = Blockly.JavaScript.valueToCode(block, 'scriptname', Blockly.JavaScript.ORDER_ATOMIC)
-    const stringParametersMap = JSON.parse(scriptParameters.replace(/'/g, '"'))
+    const scriptParameters = Blockly.JavaScript.valueToCode(block, 'parameters', Blockly.JavaScript.ORDER_ATOMIC)
+    const scriptName = Blockly.JavaScript.valueToCode(block, 'scriptname', Blockly.JavaScript.ORDER_ATOMIC)
 
-    let paramMapName = Blockly.JavaScript.provideFunction_('scriptParamsMap', ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = new java.util.HashMap();'])
+    // create a function for the generated code that maps json key-values into a map structure
+    const convertDictionaryToHashMap = Blockly.JavaScript.provideFunction_(
+      'convertDictionaryToHashMap',
+      [
+        'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' (dict) {',
+        '  if (!dict || dict.length === 0) return null;',
+        '  var map = new java.util.HashMap();',
+        '  Object.keys(dict).forEach(function (key) {',
+        '    map.put(key, dict[key]);',
+        '  });',
+        '  return map;',
+        '}'
+      ])
 
-    let code = `  ${paramMapName}.clear();\n`
-    Object.keys(stringParametersMap).forEach(function (key) {
-      code += `  ${paramMapName}.put('${key}', ${stringParametersMap[key]})\n`
-    })
-
-    code += `ruleManager.runNow(${scriptname}, true, ${paramMapName});\n`
+    let code = `${ruleManager}.runNow(${scriptName}, true, ${convertDictionaryToHashMap}(${scriptParameters}));\n`
     return code
+  }
+
+  /*
+  * function that allow to call classes within the osgi container
+  * e.g. service -> 'ruleManager', class -> 'org.openhab.core.automation.RuleManager'
+  *
+  * currently used only for script blocks but eventually be moved into a more general place
+  */
+  function addOSGiService (serviceName, serviceClass) {
+    const addServiceName = Blockly.JavaScript.provideFunction_(
+      'addFrameworkService', [
+        'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' (serviceClass) {',
+        '  var bundleContext = Java.type(\'org.osgi.framework.FrameworkUtil\').getBundle(scriptExtension.class).getBundleContext();',
+        '  var serviceReference = bundleContext.getServiceReference(serviceClass);',
+        '  return bundleContext.getService(serviceReference);',
+        '}'
+      ])
+    return Blockly.JavaScript.provideFunction_(
+      serviceName,
+      [`var ${Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_} = ${addServiceName}('${serviceClass}');`])
   }
 
   /*

@@ -487,6 +487,8 @@
             </value>
           </block>
           <block type="oh_ephemeris_date" />
+          <block type="oh_ephemeris_date_text" />
+          <block type="oh_ephemeris_text_of_date" />
           <block type="oh_ephemeris_check" />
           <block type="oh_ephemeris_getBankHolidayName" />
           <block type="oh_ephemeris_getDaysUntilBankHoliday" />
@@ -532,9 +534,23 @@
             <value name="severity" />
           </block>
         </category>
-        <!--category name="Persistence">
-          <block type="oh_getpersist" />
-        </category-->
+        <category name="Persistence">
+          <block type="oh_get_persistvalue">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_persist_changed">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_get_persistence_lastupdate">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+        </category>
         <category name="Value Storage">
           <block type="oh_store_value">
             <value name="value">

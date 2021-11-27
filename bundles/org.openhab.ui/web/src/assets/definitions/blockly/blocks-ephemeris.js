@@ -86,9 +86,71 @@ export default function (f7) {
   * Code part
   */
   Blockly.JavaScript['oh_ephemeris_date'] = function (block) {
-    addDateSupport()
+    let gzdt = addDateSupport()
     let day = block.getFieldValue('day')
-    let code = `zdt.parse('${day} 00:00:00 +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss z'))`
+    let code = `${gzdt}('${day}')`
+    return [code, Blockly.JavaScript.ORDER_NONE]
+  }
+
+  /*
+  * Typed (EphemerisDate) block that can be used with the Ephemeris check block
+  * Allows input as string in the format yyyy-MM-dd
+  * Blockly part
+  */
+  Blockly.Blocks['oh_ephemeris_date_text'] = {
+    init: function () {
+      this.appendValueInput('day')
+        .appendField('date:')
+      this.setOutput(true, 'EphemerisDate')
+      this.setColour(210)
+      this.setTooltip('Calender entry as yyyy-MM-dd for ephemeris check block or other openHAB Blocks that require a day input')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
+    }
+  }
+
+  /*
+  * Typed (EphemerisDate) block that can be used with the Ephemeris check block
+  * Code part
+  */
+  Blockly.JavaScript['oh_ephemeris_date_text'] = function (block) {
+    let gzdt = addDateSupport()
+    let day = Blockly.JavaScript.valueToCode(block, 'day', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = `${gzdt}(${day})`
+    return [code, Blockly.JavaScript.ORDER_NONE]
+  }
+
+  /*
+  * Returns a string representation of an ephemeris date
+  * Blockly part
+  */
+  Blockly.Blocks['oh_ephemeris_text_of_date'] = {
+    init: function () {
+      this.appendValueInput('date')
+        .appendField('text of')
+        .setCheck('EphemerisDate')
+      this.appendDummyInput()
+        .appendField(new Blockly.FieldDropdown([['without time', 'without'], ['with time', 'with']]), 'withtime')
+
+      this.setOutput(true, 'String')
+      this.setColour(160)
+      this.setTooltip('converts an ephemeris date into a date string')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
+    }
+  }
+
+  /*
+  * Returns a string representation of an ephemeris date
+  * Code part
+  */
+  Blockly.JavaScript['oh_ephemeris_text_of_date'] = function (block) {
+    addDateSupport()
+    let date = Blockly.JavaScript.valueToCode(block, 'date', Blockly.JavaScript.ORDER_ATOMIC)
+    let withtime = block.getFieldValue('withtime')
+    let pattern = 'yyyy-MM-dd'
+    if (withtime === 'with') {
+      pattern = 'yyyy-MM-dd HH:mm:ss'
+    }
+    let code = `${date}.format(dtf.ofPattern('${pattern}'))`
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
@@ -216,5 +278,13 @@ export default function (f7) {
     Blockly.JavaScript.provideFunction_(
       'zdt',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.ZonedDateTime");'])
+    const getZonedDatetime = Blockly.JavaScript.provideFunction_(
+      'getZonedDatetime',
+      [
+        'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' (datetime) {',
+        '  return zdt.parse(datetime + \' 00:00:00 +00:00\', dtf.ofPattern(\'yyyy-MM-dd HH:mm:ss z\'))',
+        '}'
+      ])
+    return getZonedDatetime
   }
 }
