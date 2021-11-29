@@ -75,6 +75,10 @@ export const OhSliderItemDefinition = () => new WidgetDefinition('oh-slider-item
   .paramGroup(ListItemParameterGroup(), ListItemParameters())
   .paramGroup(pg('slider', 'Slider'), SliderParameters())
 
+// OhCustomItem
+export const OhCustomItemDefinition = () => new WidgetDefinition('oh-custom-item', 'Custom List Item', 'Display a custom user widget in a list')
+  .paramGroup(ListItemParameterGroup(), ListItemParameters())
+
 // OhStepperItem
 import StepperParameters from '../system/stepper.js'
 export const OhStepperItemDefinition = () => new WidgetDefinition('oh-stepper-item', 'Stepper List Item', 'Display a stepper control in a list')
