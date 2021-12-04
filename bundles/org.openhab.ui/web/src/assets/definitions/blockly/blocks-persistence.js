@@ -26,7 +26,7 @@ export default function defineOHBlocks_Persistence (f7) {
       this.appendValueInput('dayInfo')
         .appendField('since')
         .setAlign(Blockly.ALIGN_RIGHT)
-        .setCheck(['DayOffset', 'ZonedDateTime'])
+        .setCheck(['ZonedDateTime'])
       this.setInputsInline(false)
       this.setOutput(true, null)
       this.setColour(0)
@@ -41,7 +41,7 @@ export default function defineOHBlocks_Persistence (f7) {
           'evolutionRate': 'Gets the evolution rate of the state of a given Item since a certain point in time',
           'minimumSince': 'Gets the minimum value of the State of a persisted Item since a certain point in time',
           'maximumSince': 'Gets the maximum value of the State of a persisted Item since a certain point in time',
-          'sumSince': 'Gets the sum of the previous States of a persisted Item since a certain point in time',
+          'sumSince': 'Gets the sum of the previous States of a persisted Item since a certain point in time'
         }
         return TIP[methodName]
       })
@@ -82,7 +82,7 @@ export default function defineOHBlocks_Persistence (f7) {
       this.appendValueInput('dayInfo')
         .appendField(new Blockly.FieldDropdown([['has changed since', 'changedSince'], ['has been updated since', 'updatedSince']]), 'methodName')
         .setAlign(Blockly.ALIGN_RIGHT)
-        .setCheck(['DayOffset', 'ZonedDateTime'])
+        .setCheck(['ZonedDateTime'])
       this.setInputsInline(false)
       this.setOutput(true, null)
       this.setColour(0)

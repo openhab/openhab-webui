@@ -28,12 +28,12 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   Blockly.JavaScript['oh_sleep'] = function (block) {
-    const voiceName = Blockly.JavaScript.provideFunction_(
+    const thread = Blockly.JavaScript.provideFunction_(
       'thread',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.lang.Thread\')'])
     let milliseconds = block.getFieldValue('milliseconds')
 
-    let code = `thread.sleep(${milliseconds});\n`
+    let code = `${thread}.sleep(${milliseconds});\n`
     return code
   }
 
@@ -68,8 +68,8 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   Blockly.JavaScript['oh_timer'] = function (block) {
-    addScriptExecution()
-    addZonedDateTime()
+    const scriptExecution = addScriptExecution()
+    const zdt = addZonedDateTime()
     addGlobalTimer()
 
     let delayunits = block.getFieldValue('delayUnits')
@@ -78,7 +78,7 @@ export default function defineOHBlocks_Timers (f7) {
     let timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
 
     let code = `if (typeof this.timers[${timerName}] === 'undefined') {\n`
-    code += `  this.timers[${timerName}] = scriptExecution.createTimer(zonedDateTime.now().${delayunits}(${delay}), function () {\n`
+    code += `  this.timers[${timerName}] = ${scriptExecution}.createTimer(${zdt}.now().${delayunits}(${delay}), function () {\n`
     code += timerCode.replace(/^/gm, '  ')
     code += `    this.timers[${timerName}] = undefined;\n`
     code += '  })\n'
@@ -119,8 +119,8 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   Blockly.JavaScript['oh_timer_ext'] = function (block) {
-    addScriptExecution()
-    addZonedDateTime()
+    const scriptExecution = addScriptExecution()
+    const zdt = addZonedDateTime()
     addGlobalTimer()
 
     let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
@@ -130,7 +130,7 @@ export default function defineOHBlocks_Timers (f7) {
     let timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
 
     let code = `if (typeof this.timers[${timerName}] === 'undefined') {\n`
-    code += `  this.timers[${timerName}] = scriptExecution.createTimer(zonedDateTime.now().${delayUnits}(${delay}), function () {\n`
+    code += `  this.timers[${timerName}] = ${scriptExecution}.createTimer(${zdt}.now().${delayUnits}(${delay}), function () {\n`
     code += timerCode.replace(/^/gm, '  ')
     code += `  this.timers[${timerName}] = undefined;\n`
     code += '  })\n'
@@ -314,31 +314,31 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   Blockly.JavaScript['oh_timer_reschedule'] = function (block) {
-    addZonedDateTime()
+    const zdt = addZonedDateTime()
 
     let delayUnits = block.getFieldValue('delayUnits')
     let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
     let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
     addGlobalTimer()
 
-    let code = `if (typeof this.timers[${timerName}] !== 'undefined') { this.timers[${timerName}].reschedule(zonedDateTime.now().${delayUnits}(${delay})); }\n`
+    let code = `if (typeof this.timers[${timerName}] !== 'undefined') { this.timers[${timerName}].reschedule(${zdt}.now().${delayUnits}(${delay})); }\n`
     return code
   }
 
   function addScriptExecution () {
-    Blockly.JavaScript.provideFunction_(
+    return Blockly.JavaScript.provideFunction_(
       'scriptExecution',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.ScriptExecution\');'])
   }
 
   function addZonedDateTime () {
-    Blockly.JavaScript.provideFunction_(
-      'zonedDateTime',
+    return Blockly.JavaScript.provideFunction_(
+      'zdt',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.time.ZonedDateTime\');'])
   }
 
   function addGlobalTimer () {
-    let globaltimervars = 'if (typeof this.timers === \'undefined\') {\n  this.timers =[];\n}'
+    let globaltimervars = 'if (typeof this.timers === \'undefined\') {\n  this.timers = [];\n}'
     Blockly.JavaScript.provideFunction_('globaltimervars', [globaltimervars])
   }
 }

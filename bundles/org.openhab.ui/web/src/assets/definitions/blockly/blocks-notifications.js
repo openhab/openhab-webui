@@ -21,10 +21,10 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   Blockly.JavaScript['oh_sendNotification'] = function (block) {
-    addNotificationAction()
+    const notifications = addNotificationAction()
     let email = Blockly.JavaScript.valueToCode(block, 'email', Blockly.JavaScript.ORDER_ATOMIC)
     let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `notifications.sendNotification(${email},${message});\n`
+    let code = `${notifications}.sendNotification(${email},${message});\n`
     return code
   }
 
@@ -48,11 +48,11 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   Blockly.JavaScript['oh_sendBroadcastNotification'] = function (block) {
-    addNotificationAction()
+    const notifications = addNotificationAction()
     let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
     let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
-    let code = `notifications.sendBroadcastNotification(${message},${icon},'${severity}');\n`
+    let code = `${notifications}.sendBroadcastNotification(${message},${icon},'${severity}');\n`
     return code
   }
 
@@ -76,17 +76,17 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   Blockly.JavaScript['oh_sendLogNotification'] = function (block) {
-    addNotificationAction()
+    const notifications = addNotificationAction()
     let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
     let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
-    let code = `notifications.sendLogNotification(${message},${icon},'${severity}');\n`
+    let code = `${notifications}.sendLogNotification(${message},${icon},'${severity}');\n`
     return code
   }
 }
 
 function addNotificationAction () {
-  Blockly.JavaScript.provideFunction_(
+  return Blockly.JavaScript.provideFunction_(
     'notifications',
     ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.io.openhabcloud.NotificationAction\');'])
 }
