@@ -197,10 +197,10 @@ export default function (f7, sinks, voices) {
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Voice\');'])
 
     const textToSay = Blockly.JavaScript.valueToCode(block, 'textToSay', Blockly.JavaScript.ORDER_ATOMIC)
-    const voice = Blockly.JavaScript.valueToCode(block, 'voice', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
+    const voiceName = Blockly.JavaScript.valueToCode(block, 'voice', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
     const deviceSink = Blockly.JavaScript.valueToCode(block, 'deviceSink', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    const code = `${voice}.say(${textToSay}, ${voice}, ${deviceSink});\n`
+    const code = `${voice}.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
     return code
   }
 
