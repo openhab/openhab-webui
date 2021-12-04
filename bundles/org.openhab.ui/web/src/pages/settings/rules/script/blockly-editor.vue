@@ -477,8 +477,8 @@
         </category>
 
         <category name="Ephemeris">
-          <block type="oh_ephemeris_today" />
-          <block type="oh_ephemeris_today_offset">
+          <block type="oh_dayoffset_today" />
+          <block type="oh_dayoffset">
             <value name="offset">
               <shadow type="math_number">
                 <field name="NUM">
@@ -487,28 +487,28 @@
               </shadow>
             </value>
           </block>
-          <block type="oh_ephemeris_date" />
-          <block type="oh_ephemeris_date_text">
+          <block type="oh_zoneddatetime" />
+          <block type="oh_zoneddatetime_fromText">
             <value name="day">
               <shadow type="text">
                 <field name="TEXT">{{ new Date().toISOString().split('T')[0] }}</field>
               </shadow>
             </value>
           </block>
-          <block type="oh_ephemeris_text_of_date">
+          <block type="oh_zoneddatetime_toText">
             <value name="date">
-              <shadow type="oh_ephemeris_date" />
+              <shadow type="oh_zoneddatetime" />
             </value>
           </block>
           <sep gap="48" />
           <block type="oh_ephemeris_check">
             <value name="dayInfo">
-              <shadow type="oh_ephemeris_today" />
+              <shadow type="oh_dayoffset_today" />
             </value>
           </block>
           <block type="oh_ephemeris_getHolidayName">
             <value name="dayInfo">
-              <shadow type="oh_ephemeris_today" />
+              <shadow type="oh_dayoffset_today" />
             </value>
           </block>
           <block type="oh_ephemeris_getDaysUntilHoliday">
@@ -563,14 +563,60 @@
         </category>
 
         <category name="Persistence">
+          <block type="oh_dayoffset_today" />
+          <block type="oh_dayoffset">
+            <value name="offset">
+              <shadow type="math_number">
+                <field name="NUM">
+                  0
+                </field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_zoneddatetime" />
+          <block type="oh_zoneddatetime_fromText">
+            <value name="day">
+              <shadow type="text">
+                <field name="TEXT">{{ new Date().toISOString().split('T')[0] }}</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_zoneddatetime_toText">
+            <value name="date">
+              <shadow type="oh_zoneddatetime" />
+            </value>
+          </block>
+          <sep gap="48" />
           <block type="oh_get_persistvalue">
             <value name="itemName">
               <shadow type="oh_item" />
+            </value>
+            <value name="dayInfo">
+              <shadow type="oh_dayoffset">
+                <value name="offset">
+                  <shadow type="math_number">
+                    <field name="NUM">
+                      -1
+                    </field>
+                  </shadow>
+                </value>
+              </shadow>
             </value>
           </block>
           <block type="oh_persist_changed">
             <value name="itemName">
               <shadow type="oh_item" />
+            </value>
+            <value name="dayInfo">
+              <shadow type="oh_dayoffset">
+                <value name="offset">
+                  <shadow type="math_number">
+                    <field name="NUM">
+                      -1
+                    </field>
+                  </shadow>
+                </value>
+              </shadow>
             </value>
           </block>
           <block type="oh_get_persistence_lastupdate">
