@@ -579,6 +579,7 @@
             </value>
           </block>
         </category>
+
         <category name="Value Storage">
           <block type="oh_store_value">
             <value name="value">
@@ -601,23 +602,41 @@
           </block>
         </category>
 
-        <category name="Scripts">
+        <category name="Run &amp; Process">
           <block type="oh_callscriptfile">
-            <value name="message">
+            <value name="scriptfile">
               <shadow type="text">
                 <field name="TEXT">scriptname.script</field>
               </shadow>
             </value>
           </block>
-          <block type="oh_callscript">
-            <value name="message">
+          <block type="oh_runrule">
+            <value name="ruleUID">
               <shadow type="text">
-                <field name="TEXT">scriptname</field>
+                <field name="TEXT">ruleUID</field>
+              </shadow>
+            </value>
+            <value name="parameters">
+              <shadow type="dicts_create_with">
+                <mutation items="0" />
               </shadow>
             </value>
           </block>
-          <block type="oh_transformation" />
+          <sep gap="48" />
+          <block type="oh_transformation">
+            <value name="function">
+              <shadow type="text">
+                <field name="TEXT">function</field>
+              </shadow>
+            </value>
+            <value name="value">
+              <shadow type="text">
+                <field name="TEXT">value</field>
+              </shadow>
+            </value>
+          </block>
         </category>
+
         <category name="Logging &amp; Output">
           <block type="oh_log">
             <value name="message">
