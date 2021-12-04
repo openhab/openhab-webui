@@ -475,6 +475,7 @@
             </value>
           </block>
         </category>
+
         <category name="Ephemeris">
           <block type="oh_ephemeris_today" />
           <block type="oh_ephemeris_today_offset">
@@ -487,12 +488,38 @@
             </value>
           </block>
           <block type="oh_ephemeris_date" />
-          <block type="oh_ephemeris_date_text" />
-          <block type="oh_ephemeris_text_of_date" />
-          <block type="oh_ephemeris_check" />
-          <block type="oh_ephemeris_getBankHolidayName" />
-          <block type="oh_ephemeris_getDaysUntilBankHoliday" />
+          <block type="oh_ephemeris_date_text">
+            <value name="day">
+              <shadow type="text">
+                <field name="TEXT">{{ new Date().toISOString().split('T')[0] }}</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_ephemeris_text_of_date">
+            <value name="date">
+              <shadow type="oh_ephemeris_date" />
+            </value>
+          </block>
+          <sep gap="48" />
+          <block type="oh_ephemeris_check">
+            <value name="dayInfo">
+              <shadow type="oh_ephemeris_today" />
+            </value>
+          </block>
+          <block type="oh_ephemeris_getHolidayName">
+            <value name="dayInfo">
+              <shadow type="oh_ephemeris_today" />
+            </value>
+          </block>
+          <block type="oh_ephemeris_getDaysUntilHoliday">
+            <value name="holidayName">
+              <shadow type="text">
+                <field name="TEXT">CHRISTMAS</field>
+              </shadow>
+            </value>
+          </block>
         </category>
+
         <category name="Notifications">
           <block type="oh_sendNotification">
             <value name="email">
@@ -534,6 +561,7 @@
             <value name="severity" />
           </block>
         </category>
+
         <category name="Persistence">
           <block type="oh_get_persistvalue">
             <value name="itemName">
@@ -572,6 +600,7 @@
             </value>
           </block>
         </category>
+
         <category name="Scripts">
           <block type="oh_callscriptfile">
             <value name="message">

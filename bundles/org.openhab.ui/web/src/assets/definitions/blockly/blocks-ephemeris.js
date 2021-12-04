@@ -19,7 +19,7 @@ export default function (f7) {
       this.appendDummyInput()
         .appendField('today')
       this.setOutput(true, 'EphemerisDay')
-      this.setColour(210)
+      this.setColour(70)
       this.setTooltip('today\'s date for ephemeris check block')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
     }
@@ -47,7 +47,7 @@ export default function (f7) {
       this.appendDummyInput()
         .appendField('days')
       this.setOutput(true, 'EphemerisDay')
-      this.setColour(210)
+      this.setColour(70)
       this.setTooltip('today with a positive or negative day offset for ephemeris check block')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
     }
@@ -58,7 +58,6 @@ export default function (f7) {
   * Code part
   */
   Blockly.JavaScript['oh_ephemeris_today_offset'] = function (block) {
-    addEphemeris()
     let offsetValue = Blockly.JavaScript.valueToCode(block, 'offset', Blockly.JavaScript.ORDER_ATOMIC)
     let code = `${offsetValue}`
     return [code, Blockly.JavaScript.ORDER_NONE]
@@ -72,10 +71,10 @@ export default function (f7) {
   Blockly.Blocks['oh_ephemeris_date'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('date:')
+        .appendField('date')
         .appendField(new FieldDatePicker('', null, { f7 }, 'date'), 'day')
       this.setOutput(true, 'EphemerisDate')
-      this.setColour(210)
+      this.setColour(70)
       this.setTooltip('Calender entry for ephemeris check block or other openHAB Blocks that require a day input')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
     }
@@ -86,9 +85,9 @@ export default function (f7) {
   * Code part
   */
   Blockly.JavaScript['oh_ephemeris_date'] = function (block) {
-    let gzdt = addDateSupport()
+    const { dtf, zdt, getZonedDateTime } = addDateSupport()
     let day = block.getFieldValue('day')
-    let code = `${gzdt}('${day}')`
+    let code = `${getZonedDateTime}('${day}')`
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
@@ -100,9 +99,9 @@ export default function (f7) {
   Blockly.Blocks['oh_ephemeris_date_text'] = {
     init: function () {
       this.appendValueInput('day')
-        .appendField('date:')
+        .appendField('date')
       this.setOutput(true, 'EphemerisDate')
-      this.setColour(210)
+      this.setColour(70)
       this.setTooltip('Calender entry as yyyy-MM-dd for ephemeris check block or other openHAB Blocks that require a day input')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
     }
@@ -113,9 +112,9 @@ export default function (f7) {
   * Code part
   */
   Blockly.JavaScript['oh_ephemeris_date_text'] = function (block) {
-    let gzdt = addDateSupport()
+    const { dtf, zdt, getZonedDateTime } = addDateSupport()
     let day = Blockly.JavaScript.valueToCode(block, 'day', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `${gzdt}(${day})`
+    let code = `${getZonedDateTime}(${day})`
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
@@ -143,14 +142,14 @@ export default function (f7) {
   * Code part
   */
   Blockly.JavaScript['oh_ephemeris_text_of_date'] = function (block) {
-    addDateSupport()
+    const { dtf, zdt, getZonedDatetime } = addDateSupport()
     let date = Blockly.JavaScript.valueToCode(block, 'date', Blockly.JavaScript.ORDER_ATOMIC)
     let withtime = block.getFieldValue('withtime')
     let pattern = 'yyyy-MM-dd'
     if (withtime === 'with') {
       pattern = 'yyyy-MM-dd HH:mm:ss'
     }
-    let code = `${date}.format(dtf.ofPattern('${pattern}'))`
+    let code = `${date}.format(${dtf}.ofPattern('${pattern}'))`
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
@@ -167,8 +166,8 @@ export default function (f7) {
       this.appendValueInput('dayInfo')
         .setCheck(['EphemerisDay', 'EphemerisDate'])
       this.appendDummyInput()
-        .appendField('is a')
-        .appendField(new Blockly.FieldDropdown([['bank holiday', 'bankholiday'], ['weekend', 'weekend'], ['weekday', 'weekday']]), 'checkType')
+        .appendField('is')
+        .appendField(new Blockly.FieldDropdown([['a holiday', 'holiday'], ['the weekend', 'weekend'], ['a weekday', 'weekday']]), 'checkType')
       this.setColour(0)
       this.setInputsInline(true)
       this.setTooltip('checks if the given day is a holiday, weekend or weekday')
@@ -182,24 +181,24 @@ export default function (f7) {
   * Code part
   */
   Blockly.JavaScript['oh_ephemeris_check'] = function (block) {
-    addEphemeris()
+    const ephemeris = addEphemeris()
 
-    let dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_ATOMIC)
+    let dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
     let checkType = block.getFieldValue('checkType')
     let code = ''
 
     switch (checkType) {
       case 'weekend':
-        code += `ephemeris.isWeekend(${dayInfo})`
+        code += `${ephemeris}.isWeekend(${dayInfo})`
         break
       case 'weekday':
-        code += `!ephemeris.isWeekend(${dayInfo})`
+        code += `!${ephemeris}.isWeekend(${dayInfo})`
         break
-      case 'bankholiday':
-        code += `ephemeris.isBankHoliday(${dayInfo})`
+      case 'holiday':
+        code += `${ephemeris}.isBankHoliday(${dayInfo})`
         break
     }
-    return [code, 0]
+    return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL]
   }
 
   /*
@@ -207,10 +206,10 @@ export default function (f7) {
   * Only EphemerisDay and EphemerisDate blocks are allowed as an input
   * Blockly part
   */
-  Blockly.Blocks['oh_ephemeris_getBankHolidayName'] = {
+  Blockly.Blocks['oh_ephemeris_getHolidayName'] = {
     init: function () {
       this.appendValueInput('dayInfo')
-        .appendField('bank holiday name at')
+        .appendField('holiday name for')
         .setCheck(['EphemerisDay', 'EphemerisDate'])
       this.setColour(0)
       this.setInputsInline(true)
@@ -224,21 +223,21 @@ export default function (f7) {
   * Retrieve the current bonk holiday name
   * Code part
   */
-  Blockly.JavaScript['oh_ephemeris_getBankHolidayName'] = function (block) {
-    addEphemeris()
-    let dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `ephemeris.getBankHolidayName(${dayInfo})`
-    return [code, 0]
+  Blockly.JavaScript['oh_ephemeris_getHolidayName'] = function (block) {
+    const ephemeris = addEphemeris()
+    let dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
+    let code = `${ephemeris}.getBankHolidayName(${dayInfo})`
+    return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
   /*
   * Retrieve the number of days from today until the given bank holiday name
   * Blockly part
   */
-  Blockly.Blocks['oh_ephemeris_getDaysUntilBankHoliday'] = {
+  Blockly.Blocks['oh_ephemeris_getDaysUntilHoliday'] = {
     init: function () {
       this.appendValueInput('holidayName')
-        .appendField('days until bank holiday')
+        .appendField('days until holiday named')
         .setCheck('String')
       this.setColour(0)
       this.setInputsInline(true)
@@ -252,18 +251,18 @@ export default function (f7) {
   * Retrieve the number of days from today until the given bank holiday name
   * Code part
   */
-  Blockly.JavaScript['oh_ephemeris_getDaysUntilBankHoliday'] = function (block) {
-    addEphemeris()
-    let holidayName = Blockly.JavaScript.valueToCode(block, 'holidayName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `ephemeris.getDaysUntil(${holidayName})`
-    return [code, 0]
+  Blockly.JavaScript['oh_ephemeris_getDaysUntilHoliday'] = function (block) {
+    const ephemeris = addEphemeris()
+    let holidayName = Blockly.JavaScript.valueToCode(block, 'holidayName', Blockly.JavaScript.ORDER_NONE)
+    let code = `${ephemeris}.getDaysUntil(${holidayName})`
+    return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
   /*
   * Add ephemeris support to rule
   */
   function addEphemeris () {
-    Blockly.JavaScript.provideFunction_(
+    return Blockly.JavaScript.provideFunction_(
       'ephemeris',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
   }
@@ -272,19 +271,19 @@ export default function (f7) {
   * Add ZoneDateTime and DateTimeFormatter support to rule
   */
   function addDateSupport () {
-    Blockly.JavaScript.provideFunction_(
+    const dtf = Blockly.JavaScript.provideFunction_(
       'dtf',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.format.DateTimeFormatter");'])
-    Blockly.JavaScript.provideFunction_(
+    const zdt = Blockly.JavaScript.provideFunction_(
       'zdt',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.ZonedDateTime");'])
-    const getZonedDatetime = Blockly.JavaScript.provideFunction_(
-      'getZonedDatetime',
+    const getZonedDateTime = Blockly.JavaScript.provideFunction_(
+      'getZonedDateTime',
       [
         'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' (datetime) {',
-        '  return zdt.parse(datetime + \' 00:00:00 +00:00\', dtf.ofPattern(\'yyyy-MM-dd HH:mm:ss z\'))',
+        `  return ${zdt}.parse(datetime + ' 00:00:00 +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss z'))`,
         '}'
       ])
-    return getZonedDatetime
+    return { dtf, zdt, getZonedDateTime }
   }
 }
