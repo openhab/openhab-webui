@@ -6,7 +6,7 @@
 * See usage discussion here: https://community.openhab.org/t/wip-ephemeris-documentation/84536
 */
 import Blockly from 'blockly'
-import FieldDate from '@blockly/field-date'
+import { FieldDatePicker } from './fields/date-field'
 
 export default function (f7) {
   /*
@@ -73,7 +73,7 @@ export default function (f7) {
     init: function () {
       this.appendDummyInput()
         .appendField('date:')
-        .appendField(new Blockly.FieldDate(), 'day')
+        .appendField(new FieldDatePicker('', null, { f7 }, 'date'), 'day')
       this.setOutput(true, 'EphemerisDate')
       this.setColour(210)
       this.setTooltip('Calender entry for ephemeris check block or other openHAB Blocks that require a day input')
