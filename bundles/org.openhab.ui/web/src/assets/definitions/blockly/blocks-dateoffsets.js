@@ -29,7 +29,7 @@ export default function (f7) {
   }
 
   /*
-  * Typed (DayOffset) block with a day positve or negative offset that can be used with the Ephemeris check block
+  * Typed (DayOffset) block with a day positve or negative offset that can be used
   * Blockly part
   */
   Blockly.Blocks['oh_dayoffset'] = {
@@ -47,7 +47,7 @@ export default function (f7) {
   }
 
   /*
-  * Typed (DayOffset) block with a day positve or negative offset that can be used with the Ephemeris check block
+  * Typed (DayOffset) block with a day positve or negative offset
   * Code part
   */
   Blockly.JavaScript['oh_dayoffset'] = function (block) {
@@ -57,11 +57,48 @@ export default function (f7) {
   }
 
   /*
+  * Typed (ZonedDateTime) block that adds or substracts a specified amount from the current time
+  * Blockly part
+  */
+  Blockly.Blocks['oh_zdt_plusminus'] = {
+    init: function () {
+      this.appendValueInput('offset')
+        .setCheck('Number')
+        .appendField('now')
+        .appendField(new Blockly.FieldDropdown([
+          ['+', 'plus'], ['-', 'minus']]), 'plusminus')
+      this.appendDummyInput()
+        .appendField(new Blockly.FieldDropdown([
+          ['seconds', 'Seconds'], ['minutes', 'Minutes'],
+          ['hours', 'Hours'], ['days', 'Days'], ['weeks', 'Weeks'],
+          ['months', 'Months'], ['years', 'Years']
+        ]), 'period')
+      this.setOutput(true, 'ZonedDateTime')
+      this.setColour(70)
+      this.setTooltip('today with a positive or negative day offset for ephemeris check block')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
+    }
+  }
+
+  /*
+  * Typed (DayOffset) block with a day positve or negative offset that can be used with the Ephemeris check block
+  * Code part
+  */
+  Blockly.JavaScript['oh_zdt_plusminus'] = function (block) {
+    const { dtf, zdt, getZonedDatetime } = addDateSupport()
+    let offsetValue = Blockly.JavaScript.valueToCode(block, 'offset', Blockly.JavaScript.ORDER_ATOMIC)
+    let plusMinus = block.getFieldValue('plusminus')
+    let period = block.getFieldValue('period')
+    let code = `${zdt}.now().${plusMinus}${period}(${offsetValue})`
+    return [code, Blockly.JavaScript.ORDER_ATOMIC]
+  }
+
+  /*
   * Typed (ZonedDateTime) block that can be used with the Ephemeris check block
   * Allows the selection of a date. The default is the current date
   * Blockly part
   */
-  Blockly.Blocks['oh_zoneddatetime'] = {
+  Blockly.Blocks['oh_zdt'] = {
     init: function () {
       this.appendDummyInput()
         .appendField('date')
@@ -77,7 +114,7 @@ export default function (f7) {
   * Typed (ZonedDateTime) block that can be used with the Ephemeris check block
   * Code part
   */
-  Blockly.JavaScript['oh_zoneddatetime'] = function (block) {
+  Blockly.JavaScript['oh_zdt'] = function (block) {
     const { dtf, zdt, getZonedDateTime } = addDateSupport()
     let day = block.getFieldValue('day')
     let code = `${getZonedDateTime}('${day}')`
@@ -89,7 +126,7 @@ export default function (f7) {
   * Allows input as string in the format yyyy-MM-dd
   * Blockly part
   */
-  Blockly.Blocks['oh_zoneddatetime_fromText'] = {
+  Blockly.Blocks['oh_zdt_fromText'] = {
     init: function () {
       this.appendValueInput('day')
         .appendField('date')
@@ -104,7 +141,7 @@ export default function (f7) {
   * Typed (ZonedDateTime) block that can be used with the Ephemeris check block
   * Code part
   */
-  Blockly.JavaScript['oh_zoneddatetime_fromText'] = function (block) {
+  Blockly.JavaScript['oh_zdt_fromText'] = function (block) {
     const { dtf, zdt, getZonedDateTime } = addDateSupport()
     let day = Blockly.JavaScript.valueToCode(block, 'day', Blockly.JavaScript.ORDER_ATOMIC)
     let code = `${getZonedDateTime}(${day})`
@@ -115,7 +152,7 @@ export default function (f7) {
   * Returns a string representation of an ephemeris date
   * Blockly part
   */
-  Blockly.Blocks['oh_zoneddatetime_toText'] = {
+  Blockly.Blocks['oh_zdt_toText'] = {
     init: function () {
       this.appendValueInput('date')
         .appendField('text of')
@@ -134,7 +171,7 @@ export default function (f7) {
   * Returns a string representation of an ephemeris date
   * Code part
   */
-  Blockly.JavaScript['oh_zoneddatetime_toText'] = function (block) {
+  Blockly.JavaScript['oh_zdt_toText'] = function (block) {
     const { dtf, zdt, getZonedDatetime } = addDateSupport()
     let date = Blockly.JavaScript.valueToCode(block, 'date', Blockly.JavaScript.ORDER_ATOMIC)
     let withtime = block.getFieldValue('withtime')

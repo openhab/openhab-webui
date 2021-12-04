@@ -487,17 +487,17 @@
               </shadow>
             </value>
           </block>
-          <block type="oh_zoneddatetime" />
-          <block type="oh_zoneddatetime_fromText">
+          <block type="oh_zdt" />
+          <block type="oh_zdt_fromText">
             <value name="day">
               <shadow type="text">
                 <field name="TEXT">{{ new Date().toISOString().split('T')[0] }}</field>
               </shadow>
             </value>
           </block>
-          <block type="oh_zoneddatetime_toText">
+          <block type="oh_zdt_toText">
             <value name="date">
-              <shadow type="oh_zoneddatetime" />
+              <shadow type="oh_zdt" />
             </value>
           </block>
           <sep gap="48" />
@@ -563,8 +563,7 @@
         </category>
 
         <category name="Persistence">
-          <block type="oh_dayoffset_today" />
-          <block type="oh_dayoffset">
+          <block type="oh_zdt_plusminus">
             <value name="offset">
               <shadow type="math_number">
                 <field name="NUM">
@@ -573,17 +572,17 @@
               </shadow>
             </value>
           </block>
-          <block type="oh_zoneddatetime" />
-          <block type="oh_zoneddatetime_fromText">
+          <block type="oh_zdt" />
+          <block type="oh_zdt_fromText">
             <value name="day">
               <shadow type="text">
                 <field name="TEXT">{{ new Date().toISOString().split('T')[0] }}</field>
               </shadow>
             </value>
           </block>
-          <block type="oh_zoneddatetime_toText">
+          <block type="oh_zdt_toText">
             <value name="date">
-              <shadow type="oh_zoneddatetime" />
+              <shadow type="oh_zdt" />
             </value>
           </block>
           <sep gap="48" />
@@ -592,14 +591,16 @@
               <shadow type="oh_item" />
             </value>
             <value name="dayInfo">
-              <shadow type="oh_dayoffset">
+              <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
                     <field name="NUM">
-                      -1
+                      1
                     </field>
                   </shadow>
                 </value>
+                <field name="period">Hours</field>
+                <field name="plusminus">minus</field>
               </shadow>
             </value>
           </block>
@@ -608,14 +609,16 @@
               <shadow type="oh_item" />
             </value>
             <value name="dayInfo">
-              <shadow type="oh_dayoffset">
+              <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
                     <field name="NUM">
-                      -1
+                      1
                     </field>
                   </shadow>
                 </value>
+                <field name="period">Hours</field>
+                <field name="plusminus">minus</field>
               </shadow>
             </value>
           </block>
