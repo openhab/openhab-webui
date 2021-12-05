@@ -476,6 +476,50 @@
           </block>
         </category>
 
+        <category name="Ephemeris">
+          <block type="oh_dayoffset_today" />
+          <block type="oh_dayoffset">
+            <value name="offset">
+              <shadow type="math_number">
+                <field name="NUM">
+                  0
+                </field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_zdt" />
+          <block type="oh_zdt_fromText">
+            <value name="day">
+              <shadow type="text">
+                <field name="TEXT">{{ new Date().toISOString().split('T')[0] }}</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_zdt_toText">
+            <value name="date">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <sep gap="48" />
+          <block type="oh_ephemeris_check">
+            <value name="dayInfo">
+              <shadow type="oh_dayoffset_today" />
+            </value>
+          </block>
+          <block type="oh_ephemeris_getHolidayName">
+            <value name="dayInfo">
+              <shadow type="oh_dayoffset_today" />
+            </value>
+          </block>
+          <block type="oh_ephemeris_getDaysUntilHoliday">
+            <value name="holidayName">
+              <shadow type="text">
+                <field name="TEXT">CHRISTMAS</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
+
         <category name="Notifications">
           <block type="oh_sendNotification">
             <value name="email">
@@ -518,6 +562,73 @@
           </block>
         </category>
 
+        <category name="Persistence">
+          <block type="oh_zdt_plusminus">
+            <value name="offset">
+              <shadow type="math_number">
+                <field name="NUM">
+                  0
+                </field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_zdt" />
+          <block type="oh_zdt_fromText">
+            <value name="day">
+              <shadow type="text">
+                <field name="TEXT">{{ new Date().toISOString().split('T')[0] }}</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_zdt_toText">
+            <value name="date">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <sep gap="48" />
+          <block type="oh_get_persistvalue">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+            <value name="dayInfo">
+              <shadow type="oh_zdt_plusminus">
+                <value name="offset">
+                  <shadow type="math_number">
+                    <field name="NUM">
+                      1
+                    </field>
+                  </shadow>
+                </value>
+                <field name="period">Hours</field>
+                <field name="plusminus">minus</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_persist_changed">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+            <value name="dayInfo">
+              <shadow type="oh_zdt_plusminus">
+                <value name="offset">
+                  <shadow type="math_number">
+                    <field name="NUM">
+                      1
+                    </field>
+                  </shadow>
+                </value>
+                <field name="period">Hours</field>
+                <field name="plusminus">minus</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_get_persistence_lastupdate">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+        </category>
+
         <category name="Value Storage">
           <block type="oh_store_value">
             <value name="value">
@@ -535,6 +646,41 @@
             <value name="key">
               <shadow type="text">
                 <field name="TEXT">key</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
+
+        <category name="Run &amp; Process">
+          <block type="oh_callscriptfile">
+            <value name="scriptfile">
+              <shadow type="text">
+                <field name="TEXT">scriptname.script</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_runrule">
+            <value name="ruleUID">
+              <shadow type="text">
+                <field name="TEXT">ruleUID</field>
+              </shadow>
+            </value>
+            <value name="parameters">
+              <shadow type="dicts_create_with">
+                <mutation items="0" />
+              </shadow>
+            </value>
+          </block>
+          <sep gap="48" />
+          <block type="oh_transformation">
+            <value name="function">
+              <shadow type="text">
+                <field name="TEXT">function</field>
+              </shadow>
+            </value>
+            <value name="value">
+              <shadow type="text">
+                <field name="TEXT">value</field>
               </shadow>
             </value>
           </block>

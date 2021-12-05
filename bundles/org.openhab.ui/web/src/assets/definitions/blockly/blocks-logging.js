@@ -38,12 +38,12 @@ export default function (f7) {
   }
 
   Blockly.JavaScript['oh_log'] = function (block) {
-    const loggerName = Blockly.JavaScript.provideFunction_(
+    const logger = Blockly.JavaScript.provideFunction_(
       'logger',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.slf4j.LoggerFactory\').getLogger(\'org.openhab.rule.\' + ctx.ruleUID);'])
     const message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
     const severity = block.getFieldValue('severity')
-    const code = `logger.${severity}(${message});\n`
+    const code = `${logger}.${severity}(${message});\n`
     return code
   }
 }
