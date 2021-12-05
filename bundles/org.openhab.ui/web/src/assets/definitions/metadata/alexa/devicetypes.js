@@ -79,8 +79,8 @@ export default {
     supportsGroup: false
   },
   AirConditioner: {
-    defaultAttributes: ['HeatingCoolingMode'],
-    supportedAttributes: ['HeatingCoolingMode', 'TargetTemperature', 'CurrentTemperature', ...fanAttributes]
+    defaultAttributes: ['PowerState'],
+    supportedAttributes: ['PowerState', 'TargetTemperature', 'CurrentTemperature', ...fanAttributes]
   },
   AirFreshener: {
     defaultAttributes: ['FanSpeed'],
@@ -96,6 +96,7 @@ export default {
       'FanSpeed',
       'LockState',
       'PowerState',
+      'TargetTemperature',
       'CurrentTemperature',
       ...genericAttributes
     ]

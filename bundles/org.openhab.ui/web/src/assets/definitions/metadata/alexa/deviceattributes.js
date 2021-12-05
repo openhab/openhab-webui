@@ -45,23 +45,52 @@ export default {
     itemTypes: ['Dimmer', 'Rollershutter'],
     parameters: (item) => [
       p.inverted(item.type === 'Rollershutter'),
-      p.presets(item.stateDescription, '20=Morning,60=Afternoon,80=Evening:@Setting.Night', true),
-      p.language(item.settings && item.settings.regional.language)
+      p.presets(item.stateDescription, '20=Morning,60=Afternoon,80=Evening:@Setting.Night'),
+      p.language(item.settings && item.settings.regional.language),
+      p.actionMappings(
+        { default: 'value' },
+        'Close=0,Open=100,Lower=0,Raise=100',
+        (config) => {
+          if (item.type === 'Dimmer') {
+            return config.inverted === true
+              ? ['Close=100', 'Open=0', 'Lower=100', 'Raise=0']
+              : ['Close=0', 'Open=100', 'Lower=0', 'Raise=100']
+          }
+          if (item.type === 'Rollershutter') {
+            return ['Close=DOWN', 'Open=UP', 'Lower=DOWN', 'Raise=UP', 'Stop=STOP']
+          }
+        }
+      )
     ]
   },
   TiltAngle: {
     itemTypes: ['Dimmer', 'Number', 'Number:Angle', 'Rollershutter'],
     parameters: (item) => [
       p.inverted(item.type === 'Rollershutter'),
-      p.presets(item.stateDescription, '20=Morning,60=Afternoon,80=Evening:@Setting.Night', true),
-      p.language(item.settings && item.settings.regional.language)
+      p.presets(item.stateDescription, '20=Morning,60=Afternoon,80=Evening:@Setting.Night'),
+      p.language(item.settings && item.settings.regional.language),
+      p.actionMappings(
+        { default: 'value' },
+        'Close=0,Open=100',
+        (config) => {
+          if (item.type === 'Dimmer') {
+            return config.inverted === true ? ['Close=100', 'Open=0'] : ['Close=0', 'Open=100']
+          }
+          if (item.type === 'Number' || item.type === 'Number:Angle') {
+            return config.inverted === true ? ['Close=90', 'Open=0'] : ['Close=-90', 'Open=0']
+          }
+          if (item.type === 'Rollershutter') {
+            return ['Close=DOWN', 'Open=UP', 'Stop=STOP']
+          }
+        }
+      )
     ]
   },
 
   // Entertainment Attributes
   Channel: {
     itemTypes: ['Number', 'String'],
-    parameters: () => [p.channelMappings(), p.retrievable()]
+    parameters: (item) => [p.channelMappings(item.stateDescription), p.channelRange(), p.retrievable()]
   },
   Input: {
     itemTypes: ['Number', 'String'],
@@ -396,9 +425,12 @@ export default {
     ]
   },
   ToggleState: {
-    itemTypes: ['Switch'],
+    itemTypes: ['Number', 'String', 'Switch'],
     supports: ['multiInstance'],
     parameters: (item) => [
+      ...(item.type === 'Number' || item.type === 'String'
+        ? [p.valueMapping('OFF', true), p.valueMapping('ON', true)]
+        : []),
       p.capabilityNames(item.groups.length ? item.label : '@Setting.ToggleState', '@Setting.Oscillate,Rotate'),
       p.nonControllable(item.stateDescription),
       p.retrievable(),

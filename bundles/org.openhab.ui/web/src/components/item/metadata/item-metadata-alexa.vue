@@ -29,7 +29,7 @@
               {{ cl }}
             </option>
           </optgroup>
-          <optgroup label="Generic Attributes" v-if="!multiple">
+          <optgroup label="Generic Attributes">
             <option v-for="cl in genericClasses" :value="cl" :key="cl" :selected="isSelected(cl)">
               {{ cl }}
             </option>

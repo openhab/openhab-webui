@@ -18,13 +18,15 @@ import {
 } from './helpers.js'
 
 export default {
-  actionMappings: (format, placeholder) => ({
+  actionMappings: (format, placeholder, defaultValue) => ({
     name: 'actionMappings',
     label: 'Action Mappings',
     description: `Each mapping formatted as ${getSemanticFormat('action', format)} (${docLink('Semantic Extensions')})`,
     type: 'TEXT',
+    default: defaultValue,
     placeholder: placeholder.replace(/,/g, '\n'),
-    multiple: true
+    multiple: true,
+    advanced: !!defaultValue
   }),
   capabilityNames: (defaultValue, placeholder) => ({
     name: 'capabilityNames',
@@ -36,13 +38,28 @@ export default {
     multiple: true,
     required: !defaultValue
   }),
-  channelMappings: () => ({
+  channelMappings: (stateDescription) => ({
     name: 'channelMappings',
     label: 'Channel Mappings',
-    description: 'Each mapping formatted as <code>channelName=channelNumber<code>',
+    description: 'Each mapping formatted as <code>channelNumber=channelName<code>',
     type: 'TEXT',
-    placeholder: 'CBS=2\nNBC=4\nABC=7\nPBS=13',
+    default:
+      stateDescription &&
+      stateDescription.options &&
+      stateDescription.options
+        .filter((option) => !isNaN(option.value))
+        .map((option) => `${option.value}=${option.label}`),
+    placeholder: '2=CBS\n4=NBC\n7=ABC\n13=PBS',
     multiple: true
+  }),
+  channelRange: () => ({
+    name: 'range',
+    label: 'Channel Range',
+    description: 'Formatted as <code>minValue:maxValue</code>',
+    type: 'TEXT',
+    default: '1:9999',
+    pattern: '[0-9]+:[0-9]+',
+    advanced: true
   }),
   colorTemperatureBinding: () => ({
     name: 'binding',
@@ -69,7 +86,7 @@ export default {
   colorTemperatureRange: () => ({
     name: 'range',
     label: 'Temperature Range in Kelvin',
-    description: 'Formatted as <code>minRange:maxRange</code>',
+    description: 'Formatted as <code>minValue:maxValue</code>',
     type: 'TEXT',
     default: '1000:10000',
     pattern: '[0-9]+:[0-9]+',
@@ -122,7 +139,7 @@ export default {
   equalizerRange: (defaultValue) => ({
     name: 'range',
     label: 'Equalizer Range',
-    description: 'Formatted as <code>minRange:maxRange</code>',
+    description: 'Formatted as <code>minValue:maxValue</code>',
     type: 'TEXT',
     default: defaultValue,
     pattern: '[+-]?[0-9]+:[+-]?[0-9]+'
@@ -196,7 +213,7 @@ export default {
     multiple: true,
     advanced: true
   }),
-  presets: (stateDescription, placeholder, advanced = false) => ({
+  presets: (stateDescription, placeholder) => ({
     name: 'presets',
     label: 'Presets',
     description:
@@ -210,8 +227,7 @@ export default {
         .filter((option) => !isNaN(option.value))
         .map((option) => `${option.value}=${option.label}`),
     placeholder: placeholder.replace(/,/g, '\n'),
-    multiple: true,
-    advanced
+    multiple: true
   }),
   primaryControl: () => ({
     name: 'primaryControl',
@@ -257,7 +273,7 @@ export default {
   setpointRange: (item) => ({
     name: 'setpointRange',
     label: 'Setpoint Range',
-    description: 'Formatted as <code>minRange:maxRange</code>',
+    description: 'Formatted as <code>minValue:maxValue</code>',
     type: 'TEXT',
     default: (config) => {
       const scale = config.scale || getGroupParameter('scale', item.groups) || getTemperatureScale(item)
