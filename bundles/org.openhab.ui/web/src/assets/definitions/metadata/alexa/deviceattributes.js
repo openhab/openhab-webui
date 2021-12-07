@@ -353,7 +353,10 @@ export default {
   ThermostatHold: {
     itemTypes: ['Number', 'String', 'Switch'],
     requires: ['HeatingCoolingMode'],
-    parameters: (item) => [p.valueMapping('RESUME')]
+    parameters: (item) => [
+      ...(item.type === 'Switch' ? [p.inverted()] : [p.valueMapping('OFF'), p.valueMapping('ON')]),
+      p.requiresSetpointHold()
+    ]
   },
   ThermostatFan: {
     itemTypes: ['String', 'Switch'],
@@ -405,9 +408,9 @@ export default {
     supports: ['multiInstance'],
     parameters: (item) => [
       p.capabilityNames(item.groups.length ? item.label : '@Setting.RangeValue', '@Setting.FanSpeed,Speed'),
+      p.inverted(item.type === 'Rollershutter'),
       p.nonControllable(item.stateDescription),
       p.retrievable(),
-      p.inverted(item.type === 'Rollershutter'),
       ...(item.type === 'Dimmer'
         ? [p.supportedCommands(['ON', 'OFF', 'INCREASE', 'DECREASE'], 'INCREASE=@Value.Up,DECREASE=@Value.Down')]
         : item.type === 'Rollershutter'
@@ -428,13 +431,10 @@ export default {
     itemTypes: ['Number', 'String', 'Switch'],
     supports: ['multiInstance'],
     parameters: (item) => [
-      ...(item.type === 'Number' || item.type === 'String'
-        ? [p.valueMapping('OFF', true), p.valueMapping('ON', true)]
-        : []),
       p.capabilityNames(item.groups.length ? item.label : '@Setting.ToggleState', '@Setting.Oscillate,Rotate'),
+      ...(item.type === 'Switch' ? [p.inverted()] : [p.valueMapping('OFF', true), p.valueMapping('ON', true)]),
       p.nonControllable(item.stateDescription),
       p.retrievable(),
-      p.inverted(),
       p.language(item.settings && item.settings.regional.language),
       p.actionMappings(['ON', 'OFF'], 'Close=OFF,Open=ON'),
       p.stateMappings(['ON', 'OFF'], 'Closed=OFF,Open=ON')
