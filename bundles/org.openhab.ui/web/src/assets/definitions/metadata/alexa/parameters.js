@@ -245,6 +245,12 @@ export default {
     required: true,
     pattern: 'https://.+'
   }),
+  requiresSetpointHold: () => ({
+    name: 'requiresSetpointHold',
+    label: 'Requires Hold on Setpoint Requests',
+    type: 'BOOLEAN',
+    default: false
+  }),
   resolution: () => ({
     name: 'resolution',
     label: 'Resolution',
