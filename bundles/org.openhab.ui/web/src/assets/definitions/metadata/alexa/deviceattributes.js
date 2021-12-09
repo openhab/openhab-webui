@@ -1,4 +1,5 @@
 import p from './parameters.js'
+import { getGroupParameter } from './helpers.js'
 import {
   ARM_STATES,
   EQUALIZER_MODES,
@@ -47,20 +48,23 @@ export default {
       p.inverted(item.type === 'Rollershutter'),
       p.presets(item.stateDescription, '20=Morning,60=Afternoon,80=Evening:@Setting.Night'),
       p.language(item.settings && item.settings.regional.language),
-      p.actionMappings(
-        { default: 'value' },
-        'Close=0,Open=100,Lower=0,Raise=100',
-        (config) => {
-          if (item.type === 'Dimmer') {
-            return config.inverted === true
+      p.actionMappings({ default: 'value' }, 'Close=0,Open=100,Lower=0,Raise=100', (config) => {
+        const primaryControl = getGroupParameter('primaryControl', item.groups) || 'position'
+        if (item.type === 'Dimmer') {
+          return primaryControl === 'position'
+            ? config.inverted === true
               ? ['Close=100', 'Open=0', 'Lower=100', 'Raise=0']
               : ['Close=0', 'Open=100', 'Lower=0', 'Raise=100']
-          }
-          if (item.type === 'Rollershutter') {
-            return ['Close=DOWN', 'Open=UP', 'Lower=DOWN', 'Raise=UP', 'Stop=STOP']
-          }
+            : config.inverted === true
+              ? ['Lower=100', 'Raise=0']
+              : ['Lower=0', 'Raise=100']
         }
-      )
+        if (item.type === 'Rollershutter') {
+          return primaryControl === 'position'
+            ? ['Close=DOWN', 'Open=UP', 'Lower=DOWN', 'Raise=UP', 'Stop=STOP']
+            : ['Lower=DOWN', 'Raise=UP', 'Stop=STOP']
+        }
+      })
     ]
   },
   TiltAngle: {
@@ -69,10 +73,8 @@ export default {
       p.inverted(item.type === 'Rollershutter'),
       p.presets(item.stateDescription, '20=Morning,60=Afternoon,80=Evening:@Setting.Night'),
       p.language(item.settings && item.settings.regional.language),
-      p.actionMappings(
-        { default: 'value' },
-        'Close=0,Open=100',
-        (config) => {
+      ...(getGroupParameter('primaryControl', item.groups) !== 'tilt' ? [] : [
+        p.actionMappings({ default: 'value' }, 'Close=0,Open=100', (config) => {
           if (item.type === 'Dimmer') {
             return config.inverted === true ? ['Close=100', 'Open=0'] : ['Close=0', 'Open=100']
           }
@@ -82,8 +84,8 @@ export default {
           if (item.type === 'Rollershutter') {
             return ['Close=DOWN', 'Open=UP', 'Stop=STOP']
           }
-        }
-      )
+        })
+      ])
     ]
   },
 
