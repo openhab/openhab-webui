@@ -1,17 +1,17 @@
 <template>
   <div>
     <div style="text-align:right" class="padding-right">
-      <label @click="toggleMultiple" style="cursor:pointer">Multiple</label> <f7-checkbox :checked="multiple" @change="toggleMultiple"></f7-checkbox>
+      <label @click="toggleMultiple" style="cursor:pointer">Multiple</label> <f7-checkbox :checked="multiple" @change="toggleMultiple" />
     </div>
     <f7-list>
       <f7-list-item :key="classSelectKey"
                     :title="(multiple) ? 'HomeKit Accessory/Characteristics' : 'HomeKit Accessory/Characteristics'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }" ref="classes">
         <select name="parameters" @change="updateClasses" :multiple="multiple">
-          <option v-if="!multiple" value=""></option>
+          <option v-if="!multiple" value="" />
           <option v-for="cl in classesDefs.filter((c) => c.indexOf('label:') !== 0)"
                   :value="cl" :key="cl"
                   :selected="isSelected(cl)">
-            {{cl}}
+            {{ cl }}
           </option>
         </select>
       </f7-list-item>
@@ -20,7 +20,9 @@
       <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" />
     </div>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" href="https://www.openhab.org/link/homekit">HomeKit integration documentation</f7-link>
+      <f7-link color="blue" external target="_blank" href="https://www.openhab.org/link/homekit">
+        HomeKit integration documentation
+      </f7-link>
     </p>
   </div>
 </template>
