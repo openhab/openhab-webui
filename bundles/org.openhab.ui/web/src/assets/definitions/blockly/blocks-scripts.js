@@ -107,8 +107,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
         .appendField('transform')
       this.appendValueInput('function')
         .appendField('apply')
-        .appendField(new Blockly.FieldTextInput('MAP'), 'type')
-        // .appendField(new Blockly.FieldDropdown([['MAP', 'MAP'], ['REGEX', 'REGEX'], ['JSONPATH', 'JSONPATH']]), 'type')
+        .appendField(new Blockly.FieldDropdown([['MAP', 'MAP'], ['REGEX', 'REGEX'], ['JSONPATH', 'JSONPATH']]), 'type')
         .appendField('with')
 
       this.setInputsInline(false)
