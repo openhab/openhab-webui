@@ -69,8 +69,9 @@
             </ul>
           </li>
 
-          <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close
-                        :class="{ currentsection: currentUrl.indexOf('/developer/') >= 0 && currentUrl.indexOf('/developer/widgets') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 }">
+          <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close :animate="false"
+                        :class="{ currentsection: currentUrl.indexOf('/developer/') >= 0 && currentUrl.indexOf('/developer/widgets') < 0 &&
+                          currentUrl.indexOf('/developer/blocks') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 }">
             <f7-icon slot="media" ios="f7:exclamationmark_shield_fill" aurora="f7:exclamationmark_shield_fill" md="material:extension" color="gray" />
           </f7-list-item>
           <li v-if="showDeveloperSubmenu">
@@ -79,10 +80,17 @@
                             :class="{ currentsection: currentUrl.indexOf('/developer/widgets') >= 0 }">
                 <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray" />
               </f7-list-item>
+              <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/blocks/" title="Block Libraries" view=".view-main" panel-close :animate="false" no-chevron
+                            :class="{ currentsection: currentUrl.indexOf('/developer/blocks') >= 0 }">
+                <f7-icon slot="media" f7="ticket" color="gray" />
+              </f7-list-item>
               <f7-list-item link="/developer/api-explorer" title="API Explorer" view=".view-main" panel-close :animate="false" no-chevron
                             :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') >= 0 }">
                 <f7-icon slot="media" f7="burn" color="gray" />
               </f7-list-item>
+              <!-- <f7-list-item link="" @click="$f7.emit('toggleDeveloperSidebar')" title="Sidebar" view=".view-main" panel-close :animate="false" no-chevron>
+                <f7-icon slot="media" :f7="$store.state.developerSidebar ? 'wrench_fill' : 'wrench'" color="gray" />
+              </f7-list-item> -->
             </ul>
           </li>
         </f7-list>

@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Script Blocks" back-link="Developer Tools" back-link-url="/developer/" back-link-force>
+    <f7-navbar title="Block Libraries" back-link="Developer Tools" back-link-url="/developer/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
@@ -12,7 +12,7 @@
           class="searchbar-blocks"
           :init="initSearchbar"
           search-container=".blocks-list"
-          search-item=".widgetlist-item"
+          search-item=".blockslist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
@@ -52,7 +52,7 @@
       </f7-col>
       <f7-col v-if="ready">
         <f7-block-title class="searchbar-hide-on-search">
-          {{ blocks.length }} block definitions
+          {{ blocks.length }} block libraries
         </f7-block-title>
         <f7-list
           v-show="blocks.length > 0"
@@ -63,7 +63,7 @@
             v-for="(b, index) in blocks"
             :key="index"
             media-item
-            class="widgetlist-item"
+            class="blockslist-item"
             :checkbox="showCheckboxes"
             :checked="isChecked(b.uid)"
             @click.ctrl="(e) => ctrlClick(e, b)"
@@ -156,20 +156,20 @@ export default {
       const vm = this
 
       this.$f7.dialog.confirm(
-        `Remove ${this.selectedItems.length} selected block definitions?`,
-        'Remove block definitions',
+        `Remove ${this.selectedItems.length} selected block libraries?`,
+        'Remove block libraries',
         () => {
           vm.doRemoveSelected()
         }
       )
     },
     doRemoveSelected () {
-      let dialog = this.$f7.dialog.progress('Deleting block definitions...')
+      let dialog = this.$f7.dialog.progress('Deleting block libraries...')
 
       const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/ui/components/ui:blocks/' + i))
       Promise.all(promises).then((data) => {
         this.$f7.toast.create({
-          text: 'Widgets removed',
+          text: 'Block library removed',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()

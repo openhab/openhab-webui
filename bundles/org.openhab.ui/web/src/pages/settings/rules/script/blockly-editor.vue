@@ -708,9 +708,7 @@
 
       <category name="Variables" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE" />
       <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE" />
-
-      <sep />
-      <category name="Library" ref="libraryCategory" />
+      <category :name="libraryDefinitions ? 'This Library' : 'Libraries'" colour="gray" ref="libraryCategory" />
     </xml>
   </div>
 </template>
@@ -734,7 +732,7 @@ import Blockly from 'blockly'
 import Vue from 'vue'
 
 import defineOHBlocks from '@/assets/definitions/blockly'
-import defineLibraryToolboxCategory from '@/assets/definitions/blockly/toolbox_library'
+import { defineLibraryToolboxCategory } from '@/assets/definitions/blockly/libraries'
 
 Vue.config.ignoredElements = [
   'field',
@@ -768,7 +766,7 @@ export default {
         this.$oh.api.get('/rest/rules?summary=true'),
         this.$oh.api.get('/rest/audio/sinks'),
         this.$oh.api.get('/rest/voice/voices'),
-        this.$oh.api.get('/rest/ui/components/ui:blocks')
+        this.libraryDefinitions ? Promise.resolve(this.libraryDefinitions) : this.$oh.api.get('/rest/ui/components/ui:blocks')
       ]
       Promise.all(dataPromises)
         .then((data) => {

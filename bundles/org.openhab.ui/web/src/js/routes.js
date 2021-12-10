@@ -50,7 +50,7 @@ const DeveloperToolsPage = () => import(/* webpackChunkName: "admin-devtools" */
 const WidgetsListPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/widgets/widget-list.vue')
 const WidgetEditPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/widgets/widget-edit.vue')
 const BlocksListPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/blocks/blocks-list.vue')
-const BlocksEditPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/blocks/blocks-edit.vue')
+const BlocksEditPage = () => import(/* webpackChunkName: "blockly-editor" */ '../pages/developer/blocks/blocks-edit.vue')
 const ApiExplorerPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/api-explorer.vue')
 
 const SetupWizardPage = () => import(/* webpackChunkName: "setup-wizard" */ '../pages/wizards/setup-wizard.vue')

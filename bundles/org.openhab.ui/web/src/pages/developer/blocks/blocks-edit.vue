@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create Block Definition' : 'Blocks: ' + blocks.uid" back-link="Back">
+    <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create Block Library' : 'Block Library: ' + blocks.uid" back-link="Back">
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
@@ -55,7 +55,14 @@
             </f7-link>
           </f7-nav-right>
         </f7-navbar>
-        <blockly-editor ref="blocklyEditor" v-if="!previewGeneratedCode" :blocks="previewBlockSource" :library-definitions="[blocks]" @change="dirty = true" />
+        <blockly-editor ref="blocklyPreviewEditor" v-if="previewMode === 'blockly'" :blocks="previewBlockSource" :library-definitions="[blocks]" @change="dirty = true" />
+        <editor class="blocks-preview-code" v-else-if="previewMode === 'code'" mode="application/javascript" :value="previewGeneratedCode" :read-only="true" />
+        <f7-fab v-show="previewMode === 'blockly'" position="right-bottom" slot="fixed" color="blue" @click="togglePreviewMode('code')">
+          <f7-icon f7="doc_text" />
+        </f7-fab>
+        <f7-fab v-show="previewMode === 'code'" position="right-bottom" slot="fixed" color="blue" @click="togglePreviewMode('blockly')">
+          <f7-icon f7="ticket" />
+        </f7-fab>
       </f7-page>
     </f7-popup>
   </f7-page>
@@ -89,12 +96,16 @@
       height 50%
     .vue-codemirror
       height calc(100% - var(--f7-grid-gap))
+.blocklyDropDownDiv
+  z-index 11001 !important
 </style>
 
 <script>
 import YAML from 'yaml'
 import { strOptions } from 'yaml/types'
 
+import BlocklyEditor from '@/pages/settings/rules/script/blockly-editor.vue'
+import BlockPreview from './block-preview.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 
@@ -104,8 +115,8 @@ export default {
   mixins: [DirtyMixin],
   components: {
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
-    'block-preview': () => import(/* webpackChunkName: "blockly-editor" */ './block-preview.vue'),
-    'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/pages/settings/rules/script/blockly-editor.vue')
+    BlocklyEditor, // 'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/pages/settings/rules/script/blockly-editor.vue'),
+    BlockPreview // 'block-preview': () => import(/* webpackChunkName: "blockly-editor" */ './block-preview.vue')
     // ConfigSheet
   },
   props: ['uid', 'createMode'],
@@ -122,7 +133,8 @@ export default {
       blockKey: this.$f7.utils.id(),
       previewKey: this.$f7.utils.id(),
       previewOpened: false,
-      previewGeneratedCode: false
+      previewMode: 'blockly',
+      previewGeneratedCode: ''
     }
   },
   computed: {
@@ -165,10 +177,27 @@ export default {
     },
     previewClosed () {
       this.previewOpened = false
+      this.previewMode = 'blockly'
+    },
+    togglePreviewMode (mode) {
+      this.previewMode = mode
+      if (mode === 'code') {
+        this.previewBlockSource = this.$refs.blocklyPreviewEditor.getBlocks()
+        this.previewGeneratedCode = this.$refs.blocklyPreviewEditor.getCode()
+      }
     },
     keyDown (ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
+          case 66:
+            if (!this.previewOpened) {
+              this.previewOpened = true
+            } else {
+              this.togglePreviewMode(this.previewMode === 'blockly' ? 'code' : 'blockly')
+            }
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
           case 80:
             if (!this.previewOpened) {
               this.previewOpened = true
@@ -196,20 +225,21 @@ export default {
       if (this.loading) return
       this.loading = true
       if (this.createMode) {
+        const uid = this.$f7.utils.id()
         this.blocksDefinition = YAML.stringify({
-          uid: 'blocks_' + this.$f7.utils.id(),
+          uid: 'blocklibrary_' + uid,
           tags: [],
-          component: 'block_set',
+          component: 'BlockLibrary',
           config: {
-            name: 'Block Category'
+            name: 'Block Library ' + uid
           },
           slots: {
             blocks: [
               {
-                component: 'block',
+                component: 'BlockType',
                 config: {
                   type: 'block1',
-                  message0: 'Do %1 with %2 %3 then %4',
+                  message0: 'Do %1 with %2 and %3 then %4',
                   args0: [
                     {
                       type: 'field_dropdown',
@@ -228,7 +258,7 @@ export default {
                     {
                       type: 'field_input',
                       name: 'TEXT1',
-                      text: 'text value'
+                      text: 'some text'
                     },
                     {
                       type: 'input_value',
@@ -241,9 +271,22 @@ export default {
                   ],
                   'previousStatement': null,
                   'nextStatement': null,
-                  // 'colour': 230,
+                  'colour': 90,
                   'tooltip': '',
                   'helpUrl': ''
+                },
+                slots: {
+                  code: [
+                    {
+                      component: 'BlockCodeTemplate',
+                      config: {
+                        template:
+                          '/* Incomplete example skeleton, check out\n' +
+                          '   https://openhab.org/link/blocklib-tutorial\n' +
+                          '   to learn how to build block libraries */\n'
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -265,7 +308,7 @@ export default {
     },
     save (stay) {
       if (!this.blocks.uid) {
-        this.$f7.dialog.alert('Please give an ID to the block definition')
+        this.$f7.dialog.alert('Please give an ID to the block library')
         return
       }
       // if (!this.widget.config.label) {
@@ -273,7 +316,7 @@ export default {
       //   return
       // }
       if (!this.createMode && this.uid !== this.blocks.uid) {
-        this.$f7.dialog.alert('You cannot change the ID of an existing block definition. Duplicate it with the new ID then delete this one.')
+        this.$f7.dialog.alert('You cannot change the ID of an existing block library. Duplicate it with the new ID then delete this one.')
         return
       }
 
@@ -284,7 +327,7 @@ export default {
         this.dirty = false
         if (this.createMode) {
           this.$f7.toast.create({
-            text: 'Block definition created',
+            text: 'Block library created',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
@@ -292,16 +335,16 @@ export default {
           this.load()
         } else {
           this.$f7.toast.create({
-            text: 'Block definition updated',
+            text: 'Block library updated',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         }
-        this.$f7.emit('sidebarRefresh', null)
+        // this.$f7.emit('sidebarRefresh', null)
         // if (!stay) this.$f7router.back()
       }).catch((err) => {
         this.$f7.toast.create({
-          text: 'Error while saving block definition: ' + err,
+          text: 'Error while saving block library: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()

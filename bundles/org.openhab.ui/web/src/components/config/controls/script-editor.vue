@@ -261,7 +261,7 @@ export default {
           closeOnUnfocus: false,
           completeSingle: self.mode && self.mode.indexOf('yaml') > 0,
           hint (cm, option) {
-            if (self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
+            if (self.mode.indexOf('application/vnd.openhab.uicomponent') === 0 && self.mode.indexOf('block') < 0) {
               return componentsHint(cm, option, self.mode)
             } else if (self.mode === 'application/vnd.openhab.rule+yaml') {
               return rulesHint(cm, option, self.mode)

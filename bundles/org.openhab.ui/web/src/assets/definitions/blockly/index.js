@@ -11,22 +11,9 @@ import defineValueStorageBlocks from './blocks-valuestorage'
 import defineEphemerisBlocks from './blocks-ephemeris'
 import defineScriptsBlocks from './blocks-scripts'
 import definePeristenceBlocks from './blocks-persistence'
+import { defineLibraries } from './libraries'
 
 import Blockly from 'blockly'
-
-function defineLibraries (libraryDefinitions) {
-  libraryDefinitions.forEach((library) => {
-    if (library.slots && library.slots.blocks) {
-      library.slots.blocks.forEach((block) => {
-        Blockly.Blocks[block.config.type] = {
-          init: function () {
-            this.jsonInit(block.config)
-          }
-        }
-      })
-    }
-  })
-}
 
 export default function (f7, libraryDefinitions, data) {
   defineDictionaryBlocks(f7)
