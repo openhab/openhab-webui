@@ -268,10 +268,10 @@ const dimmerFilterType = {
   type: 'TEXT',
   limitToOptions: true,
   options: [
-    { value: "normal", label: "no filter, all events from iOS home app accepted"},
-    { value: "filterOn",label: "Filter out 'ON' event" },
-    { value: "filterBrightness100", label: "Filter out 'set brightness to 100%' event"},
-    { value: "filterOnExceptBrightness100", label: "Filter out 'ON' events except of combination with 'set brightness to 100%'" }
+    { value: 'normal', label: 'no filter, all events from iOS home app accepted' },
+    { value: 'filterOn', label: 'Filter out "ON" event' },
+    { value: 'filterBrightness100', label: 'Filter out "set brightness to 100%" event' },
+    { value: 'filterOnExceptBrightness100', label: 'Filter out "ON" events except of combination with "set brightness to 100%"' }
   ]
 }
 
@@ -298,39 +298,39 @@ export const homekitParameters = {
   'WindowCovering': [invertedParameter],
 
   'Thermostat.CurrentTemperature': [minValue, maxValue, stepValue],
-  'Thermostat.TargetTemperature': [minValue, maxValue,stepValue],
+  'Thermostat.TargetTemperature': [minValue, maxValue, stepValue],
   'Thermostat.CoolingThresholdTemperature': [minValue, maxValue, stepValue],
   'Thermostat.HeatingThresholdTemperature': [minValue, maxValue, stepValue],
   'Thermostat.CurrentHeatingCoolingMode': [
-    m('OFF','TEXT','OFF', "Value for thermostat mode 'off'"),
-    m('HEAT','TEXT','HEAT', "Value for thermostat mode 'heat'"),
-    m('COOL','TEXT','COOL', "Value for thermostat mode 'cool'"),
+    m('OFF', 'TEXT', 'OFF', 'Value for thermostat mode "off"'),
+    m('HEAT', 'TEXT', 'HEAT', 'Value for thermostat mode "heat"'),
+    m('COOL', 'TEXT', 'COOL', 'Value for thermostat mode "cool"')
   ],
   'Thermostat.TargetHeatingCoolingMode': [
-    m('OFF','TEXT','OFF', "Value for thermostat mode 'off'"),
-    m('HEAT','TEXT','HEAT', "Value for thermostat mode 'heat'"),
-    m('COOL','TEXT','COOL', "Value for thermostat mode 'cool'"),
-    m('AUTO','TEXT','AUTO', "Value for thermostat mode 'auto'"),
+    m('OFF', 'TEXT', 'OFF', 'Value for thermostat mode "off"'),
+    m('HEAT', 'TEXT', 'HEAT', 'Value for thermostat mode "heat"'),
+    m('COOL', 'TEXT', 'COOL', 'Value for thermostat mode "cool"'),
+    m('AUTO', 'TEXT', 'AUTO', 'Value for thermostat mode "auto"')
   ],
   'AirQualitySensor.AirQuality': [
-    m('UNKNOWN','TEXT','UNKNOWN', "Value for air quality 'unknown'"),
-    m('EXCELLENT','TEXT','EXCELLENT', "Value for air quality 'excellent'"),
-    m('GOOD','TEXT','GOOD', "Value for air quality 'good'"),
-    m('FAIR','TEXT','FAIR', "Value for air quality 'fair'"),
-    m('INFERIOR','TEXT','INFERIOR', "Value for air quality 'inferior'"),
-    m('POOR','TEXT','POOR', "Value for air quality 'poor'")
+    m('UNKNOWN', 'TEXT', 'UNKNOWN', 'Value for air quality "unknown"'),
+    m('EXCELLENT', 'TEXT', 'EXCELLENT', 'Value for air quality "excellent"'),
+    m('GOOD', 'TEXT', 'GOOD', 'Value for air quality "good"'),
+    m('FAIR', 'TEXT', 'FAIR', 'Value for air quality "fair"'),
+    m('INFERIOR', 'TEXT', 'INFERIOR', 'Value for air quality "inferior"'),
+    m('POOR', 'TEXT', 'POOR', 'Value for air quality "poor"')
   ],
   'SecuritySystem.CurrentSecuritySystemState': [
-    m('STAY_ARM','TEXT','STAY_ARM', "Value for security state 'stay arm'"),
-    m('AWAY_ARM','TEXT','AWAY_ARM', "Value for security state 'arm away'"),
-    m('NIGHT_ARM','TEXT','NIGHT_ARM', "Value for security state 'night arm'"),
-    m('DISARMED','TEXT','DISARMED', "Value for security state 'disarmed'"),
-    m('TRIGGERED','TEXT','TRIGGERED', "Value for security state 'alarm triggered'"),
+    m('STAY_ARM', 'TEXT', 'STAY_ARM', 'Value for security state "stay arm"'),
+    m('AWAY_ARM', 'TEXT', 'AWAY_ARM', 'Value for security state "arm away"'),
+    m('NIGHT_ARM', 'TEXT', 'NIGHT_ARM', 'Value for security state "night arm"'),
+    m('DISARMED', 'TEXT', 'DISARMED', 'Value for security state "disarmed"'),
+    m('TRIGGERED', 'TEXT', 'TRIGGERED', 'Value for security state "alarm triggered"')
   ],
   'SecuritySystem.TargetSecuritySystemState': [
-    m('STAY_ARM','TEXT','STAY_ARM', "Value for security state 'stay arm'"),
-    m('AWAY_ARM','TEXT','AWAY_ARM', "Value for security state 'arm away'"),
-    m('NIGHT_ARM','TEXT','NIGHT_ARM', "Value for security state 'night arm'"),
-    m('DISARM','TEXT','DISARM', "Value for security state 'disarm'"),
+    m('STAY_ARM', 'TEXT', 'STAY_ARM', 'Value for security state "stay arm"'),
+    m('AWAY_ARM', 'TEXT', 'AWAY_ARM', 'Value for security state "arm away"'),
+    m('NIGHT_ARM', 'TEXT', 'NIGHT_ARM', 'Value for security state "night arm"'),
+    m('DISARM', 'TEXT', 'DISARM', 'Value for security state "disarm"')
   ]
 }
