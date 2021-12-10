@@ -1,4 +1,5 @@
 import Blockly from 'blockly'
+import { addOSGiService } from './utils'
 
 const generateCodeForBlock = (block) => {
   const blockTypeId = block.openhab.blockTypeId
@@ -10,24 +11,39 @@ const generateCodeForBlock = (block) => {
     fields: {},
     inputs: {},
     statements: {},
-    providedFunctions: {},
+    utilities: {},
     uniqueIdentifiers: {}
   }
 
-  const provideFunction = (functionName) => {
-    let functionCode = [`function ${Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_}() { /* error! */ }`]
-    if (library.slots.functions) {
-      const functionComponent = library.slots.functions.find(c => c.config && c.config.name === functionName)
-      if (!functionComponent) {
+  const provideUtility = (utilityName) => {
+    let utilityCode = [`function ${Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_}() { /* error! */ }`]
+    if (library.slots.utilities) {
+      const utilityComponent = library.slots.utilities.find(c => c.config && c.config.name === utilityName)
+      if (!utilityComponent) {
       } else {
-        switch (functionComponent.component) {
+        switch (utilityComponent.component) {
+          case 'UtilityFrameworkService':
+            return addOSGiService(utilityName, utilityComponent.config.serviceClass)
+          case 'UtilityJavaType':
+            utilityCode = `var ${Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_} = Java.type('${utilityComponent.config.javaClass}');`
+            break
           default:
-            functionCode = functionComponent.config.code.replace('{{name}}', Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_).split('\n')
+            utilityCode = utilityComponent.config.code.replace('{{name}}', Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_)
+            // process additional utilities if referenced in the function code
+            while (/(\{\{[A-Za-z0-9_]+\}\})/gm.test(utilityCode)) {
+              const match = /(\{\{[A-Za-z0-9_:]+\}\})/gm.exec(utilityCode)
+              const referencedUtility = match[0].replace('{{', '').replace('}}', '')
+              if (!context.utilities[referencedUtility]) {
+                // BEWARE - risk of infinite recursion
+                context.utilities[referencedUtility] = provideUtility(referencedUtility)
+              }
+              utilityCode = utilityCode.replace(match[0], context.utilities[referencedUtility])
+            }
         }
       }
     }
 
-    return Blockly.JavaScript.provideFunction_(functionName, functionCode)
+    return Blockly.JavaScript.provideFunction_(utilityName, utilityCode.split('\n'))
   }
 
   const processPlaceholder = (code, placeholder) => {
@@ -42,11 +58,11 @@ const generateCodeForBlock = (block) => {
           const order = placeholderOption ? Blockly.JavaScript['ORDER_' + placeholderOption.replace('ORDER_', '')] : Blockly.JavaScript.ORDER_NONE
           context.inputs[placeholderName] = Blockly.JavaScript.valueToCode(block, placeholderName, order)
           return code.replace(placeholder, context.inputs[placeholderName])
-        case 'function':
-          if (!context.providedFunctions[placeholderName]) {
-            context.providedFunctions[placeholderName] = provideFunction(placeholderName)
+        case 'utility':
+          if (!context.utilities[placeholderName]) {
+            context.utilities[placeholderName] = provideUtility(placeholderName)
           }
-          return code.replace(placeholder, context.providedFunctions[placeholderName])
+          return code.replace(placeholder, context.utilities[placeholderName])
         case 'temp_name':
           if (!context.uniqueIdentifiers[placeholderName]) {
             const realm = placeholderOption ? Blockly.Variables[placeholderOption] : Blockly.Variables.NAME_TYPE
