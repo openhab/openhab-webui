@@ -1,17 +1,17 @@
 <template>
   <div>
     <div style="text-align:right" class="padding-right">
-      <label @click="toggleMultiple" style="cursor:pointer">Multiple</label> <f7-checkbox :checked="multiple" @change="toggleMultiple" />
+      <label @click="toggleMultiple" style="cursor:pointer">Multiple</label> <f7-checkbox :checked="multiple" @change="toggleMultiple"></f7-checkbox>
     </div>
     <f7-list>
       <f7-list-item :key="classSelectKey"
-                    :title="(multiple) ? 'HomeKit Accessory/Charactistics' : 'HomeKit Accessory/Charactistic'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }" ref="classes">
+                    :title="(multiple) ? 'HomeKit Accessory/Characteristics' : 'HomeKit Accessory/Characteristics'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }" ref="classes">
         <select name="parameters" @change="updateClasses" :multiple="multiple">
-          <option v-if="!multiple" value="" />
-          <option v-for="cl in orderedClasses.filter((c) => c.indexOf('label:') !== 0)"
+          <option v-if="!multiple" value=""></option>
+          <option v-for="cl in classesDefs.filter((c) => c.indexOf('label:') !== 0)"
                   :value="cl" :key="cl"
                   :selected="isSelected(cl)">
-            {{ cl }}
+            {{cl}}
           </option>
         </select>
       </f7-list-item>
@@ -20,9 +20,7 @@
       <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" />
     </div>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" href="https://www.openhab.org/link/homekit">
-        HomeKit integration documentation
-      </f7-link>
+      <f7-link color="blue" external target="_blank" href="https://www.openhab.org/link/homekit">HomeKit integration documentation</f7-link>
     </p>
   </div>
 </template>
@@ -48,15 +46,9 @@ export default {
       if (!this.multiple) return this.metadata.value
       return (this.metadata.value) ? this.metadata.value.split(',') : []
     },
-    orderedClasses () {
-      return [...this.classesDefs].sort((a, b) => {
-        return a.localeCompare(b)
-      })
-    },
     parameters () {
       if (!this.classes) return []
-      if (!this.multiple && this.classes.indexOf('Valve') === 0) return homekitParameters
-      if (this.multiple && this.classes.some((c) => c.indexOf('Valve') === 0)) return homekitParameters
+      if (!this.multiple) return homekitParameters[this.classes]
       return []
     }
   },
