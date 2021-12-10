@@ -45,8 +45,6 @@
 import Blockly from 'blockly'
 import Vue from 'vue'
 
-// import defineOHBlocks from '@/assets/definitions/blockly/ohblocks'
-
 Vue.config.ignoredElements = ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
 export default {
   props: ['blocksDefinition'],

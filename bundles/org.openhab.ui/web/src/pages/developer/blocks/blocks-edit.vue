@@ -117,7 +117,6 @@ export default {
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     BlocklyEditor, // 'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/pages/settings/rules/script/blockly-editor.vue'),
     BlockPreview // 'block-preview': () => import(/* webpackChunkName: "blockly-editor" */ './block-preview.vue')
-    // ConfigSheet
   },
   props: ['uid', 'createMode'],
   data () {
@@ -147,24 +146,17 @@ export default {
       }
     }
   },
-  watch: {
-    // widgetDefinition () {
-    //   this.redrawWidget()
-    // }
-  },
   methods: {
     onPageAfterIn () {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
-      // this.$store.dispatch('startTrackingStates')
       this.load()
     },
     onPageBeforeOut () {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
-      // this.$store.dispatch('stopTrackingStates')
     },
     onEditorInput (value) {
       this.blocksDefinition = value
@@ -311,10 +303,6 @@ export default {
         this.$f7.dialog.alert('Please give an ID to the block library')
         return
       }
-      // if (!this.widget.config.label) {
-      //   this.$f7.dialog.alert('Please give a label to the widget')
-      //   return
-      // }
       if (!this.createMode && this.uid !== this.blocks.uid) {
         this.$f7.dialog.alert('You cannot change the ID of an existing block library. Duplicate it with the new ID then delete this one.')
         return
