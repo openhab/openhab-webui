@@ -14,6 +14,7 @@ import * as MapWidgets from '@/components/widgets/map'
 import { OhChartPageDefinition } from '@/assets/definitions/widgets/chart/page'
 import ChartWidgetsDefinitions from '@/assets/definitions/widgets/chart/index'
 import { OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
+import { BlockLibrariesComponentDefinitions } from '@/assets/definitions/blockly/libraries'
 
 let itemsCache = null
 
@@ -32,6 +33,8 @@ function getWidgetDefinitions (cm) {
       return Object.values(PlanWidgets).map((c) => c.widget()).sort((c1, c2) => c1.name.localeCompare(c2.name))
     case 'map':
       return Object.values(MapWidgets).map((c) => c.widget()).sort((c1, c2) => c1.name.localeCompare(c2.name))
+    case 'blocks':
+      return Object.values(BlockLibrariesComponentDefinitions).map((c) => c()).sort((c1, c2) => c1.name.localeCompare(c2.name))
     default:
       const ohComponents = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets, ...StandardCellWidgets })
         .filter((w) => w.widget && typeof w.widget === 'function')

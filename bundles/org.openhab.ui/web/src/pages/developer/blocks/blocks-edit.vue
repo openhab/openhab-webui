@@ -20,7 +20,7 @@
     <f7-block :key="blockKey + '-h'" v-if="split === 'horizontal'" class="blocks-editor horizontal">
       <f7-row resizable>
         <f7-col style="min-width: 20px" class="blocks-code">
-          <editor class="blocks-component-editor" mode="application/vnd.openhab.uicomponent+yaml?type=widget" :value="blocksDefinition" @input="onEditorInput" />
+          <editor class="blocks-component-editor" mode="application/vnd.openhab.uicomponent+yaml;type=blocks" :value="blocksDefinition" @input="onEditorInput" />
         </f7-col>
       </f7-row>
       <f7-row v-if="ready" resizable>
@@ -33,7 +33,7 @@
     <f7-block v-else :key="blockKey + 'b'" class="blocks-editor vertical">
       <f7-row resizable>
         <f7-col resizable style="min-width: 20px" class="blocks-code">
-          <editor class="blocks-component-editor" mode="application/vnd.openhab.uicomponent+yaml?type=blocks" :value="blocksDefinition" @input="onEditorInput" />
+          <editor class="blocks-component-editor" mode="application/vnd.openhab.uicomponent+yaml;type=blocks" :value="blocksDefinition" @input="onEditorInput" />
         </f7-col>
         <f7-col v-if="ready" resizable style="min-width: 20px" class="block-preview-pane padding-right margin-bottom">
           <block-preview :blocks-definition="blocks" :key="previewKey" />
