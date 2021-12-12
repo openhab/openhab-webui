@@ -14,7 +14,7 @@ import * as MapWidgets from '@/components/widgets/map'
 import { OhChartPageDefinition } from '@/assets/definitions/widgets/chart/page'
 import ChartWidgetsDefinitions from '@/assets/definitions/widgets/chart/index'
 import { OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
-import { BlockLibrariesComponentDefinitions } from '@/assets/definitions/blockly/libraries'
+import { BlockLibrariesComponentDefinitions } from '@/assets/definitions/blockly/libraries-components'
 
 let itemsCache = null
 
