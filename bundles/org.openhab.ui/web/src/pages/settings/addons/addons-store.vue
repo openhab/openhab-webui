@@ -78,7 +78,14 @@
         <addons-section
           v-if="addons"
           @addonButtonClick="addonButtonClick"
-          :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType !== 'application/vnd.openhab.ruletemplate')"
+          :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType === 'application/vnd.openhab.uicomponent;type=blocks')"
+          :install-action-text="'Add'"
+          :title="'Block Libraries'"
+          :subtitle="'Community extensions to the Blockly toolbox'" />
+        <addons-section
+          v-if="addons"
+          @addonButtonClick="addonButtonClick"
+          :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType !== 'application/vnd.openhab.ruletemplate' && a.contentType !== 'application/vnd.openhab.uicomponent;type=blocks')"
           :title="'Other Automation Add-ons'"
           :subtitle="'Add new scripting languages and various functionality'" />
       </f7-tab>
