@@ -38,7 +38,7 @@ export default function (f7) {
       this.appendDummyInput()
         .appendField('the')
         .appendField(new Blockly.FieldDropdown([
-          ['new State', 'itemState'],
+          ['new state', 'itemState'],
           ['previous state', 'oldItemState'],
           ['triggering item name', 'itemName'],
           ['type', 'type'],
