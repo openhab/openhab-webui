@@ -107,8 +107,46 @@ const generateCodeForBlock = (block) => {
 export const defineLibraryToolboxCategory = (library, f7) => (workspace) => {
   let category = []
   if (library && library.slots && library.slots.blocks) {
-    library.slots.blocks.forEach((blockTypeDefinition) => {
-      const xml = `<block type="${library.uid}_${blockTypeDefinition.config.type}" />`
+    library.slots.blocks.forEach((libraryBlock) => {
+      let xml = ''
+      switch (libraryBlock.component) {
+        case 'BlockType':
+          xml = `<block type="${library.uid}_${libraryBlock.config.type}">`
+          if (libraryBlock.slots && libraryBlock.slots.toolbox) {
+            libraryBlock.slots.toolbox.forEach((b) => {
+              switch (b.component) {
+                case 'PresetInput':
+                  xml += `<value name="${b.config.name}">`
+                  xml += (b.config.shadow) ? '<shadow ' : '<block '
+                  xml += 'type="' + b.config.type + '">'
+                  if (b.config.fields) {
+                    for (const fieldName in b.config.fields) {
+                      xml += `<field name="${fieldName}">${b.config.fields[fieldName]}</field>`
+                    }
+                  }
+                  xml += (b.config.shadow) ? '</shadow>' : '</block>'
+                  xml += '</value>'
+                  break
+                case 'PresetField':
+                  xml += `<field name="${b.config.name}">${b.config.value}</field>`
+                  break
+                default:
+                  console.warn('unknown toolbox component type')
+              }
+            })
+          }
+          xml += '</block>'
+          break
+        case 'BlockAssembly':
+          xml += libraryBlock.config.blockXml
+          break
+        case 'Separator':
+          xml += `<sep ${libraryBlock.config.gap ? 'gap="' + libraryBlock.config.gap + '"' : ''}/>`
+          break
+        default:
+          console.warn('unknown toolbox component type')
+      }
+
       const block = Blockly.Xml.textToDom(xml)
       category.push(block)
     })
