@@ -21,6 +21,9 @@
                 <f7-list-item media-item title="Widgets" footer="Develop custom widgets to use on pages" link="widgets/">
                   <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray" />
                 </f7-list-item>
+                <f7-list-item media-item title="Block Libraries" footer="Develop custom extensions for Blockly scripts" link="blocks/">
+                  <f7-icon slot="media" f7="ticket" color="gray" />
+                </f7-list-item>
                 <f7-list-item media-item title="Add Items from Textual Definition" footer="Create or update items &amp; links in bulk" link="add-items-dsl">
                   <f7-icon slot="media" f7="text_badge_plus" color="gray" />
                 </f7-list-item>

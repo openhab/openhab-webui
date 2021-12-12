@@ -49,6 +49,8 @@ const SchedulePage = () => import(/* webpackChunkName: "admin-schedule" */ '../p
 const DeveloperToolsPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/developer-tools.vue')
 const WidgetsListPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/widgets/widget-list.vue')
 const WidgetEditPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/widgets/widget-edit.vue')
+const BlocksListPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/blocks/blocks-list.vue')
+const BlocksEditPage = () => import(/* webpackChunkName: "blockly-editor" */ '../pages/developer/blocks/blocks-edit.vue')
 const ApiExplorerPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/api-explorer.vue')
 
 const SetupWizardPage = () => import(/* webpackChunkName: "setup-wizard" */ '../pages/wizards/setup-wizard.vue')
@@ -265,6 +267,17 @@ export default [
             path: ':uid',
             beforeLeave: checkDirtyBeforeLeave,
             async: loadAsync(WidgetEditPage, (routeTo) => (routeTo.params.uid === 'add') ? { createMode: true } : {})
+          }
+        ]
+      },
+      {
+        path: 'blocks/',
+        async: loadAsync(BlocksListPage),
+        routes: [
+          {
+            path: ':uid',
+            beforeLeave: checkDirtyBeforeLeave,
+            async: loadAsync(BlocksEditPage, (routeTo) => (routeTo.params.uid === 'add') ? { createMode: true } : {})
           }
         ]
       },

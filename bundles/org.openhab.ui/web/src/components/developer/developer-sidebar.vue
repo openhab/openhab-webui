@@ -235,6 +235,9 @@
             <f7-list-button href="/developer/widgets/add" color="blue" :animate="false">
               Create widget
             </f7-list-button>
+            <f7-list-button href="/developer/blocks/add" color="blue" :animate="false">
+              Create block library
+            </f7-list-button>
           </f7-list>
         </f7-block>
       </div>
