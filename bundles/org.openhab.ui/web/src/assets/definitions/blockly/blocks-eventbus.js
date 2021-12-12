@@ -29,49 +29,43 @@ export default function (f7) {
     return 'events.' + eventType + '(' + itemName + ', ' + value + ');\n'
   }
 
-  /*
-  * Provides event information that is provided when a rule is triggerd
-  * Blockly part
-  */
-  Blockly.Blocks['oh_event_attribute'] = {
+  Blockly.Blocks['oh_context_info'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('the')
+        .appendField('contextual info')
         .appendField(new Blockly.FieldDropdown([
-          ['new state', 'itemState'],
-          ['previous state', 'oldItemState'],
+          ['rule UID', 'ruleUID'],
+          ['event type', 'type'],
+          ['new state of item', 'itemState'],
+          ['previous state of item', 'oldItemState'],
           ['triggering item name', 'itemName'],
-          ['type', 'type'],
           ['received command', 'itemCommand'],
           ['triggered channel', 'channel']]),
-        'eventAttribute')
-        .appendField('of event')
+        'contextInfo')
       this.setInputsInline(true)
       this.setOutput(true, null)
       this.setColour(0)
       let thisBlock = this
       this.setTooltip(function () {
-        const eventAttribute = thisBlock.getFieldValue('eventAttribute')
+        const contextData = thisBlock.getFieldValue('contextInfo')
         const TIP = {
-          'itemState': 'the new item state (only use in rules based on change and updated events)',
-          'oldItemState': 'the old item state (only use in rules based  on change and updated events)',
-          'itemName': 'the item name that caused the event',
+          'ruleUID': 'The current rule\'s UID',
+          'itemState': 'the new item state (only applicable for rules with triggers related to changed and updated items)',
+          'oldItemState': 'the old item state (only applicable for rules with triggers related to changed and updated items)',
+          'itemName': 'the item name that caused the event (if relevant)',
           'type': 'the event type name',
           'itemCommand': 'the command name that triggered the event',
-          'channel': 'the channel id that triggered the event (only use in rules based on a channel trigger)'
+          'channel': 'the channel UID that triggered the event (only applicable for rules including a "trigger channel fired" event)'
         }
-        return TIP[eventAttribute]
+        return TIP[contextData]
       })
-      this.setHelpUrl('https://openhab-scripters.github.io/openhab-helper-libraries/Guides/Event%20Object%20Attributes.html')
+      this.setHelpUrl('https://www.openhab.org/docs/developer/utils/events.html')
     }
   }
 
-  /*
-  * Provides event information that is provided when a rule is triggerd
-  * Blockly part
-  */
-  Blockly.JavaScript['oh_event_attribute'] = function (block) {
-    const eventAttribute = block.getFieldValue('eventAttribute')
-    return [`event.${eventAttribute}`, Blockly.JavaScript.ORDER_NONE]
+  Blockly.JavaScript['oh_context_info'] = function (block) {
+    const contextInfo = block.getFieldValue('contextInfo')
+    if (contextInfo === 'ruleUID') return ['ctx.ruleUID', Blockly.JavaScript.ORDER_ATOMIC]
+    return [`event.${contextInfo}`, Blockly.JavaScript.ORDER_ATOMIC]
   }
 }

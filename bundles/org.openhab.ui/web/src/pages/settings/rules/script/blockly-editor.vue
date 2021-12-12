@@ -348,7 +348,7 @@
               <shadow type="oh_thing" />
             </value>
           </block>
-          <block type="oh_event_attribute" />
+          <block type="oh_context_info" />
         </category>
 
         <category name="Timers &amp; Delays">
