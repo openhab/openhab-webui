@@ -822,7 +822,7 @@ export default {
     },
     addLibraryToToolbox (definitions) {
       const library = this.$refs.libraryCategory
-      definitions.forEach((definition) => {
+      definitions.sort((a, b) => (a.config.name || a.uid).localeCompare(b.config.name || b.uid)).forEach((definition) => {
         const category = document.createElement('category')
         category.setAttribute('name', definition.config.name)
         category.setAttribute('custom', 'LIBRARY_' + definition.uid)
