@@ -13,8 +13,9 @@ export default function defineOHBlocks_Timers (f7) {
   Blockly.Blocks['oh_sleep'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('thread sleep (ms)')
+        .appendField('wait for')
         .appendField(new Blockly.FieldNumber(1000), 'milliseconds')
+        .appendField('ms')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
