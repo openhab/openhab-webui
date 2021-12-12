@@ -130,7 +130,7 @@ export default {
           operationsSorter: 'alpha',
           filter: true,
           docExpansion: 'none',
-          syntaxHighlight: false,
+          syntaxHighlight: true,
           requestInterceptor: (req) => {
             if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) {
               req.headers['X-OPENHAB-TOKEN'] = tokenResponse.access_token
