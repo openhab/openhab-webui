@@ -62,7 +62,6 @@
   ],
   "dependencies": {
     "@blockly/field-slider": "^2.1.10",
-    "@blockly/field-date": "^4.2.25",
     "blockly": "^6.20210701.0",
     "cronstrue": "^1.100.0",
     "dayjs": "^1.9.6",

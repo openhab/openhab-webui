@@ -50,10 +50,10 @@ export default function (f7) {
         const contextData = thisBlock.getFieldValue('contextInfo')
         const TIP = {
           'ruleUID': 'The current rule\'s UID',
+          'type': 'the event type name',
           'itemState': 'the new item state (only applicable for rules with triggers related to changed and updated items)',
           'oldItemState': 'the old item state (only applicable for rules with triggers related to changed and updated items)',
           'itemName': 'the item name that caused the event (if relevant)',
-          'type': 'the event type name',
           'itemCommand': 'the command name that triggered the event',
           'channel': 'the channel UID that triggered the event (only applicable for rules including a "trigger channel fired" event)'
         }

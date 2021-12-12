@@ -16,7 +16,7 @@ export default function defineOHBlocks_Persistence (f7) {
         .appendField(new Blockly.FieldDropdown([
           ['average', 'averageSince'], ['delta', 'deltaSince'],
           ['deviation', 'deviationSince'], ['variance', 'varianceSince'], ['evolution rate', 'evolutionRate'],
-          ['minimum', 'minimumSince'], ['maximum', 'maximumSince'], ['sum', 'sumSince'], ['previous', 'previousState']
+          ['minimum', 'minimumSince'], ['maximum', 'maximumSince'], ['sum', 'sumSince']
         ]
         ), 'methodName')
       this.appendValueInput('itemName')
@@ -30,13 +30,10 @@ export default function defineOHBlocks_Persistence (f7) {
       this.setInputsInline(false)
       this.setOutput(true, null)
       this.setColour(0)
-      this.getField('methodName').setValidator(function (option) {
-        this.getSourceBlock().updateShape_((option === 'previousState'))
-      })
       let thisBlock = this
       this.setTooltip(function () {
-        const methodName = thisBlock.getFieldValue('methodName')
-        const TIP = {
+        let methodName = thisBlock.getFieldValue('methodName')
+        let TIP = {
           'averageSince': 'Gets the average value of the State of a persisted Item since a certain point in time. This method uses a time-weighted average calculation',
           'deltaSince': 'Gets the difference in value of the State of a given Item since a certain point in time',
           'deviationSince': 'Gets the standard deviation of the state of the given Item since a certain point in time',
@@ -49,15 +46,6 @@ export default function defineOHBlocks_Persistence (f7) {
         return TIP[methodName]
       })
       this.setHelpUrl('https://www.openhab.org/docs/configuration/persistence.html')
-    },
-    updateShape_: function (previous) {
-      if (!previous && !this.getInput('dayInfo')) {
-        const input = this.appendValueInput('dayInfo')
-          .appendField('since')
-          .setCheck(['EphemerisDay', 'EphemerisDate'])
-      } else if (previous && this.getInput('dayInfo')) {
-        this.removeInput('dayInfo')
-      }
     }
   }
 
