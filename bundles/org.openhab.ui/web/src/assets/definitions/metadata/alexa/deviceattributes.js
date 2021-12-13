@@ -62,7 +62,7 @@ export default {
         if (item.type === 'Rollershutter') {
           return primaryControl === 'position'
             ? ['Close=DOWN', 'Open=UP', 'Lower=DOWN', 'Raise=UP', 'Stop=STOP']
-            : ['Lower=DOWN', 'Raise=UP', 'Stop=STOP']
+            : ['Lower=DOWN', 'Raise=UP']
         }
       })
     ]
