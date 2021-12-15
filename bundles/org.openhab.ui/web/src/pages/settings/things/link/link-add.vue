@@ -196,13 +196,14 @@ export default {
       let newItemName = diacritic.clean(this.thing.label).replace(/[^0-9a-z]/gi, '')
       newItemName += '_'
       newItemName += (this.channel.label) ? diacritic.clean(this.channel.label).replace(/[^0-9a-z]/gi, '') : diacritic.clean(this.channelType.label).replace(/[^0-9a-z]/gi, '')
+      const defaultTags = (this.channel.defaultTags.length > 0) ? this.channel.defaultTags : this.channelType.tags
       this.$set(this, 'newItem', {
         name: newItemName,
         label: this.channel.label || this.channelType.label,
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
         type: this.channel.itemType || 'Switch',
-        tags: ['Point']
+        tags: (defaultTags.find((t) => SemanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
       })
     },
     loadProfileTypes (channel) {
