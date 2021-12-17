@@ -71,6 +71,13 @@
         <addons-section
           v-if="addons"
           @addonButtonClick="addonButtonClick"
+          :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType !== 'application/vnd.openhab.ruletemplate' && a.contentType !== 'application/vnd.openhab.uicomponent;type=blocks')"
+          :featured="['automation-jsscripting', 'automation-groovyscripting', 'automation-jrubyscripting']"
+          :title="'Languages &amp; Technologies'"
+          :subtitle="'Use your preferred scripting language and other automation functionality'" />
+        <addons-section
+          v-if="addons"
+          @addonButtonClick="addonButtonClick"
           :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType === 'application/vnd.openhab.ruletemplate')"
           :install-action-text="'Add'"
           :title="'Rule Templates'"
@@ -82,12 +89,6 @@
           :install-action-text="'Add'"
           :title="'Block Libraries'"
           :subtitle="'Community extensions to the Blockly toolbox'" />
-        <addons-section
-          v-if="addons"
-          @addonButtonClick="addonButtonClick"
-          :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType !== 'application/vnd.openhab.ruletemplate' && a.contentType !== 'application/vnd.openhab.uicomponent;type=blocks')"
-          :title="'Other Automation Add-ons'"
-          :subtitle="'Add new scripting languages and various functionality'" />
       </f7-tab>
       <f7-tab :tab-active="currentTab === 'ui'">
         <addons-section
@@ -117,18 +118,21 @@
           v-if="addons && addons.karaf"
           @addonButtonClick="addonButtonClick"
           :addons="allAddons.filter((a) => a.type === 'persistence')" :show-all="true"
+          :featured="['persistence-rrd4j', 'persistence-influxdb', 'persistence-mongodb']"
           :title="'Persistence Services'"
           :subtitle="'Backend connectors to store historical data'" />
         <addons-section
           v-if="addons && addons.karaf"
           @addonButtonClick="addonButtonClick"
           :addons="allAddons.filter((a) => a.type === 'transformation')" :show-all="true"
+          :featured="['transformation-jsonpath', 'transformation-javascript', 'transformation-regex']"
           :title="'Transformation Add-ons'"
           :subtitle="'Backend connectors to store historical data'" />
         <addons-section
           v-if="addons && addons.karaf" :show-all="true"
           @addonButtonClick="addonButtonClick"
           :addons="allAddons.filter((a) => a.type === 'voice')"
+          :featured="['voice-googletts', 'voice-pollytts', 'voice-voicerss']"
           :title="'Voice &amp; Speech'"
           :subtitle="'Convert between text and speech, interpret human language queries'" />
       </f7-tab>
