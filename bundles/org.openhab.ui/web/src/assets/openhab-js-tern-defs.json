@@ -1,0 +1,434 @@
+{
+    "!name": "openhab-runtime",
+    "!define": {
+        "Item": {
+            "type": {
+                "!doc": "The type of the item: the Simple (without package) name of the Java item type, such as 'Switch'.",
+                "!type": "string"
+            },
+            "name": {
+                "!doc": "The name of the item.",
+                "!type": "string"
+            },
+            "label": {
+                "!doc": "The label attached to the item",
+                "!type": "string"
+            },
+            "state": {
+                "!doc": "The state of the item, as a string.",
+                "!type": "string"
+            },
+            "history": {
+                "!doc": "Access historical states for this item",
+                "!type": "ItemHistory"
+            },
+            "rawState": {
+                "!doc": "The raw state of the item, as a java object.",
+                "!type": "?"
+            },
+            "members": {
+                "!doc": "Members / children / direct descendents of the current group item (as returned by 'getMembers()'). Must be a group item.",
+                "!type": "[Item]"
+            },
+            "descendants": {
+                "!doc": "All descendents of the current group item (as returned by 'getAllMembers()'). Must be a group item.",
+                "!type": "[Item]"
+            },
+            "isUninitialized": {
+                "!doc": "Whether this item is initialized.",
+                "!type": "boolean"
+            },
+            "tags": {
+                "!doc": "Gets the tags from this item",
+                "!type": "[string]"
+            },
+            "getMetadataValue": {
+                "!doc": "Gets metadata values for this item.",
+                "!type": "fn(namespace: string) -> string"
+            },
+            "updateMetadataValue": {
+                "!doc": "Updates metadata value for this item.",
+                "!type": "fn(namespace: string, value: string) -> string"
+            },
+            "upsertMetadataValue": {
+                "!doc": "Inserts or updates metadata values for this item.",
+                "!type": "fn(namespace: string, value: string) -> boolean"
+            },
+            "updateMetadataValues": {
+                "!doc": "Updates metadata values for this item.",
+                "!type": "fn(namespaceToValues: Map) -> boolean"
+            },
+            "sendCommand": {
+                "!doc": "Sends a command to the item.",
+                "!type": "fn(value: ?)"
+            },
+            "sendCommandIfDifferent": {
+                "!doc": "Sends a command to the item, but only if the current state is not what is being sent.",
+                "!type": "fn(value: ?)"
+            },
+            "postUpdate": {
+                "!doc": "Posts an update to the item",
+                "!type": "fn(value: ?)"
+            },
+            "addGroups": {
+                "!doc": "Adds groups to this item",
+                "!type": "fn(...groupNamesOrItems: ?)"
+            },
+            "removeGroups": {
+                "!doc": "Removes groups to this item",
+                "!type": "fn(...groupNamesOrItems: ?)"
+            },
+            "addTags": {
+                "!doc": "Adds tags to this item",
+                "!type": "fn(...groupNamesOrItems: ?)"
+            },
+            "removeTags": {
+                "!doc": "Removes tags to this item",
+                "!type": "fn(...groupNamesOrItems: ?)"
+            }
+        },
+        "ItemHistory": {
+            "averageSince": {
+                "!doc": "Gets the average value of the state of a given Item since a certain point in time.",
+                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+            },
+            "changedSince": {
+                "!doc": "Checks if the state of a given item has changed since a certain point in time.",
+                "!type": "fn(timestamp: Date, serviceId?: string) -> boolean"
+            },
+            "deltaSince": {
+                "!doc": "Gets the difference value of the state of a given item since a certain point in time.",
+                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+            },
+            "deviationSince": {
+                "!doc": "Gets the standard deviation of the state of the given Item since a certain point in time.",
+                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+            },
+            "evolutionRate": {
+                "!doc": "Gets the evolution rate of the state of a given Item since a certain point in time.",
+                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+            },
+            "historicState": {
+                "!doc": "Retrieves the historic item state for a given item at a certain point in time.",
+                "!type": "fn(timestamp: Date, serviceId?: string) -> ?"
+            },
+            "lastUpdate": {
+                "!doc": "Query the last update time of a given item.",
+                "!type": "fn(timestamp: Date, serviceId?: string) -> Date?"
+            },
+            "maximumSince": {
+                "!doc": "Gets the historic item with the maximum value of the state of a given item since a certain point in time.",
+                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+            },
+            "minimumSince": {
+                "!doc": "Gets the historic item with the minimum value of the state of a given item since a certain point in time.",
+                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+            },
+            "persist": {
+                "!doc": "Persists the state of a given item",
+                "!type": "fn(serviceId?: string)"
+            },
+            "previousState": {
+                "!doc": "Returns the previous state of a given item.",
+                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> ?"
+            },
+            "sumSince": {
+                "!doc": "Gets the sum of the state of a given item since a certain point in time.",
+                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> number"
+            },
+            "updatedSince": {
+                "!doc": "Checks if the state of a given item has been updated since a certain point in time.",
+                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> boolean"
+            },
+            "varianceSince": {
+                "!doc": "Gets the variance of the state of the given Item since a certain point in time.",
+                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> number"
+            },
+            "latestState": {
+                "!doc": "Retrieves the historic item state for a given item at the current point in time.",
+                "!type": "fn(serviceId?: string) -> ?"
+            }
+        },
+        "ItemsNamespace": {
+            "getItem": {
+                "!doc": "This method retrieves a single item from the registry.",
+                "!type": "fn(name: string) -> Item"
+            },
+            "getItemsByTag": {
+                "!doc": "Returns a list of items containing all of the given tags.",
+                "!type": "fn(tag?: [string]) -> [Item]"
+            },
+            "addItem": {
+                "!doc": "Creates a new item within openHAB. This item is not registered with any provider. Note that all items created this way have an additional tag attached, for simpler retrieval later. This tag is created with the value DYNAMIC_ITEM_TAG.",
+                "!type": "fn(itemName: string, itemType?: string, category?: string, groups?: [string], label?: string, tags?: [string], giBaseType?: ?, groupFunction?: ?, itemMetadata?: Map)"
+            },
+            "createItem": {
+                "!doc": "Creates a new item within openHAB. This item will persist regardless of the lifecycle of the script creating it. Note that all items created this way have an additional tag attached, for simpler retrieval later. This tag is created with the value DYNAMIC_ITEM_TAG.",
+                "!type": "fn(itemName: string, itemType?: string, category?: string, groups?: [string], label?: string, tags?: [string], giBaseType?: ?, groupFunction?: ?)"
+            },
+            "replaceItem": {
+                "!doc": "Replaces (upserts) an item. If an item exists with the same name, it will be removed and a new item with the supplied parameters will be created in it's place. If an item does not exist with this name, a new item will be created with the supplied parameters. This function can be useful in scripts which create a static set of items which may need updating either periodically, during startup or even during development of the script. Using fixed item names will ensure that the items remain up-to-date, but won't fail with issues related to duplicate items.",
+                "!type": "fn(itemName: string, itemType?: string, category?: string, groups?: [string], label?: string, tags?: [string], giBaseType?: ?, groupFunction?: ?)"
+            },
+            "removeItem": {
+                "!doc": "Removes an item from openHAB. The item is removed immediately and cannot be recoved.",
+                "!type": "fn(itemName: string) -> bool"
+            },
+            "safeItemName": {
+                "!doc": "Helper function to ensure an item name is valid. All invalid characters are replaced with an underscore.",
+                "!type": "fn(s: ?)"
+            }
+        },
+        "CacheNamespace": {
+            "get": {
+                "!doc": "Returns the value to which the specified key is mapped",
+                "!type": "fn(key: string, defaultSupplier?: fn()) -> ?"
+            },
+            "put": {
+                "!doc": "Associates the specified value with the specified key",
+                "!type": "fn(key: string, value: ?) -> ?"
+            },
+            "remove": {
+                "!doc": "Removes the mapping for a key from this map if it is present",
+                "!type": "fn(key: string) -> ?"
+            }
+        },
+        "Logger": {
+            "trace": {
+                "!doc": "Logs at the TRACE level.",
+                "!type": "fn(message: string, args?: ?)"
+            },
+            "debug": {
+                "!doc": "Logs at the DEBUG level.",
+                "!type": "fn(message: string, args?: ?)"
+            },
+            "info": {
+                "!doc": "Logs at the INFO level.",
+                "!type": "fn(message: string, args?: ?)"
+            },
+            "warn": {
+                "!doc": "Logs at the WARN level.",
+                "!type": "fn(message: string, args?: ?)"
+            },
+            "error": {
+                "!doc": "Logs at the ERROR level.",
+                "!type": "fn(message: string, args?: ?)"
+            },
+            "atLevel": {
+                "!doc": "Logs a message at the supplied level. The message may include placeholders {} which will be substituted into the message string only if the message is actually logged.",
+                "!type": "fn(level: string, message: string, args?: ?)"
+            }
+        },
+        "Console": {
+            "log": {
+                "!doc": "Logs a message.",
+                "!type": "fn(message: string, args?: ?)"
+            },
+            "trace": {
+                "!doc": "Logs at the TRACE level.",
+                "!type": "fn(message: string, args?: ?)"
+            },
+            "debug": {
+                "!doc": "Logs at the DEBUG level.",
+                "!type": "fn(message: string, args?: ?)"
+            },
+            "info": {
+                "!doc": "Logs at the INFO level.",
+                "!type": "fn(message: string, args?: ?)"
+            },
+            "warn": {
+                "!doc": "Logs at the WARN level.",
+                "!type": "fn(message: string, args?: ?)"
+            },
+            "error": {
+                "!doc": "Logs at the ERROR level.",
+                "!type": "fn(message: string, args?: ?)"
+            }
+        },
+        "BusEvent": {
+            "getSource": {
+                "!doc": "The source of the event",
+                "!type": "fn() -> string"
+            },
+            "getType": {
+                "!doc": "The type of the event",
+                "!type": "fn() -> string"
+            },
+            "getTopic": {
+                "!doc": "The topic of the event",
+                "!type": "fn() -> string"
+            },
+            "getPayload": {
+                "!doc": "The payload of the event",
+                "!type": "fn() -> string"
+            },
+            "toString": {
+                "!doc": "Returns a string representation of the event",
+                "!type": "fn() -> string"
+            }
+        },
+        "State": {
+            "toString": {
+                "!doc": "Returns a string representation of the state",
+                "!type": "fn() -> string"
+            }
+        },
+
+        "AudioActions": {
+            "decreaseMasterVolume": { "!type": "fn(percent: float)" },
+            "increaseMasterVolume": { "!type": "fn(percent: float)" },
+            "getMasterVolume": { "!type": "fn() -> float" },
+            "playSound": { "!type": "fn(sink?: string, filename: string, volume?: ?)" },
+            "playStream": { "!type": "fn(sink?: string, url: string)" },
+            "setMasterVolume": { "!type": "fn(percent)" }
+        },
+        "BusEventActions": {
+            "postUpdate": {
+                "!doc": "Posts a status update for a specified item to the event bus.",
+                "!type": "fn(itemName: string, state: ?)"
+            },
+            "sendCommand": {
+                "!doc": "Sends a command for a specified item to the event bus.",
+                "!type": "fn(itemName: string, command: ?)"
+            }
+        },
+        "EphemerisActions": {
+            "getBankHolidayName": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> string" },
+            "getDaysUntil": { "!type": "fn(searchedHoliday: string, offsetOrDay?: ?, filename?: string) -> int" },
+            "getHolidayDescription": { "!type": "fn(holiday?: string) -> string" },
+            "getNextBankHoliday": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> string" },
+            "isBankHoliday": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> bool" },
+            "isInDayset": { "!type": "fn(daysetName: string, offsetOrDay?: ?, filename?: string) -> bool" },
+            "isWeekend": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> bool" }
+        },
+        "ExecActions": {
+            "executeCommandLine": { "!type": "fn(timeout?: integer, commandLine: string, args?: ?)" }
+        },
+        "HTTPActions": {
+            "sendHttpGetRequest": { "!type": "fn(url: string, headers?: Map, timeout?: int) -> string" },
+            "sendHttpPostRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: Map, timeout?: int) -> string" },
+            "sendHttpPutRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: Map, timeout?: int) -> string" },
+            "sendHttpDeleteRequest": { "!type": "fn(url: string, headers?: Map, timeout?: int) -> string" }
+        },
+        "LogActions": {
+            "logDebug": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
+            "logInfo": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
+            "logWarn": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
+            "logError": { "!type": "fn(loggerName?: string, message: string, args?: ?)" }
+        },
+        "PingActions": {
+            "checkVitality": { "!type": "fn(host: string, port: int, timeout: int) -> boolean" }
+        },
+        "ScriptExecutionActions": {
+            "callScript": { "!type": "fn(scriptName: string)" },
+            "createTimer": { "!type": "fn(instant, function: fn()) -> ?" },
+            "createTimerWithArgument": { "!type": "fn(instant, arg, function: fn()) -> ?" }
+        },
+        "SemanticsActions": {
+            "getEquipment": { "!type": "fn(rawItem: ?) -> ?" },
+            "getEquipmentType": { "!type": "fn(rawItem: ?) -> string" },
+            "getLocation": { "!type": "fn(rawItem: ?) -> ?" },
+            "getLocationType": { "!type": "fn(rawItem: ?) -> string" },
+            "getPointType": { "!type": "fn(rawItem: ?) -> string" },
+            "getPropertyType": { "!type": "fn(rawItem: ?) -> string" },
+            "isEquipment": { "!type": "fn(rawItem: ?) -> boolean" },
+            "isLocation": { "!type": "fn(rawItem: ?) -> isLocation" },
+            "isPoint": { "!type": "fn(rawItem: ?) -> isLocation" }
+        },
+        "ThingsActions": {
+            "getActions": { "!type": "fn(scope: string, thingUid: string) -> ?" },
+            "getThingStatusInfo": { "!type": "fn(thingUid: string) -> ?" }
+        },
+        "VoiceActions": {
+            "interpret": { "!type": "fn(text: string, interpreter?: string, sink?: string) -> ?" },
+            "say": { "!type": "fn(text: string, interpreter?: string, sink?: string, volume?: ?)" }
+        },
+
+        "ActionsNamespace": {
+            "Audio": {
+                "!doc": "Audio Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use audio features.",
+                "!type": "AudioActions"
+            },
+            "BusEvent": {
+                "!doc": "BusEvent Actions. The static methods of this class are made available as functions in the scripts. This gives direct write access to the openHAB event bus from within scripts. Items should not be updated directly (setting the state property), but updates should be sent to the bus, so that all interested bundles are notified.",
+                "!type": "BusEventActions"
+            },
+            "Ephemeris": {
+                "!doc": "Ephemeris Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use ephemeris features.",
+                "!type": "EphemerisActions"
+            },
+            "Exec": {
+                "!doc": "Exec Actions. This class provides static methods that can be used in automation rules for executing commands on command line.",
+                "!type": "ExecActions"
+            },
+            "HTTP": {
+                "!doc": "HTTP Actions. This class provides static methods that can be used in automation rules for sending HTTP requests.",
+                "!type": "HTTPActions"
+            },
+            "Log": {
+                "!doc": "Log Actions. The static methods of this class are made available as functions in the scripts. This allows a script to log to the SLF4J-Log.",
+                "!type": "LogActions"
+            },
+            "Ping": {
+                "!doc": "Ping Actions. This Action checks the vitality of the given host.",
+                "!type": "PingActions"
+            },
+            "ScriptExecution": {
+                "!doc": "ScriptExecution Actions. The static methods of this class are made available as functions in the scripts. This allows a script to call another script, which is available as a file.",
+                "!type": "ScriptExecutionActions"
+            },
+            "Semantics": {
+                "!doc": "Semantics Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use Semantics features.",
+                "!type": "SemanticsActions"
+            },
+            "Things": {
+                "!doc": "Things Actions. This class provides static methods that can be used in automation rules for getting thing's status info.",
+                "!type": "ThingsActions"
+            },
+            "Voice": {
+                "!doc": "Voice Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use voice features.",
+                "!type": "VoiceActions"
+            }
+        }
+    },
+    "items": {
+        "!doc": "Items namespace. This namespace handles querying and updating openHAB Items.",
+        "!type": "ItemsNamespace"
+    },
+    "cache": {
+        "!doc": "Shared cache namespace. This namespace provides a default cache that can be use to set and retrieve objects that will be persisted between reloads of scripts.",
+        "!type": "CacheNamespace"
+    },
+    "log": {
+        "!doc": "Creates a logger with the specified name.",
+        "!type": "fn(name: string) -> Logger"
+    },
+    "actions": {
+        "!doc": "Actions namespace. This namespace provides access to openHAB actions. All available actions can be accessed as direct properties of this object (via their simple class name).",
+        "!type": "ActionsNamespace"
+    },
+    "console": {
+        "!doc": "Supports the standard console object for logging. Script debug logging is enabled by default at the TRACE level, but can be configured using the console logging commands.",
+        "!type": "Console"
+    },
+    "setTimeout": {
+        "!doc": "The global setTimeout() method sets a timer which executes a function or specified piece of code once the timer expires.",
+        "!type": "fn(fn(), delay?: number, args?: ?) -> number"
+    },
+    "clearTimeout": {
+        "!doc": "The global setTimeout() method sets a timer which executes a function or specified piece of code once the timer expires.",
+        "!type": "fn(id: number) -> number"
+    },
+    "setInterval": {
+        "!doc": "The global setTimeout() method sets a timer which executes a function or specified piece of code once the timer expires.",
+        "!type": "fn(fn(), delay?: number, args?: ?) -> number"
+    },
+    "clearInterval": {
+        "!doc": "The global setTimeout() method sets a timer which executes a function or specified piece of code once the timer expires.",
+        "!type": "fn(id: number) -> number"
+    },
+    "require": {
+        "!doc": "Scripts may include standard NPM based libraries by using CommonJS require. The library search path will look in automation/js/node_modules in the user configuration directory.",
+        "!type": "fn(module: string) -> ?"
+    }
+}

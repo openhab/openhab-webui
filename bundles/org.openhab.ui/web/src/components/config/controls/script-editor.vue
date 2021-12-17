@@ -90,7 +90,8 @@ import infer from 'tern/lib/infer'
 // import 'tern/plugin/doc_comment.js'
 
 import EcmascriptDefs from 'tern/defs/ecmascript.json'
-import OpenhabDefs from '@/assets/openhab-tern-defs.json'
+import NashornDefs from '@/assets/nashorn-tern-defs.json'
+import OpenhabJsDefs from '@/assets/openhab-js-tern-defs.json'
 
 import componentsHint from '../editor/hint-components'
 import rulesHint from '../editor/hint-rules'
@@ -167,7 +168,7 @@ export default {
   methods: {
     translateMode (mode) {
       if (this.mode && this.mode.indexOf('yaml') >= 0) return 'text/x-yaml'
-      if (this.mode && this.mode === 'application/javascript') return 'text/javascript'
+      if (this.mode && this.mode.indexOf('application/javascript') === 0) return 'text/javascript'
       if (this.mode && this.mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
       if (this.mode && this.mode === 'application/python') return 'text/x-python'
       if (this.mode && this.mode === 'application/x-ruby') return 'text/x-ruby'
@@ -184,7 +185,8 @@ export default {
       if ((call.node.object.name === 'events' && call.node.property.name === 'postUpdate') ||
       (call.node.object.name === 'events' && call.node.property.name === 'sendCommand') ||
       (call.node.object.name === 'itemRegistry' && call.node.property.name === 'getItem') ||
-      (call.node.object.name === 'ir' && call.node.property.name === 'getItem')) {
+      (call.node.object.name === 'ir' && call.node.property.name === 'getItem') ||
+      (call.node.object.name === 'items' && call.node.property.name === 'getItem')) {
         console.debug('Completing item names!')
 
         let before = lit.node.value.slice(0, pos - lit.node.start - 1)
@@ -215,7 +217,7 @@ export default {
     onCmReady (cm) {
       const self = this
       let extraKeys = {}
-      if (this.mode === 'application/javascript') {
+      if (this.mode.indexOf('application/javascript') === 0) {
         window.tern = tern
         if (this.ternAutocompletionHook) {
           tern.registerPlugin('openhab-tern-hook', (server, options) => {
@@ -228,9 +230,9 @@ export default {
           this.$oh.api.get('/rest/items').then((data) => { this.$set(this, 'itemsCache', data) })
         }
         const server = new _CodeMirror.TernServer({
-          defs: [EcmascriptDefs, OpenhabDefs],
+          defs: (this.mode.indexOf('version=ECMAScript-202') > 0) ? [EcmascriptDefs, OpenhabJsDefs] : [EcmascriptDefs, NashornDefs],
           plugins: (this.ternAutocompletionHook) ? { 'openhab-tern-hook': {} } : undefined,
-          ecmaVersion: 5
+          ecmaVersion: (this.mode.indexOf('version=ECMAScript-202') > 0) ? 6 : 5
         })
         extraKeys = {
           'Ctrl-Space': function (cm) { server.complete(cm) },
