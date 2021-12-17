@@ -172,6 +172,7 @@ export default {
       if (this.mode && this.mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
       if (this.mode && this.mode === 'application/python') return 'text/x-python'
       if (this.mode && this.mode === 'application/x-ruby') return 'text/x-ruby'
+      if (this.mode && this.mode === 'rb') return 'text/x-ruby'
       if (this.mode && this.mode === 'application/x-groovy') return 'text/x-groovy'
       return this.mode
     },

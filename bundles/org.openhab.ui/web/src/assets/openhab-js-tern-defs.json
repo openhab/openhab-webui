@@ -134,15 +134,15 @@
             },
             "sumSince": {
                 "!doc": "Gets the sum of the state of a given item since a certain point in time.",
-                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> number"
+                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
             },
             "updatedSince": {
                 "!doc": "Checks if the state of a given item has been updated since a certain point in time.",
-                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> boolean"
+                "!type": "fn(timestamp: Date, serviceId?: string) -> boolean"
             },
             "varianceSince": {
                 "!doc": "Gets the variance of the state of the given Item since a certain point in time.",
-                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> number"
+                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
             },
             "latestState": {
                 "!doc": "Retrieves the historic item state for a given item at the current point in time.",
@@ -416,15 +416,15 @@
         "!type": "fn(fn(), delay?: number, args?: ?) -> number"
     },
     "clearTimeout": {
-        "!doc": "The global setTimeout() method sets a timer which executes a function or specified piece of code once the timer expires.",
+        "!doc": "The global clearTimeout() method cancels a timeout previously established by calling setTimeout().",
         "!type": "fn(id: number) -> number"
     },
     "setInterval": {
-        "!doc": "The global setTimeout() method sets a timer which executes a function or specified piece of code once the timer expires.",
+        "!doc": "The setInterval() method repeatedly calls a function or executes a code snippet, with a fixed time delay between each call.",
         "!type": "fn(fn(), delay?: number, args?: ?) -> number"
     },
     "clearInterval": {
-        "!doc": "The global setTimeout() method sets a timer which executes a function or specified piece of code once the timer expires.",
+        "!doc": "The global clearInterval() method cancels a timed, repeating action which was previously established by a call to setInterval().",
         "!type": "fn(id: number) -> number"
     },
     "require": {
