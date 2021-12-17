@@ -78,10 +78,9 @@ export default function defineOHBlocks_Timers (f7) {
     let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
     let timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
 
-    let code = `if (typeof this.timers[${timerName}] === 'undefined') {\n`
+    let code = `if (typeof this.timers[${timerName}] === 'undefined' || this.timers[${timerName}].hasTerminated()) {\n`
     code += `  this.timers[${timerName}] = ${scriptExecution}.createTimer(${zdt}.now().${delayunits}(${delay}), function () {\n`
     code += timerCode.replace(/^/gm, '  ')
-    code += `    this.timers[${timerName}] = undefined;\n`
     code += '  })\n'
     code += '}\n'
     return code
@@ -130,15 +129,14 @@ export default function defineOHBlocks_Timers (f7) {
     let retrigger = block.getFieldValue('retrigger')
     let timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
 
-    let code = `if (typeof this.timers[${timerName}] === 'undefined') {\n`
+    let code = `if (typeof this.timers[${timerName}] === 'undefined' || this.timers[${timerName}].hasTerminated()) {\n`
     code += `  this.timers[${timerName}] = ${scriptExecution}.createTimer(${zdt}.now().${delayUnits}(${delay}), function () {\n`
     code += timerCode.replace(/^/gm, '  ')
-    code += `  this.timers[${timerName}] = undefined;\n`
     code += '  })\n'
     code += '} else {\n'
     switch (retrigger) {
       case 'reschedule':
-        code += `  this.timers[${timerName}].reschedule(zonedDateTime.now().${delayUnits}(${delay}));\n`
+        code += `  this.timers[${timerName}].reschedule(${zdt}.now().${delayUnits}(${delay}));\n`
         break
 
       case 'cancel':
