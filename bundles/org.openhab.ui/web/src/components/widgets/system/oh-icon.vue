@@ -9,14 +9,14 @@
   <f7-icon v-else-if="iconType === 'f7'"
            :ios="icon || ((config) ? config.icon : null)" :md="icon || ((config) ? config.icon : null)" :aurora="icon || ((config) ? config.icon : null)"
            :color="color || ((config) ? config.color : null)" :size="width || height || ((config) ? (config.width || config.height) : null)"
-           :style="config.style" />
+           :style="(config) ? config.style : null" />
   <iconify-icon v-else-if="iconType === 'iconify'"
                 :icon="iconName"
                 :width="width || ((config) ? config.width : null)" :height="height || ((config) ? config.height : null)"
                 :color="color || ((config) ? config.color : null)" :rotate="rotate || ((config) ? config.rotate : null)"
                 :horizontal-flip="horizontalFlip || ((config) ? config.horizontalFlip : null)"
                 :vertical-flip="verticalFlip || ((config) ? config.verticalFlip : null)"
-                :style="config.style" />
+                :style="(config) ? config.style : null" />
 </template>
 
 <style lang="stylus">
