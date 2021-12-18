@@ -30,7 +30,7 @@
                 "!doc": "Members / children / direct descendents of the current group item (as returned by 'getMembers()'). Must be a group item.",
                 "!type": "[Item]"
             },
-            "descendants": {
+            "descendents": {
                 "!doc": "All descendents of the current group item (as returned by 'getAllMembers()'). Must be a group item.",
                 "!type": "[Item]"
             },
@@ -56,7 +56,7 @@
             },
             "updateMetadataValues": {
                 "!doc": "Updates metadata values for this item.",
-                "!type": "fn(namespaceToValues: Map) -> boolean"
+                "!type": "fn(namespaceToValues: object) -> boolean"
             },
             "sendCommand": {
                 "!doc": "Sends a command to the item.",
@@ -90,39 +90,39 @@
         "ItemHistory": {
             "averageSince": {
                 "!doc": "Gets the average value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "changedSince": {
                 "!doc": "Checks if the state of a given item has changed since a certain point in time.",
-                "!type": "fn(timestamp: Date, serviceId?: string) -> boolean"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "deltaSince": {
                 "!doc": "Gets the difference value of the state of a given item since a certain point in time.",
-                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "deviationSince": {
                 "!doc": "Gets the standard deviation of the state of the given Item since a certain point in time.",
-                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "evolutionRate": {
                 "!doc": "Gets the evolution rate of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "historicState": {
                 "!doc": "Retrieves the historic item state for a given item at a certain point in time.",
-                "!type": "fn(timestamp: Date, serviceId?: string) -> ?"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> ?"
             },
             "lastUpdate": {
                 "!doc": "Query the last update time of a given item.",
-                "!type": "fn(timestamp: Date, serviceId?: string) -> Date?"
+                "!type": "fn(serviceId?: string) -> Date?"
             },
             "maximumSince": {
                 "!doc": "Gets the historic item with the maximum value of the state of a given item since a certain point in time.",
-                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "minimumSince": {
                 "!doc": "Gets the historic item with the minimum value of the state of a given item since a certain point in time.",
-                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "persist": {
                 "!doc": "Persists the state of a given item",
@@ -134,15 +134,15 @@
             },
             "sumSince": {
                 "!doc": "Gets the sum of the state of a given item since a certain point in time.",
-                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "updatedSince": {
                 "!doc": "Checks if the state of a given item has been updated since a certain point in time.",
-                "!type": "fn(timestamp: Date, serviceId?: string) -> boolean"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "varianceSince": {
                 "!doc": "Gets the variance of the state of the given Item since a certain point in time.",
-                "!type": "fn(timestamp: Date, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "latestState": {
                 "!doc": "Retrieves the historic item state for a given item at the current point in time.",
@@ -160,7 +160,7 @@
             },
             "addItem": {
                 "!doc": "Creates a new item within openHAB. This item is not registered with any provider. Note that all items created this way have an additional tag attached, for simpler retrieval later. This tag is created with the value DYNAMIC_ITEM_TAG.",
-                "!type": "fn(itemName: string, itemType?: string, category?: string, groups?: [string], label?: string, tags?: [string], giBaseType?: ?, groupFunction?: ?, itemMetadata?: Map)"
+                "!type": "fn(itemName: string, itemType?: string, category?: string, groups?: [string], label?: string, tags?: [string], giBaseType?: ?, groupFunction?: ?, itemMetadata?: object)"
             },
             "createItem": {
                 "!doc": "Creates a new item within openHAB. This item will persist regardless of the lifecycle of the script creating it. Note that all items created this way have an additional tag attached, for simpler retrieval later. This tag is created with the value DYNAMIC_ITEM_TAG.",
@@ -294,7 +294,7 @@
         },
         "EphemerisActions": {
             "getBankHolidayName": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> string" },
-            "getDaysUntil": { "!type": "fn(searchedHoliday: string, offsetOrDay?: ?, filename?: string) -> int" },
+            "getDaysUntil": { "!type": "fn(searchedHoliday: string, offsetOrDay?: ?, filename?: string) -> number" },
             "getHolidayDescription": { "!type": "fn(holiday?: string) -> string" },
             "getNextBankHoliday": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> string" },
             "isBankHoliday": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> bool" },
@@ -305,10 +305,10 @@
             "executeCommandLine": { "!type": "fn(timeout?: integer, commandLine: string, args?: ?)" }
         },
         "HTTPActions": {
-            "sendHttpGetRequest": { "!type": "fn(url: string, headers?: Map, timeout?: int) -> string" },
-            "sendHttpPostRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: Map, timeout?: int) -> string" },
-            "sendHttpPutRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: Map, timeout?: int) -> string" },
-            "sendHttpDeleteRequest": { "!type": "fn(url: string, headers?: Map, timeout?: int) -> string" }
+            "sendHttpGetRequest": { "!type": "fn(url: string, headers?: object, timeout?: int) -> string" },
+            "sendHttpPostRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: object, timeout?: int) -> string" },
+            "sendHttpPutRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: object, timeout?: int) -> string" },
+            "sendHttpDeleteRequest": { "!type": "fn(url: string, headers?: object, timeout?: int) -> string" }
         },
         "LogActions": {
             "logDebug": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
