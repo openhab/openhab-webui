@@ -672,6 +672,13 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_getscript_attribute">
+            <value name="scriptParam">
+              <shadow type="text">
+                <field name="TEXT">ruleParameterName</field>
+              </shadow>
+            </value>
+          </block>
           <sep gap="48" />
           <block type="oh_transformation">
             <value name="function">

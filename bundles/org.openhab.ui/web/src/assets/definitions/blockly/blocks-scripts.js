@@ -158,4 +158,33 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
       'transformation',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.transform.actions.Transformation\');'])
   }
+
+  /*
+  * Allows retrieving parameters provided by a rule
+  * Blockly part
+  */
+  Blockly.Blocks['oh_getscript_attribute'] = {
+    init: function () {
+      this.appendDummyInput()
+        .appendField('get parameter')
+      this.appendValueInput('scriptParam')
+        .setCheck('String')
+      this.appendDummyInput()
+        .appendField('of rule')
+      this.setInputsInline(true)
+      this.setOutput(true, 'any')
+      this.setColour(0)
+      this.setTooltip('Retrieve a specified parameter that was passed from a calling rule')
+    }
+  }
+
+  /*
+  * Allows retrieving parameters provided by a rule
+  * Code part
+  */
+  Blockly.JavaScript['oh_getscript_attribute'] = function (block) {
+    const scriptParam = Blockly.JavaScript.valueToCode(block, 'scriptParam', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = `context.getAttribute(${scriptParam})`
+    return [code, 0]
+  }
 }
