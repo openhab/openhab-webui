@@ -1,0 +1,21 @@
+{
+  "about.title": "Apie",
+  "about.homePage": "Svetainė",
+  "about.documentation": "Dokumentacija",
+  "about.communityForum": "Bendruomenės Forumas",
+  "about.technicalInformation": "Techninė Informacija",
+  "about.technicalInformation.configurationFolder": "Konfigūracijos aplankas",
+  "about.technicalInformation.userdataFolder": "Vartotojų duomenų aplankas",
+  "about.technicalInformation.logsFolder": "Istorijos aplankas",
+  "about.technicalInformation.operatingSystem": "Sistema",
+  "about.technicalInformation.javaRuntime": "Javos veikimo laikas",
+  "about.technicalInformation.resourceStats": "{nbproc} like procesorius - {ram} like atminties",
+  "about.technicalInformation.viewDetails": "Detaliau",
+  "about.appearanceOptions": "Išvaizda (tik šiam įrenginiui)",
+  "about.reload": "Atnaujinti",
+  "about.reload.purgeExplanation1": "Talpyklos ir (arba) paslaugų darbuotojai naudojami ištekliams saugoti vietoje ir paspartina programos įkėlimą, tačiau ji gali nepatikimai aptikti, kada ji buvo atnaujinta į naują versiją.",
+  "about.reload.purgeExplanation2": "Toliau pasirinkite Išvalyti talpyklas ir atnaujinti, kad išvalytumėte visas talpyklas, išregistruotumėte servizus ir vėl atsisiųstumėte viską iš serverio.",
+  "about.reload.purgeCachesAndRefresh": "Išvalykite talpyklą ir atnaujinkite",
+  "about.reload.confirmPurge": "Išvalyti visas programų talpyklas ir servizus? Taip pat bus iš naujo įkeltas puslapis iš serverio, o tai gali užtrukti kelias sekundes.",
+  "about.reload.reloadApp": "Perkrauti Aplikacija"
+}
