@@ -16,7 +16,7 @@
                 :color="color || ((config) ? config.color : null)" :rotate="rotate || ((config) ? config.rotate : null)"
                 :horizontal-flip="horizontalFlip || ((config) ? config.horizontalFlip : null)"
                 :vertical-flip="verticalFlip || ((config) ? config.verticalFlip : null)"
-                :style="(config) ? config.style : null" />                
+                :style="(config) ? config.style : null" />
 </template>
 
 <style lang="stylus">
