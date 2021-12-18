@@ -8,15 +8,13 @@
        onload="this.classList.remove('no-icon')" onerror="this.classList.add('no-icon')">
   <f7-icon v-else-if="iconType === 'f7'"
            :ios="icon || ((config) ? config.icon : null)" :md="icon || ((config) ? config.icon : null)" :aurora="icon || ((config) ? config.icon : null)"
-           :color="color || ((config) ? config.color : null)" :size="width || height || ((config) ? (config.width || config.height) : null)"
-           :style="config.style" />
+           :color="color || ((config) ? config.color : null)" :size="width || height || ((config) ? (config.width || config.height) : null)" />
   <iconify-icon v-else-if="iconType === 'iconify'"
                 :icon="iconName"
                 :width="width || ((config) ? config.width : null)" :height="height || ((config) ? config.height : null)"
                 :color="color || ((config) ? config.color : null)" :rotate="rotate || ((config) ? config.rotate : null)"
                 :horizontal-flip="horizontalFlip || ((config) ? config.horizontalFlip : null)"
-                :vertical-flip="verticalFlip || ((config) ? config.verticalFlip : null)"
-                :style="config.style" />
+                :vertical-flip="verticalFlip || ((config) ? config.verticalFlip : null)" />
 </template>
 
 <style lang="stylus">
