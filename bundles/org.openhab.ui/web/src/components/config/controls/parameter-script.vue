@@ -14,7 +14,7 @@
 import ScriptEditorPopup from './script-editor-popup.vue'
 
 export default {
-  props: ['configDescription', 'value'],
+  props: ['configDescription', 'configuration', 'value'],
   data () {
     return {
     }
@@ -39,6 +39,8 @@ export default {
       }, {
         props: {
           title: this.configDescription.label,
+          // use the "type" parameter as the mode if found (for rule modules)
+          mode: (this.configuration && this.configuration.type) ? this.configuration.type : '',
           fullscreen: fullscreen,
           value: this.value
         }
