@@ -8,7 +8,7 @@
           </f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <editor v-if="showEditor" v-model="code" />
+      <editor v-if="showEditor" v-model="code" :mode="mode || ''" />
     </f7-page>
   </f7-popup>
 </template>
@@ -23,7 +23,7 @@ export default {
   components: {
     'editor': () => import(/* webpackChunkName: "script-editor" */ './script-editor.vue')
   },
-  props: ['title', 'value', 'opened', 'fullscreen', 'popupId'],
+  props: ['title', 'value', 'mode', 'opened', 'fullscreen', 'popupId'],
   data () {
     return {
       code: this.value,
