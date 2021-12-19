@@ -170,10 +170,10 @@ export default {
       if (this.mode && this.mode.indexOf('yaml') >= 0) return 'text/x-yaml'
       if (this.mode && this.mode.indexOf('application/javascript') === 0) return 'text/javascript'
       if (this.mode && this.mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
-      if (this.mode && this.mode === 'application/python') return 'text/x-python'
-      if (this.mode && this.mode === 'application/x-ruby') return 'text/x-ruby'
+      if (this.mode && this.mode.indexOf('python') >= 0) return 'text/x-python'
+      if (this.mode && this.mode.indexOf('ruby') >= 0) return 'text/x-ruby'
+      if (this.mode && this.mode.indexOf('groovy') >= 0) return 'text/x-groovy'
       if (this.mode && this.mode === 'rb') return 'text/x-ruby'
-      if (this.mode && this.mode === 'application/x-groovy') return 'text/x-groovy'
       return this.mode
     },
     ternComplete (file, query) {
