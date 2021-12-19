@@ -348,7 +348,6 @@
               <shadow type="oh_thing" />
             </value>
           </block>
-          <block type="oh_context_info" />
         </category>
 
         <category name="Timers &amp; Delays">
@@ -669,6 +668,15 @@
             <value name="parameters">
               <shadow type="dicts_create_with">
                 <mutation items="0" />
+              </shadow>
+            </value>
+          </block>
+          <sep gap="48" />
+          <block type="oh_context_info" />
+          <block type="oh_context_attribute">
+            <value name="key">
+              <shadow type="text">
+                <field name="TEXT">key</field>
               </shadow>
             </value>
           </block>
