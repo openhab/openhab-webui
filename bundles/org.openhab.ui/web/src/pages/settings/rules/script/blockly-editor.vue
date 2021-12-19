@@ -348,7 +348,6 @@
               <shadow type="oh_thing" />
             </value>
           </block>
-          <block type="oh_context_info" />
         </category>
 
         <category name="Timers &amp; Delays">
@@ -672,10 +671,12 @@
               </shadow>
             </value>
           </block>
-          <block type="oh_getscript_attribute">
-            <value name="scriptParam">
+          <sep gap="48" />
+          <block type="oh_context_info" />
+          <block type="oh_context_attribute">
+            <value name="key">
               <shadow type="text">
-                <field name="TEXT">ruleParameterName</field>
+                <field name="TEXT">key</field>
               </shadow>
             </value>
           </block>

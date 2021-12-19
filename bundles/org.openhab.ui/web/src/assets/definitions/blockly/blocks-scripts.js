@@ -50,7 +50,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
         .setCheck('String')
         .appendField('run rule or script')
       this.appendValueInput('parameters')
-        .appendField('with parameters')
+        .appendField('with context')
         .setCheck('Dictionary')
       this.setInputsInline(false)
       this.setPreviousStatement(true, null)
@@ -95,9 +95,6 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   *   - value to be transformed
   *   - method Map, Regular Expression, JSON-Path
   *   - transformation method input
-  *     - Map: map file found in openHABs transform-folder
-  *     - Regex: regex-expression
-  *     - JSON-Path: JSON-Path
   * Blockly part
   */
   Blockly.Blocks['oh_transformation'] = {
@@ -141,7 +138,9 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   * Code part
   */
   Blockly.JavaScript['oh_transformation'] = function (block) {
-    const transformation = addTransformation()
+    const transformation = Blockly.JavaScript.provideFunction_(
+      'transformation',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.transform.actions.Transformation\');'])
     const transformationType = block.getFieldValue('type')
     const transformationFunction = Blockly.JavaScript.valueToCode(block, 'function', Blockly.JavaScript.ORDER_ATOMIC)
     const transformationValue = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
@@ -150,31 +149,59 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
     return [code, 0]
   }
 
-  /*
-  * add transformation class to rule
-  */
-  function addTransformation () {
-    return Blockly.JavaScript.provideFunction_(
-      'transformation',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.transform.actions.Transformation\');'])
+  Blockly.Blocks['oh_context_info'] = {
+    init: function () {
+      this.appendDummyInput()
+        .appendField('contextual info')
+        .appendField(new Blockly.FieldDropdown([
+          ['rule UID', 'ruleUID'],
+          ['event type', 'type'],
+          ['new state of item', 'itemState'],
+          ['previous state of item', 'oldItemState'],
+          ['triggering item name', 'itemName'],
+          ['received command', 'itemCommand'],
+          ['triggered channel', 'channel']]),
+        'contextInfo')
+      this.setInputsInline(true)
+      this.setOutput(true, null)
+      this.setColour(0)
+      let thisBlock = this
+      this.setTooltip(function () {
+        const contextData = thisBlock.getFieldValue('contextInfo')
+        const TIP = {
+          'ruleUID': 'The current rule\'s UID',
+          'type': 'the event type name',
+          'itemState': 'the new item state (only applicable for rules with triggers related to changed and updated items)',
+          'oldItemState': 'the old item state (only applicable for rules with triggers related to changed and updated items)',
+          'itemName': 'the item name that caused the event (if relevant)',
+          'itemCommand': 'the command name that triggered the event',
+          'channel': 'the channel UID that triggered the event (only applicable for rules including a "trigger channel fired" event)'
+        }
+        return TIP[contextData]
+      })
+      this.setHelpUrl('https://www.openhab.org/docs/developer/utils/events.html')
+    }
+  }
+
+  Blockly.JavaScript['oh_context_info'] = function (block) {
+    const contextInfo = block.getFieldValue('contextInfo')
+    if (contextInfo === 'ruleUID') return ['ctx.ruleUID', Blockly.JavaScript.ORDER_ATOMIC]
+    return [`event.${contextInfo}`, Blockly.JavaScript.ORDER_ATOMIC]
   }
 
   /*
   * Allows retrieving parameters provided by a rule
   * Blockly part
   */
-  Blockly.Blocks['oh_getscript_attribute'] = {
+  Blockly.Blocks['oh_context_attribute'] = {
     init: function () {
-      this.appendDummyInput()
-        .appendField('get parameter')
-      this.appendValueInput('scriptParam')
+      this.appendValueInput('key')
+        .appendField('get context attribute')
         .setCheck('String')
-      this.appendDummyInput()
-        .appendField('of rule')
-      this.setInputsInline(true)
+      this.setInputsInline(false)
       this.setOutput(true, 'any')
       this.setColour(0)
-      this.setTooltip('Retrieve a specified parameter that was passed from a calling rule')
+      this.setTooltip('Retrieve a specified attribute from the context that could be set from a calling rule or script')
     }
   }
 
@@ -182,9 +209,9 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   * Allows retrieving parameters provided by a rule
   * Code part
   */
-  Blockly.JavaScript['oh_getscript_attribute'] = function (block) {
-    const scriptParam = Blockly.JavaScript.valueToCode(block, 'scriptParam', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `context.getAttribute(${scriptParam})`
+  Blockly.JavaScript['oh_context_attribute'] = function (block) {
+    const key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = `ctx[${key}]`
     return [code, 0]
   }
 }
