@@ -87,25 +87,80 @@ export default function (f7) {
     return [code, 0]
   }
 
+  /*
+  * Provides all attributes from an item
+  * - name: String
+  * - label: String
+  * - state: State
+  * - category: String
+  * - tags: Array
+  * - groups: Array
+  * - type: String
+  * Blockly part
+  */
   Blockly.Blocks['oh_getitem_attribute'] = {
     init: function () {
+      let thisBlock = this
+      let dropdown = new Blockly.FieldDropdown(
+        [['name', 'Name'], ['label', 'Label'], ['state', 'State'], ['category', 'Category'], ['tags', 'Tags'], ['groups', 'GroupNames'], ['type', 'Type']],
+        function (newMode) {
+          thisBlock.updateType_(newMode)
+        })
       this.appendValueInput('item')
         .appendField('get ')
-        .appendField(new Blockly.FieldDropdown([['name', 'Name'], ['label', 'Label'], ['state', 'State'], ['category', 'Category'], ['tags', 'Tags'], ['groups', 'GroupNames'], ['type', 'Type']]), 'attributeName')
+        .appendField(dropdown, 'attributeName')
         .appendField('of item')
         .setCheck('oh_itemtype')
       this.setInputsInline(false)
-      this.setOutput(true, 'any')
+      this.setOutput(true, 'String')
       this.setColour(0)
-      this.setTooltip('Retrieve a specific attribute from the item')
+      this.setTooltip('Retrieve a specific attribute from the item. Note that groups and tags return a list and should be used with the loops-block \'for each item ... in list\'. ')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/items.html')
+    },
+    /**
+    * Modify this block to have the correct output type based on the attribute.
+    */
+    updateType_: function (newAttributeName) {
+      let attributeName = this.getFieldValue('attributeName')
+      if (newAttributeName === 'Tags' || newAttributeName === 'GroupNames') {
+        this.outputConnection.setCheck('Array')
+      } else {
+        this.outputConnection.setCheck('String')
+      }
+    },
+    /**
+    * Create XML to represent the input and output types.
+    * @return {!Element} XML storage element.
+    * @this {Blockly.Block}
+    */
+    mutationToDom: function () {
+      let container = Blockly.utils.xml.createElement('mutation')
+      container.setAttribute('attributeName', this.getFieldValue('attributeName'))
+      return container
+    },
+    /**
+    * Parse XML to restore the input and output types.
+    * @param {!Element} xmlElement XML storage element.
+    * @this {Blockly.Block}
+    */
+    domToMutation: function (xmlElement) {
+      this.updateType_(xmlElement.getAttribute('attributeName'))
     }
   }
 
+  /*
+  * Provides all attributes from an item
+  * Code part
+  */
   Blockly.JavaScript['oh_getitem_attribute'] = function (block) {
     const theItem = Blockly.JavaScript.valueToCode(block, 'item', Blockly.JavaScript.ORDER_ATOMIC)
     const attributeName = block.getFieldValue('attributeName')
-    let code = `${theItem}.get${attributeName}()`
+    let code = ''
+    if (attributeName === 'Tags' || attributeName === 'GroupNames') {
+      code = `Java.from(${theItem}.get${attributeName}())`
+    } else {
+      code = `${theItem}.get${attributeName}()`
+    }
     return [code, 0]
   }
 }

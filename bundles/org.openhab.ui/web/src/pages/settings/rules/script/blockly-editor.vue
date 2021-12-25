@@ -344,7 +344,7 @@
           <sep gap="48" />
           <block type="oh_thing" />
           <block type="oh_getthing_state">
-            <value name="itemName">
+            <value name="thingUid">
               <shadow type="oh_thing" />
             </value>
           </block>
