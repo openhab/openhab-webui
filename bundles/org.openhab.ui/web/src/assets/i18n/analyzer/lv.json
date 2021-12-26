@@ -3,7 +3,7 @@
   "analyzer.back": "Atpakaļ",
   "analyzer.save": "Saglabāt",
   "analyzer.controls": "Iestatījumi",
-  "analyzer.series": "Sērijas",
+  "analyzer.series": "Dinamikas rindas",
   "analyzer.series.table.header.label": "Nosaukums",
   "analyzer.series.table.header.type": "Tips",
   "analyzer.series.table.header.axis": "Asis",
