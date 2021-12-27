@@ -7,6 +7,7 @@ export const FAN_DIRECTIONS = ['FORWARD', 'REVERSE']
 export const FAN_SPEEDS = ['OFF', 'LOW', 'MEDIUM', 'HIGH']
 
 export const LANGUAGES = {
+  ar: 'Arabic',
   en: 'English',
   fr: 'French',
   de: 'German',
