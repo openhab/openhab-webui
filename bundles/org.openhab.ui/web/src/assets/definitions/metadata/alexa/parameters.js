@@ -26,7 +26,8 @@ export default {
     default: defaultValue,
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true,
-    advanced: !!defaultValue
+    advanced: !!defaultValue,
+    visible: (_, config) => !config.nonControllable
   }),
   capabilityNames: (defaultValue, placeholder) => ({
     name: 'capabilityNames',
@@ -301,7 +302,8 @@ export default {
     description: `Each mapping formatted as ${getSemanticFormat('state', format)} (${docLink('Semantic Extensions')})`,
     type: 'TEXT',
     placeholder: placeholder.replace(/,/g, '\n'),
-    multiple: true
+    multiple: true,
+    visible: (_, config) => !!config.retrievable
   }),
   stepSpeaker: () => ({
     name: 'stepSpeaker',
