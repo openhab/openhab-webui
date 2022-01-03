@@ -666,9 +666,9 @@
               </shadow>
             </value>
             <value name="parameters">
-              <shadow type="dicts_create_with">
+              <block type="dicts_create_with">
                 <mutation items="0" />
-              </shadow>
+              </block>
             </value>
           </block>
           <sep gap="48" />
