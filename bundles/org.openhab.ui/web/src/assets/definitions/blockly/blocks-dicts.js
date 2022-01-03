@@ -171,4 +171,34 @@ export default function (f7) {
     let code = '{' + elements.join(', ') + '}'
     return [code, Blockly.JavaScript.ORDER_ATOMIC]
   }
+
+  /*
+  * Allows retrieving parameters provided by a rule
+  * Blockly part
+  */
+  Blockly.Blocks['dicts_get'] = {
+    init: function () {
+      this.setStyle('list_blocks')
+      this.appendValueInput('key')
+        .appendField('get')
+        .setCheck('String')
+      this.appendValueInput('varName')
+        .appendField('from dictionary')
+        .setCheck('String')
+      this.setInputsInline(true)
+      this.setOutput(true, 'String')
+      this.setTooltip('Retrieve a specified attribute from the context that could be set from a calling rule or script')
+    }
+  }
+
+  /*
+  * Allows retrieving parameters provided by a rule
+  * Code part
+  */
+  Blockly.JavaScript['dicts_get'] = function (block) {
+    const key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
+    const varName = Blockly.JavaScript.valueToCode(block, 'varName', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
+    let code = `${varName}[${key}]`
+    return [code, 0]
+  }
 }

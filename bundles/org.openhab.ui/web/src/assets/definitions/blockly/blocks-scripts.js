@@ -22,7 +22,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Calls a script file which must be located in the $OPENHAB_CONF/scripts folder')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#openhab-subsystem-actions')
     }
   }
 
@@ -117,13 +117,13 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
         const type = thisBlock.getFieldValue('type')
         switch (type) {
           case 'MAP':
-            return 'transforms an input via a map file. Specify the file as the function'
+            return 'transforms an input via a map file. Specify the file as the function.\nREGEX und JSONPATH are also valid.'
           case 'REGEX':
-            return 'transforms / filters an input by applying the provided regular expression'
+            return 'transforms / filters an input by applying the provided regular expression.\nMAP und JSONPATH are also valid.'
           case 'JSONPATH':
-            return 'transforms / filters an JSON input by executing the provided JSONPath query'
+            return 'transforms / filters an JSON input by executing the provided JSONPath query.\nMAP und REGEX are also valid.'
           default:
-            return 'transforms the input with the ' + type + ' transformation'
+            return 'transforms the input with the ' + type + ' transformation.'
         }
       })
       this.setHelpUrl(function () {
@@ -160,7 +160,9 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
           ['previous state of item', 'oldItemState'],
           ['triggering item name', 'itemName'],
           ['received command', 'itemCommand'],
-          ['triggered channel', 'channel']]),
+          ['triggered channel', 'channel'],
+          ['triggered event', 'event']
+        ]),
         'contextInfo')
       this.setInputsInline(true)
       this.setOutput(true, null)
@@ -175,7 +177,8 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
           'oldItemState': 'the old item state (only applicable for rules with triggers related to changed and updated items)',
           'itemName': 'the item name that caused the event (if relevant)',
           'itemCommand': 'the command name that triggered the event',
-          'channel': 'the channel UID that triggered the event (only applicable for rules including a "trigger channel fired" event)'
+          'channel': 'the channel UID that triggered the event (only applicable for rules including a "trigger channel fired" event)',
+          'event': 'the channel event type that triggered the event (only applicable for rules including a "trigger channel fired" event)'
         }
         return TIP[contextData]
       })
@@ -213,5 +216,31 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
     const key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
     let code = `ctx[${key}]`
     return [code, 0]
+  }
+
+  /*
+  * Allows inlining arbitrary code
+  * Blockly part
+  */
+  Blockly.Blocks['oh_script_inline'] = {
+    init: function () {
+      this.appendDummyInput()
+        .appendField('inline script')
+        .appendField(new Blockly.FieldMultilineInput('insert javascript code here (multiple lines are supported)'), 'inlineScript')
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null)
+      this.setNextStatement(true, null)
+      this.setColour(0)
+      this.setTooltip('Allows inlining arbitrary script code which has to be syntactically correct')
+    }
+  }
+
+  /*
+  * Allows inlining arbitrary code
+  * Code part
+  */
+  Blockly.JavaScript['oh_script_inline'] = function (block) {
+    const code = block.getFieldValue('inlineScript') + '\n'
+    return code
   }
 }

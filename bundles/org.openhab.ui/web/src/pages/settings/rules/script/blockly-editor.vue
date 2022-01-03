@@ -263,6 +263,13 @@
         <block type="lists_sort" />
         <sep gap="48" />
         <block type="dicts_create_with" />
+        <block type="dicts_get" >
+            <value name="key">
+              <shadow type="text">
+                <field name="TEXT">key</field>
+              </shadow>
+            </value>
+        </block>
       </category>
 
       <category name="Color" colour="%{BKY_COLOUR_HUE}">
@@ -302,6 +309,7 @@
             </shadow>
           </value>
         </block>
+        <block type="oh_color_to_hsb" />
       </category>
 
       <category name="openHAB" colour="0">
@@ -649,6 +657,13 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_check_undefined_value">
+            <value name="key">
+              <shadow type="text">
+                <field name="TEXT">key</field>
+              </shadow>
+            </value>
+          </block>
         </category>
 
         <category name="Run &amp; Process">
@@ -693,6 +708,7 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_script_inline" />
         </category>
 
         <category name="Logging &amp; Output">
