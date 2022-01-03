@@ -396,17 +396,7 @@ export default {
     ]
   },
   RangeValue: {
-    itemTypes: [
-      'Dimmer',
-      'Number',
-      'Number:Angle',
-      'Number:Dimensionless',
-      'Number:Length',
-      'Number:Mass',
-      'Number:Temperature',
-      'Number:Volume',
-      'Rollershutter'
-    ],
+    itemTypes: ['Dimmer', 'Number', 'Number:*', 'Rollershutter'],
     supports: ['multiInstance'],
     parameters: (item) => [
       p.capabilityNames(item.groups.length ? item.label : '@Setting.RangeValue', '@Setting.FanSpeed,Speed'),
