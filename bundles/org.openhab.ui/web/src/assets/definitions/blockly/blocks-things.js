@@ -29,7 +29,7 @@ export default function defineOHBlocks (f7) {
   Blockly.Blocks['oh_getthing_state'] = {
     init: function () {
       this.appendValueInput('thingUid')
-        .appendField('get thing state')
+        .appendField('get thing status')
         .setCheck('String')
       this.setInputsInline(false)
       this.setOutput(true, 'String')
