@@ -182,11 +182,16 @@ export default {
     },
     isVisible (cl) {
       const { visible = () => true } = this.getDefinition(cl)
-      return !!AlexaDefinitions[cl] && !!AlexaDefinitions[cl][this.itemType] && visible(this.item)
+      return this.hasDefinition(cl) && visible(this.item)
     },
     getDefinition (cl, item) {
       const itemType = item ? item.groupType || item.type : this.itemType
-      return (AlexaDefinitions[cl] && AlexaDefinitions[cl][itemType]) || {}
+      const defTypes = Object.keys(AlexaDefinitions[cl] || {})
+      const dt = defTypes.find((dt) => dt === itemType || (dt.endsWith('*') && itemType.startsWith(dt.slice(0, -1))))
+      return (dt && AlexaDefinitions[cl][dt]) || {}
+    },
+    hasDefinition (cl, item) {
+      return Object.keys(this.getDefinition(cl, item)).length > 0
     },
     hasRequiredGroupAttributes (cl, item, items) {
       const { requires = [] } = this.getDefinition(cl, item)
