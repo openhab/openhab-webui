@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openhab.core.common.registry.RegistryChangeListener;
+import org.openhab.core.config.core.ConfigurableService;
 import org.openhab.core.events.EventPublisher;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
@@ -52,10 +53,11 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  *
  * @author Yannick Schaus - Initial contribution
  */
-@Component(service = HumanLanguageInterpreter.class, immediate = true, name = "org.openhab.opennlphli", property = {
-        "service.config.description.uri=voice:opennlphli", "service.config.label=OpenNLP Interpreter for HABot",
-        "service.config.category=voice" })
+@Component(service = HumanLanguageInterpreter.class, immediate = true, name = "org.openhab.opennlphli")
+@ConfigurableService(category = "voice", label = "OpenNLP Interpreter for HABot", description_uri = OpenNLPInterpreter.CONFIG_URI)
 public class OpenNLPInterpreter implements HumanLanguageInterpreter {
+
+    protected static final String CONFIG_URI = "voice:opennlphli";
 
     public static final Set<Locale> SUPPORTED_LOCALES = Set.of(Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN);
 
