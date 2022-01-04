@@ -92,7 +92,15 @@ export default {
   // Entertainment Attributes
   Channel: {
     itemTypes: ['Number', 'String'],
-    parameters: (item) => [p.channelMappings(item.stateDescription), p.channelRange(), p.retrievable()]
+    parameters: (item) => [
+      p.channelMappings(item.stateDescription, item.type === 'String'),
+      ...(item.type === 'Number' ? [p.channelRange()] : []),
+      p.retrievable()
+    ]
+  },
+  ChannelStep: {
+    itemTypes: ['String'],
+    parameters: () => [p.valueMapping('CHANNEL_UP', true), p.valueMapping('CHANNEL_DOWN', true)]
   },
   Input: {
     itemTypes: ['Number', 'String'],

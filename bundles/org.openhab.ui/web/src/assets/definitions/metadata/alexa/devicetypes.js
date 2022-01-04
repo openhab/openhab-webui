@@ -18,6 +18,7 @@ const entertainmentAttributes = [
   'VolumeLevel',
   'MuteState',
   'Channel',
+  'ChannelStep',
   'Input',
   'Playback',
   'PlaybackStop',
@@ -80,7 +81,7 @@ export default {
   },
   AirConditioner: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: ['PowerState', 'TargetTemperature', 'CurrentTemperature', ...fanAttributes]
+    supportedAttributes: ['TargetTemperature', 'CurrentTemperature', ...fanAttributes]
   },
   AirFreshener: {
     defaultAttributes: ['FanSpeed'],
