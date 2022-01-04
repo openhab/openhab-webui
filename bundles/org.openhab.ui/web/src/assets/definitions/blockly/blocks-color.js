@@ -16,7 +16,7 @@ export default function (f7) {
         .setCheck('Colour')
       this.setInputsInline(false)
       this.setOutput(true, 'String')
-      this.setColour(0)
+      this.setColour('%{BKY_COLOUR_HUE}')
       this.setTooltip('converts a colour\'s hex rgb representation to openHAB\'s hue-saturation-brightness string')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/items.html#state')
     }
