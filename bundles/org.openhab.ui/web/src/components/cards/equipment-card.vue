@@ -35,13 +35,13 @@ export default {
   },
   computed: {
     listContext () {
-      const standaloneEquipment = this.element.equipment.filter((i) => i.points.length === 0).map((i) => itemDefaultListComponent(i.item, true))
+      const standaloneEquipment = this.element.equipment.filter((i) => i.points.length === 0).map((i) => itemDefaultListComponent(i.item, this.itemPathLabel(i.item)))
       const equipmentWithPoints = this.element.equipment.filter((i) => i.points.length !== 0).map((i) => {
         return [
           {
             component: 'oh-list-item',
             config: {
-              title: i.item.label || i.item.name,
+              title: [this.itemPathLabel(i.item), i.item.label || i.item.name].filter((label) => label && label.length > 0).join(' > '),
               divider: true
             }
           },
