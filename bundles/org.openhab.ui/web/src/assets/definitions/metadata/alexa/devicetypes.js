@@ -16,7 +16,9 @@ const switchAttributes = ['PowerLevel', 'Percentage', ...genericDeviceAttributes
 
 const entertainmentAttributes = [
   'VolumeLevel',
+  'VolumeStep',
   'MuteState',
+  'MuteStep',
   'Channel',
   'Input',
   'Playback',

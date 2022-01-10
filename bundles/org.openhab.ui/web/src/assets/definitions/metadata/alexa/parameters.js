@@ -305,13 +305,6 @@ export default {
     multiple: true,
     visible: (_, config) => !!config.retrievable
   }),
-  stepSpeaker: () => ({
-    name: 'stepSpeaker',
-    label: 'Control Speaker in Discrete Steps',
-    type: 'BOOLEAN',
-    default: false,
-    advanced: true
-  }),
   supportedArmStates: () => ({
     name: 'supportedArmStates',
     label: 'Supported Arm States',
