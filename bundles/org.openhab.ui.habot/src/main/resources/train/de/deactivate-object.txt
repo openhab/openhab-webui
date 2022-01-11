@@ -1,25 +1,66 @@
 <START:object> Licht <END> aus
+<START:object> Licht <END> im <START:location> Wohnzimmer <END> aus
+<START:object> Licht <END> in der <START:location> Küche <END> aus
+<START:object> Licht <END> auf dem <START:location> Dachboden <END> aus
+<START:object> Licht <END> auf der <START:location> Terrasse <END> aus
 <START:object> Fernseher <END> aus
+<START:object> Fernseher <END> im <START:location> Wohnzimmer <END> aus
+<START:object> Fernseher <END> in der <START:location> Küche <END> aus
 <START:object> Lampe <END> aus
 <START:object> Player <END> aus
 <START:object> Musik <END> aus
 mach das <START:object> Licht <END> aus
+mach das <START:object> Licht <END> im <START:location> Wohnzimmer <END> aus
+mach das <START:object> Licht <END> in der <START:location> Küche <END> aus
+mach das <START:object> Licht <END> auf der <START:location> Terrasse <END> aus
+mach das <START:object> Licht <END> auf dem <START:location> Dachboden <END> aus
 mach den <START:object> Fernseher <END> aus
+mach den <START:object> Fernseher <END> im <START:location> Wohnzimmer <END> aus
+mach den <START:object> Fernseher <END> in der <START:location> Küche <END> aus
 mach die <START:object> Lampe <END> aus
 mach den <START:object> Player <END> aus
 mach die <START:object> Musik <END> aus
 bitte mach das <START:object> Licht <END> aus
+bitte mach das <START:object> Licht <END> im <START:location> Wohnzimmer <END> aus
+bitte mach das <START:object> Licht <END> in der <START:location> Küche <END> aus
+bitte mach das <START:object> Licht <END> auf dem <START:location> Dachboden <END> aus
+bitte mach das <START:object> Licht <END> auf der <START:location> Terrasse <END> aus
+bitte mach den <START:object> Fernseher <END> im <START:location> Wohnzimmer <END> aus
+bitte mach den <START:object> Fernseher <END> in der <START:location> Küche <END> aus
 bitte mach den <START:object> Fernseher <END> aus
 bitte mach die <START:object> Lampe <END> aus
 bitte mach den <START:object> Player <END> aus
 bitte mach die <START:object> Musik <END> aus
+mach bitte das <START:object> Licht <END> aus
+mach bitte das <START:object> Licht <END> im <START:location> Wohnzimmer <END> aus
+mach bitte das <START:object> Licht <END> in der <START:location> Küche <END> aus
+mach bitte das <START:object> Licht <END> auf dem <START:location> Dachboden <END> aus
+mach bitte das <START:object> Licht <END> auf der <START:location> Terrasse <END> aus
+mach bitte im <START:location> Wohnzimmer <END> das <START:object> Licht <END> aus
+mach bitte in der <START:location> Küche <END> das <START:object> Licht <END> aus
 mach bitte den <START:object> Fernseher <END> aus
 mach bitte die <START:object> Lampe <END> aus
 mach bitte den <START:object> Player <END> aus
 mach bitte die <START:object> Musik <END> aus
 schalte den <START:object> Fernseher <END> aus
+schalte den <START:object> Fernseher <END> im <START:location> Wohnzimmer <END> aus
+schalte den <START:object> Fernseher <END> in der <START:location> Küche <END> aus
+schalte den <START:object> Fernseher <END> auf dem <START:location> Dachboden <END> aus
+schalte den <START:object> Fernseher <END> auf der <START:location> Terrasse <END> aus
 schalte alle <START:object> Lichter <END> aus
 schalte die <START:object> Beleuchtung <END> aus
 schalte das <START:object> Licht <END> aus
-schalte die <START:object> Lampe <END> aus
 schalte das <START:object> Licht <END> im <START:location> Wohnzimmer <END> aus
+schalte das <START:object> Licht <END> in der <START:location> Küche <END> aus
+schalte das <START:object> Licht <END> auf der <START:location> Terrasse <END> aus
+schalte das <START:object> Licht <END> auf dem <START:location> Dachboden <END> aus
+schalte auf der <START:location> Terrasse <END> das <START:object> Licht <END> aus
+schalte auf dem <START:location> Dachboden <END> das <START:object> Licht <END> aus
+schalte die <START:object> Lampe <END> aus
+bitte schalte das <START:object> Licht <END> aus
+bitte schalte das <START:object> Licht <END> im <START:location> Wohnzimmer <END> aus
+bitte schalte das <START:object> Licht <END> in der <START:location> Küche <END> aus
+bitte schalte das <START:object> Licht <END> auf der <START:location> Terrasse <END> aus
+bitte schalte das <START:object> Licht <END> auf dem <START:location> Dachboden <END> aus
+bitte schalte im <START:location> Wohnzimmer <END> das <START:object> Licht <END> aus
+bitte schalte in der <START:location> Küche <END> das <START:object> Licht <END> aus

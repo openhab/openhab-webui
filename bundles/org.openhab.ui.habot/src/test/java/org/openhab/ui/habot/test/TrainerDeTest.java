@@ -50,6 +50,18 @@ public class TrainerDeTest extends AbstractTrainerTest {
         assertEquals(2, actual.getEntities().size());
         assertEquals("licht", actual.getEntities().get("object"));
         assertEquals("wohnzimmer", actual.getEntities().get("location"));
+
+        actual = interpret("mach auf der Terrasse das Licht an");
+        assertEquals(Skills.ACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("terrasse", actual.getEntities().get("location"));
+
+        actual = interpret("schalte das Licht auf dem Dachboden an");
+        assertEquals(Skills.ACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("dachboden", actual.getEntities().get("location"));
     }
 
     @Test
@@ -72,6 +84,72 @@ public class TrainerDeTest extends AbstractTrainerTest {
         assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
         assertEquals(1, actual.getEntities().size());
         assertEquals("licht", actual.getEntities().get("object"));
+        
+        actual = interpret("schalte das Licht im Wohnzimmer aus");
+        assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("wohnzimmer", actual.getEntities().get("location"));
+
+        actual = interpret("schalte das Licht im Schlafzimmer aus");
+        assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("schlafzimmer", actual.getEntities().get("location"));
+
+        actual = interpret("schalte das Licht in der Küche aus");
+        assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("küche", actual.getEntities().get("location"));
+
+        actual = interpret("schalte im Wohnzimmer das Licht aus");
+        assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("wohnzimmer", actual.getEntities().get("location"));
+
+        actual = interpret("schalte im Schlafzimmer das Licht aus");
+        assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("schlafzimmer", actual.getEntities().get("location"));
+
+        actual = interpret("schalte in der Küche das Licht aus");
+        assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("küche", actual.getEntities().get("location"));
+
+        actual = interpret("mache das Licht im Wohnzimmer aus");
+        assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("wohnzimmer", actual.getEntities().get("location"));
+
+        actual = interpret("mache das Licht im Schlafzimmer aus");
+        assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("schlafzimmer", actual.getEntities().get("location"));
+
+        actual = interpret("mache das Licht in der Küche aus");
+        assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("küche", actual.getEntities().get("location"));
+
+        actual = interpret("schalte das Licht auf der Terrasse aus");
+        assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("terrasse", actual.getEntities().get("location"));
+
+        actual = interpret("mache das Licht auf dem Dachboden aus");
+        assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
+        assertEquals(2, actual.getEntities().size());
+        assertEquals("licht", actual.getEntities().get("object"));
+        assertEquals("dachboden", actual.getEntities().get("location"));
     }
 
     @Test

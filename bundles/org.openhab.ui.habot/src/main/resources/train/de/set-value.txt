@@ -66,5 +66,8 @@ färbe das <START:object> Licht <END> im <START:location> Pool <END> <START:valu
 färbe das <START:object> Licht <END> im <START:location> Wohnzimmer <END> <START:value> orange <END>
 färbe das <START:object> Licht <END> im <START:location> Wohnzimmer <END> <START:value> weiß <END>
 färbe das <START:object> Licht <END> im <START:location> Büro <END> <START:value> blau <END>
+färbe das <START:object> Licht <END> in der <START:location> Küche <END> <START:value> orange <END>
+färbe das <START:object> Licht <END> in der <START:location> Speisekammer <END> <START:value> lila <END>
+färbe das <START:object> Licht <END> in der <START:location> Halle <END> <START:value> gelb <END>
 mach das <START:object> Licht <END> im <START:location> Pool <END> <START:value> rot <END>
 <START:object> Licht <END> in <START:value> rot <END> einfärben

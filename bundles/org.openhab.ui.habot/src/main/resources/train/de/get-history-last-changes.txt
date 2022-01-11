@@ -1,7 +1,10 @@
 wann hat sich die <START:object> Temperatur <END> das letzte mal geändert
 Wann wurde der <START:object> Fernseher <END> aus geschaltet
+Wann wurde der <START:object> Fernseher <END> ausgeschaltet
 wann wurde der letzte <START:object> Alarm <END> ausgelöst
 wann wurde der letzte <START:object> Wert <END> gesendet
+wann wurde die letzte <START:object> Bewegung <END> ausgelöst
+wann wurde der letzte <START:object> Bewegungsmelder <END> ausgelöst
 wann wurde der Status vom <START:object> Licht <END> zuletzt geändert
 wann wurde der Status vom <START:object> Sensor <END> zuletzt geändert
 wann wurde der Status vom <START:object> Fernseher <END> zuletzt geändert
