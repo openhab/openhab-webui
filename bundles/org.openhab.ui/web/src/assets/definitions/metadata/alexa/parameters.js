@@ -247,6 +247,13 @@ export default {
     required: true,
     pattern: 'https://.+'
   }),
+  requiresSetColorReset: () => ({
+    name: 'requiresSetColorReset',
+    label: 'Requires Reset on Set Color Requests',
+    type: 'BOOLEAN',
+    default: false,
+    visible: (_, config) => !!config.retrievable
+  }),
   requiresSetpointHold: () => ({
     name: 'requiresSetpointHold',
     label: 'Requires Hold on Setpoint Requests',

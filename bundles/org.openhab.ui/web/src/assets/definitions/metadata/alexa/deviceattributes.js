@@ -202,6 +202,7 @@ export default {
       ...(item.type === 'Dimmer' ? [p.colorTemperatureBinding()] : []),
       p.colorTemperatureRange(),
       p.increment(item.type === 'Dimmer' ? 'INCREASE/DECREASE' : 500),
+      ...(item.type === 'Number' ? [p.requiresSetColorReset()] : []),
       p.retrievable()
     ]
   },
