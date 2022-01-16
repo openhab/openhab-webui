@@ -263,12 +263,12 @@
         <block type="lists_sort" />
         <sep gap="48" />
         <block type="dicts_create_with" />
-        <block type="dicts_get" >
-            <value name="key">
-              <shadow type="text">
-                <field name="TEXT">key</field>
-              </shadow>
-            </value>
+        <block type="dicts_get">
+          <value name="key">
+            <shadow type="text">
+              <field name="TEXT">key</field>
+            </shadow>
+          </value>
         </block>
       </category>
 
