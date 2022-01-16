@@ -26,8 +26,8 @@
 
 <style lang="stylus">
 .item-divider > span
-  flex-shrink:1
-  overflow: hidden;
+  flex-shrink 1
+  overflow hidden
 </style>
 
 <script>
