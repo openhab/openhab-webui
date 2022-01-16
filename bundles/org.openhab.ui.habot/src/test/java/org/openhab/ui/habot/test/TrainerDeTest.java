@@ -84,7 +84,7 @@ public class TrainerDeTest extends AbstractTrainerTest {
         assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
         assertEquals(1, actual.getEntities().size());
         assertEquals("licht", actual.getEntities().get("object"));
-        
+
         actual = interpret("schalte das Licht im Wohnzimmer aus");
         assertEquals(Skills.DEACTIVATE_OBJECT, actual.getName());
         assertEquals(2, actual.getEntities().size());
