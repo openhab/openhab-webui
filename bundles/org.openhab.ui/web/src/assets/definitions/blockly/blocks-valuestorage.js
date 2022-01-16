@@ -52,6 +52,25 @@ export default function defineOHBlocks_Variables (f7) {
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 
+  Blockly.Blocks['oh_check_undefined_value'] = {
+    init: function () {
+      this.appendValueInput('key')
+      this.appendDummyInput()
+        .appendField('is undefined')
+      this.setInputsInline(true)
+      this.setOutput(true, null)
+      this.setColour(0)
+      this.setTooltip('returns whether the given value is undefined')
+      this.setHelpUrl('')
+    }
+  }
+
+  Blockly.JavaScript['oh_check_undefined_value'] = function (block) {
+    let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
+    let code = `typeof this.storedValues[${key}] === 'undefined'`
+    return [code, Blockly.JavaScript.ORDER_NONE]
+  }
+
   function addStoredValues () {
     let storedValues = 'if (typeof this.storedValues === \'undefined\') {\n  this.storedValues = [];\n}'
     Blockly.JavaScript.provideFunction_('storedValues', [storedValues])

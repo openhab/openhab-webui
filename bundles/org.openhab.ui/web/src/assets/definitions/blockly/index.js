@@ -10,7 +10,8 @@ import defineTimerBlocks from './blocks-timers'
 import defineValueStorageBlocks from './blocks-valuestorage'
 import defineEphemerisBlocks from './blocks-ephemeris'
 import defineScriptsBlocks from './blocks-scripts'
-import definePeristenceBlocks from './blocks-persistence'
+import definePersistenceBlocks from './blocks-persistence'
+import defineColorBlocks from './blocks-color'
 import { defineLibraries } from './libraries'
 
 import Blockly from 'blockly'
@@ -28,6 +29,7 @@ export default function (f7, libraryDefinitions, data) {
   defineValueStorageBlocks(f7)
   defineEphemerisBlocks(f7)
   defineScriptsBlocks(f7)
-  definePeristenceBlocks(f7)
+  definePersistenceBlocks(f7)
+  defineColorBlocks(f7)
   defineLibraries(libraryDefinitions)
 }
