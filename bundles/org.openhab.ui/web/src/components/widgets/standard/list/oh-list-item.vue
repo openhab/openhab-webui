@@ -1,6 +1,6 @@
 <template>
   <f7-list-button v-if="config.listButton && !context.editmode" :title="config.title || 'Action'" :color="config.color || 'blue'" @click="performAction" />
-  <f7-list-item divider :title="config.title" v-else-if="config.divider && !context.editmode" />
+  <f7-list-item divider ref="divider" :title="config.title" v-else-if="config.divider && !context.editmode" />
   <f7-list-item v-else v-bind="config" :divider="config.divider && !context.editmode"
                 :media-item="context.parent.component.config.mediaList && !config.divider"
                 :badge="(config.divider) ? 'Divider' : (config.listButton) ? 'List button' : config.badge"
@@ -24,6 +24,12 @@
   </f7-list-item>
 </template>
 
+<style lang="stylus">
+.item-divider > span
+  flex-shrink 1
+  overflow hidden
+</style>
+
 <script>
 import mixin from '../../widget-mixin'
 import { actionsMixin } from '../../widget-actions'
@@ -32,6 +38,49 @@ import { OhListItemDefinition } from '@/assets/definitions/widgets/standard/list
 export default {
   name: 'oh-list-item',
   mixins: [mixin, actionsMixin],
-  widget: OhListItemDefinition
+  widget: OhListItemDefinition,
+  mounted () {
+    mixin.mounted.call(this)
+    if (this.config.divider && !this.context.editmode) {
+      this.$nextTick(function () {
+        this.trimTitle()
+      })
+    }
+  },
+  created () {
+    if (this.config.divider && !this.context.editmode) {
+      window.addEventListener('resize', this.duringResize)
+    }
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.duringResize)
+    if (this.timer) clearTimeout(this.timer)
+  },
+  methods: {
+    duringResize () {
+      if (this.timer) clearTimeout(this.timer)
+      this.timer = setTimeout(this.resized, 200)
+    },
+    resized () {
+      if (this.$refs.divider && this.$refs.divider.$el && this.$refs.divider.$el.firstChild) {
+        this.$refs.divider.$el.firstChild.textContent = this.config.title
+      }
+      this.trimTitle()
+    },
+    trimTitle () {
+      if (this.$refs.divider && this.$refs.divider.$el && this.$refs.divider.$el.firstChild) {
+        let element = this.$refs.divider.$el.firstChild
+        let trimCount = 0
+        if (element.scrollWidth > element.offsetWidth) {
+          let value = '…' + element.textContent
+          do {
+            value = '…' + value.substr(2)
+            trimCount++
+            element.textContent = value
+          } while (element.scrollWidth > element.offsetWidth && trimCount < 100)
+        }
+      }
+    }
+  }
 }
 </script>

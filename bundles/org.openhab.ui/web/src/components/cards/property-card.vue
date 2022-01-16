@@ -54,7 +54,7 @@ export default {
               divider: true
             }
           },
-          ...this.itemsByPointType[pointType].map((p) => itemDefaultListComponent(p, true))
+          ...this.itemsByPointType[pointType].map((p) => itemDefaultListComponent(p, this.itemPathLabel(p)))
         ])
       }
 

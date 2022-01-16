@@ -50,10 +50,31 @@ export default {
           }
       }
     },
+    // Recursively builds path in model (sorted array of relations to ancestors, either Equipment or Location) for an item
+    // that has semantics configuration and returns it
+    buildPathInModel (item) {
+      if (!item.metadata || !item.metadata.semantics) return
+      if (item.modelPath) return item.modelPath
+      // console.log(`Building path for ${item.name} with semantics ${item.metadata.semantics.config}`)
+      let parent = null
+      if (item.metadata.semantics.config && item.metadata.semantics.config.isPointOf) {
+        parent = (this.items.find((i) => i.name === item.metadata.semantics.config.isPointOf))
+      } else if (item.metadata.semantics.config && item.metadata.semantics.config.isPartOf) {
+        parent = (this.items.find((i) => i.name === item.metadata.semantics.config.isPartOf))
+      } else if (item.metadata.semantics.config && item.metadata.semantics.config.hasLocation) {
+        parent = (this.items.find((i) => i.name === item.metadata.semantics.config.hasLocation))
+      }
+      item.modelPath = parent ? [...this.buildPathInModel(parent), parent] : []
+      return item.modelPath
+    },
     loadModel (page) {
       this.$oh.api.get('/rest/items?metadata=semantics,listWidget,widgetOrder')
         .then((data) => {
           this.items = data
+          // build model path for all model items
+          data.forEach((item) => {
+            if (item.metadata && item.metadata.semantics) this.buildPathInModel(item)
+          })
           // get the location items
           const locations = data.filter((item, index, items) => {
             return item.metadata && item.metadata.semantics &&
