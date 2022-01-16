@@ -225,9 +225,10 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   Blockly.Blocks['oh_script_inline'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('inline script')
-        .appendField(new Blockly.FieldMultilineInput('insert javascript code here (multiple lines are supported)'), 'inlineScript')
-      this.setInputsInline(true)
+        .appendField('inline script (advanced)')
+      this.appendDummyInput()
+        .appendField(new Blockly.FieldMultilineInput('for (var i = 0; i < 10; i++) {\n  print(i.toString());\n}'), 'inlineScript')
+      this.setInputsInline(false)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)

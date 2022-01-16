@@ -708,6 +708,7 @@
               </shadow>
             </value>
           </block>
+          <sep gap="48" />
           <block type="oh_script_inline" />
         </category>
 
