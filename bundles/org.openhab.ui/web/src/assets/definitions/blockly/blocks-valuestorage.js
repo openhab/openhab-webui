@@ -60,7 +60,7 @@ export default function defineOHBlocks_Variables (f7) {
       this.setInputsInline(true)
       this.setOutput(true, null)
       this.setColour(0)
-      this.setTooltip('retrieves the value that was previously stored for that particular script/rule')
+      this.setTooltip('returns whether the given value is undefined')
       this.setHelpUrl('')
     }
   }
