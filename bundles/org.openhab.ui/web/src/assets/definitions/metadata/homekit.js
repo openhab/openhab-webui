@@ -222,14 +222,24 @@ const valveTypeParameter = {
 const invertedParameter = {
   name: 'inverted',
   label: 'inverted',
-  type: 'BOOLEAN',
-  description: 'invert the value for HomeKit'
+  type: 'TEXT',
+  description: 'invert the value for HomeKit (default is true)',
+  limitToOptions: true,
+  options: [
+    { value: 'false', label: 'false' },
+    { value: 'true', label: 'true' }
+  ]
 }
 
 const valveTimerParameter = {
   name: 'homekitTimer',
   label: 'Timer',
-  type: 'BOOLEAN'
+  type: 'TEXT',
+  limitToOptions: true,
+  options: [
+    { value: 'false', label: 'false' },
+    { value: 'true', label: 'true' }
+  ]
 }
 
 const valveDefaultDuration = {
