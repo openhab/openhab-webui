@@ -112,11 +112,19 @@ export default {
   },
   VolumeLevel: {
     itemTypes: ['Dimmer', 'Number'],
-    parameters: (item) => [p.increment(10), ...(item.type === 'Number' ? [p.stepSpeaker()] : [])]
+    parameters: () => [p.increment(10), p.retrievable()]
+  },
+  VolumeStep: {
+    itemTypes: ['String'],
+    parameters: () => [p.valueMapping('VOLUME_UP', true), p.valueMapping('VOLUME_DOWN', true)]
   },
   MuteState: {
     itemTypes: ['Switch'],
-    parameters: () => [p.inverted(), p.stepSpeaker()]
+    parameters: () => [p.inverted(), p.retrievable()]
+  },
+  MuteStep: {
+    itemTypes: ['String'],
+    parameters: () => [p.valueMapping('MUTE', true)]
   },
   EqualizerBass: {
     itemTypes: ['Dimmer', 'Number'],
