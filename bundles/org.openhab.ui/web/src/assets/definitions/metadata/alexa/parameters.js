@@ -39,10 +39,10 @@ export default {
     multiple: true,
     required: !defaultValue
   }),
-  channelMappings: (stateDescription) => ({
+  channelMappings: (stateDescription, required) => ({
     name: 'channelMappings',
     label: 'Channel Mappings',
-    description: 'Each mapping formatted as <code>channelNumber=channelName<code>',
+    description: 'Each mapping formatted as <code>channelId=channelName<code>',
     type: 'TEXT',
     default:
       stateDescription &&
@@ -51,7 +51,8 @@ export default {
         .filter((option) => !isNaN(option.value))
         .map((option) => `${option.value}=${option.label}`),
     placeholder: '2=CBS\n4=NBC\n7=ABC\n13=PBS',
-    multiple: true
+    multiple: true,
+    required
   }),
   channelRange: () => ({
     name: 'range',
