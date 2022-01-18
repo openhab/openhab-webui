@@ -45,7 +45,7 @@
         </f7-menu-dropdown>
       </f7-menu-item>
     </f7-menu>
-    <div @click.capture="eventControl" style="width: 100%; height: 100%; position:absolute;">
+    <div @click.capture="eventControl" style="width: 100%; height: 100%; position:absolute;" class="disable-user-select">
       <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length" @click="context.editmode.addWidget(context.component, null, context.parent)" class="oh-canvas-item-content" />
       <generic-widget-component v-else-if="context.component.slots.default.length" :context="childContext(context.component.slots.default[0])" @command="onCommand" class="oh-canvas-item-content"
                                 :class="{
