@@ -93,8 +93,8 @@ export default {
   Channel: {
     itemTypes: ['Number', 'String'],
     parameters: (item) => [
-      p.channelMappings(item.stateDescription, item.type === 'String'),
-      ...(item.type === 'Number' ? [p.channelRange()] : []),
+      p.channelMappings(item.type === 'String'),
+      ...(item.type === 'Number' ? [p.channelRange()] : [p.supportsChannelNumber()]),
       p.retrievable()
     ]
   },

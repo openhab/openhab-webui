@@ -39,17 +39,11 @@ export default {
     multiple: true,
     required: !defaultValue
   }),
-  channelMappings: (stateDescription, required) => ({
+  channelMappings: (required) => ({
     name: 'channelMappings',
     label: 'Channel Mappings',
     description: 'Each mapping formatted as <code>channelId=channelName<code>',
     type: 'TEXT',
-    default:
-      stateDescription &&
-      stateDescription.options &&
-      stateDescription.options
-        .filter((option) => !isNaN(option.value))
-        .map((option) => `${option.value}=${option.label}`),
     placeholder: '2=CBS\n4=NBC\n7=ABC\n13=PBS',
     multiple: true,
     required
@@ -404,6 +398,13 @@ export default {
     multiple: true,
     advanced: true,
     visible: (_, config) => !config.binding
+  }),
+  supportsChannelNumber: () => ({
+    name: 'supportsChannelNumber',
+    label: 'Supports Channel Requests by Number',
+    type: 'BOOLEAN',
+    default: false,
+    advanced: true
   }),
   supportsDeactivation: () => ({
     name: 'supportsDeactivation',
