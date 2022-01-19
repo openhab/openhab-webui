@@ -1,7 +1,7 @@
 <template>
   <oh-list-item :context="context">
     <div slot="after">
-      {{ context.store[config.item].displayState || context.store[config.item].state }}
+      {{ config.hideState ? '' : context.store[config.item].displayState || context.store[config.item].state }}
     </div>
   </oh-list-item>
 </template>
