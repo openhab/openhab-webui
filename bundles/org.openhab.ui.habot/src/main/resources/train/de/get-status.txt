@@ -9,13 +9,13 @@ Wie hoch ist die <START:object> Temperatur <END> im <START:location> Obergeschos
 Wie <START:object> warm <END> ist es im <START:location> Wohnzimmer <END>
 Wie ist die <START:object> Temperatur <END> in der <START:location> Küche <END>
 Wie ist die <START:object> Temperatur <END> im <START:location> Bad <END>
-Wie ist die <START:object> Temperatur <END> auf dem  <START:location> WC <END>
+Wie ist die <START:object> Temperatur <END> auf dem <START:location> WC <END>
 <START:object> Heizung <END> in der <START:location> Küche <END>
 <START:object> Heizung <END> im <START:location> Büro <END>
-<START:object> Heizung <END> auf dem  <START:location> WC <END>
+<START:object> Heizung <END> auf dem <START:location> WC <END>
 <START:object> Temperatur <END> in der <START:location> Küche <END>
 <START:object> Temperatur <END> im <START:location> Bad <END>
-<START:object> Temperatur <END> auf dem  <START:location> WC <END>
+<START:object> Temperatur <END> auf dem <START:location> WC <END>
 Ist das <START:object> Garagentor <END> offen
 Ist die <START:object> Haustüre <END> offen
 Ist das <START:object> Licht <END> an
@@ -26,7 +26,7 @@ Ist das <START:object> Licht <END> im <START:location> Keller <END> an
 Ist das <START:object> Licht <END> im <START:location> Kinderzimmer <END> an
 Ist das <START:object> Licht <END> im <START:location> Garten <END> an
 Ist das <START:object> Licht <END> im <START:location> Büro <END> an
-Ist das <START:object> Licht <END> auf dem  <START:location> WC <END> an
+Ist das <START:object> Licht <END> auf dem <START:location> WC <END> an
 Ist das <START:object> Licht <END> <START:location> draußen <END> an
 Ist das <START:object> Flutlicht <END> <START:location> draußen <END> an
 Ist das <START:object> Licht <END> <START:location> irgendwo <END> an
@@ -48,4 +48,7 @@ Ist <START:location> drinnen <END> <START:object> Licht <END> an
 <START:object> Licht <END> im <START:location> Kinderzimmer <END>
 <START:object> Licht <END> im <START:location> Schlafzimmer <END>
 <START:object> Licht <END> im <START:location> Büro <END>
-<START:object> Licht <END> auf dem  <START:location> WC <END>
+<START:object> Licht <END> auf dem <START:location> WC <END>
+Läuft das <START:object> Radio <END>
+Läuft der <START:object> Fernseher <END> in der <START:location> Küche <END>
+Läuft die <START:object> Musik <END> im <START:location> Wohnzimmer <END>
