@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="disable-user-select">
     <div v-for="(elements, idx) in groups" :key="idx">
       <f7-block-title medium v-if="elements.length > 0 && elements[0].separator">
         {{ elements[0].separator }}

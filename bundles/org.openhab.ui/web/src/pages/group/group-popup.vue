@@ -1,6 +1,6 @@
 <template>
   <f7-popup @popup:open="onOpen" @popup:close="onClose">
-    <f7-page class="analyzer-content">
+    <f7-page class="analyzer-content disable-user-select">
       <f7-navbar :title="(item) ? item.label || item.name : ''" :back-link="$t('dialogs.back')" />
 
       <div class="group-item-control no-padding no-margin">

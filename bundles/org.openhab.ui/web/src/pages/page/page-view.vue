@@ -1,6 +1,6 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" hide-bars-on-scroll :style="pageStyle">
-    <f7-navbar v-if="!page || !page.config.hideNavbar" :back-link="(showBackButton) ? $t('page.navbar.back') : undefined">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" hide-bars-on-scroll :style="pageStyle" class="disable-user-select">
+    <f7-navbar v-if="!page || !page.config.hideNavbar" :back-link="(showBackButton) ? $t('page.navbar.back') : undefined" class="disable-user-select">
       <f7-nav-left v-if="!showBackButton">
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
       </f7-nav-left>

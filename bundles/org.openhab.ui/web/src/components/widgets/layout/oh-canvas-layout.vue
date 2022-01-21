@@ -1,5 +1,5 @@
 <template>
-  <div ref="ohCanvasLayout" class="oh-canvas-layout" :class="context.editMode ? 'margin-top' : ''">
+  <div ref="ohCanvasLayout" class="oh-canvas-layout disable-user-select" :class="context.editMode ? 'margin-top' : ''">
     <f7-block v-if="context.editmode">
       <f7-menu class="configure-layout-menu">
         <f7-menu-item
@@ -72,7 +72,6 @@
         background: context.editmode
           ? 'var(--f7-page-master-border-color)'
           : false,
-        'user-select': context.editmode ? 'none' : 'auto',
         width: style.width + 'px',
         height: style.height + 'px',
         transform: `scale(${style.scale})`,
@@ -97,7 +96,7 @@
           left: 0;
         ">
         <img
-          class="oh-canvas-background"
+          class="oh-canvas-background disable-user-drag"
           :src="config.imageUrl"
           :srcset="config.imageSrcSet">
       </div>
