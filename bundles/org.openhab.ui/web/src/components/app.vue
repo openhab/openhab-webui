@@ -280,6 +280,12 @@ export default {
       theme = 'aurora'
     }
 
+    let contextRoot = '/'
+    if (window.document.baseURI) {
+      contextRoot = new URL(window.document.baseURI).pathname
+      if (contextRoot.slice(-1) === '/') contextRoot = contextRoot.slice(0, -1)
+    }
+
     return {
       init: false,
       ready: false,
@@ -307,6 +313,7 @@ export default {
           iosSwipeBack: !this.$device.ios || this.$device.cordova,
           auroraSwipeBack: !this.$device.ios || this.$device.cordova,
           pushState: true, // !this.$device.cordova
+          pushStateRoot: contextRoot,
           pushStateSeparator: ''
         },
         // Enable panel left visibility breakpoint
@@ -376,7 +383,7 @@ export default {
       return this.ready && this.user && this.user.roles && this.user.roles.indexOf('administrator') >= 0
     },
     serverDisplayUrl () {
-      return (this.serverUrl || window.location.origin)
+      return (this.serverUrl || window.document.baseURI || window.location.origin)
     }
   },
   methods: {
@@ -510,7 +517,7 @@ export default {
       this.cleanSession().then(() => {
         this.loggedIn = false
         this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
-        window.location = window.location.origin
+        window.location = window.document.baseURI
         if (this.$device.cordova) {
           this.loginScreenOpened = true
         }

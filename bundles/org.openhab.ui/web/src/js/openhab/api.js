@@ -9,6 +9,14 @@ function wrapPromise (f7promise) {
   })
 }
 
+function basedURI (uri) {
+  if (uri.charAt(0) === '/') {
+    if (window.document.baseURI.slice(-1) === '/') {
+      return window.document.baseURI.slice(0, -1) + uri
+    } else return window.document.baseURI + uri
+  } else return uri
+}
+
 Framework7.request.setup({
   xhrFields: { withCredentials: true },
   beforeSend (xhr) {
@@ -33,19 +41,19 @@ export default {
   getPlain (uri, data, contentType) {
     return wrapPromise(Framework7.request.promise({
       method: 'GET',
-      url: uri,
+      url: basedURI(uri),
       data,
       processData: false,
       contentType: contentType || 'text/plain'
     }))
   },
   post (uri, data, dataType) {
-    return wrapPromise(Framework7.request.promise.postJSON(uri, data, dataType))
+    return wrapPromise(Framework7.request.promise.postJSON(basedURI(uri), data, dataType))
   },
   postPlain (uri, data, dataType, contentType) {
     return wrapPromise(Framework7.request.promise({
       method: 'POST',
-      url: uri,
+      url: basedURI(uri),
       data,
       processData: false,
       contentType: contentType || 'text/plain',
@@ -55,7 +63,7 @@ export default {
   put (uri, data) {
     return wrapPromise(Framework7.request.promise({
       method: 'PUT',
-      url: uri,
+      url: basedURI(uri),
       data: JSON.stringify(data),
       processData: false,
       // dataType: 'json',
@@ -65,7 +73,7 @@ export default {
   putPlain (uri, data, dataType, contentType) {
     return wrapPromise(Framework7.request.promise({
       method: 'PUT',
-      url: uri,
+      url: basedURI(uri),
       data,
       processData: false,
       // dataType: 'json',
@@ -76,13 +84,13 @@ export default {
   head (uri) {
     return wrapPromise(Framework7.request.promise({
       method: 'HEAD',
-      url: uri
+      url: basedURI(uri)
     }))
   },
   delete (uri, data) {
     return wrapPromise(Framework7.request.promise({
       method: 'DELETE',
-      url: uri,
+      url: basedURI(uri),
       processData: false,
       // dataType: 'json',
       contentType: 'application/json'

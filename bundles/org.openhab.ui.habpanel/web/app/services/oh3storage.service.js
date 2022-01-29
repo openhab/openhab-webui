@@ -26,9 +26,9 @@
             } else {
                 $http({
                     method: 'POST',
-                    url: '/rest/auth/token',
-                    data: 'grant_type=refresh_token&client_id=' + window.location.origin +
-                        '&redirect_uri=' + window.location.origin + '&refresh_token=' + refreshToken,
+                    url: document.baseURI + '/rest/auth/token',
+                    data: 'grant_type=refresh_token&client_id=' + document.baseURI +
+                        '&redirect_uri=' + document.baseURI + '&refresh_token=' + refreshToken,
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 })
                 .then(function (data) {

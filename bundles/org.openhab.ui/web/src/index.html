@@ -26,6 +26,26 @@
   <link rel="icon" href="/res/icons/128x128.png" type="image/png" sizes="128x128" crossorigin="use-credentials">
   <link rel="manifest" href="/manifest.json" crossorigin="use-credentials">
   <% } %>
+  <script type="text/javascript">
+      function getCookie(cookieName) {
+        var name = cookieName + "=";
+        var decodedCookies = decodeURIComponent(document.cookie);
+        var cookies = decodedCookies.split(';');
+        for(var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          if (cookie.indexOf(name) == 0) {
+            return cookie.substring(name.length, cookie.length);
+          }
+        }
+        return null;
+      }
+      var OPENHAB_CONTEXT_PATH = getCookie('X-OPENHAB-CONTEXT-PATH') || '';
+      var baseURI = document.location.protocol + '//' + document.location.hostname +
+            (document.location.port ? ':' + document.location.port : '') + OPENHAB_CONTEXT_PATH;
+      var base = document.createElement('base');
+      base.href = baseURI;
+      document.getElementsByTagName('head')[0].appendChild(base);
+  </script>
   <!-- built styles file will be auto injected -->
 </head>
 <body>

@@ -216,7 +216,7 @@ export default {
       this.cleanSession().then(() => {
         this.loggedIn = false
         this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
-        window.location = window.location.origin
+        window.location = window.document.baseURI
         if (this.$device.cordova) {
           this.loginScreenOpened = true
         }
