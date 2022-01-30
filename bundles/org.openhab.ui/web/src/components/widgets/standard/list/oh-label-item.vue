@@ -1,6 +1,6 @@
 <template>
   <oh-list-item :context="context">
-    <div slot="after">
+    <div slot="after" v-if="config.after === undefined">
       {{ context.store[config.item].displayState || context.store[config.item].state }}
     </div>
   </oh-list-item>
