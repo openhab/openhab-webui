@@ -158,6 +158,10 @@
                 "!doc": "This method retrieves a single item from the registry.",
                 "!type": "fn(name: string) -> Item"
             },
+            "getItems": {
+                "!doc": "Returns all items.",
+                "!type": "fn() -> [Item]"
+            },
             "getItemsByTag": {
                 "!doc": "Returns a list of items containing all of the given tags.",
                 "!type": "fn(tag?: [string]) -> [Item]"
