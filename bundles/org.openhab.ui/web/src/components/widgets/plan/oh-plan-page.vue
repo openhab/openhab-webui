@@ -17,6 +17,8 @@
               'oh-plan-black-background': config.backgroundColor === 'black',
               'oh-plan-blackwhite-background': config.backgroundColor === 'blackwhite',
               'oh-plan-dark-mode-invert': config.darkModeInvert,
+              'oh-plan-tooltip-black': config.tooltipColor === 'black',
+              'oh-plan-tooltip-blackwhite': config.tooltipColor === 'blackwhite',
     }"
     @update:center="centerUpdate"
     @update:zoom="zoomUpdate">
@@ -57,6 +59,34 @@
       background-color black
     &.oh-plan-dark-mode-invert .leaflet-image-layer
       filter invert()
+
+// Tooltip Color
+
+dark-tooltip()
+  .leaflet-tooltip
+    background-color black
+    color white
+    border-color black
+    box-shadow 0 1px 3px rgb(255 255 255 / 40%)
+    &.leaflet-tooltip-top
+      &::before
+        border-top-color black
+    &.leaflet-tooltip-bottom
+      &::before
+        border-bottom-color black
+    &.leaflet-tooltip-left
+      &::before
+        border-left-color black
+    &.leaflet-tooltip-right
+      &::before
+        border-right-color black
+
+.oh-plan-tooltip-black
+  dark-tooltip()
+
+.theme-dark
+  .oh-plan-tooltip-blackwhite
+    dark-tooltip()
 </style>
 
 <script>
