@@ -106,7 +106,8 @@ export default {
     },
     mapOptions () {
       return Object.assign({
-        zoomSnap: 0.1
+        zoomSnap: 0.1,
+        tap: false
       }, this.config.noZoomOrDrag ? {
         dragging: false,
         touchZoom: false,
