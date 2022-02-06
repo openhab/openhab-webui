@@ -11,7 +11,7 @@
       <div v-if="config.useTooltipAsLabel" style="white-space: nowrap" :style="tooltipStyle">
         {{ tooltip }}
       </div>
-      <oh-icon v-else-if="config.icon" :icon="config.icon" :color="config.iconColor" :width="config.iconWidth || config.iconSize || 40" :height="config.iconHeight || config.iconSize || 40" :state="config.iconUseState ? state : undefined" />
+      <oh-icon v-else-if="config.icon" :style="iconStyle" :icon="config.icon" :color="config.iconColor" :width="config.iconWidth || config.iconSize || 40" :height="config.iconHeight || config.iconSize || 40" :state="config.iconUseState ? state : undefined" />
     </l-icon>
     <l-popup v-if="context.editmode != null && !dragging">
       <div class="display-flex">
@@ -79,6 +79,11 @@ export default {
         fontSize: this.config.tooltipFontSize,
         color: this.config.tooltipColor
       }, this.config.tooltipStyle)
+    },
+    iconStyle () {
+      return Object.assign({
+        transform: 'rotate(' + this.config.iconRotation + 'deg)'
+      }, this.config.iconStyle)
     }
   },
   asyncComputed: {
