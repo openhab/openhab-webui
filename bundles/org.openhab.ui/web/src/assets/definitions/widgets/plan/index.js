@@ -1,6 +1,6 @@
 // definitions for the plan page & markers
 
-import { WidgetDefinition, pt, pi, pg, pb, pn, po } from '../helpers.js'
+import { WidgetDefinition, pt, pi, pg, pb, pn, po, pd } from '../helpers.js'
 import { actionGroup, actionParams } from '../actions.js'
 
 export const OhPlanPageDefinition = () => new WidgetDefinition('oh-plan-page', 'Floor plan', 'Displays markers on an image overlay')
@@ -39,7 +39,18 @@ export const OhPlanMarkerDefinition = () => new WidgetDefinition('oh-plan-marker
     pb('tooltipPermanent', 'Always display the tooltip'),
     pb('useTooltipAsLabel', 'Use Tooltip as Label', 'Put the tooltip text directly over the plan instead of displaying an icon'),
     pt('tooltipFontSize', 'Tooltip Font Size', 'Font size of the tooltip text'),
-    pt('tooltipColor', 'Tooltip color', 'Color of the tooltip')
+    pt('tooltipColor', 'Tooltip color', 'Color of the tooltip'),
+    po('tooltipDirection', 'Tooltip Direction', 'The direction of the tooltip', [
+      { value: 'top', label: 'Top' },
+      { value: 'bottom', label: 'Bottom' },
+      { value: 'left', label: 'Left' },
+      { value: 'right', label: 'Right' },
+      { value: 'center', label: 'Center' },
+      { value: 'auto', label: 'Auto' }
+    ]).a(),
+    pn('tooltipOffsetX', 'Tooltip Offset X', 'The X offset of the tooltip from the marker in pixels').a(),
+    pn('tooltipOffsetY', 'Tooltip Offset Y', 'The Y offset of the tooltip from the marker in pixels').a(),
+    pd('tooltipOpacity', 'Tooltip Opacity', 'The opacity of the tooltip (0-1)').a()
   ])
   .paramGroup(pg('zoomVisibility', 'Zoom Visibility', 'Hide this marker outside certain zoom labels'), [
     pn('zoomVisibilityMin', 'Zoom Visibility Minimum', 'Visible only when zoomed to above this level (no limit if empty)').a(),

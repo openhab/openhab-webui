@@ -62,7 +62,10 @@ export default {
     },
     tooltipOptions () {
       return {
-        permanent: this.config.tooltipPermanent
+        permanent: this.config.tooltipPermanent,
+        direction: this.config.tooltipDirection || 'auto',
+        offset: [this.config.tooltipOffsetX || 0, this.config.tooltipOffsetY || 0],
+        opacity: this.config.tooltipOpacity || 0.9
       }
     },
     state () {
