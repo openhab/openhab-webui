@@ -78,7 +78,7 @@ export default {
       return Object.assign({
         fontSize: this.config.tooltipFontSize,
         color: this.config.tooltipColor
-      }, this.config.tooltipStyles)
+      }, this.config.tooltipStyle)
     }
   },
   asyncComputed: {
