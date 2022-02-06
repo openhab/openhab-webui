@@ -52,7 +52,7 @@ export const OhPlanMarkerDefinition = () => new WidgetDefinition('oh-plan-marker
       { value: 'right', label: 'Right' },
       { value: 'center', label: 'Center' },
       { value: 'auto', label: 'Auto' }
-    ]).a(),
+    ]),
     pn('tooltipOffsetX', 'Tooltip Offset X', 'The X offset of the tooltip from the marker in pixels').a(),
     pn('tooltipOffsetY', 'Tooltip Offset Y', 'The Y offset of the tooltip from the marker in pixels').a(),
     pd('tooltipOpacity', 'Tooltip Opacity', 'The opacity of the tooltip (0-1)').a()
