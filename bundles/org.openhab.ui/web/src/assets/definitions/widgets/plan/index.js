@@ -17,7 +17,12 @@ export const OhPlanPageDefinition = () => new WidgetDefinition('oh-plan-page', '
       { value: 'black', label: 'Always Black' },
       { value: 'blackwhite', label: 'Black or White' }
     ]),
-    pb('darkModeInvert', 'Invert Image in Dark Mode', 'Apply an invert filter to the image in dark mode - use with images in black & white or grayscale for best results')
+    pb('darkModeInvert', 'Invert Image in Dark Mode', 'Apply an invert filter to the image in dark mode - use with images in black & white or grayscale for best results'),
+    po('tooltipColor', 'Tooltip Color', 'Color of the tooltip. "Black or White" means it will be black in dark mode and white in light mode', [
+      { value: 'white', label: 'White' },
+      { value: 'black', label: 'Black' },
+      { value: 'blackwhite', label: 'Black or White' }
+    ])
   ])
 
 export const OhPlanMarkerDefinition = () => new WidgetDefinition('oh-plan-marker', 'Floor Plan Marker', 'A marker on a floor plan', 'map_pin')
