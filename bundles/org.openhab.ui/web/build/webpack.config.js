@@ -204,7 +204,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: './index.html',
       template: './src/index.html',
-      inject: true,
+      inject: false,
       minify: env === 'production' ? {
         collapseWhitespace: true,
         removeComments: true,
@@ -219,8 +219,8 @@ module.exports = {
     }),
     new CopyWebpackPlugin([
       {
-        from: resolvePath('src/res'),
-        to: resolvePath(isCordova ? 'cordova/www/res' : 'www/res')
+        from: resolvePath('src/images'),
+        to: resolvePath(isCordova ? 'cordova/www/images' : 'www/images')
       },
       {
         from: resolvePath('src/manifest.json'),

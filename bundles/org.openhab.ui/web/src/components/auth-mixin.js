@@ -31,8 +31,8 @@ export default {
 
           const payload = Utils.serializeObject({
             'grant_type': 'authorization_code',
-            'client_id': window.location.origin,
-            'redirect_uri': window.location.origin,
+            'client_id': window.location.origin + baseUrl,
+            'redirect_uri': window.location.origin + baseUrl + '/',
             'code': queryParams.code,
             'code_verifier': codeVerifier
           })
@@ -65,8 +65,8 @@ export default {
         const refreshToken = this.getRefreshToken()
         const payload = Utils.serializeObject({
           'grant_type': 'refresh_token',
-          'client_id': window.location.origin,
-          'redirect_uri': window.location.origin,
+          'client_id': window.location.origin + baseUrl,
+          'redirect_uri': window.location.origin + baseUrl + '/',
           'refresh_token': refreshToken
         })
 

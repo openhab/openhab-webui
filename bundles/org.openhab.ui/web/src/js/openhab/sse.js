@@ -53,10 +53,10 @@ function newSSEConnection (path, readyCallback, messageCallback, errorCallback) 
 
 export default {
   connect (path, topics, messageCallback, errorCallback) {
-    return newSSEConnection(path, null, messageCallback, errorCallback)
+    return newSSEConnection(baseUrl + path, null, messageCallback, errorCallback)
   },
   connectStateTracker (path, readyCallback, updateCallback, errorCallback) {
-    return newSSEConnection(path, readyCallback, updateCallback, errorCallback)
+    return newSSEConnection(baseUrl + path, readyCallback, updateCallback, errorCallback)
   },
   close (client, callback) {
     if (!client) return

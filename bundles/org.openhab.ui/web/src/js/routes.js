@@ -299,7 +299,7 @@ export default [
   },
   /* For Cordova */
   {
-    path: '/res/(.*)',
+    path: '/images/(.*)',
     redirect: '/'
   },
   {

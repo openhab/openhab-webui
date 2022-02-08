@@ -20,7 +20,7 @@
       <f7-row>
         <f7-col>
           <f7-list>
-            <f7-list-button color="blue" :external="true" href="/changePassword">
+            <f7-list-button color="blue" :external="true" :href="changePasswordUrl()">
               {{ $t('profile.changePassword') }}
             </f7-list-button>
           </f7-list>
@@ -77,7 +77,7 @@
                   </f7-swipeout-button>
                 </f7-swipeout-actions>
               </f7-list-item>
-              <f7-list-button color="blue" :external="true" href="/createApiToken">
+              <f7-list-button color="blue" :external="true" :href="createApiTokenUrl()">
                 {{ $t('profile.apiTokens.create') }}
               </f7-list-button>
             </f7-list>
@@ -216,7 +216,7 @@ export default {
       this.cleanSession().then(() => {
         this.loggedIn = false
         this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
-        window.location = window.location.origin
+        window.location = window.location.origin + baseUrl
         if (this.$device.cordova) {
           this.loginScreenOpened = true
         }
@@ -224,6 +224,12 @@ export default {
         this.$f7.preloader.hide()
         this.$f7.dialog.alert(this.$t('profile.sessions.signOut.error') + err)
       })
+    },
+    changePasswordUrl () {
+      return baseUrl + '/changePassword'
+    },
+    createApiTokenUrl () {
+      return baseUrl + '/createApiToken'
     }
   }
 }

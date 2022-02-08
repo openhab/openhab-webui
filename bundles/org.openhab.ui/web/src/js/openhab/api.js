@@ -28,24 +28,24 @@ Framework7.request.setup({
 
 export default {
   get (uri, data) {
-    return wrapPromise(Framework7.request.promise.json(uri, data))
+    return wrapPromise(Framework7.request.promise.json(baseUrl + uri, data))
   },
   getPlain (uri, data, contentType) {
     return wrapPromise(Framework7.request.promise({
       method: 'GET',
-      url: uri,
+      url: baseUrl + uri,
       data,
       processData: false,
       contentType: contentType || 'text/plain'
     }))
   },
   post (uri, data, dataType) {
-    return wrapPromise(Framework7.request.promise.postJSON(uri, data, dataType))
+    return wrapPromise(Framework7.request.promise.postJSON(baseUrl + uri, data, dataType))
   },
   postPlain (uri, data, dataType, contentType) {
     return wrapPromise(Framework7.request.promise({
       method: 'POST',
-      url: uri,
+      url: baseUrl + uri,
       data,
       processData: false,
       contentType: contentType || 'text/plain',
@@ -55,7 +55,7 @@ export default {
   put (uri, data) {
     return wrapPromise(Framework7.request.promise({
       method: 'PUT',
-      url: uri,
+      url: baseUrl + uri,
       data: JSON.stringify(data),
       processData: false,
       // dataType: 'json',
@@ -65,7 +65,7 @@ export default {
   putPlain (uri, data, dataType, contentType) {
     return wrapPromise(Framework7.request.promise({
       method: 'PUT',
-      url: uri,
+      url: baseUrl + uri,
       data,
       processData: false,
       // dataType: 'json',
@@ -76,13 +76,13 @@ export default {
   head (uri) {
     return wrapPromise(Framework7.request.promise({
       method: 'HEAD',
-      url: uri
+      url: baseUrl + uri
     }))
   },
   delete (uri, data) {
     return wrapPromise(Framework7.request.promise({
       method: 'DELETE',
-      url: uri,
+      url: baseUrl + uri,
       processData: false,
       // dataType: 'json',
       contentType: 'application/json'
