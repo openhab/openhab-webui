@@ -55,7 +55,7 @@
                           :key="thingType.UID"
                           :link="thingType.UID"
                           :title="thingType.label"
-                          :footer="thingType.description"
+                          :footer="getHeading(thingType.description)"
                           :header="thingType.UID"
                           :badge="thingType.bridge ? 'Bridge' : ''" badge-color="blue"
                           media-item />
@@ -210,6 +210,16 @@ export default {
           this.$f7.dialog.alert('An error occurred: ' + err)
         })
       })
+    },
+    getHeading (description) {
+      const subDocument = document.createElement('div')
+      subDocument.innerHTML = description
+
+      if (subDocument.childElementCount > 0) {
+        return subDocument.firstElementChild.textContent
+      } else {
+        return description
+      }
     }
   }
 }
