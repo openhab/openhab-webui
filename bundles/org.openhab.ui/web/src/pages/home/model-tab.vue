@@ -7,9 +7,9 @@
       <div class="model-cards-section" v-if="elements.length > 0">
         <div v-for="(element, idx) in elements.filter((e) => !isCardExcluded(e))" :key="idx">
           <location-card v-if="type === 'locations' && !element.separator && (element.equipment.length > 0 || element.properties.length > 0)" :key="element.key"
-                         type="location" :element="element" :context="cardContext(element)" :parent-location="parentLocationName(element.item)" />
+                         type="location" :element="element" :context="cardContext(element)" :parent-location="parentLocationName(element.item)" :tab-context="tabContext(type)" />
           <equipment-card v-if="type === 'equipment' && !element.separator" :key="element.key"
-                          type="equipment" :element="element" :context="cardContext(element)" />
+                          type="equipment" :element="element" :context="cardContext(element)" :tab-context="tabContext(type)" />
           <property-card v-if="type === 'properties' && !element.separator" :key="element.key"
                          type="property" :element="element" :context="cardContext(element)" />
         </div>
@@ -122,6 +122,14 @@ export default {
         return parent.item.label || parent.item.name
       }
       return ''
+    },
+    tabContext (type) {
+      const page = this.page
+      if (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config) {
+        return page.slots[type][0].config
+      } else {
+        return {}
+      }
     }
   }
 }

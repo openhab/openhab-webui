@@ -30,6 +30,7 @@ import ModelCard from './model-card.vue'
 
 export default {
   mixins: [mixin, CardMixin],
+  props: ['tabContext'],
   components: {
     ModelCard
   },

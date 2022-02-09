@@ -1,11 +1,11 @@
 <template>
   <f7-segmented round outline strong class="rollershutter-controls">
-    <f7-button @click="up()" large :icon-ios="upIcon" :icon-md="upIcon" :icon-aurora="upIcon" icon-size="24" icon-color="gray" />
-    <f7-button v-if="config.stateInCenter" @click="stop()" large class="state">
+    <f7-button @click.stop="up()" large :icon-ios="upIcon" :icon-md="upIcon" :icon-aurora="upIcon" icon-size="24" icon-color="gray" />
+    <f7-button v-if="config.stateInCenter" @click.stop="stop()" large class="state">
       <small>{{ context.store[config.item].state }}</small>
     </f7-button>
-    <f7-button v-else @click="stop()" large :icon-ios="stopIcon" :icon-md="stopIcon" :icon-aurora="stopIcon" icon-size="24" icon-color="red" />
-    <f7-button @click="down()" large :icon-ios="downIcon" :icon-md="downIcon" :icon-aurora="downIcon" icon-size="24" icon-color="gray" />
+    <f7-button v-else @click.stop="stop()" large :icon-ios="stopIcon" :icon-md="stopIcon" :icon-aurora="stopIcon" icon-size="24" icon-color="red" />
+    <f7-button @click.stop="down()" large :icon-ios="downIcon" :icon-md="downIcon" :icon-aurora="downIcon" icon-size="24" icon-color="gray" />
   </f7-segmented>
 </template>
 

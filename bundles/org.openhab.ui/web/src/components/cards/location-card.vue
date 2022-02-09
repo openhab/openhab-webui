@@ -47,7 +47,7 @@
 
 <script>
 import mixin from '@/components/widgets/widget-mixin'
-import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
+import itemDefaultListComponent, { itemAccordionEquipmentComponent } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
 import StatusBadge from './glance/location/status-badge.vue'
@@ -55,7 +55,7 @@ import MeasurementBadge from './glance/location/measurement-badge.vue'
 
 export default {
   mixins: [mixin, CardMixin],
-  props: ['parentLocation'],
+  props: ['parentLocation', 'tabContext'],
   components: {
     ModelCard,
     StatusBadge,
@@ -85,29 +85,37 @@ export default {
       }
     },
     equipmentListContext () {
-      const standaloneEquipment = this.element.equipment.filter((i) => i.points.length === 0).map((i) => itemDefaultListComponent(i.item))
-      const equipmentWithPoints = this.element.equipment.filter((i) => i.points.length !== 0).map((i) => {
-        return [
-          {
-            component: 'oh-list-item',
-            config: {
-              title: i.item.label || i.item.name,
-              divider: true
-            }
-          },
-          ...i.points.map((p) => itemDefaultListComponent(p))
-        ]
-      })
+      let components = []
+      const isAccordion = this.tabContext && this.tabContext.eqptNesting && this.tabContext.eqptNesting === 'accordion'
+      if (!isAccordion) {
+        const standaloneEquipment = this.element.equipment.filter((eqpt) => eqpt.item.equipmentOrPoints.length === 0).map((eqpt) => itemDefaultListComponent(eqpt.item))
+        const equipmentWithPoints = this.element.equipment.filter((eqpt) => eqpt.item.equipmentOrPoints.length !== 0).map((eqpt) => {
+          return [
+            {
+              component: 'oh-list-item',
+              config: {
+                title: eqpt.item.label || eqpt.item.name,
+                divider: true
+              }
+            },
+            ...eqpt.item.equipmentOrPoints.map((p) => itemDefaultListComponent(p))
+          ]
+        })
+        components = [...standaloneEquipment, ...equipmentWithPoints].flat()
+      } else {
+        components = this.element.item.equipmentOrPoints.map((item) => itemAccordionEquipmentComponent(item, this.tabContext || {}))
+      }
 
       return {
         store: this.$store.getters.trackedItems,
         component: {
           component: 'oh-list',
           config: {
+            accordionEquipment: isAccordion,
             mediaList: true
           },
           slots: {
-            default: [...standaloneEquipment, ...equipmentWithPoints].flat()
+            default: [...components].flat()
           }
         }
       }

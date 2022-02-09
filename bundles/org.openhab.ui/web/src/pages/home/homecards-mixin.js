@@ -65,7 +65,47 @@ export default {
         parent = (this.items.find((i) => i.name === item.metadata.semantics.config.hasLocation))
       }
       item.modelPath = parent ? [...this.buildPathInModel(parent), parent] : []
+      item.parent = parent
+      item.children = []
+      item.locations = []
+      item.points = []
+      item.properties = []
+      item.equipment = []
+      item.equipmentOrPoints = []
+
+      if (parent) {
+        parent.children.push(item)
+
+        if (item.metadata.semantics.value.startsWith('Location')) {
+          parent.locations.push(item)
+        }
+
+        if (item.metadata.semantics.value.startsWith('Point')) {
+          parent.points.push(item)
+          parent.equipmentOrPoints.push(item)
+        }
+
+        if (item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) {
+          parent.properties.push(item)
+        }
+
+        if (item.metadata.semantics.value.startsWith('Equipment')) {
+          parent.equipment.push(item)
+          parent.equipmentOrPoints.push(item)
+        }
+      }
+
       return item.modelPath
+    },
+    sortModel (item) {
+      item.children = item.children.sort(compareItems)
+      item.locations = item.locations.sort(compareItems)
+      item.points = item.points.sort(compareItems)
+      item.properties = item.properties.sort(compareItems)
+      item.equipment = item.equipment.sort(compareItems)
+      item.equipmentOrPoints = item.equipmentOrPoints.sort(compareItems)
+
+      item.children.forEach(child => this.sortModel(child))
     },
     loadModel (page) {
       this.$oh.api.get('/rest/items?metadata=semantics,listWidget,widgetOrder')
@@ -75,6 +115,11 @@ export default {
           data.forEach((item) => {
             if (item.metadata && item.metadata.semantics) this.buildPathInModel(item)
           })
+
+          // Sort each items children arrays
+          data.filter((item) => item.modelPath && item.modelPath.length === 0)
+            .forEach((item) => this.sortModel(item))
+
           // get the location items
           const locations = data.filter((item, index, items) => {
             return item.metadata && item.metadata.semantics &&
@@ -82,25 +127,12 @@ export default {
           }).sort(this.compareObjects).map((l) => {
             return {
               item: l,
-              properties: data.filter((item, index, items) => {
-                return item.metadata && item.metadata.semantics &&
-                  item.metadata.semantics && item.metadata.semantics.config &&
-                  item.metadata.semantics.config.relatesTo &&
-                  item.metadata.semantics.config.hasLocation === l.name
-              }).sort(this.compareObjects),
-              equipment: data.filter((item, index, items) => {
-                return item.metadata && item.metadata.semantics &&
-                  item.metadata.semantics && item.metadata.semantics.config &&
-                  item.metadata.semantics.value.indexOf('Equipment') === 0 &&
-                  item.metadata.semantics.config.hasLocation === l.name
-              }).sort(this.compareObjects).map((item) => {
+              properties: (l.properties || []).sort(this.compareObjects),
+              equipment: (l.equipment || []).sort(this.compareObjects).map((item2) => {
                 return {
-                  item: item,
-                  points: data.filter((item2, index, items) => {
-                    return item2.metadata && item2.metadata.semantics &&
-                      item2.metadata.semantics && item2.metadata.semantics.config &&
-                      item2.metadata.semantics.config.isPointOf === item.name
-                  }).sort(this.compareObjects)
+                  item: item2,
+                  points: (item2.points || []).sort(this.compareObjects),
+                  equipment: (item2.equipment || []).sort(this.compareObjects)
                 }
               })
             }
@@ -116,11 +148,7 @@ export default {
             if (!prev[equipmentType]) prev[equipmentType] = []
             const equipmentWithPoints = {
               item: item,
-              points: data.filter((item2, index, items) => {
-                return item2.metadata && item2.metadata.semantics &&
-                  item2.metadata.semantics && item2.metadata.semantics.config &&
-                  item2.metadata.semantics.config.isPointOf === item.name
-              }).sort(this.compareObjects)
+              points: (item.points || []).sort(this.compareObjects)
             }
             prev[equipmentType].push(equipmentWithPoints)
             return prev

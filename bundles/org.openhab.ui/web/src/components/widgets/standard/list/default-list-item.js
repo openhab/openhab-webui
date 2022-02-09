@@ -104,3 +104,54 @@ export default function itemDefaultListComponent (item, itemNameAsFooterOrLocati
 
   return component
 }
+
+function promotedEquipmentContext (item, config) {
+  let c = itemDefaultListComponent(item)
+  const parts = (config.eqptPromotedLabel && config.eqptPromotedLabel.length > 0) ? config.eqptPromotedLabel : false
+  c.config.title = [
+    !parts || parts.includes('equipment') ? (item.parent.label || item.parent.name) : null, // Default setting: display parent name
+    parts && parts.includes('separator') ? '>' : null,
+    parts && parts.includes('item') ? (item.label || item.name) : null
+  ].flat().join(' ')
+  return c
+}
+
+export function itemAccordionEquipmentComponent (item, config) {
+  console.log('Accordion equipment context for ' + item.name)
+  if (item.equipmentOrPoints.length === 0) {
+    // Item is a point or equipment without points or sub-equipment
+    return itemDefaultListComponent(item)
+  }
+
+  if (item.equipmentOrPoints.length === 1 && config.eqptPromoteSingle) {
+    // TODO: take into account visibility for promoting single elements (do not count siblings not visible)
+    return promotedEquipmentContext(item.equipmentOrPoints[0], config)
+  }
+
+  // Try to promote main item based on widgetOrder metadata
+  let promoted = config.eqptPromoteMain ? item.points.find((p) => {
+    return p.metadata && p.metadata.widgetOrder && p.metadata.widgetOrder && p.metadata.widgetOrder.value && (+p.metadata.widgetOrder.value) === 0
+  }) : null
+
+  if (promoted) console.log(`Will promote ${promoted.name} for ${item.name}`)
+
+  let c = promoted ? promotedEquipmentContext(promoted, config) : itemDefaultListComponent(item)
+  c.config.action = undefined
+  c.config.after = ''
+  c.slots = {
+    accordion: [
+      {
+        component: 'oh-list',
+        config: {
+          mediaList: true,
+          accordionEquipment: true
+        },
+        slots: {
+          default: item.equipmentOrPoints.filter((i) => { return i !== promoted }).map((i) => itemAccordionEquipmentComponent(i, config))
+        }
+      }
+    ]
+  }
+
+  return c
+}
