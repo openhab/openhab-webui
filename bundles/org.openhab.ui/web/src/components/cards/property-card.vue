@@ -29,7 +29,7 @@
 
 <script>
 import mixin from '@/components/widgets/widget-mixin'
-import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
+import itemDefaultListComponent, { itemPathLabel } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
 import { loadLocaleMessages } from '@/js/i18n'
@@ -54,7 +54,7 @@ export default {
               divider: true
             }
           },
-          ...this.itemsByPointType[pointType].map((p) => itemDefaultListComponent(p, this.itemPathLabel(p)))
+          ...this.itemsByPointType[pointType].map((p) => itemDefaultListComponent(p, itemPathLabel(p)))
         ])
       }
 

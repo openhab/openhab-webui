@@ -10,7 +10,8 @@ export default {
   data () {
     return {
       model: {},
-      modelReady: false
+      modelReady: false,
+      loopError: null
     }
   },
   computed: {
@@ -52,10 +53,9 @@ export default {
     },
     // Recursively builds path in model (sorted array of relations to ancestors, either Equipment or Location) for an item
     // that has semantics configuration and returns it
-    buildPathInModel (item) {
+    buildPathInModel (item, filteredItems) {
       if (!item.metadata || !item.metadata.semantics) return
       if (item.modelPath) return item.modelPath
-      // console.log(`Building path for ${item.name} with semantics ${item.metadata.semantics.config}`)
       let parent = null
       if (item.metadata.semantics.config && item.metadata.semantics.config.isPointOf) {
         parent = (this.items.find((i) => i.name === item.metadata.semantics.config.isPointOf))
@@ -64,7 +64,13 @@ export default {
       } else if (item.metadata.semantics.config && item.metadata.semantics.config.hasLocation) {
         parent = (this.items.find((i) => i.name === item.metadata.semantics.config.hasLocation))
       }
-      item.modelPath = parent ? [...this.buildPathInModel(parent), parent] : []
+      if (parent && parent.semanticLoopDetector) {
+        this.loopError = `A a loop has been detected in the semantic model: ${parent.name} is both descendant and parent of ${item.name}`
+        throw this.loopError
+      }
+      item.semanticLoopDetector = true
+      item.modelPath = parent ? [...(this.buildPathInModel(parent, filteredItems)), parent] : []
+      delete item.semanticLoopDetector
       item.parent = parent
       item.children = []
       item.locations = []
@@ -78,6 +84,7 @@ export default {
 
         if (item.metadata.semantics.value.startsWith('Location')) {
           parent.locations.push(item)
+          filteredItems.locations.push(item)
         }
 
         if (item.metadata.semantics.value.startsWith('Point')) {
@@ -87,11 +94,13 @@ export default {
 
         if (item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) {
           parent.properties.push(item)
+          filteredItems.properties.push(item)
         }
 
         if (item.metadata.semantics.value.startsWith('Equipment')) {
           parent.equipment.push(item)
           parent.equipmentOrPoints.push(item)
+          filteredItems.equipment.push(item)
         }
       }
 
@@ -111,55 +120,46 @@ export default {
       this.$oh.api.get('/rest/items?metadata=semantics,listWidget,widgetOrder')
         .then((data) => {
           this.items = data
+          let filteredItems = {
+            equipment: [],
+            properties: [],
+            locations: []
+          }
+
           // build model path for all model items
           data.forEach((item) => {
-            if (item.metadata && item.metadata.semantics) this.buildPathInModel(item)
+            if (item.metadata && item.metadata.semantics) this.buildPathInModel(item, filteredItems)
           })
 
-          // Sort each items children arrays
+          // Sort each semantic model item children arrays (start at top-level nodes)
           data.filter((item) => item.modelPath && item.modelPath.length === 0)
             .forEach((item) => this.sortModel(item))
 
           // get the location items
-          const locations = data.filter((item, index, items) => {
-            return item.metadata && item.metadata.semantics &&
-              item.metadata.semantics.value.indexOf('Location') === 0
-          }).sort(this.compareObjects).map((l) => {
+          const locations = filteredItems.locations.sort(this.compareObjects).map((l) => {
             return {
               item: l,
-              properties: (l.properties || []).sort(this.compareObjects),
-              equipment: (l.equipment || []).sort(this.compareObjects).map((item2) => {
+              properties: l.points,
+              equipment: l.equipment.map((item) => {
                 return {
-                  item: item2,
-                  points: (item2.points || []).sort(this.compareObjects),
-                  equipment: (item2.equipment || []).sort(this.compareObjects)
+                  item: item,
+                  points: item.points,
+                  equipment: item.equipment
                 }
               })
             }
           })
 
           // get the equipment items
-          const equipment = data.filter((item, index, items) => {
-            return item.metadata && item.metadata.semantics &&
-              item.metadata.semantics &&
-              item.metadata.semantics.value.indexOf('Equipment') === 0
-          }).sort(this.compareObjects).reduce((prev, item, i, properties) => {
+          const equipment = filteredItems.equipment.sort(this.compareObjects).reduce((prev, item, i, properties) => {
             const equipmentType = item.metadata.semantics.value.substring(item.metadata.semantics.value.lastIndexOf('_')).replace('_', '')
             if (!prev[equipmentType]) prev[equipmentType] = []
-            const equipmentWithPoints = {
-              item: item,
-              points: (item.points || []).sort(this.compareObjects)
-            }
-            prev[equipmentType].push(equipmentWithPoints)
+            prev[equipmentType].push(item)
             return prev
           }, {})
 
           // get the property items
-          const properties = data.filter((item, index, items) => {
-            return item.metadata && item.metadata.semantics &&
-              item.metadata.semantics && item.metadata.semantics.config &&
-              item.metadata.semantics.config.relatesTo
-          }).sort(this.compareObjects).reduce((prev, item, i, properties) => {
+          const properties = filteredItems.properties.sort(this.compareObjects).reduce((prev, item, i, properties) => {
             const property = item.metadata.semantics.config.relatesTo.split('_')[1]
             if (!prev[property]) prev[property] = []
             prev[property].push(item)

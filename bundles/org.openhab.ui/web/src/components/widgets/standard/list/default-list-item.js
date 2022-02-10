@@ -105,9 +105,16 @@ export default function itemDefaultListComponent (item, itemNameAsFooterOrLocati
   return component
 }
 
-function promotedEquipmentContext (item, config) {
-  let c = itemDefaultListComponent(item)
-  const parts = (config.eqptPromotedLabel && config.eqptPromotedLabel.length > 0) ? config.eqptPromotedLabel : false
+export function itemPathLabel (item) {
+  if (!item.modelPath) return '(?) > ' + item.name
+  return item.modelPath.map((parent) => {
+    return parent.label || parent.name
+  }).join(' > ')
+}
+
+function promotedEquipmentContext (item, config, itemNameAsFooterOrLocation) {
+  let c = itemDefaultListComponent(item, itemNameAsFooterOrLocation)
+  const parts = (config.equipmentPromotedLabel && config.equipmentPromotedLabel.length > 0) ? config.equipmentPromotedLabel : false
   c.config.title = [
     !parts || parts.includes('equipment') ? (item.parent.label || item.parent.name) : null, // Default setting: display parent name
     parts && parts.includes('separator') ? '>' : null,
@@ -116,26 +123,23 @@ function promotedEquipmentContext (item, config) {
   return c
 }
 
-export function itemAccordionEquipmentComponent (item, config) {
-  console.log('Accordion equipment context for ' + item.name)
+export function itemAccordionEquipmentComponent (item, config, itemNameAsFooterOrLocation) {
   if (item.equipmentOrPoints.length === 0) {
     // Item is a point or equipment without points or sub-equipment
-    return itemDefaultListComponent(item)
+    return itemDefaultListComponent(item, itemNameAsFooterOrLocation)
   }
 
-  if (item.equipmentOrPoints.length === 1 && config.eqptPromoteSingle) {
+  if (item.equipmentOrPoints.length === 1 && config.equipmentPromoteSingle) {
     // TODO: take into account visibility for promoting single elements (do not count siblings not visible)
-    return promotedEquipmentContext(item.equipmentOrPoints[0], config)
+    return promotedEquipmentContext(item.equipmentOrPoints[0], config, itemNameAsFooterOrLocation)
   }
 
   // Try to promote main item based on widgetOrder metadata
-  let promoted = config.eqptPromoteMain ? item.points.find((p) => {
+  let promoted = config.equipmentPromoteMain ? item.points.find((p) => {
     return p.metadata && p.metadata.widgetOrder && p.metadata.widgetOrder && p.metadata.widgetOrder.value && (+p.metadata.widgetOrder.value) === 0
   }) : null
 
-  if (promoted) console.log(`Will promote ${promoted.name} for ${item.name}`)
-
-  let c = promoted ? promotedEquipmentContext(promoted, config) : itemDefaultListComponent(item)
+  let c = promoted ? promotedEquipmentContext(promoted, config, itemNameAsFooterOrLocation) : itemDefaultListComponent(item, itemNameAsFooterOrLocation)
   c.config.action = undefined
   c.config.after = ''
   c.slots = {
@@ -147,11 +151,45 @@ export function itemAccordionEquipmentComponent (item, config) {
           accordionEquipment: true
         },
         slots: {
-          default: item.equipmentOrPoints.filter((i) => { return i !== promoted }).map((i) => itemAccordionEquipmentComponent(i, config))
+          default: item.equipmentOrPoints.filter((i) => { return i !== promoted }).map((i) => itemAccordionEquipmentComponent(i, config, false))
         }
       }
     ]
   }
 
   return c
+}
+
+export function equipmentListComponent (items, config, isLocationContext) {
+  let components = []
+  const isAccordion = config && config.equipmentNesting && config.equipmentNesting === 'accordion'
+  if (!isAccordion) {
+    const standaloneEquipment = items.filter((eqpt) => eqpt.equipmentOrPoints.length === 0).map((eqpt) => itemDefaultListComponent(eqpt))
+    const equipmentWithPoints = items.filter((eqpt) => eqpt.equipmentOrPoints.length !== 0).map((eqpt) => {
+      return [
+        {
+          component: 'oh-list-item',
+          config: {
+            title: isLocationContext ? (eqpt.label || eqpt.name) : [itemPathLabel(eqpt), eqpt.label || eqpt.name].filter((label) => label && label.length > 0).join(' > '),
+            divider: true
+          }
+        },
+        ...eqpt.equipmentOrPoints.map((p) => itemDefaultListComponent(p))
+      ]
+    })
+    components = [...standaloneEquipment, ...equipmentWithPoints].flat()
+  } else {
+    components = items.map((item) => itemAccordionEquipmentComponent(item, config || {}, isLocationContext ? false : itemPathLabel(item)))
+  }
+
+  return {
+    component: 'oh-list',
+    config: {
+      accordionEquipment: isAccordion,
+      mediaList: true
+    },
+    slots: {
+      default: [...components].flat()
+    }
+  }
 }

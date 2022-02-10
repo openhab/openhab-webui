@@ -24,20 +24,20 @@ export const OhHomePageDefinition = () => new WidgetDefinition('oh-home-page', '
 const EquipmentListParameterGroup = () => pg('equipmentList', 'Equipment List', 'General settings for equipment lists in this tab')
 
 const EquipmentListParameters = () => [
-  pt('eqptNesting', 'Display sub-equipment levels')
+  pt('equipmentNesting', 'Display sub-equipment levels')
     .o([
       { value: 'nested', label: 'Nested pages for sub-equipment (default)' },
       { value: 'accordion', label: 'Equipment items grouped as accordion cards' }
     ]),
-  pb('eqptPromoteSingle', 'Promote single item equipments', 'Display groups with a single Point as a single item'),
-  pb('eqptPromoteMain', 'Promote the main item of an equipment', 'Promote the main item of an equipment (widgetOrder equal to 0) as the equipment representation'),
-  pt('eqptPromotedLabel', 'Label promoted elements', 'Choose what elements to display in label of promoted items')
+  pb('equipmentPromoteSingle', 'Promote single item equipments', 'Display groups with a single Point as a single item'),
+  pb('equipmentPromoteMain', 'Promote the main item of an equipment', 'Promote the main item of an equipment (widgetOrder equal to 0) as the equipment representation'),
+  pt('equipmentPromotedLabel', 'Label promoted elements', 'Choose what elements to display in label of promoted items')
     .o([
       { value: 'equipment', label: 'Label of the equipment' },
       { value: 'separator', label: 'Separator character (>)' },
       { value: 'item', label: 'Label of the item within the equipment' }
     ]).m().v((value, configuration, configDescription, parameters) => {
-      return configuration.eqptPromoteSingle === true || configuration.eqptPromoteMain === true
+      return configuration.equipmentPromoteSingle === true || configuration.equipmentPromoteMain === true
     })
 ]
 

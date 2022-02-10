@@ -117,11 +117,7 @@ export default {
       return context
     },
     parentLocationName (item) {
-      if (item.metadata.semantics.config && item.metadata.semantics.config.isPartOf) {
-        const parent = (this.model.locations.find((i) => i.item.name === item.metadata.semantics.config.isPartOf))
-        return parent.item.label || parent.item.name
-      }
-      return ''
+      return item.parent ? item.parent.label || item.parent.name : ''
     },
     tabContext (type) {
       const page = this.page

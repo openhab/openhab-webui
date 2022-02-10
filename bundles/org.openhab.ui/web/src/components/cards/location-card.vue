@@ -47,7 +47,7 @@
 
 <script>
 import mixin from '@/components/widgets/widget-mixin'
-import itemDefaultListComponent, { itemAccordionEquipmentComponent } from '@/components/widgets/standard/list/default-list-item'
+import itemDefaultListComponent, { equipmentListComponent } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
 import StatusBadge from './glance/location/status-badge.vue'
@@ -85,39 +85,9 @@ export default {
       }
     },
     equipmentListContext () {
-      let components = []
-      const isAccordion = this.tabContext && this.tabContext.eqptNesting && this.tabContext.eqptNesting === 'accordion'
-      if (!isAccordion) {
-        const standaloneEquipment = this.element.equipment.filter((eqpt) => eqpt.item.equipmentOrPoints.length === 0).map((eqpt) => itemDefaultListComponent(eqpt.item))
-        const equipmentWithPoints = this.element.equipment.filter((eqpt) => eqpt.item.equipmentOrPoints.length !== 0).map((eqpt) => {
-          return [
-            {
-              component: 'oh-list-item',
-              config: {
-                title: eqpt.item.label || eqpt.item.name,
-                divider: true
-              }
-            },
-            ...eqpt.item.equipmentOrPoints.map((p) => itemDefaultListComponent(p))
-          ]
-        })
-        components = [...standaloneEquipment, ...equipmentWithPoints].flat()
-      } else {
-        components = this.element.item.equipmentOrPoints.map((item) => itemAccordionEquipmentComponent(item, this.tabContext || {}))
-      }
-
       return {
         store: this.$store.getters.trackedItems,
-        component: {
-          component: 'oh-list',
-          config: {
-            accordionEquipment: isAccordion,
-            mediaList: true
-          },
-          slots: {
-            default: [...components].flat()
-          }
-        }
+        component: equipmentListComponent(this.element.item.equipment, this.tabContext, true)
       }
     }
   }
