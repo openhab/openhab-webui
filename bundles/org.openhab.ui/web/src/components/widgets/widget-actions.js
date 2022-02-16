@@ -30,7 +30,7 @@ export const actionsMixin = {
     },
     performAction (evt, prefix) {
       if (!this.context || !this.config) return
-      const actionPropsParameterGroup = this.config[((prefix) ? prefix += '_' : '') + 'actionPropsParameterGroup']
+      const actionPropsParameterGroup = this.config[((prefix) ? prefix + '_' : '') + 'actionPropsParameterGroup']
       const actionConfig = (actionPropsParameterGroup) ? this.evaluateExpression('$props', this.context.props) : this.config
       prefix = (actionPropsParameterGroup) ? actionPropsParameterGroup.replace(/action/gi, '') : prefix
       prefix = (prefix) ? prefix += '_' : ''
@@ -231,6 +231,17 @@ export const actionsMixin = {
           console.log('Invalid action: ' + action)
           break
       }
+      return true
+    },
+    onTaphold (event) {
+      this.performAction(event, 'taphold')
+    },
+    onContextMenu (event) {
+      if (this.performAction(event, 'taphold')) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      // System contextual menu will be displayed
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <f7-button v-bind="config" @click="clicked">
+  <f7-button v-bind="config" @click="clicked" @taphold.native="onTaphold($event)" @contextmenu.native="onContextMenu($event)">
     <template v-if="context.component.slots && context.component.slots.default">
       <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" />
     </template>
