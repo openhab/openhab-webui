@@ -40,7 +40,7 @@
             <select @change="updateLinkedItem(cl, accessory.label, $event.target.value)">
               <option value="" />
               <option v-for="mbr in item.members" :value="mbr.name" :key="mbr.id" :selected="isLinked(cl, accessory.label, mbr)">
-                {{ mbr.label }}
+                {{ mbr.label }} ({{ mbr.name }})
               </option>
             </select>
           </f7-list-item>
