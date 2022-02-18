@@ -1,209 +1,210 @@
-const accessories = {
+export const accessories = {
   'AirQualitySensor': [
-    'AirQuality',
-    'OzoneDensity',
-    'NitrogenDioxideDensity',
-    'SulphurDioxideDensity',
-    'PM25Density',
-    'PM10Density',
-    'VOCDensity',
-    'ActiveStatus',
-    'FaultStatus',
-    'TamperedStatus',
-    'BatteryLowStatus'
+    { label: 'AirQuality', mandatory: true},
+    { label: 'OzoneDensity', mandatory: false},
+    { label: 'NitrogenDioxideDensity', mandatory: false},
+    { label: 'SulphurDioxideDensity', mandatory: false},
+    { label: 'PM25Density', mandatory: false},
+    { label: 'PM10Density', mandatory: false},
+    { label: 'VOCDensity', mandatory: false},
+    { label: 'ActiveStatus', mandatory: false},
+    { label: 'FaultStatus', mandatory: false},
+    { label: 'TamperedStatus', mandatory: false},
+    { label: 'BatteryLowStatus', mandatory: false}
   ],
   'LeakSensor': [
-    'LeakDetectedState',
-    'Name',
-    'ActiveStatus',
-    'FaultStatus',
-    'TamperedStatus',
-    'BatteryLowStatus'
+    { label: 'LeakDetectedState', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'ActiveStatus', mandatory: false},
+    { label: 'FaultStatus', mandatory: false},
+    { label: 'TamperedStatus', mandatory: false},
+    { label: 'BatteryLowStatus', mandatory: false}
   ],
   'MotionSensor': [
-    'MotionDetectedState',
-    'Name',
-    'ActiveStatus',
-    'FaultStatus',
-    'TamperedStatus',
-    'BatteryLowStatus'
+    { label: 'MotionDetectedState', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'ActiveStatus', mandatory: false},
+    { label: 'FaultStatus', mandatory: false},
+    { label: 'TamperedStatus', mandatory: false},
+    { label: 'BatteryLowStatus', mandatory: false}
   ],
   'OccupancySensor': [
-    'OccupancyDetectedState',
-    'Name',
-    'ActiveStatus',
-    'FaultStatus',
-    'TamperedStatus',
-    'BatteryLowStatus'
+    { label: 'OccupancyDetectedState', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'ActiveStatus', mandatory: false},
+    { label: 'FaultStatus', mandatory: false},
+    { label: 'TamperedStatus', mandatory: false},
+    { label: 'BatteryLowStatus', mandatory: false}
   ],
   'ContactSensor': [
-    'ContactSensorState',
-    'Name',
-    'ActiveStatus',
-    'FaultStatus',
-    'TamperedStatus',
-    'BatteryLowStatus'
+    { label: 'ContactSensorState', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'ActiveStatus', mandatory: false},
+    { label: 'FaultStatus', mandatory: false},
+    { label: 'TamperedStatus', mandatory: false},
+    { label: 'BatteryLowStatus', mandatory: false}
   ],
   'SmokeSensor': [
-    'SmokeDetectedState',
-    'Name',
-    'ActiveStatus',
-    'FaultStatus',
-    'TamperedStatus',
-    'BatteryLowStatus'
+    { label: 'SmokeDetectedState', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'ActiveStatus', mandatory: false},
+    { label: 'FaultStatus', mandatory: false},
+    { label: 'TamperedStatus', mandatory: false},
+    { label: 'BatteryLowStatus', mandatory: false}
   ],
   'LightSensor': [
-    'LightLevel',
-    'Name',
-    'ActiveStatus',
-    'FaultStatus',
-    'TamperedStatus',
-    'BatteryLowStatus'
+    { label: 'LightLevel', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'ActiveStatus', mandatory: false},
+    { label: 'FaultStatus', mandatory: false},
+    { label: 'TamperedStatus', mandatory: false},
+    { label: 'BatteryLowStatus', mandatory: false}
   ],
   'HumiditySensor': [
-    'RelativeHumidity',
-    'Name',
-    'ActiveStatus',
-    'FaultStatus',
-    'TamperedStatus',
-    'BatteryLowStatus'
+    { label: 'RelativeHumidity', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'ActiveStatus', mandatory: false},
+    { label: 'FaultStatus', mandatory: false},
+    { label: 'TamperedStatus', mandatory: false},
+    { label: 'BatteryLowStatus', mandatory: false}
   ],
   'TemperatureSensor': [
-    'CurrentTemperature',
-    'Name',
-    'ActiveStatus',
-    'FaultStatus',
-    'TamperedStatus',
-    'BatteryLowStatus'
+    { label: 'CurrentTemperature', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'ActiveStatus', mandatory: false},
+    { label: 'FaultStatus', mandatory: false},
+    { label: 'TamperedStatus', mandatory: false},
+    { label: 'BatteryLowStatus', mandatory: false}
   ],
   'CarbonDioxideSensor': [
-    'CarbonDioxideDetectedState',
-    'CarbonDioxideLevel',
-    'CarbonDioxidePeakLevel',
-    'Name',
-    'ActiveStatus',
-    'FaultStatus',
-    'TamperedStatus',
-    'BatteryLowStatus'
+    { label: 'CarbonDioxideDetectedState', mandatory: true},
+    { label: 'CarbonDioxideLevel', mandatory: false},
+    { label: 'CarbonDioxidePeakLevel', mandatory: false},
+    { label: 'Name', mandatory: false},
+    { label: 'ActiveStatus', mandatory: false},
+    { label: 'FaultStatus', mandatory: false},
+    { label: 'TamperedStatus', mandatory: false},
+    { label: 'BatteryLowStatus', mandatory: false}
   ],
   'CarbonMonoxideSensor': [
-    'CarbonMonoxideDetectedState',
-    'CarbonMonoxideLevel',
-    'CarbonMonoxidePeakLevel',
-    'Name',
-    'ActiveStatus',
-    'FaultStatus',
-    'TamperedStatus',
-    'BatteryLowStatus'
+    { label: 'CarbonMonoxideDetectedState', mandatory: true},
+    { label: 'CarbonMonoxideLevel', mandatory: false},
+    { label: 'CarbonMonoxidePeakLevel', mandatory: false},
+    { label: 'Name', mandatory: false},
+    { label: 'ActiveStatus', mandatory: false},
+    { label: 'FaultStatus', mandatory: false},
+    { label: 'TamperedStatus', mandatory: false},
+    { label: 'BatteryLowStatus', mandatory: false}
   ],
   'Door': [
-    'CurrentPosition',
-    'TargetPosition',
-    'PositionState',
-    'Name',
-    'HoldPosition',
-    'ObstructionStatus'
+    { label: 'CurrentPosition', mandatory: true},
+    { label: 'TargetPosition', mandatory: true},
+    { label: 'PositionState', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'HoldPosition', mandatory: false},
+    { label: 'ObstructionStatus', mandatory: false}
   ],
   'Window': [
-    'CurrentPosition',
-    'TargetPosition',
-    'PositionState',
-    'Name',
-    'HoldPosition',
-    'ObstructionStatus'
+    { label: 'CurrentPosition', mandatory: true},
+    { label: 'TargetPosition', mandatory: true},
+    { label: 'PositionState', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'HoldPosition', mandatory: false},
+    { label: 'ObstructionStatus', mandatory: false}
   ],
   'WindowCovering': [
-    'CurrentPosition',
-    'TargetPosition',
-    'PositionState',
-    'Name',
-    'HoldPosition',
-    'ObstructionStatus',
-    'CurrentHorizontalTiltAngle',
-    'TargetHorizontalTiltAngle',
-    'CurrentVerticalTiltAngle',
-    'TargetVerticalTiltAngle'
+    { label: 'CurrentPosition', mandatory: true},
+    { label: 'TargetPosition', mandatory: true},
+    { label: 'PositionState', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'HoldPosition', mandatory: false},
+    { label: 'ObstructionStatus', mandatory: false},
+    { label: 'CurrentHorizontalTiltAngle', mandatory: false},
+    { label: 'TargetHorizontalTiltAngle', mandatory: false},
+    { label: 'CurrentVerticalTiltAngle', mandatory: false},
+    { label: 'TargetVerticalTiltAngle', mandatory: false}
   ],
   'Switchable': [
-    'OnState',
-    'Name'
+    { label: 'OnState', mandatory: true},
+    { label: 'Name', mandatory: false}
   ],
   'Outlet': [
-    'OnState',
-    'InUseStatus',
-    'Name'
+    { label: 'OnState', mandatory: true},
+    { label: 'InUseStatus', mandatory: true},
+    { label: 'Name', mandatory: false}
   ],
   'Lighting': [
-    'OnState',
-    'Name',
-    'Hue',
-    'Saturation',
-    'Brightness',
-    'ColorTemperature'
+    { label: 'OnState', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'Hue', mandatory: false},
+    { label: 'Saturation', mandatory: false},
+    { label: 'Brightness', mandatory: false},
+    { label: 'ColorTemperature', mandatory: false}
   ],
   'Fan': [
-    'ActiveStatus',
-    'CurrentFanState',
-    'TargetFanState',
-    'RotationDirection',
-    'RotationSpeed',
-    'SwingMode',
-    'LockControl'
+    { label: 'ActiveStatus', mandatory: true},
+    { label: 'CurrentFanState', mandatory: false},
+    { label: 'TargetFanState', mandatory: false},
+    { label: 'RotationDirection', mandatory: false},
+    { label: 'RotationSpeed', mandatory: false},
+    { label: 'SwingMode', mandatory: false},
+    { label: 'LockControl', mandatory: false}
   ],
   'Thermostat': [
-    'CurrentTemperature',
-    'TargetTemperature',
-    'CurrentHeatingCoolingMode',
-    'TargetHeatingCoolingMode',
-    'CoolingThresholdTemperature',
-    'HeatingThresholdTemperature'
+    { label: 'CurrentTemperature', mandatory: true},
+    { label: 'TargetTemperature', mandatory: true},
+    { label: 'CurrentHeatingCoolingMode', mandatory: true},
+    { label: 'TargetHeatingCoolingMode', mandatory: true},
+    { label: 'CoolingThresholdTemperature', mandatory: false},
+    { label: 'HeatingThresholdTemperature', mandatory: false}
   ],
   'HeaterCooler': [
-    'ActiveStatus',
-    'CurrentTemperature',
-    'CurrentHeaterCoolerState',
-    'TargetHeaterCoolerState',
-    'CoolingThresholdTemperature',
-    'HeatingThresholdTemperature',
-    'RotationSpeed',
-    'SwingMode',
-    'LockControl'
+    { label: 'ActiveStatus', mandatory: true},
+    { label: 'CurrentTemperature', mandatory: true},
+    { label: 'CurrentHeaterCoolerState', mandatory: true},
+    { label: 'TargetHeaterCoolerState', mandatory: true},
+    { label: 'CoolingThresholdTemperature', mandatory: false},
+    { label: 'HeatingThresholdTemperature', mandatory: false},
+    { label: 'RotationSpeed', mandatory: false},
+    { label: 'SwingMode', mandatory: false},
+    { label: 'LockControl', mandatory: false}
   ],
   'Lock': [
-    'LockCurrentState',
-    'LockTargetState',
-    'Name'
+    { label: 'LockCurrentState', mandatory: true},
+    { label: 'LockTargetState', mandatory: true},
+    { label: 'Name', mandatory: false}
   ],
   'Valve': [
-    'ActiveStatus',
-    'InUseStatus',
-    'Duration',
-    'RemainingDuration',
-    'Name',
-    'FaultStatus'
+    { label: 'ActiveStatus', mandatory: true},
+    { label: 'InUseStatus', mandatory: true},
+    { label: 'Duration', mandatory: false},
+    { label: 'RemainingDuration', mandatory: false},
+    { label: 'Name', mandatory: false},
+    { label: 'FaultStatus', mandatory: false}
   ],
   'SecuritySystem': [
-    'CurrentSecuritySystemState',
-    'TargetSecuritySystemState',
-    'Name',
-    'FaultStatus',
-    'TamperedStatus'
+    { label: 'CurrentSecuritySystemState', mandatory: true},
+    { label: 'TargetSecuritySystemState', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'FaultStatus', mandatory: false},
+    { label: 'TamperedStatus', mandatory: false}
   ],
   'GarageDoorOpener': [
-    'ObstructionStatus',
-    'CurrentDoorState',
-    'TargetDoorState',
-    'Name',
-    'LockCurrentState',
-    'LockTargetState'
+    { label: 'ObstructionStatus', mandatory: true},
+    { label: 'CurrentDoorState', mandatory: true},
+    { label: 'TargetDoorState', mandatory: true},
+    { label: 'Name', mandatory: false},
+    { label: 'LockCurrentState', mandatory: false},
+    { label: 'LockTargetState', mandatory: false}
   ]
 }
 
 export const accessoriesAndCharacteristics = []
+
 for (const a in accessories) {
   accessoriesAndCharacteristics.push(a)
   for (const c of accessories[a]) {
-    accessoriesAndCharacteristics.push(a + '.' + c)
+    accessoriesAndCharacteristics.push(a + '.' + c.label)
   }
 }
 
@@ -263,6 +264,7 @@ const stepValue = {
   label: 'Step value for this characteristic',
   type: 'INTEGER'
 }
+
 const m = (name, type, label, description) => {
   return {
     name,
@@ -306,7 +308,6 @@ export const homekitParameters = {
   'Window': [invertedParameter],
   'Door': [invertedParameter],
   'WindowCovering': [invertedParameter],
-
   'Thermostat.CurrentTemperature': [minValue, maxValue, stepValue],
   'Thermostat.TargetTemperature': [minValue, maxValue, stepValue],
   'Thermostat.CoolingThresholdTemperature': [minValue, maxValue, stepValue],
