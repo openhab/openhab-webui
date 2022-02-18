@@ -26,7 +26,7 @@
             } else {
                 $http({
                     method: 'POST',
-                    url: '/rest/auth/token',
+                    url: '../rest/auth/token',
                     data: 'grant_type=refresh_token&client_id=' + window.location.origin +
                         '&redirect_uri=' + window.location.origin + '&refresh_token=' + refreshToken,
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -49,7 +49,7 @@
             if (!refreshToken) {
                 $rootScope.lockEditing = true;
             }
-            $http.get('/rest/ui/components/habpanel:panelconfig').then(function (data) {
+            $http.get('../rest/ui/components/habpanel:panelconfig').then(function (data) {
                 console.log('Panel configurations loaded');
                 $rootScope.panelsRegistry = transformUIComponentsToPanelRegistry(data.data);
                 deferred.resolve($rootScope.panelsRegistry);
@@ -77,11 +77,11 @@
                     headers['Authorization'] = 'Bearer ' + accessToken
                 }
 
-                $http.get('/rest/ui/components/habpanel:panelconfig/' + getCurrentPanelConfig()).then(function (data) {
+                $http.get('../rest/ui/components/habpanel:panelconfig/' + getCurrentPanelConfig()).then(function (data) {
                     // update
                     $http({
                         method: 'PUT',
-                        url: '/rest/ui/components/habpanel:panelconfig/' + getCurrentPanelConfig(),
+                        url: '../rest/ui/components/habpanel:panelconfig/' + getCurrentPanelConfig(),
                         data: transformPanelConfigurationToUIComponent(getCurrentPanelConfig(), panelConfiguration),
                         headers: headers
                     }).then (function (resp) {
@@ -95,7 +95,7 @@
                     // assume the error is 404?
                     $http({
                         method: 'POST',
-                        url: '/rest/ui/components/habpanel:panelconfig',
+                        url: '../rest/ui/components/habpanel:panelconfig',
                         data: transformPanelConfigurationToUIComponent(getCurrentPanelConfig(), panelConfiguration),
                         headers: headers
                     }).then (function (resp) {
@@ -127,7 +127,7 @@
 
                 $http({
                     method: 'DELETE',
-                    url: '/rest/ui/components/habpanel:panelconfig/' + id,
+                    url: '../rest/ui/components/habpanel:panelconfig/' + id,
                     headers: headers
                 }).then (function (resp) {
                     console.log('Panel configuration deleted');

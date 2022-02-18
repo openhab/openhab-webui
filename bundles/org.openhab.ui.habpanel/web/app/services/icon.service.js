@@ -25,7 +25,7 @@
 
         function getIconUrl(iconset, icon, state) {
             if (iconset === 'custom-icon') {
-                return '/icon/' + icon + '?format=svg' + ((state) ? '&state=' + state : '');
+                return '../icon/' + icon + '?format=svg' + ((state) ? '&state=' + state : '');
             } else if (iconset === 'custom-url') {
                 return icon;
             }
@@ -34,7 +34,7 @@
             if (set.type === 'builtin') {
                 return 'assets/icons/' + set.id + '/' + icon + '.svg';
             } else {
-                return '/icon/' + icon + '?format=svg' + ((state) ? '&state=' + state : '');
+                return '../icon/' + icon + '?format=svg' + ((state) ? '&state=' + state : '');
             }
         }
 

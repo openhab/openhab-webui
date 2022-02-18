@@ -20,7 +20,7 @@
             vm.progressMax = 1;
             vm.progressCurrent = 1;
 
-            $http.get('/rest/habpanel/gallery/community/widgets')
+            $http.get('../rest/habpanel/gallery/community/widgets')
             .then(function (resp) {
                 vm.busy = false;
                 if (resp.data) {
@@ -52,7 +52,7 @@
             vm.progressMax = 1;
             vm.progressCurrent = 1;
 
-            $http.get('/rest/habpanel/gallery/community/widgets/' + id)
+            $http.get('../rest/habpanel/gallery/community/widgets/' + id)
             .then(function (resp) {
                 vm.galleryItemDetails = resp.data;
                 if (vm.galleryItemDetails.authorAvatarUrl)

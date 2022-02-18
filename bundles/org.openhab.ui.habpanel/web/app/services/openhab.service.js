@@ -32,7 +32,7 @@
                 $timeout($rootScope.$emit('openhab-update'));
             }
 
-            $http.get('/rest/items')
+            $http.get('../rest/items')
             .then(function (data) {
                 if (angular.isArray(data.data)) {
                     console.log("Loaded " + data.data.length + " openHAB items");
@@ -71,7 +71,7 @@
         function sendCmd(item, cmd) {
             $http({
                 method : 'POST',
-                url    : '/rest/items/' + item,
+                url    : '../rest/items/' + item,
                 data   : cmd,
                 headers: { 'Content-Type': 'text/plain' }
             }).then(function (data) {
@@ -92,7 +92,7 @@
             if (locale) {
                 deferred.resolve(locale);
             } else {
-                $http.get('/rest/')
+                $http.get('../rest/')
                 .then(function (response) {
                     if (!response.data.locale) {
                         if (navigator && navigator.languages) {
@@ -145,7 +145,7 @@
         function sendVoice(text) {
             $http({
                 method : 'POST',
-                url    : '/rest/voice/interpreters',
+                url    : '../rest/voice/interpreters',
                 data   : text,
                 headers: { 'Content-Type': 'text/plain' }
             }).then(function (data) {
@@ -161,7 +161,7 @@
         
         function registerEventSource() {
             if (typeof(EventSource) !== "undefined") {
-                var source = new EventSource('/rest/events?topics=openhab/items/*/statechanged,openhab/items/*/*/statechanged,openhab/webaudio/playurl');
+                var source = new EventSource('../rest/events?topics=openhab/items/*/statechanged,openhab/items/*/*/statechanged,openhab/webaudio/playurl');
                 liveUpdatesEnabled = true;
 
                 source.onmessage = function (event) {
@@ -192,7 +192,7 @@
                                         }
                                     } else {
                                         // fetch the new transformed state
-                                        $http.get('/rest/items/' + item.name).then(function (response) {
+                                        $http.get('../rest/items/' + item.name).then(function (response) {
                                             if (response.data && response.data.transformedState) {
                                                 item.transformedState = response.data.transformedState;
                                                 $rootScope.$emit('openhab-update', item);
