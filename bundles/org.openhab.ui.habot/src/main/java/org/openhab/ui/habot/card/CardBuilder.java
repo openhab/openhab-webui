@@ -20,6 +20,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.Metadata;
@@ -33,6 +35,7 @@ import org.openhab.core.types.StateDescription;
 import org.openhab.ui.habot.card.internal.CardRegistry;
 import org.openhab.ui.habot.nlp.Intent;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -48,11 +51,18 @@ import org.osgi.service.component.annotations.Reference;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 @org.osgi.service.component.annotations.Component(service = CardBuilder.class, immediate = true)
 public class CardBuilder {
 
-    private CardRegistry cardRegistry;
-    private MetadataRegistry metadataRegistry;
+    private final CardRegistry cardRegistry;
+    private final MetadataRegistry metadataRegistry;
+
+    @Activate
+    public CardBuilder(final @Reference CardRegistry cardRegistry, final @Reference MetadataRegistry metadataRegistry) {
+        this.cardRegistry = cardRegistry;
+        this.metadataRegistry = metadataRegistry;
+    }
 
     /**
      * Retrieves or build a card for the specified intent and matched items
@@ -67,7 +77,7 @@ public class CardBuilder {
 
         Collection<Card> cardsInRegistry = this.cardRegistry.getCardMatchingAttributes(object, location).stream()
                 .filter(c -> !c.isNotReuseableInChat() && !c.isEphemeral()).collect(Collectors.toList());
-        if (cardsInRegistry.size() > 0) {
+        if (!cardsInRegistry.isEmpty()) {
             // don't handle multiple cards, just return the first one
             Card existingCard = cardsInRegistry.iterator().next();
             existingCard.updateTimestamp();
@@ -103,8 +113,7 @@ public class CardBuilder {
                     card.addComponent("right", switchComponent);
                     break;
                 case CoreItemFactory.DIMMER:
-                    boolean buildKnob = (metadata != null && metadata.getConfiguration().containsKey("control")
-                            && metadata.getConfiguration().get("control").equals("knob"));
+                    boolean buildKnob = metadata != null && "knob".equals(metadata.getConfiguration().get("control"));
                     if (item.hasTag("capability:Switchable")) {
                         Component dimmerSwitchComponent = new Component("HbSwitch");
                         dimmerSwitchComponent.addConfig("item", item.getName());
@@ -326,7 +335,7 @@ public class CardBuilder {
      * @param items the group of matching items including an eventual GroupItem to find
      * @return an optional group eligible for the card's title, or null if none was found
      */
-    private GroupItem getMatchingGroup(Collection<Item> items) {
+    private @Nullable GroupItem getMatchingGroup(Collection<Item> items) {
         Optional<Item> groupItem = items.stream().filter(i -> i instanceof GroupItem)
                 .filter(g -> items.stream().allMatch(i -> i.getName().equals(g.getName())
                         || ((GroupItem) g).getAllMembers().stream().anyMatch(i2 -> i2.getName().contains(i.getName()))))
@@ -364,23 +373,5 @@ public class CardBuilder {
         } else {
             return state.toString();
         }
-    }
-
-    @Reference
-    protected void setCardRegistry(CardRegistry cardRegistry) {
-        this.cardRegistry = cardRegistry;
-    }
-
-    protected void unsetCardRegistry(CardRegistry cardRegistry) {
-        this.cardRegistry = null;
-    }
-
-    @Reference
-    protected void setMetadataRegistry(MetadataRegistry metadataRegistry) {
-        this.metadataRegistry = metadataRegistry;
-    }
-
-    protected void unsetMetadataRegistry(MetadataRegistry metadataRegistry) {
-        this.metadataRegistry = null;
     }
 }

@@ -12,19 +12,30 @@
  */
 package org.openhab.ui.habot.nlp.internal.skill;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.ui.habot.card.Card;
 import org.openhab.ui.habot.nlp.AbstractItemIntentInterpreter;
 import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.IntentInterpretation;
+import org.openhab.ui.habot.nlp.ItemResolver;
 import org.openhab.ui.habot.nlp.Skill;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * This {@link Skill} is used to reply with a HbCreateRuleCard
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 @org.osgi.service.component.annotations.Component(service = Skill.class)
 public class CreateRuleSkill extends AbstractItemIntentInterpreter {
+
+    @Activate
+    public CreateRuleSkill(final @Reference ItemResolver itemResolver) {
+        super(itemResolver);
+    }
 
     @Override
     public String getIntentId() {
@@ -32,7 +43,7 @@ public class CreateRuleSkill extends AbstractItemIntentInterpreter {
     }
 
     @Override
-    public IntentInterpretation interpret(Intent intent, String language) {
+    public @Nullable IntentInterpretation interpret(Intent intent, String language) {
         IntentInterpretation interpretation = new IntentInterpretation();
         Card card = new Card("HbCreateRuleCard");
         // TODO: try to parse a day/time to pre-configure the new rule card

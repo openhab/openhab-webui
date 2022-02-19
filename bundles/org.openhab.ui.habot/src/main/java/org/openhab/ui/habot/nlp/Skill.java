@@ -14,6 +14,9 @@ package org.openhab.ui.habot.nlp;
 
 import java.io.InputStream;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+
 /**
  * This interface must be implemented to add support for a certain intent.
  * It covers both the training data to supply to OpenNLP for the intent categorization (and token extraction),
@@ -21,6 +24,7 @@ import java.io.InputStream;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 public interface Skill {
     /**
      * Gets the internal name of the intent handled by this skill.
@@ -39,6 +43,7 @@ public interface Skill {
      * @throws UnsupportedLanguageException if the specified language is not supported by this skill
      * @return the input stream containing the training data
      */
+    @Nullable
     InputStream getTrainingData(String language) throws UnsupportedLanguageException;
 
     /**
@@ -48,5 +53,6 @@ public interface Skill {
      * @param language the language of the query (ISO-639 code)
      * @return the {@link IntentInterpretation} containing the results of the interpretation
      */
+    @Nullable
     IntentInterpretation interpret(Intent intent, String language);
 }

@@ -14,6 +14,8 @@ package org.openhab.ui.habot.nlp.internal.skill;
 
 import java.util.Set;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.items.Item;
 import org.openhab.ui.habot.card.CardBuilder;
 import org.openhab.ui.habot.nlp.AbstractItemIntentInterpreter;
@@ -21,6 +23,7 @@ import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.IntentInterpretation;
 import org.openhab.ui.habot.nlp.ItemResolver;
 import org.openhab.ui.habot.nlp.Skill;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -28,10 +31,18 @@ import org.osgi.service.component.annotations.Reference;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 @org.osgi.service.component.annotations.Component(service = Skill.class)
 public class HistoryHourlyGraphSkill extends AbstractItemIntentInterpreter {
 
-    private CardBuilder cardBuilder;
+    private final CardBuilder cardBuilder;
+
+    @Activate
+    public HistoryHourlyGraphSkill(final @Reference ItemResolver itemResolver,
+            final @Reference CardBuilder cardBuilder) {
+        super(itemResolver);
+        this.cardBuilder = cardBuilder;
+    }
 
     @Override
     public String getIntentId() {
@@ -39,7 +50,7 @@ public class HistoryHourlyGraphSkill extends AbstractItemIntentInterpreter {
     }
 
     @Override
-    public IntentInterpretation interpret(Intent intent, String language) {
+    public @Nullable IntentInterpretation interpret(Intent intent, String language) {
         IntentInterpretation interpretation = new IntentInterpretation();
         Set<Item> matchedItems = findItems(intent);
 
@@ -47,40 +58,23 @@ public class HistoryHourlyGraphSkill extends AbstractItemIntentInterpreter {
             interpretation.setAnswer(answerFormatter.getRandomAnswer("general_failure"));
             return interpretation;
         }
-        if (matchedItems == null || matchedItems.isEmpty()) {
+        if (matchedItems.isEmpty()) {
             interpretation.setAnswer(answerFormatter.getRandomAnswer("answer_nothing_found"));
             interpretation.setHint(answerFormatter.getStandardTagHint(intent.getEntities()));
         } else {
             interpretation.setMatchedItems(matchedItems);
 
             String period = "h";
-            if (intent.getEntities().containsKey("period")) {
-                period = intent.getEntities().get("period").concat(period);
+            String value = intent.getEntities().get("period");
+            if (value != null) {
+                period = value + period;
             }
 
-            interpretation.setCard(this.cardBuilder.buildChartCard(intent, matchedItems, period));
+            interpretation.setCard(cardBuilder.buildChartCard(intent, matchedItems, period));
         }
 
         interpretation.setAnswer(answerFormatter.getRandomAnswer("info_found_simple"));
 
         return interpretation;
-    }
-
-    @Reference
-    protected void setCardBuilder(CardBuilder cardBuilder) {
-        this.cardBuilder = cardBuilder;
-    }
-
-    protected void unsetCardBuilder(CardBuilder cardBuilder) {
-        this.cardBuilder = null;
-    }
-
-    @Reference
-    protected void setItemResolver(ItemResolver itemResolver) {
-        this.itemResolver = itemResolver;
-    }
-
-    protected void unsetItemResolver(ItemResolver itemResolver) {
-        this.itemResolver = null;
     }
 }

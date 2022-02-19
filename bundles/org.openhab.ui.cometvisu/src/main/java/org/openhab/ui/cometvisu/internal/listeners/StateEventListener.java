@@ -14,6 +14,7 @@ package org.openhab.ui.cometvisu.internal.listeners;
 
 import java.util.Map;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.StateChangeListener;
@@ -44,8 +45,8 @@ public class StateEventListener implements StateChangeListener {
 
     @Override
     public void stateChanged(Item item, State oldState, State newState) {
-        Map<String, Class<? extends State>> clientItems = eventBroadcaster.getClientItems(item);
-        if (clientItems != null && clientItems.size() > 0) {
+        Map<String, @Nullable Class<? extends State>> clientItems = eventBroadcaster.getClientItems(item);
+        if (!clientItems.isEmpty()) {
             for (String cvItemName : clientItems.keySet()) {
                 Class<? extends State> stateClass = clientItems.get(cvItemName);
                 StateBean stateBean = new StateBean();
@@ -70,17 +71,15 @@ public class StateEventListener implements StateChangeListener {
         if (item instanceof GroupItem) {
             // group item update could be relevant for the client, although the state of switch group does not change
             // wenn more the one are on, the number-groupFunction changes
-            Map<String, Class<? extends State>> clientItems = eventBroadcaster.getClientItems(item);
-            if (clientItems != null && clientItems.size() > 0) {
-                for (String cvItemName : clientItems.keySet()) {
-                    Class<? extends State> stateClass = clientItems.get(cvItemName);
-                    if (stateClass != null) {
-                        StateBean stateBean = new StateBean();
-                        stateBean.name = cvItemName;
-                        stateBean.state = item.getStateAs(stateClass).toString();
+            Map<String, @Nullable Class<? extends State>> clientItems = eventBroadcaster.getClientItems(item);
+            for (String cvItemName : clientItems.keySet()) {
+                Class<? extends State> stateClass = clientItems.get(cvItemName);
+                if (stateClass != null) {
+                    StateBean stateBean = new StateBean();
+                    stateBean.name = cvItemName;
+                    stateBean.state = item.getStateAs(stateClass).toString();
 
-                        eventBroadcaster.broadcastEvent(stateBean);
-                    }
+                    eventBroadcaster.broadcastEvent(stateBean);
                 }
             }
         }

@@ -89,10 +89,10 @@ public class HiddenConfigResource implements RESTResource {
             @Parameter(description = "Section of the config option") @PathParam("section") String section,
             @Parameter(description = "Key (ID) of the config option in the section, ('*' for all options)") @PathParam("key") String key,
             @Parameter(description = "value of the option", required = true) String body) {
-        if (section.equals("*") || key.equals("*")) {
+        if ("*".equals(section) || "*".equals(key)) {
             return FsUtil.createErrorResponse(Status.NOT_ACCEPTABLE, "wildcard not allowed");
         }
-        HiddenConfig config = this.loadHiddenConfig();
+        HiddenConfig config = loadHiddenConfig();
         if (!config.containsKey(section)) {
             return FsUtil.createErrorResponse(Status.NOT_FOUND, "section not found");
         }
@@ -102,7 +102,7 @@ public class HiddenConfigResource implements RESTResource {
         }
         sec.put(key, body);
         try {
-            this.writeHiddenConfig(config);
+            writeHiddenConfig(config);
             return Response.ok().build();
         } catch (Exception e) {
             logger.error("{}", e.getMessage());
@@ -118,14 +118,14 @@ public class HiddenConfigResource implements RESTResource {
     public Response deleteHiddenConfig(
             @Parameter(description = "Section of the config option, ('*' for all sections)") @PathParam("section") String section,
             @Parameter(description = "Key (ID) of the config option in the section, ('*' for all options)") @PathParam("key") String key) {
-        HiddenConfig config = this.loadHiddenConfig();
-        if (section.equals("*")) {
+        HiddenConfig config = loadHiddenConfig();
+        if ("*".equals(section)) {
             config.clear();
         } else if (!config.containsKey(section)) {
             return FsUtil.createErrorResponse(Status.NOT_FOUND, "section not found");
         } else {
             ConfigSection sec = config.get(section);
-            if (key.contentEquals("*")) {
+            if ("*".contentEquals(key)) {
                 sec.clear();
             } else if (!sec.containsKey(key)) {
                 return FsUtil.createErrorResponse(Status.NOT_FOUND, "option not found");
@@ -134,7 +134,7 @@ public class HiddenConfigResource implements RESTResource {
             }
         }
         try {
-            this.writeHiddenConfig(config);
+            writeHiddenConfig(config);
             return Response.ok().build();
         } catch (Exception e) {
             logger.error("{}", e.getMessage());
@@ -152,9 +152,9 @@ public class HiddenConfigResource implements RESTResource {
     public Response getHiddenConfig(
             @Parameter(description = "Section of the config option, ('*' for all sections)") @PathParam("section") String sectionKey,
             @Parameter(description = "Key (ID) of the config option in the section, ('*' for all options)") @PathParam("key") String key) {
-        HiddenConfig config = this.loadHiddenConfig();
-        if (sectionKey.contentEquals("*")) {
-            if (key.contentEquals("*")) {
+        HiddenConfig config = loadHiddenConfig();
+        if ("*".contentEquals(sectionKey)) {
+            if ("*".contentEquals(key)) {
                 return Response.ok(config).build();
             } else {
                 // invalid */key not allowed
@@ -166,7 +166,7 @@ public class HiddenConfigResource implements RESTResource {
             if (section == null) {
                 return FsUtil.createErrorResponse(Status.NOT_FOUND, "section not found");
             }
-            if (key.contentEquals("*")) {
+            if ("*".contentEquals(key)) {
                 // return complete section
                 return Response.ok(section).build();
             } else {
@@ -188,7 +188,7 @@ public class HiddenConfigResource implements RESTResource {
     public Response saveHiddenConfig(
             @Parameter(description = "Complete config content", required = true) HiddenConfig config) {
         try {
-            this.writeHiddenConfig(config);
+            writeHiddenConfig(config);
             return Response.ok().build();
         } catch (Exception e) {
             logger.error("{}", e.getMessage());
@@ -209,10 +209,10 @@ public class HiddenConfigResource implements RESTResource {
             @Parameter(description = "Section of the config option") @PathParam("section") String section,
             @Parameter(description = "Key (ID) of the config option in the section") @PathParam("key") String key,
             @Parameter(description = "value of the option", required = true) String body) {
-        if (section.equals("*") || key.equals("*")) {
+        if ("*".equals(section) || "*".equals(key)) {
             return FsUtil.createErrorResponse(Status.NOT_ACCEPTABLE, "wildcard not allowed");
         }
-        HiddenConfig config = this.loadHiddenConfig();
+        HiddenConfig config = loadHiddenConfig();
         if (!config.containsKey(section)) {
             return FsUtil.createErrorResponse(Status.NOT_FOUND, "section not found");
         }
@@ -222,7 +222,7 @@ public class HiddenConfigResource implements RESTResource {
         }
         sec.put(key, body);
         try {
-            this.writeHiddenConfig(config);
+            writeHiddenConfig(config);
             return Response.ok().build();
         } catch (Exception e) {
             logger.error("{}", e.getMessage());
@@ -244,9 +244,9 @@ public class HiddenConfigResource implements RESTResource {
                     }
                 }
                 if (isPhpVersion) {
-                    return this.loadPhpConfig(config, content);
+                    return loadPhpConfig(config, content);
                 } else {
-                    return this.loadJson(String.join("\n", content));
+                    return loadJson(String.join("\n", content));
                 }
             }
         } catch (IOException e) {
@@ -269,10 +269,10 @@ public class HiddenConfigResource implements RESTResource {
 
         for (final String line : content) {
             if (!inHidden) {
-                if (line.equalsIgnoreCase("$hidden = array(")) {
+                if ("$hidden = array(".equalsIgnoreCase(line)) {
                     inHidden = true;
                 }
-            } else if (line.equalsIgnoreCase(");")) {
+            } else if (");".equalsIgnoreCase(line)) {
                 break;
             } else {
                 Matcher m = sectionPattern.matcher(line);

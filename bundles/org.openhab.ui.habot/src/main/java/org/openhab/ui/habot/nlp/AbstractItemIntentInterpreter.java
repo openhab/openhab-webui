@@ -16,9 +16,10 @@ import java.io.InputStream;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
-import org.openhab.core.items.ItemRegistry;
 import org.openhab.ui.habot.nlp.internal.AnswerFormatter;
 import org.openhab.ui.habot.nlp.internal.NamedAttributesItemResolver;
 
@@ -30,11 +31,15 @@ import org.openhab.ui.habot.nlp.internal.NamedAttributesItemResolver;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 public abstract class AbstractItemIntentInterpreter implements Skill {
 
-    protected ItemRegistry itemRegistry;
-    protected ItemResolver itemResolver;
-    protected AnswerFormatter answerFormatter;
+    protected final ItemResolver itemResolver;
+    protected AnswerFormatter answerFormatter = new AnswerFormatter("en");
+
+    public AbstractItemIntentInterpreter(ItemResolver itemResolver) {
+        this.itemResolver = itemResolver;
+    }
 
     /**
      * Returns the items matching the entities in the intent.
@@ -51,7 +56,7 @@ public abstract class AbstractItemIntentInterpreter implements Skill {
         String object = intent.getEntities().get("object");
         String location = intent.getEntities().get("location");
 
-        Set<Item> items = this.itemResolver.getMatchingItems(object, location).collect(Collectors.toSet());
+        Set<Item> items = itemResolver.getMatchingItems(object, location).collect(Collectors.toSet());
 
         // expand group items
         for (Item item : items.toArray(new Item[0])) {
@@ -65,7 +70,7 @@ public abstract class AbstractItemIntentInterpreter implements Skill {
     }
 
     @Override
-    public InputStream getTrainingData(String language) throws UnsupportedLanguageException {
+    public @Nullable InputStream getTrainingData(String language) throws UnsupportedLanguageException {
         answerFormatter = new AnswerFormatter(language);
 
         InputStream trainingData = Skill.class.getClassLoader()

@@ -29,8 +29,6 @@ import org.openhab.ui.habpanel.internal.gallery.GalleryWidgetsItem;
 import org.openhab.ui.habpanel.internal.gallery.GalleryWidgetsListItem;
 import org.openhab.ui.habpanel.internal.gallery.community.DiscourseGalleryResponse.DiscourseTopic;
 import org.openhab.ui.habpanel.internal.gallery.community.DiscourseTopicResponse.DiscoursePostLink;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -43,8 +41,6 @@ import com.google.gson.GsonBuilder;
  *
  */
 public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
-
-    private final Logger logger = LoggerFactory.getLogger(CommunityWidgetGalleryProvider.class);
 
     public static final String COMMUNITY_BASE_URL = "https://community.openhab.org";
     public static final String COMMUNITY_GALLERY_URL = COMMUNITY_BASE_URL

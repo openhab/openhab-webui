@@ -12,6 +12,8 @@
  */
 package org.openhab.ui.habpanel.internal.gallery;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.ui.habpanel.internal.gallery.community.CommunityWidgetGalleryProvider;
 
 /**
@@ -21,6 +23,7 @@ import org.openhab.ui.habpanel.internal.gallery.community.CommunityWidgetGallery
  * @author Yannick Schaus - Initial contribution
  *
  */
+@NonNullByDefault
 public class GalleryProviderFactory {
     /**
      * Gets a gallery provider for widgets
@@ -28,8 +31,8 @@ public class GalleryProviderFactory {
      * @param galleryName the name of the gallery
      * @return the appropriate {@link GalleryWidgetProvider}
      */
-    public static GalleryWidgetProvider getWidgetGalleryProvider(String galleryName) {
-        if (galleryName.equals("community")) {
+    public static @Nullable GalleryWidgetProvider getWidgetGalleryProvider(String galleryName) {
+        if ("community".equals(galleryName)) {
             return new CommunityWidgetGalleryProvider();
         } else {
             return null;

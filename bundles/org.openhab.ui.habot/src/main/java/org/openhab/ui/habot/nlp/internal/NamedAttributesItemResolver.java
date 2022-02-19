@@ -21,7 +21,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.openhab.core.common.registry.RegistryChangeListener;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
@@ -74,7 +73,6 @@ public class NamedAttributesItemResolver implements ItemResolver {
             this.itemAttributes = null;
             this.tagAttributes = ResourceBundle.getBundle("tagattributes", locale,
                     ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT));
-
         }
     }
 
@@ -138,7 +136,7 @@ public class NamedAttributesItemResolver implements ItemResolver {
     }
 
     private void updateItemNamedAttributes() {
-        itemAttributes = new HashMap<Item, Set<ItemNamedAttribute>>();
+        itemAttributes = new HashMap<>();
         for (Item item : itemRegistry.getAll()) {
 
             Metadata metadata = metadataRegistry.get(new MetadataKey("habot", item.getName()));
@@ -211,7 +209,7 @@ public class NamedAttributesItemResolver implements ItemResolver {
             boolean inheritToGroupMembers) {
         Set<ItemNamedAttribute> attributes = itemAttributes.get(item);
         if (attributes == null) {
-            attributes = new HashSet<ItemNamedAttribute>();
+            attributes = new HashSet<>();
         }
 
         ItemNamedAttribute attribute = new ItemNamedAttribute(type, value, isInherited, source);
@@ -258,7 +256,7 @@ public class NamedAttributesItemResolver implements ItemResolver {
         }
     }
 
-    private @NonNull RegistryChangeListener<Item> registryChangeListener = new RegistryChangeListener<Item>() {
+    private RegistryChangeListener<Item> registryChangeListener = new RegistryChangeListener<>() {
         @Override
         public void added(Item element) {
             logger.debug("Invalidating cached item named attributes");
@@ -278,7 +276,7 @@ public class NamedAttributesItemResolver implements ItemResolver {
         }
     };
 
-    private @NonNull RegistryChangeListener<Metadata> metadataRegistryChangeListener = new RegistryChangeListener<Metadata>() {
+    private RegistryChangeListener<Metadata> metadataRegistryChangeListener = new RegistryChangeListener<>() {
         @Override
         public void added(Metadata element) {
             if ("habot".equals(element.getUID().getNamespace())) {

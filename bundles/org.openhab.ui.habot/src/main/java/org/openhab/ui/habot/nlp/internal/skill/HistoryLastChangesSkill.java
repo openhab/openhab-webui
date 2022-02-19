@@ -18,6 +18,8 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.items.Item;
 import org.openhab.core.persistence.HistoricItem;
 import org.openhab.core.persistence.extensions.PersistenceExtensions;
@@ -34,6 +36,7 @@ import org.openhab.ui.habot.nlp.IntentInterpretation;
 import org.openhab.ui.habot.nlp.ItemResolver;
 import org.openhab.ui.habot.nlp.Skill;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -42,10 +45,18 @@ import org.osgi.service.component.annotations.Reference;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 @org.osgi.service.component.annotations.Component(service = Skill.class)
 public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
 
-    private CardRegistry cardRegistry;
+    private final CardRegistry cardRegistry;
+
+    @Activate
+    public HistoryLastChangesSkill(final @Reference ItemResolver itemResolver,
+            final @Reference CardRegistry cardRegistry) {
+        super(itemResolver);
+        this.cardRegistry = cardRegistry;
+    }
 
     @Override
     public String getIntentId() {
@@ -53,7 +64,7 @@ public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
     }
 
     @Override
-    public IntentInterpretation interpret(Intent intent, String language) {
+    public @Nullable IntentInterpretation interpret(Intent intent, String language) {
         IntentInterpretation interpretation = new IntentInterpretation();
 
         Set<Item> matchedItems = findItems(intent);
@@ -61,14 +72,14 @@ public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
             interpretation.setAnswer(answerFormatter.getRandomAnswer("general_failure"));
             return interpretation;
         }
-        if (matchedItems == null || matchedItems.isEmpty()) {
+        if (matchedItems.isEmpty()) {
             interpretation.setAnswer(answerFormatter.getRandomAnswer("answer_nothing_found"));
             interpretation.setHint(answerFormatter.getStandardTagHint(intent.getEntities()));
             return interpretation;
         }
 
-        Set<String> tags = intent.getEntities().entrySet().stream().map(e -> e.getKey() + ":" + e.getValue())
-                .collect(Collectors.toSet());
+        Set<String> tags = (Set<String>) intent.getEntities().entrySet().stream()
+                .map(e -> e.getKey() + ":" + e.getValue()).collect(Collectors.toSet());
 
         Card card = new Card("HbCard");
         card.addTags(tags);
@@ -116,7 +127,7 @@ public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
         return interpretation;
     }
 
-    private String formatState(Item item, State state) {
+    private @Nullable String formatState(Item item, State state) {
         if (item.getStateDescription() != null) {
             StateDescription stateDescription = item.getStateDescription();
             if (stateDescription != null) {
@@ -145,23 +156,5 @@ public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
         } else {
             return state.toString();
         }
-    }
-
-    @Reference
-    protected void setItemResolver(ItemResolver itemResolver) {
-        this.itemResolver = itemResolver;
-    }
-
-    protected void unsetItemResolver(ItemResolver itemResolver) {
-        this.itemResolver = null;
-    }
-
-    @Reference
-    protected void setCardRegistry(CardRegistry cardRegistry) {
-        this.cardRegistry = cardRegistry;
-    }
-
-    protected void unsetCardRegistry(CardRegistry cardRegistry) {
-        this.cardRegistry = null;
     }
 }
