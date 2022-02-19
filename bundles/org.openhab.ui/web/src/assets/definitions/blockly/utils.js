@@ -32,7 +32,11 @@ export function addDateSupport () {
     'getZonedDateTime',
     [
       'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' (datetime) {',
-      `  return ${zdt}.parse(datetime + ' 00:00:00 +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss z'))`,
+      '  switch (datetime.length) {\n' +
+      `    case 10: return ${zdt}.parse(datetime + ' 00:00:00 +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss z'));\n` +
+      `    case 19: return ${zdt}.parse(datetime + ' +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss z'));\n` +
+      `    case 26: return ${zdt}.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ss z'));\n` +
+      '  }',
       '}'
     ])
   return { dtf, zdt, getZonedDateTime }
