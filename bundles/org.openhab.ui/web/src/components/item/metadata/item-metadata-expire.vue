@@ -17,7 +17,7 @@
       <f7-list-item title="ignore state updates" checkbox :checked="ignoreStateUpdates" @change="(ev) => metadata.config['ignoreStateUpdates'] = new Boolean(ev.target.checked).toString()" />
     </f7-list>
     <f7-block-footer class="param-description padding-left">
-      <small>After a different command or state update is received, perform the chosen action when the duration specified below has passed. The timer is reset if another state update or command is received before it expires. If the ignoreStateUpdates checkbox is set, only state changes will reset the timer.</small>
+      <small>After a different command or state update is received, perform the chosen action when the duration specified below has passed. The timer is reset if another state update or command is received before it expires. If the ignore state updates checkbox is set, only state changes will reset the timer.</small>
     </f7-block-footer>
     <f7-block-title medium>
       After
