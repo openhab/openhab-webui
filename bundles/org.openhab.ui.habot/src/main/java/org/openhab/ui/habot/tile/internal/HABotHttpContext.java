@@ -71,7 +71,7 @@ public class HABotHttpContext implements HttpContext {
                 return defaultResource;
             }
         } else {
-            if (name.equals(resourcesBase) || name.equals(resourcesBase + "/") || !name.contains(".")) {
+            if (name.equals(resourcesBase) || (resourcesBase + "/").equals(name) || !name.contains(".")) {
                 return defaultHttpContext.getResource(resourcesBase + "/index.html");
             }
             return defaultResource;

@@ -13,9 +13,9 @@
 package org.openhab.ui.habot.notification.internal;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Set;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.automation.Action;
 import org.openhab.core.automation.Module;
@@ -23,7 +23,9 @@ import org.openhab.core.automation.handler.BaseModuleHandlerFactory;
 import org.openhab.core.automation.handler.ModuleHandler;
 import org.openhab.core.automation.handler.ModuleHandlerFactory;
 import org.openhab.ui.habot.notification.WebPushNotificationActionHandler;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -31,27 +33,30 @@ import org.osgi.service.component.annotations.Reference;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 @Component(service = ModuleHandlerFactory.class, enabled = false)
 public class WebPushNotificationModuleHandlerFactory extends BaseModuleHandlerFactory {
 
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Override
-    public Collection<@NonNull String> getTypes() {
-        return Collections.singleton(WebPushNotificationActionHandler.TYPE_ID);
-    }
-
-    @Override
-    protected @Nullable ModuleHandler internalCreate(@NonNull Module module, @NonNull String ruleUID) {
-        return new WebPushNotificationActionHandler((Action) module, notificationService);
-    }
-
-    @Reference
-    protected void setNotificationService(NotificationService notificationService) {
+    @Activate
+    public WebPushNotificationModuleHandlerFactory(final @Reference NotificationService notificationService) {
         this.notificationService = notificationService;
     }
 
-    protected void unsetNotificationService(NotificationService notificationService) {
-        this.notificationService = null;
+    @Override
+    @Deactivate
+    public void deactivate() {
+        super.deactivate();
+    }
+
+    @Override
+    public Collection<String> getTypes() {
+        return Set.of(WebPushNotificationActionHandler.TYPE_ID);
+    }
+
+    @Override
+    protected @Nullable ModuleHandler internalCreate(Module module, String ruleUID) {
+        return new WebPushNotificationActionHandler((Action) module, notificationService);
     }
 }

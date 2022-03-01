@@ -18,17 +18,19 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-import com.google.common.collect.ImmutableMap;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * This class helps building natural language answers by selecting random answers from a resource bundle.
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 public class AnswerFormatter {
 
-    ResourceBundle answers;
-    Locale locale;
+    private final ResourceBundle answers;
+    private final Locale locale;
 
     public AnswerFormatter(Locale locale) {
         this.locale = locale;
@@ -42,7 +44,7 @@ public class AnswerFormatter {
                 ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT));
     }
 
-    public String getRandomAnswer(String key, Map<String, String> placeholderValues) {
+    public String getRandomAnswer(String key, @Nullable Map<String, String> placeholderValues) {
         String alternativesStr = answers.getString(key);
 
         String[] alternatives = alternativesStr.split("\\|");
@@ -65,7 +67,7 @@ public class AnswerFormatter {
 
     public String getStandardTagHint(Map<String, String> entities) {
         return getRandomAnswer("standard_hint",
-                ImmutableMap.of("attributes",
+                Map.of("attributes",
                         String.join(" & ",
                                 entities.entrySet().stream()
                                         .filter(e -> e.getKey().equals("object") || e.getKey().equals("location"))

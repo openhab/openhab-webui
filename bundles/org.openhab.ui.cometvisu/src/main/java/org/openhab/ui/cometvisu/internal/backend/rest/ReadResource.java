@@ -136,7 +136,6 @@ public class ReadResource implements EventBroadcaster, RESTResource {
             @ApiResponse(responseCode = "200", description = "OK") })
     public void getStates(@Context final SseEventSink sseEventSink, @QueryParam("a") List<String> itemNames,
             @QueryParam("i") long index, @QueryParam("t") long time) throws IOException, InterruptedException {
-
         this.itemNames = itemNames;
 
         broadcaster.add(sseEventSink, new SseSinkInfo(itemNames, index, time));

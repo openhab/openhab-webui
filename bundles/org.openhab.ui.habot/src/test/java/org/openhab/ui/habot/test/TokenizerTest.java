@@ -14,12 +14,14 @@ package org.openhab.ui.habot.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.openhab.ui.habot.nlp.internal.AlphaNumericTokenizer;
 
 /**
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 public class TokenizerTest {
 
     private void printTokens(String[] tokens) {

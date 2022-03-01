@@ -12,17 +12,19 @@
  */
 package org.openhab.ui.habot.test;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 
 /**
  * @author Stephan Strittmatter - Initial contribution
  */
+@NonNullByDefault
 public class TrainerEnTest extends AbstractTrainerTest {
 
     @Test
     public void testEN() throws Exception {
-        this.trainer = new IntentTrainer("en", skills);
+        trainer = new IntentTrainer("en", skills);
 
         assertIsGetStatus("Temperature in the kitchen?", "temperature", "kitchen");
         assertIsGetStatus("show me the temperature in the kitchen", "temperature", "kitchen");

@@ -852,7 +852,6 @@ public class ConfigHelper {
                     pagejump.setWidgetinfo(infowidget);
                 }
             }
-
         }
         // add to Root page
         addToNavbar(barPage, pagejump, position);
@@ -1045,7 +1044,7 @@ public class ConfigHelper {
                 cleanup(group, pages);
             }
         }
-        if (childsToAdd.size() > 0 && page instanceof Page) {
+        if (!childsToAdd.isEmpty() && page instanceof Page) {
             if (logger.isTraceEnabled()) {
                 logger.trace("there are '{}' children to be added to '{}'", childsToAdd.size(),
                         ((Page) page).getName());

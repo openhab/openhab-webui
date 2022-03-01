@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,7 +53,6 @@ public class FsUtil {
     private final Logger logger = LoggerFactory.getLogger(FsUtil.class);
     private static FsUtil instance;
     private DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-    private MountedFile rootDir = new MountedFile(new MountPoint(Paths.get(""), Paths.get("resource", "config")));
 
     public static FsUtil getInstance() {
         if (FsUtil.instance == null) {
@@ -126,10 +124,11 @@ public class FsUtil {
             cis.mark(Integer.MAX_VALUE);
             byte[] buffer = new byte[1024];
             while (cis.read(buffer) > 0) {
+                continue;
             }
             long contentChecksum = cis.getChecksum().getValue();
             cis.reset();
-            if (hash != null && !hash.isEmpty() && hash.equalsIgnoreCase("ignore")) {
+            if (hash != null && !hash.isEmpty() && "ignore".equalsIgnoreCase(hash)) {
                 // compare hashes
                 if (contentChecksum != Long.parseLong(hash)) {
                     throw new FileOperationException(
@@ -241,15 +240,6 @@ public class FsUtil {
             }
         }
         return mounts;
-    }
-
-    private String getFileWithoutExtension(File file) {
-        String name = file.getName();
-        int lastIndexOf = name.lastIndexOf(".");
-        if (lastIndexOf == -1) {
-            return name;
-        }
-        return name.substring(0, lastIndexOf);
     }
 
     public FsEntry getEntry(File file, boolean recursive, MountedFile mount) {

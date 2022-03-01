@@ -14,6 +14,7 @@ package org.openhab.ui.habot.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
@@ -21,12 +22,12 @@ import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 /**
  * @author Jorg de Jong - Initial contribution
  */
+@NonNullByDefault
 public class TrainerNlTest extends AbstractTrainerTest {
 
     @Test
     public void testGetStatus() throws Exception {
-
-        this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
+        trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
 
         assertIsGetStatus("Wat is de temperatuur in de keuken?", "temperatuur", "keuken");
         assertIsGetStatus("Temperatuur in de keuken?", "temperatuur", "keuken");
@@ -54,8 +55,7 @@ public class TrainerNlTest extends AbstractTrainerTest {
 
     @Test
     public void testActivateObjects() throws Exception {
-
-        this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
+        trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
 
         assertIsActivate("zet de tv aan", "tv", null);
         assertIsActivate("doe het licht aan", "licht", null);
@@ -70,8 +70,7 @@ public class TrainerNlTest extends AbstractTrainerTest {
 
     @Test
     public void testDeactivateObjects() throws Exception {
-
-        this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
+        trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
 
         assertIsDeactivate("doe het licht uit", "licht", null);
         assertIsDeactivate("zet de tv uit", "tv", null);
@@ -88,9 +87,8 @@ public class TrainerNlTest extends AbstractTrainerTest {
 
     @Test
     public void testHistoryHourly() throws Exception {
-
         Intent actual;
-        this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
+        trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
 
         actual = interpret("Hoe is het verloop van de temperatuur in het afgelopen uur?");
         assertEquals(Skills.GET_HISTORY_HOURLY, actual.getName());
@@ -105,9 +103,8 @@ public class TrainerNlTest extends AbstractTrainerTest {
 
     @Test
     public void testHistoryDaily() throws Exception {
-
         Intent actual;
-        this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
+        trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
 
         actual = interpret("Verloop van de temperatuur van de laatste 24 uur");
         assertEquals(Skills.GET_HISTORY_DAILY, actual.getName());
@@ -122,9 +119,8 @@ public class TrainerNlTest extends AbstractTrainerTest {
 
     @Test
     public void testHistoryWeekly() throws Exception {
-
         Intent actual;
-        this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
+        trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
 
         actual = interpret("Verloop van de temperatuur van de laatste week");
         assertEquals(Skills.GET_HISTORY_WEEKLY, actual.getName());
@@ -145,9 +141,8 @@ public class TrainerNlTest extends AbstractTrainerTest {
 
     @Test
     public void testHistoryMonthly() throws Exception {
-
         Intent actual;
-        this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
+        trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
 
         actual = interpret("Geschiedenis van de temperatuur van de afgelopen maand");
         assertEquals(Skills.GET_HISTORY_MONTHLY, actual.getName());
@@ -168,9 +163,8 @@ public class TrainerNlTest extends AbstractTrainerTest {
 
     @Test
     public void testHistoryLastChanges() throws Exception {
-
         Intent actual;
-        this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
+        trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
 
         actual = interpret("wanneer veranderde de temperatuur");
         assertEquals(Skills.GET_HISTORY_LAST_CHANGES, actual.getName());
@@ -193,7 +187,7 @@ public class TrainerNlTest extends AbstractTrainerTest {
     @Test
     public void testSetValue() throws Exception {
         Intent actual;
-        this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
+        trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
 
         actual = interpret("zet de thermostaat op 21 graden.");
         assertEquals(Skills.SET_VALUE, actual.getName());
@@ -287,7 +281,7 @@ public class TrainerNlTest extends AbstractTrainerTest {
     @Test
     public void testCreateRule() throws Exception {
         Intent actual;
-        this.trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
+        trainer = new IntentTrainer("nl", skills, null, "alphanumeric");
 
         actual = interpret("stel een timer in");
         assertEquals(Skills.CREATE_RULE, actual.getName());

@@ -81,7 +81,7 @@ public class StateBeanMessageBodyWriter implements MessageBodyWriter<Object> {
                     states.add("\"" + stateBean.name + "\":\"" + stateBean.state + "\"");
                 }
             }
-            if (states.size() > 0) {
+            if (!states.isEmpty()) {
                 msg += String.join(",", states);
             }
         }

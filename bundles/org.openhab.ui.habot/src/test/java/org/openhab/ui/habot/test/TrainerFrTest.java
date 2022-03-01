@@ -14,6 +14,7 @@ package org.openhab.ui.habot.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
@@ -21,12 +22,13 @@ import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 /**
  * @author Stephan Strittmatter - Initial contribution
  */
+@NonNullByDefault
 public class TrainerFrTest extends AbstractTrainerTest {
 
     @Test
     public void testFR() throws Exception {
         Intent actual;
-        this.trainer = new IntentTrainer("fr", skills, null, "alphanumeric");
+        trainer = new IntentTrainer("fr", skills, null, "alphanumeric");
 
         actual = interpret("montre le graphique de la consommation électrique pour les 2 derniers jours");
         assertEquals("get-history-daily", actual.getName());
