@@ -54,6 +54,6 @@ export const UNITS_OF_MEASURE = {
   'Volume.Pints': 'pt',
   'Volume.Quarts': 'qt',
   'Volume.Liters': 'l',
-  'Volume.CubicMeters': 'm3',
-  'Volume.CubicFeet': 'ft3'
+  'Volume.CubicMeters': 'm³',
+  'Volume.CubicFeet': 'ft³'
 }
