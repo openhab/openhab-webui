@@ -94,7 +94,7 @@ export default function (f7) {
   }
 
   /*
-  * Typed (ZonedDateTime) block that can be used with the Ephemeris check block
+  * Typed date (ZonedDateTime) block that can be used with the Ephemeris check block
   * Allows the selection of a date. The default is the current date
   * Blockly part
   */
@@ -105,7 +105,7 @@ export default function (f7) {
         .appendField(new FieldDatePicker('', null, { f7 }, 'date'), 'day')
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
-      this.setTooltip('Calender entry for ephemeris check block or other openHAB Blocks that require a day input')
+      this.setTooltip('Calender entry for ephemeris check block or other openHAB Blocks that require a day or date input in the format yyyy-MM-dd')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
     }
   }
@@ -123,16 +123,17 @@ export default function (f7) {
 
   /*
   * Typed (ZonedDateTime) block that can be used with the Ephemeris check block
-  * Allows input as string in the format yyyy-MM-dd
+  * Allows input as string in the format format yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm
   * Blockly part
   */
   Blockly.Blocks['oh_zdt_fromText'] = {
     init: function () {
-      this.appendValueInput('day')
-        .appendField('date')
+      this.appendValueInput('day') // cannot be renamed for backward compatibility reasons
+        .appendField('datetime')
+        .setCheck('String')
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
-      this.setTooltip('Calender entry as yyyy-MM-dd for ephemeris check block or other openHAB Blocks that require a day input')
+      this.setTooltip('Calender entry as format yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm (ZonedDateTime)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
     }
   }
@@ -162,7 +163,7 @@ export default function (f7) {
 
       this.setOutput(true, 'String')
       this.setColour(160)
-      this.setTooltip('converts an ephemeris date into a date string')
+      this.setTooltip('converts an ZonedDateTime into a date string')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
     }
   }
