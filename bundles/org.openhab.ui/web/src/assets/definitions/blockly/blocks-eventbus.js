@@ -18,7 +18,7 @@ export default function (f7) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Send a command to an item')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#event-bus-actions')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#send-command')
     }
   }
 

@@ -15,7 +15,7 @@ export default function (f7) {
       this.setOutput(true, 'DayOffset')
       this.setColour(70)
       this.setTooltip('today\'s date for ephemeris check block')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#today')
     }
   }
 
@@ -42,7 +42,7 @@ export default function (f7) {
       this.setOutput(true, 'DayOffset')
       this.setColour(70)
       this.setTooltip('today with a positive or negative day offset for ephemeris check block')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#today-x-days')
     }
   }
 
@@ -76,7 +76,7 @@ export default function (f7) {
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
       this.setTooltip('today with a positive or negative day offset for ephemeris check block')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-date-now-with-offset')
     }
   }
 
@@ -106,7 +106,7 @@ export default function (f7) {
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
       this.setTooltip('Calender entry for ephemeris check block or other openHAB Blocks that require a day or date input in the format yyyy-MM-dd')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#date-picker')
     }
   }
 
@@ -134,7 +134,7 @@ export default function (f7) {
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
       this.setTooltip('Calender entry as format yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm (ZonedDateTime)')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-date')
     }
   }
 
@@ -164,7 +164,7 @@ export default function (f7) {
       this.setOutput(true, 'String')
       this.setColour(160)
       this.setTooltip('converts an ZonedDateTime into a date string')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#ephemeris')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-string-representation-of-date')
     }
   }
 
