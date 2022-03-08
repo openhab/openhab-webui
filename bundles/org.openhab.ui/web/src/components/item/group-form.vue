@@ -29,6 +29,13 @@
           </option>
         </select>
       </f7-list-item>
+      <f7-list-item key="function-picker-logicalplaypause" v-else-if="item.type === 'Group' && item.groupType && ['Player'].indexOf(item.groupType) >= 0" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
+        <select name="select-function" @change="setFunction($event.target.value)">
+          <option v-for="type in types.LogicalPlayPauseFunctions" :key="type.name" :value="type.name" :selected="type.name === item.functionKey">
+            {{ type.value }}
+          </option>
+        </select>
+      </f7-list-item>
       <f7-list-item key="function-picker-datetime" v-else-if="item.type === 'Group' && item.groupType && ['DateTime'].indexOf(item.groupType) >= 0" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
         <select name="select-function" @change="setFunction($event.target.value)">
           <option v-for="type in types.DateTimeFunctions" :key="type.name" :value="type.name" :selected="type.name === item.functionKey">

@@ -79,6 +79,23 @@ export const LogicalOpenClosedFunctions = [{
   value: 'One CLOSED then OPEN else CLOSED'
 }]
 
+export const LogicalPlayPauseFunctions = [{
+  name: '',
+  value: 'None'
+}, {
+  name: 'AND_PLAY_PAUSE',
+  value: 'All PLAY then PLAY else PAUSE'
+}, {
+  name: 'AND_PAUSE_PLAY',
+  value: 'All PAUSE then PAUSE else PLAY'
+}, {
+  name: 'OR_PLAY_PAUSE',
+  value: 'One PLAY then PLAY else PAUSE'
+}, {
+  name: 'OR_PAUSE_PLAY',
+  value: 'One PAUSE then PAUSE else PLAY'
+}]
+
 export const DateTimeFunctions = [{
   name: '',
   value: 'None'
