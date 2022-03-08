@@ -14,9 +14,10 @@
         placeholder="UNDEF if unset"
         :value="parsedAction.value"
         @blur="(evt) => updateActionValue(evt.target.value)" />
+      <f7-list-item title="ignore state updates" checkbox :checked="ignoreStateUpdates" @change="(ev) => metadata.config['ignoreStateUpdates'] = new Boolean(ev.target.checked).toString()" />
     </f7-list>
     <f7-block-footer class="param-description padding-left">
-      <small>After a different command or state update is received, perform the chosen action when the duration specified below has passed. The timer is reset if another state update or command is received before it expires.</small>
+      <small>After a different command or state update is received, perform the chosen action when the duration specified below has passed. The timer is reset if another state update or command is received before it expires. If the ignore state updates checkbox is set, only state changes will reset the timer.</small>
     </f7-block-footer>
     <f7-block-title medium>
       After
@@ -73,6 +74,11 @@ export default {
       const action = this.sanitizedAction.indexOf('command=') === 0 ? 'command' : 'state'
       const value = this.sanitizedAction.replace('state=', '').replace('command=', '')
       return { action, value }
+    },
+    ignoreStateUpdates () {
+      let configValue = this.metadata.config['ignoreStateUpdates']
+      if (!configValue) return false
+      return typeof (configValue) === 'string' ? configValue === 'true' : configValue
     }
   },
   mounted () {
