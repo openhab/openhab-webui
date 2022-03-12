@@ -2,7 +2,8 @@
 
 <img align="right" width="220" src="./logo.svg" type="image/svg+xml"/>
 
-[![Build Status](https://ci.openhab.org/job/openHAB-WebUI/badge/icon)](https://ci.openhab.org/job/openHAB-WebUI/)
+[![GitHub Actions Build Status](https://github.com/openhab/openhab-webui/actions/workflows/ci-build.yml/badge.svg?branch=main)](https://github.com/openhab/openhab-webui/actions/workflows/ci-build.yml)
+[![Jenkins Build Status](https://ci.openhab.org/job/openHAB-WebUI/badge/icon)](https://ci.openhab.org/job/openHAB-WebUI/)
 [![EPL-2.0](https://img.shields.io/badge/license-EPL%202-green.svg)](https://opensource.org/licenses/EPL-2.0)
 [![Crowdin](https://badges.crowdin.net/openhab-webui/localized.svg)](https://crowdin.com/project/openhab-webui)
 [![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=2164344)](https://www.bountysource.com/teams/openhab/issues?tracker_ids=2164344)
