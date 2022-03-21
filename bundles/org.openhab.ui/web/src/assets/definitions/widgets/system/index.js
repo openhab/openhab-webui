@@ -7,7 +7,7 @@ const ClearVariableParameter = pb('clearVariable', 'Clear Variable After Action'
 import ButtonParameters from './button.js'
 export const OhButtonDefinition = () => new WidgetDefinition('oh-button', 'Button', 'Button performing an action')
   .paramGroup(actionGroup(), actionParams())
-  .paramGroup(actionGroup('Tap Hold', 'Action performed when tapping and holding card (or calling contextual menu on desktop)', 'taphold'), actionParams(null, 'taphold')).a()
+  .paramGroup(actionGroup('Tap Hold', 'Action performed when tapping and holding card (or calling contextual menu on desktop)', 'taphold'), actionParams(null, 'taphold'), true)
   .params([...ButtonParameters(), VariableParameter, ClearVariableParameter])
 
 import ChartParameters from './chart.js'

@@ -173,10 +173,10 @@ export function WidgetDefinition (name, label, description, icon) {
 }
 
 WidgetDefinition.prototype = {
-  paramGroup (group, params) {
+  paramGroup (group, params, advanced) {
     this.props.parameterGroups.push(group)
     if (params) {
-      this.props.parameters.push(...params.map((p) => p.g(group.name)))
+      this.props.parameters.push(...params.map((p) => (advanced) ? p.g(group.name).a() : p.g(group.name)))
     }
     return this
   },
