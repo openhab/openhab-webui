@@ -33,8 +33,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Yannick Schaus - Initial contribution
  */
-@Component(service = Tile.class, immediate = true, name = "org.openhab.habot", property = {
-        "service.config.description.uri=ui:habot", "service.config.label=HABot", "service.config.category=ui" })
+@Component(service = Tile.class, immediate = true, name = "org.openhab.habot")
 @NonNullByDefault
 public class HABotTile implements Tile {
 
