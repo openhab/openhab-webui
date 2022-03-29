@@ -163,7 +163,7 @@ export default {
           this.$set(this.widgetVars, varKey, this.context.vars[varKey])
         }
       }
-      Object.assign(widget.slots, this.context.component.slots)
+      if (this.context.component.slots) Object.assign(widget.slots, this.context.component.slots)
       const widgetContext = {
         component: widget,
         root: widget,
