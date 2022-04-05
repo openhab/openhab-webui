@@ -196,6 +196,42 @@ export const accessories = {
     { label: 'Name', mandatory: false },
     { label: 'LockCurrentState', mandatory: false },
     { label: 'LockTargetState', mandatory: false }
+  ],
+  'Slat': [
+    { label: 'CurrentSlatState', mandatory: true },
+    { label: 'SwingMode', mandatory: false },
+    { label: 'CurrentTiltAngle', mandatory: false },
+    { label: 'TargetTiltAngle', mandatory: false }
+  ],
+  'Faucet': [
+    { label: 'Active', mandatory: true },
+    { label: 'FaultStatus', mandatory: false }
+  ],
+  'Speaker': [
+    { label: 'Mute', mandatory: true },
+    { label: 'Active', mandatory: false },
+    { label: 'Volume', mandatory: false }
+  ],
+  'SmartSpeaker': [
+    { label: 'CurrentMediaState', mandatory: true },
+    { label: 'TargetMediaState', mandatory: true },
+    { label: 'Mute', mandatory: false },
+    { label: 'ConfiguredName', mandatory: false },
+    { label: 'Volume', mandatory: false }
+  ],
+  'Microphone': [
+    { label: 'Mute', mandatory: true },
+    { label: 'Volume', mandatory: false }
+  ],
+  'Battery': [
+    { label: 'BatteryLevel', mandatory: true },
+    { label: 'BatteryLowStatus', mandatory: true },
+    { label: 'BatteryChargingState', mandatory: true }
+  ],
+  'Filter': [
+    { label: 'FilterChangeIndication', mandatory: true },
+    { label: 'FilterLifeLevel', mandatory: false },
+    { label: 'FilterResetIndication', mandatory: false }
   ]
 }
 
