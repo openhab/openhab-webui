@@ -22,7 +22,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Calls a script file which must be located in the $OPENHAB_CONF/scripts folder')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/actions.html#openhab-subsystem-actions')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#call-script-file')
     }
   }
 
@@ -57,7 +57,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Run a rule or script with a certain UID, and optional parameters')
-      // this.setHelpUrl('') // TODO provide a openhab documentation URL
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#run-rule-or-script-created-in-ui')
     }
   }
 
@@ -182,7 +182,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
         }
         return TIP[contextData]
       })
-      this.setHelpUrl('https://www.openhab.org/docs/developer/utils/events.html')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#retrieve-rule-context-information')
     }
   }
 
@@ -204,6 +204,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
       this.setInputsInline(false)
       this.setOutput(true, 'any')
       this.setColour(0)
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#retrieve-context-attribute-from-rule')
       this.setTooltip('Retrieve a specified attribute from the context that could be set from a calling rule or script')
     }
   }
@@ -232,6 +233,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#inline-script')
       this.setTooltip('Allows inlining arbitrary script code which has to be syntactically correct')
     }
   }
