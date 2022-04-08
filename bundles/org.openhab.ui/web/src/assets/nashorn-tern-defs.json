@@ -90,6 +90,52 @@
               "!doc": "Returns a string representation of the state",
               "!type": "fn() -> string"
           }
+      },
+      "TriggerType": {
+          "cronExpression": {
+              "!doc": "The cron expression for the event (timer.GenericCronTrigger)",
+              "!type": "string"
+          },
+          "time": {
+              "!doc": "The time of the event in \"hh:mm\" format (timer.TimeOfDayTrigger)",
+              "!type": "string"
+          },
+          "itemName": {
+              "!doc": "The name of the item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger, core.ItemCommandTrigger)",
+              "!type": "string"
+          },
+          "state": {
+              "!doc": "The state of the item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger)",
+              "!type": "string"
+          },
+          "previousState": {
+              "!doc": "The previous state of the item that triggered the event (core.ItemStateChangeTrigger)",
+              "!type": "string"
+          },
+          "command": {
+              "!doc": "The command of the item that triggered the event (core.ItemCommandTrigger)",
+              "!type": "string"
+          },
+          "channelUID": {
+              "!doc": "The channelUID of the channel that triggered the event (core.ChannelEventTrigger)",
+              "!type": "string"
+          },
+          "event": {
+              "!doc": "The event of the channel that triggered the event (core.ChannelEventTrigger)",
+              "!type": "string"
+          },
+          "eventTopic": {
+              "!doc": "The topic of the event (core.GenericEventTrigger)",
+              "!type": "string"
+          },
+          "eventSource": {
+              "!doc": "The Item name, ChannelUID, ThingUID, etc (core.GenericEventTrigger)",
+              "!type": "string"
+          },
+          "eventTypes": {
+              "!doc": "The event type (core.GenericEventTrigger)",
+              "!type": "string"
+          }
       }
   },
   "events": {
@@ -103,6 +149,10 @@
   "ir": {
       "!doc": "Alias for itemRegistry",
       "!type": "ItemRegistry"
+  },
+  "event": {
+      "!doc": "Data passed from triggers.",
+      "!type": "TriggerType"
   },
 
   "ON": "OnOffType",

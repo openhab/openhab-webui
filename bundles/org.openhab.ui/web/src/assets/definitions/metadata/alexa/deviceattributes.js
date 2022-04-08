@@ -441,7 +441,9 @@ export default {
     supports: ['multiInstance'],
     parameters: (item) => [
       p.capabilityNames(item.groups.length ? item.label : '@Setting.ToggleState', '@Setting.Oscillate,Rotate'),
-      ...(item.type === 'Switch' ? [p.inverted()] : [p.valueMapping('OFF', true), p.valueMapping('ON', true)]),
+      ...(item.type === 'Number' || item.type === 'String'
+        ? [p.valueMapping('OFF', true), p.valueMapping('ON', true)]
+        : [p.inverted()]),
       p.nonControllable(item.stateDescription),
       p.retrievable(),
       p.language(item.settings && item.settings.regional.language),

@@ -16,7 +16,7 @@ export default function (f7) {
       this.setColour(160)
       this.setInputsInline(true)
       this.setTooltip('Pick an item from the Model')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/items.html')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#item')
       this.setOutput(true, null)
     }
   }
@@ -37,7 +37,7 @@ export default function (f7) {
       this.setOutput(true, 'Array')
       this.setColour(0)
       this.setTooltip('Retrieve the members of a group')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/items.html')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-members-of-group')
       this.setOutput(true, null)
     }
   }
@@ -57,7 +57,7 @@ export default function (f7) {
       this.setOutput(true, 'oh_itemtype')
       this.setColour(0)
       this.setTooltip('Get an item from the item registry')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/items.html')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-item')
     }
   }
 
@@ -77,7 +77,7 @@ export default function (f7) {
       this.setOutput(true, 'String')
       this.setColour(0)
       this.setTooltip('Get an item state from the item registry')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/items.html#state')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-state-of-item')
     }
   }
 
@@ -115,7 +115,7 @@ export default function (f7) {
       this.setOutput(true, 'String')
       this.setColour(0)
       this.setTooltip('Retrieve a specific attribute from the item. Note that groups and tags return a list and should be used with the loops-block \'for each item ... in list\'. ')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/items.html')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-particular-attributes-of-an-item')
     },
     /**
     * Modify this block to have the correct output type based on the attribute.

@@ -15,7 +15,6 @@ package org.openhab.ui.habot.nlp.internal;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
@@ -24,9 +23,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.common.registry.RegistryChangeListener;
 import org.openhab.core.config.core.ConfigurableService;
-import org.openhab.core.events.EventPublisher;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.voice.text.HumanLanguageInterpreter;
@@ -39,7 +39,6 @@ import org.openhab.ui.habot.nlp.ItemNamedAttribute.AttributeType;
 import org.openhab.ui.habot.nlp.ItemResolver;
 import org.openhab.ui.habot.nlp.Skill;
 import org.openhab.ui.habot.nlp.UnsupportedLanguageException;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -53,6 +52,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 @Component(service = HumanLanguageInterpreter.class, immediate = true, name = "org.openhab.opennlphli")
 @ConfigurableService(category = "voice", label = "OpenNLP Interpreter for HABot", description_uri = OpenNLPInterpreter.CONFIG_URI)
 public class OpenNLPInterpreter implements HumanLanguageInterpreter {
@@ -61,13 +61,12 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
 
     public static final Set<Locale> SUPPORTED_LOCALES = Set.of(Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN);
 
-    private IntentTrainer intentTrainer = null;
-    private Locale currentLocale = null;
-    private String tokenizerId = null;
+    private @Nullable IntentTrainer intentTrainer = null;
+    private @Nullable Locale currentLocale = null;
+    private @Nullable String tokenizerId = null;
 
     private ItemRegistry itemRegistry;
     private ItemResolver itemResolver;
-    private EventPublisher eventPublisher;
 
     private Map<String, Skill> skills = new HashMap<>();
 
@@ -88,24 +87,49 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
         }
     };
 
+    @Activate
+    public OpenNLPInterpreter(Map<String, Object> configProps, final @Reference ItemResolver itemResolver,
+            final @Reference ItemRegistry itemRegistry) {
+        Object tokenizer = configProps.get("tokenizer");
+        if (tokenizer != null) {
+            tokenizerId = tokenizer.toString();
+        }
+
+        this.itemResolver = itemResolver;
+        this.itemRegistry = itemRegistry;
+
+        itemRegistry.addRegistryChangeListener(registryChangeListener);
+    }
+
+    @Modified
+    protected void modified(Map<String, Object> configProps) {
+        Object tokenizer = configProps.get("tokenizer");
+        if (tokenizer != null) {
+            tokenizerId = tokenizer.toString();
+        }
+
+        intentTrainer = null;
+    }
+
+    @Deactivate
+    public void deactivate() {
+        itemRegistry.removeRegistryChangeListener(registryChangeListener);
+    }
+
     @Override
     public String getId() {
         return "opennlp";
     }
 
     @Override
-    public String getLabel(Locale locale) {
+    public String getLabel(@Nullable Locale locale) {
         return "HABot OpenNLP Interpreter";
     }
 
     @Override
     public String interpret(Locale locale, String text) throws InterpretationException {
         ChatReply reply = reply(locale, text);
-        if (reply == null) {
-            throw new InterpretationException("reply is null");
-        }
-
-        return reply.getAnswer();
+        return reply.getAnswer() == null ? "" : reply.getAnswer();
     }
 
     /**
@@ -140,6 +164,7 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
      * @throws InterpretationException
      */
     public ChatReply reply(Locale locale, String text) throws InterpretationException {
+        IntentTrainer intentTrainer = this.intentTrainer;
         if (!locale.equals(currentLocale) || intentTrainer == null) {
             try {
                 itemResolver.setLocale(locale);
@@ -157,6 +182,7 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
                                 return o1.getIntentId().compareTo(o2.getIntentId());
                             }
                         }).collect(Collectors.toList()), getNameSamples(), this.tokenizerId);
+                this.intentTrainer = intentTrainer;
                 currentLocale = locale;
             } catch (Exception e) {
                 InterpretationException fe = new InterpretationException(
@@ -174,11 +200,11 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
         // it a "get-status" intent with this attribute as the corresponding entity.
         // This allows the user to query a named attribute quickly by simply stating it - and avoid a
         // misinterpretation by the categorizer.
-        if (this.itemResolver.getMatchingItems(text, null).findAny().isPresent()) {
+        if (itemResolver.getMatchingItems(text, null).findAny().isPresent()) {
             intent = new Intent("get-status");
             intent.setEntities(new HashMap<>());
             intent.getEntities().put("object", text.toLowerCase());
-        } else if (this.itemResolver.getMatchingItems(null, text).findAny().isPresent()) {
+        } else if (itemResolver.getMatchingItems(null, text).findAny().isPresent()) {
             intent = new Intent("get-status");
             intent.setEntities(new HashMap<>());
             intent.getEntities().put("location", text.toLowerCase());
@@ -210,8 +236,8 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
     }
 
     @Override
-    public String getGrammar(Locale locale, String format) {
-        throw new UnsupportedOperationException();
+    public @Nullable String getGrammar(Locale locale, String format) {
+        return null;
     }
 
     @Override
@@ -221,46 +247,7 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
 
     @Override
     public Set<String> getSupportedGrammarFormats() {
-        return Collections.emptySet();
-    }
-
-    @Reference
-    protected void setItemRegistry(ItemRegistry itemRegistry) {
-        if (this.itemRegistry == null) {
-            this.itemRegistry = itemRegistry;
-            this.itemRegistry.addRegistryChangeListener(registryChangeListener);
-        }
-    }
-
-    @SuppressWarnings("PMD.CompareObjectsWithEquals")
-    protected void unsetItemRegistry(ItemRegistry itemRegistry) {
-        if (itemRegistry == this.itemRegistry) {
-            this.itemRegistry.removeRegistryChangeListener(registryChangeListener);
-            this.itemRegistry = null;
-        }
-    }
-
-    @Reference
-    protected void setItemResolver(ItemResolver itemResolver) {
-        this.itemResolver = itemResolver;
-    }
-
-    protected void unsetItemResolver(ItemResolver itemResolver) {
-        this.itemResolver = null;
-    }
-
-    @Reference
-    protected void setEventPublisher(EventPublisher eventPublisher) {
-        if (this.eventPublisher == null) {
-            this.eventPublisher = eventPublisher;
-        }
-    }
-
-    @SuppressWarnings("PMD.CompareObjectsWithEquals")
-    protected void unsetEventPublisher(EventPublisher eventPublisher) {
-        if (eventPublisher == this.eventPublisher) {
-            this.eventPublisher = null;
-        }
+        return Set.of();
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
@@ -274,27 +261,5 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
         this.skills.remove(skill.getIntentId());
         // reset the trainer
         this.intentTrainer = null;
-    }
-
-    @Activate
-    protected void activate(Map<String, Object> configProps, BundleContext bundleContext) {
-        if (configProps.containsKey("tokenizer")) {
-            this.tokenizerId = configProps.get("tokenizer").toString();
-        }
-
-        this.intentTrainer = null;
-    }
-
-    @Modified
-    protected void modified(Map<String, Object> configProps) {
-        if (configProps.containsKey("tokenizer")) {
-            this.tokenizerId = configProps.get("tokenizer").toString();
-        }
-
-        this.intentTrainer = null;
-    }
-
-    @Deactivate
-    protected void deactivate() {
     }
 }

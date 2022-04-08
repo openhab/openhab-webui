@@ -80,7 +80,7 @@ public class DataProviderResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(DataProviderResource.class);
 
     private final ItemRegistry itemRegistry;
-    protected static final Map<String, QueryablePersistenceService> persistenceServices = new HashMap<>();
+    private final Map<String, QueryablePersistenceService> persistenceServices = new HashMap<>();
 
     @Activate
     public DataProviderResource(final @Reference ItemRegistry itemRegistry) {
@@ -116,7 +116,6 @@ public class DataProviderResource implements RESTResource {
             entry.setValue(item.getName());
 
             String type = item.getType();
-            System.out.println(item.toString() + "/" + item.getType());
             if ("Group".equals(item.getType())) {
                 Item groupItem = ((GroupItem) item).getBaseItem();
                 if (groupItem != null) {
@@ -143,7 +142,6 @@ public class DataProviderResource implements RESTResource {
             }
             group.add(entry);
         }
-        System.out.println(groups.size() + "/" + this.itemRegistry.getItems().size());
         return Response.ok(groups).build();
     }
 

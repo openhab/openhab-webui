@@ -18,6 +18,7 @@ import TrendParameters from '../system/trend.js'
 export const OhLabelCardDefinition = () => new WidgetDefinition('oh-label-card', 'Label Card', 'Display the state of an item in a card')
   .paramGroup(CardParameterGroup(), CardParameters())
   .paramGroup(actionGroup(), actionParams())
+  .paramGroup(actionGroup('Tap Hold', 'Action performed when tapping and holding card (or calling contextual menu on desktop)', 'taphold'), actionParams(null, 'taphold'), true)
   .paramGroup(pg('label', 'Label', 'Parameters of the label'), [
     pi('item', 'Item', 'Item to display'),
     pt('label', 'Label', 'Display this text (or expression result) instead of the item\'s state'),

@@ -45,7 +45,7 @@ export default function (f7, sinks, voices) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Plays a sound file from the sounds folder to the given sink.')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/multimedia.html')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-voice-and-multimedia.html#play-audio')
     }
   }
 
@@ -82,7 +82,7 @@ export default function (f7, sinks, voices) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Plays a sound file from the sounds folder to the given sink at a given volume. \n Note: rather set volume first via thing volume channel, then play sound without volume parameter as it may be more reliable.')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/multimedia.html')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-voice-and-multimedia.html#play-audio-with-volume')
     }
   }
 
@@ -118,7 +118,7 @@ export default function (f7, sinks, voices) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('plays an audio stream from an url to the given sink(s)')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/multimedia.html')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-voice-and-multimedia.html#play-stream')
     }
   }
 
@@ -148,7 +148,7 @@ export default function (f7, sinks, voices) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('stops the audio stream at the given sink')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/multimedia.html')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-voice-and-multimedia.html#stop-stream')
     }
   }
 
@@ -183,7 +183,7 @@ export default function (f7, sinks, voices) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Speak text at the given device via text-to-speech')
-      this.setHelpUrl('https://www.openhab.org/addons/voice/googletts/')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-voice-and-multimedia.html#say')
     }
   }
 

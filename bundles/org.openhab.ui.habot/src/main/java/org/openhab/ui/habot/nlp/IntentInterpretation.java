@@ -14,6 +14,8 @@ package org.openhab.ui.habot.nlp;
 
 import java.util.Collection;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.items.Item;
 import org.openhab.ui.habot.card.Card;
 
@@ -24,13 +26,18 @@ import org.openhab.ui.habot.card.Card;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 public class IntentInterpretation {
 
+    @Nullable
     String answer;
+    @Nullable
     String hint;
 
+    @Nullable
     Collection<Item> matchedItems;
 
+    @Nullable
     Card card;
 
     /**
@@ -38,7 +45,7 @@ public class IntentInterpretation {
      *
      * @return the collection of matched items
      */
-    public Collection<Item> getMatchedItems() {
+    public @Nullable Collection<Item> getMatchedItems() {
         return matchedItems;
     }
 
@@ -47,7 +54,7 @@ public class IntentInterpretation {
      *
      * @param matchedItems the collection of matched items
      */
-    public void setMatchedItems(Collection<Item> matchedItems) {
+    public void setMatchedItems(@Nullable Collection<Item> matchedItems) {
         this.matchedItems = matchedItems;
     }
 
@@ -56,7 +63,7 @@ public class IntentInterpretation {
      *
      * @return the answer
      */
-    public String getAnswer() {
+    public @Nullable String getAnswer() {
         return answer;
     }
 
@@ -65,7 +72,7 @@ public class IntentInterpretation {
      *
      * @param answer the answer
      */
-    public void setAnswer(String answer) {
+    public void setAnswer(@Nullable String answer) {
         this.answer = answer;
     }
 
@@ -74,7 +81,7 @@ public class IntentInterpretation {
      *
      * @return the hint
      */
-    public String getHint() {
+    public @Nullable String getHint() {
         return hint;
     }
 
@@ -83,7 +90,7 @@ public class IntentInterpretation {
      *
      * @param hint the hint
      */
-    public void setHint(String hint) {
+    public void setHint(@Nullable String hint) {
         this.hint = hint;
     }
 
@@ -92,7 +99,7 @@ public class IntentInterpretation {
      *
      * @return the card
      */
-    public Card getCard() {
+    public @Nullable Card getCard() {
         return card;
     }
 
@@ -101,7 +108,7 @@ public class IntentInterpretation {
      *
      * @param card the card
      */
-    public void setCard(Card card) {
+    public void setCard(@Nullable Card card) {
         this.card = card;
     }
 }

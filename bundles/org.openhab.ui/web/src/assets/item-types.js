@@ -1,5 +1,7 @@
-export const ItemTypes = ['Switch', 'Contact', 'String', 'Number', 'Dimmer', 'DateTime', 'Color', 'Image', 'Player', 'Location', 'Rollershutter', 'Call', 'Group']
-export const GroupTypes = ['None', 'Switch', 'Contact', 'Number', 'Dimmer', 'Rollershutter', 'DateTime']
+const SharedTypes = ['Call', 'Color', 'Contact', 'DateTime', 'Dimmer', 'Image', 'Location', 'Number', 'Player', 'Rollershutter', 'String', 'Switch']
+
+export const ItemTypes = SharedTypes.concat(['Group'])
+export const GroupTypes = ['None'].concat(SharedTypes)
 export const Dimensions = ['Area', 'Length', 'Mass', 'Pressure', 'Speed', 'Temperature', 'Volume', 'Dimensionless', 'Acceleration', 'AmountOfSubstance', 'Angle', 'ArealDensity', 'CatalyticActivity', 'DataAmount', 'DataTransferRate', 'Density', 'ElectricCapacitance', 'ElectricCharge', 'ElectricConductance', 'ElectricCurrent', 'ElectricInductance', 'ElectricPotential', 'ElectricResistance', 'Energy', 'Force', 'Frequency', 'Illuminance', 'Intensity', 'LuminousFlux', 'LuminousIntensity', 'MagneticFlux', 'MagneticFluxDensity', 'Power', 'RadiationDoseAbsorbed', 'RadiationDoseEffective', 'Radioactivity', 'SolidAngle', 'Time', 'VolumetricFlowRate']
 
 export const ArithmeticFunctions = [{
@@ -75,6 +77,23 @@ export const LogicalOpenClosedFunctions = [{
 }, {
   name: 'NOR_CLOSED_OPEN',
   value: 'One CLOSED then OPEN else CLOSED'
+}]
+
+export const LogicalPlayPauseFunctions = [{
+  name: '',
+  value: 'None'
+}, {
+  name: 'AND_PLAY_PAUSE',
+  value: 'All PLAY then PLAY else PAUSE'
+}, {
+  name: 'AND_PAUSE_PLAY',
+  value: 'All PAUSE then PAUSE else PLAY'
+}, {
+  name: 'OR_PLAY_PAUSE',
+  value: 'One PLAY then PLAY else PAUSE'
+}, {
+  name: 'OR_PAUSE_PLAY',
+  value: 'One PAUSE then PAUSE else PLAY'
 }]
 
 export const DateTimeFunctions = [{

@@ -57,7 +57,7 @@ public class CometVisuTile implements Tile {
             sitemapNames.addAll(provider.getSitemapNames());
         }
         String sitemap = "demo";
-        if (sitemapNames.size() > 0) {
+        if (!sitemapNames.isEmpty()) {
             if (sitemapNames.contains("demo")) {
                 // a demo sitemap exists, use this one instead
                 sitemap = "oh_demo";

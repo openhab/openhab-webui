@@ -14,6 +14,7 @@ package org.openhab.ui.habot.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
@@ -21,11 +22,11 @@ import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 /**
  * @author Stephan Strittmatter - Initial contribution
  */
+@NonNullByDefault
 public class TrainerDeTest extends AbstractTrainerTest {
 
     @Test
     public void testActivateObjects() throws Exception {
-
         Intent actual;
         this.trainer = new IntentTrainer("de", skills);
 
@@ -66,7 +67,6 @@ public class TrainerDeTest extends AbstractTrainerTest {
 
     @Test
     public void testDeactivateObjects() throws Exception {
-
         Intent actual;
         this.trainer = new IntentTrainer("de", skills);
 
@@ -154,7 +154,6 @@ public class TrainerDeTest extends AbstractTrainerTest {
 
     @Test
     public void testGetStatus() throws Exception {
-
         Intent actual;
         this.trainer = new IntentTrainer("de", skills);
 
@@ -231,7 +230,6 @@ public class TrainerDeTest extends AbstractTrainerTest {
 
     @Test
     public void testHistoryHourly() throws Exception {
-
         Intent actual;
         this.trainer = new IntentTrainer("de", skills, null, "alphanumeric");
 
@@ -248,7 +246,6 @@ public class TrainerDeTest extends AbstractTrainerTest {
 
     @Test
     public void testHistoryDaily() throws Exception {
-
         Intent actual;
         this.trainer = new IntentTrainer("de", skills, null, "alphanumeric");
 
@@ -265,7 +262,6 @@ public class TrainerDeTest extends AbstractTrainerTest {
 
     @Test
     public void testHistoryWeekly() throws Exception {
-
         Intent actual;
         this.trainer = new IntentTrainer("de", skills, null, "alphanumeric");
 
@@ -288,7 +284,6 @@ public class TrainerDeTest extends AbstractTrainerTest {
 
     @Test
     public void testHistoryMonthly() throws Exception {
-
         Intent actual;
         this.trainer = new IntentTrainer("de", skills, null, "alphanumeric");
 
@@ -311,7 +306,6 @@ public class TrainerDeTest extends AbstractTrainerTest {
 
     @Test
     public void testHistoryLastChanges() throws Exception {
-
         Intent actual;
         this.trainer = new IntentTrainer("de", skills, null, "alphanumeric");
 

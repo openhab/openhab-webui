@@ -309,7 +309,13 @@
             </shadow>
           </value>
         </block>
-        <block type="oh_color_to_hsb" />
+        <block type="oh_color_to_hsb">
+          <value name="hexColor">
+            <shadow type="colour_picker">
+              <field name="COLOUR">#ff0000</field>
+            </shadow>
+          </value>
+        </block>
       </category>
 
       <category name="openHAB" colour="0">
@@ -484,7 +490,7 @@
           </block>
         </category>
 
-        <category name="Ephemeris">
+        <category name="Dates & Times">
           <block type="oh_dayoffset_today" />
           <block type="oh_dayoffset">
             <value name="offset">
@@ -508,7 +514,18 @@
               <shadow type="oh_zdt" />
             </value>
           </block>
-          <sep gap="48" />
+          <block type="oh_zdt_plusminus">
+            <value name="offset">
+              <shadow type="math_number">
+                <field name="NUM">
+                  0
+                </field>
+              </shadow>
+            </value>
+          </block>
+        </category>
+
+        <category name="Ephemeris">
           <block type="oh_ephemeris_check">
             <value name="dayInfo">
               <shadow type="oh_dayoffset_today" />
@@ -571,29 +588,6 @@
         </category>
 
         <category name="Persistence">
-          <block type="oh_zdt_plusminus">
-            <value name="offset">
-              <shadow type="math_number">
-                <field name="NUM">
-                  0
-                </field>
-              </shadow>
-            </value>
-          </block>
-          <block type="oh_zdt" />
-          <block type="oh_zdt_fromText">
-            <value name="day">
-              <shadow type="text">
-                <field name="TEXT">{{ new Date().toISOString().split('T')[0] }}</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="oh_zdt_toText">
-            <value name="date">
-              <shadow type="oh_zdt" />
-            </value>
-          </block>
-          <sep gap="48" />
           <block type="oh_get_persistvalue">
             <value name="itemName">
               <shadow type="oh_item" />

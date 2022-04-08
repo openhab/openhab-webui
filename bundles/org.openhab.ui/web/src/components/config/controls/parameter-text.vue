@@ -12,6 +12,7 @@
       :required="configDescription.required" validate
       :clear-button="!configDescription.required && configDescription.context !== 'password'"
       @input="updateValue"
+      :readonly="configDescription.readOnly"
       :type="controlType">
       <div v-if="configDescription.context === 'password'" class="padding-left" slot="content-end">
         <f7-link class="margin" color="gray" slot="content-end" @click="showPassword = !showPassword">

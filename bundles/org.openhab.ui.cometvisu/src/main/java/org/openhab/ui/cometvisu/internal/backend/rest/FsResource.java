@@ -228,16 +228,14 @@ public class FsResource implements RESTResource {
                         // use text type all fallback
                         return Response.ok(file.toFile(), MediaType.TEXT_PLAIN).build();
                     }
-
                 }
-            } else if (path.equalsIgnoreCase("backup")) {
+            } else if ("backup".equalsIgnoreCase(path)) {
                 // backup folder is always requested and will be created on demand, so we pretend as if its there and
                 // empty
                 return Response.ok(new ReadResponse(), MediaType.APPLICATION_JSON).build();
             } else {
                 return FsUtil.createErrorResponse(Status.NOT_FOUND, "file not found: " + file.getAbsolutePath());
             }
-
         } catch (FileOperationException e) {
             return FsUtil.createErrorResponse(e);
         }

@@ -66,9 +66,9 @@ export default {
       })
       if (this.filterType && this.filterType.length) {
         if (Array.isArray(this.filterType)) {
-          this.preparedItems = this.preparedItems.filter((i) => this.filterType.includes(i.type.split(':', 1)[0]))
+          this.preparedItems = this.preparedItems.filter((i) => this.filterType.includes(i.type.split(':', 1)[0]) || (i.type === 'Group' && this.filterType.includes(i.groupType)))
         } else {
-          this.preparedItems = this.preparedItems.filter((i) => i.type === this.filterType)
+          this.preparedItems = this.preparedItems.filter((i) => i.type === this.filterType || (i.type === 'Group' && this.filterType.includes(i.groupType)))
         }
       }
       if (this.editableOnly) {

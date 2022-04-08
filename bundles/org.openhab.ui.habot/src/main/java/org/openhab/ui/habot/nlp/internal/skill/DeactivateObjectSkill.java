@@ -13,9 +13,12 @@
 package org.openhab.ui.habot.nlp.internal.skill;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.events.EventPublisher;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
@@ -27,20 +30,28 @@ import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.IntentInterpretation;
 import org.openhab.ui.habot.nlp.ItemResolver;
 import org.openhab.ui.habot.nlp.Skill;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * This {@link Skill} deactivates objects - sends the OFF command to all matching items.
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 @org.osgi.service.component.annotations.Component(service = Skill.class)
 public class DeactivateObjectSkill extends AbstractItemIntentInterpreter {
 
-    private CardBuilder cardBuilder;
-    private EventPublisher eventPublisher;
+    private final CardBuilder cardBuilder;
+    private final EventPublisher eventPublisher;
+
+    @Activate
+    public DeactivateObjectSkill(final @Reference ItemResolver itemResolver, final @Reference CardBuilder cardBuilder,
+            final @Reference EventPublisher eventPublisher) {
+        super(itemResolver);
+        this.cardBuilder = cardBuilder;
+        this.eventPublisher = eventPublisher;
+    }
 
     @Override
     public String getIntentId() {
@@ -48,7 +59,7 @@ public class DeactivateObjectSkill extends AbstractItemIntentInterpreter {
     }
 
     @Override
-    public IntentInterpretation interpret(Intent intent, String language) {
+    public @Nullable IntentInterpretation interpret(Intent intent, String language) {
         IntentInterpretation interpretation = new IntentInterpretation();
 
         Set<Item> matchedItems = findItems(intent);
@@ -57,7 +68,7 @@ public class DeactivateObjectSkill extends AbstractItemIntentInterpreter {
             interpretation.setAnswer(answerFormatter.getRandomAnswer("general_failure"));
             return interpretation;
         }
-        if (matchedItems == null || matchedItems.isEmpty()) {
+        if (matchedItems.isEmpty()) {
             interpretation.setAnswer(answerFormatter.getRandomAnswer("nothing_deactivated"));
             interpretation.setHint(answerFormatter.getStandardTagHint(intent.getEntities()));
         } else {
@@ -86,37 +97,10 @@ public class DeactivateObjectSkill extends AbstractItemIntentInterpreter {
                     eventPublisher.post(ItemEventFactory.createCommandEvent(item.getName(), OnOffType.OFF));
                 }
                 interpretation.setAnswer(answerFormatter.getRandomAnswer("switches_deactivated",
-                        ImmutableMap.of("count", String.valueOf(filteredItems.size()))));
+                        Map.of("count", String.valueOf(filteredItems.size()))));
             }
         }
 
         return interpretation;
-    }
-
-    @Reference
-    protected void setCardBuilder(CardBuilder cardBuilder) {
-        this.cardBuilder = cardBuilder;
-    }
-
-    protected void unsetCardBuilder(CardBuilder cardBuilder) {
-        this.cardBuilder = null;
-    }
-
-    @Reference
-    protected void setItemResolver(ItemResolver itemResolver) {
-        this.itemResolver = itemResolver;
-    }
-
-    protected void unsetItemResolver(ItemResolver itemResolver) {
-        this.itemResolver = null;
-    }
-
-    @Reference
-    protected void setEventPublisher(EventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
-    }
-
-    protected void unsetEventPublisher(EventPublisher eventPublisher) {
-        this.eventPublisher = null;
     }
 }

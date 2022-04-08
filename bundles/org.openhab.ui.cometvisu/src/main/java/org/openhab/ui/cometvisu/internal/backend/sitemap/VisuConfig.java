@@ -16,8 +16,6 @@ import java.io.File;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.XMLConstants;
@@ -94,14 +92,12 @@ public class VisuConfig {
     private CometVisuApp app;
 
     private ConfigHelper configHelper;
-    private File rootFolder;
 
     private ObjectFactory factory = new ObjectFactory();
 
-    public VisuConfig(Sitemap sitemap, CometVisuApp app, File rootFolder) {
+    public VisuConfig(Sitemap sitemap, CometVisuApp app) {
         this.sitemap = sitemap;
         this.app = app;
-        this.rootFolder = rootFolder;
     }
 
     /**
@@ -144,7 +140,6 @@ public class VisuConfig {
     private String marshal(Pages bean, String xsdSchema) {
         String res = "";
         try {
-            Map<String, Object> properties = new HashMap<>();
             Class<?>[] classes = new Class[1];
             classes[0] = bean.getClass();
             JAXBContext jaxbContext = JAXBContext.newInstance(bean.getClass());
@@ -311,7 +306,6 @@ public class VisuConfig {
                 configHelper.addMapping(text, widget);
                 configHelper.addToRoot(rootPage, factory.createPageText(text));
             }
-
         } else if (widget instanceof org.openhab.core.model.sitemap.sitemap.Slider) {
             if (item == null) {
                 return;

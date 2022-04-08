@@ -30,12 +30,10 @@ public class MountedFile {
     private MountPoint mount;
     private Path path;
     private Path relativeTargetPath;
-    private String originalPath;
 
     public MountedFile(String pathname) throws FileOperationException {
         this.path = Path.of(normalize(pathname));
         this.relativeTargetPath = this.path;
-        this.originalPath = pathname;
         // find a mount point
         for (final MountPoint mount : ManagerSettings.getInstance().getMounts()) {
             if (mount.contains(this.path)) {
@@ -53,51 +51,51 @@ public class MountedFile {
     }
 
     public MountPoint getMount() {
-        return this.mount;
+        return mount;
     }
 
     public String getMountPath() {
-        return this.mount != null ? this.mount.getTargetPath().toString() : "";
+        return mount != null ? mount.getTargetPath().toString() : "";
     }
 
     public Path getAbsolutePath() {
-        if (this.mount != null) {
-            return this.mount.getAbsoluteSource().resolve(this.path);
+        if (mount != null) {
+            return mount.getAbsoluteSource().resolve(path);
         } else {
-            return ManagerSettings.getInstance().getConfigPath().resolve(this.path);
+            return ManagerSettings.getInstance().getConfigPath().resolve(path);
         }
     }
 
     public boolean isReadonlyMount() {
-        return this.mount != null && !this.mount.isWriteable();
+        return mount != null && !mount.isWriteable();
     }
 
     public String getPath() {
-        return this.relativeTargetPath.toString();
+        return relativeTargetPath.toString();
     }
 
     public File toFile() {
-        return this.getAbsolutePath().toFile();
+        return getAbsolutePath().toFile();
     }
 
     public boolean exists() {
-        return this.toFile().exists();
+        return toFile().exists();
     }
 
     public boolean isDirectory() {
-        return this.toFile().isDirectory();
+        return toFile().isDirectory();
     }
 
     public String getName() {
-        return this.toFile().getName();
+        return toFile().getName();
     }
 
     public boolean hasChildren() {
-        return this.toFile().list().length > 0;
+        return toFile().list().length > 0;
     }
 
     private String normalize(String path) throws FileOperationException {
-        String normalizedPath = path.equals(".") ? "" : path;
+        String normalizedPath = ".".equals(path) ? "" : path;
         while (normalizedPath.startsWith(File.separator)) {
             normalizedPath = path.substring(1);
         }

@@ -42,6 +42,10 @@
                 "!doc": "Gets the tags from this item",
                 "!type": "[string]"
             },
+            "groupNames": {
+                "!doc": "Gets the groups for this item",
+                "!type": "[string]"
+            },
             "getMetadataValue": {
                 "!doc": "Gets metadata values for this item.",
                 "!type": "fn(namespace: string) -> string"
@@ -153,6 +157,10 @@
             "getItem": {
                 "!doc": "This method retrieves a single item from the registry.",
                 "!type": "fn(name: string) -> Item"
+            },
+            "getItems": {
+                "!doc": "Returns all items.",
+                "!type": "fn() -> [Item]"
             },
             "getItemsByTag": {
                 "!doc": "Returns a list of items containing all of the given tags.",
@@ -271,6 +279,52 @@
             "toString": {
                 "!doc": "Returns a string representation of the state",
                 "!type": "fn() -> string"
+            }
+        },
+        "TriggerType": {
+            "cronExpression": {
+                "!doc": "The cron expression for the event (timer.GenericCronTrigger)",
+                "!type": "string"
+            },
+            "time": {
+                "!doc": "The time of the event in \"hh:mm\" format (timer.TimeOfDayTrigger)",
+                "!type": "string"
+            },
+            "itemName": {
+                "!doc": "The name of the item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger, core.ItemCommandTrigger)",
+                "!type": "string"
+            },
+            "state": {
+                "!doc": "The state of the item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger)",
+                "!type": "string"
+            },
+            "previousState": {
+                "!doc": "The previous state of the item that triggered the event (core.ItemStateChangeTrigger)",
+                "!type": "string"
+            },
+            "command": {
+                "!doc": "The command of the item that triggered the event (core.ItemCommandTrigger)",
+                "!type": "string"
+            },
+            "channelUID": {
+                "!doc": "The channelUID of the channel that triggered the event (core.ChannelEventTrigger)",
+                "!type": "string"
+            },
+            "event": {
+                "!doc": "The event of the channel that triggered the event (core.ChannelEventTrigger)",
+                "!type": "string"
+            },
+            "eventTopic": {
+                "!doc": "The topic of the event (core.GenericEventTrigger)",
+                "!type": "string"
+            },
+            "eventSource": {
+                "!doc": "The Item name, ChannelUID, ThingUID, etc (core.GenericEventTrigger)",
+                "!type": "string"
+            },
+            "eventTypes": {
+                "!doc": "The event type (core.GenericEventTrigger)",
+                "!type": "string"
             }
         },
 
@@ -430,5 +484,9 @@
     "require": {
         "!doc": "Scripts may include standard NPM based libraries by using CommonJS require. The library search path will look in automation/js/node_modules in the user configuration directory.",
         "!type": "fn(module: string) -> ?"
+    },
+    "event": {
+        "!doc": "Data passed from triggers.",
+        "!type": "TriggerType"
     }
 }

@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.Skill;
 import org.openhab.ui.habot.nlp.UnsupportedLanguageException;
@@ -48,6 +50,7 @@ import opennlp.tools.util.TrainingParameters;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 public class IntentTrainer {
 
     private final Logger logger = LoggerFactory.getLogger(IntentTrainer.class);
@@ -77,13 +80,13 @@ public class IntentTrainer {
      * @param tokenizerId tokenizer to use ("alphanumeric" or "whitespace")
      * @throws Exception
      */
-    public IntentTrainer(String language, Collection<Skill> skills, InputStream additionalNameSamples,
-            String tokenizerId) throws Exception {
+    public IntentTrainer(String language, Collection<Skill> skills, @Nullable InputStream additionalNameSamples,
+            @Nullable String tokenizerId) throws Exception {
         this.tokenizer = "alphanumeric".equals(tokenizerId) ? AlphaNumericTokenizer.INSTANCE
                 : WhitespaceTokenizer.INSTANCE;
 
         /* Prepare the streams of document samples sourced from each skill's training data */
-        List<ObjectStream<DocumentSample>> categoryStreams = new ArrayList<ObjectStream<DocumentSample>>();
+        List<ObjectStream<DocumentSample>> categoryStreams = new ArrayList<>();
         for (Skill skill : skills) {
             String intent = skill.getIntentId();
 
@@ -118,10 +121,10 @@ public class IntentTrainer {
                 new DoccatFactory());
         combinedDocumentSampleStream.close();
 
-        List<TokenNameFinderModel> tokenNameFinderModels = new ArrayList<TokenNameFinderModel>();
+        List<TokenNameFinderModel> tokenNameFinderModels = new ArrayList<>();
 
         /* Use the skill's training data again, to train the entity extractor (token name finder) this time */
-        List<ObjectStream<NameSample>> nameStreams = new ArrayList<ObjectStream<NameSample>>();
+        List<ObjectStream<NameSample>> nameStreams = new ArrayList<>();
         for (Skill skill : skills) {
             try {
                 InputStream trainingData = skill.getTrainingData(language);

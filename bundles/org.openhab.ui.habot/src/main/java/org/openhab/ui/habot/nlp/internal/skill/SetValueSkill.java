@@ -14,11 +14,14 @@ package org.openhab.ui.habot.nlp.internal.skill;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.events.EventPublisher;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
@@ -32,9 +35,8 @@ import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.IntentInterpretation;
 import org.openhab.ui.habot.nlp.ItemResolver;
 import org.openhab.ui.habot.nlp.Skill;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * This {@link Skill} sets the matching item(s) to the specified numerical value (for dimmers, thermostats etc.) or
@@ -42,11 +44,20 @@ import com.google.common.collect.ImmutableMap;
  *
  * @author Yannick Schaus - Initial contribution
  */
+@NonNullByDefault
 @org.osgi.service.component.annotations.Component(service = Skill.class)
 public class SetValueSkill extends AbstractItemIntentInterpreter {
 
-    private CardBuilder cardBuilder;
-    private EventPublisher eventPublisher;
+    private final CardBuilder cardBuilder;
+    private final EventPublisher eventPublisher;
+
+    @Activate
+    public SetValueSkill(final @Reference ItemResolver itemResolver, final @Reference CardBuilder cardBuilder,
+            final @Reference EventPublisher eventPublisher) {
+        super(itemResolver);
+        this.cardBuilder = cardBuilder;
+        this.eventPublisher = eventPublisher;
+    }
 
     @Override
     public String getIntentId() {
@@ -54,7 +65,7 @@ public class SetValueSkill extends AbstractItemIntentInterpreter {
     }
 
     @Override
-    public IntentInterpretation interpret(Intent intent, String language) {
+    public @Nullable IntentInterpretation interpret(Intent intent, String language) {
         IntentInterpretation interpretation = new IntentInterpretation();
 
         Set<Item> matchedItems = findItems(intent);
@@ -63,7 +74,7 @@ public class SetValueSkill extends AbstractItemIntentInterpreter {
             interpretation.setAnswer(answerFormatter.getRandomAnswer("general_failure"));
             return interpretation;
         }
-        if (matchedItems == null || matchedItems.isEmpty()) {
+        if (matchedItems.isEmpty()) {
             interpretation.setAnswer(answerFormatter.getRandomAnswer("answer_nothing_found"));
             interpretation.setHint(answerFormatter.getStandardTagHint(intent.getEntities()));
         } else {
@@ -95,28 +106,27 @@ public class SetValueSkill extends AbstractItemIntentInterpreter {
             ResourceBundle colors = ResourceBundle.getBundle("colors", new Locale(language));
             hsbValue = colors.getString("color_" + colorString);
         } catch (MissingResourceException e) {
-            interpretation.setAnswer(
-                    answerFormatter.getRandomAnswer("set_color_unknown", ImmutableMap.of("color", colorString)));
+            interpretation
+                    .setAnswer(answerFormatter.getRandomAnswer("set_color_unknown", Map.of("color", colorString)));
             return;
         }
 
         if (filteredItems.isEmpty()) {
-            interpretation.setAnswer(
-                    answerFormatter.getRandomAnswer("set_color_no_item", ImmutableMap.of("color", colorString)));
+            interpretation
+                    .setAnswer(answerFormatter.getRandomAnswer("set_color_no_item", Map.of("color", colorString)));
             interpretation.setHint(answerFormatter.getStandardTagHint(intent.getEntities()));
         } else if (filteredItems.size() == 1) {
             interpretation.setCard(cardBuilder.buildCard(intent, filteredItems));
             eventPublisher
                     .post(ItemEventFactory.createCommandEvent(filteredItems.get(0).getName(), new HSBType(hsbValue)));
-            interpretation.setAnswer(
-                    answerFormatter.getRandomAnswer("set_color_single", ImmutableMap.of("color", colorString)));
+            interpretation.setAnswer(answerFormatter.getRandomAnswer("set_color_single", Map.of("color", colorString)));
         } else {
             interpretation.setCard(cardBuilder.buildCard(intent, filteredItems));
             for (Item item : filteredItems) {
                 eventPublisher.post(ItemEventFactory.createCommandEvent(item.getName(), new HSBType(hsbValue)));
             }
             interpretation.setAnswer(answerFormatter.getRandomAnswer("set_color_multiple",
-                    ImmutableMap.of("count", String.valueOf(filteredItems.size()), "color", colorString)));
+                    Map.of("count", String.valueOf(filteredItems.size()), "color", colorString)));
         }
     }
 
@@ -132,8 +142,7 @@ public class SetValueSkill extends AbstractItemIntentInterpreter {
                 .collect(Collectors.toList());
 
         if (filteredItems.isEmpty()) {
-            interpretation.setAnswer(
-                    answerFormatter.getRandomAnswer("nothing_set_no_item", ImmutableMap.of("value", rawValue)));
+            interpretation.setAnswer(answerFormatter.getRandomAnswer("nothing_set_no_item", Map.of("value", rawValue)));
             interpretation.setHint(answerFormatter.getStandardTagHint(intent.getEntities()));
         } else if (filteredItems.size() == 1) {
             DecimalType value = (filteredItems.get(0).getAcceptedCommandTypes().contains(DecimalType.class))
@@ -141,8 +150,7 @@ public class SetValueSkill extends AbstractItemIntentInterpreter {
                     : PercentType.valueOf(cleanedValue);
             interpretation.setCard(cardBuilder.buildCard(intent, filteredItems));
             eventPublisher.post(ItemEventFactory.createCommandEvent(filteredItems.get(0).getName(), value));
-            interpretation
-                    .setAnswer(answerFormatter.getRandomAnswer("set_value_single", ImmutableMap.of("value", rawValue)));
+            interpretation.setAnswer(answerFormatter.getRandomAnswer("set_value_single", Map.of("value", rawValue)));
         } else {
             interpretation.setCard(cardBuilder.buildCard(intent, filteredItems));
             for (Item item : filteredItems) {
@@ -152,34 +160,7 @@ public class SetValueSkill extends AbstractItemIntentInterpreter {
                 eventPublisher.post(ItemEventFactory.createCommandEvent(item.getName(), value));
             }
             interpretation.setAnswer(answerFormatter.getRandomAnswer("set_value_multiple",
-                    ImmutableMap.of("count", String.valueOf(filteredItems.size()), "value", rawValue)));
+                    Map.of("count", String.valueOf(filteredItems.size()), "value", rawValue)));
         }
-    }
-
-    @Reference
-    protected void setCardBuilder(CardBuilder cardBuilder) {
-        this.cardBuilder = cardBuilder;
-    }
-
-    protected void unsetCardBuilder(CardBuilder cardBuilder) {
-        this.cardBuilder = null;
-    }
-
-    @Reference
-    protected void setItemResolver(ItemResolver itemResolver) {
-        this.itemResolver = itemResolver;
-    }
-
-    protected void unsetItemResolver(ItemResolver itemResolver) {
-        this.itemResolver = null;
-    }
-
-    @Reference
-    protected void setEventPublisher(EventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
-    }
-
-    protected void unsetEventPublisher(EventPublisher eventPublisher) {
-        this.eventPublisher = null;
     }
 }

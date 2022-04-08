@@ -235,7 +235,7 @@ public class CometVisuServlet extends HttpServlet {
                 Sitemap sitemap = getSitemap(matcher.group(2));
                 if (sitemap != null) {
                     logger.debug("reading sitemap '{}'", sitemap);
-                    VisuConfig config = new VisuConfig(sitemap, cometVisuApp, rootFolder);
+                    VisuConfig config = new VisuConfig(sitemap, cometVisuApp);
 
                     resp.setContentType(MediaType.APPLICATION_XML);
                     resp.getWriter().write(config.getConfigXml(req));
@@ -338,7 +338,7 @@ public class CometVisuServlet extends HttpServlet {
             }
         }
 
-        if (items.size() > 0) {
+        if (!items.isEmpty()) {
             // Fallback to first persistenceService from list
             if (!CometVisuApp.getPersistenceServices().entrySet().iterator().hasNext()) {
                 throw new IllegalArgumentException("No Persistence service found.");
@@ -836,7 +836,6 @@ public class CometVisuServlet extends HttpServlet {
      */
     private final void saveConfig(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         response.setContentType(MediaType.APPLICATION_JSON);
 
         class Response {
@@ -1038,7 +1037,7 @@ public class CometVisuServlet extends HttpServlet {
         } else if (file.getName().equals("list_all_rrds.php")) {
             // all item names
         }
-        if (beans.size() == 0 && resultString == null) {
+        if (beans.isEmpty() && resultString == null) {
             // nothing found try the PHP files
             processPhpRequest(file, request, response);
         } else {

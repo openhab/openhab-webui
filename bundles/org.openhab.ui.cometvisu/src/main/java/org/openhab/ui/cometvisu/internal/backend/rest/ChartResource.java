@@ -105,10 +105,12 @@ public class ChartResource implements RESTResource {
 
     static {
         DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
-        DECIMAL_FORMAT.applyPattern(PATTERN);
+        synchronized (DECIMAL_FORMAT) {
+            DECIMAL_FORMAT.applyPattern(PATTERN);
+        }
     }
 
-    protected static final Map<String, QueryablePersistenceService> persistenceServices = new HashMap<>();
+    private final Map<String, QueryablePersistenceService> persistenceServices = new HashMap<>();
 
     private final ItemRegistry itemRegistry;
 
@@ -128,10 +130,6 @@ public class ChartResource implements RESTResource {
 
     public void removePersistenceService(PersistenceService service) {
         persistenceServices.remove(service.getId());
-    }
-
-    public static Map<String, QueryablePersistenceService> getPersistenceServices() {
-        return persistenceServices;
     }
 
     @GET
@@ -175,11 +173,10 @@ public class ChartResource implements RESTResource {
             logger.debug("item '{}' found ", item);
 
             // Prefer RRD-Service
-            QueryablePersistenceService persistenceService = getPersistenceServices().get(service);
+            QueryablePersistenceService persistenceService = persistenceServices.get(service);
             // Fallback to first persistenceService from list
             if (persistenceService == null) {
-                Iterator<Entry<String, QueryablePersistenceService>> pit = getPersistenceServices().entrySet()
-                        .iterator();
+                Iterator<Entry<String, QueryablePersistenceService>> pit = persistenceServices.entrySet().iterator();
                 if (pit.hasNext()) {
                     persistenceService = pit.next().getValue();
                     logger.debug("required persistence service ({}) not found, using {} instead", service,
@@ -199,7 +196,6 @@ public class ChartResource implements RESTResource {
             return Response.ok(data, responseType).build();
         } catch (ItemNotFoundException e1) {
             logger.error("Item '{}' not found error while requesting series data.", itemName);
-
         }
         return Response.serverError().build();
     }
@@ -264,7 +260,6 @@ public class ChartResource implements RESTResource {
             for (String itemName : itemNames) {
                 addRrdData(data, itemName, consilidationFunction, timeBegin, timeEnd, resolution);
             }
-
         } catch (FileNotFoundException e) {
             // rrd file does not exist, fallback to generic persistence service
             logger.debug("no rrd file found '{}'", (RRD_FOLDER + File.separator + item.getName() + ".rrd"));
@@ -324,7 +319,9 @@ public class ChartResource implements RESTResource {
             return nanString;
         }
         if (forceExponents) {
-            return DECIMAL_FORMAT.format(x);
+            synchronized (DECIMAL_FORMAT) {
+                return DECIMAL_FORMAT.format(x);
+            }
         }
         return "" + x;
     }

@@ -3,7 +3,7 @@
     <f7-card-header v-if="config.title">
       <div>{{ config.title }}</div>
     </f7-card-header>
-    <f7-card-content ref="cardContent" @click.native="performAction" class="label-card-content" :style="{ background: config.background }" :class="{ 'vertical-arrangement': config.vertical }">
+    <f7-card-content ref="cardContent" @click.native="performAction" @taphold.native="onTaphold($event)" @contextmenu.native="onContextMenu($event)" class="label-card-content" :style="{ background: config.background }" :class="{ 'vertical-arrangement': config.vertical }">
       <oh-trend v-if="config.trendItem" :key="'trend' + config.item" class="trend" :width="($refs.cardContent) ? $refs.cardContent.$el.clientWidth : 0" :context="context" />
       <f7-list>
         <f7-list-item :link="config.action ? true : false" no-chevron>
