@@ -102,7 +102,7 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
     public String interpret(Locale locale, String text) throws InterpretationException {
         ChatReply reply = reply(locale, text);
         if (reply == null) {
-            return null;
+            throw new InterpretationException("reply is null");
         }
 
         return reply.getAnswer();
