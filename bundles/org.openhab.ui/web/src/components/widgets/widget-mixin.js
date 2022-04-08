@@ -87,7 +87,9 @@ export default {
     if (this.context && this.context.component.config && this.context.component.config.stylesheet) {
       this.cssUid = 'scoped-' + this.$f7.utils.id()
 
-      this.$el.classList.add(this.cssUid)
+      var el = this.$el
+      if (!el.classList) el = el.parentElement
+      el.classList.add(this.cssUid)
 
       let style = document.createElement('style')
       style.id = this.cssUid
