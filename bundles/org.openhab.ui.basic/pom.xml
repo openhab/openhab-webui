@@ -35,8 +35,8 @@
         <version>1.9.0</version>
 
         <configuration>
-          <nodeVersion>v16.13.0</nodeVersion>
-          <npmVersion>6.14.3</npmVersion>
+          <nodeVersion>v16.14.2</nodeVersion>
+          <npmVersion>8.6.0</npmVersion>
           <environmentVariables>
             <npm_config_cache>${project.basedir}/npm_cache</npm_config_cache>
             <npm_config_tmp>${project.basedir}/npm_tmp</npm_config_tmp>
