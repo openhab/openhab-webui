@@ -52,7 +52,8 @@ export default {
       }
     },
     // Recursively builds path in model (sorted array of relations to ancestors, either Equipment or Location) for an item
-    // that has semantics configuration and returns it
+    // that has semantics configuration and returns it.
+    // At the same time, adds all items not already processed to the filteredItems property depending on their semantic type.
     buildPathInModel (item, filteredItems) {
       if (!item.metadata || !item.metadata.semantics) return
       if (item.modelPath) return item.modelPath
@@ -79,29 +80,31 @@ export default {
       item.equipment = []
       item.equipmentOrPoints = []
 
-      if (parent) {
-        parent.children.push(item)
+      if (parent) parent.children.push(item)
 
-        if (item.metadata.semantics.value.startsWith('Location')) {
-          parent.locations.push(item)
-          filteredItems.locations.push(item)
-        }
+      if (item.metadata.semantics.value.startsWith('Location')) {
+        if (parent) parent.locations.push(item)
+        filteredItems.locations.push(item)
+      }
 
-        if (item.metadata.semantics.value.startsWith('Point')) {
+      if (item.metadata.semantics.value.startsWith('Point')) {
+        if (parent) {
           parent.points.push(item)
           parent.equipmentOrPoints.push(item)
         }
+      }
 
-        if (item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) {
-          parent.properties.push(item)
-          filteredItems.properties.push(item)
-        }
+      if (item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) {
+        if (parent) parent.properties.push(item)
+        filteredItems.properties.push(item)
+      }
 
-        if (item.metadata.semantics.value.startsWith('Equipment')) {
+      if (item.metadata.semantics.value.startsWith('Equipment')) {
+        if (parent) {
           parent.equipment.push(item)
           parent.equipmentOrPoints.push(item)
-          filteredItems.equipment.push(item)
         }
+        filteredItems.equipment.push(item)
       }
 
       return item.modelPath
