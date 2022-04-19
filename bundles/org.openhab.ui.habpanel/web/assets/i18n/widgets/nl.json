@@ -94,6 +94,7 @@
     "widget.clock.theme.light": "licht",
     "widget.clock.theme.dark": "donker",
     "widget.clock.digital_format": "Digitaal formaat",
+    "widget.clock.digital_color": "Digitaal kleur",
     "widget.clock.font_size": "Lettergrootte digitale font",
     "widget.colorpicker": "Kleurenkiezer",
     "widget.colorpicker.description": "Toont een kleurenkiezer",

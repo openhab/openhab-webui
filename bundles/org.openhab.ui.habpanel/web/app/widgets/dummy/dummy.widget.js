@@ -105,7 +105,8 @@
             icon             : widget.icon,
             icon_size        : widget.icon_size,
             icon_nolinebreak : widget.icon_nolinebreak,
-            icon_replacestext: widget.icon_replacestext
+            icon_replacestext: widget.icon_replacestext,
+            value_color      : widget.value_color
         };
 
         $scope.dismiss = function() {

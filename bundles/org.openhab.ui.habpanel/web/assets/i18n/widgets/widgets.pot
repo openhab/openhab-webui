@@ -412,6 +412,11 @@ msgctxt "widget.clock.digital_format"
 msgid "Digital Format"
 msgstr ""
 
+#. Color picker header
+msgctxt "widget.clock.digital_color"
+msgid "Digital Color"
+msgstr ""
+
 #. Textbox header
 msgctxt "widget.clock.font_size"
 msgid "Digital Font Size"
@@ -485,6 +490,11 @@ msgstr ""
 
 
 # FRAME (WEB) WIDGET
+
+#. Color picker header
+msgctxt "widget.dummy.value_color"
+msgid "Value color"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.frame"
