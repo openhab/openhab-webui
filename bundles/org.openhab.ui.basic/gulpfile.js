@@ -3,7 +3,7 @@
 
 	var
 		gulp = require("gulp"),
-		sass = require("gulp-sass"),
+		sass = require('gulp-sass')(require('node-sass')),
 		uglify = require("gulp-uglify"),
 		eslint = require("gulp-eslint");
 

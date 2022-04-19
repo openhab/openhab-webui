@@ -57,7 +57,8 @@ You find the following repository structure:
 
 In most cases, you **don't** need a Java development environment for UI development.
 
-Instead, make sure you have NodeJS 12.16 or later and npm 6.14 or later installed.
+Instead, make sure you have NodeJS 16.14 (HABot: 12.16) or later and npm 8.6 (HABot: 6.14) or later installed.
+
 
 Then identify in the `bundles` directories where the frontend code is - for instance, for the main UI it is `bundles/org.openhab.ui/web/`.
 Then follow the instructions in the specific add-on's `CONTRIBUTING.md` file to get started. In the main UI's case, it is located in [bundles/org.openhab.ui/CONTRIBUTING.md](https://github.com/openhab/openhab-webui/blob/master/bundles/org.openhab.ui/CONTRIBUTING.md). In many cases it will involve executing some `npm` commands to install dependencies and start a development server.
