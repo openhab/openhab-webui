@@ -153,7 +153,7 @@
     <f7-list>
       <f7-list-item radio :checked="timeEventType === 'cron'" name="timeEventType" title="on a schedule (cron)" @click="updateTimeEventType('cron')" />
       <f7-list-item radio :checked="timeEventType === 'timeOfDay'" name="timeEventType" title="at a fixed time of the day" @click="updateTimeEventType('timeOfDay')" />
-      <f7-list-item radio :checked="thingEventType === 'dateTime'" name="timeEventType" title="at the time specified in an item's state" @click="updateTimeEventType('dateTime')" />
+      <f7-list-item radio :checked="timeEventType === 'dateTime'" name="timeEventType" title="at the time specified in an item's state" @click="updateTimeEventType('dateTime')" />
     </f7-list>
     <config-sheet v-if="currentModuleType" :key="currentSection + currentModule.id"
                   :parameterGroups="[]"
@@ -285,7 +285,6 @@ export default {
           break
         case 'dateTime':
           this.$emit('typeSelect', 'timer.DateTimeTrigger', true)
-          if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { itemName: this.currentItem.name }))
           break
       }
     },
