@@ -24,7 +24,7 @@
 
 <script>
 import mixin from '@/components/widgets/widget-mixin'
-import itemDefaultListComponent, { equipmentListComponent } from '@/components/widgets/standard/list/default-list-item'
+import { equipmentListComponent } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
 

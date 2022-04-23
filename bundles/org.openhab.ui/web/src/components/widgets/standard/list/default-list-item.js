@@ -105,6 +105,8 @@ export default function itemDefaultListComponent (item, itemNameAsFooterOrLocati
   return component
 }
 
+/* The functions below deal with specifically with equipment representation in the home page cards */
+
 export function itemPathLabel (item) {
   if (!item.modelPath) return '(?) > ' + item.name
   return item.modelPath.map((parent) => {

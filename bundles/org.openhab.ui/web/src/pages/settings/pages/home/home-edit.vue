@@ -51,22 +51,6 @@
               <f7-button v-for="tab in modelTabs" :key="tab.value" @click="showCardControls = false; currentModelTab = tab.value" :active="currentModelTab === tab.value" :text="tab.label" />
             </f7-segmented>
 
-            <div v-if="currentModelTab === 'locations'">
-              <config-sheet
-                :parameterGroups="locationsTabParameters.props.parameterGroups || []"
-                :parameters="locationsTabParameters.props.parameters || []"
-                :configuration="page.slots.locations[0].config"
-                @updated="dirty = true" />
-            </div>
-
-            <div v-if="currentModelTab === 'equipment'">
-              <config-sheet
-                :parameterGroups="equipmentTabParameters.props.parameterGroups || []"
-                :parameters="equipmentTabParameters.props.parameters || []"
-                :configuration="page.slots.equipment[0].config"
-                @updated="dirty = true" />
-            </div>
-
             <f7-block-title>Cards</f7-block-title>
             <div v-if="modelReady && !previewMode">
               <div class="display-block padding">
@@ -98,6 +82,22 @@
                   <f7-checkbox :checked="!isCardExcluded(card)" :disabled="card.separator !== undefined" slot="content-start" class="margin-right" />
                 </f7-list-item>
               </f7-list>
+            </div>
+
+            <div v-if="currentModelTab === 'locations'">
+              <config-sheet
+                :parameterGroups="locationsTabParameters.props.parameterGroups || []"
+                :parameters="locationsTabParameters.props.parameters || []"
+                :configuration="page.slots.locations[0].config"
+                @updated="dirty = true" />
+            </div>
+
+            <div v-if="currentModelTab === 'equipment'">
+              <config-sheet
+                :parameterGroups="equipmentTabParameters.props.parameterGroups || []"
+                :parameters="equipmentTabParameters.props.parameters || []"
+                :configuration="page.slots.equipment[0].config"
+                @updated="dirty = true" />
             </div>
           </f7-col>
         </f7-block>

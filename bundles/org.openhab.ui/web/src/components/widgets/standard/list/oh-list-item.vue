@@ -7,7 +7,7 @@
                 :accordion-item="isRegularAccordion && !config.divider && !context.editmode"
                 :link="(config.action !== undefined && config.action !== '' && !context.editmode) ? true : undefined"
                 @click.stop="openAccordionOrPerformAction"
-                :class="{ 'oh-accordion-item' : isEquipmentAccordion}"
+                :class="{ 'oh-equipment-accordion-item' : isEquipmentAccordion}"
                 ref="f7AccordionContent">
     <slot name="inner" #inner />
     <slot name="after" #after />
@@ -28,14 +28,14 @@
 </template>
 
 <style lang="stylus">
-.oh-accordion-item
+.oh-equipment-accordion-item
   .item-link .item-inner:after
-    transition-duration: 300ms
+    transition-duration 300ms
 
   .list,
   .block
-    margin-top: 0
-    margin-bottom: 0
+    margin-top 0
+    margin-bottom 0
 
   .block
     > h1,
@@ -44,65 +44,59 @@
     > h4,
     > p
       &:first-child
-        margin-top: 10px
+        margin-top 10px
 
       &:last-child
-        margin-bottom: 10px
+        margin-bottom 10px
 
-.list li.oh-accordion-item ul
-  ltr(
-    padding-left: 0
+.list li.oh-equipment-accordion-item ul
+  ltr(padding-left 0)
+  rtl(padding-right 0)
 
-)
-  rtl(
-    padding-right: 0
+ul > .oh-equipment-accordion-item > .accordion-item-content > div > ul
+    padding-left var(--f7-list-item-padding-horizontal)!important
 
-)
-
-.list ul ul
-  padding-left: var(--f7-list-item-padding-horizontal)!important
-
-.media-list .oh-accordion-item .item-inner {
-    padding-right: calc(16px + 0px)
-    padding-right: calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-right))
+.media-list .oh-equipment-accordion-item .item-inner {
+    padding-right calc(16px + 0px)
+    padding-right calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-right))
 }
 
-.media-list .oh-accordion-item .item-title-row {
-    padding-right: @css{max(20px, calc(var(--f7-list-chevron-icon-area)))}
+.media-list .oh-equipment-accordion-item .item-title-row {
+    padding-right @css{max(20px, calc(var(--f7-list-chevron-icon-area)))}
 }
 
-.media-list .oh-accordion-item > .item-content > .item-inner > .item-title-row:before
-    font-family: 'framework7-core-icons'
-    font-weight: normal
-    font-style: normal
-    font-size: var(--f7-list-chevron-icon-font-size)
-    line-height: 1
-    letter-spacing: normal
-    text-transform: none
-    white-space: nowrap
-    word-wrap: normal
-    direction: ltr
-    -webkit-font-smoothing: antialiased
-    text-rendering: optimizeLegibility
-    -moz-osx-font-smoothing: grayscale
-    -moz-font-feature-settings: "liga"
-    font-feature-settings: "liga"
-    content: var(--f7-accordion-chevron-icon-down)
-    width: 14px
-    height: 8px
-    margin-top: -4px
-    line-height: 8px
-    right: 0
-    text-align: right
-    display: block
-    width: 100%
-    height: 100%
-    position: absolute
-    top: 50%
-    color: var(--f7-list-chevron-icon-color)
+.media-list .oh-equipment-accordion-item > .item-content > .item-inner > .item-title-row:before
+    font-family 'framework7-core-icons'
+    font-weight normal
+    font-style normal
+    font-size var(--f7-list-chevron-icon-font-size)
+    line-height 1
+    letter-spacing normal
+    text-transform none
+    white-space nowrap
+    word-wrap normal
+    direction ltr
+    -webkit-font-smoothing antialiased
+    text-rendering optimizeLegibility
+    -moz-osx-font-smoothing grayscale
+    -moz-font-feature-settings "liga"
+    font-feature-settings "liga"
+    content var(--f7-accordion-chevron-icon-down)
+    width 14px
+    height 8px
+    margin-top -4px
+    line-height 8px
+    right 0
+    text-align right
+    display block
+    width 100%
+    height 100%
+    position absolute
+    top 50%
+    color var(--f7-list-chevron-icon-color)
 
-.media-list .accordion-item-opened  > .item-content > .item-inner > .item-title-row:before
-    content: var(--f7-accordion-chevron-icon-up)
+.media-list .oh-equipment-accordion-item.accordion-item-opened  > .item-content > .item-inner > .item-title-row:before
+    content var(--f7-accordion-chevron-icon-up)
 
 .item-divider > span
   flex-shrink 1
