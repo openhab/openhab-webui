@@ -29,15 +29,17 @@ const EquipmentListParameters = () => [
       { value: 'nested', label: 'Nested pages for sub-equipment (default)' },
       { value: 'accordion', label: 'Equipment items grouped as accordion cards' }
     ]),
-  pb('equipmentPromoteSingle', 'Promote single item equipments', 'Display groups with a single Point as a single item'),
-  pb('equipmentPromoteMain', 'Promote the main item of an equipment', 'Promote the main item of an equipment (widgetOrder equal to 0) as the equipment representation'),
-  pt('equipmentPromotedLabel', 'Label promoted elements', 'Choose what elements to display in label of promoted items')
+  pb('equipmentPromoteSingle', 'Promote single Points', 'Flatten equipment which only have a single Point (only display the Point as the Equipment\'s representation')
+    .v((value, configuration, configDescription, parameters) => { return configuration.equipmentNesting === 'accordion' }),
+  pb('equipmentPromoteMain', 'Promote the main Point of an Equipment', 'Promote the main Point item of an Equipment (widgetOrder equal to 0) as the Equipment\'s representation')
+    .v((value, configuration, configDescription, parameters) => { return configuration.equipmentNesting === 'accordion' }),
+  pt('equipmentPromotedLabel', 'Label for promoted elements', 'Choose what to include in the labels of promoted items')
     .o([
       { value: 'equipment', label: 'Label of the equipment' },
       { value: 'separator', label: 'Separator character (>)' },
       { value: 'item', label: 'Label of the item within the equipment' }
     ]).m().v((value, configuration, configDescription, parameters) => {
-      return configuration.equipmentPromoteSingle === true || configuration.equipmentPromoteMain === true
+      return (configuration.equipmentPromoteSingle === true || configuration.equipmentPromoteMain === true) && configuration.equipmentNesting === 'accordion'
     })
 ]
 
