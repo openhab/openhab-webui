@@ -12,6 +12,8 @@
  */
 package org.openhab.ui.basic.internal.render;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import org.eclipse.emf.common.util.ECollections;
@@ -82,6 +84,12 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             if (chart.getService() != null) {
                 chartUrl += "&service=" + chart.getService();
             }
+
+            if (chart.getYAxisDecimalPattern() != null) {
+                chartUrl += "&yAxisDecimalPattern="
+                        + URLEncoder.encode(chart.getYAxisDecimalPattern(), StandardCharsets.UTF_8);
+            }
+
             // if legend parameter is given, add corresponding GET parameter
             if (chart.getLegend() != null) {
                 if (chart.getLegend()) {
