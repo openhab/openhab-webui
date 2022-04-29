@@ -108,6 +108,8 @@
     "widget.dummy.description": "Een dummy widget - toont de waarde van een openHAB item",
     "widget.dummy.settings.header": "Dummy Instellingen",
     "widget.dummy.layout": "Opmaak",
+    "widget.dummy.state": "Status",
+    "widget.dummy.state.description": "Toon beschrijving",
     "widget.frame": "Kader",
     "widget.frame.description": "Ingesloten website van vooraf gedefinieerde URL of openHAB item.",
     "widget.frame.settings.header": "Instellingen kader",

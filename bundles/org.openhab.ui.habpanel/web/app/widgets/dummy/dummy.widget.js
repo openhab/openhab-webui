@@ -47,7 +47,21 @@
                 vm.value = "N/A";
                 return;
             }
-            var value = item.transformedState || item.state;
+
+            if (vm.widget.usedescription) {
+                var options = item.stateDescription.options;
+                if (Array.isArray(options)) {
+                    var option = options.find((element) => element.value === item.state);
+                    if (option) {
+                        var value = option.label;
+                    } else {
+                        var value = item.state;
+                    }
+                }
+            } else {
+                var value = item.transformedState || item.state;
+            }
+
             if (vm.widget.format) {
                 if (item.type === "DateTime" || item.type === "DateTimeItem") {
                     value = $filter('date')(value, vm.widget.format);
@@ -106,7 +120,8 @@
             icon_size        : widget.icon_size,
             icon_nolinebreak : widget.icon_nolinebreak,
             icon_replacestext: widget.icon_replacestext,
-            value_color      : widget.value_color
+            value_color      : widget.value_color,
+            usedescription   : widget.usedescription
         };
 
         $scope.dismiss = function() {

@@ -482,6 +482,16 @@ msgctxt "widget.dummy.value_color"
 msgid "Value color"
 msgstr "Waarde kleur"
 
+#. Checkboxes header
+msgctxt "widget.dummy.state"
+msgid "State"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.dummy.state.description"
+msgid "Use state description"
+msgstr ""
+
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.frame"
 msgid "Frame"
