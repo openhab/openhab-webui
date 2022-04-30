@@ -1,5 +1,5 @@
 <template>
-  <f7-toggle v-bind="config" :checked="value" @toggle:change="onChange" />
+  <f7-toggle v-bind="config" :checked="value" @toggle:change="onChange" @click.native.stop />
 </template>
 
 <script>

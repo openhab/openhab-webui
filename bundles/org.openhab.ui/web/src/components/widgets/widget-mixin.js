@@ -154,7 +154,7 @@ export default {
     },
     childWidgetContext () {
       if (!this.componentType.startsWith('widget:')) return null
-      const widget = this.$store.getters.widget(this.componentType.substring(7))
+      let widget = this.$store.getters.widget(this.componentType.substring(7))
       if (!widget) {
         console.warn('widget not found, cannot render: ' + this.componentType)
       }
@@ -163,6 +163,7 @@ export default {
           this.$set(this.widgetVars, varKey, this.context.vars[varKey])
         }
       }
+      if (this.context.component.slots) Object.assign(widget.slots, this.context.component.slots)
       const widgetContext = {
         component: widget,
         root: widget,

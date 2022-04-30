@@ -24,42 +24,21 @@
 
 <script>
 import mixin from '@/components/widgets/widget-mixin'
-import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
+import { equipmentListComponent } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
 
 export default {
   mixins: [mixin, CardMixin],
+  props: ['tabContext'],
   components: {
     ModelCard
   },
   computed: {
     listContext () {
-      const standaloneEquipment = this.element.equipment.filter((i) => i.points.length === 0).map((i) => itemDefaultListComponent(i.item, this.itemPathLabel(i.item)))
-      const equipmentWithPoints = this.element.equipment.filter((i) => i.points.length !== 0).map((i) => {
-        return [
-          {
-            component: 'oh-list-item',
-            config: {
-              title: [this.itemPathLabel(i.item), i.item.label || i.item.name].filter((label) => label && label.length > 0).join(' > '),
-              divider: true
-            }
-          },
-          ...i.points.map((p) => itemDefaultListComponent(p))
-        ]
-      })
-
       return {
         store: this.$store.getters.trackedItems,
-        component: {
-          component: 'oh-list',
-          config: {
-            mediaList: true
-          },
-          slots: {
-            default: [...standaloneEquipment, ...equipmentWithPoints].flat()
-          }
-        }
+        component: equipmentListComponent(this.element.equipment, this.tabContext, false)
       }
     }
   }

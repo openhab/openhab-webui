@@ -28,7 +28,7 @@
     </f7-toolbar>
     <f7-tabs class="tabs-editor-tabs">
       <f7-tab id="design" class="tabs-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
-        <f7-block v-if="!ready" class="text-align-center">
+        <f7-block v-if="!ready || !modelReady" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
@@ -36,7 +36,7 @@
           <page-settings :page="page" :createMode="createMode" />
         </f7-block> -->
 
-        <f7-block class="block-narrow" style="padding-bottom: 8rem" v-if="ready && !previewMode">
+        <f7-block class="block-narrow" style="padding-bottom: 8rem" v-else-if="ready && modelReady && !previewMode">
           <f7-col>
             <f7-block-title>Page Configuration</f7-block-title>
             <config-sheet
@@ -46,41 +46,59 @@
               @updated="dirty = true" />
           </f7-col>
 
-          <f7-col v-if="modelReady && !previewMode">
-            <f7-block-title>Cards</f7-block-title>
+          <f7-col>
             <f7-segmented strong tag="p">
               <f7-button v-for="tab in modelTabs" :key="tab.value" @click="showCardControls = false; currentModelTab = tab.value" :active="currentModelTab === tab.value" :text="tab.label" />
             </f7-segmented>
 
-            <div class="display-block padding">
-              <div class="no-padding float-right">
-                <f7-button @click="showCardControls = !showCardControls" small outline :fill="showCardControls" sortable-toggle=".sortable" style="margin-top: -3px; margin-right: 5px"
-                           color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">
-                  &nbsp;Reorder
-                </f7-button>
+            <f7-block-title>Cards</f7-block-title>
+            <div>
+              <div class="display-block padding">
+                <div class="no-padding float-right">
+                  <f7-button @click="showCardControls = !showCardControls" small outline :fill="showCardControls" sortable-toggle=".sortable" style="margin-top: -3px; margin-right: 5px"
+                             color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">
+                    &nbsp;Reorder
+                  </f7-button>
+                </div>
               </div>
+
+              <f7-list media-list class="homecards-list" sortable :key="'cards-' + currentModelTab + cardListId" @sortable:sort="reorderCard">
+                <f7-list-item media-item :link="(showCardControls) ? undefined : ''"
+                              @click.native="(ev) => cardClicked(ev, card, idx)"
+                              v-for="(card, idx) in cardGroups(currentModelTab, page).flat()" :key="idx"
+                              :title="card.separator || card.defaultTitle" :footer="(card.separator) ? '(separator)' : card.key">
+                  <f7-menu slot="content-start" class="configure-layout-menu">
+                    <f7-menu-item icon-f7="list_bullet" dropdown>
+                      <f7-menu-dropdown>
+                        <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Configure Card" />
+                        <f7-menu-dropdown-item v-if="!card.separator" @click="editCardCode(card)" href="#" text="Edit YAML" />
+                        <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
+                        <f7-menu-dropdown-item divider />
+                        <f7-menu-dropdown-item v-if="!card.separator" @click="addCardSeparator(idx)" href="#" text="Add Separator Before" />
+                        <f7-menu-dropdown-item v-if="card.separator" @click="removeCardSeparator(idx)" href="#" text="Remove Separator" />
+                      </f7-menu-dropdown>
+                    </f7-menu-item>
+                  </f7-menu>
+                  <f7-checkbox :checked="!isCardExcluded(card)" :disabled="card.separator !== undefined" slot="content-start" class="margin-right" />
+                </f7-list-item>
+              </f7-list>
             </div>
 
-            <f7-list media-list class="homecards-list" sortable :key="'cards-' + currentModelTab + cardListId" @sortable:sort="reorderCard">
-              <f7-list-item media-item :link="(showCardControls) ? undefined : ''"
-                            @click.native="(ev) => cardClicked(ev, card, idx)"
-                            v-for="(card, idx) in cardGroups(currentModelTab, page).flat()" :key="idx"
-                            :title="card.separator || card.defaultTitle" :footer="(card.separator) ? '(separator)' : card.key">
-                <f7-menu slot="content-start" class="configure-layout-menu">
-                  <f7-menu-item icon-f7="list_bullet" dropdown>
-                    <f7-menu-dropdown>
-                      <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Configure Card" />
-                      <f7-menu-dropdown-item v-if="!card.separator" @click="editCardCode(card)" href="#" text="Edit YAML" />
-                      <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
-                      <f7-menu-dropdown-item divider />
-                      <f7-menu-dropdown-item v-if="!card.separator" @click="addCardSeparator(idx)" href="#" text="Add Separator Before" />
-                      <f7-menu-dropdown-item v-if="card.separator" @click="removeCardSeparator(idx)" href="#" text="Remove Separator" />
-                    </f7-menu-dropdown>
-                  </f7-menu-item>
-                </f7-menu>
-                <f7-checkbox :checked="!isCardExcluded(card)" :disabled="card.separator !== undefined" slot="content-start" class="margin-right" />
-              </f7-list-item>
-            </f7-list>
+            <div v-if="currentModelTab === 'locations'">
+              <config-sheet
+                :parameterGroups="locationsTabParameters.props.parameterGroups || []"
+                :parameters="locationsTabParameters.props.parameters || []"
+                :configuration="page.slots.locations[0].config"
+                @updated="dirty = true" />
+            </div>
+
+            <div v-if="currentModelTab === 'equipment'">
+              <config-sheet
+                :parameterGroups="equipmentTabParameters.props.parameterGroups || []"
+                :parameters="equipmentTabParameters.props.parameters || []"
+                :configuration="page.slots.equipment[0].config"
+                @updated="dirty = true" />
+            </div>
           </f7-col>
         </f7-block>
         <div v-else-if="ready && previewMode && currentTab === 'design'" :context="context" :key="pageKey">
@@ -122,7 +140,7 @@ import HomeCards from '../../../home/homecards-mixin'
 
 import YAML from 'yaml'
 
-import { OhHomePageDefinition, OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
+import { OhHomePageDefinition, OhLocationsTabParameters, OhEquipmentTabParameters, OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ModelTab from '@/pages/home/model-tab.vue'
@@ -144,6 +162,8 @@ export default {
   data () {
     return {
       pageWidgetDefinition: OhHomePageDefinition(),
+      locationsTabParameters: OhLocationsTabParameters(),
+      equipmentTabParameters: OhEquipmentTabParameters(),
       currentModelTab: 'locations',
       modelTabs: [],
       showCardControls: false,

@@ -47,7 +47,7 @@
 
 <script>
 import mixin from '@/components/widgets/widget-mixin'
-import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
+import itemDefaultListComponent, { equipmentListComponent } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
 import StatusBadge from './glance/location/status-badge.vue'
@@ -55,7 +55,7 @@ import MeasurementBadge from './glance/location/measurement-badge.vue'
 
 export default {
   mixins: [mixin, CardMixin],
-  props: ['parentLocation'],
+  props: ['parentLocation', 'tabContext'],
   components: {
     ModelCard,
     StatusBadge,
@@ -85,31 +85,9 @@ export default {
       }
     },
     equipmentListContext () {
-      const standaloneEquipment = this.element.equipment.filter((i) => i.points.length === 0).map((i) => itemDefaultListComponent(i.item))
-      const equipmentWithPoints = this.element.equipment.filter((i) => i.points.length !== 0).map((i) => {
-        return [
-          {
-            component: 'oh-list-item',
-            config: {
-              title: i.item.label || i.item.name,
-              divider: true
-            }
-          },
-          ...i.points.map((p) => itemDefaultListComponent(p))
-        ]
-      })
-
       return {
         store: this.$store.getters.trackedItems,
-        component: {
-          component: 'oh-list',
-          config: {
-            mediaList: true
-          },
-          slots: {
-            default: [...standaloneEquipment, ...equipmentWithPoints].flat()
-          }
-        }
+        component: equipmentListComponent(this.element.item.equipment, this.tabContext, true)
       }
     }
   }

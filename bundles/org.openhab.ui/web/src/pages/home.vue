@@ -30,6 +30,10 @@
         <f7-preloader :size="30" />
         <div>Loading...</div>
       </f7-block-title>
+      <f7-block-title v-if="loopError">
+        <div>Error!</div>
+      </f7-block-title>
+      {{ loopError }}. Please correct and refresh.
     </f7-block>
     <f7-tabs v-else>
       <f7-tab id="tab-overview" :tab-active="currentTab === 'overview'" @tab:show="() => this.currentTab = 'overview'">

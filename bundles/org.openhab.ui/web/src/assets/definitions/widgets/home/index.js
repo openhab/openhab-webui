@@ -21,6 +21,34 @@ export const OhHomePageDefinition = () => new WidgetDefinition('oh-home-page', '
       ]).m()
   ])
 
+const EquipmentListParameterGroup = () => pg('equipmentList', 'Equipment List', 'General settings for equipment lists in this tab')
+
+const EquipmentListParameters = () => [
+  pt('equipmentNesting', 'Display sub-equipment levels')
+    .o([
+      { value: 'nested', label: 'Nested pages for sub-equipment (default)' },
+      { value: 'accordion', label: 'Equipment items grouped as accordion cards' }
+    ]),
+  pb('equipmentPromoteSingle', 'Promote single Points', 'Flatten equipment which only have a single Point (only display the Point as the Equipment\'s representation')
+    .v((value, configuration, configDescription, parameters) => { return configuration.equipmentNesting === 'accordion' }),
+  pb('equipmentPromoteMain', 'Promote the main Point of an Equipment', 'Promote the main Point item of an Equipment (widgetOrder equal to 0) as the Equipment\'s representation')
+    .v((value, configuration, configDescription, parameters) => { return configuration.equipmentNesting === 'accordion' }),
+  pt('equipmentPromotedLabel', 'Label for promoted elements', 'Choose what to include in the labels of promoted items')
+    .o([
+      { value: 'equipment', label: 'Label of the equipment' },
+      { value: 'separator', label: 'Separator character (>)' },
+      { value: 'item', label: 'Label of the item within the equipment' }
+    ]).m().v((value, configuration, configDescription, parameters) => {
+      return (configuration.equipmentPromoteSingle === true || configuration.equipmentPromoteMain === true) && configuration.equipmentNesting === 'accordion'
+    })
+]
+
+export const OhLocationsTabParameters = () => new WidgetDefinition('oh-locations-tab', 'Locations Tab', 'The tab showing all locations of the installation')
+  .paramGroup(EquipmentListParameterGroup(), EquipmentListParameters())
+
+export const OhEquipmentTabParameters = () => new WidgetDefinition('oh-equipment-tab', 'Equipment Tab', 'The tab showing all equipment of the installation, by category')
+  .paramGroup(EquipmentListParameterGroup(), EquipmentListParameters())
+
 const ModelCardParameterGroup = () => pg('card', 'Model Card', 'General settings for this card')
 
 const ModelCardParameters = () => [

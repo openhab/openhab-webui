@@ -1,5 +1,5 @@
 <template>
-  <f7-stepper ref="stepper" v-bind="config" :value="value" @stepper:change="onChange"
+  <f7-stepper ref="stepper" v-bind="config" :value="value" @stepper:change="onChange" @click.native.stop
               :manual-input-mode="false" :format-value="formatValue" />
 </template>
 
