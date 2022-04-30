@@ -28,7 +28,7 @@
     </f7-toolbar>
     <f7-tabs class="tabs-editor-tabs">
       <f7-tab id="design" class="tabs-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
-        <f7-block v-if="!ready" class="text-align-center">
+        <f7-block v-if="!ready || !modelReady" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
@@ -36,7 +36,7 @@
           <page-settings :page="page" :createMode="createMode" />
         </f7-block> -->
 
-        <f7-block class="block-narrow" style="padding-bottom: 8rem" v-if="ready && !previewMode">
+        <f7-block class="block-narrow" style="padding-bottom: 8rem" v-else-if="ready && modelReady && !previewMode">
           <f7-col>
             <f7-block-title>Page Configuration</f7-block-title>
             <config-sheet
@@ -52,7 +52,7 @@
             </f7-segmented>
 
             <f7-block-title>Cards</f7-block-title>
-            <div v-if="modelReady && !previewMode">
+            <div>
               <div class="display-block padding">
                 <div class="no-padding float-right">
                   <f7-button @click="showCardControls = !showCardControls" small outline :fill="showCardControls" sortable-toggle=".sortable" style="margin-top: -3px; margin-right: 5px"
