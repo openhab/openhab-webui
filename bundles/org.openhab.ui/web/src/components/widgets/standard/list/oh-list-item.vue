@@ -49,23 +49,21 @@
       &:last-child
         margin-bottom 10px
 
-.list li.oh-equipment-accordion-item ul
-  ltr(padding-left 0)
-  rtl(padding-right 0)
+  & > ul
+    ltr(padding-left 0)
+    rtl(padding-right 0)
 
-ul > .oh-equipment-accordion-item > .accordion-item-content > div > ul
-    padding-left var(--f7-list-item-padding-horizontal)!important
+  & > .accordion-item-content > div > ul
+    padding-left var(--f7-list-item-padding-horizontal) !important
 
-.media-list .oh-equipment-accordion-item .item-inner {
+  .item-inner
     padding-right calc(16px + 0px)
     padding-right calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-right))
-}
 
-.media-list .oh-equipment-accordion-item .item-title-row {
-    padding-right @css{max(20px, calc(var(--f7-list-chevron-icon-area)))}
-}
+  .item-title-row
+    padding-right @css{ max(20px, calc(var(--f7-list-chevron-icon-area))) }
 
-.media-list .oh-equipment-accordion-item > .item-content > .item-inner > .item-title-row:before
+  & > .item-content > .item-inner > .item-title-row:before
     font-family 'framework7-core-icons'
     font-weight normal
     font-style normal
@@ -95,7 +93,7 @@ ul > .oh-equipment-accordion-item > .accordion-item-content > div > ul
     top 50%
     color var(--f7-list-chevron-icon-color)
 
-.media-list .oh-equipment-accordion-item.accordion-item-opened  > .item-content > .item-inner > .item-title-row:before
+  &.accordion-item-opened > .item-content > .item-inner > .item-title-row:before
     content var(--f7-accordion-chevron-icon-up)
 
 .item-divider > span
