@@ -12,6 +12,8 @@ import defineEphemerisBlocks from './blocks-ephemeris'
 import defineScriptsBlocks from './blocks-scripts'
 import definePersistenceBlocks from './blocks-persistence'
 import defineColorBlocks from './blocks-color'
+import defineTextBlocks from './blocks-text'
+
 import { defineLibraries } from './libraries'
 
 import Blockly from 'blockly'
@@ -31,5 +33,6 @@ export default function (f7, libraryDefinitions, data) {
   defineScriptsBlocks(f7)
   definePersistenceBlocks(f7)
   defineColorBlocks(f7)
+  defineTextBlocks(f7)
   defineLibraries(libraryDefinitions)
 }

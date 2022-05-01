@@ -26,7 +26,6 @@ export default function (f7) {
   Blockly.Blocks['oh_log'] = {
     init: function () {
       this.appendValueInput('message')
-        .setCheck('String')
         .appendField('log')
         .appendField(new Blockly.FieldDropdown([['error', 'error'], ['warn', 'warn'], ['info', 'info'], ['debug', 'debug'], ['trace', 'trace']]), 'severity')
       this.setPreviousStatement(true, null)

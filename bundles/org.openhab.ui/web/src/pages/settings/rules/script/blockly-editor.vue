@@ -147,6 +147,7 @@
 
       <category name="Text" colour="%{BKY_TEXTS_HUE}">
         <block type="text" />
+        <block type="oh_text_crlf" />
         <block type="text_join">
           <mutation items="0" />
         </block>
@@ -318,7 +319,7 @@
         </block>
       </category>
 
-      <category name="openHAB" colour="0">
+      <category name="openHAB" colour="0" expanded="true">
         <category name="Items &amp; Things">
           <block type="oh_item" />
           <block type="oh_getitem">
@@ -489,10 +490,9 @@
             </value>
           </block>
         </category>
-
         <category name="Dates & Times">
-          <block type="oh_dayoffset_today" />
-          <block type="oh_dayoffset">
+          <block type="oh_zdt_now" />
+          <block type="oh_zdt_plusminus">
             <value name="offset">
               <shadow type="math_number">
                 <field name="NUM">
@@ -509,12 +509,94 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_zdt_create">
+            <value name="year">
+              <shadow type="math_number">
+                <field name="NUM">2005</field>
+              </shadow>
+            </value>
+            <value name="month">
+              <shadow type="math_number">
+                <field name="NUM">04</field>
+              </shadow>
+            </value>
+            <value name="day">
+              <shadow type="math_number">
+                <field name="NUM">12</field>
+              </shadow>
+            </value>
+            <value name="hour">
+              <shadow type="math_number">
+                <field name="NUM">23</field>
+              </shadow>
+            </value>
+            <value name="minute">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+            <value name="second">
+              <shadow type="math_number">
+                <field name="NUM">58</field>
+              </shadow>
+            </value>
+          </block>
+          <sep gap="48" />
+          <block type="oh_zdt_amend">
+            <value name="baseZdt">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <block type="oh_zdt_temporal_unit" />
+          <block type="oh_zdt_temporal_unit_input" />
+          <sep gap="48" />
+          <block type="oh_zdt_fromItem">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
           <block type="oh_zdt_toText">
             <value name="date">
               <shadow type="oh_zdt" />
             </value>
           </block>
-          <block type="oh_zdt_plusminus">
+          <sep gap="48" />
+          <block type="oh_zdt_compare">
+            <value name="zdtOne">
+              <shadow type="oh_zdt" />
+            </value>
+            <value name="zdtTwo">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <block type="oh_zdt_between">
+            <value name="zdtOne">
+              <shadow type="oh_zdt" />
+            </value>
+            <value name="zdtTwo">
+              <shadow type="oh_zdt" />
+            </value>
+            <value name="zdtThree">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <sep gap="48" />
+          <block type="oh_get_zdt_part">
+            <value name="date">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <block type="oh_get_time_between">
+            <value name="zdtOne">
+              <shadow type="oh_zdt" />
+            </value>
+            <value name="zdtTwo">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <sep gap="48" />
+          <block type="oh_dayoffset_today" />
+          <block type="oh_dayoffset">
             <value name="offset">
               <shadow type="math_number">
                 <field name="NUM">
@@ -588,6 +670,29 @@
         </category>
 
         <category name="Persistence">
+          <block type="oh_zdt_plusminus">
+            <value name="offset">
+              <shadow type="math_number">
+                <field name="NUM">
+                  0
+                </field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_zdt" />
+          <block type="oh_zdt_fromText">
+            <value name="day">
+              <shadow type="text">
+                <field name="TEXT">{{ new Date().toISOString().split('T')[0] }}</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_zdt_toText">
+            <value name="date">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <sep gap="48" />
           <block type="oh_get_persistvalue">
             <value name="itemName">
               <shadow type="oh_item" />
