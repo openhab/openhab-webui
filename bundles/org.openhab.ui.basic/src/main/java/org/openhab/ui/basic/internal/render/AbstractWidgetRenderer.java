@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -108,7 +109,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         snippet = snippet.replace("%state%", escapeURL(state));
 
         String category = getCategory(w);
-        snippet = snippet.replace("%category%", escapeURL(category));
+        snippet = snippet.replace("%category%", Objects.requireNonNullElse(category, ""));
 
         return snippet;
     }
