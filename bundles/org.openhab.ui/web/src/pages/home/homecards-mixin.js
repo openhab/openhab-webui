@@ -58,12 +58,12 @@ export default {
       if (!item.metadata || !item.metadata.semantics) return
       if (item.modelPath) return item.modelPath
       let parent = null
-      if (item.metadata.semantics.config && item.metadata.semantics.config.isPointOf) {
+      if (item.metadata.semantics.config && item.metadata.semantics.config.hasLocation) {
+        parent = (this.items.find((i) => i.name === item.metadata.semantics.config.hasLocation))
+      } else if (item.metadata.semantics.config && item.metadata.semantics.config.isPointOf) {
         parent = (this.items.find((i) => i.name === item.metadata.semantics.config.isPointOf))
       } else if (item.metadata.semantics.config && item.metadata.semantics.config.isPartOf) {
         parent = (this.items.find((i) => i.name === item.metadata.semantics.config.isPartOf))
-      } else if (item.metadata.semantics.config && item.metadata.semantics.config.hasLocation) {
-        parent = (this.items.find((i) => i.name === item.metadata.semantics.config.hasLocation))
       }
       if (parent && parent.semanticLoopDetector) {
         this.loopError = `A a loop has been detected in the semantic model: ${parent.name} is both descendant and parent of ${item.name}`
