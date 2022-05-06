@@ -1,6 +1,13 @@
 <template>
   <div class="player">
+    <oh-video-webrtc
+      v-if="config.playerType === 'webrtc'"
+      :src="src"
+      :config="config.videoOptions"
+      :startManually="config.startManually"
+      :hideControls="config.hideControls" />
     <oh-video-videojs
+      v-else
       :src="src"
       :type="config.type"
       :config="config.videoOptions"
@@ -17,7 +24,8 @@ export default {
   mixins: [mixin],
   widget: OhVideoDefinition,
   components: {
-    'oh-video-videojs': () => import(/* webpackChunkName: "oh-video-videojs" */ './oh-video-videojs.vue')
+    'oh-video-videojs': () => import(/* webpackChunkName: "oh-video-videojs" */ './oh-video-videojs.vue'),
+    'oh-video-webrtc': () => import(/* webpackChunkName: "oh-video-webrtc" */ './oh-video-webrtc.vue')
   },
   data () {
     return {
