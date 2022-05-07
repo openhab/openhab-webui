@@ -25,6 +25,10 @@ HABPanel has its own terminology of entities presented below:
 - A **Panel** is a set of **Dashboards** (or pages) which can be presented to end users, who can also easily switch between them using the menu.
 - A **Dashboard** is comprised of discrete **Widgets** positioned on the dashboard's surface at design time. There are several types of built-in *standard widgets*, configured separately, and the administrator can also develop (or import) *custom widgets*.
 
+## Accessing HABPanel
+
+To create and configure your panels, and to arrange widgets and other items on your dashboards, you can visit the home page of your OpenHAB instance in a browser, and click the 'Other Apps' icon in the top right hand corner of the screen. This will expose a menu with options of 'Basic UI' and 'HABPanel'. Click on the HABPanel option to navigate to the `/habpanel/index.html#/` HABPanel page. You can also enter this URL in your browser directly (`{openHAB-host}/habpanel/index.html`) to navigate to HABPanel.
+
 ## About data persistence
 
 By default, when running HABPanel on a new browser or device, a tutorial will be displayed allowing the user to start from scratch, or switch to an previously defined panel configuration. **Until a panel configuration is created (or chosen), HABPanel will run in "local storage" mode for this device: the settings will be retained in the browser's local storage only and nothing will be persisted on the server.** By contrast, when an active panel configuration is set, each change performed on the device will update the panel configuration on the server. This allows the sharing of panel configuration among devices, because other browsers and devices using this panel configuration will pick up the changes with a page refresh - this is useful for instance to design a panel comfortably on a computer, then use it on a tablet.
