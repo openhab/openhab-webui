@@ -68,25 +68,33 @@ export default {
       self.webrtc.onnegotiationneeded = function handleNegotiationNeeded () {
         self.webrtc.createOffer().then(offer => {
           self.webrtc.setLocalDescription(offer).then(() => {
-            console.log('Offer: ', self.webrtc.localDescription.sdp)
-            fetch(self.src, {
-              method: 'POST',
-              body: new URLSearchParams({
-                data: btoa(self.webrtc.localDescription.sdp)
-              })
+            let candidates = ''
+            // we don't support trickle ice, so do this manually
+            self.webrtc.addEventListener('icecandidate', (event) => {
+              if (!event.candidate) {
+                console.log('Offer: ', self.webrtc.localDescription.sdp)
+                fetch(self.src, {
+                  method: 'POST',
+                  body: new URLSearchParams({
+                    data: btoa(self.webrtc.localDescription.sdp + candidates)
+                  })
+                })
+                  .then(response => response.text())
+                  .then(data => {
+                    const answer = atob(data)
+                    console.log('Answer: ', answer)
+                    try {
+                      self.webrtc.setRemoteDescription(
+                        new RTCSessionDescription({ type: 'answer', sdp: answer })
+                      )
+                    } catch (e) {
+                      console.warn(e)
+                    }
+                  })
+                return
+              }
+              candidates += `a=${event.candidate['candidate']} + \r\n`
             })
-              .then(response => response.text())
-              .then(data => {
-                const answer = atob(data)
-                console.log('Answer: ', answer)
-                try {
-                  self.webrtc.setRemoteDescription(
-                    new RTCSessionDescription({ type: 'answer', sdp: answer })
-                  )
-                } catch (e) {
-                  console.warn(e)
-                }
-              })
           })
         })
       }
