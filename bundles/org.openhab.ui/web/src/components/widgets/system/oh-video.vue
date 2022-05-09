@@ -3,7 +3,8 @@
     <oh-video-webrtc
       v-if="config.playerType === 'webrtc'"
       :src="src"
-      :config="config.videoOptions"
+      :stunServer="config.stunServer"
+      :enableTrickleIce="config.enableTrickleIce"
       :startManually="config.startManually"
       :hideControls="config.hideControls" />
     <oh-video-videojs
