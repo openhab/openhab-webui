@@ -10,6 +10,5 @@ export default () => [
     { value: 'videojs', label: 'Video.js (Dash, HLS, Others)' },
     { value: 'webrtc', label: 'WebRTC' }
   ], true, false).a(),
-  pt('stunServer', 'Stun Server', 'WebRTC stun server (optional), defaults to \'stun:stun.l.google.com:19302\'').a(),
-  pb('enableTrickleIce', 'Enable Trickle ICE', 'Enables Trickle ICE candiddates for WebRTC servers that support it').a()
+  pt('stunServer', 'Stun Server', 'WebRTC stun server (optional), defaults to \'stun:stun.l.google.com:19302\'').a()
 ]

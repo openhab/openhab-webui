@@ -4,7 +4,6 @@
       v-if="config.playerType === 'webrtc'"
       :src="src"
       :stunServer="config.stunServer"
-      :enableTrickleIce="config.enableTrickleIce"
       :startManually="config.startManually"
       :hideControls="config.hideControls" />
     <oh-video-videojs
