@@ -134,7 +134,7 @@ export default function (f7) {
     updateShape_: function () {
       let year = this.appendValueInput('year')
         .setCheck('Number')
-        .appendField('ZDT with date')
+        .appendField('datetime with date')
       let month = this.appendValueInput('month')
         .setCheck('Number')
         .appendField('-')
@@ -179,7 +179,7 @@ export default function (f7) {
   Blockly.Blocks['oh_zdt'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('ZDT')
+        .appendField('datetime')
         .appendField(new FieldDatePicker('', null, { f7 }, 'date'), 'day')
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
@@ -207,7 +207,7 @@ export default function (f7) {
   Blockly.Blocks['oh_zdt_fromText'] = {
     init: function () {
       this.appendValueInput('day') // cannot be renamed for backward compatibility reasons
-        .appendField('ZDT')
+        .appendField('datetime')
         .setCheck('String')
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
@@ -248,7 +248,7 @@ export default function (f7) {
   Blockly.Blocks['oh_zdt_fromItem'] = {
     init: function () {
       this.appendValueInput('itemName')
-        .appendField('ZDT from item')
+        .appendField('datetime from item')
         .setCheck('String')
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
@@ -575,7 +575,7 @@ export default function (f7) {
     init: function () {
       this.setColour(70)
       this.appendDummyInput()
-        .appendField('amend ZDT by a')
+        .appendField('amend datetime by a')
       this.appendStatementInput('STACK')
       this.setTooltip('a group of temporal units')
       this.contextMenu = false
@@ -724,7 +724,7 @@ export default function (f7) {
   }
 
   /*
-  * Returns a temporal part of a ZDT as a Number
+  * Returns a temporal part of a zoned date time  as a Number
   * Blockly part
   */
 
@@ -744,7 +744,7 @@ export default function (f7) {
   }
 
   /*
-  * Returns a temporal part of a ZDT as a Number
+  * Returns a temporal part of a zoned date time as a Number
   * Code part
   */
   Blockly.JavaScript['oh_get_zdt_part'] = function (block) {
