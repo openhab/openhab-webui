@@ -65,12 +65,6 @@ export default {
     }
   },
   methods: {
-    itemPathLabel (item) {
-      if (!item.modelPath) return '(?) > ' + item.name
-      return item.modelPath.map((parent) => {
-        return parent.label || parent.name
-      }).join(' > ')
-    },
     cardOpening () {
       this.cardId = this.title + '-' + this.$f7.utils.id()
       history.pushState({ cardId: this.cardId }, null, window.location.href.split('#card=')[0] + '#' + this.$f7.utils.serializeObject({ card: this.element.key }))

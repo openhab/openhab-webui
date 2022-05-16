@@ -1,5 +1,6 @@
 *.iml
 .idea/
+.gradle/
 .DS_Store
 target/
 src-gen/
@@ -10,3 +11,4 @@ bin/
 features/*/src/main/history
 npm-debug.log
 node_modules/
+.idea

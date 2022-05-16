@@ -12,6 +12,7 @@ export default () => [
   pb('validate', 'Validate', 'When enabled, input value will be validated based on input type'),
   pb('validate-on-blur', 'Validate on blur', 'Only validate when focus moves away from input field'),
   pi('item', 'Item', 'Link the input value to the state of this item'),
+  pb('useDisplayState', 'Use Display State', 'Use the formatted state as the value for the input control'),
   pt('defaultValue', 'Default value', 'Default value when not found in item state or variable'),
   pt('variable', 'Variable', 'Name of the variable to set when the input changes')
 ]

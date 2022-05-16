@@ -1,6 +1,6 @@
 <template>
   <f7-range ref="rangeslider" class="oh-slider" v-bind="config" :value="value" :format-label="formatLabel" :format-scale-label="formatScaleLabel"
-            @range:change="sendCommandDebounced($event)" @click.native="sendCommandDebounced(value, true)" @touchend.native="sendCommandDebounced(value, true)" />
+            @range:change="sendCommandDebounced($event)" @click.native.stop="sendCommandDebounced(value, true)" @touchend.native="sendCommandDebounced(value, true)" />
 </template>
 
 <style lang="stylus">

@@ -2,7 +2,7 @@
   <f7-input v-if="!config.item || !config.sendButton" class="input-field" ref="input" v-bind="config" :value="(config.type.indexOf('date') === 0) ? valueForDatepicker : value" @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated" />
   <f7-row no-gap v-else class="oh-input-with-send-button">
     <f7-input class="input-field col-90" ref="input" v-bind="config" :value="(config.type.indexOf('date') === 0) ? valueForDatepicker : value" @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated" />
-    <f7-button class="send-button col-10" v-if="this.config.sendButton" @click="sendButtonClicked" v-bind="config.sendButtonConfig || { iconMaterial: 'done', iconColor: 'gray' }" />
+    <f7-button class="send-button col-10" v-if="this.config.sendButton" @click.stop="sendButtonClicked" v-bind="config.sendButtonConfig || { iconMaterial: 'done', iconColor: 'gray' }" />
   </f7-row>
 </template>
 
@@ -37,7 +37,11 @@ export default {
       } else if (this.config.sendButton && this.pendingUpdate !== null) {
         return this.pendingUpdate
       } else if (this.config.item && this.context.store[this.config.item].state !== 'NULL' && this.context.store[this.config.item].state !== 'UNDEF') {
-        return this.context.store[this.config.item].state
+        if (this.config.useDisplayState) {
+          return this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
+        } else {
+          return this.context.store[this.config.item].state
+        }
       }
       return this.config.defaultValue
     },
