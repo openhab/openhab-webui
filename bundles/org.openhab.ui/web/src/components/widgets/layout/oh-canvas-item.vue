@@ -6,6 +6,7 @@
     :y="y"
     :w="w"
     :h="h"
+    :z="active ? 10 : 0"
     :parent="true"
     :draggable="!!context.editmode"
     :resizable="!!context.editmode && !autosize"
@@ -17,8 +18,11 @@
     @dragging="onDrag"
     @resizing="onResize"
     :on-drag-start="onDragStartCallback"
-    :on-resize-start="onResizeStartCallback">
-    <f7-menu v-if="context.editmode" class="configure-canvas-menu">
+    :on-resize-start="onResizeStartCallback"
+    @dragstop="onDragStop"
+    @resizestop="onResizeStop">
+    :active.sync="active"
+    <f7-menu v-if="context.editmode" class="configure-canvas-menu disable-user-select">
       <f7-menu-item icon-f7="menu" dropdown icon-only>
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context.parent)" href="#" text="Configure container" />
@@ -53,13 +57,25 @@
                                   'oh-canvas-item-shadow' : styled && shadow
                                 }" />
     </div>
-    <f7-icon v-if="context.editmode" class="drag-handle" f7="move" size="15" color="gray" />
+    <f7-icon v-if="context.editmode" class="drag-handle disable-user-select" f7="move" size="15" color="gray" />
+    <div v-if="context.editmode" class="oh-canvas-item-id disable-user-select">
+      {{ config.id }}
+    </div>
+    <div v-if="context.editmode" class="oh-canvas-item-msg disable-user-select">
+      {{ editMessage }}
+    </div>
   </vue-draggable-resizable>
 </template>
 
 <style lang="stylus">
   .oh-canvas-item-editmode
     outline 1px dashed #F00
+    cursor move
+    color red
+    font-size 10px
+
+    *
+      cursor move !important
 
   .oh-canvas-item
     position absolute
@@ -90,6 +106,16 @@
             filter var(--oh-canvas-item-svg-shadow)
         .label-card-content
           text-shadow var(--oh-canvas-item-text-shadow)
+
+    .oh-canvas-item-id
+      position absolute
+      bottom 0
+      right 0
+
+    .oh-canvas-item-msg
+      position absolute
+      bottom -22px
+      right 0
 
     .placeholder-widget a
       height 100%
@@ -143,7 +169,10 @@ export default {
       h: 0,
       reloadKey: 0,
       shadow: true,
-      styled: true
+      styled: true,
+      dragging: false,
+      resizing: false,
+      active: false
     }
   },
   created () {
@@ -157,6 +186,15 @@ export default {
   computed: {
     autosize () {
       return this.w === 'auto'
+    },
+    editMessage () {
+      if (this.dragging) {
+        return `(${this.x}, ${this.y})`
+      } else if (this.resizing) {
+        return `${this.w}x${this.h}`
+      } else {
+        return ''
+      }
     }
   },
   methods: {
@@ -197,16 +235,19 @@ export default {
 
         if (this.w === snapW && this.h === snapH) {
           // Widget already on grid, can continue to resize
-          return true && posOK
+          this.resizing = posOK
         } else {
           // Widget was not on grid, snap to grid upon first action
           this.w = this.context.component.config.w = snapW
           this.h = this.context.component.config.h = snapH
-          return false
+          this.resizing = false
         }
       } else {
-        return true
+        this.resizing = true
       }
+
+      if (this.resizing) this.dragging = false
+      return this.resizing
     },
     onDragStartCallback (ev) {
       if (this.gridEnable) {
@@ -215,16 +256,25 @@ export default {
 
         if (this.x === snapX && this.y === snapY) {
           // Origin on grid, continue dragging action
-          return true
+          this.dragging = true
         } else {
           // First snap to grid component and stop action
           this.x = this.context.component.config.x = snapX
           this.y = this.context.component.config.y = snapY
-          return false
+          this.dragging = true
         }
       } else {
-        return true
+        this.dragging = true
       }
+
+      if (this.dragging) this.resizing = false
+      return this.dragging
+    },
+    onResizeStop () {
+      this.resizing = false
+    },
+    onDragStop () {
+      this.dragging = false
     },
     eventControl (ev) {
       // Events are captured before bubbling to prevent undesired widget interaction when a widget has been
