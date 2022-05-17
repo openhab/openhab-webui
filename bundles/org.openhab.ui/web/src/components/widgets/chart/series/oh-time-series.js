@@ -31,6 +31,14 @@ export default {
     }
 
     // other things
+    if (component.config.action) {
+      component.config.handleClick = e => {
+        if (component.config.action === 'navigate' && component.config.actionPage !== undefined) {
+          chart.navigate(component.config.actionPage)
+        }
+      }
+    }
+
     if (component.slots && component.slots.markArea) {
       series.markArea = MarkArea.get(component.slots.markArea[0], points, startTime, endTime, chart)
     }

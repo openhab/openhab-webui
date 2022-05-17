@@ -38,6 +38,14 @@ export default {
       }
     }
 
+    if (component.config.action) {
+      component.config.handleClick = e => {
+        if (component.config.action === 'navigate' && component.config.actionPage !== undefined) {
+          chart.navigate(component.config.actionPage)
+        }
+      }
+    }
+
     series.data = data
 
     // other things

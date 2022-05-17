@@ -17,6 +17,14 @@ export default {
       })
     }
 
+    if (component.config.action) {
+      component.config.handleClick = e => {
+        if (component.config.action === 'navigate' && component.config.actionPage !== undefined) {
+          chart.navigate(component.config.actionPage)
+        }
+      }
+    }
+
     if (series.axisLine && series.axisLine.lineStyle && series.axisLine.lineStyle.color && Array.isArray(series.axisLine.lineStyle.color)) {
       series.axisLine.lineStyle.color = series.axisLine.lineStyle.color.map((v, index) => {
         if (!Array.isArray(v)) return v

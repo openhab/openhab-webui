@@ -28,6 +28,14 @@ export default {
       currentArea = null
     }
 
+    if (component.config.action) {
+      component.config.handleClick = e => {
+        if (component.config.action === 'navigate' && component.config.actionPage !== undefined) {
+          chart.navigate(component.config.actionPage)
+        }
+      }
+    }
+
     if (!component.config.label) markArea.label = { show: false }
 
     return markArea

@@ -1,6 +1,8 @@
 // definitions for the chart widgets
 // TODO: migrate to WidgetDefinition & use helpers
 
+import { actionGroup, actionParams } from '../actions'
+
 const positionGroup = {
   name: 'position',
   label: 'Position',
@@ -366,7 +368,7 @@ export default {
     label: 'Calendar',
     docLink: 'https://echarts.apache.org/en/option.html#calendar',
     props: {
-      parameterGroups: [nameDisplayGroup, componentRelationsGroup],
+      parameterGroups: [nameDisplayGroup, componentRelationsGroup, actionGroup(), actionParams()],
       parameters: [
         ...positionParameters,
         orientParameter,
@@ -379,7 +381,7 @@ export default {
     label: 'Data Series',
     docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
-      parameterGroups: [],
+      parameterGroups: [actionGroup(), actionParams()],
       parameters: [
         seriesTypeParameter('gauge', 'pie')
       ]
@@ -390,7 +392,7 @@ export default {
     label: 'Time Series',
     docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
-      parameterGroups: [componentRelationsGroup],
+      parameterGroups: [componentRelationsGroup, actionGroup(), actionParams()],
       parameters: [
         ...seriesParameters,
         seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
@@ -404,7 +406,7 @@ export default {
     label: 'Aggregate Series',
     docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
-      parameterGroups: [componentRelationsGroup],
+      parameterGroups: [componentRelationsGroup, actionGroup(), actionParams()],
       parameters: [
         ...seriesParameters,
         seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
@@ -441,7 +443,7 @@ export default {
     label: 'Calendar Series',
     docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
-      parameterGroups: [componentRelationsGroup],
+      parameterGroups: [componentRelationsGroup, actionGroup(), actionParams()],
       parameters: [
         ...seriesParameters,
         seriesTypeParameter('heatmap', 'scatter'),

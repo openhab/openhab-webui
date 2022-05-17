@@ -193,6 +193,11 @@ export default {
       }
 
       return day
+    },
+    navigate (page) {
+      if (page.startsWith('page:')) {
+        this.$f7.views.main.router.navigate('/page/' + page.substring(5), {}, {})
+      }
     }
   }
 }

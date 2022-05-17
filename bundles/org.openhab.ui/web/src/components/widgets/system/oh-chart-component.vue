@@ -5,6 +5,7 @@
       v-if="ready"
       :options="options"
       class="oh-chart"
+      @click="handleClick"
       :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
       :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize />
     <f7-menu class="padding float-right" v-if="periodVisible">
@@ -113,6 +114,19 @@ export default {
     if (this.calendarPicker) this.calendarPicker.destroy()
   },
   methods: {
+    handleClick (arg) {
+      console.debug('Handling click event on chart', arg)
+      if (arg.seriesIndex !== undefined) { // a click on bar/line/etc
+        if (this.context.component.slots && this.context.component.slots.series && Array.isArray(this.context.component.slots.series) && this.context.component.slots.series.length) {
+          let series = this.context.component.slots.series[arg.seriesIndex]
+          if (series !== undefined && series.config !== undefined && series.config.handleClick !== undefined) {
+            series.config.handleClick(arg)
+          } else {
+            console.debug('No action handler to handle event', arg)
+          }
+        }
+      }
+    },
     pickFixedStartDate (evt) {
       const self = this
       const value = this.startTime.toDate()

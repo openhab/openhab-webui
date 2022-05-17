@@ -59,6 +59,14 @@ export default {
       }
     })
 
+    if (component.config.action) {
+      component.config.handleClick = e => {
+        if (component.config.action === 'navigate' && component.config.actionPage !== undefined) {
+          chart.navigate(component.config.actionPage)
+        }
+      }
+    }
+
     let series = Object.assign({}, component.config)
     if (!series.type) series.type = 'heatmap'
 
