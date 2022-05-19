@@ -250,6 +250,8 @@ export default {
       return this.resizing
     },
     onDragStartCallback (ev) {
+      if (!this.context.editmode) return false
+
       if (this.gridEnable) {
         const snapX = Math.round(this.x / this.gridPitch) * this.gridPitch
         const snapY = Math.round(this.y / this.gridPitch) * this.gridPitch
