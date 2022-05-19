@@ -20,8 +20,9 @@
     :on-drag-start="onDragStartCallback"
     :on-resize-start="onResizeStartCallback"
     @dragstop="onDragStop"
-    @resizestop="onResizeStop">
+    @resizestop="onResizeStop"
     :active.sync="active"
+    :prevent-deactivation="preventDeactivation">
     <f7-menu v-if="context.editmode" class="configure-canvas-menu disable-user-select">
       <f7-menu-item icon-f7="menu" dropdown icon-only>
         <f7-menu-dropdown right>
@@ -56,13 +57,13 @@
                                   'oh-canvas-item-styled' : styled,
                                   'oh-canvas-item-shadow' : styled && shadow
                                 }" />
-    </div>
-    <f7-icon v-if="context.editmode" class="drag-handle disable-user-select" f7="move" size="15" color="gray" />
-    <div v-if="context.editmode" class="oh-canvas-item-id disable-user-select">
-      {{ config.id }}
-    </div>
-    <div v-if="context.editmode" class="oh-canvas-item-msg disable-user-select">
-      {{ editMessage }}
+      <f7-icon v-if="context.editmode" class="drag-handle disable-user-select" f7="move" size="15" color="gray" />
+      <div v-if="context.editmode" class="oh-canvas-item-id disable-user-select">
+        {{ config.id }}
+      </div>
+      <div v-if="context.editmode && active" class="oh-canvas-item-msg disable-user-select">
+        {{ editMessage }}
+      </div>
     </div>
   </vue-draggable-resizable>
 </template>
@@ -159,7 +160,8 @@ export default {
   props: {
     gridPitch: Number,
     gridEnable: Boolean,
-    id: String
+    id: String,
+    preventDeactivation: Boolean
   },
   data () {
     return {
@@ -197,6 +199,12 @@ export default {
       }
     }
   },
+  watch: {
+    active (val) {
+      if (val) this.$emit('ociSelected', this)
+      else this.$emit('ociDeselected', this)
+    }
+  },
   methods: {
     toggleAutoSize () {
       if (this.w === 'auto') {
@@ -220,6 +228,10 @@ export default {
       this.h = this.context.component.config.h = height
     },
     onDrag (x, y) {
+      this.$emit('ociDragged', this, x - this.x, y - this.y)
+      this.moveTo(x, y)
+    },
+    moveTo (x, y) {
       this.x = this.context.component.config.x = x
       this.y = this.context.component.config.y = y
     },
@@ -238,8 +250,7 @@ export default {
           this.resizing = posOK
         } else {
           // Widget was not on grid, snap to grid upon first action
-          this.w = this.context.component.config.w = snapW
-          this.h = this.context.component.config.h = snapH
+          this.onResize(this.x, this.y, snapW, snapH)
           this.resizing = false
         }
       } else {
@@ -261,8 +272,7 @@ export default {
           this.dragging = true
         } else {
           // First snap to grid component and stop action
-          this.x = this.context.component.config.x = snapX
-          this.y = this.context.component.config.y = snapY
+          this.onDrag(snapX, snapY)
           this.dragging = true
         }
       } else {
@@ -276,6 +286,10 @@ export default {
       this.resizing = false
     },
     onDragStop () {
+      this.$emit('ociDragStop', this)
+      this.stopDrag()
+    },
+    stopDrag () {
       this.dragging = false
     },
     eventControl (ev) {
