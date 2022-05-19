@@ -7,7 +7,7 @@
     :w="w"
     :h="h"
     :z="active ? 10 : 0"
-    :parent="true"
+    :parent="false"
     :draggable="!!context.editmode"
     :resizable="!!context.editmode && !autosize"
     :class-name="!!context.editmode ? 'oh-canvas-item-editmode' : 'oh-canvas-item-runmode'"

@@ -77,6 +77,7 @@
         transform: `scale(${style.scale})`,
         'text-align': 'center',
         position: 'relative',
+        overflow: context.editmode ? 'visible' : 'hidden',
         '--oh-canvas-item-box-shadow': config.boxShadow
           ? config.boxShadow
           : '0px 0px 4px 2px #444',
