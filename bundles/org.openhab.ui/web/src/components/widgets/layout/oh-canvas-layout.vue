@@ -335,7 +335,6 @@ export default {
       this.layout = layout
     },
     onKeyDown (ev) {
-      console.log(`Keydown event shift:${ev.shiftKey} meta:${ev.metaKey}`)
       let moveX = 0, moveY = 0
       switch (ev.key) {
         case 'Shift':
