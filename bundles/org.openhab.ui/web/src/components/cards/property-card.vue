@@ -36,6 +36,7 @@ import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
   mixins: [mixin, CardMixin],
+  props: ['tabContext'],
   i18n: {
     messages: loadLocaleMessages(require.context('@/assets/i18n/semantics'))
   },
@@ -44,6 +45,7 @@ export default {
   },
   computed: {
     listContext () {
+      const footerDefaults = { contextLabelSource: 'path' }
       let pointsByType = []
       for (let pointType in this.itemsByPointType) {
         pointsByType.push([
@@ -54,7 +56,7 @@ export default {
               divider: true
             }
           },
-          ...this.itemsByPointType[pointType].map((p) => itemDefaultListComponent(p, itemPathLabel(p)))
+          ...this.itemsByPointType[pointType].map((p) => itemDefaultListComponent(p, { ...footerDefaults, ...this.tabContext }))
         ])
       }
 

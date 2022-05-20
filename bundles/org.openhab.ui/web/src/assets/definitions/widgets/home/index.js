@@ -43,11 +43,31 @@ const EquipmentListParameters = () => [
     })
 ]
 
+const ItemSubtitleParameterGroup = () => pg('label', 'Item context label', 'Settings for context label of items displayed in this tab')
+
+const ItemSubtitleParameters = () => [
+  pt('contextLabelSource', 'Label for providing context of items', 'Choose what to display as the context label of items (either in footer or in dividers). This can be used for dis-ambiguation if several items share the same label.')
+    .o([
+      { value: 'path', label: 'Path in model (default)' },
+      { value: 'parent', label: 'Label of parent in model' },
+      { value: 'itemName', label: 'Item name' },
+      { value: 'none', label: 'None' }
+    ]),
+  pn('contextLabelPathTrimStart', 'Trim start of path', 'Number of parents of the item to trim from the start of the path')
+    .v((value, configuration, configDescription, parameters) => { return configuration.contextLabelSource === 'path' }),
+  pn('contextLabelPathTrimEnd', 'Trim end of path', 'Number of parents of the item to trim from the end of the path')
+    .v((value, configuration, configDescription, parameters) => { return configuration.contextLabelSource === 'path' })
+]
+
 export const OhLocationsTabParameters = () => new WidgetDefinition('oh-locations-tab', 'Locations Tab', 'The tab showing all locations of the installation')
   .paramGroup(EquipmentListParameterGroup(), EquipmentListParameters())
 
 export const OhEquipmentTabParameters = () => new WidgetDefinition('oh-equipment-tab', 'Equipment Tab', 'The tab showing all equipment of the installation, by category')
   .paramGroup(EquipmentListParameterGroup(), EquipmentListParameters())
+  .paramGroup(ItemSubtitleParameterGroup(), ItemSubtitleParameters())
+
+export const OhPropertiesTabParameters = () => new WidgetDefinition('oh-properties-tab', 'Properties Tab', 'The tab showing all properties of the installation, by category')
+  .paramGroup(ItemSubtitleParameterGroup(), ItemSubtitleParameters())
 
 const ModelCardParameterGroup = () => pg('card', 'Model Card', 'General settings for this card')
 
