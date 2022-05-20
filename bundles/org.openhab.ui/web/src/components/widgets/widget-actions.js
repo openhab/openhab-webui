@@ -44,6 +44,7 @@ export const actionsMixin = {
         case 'navigate':
           const actionPage = actionConfig[prefix + 'actionPage']
           const actionPageTransition = actionConfig[prefix + 'actionPageTransition']
+          const actionPageVars = actionConfig[prefix + 'actionPageDefineVars']
           console.log('Navigating to ' + actionPage)
           if (actionPage.indexOf('page:') !== 0) {
             console.log('Action target is not of the format page:uid')
@@ -51,6 +52,7 @@ export const actionsMixin = {
           }
           let navigateOptions = { props: { deep: true } }
           if (actionPageTransition) navigateOptions.transition = actionPageTransition
+          if (actionPageVars) navigateOptions.props.defineVars = actionPageVars
           this.$f7.views.main.router.navigate('/page/' + actionPage.substring(5), navigateOptions)
           break
         case 'command':

@@ -54,7 +54,7 @@ export default {
     'oh-plan-page': () => import(/* webpackChunkName: "plan-page" */ '@/components/widgets/plan/oh-plan-page.vue'),
     'oh-chart-page': () => import(/* webpackChunkName: "chart-page" */ '@/components/widgets/chart/oh-chart-page.vue')
   },
-  props: ['uid', 'deep'],
+  props: ['uid', 'deep', 'defineVars'],
   data () {
     return {
       currentTab: 0,
@@ -71,7 +71,7 @@ export default {
     context () {
       return {
         component: this.page,
-        vars: (this.page && this.page.config && this.page.config.defineVars) ? this.page.config.defineVars : {},
+        vars: Object.assign((this.page && this.page.config && this.page.config.defineVars) ? this.page.config.defineVars : {}, this.defineVars),
         store: this.$store.getters.trackedItems
       }
     },
