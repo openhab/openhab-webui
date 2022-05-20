@@ -143,7 +143,6 @@ export function itemAccordionEquipmentComponent (item, config, itemNameAsFooterO
 
   let c = promoted ? promotedEquipmentContext(promoted, config, itemNameAsFooterOrLocation) : itemDefaultListComponent(item, itemNameAsFooterOrLocation)
   c.config.action = undefined
-  c.config.after = ''
   c.slots = {
     accordion: [
       {
