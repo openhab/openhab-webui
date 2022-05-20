@@ -6,7 +6,9 @@
       :id="obj.id"
       :grid-enable="gridEnable"
       :grid-pitch="gridPitch"
-      :context="childContext(obj.item)" />
+      :prevent-deactivation="preventDeactivation"
+      :context="childContext(obj.item)"
+      v-on="$listeners" />
   </div>
 </template>
 
@@ -32,7 +34,8 @@ export default {
   props: {
     gridPitch: Number,
     gridEnable: Boolean,
-    id: String
+    id: String,
+    preventDeactivation: Boolean
   },
   data () {
     return {
@@ -61,6 +64,7 @@ export default {
           if (item.component === 'oh-canvas-item') {
             layer.push({
               item: item,
+              selected: false,
               id: Math.random().toString(36).substring(2)
             })
           } else {

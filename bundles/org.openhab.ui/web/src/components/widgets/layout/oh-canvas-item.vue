@@ -6,7 +6,8 @@
     :y="y"
     :w="w"
     :h="h"
-    :parent="true"
+    :z="active ? 10 : 0"
+    :parent="false"
     :draggable="!!context.editmode"
     :resizable="!!context.editmode && !autosize"
     :class-name="!!context.editmode ? 'oh-canvas-item-editmode' : 'oh-canvas-item-runmode'"
@@ -17,8 +18,12 @@
     @dragging="onDrag"
     @resizing="onResize"
     :on-drag-start="onDragStartCallback"
-    :on-resize-start="onResizeStartCallback">
-    <f7-menu v-if="context.editmode" class="configure-canvas-menu">
+    :on-resize-start="onResizeStartCallback"
+    @dragstop="onDragStop"
+    @resizestop="onResizeStop"
+    :active.sync="active"
+    :prevent-deactivation="preventDeactivation">
+    <f7-menu v-if="context.editmode" class="configure-canvas-menu disable-user-select">
       <f7-menu-item icon-f7="menu" dropdown icon-only>
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context.parent)" href="#" text="Configure container" />
@@ -52,14 +57,26 @@
                                   'oh-canvas-item-styled' : styled,
                                   'oh-canvas-item-shadow' : styled && shadow
                                 }" />
+      <f7-icon v-if="context.editmode" class="drag-handle disable-user-select" f7="move" size="15" color="gray" />
+      <div v-if="context.editmode" class="oh-canvas-item-id disable-user-select">
+        {{ config.id }}
+      </div>
+      <div v-if="context.editmode && active" class="oh-canvas-item-msg disable-user-select">
+        {{ editMessage }}
+      </div>
     </div>
-    <f7-icon v-if="context.editmode" class="drag-handle" f7="move" size="15" color="gray" />
   </vue-draggable-resizable>
 </template>
 
 <style lang="stylus">
   .oh-canvas-item-editmode
     outline 1px dashed #F00
+    cursor move
+    color red
+    font-size 10px
+
+    *
+      cursor move !important
 
   .oh-canvas-item
     position absolute
@@ -90,6 +107,16 @@
             filter var(--oh-canvas-item-svg-shadow)
         .label-card-content
           text-shadow var(--oh-canvas-item-text-shadow)
+
+    .oh-canvas-item-id
+      position absolute
+      bottom 0
+      right 0
+
+    .oh-canvas-item-msg
+      position absolute
+      bottom -22px
+      right 0
 
     .placeholder-widget a
       height 100%
@@ -133,7 +160,8 @@ export default {
   props: {
     gridPitch: Number,
     gridEnable: Boolean,
-    id: String
+    id: String,
+    preventDeactivation: Boolean
   },
   data () {
     return {
@@ -143,7 +171,10 @@ export default {
       h: 0,
       reloadKey: 0,
       shadow: true,
-      styled: true
+      styled: true,
+      dragging: false,
+      resizing: false,
+      active: false
     }
   },
   created () {
@@ -157,6 +188,21 @@ export default {
   computed: {
     autosize () {
       return this.w === 'auto'
+    },
+    editMessage () {
+      if (this.dragging) {
+        return `(${this.x}, ${this.y})`
+      } else if (this.resizing) {
+        return `${this.w}x${this.h}`
+      } else {
+        return ''
+      }
+    }
+  },
+  watch: {
+    active (val) {
+      if (val) this.$emit('ociSelected', this)
+      else this.$emit('ociDeselected', this)
     }
   },
   methods: {
@@ -182,6 +228,10 @@ export default {
       this.h = this.context.component.config.h = height
     },
     onDrag (x, y) {
+      this.$emit('ociDragged', this, x - this.x, y - this.y)
+      this.moveTo(x, y)
+    },
+    moveTo (x, y) {
       this.x = this.context.component.config.x = x
       this.y = this.context.component.config.y = y
     },
@@ -197,34 +247,50 @@ export default {
 
         if (this.w === snapW && this.h === snapH) {
           // Widget already on grid, can continue to resize
-          return true && posOK
+          this.resizing = posOK
         } else {
           // Widget was not on grid, snap to grid upon first action
-          this.w = this.context.component.config.w = snapW
-          this.h = this.context.component.config.h = snapH
-          return false
+          this.onResize(this.x, this.y, snapW, snapH)
+          this.resizing = false
         }
       } else {
-        return true
+        this.resizing = true
       }
+
+      if (this.resizing) this.dragging = false
+      return this.resizing
     },
     onDragStartCallback (ev) {
+      if (!this.context.editmode) return false
+
       if (this.gridEnable) {
         const snapX = Math.round(this.x / this.gridPitch) * this.gridPitch
         const snapY = Math.round(this.y / this.gridPitch) * this.gridPitch
 
         if (this.x === snapX && this.y === snapY) {
           // Origin on grid, continue dragging action
-          return true
+          this.dragging = true
         } else {
           // First snap to grid component and stop action
-          this.x = this.context.component.config.x = snapX
-          this.y = this.context.component.config.y = snapY
-          return false
+          this.onDrag(snapX, snapY)
+          this.dragging = true
         }
       } else {
-        return true
+        this.dragging = true
       }
+
+      if (this.dragging) this.resizing = false
+      return this.dragging
+    },
+    onResizeStop () {
+      this.resizing = false
+    },
+    onDragStop () {
+      this.$emit('ociDragStop', this)
+      this.stopDrag()
+    },
+    stopDrag () {
+      this.dragging = false
     },
     eventControl (ev) {
       // Events are captured before bubbling to prevent undesired widget interaction when a widget has been

@@ -1,5 +1,5 @@
 <template>
-  <div ref="ohCanvasLayout" class="oh-canvas-layout disable-user-select" :class="context.editMode ? 'margin-top' : ''">
+  <div ref="ohCanvasLayout" class="oh-canvas-layout disable-user-select" :class="context.editmode ? 'margin-top' : ''" @keydown="onKeyDown" @keyup="onKeyUp">
     <f7-block v-if="context.editmode">
       <f7-menu class="configure-layout-menu">
         <f7-menu-item
@@ -77,6 +77,7 @@
         transform: `scale(${style.scale})`,
         'text-align': 'center',
         position: 'relative',
+        overflow: context.editmode ? 'visible' : 'hidden',
         '--oh-canvas-item-box-shadow': config.boxShadow
           ? config.boxShadow
           : '0px 0px 4px 2px #444',
@@ -141,7 +142,12 @@
         :id="obj.id"
         :grid-enable="grid.enable"
         :grid-pitch="grid.pitch"
-        :context="childContext(obj.item)" />
+        :prevent-deactivation="preventDeactivation"
+        :context="childContext(obj.item)"
+        @ociDragged="ociDragged"
+        @ociDragStop="ociDragStop"
+        @ociSelected="ociSelected"
+        @ociDeselected="ociDeselected" />
     </div>
   </div>
 </template>
@@ -194,7 +200,9 @@ export default {
         pitch: Number,
         enable: false
       },
-      actLyrIdx: 0
+      actLyrIdx: 0,
+      preventDeactivation: false,
+      selectedItems: []
     }
   },
   computed: {
@@ -325,6 +333,72 @@ export default {
         })
       }
       this.layout = layout
+    },
+    onKeyDown (ev) {
+      let moveX = 0, moveY = 0
+      switch (ev.key) {
+        case 'Shift':
+          this.preventDeactivation = true
+          break
+        case 'ArrowDown':
+          moveY = 1
+          break
+        case 'ArrowUp':
+          moveY = -1
+          break
+        case 'ArrowRight':
+          moveX = 1
+          break
+        case 'ArrowLeft':
+          moveX = -1
+          break
+      }
+      if (moveX || moveY) {
+        const moveBy = this.grid.enable ? this.grid.pitch : 1
+        const didMove = this.moveSelectedItems(null, moveX * moveBy, moveY * moveBy)
+        if (didMove) {
+          ev.stopPropagation()
+          ev.preventDefault()
+        }
+      }
+    },
+    onKeyUp (ev) {
+      switch (ev.key) {
+        case 'Shift':
+          this.preventDeactivation = false
+          break
+      }
+    },
+    moveSelectedItems (exceptId, deltaX, deltaY) {
+      let movedSomething = false
+      this.selectedItems.forEach(i => {
+        if (i.id !== exceptId) {
+          i.moveTo(i.x + deltaX, i.y + deltaY)
+          movedSomething = true
+        }
+      })
+      return movedSomething
+    },
+    ociSelected (item) {
+      this.selectedItems.push(item)
+    },
+    ociDeselected (item) {
+      this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
+    },
+    ociDragged (item, deltaX, deltaY) {
+      // Move all selected (active) items, except the source one (already moved)
+      // if there are several objects selected
+      if (this.selectedItems.length > 1) {
+        this.moveSelectedItems(item.id, deltaX, deltaY)
+      }
+    },
+    ociDragStop (itemId) {
+      // Notify items of drag end in case of multiple items selection
+      if (this.selectedItems.length > 1) {
+        this.selectedItems.forEach(item => {
+          item.stopDrag()
+        })
+      }
     }
   }
 }
