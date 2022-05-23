@@ -101,7 +101,9 @@ export default function itemDefaultListComponent (item, itemNameAsFooterOrLocati
   if (item.label && itemNameAsFooterOrLocation === true) component.config.footer = item.name
   else if (item.label && itemNameAsFooterOrLocation) component.config.footer = itemNameAsFooterOrLocation
   if (!item.category) component.config.fallbackIconToInitial = true
-
+  if (component.component === 'oh-label-item' && item.type.indexOf('Group') === 0 && !item.groupType && component.config.after === undefined) {
+    component.config.after = null // Hide 'NULL' label for standard (non-typed) groups with no 'after' metadata defined
+  }
   return component
 }
 
