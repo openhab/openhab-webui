@@ -4,6 +4,7 @@
       v-if="config.playerType === 'webrtc'"
       :src="src"
       :stunServer="config.stunServer"
+      :candidatesTimeout="config.candidatesTimeout"
       :startManually="config.startManually"
       :hideControls="config.hideControls" />
     <oh-video-videojs
