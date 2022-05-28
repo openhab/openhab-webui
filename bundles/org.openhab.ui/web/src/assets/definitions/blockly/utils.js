@@ -1,7 +1,7 @@
 import Blockly from 'blockly'
 
 /*
-* function that allow to call classes within the osgi container
+* Function allowing to call classes within the OSGi container
 * e.g. service -> 'ruleManager', class -> 'org.openhab.core.automation.RuleManager'
 */
 export function addOSGiService (serviceName, serviceClass) {
@@ -43,7 +43,7 @@ export function addDateSupport () {
     'getZonedDateTime',
     [
       '/* Try to detect the input in a smart way */\n' +
-      'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' (datetime) {',
+      'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + '(datetime) {',
       '  datetime = datetime.replace(\'T\', \' \')\n' +
       '  switch (datetime.length) {\n' +
       `    case 10: return ${zdt}.parse(datetime + ' 00:00:00+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));\n` +
@@ -54,7 +54,7 @@ export function addDateSupport () {
       `    case 26: return ${zdt}.parse(datetime + ' +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSSS z'));\n` +
       `    case 29: return ${zdt}.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSz'));\n` +
       `    case 32: return ${zdt}.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSSSSz'));\n` +
-      `    case 28: return ${zdt}.parse(datetime.slice(0,26)+':'+datetime.slice(26,28), dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSz'));\n` +
+      `    case 28: return ${zdt}.parse(datetime.slice(0,26) + ':' + datetime.slice(26,28), dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSz'));\n` +
       `    default: return ${zdt}.parse(datetime);\n` +
       '  }',
       '}'
@@ -66,10 +66,10 @@ export function addDateSupport () {
       '  stringToParse = \'\' + year;\n' +
       '  stringToParse += \'-\' + (\'0\' + month).slice(-2);\n' +
       '  stringToParse += \'-\' + (\'0\' + day).slice(-2);\n' +
-      '  stringToParse += \'T\'+(\'0\' + hour).slice(-2);\n' +
+      '  stringToParse += \'T\' + (\'0\' + hour).slice(-2);\n' +
       '  stringToParse += \':\' + (\'0\' + minute).slice(-2);\n' +
       '  stringToParse += \':\' + (\'0\' + second).slice(-2);\n' +
-      '  stringToParse += \'.\' +nano + offsetString + \'[\' + timezoneString + \']\';\n' +
+      '  stringToParse += \'.\' + nano + offsetString + \'[\' + timezoneString + \']\';\n' +
       `  return ${zdt}.parse(stringToParse, dtf.ISO_ZONED_DATE_TIME);`,
       '}'
     ])
@@ -115,25 +115,25 @@ export function addDateComparisonSupport () {
       '    case \'seconds\':\n' +
       '     zdt2 = zdt2.withNano(zdt1.getNano());\n' +
       '  }\n' +
-      '  if(compDate === \'date\') {\n' +
+      '  if (compDate === \'date\') {\n' +
       '    zdt1 = zdt1.toLocalDate();\n' +
       '    zdt2 = zdt2.toLocalDate();\n' +
-      '  } else if(compDate === \'time\') {\n' +
+      '  } else if (compDate === \'time\') {\n' +
       '    zdt1 = zdt1.toLocalTime();\n' +
       '    zdt2 = zdt2.toLocalTime();\n' +
       '  }\n' +
-       ' switch (compareOp) {\n' +
-       '    case \'before\':\n' +
-       '      return zdt1.isBefore(zdt2);\n' +
-       '    case \'equal\':\n' +
-       '      return zdt1.isEqual(zdt2);\n' +
-       '    case \'after\':\n' +
-       '      return zdt1.isAfter(zdt2)\n' +
-       '    case \'beforeEqual\':\n' +
-       '      return zdt1.isBefore(zdt2) || zdt1.isEqual(zdt2) \n' +
-       '    case \'afterEqual\':\n' +
-       '      return zdt1.isAfter(zdt2) || zdt1.isEqual(zdt2)\n' +
-       ' }\n' +
+      '  switch (compareOp) {\n' +
+      '    case \'before\':\n' +
+      '      return zdt1.isBefore(zdt2);\n' +
+      '    case \'equal\':\n' +
+      '      return zdt1.isEqual(zdt2);\n' +
+      '    case \'after\':\n' +
+      '      return zdt1.isAfter(zdt2);\n' +
+      '    case \'beforeEqual\':\n' +
+      '      return zdt1.isBefore(zdt2) || zdt1.isEqual(zdt2);\n' +
+      '    case \'afterEqual\':\n' +
+      '      return zdt1.isAfter(zdt2) || zdt1.isEqual(zdt2);\n' +
+      '  }\n' +
       '}'
     ])
   return zdtCompare
