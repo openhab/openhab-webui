@@ -50,8 +50,8 @@ export function addDateSupport () {
       `    case 16: return ${zdt}.parse(datetime + ':00+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));\n` +
       `    case 19: return ${zdt}.parse(datetime + '+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));\n` +
       `    case 25: return ${zdt}.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));\n` +
-      `    case 23: return ${zdt}.parse(datetime+ ' +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSS z'));\n` +
-      `    case 26: return ${zdt}.parse(datetime+ ' +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSSS z'));\n` +
+      `    case 23: return ${zdt}.parse(datetime + ' +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSS z'));\n` +
+      `    case 26: return ${zdt}.parse(datetime + ' +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSSS z'));\n` +
       `    case 29: return ${zdt}.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSz'));\n` +
       `    case 32: return ${zdt}.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSSSSz'));\n` +
       `    case 28: return ${zdt}.parse(datetime.slice(0,26)+':'+datetime.slice(26,28), dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSz'));\n` +
