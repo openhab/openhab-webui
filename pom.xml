@@ -71,7 +71,7 @@
     <eea.version>2.3.0</eea.version>
     <karaf.version>4.3.7</karaf.version>
     <ohc.version>3.3.0-SNAPSHOT</ohc.version>
-    <sat.version>0.12.0</sat.version>
+    <sat.version>0.13.0</sat.version>
     <spotless.version>2.0.3</spotless.version>
   </properties>
 
