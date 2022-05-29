@@ -13,6 +13,7 @@ export function addOSGiService (serviceName, serviceClass) {
       '  return bundleContext.getService(serviceReference);',
       '}'
     ])
+
   return Blockly.JavaScript.provideFunction_(
     serviceName,
     [`var ${Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_} = ${addServiceName}('${serviceClass}');`])
@@ -36,40 +37,41 @@ export function addDateSupport () {
   let dtf = Blockly.JavaScript.provideFunction_(
     'dtf',
     ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.format.DateTimeFormatter");'])
+
   let zdt = Blockly.JavaScript.provideFunction_(
     'zdt',
     ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.ZonedDateTime");'])
+
   let getzdt = Blockly.JavaScript.provideFunction_(
-    'getZonedDateTime',
-    [
-      '/* Try to detect the input in a smart way */\n' +
+    'getZonedDateTime', [
+      '/* Try to detect the format based on its length */',
       'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + '(datetime) {',
-      '  datetime = datetime.replace(\'T\', \' \')\n' +
-      '  switch (datetime.length) {\n' +
-      `    case 10: return ${zdt}.parse(datetime + ' 00:00:00+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));\n` +
-      `    case 16: return ${zdt}.parse(datetime + ':00+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));\n` +
-      `    case 19: return ${zdt}.parse(datetime + '+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));\n` +
-      `    case 25: return ${zdt}.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));\n` +
-      `    case 23: return ${zdt}.parse(datetime + ' +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSS z'));\n` +
-      `    case 26: return ${zdt}.parse(datetime + ' +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSSS z'));\n` +
-      `    case 29: return ${zdt}.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSz'));\n` +
-      `    case 32: return ${zdt}.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSSSSz'));\n` +
-      `    case 28: return ${zdt}.parse(datetime.slice(0,26) + ':' + datetime.slice(26,28), dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSz'));\n` +
-      `    default: return ${zdt}.parse(datetime);\n` +
+      '  datetime = datetime.replace(\'T\', \' \')',
+      '  switch (datetime.length) {',
+      `    case 10: return ${zdt}.parse(datetime + ' 00:00:00+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));`,
+      `    case 16: return ${zdt}.parse(datetime + ':00+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));`,
+      `    case 19: return ${zdt}.parse(datetime + '+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));`,
+      `    case 25: return ${zdt}.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));`,
+      `    case 23: return ${zdt}.parse(datetime + ' +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSS z'));`,
+      `    case 26: return ${zdt}.parse(datetime + ' +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSSS z'));`,
+      `    case 29: return ${zdt}.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSz'));`,
+      `    case 32: return ${zdt}.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSSSSz'));`,
+      `    case 28: return ${zdt}.parse(datetime.slice(0,26) + ':' + datetime.slice(26,28), dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSz'));`,
+      `    default: return ${zdt}.parse(datetime);`,
       '  }',
       '}'
     ])
+
   let createzdt = Blockly.JavaScript.provideFunction_(
-    'createZonedDateTime',
-    [
+    'createZonedDateTime', [
       'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + '(year, month, day, hour, minute, second, nano, offsetString, timezoneString) {',
-      '  stringToParse = \'\' + year;\n' +
-      '  stringToParse += \'-\' + (\'0\' + month).slice(-2);\n' +
-      '  stringToParse += \'-\' + (\'0\' + day).slice(-2);\n' +
-      '  stringToParse += \'T\' + (\'0\' + hour).slice(-2);\n' +
-      '  stringToParse += \':\' + (\'0\' + minute).slice(-2);\n' +
-      '  stringToParse += \':\' + (\'0\' + second).slice(-2);\n' +
-      '  stringToParse += \'.\' + nano + offsetString + \'[\' + timezoneString + \']\';\n' +
+      '  stringToParse = \'\' + year;',
+      '  stringToParse += \'-\' + (\'0\' + month).slice(-2);',
+      '  stringToParse += \'-\' + (\'0\' + day).slice(-2);',
+      '  stringToParse += \'T\' + (\'0\' + hour).slice(-2);',
+      '  stringToParse += \':\' + (\'0\' + minute).slice(-2);',
+      '  stringToParse += \':\' + (\'0\' + second).slice(-2);',
+      '  stringToParse += \'.\' + nano + offsetString + \'[\' + timezoneString + \']\';',
       `  return ${zdt}.parse(stringToParse, dtf.ISO_ZONED_DATE_TIME);`,
       '}'
     ])
@@ -79,10 +81,9 @@ export function addDateSupport () {
 
 export function addGetZdtComponent () {
   let getZdtComponent = Blockly.JavaScript.provideFunction_(
-    'getZdtComponent',
-    [
+    'getZdtComponent', [
       'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + '(value) {',
-      '  return (typeof value == \'number\') ? value: value.getValue();\n' +
+      '  return (typeof value == \'number\') ? value : value.getValue();',
       '}'
     ])
 
@@ -98,42 +99,41 @@ export function addChrono () {
 
 export function addDateComparisonSupport () {
   let zdtCompare = Blockly.JavaScript.provideFunction_(
-    'zdtCompare',
-    [
+    'zdtCompare', [
       'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + '(zdt1, zdt2, compareOp, precision, compDate) {',
-      '  switch (precision) {\n' +
-      '    case \'years\':\n' +
-      '     zdt2 = zdt2.withMonth(zdt1.getMonthValue());\n' +
-      '    case \'months\':\n' +
-      '     zdt2 = zdt2.withDayOfMonth(zdt1.getDayOfMonth());\n' +
-      '    case \'days\':\n' +
-      '     zdt2 = zdt2.withHour(zdt1.getHour());\n' +
-      '    case \'hours\':\n' +
-      '     zdt2 = zdt2.withMinute(zdt1.getMinute());\n' +
-      '    case \'minutes\':\n' +
-      '     zdt2 = zdt2.withSecond(zdt1.getSecond());\n' +
-      '    case \'seconds\':\n' +
-      '     zdt2 = zdt2.withNano(zdt1.getNano());\n' +
-      '  }\n' +
-      '  if (compDate === \'date\') {\n' +
-      '    zdt1 = zdt1.toLocalDate();\n' +
-      '    zdt2 = zdt2.toLocalDate();\n' +
-      '  } else if (compDate === \'time\') {\n' +
-      '    zdt1 = zdt1.toLocalTime();\n' +
-      '    zdt2 = zdt2.toLocalTime();\n' +
-      '  }\n' +
-      '  switch (compareOp) {\n' +
-      '    case \'before\':\n' +
-      '      return zdt1.isBefore(zdt2);\n' +
-      '    case \'equal\':\n' +
-      '      return zdt1.isEqual(zdt2);\n' +
-      '    case \'after\':\n' +
-      '      return zdt1.isAfter(zdt2);\n' +
-      '    case \'beforeEqual\':\n' +
-      '      return zdt1.isBefore(zdt2) || zdt1.isEqual(zdt2);\n' +
-      '    case \'afterEqual\':\n' +
-      '      return zdt1.isAfter(zdt2) || zdt1.isEqual(zdt2);\n' +
-      '  }\n' +
+      '  switch (precision) {',
+      '    case \'years\':',
+      '     zdt2 = zdt2.withMonth(zdt1.getMonthValue());',
+      '    case \'months\':',
+      '     zdt2 = zdt2.withDayOfMonth(zdt1.getDayOfMonth());',
+      '    case \'days\':',
+      '     zdt2 = zdt2.withHour(zdt1.getHour());',
+      '    case \'hours\':',
+      '     zdt2 = zdt2.withMinute(zdt1.getMinute());',
+      '    case \'minutes\':',
+      '     zdt2 = zdt2.withSecond(zdt1.getSecond());',
+      '    case \'seconds\':',
+      '     zdt2 = zdt2.withNano(zdt1.getNano());',
+      '  }',
+      '  if (compDate === \'date\') {',
+      '    zdt1 = zdt1.toLocalDate();',
+      '    zdt2 = zdt2.toLocalDate();',
+      '  } else if (compDate === \'time\') {',
+      '    zdt1 = zdt1.toLocalTime();',
+      '    zdt2 = zdt2.toLocalTime();',
+      '  }',
+      '  switch (compareOp) {',
+      '    case \'before\':',
+      '      return zdt1.isBefore(zdt2);',
+      '    case \'equal\':',
+      '      return zdt1.isEqual(zdt2);',
+      '    case \'after\':',
+      '      return zdt1.isAfter(zdt2);',
+      '    case \'beforeEqual\':',
+      '      return zdt1.isBefore(zdt2) || zdt1.isEqual(zdt2);',
+      '    case \'afterEqual\':',
+      '      return zdt1.isAfter(zdt2) || zdt1.isEqual(zdt2);',
+      '  }',
       '}'
     ])
   return zdtCompare

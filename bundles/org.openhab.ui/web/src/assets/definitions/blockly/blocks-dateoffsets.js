@@ -14,7 +14,7 @@ export default function (f7) {
         .appendField('today')
       this.setOutput(true, 'DayOffset')
       this.setColour(70)
-      this.setTooltip('today\'s date for ephemeris check block')
+      this.setTooltip('today\'s date for Ephemeris check block')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#today')
     }
   }
@@ -41,7 +41,7 @@ export default function (f7) {
         .appendField('days')
       this.setOutput(true, 'DayOffset')
       this.setColour(70)
-      this.setTooltip('today with a positive or negative day offset for ephemeris check block')
+      this.setTooltip('today with a positive or negative day offset for Ephemeris check block')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#today-x-days')
     }
   }
@@ -100,7 +100,7 @@ export default function (f7) {
         ]), 'period')
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
-      this.setTooltip('Obtains the current date-time from the system clock in the default time-zone with a simple positive or negative offset.\nReturns: ZonedDateTime ')
+      this.setTooltip('Obtains the current date-time from the system clock in the default time-zone with a simple positive or negative offset.\nReturns: ZonedDateTime')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-date-now-with-offset')
     }
   }
@@ -128,7 +128,7 @@ export default function (f7) {
       this.setInputsInline(true)
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
-      this.setTooltip('Creates a ZonedDateTime based on the given input for date and time with nanos set to 0 and the system\'s time-zone. The values need to be valid.\n Returns: ZonedDateTime')
+      this.setTooltip('Creates a ZonedDateTime based on the given input for date and time with nanos set to 0 and the system\'s time-zone. The values need to be valid.\nReturns: ZonedDateTime')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html')
     },
     updateShape_: function () {
@@ -212,15 +212,15 @@ export default function (f7) {
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
       let tooltip = 'Parses a text into a ZonedDateTime supporting the following formats detected:\n' +
-        'YYYY-MM-MM\n' +
-        'YYYY-MM-MMTHH:HH\n' +
-        'YYYY-MM-MMTHH:HH:MM\n' +
-        'YYYY-MM-MMTHH:HH:MM+02:00\n' +
-        'YYYY-MM-MMTHH:HH:MM.SSS\n' +
-        'YYYY-MM-MMTHH:HH:MM.SSSSS\n' +
-        'YYYY-MM-MMTHH:HH:MM.SSS+HH:MM\n' +
-        'YYYY-MM-MMTHH:HH:MM.SSSSSS+HH:MM -> local date time standard output\n' +
-        'YYYY-MM-MMTHH:HH:MM.SS+HHMM -> OH standard output format\n' +
+        'yyyy-MM-dd\n' +
+        'yyyy-MM-ddTHH:mm\n' +
+        'yyyy-MM-ddTHH:mm:ss\n' +
+        'yyyy-MM-ddTHH:mm:ss+02:00\n' +
+        'yyyy-MM-ddTHH:mm:ss.SSS\n' +
+        'yyyy-MM-ddTHH:mm:ss.SSSSS\n' +
+        'yyyy-MM-ddTHH:mm:ss.SSS+02:00\n' +
+        'yyyy-MM-ddTHH:mm:ss.SSSSSS+02:00 -> local date time standard output\n' +
+        'yyyy-MM-ddTHH:mm:ss.SS+0200 -> OH standard output format\n' +
         'Note: all of the above work with or without the "T" (replaced by a blank) in the given string"\n' +
         'returns ZonedDateTime"\n'
 
@@ -283,7 +283,7 @@ export default function (f7) {
       this.appendDummyInput()
         .appendField(new Blockly.FieldImage(nextImage, 15, 15, undefined, this.onClick), 'NEXT')
         .appendField(new Blockly.FieldNumber(0), 'value')
-        .appendField('days', 'blockType')
+        .appendField('day', 'blockType')
       this.setInputsInline(true)
       this.setOutput(true, 'zdtTemporalUnit')
       this.setColour(120)
@@ -350,7 +350,7 @@ export default function (f7) {
         .appendField(new Blockly.FieldImage(nextImage, 15, 15, undefined, this.onClick), 'NEXT')
       this.appendValueInput('value')
       this.appendDummyInput()
-        .appendField('days', 'blockType')
+        .appendField('day', 'blockType')
 
       this.addNumberBlock()
       this.setInputsInline(true)
@@ -756,10 +756,10 @@ export default function (f7) {
         temporalPart = `getLong(${chrono}.MILLI_OF_SECOND)`
         break
       case 'getMicro':
-        temporalPart = `getLong(${chrono}.MICRO_OF_SECOND)%1000`
+        temporalPart = `getLong(${chrono}.MICRO_OF_SECOND) % 1000`
         break
       case 'getNano':
-        temporalPart = `getLong(${chrono}.NANO_OF_SECOND)%1000`
+        temporalPart = `getLong(${chrono}.NANO_OF_SECOND) % 1000`
         break
       default:
         temporalPart += '()'

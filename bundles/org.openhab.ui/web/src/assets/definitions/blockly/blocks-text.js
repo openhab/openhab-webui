@@ -16,7 +16,7 @@ export default function (f7) {
         .appendField('CRLF')
       this.setOutput(true, 'String')
       this.setColour(160)
-      this.setTooltip('returns a \r\n (carriage return line feed)')
+      this.setTooltip('Returns a carriage return line feed (\\r\\n).')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/')
     }
   }

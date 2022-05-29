@@ -147,7 +147,6 @@
 
       <category name="Text" colour="%{BKY_TEXTS_HUE}">
         <block type="text" />
-        <block type="oh_text_crlf" />
         <block type="text_join">
           <mutation items="0" />
         </block>
@@ -210,6 +209,7 @@
             </shadow>
           </value>
         </block>
+        <block type="oh_text_crlf" />
       </category>
 
       <category name="Lists" colour="%{BKY_LISTS_HUE}">
@@ -319,7 +319,7 @@
         </block>
       </category>
 
-      <category name="openHAB" colour="0" expanded="true">
+      <category name="openHAB" colour="0" :expanded="$f7.device.desktop">
         <category name="Items &amp; Things">
           <block type="oh_item" />
           <block type="oh_getitem">
@@ -490,7 +490,7 @@
             </value>
           </block>
         </category>
-        <category name="Dates & Times">
+        <category name="Dates &amp; Times">
           <block type="oh_zdt_now" />
           <block type="oh_zdt_plusminus">
             <value name="offset">

@@ -7,7 +7,6 @@
 */
 import Blockly from 'blockly'
 import { FieldDatePicker } from './fields/date-field'
-import { addDateSupport } from './utils'
 
 export default function (f7) {
   /*
