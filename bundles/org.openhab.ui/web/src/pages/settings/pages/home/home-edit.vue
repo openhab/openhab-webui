@@ -99,6 +99,14 @@
                 :configuration="page.slots.equipment[0].config"
                 @updated="dirty = true" />
             </div>
+
+            <div v-if="currentModelTab === 'properties'">
+              <config-sheet
+                :parameterGroups="propertiesTabParameters.props.parameterGroups || []"
+                :parameters="propertiesTabParameters.props.parameters || []"
+                :configuration="page.slots.properties[0].config"
+                @updated="dirty = true" />
+            </div>
           </f7-col>
         </f7-block>
         <div v-else-if="ready && previewMode && currentTab === 'design'" :context="context" :key="pageKey">
@@ -140,7 +148,7 @@ import HomeCards from '../../../home/homecards-mixin'
 
 import YAML from 'yaml'
 
-import { OhHomePageDefinition, OhLocationsTabParameters, OhEquipmentTabParameters, OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
+import { OhHomePageDefinition, OhLocationsTabParameters, OhEquipmentTabParameters, OhPropertiesTabParameters, OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ModelTab from '@/pages/home/model-tab.vue'
@@ -164,6 +172,7 @@ export default {
       pageWidgetDefinition: OhHomePageDefinition(),
       locationsTabParameters: OhLocationsTabParameters(),
       equipmentTabParameters: OhEquipmentTabParameters(),
+      propertiesTabParameters: OhPropertiesTabParameters(),
       currentModelTab: 'locations',
       modelTabs: [],
       showCardControls: false,

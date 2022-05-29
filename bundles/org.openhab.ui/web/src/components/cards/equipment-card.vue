@@ -36,9 +36,10 @@ export default {
   },
   computed: {
     listContext () {
+      const contextLabelDefaults = { contextLabelSource: 'path' }
       return {
         store: this.$store.getters.trackedItems,
-        component: equipmentListComponent(this.element.equipment, this.tabContext, false)
+        component: equipmentListComponent(this.element.equipment, { ...contextLabelDefaults, ...this.tabContext }, false)
       }
     }
   }

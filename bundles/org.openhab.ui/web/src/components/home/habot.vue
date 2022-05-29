@@ -293,7 +293,7 @@ export default {
               mediaList: true
             },
             slots: {
-              default: items.map((i) => itemDefaultListComponent(i, true))
+              default: items.map((i) => itemDefaultListComponent(i, { contextLabelSource: 'itemName' }))
             }
           }
           this.busy = false
