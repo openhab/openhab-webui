@@ -213,6 +213,10 @@
       </category>
 
       <category name="Lists" colour="%{BKY_LISTS_HUE}">
+        <button
+          helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#lists"
+          text="List Help"
+          callbackKey="ohBlocklyHelp" />
         <block type="lists_create_with">
           <mutation items="0" />
         </block>
@@ -274,6 +278,10 @@
       </category>
 
       <category name="Color" colour="%{BKY_COLOUR_HUE}">
+        <button
+          helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#colors"
+          text="Color Help"
+          callbackKey="ohBlocklyHelp" />
         <block type="colour_picker" />
         <block type="colour_random" />
         <block type="colour_rgb">
@@ -505,7 +513,7 @@
         <category name="Dates &amp; Times">
           <button
             helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html"
-            text="Dates & Times Help"
+            text="Dates &amp; Times Help"
             callbackKey="ohBlocklyHelp" />
           <block type="oh_zdt_now" />
           <block type="oh_zdt_plusminus">
@@ -720,6 +728,7 @@
               <shadow type="oh_zdt" />
             </value>
           </block>
+          <sep gap="48" />
           <block type="oh_get_persistvalue">
             <value name="itemName">
               <shadow type="oh_item" />
@@ -984,8 +993,6 @@ export default {
       Blockly.Xml.domToWorkspace(xml, this.workspace)
       this.workspace.addChangeListener(this.onChange)
 
-      // Open specific help page for category via flyout button
-      // see https://developers.google.com/blockly/guides/configure/web/toolbox?hl=en#buttons_and_labels
       this.workspace.registerButtonCallback('ohBlocklyHelp', function (button) {
         window.open(button.info.helpurl, '_blank')
       })
