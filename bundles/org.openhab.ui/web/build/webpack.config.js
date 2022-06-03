@@ -86,7 +86,11 @@ module.exports = {
           resolvePath('node_modules/ssr-window')
         ]
       },
-
+      {
+        test: /(blockly\/.*\.js)$/,
+        enforce: "pre",
+        use: (env === 'development' || buildSourceMaps) ? ["source-map-loader"] : [],
+      },
       {
         test: /\.vue$/,
         use: 'vue-loader'

@@ -213,6 +213,10 @@
       </category>
 
       <category name="Lists" colour="%{BKY_LISTS_HUE}">
+        <button
+          helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#lists"
+          text="Help"
+          callbackKey="ohBlocklyHelp" />
         <block type="lists_create_with">
           <mutation items="0" />
         </block>
@@ -274,6 +278,10 @@
       </category>
 
       <category name="Color" colour="%{BKY_COLOUR_HUE}">
+        <button
+          helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#colors"
+          text="Help"
+          callbackKey="ohBlocklyHelp" />
         <block type="colour_picker" />
         <block type="colour_random" />
         <block type="colour_rgb">
@@ -321,6 +329,10 @@
 
       <category name="openHAB" colour="0" :expanded="$f7.device.desktop">
         <category name="Items &amp; Things">
+          <button
+            helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
           <block type="oh_item" />
           <block type="oh_getitem">
             <value name="itemName">
@@ -366,6 +378,10 @@
         </category>
 
         <category name="Timers &amp; Delays">
+          <button
+            helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
           <block type="oh_sleep" />
           <sep gap="48" />
           <block type="oh_timer">
@@ -435,6 +451,10 @@
         </category>
 
         <category name="Voice &amp; Multimedia">
+          <button
+            helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-voice-and-multimedia.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
           <block type="oh_playmedia_sink">
             <value name="fileName">
               <shadow type="text">
@@ -491,6 +511,10 @@
           </block>
         </category>
         <category name="Dates &amp; Times">
+          <button
+            helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
           <block type="oh_zdt_now" />
           <block type="oh_zdt_plusminus">
             <value name="offset">
@@ -608,6 +632,10 @@
         </category>
 
         <category name="Ephemeris">
+          <button
+            helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-ephemeris.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
           <block type="oh_ephemeris_check">
             <value name="dayInfo">
               <shadow type="oh_dayoffset_today" />
@@ -628,6 +656,10 @@
         </category>
 
         <category name="Notifications">
+          <button
+            helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
           <block type="oh_sendNotification">
             <value name="email">
               <shadow type="text">
@@ -670,6 +702,10 @@
         </category>
 
         <category name="Persistence">
+          <button
+            helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
           <block type="oh_zdt_plusminus">
             <value name="offset">
               <shadow type="math_number">
@@ -737,6 +773,10 @@
         </category>
 
         <category name="Value Storage">
+          <button
+            helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-value-storage.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
           <block type="oh_store_value">
             <value name="value">
               <shadow type="text">
@@ -766,6 +806,10 @@
         </category>
 
         <category name="Run &amp; Process">
+          <button
+            helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
           <block type="oh_callscriptfile">
             <value name="scriptfile">
               <shadow type="text">
@@ -812,6 +856,10 @@
         </category>
 
         <category name="Logging &amp; Output">
+          <button
+            helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-logging.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
           <block type="oh_log">
             <value name="message">
               <shadow type="text">
@@ -944,6 +992,10 @@ export default {
       const xml = Blockly.Xml.textToDom(this.blocks)
       Blockly.Xml.domToWorkspace(xml, this.workspace)
       this.workspace.addChangeListener(this.onChange)
+
+      this.workspace.registerButtonCallback('ohBlocklyHelp', function (button) {
+        window.open(button.info.helpurl, '_blank')
+      })
     },
     addLibraryToToolbox (definitions) {
       const library = this.$refs.libraryCategory
