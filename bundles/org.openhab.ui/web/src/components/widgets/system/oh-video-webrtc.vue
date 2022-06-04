@@ -10,7 +10,10 @@
 </template>
 
 <script>
+import foregroundService from '../widget-foreground-service'
+
 export default {
+  mixins: [foregroundService],
   name: 'OhVideoWebRTC',
   props: {
     src: { type: String },
@@ -21,7 +24,8 @@ export default {
   },
   data () {
     return {
-      webrtc: null
+      webrtc: null,
+      pageEl: null
     }
   },
   watch: {
@@ -30,15 +34,14 @@ export default {
     }
   },
   mounted () {
-    if (this.src) {
-      this.startPlay()
-    }
+    this.startPlay();
   },
   beforeDestroy () {
     this.closeConnection()
   },
   methods: {
     closeConnection () {
+      console.debug("WebRTC Closing Connection")
       if (this.webrtc) {
         this.webrtc.isClosed = true
         this.webrtc.close()
@@ -47,10 +50,10 @@ export default {
       }
     },
     startPlay () {
-      this.closeConnection()
-      if (!this.src) {
-        return
+      if(!this.inForeground || !this.src){
+        return;
       }
+      this.closeConnection()
       const self = this
       const webrtc = new RTCPeerConnection({
         iceServers: [
@@ -129,6 +132,12 @@ export default {
         }
       }
       this.webrtc = webrtc
+    },
+    startForegroundActivity () {
+      this.startPlay()
+    },
+    stopForegroundActivity () {
+      this.closeConnection()
     }
   }
 }
