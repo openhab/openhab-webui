@@ -30,17 +30,11 @@ export default {
   },
   watch: {
     src (value) {
-      this.startPlay()
+      this.startStream()
     }
   },
-  mounted () {
-    this.startPlay();
-  },
-  beforeDestroy () {
-    this.closeConnection()
-  },
   methods: {
-    closeConnection () {
+    stopStream () {
       console.debug("WebRTC Closing Connection")
       if (this.webrtc) {
         this.webrtc.isClosed = true
@@ -49,11 +43,11 @@ export default {
         this.webrtc = null
       }
     },
-    startPlay () {
+    startStream () {
       if(!this.inForeground || !this.src){
         return;
       }
-      this.closeConnection()
+      this.stopStream()
       const self = this
       const webrtc = new RTCPeerConnection({
         iceServers: [
@@ -128,16 +122,16 @@ export default {
         // if we did not close this, restart the stream
         if (!webrtc.isClosed) {
           console.warn(`${webrtcSendChannel.label} closed prematurely, restarting`)
-          self.startPlay()
+          self.startStream()
         }
       }
       this.webrtc = webrtc
     },
     startForegroundActivity () {
-      this.startPlay()
+      this.startStream()
     },
     stopForegroundActivity () {
-      this.closeConnection()
+      this.stopStream()
     }
   }
 }
