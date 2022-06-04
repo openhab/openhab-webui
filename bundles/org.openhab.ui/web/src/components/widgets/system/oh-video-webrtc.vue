@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     stopStream () {
-      console.debug("WebRTC Closing Connection")
+      console.debug('WebRTC Closing Connection')
       if (this.webrtc) {
         this.webrtc.isClosed = true
         this.webrtc.close()
@@ -44,8 +44,8 @@ export default {
       }
     },
     startStream () {
-      if(!this.inForeground || !this.src){
-        return;
+      if (!this.inForeground || !this.src) {
+        return
       }
       this.stopStream()
       const self = this
