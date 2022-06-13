@@ -1,6 +1,6 @@
 <template>
   <knob-control v-bind="config" :text-color="config.textColor || ($f7.data.themeOptions.dark === 'dark') ? '#ffffff' : undefined" :value="value"
-                @input="sendCommandDebounced($event)" @click.native="sendCommandDebounced(value, true)" @touchend.native="sendCommandDebounced(value, true)" />
+                @input="sendCommandDebounced($event)" @click.native.stop="sendCommandDebounced(value, true)" @touchend.native.stop="sendCommandDebounced(value, true)" />
 </template>
 
 <script>
