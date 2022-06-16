@@ -333,17 +333,6 @@
             helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html"
             text="Help"
             callbackKey="ohBlocklyHelp" />
-          <block type="oh_item" />
-          <block type="oh_getitem">
-            <value name="itemName">
-              <shadow type="oh_item" />
-            </value>
-          </block>
-          <block type="oh_groupmembers">
-            <value name="groupName">
-              <shadow type="oh_item" />
-            </value>
-          </block>
           <block type="oh_getitem_state">
             <value name="itemName">
               <shadow type="oh_item" />
@@ -358,6 +347,16 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_getitem">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_groupmembers">
+            <value name="groupName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
           <block type="oh_event">
             <value name="value">
               <shadow type="text">
@@ -368,6 +367,7 @@
               <shadow type="oh_item" />
             </value>
           </block>
+          <block type="oh_item" />
           <sep gap="48" />
           <block type="oh_thing" />
           <block type="oh_getthing_state">
