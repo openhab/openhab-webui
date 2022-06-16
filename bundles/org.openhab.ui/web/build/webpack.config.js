@@ -89,7 +89,7 @@ module.exports = {
       {
         test: /(blockly\/.*\.js)$/,
         enforce: "pre",
-        use: (env === 'development' || buildSourceMaps) ? ["source-map-loader"] : [],
+        use: (buildSourceMaps) ? ["source-map-loader"] : [],
       },
       {
         test: /\.vue$/,
