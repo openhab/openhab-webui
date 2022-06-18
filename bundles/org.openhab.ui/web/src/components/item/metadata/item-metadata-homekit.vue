@@ -25,7 +25,7 @@
       </f7-list-item>
     </f7-list>
     <div>
-      <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" />
+      <config-sheet :parameterGroups="parametersGroups" :parameters="parameters" :configuration="metadata.config" />
     </div>
     <f7-block class="padding-top no-padding no-margin" v-if="itemType === 'Group' && classes.length">
       <f7-block-title class="padding-left">
@@ -87,13 +87,29 @@ export default {
       if (!this.multiple) return this.metadata.value
       return (this.metadata.value) ? this.metadata.value.split(',') : []
     },
+    parametersGroups () {
+      if ((!this.classes) || (!this.multiple)) return []
+      let parametersGroups = []
+      this.classesAsArray.forEach(aType => {
+        parametersGroups.push({name: aType, label: aType})
+      })
+      return parametersGroups
+    },
     parameters () {
       if (!this.classes) return []
       if (!this.multiple) return homekitParameters[this.classes]
       if ((this.multiple) && (this.itemType === 'Group') && (this.classesAsArray.length > 1)) {
+        let options = []
         let primaryOptions = []
-        this.classesAsArray.forEach(aType => primaryOptions.push({ value: aType, label: aType }))
-        return [{ name: 'primary', label: 'Primary Accessory Type', type: 'TEXT', limitToOptions: true, options: primaryOptions }]
+        this.classesAsArray.forEach(aType => {
+          primaryOptions.push({ value: aType, label: aType })
+          homekitParameters[aType].forEach(opt => {
+            opt.groupName = aType
+            options.push(opt)
+          })
+        })
+        options.push({ name: 'primary', label: 'Primary Accessory Type', type: 'TEXT', limitToOptions: true, options: primaryOptions })
+        return options
       }
       return []
     }
