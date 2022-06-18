@@ -91,7 +91,7 @@ export default {
       if ((!this.classes) || (!this.multiple)) return []
       let parametersGroups = []
       this.classesAsArray.forEach(aType => {
-        parametersGroups.push({name: aType, label: aType})
+        parametersGroups.push({ name: aType, label: aType })
       })
       return parametersGroups
     },
