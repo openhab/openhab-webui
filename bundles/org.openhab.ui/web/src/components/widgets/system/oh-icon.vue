@@ -48,12 +48,14 @@ export default {
     iconType () {
       const icon = (this.context) ? this.config.icon : this.icon
       if (!icon) return 'oh'
+      if (!(typeof icon === 'string' || icon instanceof String)) return 'oh'
       if (icon.indexOf('f7') === 0 || icon.indexOf('material') === 0) return 'f7'
       if (icon.indexOf('if') === 0 || icon.indexOf('iconify') === 0) return 'iconify'
       return 'oh'
     },
     iconName () {
       const icon = (this.context) ? this.config.icon : this.icon
+      if (!(typeof icon === 'string' || icon instanceof String)) return ''
       if (icon.indexOf(':') >= 0) return icon.substring(icon.indexOf(':') + 1)
       return icon
     },
