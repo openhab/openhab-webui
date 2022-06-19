@@ -369,12 +369,12 @@
           </block>
           <block type="oh_item" />
           <sep gap="48" />
-          <block type="oh_thing" />
           <block type="oh_getthing_state">
             <value name="thingUid">
               <shadow type="oh_thing" />
             </value>
           </block>
+          <block type="oh_thing" />
         </category>
 
         <category name="Timers &amp; Delays">

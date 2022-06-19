@@ -46,7 +46,7 @@ export function addDateSupport () {
     'getZonedDateTime', [
       '/* Try to detect the format based on its length */',
       'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + '(datetime) {',
-      '  datetime = datetime.replace(\'T\', \' \')',
+      '  datetime = String(datetime).replace(\'T\', \' \')',
       '  switch (datetime.length) {',
       `    case 10: return ${zdt}.parse(datetime + ' 00:00:00+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));`,
       `    case 16: return ${zdt}.parse(datetime + ':00+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));`,
