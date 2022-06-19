@@ -153,6 +153,40 @@
                 "!type": "fn(serviceId?: string) -> ?"
             }
         },
+        "ItemConfig": {
+            "type": {
+                "!doc": "Type of the Item.",
+                "!type": "string"
+            },
+            "name": {
+                "!doc": "Name of the Item.",
+                "!type": "string"
+            },
+            "label?": {
+                "!doc": "Label of the Item.",
+                "!type": "string"
+            },
+            "category?": {
+                "!doc": "Category (icon) of the Item.",
+                "!type": "string"
+            },
+            "groups?": {
+                "!doc": "Groups of the Item.",
+                "!type": "[string]"
+            },
+            "tags?": {
+                "!doc": "Tags of the Item.",
+                "!type": "[string]"
+            },
+            "channels?": {
+                "!doc": "Channel links for the Item (see docs).",
+                "!type": "string|object"
+            },
+            "metadata?": {
+                "!doc": "Metadata for the Item (see docs).",
+                "!type": "object"
+            }
+        },
         "ItemsNamespace": {
             "getItem": {
                 "!doc": "This method retrieves a single item from the registry.",
@@ -167,16 +201,12 @@
                 "!type": "fn(tag?: [string]) -> [Item]"
             },
             "addItem": {
-                "!doc": "Creates a new item within openHAB. This item is not registered with any provider. Note that all items created this way have an additional tag attached, for simpler retrieval later. This tag is created with the value DYNAMIC_ITEM_TAG.",
-                "!type": "fn(itemName: string, itemType?: string, category?: string, groups?: [string], label?: string, tags?: [string], giBaseType?: ?, groupFunction?: ?, itemMetadata?: object)"
-            },
-            "createItem": {
                 "!doc": "Creates a new item within openHAB. This item will persist regardless of the lifecycle of the script creating it. Note that all items created this way have an additional tag attached, for simpler retrieval later. This tag is created with the value DYNAMIC_ITEM_TAG.",
-                "!type": "fn(itemName: string, itemType?: string, category?: string, groups?: [string], label?: string, tags?: [string], giBaseType?: ?, groupFunction?: ?)"
+                "!type": "fn(itemConfig: ItemConfig) -> Item"
             },
             "replaceItem": {
                 "!doc": "Replaces (upserts) an item. If an item exists with the same name, it will be removed and a new item with the supplied parameters will be created in it's place. If an item does not exist with this name, a new item will be created with the supplied parameters. This function can be useful in scripts which create a static set of items which may need updating either periodically, during startup or even during development of the script. Using fixed item names will ensure that the items remain up-to-date, but won't fail with issues related to duplicate items.",
-                "!type": "fn(itemName: string, itemType?: string, category?: string, groups?: [string], label?: string, tags?: [string], giBaseType?: ?, groupFunction?: ?)"
+                "!type": "fn(itemConfig: ItemConfig) -> Item"
             },
             "removeItem": {
                 "!doc": "Removes an item from openHAB. The item is removed immediately and cannot be recoved.",
