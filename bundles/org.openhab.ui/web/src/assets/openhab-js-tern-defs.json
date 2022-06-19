@@ -214,8 +214,68 @@
             },
             "safeItemName": {
                 "!doc": "Helper function to ensure an item name is valid. All invalid characters are replaced with an underscore.",
-                "!type": "fn(s: ?)"
+                "!type": "fn(s: string) -> string"
             }
+        },
+        "Thing": {
+            "bridgeUID": {
+                "!doc": "UID of Thing's bridge.",
+                "!type": "string"
+            },
+            "label": {
+                "!doc": "Label of the Thing.",
+                "!type": "string"
+            },
+            "location": {
+                "!doc": "Physical location of the Thing.",
+                "!type": "string"
+            },
+            "status": {
+                "!doc": "Thing status (e.g. ONLINE or OFFLINE).",
+                "!type": "string"
+            },
+            "statusInfo": {
+                "!doc": "More detailed status of Thing.",
+                "!type": "string"
+            },
+            "thingTypeUID": {
+                "!doc": "UID of Thing's type.",
+                "!type": "string"
+            },
+            "uid": {
+                "!doc": "UID of Thing.",
+                "!type": "string"
+            },
+            "isEnabled": {
+                "!doc": "Whether the thing is enabled or not.",
+                "!type": "boolean"
+            },
+            "setLabel": {
+                "!doc": "Set the Thing label.",
+                "!type": "fn(label: string)"
+            },
+            "setLocation": {
+                "!doc": "Set the physical location of the Thing.",
+                "!type": "fn(location: string)"
+            },
+            "setProperty": {
+                "!doc": "Set the value of a property of the Thing.",
+                "!type": "fn(name: string, value: string)"
+            },
+            "setEnabled": {
+                "!doc": "Enable or disable the Thing.",
+                "!type": "fn(enabled: boolean)"
+            }
+        },
+        "ThingsNamespace": {
+            "getThing": {
+                "!doc": "Get a single Thing from openHAB.",
+                "!type": "fn(uid: string, nullIfMissing?: boolean) -> Thing"
+            },
+            "getThings": {
+                "!doc": "Get all Things",
+                "!type": "fn() -> [Thing]"
+              }
         },
         "CacheNamespace": {
             "get": {
@@ -478,6 +538,10 @@
     "items": {
         "!doc": "Items namespace. This namespace handles querying and updating openHAB Items.",
         "!type": "ItemsNamespace"
+    },
+    "things": {
+        "!doc": "Things namespace. This namespace handles querying and updating openHAB Things.",
+        "!type": "ThingsNamespace"
     },
     "cache": {
         "!doc": "Shared cache namespace. This namespace provides a default cache that can be use to set and retrieve objects that will be persisted between reloads of scripts.",
