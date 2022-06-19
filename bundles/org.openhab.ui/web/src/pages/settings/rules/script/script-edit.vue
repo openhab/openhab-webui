@@ -15,16 +15,20 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar v-if="!newScript && ready" position="bottom">
-      <span class="display-flex flex-direction-row">
+      <span class="display-flex flex-direction-row align-items-center">
         <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" color="orange" @click="toggleDisabled" />
         <f7-link v-if="!$theme.aurora" :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" color="blue" @click="runNow" />
-        <f7-link v-else class="margin-left" :text="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" color="blue" @click="runNow" />
-      </span>
-      <span class="display-flex flex-direction-row align-items-center">
-        <f7-chip class="margin-right"
+        <f7-link v-else class="margin-left" :text="($device.desktop) ? 'Run Now (Ctrl-R)' : ''" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" color="blue" @click="runNow" />
+        <f7-chip class="margin-left" v-if="currentModule && currentModule.configuration.script"
                  :text="ruleStatusBadgeText(rule.status)"
                  :color="ruleStatusBadgeColor(rule.status)"
                  :tooltip="rule.status.description" />
+      </span>
+      <span class="display-flex flex-direction-row align-items-center">
+        <f7-segmented v-if="!newScript && isBlockly" class="margin-right">
+          <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" />
+          <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" />
+        </f7-segmented>
         <f7-link v-if="isScriptRule" class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
       </span>
     </f7-toolbar>
@@ -66,12 +70,6 @@
       </div>
     </div>
 
-    <f7-fab v-show="!newScript && isBlockly && !blocklyCodePreview" position="right-bottom" slot="fixed" color="blue" @click="showBlocklyCode">
-      <f7-icon f7="doc_text" />
-    </f7-fab>
-    <f7-fab v-show="!newScript && isBlockly && blocklyCodePreview" position="right-bottom" slot="fixed" color="blue" @click="blocklyCodePreview = false">
-      <f7-icon f7="ticket" />
-    </f7-fab>
     <f7-fab v-show="!newScript && !script && mode === 'application/javascript' && !isBlockly" position="center-bottom" slot="fixed" color="blue" @click="convertToBlockly" text="Design with Blockly">
       <f7-icon f7="ticket_fill" />
     </f7-fab>

@@ -902,6 +902,7 @@
 
 <script>
 import Blockly from 'blockly'
+import { ZoomToFitControl } from '@blockly/zoom-to-fit'
 import Vue from 'vue'
 
 import defineOHBlocks from '@/assets/definitions/blockly'
@@ -986,8 +987,20 @@ export default {
         toolbox: this.$refs.toolbox,
         horizontalLayout: !this.$device.desktop,
         theme: this.$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined,
+        zoom:
+          {
+            controls: true,
+            wheel: true,
+            startScale: 1.0,
+            maxScale: 3,
+            minScale: 0.3,
+            scaleSpeed: 1.2,
+            pinch: true
+          },
         trashcan: false
       })
+      const zoomToFit = new ZoomToFitControl(this.workspace)
+      zoomToFit.init()
       this.registerLibraryCallbacks(libraryDefinitions)
       const xml = Blockly.Xml.textToDom(this.blocks)
       Blockly.Xml.domToWorkspace(xml, this.workspace)
