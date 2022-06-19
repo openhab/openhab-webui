@@ -28,14 +28,34 @@ export const actionsMixin = {
         })).open()
       }
     },
-    performAction (evt, prefix) {
-      if (!this.context || !this.config) return
-      const actionPropsParameterGroup = this.config[((prefix) ? prefix + '_' : '') + 'actionPropsParameterGroup']
-      const actionConfig = (actionPropsParameterGroup) ? this.evaluateExpression('$props', this.context.props) : this.config
+    /**
+     * Performs an action determined by config parameters.
+     *
+     * If no prefix is specified, will use the parameter "action" and other parameters beginning with "action"
+     * If a prefix is specified, the parameters considered will be "prefix_action*"
+     *
+     * Instead of "[prefix_]action" and others, "[prefix_]actionPropsParameterGroup" can be provided.
+     * The value must match the name of a parameter group with the context set to "actions".
+     * The actual prefix of the parameters will then match the name of the group with the term "action" removed.
+     * For example, for a "dblclickAction" parameter group, the action parameters will be "dblclick_action*".
+     * This allows custom widget designers to offer actions parameters to configure their widget.
+     *
+     * @param {Event} evt the event (e.g. "click") at the origin of the action
+     * @param {String} prefix the prefix for the parameter group and associated parameters (see below)
+     * @param {Object} config the config object containing the parameters to use, will use `this.config` if unset
+     * @param {Object} context the context to use, will use `this.context` if unset
+     * @returns {Boolean?} true if the action was performed, otherwise undefined
+     */
+    performAction (evt, prefix, config, context) {
+      if (!context) context = this.context
+      if (!config) config = this.config
+      if (!config || !context) return
+      const actionPropsParameterGroup = config[((prefix) ? prefix + '_' : '') + 'actionPropsParameterGroup']
+      const actionConfig = (actionPropsParameterGroup) ? this.evaluateExpression('$props', context.props) : config
       prefix = (actionPropsParameterGroup) ? actionPropsParameterGroup.replace(/action/gi, '') : prefix
       prefix = (prefix) ? prefix += '_' : ''
       const action = actionConfig[prefix + 'action']
-      if (this.context.editmode) {
+      if (context.editmode) {
         this.showActionFeedback(prefix, actionConfig, `Action '${action}' not performed while in edit mode`)
         return
       }
@@ -65,8 +85,8 @@ export const actionsMixin = {
           const actionToggleItem = actionConfig[prefix + 'actionItem']
           const actionToggleCommand = actionConfig[prefix + 'actionCommand']
           const actionToggleCommandAlt = actionConfig[prefix + 'actionCommandAlt']
-          const state = this.context.store[actionToggleItem].state
-          let cmd = this.context.store[actionToggleItem].state === actionToggleCommand ? actionToggleCommandAlt : actionToggleCommand
+          const state = context.store[actionToggleItem].state
+          let cmd = context.store[actionToggleItem].state === actionToggleCommand ? actionToggleCommandAlt : actionToggleCommand
           // special behavior for Color, Dimmer
           if (actionToggleCommand === 'OFF' && state.split(',').length === 3 && parseInt(state.split(',')[2]) === 0) cmd = actionToggleCommandAlt
           if (actionToggleCommand === 'ON' && state.split(',').length === 3 && parseInt(state.split(',')[2]) > 0) cmd = actionToggleCommandAlt
@@ -227,7 +247,7 @@ export const actionsMixin = {
         case 'variable':
           const actionVariable = actionConfig[prefix + 'actionVariable']
           const actionVariableValue = actionConfig[prefix + 'actionVariableValue']
-          this.$set(this.context.vars, actionVariable, actionVariableValue)
+          this.$set(context.vars, actionVariable, actionVariableValue)
           break
         default:
           console.log('Invalid action: ' + action)

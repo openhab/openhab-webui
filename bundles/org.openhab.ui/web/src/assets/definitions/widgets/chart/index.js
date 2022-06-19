@@ -1,6 +1,8 @@
 // definitions for the chart widgets
 // TODO: migrate to WidgetDefinition & use helpers
 
+import { actionGroup, actionParams } from '../actions'
+
 const positionGroup = {
   name: 'position',
   label: 'Position',
@@ -366,11 +368,12 @@ export default {
     label: 'Calendar',
     docLink: 'https://echarts.apache.org/en/option.html#calendar',
     props: {
-      parameterGroups: [nameDisplayGroup, componentRelationsGroup],
+      parameterGroups: [nameDisplayGroup, componentRelationsGroup, actionGroup()],
       parameters: [
         ...positionParameters,
         orientParameter,
-        gridIndexParameter
+        gridIndexParameter,
+        ...actionParams()
       ]
     }
   },
@@ -379,9 +382,10 @@ export default {
     label: 'Data Series',
     docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
-      parameterGroups: [],
+      parameterGroups: [actionGroup()],
       parameters: [
-        seriesTypeParameter('gauge', 'pie')
+        seriesTypeParameter('gauge', 'pie'),
+        ...actionParams()
       ]
     }
   },
@@ -390,12 +394,13 @@ export default {
     label: 'Time Series',
     docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
-      parameterGroups: [componentRelationsGroup],
+      parameterGroups: [componentRelationsGroup, actionGroup()],
       parameters: [
         ...seriesParameters,
         seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
         xAxisIndexParameter,
-        yAxisIndexParameter
+        yAxisIndexParameter,
+        ...actionParams()
       ]
     }
   },
@@ -404,7 +409,7 @@ export default {
     label: 'Aggregate Series',
     docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
-      parameterGroups: [componentRelationsGroup],
+      parameterGroups: [componentRelationsGroup, actionGroup()],
       parameters: [
         ...seriesParameters,
         seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
@@ -432,7 +437,8 @@ export default {
         },
         aggregationFunctionParameter,
         xAxisIndexParameter,
-        yAxisIndexParameter
+        yAxisIndexParameter,
+        ...actionParams()
       ]
     }
   },
@@ -441,12 +447,13 @@ export default {
     label: 'Calendar Series',
     docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
-      parameterGroups: [componentRelationsGroup],
+      parameterGroups: [componentRelationsGroup, actionGroup()],
       parameters: [
         ...seriesParameters,
         seriesTypeParameter('heatmap', 'scatter'),
         aggregationFunctionParameter,
-        calendarIndexParameter
+        calendarIndexParameter,
+        ...actionParams()
       ]
     }
   },
