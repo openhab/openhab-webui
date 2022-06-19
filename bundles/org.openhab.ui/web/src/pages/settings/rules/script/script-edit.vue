@@ -18,7 +18,7 @@
       <span class="display-flex flex-direction-row align-items-center">
         <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" color="orange" @click="toggleDisabled" />
         <f7-link v-if="!$theme.aurora" :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" color="blue" @click="runNow" />
-        <f7-link v-else-if="$device.desktop" class="margin-left" :text="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" color="blue" @click="runNow" />
+        <f7-link v-else class="margin-left" :text="($device.desktop) ? 'Run Now (Ctrl-R)' : ''" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" color="blue" @click="runNow" />
         <f7-chip class="margin-left" v-if="currentModule && currentModule.configuration.script"
                  :text="ruleStatusBadgeText(rule.status)"
                  :color="ruleStatusBadgeColor(rule.status)"
