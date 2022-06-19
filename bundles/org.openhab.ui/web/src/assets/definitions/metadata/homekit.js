@@ -226,7 +226,7 @@ export const accessories = {
   'Battery': [
     { label: 'BatteryLevel', mandatory: true },
     { label: 'BatteryLowStatus', mandatory: true },
-    { label: 'BatteryChargingState', mandatory: true }
+    { label: 'BatteryChargingState', mandatory: false }
   ],
   'Filter': [
     { label: 'FilterChangeIndication', mandatory: true },
@@ -261,6 +261,17 @@ const invertedParameter = {
   label: 'inverted',
   type: 'TEXT',
   description: 'invert the value for HomeKit (default is true)',
+  limitToOptions: true,
+  options: [
+    { value: 'false', label: 'false' },
+    { value: 'true', label: 'true' }
+  ]
+}
+const chargeableParameter = {
+  name: 'chargeable',
+  label: 'chargeable',
+  type: 'TEXT',
+  description: 'mark battery as chargeable battery',
   limitToOptions: true,
   options: [
     { value: 'false', label: 'false' },
@@ -344,6 +355,7 @@ export const homekitParameters = {
   'Window': [invertedParameter],
   'Door': [invertedParameter],
   'WindowCovering': [invertedParameter],
+  'Battery': [chargeableParameter],
   'Thermostat.CurrentTemperature': [minValue, maxValue, stepValue],
   'Thermostat.TargetTemperature': [minValue, maxValue, stepValue],
   'Thermostat.CoolingThresholdTemperature': [minValue, maxValue, stepValue],
