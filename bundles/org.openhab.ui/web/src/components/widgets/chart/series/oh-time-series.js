@@ -14,8 +14,8 @@ export default {
       ...markAreaItems
     ]
   },
-  get (component, points, startTime, endTime, chart) {
-    let series = chart.evaluateExpression(ComponentId.get(component), component.config)
+  get (component, points, startTime, endTime, chart, chartWidget) {
+    let series = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     series.data = []
 
     if (series.item) {
@@ -32,7 +32,7 @@ export default {
 
     // other things
     if (component.slots && component.slots.markArea) {
-      series.markArea = MarkArea.get(component.slots.markArea[0], points, startTime, endTime, chart)
+      series.markArea = MarkArea.get(component.slots.markArea[0], points, startTime, endTime, chart, chartWidget)
     }
 
     if (!component.config.showSymbol) series.showSymbol = false

@@ -1,11 +1,12 @@
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+import ComponentId from '../../component-id'
 dayjs.extend(LocalizedFormat)
 
 export default {
-  get (component, points, startTime, endTime, chart) {
+  get (component, points, startTime, endTime, chart, chartWidget) {
     const itemPoints = points.find(p => p.name === component.config.item).data
-    let markArea = Object.assign({}, component.config)
+    let markArea = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     markArea.data = []
     let rollingState = null
     let currentArea = null

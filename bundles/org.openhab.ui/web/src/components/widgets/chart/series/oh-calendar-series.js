@@ -1,12 +1,13 @@
 import * as dayjs from 'dayjs'
 import aggregate from './aggregators'
+import ComponentId from '../../component-id'
 
 export default {
   neededItems (component) {
     if (!component || !component.config || !component.config.item) return []
     return [component.config.item]
   },
-  get (component, points, startTime, endTime, chart) {
+  get (component, points, startTime, endTime, chart, chartWidget) {
     const itemPoints = points.find(p => p.name === component.config.item).data
     const groups = itemPoints.reduce((acc, p) => {
       let day = dayjs(p.time).startOf('day')
@@ -27,7 +28,7 @@ export default {
       return [arr[0].toDate(), parseFloat(formatter.format(value))]
     })
 
-    let series = Object.assign({}, component.config)
+    let series = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     if (!series.type) series.type = 'heatmap'
     series.coordinateSystem = 'calendar'
 

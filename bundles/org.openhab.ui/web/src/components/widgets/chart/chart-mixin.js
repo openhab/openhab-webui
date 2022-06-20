@@ -81,43 +81,43 @@ export default {
     },
     xAxis () {
       if (!this.context.component.slots || !this.context.component.slots.xAxis) return undefined
-      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component))
+      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this))
     },
     yAxis () {
       if (!this.context.component.slots || !this.context.component.slots.yAxis) return undefined
-      return this.context.component.slots.yAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, true)) // invert Y axis by default
+      return this.context.component.slots.yAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, true)) // invert Y axis by default
     },
     calendar () {
       if (!this.context.component.slots || !this.context.component.slots.calendar) return undefined
-      return this.context.component.slots.calendar.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this.orient))
+      return this.context.component.slots.calendar.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, this.orient))
     },
     singleAxis () {
       if (!this.context.component.slots || !this.context.component.slots.singleAxis) return undefined
-      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component))
+      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this))
     },
     tooltip () {
       if (!this.context.component.slots || !this.context.component.slots.tooltip) return undefined
-      return this.context.component.slots.tooltip.map((c) => OhChartTooltip.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.tooltip.map((c) => OhChartTooltip.get(c, this.startTime, this.endTime, this.context.component, this, this.$device))
     },
     visualMap () {
       if (!this.context.component.slots || !this.context.component.slots.visualMap) return undefined
-      return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(c, this.startTime, this.endTime, this.context.component, this, this.$device))
     },
     dataZoom () {
       if (!this.context.component.slots || !this.context.component.slots.dataZoom) return undefined
-      return this.context.component.slots.dataZoom.map((c) => OhChartDataZoom.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.dataZoom.map((c) => OhChartDataZoom.get(c, this.startTime, this.endTime, this.context.component, this, this.$device))
     },
     legend () {
       if (!this.context.component.slots || !this.context.component.slots.legend) return undefined
-      return this.context.component.slots.legend.map((c) => OhChartLegend.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.legend.map((c) => OhChartLegend.get(c, this.startTime, this.endTime, this.context.component, this, this.$device))
     },
     title () {
       if (!this.context.component.slots || !this.context.component.slots.title) return undefined
-      return this.context.component.slots.title.map((c) => OhChartTitle.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.title.map((c) => OhChartTitle.get(c, this.startTime, this.endTime, this.context.component, this, this.$device))
     },
     toolbox () {
       if (!this.context.component.slots || !this.context.component.slots.toolbox) return undefined
-      return this.context.component.slots.toolbox.map((c) => OhChartToolbox.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.toolbox.map((c) => OhChartToolbox.get(c, this.startTime, this.endTime, this.context.component, this, this.$device))
     }
   },
   asyncComputed: {
@@ -128,7 +128,7 @@ export default {
   },
   methods: {
     getSeriesPromises (component) {
-      const getter = (data) => seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this)
+      const getter = (data) => seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this.context.component, this)
 
       const neededItems = seriesComponents[component.component].neededItems(component, this).filter(i => !!i)
       if (neededItems.length === 0) {

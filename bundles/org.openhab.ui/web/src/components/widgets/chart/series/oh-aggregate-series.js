@@ -2,6 +2,7 @@ import * as dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 dayjs.extend(IsoWeek)
 import aggregate from './aggregators'
+import ComponentId from '../../component-id'
 
 function dimensionFromDate (d, dimension, invert) {
   switch (dimension) {
@@ -20,7 +21,7 @@ export default {
     if (!component || !component.config || !component.config.item) return []
     return [component.config.item]
   },
-  get (component, points, startTime, endTime, chart) {
+  get (component, points, startTime, endTime, chart, chartWidget) {
     let dimension1 = component.config.dimension1
     let dimension2 = component.config.dimension2
 
@@ -59,7 +60,7 @@ export default {
       }
     })
 
-    let series = Object.assign({}, component.config)
+    let series = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     if (!series.type) series.type = 'heatmap'
 
     if (series.type === 'scatter') {

@@ -1,3 +1,5 @@
+import ComponentId from '../../component-id'
+
 const presetFeatures = {
   saveAsImage: { title: 'Save as Image' },
   restore: { title: 'Restore' },
@@ -7,8 +9,8 @@ const presetFeatures = {
 }
 
 export default {
-  get (component, startTime, endTime, chart, device) {
-    const options = Object.assign({}, component.config)
+  get (component, startTime, endTime, chart, chartWidget, device) {
+    const options = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
 
     if (options.presetFeatures && !options.feature) {
       options.feature = Object.assign({}, presetFeatures)
