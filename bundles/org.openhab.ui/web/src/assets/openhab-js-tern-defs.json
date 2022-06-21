@@ -373,49 +373,25 @@
                 "!type": "fn() -> string"
             }
         },
-        "TriggerType": {
-            "cronExpression": {
-                "!doc": "The cron expression for the event (timer.GenericCronTrigger)",
-                "!type": "string"
-            },
-            "time": {
-                "!doc": "The time of the event in \"hh:mm\" format (timer.TimeOfDayTrigger)",
-                "!type": "string"
-            },
+        "EventData": {
             "itemName": {
-                "!doc": "The name of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger, core.ItemCommandTrigger)",
+                "!doc": "The name of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger, core.ItemCommandTrigger). Attention: Java type!",
                 "!type": "string"
             },
-            "state": {
-                "!doc": "The state of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger)",
+            "itemState": {
+                "!doc": "The state of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger). Attention: Java type!",
                 "!type": "string"
             },
-            "previousState": {
-                "!doc": "The previous state of the Item that triggered the event (core.ItemStateChangeTrigger)",
+            "oldItemState": {
+                "!doc": "The previous state of the Item that triggered the event (core.ItemStateChangeTrigger). Attention: Java type!",
                 "!type": "string"
             },
-            "command": {
-                "!doc": "The command of the Item that triggered the event (core.ItemCommandTrigger)",
+            "itemCommand": {
+                "!doc": "The command of the Item that triggered the event (core.ItemCommandTrigger). Attention: Java type!",
                 "!type": "string"
             },
-            "channelUID": {
-                "!doc": "The channelUID of the channel that triggered the event (core.ChannelEventTrigger)",
-                "!type": "string"
-            },
-            "event": {
-                "!doc": "The event of the channel that triggered the event (core.ChannelEventTrigger)",
-                "!type": "string"
-            },
-            "eventTopic": {
-                "!doc": "The topic of the event (core.GenericEventTrigger)",
-                "!type": "string"
-            },
-            "eventSource": {
-                "!doc": "The Item name, ChannelUID, ThingUID, etc (core.GenericEventTrigger)",
-                "!type": "string"
-            },
-            "eventTypes": {
-                "!doc": "The event type (core.GenericEventTrigger)",
+            "type": {
+                "!doc": "The event type (core.GenericEventTrigger). Attention: Java type!",
                 "!type": "string"
             }
         },
@@ -582,7 +558,7 @@
         "!type": "fn(module: string) -> ?"
     },
     "event": {
-        "!doc": "Data passed from triggers.",
-        "!type": "TriggerType"
+        "!doc": "Data passed from triggers. Attention: Java types! See docs.",
+        "!type": "EventData"
     }
 }
