@@ -438,6 +438,20 @@
             "logWarn": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
             "logError": { "!type": "fn(loggerName?: string, message: string, args?: ?)" }
         },
+        "NotificationAction": {
+            "sendNotification": {
+                "!doc": "Sends a notification to a specific cloud instance user.",
+                "!type": "fn(email: string, message: string)"
+            },
+            "sendBroadcastNotification": {
+                "!doc": "Sends a notification to all devices of all users.",
+                "!type": "fn(message: string)"
+            },
+            "sendLogNotification": {
+                "!doc": "Sends a log notification to the notifications list at your openHAB Cloud instance. Notifications are NOT sent to any registered device.",
+                "!type": "fn(message: string)"
+            }
+        },
         "PingActions": {
             "checkVitality": { "!type": "fn(host: string, port: int, timeout: int) -> boolean" }
         },
@@ -490,6 +504,10 @@
             "Log": {
                 "!doc": "Log Actions. The static methods of this class are made available as functions in the scripts. This allows a script to log to the SLF4J-Log.",
                 "!type": "LogActions"
+            },
+            "NotificationAction": {
+                "!doc": "Notification Actions. If the openHAB Cloud Connector is installed, notifications can be sent to registered users/devices.",
+                "!type": "NotificationAction"
             },
             "Ping": {
                 "!doc": "Ping Actions. This Action checks the vitality of the given host.",
