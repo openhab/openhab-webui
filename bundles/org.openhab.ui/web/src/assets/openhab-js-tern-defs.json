@@ -3,7 +3,7 @@
     "!define": {
         "Item": {
             "type": {
-                "!doc": "The type of the item: the Simple (without package) name of the Java item type, such as 'Switch'.",
+                "!doc": "The type of the item: the Simple (without package) name of the Java Item type, such as 'Switch'.",
                 "!type": "string"
             },
             "name": {
@@ -27,15 +27,15 @@
                 "!type": "?"
             },
             "members": {
-                "!doc": "Members / children / direct descendents of the current group item (as returned by 'getMembers()'). Must be a group item.",
+                "!doc": "Members / children / direct descendents of the current group Item (as returned by 'getMembers()'). Must be a group item.",
                 "!type": "[Item]"
             },
             "descendents": {
-                "!doc": "All descendents of the current group item (as returned by 'getAllMembers()'). Must be a group item.",
+                "!doc": "All descendents of the current group Item (as returned by 'getAllMembers()'). Must be a group item.",
                 "!type": "[Item]"
             },
             "isUninitialized": {
-                "!doc": "Whether this item is initialized.",
+                "!doc": "Whether this Item is initialized.",
                 "!type": "boolean"
             },
             "tags": {
@@ -97,11 +97,11 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "changedSince": {
-                "!doc": "Checks if the state of a given item has changed since a certain point in time.",
+                "!doc": "Checks if the state of a given Item has changed since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "deltaSince": {
-                "!doc": "Gets the difference value of the state of a given item since a certain point in time.",
+                "!doc": "Gets the difference value of the state of a given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "deviationSince": {
@@ -113,7 +113,7 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "historicState": {
-                "!doc": "Retrieves the historic item state for a given item at a certain point in time.",
+                "!doc": "Retrieves the historic Item state for a given Item at a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> ?"
             },
             "lastUpdate": {
@@ -121,11 +121,11 @@
                 "!type": "fn(serviceId?: string) -> Date?"
             },
             "maximumSince": {
-                "!doc": "Gets the historic item with the maximum value of the state of a given item since a certain point in time.",
+                "!doc": "Gets the historic Item with the maximum value of the state of a given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "minimumSince": {
-                "!doc": "Gets the historic item with the minimum value of the state of a given item since a certain point in time.",
+                "!doc": "Gets the historic Item with the minimum value of the state of a given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "persist": {
@@ -137,11 +137,11 @@
                 "!type": "fn(skipEqual?: boolean, serviceId?: string) -> ?"
             },
             "sumSince": {
-                "!doc": "Gets the sum of the state of a given item since a certain point in time.",
+                "!doc": "Gets the sum of the state of a given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "updatedSince": {
-                "!doc": "Checks if the state of a given item has been updated since a certain point in time.",
+                "!doc": "Checks if the state of a given Item has been updated since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "varianceSince": {
@@ -149,7 +149,7 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "latestState": {
-                "!doc": "Retrieves the historic item state for a given item at the current point in time.",
+                "!doc": "Retrieves the historic Item state for a given Item at the current point in time.",
                 "!type": "fn(serviceId?: string) -> ?"
             }
         },
@@ -189,7 +189,7 @@
         },
         "ItemsNamespace": {
             "getItem": {
-                "!doc": "This method retrieves a single item from the registry.",
+                "!doc": "This method retrieves a single Item from the registry.",
                 "!type": "fn(name: string) -> Item"
             },
             "getItems": {
@@ -198,22 +198,24 @@
             },
             "getItemsByTag": {
                 "!doc": "Returns a list of items containing all of the given tags.",
-                "!type": "fn(tag?: [string]) -> [Item]"
+                "!type": "fn(tag: [string]) -> [Item]"
             },
             "addItem": {
-                "!doc": "Creates a new item within openHAB. This item will persist regardless of the lifecycle of the script creating it. Note that all items created this way have an additional tag attached, for simpler retrieval later. This tag is created with the value DYNAMIC_ITEM_TAG.",
-                "!type": "fn(itemConfig: ItemConfig) -> Item"
+                "!doc": "Creates a new Item within openHAB. See JS Scripting docs for parameter.",
+                "!type": "fn(itemConfig: object) -> Item",
+                "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
             },
             "replaceItem": {
-                "!doc": "Replaces (upserts) an item. If an item exists with the same name, it will be removed and a new item with the supplied parameters will be created in it's place. If an item does not exist with this name, a new item will be created with the supplied parameters. This function can be useful in scripts which create a static set of items which may need updating either periodically, during startup or even during development of the script. Using fixed item names will ensure that the items remain up-to-date, but won't fail with issues related to duplicate items.",
-                "!type": "fn(itemConfig: ItemConfig) -> Item"
+                "!doc": "Replaces (upserts) an item. If an Item does not exist with this name, a new Item will be created with the supplied configuration. See JS Scripting docs for parameter.",
+                "!type": "fn(itemConfig: object) -> Item",
+                "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
             },
             "removeItem": {
-                "!doc": "Removes an item from openHAB. The item is removed immediately and cannot be recoved.",
-                "!type": "fn(itemName: string) -> bool"
+                "!doc": "Removes an Item from openHAB. The Item is removed immediately and cannot be recovered.",
+                "!type": "fn(itemOrItemName: string|Item) -> bool"
             },
             "safeItemName": {
-                "!doc": "Helper function to ensure an item name is valid. All invalid characters are replaced with an underscore.",
+                "!doc": "Helper function to ensure an Item name is valid. All invalid characters are replaced with an underscore.",
                 "!type": "fn(s: string) -> string"
             }
         },
@@ -381,19 +383,19 @@
                 "!type": "string"
             },
             "itemName": {
-                "!doc": "The name of the item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger, core.ItemCommandTrigger)",
+                "!doc": "The name of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger, core.ItemCommandTrigger)",
                 "!type": "string"
             },
             "state": {
-                "!doc": "The state of the item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger)",
+                "!doc": "The state of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger)",
                 "!type": "string"
             },
             "previousState": {
-                "!doc": "The previous state of the item that triggered the event (core.ItemStateChangeTrigger)",
+                "!doc": "The previous state of the Item that triggered the event (core.ItemStateChangeTrigger)",
                 "!type": "string"
             },
             "command": {
-                "!doc": "The command of the item that triggered the event (core.ItemCommandTrigger)",
+                "!doc": "The command of the Item that triggered the event (core.ItemCommandTrigger)",
                 "!type": "string"
             },
             "channelUID": {
@@ -428,11 +430,11 @@
         },
         "BusEventActions": {
             "postUpdate": {
-                "!doc": "Posts a status update for a specified item to the event bus.",
+                "!doc": "Posts a status update for a specified Item to the event bus.",
                 "!type": "fn(itemName: string, state: ?)"
             },
             "sendCommand": {
-                "!doc": "Sends a command for a specified item to the event bus.",
+                "!doc": "Sends a command for a specified Item to the event bus.",
                 "!type": "fn(itemName: string, command: ?)"
             }
         },
