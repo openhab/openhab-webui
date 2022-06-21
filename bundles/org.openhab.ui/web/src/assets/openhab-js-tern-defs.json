@@ -179,11 +179,11 @@
                 "!type": "[string]"
             },
             "channels?": {
-                "!doc": "Channel links for the Item (see docs).",
+                "!doc": "Channel links for the Item (see JS Scripting docs/Standard Library/Things).",
                 "!type": "string|object"
             },
             "metadata?": {
-                "!doc": "Metadata for the Item (see docs).",
+                "!doc": "Metadata for the Item (see JS Scripting docs/Standard Library/Things).",
                 "!type": "object"
             }
         },
@@ -201,12 +201,12 @@
                 "!type": "fn(tag: [string]) -> [Item]"
             },
             "addItem": {
-                "!doc": "Creates a new Item within openHAB. See JS Scripting docs for parameter.",
+                "!doc": "Creates a new Item within openHAB (see JS Scripting docs/Standard Library/Items).",
                 "!type": "fn(itemConfig: object) -> Item",
                 "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
             },
             "replaceItem": {
-                "!doc": "Replaces (upserts) an item. If an Item does not exist with this name, a new Item will be created with the supplied configuration. See JS Scripting docs for parameter.",
+                "!doc": "Replaces (upserts) an item. If an Item does not exist with this name, a new Item will be created with the supplied configuration (see JS Scripting docs/Standard Library/Items).",
                 "!type": "fn(itemConfig: object) -> Item",
                 "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
             },
@@ -249,7 +249,7 @@
                 "!type": "string"
             },
             "isEnabled": {
-                "!doc": "Whether the thing is enabled or not.",
+                "!doc": "Whether the Thing is enabled or not.",
                 "!type": "boolean"
             },
             "setLabel": {
@@ -275,7 +275,7 @@
                 "!type": "fn(uid: string, nullIfMissing?: boolean) -> Thing"
             },
             "getThings": {
-                "!doc": "Get all Things",
+                "!doc": "Get all Things from openHAB.",
                 "!type": "fn() -> [Thing]"
               }
         },
@@ -295,11 +295,11 @@
         },
         "TimeNamespace": {
             "toZDT": {
-                "!doc": "Converts nearly any representation of a time to a time.ZonedDateTime. See JS Scripting Docs/Standard Library/Time.",
+                "!doc": "Converts nearly any representation of a time to a time.ZonedDateTime (see JS Scripting Docs/Standard Library/Time)",
                 "!type": "fn(time: any) -> time.ZonedDateTime"
             },
             "ZonedDateTime": {
-                "!doc": "Represents a date-time with a time offset and/or a time zone in the ISO-8601 calendar system. See JS Scripting Docs/Standard Library/Time."
+                "!doc": "Represents a date-time with a time offset and/or a time zone in the ISO-8601 calendar system (see JS Scripting Docs/Standard Library/Time)."
             }
         },
         "Logger": {
@@ -589,7 +589,7 @@
         "!type": "fn(module: string) -> ?"
     },
     "event": {
-        "!doc": "Data passed from triggers. Attention: Java types! See docs.",
+        "!doc": "Data passed from triggers. Attention: Java types (see JS Scripting docs/UI Based Rules/Event Object)!",
         "!type": "EventData"
     }
 }
