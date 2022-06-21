@@ -293,6 +293,15 @@
                 "!type": "fn(key: string) -> ?"
             }
         },
+        "TimeNamespace": {
+            "toZDT": {
+                "!doc": "Converts nearly any representation of a time to a time.ZonedDateTime. See JS Scripting Docs/Standard Library/Time.",
+                "!type": "fn(time: any) -> time.ZonedDateTime"
+            },
+            "ZonedDateTime": {
+                "!doc": "Represents a date-time with a time offset and/or a time zone in the ISO-8601 calendar system. See JS Scripting Docs/Standard Library/Time."
+            }
+        },
         "Logger": {
             "trace": {
                 "!doc": "Logs at the TRACE level.",
@@ -550,6 +559,10 @@
     "actions": {
         "!doc": "Actions namespace. This namespace provides access to openHAB actions. All available actions can be accessed as direct properties of this object (via their simple class name).",
         "!type": "ActionsNamespace"
+    },
+    "time": {
+        "!doc": "Exports the excellent JS-Joda library which is a port of java.time which is used by openHAB.",
+        "!type": "TimeNamespace"
     },
     "console": {
         "!doc": "Supports the standard console object for logging. Script debug logging is enabled by default at the TRACE level, but can be configured using the console logging commands.",
