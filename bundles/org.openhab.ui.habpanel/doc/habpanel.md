@@ -168,7 +168,7 @@ The following built-in widgets are available:
 
 ![Dummy widget](images/habpanel_widget-dummy.png)
 
-The so-called dummy widget (whose name is explained by historical reasons - it evolved from the first developed widget) displays the current state of an item without any interactivity, along with a label and an optional icon. It has a few options to customize it's appeareance.
+The so-called dummy widget (whose name is explained by historical reasons - it evolved from the first developed widget) displays the current state of an item without any interactivity, along with a label and an optional icon.
 
 #### Switch (switch)
 
@@ -230,7 +230,7 @@ The frame widget displays an external web page in a HTML `<iframe>`.
 
 ![Clock widget](images/habpanel_widget-clock.png)
 
-The clock widget displays an analog or digital clock with color customization. It can also be used to display the current date.
+The clock widget displays an analog or digital clock. It can also be used to display the current date.
 
 #### Chart (chart)
 
