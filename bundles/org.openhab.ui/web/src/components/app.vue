@@ -565,10 +565,6 @@ export default {
             this.playAudioUrl(JSON.parse(event.payload))
             break
         }
-      }, () => {
-        // in case of error, try reloading to refresh
-        this.stopEventSource()
-        this.startEventSource()
       })
     },
     stopEventSource () {
