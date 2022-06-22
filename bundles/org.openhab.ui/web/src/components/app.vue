@@ -283,6 +283,7 @@ export default {
     return {
       init: false,
       ready: false,
+      eventSource: null,
 
       // Framework7 Parameters
       f7params: {
