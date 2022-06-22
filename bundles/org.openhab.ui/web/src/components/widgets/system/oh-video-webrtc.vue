@@ -24,8 +24,7 @@ export default {
   },
   data () {
     return {
-      webrtc: null,
-      pageEl: null
+      webrtc: null
     }
   },
   watch: {
