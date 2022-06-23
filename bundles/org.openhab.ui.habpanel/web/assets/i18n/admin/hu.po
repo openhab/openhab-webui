@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: hu\n"
-"X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File-ID: 532\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
-"PO-Revision-Date: 2019-06-16 09:54\n"
+"PO-Revision-Date: 2022-06-23 21:31\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
@@ -90,12 +90,12 @@ msgstr "Új widget"
 
 msgctxt "designer.serversavefailed"
 msgid "Server save failed!"
-msgstr "Serverre mentés sikertelen!"
+msgstr "Szerver mentése sikertelen!"
 
 #. Title of the dashboard settings dialog
 msgctxt "dashboard.settings.dialog.title"
 msgid "Dashboard Settings"
-msgstr "Vezérlőpult beállítás"
+msgstr "Vezérlőpult beállításai"
 
 #. Tab header
 msgctxt "dashboard.settings.tile"
@@ -267,6 +267,21 @@ msgctxt "settings.storage.panelconfiguration.dialog.message"
 msgid "Please choose a name for the new panel configuration (letters and digits only please):"
 msgstr "Válasszon egy nevet az új konfigurációs panelhez (csak betűk és számjegyek):"
 
+#. Title of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.title"
+msgid "Remove panel configuration"
+msgstr "Panel beállítás eltávolítása"
+
+#. Message of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
+msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
+msgstr "Erősítse meg, hogy el szeretné távolítani a panel beállítást a kiszolgáló adatbázisából: {{name}}. Győződjön meg, hogy más példány nem használja ezt a panel beállítást!"
+
+#. Message of the dialog box when switching from local storage to a server-based panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
+msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
+msgstr "A helyi tárolóról a panel konfigurációra váltás közben felülírja a helyi tárolót. Biztos benne?"
+
 #. Panel name (section header)
 msgctxt "settings.panel.name"
 msgid "Panel name"
@@ -415,12 +430,12 @@ msgstr "Ez a nyers konfigurációs objektum, amely a jelenlegi beállításaidat
 #. Blue button
 msgctxt "settings.localconfig.import"
 msgid "Import"
-msgstr "Import"
+msgstr "Importálás"
 
 #. Blue button
 msgctxt "settings.localconfig.export"
 msgid "Export"
-msgstr "Export"
+msgstr "Exportálás"
 
 #. Default label for the white button on the right
 msgctxt "settings.localconfig.copy"
@@ -880,7 +895,7 @@ msgstr "közösségi hozzájárulások"
 #. 2b. Name of a community contribution
 msgctxt "widgetgallery.details.widget.hint.repository"
 msgid "repository"
-msgstr "repository"
+msgstr "adattár"
 
 #. 3. Suffix of the explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.suffix"
