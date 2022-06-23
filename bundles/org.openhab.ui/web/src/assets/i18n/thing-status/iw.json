@@ -1,0 +1,13 @@
+{
+  "HANDLER_MISSING_ERROR": "שגיאה: מפעיל",
+  "HANDLER_CONFIGURATION_PENDING": "שגיאה: מפעיל",
+  "HANDLER_INITIALIZING_ERROR": "שגיאה: מפעיל",
+  "BRIDGE_UNINITIALIZED": "שגיאה: מגשר",
+  "DISABLED": "מבוטל",
+  "CONFIGURATION_PENDING": "הגדרה: ממתין",
+  "COMMUNICATION_ERROR": "שגיאה: תקשורת",
+  "CONFIGURATION_ERROR": "שגיאה: הגדרות",
+  "BRIDGE_OFFLINE": "שגיאה: מגשר",
+  "FIRMWARE_UPDATING": "קושחה מתעדכן...",
+  "GONE": "אבד"
+}
