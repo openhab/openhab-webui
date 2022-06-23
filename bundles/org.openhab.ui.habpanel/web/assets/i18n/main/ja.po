@@ -3,213 +3,213 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: ja\n"
-"X-Crowdin-File: /master/web/assets/i18n/main/main.pot\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/main/main.pot\n"
+"X-Crowdin-File-ID: 534\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
-"PO-Revision-Date: 2019-06-16 10:18\n"
+"PO-Revision-Date: 2022-06-23 21:31\n"
 
 #. Common term
 msgctxt "OK"
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #. Common term
 msgctxt "Cancel"
 msgid "Cancel"
-msgstr "キャンセル"
+msgstr ""
 
 #. Common term
 msgctxt "Delete"
 msgid "Delete"
-msgstr "削除"
+msgstr ""
 
 #. Common term
 msgctxt "Save"
 msgid "Save"
-msgstr "保存"
+msgstr ""
 
 #. Common term
 msgctxt "Name"
 msgid "Name"
-msgstr "名前"
+msgstr ""
 
 #. Common term
 msgctxt "Icon"
 msgid "Icon"
-msgstr "アイコン"
+msgstr ""
 
 #. Common term (plural)
 msgctxt "Icons"
 msgid "Icons"
-msgstr "アイコン"
+msgstr ""
 
 #. Common term
 msgctxt "Backdrop Icon"
 msgid "Backdrop Icon"
-msgstr "背景アイコン"
+msgstr ""
 
 #. Common term
 msgctxt "Size"
 msgid "Size"
-msgstr "サイズ"
+msgstr ""
 
 #. Common term
 msgctxt "Font size"
 msgid "Font Size"
-msgstr "フォントサイズ"
+msgstr ""
 
 #. Common term
 msgctxt "Color"
 msgid "Color"
-msgstr "色"
+msgstr ""
 
 #. Common term (plural)
 msgctxt "Colors"
 msgid "Colors"
-msgstr "色"
+msgstr ""
 
 #. Common term
 msgctxt "Transparent"
 msgid "Transparent"
-msgstr "透明"
+msgstr ""
 
 #. Common term
 msgctxt "openHAB Item"
 msgid "openHAB Item"
-msgstr "openHAB アイテム"
+msgstr ""
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Speak"
 msgid "Speak"
-msgstr "話す"
+msgstr ""
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Refresh"
 msgid "Refresh"
-msgstr "更新"
+msgstr ""
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Fullscreen"
 msgid "Fullscreen"
-msgstr "フルスクリーン"
+msgstr ""
 
 #. Common term
 msgctxt "Help"
 msgid "Help"
-msgstr "ヘルプ"
+msgstr ""
 
 #. Appears in a red background in the bottom of the screen when openHAB is not responding
 msgctxt "error.connectionlost"
 msgid "Connection lost! Trying to reconnect..."
-msgstr "接続が失われました、再接続しています..."
+msgstr ""
 
 #. Appears below the edit mode button when there's no dashboard - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.welcome"
 msgid "Welcome to HABPanel!"
-msgstr "HABPanel へようこそ！"
+msgstr ""
 
 #. Appears below the edit mode button when there's no dashboard - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.clickheretobegin"
 msgid "Click or tap here to begin."
-msgstr "ここをクリックあるいはタップして始めましょう"
+msgstr ""
 
 #. Appears at the top of the screen when in edit mode and no dashboards are present
 msgctxt "tutorial.editmode"
 msgid "You're now in edit mode, where you can design dashboards."
-msgstr "編集モード中です。ダッシュボードの変更を行えます。"
+msgstr ""
 
 #. Hint for the bottom left link when in edit mode and no dashboards are present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.createfirstdashboard"
 msgid "Click or tap here to create your first dashboard..."
-msgstr "ここをクリックあるいはタップすることで最初のダッシュボードを作れます。"
+msgstr ""
 
 #. Hint for the bottom right link when in edit mode and no dashboards are present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.importpanel"
 msgid "...or here to restore a panel from the server"
-msgstr "...あるいはこちらでサーバからパネルを復元してください。"
+msgstr ""
 
 #. Hint in the bottom left part of the page when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.enterdesigner"
 msgid "Click or tap inside the tile to enter the dashboard designer."
-msgstr "タイルをクリックあるいはタップして、ダッシュボードデザイナーを立ち上げてください。"
+msgstr ""
 
 #. Hint in the bottom center part of the page above the column number slider when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.adjustnbcolumns"
 msgid "Adjust the number of columns"
-msgstr "列数を変更"
+msgstr ""
 
 #. Hint for the bottom left link when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.saveonserver"
 msgid "Save on the openHAB server when done!"
-msgstr "openHAB サーバへ保存"
+msgstr ""
+
+#. Displayed when no default panel configuration has been set and editing is locked (because there was no refresh token found)
+msgctxt "tutorial.nodefaultpanel"
+msgid "No default panel configuration!"
+msgstr ""
 
 #. Displayed when no dashboard is present and editing is locked in the service configuration
-msgctxt "tutorial.editingdisabled"
-msgid "Editing is disabled on the server!"
-msgstr "編集がサーバ上で無効になりました！"
-
-#. Displayed when no dashboard is present and editing is locked in the service configuration
-msgctxt "tutorial.unlockedit"
-msgid "Please go to Paper UI and unlock editing to use HABPanel on this device."
-msgstr "Paper UI を立ち上げ、デバイスで HABPanel を使うように変更してください。 "
+msgctxt "tutorial.setdefault"
+msgid "Sign in with the main UI to enable editing in HABPanel and set a default panel configuration."
+msgstr ""
 
 #. Label of the bottom-left link in edit mode - please also test with phone resolutions!
 msgctxt "menu.addnewdashboard"
 msgid "Add new dashboard"
-msgstr "新規ダッシュボードの追加"
+msgstr ""
 
 #. Label of the bottom-right link in edit mode - please also test with phone resolutions!
 msgctxt "menu.panelsettings"
 msgid "Panel settings"
-msgstr "パネルの設定"
+msgstr ""
 
 #. New dashboard dialog box title
 msgctxt "menu.dialog.newdashboard.title"
 msgid "New dashboard"
-msgstr "新規ダッシュボード"
+msgstr ""
 
 #. New dashboard dialog box message
 msgctxt "menu.dialog.newdashboard.message"
 msgid "Name of your new dashboard:"
-msgstr "新規ダッシュボード名称"
+msgstr ""
 
 #. Remove dashboard dialog box title
 msgctxt "menu.dialog.removedashboard.title"
 msgid "Remove dashboard"
-msgstr "ダッシュボードを削除"
+msgstr ""
 
 #. Remove dashboard dialog box message, followed by the dashboard id
 msgctxt "menu.dialog.removedashboard.message"
 msgid "Please confirm you want to delete this dashboard: "
-msgstr "このダッシュボードを削除してよいかご確認ください："
+msgstr ""
 
 #. Dashboard toolbar Speak button tooltip
 msgctxt "dashboard.toolbar.speak"
 msgid "Speak"
-msgstr "話す"
+msgstr ""
 
 #. Dashboard toolbar Refresh button tooltip
 msgctxt "dashboard.toolbar.refresh"
 msgid "Refresh"
-msgstr "更新"
+msgstr ""
 
 #. Dashboard toolbar Fullscreen button tooltip
 msgctxt "dashboard.toolbar.fullscreen"
 msgid "Fullscreen"
-msgstr "フルスクリーン"
+msgstr ""
 
 #. Displayed at the bottom after clicking on the Speak button
 msgctxt "dashboard.speaknow"
 msgid "Speak now..."
-msgstr "話してください..."
+msgstr ""
 
 #. Prefix of an error message, displayed at the bottom after clicking on the Speak button
 msgctxt "dashboard.speakerror"
 msgid "Error: "
-msgstr "エラー："
+msgstr ""
 
