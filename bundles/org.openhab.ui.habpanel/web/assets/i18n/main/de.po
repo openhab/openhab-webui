@@ -3,213 +3,213 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: de\n"
-"X-Crowdin-File: /master/web/assets/i18n/main/main.pot\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/main/main.pot\n"
+"X-Crowdin-File-ID: 534\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2019-06-16 09:54\n"
+"PO-Revision-Date: 2022-06-23 21:30\n"
 
 #. Common term
 msgctxt "OK"
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #. Common term
 msgctxt "Cancel"
 msgid "Cancel"
-msgstr "Abbrechen"
+msgstr ""
 
 #. Common term
 msgctxt "Delete"
 msgid "Delete"
-msgstr "Löschen"
+msgstr ""
 
 #. Common term
 msgctxt "Save"
 msgid "Save"
-msgstr "Speichern"
+msgstr ""
 
 #. Common term
 msgctxt "Name"
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 #. Common term
 msgctxt "Icon"
 msgid "Icon"
-msgstr "Symbol"
+msgstr ""
 
 #. Common term (plural)
 msgctxt "Icons"
 msgid "Icons"
-msgstr "Symbole"
+msgstr ""
 
 #. Common term
 msgctxt "Backdrop Icon"
 msgid "Backdrop Icon"
-msgstr "Hintergrund-Symbol"
+msgstr ""
 
 #. Common term
 msgctxt "Size"
 msgid "Size"
-msgstr "Größe"
+msgstr ""
 
 #. Common term
 msgctxt "Font size"
 msgid "Font Size"
-msgstr "Schriftgröße"
+msgstr ""
 
 #. Common term
 msgctxt "Color"
 msgid "Color"
-msgstr "Farbe"
+msgstr ""
 
 #. Common term (plural)
 msgctxt "Colors"
 msgid "Colors"
-msgstr "Farben"
+msgstr ""
 
 #. Common term
 msgctxt "Transparent"
 msgid "Transparent"
-msgstr "Transparent"
+msgstr ""
 
 #. Common term
 msgctxt "openHAB Item"
 msgid "openHAB Item"
-msgstr "openHAB Item"
+msgstr ""
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Speak"
 msgid "Speak"
-msgstr "Sprich"
+msgstr ""
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Refresh"
 msgid "Refresh"
-msgstr "Aktualisieren"
+msgstr ""
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Fullscreen"
 msgid "Fullscreen"
-msgstr "Vollbild"
+msgstr ""
 
 #. Common term
 msgctxt "Help"
 msgid "Help"
-msgstr "Hilfe"
+msgstr ""
 
 #. Appears in a red background in the bottom of the screen when openHAB is not responding
 msgctxt "error.connectionlost"
 msgid "Connection lost! Trying to reconnect..."
-msgstr "Verbindung verloren, versuche neu zu verbinden..."
+msgstr ""
 
 #. Appears below the edit mode button when there's no dashboard - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.welcome"
 msgid "Welcome to HABPanel!"
-msgstr "Willkommen im HABPanel!"
+msgstr ""
 
 #. Appears below the edit mode button when there's no dashboard - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.clickheretobegin"
 msgid "Click or tap here to begin."
-msgstr "Zum Starten hier klicken oder tippen."
+msgstr ""
 
 #. Appears at the top of the screen when in edit mode and no dashboards are present
 msgctxt "tutorial.editmode"
 msgid "You're now in edit mode, where you can design dashboards."
-msgstr "Du bist jetzt im Bearbeitungs-Modus und kannst Dashboards gestalten."
+msgstr ""
 
 #. Hint for the bottom left link when in edit mode and no dashboards are present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.createfirstdashboard"
 msgid "Click or tap here to create your first dashboard..."
-msgstr "Klicke oder tippe hier, um dein erstes Dashboard zu erstellen..."
+msgstr ""
 
 #. Hint for the bottom right link when in edit mode and no dashboards are present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.importpanel"
 msgid "...or here to restore a panel from the server"
-msgstr "...oder hier, um ein auf dem Server gespeichertes Panel zu laden"
+msgstr ""
 
 #. Hint in the bottom left part of the page when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.enterdesigner"
 msgid "Click or tap inside the tile to enter the dashboard designer."
-msgstr "Klicke oder tippe in die Kachel, um in den Dashboard Designer zu gelangen."
+msgstr ""
 
 #. Hint in the bottom center part of the page above the column number slider when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.adjustnbcolumns"
 msgid "Adjust the number of columns"
-msgstr "Passe die Anzahl der Spalten an"
+msgstr ""
 
 #. Hint for the bottom left link when in edit mode and only one dashboard is present - please use the Chrome developer tools and check with phone resolutions: iPhone 6, Nexus 5 etc.!
 msgctxt "tutorial.saveonserver"
 msgid "Save on the openHAB server when done!"
-msgstr "Auf dem openHAB Server speichern, wenn du fertig bist!"
+msgstr ""
+
+#. Displayed when no default panel configuration has been set and editing is locked (because there was no refresh token found)
+msgctxt "tutorial.nodefaultpanel"
+msgid "No default panel configuration!"
+msgstr ""
 
 #. Displayed when no dashboard is present and editing is locked in the service configuration
-msgctxt "tutorial.editingdisabled"
-msgid "Editing is disabled on the server!"
-msgstr "Bearbeitung ist auf dem Server deaktiviert!"
-
-#. Displayed when no dashboard is present and editing is locked in the service configuration
-msgctxt "tutorial.unlockedit"
-msgid "Please go to Paper UI and unlock editing to use HABPanel on this device."
-msgstr "Bitte nutze Paper UI um die Bearbeitung zu aktivieren, damit du HABPanel auf diesem gerät verwenden kannst."
+msgctxt "tutorial.setdefault"
+msgid "Sign in with the main UI to enable editing in HABPanel and set a default panel configuration."
+msgstr ""
 
 #. Label of the bottom-left link in edit mode - please also test with phone resolutions!
 msgctxt "menu.addnewdashboard"
 msgid "Add new dashboard"
-msgstr "Füge neues Dashboard hinzu"
+msgstr ""
 
 #. Label of the bottom-right link in edit mode - please also test with phone resolutions!
 msgctxt "menu.panelsettings"
 msgid "Panel settings"
-msgstr "Panel Einstellungen"
+msgstr ""
 
 #. New dashboard dialog box title
 msgctxt "menu.dialog.newdashboard.title"
 msgid "New dashboard"
-msgstr "Neues Dashboard"
+msgstr ""
 
 #. New dashboard dialog box message
 msgctxt "menu.dialog.newdashboard.message"
 msgid "Name of your new dashboard:"
-msgstr "Name des neuen Dashboards:"
+msgstr ""
 
 #. Remove dashboard dialog box title
 msgctxt "menu.dialog.removedashboard.title"
 msgid "Remove dashboard"
-msgstr "Dashboard löschen"
+msgstr ""
 
 #. Remove dashboard dialog box message, followed by the dashboard id
 msgctxt "menu.dialog.removedashboard.message"
 msgid "Please confirm you want to delete this dashboard: "
-msgstr "Bitte bestätige, dass du dieses Dashboard löschen möchtest: "
+msgstr ""
 
 #. Dashboard toolbar Speak button tooltip
 msgctxt "dashboard.toolbar.speak"
 msgid "Speak"
-msgstr "Sprich"
+msgstr ""
 
 #. Dashboard toolbar Refresh button tooltip
 msgctxt "dashboard.toolbar.refresh"
 msgid "Refresh"
-msgstr "Aktualisieren"
+msgstr ""
 
 #. Dashboard toolbar Fullscreen button tooltip
 msgctxt "dashboard.toolbar.fullscreen"
 msgid "Fullscreen"
-msgstr "Vollbild"
+msgstr ""
 
 #. Displayed at the bottom after clicking on the Speak button
 msgctxt "dashboard.speaknow"
 msgid "Speak now..."
-msgstr "Bitte sprechen..."
+msgstr ""
 
 #. Prefix of an error message, displayed at the bottom after clicking on the Speak button
 msgctxt "dashboard.speakerror"
 msgid "Error: "
-msgstr "Fehler: "
+msgstr ""
 
