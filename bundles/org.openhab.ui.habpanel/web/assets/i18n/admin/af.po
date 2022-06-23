@@ -3,99 +3,99 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: af\n"
-"X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File-ID: 532\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
-"PO-Revision-Date: 2019-06-16 10:18\n"
+"PO-Revision-Date: 2022-06-23 21:31\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
 msgid "Save"
-msgstr "Stoor"
+msgstr ""
 
 #. Run button in the dashboard designer
 msgctxt "designer.run"
 msgid "Run"
-msgstr "Voer uit"
+msgstr ""
 
 #. Add widget button in the dashboard designer
 msgctxt "designer.addwidget"
 msgid "Add Widget"
-msgstr "Voeg Widget by"
+msgstr ""
 
 #. Tutorial text with arrow when on an empty dashboard
 msgctxt "designer.addwidget.hint"
 msgid "Add some widgets"
-msgstr "Voeg 'n paar Widgets by"
+msgstr ""
 
 #. Header of the custom widget section (beware, it might overlap the cogs icon on the right)
 msgctxt "designer.addwidget.customwidgets"
 msgid "Custom widgets"
-msgstr "Persoonlike Widgets"
+msgstr ""
 
 #. Open widget gallery
 msgctxt "designer.addwidget.getmore"
 msgid "Get more..."
-msgstr "Nog Widgets..."
+msgstr ""
 
 #. Tooltip when hovering the "Get more" menu entry
 msgctxt "designer.addwidget.getmore.tooltip"
 msgid "Open the widget gallery to import more widgets"
-msgstr "Maak die Widget Gallery oop om nog Widgets in te laai"
+msgstr ""
 
 #. Edit option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.edit"
 msgid "Edit..."
-msgstr "Verander..."
+msgstr ""
 
 #. Copy/move option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.copymove"
 msgid "Copy/move to..."
-msgstr "Kopieër/skuif na..."
+msgstr ""
 
 #. Delete option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.delete"
 msgid "Delete"
-msgstr "Verwyder"
+msgstr ""
 
 #. Title of copy/move widget dialog
 msgctxt "designer.copymove.header"
 msgid "Copy/move {{widgetName}}"
-msgstr "Kopieer/skuif {{widgetName}}"
+msgstr ""
 
 #. Alongside the dropdown dashboard selection
 msgctxt "designer.copymove.todashboard"
 msgid "To dashboard"
-msgstr "Na paneelbord"
+msgstr ""
 
 #. Move button
 msgctxt "designer.copymove.move"
 msgid "Move"
-msgstr "Skuif"
+msgstr ""
 
 #. Copy button
 msgctxt "designer.copymove.copy"
 msgid "Copy"
-msgstr "Kopieër"
+msgstr ""
 
 #. Default name of a newly created widget
 msgctxt "designer.newwidget.defaultname"
 msgid "New Widget"
-msgstr "Nuwe widget"
+msgstr ""
 
 msgctxt "designer.serversavefailed"
 msgid "Server save failed!"
-msgstr "Bediener stoor het misluk!"
+msgstr ""
 
 #. Title of the dashboard settings dialog
 msgctxt "dashboard.settings.dialog.title"
 msgid "Dashboard Settings"
-msgstr "Paneelbord Instellings"
+msgstr ""
 
 #. Tab header
 msgctxt "dashboard.settings.tile"
@@ -110,7 +110,7 @@ msgstr ""
 #. Color picker header
 msgctxt "dashboard.settings.tile.title_text_color"
 msgid "Title Text color"
-msgstr "Titel Teks kleur"
+msgstr ""
 
 #. Checkbox header
 msgctxt "dashboard.settings.tile.click_feedback"
@@ -120,17 +120,17 @@ msgstr ""
 #. Checkbox label
 msgctxt "dashboard.settings.tile.click_feedback.description"
 msgid "Don't brighten tile on click/tap"
-msgstr "Moenie teël op klik/tik verhelder"
+msgstr ""
 
 #. Tab header
 msgctxt "dashboard.settings.advanced"
 msgid "Advanced"
-msgstr "Gevorderd"
+msgstr ""
 
 #. Alert display at the top
 msgctxt "dashboard.settings.advanced.warning"
 msgid "These options are currently experimental, unstable or targeted at advanced users! Use at your own risk."
-msgstr "Hierdie opsies is tans eksperimenteel, onstabiel of bedoel vir gevorderde gebruikers! Gebruik op jou eie risiko."
+msgstr ""
 
 #. Tab header
 msgctxt "dashboard.settings.customwidgets"
@@ -140,7 +140,7 @@ msgstr ""
 #. Alert displayed at the top
 msgctxt "dashboard.settings.customwidgets.warning"
 msgid "This feature is currently experimental, and targeted at advanced users! Use at your own risk."
-msgstr "Hierdie funksie is tans eksperimenteel en bedoel vir gevorderde gebruikers! Gebruik op jou eie risiko."
+msgstr ""
 
 #. Checkbox header
 msgctxt "dashboard.settings.customwidgets.usecustomwidget"
@@ -185,7 +185,7 @@ msgstr ""
 #. Displayed in the item picker when no item selected
 msgctxt "itempicker.placeholder"
 msgid "Search or select an openHAB item"
-msgstr "Soek vir of kies 'n openHAB item"
+msgstr ""
 
 #. Icon picker dropdown placeholder
 msgctxt "iconpicker.selecticonset"
@@ -215,7 +215,7 @@ msgstr ""
 #. Screen title
 msgctxt "settings.header"
 msgid "Settings"
-msgstr "Instellings"
+msgstr ""
 
 #. Header of the storage section
 msgctxt "settings.storage.header"
@@ -230,7 +230,7 @@ msgstr ""
 #. Explanation of the "local storage only" option
 msgctxt "settings.storage.localstorage.hint"
 msgid "The configuration is saved for this browser and device only. It will be kept as long as you don't clean up the browser's historical data."
-msgstr "Die konfigurasie is slegs vir hierdie blaaier en toestel gestoor. Dit sal gehou word solank jy nie die blaaier se historiese data skoon maak nie."
+msgstr ""
 
 #. Link below the "local storage" option
 msgctxt "settings.storage.localstorage.edit"
@@ -267,6 +267,21 @@ msgctxt "settings.storage.panelconfiguration.dialog.message"
 msgid "Please choose a name for the new panel configuration (letters and digits only please):"
 msgstr ""
 
+#. Title of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.title"
+msgid "Remove panel configuration"
+msgstr ""
+
+#. Message of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
+msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
+msgstr ""
+
+#. Message of the dialog box when switching from local storage to a server-based panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
+msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
+msgstr ""
+
 #. Panel name (section header)
 msgctxt "settings.panel.name"
 msgid "Panel name"
@@ -285,7 +300,7 @@ msgstr ""
 #. Dropown menu header
 msgctxt "settings.panel.appearance.theme"
 msgid "Theme"
-msgstr "Tema"
+msgstr ""
 
 #. Alert banner displayed when the browsers doesn't support themes (CSS variables)
 msgctxt "settings.panel.appearance.theme.not_supported"
@@ -310,257 +325,257 @@ msgstr ""
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.background_image.hint"
 msgid "Example: //source.unsplash.com/random"
-msgstr "Voorbeeld: //source.unsplash.com/random"
+msgstr ""
 
 #. Setting header
 msgctxt "settings.panel.appearance.drawer_heading_image"
 msgid "Drawer heading image (optional)"
-msgstr "Drawer opskrif image (opsioneel)"
+msgstr ""
 
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.drawer_heading_image.hint"
 msgid "Example: //via.placeholder.com/265x95"
-msgstr "Voorbeeld: //via.placeholder.com/265x95"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.prevent_scrolling"
 msgid "Prevent scrolling (when not editing)"
-msgstr "Voorkom scrolling (wanneer nie besig is om te verander nie)"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.hide_drawer_footer"
 msgid "Hide the drawer's footer"
-msgstr "Steek die Drawer se footer weg"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.hide_toolbar_buttons"
 msgid "Hide toolbar buttons:"
-msgstr "Steek die toolbar knoppies weg:"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.show_clock"
 msgid "Show a clock on the header"
-msgstr "Wys 'n horlosie op die header"
+msgstr ""
 
 #. Textbox setting header, only displayed when the "Show a clock on the header" option is checked
 msgctxt "settings.panel.appearance.show_clock.header_format"
 msgid "Header clock format"
-msgstr "Header horlosie formaat"
+msgstr ""
 
 #. Textbox placeholder, only displayed when the "Show a clock on the header" option is checked
 msgctxt "settings.panel.appearance.show_clock.header_format.hint"
 msgid "Default: shortTime, use AngularJS date format"
-msgstr "Verstek: shortTime, gebruik AngularJS datum formaat"
+msgstr ""
 
 #. Custom widgets settings (section header)
 msgctxt "settings.panel.customwidgets.header"
 msgid "Custom Widgets"
-msgstr "Persoonlike Widgets"
+msgstr ""
 
 #. Big "manage" button label (a > suffix is added)
 msgctxt "settings.panel.customwidgets.manage"
 msgid "Manage"
-msgstr "Bestuur"
+msgstr ""
 
 #. Voice support (section header) - formerly (<=2.2.0) : "Voice feedback"
 msgctxt "settings.panel.voicesupport.header"
 msgid "Voice Support"
-msgstr "Stem Ondersteuning"
+msgstr ""
 
 #. Dropdown header - formerly (<=2.2.0) : "Voice"
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice"
 msgid "Speech synthesis voice"
-msgstr "Sintetiese spraak stem"
+msgstr ""
 
 #. Displayed below the voice dropdown
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice.hint"
 msgid "Available voices depend on the operating system and browser environments."
-msgstr "Beskikbare stemme afhangend van die bedryfstelsel en webblaaier omgewings."
+msgstr ""
 
 #. Test button below the voice selection - make the voice say "habpanel 1 2 3"
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice.test"
 msgid "Test"
-msgstr "Toets"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.voicesupport.floating_speech_button"
 msgid "Display a floating speech button at the bottom of the screen"
-msgstr "Vertoon 'n floating spraak knoppie aan die onderkant van die skerm"
+msgstr ""
 
 #. Dropdown header
 msgctxt "settings.panel.voicesupport.speech_synthesis_item"
 msgid "Speak the new value of the following item when it changes:"
-msgstr "Spreek die nuwe waarde van die volgende item uit wanneer dit verander:"
+msgstr ""
 
 #. Section header
 msgctxt "settings.panel.dashboard_control.header"
 msgid "Switch dashboard with item value"
-msgstr "Verander Dashboard afhangend van item waarde"
+msgstr ""
 
 #. Dropdown header
 msgctxt "settings.panel.dashboard_control.item"
 msgid "When this item changes to a dashboard's name, switch to it:"
-msgstr "Wanneer hierdie item verander na 'n Dashboard naam, verwissel na dit:"
+msgstr ""
 
 #. Local panel configuration editor header
 msgctxt "settings.localconfig.title"
 msgid "Local panel configuration editor"
-msgstr "Local Panel opstelling redigeerder"
+msgstr ""
 
 #. Displayed in a tooltip when hovering the exclamation mark in the local panel config editor
 msgctxt "settings.localconfig.warning"
 msgid "This is the raw configuration object representing your current configuration. Be careful while editing it by hand!"
-msgstr "Hierdie is die raw opstelling object wat jou huidge opstelling voorstel. Wees versigtig as jy dit met die hand verander!"
+msgstr ""
 
 #. Blue button
 msgctxt "settings.localconfig.import"
 msgid "Import"
-msgstr "Voer In"
+msgstr ""
 
 #. Blue button
 msgctxt "settings.localconfig.export"
 msgid "Export"
-msgstr "Voer Uit"
+msgstr ""
 
 #. Default label for the white button on the right
 msgctxt "settings.localconfig.copy"
 msgid "Copy"
-msgstr "Kopieër"
+msgstr ""
 
 #. Label displayed on the button for a few seconds after a successful copy to clipboard
 msgctxt "settings.localconfig.copied"
 msgid "Copied!"
-msgstr "Gekopieër!"
+msgstr ""
 
 #. Default label for the red button on the right
 msgctxt "settings.localconfig.save"
 msgid "Save"
-msgstr "Stoor"
+msgstr ""
 
 #. Label displayed on the button for a few seconds after a successful save
 msgctxt "settings.localconfig.saved"
 msgid "Saved!"
-msgstr "Gestoor!"
+msgstr ""
 
 #. Label displayed for a few seconds on the copy or save button if an error occurred
 msgctxt "settings.localconfig.failed"
 msgid "FAILED!"
-msgstr "DIT HET MISLUK!"
+msgstr ""
 
 #. Displayed in a dialog box
 msgctxt "settings.localconfig.error.nodashboardsfound"
 msgid "No dashboards found!"
-msgstr "Geen Dashboard kan gevind word nie!"
+msgstr ""
 
 #. Title of a a dialog box
 msgctxt "settings.localconfig.parsingerror.dialog.title"
 msgid "Error"
-msgstr "Error"
+msgstr ""
 
 #. Message in a dialog box
 msgctxt "settings.localconfig.parsingerror.dialog.message"
 msgid "Configuration parsing error, nothing has been modified: "
-msgstr "Opstelling parsing error, niks is verander nie: "
+msgstr ""
 
 #. Title of a a dialog box
 msgctxt "settings.localconfig.importerror.dialog.title"
 msgid "Error"
-msgstr "Error"
+msgstr ""
 
 #. Message in a dialog box
 msgctxt "settings.localconfig.importerror.dialog.message"
 msgid "Problem while importing: "
-msgstr "Probleem met invoering: "
+msgstr ""
 
 #. Screen title
 msgctxt "customwidgets.list.header"
 msgid "Custom widgets"
-msgstr "Persoonlike Widgets"
+msgstr ""
 
 #. Prefix displayed before the author's name
 msgctxt "customwidgets.list.byauthor"
 msgid "by"
-msgstr "deur"
+msgstr ""
 
 #. Displayed in a tooltip when hovering the icon indicating a globally provisioned widget
 msgctxt "customwidgets.list.globallyprovisioned.hint"
 msgid "This widget was provisioned globally via a bundle. It cannot be modified, but may be cloned to an user-defined widget with another name."
-msgstr "Hierdie Widget was voorsien globaal via 'n pakket. Dit kan nie verander word nie, maar dit kan wel gedupliseer word na 'n gebruiker bepaalde Widget met 'n ander naam."
+msgstr ""
 
 #. Displayed in a tooltip when hovering the icon indicating a user defined widget
 msgctxt "customwidgets.list.userdefined.hint"
 msgid "This widget has been defined manually in this panel configuration and can be modified."
-msgstr "Hierdie Widget was gedefinieër met die hand in die Panel opstelling, en kan nie verander word nie."
+msgstr ""
 
 #. Custom widget context menu entry - clone a globally-provisioned widget
 msgctxt "customwidgets.list.contextmenu.clone"
 msgid "Clone widget..."
-msgstr "Dupliseer Widget..."
+msgstr ""
 
 #. Custom widget context menu entry - downloads a widget's .widget.json file
 msgctxt "customwidgets.list.contextmenu.exporttofile"
 msgid "Export to file"
-msgstr "Voer uit na 'n file"
+msgstr ""
 
 #. Custom widget context menu entry - opens a forum topic or GitHub readme
 msgctxt "customwidgets.list.contextmenu.openhelp"
 msgid "Open Help"
-msgstr "Maak Hulp oop"
+msgstr ""
 
 #. Custom widget context menu entry - update the widget from its source
 msgctxt "customwidgets.list.contextmenu.update"
 msgid "Update..."
-msgstr "Opdateer..."
+msgstr ""
 
 #. Blue button opening a dialog
 msgctxt "customwidgets.list.newwidget"
 msgid "New widget"
-msgstr "Nuwe widget"
+msgstr ""
 
 #. Blue button with a dropdown menu
 msgctxt "customwidgets.list.importwidget"
 msgid "Import widget"
-msgstr "Voer Widget in"
+msgstr ""
 
 #. Import button menu entry - opens a dialog
 msgctxt "customwidgets.list.importwidget.fromfile"
 msgid "Import from file..."
-msgstr "Voer in vanaf 'n file..."
+msgstr ""
 
 #. Import button menu entry - opens a dialog
 msgctxt "customwidgets.list.importwidget.fromgallery"
 msgid "Import from gallery..."
-msgstr "Voer in van galery..."
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.add.dialog.title"
 msgid "New custom widget"
-msgstr "Nuwe persoonlike Widget"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.add.dialog.message"
 msgid "Please choose a short name as an identifier for your widget (for example, 'window-shutter=up-down-button, 'weather-forecast' etc.). If a widget with the same identifier already exists, it will be replaced!"
-msgstr "Kies asseblief 'n kort naam as identifiseerder vir jou Widget (byvoorbeeld, 'window-shutter=up-down-button, 'weather-forecast', ens.). As 'n Widget met dieselfde identifiseerder alreeds bestaan, gaan hy vervang word!"
+msgstr ""
 
 #. Error message, displayed in an alert box
 msgctxt "customwidgets.list.import.nojson"
 msgid "The file must have a .json extension!"
-msgstr "Die file moet 'n .json extension hê!"
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.import.dialog.title"
 msgid "Import widget"
-msgstr "Voer Widget in"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.import.dialog.message"
 msgid "Please confirm or change the identifier of your widget (avoid spaces and special chars!). If a widget with the same identifier already exists, it will be replaced!"
-msgstr "Bevestig of verander asseblief die identifiseerder van jou Widget (vermy spasies en spesiale karakters!). As 'n Widget met dieselfde identifiseerder alreeds bestaan, gaan dit vervang word!"
+msgstr ""
 
 #. Prefix of an error message - followed by a technical exception message
 msgctxt "customwidgets.list.import.error"
 msgid "Widget import error: "
-msgstr "Widget invoer error: "
+msgstr ""
 
 #. Dialog box title
 msgctxt "customwidgets.list.update.dialog.title"
@@ -650,17 +665,17 @@ msgstr ""
 #. Textbox header
 msgctxt "customwidgets.designer.settings.general.description"
 msgid "Description"
-msgstr "Beskrywing"
+msgstr ""
 
 #. Section header in the Settings tab
 msgctxt "customwidgets.designer.settings.config"
 msgid "Configuration settings"
-msgstr "Konfigurasie instellings"
+msgstr ""
 
 #. Displayed in small text below the section header, with an information icon
 msgctxt "customwidgets.designer.settings.config.warning"
 msgid "Beware: always bear in mind instances of this widget might be existing when altering configuration settings!"
-msgstr "Wees bewus: Hou altyd in gedagte gevalle van hierdie widget mag reeds bestaan wanneer konfigurasie-instellings verander!"
+msgstr ""
 
 #. Button label
 msgctxt "customwidgets.designer.settings.config.add"
@@ -670,7 +685,7 @@ msgstr ""
 #. Dropdown header
 msgctxt "customwidgets.designer.settings.config.type"
 msgid "Type"
-msgstr "Tipe"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.string"
@@ -680,7 +695,7 @@ msgstr ""
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.number"
 msgid "Number"
-msgstr "Nommer"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.checkbox"
@@ -690,17 +705,17 @@ msgstr ""
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.item"
 msgid "Item"
-msgstr "Item"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.color"
 msgid "Color"
-msgstr "Kleur"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.choices"
 msgid "Choices"
-msgstr "Keuses"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.icon"
@@ -715,7 +730,7 @@ msgstr ""
 #. Tooltip displayed when hovering the help icon alongside the ID field
 msgctxt "customwidgets.designer.settings.config.id.hint"
 msgid "Enter a JSON friendly key for this setting - ideally, use only lowercase letters, digits and underscores. Examples: my_setting, first_item, text_size, font_color"
-msgstr "Tik 'n JSON vriendelike sleutel vir hierdie instelling - ideaal, gebruik net kleinletters, syfers en onderstreping. Voorbeelde: my_setting, first_item, text_size, font_color"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.label"
@@ -725,12 +740,12 @@ msgstr ""
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.default"
 msgid "Default value"
-msgstr "Standaard waarde"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.choices"
 msgid "Choices"
-msgstr "Keuses"
+msgstr ""
 
 #. Textbox placeholder
 msgctxt "customwidgets.designer.settings.config.choices.hint"
@@ -740,22 +755,22 @@ msgstr ""
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.description"
 msgid "Description"
-msgstr "Beskrywing"
+msgstr ""
 
 #. Banner displayed when selecting the Icon type for the settings, followed by the defined settings themselves
 msgctxt "customwidgets.designer.settings.config.icon.hint"
 msgid "This will define 2 config elements:"
-msgstr "Dit sal 2 config elemente definieer:"
+msgstr ""
 
 #. Tab header
 msgctxt "customwidgets.designer.preview"
 msgid "Preview"
-msgstr "Voorskou"
+msgstr ""
 
 #. Dialog box title
 msgctxt "widgetgallery.heading"
 msgid "Widget Gallery"
-msgstr "Widget Galery"
+msgstr ""
 
 #. Dialog box title (when displaying a repository)
 msgctxt "widgetgallery.heading.importrepo"
@@ -815,115 +830,115 @@ msgstr ""
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostdiscussed"
 msgid "most&nbsp;discussed"
-msgstr "meeste&nbsp;bespreek"
+msgstr ""
 
 #. Prefix before the author's name
 msgctxt "widgetgallery.details.authorby"
 msgid "by"
-msgstr "deur"
+msgstr ""
 
 #. Suffix displayed after a number, i.e. "24 posts on this topic"
 msgctxt "widgetgallery.details.forumposts"
 msgid "post(s) on this topic - discuss on community.openhab.org"
-msgstr "inskrywing(s) op hierdie onderwerp - bespreek op community.openhab.org"
+msgstr ""
 
 #. Label of the big green button when nothing to import
 msgctxt "widgetgallery.details.nothingtoimport"
 msgid "Nothing to import"
-msgstr "Niks om in te voer"
+msgstr ""
 
 #. Label of the big green button when 1 widget was found
 msgctxt "widgetgallery.details.importwidget"
 msgid "Import Widget"
-msgstr "Voer Widget in"
+msgstr ""
 
 #. Label of the big green button when 2 or more widgets were found
 msgctxt "widgetgallery.details.importwidgets"
 msgid "Import {} Widgets"
-msgstr "Voer {} Widgets in"
+msgstr ""
 
 #. Label of the big blue button when there is a referenced GitHub repo
 msgctxt "widgetgallery.details.gotorepository"
 msgid "Go to the repository"
-msgstr "Gaan na die repository"
+msgstr ""
 
 #. Displyed in orange inside the big green button after a number, when some widgets are already present
 msgctxt "widgetgallery.details.toupdate"
 msgid "to update"
-msgstr "wat moet opdateer"
+msgstr ""
 
 #. Little white button label with a down caret
 msgctxt "widgetgallery.details.showdetails"
 msgid "Show details"
-msgstr "Vertoon besonderhede"
+msgstr ""
 
 #. Little white button label with a up caret
 msgctxt "widgetgallery.details.hidedetails"
 msgid "Hide details"
-msgstr "Versteek besonderhede"
+msgstr ""
 
 #. Little white button label
 msgctxt "widgetgallery.details.downloadzip"
 msgid "Download ZIP"
-msgstr "Laai ZIP af"
+msgstr ""
 
 #. 1. Prefix of the explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.prefix"
 msgid "This"
-msgstr "Hierdie"
+msgstr ""
 
 #. 2a. Name of a community contribution
 msgctxt "widgetgallery.details.widget.hint.communitycontribution"
 msgid "community contribution"
-msgstr "gemeenskaplike bydra"
+msgstr ""
 
 #. 2b. Name of a community contribution
 msgctxt "widgetgallery.details.widget.hint.repository"
 msgid "repository"
-msgstr "repository"
+msgstr ""
 
 #. 3. Suffix of the explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.suffix"
 msgid "contains the following widgets; you can import them individually:"
-msgstr "bevat die volgende Widgets; jy kan hulle apart invoer:"
+msgstr ""
 
 #. Explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.nowidgets"
 msgid "No widgets were found (*.widget.json files)! Please report this."
-msgstr "Geen Widgets kon gevind word nie (*.widget.json files)! Raporteer dit assseblief."
+msgstr ""
 
 #. Explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.checkrepo"
 msgid "The widgets are likely in the referenced GitHub repository. Click the 'Go to the repository' button to open it."
-msgstr "Die Widgets is waarskynlik in die verwysde GitHub repository. Klik die 'Gaan na die repository' knoppie om dit oop te maak."
+msgstr ""
 
 #. Green button in the expanded details section
 msgctxt "widgetgallery.details.widget.import"
 msgid "Import widget"
-msgstr "Voer Widget in"
+msgstr ""
 
 #. Orange button in the expanded details section
 msgctxt "widgetgallery.details.widget.update"
 msgid "Update widget"
-msgstr "Opdateer Widget"
+msgstr ""
 
 #. Disabled button in the expanded details section after a widget was imported/updated
 msgctxt "widgetgallery.details.widget.imported"
 msgid "Widget imported!"
-msgstr "Widget is ingevoer!"
+msgstr ""
 
 #. Alert banner, followed by a technical exception message
 msgctxt "widgetgallery.error"
 msgid "Error:"
-msgstr "Error:"
+msgstr ""
 
 #. Dialog box title
 msgctxt "widgetgallery.widgetsdetected.dialog.title"
 msgid "Existing widgets detected"
-msgstr "Bestaande Widgets is gevind"
+msgstr ""
 
 #. Dialog box message
 msgctxt "widgetgallery.widgetsdetected.dialog.message"
 msgid "Warning: please confirm you wish to update <nbexisting> existing widgets, overwriting any eventual changes made locally! If unsure, cancel and click Show details to review the list of affected widgets."
-msgstr "Waarskuwing: Bevestig asseblief dat jy <nbexisting> Widgets wil opdateer, wat enige local veranderinge gaan oorskryf! As jy onseker is, kanseleer en klik Vertoon besonderhede en hersien die lys van geraakte Wdigets."
+msgstr ""
 
