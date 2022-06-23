@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: uk\n"
-"X-Crowdin-File: /master/web/assets/i18n/main/main.pot\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/main/main.pot\n"
+"X-Crowdin-File-ID: 534\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Ukrainian\n"
 "Language: uk_UA\n"
-"PO-Revision-Date: 2019-06-16 09:54\n"
+"PO-Revision-Date: 2022-06-23 21:30\n"
 
 #. Common term
 msgctxt "OK"
@@ -51,7 +51,7 @@ msgstr "Іконки"
 #. Common term
 msgctxt "Backdrop Icon"
 msgid "Backdrop Icon"
-msgstr "Фон іконки"
+msgstr "Фоновий значок"
 
 #. Common term
 msgctxt "Size"
@@ -81,12 +81,12 @@ msgstr "Прозорий"
 #. Common term
 msgctxt "openHAB Item"
 msgid "openHAB Item"
-msgstr "елемент openHAB"
+msgstr "об’єкт openHAB"
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Speak"
 msgid "Speak"
-msgstr "Вимовити"
+msgstr "Говорити"
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Refresh"
@@ -101,7 +101,7 @@ msgstr "Повноекранний режим"
 #. Common term
 msgctxt "Help"
 msgid "Help"
-msgstr "Допомога"
+msgstr "Довідка"
 
 #. Appears in a red background in the bottom of the screen when openHAB is not responding
 msgctxt "error.connectionlost"
@@ -148,15 +148,15 @@ msgctxt "tutorial.saveonserver"
 msgid "Save on the openHAB server when done!"
 msgstr "Зберегти на сервері openHAB коли готово!"
 
-#. Displayed when no dashboard is present and editing is locked in the service configuration
-msgctxt "tutorial.editingdisabled"
-msgid "Editing is disabled on the server!"
-msgstr "Редагування вимкнуто на сервері!"
+#. Displayed when no default panel configuration has been set and editing is locked (because there was no refresh token found)
+msgctxt "tutorial.nodefaultpanel"
+msgid "No default panel configuration!"
+msgstr "Немає конфігурації панелі за замовчуванням!"
 
 #. Displayed when no dashboard is present and editing is locked in the service configuration
-msgctxt "tutorial.unlockedit"
-msgid "Please go to Paper UI and unlock editing to use HABPanel on this device."
-msgstr "Перейдіть на Paper UI і розблокуйте редагування щоб використовувати HABPanel на цьому пристрої."
+msgctxt "tutorial.setdefault"
+msgid "Sign in with the main UI to enable editing in HABPanel and set a default panel configuration."
+msgstr "Увійдіть за допомогою головного інтерфейсу для можливості редагування в HABPanel та встановлення конфігурації панелі за замовчуванням."
 
 #. Label of the bottom-left link in edit mode - please also test with phone resolutions!
 msgctxt "menu.addnewdashboard"
@@ -191,7 +191,7 @@ msgstr "Будь ласка, підтвердіть, що ви дійсно хо
 #. Dashboard toolbar Speak button tooltip
 msgctxt "dashboard.toolbar.speak"
 msgid "Speak"
-msgstr "Вимовити"
+msgstr "Говорити"
 
 #. Dashboard toolbar Refresh button tooltip
 msgctxt "dashboard.toolbar.refresh"
