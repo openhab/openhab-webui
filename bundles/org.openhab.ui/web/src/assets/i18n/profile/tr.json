@@ -1,0 +1,19 @@
+{
+  "profile.title": "Profiliniz",
+  "profile.changePassword": "Şifrenizi değiştirin",
+  "profile.sessions": "Oturumlar",
+  "profile.sessions.header": "Not: Bir oturumu silseniz bile, tüm geçerli erişim belirteçlerinin süresi dolana kadar etkin kalabilir.",
+  "profile.sessions.signOut": "Bu oturumdan çıkış yap",
+  "profile.sessions.created": "Oluşturma: ",
+  "profile.sessions.lastRefreshed": "Son yenileme:  ",
+  "profile.sessions.delete.success": "Oturum silindi",
+  "profile.sessions.delete.error": "Oturum silinirken hata oluştu: ",
+  "profile.sessions.signOut.error": "Oturum kapatılırken hata oluştu: ",
+  "profile.apiTokens": "API jetonları",
+  "profile.apiTokens.header": "Sizin adınıza OAuth2 desteklemeyen harici araçlar ve hizmetler için kalıcı OAuth2 API jetonu olusturun.",
+  "profile.apiTokens.created": "Oluşturma: ",
+  "profile.apiTokens.validForScope": "Altbilgi için geçerli: ",
+  "profile.apiTokens.create": "Yeni API jetonu oluştur",
+  "profile.apiTokens.delete.success": "API jetonu kaldırıldı",
+  "profile.apiTokens.delete.error": "API jetonu silinirken hata oluştu: "
+}
