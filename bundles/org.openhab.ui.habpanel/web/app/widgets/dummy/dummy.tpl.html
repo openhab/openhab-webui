@@ -8,6 +8,6 @@
         <span ng-if="!vm.widget.nolinebreak" ng-if="vm.widget.name">{{vm.widget.name}}</span>
         <br ng-if="!vm.widget.nolinebreak && vm.widget.name" />
         <widget-icon ng-if="vm.widget.icon && !vm.widget.icon_nolinebreak" size="vm.widget.icon_size" iconset="vm.widget.iconset" icon="vm.widget.icon" inline="vm.widget.icon_nolinebreak" state="vm.state"></widget-icon>
-        <span ng-hide="vm.widget.icon && vm.widget.icon_replacestext" ng-style="{ 'font-size': vm.widget.font_size + 'pt' }" ng-class="{ 'dummy-value-right': vm.widget.nolinebreak }" class="value">{{vm.value}}<small ng-if="vm.widget.unit">{{vm.widget.unit}}</small></span>
+        <span ng-hide="vm.widget.icon && vm.widget.icon_replacestext" ng-style="{ 'color': vm.widget.value_color, 'font-size': vm.widget.font_size + 'pt' }" ng-class="{ 'dummy-value-right': vm.widget.nolinebreak }" class="value">{{vm.value}}<small ng-if="vm.widget.unit">{{vm.widget.unit}}</small></span>
     </div>
 </div>

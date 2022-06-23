@@ -407,6 +407,11 @@ msgctxt "widget.clock.digital_format"
 msgid "Digital Format"
 msgstr "Format (digital)"
 
+#. Color picker header
+msgctxt "widget.clock.digital_color"
+msgid "Digital Color"
+msgstr ""
+
 #. Textbox header
 msgctxt "widget.clock.font_size"
 msgid "Digital Font Size"
@@ -471,6 +476,21 @@ msgstr "Paramètres du widget dummy"
 msgctxt "widget.dummy.layout"
 msgid "Layout"
 msgstr "Apparence"
+
+#. Color picker header
+msgctxt "widget.dummy.value_color"
+msgid "Value color"
+msgstr ""
+
+#. Checkboxes header
+msgctxt "widget.dummy.state"
+msgid "State"
+msgstr ""
+
+#. Checkbox label
+msgctxt "widget.dummy.state.description"
+msgid "Use state description"
+msgstr ""
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.frame"

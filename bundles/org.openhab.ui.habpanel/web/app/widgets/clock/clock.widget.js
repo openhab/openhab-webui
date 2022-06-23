@@ -76,7 +76,8 @@
             analog_theme: widget.analog_theme,
             font_size: widget.font_size,
             nobackground: widget.nobackground,
-            digital_format: widget.digital_format
+            digital_format: widget.digital_format,
+            digital_color: widget.digital_color
         };
 
         $scope.dismiss = function() {

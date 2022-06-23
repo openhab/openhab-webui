@@ -11,7 +11,7 @@
 	    <div ng-switch-default>
                <div ng-switch-on="vm.widget.font_size">
                   <div ng-switch-when!="">
-	            <ds-widget-clock show-secs="true" show-digital ng-style="{ 'font-size': vm.widget.font_size + 'pt' }" digital-format="vm.widget.digital_format"/>
+	            <ds-widget-clock show-secs="true" show-digital ng-style="{ 'color': vm.widget.digital_color, 'font-size': vm.widget.font_size + 'pt' }" digital-format="vm.widget.digital_format"/>
                   </div>
 
                   <div ng-switch-default>
