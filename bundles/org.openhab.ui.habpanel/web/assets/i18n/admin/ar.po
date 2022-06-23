@@ -3,99 +3,99 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: ar\n"
-"X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File-ID: 532\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
-"PO-Revision-Date: 2019-06-16 10:18\n"
+"PO-Revision-Date: 2022-06-23 21:31\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
 msgid "Save"
-msgstr "حفظ"
+msgstr ""
 
 #. Run button in the dashboard designer
 msgctxt "designer.run"
 msgid "Run"
-msgstr "تشغيل"
+msgstr ""
 
 #. Add widget button in the dashboard designer
 msgctxt "designer.addwidget"
 msgid "Add Widget"
-msgstr "أضف تطبيق مصغر"
+msgstr ""
 
 #. Tutorial text with arrow when on an empty dashboard
 msgctxt "designer.addwidget.hint"
 msgid "Add some widgets"
-msgstr "أضف عنصر واحهة جديد"
+msgstr ""
 
 #. Header of the custom widget section (beware, it might overlap the cogs icon on the right)
 msgctxt "designer.addwidget.customwidgets"
 msgid "Custom widgets"
-msgstr "تخصيص عنصر الواجهة"
+msgstr ""
 
 #. Open widget gallery
 msgctxt "designer.addwidget.getmore"
 msgid "Get more..."
-msgstr "احصل على المزيد..."
+msgstr ""
 
 #. Tooltip when hovering the "Get more" menu entry
 msgctxt "designer.addwidget.getmore.tooltip"
 msgid "Open the widget gallery to import more widgets"
-msgstr "افتح مكتبة العناصر لاستيراد المزيد من العناصر"
+msgstr ""
 
 #. Edit option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.edit"
 msgid "Edit..."
-msgstr "تحرير..."
+msgstr ""
 
 #. Copy/move option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.copymove"
 msgid "Copy/move to..."
-msgstr "نسخ/نقل إلى..."
+msgstr ""
 
 #. Delete option in a widget placeholder context menu (3-dot icon)
 msgctxt "designer.contextmenu.delete"
 msgid "Delete"
-msgstr "حذف"
+msgstr ""
 
 #. Title of copy/move widget dialog
 msgctxt "designer.copymove.header"
 msgid "Copy/move {{widgetName}}"
-msgstr "نسخ/نقل {{widgetName}}"
+msgstr ""
 
 #. Alongside the dropdown dashboard selection
 msgctxt "designer.copymove.todashboard"
 msgid "To dashboard"
-msgstr "انتقل إلى لوحة التحكم"
+msgstr ""
 
 #. Move button
 msgctxt "designer.copymove.move"
 msgid "Move"
-msgstr "أُنقل"
+msgstr ""
 
 #. Copy button
 msgctxt "designer.copymove.copy"
 msgid "Copy"
-msgstr "نسخ"
+msgstr ""
 
 #. Default name of a newly created widget
 msgctxt "designer.newwidget.defaultname"
 msgid "New Widget"
-msgstr "العنصر الجديد"
+msgstr ""
 
 msgctxt "designer.serversavefailed"
 msgid "Server save failed!"
-msgstr "فشل الحفظ في المخدم!"
+msgstr ""
 
 #. Title of the dashboard settings dialog
 msgctxt "dashboard.settings.dialog.title"
 msgid "Dashboard Settings"
-msgstr "إعدادات لوحة التحكم"
+msgstr ""
 
 #. Tab header
 msgctxt "dashboard.settings.tile"
@@ -105,12 +105,12 @@ msgstr ""
 #. Textbox header
 msgctxt "dashboard.settings.tile.background_image_url"
 msgid "Background Image URL"
-msgstr "رابط صور الخلفية"
+msgstr ""
 
 #. Color picker header
 msgctxt "dashboard.settings.tile.title_text_color"
 msgid "Title Text color"
-msgstr "لون نص العنوان"
+msgstr ""
 
 #. Checkbox header
 msgctxt "dashboard.settings.tile.click_feedback"
@@ -135,22 +135,22 @@ msgstr ""
 #. Tab header
 msgctxt "dashboard.settings.customwidgets"
 msgid "Custom widgets"
-msgstr "تخصيص عناصر الواجهة"
+msgstr ""
 
 #. Alert displayed at the top
 msgctxt "dashboard.settings.customwidgets.warning"
 msgid "This feature is currently experimental, and targeted at advanced users! Use at your own risk."
-msgstr "هذه الميزة تجريبية حاليًا ،وهي للمستخدمين المتقدمين! يمكنك استخدامها على مسؤوليتك الخاصة."
+msgstr ""
 
 #. Checkbox header
 msgctxt "dashboard.settings.customwidgets.usecustomwidget"
 msgid "Use a custom widget"
-msgstr "استخدام عنصر واجهة مخصص"
+msgstr ""
 
 #. Dropdown header
 msgctxt "dashboard.settings.customwidgets.customwidget"
 msgid "Custom Widget"
-msgstr "تخصيص عنصر الواجهة"
+msgstr ""
 
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.tile"
@@ -267,6 +267,21 @@ msgctxt "settings.storage.panelconfiguration.dialog.message"
 msgid "Please choose a name for the new panel configuration (letters and digits only please):"
 msgstr ""
 
+#. Title of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.title"
+msgid "Remove panel configuration"
+msgstr ""
+
+#. Message of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
+msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
+msgstr ""
+
+#. Message of the dialog box when switching from local storage to a server-based panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
+msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
+msgstr ""
+
 #. Panel name (section header)
 msgctxt "settings.panel.name"
 msgid "Panel name"
@@ -380,7 +395,7 @@ msgstr ""
 #. Test button below the voice selection - make the voice say "habpanel 1 2 3"
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice.test"
 msgid "Test"
-msgstr "تجربة"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.voicesupport.floating_speech_button"
@@ -415,47 +430,47 @@ msgstr ""
 #. Blue button
 msgctxt "settings.localconfig.import"
 msgid "Import"
-msgstr "استيراد"
+msgstr ""
 
 #. Blue button
 msgctxt "settings.localconfig.export"
 msgid "Export"
-msgstr "تصدير"
+msgstr ""
 
 #. Default label for the white button on the right
 msgctxt "settings.localconfig.copy"
 msgid "Copy"
-msgstr "نسخ"
+msgstr ""
 
 #. Label displayed on the button for a few seconds after a successful copy to clipboard
 msgctxt "settings.localconfig.copied"
 msgid "Copied!"
-msgstr "تم النسخ!"
+msgstr ""
 
 #. Default label for the red button on the right
 msgctxt "settings.localconfig.save"
 msgid "Save"
-msgstr "حفظ"
+msgstr ""
 
 #. Label displayed on the button for a few seconds after a successful save
 msgctxt "settings.localconfig.saved"
 msgid "Saved!"
-msgstr "تم الحفظ!"
+msgstr ""
 
 #. Label displayed for a few seconds on the copy or save button if an error occurred
 msgctxt "settings.localconfig.failed"
 msgid "FAILED!"
-msgstr "فشلت العملية!"
+msgstr ""
 
 #. Displayed in a dialog box
 msgctxt "settings.localconfig.error.nodashboardsfound"
 msgid "No dashboards found!"
-msgstr "لا يوجد لوحات تحكم!"
+msgstr ""
 
 #. Title of a a dialog box
 msgctxt "settings.localconfig.parsingerror.dialog.title"
 msgid "Error"
-msgstr "خطأ"
+msgstr ""
 
 #. Message in a dialog box
 msgctxt "settings.localconfig.parsingerror.dialog.message"
@@ -465,22 +480,22 @@ msgstr ""
 #. Title of a a dialog box
 msgctxt "settings.localconfig.importerror.dialog.title"
 msgid "Error"
-msgstr "خطأ"
+msgstr ""
 
 #. Message in a dialog box
 msgctxt "settings.localconfig.importerror.dialog.message"
 msgid "Problem while importing: "
-msgstr "خدثت مشكلة أثناء الاستيراد: "
+msgstr ""
 
 #. Screen title
 msgctxt "customwidgets.list.header"
 msgid "Custom widgets"
-msgstr "تخصيص عناصر الواجهة"
+msgstr ""
 
 #. Prefix displayed before the author's name
 msgctxt "customwidgets.list.byauthor"
 msgid "by"
-msgstr "بواسطة"
+msgstr ""
 
 #. Displayed in a tooltip when hovering the icon indicating a globally provisioned widget
 msgctxt "customwidgets.list.globallyprovisioned.hint"
@@ -495,37 +510,37 @@ msgstr ""
 #. Custom widget context menu entry - clone a globally-provisioned widget
 msgctxt "customwidgets.list.contextmenu.clone"
 msgid "Clone widget..."
-msgstr "نسخ العنصر..."
+msgstr ""
 
 #. Custom widget context menu entry - downloads a widget's .widget.json file
 msgctxt "customwidgets.list.contextmenu.exporttofile"
 msgid "Export to file"
-msgstr "إرسال إلى ملف"
+msgstr ""
 
 #. Custom widget context menu entry - opens a forum topic or GitHub readme
 msgctxt "customwidgets.list.contextmenu.openhelp"
 msgid "Open Help"
-msgstr "فتح التعليمات"
+msgstr ""
 
 #. Custom widget context menu entry - update the widget from its source
 msgctxt "customwidgets.list.contextmenu.update"
 msgid "Update..."
-msgstr "تحديث..."
+msgstr ""
 
 #. Blue button opening a dialog
 msgctxt "customwidgets.list.newwidget"
 msgid "New widget"
-msgstr "عنصر واجهة جديد"
+msgstr ""
 
 #. Blue button with a dropdown menu
 msgctxt "customwidgets.list.importwidget"
 msgid "Import widget"
-msgstr "استيراد عنصر الواجهة"
+msgstr ""
 
 #. Import button menu entry - opens a dialog
 msgctxt "customwidgets.list.importwidget.fromfile"
 msgid "Import from file..."
-msgstr "إستيراد من ملف..."
+msgstr ""
 
 #. Import button menu entry - opens a dialog
 msgctxt "customwidgets.list.importwidget.fromgallery"
@@ -535,7 +550,7 @@ msgstr ""
 #. Dialog box title
 msgctxt "customwidgets.list.add.dialog.title"
 msgid "New custom widget"
-msgstr "عنصر الواجهة المخصص"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.add.dialog.message"
@@ -550,7 +565,7 @@ msgstr ""
 #. Dialog box title
 msgctxt "customwidgets.list.import.dialog.title"
 msgid "Import widget"
-msgstr "استيراد عنصر الواجهة"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.import.dialog.message"
@@ -590,7 +605,7 @@ msgstr ""
 #. Dialog box title
 msgctxt "customwidgets.list.delete.dialog.title"
 msgid "Remove widget"
-msgstr "إزالة عنصر الواجهة"
+msgstr ""
 
 #. Dialog box message
 msgctxt "customwidgets.list.delete.dialog.message"
@@ -615,12 +630,12 @@ msgstr ""
 #. Save button on the right, default label - can be hidden on phones
 msgctxt "customwidgets.designer.save"
 msgid "Save"
-msgstr "حفظ"
+msgstr ""
 
 #. Save button on the right, displayed for a few seconds after a save - can be hidden on phones
 msgctxt "customwidgets.designer.saved"
 msgid "Saved!"
-msgstr "تم الحفظ!"
+msgstr ""
 
 #. Tab header
 msgctxt "customwidgets.designer.code"
