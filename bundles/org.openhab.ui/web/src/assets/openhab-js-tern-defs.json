@@ -3,7 +3,7 @@
     "!define": {
         "Item": {
             "type": {
-                "!doc": "The type of the item: the Simple (without package) name of the Java item type, such as 'Switch'.",
+                "!doc": "The type of the item: the Simple (without package) name of the Java Item type, such as 'Switch'.",
                 "!type": "string"
             },
             "name": {
@@ -27,15 +27,15 @@
                 "!type": "?"
             },
             "members": {
-                "!doc": "Members / children / direct descendents of the current group item (as returned by 'getMembers()'). Must be a group item.",
+                "!doc": "Members / children / direct descendents of the current group Item (as returned by 'getMembers()'). Must be a group item.",
                 "!type": "[Item]"
             },
             "descendents": {
-                "!doc": "All descendents of the current group item (as returned by 'getAllMembers()'). Must be a group item.",
+                "!doc": "All descendents of the current group Item (as returned by 'getAllMembers()'). Must be a group item.",
                 "!type": "[Item]"
             },
             "isUninitialized": {
-                "!doc": "Whether this item is initialized.",
+                "!doc": "Whether this Item is initialized.",
                 "!type": "boolean"
             },
             "tags": {
@@ -97,11 +97,11 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "changedSince": {
-                "!doc": "Checks if the state of a given item has changed since a certain point in time.",
+                "!doc": "Checks if the state of a given Item has changed since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "deltaSince": {
-                "!doc": "Gets the difference value of the state of a given item since a certain point in time.",
+                "!doc": "Gets the difference value of the state of a given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "deviationSince": {
@@ -113,7 +113,7 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "historicState": {
-                "!doc": "Retrieves the historic item state for a given item at a certain point in time.",
+                "!doc": "Retrieves the historic Item state for a given Item at a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> ?"
             },
             "lastUpdate": {
@@ -121,11 +121,11 @@
                 "!type": "fn(serviceId?: string) -> Date?"
             },
             "maximumSince": {
-                "!doc": "Gets the historic item with the maximum value of the state of a given item since a certain point in time.",
+                "!doc": "Gets the historic Item with the maximum value of the state of a given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "minimumSince": {
-                "!doc": "Gets the historic item with the minimum value of the state of a given item since a certain point in time.",
+                "!doc": "Gets the historic Item with the minimum value of the state of a given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "persist": {
@@ -137,11 +137,11 @@
                 "!type": "fn(skipEqual?: boolean, serviceId?: string) -> ?"
             },
             "sumSince": {
-                "!doc": "Gets the sum of the state of a given item since a certain point in time.",
+                "!doc": "Gets the sum of the state of a given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "updatedSince": {
-                "!doc": "Checks if the state of a given item has been updated since a certain point in time.",
+                "!doc": "Checks if the state of a given Item has been updated since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "varianceSince": {
@@ -149,13 +149,47 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "latestState": {
-                "!doc": "Retrieves the historic item state for a given item at the current point in time.",
+                "!doc": "Retrieves the historic Item state for a given Item at the current point in time.",
                 "!type": "fn(serviceId?: string) -> ?"
+            }
+        },
+        "ItemConfig": {
+            "type": {
+                "!doc": "Type of the Item.",
+                "!type": "string"
+            },
+            "name": {
+                "!doc": "Name of the Item.",
+                "!type": "string"
+            },
+            "label": {
+                "!doc": "Label of the Item.",
+                "!type": "string"
+            },
+            "category": {
+                "!doc": "Category (icon) of the Item.",
+                "!type": "string"
+            },
+            "groups": {
+                "!doc": "Groups of the Item.",
+                "!type": "[string]"
+            },
+            "tags": {
+                "!doc": "Tags of the Item.",
+                "!type": "[string]"
+            },
+            "channels": {
+                "!doc": "Channel links for the Item (see JS Scripting docs/Standard Library/Things).",
+                "!type": "string|object"
+            },
+            "metadata": {
+                "!doc": "Metadata for the Item (see JS Scripting docs/Standard Library/Things).",
+                "!type": "object"
             }
         },
         "ItemsNamespace": {
             "getItem": {
-                "!doc": "This method retrieves a single item from the registry.",
+                "!doc": "This method retrieves a single Item from the registry.",
                 "!type": "fn(name: string) -> Item"
             },
             "getItems": {
@@ -164,28 +198,86 @@
             },
             "getItemsByTag": {
                 "!doc": "Returns a list of items containing all of the given tags.",
-                "!type": "fn(tag?: [string]) -> [Item]"
+                "!type": "fn(tag: [string]) -> [Item]"
             },
             "addItem": {
-                "!doc": "Creates a new item within openHAB. This item is not registered with any provider. Note that all items created this way have an additional tag attached, for simpler retrieval later. This tag is created with the value DYNAMIC_ITEM_TAG.",
-                "!type": "fn(itemName: string, itemType?: string, category?: string, groups?: [string], label?: string, tags?: [string], giBaseType?: ?, groupFunction?: ?, itemMetadata?: object)"
-            },
-            "createItem": {
-                "!doc": "Creates a new item within openHAB. This item will persist regardless of the lifecycle of the script creating it. Note that all items created this way have an additional tag attached, for simpler retrieval later. This tag is created with the value DYNAMIC_ITEM_TAG.",
-                "!type": "fn(itemName: string, itemType?: string, category?: string, groups?: [string], label?: string, tags?: [string], giBaseType?: ?, groupFunction?: ?)"
+                "!doc": "Creates a new Item within openHAB (see JS Scripting docs/Standard Library/Items).",
+                "!type": "fn(itemConfig: ItemConfig) -> Item",
+                "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
             },
             "replaceItem": {
-                "!doc": "Replaces (upserts) an item. If an item exists with the same name, it will be removed and a new item with the supplied parameters will be created in it's place. If an item does not exist with this name, a new item will be created with the supplied parameters. This function can be useful in scripts which create a static set of items which may need updating either periodically, during startup or even during development of the script. Using fixed item names will ensure that the items remain up-to-date, but won't fail with issues related to duplicate items.",
-                "!type": "fn(itemName: string, itemType?: string, category?: string, groups?: [string], label?: string, tags?: [string], giBaseType?: ?, groupFunction?: ?)"
+                "!doc": "Replaces (upserts) an item. If an Item does not exist with this name, a new Item will be created with the supplied configuration (see JS Scripting docs/Standard Library/Items).",
+                "!type": "fn(itemConfig: ItemConfig) -> Item",
+                "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
             },
             "removeItem": {
-                "!doc": "Removes an item from openHAB. The item is removed immediately and cannot be recoved.",
-                "!type": "fn(itemName: string) -> bool"
+                "!doc": "Removes an Item from openHAB. The Item is removed immediately and cannot be recovered.",
+                "!type": "fn(itemOrItemName: string|Item) -> bool"
             },
             "safeItemName": {
-                "!doc": "Helper function to ensure an item name is valid. All invalid characters are replaced with an underscore.",
-                "!type": "fn(s: ?)"
+                "!doc": "Helper function to ensure an Item name is valid. All invalid characters are replaced with an underscore.",
+                "!type": "fn(s: string) -> string"
             }
+        },
+        "Thing": {
+            "bridgeUID": {
+                "!doc": "UID of Thing's bridge.",
+                "!type": "string"
+            },
+            "label": {
+                "!doc": "Label of the Thing.",
+                "!type": "string"
+            },
+            "location": {
+                "!doc": "Physical location of the Thing.",
+                "!type": "string"
+            },
+            "status": {
+                "!doc": "Thing status (e.g. ONLINE or OFFLINE).",
+                "!type": "string"
+            },
+            "statusInfo": {
+                "!doc": "More detailed status of Thing.",
+                "!type": "string"
+            },
+            "thingTypeUID": {
+                "!doc": "UID of Thing's type.",
+                "!type": "string"
+            },
+            "uid": {
+                "!doc": "UID of Thing.",
+                "!type": "string"
+            },
+            "isEnabled": {
+                "!doc": "Whether the Thing is enabled or not.",
+                "!type": "boolean"
+            },
+            "setLabel": {
+                "!doc": "Set the Thing label.",
+                "!type": "fn(label: string)"
+            },
+            "setLocation": {
+                "!doc": "Set the physical location of the Thing.",
+                "!type": "fn(location: string)"
+            },
+            "setProperty": {
+                "!doc": "Set the value of a property of the Thing.",
+                "!type": "fn(name: string, value: string)"
+            },
+            "setEnabled": {
+                "!doc": "Enable or disable the Thing.",
+                "!type": "fn(enabled: boolean)"
+            }
+        },
+        "ThingsNamespace": {
+            "getThing": {
+                "!doc": "Get a single Thing from openHAB.",
+                "!type": "fn(uid: string, nullIfMissing?: boolean) -> Thing"
+            },
+            "getThings": {
+                "!doc": "Get all Things from openHAB.",
+                "!type": "fn() -> [Thing]"
+              }
         },
         "CacheNamespace": {
             "get": {
@@ -199,6 +291,15 @@
             "remove": {
                 "!doc": "Removes the mapping for a key from this map if it is present",
                 "!type": "fn(key: string) -> ?"
+            }
+        },
+        "TimeNamespace": {
+            "toZDT": {
+                "!doc": "Converts nearly any representation of a time to a time.ZonedDateTime (see JS Scripting Docs/Standard Library/Time)",
+                "!type": "fn(time: ?) -> time.ZonedDateTime"
+            },
+            "ZonedDateTime": {
+                "!doc": "Represents a date-time with a time offset and/or a time zone in the ISO-8601 calendar system (see JS Scripting Docs/Standard Library/Time)."
             }
         },
         "Logger": {
@@ -281,49 +382,25 @@
                 "!type": "fn() -> string"
             }
         },
-        "TriggerType": {
-            "cronExpression": {
-                "!doc": "The cron expression for the event (timer.GenericCronTrigger)",
-                "!type": "string"
-            },
-            "time": {
-                "!doc": "The time of the event in \"hh:mm\" format (timer.TimeOfDayTrigger)",
-                "!type": "string"
-            },
+        "EventData": {
             "itemName": {
-                "!doc": "The name of the item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger, core.ItemCommandTrigger)",
+                "!doc": "The name of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger, core.ItemCommandTrigger). Attention: Java type!",
                 "!type": "string"
             },
-            "state": {
-                "!doc": "The state of the item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger)",
+            "itemState": {
+                "!doc": "The state of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger). Attention: Java type!",
                 "!type": "string"
             },
-            "previousState": {
-                "!doc": "The previous state of the item that triggered the event (core.ItemStateChangeTrigger)",
+            "oldItemState": {
+                "!doc": "The previous state of the Item that triggered the event (core.ItemStateChangeTrigger). Attention: Java type!",
                 "!type": "string"
             },
-            "command": {
-                "!doc": "The command of the item that triggered the event (core.ItemCommandTrigger)",
+            "itemCommand": {
+                "!doc": "The command of the Item that triggered the event (core.ItemCommandTrigger). Attention: Java type!",
                 "!type": "string"
             },
-            "channelUID": {
-                "!doc": "The channelUID of the channel that triggered the event (core.ChannelEventTrigger)",
-                "!type": "string"
-            },
-            "event": {
-                "!doc": "The event of the channel that triggered the event (core.ChannelEventTrigger)",
-                "!type": "string"
-            },
-            "eventTopic": {
-                "!doc": "The topic of the event (core.GenericEventTrigger)",
-                "!type": "string"
-            },
-            "eventSource": {
-                "!doc": "The Item name, ChannelUID, ThingUID, etc (core.GenericEventTrigger)",
-                "!type": "string"
-            },
-            "eventTypes": {
-                "!doc": "The event type (core.GenericEventTrigger)",
+            "type": {
+                "!doc": "The event type (core.GenericEventTrigger). Attention: Java type!",
                 "!type": "string"
             }
         },
@@ -338,11 +415,11 @@
         },
         "BusEventActions": {
             "postUpdate": {
-                "!doc": "Posts a status update for a specified item to the event bus.",
+                "!doc": "Posts a status update for a specified Item to the event bus.",
                 "!type": "fn(itemName: string, state: ?)"
             },
             "sendCommand": {
-                "!doc": "Sends a command for a specified item to the event bus.",
+                "!doc": "Sends a command for a specified Item to the event bus.",
                 "!type": "fn(itemName: string, command: ?)"
             }
         },
@@ -369,6 +446,20 @@
             "logInfo": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
             "logWarn": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
             "logError": { "!type": "fn(loggerName?: string, message: string, args?: ?)" }
+        },
+        "NotificationAction": {
+            "sendNotification": {
+                "!doc": "Sends a notification to a specific cloud instance user.",
+                "!type": "fn(email: string, message: string)"
+            },
+            "sendBroadcastNotification": {
+                "!doc": "Sends a notification to all devices of all users.",
+                "!type": "fn(message: string)"
+            },
+            "sendLogNotification": {
+                "!doc": "Sends a log notification to the notifications list at your openHAB Cloud instance. Notifications are NOT sent to any registered device.",
+                "!type": "fn(message: string)"
+            }
         },
         "PingActions": {
             "checkVitality": { "!type": "fn(host: string, port: int, timeout: int) -> boolean" }
@@ -423,6 +514,10 @@
                 "!doc": "Log Actions. The static methods of this class are made available as functions in the scripts. This allows a script to log to the SLF4J-Log.",
                 "!type": "LogActions"
             },
+            "NotificationAction": {
+                "!doc": "Notification Actions. If the openHAB Cloud Connector is installed, notifications can be sent to registered users/devices.",
+                "!type": "NotificationAction"
+            },
             "Ping": {
                 "!doc": "Ping Actions. This Action checks the vitality of the given host.",
                 "!type": "PingActions"
@@ -449,6 +544,10 @@
         "!doc": "Items namespace. This namespace handles querying and updating openHAB Items.",
         "!type": "ItemsNamespace"
     },
+    "things": {
+        "!doc": "Things namespace. This namespace handles querying and updating openHAB Things.",
+        "!type": "ThingsNamespace"
+    },
     "cache": {
         "!doc": "Shared cache namespace. This namespace provides a default cache that can be use to set and retrieve objects that will be persisted between reloads of scripts.",
         "!type": "CacheNamespace"
@@ -460,6 +559,10 @@
     "actions": {
         "!doc": "Actions namespace. This namespace provides access to openHAB actions. All available actions can be accessed as direct properties of this object (via their simple class name).",
         "!type": "ActionsNamespace"
+    },
+    "time": {
+        "!doc": "Exports the excellent JS-Joda library which is a port of java.time which is used by openHAB.",
+        "!type": "TimeNamespace"
     },
     "console": {
         "!doc": "Supports the standard console object for logging. Script debug logging is enabled by default at the TRACE level, but can be configured using the console logging commands.",
@@ -486,7 +589,7 @@
         "!type": "fn(module: string) -> ?"
     },
     "event": {
-        "!doc": "Data passed from triggers.",
-        "!type": "TriggerType"
+        "!doc": "Data passed from triggers. Attention: Java types (see JS Scripting docs/UI Based Rules/Event Object)!",
+        "!type": "EventData"
     }
 }
