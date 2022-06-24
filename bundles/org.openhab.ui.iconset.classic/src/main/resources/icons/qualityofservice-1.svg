@@ -1,10 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg enable-background="new 0 0 64 64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
- <path d="m6.5 44.5h9v11h-9z" fill="#323232"/>
- <path d="m15 45v10h-8v-10h8m1-1h-10v12h10v-12z"/>
- <g fill="#dae1e4">
-  <path d="m20 32h10v24h-10z"/>
-  <path d="m34 24h10v32h-10z"/>
-  <path d="m48 8h10v48h-10z"/>
- </g>
-</svg>
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M6.5 44.5h9v11h-9z" fill="#323232"/><path d="M15 45v10H7V45h8m1-1H6v12h10V44z"/><g fill="#dae1e4"><path d="M20 32h10v24H20zM34 24h10v32H34zM48 8h10v48H48z"/></g></svg>

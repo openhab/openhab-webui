@@ -1,11 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg enable-background="new 0 0 64 64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
- <path d="m11.5 62.5v-61h41v61h-41m35-1h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5" fill="#222"/>
- <path d="m46 2v60h6-40v-60 60h6v-60h28m7-1h-42v62h42v-62zm-6 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4"/>
- <path d="m19.5 51.5h25v9h-25z" fill="#36aeff"/>
- <path d="m44 52v8h-24v-8h24m1-1h-26v10h26v-10z" fill="#2b8ed8"/>
- <path d="m19.5 3.5h25v9h-25z" fill="#36aeff"/>
- <path d="m44 4v8h-24v-8h24m1-1h-26v10h26v-10z" fill="#2b8ed8"/>
- <path d="m19.5 15.5h25v33h-25z" fill="#36aeff"/>
- <path d="m44 16v32h-24v-32h24m1-1h-26v34h26v-34z" fill="#2b8ed8"/>
-</svg>
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M11.5 62.5v-61h41v61h-41m35-1h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5m34-6h5v-5h-5v5m-34 0h5v-5h-5v5" fill="#222"/><path d="M46 2v60h6-40V2v60h6V2h28m7-1H11v62h42V1zm-6 6V3h4v4h-4M13 7V3h4v4h-4m34 6V9h4v4h-4m-34 0V9h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4m34 6v-4h4v4h-4m-34 0v-4h4v4h-4"/><path d="M19.5 51.5h25v9h-25z" fill="#36aeff"/><path d="M44 52v8H20v-8h24m1-1H19v10h26V51z" fill="#2b8ed8"/><path d="M19.5 3.5h25v9h-25z" fill="#36aeff"/><path d="M44 4v8H20V4h24m1-1H19v10h26V3z" fill="#2b8ed8"/><path d="M19.5 15.5h25v33h-25z" fill="#36aeff"/><path d="M44 16v32H20V16h24m1-1H19v34h26V15z" fill="#2b8ed8"/></svg>
