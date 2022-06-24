@@ -162,27 +162,27 @@
                 "!doc": "Name of the Item.",
                 "!type": "string"
             },
-            "label?": {
+            "label": {
                 "!doc": "Label of the Item.",
                 "!type": "string"
             },
-            "category?": {
+            "category": {
                 "!doc": "Category (icon) of the Item.",
                 "!type": "string"
             },
-            "groups?": {
+            "groups": {
                 "!doc": "Groups of the Item.",
                 "!type": "[string]"
             },
-            "tags?": {
+            "tags": {
                 "!doc": "Tags of the Item.",
                 "!type": "[string]"
             },
-            "channels?": {
+            "channels": {
                 "!doc": "Channel links for the Item (see JS Scripting docs/Standard Library/Things).",
                 "!type": "string|object"
             },
-            "metadata?": {
+            "metadata": {
                 "!doc": "Metadata for the Item (see JS Scripting docs/Standard Library/Things).",
                 "!type": "object"
             }
@@ -202,12 +202,12 @@
             },
             "addItem": {
                 "!doc": "Creates a new Item within openHAB (see JS Scripting docs/Standard Library/Items).",
-                "!type": "fn(itemConfig: object) -> Item",
+                "!type": "fn(itemConfig: ItemConfig) -> Item",
                 "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
             },
             "replaceItem": {
                 "!doc": "Replaces (upserts) an item. If an Item does not exist with this name, a new Item will be created with the supplied configuration (see JS Scripting docs/Standard Library/Items).",
-                "!type": "fn(itemConfig: object) -> Item",
+                "!type": "fn(itemConfig: ItemConfig) -> Item",
                 "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
             },
             "removeItem": {
@@ -296,7 +296,7 @@
         "TimeNamespace": {
             "toZDT": {
                 "!doc": "Converts nearly any representation of a time to a time.ZonedDateTime (see JS Scripting Docs/Standard Library/Time)",
-                "!type": "fn(time: any) -> time.ZonedDateTime"
+                "!type": "fn(time: ?) -> time.ZonedDateTime"
             },
             "ZonedDateTime": {
                 "!doc": "Represents a date-time with a time offset and/or a time zone in the ISO-8601 calendar system (see JS Scripting Docs/Standard Library/Time)."
