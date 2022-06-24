@@ -16,6 +16,6 @@
   "about.reload.purgeExplanation1": "Kešatmiņas un/vai servisa procesi tiek izmantoti, lai saglabātu resursus lokāli un padarītu ātrāku lietotnes ielādi, taču tie var nenoteikt, ka tā atjaunināta uz jaunu versiju.",
   "about.reload.purgeExplanation2": "Izvēlieties Nodzēst kešatmiņu un atjaunot lai nodzēstu visu kešatmiņu, atreģistrētu servisa procesus un lejuplādētu visu no jauna no servera.",
   "about.reload.purgeCachesAndRefresh": "Nodzēst kešatmiņu un atjaunot",
-  "about.reload.confirmPurge": "Nodzēst visu aplikācijas kešatmiņju un atreģistrēt servisa procesus? Šī darbīnas arī atjaunos lapas saturu no servera, kas var aizņemt dažas sekundes.",
+  "about.reload.confirmPurge": "Nodzēst visu aplikācijas kešatmiņu un atreģistrēt servisa procesus? Šī darbība arī atjaunos lapas saturu no servera, kas var aizņemt dažas sekundes.",
   "about.reload.reloadApp": "Pārlādēt lietotni"
 }

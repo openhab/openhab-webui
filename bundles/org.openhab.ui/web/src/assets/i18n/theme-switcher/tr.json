@@ -1,0 +1,15 @@
+{
+  "about.theme": "Tema",
+  "about.theme.auto": "Otomatik",
+  "about.darkMode": "Karanlık tema",
+  "about.darkMode.auto": "Otomatik",
+  "about.darkMode.light": "Açık",
+  "about.darkMode.dark": "Karanlık",
+  "about.navigationBarsStyle": "Gezinme çubuğu görüntüleme stili",
+  "about.miscellaneous": "Diğer",
+  "about.miscellaneous.home.navbar": "Homepage'te basit gezinme çubuğu",
+  "about.miscellaneous.home.background": "Standard homepage arka plan rengi",
+  "about.miscellaneous.home.hideChatInput": "Homepage'te chat kutusunu gizle",
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Kart genişletme animasyonlarını devre dışı bırak",
+  "about.miscellaneous.theme.disablePageTransition": "Sayfa geçiş animasyonlarını devre dışı bırak"
+}

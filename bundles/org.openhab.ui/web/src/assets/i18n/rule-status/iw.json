@@ -1,0 +1,8 @@
+{
+  "CONFIGURATION_ERROR": "שגיאה: הגדרות",
+  "HANDLER_INITIALIZING_ERROR": "שגיאה: מפעיל",
+  "HANDLER_MISSING_ERROR": "שגיאה: מפעיל",
+  "TEMPLATE_MISSING_ERROR": "שגיאה: תבנית",
+  "INVALID_RULE": "לא מאושר",
+  "DISABLED": "מבוטל"
+}

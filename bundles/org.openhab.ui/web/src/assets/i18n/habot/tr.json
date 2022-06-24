@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(örnek)",
+  "habot.clearHistory": "Geçmişi Temizle",
+  "habot.dismiss": "Vazgeç",
+  "habot.example1": "Mutfaktaki sıcaklık ne kadar?",
+  "habot.example2": "Sıcaklığı 21 dereceye ayarla",
+  "habot.example3": "Birinci kattaki lambaları kapat",
+  "habot.anythingElse": "Başka bir şey?",
+  "habot.cardDeckIsIncompatible": "Üzgünüz, kart destesine kaydedilen kartlar burada görüntülenemez, görmek için özel HABot uygulamasını kullanın.",
+  "habot.cardIsIncompatible": "Maalesef bu kart burada görüntülenemiyor, görmek için özel HABot uygulamasını kullanın."
+}

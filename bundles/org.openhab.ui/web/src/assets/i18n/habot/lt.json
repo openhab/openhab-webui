@@ -1,0 +1,11 @@
+{
+  "habot.example.label": "(pavyzdys)",
+  "habot.clearHistory": "Išvalyti istoriją",
+  "habot.dismiss": "Atšaukti",
+  "habot.example1": "Kokia temperatūra virtuvėje?",
+  "habot.example2": "Nustatykite termostatą iki 21 laipsnio",
+  "habot.example3": "Išjunkite šviesą pirmame aukšte",
+  "habot.anythingElse": "Dar kas nors?",
+  "habot.cardDeckIsIncompatible": "Atsiprašome, kortelių kaladėje išsaugotos kortelės čia negali būti rodomos. Norėdami tai pamatyti, naudokite specialią programėlę HABot.",
+  "habot.cardIsIncompatible": "Atsiprašome, šios kortelės čia parodyti negalima. Norėdami ją pamatyti, naudokite tam skirtą HABot programą."
+}
