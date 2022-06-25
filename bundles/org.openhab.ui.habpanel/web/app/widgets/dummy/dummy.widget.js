@@ -48,18 +48,20 @@
                 return;
             }
 
+            var value = item.transformedState || item.state;
+            
+            function filterOption(option, i, options) {
+                if (option.value === item.state) return true;
+                return false;
+            }
             if (vm.widget.usedescription) {
                 var options = item.stateDescription.options;
-                if (Array.isArray(options)) {
-                    var option = options.find((element) => element.value === item.state);
-                    if (option) {
-                        var value = option.label;
-                    } else {
-                        var value = item.state;
+                if (angular.isArray(options) && $filter('filter')(options, filterOption, true).length > 0) {
+                    var option = $filter('filter')(options, filterOption, true)[0];
+                    if (option.label) {
+                        value = option.label;
                     }
                 }
-            } else {
-                var value = item.transformedState || item.state;
             }
 
             if (vm.widget.format) {
