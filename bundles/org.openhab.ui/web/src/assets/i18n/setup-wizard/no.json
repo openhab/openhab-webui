@@ -10,6 +10,7 @@
   "setupwizard.location.header1": "Vil du dele ditt hjems plassering?",
   "setupwizard.location.header2": "Det vil bidra til å bestemme data avhengig av din posisjon, som soloppgangstider eller været.",
   "setupwizard.location.parameterLabel": "Plassering av hjemmet ditt",
+  "setupwizard.location.placeholder": "<breddegrad>,<lengdegrad>[,<høyde>]",
   "setupwizard.location.retrieveFromDevice": "Hent fra denne enheten",
   "setupwizard.location.retrieveFromDevice.error": "Feil under henting av gjeldende posisjon",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Beklager",
