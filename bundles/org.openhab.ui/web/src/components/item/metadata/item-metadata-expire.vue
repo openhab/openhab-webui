@@ -18,7 +18,7 @@
       <f7-list-item title="ignore commands" checkbox :checked="ignoreCommands" @change="(ev) => metadata.config['ignoreCommands'] = new Boolean(ev.target.checked).toString()" />
     </f7-list>
     <f7-block-footer class="param-description padding-left">
-      <small>After a different command or state update is received, perform the chosen action when the duration specified below has passed. The timer is reset if another state update or command is received before it expires. If the ignore state updates checkbox is set, only state changes will reset the timer. If the ignore commands checkbox is set, only state updates and state changes will reset the timer.</small>
+      <small>After a different command or state update is received, perform the chosen action when the duration specified below has passed. The timer is reset if another state update or command is received before it expires. If the ignore state updates checkbox is set, only state changes and commands will reset the timer. If the ignore commands checkbox is set, only state updates and state changes will reset the timer.</small>
     </f7-block-footer>
     <f7-block-title medium>
       After
