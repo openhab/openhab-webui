@@ -5,6 +5,7 @@
       v-if="ready"
       :options="options"
       class="oh-chart"
+      @click="handleClick"
       :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
       :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize />
     <f7-menu class="padding float-right" v-if="periodVisible">
@@ -35,6 +36,7 @@
 <script>
 import mixin from '../widget-mixin'
 import chart from '../chart/chart-mixin'
+import { actionsMixin } from '../widget-actions'
 
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
@@ -62,7 +64,7 @@ import 'echarts/lib/component/calendar'
 import ECharts from 'vue-echarts/components/ECharts'
 
 export default {
-  mixins: [mixin, chart],
+  mixins: [mixin, chart, actionsMixin],
   components: {
     'chart': ECharts
   },
@@ -113,6 +115,14 @@ export default {
     if (this.calendarPicker) this.calendarPicker.destroy()
   },
   methods: {
+    handleClick (evt) {
+      if (evt.seriesIndex !== undefined) {
+        if (this.context.component.slots && this.context.component.slots.series && Array.isArray(this.context.component.slots.series) && this.context.component.slots.series.length) {
+          let series = this.context.component.slots.series[evt.seriesIndex]
+          this.performAction(evt.event, null, series.config, null)
+        }
+      }
+    },
     pickFixedStartDate (evt) {
       const self = this
       const value = this.startTime.toDate()
