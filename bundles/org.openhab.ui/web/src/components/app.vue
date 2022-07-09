@@ -283,6 +283,7 @@ export default {
     return {
       init: false,
       ready: false,
+      eventSource: null,
 
       // Framework7 Parameters
       f7params: {
@@ -555,6 +556,46 @@ export default {
         ev.stopPropagation()
         ev.preventDefault()
       }
+    },
+    startEventSource () {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/webaudio/playurl', null, (event) => {
+        const topicParts = event.topic.split('/')
+        switch (topicParts[2]) {
+          case 'playurl':
+            this.playAudioUrl(JSON.parse(event.payload))
+            break
+        }
+      })
+    },
+    stopEventSource () {
+      this.$oh.sse.close(this.eventSource)
+      this.eventSource = null
+    },
+    playAudioUrl (audioUrl) {
+      let context
+      try {
+        window.AudioContext = window.AudioContext || window.webkitAudioContext
+        if (typeof (window.AudioContext) !== 'undefined') {
+          context = new AudioContext()
+        }
+        console.log('Playing audio URL: ' + audioUrl)
+        this.$oh.api.getPlain(audioUrl, '', '*/*', 'arraybuffer').then((data) => {
+          context.decodeAudioData(data, function (buffer) {
+            let source = context.createBufferSource()
+            source.buffer = buffer
+            source.connect(context.destination)
+            source.onended = function () {
+              context.close()
+            }
+            source.start(0)
+          })
+        })
+      } catch (e) {
+        console.warn('Error while playing audio URL: ' + e.toString())
+        if (context) {
+          context.close()
+        }
+      }
     }
   },
   created () {
@@ -655,6 +696,10 @@ export default {
 
       if (window) {
         window.addEventListener('keydown', this.keyDown)
+      }
+
+      if (localStorage.getItem('openhab.ui:webaudio.enable') === 'enabled') {
+        this.startEventSource()
       }
     })
   }

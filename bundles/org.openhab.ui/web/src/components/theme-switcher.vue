@@ -70,6 +70,10 @@
             <span v-t="'about.miscellaneous.theme.disablePageTransition'" />
             <f7-toggle :checked="pageTransitionAnimation === 'disabled'" @toggle:change="setPageTransitionAnimation" />
           </f7-list-item>
+          <f7-list-item>
+            <span v-t="'about.miscellaneous.webaudio.enable'" />
+            <f7-toggle :checked="webAudio === 'enabled'" @toggle:change="setWebAudio" />
+          </f7-list-item>
         </f7-list>
       </f7-col>
     </f7-row>
@@ -119,6 +123,10 @@ export default {
     setPageTransitionAnimation (value) {
       localStorage.setItem('openhab.ui:theme.pagetransition', (value) ? 'disabled' : 'default')
       location.reload()
+    },
+    setWebAudio (value) {
+      localStorage.setItem('openhab.ui:webaudio.enable', (value) ? 'enabled' : 'default')
+      location.reload()
     }
   },
   computed: {
@@ -145,6 +153,9 @@ export default {
     },
     pageTransitionAnimation () {
       return localStorage.getItem('openhab.ui:theme.pagetransition') || 'default'
+    },
+    webAudio () {
+      return localStorage.getItem('openhab.ui:webaudio.enable') || 'default'
     }
   }
 }

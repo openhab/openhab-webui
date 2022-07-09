@@ -53,7 +53,7 @@ module.exports = {
     //   poll: 1000,
     // },
     proxy: [{
-      context: ['/auth', '/rest', '/chart', '/proxy', '/icon', '/static', '/changePassword', '/createApiToken'],
+      context: ['/auth', '/rest', '/chart', '/proxy', '/icon', '/static', '/changePassword', '/createApiToken', '/audio'],
       target: apiBaseUrl
     }]
   },

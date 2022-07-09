@@ -30,13 +30,14 @@ export default {
   get (uri, data) {
     return wrapPromise(Framework7.request.promise.json(uri, data))
   },
-  getPlain (uri, data, contentType) {
+  getPlain (uri, data, contentType, responseType) {
     return wrapPromise(Framework7.request.promise({
       method: 'GET',
       url: uri,
       data,
       processData: false,
-      contentType: contentType || 'text/plain'
+      contentType: contentType || 'text/plain',
+      xhrFields: typeof responseType !== 'undefined' ? { responseType: responseType } : null
     }))
   },
   post (uri, data, dataType) {
