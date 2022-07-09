@@ -698,7 +698,9 @@ export default {
         window.addEventListener('keydown', this.keyDown)
       }
 
-      this.startEventSource()
+      if (localStorage.getItem('openhab.ui:webaudio.enable') === 'enabled') {
+        this.startEventSource()
+      }
     })
   }
 }

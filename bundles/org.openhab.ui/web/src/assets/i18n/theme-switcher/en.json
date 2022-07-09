@@ -11,5 +11,6 @@
   "about.miscellaneous.home.background": "Standard home page background color",
   "about.miscellaneous.home.hideChatInput": "Hide chat input box on home page",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Disable card expansion animations",
-  "about.miscellaneous.theme.disablePageTransition": "Disable page transition animations"
+  "about.miscellaneous.theme.disablePageTransition": "Disable page transition animations",
+  "about.miscellaneous.webaudio.enable": "Enable Web Audio sink support"
 }
