@@ -98,6 +98,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
             snippet = snippet.replaceAll("%main.long-polling-mode-msg%", longPollingModeMsg);
         }
         snippet = snippet.replaceAll("%id%", id);
+        snippet = snippet.replace("%config.web-audio%", Boolean.toString(config.isWebAudio()));
 
         // if the label contains a value span, we remove this span as
         // the title of a page/layer cannot deal with this

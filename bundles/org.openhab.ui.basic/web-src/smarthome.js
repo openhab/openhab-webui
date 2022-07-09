@@ -2362,7 +2362,10 @@
 		smarthome.eventMapper = new EventMapper();
 		smarthome.UI.initControls();
 		smarthome.changeListener = new ChangeListener();
-		smarthome.playAudioUrlListener = new PlayAudioUrlListener();
+
+		if (JSON.parse(document.getElementById("config").text).webAudio) {
+			smarthome.playAudioUrlListener = new PlayAudioUrlListener();
+		}
 
 		window.addEventListener("beforeunload", function() {
 			smarthome.changeListener.suppressErrors();
