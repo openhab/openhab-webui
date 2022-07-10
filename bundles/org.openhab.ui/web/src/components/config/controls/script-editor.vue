@@ -52,6 +52,7 @@ import 'codemirror/mode/groovy/groovy.js'
 import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/ruby/ruby.js'
 import 'codemirror/mode/yaml/yaml.js'
+import 'codemirror/mode/properties/properties'
 
 // theme css
 import 'codemirror/theme/gruvbox-dark.css'
@@ -174,6 +175,7 @@ export default {
       if (this.mode && this.mode.indexOf('ruby') >= 0) return 'text/x-ruby'
       if (this.mode && this.mode.indexOf('groovy') >= 0) return 'text/x-groovy'
       if (this.mode && this.mode === 'rb') return 'text/x-ruby'
+      if (this.mode && this.mode === 'properties') return 'text/x-properties'
       return this.mode
     },
     ternComplete (file, query) {

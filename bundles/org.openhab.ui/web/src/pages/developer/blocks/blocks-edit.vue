@@ -104,7 +104,7 @@
 import YAML from 'yaml'
 import { strOptions } from 'yaml/types'
 
-import BlocklyEditor from '@/pages/settings/rules/script/blockly-editor.vue'
+import BlocklyEditor from '@/components/config/controls/blockly-editor.vue'
 import BlockPreview from './block-preview.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
@@ -115,7 +115,7 @@ export default {
   mixins: [DirtyMixin],
   components: {
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
-    BlocklyEditor, // 'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/pages/settings/rules/script/blockly-editor.vue'),
+    BlocklyEditor, // 'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue'),
     BlockPreview // 'block-preview': () => import(/* webpackChunkName: "blockly-editor" */ './block-preview.vue')
   },
   props: ['uid', 'createMode'],

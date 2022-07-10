@@ -60,6 +60,16 @@
               :footer="objectsSubtitles.pages">
               <f7-icon slot="media" f7="tv" color="gray" />
             </f7-list-item>
+            <f7-list-item
+              v-if="$store.getters.apiEndpoint('transformations')"
+              media-item
+              link="transformations/"
+              title="Transformations"
+              :after="transformationsCount"
+              badge-color="blue"
+              :footer="objectsSubtitles.transform">
+              <f7-icon slot="media" f7="arrow_2_squarepath" color="gray" />
+            </f7-list-item>
           </f7-list>
           <f7-block-title v-if="$store.getters.apiEndpoint('rules')">
             Automation
@@ -157,6 +167,7 @@ export default {
         model: 'The semantic model of your home',
         items: 'Manage the functional layer',
         pages: 'Design displays for user control & monitoring',
+        transform: 'Manage transformation configurations',
         rules: 'Automate with triggers and actions',
         scenes: 'Store a set of desired states as a scene',
         scripts: 'Rules dedicated to running code',
@@ -165,6 +176,7 @@ export default {
       inboxCount: '',
       thingsCount: '',
       itemsCount: '',
+      transformationsCount: '',
       sitemapsCount: 0
     }
   },
@@ -199,6 +211,7 @@ export default {
       if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things?summary=true').then((data) => { this.thingsCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items').then((data) => { this.itemsCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('ui')) this.$oh.api.get('/rest/ui/components/system:sitemap?summary=true').then((data) => { this.sitemapsCount = data.length })
+      if (this.$store.getters.apiEndpoint('transformations')) this.$oh.api.get('/rest/transformations/configurations').then((data) => { this.transformationsCount = data.length })
     },
     navigateToStore (tab) {
       this.$f7.views.main.router.navigate('addons', { props: { initialTab: tab } })
