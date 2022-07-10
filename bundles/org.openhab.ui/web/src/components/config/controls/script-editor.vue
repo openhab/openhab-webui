@@ -52,7 +52,7 @@ import 'codemirror/mode/groovy/groovy.js'
 import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/ruby/ruby.js'
 import 'codemirror/mode/yaml/yaml.js'
-import 'codemirror/mode/properties/properties'
+import 'codemirror/mode/properties/properties.js'
 
 // theme css
 import 'codemirror/theme/gruvbox-dark.css'

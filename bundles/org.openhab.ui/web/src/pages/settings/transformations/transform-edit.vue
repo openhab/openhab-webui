@@ -15,8 +15,7 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar v-if="!newTransformation && ready" position="bottom">
-      <span class="display-flex flex-direction-row align-items-center">
-      </span>
+      <span class="display-flex flex-direction-row align-items-center" />
       <span class="display-flex flex-direction-row align-items-center">
         <f7-segmented v-if="!newTransformation && isBlockly" class="margin-right">
           <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" />
