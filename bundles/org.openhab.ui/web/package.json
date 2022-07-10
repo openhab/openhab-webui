@@ -126,6 +126,7 @@
     "babel-plugin-dynamic-import-node-babel-7": "^2.0.7",
     "babel-plugin-transform-vue-jsx": "^4.0.1",
     "chalk": "^2.4.2",
+    "chokidar": "^3.5.3",
     "copy-webpack-plugin": "^4.6.0",
     "cross-env": "^5.2.1",
     "css-loader": "^2.1.1",
