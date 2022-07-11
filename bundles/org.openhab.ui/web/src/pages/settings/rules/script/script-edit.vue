@@ -260,7 +260,10 @@ export default {
           this.isScriptRule = true
         }
 
-        if (!this.currentModule || this.currentModule.type.indexOf('script') !== 0) {
+        if (!this.currentModule ||
+            this.currentModule.type.indexOf('script') !== 0 ||
+            (this.currentModule.type === 'jsr223.ScriptedAction' &&
+             this.currentModule.configuration.type === 'application/x-ruby')) {
           this.moduleError = true
         } else {
           this.mode = this.currentModule.configuration.type
@@ -268,10 +271,11 @@ export default {
         }
 
         if (!this.rule.editable) {
-          let triggerDescriptionComments = '// Triggers:\n'
+          const commentChar = (this.mode === 'application/x-ruby' ? '#' : '//')
+          let triggerDescriptionComments = `${commentChar} Triggers:\n`
           for (const trigger of this.rule.triggers) {
             const triggerModuleType = this.moduleTypes.triggers.find((t) => t.uid === trigger.type)
-            triggerDescriptionComments += `// - ${this.suggestedModuleTitle(trigger, triggerModuleType, 'trigger')}\n`
+            triggerDescriptionComments += `${commentChar} - ${this.suggestedModuleTitle(trigger, triggerModuleType, 'trigger')}\n`
           }
           this.script = triggerDescriptionComments + '\n' + this.script
         }
