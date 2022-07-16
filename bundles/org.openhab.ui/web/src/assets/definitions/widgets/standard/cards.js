@@ -164,3 +164,25 @@ export const OhClockCardDefinition = () => new WidgetDefinition('oh-clock-card',
       })
   ])
   .paramGroup(actionGroup(null, 'Action to perform when the clock is clicked'), actionParams())
+
+// OhSIPClientCard
+export const OhSIPClientCardDefinition = () => new WidgetDefinition('oh-sipclient-card', 'SIP Client Card', 'SIP Client')
+  .paramGroup(CardParameterGroup(), CardParameters())
+  .paramGroup(pg('sipUASettings', 'SIP User Agent Settings'), [
+    pt('websocketUrl', 'Websocket URL', 'URL of the WebRTC SIP websocket, e.g. \'wss://siphost:8089/ws\''),
+    pt('domain', 'Domain', 'SIP Domain'),
+    pt('username', 'Username', 'SIP Username'),
+    pt('password', 'Password', 'SIP Password')
+    // no_answer_timeout
+    // auto-answer
+  ])
+  .paramGroup(pg('doorSettings', 'Door Station Settings'), [
+    pb('doorEnabled', 'Enable Door Station', 'Enable for use with a SIP door station'),
+    pt('doorUser', 'Door station username', 'Username of door station. Used to detect connections from door station').v((v, config, c, p) => config.doorEnabled),
+    pt('doorImageURL', 'Image URL', 'Image to show in popup window. Can also be an mjpeg stream.').v((v, config, c, p) => config.doorEnabled),
+    pt('doorDTMF', 'Door Open DTMF', 'DTMF to send to open door').v((v, config, c, p) => config.doorEnabled)
+  ])
+  .paramGroup(pg('intercomSettings', 'Intercom Settings'), [
+    pb('intercomEnabled', 'Enable Intercom Mode', 'If enabled you can make outgoing calls and assign up to 4 dial buttons. ' +
+      'To adjust individual settings for each device, either long press the SIP widget on that device or click it in layout editor.')
+  ])
