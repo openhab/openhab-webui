@@ -93,3 +93,7 @@ export const OhRepeaterDefinition = () => new WidgetDefinition('oh-repeater', 'R
 import ClockParameters from './clock.js'
 export const OhClockDefinition = () => new WidgetDefinition('oh-clock', 'Digital Clock', 'Display a digital clock')
   .params(ClockParameters())
+
+import SIPClientParameters from './sipclient.js'
+export const OhSIPClientDefinition = () => new WidgetDefinition('oh-sipclient', 'SIP Client')
+  .params(SIPClientParameters())
