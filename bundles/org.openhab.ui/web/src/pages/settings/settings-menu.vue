@@ -211,7 +211,7 @@ export default {
       if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things?summary=true').then((data) => { this.thingsCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items').then((data) => { this.itemsCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('ui')) this.$oh.api.get('/rest/ui/components/system:sitemap?summary=true').then((data) => { this.sitemapsCount = data.length })
-      if (this.$store.getters.apiEndpoint('transformations')) this.$oh.api.get('/rest/transformations/configurations').then((data) => { this.transformationsCount = data.length })
+      if (this.$store.getters.apiEndpoint('transformations')) this.$oh.api.get('/rest/transformations').then((data) => { this.transformationsCount = data.length })
     },
     navigateToStore (tab) {
       this.$f7.views.main.router.navigate('addons', { props: { initialTab: tab } })

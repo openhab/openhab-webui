@@ -46,7 +46,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title class="searchbar-hide-on-search">
-          <span v-if="ready">{{ transformations.length }} transformation configurations</span><span v-else>Loading...</span>
+          <span v-if="ready">{{ transformations.length }} transformations</span><span v-else>Loading...</span>
         </f7-block-title>
         <div class="padding-left padding-right searchbar-found" v-show="!ready || transformations.length > 0">
           <f7-segmented strong tag="p">
@@ -161,7 +161,7 @@ export default {
       if (this.loading) return
       this.loading = true
       this.loading = true
-      this.$oh.api.get('/rest/transformations/configurations').then((data) => {
+      this.$oh.api.get('/rest/transformations').then((data) => {
         this.transformations = data.sort((a, b) => (a.label || a.uid).localeCompare(b.label || a.uid))
         this.initSearchbar = true
         this.loading = false
@@ -214,21 +214,21 @@ export default {
 
       this.$f7.dialog.confirm(
         `Remove ${this.selectedItems.length} selected transformation configurations?`,
-        'Remove Transformation Configurations',
+        'Remove Transformations',
         () => {
           vm.doRemoveSelected()
         }
       )
     },
     doRemoveSelected () {
-      let dialog = this.$f7.dialog.progress('Deleting Transformation Configurations...')
+      let dialog = this.$f7.dialog.progress('Deleting Transformations...')
 
       const promises = this.selectedItems.map((p) => {
-        return this.$oh.api.delete('/rest/transformations/configurations/' + p)
+        return this.$oh.api.delete('/rest/transformations/' + p)
       })
       Promise.all(promises).then((data) => {
         this.$f7.toast.create({
-          text: 'Transformation configurations removed',
+          text: 'Transformations removed',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
