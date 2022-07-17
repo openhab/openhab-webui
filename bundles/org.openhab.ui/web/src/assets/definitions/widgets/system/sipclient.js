@@ -1,6 +1,7 @@
-import { pt } from '../helpers.js'
+import { pt, pn } from '../helpers.js'
 
 export default () => [
+  pn('height', 'Component height', 'Height of the whole component in pixels'),
   pt('websocketUrl', 'Websocket URL', 'URL of the WebRTC SIP websocket, e.g. \'wss://siphost:8089/ws\''),
   pt('domain', 'Domain', 'SIP Domain'),
   pt('username', 'Username', 'SIP Username'),
