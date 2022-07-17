@@ -4,7 +4,10 @@
   <!-- Show dial button when there`s no call -->
   <f7-button v-else-if="!session || session.isEnded()" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.height" @click.stop="call(config['sipAddress'])"></f7-button>
   <!-- Show answer button on incoming call -->
-  <f7-button v-else-if="session && session.direction === 'incoming' && session.isInProgress()" :style="{ height: config.height }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.height" @click.stop="answer()"></f7-button>
+  <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()">
+    <f7-button :style="{ height: config.height }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.height" @click.stop="answer()"></f7-button>
+    <f7-button :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.height" @click.stop="session.terminate()"></f7-button>
+  </f7-segmented>
   <!-- Show hangup button for ongoing call -->
   <f7-button v-else-if="session && !session.isEnded()" :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.height" @click.stop="session.terminate()"></f7-button>
   <!-- Show -->    
@@ -61,7 +64,7 @@ export default {
             this.audio = new Audio(ringBackFile)
             this.attachAudio()
             console.info(this.loggerPrefix + ': Calling ' + this.session.remote_identity.uri.user + ' ...')
-          } else {
+          } else if (this.session.direction === 'incoming') {
             // Set ring tone
             this.audio = new Audio(ringFile)
             console.info(this.loggerPrefix + ': Incoming call from ' + this.session.remote_identity.uri.user)
