@@ -78,13 +78,15 @@ export default {
           this.remoteParty = (phonebook.size > 0) ? phonebook.get(this.session.remote_identity.uri.user) : this.session.remote_identity.uri.user
           // Handle outgoing call,
           if (this.session.direction === 'outgoing') {
-            // Set ringback tone
-            this.audio = new Audio(ringBackFile)
-            this.attachAudio()
+            if (this.config.enableTones === true) {
+              // Set ringback tone
+              this.audio = new Audio(ringBackFile)
+              this.attachAudio()
+            }
             console.info(this.loggerPrefix + ': Calling ' + this.remoteParty + ' ...')
           } else if (this.session.direction === 'incoming') {
             // Set ring tone
-            this.audio = new Audio(ringFile)
+            if (this.config.enableTones === true) this.audio = new Audio(ringFile)
             console.info(this.loggerPrefix + ': Incoming call from ' + this.remoteParty)
           }
           if (this.config.enableTones === true) {
