@@ -8,6 +8,8 @@
     <f7-button :style="{ height: config.height }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.height" @click.stop="answer()">{{this.remoteParty}}</f7-button>
     <f7-button :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.height" @click.stop="session.terminate()"></f7-button>
   </f7-segmented>
+  <!-- Show hangup button for outgoing call -->
+  <f7-button v-else-if="session && session.isInProgress()" :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="yellow" :icon-size="config.height" @click.stop="session.terminate()"></f7-button>
   <!-- Show hangup button for ongoing call -->
   <f7-button v-else-if="session && !session.isEnded()" :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.height" @click.stop="session.terminate()"></f7-button>
   <!-- Show -->    
