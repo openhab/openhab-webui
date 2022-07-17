@@ -11,9 +11,9 @@
 import mixin from '../widget-mixin'
 import { actionsMixin } from '../widget-actions'
 import { OhImageDefinition } from '@/assets/definitions/widgets/system'
-
+import foregroundService from '../widget-foreground-service'
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [mixin, actionsMixin, foregroundService],
   widget: OhImageDefinition,
   data () {
     return {
@@ -49,21 +49,6 @@ export default {
       return this.ts && this.src ? this.src.indexOf('?') === -1 ? `${this.src}?_ts=${this.ts}` : `${this.src}&_ts=${this.ts}` : this.src
     }
   },
-  mounted () {
-    if (this.config.item) {
-      this.loadItemImage()
-    } else {
-      this.$oh.media.getImage(this.config.url).then((url) => {
-        this.src = url
-      })
-    }
-    if (this.config.refreshInterval) {
-      this.refreshInterval = setInterval(() => { this.ts = (new Date()).toISOString() }, this.config.refreshInterval)
-    }
-  },
-  unmounted () {
-    if (this.refreshInterval) clearInterval(this.refreshInterval)
-  },
   methods: {
     loadItemImage () {
       this.$oh.api.getPlain(`/rest/items/${this.config.item}/state`, 'text/plain').then((data) => {
@@ -76,6 +61,21 @@ export default {
       if (this.config.action || this.config.actionPropsParameterGroup) {
         this.performAction()
       }
+    },
+    startForegroundActivity () {
+      if (this.config.item) {
+        this.loadItemImage()
+      } else {
+        this.$oh.media.getImage(this.config.url).then((url) => {
+          this.src = url
+        })
+      }
+      if (this.config.refreshInterval) {
+        this.refreshInterval = setInterval(() => { this.ts = (new Date()).toISOString() }, this.config.refreshInterval)
+      }
+    },
+    stopForegroundActivity () {
+      if (this.refreshInterval) clearInterval(this.refreshInterval)
     }
   }
 }
