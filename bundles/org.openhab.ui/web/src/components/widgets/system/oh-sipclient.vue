@@ -20,6 +20,7 @@
 <script>
 import mixin from '../widget-mixin'
 import { OhSIPClientDefinition } from '@/assets/definitions/widgets/system'
+import foregroundService from '../widget-foreground-service'
 
 // Thanks to Joseph Sardin, https://bigsoundbank.com
 import ringFile from './oh-sipclient-ringtone.mp3'
@@ -34,13 +35,13 @@ export default {
       loggerPrefix: 'oh-sipclient'
     }
   },
-  mixins: [mixin],
+  mixins: [mixin, foregroundService],
   widget: OhSIPClientDefinition,
-  mounted () {
-    // Start SIP connection
-    this.sipStart()
-  },
   methods: {
+    startForegroundActivity () {
+      // Start SIP connection
+      this.sipStart()
+    },
     sipStart () {
       if (this.context.editmode) return // do not connect SIP while editing
       if (this.phone) this.phone.stop() // reconnect to reload config
