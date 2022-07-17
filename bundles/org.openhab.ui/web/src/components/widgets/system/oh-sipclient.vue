@@ -22,7 +22,8 @@ export default {
   data () {
     return {
       connected: false,
-      session: false
+      session: false,
+      loggerPrefix: 'oh-sipclient'
     }
   },
   mixins: [mixin],
@@ -59,9 +60,11 @@ export default {
             // Set ringback tone
             this.audio = new Audio(ringBackFile)
             this.attachAudio()
+            console.info(this.loggerPrefix + ': Calling ' + this.session.remote_identity.uri.user + ' ...')
           } else {
             // Set ring tone
             this.audio = new Audio(ringFile)
+            console.info(this.loggerPrefix + ': Incoming call from ' + this.session.remote_identity.uri.user)
           }
           // Play ringback or ring tone
           this.audio.loop = true
@@ -71,16 +74,19 @@ export default {
           this.session.on('accepted', () => {
             // Stop playing ringback or ring tone
             this.audio.pause()
+            console.info(this.loggerPrefix + ': Call in progress')
           })
           // Handle ended call
           this.session.on('ended', () => {
             // Stop playing ringback or ring tone
             this.audio.pause()
+            console.info(this.loggerPrefix + ': Call ended')
           })
           // Handle failed call
-          this.session.on('failed', () => {
+          this.session.on('failed', (event) => {
             // Stop playing ringback or ring tone
             this.audio.pause()
+            console.info(this.loggerPrefix + ': Call failed. Reason: ' + event.cause)
           })
         })
         this.phone.start()
