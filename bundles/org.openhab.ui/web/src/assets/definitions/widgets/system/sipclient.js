@@ -7,5 +7,7 @@ export default () => [
   pt('username', 'Username', 'SIP Username'),
   pt('password', 'Password', 'SIP Password'),
   pt('sipAddress', 'Address', 'SIP Address (phone number) to call'),
-  pb('enableTones', 'Enable tones', 'Enable ringback and ring tone. Might cause issues with your browser.')
+  pb('enableTones', 'Enable tones', 'Enable ringback and ring tone. Might cause issues with your browser.'),
+  pb('hideCallerId', 'Hide called id', 'Hides the username of the remote party on incoming call'),
+  pt('phonebook', 'Phonebook', 'Comma-separated list of \'value=label\' used to display names for incoming calls.')
 ]

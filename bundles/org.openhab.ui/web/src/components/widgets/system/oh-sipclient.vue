@@ -5,7 +5,7 @@
   <f7-button v-else-if="!session || session.isEnded()" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.height" @click.stop="call(config['sipAddress'])"></f7-button>
   <!-- Show answer button on incoming call -->
   <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()">
-    <f7-button :style="{ height: config.height }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.height" @click.stop="answer()">{{this.remoteParty}}</f7-button>
+    <f7-button :style="{ height: config.height }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.height" @click.stop="answer()">{{ (!config.hideCallerId) ? this.remoteParty : '' }}</f7-button>
     <f7-button :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.height" @click.stop="session.terminate()"></f7-button>
   </f7-segmented>
   <!-- Show hangup button for outgoing call -->
@@ -55,13 +55,25 @@ export default {
         this.phone = new JsSIP.UA(configuration)
 
         // Update connected status on connection changes
-        this.phone.on('connected', () => { this.connected = true })
-        this.phone.on('disconnected', () => { this.connected = false })
+        this.phone.on('connected', () => {
+          this.connected = true
+          console.info(this.loggerPrefix + ': Connected to SIP server')
+        })
+        this.phone.on('disconnected', () => {
+          this.connected = false
+          console.info(this.loggerPrefix + ': Disconnected from SIP server')
+        })
         
         // Register event for new incoming or outgoing call event
         this.phone.on('newRTCSession', (data) => {
           this.session = data.session
-          this.remoteParty = this.session.remote_identity.uri.user
+          const phonebook = new Map();
+          if (this.config.phonebook) {
+            this.config.phonebook.split(',').map((e) => {
+              phonebook.set(e.split('=')[0], e.split('=')[1])
+            })
+          }
+          this.remoteParty = (phonebook.size > 0) ? phonebook.get(this.session.remote_identity.uri.user) : this.session.remote_identity.uri.user
           // Handle outgoing call,
           if (this.session.direction === 'outgoing') {
             // Set ringback tone
