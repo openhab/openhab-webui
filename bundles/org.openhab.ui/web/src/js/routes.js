@@ -10,7 +10,7 @@ const SettingsMenuPage = () => import(/* webpackChunkName: "admin-base" */ '../p
 const ServiceSettingsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/services/service-settings.vue')
 const AddonsListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-list.vue')
 const AddonsAddPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-add.vue')
-const AddonsConfigureBindingPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/binding-config.vue')
+const AddonsConfigureBindingPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addon-config.vue')
 const AddonsStorePage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-store.vue')
 const AddonDetailsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addon-details.vue')
 
@@ -243,7 +243,7 @@ export default [
             async: loadAsync(AddonDetailsPage)
           },
           {
-            path: ':bindingId/config',
+            path: ':addonId/config',
             async: loadAsync(AddonsConfigureBindingPage)
           }
         ]

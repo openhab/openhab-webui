@@ -28,7 +28,7 @@
                 <f7-preloader v-if="isPending(addon)" color="blue" />
                 <f7-button v-else-if="addon.installed" class="install-button" text="Remove" color="red" round small fill @click="openAddonPopup" />
                 <f7-button v-else class="install-button" :text="installableAddon(addon) ? 'Install' : 'Add'" color="blue" round small fill @click="openAddonPopup" />
-                <f7-link v-if="!isPending(addon) && bindingInfo && bindingInfo.configDescriptionURI" icon-f7="gears" tooltip="Configure Binding" color="blue" :href="'/settings/addons/' + bindingInfo.id + '/config'" round small />
+                <f7-link v-if="showConfig" icon-f7="gears" tooltip="Configure add-on" color="blue" :href="'/settings/addons/' + addonId + '/config'" round small />
               </div>
             </div>
           </div>
@@ -204,6 +204,10 @@ export default {
     }
   },
   computed: {
+    showConfig () {
+      console.error('configUri' + this.addon.configDescriptionURI)
+      return this.addon && this.addon.installed && (this.addon.configDescriptionURI || this.addon.loggerPackages.length > 0)
+    },
     realAddonId () {
       if (!this.addon) return null
       return (this.addon.id.indexOf(':') > 0) ? this.addon.id.substring(this.addon.id.indexOf(':') + 1) : this.addon.id
