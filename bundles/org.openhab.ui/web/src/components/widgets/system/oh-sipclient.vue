@@ -71,26 +71,28 @@ export default {
             this.audio = new Audio(ringFile)
             console.info(this.loggerPrefix + ': Incoming call from ' + this.remoteParty)
           }
-          // Play ringback or ring tone
-          this.audio.loop = true
-          this.audio.play()
+          if (this.config.enableTones === true) {
+            // Play ringback or ring tone
+            this.audio.loop = true
+            this.audio.play()
+          }
 
           // Handle accepted call
           this.session.on('accepted', () => {
             // Stop playing ringback or ring tone
-            this.audio.pause()
+            if (this.config.enableTones === true) this.audio.pause()
             console.info(this.loggerPrefix + ': Call in progress')
           })
           // Handle ended call
           this.session.on('ended', () => {
             // Stop playing ringback or ring tone
-            this.audio.pause()
+            if (this.config.enableTones === true) this.audio.pause()
             console.info(this.loggerPrefix + ': Call ended')
           })
           // Handle failed call
           this.session.on('failed', (event) => {
             // Stop playing ringback or ring tone
-            this.audio.pause()
+            if (this.config.enableTones === true) this.audio.pause()
             console.info(this.loggerPrefix + ': Call failed. Reason: ' + event.cause)
           })
         })

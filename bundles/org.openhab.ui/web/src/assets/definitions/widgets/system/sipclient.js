@@ -1,4 +1,4 @@
-import { pt, pn } from '../helpers.js'
+import { pt, pn, pb } from '../helpers.js'
 
 export default () => [
   pn('height', 'Component height', 'Height of the whole component in pixels'),
@@ -6,5 +6,6 @@ export default () => [
   pt('domain', 'Domain', 'SIP Domain'),
   pt('username', 'Username', 'SIP Username'),
   pt('password', 'Password', 'SIP Password'),
-  pt('sipAddress', 'Address', 'SIP Address (phone number) to call')
+  pt('sipAddress', 'Address', 'SIP Address (phone number) to call'),
+  pb('enableTones', 'Enable tones', 'Enable ringback and ring tone. Might cause issues with your browser.')
 ]
