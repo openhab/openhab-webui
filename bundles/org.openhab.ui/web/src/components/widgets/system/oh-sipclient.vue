@@ -1,6 +1,10 @@
 <template>
+  <!-- Show settings gear for local settings if intercom is enabled and in edit mode -->
+  <f7-button v-if="context.editmode && config.intercomEnabled" :style="{ height: config.height }" icon-f7="gear_fill" :icon-size="config.height" @click.stop="localSettingsPopup()" />
   <!-- Show yellow dial button if connection is not established -->
-  <f7-button v-if="!connected" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.height" />
+  <f7-button v-else-if="!connected" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.height" />
+  <!-- Show dial menu when there`s no call and intercom mode enabled -->
+  <f7-button v-else-if="(!session || session.isEnded()) && config.intercomEnabled" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.height" @click.stop="dialPopup()" />
   <!-- Show dial button when there`s no call -->
   <f7-button v-else-if="!session || session.isEnded()" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.height" @click.stop="call(config['sipAddress'])" />
   <!-- Show answer button on incoming call -->
@@ -21,6 +25,9 @@
 import mixin from '../widget-mixin'
 import { OhSIPClientDefinition } from '@/assets/definitions/widgets/system'
 import foregroundService from '../widget-foreground-service'
+import { actionsMixin } from '../widget-actions'
+import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
+import { WidgetDefinition, pg, pt } from '@/assets/definitions/widgets/helpers.js'
 
 // Thanks to Joseph Sardin, https://bigsoundbank.com
 import ringFile from './oh-sipclient-ringtone.mp3'
@@ -32,19 +39,29 @@ export default {
       connected: false,
       session: false,
       remoteParty: '',
+      phonebook: new Map(),
       loggerPrefix: 'oh-sipclient'
     }
   },
-  mixins: [mixin, foregroundService],
+  mixins: [mixin, foregroundService, actionsMixin],
   widget: OhSIPClientDefinition,
   methods: {
     startForegroundActivity () {
+      // Load device specific configuration
+      this.localConfig = JSON.parse(localStorage.getItem('openhab.ui:sipConfig'))
+      // Init phonebook Map
+      if (this.config.phonebook) {
+        this.config.phonebook.split(',').map((e) => {
+          return this.phonebook.set(e.split('=')[0], e.split('=')[1])
+        })
+      }
       // Start SIP connection
       this.sipStart()
     },
     sipStart () {
       if (this.context.editmode) return // do not connect SIP while editing
       if (this.phone) this.phone.stop() // reconnect to reload config
+      this.context.component.config = { ...this.config, ...this.localConfig } // merge local device configuration
 
       import(/* webpackChunkName: "jssip" */ 'jssip').then((JsSIP) => { // lazy load jssip
         // SIP user agent setup
@@ -70,13 +87,9 @@ export default {
         // Register event for new incoming or outgoing call event
         this.phone.on('newRTCSession', (data) => {
           this.session = data.session
-          const phonebook = new Map()
-          if (this.config.phonebook) {
-            this.config.phonebook.split(',').map((e) => {
-              return phonebook.set(e.split('=')[0], e.split('=')[1])
-            })
-          }
-          this.remoteParty = (phonebook.size > 0) ? phonebook.get(this.session.remote_identity.uri.user) : this.session.remote_identity.uri.user
+          
+          this.remoteParty = (this.phonebook.size > 0) ? this.phonebook.get(this.session.remote_identity.uri.user) : this.session.remote_identity.uri.user
+
           // Handle outgoing call,
           if (this.session.direction === 'outgoing') {
             if (this.config.enableTones === true) {
@@ -132,6 +145,53 @@ export default {
     },
     answer () {
       this.session.answer({ mediaConstraints: { audio: true, video: false } })
+    },
+    localSettingsPopup () {
+      console.info(this.loggerPrefix + ': Opening local settings popup.')
+      const popup = { component: WidgetConfigPopup }
+      this.$f7router.navigate({ url: 'local-sip-settings', route: { path: 'local-sip-settings', popup } }, {
+        props: {
+          component: {
+            config: this.localConfig || {}
+          },
+          widget: new WidgetDefinition('localSipSettings', 'local SIP client settings', '')
+            .paramGroup(pg('sipCredentials', 'SIP Credentials'), [
+              pt('username', 'Username', 'SIP Username'),
+              pt('password', 'Password', 'SIP Password'),
+              pt('ownSipAddress', 'Own SIP Address', 'SIP Address (phone number) of this client. Used by the client to remove itself from the dial popup.')
+            ])
+        }
+      })
+      this.$f7.once('widgetConfigUpdate', this.storeLocalConfig)
+    },
+    storeLocalConfig (config) {
+      this.localConfig = config
+      localStorage.setItem('openhab.ui:sipConfig', JSON.stringify(this.localConfig))
+      this.sipStart() // reload config
+    },
+    dialPopup () {
+      const actionsPromise = new Promise((resolve, reject) => {
+        if (this.phonebook.size > 0) {
+          resolve(Array.from(this.phonebook.keys()).filter((key) => this.config.ownSipAddress ? this.config.ownSipAddress !== key : true).map((key) => {
+            return {
+              text: this.phonebook.get(key) || key,
+              color: 'blue',
+              onClick: () => {
+                this.call(key)
+              }
+            }
+          }))
+        }
+      })
+
+      actionsPromise.then((actions) => {
+        this.$f7.actions.create({
+          buttons: [
+            actions,
+            [{ text: 'Cancel', color: 'red' }]
+          ]
+        }).open()
+      })
     }
   }
 }

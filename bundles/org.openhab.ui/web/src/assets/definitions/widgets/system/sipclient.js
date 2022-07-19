@@ -6,8 +6,10 @@ export default () => [
   pt('domain', 'Domain', 'SIP Domain'),
   pt('username', 'Username', 'SIP Username'),
   pt('password', 'Password', 'SIP Password'),
-  pt('sipAddress', 'Address', 'SIP Address (phone number) to call'),
+  pt('sipAddress', 'SIP Address', 'SIP Address (phone number) to call'),
   pb('enableTones', 'Enable tones', 'Enable ringback and ring tone. Might cause issues with your browser, so that your call fails.'),
   pb('hideCallerId', 'Hide caller id', 'Hides the username of the remote party on incoming call'),
-  pt('phonebook', 'Phonebook', 'Comma-separated list of \'value=label\' used to display names for incoming calls.')
+  pt('phonebook', 'Phonebook', 'Comma-separated list of \'value=label\' used to display names for incoming calls. Required for intercom mode.'),
+  pb('intercomEnabled', 'Enable Intercom Mode', 'If enabled, you can make outgoing calls to more than one SIP user using the phonebook. ' +
+    'To adjust individual settings for each device, enter edit mode and click on the gear button.')
 ]
