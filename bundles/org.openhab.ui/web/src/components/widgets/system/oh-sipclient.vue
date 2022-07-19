@@ -58,6 +58,9 @@ export default {
       // Start SIP connection
       this.sipStart()
     },
+    stopForegroundActivity () {
+      if (this.phone) this.phone.stop()
+    },
     sipStart () {
       if (this.context.editmode) return // do not connect SIP while editing
       if (this.phone) this.phone.stop() // reconnect to reload config
@@ -87,7 +90,7 @@ export default {
         // Register event for new incoming or outgoing call event
         this.phone.on('newRTCSession', (data) => {
           this.session = data.session
-          
+
           this.remoteParty = (this.phonebook.size > 0) ? this.phonebook.get(this.session.remote_identity.uri.user) : this.session.remote_identity.uri.user
 
           // Handle outgoing call,
@@ -129,9 +132,6 @@ export default {
           })
         })
         this.phone.start()
-
-        // stop SIP connection on page change ('beforeDestroy' doesn't work as the previous page is kept in background)
-        this.$f7router.once('pageBeforeOut', () => { this.phone.stop() })
       })
     },
     attachAudio () {
