@@ -1,25 +1,48 @@
 <template>
-  <!-- Show settings gear for local settings if intercom is enabled and in edit mode -->
-  <f7-button v-if="context.editmode && config.intercomEnabled" :style="{ height: config.height }" icon-f7="gear_fill" :icon-size="config.height" @click.stop="localSettingsPopup()" />
-  <!-- Show yellow dial button if connection is not established -->
-  <f7-button v-else-if="!connected" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.height" />
-  <!-- Show dial menu when there`s no call and intercom mode enabled -->
-  <f7-button v-else-if="(!session || session.isEnded()) && config.intercomEnabled" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.height" @click.stop="dialPopup()" />
-  <!-- Show dial button when there`s no call -->
-  <f7-button v-else-if="!session || session.isEnded()" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.height" @click.stop="call(config['sipAddress'])" />
-  <!-- Show answer button on incoming call -->
-  <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()">
-    <f7-button :style="{ height: config.height }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.height" @click.stop="answer()">
-      {{ (!config.hideCallerId) ? this.remoteParty : '' }}
-    </f7-button>
-    <f7-button :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.height" @click.stop="session.terminate()" />
-  </f7-segmented>
-  <!-- Show hangup button for outgoing call -->
-  <f7-button v-else-if="session && session.isInProgress()" :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="yellow" :icon-size="config.height" @click.stop="session.terminate()" />
-  <!-- Show hangup button for ongoing call -->
-  <f7-button v-else-if="session && !session.isEnded()" :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.height" @click.stop="session.terminate()" />
+  <div>
+    <!-- Show settings gear for local settings if intercom is enabled and in edit mode -->
+    <f7-button v-if="context.editmode && config.intercomEnabled" :style="{ height: config.height }" icon-f7="gear_fill" :icon-size="config.height" @click.stop="localSettingsPopup()" />
+    <div v-if="config.enableVideo" class="video-container">
+      <video ref="remoteVideo" autoplay playsinline class="remote-video" poster="@/images/openhab-logo.svg" />
+      <video v-if="config.enableLocalVideo" ref="localVideo" autoplay playsinline muted="muted" class="local-video" />
+    </div>
+    <!-- Show yellow dial button if connection is not established -->
+    <f7-button v-if="!connected" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.height" />
+    <!-- Show dial menu when there`s no call and intercom mode enabled -->
+    <f7-button v-else-if="(!session || session.isEnded()) && config.intercomEnabled" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.height" @click.stop="dialPopup()" />
+    <!-- Show dial button when there`s no call -->
+    <f7-button v-else-if="!session || session.isEnded()" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.height" @click.stop="call(config['sipAddress'])" />
+    <!-- Show answer button on incoming call -->
+    <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()">
+      <f7-button :style="{ height: config.height }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.height" @click.stop="answer()">
+        {{ (!config.hideCallerId) ? this.remoteParty : '' }}
+      </f7-button>
+      <f7-button :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.height" @click.stop="session.terminate()" />
+    </f7-segmented>
+    <f7-segmented v-else>
+      <!-- Show hangup button for outgoing call -->
+      <f7-button v-if="session && session.isInProgress()" :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="yellow" :icon-size="config.height" @click.stop="session.terminate()" />
+      <!-- Show hangup button for ongoing call -->
+      <f7-button v-else-if="session && !session.isEnded()" :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.height" @click.stop="session.terminate()" />
+      <!-- Show send dtmf button if in a call and feature is enabled-->
+      <f7-button v-if="session && !session.isInProgress() && !session.isEnded() && config.dtmfString && config.dtmfString.length > 0" :style="{ height: config.height }" icon-f7="number_square" icon-color="yellow" :icon-size="config.height" @click.stop="sendDTMF()" />
+    </f7-segmented>
   <!-- Show -->
+  </div>
 </template>
+
+<style lang="stylus">
+.video-container
+  position relative
+  .remote-video
+    width 100%
+    aspect-ratio: 1
+  .local-video
+    position absolute
+    width 30%
+    bottom 0px
+    right 0px
+</style>
 
 <script>
 import mixin from '../widget-mixin'
@@ -67,13 +90,15 @@ export default {
       this.context.component.config = { ...this.config, ...this.localConfig } // merge local device configuration
 
       import(/* webpackChunkName: "jssip" */ 'jssip').then((JsSIP) => { // lazy load jssip
+        this.config.enableSIPDebug ? JsSIP.debug.enable('JsSIP:*') : JsSIP.debug.disable()
         // SIP user agent setup
         this.remoteAudio = new window.Audio()
         const socket = new JsSIP.WebSocketInterface(this.config.websocketUrl)
         const configuration = {
           sockets: [socket],
           uri: 'sip:' + this.config.username + '@' + this.config.domain,
-          password: this.config.password
+          password: this.config.password,
+          session_timers: false
         }
         this.phone = new JsSIP.UA(configuration)
 
@@ -98,7 +123,6 @@ export default {
             if (this.config.enableTones === true) {
               // Set ringback tone
               this.audio = new Audio(ringBackFile)
-              this.attachAudio()
             }
             console.info(this.loggerPrefix + ': Calling ' + this.remoteParty + ' ...')
           } else if (this.session.direction === 'incoming') {
@@ -111,7 +135,6 @@ export default {
             this.audio.loop = true
             this.audio.play()
           }
-
           // Handle accepted call
           this.session.on('accepted', () => {
             // Stop playing ringback or ring tone
@@ -122,29 +145,46 @@ export default {
           this.session.on('ended', () => {
             // Stop playing ringback or ring tone
             if (this.config.enableTones === true) this.audio.pause()
+            this.$refs.remoteVideo.srcObject = this.$refs.localVideo.srcObject = null
             console.info(this.loggerPrefix + ': Call ended')
           })
           // Handle failed call
           this.session.on('failed', (event) => {
             // Stop playing ringback or ring tone
             if (this.config.enableTones === true) this.audio.pause()
+            this.$refs.remoteVideo.srcObject = this.$refs.localVideo.srcObject = null
             console.info(this.loggerPrefix + ': Call failed. Reason: ' + event.cause)
           })
         })
         this.phone.start()
       })
     },
-    attachAudio () {
-      this.session.connection.addEventListener('track', (data) => {
-        this.remoteAudio.srcObject = data.streams[0]
+    attachMedia () {
+      this.session.connection.addEventListener('addstream', (streamEvent) => {
+        this.remoteAudio.srcObject = streamEvent.stream
         this.remoteAudio.play()
+        if (this.config.enableVideo) {
+          this.$refs.remoteVideo.srcObject = this.session.connection.getRemoteStreams()[0]
+          if (this.config.enableLocalVideo) {
+            this.$refs.localVideo.srcObject = this.session.connection.getLocalStreams()[0]
+          }
+        }
       })
     },
     call (target) {
-      this.phone.call(target, { mediaConstraints: { audio: true, video: false } })
+      this.phone.call(target, { mediaConstraints: { audio: true, video: this.config.enableVideo } })
+      this.attachMedia()
     },
     answer () {
-      this.session.answer({ mediaConstraints: { audio: true, video: false } })
+      this.session.answer({ mediaConstraints: { audio: true, video: this.config.enableVideo } })
+      this.attachMedia()
+    },
+    sendDTMF () {
+      const options = {
+        'duration': 160,
+        'interToneGap': 640
+      }
+      this.session.sendDTMF(this.config.dtmfString, options)
     },
     localSettingsPopup () {
       console.info(this.loggerPrefix + ': Opening local settings popup.')
@@ -181,9 +221,10 @@ export default {
               }
             }
           }))
+        } else {
+          this.$f7.dialog.alert('Please configure phonebook entries')
         }
       })
-
       actionsPromise.then((actions) => {
         this.$f7.actions.create({
           buttons: [
@@ -194,5 +235,6 @@ export default {
       })
     }
   }
+
 }
 </script>
