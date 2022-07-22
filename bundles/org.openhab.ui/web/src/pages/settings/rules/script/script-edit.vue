@@ -137,7 +137,6 @@ export default {
       currentModuleConfig: {},
       scriptModuleType: null,
       languages: null,
-      moduleError: null,
       script: '',
       mode: '',
       eventSource: null,
@@ -257,15 +256,13 @@ export default {
           this.currentModule = this.rule.actions.concat(this.rule.conditions).find((m) => m.id === this.moduleId)
         } else {
           this.currentModule = this.rule.actions.find((m) => m.id === 'script')
+          if (!this.currentModule) {
+            this.currentModule = this.rule.actions.find((m) => m.configuration.script)
+          }
           this.isScriptRule = true
         }
 
-        if (!this.currentModule ||
-            this.currentModule.type.indexOf('script') !== 0 ||
-            (this.currentModule.type === 'jsr223.ScriptedAction' &&
-             this.currentModule.configuration.type === 'application/x-ruby')) {
-          this.moduleError = true
-        } else {
+        if (this.currentModule) {
           this.mode = this.currentModule.configuration.type
           this.script = this.currentModule.configuration.script
         }
