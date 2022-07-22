@@ -145,14 +145,16 @@ export default {
           this.session.on('ended', () => {
             // Stop playing ringback or ring tone
             if (this.config.enableTones === true) this.audio.pause()
-            this.$refs.remoteVideo.srcObject = this.$refs.localVideo.srcObject = null
+            if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
+            if (this.config.enableLocalVideo) this.$refs.localVideo.srcObject = null
             console.info(this.loggerPrefix + ': Call ended')
           })
           // Handle failed call
           this.session.on('failed', (event) => {
             // Stop playing ringback or ring tone
             if (this.config.enableTones === true) this.audio.pause()
-            this.$refs.remoteVideo.srcObject = this.$refs.localVideo.srcObject = null
+            if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
+            if (this.config.enableLocalVideo) this.$refs.localVideo.srcObject = null
             console.info(this.loggerPrefix + ': Call failed. Reason: ' + event.cause)
           })
         })
