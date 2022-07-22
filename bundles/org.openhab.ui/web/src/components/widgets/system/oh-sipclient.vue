@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Show settings gear for local settings if intercom is enabled and in edit mode -->
-    <f7-button v-if="context.editmode && config.intercomEnabled" :style="{ height: config.height }" icon-f7="gear_fill" :icon-size="config.height" @click.stop="localSettingsPopup()" />
+    <f7-button v-if="context.editmode" :style="{ height: config.height }" icon-f7="gear_fill" :icon-size="config.height" @click.stop="localSettingsPopup()" />
     <div v-if="config.enableVideo" class="video-container">
       <video ref="remoteVideo" autoplay playsinline class="remote-video" poster="@/images/openhab-logo.svg" />
       <video v-if="config.enableLocalVideo" ref="localVideo" autoplay playsinline muted="muted" class="local-video" />
@@ -73,10 +73,13 @@ export default {
       this.localConfig = JSON.parse(localStorage.getItem('openhab.ui:sipConfig'))
       // Init phonebook Map
       if (this.config.phonebook) {
-        this.config.phonebook.split(',').map((e) => {
-          return this.phonebook.set(e.split('=')[0], e.split('=')[1])
-        })
+        if (this.config.phonebook.includes('=')) {
+          this.config.phonebook.split(',').map((e) => {
+            return this.phonebook.set(e.split('=')[0], e.split('=')[1])
+          })
+        }
       }
+      console.log(this.loggerPrefix + ': Phonebook: ' + JSON.stringify(Object.fromEntries(this.phonebook)))
       // Start SIP connection
       this.sipStart()
     },
@@ -210,30 +213,34 @@ export default {
       localStorage.setItem('openhab.ui:sipConfig', JSON.stringify(this.localConfig))
       this.sipStart() // reload config
     },
-    dialPopup () {
-      const actionsPromise = new Promise((resolve, reject) => {
-        if (this.phonebook.size > 0) {
-          resolve(Array.from(this.phonebook.keys()).filter((key) => this.config.ownSipAddress ? this.config.ownSipAddress !== key : true).map((key) => {
-            return {
-              text: this.phonebook.get(key) || key,
-              color: 'blue',
-              onClick: () => {
-                this.call(key)
+    dial () {
+      if (this.config.phonebook !== undefined && this.phonebook.size <= 1) {
+        this.call(this.config.phonebook.split('=')[0])
+      } else if (this.phonebook.size > 1) {
+        const actionsPromise = new Promise((resolve, reject) => {
+          if (this.phonebook.size > 0) {
+            resolve(Array.from(this.phonebook.keys()).filter((key) => this.config.ownSipAddress ? this.config.ownSipAddress !== key : true).map((key) => {
+              return {
+                text: this.phonebook.get(key) || key,
+                color: 'blue',
+                onClick: () => {
+                  this.call(key)
+                }
               }
-            }
-          }))
-        } else {
-          this.$f7.dialog.alert('Please configure phonebook entries')
-        }
-      })
-      actionsPromise.then((actions) => {
-        this.$f7.actions.create({
-          buttons: [
-            actions,
-            [{ text: 'Cancel', color: 'red' }]
-          ]
-        }).open()
-      })
+            }))
+          }
+        })
+        actionsPromise.then((actions) => {
+          this.$f7.actions.create({
+            buttons: [
+              actions,
+              [{ text: 'Cancel', color: 'red' }]
+            ]
+          }).open()
+        })
+      } else {
+        this.$f7.dialog.alert('Please configure phonebook entries')
+      }
     }
   }
 
