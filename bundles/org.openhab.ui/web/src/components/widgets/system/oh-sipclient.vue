@@ -1,30 +1,30 @@
 <template>
   <div>
     <!-- Show settings gear for local settings if intercom is enabled and in edit mode -->
-    <f7-button v-if="context.editmode" :style="{ height: config.height }" icon-f7="gear_fill" :icon-size="config.height" @click.stop="localSettingsPopup()" />
+    <f7-button v-if="context.editmode" :style="{ height: config.iconSize + 'px' }" icon-f7="gear_fill" :icon-size="config.iconSize + 'px'" @click.stop="localSettingsPopup()" />
     <div v-if="config.enableVideo" class="video-container">
       <video ref="remoteVideo" autoplay playsinline class="remote-video" poster="@/images/openhab-logo.svg" />
       <video v-if="config.enableLocalVideo" ref="localVideo" autoplay playsinline muted="muted" class="local-video" />
     </div>
     <div v-if="!context.editmode">
       <!-- Show yellow dial button if connection is not established -->
-      <f7-button v-if="!connected" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.height" />
+      <f7-button v-if="!connected" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.iconSize + 'px'" />
       <!-- Show dial menu when there`s no call -->
-      <f7-button v-else-if="(!session || session.isEnded())" :style="{ height: config.height }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.height" @click.stop="dial()" />
+      <f7-button v-else-if="(!session || session.isEnded())" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.iconSize + 'px'" @click.stop="dial()" />
       <!-- Show answer button on incoming call -->
       <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()">
-        <f7-button :style="{ height: config.height }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.height" @click.stop="answer()">
+        <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.iconSize + 'px'" @click.stop="answer()">
           {{ (!config.hideCallerId) ? this.remoteParty : '' }}
         </f7-button>
-        <f7-button :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.height" @click.stop="session.terminate()" />
+        <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize + 'px'" @click.stop="session.terminate()" />
       </f7-segmented>
       <f7-segmented v-else>
         <!-- Show hangup button for outgoing call -->
-        <f7-button v-if="session && session.isInProgress()" :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="yellow" :icon-size="config.height" @click.stop="session.terminate()" />
+        <f7-button v-if="session && session.isInProgress()" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="yellow" :icon-size="config.iconSize + 'px'" @click.stop="session.terminate()" />
         <!-- Show hangup button for ongoing call -->
-        <f7-button v-else-if="session && !session.isEnded()" :style="{ height: config.height }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.height" @click.stop="session.terminate()" />
+        <f7-button v-else-if="session && !session.isEnded()" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize + 'px'" @click.stop="session.terminate()" />
         <!-- Show send dtmf button if in a call and feature is enabled-->
-        <f7-button v-if="session && !session.isInProgress() && !session.isEnded() && config.dtmfString && config.dtmfString.length > 0" :style="{ height: config.height }" icon-f7="number_square" icon-color="yellow" :icon-size="config.height" @click.stop="sendDTMF()" />
+        <f7-button v-if="session && !session.isInProgress() && !session.isEnded() && config.dtmfString && config.dtmfString.length > 0" :style="{ height: config.iconSize + 'px' }" icon-f7="number_square" icon-color="yellow" :icon-size="config.iconSize + 'px'" @click.stop="sendDTMF()" />
       </f7-segmented>
     </div>
   </div>
