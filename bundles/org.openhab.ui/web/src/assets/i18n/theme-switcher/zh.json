@@ -11,5 +11,6 @@
   "about.miscellaneous.home.background": "标准主页背景颜色",
   "about.miscellaneous.home.hideChatInput": "在主页隐藏聊天输入框",
   "about.miscellaneous.home.disableCardExpansionAnimation": "禁用卡片过渡动画",
-  "about.miscellaneous.theme.disablePageTransition": "禁用页面过渡动画"
+  "about.miscellaneous.theme.disablePageTransition": "禁用页面过渡动画",
+  "about.miscellaneous.webaudio.enable": "启用Web音频接收"
 }
