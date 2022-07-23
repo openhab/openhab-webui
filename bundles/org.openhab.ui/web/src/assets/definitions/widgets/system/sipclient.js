@@ -11,6 +11,7 @@ export default () => [
   pt('phonebook', 'Phonebook', 'Single SIP Address (phone number) for a single call target or a comma-separated list of \'phoneNumber=name\' for multiple call targets').r(),
   pb('enableVideo', 'Enable Video', 'Enable video calling'),
   pb('enableLocalVideo', 'Enable Local Video View', 'Display the local camera on video calls'),
+  pt('defaultVideoAspectRatio', 'Default Aspect Ratio', 'Default video aspect ratio used to size the widget before video is loaded. Defaults to 4/3, 16/9 and 1 are common alternatives.').a(),
   pt('dtmfString', 'DTMF String', 'Display a button to send a preset DTMF string while in calls for remote doors, gates, etc...').a(),
   pb('enableSIPDebug', 'Enable SIP debugging to the console').a()
 ]

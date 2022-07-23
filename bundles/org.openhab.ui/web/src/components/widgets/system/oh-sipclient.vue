@@ -1,46 +1,46 @@
 <template>
-  <div>
+  <div class="main-container">
     <!-- Show settings gear for local settings if intercom is enabled and in edit mode -->
     <f7-button v-if="context.editmode" :style="{ height: config.iconSize + 'px' }" icon-f7="gear_fill" :icon-size="config.iconSize + 'px'" @click.stop="localSettingsPopup()" />
-    <div v-if="config.enableVideo" class="video-container">
+    <div v-if="config.enableVideo" class="video-container" :style="{ 'aspect-ratio': config.defaultVideoAspectRatio || '4/3' }">
       <video ref="remoteVideo" autoplay playsinline class="remote-video" poster="@/images/openhab-logo.svg" />
       <video v-if="config.enableLocalVideo" ref="localVideo" autoplay playsinline muted="muted" class="local-video" />
     </div>
-    <div v-if="!context.editmode">
-      <!-- Show yellow dial button if connection is not established -->
-      <f7-button v-if="!connected" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.iconSize + 'px'" />
-      <!-- Show dial menu when there`s no call -->
-      <f7-button v-else-if="(!session || session.isEnded())" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.iconSize + 'px'" @click.stop="dial()" />
-      <!-- Show answer button on incoming call -->
-      <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()">
-        <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.iconSize + 'px'" @click.stop="answer()">
-          {{ (!config.hideCallerId) ? this.remoteParty : '' }}
-        </f7-button>
-        <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize + 'px'" @click.stop="session.terminate()" />
-      </f7-segmented>
-      <f7-segmented v-else>
-        <!-- Show hangup button for outgoing call -->
-        <f7-button v-if="session && session.isInProgress()" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="yellow" :icon-size="config.iconSize + 'px'" @click.stop="session.terminate()" />
-        <!-- Show hangup button for ongoing call -->
-        <f7-button v-else-if="session && !session.isEnded()" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize + 'px'" @click.stop="session.terminate()" />
-        <!-- Show send dtmf button if in a call and feature is enabled-->
-        <f7-button v-if="session && !session.isInProgress() && !session.isEnded() && config.dtmfString && config.dtmfString.length > 0" :style="{ height: config.iconSize + 'px' }" icon-f7="number_square" icon-color="yellow" :icon-size="config.iconSize + 'px'" @click.stop="sendDTMF()" />
-      </f7-segmented>
-    </div>
+    <!-- Show yellow dial button if connection is not established -->
+    <f7-button v-if="!connected" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.iconSize + 'px'" />
+    <!-- Show dial menu when there`s no call -->
+    <f7-button v-else-if="(!session || session.isEnded())" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.iconSize + 'px'" @click.stop="dial()" />
+    <!-- Show answer button on incoming call -->
+    <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()">
+      <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.iconSize + 'px'" @click.stop="answer()">
+        {{ (!config.hideCallerId) ? this.remoteParty : '' }}
+      </f7-button>
+      <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize + 'px'" @click.stop="session.terminate()" />
+    </f7-segmented>
+    <f7-segmented v-else>
+      <!-- Show hangup button for outgoing call -->
+      <f7-button v-if="session && session.isInProgress()" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="yellow" :icon-size="config.iconSize + 'px'" @click.stop="session.terminate()" />
+      <!-- Show hangup button for ongoing call -->
+      <f7-button v-else-if="session && !session.isEnded()" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize + 'px'" @click.stop="session.terminate()" />
+      <!-- Show send dtmf button if in a call and feature is enabled-->
+      <f7-button v-if="session && !session.isInProgress() && !session.isEnded() && config.dtmfString && config.dtmfString.length > 0" :style="{ height: config.iconSize + 'px' }" icon-f7="number_square" icon-color="orange" :icon-size="config.iconSize + 'px'" @click.stop="sendDTMF()" />
+    </f7-segmented>
   </div>
 </template>
 
 <style lang="stylus">
-.video-container
-  position relative
-  .remote-video
-    width 100%
-    aspect-ratio: 1
-  .local-video
-    position absolute
-    width 30%
-    bottom 0px
-    right 0px
+.main-container
+  width: 100%
+  .video-container
+    position relative
+    .remote-video
+      width: 100%
+      height: 100%
+    .local-video
+      position absolute
+      width 30%
+      bottom 0px
+      right 0px
 </style>
 
 <script>
@@ -79,15 +79,28 @@ export default {
           })
         }
       }
-      console.log(this.loggerPrefix + ': Phonebook: ' + JSON.stringify(Object.fromEntries(this.phonebook)))
-      // Start SIP connection
-      this.sipStart()
+
+      if (this.context.editmode) return // do not connect SIP while editing
+
+      // Make sure we have Mic/Camera permissions
+      if (!navigator.mediaDevices) {
+        this.$f7.dialog.alert('Please ensure that HTTPS is in use and WebRTC is supported in this browser.')
+      } else {
+        navigator.mediaDevices.getUserMedia({ audio: true, video: this.config.enableVideo })
+          .then((stream) => {
+            // Start SIP connection
+            this.sipStart()
+          })
+          .catch((err) => {
+            console.log('could not access microphone/camera', err)
+            this.$f7.dialog.alert('To use the SIP widget you must allow microphone/camera access in your browser and reload this page.')
+          })
+      }
     },
     stopForegroundActivity () {
       if (this.phone) this.phone.stop()
     },
     sipStart () {
-      if (this.context.editmode) return // do not connect SIP while editing
       if (this.phone) this.phone.stop() // reconnect to reload config
       this.context.component.config = { ...this.config, ...this.localConfig } // merge local device configuration
 
@@ -145,18 +158,12 @@ export default {
           })
           // Handle ended call
           this.session.on('ended', () => {
-            // Stop playing ringback or ring tone
-            if (this.config.enableTones === true) this.audio.pause()
-            if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
-            if (this.config.enableLocalVideo) this.$refs.localVideo.srcObject = null
+            this.stopMedia()
             console.info(this.loggerPrefix + ': Call ended')
           })
           // Handle failed call
           this.session.on('failed', (event) => {
-            // Stop playing ringback or ring tone
-            if (this.config.enableTones === true) this.audio.pause()
-            if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
-            if (this.config.enableLocalVideo) this.$refs.localVideo.srcObject = null
+            this.stopMedia()
             console.info(this.loggerPrefix + ': Call failed. Reason: ' + event.cause)
           })
         })
@@ -174,6 +181,12 @@ export default {
           }
         }
       })
+    },
+    stopMedia () {
+      // Stop playing ringback or ring tone
+      if (this.config.enableTones === true) this.audio.pause()
+      if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
+      if (this.config.enableLocalVideo) this.$refs.localVideo.srcObject = null
     },
     call (target) {
       this.phone.call(target, { mediaConstraints: { audio: true, video: this.config.enableVideo } })
@@ -243,6 +256,5 @@ export default {
       }
     }
   }
-
 }
 </script>
