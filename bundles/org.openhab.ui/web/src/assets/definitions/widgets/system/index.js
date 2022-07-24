@@ -95,5 +95,5 @@ export const OhClockDefinition = () => new WidgetDefinition('oh-clock', 'Digital
   .params(ClockParameters())
 
 import SIPClientParameters from './sipclient.js'
-export const OhSIPClientDefinition = () => new WidgetDefinition('oh-sipclient', 'SIP Client', 'Use SIP over WebSocket to perform calls')
+export const OhSIPClientDefinition = () => new WidgetDefinition('oh-sipclient', 'SIP Client', 'SIP Client to call and answer SIP calls')
   .params(SIPClientParameters())
