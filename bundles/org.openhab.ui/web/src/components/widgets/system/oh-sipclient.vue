@@ -1,7 +1,9 @@
 <template>
   <div class="main-container">
     <!-- Show settings gear for local settings if intercom is enabled and in edit mode -->
-    <f7-button v-if="context.editmode" icon-f7="gear_fill"  @click.stop="localSettingsPopup()" class="text-align-right" > Local settings</f7-button>
+    <f7-button v-if="context.editmode" icon-f7="gear_fill" @click.stop="localSettingsPopup()" class="text-align-right">
+      Local settings
+    </f7-button>
     <div v-if="config.enableVideo" class="video-container" :style="{ 'aspect-ratio': config.defaultVideoAspectRatio || '4/3' }">
       <video ref="remoteVideo" autoplay playsinline class="remote-video" poster="@/images/openhab-logo.svg" />
       <video v-if="config.enableLocalVideo" ref="localVideo" autoplay playsinline muted="muted" class="local-video" />
