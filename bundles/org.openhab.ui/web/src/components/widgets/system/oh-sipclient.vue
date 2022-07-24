@@ -6,7 +6,8 @@
     </f7-button>
     <div v-if="config.enableVideo" class="video-container" :style="{ 'aspect-ratio': config.defaultVideoAspectRatio || '4/3' }">
       <video ref="remoteVideo" autoplay playsinline class="remote-video" poster="@/images/openhab-logo.svg" />
-      <video v-if="config.enableLocalVideo" ref="localVideo" autoplay playsinline muted="muted" class="local-video" />
+      <!-- Conditionally show local video when ready to prevent ugly video placeholder on Android -->
+      <video v-show="showLocalVideo" ref="localVideo" autoplay playsinline muted="muted" class="local-video" />
     </div>
     <!-- Show yellow dial button if connection is not established -->
     <f7-button v-if="!connected" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.iconSize + 'px'" />
@@ -64,7 +65,8 @@ export default {
       session: false,
       remoteParty: '',
       phonebook: new Map(),
-      loggerPrefix: 'oh-sipclient'
+      loggerPrefix: 'oh-sipclient',
+      showLocalVideo: false
     }
   },
   mixins: [mixin, foregroundService, actionsMixin],
@@ -177,6 +179,7 @@ export default {
         if (this.config.enableVideo) {
           this.$refs.remoteVideo.srcObject = streamEvent.stream
           if (this.config.enableLocalVideo) {
+            this.showLocalVideo = true
             this.$refs.localVideo.srcObject = this.session.connection.getLocalStreams()[0]
           }
         } else {
@@ -189,7 +192,10 @@ export default {
       // Stop playing ringback or ring tone
       if (this.config.enableTones === true) this.audio.pause()
       if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
-      if (this.config.enableLocalVideo) this.$refs.localVideo.srcObject = null
+      if (this.config.enableLocalVideo) {
+        this.$refs.localVideo.srcObject = null
+        this.showLocalVideo = false
+      }
     },
     call (target) {
       this.phone.call(target, { mediaConstraints: { audio: true, video: this.config.enableVideo } })
