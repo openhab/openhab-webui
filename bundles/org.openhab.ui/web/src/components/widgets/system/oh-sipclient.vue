@@ -9,7 +9,7 @@
     <!-- Show yellow dial button if connection is not established -->
     <f7-button v-if="!connected" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.iconSize + 'px'" />
     <!-- Show dial menu when there`s no call -->
-    <f7-button v-else-if="(!session || session.isEnded())" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.iconSize + 'px'" @click.stop="dial()" />
+    <f7-button v-else-if="(!session || session.isEnded())" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.iconSize + 'px'" @click.stop="dial()" />
     <!-- Show answer button on incoming call -->
     <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()">
       <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.iconSize + 'px'" @click.stop="answer()">
