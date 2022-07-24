@@ -175,15 +175,18 @@ export default {
       })
     },
     attachMedia () {
-      this.session.connection.addEventListener('addstream', (streamEvent) => {
+      this.session.connection.addEventListener('track', (track) => {
         if (this.config.enableVideo) {
-          this.$refs.remoteVideo.srcObject = streamEvent.stream
+          this.$refs.remoteVideo.srcObject = track.streams[0]
           if (this.config.enableLocalVideo) {
             this.showLocalVideo = true
-            this.$refs.localVideo.srcObject = this.session.connection.getLocalStreams()[0]
+            navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+              .then((stream) => {
+                this.$refs.localVideo.srcObject = stream
+              })
           }
         } else {
-          this.remoteAudio.srcObject = streamEvent.stream
+          this.remoteAudio.srcObject = track.streams[0]
           this.remoteAudio.play()
         }
       })
