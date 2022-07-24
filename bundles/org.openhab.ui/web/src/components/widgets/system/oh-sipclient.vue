@@ -174,13 +174,14 @@ export default {
     },
     attachMedia () {
       this.session.connection.addEventListener('addstream', (streamEvent) => {
-        this.remoteAudio.srcObject = streamEvent.stream
-        this.remoteAudio.play()
         if (this.config.enableVideo) {
-          this.$refs.remoteVideo.srcObject = this.session.connection.getRemoteStreams()[0]
+          this.$refs.remoteVideo.srcObject = streamEvent.stream
           if (this.config.enableLocalVideo) {
             this.$refs.localVideo.srcObject = this.session.connection.getLocalStreams()[0]
           }
+        } else {
+          this.remoteAudio.srcObject = streamEvent.stream
+          this.remoteAudio.play()
         }
       })
     },
