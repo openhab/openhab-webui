@@ -1,7 +1,7 @@
 // definitions for the chart widgets
 // TODO: migrate to WidgetDefinition & use helpers
 
-import { actionGroup, actionParams } from '../actions'
+import { actionGroup, actionParams } from '../actions.js'
 
 const positionGroup = {
   name: 'position',
