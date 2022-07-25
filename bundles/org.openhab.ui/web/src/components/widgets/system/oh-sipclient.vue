@@ -10,23 +10,23 @@
       <video v-show="showLocalVideo" ref="localVideo" autoplay playsinline muted="muted" class="local-video" />
     </div>
     <!-- Show yellow dial button if connection is not established -->
-    <f7-button v-if="!connected" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.iconSize + 'px'" />
+    <f7-button v-if="!connected" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.iconSize" />
     <!-- Show dial menu when there`s no call -->
-    <f7-button v-else-if="(!session || session.isEnded())" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.iconSize + 'px'" @click.stop="dial()" />
+    <f7-button v-else-if="(!session || session.isEnded())" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.iconSize" @click.stop="dial()" />
     <!-- Show answer button on incoming call -->
     <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()">
-      <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.iconSize + 'px'" @click.stop="answer()">
+      <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.iconSize" @click.stop="answer()">
         {{ (!config.hideCallerId) ? this.remoteParty : '' }}
       </f7-button>
-      <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize + 'px'" @click.stop="session.terminate()" />
+      <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize" @click.stop="session.terminate()" />
     </f7-segmented>
     <f7-segmented v-else>
       <!-- Show hangup button for outgoing call -->
-      <f7-button v-if="session && session.isInProgress()" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="yellow" :icon-size="config.iconSize + 'px'" @click.stop="session.terminate()" />
+      <f7-button v-if="session && session.isInProgress()" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="yellow" :icon-size="config.iconSize" @click.stop="session.terminate()" />
       <!-- Show hangup button for ongoing call -->
-      <f7-button v-else-if="session && !session.isEnded()" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize + 'px'" @click.stop="session.terminate()" />
+      <f7-button v-else-if="session && !session.isEnded()" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize" @click.stop="session.terminate()" />
       <!-- Show send dtmf button if in a call and feature is enabled-->
-      <f7-button v-if="session && !session.isInProgress() && !session.isEnded() && config.dtmfString && config.dtmfString.length > 0" :style="{ height: config.iconSize + 'px' }" icon-f7="number_square" icon-color="orange" :icon-size="config.iconSize + 'px'" @click.stop="sendDTMF()" />
+      <f7-button v-if="session && !session.isInProgress() && !session.isEnded() && config.dtmfString && config.dtmfString.length > 0" :style="{ height: config.iconSize + 'px' }" icon-f7="number_square" icon-color="orange" :icon-size="config.iconSize" @click.stop="sendDTMF()" />
     </f7-segmented>
   </div>
 </template>
