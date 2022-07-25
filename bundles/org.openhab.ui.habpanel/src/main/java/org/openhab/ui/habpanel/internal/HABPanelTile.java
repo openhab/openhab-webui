@@ -18,9 +18,7 @@ import org.openhab.core.ui.tiles.Tile;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.http.HttpService;
-import org.osgi.service.http.NamespaceException;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,29 +29,21 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Component(service = Tile.class, immediate = true)
+@HttpWhiteboardResource(pattern = HABPanelTile.RESOURCE_PATH + "/*", prefix = "/web")
 @NonNullByDefault
 public class HABPanelTile implements Tile {
 
-    public static final String HABPANEL_ALIAS = "/habpanel";
+    public static final String RESOURCE_PATH = "/habpanel";
 
     private final Logger logger = LoggerFactory.getLogger(HABPanelTile.class);
 
-    private final HttpService httpService;
-
     @Activate
-    public HABPanelTile(final @Reference HttpService httpService) {
-        this.httpService = httpService;
-        try {
-            httpService.registerResources(HABPANEL_ALIAS, "web", null);
-            logger.info("Started HABPanel at {}", HABPANEL_ALIAS);
-        } catch (NamespaceException e) {
-            logger.error("Error during HABPanel startup: {}", e.getMessage());
-        }
+    public HABPanelTile() {
+        logger.info("Started HABPanel at {}", RESOURCE_PATH);
     }
 
     @Deactivate
     protected void deactivate() {
-        httpService.unregister(HABPANEL_ALIAS);
         logger.info("Stopped HABPanel");
     }
 
@@ -64,7 +54,7 @@ public class HABPanelTile implements Tile {
 
     @Override
     public String getUrl() {
-        return "/habpanel/index.html";
+        return RESOURCE_PATH + "/index.html";
     }
 
     @Override
@@ -74,6 +64,6 @@ public class HABPanelTile implements Tile {
 
     @Override
     public String getImageUrl() {
-        return "/habpanel/tile.png";
+        return RESOURCE_PATH + "/tile.png";
     }
 }

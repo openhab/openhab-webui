@@ -21,15 +21,14 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.config.core.ConfigurableService;
-import org.openhab.core.io.http.HttpContextFactoryService;
 import org.openhab.core.io.rest.sitemap.SitemapSubscriptionService;
-import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.model.sitemap.SitemapProvider;
 import org.openhab.core.model.sitemap.sitemap.LinkableWidget;
 import org.openhab.core.model.sitemap.sitemap.Sitemap;
@@ -46,9 +45,9 @@ import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.http.HttpContext;
-import org.osgi.service.http.HttpService;
-import org.osgi.service.http.NamespaceException;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletAsyncSupported;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletName;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +62,11 @@ import org.slf4j.LoggerFactory;
 @Component(immediate = true, service = Servlet.class, configurationPid = "org.openhab.basicui", //
         property = Constants.SERVICE_PID + "=org.openhab.basicui")
 @ConfigurableService(category = "ui", label = "Basic UI", description_uri = WebAppServlet.CONFIG_URI)
+@HttpWhiteboardServletAsyncSupported(asyncSupported = true)
+@HttpWhiteboardServletName(WebAppServlet.SERVLET_PATH)
+@HttpWhiteboardServletPattern(WebAppServlet.SERVLET_PATH + "/*")
 @NonNullByDefault
-public class WebAppServlet extends BaseServlet {
+public class WebAppServlet extends HttpServlet {
 
     private final Logger logger = LoggerFactory.getLogger(WebAppServlet.class);
 
@@ -73,7 +75,7 @@ public class WebAppServlet extends BaseServlet {
     protected static final String CONFIG_URI = "ui:basic";
 
     /** the name of the servlet to be used in the URL */
-    public static final String SERVLET_NAME = "app";
+    public static final String SERVLET_PATH = "/basicui/app";
 
     private static final String CONTENT_TYPE_ASYNC = "application/xml;charset=UTF-8";
     private static final String CONTENT_TYPE = "text/html;charset=UTF-8";
@@ -84,11 +86,8 @@ public class WebAppServlet extends BaseServlet {
     protected final Set<SitemapProvider> sitemapProviders = new CopyOnWriteArraySet<>();
 
     @Activate
-    public WebAppServlet(final @Reference HttpService httpService,
-            final @Reference HttpContextFactoryService httpContextFactoryService,
-            final @Reference ItemRegistry itemRegistry, final @Reference SitemapSubscriptionService subscriptions,
+    public WebAppServlet(final @Reference SitemapSubscriptionService subscriptions,
             final @Reference PageRenderer renderer) {
-        super(httpService, httpContextFactoryService, itemRegistry);
         this.subscriptions = subscriptions;
         this.renderer = renderer;
     }
@@ -104,15 +103,6 @@ public class WebAppServlet extends BaseServlet {
 
     @Activate
     protected void activate(Map<String, Object> configProps, BundleContext bundleContext) {
-        HttpContext httpContext = createHttpContext(bundleContext.getBundle());
-        super.activate(WEBAPP_ALIAS + "/" + SERVLET_NAME, httpContext);
-
-        try {
-            httpService.registerResources(WEBAPP_ALIAS, "web", httpContext);
-        } catch (NamespaceException e) {
-            logger.error("Could not register static resources under {}", WEBAPP_ALIAS, e);
-        }
-
         modified(configProps);
     }
 
@@ -124,8 +114,6 @@ public class WebAppServlet extends BaseServlet {
 
     @Deactivate
     protected void deactivate() {
-        super.deactivate(WEBAPP_ALIAS + "/" + SERVLET_NAME);
-        httpService.unregister(WEBAPP_ALIAS);
         logger.info("Stopped Basic UI");
     }
 

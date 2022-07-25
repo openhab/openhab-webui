@@ -111,7 +111,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
             labelPlain = labelPlain.replace("[", "").replace("]", "");
         }
         snippet = snippet.replace("%label%", escapeHtml(labelPlain));
-        snippet = snippet.replace("%servletname%", WebAppServlet.SERVLET_NAME);
+        snippet = snippet.replace("%servletname%", WebAppServlet.SERVLET_PATH);
         snippet = snippet.replace("%sitemap%", sitemap);
         snippet = snippet.replace("%htmlclass%", config.getCssClassList());
         snippet = snippet.replace("%icon_type%", ICON_TYPE);
