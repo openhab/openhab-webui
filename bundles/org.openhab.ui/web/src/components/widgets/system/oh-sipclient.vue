@@ -112,7 +112,11 @@ export default {
         this.config.enableSIPDebug ? JsSIP.debug.enable('JsSIP:*') : JsSIP.debug.disable()
         // SIP user agent setup
         this.remoteAudio = new window.Audio()
-        const socket = new JsSIP.WebSocketInterface(this.config.websocketUrl)
+        const url = new URL(this.config.websocketUrl, window.location.origin)
+        if (url.protocol.indexOf('http') === 0) {
+          url.protocol = url.protocol.replace('http', 'ws')
+        }
+        const socket = new JsSIP.WebSocketInterface(url.toString())
         const configuration = {
           sockets: [socket],
           uri: 'sip:' + this.config.username + '@' + this.config.domain,
