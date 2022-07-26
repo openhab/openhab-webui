@@ -2,7 +2,7 @@ import { pt, pn, pb } from '../helpers.js'
 
 export default () => [
   pn('iconSize', 'Icon Size', 'Size of the icon(s) in px'),
-  pt('websocketUrl', 'Websocket URL', 'URL of the WebRTC SIP websocket, e.g. \'wss://siphost:8089/ws\', for Android & iOS, you need wss (WebSocket secured)').r(),
+  pt('websocketUrl', 'Websocket URL', 'Full URL of the WebRTC SIP websocket, e.g. \'wss://siphost:8089/ws\' or relative path, e.g. \'/ws\', for Android & iOS, you need wss (WebSocket secured)').r(),
   pt('domain', 'Domain', 'SIP Domain').r(),
   pt('username', 'Username', 'SIP Username').r(),
   pt('password', 'Password', 'SIP Password').r(),

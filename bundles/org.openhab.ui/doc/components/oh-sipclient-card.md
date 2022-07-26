@@ -67,7 +67,7 @@ Client to start and answer SIP calls
 </PropBlock>
 <PropBlock type="TEXT" name="websocketUrl" label="Websocket URL" required="true">
   <PropDescription>
-    URL of the WebRTC SIP websocket, e.g. 'wss://siphost:8089/ws', for Android & iOS, you need wss (WebSocket secured)
+    Full URL of the WebRTC SIP websocket, e.g. 'wss://siphost:8089/ws' or relative path, e.g. '/ws', for Android & iOS, you need wss (WebSocket secured)
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="domain" label="Domain" required="true">
