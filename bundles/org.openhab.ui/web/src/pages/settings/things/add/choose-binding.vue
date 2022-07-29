@@ -41,7 +41,7 @@
             badge-color="red"
             :footer="(binding.description && binding.description.indexOf('<br>') >= 0) ?
               binding.description.split('<br>')[0] : binding.description">
-            <f7-link slot="after" v-if="binding.configDescriptionURI" :href="`/settings/addons/${binding.id}/config`" class="margin-left" icon-size="20" icon-f7="gear_alt" color="gray" tooltip="Configure Binding" />
+            <f7-link slot="after" v-if="binding.configDescriptionURI" :href="`/settings/bindings/${binding.id}/config`" class="margin-left" icon-size="20" icon-f7="gear_alt" color="gray" tooltip="Configure Binding" />
           </f7-list-item>
         </f7-list>
       </f7-col>
