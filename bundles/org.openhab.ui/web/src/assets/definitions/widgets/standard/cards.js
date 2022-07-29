@@ -164,3 +164,9 @@ export const OhClockCardDefinition = () => new WidgetDefinition('oh-clock-card',
       })
   ])
   .paramGroup(actionGroup(null, 'Action to perform when the clock is clicked'), actionParams())
+
+// OhSIPClientCard
+import SIPClientParameters from '../system/sipclient.js'
+export const OhSIPClientCardDefinition = () => new WidgetDefinition('oh-sipclient-card', 'SIP Client Card', 'Client to start and answer SIP calls')
+  .paramGroup(CardParameterGroup(), CardParameters())
+  .paramGroup(pg('sip', 'SIP Settings'), SIPClientParameters())
