@@ -6,7 +6,7 @@ export default {
     }
   },
   mounted () {
-    const isInModal = this.$el.closest('.framework7-modals')
+    const isInModal = this.$el.closest('.framework7-modals') || this.$el.closest('.modal-in')
     if (isInModal) {
       this.inForeground = true
       this.startForegroundActivity()
