@@ -86,11 +86,11 @@ export default {
     supportedAttributes: ['TargetTemperature', 'CurrentTemperature', ...fanAttributes]
   },
   AirFreshener: {
-    defaultAttributes: ['FanSpeed'],
+    defaultAttributes: ['PowerState', 'FanSpeed'],
     supportedAttributes: fanAttributes
   },
   AirPurifier: {
-    defaultAttributes: ['FanSpeed'],
+    defaultAttributes: ['PowerState', 'FanSpeed'],
     supportedAttributes: fanAttributes
   },
   Automobile: {
@@ -118,11 +118,11 @@ export default {
     groupParameters: blindParameters
   },
   BluetoothSpeaker: {
-    defaultAttributes: ['VolumeLevel'],
+    defaultAttributes: ['PowerState', 'VolumeLevel'],
     supportedAttributes: ['BatteryLevel', ...entertainmentAttributes]
   },
   Camera: {
-    defaultAttributes: ['CameraStream'],
+    defaultAttributes: ['PowerState', 'CameraStream'],
     supportedAttributes: cameraAttributes
   },
   ChristmasTree: {
@@ -156,7 +156,7 @@ export default {
     supportedAttributes: doorAttributes
   },
   Doorbell: {
-    defaultAttributes: ['CameraStream'],
+    defaultAttributes: ['PowerState', 'CameraStream'],
     supportedAttributes: cameraAttributes
   },
   Dryer: {
@@ -164,7 +164,7 @@ export default {
     supportedAttributes: genericDeviceAttributes
   },
   Fan: {
-    defaultAttributes: ['FanSpeed'],
+    defaultAttributes: ['PowerState', 'FanSpeed'],
     supportedAttributes: fanAttributes
   },
   GameConsole: {
@@ -177,7 +177,7 @@ export default {
     supportedAttributes: ['ObstacleAlert', ...doorAttributes]
   },
   Headphones: {
-    defaultAttributes: ['VolumeLevel'],
+    defaultAttributes: ['PowerState', 'VolumeLevel'],
     supportedAttributes: ['BatteryLevel', ...entertainmentAttributes]
   },
   Hub: {
@@ -211,7 +211,7 @@ export default {
     supportedAttributes: ['MotionDetectionState', ...sensorAttributes]
   },
   MusicSystem: {
-    defaultAttributes: ['Playback'],
+    defaultAttributes: ['PowerState', 'Playback'],
     supportedAttributes: entertainmentAttributes
   },
   NetworkHardware: {
@@ -243,7 +243,7 @@ export default {
     supportsGroup: false
   },
   Screen: {
-    defaultAttributes: ['PowerState'],
+    defaultAttributes: ['PowerState', 'Channel'],
     supportedAttributes: entertainmentAttributes
   },
   SecurityPanel: {
@@ -269,11 +269,11 @@ export default {
     supportedAttributes: genericDeviceAttributes
   },
   Speaker: {
-    defaultAttributes: ['VolumeLevel'],
+    defaultAttributes: ['PowerState', 'VolumeLevel'],
     supportedAttributes: entertainmentAttributes
   },
   StreamingDevice: {
-    defaultAttributes: ['Playback'],
+    defaultAttributes: ['PowerState', 'Playback'],
     supportedAttributes: entertainmentAttributes
   },
   Switch: {
@@ -286,7 +286,7 @@ export default {
     groupParameters: networkParameters
   },
   Television: {
-    defaultAttributes: ['Channel'],
+    defaultAttributes: ['PowerState', 'Channel'],
     supportedAttributes: entertainmentAttributes
   },
   TemperatureSensor: {
@@ -299,7 +299,7 @@ export default {
     groupParameters: (item) => [p.scale(item, true)]
   },
   VacuumCleaner: {
-    defaultAttributes: ['VacuumMode'],
+    defaultAttributes: ['PowerState', 'VacuumMode'],
     supportedAttributes: ['VacuumMode', 'FanSpeed', 'BatteryLevel', ...genericDeviceAttributes]
   },
   Washer: {

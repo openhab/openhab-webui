@@ -317,7 +317,8 @@ export default {
 
   // Switchable Attributes
   PowerState: {
-    itemTypes: ['Color', 'Dimmer', 'Number', 'String', 'Switch'],
+    itemTypes: ['Color', 'Dimmer', 'Switch'],
+    customTypes: ['Number', 'String'],
     parameters: (item) => [
       ...(item.type === 'Number' || item.type === 'String'
         ? [p.valueMapping('OFF', true), p.valueMapping('ON', true)]
