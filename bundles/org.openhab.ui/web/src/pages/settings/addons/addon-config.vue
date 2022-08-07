@@ -9,8 +9,10 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-block form v-if="configDescription && config" class="service-config block-narrow">
-      <f7-block-title>Add-on configuration</f7-block-title>
       <f7-col>
+        <f7-block-title medium>
+          Add-on configuration
+        </f7-block-title>
         <config-sheet
           :parameter-groups="configDescription.parameterGroups"
           :parameters="configDescription.parameters"
@@ -18,8 +20,10 @@
       </f7-col>
     </f7-block>
     <f7-block form v-if="loggerPackages.length > 0" class="service-config block-narrow">
-      <f7-block-title>Add-on log settings</f7-block-title>
       <f7-col>
+        <f7-block-title medium>
+          Add-on log settings
+        </f7-block-title>
         <f7-list class="col wide">
           <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName"
                         :title="loggerPackage.loggerName">
