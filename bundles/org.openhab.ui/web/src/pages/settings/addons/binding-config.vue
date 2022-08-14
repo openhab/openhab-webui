@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     save () {
-      this.$oh.api.put('/rest/bindings/' + this.bindingId + '/config', this.config).then(() => {
+      this.$oh.api.put('/rest/addons/' + this.bindingId + '/config', this.config).then(() => {
         this.$f7.toast.create({
           text: 'Saved',
           destroyOnClose: true,
@@ -47,14 +47,14 @@ export default {
     }
   },
   created () {
-    this.$oh.api.get('/rest/bindings').then(data => {
+    this.$oh.api.get('/rest/addons').then(data => {
       this.binding = data.find((b) => b.id === this.bindingId)
 
       if (this.binding.configDescriptionURI) {
         this.$oh.api.get('/rest/config-descriptions/' + this.binding.configDescriptionURI).then(data2 => {
           this.configDescriptions = data2
 
-          this.$oh.api.get('/rest/bindings/' + this.bindingId + '/config').then(data3 => {
+          this.$oh.api.get('/rest/addons/' + this.bindingId + '/config').then(data3 => {
             this.config = data3
           })
         })

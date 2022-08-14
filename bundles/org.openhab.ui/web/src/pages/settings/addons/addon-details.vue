@@ -205,7 +205,6 @@ export default {
   },
   computed: {
     showConfig () {
-      console.error('configUri' + this.addon.configDescriptionURI)
       return this.addon && this.addon.installed && (this.addon.configDescriptionURI || this.addon.loggerPackages.length > 0)
     },
     realAddonId () {
@@ -283,14 +282,14 @@ export default {
         })
 
         if (this.addon.type === 'binding' && this.addonId.indexOf('binding-') === 0 && this.addon.installed) {
-          this.$oh.api.get('/rest/bindings').then(data2 => {
+          this.$oh.api.get('/rest/addons').then(data2 => {
             this.bindingInfo = data2.find(b => b.id === this.addonId.replace('binding-', '')) || {}
           })
         }
       })
     },
     processDescription () {
-      if (!this.addon.description && this.addon.author === 'openHAB') {
+      if (this.addon.author === 'openHAB') {
         // assuming the add-on is an official one (distribution), try to fetch the documentation from GitHub
         let docsBranch = 'final'
         if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'

@@ -35,13 +35,12 @@
             media-item
             :key="binding.id"
             :link="binding.id"
-            :title="binding.name"
+            :title="binding.label"
             :header="binding.id"
             :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id && e.flag !== 'IGNORED').length || undefined"
             badge-color="red"
             :footer="(binding.description && binding.description.indexOf('<br>') >= 0) ?
               binding.description.split('<br>')[0] : binding.description">
-            <f7-link slot="after" v-if="binding.configDescriptionURI" :href="`/settings/bindings/${binding.id}/config`" class="margin-left" icon-size="20" icon-f7="gear_alt" color="gray" tooltip="Configure Binding" />
           </f7-list-item>
         </f7-list>
       </f7-col>
@@ -78,8 +77,9 @@ export default {
   methods: {
     onPageAfterIn () {
       this.loading = true
-      this.$oh.api.get('/rest/bindings').then((data) => {
-        this.bindings = data.sort((a, b) => a.name.localeCompare(b.name))
+      this.$oh.api.get('/rest/addons').then((data) => {
+        let installedBindings = data.filter(addon => addon.type === 'binding' && addon.installed === true)
+        this.bindings = installedBindings.sort((a, b) => a.label.localeCompare(b.label))
         this.loading = false
         this.initSearchbar = true
         this.ready = true

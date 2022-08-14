@@ -122,7 +122,7 @@ export default {
           this.addon = data
 
           if (this.addon.type === 'binding' && this.addon.installed) {
-            this.$oh.api.get('/rest/bindings').then(data2 => {
+            this.$oh.api.get('/rest/addons').then(data2 => {
               this.bindingInfo = data2.find(b => b.id === this.addonId.replace('binding-', '')) || {}
               self.$f7.preloader.hide()
               setTimeout(() => {
