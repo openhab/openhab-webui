@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.io.http.HttpContextFactoryService;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.ui.basic.internal.render.PageRenderer;
@@ -49,11 +50,11 @@ public class ManifestServlet extends BaseServlet {
 
     private static final long serialVersionUID = 4591967180619528326L;
 
-    private final Logger logger = LoggerFactory.getLogger(ManifestServlet.class);
-
     public static final String MANIFEST_NAME = "manifest.json";
 
     private static final String MANIFEST_CONTENT_TYPE = "application/json;charset=UTF-8";
+
+    private final Logger logger = LoggerFactory.getLogger(ManifestServlet.class);
 
     private final PageRenderer renderer;
 
@@ -76,7 +77,8 @@ public class ManifestServlet extends BaseServlet {
         super.deactivate(WEBAPP_ALIAS + "/" + MANIFEST_NAME);
     }
 
-    private void generateManifest(ServletResponse res, String sitemapName) throws IOException, RenderException {
+    private void generateManifest(ServletResponse res, @Nullable String sitemapName)
+            throws IOException, RenderException {
         PrintWriter resWriter;
         resWriter = res.getWriter();
         resWriter.append(renderer.renderManifest(sitemapName));
@@ -94,7 +96,7 @@ public class ManifestServlet extends BaseServlet {
         String requestUri = req.getRequestURI();
 
         try {
-            if (requestUri.endsWith(MANIFEST_NAME)) {
+            if (requestUri != null && requestUri.endsWith(MANIFEST_NAME)) {
                 generateManifest(res, sitemapName);
                 return;
             }

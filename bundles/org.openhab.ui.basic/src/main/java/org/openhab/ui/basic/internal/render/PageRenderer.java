@@ -21,6 +21,7 @@ import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.model.sitemap.SitemapProvider;
@@ -262,7 +263,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
         return pageSnippet;
     }
 
-    public CharSequence renderManifest(String sitemapName) throws RenderException {
+    public CharSequence renderManifest(@Nullable String sitemapName) throws RenderException {
         String manifestSnippet = getSnippet("manifest", ".json");
         manifestSnippet = manifestSnippet.replace("%sitemapquery%",
                 sitemapName == null ? "" : String.format("?sitemap=%s", sitemapName));
