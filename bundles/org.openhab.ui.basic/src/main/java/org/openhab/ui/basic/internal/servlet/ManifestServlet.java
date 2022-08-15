@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * This is the manifest servlet for the Basic UI. It dynamically genrates a
  * manifest on the sitemap model.
  *
- * @author Kevin Haunschmied - Dynamic Manifest generation
+ * @author Kevin Haunschmied - Initial contribution
  *
  */
 @Component(immediate = true, service = {})
