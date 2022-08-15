@@ -121,8 +121,10 @@
 			type = typeof p.type !== "undefined" ? p.type : "GET",
 			data = typeof p.data !== "undefined" ? p.data : "",
 			headers = typeof p.headers !== "undefined" ? p.headers : {},
+			reponseType = typeof p.reponseType !== "undefined" ? p.reponseType : "",
 			request = new XMLHttpRequest();
 
+		request.responseType = reponseType;
 		request.open(type, p.url, true);
 
 		for (var h in headers) {
@@ -2313,12 +2315,57 @@
 		});
 	}
 
+	function PlayAudioUrlListener() {
+		var
+			_t = this;
+
+		_t.source = new EventSource("/rest/events?topics=openhab/webaudio/playurl");
+		_t.source.addEventListener("message", function(event) {
+			var context;
+			try {
+				window.AudioContext = window.AudioContext || window.webkitAudioContext;
+				if (typeof (window.AudioContext) !== "undefined") {
+					context = new AudioContext();
+				}
+
+				var data = JSON.parse(event.data);
+				var audioUrl = JSON.parse(data.payload);
+
+				ajax({
+					url: audioUrl,
+					type: "GET",
+					reponseType: "arraybuffer",
+					callback: function(request) {
+						context.decodeAudioData(request.response, function(buffer) {
+							var source = context.createBufferSource();
+							source.buffer = buffer;
+							source.connect(context.destination);
+							source.onended = function () {
+								context.close();
+							};
+							source.start(0);
+						});
+					}
+				});
+			}
+			catch (e) {
+				if (context) {
+					context.close();
+				}
+			}
+		});
+	}
+
 	document.addEventListener("DOMContentLoaded", function() {
 		smarthome.UI = new UI(document);
 		smarthome.UI.layoutChangeProxy = new VisibilityChangeProxy(100, 50);
 		smarthome.eventMapper = new EventMapper();
 		smarthome.UI.initControls();
 		smarthome.changeListener = new ChangeListener();
+
+		if (JSON.parse(document.getElementById("config").text).webAudio) {
+			smarthome.playAudioUrlListener = new PlayAudioUrlListener();
+		}
 
 		window.addEventListener("beforeunload", function() {
 			smarthome.changeListener.suppressErrors();
