@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon:addon id="basicui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<addon:addon id="ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:addon="https://openhab.org/schemas/addon/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/addon/v1.0.0 https://openhab.org/schemas/addon-1.0.0.xsd">
 
 	<type>ui</type>
-	<name>Basic UI</name>
-	<description>This is the openHAB Basic UI.</description>
-
-	<config-description-ref uri="ui:basic" />
-	<config-id>org.openhab.basicui</config-id>
+	<name>Main UI</name>
+	<description>This is the openHAB Main UI.</description>
 
 </addon:addon>

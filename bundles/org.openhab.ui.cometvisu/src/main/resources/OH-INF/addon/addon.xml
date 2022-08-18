@@ -7,7 +7,8 @@
 	<name>CometVisu Backend</name>
 	<description>This is the backend for the CometVisu.</description>
 
+	<service-id>org.openhab.cometvisu</servi-id>
+
 	<config-description-ref uri="ui:cometvisu" />
-	<config-id>org.openhab.cometvisu</config-id>
 
 </addon:addon>

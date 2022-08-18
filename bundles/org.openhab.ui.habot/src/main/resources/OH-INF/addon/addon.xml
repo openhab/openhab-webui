@@ -7,7 +7,8 @@
 	<name>HABot</name>
 	<description>This is the add-on for HABot.</description>
 
+	<service-id>org.openhab.habot</service-id>
+
 	<config-description-ref uri="ui:habot" />
-	<config-id>org.openhab.habot</config-id>
 
 </addon:addon>
