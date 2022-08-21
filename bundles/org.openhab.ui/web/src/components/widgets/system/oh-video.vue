@@ -6,7 +6,8 @@
       :stunServer="config.stunServer"
       :candidatesTimeout="config.candidatesTimeout"
       :startManually="config.startManually"
-      :hideControls="config.hideControls" />
+      :hideControls="config.hideControls"
+      :posterURL="config.posterURL" />
     <oh-video-videojs
       v-else
       :src="src"

@@ -3,6 +3,7 @@
     ref="videoPlayer"
     :autoplay="this.startManually ? false : true"
     :controls="this.hideControls ? false : true"
+    :poster="computedPosterUrl"
     playsinline
     style="max-width: 100%">
     Sorry, your browser doesn't support embedded videos.
@@ -20,7 +21,8 @@ export default {
     stunServer: { type: String },
     candidatesTimeout: { type: Number },
     startManually: { type: Boolean },
-    hideControls: { type: Boolean }
+    hideControls: { type: Boolean },
+    posterURL: { type: String }
   },
   data () {
     return {
@@ -30,6 +32,12 @@ export default {
   watch: {
     src (value) {
       this.startStream()
+    }
+  },
+  computed: {
+    computedPosterUrl () {
+      const ts = (new Date()).toISOString()
+      return this.posterURL ? this.posterURL.indexOf('?') === -1 ? `${this.posterURL}?_ts=${ts}` : `${this.posterURL}&_ts=${ts}` : this.posterURL
     }
   },
   methods: {
