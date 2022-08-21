@@ -336,6 +336,11 @@ export default {
         },
         touch: {
           tapHold: true
+        },
+        // Lazy loading settings
+        lazy: {
+          threshold: 50,
+          sequential: false
         }
 
         // smartSelect: {
