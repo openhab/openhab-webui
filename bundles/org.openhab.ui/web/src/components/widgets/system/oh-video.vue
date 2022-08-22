@@ -14,7 +14,8 @@
       :type="config.type"
       :config="config.videoOptions"
       :startManually="config.startManually"
-      :hideControls="config.hideControls" />
+      :hideControls="config.hideControls"
+      :posterURL="config.posterURL" />
   </div>
 </template>
 
