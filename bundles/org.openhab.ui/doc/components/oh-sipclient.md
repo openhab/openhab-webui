@@ -117,7 +117,9 @@ If the call is accepted, a red hangup button is accepted.
 <!-- If applicable describe how properties are forwarded to a underlying component from Framework7, ECharts, etc.: -->
 ### Inherited Properties
 
--->
+The `iconSize` property is forwarded to the `icon-size` property and the CSS `height` attribute of the [`f7-button`](https://framework7.io/vue/button).
+
+The `defaultVideoAspectRatio` property is forwarded to the CSS `aspect-ratio` attribute of the `video-container` class.
 
 <!-- If applicable describe the slots recognized by the component and what they represent:
 ### Slots
