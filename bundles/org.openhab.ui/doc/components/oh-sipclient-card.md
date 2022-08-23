@@ -13,9 +13,9 @@ prev: /docs/ui/components/
 ![](./images/oh-sipclient-card/header.jpg)
 -->
 
-<!— GENERATED componentDescription —>
+<!-- GENERATED componentDescription -->
 SIP Client to start and answer SIP calls
-<!— GENERATED /componentDescription —>
+<!-- GENERATED /componentDescription -->
 
 [[toc]]
 
