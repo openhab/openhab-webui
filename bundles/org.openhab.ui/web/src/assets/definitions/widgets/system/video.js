@@ -6,6 +6,7 @@ export default () => [
   pt('type', 'Type', 'Content Type of the video, for example <em>video/mp4</em> (optional)'),
   pb('hideControls', 'Hide Controls', 'Hide the control buttons of the video'),
   pb('startManually', 'Start Manually', 'Does not start playing the video automatically'),
+  pt('posterURL', 'Poster URL', 'URL of an image to use as a poster before the video loads').a(),
   pt('playerType', 'Player Type', 'Select the player type (optional), defualts to Video.js').o([
     { value: 'videojs', label: 'Video.js (Dash, HLS, Others)' },
     { value: 'webrtc', label: 'WebRTC' }

@@ -1,5 +1,8 @@
 <template>
-  <video ref="videoPlayer" class="video-js vjs-fluid">
+  <video
+    ref="videoPlayer"
+    class="video-js vjs-fluid"
+    :poster="computedPosterUrl">
     Sorry, your browser doesn't support embedded videos.
   </video>
 </template>
@@ -15,7 +18,8 @@ export default {
     type: { type: String },
     config: { type: Object },
     startManually: { type: Boolean },
-    hideControls: { type: Boolean }
+    hideControls: { type: Boolean },
+    posterURL: { type: String }
   },
   data () {
     return {
@@ -27,6 +31,12 @@ export default {
       if (this.player) {
         this.player.src({ type: this.type, src: this.src })
       }
+    }
+  },
+  computed: {
+    computedPosterUrl () {
+      const ts = (new Date()).toISOString()
+      return this.posterURL ? this.posterURL.indexOf('?') === -1 ? `${this.posterURL}?_ts=${ts}` : `${this.posterURL}&_ts=${ts}` : this.posterURL
     }
   },
   mounted () {
