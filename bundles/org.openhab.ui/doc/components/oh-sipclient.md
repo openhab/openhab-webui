@@ -28,12 +28,14 @@ The color of the call icon depends on the state of the connection to the SIP ser
 - green: successfully connected to the SIP server, ready to perform calls
 
 ![](./images/oh-sipclient/outgoing.gif)
+
 When the call button is green, a tap on it either directly starts a call or opens a popup to choose from the phonebook.
 As soon as you start an outgoing call, a hangup button will be displayed.
 The hangup button is coloured yellow, if the call has not been accepted yet.
 If the call has been accepted, the hangup button will become red.
 
 ![](./images/oh-sipclient/incoming.gif)
+
 When a call is coming in, a green accept and a red decline button are displayed.
 If the call is accepted, a red hangup button is accepted.
 
