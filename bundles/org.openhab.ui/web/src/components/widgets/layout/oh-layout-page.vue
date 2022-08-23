@@ -15,7 +15,7 @@
       </f7-block>
 
       <hr v-if="context.editmode">
-      <f7-block v-if="context.component.slots.masonry && context.component.slots.masonry.length">
+      <f7-block v-if="context.component.slots.masonry && context.component.slots.masonry.length" style="z-index: auto !important">
         <oh-masonry
           :context="childContext(context.component.slots.masonry[0])"
           v-on="$listeners" />
