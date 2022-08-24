@@ -141,15 +141,20 @@ export default {
 
           this.remoteParty = (this.phonebook.size > 0) ? this.phonebook.get(this.session.remote_identity.uri.user) : this.session.remote_identity.uri.user
 
-          if (this.session.direction === 'incoming') {
+          if (this.session.direction === 'outgoing') {
+            // Handle accepted call
+            this.session.on('accepted', () => {
+              this.stopTones()
+              console.info(this.loggerPrefix + ': Outgoing call in progress')
+            })
+          } else if (this.session.direction === 'incoming') {
             console.info(this.loggerPrefix + ': Incoming call from ' + this.remoteParty)
             this.playTone(ringFile)
+            // Handle accepted call
+            this.session.on('accepted', () => {
+              console.info(this.loggerPrefix + ': Incoming call in progress')
+            })
           }
-          // Handle accepted call
-          this.session.on('accepted', () => {
-            this.stopTones()
-            console.info(this.loggerPrefix + ': Call in progress')
-          })
           // Handle ended call
           this.session.on('ended', () => {
             this.stopMedia()
@@ -172,7 +177,7 @@ export default {
         // Play tone
         this.audio.loop = true
         this.audio.play().catch(error => {
-          console.debug(error)
+          console.debug(this.loggerPrefix + ': Play tone: ' + error)
         })
       }
     },
@@ -217,6 +222,7 @@ export default {
       this.playTone(ringBackFile)
     },
     answer () {
+      this.stopTones()
       this.session.answer({ mediaConstraints: { audio: true, video: this.config.enableVideo } })
       this.attachMedia()
     },
