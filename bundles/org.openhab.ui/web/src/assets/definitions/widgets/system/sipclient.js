@@ -6,7 +6,7 @@ export default () => [
   pt('domain', 'Domain', 'SIP Domain').r(),
   pt('username', 'Username', 'SIP Username').r(),
   pt('password', 'Password', 'SIP Password').r(),
-  pb('enableTones', 'Enable tones', 'Enable ringback and ring tone, might cause issues with your browser, so that your call fails'),
+  pb('enableTones', 'Enable tones', 'Enable ringback and ring tone. Not recommended for mobile browsers, might cause issues. Ring tone might only work after interaction with the webpage.').a(),
   pb('hideCallerId', 'Hide caller id', 'Hides the username of the remote party on incoming call'),
   pt('phonebook', 'Phonebook', 'Single SIP Address (phone number) for a single call target or a comma-separated list of \'phoneNumber=name\' for multiple call targets').r(),
   pb('enableVideo', 'Enable Video', 'Enable video calling'),
