@@ -55,6 +55,7 @@ import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue
 import { WidgetDefinition, pg, pt } from '@/assets/definitions/widgets/helpers.js'
 
 // Thanks to Joseph Sardin, https://bigsoundbank.com
+// ringFile source: https://bigsoundbank.com/detail-0375-phone-ring-5.html
 import ringFile from './oh-sipclient-ringtone.mp3'
 import ringBackFile from './oh-sipclient-ringback.mp3'
 
@@ -176,6 +177,7 @@ export default {
         this.audio = new Audio(file)
         // Play tone
         this.audio.loop = true
+        this.audio.load()
         this.audio.play().catch(error => {
           console.debug(this.loggerPrefix + ': Play tone: ' + error)
         })
