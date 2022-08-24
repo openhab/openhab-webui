@@ -205,14 +205,10 @@ export default {
       })
     },
     stopMedia () {
-      if (this.config.enableVideo) {
-        this.$refs.remoteVideo.srcObject = null
-        if (this.config.enableLocalVideo) {
-          this.$refs.localVideo.srcObject = null
-          this.showLocalVideo = false
-        }
-      } else {
-        this.remoteAudio.pause()
+      if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
+      if (this.config.enableLocalVideo) {
+        this.$refs.localVideo.srcObject = null
+        this.showLocalVideo = false
       }
     },
     call (target) {
