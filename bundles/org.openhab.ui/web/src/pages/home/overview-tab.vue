@@ -64,7 +64,7 @@ export default {
       const page = this.$store.getters.page('overview')
       if (!page) return null
       if (page.component !== 'oh-layout-page') return null
-      if (!page.slots || (!page.slots.default.length && !page.slots.masonry)) return null
+      if (!page.slots || (!page.slots.default.length && !page.slots.masonry && !page.slots.canvas && !page.slots.grid)) return null
       return page
     },
     overviewPageContext () {
