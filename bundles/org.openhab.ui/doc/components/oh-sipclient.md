@@ -75,7 +75,7 @@ If the call is accepted, a red hangup button is accepted.
 </PropBlock>
 <PropBlock type="BOOLEAN" name="enableTones" label="Enable tones">
   <PropDescription>
-    Enable ringback and ring tone, might cause issues with your browser, so that your call fails
+    Enable ringback and ring tone. Not recommended for mobile browsers, might cause issues. Ring tone might only work after interaction with the webpage.
   </PropDescription>
 </PropBlock>
 <PropBlock type="BOOLEAN" name="hideCallerId" label="Hide caller id">

@@ -55,6 +55,7 @@ import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue
 import { WidgetDefinition, pg, pt } from '@/assets/definitions/widgets/helpers.js'
 
 // Thanks to Joseph Sardin, https://bigsoundbank.com
+// ringFile source: https://bigsoundbank.com/detail-0375-phone-ring-5.html
 import ringFile from './oh-sipclient-ringtone.mp3'
 import ringBackFile from './oh-sipclient-ringback.mp3'
 
@@ -141,29 +142,20 @@ export default {
 
           this.remoteParty = (this.phonebook.size > 0) ? this.phonebook.get(this.session.remote_identity.uri.user) : this.session.remote_identity.uri.user
 
-          // Handle outgoing call,
           if (this.session.direction === 'outgoing') {
-            if (this.config.enableTones === true) {
-              // Set ringback tone
-              this.audio = new Audio(ringBackFile)
-            }
-            console.info(this.loggerPrefix + ': Calling ' + this.remoteParty + ' ...')
+            // Handle accepted call
+            this.session.on('accepted', () => {
+              this.stopTones()
+              console.info(this.loggerPrefix + ': Outgoing call in progress')
+            })
           } else if (this.session.direction === 'incoming') {
-            // Set ring tone
-            if (this.config.enableTones === true) this.audio = new Audio(ringFile)
             console.info(this.loggerPrefix + ': Incoming call from ' + this.remoteParty)
+            this.playTone(ringFile)
+            // Handle accepted call
+            this.session.on('accepted', () => {
+              console.info(this.loggerPrefix + ': Incoming call in progress')
+            })
           }
-          if (this.config.enableTones === true) {
-            // Play ringback or ring tone
-            this.audio.loop = true
-            this.audio.play()
-          }
-          // Handle accepted call
-          this.session.on('accepted', () => {
-            // Stop playing ringback or ring tone
-            if (this.config.enableTones === true) this.audio.pause()
-            console.info(this.loggerPrefix + ': Call in progress')
-          })
           // Handle ended call
           this.session.on('ended', () => {
             this.stopMedia()
@@ -171,12 +163,31 @@ export default {
           })
           // Handle failed call
           this.session.on('failed', (event) => {
+            this.stopTones()
             this.stopMedia()
             console.info(this.loggerPrefix + ': Call failed. Reason: ' + event.cause)
           })
         })
         this.phone.start()
       })
+    },
+    playTone (file) {
+      if (this.config.enableTones === true) {
+        console.info(this.loggerPrefix + ': Starting to play tone')
+        this.audio = new Audio(file)
+        // Play tone
+        this.audio.loop = true
+        this.audio.load()
+        this.audio.play().catch(error => {
+          console.debug(this.loggerPrefix + ': Play tone: ' + error)
+        })
+      }
+    },
+    stopTones () {
+      if (this.config.enableTones === true) {
+        console.info(this.loggerPrefix + ': Stop playing tone')
+        this.audio.pause()
+      }
     },
     attachMedia () {
       this.session.connection.addEventListener('track', (track) => {
@@ -196,8 +207,6 @@ export default {
       })
     },
     stopMedia () {
-      // Stop playing ringback or ring tone
-      if (this.config.enableTones === true) this.audio.pause()
       if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
       if (this.config.enableLocalVideo) {
         this.$refs.localVideo.srcObject = null
@@ -205,10 +214,13 @@ export default {
       }
     },
     call (target) {
+      console.info(this.loggerPrefix + ': Calling ' + this.remoteParty + ' ...')
       this.phone.call(target, { mediaConstraints: { audio: true, video: this.config.enableVideo } })
       this.attachMedia()
+      this.playTone(ringBackFile)
     },
     answer () {
+      this.stopTones()
       this.session.answer({ mediaConstraints: { audio: true, video: this.config.enableVideo } })
       this.attachMedia()
     },
