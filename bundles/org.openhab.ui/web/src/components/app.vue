@@ -385,6 +385,19 @@ export default {
       return (this.serverUrl || window.location.origin)
     }
   },
+  watch: {
+    '$store.state.states.sseConnected': {
+      handler: function (connected) {
+        console.debug('sseConnected', connected)
+        if (window.OHApp && typeof window.OHApp.sseConnected === 'function') {
+          try {
+            window.OHApp.sseConnected(connected)
+          } catch {}
+        }
+      },
+      immediate: true // provides initial (not changed yet) state
+    }
+  },
   methods: {
     loadData (useCredentials) {
       const useCredentialsPromise = (useCredentials) ? this.setBasicCredentials() : Promise.resolve()
