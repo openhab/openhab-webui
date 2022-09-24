@@ -134,13 +134,13 @@ export function addDateComparisonSupport () {
       '    case \'before\':',
       '      return zdt1.isBefore(zdt2);',
       '    case \'equal\':',
-      '      return zdt1.isEqual(zdt2);',
+      '      return zdt1.equals(zdt2);',
       '    case \'after\':',
       '      return zdt1.isAfter(zdt2);',
       '    case \'beforeEqual\':',
-      '      return zdt1.isBefore(zdt2) || zdt1.isEqual(zdt2);',
+      '      return zdt1.isBefore(zdt2) || zdt1.equals(zdt2);',
       '    case \'afterEqual\':',
-      '      return zdt1.isAfter(zdt2) || zdt1.isEqual(zdt2);',
+      '      return zdt1.isAfter(zdt2) || zdt1.equals(zdt2);',
       '  }',
       '}'
     ])
