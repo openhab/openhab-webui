@@ -52,7 +52,7 @@
 <style lang="stylus">
 
 .config-sheet
-  margin-left calc(-1*var(--f7-block-padding-horizontal))
+  // margin-left calc(-1*var(--f7-block-padding-horizontal))
   --f7-block-padding-horizontal 0
 .parameter-group
   --f7-block-padding-horizontal 0
