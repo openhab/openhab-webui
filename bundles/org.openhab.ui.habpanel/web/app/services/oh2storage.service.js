@@ -31,7 +31,7 @@
 
                 $http({
                     method: 'GET',
-                    url: '/rest/services/' + SERVICE_NAME + '/config',
+                    url: '../rest/services/' + SERVICE_NAME + '/config',
                     headers: headers
                 }).then(function (resp) {
                     console.log('openHAB 2 service configuration loaded');
@@ -77,7 +77,7 @@
             OH3StorageService.getAccessToken().then(function (accessToken) {
                 $http({
                     method: 'PUT',
-                    url: '/rest/services/' + SERVICE_NAME + '/config',
+                    url: '../rest/services/' + SERVICE_NAME + '/config',
                     data: OH2ServiceConfiguration,
                     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + accessToken }
                 }).then (function (resp) {

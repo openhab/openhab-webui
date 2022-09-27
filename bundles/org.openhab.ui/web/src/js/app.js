@@ -1,3 +1,4 @@
+import './public-path.js'
 import './compatibility'
 
 // Import Vue

@@ -24,7 +24,11 @@ export default {
   },
   created () {
     this.$oh.api.get('/rest/ui/tiles').then((data) => {
-      this.apps = data
+      this.apps = data.map((tile) => {
+        tile.url = baseUrl + tile.url
+        tile.imageUrl = baseUrl + tile.imageUrl
+        return tile
+      })
     })
   }
 }

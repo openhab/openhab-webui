@@ -91,8 +91,8 @@ export default {
     updateIcon () {
       if (!this.currentIcon) return
       this.$oh.media.getIcon(this.currentIcon, this.iconFormat, this.currentState).then((url) => {
-        if (url !== this.iconUrl) {
-          this.iconUrl = url
+        if (baseUrl + url !== this.iconUrl) {
+          this.iconUrl = baseUrl + url
         }
       })
     }

@@ -35,10 +35,10 @@ export function authorize (setup) {
     sessionStorage.setItem('openhab.ui:codeVerifier', pkceChallenge.code_verifier)
     sessionStorage.setItem('openhab.ui:authState', authState)
 
-    window.location = '/auth' +
+    window.location = baseUrl + '/auth' +
       '?response_type=code' +
-      '&client_id=' + encodeURIComponent(window.location.origin) +
-      '&redirect_uri=' + encodeURIComponent(window.location.origin) +
+      '&client_id=' + encodeURIComponent(window.location.origin + baseUrl) +
+      '&redirect_uri=' + encodeURIComponent(window.location.origin + baseUrl + '/') +
       '&scope=admin' +
       '&code_challenge_method=S256' +
       '&code_challenge=' + encodeURIComponent(pkceChallenge.code_challenge) +

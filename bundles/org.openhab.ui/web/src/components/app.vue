@@ -308,6 +308,7 @@ export default {
           iosSwipeBack: !this.$device.ios || this.$device.cordova,
           auroraSwipeBack: !this.$device.ios || this.$device.cordova,
           pushState: true, // !this.$device.cordova
+          pushStateRoot: baseUrl,
           pushStateSeparator: ''
         },
         // Enable panel left visibility breakpoint
@@ -516,7 +517,7 @@ export default {
       this.cleanSession().then(() => {
         this.loggedIn = false
         this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
-        window.location = window.location.origin
+        window.location = window.location.origin + baseUrl + '/'
         if (this.$device.cordova) {
           this.loginScreenOpened = true
         }

@@ -117,7 +117,7 @@
 
                 vm.rawdata = [];
                 for (var i = 0; i < vm.widget.series.length; i++) {
-                    vm.rawdata[i] = $http.get('/rest/persistence/items/' + vm.widget.series[i].item + "?starttime=" + startDate.toISOString() + (vm.widget.service ? '&serviceId=' + vm.widget.service : ''));
+                    vm.rawdata[i] = $http.get('../rest/persistence/items/' + vm.widget.series[i].item + "?starttime=" + startDate.toISOString() + (vm.widget.service ? '&serviceId=' + vm.widget.service : ''));
                 }
 
                 $q.all(vm.rawdata).then(function (values) {

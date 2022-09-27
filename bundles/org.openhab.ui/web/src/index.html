@@ -21,18 +21,29 @@
   <% if (process.env.TARGET === 'web') { %>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="/res/icons/apple-touch-icon.png" type="image/png" sizes="180x180" crossorigin="use-credentials">
-  <link rel="icon" href="/res/icons/favicon.svg" type="image/svg+xml" sizes="any" crossorigin="use-credentials">
-  <link rel="icon" href="/res/icons/128x128.png" type="image/png" sizes="128x128" crossorigin="use-credentials">
-  <link rel="manifest" href="/manifest.json" crossorigin="use-credentials">
+  <link rel="apple-touch-icon" href="images/icons/apple-touch-icon.png" type="image/png" sizes="180x180" crossorigin="use-credentials">
+  <link rel="icon" href="images/icons/favicon.svg" type="image/svg+xml" sizes="any" crossorigin="use-credentials">
+  <link rel="icon" href="images/icons/128x128.png" type="image/png" sizes="128x128" crossorigin="use-credentials">
+  <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
   <% } %>
   <!-- built styles file will be auto injected -->
+  <script>
+    const baseUrl = document.cookie.match('(^|;)\\s*X-OPENHAB-BASEURL\\s*=\\s*([^;]+)')?.pop().replace(/\/$/, '') || '';
+
+    var base = document.createElement('base');
+    base.href = baseUrl + '/';
+    document.head.appendChild(base);
+  </script>
 </head>
 <body>
   <div id="app"></div>
   <% if (process.env.TARGET === 'cordova') { %>
   <script src="cordova.js"></script>
   <% } %>
-  <!-- built script files will be auto injected -->
+  <script>
+    let app = document.createElement('script');
+    app.setAttribute('src', baseUrl + "/js/app.js");
+    document.body.appendChild(app);
+  </script>
 </body>
 </html>

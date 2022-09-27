@@ -33,6 +33,11 @@
 			.pipe(gulp.dest("./src/main/resources/web"));
 	});
 
+	gulp.task("tile", function() {
+		return gulp.src("web-src/tile.png")
+			.pipe(gulp.dest("./src/main/resources/web"));
+	});
+
 	gulp.task("eslint", function() {
 		return gulp.src(sources.js)
 			.pipe(eslint({
@@ -48,5 +53,5 @@
 			.pipe(gulp.dest("./src/main/resources/web"));
 	});
 
-	gulp.task("default", gulp.parallel("css", "copyFontLibs", gulp.series("eslint", "js")));
+	gulp.task("default", gulp.parallel("css", "tile", "copyFontLibs", gulp.series("eslint", "js")));
 })();
