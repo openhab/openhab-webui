@@ -9,6 +9,8 @@
         <f7-link v-if="isAdmin" icon-md="material:edit" :href="'/settings/pages/' + pageType + '/' + uid">
           {{ $theme.md ? '' : $t('page.navbar.edit') }}
         </f7-link>
+        <f7-link v-if="showExitToApp" icon-ios="f7:square_arrow_right" icon-aurora="f7:square_arrow_right" icon-md="material:exit_to_app" :tooltip="$t('home.exitToApp')" @click="exitToApp" />
+        <f7-link v-else icon-ios="f7:sidebar_right" icon-aurora="f7:sidebar_right" icon-md="material:exit_to_app" :tooltip="$t('home.otherApps')" panel-open="right" />
       </f7-nav-right>
     </f7-navbar>
 
