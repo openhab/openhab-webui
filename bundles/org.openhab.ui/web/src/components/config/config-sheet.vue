@@ -53,11 +53,11 @@
 
 .config-sheet
   margin-left calc(-1*var(--f7-block-padding-horizontal))
-  padding-left 0
-  padding-right 0
+  padding-left 0 !important
+  padding-right 0 !important
 .parameter-group
-  padding-right 0
-  padding-left 0
+  padding-right 0 !important
+  padding-left 0 !important
   .smart-select > .item-content > .item-inner:after
     display none !important
 
