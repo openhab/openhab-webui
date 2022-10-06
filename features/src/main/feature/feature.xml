@@ -70,6 +70,17 @@
 		<bundle dependency="true">mvn:org.bitbucket.b_c/jose4j/0.7.9</bundle>
 	</feature>
 
+
+	<feature name="openhab-ui-habassistant" description="HABAssistant" version="${project.version}">
+		<feature>openhab-core-ui</feature>
+		<bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.habassistant/${project.version}</bundle>
+		<bundle>mvn:org.openhab.core.bundles/org.openhab.core.semantics/${project.version}</bundle>
+		<bundle>mvn:org.openhab.core.bundles/org.openhab.core.io.rest/${project.version}</bundle>
+		<bundle dependency="true">mvn:org.bouncycastle/bcprov-jdk15on/1.69</bundle>
+		<bundle dependency="true">mvn:org.apache.opennlp/opennlp-tools/1.9.3</bundle>
+		<bundle dependency="true">mvn:org.bitbucket.b_c/jose4j/0.7.9</bundle>
+	</feature>
+
 	<feature name="openhab-ui-habpanel" description="HABPanel" version="${project.version}">
 		<feature>openhab-core-ui</feature>
 		<bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.habpanel/${project.version}</bundle>

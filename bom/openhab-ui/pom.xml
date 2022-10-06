@@ -48,6 +48,12 @@
     </dependency>
     <dependency>
       <groupId>org.openhab.ui.bundles</groupId>
+      <artifactId>org.openhab.ui.habassistant</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openhab.ui.bundles</groupId>
       <artifactId>org.openhab.ui.habpanel</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>

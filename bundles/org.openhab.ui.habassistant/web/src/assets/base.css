@@ -1,0 +1,40 @@
+:root {
+  --vt-c-white: #fff;
+  --vt-c-black: #181818;
+  --vt-c-openhab-red: #e64a19;
+  --vt-c-openhab-grey: #474747;
+}
+
+/* semantic color variables for this project */
+:root {
+  --color-assistant: var(--vt-c-openhab-red);
+  --color-microphone: var(--vt-c-openhab-grey);
+  --color-internal-background: var(--vt-c-openhab-grey);
+  --color-background: var(--vt-c-black);
+  --color-text: var(--vt-c-openhab-grey);
+  --color-alert-text: var(--vt-c-white);
+  --color-form-label: var(--vt-c-white);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
+  font-weight: normal;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-background);
+  transition: color 0.5s, background-color 0.5s;
+  line-height: 1.6;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
