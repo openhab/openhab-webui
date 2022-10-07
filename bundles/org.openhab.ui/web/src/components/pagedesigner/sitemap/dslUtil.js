@@ -20,7 +20,7 @@ function writeWidget (widget, indent) {
             // Anything after the first comparator that is a string should be in quotes.
             // Also quote string if no comparator (i.e. fixed labelcolor or valuecolor).
             let value = v.substring(0, v.search(/[=<>]/))
-            value += v.substring(v.search(/[=<>]/)).replace(/[A-Za-z][A-Za-z0-9 _-]*/, function (x) { return '"' + x + '"' })
+            value += v.substring(v.search(/[=<>]/)).replace(/"/g, '').replace(/[A-Za-z][A-Za-z0-9 _-]*/, function (x) { return '"' + x + '"' })
             return value
           })
           dsl += arrayDsl.join(',')
