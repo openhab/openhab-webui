@@ -75,6 +75,14 @@
             </f7-list-item>
             <f7-list-item
               media-item
+              link="scenes/"
+              title="Scenes"
+              badge-color="blue"
+              :footer="objectsSubtitles.scenes">
+              <f7-icon slot="media" f7="film" color="gray" />
+            </f7-list-item>
+            <f7-list-item
+              media-item
               link="scripts/"
               title="Scripts"
               badge-color="blue"
@@ -150,6 +158,7 @@ export default {
         items: 'Manage the functional layer',
         pages: 'Design displays for user control & monitoring',
         rules: 'Automate with triggers and actions',
+        scenes: 'Store a set of states as scene',
         scripts: 'Rules dedicated to running code',
         schedule: 'View upcoming time-based rules'
       },

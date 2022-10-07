@@ -58,6 +58,10 @@
                             :class="{ currentsection: currentUrl.indexOf('/settings/rules') >= 0 }">
                 <f7-icon slot="media" f7="wand_stars" color="gray" />
               </f7-list-item>
+              <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scenes/" title="Scenes" view=".view-main" panel-close :animate="false" no-chevron
+                            :class="{ currentsection: currentUrl.indexOf('/settings/scenes') >= 0 }">
+                <f7-icon slot="media" f7="film" color="gray" />
+              </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scripts/" title="Scripts" view=".view-main" panel-close :animate="false" no-chevron
                             :class="{ currentsection: currentUrl.indexOf('/settings/scripts') >= 0 }">
                 <f7-icon slot="media" f7="doc_plaintext" color="gray" />
