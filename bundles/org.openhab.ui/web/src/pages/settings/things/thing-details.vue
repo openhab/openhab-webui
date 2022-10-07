@@ -118,7 +118,7 @@
                 <div v-html="actionGroup.group.description" />
               </f7-block-footer>
               <f7-list>
-                <f7-list-button v-for="action in actionGroup.actions" :color="(action.verify) ? 'yellow' : 'blue'" :key="action.name" :title="action.label" @click="action.execute()" :tooltip="action.description" />
+                <f7-list-button v-for="action in actionGroup.actions" :color="(action.verify) ? 'yellow' : 'blue'" :key="action.name" :title="action.label" @click="action.execute()" />
               </f7-list>
             </f7-col>
           </f7-block>
@@ -385,6 +385,7 @@ export default {
             this.configDirty = false
             this.thingDirty = false
 
+            // gather actions (rendered as buttons at the bottom)
             let bindingActionsGrouped = this.getBindingActions(this.configDescriptions)
             let bindingActionsNames = bindingActionsGrouped.flatMap(g => g.actions).flatMap(a => a.name)
             this.configDescriptions.parameters = this.configDescriptions.parameters.filter(p => !bindingActionsNames.includes(p.name)) // params except actions
@@ -393,11 +394,13 @@ export default {
             let allActions = bindingActionsGrouped
             this.getUiActions().forEach(uiAction => {
               let existingGroup = allActions.find(g => g.group.name === uiAction.group.name)
-              if (existingGroup) { // existing (binding-side) group found, *prepending* UI actions
+              if (existingGroup) {
+                // existing (binding-side) group found, *prepending* UI actions
                 existingGroup.actions = uiAction.actions.concat(existingGroup.actions)
-                if (uiAction.group.label !== undefined) { existingGroup.group.label = uiAction.group.label }
-                if (uiAction.group.description !== undefined) { existingGroup.group.description = uiAction.group.description }
-              } else { // no action group from binding, adding the UI actions into their own group (appending at the very end)
+                if (uiAction.group.label !== undefined) existingGroup.group.label = uiAction.group.label
+                if (uiAction.group.description !== undefined) existingGroup.group.description = uiAction.group.description
+              } else {
+                // no action group from binding, adding the UI actions into their own group (appending at the very end)
                 allActions = allActions.concat([uiAction])
               }
             })
