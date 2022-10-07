@@ -107,7 +107,7 @@ WidgetColorAttrValue -> %lbracket _ Colors _ %rbracket                          
 Mappings -> Mapping                                                               {% (d) => [d[0]] %}
   | Mappings _ %comma _ Mapping                                                   {% (d) => d[0].concat([d[4]]) %}
 Mapping -> MappingCommand _ %equals _ MappingLabel                                {% (d) => d[0][0].value.toString() + '=' + d[4][0].value.toString() %}
-MappingCommand -> %identifier | %string
+MappingCommand -> %number | %identifier | %string
 MappingLabel -> %number | %identifier | %string
 
 Visibilities -> Visibility                                                        {% (d) => [d[0]] %}

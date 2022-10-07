@@ -1,9 +1,9 @@
 <template>
   <f7-card v-if="widget">
     <f7-card-content v-if="attributes.length">
-      <f7-list inline-labels sortable @sortable:sort="onSort">
-        <f7-list-input v-for="(attr, idx) in attributes" :key="idx"
-                       :label="`#${idx+1}`" type="text" placeholder="command=Label" :value="attr" @input="updateAttribute(idx, $event)" clear-button />
+      <f7-list inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
+        <f7-list-input v-for="(attr, idx) in attributes" :key="attr.key"
+                       type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute(idx, $event)" clear-button />
       </f7-list>
     </f7-card-content>
     <f7-card-footer key="item-card-buttons-edit-mode" v-if="widget.component !== 'Sitemap'">
@@ -16,11 +16,11 @@
 
 <script>
 export default {
-  props: ['widget', 'attribute'],
+  props: ['widget', 'attribute', 'placeholder'],
   computed: {
     attributes () {
       if (this.widget && this.widget.config && this.widget.config[this.attribute]) {
-        return this.widget.config[this.attribute]
+        return this.widget.config[this.attribute].map((attr, idx) => ({ key: idx + ': ' + attr, value: attr }))
       }
       return []
     }
@@ -36,9 +36,9 @@ export default {
     },
     addAttribute () {
       if (this.widget && this.widget.config && this.widget.config[this.attribute]) {
-        this.widget.config[this.attribute].push('')
+        this.widget.config[this.attribute].push(' ')
       } else {
-        this.$set(this.widget.config, this.attribute, [''])
+        this.$set(this.widget.config, this.attribute, [' '])
       }
     },
     onSort (ev) {
