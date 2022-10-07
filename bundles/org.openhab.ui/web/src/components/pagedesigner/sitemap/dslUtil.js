@@ -5,7 +5,7 @@ function writeWidget (widget, indent) {
     for (let key in widget.config) {
       if (!widget.config[key]) continue
       if (key === 'switchEnabled') {
-          dsl += ' switchSupport'
+        dsl += ' switchSupport'
       } else if (key === 'frequency') {
         dsl += ' sendFrequency=' + widget.config[key]
       } else if (key === 'forceAsItem') {
