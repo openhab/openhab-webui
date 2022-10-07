@@ -6,7 +6,8 @@ const state = {
   trackerConnectionId: null,
   trackerEventSource: null,
   pendingTrackingListUpdate: false,
-  keepConnectionOpen: false
+  keepConnectionOpen: false,
+  sseConnected: false
 }
 
 let stateTrackingProxy = null
@@ -73,11 +74,18 @@ const actions = {
         const trackingListJson = JSON.stringify(context.state.trackingList)
         console.debug('Setting initial tracking list: ' + trackingListJson)
         this._vm.$oh.api.postPlain('/rest/events/states/' + connectionId, JSON.stringify(context.state.trackingList), 'text/plain', 'application/json')
+        context.commit('sseConnected', true)
       },
       (updates) => {
         for (const item in updates) {
           context.commit('setItemState', { itemName: item, itemState: updates[item] })
         }
+      },
+      () => {
+        context.commit('sseConnected', false)
+      },
+      (healthy) => {
+        context.commit('sseConnected', healthy)
       })
     context.commit('setTrackingEventSource', eventSource)
   },
@@ -138,6 +146,9 @@ const mutations = {
   },
   keepConnectionOpen (state, value) {
     state.keepConnectionOpen = value
+  },
+  sseConnected (state, value) {
+    state.sseConnected = value
   },
   setItemState (state, { itemName, itemState }) {
     Vue.set(state.itemStates, itemName.toString(), itemState)
