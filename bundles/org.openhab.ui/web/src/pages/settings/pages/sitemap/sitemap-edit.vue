@@ -252,8 +252,7 @@ export default {
         { type: 'Image', icon: 'photo' },
         { type: 'Video', icon: 'videocam' }
       ],
-      linkableWidgetTypes: ['Sitemap', 'Text', 'Frame', 'Group', 'Image'],
-
+      linkableWidgetTypes: ['Sitemap', 'Text', 'Frame', 'Group', 'Image']
     }
   },
   created () {
