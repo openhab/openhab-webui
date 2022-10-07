@@ -2,7 +2,7 @@
   <f7-card v-if="widget">
     <f7-card-content v-if="attributes.length">
       <f7-list inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
-        <f7-list-input v-for="(attr, idx) in attributes" :key="attr.key"
+        <f7-list-input v-for="(attr, idx) in attributes" :key="attr.key" :ref="'attr'"
                        type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute(idx, $event)" clear-button />
       </f7-list>
     </f7-card-content>
@@ -36,9 +36,9 @@ export default {
     },
     addAttribute () {
       if (this.widget && this.widget.config && this.widget.config[this.attribute]) {
-        this.widget.config[this.attribute].push(' ')
+        this.widget.config[this.attribute].push('')
       } else {
-        this.$set(this.widget.config, this.attribute, [' '])
+        this.$set(this.widget.config, this.attribute, [''])
       }
     },
     onSort (ev) {
