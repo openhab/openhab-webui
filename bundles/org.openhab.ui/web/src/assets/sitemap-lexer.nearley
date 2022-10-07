@@ -2,32 +2,40 @@
   const moo = require('moo')
 
   let lexer = moo.compile({
-    WS:         /[ \t]+/,
-    comment:    /\/\/.*?$/,
-    number:     /\-?[0-9]+(?:\.[0-9]*)?/,
-    string:     { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) },
-    sitemap:    'sitemap ',
-    name:        'name=',
-    label:      'label=',
-    item:       'item=',
-    icon:       'icon=',
-    widgetattr: ['url=', 'refresh=', 'service=', 'refresh=', 'period=', 'legend=', 'height=', 'frequency=', 'sendFrequency=',
-                'switchEnabled=', 'mappings=', 'minValue=', 'maxValue=', 'step=', 'separator=', 'encoding='],
-    nlwidget:   ['Switch ', 'Selection ', 'Slider ', 'List ', 'Setpoint ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Default '],
-    lwidget:    ['Text', 'Group', 'Image', 'Frame'],
-    identifier: /[A-Za-z0-9_]+/,
-    lparen:     '(',
-    rparen:     ')',
-    colon:      ':',
-    lbrace:     '{',
-    rbrace:     '}',
-    lbracket:   '[',
-    rbracket:   ']',
-    lt:         '<',
-    gt:         '>',
-    equals:     '=',
-    comma:      ',',
-    NL:         { match: /\n/, lineBreaks: true },
+    WS:               /[ \t]+/,
+    comment:          /\/\/.*?$/,
+    number:           /\-?[0-9]+(?:\.[0-9]*)?/,
+    string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) },
+    sitemap:          'sitemap ',
+    name:             'name=',
+    label:            'label=',
+    item:             'item=',
+    icon:             'icon=',
+    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'legend=', 'height=', 'mappings=', 'minValue=', 'maxValue=', 'step=', 'separator=', 'encoding=', 'yAxisDecimalPattern='],
+    widgetfreqattr:   'sendFrequency=',
+    widgetfrcitmattr: 'forceasitem=',
+    widgetvisiattr:   'visibility=',
+    widgetcolorattr:  ['labelcolor=', 'valuecolor=', 'iconcolor='],
+    widgetswitchattr: 'switchSupport',
+    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'List ', 'Setpoint ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Default '],
+    lwidget:          ['Text ', 'Group ', 'Image ', 'Frame '],
+    identifier:       /[A-Za-z][A-Za-z0-9_]*/,
+    lparen:           '(',
+    rparen:           ')',
+    colon:            ':',
+    lbrace:           '{',
+    rbrace:           '}',
+    lbracket:         '[',
+    rbracket:         ']',
+    eq:               '==',
+    noteq:            '!=',
+    lteq:             '<=',
+    gteq:             '>=',
+    lt:               '<',
+    gt:               '>',
+    equals:           '=',
+    comma:            ',',
+    NL:               { match: /\n/, lineBreaks: true },
   })
 
   function getSitemap(d) {
@@ -64,7 +72,6 @@
 
 @lexer lexer
 
-
 Main -> _ Sitemap _                                                               {% (d) => d[1] %}
 Sitemap -> %sitemap _ SitemapName __ SitemapLabel __ %lbrace _ Widgets _ %rbrace  {% getSitemap %}
 
@@ -77,23 +84,49 @@ Widgets -> Widget                                                               
 
 Widget -> %nlwidget _ WidgetAttrs:*                                               {% getWidget %}
   | %lwidget _ WidgetAttrs:*                                                      {% getWidget %}
-  | %lwidget _ WidgetAttrs:* __ %lbrace __ Widgets __ %rbrace                     {% getWidget %}
+  | %lwidget _ WidgetAttrs:* _ %lbrace _ Widgets _ %rbrace                        {% getWidget %}
 
 WidgetAttrs -> WidgetAttr                                                         {% (d) => [d[0]] %}
   | WidgetAttrs _ WidgetAttr                                                      {% (d) => d[0].concat([d[2]]) %}
-WidgetAttr -> WidgetAttrName WidgetAttrValue                                      {% (d) => [d[0][0].value, d[1]] %}
+WidgetAttr -> %widgetswitchattr                                                   {% (d) => ['switchEnabled', true] %}
+  | %widgetfreqattr                                                               {% (d) => ['frequency', d[1]] %}
+  | %widgetfrcitmattr                                                             {% (d) => ['forceAsItem', d[1]] %}
+  | WidgetAttrName WidgetAttrValue                                                {% (d) => [d[0][0].value, d[1]] %}
+  | WidgetVisibilityAttrName WidgetVisibilityAttrValue                            {% (d) => [d[0][0].value, d[1]] %}
+  | WidgetColorAttrName WidgetColorAttrValue                                      {% (d) => [d[0][0].value, d[1]] %}
 WidgetAttrName -> %item | %label | %icon | %widgetattr
 WidgetAttrValue -> %string                                                        {% (d) => d[0].value %}
   | %identifier                                                                   {% (d) => d[0].value %}
   | %number                                                                       {% (d) => { return parseFloat(d[0].value) } %}
   | %lbracket _ Mappings _ %rbracket                                              {% (d) => d[2] %}
+WidgetVisibilityAttrName -> %widgetvisiattr
+WidgetVisibilityAttrValue -> %lbracket _ Visibilities _ %rbracket                 {% (d) => d[2] %}
+WidgetColorAttrName -> %widgetcolorattr
+WidgetColorAttrValue -> %lbracket _ Colors _ %rbracket                            {% (d) => d[2] %}
 
 Mappings -> Mapping                                                               {% (d) => [d[0]] %}
   | Mappings _ %comma _ Mapping                                                   {% (d) => d[0].concat([d[4]]) %}
-Mapping -> MappingCommand %equals MappingLabel                                    {% (d) => d[0][0].value.toString() + '=' + d[2][0].value.toString() %}
-MappingCommand -> %number | %identifier | %string
+Mapping -> MappingCommand _ %equals _ MappingLabel                                {% (d) => d[0][0].value.toString() + '=' + d[4][0].value.toString() %}
+MappingCommand -> %identifier | %string
 MappingLabel -> %number | %identifier | %string
 
+Visibilities -> Visibility                                                        {% (d) => [d[0]] %}
+  | Visibilities _ %comma _ Visibility                                            {% (d) => d[0].concat([d[4]]) %}
+Visibility -> VisibilityCommand _ VisibilityComparator _ VisibilityValue          {% (d) => d[0][0].value.toString() + d[2][0].value.toString() + d[4][0].value.toString() %}
+VisibilityCommand -> %identifier | %string
+VisibilityComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
+VisibilityValue -> %number | %identifier | %string
+
+Colors -> Color                                                                   {% (d) => [d[0]] %}
+  | Colors _ %comma _ Color                                                       {% (d) => d[0].concat([d[4]]) %}
+Color -> ColorCommand _ ColorComparator _ ColorValue _ %equals _ ColorName        {% (d) => d[0][0].value.toString() + d[2][0].value.toString() + d[4][0].value.toString() + '=' + d[8][0].value.toString() %}
+  | ColorComparator _ ColorValue _ %equals _ ColorName                            {% (d) => d[0][0].value.toString() + d[2][0].value.toString() + '=' + d[6][0].value.toString() %}
+  | ColorValue _ %equals _ ColorName                                              {% (d) => "==" + d[0][0].value.toString() + '=' + d[4][0].value.toString() %}
+  | ColorName                                                                     {% (d) => d[0][0].value.toString() %}
+ColorCommand -> %identifier | %string
+ColorComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
+ColorValue ->  %number | %identifier | %string
+ColorName ->  %identifier | %string
 
 _ -> null {% () => null %}
 	| _ %WS  {% () => null %}
