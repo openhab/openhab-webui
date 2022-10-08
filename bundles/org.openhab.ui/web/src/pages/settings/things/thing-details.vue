@@ -107,16 +107,23 @@
           </f7-col>
         </f7-block>
 
-        <f7-block class="block-narrow" v-if="ready && !error && thingType && thingType.UID.indexOf('zwave') === 0">
-          <f7-col>
-            <f7-block-title>Z-Wave</f7-block-title>
-            <f7-list>
-              <f7-list-button color="blue" title="View Network Map" @click="openZWaveNetworkPopup" />
-              <f7-list-button color="blue" v-for="action in zwaveActions" :key="action.name" :title="action.label" @click="doZWaveAction(action)" />
-            </f7-list>
-          </f7-col>
-          <z-wave-network-popup :opened="zwaveNetworkPopupOpened" @closed="zwaveNetworkPopupOpened = false" />
-        </f7-block>
+        <!-- Actions -->
+        <div v-if="ready && !error">
+          <f7-block class="block-narrow" v-for="actionGroup in configActionsByGroup" :key="actionGroup.group.name">
+            <f7-col>
+              <f7-block-title class="parameter-group-title">
+                {{ actionGroup.group.label }}
+              </f7-block-title>
+              <f7-block-footer class="param-description" v-if="actionGroup.group.description">
+                <div v-html="actionGroup.group.description" />
+              </f7-block-footer>
+              <f7-list>
+                <f7-list-button v-for="action in actionGroup.actions" :color="(action.verify) ? 'yellow' : 'blue'" :key="action.name" :title="action.label" @click="action.execute()" />
+              </f7-list>
+            </f7-col>
+          </f7-block>
+        </div>
+        <z-wave-network-popup :opened="zwaveNetworkPopupOpened" @closed="zwaveNetworkPopupOpened = false" v-if="ready && !error && thingType && (thingType.UID.indexOf('zwave') === 0) " />
 
         <f7-block class="block-narrow" v-if="ready && thing.editable">
           <f7-col>
@@ -192,6 +199,11 @@ textarea.textual-definition
 .ios .code-popup
   margin-bottom 44px !important
 
+p.action-description
+  margin-top: 0
+  font-size: 80%
+  color: var(--f7-block-footer-text-color)
+
 .code-popup
   width 100%
   position fixed
@@ -234,6 +246,8 @@ textarea.textual-definition
 
 <script>
 import YAML from 'yaml'
+import groupBy from 'lodash/groupBy'
+import map from 'lodash/map'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
@@ -276,7 +290,7 @@ export default {
       channelTypes: {},
       configDescriptions: {},
       configStatusInfo: [],
-      zwaveActions: {},
+      configActionsByGroup: [],
       thingEnabled: true,
       codePopupOpened: false,
       zwaveNetworkPopupOpened: false,
@@ -371,11 +385,26 @@ export default {
             this.configDirty = false
             this.thingDirty = false
 
-            // special treatment for Z-Wave actions
-            if (this.thingType.UID.indexOf('zwave') === 0) {
-              this.zwaveActions = this.configDescriptions.parameters.filter((p) => p.groupName === 'actions')
-              this.configDescriptions.parameters = this.configDescriptions.parameters.filter((p) => p.groupName !== 'actions')
-            }
+            // gather actions (rendered as buttons at the bottom)
+            let bindingActionsGrouped = this.getBindingActions(this.configDescriptions)
+            let bindingActionsNames = bindingActionsGrouped.flatMap(g => g.actions).flatMap(a => a.name)
+            this.configDescriptions.parameters = this.configDescriptions.parameters.filter(p => !bindingActionsNames.includes(p.name)) // params except actions
+
+            // merge UI-only actions (if any) and Binding actions (by groupName)
+            let allActions = bindingActionsGrouped
+            this.getUiActions().forEach(uiAction => {
+              let existingGroup = allActions.find(g => g.group.name === uiAction.group.name)
+              if (existingGroup) {
+                // existing (binding-side) group found, *prepending* UI actions
+                existingGroup.actions = uiAction.actions.concat(existingGroup.actions)
+                if (uiAction.group.label !== undefined) existingGroup.group.label = uiAction.group.label
+                if (uiAction.group.description !== undefined) existingGroup.group.description = uiAction.group.description
+              } else {
+                // no action group from binding, adding the UI actions into their own group (appending at the very end)
+                allActions = allActions.concat([uiAction])
+              }
+            })
+            this.configActionsByGroup = allActions
 
             if (!this.eventSource) this.startEventSource()
           }).catch(err => {
@@ -401,6 +430,44 @@ export default {
           this.error = true
           this.ready = true
         })
+      })
+    },
+    getUiActions () {
+      // Returns UI-only actions (served by the UI itself, and not coming from the binding)
+      let uiActions = []
+      if (this.thingType && this.thingType.UID && this.thingType.UID.indexOf('zwave') === 0) {
+        uiActions.push(
+          {
+            group: {
+              name: 'actions',
+              label: 'Z-Wave', // this label will override any name coming from binding actions (if matched by name)
+              description: ''
+            },
+            actions: [
+              {
+                label: 'View Network Map',
+                execute: () => this.openZWaveNetworkPopup()
+              }
+            ]
+          }
+        )
+      }
+      return uiActions
+    },
+    getBindingActions (configDescriptionsResponse) {
+      // Returns an array of parameters which qualify as "actions", grouped by the paramGroup. The actions themselves are enriched by execute() method
+      let actionContextGroups = configDescriptionsResponse.parameterGroups.filter((pg) => pg.context === 'actions')
+      if (actionContextGroups.length === 0) {
+        // No match by context, fall back to heuristic match by group name and label
+        actionContextGroups = configDescriptionsResponse.parameterGroups.filter((pg) => pg.name === 'actions' && pg.label === 'Actions')
+      }
+      let bindingActions = configDescriptionsResponse.parameters.filter((p) => actionContextGroups.map(acg => acg.name).includes(p.groupName) && p.type === 'BOOLEAN')
+
+      return map(groupBy(bindingActions, 'groupName'), (gActions, gName) => {
+        return {
+          group: configDescriptionsResponse.parameterGroups.find((pg) => pg.name === gName),
+          actions: map(gActions, (a) => { return { ...a, execute: () => this.doConfigAction(a) } })
+        }
       })
     },
     save (saveThing) {
@@ -443,12 +510,22 @@ export default {
         }).open()
       })
     },
-    doZWaveAction (action) {
+    doConfigAction (action) {
       let thing = this.thing
       let save = this.save
-      if (action.type !== 'BOOLEAN') return
+      if (action.type !== 'BOOLEAN') {
+        console.warn('Invalid action type', action)
+        return
+      }
+      let prompt = (action.label) ? `${action.label}?` : `Do you want to perform ${action.name} action?`
+      if (action.description) {
+        prompt += `<p class="action-description">${action.description}</p>`
+      }
+      if (action.verify) {
+        prompt += '<p><small><strong class="text-color-yellow"><i class="f7-icons">exclamationmark_triangle</i>WARNING:</strong>&nbsp;This action may be dangerous!</small></p>'
+      }
       this.$f7.dialog.confirm(
-        `${action.label}?`,
+        prompt,
         this.thing.label,
         () => {
           thing.configuration[action.name] = true
