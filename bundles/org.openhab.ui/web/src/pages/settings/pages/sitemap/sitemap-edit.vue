@@ -46,9 +46,25 @@
                   Nothing selected
                 </div>
               </f7-block>
+              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+                <div><f7-block-title>Visibility</f7-block-title></div>
+                <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value" />
+              </f7-block>
+              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+                <div><f7-block-title>Label Color</f7-block-title></div>
+                <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color" />
+              </f7-block>
+              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+                <div><f7-block-title>Value Color</f7-block-title></div>
+                <attribute-details :widget="selectedWidget" attribute="valuecolor" placeholder="item_name operator value = color" />
+              </f7-block>
+              <f7-block v-if="selectedWidget && selectedWidget.component === 'Image'">
+                <div><f7-block-title>Icon Color</f7-block-title></div>
+                <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
+              </f7-block>
               <f7-block v-if="selectedWidget && ['Switch', 'Selection'].indexOf(selectedWidget.component) >= 0">
                 <div><f7-block-title>Mappings</f7-block-title></div>
-                <mapping-details :widget="selectedWidget" />
+                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label" />
               </f7-block>
               <f7-block v-if="selectedWidget && canAddChildren">
                 <div><f7-block-title>Add Child Widget</f7-block-title></div>
@@ -101,8 +117,20 @@
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'widget'">
           <widget-details :widget="selectedWidget" :createMode="createMode" @remove="removeWidget" @movedown="moveWidgetDown" @moveup="moveWidgetUp" />
         </f7-block>
+        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'visibility' && selectedWidget.component !== 'Sitemap'">
+          <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value" />
+        </f7-block>
+        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'labelcolor' && selectedWidget.component !== 'Sitemap'">
+          <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color" />
+        </f7-block>
+        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'valuecolor' && selectedWidget.component !== 'Sitemap'">
+          <attribute-details :widget="selectedWidget" attribute="valuecolor" placeholder="item_name operator value = color" />
+        </f7-block>
+        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'iconcolor' && selectedWidget.component === 'Image'">
+          <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
+        </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'mappings' && ['Switch', 'Selection'].indexOf(selectedWidget.component) >= 0">
-          <mapping-details :widget="selectedWidget" />
+          <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label" />
         </f7-block>
       </f7-page>
     </f7-sheet>
@@ -176,7 +204,7 @@
 <script>
 import SitemapCode from '@/components/pagedesigner/sitemap/sitemap-code.vue'
 import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
-import MappingDetails from '@/components/pagedesigner/sitemap/mapping-details.vue'
+import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-details.vue'
 import DirtyMixin from '../../dirty-mixin'
 
 export default {
@@ -184,7 +212,7 @@ export default {
   components: {
     SitemapCode,
     WidgetDetails,
-    MappingDetails
+    AttributeDetails
   },
   props: ['createMode', 'uid'],
   data () {
@@ -285,6 +313,7 @@ export default {
       }
     },
     save (stay) {
+      this.cleanConfig(this.sitemap)
       if (!this.sitemap.uid) {
         this.$f7.dialog.alert('Please give an ID to the sitemap')
         return
@@ -331,6 +360,9 @@ export default {
     cleanConfig (widget) {
       if (widget.config) {
         for (let key in widget.config) {
+          if (widget.config[key] && Array.isArray(widget.config[key])) {
+            widget.config[key] = widget.config[key].filter(Boolean)
+          }
           if (!widget.config[key]) {
             delete widget.config[key]
           }
