@@ -206,7 +206,6 @@ import SitemapCode from '@/components/pagedesigner/sitemap/sitemap-code.vue'
 import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
 import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-details.vue'
 import DirtyMixin from '../../dirty-mixin'
-import { isArray } from 'zrender/lib/core/util'
 
 export default {
   mixins: [DirtyMixin],
@@ -361,7 +360,7 @@ export default {
     cleanConfig (widget) {
       if (widget.config) {
         for (let key in widget.config) {
-          if (widget.config[key] && isArray(widget.config[key])) {
+          if (widget.config[key] && Array.isArray(widget.config[key])) {
             widget.config[key] = widget.config[key].filter(Boolean)
           }
           if (!widget.config[key]) {

@@ -4,6 +4,7 @@ function writeWidget (widget, indent) {
   if (widget.config) {
     for (let key in widget.config) {
       if (!widget.config[key]) continue
+      if ((Array.isArray(widget.config[key]) && widget.config[key].filter(Boolean).length <= 0)) continue
       if (key === 'switchEnabled') {
         dsl += ' switchSupport'
       } else if (key === 'frequency') {
@@ -20,7 +21,7 @@ function writeWidget (widget, indent) {
             // Anything after the first comparator that is a string should be in quotes.
             // Also quote string if no comparator (i.e. fixed labelcolor or valuecolor).
             let value = v.substring(0, v.search(/[=<>]/))
-            value += v.substring(v.search(/[=<>]/)).replace(/"/g, '').replace(/[A-Za-z][A-Za-z0-9 _-]*/, function (x) { return '"' + x.trim() + '"' })
+            value += v.substring(v.search(/[=<>]/)).replace(/"/g, '').replace(/[A-Za-z][A-Za-z0-9 _-]*/g, function (x) { return '"' + x.trim() + '"' })
             return value.trim()
           })
           dsl += arrayDsl.filter(Boolean).join(',')
