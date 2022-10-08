@@ -122,6 +122,7 @@ export default {
             theme: this.$theme,
             themeOptions: this.$f7.data.themeOptions,
             device: this.$device,
+            screen: this.getPageContentRect(),
             JSON: JSON,
             dayjs: dayjs
           })
@@ -142,6 +143,16 @@ export default {
         return evalArr
       } else {
         return value
+      }
+    },
+    getPageContentRect () {
+      const pageCurrent = document.getElementsByClassName('page-current').item(0)
+      const pageContent = pageCurrent.getElementsByClassName('page-content').item(0)
+      const pageContentStyle = window.getComputedStyle(pageContent)
+
+      return {
+        width: pageContent.clientWidth - parseFloat(pageContentStyle.paddingLeft) - parseFloat(pageContentStyle.paddingRight),
+        height: pageContent.clientHeight - parseFloat(pageContentStyle.paddingTop) - parseFloat(pageContentStyle.paddingBottom)
       }
     },
     childContext (component) {
