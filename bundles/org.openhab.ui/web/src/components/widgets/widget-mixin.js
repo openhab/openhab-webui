@@ -122,7 +122,7 @@ export default {
             theme: this.$theme,
             themeOptions: this.$f7.data.themeOptions,
             device: this.$device,
-            screen: this.getPageContentRect(),
+            screen: this.getScreenInfo(),
             JSON: JSON,
             dayjs: dayjs
           })
@@ -145,14 +145,20 @@ export default {
         return value
       }
     },
-    getPageContentRect () {
+    getScreenInfo () {
       const pageCurrent = document.getElementsByClassName('page-current').item(0)
       const pageContent = pageCurrent.getElementsByClassName('page-content').item(0)
       const pageContentStyle = window.getComputedStyle(pageContent)
 
       return {
-        width: pageContent.clientWidth - parseFloat(pageContentStyle.paddingLeft) - parseFloat(pageContentStyle.paddingRight),
-        height: pageContent.clientHeight - parseFloat(pageContentStyle.paddingTop) - parseFloat(pageContentStyle.paddingBottom)
+        width: window.screen.width,
+        height: window.screen.height,
+        availWidth: window.screen.availWidth,
+        availHeight: window.screen.availHeight,
+        colorDepth: window.screen.colorDepth,
+        pixelDepth: window.screen.pixelDepth,
+        viewAreaWidth: pageContent.clientWidth - parseFloat(pageContentStyle.paddingLeft) - parseFloat(pageContentStyle.paddingRight),
+        viewAreaHeight: pageContent.clientHeight - parseFloat(pageContentStyle.paddingTop) - parseFloat(pageContentStyle.paddingBottom)
       }
     },
     childContext (component) {

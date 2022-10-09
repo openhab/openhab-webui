@@ -110,7 +110,7 @@ function hintExpression (cm, line) {
         { text: 'theme', displayText: 'theme', description: 'The current theme: aurora, ios, or md' },
         { text: 'themeOptions', displayText: 'themeOptions', description: 'Object with current theme options' },
         { text: 'device', displayText: 'device', description: 'Object with information about the current device & browser' },
-        { text: 'screen', displayText: 'screen', description: 'Object with information about the page content\' size' },
+        { text: 'screen', displayText: 'screen', description: 'Object with information about the screen and available view area' },
         { text: 'dayjs', displayText: 'dayjs', description: 'Access to the Day.js object for date manipulation & formatting' }
       ]
     }
