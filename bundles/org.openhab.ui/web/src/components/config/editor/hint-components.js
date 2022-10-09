@@ -110,8 +110,9 @@ function hintExpression (cm, line) {
         { text: 'theme', displayText: 'theme', description: 'The current theme: aurora, ios, or md' },
         { text: 'themeOptions', displayText: 'themeOptions', description: 'Object with current theme options' },
         { text: 'device', displayText: 'device', description: 'Object with information about the current device & browser' },
-        { text: 'dayjs', displayText: 'dayjs', description: 'Access to the Day.js object for date manipulation & formatting' },
         { text: 'user', displayText: 'user', description: 'Access the username of the logged in user'},
+        { text: 'screen', displayText: 'screen', description: 'Object with information about the screen and available view area' },
+        { text: 'dayjs', displayText: 'dayjs', description: 'Access to the Day.js object for date manipulation & formatting' }
       ]
     }
   } else {
@@ -244,8 +245,8 @@ function hintSlots (cm, line, parentLineNr) {
   let completions = definitions.map((c) => {
     return {
       text: ' '.repeat(indent + 2) + `- component: ${c.name}\n` +
-        // ' '.repeat(indent + 4) + 'config:\n' +
-        ' '.repeat(indent + 4),
+// ' '.repeat(indent + 4) + 'config:\n' +
+' '.repeat(indent + 4),
       displayText: c.name,
       componentName: c.name,
       className: `${cls}completion ${cls}completion-unknown`,
