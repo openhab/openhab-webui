@@ -1,5 +1,5 @@
 {
-  "dialogs.ok": "OK",
+  "dialogs.ok": "Ok",
   "dialogs.cancel": "Annulla",
   "dialogs.back": "Indietro",
   "dialogs.done": "Completato",
@@ -15,7 +15,7 @@
   "home.overview.title": "Panoramica",
   "home.overview.tab": "Panoramica",
   "home.overview.button.documentation": "Documentazione",
-  "home.overview.button.tutorial": "Tutorial",
+  "home.overview.button.tutorial": "Panoramica",
   "home.locations.title": "Ambienti",
   "home.locations.tab": "Ambienti",
   "home.equipment.title": "Dispositivi",
