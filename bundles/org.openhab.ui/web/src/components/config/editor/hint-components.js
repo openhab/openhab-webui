@@ -112,7 +112,6 @@ function hintExpression (cm, line) {
         { text: 'device', displayText: 'device', description: 'Object with information about the current device & browser' },
         { text: 'dayjs', displayText: 'dayjs', description: 'Access to the Day.js object for date manipulation & formatting' },
         { text: 'user', displayText: 'user', description: 'Access the username of the logged in user'},
-        { text: 'screen', displayText: 'screen', description: 'Access to the screen width, height, & color palette'}
       ]
     }
   } else {

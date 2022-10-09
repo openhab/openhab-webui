@@ -131,12 +131,7 @@ export default {
             device: this.$device,
             JSON: JSON,
             dayjs: dayjs,
-            user: (user) ? user.name : '-',
-            screen: { 
-              width: window.screen.width, 
-              height: window.screen.height, 
-              colorDepth: window.screen.colorDepth 
-            }
+            user: (user) ? user.name : '-'
           })
         } catch (e) {
           return e
