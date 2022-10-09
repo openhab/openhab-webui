@@ -1,8 +1,8 @@
 {
   "about.theme": "Tema",
-  "about.theme.auto": "Auto",
+  "about.theme.auto": "Automatisk",
   "about.darkMode": "Mørkmodus",
-  "about.darkMode.auto": "Auto",
+  "about.darkMode.auto": "Automatisk",
   "about.darkMode.light": "Lyst",
   "about.darkMode.dark": "Mørk",
   "about.navigationBarsStyle": "Stil for navigasjonsfelt",
