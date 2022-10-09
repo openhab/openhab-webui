@@ -17,7 +17,7 @@ export const actionParams = (groupName, paramPrefix) => {
     po(paramPrefix + 'action', 'Action', 'Type of action to perform', [
       { value: 'navigate', label: 'Navigate to page' },
       { value: 'command', label: 'Send command' },
-      { value: 'toggle', label: 'Toggle item' },
+      { value: 'toggle', label: 'Toggle Item' },
       { value: 'options', label: 'Command options' },
       { value: 'rule', label: 'Run rule' },
       { value: 'popup', label: 'Open popup' },
@@ -41,15 +41,15 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['command', 'toggle', 'options'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pt(paramPrefix + 'actionCommand', 'Action Command', 'Command to send to the item. If "toggle item" is selected as the action, only send the command when the state is different')
+    pt(paramPrefix + 'actionCommand', 'Action Command', 'Command to send to the Item. If "Toogle Item" is selected as the action, only send the command when the state is different')
       .v((value, configuration, configDescription, parameters) => {
         return ['command', 'toggle'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pt(paramPrefix + 'actionCommandAlt', 'Action Toggle Command', 'Command to send to the item when "toggle item" is selected as the action, and the item\'s state is equal to the command above')
+    pt(paramPrefix + 'actionCommandAlt', 'Action Toggle Command', 'Command to send to the Item when "Toggle Item" is selected as the action, and the Item\'s state is equal to the command above')
       .v((value, configuration, configDescription, parameters) => {
         return ['toggle'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pt(paramPrefix + 'actionOptions', 'Command Options', 'Comma-separated list of options; if omitted, retrieve the command options from the item dynamically. Use <code>value=label</code> format to provide a label different than the option.')
+    pt(paramPrefix + 'actionOptions', 'Command Options', 'Comma-separated list of options; if omitted, retrieve the command options from the Item dynamically. Use <code>value=label</code> format to provide a label different than the option.')
       .v((value, configuration, configDescription, parameters) => {
         return ['options'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
@@ -81,7 +81,7 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['navigate', 'popup', 'popover', 'sheet'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pt(paramPrefix + 'actionPhotos', 'Images to show', 'Array of URLs or objects representing the images. Auto-refresh is not supported.<br />Edit in YAML or provide a JSON array, e.g.<br /><code>[ "url1", { "item": "ImageItem1", "caption": "Camera" } ]</code><br />Objects are in the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photos-array">photos array format</a> with an additional <code>item</code> property to specify an item to view.')
+    pt(paramPrefix + 'actionPhotos', 'Images to show', 'Array of URLs or objects representing the images. Auto-refresh is not supported.<br />Edit in YAML, e.g.<br /><code><pre>- item: ImageItem1<br />  caption: Camera</pre></code>or provide a JSON array, e.g.<br /><code>[ "url1", { "item": "ImageItem1", "caption": "Camera" } ]</code><br />Objects are in the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photos-array">photos array format</a> with an additional <code>item</code> property to specify an item to view.')
       .v((value, configuration, configDescription, parameters) => {
         return ['photos'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
@@ -89,11 +89,11 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['photos'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pi(paramPrefix + 'actionGroupPopupItem', 'Group Popup Item', 'Group item whose members to show in a popup')
+    pi(paramPrefix + 'actionGroupPopupItem', 'Group Popup Item', 'Group Item whose members to show in a popup')
       .v((value, configuration, configDescription, parameters) => {
         return ['group'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pi(paramPrefix + 'actionAnalyzerItems', 'Item(s) to Analyze', 'Start analyzing with the specified (set of) item(s)').m()
+    pi(paramPrefix + 'actionAnalyzerItems', 'Item(s) to Analyze', 'Start analyzing with the specified (set of) Item(s)').m()
       .v((value, configuration, configDescription, parameters) => {
         return ['analyzer'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
