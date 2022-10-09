@@ -176,10 +176,6 @@ export default {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    onEditorInput (value) {
-      this.ruleYaml = value
-      this.dirty = true
-    },
     load () {
       if (this.loading) return
       this.loading = true
@@ -224,11 +220,11 @@ export default {
     save (stay) {
       if (!this.isEditable) return Promise.reject()
       if (!this.rule.uid) {
-        this.$f7.dialog.alert('Please give an ID to the rule')
+        this.$f7.dialog.alert('Please give an ID to the scene')
         return Promise.reject()
       }
       if (!this.rule.name) {
-        this.$f7.dialog.alert('Please give a name to the rule')
+        this.$f7.dialog.alert('Please give a name to the scene')
         return Promise.reject()
       }
       let saveRule = cloneDeep(this.rule)
@@ -256,7 +252,7 @@ export default {
         }
       }).catch((err) => {
         this.$f7.toast.create({
-          text: 'Error while saving rule: ' + err,
+          text: 'Error while saving scene: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
