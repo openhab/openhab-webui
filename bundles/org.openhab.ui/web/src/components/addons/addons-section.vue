@@ -75,6 +75,7 @@
     align-content flex-start
     align-items flex-end
     flex-wrap wrap
+    // gap 0.5rem
     padding-left calc(var(--f7-safe-area-left) + var(--f7-list-item-padding-horizontal))
     .addon-card
       width 100%
