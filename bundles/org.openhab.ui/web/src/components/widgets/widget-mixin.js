@@ -10,12 +10,20 @@ import isToday from 'dayjs/plugin/isToday'
 import isYesterday from 'dayjs/plugin/isYesterday'
 import isTomorrow from 'dayjs/plugin/isTomorrow'
 import scope from 'scope-css'
+import store from '@/js/store'
 
 import jsepRegex from '@jsep-plugin/regex'
 import jsepArrow from '@jsep-plugin/arrow'
 expr.jsep.plugins.register(jsepRegex, jsepArrow)
 
-expr.addUnaryOp('@', x => x.displayState || x.state)
+expr.addUnaryOp('@', (itemName) => {
+  const itemState = store.getters.trackedItems[itemName]
+  if (itemState.displayState === undefined) return itemState.state
+  return itemState.displayState
+})
+expr.addUnaryOp('@@', (itemName) => {
+  return store.getters.trackedItems[itemName].state
+})
 
 dayjs.extend(relativeTime)
 dayjs.extend(calendar)
@@ -118,7 +126,6 @@ export default {
           if (!this.exprAst[key] || ctx.editmode) {
             this.exprAst[key] = expr.parse(value.substring(1))
           }
-          const user = this.$store.getters.user
           return expr.evaluate(this.exprAst[key], {
             items: ctx.store,
             props: this.props,
@@ -132,7 +139,7 @@ export default {
             screen: this.getScreenInfo(),
             JSON: JSON,
             dayjs: dayjs,
-            user: (user) ? user.name : '-'
+            user: this.$store.getters.user
           })
         } catch (e) {
           return e
