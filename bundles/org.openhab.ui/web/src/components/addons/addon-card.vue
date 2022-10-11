@@ -72,7 +72,7 @@
       white-space nowrap
       // width calc(100% - 5rem)
       width 210px
-      color var(--f7-list-item-title-text-color)
+      color var(--f7-text-color)
     .addon-card-title-after
       .preloader-inner .preloader-inner-left, .preloader-inner .preloader-inner-right, .preloader-inner .preloader-inner-line
         margin-left inherit !important
