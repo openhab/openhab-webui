@@ -17,7 +17,7 @@
     {{ config.text }}
   </fragment>
   <pre v-else-if="componentType && componentType === 'Error' && visible" class="text-color-red" style="white-space: pre-wrap">{{ config.error }}</pre>
-  <component v-else-if="visible" :is="componentType" :class="config.class" :style="config.style" @command="onCommand">
+  <component v-else-if="visible" :is="componentType" v-bind="config">
     {{ config.content }}
     <template v-if="context.component.slots && context.component.slots.default">
       <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" />
