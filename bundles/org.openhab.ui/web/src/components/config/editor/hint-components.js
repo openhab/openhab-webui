@@ -50,7 +50,7 @@ function getWidgetDefinitions (cm) {
   }
 }
 
-function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix) {
+function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix, addQuotes) {
   const cursor = cm.getCursor()
   const promise = (itemsCache) ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items')
   return promise.then((data) => {
@@ -58,7 +58,7 @@ function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix) {
     let ret = {
       list: data.map((item) => {
         return {
-          text: item.name + ((addStatePropertySuffix ? '.state' : '')),
+          text: (addQuotes ? '\'' : '') + item.name + ((addStatePropertySuffix ? '.state' : '')) + (addQuotes ? '\'' : ''),
           displayText: item.name,
           description: `${(item.label) ? item.label + ' ' : ''}(${item.type})<br />${item.state}`
         }
@@ -69,6 +69,9 @@ function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix) {
       const colonPos = line.indexOf(':')
       ret.from = { line: cursor.line, ch: colonPos + 2 }
       ret.to = { line: cursor.line, ch: line.length }
+    } else if (addQuotes) {
+      const lastAtOp = line.substring(0, cursor.ch).replace(/@[A-Za-z0-9_-]*$/, '@')
+      ret.to = { line: cursor.line, ch: lastAtOp.length }
     } else {
       const lastDot = line.substring(0, cursor.ch).replace(/\.[A-Za-z0-9_-]*$/, '.')
       ret.to = { line: cursor.line, ch: lastDot.length }
@@ -110,11 +113,16 @@ function hintExpression (cm, line) {
         { text: 'theme', displayText: 'theme', description: 'The current theme: aurora, ios, or md' },
         { text: 'themeOptions', displayText: 'themeOptions', description: 'Object with current theme options' },
         { text: 'device', displayText: 'device', description: 'Object with information about the current device & browser' },
+        { text: 'user', displayText: 'user', description: 'Access the username and roles of the logged in user' },
         { text: 'screen', displayText: 'screen', description: 'Object with information about the screen and available view area' },
         { text: 'dayjs', displayText: 'dayjs', description: 'Access to the Day.js object for date manipulation & formatting' }
       ]
     }
   } else {
+    const lastAtOp = line.substring(0, cursor.ch).replace(/@[A-Za-z0-9_-]*$/, '@')
+    if (lastAtOp.endsWith('@')) {
+      return hintItems(cm, line, false, false, true)
+    }
     const lastDot = line.substring(0, cursor.ch).replace(/\.[A-Za-z0-9_-]*$/, '.')
     if (lastDot.endsWith('items.')) {
       return hintItems(cm, line, false, true)

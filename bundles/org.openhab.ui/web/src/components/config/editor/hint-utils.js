@@ -31,7 +31,7 @@ export function remove (node) {
 export function filterPartialCompletions (cm, line, completions, property = 'text') {
   const cursor = cm.getCursor()
   const lineBeforeCursor = line.substring(0, cursor.ch)
-  const completionBeginPos = Math.max(lineBeforeCursor.lastIndexOf(' '), lineBeforeCursor.lastIndexOf('.'))
+  const completionBeginPos = Math.max(lineBeforeCursor.lastIndexOf(' '), lineBeforeCursor.lastIndexOf('.'), lineBeforeCursor.lastIndexOf('@'))
   const partialCompletion = lineBeforeCursor.substring(completionBeginPos + 1)
   return completions.filter((c) => c[property] && c[property].toLowerCase().indexOf(partialCompletion.toLowerCase()) >= 0)
 }
