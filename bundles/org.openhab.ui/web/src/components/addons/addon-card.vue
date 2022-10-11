@@ -2,7 +2,7 @@
   <f7-link v-if="addon" class="addon-card padding-right-half" :href="addon.id">
     <div class="addon-card-inner">
       <div class="addon-card-headline">
-        <div>{{ headline || autoHeadline }}</div>
+        <div>{{ headline || autoHeadline || "&nbsp;" }}</div>
       </div>
       <div class="addon-card-title">
         <div class="addon-card-title-after">
@@ -59,6 +59,7 @@
     text-transform uppercase
     color var(--f7-theme-color)
     font-size 11px
+    // height 12px
     font-weight 500
   .addon-card-title
     height 3.4rem
