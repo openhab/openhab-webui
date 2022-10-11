@@ -58,7 +58,6 @@ function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix, addQuot
     let ret = {
       list: data.map((item) => {
         return {
-          //text: item.name + ((addStatePropertySuffix ? '.state' : '')),
           text: (addQuotes ? '\'' : '') + item.name + ((addStatePropertySuffix ? '.state' : '')) + (addQuotes ? '\'' : ''),
           displayText: item.name,
           description: `${(item.label) ? item.label + ' ' : ''}(${item.type})<br />${item.state}`
