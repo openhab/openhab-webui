@@ -1,6 +1,6 @@
 <template>
   <f7-link v-if="addon" class="addon-card padding-right-half" :href="addon.id">
-    <div class="addon-card-inner card">
+    <div class="addon-card-inner card-expandable">
       <div class="addon-card-headline">
         <div>{{ headline || autoHeadline || "&nbsp;" }}</div>
       </div>
@@ -36,13 +36,14 @@
 
 <style lang="stylus">
 .addon-card
-  // padding 5px
+  padding 5px
   width: 100%
   position relative
 
   .addon-card-inner
     width 100%
     height 100%
+    margin: 0px
     // background-color var(--f7-card-bg-color)
     display flex
     flex-direction column
@@ -97,8 +98,8 @@
     width 100%
     margin-top 5px
     // height 220px
-    border 1px solid var(--f7-list-item-border-color)
-    border-radius 5px
+    // border 1px solid var(--f7-list-item-border-color)
+    // border-radius 5px
     display flex
     justify-content center
     align-items center
