@@ -10,11 +10,6 @@
   </component>
   <generic-widget-component v-else-if="componentType && componentType.startsWith('widget:') && visible" :context="childWidgetContext()" @command="onCommand" />
   <component v-else-if="componentType && componentType.startsWith('oh-') && visible" :is="componentType" :context="context" @command="onCommand" />
-  <component v-else-if="componentType && componentType.startsWith('ht-') && visible" :is="componentType.slice(3)" v-bind="config" @command="onCommand">
-    <template v-for="(slotComponent, idx) in context.component.slots.default">
-      <generic-widget-component :context="childContext(slotComponent)" :key="idx" v-on="$listeners" />
-    </template>
-  </component>
   <div v-else-if="componentType && componentType === 'Label' && visible" :class="config.class" :style="config.style">
     {{ config.text }}
   </div>
@@ -22,6 +17,12 @@
     {{ config.text }}
   </fragment>
   <pre v-else-if="componentType && componentType === 'Error' && visible" class="text-color-red" style="white-space: pre-wrap">{{ config.error }}</pre>
+  <component v-else-if="visible" :is="componentType"  :class="config.class" :style="config.style" @command="onCommand">
+    {{ config.content }}
+    <template v-if="context.component.slots && context.component.slots.default">
+      <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" />
+    </template>
+  </component>
 </template>
 
 <script>

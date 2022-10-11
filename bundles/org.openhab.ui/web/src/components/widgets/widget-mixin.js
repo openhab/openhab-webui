@@ -14,7 +14,9 @@ import store from '@/js/store'
 
 import jsepRegex from '@jsep-plugin/regex'
 import jsepArrow from '@jsep-plugin/arrow'
-expr.jsep.plugins.register(jsepRegex, jsepArrow)
+import jsepObject from '@jsep-plugin/object'
+import jsepTemplate from '@jsep-plugin/template'
+expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
 
 expr.addUnaryOp('@', (itemName) => {
   const itemState = store.getters.trackedItems[itemName]
