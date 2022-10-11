@@ -43,7 +43,7 @@
   .addon-card-inner
     width 100%
     height 100%
-    background-color #1c1c1d
+    background-color var(--f7-list-link-hover-bg-color)
     display flex
     flex-direction column
     color inherit
