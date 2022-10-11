@@ -71,6 +71,7 @@
       white-space nowrap
       // width calc(100% - 5rem)
       width 210px
+      color #fff
     .addon-card-title-after
       .preloader-inner .preloader-inner-left, .preloader-inner .preloader-inner-right, .preloader-inner .preloader-inner-line
         margin-left inherit !important
