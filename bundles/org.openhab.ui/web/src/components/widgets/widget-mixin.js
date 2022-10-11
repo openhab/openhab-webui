@@ -1,6 +1,6 @@
 // Import into widget components as a mixin!
 
-import expr from 'expression-eval'
+import expr from 'jse-eval'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import calendar from 'dayjs/plugin/calendar'
@@ -10,6 +10,22 @@ import isToday from 'dayjs/plugin/isToday'
 import isYesterday from 'dayjs/plugin/isYesterday'
 import isTomorrow from 'dayjs/plugin/isTomorrow'
 import scope from 'scope-css'
+import store from '@/js/store'
+
+import jsepRegex from '@jsep-plugin/regex'
+import jsepArrow from '@jsep-plugin/arrow'
+import jsepObject from '@jsep-plugin/object'
+import jsepTemplate from '@jsep-plugin/template'
+expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
+
+expr.addUnaryOp('@', (itemName) => {
+  const itemState = store.getters.trackedItems[itemName]
+  if (itemState.displayState === undefined) return itemState.state
+  return itemState.displayState
+})
+expr.addUnaryOp('@@', (itemName) => {
+  return store.getters.trackedItems[itemName].state
+})
 
 dayjs.extend(relativeTime)
 dayjs.extend(calendar)
@@ -30,7 +46,7 @@ export default {
   },
   computed: {
     componentType () {
-      return this.context.component.component
+      return this.evaluateExpression('type', this.context.component.component)
     },
     childWidgetComponentType () {
       if (!this.componentType.startsWith('widget:')) return null
@@ -112,7 +128,7 @@ export default {
           if (!this.exprAst[key] || ctx.editmode) {
             this.exprAst[key] = expr.parse(value.substring(1))
           }
-          return expr.eval(this.exprAst[key], {
+          return expr.evaluate(this.exprAst[key], {
             items: ctx.store,
             props: this.props,
             vars: ctx.vars,
@@ -124,7 +140,8 @@ export default {
             device: this.$device,
             screen: this.getScreenInfo(),
             JSON: JSON,
-            dayjs: dayjs
+            dayjs: dayjs,
+            user: this.$store.getters.user
           })
         } catch (e) {
           return e

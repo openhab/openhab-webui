@@ -255,7 +255,8 @@ export default {
           'Ctrl-Space': 'autocomplete',
           '\'.\'': autocomplete,
           '\'=\'': autocomplete,
-          'Space': autocomplete
+          'Space': autocomplete,
+          '\'@\'': autocomplete
         }
         cm.state.$oh = this.$oh
         cm.state.originalMode = this.mode
