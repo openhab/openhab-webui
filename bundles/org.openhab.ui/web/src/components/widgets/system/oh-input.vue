@@ -1,7 +1,11 @@
 <template>
-  <f7-input v-if="!config.item || !config.sendButton" class="input-field" ref="input" v-bind="config" :value="(config.type.indexOf('date') === 0) ? valueForDatepicker : value" @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated" />
+  <f7-input v-if="!config.item || !config.sendButton" class="input-field" ref="input" v-bind="config" :value="(config.type.indexOf('date') === 0) ? valueForDatepicker : value"
+            :calendar-params="calendarParams"
+            @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated" />
   <f7-row no-gap v-else class="oh-input-with-send-button">
-    <f7-input class="input-field col-90" ref="input" v-bind="config" :value="(config.type.indexOf('date') === 0) ? valueForDatepicker : value" @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated" />
+    <f7-input class="input-field col-90" ref="input" v-bind="config" :value="(config.type.indexOf('date') === 0) ? valueForDatepicker : value"
+              :calendar-params="calendarParams"
+              @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated" />
     <f7-button class="send-button col-10" v-if="this.config.sendButton" @click.stop="sendButtonClicked" v-bind="config.sendButtonConfig || { iconMaterial: 'done', iconColor: 'gray' }" />
   </f7-row>
 </template>
@@ -45,16 +49,27 @@ export default {
       }
       return this.config.defaultValue
     },
+    calendarParams () {
+      if (this.config.type !== 'datepicker') return null
+      let params = { dateFormat: { year: 'numeric', month: 'numeric', day: 'numeric' } }
+      if (this.config.showTime) {
+        params.timePicker = true
+        params.dateFormat.hour = 'numeric'
+        params.dateFormat.minute = 'numeric'
+      }
+      return params
+    },
     valueForDatepicker () {
-      const value = this.value
+      const value = Array.isArray[this.value] ? this.value[0] : this.value
+      const datetime = new Date(value)
+      if (isNaN(datetime)) return null
       switch (this.config.type) {
         case 'datepicker':
-          if (Array.isArray(value)) return value
-          const date = new Date(value)
-          if (isNaN(date)) return null
-          return [date]
+          return [datetime]
         case 'date':
-          return (Date.parse(value) > 0) ? value.split('T')[0] : null
+          return dayjs(datetime).format('YYYY-MM-DD')
+        case 'datetime-local':
+          return dayjs(datetime).format('YYYY-MM-DDTHH:mm')
         default:
           return null
       }
