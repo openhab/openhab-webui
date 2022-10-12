@@ -1,5 +1,17 @@
 # HAB Assistant
 
+<img src="https://i.imgur.com/k9ft6n9.gif" title="Hab Assistant Gif" width="500"/>
+
+## Requirements:
+* You should have configured your default <b>speech-to-text, text-to-speech, voice and interpreter</b> in the openHAB Voice settings (Main UI), and have these services correctly setup.
+* Most browser security policies <b>requires a secure context</b> to use its record capabilities, so you should access the page using 'https' (or disable this browser security policy, which is not recommended).
+
+## Limitations:
+
+* At the moment of writing it <b>does not work with openHAB cloud instances</b>, meaning you can not use it through the myopenhab.org web page.
+
+## Description
+
 HAB Assistant is a project designed to facilitate the use of the [openHAB](https://openhab.org) dialog processing capabilities.
 
 Through a websocket connection this web interface registers a sink and source in your openHAB instance that can be used like any other ones.
@@ -7,16 +19,11 @@ It also facilitates running a single shot dialog processing execution.
 
 It is another step to have a full, open source, integrated assistant for your openHAB smart home.
 
-## Limitations:
-
-* Most browser security policies requires a secure context to use its audio capabilities, so you should access the page using 'https' (or disable this browser security policy, which is not recommended).
-* At the moment of writing it does not work with openHAB cloud instances, meaning you can not use it through the myopenhab.org page.
-
 ## Settings
 
 You can edit this settings for the service in the main ui **Settings / Other Services - HAB Assistant**:
 
-* **Secure** - Require user credentials to use the assistant (you will redirect you to the main ui if you are not logged in).
+* **Secure** - Require user credentials to use the assistant (you will be redirected to the main ui if you are not logged in).
 
 ## Local Settings:
 
@@ -30,10 +37,10 @@ These settings are stored on your browser local storage.
 ## Usage:
 
 * As most browsers requires user interaction to access its audio capabilities, you should click at the assistant panel at first. It will then ask for user permissions and show a loading animation until it's ready.
-* When the assistant is ready the registered sink and source will be visible in openHAB (audio settings section).
-* The assistant icon circle displays an animation always whenever it's streaming the microphone audio to the server.
+* When the assistant is ready the registered sink and source will be visible in openHAB (audio settings section of the Main UI or though the console commands 'audio sinks' and 'audio sources').
+* The assistant icon circle displays an animation whenever it's streaming the microphone audio to the server.
 * The assistant icon dots part displays an animation while it's playing audio.
-* By clicking on the assistant icon a single shot audio dialog processing will start. It uses the registered audio sick and source and the default processing services configured on the openHAB voice settings (so you should have configured your default speech-to-text, text-to-speech and interpreter there).
+* By clicking on the assistant icon a single shot audio dialog processing will start. It uses the registered audio sick and source and the default processing services configured on the openHAB voice settings.
 
 ## Audio Component Details:
 
