@@ -264,6 +264,5 @@ public class UIServlet extends DefaultServlet {
         public Resource addPath(@Nullable String path) throws IOException, MalformedURLException {
             return baseResource.addPath(path);
         }
-
     }
 }
