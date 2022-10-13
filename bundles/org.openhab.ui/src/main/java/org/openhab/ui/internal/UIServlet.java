@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletRequest;
@@ -102,6 +103,16 @@ public class UIServlet extends DefaultServlet {
     }
 
     @Override
+    protected ContextHandler initContextHandler(@Nullable ServletContext servletContext) {
+        if (servletContext instanceof ContextHandler.Context) {
+            return ((ContextHandler.Context) servletContext).getContextHandler();
+        } else {
+            throw new IllegalArgumentException("The servletContext " + servletContext + " "
+                    + servletContext.getClass().getName() + " is not " + ContextHandler.Context.class.getName());
+        }
+    }
+
+    @Override
     public @Nullable Resource getResource(@NonNullByDefault({}) String name) {
         logger.debug("getResource: {}", name);
         ContextHandler contextHandler = this.contextHandler;
@@ -119,10 +130,13 @@ public class UIServlet extends DefaultServlet {
             }
         } else {
             url = defaultHttpContext.getResource(APP_BASE + name);
-            // if we don't find a resource, and its not a check for a compressed version, return Vue.js index for
+            // if we don't find a resource, and its not a check for a compressed version, return Vue.js base for
             // routing
             if (url == null && !Arrays.stream(COMPRESS_EXT).anyMatch(entry -> name.endsWith(entry))) {
-                url = defaultHttpContext.getResource(APP_BASE + "/index.html");
+                // sending the default directory will trigger "getWelcomeFile" to be called which is required to avoid
+                // Jetty doing a 302 redirect
+                // which breaks Vue.js routing when reloading the browser on some pages
+                url = defaultHttpContext.getResource(APP_BASE);
             }
         }
         try {
@@ -145,6 +159,15 @@ public class UIServlet extends DefaultServlet {
             return;
         }
         super.doGet(request, response);
+    }
+
+    @Override
+    public @Nullable String getWelcomeFile(@Nullable String pathInContext) {
+        logger.debug("getWelcomeFile {}", pathInContext);
+        if (pathInContext != null && pathInContext.startsWith(STATIC_PATH)) {
+            return null;
+        }
+        return "/index.html";
     }
 
     private void setInitParameter(String name, String value) {
