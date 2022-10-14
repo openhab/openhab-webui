@@ -349,7 +349,7 @@ export default {
       seriesOptions.name = item.label || item.name
       seriesOptions.type = 'line'
       seriesOptions.discrete = false
-      if ((item.type.indexOf('Number') !== 0 && item.type.indexOf('Dimmer') !== 0) || (item.stateDescription && item.stateDescription.options.length > 0)) seriesOptions.discrete = true
+      if ((item.type.indexOf('Number') !== 0 && item.type.indexOf('Dimmer') !== 0)) seriesOptions.discrete = true
       if (!seriesOptions.discrete && this.coordSystem === 'aggregate' && this.aggregateDimensions === 1) seriesOptions.type = 'bar'
       if (!seriesOptions.discrete && (this.coordSystem === 'calendar' || (this.coordSystem === 'aggregate' && this.aggregateDimensions === 2))) seriesOptions.type = 'heatmap'
       if (seriesOptions.discrete) seriesOptions.type = 'area'
