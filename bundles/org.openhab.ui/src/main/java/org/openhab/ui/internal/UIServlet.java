@@ -97,7 +97,6 @@ public class UIServlet extends DefaultServlet {
 
     @Override
     public void init() throws UnavailableException {
-
         setInitParameter("acceptRanges", "true");
         setInitParameter("dirAllowed", "false");
         setInitParameter("redirectWelcome", "false");
@@ -119,13 +118,12 @@ public class UIServlet extends DefaultServlet {
             URL url = null;
             try {
                 url = new java.io.File(STATIC_BASE + name.substring(new String(STATIC_PATH).length())).toURI().toURL();
-                logger.trace("Serving static file from {}", url);
             } catch (MalformedURLException e) {
                 logger.error("Error while serving static content: {}", e.getMessage());
                 url = defaultHttpContext.getResource(APP_BASE + name);
             }
             try {
-                logger.debug("getResource returning {}", url);
+                logger.debug("getResource static file returning {}", url);
                 return contextHandler.newResource(url);
             } catch (IOException e) {
                 logger.error("Error while serving content: {}", e.getMessage());
@@ -133,16 +131,15 @@ public class UIServlet extends DefaultServlet {
             }
         } else {
             URL url = defaultHttpContext.getResource(APP_BASE + name);
-            // if we don't find a resource, and its not a check for a compressed version, return Vue.js base for
-            // routing
+            // if we don't find a resource, and its not a check for a compressed version, return the app base and let
+            // the Vue.js main UI handle routing
             if (url == null && !Arrays.stream(COMPRESS_EXT).anyMatch(entry -> name.endsWith(entry))) {
-                // sending the default directory will trigger "getWelcomeFile" to be called which is required to avoid
-                // Jetty doing a 302 redirect
-                // which breaks Vue.js routing when reloading the browser on some pages
+                // sending a directory will trigger "getWelcomeFile" to be called which is required to avoid
+                // Jetty doing a 302 redirect which breaks Vue.js routing when reloading the browser on some pages
                 url = defaultHttpContext.getResource(APP_BASE);
             }
             try {
-                logger.debug("getResource returning {}", url);
+                logger.debug("getResource bundle file returning {}", url);
                 return url == null ? null : new ResourceWrapper(contextHandler.newResource(url));
             } catch (IOException e) {
                 logger.error("Error while serving content: {}", e.getMessage());
