@@ -10,6 +10,8 @@ tags:
     description: Configuration and Settings
   - name: dataprovider
     description: Dataproviders for config editor.
+  - name: requestproxy
+    description: Proxy HTTP requests to avoid CORS errors.
 paths:
   '/fs/check':
     get:
@@ -410,6 +412,36 @@ paths:
                 $ref: '#/components/schemas/DataProviderResponse'
         '406':
           description: wrong measurement parameter
+  /proxy:
+    get:
+      tags:
+        - requestproxy
+      parameters:
+        - name: url
+          in: query
+          schema:
+            type: string
+        - name: authorization
+          in: query
+          schema:
+            type: string
+      summary: Can be used as a proxy to avoid CORS errors e.g. when loading images that need authorization requests
+      operationId: getProxied
+      x-exegesis-controller: ProxyController
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/*:
+              schema:
+                type: string
+                format: binary
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthorized
 components:
   schemas:
     DataProviderResponse:
