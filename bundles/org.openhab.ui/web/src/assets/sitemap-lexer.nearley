@@ -35,8 +35,9 @@
     gt:               '>',
     equals:           '=',
     comma:            ',',
-    NL:               { match: /\n/, lineBreaks: true },
+    NL:               { match: /\n/, lineBreaks: true }
   })
+  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'List', 'Setpoint', 'Colorpicker', 'Default']
 
   function getSitemap(d) {
     return {
@@ -49,7 +50,7 @@
     }
   }
 
-  function getWidget(d,l,r) {
+  function getWidget(d, l, reject) {
     let widget = {
       component: d[0].text.trim(),
       config: {}
@@ -65,9 +66,14 @@
       }
     }
 
+    // reject widgets with missing parameters
+    if (requiresItem.includes(widget.component) && !widget.config.item) return reject
+    if (widget.component === 'List' && !widget.config.separator) return reject
+    if ((widget.component === 'Video' || widget.component === 'Webview') && !widget.config.url) return reject
+    if (widget.component === 'Chart' && !widget.config.period) return reject
+
     return widget
   }
-
 %}
 
 @lexer lexer
@@ -77,7 +83,7 @@ Sitemap -> %sitemap _ SitemapName __ SitemapLabel __ %lbrace _ Widgets _ %rbrace
 
 SitemapName -> %identifier
 SitemapLabel -> null                                                              {% (d) => { return {} } %}
-  | %label %string                                                                {% (d) => { return { "label": d[1].value } } %}
+  | %label %string                                                                {% (d) => { return { 'label': d[1].value } } %}
 
 Widgets -> Widget                                                                 {% (d) => [d[0]] %}
   | Widgets _ Widget                                                              {% (d) => d[0].concat([d[2]]) %}
@@ -121,7 +127,7 @@ Colors -> Color                                                                 
   | Colors _ %comma _ Color                                                       {% (d) => d[0].concat([d[4]]) %}
 Color -> ColorCommand _ ColorComparator _ ColorValue _ %equals _ ColorName        {% (d) => d[0][0].value.toString() + d[2][0].value.toString() + d[4][0].value.toString() + '=' + d[8][0].value.toString() %}
   | ColorComparator _ ColorValue _ %equals _ ColorName                            {% (d) => d[0][0].value.toString() + d[2][0].value.toString() + '=' + d[6][0].value.toString() %}
-  | ColorValue _ %equals _ ColorName                                              {% (d) => "==" + d[0][0].value.toString() + '=' + d[4][0].value.toString() %}
+  | ColorValue _ %equals _ ColorName                                              {% (d) => '==' + d[0][0].value.toString() + '=' + d[4][0].value.toString() %}
   | ColorName                                                                     {% (d) => d[0][0].value.toString() %}
 ColorCommand -> %identifier | %string
 ColorComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt

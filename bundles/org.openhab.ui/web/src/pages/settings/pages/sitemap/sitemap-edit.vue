@@ -252,7 +252,8 @@ export default {
         { type: 'Image', icon: 'photo' },
         { type: 'Video', icon: 'videocam' }
       ],
-      linkableWidgetTypes: ['Sitemap', 'Text', 'Frame', 'Group', 'Image']
+      linkableWidgetTypes: ['Sitemap', 'Text', 'Frame', 'Group', 'Image'],
+      widgetTypesRequiringItem: ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'List', 'Setpoint', 'Colorpicker', 'Default']
     }
   },
   created () {
@@ -327,6 +328,9 @@ export default {
         return
       }
 
+      // Don't block saving when widget validation checks fail
+      this.validateWidgets()
+
       const promise = (this.createMode)
         ? this.$oh.api.postPlain('/rest/ui/components/system:sitemap', JSON.stringify(this.sitemap), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/ui/components/system:sitemap/' + this.sitemap.uid, this.sitemap)
@@ -356,6 +360,61 @@ export default {
           closeTimeout: 2000
         }).open()
       })
+    },
+    validateWidgets () {
+      if (this.sitemap.slots && Array.isArray(this.sitemap.slots.widgets)) {
+        const widgetList = this.sitemap.slots.widgets.reduce(function iter (widgets, widget) {
+          widgets.push(widget)
+          if (widget.slots && Array.isArray(widget.slots.widgets)) {
+            return widget.slots.widgets.reduce(iter, widgets)
+          }
+          return widgets
+        }, [])
+        let validationWarnings = []
+        widgetList.filter(widget => this.widgetTypesRequiringItem.includes(widget.component)).forEach(widget => {
+          if (!(widget.config && widget.config.item)) {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
+          }
+        })
+        widgetList.filter(widget => widget.component === 'List').forEach(widget => {
+          if (!(widget.config && widget.config.separator)) {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push(widget.component + ' widget ' + label + ', no separator configured')
+          }
+        })
+        widgetList.filter(widget => widget.component === 'Video' || widget.component === 'Webview').forEach(widget => {
+          if (!(widget.config && widget.config.url)) {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push(widget.component + ' widget ' + label + ', no url configured')
+          }
+        })
+        widgetList.filter(widget => widget.component === 'Chart').forEach(widget => {
+          if (!(widget.config && widget.config.period)) {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push(widget.component + ' widget ' + label + ', no period configured')
+          }
+        })
+        widgetList.forEach(widget => {
+          if (widget.config) {
+            Object.keys(widget.config).filter(attr => ['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor'].includes(attr)).forEach(attr => {
+              widget.config[attr].forEach(param => {
+                if (((attr === 'mappings') && !(/^[\w\s]*=("[\w-\s]*"|[\w-\s]*)\s*$/.test(param))) ||
+                    ((attr === 'visibility') && !(/^\s*\w+\s*(==|>=|<=|!=|>|<)\s*("[+-]?\w[\w-\s]*"|[+-]?\w[\w-\s]*)\s*$/.test(param))) ||
+                    ((attr.includes('color')) && !(/^\s*(((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?(("[+-]?\w[\w-\s]*"\s*|[+-]?\w[\w-\s]*)=\s*))?("#?\w+"|#?\w+)\s*$/.test(param)))) {
+                  let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+                  validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in ' + attr + ': ' + param)
+                }
+              })
+            })
+          }
+        })
+        if (validationWarnings.length > 0) {
+          this.$f7.dialog.alert('<b>Sitemap definition will be saved with validation errors:</b><br />' + validationWarnings.join('<br />'))
+          return false
+        }
+        return true
+      }
     },
     cleanConfig (widget) {
       if (widget.config) {

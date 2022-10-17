@@ -16,17 +16,23 @@
         </ul>
         <ul>
           <!-- additional controls -->
-          <f7-list-input v-if="supports('url')" label="URL" type="text" :value="widget.config.url" @input="updateParameter('url', $event)" clear-button />
+          <f7-list-input v-if="supports('url')" label="URL" type="url" :value="widget.config.url" @input="updateParameter('url', $event)" clear-button />
           <f7-list-input v-if="supports('refresh')" label="Refresh interval" type="text" :value="widget.config.refresh" @input="updateParameter('refresh', $event)" clear-button />
           <f7-list-input v-if="supports('encoding')" label="Encoding" type="text" :value="widget.config.encoding" @input="updateParameter('encoding', $event)" clear-button />
           <f7-list-input v-if="supports('service')" label="Service" type="text" :value="widget.config.service" @input="updateParameter('service', $event)" clear-button />
-          <f7-list-input v-if="supports('period')" label="Period" type="text" :value="widget.config.period" @input="updateParameter('period', $event)" clear-button />
+          <f7-list-item v-if="supports('period')" title="Period" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
+            <select name="periods" required :value="widget.config.period" @change="updateParameter('period', $event)">
+              <option v-for="def in periodDefs" :key="def.key" :value="def.key">
+                {{ def.value }}
+              </option>
+            </select>
+          </f7-list-item>
           <f7-list-input v-if="supports('height')" label="Height" type="number" :value="widget.config.height" @input="updateParameter('height', $event)" clear-button />
           <f7-list-input v-if="supports('sendFrequency')" label="Frequency" type="text" :value="widget.config.sendFrequency" @input="updateParameter('sendFrequency', $event)" clear-button />
           <f7-list-input v-if="supports('minValue')" label="Minimum" type="number" :value="widget.config.minValue" @input="updateParameter('minValue', $event)" clear-button />
           <f7-list-input v-if="supports('maxValue')" label="Maximum" type="number" :value="widget.config.maxValue" @input="updateParameter('maxValue', $event)" clear-button />
           <f7-list-input v-if="supports('step')" label="Step" type="number" :value="widget.config.step" @input="updateParameter('step', $event)" clear-button />
-          <f7-list-input v-if="supports('separator')" label="Separator" type="text" :value="widget.config.separator" @input="updateParameter('separator', $event)" clear-button />
+          <f7-list-input v-if="supports('separator')" label="Separator" type="text" required validate pattern=".+" :value="widget.config.separator" @input="updateParameter('separator', $event)" clear-button />
           <f7-list-input v-if="supports('yAxisDecimalPattern')" label="Y-axis decimal pattern" type="text" :value="widget.config.separator" @input="updateParameter('yAxisDecimalPattern', $event)" clear-button />
           <f7-list-item v-if="supports('switchEnabled')" title="Switch enabled">
             <f7-toggle slot="after" :checked="widget.config.switchEnabled" @toggle:change="widget.config.switchEnabled = $event" />
@@ -78,7 +84,22 @@ export default {
         Setpoint: ['minValue', 'maxValue', 'step'],
         Colorpicker: ['sendFrequency'],
         Default: ['height']
-      }
+      },
+      periodDefs: [
+        { key: 'h', value: 'Hour' },
+        { key: '4h', value: '4 Hours' },
+        { key: '8h', value: '8 Hours' },
+        { key: '12h', value: '12 Hours' },
+        { key: 'D', value: 'Day' },
+        { key: '2D', value: '2 Days' },
+        { key: '3D', value: '3 Days' },
+        { key: 'W', value: 'Week' },
+        { key: '2W', value: '2 Weeks' },
+        { key: 'M', value: 'Month' },
+        { key: '2M', value: '2 Months' },
+        { key: '3M', value: '3 Months' },
+        { key: 'Y', value: 'Year' }
+      ]
     }
   },
   methods: {
