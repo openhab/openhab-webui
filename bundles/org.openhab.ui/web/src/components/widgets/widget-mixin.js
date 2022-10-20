@@ -155,7 +155,7 @@ export default {
       } else if (typeof value === 'object' && Array.isArray(value)) {
         const evalArr = []
         for (let i = 0; i < value.length; i++) {
-          this.$set(evalArr, i, this.evaluateExpression(i, value[i]))
+          this.$set(evalArr, i, this.evaluateExpression(key + '.' + i, value[i]))
         }
         return evalArr
       } else {
