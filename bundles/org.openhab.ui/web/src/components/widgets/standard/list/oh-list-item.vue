@@ -32,6 +32,12 @@
   .item-link .item-inner:after
     transition-duration 300ms
 
+  > .item-content
+    cursor pointer
+
+    &:active
+      background var(--f7-list-link-pressed-bg-color)
+
   .list,
   .block
     margin-top 0
@@ -95,6 +101,14 @@
 
   &.accordion-item-opened > .item-content > .item-inner > .item-title-row:before
     content var(--f7-accordion-chevron-icon-up)
+
+.aurora
+  .oh-equipment-accordion-item
+    > .item-content
+      &:hover
+        background var(--f7-list-link-hover-bg-color)
+      &:active
+        background var(--f7-list-link-pressed-bg-color)
 
 .item-divider > span
   flex-shrink 1
