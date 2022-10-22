@@ -1,6 +1,6 @@
 <template>
   <f7-link v-if="addon" class="addon-card padding-right-half" :href="addon.id">
-    <div class="addon-card-inner card-expandable">
+    <div class="addon-card-inner card">
       <div class="addon-card-headline">
         <div>{{ headline || autoHeadline || "&nbsp;" }}</div>
       </div>
