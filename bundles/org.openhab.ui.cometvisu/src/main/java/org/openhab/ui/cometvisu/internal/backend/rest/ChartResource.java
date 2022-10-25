@@ -83,6 +83,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * @author Tobias Bräutigam - Initial contribution
  * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
  * @author Wouter Born - Migrated to OpenAPI annotations
+ *
+ * @deprecated CometVisu (>=0.12) is using openHAB's native REST API, a special backend implementation is obsolete now
  */
 @Component
 @JaxrsResource
@@ -92,6 +94,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CHART_ALIAS)
 @Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CHART_ALIAS)
 @NonNullByDefault
+@Deprecated(since = "3.4", forRemoval = true)
 public class ChartResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(ChartResource.class);
 
