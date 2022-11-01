@@ -17,7 +17,7 @@
 	var paths = {
 	        FontLibs: [
                 './node_modules/roboto-fontface/fonts/roboto/Roboto-Medium.*',
-                './node_modules/roboto-fontface/fonts/roboto/Roboto-Regular.*',
+                './node_modules/roboto-fontface/fonts/roboto/Roboto-Regular.*', 
                 './node_modules/material-design-icons/iconfont/MaterialIcons-Regular.*'
 	        ]
 	    };
