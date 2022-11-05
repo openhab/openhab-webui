@@ -22,8 +22,6 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
@@ -58,6 +56,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.OpenHAB;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
@@ -103,7 +102,6 @@ public class CometVisuServlet extends HttpServlet {
     private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
 
     private Pattern sitemapPattern = Pattern.compile(".*/visu_config_?(oh_)?([^\\.]+)?\\.xml");
-    private Pattern configStorePattern = Pattern.compile("config/visu_config_oh_([a-z0-9_]+)\\.xml");
 
     private String rssLogPath = "/plugins/rsslog/rsslog_oh.php";
     private final String rssLogMessageSeparator = "\\|";
@@ -112,10 +110,10 @@ public class CometVisuServlet extends HttpServlet {
     protected String root;
     protected File rootFolder;
     protected File userFileFolder;
-    protected String defaultUserDir;
-    protected PHProvider engine;
-    protected ServletContext servletContext;
-    protected ServletConfig config;
+    protected @Nullable String defaultUserDir;
+    protected @Nullable PHProvider engine;
+    protected @Nullable ServletContext servletContext;
+    protected @Nullable ServletConfig config;
 
     protected boolean phpEnabled = false;
 
@@ -146,11 +144,13 @@ public class CometVisuServlet extends HttpServlet {
 
     private void initQuercusEngine() {
         try {
-            this.engine.createQuercusEngine();
-            this.engine.setIni("include_path", ".:" + rootFolder.getAbsolutePath());
-            if (servletContext != null) {
-                this.engine.init(rootFolder.getAbsolutePath(), defaultUserDir, servletContext);
-                phpEnabled = true;
+            if (this.engine != null) {
+                this.engine.createQuercusEngine();
+                this.engine.setIni("include_path", ".:" + rootFolder.getAbsolutePath());
+                if (servletContext != null) {
+                    this.engine.init(rootFolder.getAbsolutePath(), defaultUserDir, servletContext);
+                    phpEnabled = true;
+                }
             }
         } catch (Exception e) {
             phpEnabled = false;
@@ -170,10 +170,12 @@ public class CometVisuServlet extends HttpServlet {
      * initialize the script manager.
      */
     @Override
-    public final void init(ServletConfig config) throws ServletException {
+    public final void init(@Nullable ServletConfig config) throws ServletException {
         super.init(config);
         this.config = config;
-        servletContext = config.getServletContext();
+        if (config != null) {
+            servletContext = config.getServletContext();
+        }
 
         // init php service if available
         if (this.engine != null) {
@@ -192,16 +194,10 @@ public class CometVisuServlet extends HttpServlet {
     @Deprecated
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         File requestedFile = getRequestedFile(req);
-        Matcher match = configStorePattern.matcher(req.getParameter("config"));
-        if (requestedFile.getName().endsWith("save_config.php") && match.find() && req.getParameter("type") != null
-                && req.getParameter("type").equals("xml")) {
-            saveConfig(req, resp);
-        } else {
-            processPhpRequest(requestedFile, req, resp);
-        }
+        processPhpRequest(requestedFile, req, resp);
     }
 
-    private Sitemap getSitemap(String sitemapname) {
+    private @Nullable Sitemap getSitemap(String sitemapname) {
         for (SitemapProvider provider : cometVisuApp.getSitemapProviders()) {
             Sitemap sitemap = provider.getSitemap(sitemapname);
             if (sitemap != null) {
@@ -222,13 +218,14 @@ public class CometVisuServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         File requestedFile = getRequestedFile(req);
 
-        String path = req.getPathInfo() != null ? req.getPathInfo() : "/index.html";
+        String path = req.getPathInfo();
+        if (path == null) {
+            path = "/index.html";
+        }
         Matcher matcher = sitemapPattern.matcher(path);
         if (matcher.find()) {
             // add headers for cometvisu clients autoconfiguration
-            resp.setHeader("X-CometVisu-Backend-LoginUrl",
-                    "/rest/" + Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_LOGIN_ALIAS);
-            resp.setHeader("X-CometVisu-Backend-Name", "openhab2");
+            resp.setHeader("X-CometVisu-Backend-Name", "openhab");
 
             // serve autogenerated config from openhab sitemap if no real config file exists
             if (!requestedFile.exists()) {
@@ -272,7 +269,7 @@ public class CometVisuServlet extends HttpServlet {
             // try to initialize the php service
             initQuercusEngine();
         }
-        if (this.phpEnabled) {
+        if (this.phpEnabled && this.engine != null) {
             this.engine.phpService(file, request, response);
         } else {
             logger.debug("php service is not available please install com.caucho.quercus bundle");
@@ -281,13 +278,13 @@ public class CometVisuServlet extends HttpServlet {
 
     protected File getRequestedFile(HttpServletRequest req) throws UnsupportedEncodingException {
         String requestedFile = req.getPathInfo();
-        if (requestedFile.endsWith("/")) {
-            requestedFile = requestedFile.substring(0, requestedFile.length() - 1);
-        }
         File file = null;
 
         // check services folder if a file exists there
         if (requestedFile != null) {
+            if (requestedFile.endsWith("/")) {
+                requestedFile = requestedFile.substring(0, requestedFile.length() - 1);
+            }
             file = new File(userFileFolder, URLDecoder.decode(requestedFile, "UTF-8"));
         }
         // serve the file from the cometvisu src directory
@@ -298,8 +295,9 @@ public class CometVisuServlet extends HttpServlet {
             // search for an index file
             FilenameFilter filter = new FilenameFilter() {
                 @Override
-                public boolean accept(File dir, String name) {
-                    return name.startsWith("index.") && (name.endsWith(".php") || name.endsWith(".html"));
+                public boolean accept(@Nullable File dir, @Nullable String name) {
+                    return name != null && name.startsWith("index.")
+                            && (name.endsWith(".php") || name.endsWith(".html"));
                 }
             };
             for (String dirFile : file.list(filter)) {
@@ -322,11 +320,12 @@ public class CometVisuServlet extends HttpServlet {
     private void processRssLogRequest(File file, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // retrieve the item
-        if (request.getParameter("f") == null) {
+        String f = request.getParameter("f");
+        if (f == null) {
             return;
         }
 
-        String[] itemNames = request.getParameter("f").split(",");
+        String[] itemNames = f.split(",");
         List<Item> items = new ArrayList<>();
 
         for (String name : itemNames) {
@@ -354,7 +353,7 @@ public class CometVisuServlet extends HttpServlet {
                     Command command = new StringType(title + rssLogMessageSeparator + message + rssLogMessageSeparator
                             + state + rssLogMessageSeparator + items.get(0).getName());
                     // Use the event publisher to store the item in the defined
-                    // persistance services
+                    // persistence services
                     cometVisuApp.getEventPublisher()
                             .post(ItemEventFactory.createCommandEvent(items.get(0).getName(), command));
                 }
@@ -385,9 +384,12 @@ public class CometVisuServlet extends HttpServlet {
                 response.flushBuffer();
             } else {
                 Feed feed = new Feed();
-                feed.feedUrl = request.getRequestURL().toString();
+                StringBuffer reqUrl = request.getRequestURL();
+                if (reqUrl != null) {
+                    feed.feedUrl = reqUrl.toString();
+                    feed.link = feed.feedUrl;
+                }
                 feed.title = "RSS supplied logs";
-                feed.link = request.getRequestURL().toString();
                 feed.author = "";
                 feed.description = "RSS supplied logs";
                 feed.type = "rss20";
@@ -428,7 +430,7 @@ public class CometVisuServlet extends HttpServlet {
                     while (it.hasNext()) {
                         i++;
                         HistoricItem historicItem = it.next();
-                        if (historicItem.getState() == null || historicItem.getState().toString().isEmpty()) {
+                        if (historicItem.getState().toString().isEmpty()) {
                             continue;
                         }
                         org.openhab.ui.cometvisu.internal.backend.model.rss.Entry entry = new org.openhab.ui.cometvisu.internal.backend.model.rss.Entry();
@@ -520,9 +522,9 @@ public class CometVisuServlet extends HttpServlet {
      *       http://balusc.blogspot.com/2009/02/fileservlet-supporting-resume-and
      *       .html
      */
-    @SuppressWarnings("PMD.CompareObjectsWithEquals")
-    private void processStaticRequest(File file, HttpServletRequest request, HttpServletResponse response,
+    private void processStaticRequest(@Nullable File file, HttpServletRequest request, HttpServletResponse response,
             boolean content) throws IOException {
+        File processFile = null;
         // Validate the requested file
         // ------------------------------------------------------------
         if (file == null) {
@@ -542,20 +544,22 @@ public class CometVisuServlet extends HttpServlet {
             // URL-decode the file name (might contain spaces and on) and
             // prepare
             // file object.
-            file = new File(rootFolder, URLDecoder.decode(requestedFile, "UTF-8"));
+            processFile = new File(rootFolder, URLDecoder.decode(requestedFile, "UTF-8"));
+        } else {
+            processFile = file;
         }
-        if (file.equals(rootFolder) || (file.exists() && file.isDirectory())) {
-            file = new File(file, "index.html");
+        if (processFile.equals(rootFolder) || (processFile.exists() && processFile.isDirectory())) {
+            processFile = new File(file, "index.html");
         }
 
         // Check if file actually exists in filesystem.
-        if (!file.exists()) {
+        if (!processFile.exists()) {
             // show installation hints if the CometVisu-Clients main index.html is requested but cannot be found
-            if (file.getParentFile().equals(rootFolder)
-                    && (file.getName().equalsIgnoreCase("index.html") || file.getName().length() == 0)) {
+            if (processFile.getParentFile().equals(rootFolder)
+                    && (processFile.getName().equalsIgnoreCase("index.html") || processFile.getName().length() == 0)) {
                 // looking for CometVisu clients index.html file
                 String path = null;
-                File folder = file.isDirectory() ? file : file.getParentFile();
+                File folder = processFile.isDirectory() ? processFile : processFile.getParentFile();
                 if (folder.exists()) {
                     File index = ClientInstaller.findClientRoot(folder, "index.html");
                     path = index.exists() ? index.getPath().replaceFirst(rootFolder.getPath() + "/", "") : null;
@@ -574,9 +578,9 @@ public class CometVisuServlet extends HttpServlet {
         }
 
         // Prepare some variables. The ETag is an unique identifier of the file.
-        String fileName = file.getName();
-        long length = file.length();
-        long lastModified = file.lastModified();
+        String fileName = processFile.getName();
+        long length = processFile.length();
+        long lastModified = processFile.lastModified();
         String eTag = fileName + "_" + length + "_" + lastModified;
         long expires = System.currentTimeMillis() + DEFAULT_EXPIRE_TIME;
 
@@ -745,10 +749,10 @@ public class CometVisuServlet extends HttpServlet {
 
         try {
             // Open streams.
-            input = new RandomAccessFile(file, "r");
+            input = new RandomAccessFile(processFile, "r");
             output = response.getOutputStream();
 
-            if (ranges.isEmpty() || ranges.get(0) == full) {
+            if (ranges.isEmpty() || ranges.get(0).equals(full)) {
                 // Return full file.
                 Range r = full;
                 response.setContentType(contentType);
@@ -802,8 +806,12 @@ public class CometVisuServlet extends HttpServlet {
             }
         } finally {
             // Gently close streams.
-            close(output);
-            close(input);
+            if (output != null) {
+                close(output);
+            }
+            if (input != null) {
+                close(input);
+            }
         }
     }
 
@@ -815,73 +823,26 @@ public class CometVisuServlet extends HttpServlet {
      * @throws IOException
      */
     private void showInstallationHint(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        InputStream in = getClass().getClassLoader().getResourceAsStream("404.html");
-        response.setContentType("text/html");
-        PrintWriter writer = response.getWriter();
-        byte[] bytes = new byte[in.available()];
-        in.read(bytes);
-        response.setContentLength(bytes.length);
-        writer.print(new String(bytes));
-        writer.flush();
-        writer.close();
-    }
-
-    /**
-     * Save config file send by editor
-     *
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    private final void saveConfig(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType(MediaType.APPLICATION_JSON);
-
-        class Response {
-            public Boolean success = false;
-            public String message = "";
-
-            Response() {
+        ClassLoader loader = getClass().getClassLoader();
+        if (loader != null) {
+            InputStream in = loader.getResourceAsStream("404.html");
+            if (in == null) {
+                logger.error("Error loading 404.html file");
+                response.sendError(404);
+            } else {
+                response.setContentType("text/html");
+                PrintWriter writer = response.getWriter();
+                byte[] bytes = new byte[in.available()];
+                in.read(bytes);
+                response.setContentLength(bytes.length);
+                writer.print(new String(bytes));
+                writer.flush();
+                writer.close();
             }
+        } else {
+            logger.error("Error loading classloader");
+            response.sendError(404);
         }
-        Response resp = new Response();
-
-        String fileName = request.getParameter("config");
-        File file = fileName != null ? new File(userFileFolder, URLDecoder.decode(fileName, StandardCharsets.UTF_8))
-                : null;
-
-        if (file != null && file.exists()) {
-            // file exists and we only write if the file exists (creating new files this way is prohibited for security
-            // reasons
-            logger.debug("save config file'{}' requested", file);
-
-            // check is backup folder exists
-            File backupFolder = new File(userFileFolder, "config/backup/");
-            boolean backup = true;
-            if (!backupFolder.exists()) {
-                try {
-                    backupFolder.mkdir();
-                } catch (SecurityException e) {
-                    logger.error("Error creating backup directory for CometVisu config files");
-                    backup = false;
-                }
-            }
-
-            if (backup) {
-                // Backup existing file
-                File backupFile = new File(backupFolder, file.getName() + "-" + System.currentTimeMillis());
-                Files.copy(file.toPath(), backupFile.toPath());
-            }
-
-            // write data to file
-            String data = request.getParameter("data");
-            Files.writeString(file.toPath(), data, StandardCharsets.UTF_8);
-            resp.success = true;
-            resp.message = "File saved";
-        }
-        response.getWriter().write(marshalJson(resp));
-        response.flushBuffer();
     }
 
     /**
@@ -937,8 +898,9 @@ public class CometVisuServlet extends HttpServlet {
 
                 String type = item.getType();
                 if ("Group".equals(item.getType())) {
-                    if (((GroupItem) item).getBaseItem() != null) {
-                        type = ((GroupItem) item).getBaseItem().getType();
+                    Item baseItem = ((GroupItem) item).getBaseItem();
+                    if (baseItem != null) {
+                        type = baseItem.getType();
                     } else {
                         continue;
                     }
@@ -951,10 +913,12 @@ public class CometVisuServlet extends HttpServlet {
                     logger.debug("no transform type found for item type {}, skipping this item", type);
                     continue;
                 }
-                if (!groups.containsKey(type)) {
-                    groups.put(type, new ArrayList<>());
+                List<Object> list = groups.get(type);
+                if (list == null) {
+                    list = new ArrayList<>();
+                    groups.put(type, list);
                 }
-                groups.get(type).add(bean);
+                list.add(bean);
             }
             resultString = marshalJson(groups);
         } else if (file.getName().equals("list_all_icons.php")) {
@@ -991,8 +955,8 @@ public class CometVisuServlet extends HttpServlet {
                 if (iconDir.exists() && iconDir.isDirectory()) {
                     FilenameFilter filter = new FilenameFilter() {
                         @Override
-                        public boolean accept(File dir, String name) {
-                            return name.endsWith(".png");
+                        public boolean accept(@Nullable File dir, @Nullable String name) {
+                            return name != null && name.endsWith(".png");
                         }
                     };
                     File[] icons = iconDir.listFiles(filter);
@@ -1152,15 +1116,13 @@ public class CometVisuServlet extends HttpServlet {
      *            The resource to be closed.
      */
     private static void close(Closeable resource) {
-        if (resource != null) {
-            try {
-                resource.close();
-            } catch (IOException ignore) {
-                // Ignore IOException. If you want to handle this anyway, it
-                // might be useful to know
-                // that this will generally only be thrown when the client
-                // aborted the request.
-            }
+        try {
+            resource.close();
+        } catch (IOException ignore) {
+            // Ignore IOException. If you want to handle this anyway, it
+            // might be useful to know
+            // that this will generally only be thrown when the client
+            // aborted the request.
         }
     }
 

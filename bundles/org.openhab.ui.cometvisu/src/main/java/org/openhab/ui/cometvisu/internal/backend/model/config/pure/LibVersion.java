@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.ui.cometvisu.internal.backend.model.config;
+package org.openhab.ui.cometvisu.internal.backend.model.config.pure;
 
 /**
  * the libVersion of the XSD from which the JAXB beans were generated from

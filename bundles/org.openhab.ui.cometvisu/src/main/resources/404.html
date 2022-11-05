@@ -104,7 +104,8 @@ body {
 	        Download the latest release of the CometVisu here: <a href="https://github.com/CometVisu/CometVisu/releases">CometVisu releases</a>, extract it
 	        and copy the 'release'-folder from the extracted archive to a local folder on your openHAB-server (e.g. /var/www/cometvisu)</a>
         </li>
-        <li>Change the owner of the CometVisu-client folder to openhab, e.g. for linux systems: <pre>chown -R openhab:openhab /var/www/cometvisu</pre></li>
+        <li>Change the owner of the CometVisu-client folder to the same user you use to run openHAB, usually that is "openhab", 
+            e.g. for linux systems: <pre>chown -R openhab:openhab /var/www/cometvisu</pre></li>
         <li>
 	        Open the openHAB administration UI, goto Administration -> Settings -> Other Services -> CometVisu
 	        and enter the absolute path to your local CometVisu client installation in the "Filesystem path" setting.

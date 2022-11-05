@@ -49,6 +49,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * @author Tobias Bräutigam - Initial contribution
  * @author Wouter Born - Migrated to JAX-RS Whiteboard Specification
  * @author Wouter Born - Migrated to OpenAPI annotations
+ *
+ * @deprecated CometVisu (>=0.12) is using openHAB's native REST API, a special backend implementation is obsolete now
  */
 @Component
 @JaxrsResource
@@ -58,6 +60,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_LOGIN_ALIAS)
 @Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_LOGIN_ALIAS)
 @NonNullByDefault
+@Deprecated(since = "3.4", forRemoval = true)
 public class LoginResource implements RESTResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
