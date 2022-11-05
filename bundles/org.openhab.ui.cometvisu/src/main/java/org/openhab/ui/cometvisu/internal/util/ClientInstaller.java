@@ -60,7 +60,7 @@ public class ClientInstaller {
     private Map<String, Object> latestRelease;
 
     /** Regular expression to parse semver version strings */
-    private final Pattern semverPattern = Pattern.compile("[\\D]*([\\d]{1,3})\\.([\\d]{1,3})\\.([\\d]{1,3}).*");
+    private final Pattern semverPattern = Pattern.compile("\\D*([\\d]{1,3})\\.(\\d{1,3})\\.(\\d{1,3}).*");
 
     private List<String> alreadyCheckedFolders = new ArrayList<>();
 
@@ -125,8 +125,8 @@ public class ClientInstaller {
 
                 if (version.exists()) {
                     try {
-                        String currentVersion = Files.readString(version.toPath());
-                        String currentRelease = (String) latestRelease.get("tag_name");
+                        String currentVersion = Files.readString(version.toPath()).trim();
+                        String currentRelease = (String) latestRelease.getOrDefault("tag_name", "");
                         if (currentRelease.startsWith("v")) {
                             currentRelease = currentRelease.substring(1);
                         }
@@ -203,12 +203,18 @@ public class ClientInstaller {
             throw new NumberFormatException("current version format error " + currentVersion);
         }
 
+        boolean equal = true;
+
         for (int i = 1; i <= 3; i++) {
-            if (Integer.parseInt(release.group(i)) > Integer.parseInt(current.group(i))) {
+            int relVer = Integer.parseInt(release.group(i));
+            int curVer = Integer.parseInt(current.group(i));
+            if (relVer > curVer) {
                 return false;
+            } else if (relVer < curVer) {
+                equal = false;
             }
         }
-        return true;
+        return !equal;
     }
 
     /**
