@@ -228,7 +228,14 @@ public class ClientInstaller {
                     List<Map<String, Object>> jsonResponse = new Gson().fromJson(response, ArrayList.class);
 
                     // releases are ordered top-down, the latest release comes first
-                    latestRelease = jsonResponse.get(0);
+                    for (int i = 0; i < jsonResponse.size(); i++) {
+                        var release = jsonResponse.get(i);
+                        if (((boolean) release.getOrDefault("prerelease", true)) == false
+                                && ((boolean) release.getOrDefault("draft", true)) == false) {
+                            latestRelease = release;
+                            break;
+                        }
+                    }
                 }
             } catch (IOException e) {
                 logger.error("error downloading release data: {}", e.getMessage(), e);
@@ -248,7 +255,10 @@ public class ClientInstaller {
         Map<String, Object> releaseAsset = null;
         for (Object assetObj : assets) {
             Map<String, Object> asset = (Map<String, Object>) assetObj;
-            if (((String) asset.get("content_type")).equalsIgnoreCase("application/zip")) {
+            String contentType = ((String) asset.getOrDefault("content_type", ""));
+            String name = ((String) asset.getOrDefault("name", ""));
+            if (contentType.equalsIgnoreCase("application/zip")
+                    || (contentType.equalsIgnoreCase("binary/octet-stream") && name.endsWith(".zip"))) {
                 releaseAsset = asset;
                 break;
             }
