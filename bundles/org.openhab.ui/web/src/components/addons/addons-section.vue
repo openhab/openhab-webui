@@ -75,7 +75,8 @@
     align-content flex-start
     align-items flex-end
     flex-wrap wrap
-    padding-left calc(var(--f7-safe-area-left) + var(--f7-list-item-padding-horizontal))
+    // gap 0.5rem
+    padding-left var(--f7-safe-area-left)
     .addon-card
       width 100%
       @media (min-width: 481px)
