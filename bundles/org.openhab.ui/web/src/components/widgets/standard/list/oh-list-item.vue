@@ -5,7 +5,7 @@
                 :media-item="context.parent.component.config.mediaList && !config.divider"
                 :badge="(config.divider) ? 'Divider' : (config.listButton) ? 'List button' : config.badge"
                 :accordion-item="isRegularAccordion && !config.divider && !context.editmode"
-                :link="(config.action !== undefined && config.action !== '' && !context.editmode) || isEquipmentAccordion ? true : undefined"
+                :link="(config.action !== undefined && config.action !== '' && !context.editmode) ? true : undefined"
                 @click.stop="openAccordionOrPerformAction"
                 :class="{ 'oh-equipment-accordion-item' : isEquipmentAccordion}"
                 ref="f7AccordionContent">
@@ -31,6 +31,12 @@
 .oh-equipment-accordion-item
   .item-link .item-inner:after
     transition-duration 300ms
+
+  > .item-content
+    cursor pointer
+
+    &:active
+      background var(--f7-list-link-pressed-bg-color)
 
   .list,
   .block
@@ -95,6 +101,14 @@
 
   &.accordion-item-opened > .item-content > .item-inner > .item-title-row:before
     content var(--f7-accordion-chevron-icon-up)
+
+.aurora
+  .oh-equipment-accordion-item
+    > .item-content
+      &:hover
+        background var(--f7-list-link-hover-bg-color)
+      &:active
+        background var(--f7-list-link-pressed-bg-color)
 
 .item-divider > span
   flex-shrink 1
