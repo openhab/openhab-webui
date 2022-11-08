@@ -313,7 +313,7 @@ export default {
         })
       }
     },
-    save (stay) {
+    save (stay, force) {
       this.cleanConfig(this.sitemap)
       if (!this.sitemap.uid) {
         this.$f7.dialog.alert('Please give an ID to the sitemap')
@@ -328,8 +328,7 @@ export default {
         return
       }
 
-      // Don't block saving when widget validation checks fail
-      this.validateWidgets()
+      if (!force && !this.validateWidgets(stay)) return
 
       const promise = (this.createMode)
         ? this.$oh.api.postPlain('/rest/ui/components/system:sitemap', JSON.stringify(this.sitemap), 'text/plain', 'application/json')
@@ -361,7 +360,7 @@ export default {
         }).open()
       })
     },
-    validateWidgets () {
+    validateWidgets (stay) {
       if (this.sitemap.slots && Array.isArray(this.sitemap.slots.widgets)) {
         const widgetList = this.sitemap.slots.widgets.reduce(function iter (widgets, widget) {
           widgets.push(widget)
@@ -410,7 +409,16 @@ export default {
           }
         })
         if (validationWarnings.length > 0) {
-          this.$f7.dialog.alert('<b>Sitemap definition will be saved with validation errors:</b><br />' + validationWarnings.join('<br />'))
+          this.$f7.dialog.create({
+            title: 'Validation errors',
+            text: 'Sitemap definition has validation errors:',
+            content: '<ul style="max-height: 100px; overflow-y: scroll"><li>' + validationWarnings.join('</li><li>') + '</li></ul>',
+            buttons: [
+              { text: 'Cancel', color: 'gray', close: true },
+              { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.save(stay, true) }
+            ],
+            destroyOnClose: true
+          }).open()
           return false
         }
         return true
