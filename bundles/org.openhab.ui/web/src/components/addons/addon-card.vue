@@ -44,23 +44,22 @@
     width 100%
     height 100%
     margin: 0px
-    // background-color var(--f7-card-bg-color)
     display flex
     flex-direction column
-    // color inherit
     scroll-snap-align center center
     padding 10px
     border-radius 5px
 
+    &:hover
+      background var(--f7-list-link-hover-bg-color)
+
   .install-button
-    // --f7-button-bg-color var(--f7-color-gray)
     --f7-button-text-transform uppercase
     --f7-button-bg-color var(--f7-list-item-border-color)
   .addon-card-headline
     text-transform uppercase
     color var(--f7-theme-color)
     font-size 11px
-    // height 12px
     font-weight 500
   .addon-card-title
     height 3.4rem
