@@ -127,7 +127,7 @@
           :addons="allAddons.filter((a) => a.type === 'transformation')" :show-all="true"
           :featured="['transformation-jsonpath', 'transformation-javascript', 'transformation-regex']"
           :title="'Transformation Add-ons'"
-          :subtitle="'Backend connectors to store historical data'" />
+          :subtitle="'Translate raw values into processed or human-readable representations'" />
         <addons-section
           v-if="addons && addons.karaf" :show-all="true"
           @addonButtonClick="addonButtonClick"
