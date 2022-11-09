@@ -14,6 +14,7 @@ const p = (type, name, label, description, options, advanced) => {
 }
 
 // Common
+const checkStateParameter = p('BOOLEAN', 'checkState', 'Check Current State', 'When this is enabled, the current state of the target item is queried and compared to the potential new state triggered by the command. If it is identical, a special error message is triggered and communicated to the user', null, true)
 const tfaAckParameter = p('BOOLEAN', 'ackNeeded', 'Secondary User Verification - Acknowledgement needed', 'When this is set, Google will ask for acknowledgement (yes or no) before executing the action', null, true)
 const tfaPinParameter = p('TEXT', 'pinNeeded', 'Secondary User Verification - PIN', 'When this is set, Google will require this PIN before executing the action', null, true)
 const nameParameter = p('TEXT', 'name', 'Custom name', 'The name of the device used in Google (use synonyms instead if possible)', null, true)
@@ -29,7 +30,7 @@ const speedParameter = p('TEXT', 'speeds', 'Speeds', 'Mappings between items sta
 const orderedParameter = p('BOOLEAN', 'ordered', 'Ordered')
 // Lights
 const colorTemperatureRangeParameter = p('TEXT', 'colorTemperatureRange', 'Color temperature range', '(Color lights only) Supported color temperature range in Kelvin (comma separated), e.g. "2000,9000"')
-const useKelvinParameter = p('BOOLEAN', 'useKelvin', 'Use Kelvin', '(Color lights only) Use Kelvin instead of percentage for a the "lightColorTemperature" child in a grouped light')
+const colorUnitParameter = p('TEXT', 'colorUnit', 'Color Unit', '(Color lights only) Specify the unit to be used for the "lightColorTemperature" child in a grouped light, e.g. "kelvin", "mired" or "percent"')
 // OpenCloseDevices
 const discreteOnlyParameter = p('BOOLEAN', 'discreteOnly', 'Discrete values only', 'Device must either be fully open or fully closed (no states in between)')
 const queryOnlyParameter = p('BOOLEAN', 'queryOnly', 'Read-only', 'Device is read-only (can not be controlled)')
@@ -51,6 +52,17 @@ const useFahrenheitParameter = p('BOOLEAN', 'useFahrenheit', 'Use Fahrenheit')
 const transportControlSupportedCommandsParameter = p('TEXT', 'transportControlSupportedCommands', 'Supported transport controls', 'List of supported controls, e.g. "NEXT,PREVIOUS,PAUSE,RESUME"')
 const availableInputsParameter = p('TEXT', 'availableInputs', 'Available inputs', 'List of available inputs with mapping (comma separated), e.g. "inputKey=inputName:inputSynonym1:inputSynonym2:..."')
 const availableChannelsParameter = p('TEXT', 'availableChannels', 'Available channels', 'List of available channels with mapping (comma separated), e.g. "channelNumber=channelId=channelName:channelSynonym1:channelSynonym2:..."')
+const availableApplicationsParameter = p('TEXT', 'availableApplications', 'Available applications', 'List of available applications with mapping (comma separated), e.g. "applicationKey=applicationName:applicationSynonym:..."')
+// SecuritySystem
+const waitForStateChangeParameter = p('INTEGER', 'waitForStateChange', 'Waiting time for state verification', 'Defines the number of seconds to wait for the security system state to update before checking that the arm/disarm was successful, e.g. "5"')
+const pinOnDisarmOnlyParameter = p('BOOLEAN', 'pinOnDisarmOnly', 'Require PIN only for Disarm', 'Will enforce the PIN on disarming only. Arming will be done without the PIN')
+const armLevelsParameter = p('TEXT', 'armLevels', 'Arm Levels', 'List of supported arm levels as "Key=Label" (comma separated) where the label is used for the command and the key is sent to openHAB, e.g. "L1=Level 1,L2=Level 2"')
+const blockingParameter = p('BOOLEAN', 'blocking', 'Blocking zone', 'If set Google will attempt to check for zones that are causing the arming to fail')
+const zoneTypeParameter = p('TEXT', 'zoneType', 'Zone Type', 'Type of security zone sensor, e.g. "OpenClose" or "Motion"')
+// Charger
+const isRechargeableParameter = p('BOOLEAN', 'isRechargeable', 'Rechargeable', 'Set to true if this device is rechargeable and may report capacityUntilFull, isCharging, isPluggedIn state, and can accept the Charge command')
+const unitParameter = p('TEXT', 'unit', 'Capacity Unit', 'Unit to be used for charger capacity, e.g. "PERCENTAGE", "SECONDS", "MILES", "KILOMETERS" or "KILOWATT_HOURS"')
+
 
 const deviceTypes = {
   // Switches
@@ -76,22 +88,25 @@ const deviceTypes = {
   'Fan': [speedParameter, langParameter, orderedParameter],
   'AirPurifier': [speedParameter, langParameter, orderedParameter],
   'Hood': [speedParameter, langParameter, orderedParameter],
+  // Lights
+  'Light': [colorTemperatureRangeParameter],
+  'SpecialColorLight': [colorTemperatureRangeParameter, colorUnitParameter],
   // Other Devices
+  'Charger': [isRechargeableParameter, unitParameter],
   'Camera': [protocolsParameter, tokenNeededParameter],
-  'Light': [colorTemperatureRangeParameter, useKelvinParameter],
   'Lock': [invertedParameter],
   'Scene': [sceneReversibleParameter],
-  'SecuritySystem': [invertedParameter],
+  'SecuritySystem': [armLevelsParameter, pinOnDisarmOnlyParameter, waitForStateChangeParameter, invertedParameter],
   'Sensor': [sensorNameParameter, valueUnitParameter, statesParameter],
   'Speaker': [volumeMaxLevelParameter, volumeDefaultPercentageParameter, levelStepSizeParameter],
   'TemperatureSensor': [useFahrenheitParameter],
   'Thermostat': [useFahrenheitParameter, thermostatModesParameter, thermostatTemperatureRangeParameter],
-  'TV': [volumeMaxLevelParameter, volumeDefaultPercentageParameter, levelStepSizeParameter, langParameter, transportControlSupportedCommandsParameter, availableInputsParameter, availableChannelsParameter],
+  'TV': [volumeMaxLevelParameter, volumeDefaultPercentageParameter, levelStepSizeParameter, langParameter, transportControlSupportedCommandsParameter, availableInputsParameter, availableChannelsParameter, availableApplicationsParameter],
   'Valve': [invertedParameter]
 }
 
 for (let c in deviceTypes) {
-  deviceTypes[c] = [...deviceTypes[c], nameParameter, roomHintParameter, structureHintParameter, tfaAckParameter, tfaPinParameter]
+  deviceTypes[c] = [...deviceTypes[c], nameParameter, roomHintParameter, structureHintParameter, checkStateParameter, tfaAckParameter, tfaPinParameter]
 }
 
 const deviceAttributes = {
@@ -108,7 +123,21 @@ const deviceAttributes = {
   'tvVolume': [],
   'tvChannel': [],
   'tvInput': [],
-  'tvTransport': []
+  'tvApplication': [],
+  'tvTransport': [],
+  'lightPower': [],
+  'lightBrightness': [],
+  'lightColor': [],
+  'lightColorTemperature': [],
+  'chargerCharging': [],
+  'chargerPluggedIn': [],
+  'chargerCapacityRemaining': [],
+  'chargerCapacityUntilFull': [],
+  'securitySystemArmed': [],
+  'securitySystemArmLevel': [],
+  'securitySystemTrouble': [],
+  'securitySystemTroubleCode': [],
+  'securitySystemZone': [zoneTypeParameter, blockingParameter]
 }
 
 let classes = {}
