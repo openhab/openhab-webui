@@ -11,12 +11,15 @@
   </parent>
 
   <groupId>org.openhab.ui.features</groupId>
-  <artifactId>org.openhab.ui.features</artifactId>
-
-  <packaging>feature</packaging>
+  <artifactId>org.openhab.ui.reactor.features</artifactId>
+  <packaging>pom</packaging>
 
   <name>openHAB UI :: Features</name>
-  <description>openHAB UI Features</description>
+
+  <modules>
+    <module>openhab-ui</module>
+    <module>openhab-ui-external</module>
+  </modules>
 
   <dependencies>
     <!-- BOM, so features are build after bundles in parallel builds -->

@@ -8,7 +8,9 @@ bin/
 .metadata/
 .openapi-generator/
 **/.settings/org.eclipse.*
-features/*/src/main/history
+bundles/**/src/main/history
+features/**/src/main/history
+features/**/src/main/feature
 npm-debug.log
 node_modules/
 .idea

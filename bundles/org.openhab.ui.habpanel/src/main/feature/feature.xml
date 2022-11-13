@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="org.openhab.ui.habpanel-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.4.0">
+	<repository>mvn:org.openhab.core.features.karaf/org.openhab.core.features.karaf.openhab-core/${ohc.version}/xml/features</repository>
+
+	<feature name="openhab-ui-habpanel" description="HABPanel" version="${project.version}">
+		<feature>openhab-core-ui</feature>
+		<bundle>mvn:org.openhab.ui.bundles/org.openhab.ui.habpanel/${project.version}</bundle>
+	</feature>
+</features>
