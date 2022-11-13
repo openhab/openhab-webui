@@ -428,4 +428,3 @@ export const homekitParameters = {
     m('DISARM', 'TEXT', 'DISARM', 'Value for security state "disarm"')
   ]
 }
-
