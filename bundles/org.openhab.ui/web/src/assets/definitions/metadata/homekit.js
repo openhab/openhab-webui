@@ -156,7 +156,8 @@ export const accessories = {
     { label: 'CurrentHeatingCoolingMode', mandatory: true },
     { label: 'TargetHeatingCoolingMode', mandatory: true },
     { label: 'CoolingThresholdTemperature', mandatory: false },
-    { label: 'HeatingThresholdTemperature', mandatory: false }
+    { label: 'HeatingThresholdTemperature', mandatory: false },
+    { label: 'RelativeHumidity', mandatory: false }
   ],
   'HeaterCooler': [
     { label: 'ActiveStatus', mandatory: true },
@@ -244,6 +245,13 @@ for (const a in accessories) {
   }
 }
 
+const instanceParameter = {
+  name: 'Instance',
+  label: 'Instance',
+  description: 'HomeKit bridge instance number in case of multiple bridge instances. if unsure, leave empty',
+  type: 'INTEGER'
+}
+
 const valveTypeParameter = {
   name: 'homekitValveType',
   label: 'Valve Type',
@@ -312,6 +320,12 @@ const stepValue = {
   type: 'INTEGER'
 }
 
+const batteryLowThreshold = {
+  name: 'lowThreshold',
+  label: 'battery low threshold. applicable only for items of type Number',
+  type: 'INTEGER'
+}
+
 const m = (name, type, label, description) => {
   return {
     name,
@@ -335,31 +349,44 @@ const dimmerFilterType = {
 }
 
 export const homekitParameters = {
-  'Valve': [valveTypeParameter, valveTimerParameter, valveDefaultDuration],
-  'Lighting.Brightness': [minValue, maxValue, dimmerFilterType],
-  'TemperatureSensor.CurrentTemperature': [minValue, maxValue],
-  'LeakSensor': [invertedParameter],
+  'Valve': [instanceParameter, valveTypeParameter, valveTimerParameter, valveDefaultDuration],
+  'Lighting.Brightness': [instanceParameter, minValue, maxValue, dimmerFilterType],
+  'TemperatureSensor.CurrentTemperature': [instanceParameter, minValue, maxValue],
+  'LeakSensor': [instanceParameter, invertedParameter],
   'LeakSensor.LeakDetectedState': [invertedParameter],
-  'MotionSensor': [invertedParameter],
+  'LeakSensor.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
+  'MotionSensor': [instanceParameter, invertedParameter],
   'MotionSensor.MotionDetectedState': [invertedParameter],
-  'OccupancySensor': [invertedParameter],
+  'MotionSensor.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
+  'OccupancySensor': [instanceParameter, invertedParameter],
+  'OccupancySensor.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
   'OccupancySensor.OccupancyDetectedState': [invertedParameter],
-  'ContactSensor': [invertedParameter],
+  'ContactSensor': [instanceParameter, invertedParameter],
+  'ContactSensor.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
   'ContactSensor.ContactSensorState': [invertedParameter],
-  'SmokeSensor': [invertedParameter],
+  'SmokeSensor': [instanceParameter, invertedParameter],
+  'SmokeSensor.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
   'SmokeSensor.SmokeDetectedState': [invertedParameter],
-  'CarbonDioxideSensor': [invertedParameter],
+  'CarbonDioxideSensor': [instanceParameter, invertedParameter],
   'CarbonDioxideSensor.CarbonDioxideDetectedState': [invertedParameter],
-  'CarbonMonoxideSensor': [invertedParameter],
+  'CarbonDioxideSensor.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
+  'CarbonMonoxideSensor': [instanceParameter, invertedParameter],
   'CarbonMonoxideSensor.CarbonMonoxideDetectedState': [invertedParameter],
-  'Window': [invertedParameter],
-  'Door': [invertedParameter],
-  'WindowCovering': [invertedParameter],
-  'Battery': [chargeableParameter],
+  'CarbonMonoxideSensor.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
+  'LightSensor.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
+  'HumiditySensor.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
+  'TemperatureSensor.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
+  'Window': [instanceParameter, invertedParameter],
+  'Door': [instanceParameter, invertedParameter],
+  'WindowCovering': [instanceParameter, invertedParameter],
+  'Battery': [instanceParameter, chargeableParameter],
+  'Battery.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
+  'Fan': [instanceParameter],
   'Fan.TargetFanState': [invertedParameter],
   'Fan.RotationDirection': [invertedParameter],
   'Fan.SwingMode': [invertedParameter],
   'Fan.LockControl': [invertedParameter],
+  'Thermostat': [instanceParameter],
   'Thermostat.CurrentTemperature': [minValue, maxValue, stepValue],
   'Thermostat.TargetTemperature': [minValue, maxValue, stepValue],
   'Thermostat.CoolingThresholdTemperature': [minValue, maxValue, stepValue],
@@ -375,6 +402,8 @@ export const homekitParameters = {
     m('COOL', 'TEXT', 'COOL', 'Value for thermostat mode "cool"'),
     m('AUTO', 'TEXT', 'AUTO', 'Value for thermostat mode "auto"')
   ],
+  'AirQualitySensor': [instanceParameter],
+  'AirQualitySensor.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
   'AirQualitySensor.AirQuality': [
     m('UNKNOWN', 'TEXT', 'UNKNOWN', 'Value for air quality "unknown"'),
     m('EXCELLENT', 'TEXT', 'EXCELLENT', 'Value for air quality "excellent"'),
@@ -383,6 +412,8 @@ export const homekitParameters = {
     m('INFERIOR', 'TEXT', 'INFERIOR', 'Value for air quality "inferior"'),
     m('POOR', 'TEXT', 'POOR', 'Value for air quality "poor"')
   ],
+  'AirQualitySensor.VOCDensity': [minValue, maxValue, stepValue],
+  'SecuritySystem': [instanceParameter],
   'SecuritySystem.CurrentSecuritySystemState': [
     m('STAY_ARM', 'TEXT', 'STAY_ARM', 'Value for security state "stay arm"'),
     m('AWAY_ARM', 'TEXT', 'AWAY_ARM', 'Value for security state "arm away"'),
@@ -397,3 +428,4 @@ export const homekitParameters = {
     m('DISARM', 'TEXT', 'DISARM', 'Value for security state "disarm"')
   ]
 }
+
