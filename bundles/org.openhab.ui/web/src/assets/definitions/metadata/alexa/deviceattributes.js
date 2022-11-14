@@ -16,7 +16,7 @@ export default {
   // Camera Attributes
   CameraStream: {
     itemTypes: ['String'],
-    parameters: () => [p.proxyBaseUrl(), p.resolution(), p.basicAuth('username'), p.basicAuth('password')]
+    parameters: () => [p.proxyBaseUrl(), p.resolution(), p.basicAuthUsername(), p.basicAuthPassword()]
   },
 
   // Cover Attributes
