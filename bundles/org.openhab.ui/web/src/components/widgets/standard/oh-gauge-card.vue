@@ -9,9 +9,7 @@
       </f7-link>
       <oh-gauge v-else :context="childContext(context.component)" />
     </f7-card-content>
-    <f7-card-footer v-if="config.footer">
-      {{ config.footer }}
-    </f7-card-footer>
+    <oh-card-footer v-if="config.footer" :texts="config.footer" />
   </f7-card>
 </template>
 
@@ -27,13 +25,15 @@
 <script>
 import mixin from '../widget-mixin'
 import OhGauge from '../system/oh-gauge.vue'
+import OhCardFooter from '../system/oh-card-footer.vue'
 import { actionsMixin } from '../widget-actions'
 import { OhGaugeCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin, actionsMixin],
   components: {
-    OhGauge
+    OhGauge,
+    OhCardFooter
   },
   widget: OhGaugeCardDefinition
 }

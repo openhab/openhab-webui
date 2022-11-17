@@ -18,9 +18,7 @@
       <!-- <f7-link class="label-link" v-if="config.action">{{context.store[config.item].displayState || context.store[config.item].state}}</f7-link> -->
       <!-- <h2>{{context.store[config.item].displayState || context.store[config.item].state}}</h2> -->
     </f7-card-content>
-    <f7-card-footer v-if="config.footer">
-      {{ config.footer }}
-    </f7-card-footer>
+    <oh-card-footer v-if="config.footer" :texts="config.footer" />
   </f7-card>
 </template>
 
@@ -53,11 +51,13 @@ import { actionsMixin } from '../widget-actions'
 import { OhLabelCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 import OhTrend from '../system/oh-trend'
+import OhCardFooter from '../system/oh-card-footer.vue'
 
 export default {
   mixins: [mixin, actionsMixin],
   components: {
-    OhTrend
+    OhTrend,
+    OhCardFooter
   },
   widget: OhLabelCardDefinition,
   computed: {

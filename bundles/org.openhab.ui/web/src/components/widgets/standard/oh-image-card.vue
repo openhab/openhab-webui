@@ -11,9 +11,7 @@
       </f7-list>
       <oh-image v-else :context="childContext(context.component)" />
     </f7-card-content>
-    <f7-card-footer v-if="config.footer">
-      {{ config.footer }}
-    </f7-card-footer>
+    <oh-card-footer v-if="config.footer" :texts="config.footer" />
   </f7-card>
 </template>
 
@@ -37,12 +35,14 @@
 import mixin from '../widget-mixin'
 import { actionsMixin } from '../widget-actions'
 import OhImage from '../system/oh-image.vue'
+import OhCardFooter from '../system/oh-card-footer.vue'
 import { OhImageCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin, actionsMixin],
   components: {
-    OhImage
+    OhImage,
+    OhCardFooter
   },
   widget: OhImageCardDefinition
 }
