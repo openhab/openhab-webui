@@ -13,7 +13,7 @@
           :init="initSearchbar"
           search-container=".rules-list"
           search-item=".rulelist-item"
-          search-in=".item-title, .item-subtitle, .item-header, .item-footer"
+          search-in=".item-title, .item-text, .item-after, .item-subtitle, .item-header, .item-footer"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
