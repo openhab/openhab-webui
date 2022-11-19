@@ -1332,9 +1332,9 @@
 		_t.longPress = false;
 		_t.pressed = false;
 
-		_t.setValue = function(value) {
+		_t.setValue = function(value, itemState) {
 			var
-				t = value.split(","),
+				t = itemState.split(","),
 				hsv = {
 					h: t[0] / 360,
 					s: t[1] / 100,
