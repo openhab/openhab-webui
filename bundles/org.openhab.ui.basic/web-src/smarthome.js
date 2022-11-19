@@ -1089,17 +1089,18 @@
 				};
 			}
 			var
-				maxR = _t.image.clientWidth / 2,
-				offsetX = pos.x - maxR,
-				offsetY = pos.y - maxR,
-				r = (offsetY * offsetY) + (offsetX * offsetX);
+				maxRadius = _t.image.clientWidth / 2,
+				offsetX = pos.x - maxRadius,
+				offsetY = pos.y - maxRadius,
+				radius = Math.sqrt((offsetY * offsetY) + (offsetX * offsetX));
 
-			if (r > (maxR * maxR)) {
+			if (radius > maxRadius) {
 				var
-					ratio = 1 - Math.abs(maxR / Math.sqrt(r));
+					ratio = 1 - Math.abs(maxRadius / radius);
 
 				pos.x -= (offsetX * ratio);
 				pos.y -= (offsetY * ratio);
+				radius = maxRadius;
 			}
 
 			_t.handle.style.left = (pos.x / _t.image.clientWidth) * 100 + "%";
@@ -1111,7 +1112,7 @@
 						(Math.PI * 2 - Math.atan(offsetY / offsetX) - Math.PI / 2) / (Math.PI * 2),
 				hsv = {
 					h: isNaN(angle) ? 0 : angle,
-					s: Math.sqrt(r) / maxR,
+					s: radius / maxRadius,
 					v: 1
 				},
 				hsl = hsv2hsl(hsv);
@@ -1402,7 +1403,7 @@
 				_t.value = Colorpicker.hsv2rgb(color);
 				emitEvent(
 					Math.round((color.h * 360) % 360) + "," +
-					Math.round((color.s * 100) % 100) + "," +
+					Math.round(color.s * 100) + "," +
 					Math.round(color.v * 100)
 				);
 			});
