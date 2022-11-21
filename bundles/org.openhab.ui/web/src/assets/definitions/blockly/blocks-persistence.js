@@ -16,21 +16,21 @@ export default function defineOHBlocks_Persistence (f7) {
         .appendField(new Blockly.FieldDropdown([
           ['average', 'averageSince'], ['delta', 'deltaSince'],
           ['deviation', 'deviationSince'], ['variance', 'varianceSince'], ['evolution rate', 'evolutionRate'],
-          ['minimum', 'minimumSince'], ['maximum', 'maximumSince'], ['sum', 'sumSince']
-        ]
+          ['minimum', 'minimumSince'], ['maximum', 'maximumSince'], ['sum', 'sumSince'],
+          ['previous', 'previousState']
+        ], this.handleTypeSelection.bind(this)
         ), 'methodName')
+      this.methodName = this.getFieldValue('methodName')
       this.appendValueInput('itemName')
         .appendField('of the state of item')
         .setAlign(Blockly.ALIGN_RIGHT)
         .setCheck('oh_itemtype')
-      this.appendValueInput('dayInfo')
-        .appendField('since')
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .setCheck(['ZonedDateTime'])
+      this.updateShape()
       this.setInputsInline(false)
       this.setOutput(true, null)
       this.setColour(0)
       let thisBlock = this
+
       this.setTooltip(function () {
         let methodName = thisBlock.getFieldValue('methodName')
         let TIP = {
@@ -41,11 +41,32 @@ export default function defineOHBlocks_Persistence (f7) {
           'evolutionRate': 'Gets the evolution rate of the state of a given Item since a certain point in time',
           'minimumSince': 'Gets the minimum value of the State of a persisted Item since a certain point in time',
           'maximumSince': 'Gets the maximum value of the State of a persisted Item since a certain point in time',
-          'sumSince': 'Gets the sum of the previous States of a persisted Item since a certain point in time'
+          'sumSince': 'Gets the sum of the previous States of a persisted Item since a certain point in time',
+          'previousState': 'Gets the previous state - time is irrelevant'
         }
         return TIP[methodName]
       })
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html#get-statistical-value-of-an-item')
+    },
+    handleTypeSelection: function (methodName) {
+      if (this.methodName !== methodName) {
+        this.methodName = methodName
+        this.updateShape()
+      }
+    },
+    updateShape: function () {
+      if (this.methodName === 'previousState') {
+        if (this.getInput('dayInfo')) {
+          this.removeInput('dayInfo')
+        }
+      } else {
+        if (!this.getInput('dayInfo')) {
+          this.appendValueInput('dayInfo')
+            .appendField('since')
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .setCheck(['ZonedDateTime'])
+        }
+      }
     }
   }
 
@@ -63,6 +84,8 @@ export default function defineOHBlocks_Persistence (f7) {
     let code = ''
     if (methodName === 'maximumSince' || methodName === 'minimumSince') {
       code = `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo}).getState()`
+    } else if (methodName === 'previousState') {
+      code = `${persistence}.previousState(itemRegistry.getItem(${itemName})).getState()`
     } else {
       code = `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo})`
     }
