@@ -17,7 +17,7 @@ export default function defineOHBlocks_Persistence (f7) {
           ['average', 'averageSince'], ['delta', 'deltaSince'],
           ['deviation', 'deviationSince'], ['variance', 'varianceSince'], ['evolution rate', 'evolutionRate'],
           ['minimum', 'minimumSince'], ['maximum', 'maximumSince'], ['sum', 'sumSince'],
-          ['previous', 'previousState']
+          ['previous value', 'previousState']
         ], this.handleTypeSelection.bind(this)
         ), 'methodName')
       this.methodName = this.getFieldValue('methodName')

@@ -48,7 +48,7 @@ export default function (f7) {
     return [code, 0]
   }
 
-  /* retrieve items via their tags*/
+  /* retrieve items via their tags */
   Blockly.Blocks['oh_taggeditems'] = {
     init: function () {
       this.appendValueInput('tagName')
