@@ -92,37 +92,69 @@
             }
         },
         "ItemHistory": {
+            "averageBetween": {
+                "!doc": "Gets the average value of the state of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
             "averageSince": {
                 "!doc": "Gets the average value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
+            "changedBetween": {
+                "!doc": "Checks if the state of a given Item has changed between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "changedSince": {
                 "!doc": "Checks if the state of a given Item has changed since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
+            "deltaBetween": {
+                "!doc": "Gets the difference value of the state of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
             "deltaSince": {
                 "!doc": "Gets the difference value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
+            "deviationBetween": {
+                "!doc": "Gets the standard deviation of the state of the given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "deviationSince": {
                 "!doc": "Gets the standard deviation of the state of the given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
-            "evolutionRate": {
+            "evolutionRateBetween": {
+                "!doc": "Gets the evolution rate of the state of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
+            "evolutionRateSince": {
                 "!doc": "Gets the evolution rate of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "historicState": {
                 "!doc": "Retrieves the historic Item state for a given Item at a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> ?"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> string|null"
             },
             "lastUpdate": {
                 "!doc": "Query the last update time of a given item.",
-                "!type": "fn(serviceId?: string) -> Date?"
+                "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
+            },
+            "latestState": {
+                "!doc": "Retrieves the historic Item state for a given Item at the current point in time.",
+                "!type": "fn(serviceId?: string) -> string|null"
+            },
+            "maximumBetween": {
+                "!doc": "Gets the maximum value of the historic state of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "maximumSince": {
                 "!doc": "Gets the historic Item with the maximum value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
+            "minimumBetween": {
+                "!doc": "Gets the minimum value of the historic state of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "minimumSince": {
                 "!doc": "Gets the historic Item with the minimum value of the state of a given Item since a certain point in time.",
@@ -134,15 +166,27 @@
             },
             "previousState": {
                 "!doc": "Returns the previous state of a given item.",
-                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> ?"
+                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> string|null"
+            },
+            "sumBetween": {
+                "!doc": "Gets the sum of the states of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "sumSince": {
                 "!doc": "Gets the sum of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
+            "updatedBetween": {
+                "!doc": "Checks if the state of a given Item has been updated between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "updatedSince": {
                 "!doc": "Checks if the state of a given Item has been updated since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
+            },
+            "varianceBetween": {
+                "!doc": "Gets the variance of the state of the given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "varianceSince": {
                 "!doc": "Gets the variance of the state of the given Item since a certain point in time.",
