@@ -63,7 +63,6 @@ const zoneTypeParameter = p('TEXT', 'zoneType', 'Zone Type', 'Type of security z
 const isRechargeableParameter = p('BOOLEAN', 'isRechargeable', 'Rechargeable', 'Set to true if this device is rechargeable and may report capacityUntilFull, isCharging, isPluggedIn state, and can accept the Charge command')
 const unitParameter = p('TEXT', 'unit', 'Capacity Unit', 'Unit to be used for charger capacity, e.g. "PERCENTAGE", "SECONDS", "MILES", "KILOMETERS" or "KILOWATT_HOURS"')
 
-
 const deviceTypes = {
   // Switches
   'Switch': [invertedParameter],
@@ -116,8 +115,6 @@ const deviceAttributes = {
   'thermostatTemperatureSetpointLow': [],
   'thermostatTemperatureSetpointHigh': [],
   'thermostatMode': [],
-  'lightBrightness': [],
-  'lightColorTemperature': [],
   'tvPower': [],
   'tvMute': [],
   'tvVolume': [],
