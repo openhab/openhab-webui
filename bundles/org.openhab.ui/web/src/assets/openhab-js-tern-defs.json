@@ -22,6 +22,10 @@
                 "!doc": "Access historical states for this item",
                 "!type": "ItemHistory"
             },
+            "semantics": {
+                "!doc:": "Access the sementic features for this Item",
+                "!type": "ItemSemantics"
+            },
             "rawState": {
                 "!doc": "The raw state of the item, as a java object.",
                 "!type": "?"
@@ -195,6 +199,28 @@
             "latestState": {
                 "!doc": "Retrieves the historic Item state for a given Item at the current point in time.",
                 "!type": "fn(serviceId?: string) -> ?"
+            }
+        },
+        "ItemSemantics": {
+            "equipmentType": {
+                "!doc": "The type of the semantic equipment.",
+                "!type": "string|null"
+            },
+            "locationType": {
+                "!doc": "The type of the semantic location.",
+                "!type": "string|null"
+            },
+            "pointType": {
+                "!doc": "The type of the semantic point.",
+                "!type": "string|null"
+            },
+            "propertyType": {
+                "!doc": "The type of the semantic property.",
+                "!type": "string|null"
+            },
+            "semanticType": {
+                "!doc": "Determines the semantic type (i.e. a sub-type of Location, Equipment or Point).",
+                "!type": "string|null"
             }
         },
         "ItemConfig": {
