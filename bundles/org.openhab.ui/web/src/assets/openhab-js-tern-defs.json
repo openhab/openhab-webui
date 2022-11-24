@@ -609,6 +609,10 @@
             "Voice": {
                 "!doc": "Voice Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use voice features.",
                 "!type": "VoiceActions"
+            },
+            "thingActions": {
+                "!doc": "Get the ThingActions of a given Thing.",
+                "!type": "fn(bindingId: string, thingUid: string) -> ?"
             }
         }
     },
