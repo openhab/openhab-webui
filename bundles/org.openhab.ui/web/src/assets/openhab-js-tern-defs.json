@@ -337,6 +337,32 @@
                 "!type": "fn(key: string) -> ?"
             }
         },
+        "Timer": {
+            "cancel": {
+                "!doc": "Cancels the timer.",
+                "!type": "fn() -> boolean"
+            },
+            "getExecutionTime": {
+                "!doc": "The scheduled execution time or null if timer was cancelled.",
+                "!type": "fn() -> time.ZonedDateTime|null"
+            },
+            "isActive": {
+                "!doc": "Whether the scheduled execution is yet to happen.",
+                "!type": "fn() -> boolean"
+            },
+            "isCancelled": {
+                "!doc": "Whether the timer has been cancelled.",
+                "!type": "fn() -> boolean"
+            },
+            "hasTerminated": {
+                "!doc": "Whether the scheduled execution has already terminated.",
+                "!type": "fn() -> boolean"
+            },
+            "reschedule": {
+                "!doc": "Reschedules a timer to a new starting time. This can also be called after a timer has terminated, which will result in another execution of the same code.",
+                "!type": "fn(time.ZonedDateTime) -> boolean"
+            }
+        },
         "TimeNamespace": {
             "toZDT": {
                 "!doc": "Converts nearly any representation of a time to a time.ZonedDateTime (see JS Scripting Docs/Standard Library/Time)",
@@ -510,8 +536,10 @@
         },
         "ScriptExecutionActions": {
             "callScript": { "!type": "fn(scriptName: string)" },
-            "createTimer": { "!type": "fn(instant, function: fn()) -> ?" },
-            "createTimerWithArgument": { "!type": "fn(instant, arg, function: fn()) -> ?" }
+            "createTimer": {
+                "!doc": "Schedules a function for later execution.",
+                "!type": "fn(identifier?: string, zonedDateTime: time.ZonedDateTime, function: fn()) -> Timer"
+              }
         },
         "SemanticsActions": {
             "getEquipment": { "!type": "fn(rawItem: ?) -> ?" },
