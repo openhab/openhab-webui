@@ -9,13 +9,13 @@
         <f7-link v-if="isAdmin" icon-md="material:edit" :href="'/settings/pages/' + pageType + '/' + uid">
           {{ $theme.md ? '' : $t('page.navbar.edit') }}
         </f7-link>
+        <f7-link v-if="fullscreenIcon" class="fullscreen-icon-navbar" :icon-f7="fullscreenIcon" @click="toggleFullscreen" />
       </f7-nav-right>
     </f7-navbar>
-
-    <f7-link v-else-if="!page.config.hideSidebarIcon" class="sidebar-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
-
-    <f7-link v-if="page && $fullscreen.support && page.config.showFullscreenIcon" class="fullscreen-icon" :icon-f7="fullscreen ? 'rectangle_arrow_up_right_arrow_down_left_slash' : 'rectangle_arrow_up_right_arrow_down_left'" @click="toggleFullscreen" />
-
+    <template v-else>
+      <f7-link v-if="!page.config.hideSidebarIcon" class="sidebar-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
+      <f7-link v-if="fullscreenIcon" class="fullscreen-icon" :icon-f7="fullscreenIcon" @click="toggleFullscreen" />
+    </template>
     <f7-toolbar tabbar labels bottom v-if="page && pageType === 'tabs' && visibleToCurrentUser">
       <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tab.config.icon" :icon-md="tab.config.icon" :icon-aurora="tab.config.icon" :text="tab.config.title" />
     </f7-toolbar>
@@ -37,6 +37,8 @@
   position fixed
   top 8px
   left 8px
+.fullscreen-icon-navbar
+  margin-left: 20px !important
 .fullscreen-icon
   position absolute
   top 8px
@@ -109,6 +111,11 @@ export default {
     },
     showBackButton () {
       return this.deep && (!this.page || !this.page.config.sidebar)
+    },
+    fullscreenIcon () {
+      if (this.page && this.$fullscreen.support && this.page.config.showFullscreenIcon) {
+        return this.fullscreen ? 'rectangle_arrow_up_right_arrow_down_left_slash' : 'rectangle_arrow_up_right_arrow_down_left'
+      } else return null
     }
   },
   methods: {

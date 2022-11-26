@@ -88,12 +88,19 @@ export function OhCanvasLayoutDefinition () {
       pn('screenHeight', 'Screen Height', 'Screen width in pixels (default 720)'),
       pb('scale', 'Scaling', 'Scale content to screen width (can lead to unexpected styling issues) (default false)'),
       pt('imageUrl', 'Image URL', 'The URL of the image to display as background').c('url'),
-      pt('imageSrcSet', 'Image Source Set', 'The src-set attribute of background image element to take into account mulitple device resolutions. For example: "/static/floorplans/floor-0.jpg, /static/floorplans/floor-0@2x.jpg 2x"')
+      pt('imageSrcSet', 'Image Source Set', 'The src-set attribute of background image element to take into account multiple device resolutions. For example: "/static/floorplans/floor-0.jpg, /static/floorplans/floor-0@2x.jpg 2x"')
+    ])
+    .paramGroup(pg('appearance', 'Appearance'), [
+      pb('hideNavbar', 'Hide Navigation bar', 'Hide navigation bar on top when page is displayed (You can additionally hide the sidebar using its pin icon) (default false)')
+        .v((value, configuration, configDescription, parameters) => { return configuration.layoutType === 'fixed' }),
+      pb('hideSidebarIcon', 'Hide Sidebar Icon', 'Don\'t show a menu icon in the top left corner when the sidebar is closed (default false)')
+        .v((value, configuration, configDescription, parameters) => { return configuration.hideNavbar === true }),
+      pb('showFullscreenIcon', 'Show Fullscreen Icon', 'Show a fullscreen icon on the top right corner (default false)')
     ])
     .paramGroup(pg('shadow', 'Canvas items shadow'), [
       pt('boxShadow', 'Box shadow', 'Shadow applied to box elements (box-shadow CSS syntax).').a(),
       pt('textShadow', 'Text shadow', 'Shadow applied to text elements or font icons (text-shadow CSS syntax)').a(),
-      pt('filterShadow', 'Fitler Shadow', 'Shadow applied to raster or SVG image elements (filter: drop-shadow() CSS syntax)').a()
+      pt('filterShadow', 'Filter Shadow', 'Shadow applied to raster or SVG image elements (filter: drop-shadow() CSS syntax)').a()
     ])
 }
 
