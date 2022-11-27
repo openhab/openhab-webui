@@ -29,9 +29,15 @@ export default {
     advanced: !!defaultValue,
     visible: (_, config) => !config.nonControllable
   }),
-  basicAuth: (setting) => ({
-    name: setting,
-    label: `Basic Authentication ${titleCase(setting)}`,
+  basicAuthPassword: () => ({
+    name: 'password',
+    label: 'Basic Authentication Password',
+    type: 'TEXT',
+    context: 'password'
+  }),
+  basicAuthUsername: () => ({
+    name: 'username',
+    label: 'Basic Authentication Username',
     type: 'TEXT'
   }),
   capabilityNames: (defaultValue, placeholder) => ({
