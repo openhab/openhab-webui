@@ -309,6 +309,7 @@ export default {
         try {
           this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
           this.script = this.$refs.blocklyEditor.getCode()
+          this.currentModule.configuration.type = this.$refs.blocklyEditor.getType()
         } catch (e) {
           this.$f7.dialog.alert(e)
           return Promise.reject(e)

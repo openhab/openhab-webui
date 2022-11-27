@@ -948,6 +948,7 @@ export default {
       workspace: null,
       sinks: [],
       voices: [],
+      jsScriptingAvailable: false,
       scripts: [],
       rules: [],
       loading: true,
@@ -963,6 +964,7 @@ export default {
         this.$oh.api.get('/rest/rules?summary=true'),
         this.$oh.api.get('/rest/audio/sinks'),
         this.$oh.api.get('/rest/voice/voices'),
+        this.$oh.api.get('/rest/module-types/script.ScriptAction'),
         this.libraryDefinitions ? Promise.resolve(this.libraryDefinitions) : this.$oh.api.get('/rest/ui/components/ui:blocks')
       ]
       Promise.all(dataPromises)
@@ -992,7 +994,13 @@ export default {
             return labelA.localeCompare(labelB)
           })
 
-          const blockLibraries = data[3]
+          const blockLibraries = data[4]
+
+          this.jsScriptingAvailable = data[3].configDescriptions
+            .find((c) => c.name === 'type').options
+            .map((lang) => lang.value)
+            .includes('application/javascript;version=ECMAScript-2021')
+
           this.initBlockly(blockLibraries)
         })
         .catch((err, status) => {
@@ -1022,6 +1030,7 @@ export default {
           },
         trashcan: false
       })
+      this.workspace.jsScriptingAvailable = this.jsScriptingAvailable
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
       this.registerLibraryCallbacks(libraryDefinitions)
@@ -1053,6 +1062,9 @@ export default {
     },
     getCode () {
       return Blockly.JavaScript.workspaceToCode(this.workspace)
+    },
+    getType () {
+      return this.jsScriptingAvailable === true ? 'application/javascript;version=ECMAScript-2021' : 'application/javascript'
     },
     onChange (event) {
       if (event.type === Blockly.Events.FINISHED_LOADING) {
