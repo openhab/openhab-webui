@@ -941,6 +941,14 @@ Vue.config.ignoredElements = [
   'sep'
 ]
 
+// Code to prepend when running on GraalJS. When all Blocks are migrated to native GraalJS code, this can be removed.
+const prependCode = `var ctx = this;
+var runtime = require('@runtime');
+var itemRegistry = runtime.itemRegistry;
+var events = runtime.events;
+
+`
+
 export default {
   props: ['blocks', 'libraryDefinitions'],
   data () {
@@ -1061,7 +1069,7 @@ export default {
       return Blockly.Xml.domToText(xml)
     },
     getCode () {
-      return Blockly.JavaScript.workspaceToCode(this.workspace)
+      return (this.jsScriptingAvailable === true ? prependCode : '') + Blockly.JavaScript.workspaceToCode(this.workspace)
     },
     getType () {
       return this.jsScriptingAvailable === true ? 'application/javascript;version=ECMAScript-2021' : 'application/javascript'
