@@ -19,8 +19,11 @@ export default function (f7) {
 
   Blockly.JavaScript['oh_print'] = function (block) {
     const message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `print(${message});\n`
-    return code
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `console.log(${message});\n`
+    } else {
+      return `print(${message});\n`
+    }
   }
 
   Blockly.Blocks['oh_log'] = {
@@ -37,12 +40,15 @@ export default function (f7) {
   }
 
   Blockly.JavaScript['oh_log'] = function (block) {
-    const logger = Blockly.JavaScript.provideFunction_(
-      'logger',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.slf4j.LoggerFactory\').getLogger(\'org.openhab.rule.\' + ctx.ruleUID);'])
     const message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
     const severity = block.getFieldValue('severity')
-    const code = `${logger}.${severity}(${message});\n`
-    return code
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `console.${severity}(${message});\n`
+    } else {
+      const logger = Blockly.JavaScript.provideFunction_(
+        'logger',
+        ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.slf4j.LoggerFactory\').getLogger(\'org.openhab.rule.\' + ctx.ruleUID);'])
+      return `${logger}.${severity}(${message});\n`
+    }
   }
 }
