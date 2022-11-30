@@ -198,6 +198,11 @@ Display the state of an item in a card
     The variable name to set
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="actionVariableKey" label="Variable Key">
+  <PropDescription>
+    Allows modifying a specific key of a variable object
+  </PropDescription>
+</PropBlock>
 <PropBlock type="TEXT" name="actionVariableValue" label="Variable Value">
   <PropDescription>
     The value to set the variable to
@@ -345,6 +350,11 @@ Display the state of an item in a card
 <PropBlock type="TEXT" name="taphold_actionVariable" label="Variable">
   <PropDescription>
     The variable name to set
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="taphold_actionVariableKey" label="Variable Key">
+  <PropDescription>
+    Allows modifying a specific key of a variable object
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="taphold_actionVariableValue" label="Variable Value">

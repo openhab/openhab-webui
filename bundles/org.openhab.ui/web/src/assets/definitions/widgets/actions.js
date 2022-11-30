@@ -124,6 +124,10 @@ export const actionParams = (groupName, paramPrefix) => {
     pt(paramPrefix + 'actionVariableValue', 'Variable Value', 'The value to set the variable to').a()
       .v((value, configuration, configDescription, parameters) => {
         return ['variable'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
+    pt(paramPrefix + 'actionVariableKey', 'Variable Key', 'The value to set the key of avariable').a()
+      .v((value, configuration, configDescription, parameters) => {
+        return ['variable'].indexOf(configuration[paramPrefix + 'action']) >= 0
       })
   ].map((p) => { p.groupName = groupName; return p })
 }

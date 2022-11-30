@@ -217,6 +217,11 @@ Display an openHAB icon
     The variable name to set
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="actionVariableKey" label="Variable Key">
+  <PropDescription>
+    Allows modifying a specific key of a variable object
+  </PropDescription>
+</PropBlock>
 <PropBlock type="TEXT" name="actionVariableValue" label="Variable Value">
   <PropDescription>
     The value to set the variable to
