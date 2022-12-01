@@ -230,6 +230,10 @@ module.exports = {
       {
         from: resolvePath('src/manifest.json'),
         to: resolvePath('www/manifest.json')
+      },
+      {
+        from: resolvePath('src/robots.txt'),
+        to: resolvePath('www/robots.txt')
       }
     ]),
     ...(!isCordova ? [
