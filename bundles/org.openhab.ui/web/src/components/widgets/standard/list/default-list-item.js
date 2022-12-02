@@ -81,11 +81,11 @@ export default function itemDefaultListComponent (item, footer) {
       }
     }
 
-    if(item.type === 'DateTime' && !stateDescription.readOnly) {
+    if (item.type === 'DateTime' && !stateDescription.readOnly) {
       component = {
         component: 'oh-input-item',
         config: {
-          type: "datetime",
+          type: 'datetime-local',
           sendButton: true,
           clearButton: true
         }
@@ -96,36 +96,59 @@ export default function itemDefaultListComponent (item, footer) {
       component = {
         component: 'oh-input-item',
         config: {
-          type: "number",
-          inputmode: "decimal",
+          type: 'number',
+          inputmode: 'decimal',
           sendButton: true
         }
       }
+    }
 
-      if ((semanticClass === 'Control' || semanticClass === 'SetPoint') && !stateDescription.readOnly) {
-        if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'Temperature' || semanticProperty === 'SoundVolume') {
-          component = {
-            component: 'oh-slider-item',
-            config: {
-              scale: true,
-              label: true,
-              scaleSubSteps: 5,
-              min: stateDescription.minimum,
-              max: stateDescription.maximum,
-              step: stateDescription.step
-            }
-          }
+    if (item.type === 'Number:Temperature' && !stateDescription.readOnly) {
+      component = {
+        component: 'oh-stepper-item',
+        config: {
+          min: stateDescription.minimum,
+          max: stateDescription.maximum,
+          step: stateDescription.step,
+          buttonsOnly: false
         }
-        if (semanticProperty === 'Light' || semanticProperty === 'Power' || semanticProperty === 'Energy') {
-          component = {
-            component: 'oh-toggle-item'
+      }
+    }
+
+    if ((semanticClass === 'Control' || semanticClass === 'SetPoint') && !stateDescription.readOnly) {
+      if (semanticProperty === 'Temperature') {
+        component = {
+          component: 'oh-stepper-item',
+          config: {
+            min: stateDescription.minimum,
+            max: stateDescription.maximum,
+            step: stateDescription.step,
+            buttonsOnly: false
           }
         }
       }
-      if (semanticClass === 'Switch') {
+      if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'SoundVolume') {
+        component = {
+          component: 'oh-slider-item',
+          config: {
+            scale: true,
+            label: true,
+            scaleSubSteps: 5,
+            min: stateDescription.minimum,
+            max: stateDescription.maximum,
+            step: stateDescription.step
+          }
+        }
+      }
+      if (semanticProperty === 'Light' || semanticProperty === 'Power' || semanticProperty === 'Energy') {
         component = {
           component: 'oh-toggle-item'
         }
+      }
+    }
+    if (semanticClass === 'Switch') {
+      component = {
+        component: 'oh-toggle-item'
       }
     }
   }

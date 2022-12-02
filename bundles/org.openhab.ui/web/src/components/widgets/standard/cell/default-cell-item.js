@@ -92,9 +92,9 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
     //   }
     // }
 
-    if(item.type.startsWith('Number') && !stateDescription.readOnly) {
+    if (item.type.startsWith('Number') && !stateDescription.readOnly) {
       if ((semanticClass === 'Control' || semanticClass === 'SetPoint')) {
-        if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'Temperature' || semanticProperty === 'SoundVolume') {
+        if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'SoundVolume') {
           component = {
             component: 'oh-slider-cell',
             config: {

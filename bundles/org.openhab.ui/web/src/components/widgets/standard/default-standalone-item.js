@@ -92,7 +92,7 @@ export default function itemDefaultStandaloneComponent (item) {
       component = {
         component: 'oh-input-card',
         config: {
-          type: "datetime-local",
+          type: 'datetime-local',
           sendButton: true
         }
       }
@@ -102,16 +102,39 @@ export default function itemDefaultStandaloneComponent (item) {
       component = {
         component: 'oh-input-card',
         config: {
-          type: "number",
-          inputmode: "decimal",
+          type: 'number',
+          inputmode: 'decimal',
           sendButton: true
         }
       }
     }
 
-    if(item.type.startsWith('Number') && !stateDescription.readOnly) {
+    if (item.type === 'Number:Temperature' && !stateDescription.readOnly) {
+      component = {
+        component: 'oh-stepper-card',
+        config: {
+          min: stateDescription.minimum,
+          max: stateDescription.maximum,
+          step: stateDescription.step,
+          buttonsOnly: false
+        }
+      }
+    }
+
+    if (item.type.startsWith('Number') && !stateDescription.readOnly) {
       if (semanticClass === 'Control' || semanticClass === 'SetPoint') {
-        if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'Temperature' || semanticProperty === 'SoundVolume') {
+        if (semanticProperty === 'Temperature' || item.type === 'Number:Temperature') {
+          component = {
+            component: 'oh-stepper-card',
+            config: {
+              min: stateDescription.minimum,
+              max: stateDescription.maximum,
+              step: stateDescription.step,
+              buttonsOnly: false
+            }
+          }
+        }
+        if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'SoundVolume') {
           component = {
             component: 'oh-slider-card',
             config: {
