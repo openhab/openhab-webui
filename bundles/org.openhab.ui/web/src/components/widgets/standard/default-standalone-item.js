@@ -3,10 +3,15 @@
    in the "widget" metadata namespace of the item
  */
 
+import { DateTimeFunctions } from '@/assets/item-types'
+import * as Semantics from '@/assets/semantics.js'
+
 export default function itemDefaultStandaloneComponent (item) {
   const stateDescription = item.stateDescription || {}
   const metadata = (item.metadata && item.metadata.widget) ? item.metadata.widget : {}
   let component = null
+  let semanticClass = {}
+  let semanticProperty = {}
 
   if (metadata.value && metadata.value !== ' ') {
     component = {
@@ -14,6 +19,15 @@ export default function itemDefaultStandaloneComponent (item) {
       config: Object.assign({}, metadata.config)
     }
   } else {
+    item.tags.forEach((tag) => {
+      if (Semantics.Points.indexOf(tag) >= 0) {
+        semanticClass = tag
+      }
+      if (Semantics.Properties.indexOf(tag) >= 0) {
+        semanticProperty = tag
+      }
+    })
+
     if (item.type === 'Switch' && !stateDescription.readOnly) {
       component = {
         component: 'oh-toggle-card'
@@ -70,6 +84,55 @@ export default function itemDefaultStandaloneComponent (item) {
           lazyFadeIn: true,
           action: 'photos',
           actionPhotos: [{ item: item.name }]
+        }
+      }
+    }
+
+    if (item.type === 'DateTime' && !stateDescription.readOnly) {
+      component = {
+        component: 'oh-input-card',
+        config: {
+          type: "datetime-local",
+          sendButton: true
+        }
+      }
+    }
+
+    if (item.type === 'Number' && !stateDescription.readOnly) {
+      component = {
+        component: 'oh-input-card',
+        config: {
+          type: "number",
+          inputmode: "decimal",
+          sendButton: true
+        }
+      }
+    }
+
+    if(item.type.startsWith('Number') && !stateDescription.readOnly) {
+      if (semanticClass === 'Control' || semanticClass === 'SetPoint') {
+        if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'Temperature' || semanticProperty === 'SoundVolume') {
+          component = {
+            component: 'oh-slider-card',
+            config: {
+              scale: true,
+              label: true,
+              scaleSubSteps: 5,
+              min: stateDescription.minimum,
+              max: stateDescription.maximum,
+              step: stateDescription.step
+            }
+          }
+        }
+        if (semanticProperty === 'Light' || semanticProperty === 'Power' || semanticProperty === 'Energy') {
+          component = {
+            component: 'oh-toggle-card'
+          }
+        }
+      }
+      if (semanticClass === 'Switch') {
+        component = {
+          component: 'oh-toggle-card'
         }
       }
     }

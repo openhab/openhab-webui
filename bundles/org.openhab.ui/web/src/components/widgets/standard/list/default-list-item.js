@@ -5,10 +5,15 @@
  * @param {object} [footer] configuration of the label of the component footer. If undefined nothing is displayed in the footer.
  * Refer to {@see itemContextLabel} for valid options.
  */
+
+import * as Semantics from '@/assets/semantics.js'
+
 export default function itemDefaultListComponent (item, footer) {
   const stateDescription = item.stateDescription || {}
   const metadata = (item.metadata && item.metadata.listWidget) ? item.metadata.listWidget : {}
   let component = null
+  let semanticClass = {}
+  let semanticProperty = {}
 
   if (metadata.value && metadata.value !== ' ') {
     component = {
@@ -16,6 +21,15 @@ export default function itemDefaultListComponent (item, footer) {
       config: Object.assign({}, metadata.config)
     }
   } else {
+    item.tags.forEach((tag) => {
+      if (Semantics.Points.indexOf(tag) >= 0) {
+        semanticClass = tag
+      }
+      if (Semantics.Properties.indexOf(tag) >= 0) {
+        semanticProperty = tag
+      }
+    })
+
     if (item.type === 'Switch' && !stateDescription.readOnly) {
       component = {
         component: 'oh-toggle-item'
@@ -63,6 +77,54 @@ export default function itemDefaultListComponent (item, footer) {
         config: {
           action: 'photos',
           actionPhotos: [{ item: item.name }]
+        }
+      }
+    }
+
+    if(item.type === 'DateTime' && !stateDescription.readOnly) {
+      component = {
+        component: 'oh-input-item',
+        config: {
+          type: "datetime",
+          sendButton: true,
+          clearButton: true
+        }
+      }
+    }
+
+    if (item.type === 'Number' && !stateDescription.readOnly) {
+      component = {
+        component: 'oh-input-item',
+        config: {
+          type: "number",
+          inputmode: "decimal",
+          sendButton: true
+        }
+      }
+
+      if ((semanticClass === 'Control' || semanticClass === 'SetPoint') && !stateDescription.readOnly) {
+        if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'Temperature' || semanticProperty === 'SoundVolume') {
+          component = {
+            component: 'oh-slider-item',
+            config: {
+              scale: true,
+              label: true,
+              scaleSubSteps: 5,
+              min: stateDescription.minimum,
+              max: stateDescription.maximum,
+              step: stateDescription.step
+            }
+          }
+        }
+        if (semanticProperty === 'Light' || semanticProperty === 'Power' || semanticProperty === 'Energy') {
+          component = {
+            component: 'oh-toggle-item'
+          }
+        }
+      }
+      if (semanticClass === 'Switch') {
+        component = {
+          component: 'oh-toggle-item'
         }
       }
     }
