@@ -103,6 +103,11 @@ Displays an input field, used to set a variable
     Name of the variable to set when the input changes
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="variableKey" label="Variable Key">
+  <PropDescription>
+    Allows modifying a specific key of a variable object
+  </PropDescription>
+</PropBlock>
 </PropGroup>
 </div>
 

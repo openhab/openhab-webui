@@ -3,8 +3,10 @@ import OhSheet from './modals/oh-sheet.vue'
 import OhPopover from './modals/oh-popover.vue'
 
 import GroupPopup from '@/pages/group/group-popup.vue'
+import variableMixin from './system/variable-mixins.js'
 
 export const actionsMixin = {
+  mixins: [variableMixin],
   components: {
     OhPopup,
     OhSheet,
@@ -249,27 +251,7 @@ export const actionsMixin = {
           let actionVariableValue = actionConfig[prefix + 'actionVariableValue']
           const actionVariableKey = actionConfig[prefix + 'actionVariableKey']
           if (actionVariableKey) {
-            let setValue = {}
-            if (context.vars[actionVariable]) {
-              setValue = context.vars[actionVariable]
-            }
-            let objArray = [setValue]
-            let keyArray = actionVariableKey.split('.')
-            for (let i = 0; i < keyArray.length - 1; i++) {
-              setValue = this.getObjectKeyValue(setValue, keyArray[i])
-              objArray.push(setValue)
-            }
-            while (objArray.length > 1) {
-              let lastObject = objArray[objArray.length - 1]
-              let currentIdx = objArray.length - 2
-              if (objArray.length === keyArray.length) {
-                lastObject = this.setObjectKeyValue(lastObject, keyArray[objArray.length - 1], actionVariableValue)
-              }
-              objArray[currentIdx] = this.setObjectKeyValue(objArray[currentIdx], keyArray[objArray.length - 2], lastObject)
-              objArray.pop()
-            }
-            // JSON re-parsing is needed to build missing getter/setter so vue can render new objects
-            actionVariableValue = JSON.parse(JSON.stringify(objArray[0]))
+            actionVariableValue = this.setVariableKeyValues(context.vars[actionVariable], actionVariableKey, actionVariableValue)
           }
           this.$set(context.vars, actionVariable, actionVariableValue)
           break
@@ -278,63 +260,6 @@ export const actionsMixin = {
           break
       }
       return true
-    },
-    getObjectKeyValue (obj, key) {
-      if (obj === undefined) return undefined
-      if (key.includes('[') && key.includes(']')) {
-        let arrayIndex = key.split('[')[1].split(']')[0]
-        let destKey = key.split('[')[0]
-        if (key.startsWith('[')) {
-          return obj[arrayIndex]
-        } else {
-          if (obj[destKey]) {
-            return obj[destKey][arrayIndex]
-          } else {
-            return undefined
-          }
-        }
-      } else {
-        return obj[key]
-      }
-    },
-    setObjectKeyValue (obj, key, value) {
-      let objectHasContent = true
-      if (obj === undefined) {
-        obj = {}
-        objectHasContent = false
-      }
-      if (key.includes('[') && key.includes(']')) {
-        let arrayIndex = key.split('[')[1].split(']')[0]
-        let destKey = key.split('[')[0]
-        if (key.startsWith('[')) {
-          if (!objectHasContent) {
-            obj = []
-          }
-          if (value === undefined || value === 'undefined') {
-            if (objectHasContent) {
-              obj.splice(arrayIndex, 1)
-            }
-          } else {
-            obj[arrayIndex] = value
-          }
-        } else {
-          if (obj[destKey] === undefined) {
-            obj[destKey] = []
-          }
-          if (value === undefined || value === 'undefined') {
-            obj[destKey].splice(arrayIndex, 1)
-          } else {
-            obj[destKey][arrayIndex] = value
-          }
-        }
-      } else {
-        if (value === undefined || value === 'undefined') {
-          delete obj[key]
-        } else {
-          obj[key] = value
-        }
-      }
-      return obj
     },
     onTaphold (event) {
       this.performAction(event, 'taphold')

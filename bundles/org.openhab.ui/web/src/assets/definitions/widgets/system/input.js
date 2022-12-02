@@ -15,5 +15,6 @@ export default () => [
   pb('useDisplayState', 'Use Display State', 'Use the formatted state as the value for the input control'),
   pb('showTime', 'Show time', 'Display time when type set to datepicker'),
   pt('defaultValue', 'Default value', 'Default value when not found in item state or variable'),
-  pt('variable', 'Variable', 'Name of the variable to set when the input changes')
+  pt('variable', 'Variable', 'Name of the variable to set when the input changes'),
+  pt('variableKey', 'Variable Key', 'Allows modifying a specific key of a variable object')
 ]

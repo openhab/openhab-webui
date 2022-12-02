@@ -24,10 +24,11 @@
 import dayjs from 'dayjs'
 
 import mixin from '../widget-mixin'
+import variableMixin from './variable-mixins.js'
 import { OhInputDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
-  mixins: [mixin],
+  mixins: [mixin, variableMixin],
   widget: OhInputDefinition,
   data () {
     return {
@@ -36,7 +37,12 @@ export default {
   },
   computed: {
     value () {
-      if (this.config.variable && this.context.vars[this.config.variable] !== undefined) {
+      if (this.config.variable && this.config.variableKey) {
+        const valueArray = (this.getVariableKeyValues(this.context.vars[this.config.variable], this.config.variableKey)).valueArray
+        if (valueArray[valueArray.length - 1]) {
+          return valueArray[valueArray.length - 1]
+        }
+      } else if (this.config.variable && this.context.vars[this.config.variable] !== undefined) {
         return this.context.vars[this.config.variable]
       } else if (this.config.sendButton && this.pendingUpdate !== null) {
         return this.pendingUpdate
@@ -86,6 +92,9 @@ export default {
         this.$set(this, 'pendingUpdate', value)
       }
       if (this.config.variable) {
+        if (this.config.variableKey) {
+          value = this.setVariableKeyValues(this.context.vars[this.config.variable], this.config.variableKey, value)
+        }
         this.$set(this.context.vars, this.config.variable, value)
       }
     },

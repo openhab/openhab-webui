@@ -140,6 +140,11 @@ Display an input field in a list
     Name of the variable to set when the input changes
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="variableKey" label="Variable Key">
+  <PropDescription>
+    Allows modifying a specific key of a variable object
+  </PropDescription>
+</PropBlock>
 </PropGroup>
 </div>
 
