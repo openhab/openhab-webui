@@ -554,6 +554,16 @@
             "getActions": { "!type": "fn(scope: string, thingUid: string) -> ?" },
             "getThingStatusInfo": { "!type": "fn(thingUid: string) -> ?" }
         },
+        "TransformationActions": {
+            "transform": {
+                "!doc": "Applies a transformation of a given type with some function to a value. Returns the original value if the transformation fails.",
+                "!type": "fn(type: string, fn: string, value: string) -> string"
+            },
+            "transformRaw": {
+                "!doc": "Applies a transformation of a given type with some function to a value. Throws an error if the transformation fails.",
+                "!type": "fn(type: string, fn: string, value: string) -> string"
+            }
+        },
         "VoiceActions": {
             "interpret": { "!type": "fn(text: string, interpreter?: string, sink?: string) -> ?" },
             "say": { "!type": "fn(text: string, interpreter?: string, sink?: string, volume?: ?)" }
@@ -603,6 +613,10 @@
             "Things": {
                 "!doc": "Things Actions. This class provides static methods that can be used in automation rules for getting thing's status info.",
                 "!type": "ThingsActions"
+            },
+            "Transformation": {
+                "!doc": "Transformation Actions. The static methods of this class allow rules to execute transformations using one of the various data transformation services.",
+                "!type": "TransformationActions"
             },
             "Voice": {
                 "!doc": "Voice Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use voice features.",
