@@ -23,7 +23,7 @@
                 "!type": "ItemHistory"
             },
             "semantics": {
-                "!doc:": "Access the sementic features for this Item",
+                "!doc": "Access the semantic features for this Item",
                 "!type": "ItemSemantics"
             },
             "rawState": {
@@ -386,7 +386,7 @@
             },
             "reschedule": {
                 "!doc": "Reschedules a timer to a new starting time. This can also be called after a timer has terminated, which will result in another execution of the same code.",
-                "!type": "fn(time.ZonedDateTime) -> boolean"
+                "!type": "fn(zonedDateTime: time.ZonedDateTime) -> boolean"
             }
         },
         "TimeNamespace": {
