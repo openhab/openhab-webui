@@ -450,34 +450,6 @@
                 "!type": "fn(message: string, args?: ?)"
             }
         },
-        "BusEvent": {
-            "getSource": {
-                "!doc": "The source of the event",
-                "!type": "fn() -> string"
-            },
-            "getType": {
-                "!doc": "The type of the event",
-                "!type": "fn() -> string"
-            },
-            "getTopic": {
-                "!doc": "The topic of the event",
-                "!type": "fn() -> string"
-            },
-            "getPayload": {
-                "!doc": "The payload of the event",
-                "!type": "fn() -> string"
-            },
-            "toString": {
-                "!doc": "Returns a string representation of the event",
-                "!type": "fn() -> string"
-            }
-        },
-        "State": {
-            "toString": {
-                "!doc": "Returns a string representation of the state",
-                "!type": "fn() -> string"
-            }
-        },
         "EventData": {
             "itemName": {
                 "!doc": "The name of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger, core.ItemCommandTrigger). Attention: Java type!",
