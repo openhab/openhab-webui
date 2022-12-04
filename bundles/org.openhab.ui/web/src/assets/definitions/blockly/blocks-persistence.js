@@ -106,9 +106,9 @@ export default function defineOHBlocks_Persistence (f7) {
         let skipPrevious = Blockly.JavaScript.valueToCode(block, 'skipPrevious', Blockly.JavaScript.ORDER_NONE)
         skipPrevious = ((skipPrevious === 'undefined') ? false : skipPrevious)
         if (methodName === 'previousState') {
-          code = `${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious}).getState()`
+          code = `((${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious})) ? ${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious}).getState(): 'undefined')`
         } else if (methodName === 'previousStateTime') {
-          code = `${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious}).getTimestamp()`
+          code = `((${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious})) ? ${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious}).getTimestamp() : 'undefined')`
         }
         break
 
