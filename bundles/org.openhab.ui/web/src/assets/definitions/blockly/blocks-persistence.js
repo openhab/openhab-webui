@@ -42,7 +42,7 @@ export default function defineOHBlocks_Persistence (f7) {
           'minimumSince': 'Gets the minimum value of the State of a persisted Item since a certain point in time',
           'maximumSince': 'Gets the maximum value of the State of a persisted Item since a certain point in time',
           'sumSince': 'Gets the sum of the previous States of a persisted Item since a certain point in time',
-          'previousState': 'Gets the previous state - skips Items with equal State values and searches the first Item with State not equal the current State',
+          'previousState': 'Gets the previous state',
           'previousStateTime': 'Gets the time when previous state last occured'
         }
         return TIP[methodName]
