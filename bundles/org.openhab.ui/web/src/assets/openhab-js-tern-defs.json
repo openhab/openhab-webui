@@ -22,6 +22,10 @@
                 "!doc": "Access historical states for this item",
                 "!type": "ItemHistory"
             },
+            "semantics": {
+                "!doc": "Access the semantic features for this Item",
+                "!type": "ItemSemantics"
+            },
             "rawState": {
                 "!doc": "The raw state of the item, as a java object.",
                 "!type": "?"
@@ -92,37 +96,69 @@
             }
         },
         "ItemHistory": {
+            "averageBetween": {
+                "!doc": "Gets the average value of the state of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
             "averageSince": {
                 "!doc": "Gets the average value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
+            "changedBetween": {
+                "!doc": "Checks if the state of a given Item has changed between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "changedSince": {
                 "!doc": "Checks if the state of a given Item has changed since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
+            "deltaBetween": {
+                "!doc": "Gets the difference value of the state of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
             "deltaSince": {
                 "!doc": "Gets the difference value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
+            "deviationBetween": {
+                "!doc": "Gets the standard deviation of the state of the given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "deviationSince": {
                 "!doc": "Gets the standard deviation of the state of the given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
-            "evolutionRate": {
+            "evolutionRateBetween": {
+                "!doc": "Gets the evolution rate of the state of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
+            "evolutionRateSince": {
                 "!doc": "Gets the evolution rate of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "historicState": {
                 "!doc": "Retrieves the historic Item state for a given Item at a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> ?"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> string|null"
             },
             "lastUpdate": {
                 "!doc": "Query the last update time of a given item.",
-                "!type": "fn(serviceId?: string) -> Date?"
+                "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
+            },
+            "latestState": {
+                "!doc": "Retrieves the historic Item state for a given Item at the current point in time.",
+                "!type": "fn(serviceId?: string) -> string|null"
+            },
+            "maximumBetween": {
+                "!doc": "Gets the maximum value of the historic state of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "maximumSince": {
                 "!doc": "Gets the historic Item with the maximum value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
+            "minimumBetween": {
+                "!doc": "Gets the minimum value of the historic state of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "minimumSince": {
                 "!doc": "Gets the historic Item with the minimum value of the state of a given Item since a certain point in time.",
@@ -134,15 +170,27 @@
             },
             "previousState": {
                 "!doc": "Returns the previous state of a given item.",
-                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> ?"
+                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> string|null"
+            },
+            "sumBetween": {
+                "!doc": "Gets the sum of the states of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "sumSince": {
                 "!doc": "Gets the sum of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
+            "updatedBetween": {
+                "!doc": "Checks if the state of a given Item has been updated between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "updatedSince": {
                 "!doc": "Checks if the state of a given Item has been updated since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
+            },
+            "varianceBetween": {
+                "!doc": "Gets the variance of the state of the given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "varianceSince": {
                 "!doc": "Gets the variance of the state of the given Item since a certain point in time.",
@@ -151,6 +199,28 @@
             "latestState": {
                 "!doc": "Retrieves the historic Item state for a given Item at the current point in time.",
                 "!type": "fn(serviceId?: string) -> ?"
+            }
+        },
+        "ItemSemantics": {
+            "equipmentType": {
+                "!doc": "The type of the semantic equipment.",
+                "!type": "string|null"
+            },
+            "locationType": {
+                "!doc": "The type of the semantic location.",
+                "!type": "string|null"
+            },
+            "pointType": {
+                "!doc": "The type of the semantic point.",
+                "!type": "string|null"
+            },
+            "propertyType": {
+                "!doc": "The type of the semantic property.",
+                "!type": "string|null"
+            },
+            "semanticType": {
+                "!doc": "Determines the semantic type (i.e. a sub-type of Location, Equipment or Point).",
+                "!type": "string|null"
             }
         },
         "ItemConfig": {
@@ -293,6 +363,32 @@
                 "!type": "fn(key: string) -> ?"
             }
         },
+        "Timer": {
+            "cancel": {
+                "!doc": "Cancels the timer.",
+                "!type": "fn() -> boolean"
+            },
+            "getExecutionTime": {
+                "!doc": "The scheduled execution time or null if timer was cancelled.",
+                "!type": "fn() -> time.ZonedDateTime|null"
+            },
+            "isActive": {
+                "!doc": "Whether the scheduled execution is yet to happen.",
+                "!type": "fn() -> boolean"
+            },
+            "isCancelled": {
+                "!doc": "Whether the timer has been cancelled.",
+                "!type": "fn() -> boolean"
+            },
+            "hasTerminated": {
+                "!doc": "Whether the scheduled execution has already terminated.",
+                "!type": "fn() -> boolean"
+            },
+            "reschedule": {
+                "!doc": "Reschedules a timer to a new starting time. This can also be called after a timer has terminated, which will result in another execution of the same code.",
+                "!type": "fn(zonedDateTime: time.ZonedDateTime) -> boolean"
+            }
+        },
         "TimeNamespace": {
             "toZDT": {
                 "!doc": "Converts nearly any representation of a time to a time.ZonedDateTime (see JS Scripting Docs/Standard Library/Time)",
@@ -352,34 +448,6 @@
             "error": {
                 "!doc": "Logs at the ERROR level.",
                 "!type": "fn(message: string, args?: ?)"
-            }
-        },
-        "BusEvent": {
-            "getSource": {
-                "!doc": "The source of the event",
-                "!type": "fn() -> string"
-            },
-            "getType": {
-                "!doc": "The type of the event",
-                "!type": "fn() -> string"
-            },
-            "getTopic": {
-                "!doc": "The topic of the event",
-                "!type": "fn() -> string"
-            },
-            "getPayload": {
-                "!doc": "The payload of the event",
-                "!type": "fn() -> string"
-            },
-            "toString": {
-                "!doc": "Returns a string representation of the event",
-                "!type": "fn() -> string"
-            }
-        },
-        "State": {
-            "toString": {
-                "!doc": "Returns a string representation of the state",
-                "!type": "fn() -> string"
             }
         },
         "EventData": {
@@ -466,8 +534,10 @@
         },
         "ScriptExecutionActions": {
             "callScript": { "!type": "fn(scriptName: string)" },
-            "createTimer": { "!type": "fn(instant, function: fn()) -> ?" },
-            "createTimerWithArgument": { "!type": "fn(instant, arg, function: fn()) -> ?" }
+            "createTimer": {
+                "!doc": "Schedules a function for later execution.",
+                "!type": "fn(identifier?: string, zonedDateTime: time.ZonedDateTime, function: fn()) -> Timer"
+              }
         },
         "SemanticsActions": {
             "getEquipment": { "!type": "fn(rawItem: ?) -> ?" },
@@ -483,6 +553,16 @@
         "ThingsActions": {
             "getActions": { "!type": "fn(scope: string, thingUid: string) -> ?" },
             "getThingStatusInfo": { "!type": "fn(thingUid: string) -> ?" }
+        },
+        "TransformationActions": {
+            "transform": {
+                "!doc": "Applies a transformation of a given type with some function to a value. Returns the original value if the transformation fails.",
+                "!type": "fn(type: string, fn: string, value: string) -> string"
+            },
+            "transformRaw": {
+                "!doc": "Applies a transformation of a given type with some function to a value. Throws an error if the transformation fails.",
+                "!type": "fn(type: string, fn: string, value: string) -> string"
+            }
         },
         "VoiceActions": {
             "interpret": { "!type": "fn(text: string, interpreter?: string, sink?: string) -> ?" },
@@ -534,9 +614,17 @@
                 "!doc": "Things Actions. This class provides static methods that can be used in automation rules for getting thing's status info.",
                 "!type": "ThingsActions"
             },
+            "Transformation": {
+                "!doc": "Transformation Actions. The static methods of this class allow rules to execute transformations using one of the various data transformation services.",
+                "!type": "TransformationActions"
+            },
             "Voice": {
                 "!doc": "Voice Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use voice features.",
                 "!type": "VoiceActions"
+            },
+            "thingActions": {
+                "!doc": "Get the ThingActions of a given Thing.",
+                "!type": "fn(bindingId: string, thingUid: string) -> ?"
             }
         }
     },
