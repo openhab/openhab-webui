@@ -1,5 +1,6 @@
 /*
 * General item and thing functionally for blockly
+* supports jsscripting
 */
 
 import Blockly from 'blockly'
@@ -23,8 +24,7 @@ export default function (f7) {
 
   Blockly.JavaScript['oh_item'] = function (block) {
     const itemName = block.getFieldValue('itemName')
-    let code = `'${itemName}'`
-    return [code, 0]
+    return [`'${itemName}'`, 0]
   }
 
   /* retrieve members of a group */
@@ -44,8 +44,12 @@ export default function (f7) {
 
   Blockly.JavaScript['oh_groupmembers'] = function (block) {
     const groupName = Blockly.JavaScript.valueToCode(block, 'groupName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `Java.from(itemRegistry.getItem(${groupName}).members)`
-    return [code, 0]
+
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return [`items.getItem(${groupName}).members`, 0]
+    } else {
+      return [`Java.from(itemRegistry.getItem(${groupName}).members)`, 0]
+    }
   }
 
   /* retrieve items via their tags */
@@ -92,8 +96,11 @@ export default function (f7) {
 
   Blockly.JavaScript['oh_getitem'] = function (block) {
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `itemRegistry.getItem(${itemName})`
-    return [code, 0]
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return [`items.getItem(${itemName})`, 0]
+    } else {
+      return [`itemRegistry.getItem(${itemName})`, 0]
+    }
   }
 
   /* get info from items */
@@ -112,8 +119,11 @@ export default function (f7) {
 
   Blockly.JavaScript['oh_getitem_state'] = function (block) {
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `itemRegistry.getItem(${itemName}).getState()`
-    return [code, 0]
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return [`items.getItem(${itemName}).state`, 0]
+    } else {
+      return [`itemRegistry.getItem(${itemName}).getState()`, 0]
+    }
   }
 
   /*
@@ -183,13 +193,17 @@ export default function (f7) {
   */
   Blockly.JavaScript['oh_getitem_attribute'] = function (block) {
     const theItem = Blockly.JavaScript.valueToCode(block, 'item', Blockly.JavaScript.ORDER_ATOMIC)
-    const attributeName = block.getFieldValue('attributeName')
-    let code = ''
-    if (attributeName === 'Tags' || attributeName === 'GroupNames') {
-      code = `Java.from(${theItem}.get${attributeName}())`
+    let attributeName = block.getFieldValue('attributeName')
+
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      attributeName = attributeName.charAt(0).toLowerCase() + attributeName.slice(1)
+      return [`${theItem}.${attributeName}`, 0]
     } else {
-      code = `${theItem}.get${attributeName}()`
+      if (attributeName === 'Tags' || attributeName === 'GroupNames') {
+        return [`Java.from(${theItem}.get${attributeName}())`, 0]
+      } else {
+        return [`${theItem}.get${attributeName}()`, 0]
+      }
     }
-    return [code, 0]
   }
 }

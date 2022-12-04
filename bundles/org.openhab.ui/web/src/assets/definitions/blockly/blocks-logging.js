@@ -1,5 +1,6 @@
 /*
 * Logging functionality for blockly
+* supports jsscripting
 */
 
 import Blockly from 'blockly'

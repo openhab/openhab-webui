@@ -1,5 +1,6 @@
 /*
 * Adds new blocks to the colour section
+* supports jsscripting
 */
 
 import Blockly from 'blockly'

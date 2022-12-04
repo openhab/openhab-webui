@@ -1,5 +1,6 @@
 /*
 * Adds new blocks to the text section
+* supports jsscripting
 */
 
 import Blockly from 'blockly'
@@ -22,8 +23,7 @@ export default function (f7) {
   }
 
   Blockly.JavaScript['oh_text_crlf'] = function (block) {
-    let code = '\'\\r\\n\''
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    return ['\'\\r\\n\'', Blockly.JavaScript.ORDER_NONE]
   }
 
   /*
