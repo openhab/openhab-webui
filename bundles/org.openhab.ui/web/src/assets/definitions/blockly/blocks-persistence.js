@@ -17,14 +17,14 @@ export default function defineOHBlocks_Persistence (f7) {
           ['average', 'averageSince'], ['delta', 'deltaSince'],
           ['deviation', 'deviationSince'], ['variance', 'varianceSince'], ['evolution rate', 'evolutionRate'],
           ['minimum', 'minimumSince'], ['maximum', 'maximumSince'], ['sum', 'sumSince'],
-          ['previous value', 'previousState']
+          ['previous state value', 'previousState'], ['previous state value time', 'previousStateTime']
         ], this.handleTypeSelection.bind(this)
         ), 'methodName')
       this.methodName = this.getFieldValue('methodName')
       this.appendValueInput('itemName')
-        .appendField('of the state of item')
+        .appendField('of the state of item named ')
         .setAlign(Blockly.ALIGN_RIGHT)
-        .setCheck('oh_itemtype')
+        .setCheck('String', 'oh_item')
       this.updateShape()
       this.setInputsInline(false)
       this.setOutput(true, null)
@@ -42,7 +42,8 @@ export default function defineOHBlocks_Persistence (f7) {
           'minimumSince': 'Gets the minimum value of the State of a persisted Item since a certain point in time',
           'maximumSince': 'Gets the maximum value of the State of a persisted Item since a certain point in time',
           'sumSince': 'Gets the sum of the previous States of a persisted Item since a certain point in time',
-          'previousState': 'Gets the previous state - time is irrelevant'
+          'previousState': 'Gets the previous state - skips Items with equal State values and searches the first Item with State not equal the current State',
+          'previousStateTime': 'Gets the time when previous state last occured'
         }
         return TIP[methodName]
       })
@@ -55,7 +56,7 @@ export default function defineOHBlocks_Persistence (f7) {
       }
     },
     updateShape: function () {
-      if (this.methodName === 'previousState') {
+      if (this.methodName === 'previousState' || this.methodName === 'previousStateTime') {
         if (this.getInput('dayInfo')) {
           this.removeInput('dayInfo')
         }
@@ -86,6 +87,8 @@ export default function defineOHBlocks_Persistence (f7) {
       code = `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo}).getState()`
     } else if (methodName === 'previousState') {
       code = `${persistence}.previousState(itemRegistry.getItem(${itemName})).getState()`
+    } else if (methodName === 'previousStateTime') {
+      code = `${persistence}.previousState(itemRegistry.getItem(${itemName})).getTimestamp()`
     } else {
       code = `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo})`
     }
