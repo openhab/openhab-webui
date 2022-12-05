@@ -69,6 +69,7 @@
 
     <bnd.version>6.3.0</bnd.version>
     <eea.version>2.3.0</eea.version>
+    <jackson.version>2.12.7</jackson.version>
     <karaf.version>4.3.7</karaf.version>
     <ohc.version>3.4.0-SNAPSHOT</ohc.version>
     <sat.version>0.13.0</sat.version>
@@ -457,6 +458,10 @@ Import-Package: \\
                 </includes>
                 <excludes>
                   <exclude>**/pom.xml</exclude>
+                  <exclude>**/feature.xml</exclude>
+                  <exclude>src/main/history/**/*.xml</exclude>
+                  <exclude>src/main/resources/header.xml</exclude>
+                  <exclude>src/main/resources/footer.xml</exclude>
                   <exclude>src/test/resources/**/*.xml</exclude>
                 </excludes>
                 <eclipseWtp>
