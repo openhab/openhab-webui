@@ -2,6 +2,7 @@ import { pi, pb, pn, pd } from '../helpers.js'
 
 export default () => [
   pi('item', 'Item', 'Item to control'),
+  pt('text', 'Text', 'Value text'),
   pd('min', 'Min', 'Minimum value'),
   pd('max', 'Max', 'Maximum value'),
   pd('step', 'Step', 'Minimum interval between values'),
