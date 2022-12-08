@@ -15,6 +15,7 @@ export default {
   },
   computed: {
     value () {
+      if (this.config.text) return this.context.text
       if (this.config.variable) return this.context.vars[this.config.variable]
       let value = this.toStepFixed(parseFloat(this.context.store[this.config.item].state))
       if (this.config.min !== undefined) value = Math.max(value, this.config.min)
