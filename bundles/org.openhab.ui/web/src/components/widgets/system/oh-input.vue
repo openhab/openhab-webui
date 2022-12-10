@@ -38,9 +38,9 @@ export default {
   computed: {
     value () {
       if (this.config.variable && this.config.variableKey) {
-        const valueArray = (this.getVariableKeyValues(this.context.vars[this.config.variable], this.config.variableKey)).valueArray
-        if (valueArray[valueArray.length - 1]) {
-          return valueArray[valueArray.length - 1]
+        const keyValue = this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey)
+        if (keyValue) {
+          return keyValue
         }
       } else if (this.config.variable && this.context.vars[this.config.variable] !== undefined) {
         return this.context.vars[this.config.variable]

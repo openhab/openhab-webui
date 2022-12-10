@@ -117,15 +117,15 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['command', 'toggle', 'options', 'rule'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pt(paramPrefix + 'actionVariable', 'Variable', 'The variable name to set').a()
+    pt(paramPrefix + 'actionVariable', 'Variable', 'The variable name to set')
       .v((value, configuration, configDescription, parameters) => {
         return ['variable'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pt(paramPrefix + 'actionVariableValue', 'Variable Value', 'The value to set the variable to').a()
+    pt(paramPrefix + 'actionVariableValue', 'Variable Value', 'The value to set the variable to')
       .v((value, configuration, configDescription, parameters) => {
         return ['variable'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pt(paramPrefix + 'actionVariableKey', 'Variable Key', 'The value to set the key of avariable').a()
+    pt(paramPrefix + 'actionVariableKey', 'Variable Key', 'Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The inner property and its parent hierarchy will be created if missing.').a()
       .v((value, configuration, configDescription, parameters) => {
         return ['variable'].indexOf(configuration[paramPrefix + 'action']) >= 0
       })

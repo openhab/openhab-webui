@@ -43,6 +43,11 @@ Toggle control, allows to switch on or off
     Name of the variable to set on input change
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="variableKey" label="Variable Key">
+  <PropDescription>
+    Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <ul><li><code>user.name</code></li><li><code>user[0].address[1].street</code></li><li><code>[0]</code></li><li><code>[0].label</code></li></ul>The inner property and its parent hierarchy will be created if missing.
+  </PropDescription>
+</PropBlock>
 </PropGroup>
 </div>
 

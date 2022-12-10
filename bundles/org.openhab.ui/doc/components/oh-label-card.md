@@ -200,7 +200,7 @@ Display the state of an item in a card
 </PropBlock>
 <PropBlock type="TEXT" name="actionVariableKey" label="Variable Key">
   <PropDescription>
-    Allows modifying a specific key of a variable object
+    Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <ul><li><code>user.name</code></li><li><code>user[0].address[1].street</code></li><li><code>[0]</code></li><li><code>[0].label</code></li></ul>The inner property and its parent hierarchy will be created if missing.
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="actionVariableValue" label="Variable Value">
@@ -354,7 +354,7 @@ Display the state of an item in a card
 </PropBlock>
 <PropBlock type="TEXT" name="taphold_actionVariableKey" label="Variable Key">
   <PropDescription>
-    Allows modifying a specific key of a variable object
+    Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <ul><li><code>user.name</code></li><li><code>user[0].address[1].street</code></li><li><code>[0]</code></li><li><code>[0].label</code></li></ul>The inner property and its parent hierarchy will be created if missing.
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="taphold_actionVariableValue" label="Variable Value">

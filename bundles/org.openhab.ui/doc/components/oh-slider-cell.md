@@ -135,6 +135,16 @@ A cell expanding to a big vertical slider
     Time to wait before switching from displaying user input to displaying item state in ms (default 2000)
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="variable" label="Variable">
+  <PropDescription>
+    Name of the variable to set on input change
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="variableKey" label="Variable Key">
+  <PropDescription>
+    Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <ul><li><code>user.name</code></li><li><code>user[0].address[1].street</code></li><li><code>[0]</code></li><li><code>[0].label</code></li></ul>The inner property and its parent hierarchy will be created if missing.
+  </PropDescription>
+</PropBlock>
 </PropGroup>
 </div>
 
@@ -281,7 +291,7 @@ A cell expanding to a big vertical slider
 </PropBlock>
 <PropBlock type="TEXT" name="actionVariableKey" label="Variable Key">
   <PropDescription>
-    Allows modifying a specific key of a variable object
+    Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <ul><li><code>user.name</code></li><li><code>user[0].address[1].street</code></li><li><code>[0]</code></li><li><code>[0].label</code></li></ul>The inner property and its parent hierarchy will be created if missing.
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="actionVariableValue" label="Variable Value">

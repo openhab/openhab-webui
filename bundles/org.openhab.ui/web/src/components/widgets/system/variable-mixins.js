@@ -1,10 +1,15 @@
 export default {
   methods: {
+    getLastVariableKeyValue (variableValue, variableKey) {
+      const valueArray = (this.getVariableKeyValues(variableValue, variableKey)).valueArray
+      if (valueArray[valueArray.length - 1]) {
+        return valueArray[valueArray.length - 1]
+      } else {
+        return undefined
+      }
+    },
     getVariableKeyValues (variableValue, variableKey) {
       let setValue = variableValue
-      if (!setValue) {
-        setValue = {}
-      }
       let valueArray = [setValue]
       let keyArray = variableKey.split('.')
       for (let i = 0; i <= keyArray.length - 1; i++) {

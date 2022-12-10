@@ -16,5 +16,5 @@ export default () => [
   pb('showTime', 'Show time', 'Display time when type set to datepicker'),
   pt('defaultValue', 'Default value', 'Default value when not found in item state or variable'),
   pt('variable', 'Variable', 'Name of the variable to set when the input changes'),
-  pt('variableKey', 'Variable Key', 'Allows modifying a specific key of a variable object').a()
+  pt('variableKey', 'Variable Key', 'Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The inner property and its parent hierarchy will be created if missing.').a()
 ]
