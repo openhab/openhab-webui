@@ -19,7 +19,7 @@
     widgetswitchattr: 'switchSupport',
     nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'List ', 'Setpoint ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Default '],
     lwidget:          ['Text ', 'Group ', 'Image ', 'Frame '],
-    identifier:       /[A-Za-z][A-Za-z0-9_]*/,
+    identifier:       /[A-Za-z0-9_]*/,
     lparen:           '(',
     rparen:           ')',
     colon:            ':',
@@ -112,23 +112,27 @@ WidgetColorAttrValue -> %lbracket _ Colors _ %rbracket                          
 
 Mappings -> Mapping                                                               {% (d) => [d[0]] %}
   | Mappings _ %comma _ Mapping                                                   {% (d) => d[0].concat([d[4]]) %}
-Mapping -> MappingCommand _ %equals _ MappingLabel                                {% (d) => d[0][0].value.toString() + '=' + d[4][0].value.toString() %}
-MappingCommand -> %number | %identifier | %string
-MappingLabel -> %number | %identifier | %string
+Mapping -> MappingCommand _ %equals _ MappingLabel                                {% (d) => d[0] + '=' + d[4] %}
+MappingCommand -> %string                                                         {% (d) => d[0].value.toString() %}
+  | %identifier                                                                   {% (d) => d[0].value %}
+  | %number                                                                       {% (d) => { return parseFloat(d[0].value) } %}
+MappingLabel -> %string                                                           {% (d) => d[0].value.toString() %}
+  | %identifier                                                                   {% (d) => d[0].value %}
+  | %number                                                                       {% (d) => { return parseFloat(d[0].value) } %}
 
 Visibilities -> Visibility                                                        {% (d) => [d[0]] %}
   | Visibilities _ %comma _ Visibility                                            {% (d) => d[0].concat([d[4]]) %}
-Visibility -> VisibilityCommand _ VisibilityComparator _ VisibilityValue          {% (d) => d[0][0].value.toString() + d[2][0].value.toString() + d[4][0].value.toString() %}
+Visibility -> VisibilityCommand _ VisibilityComparator _ VisibilityValue          {% (d) => d[0][0].value + d[2][0].value + d[4][0].value %}
 VisibilityCommand -> %identifier | %string
 VisibilityComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
 VisibilityValue -> %number | %identifier | %string
 
 Colors -> Color                                                                   {% (d) => [d[0]] %}
   | Colors _ %comma _ Color                                                       {% (d) => d[0].concat([d[4]]) %}
-Color -> ColorCommand _ ColorComparator _ ColorValue _ %equals _ ColorName        {% (d) => d[0][0].value.toString() + d[2][0].value.toString() + d[4][0].value.toString() + '=' + d[8][0].value.toString() %}
-  | ColorComparator _ ColorValue _ %equals _ ColorName                            {% (d) => d[0][0].value.toString() + d[2][0].value.toString() + '=' + d[6][0].value.toString() %}
-  | ColorValue _ %equals _ ColorName                                              {% (d) => '==' + d[0][0].value.toString() + '=' + d[4][0].value.toString() %}
-  | ColorName                                                                     {% (d) => d[0][0].value.toString() %}
+Color -> ColorCommand _ ColorComparator _ ColorValue _ %equals _ ColorName        {% (d) => d[0][0].value + d[2][0].value + d[4][0].value + '=' + d[8][0].value %}
+  | ColorComparator _ ColorValue _ %equals _ ColorName                            {% (d) => d[0][0].value + d[2][0].value + '=' + d[6][0].value %}
+  | ColorValue _ %equals _ ColorName                                              {% (d) => '==' + d[0][0].value + '=' + d[4][0].value %}
+  | ColorName                                                                     {% (d) => d[0][0].value %}
 ColorCommand -> %identifier | %string
 ColorComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
 ColorValue ->  %number | %identifier | %string

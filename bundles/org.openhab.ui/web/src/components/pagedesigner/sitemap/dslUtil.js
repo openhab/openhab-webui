@@ -16,16 +16,7 @@ function writeWidget (widget, indent) {
         if (key === 'item' || Number.isFinite(widget.config[key])) {
           dsl += widget.config[key]
         } else if (['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor'].includes(key)) {
-          dsl += '['
-          const arrayDsl = widget.config[key].map((v) => {
-            // Anything after the first comparator that is a string should be in quotes.
-            // Also quote string if no comparator (i.e. fixed labelcolor or valuecolor).
-            let value = v.substring(0, v.search(/[=<>]/))
-            value += v.substring(v.search(/[=<>]/)).replace(/"/g, '').replace(/[A-Za-z][A-Za-z0-9 _-]*/g, function (x) { return '"' + x.trim() + '"' })
-            return value.trim()
-          })
-          dsl += arrayDsl.filter(Boolean).join(',')
-          dsl += ']'
+          dsl += '[' + widget.config[key].filter(Boolean).join(',') + ']'
         } else {
           dsl += '"' + widget.config[key] + '"'
         }

@@ -398,9 +398,9 @@ export default {
           if (widget.config) {
             Object.keys(widget.config).filter(attr => ['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor'].includes(attr)).forEach(attr => {
               widget.config[attr].forEach(param => {
-                if (((attr === 'mappings') && !(/^[\w\s]*=("[\w-\s]*"|[\w-\s]*)\s*$/.test(param))) ||
-                    ((attr === 'visibility') && !(/^\s*\w+\s*(==|>=|<=|!=|>|<)\s*("[+-]?\w[\w-\s]*"|[+-]?\w[\w-\s]*)\s*$/.test(param))) ||
-                    ((attr.includes('color')) && !(/^\s*(((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?(("[+-]?\w[\w-\s]*"\s*|[+-]?\w[\w-\s]*)=\s*))?("#?\w+"|#?\w+)\s*$/.test(param)))) {
+                if (((attr === 'mappings') && !(/^\s*(\S+|"[^\n"]*")\s*=\s*("[^\n"]*"|[^\n"]+)\s*$/u.test(param))) ||
+                    ((attr === 'visibility') && !(/^\s*\S+\s*(==|>=|<=|!=|>|<)\s*("[^\n"]*"|[^\n"]+)\s*$/u.test(param))) ||
+                    ((attr.includes('color')) && !(/^\s*(((\S+\s*)?(==|>=|<=|!=|>|<)\s*)?(("[^\n"]*"|[^\n"]+)\s*=\s*))?("#?\w+"|'#?\w+'|#?\w+)\s*$/u.test(param)))) {
                   let label = widget.config && widget.config.label ? widget.config.label : 'without label'
                   validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in ' + attr + ': ' + param)
                 }
