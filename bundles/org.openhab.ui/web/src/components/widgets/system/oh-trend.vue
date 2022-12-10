@@ -43,7 +43,7 @@ export default {
       this.trendData = []
       this.showTrend = false
       if (!this.trendItem) return []
-      const sampling = this.config.trendSampling || 60
+      const sampling = typeof this.config.trendSampling === 'number' ? this.config.trendSampling : 60
       return this.$oh.api.get('/rest/persistence/items/' + this.config.trendItem).then((resp) => {
         if (resp.data && resp.data.length) {
           let data = []
