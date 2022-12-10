@@ -13,6 +13,7 @@ import defineScriptsBlocks from './blocks-scripts'
 import definePersistenceBlocks from './blocks-persistence'
 import defineColorBlocks from './blocks-color'
 import defineTextBlocks from './blocks-text'
+import defineListBlocks from './blocks-list'
 
 import { defineLibraries } from './libraries'
 
@@ -34,5 +35,6 @@ export default function (f7, libraryDefinitions, data) {
   definePersistenceBlocks(f7)
   defineColorBlocks(f7)
   defineTextBlocks(f7)
+  defineListBlocks(f7)
   defineLibraries(libraryDefinitions)
 }

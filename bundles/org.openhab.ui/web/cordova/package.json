@@ -11,7 +11,7 @@
     "license": "Apache-2.0",
     "dependencies": {
         "cordova-android": "^7.1.4",
-        "cordova-ios": "^4.5.5",
+        "cordova-ios": "^6.2.0",
         "cordova-plugin-advanced-http": "^2.0.6",
         "cordova-plugin-chrome-apps-common": "^1.0.7",
         "cordova-plugin-chrome-apps-iossocketscommon": "^1.0.2",

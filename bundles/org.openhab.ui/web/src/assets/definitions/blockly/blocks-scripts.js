@@ -105,7 +105,6 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
       this.appendValueInput('function')
         .appendField('apply')
         .appendField(new Blockly.FieldTextInput('MAP'), 'type')
-        // .appendField(new Blockly.FieldDropdown([['MAP', 'MAP'], ['REGEX', 'REGEX'], ['JSONPATH', 'JSONPATH']]), 'type')
         .appendField('with')
 
       this.setInputsInline(false)
@@ -128,7 +127,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
       })
       this.setHelpUrl(function () {
         const type = thisBlock.getFieldValue('type')
-        return 'https://www.openhab.org/addons/transformations/' + type.toLowerCase() + '/'
+        return 'https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#transform-values-via-map-regex-or-jsonpath-and-others' + type.toLowerCase() + '/'
       })
     }
   }

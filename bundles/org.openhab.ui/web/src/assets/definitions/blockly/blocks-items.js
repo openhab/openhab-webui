@@ -27,7 +27,7 @@ export default function (f7) {
     return [code, 0]
   }
 
-  /* get item structures */
+  /* retrieve members of a group */
   Blockly.Blocks['oh_groupmembers'] = {
     init: function () {
       this.appendValueInput('groupName')
@@ -45,6 +45,35 @@ export default function (f7) {
   Blockly.JavaScript['oh_groupmembers'] = function (block) {
     const groupName = Blockly.JavaScript.valueToCode(block, 'groupName', Blockly.JavaScript.ORDER_ATOMIC)
     let code = `Java.from(itemRegistry.getItem(${groupName}).members)`
+    return [code, 0]
+  }
+
+  /* retrieve items via their tags */
+  Blockly.Blocks['oh_taggeditems'] = {
+    init: function () {
+      this.appendValueInput('tagName')
+        .appendField('get items with tag')
+        .setCheck('String')
+      this.setInputsInline(false)
+      this.setOutput(true, 'Array')
+      this.setColour(0)
+      this.setTooltip('Retrieve the items that have all the given tags')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-tagged-items')
+      this.setOutput(true, null)
+    }
+  }
+
+  Blockly.JavaScript['oh_taggeditems'] = function (block) {
+    let tagNames = Blockly.JavaScript.valueToCode(block, 'tagName', Blockly.JavaScript.ORDER_ATOMIC)
+    tagNames = tagNames.split(',')
+    let tags = ''
+    for (let i = 0; i < tagNames.length; i++) {
+      if (i > 0) {
+        tags += '\',\''
+      }
+      tags += tagNames[i]
+    }
+    let code = `Java.from(itemRegistry.getItemsByTag(${tags}))`
     return [code, 0]
   }
 
