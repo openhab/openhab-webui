@@ -16,21 +16,21 @@ export default function defineOHBlocks_Persistence (f7) {
         .appendField(new Blockly.FieldDropdown([
           ['average', 'averageSince'], ['delta', 'deltaSince'],
           ['deviation', 'deviationSince'], ['variance', 'varianceSince'], ['evolution rate', 'evolutionRate'],
-          ['minimum', 'minimumSince'], ['maximum', 'maximumSince'], ['sum', 'sumSince']
-        ]
+          ['minimum', 'minimumSince'], ['maximum', 'maximumSince'], ['sum', 'sumSince'],
+          ['previous state value', 'previousState'], ['previous state value time', 'previousStateTime']
+        ], this.handleTypeSelection.bind(this)
         ), 'methodName')
+      this.methodName = this.getFieldValue('methodName')
       this.appendValueInput('itemName')
-        .appendField('of the state of item')
+        .appendField('of the state of item named ')
         .setAlign(Blockly.ALIGN_RIGHT)
-        .setCheck('oh_itemtype')
-      this.appendValueInput('dayInfo')
-        .appendField('since')
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .setCheck(['ZonedDateTime'])
+        .setCheck('String', 'oh_item')
+      this.updateShape()
       this.setInputsInline(false)
       this.setOutput(true, null)
       this.setColour(0)
       let thisBlock = this
+
       this.setTooltip(function () {
         let methodName = thisBlock.getFieldValue('methodName')
         let TIP = {
@@ -41,11 +41,42 @@ export default function defineOHBlocks_Persistence (f7) {
           'evolutionRate': 'Gets the evolution rate of the state of a given Item since a certain point in time',
           'minimumSince': 'Gets the minimum value of the State of a persisted Item since a certain point in time',
           'maximumSince': 'Gets the maximum value of the State of a persisted Item since a certain point in time',
-          'sumSince': 'Gets the sum of the previous States of a persisted Item since a certain point in time'
+          'sumSince': 'Gets the sum of the previous States of a persisted Item since a certain point in time',
+          'previousState': 'Gets the previous state with option to skip to different value as current',
+          'previousStateTime': 'Gets the time when previous state last occurred with option to skip to different value as current'
         }
         return TIP[methodName]
       })
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html#get-statistical-value-of-an-item')
+    },
+    handleTypeSelection: function (methodName) {
+      if (this.methodName !== methodName) {
+        this.methodName = methodName
+        this.updateShape()
+      }
+    },
+    updateShape: function () {
+      if (this.methodName === 'previousState' || this.methodName === 'previousStateTime') {
+        if (this.getInput('dayInfo')) {
+          this.removeInput('dayInfo')
+        }
+        if (!this.getInput('skipPrevious')) {
+          this.appendValueInput('skipPrevious')
+            .appendField('skip same ')
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .setCheck(['Boolean'])
+        }
+      } else {
+        if (this.getInput('skipPrevious')) {
+          this.removeInput('skipPrevious')
+        }
+        if (!this.getInput('dayInfo')) {
+          this.appendValueInput('dayInfo')
+            .appendField('since')
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .setCheck(['ZonedDateTime'])
+        }
+      }
     }
   }
 
@@ -59,12 +90,32 @@ export default function defineOHBlocks_Persistence (f7) {
 
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
     const methodName = block.getFieldValue('methodName')
-    const dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
+
     let code = ''
-    if (methodName === 'maximumSince' || methodName === 'minimumSince') {
-      code = `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo}).getState()`
-    } else {
-      code = `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo})`
+    let dayInfo = ''
+
+    switch (methodName) {
+      case 'maximumSince':
+      case 'minimumSince':
+        dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
+        code = `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo}).getState()`
+        break
+
+      case 'previousState':
+      case 'previousStateTime':
+        let skipPrevious = Blockly.JavaScript.valueToCode(block, 'skipPrevious', Blockly.JavaScript.ORDER_NONE)
+        skipPrevious = ((skipPrevious === 'undefined') ? false : skipPrevious)
+        if (methodName === 'previousState') {
+          code = `((${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious})) ? ${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious}).getState(): 'undefined')`
+        } else if (methodName === 'previousStateTime') {
+          code = `((${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious})) ? ${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious}).getTimestamp() : 'undefined')`
+        }
+        break
+
+      default:
+        dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
+        code = `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo})`
+        break
     }
 
     return [code, Blockly.JavaScript.ORDER_NONE]

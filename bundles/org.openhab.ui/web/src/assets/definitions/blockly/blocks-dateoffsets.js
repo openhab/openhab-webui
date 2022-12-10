@@ -212,6 +212,8 @@ export default function (f7) {
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
       let tooltip = 'Parses a text into a ZonedDateTime supporting the following formats detected:\n' +
+        'HH:mm\n' +
+        'HH:mm:ss\n' +
         'yyyy-MM-dd\n' +
         'yyyy-MM-ddTHH:mm\n' +
         'yyyy-MM-ddTHH:mm:ss\n' +
