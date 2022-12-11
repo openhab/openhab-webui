@@ -433,7 +433,7 @@ export default {
               widget.config[key].forEach(this.removeQuotes)
             }
           }
-          if (!widget.config[key]) {
+          if (!widget.config[key] && widget.config[key] !== 0) {
             delete widget.config[key]
           }
         }

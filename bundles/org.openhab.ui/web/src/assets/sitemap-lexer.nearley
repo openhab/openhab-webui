@@ -101,9 +101,9 @@ WidgetAttr -> %widgetswitchattr                                                 
   | WidgetVisibilityAttrName WidgetVisibilityAttrValue                            {% (d) => [d[0][0].value, d[1]] %}
   | WidgetColorAttrName WidgetColorAttrValue                                      {% (d) => [d[0][0].value, d[1]] %}
 WidgetAttrName -> %item | %label | %icon | %widgetattr
-WidgetAttrValue -> %string                                                        {% (d) => d[0].value %}
+WidgetAttrValue -> %number                                                        {% (d) => { return parseFloat(d[0].value) } %}
   | %identifier                                                                   {% (d) => d[0].value %}
-  | %number                                                                       {% (d) => { return parseFloat(d[0].value) } %}
+  | %string                                                                       {% (d) => d[0].value %}
   | %lbracket _ Mappings _ %rbracket                                              {% (d) => d[2] %}
 WidgetVisibilityAttrName -> %widgetvisiattr
 WidgetVisibilityAttrValue -> %lbracket _ Visibilities _ %rbracket                 {% (d) => d[2] %}
@@ -113,8 +113,8 @@ WidgetColorAttrValue -> %lbracket _ Colors _ %rbracket                          
 Mappings -> Mapping                                                               {% (d) => [d[0]] %}
   | Mappings _ %comma _ Mapping                                                   {% (d) => d[0].concat([d[4]]) %}
 Mapping -> MappingCommand _ %equals _ MappingLabel                                {% (d) => d[0][0].value + '=' + d[4][0].value %}
-MappingCommand -> %string | %identifier  | %number
-MappingLabel -> %string | %identifier | %number
+MappingCommand -> %number | %identifier | %string
+MappingLabel -> %number | %identifier | %string
 
 Visibilities -> Visibility                                                        {% (d) => [d[0]] %}
   | Visibilities _ %comma _ Visibility                                            {% (d) => d[0].concat([d[4]]) %}

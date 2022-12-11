@@ -3,7 +3,7 @@ function writeWidget (widget, indent) {
   dsl += widget.component
   if (widget.config) {
     for (let key in widget.config) {
-      if (!widget.config[key]) continue
+      if (!widget.config[key] && widget.config[key] !== 0) continue
       if ((Array.isArray(widget.config[key]) && widget.config[key].filter(Boolean).length <= 0)) continue
       if (key === 'switchEnabled') {
         dsl += ' switchSupport'
