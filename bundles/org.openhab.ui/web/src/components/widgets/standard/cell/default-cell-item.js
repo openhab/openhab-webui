@@ -3,7 +3,7 @@
    in the "cellWidget" metadata namespace of the item
  */
 
-import * as Semantics from '@/assets/semantics.js'
+import * as Semantics from '@/assets/semantics'
 
 export default function itemDefaultCellComponent (item, itemNameAsFooter) {
   const stateDescription = item.stateDescription || {}
@@ -92,47 +92,34 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
     //   }
     // }
 
-    if (item.type.startsWith('Number') && !stateDescription.readOnly) {
-      if ((semanticClass === 'Control' || semanticClass === 'SetPoint')) {
-        if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'SoundVolume') {
-          component = {
-            component: 'oh-slider-cell',
-            config: {
-              color: 'blue',
-              action: 'toggle',
-              actionItem: item.name,
-              actionCommand: 'ON',
-              actionCommandAlt: 'OFF',
-              scaleSubSteps: 5,
-              min: stateDescription.minimum,
-              max: stateDescription.maximum,
-              step: stateDescription.step
-            }
-          }
-        }
-        if (semanticProperty === 'Light' || semanticProperty === 'Power' || semanticProperty === 'Energy') {
-          component = {
-            component: 'oh-cell',
-            config: {
-              color: 'blue',
-              action: 'toggle',
-              actionItem: item.name,
-              actionCommand: 'ON',
-              actionCommandAlt: 'OFF'
-            }
-          }
-        }
-      }
-      if (semanticClass === 'Switch') {
+    if ((semanticClass === 'Control' || semanticClass === 'Setpoint') && !stateDescription.readOnly) {
+      if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'SoundVolume') {
         component = {
-          component: 'oh-cell',
+          component: 'oh-slider-cell',
           config: {
             color: 'blue',
             action: 'toggle',
             actionItem: item.name,
             actionCommand: 'ON',
-            actionCommandAlt: 'OFF'
+            actionCommandAlt: 'OFF',
+            scaleSubSteps: 5,
+            min: stateDescription.minimum,
+            max: stateDescription.maximum,
+            step: stateDescription.step
           }
+        }
+      }
+    }
+
+    if (semanticClass === 'Switch' && !stateDescription.readOnly) {
+      component = {
+        component: 'oh-cell',
+        config: {
+          color: 'blue',
+          action: 'toggle',
+          actionItem: item.name,
+          actionCommand: 'ON',
+          actionCommandAlt: 'OFF'
         }
       }
     }

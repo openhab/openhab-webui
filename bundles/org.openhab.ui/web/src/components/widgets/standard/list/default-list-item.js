@@ -6,7 +6,7 @@
  * Refer to {@see itemContextLabel} for valid options.
  */
 
-import * as Semantics from '@/assets/semantics.js'
+import * as Semantics from '@/assets/semantics'
 
 export default function itemDefaultListComponent (item, footer) {
   const stateDescription = item.stateDescription || {}
@@ -81,42 +81,28 @@ export default function itemDefaultListComponent (item, footer) {
       }
     }
 
-    if (item.type === 'DateTime' && !stateDescription.readOnly) {
-      component = {
-        component: 'oh-input-item',
-        config: {
-          type: 'datetime-local',
-          sendButton: true,
-          clearButton: true
+    if ((semanticClass === 'Control' || semanticClass === 'Setpoint') && !stateDescription.readOnly) {
+      if (item.type === 'DateTime') {
+        component = {
+          component: 'oh-input-item',
+          config: {
+            type: 'datetime-local',
+            sendButton: true,
+            clearButton: true
+          }
         }
       }
-    }
-
-    if (item.type === 'Number' && !stateDescription.readOnly) {
-      component = {
-        component: 'oh-input-item',
-        config: {
-          type: 'number',
-          inputmode: 'decimal',
-          sendButton: true
+      if (item.type === 'Number') {
+        component = {
+          component: 'oh-input-item',
+          config: {
+            type: 'number',
+            inputmode: 'decimal',
+            sendButton: true
+          }
         }
       }
-    }
-
-    if (item.type === 'Number:Temperature' && !stateDescription.readOnly) {
-      component = {
-        component: 'oh-stepper-item',
-        config: {
-          min: stateDescription.minimum,
-          max: stateDescription.maximum,
-          step: stateDescription.step,
-          buttonsOnly: false
-        }
-      }
-    }
-
-    if ((semanticClass === 'Control' || semanticClass === 'SetPoint') && !stateDescription.readOnly) {
-      if (semanticProperty === 'Temperature') {
+      if (item.type === 'Number:Temperature' || semanticProperty === 'Temperature') {
         component = {
           component: 'oh-stepper-item',
           config: {
@@ -140,13 +126,9 @@ export default function itemDefaultListComponent (item, footer) {
           }
         }
       }
-      if (semanticProperty === 'Light' || semanticProperty === 'Power' || semanticProperty === 'Energy') {
-        component = {
-          component: 'oh-toggle-item'
-        }
-      }
     }
-    if (semanticClass === 'Switch') {
+
+    if (semanticClass === 'Switch' && !stateDescription.readOnly) {
       component = {
         component: 'oh-toggle-item'
       }

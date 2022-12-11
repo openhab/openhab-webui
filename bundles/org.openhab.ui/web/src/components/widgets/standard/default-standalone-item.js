@@ -4,7 +4,7 @@
  */
 
 import { DateTimeFunctions } from '@/assets/item-types'
-import * as Semantics from '@/assets/semantics.js'
+import * as Semantics from '@/assets/semantics'
 
 export default function itemDefaultStandaloneComponent (item) {
   const stateDescription = item.stateDescription || {}
@@ -88,75 +88,55 @@ export default function itemDefaultStandaloneComponent (item) {
       }
     }
 
-    if (item.type === 'DateTime' && !stateDescription.readOnly) {
-      component = {
-        component: 'oh-input-card',
-        config: {
-          type: 'datetime-local',
-          sendButton: true
-        }
-      }
-    }
-
-    if (item.type === 'Number' && !stateDescription.readOnly) {
-      component = {
-        component: 'oh-input-card',
-        config: {
-          type: 'number',
-          inputmode: 'decimal',
-          sendButton: true
-        }
-      }
-    }
-
-    if (item.type === 'Number:Temperature' && !stateDescription.readOnly) {
-      component = {
-        component: 'oh-stepper-card',
-        config: {
-          min: stateDescription.minimum,
-          max: stateDescription.maximum,
-          step: stateDescription.step,
-          buttonsOnly: false
-        }
-      }
-    }
-
-    if (item.type.startsWith('Number') && !stateDescription.readOnly) {
-      if (semanticClass === 'Control' || semanticClass === 'SetPoint') {
-        if (semanticProperty === 'Temperature' || item.type === 'Number:Temperature') {
-          component = {
-            component: 'oh-stepper-card',
-            config: {
-              min: stateDescription.minimum,
-              max: stateDescription.maximum,
-              step: stateDescription.step,
-              buttonsOnly: false
-            }
-          }
-        }
-        if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'SoundVolume') {
-          component = {
-            component: 'oh-slider-card',
-            config: {
-              scale: true,
-              label: true,
-              scaleSubSteps: 5,
-              min: stateDescription.minimum,
-              max: stateDescription.maximum,
-              step: stateDescription.step
-            }
-          }
-        }
-        if (semanticProperty === 'Light' || semanticProperty === 'Power' || semanticProperty === 'Energy') {
-          component = {
-            component: 'oh-toggle-card'
-          }
-        }
-      }
-      if (semanticClass === 'Switch') {
+    if ((semanticClass === 'Control' || semanticClass === 'Setpoint') && !stateDescription.readOnly) {
+      if (item.type === 'DateTime') {
         component = {
-          component: 'oh-toggle-card'
+          component: 'oh-input-card',
+          config: {
+            type: 'datetime-local',
+            sendButton: true
+          }
         }
+      }
+      if (item.type === 'Number') {
+        component = {
+          component: 'oh-input-card',
+          config: {
+            type: 'number',
+            inputmode: 'decimal',
+            sendButton: true
+          }
+        }
+      }
+      if (item.type === 'Number:Temperature' || semanticProperty === 'Temperature') {
+        component = {
+          component: 'oh-stepper-card',
+          config: {
+            min: stateDescription.minimum,
+            max: stateDescription.maximum,
+            step: stateDescription.step,
+            buttonsOnly: false
+          }
+        }
+      }
+      if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'SoundVolume') {
+        component = {
+          component: 'oh-slider-card',
+          config: {
+            scale: true,
+            label: true,
+            scaleSubSteps: 5,
+            min: stateDescription.minimum,
+            max: stateDescription.maximum,
+            step: stateDescription.step
+          }
+        }
+      }
+    }
+
+    if (semanticClass === 'Switch' && !stateDescription.readOnly) {
+      component = {
+        component: 'oh-toggle-card'
       }
     }
   }
