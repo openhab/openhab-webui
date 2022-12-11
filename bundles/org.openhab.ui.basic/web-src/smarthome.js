@@ -1089,29 +1089,28 @@
 				};
 			}
 			var
-				maxR = _t.image.clientWidth / 2,
-				offsetX = pos.x - maxR,
-				offsetY = pos.y - maxR,
-				r = (offsetY * offsetY) + (offsetX * offsetX);
+				maxRadius = _t.image.clientWidth / 2,
+				offsetX = pos.x - maxRadius,
+				offsetY = pos.y - maxRadius,
+				radius = Math.sqrt((offsetY * offsetY) + (offsetX * offsetX)),
+				angle = Math.atan2(offsetX, offsetY) / Math.PI / 2;
 
-			if (r > (maxR * maxR)) {
+			if (radius > maxRadius) {
 				var
-					ratio = 1 - Math.abs(maxR / Math.sqrt(r));
+					ratio = 1 - Math.abs(maxRadius / radius);
 
 				pos.x -= (offsetX * ratio);
 				pos.y -= (offsetY * ratio);
+				radius = maxRadius;
 			}
 
 			_t.handle.style.left = (pos.x / _t.image.clientWidth) * 100 + "%";
 			_t.handle.style.top = (pos.y / _t.image.clientWidth) * 100 + "%";
 
 			var
-				angle = offsetX >= 0 ?
-						(Math.PI * 2 - Math.atan(offsetY / offsetX) + Math.PI / 2) / (Math.PI * 2) :
-						(Math.PI * 2 - Math.atan(offsetY / offsetX) - Math.PI / 2) / (Math.PI * 2),
 				hsv = {
-					h: isNaN(angle) ? 0 : angle,
-					s: Math.sqrt(r) / maxR,
+					h: angle >= 0 ? angle : 1 + angle,
+					s: radius / maxRadius,
 					v: 1
 				},
 				hsl = hsv2hsl(hsv);
@@ -1401,8 +1400,8 @@
 			_t.modalControl = new Colorpicker(_t.modal.container, _t.value, function(color) {
 				_t.value = Colorpicker.hsv2rgb(color);
 				emitEvent(
-					Math.round((color.h * 360) % 360) + "," +
-					Math.round((color.s * 100) % 100) + "," +
+					(Math.round(color.h * 360) % 360) + "," +
+					Math.round(color.s * 100) + "," +
 					Math.round(color.v * 100)
 				);
 			});

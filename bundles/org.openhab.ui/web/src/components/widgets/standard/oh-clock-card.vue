@@ -20,9 +20,7 @@
         </f7-col>
       </f7-row>
     </f7-card-content>
-    <f7-card-footer v-if="config.footer">
-      {{ config.footer }}
-    </f7-card-footer>
+    <oh-card-footer v-if="config.footer" :texts="config.footer" />
   </f7-card>
 </template>
 
@@ -30,12 +28,14 @@
 import mixin from '../widget-mixin'
 import { actionsMixin } from '../widget-actions'
 import OhClock from '../system/oh-clock.vue'
+import OhCardFooter from '../system/oh-card-footer.vue'
 import { OhClockCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin, actionsMixin],
   components: {
-    OhClock
+    OhClock,
+    OhCardFooter
   },
   widget: OhClockCardDefinition
 }

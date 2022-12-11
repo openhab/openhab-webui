@@ -6,9 +6,7 @@
     <f7-card-content class="display-flex justify-content-center" :style="{ height: config.vertical ? '10em' : undefined }">
       <oh-rollershutter :class="{ vertical: config.vertical }" :context="context" @command="onCommand" />
     </f7-card-content>
-    <f7-card-footer v-if="config.footer">
-      {{ config.footer }}
-    </f7-card-footer>
+    <oh-card-footer v-if="config.footer" :texts="config.footer" />
   </f7-card>
 </template>
 
@@ -28,12 +26,14 @@
 <script>
 import mixin from '../widget-mixin'
 import OhRollershutter from '../system/oh-rollershutter.vue'
+import OhCardFooter from '../system/oh-card-footer.vue'
 import { OhRollershutterCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
-    OhRollershutter
+    OhRollershutter,
+    OhCardFooter
   },
   widget: OhRollershutterCardDefinition,
   data () {

@@ -11,5 +11,6 @@
   "about.miscellaneous.home.background": "Standaard achtergrond kleur startpagina",
   "about.miscellaneous.home.hideChatInput": "Chat-invoervak op startpagina verbergen",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Kaart animaties uitschakelen",
-  "about.miscellaneous.theme.disablePageTransition": "Pagina-overgang animaties uitschakelen"
+  "about.miscellaneous.theme.disablePageTransition": "Pagina-overgang animaties uitschakelen",
+  "about.miscellaneous.webaudio.enable": "Web Audio sink ondersteuning inschakelen"
 }

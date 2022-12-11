@@ -6,21 +6,21 @@
     <f7-card-content :class="{ 'no-padding': !config.borders }">
       <oh-webframe :context="childContext(context.component)" />
     </f7-card-content>
-    <f7-card-footer v-if="config.footer">
-      {{ config.footer }}
-    </f7-card-footer>
+    <oh-card-footer v-if="config.footer" :texts="config.footer" />
   </f7-card>
 </template>
 
 <script>
 import mixin from '../widget-mixin'
 import OhWebframe from '../system/oh-webframe.vue'
+import OhCardFooter from '../system/oh-card-footer.vue'
 import { OhWebFrameCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
-    OhWebframe
+    OhWebframe,
+    OhCardFooter
   },
   widget: OhWebFrameCardDefinition
 }

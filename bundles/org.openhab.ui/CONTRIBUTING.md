@@ -40,6 +40,10 @@ The Cordova project is located in the `cordova` folder. You shouldn't modify con
 
 ## Documentation & Resources
 
+The openHAB docs provide a [Component Reference](https://www.openhab.org/docs/ui/components/) as well as docs for each component.
+You can find the components docs in the [`doc/components`](doc/components) folder.
+To generate the auto-generated parts of these component docs, run `node generate.js` inside the [`doc/components/src`](doc/components/src) folder.
+
 ### Framework7
 
 * [Framework7 Core Documentation](https://framework7.io/docs/)

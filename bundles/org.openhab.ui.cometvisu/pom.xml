@@ -66,7 +66,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.14.0-rc2</version>
+      <version>${jackson.version}</version>
     </dependency>
   </dependencies>
 
@@ -151,6 +151,28 @@
                 <useBeanValidation>false</useBeanValidation>
                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
               </configOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-artifact</id>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>target/feature/feature.xml</file>
+                  <type>xml</type>
+                  <classifier>features</classifier>
+                </artifact>
+              </artifacts>
             </configuration>
           </execution>
         </executions>

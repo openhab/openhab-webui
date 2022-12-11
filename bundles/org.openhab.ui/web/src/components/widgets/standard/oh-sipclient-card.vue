@@ -6,21 +6,21 @@
     <f7-card-content class="display-flex justify-content-center">
       <oh-sipclient v-bind="config" :context="context" />
     </f7-card-content>
-    <f7-card-footer v-if="config.footer">
-      {{ config.footer }}
-    </f7-card-footer>
+    <oh-card-footer v-if="config.footer" :texts="config.footer" />
   </f7-card>
 </template>
 
 <script>
 import mixin from '../widget-mixin'
 import OhSipclient from '../system/oh-sipclient.vue'
+import OhCardFooter from '../system/oh-card-footer.vue'
 import { OhSIPClientCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
-    OhSipclient
+    OhSipclient,
+    OhCardFooter
   },
   widget: OhSIPClientCardDefinition
 }
