@@ -105,6 +105,9 @@ export default {
     stopForegroundActivity () {
       if (this.phone) this.phone.stop()
     },
+    /**
+     * Starts the JsSIP UserAgent and connects to the SIP server.
+     */
     sipStart () {
       if (this.phone) this.phone.stop() // reconnect to reload config
       this.context.component.config = { ...this.config, ...this.localConfig } // merge local device configuration
@@ -171,6 +174,10 @@ export default {
         this.phone.start()
       })
     },
+    /**
+     * Plays a given tone. Might not properly work on all browsers and devices.
+     * @param {*} audio file to be played
+     */
     playTone (file) {
       if (this.config.enableTones === true) {
         console.info(this.loggerPrefix + ': Starting to play tone')
@@ -183,12 +190,18 @@ export default {
         })
       }
     },
+    /**
+     * Stops all played tones.
+     */
     stopTones () {
       if (this.config.enableTones === true) {
         console.info(this.loggerPrefix + ': Stop playing tone')
         this.audio.pause()
       }
     },
+    /**
+     * Attaches MediaStreams (remote audio, remote & eventually local video) for the SIP call.
+     */
     attachMedia () {
       this.session.connection.addEventListener('track', (track) => {
         if (this.config.enableVideo) {
@@ -206,6 +219,9 @@ export default {
         }
       })
     },
+    /**
+     * Stops all MediaStreams (remote audio, remote & eventually local video) of the SIP call.
+     */
     stopMedia () {
       if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
       if (this.config.enableLocalVideo) {
