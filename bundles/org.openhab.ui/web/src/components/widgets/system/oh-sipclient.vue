@@ -231,6 +231,8 @@ export default {
     stopMedia () {
       if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
       if (this.config.enableLocalVideo) {
+        // Make sure all tracks are stopped
+        this.$refs.localVideo.srcObject.getTracks().forEach((track) => track.stop())
         this.$refs.localVideo.srcObject = null
         this.showLocalVideo = false
       }
