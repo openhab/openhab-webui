@@ -4,7 +4,7 @@
 
 <script>
 import mixin from '../widget-mixin'
-import variableMixin from './variable-mixins.js'
+import variableMixin from '../variable-mixin'
 import { OhToggleDefinition } from '@/assets/definitions/widgets/system'
 
 export default {

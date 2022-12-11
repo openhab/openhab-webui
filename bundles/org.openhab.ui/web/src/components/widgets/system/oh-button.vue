@@ -8,7 +8,7 @@
 
 <script>
 import mixin from '../widget-mixin'
-import variableMixin from './variable-mixins.js'
+import variableMixin from '../variable-mixin'
 import { OhButtonDefinition } from '@/assets/definitions/widgets/system'
 import { actionsMixin } from '../widget-actions'
 

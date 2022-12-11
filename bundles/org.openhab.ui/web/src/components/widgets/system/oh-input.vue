@@ -24,7 +24,7 @@
 import dayjs from 'dayjs'
 
 import mixin from '../widget-mixin'
-import variableMixin from './variable-mixins.js'
+import variableMixin from '../variable-mixin'
 import { OhInputDefinition } from '@/assets/definitions/widgets/system'
 
 export default {

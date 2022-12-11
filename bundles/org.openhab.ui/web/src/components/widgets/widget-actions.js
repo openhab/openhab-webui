@@ -3,7 +3,7 @@ import OhSheet from './modals/oh-sheet.vue'
 import OhPopover from './modals/oh-popover.vue'
 
 import GroupPopup from '@/pages/group/group-popup.vue'
-import variableMixin from './system/variable-mixins.js'
+import variableMixin from './variable-mixin'
 
 export const actionsMixin = {
   mixins: [variableMixin],

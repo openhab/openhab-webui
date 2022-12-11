@@ -5,7 +5,7 @@
 
 <script>
 import mixin from '../widget-mixin'
-import variableMixin from './variable-mixins.js'
+import variableMixin from '../variable-mixin'
 import { OhStepperDefinition } from '@/assets/definitions/widgets/system'
 
 export default {

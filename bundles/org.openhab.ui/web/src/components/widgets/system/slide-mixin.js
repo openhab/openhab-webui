@@ -1,4 +1,4 @@
-import variableMixin from './variable-mixins.js'
+import variableMixin from '../variable-mixin'
 
 export default {
   mixins: [variableMixin],

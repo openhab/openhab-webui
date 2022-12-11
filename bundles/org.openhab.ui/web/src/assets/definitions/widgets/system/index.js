@@ -4,7 +4,7 @@ import { actionGroup, actionParams } from '../actions.js'
 const VariableParameter = pt('variable', 'Variable', 'Name of the variable to set on input change')
 const VariableKeyParameter = pt('variableKey', 'Variable Key', 'Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The inner property and its parent hierarchy will be created if missing.').a()
 const ClearVariableParameter = pb('clearVariable', 'Clear Variable After Action', 'Name of the variable to clear after performing the action')
-const ClearVariableKeyParameter = pb('clearVariableKey', 'Clear Key Propertoy Inside An Object After Action', 'Consider the variable value is an object and remove a corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The property will be removed after performing the action.').a()
+const ClearVariableKeyParameter = pb('clearVariableKey', 'Clear Object Variable Property After Action', 'Consider the variable value is an object and remove a corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The property will be removed after performing the action.').a()
 
 import ButtonParameters from './button.js'
 export const OhButtonDefinition = () => new WidgetDefinition('oh-button', 'Button', 'Button performing an action')
