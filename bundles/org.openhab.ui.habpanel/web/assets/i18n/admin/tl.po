@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: tl\n"
-"X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File-ID: 532\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Tagalog\n"
 "Language: tl_PH\n"
-"PO-Revision-Date: 2019-06-16 09:55\n"
+"PO-Revision-Date: 2022-12-11 11:15\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
@@ -125,7 +125,7 @@ msgstr "Wag mo paliwanagin ang tile sa pamamagitan ng pagpindot/pagtap"
 #. Tab header
 msgctxt "dashboard.settings.advanced"
 msgid "Advanced"
-msgstr "Advanced"
+msgstr ""
 
 #. Alert display at the top
 msgctxt "dashboard.settings.advanced.warning"
@@ -165,7 +165,7 @@ msgstr "Palitan ang mga nilalaman ng tile sa pamamagitan ng custom ng widget"
 #. Accordion header
 msgctxt "dashboard.settings.customwidgets.drawer"
 msgid "Drawer"
-msgstr "Drawer"
+msgstr ""
 
 #. Checkbox label
 msgctxt "dashboard.settings.customwidgets.drawer.description"
@@ -266,6 +266,21 @@ msgstr "Bagong kompigurasyon ng panel"
 msgctxt "settings.storage.panelconfiguration.dialog.message"
 msgid "Please choose a name for the new panel configuration (letters and digits only please):"
 msgstr "Pakiusap pumili ng pangalan para sa bagong kompigurasyon ng panel (letra at bilang lamang ang pwede):"
+
+#. Title of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.title"
+msgid "Remove panel configuration"
+msgstr ""
+
+#. Message of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
+msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
+msgstr ""
+
+#. Message of the dialog box when switching from local storage to a server-based panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
+msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
+msgstr ""
 
 #. Panel name (section header)
 msgctxt "settings.panel.name"
@@ -610,7 +625,7 @@ msgstr "I-cloclone nito ang globally provisioned na widget:<id>babaguhin bilang 
 #. Screen title, followed by the widget name - beware of size!
 msgctxt "customwidgets.designer.heading"
 msgid "Widget:"
-msgstr "Widget:"
+msgstr ""
 
 #. Save button on the right, default label - can be hidden on phones
 msgctxt "customwidgets.designer.save"
@@ -625,7 +640,7 @@ msgstr "Nai-save!"
 #. Tab header
 msgctxt "customwidgets.designer.code"
 msgid "Code"
-msgstr "Code"
+msgstr ""
 
 #. Tab header
 msgctxt "customwidgets.designer.settings"
@@ -675,7 +690,7 @@ msgstr "Uri"
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.string"
 msgid "String"
-msgstr "String"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.number"
@@ -710,7 +725,7 @@ msgstr "Ikon"
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.heading"
 msgid "Heading"
-msgstr "Heading"
+msgstr ""
 
 #. Tooltip displayed when hovering the help icon alongside the ID field
 msgctxt "customwidgets.designer.settings.config.id.hint"
