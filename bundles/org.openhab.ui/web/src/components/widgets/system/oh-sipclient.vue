@@ -67,7 +67,8 @@ export default {
       remoteParty: '',
       phonebook: new Map(),
       loggerPrefix: 'oh-sipclient',
-      showLocalVideo: false
+      showLocalVideo: false,
+      stream: null
     }
   },
   mixins: [mixin, foregroundService, actionsMixin],
@@ -93,6 +94,9 @@ export default {
       } else {
         navigator.mediaDevices.getUserMedia({ audio: true, video: this.config.enableVideo })
           .then((stream) => {
+            // Store MediaDevices access here to stop it when foreground is left
+            // Do NOT stop MediaDevices access here (keep Mic/Camera access) to improve call startup time
+            this.stream = stream
             // Start SIP connection
             this.sipStart()
           })
@@ -103,6 +107,8 @@ export default {
       }
     },
     stopForegroundActivity () {
+      // Stop MediaDevices access here, otherwise Mic/Camera access will stay active on iOS
+      this.stream.getTracks().forEach((track) => track.stop())
       if (this.phone) this.phone.stop()
     },
     /**
