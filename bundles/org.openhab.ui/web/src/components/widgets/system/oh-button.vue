@@ -8,23 +8,35 @@
 
 <script>
 import mixin from '../widget-mixin'
+import variableMixin from '../variable-mixin'
 import { OhButtonDefinition } from '@/assets/definitions/widgets/system'
 import { actionsMixin } from '../widget-actions'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [mixin, actionsMixin, variableMixin],
   widget: OhButtonDefinition,
   methods: {
     clicked () {
       if (this.config.action || this.config.actionPropsParameterGroup) {
         this.performAction()
       }
-      if (this.config.clearVariable) {
+      if (this.config.clearVariable && !this.config.clearVariableKey) {
         if (Array.isArray(this.config.clearVariable)) {
           this.config.clearVariable.forEach((v) => this.$set(this.context.vars, v, undefined))
         } else if (typeof this.config.clearVariable === 'string') {
           this.$set(this.context.vars, this.config.clearVariable, undefined)
         }
+      }
+      if (this.config.clearVariable && this.config.clearVariableKey) {
+        let value = this.context.vars[this.config.clearVariable]
+        if (Array.isArray(this.config.clearVariableKey)) {
+          this.config.clearVariableKey.forEach((key) => {
+            value = this.setVariableKeyValues(value, key, undefined)
+          })
+        } else if (typeof this.config.clearVariableKey === 'string') {
+          value = this.setVariableKeyValues(value, this.config.clearVariableKey, undefined)
+        }
+        this.$set(this.context.vars, this.config.clearVariable, value)
       }
     }
   }

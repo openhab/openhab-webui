@@ -2,13 +2,15 @@ import { WidgetDefinition, pt, pb } from '../helpers.js'
 import { actionGroup, actionParams } from '../actions.js'
 
 const VariableParameter = pt('variable', 'Variable', 'Name of the variable to set on input change')
+const VariableKeyParameter = pt('variableKey', 'Variable Key', 'Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The inner property and its parent hierarchy will be created if missing.').a()
 const ClearVariableParameter = pb('clearVariable', 'Clear Variable After Action', 'Name of the variable to clear after performing the action')
+const ClearVariableKeyParameter = pb('clearVariableKey', 'Clear Object Variable Property After Action', 'Consider the variable value is an object and remove a corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The property will be removed after performing the action.').a()
 
 import ButtonParameters from './button.js'
 export const OhButtonDefinition = () => new WidgetDefinition('oh-button', 'Button', 'Button performing an action')
   .paramGroup(actionGroup(), actionParams())
   .paramGroup(actionGroup('Tap Hold', 'Action performed when tapping and holding card (or calling contextual menu on desktop)', 'taphold'), actionParams(null, 'taphold'), true)
-  .params([...ButtonParameters(), VariableParameter, ClearVariableParameter])
+  .params([...ButtonParameters(), VariableParameter, VariableKeyParameter, ClearVariableParameter, ClearVariableKeyParameter])
 
 import ChartParameters from './chart.js'
 export const OhChartDefinition = () => new WidgetDefinition('oh-chart', 'Chart', 'Visualize series of data')
@@ -43,12 +45,12 @@ export const OhInputDefinition = () => new WidgetDefinition('oh-input', 'Input',
 
 import KnobParameters from './knob.js'
 export const OhKnobDefinition = () => new WidgetDefinition('oh-knob', 'Knob', 'Knob control, allow to change a number value on a circular track')
-  .params([...KnobParameters(), VariableParameter])
+  .params([...KnobParameters(), VariableParameter, VariableKeyParameter])
 
 import LinkParameters from './link.js'
 export const OhLinkDefinition = () => new WidgetDefinition('oh-link', 'Link', 'Link performing an action')
   .paramGroup(actionGroup(), actionParams())
-  .params([...LinkParameters(), VariableParameter, ClearVariableParameter])
+  .params([...LinkParameters(), VariableParameter, VariableKeyParameter, ClearVariableParameter, ClearVariableKeyParameter])
 
 import ListParameters from './list.js'
 export const OhListDefinition = () => new WidgetDefinition('oh-list', 'List', 'List control, hosts list items')
@@ -64,11 +66,11 @@ export const OhRollershutterDefinition = () => new WidgetDefinition('oh-rollersh
 
 import SliderParameters from './slider.js'
 export const OhSliderDefinition = () => new WidgetDefinition('oh-slider', 'Slider', 'Slider control, allows to pick a number value on a scale')
-  .params([...SliderParameters(), VariableParameter])
+  .params([...SliderParameters(), VariableParameter, VariableKeyParameter])
 
 import StepperParameters from './stepper.js'
 export const OhStepperDefinition = () => new WidgetDefinition('oh-stepper', 'Stepper', 'Stepper control, allows to input a number or decrement/increment it using buttons')
-  .params([...StepperParameters(), VariableParameter])
+  .params([...StepperParameters(), VariableParameter, VariableKeyParameter])
 
 import SwiperParameters from './swiper.js'
 export const OhSwiperDefinition = () => new WidgetDefinition('oh-swiper', 'Swiper', 'Swiper control, allows to display multiple swipeable slides')
@@ -76,7 +78,7 @@ export const OhSwiperDefinition = () => new WidgetDefinition('oh-swiper', 'Swipe
 
 import ToggleParameters from './toggle.js'
 export const OhToggleDefinition = () => new WidgetDefinition('oh-toggle', 'Toggle', 'Toggle control, allows to switch on or off')
-  .params([...ToggleParameters(), VariableParameter])
+  .params([...ToggleParameters(), VariableParameter, VariableKeyParameter])
 
 import TrendParameters from './trend.js'
 export const OhTrendDefinition = () => new WidgetDefinition('oh-trend', 'Trend line', 'Trend line to display the overall recent evoluation of an item')

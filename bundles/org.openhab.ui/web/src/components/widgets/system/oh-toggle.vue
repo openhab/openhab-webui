@@ -4,17 +4,23 @@
 
 <script>
 import mixin from '../widget-mixin'
+import variableMixin from '../variable-mixin'
 import { OhToggleDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
-  mixins: [mixin],
+  mixins: [mixin, variableMixin],
   widget: OhToggleDefinition,
   mounted () {
     delete this.config.value
   },
   computed: {
     value () {
-      if (this.config.variable) return this.context.vars[this.config.variable]
+      if (this.config.variable) {
+        if (this.config.variableKey) {
+          return this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey)
+        }
+        return this.context.vars[this.config.variable]
+      }
       if (!this.context.store[this.config.item]) return
       const value = this.context.store[this.config.item].state
       if (value === 'ON') return true
@@ -27,6 +33,9 @@ export default {
     onChange (value) {
       if (value === this.value) return
       if (this.config.variable) {
+        if (this.config.variableKey) {
+          value = this.setVariableKeyValues(this.context.vars[this.config.variable], this.config.variableKey, value)
+        }
         this.$set(this.context.vars, this.config.variable, value)
       } else if (this.config.item) {
         this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: (value) ? 'ON' : 'OFF' })
