@@ -93,6 +93,16 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
     // }
 
     if ((semanticClass === 'Control' || semanticClass === 'Setpoint') && !stateDescription.readOnly) {
+      if (item.type === 'Number:Temperature' || semanticProperty === 'Temperature') {
+        component = {
+          component: 'oh-knob-cell',
+          config: {
+            min: stateDescription.minimum,
+            max: stateDescription.maximum,
+            stepSize: stateDescription.step
+          }
+        }
+      }
       if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'SoundVolume') {
         component = {
           component: 'oh-slider-cell',
