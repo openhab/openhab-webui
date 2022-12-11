@@ -19,7 +19,7 @@
     widgetswitchattr: 'switchSupport',
     nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'List ', 'Setpoint ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Default '],
     lwidget:          ['Text ', 'Group ', 'Image ', 'Frame '],
-    identifier:       /[A-Za-z0-9_]*/,
+    identifier:       /[A-Za-z0-9_]+/,
     lparen:           '(',
     rparen:           ')',
     colon:            ':',
@@ -112,18 +112,14 @@ WidgetColorAttrValue -> %lbracket _ Colors _ %rbracket                          
 
 Mappings -> Mapping                                                               {% (d) => [d[0]] %}
   | Mappings _ %comma _ Mapping                                                   {% (d) => d[0].concat([d[4]]) %}
-Mapping -> MappingCommand _ %equals _ MappingLabel                                {% (d) => d[0] + '=' + d[4] %}
-MappingCommand -> %string                                                         {% (d) => d[0].value.toString() %}
-  | %identifier                                                                   {% (d) => d[0].value %}
-  | %number                                                                       {% (d) => { return parseFloat(d[0].value) } %}
-MappingLabel -> %string                                                           {% (d) => d[0].value.toString() %}
-  | %identifier                                                                   {% (d) => d[0].value %}
-  | %number                                                                       {% (d) => { return parseFloat(d[0].value) } %}
+Mapping -> MappingCommand _ %equals _ MappingLabel                                {% (d) => d[0][0].value + '=' + d[4][0].value %}
+MappingCommand -> %string | %identifier  | %number
+MappingLabel -> %string | %identifier | %number
 
 Visibilities -> Visibility                                                        {% (d) => [d[0]] %}
   | Visibilities _ %comma _ Visibility                                            {% (d) => d[0].concat([d[4]]) %}
 Visibility -> VisibilityCommand _ VisibilityComparator _ VisibilityValue          {% (d) => d[0][0].value + d[2][0].value + d[4][0].value %}
-VisibilityCommand -> %identifier | %string
+VisibilityCommand -> %identifier
 VisibilityComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
 VisibilityValue -> %number | %identifier | %string
 
@@ -133,7 +129,7 @@ Color -> ColorCommand _ ColorComparator _ ColorValue _ %equals _ ColorName      
   | ColorComparator _ ColorValue _ %equals _ ColorName                            {% (d) => d[0][0].value + d[2][0].value + '=' + d[6][0].value %}
   | ColorValue _ %equals _ ColorName                                              {% (d) => '==' + d[0][0].value + '=' + d[4][0].value %}
   | ColorName                                                                     {% (d) => d[0][0].value %}
-ColorCommand -> %identifier | %string
+ColorCommand -> %identifier
 ColorComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
 ColorValue ->  %number | %identifier | %string
 ColorName ->  %identifier | %string

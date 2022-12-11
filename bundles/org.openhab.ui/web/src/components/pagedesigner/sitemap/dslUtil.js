@@ -15,8 +15,46 @@ function writeWidget (widget, indent) {
         dsl += ` ${key}=`
         if (key === 'item' || Number.isFinite(widget.config[key])) {
           dsl += widget.config[key]
-        } else if (['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor'].includes(key)) {
-          dsl += '[' + widget.config[key].filter(Boolean).join(',') + ']'
+        } else if (key === 'mappings') {
+          dsl += '['
+          dsl += widget.config[key].filter(Boolean).map(mapping => {
+            return mapping.split('=').map(value => {
+              if (/^[^"'].*\W.*[^"']$/.test(value)) {
+                return '"' + value + '"'
+              }
+              return value
+            }).join('=')
+          }).join(',')
+          dsl += ']'
+        } else if (key === 'visibility') {
+          dsl += '['
+          dsl += widget.config[key].filter(Boolean).map(visibility => {
+            let index = Math.max(visibility.lastIndexOf('='), visibility.lastIndexOf('>'), visibility.lastIndexOf('<')) + 1
+            let value = visibility.substring(index)
+            if (/^[^"'].*\W.*[^"']$/.test(value)) {
+              value = '"' + value + '"'
+            }
+            return visibility.substring(0, index) + value
+          }).join(',')
+          dsl += ']'
+        } else if (['valuecolor', 'labelcolor', 'iconcolor'].includes(key)) {
+          dsl += '['
+          dsl += widget.config[key].filter(Boolean).map(color => {
+            let index = color.lastIndexOf('=') + 1
+            let colorvalue = color.substring(index)
+            if (/^[^"'].*\W.*[^"']$/.test(colorvalue)) {
+              colorvalue = '"' + colorvalue + '"'
+            }
+            colorvalue = (index > 0 ? '=' + colorvalue : colorvalue)
+            let value = color.substring(0, index - 1)
+            index = Math.max(value.lastIndexOf('='), value.lastIndexOf('>'), value.lastIndexOf('<')) + 1
+            let condition = value.substring(index)
+            if (/^[^"'].*\W.*[^"']$/.test(condition)) {
+              condition = '"' + condition + '"'
+            }
+            return color.substring(0, index) + condition + colorvalue
+          }).join(',')
+          dsl += ']'
         } else {
           dsl += '"' + widget.config[key] + '"'
         }

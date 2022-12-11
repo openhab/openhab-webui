@@ -398,7 +398,7 @@ export default {
           if (widget.config) {
             Object.keys(widget.config).filter(attr => ['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor'].includes(attr)).forEach(attr => {
               widget.config[attr].forEach(param => {
-                if (((attr === 'mappings') && !(/^\s*(\S+|"[^\n"]*")\s*=\s*("[^\n"]*"|[^\n"]+)\s*$/u.test(param))) ||
+                if (((attr === 'mappings') && !(/^\s*("[^\n"]*"|[^\n"]+)\s*=\s*("[^\n"]*"|[^\n"]+)\s*$/u.test(param))) ||
                     ((attr === 'visibility') && !(/^\s*\S+\s*(==|>=|<=|!=|>|<)\s*("[^\n"]*"|[^\n"]+)\s*$/u.test(param))) ||
                     ((attr.includes('color')) && !(/^\s*(((\S+\s*)?(==|>=|<=|!=|>|<)\s*)?(("[^\n"]*"|[^\n"]+)\s*=\s*))?("#?\w+"|'#?\w+'|#?\w+)\s*$/u.test(param)))) {
                   let label = widget.config && widget.config.label ? widget.config.label : 'without label'
@@ -429,6 +429,9 @@ export default {
         for (let key in widget.config) {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
             widget.config[key] = widget.config[key].filter(Boolean)
+            if (['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor'].includes(key)) {
+              widget.config[key].forEach(this.removeQuotes)
+            }
           }
           if (!widget.config[key]) {
             delete widget.config[key]
@@ -438,6 +441,9 @@ export default {
       if (widget.slots && widget.slots.widgets) {
         widget.slots.widgets.forEach(this.cleanConfig)
       }
+    },
+    removeQuotes (value) {
+      value = value.replace(/"|'/g, '')
     },
     update (value) {
       this.selectedWidget = null
