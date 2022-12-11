@@ -85,7 +85,7 @@ export default {
         }
       }
 
-      if (this.context.editmode) return // do not connect SIP while editing
+      if (this.context.editmode) return // Do not connect SIP while editing
 
       // Make sure we have Mic/Camera permissions
       if (!navigator.mediaDevices) {
@@ -97,7 +97,7 @@ export default {
             this.sipStart()
           })
           .catch((err) => {
-            console.log('could not access microphone/camera', err)
+            console.log('Could not access microphone/camera', err)
             this.$f7.dialog.alert('To use the SIP widget you must allow microphone/camera access in your browser and reload this page.')
           })
       }
@@ -109,10 +109,10 @@ export default {
      * Starts the JsSIP UserAgent and connects to the SIP server.
      */
     sipStart () {
-      if (this.phone) this.phone.stop() // reconnect to reload config
-      this.context.component.config = { ...this.config, ...this.localConfig } // merge local device configuration
+      if (this.phone) this.phone.stop() // Reconnect to reload config
+      this.context.component.config = { ...this.config, ...this.localConfig } // Merge local device configuration
 
-      import(/* webpackChunkName: "jssip" */ 'jssip').then((JsSIP) => { // lazy load jssip
+      import(/* webpackChunkName: "jssip" */ 'jssip').then((JsSIP) => { // Lazy load jssip
         this.config.enableSIPDebug ? JsSIP.debug.enable('JsSIP:*') : JsSIP.debug.disable()
         // SIP user agent setup
         this.remoteAudio = new window.Audio()
