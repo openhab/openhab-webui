@@ -350,17 +350,31 @@
               }
         },
         "CacheNamespace": {
+            "shared": {
+                "!doc": "Shared cache that is shared across all rules and scripts, it can therefore be accessed from any automation language. A key is removed when all scripts that ever accessed it are unloaded, if the key stores a timer, the timer is cancelled.",
+                "!type": "JSCache"
+            },
+            "private": {
+                "!doc": "Private cache for each script. It can only be accessed by the same script and is cleared when the script is unloaded. When the script is unloaded, all timers in the script are cancelled.",
+                "!type": "JSCache"
+            }
+        },
+        "JSCache": {
             "get": {
-                "!doc": "Returns the value to which the specified key is mapped",
+                "!doc": "Returns the value to which the specified key is mapped. The optional defaultSupplier will return a default value if the key has no associated value.",
                 "!type": "fn(key: string, defaultSupplier?: fn()) -> ?"
             },
             "put": {
-                "!doc": "Associates the specified value with the specified key",
+                "!doc": "Associates the specified value with the specified key.",
                 "!type": "fn(key: string, value: ?) -> ?"
             },
             "remove": {
-                "!doc": "Removes the mapping for a key from this map if it is present",
+                "!doc": "Removes the mapping for a key from this map if it is present.",
                 "!type": "fn(key: string) -> ?"
+            },
+            "exists": {
+                "!doc": "Checks whether a value is associated with the given key.",
+                "!type": "fn(key: string) -> boolean"
             }
         },
         "Timer": {
@@ -637,7 +651,7 @@
         "!type": "ThingsNamespace"
     },
     "cache": {
-        "!doc": "Shared cache namespace. This namespace provides a default cache that can be use to set and retrieve objects that will be persisted between reloads of scripts.",
+        "!doc": "Cache namespace. This namespace provides caches that can be used to set and retrieve objects that will be persisted between reloads of scripts.",
         "!type": "CacheNamespace"
     },
     "log": {
