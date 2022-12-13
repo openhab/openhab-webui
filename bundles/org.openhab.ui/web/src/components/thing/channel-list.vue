@@ -89,8 +89,6 @@
 </style>
 
 <script>
-import diacritic from 'diacritic'
-
 import ChannelGroup from './channel-group.vue'
 import ChannelLink from './channel-link.vue'
 import ItemForm from '@/components/item/item-form.vue'
@@ -185,13 +183,13 @@ export default {
         this.newItems.splice(this.newItems.findIndex((i) => i.channel === channel), 1)
       } else {
         this.selectedChannels.push(channel)
-        let newItemName = (this.newItemsPrefix) ? this.newItemsPrefix : diacritic.clean(this.thing.label).replace(/[^0-9a-z]/gi, '')
+        let newItemName = this.newItemsPrefix || this.$oh.utils.normalizeLabel(this.thing.label)
         newItemName += '_'
         let suffix = channel.label || channelType.label || channel.id
         if (this.thing.channels.filter((c) => c.label === suffix || (c.channelTypeUID && this.channelTypesMap[c.channelTypeUID] && this.channelTypesMap[c.channelTypeUID].label === suffix)).length > 1) {
           suffix = channel.id.replace('#', '_').replace(/(^\w{1})|(_+\w{1})/g, letter => letter.toUpperCase())
         }
-        newItemName += diacritic.clean(suffix).replace(/[^0-9a-z_]/gi, '')
+        newItemName += this.$oh.utils.normalizeLabel(suffix)
         const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
         const newItem = {
           channel: channel,
