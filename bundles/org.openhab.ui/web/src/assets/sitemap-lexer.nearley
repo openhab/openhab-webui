@@ -127,7 +127,7 @@ Colors -> Color                                                                 
   | Colors _ %comma _ Color                                                       {% (d) => d[0].concat([d[4]]) %}
 Color -> ColorCommand _ ColorComparator _ ColorValue _ %equals _ ColorName        {% (d) => d[0][0].value + d[2][0].value + d[4][0].value + '=' + d[8][0].value %}
   | ColorComparator _ ColorValue _ %equals _ ColorName                            {% (d) => d[0][0].value + d[2][0].value + '=' + d[6][0].value %}
-  | ColorValue _ %equals _ ColorName                                              {% (d) => '==' + d[0][0].value + '=' + d[4][0].value %}
+  | ColorValue _ %equals _ ColorName                                              {% (d) => d[0][0].value + '=' + d[4][0].value %}
   | ColorName                                                                     {% (d) => d[0][0].value %}
 ColorCommand -> %identifier
 ColorComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
