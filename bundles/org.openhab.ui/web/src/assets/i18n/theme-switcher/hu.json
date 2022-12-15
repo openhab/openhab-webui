@@ -11,5 +11,6 @@
   "about.miscellaneous.home.background": "Standard háttérszín a honlapon",
   "about.miscellaneous.home.hideChatInput": "Chat ablak elrejtése a honéapon",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Kártya megnyitás animációk tiltása",
-  "about.miscellaneous.theme.disablePageTransition": "Áttűnési animációk letiltása"
+  "about.miscellaneous.theme.disablePageTransition": "Áttűnési animációk letiltása",
+  "about.miscellaneous.webaudio.enable": "Webes audio végpont támogatás bekapcsolása"
 }
