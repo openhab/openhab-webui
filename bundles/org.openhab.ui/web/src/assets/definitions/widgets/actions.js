@@ -57,6 +57,10 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['rule'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
+    pt(paramPrefix + 'actionRuleContext', 'Rule Context', 'Object representing the optional context to pass to the rule. Edit in YAML or provide a JSON object, e.g. <code>{ "param1": "value1", "param2": { "subkey1": "testing", "subkey2": 123 } }</code>.').c('script')
+      .v((value, configuration, configDescription, parameters) => {
+        return ['rule'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
     pt(paramPrefix + 'actionPage', 'Page', 'Page to navigate to').c('page')
       .v((value, configuration, configDescription, parameters) => {
         return ['navigate'].indexOf(configuration[paramPrefix + 'action']) >= 0

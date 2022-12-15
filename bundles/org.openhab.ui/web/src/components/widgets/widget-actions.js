@@ -144,8 +144,10 @@ export const actionsMixin = {
           break
         case 'rule':
           const actionRule = actionConfig[prefix + 'actionRule']
+          let actionRuleContext = actionConfig[prefix + 'actionRuleContext']
+          if (typeof actionRuleContext === 'object') actionRuleContext = JSON.stringify(actionRuleContext)
           if (!actionRule) break
-          this.$oh.api.postPlain('/rest/rules/' + actionRule + '/runnow', '')
+          this.$oh.api.postPlain('/rest/rules/' + actionRule + '/runnow', actionRuleContext || '', 'text/plain', 'application/json')
             .then(() => this.showActionFeedback(prefix, actionConfig))
             .catch((err) => {
               this.$f7.toast.create({
