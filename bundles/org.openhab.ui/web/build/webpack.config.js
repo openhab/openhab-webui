@@ -220,7 +220,7 @@ module.exports = {
       } : false
     }),
     new MiniCssExtractPlugin({
-      filename: 'css/app.css'
+      filename: 'css/app.[hash].css'
     }),
     new CopyWebpackPlugin([
       {
@@ -241,23 +241,25 @@ module.exports = {
         swSrc: resolvePath('src/service-worker.js')
       })
     ] : []),
-     new CompressionPlugin({
-      filename: '[path][base].gz',
-      algorithm: 'gzip',
-      test: /\.js$|\.css$|\.html$/,
-      threshold: 0,
-      minRatio: Infinity,
-    }),
-    new CompressionPlugin({
-      filename: '[path][base].br',
-      algorithm: 'brotliCompress',
-      test: /\.(js|css|html|svg)$/,
-      compressionOptions: {
-        level: 11,
-      },
-      threshold: 0,
-      minRatio: Infinity,
-    }),
+    ...(env === 'production' ? [
+      new CompressionPlugin({
+        filename: '[path][base].gz',
+        algorithm: 'gzip',
+        test: /\.js$|\.css$|\.html$/,
+        threshold: 0,
+        minRatio: Infinity,
+      }),
+      new CompressionPlugin({
+        filename: '[path][base].br',
+        algorithm: 'brotliCompress',
+        test: /\.(js|css|html|svg)$/,
+        compressionOptions: {
+          level: 11,
+        },
+        threshold: 0,
+        minRatio: Infinity,
+      })
+    ] : []),
     ...(process.env.WEBPACK_ANALYZER ? [
       new WebpackAnalyzerPlugin(process.env.WEBPACK_ANALYZER_REPORT ? {
         analyzerMode: 'static',
