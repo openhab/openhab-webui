@@ -47,6 +47,7 @@
 <style lang="stylus">
 .oh-cell-container
   display block
+  --oh-default-cell-tablet-width var(--f7-card-expandable-tablet-width)
   .configure-layout-menu
     position relative
     right 0

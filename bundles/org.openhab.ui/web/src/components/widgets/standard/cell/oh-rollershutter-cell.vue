@@ -19,6 +19,9 @@
 </template>
 
 <style lang="stylus">
+@media (min-width: 768px) and (min-height: 670px)
+  .cell-expanded-thin:not(.card-tablet-fullscreen)
+    max-width var(--oh-default-cell-tablet-width) !important
 .cell-expanded-thin
   --f7-card-expandable-tablet-width 400px
 .cell-rollershutter
