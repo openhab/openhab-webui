@@ -33,7 +33,7 @@
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-react": "^5.2.2",
     "eslint-plugin-react-native": "^1.1.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-clean": "^0.3.2",
     "gulp-clean-css": "^3.4.2",
     "gulp-concat": "^2.6.0",
