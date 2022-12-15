@@ -3,25 +3,25 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: fr\n"
-"X-Crowdin-File: /master/web/assets/i18n/widgets/widgets.pot\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/widgets/widgets.pot\n"
+"X-Crowdin-File-ID: 536\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
-"PO-Revision-Date: 2019-06-16 09:54\n"
+"PO-Revision-Date: 2022-12-11 11:15\n"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.min"
 msgid "Min"
-msgstr "Min"
+msgstr ""
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.max"
 msgid "Max"
-msgstr "Max"
+msgstr ""
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.step"
@@ -36,7 +36,7 @@ msgstr "Unité (suffixe)"
 #. Common term in widget settings dialogs
 msgctxt "widget.common.format"
 msgid "Format"
-msgstr "Format"
+msgstr ""
 
 #. Common option label in widget settings dialogs
 msgctxt "widget.common.format.useserverprovided"
@@ -245,7 +245,7 @@ msgstr "Général"
 #. Dropdown header
 msgctxt "widget.chart.general.type"
 msgid "Type"
-msgstr "Type"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.chart.general.type.default"
@@ -375,7 +375,7 @@ msgstr "Paramètres de l'horloge"
 #. Dropdown header
 msgctxt "widget.clock.mode"
 msgid "Mode"
-msgstr "Mode"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.clock.mode.analog"
@@ -385,7 +385,7 @@ msgstr "Analogue"
 #. Dropdown option
 msgctxt "widget.clock.mode.digital"
 msgid "Digital"
-msgstr "Digital"
+msgstr ""
 
 #. Dropdown header
 msgctxt "widget.clock.theme"
@@ -435,7 +435,7 @@ msgstr "Paramètres du contrôle de couleur"
 #. Dropdown header
 msgctxt "widget.colorpicker.type"
 msgid "Type"
-msgstr "Type"
+msgstr ""
 
 #. Dropdown option
 msgctxt "widget.colorpicker.type.hsl"
@@ -565,7 +565,7 @@ msgstr "Ne pas afficher le titre"
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.image"
 msgid "Image"
-msgstr "Image"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.image.description"
@@ -675,7 +675,7 @@ msgstr "Curseur"
 #. Section header
 msgctxt "widget.knob.bartrack.angles"
 msgid "Angles (°)"
-msgstr "Angles (°)"
+msgstr ""
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.angles.start"
@@ -770,17 +770,17 @@ msgstr "Thème"
 #. Radio buttons header
 msgctxt "widget.knob.skin.type"
 msgid "Type"
-msgstr "Type"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.knob.skin.type.simple"
 msgid "Simple"
-msgstr "Simple"
+msgstr ""
 
 #. Radio button label
 msgctxt "widget.knob.skin.type.tron"
 msgid "Tron"
-msgstr "Tron"
+msgstr ""
 
 #. Section header
 msgctxt "widget.knob.skin.tronsettings"
@@ -990,7 +990,7 @@ msgstr "Paramètres du curseur linéaire (slider)"
 #. Checkbox header
 msgctxt "widget.slider.general.orientation"
 msgid "Orientation"
-msgstr "Orientation"
+msgstr ""
 
 #. Checkbox label
 msgctxt "widget.slider.general.orientation.vertical"
@@ -1075,7 +1075,7 @@ msgstr "Cacher ON/OFF"
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.template"
 msgid "Template"
-msgstr "Template"
+msgstr ""
 
 #. Description of the widget, displayed in a tooltip when hovering the option in the Add Widget dropdown menu in the designer
 msgctxt "widget.template.description"
@@ -1105,7 +1105,7 @@ msgstr "Pas d'arrière-plan"
 #. Section header (displayed above the code editor)
 msgctxt "widget.template.template"
 msgid "Template"
-msgstr "Template"
+msgstr ""
 
 #. Menu entry (top-right above the code editor)
 msgctxt "widget.template.importfromfile"

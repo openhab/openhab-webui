@@ -46,10 +46,7 @@ gulp.task('watch', function() {
     ], ['sass']);
 });
 
-gulp.task('server', [
-    'watch',
-    'web-server'
-], function() {});
+gulp.task('server', gulp.series('watch', 'web-server'));
 
 
 // SASS processing
@@ -68,9 +65,7 @@ gulp.task('sass-vendor', function() {
         .pipe(gulp.dest('./vendor'));
 });
 
-gulp.task('sass', [
-    'sass-vendor'
-], function() {});
+gulp.task('sass', gulp.series('sass-vendor'));
 
 
 // i18n PO files to JSON conversion
@@ -130,9 +125,7 @@ gulp.task('i18n-po2json', function() {
         })()).pipe(gulp.dest('./assets/i18n'));
 });
 
-gulp.task('i18n', [
-    'i18n-po2json'
-], function() {});
+gulp.task('i18n', gulp.series('i18n-po2json'));
 
 
 // vendor resources processing
@@ -150,7 +143,7 @@ gulp.task('uglify-timeline', function() {
         .pipe(gulp.dest('bower_components/d3-timeline/dist'));
 });
 
-gulp.task('vendor-js', ['uglify-timeline'], function() {
+gulp.task('vendor-js', gulp.series('uglify-timeline', function() {
     // var filterJS = gulpFilter('**/*.js', { restore: true });
     // return gulp.src('./bower.json')
     //            .pipe(mainBowerFiles({debugging: true}))
@@ -195,7 +188,7 @@ gulp.task('vendor-js', ['uglify-timeline'], function() {
         'vendor/angular-web-colorpicker.js'
     ]).pipe(concat('vendor.js')).pipe(gulp.dest('vendor'));
 
-});
+}));
 
 gulp.task('vendor-angular-i18n', function () {
     /* don't copy regional-specific except for selected common particular cases -
@@ -280,7 +273,7 @@ gulp.task('codemirror-theme', function() {
     ]).pipe(gulp.dest('vendor/cm/theme'));
 });
 
-gulp.task('codemirror', [
+gulp.task('codemirror', gulp.series(
     'codemirror-lib',
     'codemirror-css',
     'codemirror-addon-fold',
@@ -289,11 +282,11 @@ gulp.task('codemirror', [
     'codemirror-mode-xml',
     'codemirror-mode-javascript',
     'codemirror-theme'
-], function() {});
+));
 
-gulp.task('vendor', [
+gulp.task('vendor', gulp.series(
     'vendor-js',
     'vendor-fonts'
-], function() {});
+));
 
-gulp.task('default', ['vendor', 'codemirror'], function() {});
+gulp.task('default', gulp.series('vendor', 'codemirror'));
