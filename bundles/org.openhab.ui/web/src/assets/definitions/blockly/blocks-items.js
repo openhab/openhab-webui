@@ -58,7 +58,7 @@ export default function (f7) {
       this.setOutput(true, 'Array')
       this.setColour(0)
       this.setTooltip('Retrieve the items that have all the given tags')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-tagged-items')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-items-with-tag')
       this.setOutput(true, null)
     }
   }
