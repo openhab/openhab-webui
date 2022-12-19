@@ -1,5 +1,6 @@
 /*
  * Interact with the event bus in Blockly
+ * supports jsscripting
  */
 
 import Blockly from 'blockly'
@@ -26,6 +27,10 @@ export default function (f7) {
     const eventType = block.getFieldValue('eventType')
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
     const value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
-    return 'events.' + eventType + '(' + itemName + ', ' + value + ');\n'
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `items.getItem(${itemName}).${eventType}(${value});\n`
+    } else {
+      return `events.${eventType}(${itemName}, ${value});\n`
+    }
   }
 }

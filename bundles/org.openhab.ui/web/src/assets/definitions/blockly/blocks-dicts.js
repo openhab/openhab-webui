@@ -1,3 +1,7 @@
+/**
+ * supports jsscripting
+ */
+
 import Blockly from 'blockly'
 
 export default function (f7) {

@@ -1,10 +1,11 @@
 /*
 * Adds new blocks to the list section
+* supports jsscripting
 */
 import Blockly from 'blockly'
 export default function (f7) {
   /*
-  * allows the concatenate a list into a new list
+  * allows to concatenate a list into a new list
   * Block
   */
   Blockly.Blocks['oh_list_concatenate'] = {

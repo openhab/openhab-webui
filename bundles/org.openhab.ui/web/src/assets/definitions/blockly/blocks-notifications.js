@@ -1,5 +1,6 @@
 /*
 * These blocks allow to send notifications via openhab
+* supports jsscripting
 */
 
 import Blockly from 'blockly'
@@ -21,11 +22,14 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   Blockly.JavaScript['oh_sendNotification'] = function (block) {
-    const notifications = addNotificationAction()
     let email = Blockly.JavaScript.valueToCode(block, 'email', Blockly.JavaScript.ORDER_ATOMIC)
     let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `${notifications}.sendNotification(${email},${message});\n`
-    return code
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `actions.NotificationAction.sendNotification(${email}, ${message});\n`
+    } else {
+      const notifications = addNotificationAction()
+      return `${notifications}.sendNotification(${email}, ${message});\n`
+    }
   }
 
   Blockly.Blocks['oh_sendBroadcastNotification'] = {
@@ -48,12 +52,15 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   Blockly.JavaScript['oh_sendBroadcastNotification'] = function (block) {
-    const notifications = addNotificationAction()
     let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
     let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
-    let code = `${notifications}.sendBroadcastNotification(${message},${icon},'${severity}');\n`
-    return code
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `actions.NotificationAction.sendBroadcastNotification(${message}, ${icon}, '${severity}');\n`
+    } else {
+      const notifications = addNotificationAction()
+      return `${notifications}.sendBroadcastNotification(${message}, ${icon}, '${severity}');\n`
+    }
   }
 
   Blockly.Blocks['oh_sendLogNotification'] = {
@@ -76,12 +83,15 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   Blockly.JavaScript['oh_sendLogNotification'] = function (block) {
-    const notifications = addNotificationAction()
     let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
     let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
-    let code = `${notifications}.sendLogNotification(${message},${icon},'${severity}');\n`
-    return code
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `actions.NotificationAction.sendLogNotification(${message}, ${icon}, '${severity}');\n`
+    } else {
+      const notifications = addNotificationAction()
+      return `${notifications}.sendLogNotification(${message}, ${icon}, '${severity}');\n`
+    }
   }
 }
 
