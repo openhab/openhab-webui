@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '11', '17' ]
+        java: [ '17' ]
         maven: [ '3.8.6' ]
         os: [ 'ubuntu-22.04' ]
     name: Build (Java ${{ matrix.java }}, ${{ matrix.os }})
@@ -86,7 +86,7 @@ jobs:
           path: target/summary_report.html
 
       - name: Report SAT Errors as Annotations
-        if: ${{ matrix.java == '11' && always() && ((steps.build.outcome == 'success') || (steps.build.outcome == 'failure')) }}
+        if: ${{ matrix.java == '17' && always() && ((steps.build.outcome == 'success') || (steps.build.outcome == 'failure')) }}
         uses: ghys/checkstyle-github-action@main
         with:
           title: CheckStyle Violations
