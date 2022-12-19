@@ -77,8 +77,12 @@ export default function (f7) {
       }
       tags += tagNames[i]
     }
-    let code = `Java.from(itemRegistry.getItemsByTag(${tags}))`
-    return [code, 0]
+
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return [`items.getItemsByTag(${tags})`, 0]
+    } else {
+      return [`Java.from(itemRegistry.getItemsByTag(${tags}))`, 0]
+    }
   }
 
   Blockly.Blocks['oh_getitem'] = {
