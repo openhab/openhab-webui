@@ -20,7 +20,6 @@
     <module>org.openhab.ui</module>
     <module>org.openhab.ui.basic</module>
     <module>org.openhab.ui.cometvisu</module>
-    <module>org.openhab.ui.cometvisu.php</module>
     <module>org.openhab.ui.habot</module>
     <module>org.openhab.ui.habpanel</module>
     <module>org.openhab.ui.iconset.classic</module>

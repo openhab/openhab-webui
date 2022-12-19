@@ -30,11 +30,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,18 +45,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.OpenHAB;
-import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.items.events.ItemEventFactory;
@@ -71,19 +60,11 @@ import org.openhab.core.persistence.HistoricItem;
 import org.openhab.core.persistence.QueryablePersistenceService;
 import org.openhab.core.types.Command;
 import org.openhab.ui.cometvisu.internal.Config;
-import org.openhab.ui.cometvisu.internal.backend.model.editor.dataprovider.DataBean;
-import org.openhab.ui.cometvisu.internal.backend.model.editor.dataprovider.ItemBean;
 import org.openhab.ui.cometvisu.internal.backend.model.rss.Feed;
-import org.openhab.ui.cometvisu.internal.backend.sitemap.ConfigHelper.Transform;
 import org.openhab.ui.cometvisu.internal.backend.sitemap.VisuConfig;
 import org.openhab.ui.cometvisu.internal.util.ClientInstaller;
-import org.openhab.ui.cometvisu.php.PHProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 
@@ -111,7 +92,6 @@ public class CometVisuServlet extends HttpServlet {
     protected File rootFolder;
     protected File userFileFolder;
     protected @Nullable String defaultUserDir;
-    protected @Nullable PHProvider engine;
     protected @Nullable ServletContext servletContext;
     protected @Nullable ServletConfig config;
 
@@ -125,45 +105,6 @@ public class CometVisuServlet extends HttpServlet {
         userFileFolder = new File(OpenHAB.getConfigFolder() + Config.COMETVISU_WEBAPP_USERFILE_FOLDER);
         defaultUserDir = System.getProperty("user.dir");
         this.cometVisuApp = cometVisuApp;
-
-        PHProvider prov = cometVisuApp.getPHProvider();
-        if (prov != null) {
-            this.setPHProvider(prov);
-        }
-    }
-
-    public void setPHProvider(PHProvider prov) {
-        this.engine = prov;
-        this.initQuercusEngine();
-    }
-
-    public void unsetPHProvider() {
-        this.engine = null;
-        this.phpEnabled = false;
-    }
-
-    private void initQuercusEngine() {
-        try {
-            if (this.engine != null) {
-                this.engine.createQuercusEngine();
-                this.engine.setIni("include_path", ".:" + rootFolder.getAbsolutePath());
-                if (servletContext != null) {
-                    this.engine.init(rootFolder.getAbsolutePath(), defaultUserDir, servletContext);
-                    phpEnabled = true;
-                }
-            }
-        } catch (Exception e) {
-            phpEnabled = false;
-        }
-    }
-
-    /**
-     * Returns true if the PHP feature is enabled
-     *
-     * @return {boolean}
-     */
-    public boolean isPhpEnabled() {
-        return phpEnabled;
     }
 
     /**
@@ -176,25 +117,6 @@ public class CometVisuServlet extends HttpServlet {
         if (config != null) {
             servletContext = config.getServletContext();
         }
-
-        // init php service if available
-        if (this.engine != null) {
-            this.engine.init(rootFolder.getAbsolutePath(), defaultUserDir, servletContext);
-            phpEnabled = true;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest,
-     *      javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    @Deprecated
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        File requestedFile = getRequestedFile(req);
-        processPhpRequest(requestedFile, req, resp);
     }
 
     private @Nullable Sitemap getSitemap(String sitemapname) {
@@ -250,29 +172,10 @@ public class CometVisuServlet extends HttpServlet {
         if (requestedFile.getName().equalsIgnoreCase("hidden.php")) {
             // do not deliver the hidden php
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-        } else if (path.matches(".*editor/dataproviders/.+\\.(php|json)$")
-                || path.matches(".*designs/get_designs\\.php$")) {
-            dataProviderService(requestedFile, req, resp);
         } else if (path.endsWith(rssLogPath)) {
             processRssLogRequest(requestedFile, req, resp);
-        } else if (requestedFile.getName().endsWith(".php")) {
-            processPhpRequest(requestedFile, req, resp);
         } else {
             processStaticRequest(requestedFile, req, resp, true);
-        }
-    }
-
-    @Deprecated
-    protected void processPhpRequest(File file, HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        if (!this.phpEnabled) {
-            // try to initialize the php service
-            initQuercusEngine();
-        }
-        if (this.phpEnabled && this.engine != null) {
-            this.engine.phpService(file, request, response);
-        } else {
-            logger.debug("php service is not available please install com.caucho.quercus bundle");
         }
     }
 
@@ -842,175 +745,6 @@ public class CometVisuServlet extends HttpServlet {
         } else {
             logger.error("Error loading classloader");
             response.sendError(404);
-        }
-    }
-
-    /**
-     * replaces the dataproviders in
-     * <cometvisu-src>/editor/dataproviders/*.(php|json) +
-     *
-     * @param file
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     * @deprecated replaced by the CV REST backend in CometVisu versions >=0.12.0
-     */
-    @Deprecated
-    private final void dataProviderService(File file, HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        logger.debug("dataprovider '{}' requested", file.getPath());
-        List<Object> beans = new ArrayList<>();
-        String resultString = null;
-
-        File resourceFolder = rootFolder;
-        String rel = file.getPath().substring(rootFolder.getPath().length());
-        // is CometVisu version >= 0.11 (Qooxdoo based)
-        if (rel.startsWith("/source/") || rel.startsWith("/build/")) {
-            // Qooxdoo based CometVisu in source/build mode
-            // change the folder
-            String[] parts = rel.substring(1).split("/");
-            resourceFolder = new File(rootFolder, parts[0] + "/resource");
-            logger.debug("new resource folder is {}", resourceFolder.getPath());
-        }
-
-        if (file.getName().equals("dpt_list.json")) {
-            // return all transforms available for openhab
-            for (Transform transform : Transform.values()) {
-                DataBean bean = new DataBean();
-                bean.label = transform.toString().toLowerCase();
-                bean.value = "OH:" + bean.label;
-                beans.add(bean);
-            }
-        } else if (file.getName().equals("list_all_addresses.php")) {
-            // all item names
-
-            // collect all available transform types
-            List<String> transformTypes = new ArrayList<>();
-            for (Transform transform : Transform.values()) {
-                transformTypes.add(transform.toString().toLowerCase());
-            }
-
-            Map<String, List<Object>> groups = new HashMap<>();
-            for (Item item : this.cometVisuApp.getItemRegistry().getItems()) {
-                ItemBean bean = new ItemBean();
-                bean.value = item.getName();
-
-                String type = item.getType();
-                if ("Group".equals(item.getType())) {
-                    Item baseItem = ((GroupItem) item).getBaseItem();
-                    if (baseItem != null) {
-                        type = baseItem.getType();
-                    } else {
-                        continue;
-                    }
-                }
-                bean.label = item.getName();
-                String transform = type.toLowerCase().replace("Item", "");
-                if (transformTypes.contains(transform)) {
-                    bean.hints.put("transform", "OH:" + transform);
-                } else {
-                    logger.debug("no transform type found for item type {}, skipping this item", type);
-                    continue;
-                }
-                List<Object> list = groups.get(type);
-                if (list == null) {
-                    list = new ArrayList<>();
-                    groups.put(type, list);
-                }
-                list.add(bean);
-            }
-            resultString = marshalJson(groups);
-        } else if (file.getName().equals("list_all_icons.php")) {
-            // all item names
-            File svgFile = new File(resourceFolder, "icon/knx-uf-iconset.svg");
-            if (svgFile.exists()) {
-                // extract names from SVG file
-                try {
-                    DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                    Document doc = builder.parse(svgFile);
-                    XPath xpath = XPathFactory.newInstance().newXPath();
-                    XPathExpression expr = xpath.compile("//symbol/@id");
-                    NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-                    for (int i = 0, len = nl.getLength(); i < len; i++) {
-                        Node node = nl.item(i);
-                        DataBean bean = new DataBean();
-                        String iconName = node.getTextContent();
-                        if (iconName.startsWith("kuf-")) {
-                            iconName = iconName.substring(4);
-                        }
-                        bean.label = iconName;
-                        bean.value = iconName;
-                        beans.add(bean);
-                    }
-                } catch (SAXException e) {
-                    logger.error("error parsing SVG file: {}", e.getMessage(), e);
-                } catch (ParserConfigurationException e) {
-                    logger.error("error extracting items from SVG file: {}", e.getMessage(), e);
-                } catch (XPathExpressionException e) {
-                    logger.error("error extracting items from SVG file: {}", e.getMessage(), e);
-                }
-            } else {
-                File iconDir = new File(resourceFolder, "icon/knx-uf-iconset/128x128_white/");
-                if (iconDir.exists() && iconDir.isDirectory()) {
-                    FilenameFilter filter = new FilenameFilter() {
-                        @Override
-                        public boolean accept(@Nullable File dir, @Nullable String name) {
-                            return name != null && name.endsWith(".png");
-                        }
-                    };
-                    File[] icons = iconDir.listFiles(filter);
-                    Arrays.sort(icons);
-                    for (File iconFile : icons) {
-                        if (iconFile.isFile()) {
-                            String iconName = iconFile.getName().replace(".png", "");
-                            DataBean bean = new DataBean();
-                            bean.label = iconName;
-                            bean.value = iconName;
-                            beans.add(bean);
-                        }
-                    }
-                }
-            }
-        } else if (file.getName().equals("list_all_plugins.php")) {
-            // all plugins
-            // all item names
-            File pluginDir = new File(resourceFolder, "plugins/");
-            File[] plugins = pluginDir.listFiles();
-            Arrays.sort(plugins);
-            for (File icon : plugins) {
-                if (icon.isDirectory()) {
-                    DataBean bean = new DataBean();
-                    bean.label = icon.getName();
-                    bean.value = icon.getName();
-                    beans.add(bean);
-                }
-            }
-        } else if (file.getName().equals("get_designs.php")) {
-            // all designs
-            File designDir = new File(resourceFolder, "designs/");
-            File[] designs = designDir.listFiles();
-            if (designs != null) {
-                Arrays.sort(designs);
-                for (File design : designs) {
-                    if (design.isDirectory()) {
-                        beans.add(design.getName());
-                    }
-                }
-            }
-        } else if (file.getName().equals("list_all_rrds.php")) {
-            // all item names
-        }
-        if (beans.isEmpty() && resultString == null) {
-            // nothing found try the PHP files
-            processPhpRequest(file, request, response);
-        } else {
-            response.setContentType(MediaType.APPLICATION_JSON);
-            if (resultString == null) {
-                resultString = marshalJson(beans);
-            }
-            response.getWriter().write(resultString);
-            response.flushBuffer();
         }
     }
 
