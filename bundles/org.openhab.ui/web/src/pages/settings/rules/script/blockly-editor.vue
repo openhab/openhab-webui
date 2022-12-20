@@ -13,6 +13,14 @@
         <block type="logic_ternary" />
       </category>
 
+      <category name="Units of Measurement" colour="%{BKY_LOOPS_HUE}" v-if="!{jsScriptingAvailable}">
+        <block type="oh_uom_add">
+          <value name="itemName">
+            <shadow type="oh_item" />
+          </value>
+        </block>
+      </category>
+
       <category name="Loops" colour="%{BKY_LOOPS_HUE}">
         <block type="controls_repeat_ext">
           <value name="TIMES">

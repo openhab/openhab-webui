@@ -14,6 +14,7 @@ import definePersistenceBlocks from './blocks-persistence'
 import defineColorBlocks from './blocks-color'
 import defineTextBlocks from './blocks-text'
 import defineListBlocks from './blocks-list'
+import defineUomBlocks from './blocks-uom'
 
 import { defineLibraries } from './libraries'
 
@@ -36,5 +37,6 @@ export default function (f7, libraryDefinitions, data) {
   defineColorBlocks(f7)
   defineTextBlocks(f7)
   defineListBlocks(f7)
+  defineUomBlocks(f7)
   defineLibraries(libraryDefinitions)
 }
