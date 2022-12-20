@@ -13,10 +13,29 @@
         <block type="logic_ternary" />
       </category>
 
-      <category name="Units of Measurement" colour="%{BKY_LOOPS_HUE}" v-if="!{jsScriptingAvailable}">
-        <block type="oh_uom_add">
-          <value name="itemName">
-            <shadow type="oh_item" />
+      <category name="Units of Measurement" colour="%{BKY_MATH_HUE}" v-if="{jsScriptingAvailable}">
+        <block type="oh_uom_arithmetic">
+          <value name="first">
+            <shadow type="text">
+              <field name="TEXT">10 W</field>
+            </shadow>
+          </value>
+          <value name="second">
+            <shadow type="text">
+              <field name="TEXT">1 kW</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="oh_uom_compare">
+          <value name="first">
+            <shadow type="text">
+              <field name="TEXT">10 W</field>
+            </shadow>
+          </value>
+          <value name="second">
+            <shadow type="text">
+              <field name="TEXT">1 kW</field>
+            </shadow>
           </value>
         </block>
       </category>
