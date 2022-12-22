@@ -6,6 +6,8 @@
 * - Even though "enhancedjavasound" is provided as a sink, currently it is not clear what the intention is
 *
 * See more background info on openHAB multimedia here: https://www.openhab.org/docs/configuration/multimedia.html
+*
+* supports jsscripting
 */
 
 import Blockly from 'blockly'
@@ -57,12 +59,8 @@ export default function (f7, sinks, voices) {
     let fileName = Blockly.JavaScript.valueToCode(block, 'fileName', Blockly.JavaScript.ORDER_ATOMIC)
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
-      return `actions.Audio.playSound(${sinkName}, ${fileName});\n`
-    } else {
-      const audio = addAudio()
-      return `${audio}.playSound(${sinkName}, ${fileName});\n`
-    }
+    const audio = (this.workspace && this.workspace.jsScriptingAvailable) ? 'actions.Audio' : addAudio()
+    return `${audio}.playSound(${sinkName}, ${fileName});\n`
   }
 
   /*
@@ -136,12 +134,8 @@ export default function (f7, sinks, voices) {
     let url = Blockly.JavaScript.valueToCode(block, 'url', Blockly.JavaScript.ORDER_ATOMIC)
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
-      return `actions.Audio.playStream(${sinkName}, ${url});\n`
-    } else {
-      const audio = addAudio()
-      return `${audio}.playStream(${sinkName}, ${url});\n`
-    }
+    const audio = (this.workspace && this.workspace.jsScriptingAvailable) ? 'actions.Audio' : addAudio()
+    return `${audio}.playStream(${sinkName}, ${url});\n`
   }
 
   /*
@@ -167,16 +161,11 @@ export default function (f7, sinks, voices) {
   * Blockly part
   */
   Blockly.JavaScript['oh_stopstream_sink'] = function (block) {
-    const audio = addAudio()
     let url = block.getFieldValue('url')
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
-      return `actions.Audio.playStream(${sinkName}, null);\n`
-    } else {
-      const audio = addAudio()
-      return `${audio}.playStream(${sinkName}, null);\n`
-    }
+    const audio = (this.workspace && this.workspace.jsScriptingAvailable) ? 'actions.Audio' : addAudio()
+    return `${audio}.playStream(${sinkName}, null);\n`
   }
 
   /*
@@ -211,14 +200,8 @@ export default function (f7, sinks, voices) {
     const voiceName = Blockly.JavaScript.valueToCode(block, 'voice', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
     const deviceSink = Blockly.JavaScript.valueToCode(block, 'deviceSink', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
-      return `actions.Voice.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
-    } else {
-      const voice = Blockly.JavaScript.provideFunction_(
-        'voice',
-        ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Voice\');'])
-      return `${voice}.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
-    }
+    const voice = (this.workspace && this.workspace.jsScriptingAvailable) ? 'actions.Voice' : addVoice()
+    return `${voice}.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
   }
 
   /*
@@ -284,5 +267,11 @@ export default function (f7, sinks, voices) {
     return Blockly.JavaScript.provideFunction_(
       'audio',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Audio\');'])
+  }
+
+  function addVoice () {
+    return Blockly.JavaScript.provideFunction_(
+      'voice',
+      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Voice\');'])
   }
 }
