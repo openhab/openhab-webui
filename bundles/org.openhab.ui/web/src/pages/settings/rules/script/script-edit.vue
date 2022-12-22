@@ -312,14 +312,14 @@ export default {
         this.dirty = false
         if (!noToast) {
           this.$f7.toast.create({
-            text: 'Rule updated',
+            text: (this.isScriptRule ? 'Script' : 'Rule') + ' updated',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         }
       }).catch((err) => {
         this.$f7.toast.create({
-          text: 'Error while saving rule: ' + err,
+          text: 'Error while saving: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
@@ -334,7 +334,7 @@ export default {
       const enable = (this.rule.status.statusDetail === 'DISABLED')
       this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString()).then((data) => {
         this.$f7.toast.create({
-          text: (enable) ? 'Rule enabled' : 'Rule disabled',
+          text: (this.isScriptRule ? 'Script' : 'Rule') + (enable ? ' enabled' : ' disabled'),
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
@@ -356,7 +356,7 @@ export default {
         }).open()
       }
       this.$f7.toast.create({
-        text: 'Running rule',
+        text: 'Running ' + (this.isScriptRule ? 'script' : 'rule'),
         destroyOnClose: true,
         closeTimeout: 2000
       }).open()
@@ -366,7 +366,7 @@ export default {
       savePromise.then(() => {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
           this.$f7.toast.create({
-            text: 'Error while running rule: ' + err,
+            text: 'Error while running: ' + err,
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
@@ -376,7 +376,7 @@ export default {
     deleteRule () {
       this.$f7.dialog.confirm(
         `Are you sure you want to delete ${this.rule.name}?`,
-        'Delete Rule',
+        'Delete ' + (this.isScriptRule ? 'Script' : 'Rule'),
         () => {
           this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
             this.$f7router.back('/settings/scripts/', { force: true })
