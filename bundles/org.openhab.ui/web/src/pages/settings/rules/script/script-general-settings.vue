@@ -1,6 +1,6 @@
 <template>
   <f7-block v-if="!ready" class="block-narrow">
-    <f7-col>
+    <f7-col v-if="createMode || isScriptRule">
       <f7-list class="no-margin" inline-labels no-hairlines-md>
         <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" required validate
                        :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
@@ -12,7 +12,7 @@
                        @input="rule.description = $event.target.value" clear-button />
       </f7-list>
     </f7-col>
-    <f7-col>
+    <f7-col v-if="createMode || isScriptRule">
       <f7-block-title>Tags</f7-block-title>
       <tag-input :item="rule" :disabled="false" />
     </f7-col>
@@ -32,7 +32,7 @@
 import TagInput from '@/components/tags/tag-input.vue'
 
 export default {
-  props: ['rule', 'createMode', 'ready', 'languages', 'mode'],
+  props: ['rule', 'createMode', 'ready', 'isScriptRule', 'languages', 'mode'],
   emits: ['newLanguage'],
   components: {
     TagInput
