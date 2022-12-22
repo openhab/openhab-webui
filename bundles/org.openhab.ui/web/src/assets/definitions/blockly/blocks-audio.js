@@ -54,12 +54,15 @@ export default function (f7, sinks, voices) {
   * Code part
   */
   Blockly.JavaScript['oh_playmedia_sink'] = function (block) {
-    const audio = addAudio()
     let fileName = Blockly.JavaScript.valueToCode(block, 'fileName', Blockly.JavaScript.ORDER_ATOMIC)
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    let code = `${audio}.playSound(${sinkName}, ${fileName});\n`
-    return code
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `actions.Audio.playSound(${sinkName}, ${fileName});\n`
+    } else {
+      const audio = addAudio()
+      return `${audio}.playSound(${sinkName}, ${fileName});\n`
+    }
   }
 
   /*
@@ -92,13 +95,16 @@ export default function (f7, sinks, voices) {
   * Code part
   */
   Blockly.JavaScript['oh_playmedia_sink_volume'] = function (block) {
-    const audio = addAudio()
     let fileName = Blockly.JavaScript.valueToCode(block, 'fileName', Blockly.JavaScript.ORDER_ATOMIC)
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
     let volume = Blockly.JavaScript.valueToCode(block, 'volume', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
 
-    let code = `${audio}.playSound(${sinkName}, ${fileName}, new PercentType(${volume}));\n`
-    return code
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `actions.Audio.playSound(${sinkName}, ${fileName}, new runtime.PercentType(${volume}));\n`
+    } else {
+      const audio = addAudio()
+      return `${audio}.playSound(${sinkName}, ${fileName}, new PercentType(${volume}));\n`
+    }
   }
 
   /*
@@ -127,11 +133,15 @@ export default function (f7, sinks, voices) {
   * Blockly part
   */
   Blockly.JavaScript['oh_playstream_sink'] = function (block) {
-    const audio = addAudio()
     let url = Blockly.JavaScript.valueToCode(block, 'url', Blockly.JavaScript.ORDER_ATOMIC)
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
-    let code = `${audio}.playStream(${sinkName}, ${url});\n`
-    return code
+
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `actions.Audio.playStream(${sinkName}, ${url});\n`
+    } else {
+      const audio = addAudio()
+      return `${audio}.playStream(${sinkName}, ${url});\n`
+    }
   }
 
   /*
@@ -160,8 +170,13 @@ export default function (f7, sinks, voices) {
     const audio = addAudio()
     let url = block.getFieldValue('url')
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
-    let code = `${audio}.playStream(${sinkName}, null);\n`
-    return code
+
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `actions.Audio.playStream(${sinkName}, null);\n`
+    } else {
+      const audio = addAudio()
+      return `${audio}.playStream(${sinkName}, null);\n`
+    }
   }
 
   /*
@@ -192,16 +207,18 @@ export default function (f7, sinks, voices) {
   * Code part
   */
   Blockly.JavaScript['oh_say'] = function (block) {
-    const voice = Blockly.JavaScript.provideFunction_(
-      'voice',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Voice\');'])
-
     const textToSay = Blockly.JavaScript.valueToCode(block, 'textToSay', Blockly.JavaScript.ORDER_ATOMIC)
     const voiceName = Blockly.JavaScript.valueToCode(block, 'voice', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
     const deviceSink = Blockly.JavaScript.valueToCode(block, 'deviceSink', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    const code = `${voice}.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
-    return code
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `actions.Voice.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
+    } else {
+      const voice = Blockly.JavaScript.provideFunction_(
+        'voice',
+        ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Voice\');'])
+      return `${voice}.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
+    }
   }
 
   /*
