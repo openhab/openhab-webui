@@ -1,8 +1,9 @@
 /*
 * These blocks allow to run scripts from the current rule. There are two types of scripts which are supported by different blocks
-*  - Script Files that are stored on openHAB's server in the scripts folder
+*  - Script Files that are stored on the openHAB server in the "$OPENHAB_CONF/scripts" folder
 *  - Scripts that have been provided via the openHAB UI
 * Additionally there is a block that allows transformations based on the Map-File functionality, regular-expressions and applying JSON-paths
+* supports jsscripting
 */
 import Blockly from 'blockly'
 import { addOSGiService } from './utils'
@@ -31,12 +32,15 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   * Code part
   */
   Blockly.JavaScript['oh_callscriptfile'] = function (block) {
-    const scriptExecution = Blockly.JavaScript.provideFunction_(
-      'scriptExecution',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.ScriptExecution\');'])
     let scriptfile = Blockly.JavaScript.valueToCode(block, 'scriptfile', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `${scriptExecution}.callScript(${scriptfile});\n`
-    return code
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `actions.ScriptExecution.callScript(${scriptfile});\n`
+    } else {
+      const scriptExecution = Blockly.JavaScript.provideFunction_(
+        'scriptExecution',
+        ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.ScriptExecution\');'])
+      return `${scriptExecution}.callScript(${scriptfile});\n`
+    }
   }
 
   /*
@@ -67,26 +71,28 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   * Code part
   */
   Blockly.JavaScript['oh_runrule'] = function (block) {
-    const ruleManager = addOSGiService('ruleManager', 'org.openhab.core.automation.RuleManager')
     const ruleUID = Blockly.JavaScript.valueToCode(block, 'ruleUID', Blockly.JavaScript.ORDER_ATOMIC)
     const scriptParameters = Blockly.JavaScript.valueToCode(block, 'parameters', Blockly.JavaScript.ORDER_ATOMIC)
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `rules.runRule(${ruleUID}, ${scriptParameters});\n`
+    } else {
+      const ruleManager = addOSGiService('ruleManager', 'org.openhab.core.automation.RuleManager')
+      // create a function for the generated code that maps json key-values into a map structure
+      const convertDictionaryToHashMap = Blockly.JavaScript.provideFunction_(
+        'convertDictionaryToHashMap',
+        [
+          'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' (dict) {',
+          '  if (!dict || dict.length === 0) return null;',
+          '  var map = new java.util.HashMap();',
+          '  Object.keys(dict).forEach(function (key) {',
+          '    map.put(key, dict[key]);',
+          '  });',
+          '  return map;',
+          '}'
+        ])
 
-    // create a function for the generated code that maps json key-values into a map structure
-    const convertDictionaryToHashMap = Blockly.JavaScript.provideFunction_(
-      'convertDictionaryToHashMap',
-      [
-        'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' (dict) {',
-        '  if (!dict || dict.length === 0) return null;',
-        '  var map = new java.util.HashMap();',
-        '  Object.keys(dict).forEach(function (key) {',
-        '    map.put(key, dict[key]);',
-        '  });',
-        '  return map;',
-        '}'
-      ])
-
-    let code = `${ruleManager}.runNow(${ruleUID}, true, ${convertDictionaryToHashMap}(${scriptParameters}));\n`
-    return code
+      return `${ruleManager}.runNow(${ruleUID}, true, ${convertDictionaryToHashMap}(${scriptParameters}));\n`
+    }
   }
 
   /*
@@ -137,15 +143,18 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   * Code part
   */
   Blockly.JavaScript['oh_transformation'] = function (block) {
-    const transformation = Blockly.JavaScript.provideFunction_(
-      'transformation',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.transform.actions.Transformation\');'])
     const transformationType = block.getFieldValue('type')
     const transformationFunction = Blockly.JavaScript.valueToCode(block, 'function', Blockly.JavaScript.ORDER_ATOMIC)
     const transformationValue = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `actions.Transformation.transform('${transformationType}', ${transformationFunction}, ${transformationValue});\n`
+    } else {
+      const transformation = Blockly.JavaScript.provideFunction_(
+        'transformation',
+        ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.transform.actions.Transformation\');'])
 
-    let code = `${transformation}.transform('${transformationType}', ${transformationFunction}, ${transformationValue})`
-    return [code, 0]
+      return `${transformation}.transform('${transformationType}', ${transformationFunction}, ${transformationValue});\n`
+    }
   }
 
   Blockly.Blocks['oh_context_info'] = {
@@ -221,6 +230,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   /*
   * Allows inlining arbitrary code
   * Blockly part
+  * TODO: Change code example from "print" to "console.log" when switching the default Blockly runtime to GraalJS
   */
   Blockly.Blocks['oh_script_inline'] = {
     init: function () {

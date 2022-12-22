@@ -1,5 +1,6 @@
 /*
-* General item and thing functionally for blockly
+* General Thing functionality for blockly
+* supports jsscripting
 */
 
 import Blockly from 'blockly'
@@ -40,11 +41,14 @@ export default function defineOHBlocks (f7) {
   }
 
   Blockly.JavaScript['oh_getthing_state'] = function (block) {
-    const things = Blockly.JavaScript.provideFunction_(
-      'things',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
     const thingUid = Blockly.JavaScript.valueToCode(block, 'thingUid', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `things.getThingStatusInfo(${thingUid}).getStatus()`
-    return [code, 0]
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return [`things.getThing(${thingUid}).status`, 0]
+    } else {
+      const things = Blockly.JavaScript.provideFunction_(
+        'things',
+        ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
+      return [`things.getThingStatusInfo(${thingUid}).getStatus()`, 0]
+    }
   }
 }

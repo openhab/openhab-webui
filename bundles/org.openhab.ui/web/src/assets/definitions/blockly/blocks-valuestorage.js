@@ -1,6 +1,7 @@
 /*
 * These blocks allow values to be stored as "variables" in this.storedvars[] so they can "survive" when the rule is retriggered.
 * Note that the variables are only global to the individual rule not others.
+* supports jsscripting
 */
 
 import Blockly from 'blockly'
@@ -27,10 +28,12 @@ export default function defineOHBlocks_Variables (f7) {
   Blockly.JavaScript['oh_store_value'] = function (block) {
     let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
     let value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
-    addStoredValues()
-
-    let code = `this.storedValues[${key}] = ${value};\n`
-    return code
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `cache.private.put(${key}, ${value});\n`
+    } else {
+      addStoredValues()
+      return `this.storedValues[${key}] = ${value};\n`
+    }
   }
 
   Blockly.Blocks['oh_get_value'] = {
@@ -48,8 +51,11 @@ export default function defineOHBlocks_Variables (f7) {
 
   Blockly.JavaScript['oh_get_value'] = function (block) {
     let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `this.storedValues[${key}]`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return [`cache.private.get(${key})`, Blockly.JavaScript.ORDER_NONE]
+    } else {
+      return [`this.storedValues[${key}]`, Blockly.JavaScript.ORDER_NONE]
+    }
   }
 
   Blockly.Blocks['oh_check_undefined_value'] = {
@@ -67,8 +73,11 @@ export default function defineOHBlocks_Variables (f7) {
 
   Blockly.JavaScript['oh_check_undefined_value'] = function (block) {
     let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `typeof this.storedValues[${key}] === 'undefined'`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return [`cache.private.exists(${key}) === false`, Blockly.JavaScript.ORDER_NONE]
+    } else {
+      return [`typeof this.storedValues[${key}] === 'undefined'`, Blockly.JavaScript.ORDER_NONE]
+    }
   }
 
   function addStoredValues () {

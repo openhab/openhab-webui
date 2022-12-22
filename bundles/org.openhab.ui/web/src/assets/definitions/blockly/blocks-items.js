@@ -1,5 +1,5 @@
 /*
-* General item and thing functionally for blockly
+* General Item functionality for blockly
 * supports jsscripting
 */
 
