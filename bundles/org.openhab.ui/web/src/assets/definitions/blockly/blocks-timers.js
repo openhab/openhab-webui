@@ -1,5 +1,6 @@
 /*
  * Blockly blocks to create timers & delays
+ * supports jsscripting
  */
 
 import Blockly from 'blockly'
@@ -70,21 +71,30 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   Blockly.JavaScript['oh_timer'] = function (block) {
-    const scriptExecution = addScriptExecution()
-    const zdt = addZonedDateTime()
-    addGlobalTimer()
+    const delayUnits = block.getFieldValue('delayUnits')
+    const delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
+    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    const timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
 
-    let delayunits = block.getFieldValue('delayUnits')
-    let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    let timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
-
-    let code = `if (typeof this.timers[${timerName}] === 'undefined' || this.timers[${timerName}].hasTerminated()) {\n`
-    code += `  this.timers[${timerName}] = ${scriptExecution}.createTimer(${zdt}.now().${delayunits}(${delay}), function () {\n`
-    code += timerCode.replace(/^/gm, '  ')
-    code += '  })\n'
-    code += '}\n'
-    return code
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      let code = `if (cache.private.exists(${timerName}) === false || cache.private.get(${timerName}).hasTerminated()) {\n`
+      code += `  cache.private.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function () {\n`
+      code += timerCode.replace(/^/gm, '  ')
+      code += `  cache.private.remove(${timerName});\n`
+      code += '  }));\n'
+      code += '};\n'
+      return code
+    } else {
+      addGlobalTimer()
+      const scriptExecution = addScriptExecution()
+      const zdt = addZonedDateTime()
+      let code = `if (typeof this.timers[${timerName}] === 'undefined' || this.timers[${timerName}].hasTerminated()) {\n`
+      code += `  this.timers[${timerName}] = ${scriptExecution}.createTimer(${zdt}.now().${delayUnits}(${delay}), function () {\n`
+      code += timerCode.replace(/^/gm, '  ')
+      code += '  })\n'
+      code += '}\n'
+      return code
+    }
   }
 
   /*
@@ -120,37 +130,60 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   Blockly.JavaScript['oh_timer_ext'] = function (block) {
-    const scriptExecution = addScriptExecution()
-    const zdt = addZonedDateTime()
-    addGlobalTimer()
+    const delayUnits = block.getFieldValue('delayUnits')
+    const delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
+    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    const timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
+    const retrigger = block.getFieldValue('retrigger')
 
-    let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
-    let delayUnits = block.getFieldValue('delayUnits')
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    let retrigger = block.getFieldValue('retrigger')
-    let timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      let code = `if (cache.private.exists(${timerName}) === false || cache.private.get(${timerName}).hasTerminated()) {\n`
+      code += `  cache.private.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function () {\n`
+      code += timerCode.replace(/^/gm, '  ')
+      code += `  cache.private.remove(${timerName});\n`
+      code += '  }));\n'
+      code += '} else {\n'
+      switch (retrigger) {
+        case 'reschedule':
+          code += `  cache.private.get(${timerName}).reschedule(time.ZonedDateTime.now().${delayUnits}(${delay}));\n`
+          break
 
-    let code = `if (typeof this.timers[${timerName}] === 'undefined' || this.timers[${timerName}].hasTerminated()) {\n`
-    code += `  this.timers[${timerName}] = ${scriptExecution}.createTimer(${zdt}.now().${delayUnits}(${delay}), function () {\n`
-    code += timerCode.replace(/^/gm, '  ')
-    code += '  })\n'
-    code += '} else {\n'
-    switch (retrigger) {
-      case 'reschedule':
-        code += `  this.timers[${timerName}].reschedule(${zdt}.now().${delayUnits}(${delay}));\n`
-        break
+        case 'cancel':
+          code += `  cache.private.remove(${timerName}).cancel();\n`
+          break
 
-      case 'cancel':
-        code += `  this.timers[${timerName}].cancel();\n`
-        code += `  this.timers[${timerName}] = undefined;\n`
-        break
+        case 'nothing':
+          code += '  // do nothing\n'
+          break
+      }
+      code += '};\n'
+      return code
+    } else {
+      addGlobalTimer()
+      const scriptExecution = addScriptExecution()
+      const zdt = addZonedDateTime()
+      let code = `if (typeof this.timers[${timerName}] === 'undefined' || this.timers[${timerName}].hasTerminated()) {\n`
+      code += `  this.timers[${timerName}] = ${scriptExecution}.createTimer(${zdt}.now().${delayUnits}(${delay}), function () {\n`
+      code += timerCode.replace(/^/gm, '  ')
+      code += '  })\n'
+      code += '} else {\n'
+      switch (retrigger) {
+        case 'reschedule':
+          code += `  this.timers[${timerName}].reschedule(${zdt}.now().${delayUnits}(${delay}));\n`
+          break
 
-      case 'nothing':
-        code += '  // do nothing\n'
-        break
+        case 'cancel':
+          code += `  this.timers[${timerName}].cancel();\n`
+          code += `  this.timers[${timerName}] = undefined;\n`
+          break
+
+        case 'nothing':
+          code += '  // do nothing\n'
+          break
+      }
+      code += '}\n'
+      return code
     }
-    code += '}\n'
-    return code
   }
 
   /*
@@ -179,11 +212,15 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   Blockly.JavaScript['oh_timer_isActive'] = function (block) {
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    addGlobalTimer()
+    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return [`cache.private.exists(${timerName}) && cache.private.get(${timerName}).isActive()`, Blockly.JavaScript.ORDER_NONE]
+    } else {
+      addGlobalTimer()
 
-    let code = `typeof this.timers[${timerName}] !== 'undefined' && this.timers[${timerName}].isActive()`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+      let code = `typeof this.timers[${timerName}] !== 'undefined' && this.timers[${timerName}].isActive()`
+      return [code, Blockly.JavaScript.ORDER_NONE]
+    }
   }
 
   /*
@@ -212,10 +249,16 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   Blockly.JavaScript['oh_timer_isRunning'] = function (block) {
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    addGlobalTimer()
-    let code = `typeof this.timers[${timerName}] !== 'undefined' && this.timers[${timerName}].isRunning()`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      // Keep the isRunning block although it doesn't make sense because in GraalJS access to the context is synchronized and therefore it is not possible to run some code the same time a timer is running
+      return [`cache.private.exists(${timerName}) && cache.private.get(${timerName}).isRunning()`, Blockly.JavaScript.ORDER_NONE]
+    } else {
+      addGlobalTimer()
+
+      let code = `typeof this.timers[${timerName}] !== 'undefined' && this.timers[${timerName}].isRunning()`
+      return [code, Blockly.JavaScript.ORDER_NONE]
+    }
   }
 
   /*
@@ -244,10 +287,15 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   Blockly.JavaScript['oh_timer_hasTerminated'] = function (block) {
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    addGlobalTimer()
-    let code = `typeof this.timers[${timerName}] !== 'undefined' && this.timers[${timerName}].hasTerminated()`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return [`cache.private.exists(${timerName}) && cache.private.get(${timerName}).hasTerminated()`, Blockly.JavaScript.ORDER_NONE]
+    } else {
+      addGlobalTimer()
+
+      let code = `typeof this.timers[${timerName}] !== 'undefined' && this.timers[${timerName}].hasTerminated()`
+      return [code, Blockly.JavaScript.ORDER_NONE]
+    }
   }
 
   /*
@@ -274,14 +322,17 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   Blockly.JavaScript['oh_timer_cancel'] = function (block) {
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    addGlobalTimer()
-    let code = `if (typeof this.timers[${timerName}] !== 'undefined') {\n`
-    code += `  this.timers[${timerName}].cancel();\n`
-    code += `  this.timers[${timerName}] = undefined;\n`
-    code += '}\n'
-
-    return code
+    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `if (cache.private.exists(${timerName})) { cache.private.remove(${timerName}).cancel(); };\n`
+    } else {
+      addGlobalTimer()
+      let code = `if (typeof this.timers[${timerName}] !== 'undefined') {\n`
+      code += `  this.timers[${timerName}].cancel();\n`
+      code += `  this.timers[${timerName}] = undefined;\n`
+      code += '}\n'
+      return code
+    }
   }
 
   /*
@@ -314,15 +365,18 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   Blockly.JavaScript['oh_timer_reschedule'] = function (block) {
-    const zdt = addZonedDateTime()
+    const delayUnits = block.getFieldValue('delayUnits')
+    const delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
+    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    if (this.workspace && this.workspace.jsScriptingAvailable) {
+      return `if (cache.private.exists(${timerName})) { cache.private.get(${timerName}).reschedule(time.ZonedDateTime.now().${delayUnits}(${delay})); };\n`
+    } else {
+      const zdt = addZonedDateTime()
+      addGlobalTimer()
 
-    let delayUnits = block.getFieldValue('delayUnits')
-    let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    addGlobalTimer()
-
-    let code = `if (typeof this.timers[${timerName}] !== 'undefined') { this.timers[${timerName}].reschedule(${zdt}.now().${delayUnits}(${delay})); }\n`
-    return code
+      let code = `if (typeof this.timers[${timerName}] !== 'undefined') { this.timers[${timerName}].reschedule(${zdt}.now().${delayUnits}(${delay})); }\n`
+      return code
+    }
   }
 
   function addScriptExecution () {

@@ -4,9 +4,9 @@
 *
 * See more background info on openHAB ephemeris here: https://www.openhab.org/docs/configuration/actions.html#ephemeris
 * See usage discussion here: https://community.openhab.org/t/wip-ephemeris-documentation/84536
+* supports jsscripting
 */
 import Blockly from 'blockly'
-import { FieldDatePicker } from './fields/date-field'
 
 export default function (f7) {
   /*
@@ -37,10 +37,9 @@ export default function (f7) {
   * Code part
   */
   Blockly.JavaScript['oh_ephemeris_check'] = function (block) {
-    const ephemeris = addEphemeris()
-
-    let dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
-    let checkType = block.getFieldValue('checkType')
+    const ephemeris = (this.workspace && this.workspace.jsScriptingAvailable) ? 'actions.Ephemeris' : addEphemeris()
+    const dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
+    const checkType = block.getFieldValue('checkType')
     let code = ''
 
     switch (checkType) {
@@ -80,10 +79,9 @@ export default function (f7) {
   * Code part
   */
   Blockly.JavaScript['oh_ephemeris_getHolidayName'] = function (block) {
-    const ephemeris = addEphemeris()
-    let dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
-    let code = `${ephemeris}.getBankHolidayName(${dayInfo})`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    const ephemeris = (this.workspace && this.workspace.jsScriptingAvailable) ? 'actions.Ephemeris' : addEphemeris()
+    const dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
+    return [`${ephemeris}.getBankHolidayName(${dayInfo})`, Blockly.JavaScript.ORDER_NONE]
   }
 
   /*
@@ -108,10 +106,9 @@ export default function (f7) {
   * Code part
   */
   Blockly.JavaScript['oh_ephemeris_getDaysUntilHoliday'] = function (block) {
-    const ephemeris = addEphemeris()
-    let holidayName = Blockly.JavaScript.valueToCode(block, 'holidayName', Blockly.JavaScript.ORDER_NONE)
-    let code = `${ephemeris}.getDaysUntil(${holidayName})`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    const ephemeris = (this.workspace && this.workspace.jsScriptingAvailable) ? 'actions.Ephemeris' : addEphemeris()
+    const holidayName = Blockly.JavaScript.valueToCode(block, 'holidayName', Blockly.JavaScript.ORDER_NONE)
+    return [`${ephemeris}.getDaysUntil(${holidayName})`, Blockly.JavaScript.ORDER_NONE]
   }
 
   /*
