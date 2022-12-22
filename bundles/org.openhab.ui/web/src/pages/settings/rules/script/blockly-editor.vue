@@ -969,8 +969,7 @@ Vue.config.ignoredElements = [
 ]
 
 // Code to prepend when running on GraalJS. When all Blocks are migrated to native GraalJS code, this can be removed.
-const prependCode = `var ctx = this;
-var runtime = require('@runtime');
+const prependCode = `var runtime = require('@runtime');
 var itemRegistry = runtime.itemRegistry;
 var events = runtime.events;
 
