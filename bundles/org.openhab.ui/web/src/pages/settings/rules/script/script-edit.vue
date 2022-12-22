@@ -86,7 +86,7 @@
         </f7-toolbar>
         <f7-block class="block-narrow">
           <script-general-settings :createMode="newScript" :rule="rule" :isScriptRule="isScriptRule" :mode="mode" :languages="languages" @newLanguage="changeLanguage" />
-          <f7-col v-if="isEditable">
+          <f7-col v-if="isEditable && isScriptRule">
             <f7-list>
               <f7-list-button color="red" @click="deleteRule">
                 Remove Script
