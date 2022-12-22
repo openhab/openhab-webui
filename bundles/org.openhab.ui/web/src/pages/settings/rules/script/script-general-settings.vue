@@ -14,7 +14,7 @@
     </f7-col>
     <f7-col v-if="createMode || isScriptRule">
       <f7-block-title>Tags</f7-block-title>
-      <tag-input :item="rule" :disabled="false" />
+      <tag-input :item="rule" :disabled="false" :inScriptEditor="true" />
     </f7-col>
     <f7-col v-if="!createMode && languages">
       <f7-block-title>Scripting Language</f7-block-title>
