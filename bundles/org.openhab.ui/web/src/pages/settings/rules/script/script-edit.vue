@@ -85,7 +85,7 @@
           </div>
         </f7-toolbar>
         <f7-block class="block-narrow">
-          <script-general-settings :createMode="newScript" :rule="rule" />
+          <script-general-settings :createMode="newScript" :rule="rule" :mode="mode" :languages="languages" @newLanguage="changeLanguage" />
           <f7-col v-if="isEditable">
             <f7-list>
               <f7-list-button color="red" @click="deleteRule">
@@ -189,20 +189,8 @@ export default {
         tags: ['Script']
       }
       this.mode = 'application/javascript+blockly'
-      this.$oh.api.get('/rest/module-types/script.ScriptAction').then((data) => {
-        this.$set(this, 'scriptModuleType', data)
-        this.$set(this, 'languages',
-          this.scriptModuleType.configDescriptions
-            .find((c) => c.name === 'type').options
-            .map((l) => {
-              return {
-                contentType: l.value,
-                name: l.label.split(' (')[0],
-                version: l.label.split(' (')[1].replace(')', '')
-              }
-            }))
-        this.ready = true
-      })
+      this.loadScriptModules()
+      this.ready = true
     },
     createScript () {
       if (!this.rule.uid) {
@@ -243,6 +231,22 @@ export default {
         this.load()
       })
     },
+    loadScriptModules () {
+      this.$oh.api.get('/rest/module-types/script.ScriptAction').then((data) => {
+        this.$set(this, 'scriptModuleType', data)
+        let languages = this.scriptModuleType.configDescriptions
+          .find((c) => c.name === 'type').options
+          .map((l) => {
+            return {
+              contentType: l.value,
+              name: l.label.split(' (')[0],
+              version: l.label.split(' (')[1].replace(')', '')
+            }
+          })
+        if (this.isBlockly) languages = languages.filter((l) => l.contentType.startsWith('application/javascript'))
+        this.$set(this, 'languages', languages)
+      })
+    },
     load () {
       if (this.loading) return
       this.loading = true
@@ -277,6 +281,8 @@ export default {
           this.script = triggerDescriptionComments + '\n' + this.script
         }
 
+        this.loadScriptModules()
+
         this.ready = true
         if (!this.eventSource) this.startEventSource()
       })
@@ -300,6 +306,8 @@ export default {
         }
       }
       this.currentModule.configuration.script = this.script
+      this.currentModule.configuration.type = this.mode
+      if (this.isScriptRule && !this.rule.tags.includes('Script')) this.rule.tags.push('Script')
       return this.$oh.api.put('/rest/rules/' + this.rule.uid, this.rule).then((data) => {
         this.dirty = false
         if (!noToast) {
@@ -316,6 +324,10 @@ export default {
           closeTimeout: 2000
         }).open()
       })
+    },
+    changeLanguage (contentType) {
+      if (this.createMode) return
+      this.mode = contentType
     },
     toggleDisabled () {
       if (this.createMode) return

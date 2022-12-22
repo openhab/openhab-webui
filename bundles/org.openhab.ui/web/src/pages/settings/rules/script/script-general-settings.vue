@@ -12,11 +12,30 @@
                        @input="rule.description = $event.target.value" clear-button />
       </f7-list>
     </f7-col>
+    <f7-col>
+      <f7-block-title>Tags</f7-block-title>
+      <tag-input :item="rule" :disabled="false" />
+    </f7-col>
+    <f7-col v-if="!createMode && languages">
+      <f7-block-title>Scripting Language</f7-block-title>
+      <f7-list media-list>
+        <f7-list-item media-item radio radio-icon="start"
+                      :value="mode" :checked="mode === language.contentType" @change="$emit('newLanguage', language.contentType)"
+                      v-for="language in languages" :key="language.contentType"
+                      :title="language.name" :after="language.version" :footer="language.contentType" />
+      </f7-list>
+    </f7-col>
   </f7-block>
 </template>
 
 <script>
+import TagInput from '@/components/tags/tag-input.vue'
+
 export default {
-  props: ['rule', 'createMode', 'ready']
+  props: ['rule', 'createMode', 'ready', 'languages', 'mode'],
+  emits: ['newLanguage'],
+  components: {
+    TagInput
+  }
 }
 </script>
