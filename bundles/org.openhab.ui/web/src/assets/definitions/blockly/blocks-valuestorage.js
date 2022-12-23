@@ -16,6 +16,13 @@ export default function defineOHBlocks_Variables (f7) {
       this.appendDummyInput()
         .appendField('into')
       this.appendValueInput('key')
+
+      if (this.workspace && this.workspace.jsScriptingAvailable) {
+        this.appendDummyInput()
+          .appendField('to ')
+          .appendField(new Blockly.FieldDropdown([['private', '.private'], ['shared', '.shared']]), 'cacheType')
+          .appendField('cache')
+      }
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -28,9 +35,9 @@ export default function defineOHBlocks_Variables (f7) {
   Blockly.JavaScript['oh_store_value'] = function (block) {
     let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
     let value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.isGraalJs) {
-      return `cache.private.put(${key}, ${value});\n`
-    } else {
+ if (this.workspace && this.workspace.isGraalJs) {     const cacheType = block.getFieldValue('cacheType')
+      return `cache${cacheType}.put(${key}, ${value});\n`
+     } else {
       addStoredValues()
       return `this.storedValues[${key}] = ${value};\n`
     }
@@ -41,6 +48,12 @@ export default function defineOHBlocks_Variables (f7) {
       this.appendDummyInput()
         .appendField('stored value')
       this.appendValueInput('key')
+      if (this.workspace && this.workspace.jsScriptingAvailable) {
+        this.appendDummyInput()
+          .appendField('from ')
+          .appendField(new Blockly.FieldDropdown([['private', '.private'], ['shared', '.shared']]), 'cacheType')
+          .appendField('cache')
+      }
       this.setInputsInline(true)
       this.setOutput(true, null)
       this.setColour(0)
@@ -52,8 +65,9 @@ export default function defineOHBlocks_Variables (f7) {
   Blockly.JavaScript['oh_get_value'] = function (block) {
     let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
     if (this.workspace && this.workspace.isGraalJs) {
-      return [`cache.private.get(${key})`, Blockly.JavaScript.ORDER_NONE]
-    } else {
+      const cacheType = block.getFieldValue('cacheType')
+         return [`cache${cacheType}.get(${key})`, Blockly.JavaScript.ORDER_NONE]
+      } else {
       return [`this.storedValues[${key}]`, Blockly.JavaScript.ORDER_NONE]
     }
   }
@@ -63,6 +77,12 @@ export default function defineOHBlocks_Variables (f7) {
       this.appendValueInput('key')
       this.appendDummyInput()
         .appendField('is undefined')
+      if (this.workspace && this.workspace.jsScriptingAvailable) {
+        this.appendDummyInput()
+          .appendField('in ')
+          .appendField(new Blockly.FieldDropdown([['private', '.private'], ['shared', '.shared']]), 'cacheType')
+          .appendField('cache')
+      }
       this.setInputsInline(true)
       this.setOutput(true, null)
       this.setColour(0)
@@ -74,8 +94,9 @@ export default function defineOHBlocks_Variables (f7) {
   Blockly.JavaScript['oh_check_undefined_value'] = function (block) {
     let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
     if (this.workspace && this.workspace.isGraalJs) {
-      return [`cache.private.exists(${key}) === false`, Blockly.JavaScript.ORDER_NONE]
-    } else {
+      const cacheType = block.getFieldValue('cacheType')
+      return [`cache${cacheType}.exists(${key}) === false`, Blockly.JavaScript.ORDER_NONE]
+     } else {
       return [`typeof this.storedValues[${key}] === 'undefined'`, Blockly.JavaScript.ORDER_NONE]
     }
   }
