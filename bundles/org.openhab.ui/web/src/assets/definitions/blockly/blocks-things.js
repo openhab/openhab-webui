@@ -42,7 +42,7 @@ export default function defineOHBlocks (f7) {
 
   Blockly.JavaScript['oh_getthing_state'] = function (block) {
     const thingUid = Blockly.JavaScript.valueToCode(block, 'thingUid', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return [`things.getThing(${thingUid}).status`, 0]
     } else {
       const things = Blockly.JavaScript.provideFunction_(

@@ -13,7 +13,7 @@
         <block type="logic_ternary" />
       </category>
 
-      <category name="Units of Measurement" colour="%{BKY_MATH_HUE}" v-if="{jsScriptingAvailable}">
+      <category name="Units of Measurement" colour="%{BKY_MATH_HUE}" v-if="{isGraalJs}">
         <block type="oh_uom_arithmetic">
           <value name="first">
             <shadow type="text">
@@ -976,13 +976,12 @@ var events = runtime.events;
 `
 
 export default {
-  props: ['blocks', 'libraryDefinitions'],
+  props: ['blocks', 'libraryDefinitions', 'isGraalJs'],
   data () {
     return {
       workspace: null,
       sinks: [],
       voices: [],
-      jsScriptingAvailable: false,
       scripts: [],
       rules: [],
       loading: true,
@@ -998,7 +997,6 @@ export default {
         this.$oh.api.get('/rest/rules?summary=true'),
         this.$oh.api.get('/rest/audio/sinks'),
         this.$oh.api.get('/rest/voice/voices'),
-        this.$oh.api.get('/rest/module-types/script.ScriptAction'),
         this.libraryDefinitions ? Promise.resolve(this.libraryDefinitions) : this.$oh.api.get('/rest/ui/components/ui:blocks')
       ]
       Promise.all(dataPromises)
@@ -1028,12 +1026,7 @@ export default {
             return labelA.localeCompare(labelB)
           })
 
-          const blockLibraries = data[4]
-
-          this.jsScriptingAvailable = data[3].configDescriptions
-            .find((c) => c.name === 'type').options
-            .map((lang) => lang.value)
-            .includes('application/javascript;version=ECMAScript-2021')
+          const blockLibraries = data[3]
 
           this.initBlockly(blockLibraries)
         })
@@ -1064,7 +1057,7 @@ export default {
           },
         trashcan: false
       })
-      this.workspace.jsScriptingAvailable = this.jsScriptingAvailable
+      this.workspace.isGraalJs = this.isGraalJs
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
       this.registerLibraryCallbacks(libraryDefinitions)
@@ -1095,10 +1088,7 @@ export default {
       return Blockly.Xml.domToText(xml)
     },
     getCode () {
-      return (this.jsScriptingAvailable === true ? prependCode : '') + Blockly.JavaScript.workspaceToCode(this.workspace)
-    },
-    getType () {
-      return this.jsScriptingAvailable === true ? 'application/javascript;version=ECMAScript-2021' : 'application/javascript'
+      return (this.isGraalJs === true ? prependCode : '') + Blockly.JavaScript.workspaceToCode(this.workspace)
     },
     onChange (event) {
       if (event.type === Blockly.Events.FINISHED_LOADING) {

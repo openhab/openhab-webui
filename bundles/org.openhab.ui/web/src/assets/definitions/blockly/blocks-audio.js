@@ -59,7 +59,7 @@ export default function (f7, sinks, voices) {
     let fileName = Blockly.JavaScript.valueToCode(block, 'fileName', Blockly.JavaScript.ORDER_ATOMIC)
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    const audio = (this.workspace && this.workspace.jsScriptingAvailable) ? 'actions.Audio' : addAudio()
+    const audio = (this.workspace && this.workspace.isGraalJs) ? 'actions.Audio' : addAudio()
     return `${audio}.playSound(${sinkName}, ${fileName});\n`
   }
 
@@ -97,7 +97,7 @@ export default function (f7, sinks, voices) {
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
     let volume = Blockly.JavaScript.valueToCode(block, 'volume', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
 
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return `actions.Audio.playSound(${sinkName}, ${fileName}, new runtime.PercentType(${volume}));\n`
     } else {
       const audio = addAudio()
@@ -134,7 +134,7 @@ export default function (f7, sinks, voices) {
     let url = Blockly.JavaScript.valueToCode(block, 'url', Blockly.JavaScript.ORDER_ATOMIC)
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    const audio = (this.workspace && this.workspace.jsScriptingAvailable) ? 'actions.Audio' : addAudio()
+    const audio = (this.workspace && this.workspace.isGraalJs) ? 'actions.Audio' : addAudio()
     return `${audio}.playStream(${sinkName}, ${url});\n`
   }
 
@@ -164,7 +164,7 @@ export default function (f7, sinks, voices) {
     let url = block.getFieldValue('url')
     let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    const audio = (this.workspace && this.workspace.jsScriptingAvailable) ? 'actions.Audio' : addAudio()
+    const audio = (this.workspace && this.workspace.isGraalJs) ? 'actions.Audio' : addAudio()
     return `${audio}.playStream(${sinkName}, null);\n`
   }
 
@@ -200,7 +200,7 @@ export default function (f7, sinks, voices) {
     const voiceName = Blockly.JavaScript.valueToCode(block, 'voice', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
     const deviceSink = Blockly.JavaScript.valueToCode(block, 'deviceSink', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    const voice = (this.workspace && this.workspace.jsScriptingAvailable) ? 'actions.Voice' : addVoice()
+    const voice = (this.workspace && this.workspace.isGraalJs) ? 'actions.Voice' : addVoice()
     return `${voice}.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
   }
 

@@ -45,7 +45,7 @@ export default function (f7) {
   Blockly.JavaScript['oh_groupmembers'] = function (block) {
     const groupName = Blockly.JavaScript.valueToCode(block, 'groupName', Blockly.JavaScript.ORDER_ATOMIC)
 
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return [`items.getItem(${groupName}).members`, 0]
     } else {
       return [`Java.from(itemRegistry.getItem(${groupName}).members)`, 0]
@@ -78,7 +78,7 @@ export default function (f7) {
       tags += tagNames[i]
     }
 
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return [`items.getItemsByTag(${tags})`, 0]
     } else {
       return [`Java.from(itemRegistry.getItemsByTag(${tags}))`, 0]
@@ -100,7 +100,7 @@ export default function (f7) {
 
   Blockly.JavaScript['oh_getitem'] = function (block) {
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return [`items.getItem(${itemName})`, 0]
     } else {
       return [`itemRegistry.getItem(${itemName})`, 0]
@@ -123,7 +123,7 @@ export default function (f7) {
 
   Blockly.JavaScript['oh_getitem_state'] = function (block) {
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return [`items.getItem(${itemName}).state`, 0]
     } else {
       return [`itemRegistry.getItem(${itemName}).getState()`, 0]
@@ -199,7 +199,7 @@ export default function (f7) {
     const theItem = Blockly.JavaScript.valueToCode(block, 'item', Blockly.JavaScript.ORDER_ATOMIC)
     let attributeName = block.getFieldValue('attributeName')
 
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       attributeName = attributeName.charAt(0).toLowerCase() + attributeName.slice(1)
       return [`${theItem}.${attributeName}`, 0]
     } else {

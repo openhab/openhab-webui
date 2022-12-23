@@ -28,7 +28,7 @@ export default function defineOHBlocks_Variables (f7) {
   Blockly.JavaScript['oh_store_value'] = function (block) {
     let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
     let value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return `cache.private.put(${key}, ${value});\n`
     } else {
       addStoredValues()
@@ -51,7 +51,7 @@ export default function defineOHBlocks_Variables (f7) {
 
   Blockly.JavaScript['oh_get_value'] = function (block) {
     let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return [`cache.private.get(${key})`, Blockly.JavaScript.ORDER_NONE]
     } else {
       return [`this.storedValues[${key}]`, Blockly.JavaScript.ORDER_NONE]
@@ -73,7 +73,7 @@ export default function defineOHBlocks_Variables (f7) {
 
   Blockly.JavaScript['oh_check_undefined_value'] = function (block) {
     let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return [`cache.private.exists(${key}) === false`, Blockly.JavaScript.ORDER_NONE]
     } else {
       return [`typeof this.storedValues[${key}] === 'undefined'`, Blockly.JavaScript.ORDER_NONE]

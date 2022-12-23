@@ -20,7 +20,7 @@ export default function (f7) {
 
   Blockly.JavaScript['oh_print'] = function (block) {
     const message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return `console.log(${message});\n`
     } else {
       return `print(${message});\n`
@@ -43,7 +43,7 @@ export default function (f7) {
   Blockly.JavaScript['oh_log'] = function (block) {
     const message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
     const severity = block.getFieldValue('severity')
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return `console.${severity}(${message});\n`
     } else {
       const logger = Blockly.JavaScript.provideFunction_(

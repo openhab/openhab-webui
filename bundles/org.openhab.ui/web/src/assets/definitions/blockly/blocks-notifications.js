@@ -24,7 +24,7 @@ export default function defineOHBlocks_Notifications (f7) {
   Blockly.JavaScript['oh_sendNotification'] = function (block) {
     let email = Blockly.JavaScript.valueToCode(block, 'email', Blockly.JavaScript.ORDER_ATOMIC)
     let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return `actions.NotificationAction.sendNotification(${email}, ${message});\n`
     } else {
       const notifications = addNotificationAction()
@@ -55,7 +55,7 @@ export default function defineOHBlocks_Notifications (f7) {
     let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
     let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return `actions.NotificationAction.sendBroadcastNotification(${message}, ${icon}, '${severity}');\n`
     } else {
       const notifications = addNotificationAction()
@@ -86,7 +86,7 @@ export default function defineOHBlocks_Notifications (f7) {
     let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
     let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       return `actions.NotificationAction.sendLogNotification(${message}, ${icon}, '${severity}');\n`
     } else {
       const notifications = addNotificationAction()

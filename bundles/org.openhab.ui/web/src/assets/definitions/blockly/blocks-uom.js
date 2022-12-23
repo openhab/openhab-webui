@@ -29,7 +29,7 @@ export default function (f7) {
 
   Blockly.JavaScript['oh_uom_arithmetic'] = function (block) {
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       const first = Blockly.JavaScript.valueToCode(block, 'first', Blockly.JavaScript.ORDER_NONE)
       const second = Blockly.JavaScript.valueToCode(block, 'second', Blockly.JavaScript.ORDER_NONE)
       const operand = block.getFieldValue('operand')
@@ -66,7 +66,7 @@ export default function (f7) {
 
   Blockly.JavaScript['oh_uom_compare'] = function (block) {
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.jsScriptingAvailable) {
+    if (this.workspace && this.workspace.isGraalJs) {
       const first = Blockly.JavaScript.valueToCode(block, 'first', Blockly.JavaScript.ORDER_NONE)
       const second = Blockly.JavaScript.valueToCode(block, 'second', Blockly.JavaScript.ORDER_NONE)
       const operand = block.getFieldValue('operand')
