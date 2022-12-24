@@ -123,19 +123,35 @@ export default {
           id: 'documentationLink',
           title: 'Documentation',
           afterIcon: 'question_circle_fill',
-          linkUrl: `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}` // this.addon.link
+          linkUrl: `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id.split('-')[1]}` // this.addon.link
         })
+
+        let repository
+        let issueFilter = 'q=is%3Aopen'
+        if (this.addon.id === 'binding-zigbee') {
+          repository = 'org.openhab.binding.zigbee'
+        } else if (this.addon.id === 'binding-zwave') {
+          repository = 'org.openhab.binding.zwave'
+        } else {
+          if (this.addon.type === 'ui') {
+            repository = 'openhab-webui'
+          } else {
+            repository = 'openhab-addons'
+          }
+          issueFilter += `+${this.addon.id.split('-')[1]}`
+        }
+
         info.push({
           id: 'issuesLink',
           title: 'Issues',
           afterIcon: 'exclamationmark_bubble_fill',
-          linkUrl: 'https://github.com/openhab/openhab-addons/issues?q=is%3Aopen+' + this.addon.id.substring(this.addon.id.indexOf('-') + 1)
+          linkUrl: `https://github.com/openhab/${repository}/issues?${issueFilter}`
         })
         info.push({
           id: 'discussionsLink',
           title: 'Community Discussions',
           afterIcon: 'chat_bubble_2_fill',
-          linkUrl: 'https://community.openhab.org/search?q=' + this.addon.id.substring(this.addon.id.indexOf('-') + 1)
+          linkUrl: 'https://community.openhab.org/search?q=' + this.addon.id.split('-')[1]
         })
       } else {
         info.push({
