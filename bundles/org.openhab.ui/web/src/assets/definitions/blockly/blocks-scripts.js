@@ -230,14 +230,18 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   /*
   * Allows inlining arbitrary code
   * Blockly part
-  * TODO: Change code example from "print" to "console.log" when switching the default Blockly runtime to GraalJS
   */
   Blockly.Blocks['oh_script_inline'] = {
     init: function () {
       this.appendDummyInput()
         .appendField('inline script (advanced)')
-      this.appendDummyInput()
-        .appendField(new Blockly.FieldMultilineInput('for (var i = 0; i < 10; i++) {\n  print(i.toString());\n}'), 'inlineScript')
+      if (isGraalJs) {
+        this.appendDummyInput()
+          .appendField(new Blockly.FieldMultilineInput('for (var i = 0; i < 10; i++) {\n  console.log(i.toString());\n}'), 'inlineScript')
+      } else {
+        this.appendDummyInput()
+          .appendField(new Blockly.FieldMultilineInput('for (var i = 0; i < 10; i++) {\n  print(i.toString());\n}'), 'inlineScript')
+      }
       this.setInputsInline(false)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
