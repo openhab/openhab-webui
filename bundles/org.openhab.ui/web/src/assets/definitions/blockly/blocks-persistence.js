@@ -4,7 +4,7 @@
 import Blockly from 'blockly'
 import { addDateSupport } from './utils'
 
-export default function defineOHBlocks_Persistence (f7) {
+export default function defineOHBlocks_Persistence (f7, isGraalJs) {
   /*
   * Provides a number of different (non-)statistical metrics for an item according to the given date
   * Blockly part

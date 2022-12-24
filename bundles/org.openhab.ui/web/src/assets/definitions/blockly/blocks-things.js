@@ -7,7 +7,7 @@ import Blockly from 'blockly'
 import { FieldItemModelPicker } from './fields/item-field'
 import { FieldThingPicker } from './fields/thing-field'
 
-export default function defineOHBlocks (f7) {
+export default function defineOHBlocks (f7, isGraalJs) {
   Blockly.Blocks['oh_thing'] = {
     init: function () {
       this.appendDummyInput()
@@ -42,7 +42,7 @@ export default function defineOHBlocks (f7) {
 
   Blockly.JavaScript['oh_getthing_state'] = function (block) {
     const thingUid = Blockly.JavaScript.valueToCode(block, 'thingUid', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.isGraalJs) {
+    if (isGraalJs) {
       return [`things.getThing(${thingUid}).status`, 0]
     } else {
       const things = Blockly.JavaScript.provideFunction_(

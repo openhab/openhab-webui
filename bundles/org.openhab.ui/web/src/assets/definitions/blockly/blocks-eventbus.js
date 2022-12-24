@@ -5,7 +5,7 @@
 
 import Blockly from 'blockly'
 
-export default function (f7) {
+export default function (f7, isGraalJs) {
   Blockly.Blocks['oh_event'] = {
     init: function () {
       this.appendValueInput('value')
@@ -27,7 +27,7 @@ export default function (f7) {
     const eventType = block.getFieldValue('eventType')
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
     const value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.isGraalJs) {
+    if (isGraalJs) {
       return `items.getItem(${itemName}).${eventType}(${value});\n`
     } else {
       return `events.${eventType}(${itemName}, ${value});\n`

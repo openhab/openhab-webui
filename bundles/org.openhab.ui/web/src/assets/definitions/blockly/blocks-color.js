@@ -5,7 +5,7 @@
 
 import Blockly from 'blockly'
 
-export default function (f7) {
+export default function (f7, isGraalJs) {
   /*
   * converts a hex color string in to an openHAB hue-saturation-brightness string
   * Block

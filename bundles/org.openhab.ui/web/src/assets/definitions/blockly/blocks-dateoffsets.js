@@ -2,7 +2,7 @@ import Blockly from 'blockly'
 import { FieldDatePicker } from './fields/date-field'
 import { addDateSupport, addDateComparisonSupport, addGetZdtComponent, addChrono } from './utils'
 
-export default function (f7) {
+export default function (f7, isGraalJs) {
   /*
   * Typed (DayOffset) block that can be used with the Ephemeris check block
   * Note that the block basically returns a zero day offset for the check

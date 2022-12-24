@@ -3,7 +3,7 @@
 * supports jsscripting
 */
 import Blockly from 'blockly'
-export default function (f7) {
+export default function (f7, isGraalJs) {
   /*
   * allows to concatenate a list into a new list
   * Block

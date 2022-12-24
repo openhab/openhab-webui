@@ -8,7 +8,7 @@
 import Blockly from 'blockly'
 import { addOSGiService } from './utils'
 
-export default function defineOHBlocks_Scripts (f7, scripts) {
+export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   /*
   * Calls a script that is provided in openHABs scripts folder
   * Blockly part
@@ -33,7 +33,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   */
   Blockly.JavaScript['oh_callscriptfile'] = function (block) {
     let scriptfile = Blockly.JavaScript.valueToCode(block, 'scriptfile', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.isGraalJs) {
+    if (isGraalJs) {
       return `actions.ScriptExecution.callScript(${scriptfile});\n`
     } else {
       const scriptExecution = Blockly.JavaScript.provideFunction_(
@@ -73,7 +73,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   Blockly.JavaScript['oh_runrule'] = function (block) {
     const ruleUID = Blockly.JavaScript.valueToCode(block, 'ruleUID', Blockly.JavaScript.ORDER_ATOMIC)
     const scriptParameters = Blockly.JavaScript.valueToCode(block, 'parameters', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.isGraalJs) {
+    if (isGraalJs) {
       return `rules.runRule(${ruleUID}, ${scriptParameters});\n`
     } else {
       const ruleManager = addOSGiService('ruleManager', 'org.openhab.core.automation.RuleManager')
@@ -146,7 +146,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
     const transformationType = block.getFieldValue('type')
     const transformationFunction = Blockly.JavaScript.valueToCode(block, 'function', Blockly.JavaScript.ORDER_ATOMIC)
     const transformationValue = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.isGraalJs) {
+    if (isGraalJs) {
       return `actions.Transformation.transform('${transformationType}', ${transformationFunction}, ${transformationValue});\n`
     } else {
       const transformation = Blockly.JavaScript.provideFunction_(

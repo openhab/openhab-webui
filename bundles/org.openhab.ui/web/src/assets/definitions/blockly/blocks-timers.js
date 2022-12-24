@@ -5,7 +5,7 @@
 
 import Blockly from 'blockly'
 
-export default function defineOHBlocks_Timers (f7) {
+export default function defineOHBlocks_Timers (f7, isGraalJs) {
   /*
   * Sleeps for the number of milliseconds
   *
@@ -76,7 +76,7 @@ export default function defineOHBlocks_Timers (f7) {
     const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
     const timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
 
-    if (this.workspace && this.workspace.isGraalJs) {
+    if (isGraalJs) {
       let code = `if (cache.private.exists(${timerName}) === false || cache.private.get(${timerName}).hasTerminated()) {\n`
       code += `  cache.private.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function () {\n`
       code += timerCode.replace(/^/gm, '  ')
@@ -136,7 +136,7 @@ export default function defineOHBlocks_Timers (f7) {
     const timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
     const retrigger = block.getFieldValue('retrigger')
 
-    if (this.workspace && this.workspace.isGraalJs) {
+    if (isGraalJs) {
       let code = `if (cache.private.exists(${timerName}) === false || cache.private.get(${timerName}).hasTerminated()) {\n`
       code += `  cache.private.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function () {\n`
       code += timerCode.replace(/^/gm, '  ')
@@ -213,7 +213,7 @@ export default function defineOHBlocks_Timers (f7) {
   */
   Blockly.JavaScript['oh_timer_isActive'] = function (block) {
     const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.isGraalJs) {
+    if (isGraalJs) {
       return [`cache.private.exists(${timerName}) && cache.private.get(${timerName}).isActive()`, Blockly.JavaScript.ORDER_NONE]
     } else {
       addGlobalTimer()
@@ -250,7 +250,7 @@ export default function defineOHBlocks_Timers (f7) {
   */
   Blockly.JavaScript['oh_timer_isRunning'] = function (block) {
     const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.isGraalJs) {
+    if (isGraalJs) {
       // Keep the isRunning block although it doesn't make sense because in GraalJS access to the context is synchronized and therefore it is not possible to run some code the same time a timer is running
       return [`cache.private.exists(${timerName}) && cache.private.get(${timerName}).isRunning()`, Blockly.JavaScript.ORDER_NONE]
     } else {
@@ -288,7 +288,7 @@ export default function defineOHBlocks_Timers (f7) {
   */
   Blockly.JavaScript['oh_timer_hasTerminated'] = function (block) {
     const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.isGraalJs) {
+    if (isGraalJs) {
       return [`cache.private.exists(${timerName}) && cache.private.get(${timerName}).hasTerminated()`, Blockly.JavaScript.ORDER_NONE]
     } else {
       addGlobalTimer()
@@ -323,7 +323,7 @@ export default function defineOHBlocks_Timers (f7) {
   */
   Blockly.JavaScript['oh_timer_cancel'] = function (block) {
     const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.isGraalJs) {
+    if (isGraalJs) {
       return `if (cache.private.exists(${timerName})) { cache.private.remove(${timerName}).cancel(); };\n`
     } else {
       addGlobalTimer()
@@ -368,7 +368,7 @@ export default function defineOHBlocks_Timers (f7) {
     const delayUnits = block.getFieldValue('delayUnits')
     const delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
     const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    if (this.workspace && this.workspace.isGraalJs) {
+    if (isGraalJs) {
       return `if (cache.private.exists(${timerName})) { cache.private.get(${timerName}).reschedule(time.ZonedDateTime.now().${delayUnits}(${delay})); };\n`
     } else {
       const zdt = addZonedDateTime()

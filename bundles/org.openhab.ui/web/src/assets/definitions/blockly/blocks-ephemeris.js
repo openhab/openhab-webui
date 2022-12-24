@@ -8,7 +8,7 @@
 */
 import Blockly from 'blockly'
 
-export default function (f7) {
+export default function (f7, isGraalJs) {
   /*
   * Checks if the provided day is a
   * - bank holiday (needs to be configured in openHAB
@@ -37,7 +37,7 @@ export default function (f7) {
   * Code part
   */
   Blockly.JavaScript['oh_ephemeris_check'] = function (block) {
-    const ephemeris = (this.workspace && this.workspace.isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
+    const ephemeris = (isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
     const dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
     const checkType = block.getFieldValue('checkType')
     let code = ''
@@ -79,7 +79,7 @@ export default function (f7) {
   * Code part
   */
   Blockly.JavaScript['oh_ephemeris_getHolidayName'] = function (block) {
-    const ephemeris = (this.workspace && this.workspace.isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
+    const ephemeris = (isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
     const dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
     return [`${ephemeris}.getBankHolidayName(${dayInfo})`, Blockly.JavaScript.ORDER_NONE]
   }
@@ -106,7 +106,7 @@ export default function (f7) {
   * Code part
   */
   Blockly.JavaScript['oh_ephemeris_getDaysUntilHoliday'] = function (block) {
-    const ephemeris = (this.workspace && this.workspace.isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
+    const ephemeris = (isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
     const holidayName = Blockly.JavaScript.valueToCode(block, 'holidayName', Blockly.JavaScript.ORDER_NONE)
     return [`${ephemeris}.getDaysUntil(${holidayName})`, Blockly.JavaScript.ORDER_NONE]
   }

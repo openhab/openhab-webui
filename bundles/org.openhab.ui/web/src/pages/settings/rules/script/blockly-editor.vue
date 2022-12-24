@@ -1038,7 +1038,7 @@ export default {
       defineOHBlocks(this.$f7, libraryDefinitions, {
         sinks: this.sinks,
         voices: this.voices
-      })
+      }, this.isGraalJs)
       this.addLibraryToToolbox(libraryDefinitions || [])
 
       this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
@@ -1057,7 +1057,6 @@ export default {
           },
         trashcan: false
       })
-      this.workspace.isGraalJs = this.isGraalJs
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
       this.registerLibraryCallbacks(libraryDefinitions)

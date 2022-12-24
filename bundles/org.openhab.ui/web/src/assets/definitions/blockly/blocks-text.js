@@ -5,7 +5,7 @@
 
 import Blockly from 'blockly'
 
-export default function (f7) {
+export default function (f7, isGraalJs) {
   /*
   * allows adding a CR/LF in string concatenation
   * Block
