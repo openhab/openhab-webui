@@ -1,3 +1,6 @@
+/**
+ * supports jsscripting
+ */
 import Blockly from 'blockly'
 import { FieldDatePicker } from './fields/date-field'
 import { addDateSupport, addDateComparisonSupport, addGetZdtComponent, addChrono } from './utils'
@@ -76,9 +79,8 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_zdt_now'] = function (block) {
-    let [dtf, zdt, gzdt, czdt] = addDateSupport()
-    let code = `${zdt}.now()`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    const zdt = (isGraalJs) ? 'time.ZonedDateTime' : addDateSupport()[1]
+    return [`${zdt}.now()`, Blockly.JavaScript.ORDER_NONE]
   }
 
   /*
@@ -110,12 +112,12 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_zdt_plusminus'] = function (block) {
-    let [dtf, zdt, getZonedDatetime] = addDateSupport()
-    let offsetValue = Blockly.JavaScript.valueToCode(block, 'offset', Blockly.JavaScript.ORDER_ATOMIC)
-    let plusMinus = block.getFieldValue('plusminus')
-    let period = block.getFieldValue('period')
-    let code = `${zdt}.now().${plusMinus}${period}(${offsetValue})`
-    return [code, Blockly.JavaScript.ORDER_ATOMIC]
+    const offsetValue = Blockly.JavaScript.valueToCode(block, 'offset', Blockly.JavaScript.ORDER_ATOMIC)
+    const plusMinus = block.getFieldValue('plusminus')
+    const period = block.getFieldValue('period')
+
+    const zdt = (isGraalJs) ? 'time.ZonedDateTime' : addDateSupport()[1]
+    return [`${zdt}.now().${plusMinus}${period}(${offsetValue})`, Blockly.JavaScript.ORDER_ATOMIC]
   }
 
   /*
@@ -158,17 +160,22 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_zdt_create'] = function (block) {
-    let [dtf, zdt, gzdt, czdt] = addDateSupport()
+    const year = Blockly.JavaScript.valueToCode(block, 'year', Blockly.JavaScript.ORDER_ATOMIC)
+    const month = Blockly.JavaScript.valueToCode(block, 'month', Blockly.JavaScript.ORDER_ATOMIC)
+    const day = Blockly.JavaScript.valueToCode(block, 'day', Blockly.JavaScript.ORDER_ATOMIC)
+    const hour = Blockly.JavaScript.valueToCode(block, 'hour', Blockly.JavaScript.ORDER_ATOMIC)
+    const minute = Blockly.JavaScript.valueToCode(block, 'minute', Blockly.JavaScript.ORDER_ATOMIC)
+    const second = Blockly.JavaScript.valueToCode(block, 'second', Blockly.JavaScript.ORDER_ATOMIC)
 
-    let year = Blockly.JavaScript.valueToCode(block, 'year', Blockly.JavaScript.ORDER_ATOMIC)
-    let month = Blockly.JavaScript.valueToCode(block, 'month', Blockly.JavaScript.ORDER_ATOMIC)
-    let day = Blockly.JavaScript.valueToCode(block, 'day', Blockly.JavaScript.ORDER_ATOMIC)
-    let hour = Blockly.JavaScript.valueToCode(block, 'hour', Blockly.JavaScript.ORDER_ATOMIC)
-    let minute = Blockly.JavaScript.valueToCode(block, 'minute', Blockly.JavaScript.ORDER_ATOMIC)
-    let second = Blockly.JavaScript.valueToCode(block, 'second', Blockly.JavaScript.ORDER_ATOMIC)
-
-    let code = `${czdt}(${year}, ${month} ,${day}, ${hour}, ${minute}, ${second}, 0, ${zdt}.now().getOffset().getId(), ${zdt}.now().getZone().getId())`
-    return [code, Blockly.JavaScript.ORDER_ATOMIC]
+    if (isGraalJs) {
+      const code = `time.ZonedDateTime.now().withYear(${year}).withMonth(${month}).withDayOfMonth(${day}).withHour(${hour}).withMinute(${minute}).withSecond(${second})`
+      return [code, Blockly.JavaScript.ORDER_ATOMIC]
+    } else {
+      let [dtf, zdt, gzdt, czdt] = addDateSupport()
+      let stringToParse = `${czdt}(${year}, ${month} ,${day}, ${hour}, ${minute}, ${second}, 0, ${zdt}.now().getOffset().getId(), ${zdt}.now().getZone().getId())`
+      let code = `${zdt}.parse(${stringToParse}, ${dtf}.ISO_ZONED_DATE_TIME)`
+      return [code, Blockly.JavaScript.ORDER_ATOMIC]
+    }
   }
 
   /*
@@ -193,15 +200,14 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_zdt'] = function (block) {
-    let [dtf, zdt, getZonedDateTime] = addDateSupport()
-    let day = block.getFieldValue('day')
-    let code = `${getZonedDateTime}('${day}')`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    const day = block.getFieldValue('day')
+    const getZonedDateTime = (isGraalJs) ? 'time.toZDT' : addDateSupport()[2]
+    return [`${getZonedDateTime}('${day}')`, Blockly.JavaScript.ORDER_NONE]
   }
 
   /*
   * Typed (ZonedDateTime) block that can be used with the Ephemeris check block
-  * Allows input as string in the format format yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm
+  * Allows input as string in the pattern yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm
   * Blockly part
   */
   Blockly.Blocks['oh_zdt_fromText'] = {
@@ -236,15 +242,14 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_zdt_fromText'] = function (block) {
-    let [dtf, zdt, gzdt, czdt] = addDateSupport()
-    let day = Blockly.JavaScript.valueToCode(block, 'day', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `${gzdt}(${day})`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    const day = Blockly.JavaScript.valueToCode(block, 'day', Blockly.JavaScript.ORDER_ATOMIC)
+    const getZonedDateTime = (isGraalJs) ? 'time.toZDT' : addDateSupport()[2]
+    return [`${getZonedDateTime}(${day})`, Blockly.JavaScript.ORDER_NONE]
   }
 
   /*
   * Typed (ZonedDateTime) block that can be used with the Ephemeris check block
-  * Allows input as string in the format format yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm
+  * Allows input as string in the format yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm
   * Blockly part
   */
   Blockly.Blocks['oh_zdt_fromItem'] = {
@@ -264,10 +269,12 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_zdt_fromItem'] = function (block) {
-    let [dtf, zdt, gzdt, czdt] = addDateSupport()
-    let itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `itemRegistry.getItem(${itemName}).getState().getZonedDateTime()`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
+    if (isGraalJs) {
+      return [`time.toZDT(items.getItem(${itemName}))`, Blockly.JavaScript.ORDER_NONE]
+    } else {
+      return [`itemRegistry.getItem(${itemName}).getState().getZonedDateTime()`, Blockly.JavaScript.ORDER_NONE]
+    }
   }
 
   const nextImage =
@@ -324,9 +331,8 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_zdt_temporal_unit'] = function (block) {
-    let value = block.getFieldValue('value')
-    let code = `(${value})`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    const value = block.getFieldValue('value')
+    return [`(${value})`, Blockly.JavaScript.ORDER_NONE]
   }
 
   /*
@@ -337,6 +343,8 @@ export default function (f7, isGraalJs) {
     numberBlockInput: null,
     currentBlockType: 0,
     blockTypes: ['year', 'month', 'day', 'hour', 'minute', 'second', 'milli', 'micro', 'nano', 'day of year'],
+    // TODO: Set min values
+    // minValue: [0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
     maxValue: [9999, 12, 31, 23, 59, 59, 999, 999, 999, 366],
     addNumberBlock: function () {
       if (this.workspace.id !== Blockly.getMainWorkspace().id) {
@@ -398,10 +406,8 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_zdt_temporal_unit_input'] = function (block) {
-    let value1 = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
-    let value2 = block.getFieldValue('value')
-    let code = `(${value1})`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    const value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
+    return [`(${value})`, Blockly.JavaScript.ORDER_NONE]
   }
 
   /*
@@ -526,10 +532,9 @@ export default function (f7, isGraalJs) {
   }
 
   Blockly.JavaScript['oh_zdt_amend'] = function (block) {
-    let [dtf, zdt, gzdt, czdt] = addDateSupport()
-    let chrono = addChrono()
-    let baseZdt = Blockly.JavaScript.valueToCode(block, 'baseZdt', Blockly.JavaScript.ORDER_ATOMIC)
-    let operation = block.getFieldValue('operation')
+    const baseZdt = Blockly.JavaScript.valueToCode(block, 'baseZdt', Blockly.JavaScript.ORDER_ATOMIC)
+    const operation = block.getFieldValue('operation')
+
     let code = baseZdt
     let millis = 0
     let micros = 0
@@ -620,9 +625,9 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_zdt_toText'] = function (block) {
-    let [dtf, zdt, gzdt, czdt] = addDateSupport()
-    let date = Blockly.JavaScript.valueToCode(block, 'date', Blockly.JavaScript.ORDER_ATOMIC)
-    let withtime = block.getFieldValue('withtime')
+    const date = Blockly.JavaScript.valueToCode(block, 'date', Blockly.JavaScript.ORDER_ATOMIC)
+    const withtime = block.getFieldValue('withtime')
+    const dtf = (isGraalJs) ? 'time.DateTimeFormatter' : addDateSupport()[0]
 
     let code = ''
     if (withtime === 'with') {
@@ -669,16 +674,54 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_zdt_compare'] = function (block) {
-    let zdtCompare = addDateComparisonSupport()
-    let zdtOne = Blockly.JavaScript.valueToCode(block, 'zdtOne', Blockly.JavaScript.ORDER_ATOMIC)
-    let zdtTwo = Blockly.JavaScript.valueToCode(block, 'zdtTwo', Blockly.JavaScript.ORDER_ATOMIC)
-    let operation = block.getFieldValue('operation')
-    let precision = block.getFieldValue('precision')
-    let dateComparison = block.getFieldValue('dateComparison')
+    const zdtOne = Blockly.JavaScript.valueToCode(block, 'zdtOne', Blockly.JavaScript.ORDER_ATOMIC)
+    const zdtTwo = Blockly.JavaScript.valueToCode(block, 'zdtTwo', Blockly.JavaScript.ORDER_ATOMIC)
+    const operation = block.getFieldValue('operation')
+    const precision = block.getFieldValue('precision')
+    const dateComparison = block.getFieldValue('dateComparison')
 
-    let code = `${zdtCompare}(${zdtOne}, ${zdtTwo}, '${operation}', '${precision}', '${dateComparison}')`
+    // Technically, it is possible to move that utility function to openhab-js, but I'm not sure it fits in there
+    const graalZdtCompare = Blockly.JavaScript.provideFunction_(
+      'zdtCompare', [
+        'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + '(zdt1, zdt2, compareOp, precision, compDate) {',
+        '  switch (precision) {',
+        '    case \'years\':',
+        '     zdt2 = zdt2.withMonth(zdt1.monthValue());',
+        '    case \'months\':',
+        '     zdt2 = zdt2.withDayOfMonth(zdt1.dayOfMonth());',
+        '    case \'days\':',
+        '     zdt2 = zdt2.withHour(zdt1.hour());',
+        '    case \'hours\':',
+        '     zdt2 = zdt2.withMinute(zdt1.minute());',
+        '    case \'minutes\':',
+        '     zdt2 = zdt2.withSecond(zdt1.second());',
+        '    case \'seconds\':',
+        '     zdt2 = zdt2.withNano(zdt1.nano());',
+        '  }',
+        '  if (compDate === \'date\') {',
+        '    zdt1 = zdt1.toLocalDate();',
+        '    zdt2 = zdt2.toLocalDate();',
+        '  } else if (compDate === \'time\') {',
+        '    zdt1 = zdt1.toLocalTime();',
+        '    zdt2 = zdt2.toLocalTime();',
+        '  }',
+        '  switch (compareOp) {',
+        '    case \'before\':',
+        '      return zdt1.isBefore(zdt2);',
+        '    case \'equal\':',
+        '      return zdt1.equals(zdt2);',
+        '    case \'after\':',
+        '      return zdt1.isAfter(zdt2);',
+        '    case \'beforeEqual\':',
+        '      return zdt1.isBefore(zdt2) || zdt1.equals(zdt2);',
+        '    case \'afterEqual\':',
+        '      return zdt1.isAfter(zdt2) || zdt1.equals(zdt2);',
+        '  }',
+        '}'
+      ])
 
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    const zdtCompare = (isGraalJs) ? graalZdtCompare : addDateComparisonSupport()
+    return [`${zdtCompare}(${zdtOne}, ${zdtTwo}, '${operation}', '${precision}', '${dateComparison}')`, Blockly.JavaScript.ORDER_NONE]
   }
 
   /*
@@ -719,23 +762,27 @@ export default function (f7, isGraalJs) {
     let zdtThree = Blockly.JavaScript.valueToCode(block, 'zdtThree', Blockly.JavaScript.ORDER_ATOMIC)
     let dateComparison = block.getFieldValue('dateComparison')
 
-    let codeLow = `${zdtCompare}(${zdtTwo}, ${zdtOne}, 'beforeEqual', 'nanos', '${dateComparison}')`
-    let codeHigh = `${zdtCompare}(${zdtOne}, ${zdtThree}, 'beforeEqual', 'nanos', '${dateComparison}')`
-    let code = `(${codeLow} && ${codeHigh})`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    if (isGraalJs) {
+      const op = new Map([['dateandtime', 'isBetweenDateTimes'], ['date', 'isBetweenDates'], ['time', 'isBetweenTimes']]).get(dateComparison)
+      return [`${zdtOne}.${op}(${zdtTwo}, ${zdtThree})`, Blockly.JavaScript.ORDER_NONE]
+    } else {
+      let codeLow = `${zdtCompare}(${zdtTwo}, ${zdtOne}, 'beforeEqual', 'nanos', '${dateComparison}')`
+      let codeHigh = `${zdtCompare}(${zdtOne}, ${zdtThree}, 'beforeEqual', 'nanos', '${dateComparison}')`
+      let code = `(${codeLow} && ${codeHigh})`
+      return [code, Blockly.JavaScript.ORDER_NONE]
+    }
   }
 
   /*
   * Returns a temporal part of a zoned date time  as a Number
   * Blockly part
   */
-
   Blockly.Blocks['oh_get_zdt_part'] = {
     init: function () {
       this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([['year', 'getYear'], ['month', 'getMonthValue'], ['day of month', 'getDayOfMonth'], ['day of week', 'getDayOfWeek'], ['day of year', 'getDayOfYear'], ['hour', 'getHour'], ['minute', 'getMinute'], ['second', 'getSecond'], ['milli', 'getMilli'], ['micro', 'getMicro'], ['nano', 'getNano']]), 'temporalPart')
         .appendField('of')
-      this.appendValueInput('date')
+      this.appendValueInput('zdt')
         .setCheck('ZonedDateTime')
       this.setInputsInline(true)
       this.setOutput(true, 'Number')
@@ -746,30 +793,46 @@ export default function (f7, isGraalJs) {
   }
 
   /*
-  * Returns a temporal part of a zoned date time as a Number
+  * Returns a temporal part of a ZonedDateTime as a Number
   * Code part
   */
   Blockly.JavaScript['oh_get_zdt_part'] = function (block) {
-    let getZdtComponent = addGetZdtComponent()
-    let chrono = addChrono()
+    const zdt = Blockly.JavaScript.valueToCode(block, 'zdt', Blockly.JavaScript.ORDER_ATOMIC)
     let temporalPart = block.getFieldValue('temporalPart')
-    switch (temporalPart) {
-      case 'getMilli':
-        temporalPart = `getLong(${chrono}.MILLI_OF_SECOND)`
-        break
-      case 'getMicro':
-        temporalPart = `getLong(${chrono}.MICRO_OF_SECOND) % 1000`
-        break
-      case 'getNano':
-        temporalPart = `getLong(${chrono}.NANO_OF_SECOND) % 1000`
-        break
-      default:
-        temporalPart += '()'
-    }
 
-    let date = Blockly.JavaScript.valueToCode(block, 'date', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `${getZdtComponent}(${date}.${temporalPart})`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    if (isGraalJs) {
+      const op = new Map([['getYear', 'year'], ['getMonthValue', 'monthValue'], ['getDayOfMonth', 'dayOfMonth'], ['getDayOfWeek', 'dayOfWeek().value'], ['getDayOfYear', 'dayOfYear'], ['getHour', 'hour'], ['getMinute', 'minute'], ['getSecond', 'second'], ['getNano', 'nano']])
+      switch (temporalPart) {
+        case 'getMilli':
+          temporalPart = 'getLong(time.ChronoField.MILLI_OF_SECOND)'
+          break
+        case 'getMicro':
+          temporalPart = 'getLong(time.ChronoField.MICRO_OF_SECOND)'
+          break
+        default:
+          temporalPart = op.get(temporalPart) + '()'
+      }
+      return [`${zdt}.${temporalPart}`, Blockly.JavaScript.ORDER_NONE]
+    } else {
+      const getZdtComponent = addGetZdtComponent()
+      const chrono = addChrono()
+      switch (temporalPart) {
+        case 'getMilli':
+          temporalPart = `getLong(${chrono}.MILLI_OF_SECOND)`
+          break
+        case 'getMicro':
+          temporalPart = `getLong(${chrono}.MICRO_OF_SECOND) % 1000`
+          break
+        case 'getNano':
+          temporalPart = `getLong(${chrono}.NANO_OF_SECOND) % 1000`
+          break
+        default:
+          temporalPart += '()'
+      }
+
+      let code = `${getZdtComponent}(${zdt}.${temporalPart})`
+      return [code, Blockly.JavaScript.ORDER_NONE]
+    }
   }
 
   /*
@@ -799,15 +862,15 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_get_time_between'] = function (block) {
-    let chronoUnit = Blockly.JavaScript.provideFunction_(
+    const temporalPart = block.getFieldValue('temporalPart')
+    const zdtOne = Blockly.JavaScript.valueToCode(block, 'zdtOne', Blockly.JavaScript.ORDER_ATOMIC)
+    const zdtTwo = Blockly.JavaScript.valueToCode(block, 'zdtTwo', Blockly.JavaScript.ORDER_ATOMIC)
+
+    const chronoUnit = (isGraalJs) ? 'time.ChronoUnit' : Blockly.JavaScript.provideFunction_(
       'chronoUnit',
       ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.temporal.ChronoUnit");'])
-    let temporalPart = block.getFieldValue('temporalPart')
-    let divisor = ''
 
-    let zdtOne = Blockly.JavaScript.valueToCode(block, 'zdtOne', Blockly.JavaScript.ORDER_ATOMIC)
-    let zdtTwo = Blockly.JavaScript.valueToCode(block, 'zdtTwo', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `${chronoUnit}.${temporalPart}.between(${zdtOne},${zdtTwo})${divisor}`
+    let code = `${chronoUnit}.${temporalPart}.between(${zdtOne},${zdtTwo})`
     return [code, Blockly.JavaScript.ORDER_NONE]
   }
 }

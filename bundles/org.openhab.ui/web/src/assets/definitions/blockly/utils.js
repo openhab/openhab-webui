@@ -91,7 +91,7 @@ export function addDateSupport () {
       '  stringToParse += \':\' + (\'0\' + minute).slice(-2);',
       '  stringToParse += \':\' + (\'0\' + second).slice(-2);',
       '  stringToParse += \'.\' + nano + offsetString + \'[\' + timezoneString + \']\';',
-      `  return ${zdt}.parse(stringToParse, dtf.ISO_ZONED_DATE_TIME);`,
+      '  return stringToParse;',
       '}'
     ])
 
