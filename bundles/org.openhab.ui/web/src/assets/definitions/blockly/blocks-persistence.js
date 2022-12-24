@@ -1,5 +1,6 @@
 /*
 * These blocks support the persistence module which stores the data in the database and allows to retrieve historical and statistical data
+* supports jsscripting
 */
 import Blockly from 'blockly'
 import { addDateSupport } from './utils'
@@ -85,11 +86,10 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_get_persistvalue'] = function (block) {
-    const { dtf, zdt, getZonedDatetime } = addDateSupport()
-    const persistence = addPersistence()
-
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
     const methodName = block.getFieldValue('methodName')
+
+    const persistence = (isGraalJs) ? null : addPersistence()
 
     let code = ''
     let dayInfo = ''
@@ -98,7 +98,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
       case 'maximumSince':
       case 'minimumSince':
         dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
-        code = `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo}).getState()`
+        code = (isGraalJs) ? `items.getItem(${itemName}).history.${methodName}(${dayInfo})` : `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo}).getState()`
         break
 
       case 'previousState':
@@ -106,15 +106,15 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
         let skipPrevious = Blockly.JavaScript.valueToCode(block, 'skipPrevious', Blockly.JavaScript.ORDER_NONE)
         skipPrevious = ((skipPrevious === 'undefined') ? false : skipPrevious)
         if (methodName === 'previousState') {
-          code = `((${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious})) ? ${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious}).getState(): 'undefined')`
+          code = (isGraalJs) ? `items.getItem(${itemName}).history.${methodName}(${skipPrevious})` : `((${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious})) ? ${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious}).getState() : 'undefined')`
         } else if (methodName === 'previousStateTime') {
-          code = `((${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious})) ? ${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious}).getTimestamp() : 'undefined')`
+          code = (isGraalJs) ? `items.getItem(${itemName}).history.${methodName}(${skipPrevious})` : `((${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious})) ? ${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious}).getTimestamp() : 'undefined')`
         }
         break
 
       default:
         dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
-        code = `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo})`
+        code = (isGraalJs) ? `items.getItem(${itemName}).history.${methodName}(${dayInfo})` : `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo})`
         break
     }
 
@@ -157,14 +157,17 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_persist_changed'] = function (block) {
-    const { dtf, zdt, getZonedDatetime } = addDateSupport()
-    const persistence = addPersistence()
-
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
     const methodName = block.getFieldValue('methodName')
     const dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
-    let code = `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo})`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+
+    if (isGraalJs) {
+      return [`items.getItem(${itemName}).history.${methodName}(${dayInfo})`, Blockly.JavaScript.ORDER_NONE]
+    } else {
+      const { dtf, zdt, getZonedDatetime } = addDateSupport()
+      const persistence = addPersistence()
+      return [`${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo})`, Blockly.JavaScript.ORDER_NONE]
+    }
   }
 
   /*
@@ -189,11 +192,16 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
   * Code part
   */
   Blockly.JavaScript['oh_get_persistence_lastupdate'] = function (block) {
-    const { dtf, zdt, getZonedDatetime } = addDateSupport()
-    const persistence = addPersistence()
     const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `${persistence}.lastUpdate(itemRegistry.getItem(${itemName}))`
-    return [code, 0]
+
+    if (isGraalJs) {
+      return [`items.getItem(${itemName}).history.lastUpdate()`, 0]
+    } else {
+      const { dtf, zdt, getZonedDatetime } = addDateSupport()
+      const persistence = addPersistence()
+      let code = `${persistence}.lastUpdate(itemRegistry.getItem(${itemName}))`
+      return [code, 0]
+    }
   }
 
   function addPersistence () {
