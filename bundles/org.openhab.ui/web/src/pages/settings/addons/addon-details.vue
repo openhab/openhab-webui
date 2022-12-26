@@ -236,7 +236,7 @@ export default {
       if (this.addon.id.indexOf('-') > 0) {
         let url = `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org` +
           `/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}` +
-          `/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}`
+          `/${this.addon.id.split('-')[1]}`
         return url
       }
       return ''
@@ -293,7 +293,7 @@ export default {
         let addonTypeFolder = '_addons_' + this.addon.type
         if (this.addon.type === 'misc') addonTypeFolder = '_addons_io'
         if (this.addon.type !== 'automation') addonTypeFolder += 's'
-        let addonId = this.addon.id.substring(this.addon.id.indexOf('-') + 1)
+        let addonId = this.addon.id.split('-')[1]
         let docUrl = (this.$store.state.runtimeInfo.buildString === 'Release Build') ? 'https://www.openhab.org' : 'https://next.openhab.org'
         docUrl += `/addons/${this.addon.type}/${addonId}`
         let docSrcUrl = `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/${addonTypeFolder}/${addonId}`
