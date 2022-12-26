@@ -925,6 +925,7 @@
 
 <script>
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { ZoomToFitControl } from '@blockly/zoom-to-fit'
 import Vue from 'vue'
 
@@ -1052,7 +1053,7 @@ export default {
       return Blockly.Xml.domToText(xml)
     },
     getCode () {
-      return Blockly.JavaScript.workspaceToCode(this.workspace)
+      return javascriptGenerator.workspaceToCode(this.workspace)
     },
     onChange (event) {
       if (event.type === Blockly.Events.FINISHED_LOADING) {

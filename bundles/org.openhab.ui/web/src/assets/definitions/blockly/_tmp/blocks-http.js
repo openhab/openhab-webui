@@ -1,4 +1,5 @@
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { FieldItemModelPicker } from './ohitemfield'
 
 export default function defineOHBlocks_HTTP (f7, scripts) {
@@ -22,21 +23,21 @@ export default function defineOHBlocks_HTTP (f7, scripts) {
     }
   }
 
-  Blockly.JavaScript['oh_httprequest'] = function (block) {
-    const http = Blockly.JavaScript.provideFunction_(
+  javascriptGenerator['oh_httprequest'] = function (block) {
+    const http = javascriptGenerator.provideFunction_(
       'http',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.HTTP\');'])
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.HTTP\');'])
     let requesttype = block.getFieldValue('requestType')
     let contenttype = block.getFieldValue('contentType')
-    let url = Blockly.JavaScript.valueToCode(block, 'url', Blockly.JavaScript.ORDER_ATOMIC)
-    let payload = Blockly.JavaScript.valueToCode(block, 'payload', Blockly.JavaScript.ORDER_ATOMIC)
+    let url = javascriptGenerator.valueToCode(block, 'url', javascriptGenerator.ORDER_ATOMIC)
+    let payload = javascriptGenerator.valueToCode(block, 'payload', javascriptGenerator.ORDER_ATOMIC)
     let code = ''
     if (contenttype === 'none') {
       code = http + '.' + requesttype + '("' + url + '",60)'
     } else {
       code = http + '.' + requesttype + '(' + url + ',"' + contenttype + '","' + payload + '")'
     }
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    return [code, javascriptGenerator.ORDER_NONE]
   }
 
   Blockly.Blocks['oh_script_dropdown'] = {
@@ -58,10 +59,10 @@ export default function defineOHBlocks_HTTP (f7, scripts) {
     }
   }
 
-  Blockly.JavaScript['oh_script_dropdown'] = function (block) {
+  javascriptGenerator['oh_script_dropdown'] = function (block) {
     let scriptName = block.getFieldValue('script')
     let code = scriptName
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    return [code, javascriptGenerator.ORDER_NONE]
   }
 
   Blockly.Blocks['oh_ping'] = {
@@ -76,12 +77,12 @@ export default function defineOHBlocks_HTTP (f7, scripts) {
     }
   }
 
-  Blockly.JavaScript['oh_ping'] = function (block) {
-    const actions = Blockly.JavaScript.provideFunction_(
+  javascriptGenerator['oh_ping'] = function (block) {
+    const actions = javascriptGenerator.provideFunction_(
       'actions',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ping");'])
-    let hostname = Blockly.JavaScript.valueToCode(block, 'hostName', Blockly.JavaScript.ORDER_ATOMIC)
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ping");'])
+    let hostname = javascriptGenerator.valueToCode(block, 'hostName', javascriptGenerator.ORDER_ATOMIC)
     let code = actions + '.checkVitality(' + hostname + ',0,10)'
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    return [code, javascriptGenerator.ORDER_NONE]
   }
 }

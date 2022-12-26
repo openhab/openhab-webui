@@ -3,6 +3,7 @@
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 export default function defineOHBlocks_Notifications (f7) {
   Blockly.Blocks['oh_sendNotification'] = {
@@ -20,10 +21,10 @@ export default function defineOHBlocks_Notifications (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_sendNotification'] = function (block) {
+  javascriptGenerator['oh_sendNotification'] = function (block) {
     const notifications = addNotificationAction()
-    let email = Blockly.JavaScript.valueToCode(block, 'email', Blockly.JavaScript.ORDER_ATOMIC)
-    let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
+    let email = javascriptGenerator.valueToCode(block, 'email', javascriptGenerator.ORDER_ATOMIC)
+    let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     let code = `${notifications}.sendNotification(${email},${message});\n`
     return code
   }
@@ -47,10 +48,10 @@ export default function defineOHBlocks_Notifications (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_sendBroadcastNotification'] = function (block) {
+  javascriptGenerator['oh_sendBroadcastNotification'] = function (block) {
     const notifications = addNotificationAction()
-    let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
+    let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    let icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
     let code = `${notifications}.sendBroadcastNotification(${message},${icon},'${severity}');\n`
     return code
@@ -75,10 +76,10 @@ export default function defineOHBlocks_Notifications (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_sendLogNotification'] = function (block) {
+  javascriptGenerator['oh_sendLogNotification'] = function (block) {
     const notifications = addNotificationAction()
-    let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
+    let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    let icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
     let code = `${notifications}.sendLogNotification(${message},${icon},'${severity}');\n`
     return code
@@ -86,7 +87,7 @@ export default function defineOHBlocks_Notifications (f7) {
 }
 
 function addNotificationAction () {
-  return Blockly.JavaScript.provideFunction_(
+  return javascriptGenerator.provideFunction_(
     'notifications',
-    ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.io.openhabcloud.NotificationAction\');'])
+    ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.io.openhabcloud.NotificationAction\');'])
 }

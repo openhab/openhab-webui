@@ -3,6 +3,7 @@
  */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 export default function (f7) {
   Blockly.Blocks['oh_event'] = {
@@ -22,10 +23,10 @@ export default function (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_event'] = function (block) {
+  javascriptGenerator['oh_event'] = function (block) {
     const eventType = block.getFieldValue('eventType')
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    const value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     return 'events.' + eventType + '(' + itemName + ', ' + value + ');\n'
   }
 }

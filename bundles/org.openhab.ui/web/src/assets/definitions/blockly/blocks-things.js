@@ -3,6 +3,7 @@
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { FieldItemModelPicker } from './fields/item-field'
 import { FieldThingPicker } from './fields/thing-field'
 
@@ -20,7 +21,7 @@ export default function defineOHBlocks (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_thing'] = function (block) {
+  javascriptGenerator['oh_thing'] = function (block) {
     const thingUid = block.getFieldValue('thingUid')
     let code = `'${thingUid}'`
     return [code, 0]
@@ -39,11 +40,11 @@ export default function defineOHBlocks (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_getthing_state'] = function (block) {
-    const things = Blockly.JavaScript.provideFunction_(
+  javascriptGenerator['oh_getthing_state'] = function (block) {
+    const things = javascriptGenerator.provideFunction_(
       'things',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
-    const thingUid = Blockly.JavaScript.valueToCode(block, 'thingUid', Blockly.JavaScript.ORDER_ATOMIC)
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
+    const thingUid = javascriptGenerator.valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
     let code = `things.getThingStatusInfo(${thingUid}).getStatus()`
     return [code, 0]
   }

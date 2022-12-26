@@ -3,6 +3,7 @@
  */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 export default function defineOHBlocks_Timers (f7) {
   /*
@@ -29,10 +30,10 @@ export default function defineOHBlocks_Timers (f7) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_sleep'] = function (block) {
-    const thread = Blockly.JavaScript.provideFunction_(
+  javascriptGenerator['oh_sleep'] = function (block) {
+    const thread = javascriptGenerator.provideFunction_(
       'thread',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.lang.Thread\')'])
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.lang.Thread\')'])
     let milliseconds = block.getFieldValue('milliseconds')
 
     let code = `${thread}.sleep(${milliseconds});\n`
@@ -69,15 +70,15 @@ export default function defineOHBlocks_Timers (f7) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer'] = function (block) {
+  javascriptGenerator['oh_timer'] = function (block) {
     const scriptExecution = addScriptExecution()
     const zdt = addZonedDateTime()
     addGlobalTimer()
 
     let delayunits = block.getFieldValue('delayUnits')
-    let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    let timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
+    let delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
+    let timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
+    let timerCode = javascriptGenerator.statementToCode(block, 'timerCode')
 
     let code = `if (typeof this.timers[${timerName}] === 'undefined' || this.timers[${timerName}].hasTerminated()) {\n`
     code += `  this.timers[${timerName}] = ${scriptExecution}.createTimer(${zdt}.now().${delayunits}(${delay}), function () {\n`
@@ -119,16 +120,16 @@ export default function defineOHBlocks_Timers (f7) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer_ext'] = function (block) {
+  javascriptGenerator['oh_timer_ext'] = function (block) {
     const scriptExecution = addScriptExecution()
     const zdt = addZonedDateTime()
     addGlobalTimer()
 
-    let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
+    let delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
     let delayUnits = block.getFieldValue('delayUnits')
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    let timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     let retrigger = block.getFieldValue('retrigger')
-    let timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
+    let timerCode = javascriptGenerator.statementToCode(block, 'timerCode')
 
     let code = `if (typeof this.timers[${timerName}] === 'undefined' || this.timers[${timerName}].hasTerminated()) {\n`
     code += `  this.timers[${timerName}] = ${scriptExecution}.createTimer(${zdt}.now().${delayUnits}(${delay}), function () {\n`
@@ -178,12 +179,12 @@ export default function defineOHBlocks_Timers (f7) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer_isActive'] = function (block) {
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_timer_isActive'] = function (block) {
+    let timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     addGlobalTimer()
 
     let code = `typeof this.timers[${timerName}] !== 'undefined' && this.timers[${timerName}].isActive()`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    return [code, javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -211,11 +212,11 @@ export default function defineOHBlocks_Timers (f7) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer_isRunning'] = function (block) {
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_timer_isRunning'] = function (block) {
+    let timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     addGlobalTimer()
     let code = `typeof this.timers[${timerName}] !== 'undefined' && this.timers[${timerName}].isRunning()`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    return [code, javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -243,11 +244,11 @@ export default function defineOHBlocks_Timers (f7) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer_hasTerminated'] = function (block) {
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_timer_hasTerminated'] = function (block) {
+    let timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     addGlobalTimer()
     let code = `typeof this.timers[${timerName}] !== 'undefined' && this.timers[${timerName}].hasTerminated()`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    return [code, javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -273,8 +274,8 @@ export default function defineOHBlocks_Timers (f7) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer_cancel'] = function (block) {
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_timer_cancel'] = function (block) {
+    let timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     addGlobalTimer()
     let code = `if (typeof this.timers[${timerName}] !== 'undefined') {\n`
     code += `  this.timers[${timerName}].cancel();\n`
@@ -313,12 +314,12 @@ export default function defineOHBlocks_Timers (f7) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer_reschedule'] = function (block) {
+  javascriptGenerator['oh_timer_reschedule'] = function (block) {
     const zdt = addZonedDateTime()
 
     let delayUnits = block.getFieldValue('delayUnits')
-    let delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
-    let timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    let delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
+    let timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     addGlobalTimer()
 
     let code = `if (typeof this.timers[${timerName}] !== 'undefined') { this.timers[${timerName}].reschedule(${zdt}.now().${delayUnits}(${delay})); }\n`
@@ -326,19 +327,19 @@ export default function defineOHBlocks_Timers (f7) {
   }
 
   function addScriptExecution () {
-    return Blockly.JavaScript.provideFunction_(
+    return javascriptGenerator.provideFunction_(
       'scriptExecution',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.ScriptExecution\');'])
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.ScriptExecution\');'])
   }
 
   function addZonedDateTime () {
-    return Blockly.JavaScript.provideFunction_(
+    return javascriptGenerator.provideFunction_(
       'zdt',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.time.ZonedDateTime\');'])
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.time.ZonedDateTime\');'])
   }
 
   function addGlobalTimer () {
     let globaltimervars = 'if (typeof this.timers === \'undefined\') {\n  this.timers = [];\n}'
-    Blockly.JavaScript.provideFunction_('globaltimervars', [globaltimervars])
+    javascriptGenerator.provideFunction_('globaltimervars', [globaltimervars])
   }
 }

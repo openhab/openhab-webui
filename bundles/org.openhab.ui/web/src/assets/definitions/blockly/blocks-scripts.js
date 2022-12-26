@@ -5,6 +5,7 @@
 * Additionally there is a block that allows transformations based on the Map-File functionality, regular-expressions and applying JSON-paths
 */
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { addOSGiService } from './utils'
 
 export default function defineOHBlocks_Scripts (f7, scripts) {
@@ -30,11 +31,11 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   * Calls a script that is provided in openHABs scripts folder
   * Code part
   */
-  Blockly.JavaScript['oh_callscriptfile'] = function (block) {
-    const scriptExecution = Blockly.JavaScript.provideFunction_(
+  javascriptGenerator['oh_callscriptfile'] = function (block) {
+    const scriptExecution = javascriptGenerator.provideFunction_(
       'scriptExecution',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.ScriptExecution\');'])
-    let scriptfile = Blockly.JavaScript.valueToCode(block, 'scriptfile', Blockly.JavaScript.ORDER_ATOMIC)
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.ScriptExecution\');'])
+    let scriptfile = javascriptGenerator.valueToCode(block, 'scriptfile', javascriptGenerator.ORDER_ATOMIC)
     let code = `${scriptExecution}.callScript(${scriptfile});\n`
     return code
   }
@@ -66,16 +67,16 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   * Parameters can be provided with the special parameter block oh_scriptparam
   * Code part
   */
-  Blockly.JavaScript['oh_runrule'] = function (block) {
+  javascriptGenerator['oh_runrule'] = function (block) {
     const ruleManager = addOSGiService('ruleManager', 'org.openhab.core.automation.RuleManager')
-    const ruleUID = Blockly.JavaScript.valueToCode(block, 'ruleUID', Blockly.JavaScript.ORDER_ATOMIC)
-    const scriptParameters = Blockly.JavaScript.valueToCode(block, 'parameters', Blockly.JavaScript.ORDER_ATOMIC)
+    const ruleUID = javascriptGenerator.valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
+    const scriptParameters = javascriptGenerator.valueToCode(block, 'parameters', javascriptGenerator.ORDER_ATOMIC)
 
     // create a function for the generated code that maps json key-values into a map structure
-    const convertDictionaryToHashMap = Blockly.JavaScript.provideFunction_(
+    const convertDictionaryToHashMap = javascriptGenerator.provideFunction_(
       'convertDictionaryToHashMap',
       [
-        'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' (dict) {',
+        'function ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' (dict) {',
         '  if (!dict || dict.length === 0) return null;',
         '  var map = new java.util.HashMap();',
         '  Object.keys(dict).forEach(function (key) {',
@@ -136,13 +137,13 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   * Allow transformations via different methods
   * Code part
   */
-  Blockly.JavaScript['oh_transformation'] = function (block) {
-    const transformation = Blockly.JavaScript.provideFunction_(
+  javascriptGenerator['oh_transformation'] = function (block) {
+    const transformation = javascriptGenerator.provideFunction_(
       'transformation',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.transform.actions.Transformation\');'])
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.transform.actions.Transformation\');'])
     const transformationType = block.getFieldValue('type')
-    const transformationFunction = Blockly.JavaScript.valueToCode(block, 'function', Blockly.JavaScript.ORDER_ATOMIC)
-    const transformationValue = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
+    const transformationFunction = javascriptGenerator.valueToCode(block, 'function', javascriptGenerator.ORDER_ATOMIC)
+    const transformationValue = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
 
     let code = `${transformation}.transform('${transformationType}', ${transformationFunction}, ${transformationValue})`
     return [code, 0]
@@ -185,10 +186,10 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
     }
   }
 
-  Blockly.JavaScript['oh_context_info'] = function (block) {
+  javascriptGenerator['oh_context_info'] = function (block) {
     const contextInfo = block.getFieldValue('contextInfo')
-    if (contextInfo === 'ruleUID') return ['ctx.ruleUID', Blockly.JavaScript.ORDER_ATOMIC]
-    return [`event.${contextInfo}`, Blockly.JavaScript.ORDER_ATOMIC]
+    if (contextInfo === 'ruleUID') return ['ctx.ruleUID', javascriptGenerator.ORDER_ATOMIC]
+    return [`event.${contextInfo}`, javascriptGenerator.ORDER_ATOMIC]
   }
 
   /*
@@ -212,8 +213,8 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   * Allows retrieving parameters provided by a rule
   * Code part
   */
-  Blockly.JavaScript['oh_context_attribute'] = function (block) {
-    const key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_context_attribute'] = function (block) {
+    const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     let code = `ctx[${key}]`
     return [code, 0]
   }
@@ -241,7 +242,7 @@ export default function defineOHBlocks_Scripts (f7, scripts) {
   * Allows inlining arbitrary code
   * Code part
   */
-  Blockly.JavaScript['oh_script_inline'] = function (block) {
+  javascriptGenerator['oh_script_inline'] = function (block) {
     const code = block.getFieldValue('inlineScript') + '\n'
     return code
   }

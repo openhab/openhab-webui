@@ -4,6 +4,7 @@
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 export default function defineOHBlocks_Variables (f7) {
   Blockly.Blocks['oh_store_value'] = {
@@ -24,9 +25,9 @@ export default function defineOHBlocks_Variables (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_store_value'] = function (block) {
-    let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
-    let value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_store_value'] = function (block) {
+    let key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
+    let value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     addStoredValues()
 
     let code = `this.storedValues[${key}] = ${value};\n`
@@ -46,10 +47,10 @@ export default function defineOHBlocks_Variables (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_get_value'] = function (block) {
-    let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_get_value'] = function (block) {
+    let key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     let code = `this.storedValues[${key}]`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    return [code, javascriptGenerator.ORDER_NONE]
   }
 
   Blockly.Blocks['oh_check_undefined_value'] = {
@@ -65,14 +66,14 @@ export default function defineOHBlocks_Variables (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_check_undefined_value'] = function (block) {
-    let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_check_undefined_value'] = function (block) {
+    let key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     let code = `typeof this.storedValues[${key}] === 'undefined'`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    return [code, javascriptGenerator.ORDER_NONE]
   }
 
   function addStoredValues () {
     let storedValues = 'if (typeof this.storedValues === \'undefined\') {\n  this.storedValues = [];\n}'
-    Blockly.JavaScript.provideFunction_('storedValues', [storedValues])
+    javascriptGenerator.provideFunction_('storedValues', [storedValues])
   }
 }
