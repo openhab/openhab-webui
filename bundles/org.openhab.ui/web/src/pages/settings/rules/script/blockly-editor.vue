@@ -926,6 +926,7 @@
 <script>
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
+import DarkTheme from '@blockly/theme-dark' 
 import { ZoomToFitControl } from '@blockly/zoom-to-fit'
 import Vue from 'vue'
 
@@ -1010,7 +1011,7 @@ export default {
       this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
         toolbox: this.$refs.toolbox,
         horizontalLayout: !this.$device.desktop,
-        theme: this.$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined,
+        theme: this.$f7.data.themeOptions.dark === 'dark' ? DarkTheme : undefined,
         zoom:
           {
             controls: true,
