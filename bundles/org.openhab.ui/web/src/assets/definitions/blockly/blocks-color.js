@@ -4,6 +4,7 @@
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 export default function (f7, isGraalJs) {
   /*
@@ -27,9 +28,9 @@ export default function (f7, isGraalJs) {
   * converts a hex color string in to an openHAB hue-saturation-brightness string
   * Code generation
   */
-  Blockly.JavaScript['oh_color_to_hsb'] = function (block) {
+  javascriptGenerator['oh_color_to_hsb'] = function (block) {
     let conversionFunction = addConvertColourHexToHSB()
-    const hexColor = Blockly.JavaScript.valueToCode(block, 'hexColor', Blockly.JavaScript.ORDER_ATOMIC)
+    const hexColor = javascriptGenerator.valueToCode(block, 'hexColor', javascriptGenerator.ORDER_ATOMIC)
     let code = `${conversionFunction}(${hexColor})`
     return [code, 0]
   }
@@ -38,10 +39,10 @@ export default function (f7, isGraalJs) {
   * converts rgb to hsb (thanks to https://www.30secondsofcode.org/js/s/rgb-to-hsb)
   */
   function addConvertColourHexToHSB () {
-    const hsbConversion = Blockly.JavaScript.provideFunction_(
+    const hsbConversion = javascriptGenerator.provideFunction_(
       'colorHexToHSB',
       [
-        'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' (hexColor) {',
+        'function ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' (hexColor) {',
         '  var rgb = /^#?([a-f\\d]{2})([a-f\\d]{2})([a-f\\d]{2})$/i.exec(hexColor);',
         '  if (!rgb) return \'\';',
         '  var r = parseInt(rgb[1], 16) / 255, g = parseInt(rgb[2], 16) / 255, b = parseInt(rgb[3], 16) / 255;',

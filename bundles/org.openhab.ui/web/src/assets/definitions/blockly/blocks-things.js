@@ -4,6 +4,7 @@
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { FieldItemModelPicker } from './fields/item-field'
 import { FieldThingPicker } from './fields/thing-field'
 
@@ -21,7 +22,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_thing'] = function (block) {
+  javascriptGenerator['oh_thing'] = function (block) {
     const thingUid = block.getFieldValue('thingUid')
     let code = `'${thingUid}'`
     return [code, 0]
@@ -40,14 +41,14 @@ export default function defineOHBlocks (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_getthing_state'] = function (block) {
-    const thingUid = Blockly.JavaScript.valueToCode(block, 'thingUid', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_getthing_state'] = function (block) {
+    const thingUid = javascriptGenerator.valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return [`things.getThing(${thingUid}).status`, 0]
     } else {
-      const things = Blockly.JavaScript.provideFunction_(
+      const things = javascriptGenerator.provideFunction_(
         'things',
-        ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
+        ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
       return [`things.getThingStatusInfo(${thingUid}).getStatus()`, 0]
     }
   }

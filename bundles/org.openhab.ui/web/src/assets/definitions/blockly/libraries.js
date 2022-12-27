@@ -1,4 +1,5 @@
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { addOSGiService } from './utils'
 
 const generateCodeForBlock = (block) => {
@@ -16,7 +17,7 @@ const generateCodeForBlock = (block) => {
   }
 
   const provideUtility = (utilityName) => {
-    let utilityCode = [`function ${Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_}() { /* error! */ }`]
+    let utilityCode = [`function ${javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_}() { /* error! */ }`]
     if (library.slots.utilities) {
       const utilityComponent = library.slots.utilities.find(c => c.config && c.config.name === utilityName)
       if (!utilityComponent) {
@@ -25,10 +26,10 @@ const generateCodeForBlock = (block) => {
           case 'UtilityFrameworkService':
             return addOSGiService(utilityName, utilityComponent.config.serviceClass)
           case 'UtilityJavaType':
-            utilityCode = `var ${Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_} = Java.type('${utilityComponent.config.javaClass}');`
+            utilityCode = `var ${javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_} = Java.type('${utilityComponent.config.javaClass}');`
             break
           default:
-            utilityCode = utilityComponent.config.code.replace('{{name}}', Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_)
+            utilityCode = utilityComponent.config.code.replace('{{name}}', javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_)
             // process additional utilities if referenced in the function code
             while (/(\{\{[A-Za-z0-9_]+\}\})/gm.test(utilityCode)) {
               const match = /(\{\{[A-Za-z0-9_:]+\}\})/gm.exec(utilityCode)
@@ -43,7 +44,7 @@ const generateCodeForBlock = (block) => {
       }
     }
 
-    return Blockly.JavaScript.provideFunction_(utilityName, utilityCode.split('\n'))
+    return javascriptGenerator.provideFunction_(utilityName, utilityCode.split('\n'))
   }
 
   const processPlaceholder = (code, placeholder) => {
@@ -55,8 +56,8 @@ const generateCodeForBlock = (block) => {
           context.fields[placeholderName] = block.getFieldValue(placeholderName)
           return code.replace(placeholder, context.fields[placeholderName])
         case 'input':
-          const order = placeholderOption ? Blockly.JavaScript['ORDER_' + placeholderOption.replace('ORDER_', '')] : Blockly.JavaScript.ORDER_NONE
-          context.inputs[placeholderName] = Blockly.JavaScript.valueToCode(block, placeholderName, order)
+          const order = placeholderOption ? javascriptGenerator['ORDER_' + placeholderOption.replace('ORDER_', '')] : javascriptGenerator.ORDER_NONE
+          context.inputs[placeholderName] = javascriptGenerator.valueToCode(block, placeholderName, order)
           return code.replace(placeholder, context.inputs[placeholderName])
         case 'utility':
           if (!context.utilities[placeholderName]) {
@@ -66,12 +67,12 @@ const generateCodeForBlock = (block) => {
         case 'temp_name':
           if (!context.uniqueIdentifiers[placeholderName]) {
             const realm = placeholderOption ? Blockly.Variables[placeholderOption] : Blockly.Variables.NAME_TYPE
-            context.uniqueIdentifiers[placeholderName] = Blockly.JavaScript.variableDB_.getDistinctName(placeholderName, realm)
+            context.uniqueIdentifiers[placeholderName] = javascriptGenerator.variableDB_.getDistinctName(placeholderName, realm)
           }
           return code.replace(placeholder, context.uniqueIdentifiers[placeholderName])
         case 'statements':
           if (!context.statements[placeholderName]) {
-            context.statements[placeholderName] = Blockly.JavaScript.statementToCode(block, placeholderName)
+            context.statements[placeholderName] = javascriptGenerator.statementToCode(block, placeholderName)
           }
           return code.replace(placeholder, context.statements[placeholderName].replace(/^ {2}/, '').trim())
         default:
@@ -82,7 +83,7 @@ const generateCodeForBlock = (block) => {
 
   if (!codeComponent || !codeComponent.config || !codeComponent.config.template) {
     if (block.outputConnection) {
-      return [`/* missing implementation for value block ${blockTypeId} */`, Blockly.JavaScript.ORDER_NONE]
+      return [`/* missing implementation for value block ${blockTypeId} */`, javascriptGenerator.ORDER_NONE]
     } else {
       return `/* missing implementation for statement block ${blockTypeId} */\n`
     }
@@ -97,7 +98,7 @@ const generateCodeForBlock = (block) => {
   }
 
   if (block.outputConnection) {
-    const order = codeComponent.config.order ? Blockly.JavaScript[codeComponent.config.order] : Blockly.JavaScript.ORDER_NONE
+    const order = codeComponent.config.order ? javascriptGenerator[codeComponent.config.order] : javascriptGenerator.ORDER_NONE
     return [code, order]
   } else {
     return code
@@ -171,7 +172,7 @@ export const defineLibraries = (libraryDefinitions) => {
           }
         }
 
-        Blockly.JavaScript[blockTypeId] = generateCodeForBlock
+        javascriptGenerator[blockTypeId] = generateCodeForBlock
       })
     }
   })

@@ -4,6 +4,7 @@
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { FieldItemModelPicker } from './fields/item-field'
 import { FieldThingPicker } from './fields/thing-field'
 
@@ -22,7 +23,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_item'] = function (block) {
+  javascriptGenerator['oh_item'] = function (block) {
     const itemName = block.getFieldValue('itemName')
     return [`'${itemName}'`, 0]
   }
@@ -42,8 +43,8 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_groupmembers'] = function (block) {
-    const groupName = Blockly.JavaScript.valueToCode(block, 'groupName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_groupmembers'] = function (block) {
+    const groupName = javascriptGenerator.valueToCode(block, 'groupName', javascriptGenerator.ORDER_ATOMIC)
 
     if (isGraalJs) {
       return [`items.getItem(${groupName}).members`, 0]
@@ -67,8 +68,8 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_taggeditems'] = function (block) {
-    let tagNames = Blockly.JavaScript.valueToCode(block, 'tagName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_taggeditems'] = function (block) {
+    let tagNames = javascriptGenerator.valueToCode(block, 'tagName', javascriptGenerator.ORDER_ATOMIC)
     tagNames = tagNames.split(',')
     let tags = ''
     for (let i = 0; i < tagNames.length; i++) {
@@ -98,8 +99,8 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_getitem'] = function (block) {
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_getitem'] = function (block) {
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return [`items.getItem(${itemName})`, 0]
     } else {
@@ -121,8 +122,8 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_getitem_state'] = function (block) {
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_getitem_state'] = function (block) {
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return [`items.getItem(${itemName}).state`, 0]
     } else {
@@ -195,8 +196,8 @@ export default function (f7, isGraalJs) {
   * Provides all attributes from an item
   * Code part
   */
-  Blockly.JavaScript['oh_getitem_attribute'] = function (block) {
-    const theItem = Blockly.JavaScript.valueToCode(block, 'item', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_getitem_attribute'] = function (block) {
+    const theItem = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
     let attributeName = block.getFieldValue('attributeName')
 
     if (isGraalJs) {

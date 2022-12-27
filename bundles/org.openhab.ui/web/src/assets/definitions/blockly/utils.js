@@ -1,22 +1,22 @@
-import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 /*
 * Function allowing to call classes within the OSGi container
 * e.g. service -> 'ruleManager', class -> 'org.openhab.core.automation.RuleManager'
 */
 export function addOSGiService (serviceName, serviceClass) {
-  const addServiceName = Blockly.JavaScript.provideFunction_(
+  const addServiceName = javascriptGenerator.provideFunction_(
     'addFrameworkService', [
-      'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' (serviceClass) {',
+      'function ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' (serviceClass) {',
       '  var bundleContext = Java.type(\'org.osgi.framework.FrameworkUtil\').getBundle(scriptExtension.class).getBundleContext();',
       '  var serviceReference = bundleContext.getServiceReference(serviceClass);',
       '  return bundleContext.getService(serviceReference);',
       '}'
     ])
 
-  return Blockly.JavaScript.provideFunction_(
+  return javascriptGenerator.provideFunction_(
     serviceName,
-    [`var ${Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_} = ${addServiceName}('${serviceClass}');`])
+    [`var ${javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_} = ${addServiceName}('${serviceClass}');`])
 }
 
 /*
@@ -34,17 +34,17 @@ export function addOSGiService (serviceName, serviceClass) {
 * - all of the above work with or without the "T"
 */
 export function addDateSupport () {
-  let dtf = Blockly.JavaScript.provideFunction_(
+  let dtf = javascriptGenerator.provideFunction_(
     'dtf',
-    ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.format.DateTimeFormatter");'])
+    ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.format.DateTimeFormatter");'])
 
-  let zdt = Blockly.JavaScript.provideFunction_(
+  let zdt = javascriptGenerator.provideFunction_(
     'zdt',
-    ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.ZonedDateTime");'])
+    ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.ZonedDateTime");'])
 
-  let getzdt = Blockly.JavaScript.provideFunction_(
+  let getzdt = javascriptGenerator.provideFunction_(
     'getZonedDateTime', [
-      'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + '(datetime) {',
+      'function ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + '(datetime) {',
       '  datetime = String(datetime).replace(\'T\', \' \')',
       '  var regex_time_min =         /^\\d{2}:\\d{2}$/;',
       '  var regex_time_sec =         /^\\d{2}:\\d{2}:\\d{2}$/;',
@@ -81,9 +81,9 @@ export function addDateSupport () {
       '}'
     ])
 
-  let createzdt = Blockly.JavaScript.provideFunction_(
+  let createzdt = javascriptGenerator.provideFunction_(
     'createZonedDateTime', [
-      'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + '(year, month, day, hour, minute, second, nano, offsetString, timezoneString) {',
+      'function ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + '(year, month, day, hour, minute, second, nano, offsetString, timezoneString) {',
       '  stringToParse = \'\' + year;',
       '  stringToParse += \'-\' + (\'0\' + month).slice(-2);',
       '  stringToParse += \'-\' + (\'0\' + day).slice(-2);',
@@ -99,9 +99,9 @@ export function addDateSupport () {
 }
 
 export function addGetZdtComponent () {
-  let getZdtComponent = Blockly.JavaScript.provideFunction_(
+  let getZdtComponent = javascriptGenerator.provideFunction_(
     'getZdtComponent', [
-      'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + '(value) {',
+      'function ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + '(value) {',
       '  return (typeof value == \'number\') ? value : value.getValue();',
       '}'
     ])
@@ -110,16 +110,16 @@ export function addGetZdtComponent () {
 }
 
 export function addChrono () {
-  let chrono = Blockly.JavaScript.provideFunction_(
+  let chrono = javascriptGenerator.provideFunction_(
     'chrono',
-    ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.temporal.ChronoField");'])
+    ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.temporal.ChronoField");'])
   return chrono
 }
 
 export function addDateComparisonSupport () {
-  let zdtCompare = Blockly.JavaScript.provideFunction_(
+  let zdtCompare = javascriptGenerator.provideFunction_(
     'zdtCompare', [
-      'function ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + '(zdt1, zdt2, compareOp, precision, compDate) {',
+      'function ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + '(zdt1, zdt2, compareOp, precision, compDate) {',
       '  switch (precision) {',
       '    case \'years\':',
       '     zdt2 = zdt2.withMonth(zdt1.getMonthValue());',

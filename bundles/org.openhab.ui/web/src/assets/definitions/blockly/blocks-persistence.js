@@ -3,6 +3,7 @@
 * supports jsscripting
 */
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { addDateSupport } from './utils'
 
 export default function defineOHBlocks_Persistence (f7, isGraalJs) {
@@ -85,8 +86,8 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
   * Provides a number of different (non-)statistical metrics for an item according to the given date
   * Code part
   */
-  Blockly.JavaScript['oh_get_persistvalue'] = function (block) {
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_get_persistvalue'] = function (block) {
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const methodName = block.getFieldValue('methodName')
 
     const persistence = (isGraalJs) ? null : addPersistence()
@@ -97,13 +98,13 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
     switch (methodName) {
       case 'maximumSince':
       case 'minimumSince':
-        dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
+        dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
         code = (isGraalJs) ? `items.getItem(${itemName}).history.${methodName}(${dayInfo})` : `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo}).getState()`
         break
 
       case 'previousState':
       case 'previousStateTime':
-        let skipPrevious = Blockly.JavaScript.valueToCode(block, 'skipPrevious', Blockly.JavaScript.ORDER_NONE)
+        let skipPrevious = javascriptGenerator.valueToCode(block, 'skipPrevious', javascriptGenerator.ORDER_NONE)
         skipPrevious = ((skipPrevious === 'undefined') ? false : skipPrevious)
         if (methodName === 'previousState') {
           code = (isGraalJs) ? `items.getItem(${itemName}).history.${methodName}(${skipPrevious})` : `((${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious})) ? ${persistence}.previousState(itemRegistry.getItem(${itemName}),${skipPrevious}).getState() : 'undefined')`
@@ -113,12 +114,12 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
         break
 
       default:
-        dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
+        dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
         code = (isGraalJs) ? `items.getItem(${itemName}).history.${methodName}(${dayInfo})` : `${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo})`
         break
     }
 
-    return [code, Blockly.JavaScript.ORDER_NONE]
+    return [code, javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -156,17 +157,17 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
   * Checks if an item has changed or has been updated since some given date
   * Code part
   */
-  Blockly.JavaScript['oh_persist_changed'] = function (block) {
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_persist_changed'] = function (block) {
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const methodName = block.getFieldValue('methodName')
-    const dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
+    const dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
 
     if (isGraalJs) {
-      return [`items.getItem(${itemName}).history.${methodName}(${dayInfo})`, Blockly.JavaScript.ORDER_NONE]
+      return [`items.getItem(${itemName}).history.${methodName}(${dayInfo})`, javascriptGenerator.ORDER_NONE]
     } else {
       const { dtf, zdt, getZonedDatetime } = addDateSupport()
       const persistence = addPersistence()
-      return [`${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo})`, Blockly.JavaScript.ORDER_NONE]
+      return [`${persistence}.${methodName}(itemRegistry.getItem(${itemName}), ${dayInfo})`, javascriptGenerator.ORDER_NONE]
     }
   }
 
@@ -191,8 +192,8 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
   * Returns the state before the current state of that item
   * Code part
   */
-  Blockly.JavaScript['oh_get_persistence_lastupdate'] = function (block) {
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_get_persistence_lastupdate'] = function (block) {
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
 
     if (isGraalJs) {
       return [`items.getItem(${itemName}).history.lastUpdate()`, 0]
@@ -205,8 +206,8 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
   }
 
   function addPersistence () {
-    return Blockly.JavaScript.provideFunction_(
+    return javascriptGenerator.provideFunction_(
       'persistence',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.persistence.extensions.PersistenceExtensions\');'])
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.persistence.extensions.PersistenceExtensions\');'])
   }
 }

@@ -3,6 +3,7 @@
 * supports jsscripting
 */
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 export default function (f7, isGraalJs) {
   /*
   * allows to concatenate a list into a new list
@@ -25,9 +26,9 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_list_concatenate'] = function (block) {
-    const list1 = Blockly.JavaScript.valueToCode(block, 'list1', Blockly.JavaScript.ORDER_ATOMIC)
-    const list2 = Blockly.JavaScript.valueToCode(block, 'list2', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_list_concatenate'] = function (block) {
+    const list1 = javascriptGenerator.valueToCode(block, 'list1', javascriptGenerator.ORDER_ATOMIC)
+    const list2 = javascriptGenerator.valueToCode(block, 'list2', javascriptGenerator.ORDER_ATOMIC)
     const code = list1 + '.concat(' + list2 + ');\n'
     return [code, 0]
   }

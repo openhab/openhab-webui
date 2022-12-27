@@ -4,6 +4,7 @@
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 export default function (f7, isGraalJs) {
   Blockly.Blocks['oh_uom_arithmetic'] = {
@@ -27,13 +28,13 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_uom_arithmetic'] = function (block) {
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_uom_arithmetic'] = function (block) {
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      const first = Blockly.JavaScript.valueToCode(block, 'first', Blockly.JavaScript.ORDER_NONE)
-      const second = Blockly.JavaScript.valueToCode(block, 'second', Blockly.JavaScript.ORDER_NONE)
+      const first = javascriptGenerator.valueToCode(block, 'first', javascriptGenerator.ORDER_NONE)
+      const second = javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_NONE)
       const operand = block.getFieldValue('operand')
-      return [`Quantity(${first}).${operand}(Quantity(${second}))`, Blockly.JavaScript.ORDER_NONE]
+      return [`Quantity(${first}).${operand}(Quantity(${second}))`, javascriptGenerator.ORDER_NONE]
     } else {
       console.warn('arithmetic function unit of measurement only supported with jsscripting')
     }
@@ -64,13 +65,13 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_uom_compare'] = function (block) {
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_uom_compare'] = function (block) {
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      const first = Blockly.JavaScript.valueToCode(block, 'first', Blockly.JavaScript.ORDER_NONE)
-      const second = Blockly.JavaScript.valueToCode(block, 'second', Blockly.JavaScript.ORDER_NONE)
+      const first = javascriptGenerator.valueToCode(block, 'first', javascriptGenerator.ORDER_NONE)
+      const second = javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_NONE)
       const operand = block.getFieldValue('operand')
-      return [`Quantity(${first}).${operand}(Quantity(${second}))`, Blockly.JavaScript.ORDER_NONE]
+      return [`Quantity(${first}).${operand}(Quantity(${second}))`, javascriptGenerator.ORDER_NONE]
     } else {
       console.warn('compare function unit of measurement only supported with jsscripting')
     }

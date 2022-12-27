@@ -4,6 +4,7 @@
  */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 export default function defineOHBlocks_Timers (f7, isGraalJs) {
   /*
@@ -30,10 +31,10 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_sleep'] = function (block) {
-    const thread = Blockly.JavaScript.provideFunction_(
+  javascriptGenerator['oh_sleep'] = function (block) {
+    const thread = javascriptGenerator.provideFunction_(
       'thread',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.lang.Thread\')'])
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.lang.Thread\')'])
     let milliseconds = block.getFieldValue('milliseconds')
 
     let code = `${thread}.sleep(${milliseconds});\n`
@@ -70,11 +71,11 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer'] = function (block) {
+  javascriptGenerator['oh_timer'] = function (block) {
     const delayUnits = block.getFieldValue('delayUnits')
-    const delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
-    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    const timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
+    const delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
+    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
+    const timerCode = javascriptGenerator.statementToCode(block, 'timerCode')
 
     if (isGraalJs) {
       let code = `if (cache.private.exists(${timerName}) === false || cache.private.get(${timerName}).hasTerminated()) {\n`
@@ -129,11 +130,11 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer_ext'] = function (block) {
+  javascriptGenerator['oh_timer_ext'] = function (block) {
     const delayUnits = block.getFieldValue('delayUnits')
-    const delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
-    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
-    const timerCode = Blockly.JavaScript.statementToCode(block, 'timerCode')
+    const delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
+    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
+    const timerCode = javascriptGenerator.statementToCode(block, 'timerCode')
     const retrigger = block.getFieldValue('retrigger')
 
     if (isGraalJs) {
@@ -211,15 +212,15 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer_isActive'] = function (block) {
-    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_timer_isActive'] = function (block) {
+    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      return [`cache.private.exists(${timerName}) && cache.private.get(${timerName}).isActive()`, Blockly.JavaScript.ORDER_NONE]
+      return [`cache.private.exists(${timerName}) && cache.private.get(${timerName}).isActive()`, javascriptGenerator.ORDER_NONE]
     } else {
       addGlobalTimer()
 
       let code = `typeof this.timers[${timerName}] !== 'undefined' && this.timers[${timerName}].isActive()`
-      return [code, Blockly.JavaScript.ORDER_NONE]
+      return [code, javascriptGenerator.ORDER_NONE]
     }
   }
 
@@ -248,16 +249,16 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer_isRunning'] = function (block) {
-    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_timer_isRunning'] = function (block) {
+    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       // Keep the isRunning block although it doesn't make sense because in GraalJS access to the context is synchronized and therefore it is not possible to run some code the same time a timer is running
-      return [`cache.private.exists(${timerName}) && cache.private.get(${timerName}).isRunning()`, Blockly.JavaScript.ORDER_NONE]
+      return [`cache.private.exists(${timerName}) && cache.private.get(${timerName}).isRunning()`, javascriptGenerator.ORDER_NONE]
     } else {
       addGlobalTimer()
 
       let code = `typeof this.timers[${timerName}] !== 'undefined' && this.timers[${timerName}].isRunning()`
-      return [code, Blockly.JavaScript.ORDER_NONE]
+      return [code, javascriptGenerator.ORDER_NONE]
     }
   }
 
@@ -286,15 +287,15 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer_hasTerminated'] = function (block) {
-    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_timer_hasTerminated'] = function (block) {
+    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      return [`cache.private.exists(${timerName}) && cache.private.get(${timerName}).hasTerminated()`, Blockly.JavaScript.ORDER_NONE]
+      return [`cache.private.exists(${timerName}) && cache.private.get(${timerName}).hasTerminated()`, javascriptGenerator.ORDER_NONE]
     } else {
       addGlobalTimer()
 
       let code = `typeof this.timers[${timerName}] !== 'undefined' && this.timers[${timerName}].hasTerminated()`
-      return [code, Blockly.JavaScript.ORDER_NONE]
+      return [code, javascriptGenerator.ORDER_NONE]
     }
   }
 
@@ -321,8 +322,8 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer_cancel'] = function (block) {
-    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_timer_cancel'] = function (block) {
+    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return `if (cache.private.exists(${timerName})) { cache.private.remove(${timerName}).cancel(); };\n`
     } else {
@@ -364,10 +365,10 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  Blockly.JavaScript['oh_timer_reschedule'] = function (block) {
+  javascriptGenerator['oh_timer_reschedule'] = function (block) {
     const delayUnits = block.getFieldValue('delayUnits')
-    const delay = Blockly.JavaScript.valueToCode(block, 'delay', Blockly.JavaScript.ORDER_ATOMIC)
-    const timerName = Blockly.JavaScript.valueToCode(block, 'timerName', Blockly.JavaScript.ORDER_ATOMIC)
+    const delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
+    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return `if (cache.private.exists(${timerName})) { cache.private.get(${timerName}).reschedule(time.ZonedDateTime.now().${delayUnits}(${delay})); };\n`
     } else {
@@ -380,19 +381,19 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   }
 
   function addScriptExecution () {
-    return Blockly.JavaScript.provideFunction_(
+    return javascriptGenerator.provideFunction_(
       'scriptExecution',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.ScriptExecution\');'])
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.ScriptExecution\');'])
   }
 
   function addZonedDateTime () {
-    return Blockly.JavaScript.provideFunction_(
+    return javascriptGenerator.provideFunction_(
       'zdt',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.time.ZonedDateTime\');'])
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.time.ZonedDateTime\');'])
   }
 
   function addGlobalTimer () {
     let globaltimervars = 'if (typeof this.timers === \'undefined\') {\n  this.timers = [];\n}'
-    Blockly.JavaScript.provideFunction_('globaltimervars', [globaltimervars])
+    javascriptGenerator.provideFunction_('globaltimervars', [globaltimervars])
   }
 }

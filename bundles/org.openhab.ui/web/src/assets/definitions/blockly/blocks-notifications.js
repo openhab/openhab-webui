@@ -4,6 +4,7 @@
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 // TODO: Add options to set icon and level (argument order should be the same as for broadcast notification etc.)
 export default function defineOHBlocks_Notifications (f7, isGraalJs) {
@@ -22,9 +23,9 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_sendNotification'] = function (block) {
-    let email = Blockly.JavaScript.valueToCode(block, 'email', Blockly.JavaScript.ORDER_ATOMIC)
-    let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_sendNotification'] = function (block) {
+    let email = javascriptGenerator.valueToCode(block, 'email', javascriptGenerator.ORDER_ATOMIC)
+    let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return `actions.NotificationAction.sendNotification(${email}, ${message});\n`
     } else {
@@ -52,9 +53,9 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_sendBroadcastNotification'] = function (block) {
-    let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_sendBroadcastNotification'] = function (block) {
+    let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    let icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
     if (isGraalJs) {
       return `actions.NotificationAction.sendBroadcastNotification(${message}, ${icon}, '${severity}');\n`
@@ -83,9 +84,9 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_sendLogNotification'] = function (block) {
-    let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_sendLogNotification'] = function (block) {
+    let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    let icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
     if (isGraalJs) {
       return `actions.NotificationAction.sendLogNotification(${message}, ${icon}, '${severity}');\n`
@@ -97,7 +98,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
 }
 
 function addNotificationAction () {
-  return Blockly.JavaScript.provideFunction_(
+  return javascriptGenerator.provideFunction_(
     'notifications',
-    ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.io.openhabcloud.NotificationAction\');'])
+    ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.io.openhabcloud.NotificationAction\');'])
 }

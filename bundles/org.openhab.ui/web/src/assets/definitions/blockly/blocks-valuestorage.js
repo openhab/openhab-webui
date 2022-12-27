@@ -5,6 +5,7 @@
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 export default function defineOHBlocks_Variables (f7, isGraalJs) {
   Blockly.Blocks['oh_store_value'] = {
@@ -36,9 +37,9 @@ export default function defineOHBlocks_Variables (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_store_value'] = function (block) {
-    let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
-    let value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_store_value'] = function (block) {
+    let key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
+    let value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       const cacheType = block.getFieldValue('cacheType')
       return `cache${cacheType}.put(${key}, ${value});\n`
@@ -71,13 +72,13 @@ export default function defineOHBlocks_Variables (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_get_value'] = function (block) {
-    let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_get_value'] = function (block) {
+    let key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       const cacheType = block.getFieldValue('cacheType')
-      return [`cache${cacheType}.get(${key})`, Blockly.JavaScript.ORDER_NONE]
+      return [`cache${cacheType}.get(${key})`, javascriptGenerator.ORDER_NONE]
     } else {
-      return [`this.storedValues[${key}]`, Blockly.JavaScript.ORDER_NONE]
+      return [`this.storedValues[${key}]`, javascriptGenerator.ORDER_NONE]
     }
   }
 
@@ -104,18 +105,18 @@ export default function defineOHBlocks_Variables (f7, isGraalJs) {
     }
   }
 
-  Blockly.JavaScript['oh_check_undefined_value'] = function (block) {
-    let key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_check_undefined_value'] = function (block) {
+    let key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       const cacheType = block.getFieldValue('cacheType')
-      return [`cache${cacheType}.exists(${key}) === false`, Blockly.JavaScript.ORDER_NONE]
+      return [`cache${cacheType}.exists(${key}) === false`, javascriptGenerator.ORDER_NONE]
     } else {
-      return [`typeof this.storedValues[${key}] === 'undefined'`, Blockly.JavaScript.ORDER_NONE]
+      return [`typeof this.storedValues[${key}] === 'undefined'`, javascriptGenerator.ORDER_NONE]
     }
   }
 
   function addStoredValues () {
     let storedValues = 'if (typeof this.storedValues === \'undefined\') {\n  this.storedValues = [];\n}'
-    Blockly.JavaScript.provideFunction_('storedValues', [storedValues])
+    javascriptGenerator.provideFunction_('storedValues', [storedValues])
   }
 }
