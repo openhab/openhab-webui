@@ -264,7 +264,7 @@ sendCommand(Logger,"Received call from 123456789")
 
 ## Known problems
 
-Plugin that use custom PHP code, do not work when you use this binding to serve the CometVisu, currently these are:
+Plugins that use custom PHP code, do not work when you use this binding to serve the CometVisu, currently these are:
 
 * Direct influxdb support in diagrams
 * TR064 plugin (use openHABs TR064 binding instead)
