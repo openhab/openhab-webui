@@ -283,6 +283,13 @@ export default {
     },
     save (noToast) {
       if (!this.isEditable) return
+      if (this.rule.status.status === 'RUNNING') {
+        return this.$f7.toast.create({
+          text: 'Rule cannot be updated while running, please wait!',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      }
       if (this.isBlockly) {
         try {
           this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
