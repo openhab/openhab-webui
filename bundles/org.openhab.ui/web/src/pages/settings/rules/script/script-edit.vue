@@ -329,7 +329,13 @@ export default {
     },
     runNow () {
       if (this.createMode) return
-      if (this.rule.status === 'RUNNING') return
+      if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
+        return this.$f7.toast.create({
+          text: `Rule cannot be run ${(this.rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is disabled'}!`,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      }
       this.$f7.toast.create({
         text: 'Running rule',
         destroyOnClose: true,
@@ -382,7 +388,7 @@ export default {
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {
           case 'state':
-            this.$set(this.rule, 'status', JSON.parse(event.payload))
+            this.$set(this.rule, 'status', JSON.parse(event.payload)) // e.g. {"status":"RUNNING","statusDetail":"NONE"}
             break
         }
       })
