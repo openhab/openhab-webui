@@ -32,11 +32,11 @@ export default function (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('message')
         .appendField('log')
-        .appendField(new Blockly.FieldDropdown([['error', 'error'], ['warn', 'warn'], ['info', 'info'], ['debug', 'debug'], ['trace', 'trace']]), 'severity')
+        .appendField(new Blockly.FieldDropdown([['info', 'info'], ['error', 'error'], ['warn', 'warn'], ['debug', 'debug'], ['trace', 'trace']]), 'severity')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
-      this.setTooltip('Write a message in the openHAB log')
+      this.setTooltip('Write a message in the openHAB log with the severity level')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-logging.html#log-statement')
     }
   }

@@ -19,7 +19,7 @@ export default function (f7, isGraalJs) {
       this.setInputsInline(true)
       this.setTooltip('Pick an item from the Model')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#item')
-      this.setOutput(true, null)
+      this.setOutput(true, 'oh_item')
     }
   }
 
@@ -33,7 +33,7 @@ export default function (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('groupName')
         .appendField('get members of group')
-        .setCheck('String')
+        .setCheck(['String','oh_item'])
       this.setInputsInline(false)
       this.setOutput(true, 'Array')
       this.setColour(0)
@@ -90,7 +90,7 @@ export default function (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('itemName')
         .appendField('get item')
-        .setCheck('String')
+        .setCheck(['String','oh_item'])
       this.setInputsInline(false)
       this.setOutput(true, 'oh_itemtype')
       this.setColour(0)
@@ -113,7 +113,7 @@ export default function (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('itemName')
         .appendField('get state of item')
-        .setCheck('String')
+        .setCheck(['String','oh_item'])
       this.setInputsInline(false)
       this.setOutput(true, 'String')
       this.setColour(0)
@@ -151,10 +151,11 @@ export default function (f7, isGraalJs) {
           thisBlock.updateType_(newMode)
         })
       this.appendValueInput('item')
+        .setCheck('oh_itemtype')
         .appendField('get ')
         .appendField(dropdown, 'attributeName')
         .appendField('of item')
-        .setCheck('oh_itemtype')
+
       this.setInputsInline(false)
       this.setOutput(true, 'String')
       this.setColour(0)

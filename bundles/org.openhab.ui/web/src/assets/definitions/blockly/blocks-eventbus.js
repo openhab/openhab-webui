@@ -14,7 +14,7 @@ export default function (f7, isGraalJs) {
       this.appendValueInput('itemName')
         .appendField('to')
         .setAlign(Blockly.ALIGN_RIGHT)
-        .setCheck('String')
+        .setCheck(['String','oh_item'])
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)

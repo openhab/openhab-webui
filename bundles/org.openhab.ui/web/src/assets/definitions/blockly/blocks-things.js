@@ -32,7 +32,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('thingUid')
         .appendField('get thing status')
-        .setCheck('String')
+        .setCheck(['String','oh_thing'])
       this.setInputsInline(false)
       this.setOutput(true, 'String')
       this.setColour(0)

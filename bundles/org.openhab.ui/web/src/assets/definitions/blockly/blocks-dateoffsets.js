@@ -4,7 +4,7 @@
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import { FieldDatePicker } from './fields/date-field'
-import { addDateSupport, addDateComparisonSupport, addGetZdtComponent, addChrono } from './utils'
+import { addDateSupport, addDateComparisonSupportNashorn, addDateComparisonSupportGraalVM, addGetZdtComponent, addChrono } from './utils'
 
 export default function (f7, isGraalJs) {
   /*
@@ -253,11 +253,12 @@ export default function (f7, isGraalJs) {
   * Allows input as string in the format yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm
   * Blockly part
   */
+
   Blockly.Blocks['oh_zdt_fromItem'] = {
     init: function () {
       this.appendValueInput('itemName')
         .appendField('datetime from item')
-        .setCheck('String')
+        .setCheck(['String','oh_item'])
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
       this.setTooltip('ZonedDateTime from a datetime item')
@@ -681,47 +682,7 @@ export default function (f7, isGraalJs) {
     const precision = block.getFieldValue('precision')
     const dateComparison = block.getFieldValue('dateComparison')
 
-    // Technically, it is possible to move that utility function to openhab-js, but I'm not sure it fits in there
-    const graalZdtCompare = javascriptGenerator.provideFunction_(
-      'zdtCompare', [
-        'function ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + '(zdt1, zdt2, compareOp, precision, compDate) {',
-        '  switch (precision) {',
-        '    case \'years\':',
-        '     zdt2 = zdt2.withMonth(zdt1.monthValue());',
-        '    case \'months\':',
-        '     zdt2 = zdt2.withDayOfMonth(zdt1.dayOfMonth());',
-        '    case \'days\':',
-        '     zdt2 = zdt2.withHour(zdt1.hour());',
-        '    case \'hours\':',
-        '     zdt2 = zdt2.withMinute(zdt1.minute());',
-        '    case \'minutes\':',
-        '     zdt2 = zdt2.withSecond(zdt1.second());',
-        '    case \'seconds\':',
-        '     zdt2 = zdt2.withNano(zdt1.nano());',
-        '  }',
-        '  if (compDate === \'date\') {',
-        '    zdt1 = zdt1.toLocalDate();',
-        '    zdt2 = zdt2.toLocalDate();',
-        '  } else if (compDate === \'time\') {',
-        '    zdt1 = zdt1.toLocalTime();',
-        '    zdt2 = zdt2.toLocalTime();',
-        '  }',
-        '  switch (compareOp) {',
-        '    case \'before\':',
-        '      return zdt1.isBefore(zdt2);',
-        '    case \'equal\':',
-        '      return zdt1.equals(zdt2);',
-        '    case \'after\':',
-        '      return zdt1.isAfter(zdt2);',
-        '    case \'beforeEqual\':',
-        '      return zdt1.isBefore(zdt2) || zdt1.equals(zdt2);',
-        '    case \'afterEqual\':',
-        '      return zdt1.isAfter(zdt2) || zdt1.equals(zdt2);',
-        '  }',
-        '}'
-      ])
-
-    const zdtCompare = (isGraalJs) ? graalZdtCompare : addDateComparisonSupport()
+    const zdtCompare = (isGraalJs) ? addDateComparisonSupportGraalVM() : addDateComparisonSupportNashorn()
     return [`${zdtCompare}(${zdtOne}, ${zdtTwo}, '${operation}', '${precision}', '${dateComparison}')`, javascriptGenerator.ORDER_NONE]
   }
 

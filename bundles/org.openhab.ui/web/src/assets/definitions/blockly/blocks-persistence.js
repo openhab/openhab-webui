@@ -26,7 +26,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
       this.appendValueInput('itemName')
         .appendField('of the state of item named ')
         .setAlign(Blockly.ALIGN_RIGHT)
-        .setCheck('String', 'oh_item')
+        .setCheck(['String', 'oh_item'])
       this.updateShape()
       this.setInputsInline(false)
       this.setOutput(true, null)
