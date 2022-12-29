@@ -62,6 +62,7 @@
   ],
   "dependencies": {
     "@blockly/field-slider": "^4.0.3",
+    "@blockly/plugin-cross-tab-copy-paste": "^2.0.4",
     "@blockly/theme-dark": "^4.0.1",
     "@blockly/zoom-to-fit": "^3.0.3",
     "@jsep-plugin/arrow": "^1.0.5",

@@ -33,7 +33,7 @@ export default function (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('groupName')
         .appendField('get members of group')
-        .setCheck(['String','oh_item'])
+        .setCheck(['String', 'oh_item'])
       this.setInputsInline(false)
       this.setOutput(true, 'Array')
       this.setColour(0)
@@ -90,7 +90,7 @@ export default function (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('itemName')
         .appendField('get item')
-        .setCheck(['String','oh_item'])
+        .setCheck(['String', 'oh_item'])
       this.setInputsInline(false)
       this.setOutput(true, 'oh_itemtype')
       this.setColour(0)
@@ -113,7 +113,7 @@ export default function (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('itemName')
         .appendField('get state of item')
-        .setCheck(['String','oh_item'])
+        .setCheck(['String', 'oh_item'])
       this.setInputsInline(false)
       this.setOutput(true, 'String')
       this.setColour(0)

@@ -384,37 +384,37 @@
             </value>
           </block>
           <block type="oh_getitem_attribute">
-             <value name="item">
-               <shadow type="oh_getitem">
-                 <value name="itemName">
-                   <shadow type="oh_item" />
-                 </value>
-               </shadow>
-             </value>
-           </block>
-           <block type="oh_getitem">
-             <value name="itemName">
-               <shadow type="oh_item" />
-             </value>
-           </block>
-           <block type="oh_groupmembers">
-             <value name="groupName">
-               <shadow type="oh_item" />
-             </value>
-           </block>
-           <block type="oh_taggeditems">
-             <value name="tagName">
-               <shadow type="text" />
-             </value>
-           </block>
-           <block type="oh_event">
-             <value name="value">
-               <shadow type="text">
-                 <field name="TEXT">value</field>
-               </shadow>
-             </value>
-             <value name="itemName">
-               <shadow type="oh_item" />
+            <value name="item">
+              <shadow type="oh_getitem">
+                <value name="itemName">
+                  <shadow type="oh_item" />
+                </value>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_getitem">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_groupmembers">
+            <value name="groupName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_taggeditems">
+            <value name="tagName">
+              <shadow type="text" />
+            </value>
+          </block>
+          <block type="oh_event">
+            <value name="value">
+              <shadow type="text">
+                <field name="TEXT">value</field>
+              </shadow>
+            </value>
+            <value name="itemName">
+              <shadow type="oh_item" />
             </value>
           </block>
           <block type="oh_item" />
@@ -616,69 +616,69 @@
             </value>
           </block>
           <sep gap="48" />
-         <block type="oh_zdt_amend">
-           <value name="baseZdt">
-             <shadow type="oh_zdt" />
-           </value>
-         </block>
-         <block type="oh_zdt_temporal_unit" />
-         <block type="oh_zdt_temporal_unit_input" />
-         <sep gap="48" />
+          <block type="oh_zdt_amend">
+            <value name="baseZdt">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <block type="oh_zdt_temporal_unit" />
+          <block type="oh_zdt_temporal_unit_input" />
+          <sep gap="48" />
           <block type="oh_zdt_fromItem">
-              <value name="itemName">
-                <shadow type="oh_item" />
-              </value>
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
           </block>
           <block type="oh_zdt_toText">
             <value name="date">
               <shadow type="oh_zdt" />
             </value>
           </block>
-         <sep gap="48" />
-         <block type="oh_zdt_compare">
-           <value name="zdtOne">
-             <shadow type="oh_zdt" />
-           </value>
-           <value name="zdtTwo">
-             <shadow type="oh_zdt" />
-           </value>
-         </block>
-         <block type="oh_zdt_between">
-           <value name="zdtOne">
-             <shadow type="oh_zdt" />
-           </value>
-           <value name="zdtTwo">
-             <shadow type="oh_zdt" />
-           </value>
-           <value name="zdtThree">
-             <shadow type="oh_zdt" />
-           </value>
-         </block>
-         <sep gap="48" />
-         <block type="oh_get_zdt_part">
-           <value name="date">
-             <shadow type="oh_zdt" />
-           </value>
-         </block>
-         <block type="oh_get_time_between">
-           <value name="zdtOne">
-             <shadow type="oh_zdt" />
-           </value>
-           <value name="zdtTwo">
-             <shadow type="oh_zdt" />
-           </value>
-         </block>
-         <sep gap="48" />
-         <block type="oh_dayoffset_today" />
-         <block type="oh_dayoffset">
-           <value name="offset">
-             <shadow type="math_number">
-               <field name="NUM">
-                 0
-               </field>
-             </shadow>
-           </value>
-         </block>
+          <sep gap="48" />
+          <block type="oh_zdt_compare">
+            <value name="zdtOne">
+              <shadow type="oh_zdt" />
+            </value>
+            <value name="zdtTwo">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <block type="oh_zdt_between">
+            <value name="zdtOne">
+              <shadow type="oh_zdt" />
+            </value>
+            <value name="zdtTwo">
+              <shadow type="oh_zdt" />
+            </value>
+            <value name="zdtThree">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <sep gap="48" />
+          <block type="oh_get_zdt_part">
+            <value name="date">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <block type="oh_get_time_between">
+            <value name="zdtOne">
+              <shadow type="oh_zdt" />
+            </value>
+            <value name="zdtTwo">
+              <shadow type="oh_zdt" />
+            </value>
+          </block>
+          <sep gap="48" />
+          <block type="oh_dayoffset_today" />
+          <block type="oh_dayoffset">
+            <value name="offset">
+              <shadow type="math_number">
+                <field name="NUM">
+                  0
+                </field>
+              </shadow>
+            </value>
+          </block>
         </category>
 
         <category name="Ephemeris">
@@ -954,6 +954,7 @@
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import DarkTheme from '@blockly/theme-dark'
+import { CrossTabCopyPaste } from '@blockly/plugin-cross-tab-copy-paste'
 import { ZoomToFitControl } from '@blockly/zoom-to-fit'
 import Vue from 'vue'
 
@@ -976,6 +977,8 @@ var itemRegistry = runtime.itemRegistry;
 var events = runtime.events;
 
 `
+
+let copyPastePluginInitialized = false
 
 export default {
   props: ['blocks', 'libraryDefinitions', 'isGraalJs'],
@@ -1061,6 +1064,22 @@ export default {
       })
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
+
+      if (!copyPastePluginInitialized) {
+        const copyAndPasteOptions = {
+          contextMenu: true,
+          shortcut: true
+        }
+        const copyAndPastePlugin = new CrossTabCopyPaste()
+        copyAndPastePlugin.init(copyAndPasteOptions, () => {
+          console.log('There has been a block type error during copying and pasting')
+        })
+
+        Blockly.Msg['CROSS_TAB_COPY'] = 'Cross-Rule-Copy'
+        Blockly.Msg['CROSS_TAB_PASTE'] = 'Cross-Rule-Paste'
+        copyPastePluginInitialized = true
+      }
+
       this.registerLibraryCallbacks(libraryDefinitions)
       const xml = Blockly.Xml.textToDom(this.blocks)
       Blockly.Xml.domToWorkspace(xml, this.workspace)

@@ -258,7 +258,7 @@ export default function (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('itemName')
         .appendField('datetime from item')
-        .setCheck(['String','oh_item'])
+        .setCheck(['String', 'oh_item'])
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
       this.setTooltip('ZonedDateTime from a datetime item')
@@ -718,7 +718,7 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   javascriptGenerator['oh_zdt_between'] = function (block) {
-    let zdtCompare = addDateComparisonSupport()
+    let zdtCompare = addDateComparisonSupportNashorn()
     let zdtOne = javascriptGenerator.valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
     let zdtTwo = javascriptGenerator.valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)
     let zdtThree = javascriptGenerator.valueToCode(block, 'zdtThree', javascriptGenerator.ORDER_ATOMIC)
