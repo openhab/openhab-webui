@@ -769,7 +769,7 @@ export default function (f7, isGraalJs) {
           temporalPart = 'getLong(time.ChronoField.MILLI_OF_SECOND)'
           break
         case 'getMicro':
-          temporalPart = 'getLong(time.ChronoField.MICRO_OF_SECOND)'
+          temporalPart = 'getLong(time.ChronoField.MICRO_OF_SECOND) % 1000'
           break
         default:
           temporalPart = op.get(temporalPart) + '()'
