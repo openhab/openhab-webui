@@ -169,7 +169,7 @@ export default function (f7, isGraalJs) {
     const second = javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_ATOMIC)
 
     if (isGraalJs) {
-      const code = `time.ZonedDateTime.now().withYear(${year}).withMonth(${month}).withDayOfMonth(${day}).withHour(${hour}).withMinute(${minute}).withSecond(${second})`
+      const code = `time.ZonedDateTime.now().withYear(${year}).withMonth(${month}).withDayOfMonth(${day}).withHour(${hour}).withMinute(${minute}).withSecond(${second}).withNano(0)`
       return [code, javascriptGenerator.ORDER_ATOMIC]
     } else {
       let [dtf, zdt, gzdt, czdt] = addDateSupport()
