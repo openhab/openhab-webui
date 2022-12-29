@@ -13,42 +13,6 @@
         <block type="logic_ternary" />
       </category>
 
-      <category name="Units of Measurement" colour="%{BKY_MATH_HUE}" v-if="{isGraalJs}">
-        <block type="oh_quantity">
-          <value name="quantity">
-            <shadow type="text">
-              <field name="TEXT">10 W</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="oh_quantity_arithmetic">
-          <value name="first">
-            <shadow type="oh_quantity" />
-          </value>
-          <value name="second">
-            <shadow type="oh_quantity" />
-          </value>
-        </block>
-        <block type="oh_quantity_compare">
-          <value name="first">
-            <shadow type="oh_quantity" />
-          </value>
-          <value name="second">
-            <shadow type="oh_quantity" />
-          </value>
-        </block>
-        <block type="oh_quantity_to_unit">
-          <value name="quantity">
-            <shadow type="oh_quantity" />
-          </value>
-          <value name="unit">
-            <shadow type="text">
-              <field name="TEXT">kW</field>
-            </shadow>
-          </value>
-        </block>
-      </category>
-
       <category name="Loops" colour="%{BKY_LOOPS_HUE}">
         <block type="controls_repeat_ext">
           <value name="TIMES">
@@ -569,6 +533,41 @@
             </value>
           </block>
         </category>
+        <category name="Units of Measurement" v-if="isGraalJs">
+          <block type="oh_quantity">
+            <value name="quantity">
+              <shadow type="text">
+                <field name="TEXT">10 W</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_quantity_arithmetic">
+            <value name="first">
+              <shadow type="oh_quantity" />
+            </value>
+            <value name="second">
+              <shadow type="oh_quantity" />
+            </value>
+          </block>
+          <block type="oh_quantity_compare">
+            <value name="first">
+              <shadow type="oh_quantity" />
+            </value>
+            <value name="second">
+              <shadow type="oh_quantity" />
+            </value>
+          </block>
+          <block type="oh_quantity_to_unit">
+            <value name="quantity">
+              <shadow type="oh_quantity" />
+            </value>
+            <value name="unit">
+              <shadow type="text">
+                <field name="TEXT">kW</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
         <category name="Dates &amp; Times">
           <button
             helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html"
@@ -1071,6 +1070,10 @@ export default {
           },
         trashcan: false
       })
+
+      Blockly.HSV_SATURATION = 0.45 // default
+      Blockly.HSV_VALUE = 0.65 // a little bit more contract for the different colors
+
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
 

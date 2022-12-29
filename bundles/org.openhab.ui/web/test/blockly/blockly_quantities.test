@@ -1,0 +1,104 @@
+configuration: {}
+triggers: []
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: <xml xmlns="https://developers.google.com/blockly/xml"><block
+        type="oh_log" id="4RmAT0}d|!{$uPmGlPgG" x="-44" y="164"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Ek_D,^rYj[_CbGS-|p~."><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="D|QoIpnFcC}A_lI,E3ZK"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="f!JP$;@TeqjTPDn(C55I"><field name="TEXT">Units of Measurment with
+        </field></block></value><value name="ADD1"><block
+        type="oh_getitem_state" id="pGo}.swI=E5;x~,k8Vzr"><value
+        name="itemName"><shadow type="oh_item" id="GeKb8jtFz4uY#fpJOB1?"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="2(H_Uyr_5H4HKih~cCY5"><field
+        name="itemName">WZ_Temperature</field></block></value></block></value></block></value><next><block
+        type="controls_if" id="/:~P0.Leesm,IukNfvvL"><value name="IF0"><block
+        type="oh_quantity_compare" id="vn_m*DW!!N))BW0YV+5v"><field
+        name="operand">largerThan</field><value name="first"><shadow
+        type="oh_quantity" id="V4OVITu`;objcs{2E$=Y"></shadow><block
+        type="oh_quantity" id="st!7n6Dt*~W/UeF7@x2v"><value
+        name="quantity"><shadow type="text" id="uj)1GW;xYI57mreEpupK"><field
+        name="TEXT">10 W</field></shadow><block type="oh_getitem_state"
+        id="~aUa$c`Cwq97b4lq15VW"><value name="itemName"><shadow type="oh_item"
+        id="GeKb8jtFz4uY#fpJOB1?"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="G#lsEPsIhHw:)-LA`]J^"><field
+        name="itemName">WZ_Temperature</field></block></value></block></value></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="HEh[3-01*;F0aA^_mpV~"></shadow><block type="oh_quantity"
+        id="757*X_=UrJp,^jxhkTut"><value name="quantity"><shadow type="text"
+        id="ca-M?=7A=AM8h`S*7aS8"><field name="TEXT">15
+        °C</field></shadow></value></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="aP;5)|/J[O]IzgIPSWbW"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="[LdH7T$^)S;-YkW8P7Bh"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="u6P.6y9Qxmo-K_BHL1VY" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="z%E4{_{4,m32C.,-30LJ"><field name="TEXT">It is warm enough in the
+        living room at </field></block></value><value name="ADD1"><block
+        type="oh_getitem_state" id="M0PBTN[Js%g;-i.=dt]z"><value
+        name="itemName"><shadow type="oh_item" id="GeKb8jtFz4uY#fpJOB1?"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="JTz/+~:Zz1dnnhnG@+Ya"><field
+        name="itemName">WZ_Temperature</field></block></value></block></value></block></value><next><block
+        type="oh_log" id=";Rd|iNrc|N4cz/3V%]dS"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Qs,e!.+FCk_];q|hislH"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="OEfpr]zPV8O?wcdkC*fh" inline="false"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="1AF+]SDlK*t}9P_iDeS."><field name="TEXT">though it would be nices if
+        it was 5 degrees warmer = </field></block></value><value
+        name="ADD1"><block type="oh_quantity_arithmetic"
+        id="P@$.Hq}k!E0@y=z`t-jn"><field name="operand">add</field><value
+        name="first"><shadow type="oh_quantity"
+        id="ED_EuFTGaTD1tq}^OZOi"></shadow><block type="oh_quantity"
+        id="n/7A9^Z(0sD.TuohG2V!"><value name="quantity"><shadow type="text"
+        id="4U,$DO`QHow=gsbv}TQM"><field name="TEXT">10 W</field></shadow><block
+        type="oh_getitem_state" id="h*CcNH*Zt2=UlU[]/x4U"><value
+        name="itemName"><shadow type="oh_item" id="GeKb8jtFz4uY#fpJOB1?"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id=")3D0LAnZpdda7IyePgGI"><field
+        name="itemName">WZ_Temperature</field></block></value></block></value></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="Ifa}J~y961j{D9.wfka8"></shadow><block type="oh_quantity"
+        id="2jsqV_j$mX+EVtS)mjz#"><value name="quantity"><shadow type="text"
+        id="8@/9).`A[*BYf1hHvyVQ"><field name="TEXT">5
+        °C</field></shadow></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="jMBr^4r^*]MZtD8+h$+J"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="[b{iDk_S{Bkl4Wof+#K,"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="7f4U?oF_qzgJf:~DK;GN" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="29MUhg5gGF31U~8sVnH["><field name="TEXT">15 degress Celsius are
+        </field></block></value><value name="ADD1"><block
+        type="oh_quantity_to_unit" id="OKu#~i2YD##af$l5LQ|a"><value
+        name="quantity"><shadow type="oh_quantity"
+        id="T)jZ}LacVa~aBxzrC)}7"></shadow><block type="oh_quantity"
+        id="a7:LjVe)d0[MYxv#Fix*"><value name="quantity"><shadow type="text"
+        id="j=3f57@+hZl;(?*O^~lP"><field name="TEXT">15
+        °C</field></shadow></value></block></value><value name="unit"><shadow
+        type="text" id="}G$:$-^}vb;H//N*,nR0"><field
+        name="TEXT">°F</field></shadow></value></block></value></block></value></block></next></block></next></block></statement></block></next></block></xml>
+      type: application/javascript;version=ECMAScript-2021
+      script: >
+        var runtime = require('@runtime');
+
+        var itemRegistry = runtime.itemRegistry;
+
+        var events = runtime.events;
+
+
+        console.info(('Units of Measurment with ' + String(items.getItem('WZ_Temperature').state)));
+
+        if (Quantity(items.getItem('WZ_Temperature').state).largerThan(Quantity('15 °C'))) {
+          console.info(('It is warm enough in the living room at ' + String(items.getItem('WZ_Temperature').state)));
+          console.info(('though it would be nices if it was 5 degrees warmer = ' + String(Quantity(items.getItem('WZ_Temperature').state).add(Quantity('5 °C')))));
+          console.info(('15 degress Celsius are ' + String(Quantity('15 °C').toUnit('°F'))));
+        }
+    type: script.ScriptAction

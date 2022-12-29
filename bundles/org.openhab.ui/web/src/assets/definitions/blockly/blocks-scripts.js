@@ -148,13 +148,13 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
     const transformationFunction = javascriptGenerator.valueToCode(block, 'function', javascriptGenerator.ORDER_ATOMIC)
     const transformationValue = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      return `actions.Transformation.transform('${transformationType}', ${transformationFunction}, ${transformationValue});\n`
+      return [`actions.Transformation.transform('${transformationType}', ${transformationFunction}, ${transformationValue})`, 0]
     } else {
       const transformation = javascriptGenerator.provideFunction_(
         'transformation',
         ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.transform.actions.Transformation\');'])
 
-      return `${transformation}.transform('${transformationType}', ${transformationFunction}, ${transformationValue});\n`
+      return [`${transformation}.transform('${transformationType}', ${transformationFunction}, ${transformationValue})`, 0]
     }
   }
 
@@ -236,13 +236,14 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
     init: function () {
       this.appendDummyInput()
         .appendField('inline script (advanced)')
+      let code = ''
       if (isGraalJs) {
-        this.appendDummyInput()
-          .appendField(new Blockly.FieldMultilineInput('for (var i = 0; i < 10; i++) {\n  console.log(i.toString());\n}'), 'inlineScript')
+        code = 'for (var i = 0; i < 10; i++) {\n  console.log(i.toString());\n}'
       } else {
-        this.appendDummyInput()
-          .appendField(new Blockly.FieldMultilineInput('for (var i = 0; i < 10; i++) {\n  print(i.toString());\n}'), 'inlineScript')
+        code = 'for (var i = 0; i < 10; i++) {\n  print(i.toString());\n}'
       }
+      this.appendDummyInput()
+        .appendField(new Blockly.FieldMultilineInput(code), 'inlineScript')
       this.setInputsInline(false)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)

@@ -11,10 +11,10 @@ export default function (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('quantity')
         .setCheck('String')
-      // TODO: Explain format of String
-      this.setColour(160)
+      this.setColour(58)
       this.setInputsInline(true)
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#item')
+      this.setTooltip('Block that wraps Measurements in a Quantity block.\nA Quantity is a Number plus a Unit (of Measurement). \nMake sure you use the right units like 5.75 m, 1 N*m, 1 m/s, 1 m^2/s^2, 1 m^2/s^-2 ... ')
+      this.setHelpUrl('https://www.openhab.org/docs/concepts/units-of-measurement.html')
       this.setOutput(true, ['oh_quantity', 'String'])
     }
   }
@@ -38,8 +38,7 @@ export default function (f7, isGraalJs) {
       this.setInputsInline(true)
       this.setOutput(true, 'oh_quantity')
       this.setColour('%{BKY_MATH_HUE}')
-      // TODO operand related tooltip
-      this.setTooltip('math with units of measure')
+      this.setTooltip('Allows computation with Quantity blocks.\nA Quantity is a Number plus a Unit (of Measurement). \nMake sure you use the right units like 5.75 m, 1 N*m, 1 m/s, 1 m^2/s^2, 1 m^2/s^-2 ... ')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/')
     }
   }
@@ -73,9 +72,8 @@ export default function (f7, isGraalJs) {
       this.setInputsInline(true)
       this.setOutput(true, 'Boolean')
       this.setColour('%{BKY_LOGIC_HUE}')
-      // TODO operand related tooltip
-      this.setTooltip('compare units of measure')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/')
+      this.setTooltip('Compares two Quantities with each other.\nMake sure you use the target right units like 5.75 m, 1 N*m, 1 m/s, 1 m^2/s^2, 1 m^2/s^-2 ... ')
+      this.setHelpUrl('https://www.openhab.org/docs/concepts/units-of-measurement.html')
     }
   }
 
@@ -98,10 +96,10 @@ export default function (f7, isGraalJs) {
       this.appendValueInput('unit')
         .appendField('to unit')
         .setCheck('String')
-      // TODO: Explain format of unit
-      this.setColour(160)
+      this.setColour(58)
       this.setInputsInline(true)
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#item')
+      this.setTooltip('Converts a Quantity into another Unit.\nMake sure you use the target right units like 5.75 m, 1 N*m, 1 m/s, 1 m^2/s^2, 1 m^2/s^-2 ... ')
+      this.setHelpUrl('https://www.openhab.org/docs/concepts/units-of-measurement.html')
       this.setOutput(true, 'oh_quantity')
     }
   }

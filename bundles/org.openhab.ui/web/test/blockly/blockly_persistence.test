@@ -1,0 +1,419 @@
+configuration: {}
+triggers: []
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: <xml xmlns="https://developers.google.com/blockly/xml"><block
+        type="oh_log" id="U#LF:]N_Dx:Bh:(2rFa5" x="45" y="-88"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="C%n?LX2Lk@^.}RZ1.r)@"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="NoJ[~3k5fKj7T}[4S6Sj" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="r5CWaf=FrNC?_*~Dt-Np"><field name="TEXT">average =
+        </field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="dxs]!+B~q/},vvXJz.(i"
+        inline="true"><field name="methodName">averageSince</field><value
+        name="itemName"><shadow type="oh_item" id="sCY[~!afkH^%V`g!Mp-q"><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id=")rCBjpB2z#;Sjq3m8uM2"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="dayInfo"><shadow type="oh_zdt_plusminus"
+        id="Olkiv?[FEk|99k+!`ax}"><field name="plusminus">minus</field><field
+        name="period">Hours</field><value name="offset"><shadow
+        type="math_number" id="2`0j@sb.H4XrCm%z;it:"><field
+        name="NUM">1</field></shadow></value></shadow><block
+        type="oh_zdt_plusminus" id="|O1SNKxy*/revrA.^B[L"><field
+        name="plusminus">minus</field><field name="period">Minutes</field><value
+        name="offset"><shadow type="math_number"
+        id="oZf%2G?6ZmAt)Wc|EIeP"><field
+        name="NUM">5</field></shadow></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="+irELB0zYka/3#4qeIUX"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Jqwd/r/@C!|3`T|K)cGl"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="0AfV(!y_piw;x./:+l:a" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="cVB^RiU-oM|_xDV1ZvfF"><field name="TEXT">delta =
+        </field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="HDiDD-M/Yt7M8QfJ9R$!"
+        inline="true"><field name="methodName">deltaSince</field><value
+        name="itemName"><shadow type="oh_item" id="@}6g$xm9$SrW37;^eWup"><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id="j0S$gWmB$?NuXax!CO8z"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="dayInfo"><shadow type="oh_zdt_plusminus"
+        id="dEZqkh9COAKe{Y$KU^!#"><field name="plusminus">minus</field><field
+        name="period">Hours</field><value name="offset"><shadow
+        type="math_number" id="-PyvP[m_k?=]ifMn$d3z"><field
+        name="NUM">1</field></shadow></value></shadow><block
+        type="oh_zdt_plusminus" id="]?xwM0{st$r]K{[DfSTI"><field
+        name="plusminus">minus</field><field name="period">Hours</field><value
+        name="offset"><shadow type="math_number"
+        id="$U|e%Y1g~r6r!pa^Y1P,"><field
+        name="NUM">5</field></shadow></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="RK`PhK@`I[XfcO@l~nf."><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="b{^/tqlo_Y5x1Ek}5VHF"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="35i{O^GNJ)Z@nyE!IO^4" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="Y:7j1{IP{)MR??Np:v8V"><field name="TEXT">deviation =
+        </field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="CLtnIJqud8ri8z9u?o}:"
+        inline="true"><field name="methodName">deviationSince</field><value
+        name="itemName"><shadow type="oh_item" id="Cp1.k0^qEOxpWLrGqve$"><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id="`6r1iOD{^e)Mz50_Q+Aa"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="dayInfo"><shadow type="oh_zdt_plusminus"
+        id="[WaEMHI=~I8nEQ*B~_}c"><field name="plusminus">minus</field><field
+        name="period">Hours</field><value name="offset"><shadow
+        type="math_number" id="#+[%bu(p:mLCI|!=+nAJ"><field
+        name="NUM">1</field></shadow></value></shadow><block
+        type="oh_zdt_plusminus" id="dWDPt%:TKUzXG:e}~xjL"><field
+        name="plusminus">minus</field><field name="period">Hours</field><value
+        name="offset"><shadow type="math_number"
+        id="+E2WGHlgIYs/VJ[o(B~8"><field
+        name="NUM">5</field></shadow></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="Lh@_{`Mepyeu3(fiSRvG"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Tq94T.UT$:zZ^gV03aUi"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="?!SUG_o[}NX4uLEx~2qG" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="LmXN+,DWeouOhs.UQ9Vf"><field name="TEXT">variance =
+        </field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="HQ1$`U;2[[z%fper8,1="
+        inline="true"><field name="methodName">varianceSince</field><value
+        name="itemName"><shadow type="oh_item" id="~e-aSPz7xFfPVV+@GruV"><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id="#w2]-XjR5SH(,%e1EA/]"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="dayInfo"><shadow type="oh_zdt_plusminus"
+        id="3Q5|AwoqJyMHwut6q?wm"><field name="plusminus">minus</field><field
+        name="period">Hours</field><value name="offset"><shadow
+        type="math_number" id="9(A]@Lxmo2Yw}mU1KE9*"><field
+        name="NUM">1</field></shadow></value></shadow><block
+        type="oh_zdt_plusminus" id="}w;^-8n;0v%Wv4Dg*_{|"><field
+        name="plusminus">minus</field><field name="period">Hours</field><value
+        name="offset"><shadow type="math_number"
+        id="yuwx:8]iNO=Nk)())K!:"><field
+        name="NUM">5</field></shadow></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="^sJ*Y7$,kCGvX49V}F6I"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="w,YW]D+-$7JxsTj`+@=c"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="h.yknYoanGC,l]Ls$Zf#" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="7MxqkTlMbmFw5^VqrD!)"><field name="TEXT">evolution rate =
+        </field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="PDYT}P`T;D6WuU9Jozr:"
+        inline="true"><field name="methodName">evolutionRate</field><value
+        name="itemName"><shadow type="oh_item" id="7J,DJU9JJ8D2.PK2rOYs"><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id="/vNX(8+:+^4*f/uoe=+?"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="dayInfo"><shadow type="oh_zdt_plusminus"
+        id="_XY`:P$(gVk%+zA11hvA"><field name="plusminus">minus</field><field
+        name="period">Hours</field><value name="offset"><shadow
+        type="math_number" id="CZAx(A;*G]}gW*-yKv9/"><field
+        name="NUM">1</field></shadow></value></shadow><block
+        type="oh_zdt_plusminus" id="-vJGTGw9pjq%GUXhHH~z"><field
+        name="plusminus">minus</field><field name="period">Hours</field><value
+        name="offset"><shadow type="math_number"
+        id=".f(f~y/J[e7M(0^h;Myv"><field
+        name="NUM">5</field></shadow></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="L*V(]?4~eD-=AE?JF.%{"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="[3PC~BH7U9I,}`XI7:3E"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="3WW86s:*TXR0/J|4q:+=" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="T;n)cOcJ@z1mq282M:Xp"><field name="TEXT">minimum =
+        </field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="Nh/`-%c7hx4hdj:|oe4,"
+        inline="true"><field name="methodName">minimumSince</field><value
+        name="itemName"><shadow type="oh_item" id="oJG^6@_2(J7k2p7Ofc[+"><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id="hj~t!aL^e=Ht5?]l7(N_"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="dayInfo"><shadow type="oh_zdt_plusminus"
+        id="3#};)^=E7a2GJxuqm#oV"><field name="plusminus">minus</field><field
+        name="period">Hours</field><value name="offset"><shadow
+        type="math_number" id="dYW%U_W$tC0HxvFvOLxa"><field
+        name="NUM">1</field></shadow></value></shadow><block
+        type="oh_zdt_plusminus" id="Zg]^ireXBbA~y$[V?fu5"><field
+        name="plusminus">minus</field><field name="period">Minutes</field><value
+        name="offset"><shadow type="math_number"
+        id="g~+]m{{{gBx8/dT[;J4O"><field
+        name="NUM">5</field></shadow></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="V`62@t;d$zdhpMO/NU@F"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Ao|N@([(W#5VIsqZvg?N"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id=";?cQ49=R!BXc/!whHo[#" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="P7tec_OjNm~7V`,c_9[Q"><field name="TEXT">maximum =
+        </field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="Xbu2iXA-ht^Ph@+e]Tif"
+        inline="true"><field name="methodName">maximumSince</field><value
+        name="itemName"><shadow type="oh_item" id="7~WIR1}vX#tZqK$4c.y{"><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id="zpX94AZ$VUoZ}h(fq@Q7"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="dayInfo"><shadow type="oh_zdt_plusminus"
+        id="`M~84Ke~h#*`3E11[:VJ"><field name="plusminus">minus</field><field
+        name="period">Hours</field><value name="offset"><shadow
+        type="math_number" id="hr^I.J(xZt*cftL`o4mz"><field
+        name="NUM">1</field></shadow></value></shadow><block
+        type="oh_zdt_plusminus" id="t9~esnA?mL]o6Yo:P2Dy"><field
+        name="plusminus">minus</field><field name="period">Minutes</field><value
+        name="offset"><shadow type="math_number"
+        id="]nRmb=agSYtoKZh0f_#h"><field
+        name="NUM">5</field></shadow></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="-)g-piQ3(P-h11#!!pm6"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="siM^NL66)mqnGDB6J}-,"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="3eRCA^}pBCA|~n#/NzJ/" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="O52|ESxxq%#(9j~]=KWh"><field name="TEXT">sum
+        =</field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="#iu`s=n+*1dvXQMa;jp4"
+        inline="true"><field name="methodName">sumSince</field><value
+        name="itemName"><shadow type="oh_item" id="O0#!-X#k;U)Z{/,-I.LF"><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id="[83@H1=$Pzn+kYVxDf0j"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="dayInfo"><shadow type="oh_zdt_plusminus"
+        id="GMb}NZl/KIWcH[/sp5`Z"><field name="plusminus">minus</field><field
+        name="period">Hours</field><value name="offset"><shadow
+        type="math_number" id="w3*q/gLZ07gbI0;13K=h"><field
+        name="NUM">1</field></shadow></value></shadow><block
+        type="oh_zdt_plusminus" id="D.0e@pro4br0H#^nE*x@"><field
+        name="plusminus">minus</field><field name="period">Minutes</field><value
+        name="offset"><shadow type="math_number"
+        id="_sO%XaY_ImC8ch|UUw!g"><field
+        name="NUM">5</field></shadow></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="5W,l|84]Un9{)+DcxuFH"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Ry[CQ+v{LBcqc3IWeoxd"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="VpS|ry#^*8r2:=W;G9|a" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="z#r0[L}4v~bw2-1_=f*!"><field name="TEXT">previous (no skip)
+        =</field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="({IwdbfA6H3?A9ZB5x|b"
+        inline="true"><field name="methodName">previousState</field><value
+        name="itemName"><shadow type="oh_item" id="ifFih.kVcBxhRU[P/n*7"><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id="t9W~|rprtHKu(j{wi(H]"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="skipPrevious"><block type="logic_boolean"
+        id="AzG64QHNg%9G@M{JIl*a"><field
+        name="BOOL">FALSE</field></block></value></block></value></block></value><next><block
+        type="oh_log" id="u:W2N[%~Zh1OH=uu1v#+"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Ry[CQ+v{LBcqc3IWeoxd"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="[a1~etwy1:jN5prWn^r`" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id=":SnB5gY^pTZA*CKA[~ch"><field name="TEXT">previous time (no skip)=
+        </field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="F_B6O=3O1A$euTg$wSKz"
+        inline="true"><field name="methodName">previousStateTime</field><value
+        name="itemName"><shadow type="oh_item" id="ifFih.kVcBxhRU[P/n*7"><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id="y*U[6xIc*(hCG,iR}Yd#"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="skipPrevious"><block type="logic_boolean"
+        id="ze8)`w0kMN;.Xz/l:%;d"><field
+        name="BOOL">FALSE</field></block></value></block></value></block></value><next><block
+        type="oh_log" id="wB(2M1qtLeoN8Gd,nr1t"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Ry[CQ+v{LBcqc3IWeoxd"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="xHH=j2vqPO=WB#rm_4pf" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="68M%0q1TR*8KrBo#X!6E"><field name="TEXT">previous
+        (skip)=</field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="a==Aa4kF8h5Bd3!D:NjT"
+        inline="true"><field name="methodName">previousState</field><value
+        name="itemName"><shadow type="oh_item" id="ifFih.kVcBxhRU[P/n*7"><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id="XC$EuWhTdG#%(6e?)urh"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="skipPrevious"><block type="logic_boolean"
+        id="3of/9ti}EeI;If7SfrJD"><field
+        name="BOOL">TRUE</field></block></value></block></value></block></value><next><block
+        type="oh_log" id="nNM=4#X_b5T]B,|_N,KF"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Ry[CQ+v{LBcqc3IWeoxd"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="n12J!;|f`fFFK_TASiQ1" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="@8;NAU;GL8!h;G:T9C}0"><field name="TEXT">previous time (skip)
+        =</field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="zZ.mqCY?}TF[-L`%{Zw-"
+        inline="true"><field name="methodName">previousStateTime</field><value
+        name="itemName"><shadow type="oh_item" id="ifFih.kVcBxhRU[P/n*7"><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id="mwqwh`^tu9.LR6gT(dEg"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="skipPrevious"><block type="logic_boolean"
+        id="5%7Z0$LHTf}9bjd``TNl"><field
+        name="BOOL">TRUE</field></block></value></block></value></block></value><next><block
+        type="oh_log" id="i[^fEDFHGysEMBO;:HzP"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="{$$.;],)R)!muq2~!zgs"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="I*1R6_2hjur[58A|/KR@" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id=";OW)iPEETRu?l$5[}2Os"><field name="TEXT">previous
+        =</field></block></value><value name="ADD1"><block
+        type="oh_get_persistvalue" id="2quEKVse.-icignW!_`R"
+        inline="true"><field name="methodName">averageSince</field><value
+        name="itemName"><shadow type="oh_item" id="_l_DL:=/Zzd^]CAXKf3["><field
+        name="itemName">WZ_Temperature</field></shadow><block type="oh_item"
+        id="NvmvISaI8ZT9b[x2HKfV"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="dayInfo"><block type="oh_zdt_plusminus"
+        id="IFU.w[dFvmQgx,VhiYQ?"><field name="plusminus">minus</field><field
+        name="period">Minutes</field><value name="offset"><shadow
+        type="math_number" id="iJ!=0Aodb9VXCMjt!]dO"><field
+        name="NUM">5</field></shadow></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="i{HRGRwo9fRV2@yoh#M%"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="+*jO_~Q1dfuDgG75vk@x"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="D14D.+cAYz`Ve4J*@8^," inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="zpEYvuZ~.xNbG^_$w!F0"><field name="TEXT">last updated date
+        =</field></block></value><value name="ADD1"><block
+        type="oh_get_persistence_lastupdate" id="B=iad_dLHSDs7T2!wH_f"><value
+        name="itemName"><shadow type="oh_item" id="jV)CQ.4B+1*Wn/e~]P3)"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="(t|sMnDj)tGGR_#NhDCl"><field
+        name="itemName">Outside_Temp</field></block></value></block></value></block></value><next><block
+        type="oh_log" id="m6mORmvBKF*w?(;U!*3."><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="ajV41{s8v32/]1aA/!)z"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="Fk@]hsD4A$Wa!H,8xQZD" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="%/0iUg$Je~$oGS4DN704"><field name="TEXT">Outside temp has changed
+        within the last 1 hour?</field></block></value><value name="ADD1"><block
+        type="oh_persist_changed" id="0J=W3:Va=^Drpv=]:O5P" inline="true"><field
+        name="methodName">changedSince</field><value name="itemName"><shadow
+        type="oh_item" id="4|/pzKj6gg$@C#SUo_dL"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="bioQ}HL4|jVjLNirOv^h"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="dayInfo"><shadow type="oh_zdt_plusminus"
+        id="QbZ.wB)_m}tLb42zKMJ#"><field name="plusminus">minus</field><field
+        name="period">Hours</field><value name="offset"><shadow
+        type="math_number" id="-l^.wT:+93gIwCV[Jc{N"><field
+        name="NUM">1</field></shadow></value></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="LXxi$I6V^W+HH#h,k=VE"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="ajV41{s8v32/]1aA/!)z"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="aE}zc|(u6#y4t4qdkG1w" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="}Uu-OBGYkofj9zKo1{Pz"><field name="TEXT">Outside temp has updated
+        within the last 1 hour?</field></block></value><value name="ADD1"><block
+        type="oh_persist_changed" id="MHuA-i%|GJsU.6=R.mxw" inline="true"><field
+        name="methodName">updatedSince</field><value name="itemName"><shadow
+        type="oh_item" id="4|/pzKj6gg$@C#SUo_dL"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="fpUw)88o+ndnw7#),P!/"><field
+        name="itemName">Outside_Temp</field></block></value><value
+        name="dayInfo"><shadow type="oh_zdt_plusminus"
+        id="SjYr0rHzYC%UQ4`_pEg("><field name="plusminus">minus</field><field
+        name="period">Hours</field><value name="offset"><shadow
+        type="math_number" id="7yVb|(mF}LY2#Jz%V;#!"><field
+        name="NUM">1</field></shadow></value></shadow></value></block></value></block></value></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>
+      type: application/javascript
+      script: >
+        var persistence =
+        Java.type('org.openhab.core.persistence.extensions.PersistenceExtensions');
+
+
+        var dtf = Java.type("java.time.format.DateTimeFormatter");
+
+
+        var zdt = Java.type("java.time.ZonedDateTime");
+
+
+        function getZonedDateTime(datetime) {
+          datetime = String(datetime).replace('T', ' ')
+          var regex_time_min =         /^\d{2}:\d{2}$/;
+          var regex_time_sec =         /^\d{2}:\d{2}:\d{2}$/;
+          var regex_date =             /^\d{4}-\d{2}-\d{2}$/;
+          var regex_date_time_min =    /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
+          var regex_date_time_sec =    /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
+          var regex_date_time_sec_tz = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/;
+          var regex_date_time_ms =     /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}\.\d{3}$/;
+          var regex_date_time_us =     /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}\.\d{6}$/;
+          var regex_date_time_ms_tz =  /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}\.\d{3}[+-]\d{2}:\d{2}$/;
+          var regex_date_time_us_tz =  /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}\.\d{6}[+-]\d{2}:\d{2}$/;
+          var regex_oh =               /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}\.\d{3}[+-]\d{4}$/;
+          var now = zdt.now();
+          var now_year = now.getYear();
+          var now_month = now.getMonthValue();
+          var now_day = now.getDayOfMonth();
+          var today = '' + now_year;
+          today += '-' + ('0' + now_month).slice(-2);
+          today += '-' + ('0' + now_day).slice(-2)+' ';
+          switch (true) {
+            case regex_time_min.test(datetime): return zdt.parse(today + datetime + ':00+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));
+            case regex_time_sec.test(datetime): return zdt.parse(today + datetime + '+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));
+            case regex_date.test(datetime): return zdt.parse(datetime + ' 00:00:00+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));
+            case regex_date_time_min.test(datetime): return zdt.parse(datetime + ':00+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));
+            case regex_date_time_sec.test(datetime): return zdt.parse(datetime + '+00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));
+            case regex_date_time_sec_tz.test(datetime): return zdt.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ssz'));
+            case regex_date_time_ms.test(datetime): return zdt.parse(datetime + ' +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSS z'));
+            case regex_date_time_us.test(datetime): return zdt.parse(datetime + ' +00:00', dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSSS z'));
+            case regex_date_time_ms_tz.test(datetime): return zdt.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSz'));
+            case regex_date_time_us_tz.test(datetime): return zdt.parse(datetime, dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSSSSz'));
+            case regex_oh.test(datetime): return zdt.parse(datetime.slice(0,26) + ':' + datetime.slice(26,28), dtf.ofPattern('yyyy-MM-dd HH:mm:ss.SSSSz'));
+            default: return zdt.parse(datetime);
+          }
+        }
+
+
+        function createZonedDateTime(year, month, day, hour, minute, second, nano, offsetString, timezoneString) {
+          stringToParse = '' + year;
+          stringToParse += '-' + ('0' + month).slice(-2);
+          stringToParse += '-' + ('0' + day).slice(-2);
+          stringToParse += 'T' + ('0' + hour).slice(-2);
+          stringToParse += ':' + ('0' + minute).slice(-2);
+          stringToParse += ':' + ('0' + second).slice(-2);
+          stringToParse += '.' + nano + offsetString + '[' + timezoneString + ']';
+          return stringToParse;
+        }
+
+
+        var logger = Java.type('org.slf4j.LoggerFactory').getLogger('org.openhab.rule.' + ctx.ruleUID);
+
+
+
+        logger.info(('average = ' + String(persistence.averageSince(itemRegistry.getItem('Outside_Temp'), zdt.now().minusMinutes(5)))));
+
+        logger.info(('delta = ' + String(persistence.deltaSince(itemRegistry.getItem('Outside_Temp'), zdt.now().minusHours(5)))));
+
+        logger.info(('deviation = ' + String(persistence.deviationSince(itemRegistry.getItem('Outside_Temp'), zdt.now().minusHours(5)))));
+
+        logger.info(('variance = ' + String(persistence.varianceSince(itemRegistry.getItem('Outside_Temp'), zdt.now().minusHours(5)))));
+
+        logger.info(('evolution rate = ' + String(persistence.evolutionRate(itemRegistry.getItem('Outside_Temp'), zdt.now().minusHours(5)))));
+
+        logger.info(('minimum = ' + String(persistence.minimumSince(itemRegistry.getItem('Outside_Temp'), zdt.now().minusMinutes(5)).getState())));
+
+        logger.info(('maximum = ' + String(persistence.maximumSince(itemRegistry.getItem('Outside_Temp'), zdt.now().minusMinutes(5)).getState())));
+
+        logger.info(('sum =' + String(persistence.sumSince(itemRegistry.getItem('Outside_Temp'), zdt.now().minusMinutes(5)))));
+
+        logger.info(('previous (no skip) =' + String(((persistence.previousState(itemRegistry.getItem('Outside_Temp'),false)) ? persistence.previousState(itemRegistry.getItem('Outside_Temp'),false).getState() : 'undefined'))));
+
+        logger.info(('previous time (no skip)= ' + String(((persistence.previousState(itemRegistry.getItem('Outside_Temp'),false)) ? persistence.previousState(itemRegistry.getItem('Outside_Temp'),false).getTimestamp() : 'undefined'))));
+
+        logger.info(('previous (skip)=' + String(((persistence.previousState(itemRegistry.getItem('Outside_Temp'),true)) ? persistence.previousState(itemRegistry.getItem('Outside_Temp'),true).getState() : 'undefined'))));
+
+        logger.info(('previous time (skip) =' + String(((persistence.previousState(itemRegistry.getItem('Outside_Temp'),true)) ? persistence.previousState(itemRegistry.getItem('Outside_Temp'),true).getTimestamp() : 'undefined'))));
+
+        logger.info(('previous =' + String(persistence.averageSince(itemRegistry.getItem('Outside_Temp'), zdt.now().minusMinutes(5)))));
+
+        logger.info(('last updated date =' + String(persistence.lastUpdate(itemRegistry.getItem('Outside_Temp')))));
+
+        logger.info(('Outside temp has changed within the last 1 hour?' + String(persistence.changedSince(itemRegistry.getItem('Outside_Temp'), zdt.now().minusHours(1)))));
+
+        logger.info(('Outside temp has updated within the last 1 hour?' + String(persistence.updatedSince(itemRegistry.getItem('Outside_Temp'), zdt.now().minusHours(1)))));
+    type: script.ScriptAction

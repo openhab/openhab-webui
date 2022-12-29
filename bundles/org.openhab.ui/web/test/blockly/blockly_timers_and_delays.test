@@ -1,0 +1,126 @@
+configuration: {}
+triggers: []
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: <xml
+        xmlns="https://developers.google.com/blockly/xml"><variables><variable
+        id="JfWms,:g{Z??DM8U:/Hq">counter</variable></variables><block
+        type="oh_log" id="hXA.)8kwV?JB7Mt1/v[H" x="111" y="95"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="1!Q}L$ZI-/mZ;PUn`tKW"><field name="TEXT">wait a
+        second...</field></shadow></value><next><block type="oh_sleep"
+        id="SG`EydD/Q89_1Yz3^hRu"><field
+        name="milliseconds">1000</field><next><block type="oh_log"
+        id="}m2`3d:mX=YX69@t.g8,"><field name="severity">info</field><value
+        name="message"><shadow type="text" id="i,$qpJ}VY#XVX%)0EHD]"><field
+        name="TEXT">1 sec later</field></shadow></value><next><block
+        type="oh_timer" id="L0ZJqi-5L0gY_nsh8~@x"><field
+        name="delayUnits">plusSeconds</field><value name="delay"><shadow
+        type="math_number" id="$-NTfvfs8{ScZetWB}w0"><field
+        name="NUM">2</field></shadow></value><value name="timerName"><shadow
+        type="text" id="-3Qcn^EF`pB8t`VaOYmG"><field
+        name="TEXT">twosectimer</field></shadow></value><statement
+        name="timerCode"><block type="oh_log" id="CvTv|{7tGF%0oZy4;wLD"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="mZ+6@,bU0u[DgeN@6rL$"><field name="TEXT">after two secs in
+        timer</field></shadow></value><next><block type="oh_timer"
+        id="cDVv5}wY2qwBgW!m-DO;"><field
+        name="delayUnits">plusSeconds</field><value name="delay"><shadow
+        type="math_number" id="^Y|kD_p)3d4:6j.$5X]J"><field
+        name="NUM">2</field></shadow></value><value name="timerName"><shadow
+        type="text" id="JRj5jQEt_Mm3y|NwP){+"><field
+        name="TEXT">twosectimer2</field></shadow></value><statement
+        name="timerCode"><block type="oh_log" id="-Aw9,Pc6YVU*,i|C3Nyq"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id=",j,c0|B1(4=do](|CoZ9"><field name="TEXT">after two secs in timer in
+        timer</field></shadow></value></block></statement></block></next></block></statement></block></next></block></next></block></next></block><block
+        type="variables_set" id=",DQlKHZC))UD5!s;?lds" x="109" y="391"><field
+        name="VAR" id="JfWms,:g{Z??DM8U:/Hq">counter</field><value
+        name="VALUE"><block type="math_number" id="OnoC``_|*fv4f;4V7s]h"><field
+        name="NUM">3</field></block></value><next><block type="oh_log"
+        id="L1^VhcOhfw;i{|Rd~yq="><field name="severity">info</field><value
+        name="message"><shadow type="text" id="!yvV^NxoMjzW?[U,~VJP"><field
+        name="TEXT">timer triggers in 2
+        seconds</field></shadow></value><next><block type="oh_timer"
+        id="1lo[Hg7^N[hNl=a)2UWp"><field
+        name="delayUnits">plusSeconds</field><value name="delay"><shadow
+        type="math_number" id=".v1F%47|?Z++/%@:jn.s"><field
+        name="NUM">2</field></shadow></value><value name="timerName"><shadow
+        type="text" id="XRQ+6si[Q]s!ck.g0Yi5"><field
+        name="TEXT">reschuledTimer</field></shadow></value><statement
+        name="timerCode"><block type="oh_log" id=".GSTV=xHzVm5#o~Z/m`s"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Z[LRR:}9j!(qCEJ6Oo3h"><field name="TEXT">timer triggered, reschedule
+        after 5 seconds</field></shadow></value><next><block type="math_change"
+        id="Ov-aD(5|+Cs*o=D-0G48"><field name="VAR"
+        id="JfWms,:g{Z??DM8U:/Hq">counter</field><value name="DELTA"><shadow
+        type="math_number" id="J)kYdaG,+?rhCbY.e=aD"><field
+        name="NUM">-1</field></shadow></value><next><block type="controls_if"
+        id="bNhqnA!siYi28popZ(Ye"><value name="IF0"><block type="logic_compare"
+        id="C/`QF4oORq=|(GnY4bw;"><field name="OP">GT</field><value
+        name="A"><block type="variables_get" id="Vr{p)41MXO]%?qI5+It4"><field
+        name="VAR"
+        id="JfWms,:g{Z??DM8U:/Hq">counter</field></block></value><value
+        name="B"><block type="math_number" id="8ljB[dy4Ef?Dq8Jobp+j"><field
+        name="NUM">0</field></block></value></block></value><statement
+        name="DO0"><block type="oh_timer_reschedule"
+        id="gx$7yRIbA:`2o0|%SehD"><field
+        name="delayUnits">plusSeconds</field><value name="delay"><shadow
+        type="math_number" id="C|y;e*`-S..CO6:F!U3Y"><field
+        name="NUM">3</field></shadow></value><value name="timerName"><shadow
+        type="text" id="NEZeGW2l?g^vHO1HrK9P"><field
+        name="TEXT">reschuledTimer</field></shadow></value></block></statement></block></next></block></next></block></statement></block></next></block></next></block></xml>
+      type: application/javascript
+      script: >
+        var runtime = require('@runtime');
+
+        var itemRegistry = runtime.itemRegistry;
+
+        var events = runtime.events;
+
+
+        var counter;
+
+
+        var thread = Java.type('java.lang.Thread')
+
+
+
+        console.info('wait a second...');
+
+        thread.sleep(1000);
+
+        console.info('1 sec later');
+
+        if (cache.private.exists('twosectimer') === false || cache.private.get('twosectimer').hasTerminated()) {
+          cache.private.put('twosectimer', actions.ScriptExecution.createTimer('twosectimer', time.ZonedDateTime.now().plusSeconds(2), function () {
+            console.info('after two secs in timer');
+            if (cache.private.exists('twosectimer2') === false || cache.private.get('twosectimer2').hasTerminated()) {
+              cache.private.put('twosectimer2', actions.ScriptExecution.createTimer('twosectimer2', time.ZonedDateTime.now().plusSeconds(2), function () {
+                console.info('after two secs in timer in timer');
+                cache.private.remove('twosectimer2');
+              }));
+            };
+            cache.private.remove('twosectimer');
+          }));
+        };
+
+
+        counter = 3;
+
+        console.info('timer triggers in 2 seconds');
+
+        if (cache.private.exists('reschuledTimer') === false || cache.private.get('reschuledTimer').hasTerminated()) {
+          cache.private.put('reschuledTimer', actions.ScriptExecution.createTimer('reschuledTimer', time.ZonedDateTime.now().plusSeconds(2), function () {
+            console.info('timer triggered, reschedule after 5 seconds');
+            counter = (typeof counter == 'number' ? counter : 0) + -1;
+            if (counter > 0) {
+              if (cache.private.exists('reschuledTimer')) { cache.private.get('reschuledTimer').reschedule(time.ZonedDateTime.now().plusSeconds(3)); };
+            }
+            cache.private.remove('reschuledTimer');
+          }));
+        };
+    type: script.ScriptAction

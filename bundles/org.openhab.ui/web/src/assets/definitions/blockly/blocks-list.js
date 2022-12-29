@@ -29,7 +29,7 @@ export default function (f7, isGraalJs) {
   javascriptGenerator['oh_list_concatenate'] = function (block) {
     const list1 = javascriptGenerator.valueToCode(block, 'list1', javascriptGenerator.ORDER_ATOMIC)
     const list2 = javascriptGenerator.valueToCode(block, 'list2', javascriptGenerator.ORDER_ATOMIC)
-    const code = list1 + '.concat(' + list2 + ');\n'
+    const code = list1 + '.concat(' + list2 + ')'
     return [code, 0]
   }
 }

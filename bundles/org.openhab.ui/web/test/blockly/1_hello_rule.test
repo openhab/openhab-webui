@@ -1,0 +1,62 @@
+configuration: {}
+triggers: []
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: <xml xmlns="https://developers.google.com/blockly/xml"><block
+        type="oh_log" id="~X;F-}-~7AN.;PB7.hKv" x="25" y="133"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="0:_hQztz(sxmkW0;Q=8K"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="Uk0pQmDVS)fBo~yFEb]J"><mutation
+        items="6"></mutation><value name="ADD0"><block type="text"
+        id="!mV)UcyQ|9k0e:SYovK%"><field name="TEXT">Hi from
+        </field></block></value><value name="ADD1"><block type="oh_context_info"
+        id="cn/ACd1VI8F8evTzwV/D"><field
+        name="contextInfo">ruleUID</field></block></value><value
+        name="ADD2"><block type="text" id="eMDPu-tz5mufI5h!KF*6"><field
+        name="TEXT">. Calling </field></block></value><value name="ADD3"><block
+        type="oh_context_attribute" id="W?HvWU0yGL+C]Wj,wtTw"><value
+        name="key"><shadow type="text" id="(lU/JIqttKW/g6GLNv/^"><field
+        name="TEXT">name1</field></shadow></value></block></value><value
+        name="ADD4"><block type="text" id="66KUnED2g;GvwadRKsdH"><field
+        name="TEXT"> and </field></block></value><value name="ADD5"><block
+        type="oh_context_attribute" id="130}JS049Zo6#7#qA0{`"><value
+        name="key"><shadow type="text" id="$%yBZ*Fh=^(:dn!]o6(Z"><field
+        name="TEXT">name2</field></shadow></value></block></value></block></value></block><block
+        type="controls_if" id="}JV.%a:G!oQQSd`O,=-0" x="56" y="323"><mutation
+        else="1"></mutation><value name="IF0"><block
+        type="oh_check_undefined_value" id="To|m@.%m%Efsr4.~)PBD"><field
+        name="cacheType">.shared</field><value name="key"><shadow type="text"
+        id="AxRYh[hii#a9CTegcj:("><field
+        name="TEXT">intruder</field></shadow></value></block></value><statement
+        name="DO0"><block type="oh_log" id="P,(=[.dO%W-55!i4/Qmd"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="q[D@JYdoo,)^|,UvT(-!"><field name="TEXT">No intruder
+        found</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="y|%+6_UbpaMeBt#K%]dv"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="c[oE0f0bFR$*00pfLf(n"><field name="TEXT">abc</field></shadow><block
+        type="oh_get_value" id="|97Om2v|YhxF/W3~@B#,"><field
+        name="cacheType">.shared</field><value name="key"><shadow type="text"
+        id=".K%_@t.M!UJlqF,bmW/z"><field
+        name="TEXT">intruder</field></shadow></value></block></value></block></statement></block></xml>
+      type: application/javascript;version=ECMAScript-2021
+      script: >
+        var runtime = require('@runtime');
+
+        var itemRegistry = runtime.itemRegistry;
+
+        var events = runtime.events;
+
+
+        console.info((['Hi from ',ctx.ruleUID,'. Calling ',ctx['name1'],' and ',ctx['name2']].join('')));
+
+
+        if (cache.shared.exists('intruder') === false) {
+          console.warn('No intruder found');
+        } else {
+          console.info((cache.shared.get('intruder')));
+        }
+    type: script.ScriptAction
