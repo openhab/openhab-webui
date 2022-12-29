@@ -253,7 +253,6 @@ export default function (f7, isGraalJs) {
   * Allows input as string in the format yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm
   * Blockly part
   */
-
   Blockly.Blocks['oh_zdt_fromItem'] = {
     init: function () {
       this.appendValueInput('itemName')

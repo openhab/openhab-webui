@@ -155,7 +155,6 @@ export default function (f7, isGraalJs) {
         .appendField('get ')
         .appendField(dropdown, 'attributeName')
         .appendField('of item')
-
       this.setInputsInline(false)
       this.setOutput(true, 'String')
       this.setColour(0)
