@@ -14,27 +14,36 @@
       </category>
 
       <category name="Units of Measurement" colour="%{BKY_MATH_HUE}" v-if="{isGraalJs}">
-        <block type="oh_uom_arithmetic">
-          <value name="first">
+        <block type="oh_quantity">
+          <value name="quantity">
             <shadow type="text">
               <field name="TEXT">10 W</field>
-            </shadow>
-          </value>
-          <value name="second">
-            <shadow type="text">
-              <field name="TEXT">1 kW</field>
             </shadow>
           </value>
         </block>
-        <block type="oh_uom_compare">
+        <block type="oh_quantity_arithmetic">
           <value name="first">
-            <shadow type="text">
-              <field name="TEXT">10 W</field>
-            </shadow>
+            <shadow type="oh_quantity" />
           </value>
           <value name="second">
+            <shadow type="oh_quantity" />
+          </value>
+        </block>
+        <block type="oh_quantity_compare">
+          <value name="first">
+            <shadow type="oh_quantity" />
+          </value>
+          <value name="second">
+            <shadow type="oh_quantity" />
+          </value>
+        </block>
+        <block type="oh_quantity_to_unit">
+          <value name="quantity">
+            <shadow type="oh_quantity" />
+          </value>
+          <value name="unit">
             <shadow type="text">
-              <field name="TEXT">1 kW</field>
+              <field name="TEXT">kW</field>
             </shadow>
           </value>
         </block>
