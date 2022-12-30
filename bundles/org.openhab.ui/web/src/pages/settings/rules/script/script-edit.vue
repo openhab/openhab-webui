@@ -291,7 +291,7 @@ export default {
       if (!this.isEditable) return
       if (this.rule.status.status === 'RUNNING') {
         return this.$f7.toast.create({
-          text: 'Rule cannot be updated while running, please wait!',
+          text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be updated while running, please wait!`,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
@@ -349,7 +349,7 @@ export default {
       if (this.createMode) return
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
         return this.$f7.toast.create({
-          text: `Rule cannot be run ${(this.rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is disabled'}!`,
+          text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run ${(this.rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
