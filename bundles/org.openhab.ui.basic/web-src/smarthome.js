@@ -929,9 +929,9 @@
 				var stateAndUnit = itemState.split(" ");
 				_t.value = stateAndUnit[0] * 1;
 				_t.unit = stateAndUnit[1];
-				} else {
-					_t.value = itemState * 1;
-					}
+			} else {
+				_t.value = itemState * 1;
+			}
 			_t.valueNode.innerHTML = value;
 		};
 
@@ -1542,6 +1542,10 @@
 			if (_t.locked) {
 				_t.reloadIcon(itemState);
 				return;
+			}
+			if (value.indexOf(" ") > 0) {
+				var valueAndUnit = value.split(" ");
+				_t.unit = valueAndUnit[1];
 			}
 			_t.input.value = itemState;
 			_t.input.MaterialSlider.change();
