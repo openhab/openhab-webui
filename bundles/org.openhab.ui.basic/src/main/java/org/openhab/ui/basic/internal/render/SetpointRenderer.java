@@ -14,13 +14,17 @@ package org.openhab.ui.basic.internal.render;
 
 import java.math.BigDecimal;
 
+import javax.measure.Unit;
+
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
+import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.model.sitemap.sitemap.Setpoint;
 import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.types.State;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
@@ -70,6 +74,14 @@ public class SetpointRenderer extends AbstractWidgetRenderer {
         }
 
         String unit = getUnitForWidget(w);
+        if (unit == null) {
+            // Search the unit in the item state
+            State state = itemUIRegistry.getState(w);
+            if (state instanceof QuantityType<?>) {
+                Unit<?> stateUnit = ((QuantityType<?>) state).getUnit();
+                unit = stateUnit.toString();
+            }
+        }
 
         String snippet = getSnippet("setpoint");
 
@@ -78,9 +90,7 @@ public class SetpointRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%minValue%", minValue.toString());
         snippet = snippet.replace("%maxValue%", maxValue.toString());
         snippet = snippet.replace("%step%", step.toString());
-        if (unit != null) {
-            snippet = snippet.replace("%unit%", unit);
-        }
+        snippet = snippet.replace("%unit%", unit == null ? "" : unit);
 
         // Process the color tags
         snippet = processColor(w, snippet);
