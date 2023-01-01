@@ -123,8 +123,8 @@ export default {
   props: ['ruleId', 'moduleId', 'createMode'],
   data () {
     return {
-      GRAALJS_MIME_TYPE: 'application/javascript;version=ECMAScript-2021',
-      NASHORNJS_MIME_TYPE: 'application/javascript',
+      GRAALJS_MIME_TYPE: 'application/javascript',
+      NASHORNJS_MIME_TYPE: 'application/javascript;version=ECMAScript-5.1',
       newScript: this.createMode,
       ready: false,
       loading: false,
