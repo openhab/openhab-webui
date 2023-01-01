@@ -231,9 +231,9 @@ export default {
           this.$oh.api.get('/rest/items').then((data) => { this.$set(this, 'itemsCache', data) })
         }
         const server = new _CodeMirror.TernServer({
-          defs: (this.mode.indexOf('version=ECMAScript-202') > 0) ? [EcmascriptDefs, OpenhabJsDefs] : [EcmascriptDefs, NashornDefs],
+          defs: (this.mode.indexOf('version=ECMAScript-5.1') > 0) ? [EcmascriptDefs, NashornDefs] : [EcmascriptDefs, OpenhabJsDefs],
           plugins: (this.ternAutocompletionHook) ? { 'openhab-tern-hook': {} } : undefined,
-          ecmaVersion: (this.mode.indexOf('version=ECMAScript-202') > 0) ? 6 : 5
+          ecmaVersion: (this.mode.indexOf('version=ECMAScript-5.1') > 0) ? 5 : 6
         })
         extraKeys = {
           'Ctrl-Space': function (cm) { server.complete(cm) },
