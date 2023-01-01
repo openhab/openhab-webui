@@ -81,7 +81,7 @@ export const OhToggleDefinition = () => new WidgetDefinition('oh-toggle', 'Toggl
   .params([...ToggleParameters(), VariableParameter, VariableKeyParameter])
 
 import TrendParameters from './trend.js'
-export const OhTrendDefinition = () => new WidgetDefinition('oh-trend', 'Trend line', 'Trend line to display the overall recent evoluation of an item')
+export const OhTrendDefinition = () => new WidgetDefinition('oh-trend', 'Trend line', 'Trend line to display the overall recent evolution of an item')
   .params(TrendParameters())
 
 import WebFrameParameters from './webframe.js'
