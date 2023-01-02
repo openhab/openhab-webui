@@ -24,6 +24,8 @@ export const OPEN_STATES = ['CLOSED', 'OPEN']
 
 export const PLAYBACK_OPERATIONS = ['Play', 'Pause', 'Next', 'Previous', 'FastForward', 'Rewind']
 
+export const STATE_DESCRIPTION_OPTIONS_LIMIT = 150
+
 export const TEMPERATURE_SCALES = ['CELSIUS', 'FAHRENHEIT']
 
 export const THERMOSTAT_MODES = ['OFF', 'HEAT', 'COOL', 'ECO', 'AUTO']
