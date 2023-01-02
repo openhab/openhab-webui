@@ -402,9 +402,9 @@ export default {
     loadData (useCredentials) {
       const useCredentialsPromise = (useCredentials) ? this.setBasicCredentials() : Promise.resolve()
       return useCredentialsPromise
-        .then(() => { return this.$oh.api.get('/rest/') })
+        .then(() => { return this.$oh.api.getWithUnwrappedErr('/rest/') })
         .catch((err) => {
-          if (err === 'Unauthorized' || err === 401) {
+          if (err.message === 'Unauthorized' || err.status === 401) {
             if (!useCredentials) {
               // try again with credentials
               this.loadData(true)
@@ -434,6 +434,17 @@ export default {
               )
             })
             return Promise.reject()
+          } else if (err.message === 'Found' || err.status === 302) {
+            if (err.xhr.HEADERS_RECEIVED > 0) {
+              const headersObj = {}
+              const headers = err.xhr.getAllResponseHeaders().trim().split(/[\r\n]+/).forEach((line) => {
+                const parts = line.split(':\t')
+                headersObj[parts[0]] = parts[1]
+              })
+              window.location.href = headersObj['location']
+            }
+          } else {
+            this.$f7.dialog.alert('openHAB REST API connection failed with error ' + err.message || err.status)
           }
         })
         .then((rootResponse) => {

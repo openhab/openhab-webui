@@ -30,6 +30,13 @@ export default {
   get (uri, data) {
     return wrapPromise(Framework7.request.promise.json(uri, data))
   },
+  getWithUnwrappedErr (uri, data) {
+    return new Promise((resolve, reject) => {
+      Framework7.request.promise.json(uri, data)
+        .then((data) => resolve(data.data))
+        .catch((err) => reject(err))
+    })
+  },
   getPlain (uri, data, contentType, responseType) {
     return wrapPromise(Framework7.request.promise({
       method: 'GET',
