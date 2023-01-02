@@ -441,7 +441,8 @@ export default {
                 const parts = line.split(':\t')
                 headersObj[parts[0]] = parts[1]
               })
-              window.location.href = headersObj['location']
+              // Redirect according to location header but modify URL arguments to redirect back to the UI and not the REST API after authentication
+              window.location.href = headersObj['location'].replace(window.location.href + 'rest', window.location.href)
             }
           } else {
             this.$f7.dialog.alert('openHAB REST API connection failed with error ' + err.message || err.status)
