@@ -24,6 +24,7 @@ const entertainmentAttributes = [
   'Input',
   'Playback',
   'PlaybackStop',
+  'PlaybackStep',
   'EqualizerBass',
   'EqualizerMidrange',
   'EqualizerTreble',
