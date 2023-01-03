@@ -4,10 +4,10 @@
       <f7-list>
         <ul>
           <f7-list-item
-            v-for="namespace in metadataNamespaces.filter((n) => item.metadata[n.name])" :key="namespace.name"
-            :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
+            v-for="namespace in item.metadata" :key="namespace"
+            :link="'/settings/items/' + item.name + '/metadata/' + namespace.id"
             :title="namespace.label"
-            :after="(item.metadata[namespace.name]) ? item.metadata[namespace.name].value : 'Not Set'" />
+            :after="(item.metadata[namespace.id]) ? item.metadata[namespace.id].value : 'Not Set'" />
         </ul>
       </f7-list>
     </f7-card-content>

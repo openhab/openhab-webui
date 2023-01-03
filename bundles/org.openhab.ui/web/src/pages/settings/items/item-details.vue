@@ -184,9 +184,18 @@ export default {
       this.$store.dispatch('stopTrackingStates')
     },
     load () {
-      this.$oh.api.get(`/rest/items/${this.itemName}?metadata=semantics,${MetadataNamespaces.map((n) => n.name).join(',')}`).then((data) => {
-        this.item = data
-        this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
+      let metadataNamespacesList = MetadataNamespaces.map((n) => n.name).join(',')
+      this.$oh.api.getPlain(`/rest/items/${this.itemName}/metadata/namespaces?exclude=${metadataNamespacesList}`, 'text/plain').then((customNamespaces) => {
+        this.$oh.api.get(`/rest/items/${this.itemName}?metadata=semantics,${metadataNamespacesList},${customNamespaces}`).then((data) => {
+          // map the labels of the known namespaces or add "custom:" to the user defined namespaces
+          Object.keys(data.metadata).forEach(namespace => {
+            let rs = MetadataNamespaces.find(ns => ns.name === namespace)
+            data.metadata[namespace].id = namespace
+            data.metadata[namespace].label = (rs === undefined) ? 'custom: ' + namespace : rs.label
+          })
+          this.item = data
+          this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
+        })
       })
     },
     deleteItem () {
