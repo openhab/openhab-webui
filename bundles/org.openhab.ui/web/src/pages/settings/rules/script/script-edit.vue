@@ -29,7 +29,7 @@
           <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" />
           <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" />
         </f7-segmented>
-        <f7-link v-if="isScriptRule" class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
+        <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
       </span>
     </f7-toolbar>
     <f7-icon v-if="ready && !newScript && (!isBlockly && !isEditable) || (blocklyCodePreview && isBlockly)" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray"
@@ -85,8 +85,8 @@
           </div>
         </f7-toolbar>
         <f7-block class="block-narrow">
-          <script-general-settings :createMode="newScript" :rule="rule" />
-          <f7-col v-if="isEditable">
+          <script-general-settings :createMode="newScript" :rule="rule" :isScriptRule="isScriptRule" :mode="mode" :languages="languages" @newLanguage="changeLanguage" />
+          <f7-col v-if="isEditable && isScriptRule">
             <f7-list>
               <f7-list-button color="red" @click="deleteRule">
                 Remove Script
@@ -189,20 +189,8 @@ export default {
         tags: ['Script']
       }
       this.mode = 'application/javascript+blockly'
-      this.$oh.api.get('/rest/module-types/script.ScriptAction').then((data) => {
-        this.$set(this, 'scriptModuleType', data)
-        this.$set(this, 'languages',
-          this.scriptModuleType.configDescriptions
-            .find((c) => c.name === 'type').options
-            .map((l) => {
-              return {
-                contentType: l.value,
-                name: l.label.split(' (')[0],
-                version: l.label.split(' (')[1].replace(')', '')
-              }
-            }))
-        this.ready = true
-      })
+      this.loadScriptModules()
+      this.ready = true
     },
     createScript () {
       if (!this.rule.uid) {
@@ -243,6 +231,22 @@ export default {
         this.load()
       })
     },
+    loadScriptModules () {
+      this.$oh.api.get('/rest/module-types/script.ScriptAction').then((data) => {
+        this.$set(this, 'scriptModuleType', data)
+        let languages = this.scriptModuleType.configDescriptions
+          .find((c) => c.name === 'type').options
+          .map((l) => {
+            return {
+              contentType: l.value,
+              name: l.label.split(' (')[0],
+              version: l.label.split(' (')[1].replace(')', '')
+            }
+          })
+        if (this.isBlockly) languages = languages.filter((l) => l.contentType.startsWith('application/javascript'))
+        this.$set(this, 'languages', languages)
+      })
+    },
     load () {
       if (this.loading) return
       this.loading = true
@@ -277,6 +281,8 @@ export default {
           this.script = triggerDescriptionComments + '\n' + this.script
         }
 
+        this.loadScriptModules()
+
         this.ready = true
         if (!this.eventSource) this.startEventSource()
       })
@@ -285,7 +291,7 @@ export default {
       if (!this.isEditable) return
       if (this.rule.status.status === 'RUNNING') {
         return this.$f7.toast.create({
-          text: 'Rule cannot be updated while running, please wait!',
+          text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be updated while running, please wait!`,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
@@ -300,29 +306,34 @@ export default {
         }
       }
       this.currentModule.configuration.script = this.script
+      this.currentModule.configuration.type = this.mode
       return this.$oh.api.put('/rest/rules/' + this.rule.uid, this.rule).then((data) => {
         this.dirty = false
         if (!noToast) {
           this.$f7.toast.create({
-            text: 'Rule updated',
+            text: (this.isScriptRule ? 'Script' : 'Rule') + ' updated',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         }
       }).catch((err) => {
         this.$f7.toast.create({
-          text: 'Error while saving rule: ' + err,
+          text: 'Error while saving: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       })
+    },
+    changeLanguage (contentType) {
+      if (this.createMode) return
+      this.mode = contentType
     },
     toggleDisabled () {
       if (this.createMode) return
       const enable = (this.rule.status.statusDetail === 'DISABLED')
       this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString()).then((data) => {
         this.$f7.toast.create({
-          text: (enable) ? 'Rule enabled' : 'Rule disabled',
+          text: (this.isScriptRule ? 'Script' : 'Rule') + (enable ? ' enabled' : ' disabled'),
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
@@ -338,13 +349,13 @@ export default {
       if (this.createMode) return
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
         return this.$f7.toast.create({
-          text: `Rule cannot be run ${(this.rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is disabled'}!`,
+          text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run ${(this.rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       }
       this.$f7.toast.create({
-        text: 'Running rule',
+        text: 'Running ' + (this.isScriptRule ? 'script' : 'rule'),
         destroyOnClose: true,
         closeTimeout: 2000
       }).open()
@@ -354,7 +365,7 @@ export default {
       savePromise.then(() => {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
           this.$f7.toast.create({
-            text: 'Error while running rule: ' + err,
+            text: 'Error while running: ' + err,
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
@@ -364,7 +375,7 @@ export default {
     deleteRule () {
       this.$f7.dialog.confirm(
         `Are you sure you want to delete ${this.rule.name}?`,
-        'Delete Rule',
+        'Delete ' + (this.isScriptRule ? 'Script' : 'Rule'),
         () => {
           this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
             this.$f7router.back('/settings/scripts/', { force: true })
