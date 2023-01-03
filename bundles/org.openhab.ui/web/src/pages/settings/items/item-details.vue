@@ -185,8 +185,8 @@ export default {
     },
     load () {
       let metadataNamespacesList = MetadataNamespaces.map((n) => n.name).join(',')
-      this.$oh.api.getPlain(`/rest/items/${this.itemName}/metadata/namespaces?exclude=${metadataNamespacesList}`, 'text/plain').then((customNamespaces) => {
-        this.$oh.api.get(`/rest/items/${this.itemName}?metadata=semantics,${metadataNamespacesList},${customNamespaces}`).then((data) => {
+      this.$oh.api.get(`/rest/items/${this.itemName}/metadata/namespaces`).then((itemNamespaces) => {
+        this.$oh.api.get(`/rest/items/${this.itemName}?metadata=${itemNamespaces.join(',')}`).then((data) => {
           // map the labels of the known namespaces or add "custom:" to the user defined namespaces
           Object.keys(data.metadata).forEach(namespace => {
             let rs = MetadataNamespaces.find(ns => ns.name === namespace)
