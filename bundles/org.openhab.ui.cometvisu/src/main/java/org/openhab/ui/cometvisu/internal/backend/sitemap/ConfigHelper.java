@@ -158,20 +158,18 @@ public class ConfigHelper {
         defaultStatus.setValue(" - <a href=\".\">Default Config</a>");
         statusbar.getStatus().add(defaultStatus);
 
-        if (this.app.getServlet().isPhpEnabled()) {
-            CDataStatus editStatus = new CDataStatus();
-            editStatus.setType("html");
-            editStatus.setCondition("!edit");
-            editStatus.setHrefextend("config");
-            editStatus.setValue(" - <a href=\"editor/\">Edit</a>");
-            statusbar.getStatus().add(editStatus);
+        CDataStatus editStatus = new CDataStatus();
+        editStatus.setType("html");
+        editStatus.setCondition("!edit");
+        editStatus.setHrefextend("config");
+        editStatus.setValue(" - <a cv-action=\"edit/\">Edit</a>");
+        statusbar.getStatus().add(editStatus);
 
-            CDataStatus checkStatus = new CDataStatus();
-            checkStatus.setType("html");
-            checkStatus.setHrefextend("config");
-            checkStatus.setValue("- <a href=\"check_config.php\">Check Config</a>");
-            statusbar.getStatus().add(checkStatus);
-        }
+        CDataStatus checkStatus = new CDataStatus();
+        checkStatus.setType("html");
+        checkStatus.setHrefextend("config");
+        checkStatus.setValue("- <a cv-action=\"validate\">Check Config</a>");
+        statusbar.getStatus().add(checkStatus);
 
         // add download link
         CDataStatus downloadConfig = new CDataStatus();

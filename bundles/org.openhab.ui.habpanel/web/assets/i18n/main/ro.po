@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: ro\n"
-"X-Crowdin-File: /master/web/assets/i18n/main/main.pot\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/main/main.pot\n"
+"X-Crowdin-File-ID: 534\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Romanian\n"
 "Language: ro_RO\n"
-"PO-Revision-Date: 2019-06-16 09:54\n"
+"PO-Revision-Date: 2022-12-11 11:15\n"
 
 #. Common term
 msgctxt "OK"
@@ -81,7 +81,7 @@ msgstr "Transparent"
 #. Common term
 msgctxt "openHAB Item"
 msgid "openHAB Item"
-msgstr "openHAB Item"
+msgstr "element openHAB"
 
 #. Common term (e.g. tooltip in the dashboard header toolbar)
 msgctxt "Speak"
@@ -148,15 +148,15 @@ msgctxt "tutorial.saveonserver"
 msgid "Save on the openHAB server when done!"
 msgstr "Când ai terminat, salvează pe serverul openHAB!"
 
-#. Displayed when no dashboard is present and editing is locked in the service configuration
-msgctxt "tutorial.editingdisabled"
-msgid "Editing is disabled on the server!"
-msgstr "Editarea pe server este dezactivată!"
+#. Displayed when no default panel configuration has been set and editing is locked (because there was no refresh token found)
+msgctxt "tutorial.nodefaultpanel"
+msgid "No default panel configuration!"
+msgstr "Nicio configurație implicită a panoului!"
 
 #. Displayed when no dashboard is present and editing is locked in the service configuration
-msgctxt "tutorial.unlockedit"
-msgid "Please go to Paper UI and unlock editing to use HABPanel on this device."
-msgstr "Pentru a utiliza HABPanel pe acest aparat, activează editarea folosind Paper UI."
+msgctxt "tutorial.setdefault"
+msgid "Sign in with the main UI to enable editing in HABPanel and set a default panel configuration."
+msgstr "Conectează-te la interfața principală pentru a activa editarea în HABPanel și a seta o configurație implicită a panoului."
 
 #. Label of the bottom-left link in edit mode - please also test with phone resolutions!
 msgctxt "menu.addnewdashboard"

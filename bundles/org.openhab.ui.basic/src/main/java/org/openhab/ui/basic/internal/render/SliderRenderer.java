@@ -12,13 +12,17 @@
  */
 package org.openhab.ui.basic.internal.render;
 
+import javax.measure.Unit;
+
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
+import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.model.sitemap.sitemap.Slider;
 import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.types.State;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
@@ -65,13 +69,22 @@ public class SliderRenderer extends AbstractWidgetRenderer {
         String frequency = s.getFrequency() == 0 ? "200" : Integer.toString(s.getFrequency());
 
         String unit = getUnitForWidget(w);
+        if (unit == null) {
+            // Search the unit in the item state
+            // Do not use itemUIRegistry.getState(w) as it will return a DecimalType for a slider widget
+            // even if the item state is a QuantityType
+            String itemName = w.getItem();
+            State state = itemName != null ? itemUIRegistry.getItemState(itemName) : null;
+            if (state instanceof QuantityType<?>) {
+                Unit<?> stateUnit = ((QuantityType<?>) state).getUnit();
+                unit = stateUnit.toString();
+            }
+        }
 
         snippet = preprocessSnippet(snippet, w);
         snippet = snippet.replace("%frequency%", frequency);
         snippet = snippet.replace("%switch%", s.isSwitchEnabled() ? "1" : "0");
-        if (unit != null) {
-            snippet = snippet.replace("%unit%", unit);
-        }
+        snippet = snippet.replace("%unit%", unit == null ? "" : unit);
         snippet = snippet.replace("%minValue%", minValueOf(s));
         snippet = snippet.replace("%maxValue%", maxValueOf(s));
         snippet = snippet.replace("%step%", stepOf(s));

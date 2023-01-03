@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -11,7 +11,7 @@
 
   <groupId>org.openhab.ui</groupId>
   <artifactId>org.openhab.ui.reactor</artifactId>
-  <version>3.4.0-SNAPSHOT</version>
+  <version>4.0.0-SNAPSHOT</version>
 
   <packaging>pom</packaging>
 
@@ -20,7 +20,7 @@
 
   <organization>
     <name>openHAB.org</name>
-    <url>http://www.openhab.org</url>
+    <url>https://www.openhab.org</url>
   </organization>
 
   <licenses>
@@ -62,18 +62,19 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <oh.java.version>11</oh.java.version>
+    <oh.java.version>17</oh.java.version>
     <maven.compiler.source>${oh.java.version}</maven.compiler.source>
     <maven.compiler.target>${oh.java.version}</maven.compiler.target>
     <maven.compiler.compilerVersion>${oh.java.version}</maven.compiler.compilerVersion>
 
-    <bnd.version>6.3.0</bnd.version>
+    <bnd.version>6.4.0</bnd.version>
     <eea.version>2.3.0</eea.version>
-    <jackson.version>2.12.7</jackson.version>
+    <jackson.version>2.14.1</jackson.version>
     <karaf.version>4.3.7</karaf.version>
-    <ohc.version>3.4.0-SNAPSHOT</ohc.version>
+    <ohc.version>4.0.0-SNAPSHOT</ohc.version>
     <sat.version>0.13.0</sat.version>
-    <spotless.version>2.0.3</spotless.version>
+    <spotless.version>2.28.0</spotless.version>
+    <spotless.eclipse.version>4.21.0</spotless.eclipse.version>
   </properties>
 
   <build>
@@ -254,12 +255,12 @@ Import-Package: \\
             <dependency>
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-compiler-eclipse</artifactId>
-              <version>2.11.1</version>
+              <version>2.12.1</version>
             </dependency>
             <dependency>
               <groupId>org.eclipse.jdt</groupId>
               <artifactId>ecj</artifactId>
-              <version>3.28.0</version>
+              <version>3.30.0</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -327,8 +328,12 @@ Import-Package: \\
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M5</version>
+          <version>3.0.0-M7</version>
           <configuration>
+            <argLine>
+              --add-opens java.base/java.net=ALL-UNNAMED
+              --add-opens java.base/java.util=ALL-UNNAMED
+            </argLine>
             <systemPropertyVariables>
               <junit.jupiter.execution.timeout.default>15 m</junit.jupiter.execution.timeout.default>
             </systemPropertyVariables>
@@ -442,7 +447,7 @@ Import-Package: \\
             <java>
               <eclipse>
                 <file>openhab_codestyle.xml</file>
-                <version>4.13.0</version>
+                <version>${spotless.eclipse.version}</version>
               </eclipse>
               <removeUnusedImports/>
               <importOrder>
@@ -469,7 +474,7 @@ Import-Package: \\
                   <files>
                     <file>openhab_wst_xml_files.prefs</file>
                   </files>
-                  <version>4.13.0</version>
+                  <version>${spotless.eclipse.version}</version>
                 </eclipseWtp>
                 <trimTrailingWhitespace/>
                 <endWithNewline/>
@@ -484,7 +489,7 @@ Import-Package: \\
                   <files>
                     <file>openhab_wst_pom_file.prefs</file>
                   </files>
-                  <version>4.13.0</version>
+                  <version>${spotless.eclipse.version}</version>
                 </eclipseWtp>
                 <trimTrailingWhitespace/>
                 <endWithNewline/>
@@ -516,7 +521,7 @@ Import-Package: \\
       <plugin>
         <groupId>org.commonjava.maven.plugins</groupId>
         <artifactId>directory-maven-plugin</artifactId>
-        <version>0.3.1</version>
+        <version>1.0</version>
         <executions>
           <execution>
             <id>directories</id>
@@ -547,7 +552,7 @@ Import-Package: \\
             <configuration>
               <rules>
                 <requireJavaVersion>
-                  <version>[11.0,18.0)</version>
+                  <version>[17.0,18.0)</version>
                 </requireJavaVersion>
               </rules>
             </configuration>
@@ -612,7 +617,7 @@ Import-Package: \\
                       <pluginExecutionFilter>
                         <groupId>org.commonjava.maven.plugins</groupId>
                         <artifactId>directory-maven-plugin</artifactId>
-                        <versionRange>[0.3.1,)</versionRange>
+                        <versionRange>[1.0,)</versionRange>
                         <goals>
                           <goal>directory-of</goal>
                         </goals>

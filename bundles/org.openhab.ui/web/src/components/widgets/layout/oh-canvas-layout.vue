@@ -114,15 +114,6 @@
           'background-size': `${grid.pitch}px ${grid.pitch}px, ${grid.pitch}px ${grid.pitch}px`,
           visibility: context.editmode && grid.enable ? 'inherit' : 'hidden',
         }" />
-      <f7-button
-        v-if="!context.editmode"
-        @click="toggleFullscreen"
-        class="fullscreen-icon"
-        :icon-f7="
-          fullscreen
-            ? 'arrow_down_right_arrow_up_left'
-            : 'arrow_up_left_arrow_down_right'
-        " />
       <div
         v-if="context.editmode"
         style="
@@ -165,12 +156,6 @@
     height 100%
     width 100%
     object-fit contain
-
-  .fullscreen-icon
-    position absolute
-    top 2px
-    right 2px
-    z-index 1000
 </style>
 
 <script>
@@ -225,7 +210,7 @@ export default {
         window.addEventListener('resize', this.setDimensions)
       }
     }
-
+    this.$fullscreen.support = true
     this.canvasLayoutStyle()
     this.computeLayout()
   },
@@ -296,15 +281,6 @@ export default {
       this.context.component.slots.canvas.forEach((layer, idx) => {
         if (idx !== this.actLyrIdx) {
           layer.config.editVisible = true
-        }
-      })
-    },
-    toggleFullscreen () {
-      this.$fullscreen.toggle(this.$refs.ohCanvasLayout, {
-        wrap: false,
-        callback: (fullscreen) => {
-          this.canvasLayoutStyle()
-          this.fullscreen = fullscreen
         }
       })
     },

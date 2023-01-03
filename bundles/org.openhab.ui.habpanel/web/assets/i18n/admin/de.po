@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: de\n"
-"X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File-ID: 532\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2019-06-16 09:54\n"
+"PO-Revision-Date: 2022-12-11 11:15\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
@@ -267,6 +267,21 @@ msgctxt "settings.storage.panelconfiguration.dialog.message"
 msgid "Please choose a name for the new panel configuration (letters and digits only please):"
 msgstr "Bitte wähle einen Namen für die neue Panel-Konfiguration (Bitte nur Buchstaben und Zahlen):"
 
+#. Title of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.title"
+msgid "Remove panel configuration"
+msgstr "Panel-Konfiguration löschen"
+
+#. Message of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
+msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
+msgstr "Bitte bestätige, dass Du diese Panel-Konfiguration aus der Registry des Servers löschen willst: {{name}}. Stelle sicher, dass keine anderen Instanzen diese Panel-Konfiguration verwenden!"
+
+#. Message of the dialog box when switching from local storage to a server-based panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
+msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
+msgstr "Wenn Du vom lokalen Speicher auf eine Panel-Konfiguration umschaltest, wird Deine lokale Konfiguration überschrieben! Bist Du Dir sicher?"
+
 #. Panel name (section header)
 msgctxt "settings.panel.name"
 msgid "Panel name"
@@ -285,7 +300,7 @@ msgstr "Darstellung"
 #. Dropown menu header
 msgctxt "settings.panel.appearance.theme"
 msgid "Theme"
-msgstr "Theme"
+msgstr "Design"
 
 #. Alert banner displayed when the browsers doesn't support themes (CSS variables)
 msgctxt "settings.panel.appearance.theme.not_supported"
@@ -625,7 +640,7 @@ msgstr "Gespeichert!"
 #. Tab header
 msgctxt "customwidgets.designer.code"
 msgid "Code"
-msgstr "Code"
+msgstr "Quelltext"
 
 #. Tab header
 msgctxt "customwidgets.designer.settings"
@@ -675,7 +690,7 @@ msgstr "Typ"
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.string"
 msgid "String"
-msgstr "String"
+msgstr "Zeichenfolge"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.number"
@@ -685,7 +700,7 @@ msgstr "Nummer"
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.checkbox"
 msgid "Checkbox"
-msgstr "Checkbox"
+msgstr "Kontrollkästchen"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.item"
@@ -720,7 +735,7 @@ msgstr "Trage einen JSON kompatiblen Parameter für diese Einstellung ein - verw
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.label"
 msgid "Label"
-msgstr "Label"
+msgstr "Bezeichnung"
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.default"

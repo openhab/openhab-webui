@@ -3,8 +3,10 @@ import OhSheet from './modals/oh-sheet.vue'
 import OhPopover from './modals/oh-popover.vue'
 
 import GroupPopup from '@/pages/group/group-popup.vue'
+import variableMixin from './variable-mixin'
 
 export const actionsMixin = {
+  mixins: [variableMixin],
   components: {
     OhPopup,
     OhSheet,
@@ -142,8 +144,10 @@ export const actionsMixin = {
           break
         case 'rule':
           const actionRule = actionConfig[prefix + 'actionRule']
+          let actionRuleContext = actionConfig[prefix + 'actionRuleContext']
+          if (typeof actionRuleContext === 'object') actionRuleContext = JSON.stringify(actionRuleContext)
           if (!actionRule) break
-          this.$oh.api.postPlain('/rest/rules/' + actionRule + '/runnow', '')
+          this.$oh.api.postPlain('/rest/rules/' + actionRule + '/runnow', actionRuleContext || '', 'text/plain', 'application/json')
             .then(() => this.showActionFeedback(prefix, actionConfig))
             .catch((err) => {
               this.$f7.toast.create({
@@ -246,7 +250,11 @@ export const actionsMixin = {
           break
         case 'variable':
           const actionVariable = actionConfig[prefix + 'actionVariable']
-          const actionVariableValue = actionConfig[prefix + 'actionVariableValue']
+          let actionVariableValue = actionConfig[prefix + 'actionVariableValue']
+          const actionVariableKey = actionConfig[prefix + 'actionVariableKey']
+          if (actionVariableKey) {
+            actionVariableValue = this.setVariableKeyValues(context.vars[actionVariable], actionVariableKey, actionVariableValue)
+          }
           this.$set(context.vars, actionVariable, actionVariableValue)
           break
         default:

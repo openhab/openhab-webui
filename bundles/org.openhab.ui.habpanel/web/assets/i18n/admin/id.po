@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: id\n"
-"X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File-ID: 532\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
-"PO-Revision-Date: 2019-06-16 09:55\n"
+"PO-Revision-Date: 2022-12-11 11:15\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
@@ -267,6 +267,21 @@ msgctxt "settings.storage.panelconfiguration.dialog.message"
 msgid "Please choose a name for the new panel configuration (letters and digits only please):"
 msgstr "Silakan pilih sebuah nama untuk konfigurasi panel baru (hanya diperbolehkan huruf dan angka saja):"
 
+#. Title of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.title"
+msgid "Remove panel configuration"
+msgstr ""
+
+#. Message of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
+msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
+msgstr ""
+
+#. Message of the dialog box when switching from local storage to a server-based panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
+msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
+msgstr ""
+
 #. Panel name (section header)
 msgctxt "settings.panel.name"
 msgid "Panel name"
@@ -510,7 +525,7 @@ msgstr "Bantuan terbuka"
 #. Custom widget context menu entry - update the widget from its source
 msgctxt "customwidgets.list.contextmenu.update"
 msgid "Update..."
-msgstr "Update..."
+msgstr ""
 
 #. Blue button opening a dialog
 msgctxt "customwidgets.list.newwidget"
@@ -610,7 +625,7 @@ msgstr "Ini akan mengkloning widget yang tersedia secara global: <id> akan modif
 #. Screen title, followed by the widget name - beware of size!
 msgctxt "customwidgets.designer.heading"
 msgid "Widget:"
-msgstr "Widget:"
+msgstr ""
 
 #. Save button on the right, default label - can be hidden on phones
 msgctxt "customwidgets.designer.save"
@@ -690,7 +705,7 @@ msgstr "Kotak centang"
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.item"
 msgid "Item"
-msgstr "Item"
+msgstr ""
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.color"
@@ -720,7 +735,7 @@ msgstr "Masukkan kunci JSON untuk pengaturan ini - idealnya, dengan hanya menggu
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.label"
 msgid "Label"
-msgstr "Label"
+msgstr ""
 
 #. Textbox header
 msgctxt "customwidgets.designer.settings.config.default"
@@ -800,7 +815,7 @@ msgstr "urut berdasarkan:"
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostrecent"
 msgid "most&nbsp;recent"
-msgstr "most&nbsp;recent"
+msgstr ""
 
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostliked"

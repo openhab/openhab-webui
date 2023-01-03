@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: openhab-habpanel\n"
 "Report-Msgid-Bugs-To: https://github.com/openhab/org.openhab.ui.habpanel/issues\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openhab-habpanel\n"
+"X-Crowdin-Project-ID: 297898\n"
 "X-Crowdin-Language: he\n"
-"X-Crowdin-File: /master/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File: /main/bundles/org.openhab.ui.habpanel/web/assets/i18n/admin/admin.pot\n"
+"X-Crowdin-File-ID: 532\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: openhab-bot\n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
-"PO-Revision-Date: 2019-06-16 09:54\n"
+"PO-Revision-Date: 2022-12-11 11:15\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
@@ -267,6 +267,21 @@ msgctxt "settings.storage.panelconfiguration.dialog.message"
 msgid "Please choose a name for the new panel configuration (letters and digits only please):"
 msgstr "אנא בחר שם עבור תצורת לוח חדש (אותיות וספרות בלבד):"
 
+#. Title of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.title"
+msgid "Remove panel configuration"
+msgstr ""
+
+#. Message of the dialog box when deleting a new panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
+msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
+msgstr ""
+
+#. Message of the dialog box when switching from local storage to a server-based panel configuration
+msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
+msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
+msgstr ""
+
 #. Panel name (section header)
 msgctxt "settings.panel.name"
 msgid "Panel name"
@@ -320,7 +335,7 @@ msgstr "מגירת תמונת כותרת (אופציונלי)"
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.drawer_heading_image.hint"
 msgid "Example: //via.placeholder.com/265x95"
-msgstr "Example: //via.placeholder.com/265x95"
+msgstr ""
 
 #. Checkbox
 msgctxt "settings.panel.appearance.prevent_scrolling"
@@ -815,7 +830,7 @@ msgstr "הפופולרי ביותר"
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostdiscussed"
 msgid "most&nbsp;discussed"
-msgstr "most&nbsp;discussed"
+msgstr ""
 
 #. Prefix before the author's name
 msgctxt "widgetgallery.details.authorby"
@@ -825,7 +840,7 @@ msgstr "מאת"
 #. Suffix displayed after a number, i.e. "24 posts on this topic"
 msgctxt "widgetgallery.details.forumposts"
 msgid "post(s) on this topic - discuss on community.openhab.org"
-msgstr "post(s) on this topic - discuss on community.openhab.org"
+msgstr ""
 
 #. Label of the big green button when nothing to import
 msgctxt "widgetgallery.details.nothingtoimport"

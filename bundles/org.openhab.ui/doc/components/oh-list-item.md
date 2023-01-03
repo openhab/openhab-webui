@@ -121,6 +121,11 @@ A list item
     Rule to run
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="actionRuleContext" label="Rule Context" context="script">
+  <PropDescription>
+    Object representing the optional context to pass to the rule. Edit in YAML or provide a JSON object, e.g. <code>{ "param1": "value1", "param2": { "subkey1": "testing", "subkey2": 123 } }</code>.
+  </PropDescription>
+</PropBlock>
 <PropBlock type="TEXT" name="actionPage" label="Page" context="page">
   <PropDescription>
     Page to navigate to
@@ -206,6 +211,11 @@ A list item
 <PropBlock type="TEXT" name="actionVariableValue" label="Variable Value">
   <PropDescription>
     The value to set the variable to
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="actionVariableKey" label="Variable Key">
+  <PropDescription>
+    Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The inner property and its parent hierarchy will be created if missing.
   </PropDescription>
 </PropBlock>
 </PropGroup>

@@ -99,9 +99,19 @@ Button performing an action
     Name of the variable to set on input change
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="variableKey" label="Variable Key">
+  <PropDescription>
+    Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The inner property and its parent hierarchy will be created if missing.
+  </PropDescription>
+</PropBlock>
 <PropBlock type="BOOLEAN" name="clearVariable" label="Clear Variable After Action">
   <PropDescription>
     Name of the variable to clear after performing the action
+  </PropDescription>
+</PropBlock>
+<PropBlock type="BOOLEAN" name="clearVariableKey" label="Clear Object Variable Property After Action">
+  <PropDescription>
+    Consider the variable value is an object and remove a corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The property will be removed after performing the action.
   </PropDescription>
 </PropBlock>
 </PropGroup>
@@ -164,6 +174,11 @@ Button performing an action
 <PropBlock type="TEXT" name="actionRule" label="Rule" context="rule">
   <PropDescription>
     Rule to run
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="actionRuleContext" label="Rule Context" context="script">
+  <PropDescription>
+    Object representing the optional context to pass to the rule. Edit in YAML or provide a JSON object, e.g. <code>{ "param1": "value1", "param2": { "subkey1": "testing", "subkey2": 123 } }</code>.
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="actionPage" label="Page" context="page">
@@ -253,6 +268,11 @@ Button performing an action
     The value to set the variable to
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="actionVariableKey" label="Variable Key">
+  <PropDescription>
+    Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The inner property and its parent hierarchy will be created if missing.
+  </PropDescription>
+</PropBlock>
 </PropGroup>
 </div>
 
@@ -313,6 +333,11 @@ Button performing an action
 <PropBlock type="TEXT" name="taphold_actionRule" label="Rule" context="rule">
   <PropDescription>
     Rule to run
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="taphold_actionRuleContext" label="Rule Context" context="script">
+  <PropDescription>
+    Object representing the optional context to pass to the rule. Edit in YAML or provide a JSON object, e.g. <code>{ "param1": "value1", "param2": { "subkey1": "testing", "subkey2": 123 } }</code>.
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="taphold_actionPage" label="Page" context="page">
@@ -400,6 +425,11 @@ Button performing an action
 <PropBlock type="TEXT" name="taphold_actionVariableValue" label="Variable Value">
   <PropDescription>
     The value to set the variable to
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="taphold_actionVariableKey" label="Variable Key">
+  <PropDescription>
+    Consider the variable value is an object and set the corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The inner property and its parent hierarchy will be created if missing.
   </PropDescription>
 </PropBlock>
 </PropGroup>

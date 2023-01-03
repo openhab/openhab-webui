@@ -5,18 +5,25 @@
 
 <script>
 import mixin from '../widget-mixin'
+import variableMixin from '../variable-mixin'
 import { OhStepperDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
-  mixins: [mixin],
+  mixins: [mixin, variableMixin],
   widget: OhStepperDefinition,
   mounted () {
     delete this.config.value
   },
   computed: {
     value () {
+
       if (this.config.text) return this.context.text
-      if (this.config.variable) return this.context.vars[this.config.variable]
+      if (this.config.variable) {
+        if (this.config.variableKey) {
+          return this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey)
+        }
+        return this.context.vars[this.config.variable]
+      }
       let value = this.toStepFixed(parseFloat(this.context.store[this.config.item].state))
       if (this.config.min !== undefined) value = Math.max(value, this.config.min)
       if (this.config.max !== undefined) value = Math.min(value, this.config.max)
@@ -40,9 +47,12 @@ export default {
       return parseFloat(Number(value).toFixed(nbDecimals))
     },
     onChange (value) {
-      const newValue = this.toStepFixed(value)
+      let newValue = this.toStepFixed(value)
       if (newValue === this.value) return
       if (this.config.variable) {
+        if (this.config.variableKey) {
+          newValue = this.setVariableKeyValues(this.context.vars[this.config.variable], this.config.variableKey, value)
+        }
         this.$set(this.context.vars, this.config.variable, newValue)
       } else if (this.config.item) {
         this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: newValue.toString() })

@@ -67,7 +67,8 @@ export default {
       remoteParty: '',
       phonebook: new Map(),
       loggerPrefix: 'oh-sipclient',
-      showLocalVideo: false
+      showLocalVideo: false,
+      stream: null
     }
   },
   mixins: [mixin, foregroundService, actionsMixin],
@@ -85,7 +86,7 @@ export default {
         }
       }
 
-      if (this.context.editmode) return // do not connect SIP while editing
+      if (this.context.editmode) return // Do not connect SIP while editing
 
       // Make sure we have Mic/Camera permissions
       if (!navigator.mediaDevices) {
@@ -93,23 +94,31 @@ export default {
       } else {
         navigator.mediaDevices.getUserMedia({ audio: true, video: this.config.enableVideo })
           .then((stream) => {
+            // Store MediaDevices access here to stop it when foreground is left
+            // Do NOT stop MediaDevices access here (keep Mic/Camera access) to improve call startup time
+            this.stream = stream
             // Start SIP connection
             this.sipStart()
           })
           .catch((err) => {
-            console.log('could not access microphone/camera', err)
+            console.log('Could not access microphone/camera', err)
             this.$f7.dialog.alert('To use the SIP widget you must allow microphone/camera access in your browser and reload this page.')
           })
       }
     },
     stopForegroundActivity () {
+      // Stop MediaDevices access here, otherwise Mic/Camera access will stay active on iOS
+      this.stream.getTracks().forEach((track) => track.stop())
       if (this.phone) this.phone.stop()
     },
+    /**
+     * Starts the JsSIP UserAgent and connects to the SIP server.
+     */
     sipStart () {
-      if (this.phone) this.phone.stop() // reconnect to reload config
-      this.context.component.config = { ...this.config, ...this.localConfig } // merge local device configuration
+      if (this.phone) this.phone.stop() // Reconnect to reload config
+      this.context.component.config = { ...this.config, ...this.localConfig } // Merge local device configuration
 
-      import(/* webpackChunkName: "jssip" */ 'jssip').then((JsSIP) => { // lazy load jssip
+      import(/* webpackChunkName: "jssip" */ 'jssip').then((JsSIP) => { // Lazy load jssip
         this.config.enableSIPDebug ? JsSIP.debug.enable('JsSIP:*') : JsSIP.debug.disable()
         // SIP user agent setup
         this.remoteAudio = new window.Audio()
@@ -171,6 +180,10 @@ export default {
         this.phone.start()
       })
     },
+    /**
+     * Plays a given tone. Might not properly work on all browsers and devices.
+     * @param {*} audio file to be played
+     */
     playTone (file) {
       if (this.config.enableTones === true) {
         console.info(this.loggerPrefix + ': Starting to play tone')
@@ -183,12 +196,18 @@ export default {
         })
       }
     },
+    /**
+     * Stops all played tones.
+     */
     stopTones () {
       if (this.config.enableTones === true) {
         console.info(this.loggerPrefix + ': Stop playing tone')
         this.audio.pause()
       }
     },
+    /**
+     * Attaches MediaStreams (remote audio, remote & eventually local video) for the SIP call.
+     */
     attachMedia () {
       this.session.connection.addEventListener('track', (track) => {
         if (this.config.enableVideo) {
@@ -206,9 +225,14 @@ export default {
         }
       })
     },
+    /**
+     * Stops all MediaStreams (remote audio, remote & eventually local video) of the SIP call.
+     */
     stopMedia () {
       if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
       if (this.config.enableLocalVideo) {
+        // Make sure all tracks are stopped
+        this.$refs.localVideo.srcObject.getTracks().forEach((track) => track.stop())
         this.$refs.localVideo.srcObject = null
         this.showLocalVideo = false
       }

@@ -209,6 +209,23 @@
             </shadow>
           </value>
         </block>
+        <block type="oh_text_replace">
+          <value name="pattern">
+            <shadow type="text">
+              <field name="TEXT">pattern</field>
+            </shadow>
+          </value>
+          <value name="replacement">
+            <shadow type="text">
+              <field name="TEXT">replacement</field>
+            </shadow>
+          </value>
+          <value name="origin">
+            <shadow type="text">
+              <field name="TEXT">origin</field>
+            </shadow>
+          </value>
+        </block>
         <block type="oh_text_crlf" />
       </category>
 
@@ -221,6 +238,7 @@
           <mutation items="0" />
         </block>
         <block type="lists_create_with" />
+        <block type="oh_list_concatenate" />
         <block type="lists_repeat">
           <value name="NUM">
             <shadow type="math_number">
@@ -355,6 +373,11 @@
           <block type="oh_groupmembers">
             <value name="groupName">
               <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_taggeditems">
+            <value name="tagName">
+              <shadow type="text" />
             </value>
           </block>
           <block type="oh_event">

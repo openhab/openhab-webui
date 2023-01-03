@@ -124,8 +124,6 @@
 </style>
 
 <script>
-import diacritic from 'diacritic'
-
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
@@ -193,9 +191,9 @@ export default {
     onPageAfterIn (event) {
       if (!this.channel) return
       this.loadProfileTypes(this.channel)
-      let newItemName = diacritic.clean(this.thing.label).replace(/[^0-9a-z]/gi, '')
+      let newItemName = this.$oh.utils.normalizeLabel(this.thing.label)
       newItemName += '_'
-      newItemName += (this.channel.label) ? diacritic.clean(this.channel.label).replace(/[^0-9a-z]/gi, '') : diacritic.clean(this.channelType.label).replace(/[^0-9a-z]/gi, '')
+      newItemName += this.$oh.utils.normalizeLabel(this.channel.label || this.channelType.label)
       const defaultTags = (this.channel.defaultTags.length > 0) ? this.channel.defaultTags : this.channelType.tags
       this.$set(this, 'newItem', {
         name: newItemName,

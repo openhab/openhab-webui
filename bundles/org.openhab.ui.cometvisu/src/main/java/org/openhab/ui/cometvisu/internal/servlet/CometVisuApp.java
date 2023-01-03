@@ -33,7 +33,6 @@ import org.openhab.core.ui.icon.IconProvider;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.util.ClientInstaller;
-import org.openhab.ui.cometvisu.php.PHProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.service.cm.ConfigurationException;
@@ -44,7 +43,6 @@ import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 import org.slf4j.Logger;
@@ -77,8 +75,6 @@ public class CometVisuApp {
     private EventPublisher eventPublisher;
 
     private CometVisuServlet servlet;
-
-    private PHProvider phpProvider;
 
     protected static Map<String, QueryablePersistenceService> persistenceServices = new HashMap<>();
 
@@ -185,25 +181,6 @@ public class CometVisuApp {
 
     protected void unsetHttpService(HttpService httpService) {
         this.httpService = null;
-    }
-
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
-    public void setPHProvider(PHProvider prov) {
-        this.phpProvider = prov;
-        if (servlet != null) {
-            servlet.setPHProvider(prov);
-        }
-    }
-
-    public PHProvider getPHProvider() {
-        return this.phpProvider;
-    }
-
-    public void unsetPHProvider(PHProvider prov) {
-        this.phpProvider = null;
-        if (servlet != null) {
-            servlet.unsetPHProvider();
-        }
     }
 
     private void readConfiguration(final Map<String, Object> properties) {

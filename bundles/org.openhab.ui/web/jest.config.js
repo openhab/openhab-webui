@@ -52,7 +52,8 @@ module.exports = {
   transform: {
     '.*\\.(vue)$': '<rootDir>/node_modules/vue-jest',
     '.*\\.js$': 'babel-jest',
-    '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub'
+    '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
+    '^.+\\.nearley$': 'jest-transform-nearley'
   },
   transformIgnorePatterns: [
     '/node_modules/(?!framework7|framework7-vue|template7|dom7/)'
