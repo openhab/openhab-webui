@@ -22,7 +22,9 @@ export const LOCK_STATES = ['LOCKED', 'UNLOCKED', 'JAMMED']
 
 export const OPEN_STATES = ['CLOSED', 'OPEN']
 
-export const PLAYBACK_OPERATIONS = ['Play', 'Pause', 'Next', 'Previous', 'FastForward', 'Rewind']
+export const PLAYBACK_OPERATIONS = ['Play', 'Pause', 'Previous', 'Next', 'Rewind', 'FastForward']
+
+export const PLAYBACK_STEPS = ['PLAY', 'PAUSE', 'STOP', 'START_OVER', 'PREVIOUS', 'NEXT', 'REWIND', 'FAST_FORWARD']
 
 export const TEMPERATURE_SCALES = ['CELSIUS', 'FAHRENHEIT']
 
