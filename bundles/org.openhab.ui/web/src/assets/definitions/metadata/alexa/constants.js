@@ -26,6 +26,8 @@ export const PLAYBACK_OPERATIONS = ['Play', 'Pause', 'Previous', 'Next', 'Rewind
 
 export const PLAYBACK_STEPS = ['PLAY', 'PAUSE', 'STOP', 'START_OVER', 'PREVIOUS', 'NEXT', 'REWIND', 'FAST_FORWARD']
 
+export const STATE_DESCRIPTION_OPTIONS_LIMIT = 150
+
 export const TEMPERATURE_SCALES = ['CELSIUS', 'FAHRENHEIT']
 
 export const THERMOSTAT_MODES = ['OFF', 'HEAT', 'COOL', 'ECO', 'AUTO']
