@@ -365,8 +365,7 @@ Import-Package: \\
             </headerDefinitions>
             <includes>
               <include>**/org/openhab/**/*.java</include>
-              <include>**/feature.xml</include>
-              <include>**/OSGI-INF/*.xml</include>
+              <include>**/features/**/header.xml</include>
             </includes>
             <excludes>
               <exclude>target/**</exclude>
@@ -375,7 +374,7 @@ Import-Package: \\
             </excludes>
             <useDefaultExcludes>true</useDefaultExcludes>
             <properties>
-              <year>2022</year>
+              <year>2023</year>
             </properties>
             <encoding>UTF-8</encoding>
           </configuration>
