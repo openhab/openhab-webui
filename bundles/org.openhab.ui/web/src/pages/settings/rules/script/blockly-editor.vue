@@ -1077,7 +1077,7 @@ export default {
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
 
-      if (!copyPastePluginInitialized) {
+      if (!Blockly.ContextMenuRegistry.registry.getItem('blockCopyToStorage')) {
         const copyAndPasteOptions = {
           contextMenu: true,
           shortcut: true
