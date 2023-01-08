@@ -992,6 +992,7 @@ export default {
   props: ['blocks', 'libraryDefinitions', 'isGraalJs'],
   data () {
     return {
+      blockLibraries: null,
       workspace: null,
       sinks: [],
       voices: [],
@@ -999,6 +1000,11 @@ export default {
       rules: [],
       loading: true,
       ready: false
+    }
+  },
+  watch: {
+    isGraalJs: function() {
+      this.initBlockly(this.blockLibraries)
     }
   },
   mounted () {
@@ -1039,9 +1045,9 @@ export default {
             return labelA.localeCompare(labelB)
           })
 
-          const blockLibraries = data[3]
+          this.blockLibraries = data[3]
 
-          this.initBlockly(blockLibraries)
+          this.initBlockly(this.blockLibraries)
         })
         .catch((err, status) => {
           console.error('Error while retrieving Blockly data - ' + err + ':' + status)
