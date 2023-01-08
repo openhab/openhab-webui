@@ -97,7 +97,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
     let skipPrevious = javascriptGenerator.valueToCode(block, 'skipPrevious', javascriptGenerator.ORDER_NONE)
     skipPrevious = ((skipPrevious === 'undefined') ? false : skipPrevious)
 
-    let itemCode = (isGraalJs) ?  `items.getItem(${itemName})` : `itemRegistry.getItem(${itemName})`
+    let itemCode = (isGraalJs) ? `items.getItem(${itemName})` : `itemRegistry.getItem(${itemName})`
     switch (methodName) {
       case 'maximumSince':
       case 'minimumSince':
@@ -106,12 +106,12 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
         break
 
       case 'previousState':
-          code =  (isGraalJs) ?  `${itemCode}.history.${methodName}(${skipPrevious})` : `${persistence}.previousState(${itemCode},${skipPrevious}).getState()`
+        code = (isGraalJs) ? `${itemCode}.history.${methodName}(${skipPrevious})` : `${persistence}.previousState(${itemCode},${skipPrevious}).getState()`
         break
 
       case 'previousStateTime':
-          code =  (isGraalJs) ? `${itemCode}.history.previousStateTimestamp(${skipPrevious})` : `${persistence}.previousState(${itemCode},${skipPrevious}).getTimestamp()`
-          break;
+        code = (isGraalJs) ? `${itemCode}.history.previousStateTimestamp(${skipPrevious})` : `${persistence}.previousState(${itemCode},${skipPrevious}).getTimestamp()`
+        break
 
       default:
         dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)

@@ -986,8 +986,6 @@ var events = runtime.events;
 
 `
 
-let copyPastePluginInitialized = false
-
 export default {
   props: ['blocks', 'libraryDefinitions', 'isGraalJs'],
   data () {
@@ -1003,7 +1001,7 @@ export default {
     }
   },
   watch: {
-    isGraalJs: function() {
+    isGraalJs: function () {
       this.initBlockly(this.blockLibraries)
     }
   },
@@ -1095,7 +1093,6 @@ export default {
 
         Blockly.Msg['CROSS_TAB_COPY'] = 'Cross-Rule-Copy'
         Blockly.Msg['CROSS_TAB_PASTE'] = 'Cross-Rule-Paste'
-        copyPastePluginInitialized = true
       }
 
       this.registerLibraryCallbacks(libraryDefinitions)
