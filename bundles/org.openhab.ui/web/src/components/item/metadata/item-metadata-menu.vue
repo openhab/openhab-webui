@@ -5,6 +5,20 @@
         <ul>
           <f7-list-item
             v-for="namespace in item.metadata" :key="namespace"
+            v-if="!namespace.custom"
+            :link="'/settings/items/' + item.name + '/metadata/' + namespace.id"
+            :title="namespace.label"
+            :after="(item.metadata[namespace.id]) ? item.metadata[namespace.id].value : 'Not Set'" />
+        </ul>
+      </f7-list>
+    </f7-card-content>
+    <hr>
+    <f7-card-content v-if="item.metadata && Object.keys(item.metadata).filter((n) => n !== 'semantics').length > 0">
+      <f7-list>
+        <ul>
+          <f7-list-item
+            v-for="namespace in item.metadata" :key="namespace"
+            v-if="namespace.custom"
             :link="'/settings/items/' + item.name + '/metadata/' + namespace.id"
             :title="namespace.label"
             :after="(item.metadata[namespace.id]) ? item.metadata[namespace.id].value : 'Not Set'" />
