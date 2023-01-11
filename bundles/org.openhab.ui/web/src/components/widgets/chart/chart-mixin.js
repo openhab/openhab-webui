@@ -135,6 +135,7 @@ export default {
         return Promise.resolve(getter([]))
       }
 
+      let boundary = seriesComponents[component.component].includeBoundary?.(component)
       const itemPromises = neededItems.map((neededItem) => {
         if (this.items[neededItem]) return Promise.resolve(this.items[neededItem])
         return this.$oh.api.get(`/rest/items/${neededItem}`).then((item) => {
@@ -154,7 +155,8 @@ export default {
         let query = {
           serviceId: component.config.service || undefined,
           starttime: seriesStartTime.toISOString(),
-          endtime: seriesEndTime.subtract(1, 'millisecond').toISOString()
+          endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
+          boundary: boundary
         }
 
         return Promise.all([itemPromises[neededItem], this.$oh.api.get(url, query)])
