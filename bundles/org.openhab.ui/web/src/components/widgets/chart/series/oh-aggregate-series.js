@@ -15,14 +15,22 @@ function dimensionFromDate (d, dimension, invert) {
   }
 }
 
+function includeBoundaryFor (component) {
+  return (!component || !component.config || component.config.aggregationFunction !== 'diff_last') ? undefined : true
+}
+
 export default {
   neededItems (component) {
     if (!component || !component.config || !component.config.item) return []
     return [component.config.item]
   },
+  includeBoundary (component) {
+    return includeBoundaryFor(component)
+  },
   get (component, points, startTime, endTime, chart) {
     let dimension1 = component.config.dimension1
     let dimension2 = component.config.dimension2
+    let boundary = includeBoundaryFor(component)
 
     const itemPoints = points.find(p => p.name === component.config.item).data
     const groups = itemPoints.reduce((acc, p) => {
@@ -30,11 +38,15 @@ export default {
       // e.g. if dimension1=day, dimension2 can be hour but not month
       let groupStart = dimension2 || dimension1
       if (groupStart === 'weekday' || groupStart === 'isoWeekday') groupStart = 'day'
-      let start = dayjs(p.time).startOf(groupStart)
+      let pTime = dayjs(p.time)
+      let start = pTime.startOf(groupStart)
       if (acc.length && acc[acc.length - 1][0].isSame(start)) {
         acc[acc.length - 1][1].push(p.state)
       } else {
         acc.push([start, [p.state]])
+        if (acc.length === 1 && boundary && !pTime.isSame(start)) {
+          acc[0][1].unshift(NaN)
+        }
       }
       return acc
     }, [])
