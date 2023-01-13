@@ -4,15 +4,15 @@ import Framework7 from 'framework7'
 
 export default {
   neededItems (component, chart) {
-    const seriesItem = (!component || !component.config || !component.config.item) ? undefined : component.config.item
     let markAreaItems = []
     if (component.slots && component.slots.markArea) {
       markAreaItems = component.slots.markArea.map((a, i) =>
         chart.evaluateExpression(ComponentId.get(component) + '.mitem' + i, a.config.item)
       )
     }
+    let series = chart.evaluateExpression(ComponentId.get(component), component.config)
     return [
-      chart.evaluateExpression(ComponentId.get(component) + '.item', seriesItem),
+      series.item,
       ...markAreaItems
     ]
   },
