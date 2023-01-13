@@ -35,8 +35,8 @@ export default {
       series.markArea = MarkArea.get(component.slots.markArea[0], points, startTime, endTime, chart)
     }
 
-    if (!component.config.showSymbol) series.showSymbol = false
-    if (!component.config.tooltip) {
+    if (!series.showSymbol) series.showSymbol = false
+    if (!series.tooltip) {
       series.tooltip = { show: true }
     }
 

@@ -2,6 +2,7 @@ import * as dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 dayjs.extend(IsoWeek)
 import aggregate from './aggregators'
+import ComponentId from '../../component-id'
 
 function dimensionFromDate (d, dimension, invert) {
   switch (dimension) {
@@ -28,11 +29,12 @@ export default {
     return includeBoundaryFor(component)
   },
   get (component, points, startTime, endTime, chart) {
-    let dimension1 = component.config.dimension1
-    let dimension2 = component.config.dimension2
+    let series = chart.evaluateExpression(ComponentId.get(component), component.config)
+    let dimension1 = series.dimension1
+    let dimension2 = series.dimension2
     let boundary = includeBoundaryFor(component)
 
-    const itemPoints = points.find(p => p.name === component.config.item).data
+    const itemPoints = points.find(p => p.name === series.item).data
     const groups = itemPoints.reduce((acc, p) => {
       // we'll suppose dimension2 always more granular than dimension1
       // e.g. if dimension1=day, dimension2 can be hour but not month
@@ -55,15 +57,15 @@ export default {
 
     const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
     const data = groups.map((arr, idx, groups) => {
-      const aggregationFunction = component.config.aggregationFunction || 'average'
+      const aggregationFunction = series.aggregationFunction || 'average'
       let value = aggregate(aggregationFunction, arr, idx, groups)
       if (value.toFixed) value = value.toFixed(3)
       if (dimension2) {
-        const axisX = (component.config.transpose) ? dimension2 : dimension1
-        const axisY = (component.config.transpose) ? dimension1 : dimension2
+        const axisX = (series.transpose) ? dimension2 : dimension1
+        const axisY = (series.transpose) ? dimension1 : dimension2
         return [dimensionFromDate(arr[0], axisX), dimensionFromDate(arr[0], axisY, true), formatter.format(value)]
       } else {
-        if (component.config.transpose) {
+        if (series.transpose) {
           return [formatter.format(value), dimensionFromDate(arr[0], dimension1, true)]
         } else {
           return [dimensionFromDate(arr[0], dimension1), formatter.format(value)]
@@ -71,11 +73,10 @@ export default {
       }
     })
 
-    let series = Object.assign({}, component.config)
     if (!series.type) series.type = 'heatmap'
 
     if (series.type === 'scatter') {
-      const symbolSizeFactor = component.config.scatterSymbolSizeFactor || 1
+      const symbolSizeFactor = series.scatterSymbolSizeFactor || 1
       series.symbolSize = (v) => {
         return v.pop() * symbolSizeFactor
       }

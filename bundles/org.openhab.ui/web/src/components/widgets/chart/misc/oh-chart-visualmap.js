@@ -1,3 +1,5 @@
+import ComponentId from '../../component-id'
+
 const presetPalettes = {
   'greenred': ['#50a3ba', '#eac736', '#d94e5d'],
   'whiteblue': ['#ffffff', '#4c9ffb'],
@@ -6,11 +8,11 @@ const presetPalettes = {
 
 export default {
   get (component, startTime, endTime, chart, device) {
-    let options = Object.assign({}, component.config)
-    if (component.config.presetPalette && (!component.config.inRange || !component.config.inRange.color)) {
-      if (presetPalettes[component.config.presetPalette]) {
+    let options = chart.evaluateExpression(ComponentId.get(component), component.config)
+    if (options.presetPalette && (!options.inRange || !options.inRange.color)) {
+      if (presetPalettes[options.presetPalette]) {
         if (!options.inRange) options.inRange = {}
-        options.inRange.color = presetPalettes[component.config.presetPalette]
+        options.inRange.color = presetPalettes[options.presetPalette]
       }
     }
     if (options.min !== undefined) {

@@ -1,6 +1,8 @@
+import ComponentId from '../../component-id'
+
 export default {
-  get (component, startTime, endTime, chart, orient) {
-    let calendar = Object.assign({}, component.config)
+  get (component, startTime, endTime, chart, chartWidget, orient) {
+    let calendar = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     calendar.range = [startTime.toDate(), endTime.subtract(1, 'day').toDate()]
     if (orient) calendar.orient = orient
     calendar.dayLabel = {
