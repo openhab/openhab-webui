@@ -7,7 +7,9 @@ export default {
     const seriesItem = (!component || !component.config || !component.config.item) ? undefined : component.config.item
     let markAreaItems = []
     if (component.slots && component.slots.markArea) {
-      markAreaItems = component.slots.markArea.map(a => a.config.item)
+      markAreaItems = component.slots.markArea.map((a, i) =>
+        chart.evaluateExpression(ComponentId.get(component) + '.mitem' + i, a.config.item)
+      )
     }
     return [
       chart.evaluateExpression(ComponentId.get(component) + '.item', seriesItem),

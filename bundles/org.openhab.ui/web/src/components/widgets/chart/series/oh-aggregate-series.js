@@ -21,9 +21,10 @@ function includeBoundaryFor (component) {
 }
 
 export default {
-  neededItems (component) {
+  neededItems (component, chart) {
     if (!component || !component.config || !component.config.item) return []
-    return [component.config.item]
+    let series = chart.evaluateExpression(ComponentId.get(component), component.config)
+    return [series.item]
   },
   includeBoundary (component) {
     return includeBoundaryFor(component)
