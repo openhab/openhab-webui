@@ -6,7 +6,7 @@ dayjs.extend(LocalizedFormat)
 export default {
   get (component, points, startTime, endTime, chart) {
     let markArea = chart.evaluateExpression(ComponentId.get(component), component.config)
-    const onStates = markArea.onStates || ["ON", "OPEN"]
+    const onStates = markArea.onStates || ['ON', 'OPEN']
     const itemPoints = points.find(p => p.name === markArea.item).data
     markArea.data = []
     let rollingState = null
