@@ -75,9 +75,9 @@ export default {
       }
     },
     pageStyle () {
-      if (!this.overviewPage) return null;
+      if (!this.overviewPage) return null
       return this.overviewPage.config.style
-    },
+    }
   },
   methods: {
     onCommand (itemName, command) {
