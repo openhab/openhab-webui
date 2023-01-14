@@ -19,7 +19,8 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
           ['average', 'averageSince'], ['delta', 'deltaSince'],
           ['deviation', 'deviationSince'], ['variance', 'varianceSince'], ['evolution rate', 'evolutionRate'],
           ['minimum', 'minimumSince'], ['maximum', 'maximumSince'], ['sum', 'sumSince'],
-          ['previous state value', 'previousState'], ['previous state value time', 'previousStateTime']
+          ['previous state value', 'previousState'], ['previous state value time', 'previousStateTime'],
+          ['historic state', 'historicState']
         ], this.handleTypeSelection.bind(this)
         ), 'methodName')
       this.methodName = this.getFieldValue('methodName')
@@ -45,7 +46,8 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
           'maximumSince': 'Gets the maximum value of the State of a persisted Item since a certain point in time',
           'sumSince': 'Gets the sum of the previous States of a persisted Item since a certain point in time',
           'previousState': 'Gets the previous state with option to skip to different value as current',
-          'previousStateTime': 'Gets the time when previous state last occurred with option to skip to different value as current'
+          'previousStateTime': 'Gets the time when previous state last occurred with option to skip to different value as current',
+          'historicState': 'Gets the historic state at a certain point in time'
         }
         return TIP[methodName]
       })
@@ -72,12 +74,15 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
         if (this.getInput('skipPrevious')) {
           this.removeInput('skipPrevious')
         }
-        if (!this.getInput('dayInfo')) {
-          this.appendValueInput('dayInfo')
-            .appendField('since')
-            .setAlign(Blockly.ALIGN_RIGHT)
-            .setCheck(['ZonedDateTime'])
+        if (this.getInput('dayInfo')) {
+          this.removeInput('dayInfo')
         }
+        const preposition = (this.methodName === 'historicState') ? 'at' : 'since'
+        console.log(this.methodName + '->' + preposition)
+        this.appendValueInput('dayInfo')
+          .appendField(preposition)
+          .setAlign(Blockly.ALIGN_RIGHT)
+          .setCheck(['ZonedDateTime'])
       }
     }
   }
@@ -101,16 +106,17 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs) {
     switch (methodName) {
       case 'maximumSince':
       case 'minimumSince':
+      case 'historicState':
         dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
-        code = (isGraalJs) ? `${itemCode}.history.${methodName}(${dayInfo})` : `${persistence}.${methodName}(${itemCode}, ${dayInfo}).getState()`
+        code = (isGraalJs) ? `${itemCode}.history.${methodName}(${dayInfo}).state` : `${persistence}.${methodName}(${itemCode}, ${dayInfo}).getState()`
         break
 
       case 'previousState':
-        code = (isGraalJs) ? `${itemCode}.history.${methodName}(${skipPrevious})` : `${persistence}.previousState(${itemCode},${skipPrevious}).getState()`
+        code = (isGraalJs) ? `${itemCode}.history.previousState(${skipPrevious}).state` : `${persistence}.previousState(${itemCode},${skipPrevious}).getState()`
         break
 
       case 'previousStateTime':
-        code = (isGraalJs) ? `${itemCode}.history.previousStateTimestamp(${skipPrevious})` : `${persistence}.previousState(${itemCode},${skipPrevious}).getTimestamp()`
+        code = (isGraalJs) ? `${itemCode}.history.previousState(${skipPrevious}).timestamp` : `${persistence}.previousState(${itemCode},${skipPrevious}).getTimestamp()`
         break
 
       default:
