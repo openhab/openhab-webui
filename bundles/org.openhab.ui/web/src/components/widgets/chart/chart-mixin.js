@@ -40,11 +40,9 @@ export default {
   data () {
     const config = this.context.component.config || {}
     const chartType = config.chartType
-    const period = config.period || 'D'
     let endTime = (chartType) ? this.addOrSubtractPeriod(dayjs().startOf(chartType), 1) : dayjs()
     return {
       items: {},
-      period,
       endTime,
       orient: null
     }
@@ -52,6 +50,10 @@ export default {
   computed: {
     startTime () {
       return this.addOrSubtractPeriod(this.endTime, -1)
+    },
+    period () {
+      const config = this.context.component.config || {}
+      return this.evaluateExpression('period111', config.period || 'D')
     },
     options () {
       if (!this.config) return {}
