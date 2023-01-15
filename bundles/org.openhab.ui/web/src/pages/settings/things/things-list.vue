@@ -85,6 +85,7 @@
               :checkbox="showCheckboxes"
               :checked="isChecked(thing.UID)"
               @click.ctrl="(e) => ctrlClick(e, thing)"
+              @click.meta="(e) => ctrlClick(e, thing)"
               @click.exact="(e) => click(e, thing)"
               link=""
               :title="thing.label || thing.UID">

@@ -69,6 +69,7 @@
               :checkbox="showCheckboxes"
               :checked="isChecked(item.name)"
               @click.ctrl="(e) => ctrlClick(e, item)"
+              @click.meta="(e) => ctrlClick(e, item)"
               @click.exact="(e) => click(e, item)"
               link=""
               :title="(item.label) ? item.label : item.name"
