@@ -78,7 +78,7 @@ export default {
     validateName (name) {
       let oldError = this.nameErrorMessage
       if (!/^[A-Za-z0-9_]+$/.test(name)) {
-        this.nameErrorMessage = 'Required. Alphanumeric & underscores only'
+        this.nameErrorMessage = 'Required. A-z 0-9 and _ only.'	
       } else if (this.items.some(item => item.name === name)) {
         this.nameErrorMessage = 'An item with this name already exists'
       } else {
