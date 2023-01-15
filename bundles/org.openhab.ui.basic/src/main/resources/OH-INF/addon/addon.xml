@@ -9,6 +9,6 @@
 
 	<service-id>org.openhab.basicui</service-id>
 
-	<config-description-ref uri="ui:basic" />
+	<config-description-ref uri="ui:basic"/>
 
 </addon:addon>

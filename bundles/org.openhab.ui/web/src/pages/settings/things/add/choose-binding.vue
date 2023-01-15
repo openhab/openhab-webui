@@ -40,8 +40,7 @@
             :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id && e.flag !== 'IGNORED').length || undefined"
             badge-color="red"
             :footer="(binding.description && binding.description.indexOf('<br>') >= 0) ?
-              binding.description.split('<br>')[0] : binding.description">
-          </f7-list-item>
+              binding.description.split('<br>')[0] : binding.description" />
         </f7-list>
       </f7-col>
     </f7-block>

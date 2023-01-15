@@ -9,6 +9,6 @@
 
 	<service-id>org.openhab.habot</service-id>
 
-	<config-description-ref uri="ui:habot" />
+	<config-description-ref uri="ui:habot"/>
 
 </addon:addon>
