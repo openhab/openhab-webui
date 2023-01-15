@@ -57,23 +57,28 @@ public class ManifestServlet extends BaseServlet {
     private final Logger logger = LoggerFactory.getLogger(ManifestServlet.class);
 
     private final PageRenderer renderer;
+    private final ImplicitUserRoleSecurityHandler securityHandler;
 
     @Activate
     public ManifestServlet(final @Reference HttpService httpService,
             final @Reference HttpContextFactoryService httpContextFactoryService,
-            final @Reference ItemRegistry itemRegistry, final @Reference PageRenderer renderer) {
+            final @Reference ItemRegistry itemRegistry, final @Reference PageRenderer renderer,
+            final @Reference ImplicitUserRoleSecurityHandler securityHandler) {
         super(httpService, httpContextFactoryService, itemRegistry);
         this.renderer = renderer;
+        this.securityHandler = securityHandler;
     }
 
     @Activate
     protected void activate(Map<String, Object> configProps, BundleContext bundleContext) {
+        securityHandler.addUriToChecks(WEBAPP_ALIAS);
         HttpContext httpContext = createHttpContext(bundleContext.getBundle());
         super.activate(WEBAPP_ALIAS + "/" + MANIFEST_NAME, httpContext);
     }
 
     @Deactivate
     protected void deactivate() {
+        securityHandler.removeUriFromChecks(WEBAPP_ALIAS);
         super.deactivate(WEBAPP_ALIAS + "/" + MANIFEST_NAME);
     }
 

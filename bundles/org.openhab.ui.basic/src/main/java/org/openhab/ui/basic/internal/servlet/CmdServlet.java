@@ -54,22 +54,27 @@ public class CmdServlet extends BaseServlet {
     public static final String SERVLET_NAME = "CMD";
 
     private final EventPublisher eventPublisher;
+    private final ImplicitUserRoleSecurityHandler securityHandler;
 
     @Activate
     public CmdServlet(final @Reference HttpService httpService,
             final @Reference HttpContextFactoryService httpContextFactoryService,
-            final @Reference ItemRegistry itemRegistry, final @Reference EventPublisher eventPublisher) {
+            final @Reference ItemRegistry itemRegistry, final @Reference EventPublisher eventPublisher,
+            final @Reference ImplicitUserRoleSecurityHandler securityHandler) {
         super(httpService, httpContextFactoryService, itemRegistry);
         this.eventPublisher = eventPublisher;
+        this.securityHandler = securityHandler;
     }
 
     @Activate
     protected void activate(BundleContext bundleContext) {
+        securityHandler.addUriToChecks(WEBAPP_ALIAS);
         super.activate(WEBAPP_ALIAS + "/" + SERVLET_NAME, bundleContext);
     }
 
     @Deactivate
     protected void deactivate() {
+        securityHandler.removeUriFromChecks(WEBAPP_ALIAS);
         httpService.unregister(WEBAPP_ALIAS + "/" + SERVLET_NAME);
     }
 

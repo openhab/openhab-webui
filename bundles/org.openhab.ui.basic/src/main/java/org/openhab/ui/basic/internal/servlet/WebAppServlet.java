@@ -80,6 +80,7 @@ public class WebAppServlet extends BaseServlet {
 
     private final PageRenderer renderer;
     private final SitemapSubscriptionService subscriptions;
+    private final ImplicitUserRoleSecurityHandler securityHandler;
     private final WebAppConfig config = new WebAppConfig();
     protected final Set<SitemapProvider> sitemapProviders = new CopyOnWriteArraySet<>();
 
@@ -87,10 +88,11 @@ public class WebAppServlet extends BaseServlet {
     public WebAppServlet(final @Reference HttpService httpService,
             final @Reference HttpContextFactoryService httpContextFactoryService,
             final @Reference ItemRegistry itemRegistry, final @Reference SitemapSubscriptionService subscriptions,
-            final @Reference PageRenderer renderer) {
+            final @Reference PageRenderer renderer, final @Reference ImplicitUserRoleSecurityHandler securityHandler) {
         super(httpService, httpContextFactoryService, itemRegistry);
         this.subscriptions = subscriptions;
         this.renderer = renderer;
+        this.securityHandler = securityHandler;
     }
 
     @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE, policy = ReferencePolicy.DYNAMIC)
@@ -104,6 +106,7 @@ public class WebAppServlet extends BaseServlet {
 
     @Activate
     protected void activate(Map<String, Object> configProps, BundleContext bundleContext) {
+        securityHandler.addUriToChecks(WEBAPP_ALIAS);
         HttpContext httpContext = createHttpContext(bundleContext.getBundle());
         super.activate(WEBAPP_ALIAS + "/" + SERVLET_NAME, httpContext);
 
@@ -124,6 +127,7 @@ public class WebAppServlet extends BaseServlet {
 
     @Deactivate
     protected void deactivate() {
+        securityHandler.removeUriFromChecks(WEBAPP_ALIAS);
         super.deactivate(WEBAPP_ALIAS + "/" + SERVLET_NAME);
         httpService.unregister(WEBAPP_ALIAS);
         logger.info("Stopped Basic UI");
