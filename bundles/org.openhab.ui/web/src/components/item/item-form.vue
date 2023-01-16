@@ -80,7 +80,7 @@ export default {
 	  if (name == null || name.trim() === "") {
         this.nameErrorMessage = 'A name is required.'	
 	  } else if (!/^[A-Za-z0-9_]+$/.test(name)) {
-        this.nameErrorMessage = 'Only A-z 0-9 and _ allowed.'	
+        this.nameErrorMessage = 'Only A-z, 0-9 and _ allowed.'	
       } else if (this.items.some(item => item.name === name)) {
         this.nameErrorMessage = 'An item with this name already exists'
       } else {
