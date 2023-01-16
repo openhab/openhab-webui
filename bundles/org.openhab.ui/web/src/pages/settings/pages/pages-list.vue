@@ -89,6 +89,7 @@
               :checked="isChecked(((page.component === 'Sitemap') ? 'system:sitemap:' : 'ui:page:') + page.uid)"
               :disabled="showCheckboxes && page.uid === 'overview'"
               @click.ctrl="(e) => ctrlClick(e, page)"
+              @click.meta="(e) => ctrlClick(e, page)"
               @click.exact="(e) => click(e, page)"
               link=""
               :title="page.config.label"
