@@ -3,7 +3,7 @@
     <f7-list>
       <f7-list-item>
         <div slot="inner">
-          <f7-chip v-for="tag in item.tags.filter((t) => !isSemanticTag(t))" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="blue">
+          <f7-chip v-for="tag in item.tags.filter((t) => !isSemanticTag(t) && !isScriptTag(t))" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="blue">
             <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
           </f7-chip>
         </div>
@@ -28,7 +28,7 @@
 import * as SemanticClasses from '@/assets/semantics.js'
 
 export default {
-  props: ['item', 'disabled'],
+  props: ['item', 'disabled', 'inScriptEditor'],
   data () {
     return {
       pendingTag: ''
@@ -40,6 +40,10 @@ export default {
         SemanticClasses.Equipment,
         SemanticClasses.Points,
         SemanticClasses.Properties].some((t) => t.indexOf(tag) >= 0)
+    },
+    isScriptTag (tag) {
+      if (this.inScriptEditor !== true) return false
+      if (tag === 'Script') return true
     },
     addTag () {
       if (this.pendingTag && this.item.tags.indexOf(this.pendingTag) === -1) {
