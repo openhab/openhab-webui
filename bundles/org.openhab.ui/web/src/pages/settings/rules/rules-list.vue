@@ -92,6 +92,7 @@
               :checkbox="showCheckboxes"
               :checked="isChecked(rule.uid)"
               @click.ctrl="(e) => ctrlClick(e, rule)"
+              @click.meta="(e) => ctrlClick(e, rule)"
               @click.exact="(e) => click(e, rule)"
               link=""
               :title="rule.name"
