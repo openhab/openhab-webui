@@ -185,15 +185,15 @@ export default {
     },
     load () {
       this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`).then((data) => {
-          Object.keys(data.metadata).forEach(namespace => {
-            let rs = MetadataNamespaces.find(ns => ns.name === namespace)
-            data.metadata[namespace].id = namespace
-            data.metadata[namespace].label = (rs === undefined) ? namespace : rs.label
-            data.metadata[namespace].custom = (rs === undefined) ? true : false
-          })
-          this.item = data
-          this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
+        Object.keys(data.metadata).forEach(namespace => {
+          let rs = MetadataNamespaces.find(ns => ns.name === namespace)
+          data.metadata[namespace].id = namespace
+          data.metadata[namespace].label = (rs === undefined) ? namespace : rs.label
+          data.metadata[namespace].custom = (rs === undefined)
         })
+        this.item = data
+        this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
+      })
     },
     deleteItem () {
       this.$f7.dialog.confirm(
