@@ -32,21 +32,31 @@ export default {
     let dimension2 = component.config.dimension2
     let boundary = includeBoundaryFor(component)
 
-    const itemPoints = points.find(p => p.name === component.config.item).data
+    // we'll suppose dimension2 always more granular than dimension1
+    // e.g. if dimension1=day, dimension2 can be hour but not month
+    let groupStart = dimension2 || dimension1
+    if (groupStart === 'weekday' || groupStart === 'isoWeekday') groupStart = 'day'
+
+    let itemPoints = points.find(p => p.name === component.config.item).data
+
+    if (boundary && itemPoints.length) {
+      let stime = dayjs(itemPoints[0].time)
+      let start = stime.startOf(groupStart)
+      if (!stime.isSame(start)) {
+        itemPoints.unshift({ time: start.valueOf(), state: NaN })
+      }
+      let etime = dayjs(itemPoints[itemPoints.length - 1].time)
+      if (etime.isSame(etime.endOf(groupStart))) {
+        itemPoints.splice(-1, 1)
+      }
+    }
+
     const groups = itemPoints.reduce((acc, p) => {
-      // we'll suppose dimension2 always more granular than dimension1
-      // e.g. if dimension1=day, dimension2 can be hour but not month
-      let groupStart = dimension2 || dimension1
-      if (groupStart === 'weekday' || groupStart === 'isoWeekday') groupStart = 'day'
-      let pTime = dayjs(p.time)
-      let start = pTime.startOf(groupStart)
+      let start = dayjs(p.time).startOf(groupStart)
       if (acc.length && acc[acc.length - 1][0].isSame(start)) {
         acc[acc.length - 1][1].push(p.state)
       } else {
         acc.push([start, [p.state]])
-        if (acc.length === 1 && boundary && !pTime.isSame(start)) {
-          acc[0][1].unshift(NaN)
-        }
       }
       return acc
     }, [])
