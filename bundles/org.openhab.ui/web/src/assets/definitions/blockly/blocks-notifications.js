@@ -18,7 +18,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       this.setNextStatement(true, null)
       this.setInputsInline(false)
       this.setColour(0)
-      this.setTooltip('Send a notification message to a specific openhab user')
+      this.setTooltip('Send a notification message to a specific openhab user (requires openHAB Cloud Connector)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-specific-cloud-email-user')
     }
   }
@@ -48,7 +48,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       this.setNextStatement(true, null)
       this.setInputsInline(false)
       this.setColour(0)
-      this.setTooltip('send a notification to all clients. Provide icon name without prefix')
+      this.setTooltip('send a notification to all clients. Provide icon name without prefix. (requires openHAB Cloud Connector)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-all-devices-and-users')
     }
   }
@@ -79,7 +79,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       this.setNextStatement(true, null)
       this.setInputsInline(false)
       this.setColour(0)
-      this.setTooltip('Sends a notification to the log only not to any device')
+      this.setTooltip('Sends a notification to the cloud log only, not to any device (requires openHAB Cloud Connector)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-log-only')
     }
   }
