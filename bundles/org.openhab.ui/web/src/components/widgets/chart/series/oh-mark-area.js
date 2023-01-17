@@ -12,9 +12,11 @@ export default {
     let rollingState = null
     let currentArea = null
     itemPoints.forEach((p) => {
-      if (onStates.includes(p.state) && !onStates.includes(rollingState)) {
+      // eslint-disable-next-line eqeqeq
+      if (onStates.findIndex((s) => s == p.state) >= 0 && onStates.findIndex((s) => s == rollingState) < 0) {
         currentArea = [{ name: markArea.name, xAxis: new Date(p.time) }]
-      } else if ((!onStates.includes(p.state) && onStates.includes(rollingState)) && currentArea) {
+      // eslint-disable-next-line eqeqeq
+      } else if ((onStates.findIndex((s) => s == p.state) < 0 && onStates.findIndex((s) => s == rollingState) >= 0) && currentArea) {
         currentArea.push({ xAxis: new Date(p.time) })
         currentArea[0].name = markArea.name || markArea.item
         currentArea[0].value = rollingState
