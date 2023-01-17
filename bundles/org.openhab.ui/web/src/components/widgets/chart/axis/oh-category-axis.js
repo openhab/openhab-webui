@@ -1,6 +1,7 @@
 import * as dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import LocaleData from 'dayjs/plugin/localeData'
+import ComponentId from '../../component-id'
 dayjs.extend(LocalizedFormat)
 dayjs.extend(LocaleData)
 
@@ -16,9 +17,9 @@ const weekdays = {
 }
 
 export default {
-  get (component, startTime, endTime, chart, inverse) {
+  get (component, startTime, endTime, chart, chartWidget, inverse) {
     const config = component.config || {}
-    let axis = Object.assign({}, config)
+    let axis = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     axis.type = 'category'
 
     axis.data = []
