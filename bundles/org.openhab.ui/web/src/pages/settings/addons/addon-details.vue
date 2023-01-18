@@ -199,8 +199,7 @@ export default {
       addonIcon: null,
       descriptionReady: false,
       parsedDescription: '',
-      descriptionExpanded: false,
-      bindingInfo: null
+      descriptionExpanded: false
     }
   },
   computed: {
@@ -209,11 +208,11 @@ export default {
     },
     realAddonId () {
       if (!this.addon) return null
-      return (this.addon.id.indexOf(':') > 0) ? this.addon.id.substring(this.addon.id.indexOf(':') + 1) : this.addon.id
+      return this.addon.uid
     },
     serviceId () {
       if (!this.addon) return null
-      return (this.addon.id.indexOf(':') > 0) ? this.addon.id.substring(0, this.addon.id.indexOf(':')) : undefined
+      return (this.addon.uid.indexOf(':') > 0) ? this.addon.uid.substring(0, this.addon.uid.indexOf(':')) : undefined
     },
     imageUrl () {
       if (!this.addon) return null
@@ -236,13 +235,10 @@ export default {
     docLinkUrl () {
       if (!this.addon) return ''
       if (this.serviceId && this.serviceId !== 'karaf' && this.addon.link) return this.addon.link
-      if (this.addon.id.indexOf('-') > 0) {
-        let url = `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org` +
-          `/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}` +
-          `/${this.addon.id.split('-')[1]}`
-        return url
-      }
-      return ''
+      let url = `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org` +
+        `/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}` +
+        `/${this.addon.id}`
+      return url
     }
   },
   methods: {
@@ -255,14 +251,11 @@ export default {
     },
     load () {
       this.stopEventSource()
-      let addonId = this.addonId
       let serviceId = null
-      if (addonId.indexOf(':') > 0) {
-        serviceId = addonId.substring(0, addonId.indexOf(':'))
-        addonId = addonId.substring(addonId.indexOf(':') + 1)
+      if (this.addonId.indexOf(':') > 0) {
+        serviceId = this.addonId.substring(0, this.addonId.indexOf(':'))
       }
-      this.bindingInfo = null
-      this.$oh.api.get('/rest/addons/' + addonId + (serviceId ? '?serviceId=' + serviceId : '')).then((data) => {
+      this.$oh.api.get('/rest/addons/' + this.addonId + (serviceId ? '?serviceId=' + serviceId : '')).then((data) => {
         this.resetPending()
         this.$set(this, 'addon', data)
         this.addonIcon = AddonIcons[this.addon.type]
@@ -280,12 +273,6 @@ export default {
           })
           this.$f7.lazy.create('.page-addon-details')
         })
-
-        if (this.addon.type === 'binding' && this.addonId.indexOf('binding-') === 0 && this.addon.installed) {
-          this.$oh.api.get('/rest/addons').then(data2 => {
-            this.bindingInfo = data2.find(b => b.id === this.addonId.replace('binding-', '')) || {}
-          })
-        }
       })
     },
     processDescription () {
@@ -296,10 +283,9 @@ export default {
         let addonTypeFolder = '_addons_' + this.addon.type
         if (this.addon.type === 'misc') addonTypeFolder = '_addons_io'
         if (this.addon.type !== 'automation') addonTypeFolder += 's'
-        let addonId = this.addon.id.split('-')[1]
         let docUrl = (this.$store.state.runtimeInfo.buildString === 'Release Build') ? 'https://www.openhab.org' : 'https://next.openhab.org'
-        docUrl += `/addons/${this.addon.type}/${addonId}`
-        let docSrcUrl = `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/${addonTypeFolder}/${addonId}`
+        docUrl += `/addons/${this.addon.type}/${this.addon.id}`
+        let docSrcUrl = `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/${addonTypeFolder}/${this.addon.id}`
 
         fetch(docSrcUrl + '/readme.md').then((readme) => {
           readme.text().then((text) => {

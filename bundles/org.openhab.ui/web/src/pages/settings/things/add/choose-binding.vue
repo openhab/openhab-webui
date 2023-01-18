@@ -33,10 +33,10 @@
           <f7-list-item
             v-for="binding in bindings"
             media-item
-            :key="binding.id"
+            :key="binding.uid"
             :link="binding.id"
             :title="binding.label"
-            :header="binding.id"
+            :header="binding.uid"
             :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id && e.flag !== 'IGNORED').length || undefined"
             badge-color="red"
             :footer="(binding.description && binding.description.indexOf('<br>') >= 0) ?
@@ -76,7 +76,7 @@ export default {
   methods: {
     onPageAfterIn () {
       this.loading = true
-      this.$oh.api.get('/rest/addons').then((data) => {
+      this.$oh.api.get('/rest/addons?serviceId=all').then((data) => {
         let installedBindings = data.filter(addon => addon.type === 'binding' && addon.installed === true)
         this.bindings = installedBindings.sort((a, b) => a.label.localeCompare(b.label))
         this.loading = false

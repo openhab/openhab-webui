@@ -3,7 +3,7 @@
     v-if="addon"
     class="addon-list-item padding-right-half"
     :title="addon.label"
-    :link="addon.id">
+    :link="addon.uid">
     <div v-if="addon.verifiedAuthor" slot="subtitle">
       {{ addon.author }}
       <f7-icon v-if="addon.verifiedAuthor" size="15" :color="$f7.data.themeOptions.dark === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" style="margin-top: -3px" />

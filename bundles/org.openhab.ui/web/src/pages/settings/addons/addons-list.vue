@@ -28,11 +28,11 @@
             media-item
             link="#"
             v-for="addon in addons"
-            :key="addon.id"
-            @click="openAddonPopup(addon.id)"
-            :header="addon.id"
+            :key="addon.uid"
+            @click="openAddonPopup(addon.uid)"
+            :header="addon.uid"
             :footer="addon.version"
-            :after="(currentlyUninstalling.indexOf(addon.id) >= 0) ? 'Uninstalling...' : ''"
+            :after="(currentlyUninstalling.indexOf(addon.uid) >= 0) ? 'Uninstalling...' : ''"
             :title="addon.label">
             <!-- <f7-swipeout-actions left>
               <f7-swipeout-button v-if="addon.link" color="blue">Documentation</f7-swipeout-button>
@@ -124,7 +124,7 @@ export default {
     },
     uninstallAddon (addon) {
       this.addonPopupOpened = false
-      this.currentlyUninstalling.push(addon.id)
+      this.currentlyUninstalling.push(addon.uid)
     },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/addons/*/*', null, (event) => {
