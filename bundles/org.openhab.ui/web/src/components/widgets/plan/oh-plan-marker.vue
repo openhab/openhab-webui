@@ -82,7 +82,8 @@ export default {
     },
     iconStyle () {
       return Object.assign({
-        transform: 'rotate(' + this.config.iconRotation + 'deg)'
+        transform: 'rotate(' + this.config.iconRotation + 'deg)',
+        visibility: this.config.iconVisibility
       }, this.config.iconStyle)
     }
   },
