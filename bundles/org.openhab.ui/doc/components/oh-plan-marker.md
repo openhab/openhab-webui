@@ -82,6 +82,11 @@ Example: (note that you must not have semicolons at the end of the css style):
     Height of the icon in pixels (for openHAB icons only, 40 by default)
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="iconVisibility" label="Icon Visibility">
+  <PropDescription>
+    Enter an expression to show/hide the icon conditionally
+  </PropDescription>
+</PropBlock>
 <PropBlock type="TEXT" name="iconColor" label="Icon Color">
   <PropDescription>
     Color of the icon (for Framework7/Material/certain Iconify icons); use expression for dynamic colors

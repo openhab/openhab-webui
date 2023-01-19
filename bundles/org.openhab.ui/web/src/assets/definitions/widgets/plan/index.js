@@ -37,7 +37,7 @@ export const OhPlanMarkerDefinition = () => new WidgetDefinition('oh-plan-marker
     pn('iconSize', 'Icon Size', 'Size of the icon in pixels (40 by default)'),
     pn('iconWidth', 'Icon Width', 'Width of the icon in pixels (for openHAB icons only, 40 by default)').a(),
     pn('iconHeight', 'Icon Height', 'Height of the icon in pixels (for openHAB icons only, 40 by default)').a(),
-    pt('iconVisibility', 'Icon Visibility', 'Enter an expression to hide the icon conditionally or false to never display it'),
+    pt('iconVisibility', 'Icon Visibility', 'Enter an expression to show/hide the icon conditionally'),
     pt('iconColor', 'Icon Color', 'Color of the icon (for Framework7/Material/certain Iconify icons); use expression for dynamic colors'),
     pn('iconRotation', 'Icon Rotation', 'Rotation of the icon in degrees')
   ])
