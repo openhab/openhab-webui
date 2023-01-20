@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="pageStyle">
     <div class="hint-apps" v-if="!overviewPage && !$store.getters.user && !showHABot">
       <p><em><f7-icon class="float-right margin-left margin-bottom" f7="arrow_turn_right_up" size="20" />{{ $t('home.tip.otherApps') }}</em></p>
     </div>
@@ -73,6 +73,10 @@ export default {
         store: this.context.store,
         vars: {}
       }
+    },
+    pageStyle () {
+      if (!this.overviewPage) return null
+      return this.overviewPage.config.style
     }
   },
   methods: {

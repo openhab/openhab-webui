@@ -7,6 +7,7 @@ import {
   FAN_SPEEDS,
   LOCK_STATES,
   OPEN_STATES,
+  PLAYBACK_STEPS,
   THERMOSTAT_MODES,
   THERMOSTAT_FAN_MODES,
   VACUUM_MODES
@@ -163,12 +164,16 @@ export default {
   },
   Playback: {
     itemTypes: ['Player'],
-    parameters: () => [p.supportedOperations()]
+    parameters: () => [p.supportedOperations(), p.retrievable()]
   },
   PlaybackStop: {
     itemTypes: ['Switch'],
     requires: ['Playback'],
-    parameters: () => [p.inverted()]
+    parameters: () => [p.inverted(), p.retrievable()]
+  },
+  PlaybackStep: {
+    itemTypes: ['String'],
+    parameters: () => PLAYBACK_STEPS.map((step) => p.valueMapping(step))
   },
 
   // Fan Attributes

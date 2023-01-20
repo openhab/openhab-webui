@@ -3,6 +3,7 @@ import {
   EQUALIZER_MODES,
   LANGUAGES,
   PLAYBACK_OPERATIONS,
+  STATE_DESCRIPTION_OPTIONS_LIMIT,
   TEMPERATURE_SCALES,
   THERMOSTAT_MODES,
   UNITS_OF_MEASURE
@@ -232,7 +233,8 @@ export default {
       stateDescription.options &&
       stateDescription.options
         .filter((option) => !isNaN(option.value))
-        .map((option) => `${option.value}=${option.label}`),
+        .map((option) => `${option.value}=${option.label}`)
+        .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true
   }),
@@ -356,7 +358,9 @@ export default {
     default:
       stateDescription &&
       stateDescription.options &&
-      stateDescription.options.map((option) => `${option.value}=${option.label}`),
+      stateDescription.options
+        .map((option) => `${option.value}=${option.label}`)
+        .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true,
     required: !stateDescription || !stateDescription.options || !stateDescription.options.length
@@ -370,7 +374,9 @@ export default {
     default:
       stateDescription &&
       stateDescription.options &&
-      stateDescription.options.map((option) => `${option.value}=${option.label}`),
+      stateDescription.options
+        .map((option) => `${option.value}=${option.label}`)
+        .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: 'Normal=Normal:Cottons\nWhites=Whites',
     multiple: true,
     required: !stateDescription || !stateDescription.options || !stateDescription.options.length

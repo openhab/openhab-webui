@@ -28,7 +28,7 @@
                 <f7-preloader v-if="isPending(addon)" color="blue" />
                 <f7-button v-else-if="addon.installed" class="install-button" text="Remove" color="red" round small fill @click="openAddonPopup" />
                 <f7-button v-else class="install-button" :text="installableAddon(addon) ? 'Install' : 'Add'" color="blue" round small fill @click="openAddonPopup" />
-                <f7-link v-if="!isPending(addon) && bindingInfo && bindingInfo.configDescriptionURI" icon-f7="gears" tooltip="Configure Binding" color="blue" :href="'/settings/addons/' + bindingInfo.id + '/config'" round small />
+                <f7-link v-if="showConfig" icon-f7="gears" tooltip="Configure add-on" color="blue" :href="'/settings/addons/' + addonId + '/config'" round small />
               </div>
             </div>
           </div>
@@ -204,6 +204,9 @@ export default {
     }
   },
   computed: {
+    showConfig () {
+      return this.addon && this.addon.installed && (this.addon.configDescriptionURI || this.addon.loggerPackages.length > 0)
+    },
     realAddonId () {
       if (!this.addon) return null
       return (this.addon.id.indexOf(':') > 0) ? this.addon.id.substring(this.addon.id.indexOf(':') + 1) : this.addon.id
@@ -279,14 +282,14 @@ export default {
         })
 
         if (this.addon.type === 'binding' && this.addonId.indexOf('binding-') === 0 && this.addon.installed) {
-          this.$oh.api.get('/rest/bindings').then(data2 => {
+          this.$oh.api.get('/rest/addons').then(data2 => {
             this.bindingInfo = data2.find(b => b.id === this.addonId.replace('binding-', '')) || {}
           })
         }
       })
     },
     processDescription () {
-      if (!this.addon.description && this.addon.author === 'openHAB') {
+      if (this.addon.author === 'openHAB') {
         // assuming the add-on is an official one (distribution), try to fetch the documentation from GitHub
         let docsBranch = 'final'
         if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'

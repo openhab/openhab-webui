@@ -46,7 +46,7 @@ const volumeDefaultPercentageParameter = p('INTEGER', 'volumeDefaultPercentage',
 const levelStepSizeParameter = p('INTEGER', 'levelStepSize', 'Step size', 'Step size for relative volume queries like "volume up" (default is 1)')
 // Thermostat
 const thermostatModesParameter = p('TEXT', 'modes', 'Thermostat modes', 'Mappings from Google values to openHAB item values (comma separated), e.g. "off=OFF:WINDOW_OPEN,heat=COMFORT:BOOST,eco=ECO,on=ON,auto"')
-const thermostatTemperatureRangeParameter = p('TEXT', 'thermostatTemperatureRange', 'Temperature range', 'The temperature range your thermostat supports (comma separated), e.g. "10,30"')
+const thermostatTemperatureRangeParameter = p('TEXT', 'thermostatTemperatureRange', 'Thermostat temperature range', 'The temperature range your thermostat supports (comma separated, in Celsius), e.g. "10,30"')
 const useFahrenheitParameter = p('BOOLEAN', 'useFahrenheit', 'Use Fahrenheit')
 // TV
 const transportControlSupportedCommandsParameter = p('TEXT', 'transportControlSupportedCommands', 'Supported transport controls', 'List of supported controls, e.g. "NEXT,PREVIOUS,PAUSE,RESUME"')
@@ -98,7 +98,9 @@ const deviceTypes = {
   'SecuritySystem': [armLevelsParameter, pinOnDisarmOnlyParameter, waitForStateChangeParameter, invertedParameter],
   'Sensor': [sensorNameParameter, valueUnitParameter, statesParameter],
   'Speaker': [volumeMaxLevelParameter, volumeDefaultPercentageParameter, levelStepSizeParameter],
+  'HumiditySensor': [],
   'TemperatureSensor': [useFahrenheitParameter],
+  'ClimateSensor': [useFahrenheitParameter],
   'Thermostat': [useFahrenheitParameter, thermostatModesParameter, thermostatTemperatureRangeParameter],
   'TV': [volumeMaxLevelParameter, volumeDefaultPercentageParameter, levelStepSizeParameter, langParameter, transportControlSupportedCommandsParameter, availableInputsParameter, availableChannelsParameter, availableApplicationsParameter],
   'Valve': [invertedParameter]
@@ -115,6 +117,8 @@ const deviceAttributes = {
   'thermostatTemperatureSetpointLow': [],
   'thermostatTemperatureSetpointHigh': [],
   'thermostatMode': [],
+  'temperatureAmbient': [],
+  'humidityAmbient': [],
   'tvPower': [],
   'tvMute': [],
   'tvVolume': [],
