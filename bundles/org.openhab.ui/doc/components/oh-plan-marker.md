@@ -49,14 +49,7 @@ A marker on a floor plan
 ### Icon
 <div class="props">
 <PropGroup name="icon" label="Icon">
-  You can customize the styles further with CSS attributes in the <code>iconStyle</code> parameter (in YAML only)
-Example: (note that you must not have semicolons at the end of the css style):
-
-    iconStyle:
-      padding: 10px
-      border-radius: 4px
-      border: 5px solid #f00  
-
+  You can customize the styles further with CSS attributes in the <code>iconStyle</code> parameter (in YAML only) - see example below
 <PropBlock type="TEXT" name="icon" label="Icon">
   <PropDescription>
     Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>), <code>material:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>) or <code>iconify:iconSet:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://icon-sets.iconify.design">Iconify icon</a>, requires being online if not in cache)
@@ -103,14 +96,7 @@ Example: (note that you must not have semicolons at the end of the css style):
 ### Tooltip
 <div class="props">
 <PropGroup name="tooltip" label="Tooltip">
-  You can customize the styles further with CSS attributes in the <code>tooltipStyle</code> parameter (in YAML only)
-Example: (note that you must not have semicolons at the end of the css style):
-
-    tooltipStyle:
-      textShadow: 0 0 15px red
-      fontSize: 40px
-      color: yellow
-
+  You can customize the styles further with CSS attributes in the <code>tooltipStyle</code> parameter (in YAML only) - see example below
 <PropBlock type="TEXT" name="tooltip" label="Tooltip Text">
   <PropDescription>
     The tooltip text - leave blank to display the state of the item
@@ -342,6 +328,28 @@ Example: (note that you must not have semicolons at the end of the css style):
 
 
 <!-- GENERATED /props -->
+
+## Examples
+
+note that you must not have semicolons at the end of the css style
+
+### iconStyle: 
+
+```yaml
+iconStyle:
+  padding: 10px
+  border-radius: 4px
+  border: 5px solid #f00
+```
+
+### tooltipStyle:
+
+```yaml
+tooltipStyle:
+  textShadow: 0 0 15px red
+  fontSize: 40px
+  color: yellow
+```
 
 <!-- If applicable describe how properties are forwarded to a underlying component from Framework7, ECharts, etc.:
 ### Inherited Properties

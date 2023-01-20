@@ -31,7 +31,7 @@ export const OhPlanMarkerDefinition = () => new WidgetDefinition('oh-plan-marker
     pt('coords', 'Coordinates', 'The coordinates of this marker in the floor plan Coordinate Reference System; usually set by dragging the marker at design time').a(),
     pi('item', 'Item', 'The item whose state to display on this marker')
   ])
-  .paramGroup(pg('icon', 'Icon', 'You can customize the styles further with CSS attributes in the <code>iconStyle</code> parameter (in YAML only)'), [
+  .paramGroup(pg('icon', 'Icon', 'You can customize the styles further with CSS attributes in the <code>iconStyle</code> parameter (in YAML only) - see example below'), [
     pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>), <code>material:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>) or <code>iconify:iconSet:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://icon-sets.iconify.design">Iconify icon</a>, requires being online if not in cache)'),
     pb('iconUseState', 'Icon depends on state', 'Use the state of the item to get a dynamic icon (for openHAB icons only)'),
     pn('iconSize', 'Icon Size', 'Size of the icon in pixels (40 by default)'),
@@ -41,7 +41,7 @@ export const OhPlanMarkerDefinition = () => new WidgetDefinition('oh-plan-marker
     pt('iconColor', 'Icon Color', 'Color of the icon (for Framework7/Material/certain Iconify icons); use expression for dynamic colors'),
     pn('iconRotation', 'Icon Rotation', 'Rotation of the icon in degrees')
   ])
-  .paramGroup(pg('tooltip', 'Tooltip', 'You can customize the styles further with CSS attributes in the <code>tooltipStyle</code> parameter (in YAML only)'), [
+  .paramGroup(pg('tooltip', 'Tooltip', 'You can customize the styles further with CSS attributes in the <code>tooltipStyle</code> parameter (in YAML only) - see example below'), [
     pt('tooltip', 'Tooltip Text', 'The tooltip text - leave blank to display the state of the item'),
     pb('tooltipPermanent', 'Always display the tooltip'),
     pb('useTooltipAsLabel', 'Use Tooltip as Label', 'Put the tooltip text directly over the plan instead of displaying an icon'),
