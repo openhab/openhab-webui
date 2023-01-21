@@ -76,7 +76,7 @@
               :footer="(item.label) ? item.name : '\xa0'"
               :subtitle="getItemTypeAndMetaLabel(item)"
               :style="`top: ${vlData.topPosition}px`"
-              :after="item.state">
+              :after="(item.state) ? item.state : '\xa0'">
               <oh-icon v-if="item.category" slot="media" :icon="item.category" height="32" width="32" />
               <span v-else slot="media" class="item-initial">{{ item.name[0] }}</span>
               <f7-icon v-if="!item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
