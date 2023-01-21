@@ -147,8 +147,6 @@ import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 
-import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
-
 export default {
   props: ['itemName'],
   components: {
@@ -185,12 +183,6 @@ export default {
     },
     load () {
       this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`).then((data) => {
-        Object.keys(data.metadata).forEach(namespace => {
-          let rs = MetadataNamespaces.find(ns => ns.name === namespace)
-          data.metadata[namespace].id = namespace
-          data.metadata[namespace].label = (rs === undefined) ? namespace : rs.label
-          data.metadata[namespace].custom = (rs === undefined)
-        })
         this.item = data
         this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
       })

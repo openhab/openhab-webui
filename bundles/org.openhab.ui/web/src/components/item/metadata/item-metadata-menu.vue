@@ -1,25 +1,21 @@
 <template>
   <f7-card>
-    <f7-card-content v-if="item.metadata && Object.keys(item.metadata).filter((n) => n !== 'semantics').length > 0">
+    <f7-card-content v-if="item.metadata && Object.keys(item.metadata).filter((n) => n !== 'semantics2').length > 0">
       <f7-list>
         <ul>
           <f7-list-item
-            v-for="namespace in standardNamespaces" :key="namespace"
-            :link="'/settings/items/' + item.name + '/metadata/' + item.metadata[namespace].id"
-            :title="item.metadata[namespace].label"
-            :after="(item.metadata[namespace].id) ? item.metadata[namespace].id : 'Not Set'" />
+            v-for="namespace in wellKnownNamespaces" :key="namespace"
+            :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
+            :title="namespace.label"
+            :after="namespace.value || 'Not Set'" />
         </ul>
-      </f7-list>
-    </f7-card-content>
-    <hr>
-    <f7-card-content v-if="item.metadata && Object.keys(item.metadata).filter((n) => n !== 'semantics').length > 0">
-      <f7-list>
-        <ul>
+        <ul v-if="customNamespaces.length > 0">
+          <f7-list-item divider />
           <f7-list-item
             v-for="namespace in customNamespaces" :key="namespace"
-            :link="'/settings/items/' + item.name + '/metadata/' + item.metadata[namespace].id"
-            :title="item.metadata[namespace].label"
-            :after="(item.metadata[namespace].id) ? item.metadata[namespace].id : 'Not Set'" />
+            :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
+            :title="namespace.label"
+            :after="namespace.value || 'Not Set'" />
         </ul>
       </f7-list>
     </f7-card-content>
@@ -42,11 +38,39 @@ export default {
     }
   },
   computed: {
-    standardNamespaces () {
-      return Object.keys(this.item.metadata).filter((n) => !this.item.metadata[n].custom)
+    editableNamespaces () {
+      if (!this.item.metadata) return []
+      // TODO: determine somehow if other MetadataProviders are not editable
+      // for now we'll assume they're all editable except "semantics"
+      return Object.keys(this.item.metadata)
+        .filter((n) => n !== 'semantics')
+        .map((n) => {
+          return {
+            name: n,
+            value: this.item.metadata[n].value
+          }
+        })
+    },
+    wellKnownNamespaces () {
+      return this.editableNamespaces
+        .filter((n) => MetadataNamespaces.some((wk) => wk.name === n.name))
+        .map((n) => {
+          const wellKnown = MetadataNamespaces.find((wk) => wk.name === n.name)
+          return {
+            ...n,
+            label: wellKnown.label
+          }
+        })
     },
     customNamespaces () {
-      return Object.keys(this.item.metadata).filter((n) => this.item.metadata[n].custom)
+      return this.editableNamespaces
+        .filter((n) => !MetadataNamespaces.some((wk) => wk.name === n.name))
+        .map((n) => {
+          return {
+            ...n,
+            label: n.name
+          }
+        })
     }
   },
   methods: {
