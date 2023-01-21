@@ -1,6 +1,6 @@
 <template>
   <f7-card>
-    <f7-card-content v-if="item.metadata && Object.keys(item.metadata).filter((n) => n !== 'semantics2').length > 0">
+    <f7-card-content v-if="this.editableNamespaces.length > 0">
       <f7-list>
         <ul>
           <f7-list-item
