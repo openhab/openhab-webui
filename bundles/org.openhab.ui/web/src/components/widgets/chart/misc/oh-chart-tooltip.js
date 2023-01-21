@@ -1,14 +1,15 @@
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+import ComponentId from '../../component-id'
 dayjs.extend(LocalizedFormat)
 
 export default {
-  get (component, startTime, endTime, chart, device, items) {
-    let options = Object.assign({}, component.config)
+  get (component, startTime, endTime, chart, device) {
+    let options = chart.evaluateExpression(ComponentId.get(component), component.config)
     if (options.confine === undefined) options.confine = true
 
-    if (component.config.smartFormatter) {
+    if (options.smartFormatter) {
       options.formatter = (params, ticket, callback) => {
         let tooltip = ''
         if (params.componentType === 'markArea') {
