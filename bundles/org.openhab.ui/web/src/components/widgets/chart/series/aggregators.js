@@ -20,7 +20,11 @@ export default (aggregationFunction, arr, idx, values) => {
       aggregate = idx < 1 ? NaN : arr[1][0] - values[idx - 1][1][0]
       break
     case 'diff_last':
-      aggregate = idx < 1 ? NaN : arr[1][arr[1].length - 1] - values[idx - 1][1][values[idx - 1][1].length - 1]
+      if (idx < 1) {
+        aggregate = arr[1][arr[1].length - 1] - arr[1][0]
+      } else {
+        aggregate = arr[1][arr[1].length - 1] - values[idx - 1][1][values[idx - 1][1].length - 1]
+      }
       break
     case 'average':
       aggregate = arr[1].reduce((sum, state) => sum + parseFloat(state), 0) / arr[1].length

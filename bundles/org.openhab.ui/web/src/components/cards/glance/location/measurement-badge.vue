@@ -28,7 +28,7 @@
 import { allEquipmentPoints, findPoints } from '../glance-helpers'
 
 export default {
-  props: ['element', 'type', 'customConfig', 'invertColor', 'store'],
+  props: ['element', 'type', 'badgeOverrides', 'customConfig', 'invertColor', 'store'],
   data () {
     return {
       badgeConfigs: {
@@ -40,6 +40,12 @@ export default {
   },
   computed: {
     config () {
+      if (this.badgeOverrides) {
+        const override = this.badgeOverrides[this.type]
+        if (override && override.badge) {
+          return Object.assign(this.badgeConfigs[this.type], override.badge)
+        }
+      }
       return this.badgeConfigs[this.type]
     },
     query () {
