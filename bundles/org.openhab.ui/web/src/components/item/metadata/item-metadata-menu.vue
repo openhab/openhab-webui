@@ -40,7 +40,8 @@ export default {
   computed: {
     editableNamespaces () {
       if (!this.item.metadata) return []
-      // TODO: determine somehow if other MetadataProviders are not editable
+      // TODO: determine somehow if other namespaces are not editable
+      // (non-managed MetadataProvider)
       // for now we'll assume they're all editable except "semantics"
       return Object.keys(this.item.metadata)
         .filter((n) => n !== 'semantics')
