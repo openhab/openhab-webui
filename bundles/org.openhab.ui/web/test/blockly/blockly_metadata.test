@@ -1,0 +1,821 @@
+configuration: {}
+triggers: []
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: <xml
+        xmlns="https://developers.google.com/blockly/xml"><variables><variable
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</variable><variable
+        id="IO{F,GCA?2XW9T@8W(9?">i</variable><variable
+        id="B;GJTn$|g!JY*vDB@s/T">configName</variable><variable
+        id="(iHy2[:UwW}3%u;7v:)G">fieldName</variable><variable
+        id="Jm`?rNO@[9yl`LXSy.t#">item</variable></variables><block
+        type="variables_set" id="ThUoT%z/qSwn.YM0}ttj" x="-480" y="-995"><field
+        name="VAR" id="PI%0qLR{.uv#m?r}2IO2">namespace</field><value
+        name="VALUE"><block type="text" id="i93.w{KHy+Xc^l*}?B4R"><field
+        name="TEXT">namespaceTest</field></block></value><next><block
+        type="variables_set" id="Q@0B;L3Ab1QSpE)rOLjR"><field name="VAR"
+        id="B;GJTn$|g!JY*vDB@s/T">configName</field><value name="VALUE"><block
+        type="text" id="JxP.uowmqluvCE]:GNMo"><field
+        name="TEXT">one.two.three</field></block></value><next><block
+        type="oh_log" id="5=46vTjvA(C]$XJ!QAQ-"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="bZu`|YHWU+6f(,o$fzwz"><field name="TEXT">Testing metadata
+        hierarchies; if vars work, then normal strings work as well, also test
+        bad property access</field></shadow></value><next><block
+        type="controls_if" id="sE^EYkQ_#^gALQ,2KZi!"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="3;oU9fo30)pi_U`y9,y5"><field name="OP">EQ</field><value
+        name="A"><block type="oh_get_meta_config"
+        id="u5Dr`$kxNINiB]pB^58i"><value name="configKey"><shadow type="text"
+        id="`S*`GNPS8C9~C;=Mz]^L"><field
+        name="TEXT">one.two.three</field></shadow><block type="variables_get"
+        id="5%sQmTn;?0a{^]3g6}*q"><field name="VAR"
+        id="B;GJTn$|g!JY*vDB@s/T">configName</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="Z9(-Sm!_gj9Q}5JrZu[r"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="VyLSYKJdHSPE_%ZKeFV)"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id=",.pExuh0Pzj4yeW)F|(e"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="H;d%2(Mvwg%LAtuBqu$Q"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="text" id="Xou:2/r-UB{/XdB@jDbJ"><field
+        name="TEXT">756</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="fbpkH_}1!7!|B2%Pr6b9"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="n7R:!3h3smIskO9_;#Ha"><field name="TEXT">one.two.three == 756 =&gt;
+        correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="nz=SSLR=S7Y~j7V/6jm^"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="~GfR7z%Uo,ino!f*;%W/"><field name="TEXT">one.two.three == 756 =&gt;
+        incorrect</field></shadow></value></block></statement><next><block
+        type="variables_set" id=";bM.vv-`glbcpr``OIFX"><field name="VAR"
+        id="B;GJTn$|g!JY*vDB@s/T">configName</field><value name="VALUE"><block
+        type="text" id="V|9/jg?_,Wwp+yT?S!5q"><field
+        name="TEXT">oone.two</field></block></value><next><block
+        type="controls_if" id="}DMnMgrIfivt_vUbllXe"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="eXa[.xEOvp6a-s|1D#v["><field name="OP">EQ</field><value
+        name="A"><block type="oh_get_meta_config"
+        id="sv!fnZ3pQ-[#AJ5_ix*o"><value name="configKey"><shadow type="text"
+        id="Y3_5:d:}:8yCwoIwY]Ky"><field
+        name="TEXT">oone.two</field></shadow><block type="variables_get"
+        id="2e`GVOpN.:xH1;H?Bg8z"><field name="VAR"
+        id="B;GJTn$|g!JY*vDB@s/T">configName</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="Z9(-Sm!_gj9Q}5JrZu[r"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="NNS2u|)YXwgyf:5C_*SD"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="]jZ:%WBRK(4`rSSg(I8e"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="8ou`g6H|gx6g}S=5h[[{"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="text" id="|V7f6/y[9B{0hU5Q|dT%"><field
+        name="TEXT">456</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="W7n2x%{41NwoJV,U{|fB"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="YywJ$bd9F-$aB1()Hb=I"><field name="TEXT">oone.two == 456 =&gt;
+        correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="Hu:_i3=~vfR[Xv:1!AsV"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="SLge0wf;:!#%fmJZr?CT"><field name="TEXT">oone.two != 456 =&gt;
+        incorrect</field></shadow></value></block></statement><next><block
+        type="variables_set" id="h_kc3?^ln:+;YGJGaPop"><field name="VAR"
+        id="B;GJTn$|g!JY*vDB@s/T">configName</field><value name="VALUE"><block
+        type="text" id="Qea-O21{GtlOV.SH$!e#"><field
+        name="TEXT">ooone</field></block></value><next><block type="controls_if"
+        id="H{f8BQjT%`D%c94um8yu"><mutation else="1"></mutation><value
+        name="IF0"><block type="logic_compare" id="r,BlXz*1%j5ju=VmRjv9"><field
+        name="OP">EQ</field><value name="A"><block type="oh_get_meta_config"
+        id="5W62sBUA1qVCLk[yS6`,"><value name="configKey"><shadow type="text"
+        id="gHRfDPJrNwNgnZco=HbM"><field
+        name="TEXT">oone.two</field></shadow><block type="variables_get"
+        id="hCI;/U{cN|XzE,nO5}j|"><field name="VAR"
+        id="B;GJTn$|g!JY*vDB@s/T">configName</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="Z9(-Sm!_gj9Q}5JrZu[r"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="#M}#ocA}8$]Ys_T/+0wg"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="$W]kv[W,jEj^JZjE{dcZ"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="5/Q]IdHvchKr~uY]hhX|"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="text" id="-9X{Th;T1coLb5Yzupo5"><field
+        name="TEXT">123</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="2x?_3$ib3a?I[,oPyGt8"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="T_3K:I[ah4FH-Z@WDa{/"><field name="TEXT">ooone == 123 =&gt;
+        correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="b6uEoBtDVkllZFuRE/4N"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="n%s%WqpBG-[?_!E!^G-u"><field name="TEXT">ooone != 123 =&gt;
+        incorrect</field></shadow></value></block></statement><next><block
+        type="variables_set" id="O9!#LCy/qVo*-ZedlZ|p"><field name="VAR"
+        id="B;GJTn$|g!JY*vDB@s/T">configName</field><value name="VALUE"><block
+        type="text" id="z7DHRw;9#t)3U2dfvLL_"><field
+        name="TEXT">one</field></block></value><next><block type="oh_log"
+        id="aPJ-VV@h0m)~TMjd)qg%"><field name="severity">info</field><value
+        name="message"><shadow type="text" id="ttY7y|BpveA@4/^p6^1a"><field
+        name="TEXT">abc</field></shadow><block type="oh_get_meta_config"
+        id="5QPY9*j(Z.krV$d.yGzV"><value name="configKey"><shadow type="text"
+        id="^pF]^)|zZjR_Yn(M:8,."><field
+        name="TEXT">one.two.three</field></shadow><block type="variables_get"
+        id="i3KhU`i({_)!uV1n_@5}"><field name="VAR"
+        id="B;GJTn$|g!JY*vDB@s/T">configName</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="Z9(-Sm!_gj9Q}5JrZu[r"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="UNk%INe%|{cW(S^`W};p"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="pD/UVq6y5I{HE7@NdeYQ"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="MKga7K:x$WQ_6IeOJV0/"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><next><block
+        type="controls_if" id="qJA$Bw;WJV-oj#l,9y=("><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="`cjZO_6![Kmp%W@L-9CA"><field name="OP">EQ</field><value
+        name="A"><block type="text_join" id="yQw)!vsy@0GYkyrnowcl"
+        inline="true"><mutation items="2"></mutation><value name="ADD0"><block
+        type="oh_get_meta_config" id="n8mC%c^uoGU46S3IR`t%"><value
+        name="configKey"><shadow type="text" id="gHRfDPJrNwNgnZco=HbM"><field
+        name="TEXT">oone.two</field></shadow><block type="variables_get"
+        id="=4^;kef2bE1$Z(nU$E+B"><field name="VAR"
+        id="B;GJTn$|g!JY*vDB@s/T">configName</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="Z9(-Sm!_gj9Q}5JrZu[r"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="icnc;VEv]^We{XlaI`)F"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="`^(MiVpMc[Ssk4$N1EKm"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id=";aIXu,!Rv=eABTk4m.)?"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="ADD1"><block type="text" id="3sJ86suDk9!~:%/WU:e."><field
+        name="TEXT"></field></block></value></block></value><value
+        name="B"><block type="text" id="Gm{nr/#T2_=)HS$!e:.2"><field
+        name="TEXT">{two={three=756}}</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="9vx%(0B6=E4BY.Y{U1=U"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="!}VOu++{sB^W}Yr}:~OJ"><field name="TEXT">one == {two={three=756}}
+        =&gt; correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="ZM^@lM@0E7zVM{lBGBHk"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id=".M|BawAaW.L|2%3#0m9n"><field name="TEXT">one != {two={three=756}}
+        =&gt; incorrect</field></shadow></value></block></statement><next><block
+        type="variables_set" id="/NBY)@/EIw%:q1}XKH);"><field name="VAR"
+        id="B;GJTn$|g!JY*vDB@s/T">configName</field><value name="VALUE"><block
+        type="text" id="2|]_1XxATOoxW^)p{p,i"><field
+        name="TEXT">none</field></block></value><next><block type="oh_log"
+        id="u56LAIV:pLC9])#t)X#1"><field name="severity">info</field><value
+        name="message"><shadow type="text" id="ttY7y|BpveA@4/^p6^1a"><field
+        name="TEXT">abc</field></shadow><block type="oh_get_meta_config"
+        id="Z8Ow:/4q4KDfNtbP,sCl"><value name="configKey"><shadow type="text"
+        id="8E.MrQ0cS%IN=h{Z=SMO"><field
+        name="TEXT">one.two.three</field></shadow><block type="variables_get"
+        id="o[DW/Bc!{;=94V}(q4;2"><field name="VAR"
+        id="B;GJTn$|g!JY*vDB@s/T">configName</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="Z9(-Sm!_gj9Q}5JrZu[r"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id=":mk2LbS.C{;Yicf6?nBm"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="dfzF6Muv~D5L7Q`BRQ1z"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="rIxZE+zKm?s{u;f`-A6n"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><next><block
+        type="controls_if" id="JUpQa6Fs`HcNP!51cijZ"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="g,vyFNEsBAJmCvl?=UB("><field name="OP">EQ</field><value
+        name="A"><block type="text_join" id="rjqqefphA/Vz.`5~l9ff"><mutation
+        items="2"></mutation><value name="ADD0"><block type="oh_get_meta_config"
+        id="3i6;0qMPMko@%2e==u:`"><value name="configKey"><shadow type="text"
+        id="gHRfDPJrNwNgnZco=HbM"><field
+        name="TEXT">oone.two</field></shadow><block type="variables_get"
+        id="0_yrpj]:Q.fbNP!wSqns"><field name="VAR"
+        id="B;GJTn$|g!JY*vDB@s/T">configName</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="Z9(-Sm!_gj9Q}5JrZu[r"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="g_LG66=d-#j.pSqKaM~_"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="BXrP}Eu_Pfx@)BShQP:m"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="ZZjDg@($obh2f1|O6Eyp"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="ADD1"><block type="text" id="a]I/Z!R_L3?tu*#c;:A8"><field
+        name="TEXT"></field></block></value></block></value><value
+        name="B"><block type="text" id=",x!58eJ+)U:t_H/nmz4F"><field
+        name="TEXT">undefined</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="}D^p@3xV{AI265%X(Ari"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id=")ffrjj/{Aa-x^Va/!XT!"><field name="TEXT">none == undefined =&gt;
+        correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="[Q]@XoFOgiulb**!J=zy"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="voY!w]AQsf7*MGA%LtH6"><field name="TEXT">none != undefined =&gt;
+        incorrect</field></shadow></value></block></statement><next><block
+        type="controls_if" id="GGuK*JT[YBt;1Ais]3Ug"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="|qt-[Z:Av94R.[.:-]]~"><field name="OP">EQ</field><value
+        name="A"><block type="oh_get_meta_value"
+        id="a/s;;nj{J$(iREr5*VuQ"><value name="itemName"><shadow type="oh_item"
+        id="^Am(f?u2|dHVQlkgWUE:"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="L3SWh18^K/nAL2.KtI*{"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="G$2v(~j!]p]vLOIHZa{4"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="EV#:12KnH+q}fnfc{`mU"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="text" id="V0N/M9#-/SKGq+PGHCCf"><field
+        name="TEXT">Stefan</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="M_EuMcdgn,?nYV?opyFK"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="gFSul;U)KpYJD@E2YmKK"><field name="TEXT">value (via item name) ==
+        Stefan =&gt;
+        correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="Vw[P/_oAM?0o3|+~|uHf"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="%-~ru*7d$pB5z=1%{PjA"><field name="TEXT">value (via item name)  !=
+        Stefan =&gt;
+        incorrect</field></shadow></value></block></statement><next><block
+        type="oh_log" id="$_+~ROC%|rkI-/T)cdRK"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Tjiqt$~uETnyqIH2XXRB"><field name="TEXT">Test Item Object vs. Item
+        Name Resilience. Now using Object directly attached in
+        block</field></shadow></value><next><block type="controls_if"
+        id="dQnb|{_LHQfiL}alMpNw"><mutation else="1"></mutation><value
+        name="IF0"><block type="logic_compare" id="yyXUkn1mW6vHY6gy`?yh"><field
+        name="OP">EQ</field><value name="A"><block type="oh_get_meta_value"
+        id="SQH5y#5]=S==3e~pfmrS"><value name="itemName"><shadow type="oh_item"
+        id="^Am(f?u2|dHVQlkgWUE:"><field
+        name="itemName">MyItem</field></shadow><block type="oh_getitem"
+        id="o*[^cs~S[DHf3+uumq+a"><value name="itemName"><shadow type="oh_item"
+        id="?E.EZ)?`oCxBF9.!k[5z"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="D-0v2fp~~JUlh#}/-dhr"><field
+        name="itemName">teststate</field></block></value></block></value><value
+        name="namespace"><shadow type="text" id="NM=:8OiBWO8c7%(~I_)`"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="F5p`MWu3X(PM$D}jkn#u"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="text" id="yv:WZJs*!ytv,Nl#1Y}J"><field
+        name="TEXT">Stefan</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="wvQ:oX)!3Zh-(zlZp=:q"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="TQwUtm2v7s`[EEVUZ^nu"><field name="TEXT">value (via item object)  ==
+        Stefan =&gt;
+        correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="+()LqqMSlhluwTuSA~[J"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="EKZD3dc{R+mI}tgmz!}V"><field name="TEXT">value (via item object)  !=
+        Stefan =&gt;
+        incorrect</field></shadow></value></block></statement><next><block
+        type="oh_log" id="WpJ7$CtIDDK+|fgyfX,f"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="qL9X:$X}cU=c2KfcLB]|"><field name="TEXT">Test Item Object vs. Item
+        Name Resilience. Now using Object through intransparent
+        var</field></shadow></value><next><block type="variables_set"
+        id="%_N}4Q%yQ@FlDH3fYFP;"><field name="VAR"
+        id="Jm`?rNO@[9yl`LXSy.t#">item</field><value name="VALUE"><block
+        type="oh_getitem" id="e8E=C]R9p:Z/,;(D0bXu"><value
+        name="itemName"><shadow type="oh_item" id="?E.EZ)?`oCxBF9.!k[5z"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="A[{[6i!AP%6^6{6uWQBQ"><field
+        name="itemName">teststate</field></block></value></block></value><next><block
+        type="controls_if" id=":_Z0KtFhtVO9!(vby?s,"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id=".x,obZM_BXI|`,;BSAqT"><field name="OP">EQ</field><value
+        name="A"><block type="oh_get_meta_value"
+        id="JB.KV:7wqeGF#Aw]]hke"><value name="itemName"><shadow type="oh_item"
+        id="^Am(f?u2|dHVQlkgWUE:"><field
+        name="itemName">MyItem</field></shadow><block type="variables_get"
+        id="tS5yUb;D%4J/R|.C)Gt."><field name="VAR"
+        id="Jm`?rNO@[9yl`LXSy.t#">item</field></block></value><value
+        name="namespace"><shadow type="text" id="Jw=dy~uiPyW[i*s6reu`"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="=b!]O5%0m:*!Ip:G-1S("><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="text" id="E(%@ljSCzD`mnf;Cqn,w"><field
+        name="TEXT">Stefan</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="6ol[w1Go3Y)d+l_wSUiJ"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="QO(qZbi{{VYp7p(PYOpD"><field name="TEXT">value (via item object)  ==
+        Stefan =&gt;
+        correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="FvBb3F3MwJONr#9r*1l4"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="Gq9;O:71e9yuPKJ+|o%q"><field name="TEXT">value (via item object)  !=
+        Stefan =&gt;
+        incorrect</field></shadow></value></block></statement></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block><block
+        type="oh_log" id="+]83DQ-s(9ahs%PK5t)$" x="-484" y="524"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="OZ:_W0szayB%/iFY`gk:"><field name="TEXT">Testing
+        writes</field></shadow></value><next><block type="oh_log"
+        id="Epj+%ZY]@+SI*gaz3an("><field name="severity">info</field><value
+        name="message"><shadow type="text" id="6-*t_2%lh`mCv:K9Ct`!"><field
+        name="TEXT">Setting Metadata Value</field></shadow></value><next><block
+        type="oh_store_meta_value" id="Ix=k1.Qs)1$th0LU|qgr"><value
+        name="value"><shadow type="text" id="UkSdimHxp~um_wcuHtUh"><field
+        name="TEXT">ON</field></shadow></value><value name="namespace"><shadow
+        type="text" id="[KNfR8PdT00s_FT#Ow+u"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="AA6t}Nk9hZ!=$Zet8_e%"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="@:7i{K]IwJF$lj7e[t7#"><field
+        name="itemName">MyItem</field></shadow><block type="variables_get"
+        id="yC{WhOmm(Y2z_m`;d-X7"><field name="VAR"
+        id="Jm`?rNO@[9yl`LXSy.t#">item</field></block></value><next><block
+        type="controls_if" id=";lE=u8~a4j7.6xJ#~B)7"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="4DZv4~^g-NHAvP19^#vk"><field name="OP">EQ</field><value
+        name="A"><block type="oh_get_meta_value"
+        id="c[@q2R@~gO-m.h.7)g#T"><value name="itemName"><shadow type="oh_item"
+        id="^Am(f?u2|dHVQlkgWUE:"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="A%L_JX3/FU2:H9FAEG]e"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="G$2v(~j!]p]vLOIHZa{4"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id=")sR0]:7nXIXh0,vF]liN"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="text" id="DcoMpfdV/Lj3RZ|ISxQ{"><field
+        name="TEXT">ON</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="tNqcHCw_YdT8gzHgn5!N"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="?]D=r.M*.OeF7(ZMaT-q"><field name="TEXT">value (via item name) == ON
+        =&gt; correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="FK*[qxHvqr8^wifS__AP"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="!(hM8K$+V{Hq-aq1fSNS"><field name="TEXT">value (via item name)  !=
+        ON =&gt;
+        incorrect</field></shadow></value></block></statement><next><block
+        type="oh_store_meta_value" id="XU)v],:==nv%l!S|Lu9R"><value
+        name="value"><shadow type="text" id="}vmZ:]O/-:WE@F@%D6Q4"><field
+        name="TEXT">Stefan</field></shadow></value><value
+        name="namespace"><shadow type="text" id="[KNfR8PdT00s_FT#Ow+u"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="vGq2j.o{/IOUn:pN84.y"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="@:7i{K]IwJF$lj7e[t7#"><field
+        name="itemName">MyItem</field></shadow><block type="variables_get"
+        id="tIGx,d]:tmwoFu?O5ajf"><field name="VAR"
+        id="Jm`?rNO@[9yl`LXSy.t#">item</field></block></value><next><block
+        type="controls_if" id="CLx%xNv.2:[,1{rj,q?|"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="!MPr$w(=~ADtx.bGHaa6"><field name="OP">EQ</field><value
+        name="A"><block type="oh_get_meta_value"
+        id="KWAewuh~Dr8y|Zd@O@kp"><value name="itemName"><shadow type="oh_item"
+        id="^Am(f?u2|dHVQlkgWUE:"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="yn#s{1%:Dxl`_ti%Z}~)"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="G$2v(~j!]p]vLOIHZa{4"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="YiUJ)`aS;^R0FD[|f?W2"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="text" id="*zhs;O27..^1~/[#mB{L"><field
+        name="TEXT">Stefan</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="%Y,lw,FMh:fk]`W+b{W#"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="ip_1pg,UA~K/SQKd$!B;"><field name="TEXT">value (via item name) ==
+        Stefan =&gt;
+        correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="9r@*RI-Z$-1O_!sw4:gs"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="xI]UVWak.~7GtVHgjrb4"><field name="TEXT">value (via item name)  !=
+        Stefan =&gt;
+        incorrect</field></shadow></value></block></statement></block></next></block></next></block></next></block></next></block></next></block><block
+        type="oh_log" id="FtI$e#)g/Bgg=y8rOCwo" x="-481" y="974"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="c?vy2q#k6mHI6QPuoF1("><field name="TEXT">Setting Config Values with
+        hierarchies</field></shadow></value><next><block
+        type="oh_store_meta_config" id="c=Pi5TS.2-:Pf8BR0Mbo"><value
+        name="value"><shadow type="text" id="_xm;lQ6QQeDQ__=Bj{vM"><field
+        name="TEXT">one</field></shadow></value><value name="configName"><shadow
+        type="text" id="BuxbI=|m:_Zs*sLKpw1_"><field
+        name="TEXT">ooone</field></shadow></value><value
+        name="namespace"><shadow type="text" id="US}o`-m(D@{:lc@9btE]"><field
+        name="TEXT"></field></shadow><block type="variables_get"
+        id="HPN+[wSGU1qrEr1FIvEH"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="mJwLi_UD:fs#mYpv,Oyz"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="(JmFhh|=^fMtIjihsNf`"><field
+        name="itemName">teststate</field></block></value><next><block
+        type="controls_if" id="]Q3:?R_~n.!js^nuJoWU"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="[(MukRmol`x7a%7S4i|M"><field name="OP">EQ</field><value
+        name="A"><block type="oh_get_meta_config"
+        id="pg]zi0#0m67p3=0bIJ|a"><value name="configKey"><shadow type="text"
+        id="gHRfDPJrNwNgnZco=HbM"><field
+        name="TEXT">ooone</field></shadow></value><value name="itemName"><shadow
+        type="oh_item" id="Z9(-Sm!_gj9Q}5JrZu[r"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="(3_u{BhM0d_`N!mlZ[iv"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="$W]kv[W,jEj^JZjE{dcZ"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="7I1s=N!a^cxR9G.gD~@6"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="text" id="dG.3a?@xmuwnbp1OPzjG"><field
+        name="TEXT">one</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id=")0D:!4DLW~n_RayNM=iy"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="=VS/wS;OW2D.P/+w`]i]"><field name="TEXT">ooone == one =&gt;
+        correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="jeY}%u7xRbtNm;Ty!`T+"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="dX.*`i*F?DLgBZh7XV6S"><field name="TEXT">ooone != one =&gt;
+        incorrect</field></shadow></value></block></statement><next><block
+        type="oh_store_meta_config" id="YC$;s-4KM!B(wq6aBNe/"><value
+        name="value"><shadow type="text" id="gq)Ys,Q~.0El~MGw02-}"><field
+        name="TEXT">123</field></shadow></value><value name="configName"><shadow
+        type="text" id="l*8qdGj+wWc0Rh_%7,H|"><field
+        name="TEXT">ooone</field></shadow></value><value
+        name="namespace"><shadow type="text" id="US}o`-m(D@{:lc@9btE]"><field
+        name="TEXT"></field></shadow><block type="variables_get"
+        id="q1KHmxadQgivXC|YIx:u"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="mJwLi_UD:fs#mYpv,Oyz"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="ILeLhnf?A2AP/;ZP(K@s"><field
+        name="itemName">teststate</field></block></value><next><block
+        type="controls_if" id="G}tU9l7KIPkl]W2^Q=af"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="8=3:3)wEj%jzp@g~FC|#"><field name="OP">EQ</field><value
+        name="A"><block type="oh_get_meta_config"
+        id="8m+v]4vB}Pna`w[GnL)6"><value name="configKey"><shadow type="text"
+        id="7Q#-Q-X9}^pO),3tG/No"><field
+        name="TEXT">ooone</field></shadow></value><value name="itemName"><shadow
+        type="oh_item" id="Z9(-Sm!_gj9Q}5JrZu[r"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="~FeqU=y^*#=s#3YKXTfy"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="$W]kv[W,jEj^JZjE{dcZ"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="J*I#Lx#l01gVX2d~4]qz"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="text" id="1Ox2_C--DNXPu:bAXRe!"><field
+        name="TEXT">123</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="+Xc%$=(EWFt.%/d4IH/b"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="TuC]o7J}eJq#B2^r+2L8"><field name="TEXT">ooone == 123 =&gt;
+        correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="EpU+?7:J8{zoy%Rd}8l4"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="{A)~/vkH*3EhGt.|CBl:"><field name="TEXT">ooone != 123 =&gt;
+        incorrect</field></shadow></value></block></statement><next><block
+        type="oh_store_meta_config" id="=W}}o_@OSF4mPhdewkOB"><value
+        name="value"><shadow type="text" id="iYI2bK`tpPQ!L%!%9g*["><field
+        name="TEXT">fourfivesix</field></shadow></value><value
+        name="configName"><shadow type="text" id="^N;qcX`Uw)13zwF7r1]#"><field
+        name="TEXT">oone.two</field></shadow></value><value
+        name="namespace"><shadow type="text" id="US}o`-m(D@{:lc@9btE]"><field
+        name="TEXT"></field></shadow><block type="variables_get"
+        id="zl@_E;6W.@Ir.MPek1MR"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="mJwLi_UD:fs#mYpv,Oyz"><field
+        name="itemName">MyItem</field></shadow><block type="variables_get"
+        id="eI%l!PTdR-qc_.ug=sI0"><field name="VAR"
+        id="Jm`?rNO@[9yl`LXSy.t#">item</field></block></value><next><block
+        type="controls_if" id="Z~(kT5Y6fgY0^5QDpOhK"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="W.crq;o/0H(8.R=WR88|"><field name="OP">EQ</field><value
+        name="A"><block type="oh_get_meta_config"
+        id="e=}!wv!;y{KceAZHBB^D"><value name="configKey"><shadow type="text"
+        id="5tOM;0VHJM|HX]]%=5{h"><field
+        name="TEXT">oone.two</field></shadow></value><value
+        name="itemName"><shadow type="oh_item" id="Z9(-Sm!_gj9Q}5JrZu[r"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="nj]1QrEVv!0Osk1OCAV-"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="$W]kv[W,jEj^JZjE{dcZ"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="`Qu%RLe)fs2Vpbc*Y+(r"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="text" id="k)wk9RgKXN0^TH@/eHX^"><field
+        name="TEXT">fourfivesix</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id=")g_zvG/|sQfWMArk:W9#"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="ke,EjY2p*?N]Y-C?3pB4"><field name="TEXT">oone.two == fourfivesix
+        =&gt; correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="8J(?gBuNaW|y,:Oash1Y"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="fyX)(RgpycBtYOfRfiR2"><field name="TEXT">oone.two != fourfivesix
+        =&gt; incorrect</field></shadow></value></block></statement><next><block
+        type="oh_store_meta_config" id="0wJeKVo/Zw9eRKRO0I:c"><value
+        name="value"><shadow type="text" id="8Kb6*VYv{W!3L@ilbt@O"><field
+        name="TEXT">456</field></shadow></value><value name="configName"><shadow
+        type="text" id="0N6iSHO),rIKQGH01xK#"><field
+        name="TEXT">oone.two</field></shadow></value><value
+        name="namespace"><shadow type="text" id="US}o`-m(D@{:lc@9btE]"><field
+        name="TEXT"></field></shadow><block type="variables_get"
+        id="PYT5UPv:J_cKU4_}3bx="><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="mJwLi_UD:fs#mYpv,Oyz"><field
+        name="itemName">MyItem</field></shadow><block type="variables_get"
+        id="f+{^S2j;aQZJ[Pc2yZe8"><field name="VAR"
+        id="Jm`?rNO@[9yl`LXSy.t#">item</field></block></value><next><block
+        type="controls_if" id="aW2Dm.P@4TzWdNok;l!E"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="v9T1z9e)Th=0u5@I#k!E"><field name="OP">EQ</field><value
+        name="A"><block type="oh_get_meta_config"
+        id="bw_ejfrA_ZC7su%WcL#U"><value name="configKey"><shadow type="text"
+        id="S7C^5/u5|HY/|n$9QMwJ"><field
+        name="TEXT">oone.two</field></shadow></value><value
+        name="itemName"><shadow type="oh_item" id="Z9(-Sm!_gj9Q}5JrZu[r"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="zJ/[)mpUVepCdu@yCVzR"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="$W]kv[W,jEj^JZjE{dcZ"><field
+        name="TEXT">namespaceTest</field></shadow><block type="variables_get"
+        id="D8QAZjfU[L;Vbj~bixM~"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="text" id="lNFVy3FdHii]09I(M%|?"><field
+        name="TEXT">456</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="rkXL~IEuz:dE/Gf.7Ot0"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="16FsUix/I8+X6aP@4:|z"><field name="TEXT">oone.two == 456 =&gt;
+        correct</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="3B9PM~U:wPD:W]xC$m^^"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="ZRpb;vK(nz~a:Fy+gPmd"><field name="TEXT">oone.two != 456 =&gt;
+        incorrect</field></shadow></value></block></statement></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block><block
+        type="controls_for" id="E5F,)^JYDwg+5DfsRvZ`" x="-481" y="1753"><field
+        name="VAR" id="IO{F,GCA?2XW9T@8W(9?">i</field><value name="FROM"><shadow
+        type="math_number" id="66yozRxnY/G:Q{Il68m7"><field
+        name="NUM">1</field></shadow></value><value name="TO"><shadow
+        type="math_number" id="D#+Ql6L4QOTj0@-CcH|X"><field
+        name="NUM">3</field></shadow></value><value name="BY"><shadow
+        type="math_number" id="ty%]MQ(|sxxh`)*{!CjV"><field
+        name="NUM">1</field></shadow></value><statement name="DO"><block
+        type="variables_set" id="$:Ct15p654Y(K}8QLzg$"><field name="VAR"
+        id="(iHy2[:UwW}3%u;7v:)G">fieldName</field><value name="VALUE"><block
+        type="text_join" id="{[0vWzXe:)x.SIxzZx;J"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="JkJUpsdA3RA;.|khbo+H"><field
+        name="TEXT">field</field></block></value><value name="ADD1"><block
+        type="variables_get" id="~^lEuO]a8XEtn+5-g`?g"><field name="VAR"
+        id="IO{F,GCA?2XW9T@8W(9?">i</field></block></value></block></value><next><block
+        type="controls_if" id="89^)vtVNF+~9fCl5MeYY"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="NwG/K#naxmsU=Tkyy%Iu"><field name="OP">EQ</field><value
+        name="A"><block type="oh_get_meta_config"
+        id="kCq.[gnIV(2k9pmZq1,2"><value name="configKey"><shadow type="text"
+        id="ul,~wV6#+MrScA*GRn}b"><field name="TEXT"></field></shadow><block
+        type="variables_get" id="T@RVo3k,Yl*hqen{/6cC"><field name="VAR"
+        id="(iHy2[:UwW}3%u;7v:)G">fieldName</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="pL8)!:svJ/H4IX`9{?.5"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="KMf2?odxjSG|q,+bMyg7"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="$jM8V_Ha`]+j@L:Uq$F)"><field
+        name="TEXT"></field></shadow><block type="variables_get"
+        id="VOTO:tZ3I)JU5dKsO9xr"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value><value
+        name="B"><block type="variables_get" id=";NAT!7!6{gLB#2Ag$=a="><field
+        name="VAR"
+        id="IO{F,GCA?2XW9T@8W(9?">i</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="Cc{Kb5)nPyL6+1E~Ur[V"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="=65uh9pZaV*,Vf1fCH-b"><field
+        name="TEXT">field</field></shadow><block type="text_join"
+        id="=~@]hH:yAqF,_`x7p-kj"><mutation items="4"></mutation><value
+        name="ADD0"><block type="text" id="v6wZ?KBKC3_ek!.0$/Bf"><field
+        name="TEXT">field</field></block></value><value name="ADD1"><block
+        type="variables_get" id="iuc.JnkDVBz`on4!x[zz"><field name="VAR"
+        id="IO{F,GCA?2XW9T@8W(9?">i</field></block></value><value
+        name="ADD2"><block type="text" id="^:]n%8m%fP_lnCc!1DVP"><field
+        name="TEXT"> == </field></block></value><value name="ADD3"><block
+        type="variables_get" id="RA/Xj6((:|Or;zJu@}$@"><field name="VAR"
+        id="IO{F,GCA?2XW9T@8W(9?">i</field></block></value></block></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="Gg[^5{CJ%4FZe^-U`5;w"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="=65uh9pZaV*,Vf1fCH-b"><field
+        name="TEXT">field</field></shadow><block type="text_join"
+        id="_ls(J{3_]JGcCKFeWg8c"><mutation items="4"></mutation><value
+        name="ADD0"><block type="text" id="Rj}bS-K;G#%~Sh!Mg3-H"><field
+        name="TEXT">field</field></block></value><value name="ADD1"><block
+        type="variables_get" id="ph|,|@w=KqKr2lx`j!3/"><field name="VAR"
+        id="IO{F,GCA?2XW9T@8W(9?">i</field></block></value><value
+        name="ADD2"><block type="text" id="6lK4omCV]qJFj2!.9=T|"><field
+        name="TEXT"> != </field></block></value><value name="ADD3"><block
+        type="variables_get" id="c6*Cv.z.[u8m4l$9QH7U"><field name="VAR"
+        id="IO{F,GCA?2XW9T@8W(9?">i</field></block></value></block></value><next><block
+        type="oh_log" id="Wh3o9{=4OXDjV~YI$EG."><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="1HRgOIYaMGtJSJdH;d:]"><field name="TEXT">abc</field></shadow><block
+        type="oh_get_meta_config" id="Afg_yP/b;7{[fGLO6%xd"><value
+        name="configKey"><shadow type="text" id="ul,~wV6#+MrScA*GRn}b"><field
+        name="TEXT"></field></shadow><block type="variables_get"
+        id="`n-)Ebxv7@XxQ#D:+sF~"><field name="VAR"
+        id="(iHy2[:UwW}3%u;7v:)G">fieldName</field></block></value><value
+        name="itemName"><shadow type="oh_item" id="pL8)!:svJ/H4IX`9{?.5"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id=",FgxtAkiMAXuu*V:E^5l"><field
+        name="itemName">teststate</field></block></value><value
+        name="namespace"><shadow type="text" id="$jM8V_Ha`]+j@L:Uq$F)"><field
+        name="TEXT"></field></shadow><block type="variables_get"
+        id="Ey*OMqp^dQudXwm-bTjw"><field name="VAR"
+        id="PI%0qLR{.uv#m?r}2IO2">namespace</field></block></value></block></value></block></next></block></statement></block></next></block></statement></block></xml>
+      type: application/javascript;version=ECMAScript-2021
+      script: >
+        var runtime = require('@runtime');
+
+        var itemRegistry = runtime.itemRegistry;
+
+        var events = runtime.events;
+
+
+        var namespace, i, configName, fieldName, item;
+
+
+        function _itemName(item) {
+          return (typeof item === "string") ? item : item.name;
+        }
+
+
+        function getItemMetaConfigValue(itemName, namespace, prop) {
+          if (items.metadata.getMetadata(_itemName(itemName), namespace)===null) {
+             return 'undefined';
+          }
+          let props = prop.split('.');
+          let value = items.metadata.getMetadata(_itemName(itemName), namespace).configuration;
+          props.forEach (property => {
+            value = value[property];
+          });
+          return value;
+        }
+
+
+        var itemMedatata;
+
+
+
+        namespace = 'namespaceTest';
+
+        configName = 'one.two.three';
+
+        console.info('Testing metadata hierarchies; if vars work, then normal strings work as well, also test bad property access');
+
+        if ((getItemMetaConfigValue(_itemName('teststate'), namespace, configName)) == '756') {
+          console.info('one.two.three == 756 => correct');
+        } else {
+          console.warn('one.two.three == 756 => incorrect');
+        }
+
+        configName = 'oone.two';
+
+        if ((getItemMetaConfigValue(_itemName('teststate'), namespace, configName)) == '456') {
+          console.info('oone.two == 456 => correct');
+        } else {
+          console.warn('oone.two != 456 => incorrect');
+        }
+
+        configName = 'ooone';
+
+        if ((getItemMetaConfigValue(_itemName('teststate'), namespace, configName)) == '123') {
+          console.info('ooone == 123 => correct');
+        } else {
+          console.warn('ooone != 123 => incorrect');
+        }
+
+        configName = 'one';
+
+        console.info((getItemMetaConfigValue(_itemName('teststate'), namespace, configName)));
+
+        if (String(getItemMetaConfigValue(_itemName('teststate'), namespace, configName)) + '' == '{two={three=756}}') {
+          console.info('one == {two={three=756}} => correct');
+        } else {
+          console.warn('one != {two={three=756}} => incorrect');
+        }
+
+        configName = 'none';
+
+        console.info((getItemMetaConfigValue(_itemName('teststate'), namespace, configName)));
+
+        if (String(getItemMetaConfigValue(_itemName('teststate'), namespace, configName)) + '' == 'undefined') {
+          console.info('none == undefined => correct');
+        } else {
+          console.warn('none != undefined => incorrect');
+        }
+
+        if (((items.metadata.getMetadata(_itemName('teststate'), namespace)!=null) ? (items.metadata.getMetadata(_itemName('teststate'), namespace).value) : 'undefined') == 'Stefan') {
+          console.info('value (via item name) == Stefan => correct');
+        } else {
+          console.warn('value (via item name)  != Stefan => incorrect');
+        }
+
+        console.info('Test Item Object vs. Item Name Resilience. Now using Object directly attached in block');
+
+        if (((items.metadata.getMetadata(_itemName(items.getItem('teststate')), namespace)!=null) ? (items.metadata.getMetadata(_itemName(items.getItem('teststate')), namespace).value) : 'undefined') == 'Stefan') {
+          console.info('value (via item object)  == Stefan => correct');
+        } else {
+          console.warn('value (via item object)  != Stefan => incorrect');
+        }
+
+        console.info('Test Item Object vs. Item Name Resilience. Now using Object through intransparent var');
+
+        item = items.getItem('teststate');
+
+        if (((items.metadata.getMetadata(_itemName(item), namespace)!=null) ? (items.metadata.getMetadata(_itemName(item), namespace).value) : 'undefined') == 'Stefan') {
+          console.info('value (via item object)  == Stefan => correct');
+        } else {
+          console.warn('value (via item object)  != Stefan => incorrect');
+        }
+
+
+        console.info('Testing writes');
+
+        console.info('Setting Metadata Value');
+
+        itemMedatata = items.metadata.getMetadata(_itemName(item), namespace)
+
+        itemMedatata.value = 'ON'
+
+        items.metadata.replaceMetadata(_itemName(item),namespace,itemMedatata.value,itemMedatata.configuration);
+
+        if (((items.metadata.getMetadata(_itemName('teststate'), namespace)!=null) ? (items.metadata.getMetadata(_itemName('teststate'), namespace).value) : 'undefined') == 'ON') {
+          console.info('value (via item name) == ON => correct');
+        } else {
+          console.warn('value (via item name)  != ON => incorrect');
+        }
+
+        itemMedatata = items.metadata.getMetadata(_itemName(item), namespace)
+
+        itemMedatata.value = 'Stefan'
+
+        items.metadata.replaceMetadata(_itemName(item),namespace,itemMedatata.value,itemMedatata.configuration);
+
+        if (((items.metadata.getMetadata(_itemName('teststate'), namespace)!=null) ? (items.metadata.getMetadata(_itemName('teststate'), namespace).value) : 'undefined') == 'Stefan') {
+          console.info('value (via item name) == Stefan => correct');
+        } else {
+          console.warn('value (via item name)  != Stefan => incorrect');
+        }
+
+
+        console.info('Setting Config Values with hierarchies');
+
+        itemMedatata = items.metadata.getMetadata(_itemName('teststate'), namespace)
+
+        if(itemMedatata!==null){
+          itemMedatata.configuration.ooone = 'one'
+          items.metadata.replaceMetadata(_itemName('teststate'),namespace,itemMedatata.value,itemMedatata.configuration);
+        }
+
+        if ((getItemMetaConfigValue(_itemName('teststate'), namespace, 'ooone')) == 'one') {
+          console.info('ooone == one => correct');
+        } else {
+          console.warn('ooone != one => incorrect');
+        }
+
+        itemMedatata = items.metadata.getMetadata(_itemName('teststate'), namespace)
+
+        if(itemMedatata!==null){
+          itemMedatata.configuration.ooone = '123'
+          items.metadata.replaceMetadata(_itemName('teststate'),namespace,itemMedatata.value,itemMedatata.configuration);
+        }
+
+        if ((getItemMetaConfigValue(_itemName('teststate'), namespace, 'ooone')) == '123') {
+          console.info('ooone == 123 => correct');
+        } else {
+          console.warn('ooone != 123 => incorrect');
+        }
+
+        itemMedatata = items.metadata.getMetadata(_itemName(item), namespace)
+
+        if(itemMedatata!==null){
+          itemMedatata.configuration.oone.two = 'fourfivesix'
+          items.metadata.replaceMetadata(_itemName(item),namespace,itemMedatata.value,itemMedatata.configuration);
+        }
+
+        if ((getItemMetaConfigValue(_itemName('teststate'), namespace, 'oone.two')) == 'fourfivesix') {
+          console.info('oone.two == fourfivesix => correct');
+        } else {
+          console.warn('oone.two != fourfivesix => incorrect');
+        }
+
+        itemMedatata = items.metadata.getMetadata(_itemName(item), namespace)
+
+        if(itemMedatata!==null){
+          itemMedatata.configuration.oone.two = '456'
+          items.metadata.replaceMetadata(_itemName(item),namespace,itemMedatata.value,itemMedatata.configuration);
+        }
+
+        if ((getItemMetaConfigValue(_itemName('teststate'), namespace, 'oone.two')) == '456') {
+          console.info('oone.two == 456 => correct');
+        } else {
+          console.warn('oone.two != 456 => incorrect');
+        }
+
+
+        for (i = 1; i <= 3; i++) {
+          fieldName = 'field' + String(i);
+          if ((getItemMetaConfigValue(_itemName('teststate'), namespace, fieldName)) == i) {
+            console.info((['field',i,' == ',i].join('')));
+          } else {
+            console.info((['field',i,' != ',i].join('')));
+            console.info((getItemMetaConfigValue(_itemName('teststate'), namespace, fieldName)));
+          }
+        }
+    type: script.ScriptAction
