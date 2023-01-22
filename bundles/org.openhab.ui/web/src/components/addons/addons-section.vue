@@ -108,7 +108,7 @@ export default {
   computed: {
     featuredAddons () {
       if (this.featured) {
-        return this.addons.filter(a => this.featured.indexOf(a.id) >= 0).sort(compareAddons)
+        return this.addons.filter(a => this.featured.indexOf(a.uid) >= 0).sort(compareAddons)
       }
       return null
     },
