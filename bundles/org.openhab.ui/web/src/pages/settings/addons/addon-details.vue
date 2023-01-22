@@ -224,7 +224,7 @@ export default {
     addonDescription () {
       if (!this.descriptionReady) return null
       if (!this.addon) return null
-      if (this.addon.description) return this.addon.description
+      if (this.addon.description && this.addon.link.indexOf('openhab.org/addons') < 0) return this.addon.description
       if (this.parsedDescription) {
         const firstHeading = this.parsedDescription.match(/<h\d/m)
         if (firstHeading && firstHeading.index > 0) return this.parsedDescription.substring(0, firstHeading.index)
