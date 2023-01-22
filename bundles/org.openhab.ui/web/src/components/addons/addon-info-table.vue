@@ -41,8 +41,8 @@ export default {
   computed: {
     information () {
       let info = []
-      if (!this.addon || !this.addon.id) return info
-      const source = this.addon.id.indexOf(':') > 0 ? this.addon.id.substring(0, this.addon.id.indexOf(':')) : 'karaf'
+      if (!this.addon || !this.addon.uid) return info
+      const source = this.addon.uid.indexOf(':') > 0 ? this.addon.uid.substring(0, this.addon.uid.indexOf(':')) : 'karaf'
       let sourceName = 'openHAB Distribution'
       if (source === 'marketplace') {
         sourceName = 'Community Marketplace'
@@ -123,7 +123,7 @@ export default {
           id: 'documentationLink',
           title: 'Documentation',
           afterIcon: 'question_circle_fill',
-          linkUrl: `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id.split('-')[1]}` // this.addon.link
+          linkUrl: `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id}` // this.addon.link
         })
 
         let repository
@@ -138,7 +138,7 @@ export default {
           } else {
             repository = 'openhab-addons'
           }
-          issueFilter += `+${this.addon.id.split('-')[1]}`
+          issueFilter += `+${this.addon.id}`
         }
 
         info.push({
@@ -151,7 +151,7 @@ export default {
           id: 'discussionsLink',
           title: 'Community Discussions',
           afterIcon: 'chat_bubble_2_fill',
-          linkUrl: 'https://community.openhab.org/search?q=' + this.addon.id.split('-')[1]
+          linkUrl: 'https://community.openhab.org/search?q=' + this.addon.id
         })
       } else {
         info.push({

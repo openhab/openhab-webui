@@ -10,13 +10,13 @@
       {{ subtitle }}
     </f7-block-footer>
     <div class="addons-cards">
-      <addon-card v-for="addon in featuredAddons" :key="addon.id" :addon="addon" :install-action-text="installActionText" :headline="'Featured'" @addonButtonClick="addonButtonClick" />
+      <addon-card v-for="addon in featuredAddons" :key="addon.uid" :addon="addon" :install-action-text="installActionText" :headline="'Featured'" @addonButtonClick="addonButtonClick" />
     </div>
     <div v-if="showAsCards" class="addons-cards">
-      <addon-card v-for="addon in addonsList" :key="addon.id" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
+      <addon-card v-for="addon in addonsList" :key="addon.uid" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
     </div>
     <f7-list v-else media-list ref="addonlist" class="addons-table-list" no-chevron no-hairlines>
-      <addon-list-item v-for="addon in addonsList" :key="addon.id" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
+      <addon-list-item v-for="addon in addonsList" :key="addon.uid" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
     </f7-list>
     <f7-block v-if="canExpand" class="display-flex justify-content-center">
       <f7-button class="" outline color="blue" @click="expand" :text="`Show ${addons.length - addonCollapsedLimit} More`" />

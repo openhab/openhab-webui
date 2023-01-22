@@ -237,9 +237,8 @@ export default {
       })
     },
     addonButtonClick (addon) {
-      const realAddonId = (addon.id.indexOf(':') > 0) ? addon.id.substring(addon.id.indexOf(':') + 1) : addon.id
-      const serviceId = (addon.id.indexOf(':') > 0) ? addon.id.substring(0, addon.id.indexOf(':')) : undefined
-      this.openAddonPopup(realAddonId, serviceId, addon)
+      const serviceId = (addon.uid.indexOf(':') > 0) ? addon.uid.substring(0, addon.uid.indexOf(':')) : undefined
+      this.openAddonPopup(addon.uid, serviceId, addon)
     },
     search (searchbar, query, previousQuery) {
       let results = []

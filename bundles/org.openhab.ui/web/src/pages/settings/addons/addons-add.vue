@@ -95,7 +95,7 @@ export default {
     },
     installAddon (addon) {
       this.addonPopupOpened = false
-      this.currentlyInstalling.push(addon.id)
+      this.currentlyInstalling.push(addon.uid)
     },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/addons/*/*', null, (event) => {

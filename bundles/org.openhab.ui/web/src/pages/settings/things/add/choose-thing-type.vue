@@ -103,9 +103,8 @@ export default {
     },
     onPageAfterIn () {
       this.loading = true
-      this.rawBindingId = this.bindingId.substring('binding-'.length)
-      this.$oh.api.get('/rest/thing-types?bindingId=' + this.rawBindingId).then((data) => {
-        this.thingTypes = data.filter((tt) => tt.UID.split(':')[0] === this.rawBindingId && tt.listed)
+      this.$oh.api.get('/rest/thing-types?bindingId=' + this.bindingId).then((data) => {
+        this.thingTypes = data.filter((tt) => tt.UID.split(':')[0] === this.bindingId && tt.listed)
           .sort((a, b) => {
             if (a.bridge && !b.bridge) return -1
             if (b.bridge && !a.bridge) return 1
@@ -116,7 +115,7 @@ export default {
         this.ready = true
         this.loadInbox()
         this.$oh.api.get('/rest/discovery').then((data) => {
-          if (data.indexOf(this.rawBindingId) >= 0) {
+          if (data.indexOf(this.bindingId) >= 0) {
             this.discoverySupported = true
             // this.scan()
           }
@@ -138,7 +137,7 @@ export default {
         return
       }
       this.scanning = true
-      this.$oh.api.postPlain('/rest/discovery/bindings/' + this.rawBindingId + '/scan', null, 'text/plain', 'text/plain').then((data) => {
+      this.$oh.api.postPlain('/rest/discovery/bindings/' + this.bindingId + '/scan', null, 'text/plain', 'text/plain').then((data) => {
         try {
           this.scanTimeout = parseInt(data)
           this.scanProgress = 0
@@ -159,7 +158,7 @@ export default {
       this.loading = true
       this.$oh.api.get('/rest/inbox').then((data) => {
         this.loading = false
-        this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.rawBindingId && e.flag !== 'IGNORED')
+        this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.bindingId && e.flag !== 'IGNORED')
         const searchbar = this.$refs.searchbar.$el.f7Searchbar
         const filterQuery = searchbar.query
         this.initSearchbar = false
