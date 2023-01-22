@@ -1,0 +1,219 @@
+configuration: {}
+triggers: []
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: <xml
+        xmlns="https://developers.google.com/blockly/xml"><variables><variable
+        id="Hl,19U8Sqk?U3k],Cx,S">myDict</variable></variables><block
+        type="oh_log" id="^_*PbN(~_iwRGcT!Z(6r" x="71" y="45"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="(U;eY5acD2k~3(_!,nqP"><field name="TEXT">abc</field></shadow><block
+        type="colour_picker" id="*]hNg8#$LNaqhUbc4..S"><field
+        name="COLOUR">#ff0000</field></block></value><next><block type="oh_log"
+        id="AV5gMW%4fH4Fj68-dqH!"><field name="severity">info</field><value
+        name="message"><shadow type="text" id="(U;eY5acD2k~3(_!,nqP"><field
+        name="TEXT">abc</field></shadow><block type="oh_color_to_hsb"
+        id="h+NFNyKOXF-.[=3?/+hE"><value name="hexColor"><shadow
+        type="colour_picker" id="wKSOIdZG(z`ave;72`O:"><field
+        name="COLOUR">#ff0000</field></shadow></value></block></value></block></next></block><block
+        type="oh_log" id="q[Y*C`).X^gDcoF$`1)%" x="63" y="143"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="A5)2dH0.3zQ?ofFK}8mC"><field name="TEXT">abc</field></shadow><block
+        type="oh_taggeditems" id="/J;_4,Jkr2-iACFc!{zj"><value
+        name="tagName"><shadow type="text" id="WiWU-*k87NZLq4Yb;-*U"><field
+        name="TEXT">rs_close</field></shadow></value></block></value><next><block
+        type="oh_log" id="mU:1A)8Kp?)/T)QwkEh|"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="A5)2dH0.3zQ?ofFK}8mC"><field name="TEXT">abc</field></shadow><block
+        type="oh_taggeditems" id="}={g?m0sfQfZJSKFg%F,"><value
+        name="tagName"><shadow type="text" id="qi7cuMU2z1XtuLth9oQd"><field
+        name="TEXT">rs_open</field></shadow></value></block></value><next><block
+        type="oh_log" id="tiQTR:rpv8a*,e$-}Z~f"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="JKOZw+8vGiyZb6GW28=C"><field name="TEXT">abc</field></shadow><block
+        type="oh_list_concatenate" id="cOq`5[/HVuAxg}-GSnA/"><value
+        name="list1"><block type="oh_taggeditems"
+        id="}__F=;OXj:??H}.j;vkJ"><value name="tagName"><shadow type="text"
+        id="y[j0q*[{Wi)_3$f[47kg"><field
+        name="TEXT">rs_close</field></shadow></value></block></value><value
+        name="list2"><block type="oh_taggeditems"
+        id="]YQzvoN}%p(SM[y+s(b]"><value name="tagName"><shadow type="text"
+        id="[,ur^+9lYmIkl$t?5Wkt"><field
+        name="TEXT">rs_open</field></shadow></value></block></value></block></value></block></next></block></next></block><block
+        type="oh_log" id="4V^ZlxAY!b#lF!h3ptYr" x="58" y="272"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="8w^Nr4c%aP6I{9?BfS)1"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="u7+oRfB1F;aL+?-*@~zE"><mutation
+        items="2"></mutation><value name="ADD0"><block type="oh_text_replace"
+        id="B0mz~6F5`M0OZ/d2$Mto"><value name="pattern"><shadow type="text"
+        id="y1)hX*WW]:M2v`C@l7wv"><field
+        name="TEXT">brown</field></shadow></value><value
+        name="replacement"><shadow type="text" id="x?lC6KN.]MboD3#gOB^Y"><field
+        name="TEXT">blue</field></shadow></value><value name="origin"><shadow
+        type="text" id="|bnD01c]d_0(2lzZ#/zt"><field name="TEXT">blue
+        brown</field></shadow></value></block></value><value name="ADD1"><block
+        type="text" id="(DouaX1z,-jY?I#uWmD!"><field name="TEXT">= blue
+        blue</field></block></value></block></value><next><block type="oh_log"
+        id="LsMFI?J:d(m8a8XutXWF"><field name="severity">info</field><value
+        name="message"><shadow type="text" id="0;;$+#?Ls%f;n}dpBF3-"><field
+        name="TEXT">abc</field></shadow><block type="text_join"
+        id="FJIBmR9^a-Ho,@2y`2F2"><mutation items="3"></mutation><value
+        name="ADD0"><block type="text" id="L73y?bFa[vEUH;@X9hjq"><field
+        name="TEXT">first line</field></block></value><value name="ADD1"><block
+        type="oh_text_crlf" id="I3cVw@V*g+L;(/^(SIq|"></block></value><value
+        name="ADD2"><block type="text" id=".oRWoJW|F*44-ko%+pPw"><field
+        name="TEXT">second
+        line</field></block></value></block></value></block></next></block><block
+        type="variables_set" id="ghWw)Wc0S1VJJ#qPy#Qt" x="55" y="491"><field
+        name="VAR" id="Hl,19U8Sqk?U3k],Cx,S">myDict</field><value
+        name="VALUE"><block type="dicts_create_with"
+        id="BFkLg0Di)Owm4-geoH+n"><mutation items="3"></mutation><field
+        name="KEY0">key0</field><field name="KEY1">key1</field><field
+        name="KEY2">key2</field><value name="ADD0"><block type="text"
+        id="io`Ly7D%4MC?vOP-gGOB"><field
+        name="TEXT">value0</field></block></value><value name="ADD1"><block
+        type="text" id=";;FU~N.z[3ldg^iT{%H]"><field
+        name="TEXT">value1</field></block></value><value name="ADD2"><block
+        type="text" id="M^QGUe!pg4cmVA%;`8VY"><field
+        name="TEXT">value2</field></block></value></block></value><next><block
+        type="controls_if" id=",ne}gO(V4o_HT|;n+]pa"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="1e*7AZfm%YJlXaM~Z{tU"><field name="OP">EQ</field><value
+        name="A"><block type="dicts_get" id="Wa82eYAa.^Ecg1#7Z?(W"><value
+        name="key"><shadow type="text" id="o[vX@RP8F%InT#v6^s:7"><field
+        name="TEXT">key0</field></shadow></value><value name="varName"><block
+        type="variables_get" id=":}!sE7EntgwMd]E}Tf1A"><field name="VAR"
+        id="Hl,19U8Sqk?U3k],Cx,S">myDict</field></block></value></block></value><value
+        name="B"><block type="text" id="{z%7QQ@#0r3!8Kb^)]w~"><field
+        name="TEXT">value0</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="pPXddeHJAUd_i^$AY19y"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="eNk_KiC*NnKyy-bzKe;x"><field name="TEXT">key0 =
+        value0</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="SXF6dVC0$}`=Fz@P29]i"><field
+        name="severity">error</field><value name="message"><shadow type="text"
+        id="AhyeBp;,H}=Pnr{1*i2A"><field name="TEXT">key0 =
+        value0</field></shadow><block type="text_join"
+        id="MlUbi9Kd8A`|G(#-.v,d"><mutation items="2"></mutation><value
+        name="ADD0"><block type="text" id="pNS.z$5VlsIv^X@Kf$)u"><field
+        name="TEXT">key0=</field></block></value><value name="ADD1"><block
+        type="dicts_get" id="H9^9`-1!daxK!Gu};A3i"><value name="key"><shadow
+        type="text" id="jO)L=Ps*K)GvJZ/*Kvu;"><field
+        name="TEXT">key0</field></shadow></value><value name="varName"><block
+        type="variables_get" id="cZ$4STRNh}s}3/4:G[`8"><field name="VAR"
+        id="Hl,19U8Sqk?U3k],Cx,S">myDict</field></block></value></block></value></block></value></block></statement><next><block
+        type="controls_if" id=".T`~yB-^{|lhD3|5@3x^"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="Q,^zwX:cvp~DG3/acIw="><field name="OP">EQ</field><value
+        name="A"><block type="dicts_get" id="#={@+N3C1.3Tx{i.d,hl"><value
+        name="key"><shadow type="text" id="},-$+_b8$%UUD`NlT(^d"><field
+        name="TEXT">key1</field></shadow></value><value name="varName"><block
+        type="variables_get" id="fs`Q?oMxPj#zBjr?X3CO"><field name="VAR"
+        id="Hl,19U8Sqk?U3k],Cx,S">myDict</field></block></value></block></value><value
+        name="B"><block type="text" id="%E(VM7@+/Z3e{X{pD]di"><field
+        name="TEXT">value1</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="bz=)]IUin*j}UO(M$7yg"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="gq:(UKVTS,poWC,`o.IH"><field name="TEXT">key1 =
+        value1</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="i!mr0:2euX![8W1%RPZ5"><field
+        name="severity">error</field><value name="message"><shadow type="text"
+        id="AhyeBp;,H}=Pnr{1*i2A"><field name="TEXT">key0 =
+        value0</field></shadow><block type="text_join"
+        id="(~?{OfgSWg$44v/(S{HA"><mutation items="2"></mutation><value
+        name="ADD0"><block type="text" id="y4D)0e|hBaM#d.uKd:ls"><field
+        name="TEXT">key1=</field></block></value><value name="ADD1"><block
+        type="dicts_get" id="NXWRUfBobvaxfIItW%zA"><value name="key"><shadow
+        type="text" id="O+KvfJUC*i$^AR4Pl6Ef"><field
+        name="TEXT">key1</field></shadow></value><value name="varName"><block
+        type="variables_get" id="0n`pO48?,dBQK:J[-ZFa"><field name="VAR"
+        id="Hl,19U8Sqk?U3k],Cx,S">myDict</field></block></value></block></value></block></value></block></statement><next><block
+        type="controls_if" id="rPzS=}JL..oIVvdk+O.,"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_compare"
+        id="_U*4%59%FqGQ+fqil$l6"><field name="OP">EQ</field><value
+        name="A"><block type="dicts_get" id="o!kpDZF$-7|A0h}A65LI"><value
+        name="key"><shadow type="text" id="@3KzMCHy)ZQ,gmV/c7XY"><field
+        name="TEXT">key2</field></shadow></value><value name="varName"><block
+        type="variables_get" id="{ruKhM41#0km5#50rMn`"><field name="VAR"
+        id="Hl,19U8Sqk?U3k],Cx,S">myDict</field></block></value></block></value><value
+        name="B"><block type="text" id="{lSpzBCsqn.T;@yP#(NH"><field
+        name="TEXT">value2</field></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="zK16_0aDrq#YOT^4_O^H"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="]kuTkq|#MHSGfmiPqT:r"><field name="TEXT">key2 =
+        value2</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="qX)[|cK#n9^iSrsnJ4@t"><field
+        name="severity">error</field><value name="message"><shadow type="text"
+        id="AhyeBp;,H}=Pnr{1*i2A"><field name="TEXT">key0 =
+        value0</field></shadow><block type="text_join"
+        id="m`2RuUSh4H-|e*K#eT6a"><mutation items="2"></mutation><value
+        name="ADD0"><block type="text" id="qv:_OTy/mL,Gp40LoM5E"><field
+        name="TEXT">key0=</field></block></value><value name="ADD1"><block
+        type="dicts_get" id="bXqwSvEw@?%ir8hY/{/V"><value name="key"><shadow
+        type="text" id="n*/X%Q]3?Z7{4klCLw[{"><field
+        name="TEXT">key2</field></shadow></value><value name="varName"><block
+        type="variables_get" id="!B%juw;PN/)ly6g{ZgM%"><field name="VAR"
+        id="Hl,19U8Sqk?U3k],Cx,S">myDict</field></block></value></block></value></block></value></block></statement></block></next></block></next></block></next></block></xml>
+      type: application/javascript;version=ECMAScript-2021
+      script: >
+        var runtime = require('@runtime');
+
+        var itemRegistry = runtime.itemRegistry;
+
+        var events = runtime.events;
+
+
+        var myDict;
+
+
+        function colorHexToHSB (hexColor) {
+          var rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexColor);
+          if (!rgb) return '';
+          var r = parseInt(rgb[1], 16) / 255, g = parseInt(rgb[2], 16) / 255, b = parseInt(rgb[3], 16) / 255;
+          var v = Math.max(r, g, b), n = v - Math.min(r, g, b);
+          var h = n === 0 ? 0 : n && v === r ? (g - b) / n : v === g ? 2 + (b - r) / n : 4 + (r - g) / n;
+          return [60 * (h < 0 ? h + 6 : h), v && (n / v) * 100, v * 100].join(',');
+        }
+
+
+
+        console.info('#ff0000');
+
+        console.info(colorHexToHSB('#ff0000'));
+
+
+        console.info(items.getItemsByTag('rs_close'));
+
+        console.info(items.getItemsByTag('rs_open'));
+
+        console.warn(items.getItemsByTag('rs_close').concat(items.getItemsByTag('rs_open')));
+
+
+        console.info((String('blue brown'.replaceAll('brown','blue')) + '= blue blue'));
+
+        console.info((['first line','\r\n','second line'].join('')));
+
+
+        myDict = {'key0': 'value0', 'key1': 'value1', 'key2': 'value2'};
+
+        if (myDict['key0'] == 'value0') {
+          console.info('key0 = value0');
+        } else {
+          console.error(('key0=' + String(myDict['key0'])));
+        }
+
+        if (myDict['key1'] == 'value1') {
+          console.info('key1 = value1');
+        } else {
+          console.error(('key1=' + String(myDict['key1'])));
+        }
+
+        if (myDict['key2'] == 'value2') {
+          console.info('key2 = value2');
+        } else {
+          console.error(('key0=' + String(myDict['key2'])));
+        }
+    type: script.ScriptAction

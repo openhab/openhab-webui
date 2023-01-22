@@ -1,0 +1,75 @@
+configuration: {}
+triggers: []
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: <xml xmlns="https://developers.google.com/blockly/xml"><block
+        type="oh_playmedia_sink" id="V_9NBi|=:kaut?h5tL32" x="246" y="67"><value
+        name="fileName"><shadow type="text" id="!/~d=2H~K!+RlxiBW+d)"><field
+        name="TEXT">doorbell.mp3</field></shadow></value><value
+        name="sinkName"><shadow type="oh_audiosink_dropdown"
+        id="!{7)O_AQ#|[@8{x,r$|{"><field
+        name="sinks">chromecast:chromecast:onkyo</field></shadow></value><next><block
+        type="oh_sleep" id="Q$b8vg)]UXLmS3%_k|-N"><field
+        name="milliseconds">3000</field><next><block
+        type="oh_playmedia_sink_volume" id="dF=C}nGlEK,$g[`~[Q~v"><value
+        name="fileName"><shadow type="text" id="[?S6=ZjeCCI-woJ|7*Nh"><field
+        name="TEXT">doorbell.mp3</field></shadow></value><value
+        name="sinkName"><shadow type="oh_audiosink_dropdown"
+        id="5cZdKyST-tJ]:#6%7S[["><field
+        name="sinks">chromecast:chromecast:onkyo</field></shadow></value><value
+        name="volume"><shadow type="oh_volumeslider"
+        id="{0Fl5_F-!SCg9_BZ5C.~"><field
+        name="volume">24</field></shadow></value><next><block type="oh_sleep"
+        id="gbfB6R@.Qsi8jIph9AQo"><field
+        name="milliseconds">3000</field><next><block type="oh_playstream_sink"
+        id="}!d@(7xsb5f}350Y4rf}"><value name="url"><shadow type="text"
+        id="_}_N6PCI:0OYueC:GWGl"><field
+        name="TEXT">https://liveradio.swr.de/sw282p3/swr3/play.mp3</field></shadow></value><value
+        name="sinkName"><shadow type="oh_audiosink_dropdown"
+        id=".}4Ao5R7ir{#u1r4Msz."><field
+        name="sinks">chromecast:chromecast:onkyo</field></shadow></value><next><block
+        type="oh_sleep" id="D=)H/*$0r_d!%.fFa}6+"><field
+        name="milliseconds">3000</field><next><block type="oh_stopstream_sink"
+        id="H+agwpQkrNXf7u^Q{0Md"><value name="sinkName"><shadow
+        type="oh_audiosink_dropdown" id="d;+RNViAb{6IhB5{^bI#"><field
+        name="sinks">chromecast:chromecast:onkyo</field></shadow></value><next><block
+        type="oh_say" id="BDoR;r63ueYwc[pAOc!]"><value name="textToSay"><shadow
+        type="text" id="1hUsjUj[b9lOFxY_/;C]"><field name="TEXT">text to
+        say</field></shadow></value><value name="deviceSink"><shadow
+        type="oh_audiosink_dropdown" id="o(l:Yy[!:bc~^]O}GuL4"><field
+        name="sinks">chromecast:chromecast:onkyo</field></shadow></value><value
+        name="voice"><shadow type="oh_voices_dropdown"
+        id="GM^8FxGF|k5b?sAd(l;f"><field
+        name="voiceName">googletts:deDEWavenetC</field></shadow></value></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>
+      type: application/javascript;version=ECMAScript-2021
+      script: >
+        var runtime = require('@runtime');
+
+        var itemRegistry = runtime.itemRegistry;
+
+        var events = runtime.events;
+
+
+        var thread = Java.type('java.lang.Thread')
+
+
+
+        actions.Audio.playSound('chromecast:chromecast:onkyo', 'doorbell.mp3');
+
+        thread.sleep(3000);
+
+        actions.Audio.playSound('chromecast:chromecast:onkyo', 'doorbell.mp3', new runtime.PercentType(24));
+
+        thread.sleep(3000);
+
+        actions.Audio.playStream('chromecast:chromecast:onkyo', 'https://liveradio.swr.de/sw282p3/swr3/play.mp3');
+
+        thread.sleep(3000);
+
+        actions.Audio.playStream('chromecast:chromecast:onkyo', null);
+
+        actions.Voice.say('text to say', 'googletts:deDEWavenetC', 'chromecast:chromecast:onkyo');
+    type: script.ScriptAction

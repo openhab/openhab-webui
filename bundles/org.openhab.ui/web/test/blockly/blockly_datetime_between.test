@@ -1,0 +1,166 @@
+configuration: {}
+triggers: []
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: <xml xmlns="https://developers.google.com/blockly/xml"><block
+        type="oh_log" id="WACF#xP0-z/*KSch^({S" x="15" y="40"><field
+        name="severity">error</field><value name="message"><shadow type="text"
+        id="Jx*H{728AwULbH_-viEh"><field name="TEXT">abc</field></shadow><block
+        type="oh_zdt" id="5KJ)M9^*wl%ELg!I^Osi"><field
+        name="day">2021-03-04</field></block></value><next><block type="oh_log"
+        id="=aj~:qLFbZo{e,KG/sTX"><field name="severity">error</field><value
+        name="message"><shadow type="text"><field
+        name="TEXT">abc</field></shadow><block type="oh_zdt"
+        id="ea@Y$Qcs7Mw+TU2?[,m~"><field
+        name="day">2022-04-09</field></block></value><next><block type="oh_log"
+        id="{4WkLv-pV_2cEQBuNsdz"><field name="severity">info</field><value
+        name="message"><shadow type="text" id="kL%Z!EqWHWUnGy[yTnB^"><field
+        name="TEXT">abc</field></shadow><block type="text_join"
+        id="MO5=YD$AkoTDt+XKH}SZ" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="(eaad!(T]@;S]}6ruzE5"><field
+        name="TEXT">year=</field></block></value><value name="ADD1"><block
+        type="oh_get_time_between" id="qX7lQlBKcj;p_[m^wvaE"><field
+        name="temporalPart">YEARS</field><value name="zdtOne"><shadow
+        type="oh_zdt" id="iI@maeH3a$fIMsvm@SKh"><field
+        name="day">2021-03-04</field></shadow></value><value
+        name="zdtTwo"><shadow type="oh_zdt" id="}}f_GM4uJv[sK!|@D4aJ"><field
+        name="day">2022-04-09</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="8k`YmZLymXKew|h@Q8Wh"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="(p|JT~X6XQxyu(^{@_au"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="[3.{K-a,_-!ZQ)RDN{T%" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="rdBq4XEZ`RUTRG-;|)),"><field
+        name="TEXT">months=</field></block></value><value name="ADD1"><block
+        type="oh_get_time_between" id="8rHu6sZXKvhKYAc8m~I7"><field
+        name="temporalPart">MONTHS</field><value name="zdtOne"><shadow
+        type="oh_zdt" id="7}OBH/#!z-#i?z)t96H."><field
+        name="day">2021-03-04</field></shadow></value><value
+        name="zdtTwo"><shadow type="oh_zdt" id="3(CjHAnf9HA]83_Z`}zu"><field
+        name="day">2022-04-09</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="(2_^S{gp5r5(.2Tj[}Le"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="+5(1GlAK%RI:#B}BPL@h"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="/Ag,Pucxbo1M6,1(O.Z#" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="2xMBZ?R6~e:d+n4bye:k"><field
+        name="TEXT">weeks=</field></block></value><value name="ADD1"><block
+        type="oh_get_time_between" id="*oKH`,ZQ8Goe4aJqz3T3"><field
+        name="temporalPart">WEEKS</field><value name="zdtOne"><shadow
+        type="oh_zdt" id="h^xL3)FB#LZ~hGkoP_m8"><field
+        name="day">2021-03-04</field></shadow></value><value
+        name="zdtTwo"><shadow type="oh_zdt" id="u75_0IS3fC,%WUJ3]u.`"><field
+        name="day">2022-04-09</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="t7PY!IQNK*EzgnbL+UE5"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="_cPOfq-B%sAz`JvC4NEd"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="U,1v-opdB6+1qMc*)%ub" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="z69#DvF|$N7WAtWQ:K8a"><field
+        name="TEXT">days=</field></block></value><value name="ADD1"><block
+        type="oh_get_time_between" id="@{h2j^IP70tPs[l7QUq8"><field
+        name="temporalPart">DAYS</field><value name="zdtOne"><shadow
+        type="oh_zdt" id="R!;){K$9$kb|lCtwgqn("><field
+        name="day">2021-03-04</field></shadow></value><value
+        name="zdtTwo"><shadow type="oh_zdt" id="ekYLNftht,K)btvB?mpW"><field
+        name="day">2022-04-09</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="?b_Ycsbuk/cLv2crmlu-"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="!!FdGxB?4CZl*jc8b#e6"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="6T0Gb;!B%(*I^+H2HNZ." inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="dgjr81/o{xn,t,5m6^ZW"><field
+        name="TEXT">hours=</field></block></value><value name="ADD1"><block
+        type="oh_get_time_between" id="Ph[`3UdW}oTt4Fc=N/E+"><field
+        name="temporalPart">HOURS</field><value name="zdtOne"><shadow
+        type="oh_zdt" id="7R(E?3|yrNU%FMq]w$%`"><field
+        name="day">2021-03-04</field></shadow></value><value
+        name="zdtTwo"><shadow type="oh_zdt" id="?Tb6Va,}X{(ygv#xWj{("><field
+        name="day">2022-04-09</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="*v)z6KmH8QwPbgPWiUcm"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="F{Nd,tIx%.e$!hh9alLp"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="@!vEIJ%Po%UcH_YOm=[_" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="sh*()[xdvx]s|TG#6/5|"><field
+        name="TEXT">minutes=</field></block></value><value name="ADD1"><block
+        type="oh_get_time_between" id="-k+K{{6oQP]5BxaZK++e"><field
+        name="temporalPart">MINUTES</field><value name="zdtOne"><shadow
+        type="oh_zdt" id="iFvV_7;/7[dOCi.a@}Z]"><field
+        name="day">2021-03-04</field></shadow></value><value
+        name="zdtTwo"><shadow type="oh_zdt" id="uBuCT4i+)p#2hx_oxusV"><field
+        name="day">2022-04-09</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="hh5Pl5l]6zE3{i!YSV]]"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="GW}V09Oc#IrX}A_o/k8/"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="lZsO374ivy7e%Y6]Ipck" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="1SN.qLK[.l8gP.]2/F`y"><field
+        name="TEXT">seconds=</field></block></value><value name="ADD1"><block
+        type="oh_get_time_between" id="|*_ZwsDP5m^dv9v||Vho"><field
+        name="temporalPart">SECONDS</field><value name="zdtOne"><shadow
+        type="oh_zdt" id="+{gg?zIxlkgD,AI;Dj=m"><field
+        name="day">2021-03-04</field></shadow></value><value
+        name="zdtTwo"><shadow type="oh_zdt" id=";~h[vE-CvLOK..uf.:x+"><field
+        name="day">2022-04-09</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="ra[UYu{Og:vQPA+6Xdy6"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="GBl(2A~Z/GzNIA!k=-=/"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="^6`#gI;@[3k`fKGFNQu2" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="87,]5Ze]://|e[/jt5[7"><field
+        name="TEXT">millis=</field></block></value><value name="ADD1"><block
+        type="oh_get_time_between" id="fRmhlgK3UQR-wPm.ZwM9"><field
+        name="temporalPart">MILLIS</field><value name="zdtOne"><shadow
+        type="oh_zdt" id="U20;,;@2?t:_v?GbEx`{"><field
+        name="day">2021-03-04</field></shadow></value><value
+        name="zdtTwo"><shadow type="oh_zdt" id="G^@/*u++E|6#)p*+yaNi"><field
+        name="day">2022-04-09</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="F}BjnP[:mV9I@C/2K2T!"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="_Gv,VCFIB.FxO3`b+4q;"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="WYGfQLK9a,+p.KHB(atd" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="/*;J!OvTBt[hI1wDpny%"><field
+        name="TEXT">nanos=</field></block></value><value name="ADD1"><block
+        type="oh_get_time_between" id="?mWWAkOjS_lv2SB$`;;Y"><field
+        name="temporalPart">NANOS</field><value name="zdtOne"><shadow
+        type="oh_zdt" id="RnSjv(|22q8ke9_QbPG0"><field
+        name="day">2022-04-03</field></shadow></value><value
+        name="zdtTwo"><shadow type="oh_zdt" id="OZFg|VBvQ;~vzB8ls2Na"><field
+        name="day">2022-04-04</field></shadow></value></block></value></block></value></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>
+      type: application/javascript
+      script: >
+        var runtime = require('@runtime');
+
+        var itemRegistry = runtime.itemRegistry;
+
+        var events = runtime.events;
+
+
+        console.error((time.toZDT('2021-03-04')));
+
+        console.error((time.toZDT('2022-04-09')));
+
+        console.info(('year=' + String(time.ChronoUnit.YEARS.between((time.toZDT('2021-03-04')),(time.toZDT('2022-04-09'))))));
+
+        console.info(('months=' + String(time.ChronoUnit.MONTHS.between((time.toZDT('2021-03-04')),(time.toZDT('2022-04-09'))))));
+
+        console.info(('weeks=' + String(time.ChronoUnit.WEEKS.between((time.toZDT('2021-03-04')),(time.toZDT('2022-04-09'))))));
+
+        console.info(('days=' + String(time.ChronoUnit.DAYS.between((time.toZDT('2021-03-04')),(time.toZDT('2022-04-09'))))));
+
+        console.info(('hours=' + String(time.ChronoUnit.HOURS.between((time.toZDT('2021-03-04')),(time.toZDT('2022-04-09'))))));
+
+        console.info(('minutes=' + String(time.ChronoUnit.MINUTES.between((time.toZDT('2021-03-04')),(time.toZDT('2022-04-09'))))));
+
+        console.info(('seconds=' + String(time.ChronoUnit.SECONDS.between((time.toZDT('2021-03-04')),(time.toZDT('2022-04-09'))))));
+
+        console.info(('millis=' + String(time.ChronoUnit.MILLIS.between((time.toZDT('2021-03-04')),(time.toZDT('2022-04-09'))))));
+
+        console.info(('nanos=' + String(time.ChronoUnit.NANOS.between((time.toZDT('2022-04-03')),(time.toZDT('2022-04-04'))))));
+    type: script.ScriptAction

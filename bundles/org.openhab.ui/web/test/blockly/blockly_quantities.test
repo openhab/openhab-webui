@@ -1,0 +1,321 @@
+configuration: {}
+triggers: []
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: <xml
+        xmlns="https://developers.google.com/blockly/xml"><variables><variable
+        id="dK=0Ckm?77fwtxXL~BX,">qty</variable></variables><block type="oh_log"
+        id="4RmAT0}d|!{$uPmGlPgG" x="-44" y="164"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Ek_D,^rYj[_CbGS-|p~."><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="D|QoIpnFcC}A_lI,E3ZK"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="f!JP$;@TeqjTPDn(C55I"><field name="TEXT">Units of Measurment with
+        </field></block></value><value name="ADD1"><block
+        type="oh_getitem_state" id="pGo}.swI=E5;x~,k8Vzr"><value
+        name="itemName"><shadow type="oh_item" id="GeKb8jtFz4uY#fpJOB1?"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="2(H_Uyr_5H4HKih~cCY5"><field
+        name="itemName">Temperature</field></block></value></block></value></block></value><next><block
+        type="controls_if" id="/:~P0.Leesm,IukNfvvL"><value name="IF0"><block
+        type="oh_quantity_compare" id="vn_m*DW!!N))BW0YV+5v"><field
+        name="operand">largerThan</field><value name="first"><shadow
+        type="oh_quantity" id="V4OVITu`;objcs{2E$=Y"></shadow><block
+        type="oh_quantity" id="st!7n6Dt*~W/UeF7@x2v"><value
+        name="quantity"><shadow type="text" id="uj)1GW;xYI57mreEpupK"><field
+        name="TEXT">10 W</field></shadow><block type="oh_getitem_state"
+        id="~aUa$c`Cwq97b4lq15VW"><value name="itemName"><shadow type="oh_item"
+        id="GeKb8jtFz4uY#fpJOB1?"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="G#lsEPsIhHw:)-LA`]J^"><field
+        name="itemName">Temperature</field></block></value></block></value></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="HEh[3-01*;F0aA^_mpV~"></shadow><block type="oh_quantity"
+        id="757*X_=UrJp,^jxhkTut"><value name="quantity"><shadow type="text"
+        id="ca-M?=7A=AM8h`S*7aS8"><field name="TEXT">15
+        °C</field></shadow></value></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="aP;5)|/J[O]IzgIPSWbW"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="[LdH7T$^)S;-YkW8P7Bh"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="u6P.6y9Qxmo-K_BHL1VY" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="z%E4{_{4,m32C.,-30LJ"><field name="TEXT">It is warm enough in the
+        living room at </field></block></value><value name="ADD1"><block
+        type="oh_getitem_state" id="M0PBTN[Js%g;-i.=dt]z"><value
+        name="itemName"><shadow type="oh_item" id="GeKb8jtFz4uY#fpJOB1?"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="JTz/+~:Zz1dnnhnG@+Ya"><field
+        name="itemName">Temperature</field></block></value></block></value></block></value><next><block
+        type="oh_log" id=";Rd|iNrc|N4cz/3V%]dS"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Qs,e!.+FCk_];q|hislH"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="OEfpr]zPV8O?wcdkC*fh" inline="false"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="1AF+]SDlK*t}9P_iDeS."><field name="TEXT">though it would be nices if
+        it was 5 degrees warmer = </field></block></value><value
+        name="ADD1"><block type="oh_quantity_arithmetic"
+        id="P@$.Hq}k!E0@y=z`t-jn"><field name="operand">add</field><value
+        name="first"><shadow type="oh_quantity"
+        id="ED_EuFTGaTD1tq}^OZOi"></shadow><block type="oh_quantity"
+        id="n/7A9^Z(0sD.TuohG2V!"><value name="quantity"><shadow type="text"
+        id="4U,$DO`QHow=gsbv}TQM"><field name="TEXT">10 W</field></shadow><block
+        type="oh_getitem_state" id="h*CcNH*Zt2=UlU[]/x4U"><value
+        name="itemName"><shadow type="oh_item" id="GeKb8jtFz4uY#fpJOB1?"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id=")3D0LAnZpdda7IyePgGI"><field
+        name="itemName">Temperature</field></block></value></block></value></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="Ifa}J~y961j{D9.wfka8"></shadow><block type="oh_quantity"
+        id="2jsqV_j$mX+EVtS)mjz#"><value name="quantity"><shadow type="text"
+        id="8@/9).`A[*BYf1hHvyVQ"><field name="TEXT">5
+        °C</field></shadow></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="jMBr^4r^*]MZtD8+h$+J"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="[b{iDk_S{Bkl4Wof+#K,"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="7f4U?oF_qzgJf:~DK;GN" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="29MUhg5gGF31U~8sVnH["><field name="TEXT">15 degress Celsius are
+        </field></block></value><value name="ADD1"><block
+        type="oh_quantity_to_unit" id="OKu#~i2YD##af$l5LQ|a"><value
+        name="quantity"><shadow type="oh_quantity"
+        id="T)jZ}LacVa~aBxzrC)}7"></shadow><block type="oh_quantity"
+        id="a7:LjVe)d0[MYxv#Fix*"><value name="quantity"><shadow type="text"
+        id="j=3f57@+hZl;(?*O^~lP"><field name="TEXT">15
+        °C</field></shadow></value></block></value><value name="unit"><shadow
+        type="text" id="}G$:$-^}vb;H//N*,nR0"><field
+        name="TEXT">°F</field></shadow></value></block></value></block></value></block></next></block></next></block></statement><next><block
+        type="variables_set" id="ud1]:s)U2U4|5w$@1Nmk"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field><value name="VALUE"><block
+        type="oh_quantity" id="b[yF4e?4/].r~vr}z@a7"><value
+        name="quantity"><shadow type="text" id="v)hL!yQ`^MKw~S}oDYW3"><field
+        name="TEXT">10 W</field></shadow></value></block></value><next><block
+        type="oh_log" id="r^nZ@vLCv/u19GWf#fg+"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="J_Cuq7}N^qi/cklrGR?c"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="p$~hm,y%gZzow~k-aw-v"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="Vt0Z?ZcWca}75yNSDZBb"><field
+        name="TEXT">Quantity=</field></block></value><value name="ADD1"><block
+        type="variables_get" id="-M*^4gwdvg$$$_n(n?BG"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value></block></value><next><block
+        type="oh_log" id="$DA_I73?!H]uzg~#$Et}"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="J_Cuq7}N^qi/cklrGR?c"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="{qeT9UX-c^~2DDWc=DB)"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="fkUu50Oei]NdY[eI)5L5"><field name="TEXT">Quantity in
+        kW=</field></block></value><value name="ADD1"><block
+        type="oh_quantity_to_unit" id="KY8VPz)}|8tNwxx?{OUR"><value
+        name="quantity"><shadow type="oh_quantity"
+        id="^35TaG#Pha|klWBY]OZe"></shadow><block type="variables_get"
+        id="jO,?/g[Er?uC3hM;lI,K"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value><value
+        name="unit"><shadow type="text" id="r/1H5)P2D~?nJsoIVkc:"><field
+        name="TEXT">kW</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="Ux0.(J4|J[$GQ3esir47"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="tB5M?KM}d=^y;^gBr!vD"><field name="TEXT">Arithmetic
+        operations</field></shadow></value><next><block type="oh_log"
+        id="8P}`bxd*C%Q/@RV6(h[h"><field name="severity">info</field><value
+        name="message"><shadow type="text" id="J_Cuq7}N^qi/cklrGR?c"><field
+        name="TEXT">abc</field></shadow><block type="oh_quantity_arithmetic"
+        id="m%%7]zow*#hmJMZqiDed"><field name="operand">add</field><value
+        name="first"><shadow type="oh_quantity"
+        id="=j`6IUbXSC2YBr.E]@}5"></shadow><block type="variables_get"
+        id=".MvhjA%+Vbmm`^z+JnSv"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="o-C+zXU`jsUKao|~|$ah"></shadow><block type="oh_quantity"
+        id="k$I_j%ms?+CxO=(K=+M/"><value name="quantity"><shadow type="text"
+        id="pZ?C9D)?l4~/.U]Fb{c{"><field name="TEXT">10
+        kW</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="nvs[drez^s:wRdAPo[jG"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="J_Cuq7}N^qi/cklrGR?c"><field name="TEXT">abc</field></shadow><block
+        type="oh_quantity_arithmetic" id="Wa3~mxC,7^|L:%V,vi]?"><field
+        name="operand">subtract</field><value name="first"><shadow
+        type="oh_quantity" id="=j`6IUbXSC2YBr.E]@}5"></shadow><block
+        type="variables_get" id="5`-L`k]]q%Prgb7RGUFH"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="o-C+zXU`jsUKao|~|$ah"></shadow><block type="oh_quantity"
+        id="v*ft%{DmSZEw4c3Mp%bU"><value name="quantity"><shadow type="text"
+        id="g]o#rFeAYj+g4Q-ed[5+"><field name="TEXT">10
+        kW</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="X|I#.%a!6+_/I=(*Odl."><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="J_Cuq7}N^qi/cklrGR?c"><field name="TEXT">abc</field></shadow><block
+        type="oh_quantity_arithmetic" id="$eH=PfuY,@tBF+emj-|E"><field
+        name="operand">multiply</field><value name="first"><shadow
+        type="oh_quantity" id="=j`6IUbXSC2YBr.E]@}5"></shadow><block
+        type="variables_get" id="kpxR)q`ngQc7Xl~ay_9#"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="o-C+zXU`jsUKao|~|$ah"></shadow><block type="oh_quantity"
+        id="WzKLzk}SS{M38_.GWcTW"><value name="quantity"><shadow type="text"
+        id="@YlK[;5q68_MM)tlCj|B"><field name="TEXT">10
+        W</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="vuZAdObBF[%F,Q_9RXod"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="J_Cuq7}N^qi/cklrGR?c"><field name="TEXT">abc</field></shadow><block
+        type="oh_quantity_arithmetic" id="Bqj{=]%$X4)yQ{]l7P*;"><field
+        name="operand">multiply</field><value name="first"><shadow
+        type="oh_quantity" id="=j`6IUbXSC2YBr.E]@}5"></shadow><block
+        type="variables_get" id="+tl?RN~:gq_Q0s-vK`tz"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="o-C+zXU`jsUKao|~|$ah"></shadow><block type="oh_quantity"
+        id=";9(-2MVM1*Mq8/C7o+{e"><value name="quantity"><shadow type="text"
+        id="5?4G?;i7}h?:E_0nHmU!"><field
+        name="TEXT">10</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="3}w%^#I|fh?xd?LE9Rii"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="J_Cuq7}N^qi/cklrGR?c"><field name="TEXT">abc</field></shadow><block
+        type="oh_quantity_arithmetic" id="SM4SWNF9B-B2xCT8?5rG"><field
+        name="operand">divide</field><value name="first"><shadow
+        type="oh_quantity" id="=j`6IUbXSC2YBr.E]@}5"></shadow><block
+        type="variables_get" id="Bv~]GObISO3(qR-AL-0W"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="o-C+zXU`jsUKao|~|$ah"></shadow><block type="oh_quantity"
+        id="1i*:my|Vn6D{uT*PH-B!"><value name="quantity"><shadow type="text"
+        id="pBig:g52WrvvR5N;?D$c"><field name="TEXT">10
+        W</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="nsKm/=D0B/8JZoR7Jofj"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="J_Cuq7}N^qi/cklrGR?c"><field name="TEXT">abc</field></shadow><block
+        type="oh_quantity_arithmetic" id="=Qg~#YC%,),-p`hxo#S~"><field
+        name="operand">divide</field><value name="first"><shadow
+        type="oh_quantity" id="=j`6IUbXSC2YBr.E]@}5"></shadow><block
+        type="variables_get" id="|[jI{w[2D,e|_kgb1+iJ"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="o-C+zXU`jsUKao|~|$ah"></shadow><block type="oh_quantity"
+        id="T7rzCr=8?pNps.)79?$W"><value name="quantity"><shadow type="text"
+        id="Z?FT1j@$h8lYoQ8Q$Jnm"><field
+        name="TEXT">10</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="iNZJM4^h.;zqGUz+~Gv+"><field
+        name="severity">warn</field><value name="message"><shadow type="text"
+        id="f-9,Q.nH|m;`YH6$^[uR"><field
+        name="TEXT">Comparions</field></shadow></value><next><block
+        type="oh_log" id="yM!~$,F{iCV#Pm3{g`y6"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="J_Cuq7}N^qi/cklrGR?c"><field name="TEXT">abc</field></shadow><block
+        type="oh_quantity_compare" id="Cb@1$zT3(kz16t0aq(?N"><field
+        name="operand">equal</field><value name="first"><shadow
+        type="oh_quantity" id=",PVQk?;aX]AGv)7Rk#nO"></shadow><block
+        type="variables_get" id="!Q~KSyZu-{:]G+hjz_|i"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="]t9gqw9xe0jBZFH6~oZk"></shadow><block type="oh_quantity"
+        id="}OI8-L,l,QNv,@Ksa6$;"><value name="quantity"><shadow type="text"
+        id="Zjr|X8%c`IxMaP90t;EE"><field name="TEXT">10
+        W</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="])8=U*$gBajO`~2.vf$c"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="J_Cuq7}N^qi/cklrGR?c"><field name="TEXT">abc</field></shadow><block
+        type="oh_quantity_compare" id="ooo$O_YSTaG[;xU,_(w!"><field
+        name="operand">smallerThan</field><value name="first"><shadow
+        type="oh_quantity" id=",PVQk?;aX]AGv)7Rk#nO"></shadow><block
+        type="variables_get" id="H4T_a6pdos^AA!;)nBGg"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="]t9gqw9xe0jBZFH6~oZk"></shadow><block type="oh_quantity"
+        id="Iz:3j?RiM3`Boc!?$zX%"><value name="quantity"><shadow type="text"
+        id="u{)#%%D!,SOs{#T~.%b]"><field name="TEXT">1
+        kW</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="q7Pt!_BEDv4P;9?EmZ55"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="J_Cuq7}N^qi/cklrGR?c"><field name="TEXT">abc</field></shadow><block
+        type="oh_quantity_compare" id="|~dA=HHD{b`4[`q7dx/t"><field
+        name="operand">smallerThanOrEqual</field><value name="first"><shadow
+        type="oh_quantity" id=",PVQk?;aX]AGv)7Rk#nO"></shadow><block
+        type="variables_get" id="hNF0K2Q7y#LmI=(-=/-^"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="]t9gqw9xe0jBZFH6~oZk"></shadow><block type="oh_quantity"
+        id="4eATVEF7Q^Ci-.QK2Kbf"><value name="quantity"><shadow type="text"
+        id="I|vl(CF;7`jb@YiyO)mG"><field name="TEXT">10
+        W</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="Sy`[h2wUuEva29$oN2.x"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="J_Cuq7}N^qi/cklrGR?c"><field name="TEXT">abc</field></shadow><block
+        type="oh_quantity_compare" id="qp3CTs0l~0C}xpo+;Way"><field
+        name="operand">largerThan</field><value name="first"><shadow
+        type="oh_quantity" id=",PVQk?;aX]AGv)7Rk#nO"></shadow><block
+        type="variables_get" id="Oq)Fq-foM(y~H)}_[D3%"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="]t9gqw9xe0jBZFH6~oZk"></shadow><block type="oh_quantity"
+        id="@kh:iI$A(P|-}C9h/lmO"><value name="quantity"><shadow type="text"
+        id="ng-a??eK7zA`,3LV6[%8"><field name="TEXT">1000
+        mW</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="w,ch!V(jx-B7BB.aeA$k"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="J_Cuq7}N^qi/cklrGR?c"><field name="TEXT">abc</field></shadow><block
+        type="oh_quantity_compare" id="cSTo~yv`ONKJfNMx6O.i"><field
+        name="operand">largerThanOrEqual</field><value name="first"><shadow
+        type="oh_quantity" id=",PVQk?;aX]AGv)7Rk#nO"></shadow><block
+        type="variables_get" id="VWXoD1uuCU%s0*k5(_cm"><field name="VAR"
+        id="dK=0Ckm?77fwtxXL~BX,">qty</field></block></value><value
+        name="second"><shadow type="oh_quantity"
+        id="]t9gqw9xe0jBZFH6~oZk"></shadow><block type="oh_quantity"
+        id="`gFV:aB?QJO0({bbM{2x"><value name="quantity"><shadow type="text"
+        id="AOr$XqpFn+W@q6,@h?(Y"><field name="TEXT">10000
+        mW</field></shadow></value></block></value></block></value></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>
+      type: application/javascript;version=ECMAScript-2021
+      script: >
+        var runtime = require('@runtime');
+
+        var itemRegistry = runtime.itemRegistry;
+
+        var events = runtime.events;
+
+
+        var qty;
+
+
+
+        console.info(('Units of Measurment with ' + String(items.getItem('Temperature').state)));
+
+        if (Quantity(items.getItem('Temperature').state).largerThan(Quantity('15 °C'))) {
+          console.info(('It is warm enough in the living room at ' + String(items.getItem('Temperature').state)));
+          console.info(('though it would be nices if it was 5 degrees warmer = ' + String(Quantity(items.getItem('Temperature').state).add(Quantity('5 °C')))));
+          console.info(('15 degress Celsius are ' + String(Quantity('15 °C').toUnit('°F'))));
+        }
+
+        qty = Quantity('10 W');
+
+        console.info(('Quantity=' + String(qty)));
+
+        console.info(('Quantity in kW=' + String(qty.toUnit('kW'))));
+
+        console.warn('Arithmetic operations');
+
+        console.info((qty.add(Quantity('10 kW'))));
+
+        console.info((qty.subtract(Quantity('10 kW'))));
+
+        console.info((qty.multiply(Quantity('10 W'))));
+
+        console.info((qty.multiply(Quantity('10'))));
+
+        console.info((qty.divide(Quantity('10 W'))));
+
+        console.info((qty.divide(Quantity('10'))));
+
+        console.warn('Comparions');
+
+        console.info((qty.equal(Quantity('10 W'))));
+
+        console.info((qty.smallerThan(Quantity('1 kW'))));
+
+        console.info((qty.smallerThanOrEqual(Quantity('10 W'))));
+
+        console.info((qty.largerThan(Quantity('1000 mW'))));
+
+        console.info((qty.largerThanOrEqual(Quantity('10000 mW'))));
+    type: script.ScriptAction

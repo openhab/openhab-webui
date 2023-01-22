@@ -61,13 +61,15 @@
     "Samsung >= 5"
   ],
   "dependencies": {
-    "@blockly/field-slider": "^2.1.10",
-    "@blockly/zoom-to-fit": "^2.0.24",
+    "@blockly/field-slider": "^4.0.3",
+    "@blockly/plugin-cross-tab-copy-paste": "^2.0.4",
+    "@blockly/theme-dark": "^4.0.1",
+    "@blockly/zoom-to-fit": "^3.0.3",
     "@jsep-plugin/arrow": "^1.0.5",
     "@jsep-plugin/object": "^1.2.1",
     "@jsep-plugin/regex": "^1.0.3",
     "@jsep-plugin/template": "^1.0.2",
-    "blockly": "^6.20210701.0",
+    "blockly": "^9.2.0",
     "cronstrue": "^1.100.0",
     "dayjs": "^1.9.6",
     "dom7": "^2.1.5",

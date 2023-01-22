@@ -1,0 +1,95 @@
+configuration: {}
+triggers: []
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: '<xml xmlns="https://developers.google.com/blockly/xml"><block
+        type="oh_callscriptfile" id="7_e]zyJmK.xZx0=ix0]g" x="106" y="62"><value
+        name="scriptfile"><shadow type="text" id="fE~v3.ayA?KEo$4S4raU"><field
+        name="TEXT">hello.script</field></shadow></value><next><block
+        type="oh_store_value" id="U6-rllLH7%LsSGN:8=He"><field
+        name="cacheType">.shared</field><value name="value"><shadow type="text"
+        id="VsRM`R=`^27T4FdtQV}y"><field
+        name="TEXT">Spy</field></shadow></value><value name="key"><shadow
+        type="text" id="QR}R5,9]T+kwbrHxUX=f"><field
+        name="TEXT">intruder</field></shadow></value><next><block
+        type="oh_runrule" id="s0Fmi#zWGxZg*?89{dEP"><value
+        name="ruleUID"><shadow type="text" id="$jS%ZX)QIfm{@KU7?$/O"><field
+        name="TEXT">1_hello_rule</field></shadow></value><value
+        name="parameters"><block type="dicts_create_with"
+        id="m5RpDCoRzr.=n`%Y]ALa"><mutation items="2"></mutation><field
+        name="KEY0">name1</field><field name="KEY1">name2</field><value
+        name="ADD0"><block type="text" id=")k]]kIW}EZ7B}h{;.7*W"><field
+        name="TEXT">Stefan</field></block></value><value name="ADD1"><block
+        type="text" id="3x+8pY8Ycu(*N3]^~v^%"><field
+        name="TEXT">Florian</field></block></value></block></value></block></next></block></next></block><block
+        type="oh_log" id="]01A|}8/W%Zd[.YE16p$" x="104" y="270"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="/L)21],EA`Z:[(IPR6l4"><field name="TEXT">abc</field></shadow><block
+        type="oh_transformation" id="IwTJ$bVknC![LJXW`;jY"><field
+        name="type">REGEX</field><value name="value"><block type="text"
+        id="Hm)vQE,J$ag4L9[4u^/v"><field
+        name="TEXT">#123456</field></block></value><value name="function"><block
+        type="text" id="RF*Xay%z*.x_eL*UM+7g"><field
+        name="TEXT">s/#(.{2})(.{2})(.{2})/rgb($1,$2,$3)/g</field></block></value></block></value><next><block
+        type="oh_log" id="RwBS3ZL8tg/iD1eQQdKV"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="kv%B48/+xh[sJ^!`p4zK"><field name="TEXT">abc</field></shadow><block
+        type="oh_transformation" id="j9@{cVT=(sD(p8kX}/kS"><field
+        name="type">REGEX</field><value name="value"><block type="colour_picker"
+        id=".+@t!EuY39*bj0dc4FR)"><field
+        name="COLOUR">#ff99ff</field></block></value><value
+        name="function"><block type="text" id="un+e3m6w^vX}*GC]nO*g"><field
+        name="TEXT">s/#(.{2})(.{2})(.{2})/rgb($1,$2,$3)/g</field></block></value></block></value><next><block
+        type="oh_log" id="z)`5F=T5$)kGT9f/]_|^"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="!yS49n}3o#uHCPEzITH0"><field name="TEXT">abc</field></shadow><block
+        type="oh_transformation" id="!@h$%]vv@0P7dBly)9-e"><field
+        name="type">JSONPATH</field><value name="value"><shadow type="text"
+        id="WI6(Y`yoKs5-6*[?`meW"><field name="TEXT">{ "device": { "location":
+        "Outside", "status": { "temperature": 23.2
+        }}}</field></shadow></value><value name="function"><shadow type="text"
+        id="UuA)1-p~(lIsx%fJrkBN"><field
+        name="TEXT">$.device.status.temperature</field></shadow></value></block></value><next><block
+        type="oh_log" id="?.!S)c]::V482Dl8,C7]"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="!yS49n}3o#uHCPEzITH0"><field name="TEXT">abc</field></shadow><block
+        type="oh_transformation" id="zFyI1K$q`+w/Vg#H3JUJ"><field
+        name="type">MAP</field><value name="value"><shadow type="text"
+        id="f+RR|{@G{ju4]fjr[~`?"><field
+        name="TEXT">hs</field></shadow></value><value name="function"><shadow
+        type="text" id="N^(-y9u~g~v0Na9P3z7U"><field
+        name="TEXT">nanoleaf.map</field></shadow></value></block></value><next><block
+        type="oh_script_inline" id="-1:V20y8!G6`OY2J!2/i"><field
+        name="inlineScript">for (var i = 0; i &lt; 10; i++)
+        {&amp;#10;  console.log(i.toString());&amp;#10;}</field></block></next></block></next></block></next></block></next></block></xml>'
+      type: application/javascript;version=ECMAScript-2021
+      script: >
+        var runtime = require('@runtime');
+
+        var itemRegistry = runtime.itemRegistry;
+
+        var events = runtime.events;
+
+
+        actions.ScriptExecution.callScript('hello.script');
+
+        cache.shared.put('intruder', 'Spy');
+
+        rules.runRule('1_hello_rule', {'name1': 'Stefan', 'name2': 'Florian'});
+
+
+        console.info(actions.Transformation.transform('REGEX', 's/#(.{2})(.{2})(.{2})/rgb($1,$2,$3)/g', '#123456'));
+
+        console.info(actions.Transformation.transform('REGEX', 's/#(.{2})(.{2})(.{2})/rgb($1,$2,$3)/g', '#ff99ff'));
+
+        console.info(actions.Transformation.transform('JSONPATH', '$.device.status.temperature', '{ "device": { "location": "Outside", "status": { "temperature": 23.2 }}}'));
+
+        console.info(actions.Transformation.transform('MAP', 'nanoleaf.map', 'hs'));
+
+        for (var i = 0; i < 10; i++) {
+          console.log(i.toString());
+        }
+    type: script.ScriptAction

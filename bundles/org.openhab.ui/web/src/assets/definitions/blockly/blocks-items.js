@@ -1,12 +1,14 @@
 /*
-* General item and thing functionally for blockly
+* General Item functionality for blockly
+* supports jsscripting
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { FieldItemModelPicker } from './fields/item-field'
 import { FieldThingPicker } from './fields/thing-field'
 
-export default function (f7) {
+export default function (f7, isGraalJs) {
   /* Helper block to allow selecting an item */
   Blockly.Blocks['oh_item'] = {
     init: function () {
@@ -17,14 +19,13 @@ export default function (f7) {
       this.setInputsInline(true)
       this.setTooltip('Pick an item from the Model')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#item')
-      this.setOutput(true, null)
+      this.setOutput(true, 'oh_item')
     }
   }
 
-  Blockly.JavaScript['oh_item'] = function (block) {
+  javascriptGenerator['oh_item'] = function (block) {
     const itemName = block.getFieldValue('itemName')
-    let code = `'${itemName}'`
-    return [code, 0]
+    return [`'${itemName}'`, 0]
   }
 
   /* retrieve members of a group */
@@ -32,7 +33,7 @@ export default function (f7) {
     init: function () {
       this.appendValueInput('groupName')
         .appendField('get members of group')
-        .setCheck('String')
+        .setCheck(['String', 'oh_item'])
       this.setInputsInline(false)
       this.setOutput(true, 'Array')
       this.setColour(0)
@@ -42,10 +43,14 @@ export default function (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_groupmembers'] = function (block) {
-    const groupName = Blockly.JavaScript.valueToCode(block, 'groupName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `Java.from(itemRegistry.getItem(${groupName}).members)`
-    return [code, 0]
+  javascriptGenerator['oh_groupmembers'] = function (block) {
+    const groupName = javascriptGenerator.valueToCode(block, 'groupName', javascriptGenerator.ORDER_ATOMIC)
+
+    if (isGraalJs) {
+      return [`items.getItem(${groupName}).members`, 0]
+    } else {
+      return [`Java.from(itemRegistry.getItem(${groupName}).members)`, 0]
+    }
   }
 
   /* retrieve items via their tags */
@@ -63,8 +68,8 @@ export default function (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_taggeditems'] = function (block) {
-    let tagNames = Blockly.JavaScript.valueToCode(block, 'tagName', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_taggeditems'] = function (block) {
+    let tagNames = javascriptGenerator.valueToCode(block, 'tagName', javascriptGenerator.ORDER_ATOMIC)
     tagNames = tagNames.split(',')
     let tags = ''
     for (let i = 0; i < tagNames.length; i++) {
@@ -73,15 +78,19 @@ export default function (f7) {
       }
       tags += tagNames[i]
     }
-    let code = `Java.from(itemRegistry.getItemsByTag(${tags}))`
-    return [code, 0]
+
+    if (isGraalJs) {
+      return [`items.getItemsByTag(${tags})`, 0]
+    } else {
+      return [`Java.from(itemRegistry.getItemsByTag(${tags}))`, 0]
+    }
   }
 
   Blockly.Blocks['oh_getitem'] = {
     init: function () {
       this.appendValueInput('itemName')
         .appendField('get item')
-        .setCheck('String')
+        .setCheck(['String', 'oh_item'])
       this.setInputsInline(false)
       this.setOutput(true, 'oh_itemtype')
       this.setColour(0)
@@ -90,10 +99,13 @@ export default function (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_getitem'] = function (block) {
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `itemRegistry.getItem(${itemName})`
-    return [code, 0]
+  javascriptGenerator['oh_getitem'] = function (block) {
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    if (isGraalJs) {
+      return [`items.getItem(${itemName})`, 0]
+    } else {
+      return [`itemRegistry.getItem(${itemName})`, 0]
+    }
   }
 
   /* get info from items */
@@ -101,7 +113,7 @@ export default function (f7) {
     init: function () {
       this.appendValueInput('itemName')
         .appendField('get state of item')
-        .setCheck('String')
+        .setCheck(['String', 'oh_item'])
       this.setInputsInline(false)
       this.setOutput(true, 'String')
       this.setColour(0)
@@ -110,10 +122,13 @@ export default function (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_getitem_state'] = function (block) {
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `itemRegistry.getItem(${itemName}).getState()`
-    return [code, 0]
+  javascriptGenerator['oh_getitem_state'] = function (block) {
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    if (isGraalJs) {
+      return [`items.getItem(${itemName}).state`, 0]
+    } else {
+      return [`itemRegistry.getItem(${itemName}).getState()`, 0]
+    }
   }
 
   /*
@@ -136,10 +151,10 @@ export default function (f7) {
           thisBlock.updateType_(newMode)
         })
       this.appendValueInput('item')
+        .setCheck('oh_itemtype')
         .appendField('get ')
         .appendField(dropdown, 'attributeName')
         .appendField('of item')
-        .setCheck('oh_itemtype')
       this.setInputsInline(false)
       this.setOutput(true, 'String')
       this.setColour(0)
@@ -181,15 +196,19 @@ export default function (f7) {
   * Provides all attributes from an item
   * Code part
   */
-  Blockly.JavaScript['oh_getitem_attribute'] = function (block) {
-    const theItem = Blockly.JavaScript.valueToCode(block, 'item', Blockly.JavaScript.ORDER_ATOMIC)
-    const attributeName = block.getFieldValue('attributeName')
-    let code = ''
-    if (attributeName === 'Tags' || attributeName === 'GroupNames') {
-      code = `Java.from(${theItem}.get${attributeName}())`
+  javascriptGenerator['oh_getitem_attribute'] = function (block) {
+    const theItem = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
+    let attributeName = block.getFieldValue('attributeName')
+
+    if (isGraalJs) {
+      attributeName = attributeName.charAt(0).toLowerCase() + attributeName.slice(1)
+      return [`${theItem}.${attributeName}`, 0]
     } else {
-      code = `${theItem}.get${attributeName}()`
+      if (attributeName === 'Tags' || attributeName === 'GroupNames') {
+        return [`Java.from(${theItem}.get${attributeName}())`, 0]
+      } else {
+        return [`${theItem}.get${attributeName}()`, 0]
+      }
     }
-    return [code, 0]
   }
 }

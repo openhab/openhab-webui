@@ -1,10 +1,12 @@
 /*
  * Interact with the event bus in Blockly
+ * supports jsscripting
  */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
-export default function (f7) {
+export default function (f7, isGraalJs) {
   Blockly.Blocks['oh_event'] = {
     init: function () {
       this.appendValueInput('value')
@@ -12,7 +14,7 @@ export default function (f7) {
       this.appendValueInput('itemName')
         .appendField('to')
         .setAlign(Blockly.ALIGN_RIGHT)
-        .setCheck('String')
+        .setCheck(['String', 'oh_item'])
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -22,10 +24,14 @@ export default function (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_event'] = function (block) {
+  javascriptGenerator['oh_event'] = function (block) {
     const eventType = block.getFieldValue('eventType')
-    const itemName = Blockly.JavaScript.valueToCode(block, 'itemName', Blockly.JavaScript.ORDER_ATOMIC)
-    const value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC)
-    return 'events.' + eventType + '(' + itemName + ', ' + value + ');\n'
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
+    if (isGraalJs) {
+      return `items.getItem(${itemName}).${eventType}(${value});\n`
+    } else {
+      return `events.${eventType}(${itemName}, ${value});\n`
+    }
   }
 }

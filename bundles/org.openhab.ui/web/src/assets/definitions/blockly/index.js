@@ -14,27 +14,29 @@ import definePersistenceBlocks from './blocks-persistence'
 import defineColorBlocks from './blocks-color'
 import defineTextBlocks from './blocks-text'
 import defineListBlocks from './blocks-list'
+import defineUomBlocks from './blocks-uom'
 
 import { defineLibraries } from './libraries'
 
 import Blockly from 'blockly'
 
-export default function (f7, libraryDefinitions, data) {
-  defineDictionaryBlocks(f7)
-  defineDateOffsetsBlocks(f7)
-  defineItemBlocks(f7)
-  defineThingsBlocks(f7)
-  defineAudioBlocks(f7, data.sinks, data.voices)
-  defineEventBusBlocks(f7)
-  defineNotificationBlocks(f7)
-  defineLoggingBlocks(f7)
-  defineTimerBlocks(f7)
-  defineValueStorageBlocks(f7)
-  defineEphemerisBlocks(f7)
-  defineScriptsBlocks(f7)
-  definePersistenceBlocks(f7)
-  defineColorBlocks(f7)
-  defineTextBlocks(f7)
-  defineListBlocks(f7)
+export default function (f7, libraryDefinitions, data, isGraalJs) {
+  defineDictionaryBlocks(f7, isGraalJs)
+  defineDateOffsetsBlocks(f7, isGraalJs)
+  defineItemBlocks(f7, isGraalJs)
+  defineThingsBlocks(f7, isGraalJs)
+  defineAudioBlocks(f7, isGraalJs, data.sinks, data.voices)
+  defineEventBusBlocks(f7, isGraalJs)
+  defineNotificationBlocks(f7, isGraalJs)
+  defineLoggingBlocks(f7, isGraalJs)
+  defineTimerBlocks(f7, isGraalJs)
+  defineValueStorageBlocks(f7, isGraalJs)
+  defineEphemerisBlocks(f7, isGraalJs)
+  defineScriptsBlocks(f7, isGraalJs)
+  definePersistenceBlocks(f7, isGraalJs)
+  defineColorBlocks(f7, isGraalJs)
+  defineTextBlocks(f7, isGraalJs)
+  defineListBlocks(f7, isGraalJs)
+  defineUomBlocks(f7, isGraalJs)
   defineLibraries(libraryDefinitions)
 }

@@ -1,0 +1,103 @@
+configuration: {}
+triggers:
+  - id: "2"
+    configuration:
+      itemName: PilztasterJonas
+    type: core.ItemStateUpdateTrigger
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: '<xml xmlns="https://developers.google.com/blockly/xml"><block
+        type="oh_log" id="$o$l1Vx~j~uDl)?SQQ])" disabled="true" x="152"
+        y="174"><field name="severity">info</field><value name="message"><shadow
+        type="text" id="||N2o3OS6NVlEC|2HBwK"><field
+        name="TEXT">abc</field></shadow><block type="oh_timer_isRunning"
+        id="hKUA7GJF]B{w8W82K2R."><value name="timerName"><shadow type="text"
+        id="iv08y.zRgnQ?uo}.*%M*"><field
+        name="TEXT">MyTimer</field></shadow></value></block></value><next><block
+        type="oh_log" id="_7=_sD,.1Hvi0JtX-kk."><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="V1iu.n?]PilpZsjnqjBS"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="cUUKytK]F:3YvAyt.6sl" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="`++xdbvcTG*}/MHhINnL"><field name="TEXT">Timer is active:
+        </field></block></value><value name="ADD1"><block
+        type="oh_timer_isActive" id="D!]8x5?1KZry}5vL2};B"><value
+        name="timerName"><shadow type="text" id="!2K_(RN`5K0oVA8N7sYj"><field
+        name="TEXT">MyTimer</field></shadow></value></block></value></block></value><next><block
+        type="controls_if" id="tF|[FS/t@A.:UIbsQwVj"><mutation
+        else="1"></mutation><value name="IF0"><block type="logic_negate"
+        id="u[#7@R-.2]/?4!3jnPdp"><value name="BOOL"><block
+        type="oh_timer_isActive" id="v,C-N-g8TjD7qn1**_s;"><value
+        name="timerName"><shadow type="text" id="BRp(;]6O?wU,[::H);|R"><field
+        name="TEXT">MyTimer</field></shadow></value></block></value></block></value><statement
+        name="DO0"><block type="oh_log" id="aZ#rW7L$82s_pHi~Lxiq"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="$fwn:eeV0cO4{X2UumuK"><field name="TEXT">Timer will be started for
+        the first time. intended to be run in 10
+        secs</field></shadow></value></block></statement><statement
+        name="ELSE"><block type="oh_log" id="Wb7+I[}.a]}SgR_mPPhD"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="9;I,71*xQSNc3UJ@eRYS"><field name="TEXT">Timer will be
+        restarted</field></shadow></value></block></statement><next><block
+        type="oh_timer_ext" id="mTd@(d|*RUlnH%YAI9p^"><field
+        name="delayUnits">plusSeconds</field><field
+        name="retrigger">nothing</field><value name="delay"><shadow
+        type="math_number" id="G0Lo2k*#Ncz8,)FmM19%"><field
+        name="NUM">10</field></shadow></value><value name="timerName"><shadow
+        type="text" id="tZQk~a-(xj[YB5`wS*mz"><field
+        name="TEXT">MyTimer</field></shadow></value><statement
+        name="timerCode"><block type="oh_log" id="dRzmPmYh29-5`ShZ4ff!"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="rBP5k2t)Zk}#ubCcq.S+"><field name="TEXT">Timer executed (if later
+        than 10 seconds, it was
+        rescheduled</field></shadow></value></block></statement><next><block
+        type="controls_if" id="sZAs_T|vX:-HZ,VV4qW|"><value name="IF0"><block
+        type="logic_compare" id="Sem]qUE^[*sfO6LWT~!8"><field
+        name="OP">EQ</field><value name="A"><block type="oh_getitem_state"
+        id="diV$YdkA]CqMNszn[I|/"><value name="itemName"><shadow type="oh_item"
+        id="ea[Z0VkM5%FIx]i=_-1{"><field
+        name="itemName">timerCancelTrigger</field></shadow></value></block></value><value
+        name="B"><block type="text" id="blP+.5XcKlr,hulf]aX="><field
+        name="TEXT">ON</field></block></value></block></value><statement
+        name="DO0"><block type="oh_timer_cancel"
+        id="Q9-.MCput2;=8PVmcTLP"><value name="timerName"><shadow type="text"
+        id="hp[xn00nsYlDe.8qS%GA"><field
+        name="TEXT">MyTimer</field></shadow></value><next><block type="oh_log"
+        id="3Ws5NraqK3zfo*!NX+|d"><field name="severity">info</field><value
+        name="message"><shadow type="text" id="T8ff3~TCGhmL5pyN@8g|"><field
+        name="TEXT">Canceled timer - will never be
+        executed</field></shadow></value></block></next></block></statement></block></next></block></next></block></next></block></next></block></xml>'
+      type: application/javascript;version=ECMAScript-2021
+      script: >
+        var runtime = require('@runtime');
+
+        var itemRegistry = runtime.itemRegistry;
+
+        var events = runtime.events;
+
+
+        console.info(('Timer is active: ' + String(cache.private.exists('MyTimer') && cache.private.get('MyTimer').isActive())));
+
+        if (!(cache.private.exists('MyTimer') && cache.private.get('MyTimer').isActive())) {
+          console.info('Timer will be started for the first time. intended to be run in 10 secs');
+        } else {
+          console.info('Timer will be restarted');
+        }
+
+        if (cache.private.exists('MyTimer') === false || cache.private.get('MyTimer').hasTerminated()) {
+          cache.private.put('MyTimer', actions.ScriptExecution.createTimer('MyTimer', time.ZonedDateTime.now().plusSeconds(10), function () {
+            console.info('Timer executed (if later than 10 seconds, it was rescheduled');
+            cache.private.remove('MyTimer');
+          }));
+        } else {
+          // do nothing
+        };
+
+        if (items.getItem('timerCancelTrigger').state == 'ON') {
+          if (cache.private.exists('MyTimer')) { cache.private.remove('MyTimer').cancel(); };
+          console.info('Canceled timer - will never be executed');
+        }
+    type: script.ScriptAction

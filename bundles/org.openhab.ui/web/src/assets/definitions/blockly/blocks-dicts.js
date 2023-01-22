@@ -1,6 +1,11 @@
-import Blockly from 'blockly'
+/**
+ * supports jsscripting
+ */
 
-export default function (f7) {
+import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
+
+export default function (f7, isGraalJs) {
   Blockly.Blocks['dicts_create_with'] = {
     /**
      * Block for creating a list with any number of elements of any type.
@@ -161,16 +166,16 @@ export default function (f7) {
     }
   }
 
-  Blockly.JavaScript['dicts_create_with'] = function (block) {
+  javascriptGenerator['dicts_create_with'] = function (block) {
     // Create an object with any number of elements of any type.
     let elements = new Array(block.itemCount_)
     for (let i = 0; i < block.itemCount_; i++) {
       elements[i] = '\'' + block.getFieldValue('KEY' + i) + '\': '
-      elements[i] += Blockly.JavaScript.valueToCode(block, 'ADD' + i,
-        Blockly.JavaScript.ORDER_NONE) || 'null'
+      elements[i] += javascriptGenerator.valueToCode(block, 'ADD' + i,
+        javascriptGenerator.ORDER_NONE) || 'null'
     }
     let code = '{' + elements.join(', ') + '}'
-    return [code, Blockly.JavaScript.ORDER_ATOMIC]
+    return [code, javascriptGenerator.ORDER_ATOMIC]
   }
 
   /*
@@ -197,9 +202,9 @@ export default function (f7) {
   * Allows retrieving parameters provided by a rule
   * Code part
   */
-  Blockly.JavaScript['dicts_get'] = function (block) {
-    const key = Blockly.JavaScript.valueToCode(block, 'key', Blockly.JavaScript.ORDER_ATOMIC)
-    const varName = Blockly.JavaScript.valueToCode(block, 'varName', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
+  javascriptGenerator['dicts_get'] = function (block) {
+    const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
+    const varName = javascriptGenerator.valueToCode(block, 'varName', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
     let code = `${varName}[${key}]`
     return [code, 0]
   }
