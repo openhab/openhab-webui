@@ -23,7 +23,7 @@ export default function (f7, isGraalJs) {
 
   javascriptGenerator['oh_quantity'] = function (block) {
     const quantity = javascriptGenerator.valueToCode(block, 'quantity', javascriptGenerator.ORDER_NONE)
-    if (isGraalJs) { 
+    if (isGraalJs) {
       return [`Quantity(${quantity})`, 0]
     } else {
       throw new Error(unavailMsg)
@@ -69,10 +69,10 @@ export default function (f7, isGraalJs) {
         .appendField(new Blockly.FieldDropdown([
           ['=', 'equal'],
           // ['\u2260', 'NEQ'], // maybe later by adding a not
-          ['\u200F<', 'smallerThan'],
-          ['\u200F\u2264', 'smallerThanOrEqual'],
-          ['\u200F>', 'largerThan'],
-          ['\u200F\u2265', 'largerThanOrEqual']
+          ['\u200F<', 'lessThan'],
+          ['\u200F\u2264', 'lessThanOrEqual'],
+          ['\u200F>', 'greaterThan'],
+          ['\u200F\u2265', 'greaterThanOrEqual']
         ]), 'operand')
 
       this.setInputsInline(true)
