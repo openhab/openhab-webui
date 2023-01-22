@@ -544,6 +544,10 @@ export default {
           path: 'zwave-network',
           popup
         }
+      }, {
+        props: {
+          bridgeUID: this.thing.bridgeUID || this.thing.UID
+        }
       })
     },
     deleteThing () {
