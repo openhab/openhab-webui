@@ -6,6 +6,8 @@
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 
+const unavailMsg = 'Units of Measurements blocks aren\'t supported in "application/javascript;version=ECMAScript-5.1"'
+
 export default function (f7, isGraalJs) {
   Blockly.Blocks['oh_quantity'] = {
     init: function () {
@@ -21,7 +23,11 @@ export default function (f7, isGraalJs) {
 
   javascriptGenerator['oh_quantity'] = function (block) {
     const quantity = javascriptGenerator.valueToCode(block, 'quantity', javascriptGenerator.ORDER_NONE)
-    return [`Quantity(${quantity})`, 0]
+    if (isGraalJs) { 
+      return [`Quantity(${quantity})`, 0]
+    } else {
+      throw new Error(unavailMsg)
+    }
   }
 
   Blockly.Blocks['oh_quantity_arithmetic'] = {
@@ -50,7 +56,7 @@ export default function (f7, isGraalJs) {
       const operand = block.getFieldValue('operand')
       return [`${first}.${operand}(${second})`, javascriptGenerator.ORDER_NONE]
     } else {
-      console.warn('arithmetic function unit of measurement only supported with jsscripting')
+      throw new Error(unavailMsg)
     }
   }
 
@@ -85,7 +91,7 @@ export default function (f7, isGraalJs) {
       const operand = block.getFieldValue('operand')
       return [`${first}.${operand}(${second})`, javascriptGenerator.ORDER_NONE]
     } else {
-      console.warn('compare function unit of measurement only supported with jsscripting')
+      throw new Error(unavailMsg)
     }
   }
 
@@ -107,6 +113,10 @@ export default function (f7, isGraalJs) {
   javascriptGenerator['oh_quantity_to_unit'] = function (block) {
     const quantity = javascriptGenerator.valueToCode(block, 'quantity', javascriptGenerator.ORDER_NONE)
     const unit = javascriptGenerator.valueToCode(block, 'unit', javascriptGenerator.ORDER_NONE)
-    return [`${quantity}.toUnit(${unit})`, javascriptGenerator.ORDER_NONE]
+    if (isGraalJs) {
+      return [`${quantity}.toUnit(${unit})`, javascriptGenerator.ORDER_NONE]
+    } else {
+      throw new Error(unavailMsg)
+    }
   }
 }
