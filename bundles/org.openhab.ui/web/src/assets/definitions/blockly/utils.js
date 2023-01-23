@@ -202,25 +202,16 @@ export function addDateComparisonSupportGraalVM () {
   return graalZdtCompare
 }
 
-export function addItemName () {
-  return javascriptGenerator.provideFunction_(
-    'itemName', [
-      'function _itemName(item) {',
-      '  return (typeof item === "string") ? item : item.name;',
-      '}'
-    ])
-}
-
 export function addGetItemMetaConfigValue () {
   return javascriptGenerator.provideFunction_(
     'getItemMetaConfigValue', [
       'function getItemMetaConfigValue(itemName, namespace, prop) {',
-      '  if (items.metadata.getMetadata(_itemName(itemName), namespace)===null) {',
+      '  if (items.metadata.getMetadata(itemName, namespace) === null) {',
       '     return \'undefined\';',
-      '  }',
+      '  };',
       '  let props = prop.split(\'.\');',
-      '  let value = items.metadata.getMetadata(_itemName(itemName), namespace).configuration;',
-      '  props.forEach (property => {',
+      '  let value = items.metadata.getMetadata(itemName, namespace).configuration;',
+      '  props.forEach(property => {',
       '    value = value[property];',
       '  });',
       '  return value;',

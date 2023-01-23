@@ -5,8 +5,7 @@
 
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
-import { FieldItemModelPicker } from './fields/item-field'
-import { addItemName, addGetItemMetaConfigValue } from './utils'
+import { addGetItemMetaConfigValue } from './utils'
 
 export default function (f7, isGraalJs) {
   Blockly.Blocks['oh_get_meta_value'] = {
@@ -27,10 +26,9 @@ export default function (f7, isGraalJs) {
   javascriptGenerator['oh_get_meta_value'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
-    addItemName()
 
     if (isGraalJs) {
-      return [`(items.metadata.getMetadata(_itemName(${itemName}), ${namespace})!=null) ? (items.metadata.getMetadata(_itemName(${itemName}), ${namespace}).value) : 'undefined'`, javascriptGenerator.ORDER_CONDITIONAL]
+      return [`(items.metadata.getMetadata(${itemName}, ${namespace}) !== null) ? (items.metadata.getMetadata(${itemName}, ${namespace}).value) : 'undefined'`, javascriptGenerator.ORDER_CONDITIONAL]
     } else {
       return ['\'no implementation available for Nashorn\'', 0]
     }
@@ -58,11 +56,10 @@ export default function (f7, isGraalJs) {
     const configKey = javascriptGenerator.valueToCode(block, 'configKey', javascriptGenerator.ORDER_ATOMIC)
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
-    addItemName()
     addGetItemMetaConfigValue()
 
     if (isGraalJs) {
-      return [`getItemMetaConfigValue(_itemName(${itemName}), ${namespace}, ${configKey})`, javascriptGenerator.ORDER_CONDITIONAL]
+      return [`getItemMetaConfigValue(${itemName}, ${namespace}, ${configKey})`, javascriptGenerator.ORDER_CONDITIONAL]
     } else {
       return ['\'no implementation available for Nashorn\'', 0]
     }
@@ -94,11 +91,10 @@ export default function (f7, isGraalJs) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
 
-    addItemName()
     let itemMeta = addItemMeta()
     let code = `${itemMeta} = items.metadata.getMetadata(_itemName(${itemName}), ${namespace})\n`
     code += `${itemMeta}.value = ${value}\n`
-    code += `items.metadata.replaceMetadata(_itemName(${itemName}),${namespace},${itemMeta}.value,${itemMeta}.configuration);\n`
+    code += `items.metadata.replaceMetadata(${itemName}, ${namespace}, ${itemMeta}.value, ${itemMeta}.configuration);\n`
     if (isGraalJs) {
       return code
     } else {
@@ -135,13 +131,12 @@ export default function (f7, isGraalJs) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
 
-    addItemName()
     let itemMeta = addItemMeta()
-    let code = `${itemMeta} = items.metadata.getMetadata(_itemName(${itemName}), ${namespace})\n`
-    code += `if(${itemMeta}!==null){\n`
+    let code = `${itemMeta} = items.metadata.getMetadata(${itemName}, ${namespace})\n`
+    code += `if(${itemMeta} !== null) {\n`
     code += `  ${itemMeta}.configuration.${configName} = ${value}\n`
-    code += `  items.metadata.replaceMetadata(_itemName(${itemName}),${namespace},${itemMeta}.value,${itemMeta}.configuration);\n`
-    code += '}\n'
+    code += `  items.metadata.replaceMetadata(${itemName}, ${namespace}, ${itemMeta}.value, ${itemMeta}.configuration);\n`
+    code += '};\n'
     if (isGraalJs) {
       return code
     } else {
@@ -152,7 +147,7 @@ export default function (f7, isGraalJs) {
   function addItemMeta () {
     if (isGraalJs) {
       return javascriptGenerator.provideFunction_(
-        'itemMedatata',
+        'itemMetadata',
         ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ';'])
     } else {
       return '// no implementation available for Nashorn\n'
