@@ -6,12 +6,15 @@
 * - Even though "enhancedjavasound" is provided as a sink, currently it is not clear what the intention is
 *
 * See more background info on openHAB multimedia here: https://www.openhab.org/docs/configuration/multimedia.html
+*
+* supports jsscripting
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { FieldSlider } from '@blockly/field-slider'
 
-export default function (f7, sinks, voices) {
+export default function (f7, isGraalJs, sinks, voices) {
   Blockly.Blocks['oh_volumeslider'] = {
     init: function () {
       this.appendDummyInput()
@@ -22,7 +25,7 @@ export default function (f7, sinks, voices) {
     }
   }
 
-  Blockly.JavaScript['oh_volumeslider'] = function (block) {
+  javascriptGenerator['oh_volumeslider'] = function (block) {
     const fieldName = block.getFieldValue('volume')
     let code = `'${fieldName}'`
     return [code, 0]
@@ -53,13 +56,12 @@ export default function (f7, sinks, voices) {
   * Plays a file (like mp3) which resides in conf/sounds to the given sink
   * Code part
   */
-  Blockly.JavaScript['oh_playmedia_sink'] = function (block) {
-    const audio = addAudio()
-    let fileName = Blockly.JavaScript.valueToCode(block, 'fileName', Blockly.JavaScript.ORDER_ATOMIC)
-    let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
+  javascriptGenerator['oh_playmedia_sink'] = function (block) {
+    let fileName = javascriptGenerator.valueToCode(block, 'fileName', javascriptGenerator.ORDER_ATOMIC)
+    let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    let code = `${audio}.playSound(${sinkName}, ${fileName});\n`
-    return code
+    const audio = (isGraalJs) ? 'actions.Audio' : addAudio()
+    return `${audio}.playSound(${sinkName}, ${fileName});\n`
   }
 
   /*
@@ -91,14 +93,17 @@ export default function (f7, sinks, voices) {
   * Note: In general, though more complex, rather create a volume item for that device and set the volume first as it is more reliable.
   * Code part
   */
-  Blockly.JavaScript['oh_playmedia_sink_volume'] = function (block) {
-    const audio = addAudio()
-    let fileName = Blockly.JavaScript.valueToCode(block, 'fileName', Blockly.JavaScript.ORDER_ATOMIC)
-    let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
-    let volume = Blockly.JavaScript.valueToCode(block, 'volume', Blockly.JavaScript.ORDER_ATOMIC).replace(/'/g, '')
+  javascriptGenerator['oh_playmedia_sink_volume'] = function (block) {
+    let fileName = javascriptGenerator.valueToCode(block, 'fileName', javascriptGenerator.ORDER_ATOMIC)
+    let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
+    let volume = javascriptGenerator.valueToCode(block, 'volume', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
 
-    let code = `${audio}.playSound(${sinkName}, ${fileName}, new PercentType(${volume}));\n`
-    return code
+    if (isGraalJs) {
+      return `actions.Audio.playSound(${sinkName}, ${fileName}, new runtime.PercentType(${volume}));\n`
+    } else {
+      const audio = addAudio()
+      return `${audio}.playSound(${sinkName}, ${fileName}, new PercentType(${volume}));\n`
+    }
   }
 
   /*
@@ -126,12 +131,12 @@ export default function (f7, sinks, voices) {
   * Plays a stream from a URL on a specific sink
   * Blockly part
   */
-  Blockly.JavaScript['oh_playstream_sink'] = function (block) {
-    const audio = addAudio()
-    let url = Blockly.JavaScript.valueToCode(block, 'url', Blockly.JavaScript.ORDER_ATOMIC)
-    let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
-    let code = `${audio}.playStream(${sinkName}, ${url});\n`
-    return code
+  javascriptGenerator['oh_playstream_sink'] = function (block) {
+    let url = javascriptGenerator.valueToCode(block, 'url', javascriptGenerator.ORDER_ATOMIC)
+    let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
+
+    const audio = (isGraalJs) ? 'actions.Audio' : addAudio()
+    return `${audio}.playStream(${sinkName}, ${url});\n`
   }
 
   /*
@@ -156,12 +161,12 @@ export default function (f7, sinks, voices) {
   * Stops a stream on a specific sink
   * Blockly part
   */
-  Blockly.JavaScript['oh_stopstream_sink'] = function (block) {
-    const audio = addAudio()
+  javascriptGenerator['oh_stopstream_sink'] = function (block) {
     let url = block.getFieldValue('url')
-    let sinkName = Blockly.JavaScript.valueToCode(block, 'sinkName', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
-    let code = `${audio}.playStream(${sinkName}, null);\n`
-    return code
+    let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
+
+    const audio = (isGraalJs) ? 'actions.Audio' : addAudio()
+    return `${audio}.playStream(${sinkName}, null);\n`
   }
 
   /*
@@ -191,17 +196,13 @@ export default function (f7, sinks, voices) {
   * Says some text via a device sink - TTS has to be installed for that
   * Code part
   */
-  Blockly.JavaScript['oh_say'] = function (block) {
-    const voice = Blockly.JavaScript.provideFunction_(
-      'voice',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Voice\');'])
+  javascriptGenerator['oh_say'] = function (block) {
+    const textToSay = javascriptGenerator.valueToCode(block, 'textToSay', javascriptGenerator.ORDER_ATOMIC)
+    const voiceName = javascriptGenerator.valueToCode(block, 'voice', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
+    const deviceSink = javascriptGenerator.valueToCode(block, 'deviceSink', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    const textToSay = Blockly.JavaScript.valueToCode(block, 'textToSay', Blockly.JavaScript.ORDER_ATOMIC)
-    const voiceName = Blockly.JavaScript.valueToCode(block, 'voice', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
-    const deviceSink = Blockly.JavaScript.valueToCode(block, 'deviceSink', Blockly.JavaScript.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
-
-    const code = `${voice}.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
-    return code
+    const voice = (isGraalJs) ? 'actions.Voice' : addVoice()
+    return `${voice}.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
   }
 
   /*
@@ -228,9 +229,9 @@ export default function (f7, sinks, voices) {
     }
   }
 
-  Blockly.JavaScript['oh_audiosink_dropdown'] = function (block) {
+  javascriptGenerator['oh_audiosink_dropdown'] = function (block) {
     let sinkName = block.getFieldValue('sinks')
-    return [`'${sinkName}'`, Blockly.JavaScript.ORDER_NONE]
+    return [`'${sinkName}'`, javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -258,14 +259,20 @@ export default function (f7, sinks, voices) {
     }
   }
 
-  Blockly.JavaScript['oh_voices_dropdown'] = function (block) {
+  javascriptGenerator['oh_voices_dropdown'] = function (block) {
     let voiceName = block.getFieldValue('voiceName')
-    return [`'${voiceName}'`, Blockly.JavaScript.ORDER_NONE]
+    return [`'${voiceName}'`, javascriptGenerator.ORDER_NONE]
   }
 
   function addAudio () {
-    return Blockly.JavaScript.provideFunction_(
+    return javascriptGenerator.provideFunction_(
       'audio',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Audio\');'])
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Audio\');'])
+  }
+
+  function addVoice () {
+    return javascriptGenerator.provideFunction_(
+      'voice',
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Voice\');'])
   }
 }

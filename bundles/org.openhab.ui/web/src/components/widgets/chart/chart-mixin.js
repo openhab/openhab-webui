@@ -44,7 +44,7 @@ export default {
     let endTime = (chartType) ? this.addOrSubtractPeriod(dayjs().startOf(chartType), 1) : dayjs()
     return {
       items: {},
-      period,
+      speriod: period,
       endTime,
       orient: null
     }
@@ -52,6 +52,9 @@ export default {
   computed: {
     startTime () {
       return this.addOrSubtractPeriod(this.endTime, -1)
+    },
+    period () {
+      return this.evaluateExpression('.period', this.speriod)
     },
     options () {
       if (!this.config) return {}
@@ -81,19 +84,19 @@ export default {
     },
     xAxis () {
       if (!this.context.component.slots || !this.context.component.slots.xAxis) return undefined
-      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component))
+      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this))
     },
     yAxis () {
       if (!this.context.component.slots || !this.context.component.slots.yAxis) return undefined
-      return this.context.component.slots.yAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, true)) // invert Y axis by default
+      return this.context.component.slots.yAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, true)) // invert Y axis by default
     },
     calendar () {
       if (!this.context.component.slots || !this.context.component.slots.calendar) return undefined
-      return this.context.component.slots.calendar.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this.orient))
+      return this.context.component.slots.calendar.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, this.orient))
     },
     singleAxis () {
       if (!this.context.component.slots || !this.context.component.slots.singleAxis) return undefined
-      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component))
+      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this))
     },
     tooltip () {
       if (!this.context.component.slots || !this.context.component.slots.tooltip) return undefined
@@ -135,6 +138,7 @@ export default {
         return Promise.resolve(getter([]))
       }
 
+      let boundary = seriesComponents[component.component].includeBoundary?.(component)
       const itemPromises = neededItems.map((neededItem) => {
         if (this.items[neededItem]) return Promise.resolve(this.items[neededItem])
         return this.$oh.api.get(`/rest/items/${neededItem}`).then((item) => {
@@ -154,7 +158,8 @@ export default {
         let query = {
           serviceId: component.config.service || undefined,
           starttime: seriesStartTime.toISOString(),
-          endtime: seriesEndTime.subtract(1, 'millisecond').toISOString()
+          endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
+          boundary: boundary
         }
 
         return Promise.all([itemPromises[neededItem], this.$oh.api.get(url, query)])
@@ -163,7 +168,7 @@ export default {
       return Promise.all(combinedPromises).then(getter)
     },
     setPeriod (period) {
-      this.period = period
+      this.speriod = period
       this.endTime = dayjs()
     },
     setDate (date) {

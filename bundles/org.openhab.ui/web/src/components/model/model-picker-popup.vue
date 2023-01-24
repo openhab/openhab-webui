@@ -49,8 +49,6 @@
 <script>
 import ModelTreeview from '@/components/model/model-treeview.vue'
 
-import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
-
 import { compareItems } from '@/components/widgets/widget-order'
 
 function compareModelItems (o1, o2) {
@@ -151,7 +149,7 @@ export default {
     load (update) {
       // if (this.ready) return
       this.loading = true
-      const items = this.$oh.api.get('/rest/items?metadata=semantics,' + MetadataNamespaces.map((n) => n.name).join(','))
+      const items = this.$oh.api.get('/rest/items?metadata=.+')
       const links = this.$oh.api.get('/rest/links')
       Promise.all([items, links]).then((data) => {
         this.items = data[0]

@@ -121,22 +121,11 @@ export default {
         this.$oh.api.get('/rest/addons/' + this.addonId + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then(data => {
           this.addon = data
 
-          if (this.addon.type === 'binding' && this.addon.installed) {
-            this.$oh.api.get('/rest/addons').then(data2 => {
-              this.bindingInfo = data2.find(b => b.id === this.addonId.replace('binding-', '')) || {}
-              self.$f7.preloader.hide()
-              setTimeout(() => {
-                if (!this.noDetails) self.$refs.sheet.f7Sheet.setSwipeStep()
-                self.$refs.sheet.f7Sheet.open()
-              })
-            })
-          } else {
-            self.$f7.preloader.hide()
-            setTimeout(() => {
-              if (!this.noDetails) self.$refs.sheet.f7Sheet.setSwipeStep()
-              self.$refs.sheet.f7Sheet.open()
-            })
-          }
+          self.$f7.preloader.hide()
+          setTimeout(() => {
+            if (!this.noDetails) self.$refs.sheet.f7Sheet.setSwipeStep()
+            self.$refs.sheet.f7Sheet.open()
+          })
         })
       } else {
         self.$refs.sheet.f7Sheet.close()

@@ -1,13 +1,21 @@
 <template>
   <f7-card>
-    <f7-card-content v-if="item.metadata && Object.keys(item.metadata).filter((n) => n !== 'semantics').length > 0">
+    <f7-card-content v-if="this.editableNamespaces.length > 0">
       <f7-list>
         <ul>
           <f7-list-item
-            v-for="namespace in metadataNamespaces.filter((n) => item.metadata[n.name])" :key="namespace.name"
+            v-for="namespace in wellKnownNamespaces" :key="namespace"
             :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
             :title="namespace.label"
-            :after="(item.metadata[namespace.name]) ? item.metadata[namespace.name].value : 'Not Set'" />
+            :after="namespace.value || 'Not Set'" />
+        </ul>
+        <ul v-if="customNamespaces.length > 0">
+          <f7-list-item divider />
+          <f7-list-item
+            v-for="namespace in customNamespaces" :key="namespace"
+            :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
+            :title="namespace.label"
+            :after="namespace.value || 'Not Set'" />
         </ul>
       </f7-list>
     </f7-card-content>
@@ -27,6 +35,43 @@ export default {
   data () {
     return {
       metadataNamespaces: MetadataNamespaces
+    }
+  },
+  computed: {
+    editableNamespaces () {
+      if (!this.item.metadata) return []
+      // TODO: determine somehow if other namespaces are not editable
+      // (non-managed MetadataProvider)
+      // for now we'll assume they're all editable except "semantics"
+      return Object.keys(this.item.metadata)
+        .filter((n) => n !== 'semantics')
+        .map((n) => {
+          return {
+            name: n,
+            value: this.item.metadata[n].value
+          }
+        })
+    },
+    wellKnownNamespaces () {
+      return this.editableNamespaces
+        .filter((n) => MetadataNamespaces.some((wk) => wk.name === n.name))
+        .map((n) => {
+          const wellKnown = MetadataNamespaces.find((wk) => wk.name === n.name)
+          return {
+            ...n,
+            label: wellKnown.label
+          }
+        })
+    },
+    customNamespaces () {
+      return this.editableNamespaces
+        .filter((n) => !MetadataNamespaces.some((wk) => wk.name === n.name))
+        .map((n) => {
+          return {
+            ...n,
+            label: n.name
+          }
+        })
     }
   },
   methods: {

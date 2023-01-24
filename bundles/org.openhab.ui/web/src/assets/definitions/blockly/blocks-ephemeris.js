@@ -4,11 +4,12 @@
 *
 * See more background info on openHAB ephemeris here: https://www.openhab.org/docs/configuration/actions.html#ephemeris
 * See usage discussion here: https://community.openhab.org/t/wip-ephemeris-documentation/84536
+* supports jsscripting
 */
 import Blockly from 'blockly'
-import { FieldDatePicker } from './fields/date-field'
+import { javascriptGenerator } from 'blockly/javascript'
 
-export default function (f7) {
+export default function (f7, isGraalJs) {
   /*
   * Checks if the provided day is a
   * - bank holiday (needs to be configured in openHAB
@@ -36,11 +37,10 @@ export default function (f7) {
   * Checks if the provided day is a bank holiday, weekend or weekday
   * Code part
   */
-  Blockly.JavaScript['oh_ephemeris_check'] = function (block) {
-    const ephemeris = addEphemeris()
-
-    let dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
-    let checkType = block.getFieldValue('checkType')
+  javascriptGenerator['oh_ephemeris_check'] = function (block) {
+    const ephemeris = (isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
+    const dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
+    const checkType = block.getFieldValue('checkType')
     let code = ''
 
     switch (checkType) {
@@ -54,7 +54,7 @@ export default function (f7) {
         code += `${ephemeris}.isBankHoliday(${dayInfo})`
         break
     }
-    return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL]
+    return [code, javascriptGenerator.ORDER_FUNCTION_CALL]
   }
 
   /*
@@ -79,11 +79,10 @@ export default function (f7) {
   * Retrieve the current bonk holiday name
   * Code part
   */
-  Blockly.JavaScript['oh_ephemeris_getHolidayName'] = function (block) {
-    const ephemeris = addEphemeris()
-    let dayInfo = Blockly.JavaScript.valueToCode(block, 'dayInfo', Blockly.JavaScript.ORDER_NONE)
-    let code = `${ephemeris}.getBankHolidayName(${dayInfo})`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+  javascriptGenerator['oh_ephemeris_getHolidayName'] = function (block) {
+    const ephemeris = (isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
+    const dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
+    return [`${ephemeris}.getBankHolidayName(${dayInfo})`, javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -107,19 +106,18 @@ export default function (f7) {
   * Retrieve the number of days from today until the given bank holiday name
   * Code part
   */
-  Blockly.JavaScript['oh_ephemeris_getDaysUntilHoliday'] = function (block) {
-    const ephemeris = addEphemeris()
-    let holidayName = Blockly.JavaScript.valueToCode(block, 'holidayName', Blockly.JavaScript.ORDER_NONE)
-    let code = `${ephemeris}.getDaysUntil(${holidayName})`
-    return [code, Blockly.JavaScript.ORDER_NONE]
+  javascriptGenerator['oh_ephemeris_getDaysUntilHoliday'] = function (block) {
+    const ephemeris = (isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
+    const holidayName = javascriptGenerator.valueToCode(block, 'holidayName', javascriptGenerator.ORDER_NONE)
+    return [`${ephemeris}.getDaysUntil(${holidayName})`, javascriptGenerator.ORDER_NONE]
   }
 
   /*
   * Add ephemeris support to rule
   */
   function addEphemeris () {
-    return Blockly.JavaScript.provideFunction_(
+    return javascriptGenerator.provideFunction_(
       'ephemeris',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
   }
 }

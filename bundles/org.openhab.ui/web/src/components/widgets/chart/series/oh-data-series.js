@@ -6,8 +6,6 @@ export default {
   },
   get (component, points, startTime, endTime, chart) {
     if (!component.config || typeof component.config !== 'object') return {}
-
-    const dataSeriesId = ComponentId.get(component)
-    return chart.evaluateExpression(dataSeriesId, component.config)
+    return chart.evaluateExpression(ComponentId.get(component), component.config)
   }
 }

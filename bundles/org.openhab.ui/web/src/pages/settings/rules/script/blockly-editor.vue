@@ -533,6 +533,41 @@
             </value>
           </block>
         </category>
+        <category name="Units of Measurement" v-if="isGraalJs">
+          <block type="oh_quantity">
+            <value name="quantity">
+              <shadow type="text">
+                <field name="TEXT">10 W</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_quantity_arithmetic">
+            <value name="first">
+              <shadow type="oh_quantity" />
+            </value>
+            <value name="second">
+              <shadow type="oh_quantity" />
+            </value>
+          </block>
+          <block type="oh_quantity_compare">
+            <value name="first">
+              <shadow type="oh_quantity" />
+            </value>
+            <value name="second">
+              <shadow type="oh_quantity" />
+            </value>
+          </block>
+          <block type="oh_quantity_to_unit">
+            <value name="quantity">
+              <shadow type="oh_quantity" />
+            </value>
+            <value name="unit">
+              <shadow type="text">
+                <field name="TEXT">kW</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
         <category name="Dates &amp; Times">
           <button
             helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html"
@@ -925,6 +960,9 @@
 
 <script>
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
+import DarkTheme from '@blockly/theme-dark'
+import { CrossTabCopyPaste } from '@blockly/plugin-cross-tab-copy-paste'
 import { ZoomToFitControl } from '@blockly/zoom-to-fit'
 import Vue from 'vue'
 
@@ -941,10 +979,18 @@ Vue.config.ignoredElements = [
   'sep'
 ]
 
+// Code to prepend when running on GraalJS. When all Blocks are migrated to native GraalJS code, this can be removed.
+const prependCode = `var runtime = require('@runtime');
+var itemRegistry = runtime.itemRegistry;
+var events = runtime.events;
+
+`
+
 export default {
-  props: ['blocks', 'libraryDefinitions'],
+  props: ['blocks', 'libraryDefinitions', 'isGraalJs'],
   data () {
     return {
+      blockLibraries: null,
       workspace: null,
       sinks: [],
       voices: [],
@@ -952,6 +998,11 @@ export default {
       rules: [],
       loading: true,
       ready: false
+    }
+  },
+  watch: {
+    isGraalJs: function () {
+      this.initBlockly(this.blockLibraries)
     }
   },
   mounted () {
@@ -992,8 +1043,9 @@ export default {
             return labelA.localeCompare(labelB)
           })
 
-          const blockLibraries = data[3]
-          this.initBlockly(blockLibraries)
+          this.blockLibraries = data[3]
+
+          this.initBlockly(this.blockLibraries)
         })
         .catch((err, status) => {
           console.error('Error while retrieving Blockly data - ' + err + ':' + status)
@@ -1003,13 +1055,13 @@ export default {
       defineOHBlocks(this.$f7, libraryDefinitions, {
         sinks: this.sinks,
         voices: this.voices
-      })
+      }, this.isGraalJs)
       this.addLibraryToToolbox(libraryDefinitions || [])
 
       this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
         toolbox: this.$refs.toolbox,
         horizontalLayout: !this.$device.desktop,
-        theme: this.$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined,
+        theme: this.$f7.data.themeOptions.dark === 'dark' ? DarkTheme : undefined,
         zoom:
           {
             controls: true,
@@ -1022,8 +1074,27 @@ export default {
           },
         trashcan: false
       })
+
+      Blockly.HSV_SATURATION = 0.45 // default
+      Blockly.HSV_VALUE = 0.65 // a little bit more contract for the different colors
+
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
+
+      if (!Blockly.ContextMenuRegistry.registry.getItem('blockCopyToStorage')) {
+        const copyAndPasteOptions = {
+          contextMenu: true,
+          shortcut: true
+        }
+        const copyAndPastePlugin = new CrossTabCopyPaste()
+        copyAndPastePlugin.init(copyAndPasteOptions, () => {
+          console.log('There has been a block type error during copying and pasting')
+        })
+
+        Blockly.Msg['CROSS_TAB_COPY'] = 'Cross-Rule-Copy'
+        Blockly.Msg['CROSS_TAB_PASTE'] = 'Cross-Rule-Paste'
+      }
+
       this.registerLibraryCallbacks(libraryDefinitions)
       const xml = Blockly.Xml.textToDom(this.blocks)
       Blockly.Xml.domToWorkspace(xml, this.workspace)
@@ -1052,7 +1123,7 @@ export default {
       return Blockly.Xml.domToText(xml)
     },
     getCode () {
-      return Blockly.JavaScript.workspaceToCode(this.workspace)
+      return (this.isGraalJs === true ? prependCode : '') + javascriptGenerator.workspaceToCode(this.workspace)
     },
     onChange (event) {
       if (event.type === Blockly.Events.FINISHED_LOADING) {

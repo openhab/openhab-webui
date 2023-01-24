@@ -1,10 +1,13 @@
 /*
 * These blocks allow to send notifications via openhab
+* supports jsscripting
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
-export default function defineOHBlocks_Notifications (f7) {
+// TODO: Add options to set icon and level (argument order should be the same as for broadcast notification etc.)
+export default function defineOHBlocks_Notifications (f7, isGraalJs) {
   Blockly.Blocks['oh_sendNotification'] = {
     init: function () {
       this.appendValueInput('message')
@@ -15,17 +18,20 @@ export default function defineOHBlocks_Notifications (f7) {
       this.setNextStatement(true, null)
       this.setInputsInline(false)
       this.setColour(0)
-      this.setTooltip('Send a notification message to a specific openhab user')
+      this.setTooltip('Send a notification message to a specific openhab user (requires openHAB Cloud Connector)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-specific-cloud-email-user')
     }
   }
 
-  Blockly.JavaScript['oh_sendNotification'] = function (block) {
-    const notifications = addNotificationAction()
-    let email = Blockly.JavaScript.valueToCode(block, 'email', Blockly.JavaScript.ORDER_ATOMIC)
-    let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `${notifications}.sendNotification(${email},${message});\n`
-    return code
+  javascriptGenerator['oh_sendNotification'] = function (block) {
+    let email = javascriptGenerator.valueToCode(block, 'email', javascriptGenerator.ORDER_ATOMIC)
+    let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    if (isGraalJs) {
+      return `actions.NotificationAction.sendNotification(${email}, ${message});\n`
+    } else {
+      const notifications = addNotificationAction()
+      return `${notifications}.sendNotification(${email}, ${message});\n`
+    }
   }
 
   Blockly.Blocks['oh_sendBroadcastNotification'] = {
@@ -42,18 +48,21 @@ export default function defineOHBlocks_Notifications (f7) {
       this.setNextStatement(true, null)
       this.setInputsInline(false)
       this.setColour(0)
-      this.setTooltip('send a notification to all clients. Provide icon name without prefix')
+      this.setTooltip('send a notification to all clients. Provide icon name without prefix. (requires openHAB Cloud Connector)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-all-devices-and-users')
     }
   }
 
-  Blockly.JavaScript['oh_sendBroadcastNotification'] = function (block) {
-    const notifications = addNotificationAction()
-    let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_sendBroadcastNotification'] = function (block) {
+    let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    let icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
-    let code = `${notifications}.sendBroadcastNotification(${message},${icon},'${severity}');\n`
-    return code
+    if (isGraalJs) {
+      return `actions.NotificationAction.sendBroadcastNotification(${message}, ${icon}, '${severity}');\n`
+    } else {
+      const notifications = addNotificationAction()
+      return `${notifications}.sendBroadcastNotification(${message}, ${icon}, '${severity}');\n`
+    }
   }
 
   Blockly.Blocks['oh_sendLogNotification'] = {
@@ -70,23 +79,26 @@ export default function defineOHBlocks_Notifications (f7) {
       this.setNextStatement(true, null)
       this.setInputsInline(false)
       this.setColour(0)
-      this.setTooltip('Sends a notification to the log only not to any device')
+      this.setTooltip('Sends a notification to the cloud log only, not to any device (requires openHAB Cloud Connector)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-log-only')
     }
   }
 
-  Blockly.JavaScript['oh_sendLogNotification'] = function (block) {
-    const notifications = addNotificationAction()
-    let message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC)
-    let icon = Blockly.JavaScript.valueToCode(block, 'icon', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_sendLogNotification'] = function (block) {
+    let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    let icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
-    let code = `${notifications}.sendLogNotification(${message},${icon},'${severity}');\n`
-    return code
+    if (isGraalJs) {
+      return `actions.NotificationAction.sendLogNotification(${message}, ${icon}, '${severity}');\n`
+    } else {
+      const notifications = addNotificationAction()
+      return `${notifications}.sendLogNotification(${message}, ${icon}, '${severity}');\n`
+    }
   }
 }
 
 function addNotificationAction () {
-  return Blockly.JavaScript.provideFunction_(
+  return javascriptGenerator.provideFunction_(
     'notifications',
-    ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.io.openhabcloud.NotificationAction\');'])
+    ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.io.openhabcloud.NotificationAction\');'])
 }

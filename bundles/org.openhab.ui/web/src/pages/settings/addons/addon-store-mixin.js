@@ -26,22 +26,22 @@ export default {
     },
     installAddon (addon) {
       this.addonPopupOpened = false
-      this.currentlyInstalling.push(addon.id)
+      this.currentlyInstalling.push(addon.uid)
       if (this.currentAddon) this.$set(this.currentAddon, 'pending', 'INSTALL')
     },
     uninstallAddon (addon) {
       this.addonPopupOpened = false
-      this.currentlyUninstalling.push(addon.id)
+      this.currentlyUninstalling.push(addon.uid)
       if (this.currentAddon) this.$set(this.currentAddon, 'pending', 'UNINSTALL')
     },
     installableAddon (addon) {
       return (addon && (addon.contentType === 'application/vnd.openhab.bundle' || addon.contentType.indexOf('application/vnd.openhab.feature') === 0))
     },
     isInstalling (addon) {
-      return this.currentlyInstalling.indexOf(addon.id) >= 0
+      return this.currentlyInstalling.indexOf(addon.uid) >= 0
     },
     isUninstalling (addon) {
-      return this.currentlyUninstalling.indexOf(addon.id) >= 0
+      return this.currentlyUninstalling.indexOf(addon.uid) >= 0
     },
     isPending (addon) {
       return this.isInstalling(addon) || this.isUninstalling(addon)

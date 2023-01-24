@@ -4,13 +4,15 @@ import Framework7 from 'framework7'
 
 export default {
   neededItems (component, chart) {
-    const seriesItem = (!component || !component.config || !component.config.item) ? undefined : component.config.item
     let markAreaItems = []
     if (component.slots && component.slots.markArea) {
-      markAreaItems = component.slots.markArea.map(a => a.config.item)
+      markAreaItems = component.slots.markArea.map((a, i) =>
+        chart.evaluateExpression(ComponentId.get(component) + '.mitem' + i, a.config.item)
+      )
     }
+    let series = chart.evaluateExpression(ComponentId.get(component), component.config)
     return [
-      chart.evaluateExpression(ComponentId.get(component) + '.item', seriesItem),
+      series.item,
       ...markAreaItems
     ]
   },
@@ -35,8 +37,8 @@ export default {
       series.markArea = MarkArea.get(component.slots.markArea[0], points, startTime, endTime, chart)
     }
 
-    if (!component.config.showSymbol) series.showSymbol = false
-    if (!component.config.tooltip) {
+    if (!series.showSymbol) series.showSymbol = false
+    if (!series.tooltip) {
       series.tooltip = { show: true }
     }
 

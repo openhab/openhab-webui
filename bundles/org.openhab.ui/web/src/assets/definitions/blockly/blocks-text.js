@@ -1,10 +1,12 @@
 /*
 * Adds new blocks to the text section
+* supports jsscripting
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
-export default function (f7) {
+export default function (f7, isGraalJs) {
   /*
   * allows adding a CR/LF in string concatenation
   * Block
@@ -21,9 +23,8 @@ export default function (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_text_crlf'] = function (block) {
-    let code = '\'\\r\\n\''
-    return [code, Blockly.JavaScript.ORDER_NONE]
+  javascriptGenerator['oh_text_crlf'] = function (block) {
+    return ['\'\\r\\n\'', javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -51,10 +52,10 @@ export default function (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_text_replace'] = function (block) {
-    const pattern = Blockly.JavaScript.valueToCode(block, 'pattern', Blockly.JavaScript.ORDER_ATOMIC)
-    const replacement = Blockly.JavaScript.valueToCode(block, 'replacement', Blockly.JavaScript.ORDER_ATOMIC)
-    const originText = Blockly.JavaScript.valueToCode(block, 'origin', Blockly.JavaScript.ORDER_ATOMIC)
+  javascriptGenerator['oh_text_replace'] = function (block) {
+    const pattern = javascriptGenerator.valueToCode(block, 'pattern', javascriptGenerator.ORDER_ATOMIC)
+    const replacement = javascriptGenerator.valueToCode(block, 'replacement', javascriptGenerator.ORDER_ATOMIC)
+    const originText = javascriptGenerator.valueToCode(block, 'origin', javascriptGenerator.ORDER_ATOMIC)
     const code = originText + '.replaceAll(' + pattern + ',' + replacement + ')'
     return [code, 0]
   }

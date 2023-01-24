@@ -85,6 +85,7 @@
                           :checked="isChecked(entry.thingUID)"
                           @change="(e) => toggleItemCheck(e, entry.thingUID)"
                           @click.ctrl="(e) => ctrlClick(e, entry)"
+                          @click.meta="(e) => ctrlClick(e, entry)"
                           @click.exact="(e) => click(e, entry)"
                           :title="entry.label"
                           :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"

@@ -1,12 +1,14 @@
 /*
-* General item and thing functionally for blockly
+* General Thing functionality for blockly
+* supports jsscripting
 */
 
 import Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { FieldItemModelPicker } from './fields/item-field'
 import { FieldThingPicker } from './fields/thing-field'
 
-export default function defineOHBlocks (f7) {
+export default function defineOHBlocks (f7, isGraalJs) {
   Blockly.Blocks['oh_thing'] = {
     init: function () {
       this.appendDummyInput()
@@ -20,7 +22,7 @@ export default function defineOHBlocks (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_thing'] = function (block) {
+  javascriptGenerator['oh_thing'] = function (block) {
     const thingUid = block.getFieldValue('thingUid')
     let code = `'${thingUid}'`
     return [code, 0]
@@ -30,7 +32,7 @@ export default function defineOHBlocks (f7) {
     init: function () {
       this.appendValueInput('thingUid')
         .appendField('get thing status')
-        .setCheck('String')
+        .setCheck(['String', 'oh_thing'])
       this.setInputsInline(false)
       this.setOutput(true, 'String')
       this.setColour(0)
@@ -39,12 +41,15 @@ export default function defineOHBlocks (f7) {
     }
   }
 
-  Blockly.JavaScript['oh_getthing_state'] = function (block) {
-    const things = Blockly.JavaScript.provideFunction_(
-      'things',
-      ['var ' + Blockly.JavaScript.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
-    const thingUid = Blockly.JavaScript.valueToCode(block, 'thingUid', Blockly.JavaScript.ORDER_ATOMIC)
-    let code = `things.getThingStatusInfo(${thingUid}).getStatus()`
-    return [code, 0]
+  javascriptGenerator['oh_getthing_state'] = function (block) {
+    const thingUid = javascriptGenerator.valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
+    if (isGraalJs) {
+      return [`things.getThing(${thingUid}).status`, 0]
+    } else {
+      const things = javascriptGenerator.provideFunction_(
+        'things',
+        ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
+      return [`things.getThingStatusInfo(${thingUid}).getStatus()`, 0]
+    }
   }
 }

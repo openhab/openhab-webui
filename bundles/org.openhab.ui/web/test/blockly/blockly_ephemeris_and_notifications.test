@@ -1,0 +1,92 @@
+configuration: {}
+triggers: []
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: <xml xmlns="https://developers.google.com/blockly/xml"><block
+        type="oh_log" id=".zv.O-k./.C/{4CVo$?4" x="-329" y="211"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="kt+uqI920WgaU?|Ef#s1"><field name="TEXT">abc</field></shadow><block
+        type="oh_ephemeris_check" id="f/OBvAzh5b$~EAegi1!/"><field
+        name="checkType">weekend</field><value name="dayInfo"><shadow
+        type="oh_dayoffset_today" id="6XX90Ib?^y06_g/_@bUG"></shadow><block
+        type="oh_dayoffset_today"
+        id="B0BzieSjbsia)hpa?DGR"></block></value></block></value><next><block
+        type="oh_log" id="kovEI4u{Bo6*iQU/*Np7"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id=";l1$E2b,|X{cC|=ea(g+"><field name="TEXT">abc</field></shadow><block
+        type="oh_ephemeris_check" id="}qg4:+t]IgDLhw?]CZ.O"><field
+        name="checkType">holiday</field><value name="dayInfo"><shadow
+        type="oh_dayoffset_today" id="A^UL+6i:w7nmVg@(8VsD"></shadow><block
+        type="oh_dayoffset" id="4wRob|@WpM-u)Ci3U$|y"><value
+        name="offset"><shadow type="math_number"
+        id="$u@kx1;mU%~)?(8JB+G#"><field
+        name="NUM">-4</field></shadow></value></block></value></block></value><next><block
+        type="oh_log" id="8BsFZ(l3.kMPh7HG]lQ)"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="`V%-h2s4DL4Q0]Mq@T%d"><field name="TEXT">abc</field></shadow><block
+        type="oh_ephemeris_check" id="a{L*Cti~oQ@SB$j,T.-T"><field
+        name="checkType">holiday</field><value name="dayInfo"><shadow
+        type="oh_dayoffset_today" id="yYe4GZ/7@VAY;S1PYK=i"></shadow><block
+        type="oh_zdt" id="v{v)riHF[bQ85isDNc9F"><field
+        name="day">2021-12-25</field></block></value></block></value><next><block
+        type="oh_log" id="GlF|,#Zp+nj0]BLeF,HN"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="$4hGW2l]+zNH!1GS5R^D"><field name="TEXT">abc</field></shadow><block
+        type="oh_ephemeris_getHolidayName" id="]q!_436VPTwR_%!,`:IW"><value
+        name="dayInfo"><shadow type="oh_dayoffset_today"
+        id="/?C393j7zCjJ)`V]J*K|"></shadow><block type="oh_zdt"
+        id="[Xw;77l!s!OqU]]r}U8h"><field
+        name="day">2021-12-25</field></block></value></block></value><next><block
+        type="oh_log" id="C`poj]{):eBKLZ;cL*Go"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="G|PAb#q2e8DzTk~sCSZ9"><field name="TEXT">abc</field></shadow><block
+        type="oh_ephemeris_getDaysUntilHoliday" id="e.r?-,vW!Iz|bs)(p@i*"><value
+        name="holidayName"><shadow type="text" id="8I3FK4h~Tl$01!sy{#65"><field
+        name="TEXT">CHRISTMAS</field></shadow></value></block></value></block></next></block></next></block></next></block></next></block><block
+        type="oh_sendNotification" id="0`_*c/z5fFM4L/{9m_gD" inline="true"
+        x="-328" y="480"><value name="message"><shadow type="text"
+        id="f,HlVlmN.}.sRUbv5yOn"><field name="TEXT">test
+        Message</field></shadow></value><value name="email"><shadow type="text"
+        id="SyPk#e5_U}1fj)$(*mD["><field
+        name="TEXT">mail@stefanhoehn.com</field></shadow></value><next><block
+        type="oh_sendBroadcastNotification" id="h,)M1U^FPC?[vZzSi-Ni"
+        inline="true"><field name="severity">info</field><value
+        name="message"><shadow type="text" id="67c!1[g4P%C]CGNia]`8"><field
+        name="TEXT">Es ist zu kalt</field></shadow></value><value
+        name="icon"><shadow type="text" id="h{kW4!*:r2|*.257)8%V"><field
+        name="TEXT">temperature_cold</field></shadow></value><next><block
+        type="oh_sendLogNotification" id="NUgqwTe5BPw6AHP{HZs8"
+        inline="true"><field name="severity">info</field><value
+        name="message"><shadow type="text" id="%Bcoe*TZrj|,;IM.f],9"><field
+        name="TEXT">Es ist zu heiß</field></shadow></value><value
+        name="icon"><shadow type="text" id="tpD#QdMOAIWg:@Q1)C#,"><field
+        name="TEXT">temperature_hot</field></shadow></value></block></next></block></next></block></xml>
+      type: application/javascript;version=ECMAScript-2021
+      script: >
+        var runtime = require('@runtime');
+
+        var itemRegistry = runtime.itemRegistry;
+
+        var events = runtime.events;
+
+
+        console.info((actions.Ephemeris.isWeekend(0)));
+
+        console.info((actions.Ephemeris.isBankHoliday((-4))));
+
+        console.info((actions.Ephemeris.isBankHoliday(time.toZDT('2021-12-25'))));
+
+        console.info((actions.Ephemeris.getBankHolidayName(time.toZDT('2021-12-25'))));
+
+        console.info((actions.Ephemeris.getDaysUntil('CHRISTMAS')));
+
+
+        actions.NotificationAction.sendNotification('mail@stefanhoehn.com', 'test Message');
+
+        actions.NotificationAction.sendBroadcastNotification('Es ist zu kalt', 'temperature_cold', 'info');
+
+        actions.NotificationAction.sendLogNotification('Es ist zu heiß', 'temperature_hot', 'info');
+    type: script.ScriptAction

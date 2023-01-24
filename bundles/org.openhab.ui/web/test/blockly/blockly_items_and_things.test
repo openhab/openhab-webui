@@ -1,0 +1,424 @@
+configuration: {}
+triggers: []
+conditions: []
+actions:
+  - inputs: {}
+    id: "1"
+    configuration:
+      blockSource: '<xml
+        xmlns="https://developers.google.com/blockly/xml"><variables><variable
+        id="Slpz#r/n~_eE7R{PWgjD">item</variable><variable
+        id="GG*X-nPkT.[}xBPdQ`Zt">memberItem</variable><variable
+        id="||HJp!TeG=n?xqxL*#;,">tag</variable></variables><block type="oh_log"
+        id="g!]Xs@}xcK-jXeps%w~7" x="-1915" y="-635"><field
+        name="severity">error</field><value name="message"><shadow
+        type="text"><field name="TEXT">abc</field></shadow><block
+        type="oh_getitem_state" id="3`,2aTSG?qkt1VAIO=jp"><value
+        name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="189Uw_y==oqKJ^[(I[GX"><field
+        name="itemName">Lights</field></block></value></block></value><next><block
+        type="oh_log" id="(*qA*8Nbl-0`evpH)W!a"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="WIDLA?hXrE}vY}lbtA6Y"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="+/9de#[6dS{};$aCtC8G" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="t)R2?x_f#rej/1GGodKP"><field
+        name="TEXT">name:</field></block></value><value name="ADD1"><block
+        type="oh_getitem_attribute" id="N!,~v_J?}tQ_.Y5cYt-u"><mutation
+        attributeName="Name"></mutation><field
+        name="attributeName">Name</field><value name="item"><shadow
+        type="oh_getitem" id="-RtMGxLqk{PxS7yOruq1"><value
+        name="itemName"><shadow type="oh_item" id="$:?6128+4q67V8OSAKm4"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="oh_getitem" id="Y~+:Toobkd]@)SMIS+y}"><value
+        name="itemName"><shadow type="oh_item" id="0N6lP:XvawVKJsu#dM3l"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="QOoAsPZ)yOe`!c.:xdAK"><field
+        name="itemName">Lights</field></block></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="l%d,5=BB*j+aJ;d!#D0m"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="gL-71Sd18lw1QBT@a5r("><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="^4-jL`|)el70;DXm?FPO" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id=".rjU)=.-}3qg?G!#f`8}"><field
+        name="TEXT">label:</field></block></value><value name="ADD1"><block
+        type="oh_getitem_attribute" id="s+|sWBGl?K{Eg1+Y0PYs"><mutation
+        attributeName="Label"></mutation><field
+        name="attributeName">Label</field><value name="item"><shadow
+        type="oh_getitem" id="%*,o5.awppdqb}uW);-$"><value
+        name="itemName"><shadow type="oh_item" id="|i*r*$nsQxavXL5fA^D+"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="oh_getitem" id="Fv)[9k-hB6m??|x:Lv=)"><value
+        name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id=";U(ognlnD,6aA3,JuEI5"><field
+        name="itemName">Lights</field></block></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="Sc9t_Yc-B%P,^IF;6656"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="_cc?aeHg5|t#i8skqt}1"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="zd%n0dj$s`KUxjv.#8`R" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="k0A^wxxUovBIcq2xU)7K"><field
+        name="TEXT">state:</field></block></value><value name="ADD1"><block
+        type="oh_getitem_attribute" id="`Z[+Qdg2[@ynR[^n?an,"><mutation
+        attributeName="State"></mutation><field
+        name="attributeName">State</field><value name="item"><shadow
+        type="oh_getitem" id=")*PB!!j0z@xvED3)U?JO"><value
+        name="itemName"><shadow type="oh_item" id="53rc2S*2Z!-[A[ocvQDL"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="oh_getitem" id="HRKX(FH3vk5WuZvO~eBM"><value
+        name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="KE5{@6aybqf/?^-.7*If"><field
+        name="itemName">Lights</field></block></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="p2DSqxP{Jg*JV$uZ@iMf"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="^(y6*1Frz`eJcGUZJ]3Y"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="[srpbH#`rG7~@m#jI8Cn" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="f5V%|Zgq9f-9;~{0n`y!"><field
+        name="TEXT">category:</field></block></value><value name="ADD1"><block
+        type="oh_getitem_attribute" id=".%8Ic0V_V]Acqz55^/bK"><mutation
+        attributeName="Category"></mutation><field
+        name="attributeName">Category</field><value name="item"><shadow
+        type="oh_getitem" id="=1@Rh*C.Z(]0(0:Nr#y@"><value
+        name="itemName"><shadow type="oh_item" id="X),,.#kGu$5WtI`GFDy%"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="oh_getitem" id="Ve8n)qB+*$,?yWp+,.}@"><value
+        name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="w),t(Ly~%Gd$fNLIjJy8"><field
+        name="itemName">Lights</field></block></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="j8Doz[YVsnk{RLn.`TPH"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="$MUq5]3iFAG0A?m8n(|`"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="g#o[!8Q?hdWTAkl]zzCh" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="Az^n1_j6?./xfg9sJSsc"><field
+        name="TEXT">tags:</field></block></value><value name="ADD1"><block
+        type="oh_getitem_attribute" id="L^l_7sOdu]!,92Hjnn82"><mutation
+        attributeName="Tags"></mutation><field
+        name="attributeName">Tags</field><value name="item"><shadow
+        type="oh_getitem" id="x(?Z[FFu:4]0?oi.4-ZD"><value
+        name="itemName"><shadow type="oh_item" id="*[6:Lp9{EmsW{m`E/?s["><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="oh_getitem" id="8s?u-OAHE/qtODR~vli}"><value
+        name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="E,+7M|Y$Jle]sjS{ZC3f"><field
+        name="itemName">Lights</field></block></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="eR)JtjbUy{ruR@QcDVf0"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="c}XmP,iFFHhwBO$g?VVB"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="Vg#x%Uw~m;$aR@6qQ3f[" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="*M0Dmto+vF--:NJ6#mX2"><field
+        name="TEXT">type:</field></block></value><value name="ADD1"><block
+        type="oh_getitem_attribute" id="i?S4#7QI~xj?icJ^p(gB"><mutation
+        attributeName="Type"></mutation><field
+        name="attributeName">Type</field><value name="item"><shadow
+        type="oh_getitem" id="ZV}(BAM+?e7%u$e_`yLd"><value
+        name="itemName"><shadow type="oh_item" id="AF=PdfH|3c}+*%V0q3Ke"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="oh_getitem" id="tN[G_tr6j!C6b,CR:A~C"><value
+        name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="=rUb@rE*J{n$y4|k=B1P"><field
+        name="itemName">Lights</field></block></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="%IkR%Wh-igXPC5SCKe2T"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Je(_+*khzDP-YHk%JWab"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="OL6-S$:D0)5%mNKn1y)[" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="6?W$R)mHU[V!Z*42nimk"><field name="TEXT">groups
+        (Lights):</field></block></value><value name="ADD1"><block
+        type="oh_getitem_attribute" id="2*6B9D%[s#TG.Z~C,!8K"><mutation
+        attributeName="GroupNames"></mutation><field
+        name="attributeName">GroupNames</field><value name="item"><shadow
+        type="oh_getitem" id="ve8,cWVeow/dYe~dV`0Q"><value
+        name="itemName"><shadow type="oh_item" id="c{_L_RyzsR78CBi*NDqo"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="oh_getitem" id="nFK`5DimlGz)S+VL,K:0"><value
+        name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="I_ELr-5Yo8+@JO*~U]Ru"><field
+        name="itemName">Lights</field></block></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="=13/3Q4YNi+(:Nn/2x]T"><field
+        name="severity">info</field><value name="message"><shadow
+        type="text"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="C|Y+QqB.}X??ln%KUl,]" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="Omy0J|ZqJ#=7wN0-{lrb"><field name="TEXT">groups (Lichter
+        AZ):</field></block></value><value name="ADD1"><block
+        type="oh_getitem_attribute" id="$Da8u4(uwW2runyz;QjC"><mutation
+        attributeName="GroupNames"></mutation><field
+        name="attributeName">GroupNames</field><value name="item"><shadow
+        type="oh_getitem"><value name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="oh_getitem" id="3Vz2`Bb/VFTuY@qf1zvg"><value
+        name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="I}U[fhzE+[]h.RM}Iu}G"><field
+        name="itemName">LichterAZ</field></block></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="]liaD=,W5H,W(|,qJ26o"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="6/jHWf=$4fLxs}xUV?o("><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="Zw*hAnFQihjcMOwPAM.f" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="n6Q(Zq{vDBHVdsXI+qHX"><field name="TEXT">members of group Lichter
+        AZ: </field></block></value><value name="ADD1"><block
+        type="oh_groupmembers" id="j$^mq6d%4DQsAiR1[yfx"><value
+        name="groupName"><shadow type="oh_item" id="%5F_.{zaJKbgTl}[Ev$f"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="t4:z;xgD[+Ijp]u7V.Y!"><field
+        name="itemName">LichterAZ</field></block></value></block></value></block></value></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block><block
+        type="oh_log" id="q[a/VG7=?s7^1h1uc@fU" x="-1914" y="-242"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="g/?}Rdwu?ns4[dXzHxLL"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="x9}D5%x5.$vJ[U1xB?}f" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="Y!/.W{OSHSll:+rciXl2"><field
+        name="TEXT">state:</field></block></value><value name="ADD1"><block
+        type="oh_getitem_attribute" id="W/.)HwvZC,n5NS.yZFrd"><mutation
+        attributeName="State"></mutation><field
+        name="attributeName">State</field><value name="item"><shadow
+        type="oh_getitem"><value name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="oh_getitem" id="PUdCRQF1N[mxd?sUUaT-"><value
+        name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="(rg7gn-?~QWv|_rlIda6"><field
+        name="itemName">Lights</field></block></value></block></value></block></value></block></value><next><block
+        type="oh_log" id="|X8(H~%])(s?ukqU!(HT"><field
+        name="severity">error</field><value name="message"><shadow type="text"
+        id="Ff@v:X7{8DeTlEt.u86w"><field name="TEXT">For each Member in Group
+        Lights</field></shadow></value><next><block type="controls_forEach"
+        id="/3bo`-ul).B9:GA8rqwk"><field name="VAR"
+        id="GG*X-nPkT.[}xBPdQ`Zt">memberItem</field><value name="LIST"><block
+        type="oh_groupmembers" id="CTzgdMnQlw[r9e961RHm"><value
+        name="groupName"><shadow type="oh_item" id="R7+]^Y*8r[oOL40Dt!Bi"><field
+        name="itemName">Lights</field></shadow><block type="oh_item"
+        id="sZxN?x9|K$(zvBr+KxKN"><field
+        name="itemName">Lights</field></block></value></block></value><statement
+        name="DO"><block type="oh_log" id="H;O!l]k2fWA:k}a{d*O;"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="atRp.u]qZltj]hYl,AL!"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="#JikB1YdziHs{yVXdx$[" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="qyMi2MTi*^Z=`4Dc)rxN"><field name="TEXT">
+        member-item:</field></block></value><value name="ADD1"><block
+        type="variables_get" id="6.kk|`BlsK)oXJff%S0%"><field name="VAR"
+        id="GG*X-nPkT.[}xBPdQ`Zt">memberItem</field></block></value></block></value><next><block
+        type="oh_log" id="~fDjR=tltA})QAVlAYwU"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="7XxoVVhaX=bQCE{22/`%"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="02=k]0f%ngb7y$`FV}^(" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="kjA5%:!6!z;EanaV~qeQ"><field name="TEXT">    name:
+        </field></block></value><value name="ADD1"><block
+        type="oh_getitem_attribute" id="9*XBZ:D9I)Mx%/{r%9N]"><mutation
+        attributeName="Name"></mutation><field
+        name="attributeName">Name</field><value name="item"><shadow
+        type="oh_getitem" id="`-iQ19eBV)~zK~Z1MZJW"><value
+        name="itemName"><shadow type="oh_item" id="Rg8Fv#aLx3HccojsMojA"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="variables_get" id="J[xBX?F)d12.[9697E_v"><field name="VAR"
+        id="GG*X-nPkT.[}xBPdQ`Zt">memberItem</field></block></value></block></value></block></value><next><block
+        type="oh_log" id="_If#3}4Ps/#[W-9Rw=Ee"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="f{nzB=J47]!r#!{3:40J"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="V$I1jF%4dDLQC#v)c?b6" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="H?qYT_9EI2!$j7texX3k"><field name="TEXT">    state:
+        </field></block></value><value name="ADD1"><block
+        type="oh_getitem_attribute" id="(U?AsQ.y?^WSPcdEZUp@"><mutation
+        attributeName="State"></mutation><field
+        name="attributeName">State</field><value name="item"><shadow
+        type="oh_getitem" id="C9$Y3j!H**la?K-OVr$5"><value
+        name="itemName"><shadow type="oh_item" id="X5$VH2=s01u(l*ZdpN@0"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="variables_get" id=";eKekDeFISEp[%+K4Cr-"><field name="VAR"
+        id="GG*X-nPkT.[}xBPdQ`Zt">memberItem</field></block></value></block></value></block></value><next><block
+        type="oh_log" id="S]J:X8IcYKnfIINH{FX]"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="yHRFlKW3|8Tg8,~kR/ga"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="a,e/yi=,~#$}f^NUh0^)" inline="true"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="|KCin?~$/Cf8u+{IIS%U"><field name="TEXT">    state by
+        name:</field></block></value><value name="ADD1"><block
+        type="oh_getitem_state" id="BS;vow!SV`Un8xdfL9E*"><value
+        name="itemName"><shadow type="oh_item" id="(T%/`6m`A-YSu0y{o-$Q"><field
+        name="itemName">MyItem</field></shadow><block
+        type="oh_getitem_attribute" id="wD7Cz[D{2lWM`vR.O9ig"><mutation
+        attributeName="Name"></mutation><field
+        name="attributeName">Name</field><value name="item"><shadow
+        type="oh_getitem"><value name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="variables_get" id="Nie($:wnY:kqT}r{W|O%"><field name="VAR"
+        id="GG*X-nPkT.[}xBPdQ`Zt">memberItem</field></block></value></block></value></block></value></block></value></block></next></block></next></block></next></block></statement></block></next></block></next></block><block
+        type="oh_log" id="a@EH13d:I]bGUIhkDAQY" x="-1911" y="48"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="Za7DQ,;PmRR-5/;7bh:+"><field name="TEXT">send ON to Nano
+        Trio</field></shadow></value><next><block type="oh_event"
+        id="u3D~YBc/Pdy?z:a6!|f4"><field
+        name="eventType">sendCommand</field><value name="value"><shadow
+        type="text" id="_x]8w=.=Q0tr^P~V}e(Y"><field
+        name="TEXT">ON</field></shadow></value><value name="itemName"><shadow
+        type="oh_item" id="DMbf2U`V:FG-H?KVFNR*"><field
+        name="itemName">Nano_Trio_Power</field></shadow></value><next><block
+        type="oh_log" id="[GPp8wKiXya*yrzw_L@`"><field
+        name="severity">error</field><value name="message"><shadow type="text"
+        id="8:PGL]Q@v+3cs@(!pwWY"><field name="TEXT">iterate of tags of item
+        Lights</field></shadow></value><next><block type="controls_forEach"
+        id="tjlc-{p(,RCw6^8CF1n:"><field name="VAR"
+        id="||HJp!TeG=n?xqxL*#;,">tag</field><value name="LIST"><block
+        type="oh_getitem_attribute" id="Ub%ep-,keSbmXW5K-xmR"><mutation
+        attributeName="Tags"></mutation><field
+        name="attributeName">Tags</field><value name="item"><shadow
+        type="oh_getitem"><value name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="oh_getitem" id=",f5LUL0bxND`jVyX$;m_"><value
+        name="itemName"><shadow type="oh_item"><field
+        name="itemName">MyItem</field></shadow><block type="oh_item"
+        id="w|CDoFsaj2kx1a*WSz|i"><field
+        name="itemName">Lights</field></block></value></block></value></block></value><statement
+        name="DO"><block type="oh_log" id="jp%O#)2HWf|iXu2!DS+K"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="A6EhA4~G:tdsOdi,tF#y"><field name="TEXT">abc</field></shadow><block
+        type="variables_get" id="y%7@e]5jUGfHJeIKa){`"><field name="VAR"
+        id="||HJp!TeG=n?xqxL*#;,">tag</field></block></value></block></statement></block></next></block></next></block></next></block><block
+        type="controls_forEach" id="vbI1A[qvMbMmK,WK-`pr" x="-1272"
+        y="59"><field name="VAR" id="Slpz#r/n~_eE7R{PWgjD">item</field><value
+        name="LIST"><block type="oh_taggeditems"
+        id="exVe^z-^c?,k@l]gOQLp"><value name="tagName"><shadow type="text"
+        id=".xQ:q!MVbkH1UQO1u7dd"><field
+        name="TEXT">rs_close</field></shadow></value></block></value><statement
+        name="DO"><block type="oh_log" id="e6TIQ/(ERerJ3Boj;q?a"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="L3{ktnl8KWOlz!sE6t}#"><field name="TEXT">abc</field></shadow><block
+        type="oh_getitem_attribute" id="E/2Ue,S#}Fs4}=(}ZZ}8"><mutation
+        attributeName="Name"></mutation><field
+        name="attributeName">Name</field><value name="item"><shadow
+        type="oh_getitem" id="g5z%;V]Zv3Xn@:G)HnsV"><value
+        name="itemName"><shadow type="oh_item" id="mx(PT,Su=qM[|$/]q:iC"><field
+        name="itemName">MyItem</field></shadow></value></shadow><block
+        type="variables_get" id=";-o(_7kxusUjjTsQY*-d"><field name="VAR"
+        id="Slpz#r/n~_eE7R{PWgjD">item</field></block></value></block></value></block></statement></block><block
+        type="oh_log" id="hjp2)b+`iL+6IV{gm,Rp" x="-1909" y="257"><field
+        name="severity">error</field><value name="message"><shadow type="text"
+        id="0[KTK1V%qckUw7lj[.@0"><field name="TEXT">get Thing Status and thing
+        info</field></shadow></value><next><block type="oh_log"
+        id="vUvr.6P-th/^o4uMe:_M"><field name="severity">info</field><value
+        name="message"><shadow type="text" id="^ZL8b^3zTE+KPNjo3CJ."><field
+        name="TEXT">abc</field></shadow><block type="oh_getthing_state"
+        id="t{AyTSd@7+G*VJE=KdJM"><value name="thingUid"><shadow type="oh_thing"
+        id="D~jNm#JjGu`!9[!9jDpN"><field
+        name="thingUid">nanoleaf:controller:645E3A484A83</field></shadow></value></block></value><next><block
+        type="oh_log" id="S@gEzZ$FWm0H#G:JU_-^"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="So`eK,ze;4Z/s_pp[U7B"><field name="TEXT">abc</field></shadow><block
+        type="oh_thing" id="n5;YlUZC|/Pq4MeM*mmD"><field
+        name="thingUid">nanoleaf:controller:645E3A484A83</field></block></value><next><block
+        type="oh_log" id="^=F;#H4qn3s*WNh;3p62"><field
+        name="severity">info</field><value name="message"><shadow type="text"
+        id="[7x^*DzEiXnrh@q-[nNW"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="uvw?q0IHN1q9?i?-jW02"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="F6GS;Z2Oto%Z`q$1mwA?"><field name="TEXT">thing name
+        =</field></block></value><value name="ADD1"><block type="oh_thing"
+        id="i`Inc(D,JG;D;hZ9R?4@"><field
+        name="thingUid">nanoleaf:controller:645E3A484A83</field></block></value></block></value><next><block
+        type="oh_log" id="@gK0i.AsY9k_=lA0L``|"><field
+        name="severity">info</field><value name="message"><shadow
+        type="text"><field name="TEXT">abc</field></shadow><block
+        type="text_join" id="ykzP*5ZMS3|8wgsHY]s7"><mutation
+        items="2"></mutation><value name="ADD0"><block type="text"
+        id="O}}(GY0w-Dqz|At1mx.S"><field name="TEXT">thing state
+        =</field></block></value><value name="ADD1"><block
+        type="oh_getthing_state" id="05lJ,PA^OGlxKpg|ebTv"><value
+        name="thingUid"><shadow type="oh_thing" id="[SrnQ,$XWA%iVq^2XHtM"><field
+        name="thingUid">MyThing</field></shadow><block type="oh_thing"
+        id=",Q~IEFKu3`%T;LQtM_7-"><field
+        name="thingUid">nanoleaf:controller:5301E2D13CD1</field></block></value></block></value></block></value></block></next></block></next></block></next></block></next></block></xml>'
+      type: application/javascript;version=ECMAScript-2021
+      script: >
+        var runtime = require('@runtime');
+
+        var itemRegistry = runtime.itemRegistry;
+
+        var events = runtime.events;
+
+
+        var item, memberItem, tag;
+
+
+
+        console.error(items.getItem('Lights').state);
+
+        console.info(('name:' + String(items.getItem('Lights').name)));
+
+        console.info(('label:' + String(items.getItem('Lights').label)));
+
+        console.info(('state:' + String(items.getItem('Lights').state)));
+
+        console.info(('category:' + String(items.getItem('Lights').category)));
+
+        console.info(('tags:' + String(items.getItem('Lights').tags)));
+
+        console.info(('type:' + String(items.getItem('Lights').type)));
+
+        console.info(('groups (Lights):' + String(items.getItem('Lights').groupNames)));
+
+        console.info(('groups (Lichter AZ):' + String(items.getItem('LichterAZ').groupNames)));
+
+        console.info(('members of group Lichter AZ: ' + String(items.getItem('LichterAZ').members)));
+
+
+        console.info(('state:' + String(items.getItem('Lights').state)));
+
+        console.error('For each Member in Group Lights');
+
+        var memberItem_list = items.getItem('Lights').members;
+
+        for (var memberItem_index in memberItem_list) {
+          memberItem = memberItem_list[memberItem_index];
+          console.info((' member-item:' + String(memberItem)));
+          console.info(('    name: ' + String(memberItem.name)));
+          console.info(('    state: ' + String(memberItem.state)));
+          console.info(('    state by name:' + String(items.getItem(memberItem.name).state)));
+        }
+
+
+        console.info('send ON to Nano Trio');
+
+        items.getItem('Nano_Trio_Power').sendCommand('ON');
+
+        console.error('iterate of tags of item Lights');
+
+        var tag_list = items.getItem('Lights').tags;
+
+        for (var tag_index in tag_list) {
+          tag = tag_list[tag_index];
+          console.info(tag);
+        }
+
+
+        var item_list = items.getItemsByTag('rs_close');
+
+        for (var item_index in item_list) {
+          item = item_list[item_index];
+          console.info(item.name);
+        }
+
+
+        console.error('get Thing Status and thing info');
+
+        console.info(things.getThing('nanoleaf:controller:645E3A484A83').status);
+
+        console.info('nanoleaf:controller:645E3A484A83');
+
+        console.info(('thing name =' + 'nanoleaf:controller:645E3A484A83'));
+
+        console.info(('thing state =' + String(things.getThing('nanoleaf:controller:5301E2D13CD1').status)));
+    type: script.ScriptAction
