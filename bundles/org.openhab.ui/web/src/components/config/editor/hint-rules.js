@@ -14,7 +14,7 @@ function getModuleTypes (cm, section) {
 function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix) {
   const cursor = cm.getCursor()
   if (!cm.state.$oh) return
-  const promise = (itemsCache) ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items')
+  const promise = (itemsCache) ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items?cacheable=true')
   return promise.then((data) => {
     if (!itemsCache) itemsCache = data
     let ret = {

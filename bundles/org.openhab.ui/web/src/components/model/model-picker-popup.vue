@@ -149,7 +149,7 @@ export default {
     load (update) {
       // if (this.ready) return
       this.loading = true
-      const items = this.$oh.api.get('/rest/items?metadata=.+')
+      const items = this.$oh.api.get('/rest/items?cacheable=true&metadata=.+')
       const links = this.$oh.api.get('/rest/links')
       Promise.all([items, links]).then((data) => {
         this.items = data[0]

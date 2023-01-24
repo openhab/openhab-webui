@@ -107,7 +107,7 @@ export default {
           created: false
         }
         this.$set(this, 'item', newItem)
-        this.$oh.api.get('/rest/items').then((items) => {
+        this.$oh.api.get('/rest/items&cacheable=true').then((items) => {
           this.items = items
           this.ready = true
         })

@@ -187,9 +187,9 @@ export default {
     loadCounters () {
       if (!this.apiEndpoints) return
       if (this.$store.getters.apiEndpoint('inbox')) this.$oh.api.get('/rest/inbox').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
-      if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things?summary=true').then((data) => { this.thingsCount = data.length.toString() })
-      if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items').then((data) => { this.itemsCount = data.length.toString() })
-      if (this.$store.getters.apiEndpoint('ui')) this.$oh.api.get('/rest/ui/components/system:sitemap?summary=true').then((data) => { this.sitemapsCount = data.length })
+      if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things?cacheable=true').then((data) => { this.thingsCount = data.length.toString() })
+      if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items?cacheable=true').then((data) => { this.itemsCount = data.length.toString() })
+      if (this.$store.getters.apiEndpoint('ui')) this.$oh.api.get('/rest/ui/components/system:sitemap').then((data) => { this.sitemapsCount = data.length })
     },
     navigateToStore (tab) {
       this.$f7.views.main.router.navigate('addons', { props: { initialTab: tab } })
