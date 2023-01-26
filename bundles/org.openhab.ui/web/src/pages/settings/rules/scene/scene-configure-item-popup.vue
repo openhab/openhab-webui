@@ -39,12 +39,19 @@
           </f7-list>
         </f7-col>
       </f7-block>
+      <f7-block class="scene-item-control" strong>
+        <f7-col>
+          <div ref="colorpicker" />
+        </f7-col>
+      </f7-block>
     </f7-page>
   </f7-popup>
 </template>
 
-<script>
+<style lang="stylus">
+</style>
 
+<script>
 export default {
   components: {
   },
@@ -54,7 +61,9 @@ export default {
       ready: false,
       itemName: null,
       item: null,
-      command: null
+      command: null,
+      colorpicker: null,
+      control: null
     }
   },
   methods: {
@@ -63,14 +72,17 @@ export default {
       this.command = this.module.configuration.command
       this.$oh.api.get('/rest/items/' + this.itemName).then((item) => {
         this.item = item
+        this.initializeControl()
         this.ready = true
       })
     },
     itemConfigClosed () {
+      if (this.colorpicker) this.colorpicker.destroy()
       this.$f7.emit('sceneItemConfigClosed')
       this.$emit('closed')
     },
     updateItemConfig () {
+      if (this.colorpicker) this.colorpicker.destroy()
       this.$f7.emit('sceneItemConfigUpdate', [this.itemName, this.command])
       this.$emit('update', [this.itemName, this.command])
       this.itemConfigClosed()
@@ -93,6 +105,30 @@ export default {
           closeTimeout: 2000
         }).open()
       })
+    },
+    initializeControl () {
+      if (this.item.commandDescription && this.item.commandDescription.commandOptions) return // no control if command options
+      if (this.item.type === 'Color') {
+        this.control = 'colorpicker'
+        const vm = this
+        this.colorpicker = this.$f7.colorPicker.create(Object.assign({}, this.config, {
+          containerEl: this.$refs.colorpicker,
+          modules: ['wheel'],
+          value: (this.command.split(',').length === 3) ? { hsb: this.color } : null,
+          on: {
+            change (colorpicker, value) {
+              let command = [...value.hsb]
+              command[0] = Math.round(command[0]) % 360
+              command[1] = Math.round(command[1] * 100)
+              command[2] = Math.round(command[2] * 100)
+              command = command.join(',')
+              vm.command = command
+            }
+          }
+        }))
+      } else {
+
+      }
     }
   },
   computed: {
@@ -117,6 +153,16 @@ export default {
       }
 
       return []
+    },
+    color () {
+      if (this.item.type === 'Color' && this.command && this.command.split(',').length === 3) {
+        let color = this.command.split(',')
+        color[0] = parseInt(color[0])
+        color[1] = color[1] / 100
+        color[2] = color[2] / 100
+        return color
+      }
+      return null
     }
   }
 }
