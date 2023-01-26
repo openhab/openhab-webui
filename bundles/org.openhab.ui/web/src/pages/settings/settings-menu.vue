@@ -158,7 +158,7 @@ export default {
         items: 'Manage the functional layer',
         pages: 'Design displays for user control & monitoring',
         rules: 'Automate with triggers and actions',
-        scenes: 'Store a set of states as scene',
+        scenes: 'Store a set of desired states as a scene',
         scripts: 'Rules dedicated to running code',
         schedule: 'View upcoming time-based rules'
       },
