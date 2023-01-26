@@ -16,10 +16,10 @@
         </f7-nav-right>
       </f7-navbar>
       <f7-toolbar bottom>
-        <f7-link class="left" @click="selectedItem = null" icon-f7="arrow_uturn_left_circle">
+        <f7-link class="left" icon-f7="arrow_uturn_left_circle" @click="updateCommandFromCurrentState">
           Set to current state
         </f7-link>
-        <f7-link class="right" @click="selectedItem = null" icon-f7="arrowtriangle_right_circle">
+        <f7-link class="right" icon-f7="arrowtriangle_right_circle" @click="testCommand">
           Test command
         </f7-link>
       </f7-toolbar>
@@ -66,6 +66,25 @@ export default {
       this.$f7.emit('sceneItemConfigUpdate', [this.itemName, this.command])
       this.$emit('update', [this.itemName, this.command])
       this.itemConfigClosed()
+    },
+    updateCommandFromCurrentState () {
+      this.$oh.api.getPlain('/rest/items/' + this.itemName + '/state').then((state) => {
+        this.$set(this, 'command', state)
+        this.$f7.toast.create({
+          text: `Updated desired state of ${this.itemName} to ${state}`,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
+    },
+    testCommand () {
+      this.$oh.api.postPlain('/rest/items/' + this.itemName, this.command, 'text/plain', 'text/plain').then((state) => {
+        this.$f7.toast.create({
+          text: `Sent comment ${this.command} to ${this.itemName}`,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
     }
   },
   computed: {
