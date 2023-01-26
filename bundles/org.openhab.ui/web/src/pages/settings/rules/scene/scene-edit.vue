@@ -104,7 +104,7 @@
                 <f7-list-item :title="mod.configuration.itemName" media
                               v-for="mod in rule['actions']" :key="mod.id"
                               :link="!showModuleControls"
-                              @click.native="(ev) => editModule(ev, mod)" swipeout>
+                              @click.native="(ev) => editModule(ev, mod)" swipeout no-chevron>
                   <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled"
                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
