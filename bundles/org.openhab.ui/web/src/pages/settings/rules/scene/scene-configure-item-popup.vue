@@ -23,7 +23,7 @@
           Test command
         </f7-link>
       </f7-toolbar>
-      <f7-block>
+      <f7-block class="no-padding">
         <f7-col v-if="ready">
           <f7-list no-hairlines-md>
             <f7-list-input
@@ -32,6 +32,10 @@
               :value="command"
               @input="command = $event.target.value"
               type="text" />
+            <ul v-if="commandSuggestions.length">
+              <f7-list-item radio :checked="command === suggestion.command" v-for="suggestion in commandSuggestions" :key="suggestion.command"
+                            :title="suggestion.label" @click="command = suggestion.command" />
+            </ul>
           </f7-list>
         </f7-col>
       </f7-block>
@@ -49,6 +53,7 @@ export default {
     return {
       ready: false,
       itemName: null,
+      item: null,
       command: null
     }
   },
@@ -56,7 +61,10 @@ export default {
     itemConfigOpened () {
       this.itemName = this.module.configuration.itemName
       this.command = this.module.configuration.command
-      this.ready = true
+      this.$oh.api.get('/rest/items/' + this.itemName).then((item) => {
+        this.item = item
+        this.ready = true
+      })
     },
     itemConfigClosed () {
       this.$f7.emit('sceneItemConfigClosed')
@@ -68,7 +76,7 @@ export default {
       this.itemConfigClosed()
     },
     updateCommandFromCurrentState () {
-      this.$oh.api.getPlain('/rest/items/' + this.itemName + '/state').then((state) => {
+      this.$oh.api.getPlain('/rest/items/' + this.itemName + '/state?metadata=semantics,widget').then((state) => {
         this.$set(this, 'command', state)
         this.$f7.toast.create({
           text: `Updated desired state of ${this.itemName} to ${state}`,
@@ -88,6 +96,28 @@ export default {
     }
   },
   computed: {
+    commandSuggestions () {
+      if (!this.item) return []
+      let type = (this.item.type === 'Group' && this.item.groupType) ? this.item.groupType : this.item.type
+
+      if (this.item.commandDescription && this.item.commandDescription.commandOptions) {
+        return this.item.commandDescription.commandOptions
+      }
+      if (type === 'Switch') {
+        return ['ON', 'OFF'].map((c) => { return { command: c, label: c } })
+      }
+      if (type === 'Rollershutter') {
+        return ['UP', 'DOWN', 'STOP'].map((c) => { return { command: c, label: c } })
+      }
+      if (type === 'Contact') {
+        return ['UP', 'DOWN', 'STOP'].map((c) => { return { command: c, label: c } })
+      }
+      if (type === 'Color') {
+        return ['ON', 'OFF'].map((c) => { return { command: c, label: c } })
+      }
+
+      return []
+    }
   }
 }
 </script>
