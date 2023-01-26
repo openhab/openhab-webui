@@ -540,14 +540,15 @@ export default {
         let idx = 0
         for (let item in updatedRule.items) {
           actions.push({
-            id: idx++,
+            id: (idx++).toString(),
             configuration: {
               itemName: item,
               command: updatedRule.items[item]
-            }
+            },
+            type: 'core.ItemCommandAction'
           })
         }
-        this.$set(this.rule, 'triggers', updatedRule.items)
+        this.$set(this.rule, 'triggers', updatedRule.triggers)
         this.$set(this.rule, 'conditions', updatedRule.conditions)
         this.$set(this.rule, 'actions', actions)
         return true
