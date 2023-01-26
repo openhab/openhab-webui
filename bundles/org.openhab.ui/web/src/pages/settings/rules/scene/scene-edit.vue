@@ -119,11 +119,12 @@
                 </f7-list-item>
               </f7-list>
               <f7-list v-if="isEditable">
-                <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" subtitle="Add Item"
+                <!-- <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" subtitle="Add Item"
                               @click="addModule()">
                   <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
                            md="material:control_point" />
-                </f7-list-item>
+                </f7-list-item> -->
+                <item-picker title="Select Items" name="newItem" :multiple="true" :value="selectedItems" @input="selectItems" :no-after="true" class="scene-items-picker" />
                 <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
               </f7-list>
             </div>
@@ -175,6 +176,10 @@
   .list
     margin-top 0
 
+.scene-items-picker
+  .item-after
+    display none
+
 .rule-code-editor.vue-codemirror
   display block
   top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
@@ -193,6 +198,7 @@ import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 
 import SemanticsPicker from '@/components/tags/semantics-picker.vue'
+import ItemPicker from '@/components/config/controls/item-picker.vue'
 import TagInput from '@/components/tags/tag-input.vue'
 
 import RuleModulePopup from '../rule-module-popup.vue'
@@ -206,6 +212,7 @@ export default {
   components: {
     SemanticsPicker,
     TagInput,
+    ItemPicker,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
   props: ['ruleId', 'createMode'],
@@ -226,6 +233,7 @@ export default {
       currentModule: null,
       currentModuleConfig: {},
       keyHandler: null,
+      selectedItems: [],
 
       codeEditorOpened: false
     }
@@ -282,6 +290,12 @@ export default {
           this.$oh.api.get('/rest/rules/' + this.ruleId).then((data2) => {
             this.$set(this, 'rule', data2)
             this.rule.tags = this.rule.tags.filter(e => e !== 'Scene')
+            this.$set(this, 'selectedItems', [])
+            this.rule.actions.forEach((a) => {
+              if (a.type === 'core.ItemCommandAction') {
+                this.selectedItems.push(a.configuration.itemName)
+              }
+            })
             loadingFinished()
           })
         }
@@ -443,53 +457,53 @@ export default {
       }
       this.$f7.swipeout.delete(swipeoutElement, () => {
         const idx = this.rule[section].findIndex((m) => m.id === mod.id)
+        const itemName = this.rule.actions[idx].configuration.itemName
         this.rule[section].splice(idx, 1)
+        console.debug('Removing ' + itemName)
+        this.$set(this, 'selectedItems', this.selectedItems.filter((i) => i !== itemName))
+        this.buildActionModules()
       })
     },
-    addModule () {
-      if (this.showModuleControls) return
-      if (!this.isEditable) return
-      let moduleId = 1
-      for (; this.rule['actions'].some((m) => m.id === moduleId.toString()); moduleId++) ;
-      console.debug('new moduleId=' + moduleId)
-      const newModule = {
-        id: moduleId.toString(),
-        configuration: {},
-        type: 'core.ItemCommandAction'
-      }
-
-      this.currentModule = newModule
-      this.currentModuleType = this.moduleTypes['actions'].find((m) => m.uid === newModule.type)
-
-      const popup = {
-        component: RuleModulePopup
-      }
-      this.$f7router.navigate({
-        url: 'module-config',
-        route: {
-          path: 'module-config',
-          popup
-        }
-      }, {
-        props: {
-          currentSection: 'actions',
-          ruleModule: this.currentModule,
-          ruleModuleType: this.currentModuleType,
-          moduleTypes: this.moduleTypes,
-          isSceneModule: true
-        }
-      })
-
-      this.$f7.once('ruleModuleConfigUpdate', this.saveModule)
-      this.$f7.once('ruleModuleConfigClosed', () => {
-        this.$f7.off('ruleModuleConfigUpdate', this.saveModule)
-        this.moduleConfigClosed()
-      })
+    selectItems (items) {
+      console.log(items)
+      this.$set(this, 'selectedItems', items)
+      this.buildActionModules()
     },
     reorderModule (ev, section) {
       const newSection = [...this.rule[section]]
       newSection.splice(ev.to, 0, newSection.splice(ev.from, 1)[0])
       this.$set(this.rule, section, newSection)
+    },
+    buildActionModules () {
+      const currentItemNames = this.rule.actions.map((a) => a.configuration.itemName)
+      const modulesToRemove = this.rule.actions.filter((a) => this.selectedItems.indexOf(a.configuration.itemName) < 0)
+      console.log('Removing: ' + modulesToRemove.map((m) => m.configuration.itemName).join(', '))
+      this.$set(this.rule, 'actions', this.rule.actions.filter((a) => this.selectedItems.indexOf(a.configuration.itemName) >= 0))
+      const itemsToAdd = this.selectedItems.filter((i) => !this.rule.actions.some((a) => a.configuration.itemName === i))
+      console.log('Adding: ' + itemsToAdd.join(', '))
+
+      let moduleId = 1
+      itemsToAdd.forEach((itemName) => {
+        for (; ['triggers', 'actions', 'conditions'].some((s) => this.rule[s].some((m) => m.id === moduleId.toString())); moduleId++);
+        console.debug('new moduleId=' + moduleId)
+        const newModule = {
+          id: moduleId.toString(),
+          configuration: {
+            itemName,
+            command: null
+          },
+          type: 'core.itemCommandAction',
+          new: true
+        }
+        this.rule.actions.push(newModule)
+      })
+      const statePromises = itemsToAdd.map((itemName) => this.$oh.api.getPlain('/rest/items/' + itemName + '/state'))
+      Promise.all(statePromises).then((states) => {
+        states.forEach((state, idx) => {
+          const module = this.rule.actions.find((a) => a.configuration.itemName === itemsToAdd[idx])
+          this.$set(module.configuration, 'command', state)
+        })
+      })
     },
     saveModule (updatedModule) {
       if (!updatedModule.type) return
@@ -510,12 +524,6 @@ export default {
         this.rule['actions'].push(updatedModule)
       }
     },
-    saveAndEditNewScript (updatedModule) {
-      this.saveModule(updatedModule)
-      this.save().then(() => {
-        this.$f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + updatedModule.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
-      })
-    },
     moduleConfigClosed () {
       this.currentModule = null
       this.currentModuleType = null
@@ -529,7 +537,7 @@ export default {
       this.ruleYaml = YAML.stringify({
         items: itemsConfig,
         triggers: this.rule.triggers,
-        conditions: this.rule.conditions,
+        conditions: this.rule.conditions
       })
     },
     fromYaml () {
