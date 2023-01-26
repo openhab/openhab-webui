@@ -48,6 +48,13 @@
           <div v-else-if="control === 'slider'" class="scene-item-control-slider">
             <f7-range v-bind="sliderConfig" :value="command" @range:change="command = $event.toString()" />
           </div>
+          <div v-else-if="control === 'rollershutter'" class="scene-item-control-rollershutter">
+            <f7-segmented round outline strong class="rollershutter-controls">
+              <f7-button @click="command = 'UP'" large icon-f7="arrowtriangle_left" icon-size="24" icon-color="gray" />
+              <f7-button @click="command = 'STOP'" large icon-f7="stop" icon-size="24" icon-color="red" />
+              <f7-button @click="command = 'DOWN'" large icon-f7="arrowtriangle_right" icon-size="24" icon-color="gray" />
+            </f7-segmented>
+          </div>
         </f7-col>
       </f7-block>
     </f7-page>
@@ -74,6 +81,17 @@
     --f7-range-knob-size 0px
     --f7-range-label-size 60px
     --f7-range-label-font-size 40px
+
+  .scene-item-control-rollershutter
+    width 100%
+    height 200px
+    display flex
+    flex-direction column
+    justify-content center
+    .rollershutter-controls
+      width 150px
+      transform rotate(90deg)
+      transform-origin center
 
 </style>
 
@@ -134,7 +152,7 @@ export default {
     },
     initializeControl () {
       if (this.item.commandDescription && this.item.commandDescription.commandOptions) return // no control if command options
-      if (this.item.type === 'Color') {
+      if (this.item.type === 'Color' || this.item.groupType === 'Color') {
         this.control = 'colorpicker'
         const vm = this
         this.$nextTick(() => {
@@ -154,12 +172,23 @@ export default {
             }
           }))
         })
-      } else if (this.item.type === 'Switch') {
+      } else if (this.item.type === 'Switch' || this.item.groupType === 'Switch') {
         this.control = 'toggle'
-      } else if (this.item.type === 'Dimmer') {
+      } else if (this.item.type === 'Dimmer' || this.item.groupType === 'Dimmer') {
         this.control = 'slider'
-      } else if (this.item.type === 'Number') {
-        // 
+      } else if (this.item.type === 'Rollershutter' || this.item.groupType === 'Rollershutter') {
+        this.control = 'rollershutter'
+      } else if (this.item.type === 'Number' || this.item.groupType === 'Number') {
+        if (this.item.tags.find((t) => [
+          'ColorTemperature',
+          'Temperature',
+          'Brightness',
+          'Level',
+          'SoundVolume',
+          'Setpoint'
+        ].includes(t))) {
+          this.control = 'slider'
+        }
       }
     }
   },
@@ -198,13 +227,13 @@ export default {
     },
     sliderConfig () {
       if (!this.item) return {}
-      const sd = this.item.stateDescription || { min: 0, max: 100, step: 1 }
+      const sd = this.item.stateDescription || { minimum: 0, maximum: 100, step: 1 }
       return {
         vertical: true,
         label: true,
         scale: true,
-        min: sd.min,
-        max: sd.max,
+        min: sd.minimum,
+        max: sd.maximum,
         step: sd.step
       }
     }

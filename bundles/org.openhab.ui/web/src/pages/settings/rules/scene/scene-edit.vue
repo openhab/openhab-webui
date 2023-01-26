@@ -516,7 +516,7 @@ export default {
             itemName,
             command: null
           },
-          type: 'core.itemCommandAction'
+          type: 'core.ItemCommandAction'
         }
         this.rule.actions.push(newModule)
       })
