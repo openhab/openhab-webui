@@ -459,7 +459,7 @@ export default {
         const idx = this.rule[section].findIndex((m) => m.id === mod.id)
         const itemName = this.rule.actions[idx].configuration.itemName
         this.rule[section].splice(idx, 1)
-        console.debug('Removing ' + itemName)
+        console.debug('Removing: ' + itemName)
         this.$set(this, 'selectedItems', this.selectedItems.filter((i) => i !== itemName))
         this.buildActionModules()
       })
@@ -477,10 +477,10 @@ export default {
     buildActionModules () {
       const currentItemNames = this.rule.actions.map((a) => a.configuration.itemName)
       const modulesToRemove = this.rule.actions.filter((a) => this.selectedItems.indexOf(a.configuration.itemName) < 0)
-      console.log('Removing: ' + modulesToRemove.map((m) => m.configuration.itemName).join(', '))
+      if (modulesToRemove.length > 0) console.debug('Removing: ' + modulesToRemove.map((m) => m.configuration.itemName).join(', '))
       this.$set(this.rule, 'actions', this.rule.actions.filter((a) => this.selectedItems.indexOf(a.configuration.itemName) >= 0))
       const itemsToAdd = this.selectedItems.filter((i) => !this.rule.actions.some((a) => a.configuration.itemName === i))
-      console.log('Adding: ' + itemsToAdd.join(', '))
+      if (itemsToAdd.length > 0) console.debug('Adding: ' + itemsToAdd.join(', '))
 
       let moduleId = 1
       itemsToAdd.forEach((itemName) => {
