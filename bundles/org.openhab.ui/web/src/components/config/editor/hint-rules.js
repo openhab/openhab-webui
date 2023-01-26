@@ -149,7 +149,7 @@ function buildModuleStructure (cm, moduleType) {
   return ret
 }
 
-function hintSceneItems(cm, line, parentNr) {
+function hintSceneItems (cm, line, parentNr) {
   console.info('hinting in the items section (scenes)')
   return hintItems(cm, line, false, true, true)
 }
