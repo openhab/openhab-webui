@@ -43,7 +43,7 @@ const PageEditors = {
 
 const RulesListPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/rules/rules-list.vue')
 const RuleEditPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/rules/rule-edit.vue')
-const SceneEditPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/rules/scene-edit.vue')
+const SceneEditPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/rules/scene/scene-edit.vue')
 const ScriptEditPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/rules/script/script-edit.vue')
 const SchedulePage = () => import(/* webpackChunkName: "admin-schedule" */ '../pages/settings/schedule/schedule.vue')
 
