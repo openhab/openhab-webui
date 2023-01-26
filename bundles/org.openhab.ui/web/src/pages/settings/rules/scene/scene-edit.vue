@@ -97,19 +97,29 @@
               </f7-button>
             </div>
             <div>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"
-                              v-if="rule['actions'].length > 0">
+              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Configuration
               </f7-block-title>
-              <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, 'actions')">
-                <f7-list-item :title="mod.configuration.itemName"
-                              :after="mod.configuration.command" media
+              <f7-list class="scene-items" sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, 'actions')">
+                <f7-list-item :title="mod.configuration.itemName" media
                               v-for="mod in rule['actions']" :key="mod.id"
                               :link="!showModuleControls"
                               @click.native="(ev) => editModule(ev, mod)" swipeout>
                   <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled"
                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
+                  <span slot="after" class="inline-command-input">
+                    <f7-input type="text"
+                              :value="mod.configuration.command"
+                              @input="updateActionModule([mod.configuration.itemName, $event.target.value])"
+                              :disabled="showModuleControls" />
+                    <f7-link icon-f7="arrow_uturn_left_circle"
+                             class="margin-left-half" color="blue" tooltip="Set to current state"
+                             @click.native="(ev) => updateCommandFromCurrentState(ev, mod)" />
+                    <f7-link icon-f7="arrowtriangle_right_circle"
+                             class="margin-left-half" color="blue" tooltip="Test command"
+                             @click.native="(ev) => testCommand(ev, mod)" />
+                  </span>
                   <f7-swipeout-actions right>
                     <f7-swipeout-button @click="(ev) => deleteModule(ev, 'actions', mod)"
                                         style="background-color: var(--f7-swipeout-delete-button-bg-color)">
@@ -129,7 +139,7 @@
               </f7-list>
             </div>
           </f7-col>
-          <f7-col v-if="(isEditable || rule.tags.length > 0) && (!createMode || !hasTemplate)">
+          <f7-col v-if="(isEditable || rule.tags.length > 0)">
             <f7-block-title>Tags</f7-block-title>
             <semantics-picker v-if="isEditable" :item="rule" />
             <tag-input :item="rule" :disabled="!isEditable" />
@@ -176,6 +186,17 @@
   .list
     margin-top 0
 
+  .scene-items
+    .inline-command-input
+      position: relative
+      display: flex
+      flex-direction: horizontal
+    .item-after
+      max-width: 40%
+
+.ios .scene-items
+  --f7-input-height: 24px
+
 .scene-items-picker
   .item-after
     display none
@@ -201,14 +222,13 @@ import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import TagInput from '@/components/tags/tag-input.vue'
 
-import RuleModulePopup from '../rule-module-popup.vue'
+import SceneConfigureItemPopup from './scene-configure-item-popup.vue'
 
-import ModuleDescriptionSuggestions from '../module-description-suggestions'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import DirtyMixin from '../../dirty-mixin'
 
 export default {
-  mixins: [ModuleDescriptionSuggestions, RuleStatus, DirtyMixin],
+  mixins: [RuleStatus, DirtyMixin],
   components: {
     SemanticsPicker,
     TagInput,
@@ -413,6 +433,12 @@ export default {
       }
     },
     editModule (ev, mod) {
+      if (ev.target.tagName.toLowerCase() === 'input') {
+        ev.cancelBubble = true
+        return
+      }
+      if (this.showModuleControls) return
+
       let swipeoutElement = ev.target
       ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
@@ -420,32 +446,26 @@ export default {
       }
       if (swipeoutElement && swipeoutElement.classList.contains('swipeout-opened')) return
 
-      this.currentModule = Object.assign({}, mod)
-
       const popup = {
-        component: RuleModulePopup
+        component: SceneConfigureItemPopup
       }
 
       this.$f7router.navigate({
-        url: 'module-config',
+        url: 'item-config',
         route: {
-          path: 'module-config',
+          path: 'item-config',
           popup
         }
       }, {
         props: {
-          currentSection: 'actions',
-          ruleModule: this.currentModule,
-          ruleModuleType: this.moduleTypes['actions'].find((m) => m.uid === mod.type),
-          moduleTypes: this.moduleTypes,
-          isSceneModule: true
+          rule: this.rule,
+          module: mod
         }
       })
 
-      this.$f7.once('ruleModuleConfigUpdate', this.saveModule)
-      this.$f7.once('ruleModuleConfigClosed', () => {
-        this.$f7.off('ruleModuleConfigUpdate', this.saveModule)
-        this.moduleConfigClosed()
+      this.$f7.once('sceneItemConfigUpdate', this.updateActionModule)
+      this.$f7.once('sceneItemConfigClosed', () => {
+        this.$f7.off('sceneItemConfigUpdate', this.updateActionModule)
       })
     },
     deleteModule (ev, section, mod) {
@@ -492,8 +512,7 @@ export default {
             itemName,
             command: null
           },
-          type: 'core.itemCommandAction',
-          new: true
+          type: 'core.itemCommandAction'
         }
         this.rule.actions.push(newModule)
       })
@@ -505,28 +524,34 @@ export default {
         })
       })
     },
-    saveModule (updatedModule) {
-      if (!updatedModule.type) return
-      if (!updatedModule.configuration.command) {
-        this.$oh.api.getPlain('/rest/items/' + updatedModule.configuration.itemName + '/state').then(state => {
-          updatedModule.configuration.command = state
-          this.doSave(updatedModule)
-        })
-      } else {
-        this.doSave(updatedModule)
-      }
+    updateCommandFromCurrentState (ev, module) {
+      if (ev) ev.cancelBubble = true
+      const itemName = module.configuration.itemName
+      this.$oh.api.getPlain('/rest/items/' + itemName + '/state').then((state) => {
+        this.$set(module.configuration, 'command', state)
+        // this.$f7.toast.create({
+        //   text: `Updated desired state of ${itemName} to ${state}`,
+        //   destroyOnClose: true,
+        //   closeTimeout: 2000
+        // }).open()
+      })
     },
-    doSave (updatedModule) {
-      const idx = this.rule['actions'].findIndex((m) => m.id === updatedModule.id)
-      if (idx >= 0) {
-        this.$set(this.rule['actions'], idx, updatedModule)
-      } else {
-        this.rule['actions'].push(updatedModule)
-      }
+    testCommand (ev, module) {
+      if (ev) ev.cancelBubble = true
+      const itemName = module.configuration.itemName
+      const command = module.configuration.command
+      this.$oh.api.postPlain('/rest/items/' + itemName, command, 'text/plain', 'text/plain').then((state) => {
+        // this.$f7.toast.create({
+        //   text: `Updated desired state of ${itemName} to ${state}`,
+        //   destroyOnClose: true,
+        //   closeTimeout: 2000
+        // }).open()
+      })
     },
-    moduleConfigClosed () {
-      this.currentModule = null
-      this.currentModuleType = null
+    updateActionModule (params) {
+      const [itemName, command] = params
+      const module = this.rule.actions.find((a) => a.configuration.itemName === itemName)
+      if (module) module.configuration.command = command
     },
     toYaml () {
       const itemsConfig = {}
