@@ -108,11 +108,13 @@
                   <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled"
                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
-                  <span slot="after" class="inline-command-input">
-                    <f7-input type="text"
+                  <span slot="inner" class="inline-command-input">
+                    <f7-input type="text" outline
                               :value="mod.configuration.command"
                               @input="updateActionModule([mod.configuration.itemName, $event.target.value])"
                               :disabled="showModuleControls" />
+                  </span>
+                  <span slot="after">
                     <f7-link icon-f7="arrow_uturn_left_circle"
                              class="margin-left-half" color="blue" tooltip="Set to current state"
                              @click.native="(ev) => updateCommandFromCurrentState(ev, mod)" />
@@ -190,9 +192,11 @@
     .inline-command-input
       position: relative
       display: flex
-      flex-direction: horizontal
-    .item-after
-      max-width: 40%
+      flex-direction: row-reverse
+      .input
+        max-width: 30%
+        padding-left: 5px
+        background: var(--f7-list-bg-color)
 
 .ios .scene-items
   --f7-input-height: 24px
