@@ -27,7 +27,7 @@
   "rules.text": "Rules are the basic building blocks to automate your home - they define which actions to perform when certain events occur.<br><br>Create your first rule with the button below; for more advanced scenarios, you can also write script files in your configuration folder.",
 
   "scenes.title": "No scenes yet",
-  "scenes.text": "Scenes are rules sending commands to restore a set items to a desired state.<br />You can run them on-demand or call them from other rules.<br><br>Create your first scene with the button below.",
+  "scenes.text": "Scenes are rules sending commands to restore a set of items to a desired state.<br />You can run them on-demand or call them from other rules.<br><br>Create your first scene with the button below.",
 
   "scripts.title": "No scripts yet",
   "scripts.text": "Scripts are a special kind of rules, with no triggers and a single action module to execute code.<br />You can run them on-demand or call them from other rules.<br><br>Create your first script with the button below.",
