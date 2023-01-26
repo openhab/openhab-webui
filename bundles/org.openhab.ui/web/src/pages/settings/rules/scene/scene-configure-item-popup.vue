@@ -39,9 +39,15 @@
           </f7-list>
         </f7-col>
       </f7-block>
-      <f7-block class="scene-item-control" strong>
+      <f7-block v-show="control" class="scene-item-control" strong>
         <f7-col>
-          <div ref="colorpicker" />
+          <div v-show="control === 'colorpicker'" class="scene-item-control-colorpicker" ref="colorpicker" />
+          <div v-if="control === 'toggle'" class="scene-item-control-toggle">
+            <f7-toggle :checked="command === 'ON'" @toggle:change="(value) => command = (value) ? 'ON' : 'OFF'" />
+          </div>
+          <div v-else-if="control === 'slider'" class="scene-item-control-slider">
+            <f7-range v-bind="sliderConfig" :value="command" @range:change="command = $event.toString()" />
+          </div>
         </f7-col>
       </f7-block>
     </f7-page>
@@ -49,6 +55,26 @@
 </template>
 
 <style lang="stylus">
+.scene-item-control
+  .scene-item-control-toggle
+    text-align center
+    padding-top calc(var(--f7-toggle-width))
+    padding-bottom calc(var(--f7-toggle-width))
+    .toggle
+      transform scale(2) rotate(-90deg)
+      transform-origin center
+
+  .scene-item-control-slider
+    width 100%
+    height: 300px
+    display flex
+    flex-direction column
+    justify-content center
+    --f7-range-bar-size 150px
+    --f7-range-knob-size 0px
+    --f7-range-label-size 60px
+    --f7-range-label-font-size 40px
+
 </style>
 
 <script>
@@ -111,23 +137,29 @@ export default {
       if (this.item.type === 'Color') {
         this.control = 'colorpicker'
         const vm = this
-        this.colorpicker = this.$f7.colorPicker.create(Object.assign({}, this.config, {
-          containerEl: this.$refs.colorpicker,
-          modules: ['wheel'],
-          value: (this.command.split(',').length === 3) ? { hsb: this.color } : null,
-          on: {
-            change (colorpicker, value) {
-              let command = [...value.hsb]
-              command[0] = Math.round(command[0]) % 360
-              command[1] = Math.round(command[1] * 100)
-              command[2] = Math.round(command[2] * 100)
-              command = command.join(',')
-              vm.command = command
+        this.$nextTick(() => {
+          this.colorpicker = this.$f7.colorPicker.create(Object.assign({}, this.config, {
+            containerEl: this.$refs.colorpicker,
+            modules: ['wheel'],
+            value: (this.command.split(',').length === 3) ? { hsb: this.color } : null,
+            on: {
+              change (colorpicker, value) {
+                let command = [...value.hsb]
+                command[0] = Math.round(command[0]) % 360
+                command[1] = Math.round(command[1] * 100)
+                command[2] = Math.round(command[2] * 100)
+                command = command.join(',')
+                vm.command = command
+              }
             }
-          }
-        }))
-      } else {
-
+          }))
+        })
+      } else if (this.item.type === 'Switch') {
+        this.control = 'toggle'
+      } else if (this.item.type === 'Dimmer') {
+        this.control = 'slider'
+      } else if (this.item.type === 'Number') {
+        // 
       }
     }
   },
@@ -163,6 +195,18 @@ export default {
         return color
       }
       return null
+    },
+    sliderConfig () {
+      if (!this.item) return {}
+      const sd = this.item.stateDescription || { min: 0, max: 100, step: 1 }
+      return {
+        vertical: true,
+        label: true,
+        scale: true,
+        min: sd.min,
+        max: sd.max,
+        step: sd.step
+      }
     }
   }
 }
