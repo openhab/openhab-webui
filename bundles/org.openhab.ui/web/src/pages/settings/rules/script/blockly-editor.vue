@@ -424,7 +424,7 @@
             <value name="value">
               <shadow type="text" />
             </value>
-            <value name="configName">
+            <value name="configKey">
               <shadow type="text" />
             </value>
             <value name="theItem">
