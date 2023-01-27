@@ -202,6 +202,28 @@ export function addDateComparisonSupportGraalVM () {
   return graalZdtCompare
 }
 
+// always return the item name no matter whether the name is given already or the item object
+export function addItemName (isGraalJs) {
+  let itemNameAccess = (isGraalJs) ? 'name' : 'getName()'
+  return javascriptGenerator.provideFunction_(
+    'itemName', [
+      'function _itemName(item) {',
+      `  return (typeof item === "string") ? item : item.${itemNameAccess};`,
+      '}'
+    ])
+}
+
+// always return the item object no matter of the name is given or already the item object
+export function addItemObject (isGraalJs) {
+  let itemReg = (isGraalJs) ? 'items' : 'itemRegistry'
+  return javascriptGenerator.provideFunction_(
+    'itemObject', [
+      'function _itemObject(item) {',
+      `  return (typeof item !== "string") ? item : ${itemReg}.getItem(item);`,
+      '}'
+    ])
+}
+
 export function addGetItemMetaConfigValue () {
   return javascriptGenerator.provideFunction_(
     'getItemMetaConfigValue', [

@@ -391,7 +391,7 @@
             </value>
           </block>
           <block type="oh_get_meta_value" v-if="isGraalJs">
-            <value name="itemName">
+            <value name="theItem">
               <shadow type="oh_item" />
             </value>
             <value name="namespace">
@@ -402,7 +402,7 @@
             <value name="configKey">
               <shadow type="text" />
             </value>
-            <value name="itemName">
+            <value name="theItem">
               <shadow type="oh_item" />
             </value>
             <value name="namespace">
@@ -413,7 +413,7 @@
             <value name="value">
               <shadow type="text" />
             </value>
-            <value name="itemName">
+            <value name="theItem">
               <shadow type="oh_item" />
             </value>
             <value name="namespace">
@@ -427,7 +427,7 @@
             <value name="configName">
               <shadow type="text" />
             </value>
-            <value name="itemName">
+            <value name="theItem">
               <shadow type="oh_item" />
             </value>
             <value name="namespace">
