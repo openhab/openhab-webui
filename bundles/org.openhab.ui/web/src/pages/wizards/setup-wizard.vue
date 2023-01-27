@@ -127,8 +127,8 @@
             </f7-col>
           </f7-row>
           <f7-list class="search-list searchbar-found" ref="selectAddons" media-list v-show="!installingAddons">
-            <f7-list-item media-item v-for="addon in selectedAddons" :key="addon.id"
-                          :header="addon.id" :title="addon.label" :footer="addon.version">
+            <f7-list-item media-item v-for="addon in selectedAddons" :key="addon.uid"
+                          :header="addon.uid" :title="addon.label" :footer="addon.version">
               <f7-link slot="after" v-if="addon.link" icon-f7="doc_text_search" :external="true" color="gray" target="_blank" :href="addon.link" />
             </f7-list-item>
           </f7-list>
@@ -320,16 +320,16 @@ export default {
 
       const checkAddonStatus = function (addon) {
         return new Promise((resolve, reject) => {
-          self.$oh.api.get('/rest/addons/' + addon.id).then((data) => {
+          self.$oh.api.get('/rest/addons/' + addon.uid).then((data) => {
             if (data.installed) {
-              console.log(`Add-on ${addon.id} installed!`)
+              console.log(`Add-on ${addon.uid} installed!`)
               resolve(data)
             } else {
-              console.log(`Add-on ${addon.id} still not installed. Trying again in ${checkInterval} secs...`)
+              console.log(`Add-on ${addon.uid} still not installed. Trying again in ${checkInterval} secs...`)
               reject(data)
             }
           }).catch((err) => {
-            console.log(`Error while querying API to check addon: ${addon.id}: ${err}'. Trying again in ${checkInterval} secs...`)
+            console.log(`Error while querying API to check addon: ${addon.uid}: ${err}'. Trying again in ${checkInterval} secs...`)
             reject(err)
           })
         })
@@ -348,10 +348,10 @@ export default {
         progressDialog.setText(self.$t('setupwizard.addons.progress', { current: addonsCount - self.selectedAddons.length + 1, total: addonsCount }))
         progressDialog.setProgress(((addonsCount - self.selectedAddons.length + 1) / addonsCount) * 100)
         const addon = self.selectedAddons.shift()
-        console.log('Installing add-on: ' + addon.id)
+        console.log('Installing add-on: ' + addon.uid)
         progressDialog.setTitle(self.$t('setupwizard.addons.installingAddon', { addon: addon.label }))
 
-        self.$oh.api.post('/rest/addons/' + addon.id + '/install', {}, 'text').then((data) => {
+        self.$oh.api.post('/rest/addons/' + addon.uid + '/install', {}, 'text').then((data) => {
           const checkTimer = setInterval(() => {
             checkAddonStatus(addon).then((addon) => {
               clearInterval(checkTimer)
@@ -428,7 +428,7 @@ export default {
           if (query.length === 0) {
             render(self.addons.filter((a) => !a.installed).map((a) => a.label))
           } else {
-            render(self.addons.filter((a) => !a.installed && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.id.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map((a) => a.label))
+            render(self.addons.filter((a) => !a.installed && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map((a) => a.label))
           }
         },
         on: {
