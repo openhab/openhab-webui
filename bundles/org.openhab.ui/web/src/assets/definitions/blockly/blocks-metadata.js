@@ -111,8 +111,9 @@ export default function (f7, isGraalJs) {
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
 
     let itemMeta = addItemMeta()
-    let code = `${itemMeta} = items.metadata.getMetadata(${theItem}, ${namespace})\n`
-    code += `${itemMeta}.value = ${value}\n`
+    let code = `${itemMeta} = items.metadata.getMetadata(${theItem}, ${namespace});\n`
+    code += `${itemMeta} = (${itemMeta} === null) ? { value: '', configuration: {} } : ${itemMeta};\n`
+    code += `${itemMeta}.value = ${value};\n`
     code += `items.metadata.replaceMetadata(${theItem}, ${namespace}, ${itemMeta}.value, ${itemMeta}.configuration);\n`
     if (isGraalJs) {
       return code
@@ -146,7 +147,7 @@ export default function (f7, isGraalJs) {
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
-      this.setTooltip('stores the value into a config property of the given metadata namespace. Use .-notation for easy access of hierachic properties, ie. level1.level2.myConfig = 123.\nProperties have to exist and are not created.')
+      this.setTooltip('stores the value into a config property of the given metadata namespace. Use .-notation for easy access of hierarchic properties, ie. level1.level2.myConfig = 123.\nProperties have to exist and are not created.')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/https://www.openhab.org/docs/configuration/blockly/rules-blockly-metadata.html#store_meta_value')
     }
   }
@@ -158,11 +159,10 @@ export default function (f7, isGraalJs) {
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
 
     let itemMeta = addItemMeta()
-    let code = `${itemMeta} = items.metadata.getMetadata(${theItem}, ${namespace})\n`
-    code += `if(${itemMeta} !== null) {\n`
-    code += `  ${itemMeta}.configuration.${configKey} = ${value}\n`
-    code += `  items.metadata.replaceMetadata(${theItem}, ${namespace}, ${itemMeta}.value, ${itemMeta}.configuration);\n`
-    code += '};\n'
+    let code = `${itemMeta} = items.metadata.getMetadata(${theItem}, ${namespace});\n`
+    code += `${itemMeta} = (${itemMeta} === null) ? { value: '', configuration: {} } : ${itemMeta};\n`
+    code += `${itemMeta}.configuration.${configKey} = ${value};\n`
+    code += `items.metadata.replaceMetadata(${theItem}, ${namespace}, ${itemMeta}.value, ${itemMeta}.configuration);\n`
     if (isGraalJs) {
       return code
     } else {
