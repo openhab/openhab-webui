@@ -406,7 +406,7 @@ export default {
       return useCredentialsPromise
         .then(() => { return Framework7.request.promise.json('/rest/') })
         .catch((err) => {
-          console.error('Initial API request failed with error:')
+          console.error('openHAB REST API connection failed with error:')
           console.info(err)
           if (err.message === 'Unauthorized' || err.status === 401) {
             if (!useCredentials) {
