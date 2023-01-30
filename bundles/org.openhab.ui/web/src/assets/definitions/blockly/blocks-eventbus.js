@@ -5,13 +5,11 @@
 
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
-import { addItemName, addItemObject } from './utils'
 
 export default function (f7, isGraalJs) {
   /*
     Send a command or post an update
-    itemName: provide the name of the item ('String', 'oh_item') or even directly the item object ('oh_itemtype')
-    note: the field name has not been changed from itemName to allow backward compatibility
+    itemName: provide the name of the item ('String', 'oh_item')
   */
   Blockly.Blocks['oh_event'] = {
     init: function () {
@@ -20,7 +18,7 @@ export default function (f7, isGraalJs) {
       this.appendValueInput('itemName')
         .appendField('to')
         .setAlign(Blockly.ALIGN_RIGHT)
-        .setCheck(['String', 'oh_item', 'oh_itemtype'])
+        .setCheck(['String', 'oh_item'])
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -35,11 +33,9 @@ export default function (f7, isGraalJs) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      addItemObject(isGraalJs)
-      return `_itemObject(${itemName}).${eventType}(${value});\n`
+      return `${itemName}.${eventType}(${value});\n`
     } else {
-      addItemName()
-      return `events.${eventType}(_itemName(${itemName}), ${value});\n`
+      return `events.${eventType}(${itemName}, ${value});\n`
     }
   }
 }
