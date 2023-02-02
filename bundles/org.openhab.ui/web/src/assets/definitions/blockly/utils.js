@@ -218,3 +218,26 @@ export function addGetItemMetaConfigValue () {
       '}'
     ])
 }
+
+/**
+ * Gets the type of passed input to a given block.
+ *
+ * @param block
+ * @param {string} inputName
+ * @returns {string}
+ */
+export function blockGetCheckedInputType (block, inputName) {
+  // Get the input type checks for this block
+  const thisBlock = block.getInput(inputName).connection.getCheck()
+  // Get the output type checks for the connected block
+  const connectedBlock = block.getInput(inputName).connection.targetBlock().outputConnection.getCheck()
+  // Skip if no checks are available
+  if (!thisBlock || !connectedBlock) return ''
+  // Find any intersection in the checklist
+  for (let i = 0; i < thisBlock.length; i++) {
+    if (connectedBlock.indexOf(thisBlock[i]) !== -1) {
+      return thisBlock[i]
+    }
+  }
+  return ''
+}

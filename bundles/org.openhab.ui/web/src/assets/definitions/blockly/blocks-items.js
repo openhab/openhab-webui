@@ -39,7 +39,7 @@ export default function (f7, isGraalJs) {
       this.setColour(0)
       this.setTooltip('Retrieve the members of a group')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-members-of-group')
-      this.setOutput(true, null)
+      this.setOutput(true, null) // Array of Item objects
     }
   }
 
@@ -64,7 +64,7 @@ export default function (f7, isGraalJs) {
       this.setColour(0)
       this.setTooltip('Retrieve the items that have all the given tags')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-items-with-tag')
-      this.setOutput(true, null)
+      this.setOutput(true, null) // Array of Item objects
     }
   }
 

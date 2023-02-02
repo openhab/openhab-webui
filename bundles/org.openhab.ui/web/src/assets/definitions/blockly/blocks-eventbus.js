@@ -5,11 +5,13 @@
 
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
+import { blockGetCheckedInputType } from './utils'
 
 export default function (f7, isGraalJs) {
   /*
     Send a command or post an update
-    itemName: provide the name of the item ('String', 'oh_item')
+    itemName: provide the name of the item ('String', 'oh_item') or even directly the item object ('oh_itemtype')
+    note: the field name has not been changed from itemName to allow backward compatibility
   */
   Blockly.Blocks['oh_event'] = {
     init: function () {
@@ -18,7 +20,7 @@ export default function (f7, isGraalJs) {
       this.appendValueInput('itemName')
         .appendField('to')
         .setAlign(Blockly.ALIGN_RIGHT)
-        .setCheck(['String', 'oh_item'])
+        .setCheck(['String', 'oh_item', 'oh_itemtype'])
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -32,10 +34,14 @@ export default function (f7, isGraalJs) {
     const eventType = block.getFieldValue('eventType')
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
+
+    const inputType = blockGetCheckedInputType(block, 'itemName')
+
+    // Expect oh_itemtype as default because oh_groupmembers & oh_taggeditems return them
     if (isGraalJs) {
-      return `${itemName}.${eventType}(${value});\n`
+      return (inputType === 'oh_item' || inputType === 'String') ? `items.getItem(${itemName}).${eventType}(${value});\n` : `${itemName}.${eventType}(${value});\n`
     } else {
-      return `events.${eventType}(${itemName}, ${value});\n`
+      return (inputType === 'oh_item' || inputType === 'String') ? `events.${eventType}(${itemName}, ${value});\n` : `events.${eventType}(${itemName}.getName(), ${value});\n`
     }
   }
 }
