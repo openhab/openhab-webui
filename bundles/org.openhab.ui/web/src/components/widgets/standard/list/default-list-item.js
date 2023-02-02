@@ -166,7 +166,7 @@ export default function itemDefaultListComponent (item, footer) {
   if (!component.config.item) component.config.item = item.name
   if (!component.config.title) component.config.title = item.label || item.name
   if (item.category && !component.config.icon) component.config.icon = 'oh:' + item.category
-  if (item.category && ['Switch', 'Rollershutter', 'Contact', 'Dimmer', 'Group'].indexOf(item.type) >= 0) component.config.iconUseState = true
+  if (item.category && ['Contact', 'Dimmer', 'Group', 'Number', 'Rollershutter', 'Switch'].indexOf(item.type) >= 0) component.config.iconUseState = true
   if (item.label && footer && footer.contextLabelSource) {
     let text = itemContextLabel(item, footer)
     if (text) component.config.footer = text
