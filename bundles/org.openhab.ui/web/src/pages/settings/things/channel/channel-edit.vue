@@ -34,13 +34,11 @@
 <script>
 import ChannelGeneralSettings from '@/pages/settings/things/channel/channel-general-settings.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
-import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
   components: {
     ChannelGeneralSettings,
-    ConfigSheet,
-    ClipboardIcon
+    ConfigSheet
   },
   props: ['thing', 'thingType', 'channel', 'channelType', 'channelId'],
   data () {
