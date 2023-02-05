@@ -11,16 +11,7 @@
     <f7-block class="block-narrow">
       <f7-col v-if="channel">
         <f7-block-title>Channel</f7-block-title>
-        <f7-list media-list>
-          <f7-list-item media-item class="channel-item"
-                        :title="channel.label"
-                        :footer="channel.description">
-            <div slot="subtitle">
-              {{ channel.uid }}
-              <clipboard-icon :value="channel.uid" tooltip="Copy UID" />
-            </div>
-          </f7-list-item>
-        </f7-list>
+        <channel-general-settings :channel="channel" :createMode="false" :ready="ready" />
       </f7-col>
       <f7-col v-if="channelType != null">
         <f7-block-title v-if="configDescription.parameters">
@@ -41,11 +32,13 @@
 </template>
 
 <script>
+import ChannelGeneralSettings from '@/pages/settings/things/channel/channel-general-settings.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
   components: {
+    ChannelGeneralSettings,
     ConfigSheet,
     ClipboardIcon
   },
