@@ -84,7 +84,7 @@ export default {
         this.$f7.dialog.alert('Please give an unique identifier')
         return
       }
-      if (!this.channel.id.match(/^[a-zA-Z0-9_]*$/)) {
+      if (!this.channel.id.match(/^[a-zA-Z0-9_\-]*$/)) {
         this.$f7.dialog.alert('The identifier should only contain alphanumeric characters')
         return
       }
