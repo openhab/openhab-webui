@@ -120,8 +120,7 @@ export default {
       if (configDescriptionURI) {
         this.$oh.api.get('/rest/config-descriptions/' + configDescriptionURI).then(data2 => {
           this.configDescription = data2
-          this.bindingId = configDescriptionURI.substring(configDescriptionURI.indexOf(':') + 1)
-          this.$oh.api.get('/rest/addons/' + this.bindingId + '/config').then(data3 => {
+          this.$oh.api.get('/rest/addons/' + this.strippedAddonId + '/config').then(data3 => {
             this.config = data3
           })
         })
