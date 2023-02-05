@@ -541,8 +541,8 @@ export default {
   computed: {
     titleDisplayText () {
       if (!this.items || !this.items.length) return 'Analyze'
-      if (this.items.length === 1) return this.items[0].name
-      return this.items[0].name + ' + ' + (this.items.length - 1)
+      if (this.items.length === 1) return (this.items[0].label) ? this.items[0].label : this.items[0].name
+      return ((this.items[0].label) ? this.items[0].label : this.items[0].name) + ' + ' + (this.items.length - 1)
     },
     context () {
       return {
