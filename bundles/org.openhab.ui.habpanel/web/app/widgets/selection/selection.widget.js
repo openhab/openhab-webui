@@ -53,7 +53,7 @@
                 switch (vm.widget.choices_source) {
                     case 'server':
                         vm.choices = vm.item.commandDescription.commandOptions.map(function (option) {
-                            return { cmd: option.value, label: option.label };
+                            return { cmd: option.command, label: option.label };
                         });
                         break;
                     case 'csv':
