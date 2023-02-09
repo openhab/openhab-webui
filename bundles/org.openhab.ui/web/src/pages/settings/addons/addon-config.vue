@@ -90,7 +90,7 @@ export default {
       })
 
       if (this.configDescription && this.config) {
-        promises.push(this.$oh.api.put('/rest/addons/' + this.bindingId + '/config', this.config))
+        promises.push(this.$oh.api.put('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : ''), this.config))
       }
 
       Promise.all(promises).then(() => {
@@ -120,8 +120,7 @@ export default {
       if (configDescriptionURI) {
         this.$oh.api.get('/rest/config-descriptions/' + configDescriptionURI).then(data2 => {
           this.configDescription = data2
-          this.bindingId = configDescriptionURI.substring(configDescriptionURI.indexOf(':') + 1)
-          this.$oh.api.get('/rest/addons/' + this.bindingId + '/config').then(data3 => {
+          this.$oh.api.get('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then(data3 => {
             this.config = data3
           })
         })
