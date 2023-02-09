@@ -52,8 +52,8 @@
             if (!vm.choices) {
                 switch (vm.widget.choices_source) {
                     case 'server':
-                        vm.choices = vm.item.stateDescription.options.map(function (option) {
-                            return { cmd: option.value, label: option.label };
+                        vm.choices = vm.item.commandDescription.commandOptions.map(function (option) {
+                            return { cmd: option.command, label: option.label };
                         });
                         break;
                     case 'csv':
