@@ -16,6 +16,11 @@
         Code
       </f7-link>
     </f7-toolbar>
+    <f7-toolbar v-if="ready && generic" position="bottom">
+      <f7-button color="red" v-if="!creationMode" @click="remove()" class="width-100">
+        Remove metadata
+      </f7-button>
+    </f7-toolbar>
     <f7-tabs class="metadata-editor-tabs">
       <f7-tab id="config" class="metadata-editor-config-tab" @tab:show="() => this.currentTab = 'config'" :tab-active="currentTab === 'config'">
         <f7-block class="block-narrow" v-if="ready && currentTab === 'config'">
