@@ -128,7 +128,7 @@ export default {
           if (!this.exprAst[key] || ctx.editmode) {
             this.exprAst[key] = expr.parse(value.substring(1))
           }
-          return expr.evaluate(this.exprAst[key], {
+          const evalExpr = expr.evaluate(this.exprAst[key], {
             items: ctx.store,
             props: this.props,
             vars: ctx.vars,
@@ -143,6 +143,7 @@ export default {
             dayjs: dayjs,
             user: this.$store.getters.user
           })
+          return (evalExpr === undefined) ? 'undefined' : evalExpr
         } catch (e) {
           return e
         }
