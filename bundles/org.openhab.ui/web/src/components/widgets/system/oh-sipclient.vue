@@ -265,7 +265,8 @@ export default {
           },
           widget: new WidgetDefinition('localSipSettings', 'local SIP client settings', '')
             .paramGroup(pg('sipCredentials', 'SIP Credentials', 'These are not stored on the openHAB server, but instead locally in your browser. ' +
-              'Local settings allow each UI client to have its own SIP account and therefore to establish an intercom between multiple UI clients.'), [
+              'Local settings allow each UI client to have its own SIP account and therefore to establish an intercom between multiple UI clients. ' +
+              'Note: You still need to configure the SIP domain and other options in the widget settings!'), [
               pt('username', 'Local SIP Username', 'Used instead of the username from widget settings and stored on the openHAB server.'),
               pt('password', 'Local SIP Password', 'Used instead of the password from the widget settings and stored on the openHAB server.'),
               pt('ownSipAddress', 'Local SIP Address', 'SIP Address (phone number) of this local client. Used by the client to remove itself from the dial ' +
