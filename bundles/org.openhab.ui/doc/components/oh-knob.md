@@ -7,11 +7,9 @@ source: https://github.com/openhab/openhab-webui/edit/main/bundles/org.openhab.u
 prev: /docs/ui/components/
 ---
 
-# oh-knob - Knob
+# oh-knob - Knob & Rounded Slider
 
-<!-- Put a screenshot here if relevant:
-![](./images/oh-knob/header.jpg)
--->
+![](images/oh-knob/header.png)
 
 [[toc]]
 
@@ -33,6 +31,11 @@ Knob control, allow to change a number value on a circular track
     Item to control
   </PropDescription>
 </PropBlock>
+<PropBlock type="BOOLEAN" name="sliderType" label="activate Slider Control">
+  <PropDescription>
+    Use Slider Control instead of knob control (allows more customization)
+  </PropDescription>
+</PropBlock>
 <PropBlock type="INTEGER" name="min" label="Min">
   <PropDescription>
     Minimum value (default 0)
@@ -41,6 +44,21 @@ Knob control, allow to change a number value on a circular track
 <PropBlock type="INTEGER" name="max" label="Max">
   <PropDescription>
     Maximum value (default 100)
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="circleShape" label="Circle Shape">
+  <PropDescription>
+    full, pie, half-top/-bottom/-left/-right, quarter-top-left/-right, quarter-botton-left/right  - slider control only
+  </PropDescription>
+</PropBlock>
+<PropBlock type="INTEGER" name="startAngle" label="Start Angle">
+  <PropDescription>
+    Minimum value (default 0)  - slider control only
+  </PropDescription>
+</PropBlock>
+<PropBlock type="INTEGER" name="endAngle" label="End Angle">
+  <PropDescription>
+    Maximum value (default 360)  - slider control only
   </PropDescription>
 </PropBlock>
 <PropBlock type="DECIMAL" name="stepSize" label="Step">
@@ -73,9 +91,29 @@ Knob control, allow to change a number value on a circular track
     Color of the value text (HTML value, default #000000)
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="borderColor" label="Border Color">
+  <PropDescription>
+    Sets the border color of the slider. By default it will inherit the `primaryColor` value (HTML value, default #000000) - slider control only
+  </PropDescription>
+</PropBlock>
+<PropBlock type="INTEGER" name="borderWidth" label="Border Width">
+  <PropDescription>
+    Indicates the border width of the slider - slider control only
+  </PropDescription>
+</PropBlock>
 <PropBlock type="TEXT" name="strokeWidth" label="Stroke Width">
   <PropDescription>
     Thickness of the arcs, default 17
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="lineCap" label="Line End Type">
+  <PropDescription>
+    butt, round, square, none - slider control only
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="dottedPath" label="Dotted Path">
+  <PropDescription>
+    dotted path style (use css stroke-dasharray format) - slider control only
   </PropDescription>
 </PropBlock>
 <PropBlock type="BOOLEAN" name="responsive" label="Responsive">
