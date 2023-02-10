@@ -2,7 +2,7 @@
   <div class="main-container">
     <!-- Show settings gear for local settings if intercom is enabled and in edit mode -->
     <f7-button v-if="context.editmode" icon-f7="gear_fill" @click.stop="localSettingsPopup()" class="text-align-right">
-      Local settings
+      Local SIP Account Settings
     </f7-button>
     <div v-if="config.enableVideo" class="video-container" :style="{ 'aspect-ratio': config.defaultVideoAspectRatio || '4/3' }">
       <video ref="remoteVideo" autoplay playsinline class="remote-video" poster="@/images/openhab-logo.svg" />
@@ -182,7 +182,7 @@ export default {
     },
     /**
      * Plays a given tone. Might not properly work on all browsers and devices.
-     * @param {*} audio file to be played
+     * @param {*} file file to be played
      */
     playTone (file) {
       if (this.config.enableTones === true) {
@@ -264,10 +264,12 @@ export default {
             config: this.localConfig || {}
           },
           widget: new WidgetDefinition('localSipSettings', 'local SIP client settings', '')
-            .paramGroup(pg('sipCredentials', 'SIP Credentials'), [
-              pt('username', 'Username', 'SIP Username'),
-              pt('password', 'Password', 'SIP Password'),
-              pt('ownSipAddress', 'Own SIP Address', 'SIP Address (phone number) of this client. Used by the client to remove itself from the dial popup.')
+            .paramGroup(pg('sipCredentials', 'SIP Credentials', 'These are not stored on the openHAB server, but instead locally in your browser. ' +
+              'Local settings allow each UI client to have its own SIP account and therefore to establish an intercom between multiple UI clients.'), [
+              pt('username', 'Local SIP Username', 'Used instead of the username from widget settings and stored on the openHAB server.'),
+              pt('password', 'Local SIP Password', 'Used instead of the password from the widget settings and stored on the openHAB server.'),
+              pt('ownSipAddress', 'Local SIP Address', 'SIP Address (phone number) of this local client. Used by the client to remove itself from the dial ' +
+                'popup, which is configured with the phonebook option in the widget settings.')
             ])
         }
       })
