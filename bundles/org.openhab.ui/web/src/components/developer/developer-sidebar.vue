@@ -187,10 +187,10 @@
           <f7-list>
             <f7-list-item divider title="Things" />
             <f7-list-button href="/settings/things/add" color="blue" :animate="false">
-              Add thing
+              Add Thing
             </f7-list-button>
             <f7-list-button @click="quickAddThing" color="blue">
-              Add thing (quick)
+              Add Thing (quick)
             </f7-list-button>
             <f7-list-button href="/settings/things/inbox" color="blue" :animate="false">
               Inbox
