@@ -55,18 +55,18 @@ Display a knob in a card to visualize and control a quantifiable item
 </PropGroup>
 </div>
 
-### Knob
+### Knob  vue-round-slider
 <div class="props">
-<PropGroup name="knob" label="Knob">
-  Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://github.com/kramer99/vue-knob-control#properties">Knob control</a>
+<PropGroup name="knob" label="Knob  vue-round-slider">
+  Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://github.com/kramer99/vue-knob-control#properties">knob control</a> or <a target="_blank" class="external text-color-blue" href="https://github.com/soundar24/vue-round-slider#props">round-slider control</a>
 <PropBlock type="TEXT" name="item" label="Item" context="item">
   <PropDescription>
     Item to control
   </PropDescription>
 </PropBlock>
-<PropBlock type="BOOLEAN" name="sliderType" label="activate Slider Control">
+<PropBlock type="BOOLEAN" name="useSliderControl" label="Use Slider Control">
   <PropDescription>
-    Use Slider Control instead of knob control (allows more customization)
+    Use <a class="external text-color-blue" target="_blank" href="https://vue.roundsliderui.com/">round-slider control</a> instead of knob control (allows more customization) - parameters are advanced!
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="min" label="Min">
@@ -81,17 +81,17 @@ Display a knob in a card to visualize and control a quantifiable item
 </PropBlock>
 <PropBlock type="TEXT" name="circleShape" label="Circle Shape">
   <PropDescription>
-    full, pie, half-top/-bottom/-left/-right, quarter-top-left/-right, quarter-botton-left/right  - slider control only
+    full, pie, half-top/-bottom/-left/-right, quarter-top-left/-right, quarter-bottom-left/-right - slider control only!
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="startAngle" label="Start Angle">
   <PropDescription>
-    Minimum value (default 0)  - slider control only
+    Angle of circle where the round slider should start (default 0); 0 is 9 o'clock; only if circleShape is not set - slider control only!
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="endAngle" label="End Angle">
   <PropDescription>
-    Maximum value (default 360)  - slider control only
+    Angle of circle where the round slider should start (default 360); 360 is 9 o'clock; only if circleShape is not set - slider control only!
   </PropDescription>
 </PropBlock>
 <PropBlock type="DECIMAL" name="stepSize" label="Step">
@@ -126,27 +126,27 @@ Display a knob in a card to visualize and control a quantifiable item
 </PropBlock>
 <PropBlock type="TEXT" name="borderColor" label="Border Color">
   <PropDescription>
-    Sets the border color of the slider. By default it will inherit the `primaryColor` value (HTML value, default #000000) - slider control only
+    Sets the border color of the slider. By default it will inherit the primaryColor value (HTML value, default #000000) - slider control only!
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="borderWidth" label="Border Width">
   <PropDescription>
-    Indicates the border width of the slider - slider control only
+    Indicates the border width of the slider - slider control only!
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="strokeWidth" label="Stroke Width">
   <PropDescription>
-    Thickness of the arcs, default 17
+    Thickness of the arcs (default 17)
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="lineCap" label="Line End Type">
   <PropDescription>
-    butt, round, square, none - slider control only
+    butt, round, square, none - slider control only!
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="dottedPath" label="Dotted Path">
+<PropBlock type="INTEGER" name="dottedPath" label="Dotted Path">
   <PropDescription>
-    dotted path style (use css stroke-dasharray format) - slider control only
+    Length of dotted path segments (css stroke-dasharray) - slider control only!
   </PropDescription>
 </PropBlock>
 <PropBlock type="BOOLEAN" name="responsive" label="Responsive">
