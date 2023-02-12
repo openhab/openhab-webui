@@ -126,6 +126,9 @@ export default {
       if (!this.page.uid) {
         this.$f7.dialog.alert('Please give an ID to the page')
         return
+      } else if (!/^[A-Za-z0-9_]+$/.test(this.page.uid)) {
+        this.$f7.dialog.alert('Page ID is only allowed to contain A-Z,a-z,0-9,_')
+        return
       }
       if (!this.page.config.label) {
         this.$f7.dialog.alert('Please give a label to the page')
