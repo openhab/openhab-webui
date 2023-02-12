@@ -1,9 +1,9 @@
 <template>
-  <div :style="dottedPath">
-    <knob-control v-if="!config.sliderType" v-bind="config" :text-color="config.textColor || (($f7.data.themeOptions.dark === 'dark') ? '#ffffff' : undefined)" :value="value"
+  <div>
+    <knob-control v-if="!config.useSliderControl" v-bind="config" :text-color="config.textColor || (($f7.data.themeOptions.dark === 'dark') ? '#ffffff' : undefined)" :value="value"
                   @input="sendCommandDebounced($event)" @click.native.stop="sendCommandDebounced(value, true)" @touchend.native.stop="sendCommandDebounced(value, true)" />
 
-    <round-slider v-else :value="value" :min="config.min" :max="config.max" :step="config.stepSize" :radius="config.size/2"
+    <round-slider v-else :value="value" :min="config.min" :max="config.max" :step="config.stepSize" :radius="config.size/2" :style="dottedPath"
                   :rangeColor="config.primaryColor" :pathColor="config.secondaryColor"
                   :tooltipColor="config.textColor || (($f7.data.themeOptions.dark === 'dark') ? '#ffffff' : undefined)"
                   :disabled="config.disabled" :width="config.strokeWidth" :line-cap="config.lineCap"
