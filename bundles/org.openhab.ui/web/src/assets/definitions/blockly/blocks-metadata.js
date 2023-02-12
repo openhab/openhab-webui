@@ -54,7 +54,7 @@ export default function (f7, isGraalJs) {
         .setCheck('String')
       this.appendValueInput('theItem')
         .appendField('of item')
-        .setCheck(['String', 'oh_item'])
+        .setCheck(['String', 'oh_item', 'oh_itemtype'])
       this.appendValueInput('namespace')
         .appendField('from namespace')
       this.setInputsInline(true)
@@ -94,7 +94,7 @@ export default function (f7, isGraalJs) {
         .appendField('to value into namespace')
       this.appendValueInput('theItem')
         .appendField('of item')
-        .setCheck(['String', 'oh_item'])
+        .setCheck(['String', 'oh_item', 'oh_itemtype'])
 
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
@@ -141,7 +141,7 @@ export default function (f7, isGraalJs) {
         .appendField('into namespace')
       this.appendValueInput('theItem')
         .appendField('of item')
-        .setCheck(['String', 'oh_item'])
+        .setCheck(['String', 'oh_item', 'oh_itemtype'])
 
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
