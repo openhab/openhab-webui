@@ -3,7 +3,8 @@
     <knob-control v-if="!config.useSliderControl" v-bind="config" :text-color="config.textColor || (($f7.data.themeOptions.dark === 'dark') ? '#ffffff' : undefined)" :value="value"
                   @input="sendCommandDebounced($event)" @click.native.stop="sendCommandDebounced(value, true)" @touchend.native.stop="sendCommandDebounced(value, true)" />
 
-    <round-slider v-else :value="value" :min="config.min" :max="config.max" :step="config.stepSize" :radius="config.size/2" :style="dottedPath"
+    <round-slider v-else :value="value" :min="config.min" :max="config.max" :step="config.stepSize" :radius="config.size/2"
+                  :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`"
                   :rangeColor="config.primaryColor" :pathColor="config.secondaryColor"
                   :tooltipColor="config.textColor || (($f7.data.themeOptions.dark === 'dark') ? '#ffffff' : undefined)"
                   :disabled="config.disabled" :width="config.strokeWidth" :line-cap="config.lineCap"
@@ -27,11 +28,6 @@ export default {
     KnobControl,
     RoundSlider
   },
-  widget: OhKnobDefinition,
-  computed: {
-    dottedPath () {
-      return `stroke-dasharray: ${(!this.config.dottedPath) ? 0 : this.config.dottedPath}`
-    }
-  }
+  widget: OhKnobDefinition
 }
 </script>
