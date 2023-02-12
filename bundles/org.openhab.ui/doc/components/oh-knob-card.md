@@ -55,9 +55,9 @@ Display a knob in a card to visualize and control a quantifiable item
 </PropGroup>
 </div>
 
-### Knob  vue-round-slider
+### Knob & Round Slider
 <div class="props">
-<PropGroup name="knob" label="Knob  vue-round-slider">
+<PropGroup name="knob" label="Knob & Round Slider">
   Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://github.com/kramer99/vue-knob-control#properties">knob control</a> or <a target="_blank" class="external text-color-blue" href="https://github.com/soundar24/vue-round-slider#props">round-slider control</a>
 <PropBlock type="TEXT" name="item" label="Item" context="item">
   <PropDescription>
