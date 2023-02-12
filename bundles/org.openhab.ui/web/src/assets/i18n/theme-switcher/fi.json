@@ -1,15 +1,16 @@
 {
   "about.theme": "Teema",
   "about.theme.auto": "Automaattinen",
-  "about.darkMode": "Tumma",
+  "about.darkMode": "Tumma tila",
   "about.darkMode.auto": "Automaattinen",
   "about.darkMode.light": "Vaalea",
   "about.darkMode.dark": "Tumma",
   "about.navigationBarsStyle": "Navigointipalkkien tyyli",
   "about.miscellaneous": "Sekalaiset",
   "about.miscellaneous.home.navbar": "Yksinkertainen navigointipalkki etusivulla",
-  "about.miscellaneous.home.background": "Standardi etusivun taustaväri",
+  "about.miscellaneous.home.background": "Vakioväri etusivun taustalla",
   "about.miscellaneous.home.hideChatInput": "Piilota chatin syöttöruutu etusivulla",
-  "about.miscellaneous.home.disableCardExpansionAnimation": "Poista korttien laajennusanimaatiot käytöstä",
-  "about.miscellaneous.theme.disablePageTransition": "Poista sivujen siirtymäanimaatiot käytöstä"
+  "about.miscellaneous.home.disableCardExpansionAnimation": "Älä käytä korttien laajennusanimaatioita",
+  "about.miscellaneous.theme.disablePageTransition": "Älä käytä sivujen siirtymäanimaatioita",
+  "about.miscellaneous.webaudio.enable": "Ota Web Audio sink -tuki käyttöön"
 }
