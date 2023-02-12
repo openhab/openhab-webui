@@ -143,7 +143,7 @@ A cell expanding to a knob control
     Indicates the border width of the slider - slider control only!
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="strokeWidth" label="Stroke Width">
+<PropBlock type="INTEGER" name="strokeWidth" label="Stroke Width">
   <PropDescription>
     Thickness of the arcs (default 17)
   </PropDescription>

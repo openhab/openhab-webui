@@ -16,7 +16,7 @@ export default () => [
   pt('textColor', 'Text Color', 'Color of the value text (HTML value, default #000000)'),
   pt('borderColor', 'Border Color', 'Sets the border color of the slider. By default it will inherit the primaryColor value (HTML value, default #000000) - slider control only!'),
   pn('borderWidth', 'Border Width', 'Indicates the border width of the slider - slider control only!').a(),
-  pt('strokeWidth', 'Stroke Width', 'Thickness of the arcs (default 17)'),
+  pn('strokeWidth', 'Stroke Width', 'Thickness of the arcs (default 17)'),
   pt('lineCap', 'Line End Type', 'butt, round, square, none - slider control only!').a(),
   pn('dottedPath', 'Dotted Path', 'Length of dotted path segments (css stroke-dasharray) - slider control only!').a(),
   pb('responsive', 'Responsive', 'Size the control using percentages instead of pixels'),
