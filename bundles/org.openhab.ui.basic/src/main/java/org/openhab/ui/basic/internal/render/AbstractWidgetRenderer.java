@@ -54,6 +54,14 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
     private final Logger logger = LoggerFactory.getLogger(AbstractWidgetRenderer.class);
 
+    private static final String ICON_SOURCE_OH = "oh";
+    private static final String ICON_SOURCE_IF = "if";
+    private static final String ICON_SOURCE_ICONIFY = "iconify";
+    private static final String ICON_SOURCE_MATERIAL = "material";
+    private static final String DEFAULT_ICON_SOURCE = ICON_SOURCE_OH;
+    private static final String DEFAULT_ICON_SET = "classic";
+    private static final String DEFAULT_ICON_NAME = "none";
+
     public static final String ICON_TYPE = "svg";
 
     private final BundleContext bundleContext;
@@ -88,14 +96,26 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     /**
      * Replace some common values in the widget template
      *
-     * @param snippet snippet html code
+     * @param snippet snippet HTML code
      * @param w corresponding widget
-     * @return
+     * @return HTML code
      */
     protected String preprocessSnippet(String originalSnippet, Widget w) {
-        String snippet = originalSnippet;
+        return preprocessSnippet(originalSnippet, w, false);
+    }
+
+    /**
+     * Replace some common values in the widget template
+     *
+     * @param snippet snippet HTML code
+     * @param w corresponding widget
+     * @param ignoreStateForIcon true if state has to be ignored when requesting the icon
+     * @return HTML code
+     */
+    protected String preprocessSnippet(String originalSnippet, Widget w, boolean ignoreStateForIcon) {
+        String snippet = preprocessIcon(originalSnippet, w, ignoreStateForIcon);
+
         snippet = snippet.replace("%widget_id%", itemUIRegistry.getWidgetId(w));
-        snippet = snippet.replace("%icon_type%", ICON_TYPE);
         snippet = snippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
         // Optimization: avoid calling 3 times itemUIRegistry.getLabel(w)
         String text = itemUIRegistry.getLabel(w);
@@ -107,8 +127,67 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         String state = getState(w);
         snippet = snippet.replace("%state%", escapeURL(state));
 
+        return snippet;
+    }
+
+    private String preprocessIcon(String originalSnippet, Widget w, boolean ignoreState) {
         String category = getCategory(w);
-        snippet = snippet.replace("%category%", escapeURL(category));
+        String iconSource = DEFAULT_ICON_SOURCE;
+        String iconSet = DEFAULT_ICON_SET;
+        String iconName = DEFAULT_ICON_NAME;
+        if (category != null) {
+            String[] segments = category.split(":", 3);
+            if (segments.length == 1) {
+                iconName = segments[0];
+            } else if (segments.length == 2) {
+                iconSource = segments[0];
+                if (!ICON_SOURCE_OH.equalsIgnoreCase(iconSource)) {
+                    iconSet = "";
+                }
+                iconName = segments[1];
+            } else if (segments.length == 3) {
+                iconSource = segments[0];
+                iconSet = segments[1];
+                iconName = segments[2];
+            }
+        }
+
+        String iconSnippet = null;
+        boolean escapeValue = true;
+        try {
+            switch (iconSource.toLowerCase()) {
+                case ICON_SOURCE_OH:
+                    iconSnippet = getSnippet(ignoreState ? "icon_oh_no_state" : "icon_oh");
+                    break;
+                case ICON_SOURCE_IF:
+                case ICON_SOURCE_ICONIFY:
+                    if (config.isIconifyEnabled()) {
+                        iconSnippet = getSnippet("icon_iconify");
+                        escapeValue = false;
+                    }
+                    break;
+                case ICON_SOURCE_MATERIAL:
+                    iconSnippet = getSnippet("icon_material");
+                    break;
+                default:
+                    break;
+            }
+            if (iconSnippet == null) {
+                iconSnippet = getSnippet("icon_oh_no_state");
+                iconSource = DEFAULT_ICON_SOURCE;
+                iconSet = DEFAULT_ICON_SET;
+                iconName = DEFAULT_ICON_NAME;
+            }
+        } catch (RenderException e) {
+            iconSnippet = "";
+        }
+
+        String snippet = originalSnippet;
+        snippet = snippet.replace("%icon_snippet%", iconSnippet);
+
+        snippet = snippet.replace("%icon_type%", ICON_TYPE);
+        snippet = snippet.replace("%icon_set%", escapeValue ? escapeURL(iconSet) : iconSet);
+        snippet = snippet.replace("%icon_name%", escapeValue ? escapeURL(iconName) : iconName);
 
         return snippet;
     }

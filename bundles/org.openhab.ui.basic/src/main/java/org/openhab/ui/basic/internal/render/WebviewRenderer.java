@@ -52,7 +52,7 @@ public class WebviewRenderer extends AbstractWidgetRenderer {
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Webview webview = (Webview) w;
         String snippet = getSnippet("webview");
-        snippet = preprocessSnippet(snippet, webview);
+        snippet = preprocessSnippet(snippet, webview, true);
         // Process the color tags
         snippet = processColor(w, snippet);
 
