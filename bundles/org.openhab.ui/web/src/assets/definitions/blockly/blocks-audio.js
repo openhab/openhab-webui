@@ -99,7 +99,7 @@ export default function (f7, isGraalJs, sinks, voices) {
     let volume = javascriptGenerator.valueToCode(block, 'volume', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
 
     if (isGraalJs) {
-      return `actions.Audio.playSound(${sinkName}, ${fileName}, new runtime.PercentType(${volume}));\n`
+      return `actions.Audio.playSound(${sinkName}, ${fileName}, (${volume}/100));\n`
     } else {
       const audio = addAudio()
       return `${audio}.playSound(${sinkName}, ${fileName}, new PercentType(${volume}));\n`
