@@ -14,13 +14,10 @@
               {{ type }}
             </option>
           </optgroup>
-          <optgroup label="Numbers with Dimensions">
-            <option v-for="dimension in types.Dimensions" :key="dimension" :value="'Number:' + dimension" :selected="item.type === 'Number:' + dimension">
-              {{ 'Number:' + dimension }}
-            </option>
-          </optgroup>
         </select>
       </f7-list-item>
+      <f7-list-input v-if="(item.type === 'Number') || ((item.type === 'Group') && (item.groupType === 'Number'))" label="Unit" type="text" placeholder="Unit" :value="unit"
+                     @input="onUnitInput" clear-button />
       <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
                      @input="item.category = $event.target.value" clear-button>
         <div slot="root-end" style="margin-left: calc(35% + 8px)">
@@ -55,7 +52,8 @@ export default {
       types: Types,
       categoryInputId: '',
       categoryAutocomplete: null,
-      nameErrorMessage: ''
+      nameErrorMessage: '',
+      unit: ''
     }
   },
   methods: {
@@ -86,6 +84,14 @@ export default {
         this.nameErrorMessage = ''
       }
       if (oldError !== this.nameErrorMessage) this.$emit('valid', !this.nameErrorMessage)
+    },
+    onUnitInput (event) {
+      console.log('' + event.target.value)
+      this.unit = event.target.value
+      if (!this.item.metadata) {
+        this.item.metadata = {}
+      }
+      this.item.metadata.unit = { value : this.unit }
     }
   },
   mounted () {
@@ -94,6 +100,9 @@ export default {
     if (this.enableName) {
       if (!this.items) this.items = []
       this.validateName(this.item.name)
+    }
+    if (this.item.metadata && this.item.metadata.unit) {
+      this.unit = this.item.metadata.unit.value
     }
     const categoryControl = this.$refs.category
     if (!categoryControl || !categoryControl.$el) return
