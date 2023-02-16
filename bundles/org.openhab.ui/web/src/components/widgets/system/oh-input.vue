@@ -32,10 +32,11 @@ export default {
   widget: OhInputDefinition,
   data () {
     return {
-      pendingUpdate: null
+      pendingUpdate: null,
+      metaValue: null
     }
   },
-  computed: {
+  asyncComputed: {
     value () {
       if (this.config.variable && this.config.variableKey) {
         const keyValue = this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey)
@@ -46,15 +47,19 @@ export default {
         return this.context.vars[this.config.variable]
       } else if (this.config.sendButton && this.pendingUpdate !== null) {
         return this.pendingUpdate
-      } else if (this.config.item && this.context.store[this.config.item].state !== 'NULL' && this.context.store[this.config.item].state !== 'UNDEF') {
+      } else if (this.config.item && !this.config.metaconfig && this.context.store[this.config.item].state !== 'NULL' && this.context.store[this.config.item].state !== 'UNDEF') {
         if (this.config.useDisplayState) {
           return this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
         } else {
           return this.context.store[this.config.item].state
         }
+      } else if (this.config.item && this.config.metaconfig) {
+        return this.processMetadataValue('get')
       }
       return this.config.defaultValue
-    },
+    }
+  },
+  computed: {
     calendarParams () {
       if (this.config.type !== 'datepicker') return null
       let params = { dateFormat: { year: 'numeric', month: 'numeric', day: 'numeric' } }
@@ -82,6 +87,58 @@ export default {
     }
   },
   methods: {
+    processMetadataValue (command) {
+      if (this.config.item && this.config.metaconfig) {
+        let metaConfigPath = this.config.metaconfig
+        let dot = metaConfigPath.indexOf('.')
+        let namespace = metaConfigPath.slice(0, dot)
+        let newValue = this.value
+        this.$oh.api.get(`/rest/items/${this.config.item}?metadata=${namespace}`).then((data) => {
+          if (data.metadata) {
+            let propertyPath = metaConfigPath.slice(dot + 1, metaConfigPath.len)
+            if (propertyPath === 'value') {
+              if (command === 'patch') {
+                data.metadata[namespace].value = newValue
+              } else {
+                this.metaValue = data.metadata[namespace].value
+              }
+            } else {
+              let props = propertyPath.split('.')
+              let meta = data.metadata[namespace].config
+              if (command === 'patch') {
+                let index = 0
+                for (; index < props.length - 1; index++) {
+                  let property = props[index]
+                  meta = meta[property]
+                }
+                meta[props[index]] = newValue
+              } else {
+                props.forEach(property => {
+                  meta = meta[property]
+                })
+                this.metaValue = meta
+              }
+            }
+            if (command === 'patch') {
+              this.$oh.api.put(`/rest/items/${this.config.item}/metadata/${namespace}`, data.metadata[namespace]).then((data) => {
+                this.$f7.toast.create({
+                  text: `Metadata ${metaConfigPath} for item ${this.config.item} updated to ${newValue}.`,
+                  destroyOnClose: true,
+                  closeTimeout: 3000
+                }).open()
+              }).catch((err) => {
+                this.$f7.toast.create({
+                  text: `Error while updating metadata ${metaConfigPath} for item ${this.config.item}. Error = ${err}`,
+                  destroyOnClose: true,
+                  closeTimeout: 15000
+                }).open()
+              })
+            }
+          }
+        })
+      }
+      return this.metaValue
+    },
     updated (value) {
       if (this.config.type === 'texteditor') {
         value = this.$$(this.$refs.input.$el).find('.text-editor-content')[0].innerHTML
@@ -99,7 +156,9 @@ export default {
       }
     },
     sendButtonClicked () {
-      if (this.config.item && this.pendingUpdate) {
+      if (this.config.item && this.config.metaconfig) {
+        this.processMetadataValue('patch')
+      } else if (this.config.item && this.pendingUpdate) {
         let cmd = this.pendingUpdate
         if (this.config.type === 'datepicker' && Array.isArray(cmd)) {
           cmd = dayjs(cmd[0]).format()

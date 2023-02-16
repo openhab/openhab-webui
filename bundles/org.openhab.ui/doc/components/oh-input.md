@@ -83,6 +83,11 @@ Displays an input field, used to set a variable
     Link the input value to the state of this item
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="metaconfig" label="Name of metadata config property">
+  <PropDescription>
+    Use namespacename.value or namespacename.propertyname
+  </PropDescription>
+</PropBlock>
 <PropBlock type="BOOLEAN" name="useDisplayState" label="Use Display State">
   <PropDescription>
     Use the formatted state as the value for the input control
