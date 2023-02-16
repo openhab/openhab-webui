@@ -15,6 +15,7 @@ import defineColorBlocks from './blocks-color'
 import defineTextBlocks from './blocks-text'
 import defineListBlocks from './blocks-list'
 import defineUomBlocks from './blocks-uom'
+import defineMetaBlocks from './blocks-metadata'
 
 import { defineLibraries } from './libraries'
 
@@ -38,5 +39,6 @@ export default function (f7, libraryDefinitions, data, isGraalJs) {
   defineTextBlocks(f7, isGraalJs)
   defineListBlocks(f7, isGraalJs)
   defineUomBlocks(f7, isGraalJs)
+  defineMetaBlocks(f7, isGraalJs)
   defineLibraries(libraryDefinitions)
 }
