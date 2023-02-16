@@ -74,9 +74,13 @@
         <f7-block-title v-if="showScripts" class="searchbar-hide-on-search">
           {{ rules.length }} scripts
         </f7-block-title>
+        <f7-block-title v-else-if="showScenes" class="searchbar-hide-on-search">
+          {{ rules.length }} scenes
+        </f7-block-title>
         <f7-block-title v-else class="searchbar-hide-on-search">
           {{ rules.length }} rules
         </f7-block-title>
+
         <f7-list
           v-show="rules.length > 0"
           class="searchbar-found col rules-list"
@@ -98,10 +102,10 @@
               :title="rule.name"
               :text="rule.uid"
               :footer="rule.description"
-              :badge="ruleStatusBadgeText(rule.status)"
+              :badge="showScenes ? '' : ruleStatusBadgeText(rule.status)"
               :badge-color="ruleStatusBadgeColor(rule.status)">
               <div slot="footer">
-                <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                   <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                 </f7-chip>
               </div>
@@ -114,6 +118,7 @@
     </f7-block>
     <f7-block v-if="ready && !noRuleEngine && !rules.length" class="service-config block-narrow">
       <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
+      <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
       <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
     </f7-block>
     <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
@@ -128,7 +133,7 @@ import RuleStatus from '@/components/rule/rule-status-mixin'
 
 export default {
   mixins: [RuleStatus],
-  props: ['showScripts'],
+  props: ['showScripts', 'showScenes'],
   components: {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
   },
@@ -166,13 +171,24 @@ export default {
       this.loading = true
       this.$set(this, 'selectedItems', [])
       this.showCheckboxes = false
-      this.$oh.api.get('/rest/rules?summary=true' + (this.showScripts ? '&tags=Script' : '')).then(data => {
+      let filter = ''
+      if (this.showScripts) {
+        filter = '&tags=Script'
+      }
+      if (this.showScenes) {
+        filter = '&tags=Scene'
+      }
+      this.$oh.api.get('/rest/rules?summary=true' + filter).then(data => {
         this.rules = data.sort((a, b) => {
           return a.name.localeCompare(b.name)
         })
 
         if (!this.showScripts) {
           this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Script') < 0)
+        }
+
+        if (!this.showScenes) {
+          this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Scene') < 0)
         }
 
         this.loading = false

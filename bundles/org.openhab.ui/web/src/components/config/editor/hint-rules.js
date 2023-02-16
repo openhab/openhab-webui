@@ -11,7 +11,7 @@ function getModuleTypes (cm, section) {
   })
 }
 
-function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix) {
+function hintItems (cm, line, replaceAfterColon, replaceAfterLastSpace, addColonSuffix) {
   const cursor = cm.getCursor()
   if (!cm.state.$oh) return
   const promise = (itemsCache) ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items')
@@ -20,7 +20,7 @@ function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix) {
     let ret = {
       list: data.map((item) => {
         return {
-          text: item.name + ((addStatePropertySuffix ? '.state' : '')),
+          text: item.name + ((addColonSuffix ? ': ' : '')),
           displayText: item.name,
           description: `${(item.label) ? item.label + ' ' : ''}(${item.type})<br />${item.state}`
         }
@@ -30,6 +30,11 @@ function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix) {
     if (replaceAfterColon) {
       const colonPos = line.indexOf(':')
       ret.from = { line: cursor.line, ch: colonPos + 2 }
+      ret.to = { line: cursor.line, ch: line.length }
+    }
+    if (replaceAfterLastSpace) {
+      const lastSpacePos = line.lastIndexOf(' ')
+      ret.from = { line: cursor.line, ch: lastSpacePos + 1 }
       ret.to = { line: cursor.line, ch: line.length }
     }
     addTooltipHandlers(cm, ret)
@@ -144,9 +149,18 @@ function buildModuleStructure (cm, moduleType) {
   return ret
 }
 
+function hintSceneItems (cm, line, parentNr) {
+  console.info('hinting in the items section (scenes)')
+  return hintItems(cm, line, false, true, true)
+}
+
 function hintModuleStructure (cm, line, parentLineNr) {
   const cursor = cm.getCursor()
   const section = cm.getLine(parentLineNr).replace('s:', '').trim()
+  if (section === 'item') {
+    if (line.indexOf(':') < 0) return hintSceneItems(cm, line, parentLineNr)
+    return // todo: hint commands?
+  }
   return getModuleTypes(cm, section).then((moduleTypes) => {
     let completions = moduleTypes.map((m) => {
       return {
