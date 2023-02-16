@@ -533,11 +533,6 @@ export default {
       const itemName = module.configuration.itemName
       this.$oh.api.getPlain('/rest/items/' + itemName + '/state').then((state) => {
         this.$set(module.configuration, 'command', state)
-        // this.$f7.toast.create({
-        //   text: `Updated desired state of ${itemName} to ${state}`,
-        //   destroyOnClose: true,
-        //   closeTimeout: 2000
-        // }).open()
       })
     },
     testCommand (ev, module) {
@@ -545,11 +540,11 @@ export default {
       const itemName = module.configuration.itemName
       const command = module.configuration.command
       this.$oh.api.postPlain('/rest/items/' + itemName, command, 'text/plain', 'text/plain').then((state) => {
-        // this.$f7.toast.create({
-        //   text: `Updated desired state of ${itemName} to ${state}`,
-        //   destroyOnClose: true,
-        //   closeTimeout: 2000
-        // }).open()
+        this.$f7.toast.create({
+          text: `Updated desired state of ${itemName} to ${state}`,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
       })
     },
     updateActionModule (params) {
