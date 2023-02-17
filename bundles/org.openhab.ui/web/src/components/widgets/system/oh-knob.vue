@@ -20,13 +20,12 @@ import slideMixin from './slide-mixin'
 import { OhKnobDefinition } from '@/assets/definitions/widgets/system'
 
 import KnobControl from 'vue-knob-control'
-import RoundSlider from 'vue-round-slider'
 
 export default {
   mixins: [mixin, slideMixin],
   components: {
     KnobControl,
-    RoundSlider
+    'RoundSlider': () => import(/* webpackChunkName: "vue-round-slider" */ 'vue-round-slider')
   },
   widget: OhKnobDefinition
 }
