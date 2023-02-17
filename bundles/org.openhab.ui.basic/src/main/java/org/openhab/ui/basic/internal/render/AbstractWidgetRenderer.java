@@ -153,7 +153,6 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         }
 
         String iconSnippet = null;
-        boolean escapeValue = true;
         try {
             switch (iconSource.toLowerCase()) {
                 case ICON_SOURCE_OH:
@@ -163,7 +162,6 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
                 case ICON_SOURCE_ICONIFY:
                     if (config.isIconifyEnabled()) {
                         iconSnippet = getSnippet("icon_iconify");
-                        escapeValue = false;
                     }
                     break;
                 case ICON_SOURCE_MATERIAL:
@@ -186,8 +184,10 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         snippet = snippet.replace("%icon_snippet%", iconSnippet);
 
         snippet = snippet.replace("%icon_type%", ICON_TYPE);
-        snippet = snippet.replace("%icon_set%", escapeValue ? escapeURL(iconSet) : iconSet);
-        snippet = snippet.replace("%icon_name%", escapeValue ? escapeURL(iconName) : iconName);
+        snippet = snippet.replace("%icon_set%", iconSet);
+        snippet = snippet.replace("%icon_set_in_url%", escapeURL(iconSet));
+        snippet = snippet.replace("%icon_name%", iconName);
+        snippet = snippet.replace("%icon_name_in_url%", escapeURL(iconName));
 
         return snippet;
     }
