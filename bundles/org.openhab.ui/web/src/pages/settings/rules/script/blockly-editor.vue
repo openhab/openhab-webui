@@ -1002,8 +1002,10 @@
   z-index 9000
 </style>
 
+<script src="./node_modules/@blockly/plugin-workspace-search/dist/index.js"></script>
 <script>
 import Blockly from 'blockly'
+import { WorkspaceSearch } from '@blockly/plugin-workspace-search';
 import { javascriptGenerator } from 'blockly/javascript'
 import DarkTheme from '@blockly/theme-dark'
 import { CrossTabCopyPaste } from '@blockly/plugin-cross-tab-copy-paste'
@@ -1111,6 +1113,8 @@ export default {
           },
         trashcan: false
       })
+      const workspaceSearch = new WorkspaceSearch(this.workspace);
+      workspaceSearch.init();
 
       Blockly.HSV_SATURATION = 0.45 // default
       Blockly.HSV_VALUE = 0.65 // a little bit more contract for the different colors
