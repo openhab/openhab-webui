@@ -18,6 +18,14 @@
                 "!doc": "The state of the item, as a string.",
                 "!type": "string"
             },
+            "numericState": {
+                "!doc": "Numeric representation of Item state, or null if state is not numeric",
+                "!type": "number|null"
+            },
+            "quantityState": {
+                "!doc": "Item state as Quantity or null if state is not Quantity-compatible",
+                "!type": "QuantityClass|null"
+            },
             "history": {
                 "!doc": "Access historical states for this item",
                 "!type": "ItemHistory"
@@ -50,21 +58,17 @@
                 "!doc": "Gets the groups for this item",
                 "!type": "[string]"
             },
-            "getMetadataValue": {
-                "!doc": "Gets metadata values for this item.",
-                "!type": "fn(namespace: string) -> string"
+            "getMetadata": {
+                "!doc": "Gets metadata of a single namespace or of all namespaces from this Item (see JavaScript Scripting docs/Standard Library/Items).",
+                "!type": "fn(namespace?: string) -> object|null"
             },
-            "updateMetadataValue": {
-                "!doc": "Updates metadata value for this item.",
-                "!type": "fn(namespace: string, value: string) -> string"
+            "replaceMetadata": {
+                "!doc": "Updates or adds metadata of a single namespace to this Item (see JavaScript Scripting docs/Standard Library/Items).",
+                "!type": "fn(namespace: string, value: string, configuration?: object) -> object|null"
             },
-            "upsertMetadataValue": {
-                "!doc": "Inserts or updates metadata values for this item.",
-                "!type": "fn(namespace: string, value: string) -> boolean"
-            },
-            "updateMetadataValues": {
-                "!doc": "Updates metadata values for this item.",
-                "!type": "fn(namespaceToValues: object) -> boolean"
+            "removeMetadata": {
+                "!doc": "Removes metadata of a single namespace or of all namespaces from a given Item (see JavaScript Scripting docs/Standard Library/Items).",
+                "!type": "fn(namespace?: string) -> object|null"
             },
             "sendCommand": {
                 "!doc": "Sends a command to the item.",
@@ -112,6 +116,22 @@
                 "!doc": "Checks if the state of a given Item has changed since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
+            "countBetween": {
+                "!doc": "Gets the number of available historic data points of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number"
+            },
+            "countSince": {
+                "!doc": "Gets the number of available historic data points of a given Item since a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+            },
+            "countStateChangesBetween": {
+                "!doc": "Gets the number of changes in historic data points of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number"
+            },
+            "countStateChangesSince": {
+                "!doc": "Gets the number of changes in historic data points of a given Item since a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+            },
             "deltaBetween": {
                 "!doc": "Gets the difference value of the state of a given Item between two certain points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
@@ -138,7 +158,7 @@
             },
             "historicState": {
                 "!doc": "Retrieves the historic Item state for a given Item at a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> string|null"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> HistoricItem"
             },
             "lastUpdate": {
                 "!doc": "Query the last update time of a given item.",
@@ -150,19 +170,19 @@
             },
             "maximumBetween": {
                 "!doc": "Gets the maximum value of the historic state of a given Item between two certain points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> HistoricItem"
             },
             "maximumSince": {
                 "!doc": "Gets the historic Item with the maximum value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> HistoricItem"
             },
             "minimumBetween": {
                 "!doc": "Gets the minimum value of the historic state of a given Item between two certain points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> HistoricItem"
             },
             "minimumSince": {
                 "!doc": "Gets the historic Item with the minimum value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> HistoricItem"
             },
             "persist": {
                 "!doc": "Persists the state of a given item",
@@ -170,7 +190,7 @@
             },
             "previousState": {
                 "!doc": "Returns the previous state of a given item.",
-                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> string|null"
+                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> HistoricItem"
             },
             "sumBetween": {
                 "!doc": "Gets the sum of the states of a given Item between two certain points in time.",
@@ -195,10 +215,24 @@
             "varianceSince": {
                 "!doc": "Gets the variance of the state of the given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+            }
+        },
+        "HistoricItem": {
+            "state": {
+                "!doc": "Item state",
+                "!type": "string"
             },
-            "latestState": {
-                "!doc": "Retrieves the historic Item state for a given Item at the current point in time.",
-                "!type": "fn(serviceId?: string) -> ?"
+            "numericState": {
+                "!doc": "Numeric representation of Item state, or null if state is not numeric",
+                "!type": "number|null"
+            },
+            "quantityState": {
+                "!doc": "Item state as Quantity or null if state is not Quantity-compatible",
+                "!type": "QuantityClass|null"
+            },
+            "timestamp": {
+                "!doc": "timestamp of historic Item",
+                "!type": "ZonedDateTime"
             }
         },
         "ItemSemantics": {
@@ -249,34 +283,34 @@
                 "!type": "[string]"
             },
             "channels": {
-                "!doc": "Channel links for the Item (see JS Scripting docs/Standard Library/Things).",
+                "!doc": "Channel links for the Item (see JavaScript Scripting docs/Standard Library/Items).",
                 "!type": "string|object"
             },
             "metadata": {
-                "!doc": "Metadata for the Item (see JS Scripting docs/Standard Library/Things).",
+                "!doc": "Metadata for the Item (see JavaScript Scripting docs/Standard Library/Items).",
                 "!type": "object"
             }
         },
         "ItemsNamespace": {
             "getItem": {
-                "!doc": "This method retrieves a single Item from the registry.",
+                "!doc": "Gets an Item.",
                 "!type": "fn(name: string) -> Item"
             },
             "getItems": {
-                "!doc": "Returns all items.",
+                "!doc": "Gets all Items.",
                 "!type": "fn() -> [Item]"
             },
             "getItemsByTag": {
-                "!doc": "Returns a list of items containing all of the given tags.",
+                "!doc": "Gets a list of all Items containing all of the given tags.",
                 "!type": "fn(tag: [string]) -> [Item]"
             },
             "addItem": {
-                "!doc": "Creates a new Item within openHAB (see JS Scripting docs/Standard Library/Items).",
+                "!doc": "Creates a new Item within openHAB (see JavaScript Scripting docs/Standard Library/Items).",
                 "!type": "fn(itemConfig: ItemConfig) -> Item",
                 "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
             },
             "replaceItem": {
-                "!doc": "Replaces (upserts) an item. If an Item does not exist with this name, a new Item will be created with the supplied configuration (see JS Scripting docs/Standard Library/Items).",
+                "!doc": "Replaces (upserts) an item. If an Item does not exist with this name, a new Item will be created with the supplied configuration (see JavaScript Scripting docs/Standard Library/Items).",
                 "!type": "fn(itemConfig: ItemConfig) -> Item",
                 "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
             },
@@ -287,6 +321,10 @@
             "safeItemName": {
                 "!doc": "Helper function to ensure an Item name is valid. All invalid characters are replaced with an underscore.",
                 "!type": "fn(s: string) -> string"
+            },
+            "NAME": {
+                "!doc": "Gets an Item using it's name on the items namespace, e.g. items.Hallway_Light",
+                "!type": "Item"
             }
         },
         "Thing": {
@@ -377,6 +415,68 @@
                 "!type": "fn(key: string) -> boolean"
             }
         },
+        "QuantityClass": {
+            "dimension": {
+                "!doc": "Dimension of this Quantity, e.g. [L] for metres or [L]² for cubic-metres",
+                "!type": "string"
+            },
+            "unit": {
+                "!doc": "Unit of this Quantity, e.g. Metre, or null if not available",
+                "!type": "string|null"
+            },
+            "symbol": {
+                "!doc": "Unit symbol of this Quantity, e.g. m, or null if not available",
+                "!type": "string|null"
+            },
+            "float": {
+                "!doc": "Float (decimal number) value of this Quantity",
+                "!type": "number"
+            },
+            "int": {
+                "!doc": "Integer (non-decimal number) value of this Quantity",
+                "!type": "number"
+            },
+            "add": {
+                "!doc": "Add the given value to this Quantity.",
+                "!type": "fn(value: string|QuantityClass) -> QuantityClass"
+            },
+            "divide": {
+                "!doc": "Divide this Quantity by the given value.",
+                "!type": "fn(value: number|string|QuantityClass) -> QuantityClass"
+            },
+            "multiply": {
+                "!doc": "Multiply this Quantity by the given value.",
+                "!type": "fn(value: number|string|QuantityClass) -> QuantityClass"
+            },
+            "subtract": {
+                "!doc": "Subtract the given value from this Quantity.",
+                "!type": "fn(value: string|QuantityClass) -> QuantityClass"
+            },
+            "toUnit": {
+                "!doc": "Convert this Quantity to the given unit, e.g. cm or °F",
+                "!type": "fn(unit: string) -> QuantityClass"
+            },
+            "equal": {
+                "!doc": "Checks whether this Quantity is equal to the passed in value.",
+                "!type": "fn(value: string|QuantityClass) -> boolean"
+            },
+            "greaterThan": {
+                "!doc": "Checks whether this Quantity is larger than the passed in value.",
+               "!type": "fn(value: string|QuantityClass) -> boolean"
+            },
+            "greaterThanOrEqual": {
+                "!doc": "Checks whether this Quantity is larger than or equal to the passed in value.",
+                "!type": "fn(value: string|QuantityClass) -> boolean"
+            },
+            "lessThan": {
+                "!doc": "Checks whether this Quantity is smaller than the passed in value.",
+                "!type": "fn(value: string|QuantityClass) -> boolean"
+            },
+            "lessThanOrEqual": {
+                "!doc": "Checks whether this Quantity is smaller than or equal to the passed in value.",
+                "!type": "fn(value: string|QuantityClass) -> boolean"
+            }
+        },
         "Timer": {
             "cancel": {
                 "!doc": "Cancels the timer.",
@@ -405,11 +505,11 @@
         },
         "TimeNamespace": {
             "toZDT": {
-                "!doc": "Converts nearly any representation of a time to a time.ZonedDateTime (see JS Scripting Docs/Standard Library/Time)",
+                "!doc": "Converts nearly any representation of a time to a time.ZonedDateTime (see JavaScript Scripting Docs/Standard Library/Time)",
                 "!type": "fn(time: ?) -> time.ZonedDateTime"
             },
             "ZonedDateTime": {
-                "!doc": "Represents a date-time with a time offset and/or a time zone in the ISO-8601 calendar system (see JS Scripting Docs/Standard Library/Time)."
+                "!doc": "Represents a date-time with a time offset and/or a time zone in the ISO-8601 calendar system (see JavaScript Scripting Docs/Standard Library/Time)."
             }
         },
         "Logger": {
@@ -491,9 +591,9 @@
             "decreaseMasterVolume": { "!type": "fn(percent: float)" },
             "increaseMasterVolume": { "!type": "fn(percent: float)" },
             "getMasterVolume": { "!type": "fn() -> float" },
-            "playSound": { "!type": "fn(sink?: string, filename: string, volume?: ?)" },
+            "playSound": { "!type": "fn(sink?: string, filename: string, volume?: float)" },
             "playStream": { "!type": "fn(sink?: string, url: string)" },
-            "setMasterVolume": { "!type": "fn(percent)" }
+            "setMasterVolume": { "!type": "fn(percent: float)" }
         },
         "BusEventActions": {
             "postUpdate": {
@@ -580,7 +680,7 @@
         },
         "VoiceActions": {
             "interpret": { "!type": "fn(text: string, interpreter?: string, sink?: string) -> ?" },
-            "say": { "!type": "fn(text: string, interpreter?: string, sink?: string, volume?: ?)" }
+            "say": { "!type": "fn(text: string, interpreter?: string, sink?: string, volume?: float)" }
         },
 
         "ActionsNamespace": {
@@ -621,7 +721,7 @@
                 "!type": "ScriptExecutionActions"
             },
             "Semantics": {
-                "!doc": "Semantics Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use Semantics features.",
+                "!doc": "Semantics Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use Semantics features.\nInstead of using the Semantics actions, it is recommended to use the ItemSemantics available through the \"semantics\" property of an Item.",
                 "!type": "SemanticsActions"
             },
             "Things": {
@@ -645,6 +745,10 @@
     "items": {
         "!doc": "Items namespace. This namespace handles querying and updating openHAB Items.",
         "!type": "ItemsNamespace"
+    },
+    "Quantity": {
+        "!doc": "Quantity class. It greatly simplifies Quantity handling by providing unit conversion, comparisons and mathematical operations. A Quantity consists of a measurement and its Unit of Measurement (UoM), e.g. 5.7 m (the measurement is 5.7, the unit is m meters).",
+        "!type": "fn(value: string|QuantityClass) -> QuantityClass"
     },
     "things": {
         "!doc": "Things namespace. This namespace handles querying and updating openHAB Things.",
@@ -691,7 +795,7 @@
         "!type": "fn(module: string) -> ?"
     },
     "event": {
-        "!doc": "Data passed from triggers. Attention: Java types (see JS Scripting docs/UI Based Rules/Event Object)!",
+        "!doc": "Data passed from triggers. Attention: Java types (see JavaScript Scripting docs/UI Based Rules/Event Object)!",
         "!type": "EventData"
     }
 }

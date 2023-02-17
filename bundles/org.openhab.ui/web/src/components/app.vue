@@ -58,6 +58,10 @@
                             :class="{ currentsection: currentUrl.indexOf('/settings/rules') >= 0 }">
                 <f7-icon slot="media" f7="wand_stars" color="gray" />
               </f7-list-item>
+              <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scenes/" title="Scenes" view=".view-main" panel-close :animate="false" no-chevron
+                            :class="{ currentsection: currentUrl.indexOf('/settings/scenes') >= 0 }">
+                <f7-icon slot="media" f7="film" color="gray" />
+              </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scripts/" title="Scripts" view=".view-main" panel-close :animate="false" no-chevron
                             :class="{ currentsection: currentUrl.indexOf('/settings/scripts') >= 0 }">
                 <f7-icon slot="media" f7="doc_plaintext" color="gray" />
@@ -251,6 +255,8 @@
 </style>
 
 <script>
+import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
+
 import cordovaApp from '../js/cordova-app.js'
 import routes from '../js/routes.js'
 import PanelRight from '../pages/panel-right.vue'
@@ -402,9 +408,11 @@ export default {
     loadData (useCredentials) {
       const useCredentialsPromise = (useCredentials) ? this.setBasicCredentials() : Promise.resolve()
       return useCredentialsPromise
-        .then(() => { return this.$oh.api.get('/rest/') })
+        .then(() => { return Framework7.request.promise.json('/rest/') })
         .catch((err) => {
-          if (err === 'Unauthorized' || err === 401) {
+          console.error('openHAB REST API connection failed with error:')
+          console.info(err)
+          if (err.message === 'Unauthorized' || err.status === 401) {
             if (!useCredentials) {
               // try again with credentials
               this.loadData(true)
@@ -434,8 +442,34 @@ export default {
               )
             })
             return Promise.reject()
+          // Redirection handling (e.g. when using auth_request in nginx)
+          } else if (err.message === 'Found' || err.status === 302) {
+            // technically correct way, but unreliable because XhrHttpRequest follows the redirect itself and fails because of CORS policy
+            if (err.xhr.HEADERS_RECEIVED > 0) {
+              const headersObj = {}
+              err.xhr.getAllResponseHeaders().trim().split(/[\r\n]+/).forEach((line) => {
+                const parts = line.split(':\t')
+                headersObj[parts[0]] = parts[1]
+              })
+              // Redirect according to location header but modify URL arguments to redirect back to the UI and not the REST API after authentication
+              window.location.replace(headersObj['location'].replace(window.location.href + 'rest', window.location.href))
+            }
+          } else if (err.message === 0 || err.status === 0) {
+            // XhrHttpRequest has message & status 0 if the redirected request failed due to CORS policy
+            // Follow the authentication redirect by unloading service-worker and reloading PWA
+            if ('serviceWorker' in window.navigator) {
+              window.navigator.serviceWorker.getRegistration().then((reg) => {
+                reg.unregister().then(() => {
+                  console.info('Unregistered service-worker, reloading now.')
+                  window.location.reload()
+                })
+              })
+            }
+          } else {
+            this.$f7.dialog.alert('openHAB REST API connection failed with error ' + err.message || err.status)
           }
         })
+        .then((res) => res.data)
         .then((rootResponse) => {
           // store the REST API services present on the system
           this.$store.dispatch('loadRootResource', { rootResponse })

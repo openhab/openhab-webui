@@ -390,6 +390,50 @@
               <shadow type="oh_item" />
             </value>
           </block>
+          <block type="oh_get_meta_value" v-if="isGraalJs">
+            <value name="theItem">
+              <shadow type="oh_item" />
+            </value>
+            <value name="namespace">
+              <shadow type="text" />
+            </value>
+          </block>
+          <block type="oh_get_meta_config" v-if="isGraalJs">
+            <value name="configKey">
+              <shadow type="text" />
+            </value>
+            <value name="theItem">
+              <shadow type="oh_item" />
+            </value>
+            <value name="namespace">
+              <shadow type="text" />
+            </value>
+          </block>
+          <block type="oh_store_meta_value" v-if="isGraalJs">
+            <value name="value">
+              <shadow type="text" />
+            </value>
+            <value name="theItem">
+              <shadow type="oh_item" />
+            </value>
+            <value name="namespace">
+              <shadow type="text" />
+            </value>
+          </block>
+          <block type="oh_store_meta_config" v-if="isGraalJs">
+            <value name="value">
+              <shadow type="text" />
+            </value>
+            <value name="configKey">
+              <shadow type="text" />
+            </value>
+            <value name="theItem">
+              <shadow type="oh_item" />
+            </value>
+            <value name="namespace">
+              <shadow type="text" />
+            </value>
+          </block>
           <block type="oh_item" />
           <sep gap="48" />
           <block type="oh_getthing_state">
@@ -979,13 +1023,6 @@ Vue.config.ignoredElements = [
   'sep'
 ]
 
-// Code to prepend when running on GraalJS. When all Blocks are migrated to native GraalJS code, this can be removed.
-const prependCode = `var runtime = require('@runtime');
-var itemRegistry = runtime.itemRegistry;
-var events = runtime.events;
-
-`
-
 export default {
   props: ['blocks', 'libraryDefinitions', 'isGraalJs'],
   data () {
@@ -1123,7 +1160,7 @@ export default {
       return Blockly.Xml.domToText(xml)
     },
     getCode () {
-      return (this.isGraalJs === true ? prependCode : '') + javascriptGenerator.workspaceToCode(this.workspace)
+      return javascriptGenerator.workspaceToCode(this.workspace)
     },
     onChange (event) {
       if (event.type === Blockly.Events.FINISHED_LOADING) {

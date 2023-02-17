@@ -9,9 +9,7 @@ prev: /docs/ui/components/
 
 # oh-knob-cell - Knob Cell
 
-<!-- Put a screenshot here if relevant:
-![](./images/oh-knob-cell/header.jpg)
--->
+![](images/oh-knob/header.png)
 
 [[toc]]
 
@@ -75,6 +73,11 @@ A cell expanding to a knob control
     Item to control
   </PropDescription>
 </PropBlock>
+<PropBlock type="BOOLEAN" name="useSliderControl" label="Use Slider Control">
+  <PropDescription>
+    Use <a class="external text-color-blue" target="_blank" href="https://vue.roundsliderui.com/">round-slider control</a> instead of knob control (allows more customization) - parameters are advanced!
+  </PropDescription>
+</PropBlock>
 <PropBlock type="INTEGER" name="min" label="Min">
   <PropDescription>
     Minimum value (default 0)
@@ -83,6 +86,21 @@ A cell expanding to a knob control
 <PropBlock type="INTEGER" name="max" label="Max">
   <PropDescription>
     Maximum value (default 100)
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="circleShape" label="Circle Shape">
+  <PropDescription>
+    full, pie, half-top/-bottom/-left/-right, quarter-top-left/-right, quarter-bottom-left/-right - slider control only!
+  </PropDescription>
+</PropBlock>
+<PropBlock type="INTEGER" name="startAngle" label="Start Angle">
+  <PropDescription>
+    Angle of circle where the round slider should start (default 0); 0 is 9 o'clock; only if circleShape is not set - slider control only!
+  </PropDescription>
+</PropBlock>
+<PropBlock type="INTEGER" name="endAngle" label="End Angle">
+  <PropDescription>
+    Angle of circle where the round slider should start (default 360); 360 is 9 o'clock; only if circleShape is not set - slider control only!
   </PropDescription>
 </PropBlock>
 <PropBlock type="DECIMAL" name="stepSize" label="Step">
@@ -115,9 +133,29 @@ A cell expanding to a knob control
     Color of the value text (HTML value, default #000000)
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="strokeWidth" label="Stroke Width">
+<PropBlock type="TEXT" name="borderColor" label="Border Color">
   <PropDescription>
-    Thickness of the arcs, default 17
+    Sets the border color of the slider. By default it will inherit the primaryColor value (HTML value, default #000000) - slider control only!
+  </PropDescription>
+</PropBlock>
+<PropBlock type="INTEGER" name="borderWidth" label="Border Width">
+  <PropDescription>
+    Indicates the border width of the slider - slider control only!
+  </PropDescription>
+</PropBlock>
+<PropBlock type="INTEGER" name="strokeWidth" label="Stroke Width">
+  <PropDescription>
+    Thickness of the arcs (default 17)
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="lineCap" label="Line End Type">
+  <PropDescription>
+    butt, round, square, none - slider control only!
+  </PropDescription>
+</PropBlock>
+<PropBlock type="INTEGER" name="dottedPath" label="Dotted Path">
+  <PropDescription>
+    Length of dotted path segments (css stroke-dasharray) - slider control only!
   </PropDescription>
 </PropBlock>
 <PropBlock type="BOOLEAN" name="responsive" label="Responsive">
@@ -156,7 +194,7 @@ A cell expanding to a knob control
     <PropOption value="command" label="Send command" />
     <PropOption value="toggle" label="Toggle Item" />
     <PropOption value="options" label="Command options" />
-    <PropOption value="rule" label="Run rule" />
+    <PropOption value="rule" label="Run scene, script or rule" />
     <PropOption value="popup" label="Open popup" />
     <PropOption value="popover" label="Open popover" />
     <PropOption value="sheet" label="Open sheet" />
@@ -197,14 +235,14 @@ A cell expanding to a knob control
     Comma-separated list of options; if omitted, retrieve the command options from the Item dynamically. Use <code>value=label</code> format to provide a label different than the option.
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="actionRule" label="Rule" context="rule">
+<PropBlock type="TEXT" name="actionRule" label="Scene, Script or Rule" context="rule">
   <PropDescription>
-    Rule to run
+    Scene, Script or Rule to run
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="actionRuleContext" label="Rule Context" context="script">
+<PropBlock type="TEXT" name="actionRuleContext" label="Context" context="script">
   <PropDescription>
-    Object representing the optional context to pass to the rule. Edit in YAML or provide a JSON object, e.g. <code>{ "param1": "value1", "param2": { "subkey1": "testing", "subkey2": 123 } }</code>.
+    Object representing the optional context to pass. Edit in YAML or provide a JSON object, e.g. <code>{ "param1": "value1", "param2": { "subkey1": "testing", "subkey2": 123 } }</code>.
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="actionPage" label="Page" context="page">

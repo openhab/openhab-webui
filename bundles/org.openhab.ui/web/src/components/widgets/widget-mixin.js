@@ -58,11 +58,11 @@ export default {
     },
     config () {
       if (!this.context || !this.context.component) return null
-      const sourceConfig = this.context.component.config
       let evalConfig = {}
       if (this.context.component.config) {
-        if (typeof this.context.component.config !== 'object') return {}
-        for (const key in this.context.component.config) {
+        const sourceConfig = this.context.component.config
+        if (typeof sourceConfig !== 'object') return {}
+        for (const key in sourceConfig) {
           if (key === 'visible' || key === 'visibleTo' || key === 'stylesheet') continue
           this.$set(evalConfig, key, this.evaluateExpression(key, sourceConfig[key]))
         }
@@ -128,9 +128,10 @@ export default {
           if (!this.exprAst[key] || ctx.editmode) {
             this.exprAst[key] = expr.parse(value.substring(1))
           }
-          return expr.evaluate(this.exprAst[key], {
+          const evalExpr = expr.evaluate(this.exprAst[key], {
             items: ctx.store,
             props: this.props,
+            config: ctx.component.config,
             vars: ctx.vars,
             loop: ctx.loop,
             Math: Math,
@@ -143,6 +144,7 @@ export default {
             dayjs: dayjs,
             user: this.$store.getters.user
           })
+          return (evalExpr === undefined) ? 'undefined' : evalExpr
         } catch (e) {
           return e
         }

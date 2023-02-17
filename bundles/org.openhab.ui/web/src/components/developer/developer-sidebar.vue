@@ -187,24 +187,24 @@
           <f7-list>
             <f7-list-item divider title="Things" />
             <f7-list-button href="/settings/things/add" color="blue" :animate="false">
-              Add thing
+              Add Thing
             </f7-list-button>
             <f7-list-button @click="quickAddThing" color="blue">
-              Add thing (quick)
+              Add Thing (quick)
             </f7-list-button>
             <f7-list-button href="/settings/things/inbox" color="blue" :animate="false">
               Inbox
             </f7-list-button>
             <f7-list-item divider title="Items" />
             <f7-list-button href="/settings/items/add" color="blue" :animate="false">
-              Create item
+              Create Item
             </f7-list-button>
             <f7-list-button href="/settings/items/add-from-textual-definition" color="blue" :animate="false">
-              Add items (textual)
+              Add Items (textual)
             </f7-list-button>
             <f7-list-item divider title="Pages" />
             <f7-list-button href="/settings/pages/layout/add" color="blue" :animate="false">
-              Create layout
+              Create layout page
             </f7-list-button>
             <f7-list-button href="/settings/pages/tabs/add" color="blue" :animate="false">
               Create tabbed page

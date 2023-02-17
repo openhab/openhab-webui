@@ -18,7 +18,7 @@
         </f7-nav-right>
       </f7-navbar>
       <f7-block v-if="ruleModule" class="no-margin no-padding">
-        <f7-col class="margin-top">
+        <f7-col v-if="!isSceneModule" class="margin-top">
           <f7-list inline-labels no-hairlines-md class="no-margin">
             <f7-list-input type="text" :placeholder="moduleTitleSuggestion" :value="ruleModule.label" required
                            @input="ruleModule.label = $event.target.value" clear-button />
@@ -46,7 +46,7 @@
           <condition-module-wizard v-else-if="!advancedTypePicker && currentSection === 'conditions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
           <action-module-wizard v-else-if="!advancedTypePicker && currentSection === 'actions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
         </div>
-        <f7-list v-if="ruleModule.type && (!ruleModule.new || advancedTypePicker)">
+        <f7-list v-if="!isSceneModule && ruleModule.type && (!ruleModule.new || advancedTypePicker)">
           <f7-list-item :title="sectionLabels[currentSection][0]" ref="ruleModuleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
             <select name="ruleModuleType"
                     @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)">
@@ -59,7 +59,7 @@
             </select>
           </f7-list-item>
         </f7-list>
-        <f7-block-title v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">
+        <f7-block-title v-if="!isSceneModule && ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">
           Configuration
         </f7-block-title>
         <f7-col v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)">
@@ -90,7 +90,7 @@ export default {
     ActionModuleWizard,
     ConfigSheet
   },
-  props: ['rule', 'ruleModule', 'ruleModuleType', 'moduleTypes', 'currentSection'],
+  props: ['rule', 'ruleModule', 'ruleModuleType', 'moduleTypes', 'currentSection', 'isSceneModule'],
   data () {
     return {
       currentRuleModuleType: this.ruleModuleType,

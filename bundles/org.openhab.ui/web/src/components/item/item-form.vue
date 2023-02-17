@@ -1,9 +1,10 @@
 <template>
   <div v-if="item" class="quick-link-form no-padding">
     <f7-list inline-labels no-hairlines-md>
-      <f7-list-input v-if="!enableName" label="Name" type="text" placeholder="Name" :value="item.name" disabled />
-      <f7-list-input v-else label="Name" type="text" placeholder="Name" :value="item.name"
-                     @input="onNameInput" clear-button required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage" />
+      <f7-list-input label="Name" type="text" placeholder="Required" :value="item.name"
+                     :disabled="!enableName" :info="(enableName) ? 'Note: cannot be changed after the creation' : ''"
+                     required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage"
+                     @input="onNameInput" :clear-button="enableName" />
       <f7-list-input label="Label" type="text" placeholder="Label" :value="item.label"
                      @input="item.label = $event.target.value" clear-button />
       <f7-list-item v-if="item.type && !hideType" title="Type" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
@@ -78,9 +79,9 @@ export default {
     validateName (name) {
       let oldError = this.nameErrorMessage
       if (!/^[A-Za-z0-9_]+$/.test(name)) {
-        this.nameErrorMessage = 'Required. Alphanumeric & underscores only'
+        this.nameErrorMessage = 'Required. A-Z,a-z,0-9,_ only'
       } else if (this.items.some(item => item.name === name)) {
-        this.nameErrorMessage = 'An item with this name already exists'
+        this.nameErrorMessage = 'An Item with this name already exists'
       } else {
         this.nameErrorMessage = ''
       }
