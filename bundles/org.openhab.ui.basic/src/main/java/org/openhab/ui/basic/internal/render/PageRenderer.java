@@ -117,7 +117,6 @@ public class PageRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%icon_type%", ICON_TYPE);
         snippet = snippet.replace("%theme%", config.getTheme());
         snippet = snippet.replace("%sitemapquery%", String.format("?sitemap=%s", sitemap));
-        snippet = snippet.replace("%iconify_script%", config.isIconifyEnabled() ? getSnippet("iconify_script") : "");
 
         String[] parts = snippet.split("%children%");
 
