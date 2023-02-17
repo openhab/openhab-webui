@@ -230,6 +230,7 @@ import SceneConfigureItemPopup from './scene-configure-item-popup.vue'
 
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import DirtyMixin from '../../dirty-mixin'
+import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
   mixins: [RuleStatus, DirtyMixin],
@@ -260,6 +261,22 @@ export default {
       selectedItems: [],
 
       codeEditorOpened: false
+    }
+  },
+  watch: {
+    rule: {
+      handler: function (newRule, oldRule) {
+        if (!this.loading) { // ignore initial rule assignment
+          // create rule object clone in order to be able to delete status part
+          // which can change from eventsource but doesn't mean a rule modification
+          let ruleClone = cloneDeep(this.rule)
+          delete ruleClone.status
+          delete this.savedRule.status
+
+          this.dirty = !fastDeepEqual(ruleClone, this.savedRule)
+        }
+      },
+      deep: true
     }
   },
   methods: {
@@ -325,7 +342,7 @@ export default {
         }
       })
     },
-    save (stay) {
+    save (noToast) {
       if (!this.isEditable) return Promise.reject()
       if (!this.rule.uid) {
         this.$f7.dialog.alert('Please give an ID to the scene')
@@ -351,11 +368,13 @@ export default {
           this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.rule.uid), { reloadCurrent: true })
           this.load()
         } else {
-          this.$f7.toast.create({
-            text: 'Scene updated',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          if (!noToast) {
+            this.$f7.toast.create({
+              text: 'Scene updated',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+          }
           this.savedRule = cloneDeep(this.rule)
         }
       }).catch((err) => {
@@ -371,7 +390,7 @@ export default {
       const enable = (this.rule.status.statusDetail === 'DISABLED')
       this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString()).then((data) => {
         this.$f7.toast.create({
-          text: (enable) ? 'Rule enabled' : 'Rule disabled',
+          text: (enable) ? 'Scene enabled' : 'Scene disabled',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
@@ -385,18 +404,29 @@ export default {
     },
     runNow () {
       if (this.createMode) return
-      if (this.rule.status === 'RUNNING') return
-      this.$f7.toast.create({
-        text: 'Running rule',
-        destroyOnClose: true,
-        closeTimeout: 2000
-      }).open()
-      this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
-        this.$f7.toast.create({
-          text: 'Error while running rule: ' + err,
+      if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
+        return this.$f7.toast.create({
+          text: `Scene cannot be activated ${(this.rule.status.status === 'RUNNING') ? 'while currently activating, please wait' : 'if it is uninitialized'}!`,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
+      }
+      this.$f7.toast.create({
+        text: 'Activating scene',
+        destroyOnClose: true,
+        closeTimeout: 2000
+      }).open()
+
+      const savePromise = (this.isEditable && this.dirty) ? this.save(true) : Promise.resolve()
+
+      savePromise.then(() => {
+        this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
+          this.$f7.toast.create({
+            text: 'Error while activating scene: ' + err,
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        })
       })
     },
     deleteRule () {
@@ -415,7 +445,7 @@ export default {
         if (this.currentModule) return
         switch (ev.keyCode) {
           case 83:
-            this.save(!this.createMode)
+            this.save()
             ev.stopPropagation()
             ev.preventDefault()
             break
@@ -539,9 +569,9 @@ export default {
       if (ev) ev.cancelBubble = true
       const itemName = module.configuration.itemName
       const command = module.configuration.command
-      this.$oh.api.postPlain('/rest/items/' + itemName, command, 'text/plain', 'text/plain').then((state) => {
+      this.$oh.api.postPlain('/rest/items/' + itemName, command, 'text/plain', 'text/plain').then(() => {
         this.$f7.toast.create({
-          text: `Updated desired state of ${itemName} to ${state}`,
+          text: `Updated desired state of ${itemName} to ${command}`,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
