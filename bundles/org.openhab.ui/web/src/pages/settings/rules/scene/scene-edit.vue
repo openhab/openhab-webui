@@ -444,6 +444,16 @@ export default {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         if (this.currentModule) return
         switch (ev.keyCode) {
+          case 68:
+            this.toggleDisabled()
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
+          case 82:
+            this.runNow()
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
           case 83:
             this.save()
             ev.stopPropagation()
