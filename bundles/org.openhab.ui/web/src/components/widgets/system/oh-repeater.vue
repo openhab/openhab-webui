@@ -83,6 +83,9 @@ export default {
         return this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.stateDescription) ? i.stateDescription.options : []))
       } else if (this.config.sourceType === 'itemCommandOptions') {
         return this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.commandDescription) ? i.commandDescription.commandOptions : []))
+      } else if (this.config.sourceType === 'rules') {
+        // return this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags)
+        return this.$oh.api.get('/rest/rules?summary=true').then((d) => d)
       } else {
         return Promise.resolve(this.config.in)
       }
