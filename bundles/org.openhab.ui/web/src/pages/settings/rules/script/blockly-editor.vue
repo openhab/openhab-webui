@@ -1009,7 +1009,7 @@
 
 <script>
 import Blockly from 'blockly'
-import { WorkspaceSearch } from '@blockly/plugin-workspace-search';
+import { WorkspaceSearch } from '@blockly/plugin-workspace-search'
 import { javascriptGenerator } from 'blockly/javascript'
 import DarkTheme from '@blockly/theme-dark'
 import { CrossTabCopyPaste } from '@blockly/plugin-cross-tab-copy-paste'
