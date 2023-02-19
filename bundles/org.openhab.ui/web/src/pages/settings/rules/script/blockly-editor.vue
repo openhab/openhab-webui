@@ -1019,10 +1019,16 @@
       stroke inherit
 .blocklyDropDownDiv
   z-index 9000
+.blockly-ws-search
+  background var(--blockly-ws-search-bg-color)
+  border-color var(--blockly-ws-search-border-color)
+  box-shadow none
+  color var(--blockly-ws-search-text-color)
 </style>
 
 <script>
 import Blockly from 'blockly'
+import { WorkspaceSearch } from '@blockly/plugin-workspace-search'
 import { javascriptGenerator } from 'blockly/javascript'
 import DarkTheme from '@blockly/theme-dark'
 import { CrossTabCopyPaste } from '@blockly/plugin-cross-tab-copy-paste'
@@ -1059,6 +1065,15 @@ export default {
   watch: {
     isGraalJs: function () {
       this.initBlockly(this.blockLibraries)
+    }
+  },
+  computed: {
+    cssVars () {
+      return {
+        '--blockly-ws-search-bg-color': this.$f7.data.themeOptions.dark === 'dark' ? '#1e1e1e' : 'white',
+        '--blockly-ws-search-border-color': this.$f7.data.themeOptions.dark === 'dark' ? 'lightgrey' : 'grey',
+        '--blockly-ws-search-text-color': this.$f7.data.themeOptions.dark === 'dark' ? 'white' : 'black'
+      }
     }
   },
   mounted () {
@@ -1130,6 +1145,8 @@ export default {
           },
         trashcan: false
       })
+      const workspaceSearch = new WorkspaceSearch(this.workspace)
+      workspaceSearch.init()
 
       Blockly.HSV_SATURATION = 0.45 // default
       Blockly.HSV_VALUE = 0.65 // a little bit more contract for the different colors
