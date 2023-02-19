@@ -14,7 +14,7 @@ export default function (f7, isGraalJs) {
       this.setColour('%{BKY_MATH_HUE}')
       this.setInputsInline(true)
       this.setTooltip('bitwise not operator')
-      this.setHelpUrl('www.openhab.org/docs/configuration/blockly/rules-blockly-math.html#not')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-math.html#not')
       this.setOutput(true, 'Number')
     }
   }
@@ -51,7 +51,7 @@ export default function (f7, isGraalJs) {
           case '>>>': return 'bitwise unsigned shift right'
         }
       })
-      this.setHelpUrl('www.openhab.org/docs/configuration/blockly/rules-blockly-math.html#bitwise')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-math.html#bitwise')
     }
   }
 
