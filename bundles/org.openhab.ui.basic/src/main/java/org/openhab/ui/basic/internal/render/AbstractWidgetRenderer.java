@@ -125,7 +125,8 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         snippet = snippet.replace("%visibility_class%", itemUIRegistry.getVisiblity(w) ? "" : "mdl-form__row--hidden");
 
         String state = getState(w);
-        snippet = snippet.replace("%state%", escapeURL(state));
+        snippet = snippet.replace("%state%", escapeHtml(state));
+        snippet = snippet.replace("%state_in_url%", escapeURL(state));
 
         return snippet;
     }
