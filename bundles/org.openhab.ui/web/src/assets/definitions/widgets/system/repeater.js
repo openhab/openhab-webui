@@ -18,6 +18,7 @@ export default () => [
   pn('rangeStep', 'Range Step', 'Step of range (for "range" source type)'),
   pi('groupItem', 'Group Item', 'Group item to whose members will be iterated (for "itemsInGroup" source type)'),
   pt('itemTags', 'Item Tags', 'Iterate over items with the given tags (comma-separated, for "itemsWithTags" source type)'),
+  pt('ruleTags', 'Rule Tags', 'Iterate over rules with the given tags (comma-separated, for "rulesWithTags" source type)'),
   pt('itemOptions', 'Item with Options', 'Iterate over the state options or command options of this item (for "itemStateOptions" or "itemCommandOptions" source type)'),
   pt('fetchMetadata', 'Fetch Item Metadata Namespaces', 'Fetch the metadata from these namespaces (for "itemsInGroup" and "itemsWithTags" source types)'),
   pt('filter', 'Filter expression', 'Specify an expression WITHOUT THE = PREFIX to filter the resulting array'),

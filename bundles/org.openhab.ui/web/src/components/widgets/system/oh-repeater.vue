@@ -13,7 +13,7 @@
 <script>
 import mixin from '../widget-mixin'
 import { OhRepeaterDefinition } from '@/assets/definitions/widgets/system'
-import { compareItems } from '@/components/widgets/widget-order'
+import { compareItems, compareRules } from '@/components/widgets/widget-order'
 import { Fragment } from 'vue-fragment'
 
 export default {
@@ -83,9 +83,8 @@ export default {
         return this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.stateDescription) ? i.stateDescription.options : []))
       } else if (this.config.sourceType === 'itemCommandOptions') {
         return this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.commandDescription) ? i.commandDescription.commandOptions : []))
-      } else if (this.config.sourceType === 'rules') {
-        // return this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags)
-        return this.$oh.api.get('/rest/rules?summary=true').then((d) => d)
+      } else if (this.config.sourceType === 'rulesWithTags' && this.config.ruleTags) {
+        return this.$oh.api.get('/rest/rules?summary=true' + '&tags=' + this.config.ruleTags).then((r) => r.sort(compareRules))
       } else {
         return Promise.resolve(this.config.in)
       }

@@ -76,6 +76,11 @@ Iterate over an array and repeat the children components in the default slot
     Iterate over items with the given tags (comma-separated, for "itemsWithTags" source type)
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="ruleTags" label="Rule Tags">
+  <PropDescription>
+    Iterate over rules with the given tags (comma-separated, for "rulesWithTags" source type)
+  </PropDescription>
+</PropBlock>
 <PropBlock type="TEXT" name="itemOptions" label="Item with Options">
   <PropDescription>
     Iterate over the state options or command options of this item (for "itemStateOptions" or "itemCommandOptions" source type)
