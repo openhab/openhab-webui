@@ -1,5 +1,5 @@
 /*
-* Adds new blocks to the colour section
+* Adds new blocks to the unit of measurement section
 * supports jsscripting
 */
 

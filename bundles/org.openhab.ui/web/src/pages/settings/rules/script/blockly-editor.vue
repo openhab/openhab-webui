@@ -59,6 +59,25 @@
             </shadow>
           </value>
         </block>
+        <block type="oh_bitwise">
+          <value name="first">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="second">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="oh_bit_not">
+          <value name="value">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
         <block type="math_single">
           <value name="NUM">
             <shadow type="math_number">
