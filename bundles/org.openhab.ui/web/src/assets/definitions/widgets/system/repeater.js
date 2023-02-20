@@ -11,7 +11,7 @@ export default () => [
       { value: 'itemsWithTags', label: 'Items with tags in the "itemTags" parameter' },
       { value: 'itemStateOptions', label: 'State options of the item specified in "itemOptions"' },
       { value: 'itemCommandOptions', label: 'Command options of the item specified in "itemOptions"' },
-      { value: 'rulesWithTags', label: 'Rules with tags in the "ruleTags" parameter' },
+      { value: 'rulesWithTags', label: 'Rules with tags in the "ruleTags" parameter' }
     ]),
   pt('in', 'Source array', 'Source array (for "array" source type)'),
   pn('rangeStart', 'Range Start', 'Start of range (for "range" source type)'),

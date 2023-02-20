@@ -75,9 +75,9 @@ export default {
         const stop = this.config.rangeStop || 10
         const step = this.config.rangeStep || 1
         return Promise.resolve(Array(Math.ceil((stop + 1 - start) / step)).fill(start).map((x, y) => x + y * step))
-        } else if (this.config.sourceType === 'itemsWithTags' && this.config.itemTags) {
-          return this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((d) => Promise.resolve(d.sort(compareItems)))
-        } else if (this.config.sourceType === 'itemsInGroup') {
+      } else if (this.config.sourceType === 'itemsWithTags' && this.config.itemTags) {
+        return this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((d) => Promise.resolve(d.sort(compareItems)))
+      } else if (this.config.sourceType === 'itemsInGroup') {
         return this.$oh.api.get('/rest/items/' + this.config.groupItem + '?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((i) => Promise.resolve(i.members.sort(compareItems)))
       } else if (this.config.sourceType === 'itemStateOptions') {
         return this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.stateDescription) ? i.stateDescription.options : []))
