@@ -14,6 +14,7 @@ export default function itemDefaultListComponent (item, footer) {
   let component = null
   let semanticClass = {}
   let semanticProperty = {}
+
   if (metadata.value && metadata.value !== ' ') {
     component = {
       component: metadata.value,
