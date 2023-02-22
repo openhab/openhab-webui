@@ -299,11 +299,12 @@ export default {
     save (noToast) {
       if (!this.isEditable) return
       if (this.rule.status.status === 'RUNNING') {
-        return this.$f7.toast.create({
+        this.$f7.toast.create({
           text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be updated while running, please wait!`,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
+        return Promise.reject()
       }
       if (this.isBlockly) {
         try {
