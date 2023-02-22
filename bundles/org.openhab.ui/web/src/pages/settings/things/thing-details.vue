@@ -123,7 +123,6 @@
             </f7-col>
           </f7-block>
         </div>
-        <z-wave-network-popup :opened="zwaveNetworkPopupOpened" @closed="zwaveNetworkPopupOpened = false" v-if="ready && !error && thingType && (thingType.UID.indexOf('zwave') === 0) " />
 
         <f7-block class="block-narrow" v-if="ready && thing.editable">
           <f7-col>
@@ -293,7 +292,6 @@ export default {
       configActionsByGroup: [],
       thingEnabled: true,
       codePopupOpened: false,
-      zwaveNetworkPopupOpened: false,
       eventSource: null,
       thingYaml: null
     }
