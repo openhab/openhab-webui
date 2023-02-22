@@ -31,6 +31,7 @@ import ThingStatus from '@/components/thing/thing-status-mixin'
 
 export default {
   mixins: [ThingStatus],
+  props: ['bridgeUID'],
   components: {
     'chart': ECharts
   },
@@ -94,13 +95,14 @@ export default {
         }
       }
       return this.$oh.api.get('/rest/things').then((data) => {
-        let zWaveNodes = data.filter((t) => t.properties && t.properties.zwave_nodeid && t.properties.zwave_neighbours)
+        let zWaveNodes = data.filter((t) => (t.bridgeUID === this.bridgeUID || t.UID === this.bridgeUID) && t.properties && t.properties.zwave_nodeid && t.properties.zwave_neighbours)
+        const links = []
 
         zWaveNodes.forEach((t) => {
           let nodeid = t.properties.zwave_nodeid
           let bridgeUID = t.bridgeUID
           let listening = t.properties.zwave_listening === 'true'
-          let neighbours = t.properties.zwave_neighbours ? t.properties.zwave_neighbours : ''
+          links.push([nodeid, t.properties.zwave_neighbours ? t.properties.zwave_neighbours : ''])
           serie.data.push({
             name: nodeid,
             value: t.label,
@@ -111,11 +113,15 @@ export default {
               borderWidth: 3
             }
           })
+        })
+        links.forEach((l) => {
+          const nodeid = l[0]
+          const neighbours = l[1]
           neighbours.split(',').forEach((n) => {
             let returnlink = serie.links.find((l) => l.target === nodeid && l.source === n)
             if (!returnlink) {
               serie.links.push({
-                source: t.properties.zwave_nodeid,
+                source: nodeid,
                 target: n,
                 symbol: ['circle', 'arrow'],
                 symbolSize: [4, 10],
