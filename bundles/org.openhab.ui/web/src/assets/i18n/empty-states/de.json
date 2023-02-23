@@ -17,6 +17,8 @@
   "pages.text": "Entwerfe Seiten, um Informationen auf verschiedene Arten anzuzeigen und mit deinen Objekten zu interagieren. Du kannst verschiedene Arten von Seiten erstellen: Diagramme, Sitemaps, Grundrisse...<br><br>Klicke auf die Schaltfläche unten, um deine erste Seite zu erstellen.",
   "rules.title": "Noch keine Regeln",
   "rules.text": "Regeln sind die Grundbausteine für die Automatisierung des Hauses - du definierst, welche Aktionen ausgeführt werden sollen, wenn bestimmte Ereignisse eintreten. <br><br>Erstelle deine erste Regel mit der Schaltfläche unten; für fortgeschrittenere Szenarien kannst du auch Skriptdateien in deinen Konfigurationsordner erstellen.",
+  "scenes.title": "Noch keine Szenen",
+  "scenes.text": "Szenen sind Regeln, die Befehle senden, um mehrere Items in einen gewünschten Zustand zu versetzen.<br />Du kannst sie bei Bedarf ausführen oder von anderen Regeln aufrufen.<br><br>Erstelle deine erste Szene mit dem Button unten.",
   "scripts.title": "Noch keine Skripte",
   "scripts.text": "Skripte sind eine besondere Art von Regeln, ohne Auslöser und mit einem einzigen Aktionsmodul zur Ausführung von Code.<br/><br/>Diese lassen sich bei Bedarf ausführen oder von anderen Regeln aus aufrufen.<br/><br/>Ein erstes Skript lässt sich mit der Schaltfläche unten erzeugen.",
   "schedule.title": "Nichts auf dem Zeitplan",
