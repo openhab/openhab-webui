@@ -1635,6 +1635,174 @@
 		_t.input.addEventListener("change", onChange);
 	}
 
+	/* class ControlInput extends Control */
+	function ControlInput(parentNode) {
+		Control.call(this, parentNode);
+
+		var
+			_t = this;
+
+		_t.input = _t.parentNode.querySelector("input");
+		_t.itemType = _t.parentNode.getAttribute(o.itemTypeAttribute);
+		_t.inputHint = _t.parentNode.getAttribute(o.inputHintAttribute);
+		_t.verify = undefined;
+
+		var
+			lastValue = _t.input.value,
+			lastUndef = _t.input.nextElementSibling.innerHTML.trim(),
+			numberPattern = /^(\+|-)?[0-9\.,]+/,
+			timePattern = /^[0-9]{2}:[0-9]{2}/,
+			dotSeparatorPattern = /^-?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
+			commaSeparatorPattern = /^-?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
+
+		// This kicks in when the browser does not support date, time or datetime-local input elements.
+		// Set the placeholder to the right patterns. This cannot be done in the snippet creation in Java because the browser is unknown there.
+		if (_t.itemType === "datetime" && _t.inputHint && _t.input.type === "text") {
+			var placeholder = "YYYY-MM-DD hh:mm:ss";
+			if (_t.inputHint === "date") {
+				placeholder = "YYYY-MM-DD";
+			} else if (_t.inputHint === "time") {
+				placeholder = "hh:mm:ss";
+			}
+			_t.parentNode.querySelector("label").innerHTML = placeholder;
+		}
+
+		function parseNumber(value) {
+			var newValue = value.trim();
+			var numberMatch = newValue.match(numberPattern);
+			if (numberMatch && (numberMatch.length > 0)) {
+				var numberValue = numberMatch[0];
+				var unitValue = newValue.substring(numberValue.length).trim();
+				newValue = numberValue.replace(/^\+/, "");
+				if (commaSeparatorPattern.test(newValue) && !dotSeparatorPattern.test(newValue)) {
+					newValue = newValue.replace(/\./g, "").replace(",", ".");
+				}
+				if (unitValue.length > 1) {
+					newValue = newValue + " " + unitValue;
+				}
+				return { value: newValue, changed: true };
+			} else {
+				return { value: value, changed: false };
+			}
+		}
+
+		function onChange() {
+			var
+				changeValue = _t.input.value,
+				changed = true;
+
+			if (_t.itemType === "number") {
+				var parsedValue = parseNumber(changeValue);
+				if (parsedValue.changed) {
+					changeValue = parsedValue.value;
+				} else {
+					changed = false;
+				}
+			} else if (_t.itemType === "datetime") {
+				changeValue = changeValue.trim();
+				if (changeValue.match(timePattern)) {
+					changeValue = (new Date(0)).toISOString().split("T")[0] + "T" + changeValue;
+				} else if (_t.input.type === "text") {
+					var valueArray = changeValue.split(" ");
+					if (valueArray.length > 0) {
+						changeValue = valueArray[0];
+						if (valueArray.length > 1) {
+							changeValue = changeValue + "T" + valueArray[1];
+						}
+					}
+				}
+				changeValue = Date.parse(changeValue);
+				if (isNaN(changeValue)) {
+					changed = false;
+				}
+			}
+
+			if (!changed) {
+				if (_t.inputHint === "time" && lastValue.match(timePattern)) {
+					lastValue = (new Date(0)).toISOString().split("T")[0] + "T" + lastValue;
+				}
+				_t.setValuePrivate(lastValue);
+			} else {
+				_t.parentNode.dispatchEvent(createEvent("control-change", {
+					item: _t.item,
+					value: changeValue
+				}));
+				// We don't know if the sent value is a valid command and will update the item state.
+				// If we don't receive an update in 1s, revert to the previous value.
+				_t.verify = new WaitingTimer(function() {
+					_t.setValuePrivate(lastValue);
+				}, 1000);
+				_t.verify.wait();
+			}
+		}
+
+		_t.setValuePrivate = function(value, itemState) {
+			if (_t.verify) {
+				_t.verify.cancel();
+			}
+
+			var newValue = value;
+			var undefValue = "";
+			if (itemState === undefined) {
+				undefValue = lastUndef;
+			} else if (itemState === "NULL" || itemState === "UNDEF") {
+				newValue = "";
+				undefValue = (value !== "") ? value : lastUndef;
+			}
+
+			if (_t.inputHint === "number") {
+				if (newValue !== "") {
+					newValue = parseNumber(newValue).value;
+					var valueArray = newValue.trim().split(" ");
+					if (valueArray.length > 0) {
+						newValue = valueArray[0];
+					}
+					if (valueArray.length > 1) {
+						_t.input.parentNode.nextElementSibling.innerHTML = valueArray[1];
+					}
+				} else {
+					var undefArray = undefValue.split(" ");
+					if (undefArray.length > 0) {
+						undefValue = undefArray[0];
+					}
+				}
+			} else if (_t.itemType === "datetime") {
+				if (_t.inputHint) {
+					newValue = (itemState !== undefined) ? itemState : value;
+					undefValue = "";
+				} else {
+					undefValue = "YYYY-MM-DD hh:mm:ss";
+				}
+				newValue = newValue.trim().split(".")[0];
+				if (_t.inputHint === "date") {
+					newValue = newValue.split("T")[0];
+				} else if (_t.inputHint === "time") {
+					newValue = newValue.split("T")[1];
+				}
+				if (_t.input.type === "text") {
+					newValue = newValue.replace("T", " ");
+				}
+			}
+			_t.input.value = newValue;
+			_t.input.nextElementSibling.innerHTML = undefValue;
+
+			_t.input.parentNode.MaterialTextfield.change();
+			_t.input.parentNode.MaterialTextfield.checkValidity();
+			lastValue = value;
+		};
+
+		_t.setValueColor = function(color) {
+			_t.input.style.color = color;
+		};
+
+		_t.destroy = function() {
+			_t.input.removeEventListener("change", onChange);
+			componentHandler.downgradeElements([ _t.parentNode ]);
+		};
+
+		_t.input.addEventListener("change", onChange);
+	}
+
 	/* class ControlSlider extends Control */
 	function ControlSlider(parentNode) {
 		Control.call(this, parentNode);
@@ -1736,7 +1904,7 @@
 				[ _t.input, "touchstart", onChangeStart ],
 				[ _t.input, "mousedown",  onChangeStart ],
 				[ _t.input, "touchend",   onChangeEnd ],
-				[ _t.input, "mouseup",    onChangeEnd ],
+				[ _t.input, "mouseup",	onChangeEnd ],
 				[ _t.input, "change",     onChange ]
 			];
 
@@ -2563,6 +2731,7 @@
 })({
 	itemAttribute: "data-item",
 	itemTypeAttribute: "data-item-type",
+	inputHintAttribute: "data-input-hint",
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",
