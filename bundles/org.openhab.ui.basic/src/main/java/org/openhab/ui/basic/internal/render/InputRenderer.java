@@ -12,6 +12,9 @@
  */
 package org.openhab.ui.basic.internal.render;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -19,6 +22,8 @@ import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
+import org.openhab.core.library.types.DateTimeType;
+import org.openhab.core.library.types.StringType;
 import org.openhab.core.model.sitemap.sitemap.Input;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
@@ -45,6 +50,12 @@ public class InputRenderer extends AbstractWidgetRenderer {
 
     private final Logger logger = LoggerFactory.getLogger(InputRenderer.class);
 
+    static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\+|-)?[0-9\\.,]+");
+    static final Pattern DOT_SEPARATOR_PATTERN = Pattern
+            .compile("^-?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\\.[0-9]+)?$");
+    static final Pattern COMMA_SEPARATOR_PATTERN = Pattern
+            .compile("^-?(([0-9]{1,3}(\\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$");
+
     @Activate
     public InputRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
             final @Reference ItemUIRegistry itemUIRegistry, final @Reference LocaleProvider localeProvider) {
@@ -58,19 +69,11 @@ public class InputRenderer extends AbstractWidgetRenderer {
 
     @Override
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
+        Input input = (Input) w;
+
         String snippet = getSnippet("input");
 
         snippet = preprocessSnippet(snippet, w);
-
-        String dataState = getValue(w);
-        State state = itemUIRegistry.getState(w);
-        if (state == null || state instanceof UnDefType) {
-            snippet = snippet.replace("%undef_state%", dataState);
-            snippet = snippet.replace("%data_state%", "");
-        } else {
-            snippet = snippet.replace("%undef_state%", "");
-            snippet = snippet.replace("%data_state%", dataState);
-        }
 
         Item item = null;
         try {
@@ -79,17 +82,114 @@ public class InputRenderer extends AbstractWidgetRenderer {
             logger.debug("Failed to retrieve item during widget rendering: {}", e.getMessage());
         }
         String dataType;
-        if (item != null && item.getAcceptedDataTypes().stream().anyMatch(o -> Number.class.isAssignableFrom(o))) {
-            dataType = "Number";
+        if (item != null && item.getAcceptedCommandTypes().stream()
+                .anyMatch(o -> (!StringType.class.isAssignableFrom(o) && Number.class.isAssignableFrom(o)))) {
+            dataType = "number";
+        } else if (item != null && item.getAcceptedCommandTypes().stream()
+                .anyMatch(o -> (!StringType.class.isAssignableFrom(o) && DateTimeType.class.isAssignableFrom(o)))) {
+            dataType = "datetime";
         } else {
-            dataType = "Text";
+            dataType = "text";
         }
         snippet = snippet.replace("%data_type%", dataType);
+
+        String inputHint = input.getInputHint();
+        snippet = snippet.replace("%input_hint%", inputHint == null ? "" : inputHint);
+
+        String inputType = "text";
+        String inputPattern = "";
+        if ("number".equals(inputHint)) {
+            inputType = "number";
+            inputPattern = "pattern=\"[0-9]*([\\.|,][0-9]*)?\"";
+        } else if ("date".equals(inputHint)) {
+            inputType = "date";
+            inputPattern = "pattern=\"[0-9]{4}-[0-9]d{2}-[0-9]d{2}\"";
+        } else if ("time".equals(inputHint)) {
+            inputType = "time";
+            inputPattern = "pattern=\"[0-9]{2}:[0-9]{2}(:[0-9]{2})?\"";
+        } else if ("datetime".equals(inputHint)) {
+            inputType = "datetime-local";
+            inputPattern = "pattern=\"[0-9]{4}-[0-9]d{2}-[0-9]d{2} [0-9]{2}:[0-9]{2}(:[0-9]{2})?\"";
+        }
+        snippet = snippet.replace("%input_type%", inputType);
+        snippet = snippet.replace("%input_pattern%", inputPattern);
+
+        String displayState = getValue(w);
+        State state = itemUIRegistry.getState(w);
+
+        String undefState = "-";
+        if ("datetime".equals(dataType)) {
+            undefState = "";
+            if ((inputHint == null || inputHint.isEmpty())) {
+                undefState = "YYYY-MM-DD hh:mm:ss";
+            }
+        } else if (state == null || state instanceof UnDefType) {
+            undefState = displayState;
+            if ("number".equals(inputHint)) {
+                String[] stateArray = displayState.trim().split(" ");
+                if (stateArray.length > 0) {
+                    undefState = stateArray[0];
+                }
+            }
+        }
+        snippet = snippet.replace("%undef_state%", undefState);
+
+        String dataState = displayState;
+        if (state == null || state instanceof UnDefType) {
+            dataState = "";
+        } else {
+            dataState = displayState.isEmpty() ? state.toString() : displayState;
+            if ("number".equals(inputHint)) {
+                String[] stateArray = displayState.trim().split(" ");
+                if (stateArray.length > 0) {
+                    dataState = parseNumber(stateArray[0]);
+                }
+            } else if (state instanceof DateTimeType) {
+                dataState = displayState.isEmpty() ? ((DateTimeType) state).format("%1$tY-%1$tm-%1$td %1$tT")
+                        : displayState;
+                if ("date".equals(inputHint)) {
+                    dataState = ((DateTimeType) state).format("%1$tY-%1$tm-%1$td");
+                } else if ("time".equals(inputHint)) {
+                    dataState = ((DateTimeType) state).format("%1$tT");
+                } else if ("datetime".equals(inputHint)) {
+                    dataState = ((DateTimeType) state).format("%1$tY-%1$tm-%1$tdT%1$tT");
+                }
+            }
+        }
+        snippet = snippet.replace("%data_state%", dataState);
+
+        String unitSnippet = "";
+        if ("number".equals(inputHint)) {
+            String[] stateArray = displayState.trim().split(" ");
+            if (stateArray.length > 1) {
+                unitSnippet = "<span %valuestyle% class=\"mdl-form__input-unit\">" + stateArray[1] + "</span>";
+            }
+        }
+        snippet = snippet.replace("%unit_snippet%", unitSnippet);
 
         // Process the color tags
         snippet = processColor(w, snippet);
 
         sb.append(snippet);
         return ECollections.emptyEList();
+    }
+
+    private String parseNumber(String value) {
+        String newValue = value.trim();
+        Matcher numberMatcher = NUMBER_PATTERN.matcher(newValue);
+        if (numberMatcher.find()) {
+            String numberValue = numberMatcher.group(0);
+            String unitValue = newValue.substring(numberValue.length()).trim();
+            newValue = numberValue.replace("/^\\+/", "");
+            if (COMMA_SEPARATOR_PATTERN.matcher(newValue).find() && !DOT_SEPARATOR_PATTERN.matcher(newValue).find()) {
+                newValue = newValue.replace("/\\./g", "").replace(",", ".");
+            }
+            if (unitValue.length() > 1) {
+                newValue = newValue + " " + unitValue;
+            }
+            return newValue;
+        } else {
+            return value;
+        }
     }
 }
