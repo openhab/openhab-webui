@@ -2,6 +2,7 @@
  * Eclipse SmartHome BasicUI javascript
  *
  * @author Vlad Ivanov — initial version
+ * @author Mark Herwege - input widget
  */
 
 /*eslint-env browser */
@@ -1503,6 +1504,40 @@
 		_t.input.addEventListener("change", onChange);
 	}
 
+	/* class ControlInput extends Control */
+	function ControlInput(parentNode) {
+		Control.call(this, parentNode);
+
+		var
+			_t = this;
+
+		_t.input = _t.parentNode.querySelector("input[type=text]");
+
+		_t.valueNode = _t.parentNode.parentNode.querySelector(o.formValue);
+
+		function onChange() {
+			_t.parentNode.dispatchEvent(createEvent("control-change", {
+				item: _t.item,
+				value: _t.input.value
+			}));
+		}
+
+		_t.setValuePrivate = function(value) {
+			_t.input.value = value;
+		};
+
+		_t.setValueColor = function(color) {
+			_t.valueNode.style.color = color;
+		};
+
+		_t.destroy = function() {
+			_t.input.removeEventListener("change", onChange);
+			componentHandler.downgradeElements([ _t.parentNode ]);
+		};
+
+		_t.input.addEventListener("change", onChange);
+	}
+
 	/* class ControlSlider extends Control */
 	function ControlSlider(parentNode) {
 		Control.call(this, parentNode);
@@ -1869,6 +1904,9 @@
 					break;
 				case "text":
 					appendControl(new ControlText(e));
+					break;
+				case "input":
+					appendControl(new ControlInput(e));
 					break;
 				case "colorpicker":
 					appendControl(new ControlColorpicker(e));

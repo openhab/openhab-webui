@@ -284,7 +284,19 @@
 			padding: 0 10px 0 10px;
 		}
 	}
-	&__text {
+	&__input {
+		font-weight: normal;
+		font-size: 14px;
+		text-align: right;
+		&--value {
+			margin: 0 0;
+			padding: 0 0 0 0;
+		}
+		&--label {
+			margin: 0 -12px;
+			padding: 0 12px 0 0;
+		}
+}	&__text {
 		overflow: hidden;
 		flex-shrink: 2;
 		text-overflow: ellipsis;

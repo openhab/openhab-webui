@@ -1,0 +1,25 @@
+<div class="mdl-form__row mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet %visibility_class%">
+	<span class="mdl-form__icon">
+		<img data-icon="%category%" src="../icon/%category%?state=%state%&format=%icon_type%&anyFormat=true" />
+	</span>
+	<span %labelstyle% class="mdl-form__label">
+		%label%
+	</span>
+	<div
+		class="mdl-form__control mdl-textfield mdl-js-textfield"
+		data-control-type="input"
+		data-item="%item%"
+		data-widget-id="%widget_id%"
+		for="oh-input-%item%"
+	>
+		<input
+			%valuestyle% type="text"
+			id="oh-input-%item%"
+			class="mdl-form__input--value mdl-form__input mdl-textfield__input"
+			value="%data_state%"
+		/>
+		<label for="oh-input-%item%" class="mdl-form__input--label mdl-form__input mdl-textfield__label">
+		    %empty_state%
+		</label>
+	</div>
+</div>
