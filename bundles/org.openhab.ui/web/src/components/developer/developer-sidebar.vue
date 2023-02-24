@@ -536,25 +536,25 @@ export default {
         const items = data[0].filter((i) => this.searchInItem(i, this.searchQuery)).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
-          return labelA.localeCompare(labelB)
+          return (labelA) ? labelA.localeCompare(labelB) : 0
         })
         const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
-          return labelA.localeCompare(labelB)
+          return (labelA) ? labelA.localeCompare(labelB) : 0
         })
         const rulesScenesScripts = data[2].filter((r) => this.searchInRule(r, this.searchQuery)).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
-          return labelA.localeCompare(labelB)
+          return (labelA) ? labelA.localeCompare(labelB) : 0
         })
         const rules = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0)
-        const scenes = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0)
+        const scenes = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') >= 0)
         const scripts = rulesScenesScripts.filter((r) => r.tags.indexOf('Script') >= 0)
         const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
-          return labelA.localeCompare(labelB)
+          return (labelA) ? labelA.localeCompare(labelB) : 0
         })
         this.$set(this, 'searchResults', {
           items,

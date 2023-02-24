@@ -137,12 +137,12 @@ export default {
   },
   computed: {
     filteredSearchResults () {
-      const items = (this.expandedTypes.items) ? this.searchResults.items : this.searchResults.items.slice(0, 5)
-      const things = (this.expandedTypes.things) ? this.searchResults.things : this.searchResults.things.slice(0, 5)
-      const rules = (this.expandedTypes.rules) ? this.searchResults.rules : this.searchResults.rules.slice(0, 5)
-      const scenes = (this.expandedTypes.scenes) ? this.searchResults.scenes : this.searchResults.scenes.slice(0, 5)
-      const scripts = (this.expandedTypes.scripts) ? this.searchResults.scripts : this.searchResults.scripts.slice(0, 5)
-      const pages = (this.expandedTypes.pages) ? this.searchResults.pages : this.searchResults.pages.slice(0, 5)
+      const items = (this.expandedTypes.items) ? this.searchResults.items : (this.searchResults.items ? this.searchResults.items.slice(0, 5) : [])
+      const things = (this.expandedTypes.things) ? this.searchResults.things : (this.searchResults.things ? this.searchResults.things.slice(0, 5) : [])
+      const rules = (this.expandedTypes.rules) ? this.searchResults.rules : (this.searchResults.rules ? this.searchResults.rules.slice(0, 5) : [])
+      const scenes = (this.expandedTypes.scenes) ? this.searchResults.scenes : (this.searchResults.scenes ? this.searchResults.scenes.slice(0, 5) : [])
+      const scripts = (this.expandedTypes.scripts) ? this.searchResults.scripts : (this.searchResults.scripts ? this.searchResults.scripts.slice(0, 5) : [])
+      const pages = (this.expandedTypes.pages) ? this.searchResults.pages : (this.searchResults.pages ? this.searchResults.pages.slice(0, 5) : [])
       return { items, things, rules, scenes, scripts, pages }
     }
   },
