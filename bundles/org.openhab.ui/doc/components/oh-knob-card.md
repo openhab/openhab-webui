@@ -7,7 +7,7 @@ source: https://github.com/openhab/openhab-webui/edit/main/bundles/org.openhab.u
 prev: /docs/ui/components/
 ---
 
-# oh-knob-card - Knob Card
+# oh-knob-card - Knob & Rounded Slider Card
 
 ![](images/oh-knob/header.png)
 
@@ -16,10 +16,12 @@ prev: /docs/ui/components/
 <!-- Note: you can overwrite the definition-provided description and add your own intro/additional sections instead -->
 <!-- DO NOT REMOVE the following comments if you intend to keep the definition-provided description -->
 <!-- GENERATED componentDescription -->
-Display a knob in a card to visualize and control a quantifiable item
+Display a knob or a rounded slider in a card to visualize and control a quantifiable item
 <!-- GENERATED /componentDescription -->
 
 ## Configuration
+
+Use the advanced properties to change the appearance from a knob to a rounded slider.
 
 <!-- DO NOT REMOVE the following comments -->
 <!-- GENERATED props -->
@@ -55,18 +57,13 @@ Display a knob in a card to visualize and control a quantifiable item
 </PropGroup>
 </div>
 
-### Knob & Round Slider
+### Knob & Rounded Slider
 <div class="props">
-<PropGroup name="knob" label="Knob & Round Slider">
-  Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://github.com/kramer99/vue-knob-control#properties">knob control</a> or <a target="_blank" class="external text-color-blue" href="https://github.com/soundar24/vue-round-slider#props">round-slider control</a>
+<PropGroup name="knob" label="Knob & Rounded Slider">
+  Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://github.com/soundar24/vue-round-slider#props">round-slider control</a>
 <PropBlock type="TEXT" name="item" label="Item" context="item">
   <PropDescription>
     Item to control
-  </PropDescription>
-</PropBlock>
-<PropBlock type="BOOLEAN" name="useSliderControl" label="Use Slider Control">
-  <PropDescription>
-    Use <a class="external text-color-blue" target="_blank" href="https://vue.roundsliderui.com/">round-slider control</a> instead of knob control (allows more customization) - parameters are advanced!
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="min" label="Min">
@@ -81,17 +78,17 @@ Display a knob in a card to visualize and control a quantifiable item
 </PropBlock>
 <PropBlock type="TEXT" name="circleShape" label="Circle Shape">
   <PropDescription>
-    full, pie, half-top/-bottom/-left/-right, quarter-top-left/-right, quarter-bottom-left/-right - slider control only!
+    full, pie, half-top/-bottom/-left/-right, quarter-top-left/-right, quarter-bottom-left/-right
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="startAngle" label="Start Angle">
   <PropDescription>
-    Angle of circle where the round slider should start (default 0); 0 is 9 o'clock; only if circleShape is not set - slider control only!
+    Angle of circle where the round slider should start (default -50); 0 is 9 o'clock; only if circleShape is not set
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="endAngle" label="End Angle">
   <PropDescription>
-    Angle of circle where the round slider should start (default 360); 360 is 9 o'clock; only if circleShape is not set - slider control only!
+    Angle of circle where the round slider should start (default -130); 360 is 9 o'clock; only if circleShape is not set
   </PropDescription>
 </PropBlock>
 <PropBlock type="DECIMAL" name="stepSize" label="Step">
@@ -111,42 +108,42 @@ Display a knob in a card to visualize and control a quantifiable item
 </PropBlock>
 <PropBlock type="TEXT" name="primaryColor" label="Primary Color">
   <PropDescription>
-    Color of the value arc (HTML value, default #409eff)
+    Color of the value arc (HTML value)
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="secondaryColor" label="Secondary Color">
   <PropDescription>
-    Color of the rest of the control (HTML value, default #dcdfe6)
+    Color of the rest of the control (HTML value)
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="textColor" label="Text Color">
   <PropDescription>
-    Color of the value text (HTML value, default #000000)
+    Color of the value text (HTML value, default inherits from primaryColor)
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="borderColor" label="Border Color">
   <PropDescription>
-    Sets the border color of the slider. By default it will inherit the primaryColor value (HTML value, default #000000) - slider control only!
+    Sets the border color of the slider; set borderWidth as well! (HTML value)
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="borderWidth" label="Border Width">
   <PropDescription>
-    Indicates the border width of the slider - slider control only!
+    Sets the border width of the slider (px value)
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="strokeWidth" label="Stroke Width">
   <PropDescription>
-    Thickness of the arcs (default 17)
+    Thickness of the arcs (default 18)
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="lineCap" label="Line End Type">
   <PropDescription>
-    butt, round, square, none - slider control only!
+    butt, round, square, none
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="dottedPath" label="Dotted Path">
   <PropDescription>
-    Length of dotted path segments (css stroke-dasharray) - slider control only!
+    Length of dotted path segments (css stroke-dasharray)
   </PropDescription>
 </PropBlock>
 <PropBlock type="BOOLEAN" name="responsive" label="Responsive">
@@ -166,7 +163,7 @@ Display a knob in a card to visualize and control a quantifiable item
 </PropBlock>
 <PropBlock type="INTEGER" name="delayStateDisplay" label="Delay State Display">
   <PropDescription>
-    Time to wait before switching from displaying user input to displaying item state in ms (default 2000)
+    Time to wait before switching from displaying user input to displaying Item state in ms (default 2000)
   </PropDescription>
 </PropBlock>
 </PropGroup>
@@ -175,10 +172,10 @@ Display a knob in a card to visualize and control a quantifiable item
 
 <!-- GENERATED /props -->
 
-<!-- If applicable describe how properties are forwarded to a underlying component from Framework7, ECharts, etc.:
 ### Inherited Properties
 
--->
+Properties are forwarded to the underlying [vue-round-slider](https://vue.roundsliderui.com/) component, which means you can set [these parameters](https://roundsliderui.com/document.html#options.
+A compatibility layer ensures backward compatibility with the [vue-knob-control](https://github.com/kramer99/vue-knob-control#readme) component that was initially used.
 
 <!-- If applicable describe the slots recognized by the component and what they represent:
 ### Slots
