@@ -31,6 +31,7 @@
             </f7-button>
           </p>
         </f7-block>
+        <!-- Pinned Items -->
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.items.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Items</span>
@@ -52,6 +53,7 @@
             <!-- <f7-list-button title="Pick Items" @click="modelPickerOpened = true"></f7-list-button> -->
           </f7-list>
         </f7-block>
+        <!-- Pinned Things -->
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.things.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Things</span>
@@ -75,6 +77,7 @@
             </ul>
           </f7-list>
         </f7-block>
+        <!-- Pinned Rules -->
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.rules.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Rules</span>
@@ -99,6 +102,57 @@
             </ul>
           </f7-list>
         </f7-block>
+        <!-- Pinned Scenes -->
+        <f7-block class="no-margin no-padding" v-if="pinnedObjects.scenes.length">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Scenes</span>
+            <span style="margin-left:auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('rules')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item v-for="rule in pinnedObjects.scenes" :key="rule.uid" media-item
+                            :title="rule.name" :footer="rule.uid">
+                <f7-badge slot="after" :color="ruleStatusBadgeColor(rule.status)" :tooltip="rule.status.description">
+                  {{ ruleStatusBadgeText(rule.status) }}
+                </f7-badge>
+                <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
+                  <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
+                  <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
+                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('rules', rule, 'uid')" />
+                </div>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
+        <!-- Pinned Scripts -->
+        <f7-block class="no-margin no-padding" v-if="pinnedObjects.scripts.length">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Scripts</span>
+            <span style="margin-left:auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('rules')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item v-for="rule in pinnedObjects.scripts" :key="rule.uid" media-item
+                            :title="rule.name" :footer="rule.uid">
+                <f7-badge slot="after" :color="ruleStatusBadgeColor(rule.status)" :tooltip="rule.status.description">
+                  {{ ruleStatusBadgeText(rule.status) }}
+                </f7-badge>
+                <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
+                  <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
+                  <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
+                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('rules', rule, 'uid')" />
+                </div>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
+        <!-- Pinned Pages -->
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.pages.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Pages</span>
@@ -305,12 +359,16 @@ export default {
         items: [],
         things: [],
         rules: [],
+        scenes: [],
+        scripts: [],
         pages: []
       },
       pinnedObjects: {
         items: [],
         things: [],
         rules: [],
+        scenes: [],
+        scripts: [],
         pages: []
       },
       sseEvents: [],
@@ -485,11 +543,14 @@ export default {
           const labelB = b.name
           return labelA.localeCompare(labelB)
         })
-        const rules = data[2].filter((r) => this.searchInRule(r, this.searchQuery)).sort((a, b) => {
+        const rulesScenesScripts = data[2].filter((r) => this.searchInRule(r, this.searchQuery)).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
           return labelA.localeCompare(labelB)
         })
+        const rules = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0)
+        const scenes = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0)
+        const scripts = rulesScenesScripts.filter((r) => r.tags.indexOf('Script') >= 0)
         const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
@@ -499,6 +560,8 @@ export default {
           items,
           things,
           rules,
+          scenes,
+          scripts,
           pages
         })
       })
