@@ -75,5 +75,4 @@ public class InputRenderer extends AbstractWidgetRenderer {
         sb.append(snippet);
         return ECollections.emptyEList();
     }
-
 }
