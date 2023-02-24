@@ -378,7 +378,7 @@ export default {
       })
     },
     /**
-     * Search for the query inside a single Item.
+     * Search for the query string inside a single Item.
      *
      * Checks:
      *  - name (non case-intensive)
@@ -398,14 +398,31 @@ export default {
       }
       return false
     },
+    /**
+     * Search for the query string inside a single rule.
+     *
+     * Checks:
+     *  - name (non case-intensive)
+     *  - label (non case-intensive)
+     *  - description (non case-intensive)
+     *  - itemName & thingUID of triggers, actions & conditions (non case-intensive)
+     *  - scripts (e.g. JavaScript or Rule DSL) (case-intensive)
+     *
+     * @param r rule
+     * @param search query (as typed, not in lowercase)
+     * @returns {boolean}
+     */
     searchInRule (r, query) {
+      if (r.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0) return true
+      if (r.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0) return true
+      if (r.description && r.description.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0) return true
       const searchItemOrThing = (m) => {
         // Match Item names non case-intensive
-        if (m.configuration.itemName && m.configuration.itemName.toLowerCase().indexOf(query) >= 0) {
+        if (m.configuration.itemName && m.configuration.itemName.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
           return true
         }
         // Match Thing names non case-intensive
-        if (m.configuration.thingUID && m.configuration.thingUID.toLowerCase().indexOf(query) >= 0) {
+        if (m.configuration.thingUID && m.configuration.thingUID.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
           return true
         }
       }
@@ -460,7 +477,7 @@ export default {
         this.searchResultsLoading = false
         const items = data[0].filter((i) => this.searchInItem(i, this.searchQuery))
         const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
-        const rules = data[2].filter((r) => r.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || r.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || (r.description && r.description.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0) || this.searchInRules(r, this.searchQuery))
+        const rules = data[2].filter((r) => this.searchInRule(r, this.searchQuery))
         const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
         this.$set(this, 'searchResults', {
           items,
