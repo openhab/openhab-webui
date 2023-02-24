@@ -786,7 +786,9 @@ export default {
                 this.unpin('rules', { uid: topicParts[2] }, 'uid')
                 break
               case 'state':
-                const rule = this.pinnedObjects.rules.find((r) => r.uid === topicParts[2])
+                let rule = this.pinnedObjects.rules.find((r) => r.uid === topicParts[2])
+                if (!rule) rule = this.pinnedObjects.scenes.find((r) => r.uid === topicParts[2])
+                if (!rule) rule = this.pinnedObjects.scripts.find((r) => r.uid === topicParts[2])
                 if (!rule) break
                 this.$set(rule, 'status', JSON.parse(event.payload))
             }
