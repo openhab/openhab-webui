@@ -475,10 +475,26 @@ export default {
       Promise.all(promises).then((data) => {
         this.$set(this, 'cachedObjects', data)
         this.searchResultsLoading = false
-        const items = data[0].filter((i) => this.searchInItem(i, this.searchQuery))
-        const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
-        const rules = data[2].filter((r) => this.searchInRule(r, this.searchQuery))
-        const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
+        const items = data[0].filter((i) => this.searchInItem(i, this.searchQuery)).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return labelA.localeCompare(labelB)
+        })
+        const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return labelA.localeCompare(labelB)
+        })
+        const rules = data[2].filter((r) => this.searchInRule(r, this.searchQuery)).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return labelA.localeCompare(labelB)
+        })
+        const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return labelA.localeCompare(labelB)
+        })
         this.$set(this, 'searchResults', {
           items,
           things,
