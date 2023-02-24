@@ -284,19 +284,7 @@
 			padding: 0 10px 0 10px;
 		}
 	}
-	&__input {
-		font-weight: normal;
-		font-size: 14px;
-		text-align: right;
-		&--value {
-			margin: 0 0;
-			padding: 0 0 0 0;
-		}
-		&--label {
-			margin: 0 -12px;
-			padding: 0 12px 0 0;
-		}
-}	&__text {
+	&__text {
 		overflow: hidden;
 		flex-shrink: 2;
 		text-overflow: ellipsis;
@@ -551,6 +539,27 @@ $colorpicker-mobile-size: 270px;
 	}
 	position: relative;
 }
+
+.input {
+	font-weight: normal;
+	font-size: 14px;
+	text-align: right;
+	&__control {
+		width: 60%;
+	}
+	&__value {
+		margin: 0 0;
+		padding: 0 0 0 0;
+	}
+	&__label {
+		@media screen and (max-width: $layout-tablet-size-threshold) {
+			margin: 0 -12px;
+			padding: 0 12px 0 0;
+		}
+		margin: 0 -16px;
+		padding: 0 16px 0 0;
+	}
+}   
 
 .page {
 	&-static {
