@@ -1,5 +1,5 @@
 <template>
-  <round-slider :value="value" :min="config.min" :max="config.max" :step="config.stepSize" :radius="(config.responsive) ? config.size/2 + '%' : config.size/2"
+  <round-slider v-bind="config" :value="value" :min="config.min" :max="config.max" :step="config.stepSize" :radius="(config.responsive) ? config.size/2 + '%' : config.size/2"
                 :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`"
                 :rangeColor="config.primaryColor" :pathColor="config.secondaryColor"
                 :tooltipColor="config.textColor" mouseScrollAction="true"
