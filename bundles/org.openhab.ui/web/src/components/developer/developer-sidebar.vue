@@ -377,7 +377,28 @@ export default {
         this.$f7.off('itemsPicked', this.addItemsFromModel)
       })
     },
-    searchInRules (r, query) {
+    /**
+     * Search for the query inside a single Item.
+     *
+     * Checks:
+     *  - name (non case-intensive)
+     *  - label (non case-intensive)
+     *  - metadata namespaces (non case-intensive; exact match)
+     *
+     * @param i Item
+     * @param query search query (as typed, not in lowercase)
+     * @returns {boolean}
+     */
+    searchInItem (i, query) {
+      if (i.name.toLowerCase().indexOf(query.toLowerCase()) >= 0) return true
+      if (i.label && i.label.toLowerCase().indexOf(query.toLowerCase()) >= 0) return true
+      if (i.metadata) {
+        const namespaces = Object.keys(i.metadata).map(n => n.toLowerCase())
+        if (namespaces.includes(query.toLowerCase())) return true
+      }
+      return false
+    },
+    searchInRule (r, query) {
       const searchItemOrThing = (m) => {
         // Match Item names non case-intensive
         if (m.configuration.itemName && m.configuration.itemName.toLowerCase().indexOf(query) >= 0) {
@@ -427,7 +448,7 @@ export default {
           Promise.resolve(this.cachedObjects[2]),
           Promise.resolve(this.cachedObjects[3])
         ] : [
-          this.$oh.api.get('/rest/items'),
+          this.$oh.api.get('/rest/items?metadata=.*'),
           this.$oh.api.get('/rest/things?summary=true'),
           this.$oh.api.get('/rest/rules?summary=false'),
           Promise.resolve(this.$store.getters.pages)
@@ -437,7 +458,7 @@ export default {
       Promise.all(promises).then((data) => {
         this.$set(this, 'cachedObjects', data)
         this.searchResultsLoading = false
-        const items = data[0].filter((i) => i.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || (i.label && i.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0))
+        const items = data[0].filter((i) => this.searchInItem(i, this.searchQuery))
         const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
         const rules = data[2].filter((r) => r.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || r.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || (r.description && r.description.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0) || this.searchInRules(r, this.searchQuery))
         const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
