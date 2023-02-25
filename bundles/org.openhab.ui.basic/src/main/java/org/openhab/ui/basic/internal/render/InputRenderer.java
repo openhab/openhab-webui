@@ -33,9 +33,7 @@ import org.osgi.service.component.annotations.Reference;
  * This is an implementation of the {@link WidgetRenderer} interface, which
  * can produce HTML code for Input widgets.
  *
- * @author Kai Kreuzer - Initial contribution and API
- * @author Vlad Ivanov - BasicUI changes
- * @author Mark Herwege - Input widget
+ * @author Mark Herwege - Initial contributor
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -57,15 +55,14 @@ public class InputRenderer extends AbstractWidgetRenderer {
         String snippet = getSnippet("input");
 
         snippet = preprocessSnippet(snippet, w);
-        snippet = snippet.replace("%id%", itemUIRegistry.getWidgetId(w));
 
         String dataState = getValue(w);
         State state = itemUIRegistry.getState(w);
         if (state == null || state instanceof UnDefType) {
-            snippet = snippet.replace("%empty_state%", !dataState.isEmpty() ? dataState : "-");
+            snippet = snippet.replace("%undef_state%", !dataState.isEmpty() ? dataState : "-");
             snippet = snippet.replace("%data_state%", "");
         } else {
-            snippet = snippet.replace("%empty_state%", "");
+            snippet = snippet.replace("%undef_state%", "");
             snippet = snippet.replace("%data_state%", dataState.isEmpty() ? state.toString() : dataState);
         }
 
