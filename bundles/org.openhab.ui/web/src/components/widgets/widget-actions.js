@@ -103,12 +103,12 @@ export const actionsMixin = {
           const actionsPromise = new Promise((resolve, reject) => {
             if (actionCommandOptions && typeof actionCommandOptions === 'string') {
               resolve(actionCommandOptions.split(',').map((o) => {
-                const parts = o.split('=')
+                const parts = o.trim().split('=')
                 return {
-                  text: parts[1] || parts[0],
+                  text: parts[1].trim() || parts[0].trim(),
                   color: 'blue',
                   onClick: () => {
-                    this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd: parts[0] })
+                    this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd: parts[0].trim() })
                       .then(() => this.showActionFeedback(prefix, actionConfig))
                   }
                 }
