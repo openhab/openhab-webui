@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
+ * @author Laurent Garnier - Refactor icon management to support other iconsets
  */
 @NonNullByDefault
 public abstract class AbstractWidgetRenderer implements WidgetRenderer {

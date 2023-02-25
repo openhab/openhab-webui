@@ -25,6 +25,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * and validates newly applied values.
  *
  * @author Vlad Ivanov - Initial contribution
+ * @author Laurent Garnier - New config parameter "enableIconify"
  */
 @NonNullByDefault
 public class WebAppConfig {
