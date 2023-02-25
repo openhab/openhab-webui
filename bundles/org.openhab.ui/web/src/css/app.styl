@@ -140,6 +140,14 @@ html
    .delete
      --f7-bars-link-color #ff3b30
 
+@media (orientation: portrait)
+  .ios .actions-modal
+    max-height: calc(100% - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))
+
+@media (orientation: landscape)
+  .ios .actions-modal
+    max-height: calc(100% - env(safe-area-inset-left, 0px))
+
 .md .contextual-toolbar
   --f7-theme-color #474747
   --f7-bars-bg-color #474747
