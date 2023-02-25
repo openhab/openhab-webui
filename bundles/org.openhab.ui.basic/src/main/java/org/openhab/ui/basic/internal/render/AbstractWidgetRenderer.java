@@ -48,13 +48,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
+ * @author Laurent Garnier - primary/secondary colors
  */
 @NonNullByDefault
 public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
-    private final Logger logger = LoggerFactory.getLogger(AbstractWidgetRenderer.class);
-
     public static final String ICON_TYPE = "svg";
+
+    public static final String PRIMARY_COLOR = "#3f51b5";
+    public static final String SECONDARY_COLOR = "#ff4081";
+
+    private final Logger logger = LoggerFactory.getLogger(AbstractWidgetRenderer.class);
 
     private final BundleContext bundleContext;
     protected final TranslationProvider i18nProvider;
@@ -269,6 +273,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         String snippet = originalSnippet;
 
         color = itemUIRegistry.getLabelColor(w);
+        color = applyPrimaryOrSecondaryColor(color);
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
@@ -277,6 +282,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
         style = "";
         color = itemUIRegistry.getValueColor(w);
+        color = applyPrimaryOrSecondaryColor(color);
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
@@ -284,6 +290,15 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         snippet = snippet.replace("%valuestyle%", style);
 
         return snippet;
+    }
+
+    private @Nullable String applyPrimaryOrSecondaryColor(@Nullable String color) {
+        if ("primary".equals(color)) {
+            return PRIMARY_COLOR;
+        } else if ("secondary".equals(color)) {
+            return SECONDARY_COLOR;
+        }
+        return color;
     }
 
     protected @Nullable String getCategory(Widget w) {

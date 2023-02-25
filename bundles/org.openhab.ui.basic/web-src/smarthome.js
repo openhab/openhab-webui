@@ -1661,6 +1661,8 @@
 		_t.loading = _t.root.querySelector(o.uiLoadingBar);
 		_t.layoutTitle = document.querySelector(o.layoutTitle);
 		_t.iconType = document.body.getAttribute(o.iconTypeAttribute);
+		_t.primaryColor = document.body.getAttribute(o.primaryColorAttribute);
+		_t.secondaryColor = document.body.getAttribute(o.secondaryColorAttribute);
 		_t.notification = document.querySelector(o.notify);
 
 		_t.escapeHtml = function(text) {
@@ -1953,6 +1955,8 @@
 		this.updateWidget = function(widget, update) {
 			var
 				value = this.extractValueFromLabel(update.label),
+				labelColor = update.labelcolor,
+				valueColor = update.valuecolor,
 				makeVisible = false;
 
 			if (widget.visible !== update.visibility) {
@@ -1970,17 +1974,29 @@
 				widget.setValue(smarthome.UI.escapeHtml(value), update.state, update.visibility);
 			}
 
+			if (labelColor === "primary") {
+				labelColor = smarthome.UI.primaryColor;
+			} else if (labelColor === "secondary") {
+				labelColor = smarthome.UI.secondaryColor;
+			}
+
+			if (valueColor === "primary") {
+				valueColor = smarthome.UI.primaryColor;
+			} else if (valueColor === "secondary") {
+				valueColor = smarthome.UI.secondaryColor;
+			}
+
 			[{
 				apply: widget.setLabel,
 				data: update.label,
 				fallback: null
 			}, {
 				apply: widget.setLabelColor,
-				data: update.labelcolor,
+				data: labelColor,
 				fallback: ""
 			}, {
 				apply: widget.setValueColor,
-				data: update.valuecolor,
+				data: valueColor,
 				fallback: ""
 			}].forEach(function(e) {
 				if (e.data !== undefined) {
@@ -2379,6 +2395,8 @@
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",
+	primaryColorAttribute: "data-primary-color",
+	secondaryColorAttribute: "data-secondary-color",
 	controlButton: "button",
 	buttonActiveClass: "mdl-button--accent",
 	modal: ".mdl-modal",
