@@ -1513,8 +1513,6 @@
 
 		_t.input = _t.parentNode.querySelector("input[type=text]");
 
-		_t.valueNode = _t.parentNode.parentNode.querySelector(o.formValue);
-
 		function onChange() {
 			_t.parentNode.dispatchEvent(createEvent("control-change", {
 				item: _t.item,
@@ -1527,7 +1525,7 @@
 		};
 
 		_t.setValueColor = function(color) {
-			_t.valueNode.style.color = color;
+			_t.input.value.style.color = color;
 		};
 
 		_t.destroy = function() {
