@@ -1520,12 +1520,12 @@
 			}));
 		}
 
-		_t.setValuePrivate = function(value) {
+		_t.setValuePrivate = function(value, itemState) {
 			_t.input.value = value;
 		};
 
 		_t.setValueColor = function(color) {
-			_t.input.value.style.color = color;
+			_t.input.style.color = color;
 		};
 
 		_t.destroy = function() {
