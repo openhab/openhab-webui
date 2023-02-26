@@ -1520,20 +1520,26 @@
 			commaSeparatorPattern = /^[+-]?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
 
 		function onChange() {
-			var changeValue = _t.input.value;
+			let
+				changeValue = _t.input.value,
+				changed = true;
 			if (_t.itemType === "Number") {
-				var valueArray = changeValue.split(" ");
+				let valueArray = changeValue.split(" ");
 				changeValue = valueArray[0];
-				if (commaSeparatorPattern.test(changeValue) && !dotSeparatorPattern.test(changeValue)) {
-					changeValue = changeValue.replace(/\./g, "").replace(",", ".");
-				}
-				if (valueArray.length > 1) {
-					changeValue = changeValue + " " + valueArray[1];
+				if (changeValue === "") {
+					changed = false;
+				} else {
+	 				if (commaSeparatorPattern.test(changeValue) && !dotSeparatorPattern.test(changeValue)) {
+	 					changeValue = changeValue.replace(/\./g, "").replace(",", ".");
+	 				}
+	 				if (valueArray.length > 1) {
+	 					changeValue = changeValue + " " + valueArray[1];
+    				}
 				}
 			}
 
-			if (_t.itemType === "Number" && _t.input.value === "") {
-			_t.setValuePrivate(lastValue);
+			if (!changed) {
+				 _t.setValuePrivate(lastValue);
 			} else {
 				_t.parentNode.dispatchEvent(createEvent("control-change", {
 					item: _t.item,
