@@ -66,6 +66,9 @@ public class InputRenderer extends AbstractWidgetRenderer {
             snippet = snippet.replace("%data_state%", dataState.isEmpty() ? state.toString() : dataState);
         }
 
+        String dataType = state instanceof Number ? "Number" : "Text";
+        snippet = snippet.replace("%data_type%", dataType);
+
         // Process the color tags
         snippet = processColor(w, snippet);
 

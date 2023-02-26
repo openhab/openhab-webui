@@ -1512,16 +1512,39 @@
 			_t = this;
 
 		_t.input = _t.parentNode.querySelector("input[type=text]");
+		_t.itemType = _t.parentNode.getAttribute(o.itemTypeAttribute);
+
+		var
+			lastValue = _t.input.value,
+			dotSeparatorPattern = /^[+-]?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
+			commaSeparatorPattern = /^[+-]?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
 
 		function onChange() {
-			_t.parentNode.dispatchEvent(createEvent("control-change", {
-				item: _t.item,
-				value: _t.input.value
-			}));
+			var changeValue = _t.input.value;
+			if (_t.itemType === "Number") {
+				var valueArray = changeValue.split(" ");
+				changeValue = valueArray[0];
+				if (commaSeparatorPattern.test(changeValue) && !dotSeparatorPattern.test(changeValue)) {
+					changeValue = changeValue.replace(/\./g, "").replace(",", ".");
+				}
+				if (valueArray.length > 1) {
+					changeValue = changeValue + " " + valueArray[1];
+				}
+			}
+
+			if (_t.itemType === "Number" && _t.input.value === "") {
+			_t.setValuePrivate(lastValue);
+			} else {
+				_t.parentNode.dispatchEvent(createEvent("control-change", {
+					item: _t.item,
+					value: changeValue
+				}));
+			}
 		}
 
-		_t.setValuePrivate = function(value, itemState) {
+		_t.setValuePrivate = function(value) {
 			_t.input.value = value;
+			lastValue = value;
 		};
 
 		_t.setValueColor = function(color) {
@@ -2453,6 +2476,7 @@
 	});
 })({
 	itemAttribute: "data-item",
+	itemTypeAttribute: "data-item-type",
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",
