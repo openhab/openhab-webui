@@ -1529,17 +1529,17 @@
 				if (changeValue === "") {
 					changed = false;
 				} else {
-	 				if (commaSeparatorPattern.test(changeValue) && !dotSeparatorPattern.test(changeValue)) {
-	 					changeValue = changeValue.replace(/\./g, "").replace(",", ".");
-	 				}
-	 				if (valueArray.length > 1) {
-	 					changeValue = changeValue + " " + valueArray[1];
-    				}
+					if (commaSeparatorPattern.test(changeValue) && !dotSeparatorPattern.test(changeValue)) {
+						changeValue = changeValue.replace(/\./g, "").replace(",", ".");
+					}
+					if (valueArray.length > 1) {
+						changeValue = changeValue + " " + valueArray[1];
+					}
 				}
 			}
 
 			if (!changed) {
-				 _t.setValuePrivate(lastValue);
+				_t.setValuePrivate(lastValue);
 			} else {
 				_t.parentNode.dispatchEvent(createEvent("control-change", {
 					item: _t.item,
