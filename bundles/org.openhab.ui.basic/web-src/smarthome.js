@@ -1520,11 +1520,11 @@
 			commaSeparatorPattern = /^[+-]?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
 
 		function onChange() {
-			let
+			var
 				changeValue = _t.input.value,
 				changed = true;
 			if (_t.itemType === "Number") {
-				let valueArray = changeValue.split(" ");
+				var valueArray = changeValue.split(" ");
 				changeValue = valueArray[0];
 				if (changeValue === "") {
 					changed = false;
