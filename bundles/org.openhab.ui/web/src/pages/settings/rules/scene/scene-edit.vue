@@ -609,10 +609,11 @@ export default {
       try {
         const updatedRule = YAML.parse(this.ruleYaml)
         const actions = []
-        let idx = 0
+        let moduleId = 1
+        for (; ['triggers', 'actions', 'conditions'].some((s) => this.rule[s].some((m) => m.id === moduleId.toString())); moduleId++);
         for (let item in updatedRule.items) {
           actions.push({
-            id: (idx++).toString(),
+            id: (moduleId++).toString(),
             configuration: {
               itemName: item,
               command: updatedRule.items[item]
