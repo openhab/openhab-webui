@@ -1516,12 +1516,12 @@
 
 		var
 			lastValue = _t.input.value,
-			dotSeparatorPattern = /^[\+-]?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
-			commaSeparatorPattern = /^[\+-]?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
+			dotSeparatorPattern = /^-?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
+			commaSeparatorPattern = /^-?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
 
 		function onChange() {
 			var
-				changeValue = _t.input.value,
+				changeValue = _t.input.value.trim(),
 				changed = true;
 			if (_t.itemType === "Number") {
 				var valueArray = changeValue.split(" ");
@@ -1529,6 +1529,7 @@
 				if (changeValue === "") {
 					changed = false;
 				} else {
+					changeValue = changeValue.replace(/^\+/, "");
 					if (commaSeparatorPattern.test(changeValue) && !dotSeparatorPattern.test(changeValue)) {
 						changeValue = changeValue.replace(/\./g, "").replace(",", ".");
 					}
