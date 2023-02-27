@@ -242,6 +242,7 @@ export default {
         { type: 'Slider', icon: 'slider_horizontal_3' },
         { type: 'Frame', icon: 'macwindow' },
         { type: 'Setpoint', icon: 'plus_slash_minus' },
+        { type: 'Input', icon: 'text_cursor' },
         { type: 'Default', icon: 'rectangle' },
         { type: 'Group', icon: 'square_stack_3d_down_right' },
         { type: 'Chart', icon: 'chart_bar_square' },
@@ -253,7 +254,7 @@ export default {
         { type: 'Video', icon: 'videocam' }
       ],
       linkableWidgetTypes: ['Sitemap', 'Text', 'Frame', 'Group', 'Image'],
-      widgetTypesRequiringItem: ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'List', 'Setpoint', 'Colorpicker', 'Default']
+      widgetTypesRequiringItem: ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'List', 'Setpoint', 'Input', 'Colorpicker', 'Default']
     }
   },
   created () {
