@@ -1516,8 +1516,8 @@
 
 		var
 			lastValue = _t.input.value,
-			dotSeparatorPattern = /^[+-]?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
-			commaSeparatorPattern = /^[+-]?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
+			dotSeparatorPattern = /^[\+-]?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
+			commaSeparatorPattern = /^[\+-]?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
 
 		function onChange() {
 			var
