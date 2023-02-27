@@ -1,4 +1,4 @@
-import { pi, pb, pt } from '../helpers.js'
+import { pi, pb, pt, pd } from '../helpers.js'
 
 export default () => [
   pt('name', 'Name', 'Input name'),
@@ -13,6 +13,7 @@ export default () => [
   pb('validate-on-blur', 'Validate on blur', 'Only validate when focus moves away from input field'),
   pi('item', 'Item', 'Link the input value to the state of this item'),
   pb('useDisplayState', 'Use Display State', 'Use the formatted state as the value for the input control'),
+  pd('step', 'Step', 'Step value when type set to number, any if left empty'),
   pb('showTime', 'Show time', 'Display time when type set to datepicker'),
   pt('defaultValue', 'Default value', 'Default value when not found in item state or variable'),
   pt('variable', 'Variable', 'Name of the variable to set when the input changes'),

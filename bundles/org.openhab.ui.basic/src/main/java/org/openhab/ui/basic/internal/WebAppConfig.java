@@ -25,6 +25,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * and validates newly applied values.
  *
  * @author Vlad Ivanov - Initial contribution
+ * @author Laurent Garnier - New config parameter "enableIconify"
  */
 @NonNullByDefault
 public class WebAppConfig {
@@ -34,10 +35,13 @@ public class WebAppConfig {
     public static final String THEME_NAME_DARK = "dark";
     private static final String DEFAULT_THEME = THEME_NAME_DEFAULT;
 
+    private static final String DEFAULT_ICONIFY = "false";
+
     private static final String DEFAULT_WEB_AUDIO = "false";
 
     private String defaultSitemap = DEFAULT_SITEMAP;
     private String theme = DEFAULT_THEME;
+    private boolean iconify = Boolean.parseBoolean(DEFAULT_ICONIFY);
     private boolean webAudio = Boolean.parseBoolean(DEFAULT_WEB_AUDIO);
 
     private List<String> cssClassList = new ArrayList<>();
@@ -80,6 +84,7 @@ public class WebAppConfig {
     public void applyConfig(Map<String, Object> configProps) {
         defaultSitemap = (String) configProps.getOrDefault("defaultSitemap", DEFAULT_SITEMAP);
         theme = (String) configProps.getOrDefault("theme", DEFAULT_THEME);
+        iconify = "true".equalsIgnoreCase((String) configProps.getOrDefault("enableIconify", DEFAULT_ICONIFY));
         webAudio = "true".equalsIgnoreCase((String) configProps.getOrDefault("webAudio", DEFAULT_WEB_AUDIO));
 
         applyCssClasses(configProps);
@@ -99,6 +104,10 @@ public class WebAppConfig {
             result += item + " ";
         }
         return result;
+    }
+
+    public boolean isIconifyEnabled() {
+        return iconify;
     }
 
     public boolean isWebAudio() {

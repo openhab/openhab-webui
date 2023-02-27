@@ -343,7 +343,7 @@ export default {
         }
       })
     },
-    save (stay) {
+    save (noToast) {
       if (!this.isEditable) return Promise.reject()
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) {
@@ -372,11 +372,13 @@ export default {
           this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.rule.uid).replace('/schedule/', '/rules/'), { reloadCurrent: true })
           this.load()
         } else {
-          this.$f7.toast.create({
-            text: 'Rule updated',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          if (!noToast) {
+            this.$f7.toast.create({
+              text: 'Rule updated',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+          }
           this.savedRule = cloneDeep(this.rule)
         }
         // if (!stay) this.$f7router.back()
@@ -407,18 +409,29 @@ export default {
     },
     runNow () {
       if (this.createMode) return
-      if (this.rule.status === 'RUNNING') return
+      if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
+        return this.$f7.toast.create({
+          text: `Rule cannot be run ${(this.rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      }
       this.$f7.toast.create({
         text: 'Running rule',
         destroyOnClose: true,
         closeTimeout: 2000
       }).open()
-      this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
-        this.$f7.toast.create({
-          text: 'Error while running rule: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+
+      const savePromise = (this.isEditable && this.dirty) ? this.save(true) : Promise.resolve()
+
+      savePromise.then(() => {
+        this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
+          this.$f7.toast.create({
+            text: 'Error while running rule: ' + err,
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        })
       })
     },
     deleteRule () {
@@ -473,7 +486,7 @@ export default {
             ev.preventDefault()
             break
           case 83:
-            this.save(!this.createMode)
+            this.save()
             ev.stopPropagation()
             ev.preventDefault()
             break

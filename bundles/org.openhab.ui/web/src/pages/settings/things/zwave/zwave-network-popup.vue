@@ -8,13 +8,14 @@
           </f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <zwave-network v-if="showNetwork" />
+      <zwave-network v-if="showNetwork" :bridgeUID="bridgeUID" />
     </f7-page>
   </f7-popup>
 </template>
 
 <script>
 export default {
+  props: ['bridgeUID'],
   components: {
     'zwave-network': () => import(/* webpackChunkName: "zwave-network" */ '@/components/thing/zwave/zwave-network.vue')
   },

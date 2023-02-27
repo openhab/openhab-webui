@@ -50,3 +50,7 @@ export function compareParents (i1, i2) {
   }
   return modelOrder
 }
+
+export function compareRules (r1, r2) {
+  return r1.name.localeCompare(r2.name)
+}

@@ -13,7 +13,7 @@
 <script>
 import mixin from '../widget-mixin'
 import { OhRepeaterDefinition } from '@/assets/definitions/widgets/system'
-import { compareItems } from '@/components/widgets/widget-order'
+import { compareItems, compareRules } from '@/components/widgets/widget-order'
 import { Fragment } from 'vue-fragment'
 
 export default {
@@ -76,13 +76,15 @@ export default {
         const step = this.config.rangeStep || 1
         return Promise.resolve(Array(Math.ceil((stop + 1 - start) / step)).fill(start).map((x, y) => x + y * step))
       } else if (this.config.sourceType === 'itemsWithTags' && this.config.itemTags) {
-        return this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((d) => d.sort(compareItems))
+        return this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((d) => Promise.resolve(d.sort(compareItems)))
       } else if (this.config.sourceType === 'itemsInGroup') {
         return this.$oh.api.get('/rest/items/' + this.config.groupItem + '?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((i) => Promise.resolve(i.members.sort(compareItems)))
       } else if (this.config.sourceType === 'itemStateOptions') {
         return this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.stateDescription) ? i.stateDescription.options : []))
       } else if (this.config.sourceType === 'itemCommandOptions') {
         return this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.commandDescription) ? i.commandDescription.commandOptions : []))
+      } else if (this.config.sourceType === 'rulesWithTags' && this.config.ruleTags) {
+        return this.$oh.api.get('/rest/rules?summary=true' + '&tags=' + this.config.ruleTags).then((r) => Promise.resolve(r.sort(compareRules)))
       } else {
         return Promise.resolve(this.config.in)
       }
