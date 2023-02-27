@@ -1521,9 +1521,10 @@
 
 		function onChange() {
 			var
-				changeValue = _t.input.value.trim(),
+				changeValue = _t.input.value,
 				changed = true;
 			if (_t.itemType === "Number") {
+				changeValue = changeValue.trim();
 				var valueArray = changeValue.split(" ");
 				changeValue = valueArray[0];
 				if (changeValue === "") {
