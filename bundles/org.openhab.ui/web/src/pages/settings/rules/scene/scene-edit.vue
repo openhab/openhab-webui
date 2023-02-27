@@ -608,6 +608,8 @@ export default {
       if (!this.isEditable) return
       try {
         const updatedRule = YAML.parse(this.ruleYaml)
+        if (updatedRule.triggers === null) updatedRule.triggers = []
+        if (updatedRule.conditions === null) updatedRule.conditions = []
         const actions = []
         let moduleId = 1
         for (; ['triggers', 'actions', 'conditions'].some((s) => this.rule[s].some((m) => m.id === moduleId.toString())); moduleId++);
