@@ -34,3 +34,13 @@
   font-feature-settings: 'liga';
 }
 
+.material-icons.md-oh {
+	font-size: 32px;
+	vertical-align: middle;
+	html:not(.ui-icons-enabled) & {
+		display: none;
+	}
+	html.ui-layout-condensed & {
+		font-size: 28px;
+	}
+}

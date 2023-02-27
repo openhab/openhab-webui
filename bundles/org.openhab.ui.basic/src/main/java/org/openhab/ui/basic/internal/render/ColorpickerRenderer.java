@@ -80,7 +80,7 @@ public class ColorpickerRenderer extends AbstractWidgetRenderer {
 
         // Should be called before preprocessSnippet
         snippet = snippet.replace("%state%", hexValue);
-        snippet = snippet.replace("%icon_state%", escapeURL(hexValue));
+        snippet = snippet.replace("%state_in_url%", escapeURL(hexValue));
 
         snippet = preprocessSnippet(snippet, w);
         if (purelabel != null) {

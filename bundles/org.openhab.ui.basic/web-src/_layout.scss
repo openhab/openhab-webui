@@ -152,6 +152,13 @@
 				max-height: 28px;
 			}
 		}
+		iconify-icon {
+			font-size: 32px;
+			vertical-align: middle;
+			html.ui-layout-condensed & {
+				font-size: 28px;
+			}
+		}
 	}
 	&__label {
 		@media screen and (max-width: $layout-tablet-size-threshold) {

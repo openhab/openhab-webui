@@ -24,6 +24,17 @@
 			</options>
 			<default>true</default>
 		</parameter>
+		<parameter name="enableIconify" type="text">
+			<label>Enable Iconify Icons</label>
+			<description>If enabled, the UI will render iconify icons directly by downloading them from the Internet and caching
+				them in the WEB browser. If disabled, the UI will use the standard method by requesting the server icon proxy and
+				assuming iconify icons are installed on the server. Default is disabled.</description>
+			<options>
+				<option value="true">Enable</option>
+				<option value="false">Disable</option>
+			</options>
+			<default>false</default>
+		</parameter>
 		<parameter name="condensedLayout" type="text" required="true">
 			<label>Condensed Layout</label>
 			<description>When enabled, changes the layout so that more widgets can fit on the screen.</description>
