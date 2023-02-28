@@ -260,6 +260,25 @@
 		};
 	}
 
+    function WaitingTimer(callback, waitingTime) {
+        var
+            _t = this,
+            timeoutId,
+            args;
+
+        _t.wait = function() {
+            args = arguments;
+            timeoutId = setTimeout(function() {
+                callback.apply(null, args);
+                this.timeoutId = undefined;
+            }, waitingTime);
+        }
+
+        _t.cancel = function() {
+            clearTimeout(timeoutId);
+        };
+    }
+
 	function DebounceProxy(callback, callInterval) {
 		var
 			_t = this,
@@ -1513,6 +1532,7 @@
 
 		_t.input = _t.parentNode.querySelector("input[type=text]");
 		_t.itemType = _t.parentNode.getAttribute(o.itemTypeAttribute);
+		_t.verify = undefined;
 
 		var
 			lastValue = _t.input.value,
@@ -1547,10 +1567,19 @@
 					item: _t.item,
 					value: changeValue
 				}));
+				// We don't know if the sent value is a valid command and will update the item state.
+				// If we don't receive an update in 1s, revert to the previous value.
+				_t.verify = new WaitingTimer(function() {
+					_t.setValuePrivate(lastValue);
+				}, 1000);
+				_t.verify.wait();
 			}
 		}
 
 		_t.setValuePrivate = function(value) {
+			if (_t.verify) {
+				_t.verify.cancel();
+			}
 			_t.input.value = value;
 			lastValue = value;
 		};
