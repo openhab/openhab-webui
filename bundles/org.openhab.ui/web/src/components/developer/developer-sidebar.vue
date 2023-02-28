@@ -437,56 +437,64 @@ export default {
     },
     /**
      * Search for the query string inside a single Item.
+     * All searches are non case-intensive.
      *
      * Checks:
-     *  - name (non case-intensive)
-     *  - label (non case-intensive)
-     *  - metadata namespaces (non case-intensive; exact match)
+     *  - name
+     *  - label
+     *  - metadata namespaces (requires exact match)
      *
      * @param i Item
      * @param query search query (as typed, not in lowercase)
      * @returns {boolean}
      */
     searchInItem (i, query) {
-      if (i.name.toLowerCase().indexOf(query.toLowerCase()) >= 0) return true
-      if (i.label && i.label.toLowerCase().indexOf(query.toLowerCase()) >= 0) return true
+      query = query.toLowerCase()
+      if (i.name.toLowerCase().indexOf(query) >= 0) return true
+      if (i.label && i.label.toLowerCase().indexOf(query) >= 0) return true
       if (i.metadata) {
         const namespaces = Object.keys(i.metadata).map(n => n.toLowerCase())
-        if (namespaces.includes(query.toLowerCase())) return true
+        if (namespaces.includes(query)) return true
       }
       return false
     },
     /**
      * Search for the query string inside a single rule.
+     * All searches are non case-intensive.
      *
      * Checks:
-     *  - name (non case-intensive)
-     *  - label (non case-intensive)
-     *  - description (non case-intensive)
-     *  - itemName & thingUID of triggers, actions & conditions (non case-intensive)
-     *  - scripts (e.g. JavaScript or Rule DSL) (case-intensive)
+     *  - name
+     *  - label
+     *  - description
+     *  - itemName & thingUID of triggers, actions & conditions
+     *  - script content (e.g. JavaScript or Rule DSL)
+     *  - script MIME types (requires exact match)
      *
      * @param r rule
-     * @param search query (as typed, not in lowercase)
+     * @param query query (as typed, not in lowercase)
      * @returns {boolean}
      */
     searchInRule (r, query) {
-      if (r.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0) return true
-      if (r.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0) return true
-      if (r.description && r.description.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0) return true
+      query = query.toLowerCase()
+      if (r.uid.toLowerCase().indexOf(query) >= 0) return true
+      if (r.name.toLowerCase().indexOf(query) >= 0) return true
+      if (r.description && r.description.toLowerCase().indexOf(query) >= 0) return true
       const searchItemOrThing = (m) => {
         // Match Item names non case-intensive
-        if (m.configuration.itemName && m.configuration.itemName.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
+        if (m.configuration.itemName && m.configuration.itemName.toLowerCase().indexOf(query) >= 0) {
           return true
         }
         // Match Thing names non case-intensive
-        if (m.configuration.thingUID && m.configuration.thingUID.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
+        if (m.configuration.thingUID && m.configuration.thingUID.toLowerCase().indexOf(query) >= 0) {
           return true
         }
       }
       const searchScript = (m) => {
-        // Match scripts case-intensive
-        if (m.configuration.script && m.configuration.script.indexOf(query) >= 0) {
+        // MIME types require exact match
+        if (m.configuration.type && m.configuration.type.toLowerCase() === query) {
+          return true
+        }
+        if (m.configuration.script && m.configuration.script.toLowerCase().indexOf(query) >= 0) {
           return true
         }
       }
