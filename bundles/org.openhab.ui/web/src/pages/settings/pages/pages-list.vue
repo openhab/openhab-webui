@@ -14,6 +14,7 @@
           search-container=".pages-list"
           search-item=".pagelist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -190,6 +191,9 @@ export default {
           return prev
         }, {})
       }
+    },
+    searchPlaceholder () {
+      return window.innerWidth > 1000 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {

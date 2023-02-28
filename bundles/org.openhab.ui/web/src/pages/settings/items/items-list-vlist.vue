@@ -10,6 +10,7 @@
           ref="searchbar"
           class="searchbar-items"
           search-container=".virtual-list"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -272,6 +273,11 @@ export default {
   asyncComputed: {
     iconUrl () {
       return icon => this.$oh.media.getIcon(icon)
+    }
+  },
+  computed: {
+    searchPlaceholder () {
+      return window.innerWidth > 1000 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   }
 }
