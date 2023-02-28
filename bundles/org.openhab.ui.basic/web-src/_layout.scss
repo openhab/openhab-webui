@@ -217,6 +217,22 @@
 			box-shadow: none;
 			-webkit-box-shadow: none;
 		}
+		.mdl-textfield {
+			&__input,
+			&__label {
+				font-weight: normal;
+				font-size: 14px;
+				text-align: right;
+			}
+			&__label {
+				@media screen and (max-width: $layout-tablet-size-threshold) {
+					margin: 0 -12px;
+					padding: 0 12px 0 0;
+				}
+				margin: 0 -16px;
+				padding: 0 16px 0 0;
+			}
+		}
 	}
 	&__setpoint,
 	&__colorpicker,
@@ -243,6 +259,9 @@
 	}
 	&__slider {
 		width: 140px;
+	}
+	&__input {
+		width: 60%;
 	}
 	&__title {
 		margin: 0;
@@ -539,27 +558,6 @@ $colorpicker-mobile-size: 270px;
 	}
 	position: relative;
 }
-
-.input {
-	font-weight: normal;
-	font-size: 14px;
-	text-align: right;
-	&__control {
-		width: 60%;
-	}
-	&__value {
-		margin: 0 0;
-		padding: 0 0 0 0;
-	}
-	&__label {
-		@media screen and (max-width: $layout-tablet-size-threshold) {
-			margin: 0 -12px;
-			padding: 0 12px 0 0;
-		}
-		margin: 0 -16px;
-		padding: 0 16px 0 0;
-	}
-}   
 
 .page {
 	&-static {
