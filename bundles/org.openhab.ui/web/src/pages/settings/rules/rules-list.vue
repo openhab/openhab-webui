@@ -21,10 +21,10 @@
       <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
         Remove {{ selectedItems.length }}
       </f7-link>
-      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">
+      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md && !showScenes" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">
         &nbsp;Disable {{ selectedItems.length }}
       </f7-link>
-      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
+      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md && !showScenes" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
         &nbsp;Enable {{ selectedItems.length }}
       </f7-link>
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
@@ -32,8 +32,8 @@
         {{ selectedItems.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)" />
-        <f7-link v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)" />
+        <f7-link v-if="!showScenes" v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)" />
+        <f7-link v-if="!showScenes" v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)" />
         <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
       </div>
     </f7-toolbar>
