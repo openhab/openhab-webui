@@ -59,11 +59,11 @@ public class InputRenderer extends AbstractWidgetRenderer {
         String dataState = getValue(w);
         State state = itemUIRegistry.getState(w);
         if (state == null || state instanceof UnDefType) {
-            snippet = snippet.replace("%undef_state%", !dataState.isEmpty() ? dataState : "-");
+            snippet = snippet.replace("%undef_state%", dataState);
             snippet = snippet.replace("%data_state%", "");
         } else {
             snippet = snippet.replace("%undef_state%", "");
-            snippet = snippet.replace("%data_state%", dataState.isEmpty() ? state.toString() : dataState);
+            snippet = snippet.replace("%data_state%", dataState);
         }
 
         String dataType = state instanceof Number ? "Number" : "Text";
