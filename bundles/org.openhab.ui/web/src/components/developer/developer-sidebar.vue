@@ -443,6 +443,7 @@ export default {
      *  - name
      *  - label
      *  - metadata namespaces (requires exact match)
+     *  - tags (requires exact match)
      *
      * @param i Item
      * @param query search query (as typed, not in lowercase)
@@ -456,6 +457,7 @@ export default {
         const namespaces = Object.keys(i.metadata).map(n => n.toLowerCase())
         if (namespaces.includes(query)) return true
       }
+      if (i.tags && i.tags.map(t => t.toLowerCase()).includes(query)) return true
       return false
     },
     /**
