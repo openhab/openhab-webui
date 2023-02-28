@@ -548,7 +548,8 @@ export default {
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
         })
-        const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
+        const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 ||
+          t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
@@ -561,7 +562,8 @@ export default {
         const rules = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0)
         const scenes = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') >= 0)
         const scripts = rulesScenesScripts.filter((r) => r.tags.indexOf('Script') >= 0)
-        const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
+        const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 ||
+          (p.config && p.config.label && p.config.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
