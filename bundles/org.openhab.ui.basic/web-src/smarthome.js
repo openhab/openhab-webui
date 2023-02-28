@@ -272,7 +272,7 @@
                 callback.apply(null, args);
                 this.timeoutId = undefined;
             }, waitingTime);
-        }
+        };
 
         _t.cancel = function() {
             clearTimeout(timeoutId);
