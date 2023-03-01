@@ -14,13 +14,14 @@ package org.openhab.ui.basic.internal.servlet;
 
 import java.io.IOException;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.events.EventPublisher;
-import org.openhab.core.io.http.HttpContextFactoryService;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
@@ -30,12 +31,15 @@ import org.openhab.core.library.items.SwitchItem;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.TypeParser;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.http.HttpService;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardResource;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletAsyncSupported;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletName;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletPattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This servlet receives events from the web app and sends these as
@@ -45,32 +49,27 @@ import org.osgi.service.http.HttpService;
  * @author Stefan Bußweiler - Migration to new ESH event concept
  *
  */
-@Component(immediate = true, service = {})
+@Component(immediate = true, service = Servlet.class)
+@HttpWhiteboardResource(pattern = "/basicui/*", prefix = "/web")
+@HttpWhiteboardServletAsyncSupported(asyncSupported = true)
+@HttpWhiteboardServletName(CmdServlet.SERVLET_PATH)
+@HttpWhiteboardServletPattern(CmdServlet.SERVLET_PATH + "/*")
 @NonNullByDefault
-public class CmdServlet extends BaseServlet {
+public class CmdServlet extends HttpServlet {
 
     private static final long serialVersionUID = 4813813926991230571L;
 
-    public static final String SERVLET_NAME = "CMD";
+    public static final String SERVLET_PATH = "/basicui/CMD";
+
+    private final Logger logger = LoggerFactory.getLogger(CmdServlet.class);
 
     private final EventPublisher eventPublisher;
+    private final ItemRegistry itemRegistry;
 
     @Activate
-    public CmdServlet(final @Reference HttpService httpService,
-            final @Reference HttpContextFactoryService httpContextFactoryService,
-            final @Reference ItemRegistry itemRegistry, final @Reference EventPublisher eventPublisher) {
-        super(httpService, httpContextFactoryService, itemRegistry);
+    public CmdServlet(final @Reference ItemRegistry itemRegistry, final @Reference EventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
-    }
-
-    @Activate
-    protected void activate(BundleContext bundleContext) {
-        super.activate(WEBAPP_ALIAS + "/" + SERVLET_NAME, bundleContext);
-    }
-
-    @Deactivate
-    protected void deactivate() {
-        httpService.unregister(WEBAPP_ALIAS + "/" + SERVLET_NAME);
+        this.itemRegistry = itemRegistry;
     }
 
     @Override
