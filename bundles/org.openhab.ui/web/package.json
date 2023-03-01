@@ -140,7 +140,7 @@
     "copy-webpack-plugin": "^4.6.0",
     "cross-env": "^5.2.1",
     "css-loader": "^2.1.1",
-    "cypress": "^3.8.3",
+    "cypress": "^12.7.0",
     "diacritic": "0.0.2",
     "eslint": "^7.19.0",
     "eslint-plugin-cypress": "^2.11.2",
