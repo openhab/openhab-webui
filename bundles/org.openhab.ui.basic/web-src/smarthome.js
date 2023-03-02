@@ -260,24 +260,24 @@
 		};
 	}
 
-    function WaitingTimer(callback, waitingTime) {
-        var
-            _t = this,
-            timeoutId,
-            args;
+	function WaitingTimer(callback, waitingTime) {
+		var
+			_t = this,
+			timeoutId,
+			args;
 
-        _t.wait = function() {
-            args = arguments;
-            timeoutId = setTimeout(function() {
-                callback.apply(null, args);
-                this.timeoutId = undefined;
-            }, waitingTime);
-        };
+		_t.wait = function() {
+			args = arguments;
+			timeoutId = setTimeout(function() {
+				callback.apply(null, args);
+				this.timeoutId = undefined;
+			}, waitingTime);
+		};
 
-        _t.cancel = function() {
-            clearTimeout(timeoutId);
-        };
-    }
+		_t.cancel = function() {
+			clearTimeout(timeoutId);
+		};
+	}
 
 	function DebounceProxy(callback, callInterval) {
 		var
