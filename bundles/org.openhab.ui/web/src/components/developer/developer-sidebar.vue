@@ -154,17 +154,7 @@
             Code Tools
           </f7-block-title>
         </f7-block>
-        <f7-block class="no-margin no-padding">
-          <f7-block-title class="padding-horizontal">
-            Widgets Expression Tester
-          </f7-block-title>
-          <f7-list media-list>
-            <f7-list-input type="textarea" title="Expression" placeholder="Try '=2+3' or '=items.MyItem.state'" :value="testExpression" @input="(evt) => testExpression = evt.target.value" />
-          </f7-list>
-          <f7-block strong v-if="testExpression">
-            <generic-widget-component :context="expressionTesterContext" />
-          </f7-block>
-        </f7-block>
+        <expression-tester />
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal">
             Scripting Scratchpad
@@ -287,6 +277,7 @@ import Item from '@/components/item/item.vue'
 import ItemStandaloneControl from '@/components/item/item-standalone-control.vue'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 import SearchResults from './search-results.vue'
+import ExpressionTester from './expression-tester.vue'
 
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import ThingStatus from '@/components/thing/thing-status-mixin'
@@ -296,7 +287,8 @@ export default {
   components: {
     Item,
     ItemStandaloneControl,
-    SearchResults
+    SearchResults,
+    ExpressionTester
   },
   data () {
     return {
@@ -339,24 +331,6 @@ export default {
   computed: {
     context () {
       return {
-        store: this.$store.getters.trackedItems
-      }
-    },
-    expressionTesterContext () {
-      return {
-        component: {
-          component: 'Label',
-          config: {
-            style: {
-              fontFamily: 'monospace'
-            },
-            noBorder: true,
-            noShadow: true,
-            text: this.testExpression.toString()
-          }
-        },
-        editmode: true,
-        vars: {},
         store: this.$store.getters.trackedItems
       }
     }
