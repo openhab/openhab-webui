@@ -194,7 +194,7 @@
             </f7-list-button>
             <f7-list-item divider title="Pages" />
             <f7-list-button href="/settings/pages/layout/add" color="blue" :animate="false">
-              Create layout
+              Create layout page
             </f7-list-button>
             <f7-list-button href="/settings/pages/tabs/add" color="blue" :animate="false">
               Create tabbed page
