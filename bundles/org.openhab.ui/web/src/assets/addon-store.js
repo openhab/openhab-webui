@@ -25,6 +25,7 @@ export const Formats = {
   'json_download_url': 'Linked JSON File',
   'jar_download_url': 'Linked JAR file',
   'kar_download_url': 'Linked KAR file',
+  'eclipse': 'Eclipse',
   'karaf': 'Karaf'
 }
 

@@ -50,9 +50,9 @@
     <f7-tabs>
       <f7-tab :tab-active="currentTab === 'bindings'">
         <addons-section
-          v-if="addons && addons.karaf"
+          v-if="officialAddons"
           @addonButtonClick="addonButtonClick"
-          :addons="addons.karaf.filter((a) => a.type === 'binding')"
+          :addons="officialAddons.filter((a) => a.type === 'binding')"
           :title="'openHAB Distribution'"
           :subtitle="'Official bindings maintained by the openHAB project'" />
         <addons-section
@@ -100,7 +100,7 @@
           :title="'Widgets for the Main UI'"
           :subtitle="'Extend your pages with these community-designed widgets'" />
         <addons-section
-          v-if="addons && addons.karaf" :show-all="true"
+          v-if="addons && officialAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
           :addons="allAddons.filter((a) => a.type === 'ui' && a.contentType !== 'application/vnd.openhab.uicomponent;type=widget')"
           :title="'Other UI Add-ons'"
@@ -108,28 +108,28 @@
       </f7-tab>
       <f7-tab :tab-active="currentTab === 'other'">
         <addons-section
-          v-if="addons && addons.karaf" :show-all="true"
+          v-if="addons && officialAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
           :addons="allAddons.filter((a) => a.type === 'misc')"
           :title="'System Integrations'"
           :featured="['misc-openhabcloud', 'misc-homekit', 'misc-metrics']"
           :subtitle="'Integrate openHAB with external systems'" />
         <addons-section
-          v-if="addons && addons.karaf"
+          v-if="addons && officialAddons"
           @addonButtonClick="addonButtonClick"
           :addons="allAddons.filter((a) => a.type === 'persistence')" :show-all="true"
           :featured="['persistence-rrd4j', 'persistence-influxdb', 'persistence-mongodb']"
           :title="'Persistence Services'"
           :subtitle="'Backend connectors to store historical data'" />
         <addons-section
-          v-if="addons && addons.karaf"
+          v-if="addons && officialAddons"
           @addonButtonClick="addonButtonClick"
           :addons="allAddons.filter((a) => a.type === 'transformation')" :show-all="true"
           :featured="['transformation-jsonpath', 'transformation-javascript', 'transformation-regex']"
           :title="'Transformation Add-ons'"
           :subtitle="'Translate raw values into processed or human-readable representations'" />
         <addons-section
-          v-if="addons && addons.karaf" :show-all="true"
+          v-if="addons && officialAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
           :addons="allAddons.filter((a) => a.type === 'voice')"
           :featured="['voice-googletts', 'voice-pollytts', 'voice-voicerss']"
@@ -189,8 +189,11 @@ export default {
     allAddons () {
       return Object.keys(this.addons).flatMap((k) => this.addons[k])
     },
+    officialAddons () {
+      return Object.keys(this.addons).filter((k) => k === 'eclipse' || k === 'karaf').flatMap((k) => this.addons[k])
+    },
     otherAddons () {
-      return Object.keys(this.addons).filter((k) => k !== 'karaf' && k !== 'marketplace').flatMap((k) => this.addons[k])
+      return Object.keys(this.addons).filter((k) => k !== 'eclipse' && k !== 'karaf' && k !== 'marketplace').flatMap((k) => this.addons[k])
     }
   },
   methods: {
