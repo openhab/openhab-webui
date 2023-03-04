@@ -828,6 +828,10 @@
 			_t.valueNode.innerHTML = value;
 		};
 
+		_t.setValueColor = function(color) {
+			_t.valueNode.style.color = color;
+		};
+
 		function emitEvent(value) {
 			_t.parentNode.dispatchEvent(createEvent(
 				"control-change", {

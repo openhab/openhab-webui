@@ -25,9 +25,11 @@
                 <addon-stats-line :addon="addon" :iconSize="15" />
               </div>
               <div class="addon-header-actions">
-                <f7-preloader v-if="isPending(addon)" color="blue" />
-                <f7-button v-else-if="addon.installed" class="install-button" text="Remove" color="red" round small fill @click="openAddonPopup" />
-                <f7-button v-else class="install-button" :text="installableAddon(addon) ? 'Install' : 'Add'" color="blue" round small fill @click="openAddonPopup" />
+                <div v-if="showInstallActions">
+                  <f7-preloader v-if="isPending(addon)" color="blue" />
+                  <f7-button v-else-if="addon.installed" class="install-button" text="Remove" color="red" round small fill @click="openAddonPopup" />
+                  <f7-button v-else class="install-button" :text="installableAddon(addon) ? 'Install' : 'Add'" color="blue" round small fill @click="openAddonPopup" />
+                </div>
                 <f7-link v-if="showConfig" icon-f7="gears" tooltip="Configure add-on" color="blue" :href="'/settings/addons/' + addonId + '/config'" round small />
               </div>
             </div>
@@ -239,6 +241,10 @@ export default {
         `/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}` +
         `/${this.addon.id}`
       return url
+    },
+    showInstallActions () {
+      let splitted = this.addon.uid.split(':')
+      return splitted.length < 2 || splitted[0] !== 'eclipse'
     }
   },
   methods: {
@@ -297,7 +303,7 @@ export default {
                 body = '<p>The description is not available for this add-on.</p><h3>Debug Information</h3><blockquote>' + text + '</blockquote>'
               } else {
                 const frontmatter = text.substring(4, frontmatterSeparators[1].index)
-                body = marked.default(text.substring(frontmatterSeparators[1].index + 4))
+                body = marked.parse(text.substring(frontmatterSeparators[1].index + 4))
 
                 // perform a few replaces on HTML body for Markdown readmes on GitHub
                 body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
