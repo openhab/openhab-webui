@@ -333,7 +333,8 @@
 		_t.formRow = parentNode.parentNode;
 		_t.item = _t.parentNode.getAttribute(o.itemAttribute);
 		_t.id = _t.parentNode.getAttribute(o.idAttribute);
-		_t.icon = _t.parentNode.parentNode.querySelector(o.formIcon);
+		_t.iconContainer = _t.parentNode.parentNode.querySelector(o.formIcon);
+		_t.icon = _t.parentNode.parentNode.querySelector(o.formIconImg);
 		_t.visible = !_t.formRow.classList.contains(o.formRowHidden);
 		_t.label = _t.parentNode.parentNode.querySelector(o.formLabel);
 
@@ -412,6 +413,12 @@
 			_t.parentNode.style.color = color;
 		};
 
+		_t.setIconColor = function(color) {
+			if (_t.iconContainer !== null) {
+				_t.iconContainer.style.color = color;
+			}
+		};
+
 		_t.destroy = function() {
 			if (_t.icon !== null) {
 				_t.icon.removeEventListener("error", replaceImageWithNone);
@@ -453,6 +460,7 @@
 		_t.setValue = function() {};
 		_t.setLabelColor = function() {};
 		_t.setValueColor = function() {};
+		_t.setIconColor = function() {};
 		_t.suppressUpdate = function() {};
 		_t.destroy = function() {};
 	}
@@ -818,6 +826,10 @@
 				value = "0";
 			}
 			_t.valueNode.innerHTML = value;
+		};
+
+		_t.setValueColor = function(color) {
+			_t.valueNode.style.color = color;
 		};
 
 		function emitEvent(value) {
@@ -1982,6 +1994,10 @@
 				apply: widget.setValueColor,
 				data: update.valuecolor,
 				fallback: ""
+			}, {
+				apply: widget.setIconColor,
+				data: update.iconcolor,
+				fallback: ""
 			}].forEach(function(e) {
 				if (e.data !== undefined) {
 					e.apply(e.data);
@@ -2061,7 +2077,8 @@
 					state: state,
 					label: data.label,
 					labelcolor: data.labelcolor,
-					valuecolor: data.valuecolor
+					valuecolor: data.valuecolor,
+					iconcolor: data.iconcolor
 				};
 				_t.updateWidget(smarthome.dataModel[data.widgetId], update);
 			}
@@ -2125,7 +2142,8 @@
 							state: state,
 							label: widget.label,
 							labelcolor: widget.labelcolor,
-							valuecolor: widget.valuecolor
+							valuecolor: widget.valuecolor,
+							iconcolor: widget.iconcolor
 						};
 						_t.updateWidget(w, update);
 					}
@@ -2392,7 +2410,8 @@
 	formValue: ".mdl-form__value",
 	formRadio: ".mdl-radio",
 	formRadioControl: ".mdl-radio__button",
-	formIcon: ".mdl-form__icon img",
+	formIcon: ".mdl-form__icon",
+	formIconImg: ".mdl-form__icon img",
 	formLabel: ".mdl-form__label",
 	uiLoadingBar: ".ui__loading",
 	layoutTitle: ".mdl-layout-title",
