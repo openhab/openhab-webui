@@ -49,7 +49,7 @@ A marker on a floor plan
 ### Icon
 <div class="props">
 <PropGroup name="icon" label="Icon">
-  You can customize the styles further with CSS attributes in the <code>iconStyle</code> parameter (in YAML only) - see example below
+  You can customize the styles further with CSS attributes in the <code>iconStyle</code> parameter (in YAML only)
 <PropBlock type="TEXT" name="icon" label="Icon">
   <PropDescription>
     Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>), <code>material:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>) or <code>iconify:iconSet:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://icon-sets.iconify.design">Iconify icon</a>, requires being online if not in cache)
@@ -96,7 +96,7 @@ A marker on a floor plan
 ### Tooltip
 <div class="props">
 <PropGroup name="tooltip" label="Tooltip">
-  You can customize the styles further with CSS attributes in the <code>tooltipStyle</code> parameter (in YAML only) - see example below
+  You can customize the styles further with CSS attributes in the <code>tooltipStyle</code> parameter (in YAML only)
 <PropBlock type="TEXT" name="tooltip" label="Tooltip Text">
   <PropDescription>
     The tooltip text - leave blank to display the state of the item
