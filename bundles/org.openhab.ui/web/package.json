@@ -156,7 +156,7 @@
     "jest-transform-nearley": "^2.0.0",
     "jest-transform-stub": "^2.0.0",
     "jest-vue-preprocessor": "^1.7.1",
-    "marked": "^3.0.2",
+    "marked": "^4.0.10",
     "mini-css-extract-plugin": "^0.5.0",
     "nearley-loader": "^2.0.0",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
