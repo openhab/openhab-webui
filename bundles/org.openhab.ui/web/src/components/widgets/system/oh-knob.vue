@@ -20,14 +20,14 @@ export default {
       const cfg = this.config
       return {
         ...cfg,
-        step: cfg.step ? cfg.step : cfg.stepSize,
-        radius: cfg.radius ? cfg.radius : (cfg.responsive ? cfg.size / 2 + '%' : cfg.size / 2),
-        rangeColor: cfg.rangeColor ? cfg.rangeColor : cfg.primaryColor,
-        pathColor: cfg.pathColor ? cfg.pathColor : cfg.secondaryColor,
-        tooltipColor: cfg.tooltipColor ? cfg.tooltipColor : cfg.textColor,
-        width: cfg.width ? cfg.width : cfg.strokeWidth,
-        startAngle: !cfg.circleShape ? (cfg.startAngle ? cfg.startAngle : -50) : null,
-        endAngle: !cfg.circleShape ? (cfg.endAngle ? cfg.endAngle : -130) : null
+        step: cfg.step !== undefined ? cfg.step : cfg.stepSize,
+        radius: cfg.radius !== undefined ? cfg.radius : (cfg.responsive ? cfg.size / 2 + '%' : cfg.size / 2),
+        rangeColor: cfg.rangeColor !== undefined ? cfg.rangeColor : cfg.primaryColor,
+        pathColor: cfg.pathColor !== undefined ? cfg.pathColor : cfg.secondaryColor,
+        tooltipColor: cfg.tooltipColor !== undefined ? cfg.tooltipColor : cfg.textColor,
+        width: cfg.width !== undefined ? cfg.width : cfg.strokeWidth,
+        startAngle: !cfg.circleShape !== undefined ? (cfg.startAngle !== undefined ? cfg.startAngle : -50) : null,
+        endAngle: !cfg.circleShape !== undefined ? (cfg.endAngle !== undefined ? cfg.endAngle : -130) : null
       }
     }
   }
