@@ -15,7 +15,7 @@
     <div class="item-logo" slot="media">
       <img v-if="!logoError" class="lazy" :style="{ visibility: logoLoaded ? 'visible': 'hidden' }" ref="logo" width="54" :data-src="imageUrl">
     </div>
-    <div slot="after">
+    <div v-if="showInstallActions" slot="after">
       <f7-preloader v-if="addon.pending" color="blue" />
       <f7-button v-else-if="addon.installed" class="install-button prevent-active-state-propagation" text="Remove" color="red" round small @click="buttonClicked" />
       <f7-button v-else class="install-button prevent-active-state-propagation" :text="installActionText || 'Install'" color="blue" round small @click="buttonClicked" />
@@ -77,6 +77,10 @@ export default {
       let docsBranch = 'final'
       if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
       return `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/images/addons/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}.png`
+    },
+    showInstallActions () {
+      let splitted = this.addon.uid.split(':')
+      return splitted.length < 2 || splitted[0] !== 'eclipse'
     }
   },
   mounted () {

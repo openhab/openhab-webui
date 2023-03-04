@@ -46,7 +46,7 @@ export default {
       let sourceName = 'openHAB Distribution'
       if (source === 'marketplace') {
         sourceName = 'Community Marketplace'
-      } else if (source !== 'karaf') {
+      } else if (source !== 'eclipse' && source !== 'karaf') {
         sourceName = '3rd Party (' + source + ')'
       }
       info.push({
@@ -82,8 +82,12 @@ export default {
         value: ContentTypes[this.addon.contentType] || this.addon.contentType
       })
 
-      let format = Formats.karaf
-      if (source !== 'karaf' && Object.keys(this.addon.properties).length > 0) {
+      let format
+      if (source === 'eclipse') {
+        format = Formats.eclipse
+      } else if (source === 'karaf') {
+        format = Formats.karaf
+      } else if (Object.keys(this.addon.properties).length > 0) {
         for (const property in this.addon.properties) {
           if (Formats[property]) format = Formats[property]
         }
@@ -118,7 +122,7 @@ export default {
           afterIcon: 'chat_bubble_2_fill',
           linkUrl: this.addon.link
         })
-      } else if (source === 'karaf') {
+      } else if (source === 'eclipse' || source === 'karaf') {
         info.push({
           id: 'documentationLink',
           title: 'Documentation',

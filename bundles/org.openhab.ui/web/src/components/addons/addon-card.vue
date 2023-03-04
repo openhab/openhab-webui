@@ -5,7 +5,7 @@
         <div>{{ headline || autoHeadline || "&nbsp;" }}</div>
       </div>
       <div class="addon-card-title">
-        <div class="addon-card-title-after">
+        <div v-if="showInstallActions" class="addon-card-title-after">
           <f7-preloader v-if="addon.pending" color="blue" />
           <f7-button v-else-if="addon.installed" class="install-button prevent-active-state-propagation" text="Remove"
                      color="red" round small @click="buttonClicked" />
@@ -146,6 +146,10 @@ export default {
       let docsBranch = 'final'
       if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
       return `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/images/addons/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}.png`
+    },
+    showInstallActions () {
+      let splitted = this.addon.uid.split(':')
+      return splitted.length < 2 || splitted[0] !== 'eclipse'
     }
   },
   mounted () {

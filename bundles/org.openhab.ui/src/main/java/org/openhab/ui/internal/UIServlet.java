@@ -19,9 +19,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Map;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,13 +32,14 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.util.resource.Resource;
 import org.openhab.core.OpenHAB;
+import org.ops4j.pax.web.service.WebContainer;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.http.HttpContext;
-import org.osgi.service.http.HttpService;
-import org.osgi.service.http.NamespaceException;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardContext;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletName;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +50,11 @@ import org.slf4j.LoggerFactory;
  * @author Yannick Schaus - Initial contribution
  * @author Dan Cunningham - Convert file serving to a custom servlet
  */
-
-@Component(immediate = true, name = "org.openhab.ui", property = { "httpContext.id:String=oh-ui-http-ctx" })
+@Component(immediate = true, service = Servlet.class, name = "org.openhab.ui")
 @NonNullByDefault
+@HttpWhiteboardServletName(UIServlet.SERVLET_PATH)
+@HttpWhiteboardServletPattern(UIServlet.SERVLET_PATH + "*")
+@HttpWhiteboardContext(name = "=org.openhab.ui.context", path = "=/")
 public class UIServlet extends DefaultServlet {
 
     private static final long serialVersionUID = 1L;
@@ -60,48 +62,24 @@ public class UIServlet extends DefaultServlet {
     private final Logger logger = LoggerFactory.getLogger(UIServlet.class);
 
     private static final String APP_BASE = "app";
-    private static final String SERVLET_NAME = "/";
+    public static final String SERVLET_PATH = "/";
     private static final String STATIC_PATH = "/static";
     private static final String STATIC_BASE = OpenHAB.getConfigFolder() + "/html";
     private static final String[] COMPRESS_EXT = { "gz", "br" };
 
     private final HttpContext defaultHttpContext;
-    private final HttpService httpService;
-    private long bundleModifiedTime = 0;
+    private final long bundleModifiedTime;
     private @Nullable ContextHandler contextHandler;
 
     @Activate
-    public UIServlet(final @Reference HttpService httpService, final @Reference HttpContext httpContext) {
-        super();
-        defaultHttpContext = httpService.createDefaultHttpContext();
-        this.httpService = httpService;
-    }
-
-    @Activate
-    protected void activate(Map<String, Object> config) {
-        try {
-            logger.debug("Starting up {} at {}", getClass().getSimpleName(), SERVLET_NAME);
-            httpService.registerServlet(SERVLET_NAME, this, new Hashtable<>(), defaultHttpContext);
-            bundleModifiedTime = (System.currentTimeMillis() / 1000) * 1000; // round milliseconds
-        } catch (NamespaceException e) {
-            logger.error("Error during servlet registration - alias {} already in use", SERVLET_NAME, e);
-        } catch (ServletException e) {
-            logger.error("Error during servlet registration", e);
-        }
-    }
-
-    @Deactivate
-    protected void deactivate() {
-        httpService.unregister(SERVLET_NAME);
+    public UIServlet(final @Reference WebContainer webContainer) {
+        this.defaultHttpContext = webContainer.createDefaultHttpContext();
+        logger.debug("Starting up {} at {}", getClass().getSimpleName(), SERVLET_PATH);
+        bundleModifiedTime = (System.currentTimeMillis() / 1000) * 1000; // round milliseconds
     }
 
     @Override
     public void init() throws UnavailableException {
-        setInitParameter("acceptRanges", "true");
-        setInitParameter("dirAllowed", "false");
-        setInitParameter("redirectWelcome", "false");
-        setInitParameter("precompressed", "true");
-        setInitParameter("etags", "true");
         contextHandler = ContextHandler.getCurrentContext().getContextHandler();
         super.init();
     }
@@ -117,7 +95,7 @@ public class UIServlet extends DefaultServlet {
         if (name.startsWith(STATIC_PATH) && !name.endsWith("/")) {
             URL url = null;
             try {
-                url = new java.io.File(STATIC_BASE + name.substring(new String(STATIC_PATH).length())).toURI().toURL();
+                url = new File(STATIC_BASE + name.substring(STATIC_PATH.length())).toURI().toURL();
             } catch (MalformedURLException e) {
                 logger.error("Error while serving static content: {}", e.getMessage());
                 url = defaultHttpContext.getResource(APP_BASE + name);
@@ -131,12 +109,11 @@ public class UIServlet extends DefaultServlet {
             }
         } else {
             URL url = defaultHttpContext.getResource(APP_BASE + name);
-            // if we don't find a resource, and its not a check for a compressed version, return the app base and let
+            // if we don't find a resource, and it's not a check for a compressed version,
+            // let the UIErrorPageServlet return the app base with a proper response code that lets
             // the Vue.js main UI handle routing
-            if (url == null && !Arrays.stream(COMPRESS_EXT).anyMatch(entry -> name.endsWith(entry))) {
-                // sending a directory will trigger "getWelcomeFile" to be called which is required to avoid
-                // Jetty doing a 302 redirect which breaks Vue.js routing when reloading the browser on some pages
-                url = defaultHttpContext.getResource(APP_BASE);
+            if (url == null && Arrays.stream(COMPRESS_EXT).noneMatch(name::endsWith)) {
+                return null;
             }
             try {
                 logger.debug("getResource bundle file returning {}", url);
@@ -170,10 +147,6 @@ public class UIServlet extends DefaultServlet {
         return "/index.html";
     }
 
-    private void setInitParameter(String name, String value) {
-        getServletContext().setInitParameter(CONTEXT_INIT + name, value);
-    }
-
     /**
      *
      * Wraps a resource and returns a consistent time for bundled files
@@ -181,7 +154,7 @@ public class UIServlet extends DefaultServlet {
      */
     class ResourceWrapper extends Resource {
 
-        private Resource baseResource;
+        private final Resource baseResource;
 
         public ResourceWrapper(Resource baseResource) {
             this.baseResource = baseResource;
@@ -258,8 +231,13 @@ public class UIServlet extends DefaultServlet {
         }
 
         @Override
-        public Resource addPath(@Nullable String path) throws IOException, MalformedURLException {
+        public Resource addPath(@Nullable String path) throws IOException {
             return baseResource.addPath(path);
+        }
+
+        @Override
+        public String toString() {
+            return getURL().toString();
         }
     }
 }

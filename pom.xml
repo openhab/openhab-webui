@@ -70,7 +70,7 @@
     <bnd.version>6.4.0</bnd.version>
     <eea.version>2.3.0</eea.version>
     <jackson.version>2.14.1</jackson.version>
-    <karaf.version>4.3.7</karaf.version>
+    <karaf.version>4.4.3</karaf.version>
     <ohc.version>4.0.0-SNAPSHOT</ohc.version>
     <sat.version>0.13.0</sat.version>
     <spotless.version>2.28.0</spotless.version>

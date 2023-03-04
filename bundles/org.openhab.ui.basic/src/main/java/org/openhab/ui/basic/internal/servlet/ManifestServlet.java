@@ -14,42 +14,43 @@ package org.openhab.ui.basic.internal.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.core.io.http.HttpContextFactoryService;
-import org.openhab.core.items.ItemRegistry;
 import org.openhab.ui.basic.internal.render.PageRenderer;
 import org.openhab.ui.basic.render.RenderException;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.http.HttpContext;
-import org.osgi.service.http.HttpService;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletAsyncSupported;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletName;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is the manifest servlet for the Basic UI. It dynamically genrates a
+ * This is the manifest servlet for the Basic UI. It dynamically generates a
  * manifest on the sitemap model.
  *
  * @author Kevin Haunschmied - Initial contribution
  *
  */
-@Component(immediate = true, service = {})
+@Component(immediate = true, service = Servlet.class)
 @NonNullByDefault
-public class ManifestServlet extends BaseServlet {
+@HttpWhiteboardServletAsyncSupported(asyncSupported = true)
+@HttpWhiteboardServletName(ManifestServlet.WEBAPP_ALIAS)
+@HttpWhiteboardServletPattern(ManifestServlet.WEBAPP_ALIAS + "/" + ManifestServlet.MANIFEST_NAME)
+public class ManifestServlet extends HttpServlet {
 
     private static final long serialVersionUID = 4591967180619528326L;
-
+    public static final String WEBAPP_ALIAS = "/basicui";
     public static final String MANIFEST_NAME = "manifest.json";
 
     private static final String MANIFEST_CONTENT_TYPE = "application/json;charset=UTF-8";
@@ -59,22 +60,8 @@ public class ManifestServlet extends BaseServlet {
     private final PageRenderer renderer;
 
     @Activate
-    public ManifestServlet(final @Reference HttpService httpService,
-            final @Reference HttpContextFactoryService httpContextFactoryService,
-            final @Reference ItemRegistry itemRegistry, final @Reference PageRenderer renderer) {
-        super(httpService, httpContextFactoryService, itemRegistry);
+    public ManifestServlet(final @Reference PageRenderer renderer) {
         this.renderer = renderer;
-    }
-
-    @Activate
-    protected void activate(Map<String, Object> configProps, BundleContext bundleContext) {
-        HttpContext httpContext = createHttpContext(bundleContext.getBundle());
-        super.activate(WEBAPP_ALIAS + "/" + MANIFEST_NAME, httpContext);
-    }
-
-    @Deactivate
-    protected void deactivate() {
-        super.deactivate(WEBAPP_ALIAS + "/" + MANIFEST_NAME);
     }
 
     private void generateManifest(ServletResponse res, @Nullable String sitemapName)

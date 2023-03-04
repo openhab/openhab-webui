@@ -17,7 +17,7 @@
     widgetvisiattr:   'visibility=',
     widgetcolorattr:  ['labelcolor=', 'valuecolor=', 'iconcolor='],
     widgetswitchattr: 'switchSupport',
-    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'List ', 'Setpoint ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Default '],
+    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'List ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Default '],
     lwidget:          ['Text ', 'Group ', 'Image ', 'Frame '],
     identifier:       /[A-Za-z0-9_]+/,
     lparen:           '(',
@@ -37,7 +37,7 @@
     comma:            ',',
     NL:               { match: /\n/, lineBreaks: true }
   })
-  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'List', 'Setpoint', 'Colorpicker', 'Default']
+  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'List', 'Setpoint', 'Input ', 'Colorpicker', 'Default']
 
   function getSitemap(d) {
     return {

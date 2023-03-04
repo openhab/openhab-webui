@@ -140,6 +140,10 @@ html
    .delete
      --f7-bars-link-color #ff3b30
 
+// Fix actions-modal/popup is placed behind the notch or outside of the screen on iPhone in openHAB iOS app
+.device-ios .actions-modal
+  max-height: calc(100% - var(--f7-safe-area-top) - var(--f7-safe-area-bottom))
+
 .md .contextual-toolbar
   --f7-theme-color #474747
   --f7-bars-bg-color #474747

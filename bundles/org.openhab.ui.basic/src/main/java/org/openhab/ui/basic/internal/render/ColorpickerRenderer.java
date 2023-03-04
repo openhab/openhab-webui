@@ -87,21 +87,10 @@ public class ColorpickerRenderer extends AbstractWidgetRenderer {
             snippet = snippet.replace("%purelabel%", purelabel);
         }
         snippet = snippet.replace("%frequency%", frequency);
-        snippet = snippet.replace("%servletname%", WebAppServlet.SERVLET_NAME);
+        snippet = snippet.replace("%servletname%", WebAppServlet.SERVLET_PATH);
 
-        String style = "";
-        String color = itemUIRegistry.getLabelColor(w);
-        if (color != null) {
-            style = "color:" + color;
-        }
-        snippet = snippet.replace("%labelstyle%", style);
-
-        style = "";
-        color = itemUIRegistry.getValueColor(w);
-        if (color != null) {
-            style = "color:" + color;
-        }
-        snippet = snippet.replace("%valuestyle%", style);
+        // Process the color tags
+        snippet = processColor(w, snippet);
 
         sb.append(snippet);
         return ECollections.emptyEList();

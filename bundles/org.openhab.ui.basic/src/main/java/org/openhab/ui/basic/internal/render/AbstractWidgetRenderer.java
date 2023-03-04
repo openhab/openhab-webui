@@ -370,6 +370,14 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         }
         snippet = snippet.replace("%valuestyle%", style);
 
+        style = "";
+        color = itemUIRegistry.getIconColor(w);
+
+        if (color != null) {
+            style = "style=\"color:" + color + "\"";
+        }
+        snippet = snippet.replace("%iconstyle%", style);
+
         return snippet;
     }
 
