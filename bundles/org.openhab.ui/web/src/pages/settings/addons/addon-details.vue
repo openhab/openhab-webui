@@ -303,7 +303,7 @@ export default {
                 body = '<p>The description is not available for this add-on.</p><h3>Debug Information</h3><blockquote>' + text + '</blockquote>'
               } else {
                 const frontmatter = text.substring(4, frontmatterSeparators[1].index)
-                body = marked.default(text.substring(frontmatterSeparators[1].index + 4))
+                body = marked.parse(text.substring(frontmatterSeparators[1].index + 4))
 
                 // perform a few replaces on HTML body for Markdown readmes on GitHub
                 body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
