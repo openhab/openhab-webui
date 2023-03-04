@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
+ * @author Laurent Garnier - primary/secondary colors
  */
 @Component(service = { PageRenderer.class })
 @NonNullByDefault
@@ -117,6 +118,8 @@ public class PageRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%icon_type%", ICON_TYPE);
         snippet = snippet.replace("%theme%", config.getTheme());
         snippet = snippet.replace("%sitemapquery%", String.format("?sitemap=%s", sitemap));
+        snippet = snippet.replace("%primarycolor%", PRIMARY_COLOR);
+        snippet = snippet.replace("%secondarycolor%", SECONDARY_COLOR);
 
         String[] parts = snippet.split("%children%");
 
