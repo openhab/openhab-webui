@@ -36,13 +36,13 @@ This is a PWA. Don't forget to check what is inside of your `service-worker.js`.
 
 ## Cordova
 
-The Cordova project is located in the `cordova` folder. You shouldn't modify content of the `cordova/www` folder. Its content will be correctly generated when you call `npm run cordova-build-prod`.
+The Cordova project is located in the `cordova` folder. You shouldn't modify content of the `cordova/www` folder. Its content will be correctly generated when you call `npm run build-cordova-prod` (see [NPM Scripts](#npm-scripts)).qq
 
 ## Documentation & Resources
 
 The openHAB docs provide a [Component Reference](https://www.openhab.org/docs/ui/components/) as well as docs for each component.
 You can find the components docs in the [`doc/components`](doc/components) folder.
-To generate the auto-generated parts of these component docs, run `node generate.js` inside the [`doc/components/src`](doc/components/src) folder.
+To generate the auto-generated parts of these component docs, inside the [`doc/components/src`](doc/components/src) folder.
 
 ### Framework7
 
