@@ -372,6 +372,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
         style = "";
         color = itemUIRegistry.getIconColor(w);
+        color = applyPrimaryOrSecondaryColor(color);
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
