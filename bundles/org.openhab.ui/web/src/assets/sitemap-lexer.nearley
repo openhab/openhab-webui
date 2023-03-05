@@ -4,8 +4,6 @@
   let lexer = moo.compile({
     WS:               /[ \t]+/,
     comment:          /\/\/.*?$/,
-    number:           /\-?[0-9]+(?:\.[0-9]*)?/,
-    string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) },
     sitemap:          'sitemap ',
     name:             'name=',
     label:            'label=',
@@ -19,7 +17,6 @@
     widgetswitchattr: 'switchSupport',
     nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'List ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Default '],
     lwidget:          ['Text ', 'Group ', 'Image ', 'Frame '],
-    identifier:       /[A-Za-z0-9_]+/,
     lparen:           '(',
     rparen:           ')',
     colon:            ':',
@@ -35,7 +32,10 @@
     gt:               '>',
     equals:           '=',
     comma:            ',',
-    NL:               { match: /\n/, lineBreaks: true }
+    NL:               { match: /\n/, lineBreaks: true },
+    identifier:       /(?:[A-Za-z_][A-Za-z0-9_]*)|(?:[0-9]+[A-Za-z_][A-Za-z0-9_]*)/,
+    number:           /\-?[0-9]+(?:\.[0-9]*)?/,
+    string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) }
   })
   const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'List', 'Setpoint', 'Input ', 'Colorpicker', 'Default']
 
