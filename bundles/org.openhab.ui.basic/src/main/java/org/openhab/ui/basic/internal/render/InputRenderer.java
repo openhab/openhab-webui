@@ -17,6 +17,8 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.model.sitemap.sitemap.Input;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
@@ -28,6 +30,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is an implementation of the {@link WidgetRenderer} interface, which
@@ -38,6 +42,8 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
 public class InputRenderer extends AbstractWidgetRenderer {
+
+    private final Logger logger = LoggerFactory.getLogger(InputRenderer.class);
 
     @Activate
     public InputRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
@@ -66,7 +72,18 @@ public class InputRenderer extends AbstractWidgetRenderer {
             snippet = snippet.replace("%data_state%", dataState);
         }
 
-        String dataType = state instanceof Number ? "Number" : "Text";
+        Item item = null;
+        try {
+            item = itemUIRegistry.getItem(w.getItem());
+        } catch (ItemNotFoundException e) {
+            logger.debug("Failed to retrieve item during widget rendering: {}", e.getMessage());
+        }
+        String dataType;
+        if (item != null && item.getAcceptedDataTypes().stream().anyMatch(o -> Number.class.isAssignableFrom(o))) {
+            dataType = "Number";
+        } else {
+            dataType = "Text";
+        }
         snippet = snippet.replace("%data_type%", dataType);
 
         // Process the color tags
