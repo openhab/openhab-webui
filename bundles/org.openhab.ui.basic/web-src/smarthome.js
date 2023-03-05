@@ -1969,6 +1969,7 @@
 				value = this.extractValueFromLabel(update.label),
 				labelColor = update.labelcolor,
 				valueColor = update.valuecolor,
+				iconColor = update.iconcolor,
 				makeVisible = false;
 
 			if (widget.visible !== update.visibility) {
@@ -1998,6 +1999,12 @@
 				valueColor = smarthome.UI.secondaryColor;
 			}
 
+			if (iconColor === "primary") {
+				iconColor = smarthome.UI.primaryColor;
+			} else if (iconColor === "secondary") {
+				iconColor = smarthome.UI.secondaryColor;
+			}
+
 			[{
 				apply: widget.setLabel,
 				data: update.label,
@@ -2012,7 +2019,7 @@
 				fallback: ""
 			}, {
 				apply: widget.setIconColor,
-				data: update.iconcolor,
+				data: iconColor,
 				fallback: ""
 			}].forEach(function(e) {
 				if (e.data !== undefined) {
