@@ -32,7 +32,6 @@
           <f7-list-input v-if="supports('minValue')" label="Minimum" type="number" :value="widget.config.minValue" @input="updateParameter('minValue', $event)" clear-button />
           <f7-list-input v-if="supports('maxValue')" label="Maximum" type="number" :value="widget.config.maxValue" @input="updateParameter('maxValue', $event)" clear-button />
           <f7-list-input v-if="supports('step')" label="Step" type="number" :value="widget.config.step" @input="updateParameter('step', $event)" clear-button />
-          <f7-list-input v-if="supports('separator')" label="Separator" type="text" required validate pattern=".+" :value="widget.config.separator" @input="updateParameter('separator', $event)" clear-button />
           <f7-list-input v-if="supports('yAxisDecimalPattern')" label="Y-axis decimal pattern" type="text" :value="widget.config.separator" @input="updateParameter('yAxisDecimalPattern', $event)" clear-button />
           <f7-list-item v-if="supports('switchEnabled')" title="Switch enabled">
             <f7-toggle slot="after" :checked="widget.config.switchEnabled" @toggle:change="widget.config.switchEnabled = $event" />
@@ -80,7 +79,6 @@ export default {
         Webview: ['url', 'height'],
         Mapview: ['height'],
         Slider: ['sendFrequency', 'switchEnabled', 'minValue', 'maxValue', 'step'],
-        List: ['separator'],
         Setpoint: ['minValue', 'maxValue', 'step'],
         Colorpicker: ['sendFrequency'],
         Default: ['height']

@@ -249,12 +249,11 @@ export default {
         { type: 'Webview', icon: 'globe' },
         { type: 'Colorpicker', icon: 'drop' },
         { type: 'Mapview', icon: 'map' },
-        { type: 'List', icon: 'square_list' },
         { type: 'Image', icon: 'photo' },
         { type: 'Video', icon: 'videocam' }
       ],
       linkableWidgetTypes: ['Sitemap', 'Text', 'Frame', 'Group', 'Image'],
-      widgetTypesRequiringItem: ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'List', 'Setpoint', 'Input', 'Colorpicker', 'Default']
+      widgetTypesRequiringItem: ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input', 'Colorpicker', 'Default']
     }
   },
   created () {
