@@ -146,10 +146,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
             if (segments.length == 1) {
                 iconName = segments[0];
             } else if (segments.length == 2) {
-                iconSource = segments[0];
-                if (!ICON_SOURCE_OH.equalsIgnoreCase(iconSource)) {
-                    iconSet = "";
-                }
+                iconSet = segments[0];
                 iconName = segments[1];
             } else if (segments.length == 3) {
                 iconSource = segments[0];
