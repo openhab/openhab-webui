@@ -141,8 +141,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
         if (!children.isEmpty()) {
             EObject firstChild = children.get(0);
             EObject parent = itemUIRegistry.getParent((Widget) firstChild);
-            if (!(firstChild instanceof Frame || parent instanceof Frame || parent instanceof Sitemap
-                    || parent instanceof org.openhab.core.model.sitemap.sitemap.List)) {
+            if (!(firstChild instanceof Frame || parent instanceof Frame || parent instanceof Sitemap)) {
                 String frameSnippet = getSnippet("frame");
                 frameSnippet = frameSnippet.replace("%widget_id%", "");
                 frameSnippet = frameSnippet.replace("%label%", "");
