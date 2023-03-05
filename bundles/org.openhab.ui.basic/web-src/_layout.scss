@@ -220,9 +220,12 @@
 		.mdl-textfield {
 			&__input,
 			&__label {
-				font-weight: normal;
+				font-family: "Helvetica","Arial",sans-serif;
 				font-size: 14px;
 				text-align: right;
+			}
+			&__input {
+				font-weight: 700;
 			}
 			&__label {
 				@media screen and (max-width: $layout-tablet-size-threshold) {

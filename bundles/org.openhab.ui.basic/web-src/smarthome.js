@@ -1536,26 +1536,26 @@
 
 		var
 			lastValue = _t.input.value,
+			numberPattern = /^(\+|-)?[0-9\.,]+/,
 			dotSeparatorPattern = /^-?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
 			commaSeparatorPattern = /^-?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
-
 		function onChange() {
 			var
 				changeValue = _t.input.value,
 				changed = true;
 			if (_t.itemType === "Number") {
 				changeValue = changeValue.trim();
-				var valueArray = changeValue.split(" ");
-				changeValue = valueArray[0];
-				if (changeValue === "") {
+				var numberValue = changeValue.match(numberPattern)[0];
+				if (numberValue === undefined) {
 					changed = false;
 				} else {
-					changeValue = changeValue.replace(/^\+/, "");
+                    var unitValue = changeValue.substring(numberValue.length).trim();
+                    changeValue = numberValue.replace(/^\+/, "");
 					if (commaSeparatorPattern.test(changeValue) && !dotSeparatorPattern.test(changeValue)) {
 						changeValue = changeValue.replace(/\./g, "").replace(",", ".");
 					}
-					if (valueArray.length > 1) {
-						changeValue = changeValue + " " + valueArray[1];
+					if (unitValue.length > 1) {
+						changeValue = changeValue + " " + unitValue;
 					}
 				}
 			}
