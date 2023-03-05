@@ -1,6 +1,6 @@
 {
   "name": "org.openhab.ui.basic",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Basic UI",
   "scripts": {
     "build": "gulp default"
