@@ -11,13 +11,13 @@
     label:            'label=',
     item:             'item=',
     icon:             'icon=',
-    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'legend=', 'height=', 'mappings=', 'minValue=', 'maxValue=', 'step=', 'separator=', 'encoding=', 'yAxisDecimalPattern='],
+    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'legend=', 'height=', 'mappings=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern='],
     widgetfreqattr:   'sendFrequency=',
     widgetfrcitmattr: 'forceasitem=',
     widgetvisiattr:   'visibility=',
     widgetcolorattr:  ['labelcolor=', 'valuecolor=', 'iconcolor='],
     widgetswitchattr: 'switchSupport',
-    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'List ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Default '],
+    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Default '],
     lwidget:          ['Text ', 'Group ', 'Image ', 'Frame '],
     identifier:       /[A-Za-z0-9_]+/,
     lparen:           '(',
@@ -37,7 +37,7 @@
     comma:            ',',
     NL:               { match: /\n/, lineBreaks: true }
   })
-  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'List', 'Setpoint', 'Input ', 'Colorpicker', 'Default']
+  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Default']
 
   function getSitemap(d) {
     return {
@@ -68,7 +68,6 @@
 
     // reject widgets with missing parameters
     if (requiresItem.includes(widget.component) && !widget.config.item) return reject
-    if (widget.component === 'List' && !widget.config.separator) return reject
     if ((widget.component === 'Video' || widget.component === 'Webview') && !widget.config.url) return reject
     if (widget.component === 'Chart' && !widget.config.period) return reject
 

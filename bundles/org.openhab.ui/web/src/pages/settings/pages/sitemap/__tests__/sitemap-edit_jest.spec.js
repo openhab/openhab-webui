@@ -69,31 +69,6 @@ describe('SitemapEdit', () => {
     expect(lastDialogConfig).toBeFalsy()
   })
 
-  it('validates separator is checked', async () => {
-    wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
-    await wrapper.vm.$nextTick()
-    wrapper.vm.addWidget('List')
-    await wrapper.vm.$nextTick()
-    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
-    await wrapper.vm.$nextTick()
-    localVue.set(wrapper.vm.selectedWidget.config, 'item', 'Item1')
-    localVue.set(wrapper.vm.selectedWidget.config, 'label', 'List Test')
-
-    // should not validate as the List has no separator configured
-    lastDialogConfig = null
-    wrapper.vm.validateWidgets()
-    expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(/List widget List Test, no separator configured/)
-
-    // configure a separator for the List and check that there are no validation errors anymore
-    lastDialogConfig = null
-    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
-    await wrapper.vm.$nextTick()
-    localVue.set(wrapper.vm.selectedWidget.config, 'separator', ' - ')
-    wrapper.vm.validateWidgets()
-    expect(lastDialogConfig).toBeFalsy()
-  })
-
   it('validates url is checked', async () => {
     wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
     await wrapper.vm.$nextTick()
