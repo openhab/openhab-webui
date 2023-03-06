@@ -129,6 +129,11 @@ Use the advanced properties to change the appearance from a knob to a rounded sl
     Sets the border width of the slider (px value)
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="handleSize" label="Handle Size">
+  <PropDescription>
+    Sets the size of the slider handle (px value)
+  </PropDescription>
+</PropBlock>
 <PropBlock type="TEXT" name="borderColor" label="Border Color">
   <PropDescription>
     Sets the border color of the slider; set borderWidth as well! (HTML value)
