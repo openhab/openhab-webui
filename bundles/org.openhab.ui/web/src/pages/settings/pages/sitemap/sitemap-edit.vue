@@ -58,7 +58,7 @@
                 <div><f7-block-title>Value Color</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="valuecolor" placeholder="item_name operator value = color" />
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.component === 'Image'">
+              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
                 <div><f7-block-title>Icon Color</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
               </f7-block>
