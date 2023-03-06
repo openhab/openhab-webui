@@ -10,6 +10,7 @@
                   :disabled="config.disabled" :width="config.strokeWidth" :line-cap="config.lineCap"
                   :startAngle="config.startAngle" :endAngle="config.endAngle"
                   :borderWidth="config.borderWidth" :borderColor="config.borderColor" :circleShape="config.circleShape"
+                  :handleSize="config.handleSize"
                   @input="sendCommandDebounced($event)" @click.native.stop="sendCommandDebounced(value, true)" @touchend.native.stop="sendCommandDebounced(value, true)" />
   </div>
 </template>
