@@ -161,7 +161,7 @@ Use the advanced properties to change the appearance from a knob to a rounded sl
     <PropOption value="round" label="round" />
   </PropOptions>
 </PropBlock>
-<PropBlock type="INTEGER" name="dottedPath" label="Dotted Path">
+<PropBlock type="TEXT" name="dottedPath" label="Dotted Path">
   <PropDescription>
     Length of dotted path segments (using css stroke-dasharray)
   </PropDescription>
