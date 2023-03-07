@@ -18,16 +18,36 @@
     </f7-toolbar>
     <f7-tabs class="scene-editor-tabs">
       <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
-        <f7-block v-if="ready && !createMode" class="block-narrow padding-left padding-right" strong>
-          <f7-col v-if="!createMode" style="height: 32px">
+        <f7-block v-if="ready && rule.status && !createMode" class="block-narrow padding-left padding-right" strong>
+          <f7-col v-if="!createMode">
             <div class="float-right align-items-flex-start align-items-center">
+              <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
+              <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled" />
               <f7-link :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" color="blue" @click="runNow" />
+            </div>
+            Status:
+            <f7-chip class="margin-left"
+                     :text="rule.status.status"
+                     :color="ruleStatusBadgeColor(rule.status)" />
+            <div>
+              <strong>{{ (rule.status.statusDetail !== 'NONE') ? rule.status.statusDetail : '&nbsp;' }}</strong>
+              <br>
+              <div v-if="rule.status.description">
+                {{ rule.status.description }}
+              </div>
             </div>
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
         <f7-block v-else-if="!createMode" class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
-          <f7-col style="height: 32px"/>
+          <f7-col>
+            ______:
+            <f7-chip class="margin-left" text="________" />
+            <div>
+              <strong>____ _______</strong>
+              <br>
+            </div>
+          </f7-col>
         </f7-block>
 
         <!-- skeletons -->
@@ -208,11 +228,12 @@ import TagInput from '@/components/tags/tag-input.vue'
 
 import SceneConfigureItemPopup from './scene-configure-item-popup.vue'
 
+import RuleStatus from '@/components/rule/rule-status-mixin'
 import DirtyMixin from '../../dirty-mixin'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
-  mixins: [DirtyMixin],
+  mixins: [RuleStatus, DirtyMixin],
   components: {
     SemanticsPicker,
     TagInput,
@@ -364,6 +385,23 @@ export default {
         }).open()
       })
     },
+    toggleDisabled () {
+      if (this.createMode) return
+      const enable = (this.rule.status.statusDetail === 'DISABLED')
+      this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString()).then((data) => {
+        this.$f7.toast.create({
+          text: (enable) ? 'Scene enabled' : 'Scene disabled',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      }).catch((err) => {
+        this.$f7.toast.create({
+          text: 'Error while disabling or enabling: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
+    },
     runNow () {
       if (this.createMode) return
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
@@ -406,6 +444,11 @@ export default {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         if (this.currentModule) return
         switch (ev.keyCode) {
+          case 68:
+            this.toggleDisabled()
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
           case 82:
             this.runNow()
             ev.stopPropagation()
