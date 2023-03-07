@@ -347,6 +347,11 @@ export default {
     },
     save (noToast) {
       if (!this.isEditable) return Promise.reject()
+      if (this.currentTab === 'code') {
+        if (!this.fromYaml()) {
+          return Promise.reject()
+        }
+      }
       if (!this.rule.uid) {
         this.$f7.dialog.alert('Please give an ID to the scene')
         return Promise.reject()
@@ -643,6 +648,7 @@ export default {
         this.$set(this.rule, 'triggers', updatedRule.triggers)
         this.$set(this.rule, 'conditions', updatedRule.conditions)
         this.$set(this.rule, 'actions', actions)
+        console.debug(this.rule)
         return true
       } catch (e) {
         this.$f7.dialog.alert(e).open()
