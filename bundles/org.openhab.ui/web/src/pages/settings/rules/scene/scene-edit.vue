@@ -245,6 +245,7 @@ export default {
     return {
       ready: false,
       loading: false,
+      eventSource: null,
       rule: {},
       ruleYaml: '',
       moduleTypes: {
@@ -287,6 +288,7 @@ export default {
       this.load()
     },
     onPageAfterOut () {
+      this.stopEventSource()
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
@@ -306,6 +308,7 @@ export default {
           this.savedRule = cloneDeep(this.rule)
           this.ready = true
           this.loading = false
+          if (!this.eventSource) this.startEventSource()
         })
       }
 
@@ -439,6 +442,20 @@ export default {
           })
         }
       )
+    },
+    startEventSource () {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/' + this.ruleId + '/*', null, (event) => {
+        const topicParts = event.topic.split('/')
+        switch (topicParts[3]) {
+          case 'state':
+            this.$set(this.rule, 'status', JSON.parse(event.payload)) // e.g. {"status":"RUNNING","statusDetail":"NONE"}
+            break
+        }
+      })
+    },
+    stopEventSource () {
+      this.$oh.sse.close(this.eventSource)
+      this.eventSource = null
     },
     keyDown (ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
