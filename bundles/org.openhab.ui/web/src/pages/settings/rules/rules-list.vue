@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
-    <f7-navbar :title="(showScripts) ? 'Scripts' : 'Rules'" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar :title="(showScripts) ? 'Scripts' : ((showScenes) ? 'Scenes' : 'Rules')" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
