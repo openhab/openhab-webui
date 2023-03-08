@@ -1,5 +1,5 @@
 <template>
-  <l-marker ref="marker" v-if="coords" :key="markerKey" :draggable="context.editmode != undefined" :lat-lng="coords"
+  <l-marker ref="marker" v-if="coords && visible" :key="markerKey" :draggable="context.editmode != undefined" :lat-lng="coords"
             @update:latLng="onMove" @click="onClick">
     <l-tooltip v-if="tooltip && !config.useTooltipAsLabel" :options="tooltipOptions" @click="() => {}">
       <div style="white-space: nowrap" :style="tooltipStyle">
@@ -82,9 +82,14 @@ export default {
     },
     iconStyle () {
       return Object.assign({
-        transform: 'rotate(' + this.config.iconRotation + 'deg)',
-        visibility: this.config.iconVisibility
+        transform: 'rotate(' + this.config.iconRotation + 'deg)'
       }, this.config.iconStyle)
+    },
+    visible () {
+      let visible = this.config.visibility
+      if (this.context.editmode || !this.config) return true
+      if (visible === false || visible === 'false') return false
+      return true
     }
   },
   asyncComputed: {

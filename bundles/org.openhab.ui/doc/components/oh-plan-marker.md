@@ -43,6 +43,11 @@ A marker on a floor plan
     The item whose state to display on this marker
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="visibility" label="Marker Visibility">
+  <PropDescription>
+    Enter an expression to show/hide the marker conditionally
+  </PropDescription>
+</PropBlock>
 </PropGroup>
 </div>
 
@@ -73,11 +78,6 @@ A marker on a floor plan
 <PropBlock type="INTEGER" name="iconHeight" label="Icon Height">
   <PropDescription>
     Height of the icon in pixels (for openHAB icons only, 40 by default)
-  </PropDescription>
-</PropBlock>
-<PropBlock type="TEXT" name="iconVisibility" label="Icon Visibility">
-  <PropDescription>
-    Enter an expression to show/hide the icon conditionally
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="iconColor" label="Icon Color">
