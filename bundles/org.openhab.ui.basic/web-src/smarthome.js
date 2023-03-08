@@ -333,7 +333,8 @@
 		_t.formRow = parentNode.parentNode;
 		_t.item = _t.parentNode.getAttribute(o.itemAttribute);
 		_t.id = _t.parentNode.getAttribute(o.idAttribute);
-		_t.icon = _t.parentNode.parentNode.querySelector(o.formIcon);
+		_t.iconContainer = _t.parentNode.parentNode.querySelector(o.formIcon);
+		_t.icon = _t.parentNode.parentNode.querySelector(o.formIconImg);
 		_t.visible = !_t.formRow.classList.contains(o.formRowHidden);
 		_t.label = _t.parentNode.parentNode.querySelector(o.formLabel);
 
@@ -412,6 +413,12 @@
 			_t.parentNode.style.color = color;
 		};
 
+		_t.setIconColor = function(color) {
+			if (_t.iconContainer !== null) {
+				_t.iconContainer.style.color = color;
+			}
+		};
+
 		_t.destroy = function() {
 			if (_t.icon !== null) {
 				_t.icon.removeEventListener("error", replaceImageWithNone);
@@ -453,6 +460,7 @@
 		_t.setValue = function() {};
 		_t.setLabelColor = function() {};
 		_t.setValueColor = function() {};
+		_t.setIconColor = function() {};
 		_t.suppressUpdate = function() {};
 		_t.destroy = function() {};
 	}
@@ -818,6 +826,10 @@
 				value = "0";
 			}
 			_t.valueNode.innerHTML = value;
+		};
+
+		_t.setValueColor = function(color) {
+			_t.valueNode.style.color = color;
 		};
 
 		function emitEvent(value) {
@@ -1661,6 +1673,8 @@
 		_t.loading = _t.root.querySelector(o.uiLoadingBar);
 		_t.layoutTitle = document.querySelector(o.layoutTitle);
 		_t.iconType = document.body.getAttribute(o.iconTypeAttribute);
+		_t.primaryColor = document.body.getAttribute(o.primaryColorAttribute);
+		_t.secondaryColor = document.body.getAttribute(o.secondaryColorAttribute);
 		_t.notification = document.querySelector(o.notify);
 
 		_t.escapeHtml = function(text) {
@@ -1953,6 +1967,9 @@
 		this.updateWidget = function(widget, update) {
 			var
 				value = this.extractValueFromLabel(update.label),
+				labelColor = update.labelcolor,
+				valueColor = update.valuecolor,
+				iconColor = update.iconcolor,
 				makeVisible = false;
 
 			if (widget.visible !== update.visibility) {
@@ -1970,17 +1987,39 @@
 				widget.setValue(smarthome.UI.escapeHtml(value), update.state, update.visibility);
 			}
 
+			if (labelColor === "primary") {
+				labelColor = smarthome.UI.primaryColor;
+			} else if (labelColor === "secondary") {
+				labelColor = smarthome.UI.secondaryColor;
+			}
+
+			if (valueColor === "primary") {
+				valueColor = smarthome.UI.primaryColor;
+			} else if (valueColor === "secondary") {
+				valueColor = smarthome.UI.secondaryColor;
+			}
+
+			if (iconColor === "primary") {
+				iconColor = smarthome.UI.primaryColor;
+			} else if (iconColor === "secondary") {
+				iconColor = smarthome.UI.secondaryColor;
+			}
+
 			[{
 				apply: widget.setLabel,
 				data: update.label,
 				fallback: null
 			}, {
 				apply: widget.setLabelColor,
-				data: update.labelcolor,
+				data: labelColor,
 				fallback: ""
 			}, {
 				apply: widget.setValueColor,
-				data: update.valuecolor,
+				data: valueColor,
+				fallback: ""
+			}, {
+				apply: widget.setIconColor,
+				data: iconColor,
 				fallback: ""
 			}].forEach(function(e) {
 				if (e.data !== undefined) {
@@ -2061,7 +2100,8 @@
 					state: state,
 					label: data.label,
 					labelcolor: data.labelcolor,
-					valuecolor: data.valuecolor
+					valuecolor: data.valuecolor,
+					iconcolor: data.iconcolor
 				};
 				_t.updateWidget(smarthome.dataModel[data.widgetId], update);
 			}
@@ -2125,7 +2165,8 @@
 							state: state,
 							label: widget.label,
 							labelcolor: widget.labelcolor,
-							valuecolor: widget.valuecolor
+							valuecolor: widget.valuecolor,
+							iconcolor: widget.iconcolor
 						};
 						_t.updateWidget(w, update);
 					}
@@ -2379,6 +2420,8 @@
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",
+	primaryColorAttribute: "data-primary-color",
+	secondaryColorAttribute: "data-secondary-color",
 	controlButton: "button",
 	buttonActiveClass: "mdl-button--accent",
 	modal: ".mdl-modal",
@@ -2392,7 +2435,8 @@
 	formValue: ".mdl-form__value",
 	formRadio: ".mdl-radio",
 	formRadioControl: ".mdl-radio__button",
-	formIcon: ".mdl-form__icon img",
+	formIcon: ".mdl-form__icon",
+	formIconImg: ".mdl-form__icon img",
 	formLabel: ".mdl-form__label",
 	uiLoadingBar: ".ui__loading",
 	layoutTitle: ".mdl-layout-title",

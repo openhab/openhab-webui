@@ -13,7 +13,7 @@ function writeWidget (widget, indent) {
         dsl += ' forceasitem=' + widget.config[key]
       } else {
         dsl += ` ${key}=`
-        if (key === 'item' || Number.isFinite(widget.config[key])) {
+        if (key === 'item' || key === 'period' || key === 'legend' || Number.isFinite(widget.config[key])) {
           dsl += widget.config[key]
         } else if (key === 'mappings') {
           dsl += '['

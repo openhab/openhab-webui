@@ -58,7 +58,7 @@
                 <div><f7-block-title>Value Color</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="valuecolor" placeholder="item_name operator value = color" />
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.component === 'Image'">
+              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
                 <div><f7-block-title>Icon Color</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
               </f7-block>
@@ -249,12 +249,11 @@ export default {
         { type: 'Webview', icon: 'globe' },
         { type: 'Colorpicker', icon: 'drop' },
         { type: 'Mapview', icon: 'map' },
-        { type: 'List', icon: 'square_list' },
         { type: 'Image', icon: 'photo' },
         { type: 'Video', icon: 'videocam' }
       ],
       linkableWidgetTypes: ['Sitemap', 'Text', 'Frame', 'Group', 'Image'],
-      widgetTypesRequiringItem: ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'List', 'Setpoint', 'Input', 'Colorpicker', 'Default']
+      widgetTypesRequiringItem: ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input', 'Colorpicker', 'Default']
     }
   },
   created () {

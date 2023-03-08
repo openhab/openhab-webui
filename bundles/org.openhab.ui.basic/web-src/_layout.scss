@@ -143,13 +143,12 @@
 			display: none;
 		}
 		img {
-			max-width: 32px;
-			max-height: 32px;
-			width: auto;
-			height: auto;
+			width: 32px;
+			height: 32px;
+			object-fit: contain;
 			html.ui-layout-condensed & {
-				max-width: 28px;
-				max-height: 28px;
+				width: 28px;
+				height: 28px;
 			}
 		}
 		iconify-icon {

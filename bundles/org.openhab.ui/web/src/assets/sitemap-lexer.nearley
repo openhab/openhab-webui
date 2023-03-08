@@ -4,22 +4,19 @@
   let lexer = moo.compile({
     WS:               /[ \t]+/,
     comment:          /\/\/.*?$/,
-    number:           /\-?[0-9]+(?:\.[0-9]*)?/,
-    string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) },
     sitemap:          'sitemap ',
     name:             'name=',
     label:            'label=',
     item:             'item=',
     icon:             'icon=',
-    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'legend=', 'height=', 'mappings=', 'minValue=', 'maxValue=', 'step=', 'separator=', 'encoding=', 'yAxisDecimalPattern='],
+    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'legend=', 'height=', 'mappings=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern='],
     widgetfreqattr:   'sendFrequency=',
     widgetfrcitmattr: 'forceasitem=',
     widgetvisiattr:   'visibility=',
     widgetcolorattr:  ['labelcolor=', 'valuecolor=', 'iconcolor='],
     widgetswitchattr: 'switchSupport',
-    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'List ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Default '],
+    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Default '],
     lwidget:          ['Text ', 'Group ', 'Image ', 'Frame '],
-    identifier:       /[A-Za-z0-9_]+/,
     lparen:           '(',
     rparen:           ')',
     colon:            ':',
@@ -35,9 +32,12 @@
     gt:               '>',
     equals:           '=',
     comma:            ',',
-    NL:               { match: /\n/, lineBreaks: true }
+    NL:               { match: /\n/, lineBreaks: true },
+    identifier:       /(?:[A-Za-z_][A-Za-z0-9_]*)|(?:[0-9]+[A-Za-z_][A-Za-z0-9_]*)/,
+    number:           /\-?[0-9]+(?:\.[0-9]*)?/,
+    string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) }
   })
-  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'List', 'Setpoint', 'Input ', 'Colorpicker', 'Default']
+  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Default']
 
   function getSitemap(d) {
     return {
@@ -68,7 +68,6 @@
 
     // reject widgets with missing parameters
     if (requiresItem.includes(widget.component) && !widget.config.item) return reject
-    if (widget.component === 'List' && !widget.config.separator) return reject
     if ((widget.component === 'Video' || widget.component === 'Webview') && !widget.config.url) return reject
     if (widget.component === 'Chart' && !widget.config.period) return reject
 
@@ -95,8 +94,8 @@ Widget -> %nlwidget _ WidgetAttrs:*                                             
 WidgetAttrs -> WidgetAttr                                                         {% (d) => [d[0]] %}
   | WidgetAttrs _ WidgetAttr                                                      {% (d) => d[0].concat([d[2]]) %}
 WidgetAttr -> %widgetswitchattr                                                   {% (d) => ['switchEnabled', true] %}
-  | %widgetfreqattr                                                               {% (d) => ['frequency', d[1]] %}
-  | %widgetfrcitmattr                                                             {% (d) => ['forceAsItem', d[1]] %}
+  | %widgetfreqattr WidgetAttrValue                                               {% (d) => ['frequency', d[1]] %}
+  | %widgetfrcitmattr WidgetAttrValue                                             {% (d) => ['forceAsItem', d[1]] %}
   | WidgetAttrName WidgetAttrValue                                                {% (d) => [d[0][0].value, d[1]] %}
   | WidgetVisibilityAttrName WidgetVisibilityAttrValue                            {% (d) => [d[0][0].value, d[1]] %}
   | WidgetColorAttrName WidgetColorAttrValue                                      {% (d) => [d[0][0].value, d[1]] %}

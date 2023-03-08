@@ -49,11 +49,10 @@ import org.slf4j.LoggerFactory;
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
  * @author Laurent Garnier - Refactor icon management to support other iconsets
+ * @author Laurent Garnier - primary/secondary colors
  */
 @NonNullByDefault
 public abstract class AbstractWidgetRenderer implements WidgetRenderer {
-
-    private final Logger logger = LoggerFactory.getLogger(AbstractWidgetRenderer.class);
 
     private static final String ICON_SOURCE_OH = "oh";
     private static final String ICON_SOURCE_IF = "if";
@@ -64,6 +63,11 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     private static final String DEFAULT_ICON_NAME = "none";
 
     public static final String ICON_TYPE = "svg";
+
+    public static final String PRIMARY_COLOR = "#3f51b5";
+    public static final String SECONDARY_COLOR = "#ff4081";
+
+    private final Logger logger = LoggerFactory.getLogger(AbstractWidgetRenderer.class);
 
     private final BundleContext bundleContext;
     protected final TranslationProvider i18nProvider;
@@ -142,10 +146,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
             if (segments.length == 1) {
                 iconName = segments[0];
             } else if (segments.length == 2) {
-                iconSource = segments[0];
-                if (!ICON_SOURCE_OH.equalsIgnoreCase(iconSource)) {
-                    iconSet = "";
-                }
+                iconSet = segments[0];
                 iconName = segments[1];
             } else if (segments.length == 3) {
                 iconSource = segments[0];
@@ -350,6 +351,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         String snippet = originalSnippet;
 
         color = itemUIRegistry.getLabelColor(w);
+        color = applyPrimaryOrSecondaryColor(color);
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
@@ -358,13 +360,32 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
         style = "";
         color = itemUIRegistry.getValueColor(w);
+        color = applyPrimaryOrSecondaryColor(color);
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
         }
         snippet = snippet.replace("%valuestyle%", style);
 
+        style = "";
+        color = itemUIRegistry.getIconColor(w);
+        color = applyPrimaryOrSecondaryColor(color);
+
+        if (color != null) {
+            style = "style=\"color:" + color + "\"";
+        }
+        snippet = snippet.replace("%iconstyle%", style);
+
         return snippet;
+    }
+
+    private @Nullable String applyPrimaryOrSecondaryColor(@Nullable String color) {
+        if ("primary".equals(color)) {
+            return PRIMARY_COLOR;
+        } else if ("secondary".equals(color)) {
+            return SECONDARY_COLOR;
+        }
+        return color;
     }
 
     protected @Nullable String getCategory(Widget w) {

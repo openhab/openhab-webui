@@ -36,12 +36,6 @@
     </dependency>
     <dependency>
       <groupId>org.openhab.ui.bundles</groupId>
-      <artifactId>org.openhab.ui.cometvisu.php</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openhab.ui.bundles</groupId>
       <artifactId>org.openhab.ui.habot</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>

@@ -36,7 +36,7 @@ This is a PWA. Don't forget to check what is inside of your `service-worker.js`.
 
 ## Cordova
 
-The Cordova project is located in the `cordova` folder. You shouldn't modify content of the `cordova/www` folder. Its content will be correctly generated when you call `npm run cordova-build-prod`.
+The Cordova project is located in the `cordova` folder. You shouldn't modify content of the `cordova/www` folder. Its content will be correctly generated when you call `npm run build-cordova-prod` (see [NPM Scripts](#npm-scripts)).
 
 ## Documentation & Resources
 

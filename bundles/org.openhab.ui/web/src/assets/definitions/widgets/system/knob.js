@@ -18,7 +18,7 @@ export default () => [
   pn('borderWidth', 'Border Width', 'Indicates the border width of the slider - slider control only!').a(),
   pn('strokeWidth', 'Stroke Width', 'Thickness of the arcs (default 17)'),
   pt('lineCap', 'Line End Type', 'butt, round, square, none - slider control only!').a(),
-  pn('dottedPath', 'Dotted Path', 'Length of dotted path segments (css stroke-dasharray) - slider control only!').a(),
+  pt('dottedPath', 'Dotted Path', 'Length of dotted path segments (css stroke-dasharray) - slider control only!').a(),
   pb('responsive', 'Responsive', 'Size the control using percentages instead of pixels'),
   pb('releaseOnly', 'Send command only on release', 'If enabled, no commands are sent during sliding'),
   pn('commandInterval', 'Command Interval', 'Time to wait between subsequent commands in ms (default 200)'),
