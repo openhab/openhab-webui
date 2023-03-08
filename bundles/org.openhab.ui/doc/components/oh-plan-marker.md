@@ -43,9 +43,9 @@ A marker on a floor plan
     The item whose state to display on this marker
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="visibility" label="Marker Visibility">
+<PropBlock type="TEXT" name="visible" label="Visibility">
   <PropDescription>
-    Enter an expression to show/hide the marker conditionally
+    Enter an expression to dynamically show the marker, see <a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/ui/building-pages.html#widgets-definition-usage">Building Pages: <code>visible</code></a>
   </PropDescription>
 </PropBlock>
 </PropGroup>
