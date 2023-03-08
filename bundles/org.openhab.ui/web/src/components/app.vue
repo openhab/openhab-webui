@@ -635,7 +635,7 @@ export default {
         }
         console.log('Playing audio URL: ' + audioUrl)
         this.$oh.api.getPlain(audioUrl, '', '*/*', 'arraybuffer').then((data) => {
-          this.audioContext.decodeAudioData(data).then((buffer) => {
+          this.audioContext.decodeAudioData(data, (buffer) => {
             let source = this.audioContext.createBufferSource()
             source.buffer = buffer
             source.connect(this.audioContext.destination)
