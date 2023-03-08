@@ -167,6 +167,16 @@ Use the advanced properties to change the appearance from a knob to a rounded sl
     Sets the size of the slider handle (px value)
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="handleShape" label="Handle Shape">
+  <PropDescription>
+    Sets the shape of the slider handle
+  </PropDescription>
+  <PropOptions>
+    <PropOption value="square" label="square" />
+    <PropOption value="round" label="round" />
+    <PropOption value="dot" label="dot" />
+  </PropOptions>
+</PropBlock>
 <PropBlock type="TEXT" name="borderColor" label="Border Color">
   <PropDescription>
     Sets the border color of the slider; set borderWidth as well! (HTML value)
