@@ -290,6 +290,7 @@ export default {
       init: false,
       ready: false,
       eventSource: null,
+      audioContext: null,
 
       // Framework7 Parameters
       f7params: {
@@ -624,29 +625,35 @@ export default {
       this.eventSource = null
     },
     playAudioUrl (audioUrl) {
-      let context
       try {
-        window.AudioContext = window.AudioContext || window.webkitAudioContext
-        if (typeof (window.AudioContext) !== 'undefined') {
-          context = new AudioContext()
+        if (!this.audioContext) {
+          window.AudioContext = window.AudioContext || window.webkitAudioContext
+          if (typeof (window.AudioContext) !== 'undefined') {
+            this.audioContext = new AudioContext()
+            unlockAudioContext(this.audioContext)
+          }
         }
         console.log('Playing audio URL: ' + audioUrl)
         this.$oh.api.getPlain(audioUrl, '', '*/*', 'arraybuffer').then((data) => {
-          context.decodeAudioData(data, function (buffer) {
-            let source = context.createBufferSource()
+          this.audioContext.decodeAudioData(data, (buffer) => {
+            let source = this.audioContext.createBufferSource()
             source.buffer = buffer
-            source.connect(context.destination)
-            source.onended = function () {
-              context.close()
-            }
+            source.connect(this.audioContext.destination)
             source.start(0)
           })
         })
       } catch (e) {
         console.warn('Error while playing audio URL: ' + e.toString())
-        if (context) {
-          context.close()
-        }
+      }
+      // Safari requires a touch event after the stream has started, hence this workaround
+      // Credit: https://www.mattmontag.com/web/unlock-web-audio-in-safari-for-ios-and-macos
+      function unlockAudioContext (audioContext) {
+        if (audioContext.state !== 'suspended') return
+        const b = document.body
+        const events = ['touchstart', 'touchend', 'mousedown', 'keydown']
+        events.forEach(e => b.addEventListener(e, unlock, false))
+        function unlock () { audioContext.resume().then(clean) }
+        function clean () { events.forEach(e => b.removeEventListener(e, unlock)) }
       }
     }
   },
