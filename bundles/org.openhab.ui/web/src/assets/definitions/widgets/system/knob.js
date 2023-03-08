@@ -36,6 +36,11 @@ export default () => [
   pt('dottedPath', 'Dotted Path', 'Length of dotted path segments (using css stroke-dasharray)'),
   pn('borderWidth', 'Border Width', 'Sets the border width of the slider (px value)'),
   pt('handleSize', 'Handle Size', 'Sets the size of the slider handle (px value)'),
+  po('handleShape', 'Handle Shape', 'Sets the shape of the slider handle', [
+    { value: 'square', label: 'square' },
+    { value: 'round', label: 'round' },
+    { value: 'dot', label: 'dot' }
+  ]),
   pt('borderColor', 'Border Color', 'Sets the border color of the slider; set borderWidth as well! (HTML value)'),
   pt('pathColor', 'Path Color', 'Sets the path color of the slider (HTML value)'),
   pt('rangeColor', 'Range Color', 'Sets the range color of the slider (HTML value)'),
