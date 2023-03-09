@@ -96,9 +96,9 @@ Widget -> %nlwidget _ WidgetAttrs:*                                             
 WidgetAttrs -> WidgetAttr                                                         {% (d) => [d[0]] %}
   | WidgetAttrs _ WidgetAttr                                                      {% (d) => d[0].concat([d[2]]) %}
 WidgetAttr -> %widgetswitchattr                                                   {% (d) => ['switchEnabled', true] %}
-| %widgetfrcitmattr WidgetBooleanAttrValue                                        {% (d) => ['forceAsItem', d[1]] %}
+  | %widgetfrcitmattr WidgetBooleanAttrValue                                      {% (d) => ['forceAsItem', d[1]] %}
   | %widgetboolattr WidgetBooleanAttrValue                                        {% (d) => [d[0].value, d[1]] %}
-| %widgetfreqattr WidgetAttrValue                                                 {% (d) => ['frequency', d[1]] %}
+  | %widgetfreqattr WidgetAttrValue                                               {% (d) => ['frequency', d[1]] %}
   | WidgetAttrName WidgetAttrValue                                                {% (d) => [d[0][0].value, d[1]] %}
   | WidgetVisibilityAttrName WidgetVisibilityAttrValue                            {% (d) => [d[0][0].value, d[1]] %}
   | WidgetColorAttrName WidgetColorAttrValue                                      {% (d) => [d[0][0].value, d[1]] %}
