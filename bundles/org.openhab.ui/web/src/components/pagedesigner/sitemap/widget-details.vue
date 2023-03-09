@@ -34,13 +34,13 @@
           <f7-list-input v-if="supports('step')" label="Step" type="number" :value="widget.config.step" @input="updateParameter('step', $event)" clear-button />
           <f7-list-input v-if="supports('yAxisDecimalPattern')" label="Y-axis decimal pattern" type="text" :value="widget.config.separator" @input="updateParameter('yAxisDecimalPattern', $event)" clear-button />
           <f7-list-item v-if="supports('switchEnabled')" title="Switch enabled">
-            <f7-toggle slot="after" :checked="widget.config.switchEnabled === 'true'" @toggle:change="widget.config.switchEnabled = $event" />
+            <f7-toggle slot="after" :checked="widget.config.switchEnabled" @toggle:change="widget.config.switchEnabled = $event" />
           </f7-list-item>
           <f7-list-item v-if="supports('legend')" title="Legend">
-            <f7-toggle slot="after" :checked="widget.config.legend === 'true'" @toggle:change="widget.config.legend = $event" />
+            <f7-toggle slot="after" :checked="widget.config.legend" @toggle:change="widget.config.legend = $event" />
           </f7-list-item>
           <f7-list-item v-if="supports('forceAsItem')" title="Force as item">
-            <f7-toggle slot="after" :checked="widget.config.forceAsItem === 'true'" @toggle:change="widget.config.forceAsItem = $event" />
+            <f7-toggle slot="after" :checked="widget.config.forceAsItem" @toggle:change="widget.config.forceAsItem = $event" />
           </f7-list-item>
         </ul>
       </f7-list>
