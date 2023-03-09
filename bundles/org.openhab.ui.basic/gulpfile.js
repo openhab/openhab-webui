@@ -16,7 +16,8 @@
 	
 	var paths = {
 	        FontLibs: [
-                './node_modules/material-design-icons/iconfont/MaterialIcons-Regular.*'
+			'./node_modules/material-design-icons/iconfont/MaterialIcons-Regular.woff*',
+			'./node_modules/material-design-icons/iconfont/MaterialIcons-Regular.ttf'
 	        ]
 	    };
 	
