@@ -60,6 +60,7 @@ export default {
         if (err === 404) {
           this.noConfig = true
         }
+        this.ready = true
       })
     },
     save () {
