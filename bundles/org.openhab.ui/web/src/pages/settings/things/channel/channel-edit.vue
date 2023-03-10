@@ -55,12 +55,13 @@ export default {
       this.config = Object.assign({}, this.channel.configuration)
       this.$oh.api.get(`/rest/config-descriptions/channel:${this.thing.UID}:${this.channelId.replace('#', '%23')}`).then((ct) => {
         this.configDescription = ct
+        this.ready = true
       }).catch((err) => {
         if (err === 'Not Found' || err === 404) {
           this.noConfig = true
+          this.ready = true
         }
       })
-      this.ready = true
     },
     save () {
       let finalChannel = Object.assign({}, this.channel, {
