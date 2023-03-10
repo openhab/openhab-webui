@@ -1,5 +1,5 @@
 <template>
-  <trend :key="'trend' + config.item" v-if="showTrend" :style="config.style" :width="trendWidth" class="trend" :data="trendData" :gradient="trendGradient" :stroke-width="trendStrokeWidth" auto-draw smooth />
+  <trend :key="'trend' + config.item" v-if="showTrend" :style="config.style" :width="trendWidth" class="trend" :data="trendData" :gradient="trendGradient" :gradientDirection="trendGradientDirection" :stroke-width="trendStrokeWidth" auto-draw smooth />
 </template>
 
 <script>
@@ -25,6 +25,9 @@ export default {
     },
     trendGradient () {
       return this.config.trendGradient || ['#2196f3', '#5ac8fa']
+    },
+    trendGradientDirection () {
+      return this.config.trendGradientDirection || 'top'
     },
     trendStrokeWidth () {
       return this.config.trendStrokeWidth || 3
