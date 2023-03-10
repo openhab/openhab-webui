@@ -60,6 +60,9 @@
             <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
               By binding
             </f7-button>
+            <f7-button :active="groupBy === 'state'" @click="switchGroupOrder('state')">
+              By State
+            </f7-button>
           </f7-segmented>
         </div>
         <f7-list v-if="!ready" contacts-list class="col things-list">
@@ -151,26 +154,38 @@ export default {
   },
   computed: {
     indexedThings () {
-      if (this.groupBy === 'alphabetical') {
-        return this.things.reduce((prev, thing, i, things) => {
-          const initial = (thing.label || thing.UID).substring(0, 1).toUpperCase()
-          if (!prev[initial]) {
-            prev[initial] = []
-          }
-          prev[initial].push(thing)
+      switch (this.groupBy) {
+          case 'alphabetical':
+            return this.things.reduce((prev, thing, i, things) => {
+              const initial = (thing.label || thing.UID).substring(0, 1).toUpperCase()
+              if (!prev[initial]) {
+                prev[initial] = []
+              }
+              prev[initial].push(thing)
 
-          return prev
-        }, {})
-      } else {
-        return this.things.reduce((prev, thing, i, things) => {
-          const binding = thing.thingTypeUID.split(':')[0]
-          if (!prev[binding]) {
-            prev[binding] = []
-          }
-          prev[binding].push(thing)
+              return prev
+            }, {})
+            break;
+          case 'state':
+            return this.things.reduce((prev, thing, i, things) => {
+              const statusInfo = thing.statusInfo.status
+              if (!prev[statusInfo]) {
+                prev[statusInfo] = []
+              }
+              prev[statusInfo].push(thing)
+              return prev
+            }, {})
+            break;
+          default:
+            return this.things.reduce((prev, thing, i, things) => {
+              const binding = thing.thingTypeUID.split(':')[0]
+              if (!prev[binding]) {
+                prev[binding] = []
+              }
+              prev[binding].push(thing)
 
-          return prev
-        }, {})
+              return prev
+            }, {})
       }
     },
     inboxCount () {
