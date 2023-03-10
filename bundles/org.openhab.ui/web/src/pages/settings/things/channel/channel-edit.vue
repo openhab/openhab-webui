@@ -57,8 +57,9 @@ export default {
         this.configDescription = ct
         this.ready = true
       }).catch((err) => {
-        if (err === 404) {
+        if (err === 'Not Found' || err === 404) {
           this.noConfig = true
+          this.ready = true
         }
       })
     },
