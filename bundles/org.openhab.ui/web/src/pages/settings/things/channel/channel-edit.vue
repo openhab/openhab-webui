@@ -11,7 +11,7 @@
     <f7-block class="block-narrow">
       <f7-col v-if="channel">
         <f7-block-title>Channel</f7-block-title>
-        <channel-general-settings :channel="channel" :createMode="false" :ready="ready" />
+        <channel-general-settings :channel="channel" :channelType="channelType" :createMode="false" :ready="ready" />
       </f7-col>
       <f7-col v-if="channelType != null">
         <f7-block-title v-if="configDescription.parameters">
@@ -45,7 +45,6 @@ export default {
     return {
       ready: false,
       configDescription: {},
-      currentChannelType: null,
       config: {},
       noConfig: false
     }
