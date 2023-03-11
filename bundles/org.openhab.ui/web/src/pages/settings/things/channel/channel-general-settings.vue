@@ -1,5 +1,5 @@
 <template>
-  <f7-block v-if="ready" class="padding-vertical no-padding-horizontal">
+  <f7-block class="padding-vertical no-padding-horizontal">
     <f7-col>
       <f7-list class="no-margin" inline-labels no-hairlines-md>
         <f7-list-input v-if="createMode" label="Channel Identifier" type="text" placeholder="Required" :value="channel.id"
@@ -24,7 +24,7 @@
 <script>
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 export default {
-  props: ['channel', 'channelType', 'createMode', 'ready'],
+  props: ['channel', 'channelType', 'createMode'],
   components: {
     ClipboardIcon
   }
