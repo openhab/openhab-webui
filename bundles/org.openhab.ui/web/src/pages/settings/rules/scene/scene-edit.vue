@@ -245,6 +245,7 @@ export default {
     return {
       ready: false,
       loading: false,
+      eventSource: null,
       rule: {},
       ruleYaml: '',
       moduleTypes: {
@@ -287,6 +288,7 @@ export default {
       this.load()
     },
     onPageAfterOut () {
+      this.stopEventSource()
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
@@ -306,6 +308,7 @@ export default {
           this.savedRule = cloneDeep(this.rule)
           this.ready = true
           this.loading = false
+          if (!this.eventSource) this.startEventSource()
         })
       }
 
@@ -344,6 +347,11 @@ export default {
     },
     save (noToast) {
       if (!this.isEditable) return Promise.reject()
+      if (this.currentTab === 'code') {
+        if (!this.fromYaml()) {
+          return Promise.reject()
+        }
+      }
       if (!this.rule.uid) {
         this.$f7.dialog.alert('Please give an ID to the scene')
         return Promise.reject()
@@ -439,6 +447,20 @@ export default {
           })
         }
       )
+    },
+    startEventSource () {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/' + this.ruleId + '/*', null, (event) => {
+        const topicParts = event.topic.split('/')
+        switch (topicParts[3]) {
+          case 'state':
+            this.$set(this.rule, 'status', JSON.parse(event.payload)) // e.g. {"status":"RUNNING","statusDetail":"NONE"}
+            break
+        }
+      })
+    },
+    stopEventSource () {
+      this.$oh.sse.close(this.eventSource)
+      this.eventSource = null
     },
     keyDown (ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
@@ -608,11 +630,14 @@ export default {
       if (!this.isEditable) return
       try {
         const updatedRule = YAML.parse(this.ruleYaml)
+        if (updatedRule.triggers === null) updatedRule.triggers = []
+        if (updatedRule.conditions === null) updatedRule.conditions = []
         const actions = []
-        let idx = 0
+        let moduleId = 1
+        for (; ['triggers', 'actions', 'conditions'].some((s) => this.rule[s].some((m) => m.id === moduleId.toString())); moduleId++);
         for (let item in updatedRule.items) {
           actions.push({
-            id: (idx++).toString(),
+            id: (moduleId++).toString(),
             configuration: {
               itemName: item,
               command: updatedRule.items[item]
@@ -623,6 +648,7 @@ export default {
         this.$set(this.rule, 'triggers', updatedRule.triggers)
         this.$set(this.rule, 'conditions', updatedRule.conditions)
         this.$set(this.rule, 'actions', actions)
+        console.debug(this.rule)
         return true
       } catch (e) {
         this.$f7.dialog.alert(e).open()

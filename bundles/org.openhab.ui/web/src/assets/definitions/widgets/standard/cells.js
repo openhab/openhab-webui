@@ -43,7 +43,7 @@ export const OhSliderCellDefinition = () => new WidgetDefinition('oh-slider-cell
 
 // OhKnobCell
 import KnobParameters from '../system/knob.js'
-export const OhKnobCellDefinition = () => new WidgetDefinition('oh-knob-cell', 'Knob Cell', 'A cell expanding to a knob control')
+export const OhKnobCellDefinition = () => new WidgetDefinition('oh-knob-cell', 'Knob & Rounded Slider Cell', 'A cell expanding to a knob or rounded slider control')
   .paramGroup(CellParameterGroup(), CellParameters())
   .paramGroup(pg('knob', 'Knob'), KnobParameters())
   .paramGroup(actionGroup(), actionParams())
