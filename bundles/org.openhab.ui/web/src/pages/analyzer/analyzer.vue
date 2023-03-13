@@ -348,9 +348,9 @@ export default {
       let seriesOptions = {}
       seriesOptions.name = item.label || item.name
       seriesOptions.type = 'line'
-      seriesOptions.discrete = false
-      if ((item.type.indexOf('Number') !== 0 && item.type.indexOf('Dimmer') !== 0 &&
-         ((item.groupType.indexOf('Number') !== 0 && item.groupType.indexOf('Dimmer') !== 0) || item.groupType === undefined))) seriesOptions.discrete = true
+      seriesOptions.discrete = true
+      if (item.type.indexOf('Number') === 0 || item.type === 'Dimmer') seriesOptions.discrete = false
+      if (item.groupType && (item.groupType.indexOf('Number') === 0 || item.groupType === 'Dimmer')) seriesOptions.discrete = false
       if (!seriesOptions.discrete && this.coordSystem === 'aggregate' && this.aggregateDimensions === 1) seriesOptions.type = 'bar'
       if (!seriesOptions.discrete && (this.coordSystem === 'calendar' || (this.coordSystem === 'aggregate' && this.aggregateDimensions === 2))) seriesOptions.type = 'heatmap'
       if (seriesOptions.discrete) seriesOptions.type = 'area'
