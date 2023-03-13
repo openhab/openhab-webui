@@ -17,7 +17,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
-import org.openhab.core.library.types.HSBType;
 import org.openhab.core.model.sitemap.sitemap.Colorpicker;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
@@ -68,10 +67,9 @@ public class ColorpickerRenderer extends AbstractWidgetRenderer {
 
         // get RGB hex value
         State state = itemUIRegistry.getState(cp);
-        String hexValue = "#ffffff";
-        if (state instanceof HSBType) {
-            HSBType hsbState = (HSBType) state;
-            hexValue = "#" + Integer.toHexString(hsbState.getRGB()).substring(2);
+        String hexValue = getRGBHexCodeFromItemState(state);
+        if (hexValue == null) {
+            hexValue = "#ffffff";
         }
         String purelabel = itemUIRegistry.getLabel(w);
         if (purelabel != null) {
