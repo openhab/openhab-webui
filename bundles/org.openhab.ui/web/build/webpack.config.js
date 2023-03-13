@@ -21,14 +21,7 @@ const target = process.env.TARGET || 'web'
 const buildSourceMaps = process.env.SOURCE_MAPS || false
 const isCordova = target === 'cordova'
 
-const proxyConfig = {
-  context: ['/auth', '/rest', '/chart', '/proxy', '/icon', '/static', '/changePassword', '/createApiToken', '/audio'],
-  target: process.env.OH_APIBASE || 'http://localhost:8080'
-}
-if (proxyConfig.target && proxyConfig.target.startsWith('https://')) {
-  proxyConfig['secure'] = true
-  proxyConfig['changeOrigin'] = true
-}
+const apiBaseUrl = process.env.OH_APIBASE || 'http://localhost:8080'
 
 module.exports = {
   mode: env,
@@ -60,7 +53,10 @@ module.exports = {
     // watchOptions: {
     //   poll: 1000,
     // },
-    proxy: [proxyConfig]
+    proxy: [{
+      context: ['/auth', '/rest', '/chart', '/proxy', '/icon', '/static', '/changePassword', '/createApiToken', '/audio'],
+      target: apiBaseUrl
+    }]
   },
   performance: {
     maxAssetSize: 2048000,
