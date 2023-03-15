@@ -3,9 +3,9 @@
     <!-- eslint-disable-next-line vue/no-unused-vars -->
     <template v-for="(slotComponents, slotName) in context.component.slots" #[slotName]>
       <ul :key="slotName" v-if="componentType === 'f7-list'">
-        <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in slotComponents" :key="slotName + '-' + idx" @command="onCommand" />
+        <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in slotComponents" :slot="slotName" :key="slotName + '-' + idx" @command="onCommand" />
       </ul>
-      <generic-widget-component v-else :context="childContext(slotComponent)" v-for="(slotComponent, idx) in slotComponents" :key="slotName + '-' + idx" @command="onCommand" />
+      <generic-widget-component v-else :context="childContext(slotComponent)" v-for="(slotComponent, idx) in slotComponents" :slot="slotName" :key="slotName + '-' + idx" @command="onCommand" />
     </template>
   </component>
   <generic-widget-component v-else-if="componentType && componentType.startsWith('widget:') && visible" :context="childWidgetContext()" @command="onCommand" />
