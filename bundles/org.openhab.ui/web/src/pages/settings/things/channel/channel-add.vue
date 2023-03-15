@@ -11,7 +11,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title>Channel</f7-block-title>
-        <channel-general-settings :channel="channel" :createMode="true" :ready="ready" />
+        <channel-general-settings v-if="ready" :channel="channel" :channelType="currentChannelType" :createMode="true" />
       </f7-col>
       <f7-col>
         <f7-block-title>Channel type</f7-block-title>
