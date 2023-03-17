@@ -327,7 +327,8 @@
 		var
 			_t = this,
 			suppress = false,
-			noneImageSrc = "/icon/none.png";
+			noneImageSrc = "/icon/none.png",
+			splittedIconAttr;
 
 		_t.parentNode = parentNode;
 		_t.formRow = parentNode.parentNode;
@@ -344,7 +345,9 @@
 		}
 
 		if (_t.icon !== null) {
-			_t.iconName = _t.icon.getAttribute(o.iconAttribute);
+			splittedIconAttr = _t.icon.getAttribute(o.iconAttribute).split(":");
+			_t.iconSet = splittedIconAttr[0];
+			_t.iconName = splittedIconAttr[1];
 			if (_t.icon.src !== noneImageSrc) {
 				_t.icon.addEventListener("error", replaceImageWithNone);
 			}
@@ -360,6 +363,8 @@
 						encodeURIComponent(_t.iconName) +
 						"?state=" +
 						encodeURIComponent(state) +
+						"&iconset=" +
+						encodeURIComponent(_t.iconSet) +
 						"&format=" +
 						smarthome.UI.iconType +
 						"&anyFormat=true"
@@ -368,7 +373,9 @@
 					_t.icon.setAttribute("src",
 						"/icon/" +
 						encodeURIComponent(_t.iconName) +
-						"?format=" +
+						"?iconset=" +
+						encodeURIComponent(_t.iconSet) +
+						"&format=" +
 						smarthome.UI.iconType +
 						"&anyFormat=true"
 					);
