@@ -28,6 +28,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.I18nUtil;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.ItemNotFoundException;
+import org.openhab.core.library.types.HSBType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
@@ -350,8 +353,18 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         String color = "";
         String snippet = originalSnippet;
 
+        State itemState = null;
+        if (w.getItem() != null) {
+            try {
+                Item item = itemUIRegistry.getItem(w.getItem());
+                itemState = item.getState();
+            } catch (ItemNotFoundException e) {
+                logger.debug("{}", e.getMessage());
+            }
+        }
+
         color = itemUIRegistry.getLabelColor(w);
-        color = applyPrimaryOrSecondaryColor(color);
+        color = convertSpecialColors(color, itemState);
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
@@ -360,7 +373,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
         style = "";
         color = itemUIRegistry.getValueColor(w);
-        color = applyPrimaryOrSecondaryColor(color);
+        color = convertSpecialColors(color, itemState);
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
@@ -369,7 +382,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
         style = "";
         color = itemUIRegistry.getIconColor(w);
-        color = applyPrimaryOrSecondaryColor(color);
+        color = convertSpecialColors(color, itemState);
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
@@ -379,13 +392,23 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         return snippet;
     }
 
-    private @Nullable String applyPrimaryOrSecondaryColor(@Nullable String color) {
+    private @Nullable String convertSpecialColors(@Nullable String color, @Nullable State itemState) {
         if ("primary".equals(color)) {
             return PRIMARY_COLOR;
         } else if ("secondary".equals(color)) {
             return SECONDARY_COLOR;
+        } else if ("itemValue".equals(color)) {
+            return getRGBHexCodeFromItemState(itemState);
         }
         return color;
+    }
+
+    protected @Nullable String getRGBHexCodeFromItemState(@Nullable State itemState) {
+        if (itemState instanceof HSBType) {
+            HSBType hsbState = (HSBType) itemState;
+            return "#" + Integer.toHexString(hsbState.getRGB()).substring(2);
+        }
+        return null;
     }
 
     protected @Nullable String getCategory(Widget w) {
