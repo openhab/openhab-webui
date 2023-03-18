@@ -2,6 +2,7 @@ import { pt, pi, pb } from '../helpers.js'
 
 export default () => [
   pi('item', 'Item', 'Rollershutter item to control'),
+  pt('buttonStyle', 'style', 'CSS style for buttons'),
   pt('dirIconsStyle', 'Direction Icons Style', 'Icons to use for the UP/DOWN buttons').o([
     'arrowtriangle_{dir}',
     'arrowtriangle_{dir}_fill',

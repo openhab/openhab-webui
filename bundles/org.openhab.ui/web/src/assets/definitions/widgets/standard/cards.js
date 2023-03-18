@@ -8,6 +8,7 @@ export const CardParameterGroup = () => pg('card', 'Card', 'Parameters of the ca
 export const CardParameters = () => [
   pt('title', 'Title', 'Title of the card'),
   pt('footer', 'Footer text', 'Footer of the card'),
+  pt('style', 'style', 'CSS style for the card'),
   pb('noBorder', 'No Border', 'Do not render the card border').a(),
   pb('noShadow', 'No Shadow', 'Do not render a shadow effect to the card').a(),
   pb('outline', 'Outline', 'Show the card outline').a()
