@@ -1,4 +1,5 @@
 import { Points } from '@/assets/semantics'
+import utils from '@/js/openhab/utils'
 
 /**
  * Generate a textual definition for the items provided by the "add from thing" page,
@@ -23,13 +24,13 @@ export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment,
   for (const channel of thing.channels) {
     if (channel.kind !== 'STATE') continue
     const channelType = channelTypesMap.get(channel.channelTypeUID)
-    let newItemName = (newEquipmentItem) ? newEquipmentItem.name : this.$oh.utils.normalizeLabel(thing.label)
+    let newItemName = (newEquipmentItem) ? newEquipmentItem.name : utils.normalizeLabel(thing.label)
     newItemName += '_'
     let suffix = channel.label || channel.id
     if (thing.channels.filter((c) => c.label === suffix || (c.channelTypeUID && channelTypesMap[c.channelTypeUID] && channelTypesMap[c.channelTypeUID].label === suffix)).length > 1) {
       suffix = channel.id.replace('#', '_').replace(/(^\w{1})|(_+\w{1})/g, letter => letter.toUpperCase())
     }
-    newItemName += this.$oh.utils.normalizeLabel(suffix)
+    newItemName += utils.normalizeLabel(suffix)
     const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
     const newItem = {
       channel: channel,
