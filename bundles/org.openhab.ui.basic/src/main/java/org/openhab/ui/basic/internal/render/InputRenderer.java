@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * This is an implementation of the {@link WidgetRenderer} interface, which
  * can produce HTML code for Input widgets.
  *
- * @author Mark Herwege - Initial contributor
+ * @author Mark Herwege - Initial contribution
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
