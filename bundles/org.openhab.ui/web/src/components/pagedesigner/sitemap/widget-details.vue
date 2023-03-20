@@ -42,6 +42,13 @@
           <f7-list-item v-if="supports('forceAsItem')" title="Force as item">
             <f7-toggle slot="after" :checked="widget.config.forceAsItem" @toggle:change="widget.config.forceAsItem = $event" />
           </f7-list-item>
+          <f7-list-item v-if="supports('inputHint')" title="Hint" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
+            <select name="inputHints" required :value="widget.config.inputHint" @change="updateParameter('inputHint', $event)">
+              <option v-for="def in inputHintDefs" :key="def.key" :value="def.key">
+                {{ def.value }}
+              </option>
+            </select>
+          </f7-list-item>
         </ul>
       </f7-list>
     </f7-card-content>
@@ -84,6 +91,7 @@ export default {
         Slider: ['sendFrequency', 'switchEnabled', 'minValue', 'maxValue', 'step'],
         Setpoint: ['minValue', 'maxValue', 'step'],
         Colorpicker: ['sendFrequency'],
+        Input: ['inputHint'],
         Default: ['height']
       },
       periodDefs: [
@@ -100,6 +108,13 @@ export default {
         { key: '2M', value: '2 Months' },
         { key: '3M', value: '3 Months' },
         { key: 'Y', value: 'Year' }
+      ],
+      inputHintDefs: [
+        { key: 'text', value: 'Text'},
+        { key: 'number', value: 'Number'},
+        { key: 'date', value: 'Date'},
+        { key: 'time', value: 'Time'},
+        { key: 'datetime', value: 'Date and Time'}
       ]
     }
   },
