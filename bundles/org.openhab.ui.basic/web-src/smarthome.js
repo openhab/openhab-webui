@@ -1578,7 +1578,7 @@
 
 		_t.setValuePrivate = function(value, itemState) {
 			var newValue = (itemState === "undefined" || itemState === "NULL" || itemState === "UNDEF") ? "" : value;
-			
+
 			if (_t.verify) {
 				_t.verify.cancel();
 			}
