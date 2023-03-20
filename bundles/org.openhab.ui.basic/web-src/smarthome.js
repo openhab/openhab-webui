@@ -1545,12 +1545,12 @@
 				changed = true;
 			if (_t.itemType === "Number") {
 				changeValue = changeValue.trim();
-				var numberValue = changeValue.match(numberPattern)[0];
-				if (numberValue === undefined) {
+				var numberValue = changeValue.match(numberPattern);
+				if (!numberValue || numberValue.length < 1) {
 					changed = false;
 				} else {
-                    var unitValue = changeValue.substring(numberValue.length).trim();
-                    changeValue = numberValue.replace(/^\+/, "");
+					var unitValue = changeValue.substring(numberValue[0].length).trim();
+					changeValue = numberValue[0].replace(/^\+/, "");
 					if (commaSeparatorPattern.test(changeValue) && !dotSeparatorPattern.test(changeValue)) {
 						changeValue = changeValue.replace(/\./g, "").replace(",", ".");
 					}
@@ -1576,12 +1576,14 @@
 			}
 		}
 
-		_t.setValuePrivate = function(value) {
+		_t.setValuePrivate = function(value, itemState) {
+			var newValue = (itemState === "undefined" || itemState === "NULL" || itemState === "UNDEF") ? "" : value;
+			
 			if (_t.verify) {
 				_t.verify.cancel();
 			}
-			_t.input.value = value;
-			lastValue = value;
+			_t.input.value = newValue;
+			lastValue = newValue;
 		};
 
 		_t.setValueColor = function(color) {
