@@ -136,7 +136,11 @@
       <developer-sidebar />
     </f7-panel>
 
-    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
+    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'">
+      <f7-fab v-if="sseFailure" position="center-bottom" href="javascript:window.location.reload()" :text="$t('server.sseConnectionFailed')">
+        <f7-icon f7="wifi_exclamationmark" />
+      </f7-fab>
+    </f7-view>
 
   <!-- <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
     <f7-view name="login" v-if="$device.cordova">
@@ -382,7 +386,7 @@ export default {
       showDeveloperSidebar: false,
       currentUrl: '',
 
-      sseFailureToast: null
+      sseFailure: false
     }
   },
   computed: {
@@ -403,25 +407,7 @@ export default {
             window.OHApp.sseConnected(connected)
           } catch {}
         } else if (this.$f7) {
-          if (connected === false) {
-            this.sseFailureToast = this.$f7.toast.create({
-              text: this.$t('server.sseConnectionFailed'),
-              closeButton: true,
-              closeButtonText: this.$t('dialogs.reload'),
-              destroyOnClose: true,
-              position: 'bottom',
-              horizontalPosition: 'bottom',
-              cssClass: 'toast-sse-connection-failed button-outline'
-            }).open()
-            this.sseFailureToast.on('closeButtonClick', () => {
-              window.location.reload()
-            })
-          } else if (connected === true) {
-            if (this.sseFailureToast !== null) {
-              this.sseFailureToast.off('closeButtonClick')
-              this.sseFailureToast.close()
-            }
-          }
+          this.sseFailure = !connected
         }
       },
       immediate: true // provides initial (not changed yet) state
