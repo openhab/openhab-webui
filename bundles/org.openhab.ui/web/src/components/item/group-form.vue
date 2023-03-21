@@ -8,11 +8,6 @@
               {{ type }}
             </option>
           </optgroup>
-          <optgroup label="Numbers with Dimensions">
-            <option v-for="dimension in types.Dimensions" :key="dimension" :value="'Number:' + dimension" :selected="item.groupType === 'Number:' + dimension">
-              {{ 'Number:' + dimension }}
-            </option>
-          </optgroup>
         </select>
       </f7-list-item>
       <f7-list-item key="function-picker-arithmetic" v-if="item.type === 'Group' && item.groupType && (['Dimmer', 'Rollershutter'].indexOf(item.groupType) >= 0 || item.groupType.indexOf('Number') === 0)" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">

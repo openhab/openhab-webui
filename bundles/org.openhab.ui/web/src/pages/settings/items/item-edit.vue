@@ -112,7 +112,7 @@ export default {
           this.ready = true
         })
       } else {
-        const loadItem = this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=semantics')
+        const loadItem = this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=semantics,unit')
         loadItem.then((data) => {
           if (!data.groupType) data.groupType = 'None'
           this.item = data
@@ -158,8 +158,12 @@ export default {
             closeTimeout: 2000
           }).open()
         }
-        this.dirty = false
-        this.$f7router.back()
+        if (this.item.metadata && this.item.metadata.unit) {
+          this.$oh.api.put('/rest/items/' + this.item.name + '/metadata/unit', this.item.metadata.unit).then((data) => {
+            this.dirty = false
+            this.$f7router.back()
+          })
+        }
       }).catch((err) => {
         this.$f7.toast.create({
           text: 'Item not saved: ' + err,

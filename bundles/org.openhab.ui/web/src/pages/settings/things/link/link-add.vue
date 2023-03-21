@@ -195,12 +195,17 @@ export default {
       newItemName += '_'
       newItemName += this.$oh.utils.normalizeLabel(this.channel.label || this.channelType.label)
       const defaultTags = (this.channel.defaultTags.length > 0) ? this.channel.defaultTags : this.channelType.tags
+      let newMetadata;
+      if (this.channelType.unit) {
+          newMetadata = { unit : { value : this.channelType.unit } }
+      }
       this.$set(this, 'newItem', {
         name: newItemName,
         label: this.channel.label || this.channelType.label,
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
         type: this.channel.itemType || 'Switch',
+        metadata: newMetadata,
         tags: (defaultTags.find((t) => SemanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
       })
     },
