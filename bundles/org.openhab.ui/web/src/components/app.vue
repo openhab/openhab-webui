@@ -408,14 +408,17 @@ export default {
               text: this.$t('server.sseConnectionFailed'),
               closeButton: true,
               closeButtonText: this.$t('dialogs.reload'),
-              destroyOnClose: true
+              destroyOnClose: true,
+              position: 'bottom',
+              horizontalPosition: 'bottom',
+              cssClass: 'toast-sse-connection-failed button-outline'
             }).open()
-            this.sseFailureToast.on('closed', () => {
+            this.sseFailureToast.on('closeButtonClick', () => {
               window.location.reload()
             })
           } else if (connected === true) {
             if (this.sseFailureToast !== null) {
-              this.sseFailureToast.off('closed')
+              this.sseFailureToast.off('closeButtonClick')
               this.sseFailureToast.close()
             }
           }
