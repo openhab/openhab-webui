@@ -380,7 +380,9 @@ export default {
       showSettingsSubmenu: false,
       showDeveloperSubmenu: false,
       showDeveloperSidebar: false,
-      currentUrl: ''
+      currentUrl: '',
+
+      sseFailureToast: null
     }
   },
   computed: {
@@ -400,6 +402,23 @@ export default {
           try {
             window.OHApp.sseConnected(connected)
           } catch {}
+        } else if (this.$f7) {
+          if (connected === false) {
+            this.sseFailureToast = this.$f7.toast.create({
+              text: this.$t('server.sseConnectionFailed'),
+              closeButton: true,
+              closeButtonText: this.$t('dialogs.reload'),
+              destroyOnClose: true
+            }).open()
+            this.sseFailureToast.on('closed', () => {
+              window.location.reload()
+            })
+          } else if (connected === true) {
+            if (this.sseFailureToast !== null) {
+              this.sseFailureToast.off('closed')
+              this.sseFailureToast.close()
+            }
+          }
         }
       },
       immediate: true // provides initial (not changed yet) state
