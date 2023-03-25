@@ -449,7 +449,7 @@ export default {
      * @param query search query (as typed, not in lowercase)
      * @returns {boolean}
      */
-    searchInItem (i, query) {
+    searchItem (i, query) {
       query = query.toLowerCase()
       if (i.name.toLowerCase().indexOf(query) >= 0) return true
       if (i.label && i.label.toLowerCase().indexOf(query) >= 0) return true
@@ -476,7 +476,7 @@ export default {
      * @param query query (as typed, not in lowercase)
      * @returns {boolean}
      */
-    searchInRule (r, query) {
+    searchRule (r, query) {
       query = query.toLowerCase()
       if (r.uid.toLowerCase().indexOf(query) >= 0) return true
       if (r.name.toLowerCase().indexOf(query) >= 0) return true
@@ -516,6 +516,26 @@ export default {
       }
       return false
     },
+    /**
+     * Search for the query string inside a single page.
+     * All searches are non case-intensive.
+     *
+     * Checks:
+     *  - uid
+     *  - label
+     *  - slots
+     *
+     * @param p page
+     * @param query search query (as typed, not in lowercase)
+     * @returns {boolean}
+     */
+    searchPage (p, query) {
+      query = query.toLowerCase()
+      if (p.uid.toLowerCase().indexOf(query) >= 0) return true
+      if (p.config && p.config.label && p.config.label.toLowerCase().indexOf(query) >= 0) return true
+      if (p.slots && JSON.stringify(p.slots).toLowerCase().indexOf(query) >= 0) return true
+      return false
+    },
     search (searchbar, query, previousQuery) {
       if (!query) {
         this.clearSearch()
@@ -543,7 +563,7 @@ export default {
       Promise.all(promises).then((data) => {
         this.$set(this, 'cachedObjects', data)
         this.searchResultsLoading = false
-        const items = data[0].filter((i) => this.searchInItem(i, this.searchQuery)).sort((a, b) => {
+        const items = data[0].filter((i) => this.searchItem(i, this.searchQuery)).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
@@ -554,7 +574,7 @@ export default {
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
         })
-        const rulesScenesScripts = data[2].filter((r) => this.searchInRule(r, this.searchQuery)).sort((a, b) => {
+        const rulesScenesScripts = data[2].filter((r) => this.searchRule(r, this.searchQuery)).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
@@ -562,8 +582,7 @@ export default {
         const rules = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0)
         const scenes = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') >= 0)
         const scripts = rulesScenesScripts.filter((r) => r.tags.indexOf('Script') >= 0)
-        const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 ||
-          (p.config && p.config.label && p.config.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)).sort((a, b) => {
+        const pages = data[3].filter((p) => this.searchPage(p, this.searchQuery)).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
