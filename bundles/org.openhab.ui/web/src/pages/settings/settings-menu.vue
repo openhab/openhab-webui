@@ -167,7 +167,7 @@ export default {
         model: 'The semantic model of your home',
         items: 'Manage the functional layer',
         pages: 'Design displays for user control & monitoring',
-        transform: 'Manage transformation configurations',
+        transform: 'Manage transformations',
         rules: 'Automate with triggers and actions',
         scenes: 'Store a set of desired states as a scene',
         scripts: 'Rules dedicated to running code',

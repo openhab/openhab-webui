@@ -9,11 +9,11 @@
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
-          class="searchbar-transform"
+          class="searchbar-transformations"
           :init="initSearchbar"
-          search-container=".transform-list"
-          search-item=".transform-item"
-          search-in=".item-title, .item-subtitle, .item-header, .item-footer"
+          search-container=".transformations-list"
+          search-item=".transformationlist-item"
+          search-in=".item-title, .item-subtitle, .item-footer"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -31,10 +31,10 @@
     </f7-toolbar>
 
     <f7-list-index
-      v-if="ready"
-      ref="listIndex" :key="'transform-index'"
+      ref="listIndex"
+      v-if="$refs.transformationsList"
       v-show="groupBy === 'alphabetical' && !$device.desktop"
-      list-el=".transform-list"
+      listEl=".transformations-list"
       :scroll-list="true"
       :label="true" />
 
@@ -42,13 +42,29 @@
       <f7-list-item title="Nothing found" />
     </f7-list>
 
-    <!-- skeleton for not ready -->
     <f7-block class="block-narrow">
-      <f7-col>
+      <!-- skeleton for not ready -->
+      <f7-col v-if="!ready">
+        <f7-block-title>&nbsp;Loading...</f7-block-title>
+        <f7-list contacts-list class="col transformations-list">
+          <f7-list-group>
+            <f7-list-item
+              media-item
+              v-for="n in 20"
+              :key="n"
+              :class="`skeleton-text skeleton-effect-blink`"
+              title="Label of the transformation"
+              subtitle="Transformation type"
+              footer="Transformation UID" />
+          </f7-list-group>
+        </f7-list>
+      </f7-col>
+
+      <f7-col v-else>
         <f7-block-title class="searchbar-hide-on-search">
-          <span v-if="ready">{{ transformations.length }} transformations</span><span v-else>Loading...</span>
+          {{ transformations.length }} transformations
         </f7-block-title>
-        <div class="padding-left padding-right searchbar-found" v-show="!ready || transformations.length > 0">
+        <div class="padding-left padding-right searchbar-found" v-show="transformations.length > 0">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical
@@ -58,35 +74,23 @@
             </f7-button>
           </f7-segmented>
         </div>
-        <f7-list v-if="!ready" contacts-list class="col wide transformations-list">
-          <f7-list-group>
-            <f7-list-item
-              media-item
-              v-for="n in 20"
-              :key="n"
-              :class="`skeleton-text skeleton-effect-blink`"
-              title="Label of the transformation"
-              subtitle="Transformation type"
-              footer="Page UID">
-              <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media" />
-            </f7-list-item>
-          </f7-list-group>
-        </f7-list>
-        <f7-list v-else
-                 v-show="transformations.length > 0"
-                 class="searchbar-found col transformations-list"
-                 ref="transformationList"
-                 :contacts-list="groupBy === 'alphabetical'" media-list>
+
+        <f7-list
+          v-show="transformations.length > 0"
+          class="searchbar-found col transformations-list"
+          ref="transformationsList"
+          :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(transformationsWithInitial, initial) in indexedTransformations" :key="initial">
             <f7-list-item v-if="transformationsWithInitial.length" :title="initial" group-title />
             <f7-list-item
-              v-for="(transformation, index) in transformationsWithInitial"
-              :key="index"
+              v-for="transformation in transformationsWithInitial"
+              :key="transformation.uid"
               media-item
-              class="transformlist-item"
+              class="transformationlist-item"
               :checkbox="showCheckboxes"
               :checked="isChecked(transformation.uid)"
               @click.ctrl="(e) => ctrlClick(e, transformation)"
+              @click.meta="(e) => ctrlClick(e, transformation)"
               @click.exact="(e) => click(e, transformation)"
               link=""
               :title="transformation.label"
@@ -163,11 +167,11 @@ export default {
       this.loading = true
       this.$oh.api.get('/rest/transformations').then((data) => {
         this.transformations = data.sort((a, b) => (a.label || a.uid).localeCompare(b.label || a.uid))
-        this.initSearchbar = true
         this.loading = false
         this.ready = true
         setTimeout(() => {
-          this.$refs.listIndex.update()
+          this.initSearchbar = true
+          if (this.$refs.listIndex) this.$refs.listIndex.update()
           if (this.$device.desktop && this.$refs.searchbar) this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
         })
       })
@@ -213,7 +217,7 @@ export default {
       const vm = this
 
       this.$f7.dialog.confirm(
-        `Remove ${this.selectedItems.length} selected transformation configurations?`,
+        `Remove ${this.selectedItems.length} selected transformations?`,
         'Remove Transformations',
         () => {
           vm.doRemoveSelected()
@@ -235,19 +239,14 @@ export default {
         this.selectedItems = []
         dialog.close()
         this.load()
-        this.$f7.emit('sidebarRefresh', null)
+        this.$f7.emit('sidebarRefresh', null) // for what?
       }).catch((err) => {
         dialog.close()
         this.load()
         console.error(err)
         this.$f7.dialog.alert('An error occurred while deleting: ' + err)
-        this.$f7.emit('sidebarRefresh', null)
+        this.$f7.emit('sidebarRefresh', null) // for what?
       })
-    }
-  },
-  asyncComputed: {
-    iconUrl () {
-      return icon => this.$oh.media.getIcon(icon)
     }
   }
 }
