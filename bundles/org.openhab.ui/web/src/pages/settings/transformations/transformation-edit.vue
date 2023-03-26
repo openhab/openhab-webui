@@ -80,6 +80,7 @@
 <script>
 import DirtyMixin from '../dirty-mixin'
 import TransformationGeneralSettings from '@/pages/settings/transformations/transformation-general-settings'
+import TransformationDefinitions from '@/assets/definitions/transformations.js'
 
 export default {
   mixins: [DirtyMixin],
@@ -175,9 +176,17 @@ export default {
       }
 
       this.transformation.uid = 'config:' + this.transformation.type + ':' + this.transformation.uid
-
       if (this.language) {
         this.transformation.uid += ':' + this.language
+      }
+
+      // Set up editor mode if not SCRIPT
+      if (this.transformation.type !== 'SCRIPT') {
+        this.transformation.configuration.mode = TransformationDefinitions.EDITOR_MODES[this.transformation.type]
+      }
+      // Insert code examples for SCRIPT
+      if (this.transformation.type === 'SCRIPT') {
+        this.transformation.configuration.function = TransformationDefinitions.SNIPPETS.SCRIPT[this.transformation.configuration.mode]
       }
 
       this.$oh.api.put('/rest/transformations/' + this.transformation.uid, this.transformation).then(() => {
