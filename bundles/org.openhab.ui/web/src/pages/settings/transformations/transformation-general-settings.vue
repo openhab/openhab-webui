@@ -8,10 +8,10 @@
                        @input="transformation.uid = $event.target.value" :clear-button="createMode" />
         <f7-list-input label="Label" type="text" placeholder="Required" :value="transformation.label" required validate
                        :disabled="!transformation.editable" @input="transformation.label = $event.target.value" :clear-button="!transformation.editable" />
-        <f7-list-item v-if="createMode && languages" title="Language" smart-select>
+        <f7-list-item v-if="createMode && languages" title="Language" smart-select :smart-select-params="smartSelectParams">
           <select name="language" @change="$emit('newLanguage', $event.target.value)">
             <option value="" selected />
-            <option v-for="lang in languages" :selected="language" :value="lang.value">
+            <option v-for="lang in languages" :selected="language" :value="lang.value" :key="lang.value">
               {{ lang.label }}
             </option>
           </select>
@@ -41,6 +41,16 @@
 
 <script>
 export default {
-  props: ['transformation', 'createMode', 'types', 'languages', 'language', 'scriptLanguages']
+  props: ['transformation', 'createMode', 'types', 'languages', 'language', 'scriptLanguages'],
+  data () {
+    return {
+      smartSelectParams: {
+        openIn: 'popup',
+        searchbar: true,
+        virtualList: true,
+        virtualListHeight: (this.$theme.aurora) ? 32 : undefined
+      }
+    }
+  }
 }
 </script>
