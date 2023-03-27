@@ -404,22 +404,11 @@ export default {
           } catch {}
         } else if (this.$f7) {
           if (connected === false) {
-            this.sseFailureToast = this.$f7.toast.create({
-              text: this.$t('server.sseConnectionFailed'),
-              closeButton: true,
-              closeButtonText: this.$t('dialogs.reload'),
-              destroyOnClose: true,
-              position: 'bottom',
-              horizontalPosition: 'bottom',
-              cssClass: 'toast-sse-connection-failed button-outline'
-            }).open()
-            this.sseFailureToast.on('closeButtonClick', () => {
-              window.location.reload()
-            })
+            this.sseFailureToast = this.displayFailureToast(this.$t('error.sseConnectionFailed'), true, false)
           } else if (connected === true) {
             if (this.sseFailureToast !== null) {
-              this.sseFailureToast.off('closeButtonClick')
               this.sseFailureToast.close()
+              this.sseFailureToast = null
             }
           }
         }
@@ -677,6 +666,30 @@ export default {
         function unlock () { audioContext.resume().then(clean) }
         function clean () { events.forEach(e => b.removeEventListener(e, unlock)) }
       }
+    },
+    /**
+     * Creates and opens a toast message that indicates a failure, e.g. of SSE connection
+     * @param {string} message message to show
+     * @param {boolean} [reloadButton=false] displays a reload button
+     * @param {boolean} [autoClose=true] closes toast automatically
+     * @returns {Toast.Toast}
+     */
+    displayFailureToast (message, reloadButton = false, autoClose = true) {
+      const toast = this.$f7.toast.create({
+        text: message,
+        closeButton: reloadButton,
+        closeButtonText: this.$t('dialogs.reload'),
+        destroyOnClose: autoClose,
+        closeTimeout: (autoClose) ? 5000 : undefined,
+        position: 'bottom',
+        horizontalPosition: 'bottom',
+        cssClass: 'failure-toast button-outline'
+      })
+      toast.on('closeButtonClick', () => {
+        window.location.reload()
+      })
+      toast.open()
+      return toast
     }
   },
   created () {
