@@ -5,6 +5,7 @@ let openSSEClients = []
 
 function newSSEConnection (path, readyCallback, messageCallback, errorCallback, heartbeatCallback) {
   let eventSource
+  let reconnectSeconds = 1
   const headers = {}
   if (getAccessToken() && getRequireToken()) {
     if (getTokenInCustomHeader()) {
@@ -43,6 +44,7 @@ function newSSEConnection (path, readyCallback, messageCallback, errorCallback, 
     }
 
     eventSource.onopen = (event) => {
+      reconnectSeconds = 1
     }
 
     eventSource.onerror = () => {
@@ -53,14 +55,16 @@ function newSSEConnection (path, readyCallback, messageCallback, errorCallback, 
       }
       if (eventSource.readyState === 2) {
         console.log('%c=!= Event source connection broken...', 'background-color: red; color: white')
-        console.debug('Attempting SSE reconnection in 10 seconds...')
+        console.debug(`Attempting SSE reconnection in ${reconnectSeconds} seconds...`)
         setTimeout(() => {
           if (eventSource.readyState === 2) {
+            reconnectSeconds = reconnectSeconds * 2
+            if (reconnectSeconds > 10) reconnectSeconds = 10
             eventSource.close()
             eventSource.clearKeepalive()
             eventSource = initEventSource()
           }
-        }, 10000)
+        }, reconnectSeconds * 1000)
       }
     }
 
