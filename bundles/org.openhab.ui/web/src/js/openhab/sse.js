@@ -17,58 +17,70 @@ function newSSEConnection (path, readyCallback, messageCallback, errorCallback, 
     const creds = getBasicCredentials()
     headers['Authorization'] = 'Basic ' + btoa(creds.id + ':' + creds.password)
   }
-  if (Object.keys(headers).length > 0) {
-    eventSource = new EventSourcePolyfill(path, { headers })
-  } else {
-    eventSource = new NativeEventSource(path)
-  }
 
-  eventSource.addEventListener('ready', (e) => {
-    readyCallback(e.data)
-  })
-
-  eventSource.addEventListener('alive', (e) => {
-    let evt = JSON.parse(e.data)
-    eventSource.setKeepalive(evt.interval)
-    if (heartbeatCallback) {
-      heartbeatCallback(true)
+  function initEventSource () {
+    if (Object.keys(headers).length > 0) {
+      eventSource = new EventSourcePolyfill(path, { headers })
+    } else {
+      eventSource = new NativeEventSource(path)
     }
-  })
 
-  eventSource.onmessage = (event) => {
-    let evt = JSON.parse(event.data)
-    messageCallback(evt)
-  }
+    eventSource.addEventListener('ready', (e) => {
+      readyCallback(e.data)
+    })
 
-  eventSource.onopen = (event) => {
-  }
+    eventSource.addEventListener('alive', (e) => {
+      let evt = JSON.parse(e.data)
+      eventSource.setKeepalive(evt.interval)
+      if (heartbeatCallback) {
+        heartbeatCallback(true)
+      }
+    })
 
-  eventSource.onerror = () => {
-    console.warn('SSE error')
-    eventSource.clearKeepalive()
-    if (errorCallback) {
-      errorCallback()
+    eventSource.onmessage = (event) => {
+      let evt = JSON.parse(event.data)
+      messageCallback(evt)
     }
-    if (eventSource.readyState === 2) {
-      console.log('%c=!= Event source connection broken...', 'background-color: red; color: white')
+
+    eventSource.onopen = (event) => {
     }
+
+    eventSource.onerror = () => {
+      console.warn('SSE error')
+      eventSource.clearKeepalive()
+      if (errorCallback) {
+        errorCallback()
+      }
+      if (eventSource.readyState === 2) {
+        console.log('%c=!= Event source connection broken...', 'background-color: red; color: white')
+        console.debug('Attempting SSE reconnection in 10 seconds...')
+        setTimeout(() => {
+          if (eventSource.readyState === 2) {
+            eventSource.close()
+            eventSource.clearKeepalive()
+            eventSource = initEventSource()
+          }
+        }, 10000)
+      }
+    }
+
+    eventSource.setKeepalive = (seconds = 10) => {
+      console.debug('Setting keepalive interval seconds', seconds)
+      eventSource.clearKeepalive()
+      eventSource.keepaliveTimer = setTimeout(() => {
+        console.warn('SSE timeout error')
+      }, (seconds + 2) * 1000)
+    }
+
+    eventSource.clearKeepalive = () => {
+      if (eventSource.keepaliveTimer) clearTimeout(eventSource.keepaliveTimer)
+      delete eventSource.keepaliveTimer
+    }
+
+    return eventSource
   }
 
-  eventSource.setKeepalive = (seconds = 10) => {
-    console.debug('Setting keepalive interval seconds', seconds)
-    eventSource.clearKeepalive()
-    eventSource.keepaliveTimer = setTimeout(() => {
-      console.warn('SSE timeout error')
-    }, (seconds + 2) * 1000)
-    if (heartbeatCallback) {
-      heartbeatCallback(true)
-    }
-  }
-
-  eventSource.clearKeepalive = () => {
-    if (eventSource.keepaliveTimer) clearTimeout(eventSource.keepaliveTimer)
-    delete eventSource.keepaliveTimer
-  }
+  eventSource = initEventSource()
 
   openSSEClients.push(eventSource)
   console.debug(`new SSE connection: ${eventSource.url}, ${openSSEClients.length} open`)
