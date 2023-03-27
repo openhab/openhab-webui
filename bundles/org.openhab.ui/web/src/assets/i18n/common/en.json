@@ -41,5 +41,8 @@
   "page.navbar.back": "Back",
   "page.navbar.edit": "Edit",
   "admin.notTranslatedYet": "The administration area is not translated yet.",
-  "server.sseConnectionFailed": "SSE connection failed!"
+  "error.sseConnectionFailed": "SSE connection failed!",
+  "error.itemNotFound": "Item not found",
+  "error.sendCommandFailed": "Sending command to {} failed:",
+  "error.reloadRecommended": "Reload recommended"
 }

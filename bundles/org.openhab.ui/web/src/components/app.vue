@@ -788,6 +788,28 @@ export default {
         }
       })
 
+      this.$store.subscribeAction({
+        error: (action, state, error) => {
+          if (action.type === 'sendCommand') {
+            let reloadButton = true
+            let msg = error
+            switch (error) {
+              case 0:
+              case 302:
+              case 'Found':
+                msg = this.$t('error.reloadRecommended')
+                break
+              case 404:
+              case 'Not Found':
+                msg = this.$t('error.itemNotFound')
+                reloadButton = false
+                break
+            }
+            this.displayFailureToast(this.$t('error.sendCommandFailed').replace('{}', action.payload.itemName) + ' ' + msg, reloadButton)
+          }
+        }
+      })
+
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
