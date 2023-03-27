@@ -402,15 +402,6 @@ export default {
           try {
             window.OHApp.sseConnected(connected)
           } catch {}
-        } else if (this.$f7) {
-          if (connected === false) {
-            this.sseFailureToast = this.displayFailureToast(this.$t('error.sseConnectionFailed'), true, false)
-          } else if (connected === true) {
-            if (this.sseFailureToast !== null) {
-              this.sseFailureToast.close()
-              this.sseFailureToast = null
-            }
-          }
         }
       },
       immediate: true // provides initial (not changed yet) state
@@ -785,6 +776,23 @@ export default {
       this.$f7.on('smartSelectOpened', (smartSelect) => {
         if (smartSelect && smartSelect.searchbar && this.$device.desktop) {
           smartSelect.searchbar.$inputEl.focus()
+        }
+      })
+
+      this.$store.subscribe((mutation, state) => {
+        if (mutation.type === 'sseConnected') {
+          if (!window.OHApp && this.$f7) {
+            if (mutation.payload === false) {
+              if (this.sseFailureToast === null) this.sseFailureToast = this.displayFailureToast(this.$t('error.sseConnectionFailed'), true, false)
+              this.sseFailureToast.open()
+            } else if (mutation.payload === true) {
+              if (this.sseFailureToast !== null) {
+                this.sseFailureToast.close()
+                this.sseFailureToast.destroy()
+                this.sseFailureToast = null
+              }
+            }
+          }
         }
       })
 
