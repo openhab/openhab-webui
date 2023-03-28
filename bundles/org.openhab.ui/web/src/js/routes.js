@@ -1,3 +1,6 @@
+import store from '@/js/store'
+import { authorize } from '@/js/openhab/auth'
+
 import HomePage from '../pages/home.vue'
 import NotFoundPage from '../pages/not-found.vue'
 import PageViewPage from '../pages/page/page-view.vue'
@@ -77,6 +80,24 @@ const loadAsync = (page, props) => {
   }
 }
 
+const isLoggedIn = () => {
+  return store.getters.user !== null
+}
+
+const isAdmin = () => {
+  const user = store.getters.user
+  return user && user.roles && user.roles.indexOf('administrator') >= 0
+}
+
+const enforceAdmin = (to, from, resolve, reject) => {
+  if (!isAdmin()) {
+    reject()
+    authorize()
+  } else {
+    resolve()
+  }
+}
+
 export default [
   {
     path: '/',
@@ -103,6 +124,14 @@ export default [
   },
   {
     path: '/profile/',
+    beforeEnter: [(to, from, resolve, reject) => {
+      if (isLoggedIn()) {
+        resolve()
+      } else {
+        reject()
+        authorize()
+      }
+    }],
     async: loadAsync(UserProfilePage),
     options: {
       animate: false
@@ -110,33 +139,40 @@ export default [
   },
   {
     path: '/settings/',
+    beforeEnter: [enforceAdmin],
     async: loadAsync(SettingsMenuPage),
     keepAlive: true,
     routes: [
       {
         path: 'items',
+        beforeEnter: [enforceAdmin],
         async: loadAsync(ItemsListPage),
         routes: [
           {
             path: 'add',
-            async: loadAsync(ItemEditPage, { createMode: true })
+            beforeEnter: [enforceAdmin],
+            async: loadAsync(ItemEditPage, { createMode: true }),
           },
           {
             path: 'add-from-textual-definition',
-            async: loadAsync(ItemsAddFromTextualDefinition)
+            beforeEnter: [enforceAdmin],
+            async: loadAsync(ItemsAddFromTextualDefinition),
           },
           {
             path: ':itemName',
+            beforeEnter: [enforceAdmin],
             async: loadAsync(ItemDetailsPage),
             routes: [
               {
                 path: 'edit',
-                beforeLeave: checkDirtyBeforeLeave,
+                beforeEnter: [enforceAdmin],
+                beforeLeave: [checkDirtyBeforeLeave],
                 async: loadAsync(ItemEditPage)
               },
               {
                 path: 'metadata/:namespace',
-                beforeLeave: checkDirtyBeforeLeave,
+                beforeEnter: [enforceAdmin],
+                beforeLeave: [checkDirtyBeforeLeave],
                 async: loadAsync(ItemMetadataEditPage)
               }
             ]
@@ -146,22 +182,26 @@ export default [
       {
         path: 'pages',
         async: loadAsync(PagesListPage),
+        beforeEnter: [enforceAdmin],
         routes: [
           {
             path: ':type/:uid',
-            beforeLeave: checkDirtyBeforeLeave,
-            async (routeTo, routeFrom, resolve, reject) {
+            beforeEnter: [enforceAdmin],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: [(routeTo, routeFrom, resolve, reject) => {
               PageEditors[routeTo.params.type]().then((c) => { resolve({ component: c.default }, (routeTo.params.uid === 'add') ? { props: { createMode: true } } : {}) })
-            }
+            }]
           }
         ]
       },
       {
         path: 'things/',
+        beforeEnter: [enforceAdmin],
         async: loadAsync(ThingsListPage),
         routes: [
           {
             path: 'add',
+            beforeEnter: [enforceAdmin],
             async: loadAsync(AddThingChooseBindingPage),
             routes: [
               // {
@@ -170,10 +210,12 @@ export default [
               // },
               {
                 path: ':bindingId',
+                beforeEnter: [enforceAdmin],
                 async: loadAsync(AddThingChooseThingTypePage),
                 routes: [
                   {
                     path: ':thingTypeId',
+                    beforeEnter: [enforceAdmin],
                     async: loadAsync(AddThingPage)
                   }
                 ]
@@ -182,31 +224,37 @@ export default [
           },
           {
             path: 'inbox',
+            beforeEnter: [enforceAdmin],
             async: loadAsync(InboxListPage)
           },
           {
             path: ':thingId',
-            beforeLeave: checkDirtyBeforeLeave,
+            beforeEnter: [enforceAdmin],
+            beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(ThingDetailsPage)
           }
         ]
       },
       {
         path: 'model',
+        beforeEnter: [enforceAdmin],
         async: loadAsync(SemanticModelPage)
       },
       {
         path: 'rules/',
+        beforeEnter: [enforceAdmin],
         async: loadAsync(RulesListPage),
         routes: [
           {
             path: ':ruleId',
-            beforeLeave: checkDirtyBeforeLeave,
+            beforeEnter: [enforceAdmin],
+            beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(RuleEditPage, (routeTo) => (routeTo.params.ruleId === 'add') ? { createMode: true } : {}),
             routes: [
               {
                 path: 'script/:moduleId',
-                beforeLeave: checkDirtyBeforeLeave,
+                beforeEnter: [enforceAdmin],
+                beforeLeave: [checkDirtyBeforeLeave],
                 async: loadAsync(ScriptEditPage, (routeTo) => (routeTo.params.ruleId === 'add') ? { createMode: true } : {})
               }
             ]
@@ -215,90 +263,107 @@ export default [
       },
       {
         path: 'scenes/',
+        beforeEnter: [enforceAdmin],
         async: loadAsync(RulesListPage, { showScenes: true }),
         routes: [
           {
             path: ':ruleId',
-            beforeLeave: checkDirtyBeforeLeave,
+            beforeEnter: [enforceAdmin],
+            beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(SceneEditPage, (routeTo) => (routeTo.params.ruleId === 'add') ? { createMode: true } : {})
           }
         ]
       },
       {
         path: 'scripts/',
+        beforeEnter: [enforceAdmin],
         async: loadAsync(RulesListPage, { showScripts: true }),
         routes: [
           {
             path: ':ruleId',
-            beforeLeave: checkDirtyBeforeLeave,
+            beforeEnter: [enforceAdmin],
+            beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(ScriptEditPage, (routeTo) => (routeTo.params.ruleId === 'add') ? { createMode: true } : {})
           }
         ]
       },
       {
         path: 'schedule/',
+        beforeEnter: [enforceAdmin],
         async: loadAsync(SchedulePage),
         routes: [
           {
             path: 'add',
-            beforeLeave: checkDirtyBeforeLeave,
+            beforeEnter: [enforceAdmin],
+            beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(RuleEditPage, { createMode: true, schedule: true })
           }
         ]
       },
       {
         path: 'addons',
+        beforeEnter: [enforceAdmin],
         async: loadAsync(AddonsStorePage),
         routes: [
           {
             path: ':addonId',
+            beforeEnter: [enforceAdmin],
             async: loadAsync(AddonDetailsPage)
           },
           {
             path: ':addonId/config',
+            beforeEnter: [enforceAdmin],
             async: loadAsync(AddonsConfigureBindingPage)
           }
         ]
       },
       {
         path: 'services/:serviceId',
-        beforeLeave: checkDirtyBeforeLeave,
+        beforeEnter: [enforceAdmin],
+        beforeLeave: [checkDirtyBeforeLeave],
         async: loadAsync(ServiceSettingsPage)
       }
     ]
   },
   {
     path: '/developer/',
+    beforeEnter: [enforceAdmin],
     async: loadAsync(DeveloperToolsPage),
     routes: [
       {
         path: 'widgets/',
+        beforeEnter: [enforceAdmin],
         async: loadAsync(WidgetsListPage),
         routes: [
           {
             path: ':uid',
-            beforeLeave: checkDirtyBeforeLeave,
+            beforeEnter: [enforceAdmin],
+            beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(WidgetEditPage, (routeTo) => (routeTo.params.uid === 'add') ? { createMode: true } : {})
           }
         ]
       },
       {
         path: 'blocks/',
+        beforeEnter: [enforceAdmin],
         async: loadAsync(BlocksListPage),
         routes: [
           {
             path: ':uid',
-            beforeLeave: checkDirtyBeforeLeave,
+            beforeEnter: [enforceAdmin],
+            beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(BlocksEditPage, (routeTo) => (routeTo.params.uid === 'add') ? { createMode: true } : {})
           }
         ]
       },
       {
         path: 'add-items-dsl',
+        beforeEnter: [enforceAdmin],
         async: loadAsync(ItemsAddFromTextualDefinition)
       },
       {
         path: 'api-explorer',
+        beforeEnter: [enforceAdmin],
         async: loadAsync(ApiExplorerPage)
       }
     ]
