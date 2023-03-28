@@ -105,7 +105,7 @@ export const actionsMixin = {
               resolve(actionCommandOptions.split(',').map((o) => {
                 const parts = o.trim().split('=')
                 return {
-                  text: parts[1].trim() || parts[0].trim(),
+                  text: (parts[1] !== undefined ? parts[1].trim() : parts[1]) || parts[0].trim(),
                   color: 'blue',
                   onClick: () => {
                     this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd: parts[0].trim() })
