@@ -382,7 +382,7 @@ export default {
       showDeveloperSidebar: false,
       currentUrl: '',
 
-      sseFailureToast: null
+      communicationFailureToast: null
     }
   },
   computed: {
@@ -672,9 +672,9 @@ export default {
         closeButtonText: this.$t('dialogs.reload'),
         destroyOnClose: autoClose,
         closeTimeout: (autoClose) ? 5000 : undefined,
+        cssClass: 'failure-toast button-outline',
         position: 'bottom',
-        horizontalPosition: 'bottom',
-        cssClass: 'failure-toast button-outline'
+        horizontalPosition: 'center'
       })
       toast.on('closeButtonClick', () => {
         window.location.reload()
@@ -783,13 +783,13 @@ export default {
         if (mutation.type === 'sseConnected') {
           if (!window.OHApp && this.$f7) {
             if (mutation.payload === false) {
-              if (this.sseFailureToast === null) this.sseFailureToast = this.displayFailureToast(this.$t('error.sseConnectionFailed'), true, false)
-              this.sseFailureToast.open()
+              if (this.communicationFailureToast === null) this.communicationFailureToast = this.displayFailureToast(this.$t('error.communicationFailure'), true, false)
+              this.communicationFailureToast.open()
             } else if (mutation.payload === true) {
-              if (this.sseFailureToast !== null) {
-                this.sseFailureToast.close()
-                this.sseFailureToast.destroy()
-                this.sseFailureToast = null
+              if (this.communicationFailureToast !== null) {
+                this.communicationFailureToast.close()
+                this.communicationFailureToast.destroy()
+                this.communicationFailureToast = null
               }
             }
           }
@@ -800,20 +800,20 @@ export default {
         error: (action, state, error) => {
           if (action.type === 'sendCommand') {
             let reloadButton = true
-            let msg = error
+            let msg = this.$t('error.communicationFailure')
             switch (error) {
-              case 0:
-              case 302:
-              case 'Found':
-                msg = this.$t('error.reloadRecommended')
-                break
               case 404:
               case 'Not Found':
-                msg = this.$t('error.itemNotFound')
+                msg = this.$t('error.itemNotFound').replace('%s', action.payload.itemName)
                 reloadButton = false
-                break
+                return this.displayFailureToast(msg, reloadButton)
             }
-            this.displayFailureToast(this.$t('error.sendCommandFailed').replace('{}', action.payload.itemName) + ' ' + msg, reloadButton)
+            if (this.communicationFailureToast === null) {
+              this.communicationFailureToast = this.displayFailureToast(this.$t('error.communicationFailure'), true, true)
+              this.communicationFailureToast.on('closed', () => {
+                this.communicationFailureToast = null
+              })
+            }
           }
         }
       })
