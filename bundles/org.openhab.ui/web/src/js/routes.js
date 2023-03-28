@@ -151,12 +151,12 @@ export default [
           {
             path: 'add',
             beforeEnter: [enforceAdmin],
-            async: loadAsync(ItemEditPage, { createMode: true }),
+            async: loadAsync(ItemEditPage, { createMode: true })
           },
           {
             path: 'add-from-textual-definition',
             beforeEnter: [enforceAdmin],
-            async: loadAsync(ItemsAddFromTextualDefinition),
+            async: loadAsync(ItemsAddFromTextualDefinition)
           },
           {
             path: ':itemName',
