@@ -60,6 +60,8 @@
   padding-left 0 !important
   .smart-select > .item-content > .item-inner:after
     display none !important
+  .item-content .item-inner
+    overflow auto
 
 .param-description.block-footer h1
   font-size 1em
