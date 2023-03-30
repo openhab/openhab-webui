@@ -59,7 +59,7 @@
               Information
             </f7-block-title>
             <f7-block-footer v-if="thing.editable === false" class="no-margin padding-left">
-              <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this thing is not editable because it has been provisioned from a file.
+              <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: {{ notEditableMsg }}
             </f7-block-footer>
             <f7-list accordion-opposite>
               <f7-list-item accordion-item title="Thing Type" :after="thingType.label">
@@ -150,7 +150,8 @@
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="(value) => thingYaml = value" />
+        <f7-icon v-if="thing && !thing.editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
+        <editor v-if="currentTab === 'code'" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="(value) => thingYaml = value" :read-only="thing && !thing.editable" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
@@ -292,7 +293,8 @@ export default {
       thingEnabled: true,
       codePopupOpened: false,
       eventSource: null,
-      thingYaml: null
+      thingYaml: null,
+      notEditableMsg: 'This Thing is not editable because it has been provisioned from a file.'
     }
   },
   created () {
