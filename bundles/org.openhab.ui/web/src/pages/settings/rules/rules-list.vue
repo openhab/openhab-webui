@@ -163,7 +163,7 @@ export default {
       }, {})
     },
     searchPlaceholder () {
-      return window.innerWidth > 1000 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {

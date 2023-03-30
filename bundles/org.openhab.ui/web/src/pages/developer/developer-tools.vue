@@ -94,7 +94,7 @@
 </template>
 
 <style lang="stylus">
-@media (max-width 999px)
+@media (max-width 1279px)
   .developer-sidebar-toggle
     display none
 

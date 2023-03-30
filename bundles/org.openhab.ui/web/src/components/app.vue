@@ -132,7 +132,7 @@
     <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
 
-    <f7-panel v-if="showDeveloperSidebar" right :visible-breakpoint="1000" resizable>
+    <f7-panel v-if="showDeveloperSidebar" right :visible-breakpoint="1280" resizable>
       <developer-sidebar />
     </f7-panel>
 

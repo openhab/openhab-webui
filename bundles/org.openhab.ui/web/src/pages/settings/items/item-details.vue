@@ -144,7 +144,7 @@
     margin-right 3px
 .developer-sidebar-tip
     visibility visible
-@media(max-width: 999px)
+@media(max-width: 1279px)
   .developer-sidebar-tip
     visibility hidden
 </style>
