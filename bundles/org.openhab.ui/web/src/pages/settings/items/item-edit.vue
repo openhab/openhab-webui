@@ -21,7 +21,7 @@
         <f7-block class="block-narrow" v-if="item.name || item.created === false">
           <f7-col v-if="item.editable === false">
             <div class="padding-left">
-              Note: {{ itemNotEditableMgs }}
+              Note: {{ notEditableMgs }}
             </div>
           </f7-col>
           <f7-col>
@@ -44,8 +44,7 @@
         </f7-block>
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="ready && !isEditable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray"
-                 :tooltip="itemNotEditableMgs" />
+        <f7-icon v-if="ready && !isEditable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMgs" />
         <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.item+yaml" :value="itemYaml" @input="onEditorInput" :read-only="item.editable === false" />
       </f7-tab>
     </f7-tabs>
@@ -106,7 +105,7 @@ export default {
       semanticProperty: '',
       pendingTag: '',
       currentTab: 'design',
-      itemNotEditableMgs: 'This Item is not editable because it has been provisioned from a file.'
+      notEditableMgs: 'This Item is not editable because it has been provisioned from a file.'
     }
   },
   watch: {
