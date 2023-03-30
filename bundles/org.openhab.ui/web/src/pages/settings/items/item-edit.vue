@@ -21,7 +21,7 @@
         <f7-block class="block-narrow" v-if="item.name || item.created === false">
           <f7-col v-if="item.editable === false">
             <div class="padding-left">
-              Note: this item is not editable because it has been created with textual configuration.
+              Note: {{ itemNotEditableMgs }}
             </div>
           </f7-col>
           <f7-col>
@@ -45,8 +45,8 @@
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
         <f7-icon v-if="ready && !isEditable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray"
-                 tooltip="This Item is not editable because it has been provisioned from a file" />
-        <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.item+yaml" :value="itemYaml" @input="onEditorInput" :read-only="!isEditable" />
+                 :tooltip="itemNotEditableMgs" />
+        <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.item+yaml" :value="itemYaml" @input="onEditorInput" :read-only="item.editable === false" />
       </f7-tab>
     </f7-tabs>
 
@@ -105,12 +105,8 @@ export default {
       semanticClass: '',
       semanticProperty: '',
       pendingTag: '',
-      currentTab: 'design'
-    }
-  },
-  computed: {
-    isEditable () {
-      return this.item && this.item.editable !== false
+      currentTab: 'design',
+      itemNotEditableMgs: 'This Item is not editable because it has been provisioned from a file.'
     }
   },
   watch: {
