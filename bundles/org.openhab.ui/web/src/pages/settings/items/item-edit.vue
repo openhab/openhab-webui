@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar :title="createMode ? 'Create New Item': 'Edit Item'" back-link="Cancel">
-      <f7-nav-right v-if="!$theme.aurora || !createMode">
+      <f7-nav-right v-if="createMode || item.editable">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
@@ -50,7 +50,7 @@
       </f7-tab>
     </f7-tabs>
 
-    <div v-if="ready && createMode" class="if-aurora display-flex justify-content-center margin padding">
+    <div v-if="ready && createMode && currentTab === 'design'" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
         <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save">
           Create
