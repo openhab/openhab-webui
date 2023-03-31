@@ -170,6 +170,8 @@ export default {
         this.$f7.dialog.alert('Please give the type of the transformation')
         return
       }
+      // openHAB core expects lowercase, however the list of available transformation services is uppercase
+      this.transformation.type = this.transformation.type.toLowerCase()
       if (!this.transformation.label) {
         this.$f7.dialog.alert('Please give a label for this transformation')
         return
