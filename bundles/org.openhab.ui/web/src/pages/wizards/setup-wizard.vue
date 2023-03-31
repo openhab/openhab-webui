@@ -117,7 +117,7 @@
           </f7-login-screen-title>
         </f7-block>
         <f7-block strong>
-          {{ $t('setupwizard.addons.header1') }}<br>{{ $t('setupwizard.addons.header2') }}<br><br>
+          {{ $t('setupwizard.addons.header1') }}<br>{{ $t('setupwizard.addons.header2') }}<br>{{ $t('setupwizard.addons.header3') }}<br><br>
           <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/addons/" v-t="'setupwizard.addons.browseAddonsOnWebsite'" />
         </f7-block>
         <f7-block class="padding">
@@ -229,6 +229,7 @@ export default {
       autocompleteAddons: null,
       addons: [],
       selectedAddons: [],
+      recommendedAddons: ['automation-jsscripting', 'persistence-rrd4j'],
       installingAddons: false
     }
   },
@@ -416,6 +417,7 @@ export default {
     })
     this.$oh.api.get('/rest/addons').then((data) => {
       this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+      this.selectedAddons = this.addons.filter((a) => this.recommendedAddons.includes(a.uid) && !a.installed)
       const self = this
       this.autocompleteAddons = this.$f7.autocomplete.create({
         openIn: 'popup',
@@ -433,10 +435,12 @@ export default {
         },
         on: {
           change (value) {
+            console.log(value)
             const selected = value.map((label) => self.addons.find((a) => a.label === label))
             self.$set(self, 'selectedAddons', selected)
           }
-        }
+        },
+        value: this.addons.filter((a) => this.recommendedAddons.includes(a.uid)).map((a) => a.label)
       })
     })
   }

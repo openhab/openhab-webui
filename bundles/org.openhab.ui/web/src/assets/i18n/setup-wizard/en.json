@@ -21,6 +21,7 @@
   "setupwizard.addons.title": "Install Add-ons",
   "setupwizard.addons.header1": "Most of openHAB's functionality is provided by add-ons.",
   "setupwizard.addons.header2": "Choose which ones you'd like to install right away.",
+  "setupwizard.addons.header3": "Add-ons recommended for functional reasons are pre-selected.",
   "setupwizard.addons.browseAddonsOnWebsite": "Browse Add-ons on openhab.org",
   "setupwizard.addons.selectAddons": "Select Add-ons to Install",
   "setupwizard.addons.selectAddons.placeholder": "Try: astro, mqtt, hue, knx...",
