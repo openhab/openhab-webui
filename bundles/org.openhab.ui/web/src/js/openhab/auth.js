@@ -1,4 +1,5 @@
 import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
+import store from '@/js/store'
 
 /**
  * The current access token
@@ -104,6 +105,24 @@ export function setAccessToken (token, api) {
 
 export function clearAccessToken () {
   accessToken = null
+}
+
+export function isLoggedIn () {
+  return store.getters.user !== null
+}
+
+export function isAdmin () {
+  const user = store.getters.user
+  return user && user.roles && user.roles.indexOf('administrator') >= 0
+}
+
+export function enforceAdminForRoute (to, from, resolve, reject) {
+  if (!isAdmin()) {
+    reject()
+    authorize()
+  } else {
+    resolve()
+  }
 }
 
 export default {
