@@ -102,6 +102,7 @@ export default [
   },
   {
     path: '/setup-wizard/',
+    beforeEnter: [enforceAdminForRoute],
     async: loadAsync(SetupWizardPage)
   },
   {
