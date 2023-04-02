@@ -73,6 +73,9 @@ function newSSEConnection (path, readyCallback, messageCallback, errorCallback, 
       eventSource.clearKeepalive()
       eventSource.keepaliveTimer = setTimeout(() => {
         console.warn('SSE timeout error')
+        if (heartbeatCallback) {
+          heartbeatCallback(false)
+        }
       }, (seconds + 2) * 1000)
     }
 
