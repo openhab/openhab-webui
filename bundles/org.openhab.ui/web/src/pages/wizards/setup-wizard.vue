@@ -435,7 +435,6 @@ export default {
         },
         on: {
           change (value) {
-            console.log(value)
             const selected = value.map((label) => self.addons.find((a) => a.label === label))
             self.$set(self, 'selectedAddons', selected)
           }
