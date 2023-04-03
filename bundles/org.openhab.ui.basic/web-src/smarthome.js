@@ -1577,12 +1577,22 @@
 		}
 
 		_t.setValuePrivate = function(value, itemState) {
-			var newValue = (itemState === "undefined" || itemState === "NULL" || itemState === "UNDEF") ? "" : value;
-
 			if (_t.verify) {
 				_t.verify.cancel();
 			}
+
+			var newValue = value;
+			var undefValue = "";
+			if (itemState === "undefined" || itemState === "NULL" || itemState === "UNDEF") {
+				newValue = "";
+				undefValue = value;
+			}
+
 			_t.input.value = newValue;
+			_t.input.nextElementSibling.innerHTML = undefValue;
+
+			_t.input.parentNode.MaterialTextfield.change();
+			_t.input.parentNode.MaterialTextfield.checkValidity();
 			lastValue = newValue;
 		};
 
