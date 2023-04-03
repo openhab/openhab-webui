@@ -394,6 +394,12 @@ export default {
             validationWarnings.push(widget.component + ' widget ' + label + ', no period configured')
           }
         })
+        widgetList.filter(widget => widget.component === 'Input').forEach(widget => {
+          if (!widget.config && widget.config.inputHint && ['text', 'number', 'date', 'time', 'datetime'].contains(widget.config.inputHint)) {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push(widget.component + ' widget ' + label + ', invalid inputHint configured ' + widget.config.inputHint)
+          }
+        })
         widgetList.forEach(widget => {
           if (widget.config) {
             Object.keys(widget.config).filter(attr => ['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor'].includes(attr)).forEach(attr => {
