@@ -110,11 +110,11 @@ export default {
         { key: 'Y', value: 'Year' }
       ],
       inputHintDefs: [
-        { key: 'text', value: 'Text'},
-        { key: 'number', value: 'Number'},
-        { key: 'date', value: 'Date'},
-        { key: 'time', value: 'Time'},
-        { key: 'datetime', value: 'Date and Time'}
+        { key: 'text', value: 'Text' },
+        { key: 'number', value: 'Number' },
+        { key: 'date', value: 'Date' },
+        { key: 'time', value: 'Time' },
+        { key: 'datetime', value: 'Date and Time' }
       ]
     }
   },
