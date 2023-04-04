@@ -170,9 +170,9 @@ export default [
             path: ':type/:uid',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: [(routeTo, routeFrom, resolve, reject) => {
+            async: (routeTo, routeFrom, resolve, reject) => {
               PageEditors[routeTo.params.type]().then((c) => { resolve({ component: c.default }, (routeTo.params.uid === 'add') ? { props: { createMode: true } } : {}) })
-            }]
+            }
           }
         ]
       },
