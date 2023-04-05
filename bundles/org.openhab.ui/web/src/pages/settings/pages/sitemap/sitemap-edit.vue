@@ -395,9 +395,9 @@ export default {
           }
         })
         widgetList.filter(widget => widget.component === 'Input').forEach(widget => {
-          if (!widget.config && widget.config.inputHint && ['text', 'number', 'date', 'time', 'datetime'].contains(widget.config.inputHint)) {
+          if (!(widget.config && widget.config.inputHint && ['text', 'number', 'date', 'time', 'datetime'].includes(widget.config.inputHint))) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
-            validationWarnings.push(widget.component + ' widget ' + label + ', invalid inputHint configured ' + widget.config.inputHint)
+            validationWarnings.push(widget.component + ' widget ' + label + ', invalid inputHint configured: ' + widget.config.inputHint)
           }
         })
         widgetList.forEach(widget => {
