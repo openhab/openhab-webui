@@ -31,6 +31,9 @@ const AddThingPage = () => import(/* webpackChunkName: "admin-config" */ '../pag
 
 const InboxListPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/inbox/inbox-list.vue')
 
+const TransformationsListPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/transformations/transformations-list.vue')
+const TransformationsEditPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/transformations/transformation-edit.vue')
+
 const SemanticModelPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/model/model.vue')
 
 const PagesListPage = () => import(/* webpackChunkName: "admin-pages" */ '../pages/settings/pages/pages-list.vue')
@@ -173,6 +176,17 @@ export default [
             async: (routeTo, routeFrom, resolve, reject) => {
               PageEditors[routeTo.params.type]().then((c) => { resolve({ component: c.default }, (routeTo.params.uid === 'add') ? { props: { createMode: true } } : {}) })
             }
+          }
+        ]
+      },
+      {
+        path: 'transformations/',
+        async: loadAsync(TransformationsListPage),
+        routes: [
+          {
+            path: ':transformationId',
+            beforeLeave: checkDirtyBeforeLeave,
+            async: loadAsync(TransformationsEditPage, (routeTo) => (routeTo.params.transformationId === 'add') ? { createMode: true } : {})
           }
         ]
       },
