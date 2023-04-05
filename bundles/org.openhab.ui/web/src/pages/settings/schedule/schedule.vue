@@ -13,6 +13,7 @@
           search-container=".timeline"
           search-item=".timeline-item-inner"
           search-in=".timeline-item-title"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -211,6 +212,11 @@ export default {
         console.error(err)
         this.$f7.dialog.alert('An error occurred while deleting: ' + err)
       })
+    }
+  },
+  computed: {
+    searchPlaceholder () {
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   }
 }

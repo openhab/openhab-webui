@@ -81,13 +81,16 @@
           <link-details :item="item" :links="links" />
         </f7-col>
       </f7-row>
-      <f7-row v-if="item.editable">
+      <f7-row>
         <f7-col>
           <f7-list>
-            <f7-list-button color="red" @click="deleteItem">
+            <f7-list-button v-if="item.editable" color="red" @click="deleteItem">
               Remove Item
             </f7-list-button>
           </f7-list>
+          <p class="developer-sidebar-tip text-align-center">
+            Tip: Use the developer sidebar (Shift+Alt+D) to search for usages of this Item
+          </p>
         </f7-col>
       </f7-row>
     </f7-block>
@@ -139,6 +142,11 @@
   .chip
     margin-left 3px
     margin-right 3px
+.developer-sidebar-tip
+    visibility visible
+@media(max-width: 1279px)
+  .developer-sidebar-tip
+    visibility hidden
 </style>
 
 <script>

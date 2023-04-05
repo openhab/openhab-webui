@@ -14,6 +14,7 @@
           search-container=".rules-list"
           search-item=".rulelist-item"
           search-in=".item-title, .item-text, .item-after, .item-subtitle, .item-header, .item-footer"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -160,6 +161,9 @@ export default {
 
         return prev
       }, {})
+    },
+    searchPlaceholder () {
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {

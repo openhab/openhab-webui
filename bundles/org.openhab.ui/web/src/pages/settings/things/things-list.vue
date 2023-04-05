@@ -13,6 +13,7 @@
           :init="initSearchbar"
           search-container=".contacts-list"
           search-in=".item-inner"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -175,6 +176,9 @@ export default {
     },
     inboxCount () {
       return this.inbox.filter((e) => e.flag !== 'IGNORED').length
+    },
+    searchPlaceholder () {
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {
