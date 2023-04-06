@@ -7,10 +7,11 @@
   "dialogs.close": "Close",
   "dialogs.copy": "Copy",
   "dialogs.delete": "Delete",
+  "dialogs.reload": "Reload",
   "dialogs.search": "Search",
   "dialogs.search.items": "Search items",
-  "dialogs.search.things": "Search things",  
-  "dialogs.search.rules": "Search rules",  
+  "dialogs.search.things": "Search things",
+  "dialogs.search.rules": "Search rules",
   "dialogs.search.nothingFound": "Nothing found",
   "home.overview.title": "Overview",
   "home.overview.tab": "Overview",
@@ -39,5 +40,7 @@
   "sidebar.tip.signIn": "Sign in as an administrator to access settings",
   "page.navbar.back": "Back",
   "page.navbar.edit": "Edit",
-  "admin.notTranslatedYet": "The administration area is not translated yet."
+  "admin.notTranslatedYet": "The administration area is not translated yet.",
+  "error.communicationFailure": "Communication failure",
+  "error.itemNotFound": "%s not found"
 }
