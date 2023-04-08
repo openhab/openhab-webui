@@ -263,7 +263,7 @@
 	function WaitingTimer(callback, waitingTime) {
 		var
 			_t = this,
-			timeoutId,
+			timeoutId = null,
 			args;
 
 		_t.wait = function() {
@@ -275,7 +275,9 @@
 		};
 
 		_t.cancel = function() {
-			clearTimeout(timeoutId);
+			if (timeoutId !== null) {
+				clearTimeout(timeoutId);
+			}
 		};
 	}
 
@@ -1536,9 +1538,18 @@
 
 		var
 			lastValue = _t.input.value,
+			lastItemState,
 			numberPattern = /^(\+|-)?[0-9\.,]+/,
 			dotSeparatorPattern = /^-?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
 			commaSeparatorPattern = /^-?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
+
+		if (_t.input.nextElementSibling.innerHTML.trim() === "") {
+			lastItemState = lastValue;
+		} else {
+			lastValue = _t.input.nextElementSibling.innerHTML.trim();
+			lastItemState = "NULL";
+		}
+
 		function onChange() {
 			var
 				changeValue = _t.input.value,
@@ -1561,7 +1572,7 @@
 			}
 
 			if (!changed) {
-				_t.setValuePrivate(lastValue);
+				_t.setValuePrivate(lastValue, lastItemState);
 			} else {
 				_t.parentNode.dispatchEvent(createEvent("control-change", {
 					item: _t.item,
@@ -1570,7 +1581,7 @@
 				// We don't know if the sent value is a valid command and will update the item state.
 				// If we don't receive an update in 1s, revert to the previous value.
 				_t.verify = new WaitingTimer(function() {
-					_t.setValuePrivate(lastValue);
+					_t.setValuePrivate(lastValue, lastItemState);
 				}, 1000);
 				_t.verify.wait();
 			}
@@ -1593,7 +1604,9 @@
 
 			_t.input.parentNode.MaterialTextfield.change();
 			_t.input.parentNode.MaterialTextfield.checkValidity();
-			lastValue = newValue;
+
+			lastValue = value;
+			lastItemState = itemState;
 		};
 
 		_t.setValueColor = function(color) {
