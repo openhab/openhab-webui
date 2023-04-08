@@ -228,12 +228,12 @@
 				font-weight: 700;
 			}
 			&__label {
+				margin: 0 -16px;
+				padding: 0 16px 0 0;
 				@media screen and (max-width: $layout-tablet-size-threshold) {
 					margin: 0 -12px;
 					padding: 0 12px 0 0;
 				}
-				margin: 0 -16px;
-				padding: 0 16px 0 0;
 			}
 		}
 	}
