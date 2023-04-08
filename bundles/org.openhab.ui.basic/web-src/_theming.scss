@@ -7,6 +7,7 @@ body[data-theme="default"] {
 	--container-text-color: #616161;
 	--switch-on-track-bg: #9fa8da;
 	--border-color: #ccc;
+	--input-undef-color: rgba(0,0,0,.26);
 }
 
 body[data-theme="dark"] {
@@ -18,6 +19,7 @@ body[data-theme="dark"] {
 	--container-text-color: #c0c0c0;
 	--switch-on-track-bg: #9fa8da;
 	--border-color: #343434;
+	--input-undef-color: rgba(158,158,158,.26);
 }
 
 .mdl-layout__header {
@@ -53,4 +55,11 @@ body {
 .mdl-switch__ripple-container .mdl-ripple {
 	background: #3f51b5;
 	background: var(--primary-color, #3f51b5);
+}
+
+.mdl-textfield__input {
+	border-bottom: 1px solid var(--border-color, #ccc);
+}
+.mdl-textfield__label {
+	color: var(--input-undef-color, rgba(0,0,0,.26));
 }
