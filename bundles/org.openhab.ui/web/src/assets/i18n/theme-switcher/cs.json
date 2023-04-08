@@ -11,5 +11,6 @@
   "about.miscellaneous.home.background": "Standardní barva pozadí domovské stránky",
   "about.miscellaneous.home.hideChatInput": "Skrýt chat na domovské stránce",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Zakázat animace rozbalování karet",
-  "about.miscellaneous.theme.disablePageTransition": "Zakázat animace přechodu stránek"
+  "about.miscellaneous.theme.disablePageTransition": "Zakázat animace přechodu stránek",
+  "about.miscellaneous.webaudio.enable": "Povolit podporu Web Audio sink"
 }
