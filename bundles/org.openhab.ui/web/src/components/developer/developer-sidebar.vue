@@ -569,7 +569,7 @@ export default {
           return (labelA) ? labelA.localeCompare(labelB) : 0
         })
         const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 ||
-          t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
+          (t.label && t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase())) >= 0).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
