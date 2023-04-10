@@ -1808,7 +1808,7 @@
 				[ _t.input, "touchstart", onChangeStart ],
 				[ _t.input, "mousedown",  onChangeStart ],
 				[ _t.input, "touchend",   onChangeEnd ],
-				[ _t.input, "mouseup",	onChangeEnd ],
+				[ _t.input, "mouseup",    onChangeEnd ],
 				[ _t.input, "change",     onChange ]
 			];
 
