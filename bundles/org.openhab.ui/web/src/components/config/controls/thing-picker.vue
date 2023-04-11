@@ -36,9 +36,9 @@ export default {
     // TODO use a Vuex store
     this.$oh.api.get('/rest/things?summary=true').then((data) => {
       this.things = data.sort((a, b) => {
-        const labelA = a.label
-        const labelB = b.label
-        return labelA.localeCompare(labelB)
+        const labelA = a.label || a.uid
+        const labelB = b.label || b.uid
+        return labelA?.localeCompare(labelB)
       })
       if (this.filterType) {
         this.things = this.things.filter((i) => this.filterType.indexOf(i.thingTypeUID) >= 0)
