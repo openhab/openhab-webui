@@ -29,11 +29,11 @@ export default () => [
     { value: 'quarter-bottom-right', label: 'quarter bottom right' },
     { value: 'pie', label: 'pie' }
   ]),
-  po('lineCap', 'Line Cap', 'Sets the shape of the end of the path', [
+  po('lineCap', 'Line Cap', 'Sets the shape of the end of the path; dotted path and line cap cannot be used together.', [
     { value: 'square', label: 'square' },
     { value: 'round', label: 'round' }
   ]),
-  pt('dottedPath', 'Dotted Path', 'Length of dotted path segments (using css stroke-dasharray)'),
+  pt('dottedPath', 'Dotted Path', 'Length of dotted path segments (using css stroke-dasharray); dotted path and line cap cannot be used together.'),
   pn('borderWidth', 'Border Width', 'Sets the border width of the slider (px value)'),
   pt('handleSize', 'Handle Size', 'Sets the size of the slider handle (px value)'),
   po('handleShape', 'Handle Shape', 'Sets the shape of the slider handle', [
