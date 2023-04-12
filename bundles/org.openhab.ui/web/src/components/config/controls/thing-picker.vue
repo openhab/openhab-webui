@@ -38,7 +38,7 @@ export default {
       this.things = data.sort((a, b) => {
         const labelA = a.label || a.uid
         const labelB = b.label || b.uid
-        return labelA?.localeCompare(labelB)
+        return labelA.localeCompare(labelB)
       })
       if (this.filterType) {
         this.things = this.things.filter((i) => this.filterType.indexOf(i.thingTypeUID) >= 0)
