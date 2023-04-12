@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.openhab.ui.features</groupId>
     <artifactId>org.openhab.ui.reactor.features</artifactId>
-    <version>3.4.3-SNAPSHOT</version>
+    <version>3.4.3</version>
   </parent>
 
   <artifactId>org.openhab.ui.features.openhab-ui-external</artifactId>

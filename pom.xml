@@ -9,7 +9,7 @@
 
   <groupId>org.openhab.ui</groupId>
   <artifactId>org.openhab.ui.reactor</artifactId>
-  <version>3.4.3-SNAPSHOT</version>
+  <version>3.4.3</version>
 
   <packaging>pom</packaging>
 
@@ -37,7 +37,7 @@
   <scm>
     <connection>scm:git:https://github.com/openhab/openhab-webui.git</connection>
     <developerConnection>scm:git:https://github.com/openhab/openhab-webui.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>3.4.3</tag>
     <url>https://github.com/openhab/openhab-webui</url>
   </scm>
 
@@ -69,7 +69,7 @@
     <eea.version>2.3.0</eea.version>
     <jackson.version>2.12.7</jackson.version>
     <karaf.version>4.3.7</karaf.version>
-    <ohc.version>3.4.3-SNAPSHOT</ohc.version>
+    <ohc.version>3.4.3</ohc.version>
     <sat.version>0.13.0</sat.version>
     <spotless.version>2.0.3</spotless.version>
   </properties>
