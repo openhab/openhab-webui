@@ -12,7 +12,7 @@
 			<options>
 				<option value="bright">Bright</option>
 				<option value="dark">Dark</option>
-				<option value="system">Follow system</option>
+				<option value="system">Follow System</option>
 			</options>
 			<default>bright</default>
 		</parameter>
