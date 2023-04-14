@@ -76,6 +76,8 @@ body {
 .mdl-form__row {
 	border-bottom: 1px solid #ccc;
 	border-bottom: 1px solid var(--border-color, #ccc);
+	color: #616161 !important;
+	color: var(--container-text-color, #616161) !important;
 }
 
 .mdl-switch .mdl-switch__track {
