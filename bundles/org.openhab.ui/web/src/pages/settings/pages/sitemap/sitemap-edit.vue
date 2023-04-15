@@ -82,7 +82,7 @@
 
         <f7-actions ref="widgetTypeSelection" id="widget-type-selection" :grid="true">
           <f7-actions-group>
-            <f7-actions-button v-for="widgetType in widgetTypes" :key="widgetType.type" @click="addWidget(widgetType.type)">
+            <f7-actions-button v-for="widgetType in addableWidgetTypes" :key="widgetType.type" @click="addWidget(widgetType.type)">
               <f7-icon :f7="widgetType.icon" slot="media" />
               <span>{{ widgetType.type }}</span>
             </f7-actions-button>
@@ -264,6 +264,22 @@ export default {
       if (!this.selectedWidget) return false
       if (this.linkableWidgetTypes.indexOf(this.selectedWidget.component) < 0) return false
       return true
+    },
+    addableWidgetTypes () {
+      if (!this.selectedWidget) return
+      // No frames in frame
+      if (this.selectedWidget.component === 'Frame') return this.widgetTypes.filter(w => w.type !== 'Frame')
+      // Linkable widget types only contain frames or none at all
+      if (this.linkableWidgetTypes.filter(t => t === this.selectedWidget.component)) {
+        if (this.selectedWidget.slots) {
+          if (this.selectedWidget.slots.widgets.filter(w => w.component === 'Frame')) {
+            return this.widgetTypes.filter(w => w.type === 'Frame')
+          } else {
+            return this.widgetTypes.filter(w => w.type !== 'Frame')
+          }
+        }
+      }
+      return this.widgetTypes
     }
   },
   watch: {
