@@ -21,6 +21,8 @@
     gt:         '>',
     comma:      ',',
     equals:     '=',
+    colon:      ':',
+    hyphen:     '-',
     NL:         { match: /\n/, lineBreaks: true },
   })
 %}
@@ -69,7 +71,13 @@ Label -> null                                       {% (d) => undefined %}
 
 # Icon (category)
 Icon -> null                                        {% (d) => undefined %}
-  | __ "<" _ %identifier _ ">"                      {% (d) => d[3].text %}
+  | __ "<" _ IconValue _ ">"                        {% (d) => d[3].text %}
+IconValue -> %string
+  | IconName
+  | %identifier %colon IconName
+  | %identifier %colon %identifier %colon IconName
+IconName -> %identifier
+  | %identifier %hyphen IconName
 
 # Groups
 Groups -> null                                      {% (d) => undefined %}
