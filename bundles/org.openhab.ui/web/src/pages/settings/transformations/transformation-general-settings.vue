@@ -36,10 +36,10 @@
 </template>
 
 <script>
-import ClipboardIcon from "@/components/util/clipboard-icon.vue";
+import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
-  components: {ClipboardIcon},
+  components: { ClipboardIcon },
   props: ['transformation', 'createMode', 'types', 'languages', 'language'],
   emits: ['newType', 'newLanguage'],
   data () {
