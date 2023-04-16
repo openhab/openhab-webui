@@ -15,7 +15,7 @@
       </f7-nav-right>
     </f7-navbar>
     <!-- Create Transformation -->
-    <transformation-general-settings v-if="newTransformation && ready" :createMode="true" :transformation="transformation" :types="types" :languages="languages" :language="language" :scriptLanguages="scriptLanguages" @newLanguage="language = $event" @newType="transformation.type = $event" @newScriptMimeType="transformation.configuration.mode = $event" />
+    <transformation-general-settings v-if="newTransformation && ready" :createMode="true" :transformation="transformation" :types="types" :languages="languages" :language="language" @newType="transformation.type = $event" @newLanguage="language = $event" />
     <div v-if="ready && newTransformation" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
         <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="createTransformation">
@@ -97,7 +97,6 @@ export default {
       loading: false,
       transformation: {},
       types: [],
-      scriptLanguages: [],
       languages: [],
       language: '',
       detailsOpened: false,
@@ -143,20 +142,10 @@ export default {
         },
         editable: true
       }
-      Promise.all([this.$oh.api.get('/rest/transformations/services'), this.$oh.api.get('/rest/module-types/script.ScriptAction'), this.$oh.api.get('/rest/config-descriptions/system:i18n')]).then((data) => {
+      Promise.all([this.$oh.api.get('/rest/transformations/services'), this.$oh.api.get('/rest/config-descriptions/system:i18n')]).then((data) => {
         this.$set(this, 'types', data[0])
 
-        this.$set(this, 'scriptLanguages', data[1].configDescriptions
-          .find((c) => c.name === 'type').options
-          .map((l) => {
-            return {
-              contentType: l.value,
-              name: l.label.split(' (')[0],
-              version: l.label.split(' (')[1].replace(')', '')
-            }
-          }))
-
-        this.$set(this, 'languages', data[2].parameters.find(p => p.name === 'language').options)
+        this.$set(this, 'languages', data[1].parameters.find(p => p.name === 'language').options)
       })
       this.language = ''
       this.ready = true

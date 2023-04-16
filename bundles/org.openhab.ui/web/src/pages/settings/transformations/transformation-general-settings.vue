@@ -27,21 +27,13 @@
                       :title="type" />
       </f7-list>
     </f7-col>
-    <f7-col v-if="createMode && scriptLanguages && transformation.type === 'SCRIPT'">
-      <f7-block-title>Scripting Language</f7-block-title>
-      <f7-list media-list>
-        <f7-list-item media-item radio radio-icon="start"
-                      :value="transformation.configuration.mode" :checked="transformation.configuration.mode === lang.contentType" @change="$emit('newScriptMimeType', lang.contentType)"
-                      v-for="lang in scriptLanguages" :key="lang.contentType"
-                      :title="lang.name" :after="lang.version" :footer="lang.contentType" />
-      </f7-list>
-    </f7-col>
   </f7-block>
 </template>
 
 <script>
 export default {
-  props: ['transformation', 'createMode', 'types', 'languages', 'language', 'scriptLanguages'],
+  props: ['transformation', 'createMode', 'types', 'languages', 'language'],
+  emits: ['newType', 'newLanguage'],
   data () {
     return {
       smartSelectParams: {
