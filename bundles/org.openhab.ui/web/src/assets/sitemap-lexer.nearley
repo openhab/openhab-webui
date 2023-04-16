@@ -101,7 +101,7 @@ WidgetAttr -> %widgetswitchattr                                                 
   | %widgetfrcitmattr WidgetBooleanAttrValue                                      {% (d) => ['forceAsItem', d[1]] %}
   | %widgetboolattr WidgetBooleanAttrValue                                        {% (d) => [d[0].value, d[1]] %}
   | %widgetfreqattr WidgetAttrValue                                               {% (d) => ['frequency', d[1]] %}
-  | %icon WidgetIconAttrValue                                                     {% (d) => [d[0].value, d[1]] %}
+  | %icon WidgetIconAttrValue                                                     {% (d) => [d[0].value, d[1].join("")] %}
   | WidgetAttrName WidgetAttrValue                                                {% (d) => [d[0][0].value, d[1]] %}
   | WidgetVisibilityAttrName WidgetVisibilityAttrValue                            {% (d) => [d[0][0].value, d[1]] %}
   | WidgetColorAttrName WidgetColorAttrValue                                      {% (d) => [d[0][0].value, d[1]] %}
@@ -113,7 +113,7 @@ WidgetIconAttrValue -> %string
   | %identifier %colon WidgetIconName
   | %identifier %colon %identifier %colon WidgetIconName
 WidgetIconName -> %identifier
-  | %identifier %hyphen WidgetIconName
+  | %identifier %hyphen WidgetIconName                                            {% (d) => d[0].value + "-" + d[2] %}
 WidgetAttrValue -> %number                                                        {% (d) => { return parseFloat(d[0].value) } %}
   | %identifier                                                                   {% (d) => d[0].value %}
   | %string                                                                       {% (d) => d[0].value %}
