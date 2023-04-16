@@ -142,7 +142,7 @@ export default {
           return prev
         }, {})
       } else {
-        return this.transformations.reduce((prev, transformation, i, transformations) => {
+        const typeGroups = this.transformations.reduce((prev, transformation, i, transformations) => {
           const type = transformation.type
           if (!prev[type]) {
             prev[type] = []
@@ -150,6 +150,10 @@ export default {
           prev[type].push(transformation)
 
           return prev
+        }, {})
+        return Object.keys(typeGroups).sort().reduce((objEntries, key) => {
+          objEntries[key] = typeGroups[key]
+          return objEntries
         }, {})
       }
     }
