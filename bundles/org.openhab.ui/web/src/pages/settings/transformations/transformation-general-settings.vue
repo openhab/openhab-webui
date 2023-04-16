@@ -2,12 +2,17 @@
   <f7-block class="block-narrow">
     <f7-col>
       <f7-list class="no-margin" inline-labels no-hairlines-md>
-        <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="transformation.uid"
-                       required :validate="createMode" pattern="[A-Za-z0-9_]+" error-message="Required. A-Z,a-z,0-9,_ only"
-                       :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                       @input="transformation.uid = $event.target.value" :clear-button="createMode" />
-        <f7-list-input label="Label" type="text" placeholder="Required" :value="transformation.label" required validate
-                       :disabled="!transformation.editable" @input="transformation.label = $event.target.value" :clear-button="createMode || transformation.editable" />
+        <f7-list-input v-if="createMode" label="Unique ID" type="text" placeholder="Required" :value="transformation.uid"
+                       required validate pattern="[A-Za-z0-9_]+" error-message="Required. A-Z,a-z,0-9,_ only"
+                       info="Note: cannot be changed after the creation"
+                       @input="transformation.uid = $event.target.value" clear-button />
+        <f7-list-item v-if="!createMode" media-item class="channel-item" title="Unique ID">
+          <div slot="subtitle">
+            {{ transformation.uid }}
+            <clipboard-icon :value="transformation.uid" tooltip="Copy UID" />
+          </div>
+        </f7-list-item>
+        <f7-list-input label="Label" type="text" placeholder="Required" :value="transformation.label" required validate :disabled="!transformation.editable" @input="transformation.label = $event.target.value" :clear-button="createMode || transformation.editable" />
         <f7-list-item v-if="createMode && languages" title="Language" smart-select :smart-select-params="smartSelectParams">
           <select name="language" @change="$emit('newLanguage', $event.target.value)">
             <option value="" selected />
@@ -31,7 +36,10 @@
 </template>
 
 <script>
+import ClipboardIcon from "@/components/util/clipboard-icon.vue";
+
 export default {
+  components: {ClipboardIcon},
   props: ['transformation', 'createMode', 'types', 'languages', 'language'],
   emits: ['newType', 'newLanguage'],
   data () {
