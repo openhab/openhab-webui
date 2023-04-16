@@ -188,13 +188,12 @@ export default {
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-        this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.transformation.uid), { reloadCurrent: true })
         this.newTransformation = false
         this.ready = false
         if (window) {
           window.addEventListener('keydown', this.keyDown)
         }
-        this.load()
+        this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.transformation.uid), { reloadCurrent: true })
       })
     },
     load () {
