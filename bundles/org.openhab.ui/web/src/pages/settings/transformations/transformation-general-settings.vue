@@ -7,7 +7,7 @@
                        :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
                        @input="transformation.uid = $event.target.value" :clear-button="createMode" />
         <f7-list-input label="Label" type="text" placeholder="Required" :value="transformation.label" required validate
-                       :disabled="!transformation.editable" @input="transformation.label = $event.target.value" :clear-button="!transformation.editable" />
+                       :disabled="!transformation.editable" @input="transformation.label = $event.target.value" :clear-button="createMode || transformation.editable" />
         <f7-list-item v-if="createMode && languages" title="Language" smart-select :smart-select-params="smartSelectParams">
           <select name="language" @change="$emit('newLanguage', $event.target.value)">
             <option value="" selected />
