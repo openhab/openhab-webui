@@ -92,7 +92,7 @@ export default {
   props: ['transformationId', 'createMode'],
   data () {
     return {
-      newTransformation: this.createMode,
+      newTransformation: this.createMode || false,
       ready: false,
       loading: false,
       transformation: {},
@@ -171,10 +171,8 @@ export default {
         this.transformation.uid += ':' + this.language
       }
 
-      // Insert code examples for SCRIPT
-      if (this.transformation.type === 'SCRIPT') {
-        this.transformation.configuration.function = TransformationDefinitions.SNIPPETS.SCRIPT[this.transformation.configuration.mode]
-      }
+      // Insert code example if available
+      if (TransformationDefinitions.SNIPPETS[this.transformation.type.toUpperCase()]) this.transformation.configuration.function = TransformationDefinitions.SNIPPETS[this.transformation.type.toUpperCase()]
 
       this.$oh.api.put('/rest/transformations/' + this.transformation.uid, this.transformation).then(() => {
         this.$f7.toast.create({
@@ -197,7 +195,7 @@ export default {
 
       this.$oh.api.get('/rest/transformations/' + this.transformationId).then((data) => {
         this.$set(this, 'transformation', data)
-        this.editorMode = (this.transformation.configuration.mode) ? this.transformation.configuration.mode : TransformationDefinitions.EDITOR_MODES[this.transformation.type.toUpperCase()]
+        this.editorMode = TransformationDefinitions.EDITOR_MODES[this.transformation.type.toUpperCase()] || this.transformation.type
         this.loading = false
         this.ready = true
       })
