@@ -143,7 +143,7 @@ export default {
         }, {})
       } else {
         const typeGroups = this.transformations.reduce((prev, transformation, i, transformations) => {
-          const type = transformation.type
+          const type = transformation.type.toUpperCase()
           if (!prev[type]) {
             prev[type] = []
           }
