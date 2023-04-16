@@ -56,12 +56,15 @@
         </f7-toolbar>
         <f7-block class="block-narrow">
           <transformation-general-settings :createMode="newTransformation" :transformation="transformation" />
-          <f7-col v-if="isEditable">
-            <f7-list>
+          <f7-col>
+            <f7-list v-if="isEditable">
               <f7-list-button color="red" @click="deleteTransformation">
                 Remove Transformation
               </f7-list-button>
             </f7-list>
+            <p v-if="ready" class="text-align-center">
+              Tip: Use <code>{{ itemStateTransformationCode }}</code> <clipboard-icon :value="itemStateTransformationCode" tooltip="Copy transformation" /> for Item state transformations.
+            </p>
           </f7-col>
         </f7-block>
       </f7-page>
@@ -81,10 +84,12 @@
 import DirtyMixin from '../dirty-mixin'
 import TransformationGeneralSettings from '@/pages/settings/transformations/transformation-general-settings'
 import TransformationDefinitions from '@/assets/definitions/transformations.js'
+import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
   mixins: [DirtyMixin],
   components: {
+    ClipboardIcon,
     TransformationGeneralSettings,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue')
@@ -112,6 +117,9 @@ export default {
       // TODO: Enable Blockly after blocks have been adjusted
       // return this.transformation.configuration && this.transformation.configuration.blockSource
       return false
+    },
+    itemStateTransformationCode () {
+      return `${this.transformation.type.toUpperCase()}(${this.transformationId})`
     }
   },
   methods: {
