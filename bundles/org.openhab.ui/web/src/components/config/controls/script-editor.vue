@@ -46,13 +46,16 @@ import _CodeMirror from 'codemirror'
 import 'codemirror/lib/codemirror.css'
 
 // language js
-import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/mode/clike/clike.js'
 import 'codemirror/mode/groovy/groovy.js'
+import 'codemirror/mode/jinja2/jinja2.js'
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/properties/properties.js'
 import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/ruby/ruby.js'
+import 'codemirror/mode/shell/shell.js'
+import 'codemirror/mode/xml/xml.js'
 import 'codemirror/mode/yaml/yaml.js'
-import 'codemirror/mode/properties/properties.js'
 
 // theme css
 import 'codemirror/theme/gruvbox-dark.css'
@@ -168,15 +171,16 @@ export default {
   },
   methods: {
     translateMode (mode) {
-      if (this.mode && this.mode.indexOf('yaml') >= 0) return 'text/x-yaml'
-      if (this.mode && this.mode.indexOf('application/javascript') === 0) return 'text/javascript'
-      if (this.mode && this.mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
-      if (this.mode && this.mode.indexOf('python') >= 0) return 'text/x-python'
-      if (this.mode && this.mode.indexOf('ruby') >= 0) return 'text/x-ruby'
-      if (this.mode && this.mode.indexOf('groovy') >= 0) return 'text/x-groovy'
-      if (this.mode && this.mode === 'rb') return 'text/x-ruby'
-      if (this.mode && this.mode === 'properties') return 'text/x-properties'
-      return this.mode
+      // Translations required for some special modes used in MainUI
+      // See https://codemirror.net/5/mode/index.html for supported language names & MIME types
+      if (!mode) return mode
+      if (mode.indexOf('yaml') >= 0) return 'text/x-yaml'
+      if (mode.indexOf('jinja') >= 0) return 'text/jinja2'
+      if (mode.indexOf('application/javascript') === 0 || mode === 'js') return 'text/javascript'
+      if (mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
+      if (mode === 'py') return 'text/x-python'
+      if (mode === 'rb') return 'text/x-ruby'
+      return mode
     },
     ternComplete (file, query) {
       let pos = tern.resolvePos(file, query.end)
