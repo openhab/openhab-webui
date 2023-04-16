@@ -15,7 +15,7 @@
       </f7-nav-right>
     </f7-navbar>
     <!-- Create Transformation -->
-    <transformation-general-settings v-if="newTransformation && ready" :createMode="true" :transformation="transformation" :types="types" :languages="languages" :language="language" :scriptLanguages="scriptLanguages" @newLanguage="language = $event" @newType="transformation.type = $event" @newScriptMimeType="transformation.configuration.mode = $event" />
+    <transformation-general-settings v-if="newTransformation && ready" :createMode="true" :transformation="transformation" :types="types" :languages="languages" :language="language" @newType="transformation.type = $event" @newLanguage="language = $event" />
     <div v-if="ready && newTransformation" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
         <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="createTransformation">
@@ -56,12 +56,15 @@
         </f7-toolbar>
         <f7-block class="block-narrow">
           <transformation-general-settings :createMode="newTransformation" :transformation="transformation" />
-          <f7-col v-if="isEditable">
-            <f7-list>
+          <f7-col>
+            <f7-list v-if="isEditable">
               <f7-list-button color="red" @click="deleteTransformation">
                 Remove Transformation
               </f7-list-button>
             </f7-list>
+            <p v-if="ready" class="text-align-center">
+              Tip: Use <code>{{ itemStateTransformationCode }}</code> <clipboard-icon :value="itemStateTransformationCode" tooltip="Copy transformation" /> for Item state transformations.
+            </p>
           </f7-col>
         </f7-block>
       </f7-page>
@@ -81,10 +84,12 @@
 import DirtyMixin from '../dirty-mixin'
 import TransformationGeneralSettings from '@/pages/settings/transformations/transformation-general-settings'
 import TransformationDefinitions from '@/assets/definitions/transformations.js'
+import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
   mixins: [DirtyMixin],
   components: {
+    ClipboardIcon,
     TransformationGeneralSettings,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue')
@@ -92,12 +97,11 @@ export default {
   props: ['transformationId', 'createMode'],
   data () {
     return {
-      newTransformation: this.createMode,
+      newTransformation: this.createMode || false,
       ready: false,
       loading: false,
       transformation: {},
       types: [],
-      scriptLanguages: [],
       languages: [],
       language: '',
       detailsOpened: false,
@@ -113,6 +117,9 @@ export default {
       // TODO: Enable Blockly after blocks have been adjusted
       // return this.transformation.configuration && this.transformation.configuration.blockSource
       return false
+    },
+    itemStateTransformationCode () {
+      return `${this.transformation.type.toUpperCase()}(${this.transformationId})`
     }
   },
   methods: {
@@ -143,20 +150,10 @@ export default {
         },
         editable: true
       }
-      Promise.all([this.$oh.api.get('/rest/transformations/services'), this.$oh.api.get('/rest/module-types/script.ScriptAction'), this.$oh.api.get('/rest/config-descriptions/system:i18n')]).then((data) => {
+      Promise.all([this.$oh.api.get('/rest/transformations/services'), this.$oh.api.get('/rest/config-descriptions/system:i18n')]).then((data) => {
         this.$set(this, 'types', data[0])
 
-        this.$set(this, 'scriptLanguages', data[1].configDescriptions
-          .find((c) => c.name === 'type').options
-          .map((l) => {
-            return {
-              contentType: l.value,
-              name: l.label.split(' (')[0],
-              version: l.label.split(' (')[1].replace(')', '')
-            }
-          }))
-
-        this.$set(this, 'languages', data[2].parameters.find(p => p.name === 'language').options)
+        this.$set(this, 'languages', data[1].parameters.find(p => p.name === 'language').options)
       })
       this.language = ''
       this.ready = true
@@ -182,10 +179,8 @@ export default {
         this.transformation.uid += ':' + this.language
       }
 
-      // Insert code examples for SCRIPT
-      if (this.transformation.type === 'SCRIPT') {
-        this.transformation.configuration.function = TransformationDefinitions.SNIPPETS.SCRIPT[this.transformation.configuration.mode]
-      }
+      // Insert code example if available
+      if (TransformationDefinitions.SNIPPETS[this.transformation.type.toUpperCase()]) this.transformation.configuration.function = TransformationDefinitions.SNIPPETS[this.transformation.type.toUpperCase()]
 
       this.$oh.api.put('/rest/transformations/' + this.transformation.uid, this.transformation).then(() => {
         this.$f7.toast.create({
@@ -194,12 +189,6 @@ export default {
           closeTimeout: 2000
         }).open()
         this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.transformation.uid), { reloadCurrent: true })
-        this.newTransformation = false
-        this.ready = false
-        if (window) {
-          window.addEventListener('keydown', this.keyDown)
-        }
-        this.load()
       })
     },
     load () {
@@ -208,7 +197,7 @@ export default {
 
       this.$oh.api.get('/rest/transformations/' + this.transformationId).then((data) => {
         this.$set(this, 'transformation', data)
-        this.editorMode = (this.transformation.configuration.mode) ? this.transformation.configuration.mode : TransformationDefinitions.EDITOR_MODES[this.transformation.type.toUpperCase()]
+        this.editorMode = TransformationDefinitions.EDITOR_MODES[this.transformation.type.toUpperCase()] || this.transformation.type
         this.loading = false
         this.ready = true
       })

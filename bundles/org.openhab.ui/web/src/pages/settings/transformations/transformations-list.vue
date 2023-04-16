@@ -18,15 +18,15 @@
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
-        Remove {{ selectedItems.length }}
+      <f7-link color="red" v-show="selectedTransformations.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
+        Remove {{ selectedTransformations.length }}
       </f7-link>
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
-        {{ selectedItems.length }} selected
+        {{ selectedTransformations.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link v-show="selectedTransformations.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
       </div>
     </f7-toolbar>
 
@@ -87,7 +87,7 @@
               :key="transformation.uid"
               media-item
               class="transformationlist-item"
-              :checkbox="showCheckboxes"
+              :checkbox="showCheckboxes && transformation.editable"
               :checked="isChecked(transformation.uid)"
               @click.ctrl="(e) => ctrlClick(e, transformation)"
               @click.meta="(e) => ctrlClick(e, transformation)"
@@ -123,7 +123,7 @@ export default {
       loading: false,
       transformations: [],
       initSearchbar: false,
-      selectedItems: [],
+      selectedTransformations: [],
       groupBy: 'alphabetical',
       showCheckboxes: false
     }
@@ -142,14 +142,18 @@ export default {
           return prev
         }, {})
       } else {
-        return this.transformations.reduce((prev, transformation, i, transformations) => {
-          const type = transformation.type
+        const typeGroups = this.transformations.reduce((prev, transformation, i, transformations) => {
+          const type = transformation.type.toUpperCase()
           if (!prev[type]) {
             prev[type] = []
           }
           prev[type].push(transformation)
 
           return prev
+        }, {})
+        return Object.keys(typeGroups).sort().reduce((objEntries, key) => {
+          objEntries[key] = typeGroups[key]
+          return objEntries
         }, {})
       }
     }
@@ -191,33 +195,34 @@ export default {
     toggleCheck () {
       this.showCheckboxes = !this.showCheckboxes
     },
-    isChecked (item) {
-      return this.selectedItems.indexOf(item) >= 0
+    isChecked (transformation) {
+      return this.selectedTransformations.indexOf(transformation) >= 0
     },
-    click (event, item) {
+    click (event, transformation) {
       if (this.showCheckboxes) {
-        this.toggleItemCheck(event, item.uid, item)
+        this.toggleTransformationCheck(event, transformation.uid, transformation)
       } else {
-        this.$f7router.navigate(item.uid)
+        this.$f7router.navigate(transformation.uid)
       }
     },
-    ctrlClick (event, item) {
-      this.toggleItemCheck(event, item.uid, item)
-      if (!this.selectedItems.length) this.showCheckboxes = false
+    ctrlClick (event, transformation) {
+      this.toggleTransformationCheck(event, transformation.uid, transformation)
+      if (!this.selectedTransformations.length) this.showCheckboxes = false
     },
-    toggleItemCheck (event, itemName, item) {
+    toggleTransformationCheck (event, transformationUid, transformation) {
+      if (!transformation.editable) return
       if (!this.showCheckboxes) this.showCheckboxes = true
-      if (this.isChecked(itemName)) {
-        this.selectedItems.splice(this.selectedItems.indexOf(itemName), 1)
+      if (this.isChecked(transformationUid)) {
+        this.selectedTransformations.splice(this.selectedTransformations.indexOf(transformationUid), 1)
       } else {
-        this.selectedItems.push(itemName)
+        this.selectedTransformations.push(transformationUid)
       }
     },
     removeSelected () {
       const vm = this
 
       this.$f7.dialog.confirm(
-        `Remove ${this.selectedItems.length} selected transformations?`,
+        `Remove ${this.selectedTransformations.length} selected transformations?`,
         'Remove Transformations',
         () => {
           vm.doRemoveSelected()
@@ -227,7 +232,7 @@ export default {
     doRemoveSelected () {
       let dialog = this.$f7.dialog.progress('Deleting Transformations...')
 
-      const promises = this.selectedItems.map((p) => {
+      const promises = this.selectedTransformations.map((p) => {
         return this.$oh.api.delete('/rest/transformations/' + p)
       })
       Promise.all(promises).then((data) => {
@@ -236,7 +241,7 @@ export default {
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-        this.selectedItems = []
+        this.selectedTransformations = []
         dialog.close()
         this.load()
         this.$f7.emit('sidebarRefresh', null) // for what?
