@@ -381,30 +381,39 @@ export default {
     validateWidgets (stay) {
       if (this.sitemap.slots && Array.isArray(this.sitemap.slots.widgets)) {
         let validationWarnings = []
-        let isFrame = [false]
         const widgetList = this.sitemap.slots.widgets.reduce(function iter (widgets, widget) {
+          widgets.push(widget)
+          if (widget.slots && Array.isArray(widget.slots.widgets)) {
+            return widget.slots.widgets.reduce(iter, widgets)
+          }
+          return widgets
+        }, [])
+        let isFrame = [false]
+        let siblingIsFrame = [undefined]
+        this.sitemap.slots.widgets.forEach(function iter (widget) {
           if (isFrame[isFrame.length - 1] && widget.component === 'Frame') {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             validationWarnings.push('Frame widget ' + label + ', frame not allowed in frame')
           }
-          widgets.push(widget)
+          if (siblingIsFrame[siblingIsFrame.length - 1] !== undefined) {
+            if ((siblingIsFrame[siblingIsFrame.length - 1] && (widget.component !== 'Frame')) || (!siblingIsFrame[siblingIsFrame.length - 1] && (widget.component === 'Frame'))) {
+              let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+              validationWarnings.push('Widget ' + label + ', only frames or no frames at all allowed in linkable widget')
+            }
+          }
+          siblingIsFrame.push(siblingIsFrame.pop() || widget.component === 'Frame')
           if (widget.slots && Array.isArray(widget.slots.widgets)) {
             isFrame.push(widget.component === 'Frame')
-            return widget.slots.widgets.reduce(iter, widgets)
+            siblingIsFrame.push(undefined)
+            widget.slots.widgets.forEach(iter)
+            isFrame.pop()
+            siblingIsFrame.pop()
           }
-          isFrame.pop()
-          return widgets
-        }, [])
+        })
         widgetList.filter(widget => this.widgetTypesRequiringItem.includes(widget.component)).forEach(widget => {
           if (!(widget.config && widget.config.item)) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
-          }
-        })
-        widgetList.filter(widget => widget.component === 'List').forEach(widget => {
-          if (!(widget.config && widget.config.separator)) {
-            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
-            validationWarnings.push(widget.component + ' widget ' + label + ', no separator configured')
           }
         })
         widgetList.filter(widget => widget.component === 'Video' || widget.component === 'Webview').forEach(widget => {
@@ -414,15 +423,27 @@ export default {
           }
         })
         widgetList.filter(widget => widget.component === 'Chart').forEach(widget => {
-          if (!(widget.config && widget.config.period)) {
+          if (!(widget.config && widget.config.period && ['h', '4h', '8h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '3M', 'Y'].includes(widget.config.period))) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
-            validationWarnings.push(widget.component + ' widget ' + label + ', no period configured')
+            validationWarnings.push(widget.component + ' widget ' + label + ', invalid period configured: ' + widget.config.period)
           }
         })
         widgetList.filter(widget => widget.component === 'Input').forEach(widget => {
           if (!(widget.config && widget.config.inputHint && ['text', 'number', 'date', 'time', 'datetime'].includes(widget.config.inputHint))) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid inputHint configured: ' + widget.config.inputHint)
+          }
+        })
+        widgetList.filter(widget => widget.component === 'Slider' || widget.component === 'Setpoint').forEach(widget => {
+          if (widget.config && (widget.config.step !== undefined) && (widget.config.step <= 0)) {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push(widget.component + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.config.step)
+          }
+        })
+        widgetList.filter(widget => widget.component === 'Slider' || widget.component === 'Setpoint').forEach(widget => {
+          if (widget.config && (widget.config.minValue !== undefined) && (widget.config.maxValue !== undefined) && (widget.config.minValue > widget.config.maxValue)) {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push(widget.component + ' widget ' + label + ', minValue must be less than or equal maxValue: ' + widget.config.minValue + ' > ' + widget.config.maxValue)
           }
         })
         widgetList.forEach(widget => {
