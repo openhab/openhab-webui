@@ -270,13 +270,15 @@ export default {
       // No frames in frame
       if (this.selectedWidget.component === 'Frame') return this.widgetTypes.filter(w => w.type !== 'Frame')
       // Linkable widget types only contain frames or none at all
-      if (this.linkableWidgetTypes.filter(t => t === this.selectedWidget.component)) {
-        if (this.selectedWidget.slots) {
-          if (this.selectedWidget.slots.widgets.filter(w => w.component === 'Frame')) {
+      if (this.linkableWidgetTypes.includes(this.selectedWidget.component)) {
+        if (this.selectedWidget.slots && this.selectedWidget.slots.widgets && this.selectedWidget.slots.widgets.length > 0) {
+          if (this.selectedWidget.slots.widgets.find(w => w.component === 'Frame')) {
             return this.widgetTypes.filter(w => w.type === 'Frame')
           } else {
             return this.widgetTypes.filter(w => w.type !== 'Frame')
           }
+        } else {
+          return this.widgetTypes
         }
       }
       return this.widgetTypes
@@ -378,14 +380,21 @@ export default {
     },
     validateWidgets (stay) {
       if (this.sitemap.slots && Array.isArray(this.sitemap.slots.widgets)) {
+        let validationWarnings = []
+        let isFrame = [false]
         const widgetList = this.sitemap.slots.widgets.reduce(function iter (widgets, widget) {
+          if (isFrame[isFrame.length - 1] && widget.component === 'Frame') {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push('Frame widget ' + label + ', frame not allowed in frame')
+          }
           widgets.push(widget)
           if (widget.slots && Array.isArray(widget.slots.widgets)) {
+            isFrame.push(widget.component === 'Frame')
             return widget.slots.widgets.reduce(iter, widgets)
           }
+          isFrame.pop()
           return widgets
         }, [])
-        let validationWarnings = []
         widgetList.filter(widget => this.widgetTypesRequiringItem.includes(widget.component)).forEach(widget => {
           if (!(widget.config && widget.config.item)) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'

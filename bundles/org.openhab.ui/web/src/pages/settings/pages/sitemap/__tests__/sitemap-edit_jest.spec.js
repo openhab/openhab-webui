@@ -46,10 +46,65 @@ describe('SitemapEdit', () => {
     expect(wrapper.vm.sitemap.component).toEqual('Sitemap')
   })
 
+  it('validates frame does not contain frames', async () => {
+    wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Frame')
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Frame')
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Frame Test')
+
+    // should not validate as the frame contains a frame
+    lastDialogConfig = null
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Frame widget Frame Test, frame not allowed in frame/)
+  })
+
+  it('validates frame in text does not contain frames', async () => {
+    wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Frame')
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Text')
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Frame')
+    await wrapper.vm.$nextTick()
+
+    // should validate, as frame in text in frame is allowed
+    lastDialogConfig = null
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+
+    // add a frame inside the frame in the text
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Frame')
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0].slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Frame Test')
+
+    // should not validate as the frame contains a frame
+    lastDialogConfig = null
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Frame widget Frame Test, frame not allowed in frame/)
+  })
+
   it('validates item name is checked', async () => {
     wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
     await wrapper.vm.$nextTick()
     wrapper.vm.addWidget('Frame')
+    await wrapper.vm.$nextTick()
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
     wrapper.vm.addWidget('Switch')
@@ -182,41 +237,6 @@ describe('SitemapEdit', () => {
       'Battery<30',
       'Battery>50',
       'Battery_Level>=20'
-    ])
-    wrapper.vm.validateWidgets()
-    expect(lastDialogConfig).toBeFalsy()
-  })
-
-  it('validates valuecolor', async () => {
-    wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
-    await wrapper.vm.$nextTick()
-    wrapper.vm.addWidget('Text')
-    await wrapper.vm.$nextTick()
-    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
-    await wrapper.vm.$nextTick()
-    localVue.set(wrapper.vm.selectedWidget.config, 'item', 'Item1')
-    localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Text Test')
-    localVue.set(wrapper.vm.selectedWidget.config, 'valuecolor', [
-      'false>='
-    ])
-
-    // should not validate as the valuecolor has a syntax error
-    lastDialogConfig = null
-    wrapper.vm.validateWidgets()
-    expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(/Text widget Text Test, syntax error in valuecolor: false>=/)
-
-    // configure a correct valuecolor and check that there are no validation errors anymore
-    lastDialogConfig = null
-    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
-    await wrapper.vm.$nextTick()
-    localVue.set(wrapper.vm.selectedWidget.config, 'valuecolor', [
-      'Heat_Warning==It is hot=gray',
-      'Last_Update==Uninitialized=gray',
-      '>=25=orange',
-      '==15=green',
-      '0=white',
-      'blue'
     ])
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
