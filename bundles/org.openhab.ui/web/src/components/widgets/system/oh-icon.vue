@@ -56,6 +56,7 @@ export default {
     iconName () {
       const icon = (this.context) ? this.config.icon : this.icon
       if (!(typeof icon === 'string' || icon instanceof String)) return ''
+      if (icon.indexOf('oh:classic:') === 0) return icon.substring(icon.indexOf('oh:classic:') + 11)
       if (icon.indexOf(':') >= 0) return icon.substring(icon.indexOf(':') + 1)
       return icon
     },
