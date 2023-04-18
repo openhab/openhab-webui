@@ -2,21 +2,16 @@
   <img v-if="iconType === 'oh'"
        :src="iconUrl" v-bind="config" @click="performAction()"
        :style="{
-         width: (context && config && config.width) ? config.width + 'px' : (width) ? width + 'px' : 'auto',
-         height: (context && config && config.height) ? config.height + 'px' : (height) ? height + 'px' : 'auto',
-         ...(config) ? config.style : {} }"
+         width: (resolvedConfig.width !== null) ? resolvedConfig.width + 'px' : 'auto',
+         height: (resolvedConfig.height !== null) ? resolvedConfig.height + 'px' : 'auto',
+         ...resolvedStyle }"
        onload="this.classList.remove('no-icon')" onerror="this.classList.add('no-icon')">
-  <f7-icon v-else-if="iconType === 'f7'"
-           :ios="icon || ((config) ? config.icon : null)" :md="icon || ((config) ? config.icon : null)" :aurora="icon || ((config) ? config.icon : null)"
-           :color="color || ((config) ? config.color : null)" :size="width || height || ((config) ? (config.width || config.height) : null)"
-           :style="(config) ? config.style : null" />
-  <iconify-icon v-else-if="iconType === 'iconify'"
+  <f7-icon v-else-if="iconType === 'f7'" v-bind="resolvedConfig"
+           :size="resolvedConfig.width || resolvedConfig.height || null"
+           :style="resolvedStyle" />
+  <iconify-icon v-else-if="iconType === 'iconify'" v-bind="resolvedConfig"
                 :icon="iconName"
-                :width="width || ((config) ? config.width : null)" :height="height || ((config) ? config.height : null)"
-                :color="color || ((config) ? config.color : null)" :rotate="rotate || ((config) ? config.rotate : null)"
-                :horizontal-flip="horizontalFlip || ((config) ? config.horizontalFlip : null)"
-                :vertical-flip="verticalFlip || ((config) ? config.verticalFlip : null)"
-                :style="(config) ? config.style : null" />
+                :style="resolvedStyle" />
 </template>
 
 <style lang="stylus">
@@ -35,7 +30,7 @@ export default {
   components: {
     'iconify-icon': Icon
   },
-  props: ['icon', 'width', 'height', 'color', 'flip', 'state', 'rotate', 'horizontalFlip', 'verticalFlip'],
+  props: ['icon', 'width', 'height', 'color', 'state', 'rotate', 'horizontalFlip', 'verticalFlip'],
   widget: OhIconDefinition,
   data () {
     return {
@@ -45,6 +40,24 @@ export default {
     }
   },
   computed: {
+    resolvedStyle () {
+      return {
+        ...(this.config && this.config.style) ? this.config.style : {}
+      }
+    },
+    resolvedConfig () {
+      return {
+        width: (this.width) ? this.width : (this.config && this.config.width) ? this.config.width : null,
+        height: (this.height) ? this.height : (this.config && this.config.height) ? this.config.height : null,
+        color: (this.color) ? this.color : (this.config && this.config.color) ? this.config.color : null,
+        rotate: (this.rotate) ? this.rotate : (this.config && this.config.rotate) ? this.config.rotate : null,
+        horizontalFlip: (this.horizontalFlip) ? this.horizontalFlip : (this.config && this.config.horizontalFlip) ? this.config.horizontalFlip : null,
+        verticalFlip: (this.verticalFlip) ? this.verticalFlip : (this.config && this.config.verticalFlip) ? this.config.verticalFlip : null,
+        ios: (this.icon) ? this.icon : (this.config && this.config.icon) ? this.config.icon : null,
+        md: (this.icon) ? this.icon : (this.config && this.config.icon) ? this.config.icon : null,
+        aurora: (this.icon) ? this.icon : (this.config && this.config.icon) ? this.config.icon : null
+      }
+    },
     iconType () {
       const icon = (this.context) ? this.config.icon : this.icon
       if (!icon) return 'oh'
