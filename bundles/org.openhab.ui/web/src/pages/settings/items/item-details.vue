@@ -107,7 +107,7 @@
       width 60px
       padding 10px
       border-radius 40px
-      background white
+      border 1px solid white
       img
         height 60px
         width 60px
