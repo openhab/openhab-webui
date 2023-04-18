@@ -74,7 +74,6 @@
 
 <script>
 import * as Types from '@/assets/item-types.js'
-import * as SemanticClasses from '@/assets/semantics.js'
 import YAML from 'yaml'
 
 import ItemForm from '@/components/item/item-form.vue'
@@ -100,7 +99,6 @@ export default {
       itemYaml: '',
       items: [],
       types: Types,
-      semanticClasses: SemanticClasses,
       semanticClass: '',
       semanticProperty: '',
       pendingTag: '',

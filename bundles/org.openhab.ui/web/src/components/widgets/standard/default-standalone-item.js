@@ -4,7 +4,6 @@
  */
 
 import { DateTimeFunctions } from '@/assets/item-types'
-import * as Semantics from '@/assets/semantics'
 
 export default function itemDefaultStandaloneComponent (item) {
   const stateDescription = item.stateDescription || {}
@@ -19,14 +18,15 @@ export default function itemDefaultStandaloneComponent (item) {
       config: Object.assign({}, metadata.config)
     }
   } else {
-    item.tags.forEach((tag) => {
-      if (Semantics.Points.indexOf(tag) >= 0) {
+    if (item.metadata?.semantics?.value) {
+      const semantics = item.metadata.semantics.value.split('_')
+      const semanticType = semantics[0]
+      const tag = semantics.at(-1)
+      if (semanticType === 'Point') {
         semanticClass = tag
+        semanticProperty = item.metadata.semantics.config?.relatesTo?.split('_')?.at(-1) || {}
       }
-      if (Semantics.Properties.indexOf(tag) >= 0) {
-        semanticProperty = tag
-      }
-    })
+    }
 
     if (item.type === 'Switch' && !stateDescription.readOnly) {
       component = {

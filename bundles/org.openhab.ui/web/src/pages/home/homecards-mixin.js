@@ -1,11 +1,11 @@
 import cardGroups from './homecards-grouping'
 import { compareItems } from '@/components/widgets/widget-order'
-import { loadLocaleMessages } from '@/js/i18n'
 import { authorize } from '@/js/openhab/auth'
+import Semantics from '@/assets/semantics'
 
 export default {
   i18n: {
-    messages: loadLocaleMessages(require.context('@/assets/i18n/semantics'))
+    messages: {}
   },
   data () {
     return {
@@ -13,6 +13,11 @@ export default {
       modelReady: false,
       loopError: null
     }
+  },
+  created () {
+    Semantics.whenLoaded.then(semantics => {
+      Object.keys(semantics.Labels).forEach(locale => this.$i18n.mergeLocaleMessage(locale, semantics.Labels[locale]))
+    })
   },
   computed: {
   },

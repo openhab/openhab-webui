@@ -1,5 +1,27 @@
+import openhabApi from '@/js/openhab/api'
 
-export const Locations = ['Location', 'Indoor', 'Apartment', 'Building', 'Garage', 'House', 'Shed', 'SummerHouse', 'Floor', 'GroundFloor', 'FirstFloor', 'SecondFloor', 'ThirdFloor', 'Attic', 'Basement', 'Corridor', 'Room', 'Bathroom', 'Bedroom', 'BoilerRoom', 'Cellar', 'DiningRoom', 'Entry', 'FamilyRoom', 'GuestRoom', 'Kitchen', 'LaundryRoom', 'LivingRoom', 'Office', 'Veranda', 'Outdoor', 'Carport', 'Driveway', 'Garden', 'Patio', 'Porch', 'Terrace']
-export const Equipment = ['Equipment', 'AlarmSystem', 'BackDoor', 'Battery', 'Blinds', 'Boiler', 'Camera', 'Car', 'CeilingFan', 'CellarDoor', 'CleaningRobot', 'Dishwasher', 'Door', 'Doorbell', 'Dryer', 'Fan', 'Freezer', 'FrontDoor', 'GarageDoor', 'Gate', 'HVAC', 'KitchenHood', 'InnerDoor', 'Inverter', 'LawnMower', 'Lightbulb', 'LightStripe', 'Lock', 'MotionDetector', 'NetworkAppliance', 'Oven', 'PowerOutlet', 'Projector', 'Pump', 'RadiatorControl', 'Receiver', 'Refrigerator', 'RemoteControl', 'Screen', 'Sensor', 'SideDoor', 'Siren', 'Smartphone', 'SmokeDetector', 'Speaker', 'Television', 'Valve', 'VoiceAssistant', 'WallSwitch', 'WashingMachine', 'WebService', 'WeatherService', 'WhiteGood', 'Window']
-export const Points = ['Point', 'Alarm', 'Control', 'Switch', 'Measurement', 'Setpoint', 'Status', 'LowBattery', 'OpenLevel', 'OpenState', 'Tampered', 'Tilt']
-export const Properties = ['Temperature', 'Light', 'ColorTemperature', 'Humidity', 'Presence', 'Pressure', 'Smoke', 'Noise', 'Rain', 'Wind', 'Water', 'CO2', 'CO', 'Energy', 'Power', 'Voltage', 'Current', 'Frequency', 'Gas', 'SoundVolume', 'Oil', 'Duration', 'Level', 'Opening', 'Timestamp', 'Ultraviolet', 'Vibration']
+const Semantics = {
+  Equipments: [],
+  Locations: [],
+  Points: [],
+  Properties: [],
+  Labels: {},
+  whenLoaded: openhabApi.get('/rest/tags').then(tags => {
+    Semantics.Locations = tags.Locations.map(tag => tag.name)
+    Semantics.Equipments = tags.Equipments.map(tag => tag.name)
+    Semantics.Points = tags.Points.map(tag => tag.name)
+    Semantics.Properties = tags.Properties.map(tag => tag.name)
+
+    let labels = {}
+    Object.values(tags).forEach(tags => tags.forEach(tag => {
+      if (tag.label) {
+        labels[tag.name] = tag.label
+      }
+    }))
+    const locale = process.env.VUE_APP_I18N_LOCALE || 'en'
+    Semantics.Labels = { [locale]: labels }
+    return Semantics
+  })
+}
+
+export default Semantics

@@ -38,7 +38,7 @@
 
 <script>
 import * as Types from '@/assets/item-types.js'
-import * as SemanticClasses from '@/assets/semantics.js'
+import SemanticClasses from '@/assets/semantics.js'
 
 export default {
   props: ['item', 'sameClassOnly', 'hideType', 'hideNone'],
@@ -54,7 +54,7 @@ export default {
   methods: {
     semanticType (tag) {
       if (this.semanticClasses.Locations.indexOf(tag) >= 0) return 'Location'
-      if (this.semanticClasses.Equipment.indexOf(tag) >= 0) return 'Equipment'
+      if (this.semanticClasses.Equipments.indexOf(tag) >= 0) return 'Equipment'
       if (this.semanticClasses.Points.indexOf(tag) >= 0) return 'Point'
       return ''
     },
@@ -115,7 +115,7 @@ export default {
       })
     },
     orderedEquipment () {
-      return [...this.semanticClasses.Equipment].sort((a, b) => {
+      return [...this.semanticClasses.Equipments].sort((a, b) => {
         return a.localeCompare(b)
       })
     },

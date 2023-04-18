@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import * as SemanticClasses from '@/assets/semantics.js'
+import Semantics from '@/assets/semantics.js'
 
 export default {
   props: ['item', 'disabled', 'inScriptEditor'],
@@ -36,10 +36,7 @@ export default {
   },
   methods: {
     isSemanticTag (tag) {
-      return [SemanticClasses.Locations,
-        SemanticClasses.Equipment,
-        SemanticClasses.Points,
-        SemanticClasses.Properties].some((t) => t.indexOf(tag) >= 0)
+      return [Semantics.Locations, Semantics.Equipments, Semantics.Points, Semantics.Properties].some((t) => t.indexOf(tag) >= 0)
     },
     isScriptTag (tag) {
       if (this.inScriptEditor !== true) return false

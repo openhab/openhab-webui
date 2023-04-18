@@ -6,8 +6,6 @@
  * Refer to {@see itemContextLabel} for valid options.
  */
 
-import * as Semantics from '@/assets/semantics'
-
 export default function itemDefaultListComponent (item, footer) {
   const stateDescription = item.stateDescription || {}
   const metadata = (item.metadata && item.metadata.listWidget) ? item.metadata.listWidget : {}
@@ -21,14 +19,15 @@ export default function itemDefaultListComponent (item, footer) {
       config: Object.assign({}, metadata.config)
     }
   } else {
-    item.tags.forEach((tag) => {
-      if (Semantics.Points.indexOf(tag) >= 0) {
+    if (item.metadata?.semantics?.value) {
+      const semantics = item.metadata.semantics.value.split('_')
+      const semanticType = semantics[0]
+      const tag = semantics.at(-1)
+      if (semanticType === 'Point') {
         semanticClass = tag
+        semanticProperty = item.metadata.semantics.config?.relatesTo?.split('_')?.at(-1) || {}
       }
-      if (Semantics.Properties.indexOf(tag) >= 0) {
-        semanticProperty = tag
-      }
-    })
+    }
 
     if (item.type === 'Switch' && !stateDescription.readOnly) {
       component = {
