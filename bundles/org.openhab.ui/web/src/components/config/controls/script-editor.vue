@@ -98,6 +98,7 @@ import NashornDefs from '@/assets/nashorn-tern-defs.json'
 import OpenhabJsDefs from '@/assets/openhab-js-tern-defs.json'
 
 import componentsHint from '../editor/hint-components'
+import itemsHint from '../editor/hint-items'
 import rulesHint from '../editor/hint-rules'
 import thingsHint from '../editor/hint-things'
 import pythonHint from '../editor/hint-python'
@@ -273,6 +274,8 @@ export default {
           hint (cm, option) {
             if (self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
               return componentsHint(cm, option, self.mode)
+            } else if (self.mode === 'application/vnd.openhab.item+yaml') {
+              return itemsHint(cm, option, self.mode)
             } else if (self.mode === 'application/vnd.openhab.rule+yaml') {
               return rulesHint(cm, option, self.mode)
             } else if (self.mode === 'application/vnd.openhab.thing+yaml') {
