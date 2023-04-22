@@ -66,10 +66,20 @@ export default {
       if (icon.indexOf('if') === 0 || icon.indexOf('iconify') === 0) return 'iconify'
       return 'oh'
     },
+    /**
+     * Icon set, for openHAB icons only.
+     * Defaults to 'classic'.
+     * @returns {*|string}
+     */
+    iconSet () {
+      const icon = (this.context) ? this.config.icon : this.icon
+      if (icon.indexOf('oh:') === 0 && icon.split(':').length === 3) return icon.split(':')[1]
+      return 'classic'
+    },
     iconName () {
       const icon = (this.context) ? this.config.icon : this.icon
       if (!(typeof icon === 'string' || icon instanceof String)) return ''
-      if (icon.indexOf('oh:classic:') === 0) return icon.substring(icon.indexOf('oh:classic:') + 11)
+      if (icon.indexOf('oh:') === 0 && icon.split(':').length === 3) return icon.split(':')[2]
       if (icon.indexOf(':') >= 0) return icon.substring(icon.indexOf(':') + 1)
       return icon
     },
@@ -104,7 +114,7 @@ export default {
   methods: {
     updateIcon () {
       if (!this.currentIcon) return
-      this.$oh.media.getIcon(this.currentIcon, this.iconFormat, this.currentState).then((url) => {
+      this.$oh.media.getIcon(this.currentIcon, this.iconFormat, this.currentState, this.iconSet).then((url) => {
         if (url !== this.iconUrl) {
           this.iconUrl = url
         }
