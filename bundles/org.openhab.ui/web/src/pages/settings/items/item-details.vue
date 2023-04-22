@@ -8,7 +8,7 @@
       </f7-nav-right>
       <f7-subnavbar sliding class="item-header">
         <div class="item-icon" v-if="item.name">
-          <oh-icon v-if="item.category" :icon="item.category" height="60" width="60" />
+          <oh-icon v-if="item.category" :icon="item.category" :state="context.store[item.name] ? context.store[item.name].state : item.state" height="60" width="60" />
           <span v-else>
             {{ item.label ? item.label[0] : item.name[0] }}
           </span>
