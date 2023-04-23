@@ -16,7 +16,7 @@
     <!-- Show answer button on incoming call -->
     <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()">
       <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.iconSize" @click.stop="answer()">
-        {{ (!config.hideCallerId) ? this.remoteParty : '' }}
+        {{ (!config.hideCallerId) ? remoteParty : '' }}
       </f7-button>
       <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize" @click.stop="session.terminate()" />
     </f7-segmented>
