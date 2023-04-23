@@ -131,7 +131,8 @@ export default {
           sockets: [socket],
           uri: 'sip:' + this.config.username + '@' + this.config.domain,
           password: this.config.password,
-          session_timers: false
+          session_timers: false,
+          register: (this.config.disableRegister !== true)
         }
         this.phone = new JsSIP.UA(configuration)
 
