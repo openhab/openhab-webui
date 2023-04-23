@@ -90,7 +90,7 @@ export default {
 
       // Make sure we have Mic/Camera permissions
       if (!navigator.mediaDevices) {
-        this.$f7.dialog.alert('Please ensure that HTTPS is in use and WebRTC is supported in this browser.')
+        this.$f7.dialog.alert('To use the SIP widget, please make sure that HTTPS is in use and WebRTC is supported by this browser.')
       } else {
         navigator.mediaDevices.getUserMedia({ audio: true, video: this.config.enableVideo })
           .then((stream) => {
