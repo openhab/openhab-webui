@@ -108,7 +108,7 @@ export default {
     },
     stopForegroundActivity () {
       // Stop MediaDevices access here, otherwise Mic/Camera access will stay active on iOS
-      this.stream.getTracks().forEach((track) => track.stop())
+      if (this.stream) this.stream.getTracks().forEach((track) => track.stop())
       if (this.phone) this.phone.stop()
     },
     /**
