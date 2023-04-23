@@ -12,7 +12,7 @@
         <item-form :item="editedItem" :hide-type="true" :force-semantics="forceSemantics" />
       </div>
       <div class="padding-top" v-else-if="createMode">
-        <item-form :item="editedItem" :items="items" :enable-name="true" :force-semantics="forceSemantics" />
+        <item-form :item="editedItem" :items="items" :createMode="true" :force-semantics="forceSemantics" />
       </div>
     </f7-card-content>
     <f7-card-footer v-if="createMode || editMode" key="item-card-buttons">

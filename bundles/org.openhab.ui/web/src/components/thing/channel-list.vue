@@ -48,7 +48,7 @@
                               @channel-updated="(e) => $emit('channels-updated', e)" />
               </template>
               <template #default="{ channel }" v-else-if="multipleLinksMode">
-                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :items="items" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
+                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :items="items" :createMode="true" :channel="channel" :checked="isChecked(channel)" />
               </template>
               <!-- <channel-link #default="{ channelId }" /> -->
             </channel-group>

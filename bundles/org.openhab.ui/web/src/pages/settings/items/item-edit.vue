@@ -25,7 +25,7 @@
             </div>
           </f7-col>
           <f7-col>
-            <item-form :item="item" :items="items" :enable-name="createMode" />
+            <item-form :item="item" :items="items" :createMode="createMode" />
           </f7-col>
           <f7-col>
             <f7-block-title>Group Membership</f7-block-title>

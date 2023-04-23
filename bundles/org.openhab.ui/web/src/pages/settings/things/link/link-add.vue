@@ -43,7 +43,7 @@
 
         <!-- Create new item -->
         <f7-col v-else>
-          <item-form :item="newItem" :items="items" :enable-name="true" @valid="itemValid = $event" />
+          <item-form :item="newItem" :items="items" :createMode="true" @valid="itemValid = $event" />
           <f7-list>
             <item-picker key="newItem-groups" title="Parent Group(s)" name="parent-groups" :value="newItem.groupNames" :items="items" @input="(value) => newItem.groupNames = value" :multiple="true" filterType="Group" />
           </f7-list>
