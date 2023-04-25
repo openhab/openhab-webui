@@ -13,6 +13,6 @@ export default () => [
   pb('enableVideo', 'Enable Video', 'Enable video calling'),
   pb('enableLocalVideo', 'Enable Local Video View', 'Display the local camera on video calls'),
   pt('defaultVideoAspectRatio', 'Default Aspect Ratio', 'Default video aspect ratio used to size the widget before video is loaded. Defaults to 4/3, 16/9 and 1 are common alternatives.').a(),
-  pb('disableRegister', 'Disable REGISTER', 'You can disable SIP registration in case you only want to initiate calls, but not receive calls with the SIP widgets.').a(),
+  pb('disableRegister', 'Disable REGISTER', 'SIP registration can be disabled in case you only want to initiate calls, but not receive calls with the SIP widgets.').a(),
   pb('enableSIPDebug', 'Enable SIP debugging to the browser console (dev tools)').a()
 ]
