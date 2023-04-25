@@ -56,7 +56,7 @@ Display a slider control in a list
 </PropBlock>
 <PropBlock type="BOOLEAN" name="iconUseState" label="Icon depends on state">
   <PropDescription>
-    Use the state of the Item to get a dynamic icon (enabled by default for all Item types except <code>Call</code>, <code>Image</code>, <code>Location</code> & <code>String</code>) (for openHAB icons only)
+    Use the state of the Item to get a dynamic icon (enabled by default for all Item types except <code>Call</code>, <code>Image</code> & <code>Location</code>) (for openHAB icons only)
   </PropDescription>
 </PropBlock>
 </PropGroup>

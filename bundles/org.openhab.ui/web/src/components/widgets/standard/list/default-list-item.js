@@ -166,7 +166,7 @@ export default function itemDefaultListComponent (item, footer) {
   if (!component.config.item) component.config.item = item.name
   if (!component.config.title) component.config.title = item.label || item.name
   if (item.category && !component.config.icon) component.config.icon = item.category
-  if (item.category && !['Call', 'Image', 'Location', 'String'].includes(item.type)) component.config.iconUseState = true
+  if (item.category && component.config.iconUseState === undefined && !['Call', 'Image', 'Location'].includes(item.type)) component.config.iconUseState = true
   if (item.label && footer && footer.contextLabelSource) {
     let text = itemContextLabel(item, footer)
     if (text) component.config.footer = text
