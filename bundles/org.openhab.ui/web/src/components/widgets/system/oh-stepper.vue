@@ -1,7 +1,12 @@
 <template>
   <f7-stepper ref="stepper" v-bind="config" :value="value" @stepper:change="onChange" @click.native.stop
-              :manual-input-mode="false" :format-value="formatValue" />
+              :input="false" :manual-input-mode="false" :format-value="formatValue" />
 </template>
+
+<style lang="stylus">
+.stepper-value
+  margin-top: 0px
+</style>
 
 <script>
 import mixin from '../widget-mixin'
