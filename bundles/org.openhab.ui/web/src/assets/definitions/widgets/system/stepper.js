@@ -1,10 +1,11 @@
-import { pi, pb, pn, pd } from '../helpers.js'
+import { pi, pb, pd } from '../helpers.js'
 
 export default () => [
   pi('item', 'Item', 'Item to control'),
   pd('min', 'Min', 'Minimum value'),
   pd('max', 'Max', 'Maximum value'),
   pd('step', 'Step', 'Minimum interval between values'),
+  pd('offset', 'Offset', 'Offset to be applied to the Item\'s state (e.g. Item state = 2; offset = 20; stepper behaves as Item state would be 22)'),
   pb('buttonsOnly', 'Buttons Only', 'Display the buttons without the value in the middle'),
   pb('small', 'Small', 'Smaller size'),
   pb('large', 'Large', 'Larger size'),
