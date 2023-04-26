@@ -48,6 +48,11 @@ Stepper control, allows to input a number or decrement/increment it using button
     Minimum interval between values
   </PropDescription>
 </PropBlock>
+<PropBlock type="DECIMAL" name="offset" label="Offset">
+  <PropDescription>
+    Offset to be applied to the Item's state (e.g. Item state = 2; offset = 20; stepper behaves as Item state would be 22)
+  </PropDescription>
+</PropBlock>
 <PropBlock type="BOOLEAN" name="buttonsOnly" label="Buttons Only">
   <PropDescription>
     Display the buttons without the value in the middle
