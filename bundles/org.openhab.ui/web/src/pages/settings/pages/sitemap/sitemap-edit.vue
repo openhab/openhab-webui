@@ -460,9 +460,10 @@ export default {
         })
         if (validationWarnings.length > 0) {
           this.$f7.dialog.create({
+            cssClass: 'sitemap-validation-dialog',
             title: 'Validation errors',
             text: 'Sitemap definition has validation errors:',
-            content: '<ul style="max-height: 100px; overflow-y: scroll"><li>' + validationWarnings.join('</li><li>') + '</li></ul>',
+            content: '<ul style="max-height: 200px; overflow-y: scroll"><li>' + validationWarnings.join('</li><li>') + '</li></ul>',
             buttons: [
               { text: 'Cancel', color: 'gray', close: true },
               { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.save(stay, true) }
