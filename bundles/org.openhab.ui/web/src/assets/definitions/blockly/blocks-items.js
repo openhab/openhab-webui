@@ -145,8 +145,14 @@ export default function (f7, isGraalJs) {
   Blockly.Blocks['oh_getitem_attribute'] = {
     init: function () {
       let thisBlock = this
+      let choices = [['name', 'Name'], ['label', 'Label'], ['state', 'State'], ['category', 'Category'], ['tags', 'Tags'], ['groups', 'GroupNames'], ['type', 'Type']]
+      if (isGraalJs) {
+        choices.splice(3, 0, ['numeric state', 'NumericState'])
+        choices.splice(4, 0, ['quantity state', 'QuantityState'])
+        choices.splice(9, 0, ['raw state', 'RawState'])
+      }
       let dropdown = new Blockly.FieldDropdown(
-        [['name', 'Name'], ['label', 'Label'], ['state', 'State'], ['category', 'Category'], ['tags', 'Tags'], ['groups', 'GroupNames'], ['type', 'Type']],
+        choices,
         function (newMode) {
           thisBlock.updateType_(newMode)
         })
@@ -156,9 +162,26 @@ export default function (f7, isGraalJs) {
         .appendField(dropdown, 'attributeName')
         .appendField('of item')
       this.setInputsInline(false)
+
       this.setOutput(true, 'String')
       this.setColour(0)
       this.setTooltip('Retrieve a specific attribute from the item. Note that groups and tags return a list and should be used with the loops-block \'for each item ... in list\'. ')
+      this.setTooltip(function () {
+        let attributeName = thisBlock.getFieldValue('attributeName')
+        let TIP = {
+          'Name': 'name of the Item (string)',
+          'Label': 'label of the Item (string)',
+          'State': 'complete state of the Item (object)',
+          'Category': 'category of the Item (string)',
+          'Tags': 'tags of the Item (list of strings -> should be used with the loops-block \'for each item ... in list\')',
+          'GroupNames': 'groups of the Item (list of strings -> should be used with the loops-block \'for each item ... in list\')',
+          'Type': 'type of the Item (string)',
+          'NumericState': 'numeric state of the Item (number)',
+          'QuantityState': 'Unit of Measurement / quantity of Item (Quantity)',
+          'RawState': 'raw state of Item (java object)'
+        }
+        return TIP[attributeName]
+      })
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-particular-attributes-of-an-item')
     },
     /**
@@ -168,8 +191,14 @@ export default function (f7, isGraalJs) {
       let attributeName = this.getFieldValue('attributeName')
       if (newAttributeName === 'Tags' || newAttributeName === 'GroupNames') {
         this.outputConnection.setCheck('Array')
-      } else {
+      } else if (newAttributeName === 'Name' || newAttributeName === 'Label' || newAttributeName === 'Category' || newAttributeName === 'Type') {
         this.outputConnection.setCheck('String')
+      } else if (newAttributeName === 'NumericState') {
+        this.outputConnection.setCheck('Number')
+      } else if (newAttributeName === 'QuantityState') {
+        this.outputConnection.setCheck('oh_quantity')
+      } else { // State, RawState
+        this.outputConnection.setCheck(null)
       }
     },
     /**
