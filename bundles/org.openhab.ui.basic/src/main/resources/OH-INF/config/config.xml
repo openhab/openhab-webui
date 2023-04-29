@@ -10,10 +10,11 @@
 			<label>Theme</label>
 			<description>Defines the UI theme.</description>
 			<options>
-				<option value="default">Default</option>
+				<option value="bright">Bright</option>
 				<option value="dark">Dark</option>
+				<option value="system">Follow System</option>
 			</options>
-			<default>default</default>
+			<default>bright</default>
 		</parameter>
 		<parameter name="enableIcons" type="text" required="true">
 			<label>Enable Icons</label>

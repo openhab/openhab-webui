@@ -17,6 +17,8 @@
   "pages.text": "Navrhněte stránky pro zobrazení informací různými způsoby a interakci s Items. Můžete vytvořit několik druhů stránek: grafy, sitemaps, mapy, podlahové plány...<br><br>Klikněte na tlačítko níže pro vytvoření vaší první stránky.",
   "rules.title": "Zatím žádná pravidla",
   "rules.text": "Pravidla jsou základními stavebními kameny pro automatizaci vašeho domova - definují, které akce mají být provedeny, když dojde k určitým událostem.<br><br>Vytvořte své první pravidlo pomocí tlačítka níže; pro pokročilé scénáře můžete také použít soubory se skripty ve složce s konfiguračními soubory.",
+  "scenes.title": "Zatím nemáte žádné scény",
+  "scenes.text": "Scény jsou pravidla pro odesílání příkazů k obnovení řady Items do požadovaného stavu.<br />Můžete je spustit na vyžádání nebo z jiných pravidel.<br><br>Vytvořte svou první scénu tlačítkem níže.",
   "scripts.title": "Zatím žádné skripty",
   "scripts.text": "Skripty jsou speciální pravidla, bez spouštěčů a modulem pro jednoduchou akci spuštění kódu.<br />Můžete je spustit na vyžádání nebo je zavolat z jiných pravidel.<br><br>Vytvořte svůj první skript tlačítkem níže.",
   "schedule.title": "Nic v plánu",

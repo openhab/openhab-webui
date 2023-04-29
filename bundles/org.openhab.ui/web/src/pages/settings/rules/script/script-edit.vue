@@ -118,7 +118,7 @@ export default {
   components: {
     ScriptGeneralSettings,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
-    'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ './blockly-editor.vue')
+    'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue')
   },
   props: ['ruleId', 'moduleId', 'createMode'],
   data () {

@@ -9,5 +9,6 @@
   "CONFIGURATION_ERROR": "שגיאה: הגדרות",
   "BRIDGE_OFFLINE": "שגיאה: מגשר",
   "FIRMWARE_UPDATING": "קושחה מתעדכן...",
-  "GONE": "אבד"
+  "GONE": "אבד",
+  "NOT_YET_READY": "עדיין לא מוכן"
 }

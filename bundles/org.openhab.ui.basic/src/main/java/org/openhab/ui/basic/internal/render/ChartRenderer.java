@@ -101,7 +101,7 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             // add theme GET parameter
             String chartTheme = null;
             switch (config.getTheme()) {
-                case WebAppConfig.THEME_NAME_DEFAULT:
+                case WebAppConfig.THEME_NAME_BRIGHT:
                     chartTheme = "bright";
                     break;
                 case WebAppConfig.THEME_NAME_DARK:
