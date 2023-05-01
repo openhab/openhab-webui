@@ -1143,7 +1143,8 @@ export default {
             scaleSpeed: 1.2,
             pinch: true
           },
-        trashcan: false
+        trashcan: false,
+        showLabels: false
       })
       const workspaceSearch = new WorkspaceSearch(this.workspace)
       workspaceSearch.init()
@@ -1176,6 +1177,12 @@ export default {
       this.workspace.registerButtonCallback('ohBlocklyHelp', function (button) {
         window.open(button.info.helpurl, '_blank')
       })
+      Blockly.Workspace.prototype.refresh = function () {
+        let xml = Blockly.Xml.workspaceToDom(this)
+        this.clear()
+        Blockly.Xml.domToWorkspace(xml, this)
+        this.refreshToolboxSelection()
+      }
     },
     addLibraryToToolbox (definitions) {
       const library = this.$refs.libraryCategory
@@ -1190,6 +1197,12 @@ export default {
       definitions.forEach((definition) => {
         this.workspace.registerToolboxCategoryCallback('LIBRARY_' + definition.uid, defineLibraryToolboxCategory(definition, this.$f7))
       })
+    },
+    showHideLabels (showLabels) {
+      this.workspace.showLabels = showLabels
+      this.workspace.refresh()
+      this.workspace.loadItem('test')
+      debugger
     },
     getBlocks () {
       const xml = Blockly.Xml.workspaceToDom(this.workspace)
