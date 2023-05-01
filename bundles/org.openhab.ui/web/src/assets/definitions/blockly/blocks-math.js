@@ -79,4 +79,61 @@ export default function (f7, isGraalJs) {
     }
     return [`${first} ${operand} ${second}`, parentheses]
   }
+
+  Blockly.Blocks['math_round'] = {
+    init: function () {
+      let thisBlock = this
+      let dropDown = new Blockly.FieldDropdown([['round', 'ROUND'], ['round up', 'ROUNDUP'], ['round down', 'ROUNDDOWN'], ['round →', 'toFixed']],
+        function (operation) {
+          thisBlock.updateType_(operation)
+        })
+      this.appendValueInput('NUM')
+        .setCheck('Number')
+        .appendField(dropDown, 'op')
+      this.setColour('%{BKY_MATH_HUE}')
+      this.setInputsInline(false)
+      this.setTooltip('Round a number up or down')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-math.html#round')
+      this.setOutput(true, 'Number')
+    },
+    updateType_: function (type) {
+      if (type === 'toFixed') {
+        this.appendValueInput('decimals')
+          .setCheck('Number')
+          .appendField('by')
+        this.appendDummyInput('declabel')
+          .appendField('decimals')
+        this.setInputsInline(true)
+      } else if (this.getInput('decimals')) {
+        this.removeInput('decimals')
+        this.removeInput('declabel')
+        this.setInputsInline(false)
+      }
+    }
+  }
+
+  javascriptGenerator['math_round'] = function (block) {
+    const math_number = javascriptGenerator.valueToCode(block, 'NUM', javascriptGenerator.ORDER_FUNCTION_CALL)
+    const decimals = javascriptGenerator.valueToCode(block, 'decimals', javascriptGenerator.ORDER_NONE)
+    const operand = block.getFieldValue('op')
+    let code = ''
+    if (operand !== 'toFixed') {
+      let method = ''
+      switch (operand) {
+        case 'ROUND':
+          method = 'Math.round'
+          break
+        case 'ROUNDUP':
+          method = 'Math.ceil'
+          break
+        case 'ROUNDDOWN':
+          method = 'Math.floor'
+          break
+      }
+      code = `${method}(${math_number})`
+    } else {
+      code = `(${math_number}).toFixed(${decimals})`
+    }
+    return [code, 0]
+  }
 }
