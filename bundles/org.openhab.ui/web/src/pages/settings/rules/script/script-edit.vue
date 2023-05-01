@@ -26,6 +26,9 @@
       </span>
       <span class="display-flex flex-direction-row align-items-center">
         <f7-segmented v-if="!newScript && isBlockly" class="margin-right">
+          <f7-button outline small :active="showLabels" icon-f7="captions_bubble" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="toggleBlocklyItemLabelId" :tooltip="'Toggle to show either item labels or IDs'" />
+        </f7-segmented>
+        <f7-segmented v-if="!newScript && isBlockly" class="margin-right">
           <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" />
           <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" />
         </f7-segmented>
@@ -144,7 +147,8 @@ export default {
       eventSource: null,
       keyHandler: null,
       detailsOpened: false,
-      blocklyCodePreview: false
+      blocklyCodePreview: false,
+      showLabels: true
     }
   },
   computed: {
@@ -392,6 +396,11 @@ export default {
           })
         }
       )
+    },
+    toggleBlocklyItemLabelId () {
+      let editor = this.$refs.blocklyEditor
+      this.showLabels = !this.showLabels
+      editor.showHideLabels(this.showLabels)
     },
     showBlocklyCode () {
       try {

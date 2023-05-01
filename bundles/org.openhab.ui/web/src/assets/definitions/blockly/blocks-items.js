@@ -11,20 +11,49 @@ import { FieldThingPicker } from './fields/thing-field'
 export default function (f7, isGraalJs) {
   /* Helper block to allow selecting an item */
   Blockly.Blocks['oh_item'] = {
+    fieldPicker: null,
     init: function () {
+      this.fieldPicker = new FieldItemModelPicker('MyItem', null, { f7 })
       this.appendDummyInput()
         .appendField('item')
-        .appendField(new FieldItemModelPicker('MyItem', null, { f7 }), 'itemName')
+        .appendField(this.fieldPicker, 'itemName')
       this.setColour(160)
       this.setInputsInline(true)
-      this.setTooltip('Pick an item from the Model')
+
+      let thisFieldpicker = this.fieldPicker
+      this.setTooltip(function () {
+        let tooltip = 'Pick an item from the Model'
+        const itemData = thisFieldpicker.data
+        if (itemData[0] !== itemData[1]) {
+          tooltip = itemData[0]
+        }
+        return tooltip
+      })
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#item')
       this.setOutput(true, 'oh_item')
+    },
+    update_: function (name, label) {
+      this.fieldPicker.data = [name, label]
+    },
+    mutationToDom: function () {
+      let container = Blockly.utils.xml.createElement('mutation')
+
+      if (!this.fieldPicker.data) { // "migrate" old storage
+        this.fieldPicker.data = [this.fieldPicker.value_, this.fieldPicker.value_]
+      }
+      this.fieldPicker.value_ = (this.workspace.showLabels) ? this.fieldPicker.data[1] : this.fieldPicker.data[0]
+
+      container.setAttribute('itemName', this.fieldPicker.data[0])
+      container.setAttribute('itemLabel', this.fieldPicker.data[1])
+      return container
+    },
+    domToMutation: function (xmlElement) {
+      this.update_(xmlElement.getAttribute('itemName'), xmlElement.getAttribute('itemLabel'))
     }
   }
 
   javascriptGenerator['oh_item'] = function (block) {
-    const itemName = block.getFieldValue('itemName')
+    const itemName = block.fieldPicker.data[0]
     return [`'${itemName}'`, 0]
   }
 
