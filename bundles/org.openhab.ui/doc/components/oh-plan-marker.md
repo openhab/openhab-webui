@@ -62,7 +62,7 @@ A marker on a floor plan
 </PropBlock>
 <PropBlock type="BOOLEAN" name="iconUseState" label="Icon depends on state">
   <PropDescription>
-    Use the state of the item to get a dynamic icon (for openHAB icons only)
+    Use the state of the Item to get a dynamic icon (enabled by default for all Item types except <code>Call</code>, <code>Image</code> & <code>Location</code>) (for openHAB icons only)
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="iconSize" label="Icon Size">

@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:beforein="load" @page:afterout="stopEventSource">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar title="Items" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
@@ -52,7 +52,7 @@
       </f7-col>
       <f7-col v-show="ready">
         <f7-block-title class="searchbar-hide-on-search">
-          {{ items.length }} items
+          {{ items.length }} Items
         </f7-block-title>
         <f7-list
           v-show="items.length > 0"
@@ -78,7 +78,8 @@
               :subtitle="getItemTypeAndMetaLabel(item)"
               :style="`top: ${vlData.topPosition}px`"
               :after="(item.state) ? item.state : '\xa0'">
-              <oh-icon v-if="item.category" slot="media" :icon="item.category" height="32" width="32" />
+              <!-- Note: Using dynamic states is not possible since state tracking has a heavy performance impact -->
+              <oh-icon v-if="item.category" slot="media" :icon="item.category" :state="(item.state) ? item.state : null" height="32" width="32" />
               <span v-else slot="media" class="item-initial">{{ item.name[0] }}</span>
               <f7-icon v-if="!item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
               <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
@@ -90,6 +91,9 @@
     <f7-block v-if="ready && !items.length" class="service-config block-narrow">
       <empty-state-placeholder icon="square_on_circle" title="items.title" text="items.text" />
     </f7-block>
+    <f7-fab v-show="!showCheckboxes" position="center-bottom" text="Refresh" slot="fixed" color="blue" @click="load()">
+      <f7-icon ios="f7:arrow_clockwise" md="material:refresh" aurora="f7:arrow_clockwise" />
+    </f7-fab>
     <f7-fab v-show="!showCheckboxes" position="right-bottom" slot="fixed" color="blue">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
@@ -139,6 +143,12 @@ export default {
     }
   },
   methods: {
+    onPageAfterIn (event) {
+      this.load()
+    },
+    onPageBeforeOut (event) {
+      this.stopEventSource()
+    },
     load () {
       this.ready = false
       this.$oh.api.get('/rest/items?metadata=semantics').then(data => {
@@ -268,11 +278,6 @@ export default {
         console.error(err)
         this.$f7.dialog.alert('An error occurred while deleting: ' + err)
       })
-    }
-  },
-  asyncComputed: {
-    iconUrl () {
-      return icon => this.$oh.media.getIcon(icon)
     }
   },
   computed: {
