@@ -166,7 +166,9 @@ export default function itemDefaultListComponent (item, footer) {
   if (!component.config.item) component.config.item = item.name
   if (!component.config.title) component.config.title = item.label || item.name
   if (item.category && !component.config.icon) component.config.icon = item.category
-  if (item.category && component.config.iconUseState === undefined && !['Call', 'Image', 'Location'].includes(item.type)) component.config.iconUseState = true
+  // Only enable dynamic icon by default for Item types with good support for dynamic icons and "predictable" states
+  const discreteItemTypes = ['Contact', 'Dimmer', 'Rollershutter', 'Switch']
+  if (item.category && component.config.iconUseState === undefined && (discreteItemTypes.includes(item.type) || (item.type === 'Groups' && discreteItemTypes.included(item.groupType)))) component.config.iconUseState = true
   if (item.label && footer && footer.contextLabelSource) {
     let text = itemContextLabel(item, footer)
     if (text) component.config.footer = text
