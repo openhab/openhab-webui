@@ -33,6 +33,8 @@
     gt:               '>',
     equals:           '=',
     comma:            ',',
+    colon:            ':',
+    hyphen:           '-',
     NL:               { match: /\n/, lineBreaks: true },
     boolean:          /(?:true)|(?:false)/,
     identifier:       /(?:[A-Za-z_][A-Za-z0-9_]*)|(?:[0-9]+[A-Za-z_][A-Za-z0-9_]*)/,
@@ -99,12 +101,19 @@ WidgetAttr -> %widgetswitchattr                                                 
   | %widgetfrcitmattr WidgetBooleanAttrValue                                      {% (d) => ['forceAsItem', d[1]] %}
   | %widgetboolattr WidgetBooleanAttrValue                                        {% (d) => [d[0].value, d[1]] %}
   | %widgetfreqattr WidgetAttrValue                                               {% (d) => ['frequency', d[1]] %}
+  | %icon WidgetIconAttrValue                                                     {% (d) => [d[0].value, d[1].join("")] %}
   | WidgetAttrName WidgetAttrValue                                                {% (d) => [d[0][0].value, d[1]] %}
   | WidgetVisibilityAttrName WidgetVisibilityAttrValue                            {% (d) => [d[0][0].value, d[1]] %}
   | WidgetColorAttrName WidgetColorAttrValue                                      {% (d) => [d[0][0].value, d[1]] %}
-WidgetAttrName -> %item | %label | %icon | %widgetattr
+WidgetAttrName -> %item | %label | %widgetattr
 WidgetBooleanAttrValue -> %boolean                                                {% (d) => (d[0].value === 'true') %}
   | %string                                                                       {% (d) => (d[0].value === 'true') %}
+WidgetIconAttrValue -> %string
+  | WidgetIconName
+  | %identifier %colon WidgetIconName
+  | %identifier %colon %identifier %colon WidgetIconName
+WidgetIconName -> %identifier
+  | %identifier %hyphen WidgetIconName                                            {% (d) => d[0].value + "-" + d[2] %}
 WidgetAttrValue -> %number                                                        {% (d) => { return parseFloat(d[0].value) } %}
   | %identifier                                                                   {% (d) => d[0].value %}
   | %string                                                                       {% (d) => d[0].value %}
