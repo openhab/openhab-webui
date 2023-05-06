@@ -53,12 +53,15 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
         .appendField('after')
       this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([['seconds', 'plusSeconds'], ['minutes', 'plusMinutes'], ['hours', 'plusHours'], ['days', 'plusDays'], ['weeks', 'plusWeeks'], ['months', 'plusMonths']]), 'delayUnits')
-      let tn = this.appendValueInput('timerName')
+      const tn = this.appendValueInput('timerName')
         .setCheck(null)
-      if (!isGraalJs) {
-        tn.appendField('do with timer')
+      if (isGraalJs) {
+        tn
+          .appendField('do with')
+          .appendField(new Blockly.FieldDropdown([['private', 'private'], ['shared', 'shared']]), 'cache')
+          .appendField('timer')
       } else {
-        tn.appendField(new Blockly.FieldDropdown([['private', 'private'], ['shared', 'shared']]), 'cache')
+        tn.appendField('do with timer')
       }
       this.setColour(0)
       this.appendStatementInput('timerCode')
@@ -115,12 +118,15 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
         .appendField('after')
       this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([['seconds', 'plusSeconds'], ['minutes', 'plusMinutes'], ['hours', 'plusHours'], ['days', 'plusDays'], ['weeks', 'plusWeeks'], ['months', 'plusMonths']]), 'delayUnits')
-      let tn = this.appendValueInput('timerName')
+      const tn = this.appendValueInput('timerName')
         .setCheck(null)
-      if (!isGraalJs) {
-        tn.appendField('do with timer')
+      if (isGraalJs) {
+        tn
+          .appendField('do with')
+          .appendField(new Blockly.FieldDropdown([['private', 'private'], ['shared', 'shared']]), 'cache')
+          .appendField('timer')
       } else {
-        tn.appendField(new Blockly.FieldDropdown([['private', 'private'], ['shared', 'shared']]), 'cache')
+        tn.appendField('do with timer')
       }
       this.appendStatementInput('timerCode')
       this.appendDummyInput()
