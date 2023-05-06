@@ -85,11 +85,11 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
     const timerCode = javascriptGenerator.statementToCode(block, 'timerCode')
 
     if (isGraalJs) {
-      let cachetype = (this.getField('cache')) ? block.getFieldValue('cache') : 'private'
-      let code = `if (cache.${cachetype}.exists(${timerName}) === false || cache.${cachetype}.get(${timerName}).hasTerminated()) {\n`
-      code += `  cache.${cachetype}.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function () {\n`
+      const cacheType = getCacheType(this)
+      let code = `if (cache.${cacheType}.exists(${timerName}) === false || cache.${cacheType}.get(${timerName}).hasTerminated()) {\n`
+      code += `  cache.${cacheType}.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function () {\n`
       code += timerCode.replace(/^/gm, '  ')
-      code += `  cache.${cachetype}.remove(${timerName});\n`
+      code += `  cache.${cacheType}.remove(${timerName});\n`
       code += '  }));\n'
       code += '};\n'
       return code
@@ -153,20 +153,20 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
     const retrigger = block.getFieldValue('retrigger')
 
     if (isGraalJs) {
-      let cachetype = (this.getField('cache')) ? block.getFieldValue('cache') : 'private'
-      let code = `if (cache.${cachetype}.exists(${timerName}) === false || cache.${cachetype}.get(${timerName}).hasTerminated()) {\n`
-      code += `  cache.${cachetype}.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function () {\n`
+      const cacheType = getCacheType(this)
+      let code = `if (cache.${cacheType}.exists(${timerName}) === false || cache.${cacheType}.get(${timerName}).hasTerminated()) {\n`
+      code += `  cache.${cacheType}.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function () {\n`
       code += timerCode.replace(/^/gm, '  ')
-      code += `  cache.${cachetype}.remove(${timerName});\n`
+      code += `  cache.${cacheType}.remove(${timerName});\n`
       code += '  }));\n'
       code += '} else {\n'
       switch (retrigger) {
         case 'reschedule':
-          code += `  cache.${cachetype}.get(${timerName}).reschedule(time.ZonedDateTime.now().${delayUnits}(${delay}));\n`
+          code += `  cache.${cacheType}.get(${timerName}).reschedule(time.ZonedDateTime.now().${delayUnits}(${delay}));\n`
           break
 
         case 'cancel':
-          code += `  cache.${cachetype}.remove(${timerName}).cancel();\n`
+          code += `  cache.${cacheType}.remove(${timerName}).cancel();\n`
           break
 
         case 'nothing':
@@ -237,8 +237,8 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   javascriptGenerator['oh_timer_isActive'] = function (block) {
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      let cachetype = (this.getField('cache')) ? block.getFieldValue('cache') : 'private'
-      return [`cache.${cachetype}.exists(${timerName}) && cache.${cachetype}.get(${timerName}).isActive()`, javascriptGenerator.ORDER_NONE]
+      const cacheType = getCacheType(this)
+      return [`cache.${cacheType}.exists(${timerName}) && cache.${cacheType}.get(${timerName}).isActive()`, javascriptGenerator.ORDER_NONE]
     } else {
       addGlobalTimer()
 
@@ -282,8 +282,8 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       // Keep the isRunning block although it doesn't make sense because in GraalJS access to the context is synchronized and therefore it is not possible to run some code the same time a timer is running
-      let cachetype = (this.getField('cache')) ? block.getFieldValue('cache') : 'private'
-      return [`cache.${cachetype}.exists(${timerName}) && cache.${cachetype}.get(${timerName}).isRunning()`, javascriptGenerator.ORDER_NONE]
+      const cacheType = getCacheType(this)
+      return [`cache.${cacheType}.exists(${timerName}) && cache.${cacheType}.get(${timerName}).isRunning()`, javascriptGenerator.ORDER_NONE]
     } else {
       addGlobalTimer()
 
@@ -327,8 +327,8 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   javascriptGenerator['oh_timer_hasTerminated'] = function (block) {
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      let cachetype = (this.getField('cache')) ? block.getFieldValue('cache') : 'private'
-      return [`cache.${cachetype}.exists(${timerName}) && cache.${cachetype}.get(${timerName}).hasTerminated()`, javascriptGenerator.ORDER_NONE]
+      const cacheType = getCacheType(this)
+      return [`cache.${cacheType}.exists(${timerName}) && cache.${cacheType}.get(${timerName}).hasTerminated()`, javascriptGenerator.ORDER_NONE]
     } else {
       addGlobalTimer()
 
@@ -367,8 +367,8 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   javascriptGenerator['oh_timer_cancel'] = function (block) {
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      let cachetype = (this.getField('cache')) ? block.getFieldValue('cache') : 'private'
-      return `if (cache.${cachetype}.exists(${timerName})) { cache.${cachetype}.remove(${timerName}).cancel(); };\n`
+      const cacheType = getCacheType(this)
+      return `if (cache.${cacheType}.exists(${timerName})) { cache.${cacheType}.remove(${timerName}).cancel(); };\n`
     } else {
       addGlobalTimer()
       let code = `if (typeof this.timers[${timerName}] !== 'undefined') {\n`
@@ -417,8 +417,8 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
     const delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      let cachetype = (this.getField('cache')) ? block.getFieldValue('cache') : 'private'
-      return `if (cache.${cachetype}.exists(${timerName})) { cache.${cachetype}.get(${timerName}).reschedule(time.ZonedDateTime.now().${delayUnits}(${delay})); };\n`
+      const cacheType = getCacheType(this)
+      return `if (cache.${cacheType}.exists(${timerName})) { cache.${cacheType}.get(${timerName}).reschedule(time.ZonedDateTime.now().${delayUnits}(${delay})); };\n`
     } else {
       const zdt = addZonedDateTime()
       addGlobalTimer()
@@ -443,5 +443,9 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   function addGlobalTimer () {
     let globaltimervars = 'if (typeof this.timers === \'undefined\') {\n  this.timers = [];\n}'
     javascriptGenerator.provideFunction_('globaltimervars', [globaltimervars])
+  }
+
+  function getCacheType (block) {
+    return (block.getField('cache')) ? block.getFieldValue('cache') : 'private'
   }
 }
