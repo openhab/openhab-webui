@@ -82,10 +82,10 @@ export default function (f7, isGraalJs) {
 
   Blockly.Blocks['math_round'] = {
     init: function () {
-      let thisBlock = this
-      let dropDown = new Blockly.FieldDropdown([['round', 'ROUND'], ['round up', 'ROUNDUP'], ['round down', 'ROUNDDOWN'], ['round →', 'toFixed']],
+      const block = this
+      const dropDown = new Blockly.FieldDropdown([['round', 'ROUND'], ['round up', 'ROUNDUP'], ['round down', 'ROUNDDOWN'], ['round →', 'toFixed']],
         function (operation) {
-          thisBlock.updateType_(operation)
+          block.updateType(operation)
         })
       this.appendValueInput('NUM')
         .setCheck('Number')
@@ -96,16 +96,18 @@ export default function (f7, isGraalJs) {
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-math.html#round')
       this.setOutput(true, 'Number')
     },
-    updateType_: function (type) {
+    updateType: function (type) {
       if (type === 'toFixed') {
-        this.appendValueInput('decimals')
+        if (this.getInput('DECIMALS')) return
+        this.appendValueInput('DECIMALS')
           .setCheck('Number')
           .appendField('by')
+          .setShadowDom(Blockly.Xml.textToDom('<shadow type="math_number"><field name="NUM">2</field></shadow>'))
         this.appendDummyInput('declabel')
           .appendField('decimals')
         this.setInputsInline(true)
-      } else if (this.getInput('decimals')) {
-        this.removeInput('decimals')
+      } else if (this.getInput('DECIMALS')) {
+        this.removeInput('DECIMALS')
         this.removeInput('declabel')
         this.setInputsInline(false)
       }
@@ -114,7 +116,7 @@ export default function (f7, isGraalJs) {
 
   javascriptGenerator['math_round'] = function (block) {
     const math_number = javascriptGenerator.valueToCode(block, 'NUM', javascriptGenerator.ORDER_FUNCTION_CALL)
-    const decimals = javascriptGenerator.valueToCode(block, 'decimals', javascriptGenerator.ORDER_NONE)
+    const decimals = javascriptGenerator.valueToCode(block, 'DECIMALS', javascriptGenerator.ORDER_NONE)
     const operand = block.getFieldValue('op')
     let code = ''
     if (operand !== 'toFixed') {
