@@ -83,7 +83,7 @@ export default function (f7, isGraalJs) {
   Blockly.Blocks['math_round'] = {
     init: function () {
       const block = this
-      const dropDown = new Blockly.FieldDropdown([['round', 'ROUND'], ['round up', 'ROUNDUP'], ['round down', 'ROUNDDOWN'], ['round →', 'toFixed']],
+      const dropDown = new Blockly.FieldDropdown([['round', 'ROUND'], ['round up', 'ROUNDUP'], ['round down', 'ROUNDDOWN'], ['round (by decimals)', 'toFixed']],
         function (operation) {
           block.updateType(operation)
         })
