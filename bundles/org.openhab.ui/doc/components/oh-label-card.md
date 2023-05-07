@@ -421,7 +421,7 @@ Display the state of an item in a card
 </PropBlock>
 <PropBlock type="BOOLEAN" name="iconUseState" label="Icon depends on state">
   <PropDescription>
-    Use the state of the Item to get a dynamic icon (enabled by default for all Item types except <code>Call</code>, <code>Image</code> & <code>Location</code>) (for openHAB icons only)
+    Use the state of the Item to get a dynamic icon (enabled by default for <code>Contact</code>, <code>Dimmer</code>, <code>Rollershutter</code> & <code>Switch</code> Item types) (for openHAB icons only)
   </PropDescription>
 </PropBlock>
 <PropBlock type="BOOLEAN" name="vertical" label="Vertical arrangement">
