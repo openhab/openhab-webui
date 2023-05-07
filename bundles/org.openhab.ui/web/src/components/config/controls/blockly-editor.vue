@@ -604,6 +604,18 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_quantity_ext">
+            <value name="value">
+              <shadow type="text">
+                <field name="TEXT">10</field>
+              </shadow>
+            </value>
+            <value name="unit">
+              <shadow type="text">
+                <field name="TEXT">W</field>
+              </shadow>
+            </value>
+          </block>
           <block type="oh_quantity_arithmetic">
             <value name="first">
               <shadow type="oh_quantity" />
