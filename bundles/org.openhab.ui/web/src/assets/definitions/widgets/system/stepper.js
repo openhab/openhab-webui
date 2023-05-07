@@ -7,6 +7,7 @@ export default () => [
   pd('step', 'Step', 'Minimum interval between values'),
   pd('offset', 'Offset', 'Offset to be applied to the Item\'s state (e.g. Item state = 2; offset = 20; stepper behaves as Item state would be 22)'),
   pb('buttonsOnly', 'Buttons Only', 'Display the buttons without the value in the middle'),
+  pb('enableInput', 'Enable Input Field', 'Enables the input field between the buttons. Note that this might not work when min/max is set.'),
   pb('small', 'Small', 'Smaller size'),
   pb('large', 'Large', 'Larger size'),
   pb('fill', 'Fill', 'Fill the buttons with the primary color'),

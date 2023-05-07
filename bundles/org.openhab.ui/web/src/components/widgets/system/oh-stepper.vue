@@ -1,6 +1,6 @@
 <template>
   <f7-stepper ref="stepper" v-bind="config" :value="value" @stepper:change="onChange" @click.native.stop
-              :input="false" :manual-input-mode="false" :format-value="formatValue" />
+              :input="config.enableInput === true" :manual-input-mode="false" :format-value="formatValue" />
 </template>
 
 <style lang="stylus">

@@ -58,6 +58,11 @@ Stepper control, allows to input a number or decrement/increment it using button
     Display the buttons without the value in the middle
   </PropDescription>
 </PropBlock>
+<PropBlock type="BOOLEAN" name="enableInput" label="Enable Input Field">
+  <PropDescription>
+    Enables the input field between the buttons. Note that this might not work when min/max is set.
+  </PropDescription>
+</PropBlock>
 <PropBlock type="BOOLEAN" name="small" label="Small">
   <PropDescription>
     Smaller size
