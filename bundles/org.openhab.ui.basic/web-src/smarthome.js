@@ -1549,12 +1549,15 @@
 		_t.input = _t.parentNode.querySelector("input");
 		_t.itemType = _t.parentNode.getAttribute(o.itemTypeAttribute);
 		_t.inputHint = _t.parentNode.getAttribute(o.inputHintAttribute);
+		_t.itemState = _t.parentNode.getAttribute(o.itemStateAttribute);
 		_t.verify = undefined;
 
 		var
 			lastValue = _t.input.value,
 			lastUndef = _t.input.nextElementSibling.innerHTML.trim(),
+			lastItemState = _t.itemState,
 			numberPattern = /^(\+|-)?[0-9\.,]+/,
+			datePattern = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/,
 			timePattern = /^[0-9]{2}:[0-9]{2}/,
 			dotSeparatorPattern = /^-?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
 			commaSeparatorPattern = /^-?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
@@ -1604,8 +1607,14 @@
 				}
 			} else if (_t.itemType === "datetime") {
 				changeValue = changeValue.trim();
-				if (changeValue.match(timePattern)) {
-					changeValue = (new Date(0)).toISOString().split("T")[0] + "T" + changeValue;
+				if (changeValue.match(datePattern) && (lastItemState !== "NULL") && (lastItemState !== "UNDEF")) {
+					var lastStateArray = lastItemState.split("T");
+					if (lastStateArray.length > 1) {
+						changeValue = changeValue + "T" + lastStateArray[1];
+					}
+				} else if (changeValue.match(timePattern)) {
+					var date = ((lastItemState !== "NULL") && (lastItemState !== "UNDEF")) ? lastItemState.split("T")[0] : (new Date(0)).toISOString();
+					changeValue = date.split("T")[0] + "T" + changeValue;
 				} else if (_t.input.type === "text") {
 					var valueArray = changeValue.split(" ");
 					if (valueArray.length > 0) {
@@ -1615,17 +1624,22 @@
 						}
 					}
 				}
-				changeValue = Date.parse(changeValue);
-				if (isNaN(changeValue)) {
+				if (isNaN(Date.parse(changeValue))) {
 					changed = false;
 				}
 			}
 
 			if (!changed) {
-				if (_t.inputHint === "time" && lastValue.match(timePattern)) {
-					lastValue = (new Date(0)).toISOString().split("T")[0] + "T" + lastValue;
+				if ((_t.inputHint === "date") && lastValue.match(datePattern) && (lastItemState !== "NULL") && (lastItemState !== "UNDEF")) {
+					lastStateArray = lastItemState.split("T");
+					if (lastStateArray.length > 1) {
+						lastValue = lastValue + "T" + lastStateArray[1];
+					}
+				} else if (_t.inputHint === "time" && lastValue.match(timePattern)) {
+					date = ((lastItemState !== "NULL") && (lastItemState !== "UNDEF")) ? lastItemState.split("T")[0] : (new Date(0)).toISOString();
+					lastValue = date.split("T")[0] + "T" + lastValue;
 				}
-				_t.setValuePrivate(lastValue);
+				_t.setValuePrivate(lastValue, lastItemState);
 			} else {
 				_t.parentNode.dispatchEvent(createEvent("control-change", {
 					item: _t.item,
@@ -1671,13 +1685,9 @@
 					}
 				}
 			} else if (_t.itemType === "datetime") {
-				if (_t.inputHint) {
-					newValue = (itemState !== undefined) ? itemState : value;
-					undefValue = "";
-				} else {
-					undefValue = "YYYY-MM-DD hh:mm:ss";
-				}
+				newValue = ((lastItemState !== "NULL") && (lastItemState !== "UNDEF")) ? itemState : value;
 				newValue = newValue.trim().split(".")[0];
+				undefValue = "";
 				if (_t.inputHint === "date") {
 					newValue = newValue.split("T")[0];
 				} else if (_t.inputHint === "time") {
@@ -1685,6 +1695,7 @@
 				}
 				if (_t.input.type === "text") {
 					newValue = newValue.replace("T", " ");
+					undefValue = "YYYY-MM-DD hh:mm:ss";
 				}
 			}
 			_t.input.value = newValue;
@@ -1693,6 +1704,7 @@
 			_t.input.parentNode.MaterialTextfield.change();
 			_t.input.parentNode.MaterialTextfield.checkValidity();
 			lastValue = value;
+			lastItemState = itemState;
 		};
 
 		_t.setValueColor = function(color) {
@@ -2636,6 +2648,7 @@
 	itemAttribute: "data-item",
 	itemTypeAttribute: "data-item-type",
 	inputHintAttribute: "data-input-hint",
+	itemStateAttribute: "data-item-state",
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",
