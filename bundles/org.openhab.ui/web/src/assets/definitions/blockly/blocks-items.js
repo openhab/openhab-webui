@@ -212,7 +212,7 @@ export default function (f7, isGraalJs) {
     * @this {Blockly.Block}
     */
     domToMutation: function (xmlElement) {
-      this.updateType_(xmlElement.getAttribute('attributeName'))
+      this._updateType(xmlElement.getAttribute('attributeName'))
     }
   }
 
