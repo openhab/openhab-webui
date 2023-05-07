@@ -31,14 +31,22 @@ export default function (f7, isGraalJs) {
     const unit = javascriptGenerator.valueToCode(block, 'unit', javascriptGenerator.ORDER_NONE)
     const inputType = blockGetCheckedInputType(block, 'value')
 
-    let quantity = `Quantity(${value}+${unit})`
-    if (inputType !== 'String') {
-      value = (inputType === 'oh_itemtype') ? value : (inputType === 'oh_item') ? `items.getItem(${value})` : value
-      quantity = `(${value}.quantityState !== null) ? ${value}.quantityState.toUnit(${unit}) : (${value}.numericState !== null) ? Quantity(${value}.numericState + ' ' + ${unit}) : '0'`
+    let code
+    switch (inputType) {
+      case 'String':
+        code = `Quantity(${value} + ${unit})`
+        break
+      case 'oh_itemtype':
+        code = `(${value}.quantityState !== null) ? ${value}.quantityState.toUnit(${unit}) : Quantity(${value}.numericState + ${unit})`
+        break
+      case 'oh_item':
+        value = `items.getItem(${value})`
+        code = `(${value}.quantityState !== null) ? ${value}.quantityState.toUnit(${unit}) : Quantity(${value}.numericState + ${unit})`
+        break
     }
 
     if (isGraalJs) {
-      return [`${quantity}`, 0]
+      return [code, 0]
     } else {
       throw new Error(unavailMsg)
     }
@@ -59,12 +67,8 @@ export default function (f7, isGraalJs) {
   }
 
   javascriptGenerator['oh_quantity'] = function (block) {
-    let quantity = javascriptGenerator.valueToCode(block, 'quantity', javascriptGenerator.ORDER_NONE)
-    const inputType = blockGetCheckedInputType(block, 'quantity')
-    quantity = (inputType === 'oh_itemtype') ? quantity + '.quantityState' : (inputType === 'oh_item') ? `items.getItem(${quantity}).quantityState` : quantity
-
     if (isGraalJs) {
-      return [`Quantity(${quantity})`, 0]
+      return [generateQuantityCode(block, 'quantity'), 0]
     } else {
       throw new Error(unavailMsg)
     }
@@ -93,17 +97,11 @@ export default function (f7, isGraalJs) {
 
   javascriptGenerator['oh_quantity_arithmetic'] = function (block) {
     if (isGraalJs) {
-      let first = javascriptGenerator.valueToCode(block, 'first', javascriptGenerator.ORDER_NONE)
-      let second = javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_NONE)
       const operand = block.getFieldValue('operand')
 
-      const inputTypeFirst = blockGetCheckedInputType(block, 'first')
-      const inputTypeSecond = blockGetCheckedInputType(block, 'second')
+      const first = generateQuantityCode(block, 'first')
+      const second = generateQuantityCode(block, 'second')
 
-      first = (inputTypeFirst === 'oh_itemtype') ? first + '.quantityState' : (inputTypeFirst === 'oh_item') ? `items.getItem(${first}).quantityState` : first
-      second = (inputTypeSecond === 'oh_itemtype') ? second + '.quantityState' : (inputTypeSecond === 'oh_item') ? `items.getItem(${second}).quantityState` : second
-
-      // debugger
       return [`${first}.${operand}(${second})`, javascriptGenerator.ORDER_NONE]
     } else {
       throw new Error(unavailMsg)
@@ -136,18 +134,12 @@ export default function (f7, isGraalJs) {
   }
 
   javascriptGenerator['oh_quantity_compare'] = function (block) {
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      let first = javascriptGenerator.valueToCode(block, 'first', javascriptGenerator.ORDER_NONE)
-      let second = javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_NONE)
-
-      const inputTypeFirst = blockGetCheckedInputType(block, 'first')
-      const inputTypeSecond = blockGetCheckedInputType(block, 'second')
-
-      first = (inputTypeFirst === 'oh_itemtype') ? first + '.quantityState' : (inputTypeFirst === 'oh_item') ? `items.getItem(${first}).quantityState` : first
-      second = (inputTypeSecond === 'oh_itemtype') ? second + '.quantityState' : (inputTypeSecond === 'oh_item') ? `items.getItem(${second}).quantityState` : second
-
       const operand = block.getFieldValue('operand')
+
+      const first = generateQuantityCode(block, 'first')
+      const second = generateQuantityCode(block, 'second')
+
       return [`${first}.${operand}(${second})`, javascriptGenerator.ORDER_NONE]
     } else {
       throw new Error(unavailMsg)
@@ -178,4 +170,34 @@ export default function (f7, isGraalJs) {
       throw new Error(unavailMsg)
     }
   }
+}
+
+/**
+ * Generates the Quantity code for a given input of a Block.
+ * Supported input types: `oh_quantity`, `String`, `oh_itemtype`, `oh_item`
+ *
+ * @param {Blockly.Block} block
+ * @param {string} inputName name of the input
+ * @returns {string} generated Quantity code
+ */
+function generateQuantityCode (block, inputName) {
+  const input = javascriptGenerator.valueToCode(block, inputName, javascriptGenerator.ORDER_NONE)
+  const inputType = blockGetCheckedInputType(block, inputName)
+
+  let code = ''
+  switch (inputType) {
+    case 'oh_quantity':
+      code = input
+      break
+    case 'String':
+      code = `Quantity(${input})`
+      break
+    case 'oh_itemtype':
+      code = `${input}.quantityState`
+      break
+    case 'oh_item':
+      code = `items.getItem(${input}).quantityState`
+      break
+  }
+  return code
 }
