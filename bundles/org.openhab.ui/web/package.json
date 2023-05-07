@@ -64,6 +64,7 @@
     "@blockly/field-slider": "^4.0.3",
     "@blockly/plugin-cross-tab-copy-paste": "^2.0.4",
     "@blockly/plugin-workspace-search": "^6.0.7",
+    "@blockly/shadow-block-converter": "^2.0.13",
     "@blockly/theme-dark": "^4.0.1",
     "@blockly/zoom-to-fit": "^3.0.3",
     "@jsep-plugin/arrow": "^1.0.5",
