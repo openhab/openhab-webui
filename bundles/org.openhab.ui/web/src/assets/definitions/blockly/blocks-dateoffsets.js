@@ -608,16 +608,33 @@ export default function (f7, isGraalJs) {
   */
   Blockly.Blocks['oh_zdt_toText'] = {
     init: function () {
+      const block = this
       this.appendValueInput('date')
         .appendField('text of')
         .setCheck('ZonedDateTime')
+
+      const dropDown = new Blockly.FieldDropdown(
+        [['without time', 'without'], ['with time', 'with'], ['as OH-Time', 'asOHTime'], ['with pattern', 'withPattern']],
+        function (newMode) {
+          block._updateType(newMode)
+        })
       this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([['without time', 'without'], ['with time', 'with'], ['as OH-Time', 'asOHTime']]), 'withtime')
+        .appendField(dropDown, 'withtime')
 
       this.setOutput(true, 'String')
       this.setColour(160)
       this.setTooltip('converts an ZonedDateTime into a date string')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-string-representation-of-date')
+    },
+    _updateType: function (type) {
+      if (type === 'withPattern') {
+        if (this.getInput('pattern')) return
+        this.appendValueInput('pattern')
+          .setCheck('String')
+          .setShadowDom(Blockly.Xml.textToDom('<shadow type="text"><field name="TEXT">yyyy-MM-dd</field></shadow>'))
+      } else if (this.getInput('pattern')) {
+        this.removeInput('pattern')
+      }
     }
   }
 
@@ -635,6 +652,9 @@ export default function (f7, isGraalJs) {
       code = `${date}.format(${dtf}.ofPattern('yyyy-MM-dd HH:mm:ss'))`
     } else if (withtime === 'without') {
       code = `${date}.format(${dtf}.ofPattern('yyyy-MM-dd'))`
+    } else if (withtime === 'withPattern') {
+      const pattern = javascriptGenerator.valueToCode(block, 'pattern', javascriptGenerator.ORDER_ATOMIC)
+      code = `${date}.format(${dtf}.ofPattern(${pattern}))`
     } else {
       code = `${date}.format(${dtf}.ofPattern('yyyy-MM-dd\\'T\\'HH:mm:ss.SSSZ'))`
     }
