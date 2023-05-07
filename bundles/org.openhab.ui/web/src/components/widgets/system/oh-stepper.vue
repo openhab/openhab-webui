@@ -1,7 +1,12 @@
 <template>
   <f7-stepper ref="stepper" v-bind="config" :value="value" @stepper:change="onChange" @click.native.stop
-              :manual-input-mode="false" :format-value="formatValue" />
+              :input="config.enableInput === true" :manual-input-mode="false" :format-value="formatValue" />
 </template>
+
+<style lang="stylus">
+.stepper-value
+  margin-top: 0px
+</style>
 
 <script>
 import mixin from '../widget-mixin'
@@ -16,13 +21,14 @@ export default {
   },
   computed: {
     value () {
+      const applyOffset = (value) => (typeof this.config.offset === 'number') ? value + this.config.offset : value
       if (this.config.variable) {
         if (this.config.variableKey) {
-          return this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey)
+          return applyOffset(this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey))
         }
-        return this.context.vars[this.config.variable]
+        return applyOffset(this.context.vars[this.config.variable])
       }
-      let value = this.toStepFixed(parseFloat(this.context.store[this.config.item].state))
+      let value = applyOffset(this.toStepFixed(parseFloat(this.context.store[this.config.item].state)))
       if (this.config.min !== undefined) value = Math.max(value, this.config.min)
       if (this.config.max !== undefined) value = Math.min(value, this.config.max)
       return value
@@ -45,11 +51,12 @@ export default {
       return parseFloat(Number(value).toFixed(nbDecimals))
     },
     onChange (value) {
-      let newValue = this.toStepFixed(value)
+      const applyOffset = (value) => (typeof this.config.offset === 'number') ? value - this.config.offset : value
+      let newValue = applyOffset(this.toStepFixed(value))
       if (newValue === this.value) return
       if (this.config.variable) {
         if (this.config.variableKey) {
-          newValue = this.setVariableKeyValues(this.context.vars[this.config.variable], this.config.variableKey, value)
+          newValue = applyOffset(this.setVariableKeyValues(this.context.vars[this.config.variable], this.config.variableKey, value))
         }
         this.$set(this.context.vars, this.config.variable, newValue)
       } else if (this.config.item) {
