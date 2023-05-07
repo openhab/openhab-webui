@@ -48,13 +48,13 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 public class InputRenderer extends AbstractWidgetRenderer {
 
-    private final Logger logger = LoggerFactory.getLogger(InputRenderer.class);
-
-    static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\+|-)?[0-9\\.,]+");
-    static final Pattern DOT_SEPARATOR_PATTERN = Pattern
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\+|-)?[0-9\\.,]+");
+    private static final Pattern DOT_SEPARATOR_PATTERN = Pattern
             .compile("^-?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\\.[0-9]+)?$");
-    static final Pattern COMMA_SEPARATOR_PATTERN = Pattern
+    private static final Pattern COMMA_SEPARATOR_PATTERN = Pattern
             .compile("^-?(([0-9]{1,3}(\\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$");
+
+    private final Logger logger = LoggerFactory.getLogger(InputRenderer.class);
 
     @Activate
     public InputRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,
@@ -94,6 +94,9 @@ public class InputRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%data_type%", dataType);
 
         String inputHint = input.getInputHint();
+        if ("datetime".equals(dataType) && ((inputHint == null) || "".equals(inputHint) || "text".equals(inputHint))) {
+            inputHint = "datetime";
+        }
         snippet = snippet.replace("%input_hint%", inputHint == null ? "" : inputHint);
 
         String inputType = "text";
@@ -117,13 +120,8 @@ public class InputRenderer extends AbstractWidgetRenderer {
         String displayState = getValue(w);
         State state = itemUIRegistry.getState(w);
 
-        String undefState = "-";
-        if ("datetime".equals(dataType)) {
-            undefState = "";
-            if ((inputHint == null || inputHint.isEmpty())) {
-                undefState = "YYYY-MM-DD hh:mm:ss";
-            }
-        } else if (state == null || state instanceof UnDefType) {
+        String undefState = "";
+        if (state == null || state instanceof UnDefType) {
             undefState = displayState;
             if ("number".equals(inputHint)) {
                 String[] stateArray = displayState.trim().split(" ");
@@ -134,19 +132,21 @@ public class InputRenderer extends AbstractWidgetRenderer {
         }
         snippet = snippet.replace("%undef_state%", undefState);
 
-        String dataState = displayState;
-        if (state == null || state instanceof UnDefType) {
-            dataState = "";
+        String dataState = "";
+        String itemState = "";
+        if (state == null) {
+            itemState = "NULL";
+        } else if (state instanceof UnDefType) {
+            itemState = "UNDEF";
         } else {
-            dataState = displayState.isEmpty() ? state.toString() : displayState;
+            itemState = state.toString();
+            dataState = displayState.isEmpty() ? itemState : displayState;
             if ("number".equals(inputHint)) {
-                String[] stateArray = displayState.trim().split(" ");
+                String[] stateArray = dataState.trim().split(" ");
                 if (stateArray.length > 0) {
                     dataState = parseNumber(stateArray[0]);
                 }
             } else if (state instanceof DateTimeType) {
-                dataState = displayState.isEmpty() ? ((DateTimeType) state).format("%1$tY-%1$tm-%1$td %1$tT")
-                        : displayState;
                 if ("date".equals(inputHint)) {
                     dataState = ((DateTimeType) state).format("%1$tY-%1$tm-%1$td");
                 } else if ("time".equals(inputHint)) {
@@ -157,10 +157,12 @@ public class InputRenderer extends AbstractWidgetRenderer {
             }
         }
         snippet = snippet.replace("%data_state%", dataState);
+        snippet = snippet.replace("%item_state%", itemState);
 
         String unitSnippet = "";
         if ("number".equals(inputHint)) {
-            String[] stateArray = displayState.trim().split(" ");
+            String numberState = displayState.isEmpty() ? itemState : displayState;
+            String[] stateArray = numberState.trim().split(" ");
             if (stateArray.length > 1) {
                 unitSnippet = "<span %valuestyle% class=\"mdl-form__input-unit\">" + stateArray[1] + "</span>";
             }
