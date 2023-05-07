@@ -1045,6 +1045,8 @@ import { javascriptGenerator } from 'blockly/javascript'
 import DarkTheme from '@blockly/theme-dark'
 import { CrossTabCopyPaste } from '@blockly/plugin-cross-tab-copy-paste'
 import { ZoomToFitControl } from '@blockly/zoom-to-fit'
+import { shadowBlockConversionChangeListener } from '@blockly/shadow-block-converter'
+
 import Vue from 'vue'
 
 import defineOHBlocks from '@/assets/definitions/blockly'
@@ -1157,6 +1159,7 @@ export default {
           },
         trashcan: false
       })
+      this.workspace.addChangeListener(shadowBlockConversionChangeListener)
       const workspaceSearch = new WorkspaceSearch(this.workspace)
       workspaceSearch.init()
 
