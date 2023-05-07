@@ -188,6 +188,9 @@ function generateQuantityCode (block, inputName) {
 
   let code = ''
   switch (inputType) {
+    case 'oh_quantity':
+      code = input
+      break
     case 'String':
       code = `Quantity(${input})`
       break
