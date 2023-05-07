@@ -100,7 +100,9 @@ export default function (f7, isGraalJs) {
       const operand = block.getFieldValue('operand')
 
       const first = generateQuantityCode(block, 'first')
-      const second = generateQuantityCode(block, 'second')
+      const second = (blockGetCheckedInputType(block, 'second') !== 'Number')
+        ? generateQuantityCode(block, 'second')
+        : javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_NONE)
 
       return [`${first}.${operand}(${second})`, javascriptGenerator.ORDER_NONE]
     } else {
@@ -186,9 +188,6 @@ function generateQuantityCode (block, inputName) {
 
   let code = ''
   switch (inputType) {
-    case 'oh_quantity':
-      code = input
-      break
     case 'String':
       code = `Quantity(${input})`
       break
