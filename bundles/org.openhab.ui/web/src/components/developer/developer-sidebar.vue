@@ -453,10 +453,7 @@ export default {
       query = query.toLowerCase()
       if (i.name.toLowerCase().indexOf(query) >= 0) return true
       if (i.label && i.label.toLowerCase().indexOf(query) >= 0) return true
-      if (i.metadata) {
-        const namespaces = Object.keys(i.metadata).map(n => n.toLowerCase())
-        if (namespaces.includes(query)) return true
-      }
+      if (i.metadata && JSON.stringify(i.metadata).toLowerCase().indexOf(query) >= 0) return true
       if (i.tags && i.tags.map(t => t.toLowerCase()).includes(query)) return true
       return false
     },
