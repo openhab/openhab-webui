@@ -608,15 +608,15 @@ export default function (f7, isGraalJs) {
   */
   Blockly.Blocks['oh_zdt_toText'] = {
     init: function () {
+      const block = this
       this.appendValueInput('date')
         .appendField('text of')
         .setCheck('ZonedDateTime')
 
-      let thisBlock = this
-      let dropDown = new Blockly.FieldDropdown(
+      const dropDown = new Blockly.FieldDropdown(
         [['without time', 'without'], ['with time', 'with'], ['as OH-Time', 'asOHTime'], ['with pattern', 'withPattern']],
         function (newMode) {
-          thisBlock.updateType_(newMode)
+          block._updateType(newMode)
         })
       this.appendDummyInput()
         .appendField(dropDown, 'withtime')
@@ -626,9 +626,12 @@ export default function (f7, isGraalJs) {
       this.setTooltip('converts an ZonedDateTime into a date string')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-string-representation-of-date')
     },
-    updateType_: function (type) {
+    _updateType: function (type) {
       if (type === 'withPattern') {
+        if (this.getInput('pattern')) return
         this.appendValueInput('pattern')
+          .setCheck('String')
+          .setShadowDom(Blockly.Xml.textToDom('<shadow type="text"><field name="TEXT">yyyy-MM-dd</field></shadow>'))
       } else if (this.getInput('pattern')) {
         this.removeInput('pattern')
       }
