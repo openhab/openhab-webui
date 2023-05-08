@@ -1686,7 +1686,7 @@
 					}
 				}
 			} else if (_t.itemType === "datetime") {
-				newValue = ((lastItemState !== "NULL") && (lastItemState !== "UNDEF")) ? itemState : value;
+				newValue = ((itemState !== "NULL") && (itemState !== "UNDEF")) ? itemState : value;
 				newValue = newValue.trim().split(".")[0];		// drop millis
 				if (newValue.match(timeWithSecondsPattern)) {	// drop seconds
 					newValue = newValue.split(":").slice(0, -1).join(":");
