@@ -507,7 +507,7 @@ export default {
 
           if (data[2]) dayjs.locale(data[2].key)
 
-          // load the Semantics tags, only if the `tags` endpoint exists (or empty arrays otherwise)
+          // load the Semantic tags, only if the `tags` endpoint exists (or empty arrays otherwise)
           return Promise.all([
             ...this.$store.getters.apiEndpoint('tags')
               ? [this.$oh.api.get('/rest/tags')]
