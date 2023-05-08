@@ -1575,7 +1575,13 @@
 			}
 			_t.parentNode.querySelector("label").innerHTML = placeholder;
 		}
-		
+
+		function setColor(element, color) {
+			if (element) {
+				element.style.setProperty("color", color);
+			}
+		}
+
 		// Set the color correctly for UNDEF or NULL values at initialization
 		if (lastItemState === undefined || lastItemState === "NULL" || lastItemState === "UNDEF") {
 			setColor(_t.input, undefColor);
@@ -1718,12 +1724,6 @@
 			lastValue = value;
 			lastItemState = itemState;
 		};
-
-		function setColor(element, color) {
-			if (element) {
-				element.style.setProperty("color", color);
-			}
-		}
 
 		_t.setValueColor = function(color) {
 			var newColor = !(lastItemState === undefined || lastItemState === "NULL" || lastItemState === "UNDEF") ? color : undefColor;
