@@ -162,7 +162,7 @@ export default {
 
           return prev
         }, {})
-        return Object.keys(bindingGroups).sort().reduce((objEntries, key) => {
+        return Object.keys(bindingGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
           objEntries[key] = bindingGroups[key]
           return objEntries
         }, {})

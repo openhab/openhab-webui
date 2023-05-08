@@ -190,7 +190,7 @@ export default {
 
           return prev
         }, {})
-        return Object.keys(typeGroups).sort().reduce((objEntries, key) => {
+        return Object.keys(typeGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
           objEntries[key] = typeGroups[key]
           return objEntries
         }, {})
