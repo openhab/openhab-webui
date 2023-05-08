@@ -1,3 +1,5 @@
+import i18n from '@/js/i18n'
+
 const state = {
   Locations: [],
   Equipment: [],
@@ -18,12 +20,12 @@ const mutations = {
     state.Equipment = tags.Equipments.map(t => t.name)
     state.Points = tags.Points.map(t => t.name)
     state.Properties = tags.Properties.map(t => t.name)
-    const labels = {}
+    // Store i18n labels
     Object.values(tags).forEach(ctg => ctg.forEach(t => {
-      if (t.label) labels[t.name] = t.label
+      if (t.label) state.Labels[t.name] = t.label
     }))
-    const locale = this.getters.locale
-    state.Labels = { [locale]: labels }
+    // Save as i18n messages
+    i18n.mergeLocaleMessage(this.getters.locale, state.Labels)
   }
 }
 

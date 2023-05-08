@@ -32,19 +32,12 @@ import mixin from '@/components/widgets/widget-mixin'
 import itemDefaultListComponent, { itemPathLabel } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
-import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
   mixins: [mixin, CardMixin],
   props: ['tabContext'],
-  i18n: {
-    messages: {}
-  },
   components: {
     ModelCard
-  },
-  created () {
-    Object.keys(this.$store.getters.semanticClasses.Labels).forEach(locale => this.$i18n.mergeLocaleMessage(locale, this.$store.getters.semanticClasses.Labels[locale]))
   },
   computed: {
     listContext () {

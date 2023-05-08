@@ -1,23 +1,14 @@
 import cardGroups from './homecards-grouping'
 import { compareItems } from '@/components/widgets/widget-order'
-import { loadLocaleMessages } from '@/js/i18n'
 import { authorize } from '@/js/openhab/auth'
 
 export default {
-  i18n: {
-    messages: {}
-  },
   data () {
     return {
       model: {},
       modelReady: false,
       loopError: null
     }
-  },
-  created () {
-    Object.keys(this.$store.getters.semanticClasses.Labels).forEach(locale => this.$i18n.mergeLocaleMessage(locale, this.$store.getters.semanticClasses.Labels[locale]))
-  },
-  computed: {
   },
   methods: {
     cardGroups (type, page) {
