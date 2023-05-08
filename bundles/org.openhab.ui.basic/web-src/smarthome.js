@@ -1575,6 +1575,12 @@
 			}
 			_t.parentNode.querySelector("label").innerHTML = placeholder;
 		}
+		
+		// Set the color correctly for UNDEF or NULL values at initialization
+		if (lastItemState === undefined || lastItemState === "NULL" || lastItemState === "UNDEF") {
+			setColor(_t.input, undefColor);
+			setColor(_t.input.parentNode.nextElementSibling, undefColor); // set color for unit
+		}
 
 		function parseNumber(value) {
 			var newValue = value.trim();
