@@ -133,7 +133,6 @@ import ItemForm from '@/components/item/item-form.vue'
 import Item from '@/components/item/item.vue'
 
 import * as Types from '@/assets/item-types.js'
-import * as SemanticClasses from '@/assets/semantics.js'
 
 export default {
   components: {
@@ -167,8 +166,7 @@ export default {
       profileTypeConfiguration: null,
       newItem: {},
       configuration: {},
-      types: Types,
-      semanticClasses: SemanticClasses
+      types: Types
     }
   },
   created () {
@@ -201,7 +199,7 @@ export default {
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
         type: this.channel.itemType || 'Switch',
-        tags: (defaultTags.find((t) => SemanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
+        tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
       })
     },
     loadProfileTypes (channel) {

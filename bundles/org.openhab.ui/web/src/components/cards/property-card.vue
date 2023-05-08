@@ -38,10 +38,13 @@ export default {
   mixins: [mixin, CardMixin],
   props: ['tabContext'],
   i18n: {
-    messages: loadLocaleMessages(require.context('@/assets/i18n/semantics'))
+    messages: {}
   },
   components: {
     ModelCard
+  },
+  created () {
+    Object.keys(this.$store.getters.semanticClasses.Labels).forEach(locale => this.$i18n.mergeLocaleMessage(locale, this.$store.getters.semanticClasses.Labels[locale]))
   },
   computed: {
     listContext () {

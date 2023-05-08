@@ -3,8 +3,7 @@
    in the "widget" metadata namespace of the item
  */
 
-import { DateTimeFunctions } from '@/assets/item-types'
-import * as Semantics from '@/assets/semantics'
+import store from '@/js/store'
 
 export default function itemDefaultStandaloneComponent (item) {
   const stateDescription = item.stateDescription || {}
@@ -20,10 +19,10 @@ export default function itemDefaultStandaloneComponent (item) {
     }
   } else {
     item.tags.forEach((tag) => {
-      if (Semantics.Points.indexOf(tag) >= 0) {
+      if (store.getters.semanticClasses.Points.indexOf(tag) >= 0) {
         semanticClass = tag
       }
-      if (Semantics.Properties.indexOf(tag) >= 0) {
+      if (store.getters.semanticClasses.Properties.indexOf(tag) >= 0) {
         semanticProperty = tag
       }
     })

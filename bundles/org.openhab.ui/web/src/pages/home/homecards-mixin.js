@@ -5,7 +5,7 @@ import { authorize } from '@/js/openhab/auth'
 
 export default {
   i18n: {
-    messages: loadLocaleMessages(require.context('@/assets/i18n/semantics'))
+    messages: {}
   },
   data () {
     return {
@@ -13,6 +13,9 @@ export default {
       modelReady: false,
       loopError: null
     }
+  },
+  created () {
+    Object.keys(this.$store.getters.semanticClasses.Labels).forEach(locale => this.$i18n.mergeLocaleMessage(locale, this.$store.getters.semanticClasses.Labels[locale]))
   },
   computed: {
   },
