@@ -119,7 +119,7 @@ export default {
       return false
     },
     itemStateTransformationCode () {
-      return `${this.transformation.type.toUpperCase()}(${this.transformationId})`
+      return `${this.transformation.type.toUpperCase()}(${this.transformationId.replace(/:([A-Z][a-z]{1,2}-)?([a-z]{2,3})(-[A-Z]{2,3})?$/, '')})`
     }
   },
   methods: {
