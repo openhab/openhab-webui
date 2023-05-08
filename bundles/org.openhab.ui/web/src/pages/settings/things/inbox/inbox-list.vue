@@ -153,7 +153,7 @@ export default {
           return prev
         }, {})
       } else {
-        return filteredInbox.reduce((prev, entry, i, inbox) => {
+        const bindingGroups = filteredInbox.reduce((prev, entry, i, inbox) => {
           const binding = entry.thingUID.split(':')[0]
           if (!prev[binding]) {
             prev[binding] = []
@@ -161,6 +161,10 @@ export default {
           prev[binding].push(entry)
 
           return prev
+        }, {})
+        return Object.keys(bindingGroups).sort().reduce((objEntries, key) => {
+          objEntries[key] = bindingGroups[key]
+          return objEntries
         }, {})
       }
     }

@@ -163,7 +163,7 @@ export default {
           return prev
         }, {})
       } else {
-        return this.things.reduce((prev, thing, i, things) => {
+        const bindingGroups = this.things.reduce((prev, thing, i, things) => {
           const binding = thing.thingTypeUID.split(':')[0]
           if (!prev[binding]) {
             prev[binding] = []
@@ -171,6 +171,10 @@ export default {
           prev[binding].push(thing)
 
           return prev
+        }, {})
+        return Object.keys(bindingGroups).sort().reduce((objEntries, key) => {
+          objEntries[key] = bindingGroups[key]
+          return objEntries
         }, {})
       }
     },
