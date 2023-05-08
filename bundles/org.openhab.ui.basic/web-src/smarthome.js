@@ -1555,6 +1555,7 @@
 		var
 			lastValue = _t.input.value,
 			lastUndef = _t.input.nextElementSibling.innerHTML.trim(),
+			undefColor = getComputedStyle(_t.input.nextElementSibling).getPropertyValue("color"),
 			lastItemState = _t.itemState,
 			numberPattern = /^(\+|-)?[0-9\.,]+/,
 			datePattern = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/,
@@ -1618,11 +1619,9 @@
 					changeValue = date.split("T")[0] + "T" + changeValue;
 				} else if (_t.input.type === "text") {
 					var valueArray = changeValue.split(" ");
-					if (valueArray.length > 0) {
-						changeValue = valueArray[0];
-						if (valueArray.length > 1) {
-							changeValue = changeValue + "T" + valueArray[1];
-						}
+					changeValue = valueArray[0];
+					if (valueArray.length > 1) {
+						changeValue = changeValue + "T" + valueArray[1];
 					}
 				}
 				if (isNaN(Date.parse(changeValue))) {
@@ -1666,7 +1665,7 @@
 				undefValue = lastUndef;
 			} else if (itemState === "NULL" || itemState === "UNDEF") {
 				newValue = "";
-				if (_t.itemType == "datetime") {
+				if (_t.itemType === "datetime") {
 					undefValue = "";
 					if (_t.input.type === "text") {
 						undefValue = "YYYY-MM-DD hh:mm";
@@ -1680,17 +1679,13 @@
 				if (newValue !== "") {
 					newValue = parseNumber(newValue).value;
 					var valueArray = newValue.trim().split(" ");
-					if (valueArray.length > 0) {
-						newValue = valueArray[0];
-					}
+					newValue = valueArray[0];
 					if (valueArray.length > 1) {
 						_t.input.parentNode.nextElementSibling.innerHTML = valueArray[1];
 					}
 				} else {
 					var undefArray = undefValue.split(" ");
-					if (undefArray.length > 0) {
-						undefValue = undefArray[0];
-					}
+					undefValue = undefArray[0];
 				}
 			} else if (_t.itemType === "datetime") {
 				newValue = ((itemState !== "NULL") && (itemState !== "UNDEF")) ? itemState : newValue;
@@ -1698,7 +1693,7 @@
 				if (newValue.match(timeWithSecondsPattern)) {	// drop seconds
 					newValue = newValue.split(":").slice(0, -1).join(":");
 				}
-				if (newValue != "") {
+				if (newValue !== "") {
 					if (_t.inputHint === "date") {
 						newValue = newValue.split("T")[0];
 					} else if (_t.inputHint === "time") {
@@ -1718,8 +1713,16 @@
 			lastItemState = itemState;
 		};
 
+		function setColor(element, color) {
+			if (element) {
+				element.style.setProperty("color", color);
+			}
+		}
+
 		_t.setValueColor = function(color) {
-			_t.input.style.color = color;
+			var newColor = !(lastItemState === undefined || lastItemState === "NULL" || lastItemState === "UNDEF") ? color : undefColor;
+			setColor(_t.input, newColor);
+			setColor(_t.input.parentNode.nextElementSibling, newColor); // set color for unit
 		};
 
 		_t.destroy = function() {
