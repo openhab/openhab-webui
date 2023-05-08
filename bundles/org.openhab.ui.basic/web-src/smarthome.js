@@ -1559,17 +1559,18 @@
 			numberPattern = /^(\+|-)?[0-9\.,]+/,
 			datePattern = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/,
 			timePattern = /^[0-9]{2}:[0-9]{2}/,
+			timeWithSecondsPattern = /[0-9]{2}:[0-9]{2}:[0-9]{2}$/,
 			dotSeparatorPattern = /^-?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
 			commaSeparatorPattern = /^-?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
 
 		// This kicks in when the browser does not support date, time or datetime-local input elements.
 		// Set the placeholder to the right patterns. This cannot be done in the snippet creation in Java because the browser is unknown there.
 		if (_t.itemType === "datetime" && _t.inputHint && _t.input.type === "text") {
-			var placeholder = "YYYY-MM-DD hh:mm:ss";
+			var placeholder = "YYYY-MM-DD hh:mm";
 			if (_t.inputHint === "date") {
 				placeholder = "YYYY-MM-DD";
 			} else if (_t.inputHint === "time") {
-				placeholder = "hh:mm:ss";
+				placeholder = "hh:mm";
 			}
 			_t.parentNode.querySelector("label").innerHTML = placeholder;
 		}
@@ -1686,7 +1687,10 @@
 				}
 			} else if (_t.itemType === "datetime") {
 				newValue = ((lastItemState !== "NULL") && (lastItemState !== "UNDEF")) ? itemState : value;
-				newValue = newValue.trim().split(".")[0];
+				newValue = newValue.trim().split(".")[0];		// drop millis
+				if (newValue.match(timeWithSecondsPattern)) {	// drop seconds
+					newValue = newValue.split(":").slice(0, -1).join(":");
+				}
 				undefValue = "";
 				if (_t.inputHint === "date") {
 					newValue = newValue.split("T")[0];
@@ -1695,7 +1699,7 @@
 				}
 				if (_t.input.type === "text") {
 					newValue = newValue.replace("T", " ");
-					undefValue = "YYYY-MM-DD hh:mm:ss";
+					undefValue = "YYYY-MM-DD hh:mm";
 				}
 			}
 			_t.input.value = newValue;

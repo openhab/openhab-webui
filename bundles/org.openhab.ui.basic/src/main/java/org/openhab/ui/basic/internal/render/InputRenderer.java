@@ -109,10 +109,10 @@ public class InputRenderer extends AbstractWidgetRenderer {
             inputPattern = "pattern=\"[0-9]{4}-[0-9]d{2}-[0-9]d{2}\"";
         } else if ("time".equals(inputHint)) {
             inputType = "time";
-            inputPattern = "pattern=\"[0-9]{2}:[0-9]{2}(:[0-9]{2})?\"";
+            inputPattern = "pattern=\"[0-9]{2}:[0-9]{2}?\"";
         } else if ("datetime".equals(inputHint)) {
             inputType = "datetime-local";
-            inputPattern = "pattern=\"[0-9]{4}-[0-9]d{2}-[0-9]d{2} [0-9]{2}:[0-9]{2}(:[0-9]{2})?\"";
+            inputPattern = "pattern=\"[0-9]{4}-[0-9]d{2}-[0-9]d{2} [0-9]{2}:[0-9]{2}\"";
         }
         snippet = snippet.replace("%input_type%", inputType);
         snippet = snippet.replace("%input_pattern%", inputPattern);
@@ -122,12 +122,15 @@ public class InputRenderer extends AbstractWidgetRenderer {
 
         String undefState = "";
         if (state == null || state instanceof UnDefType) {
-            undefState = displayState;
             if ("number".equals(inputHint)) {
                 String[] stateArray = displayState.trim().split(" ");
                 if (stateArray.length > 0) {
                     undefState = stateArray[0];
+                } else {
+                    undefState = displayState;
                 }
+            } else if (!("date".equals(inputHint) || "time".equals(inputHint) || "datetime".equals(inputHint))) {
+                undefState = displayState;
             }
         }
         snippet = snippet.replace("%undef_state%", undefState);
@@ -150,9 +153,9 @@ public class InputRenderer extends AbstractWidgetRenderer {
                 if ("date".equals(inputHint)) {
                     dataState = ((DateTimeType) state).format("%1$tY-%1$tm-%1$td");
                 } else if ("time".equals(inputHint)) {
-                    dataState = ((DateTimeType) state).format("%1$tT");
+                    dataState = ((DateTimeType) state).format("%1$tR");
                 } else if ("datetime".equals(inputHint)) {
-                    dataState = ((DateTimeType) state).format("%1$tY-%1$tm-%1$tdT%1$tT");
+                    dataState = ((DateTimeType) state).format("%1$tY-%1$tm-%1$tdT%1$tR");
                 }
             }
         }
