@@ -1666,7 +1666,14 @@
 				undefValue = lastUndef;
 			} else if (itemState === "NULL" || itemState === "UNDEF") {
 				newValue = "";
-				undefValue = (value !== "") ? value : lastUndef;
+				if (_t.itemType == "datetime") {
+					undefValue = "";
+					if (_t.input.type === "text") {
+						undefValue = "YYYY-MM-DD hh:mm";
+					}
+				} else {
+					undefValue = (value !== "") ? value : lastUndef;
+				}
 			}
 
 			if (_t.inputHint === "number") {
@@ -1686,20 +1693,20 @@
 					}
 				}
 			} else if (_t.itemType === "datetime") {
-				newValue = ((itemState !== "NULL") && (itemState !== "UNDEF")) ? itemState : value;
+				newValue = ((itemState !== "NULL") && (itemState !== "UNDEF")) ? itemState : newValue;
 				newValue = newValue.trim().split(".")[0];		// drop millis
 				if (newValue.match(timeWithSecondsPattern)) {	// drop seconds
 					newValue = newValue.split(":").slice(0, -1).join(":");
 				}
-				undefValue = "";
-				if (_t.inputHint === "date") {
-					newValue = newValue.split("T")[0];
-				} else if (_t.inputHint === "time") {
-					newValue = newValue.split("T")[1];
-				}
-				if (_t.input.type === "text") {
-					newValue = newValue.replace("T", " ");
-					undefValue = "YYYY-MM-DD hh:mm";
+				if (newValue != "") {
+					if (_t.inputHint === "date") {
+						newValue = newValue.split("T")[0];
+					} else if (_t.inputHint === "time") {
+						newValue = newValue.split("T")[1];
+					}
+					if (_t.input.type === "text") {
+						newValue = newValue.replace("T", " ");
+					}
 				}
 			}
 			_t.input.value = newValue;
