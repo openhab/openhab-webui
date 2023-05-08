@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import components from './modules/components'
 import states from './modules/states'
+import semantics from './modules/semantics'
 import user from './modules/user'
 import { convertJavaLocale } from '@/js/i18n'
 
@@ -13,6 +14,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     components,
+    semantics,
     states,
     user
   },

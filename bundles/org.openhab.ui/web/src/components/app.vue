@@ -507,8 +507,18 @@ export default {
 
           if (data[2]) dayjs.locale(data[2].key)
 
-          this.ready = true
-          return Promise.resolve()
+          // load the Semantics tags, only if the `tags` endpoint exists (or empty arrays otherwise)
+          return Promise.all([
+            ...this.$store.getters.apiEndpoint('tags')
+              ? [this.$oh.api.get('/rest/tags')]
+              : [Promise.resolve([])]
+          ]).then((data) => {
+            // store the Semantic tags
+            this.$store.commit('setSemanticClasses', { tags: data[0] })
+
+            this.ready = true
+            return Promise.resolve()
+          })
         })
     },
     pageIsVisible (page) {
