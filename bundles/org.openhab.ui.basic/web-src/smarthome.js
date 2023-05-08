@@ -1672,7 +1672,7 @@
 						undefValue = "YYYY-MM-DD hh:mm";
 					}
 				} else {
-					undefValue = (value !== "") ? value : lastUndef;
+					undefValue = !(value === "" || value === "NULL" || value === "UNDEF") ? value : lastUndef;
 				}
 			}
 
