@@ -56,8 +56,6 @@ import org.slf4j.LoggerFactory;
 public class InputRenderer extends AbstractWidgetRenderer {
 
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\+|-)?[0-9\\.,]+");
-    private static final Pattern DOT_SEPARATOR_PATTERN = Pattern
-            .compile("^-?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\\.[0-9]+)?$");
     private static final Pattern COMMA_SEPARATOR_PATTERN = Pattern
             .compile("^-?(([0-9]{1,3}(\\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$");
 
@@ -207,7 +205,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
             String numberValue = numberMatcher.group(0);
             String unitValue = newValue.substring(numberValue.length()).trim();
             newValue = numberValue.replace("/^\\+/", "");
-            if (COMMA_SEPARATOR_PATTERN.matcher(newValue).find() && !DOT_SEPARATOR_PATTERN.matcher(newValue).find()) {
+            if (COMMA_SEPARATOR_PATTERN.matcher(newValue).find()) {
                 newValue = newValue.replace("/\\./g", "").replace(",", ".");
             }
             if (unitValue.length() > 1) {

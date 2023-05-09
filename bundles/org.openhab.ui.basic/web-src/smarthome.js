@@ -1561,7 +1561,6 @@
 			datePattern = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/,
 			timePattern = /^[0-9]{2}:[0-9]{2}/,
 			timeWithSecondsPattern = /[0-9]{2}:[0-9]{2}:[0-9]{2}$/,
-			dotSeparatorPattern = /^-?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
 			commaSeparatorPattern = /^-?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
 
 		// This kicks in when the browser does not support date, time or datetime-local input elements.
@@ -1595,7 +1594,7 @@
 				var numberValue = numberMatch[0];
 				var unitValue = newValue.substring(numberValue.length).trim();
 				newValue = numberValue.replace(/^\+/, "");
-				if (commaSeparatorPattern.test(newValue) && !dotSeparatorPattern.test(newValue)) {
+				if (commaSeparatorPattern.test(newValue)) {
 					newValue = newValue.replace(/\./g, "").replace(",", ".");
 				}
 				if (unitValue.length > 1) {
