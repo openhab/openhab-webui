@@ -12,8 +12,11 @@
  */
 package org.openhab.ui.basic.internal.render;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.measure.Unit;
 
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
@@ -22,7 +25,11 @@ import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
+import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.types.DateTimeType;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.library.types.PercentType;
+import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.types.StringType;
 import org.openhab.core.model.sitemap.sitemap.Input;
 import org.openhab.core.model.sitemap.sitemap.Widget;
@@ -94,6 +101,17 @@ public class InputRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%data_type%", dataType);
 
         String inputHint = input.getInputHint();
+        if (item != null) {
+            List<Class<? extends State>> dataTypes = item.getAcceptedDataTypes();
+            if (("number".equals(inputHint)
+                    && !(dataTypes.contains(DecimalType.class) || dataTypes.contains(PercentType.class)))
+                    || (("date".equals(inputHint) || "time".equals(inputHint) || "datetime".equals(inputHint))
+                            && !dataTypes.contains(DateTimeType.class))) {
+                logger.warn("Invalid inputHint {} for item {} of type {}, set to default", inputHint, item.getName(),
+                        item.getType());
+                inputHint = null;
+            }
+        }
         if ("datetime".equals(dataType) && ((inputHint == null) || "".equals(inputHint) || "text".equals(inputHint))) {
             inputHint = "datetime";
         }
@@ -124,11 +142,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
         if (state == null || state instanceof UnDefType) {
             if ("number".equals(inputHint)) {
                 String[] stateArray = displayState.trim().split(" ");
-                if (stateArray.length > 0) {
-                    undefState = stateArray[0];
-                } else {
-                    undefState = displayState;
-                }
+                undefState = stateArray[0];
             } else if (!("date".equals(inputHint) || "time".equals(inputHint) || "datetime".equals(inputHint))) {
                 undefState = displayState;
             }
@@ -146,9 +160,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
             dataState = displayState.isEmpty() ? itemState : displayState;
             if ("number".equals(inputHint)) {
                 String[] stateArray = dataState.trim().split(" ");
-                if (stateArray.length > 0) {
-                    dataState = parseNumber(stateArray[0]);
-                }
+                dataState = parseNumber(stateArray[0]);
             } else if (state instanceof DateTimeType) {
                 if ("date".equals(inputHint)) {
                     dataState = ((DateTimeType) state).format("%1$tY-%1$tm-%1$td");
@@ -163,12 +175,18 @@ public class InputRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%item_state%", itemState);
 
         String unitSnippet = "";
-        if ("number".equals(inputHint)) {
-            String numberState = displayState.isEmpty() ? itemState : displayState;
-            String[] stateArray = numberState.trim().split(" ");
-            if (stateArray.length > 1) {
-                unitSnippet = "<span %valuestyle% class=\"mdl-form__input-unit\">" + stateArray[1] + "</span>";
+        if ("number".equals(inputHint) && item instanceof NumberItem numberItem && numberItem.getDimension() != null) {
+            String unit = getUnitForWidget(w);
+            if (unit == null) {
+                // Search the unit in the item state
+                if (state instanceof QuantityType<?>) {
+                    Unit<?> stateUnit = ((QuantityType<?>) state).getUnit();
+                    unit = stateUnit.toString();
+                } else {
+                    unit = "";
+                }
             }
+            unitSnippet = "<span %valuestyle% class=\"mdl-form__input-unit\">" + unit + "</span>";
         }
         snippet = snippet.replace("%unit_snippet%", unitSnippet);
 
