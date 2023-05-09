@@ -175,18 +175,21 @@ public class InputRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%item_state%", itemState);
 
         String unitSnippet = "";
-        if ("number".equals(inputHint) && item instanceof NumberItem numberItem && numberItem.getDimension() != null) {
-            String unit = getUnitForWidget(w);
-            if (unit == null) {
-                // Search the unit in the item state
-                if (state instanceof QuantityType<?>) {
-                    Unit<?> stateUnit = ((QuantityType<?>) state).getUnit();
-                    unit = stateUnit.toString();
-                } else {
-                    unit = "";
+        if ("number".equals(inputHint) && item instanceof NumberItem) {
+            NumberItem numberItem = (NumberItem) item;
+            if (numberItem.getDimension() != null) {
+                String unit = getUnitForWidget(w);
+                if (unit == null) {
+                    // Search the unit in the item state
+                    if (state instanceof QuantityType<?>) {
+                        Unit<?> stateUnit = ((QuantityType<?>) state).getUnit();
+                        unit = stateUnit.toString();
+                    } else {
+                        unit = "";
+                    }
                 }
+                unitSnippet = "<span %valuestyle% class=\"mdl-form__input-unit\">" + unit + "</span>";
             }
-            unitSnippet = "<span %valuestyle% class=\"mdl-form__input-unit\">" + unit + "</span>";
         }
         snippet = snippet.replace("%unit_snippet%", unitSnippet);
 
