@@ -162,7 +162,7 @@ describe('dslUtil', () => {
       ]
     })
     const sitemap = dslUtil.toDsl(component).split('\n')
-    expect(sitemap[1]).toEqual('    Text item=Temperature valuecolor=[Last_Update==Uninitialized=gray,>=25=orange,==15=green,0=white,blue]')
+    expect(sitemap[1]).toEqual('    Text item=Temperature valuecolor=[Last_Update==Uninitialized="gray",>=25="orange",==15="green",0="white","blue"]')
   })
 
   it('renders widget with valuecolor and text condition correctly', () => {
@@ -176,6 +176,6 @@ describe('dslUtil', () => {
       ]
     })
     const sitemap = dslUtil.toDsl(component).split('\n')
-    expect(sitemap[1]).toEqual('    Text item=Temperature valuecolor=[Heat_Warning=="It is hot"=gray]')
+    expect(sitemap[1]).toEqual('    Text item=Temperature valuecolor=[Heat_Warning=="It is hot"="gray"]')
   })
 })
