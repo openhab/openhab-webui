@@ -21,18 +21,13 @@ export default {
 
     this.$f7.on('pageAfterIn', this.onPageAfterIn)
     this.$f7.on('pageBeforeOut', this.onPageBeforeOut)
-
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
-        this.startForegroundActivity()
-      } else if (document.visibilityState === 'hidden') {
-        this.stopForegroundActivity()
-      }
-    })
+    document.addEventListener('visibilitychange', this.onVisibilityChange)
   },
   beforeDestroy () {
     this.$f7.off('pageAfterIn', this.onPageAfterIn)
     this.$f7.off('pageBeforeOut', this.onPageBeforeOut)
+    document.removeEventListener('visibilitychange', this.onVisibilityChange)
+    this.inForeground = false
     this.stopForegroundActivity()
   },
   methods: {
@@ -51,6 +46,13 @@ export default {
     onPageBeforeOut (page) {
       if (page.el === this.pageEl) {
         this.inForeground = false
+        this.stopForegroundActivity()
+      }
+    },
+    onVisibilityChange () {
+      if (document.visibilityState === 'visible' && this.inForeground) {
+        this.startForegroundActivity()
+      } else if (document.visibilityState === 'hidden' && this.inForeground) {
         this.stopForegroundActivity()
       }
     }
