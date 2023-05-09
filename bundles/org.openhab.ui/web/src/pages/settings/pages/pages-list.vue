@@ -181,7 +181,7 @@ export default {
           return prev
         }, {})
       } else {
-        return this.pages.reduce((prev, page, i, things) => {
+        const typeGroups = this.pages.reduce((prev, page, i, things) => {
           const type = this.getPageType(page).label
           if (!prev[type]) {
             prev[type] = []
@@ -189,6 +189,10 @@ export default {
           prev[type].push(page)
 
           return prev
+        }, {})
+        return Object.keys(typeGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
+          objEntries[key] = typeGroups[key]
+          return objEntries
         }, {})
       }
     },
