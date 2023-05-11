@@ -21,8 +21,8 @@ export default function (f7, isGraalJs) {
       this.setInputsInline(true)
 
       let thisFieldpicker = this.fieldPicker
-      this.setTooltip(function () {
-        let tooltip = 'Pick an item from the Model'
+      this.setTooltip(() => {
+        let tooltip = 'Pick an Item from the Model'
         const itemData = thisFieldpicker.data
         if (itemData[0] !== itemData[1]) {
           tooltip = itemData[0]
@@ -32,11 +32,11 @@ export default function (f7, isGraalJs) {
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#item')
       this.setOutput(true, 'oh_item')
     },
-    update_: function (name, label) {
+    _updateFieldPicker: function (name, label) {
       this.fieldPicker.data = [name, label]
     },
     mutationToDom: function () {
-      let container = Blockly.utils.xml.createElement('mutation')
+      const container = Blockly.utils.xml.createElement('mutation')
 
       if (!this.fieldPicker.data) { // "migrate" old storage
         this.fieldPicker.data = [this.fieldPicker.value_, this.fieldPicker.value_]
@@ -48,7 +48,7 @@ export default function (f7, isGraalJs) {
       return container
     },
     domToMutation: function (xmlElement) {
-      this.update_(xmlElement.getAttribute('itemName'), xmlElement.getAttribute('itemLabel'))
+      this._updateFieldPicker(xmlElement.getAttribute('itemName'), xmlElement.getAttribute('itemLabel'))
     }
   }
 

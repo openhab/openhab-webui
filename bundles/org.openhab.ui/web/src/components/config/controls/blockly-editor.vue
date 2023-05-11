@@ -1193,7 +1193,7 @@ export default {
         window.open(button.info.helpurl, '_blank')
       })
       Blockly.Workspace.prototype.refresh = function () {
-        let xml = Blockly.Xml.workspaceToDom(this)
+        const xml = Blockly.Xml.workspaceToDom(this)
         this.clear()
         Blockly.Xml.domToWorkspace(xml, this)
         this.refreshToolboxSelection()
@@ -1217,7 +1217,6 @@ export default {
       this.workspace.showLabels = showLabels
       this.workspace.refresh()
       this.workspace.loadItem('test')
-      debugger
     },
     getBlocks () {
       const xml = Blockly.Xml.workspaceToDom(this.workspace)
