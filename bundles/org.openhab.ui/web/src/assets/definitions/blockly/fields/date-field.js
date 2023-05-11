@@ -38,8 +38,7 @@ export class FieldDatePicker extends Blockly.FieldTextInput {
             change (calendar, value) {
               if (value.length < 1) return
               if (!value[0].toISOString) return
-              self.value_ = dayjs(value[0]).format('YYYY-MM-DD')
-              self.setEditorValue_(self.value)
+              self.setEditorValue_(dayjs(value[0]).format('YYYY-MM-DD'))
             }
           }
         })
