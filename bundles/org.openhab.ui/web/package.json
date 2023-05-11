@@ -42,7 +42,7 @@
     "webpack-analyzer": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 node ./build/build.js",
     "webpack-analyzer-report": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 WEBPACK_ANALYZER_REPORT=1 node ./build/build.js",
     "webpack-analyzer-report-stats": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 WEBPACK_ANALYZER_REPORT=1 WEBPACK_ANALYZER_REPORT_STATS=1 node ./build/build.js",
-    "dev-blockly": "cross-env SOURCE_MAPS=1 NODE_ENV=development webpack-dev-server --config ./build/webpack.config.js",
+    "dev:blockly": "cross-env SOURCE_MAPS=1 NODE_ENV=development webpack-dev-server --config ./build/webpack.config.js",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config ./build/webpack.config.js",
     "start": "npm run dev",
     "lint": "npx eslint --ext js --ext vue src",
