@@ -41,7 +41,7 @@ export default function (f7, isGraalJs) {
 
       if (!this.fieldPicker.data) { // "migrate" old storage
         this.fieldPicker.data = [this.fieldPicker.value_, this.fieldPicker.value_]
-        if (this.fieldPicker.value_ && this.fieldPicker.value_ != 'MyItem') {
+        if (this.fieldPicker.value_ && this.fieldPicker.value_ !== 'MyItem') {
           api.get(`/rest/items/${this.fieldPicker.value_}?metadata=^$`).then((data) => {
             this.fieldPicker.data = [this.fieldPicker.value_, data.label]
           }).catch()
