@@ -15,8 +15,8 @@ You need Node 16.14.0 or later and npm 8.6.0. Change to the `web` directory, gat
 * `npm start` - run the development server (see below)
 * `npm run build-prod` - build web app for production (note: no need to prepare a production version when submitting a PR, the build server will do it)
 * `npm run build-cordova-prod` - build cordova's `www` folder from source and build a Cordova app
-* `npm run dev` - run server in dev mode for development using webpack.config.js
-^* `npm run dev:blockly` - run server in dev mode for development using webpack.config.js and blockly source-maps
+* `npm run dev` - run the development server (same as above)
+^* `npm run dev:blockly` - run the development server with Blockly source-maps (allows Blockly debugging)
 * `npm run test:unit` - start the Jest test runner and run the unit tests
 * `npm run test:unit:watch` - start the Jest test runner, run the unit tests, keep running and watch for changes
 * `npm run test:e2e` - start Cypress and run the e2e tests
