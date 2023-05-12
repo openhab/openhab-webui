@@ -7,6 +7,7 @@ import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import { FieldItemModelPicker } from './fields/item-field'
 import { FieldThingPicker } from './fields/thing-field'
+import api from '@/js/openhab/api'
 
 export default function (f7, isGraalJs) {
   /* Helper block to allow selecting an item */
@@ -40,6 +41,11 @@ export default function (f7, isGraalJs) {
 
       if (!this.fieldPicker.data) { // "migrate" old storage
         this.fieldPicker.data = [this.fieldPicker.value_, this.fieldPicker.value_]
+        if (this.fieldPicker.value_ && this.fieldPicker.value_ != 'MyItem') {
+          api.get(`/rest/items/${this.fieldPicker.value_}?metadata=^$`).then((data) => {
+            this.fieldPicker.data = [this.fieldPicker.value_, data.label]
+          }).catch()
+        }
       }
       this.fieldPicker.value_ = (this.workspace.showLabels) ? this.fieldPicker.data[1] : this.fieldPicker.data[0]
 
