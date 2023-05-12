@@ -1216,7 +1216,6 @@ export default {
     showHideLabels (showLabels) {
       this.workspace.showLabels = showLabels
       this.workspace.refresh()
-      this.workspace.loadItem('test')
     },
     getBlocks () {
       const xml = Blockly.Xml.workspaceToDom(this.workspace)
