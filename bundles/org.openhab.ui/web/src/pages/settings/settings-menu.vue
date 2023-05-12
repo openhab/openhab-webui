@@ -201,7 +201,7 @@ export default {
       // can be done in parallel!
       servicesPromise.then((data) => {
         this.systemServices = data.filter(s => s.category === 'system')
-        this.otherServices = data.filter(s => s.category !== 'system')
+        this.otherServices = data.filter(s => s.category !== 'system' && s.category !== 'persistence')
         this.servicesLoaded = true
       })
     },
