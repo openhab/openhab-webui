@@ -9,5 +9,6 @@
   "CONFIGURATION_ERROR": "ГРЕШКА: КОНФИГУРАЦИЯ",
   "BRIDGE_OFFLINE": "ГРЕШКА: МОСТ",
   "FIRMWARE_UPDATING": "ФЪРМУЕЪР ОБНОВЯВАНЕ",
-  "GONE": "ЛИПСВА"
+  "GONE": "ЛИПСВА",
+  "NOT_YET_READY": "ОЩЕ НЕ Е ГОТОВО"
 }
