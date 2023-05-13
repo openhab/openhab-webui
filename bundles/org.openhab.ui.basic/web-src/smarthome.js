@@ -525,7 +525,7 @@
 				// Image element associated to an item of type ImageItem
 				_t.ignoreRefresh = true;
 				_t.image.setAttribute("src", itemState);
-			} else if ((itemState !== "UNDEF") || (_t.validUrl)) {
+			} else if ((itemState !== "NULL" && itemState !== "UNDEF") || (_t.validUrl)) {
 				// Image element associated to an item of type StringItem (URL)
 				// Or no associated item but url is set and valid in the image element
 				_t.ignoreRefresh = false;
@@ -612,7 +612,7 @@
 
 			if (!visible) {
 				mapUrl = urlNoneIcon;
-			} else if (itemState !== "UNDEF") {
+			} else if (itemState !== "NULL" && itemState !== "UNDEF") {
 				splittedState = itemState.split(",");
 				lat = parseFloat(splittedState[0]);
 				lon = parseFloat(splittedState[1]);
@@ -955,6 +955,7 @@
 		_t.up = _t.parentNode.querySelector(o.setpoint.up);
 		_t.down = _t.parentNode.querySelector(o.setpoint.down);
 
+		_t.hasValue = _t.parentNode.getAttribute("data-has-value") === "true";
 		_t.value = _t.parentNode.getAttribute("data-value");
 		_t.max = parseFloat(_t.parentNode.getAttribute("data-max"));
 		_t.min = parseFloat(_t.parentNode.getAttribute("data-min"));
@@ -966,14 +967,19 @@
 		_t.unit = _t.parentNode.getAttribute("data-unit");
 
 		_t.setValuePrivate = function(value, itemState) {
-			if (itemState.indexOf(" ") > 0) {
+			// itemState contains value + unit in the display unit (in case unit is set in label pattern)
+			if (itemState === "NULL" || itemState === "UNDEF") {
+				_t.value = 0;
+			} else  if (itemState.indexOf(" ") > 0) {
 				var stateAndUnit = itemState.split(" ");
 				_t.value = stateAndUnit[0] * 1;
 				_t.unit = stateAndUnit[1];
 			} else {
 				_t.value = itemState * 1;
 			}
-			_t.valueNode.innerHTML = value;
+			if (_t.hasValue) {
+				_t.valueNode.innerHTML = value;
+			}
 		};
 
 		_t.setValueColor = function(color) {
@@ -1027,6 +1033,7 @@
 
 		smarthome.eventMapper.map(eventMap);
 	}
+
 	/* class Colorpicker */
 	function Colorpicker(parentNode, color, callback) {
 		var
@@ -1673,6 +1680,7 @@
 		}, 200);
 
 		_t.setValuePrivate = function(value, itemState) {
+			// itemState contains only value in the display unit (in case unit is set in label pattern)
 			if (_t.hasValue) {
 				_t.valueNode.innerHTML = value;
 			}
@@ -1684,7 +1692,11 @@
 				var valueAndUnit = value.split(" ");
 				_t.unit = valueAndUnit[1];
 			}
-			_t.input.value = itemState;
+			if (itemState === "NULL" || itemState === "UNDEF") {
+				_t.input.value = 0;
+			} else {
+				_t.input.value = itemState;
+			}
 			_t.input.MaterialSlider.change();
 		};
 
@@ -2108,7 +2120,7 @@
 				});
 			}
 
-			if (makeVisible || update.state !== "NULL") {
+			if (makeVisible || update.itemIncluded) {
 				if (value === null) {
 					value = update.state;
 				}
@@ -2175,6 +2187,7 @@
 
 			var
 				data = JSON.parse(payload.data),
+				itemIncluded = false,
 				state = "NULL",
 				title;
 
@@ -2208,6 +2221,7 @@
 			}
 
 			if (data.item !== undefined) {
+				itemIncluded = true;
 				if (data.state === undefined) {
 					state = data.item.state;
 				} else {
@@ -2225,6 +2239,7 @@
 			} else if (smarthome.dataModel[data.widgetId] !== undefined) {
 				var update = {
 					visibility: data.visibility,
+					itemIncluded: itemIncluded,
 					state: state,
 					label: data.label,
 					labelcolor: data.labelcolor,
@@ -2277,10 +2292,12 @@
 
 					var
 						w = smarthome.dataModel[widget.widgetId],
+						itemIncluded = false,
 						state = "NULL",
 						update;
 
 					if (widget.item !== undefined) {
+						itemIncluded = true;
 						if (widget.state === undefined) {
 							state = widget.item.state;
 						} else {
@@ -2290,6 +2307,7 @@
 					if (!w.visible || widget.item !== undefined) {
 						update = {
 							visibility: true,
+							itemIncluded: itemIncluded,
 							state: state,
 							label: widget.label,
 							labelcolor: widget.labelcolor,
