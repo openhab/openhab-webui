@@ -40,6 +40,7 @@
           </value>
         </block>
         <block type="controls_forEach" />
+        <block type="dicts_for" />
         <block type="controls_flow_statements" />
       </category>
 

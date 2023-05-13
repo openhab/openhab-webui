@@ -219,6 +219,13 @@ export function addGetItemMetaConfigValue () {
     ])
 }
 
+export function addDict () {
+  let dict = javascriptGenerator.provideFunction_(
+    'dictionary',
+    ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ';'])
+  return dict
+}
+
 /**
  * Gets the type of passed input to a given block.
  *
