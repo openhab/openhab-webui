@@ -19,7 +19,7 @@ export class FieldItemModelPicker extends Blockly.FieldTextInput {
     if (this.f7) {
       const itemsPicked = (value) => {
         this.data = [value.name, value.label]
-        this.setEditorValue_(value.label)
+        this.setEditorValue_(value.name)
       }
       const popup = {
         component: ModelPickerPopup

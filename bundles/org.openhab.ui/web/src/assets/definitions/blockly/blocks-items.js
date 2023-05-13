@@ -21,10 +21,9 @@ export default function (f7, isGraalJs) {
       this.setColour(160)
       this.setInputsInline(true)
 
-      let thisFieldpicker = this.fieldPicker
       this.setTooltip(() => {
         let tooltip = 'Pick an Item from the Model'
-        const itemData = thisFieldpicker.data
+        const itemData = this.fieldPicker.data
         if (itemData[0] !== itemData[1]) {
           tooltip = itemData[0]
         }
