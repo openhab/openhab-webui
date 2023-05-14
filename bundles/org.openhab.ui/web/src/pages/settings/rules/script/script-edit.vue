@@ -310,8 +310,19 @@ export default {
       }
       if (this.isBlockly) {
         try {
-          this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
-          this.script = this.$refs.blocklyEditor.getCode()
+          if (!this.blocklyCodePreview) {
+            this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
+            this.script = this.$refs.blocklyEditor.getCode()
+          } else {
+            this.$f7.toast.create({
+              text: 'Running / saving is only supported in block mode - <br>please switch back from code preview to block editor',
+              position: 'center',
+              icon: '<i class="f7-icons">exclamationmark_bubble</i>',
+              destroyOnClose: true,
+              closeTimeout: 3000
+            }).open()
+            return Promise.reject()
+          }
         } catch (e) {
           this.$f7.dialog.alert(e)
           return Promise.reject(e)
@@ -383,6 +394,7 @@ export default {
           }).open()
         })
       })
+        .catch(() => {})
     },
     deleteRule () {
       this.$f7.dialog.confirm(
