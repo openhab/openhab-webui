@@ -26,8 +26,9 @@
       </span>
       <span class="display-flex flex-direction-row align-items-center">
         <f7-button v-if="!newScript && isBlockly && !blocklyCodePreview" outline small :active="blocklyShowLabels" icon-f7="square_on_circle" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" style="margin-right: 5px" @click="toggleBlocklyItemLabelId" :tooltip="'Toggle to show either Item labels or IDs'" />
-        <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" />
-        <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" />
+        <f7-segmented>
+          <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" />
+          <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" />
         </f7-segmented>
         <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
       </span>
