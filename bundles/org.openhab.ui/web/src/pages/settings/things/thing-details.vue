@@ -150,8 +150,8 @@
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="thing && !thing.editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
-        <editor v-if="currentTab === 'code'" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="(value) => thingYaml = value" :read-only="thing && !thing.editable" />
+        <f7-icon v-if="thing.editable === false" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
+        <editor class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="onEditorInput" :read-only="thing.editable === false" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
@@ -349,6 +349,10 @@ export default {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
+    },
+    onEditorInput (value) {
+      this.thingYaml = value
+      this.dirty = true
     },
     switchTab (tab) {
       if (this.currentTab === tab) return
