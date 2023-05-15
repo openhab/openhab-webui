@@ -43,9 +43,10 @@
           </f7-col>
         </f7-block>
       </f7-tab>
+
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="ready && !isEditable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMgs" />
-        <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.item+yaml" :value="itemYaml" @input="onEditorInput" :read-only="item.editable === false" />
+        <f7-icon v-if="item.editable === false" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMgs" />
+        <editor class="item-code-editor" mode="application/vnd.openhab.item+yaml" :value="itemYaml" @input="onEditorInput" :read-only="item.editable === false" />
       </f7-tab>
     </f7-tabs>
 
@@ -60,7 +61,7 @@
 </template>
 
 <style lang="stylus">
-.rule-code-editor.vue-codemirror
+.item-code-editor.vue-codemirror
   display block
   top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
   height calc(100% - 2*var(--f7-navbar-height))
