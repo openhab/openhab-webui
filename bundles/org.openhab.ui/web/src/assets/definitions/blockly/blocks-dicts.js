@@ -4,7 +4,6 @@
 
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
-import { addDict } from './utils'
 
 export default function (f7, isGraalJs) {
   Blockly.Blocks['dicts_create_with'] = {
@@ -257,15 +256,21 @@ export default function (f7, isGraalJs) {
     if (dictType === 'Dictionary') {
       // Dictionary used directly, so we create an intermediate var
       dictVar = addDict()
-      code += `${dictVar}=${dict}\n`
+      code += `${dictVar}=${dict};\n`
     } else {
       dictVar = dict
     }
 
     code += `for (var ${loopVar}Key in ${dictVar}) {\n`
-    code += `${loopVar} = ${dictVar}[${loopVar}Key]\n`
-    code += dictForCode + '\n'
+    code += `  ${loopVar} = ${dictVar}[${loopVar}Key];\n`
+    code += dictForCode
     code += '}\n'
     return code
   }
+}
+
+function addDict () {
+  return javascriptGenerator.provideFunction_(
+    'dictionary',
+    ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ';'])
 }
