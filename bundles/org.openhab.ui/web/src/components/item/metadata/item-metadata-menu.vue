@@ -37,6 +37,9 @@ export default {
       metadataNamespaces: MetadataNamespaces
     }
   },
+  beforeMount () {
+    if (this.item.type.indexOf('Number:') < 0) this.metadataNamespaces = this.metadataNamespaces.filter(n => n.name !== 'unit')
+  },
   computed: {
     editableNamespaces () {
       if (!this.item.metadata) return []
@@ -54,9 +57,9 @@ export default {
     },
     wellKnownNamespaces () {
       return this.editableNamespaces
-        .filter((n) => MetadataNamespaces.some((wk) => wk.name === n.name))
+        .filter((n) => this.metadataNamespaces.some((wk) => wk.name === n.name))
         .map((n) => {
-          const wellKnown = MetadataNamespaces.find((wk) => wk.name === n.name)
+          const wellKnown = this.metadataNamespaces.find((wk) => wk.name === n.name)
           return {
             ...n,
             label: wellKnown.label
@@ -65,7 +68,7 @@ export default {
     },
     customNamespaces () {
       return this.editableNamespaces
-        .filter((n) => !MetadataNamespaces.some((wk) => wk.name === n.name))
+        .filter((n) => !this.metadataNamespaces.some((wk) => wk.name === n.name))
         .map((n) => {
           return {
             ...n,
@@ -87,7 +90,7 @@ export default {
         buttons: [
           [
             { label: true, text: 'Well-known namespaces' },
-            ...MetadataNamespaces.map((n) => {
+            ...this.metadataNamespaces.map((n) => {
               return {
                 text: n.label,
                 color: 'blue',

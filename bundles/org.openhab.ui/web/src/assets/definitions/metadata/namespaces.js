@@ -1,5 +1,6 @@
 export default [
   { name: 'stateDescription', label: 'State Description' },
+  { name: 'unit', label: 'Internal Unit' },
   { name: 'commandDescription', label: 'Command Options' },
   { name: 'synonyms', label: 'Synonyms' },
   { name: 'widget', label: 'Default Standalone Widget' },

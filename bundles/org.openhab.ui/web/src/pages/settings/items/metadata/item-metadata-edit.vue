@@ -66,6 +66,7 @@ import YAML from 'yaml'
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 
 import ItemMetadataItemDescription from '@/components/item/metadata/item-metadata-itemdescription.vue'
+import ItemMetadataUnit from '@/components/item/metadata/item-metadata-unit.vue'
 import ItemMetadataSynonyms from '@/components/item/metadata/item-metadata-synonyms.vue'
 import ItemMetadataWidget from '@/components/item/metadata/item-metadata-widget.vue'
 import ItemMetadataWidgetOrder from '@/components/item/metadata/item-metadata-widgetorder.vue'
@@ -109,6 +110,8 @@ export default {
         case 'stateDescription':
         case 'commandDescription':
           return ItemMetadataItemDescription
+        case 'unit':
+          return ItemMetadataUnit
         case 'synonyms':
           return ItemMetadataSynonyms
         case 'widget':
