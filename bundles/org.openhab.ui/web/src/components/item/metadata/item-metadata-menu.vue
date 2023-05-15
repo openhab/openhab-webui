@@ -4,7 +4,7 @@
       <f7-list>
         <ul>
           <f7-list-item
-            v-for="namespace in wellKnownNamespaces" :key="namespace"
+            v-for="namespace in wellKnownNamespaces" :key="namespace.name"
             :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
             :title="namespace.label"
             :after="namespace.value || 'Not Set'" />
@@ -12,7 +12,7 @@
         <ul v-if="customNamespaces.length > 0">
           <f7-list-item divider />
           <f7-list-item
-            v-for="namespace in customNamespaces" :key="namespace"
+            v-for="namespace in customNamespaces" :key="namespace.name"
             :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
             :title="namespace.label"
             :after="namespace.value || 'Not Set'" />
