@@ -2,8 +2,8 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="pageTitle" :subtitle="(!newScript) ? mode : undefined" back-link="Back">
       <f7-nav-right v-if="isEditable && !newScript">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
+        <f7-link @click="onSave()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="onSave()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
       </f7-nav-right>
@@ -298,7 +298,7 @@ export default {
         if (!this.eventSource) this.startEventSource()
       })
     },
-    saveRule (noToast) {
+    save (noToast) {
       if (!this.isEditable) return
       if (this.rule.status.status === 'RUNNING') {
         this.$f7.toast.create({
@@ -306,7 +306,7 @@ export default {
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-        return Promise.reject()
+        return Promise.reject('saveWhileRunningRejected')
       }
       if (this.isBlockly) {
         try {
@@ -315,7 +315,7 @@ export default {
             this.script = this.$refs.blocklyEditor.getCode()
           } else {
             this.$f7.toast.create({
-              text: 'Running / saving is only supported in block mode - <br>please switch back from code preview to block editor',
+              text: 'Running / saving is only supported in block mode!<br>Please switch back from code preview to block editor.',
               position: 'center',
               icon: '<i class="f7-icons">exclamationmark_bubble</i>',
               destroyOnClose: true,
@@ -347,8 +347,8 @@ export default {
         }).open()
       })
     },
-    save () {
-      this.saveRule().catch((e) => { if (e !== 'saveOnCodePreviewRejected') { throw (e) } })
+    onSave () {
+      this.save().catch((e) => { if (!['saveWhileRunningRejected', 'saveOnCodePreviewRejected'].includes(e)) { throw (e) } })
     },
     changeLanguage (contentType) {
       if (this.createMode) return
@@ -386,7 +386,7 @@ export default {
         closeTimeout: 2000
       }).open()
 
-      const savePromise = (this.isEditable && (this.dirty || this.isBlockly)) ? this.saveRule(true) : Promise.resolve()
+      const savePromise = (this.isEditable && (this.dirty || this.isBlockly)) ? this.save(true) : Promise.resolve()
 
       savePromise.then(() => {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
@@ -473,7 +473,7 @@ export default {
             ev.preventDefault()
             break
           case 83:
-            this.save()
+            this.onSave()
             ev.stopPropagation()
             ev.preventDefault()
             break
