@@ -298,7 +298,7 @@ export default {
         if (!this.eventSource) this.startEventSource()
       })
     },
-    save (noToast) {
+    saveRule (noToast) {
       if (!this.isEditable) return
       if (this.rule.status.status === 'RUNNING') {
         this.$f7.toast.create({
@@ -321,7 +321,7 @@ export default {
               destroyOnClose: true,
               closeTimeout: 3000
             }).open()
-            return Promise.reject()
+            return Promise.reject('saveOnCodePreviewRejected')
           }
         } catch (e) {
           this.$f7.dialog.alert(e)
@@ -346,6 +346,9 @@ export default {
           closeTimeout: 2000
         }).open()
       })
+    },
+    save () {
+      this.saveRule().catch((e) => { if (e !== 'saveOnCodePreviewRejected') { throw (e) } })
     },
     changeLanguage (contentType) {
       if (this.createMode) return
@@ -383,7 +386,7 @@ export default {
         closeTimeout: 2000
       }).open()
 
-      const savePromise = (this.isEditable && (this.dirty || this.isBlockly)) ? this.save(true) : Promise.resolve()
+      const savePromise = (this.isEditable && (this.dirty || this.isBlockly)) ? this.saveRule(true) : Promise.resolve()
 
       savePromise.then(() => {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
@@ -394,7 +397,7 @@ export default {
           }).open()
         })
       })
-        .catch(() => {})
+        .catch((e) => { if (e !== 'saveOnCodePreviewRejected') { throw (e) } })
     },
     deleteRule () {
       this.$f7.dialog.confirm(
