@@ -1,4 +1,5 @@
 export default [
+  { name: 'unit', label: 'Unit' },
   { name: 'stateDescription', label: 'State Description' },
   { name: 'commandDescription', label: 'Command Options' },
   { name: 'synonyms', label: 'Synonyms' },
