@@ -63,7 +63,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       }
     },
     updateShape: function () {
-      let persistenceNameInput = this.getInput('persistenceName')
+      const persistenceNameInput = this.getInput('persistenceName')
       if (!persistenceNameInput.getShadowDom()) {
         persistenceNameInput.setShadowDom(Blockly.Xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
       }
@@ -101,12 +101,12 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
   javascriptGenerator['oh_get_persistvalue'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'itemName')
-    let itemCode = toItemCode(itemName, inputType)
 
     const methodName = block.getFieldValue('methodName')
     const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistence = (isGraalJs) ? null : addPersistence()
 
+    const itemCode = generateItemCode(itemName, inputType)
     let code = ''
     let dayInfo = ''
     let skipPrevious = javascriptGenerator.valueToCode(block, 'skipPrevious', javascriptGenerator.ORDER_NONE)
@@ -185,7 +185,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
   javascriptGenerator['oh_persist_changed'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const inputType = block.getInput('itemName').connection.targetBlock().outputConnection.getCheck()[0]
-    let itemCode = toItemCode(itemName, inputType)
+    let itemCode = generateItemCode(itemName, inputType)
 
     const methodName = block.getFieldValue('methodName')
     const dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
@@ -237,7 +237,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
     const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : ((!isGraalJs) ? ',' : '') + ` ${persistenceName}`
 
-    let itemCode = toItemCode(itemName, inputType)
+    let itemCode = generateItemCode(itemName, inputType)
 
     if (isGraalJs) {
       return [`${itemCode}.history.lastUpdate(${persistenceExtension})`, 0]
@@ -249,7 +249,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
     }
   }
 
-  function toItemCode (itemName, inputType) {
+  function generateItemCode (itemName, inputType) {
     if (isGraalJs) {
       return (inputType === 'oh_item' || inputType === 'String') ? `items.getItem(${itemName})` : `${itemName}`
     } else {
