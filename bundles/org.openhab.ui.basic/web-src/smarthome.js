@@ -1600,7 +1600,7 @@
 				}
 				if (unitValue.length > 1) {
 					newValue = newValue + " " + unitValue;
-				} else if (unit != undefined) {
+				} else if (unit !== undefined) {
 					newValue = newValue + " " + unit;
 				}
 				return { value: newValue, changed: true };
