@@ -1550,6 +1550,7 @@
 		_t.itemType = _t.parentNode.getAttribute(o.itemTypeAttribute);
 		_t.inputHint = _t.parentNode.getAttribute(o.inputHintAttribute);
 		_t.itemState = _t.parentNode.getAttribute(o.itemStateAttribute);
+		_t.unit = _t.parentNode.getAttribute(o.unitAttribute);
 		_t.verify = undefined;
 
 		var
@@ -1587,7 +1588,7 @@
 			setColor(_t.input.parentNode.nextElementSibling, undefColor); // set color for unit
 		}
 
-		function parseNumber(value) {
+		function parseNumber(value, unit) {
 			var newValue = value.trim();
 			var numberMatch = newValue.match(numberPattern);
 			if (numberMatch && (numberMatch.length > 0)) {
@@ -1599,6 +1600,8 @@
 				}
 				if (unitValue.length > 1) {
 					newValue = newValue + " " + unitValue;
+				} else if (unit != undefined) {
+					newValue = newValue + " " + unit;
 				}
 				return { value: newValue, changed: true };
 			} else {
@@ -1612,7 +1615,7 @@
 				changed = true;
 
 			if (_t.itemType === "number") {
-				var parsedValue = parseNumber(changeValue);
+				var parsedValue = parseNumber(changeValue, _t.unit);
 				if (parsedValue.changed) {
 					changeValue = parsedValue.value;
 				} else {
@@ -2668,6 +2671,7 @@
 	itemTypeAttribute: "data-item-type",
 	inputHintAttribute: "data-input-hint",
 	itemStateAttribute: "data-item-state",
+	unitAttribute: "data-item-unit",
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",

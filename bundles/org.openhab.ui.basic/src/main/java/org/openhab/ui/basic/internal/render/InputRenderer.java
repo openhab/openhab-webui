@@ -16,11 +16,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.measure.Unit;
-
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.items.Item;
@@ -29,12 +28,12 @@ import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.types.DateTimeType;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.PercentType;
-import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.types.StringType;
 import org.openhab.core.model.sitemap.sitemap.Input;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
 import org.openhab.core.types.UnDefType;
+import org.openhab.core.types.util.UnitUtils;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
@@ -58,6 +57,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\+|-)?[0-9\\.,]+");
     private static final Pattern COMMA_SEPARATOR_PATTERN = Pattern
             .compile("^-?(([0-9]{1,3}(\\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$");
+    private static final Pattern LABEL_PATTERN = Pattern.compile("[^\\[]*?\\[[^%]*(%\\S+)? ?(\\S+)?.*\\]");
 
     private final Logger logger = LoggerFactory.getLogger(InputRenderer.class);
 
@@ -143,6 +143,15 @@ public class InputRenderer extends AbstractWidgetRenderer {
                 undefState = stateArray[0];
             } else if (!("date".equals(inputHint) || "time".equals(inputHint) || "datetime".equals(inputHint))) {
                 undefState = displayState;
+                if (item instanceof NumberItem) {
+                    NumberItem numberItem = (NumberItem) item;
+                    if (numberItem.getDimension() != null) {
+                        String[] stateArray = displayState.trim().split(" ");
+                        if (stateArray.length <= 1) {
+                            undefState = stateArray[0] + " " + getUnit(w, numberItem);
+                        }
+                    }
+                }
             }
         }
         snippet = snippet.replace("%undef_state%", undefState);
@@ -173,22 +182,17 @@ public class InputRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%item_state%", itemState);
 
         String unitSnippet = "";
-        if ("number".equals(inputHint) && item instanceof NumberItem) {
+        String unit = "";
+        if (item instanceof NumberItem) {
             NumberItem numberItem = (NumberItem) item;
             if (numberItem.getDimension() != null) {
-                String unit = getUnitForWidget(w);
-                if (unit == null) {
-                    // Search the unit in the item state
-                    if (state instanceof QuantityType<?>) {
-                        Unit<?> stateUnit = ((QuantityType<?>) state).getUnit();
-                        unit = stateUnit.toString();
-                    } else {
-                        unit = "";
-                    }
+                unit = getUnit(w, numberItem);
+                if ("number".equals(inputHint)) {
+                    unitSnippet = "<span %valuestyle% class=\"mdl-form__input-unit\">" + unit + "</span>";
                 }
-                unitSnippet = "<span %valuestyle% class=\"mdl-form__input-unit\">" + unit + "</span>";
             }
         }
+        snippet = snippet.replace("%item_unit%", unit);
         snippet = snippet.replace("%unit_snippet%", unitSnippet);
 
         // Process the color tags
@@ -215,5 +219,40 @@ public class InputRenderer extends AbstractWidgetRenderer {
         } else {
             return value;
         }
+    }
+
+    private String getUnit(Widget w, NumberItem item) {
+        String unit = "";
+        if (w.getLabel() != null) {
+            unit = getUnitFromLabel(item, w.getLabel());
+        }
+        if ((unit != null) && unit.isBlank() && (item.getLabel() != null)) {
+            unit = getUnitFromLabel(item, item.getLabel());
+        }
+        if (unit == null || unit.isBlank()) {
+            unit = item.getUnitSymbol();
+        }
+        unit = (unit == null) ? "" : unit;
+        return unit;
+    }
+
+    private @Nullable String getUnitFromLabel(NumberItem item, @Nullable String label) {
+        String unit = null;
+        if (label != null && !label.isBlank()) {
+            Matcher m = LABEL_PATTERN.matcher(label);
+            if (m.matches()) {
+                unit = m.group(2);
+                if (unit != null) {
+                    unit = unit.trim();
+                }
+            } else {
+                unit = "";
+            }
+            if (UnitUtils.UNIT_PLACEHOLDER.equals(unit)) {
+                unit = item.getUnitSymbol();
+            }
+            unit = "%%".equals(unit) ? "%" : unit;
+        }
+        return unit;
     }
 }
