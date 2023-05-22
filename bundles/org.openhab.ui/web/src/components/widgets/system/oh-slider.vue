@@ -1,6 +1,6 @@
 <template>
-  <f7-range ref="rangeslider" class="oh-slider" v-bind="config" :value="value" :format-label="formatLabel" :format-scale-label="formatScaleLabel"
-            @range:change="sendCommandDebounced($event)" @click.native.stop="sendCommandDebounced(value, true)" @touchend.native="sendCommandDebounced(value, true)" />
+  <f7-range ref="rangeslider" class="oh-slider" v-bind="config" :value="sliderValue" :format-label="formatLabel" :format-scale-label="formatScaleLabel"
+            @range:change="onChange($event)" @click.native.stop="sendCommandDebounced(sliderValue, true)" @touchend.native="sendCommandDebounced(sliderValue, true)" />
 </template>
 
 <style lang="stylus">
@@ -17,6 +17,18 @@ import { OhSliderDefinition } from '@/assets/definitions/widgets/system'
 export default {
   mixins: [mixin, slideMixin],
   widget: OhSliderDefinition,
+  data () {
+    return {
+      sliderValue: null
+    }
+  },
+  watch: {
+    value (newValue) {
+      if (!isNaN(newValue)) {
+        this.sliderValue = newValue
+      }
+    }
+  },
   mounted () {
     // f7-range inside of masonry can get rendered faulty, as the masonry changes its breakpoint layout after being rendered
     // re-calculate the range slider after masonry is updated
@@ -38,6 +50,16 @@ export default {
       // uses the number of decimals in the step config to round the provided number
       const nbDecimals = this.config.step ? Number(this.config.step).toString().replace(',', '.').split('.')[1] : 0
       return parseFloat(Number(value).toFixed(nbDecimals))
+    },
+    onChange (newValue) {
+      if (isNaN(this.value)) return
+      const tsf = this.toStepFixed(newValue)
+      // Do NOT send command if sliderValue is smaller than real value +-step
+      if (Math.abs(tsf - this.value) < (this.config.step || 1)) {
+        this.$refs.rangeslider.setValue(this.value)
+      } else {
+        this.sendCommandDebounced(tsf)
+      }
     }
   }
 }
