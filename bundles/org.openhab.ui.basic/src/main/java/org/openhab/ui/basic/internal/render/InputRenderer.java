@@ -57,7 +57,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\+|-)?[0-9\\.,]+");
     private static final Pattern COMMA_SEPARATOR_PATTERN = Pattern
             .compile("^-?(([0-9]{1,3}(\\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$");
-    private static final Pattern LABEL_PATTERN = Pattern.compile("[^\\[]*?\\[[^%]*(%\\S+)? ?(\\S+)?.*\\]");
+    private static final Pattern LABEL_PATTERN = Pattern.compile("[^\\[]*?\\[([^%]*)(%\\S+)? ?(\\S+)?(.*)\\]");
 
     private final Logger logger = LoggerFactory.getLogger(InputRenderer.class);
 
@@ -77,7 +77,6 @@ public class InputRenderer extends AbstractWidgetRenderer {
         Input input = (Input) w;
 
         String snippet = getSnippet("input");
-
         snippet = preprocessSnippet(snippet, w);
 
         Item item = null;
@@ -85,12 +84,14 @@ public class InputRenderer extends AbstractWidgetRenderer {
             item = itemUIRegistry.getItem(w.getItem());
         } catch (ItemNotFoundException e) {
             logger.debug("Failed to retrieve item during widget rendering: {}", e.getMessage());
+            return ECollections.emptyEList();
         }
+
         String dataType;
-        if (item != null && item.getAcceptedCommandTypes().stream()
+        if (item.getAcceptedCommandTypes().stream()
                 .anyMatch(o -> (!StringType.class.isAssignableFrom(o) && Number.class.isAssignableFrom(o)))) {
             dataType = "number";
-        } else if (item != null && item.getAcceptedCommandTypes().stream()
+        } else if (item.getAcceptedCommandTypes().stream()
                 .anyMatch(o -> (!StringType.class.isAssignableFrom(o) && DateTimeType.class.isAssignableFrom(o)))) {
             dataType = "datetime";
         } else {
@@ -99,16 +100,14 @@ public class InputRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%data_type%", dataType);
 
         String inputHint = input.getInputHint();
-        if (item != null) {
-            List<Class<? extends State>> dataTypes = item.getAcceptedDataTypes();
-            if (("number".equals(inputHint)
-                    && !(dataTypes.contains(DecimalType.class) || dataTypes.contains(PercentType.class)))
-                    || (("date".equals(inputHint) || "time".equals(inputHint) || "datetime".equals(inputHint))
-                            && !dataTypes.contains(DateTimeType.class))) {
-                logger.warn("Invalid inputHint {} for item {} of type {}, set to default", inputHint, item.getName(),
-                        item.getType());
-                inputHint = null;
-            }
+        List<Class<? extends State>> dataTypes = item.getAcceptedDataTypes();
+        if (("number".equals(inputHint)
+                && !(dataTypes.contains(DecimalType.class) || dataTypes.contains(PercentType.class)))
+                || (("date".equals(inputHint) || "time".equals(inputHint) || "datetime".equals(inputHint))
+                        && !dataTypes.contains(DateTimeType.class))) {
+            logger.warn("Invalid inputHint {} for item {} of type {}, set to default", inputHint, item.getName(),
+                    item.getType());
+            inputHint = null;
         }
         if ("datetime".equals(dataType) && ((inputHint == null) || "".equals(inputHint) || "text".equals(inputHint))) {
             inputHint = "datetime";
@@ -133,38 +132,38 @@ public class InputRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%input_type%", inputType);
         snippet = snippet.replace("%input_pattern%", inputPattern);
 
-        String displayState = getValue(w);
+        String displayState = getValue(w, item);
         State state = itemUIRegistry.getState(w);
+
+        String prefix = getPrefix(w, item);
+        String postfix = getPostfix(w, item);
+        String prefixSnippet = !prefix.isBlank()
+                ? "<span %valuestyle% class=\"mdl-form__input-prefix\">" + prefix + "</span>"
+                : "";
+        String postfixSnippet = !postfix.isBlank()
+                ? "<span %valuestyle% class=\"mdl-form__input-postfix\">" + postfix + "</span>"
+                : "";
+        snippet = snippet.replace("%prefix_snippet%", prefixSnippet);
+        snippet = snippet.replace("%postfix_snippet%", postfixSnippet);
 
         String undefState = "";
         if (state == null || state instanceof UnDefType) {
             if ("number".equals(inputHint)) {
-                String[] stateArray = displayState.trim().split(" ");
-                undefState = stateArray[0];
+                String[] stateArray = displayState.split(" ");
+                undefState = stateArray.length > 0 ? stateArray[0] : undefState;
             } else if (!("date".equals(inputHint) || "time".equals(inputHint) || "datetime".equals(inputHint))) {
                 undefState = displayState;
-                if (item instanceof NumberItem) {
-                    NumberItem numberItem = (NumberItem) item;
-                    if (numberItem.getDimension() != null) {
-                        String[] stateArray = displayState.trim().split(" ");
-                        if (stateArray.length <= 1) {
-                            undefState = stateArray[0] + " " + getUnit(w, numberItem);
-                        }
-                    }
-                }
             }
         }
         snippet = snippet.replace("%undef_state%", undefState);
 
         String dataState = "";
         String itemState = "";
-        if (state == null) {
-            itemState = "NULL";
-        } else if (state instanceof UnDefType) {
-            itemState = "UNDEF";
+        if ((state == null) || (state instanceof UnDefType)) {
+            itemState = "";
         } else {
             itemState = state.toString();
-            dataState = displayState.isEmpty() ? itemState : displayState;
+            dataState = displayState;
             if ("number".equals(inputHint)) {
                 String[] stateArray = dataState.trim().split(" ");
                 dataState = parseNumber(stateArray[0]);
@@ -199,6 +198,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
         snippet = processColor(w, snippet);
 
         sb.append(snippet);
+
         return ECollections.emptyEList();
     }
 
@@ -221,6 +221,36 @@ public class InputRenderer extends AbstractWidgetRenderer {
         }
     }
 
+    private String getValue(Widget w, Item item) {
+        String value = cleanValue(getValue(w), w, item);
+        if (value.isBlank()) {
+            State state = itemUIRegistry.getState(w);
+            if (state != null && !(state instanceof UnDefType)) {
+                value = state.toString();
+            } else {
+                value = "-";
+            }
+        }
+        if (item instanceof NumberItem) {
+            NumberItem numberItem = (NumberItem) item;
+            if (numberItem.getDimension() != null) {
+                String[] stateArray = value.split(" ");
+                if (stateArray.length <= 1) {
+                    value = (stateArray.length > 0 ? stateArray[0] : value) + " " + getUnit(w, numberItem);
+                }
+            }
+        }
+        return value;
+    }
+
+    private String cleanValue(String value, Widget w, Item item) {
+        String prefix = getPrefix(w, item);
+        String postfix = getPostfix(w, item);
+        String newValue = value.startsWith(prefix) ? value.substring(prefix.length()) : value;
+        newValue = value.endsWith(postfix) ? newValue.substring(0, newValue.lastIndexOf(postfix)) : newValue;
+        return newValue.trim();
+    }
+
     private String getUnit(Widget w, NumberItem item) {
         String unit = "";
         if (w.getLabel() != null) {
@@ -241,7 +271,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
         if (label != null && !label.isBlank()) {
             Matcher m = LABEL_PATTERN.matcher(label);
             if (m.matches()) {
-                unit = m.group(2);
+                unit = m.group(3);
                 if (unit != null) {
                     unit = unit.trim();
                 }
@@ -254,5 +284,51 @@ public class InputRenderer extends AbstractWidgetRenderer {
             unit = "%%".equals(unit) ? "%" : unit;
         }
         return unit;
+    }
+
+    private String getPrefix(Widget w, Item item) {
+        if (w.getLabel() != null) {
+            return getPrefixFromLabel(w.getLabel());
+        } else if (item.getLabel() != null) {
+            return getPrefixFromLabel(item.getLabel());
+        } else {
+            return "";
+        }
+    }
+
+    private String getPrefixFromLabel(@Nullable String label) {
+        if (label != null && !label.isBlank()) {
+            Matcher m = LABEL_PATTERN.matcher(label);
+            if (m.matches()) {
+                String prefix = m.group(1);
+                if (prefix != null && !prefix.isBlank()) {
+                    return prefix;
+                }
+            }
+        }
+        return "";
+    }
+
+    private String getPostfix(Widget w, Item item) {
+        if (w.getLabel() != null) {
+            return getPostfixFromLabel(w.getLabel());
+        } else if (item.getLabel() != null) {
+            return getPostfixFromLabel(item.getLabel());
+        } else {
+            return "";
+        }
+    }
+
+    private String getPostfixFromLabel(@Nullable String label) {
+        if (label != null && !label.isBlank()) {
+            Matcher m = LABEL_PATTERN.matcher(label);
+            if (m.matches()) {
+                String postfix = m.group(4);
+                if (postfix != null && !postfix.isBlank()) {
+                    return postfix;
+                }
+            }
+        }
+        return "";
     }
 }

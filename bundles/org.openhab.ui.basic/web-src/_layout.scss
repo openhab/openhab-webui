@@ -282,6 +282,24 @@
 			text-align: right;
 			padding-left: 8px;
 		}
+		&-prefix {
+			display: inline-block;
+			box-sizing: border-box;
+			font-family: "Helvetica","Arial",sans-serif;
+			font-size: 14px;
+			font-weight: 700;
+			text-align: right;
+			padding-right: 8px;
+		}
+		&-postfix {
+			display: inline-block;
+			box-sizing: border-box;
+			font-family: "Helvetica","Arial",sans-serif;
+			font-size: 14px;
+			font-weight: 700;
+			text-align: right;
+			padding-left: 8px;
+		}
 	}
 	&__title {
 		margin: 0;
