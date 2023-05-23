@@ -1551,6 +1551,9 @@
 		_t.inputHint = _t.parentNode.getAttribute(o.inputHintAttribute);
 		_t.itemState = _t.parentNode.getAttribute(o.itemStateAttribute);
 		_t.unit = _t.parentNode.getAttribute(o.unitAttribute);
+		_t.prefixField = _t.parentNode.parentNode.querySelector(".mdl-form__input-prefix");
+		_t.postfixField = _t.parentNode.parentNode.querySelector(".mdl-form__input-postfix");
+		_t.unitField =  _t.parentNode.parentNode.querySelector(".mdl-form__input-unit");
 		_t.verify = undefined;
 
 		var
@@ -1582,12 +1585,6 @@
 			}
 		}
 
-		// Set the color correctly for UNDEF or NULL values at initialization
-		if (lastItemState === undefined || lastItemState === "NULL" || lastItemState === "UNDEF") {
-			setColor(_t.input, undefColor);
-			setColor(_t.input.parentNode.nextElementSibling, undefColor); // set color for unit
-		}
-
 		function parseNumber(value, unit) {
 			var newValue = value.trim();
 			var numberMatch = newValue.match(numberPattern);
@@ -1607,6 +1604,14 @@
 			} else {
 				return { value: value, changed: false };
 			}
+		}
+
+		function cleanValue(value) {
+			var prefix = _t.prefixField !== null ? _t.prefixField.innerHTML : "";
+			var postfix = _t.postfixField !== null ? _t.postfixField.innerHTML : "";
+			var newValue = value.startsWith(prefix) ? value.substr(prefix.length) : value;
+			newValue = value.endsWith(postfix) ? newValue.substr(0, newValue.lastIndexOf(postfix)) : newValue;
+			return newValue.trim();
 		}
 
 		function onChange() {
@@ -1673,33 +1678,35 @@
 				_t.verify.cancel();
 			}
 
-			var newValue = value;
+			var newValue = cleanValue(value);
 			var undefValue = "";
 			if (itemState === undefined) {
 				undefValue = lastUndef;
 			} else if (itemState === "NULL" || itemState === "UNDEF") {
-				newValue = "";
 				if (_t.itemType === "datetime") {
 					undefValue = "";
 					if (_t.input.type === "text") {
 						undefValue = "YYYY-MM-DD hh:mm";
 					}
 				} else {
-					undefValue = !(value === "" || value === "NULL" || value === "UNDEF") ? value : lastUndef;
+					undefValue = !(newValue === "" || newValue === "NULL" || newValue === "UNDEF") ? newValue : lastUndef;
 				}
+				newValue = "";
 			}
 
-			if (_t.inputHint === "number") {
-				if (newValue !== "") {
-					newValue = parseNumber(newValue).value;
-					var valueArray = newValue.trim().split(" ");
-					newValue = valueArray[0];
-					if (valueArray.length > 1) {
-						_t.input.parentNode.nextElementSibling.innerHTML = valueArray[1];
+			if (_t.itemType === "number") {
+				newValue = parseNumber(newValue, _t.unit).value;
+				if (_t.inputHint === "number") {
+					if (newValue !== "") {
+						var valueArray = newValue.trim().split(" ");
+						newValue = valueArray[0];
+						if (valueArray.length > 1) {
+							_t.input.parentNode.nextElementSibling.innerHTML = valueArray[1];
+						}
+					} else {
+						var undefArray = undefValue.split(" ");
+						undefValue = undefArray[0];
 					}
-				} else {
-					var undefArray = undefValue.split(" ");
-					undefValue = undefArray[0];
 				}
 			} else if (_t.itemType === "datetime") {
 				newValue = ((itemState !== "NULL") && (itemState !== "UNDEF")) ? itemState : newValue;
@@ -1730,7 +1737,9 @@
 		_t.setValueColor = function(color) {
 			var newColor = !(lastItemState === undefined || lastItemState === "NULL" || lastItemState === "UNDEF") ? color : undefColor;
 			setColor(_t.input, newColor);
-			setColor(_t.input.parentNode.nextElementSibling, newColor); // set color for unit
+			setColor(_t.unitField, color);
+			setColor(_t.prefixField, color);
+			setColor(_t.postfixField, color);
 		};
 
 		_t.destroy = function() {
