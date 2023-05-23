@@ -310,25 +310,35 @@ public class InputRenderer extends AbstractWidgetRenderer {
     }
 
     private String getPostfix(Widget w, Item item) {
+        boolean hasUnit = false;
+        if (item instanceof NumberItem) {
+            NumberItem numberItem = (NumberItem) item;
+            if (numberItem.getDimension() != null) {
+                hasUnit = true;
+            }
+        }
         if (w.getLabel() != null) {
-            return getPostfixFromLabel(w.getLabel());
+            return getPostfixFromLabel(w.getLabel(), hasUnit);
         } else if (item.getLabel() != null) {
-            return getPostfixFromLabel(item.getLabel());
+            return getPostfixFromLabel(item.getLabel(), hasUnit);
         } else {
             return "";
         }
     }
 
-    private String getPostfixFromLabel(@Nullable String label) {
+    private String getPostfixFromLabel(@Nullable String label, boolean hasUnit) {
+        String postfix = "";
         if (label != null && !label.isBlank()) {
             Matcher m = LABEL_PATTERN.matcher(label);
             if (m.matches()) {
-                String postfix = m.group(4);
-                if (postfix != null && !postfix.isBlank()) {
-                    return postfix;
+                if (!hasUnit && m.group(3) != null) {
+                    postfix = m.group(3);
+                }
+                if (m.group(4) != null) {
+                    postfix = postfix + m.group(4);
                 }
             }
         }
-        return "";
+        return postfix;
     }
 }
