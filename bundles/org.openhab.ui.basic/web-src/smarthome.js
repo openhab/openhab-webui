@@ -1559,7 +1559,6 @@
 		var
 			lastValue = _t.input.value,
 			lastUndef = _t.input.nextElementSibling.innerHTML.trim(),
-			undefColor = getComputedStyle(_t.input.nextElementSibling).getPropertyValue("color"),
 			lastItemState = _t.itemState,
 			numberPattern = /^(\+|-)?[0-9\.,]+/,
 			datePattern = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/,
@@ -1735,8 +1734,7 @@
 		};
 
 		_t.setValueColor = function(color) {
-			var newColor = !(lastItemState === undefined || lastItemState === "NULL" || lastItemState === "UNDEF") ? color : undefColor;
-			setColor(_t.input, newColor);
+			setColor(_t.input, color);
 			setColor(_t.unitField, color);
 			setColor(_t.prefixField, color);
 			setColor(_t.postfixField, color);
