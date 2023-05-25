@@ -1560,11 +1560,11 @@
 			lastValue = _t.input.value,
 			lastUndef = _t.input.nextElementSibling.innerHTML.trim(),
 			lastItemState = _t.itemState,
-			numberPattern = /^(\+|-)?[0-9\.,]+/,
+			numberPattern = /^(\+|-)?[0-9\.,]+((e|E)(\+|-)?[0-9]+)?/,
 			datePattern = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/,
 			timePattern = /^[0-9]{2}:[0-9]{2}/,
 			timeWithSecondsPattern = /[0-9]{2}:[0-9]{2}:[0-9]{2}$/,
-			commaSeparatorPattern = /^-?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
+			commaSeparatorPattern = /^-?(([1-9][0-9]{0,2}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?((e|E)(\+|-)?[0-9]+)?$/;
 
 		// This kicks in when the browser does not support date, time or datetime-local input elements.
 		// Set the placeholder to the right patterns. This cannot be done in the snippet creation in Java because the browser is unknown there.
@@ -1584,13 +1584,15 @@
 			}
 		}
 
-		function parseNumber(value, unit) {
+		function parseNumber(value, unit, keepExponentChar) {
 			var newValue = value.trim();
 			var numberMatch = newValue.match(numberPattern);
 			if (numberMatch && (numberMatch.length > 0)) {
 				var numberValue = numberMatch[0];
 				var unitValue = newValue.substring(numberValue.length).trim();
 				newValue = numberValue.replace(/^\+/, "");
+				// when sending updates, only uppercase E for exponent is accepted, don't change when only parsing for visualisation
+				newValue = keepExponentChar ? newValue : newValue.replace("e", "E");
 				if (commaSeparatorPattern.test(newValue)) {
 					newValue = newValue.replace(/\./g, "").replace(",", ".");
 				}
@@ -1693,19 +1695,17 @@
 				newValue = "";
 			}
 
-			if (_t.itemType === "number") {
-				newValue = parseNumber(newValue, _t.unit).value;
-				if (_t.inputHint === "number") {
-					if (newValue !== "") {
-						var valueArray = newValue.trim().split(" ");
-						newValue = valueArray[0];
-						if (valueArray.length > 1) {
-							_t.input.parentNode.nextElementSibling.innerHTML = valueArray[1];
-						}
-					} else {
-						var undefArray = undefValue.split(" ");
-						undefValue = undefArray[0];
+			if (_t.inputHint === "number") {
+				if (newValue !== "") {
+					newValue = parseNumber(newValue, _t.unit, true).value;
+					var valueArray = newValue.trim().split(" ");
+					newValue = valueArray[0];
+					if (valueArray.length > 1) {
+						_t.input.parentNode.nextElementSibling.innerHTML = valueArray[1];
 					}
+				} else {
+					var undefArray = undefValue.split(" ");
+					undefValue = undefArray[0];
 				}
 			} else if (_t.itemType === "datetime") {
 				newValue = ((itemState !== "NULL") && (itemState !== "UNDEF")) ? itemState : newValue;
