@@ -212,7 +212,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
             if (COMMA_SEPARATOR_PATTERN.matcher(newValue).find()) {
                 newValue = newValue.replace("/\\./g", "").replace(",", ".");
             }
-            if (unitValue.length() > 1) {
+            if (unitValue.length() > 0) {
                 newValue = newValue + " " + unitValue;
             }
             return newValue;
