@@ -54,9 +54,9 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 public class InputRenderer extends AbstractWidgetRenderer {
 
-    private static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\+|-)?[0-9\\.,]+");
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\+|-)?[0-9\\.,]+((e|E)(\\+|-)?[0-9]+)?");
     private static final Pattern COMMA_SEPARATOR_PATTERN = Pattern
-            .compile("^-?(([0-9]{1,3}(\\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$");
+            .compile("^(\\+|-)?(([1-9][0-9]{0,2}(\\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?((e|E)(\\+|-)?[0-9]+)?$");
     private static final Pattern LABEL_PATTERN = Pattern.compile("[^\\[]*?\\[([^%]*)(%\\S+)? ?(\\S+)?(.*)\\]");
 
     private final Logger logger = LoggerFactory.getLogger(InputRenderer.class);
