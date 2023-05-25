@@ -1596,7 +1596,7 @@
 				if (commaSeparatorPattern.test(newValue)) {
 					newValue = newValue.replace(/\./g, "").replace(",", ".");
 				}
-				if (unitValue.length > 1) {
+				if (unitValue.length > 0) {
 					newValue = newValue + " " + unitValue;
 				} else if (unit !== undefined) {
 					newValue = newValue + " " + unit;
