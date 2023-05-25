@@ -229,7 +229,7 @@ export default {
       autocompleteAddons: null,
       addons: [],
       selectedAddons: [],
-      recommendedAddons: ['automation-jsscripting', 'persistence-rrd4j'],
+      recommendedAddons: ['automation-jsscripting', 'persistence-rrd4j', 'ui-basic'],
       installingAddons: false
     }
   },
