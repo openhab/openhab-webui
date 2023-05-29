@@ -195,6 +195,7 @@ function generateQuantityCode (block, inputName) {
       code = `Quantity(${input})`
       break
     case 'oh_itemtype':
+    case '': // vars are expected to contain an item object
       code = `${input}.quantityState`
       break
     case 'oh_item':
