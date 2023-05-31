@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.items.Item;
@@ -33,7 +32,6 @@ import org.openhab.core.model.sitemap.sitemap.Input;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
 import org.openhab.core.types.UnDefType;
-import org.openhab.core.types.util.UnitUtils;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
@@ -57,7 +55,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\+|-)?[0-9\\.,]+((e|E)(\\+|-)?[0-9]+)?");
     private static final Pattern COMMA_SEPARATOR_PATTERN = Pattern
             .compile("^(\\+|-)?(([1-9][0-9]{0,2}(\\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?((e|E)(\\+|-)?[0-9]+)?$");
-    private static final Pattern LABEL_PATTERN = Pattern.compile("[^\\[]*?\\[([^%]*)(%\\S+)? ?(\\S+)?(.*)\\]");
+    private static final Pattern FORMAT_PATTERN = Pattern.compile("^([^%]*)( ?%\\S+)+( [^%]*)?");
 
     private final Logger logger = LoggerFactory.getLogger(InputRenderer.class);
 
@@ -135,8 +133,9 @@ public class InputRenderer extends AbstractWidgetRenderer {
         String displayState = getValue(w, item);
         State state = itemUIRegistry.getState(w);
 
-        String prefix = getPrefix(w, item);
-        String postfix = getPostfix(w, item);
+        String prefix = getPrefix(w);
+        boolean hasUnit = item instanceof NumberItem ? (((NumberItem) item).getDimension() != null) : false;
+        String postfix = hasUnit ? "" : getPostfix(w);
         String prefixSnippet = !prefix.isBlank()
                 ? "<span %valuestyle% class=\"mdl-form__input-prefix\">" + prefix + "</span>"
                 : "";
@@ -236,7 +235,8 @@ public class InputRenderer extends AbstractWidgetRenderer {
             if (numberItem.getDimension() != null) {
                 String[] stateArray = value.split(" ");
                 if (stateArray.length <= 1) {
-                    value = (stateArray.length > 0 ? stateArray[0] : value) + " " + getUnit(w, numberItem);
+                    String unit = getUnit(w, numberItem);
+                    value = (stateArray.length > 0 ? stateArray[0] : value) + (!unit.isBlank() ? " " + unit : "");
                 }
             }
         }
@@ -244,101 +244,53 @@ public class InputRenderer extends AbstractWidgetRenderer {
     }
 
     private String cleanValue(String value, Widget w, Item item) {
-        String prefix = getPrefix(w, item);
-        String postfix = getPostfix(w, item);
+        String prefix = getPrefix(w);
+        boolean hasUnit = item instanceof NumberItem ? (((NumberItem) item).getDimension() != null) : false;
+        String postfix = hasUnit ? "" : getPostfix(w);
         String newValue = value.startsWith(prefix) ? value.substring(prefix.length()) : value;
         newValue = value.endsWith(postfix) ? newValue.substring(0, newValue.lastIndexOf(postfix)) : newValue;
         return newValue.trim();
     }
 
-    private String getUnit(Widget w, NumberItem item) {
-        String unit = "";
-        if (w.getLabel() != null) {
-            unit = getUnitFromLabel(item, w.getLabel());
-        }
-        if ((unit != null) && unit.isBlank() && (item.getLabel() != null)) {
-            unit = getUnitFromLabel(item, item.getLabel());
-        }
-        if (unit == null || unit.isBlank()) {
-            unit = item.getUnitSymbol();
+    private String getUnit(Widget w, NumberItem numberItem) {
+        String unit;
+        unit = itemUIRegistry.getUnitForWidget(w);
+        if (unit == null) {
+            unit = numberItem.getUnitSymbol();
         }
         unit = (unit == null) ? "" : unit;
         return unit;
     }
 
-    private @Nullable String getUnitFromLabel(NumberItem item, @Nullable String label) {
-        String unit = null;
-        if (label != null && !label.isBlank()) {
-            Matcher m = LABEL_PATTERN.matcher(label);
-            if (m.matches()) {
-                unit = m.group(3);
-                if (unit != null) {
-                    unit = unit.trim();
-                }
-            } else {
-                unit = "";
-            }
-            if (UnitUtils.UNIT_PLACEHOLDER.equals(unit)) {
-                unit = item.getUnitSymbol();
-            }
-            unit = "%%".equals(unit) ? "%" : unit;
-        }
-        return unit;
-    }
-
-    private String getPrefix(Widget w, Item item) {
-        if (w.getLabel() != null) {
-            return getPrefixFromLabel(w.getLabel());
-        } else if (item.getLabel() != null) {
-            return getPrefixFromLabel(item.getLabel());
-        } else {
+    private String getPrefix(Widget w) {
+        String pattern = itemUIRegistry.getFormatPattern(w);
+        if (pattern == null) {
             return "";
         }
-    }
 
-    private String getPrefixFromLabel(@Nullable String label) {
-        if (label != null && !label.isBlank()) {
-            Matcher m = LABEL_PATTERN.matcher(label);
-            if (m.matches()) {
-                String prefix = m.group(1);
-                if (prefix != null && !prefix.isBlank()) {
-                    return prefix;
-                }
+        Matcher m = FORMAT_PATTERN.matcher(pattern);
+        if (m.matches()) {
+            String prefix = m.group(1);
+            if (prefix != null && !prefix.isBlank()) {
+                return prefix;
             }
         }
         return "";
     }
 
-    private String getPostfix(Widget w, Item item) {
-        boolean hasUnit = false;
-        if (item instanceof NumberItem) {
-            NumberItem numberItem = (NumberItem) item;
-            if (numberItem.getDimension() != null) {
-                hasUnit = true;
-            }
-        }
-        if (w.getLabel() != null) {
-            return getPostfixFromLabel(w.getLabel(), hasUnit);
-        } else if (item.getLabel() != null) {
-            return getPostfixFromLabel(item.getLabel(), hasUnit);
-        } else {
+    private String getPostfix(Widget w) {
+        String pattern = itemUIRegistry.getFormatPattern(w);
+        if (pattern == null) {
             return "";
         }
-    }
 
-    private String getPostfixFromLabel(@Nullable String label, boolean hasUnit) {
-        String postfix = "";
-        if (label != null && !label.isBlank()) {
-            Matcher m = LABEL_PATTERN.matcher(label);
-            if (m.matches()) {
-                if (!hasUnit && m.group(3) != null) {
-                    postfix = m.group(3);
-                }
-                if (m.group(4) != null) {
-                    postfix = postfix + m.group(4);
-                }
+        Matcher m = FORMAT_PATTERN.matcher(pattern);
+        if (m.matches()) {
+            String postfix = m.group(3);
+            if (postfix != null && !postfix.isBlank()) {
+                return postfix;
             }
         }
-        return postfix;
+        return "";
     }
 }
