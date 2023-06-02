@@ -134,14 +134,6 @@
               :link="'services/' + service.id"
               :title="service.label" />
           </f7-list>
-          <f7-block-title>Other Services</f7-block-title>
-          <f7-list class="search-list">
-            <f7-list-item
-              v-for="service in otherServices"
-              :key="service.id"
-              :link="'services/' + service.id"
-              :title="service.label" />
-          </f7-list>
         </f7-col>
       </f7-row>
       <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
@@ -161,7 +153,6 @@ export default {
       servicesLoaded: false,
       addonStoreTabShortcuts: AddonStoreTabShortcuts,
       systemServices: [],
-      otherServices: [],
       objectsSubtitles: {
         things: 'Manage the physical layer',
         model: 'The semantic model of your home',
@@ -201,7 +192,6 @@ export default {
       // can be done in parallel!
       servicesPromise.then((data) => {
         this.systemServices = data.filter(s => s.category === 'system')
-        this.otherServices = data.filter(s => s.category !== 'system' && s.category !== 'persistence')
         this.servicesLoaded = true
       })
     },
