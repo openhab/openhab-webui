@@ -75,7 +75,7 @@ public class SemanticsItemResolver implements ItemResolver {
         }
 
         if (object != null) {
-            List<Class<? extends Tag>> semanticTagTypes = SemanticTags.getByLabelOrSynonym(object, currentLocale);
+            List<Class<? extends Tag>> semanticTagTypes = semanticsService.getByLabelOrSynonym(object, currentLocale);
             if (!semanticTagTypes.isEmpty()
                     && semanticTagTypes.stream().noneMatch(t -> Location.class.isAssignableFrom(t))) {
                 Predicate<Item> tagsPredicate = null;
@@ -116,14 +116,14 @@ public class SemanticsItemResolver implements ItemResolver {
                 itemAttributes.add(new ItemNamedAttribute(attributeType, item.getLabel(), AttributeSource.LABEL));
 
                 // Add the primary type's label and synonyms
-                for (String tagLabel : SemanticTags.getLabelAndSynonyms(semanticType, currentLocale)) {
+                for (String tagLabel : semanticsService.getLabelAndSynonyms(semanticType, currentLocale)) {
                     itemAttributes.add(new ItemNamedAttribute(attributeType, tagLabel, AttributeSource.TAG));
                 }
 
                 // Add the related property's label and synonyms
                 Class<? extends Property> relatedProperty = SemanticTags.getProperty(item);
                 if (relatedProperty != null) {
-                    for (String propertyLabel : SemanticTags.getLabelAndSynonyms(relatedProperty, currentLocale)) {
+                    for (String propertyLabel : semanticsService.getLabelAndSynonyms(relatedProperty, currentLocale)) {
                         itemAttributes.add(new ItemNamedAttribute("object", propertyLabel, AttributeSource.TAG));
                     }
                 }
