@@ -17,15 +17,19 @@
       <f7-block>
         <f7-block-title>Items</f7-block-title>
         <f7-list>
-          <item-picker title="Select groups whose Items are to be persisted" name="groupItems" multiple="true"
+          <item-picker title="Select groups" name="groupItems" multiple="true"
                        filterType="Group" :value="groupItems" @input="selectGroupItems" />
-          <item-picker title="Select Items to be persisted" name="items" multiple="true" :value="items"
+          <f7-list-item>... whose members are to be persisted.</f7-list-item>
+        </f7-list>
+        <f7-list>
+          <item-picker title="Select Items" name="items" multiple="true" :value="items"
                        @input="selectItems" />
+          <f7-list-item>... to be persisted.</f7-list-item>
         </f7-list>
       </f7-block>
       <f7-block>
         <f7-block-title>Strategies</f7-block-title>
-        <strategy-picker title="Select Strategies" name="strategies" :strategies="strategies"
+        <strategy-picker title="Select strategies" name="strategies" :strategies="strategies"
                          :value="currentConfiguration.strategies"
                          @strategiesSelected="currentConfiguration.strategies = $event" />
       </f7-block>
