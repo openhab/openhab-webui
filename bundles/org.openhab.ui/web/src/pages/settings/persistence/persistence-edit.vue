@@ -255,6 +255,8 @@ export default {
       }).catch((e) => {
         if (e === 404 || e === 'Not Found') {
           this.initializeNewPersistence()
+          this.loading = false
+          this.ready = true
         } else {
           Promise.reject(e)
         }
@@ -264,8 +266,12 @@ export default {
       if (!this.isEditable) return
       if (this.currentTab === 'code') this.fromYaml()
       return this.$oh.api.put('/rest/persistence/' + this.persistence.serviceId, this.persistence).then((data) => {
-        this.newPersistence = false
         this.dirty = false
+        if (this.newPersistence) {
+          this.newPersistence = false
+          this.ready = false
+          this.load()
+        }
         if (!noToast) {
           this.$f7.toast.create({
             text: 'Persistence configuration saved',
