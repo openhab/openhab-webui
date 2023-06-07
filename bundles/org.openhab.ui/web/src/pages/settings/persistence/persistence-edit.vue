@@ -56,7 +56,7 @@
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Configuration
               </f7-block-title>
-              <f7-list media-list swipeout>
+              <f7-list :media-list="isEditable" swipeout>
                 <f7-list-item v-for="(cfg, index) in persistence.configs" :key="cfg.items.join()"
                               :title="cfg.items.join(', ')"
                               :footer="cfg.strategies.join(', ')" :link="isEditable"
@@ -85,7 +85,7 @@
                 Strategies
               </f7-block-title>
               <!-- Cron Strategies -->
-              <f7-list media-list swipeout>
+              <f7-list :media-list="isEditable" swipeout>
                 <f7-list-item v-for="(cs, index) in persistence.cronStrategies" :key="cs.name" :title="cs.name"
                               :footer="cs.cronExpression" :link="isEditable"
                               @click.native="(ev) => editCronStrategy(ev, index, cs)" swipeout>
@@ -104,12 +104,11 @@
                 <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
                               subtitle="Add cron strategy" @click="editCronStrategy(undefined, null)">
                   <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
-                           md="material:control_point"/>
+                           md="material:control_point" />
                 </f7-list-item>
               </f7-list>
               <!-- Default Strategies -->
-              <strategy-picker title="Default Strategies" name="defaults" :strategies="strategies"
-                               :value="persistence.defaults" @strategiesSelected="persistence.defaults = $event"/>
+              <strategy-picker title="Default Strategies" name="defaults" :strategies="strategies" :value="persistence.defaults" :disabled="!isEditable" @strategiesSelected="persistence.defaults = $event" />
             </div>
           </f7-col>
           <f7-col>
@@ -317,6 +316,7 @@ export default {
       }
     },
     editConfiguration (ev, index, configuration) {
+      if (!this.isEditable) return
       this.currentConfiguration = configuration
 
       const popup = {
@@ -346,6 +346,7 @@ export default {
       this.saveModule('configs', index, configuration)
     },
     editCronStrategy (ev, index, cronStrategy) {
+      if (!this.isEditable) return
       this.currentCronStrategy = cronStrategy
 
       const popup = {

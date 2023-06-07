@@ -1,13 +1,16 @@
 <template>
   <f7-list class="strategy-picker-container" v-if="strategies">
-    <f7-list-item :title="title" smart-select :smart-select-params="smartSelectParams"
+    <f7-list-item :title="title" :smart-select="disabled !== true" :smart-select-params="smartSelectParams"
                   ref="smartSelect" class="defaults-picker">
-      <select :name="name" multiple @change="select">
+      <select v-if="disabled !== true" :name="name" multiple @change="select">
         <option v-for="s in strategies" :key="s" :value="s"
                 :selected="value.includes(s)">
           {{ s }}
         </option>
       </select>
+      <div v-else>
+        {{ value.join(', ') }}
+      </div>
     </f7-list-item>
   </f7-list>
 </template>
@@ -24,7 +27,7 @@
 
 <script>
 export default {
-  props: ['title', 'name', 'strategies', 'value'],
+  props: ['title', 'name', 'strategies', 'value', 'disabled'],
   emits: ['strategiesSelected'],
   data () {
     return {
