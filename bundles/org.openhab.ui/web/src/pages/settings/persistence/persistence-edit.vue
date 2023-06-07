@@ -65,7 +65,7 @@
                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
                   <f7-swipeout-actions right v-if="isEditable">
-                    <f7-swipeout-button @click="(ev) => deleteConfiguration(ev, index)"
+                    <f7-swipeout-button @click="(ev) => deleteModule(ev, 'configs', index)"
                                         style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
                     </f7-swipeout-button>
@@ -93,7 +93,7 @@
                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
                   <f7-swipeout-actions right v-if="isEditable">
-                    <f7-swipeout-button @click="(ev) => deleteCronStrategy(ev, index)"
+                    <f7-swipeout-button @click="(ev) => deleteModule(ev, 'cronStrategies', index)"
                                         style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
                     </f7-swipeout-button>
@@ -321,28 +321,11 @@ export default {
     },
     saveConfiguration (index, configuration) {
       const idx = this.persistence.configs.findIndex((cfg) => cfg.items.join() === configuration.items.join())
-      console.log(index, idx)
       if (idx !== -1 && idx !== index) {
         this.$f7.dialog.alert('A configuration for this/these Item(s) already exists!')
         return
       }
-      if (index === null) {
-        this.persistence.configs.push(configuration)
-      } else {
-        this.persistence.configs[index] = configuration
-        this.$forceUpdate()
-      }
-    },
-    deleteConfiguration (ev, index) {
-      let swipeoutElement = ev.target
-      if (!this.isEditable) return
-      ev.cancelBubble = true
-      while (!swipeoutElement.classList.contains('swipeout')) {
-        swipeoutElement = swipeoutElement.parentElement
-      }
-      this.$f7.swipeout.delete(swipeoutElement, () => {
-        this.persistence.configs.splice(index, 1)
-      })
+      this.saveModule('configs', index, configuration)
     },
     editCronStrategy (ev, index, cronStrategy) {
       this.currentCronStrategy = cronStrategy
@@ -370,14 +353,21 @@ export default {
         this.$f7.dialog.alert('A (cron) strategy with the same name already exists!')
         return
       }
+      this.saveModule('cronStrategies', index, cronStrategy)
+    },
+    saveModule (module, index, updatedModule) {
       if (index === null) {
-        this.persistence.cronStrategies.push(cronStrategy)
+        console.debug(`Adding ${module}:`)
+        console.debug(updatedModule)
+        this.persistence[module].push(updatedModule)
       } else {
-        this.persistence.cronStrategies[index] = cronStrategy
+        console.debug(`Updating ${module} at index ${index}:`)
+        console.debug(updatedModule)
+        this.persistence[module][index] = updatedModule
         this.$forceUpdate()
       }
     },
-    deleteCronStrategy (ev, index) {
+    deleteModule (ev, module, index) {
       let swipeoutElement = ev.target
       if (!this.isEditable) return
       ev.cancelBubble = true
@@ -385,7 +375,9 @@ export default {
         swipeoutElement = swipeoutElement.parentElement
       }
       this.$f7.swipeout.delete(swipeoutElement, () => {
-        this.persistence.cronStrategies.splice(index, 1)
+        console.debug(`Removing ${module}:`)
+        console.debug(this.persistence[module][index])
+        this.persistence[module].splice(index, 1)
       })
     },
     onEditorInput (value) {
