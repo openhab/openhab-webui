@@ -104,13 +104,20 @@
                 <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
                               subtitle="Add cron strategy" @click="editCronStrategy(undefined, null)">
                   <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
-                           md="material:control_point" />
+                           md="material:control_point"/>
                 </f7-list-item>
               </f7-list>
               <!-- Default Strategies -->
               <strategy-picker title="Default Strategies" name="defaults" :strategies="strategies"
-                               :value="persistence.defaults" @strategiesSelected="persistence.defaults = $event" />
+                               :value="persistence.defaults" @strategiesSelected="persistence.defaults = $event"/>
             </div>
+          </f7-col>
+          <f7-col>
+            <f7-list>
+              <f7-list-button v-if="isEditable" color="red" @click="deletePersistence">
+                Remove persistence configuration
+              </f7-list-button>
+            </f7-list>
           </f7-col>
         </f7-block>
       </f7-tab>
@@ -286,6 +293,17 @@ export default {
           closeTimeout: 2000
         }).open()
       })
+    },
+    deletePersistence () {
+      this.$f7.dialog.confirm(
+        `Are you sure you want to delete persistence configuration for ${this.serviceId}?`,
+        'Delete persistence configuration',
+        () => {
+          this.$oh.api.delete('/rest/persistence/' + this.serviceId).then(() => {
+            this.$f7router.back(`/settings/addons/persistence-${this.serviceId}/config`, { force: true })
+          })
+        }
+      )
     },
     showSwipeout (ev) {
       let swipeoutElement = ev.target
