@@ -25,7 +25,7 @@ export default {
   data () {
     return {
       ready: false,
-      source: null
+      loadedSource: null
     }
   },
   created () {
@@ -75,18 +75,24 @@ export default {
       }
 
       return contexts
+    },
+    source () {
+      if (this.loadedSource !== null) return this.loadedSource
+      switch (this.config.sourceType) {
+        case 'range':
+          const start = this.config.rangeStart || 0
+          const stop = this.config.rangeStop || 10
+          const step = this.config.rangeStep || 1
+          return Array(Math.ceil((stop + 1 - start) / step)).fill(start).map((x, y) => x + y * step)
+        default:
+          return this.config.in
+      }
     }
   },
   methods: {
     load () {
-      if (this.loading) return
       let loadPromise
-      if (this.config.sourceType === 'range') {
-        const start = this.config.rangeStart || 0
-        const stop = this.config.rangeStop || 10
-        const step = this.config.rangeStep || 1
-        loadPromise = Promise.resolve(Array(Math.ceil((stop + 1 - start) / step)).fill(start).map((x, y) => x + y * step))
-      } else if (this.config.sourceType === 'itemsWithTags' && this.config.itemTags) {
+      if (this.config.sourceType === 'itemsWithTags' && this.config.itemTags) {
         loadPromise = this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((d) => Promise.resolve(d.sort(compareItems)))
       } else if (this.config.sourceType === 'itemsInGroup') {
         loadPromise = this.$oh.api.get('/rest/items/' + this.config.groupItem + '?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((i) => Promise.resolve(i.members.sort(compareItems)))
@@ -97,10 +103,11 @@ export default {
       } else if (this.config.sourceType === 'rulesWithTags' && this.config.ruleTags) {
         loadPromise = this.$oh.api.get('/rest/rules?summary=true' + '&tags=' + this.config.ruleTags).then((r) => Promise.resolve(r.sort(compareRules)))
       } else {
-        loadPromise = Promise.resolve(this.config.in)
+        this.ready = true
+        return
       }
       loadPromise.then((d) => {
-        this.source = d
+        this.loadedSource = d
         this.ready = true
       })
     }
