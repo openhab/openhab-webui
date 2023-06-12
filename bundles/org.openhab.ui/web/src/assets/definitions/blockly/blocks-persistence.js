@@ -184,7 +184,9 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
   */
   javascriptGenerator['oh_persist_changed'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
-    const inputType = block.getInput('itemName').connection.targetBlock().outputConnection.getCheck()[0]
+
+    const inputType = blockGetCheckedInputType(block, 'itemName')
+
     let itemCode = generateItemCode(itemName, inputType)
 
     const methodName = block.getFieldValue('methodName')
@@ -233,7 +235,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
   */
   javascriptGenerator['oh_get_persistence_lastupdate'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
-    const inputType = block.getInput('itemName').connection.targetBlock().outputConnection.getCheck()[0]
+    const inputType = blockGetCheckedInputType(block, 'itemName')
     const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : ((!isGraalJs) ? ',' : '') + ` ${persistenceName}`
 
