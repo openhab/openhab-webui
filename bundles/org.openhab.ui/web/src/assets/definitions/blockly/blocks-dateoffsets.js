@@ -208,7 +208,7 @@ export default function (f7, isGraalJs) {
 
   /*
   * Typed (ZonedDateTime) block that can be used with the Ephemeris check block
-  * Allows input as string in the pattern yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm
+  * Allows input as string in many different patterns e.g. yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm
   * Blockly part
   */
   Blockly.Blocks['oh_zdt_fromText'] = {
