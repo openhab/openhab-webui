@@ -29,6 +29,13 @@ export default {
       }
     }
   },
+  created () {
+    if (!isNaN(this.value)) {
+      this.sliderValue = this.value
+    } else {
+      this.sliderValue = this.config.min || this.config.max || 0
+    }
+  },
   mounted () {
     // f7-range inside of masonry can get rendered faulty, as the masonry changes its breakpoint layout after being rendered
     // re-calculate the range slider after masonry is updated
@@ -41,7 +48,7 @@ export default {
   },
   methods: {
     formatLabel (value) {
-      return this.toStepFixed(value) + (this.config.unit || '')
+      return this.toStepFixed(value) + (this.unit ? ' ' + this.unit : '')
     },
     formatScaleLabel (value) {
       return this.toStepFixed(value)
