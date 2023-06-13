@@ -120,6 +120,7 @@ export default {
       // Stop MediaDevices access here, otherwise Mic/Camera access will stay active on iOS
       if (this.stream) this.stream.getTracks().forEach((track) => track.stop())
       if (this.phone) this.phone.stop()
+      this.remoteAudio = null
     },
     /**
      * Starts the JsSIP UserAgent and connects to the SIP server.
@@ -240,12 +241,17 @@ export default {
      * Stops all MediaStreams (remote audio, remote & eventually local video) of the SIP call.
      */
     stopMedia () {
-      if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
-      if (this.config.enableLocalVideo) {
-        // Make sure all tracks are stopped
-        this.$refs.localVideo.srcObject.getTracks().forEach((track) => track.stop())
-        this.$refs.localVideo.srcObject = null
-        this.showLocalVideo = false
+      if (this.config.enableVideo) {
+        this.$refs.remoteVideo.srcObject = null
+        if (this.config.enableLocalVideo) {
+          // Make sure all tracks are stopped
+          this.$refs.localVideo.srcObject.getTracks().forEach((track) => track.stop())
+          this.$refs.localVideo.srcObject = null
+          this.showLocalVideo = false
+        }
+      } else {
+        this.remoteAudio.srcObject = null
+        this.remoteAudio.pause()
       }
     },
     call (target) {
