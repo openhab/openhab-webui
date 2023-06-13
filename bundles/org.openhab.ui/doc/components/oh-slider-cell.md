@@ -120,6 +120,11 @@ A cell expanding to a big vertical slider
     Unit for the command sent and also append to the label while dragging the cursor, leave empty to use Item's unit
   </PropDescription>
 </PropBlock>
+<PropBlock type="BOOLEAN" name="ignoreDisplayState" label="Ignore Display State">
+  <PropDescription>
+    Ignore the display state if available and always use the raw state.
+  </PropDescription>
+</PropBlock>
 <PropBlock type="BOOLEAN" name="releaseOnly" label="Send command only on release">
   <PropDescription>
     If enabled, no commands are sent during sliding

@@ -23,7 +23,7 @@ export default {
         }
       }
       if (this.pendingCommand !== null) return this.pendingCommand // to keep the control reactive when operating
-      const value = this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
+      const value = (this.config.ignoreDisplayState === true) ? this.context.store[this.config.item].state : this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
       // use as a brightness control for HSB values
       if (value.split && value.split(',').length === 3) return parseFloat(value.split(',')[2])
       return parseFloat(value)
@@ -31,6 +31,7 @@ export default {
     unit () {
       if (this.config.unit) return this.config.unit
       if (this.context.store[this.config.item].displayState && this.context.store[this.config.item].displayState.split(' ').length === 2) return this.context.store[this.config.item].displayState.split(' ')[1]
+      if (this.config.ignoreDisplayState === true) return this.context.store[this.config.item].state.split(' ')[1]
       return undefined
     }
   },
