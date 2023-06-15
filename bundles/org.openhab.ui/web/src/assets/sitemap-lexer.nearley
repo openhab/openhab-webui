@@ -20,7 +20,6 @@
     lwidget:          ['Text ', 'Group ', 'Image ', 'Frame '],
     lparen:           '(',
     rparen:           ')',
-    colon:            ':',
     lbrace:           '{',
     rbrace:           '}',
     lbracket:         '[',
