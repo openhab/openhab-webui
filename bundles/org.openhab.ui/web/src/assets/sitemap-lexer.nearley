@@ -32,13 +32,13 @@
     lt:               '<',
     gt:               '>',
     equals:           '=',
-    comma:            ',',
-    colon:            ':',
-    hyphen:           '-',
     NL:               { match: /\n/, lineBreaks: true },
     boolean:          /(?:true)|(?:false)/,
     identifier:       /(?:[A-Za-z_][A-Za-z0-9_]*)|(?:[0-9]+[A-Za-z_][A-Za-z0-9_]*)/,
-    number:           /\-?[0-9]+(?:\.[0-9]*)?/,
+    number:           /-?[0-9]+(?:\.[0-9]*)?/,
+    comma:            ',',
+    colon:            ':',
+    hyphen:           '-',
     string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) }
   })
   const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Default']
