@@ -1680,7 +1680,6 @@
 		}, 200);
 
 		_t.setValuePrivate = function(value, itemState) {
-			// itemState contains only value in the display unit (in case unit is set in label pattern)
 			if (_t.hasValue) {
 				_t.valueNode.innerHTML = value;
 			}
@@ -1695,7 +1694,7 @@
 			if (itemState === "NULL" || itemState === "UNDEF") {
 				_t.input.value = 0;
 			} else {
-				_t.input.value = itemState;
+				_t.input.value = itemState.split(" ")[0] * 1;
 			}
 			_t.input.MaterialSlider.change();
 		};

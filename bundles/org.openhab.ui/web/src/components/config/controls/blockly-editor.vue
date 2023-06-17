@@ -1073,6 +1073,7 @@ export default {
       voices: [],
       scripts: [],
       rules: [],
+      persistenceServices: [],
       loading: true,
       ready: false
     }
@@ -1100,7 +1101,8 @@ export default {
         this.$oh.api.get('/rest/rules?summary=true'),
         this.$oh.api.get('/rest/audio/sinks'),
         this.$oh.api.get('/rest/voice/voices'),
-        this.libraryDefinitions ? Promise.resolve(this.libraryDefinitions) : this.$oh.api.get('/rest/ui/components/ui:blocks')
+        this.libraryDefinitions ? Promise.resolve(this.libraryDefinitions) : this.$oh.api.get('/rest/ui/components/ui:blocks'),
+        this.$oh.api.get('/rest/persistence')
       ]
       Promise.all(dataPromises)
         .then((data) => {
@@ -1131,6 +1133,12 @@ export default {
 
           this.blockLibraries = data[3]
 
+          this.persistenceServices = data[4].sort((a, b) => {
+            const labelA = a.label
+            const labelB = b.label
+            return labelA.localeCompare(labelB)
+          })
+
           this.initBlockly(this.blockLibraries)
         })
         .catch((err, status) => {
@@ -1140,7 +1148,8 @@ export default {
     initBlockly (libraryDefinitions) {
       defineOHBlocks(this.$f7, libraryDefinitions, {
         sinks: this.sinks,
-        voices: this.voices
+        voices: this.voices,
+        persistenceServices: this.persistenceServices
       }, this.isGraalJs)
       this.addLibraryToToolbox(libraryDefinitions || [])
 
