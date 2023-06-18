@@ -159,7 +159,7 @@ export default {
           afterIcon: 'chat_bubble_2_fill',
           linkUrl: 'https://community.openhab.org/search?q=' + this.addon.id
         })
-      } else {
+      } else if (this.addon.link) {
         info.push({
           id: 'documentationLink',
           title: 'Documentation',
