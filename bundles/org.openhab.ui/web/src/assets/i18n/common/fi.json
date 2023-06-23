@@ -7,6 +7,7 @@
   "dialogs.close": "Sulje",
   "dialogs.copy": "Kopioi",
   "dialogs.delete": "Poista",
+  "dialogs.reload": "Lataa uudelleen",
   "dialogs.search": "Etsi",
   "dialogs.search.items": "Hae Item",
   "dialogs.search.things": "Etsi Thing",
@@ -39,5 +40,7 @@
   "sidebar.tip.signIn": "Kirjaudu ylläpitäjänä hallitaksesi asetuksia",
   "page.navbar.back": "Takaisin",
   "page.navbar.edit": "Muokkaa",
-  "admin.notTranslatedYet": "Hallinta-aluetta ei ole vielä käännetty."
+  "admin.notTranslatedYet": "Hallinta-aluetta ei ole vielä käännetty.",
+  "error.communicationFailure": "Yhteysvirhe",
+  "error.itemNotFound": "%s ei löydy"
 }

@@ -9,5 +9,6 @@
   "CONFIGURATION_ERROR": "ΣΦΑΛΜΑ: CONFIG",
   "BRIDGE_OFFLINE": "ΣΦΑΛΜΑ: BRIDGE",
   "FIRMWARE_UPDATING": "ΕΝΗΜΕΡΩΣΗ FIRMWARE",
-  "GONE": "ΕΦΥΓΕ"
+  "GONE": "ΕΦΥΓΕ",
+  "NOT_YET_READY": "ΔΕΝ ΕΙΝΑΙ ΑΚΟΜΑ ΕΤΟΙΜΟ"
 }
