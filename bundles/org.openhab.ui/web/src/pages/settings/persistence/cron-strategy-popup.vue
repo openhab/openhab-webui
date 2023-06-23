@@ -21,7 +21,7 @@
                            @input="currentCronStrategy.name = $event.target.value"
                            :disabled="!createMode"
                            :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                           required validate pattern="[A-Za-z]+" error-message="Required. A-Z,a-z only"/>
+                           required validate pattern="[A-Za-z]+" error-message="Required. A-Z,a-z only" />
           </f7-list>
         </f7-col>
         <f7-col>
@@ -31,7 +31,7 @@
           <f7-list>
             <parameter-cronexpression ref="cronExpression" :configDescription="cronExpressionConfigDescription"
                                       :value="currentCronStrategy.cronExpression"
-                                      @input="currentCronStrategy.cronExpression = $event"/>
+                                      @input="currentCronStrategy.cronExpression = $event" />
           </f7-list>
         </f7-col>
       </f7-block>

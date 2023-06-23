@@ -21,12 +21,12 @@
           </f7-block-title>
           <f7-list>
             <item-picker title="Select groups" name="groupItems" multiple="true"
-                         filterType="Group" :value="groupItems" @input="selectGroupItems"/>
+                         filterType="Group" :value="groupItems" @input="selectGroupItems" />
             <f7-list-item>... whose members are to be persisted.</f7-list-item>
           </f7-list>
           <f7-list>
             <item-picker title="Select Items" name="items" multiple="true" :value="items"
-                         @input="selectItems"/>
+                         @input="selectItems" />
             <f7-list-item>... to be persisted.</f7-list-item>
           </f7-list>
         </f7-col>
@@ -36,7 +36,15 @@
           </f7-block-title>
           <strategy-picker title="Select strategies" name="strategies" :strategies="strategies"
                            :value="currentConfiguration.strategies"
-                           @strategiesSelected="currentConfiguration.strategies = $event"/>
+                           @strategiesSelected="currentConfiguration.strategies = $event" />
+        </f7-col>
+        <f7-col>
+          <f7-block-title medium class="padding-bottom">
+            Filters
+          </f7-block-title>
+          <filter-picker :filters="filters"
+                         :value="currentConfiguration.filters"
+                         @filtersSelected="currentConfiguration.filters = $event" />
         </f7-col>
       </f7-block>
     </f7-page>
@@ -46,10 +54,11 @@
 <script>
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
+import FilterPicker from '@/pages/settings/persistence/filter-picker.vue'
 
 export default {
-  components: { StrategyPicker, ItemPicker },
-  props: ['configuration', 'strategies'],
+  components: { FilterPicker, StrategyPicker, ItemPicker },
+  props: ['configuration', 'strategies', 'filters'],
   emits: ['configurationUpdate'],
   data () {
     return {

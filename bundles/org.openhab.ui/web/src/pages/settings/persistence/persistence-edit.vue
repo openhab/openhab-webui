@@ -42,6 +42,19 @@
               <!-- Default Strategies -->
               <strategy-picker title="Default Strategies" class="skeleton-text skeleton-effect-blink" />
             </div>
+            <div>
+              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
+                Filters
+              </f7-block-title>
+              <div v-for="ft in filterTypes" :key="ft.name">
+                <f7-block-title>
+                  {{ ft.label }}
+                </f7-block-title>
+                <f7-list class="skeleton-text skeleton-effect-blink">
+                  <f7-list-item />
+                </f7-list>
+              </div>
+            </div>
           </f7-col>
         </f7-block>
 
@@ -52,6 +65,7 @@
             </div>
           </f7-col>
           <f7-col class="modules">
+            <!-- Configuration -->
             <div>
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Configuration
@@ -80,6 +94,7 @@
                 </f7-list-item>
               </f7-list>
             </div>
+            <!-- Strategies -->
             <div>
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Strategies
@@ -108,7 +123,43 @@
                 </f7-list-item>
               </f7-list>
               <!-- Default Strategies -->
-              <strategy-picker title="Default Strategies" name="defaults" :strategies="strategies" :value="persistence.defaults" :disabled="!isEditable" @strategiesSelected="persistence.defaults = $event" />
+              <strategy-picker title="Default Strategies" name="defaults" :strategies="strategies"
+                               :value="persistence.defaults" :disabled="!isEditable"
+                               @strategiesSelected="persistence.defaults = $event" />
+            </div>
+            <!-- Filters -->
+            <div>
+              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
+                Filters
+              </f7-block-title>
+              <div v-for="ft in filterTypes" :key="ft.name">
+                <f7-block-title>
+                  {{ ft.label }}
+                </f7-block-title>
+                <f7-list :media-list="isEditable" swipeout>
+                  <f7-list-item v-for="(f, index) in persistence[ft.name]" :key="f.name" :title="f.name"
+                                :link="isEditable"
+                                @click.native="(ev) => editFilter(ev, ft, index, f)" swipeout>
+                    <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled"
+                             icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
+                             @click="showSwipeout" />
+                    <f7-swipeout-actions right v-if="isEditable">
+                      <f7-swipeout-button @click="(ev) => deleteModule(ev, ft.name, index)"
+                                          style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                        Delete
+                      </f7-swipeout-button>
+                    </f7-swipeout-actions>
+                  </f7-list-item>
+                </f7-list>
+                <f7-list v-if="isEditable">
+                  <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
+                                :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
+                                @click="editFilter(undefined, ft, null)">
+                    <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
+                             md="material:control_point" />
+                  </f7-list-item>
+                </f7-list>
+              </div>
             </div>
           </f7-col>
           <f7-col>
@@ -165,8 +216,18 @@ import YAML from 'yaml'
 import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
 import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
+import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
+
+const filterInvertedParameter = {
+  advanced: false,
+  description: 'Whether to invert the above filter, i.e. persist values that do not equal the above values or are outside of the specified range',
+  label: 'Inverted',
+  name: 'inverted',
+  required: false,
+  type: 'BOOLEAN'
+}
 
 export default {
   mixins: [DirtyMixin],
@@ -186,8 +247,109 @@ export default {
       currentTab: 'design',
       currentConfiguration: null,
       currentCronStrategy: null,
+      currentFilter: null,
 
       predefinedStrategies: ['everyChange', 'everyUpdate', 'restoreOnStartup'],
+      filterTypes: [
+        {
+          name: 'thresholdFilters',
+          label: 'Threshold',
+          configDescriptionParameters: [
+            {
+              advanced: false,
+              description: 'Difference to last stored value that must be exceeded to persist a new value',
+              label: 'Value',
+              name: 'value',
+              required: true,
+              type: 'DECIMAL'
+            },
+            {
+              advanced: false,
+              description: 'Whether the difference is relative (i.e. in percent)',
+              label: 'Relative',
+              name: 'relative',
+              required: false,
+              type: 'BOOLEAN'
+            },
+            {
+              advanced: false,
+              description: 'Unit of the given value, only used for UoM Items and if relative is disabled',
+              label: 'Unit',
+              name: 'unit',
+              required: false,
+              type: 'STRING'
+            }
+          ]
+        },
+        {
+          name: 'timeFilters',
+          label: 'Time',
+          configDescriptionParameters: [
+            {
+              advanced: false,
+              description: 'Amount of time that must have passed since the last persist',
+              label: 'Value',
+              name: 'value',
+              required: true,
+              type: 'DECIMAL'
+            },
+            {
+              advanced: false,
+              description: 'Time unit (defaults to seconds <code>s</code>)',
+              label: 'Unit',
+              name: 'unit',
+              required: false,
+              type: 'STRING'
+            }
+          ]
+        },
+        {
+          name: 'equalsFilters',
+          label: 'Equals/Not Equals',
+          configDescriptionParameters: [
+            {
+              advanced: false,
+              description: 'Enter values seperated by comma (use point <code>.</code> as decimal point), e.g. <code>one, two, three</code>, to be persisted',
+              label: 'Values',
+              name: 'values',
+              required: true,
+              type: ''
+            },
+            filterInvertedParameter
+          ]
+        },
+        {
+          name: 'includeFilters',
+          label: 'Include/Exclude',
+          configDescriptionParameters: [
+            {
+              advanced: false,
+              description: 'Lower bound of the range of value to be persisted',
+              label: 'Lower Bound',
+              name: 'lower',
+              required: true,
+              type: 'DECIMAL'
+            },
+            {
+              advanced: false,
+              description: 'Lower bound of the range of value to be persisted',
+              label: 'Upper Bound',
+              name: 'upper',
+              required: true,
+              type: 'DECIMAL'
+            },
+            {
+              advanced: false,
+              description: 'Unit of the given bounds, only used for UoM Items',
+              label: 'Unit',
+              name: 'unit',
+              required: false,
+              type: 'STRING'
+            },
+            filterInvertedParameter
+          ]
+        }
+      ],
       notEditableMgs: 'This persistence configuration is not editable because it has been provisioned from a file.'
     }
   },
@@ -197,6 +359,14 @@ export default {
     },
     strategies () {
       return this.predefinedStrategies.concat(this.persistence.cronStrategies.map(cs => cs.name))
+    },
+    filters () {
+      let names = []
+      for (let i = 0; i < this.filterTypes.length; i++) {
+        const filterTypeName = this.filterTypes[i].name
+        if (this.persistence[filterTypeName]) names = names.concat(this.persistence[filterTypeName].map((f) => f.name))
+      }
+      return names
     }
   },
   watch: {
@@ -271,6 +441,21 @@ export default {
     save (noToast) {
       if (!this.isEditable) return
       if (this.currentTab === 'code') this.fromYaml()
+
+      // Ensure relative is set on threshold filter, otherwise the save request fails with a 500
+      this.persistence.thresholdFilters.forEach((f) => {
+        if (f.relative === undefined) f.relative = false
+      })
+      // Ensure inverted is set for equals and include filter, otherwise the save request fails with a 500
+      this.persistence.equalsFilters.forEach((f) => {
+        if (f.inverted === undefined) f.inverted = false
+      })
+      this.persistence.includeFilters.forEach((f) => {
+        if (f.inverted === undefined) f.inverted = false
+      })
+      // Update the code tab
+      if (this.persistenceYaml) this.toYaml()
+
       return this.$oh.api.put('/rest/persistence/' + this.persistence.serviceId, this.persistence).then((data) => {
         this.dirty = false
         if (this.newPersistence) {
@@ -331,7 +516,8 @@ export default {
       }, {
         props: {
           configuration: this.currentConfiguration,
-          strategies: this.strategies
+          strategies: this.strategies,
+          filters: this.filters
         }
       })
 
@@ -339,7 +525,7 @@ export default {
     },
     saveConfiguration (index, configuration) {
       const idx = this.persistence.configs.findIndex((cfg) => cfg.items.join() === configuration.items.join())
-      if (idx !== -1 && idx !== index) {
+      if (idx !== -1 && idx === index) {
         this.$f7.dialog.alert('A configuration for this/these Item(s) already exists!')
         return
       }
@@ -368,11 +554,48 @@ export default {
     },
     saveCronStrategy (index, cronStrategy) {
       const idx = this.persistence.cronStrategies.findIndex((cs) => cs.name === cronStrategy.name)
-      if ((idx !== -1 && idx !== index) || this.predefinedStrategies.includes(cronStrategy.name)) {
+      if ((idx !== -1 && idx === index) || this.predefinedStrategies.includes(cronStrategy.name)) {
         this.$f7.dialog.alert('A (cron) strategy with the same name already exists!')
         return
       }
       this.saveModule('cronStrategies', index, cronStrategy)
+    },
+    editFilter (ev, filterType, index, filter) {
+      if (!this.isEditable) return
+      this.currentFilter = filter
+
+      // Stringify values array from equals filter
+      if (filterType.name === 'equalsFilters' && filter) filter.values = filter.values.join(', ')
+
+      const popup = {
+        component: FilterPopup
+      }
+      this.$f7router.navigate({
+        url: 'filter-config',
+        route: {
+          path: 'filter-config',
+          popup
+        }
+      }, {
+        props: {
+          filter: this.currentFilter,
+          filterType: filterType,
+          filterConfigDescriptionParameters: filterType.configDescriptionParameters
+        }
+      })
+
+      this.$f7.once('filterUpdate', (ev, ftn) => this.saveFilter(ftn, index, ev))
+    },
+    saveFilter (filterTypeName, index, filter) {
+      const idx = this.filters.findIndex((f) => f === filter.name)
+      if (index === null && idx !== -1) {
+        this.$f7.dialog.alert('A filter with the same name already exists!')
+        return
+      }
+      // Convert comma separated string to array for equals filter
+      if (filterTypeName === 'equalsFilters') filter.values = filter.values.split(',').map((v) => v.trim())
+
+      this.saveModule(filterTypeName, index, filter)
     },
     saveModule (module, index, updatedModule) {
       if (index === null) {
@@ -409,7 +632,9 @@ export default {
         cronStrategies: this.persistence.cronStrategies,
         defaultStrategies: this.persistence.defaults,
         thresholdFilters: this.persistence.thresholdFilters,
-        timeFilters: this.persistence.timeFilters
+        timeFilters: this.persistence.timeFilters,
+        equalsFilters: this.persistence.equalsFilters,
+        includeFilters: this.persistence.includeFilters
       })
     },
     fromYaml () {
@@ -421,6 +646,8 @@ export default {
         this.$set(this.persistence, 'defaults', updatedPersistence.defaultStrategies)
         this.$set(this.persistence, 'thresholdFilters', updatedPersistence.thresholdFilters)
         this.$set(this.persistence, 'timeFilters', updatedPersistence.timeFilters)
+        this.$set(this.persistence, 'equalsFilters', updatedPersistence.equalsFilters)
+        this.$set(this.persistence, 'includeFilters', updatedPersistence.includeFilters)
         return true
       } catch (e) {
         this.$f7.dialog.alert(e).open()
