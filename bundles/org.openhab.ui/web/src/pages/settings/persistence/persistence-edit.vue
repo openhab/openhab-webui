@@ -108,7 +108,7 @@
                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
                   <f7-swipeout-actions right v-if="isEditable">
-                    <f7-swipeout-button @click="(ev) => deleteModule(ev, 'cronStrategies', index)"
+                    <f7-swipeout-button @click="(ev) => deleteCronStrategy(ev, index)"
                                         style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
                     </f7-swipeout-button>
@@ -144,7 +144,7 @@
                              icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                              @click="showSwipeout" />
                     <f7-swipeout-actions right v-if="isEditable">
-                      <f7-swipeout-button @click="(ev) => deleteModule(ev, ft.name, index)"
+                      <f7-swipeout-button @click="(ev) => deleteFilter(ev, ft.name, index)"
                                           style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                         Delete
                       </f7-swipeout-button>
@@ -525,7 +525,7 @@ export default {
     },
     saveConfiguration (index, configuration) {
       const idx = this.persistence.configs.findIndex((cfg) => cfg.items.join() === configuration.items.join())
-      if (idx !== -1 && idx === index) {
+      if (idx !== -1 && idx !== index) {
         this.$f7.dialog.alert('A configuration for this/these Item(s) already exists!')
         return
       }
@@ -554,11 +554,20 @@ export default {
     },
     saveCronStrategy (index, cronStrategy) {
       const idx = this.persistence.cronStrategies.findIndex((cs) => cs.name === cronStrategy.name)
-      if ((idx !== -1 && idx === index) || this.predefinedStrategies.includes(cronStrategy.name)) {
+      if ((idx !== -1 && idx !== index) || this.predefinedStrategies.includes(cronStrategy.name)) {
         this.$f7.dialog.alert('A (cron) strategy with the same name already exists!')
         return
       }
       this.saveModule('cronStrategies', index, cronStrategy)
+    },
+    deleteCronStrategy (ev, index) {
+      // Remove cron strategy from configs, otherwise we get a 400
+      const csName = this.persistence.cronStrategies[index].name
+      this.persistence.configs.forEach((cfg) => {
+        const i = cfg.strategies.findIndex((cs) => cs === csName)
+        cfg.strategies.splice(i, 1)
+      })
+      this.deleteModule(ev, 'cronStrategies', index)
     },
     editFilter (ev, filterType, index, filter) {
       if (!this.isEditable) return
@@ -596,6 +605,15 @@ export default {
       if (filterTypeName === 'equalsFilters') filter.values = filter.values.split(',').map((v) => v.trim())
 
       this.saveModule(filterTypeName, index, filter)
+    },
+    deleteFilter (ev, module, index) {
+      // Remove filter from configs, otherwise we get a 400
+      const filterName = this.persistence[module][index].name
+      this.persistence.configs.forEach((cfg) => {
+        const i = cfg.filters.findIndex((f) => f === filterName)
+        cfg.filters.splice(i, 1)
+      })
+      this.deleteModule(ev, module, index)
     },
     saveModule (module, index, updatedModule) {
       if (index === null) {
