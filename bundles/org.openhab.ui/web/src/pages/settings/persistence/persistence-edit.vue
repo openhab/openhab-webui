@@ -287,7 +287,7 @@ export default {
           configDescriptionParameters: [
             {
               advanced: false,
-              description: 'Amount of time that must have passed since the last persist',
+              description: 'Amount of time that must have passed since the last value has been persisted',
               label: 'Value',
               name: 'value',
               required: true,
@@ -309,7 +309,7 @@ export default {
           configDescriptionParameters: [
             {
               advanced: false,
-              description: 'Enter values seperated by comma (use point <code>.</code> as decimal point), e.g. <code>one, two, three</code>, to be persisted',
+              description: 'Enter values separated by comma (use point <code>.</code> as decimal point), e.g. <code>one, two, three</code>, to be persisted',
               label: 'Values',
               name: 'values',
               required: true,
