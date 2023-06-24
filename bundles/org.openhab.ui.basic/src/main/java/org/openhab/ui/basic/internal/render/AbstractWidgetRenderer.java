@@ -387,6 +387,18 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
+        } else {
+            switch (config.getTheme()) {
+                case WebAppConfig.THEME_NAME_BRIGHT:
+                    style = "style=\"color-scheme: light\"";
+                    break;
+                case WebAppConfig.THEME_NAME_DARK:
+                    style = "style=\"color-scheme: dark\"";
+                    break;
+                default:
+                    break;
+            }
+
         }
         snippet = snippet.replace("%iconstyle%", style);
 
