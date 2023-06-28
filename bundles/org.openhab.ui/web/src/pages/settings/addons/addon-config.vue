@@ -8,6 +8,15 @@
         </f7-link>
       </f7-nav-right>
     </f7-navbar>
+    <f7-block v-if="type === 'persistence'" class="service-config block-narrow">
+      <f7-col>
+        <f7-block-title medium>
+          <f7-link color="blue" :href="'/settings/persistence/' + name">
+            Persistence configuration
+          </f7-link>
+        </f7-block-title>
+      </f7-col>
+    </f7-block>
     <f7-block form v-if="configDescription && config" class="service-config block-narrow">
       <f7-col>
         <f7-block-title medium>
@@ -72,6 +81,14 @@ export default {
       loggerPackages: [],
       serviceId: null,
       strippedAddonId: ''
+    }
+  },
+  computed: {
+    type () {
+      return this.addonId.split('-')[0]
+    },
+    name () {
+      return this.addonId.split('-')[1]
     }
   },
   methods: {
