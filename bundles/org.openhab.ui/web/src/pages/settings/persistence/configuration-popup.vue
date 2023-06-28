@@ -64,7 +64,9 @@ export default {
     return {
       currentConfiguration: this.configuration || {
         items: [],
-        strategies: [],
+        strategies: [
+          'everyChange'
+        ],
         filters: []
       }
     }

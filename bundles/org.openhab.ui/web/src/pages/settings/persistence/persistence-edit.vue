@@ -162,9 +162,9 @@
               </div>
             </div>
           </f7-col>
-          <f7-col>
+          <f7-col v-if="isEditable && !newPersistence">
             <f7-list>
-              <f7-list-button v-if="isEditable" color="red" @click="deletePersistence">
+              <f7-list-button color="red" @click="deletePersistence">
                 Remove persistence configuration
               </f7-list-button>
             </f7-list>
@@ -250,6 +250,8 @@ export default {
       currentFilter: null,
 
       predefinedStrategies: ['everyChange', 'everyUpdate', 'restoreOnStartup'],
+      // Filter configuration is completely based on these definitions, when adding new filters, no code needs to be updated.
+      // However, please note that some validation and checks are in place for some filter types in save(), editFilter(), saveFilter() and filter-popup.vue
       filterTypes: [
         {
           name: 'thresholdFilters',
@@ -324,7 +326,7 @@ export default {
           configDescriptionParameters: [
             {
               advanced: false,
-              description: 'Lower bound of the range of value to be persisted',
+              description: 'Lower bound of the range of values to be persisted',
               label: 'Lower Bound',
               name: 'lower',
               required: true,
@@ -332,7 +334,7 @@ export default {
             },
             {
               advanced: false,
-              description: 'Lower bound of the range of value to be persisted',
+              description: 'Upper bound of the range of values to be persisted',
               label: 'Upper Bound',
               name: 'upper',
               required: true,
@@ -413,10 +415,10 @@ export default {
             name: 'everyDay',
             cronExpression: '0 0 0 * * ?'
           }
-        ],
-        thresholdFilters: [],
-        timeFilters: []
+        ]
       }
+      // Dynamically add empty arrays for all filter types defined in the filterTypes object
+      this.filterTypes.forEach((ft) => { this.persistence[ft.name] = [] })
       this.ready = true
     },
     load () {
@@ -442,6 +444,10 @@ export default {
       if (!this.isEditable) return
       if (this.currentTab === 'code') this.fromYaml()
 
+      // Ensure arrays for all filter types defined in the filterTypes object are existent
+      this.filterTypes.forEach((ft) => {
+        if (!this.persistence[ft.name]) this.persistence[ft.name] = []
+      })
       // Ensure relative is set on threshold filter, otherwise the save request fails with a 500
       this.persistence.thresholdFilters.forEach((f) => {
         if (f.relative === undefined) f.relative = false
@@ -604,6 +610,9 @@ export default {
       // Convert comma separated string to array for equals filter
       if (filterTypeName === 'equalsFilters') filter.values = filter.values.split(',').map((v) => v.trim())
 
+      // Ensure that the filter type array exists.
+      // Even though the arrays are created when a new persistence config is initialized, we need this for existing, old configs.
+      if (!this.persistence[filterTypeName]) this.persistence[filterTypeName] = []
       this.saveModule(filterTypeName, index, filter)
     },
     deleteFilter (ev, module, index) {
@@ -645,15 +654,15 @@ export default {
       this.dirty = true
     },
     toYaml () {
-      this.persistenceYaml = YAML.stringify({
+      const toCode = {
         configurations: this.persistence.configs,
         cronStrategies: this.persistence.cronStrategies,
-        defaultStrategies: this.persistence.defaults,
-        thresholdFilters: this.persistence.thresholdFilters,
-        timeFilters: this.persistence.timeFilters,
-        equalsFilters: this.persistence.equalsFilters,
-        includeFilters: this.persistence.includeFilters
+        defaultStrategies: this.persistence.defaults
+      }
+      this.filterTypes.forEach((ft) => {
+        toCode[ft.name] = this.persistence[ft.name]
       })
+      this.persistenceYaml = YAML.stringify(toCode)
     },
     fromYaml () {
       if (!this.isEditable) return false
@@ -662,10 +671,9 @@ export default {
         this.$set(this.persistence, 'configs', updatedPersistence.configurations)
         this.$set(this.persistence, 'cronStrategies', updatedPersistence.cronStrategies)
         this.$set(this.persistence, 'defaults', updatedPersistence.defaultStrategies)
-        this.$set(this.persistence, 'thresholdFilters', updatedPersistence.thresholdFilters)
-        this.$set(this.persistence, 'timeFilters', updatedPersistence.timeFilters)
-        this.$set(this.persistence, 'equalsFilters', updatedPersistence.equalsFilters)
-        this.$set(this.persistence, 'includeFilters', updatedPersistence.includeFilters)
+        this.filterTypes.forEach((ft) => {
+          this.$set(this.persistence, ft.name, updatedPersistence[ft.name])
+        })
         return true
       } catch (e) {
         this.$f7.dialog.alert(e).open()
