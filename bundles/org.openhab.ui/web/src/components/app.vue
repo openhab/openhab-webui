@@ -507,8 +507,11 @@ export default {
 
           if (data[2]) dayjs.locale(data[2].key)
 
-          this.ready = true
-          return Promise.resolve()
+          // load the Semantic tags
+          this.$store.dispatch('loadSemantics').then(() => {
+            this.ready = true
+            return Promise.resolve()
+          })
         })
     },
     pageIsVisible (page) {
@@ -542,8 +545,7 @@ export default {
       localStorage.setItem('openhab.ui:serverUrl', this.serverUrl)
       localStorage.setItem('openhab.ui:username', this.username)
       localStorage.setItem('openhab.ui:password', this.password)
-      this.loadData().then((data) => {
-        // this.sitemaps = data
+      this.loadData().then(() => {
         this.loginScreenOpened = false
         this.loggedIn = true
       }).catch((err) => {
