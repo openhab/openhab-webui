@@ -442,7 +442,7 @@ export default {
      * Checks:
      *  - name
      *  - label
-     *  - metadata namespaces (requires exact match)
+     *  - metadata
      *  - tags (requires exact match)
      *
      * @param i Item
@@ -465,6 +465,7 @@ export default {
      *  - name
      *  - label
      *  - description
+     *  - tags (requires exact match)
      *  - itemName & thingUID of triggers, actions & conditions
      *  - script content (e.g. JavaScript or Rule DSL)
      *  - script MIME types (requires exact match)
@@ -479,6 +480,7 @@ export default {
       if (r.uid.toLowerCase().indexOf(query) >= 0) return true
       if (r.name.toLowerCase().indexOf(query) >= 0) return true
       if (r.description && r.description.toLowerCase().indexOf(query) >= 0) return true
+      if (r.tags && r.tags.map(t => t.toLowerCase()).includes(query)) return true
       const searchItemOrThing = (m) => {
         // Match Item names non case-intensive
         if (m.configuration.itemName && m.configuration.itemName.toLowerCase().indexOf(query) >= 0) {
