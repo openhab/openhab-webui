@@ -468,6 +468,7 @@ export default {
      *  - itemName & thingUID of triggers, actions & conditions
      *  - script content (e.g. JavaScript or Rule DSL)
      *  - script MIME types (requires exact match)
+     *  - Blockly scripts when lowercase search term is 'block', 'blockly' or 'blocksource'
      *
      * @param r rule
      * @param query query (as typed, not in lowercase)
@@ -491,6 +492,9 @@ export default {
       const searchScript = (m) => {
         // MIME types require exact match
         if (m.configuration.type && m.configuration.type.toLowerCase() === query) {
+          return true
+        }
+        if (['block', 'blockly', 'blocksource'].includes(query) && m.configuration.blockSource !== undefined) {
           return true
         }
         if (m.configuration.script && m.configuration.script.toLowerCase().indexOf(query) >= 0) {
