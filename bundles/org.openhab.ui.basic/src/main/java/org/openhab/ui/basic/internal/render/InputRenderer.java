@@ -32,6 +32,7 @@ import org.openhab.core.library.types.StringType;
 import org.openhab.core.model.sitemap.sitemap.Input;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
+import org.openhab.core.types.StateDescription;
 import org.openhab.core.types.UnDefType;
 import org.openhab.core.types.util.UnitUtils;
 import org.openhab.core.ui.items.ItemUIRegistry;
@@ -256,8 +257,19 @@ public class InputRenderer extends AbstractWidgetRenderer {
         if (w.getLabel() != null) {
             unit = getUnitFromLabel(item, w.getLabel());
         }
+        // required when item is defined through UI and the label contains the value format pattern
         if ((unit != null) && unit.isBlank() && (item.getLabel() != null)) {
             unit = getUnitFromLabel(item, item.getLabel());
+        }
+        // required when the value pattern is in the state description (text definition or meta data)
+        if ((unit != null) && unit.isBlank()) {
+            StateDescription stateDescription = item.getStateDescription();
+            if (stateDescription != null) {
+                String pattern = stateDescription.getPattern();
+                if (pattern != null) {
+                    unit = getUnitFromLabel(item, "[" + pattern + "]");
+                }
+            }
         }
         if (unit == null || unit.isBlank()) {
             unit = item.getUnitSymbol();
