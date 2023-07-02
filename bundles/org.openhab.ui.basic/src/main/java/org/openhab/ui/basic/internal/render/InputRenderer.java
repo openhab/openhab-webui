@@ -110,7 +110,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
                     item.getType());
             inputHint = null;
         }
-        if ("datetime".equals(dataType) && ((inputHint == null) || "".equals(inputHint) || "text".equals(inputHint))) {
+        if ("datetime".equals(dataType) && ((inputHint == null) || inputHint.isEmpty() || "text".equals(inputHint))) {
             inputHint = "datetime";
         }
         snippet = snippet.replace("%input_hint%", inputHint == null ? "" : inputHint);
