@@ -73,7 +73,7 @@
               <f7-list :media-list="isEditable" swipeout>
                 <f7-list-item v-for="(cfg, index) in persistence.configs" :key="cfg.items.join()"
                               :title="cfg.items.join(', ')"
-                              :footer="cfg.strategies.join(', ')" :link="isEditable"
+                              :footer="cfg.strategies.join(', ') + (cfg.filters.length > 0 ? ' - ' + cfg.filters.join(', ') : '')" :link="isEditable"
                               @click.native="(ev) => editConfiguration(ev, index, cfg)" swipeout>
                   <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled"
                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
