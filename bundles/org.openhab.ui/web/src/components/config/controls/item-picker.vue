@@ -49,8 +49,7 @@ export default {
   created () {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
     if (!this.items || !this.items.length) {
-      // TODO use a Vuex store
-      this.$oh.api.get('/rest/items').then((items) => {
+      this.$oh.api.get('/rest/items?staticDataOnly=true').then((items) => {
         this.sortAndFilterItems(items)
       })
     } else {

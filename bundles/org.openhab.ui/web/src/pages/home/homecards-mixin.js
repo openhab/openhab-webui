@@ -114,7 +114,7 @@ export default {
       item.children.forEach(child => this.sortModel(child))
     },
     loadModel (page) {
-      this.$oh.api.get('/rest/items?metadata=semantics,listWidget,widgetOrder')
+      this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=semantics,listWidget,widgetOrder')
         .then((data) => {
           this.items = data
           let filteredItems = {

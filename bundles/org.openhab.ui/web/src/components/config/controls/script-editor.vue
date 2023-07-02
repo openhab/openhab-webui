@@ -235,7 +235,7 @@ export default {
             }
             server.on('completion', this.ternComplete)
           })
-          this.$oh.api.get('/rest/items').then((data) => { this.$set(this, 'itemsCache', data) })
+          this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.$set(this, 'itemsCache', data) })
         }
         const server = new _CodeMirror.TernServer({
           defs: (this.mode.indexOf('version=ECMAScript-5.1') > 0) ? [EcmascriptDefs, NashornDefs] : [EcmascriptDefs, OpenhabJsDefs],

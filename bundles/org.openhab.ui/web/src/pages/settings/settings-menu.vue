@@ -198,9 +198,9 @@ export default {
     loadCounters () {
       if (!this.apiEndpoints) return
       if (this.$store.getters.apiEndpoint('inbox')) this.$oh.api.get('/rest/inbox').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
-      if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things?summary=true').then((data) => { this.thingsCount = data.length.toString() })
-      if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items').then((data) => { this.itemsCount = data.length.toString() })
-      if (this.$store.getters.apiEndpoint('ui')) this.$oh.api.get('/rest/ui/components/system:sitemap?summary=true').then((data) => { this.sitemapsCount = data.length })
+      if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => { this.thingsCount = data.length.toString() })
+      if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.itemsCount = data.length.toString() })
+      if (this.$store.getters.apiEndpoint('ui')) this.$oh.api.get('/rest/ui/components/system:sitemap').then((data) => { this.sitemapsCount = data.length })
       if (this.$store.getters.apiEndpoint('transformations')) this.$oh.api.get('/rest/transformations').then((data) => { this.transformationsCount = data.length })
     },
     navigateToStore (tab) {
