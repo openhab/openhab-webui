@@ -33,7 +33,7 @@ export default {
   },
   created () {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
-    this.$oh.api.get('/rest/things?cacheable=true').then((data) => {
+    this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => {
       this.things = data.sort((a, b) => {
         const labelA = a.label
         const labelB = b.label

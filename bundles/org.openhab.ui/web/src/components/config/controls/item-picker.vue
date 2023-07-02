@@ -49,7 +49,7 @@ export default {
   created () {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
     if (!this.items || !this.items.length) {
-      this.$oh.api.get('/rest/items?cacheable=true').then((items) => {
+      this.$oh.api.get('/rest/items?staticDataOnly=true').then((items) => {
         this.sortAndFilterItems(items)
       })
     } else {

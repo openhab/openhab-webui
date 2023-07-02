@@ -52,7 +52,7 @@ function getWidgetDefinitions (cm) {
 
 function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix, addQuotes) {
   const cursor = cm.getCursor()
-  const promise = (itemsCache) ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items?cacheable=true')
+  const promise = (itemsCache) ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items?staticDataOnly=true')
   return promise.then((data) => {
     if (!itemsCache) itemsCache = data
     let ret = {
