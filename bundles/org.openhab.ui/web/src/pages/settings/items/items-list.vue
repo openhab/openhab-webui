@@ -138,7 +138,7 @@ export default {
           found.push(i)
         }
       }
-      return found // return array with mathced indexes
+      return found // return array with matched indexes
     },
     renderExternal (vl, vlData) {
       this.vlData = vlData

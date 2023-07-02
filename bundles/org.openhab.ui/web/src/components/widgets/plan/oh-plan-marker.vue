@@ -1,5 +1,5 @@
 <template>
-  <l-marker ref="marker" v-if="coords" :key="markerKey" :draggable="context.editmode != undefined" :lat-lng="coords"
+  <l-marker ref="marker" v-if="visible && coords" :key="markerKey" :draggable="context.editmode != undefined" :lat-lng="coords"
             @update:latLng="onMove" @click="onClick">
     <l-tooltip v-if="tooltip && !config.useTooltipAsLabel" :options="tooltipOptions" @click="() => {}">
       <div style="white-space: nowrap" :style="tooltipStyle">

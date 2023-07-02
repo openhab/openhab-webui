@@ -57,7 +57,7 @@ public class MapviewRenderer extends AbstractWidgetRenderer {
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Mapview mapview = (Mapview) w;
         String snippet = getSnippet("mapview");
-        snippet = preprocessSnippet(snippet, mapview);
+        snippet = preprocessSnippet(snippet, mapview, true);
         // Process the color tags
         snippet = processColor(w, snippet);
 

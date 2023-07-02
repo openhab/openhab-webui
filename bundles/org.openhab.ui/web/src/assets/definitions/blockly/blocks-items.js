@@ -7,24 +7,58 @@ import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import { FieldItemModelPicker } from './fields/item-field'
 import { FieldThingPicker } from './fields/thing-field'
+import api from '@/js/openhab/api'
 
 export default function (f7, isGraalJs) {
   /* Helper block to allow selecting an item */
   Blockly.Blocks['oh_item'] = {
+    fieldPicker: null,
     init: function () {
+      this.fieldPicker = new FieldItemModelPicker('MyItem', null, { f7 })
       this.appendDummyInput()
         .appendField('item')
-        .appendField(new FieldItemModelPicker('MyItem', null, { f7 }), 'itemName')
+        .appendField(this.fieldPicker, 'itemName')
       this.setColour(160)
       this.setInputsInline(true)
-      this.setTooltip('Pick an item from the Model')
+
+      this.setTooltip(() => {
+        let tooltip = 'Pick an Item from the Model'
+        const itemData = this.fieldPicker.data
+        if (itemData[0] !== itemData[1]) {
+          tooltip = itemData[0]
+        }
+        return tooltip
+      })
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#item')
       this.setOutput(true, 'oh_item')
+    },
+    _updateFieldPicker: function (name, label) {
+      this.fieldPicker.data = [name, label]
+    },
+    mutationToDom: function () {
+      const container = Blockly.utils.xml.createElement('mutation')
+
+      if (!this.fieldPicker.data) { // "migrate" old storage
+        this.fieldPicker.data = [this.fieldPicker.value_, this.fieldPicker.value_]
+        if (this.fieldPicker.value_ && this.fieldPicker.value_ !== 'MyItem') {
+          api.get(`/rest/items/${this.fieldPicker.value_}?metadata=^$`).then((data) => {
+            this.fieldPicker.data = [this.fieldPicker.value_, data.label]
+          }).catch()
+        }
+      }
+      this.fieldPicker.value_ = (this.workspace.showLabels) ? this.fieldPicker.data[1] : this.fieldPicker.data[0]
+
+      container.setAttribute('itemName', this.fieldPicker.data[0])
+      container.setAttribute('itemLabel', this.fieldPicker.data[1])
+      return container
+    },
+    domToMutation: function (xmlElement) {
+      this._updateFieldPicker(xmlElement.getAttribute('itemName'), xmlElement.getAttribute('itemLabel'))
     }
   }
 
   javascriptGenerator['oh_item'] = function (block) {
-    const itemName = block.getFieldValue('itemName')
+    const itemName = block.fieldPicker.data[0]
     return [`'${itemName}'`, 0]
   }
 
@@ -39,7 +73,7 @@ export default function (f7, isGraalJs) {
       this.setColour(0)
       this.setTooltip('Retrieve the members of a group')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-members-of-group')
-      this.setOutput(true, null)
+      this.setOutput(true, null) // Array of Item objects
     }
   }
 
@@ -64,7 +98,7 @@ export default function (f7, isGraalJs) {
       this.setColour(0)
       this.setTooltip('Retrieve the items that have all the given tags')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-items-with-tag')
-      this.setOutput(true, null)
+      this.setOutput(true, null) // Array of Item objects
     }
   }
 
@@ -144,11 +178,16 @@ export default function (f7, isGraalJs) {
   */
   Blockly.Blocks['oh_getitem_attribute'] = {
     init: function () {
-      let thisBlock = this
-      let dropdown = new Blockly.FieldDropdown(
-        [['name', 'Name'], ['label', 'Label'], ['state', 'State'], ['category', 'Category'], ['tags', 'Tags'], ['groups', 'GroupNames'], ['type', 'Type']],
+      const block = this
+      const choices = [['name', 'Name'], ['label', 'Label'], ['state', 'State'], ['category', 'Category'], ['tags', 'Tags'], ['groups', 'GroupNames'], ['type', 'Type']]
+      if (isGraalJs) {
+        choices.splice(3, 0, ['numeric state', 'NumericState'])
+        choices.splice(4, 0, ['quantity state', 'QuantityState'])
+      }
+      const dropdown = new Blockly.FieldDropdown(
+        choices,
         function (newMode) {
-          thisBlock.updateType_(newMode)
+          block._updateType(newMode)
         })
       this.appendValueInput('item')
         .setCheck('oh_itemtype')
@@ -156,20 +195,39 @@ export default function (f7, isGraalJs) {
         .appendField(dropdown, 'attributeName')
         .appendField('of item')
       this.setInputsInline(false)
+
       this.setOutput(true, 'String')
       this.setColour(0)
       this.setTooltip('Retrieve a specific attribute from the item. Note that groups and tags return a list and should be used with the loops-block \'for each item ... in list\'. ')
+      this.setTooltip(function () {
+        const attributeName = block.getFieldValue('attributeName')
+        const TIP = {
+          'Name': 'name of the Item (string)',
+          'Label': 'label of the Item (string)',
+          'State': 'state of the Item (string)',
+          'Category': 'category of the Item (string)',
+          'Tags': 'tags of the Item (list of strings -> should be used with the loops-block \'for each item ... in list\')',
+          'GroupNames': 'groups of the Item (list of strings -> should be used with the loops-block \'for each item ... in list\')',
+          'Type': 'type of the Item (string)',
+          'NumericState': 'numeric state of the Item (number)',
+          'QuantityState': 'Unit of Measurement / quantity state of Item (Quantity)'
+        }
+        return TIP[attributeName]
+      })
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-particular-attributes-of-an-item')
     },
     /**
-    * Modify this block to have the correct output type based on the attribute.
-    */
-    updateType_: function (newAttributeName) {
-      let attributeName = this.getFieldValue('attributeName')
+     * Modify this block to have the correct output type based on the attribute.
+     */
+    _updateType: function (newAttributeName) {
       if (newAttributeName === 'Tags' || newAttributeName === 'GroupNames') {
         this.outputConnection.setCheck('Array')
-      } else {
+      } else if (['Name', 'Label', 'State', 'Category', 'Type'].includes(newAttributeName)) {
         this.outputConnection.setCheck('String')
+      } else if (newAttributeName === 'NumericState') {
+        this.outputConnection.setCheck('Number')
+      } else if (newAttributeName === 'QuantityState') {
+        this.outputConnection.setCheck('oh_quantity')
       }
     },
     /**
@@ -188,7 +246,7 @@ export default function (f7, isGraalJs) {
     * @this {Blockly.Block}
     */
     domToMutation: function (xmlElement) {
-      this.updateType_(xmlElement.getAttribute('attributeName'))
+      this._updateType(xmlElement.getAttribute('attributeName'))
     }
   }
 

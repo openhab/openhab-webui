@@ -7,6 +7,7 @@
   "dialogs.close": "סגור",
   "dialogs.copy": "העתק",
   "dialogs.delete": "מחק",
+  "dialogs.reload": "רענן",
   "dialogs.search": "חיפוש",
   "dialogs.search.items": "חפש פריטים",
   "dialogs.search.things": "חפש דברים",
@@ -39,5 +40,7 @@
   "sidebar.tip.signIn": "הכנס כמנהל כדי לקבל גישה להגדרות",
   "page.navbar.back": "חזור",
   "page.navbar.edit": "ערוך",
-  "admin.notTranslatedYet": "אזור הניהול עדיין לא מתורגם."
+  "admin.notTranslatedYet": "אזור הניהול עדיין לא מתורגם.",
+  "error.communicationFailure": "כשל בתקשורת",
+  "error.itemNotFound": "%s לא נמצא"
 }

@@ -25,9 +25,11 @@
                 <addon-stats-line :addon="addon" :iconSize="15" />
               </div>
               <div class="addon-header-actions">
-                <f7-preloader v-if="isPending(addon)" color="blue" />
-                <f7-button v-else-if="addon.installed" class="install-button" text="Remove" color="red" round small fill @click="openAddonPopup" />
-                <f7-button v-else class="install-button" :text="installableAddon(addon) ? 'Install' : 'Add'" color="blue" round small fill @click="openAddonPopup" />
+                <div v-if="showInstallActions">
+                  <f7-preloader v-if="isPending(addon)" color="blue" />
+                  <f7-button v-else-if="addon.installed" class="install-button" text="Remove" color="red" round small fill @click="openAddonPopup" />
+                  <f7-button v-else class="install-button" :text="installableAddon(addon) ? 'Install' : 'Add'" color="blue" round small fill @click="openAddonPopup" />
+                </div>
                 <f7-link v-if="showConfig" icon-f7="gears" tooltip="Configure add-on" color="blue" :href="'/settings/addons/' + addonId + '/config'" round small />
               </div>
             </div>
@@ -224,7 +226,7 @@ export default {
     addonDescription () {
       if (!this.descriptionReady) return null
       if (!this.addon) return null
-      if (this.addon.description && this.addon.link.indexOf('openhab.org/addons') < 0) return this.addon.description
+      if (this.addon.description && (!this.addon.link || this.addon.link.indexOf('openhab.org/addons') < 0)) return this.addon.description
       if (this.parsedDescription) {
         const firstHeading = this.parsedDescription.match(/<h\d/m)
         if (firstHeading && firstHeading.index > 0) return this.parsedDescription.substring(0, firstHeading.index)
@@ -234,11 +236,15 @@ export default {
     },
     docLinkUrl () {
       if (!this.addon) return ''
-      if (this.serviceId && this.serviceId !== 'karaf' && this.addon.link) return this.addon.link
+      if (this.serviceId && this.serviceId !== 'karaf') return this.addon.link ? this.addon.link : ''
       let url = `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org` +
         `/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}` +
         `/${this.addon.id}`
       return url
+    },
+    showInstallActions () {
+      let splitted = this.addon.uid.split(':')
+      return splitted.length < 2 || splitted[0] !== 'eclipse'
     }
   },
   methods: {
@@ -297,7 +303,7 @@ export default {
                 body = '<p>The description is not available for this add-on.</p><h3>Debug Information</h3><blockquote>' + text + '</blockquote>'
               } else {
                 const frontmatter = text.substring(4, frontmatterSeparators[1].index)
-                body = marked.default(text.substring(frontmatterSeparators[1].index + 4))
+                body = marked.parse(text.substring(frontmatterSeparators[1].index + 4))
 
                 // perform a few replaces on HTML body for Markdown readmes on GitHub
                 body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
@@ -323,8 +329,7 @@ export default {
         })
       } else {
         // perform a few replaces for Discourse "cooked" HTML
-        let body = this.addon.detailedDescription
-        if (!body) return
+        let body = this.addon.detailedDescription ? this.addon.detailedDescription : ''
         body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
         body = body.replace(/<\/pre>/gm, '</pre></div>')
         body = body.replace(/<table>/gm, '<div class="data-table"><table>')

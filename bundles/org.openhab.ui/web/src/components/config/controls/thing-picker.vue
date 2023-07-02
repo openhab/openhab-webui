@@ -4,7 +4,7 @@
       <select :name="name" :multiple="multiple" @change="select" :required="required">
         <option v-if="!multiple" value="" />
         <option v-for="thing in things" :value="thing.UID" :key="thing.UID" :selected="(multiple) ? value.indexOf(thing.UID) >= 0 : value === thing.UID">
-          {{ thing.label }}
+          {{ thing.label ? thing.label + ' (' + thing.UID + ')' : thing.UID }}
         </option>
       </select>
     </f7-list-item>
@@ -35,8 +35,8 @@ export default {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
     this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => {
       this.things = data.sort((a, b) => {
-        const labelA = a.label
-        const labelB = b.label
+        const labelA = a.label || a.UID
+        const labelB = b.label || b.UID
         return labelA.localeCompare(labelB)
       })
       if (this.filterType) {

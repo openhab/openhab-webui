@@ -13,7 +13,7 @@ function writeWidget (widget, indent) {
         dsl += ' forceasitem=' + widget.config[key]
       } else {
         dsl += ` ${key}=`
-        if (key === 'item' || Number.isFinite(widget.config[key])) {
+        if (key === 'item' || key === 'period' || key === 'legend' || Number.isFinite(widget.config[key])) {
           dsl += widget.config[key]
         } else if (key === 'mappings') {
           dsl += '['
@@ -42,7 +42,7 @@ function writeWidget (widget, indent) {
           dsl += widget.config[key].filter(Boolean).map(color => {
             let index = color.lastIndexOf('=') + 1
             let colorvalue = color.substring(index)
-            if (/^[^"'].*\W.*[^"']$/.test(colorvalue)) {
+            if (!/^(".*")|('.*')$/.test(colorvalue)) {
               colorvalue = '"' + colorvalue + '"'
             }
             colorvalue = (index > 0 ? '=' + colorvalue : colorvalue)

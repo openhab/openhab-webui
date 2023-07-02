@@ -96,7 +96,7 @@ A cell with a big label to show a short item state value
     <PropOption value="command" label="Send command" />
     <PropOption value="toggle" label="Toggle Item" />
     <PropOption value="options" label="Command options" />
-    <PropOption value="rule" label="Run rule" />
+    <PropOption value="rule" label="Run scene, script or rule" />
     <PropOption value="popup" label="Open popup" />
     <PropOption value="popover" label="Open popover" />
     <PropOption value="sheet" label="Open sheet" />
@@ -137,14 +137,14 @@ A cell with a big label to show a short item state value
     Comma-separated list of options; if omitted, retrieve the command options from the Item dynamically. Use <code>value=label</code> format to provide a label different than the option.
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="actionRule" label="Rule" context="rule">
+<PropBlock type="TEXT" name="actionRule" label="Scene, Script or Rule" context="rule">
   <PropDescription>
-    Rule to run
+    Scene, Script or Rule to run
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="actionRuleContext" label="Rule Context" context="script">
+<PropBlock type="TEXT" name="actionRuleContext" label="Context" context="script">
   <PropDescription>
-    Object representing the optional context to pass to the rule. Edit in YAML or provide a JSON object, e.g. <code>{ "param1": "value1", "param2": { "subkey1": "testing", "subkey2": 123 } }</code>.
+    Object representing the optional context to pass. Edit in YAML or provide a JSON object, e.g. <code>{ "param1": "value1", "param2": { "subkey1": "testing", "subkey2": 123 } }</code>.
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="actionPage" label="Page" context="page">
@@ -265,6 +265,17 @@ A cell with a big label to show a short item state value
   <PropDescription>
     Colors of the trend line (see <a target="_blank" class="external text-color-blue" href="https://github.com/QingWei-Li/vue-trend#props">vue-trend</a>)
   </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="trendGradientDirection" label="Trend Line Gradient Direction">
+  <PropDescription>
+    Direction of the trend line gradient (default: top)
+  </PropDescription>
+  <PropOptions>
+    <PropOption value="top" label="top" />
+    <PropOption value="bottom" label="bottom" />
+    <PropOption value="left" label="left" />
+    <PropOption value="right" label="right" />
+  </PropOptions>
 </PropBlock>
 <PropBlock type="TEXT" name="trendSampling" label="Trend Line Sampling">
   <PropDescription>

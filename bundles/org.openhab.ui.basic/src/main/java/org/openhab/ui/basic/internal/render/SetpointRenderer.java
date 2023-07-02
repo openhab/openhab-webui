@@ -86,7 +86,6 @@ public class SetpointRenderer extends AbstractWidgetRenderer {
         String snippet = getSnippet("setpoint");
 
         snippet = preprocessSnippet(snippet, w);
-        snippet = snippet.replace("%value%", getValue(w));
         snippet = snippet.replace("%minValue%", minValue.toString());
         snippet = snippet.replace("%maxValue%", maxValue.toString());
         snippet = snippet.replace("%step%", step.toString());

@@ -1,6 +1,6 @@
 {
   "name": "org.openhab.ui.basic",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Basic UI",
   "scripts": {
     "build": "gulp default"
@@ -9,9 +9,8 @@
     "gulp": "^4.0.2",
     "gulp-eslint": "^6.0.0",
     "gulp-sass": "^5.0.0",
-    "node-sass": "^6.0.1",
     "gulp-uglify": "^3.0.2",
     "material-design-icons": "^3.0.1",
-    "roboto-fontface": "^0.10.0"
+    "node-sass": "^8.0.0"
   }
 }

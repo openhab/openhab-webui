@@ -17,7 +17,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
-import org.openhab.core.library.types.HSBType;
 import org.openhab.core.model.sitemap.sitemap.Colorpicker;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
@@ -68,10 +67,9 @@ public class ColorpickerRenderer extends AbstractWidgetRenderer {
 
         // get RGB hex value
         State state = itemUIRegistry.getState(cp);
-        String hexValue = "#ffffff";
-        if (state instanceof HSBType) {
-            HSBType hsbState = (HSBType) state;
-            hexValue = "#" + Integer.toHexString(hsbState.getRGB()).substring(2);
+        String hexValue = getRGBHexCodeFromItemState(state);
+        if (hexValue == null) {
+            hexValue = "#ffffff";
         }
         String purelabel = itemUIRegistry.getLabel(w);
         if (purelabel != null) {
@@ -80,28 +78,17 @@ public class ColorpickerRenderer extends AbstractWidgetRenderer {
 
         // Should be called before preprocessSnippet
         snippet = snippet.replace("%state%", hexValue);
-        snippet = snippet.replace("%icon_state%", escapeURL(hexValue));
+        snippet = snippet.replace("%state_in_url%", escapeURL(hexValue));
 
         snippet = preprocessSnippet(snippet, w);
         if (purelabel != null) {
             snippet = snippet.replace("%purelabel%", purelabel);
         }
         snippet = snippet.replace("%frequency%", frequency);
-        snippet = snippet.replace("%servletname%", WebAppServlet.SERVLET_NAME);
+        snippet = snippet.replace("%servletname%", WebAppServlet.SERVLET_PATH);
 
-        String style = "";
-        String color = itemUIRegistry.getLabelColor(w);
-        if (color != null) {
-            style = "color:" + color;
-        }
-        snippet = snippet.replace("%labelstyle%", style);
-
-        style = "";
-        color = itemUIRegistry.getValueColor(w);
-        if (color != null) {
-            style = "color:" + color;
-        }
-        snippet = snippet.replace("%valuestyle%", style);
+        // Process the color tags
+        snippet = processColor(w, snippet);
 
         sb.append(snippet);
         return ECollections.emptyEList();

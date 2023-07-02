@@ -19,7 +19,7 @@ export const actionParams = (groupName, paramPrefix) => {
       { value: 'command', label: 'Send command' },
       { value: 'toggle', label: 'Toggle Item' },
       { value: 'options', label: 'Command options' },
-      { value: 'rule', label: 'Run rule' },
+      { value: 'rule', label: 'Run scene, script or rule' },
       { value: 'popup', label: 'Open popup' },
       { value: 'popover', label: 'Open popover' },
       { value: 'sheet', label: 'Open sheet' },
@@ -53,11 +53,11 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['options'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pt(paramPrefix + 'actionRule', 'Rule', 'Rule to run').c('rule')
+    pt(paramPrefix + 'actionRule', 'Scene, Script or Rule', 'Scene, Script or Rule to run').c('rule')
       .v((value, configuration, configDescription, parameters) => {
         return ['rule'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pt(paramPrefix + 'actionRuleContext', 'Rule Context', 'Object representing the optional context to pass to the rule. Edit in YAML or provide a JSON object, e.g. <code>{ "param1": "value1", "param2": { "subkey1": "testing", "subkey2": 123 } }</code>.').c('script')
+    pt(paramPrefix + 'actionRuleContext', 'Context', 'Object representing the optional context to pass. Edit in YAML or provide a JSON object, e.g. <code>{ "param1": "value1", "param2": { "subkey1": "testing", "subkey2": 123 } }</code>.').c('script')
       .v((value, configuration, configDescription, parameters) => {
         return ['rule'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),

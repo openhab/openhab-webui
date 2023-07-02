@@ -28,7 +28,7 @@ export const OhLabelCardDefinition = () => new WidgetDefinition('oh-label-card',
     pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>), <code>material:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>) or <code>iconify:iconSet:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://icon-sets.iconify.design">Iconify icon</a>, requires being online if not in cache)'),
     pt('iconColor', 'Icon Color', 'Not applicable to openHAB icons').a(),
     pn('iconSize', 'Icon Size', 'Size of the icon in px').a(),
-    pb('iconUseState', 'Icon depends on state', 'Use the state of the item to get a dynamic icon (for openHAB icons only)').a(),
+    pb('iconUseState', 'Icon depends on state', 'Use the state of the Item to get a dynamic icon (enabled by default for <code>Contact</code>, <code>Dimmer</code>, <code>Rollershutter</code> & <code>Switch</code> Item types) (for openHAB icons only)'),
     pb('vertical', 'Vertical arrangement', 'Display label below icon')
   ])
   .paramGroup(pg('trend', 'Trend Line', 'Show a trend line in the background'), TrendParameters())
@@ -80,14 +80,14 @@ export const OhSliderCardDefinition = () => new WidgetDefinition('oh-slider-card
 import GaugeParameters from '../system/gauge.js'
 export const OhGaugeCardDefinition = () => new WidgetDefinition('oh-gauge-card', 'Gauge Card', 'Display a read-only gauge in a card to visualize a quantifiable item')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('gauge', 'Gauge', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://framework7.io/vue/gauge.html#gauge-properties">Gauge control</a>'), GaugeParameters())
+  .paramGroup(pg('gauge', 'Gauge', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://framework7.io/vue/gauge.html#gauge-properties">gauge</a>'), GaugeParameters())
   .paramGroup(actionGroup(null, 'Action to perform when the gauge is clicked'), actionParams())
 
 // OhKnobCard
 import KnobParameters from '../system/knob.js'
-export const OhKnobCardDefinition = () => new WidgetDefinition('oh-knob-card', 'Knob Card', 'Display a knob in a card to visualize and control a quantifiable item')
+export const OhKnobCardDefinition = () => new WidgetDefinition('oh-knob-card', 'Knob & Rounded Slider Card', 'Display a knob or a rounded slider in a card to visualize and control a quantifiable item')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('knob', 'Knob', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://github.com/kramer99/vue-knob-control#properties">Knob control</a>'), KnobParameters())
+  .paramGroup(pg('knob', 'Knob & Rounded Slider', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://github.com/soundar24/vue-round-slider#props">round-slider control</a>'), KnobParameters())
 
 // OhStepperCard
 import StepperParameters from '../system/stepper.js'

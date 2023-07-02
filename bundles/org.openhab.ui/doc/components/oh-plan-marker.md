@@ -43,6 +43,11 @@ A marker on a floor plan
     The item whose state to display on this marker
   </PropDescription>
 </PropBlock>
+<PropBlock type="TEXT" name="visible" label="Visibility">
+  <PropDescription>
+    Enter an expression to dynamically show the marker, see <a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/ui/building-pages.html#widgets-definition-usage">Building Pages: <code>visible</code></a>
+  </PropDescription>
+</PropBlock>
 </PropGroup>
 </div>
 
@@ -57,7 +62,7 @@ A marker on a floor plan
 </PropBlock>
 <PropBlock type="BOOLEAN" name="iconUseState" label="Icon depends on state">
   <PropDescription>
-    Use the state of the item to get a dynamic icon (for openHAB icons only)
+    Use the state of the Item to get a dynamic icon (enabled by default for <code>Contact</code>, <code>Dimmer</code>, <code>Rollershutter</code> & <code>Switch</code> Item types) (for openHAB icons only)
   </PropDescription>
 </PropBlock>
 <PropBlock type="INTEGER" name="iconSize" label="Icon Size">
@@ -175,7 +180,7 @@ A marker on a floor plan
     <PropOption value="command" label="Send command" />
     <PropOption value="toggle" label="Toggle Item" />
     <PropOption value="options" label="Command options" />
-    <PropOption value="rule" label="Run rule" />
+    <PropOption value="rule" label="Run scene, script or rule" />
     <PropOption value="popup" label="Open popup" />
     <PropOption value="popover" label="Open popover" />
     <PropOption value="sheet" label="Open sheet" />
@@ -216,14 +221,14 @@ A marker on a floor plan
     Comma-separated list of options; if omitted, retrieve the command options from the Item dynamically. Use <code>value=label</code> format to provide a label different than the option.
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="actionRule" label="Rule" context="rule">
+<PropBlock type="TEXT" name="actionRule" label="Scene, Script or Rule" context="rule">
   <PropDescription>
-    Rule to run
+    Scene, Script or Rule to run
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="actionRuleContext" label="Rule Context" context="script">
+<PropBlock type="TEXT" name="actionRuleContext" label="Context" context="script">
   <PropDescription>
-    Object representing the optional context to pass to the rule. Edit in YAML or provide a JSON object, e.g. <code>{ "param1": "value1", "param2": { "subkey1": "testing", "subkey2": 123 } }</code>.
+    Object representing the optional context to pass. Edit in YAML or provide a JSON object, e.g. <code>{ "param1": "value1", "param2": { "subkey1": "testing", "subkey2": 123 } }</code>.
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="actionPage" label="Page" context="page">
@@ -323,6 +328,28 @@ A marker on a floor plan
 
 
 <!-- GENERATED /props -->
+
+## Examples
+
+note that you must not have semicolons at the end of the css style
+
+### iconStyle: 
+
+```yaml
+iconStyle:
+  padding: 10px
+  border-radius: 4px
+  border: 5px solid #f00
+```
+
+### tooltipStyle:
+
+```yaml
+tooltipStyle:
+  textShadow: 0 0 15px red
+  fontSize: 40px
+  color: yellow
+```
 
 <!-- If applicable describe how properties are forwarded to a underlying component from Framework7, ECharts, etc.:
 ### Inherited Properties

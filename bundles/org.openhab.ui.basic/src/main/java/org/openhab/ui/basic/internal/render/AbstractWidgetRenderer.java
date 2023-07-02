@@ -28,6 +28,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.I18nUtil;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.ItemNotFoundException;
+import org.openhab.core.library.types.HSBType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
@@ -48,13 +51,27 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
+ * @author Laurent Garnier - Refactor icon management to support other iconsets
+ * @author Laurent Garnier - primary/secondary colors
  */
 @NonNullByDefault
 public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
-    private final Logger logger = LoggerFactory.getLogger(AbstractWidgetRenderer.class);
+    private static final String ICON_SOURCE_OH = "oh";
+    private static final String ICON_SOURCE_IF = "if";
+    private static final String ICON_SOURCE_ICONIFY = "iconify";
+    private static final String ICON_SOURCE_MATERIAL = "material";
+    private static final String ICON_SET_OH_CLASSIC = "classic";
+    private static final String DEFAULT_ICON_SOURCE = ICON_SOURCE_OH;
+    private static final String DEFAULT_ICON_SET = ICON_SET_OH_CLASSIC;
+    private static final String DEFAULT_ICON_NAME = "none";
 
     public static final String ICON_TYPE = "svg";
+
+    public static final String PRIMARY_COLOR = "#3f51b5";
+    public static final String SECONDARY_COLOR = "#ff4081";
+
+    private final Logger logger = LoggerFactory.getLogger(AbstractWidgetRenderer.class);
 
     private final BundleContext bundleContext;
     protected final TranslationProvider i18nProvider;
@@ -88,14 +105,26 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     /**
      * Replace some common values in the widget template
      *
-     * @param snippet snippet html code
+     * @param snippet snippet HTML code
      * @param w corresponding widget
-     * @return
+     * @return HTML code
      */
     protected String preprocessSnippet(String originalSnippet, Widget w) {
-        String snippet = originalSnippet;
+        return preprocessSnippet(originalSnippet, w, false);
+    }
+
+    /**
+     * Replace some common values in the widget template
+     *
+     * @param snippet snippet HTML code
+     * @param w corresponding widget
+     * @param ignoreStateForIcon true if state has to be ignored when requesting the icon
+     * @return HTML code
+     */
+    protected String preprocessSnippet(String originalSnippet, Widget w, boolean ignoreStateForIcon) {
+        String snippet = preprocessIcon(originalSnippet, w, ignoreStateForIcon);
+
         snippet = snippet.replace("%widget_id%", itemUIRegistry.getWidgetId(w));
-        snippet = snippet.replace("%icon_type%", ICON_TYPE);
         snippet = snippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
         // Optimization: avoid calling 3 times itemUIRegistry.getLabel(w)
         String text = itemUIRegistry.getLabel(w);
@@ -105,10 +134,67 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         snippet = snippet.replace("%visibility_class%", itemUIRegistry.getVisiblity(w) ? "" : "mdl-form__row--hidden");
 
         String state = getState(w);
-        snippet = snippet.replace("%state%", escapeURL(state));
+        snippet = snippet.replace("%state%", escapeHtml(state));
+        snippet = snippet.replace("%state_in_url%", escapeURL(state));
 
+        return snippet;
+    }
+
+    private String preprocessIcon(String originalSnippet, Widget w, boolean ignoreState) {
         String category = getCategory(w);
-        snippet = snippet.replace("%category%", escapeURL(category));
+        String iconSource = DEFAULT_ICON_SOURCE;
+        String iconSet = DEFAULT_ICON_SET;
+        String iconName = DEFAULT_ICON_NAME;
+        if (category != null) {
+            String[] segments = category.split(":", 3);
+            if (segments.length == 1) {
+                iconName = segments[0];
+            } else if (segments.length == 2) {
+                iconSource = segments[0];
+                iconName = segments[1];
+            } else if (segments.length == 3) {
+                iconSource = segments[0];
+                iconSet = segments[1];
+                iconName = segments[2];
+            }
+        }
+
+        String iconSnippet = null;
+        try {
+            switch (iconSource.toLowerCase()) {
+                case ICON_SOURCE_OH:
+                    iconSnippet = getSnippet(ignoreState ? "icon_oh_no_state" : "icon_oh");
+                    break;
+                case ICON_SOURCE_IF:
+                case ICON_SOURCE_ICONIFY:
+                    if (config.isIconifyEnabled()) {
+                        iconSnippet = getSnippet("icon_iconify");
+                    }
+                    break;
+                case ICON_SOURCE_MATERIAL:
+                    iconSnippet = getSnippet("icon_material");
+                    break;
+                default:
+                    break;
+            }
+            if (iconSnippet == null) {
+                iconSnippet = getSnippet("icon_oh_no_state");
+                iconSource = DEFAULT_ICON_SOURCE;
+                iconSet = DEFAULT_ICON_SET;
+                iconName = DEFAULT_ICON_NAME;
+            }
+        } catch (RenderException e) {
+            iconSnippet = "";
+        }
+
+        String snippet = originalSnippet;
+        snippet = snippet.replace("%icon_snippet%", iconSnippet);
+
+        snippet = snippet.replace("%icon_type%", ICON_TYPE);
+        snippet = snippet.replace("%icon_set%", iconSet);
+        snippet = snippet.replace("%icon_set_in_url%", escapeURL(iconSet));
+        snippet = snippet.replace("%icon_name%", iconName);
+        snippet = snippet.replace("%icon_name_in_url%", escapeURL(iconName));
 
         return snippet;
     }
@@ -268,7 +354,18 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         String color = "";
         String snippet = originalSnippet;
 
+        State itemState = null;
+        if (w.getItem() != null) {
+            try {
+                Item item = itemUIRegistry.getItem(w.getItem());
+                itemState = item.getState();
+            } catch (ItemNotFoundException e) {
+                logger.debug("{}", e.getMessage());
+            }
+        }
+
         color = itemUIRegistry.getLabelColor(w);
+        color = convertSpecialColors(color, itemState);
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
@@ -277,13 +374,54 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
         style = "";
         color = itemUIRegistry.getValueColor(w);
+        color = convertSpecialColors(color, itemState);
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
         }
         snippet = snippet.replace("%valuestyle%", style);
 
+        style = "";
+        color = itemUIRegistry.getIconColor(w);
+        color = convertSpecialColors(color, itemState);
+
+        if (color != null) {
+            style = "style=\"color:" + color + "\"";
+        } else {
+            switch (config.getTheme()) {
+                case WebAppConfig.THEME_NAME_BRIGHT:
+                    style = "style=\"color-scheme: light\"";
+                    break;
+                case WebAppConfig.THEME_NAME_DARK:
+                    style = "style=\"color-scheme: dark\"";
+                    break;
+                default:
+                    break;
+            }
+
+        }
+        snippet = snippet.replace("%iconstyle%", style);
+
         return snippet;
+    }
+
+    private @Nullable String convertSpecialColors(@Nullable String color, @Nullable State itemState) {
+        if ("primary".equals(color)) {
+            return PRIMARY_COLOR;
+        } else if ("secondary".equals(color)) {
+            return SECONDARY_COLOR;
+        } else if ("itemValue".equals(color)) {
+            return getRGBHexCodeFromItemState(itemState);
+        }
+        return color;
+    }
+
+    protected @Nullable String getRGBHexCodeFromItemState(@Nullable State itemState) {
+        if (itemState instanceof HSBType) {
+            HSBType hsbState = (HSBType) itemState;
+            return "#" + Integer.toHexString(hsbState.getRGB()).substring(2);
+        }
+        return null;
     }
 
     protected @Nullable String getCategory(Widget w) {

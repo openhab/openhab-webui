@@ -48,7 +48,7 @@
                               @channel-updated="(e) => $emit('channels-updated', e)" />
               </template>
               <template #default="{ channel }" v-else-if="multipleLinksMode">
-                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :items="items" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
+                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :items="items" :createMode="true" :channel="channel" :checked="isChecked(channel)" />
               </template>
               <!-- <channel-link #default="{ channelId }" /> -->
             </channel-group>
@@ -92,8 +92,6 @@
 import ChannelGroup from './channel-group.vue'
 import ChannelLink from './channel-link.vue'
 import ItemForm from '@/components/item/item-form.vue'
-
-import { Points } from '@/assets/semantics'
 
 export default {
   props: ['thingType', 'thing', 'channelTypes', 'items', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems', 'context'],
@@ -198,7 +196,7 @@ export default {
           label: channel.label || channelType.label,
           category: (channelType) ? channelType.category : '',
           type: channel.itemType,
-          tags: (defaultTags.find((t) => Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
+          tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
         }
         this.newItems.push(newItem)
       }

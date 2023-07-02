@@ -16,6 +16,11 @@
         Code
       </f7-link>
     </f7-toolbar>
+    <f7-toolbar v-if="ready && generic" position="bottom">
+      <f7-button color="red" v-if="!creationMode" @click="remove()" class="width-100">
+        Remove metadata
+      </f7-button>
+    </f7-toolbar>
     <f7-tabs class="metadata-editor-tabs">
       <f7-tab id="config" class="metadata-editor-config-tab" @tab:show="() => this.currentTab = 'config'" :tab-active="currentTab === 'config'">
         <f7-block class="block-narrow" v-if="ready && currentTab === 'config'">
@@ -61,6 +66,7 @@ import YAML from 'yaml'
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 
 import ItemMetadataItemDescription from '@/components/item/metadata/item-metadata-itemdescription.vue'
+import ItemMetadataUnit from '@/components/item/metadata/item-metadata-unit.vue'
 import ItemMetadataSynonyms from '@/components/item/metadata/item-metadata-synonyms.vue'
 import ItemMetadataWidget from '@/components/item/metadata/item-metadata-widget.vue'
 import ItemMetadataWidgetOrder from '@/components/item/metadata/item-metadata-widgetorder.vue'
@@ -104,6 +110,8 @@ export default {
         case 'stateDescription':
         case 'commandDescription':
           return ItemMetadataItemDescription
+        case 'unit':
+          return ItemMetadataUnit
         case 'synonyms':
           return ItemMetadataSynonyms
         case 'widget':

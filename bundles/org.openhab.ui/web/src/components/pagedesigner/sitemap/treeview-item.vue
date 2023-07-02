@@ -28,10 +28,10 @@ export default {
           return 'f7:text_justify'
         case 'Slider':
           return 'f7:slider_horizontal_3'
-        case 'List':
-          return 'f7:square_list'
         case 'Setpoint':
           return 'f7:plus_slash_minus'
+        case 'Input':
+          return 'f7:text_cursor'
         case 'Video':
           return 'f7:videocam'
         case 'Chart':

@@ -102,10 +102,57 @@ describe('SitemapCode', () => {
     })
   })
 
+  it('parses a segmented icon name with hyphens', async () => {
+    expect(wrapper.vm.sitemapDsl).toBeDefined()
+    // simulate updating the sitemap in code
+    const sitemap = [
+      'sitemap test label="Test" {',
+      '    Default item=Item_Icon icon=iconify:wi:day-sunny-overcast',
+      '    Default item=Item_Icon_String icon="iconify:wi:day-sunny-overcast"',
+      '}',
+      ''
+    ].join('\n')
+    wrapper.vm.updateSitemap(sitemap)
+    expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
+    expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
+
+    await wrapper.vm.$nextTick()
+
+    // check whether an 'updated' event was emitted and its payload
+    // (should contain the parsing result for the new sitemap definition)
+    const events = wrapper.emitted().updated
+    expect(events).toBeTruthy()
+    expect(events.length).toBe(1)
+    const payload = events[0][0]
+    expect(payload.slots).toBeDefined()
+    expect(payload.slots.widgets).toBeDefined()
+    expect(payload.slots.widgets.length).toBe(2)
+    expect(payload.slots.widgets[0]).toEqual({
+      component: 'Default',
+      config: {
+        item: 'Item_Icon',
+        icon: 'iconify:wi:day-sunny-overcast'
+      }
+    })
+    expect(payload.slots.widgets[1]).toEqual({
+      component: 'Default',
+      config: {
+        item: 'Item_Icon_String',
+        icon: 'iconify:wi:day-sunny-overcast'
+      }
+    })
+  })
+
   it('parses a mapping code back to a mapping on a component', async () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
     // simulate updating the sitemap in code
-    wrapper.vm.updateSitemap('sitemap test label="Test" {\n    Selection item=Scene_General mappings=[1=Morning,2="Evening",10="Cinéma",11=TV,3="Bed time",4=Night]\n}\n')
+    const sitemap = [
+      'sitemap test label="Test" {',
+      '    Selection item=Scene_General mappings=[1=Morning,2="Evening",10="Cinéma",11=TV,3="Bed time",4=Night]',
+      '}',
+      ''
+    ].join('\n')
+    wrapper.vm.updateSitemap(sitemap)
     expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
     expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
 

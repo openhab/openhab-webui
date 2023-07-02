@@ -14,6 +14,7 @@
           search-container=".pages-list"
           search-item=".pagelist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -180,7 +181,7 @@ export default {
           return prev
         }, {})
       } else {
-        return this.pages.reduce((prev, page, i, things) => {
+        const typeGroups = this.pages.reduce((prev, page, i, things) => {
           const type = this.getPageType(page).label
           if (!prev[type]) {
             prev[type] = []
@@ -189,7 +190,14 @@ export default {
 
           return prev
         }, {})
+        return Object.keys(typeGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
+          objEntries[key] = typeGroups[key]
+          return objEntries
+        }, {})
       }
+    },
+    searchPlaceholder () {
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {

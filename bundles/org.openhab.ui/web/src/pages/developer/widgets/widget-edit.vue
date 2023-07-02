@@ -250,7 +250,10 @@ export default {
     },
     save (stay) {
       if (!this.widget.uid) {
-        this.$f7.dialog.alert('Please give an ID to the widget')
+        this.$f7.dialog.alert('Please give an UID to the widget')
+        return
+      } else if (!/^[A-Za-z0-9_-]+$/.test(this.widget.uid)) {
+        this.$f7.dialog.alert('Widget UID is only allowed to contain A-Z,a-z,0-9,_,-')
         return
       }
       // if (!this.widget.config.label) {

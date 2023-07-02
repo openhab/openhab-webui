@@ -8,6 +8,15 @@
         </f7-link>
       </f7-nav-right>
     </f7-navbar>
+    <f7-block v-if="type === 'persistence'" class="service-config block-narrow">
+      <f7-col>
+        <f7-block-title medium>
+          <f7-link color="blue" :href="'/settings/persistence/' + name">
+            Persistence configuration
+          </f7-link>
+        </f7-block-title>
+      </f7-col>
+    </f7-block>
     <f7-block form v-if="configDescription && config" class="service-config block-narrow">
       <f7-col>
         <f7-block-title medium>
@@ -74,6 +83,14 @@ export default {
       strippedAddonId: ''
     }
   },
+  computed: {
+    type () {
+      return this.addonId.split('-')[0]
+    },
+    name () {
+      return this.addonId.split('-')[1]
+    }
+  },
   methods: {
     save () {
       let promises = []
@@ -90,7 +107,7 @@ export default {
       })
 
       if (this.configDescription && this.config) {
-        promises.push(this.$oh.api.put('/rest/addons/' + this.bindingId + '/config', this.config))
+        promises.push(this.$oh.api.put('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : ''), this.config))
       }
 
       Promise.all(promises).then(() => {
@@ -120,8 +137,7 @@ export default {
       if (configDescriptionURI) {
         this.$oh.api.get('/rest/config-descriptions/' + configDescriptionURI).then(data2 => {
           this.configDescription = data2
-          this.bindingId = configDescriptionURI.substring(configDescriptionURI.indexOf(':') + 1)
-          this.$oh.api.get('/rest/addons/' + this.bindingId + '/config').then(data3 => {
+          this.$oh.api.get('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then(data3 => {
             this.config = data3
           })
         })

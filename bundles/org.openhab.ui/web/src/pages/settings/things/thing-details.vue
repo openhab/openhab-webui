@@ -59,7 +59,7 @@
               Information
             </f7-block-title>
             <f7-block-footer v-if="thing.editable === false" class="no-margin padding-left">
-              <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this thing is not editable because it has been provisioned from a file.
+              <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: {{ notEditableMsg }}
             </f7-block-footer>
             <f7-list accordion-opposite>
               <f7-list-item accordion-item title="Thing Type" :after="thingType.label">
@@ -123,7 +123,6 @@
             </f7-col>
           </f7-block>
         </div>
-        <z-wave-network-popup :opened="zwaveNetworkPopupOpened" @closed="zwaveNetworkPopupOpened = false" v-if="ready && !error && thingType && (thingType.UID.indexOf('zwave') === 0) " />
 
         <f7-block class="block-narrow" v-if="ready && thing.editable">
           <f7-col>
@@ -151,7 +150,8 @@
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="(value) => thingYaml = value" />
+        <f7-icon v-if="thing.editable === false" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
+        <editor class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="onEditorInput" :read-only="thing.editable === false" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
@@ -254,7 +254,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 
-import ZWaveNetworkPopup from './zwave/zwave-network-popup.vue'
+import ZWaveNetworkPopup from '@/pages/settings/things/zwave/zwave-network-popup.vue'
 
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 import AddFromThingPage from '@/pages/settings/model/add-from-thing.vue'
@@ -273,7 +273,6 @@ export default {
     ConfigSheet,
     ChannelList,
     ThingGeneralSettings,
-    ZWaveNetworkPopup,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
   props: ['thingId'],
@@ -293,9 +292,9 @@ export default {
       configActionsByGroup: [],
       thingEnabled: true,
       codePopupOpened: false,
-      zwaveNetworkPopupOpened: false,
       eventSource: null,
-      thingYaml: null
+      thingYaml: null,
+      notEditableMsg: 'This Thing is not editable because it has been provisioned from a file.'
     }
   },
   created () {
@@ -350,6 +349,10 @@ export default {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
+    },
+    onEditorInput (value) {
+      this.thingYaml = value
+      this.dirty = true
     },
     switchTab (tab) {
       if (this.currentTab === tab) return
@@ -543,6 +546,10 @@ export default {
         route: {
           path: 'zwave-network',
           popup
+        }
+      }, {
+        props: {
+          bridgeUID: this.thing.bridgeUID || this.thing.UID
         }
       })
     },

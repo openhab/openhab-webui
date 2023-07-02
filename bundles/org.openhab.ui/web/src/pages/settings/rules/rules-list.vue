@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
-    <f7-navbar :title="(showScripts) ? 'Scripts' : 'Rules'" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar :title="(showScripts) ? 'Scripts' : ((showScenes) ? 'Scenes' : 'Rules')" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
@@ -14,6 +14,7 @@
           search-container=".rules-list"
           search-item=".rulelist-item"
           search-in=".item-title, .item-text, .item-after, .item-subtitle, .item-header, .item-footer"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -21,10 +22,10 @@
       <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
         Remove {{ selectedItems.length }}
       </f7-link>
-      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">
+      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md && !showScenes" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">
         &nbsp;Disable {{ selectedItems.length }}
       </f7-link>
-      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
+      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md && !showScenes" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
         &nbsp;Enable {{ selectedItems.length }}
       </f7-link>
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
@@ -32,8 +33,8 @@
         {{ selectedItems.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)" />
-        <f7-link v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)" />
+        <f7-link v-if="!showScenes" v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)" />
+        <f7-link v-if="!showScenes" v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)" />
         <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
       </div>
     </f7-toolbar>
@@ -74,9 +75,13 @@
         <f7-block-title v-if="showScripts" class="searchbar-hide-on-search">
           {{ rules.length }} scripts
         </f7-block-title>
+        <f7-block-title v-else-if="showScenes" class="searchbar-hide-on-search">
+          {{ rules.length }} scenes
+        </f7-block-title>
         <f7-block-title v-else class="searchbar-hide-on-search">
           {{ rules.length }} rules
         </f7-block-title>
+
         <f7-list
           v-show="rules.length > 0"
           class="searchbar-found col rules-list"
@@ -98,10 +103,10 @@
               :title="rule.name"
               :text="rule.uid"
               :footer="rule.description"
-              :badge="ruleStatusBadgeText(rule.status)"
+              :badge="showScenes ? '' : ruleStatusBadgeText(rule.status)"
               :badge-color="ruleStatusBadgeColor(rule.status)">
               <div slot="footer">
-                <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                   <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                 </f7-chip>
               </div>
@@ -114,6 +119,7 @@
     </f7-block>
     <f7-block v-if="ready && !noRuleEngine && !rules.length" class="service-config block-narrow">
       <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
+      <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
       <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
     </f7-block>
     <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
@@ -128,7 +134,7 @@ import RuleStatus from '@/components/rule/rule-status-mixin'
 
 export default {
   mixins: [RuleStatus],
-  props: ['showScripts'],
+  props: ['showScripts', 'showScenes'],
   components: {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
   },
@@ -155,6 +161,9 @@ export default {
 
         return prev
       }, {})
+    },
+    searchPlaceholder () {
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {
@@ -166,13 +175,24 @@ export default {
       this.loading = true
       this.$set(this, 'selectedItems', [])
       this.showCheckboxes = false
-      this.$oh.api.get('/rest/rules?summary=true' + (this.showScripts ? '&tags=Script' : '')).then(data => {
+      let filter = ''
+      if (this.showScripts) {
+        filter = '&tags=Script'
+      }
+      if (this.showScenes) {
+        filter = '&tags=Scene'
+      }
+      this.$oh.api.get('/rest/rules?summary=true' + filter).then(data => {
         this.rules = data.sort((a, b) => {
           return a.name.localeCompare(b.name)
         })
 
         if (!this.showScripts) {
           this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Script') < 0)
+        }
+
+        if (!this.showScenes) {
+          this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Scene') < 0)
         }
 
         this.loading = false

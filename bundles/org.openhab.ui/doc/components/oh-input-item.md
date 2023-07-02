@@ -56,7 +56,7 @@ Display an input field in a list
 </PropBlock>
 <PropBlock type="BOOLEAN" name="iconUseState" label="Icon depends on state">
   <PropDescription>
-    Use the state of the item to get a dynamic icon (for openHAB icons only)
+    Use the state of the Item to get a dynamic icon (enabled by default for <code>Contact</code>, <code>Dimmer</code>, <code>Rollershutter</code> & <code>Switch</code> Item types) (for openHAB icons only)
   </PropDescription>
 </PropBlock>
 </PropGroup>
@@ -123,6 +123,11 @@ Display an input field in a list
 <PropBlock type="BOOLEAN" name="useDisplayState" label="Use Display State">
   <PropDescription>
     Use the formatted state as the value for the input control
+  </PropDescription>
+</PropBlock>
+<PropBlock type="DECIMAL" name="step" label="Step">
+  <PropDescription>
+    Step value when type set to number, any if left empty
   </PropDescription>
 </PropBlock>
 <PropBlock type="BOOLEAN" name="showTime" label="Show time">

@@ -44,7 +44,7 @@ export const OhInputDefinition = () => new WidgetDefinition('oh-input', 'Input',
   .params(InputParameters())
 
 import KnobParameters from './knob.js'
-export const OhKnobDefinition = () => new WidgetDefinition('oh-knob', 'Knob', 'Knob control, allow to change a number value on a circular track')
+export const OhKnobDefinition = () => new WidgetDefinition('oh-knob', 'Knob & Rounded Slider', 'Allows to change a number value on a circular track or a rounded slider')
   .params([...KnobParameters(), VariableParameter, VariableKeyParameter])
 
 import LinkParameters from './link.js'

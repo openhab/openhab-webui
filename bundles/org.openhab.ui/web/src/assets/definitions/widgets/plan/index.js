@@ -29,11 +29,12 @@ export const OhPlanMarkerDefinition = () => new WidgetDefinition('oh-plan-marker
   .paramGroup(pg('marker', 'Marker Settings'), [
     pt('name', 'Name', 'The name of the marker (for identification)'),
     pt('coords', 'Coordinates', 'The coordinates of this marker in the floor plan Coordinate Reference System; usually set by dragging the marker at design time').a(),
-    pi('item', 'Item', 'The item whose state to display on this marker')
+    pi('item', 'Item', 'The item whose state to display on this marker'),
+    pt('visible', 'Visibility', 'Enter an expression to dynamically show the marker, see <a class="external text-color-blue" target="_blank" href="https://www.openhab.org/docs/ui/building-pages.html#widgets-definition-usage">Building Pages: <code>visible</code></a>')
   ])
   .paramGroup(pg('icon', 'Icon', 'You can customize the styles further with CSS attributes in the <code>iconStyle</code> parameter (in YAML only)'), [
     pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>), <code>material:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>) or <code>iconify:iconSet:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://icon-sets.iconify.design">Iconify icon</a>, requires being online if not in cache)'),
-    pb('iconUseState', 'Icon depends on state', 'Use the state of the item to get a dynamic icon (for openHAB icons only)'),
+    pb('iconUseState', 'Icon depends on state', 'Use the state of the Item to get a dynamic icon (enabled by default for <code>Contact</code>, <code>Dimmer</code>, <code>Rollershutter</code> & <code>Switch</code> Item types) (for openHAB icons only)'),
     pn('iconSize', 'Icon Size', 'Size of the icon in pixels (40 by default)'),
     pn('iconWidth', 'Icon Width', 'Width of the icon in pixels (for openHAB icons only, 40 by default)').a(),
     pn('iconHeight', 'Icon Height', 'Height of the icon in pixels (for openHAB icons only, 40 by default)').a(),

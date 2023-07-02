@@ -1,9 +1,10 @@
 <template>
   <div v-if="item" class="quick-link-form no-padding">
     <f7-list inline-labels no-hairlines-md>
-      <f7-list-input v-if="!enableName" label="Name" type="text" placeholder="Name" :value="item.name" disabled />
-      <f7-list-input v-else label="Name" type="text" placeholder="Name" :value="item.name"
-                     @input="onNameInput" clear-button required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage" />
+      <f7-list-input label="Name" type="text" placeholder="Required" :value="item.name"
+                     :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+                     required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage"
+                     @input="onNameInput" :clear-button="createMode" />
       <f7-list-input label="Label" type="text" placeholder="Label" :value="item.label"
                      @input="item.label = $event.target.value" clear-button />
       <f7-list-item v-if="item.type && !hideType" title="Type" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
@@ -23,7 +24,7 @@
       <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
                      @input="item.category = $event.target.value" clear-button>
         <div slot="root-end" style="margin-left: calc(35% + 8px)">
-          <oh-icon :icon="item.category" height="32" width="32" />
+          <oh-icon :icon="item.category" :state="(createMode) ? null : item.state" height="32" width="32" />
         </div>
       </f7-list-input>
     </f7-list>
@@ -45,7 +46,7 @@ import * as Types from '@/assets/item-types.js'
 import { Categories } from '@/assets/categories.js'
 
 export default {
-  props: ['item', 'items', 'enableName', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
+  props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
   components: {
     SemanticsPicker
   },
@@ -78,9 +79,9 @@ export default {
     validateName (name) {
       let oldError = this.nameErrorMessage
       if (!/^[A-Za-z0-9_]+$/.test(name)) {
-        this.nameErrorMessage = 'Required. Alphanumeric & underscores only'
+        this.nameErrorMessage = 'Required. A-Z,a-z,0-9,_ only'
       } else if (this.items.some(item => item.name === name)) {
-        this.nameErrorMessage = 'An item with this name already exists'
+        this.nameErrorMessage = 'An Item with this name already exists'
       } else {
         this.nameErrorMessage = ''
       }
@@ -90,7 +91,7 @@ export default {
   mounted () {
     if (!this.item) return
     if (!this.item.category) this.$set(this.item, 'category', '')
-    if (this.enableName) {
+    if (this.createMode) {
       if (!this.items) this.items = []
       this.validateName(this.item.name)
     }

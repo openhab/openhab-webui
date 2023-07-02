@@ -11,16 +11,7 @@
     <f7-block class="block-narrow">
       <f7-col v-if="channel">
         <f7-block-title>Channel</f7-block-title>
-        <f7-list media-list>
-          <f7-list-item media-item class="channel-item"
-                        :title="channel.label"
-                        :footer="channel.description">
-            <div slot="subtitle">
-              {{ channel.uid }}
-              <clipboard-icon :value="channel.uid" tooltip="Copy UID" />
-            </div>
-          </f7-list-item>
-        </f7-list>
+        <channel-general-settings :channel="channel" :channelType="channelType" :createMode="false" />
       </f7-col>
       <f7-col v-if="channelType != null">
         <f7-block-title v-if="configDescription.parameters">
@@ -41,20 +32,18 @@
 </template>
 
 <script>
+import ChannelGeneralSettings from '@/pages/settings/things/channel/channel-general-settings.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
-import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
   components: {
-    ConfigSheet,
-    ClipboardIcon
+    ChannelGeneralSettings,
+    ConfigSheet
   },
   props: ['thing', 'thingType', 'channel', 'channelType', 'channelId'],
   data () {
     return {
-      ready: false,
       configDescription: {},
-      currentChannelType: null,
       config: {},
       noConfig: false
     }
@@ -64,9 +53,8 @@ export default {
       this.config = Object.assign({}, this.channel.configuration)
       this.$oh.api.get(`/rest/config-descriptions/channel:${this.thing.UID}:${this.channelId.replace('#', '%23')}`).then((ct) => {
         this.configDescription = ct
-        this.ready = true
       }).catch((err) => {
-        if (err === 404) {
+        if (err === 'Not Found' || err === 404) {
           this.noConfig = true
         }
       })

@@ -58,6 +58,10 @@
                             :class="{ currentsection: currentUrl.indexOf('/settings/rules') >= 0 }">
                 <f7-icon slot="media" f7="wand_stars" color="gray" />
               </f7-list-item>
+              <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scenes/" title="Scenes" view=".view-main" panel-close :animate="false" no-chevron
+                            :class="{ currentsection: currentUrl.indexOf('/settings/scenes') >= 0 }">
+                <f7-icon slot="media" f7="film" color="gray" />
+              </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scripts/" title="Scripts" view=".view-main" panel-close :animate="false" no-chevron
                             :class="{ currentsection: currentUrl.indexOf('/settings/scripts') >= 0 }">
                 <f7-icon slot="media" f7="doc_plaintext" color="gray" />
@@ -251,6 +255,8 @@
 </style>
 
 <script>
+import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
+
 import cordovaApp from '../js/cordova-app.js'
 import routes from '../js/routes.js'
 import PanelRight from '../pages/panel-right.vue'
@@ -284,6 +290,7 @@ export default {
       init: false,
       ready: false,
       eventSource: null,
+      audioContext: null,
 
       // Framework7 Parameters
       f7params: {
@@ -373,7 +380,9 @@ export default {
       showSettingsSubmenu: false,
       showDeveloperSubmenu: false,
       showDeveloperSidebar: false,
-      currentUrl: ''
+      currentUrl: '',
+
+      communicationFailureToast: null
     }
   },
   computed: {
@@ -402,9 +411,11 @@ export default {
     loadData (useCredentials) {
       const useCredentialsPromise = (useCredentials) ? this.setBasicCredentials() : Promise.resolve()
       return useCredentialsPromise
-        .then(() => { return this.$oh.api.get('/rest/') })
+        .then(() => { return Framework7.request.promise.json('/rest/') })
         .catch((err) => {
-          if (err === 'Unauthorized' || err === 401) {
+          console.error('openHAB REST API connection failed with error:')
+          console.info(err)
+          if (err.message === 'Unauthorized' || err.status === 401) {
             if (!useCredentials) {
               // try again with credentials
               this.loadData(true)
@@ -434,8 +445,34 @@ export default {
               )
             })
             return Promise.reject()
+          // Redirection handling (e.g. when using auth_request in nginx)
+          } else if (err.message === 'Found' || err.status === 302) {
+            // technically correct way, but unreliable because XhrHttpRequest follows the redirect itself and fails because of CORS policy
+            if (err.xhr.HEADERS_RECEIVED > 0) {
+              const headersObj = {}
+              err.xhr.getAllResponseHeaders().trim().split(/[\r\n]+/).forEach((line) => {
+                const parts = line.split(':\t')
+                headersObj[parts[0]] = parts[1]
+              })
+              // Redirect according to location header but modify URL arguments to redirect back to the UI and not the REST API after authentication
+              window.location.replace(headersObj['location'].replace(window.location.href + 'rest', window.location.href))
+            }
+          } else if (err.message === 0 || err.status === 0) {
+            // XhrHttpRequest has message & status 0 if the redirected request failed due to CORS policy
+            // Follow the authentication redirect by unloading service-worker and reloading PWA
+            if ('serviceWorker' in window.navigator) {
+              window.navigator.serviceWorker.getRegistration().then((reg) => {
+                reg.unregister().then(() => {
+                  console.info('Unregistered service-worker, reloading now.')
+                  window.location.reload()
+                })
+              })
+            }
+          } else {
+            this.$f7.dialog.alert('openHAB REST API connection failed with error ' + err.message || err.status)
           }
         })
+        .then((res) => res.data)
         .then((rootResponse) => {
           // store the REST API services present on the system
           this.$store.dispatch('loadRootResource', { rootResponse })
@@ -470,8 +507,11 @@ export default {
 
           if (data[2]) dayjs.locale(data[2].key)
 
-          this.ready = true
-          return Promise.resolve()
+          // load the Semantic tags
+          this.$store.dispatch('loadSemantics').then(() => {
+            this.ready = true
+            return Promise.resolve()
+          })
         })
     },
     pageIsVisible (page) {
@@ -505,8 +545,7 @@ export default {
       localStorage.setItem('openhab.ui:serverUrl', this.serverUrl)
       localStorage.setItem('openhab.ui:username', this.username)
       localStorage.setItem('openhab.ui:password', this.password)
-      this.loadData().then((data) => {
-        // this.sitemaps = data
+      this.loadData().then(() => {
         this.loginScreenOpened = false
         this.loggedIn = true
       }).catch((err) => {
@@ -590,30 +629,60 @@ export default {
       this.eventSource = null
     },
     playAudioUrl (audioUrl) {
-      let context
       try {
-        window.AudioContext = window.AudioContext || window.webkitAudioContext
-        if (typeof (window.AudioContext) !== 'undefined') {
-          context = new AudioContext()
+        if (!this.audioContext) {
+          window.AudioContext = window.AudioContext || window.webkitAudioContext
+          if (typeof (window.AudioContext) !== 'undefined') {
+            this.audioContext = new AudioContext()
+            unlockAudioContext(this.audioContext)
+          }
         }
         console.log('Playing audio URL: ' + audioUrl)
         this.$oh.api.getPlain(audioUrl, '', '*/*', 'arraybuffer').then((data) => {
-          context.decodeAudioData(data, function (buffer) {
-            let source = context.createBufferSource()
+          this.audioContext.decodeAudioData(data, (buffer) => {
+            let source = this.audioContext.createBufferSource()
             source.buffer = buffer
-            source.connect(context.destination)
-            source.onended = function () {
-              context.close()
-            }
+            source.connect(this.audioContext.destination)
             source.start(0)
           })
         })
       } catch (e) {
         console.warn('Error while playing audio URL: ' + e.toString())
-        if (context) {
-          context.close()
-        }
       }
+      // Safari requires a touch event after the stream has started, hence this workaround
+      // Credit: https://www.mattmontag.com/web/unlock-web-audio-in-safari-for-ios-and-macos
+      function unlockAudioContext (audioContext) {
+        if (audioContext.state !== 'suspended') return
+        const b = document.body
+        const events = ['touchstart', 'touchend', 'mousedown', 'keydown']
+        events.forEach(e => b.addEventListener(e, unlock, false))
+        function unlock () { audioContext.resume().then(clean) }
+        function clean () { events.forEach(e => b.removeEventListener(e, unlock)) }
+      }
+    },
+    /**
+     * Creates and opens a toast message that indicates a failure, e.g. of SSE connection
+     * @param {string} message message to show
+     * @param {boolean} [reloadButton=false] displays a reload button
+     * @param {boolean} [autoClose=true] closes toast automatically
+     * @returns {Toast.Toast}
+     */
+    displayFailureToast (message, reloadButton = false, autoClose = true) {
+      const toast = this.$f7.toast.create({
+        text: message,
+        closeButton: reloadButton,
+        closeButtonText: this.$t('dialogs.reload'),
+        destroyOnClose: autoClose,
+        closeTimeout: (autoClose) ? 5000 : undefined,
+        cssClass: 'failure-toast button-outline',
+        position: 'bottom',
+        horizontalPosition: 'center'
+      })
+      toast.on('closeButtonClick', () => {
+        window.location.reload()
+      })
+      toast.open()
+      return toast
     }
   },
   created () {
@@ -709,6 +778,45 @@ export default {
       this.$f7.on('smartSelectOpened', (smartSelect) => {
         if (smartSelect && smartSelect.searchbar && this.$device.desktop) {
           smartSelect.searchbar.$inputEl.focus()
+        }
+      })
+
+      this.$store.subscribe((mutation, state) => {
+        if (mutation.type === 'sseConnected') {
+          if (!window.OHApp && this.$f7) {
+            if (mutation.payload === false) {
+              if (this.communicationFailureToast === null) this.communicationFailureToast = this.displayFailureToast(this.$t('error.communicationFailure'), true, false)
+              this.communicationFailureToast.open()
+            } else if (mutation.payload === true) {
+              if (this.communicationFailureToast !== null) {
+                this.communicationFailureToast.close()
+                this.communicationFailureToast.destroy()
+                this.communicationFailureToast = null
+              }
+            }
+          }
+        }
+      })
+
+      this.$store.subscribeAction({
+        error: (action, state, error) => {
+          if (action.type === 'sendCommand') {
+            let reloadButton = true
+            let msg = this.$t('error.communicationFailure')
+            switch (error) {
+              case 404:
+              case 'Not Found':
+                msg = this.$t('error.itemNotFound').replace('%s', action.payload.itemName)
+                reloadButton = false
+                return this.displayFailureToast(msg, reloadButton)
+            }
+            if (this.communicationFailureToast === null) {
+              this.communicationFailureToast = this.displayFailureToast(this.$t('error.communicationFailure'), true, true)
+              this.communicationFailureToast.on('closed', () => {
+                this.communicationFailureToast = null
+              })
+            }
+          }
         }
       })
 

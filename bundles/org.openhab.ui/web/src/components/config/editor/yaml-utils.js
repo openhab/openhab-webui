@@ -47,7 +47,7 @@ export function isComponent (line) {
 
 export function isRuleSection (line) {
   if (!line) return false
-  return line.match(/^(triggers|conditions|actions):/)
+  return line.match(/^(triggers|conditions|actions|items):/)
 }
 
 export function isChannelsSection (line) {
