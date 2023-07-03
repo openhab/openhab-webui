@@ -138,7 +138,7 @@
                 </f7-block-title>
                 <f7-list :media-list="isEditable" swipeout>
                   <f7-list-item v-for="(f, index) in persistence[ft.name]" :key="f.name" :title="f.name"
-                                :link="isEditable"
+                                :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''" :link="isEditable"
                                 @click.native="(ev) => editFilter(ev, ft, index, f)" swipeout>
                     <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled"
                              icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
@@ -281,7 +281,8 @@ export default {
               required: false,
               type: 'STRING'
             }
-          ]
+          ],
+          footerFn: (f) => f.relative ? f.value + ' %' : (f.unit ? f.value + ' ' + f.unit : f.value)
         },
         {
           name: 'timeFilters',
@@ -303,7 +304,8 @@ export default {
               required: false,
               type: 'STRING'
             }
-          ]
+          ],
+          footerFn: (f) => f.value + ' ' + (f.unit || 's')
         },
         {
           name: 'equalsFilters',
@@ -318,7 +320,8 @@ export default {
               type: ''
             },
             filterInvertedParameter
-          ]
+          ],
+          footerFn: (f) => (f.inverted === true ? 'not ' : '') + 'equals ' + f.values.join(', ')
         },
         {
           name: 'includeFilters',
@@ -349,7 +352,8 @@ export default {
               type: 'STRING'
             },
             filterInvertedParameter
-          ]
+          ],
+          footerFn: (f) => (f.inverted === true ? ']' : '[') + f.lower + ';' + f.upper + (f.inverted === true ? '[' : ']' + (f.unit ? ' ' + f.unit : ''))
         }
       ],
       notEditableMgs: 'This persistence configuration is not editable because it has been provisioned from a file.'
