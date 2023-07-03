@@ -301,9 +301,17 @@ export default {
             },
             {
               advanced: false,
-              description: 'Time unit (defaults to seconds <code>s</code>)',
+              description: 'Time unit (defaults to seconds)',
               label: 'Unit',
+              limitToOptions: true,
+              multiple: false,
               name: 'unit',
+              options: [
+                { label: 'seconds', value: 's' },
+                { label: 'minutes', value: 'm' },
+                { label: 'hours', value: 'h' },
+                { label: 'days', value: 'd' }
+              ],
               required: false,
               type: 'STRING'
             }
