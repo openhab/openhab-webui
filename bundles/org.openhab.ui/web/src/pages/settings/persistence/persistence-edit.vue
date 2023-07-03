@@ -162,9 +162,12 @@
               </div>
             </div>
           </f7-col>
-          <f7-col v-if="isEditable && !newPersistence">
+          <f7-col>
             <f7-list>
-              <f7-list-button color="red" @click="deletePersistence">
+              <f7-list-button color="blue" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/docs/configuration/persistence.html`" external target="_blank">
+                Open documentation
+              </f7-list-button>
+              <f7-list-button v-if="isEditable && !newPersistence" color="red" @click="deletePersistence">
                 Remove persistence configuration
               </f7-list-button>
             </f7-list>
