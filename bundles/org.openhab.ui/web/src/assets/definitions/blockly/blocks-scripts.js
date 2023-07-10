@@ -173,6 +173,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
           ['triggered event', 'event']
         ]),
         'contextInfo')
+      this.contextInfo = this.getFieldValue('contextInfo')
       this.setInputsInline(true)
       this.setOutput(true, null)
       this.setColour(0)
@@ -192,6 +193,19 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         return TIP[contextData]
       })
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#retrieve-rule-context-information')
+    },
+    onchange: function (event) {
+      let contextInfo = this.getFieldValue('contextInfo')
+      if (this.contextInfo !== contextInfo) {
+        this.contextInfo = contextInfo
+        if (contextInfo === 'itemName') {
+          this.setOutput(true, 'oh_item')
+          console.log('type = oh_item')
+        } else {
+          this.setOutput(true, 'String')
+          console.log('type = State String')
+        }
+      }
     }
   }
 
