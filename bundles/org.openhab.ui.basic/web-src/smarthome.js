@@ -1598,7 +1598,7 @@
 				}
 				if (unitValue.length > 0) {
 					newValue = newValue + " " + unitValue;
-				} else if (unit !== undefined) {
+				} else if (unit !== undefined && unit.length > 0) {
 					newValue = newValue + " " + unit;
 				}
 				return { value: newValue, changed: true };
