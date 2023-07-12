@@ -1730,7 +1730,9 @@
 			_t.input.parentNode.MaterialTextfield.change();
 			_t.input.parentNode.MaterialTextfield.checkValidity();
 			lastValue = value;
-			lastItemState = itemState;
+			if (itemState !== undefined) {
+				lastItemState = itemState;
+			}
 		};
 
 		_t.setValueColor = function(color) {
