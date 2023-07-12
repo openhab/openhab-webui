@@ -27,5 +27,6 @@ export default () => [
   pb('listContainer', 'List container', 'The child components will be wrapped in a <code>ul</code> HTML elements instead of a <code>div</code>'),
   pt('containerClasses', 'Classes of the container', 'Add these CSS classes to the container'),
   pt('containerStyle', 'Styles of the container', 'Add these CSS styles to the container'),
-  pb('fragment', 'No container (fragment)', 'Render all children directly under the repeater\'s parent, without any container')
+  pb('fragment', 'No container (fragment)', 'Render all children directly under the repeater\'s parent, without any container'),
+  pb('cacheSource', 'Suppress source refresh', 'The source array will be cached and not refreshed on page updates')
 ]
