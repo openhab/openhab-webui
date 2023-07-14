@@ -28,5 +28,5 @@ export default () => [
   pt('containerClasses', 'Classes of the container', 'Add these CSS classes to the container'),
   pt('containerStyle', 'Styles of the container', 'Add these CSS styles to the container'),
   pb('fragment', 'No container (fragment)', 'Render all children directly under the repeater\'s parent, without any container'),
-  pb('cacheSource', 'Suppress source refresh', 'The source array will be cached and not refreshed on page updates')
+  pb('cacheSource', 'Suppress source refresh', 'For loaded sources (e.g. with Items or rules), the source array will be cached and not refreshed on page updates')
 ]

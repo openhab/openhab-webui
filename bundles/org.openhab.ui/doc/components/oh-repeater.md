@@ -124,7 +124,7 @@ Iterate over an array and repeat the children components in the default slot
 </PropBlock>
 <PropBlock type="BOOLEAN" name="cacheSource" label="Suppress source refresh">
   <PropDescription>
-    The source array will be cached and not refreshed on page updates
+    For loaded sources (e.g. with Items or rules), the source array will be cached and not refreshed on page updates
   </PropDescription>
 </PropBlock>
 </PropGroup>
