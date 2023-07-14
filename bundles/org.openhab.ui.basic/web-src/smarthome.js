@@ -1546,46 +1546,119 @@
 		var
 			_t = this;
 
-		_t.input = _t.parentNode.querySelector("input[type=text]");
+		_t.input = _t.parentNode.querySelector("input");
 		_t.itemType = _t.parentNode.getAttribute(o.itemTypeAttribute);
+		_t.inputHint = _t.parentNode.getAttribute(o.inputHintAttribute);
+		_t.itemState = _t.parentNode.getAttribute(o.itemStateAttribute);
+		_t.unit = _t.parentNode.getAttribute(o.unitAttribute);
+		_t.prefixField = _t.parentNode.parentNode.querySelector(".mdl-form__input-prefix");
+		_t.postfixField = _t.parentNode.parentNode.querySelector(".mdl-form__input-postfix");
+		_t.unitField =  _t.parentNode.parentNode.querySelector(".mdl-form__input-unit");
 		_t.verify = undefined;
 
 		var
 			lastValue = _t.input.value,
-			lastItemState,
-			numberPattern = /^(\+|-)?[0-9\.,]+/,
-			dotSeparatorPattern = /^-?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
-			commaSeparatorPattern = /^-?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
+			lastUndef = _t.input.nextElementSibling.innerHTML.trim(),
+			lastItemState = _t.itemState,
+			numberPattern = /^(\+|-)?[0-9\.,]+((e|E)(\+|-)?[0-9]+)?/,
+			datePattern = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/,
+			timePattern = /^[0-9]{2}:[0-9]{2}/,
+			timeWithSecondsPattern = /[0-9]{2}:[0-9]{2}:[0-9]{2}$/,
+			commaSeparatorPattern = /^-?(([1-9][0-9]{0,2}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?((e|E)(\+|-)?[0-9]+)?$/;
 
-		if (_t.input.nextElementSibling.innerHTML.trim() === "") {
-			lastItemState = lastValue;
-		} else {
-			lastValue = _t.input.nextElementSibling.innerHTML.trim();
-			lastItemState = "NULL";
+		// This kicks in when the browser does not support date, time or datetime-local input elements.
+		// Set the placeholder to the right patterns. This cannot be done in the snippet creation in Java because the browser is unknown there.
+		if (_t.itemType === "datetime" && _t.inputHint && _t.input.type === "text") {
+			var placeholder = "YYYY-MM-DD hh:mm";
+			if (_t.inputHint === "date") {
+				placeholder = "YYYY-MM-DD";
+			} else if (_t.inputHint === "time") {
+				placeholder = "hh:mm";
+			}
+			_t.parentNode.querySelector("label").innerHTML = placeholder;
+		}
+
+		function setColor(element, color) {
+			if (element) {
+				element.style.setProperty("color", color);
+			}
+		}
+
+		function parseNumber(value, unit, keepExponentChar) {
+			var newValue = value.trim();
+			var numberMatch = newValue.match(numberPattern);
+			if (numberMatch && (numberMatch.length > 0)) {
+				var numberValue = numberMatch[0];
+				var unitValue = newValue.substring(numberValue.length).trim();
+				newValue = numberValue.replace(/^\+/, "");
+				// when sending updates, only uppercase E for exponent is accepted, don't change when only parsing for visualisation
+				newValue = keepExponentChar ? newValue : newValue.replace("e", "E");
+				if (commaSeparatorPattern.test(newValue)) {
+					newValue = newValue.replace(/\./g, "").replace(",", ".");
+				}
+				if (unitValue.length > 0) {
+					newValue = newValue + " " + unitValue;
+				} else if (unit !== undefined && unit.length > 0) {
+					newValue = newValue + " " + unit;
+				}
+				return { value: newValue, changed: true };
+			} else {
+				return { value: value, changed: false };
+			}
+		}
+
+		function cleanValue(value) {
+			var prefix = _t.prefixField !== null ? _t.prefixField.innerHTML : "";
+			var postfix = _t.postfixField !== null ? _t.postfixField.innerHTML : "";
+			var newValue = value.startsWith(prefix) ? value.substr(prefix.length) : value;
+			newValue = value.endsWith(postfix) ? newValue.substr(0, newValue.lastIndexOf(postfix)) : newValue;
+			return newValue.trim();
 		}
 
 		function onChange() {
 			var
 				changeValue = _t.input.value,
 				changed = true;
-			if (_t.itemType === "Number") {
-				changeValue = changeValue.trim();
-				var numberValue = changeValue.match(numberPattern);
-				if (!numberValue || numberValue.length < 1) {
-					changed = false;
+
+			if (_t.itemType === "number") {
+				var parsedValue = parseNumber(changeValue, _t.unit);
+				if (parsedValue.changed) {
+					changeValue = parsedValue.value;
 				} else {
-					var unitValue = changeValue.substring(numberValue[0].length).trim();
-					changeValue = numberValue[0].replace(/^\+/, "");
-					if (commaSeparatorPattern.test(changeValue) && !dotSeparatorPattern.test(changeValue)) {
-						changeValue = changeValue.replace(/\./g, "").replace(",", ".");
+					changed = false;
+				}
+			} else if (_t.itemType === "datetime") {
+				changeValue = changeValue.trim();
+				if (changeValue.match(datePattern) && (lastItemState !== "NULL") && (lastItemState !== "UNDEF")) {
+					var lastStateArray = lastItemState.split("T");
+					if (lastStateArray.length > 1) {
+						changeValue = changeValue + "T" + lastStateArray[1];
 					}
-					if (unitValue.length > 1) {
-						changeValue = changeValue + " " + unitValue;
+				} else if (changeValue.match(timePattern)) {
+					var date = ((lastItemState !== "NULL") && (lastItemState !== "UNDEF")) ? lastItemState.split("T")[0] : (new Date(0)).toISOString();
+					changeValue = date.split("T")[0] + "T" + changeValue;
+				} else if (_t.input.type === "text") {
+					var valueArray = changeValue.split(" ");
+					changeValue = valueArray[0];
+					if (valueArray.length > 1) {
+						changeValue = changeValue + "T" + valueArray[1];
 					}
+				}
+				if (isNaN(Date.parse(changeValue))) {
+					changed = false;
 				}
 			}
 
 			if (!changed) {
+				if ((_t.inputHint === "date") && lastValue.match(datePattern) && (lastItemState !== "NULL") && (lastItemState !== "UNDEF")) {
+					lastStateArray = lastItemState.split("T");
+					if (lastStateArray.length > 1) {
+						lastValue = lastValue + "T" + lastStateArray[1];
+					}
+				} else if (_t.inputHint === "time" && lastValue.match(timePattern)) {
+					date = ((lastItemState !== "NULL") && (lastItemState !== "UNDEF")) ? lastItemState.split("T")[0] : (new Date(0)).toISOString();
+					lastValue = date.split("T")[0] + "T" + lastValue;
+				}
 				_t.setValuePrivate(lastValue, lastItemState);
 			} else {
 				_t.parentNode.dispatchEvent(createEvent("control-change", {
@@ -1595,7 +1668,7 @@
 				// We don't know if the sent value is a valid command and will update the item state.
 				// If we don't receive an update in 1s, revert to the previous value.
 				_t.verify = new WaitingTimer(function() {
-					_t.setValuePrivate(lastValue, lastItemState);
+					_t.setValuePrivate(lastValue);
 				}, 1000);
 				_t.verify.wait();
 			}
@@ -1606,25 +1679,67 @@
 				_t.verify.cancel();
 			}
 
-			var newValue = value;
+			var newValue = cleanValue(value);
 			var undefValue = "";
-			if (itemState === "undefined" || itemState === "NULL" || itemState === "UNDEF") {
+			if (itemState === undefined) {
+				undefValue = lastUndef;
+			} else if (itemState === "NULL" || itemState === "UNDEF") {
+				if (_t.itemType === "datetime") {
+					undefValue = "";
+					if (_t.input.type === "text") {
+						undefValue = "YYYY-MM-DD hh:mm";
+					}
+				} else {
+					undefValue = !(newValue === "" || newValue === "NULL" || newValue === "UNDEF") ? newValue : lastUndef;
+				}
 				newValue = "";
-				undefValue = value;
 			}
 
+			if (_t.inputHint === "number") {
+				if (newValue !== "") {
+					newValue = parseNumber(newValue, _t.unit, true).value;
+					var valueArray = newValue.trim().split(" ");
+					newValue = valueArray[0];
+					if (valueArray.length > 1) {
+						_t.input.parentNode.nextElementSibling.innerHTML = valueArray[1];
+					}
+				} else {
+					var undefArray = undefValue.split(" ");
+					undefValue = undefArray[0];
+				}
+			} else if (_t.itemType === "datetime") {
+				newValue = ((itemState !== "NULL") && (itemState !== "UNDEF")) ? itemState : newValue;
+				newValue = newValue.trim().split(".")[0];		// drop millis
+				if (newValue.match(timeWithSecondsPattern)) {	// drop seconds
+					newValue = newValue.split(":").slice(0, -1).join(":");
+				}
+				if (newValue !== "") {
+					if (_t.inputHint === "date") {
+						newValue = newValue.split("T")[0];
+					} else if (_t.inputHint === "time") {
+						newValue = newValue.split("T")[1];
+					}
+					if (_t.input.type === "text") {
+						newValue = newValue.replace("T", " ");
+					}
+				}
+			}
 			_t.input.value = newValue;
 			_t.input.nextElementSibling.innerHTML = undefValue;
 
 			_t.input.parentNode.MaterialTextfield.change();
 			_t.input.parentNode.MaterialTextfield.checkValidity();
-
 			lastValue = value;
-			lastItemState = itemState;
+			if (itemState !== undefined) {
+				lastItemState = itemState;
+			}
 		};
 
 		_t.setValueColor = function(color) {
-			_t.input.style.color = color;
+			setColor(_t.input, color);
+			setColor(_t.unitField, color);
+			setColor(_t.prefixField, color);
+			setColor(_t.postfixField, color);
 		};
 
 		_t.destroy = function() {
@@ -2563,6 +2678,9 @@
 })({
 	itemAttribute: "data-item",
 	itemTypeAttribute: "data-item-type",
+	inputHintAttribute: "data-input-hint",
+	itemStateAttribute: "data-item-state",
+	unitAttribute: "data-item-unit",
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",
