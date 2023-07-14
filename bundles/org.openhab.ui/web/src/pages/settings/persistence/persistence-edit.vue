@@ -463,6 +463,17 @@ export default {
       this.filterTypes.forEach((ft) => {
         if (!this.persistence[ft.name]) this.persistence[ft.name] = []
       })
+      // Ensure relative is set on threshold filter, otherwise the save request fails with a 500
+      this.persistence.thresholdFilters.forEach((f) => {
+        if (f.relative === undefined) f.relative = false
+      })
+      // Ensure inverted is set for equals and include filter, otherwise the save request fails with a 500
+      this.persistence.equalsFilters.forEach((f) => {
+        if (f.inverted === undefined) f.inverted = false
+      })
+      this.persistence.includeFilters.forEach((f) => {
+        if (f.inverted === undefined) f.inverted = false
+      })
       // Update the code tab
       if (this.persistenceYaml) this.toYaml()
 
