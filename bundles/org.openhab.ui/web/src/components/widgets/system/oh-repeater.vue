@@ -75,6 +75,7 @@ export default {
   },
   asyncComputed: {
     source () {
+      if (this.config.cacheSource && this.sourceCache) return this.sourceCache
       let sourceResult
       if (this.config.sourceType === 'range') {
         const start = this.config.rangeStart || 0
@@ -82,24 +83,23 @@ export default {
         const step = this.config.rangeStep || 1
         sourceResult = Promise.resolve(Array(Math.ceil((stop + 1 - start) / step)).fill(start).map((x, y) => x + y * step))
       } else if (this.config.sourceType === 'itemsWithTags' && this.config.itemTags) {
-        if (this.config.cacheSource && this.sourceCache) return this.sourceCache
         sourceResult = this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((d) => Promise.resolve(d.sort(compareItems)))
+        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
       } else if (this.config.sourceType === 'itemsInGroup') {
-        if (this.config.cacheSource && this.sourceCache) return this.sourceCache
         sourceResult = this.$oh.api.get('/rest/items/' + this.config.groupItem + '?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((i) => Promise.resolve(i.members.sort(compareItems)))
+        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
       } else if (this.config.sourceType === 'itemStateOptions') {
-        if (this.config.cacheSource && this.sourceCache) return this.sourceCache
         sourceResult = this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.stateDescription) ? i.stateDescription.options : []))
+        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
       } else if (this.config.sourceType === 'itemCommandOptions') {
-        if (this.config.cacheSource && this.sourceCache) return this.sourceCache
         sourceResult = this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.commandDescription) ? i.commandDescription.commandOptions : []))
+        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
       } else if (this.config.sourceType === 'rulesWithTags' && this.config.ruleTags) {
-        if (this.config.cacheSource && this.sourceCache) return this.sourceCache
         sourceResult = this.$oh.api.get('/rest/rules?summary=true' + '&tags=' + this.config.ruleTags).then((r) => Promise.resolve(r.sort(compareRules)))
+        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
       } else {
         sourceResult = Promise.resolve(this.config.in)
       }
-      this.sourceCache = (this.config.cacheSource) ? sourceResult : null
       return sourceResult
     }
   }
