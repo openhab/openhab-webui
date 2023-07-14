@@ -3,7 +3,7 @@
    in the "cellWidget" metadata namespace of the item
  */
 
-import * as Semantics from '@/assets/semantics'
+import store from '@/js/store'
 
 export default function itemDefaultCellComponent (item, itemNameAsFooter) {
   const stateDescription = item.stateDescription || {}
@@ -19,10 +19,10 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
     }
   } else {
     item.tags.forEach((tag) => {
-      if (Semantics.Points.indexOf(tag) >= 0) {
+      if (store.getters.semanticClasses.Points.indexOf(tag) >= 0) {
         semanticClass = tag
       }
-      if (Semantics.Properties.indexOf(tag) >= 0) {
+      if (store.getters.semanticClasses.Properties.indexOf(tag) >= 0) {
         semanticProperty = tag
       }
     })

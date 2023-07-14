@@ -13,6 +13,7 @@
           :init="initSearchbar"
           search-container=".contacts-list"
           search-in=".item-inner"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -162,7 +163,7 @@ export default {
           return prev
         }, {})
       } else {
-        return this.things.reduce((prev, thing, i, things) => {
+        const bindingGroups = this.things.reduce((prev, thing, i, things) => {
           const binding = thing.thingTypeUID.split(':')[0]
           if (!prev[binding]) {
             prev[binding] = []
@@ -171,10 +172,17 @@ export default {
 
           return prev
         }, {})
+        return Object.keys(bindingGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
+          objEntries[key] = bindingGroups[key]
+          return objEntries
+        }, {})
       }
     },
     inboxCount () {
       return this.inbox.filter((e) => e.flag !== 'IGNORED').length
+    },
+    searchPlaceholder () {
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {

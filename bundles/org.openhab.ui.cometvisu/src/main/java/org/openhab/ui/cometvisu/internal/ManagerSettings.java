@@ -156,7 +156,7 @@ public class ManagerSettings implements IConfigChangeListener {
     }
 
     public String getBackupPath() {
-        return configFolder.getAbsoluteFile() + File.separator + backupFolderName;
+        return configFolder.getAbsoluteFile() + File.separator + backupFolderName + File.separator;
     }
 
     public String getTrashFolder() {
@@ -164,7 +164,7 @@ public class ManagerSettings implements IConfigChangeListener {
     }
 
     public String getTrashPath() {
-        return configFolder.getAbsoluteFile() + File.separator + trashFolderName;
+        return configFolder.getAbsoluteFile() + File.separator + trashFolderName + File.separator;
     }
 
     public String getDesignsDir() {

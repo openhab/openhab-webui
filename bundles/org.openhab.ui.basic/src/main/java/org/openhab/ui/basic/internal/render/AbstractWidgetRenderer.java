@@ -61,8 +61,9 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     private static final String ICON_SOURCE_IF = "if";
     private static final String ICON_SOURCE_ICONIFY = "iconify";
     private static final String ICON_SOURCE_MATERIAL = "material";
+    private static final String ICON_SET_OH_CLASSIC = "classic";
     private static final String DEFAULT_ICON_SOURCE = ICON_SOURCE_OH;
-    private static final String DEFAULT_ICON_SET = "classic";
+    private static final String DEFAULT_ICON_SET = ICON_SET_OH_CLASSIC;
     private static final String DEFAULT_ICON_NAME = "none";
 
     public static final String ICON_TYPE = "svg";
@@ -149,7 +150,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
             if (segments.length == 1) {
                 iconName = segments[0];
             } else if (segments.length == 2) {
-                iconSet = segments[0];
+                iconSource = segments[0];
                 iconName = segments[1];
             } else if (segments.length == 3) {
                 iconSource = segments[0];
@@ -386,6 +387,18 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
+        } else {
+            switch (config.getTheme()) {
+                case WebAppConfig.THEME_NAME_BRIGHT:
+                    style = "style=\"color-scheme: light\"";
+                    break;
+                case WebAppConfig.THEME_NAME_DARK:
+                    style = "style=\"color-scheme: dark\"";
+                    break;
+                default:
+                    break;
+            }
+
         }
         snippet = snippet.replace("%iconstyle%", style);
 

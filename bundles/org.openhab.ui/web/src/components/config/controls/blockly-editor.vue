@@ -40,6 +40,7 @@
           </value>
         </block>
         <block type="controls_forEach" />
+        <block type="dicts_for" />
         <block type="controls_flow_statements" />
       </category>
 
@@ -604,6 +605,18 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_quantity_ext">
+            <value name="value">
+              <shadow type="text">
+                <field name="TEXT">10</field>
+              </shadow>
+            </value>
+            <value name="unit">
+              <shadow type="text">
+                <field name="TEXT">W</field>
+              </shadow>
+            </value>
+          </block>
           <block type="oh_quantity_arithmetic">
             <value name="first">
               <shadow type="oh_quantity" />
@@ -1033,6 +1046,8 @@ import { javascriptGenerator } from 'blockly/javascript'
 import DarkTheme from '@blockly/theme-dark'
 import { CrossTabCopyPaste } from '@blockly/plugin-cross-tab-copy-paste'
 import { ZoomToFitControl } from '@blockly/zoom-to-fit'
+import { shadowBlockConversionChangeListener } from '@blockly/shadow-block-converter'
+
 import Vue from 'vue'
 
 import defineOHBlocks from '@/assets/definitions/blockly'
@@ -1058,6 +1073,7 @@ export default {
       voices: [],
       scripts: [],
       rules: [],
+      persistenceServices: [],
       loading: true,
       ready: false
     }
@@ -1085,7 +1101,8 @@ export default {
         this.$oh.api.get('/rest/rules?summary=true'),
         this.$oh.api.get('/rest/audio/sinks'),
         this.$oh.api.get('/rest/voice/voices'),
-        this.libraryDefinitions ? Promise.resolve(this.libraryDefinitions) : this.$oh.api.get('/rest/ui/components/ui:blocks')
+        this.libraryDefinitions ? Promise.resolve(this.libraryDefinitions) : this.$oh.api.get('/rest/ui/components/ui:blocks'),
+        this.$oh.api.get('/rest/persistence')
       ]
       Promise.all(dataPromises)
         .then((data) => {
@@ -1116,6 +1133,12 @@ export default {
 
           this.blockLibraries = data[3]
 
+          this.persistenceServices = data[4].sort((a, b) => {
+            const labelA = a.label
+            const labelB = b.label
+            return labelA.localeCompare(labelB)
+          })
+
           this.initBlockly(this.blockLibraries)
         })
         .catch((err, status) => {
@@ -1125,7 +1148,8 @@ export default {
     initBlockly (libraryDefinitions) {
       defineOHBlocks(this.$f7, libraryDefinitions, {
         sinks: this.sinks,
-        voices: this.voices
+        voices: this.voices,
+        persistenceServices: this.persistenceServices
       }, this.isGraalJs)
       this.addLibraryToToolbox(libraryDefinitions || [])
 
@@ -1143,8 +1167,10 @@ export default {
             scaleSpeed: 1.2,
             pinch: true
           },
-        trashcan: false
+        trashcan: false,
+        showLabels: false
       })
+      this.workspace.addChangeListener(shadowBlockConversionChangeListener)
       const workspaceSearch = new WorkspaceSearch(this.workspace)
       workspaceSearch.init()
 
@@ -1176,6 +1202,12 @@ export default {
       this.workspace.registerButtonCallback('ohBlocklyHelp', function (button) {
         window.open(button.info.helpurl, '_blank')
       })
+      Blockly.Workspace.prototype.refresh = function () {
+        const xml = Blockly.Xml.workspaceToDom(this)
+        this.clear()
+        Blockly.Xml.domToWorkspace(xml, this)
+        this.refreshToolboxSelection()
+      }
     },
     addLibraryToToolbox (definitions) {
       const library = this.$refs.libraryCategory
@@ -1190,6 +1222,10 @@ export default {
       definitions.forEach((definition) => {
         this.workspace.registerToolboxCategoryCallback('LIBRARY_' + definition.uid, defineLibraryToolboxCategory(definition, this.$f7))
       })
+    },
+    showHideLabels (showLabels) {
+      this.workspace.showLabels = showLabels
+      this.workspace.refresh()
     },
     getBlocks () {
       const xml = Blockly.Xml.workspaceToDom(this.workspace)

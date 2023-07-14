@@ -2,6 +2,7 @@
  * Eclipse SmartHome BasicUI javascript
  *
  * @author Vlad Ivanov — initial version
+ * @author Mark Herwege - input widget
  */
 
 /*eslint-env browser */
@@ -256,6 +257,27 @@
 			document.body.querySelector(o.modal).remove();
 			delete smarthome.UI.currentModal;
 			destroy();
+		};
+	}
+
+	function WaitingTimer(callback, waitingTime) {
+		var
+			_t = this,
+			timeoutId = null,
+			args;
+
+		_t.wait = function() {
+			args = arguments;
+			timeoutId = setTimeout(function() {
+				callback.apply(null, args);
+				this.timeoutId = undefined;
+			}, waitingTime);
+		};
+
+		_t.cancel = function() {
+			if (timeoutId !== null) {
+				clearTimeout(timeoutId);
+			}
 		};
 	}
 
@@ -552,7 +574,7 @@
 				// Image element associated to an item of type ImageItem
 				_t.ignoreRefresh = true;
 				_t.image.setAttribute("src", itemState);
-			} else if ((itemState !== "UNDEF") || (_t.validUrl)) {
+			} else if ((itemState !== "NULL" && itemState !== "UNDEF") || (_t.validUrl)) {
 				// Image element associated to an item of type StringItem (URL)
 				// Or no associated item but url is set and valid in the image element
 				_t.ignoreRefresh = false;
@@ -639,7 +661,7 @@
 
 			if (!visible) {
 				mapUrl = urlNoneIcon;
-			} else if (itemState !== "UNDEF") {
+			} else if (itemState !== "NULL" && itemState !== "UNDEF") {
 				splittedState = itemState.split(",");
 				lat = parseFloat(splittedState[0]);
 				lon = parseFloat(splittedState[1]);
@@ -982,6 +1004,7 @@
 		_t.up = _t.parentNode.querySelector(o.setpoint.up);
 		_t.down = _t.parentNode.querySelector(o.setpoint.down);
 
+		_t.hasValue = _t.parentNode.getAttribute("data-has-value") === "true";
 		_t.value = _t.parentNode.getAttribute("data-value");
 		_t.max = parseFloat(_t.parentNode.getAttribute("data-max"));
 		_t.min = parseFloat(_t.parentNode.getAttribute("data-min"));
@@ -993,14 +1016,19 @@
 		_t.unit = _t.parentNode.getAttribute("data-unit");
 
 		_t.setValuePrivate = function(value, itemState) {
-			if (itemState.indexOf(" ") > 0) {
+			// itemState contains value + unit in the display unit (in case unit is set in label pattern)
+			if (itemState === "NULL" || itemState === "UNDEF") {
+				_t.value = 0;
+			} else  if (itemState.indexOf(" ") > 0) {
 				var stateAndUnit = itemState.split(" ");
 				_t.value = stateAndUnit[0] * 1;
 				_t.unit = stateAndUnit[1];
 			} else {
 				_t.value = itemState * 1;
 			}
-			_t.valueNode.innerHTML = value;
+			if (_t.hasValue) {
+				_t.valueNode.innerHTML = value;
+			}
 		};
 
 		_t.setValueColor = function(color) {
@@ -1054,6 +1082,7 @@
 
 		smarthome.eventMapper.map(eventMap);
 	}
+
 	/* class Colorpicker */
 	function Colorpicker(parentNode, color, callback) {
 		var
@@ -1559,6 +1588,217 @@
 		_t.input.addEventListener("change", onChange);
 	}
 
+	/* class ControlInput extends Control */
+	function ControlInput(parentNode) {
+		Control.call(this, parentNode);
+
+		var
+			_t = this;
+
+		_t.input = _t.parentNode.querySelector("input");
+		_t.itemType = _t.parentNode.getAttribute(o.itemTypeAttribute);
+		_t.inputHint = _t.parentNode.getAttribute(o.inputHintAttribute);
+		_t.itemState = _t.parentNode.getAttribute(o.itemStateAttribute);
+		_t.unit = _t.parentNode.getAttribute(o.unitAttribute);
+		_t.prefixField = _t.parentNode.parentNode.querySelector(".mdl-form__input-prefix");
+		_t.postfixField = _t.parentNode.parentNode.querySelector(".mdl-form__input-postfix");
+		_t.unitField =  _t.parentNode.parentNode.querySelector(".mdl-form__input-unit");
+		_t.verify = undefined;
+
+		var
+			lastValue = _t.input.value,
+			lastUndef = _t.input.nextElementSibling.innerHTML.trim(),
+			lastItemState = _t.itemState,
+			numberPattern = /^(\+|-)?[0-9\.,]+((e|E)(\+|-)?[0-9]+)?/,
+			datePattern = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/,
+			timePattern = /^[0-9]{2}:[0-9]{2}/,
+			timeWithSecondsPattern = /[0-9]{2}:[0-9]{2}:[0-9]{2}$/,
+			commaSeparatorPattern = /^-?(([1-9][0-9]{0,2}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?((e|E)(\+|-)?[0-9]+)?$/;
+
+		// This kicks in when the browser does not support date, time or datetime-local input elements.
+		// Set the placeholder to the right patterns. This cannot be done in the snippet creation in Java because the browser is unknown there.
+		if (_t.itemType === "datetime" && _t.inputHint && _t.input.type === "text") {
+			var placeholder = "YYYY-MM-DD hh:mm";
+			if (_t.inputHint === "date") {
+				placeholder = "YYYY-MM-DD";
+			} else if (_t.inputHint === "time") {
+				placeholder = "hh:mm";
+			}
+			_t.parentNode.querySelector("label").innerHTML = placeholder;
+		}
+
+		function setColor(element, color) {
+			if (element) {
+				element.style.setProperty("color", color);
+			}
+		}
+
+		function parseNumber(value, unit, keepExponentChar) {
+			var newValue = value.trim();
+			var numberMatch = newValue.match(numberPattern);
+			if (numberMatch && (numberMatch.length > 0)) {
+				var numberValue = numberMatch[0];
+				var unitValue = newValue.substring(numberValue.length).trim();
+				newValue = numberValue.replace(/^\+/, "");
+				// when sending updates, only uppercase E for exponent is accepted, don't change when only parsing for visualisation
+				newValue = keepExponentChar ? newValue : newValue.replace("e", "E");
+				if (commaSeparatorPattern.test(newValue)) {
+					newValue = newValue.replace(/\./g, "").replace(",", ".");
+				}
+				if (unitValue.length > 0) {
+					newValue = newValue + " " + unitValue;
+				} else if (unit !== undefined && unit.length > 0) {
+					newValue = newValue + " " + unit;
+				}
+				return { value: newValue, changed: true };
+			} else {
+				return { value: value, changed: false };
+			}
+		}
+
+		function cleanValue(value) {
+			var prefix = _t.prefixField !== null ? _t.prefixField.innerHTML : "";
+			var postfix = _t.postfixField !== null ? _t.postfixField.innerHTML : "";
+			var newValue = value.startsWith(prefix) ? value.substr(prefix.length) : value;
+			newValue = value.endsWith(postfix) ? newValue.substr(0, newValue.lastIndexOf(postfix)) : newValue;
+			return newValue.trim();
+		}
+
+		function onChange() {
+			var
+				changeValue = _t.input.value,
+				changed = true;
+
+			if (_t.itemType === "number") {
+				var parsedValue = parseNumber(changeValue, _t.unit);
+				if (parsedValue.changed) {
+					changeValue = parsedValue.value;
+				} else {
+					changed = false;
+				}
+			} else if (_t.itemType === "datetime") {
+				changeValue = changeValue.trim();
+				if (changeValue.match(datePattern) && (lastItemState !== "NULL") && (lastItemState !== "UNDEF")) {
+					var lastStateArray = lastItemState.split("T");
+					if (lastStateArray.length > 1) {
+						changeValue = changeValue + "T" + lastStateArray[1];
+					}
+				} else if (changeValue.match(timePattern)) {
+					var date = ((lastItemState !== "NULL") && (lastItemState !== "UNDEF")) ? lastItemState.split("T")[0] : (new Date(0)).toISOString();
+					changeValue = date.split("T")[0] + "T" + changeValue;
+				} else if (_t.input.type === "text") {
+					var valueArray = changeValue.split(" ");
+					changeValue = valueArray[0];
+					if (valueArray.length > 1) {
+						changeValue = changeValue + "T" + valueArray[1];
+					}
+				}
+				if (isNaN(Date.parse(changeValue))) {
+					changed = false;
+				}
+			}
+
+			if (!changed) {
+				if ((_t.inputHint === "date") && lastValue.match(datePattern) && (lastItemState !== "NULL") && (lastItemState !== "UNDEF")) {
+					lastStateArray = lastItemState.split("T");
+					if (lastStateArray.length > 1) {
+						lastValue = lastValue + "T" + lastStateArray[1];
+					}
+				} else if (_t.inputHint === "time" && lastValue.match(timePattern)) {
+					date = ((lastItemState !== "NULL") && (lastItemState !== "UNDEF")) ? lastItemState.split("T")[0] : (new Date(0)).toISOString();
+					lastValue = date.split("T")[0] + "T" + lastValue;
+				}
+				_t.setValuePrivate(lastValue, lastItemState);
+			} else {
+				_t.parentNode.dispatchEvent(createEvent("control-change", {
+					item: _t.item,
+					value: changeValue
+				}));
+				// We don't know if the sent value is a valid command and will update the item state.
+				// If we don't receive an update in 1s, revert to the previous value.
+				_t.verify = new WaitingTimer(function() {
+					_t.setValuePrivate(lastValue);
+				}, 1000);
+				_t.verify.wait();
+			}
+		}
+
+		_t.setValuePrivate = function(value, itemState) {
+			if (_t.verify) {
+				_t.verify.cancel();
+			}
+
+			var newValue = cleanValue(value);
+			var undefValue = "";
+			if (itemState === undefined) {
+				undefValue = lastUndef;
+			} else if (itemState === "NULL" || itemState === "UNDEF") {
+				if (_t.itemType === "datetime") {
+					undefValue = "";
+					if (_t.input.type === "text") {
+						undefValue = "YYYY-MM-DD hh:mm";
+					}
+				} else {
+					undefValue = !(newValue === "" || newValue === "NULL" || newValue === "UNDEF") ? newValue : lastUndef;
+				}
+				newValue = "";
+			}
+
+			if (_t.inputHint === "number") {
+				if (newValue !== "") {
+					newValue = parseNumber(newValue, _t.unit, true).value;
+					var valueArray = newValue.trim().split(" ");
+					newValue = valueArray[0];
+					if (valueArray.length > 1) {
+						_t.input.parentNode.nextElementSibling.innerHTML = valueArray[1];
+					}
+				} else {
+					var undefArray = undefValue.split(" ");
+					undefValue = undefArray[0];
+				}
+			} else if (_t.itemType === "datetime") {
+				newValue = ((itemState !== "NULL") && (itemState !== "UNDEF")) ? itemState : newValue;
+				newValue = newValue.trim().split(".")[0];		// drop millis
+				if (newValue.match(timeWithSecondsPattern)) {	// drop seconds
+					newValue = newValue.split(":").slice(0, -1).join(":");
+				}
+				if (newValue !== "") {
+					if (_t.inputHint === "date") {
+						newValue = newValue.split("T")[0];
+					} else if (_t.inputHint === "time") {
+						newValue = newValue.split("T")[1];
+					}
+					if (_t.input.type === "text") {
+						newValue = newValue.replace("T", " ");
+					}
+				}
+			}
+			_t.input.value = newValue;
+			_t.input.nextElementSibling.innerHTML = undefValue;
+
+			_t.input.parentNode.MaterialTextfield.change();
+			_t.input.parentNode.MaterialTextfield.checkValidity();
+			lastValue = value;
+			if (itemState !== undefined) {
+				lastItemState = itemState;
+			}
+		};
+
+		_t.setValueColor = function(color) {
+			setColor(_t.input, color);
+			setColor(_t.unitField, color);
+			setColor(_t.prefixField, color);
+			setColor(_t.postfixField, color);
+		};
+
+		_t.destroy = function() {
+			_t.input.removeEventListener("change", onChange);
+			componentHandler.downgradeElements([ _t.parentNode ]);
+		};
+
+		_t.input.addEventListener("change", onChange);
+	}
+
 	/* class ControlSlider extends Control */
 	function ControlSlider(parentNode) {
 		Control.call(this, parentNode);
@@ -1615,7 +1855,11 @@
 				var valueAndUnit = value.split(" ");
 				_t.unit = valueAndUnit[1];
 			}
-			_t.input.value = itemState;
+			if (itemState === "NULL" || itemState === "UNDEF") {
+				_t.input.value = 0;
+			} else {
+				_t.input.value = itemState.split(" ")[0] * 1;
+			}
 			_t.input.MaterialSlider.change();
 		};
 
@@ -1926,6 +2170,9 @@
 				case "text":
 					appendControl(new ControlText(e));
 					break;
+				case "input":
+					appendControl(new ControlInput(e));
+					break;
 				case "colorpicker":
 					appendControl(new ControlColorpicker(e));
 					break;
@@ -2036,7 +2283,7 @@
 				});
 			}
 
-			if (makeVisible || update.state !== "NULL") {
+			if (makeVisible || update.itemIncluded) {
 				if (value === null) {
 					value = update.state;
 				}
@@ -2103,6 +2350,7 @@
 
 			var
 				data = JSON.parse(payload.data),
+				itemIncluded = false,
 				state = "NULL",
 				title;
 
@@ -2136,6 +2384,7 @@
 			}
 
 			if (data.item !== undefined) {
+				itemIncluded = true;
 				if (data.state === undefined) {
 					state = data.item.state;
 				} else {
@@ -2153,6 +2402,7 @@
 			} else if (smarthome.dataModel[data.widgetId] !== undefined) {
 				var update = {
 					visibility: data.visibility,
+					itemIncluded: itemIncluded,
 					state: state,
 					label: data.label,
 					labelcolor: data.labelcolor,
@@ -2205,10 +2455,12 @@
 
 					var
 						w = smarthome.dataModel[widget.widgetId],
+						itemIncluded = false,
 						state = "NULL",
 						update;
 
 					if (widget.item !== undefined) {
+						itemIncluded = true;
 						if (widget.state === undefined) {
 							state = widget.item.state;
 						} else {
@@ -2218,6 +2470,7 @@
 					if (!w.visible || widget.item !== undefined) {
 						update = {
 							visibility: true,
+							itemIncluded: itemIncluded,
 							state: state,
 							label: widget.label,
 							labelcolor: widget.labelcolor,
@@ -2473,6 +2726,10 @@
 	});
 })({
 	itemAttribute: "data-item",
+	itemTypeAttribute: "data-item-type",
+	inputHintAttribute: "data-input-hint",
+	itemStateAttribute: "data-item-state",
+	unitAttribute: "data-item-unit",
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",

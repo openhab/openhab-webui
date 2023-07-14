@@ -3,7 +3,7 @@
     <f7-card-content>
       <f7-list media-list accordion-list>
         <ul>
-          <item v-if="!createMode" :item="model.item" :link="'/settings/items/' + model.item.name" :no-state="true" />
+          <item v-if="!createMode" :item="model.item" :link="'/settings/items/' + model.item.name" :context="context" />
           <!-- <f7-list-button v-if="!editMode && !createMode" color="blue" title="Edit Item" @click="editMode = true">Edit Item</f7-list-button> -->
         </ul>
       </f7-list>
@@ -12,7 +12,7 @@
         <item-form :item="editedItem" :hide-type="true" :force-semantics="forceSemantics" />
       </div>
       <div class="padding-top" v-else-if="createMode">
-        <item-form :item="editedItem" :items="items" :enable-name="true" :force-semantics="forceSemantics" />
+        <item-form :item="editedItem" :items="items" :createMode="true" :force-semantics="forceSemantics" />
       </div>
     </f7-card-content>
     <f7-card-footer v-if="createMode || editMode" key="item-card-buttons">
@@ -42,7 +42,7 @@ import Item from '@/components/item/item.vue'
 import ItemForm from '@/components/item/item-form.vue'
 
 export default {
-  props: ['model', 'links', 'items'],
+  props: ['model', 'links', 'items', 'context'],
   components: {
     Item,
     ItemForm

@@ -31,6 +31,7 @@
             </f7-button>
           </p>
         </f7-block>
+        <!-- Pinned Items -->
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.items.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Items</span>
@@ -52,6 +53,7 @@
             <!-- <f7-list-button title="Pick Items" @click="modelPickerOpened = true"></f7-list-button> -->
           </f7-list>
         </f7-block>
+        <!-- Pinned Things -->
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.things.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Things</span>
@@ -75,6 +77,7 @@
             </ul>
           </f7-list>
         </f7-block>
+        <!-- Pinned Rules -->
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.rules.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Rules</span>
@@ -99,6 +102,57 @@
             </ul>
           </f7-list>
         </f7-block>
+        <!-- Pinned Scenes -->
+        <f7-block class="no-margin no-padding" v-if="pinnedObjects.scenes.length">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Scenes</span>
+            <span style="margin-left:auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('rules')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item v-for="rule in pinnedObjects.scenes" :key="rule.uid" media-item
+                            :title="rule.name" :footer="rule.uid">
+                <f7-badge slot="after" :color="ruleStatusBadgeColor(rule.status)" :tooltip="rule.status.description">
+                  {{ ruleStatusBadgeText(rule.status) }}
+                </f7-badge>
+                <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
+                  <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
+                  <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
+                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('rules', rule, 'uid')" />
+                </div>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
+        <!-- Pinned Scripts -->
+        <f7-block class="no-margin no-padding" v-if="pinnedObjects.scripts.length">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Scripts</span>
+            <span style="margin-left:auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('rules')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item v-for="rule in pinnedObjects.scripts" :key="rule.uid" media-item
+                            :title="rule.name" :footer="rule.uid">
+                <f7-badge slot="after" :color="ruleStatusBadgeColor(rule.status)" :tooltip="rule.status.description">
+                  {{ ruleStatusBadgeText(rule.status) }}
+                </f7-badge>
+                <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
+                  <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
+                  <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
+                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('rules', rule, 'uid')" />
+                </div>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
+        <!-- Pinned Pages -->
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.pages.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Pages</span>
@@ -305,12 +359,16 @@ export default {
         items: [],
         things: [],
         rules: [],
+        scenes: [],
+        scripts: [],
         pages: []
       },
       pinnedObjects: {
         items: [],
         things: [],
         rules: [],
+        scenes: [],
+        scripts: [],
         pages: []
       },
       sseEvents: [],
@@ -377,6 +435,110 @@ export default {
         this.$f7.off('itemsPicked', this.addItemsFromModel)
       })
     },
+    /**
+     * Search for the query string inside a single Item.
+     * All searches are non case-intensive.
+     *
+     * Checks:
+     *  - name
+     *  - label
+     *  - metadata
+     *  - tags (requires exact match)
+     *
+     * @param i Item
+     * @param query search query (as typed, not in lowercase)
+     * @returns {boolean}
+     */
+    searchItem (i, query) {
+      query = query.toLowerCase()
+      if (i.name.toLowerCase().indexOf(query) >= 0) return true
+      if (i.label && i.label.toLowerCase().indexOf(query) >= 0) return true
+      if (i.metadata && JSON.stringify(i.metadata).toLowerCase().indexOf(query) >= 0) return true
+      if (i.tags && i.tags.map(t => t.toLowerCase()).includes(query)) return true
+      return false
+    },
+    /**
+     * Search for the query string inside a single rule.
+     * All searches are non case-intensive.
+     *
+     * Checks:
+     *  - name
+     *  - label
+     *  - description
+     *  - tags (requires exact match)
+     *  - itemName & thingUID of triggers, actions & conditions
+     *  - script content (e.g. JavaScript or Rule DSL)
+     *  - script MIME types (requires exact match)
+     *  - Blockly scripts when lowercase search term is 'block', 'blockly' or 'blocksource'
+     *
+     * @param r rule
+     * @param query query (as typed, not in lowercase)
+     * @returns {boolean}
+     */
+    searchRule (r, query) {
+      query = query.toLowerCase()
+      if (r.uid.toLowerCase().indexOf(query) >= 0) return true
+      if (r.name.toLowerCase().indexOf(query) >= 0) return true
+      if (r.description && r.description.toLowerCase().indexOf(query) >= 0) return true
+      if (r.tags && r.tags.map(t => t.toLowerCase()).includes(query)) return true
+      const searchItemOrThing = (m) => {
+        // Match Item names non case-intensive
+        if (m.configuration.itemName && m.configuration.itemName.toLowerCase().indexOf(query) >= 0) {
+          return true
+        }
+        // Match Thing names non case-intensive
+        if (m.configuration.thingUID && m.configuration.thingUID.toLowerCase().indexOf(query) >= 0) {
+          return true
+        }
+      }
+      const searchScript = (m) => {
+        // MIME types require exact match
+        if (m.configuration.type && m.configuration.type.toLowerCase() === query) {
+          return true
+        }
+        if (['block', 'blockly', 'blocksource'].includes(query) && m.configuration.blockSource !== undefined) {
+          return true
+        }
+        if (m.configuration.script && m.configuration.script.toLowerCase().indexOf(query) >= 0) {
+          return true
+        }
+      }
+      for (let i = 0; i < r.triggers.length; i++) {
+        const t = r.triggers[i]
+        if (searchItemOrThing(t)) return true
+      }
+      for (let i = 0; i < r.actions.length; i++) {
+        const a = r.actions[i]
+        if (searchItemOrThing(a)) return true
+        if (searchScript(a)) return true
+      }
+      for (let i = 0; i < r.conditions.length; i++) {
+        const c = r.conditions[i]
+        if (searchItemOrThing(c)) return true
+        if (searchScript(c)) return true
+      }
+      return false
+    },
+    /**
+     * Search for the query string inside a single page.
+     * All searches are non case-intensive.
+     *
+     * Checks:
+     *  - uid
+     *  - label
+     *  - slots
+     *
+     * @param p page
+     * @param query search query (as typed, not in lowercase)
+     * @returns {boolean}
+     */
+    searchPage (p, query) {
+      query = query.toLowerCase()
+      if (p.uid.toLowerCase().indexOf(query) >= 0) return true
+      if (p.config && p.config.label && p.config.label.toLowerCase().indexOf(query) >= 0) return true
+      if (p.slots && JSON.stringify(p.slots).toLowerCase().indexOf(query) >= 0) return true
+      return false
+    },
     search (searchbar, query, previousQuery) {
       if (!query) {
         this.clearSearch()
@@ -394,9 +556,9 @@ export default {
           Promise.resolve(this.cachedObjects[2]),
           Promise.resolve(this.cachedObjects[3])
         ] : [
-          this.$oh.api.get('/rest/items'),
-          this.$oh.api.get('/rest/things?summary=true'),
-          this.$oh.api.get('/rest/rules?summary=true'),
+          this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.*'),
+          this.$oh.api.get('/rest/things?staticDataOnly=true'),
+          this.$oh.api.get('/rest/rules?summary=false'),
           Promise.resolve(this.$store.getters.pages)
         ]
 
@@ -404,14 +566,36 @@ export default {
       Promise.all(promises).then((data) => {
         this.$set(this, 'cachedObjects', data)
         this.searchResultsLoading = false
-        const items = data[0].filter((i) => i.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || (i.label && i.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0))
-        const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
-        const rules = data[2].filter((r) => r.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || r.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
-        const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
+        const items = data[0].filter((i) => this.searchItem(i, this.searchQuery)).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return (labelA) ? labelA.localeCompare(labelB) : 0
+        })
+        const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 ||
+          (t.label && t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase())) >= 0).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return (labelA) ? labelA.localeCompare(labelB) : 0
+        })
+        const rulesScenesScripts = data[2].filter((r) => this.searchRule(r, this.searchQuery)).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return (labelA) ? labelA.localeCompare(labelB) : 0
+        })
+        const rules = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0)
+        const scenes = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') >= 0)
+        const scripts = rulesScenesScripts.filter((r) => r.tags.indexOf('Script') >= 0)
+        const pages = data[3].filter((p) => this.searchPage(p, this.searchQuery)).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return (labelA) ? labelA.localeCompare(labelB) : 0
+        })
         this.$set(this, 'searchResults', {
           items,
           things,
           rules,
+          scenes,
+          scripts,
           pages
         })
       })
@@ -636,7 +820,9 @@ export default {
                 this.unpin('rules', { uid: topicParts[2] }, 'uid')
                 break
               case 'state':
-                const rule = this.pinnedObjects.rules.find((r) => r.uid === topicParts[2])
+                let rule = this.pinnedObjects.rules.find((r) => r.uid === topicParts[2])
+                if (!rule) rule = this.pinnedObjects.scenes.find((r) => r.uid === topicParts[2])
+                if (!rule) rule = this.pinnedObjects.scripts.find((r) => r.uid === topicParts[2])
                 if (!rule) break
                 this.$set(rule, 'status', JSON.parse(event.payload))
             }

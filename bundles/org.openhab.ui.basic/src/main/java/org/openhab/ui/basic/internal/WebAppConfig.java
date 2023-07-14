@@ -31,9 +31,10 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 public class WebAppConfig {
     private static final String DEFAULT_SITEMAP = "default";
 
-    public static final String THEME_NAME_DEFAULT = "default";
+    public static final String THEME_NAME_BRIGHT = "bright";
     public static final String THEME_NAME_DARK = "dark";
-    private static final String DEFAULT_THEME = THEME_NAME_DEFAULT;
+    public static final String THEME_NAME_SYSTEM = "system";
+    private static final String DEFAULT_THEME = THEME_NAME_BRIGHT;
 
     private static final String DEFAULT_ICONIFY = "false";
 
@@ -84,6 +85,10 @@ public class WebAppConfig {
     public void applyConfig(Map<String, Object> configProps) {
         defaultSitemap = (String) configProps.getOrDefault("defaultSitemap", DEFAULT_SITEMAP);
         theme = (String) configProps.getOrDefault("theme", DEFAULT_THEME);
+        // "default" was previously valid. For backward compatibility, accept it but convert it to DEFAULT_THEME
+        if ("default".equals(theme)) {
+            theme = DEFAULT_THEME;
+        }
         iconify = "true".equalsIgnoreCase((String) configProps.getOrDefault("enableIconify", DEFAULT_ICONIFY));
         webAudio = "true".equalsIgnoreCase((String) configProps.getOrDefault("webAudio", DEFAULT_WEB_AUDIO));
 

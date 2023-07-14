@@ -28,7 +28,7 @@ export const OhLabelCardDefinition = () => new WidgetDefinition('oh-label-card',
     pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>), <code>material:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>) or <code>iconify:iconSet:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://icon-sets.iconify.design">Iconify icon</a>, requires being online if not in cache)'),
     pt('iconColor', 'Icon Color', 'Not applicable to openHAB icons').a(),
     pn('iconSize', 'Icon Size', 'Size of the icon in px').a(),
-    pb('iconUseState', 'Icon depends on state', 'Use the state of the item to get a dynamic icon (for openHAB icons only)').a(),
+    pb('iconUseState', 'Icon depends on state', 'Use the state of the Item to get a dynamic icon (enabled by default for <code>Contact</code>, <code>Dimmer</code>, <code>Rollershutter</code> & <code>Switch</code> Item types) (for openHAB icons only)'),
     pb('vertical', 'Vertical arrangement', 'Display label below icon')
   ])
   .paramGroup(pg('trend', 'Trend Line', 'Show a trend line in the background'), TrendParameters())

@@ -8,7 +8,7 @@
       </f7-nav-right>
       <f7-subnavbar sliding class="item-header">
         <div class="item-icon" v-if="item.name">
-          <oh-icon v-if="item.category" :icon="item.category" height="60" width="60" />
+          <oh-icon v-if="item.category" :icon="item.category" :state="context.store[item.name] ? context.store[item.name].state : item.state" height="60" width="60" />
           <span v-else>
             {{ item.label ? item.label[0] : item.name[0] }}
           </span>
@@ -81,13 +81,16 @@
           <link-details :item="item" :links="links" />
         </f7-col>
       </f7-row>
-      <f7-row v-if="item.editable">
+      <f7-row>
         <f7-col>
           <f7-list>
-            <f7-list-button color="red" @click="deleteItem">
+            <f7-list-button v-if="item.editable" color="red" @click="deleteItem">
               Remove Item
             </f7-list-button>
           </f7-list>
+          <p class="developer-sidebar-tip text-align-center">
+            Tip: Use the developer sidebar (Shift+Alt+D) to search for usages of this Item
+          </p>
         </f7-col>
       </f7-row>
     </f7-block>
@@ -104,7 +107,7 @@
       width 60px
       padding 10px
       border-radius 40px
-      background white
+      border 1px solid white
       img
         height 60px
         width 60px
@@ -139,6 +142,11 @@
   .chip
     margin-left 3px
     margin-right 3px
+.developer-sidebar-tip
+    visibility visible
+@media(max-width: 1279px)
+  .developer-sidebar-tip
+    visibility hidden
 </style>
 
 <script>

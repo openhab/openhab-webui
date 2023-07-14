@@ -226,6 +226,21 @@
 			box-shadow: none;
 			-webkit-box-shadow: none;
 		}
+		.mdl-textfield {
+			&__input,
+			&__label {
+				font-family: "Helvetica","Arial",sans-serif;
+				font-size: 14px;
+				text-align: right;
+			}
+			&__input {
+				font-weight: 700;
+			}
+			&__label {
+				margin: 0;
+				padding: 0;
+			}
+		}
 	}
 	&__setpoint,
 	&__colorpicker,
@@ -252,6 +267,48 @@
 	}
 	&__slider {
 		width: 140px;
+	}
+	&__input {
+		width: 60%;
+		display: flex;
+		align-items: center;
+		box-sizing: border-box;
+		padding: 0 16px 0 0;
+		@media screen and (max-width: $layout-tablet-size-threshold) {
+			padding: 0 12px 0 0;
+		}
+		&-container {
+			flex-grow: 1;
+			width: auto;
+			padding-right: 0;
+		}
+		&-unit {
+			display: inline-block;
+			box-sizing: border-box;
+			font-family: "Helvetica","Arial",sans-serif;
+			font-size: 14px;
+			font-weight: 700;
+			text-align: right;
+			padding-left: 8px;
+		}
+		&-prefix {
+			display: inline-block;
+			box-sizing: border-box;
+			font-family: "Helvetica","Arial",sans-serif;
+			font-size: 14px;
+			font-weight: 700;
+			text-align: right;
+			padding-right: 8px;
+		}
+		&-postfix {
+			display: inline-block;
+			box-sizing: border-box;
+			font-family: "Helvetica","Arial",sans-serif;
+			font-size: 14px;
+			font-weight: 700;
+			text-align: right;
+			padding-left: 8px;
+		}
 	}
 	&__title {
 		margin: 0;
@@ -611,6 +668,47 @@ $colorpicker-mobile-size: 270px;
 	&--hidden {
 		display: none;
 	}
+}
+
+// Some extra formatting for input widget on webkit browsers
+input[type=date],
+input[type=time],
+input[type=datetime-local],
+input[type=number] {
+	-webkit-align-items: center;
+	align-items: center;
+	overflow: hidden;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	appearance: none;
+	display: none;
+	margin: 0;
+}
+/* Works for Firefox */
+input[type="number"] {
+	-moz-appearance: textfield;
+}
+input::-webkit-datetime-edit {
+	-webkit-flex: 1;
+	flex: 1;
+	display: inline-block;
+	min-width: 0;
+	overflow: hidden;
+}
+input::-webkit-datetime-edit-fields-wrapper {
+	display: inline-block;
+	padding: 1px 8px 1px 0px;
+	white-space: pre;
+}
+input[type=time]::-webkit-datetime-edit-fields-wrapper {
+	padding: 1px 0px;
+}
+input::-webkit-calendar-picker-indicator {
+	display: inline-block;
+	width: 1.2em;
+	height: 1.2em;
 }
 
 // MS Edge hacks

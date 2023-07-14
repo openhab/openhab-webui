@@ -46,8 +46,7 @@ export default {
   },
   created () {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
-    // TODO use a Vuex store
-    this.$oh.api.get('/rest/rules?summary=true').then((data) => {
+    this.$oh.api.get('/rest/rules?staticDataOnly=true').then((data) => {
       this.scenes = data.filter((r) => r.tags.indexOf('Scene') >= 0).sort((a, b) => {
         const labelA = a.name
         const labelB = b.name

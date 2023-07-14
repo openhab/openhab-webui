@@ -103,12 +103,28 @@ export const actionsMixin = {
           const actionsPromise = new Promise((resolve, reject) => {
             if (actionCommandOptions && typeof actionCommandOptions === 'string') {
               resolve(actionCommandOptions.split(',').map((o) => {
-                const parts = o.trim().split('=')
+                const option = o.trim()
+                let cmd
+                let label
+                if (option.includes('=')) {
+                  if (option.startsWith('"') && option.includes('"="') && option.endsWith('"')) {
+                    const parts = option.split('"="')
+                    cmd = parts[0].substring(1).trim()
+                    label = parts[1].substring(0, parts[1].length - 1).trim()
+                  } else {
+                    const parts = option.split('=')
+                    cmd = parts[0].trim()
+                    label = parts[1].trim()
+                  }
+                } else {
+                  cmd = option
+                  label = null
+                }
                 return {
-                  text: parts[1].trim() || parts[0].trim(),
+                  text: label || cmd,
                   color: 'blue',
                   onClick: () => {
-                    this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd: parts[0].trim() })
+                    this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd: cmd })
                       .then(() => this.showActionFeedback(prefix, actionConfig))
                   }
                 }

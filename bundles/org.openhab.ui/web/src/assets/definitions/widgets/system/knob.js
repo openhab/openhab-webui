@@ -6,6 +6,8 @@ export default () => [
   pn('min', 'Min', 'Minimum value (default 0)'),
   pn('max', 'Max', 'Maximum value (default 100)'),
   pd('step', 'Step', 'Minimum interval between values (default 1)'),
+  pd('offset', 'Offset', 'Offset to be applied to the Item\'s state (e.g. Item state = 2; offset = 20; knob/rounded slider behaves as Item state would be 22)'),
+  pb('ignoreDisplayState', 'Ignore Display State', 'Ignore the display state if available and always use the raw state.'),
   pb('releaseOnly', 'Send command only on release', 'If enabled, no commands are sent during sliding'),
   pn('commandInterval', 'Command Interval', 'Time to wait between subsequent commands in ms (default 200)').a(),
   pn('delayStateDisplay', 'Delay State Display', 'Time to wait before switching from displaying user input to displaying Item state in ms (default 2000)').a(),
@@ -29,11 +31,11 @@ export default () => [
     { value: 'quarter-bottom-right', label: 'quarter bottom right' },
     { value: 'pie', label: 'pie' }
   ]),
-  po('lineCap', 'Line Cap', 'Sets the shape of the end of the path', [
+  po('lineCap', 'Line Cap', 'Sets the shape of the end of the path; dotted path and line cap cannot be used together.', [
     { value: 'square', label: 'square' },
     { value: 'round', label: 'round' }
   ]),
-  pt('dottedPath', 'Dotted Path', 'Length of dotted path segments (using css stroke-dasharray)'),
+  pt('dottedPath', 'Dotted Path', 'Length of dotted path segments (using css stroke-dasharray); dotted path and line cap cannot be used together.'),
   pn('borderWidth', 'Border Width', 'Sets the border width of the slider (px value)'),
   pt('handleSize', 'Handle Size', 'Sets the size of the slider handle (px value)'),
   po('handleShape', 'Handle Shape', 'Sets the shape of the slider handle', [

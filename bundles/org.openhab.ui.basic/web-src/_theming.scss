@@ -1,12 +1,16 @@
-body[data-theme="default"] {
+body[data-theme="bright"] {
 	--primary-color: #3f51b5;
 	--header-bg: var(--primary-color);
 	--header-text-color: #fff;
 	--body-bg: #f5f5f5;
 	--container-bg: #fff;
 	--container-text-color: #616161;
+	--switch-off-track-bg: rgba(0,0,0,.26);
 	--switch-on-track-bg: #9fa8da;
 	--border-color: #ccc;
+	--input-undef-color: rgba(0,0,0,.26);
+	--input-icon-filter: invert(0%);
+	--button-color: #000000;
 }
 
 body[data-theme="dark"] {
@@ -16,8 +20,42 @@ body[data-theme="dark"] {
 	--body-bg: #181818;
 	--container-bg: #232323;
 	--container-text-color: #c0c0c0;
+	--switch-off-track-bg: rgba(255,255,255,.26);
 	--switch-on-track-bg: #9fa8da;
 	--border-color: #343434;
+	--input-undef-color: rgba(158,158,158,.26);
+	--input-icon-filter: invert(100%);
+	--button-color: #e0e0e0;
+}
+
+body[data-theme="system"] {
+	--primary-color: #3f51b5;
+	--header-bg: var(--primary-color);
+	--header-text-color: #fff;
+	--body-bg: #f5f5f5;
+	--container-bg: #fff;
+	--container-text-color: #616161;
+	--switch-off-track-bg: rgba(0,0,0,.26);
+	--switch-on-track-bg: #9fa8da;
+	--border-color: #ccc;
+	--input-undef-color: rgba(0,0,0,.26);
+	--input-icon-filter: invert(0%);
+	--button-color: #000000;
+
+	@media (prefers-color-scheme: dark) {
+		--primary-color: #3f51b5;
+		--header-bg: #101010;
+		--header-text-color: #c0c0c0;
+		--body-bg: #181818;
+		--container-bg: #232323;
+		--container-text-color: #c0c0c0;
+		--switch-off-track-bg: rgba(255,255,255,.26);
+		--switch-on-track-bg: #9fa8da;
+		--border-color: #343434;
+		--input-undef-color: rgba(158,158,158,.26);
+		--input-icon-filter: invert(100%);
+		--button-color: #e0e0e0;
+	}
 }
 
 .mdl-layout__header {
@@ -42,6 +80,13 @@ body {
 .mdl-form__row {
 	border-bottom: 1px solid #ccc;
 	border-bottom: 1px solid var(--border-color, #ccc);
+	color: #616161 !important;
+	color: var(--container-text-color, #616161) !important;
+}
+
+.mdl-switch .mdl-switch__track {
+	background: rgba(0,0,0,.26);
+	background: var(--switch-off-track-bg, rgba(0,0,0,.26));
 }
 
 .mdl-switch.is-checked .mdl-switch__track {
@@ -53,4 +98,20 @@ body {
 .mdl-switch__ripple-container .mdl-ripple {
 	background: #3f51b5;
 	background: var(--primary-color, #3f51b5);
+}
+
+.mdl-button {
+	color: #000000;
+	color: var(--button-color, #000000);
+}
+
+.mdl-textfield__input {
+	border-bottom: 1px solid var(--border-color, #ccc);
+}
+.mdl-textfield__label {
+	color: var(--input-undef-color, rgba(0,0,0,.26));
+}
+
+input::-webkit-calendar-picker-indicator {
+	filter: var(--input-icon-filter, invert(0%));
 }

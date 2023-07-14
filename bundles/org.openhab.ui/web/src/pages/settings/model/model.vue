@@ -8,6 +8,7 @@
           search-container=".semantic-tree"
           search-item=".treeview-item"
           search-in=".treeview-item-label"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -244,6 +245,9 @@ export default {
       return {
         store: this.$store.getters.trackedItems
       }
+    },
+    searchPlaceholder () {
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {
@@ -288,7 +292,7 @@ export default {
     load (update) {
       // if (this.ready) return
       this.loading = true
-      const items = this.$oh.api.get('/rest/items?metadata=.+')
+      const items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
       const links = this.$oh.api.get('/rest/links')
       Promise.all([items, links]).then((data) => {
         this.items = data[0]

@@ -25,21 +25,20 @@
 </template>
 
 <script>
-import * as SemanticClasses from '@/assets/semantics.js'
-
 export default {
   props: ['item', 'disabled', 'inScriptEditor'],
   data () {
     return {
-      pendingTag: ''
+      pendingTag: '',
+      semanticClasses: this.$store.getters.semanticClasses
     }
   },
   methods: {
     isSemanticTag (tag) {
-      return [SemanticClasses.Locations,
-        SemanticClasses.Equipment,
-        SemanticClasses.Points,
-        SemanticClasses.Properties].some((t) => t.indexOf(tag) >= 0)
+      return [this.semanticClasses.Locations,
+        this.semanticClasses.Equipment,
+        this.semanticClasses.Points,
+        this.semanticClasses.Properties].some((t) => t.indexOf(tag) >= 0)
     },
     isScriptTag (tag) {
       if (this.inScriptEditor !== true) return false

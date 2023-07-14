@@ -9,7 +9,7 @@
     label:            'label=',
     item:             'item=',
     icon:             'icon=',
-    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'height=', 'mappings=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern='],
+    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'height=', 'mappings=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint='],
     widgetboolattr:   ['legend='],
     widgetfreqattr:   'sendFrequency=',
     widgetfrcitmattr: 'forceasitem=',
@@ -20,7 +20,6 @@
     lwidget:          ['Text ', 'Group ', 'Image ', 'Frame '],
     lparen:           '(',
     rparen:           ')',
-    colon:            ':',
     lbrace:           '{',
     rbrace:           '}',
     lbracket:         '[',
@@ -32,11 +31,13 @@
     lt:               '<',
     gt:               '>',
     equals:           '=',
-    comma:            ',',
     NL:               { match: /\n/, lineBreaks: true },
     boolean:          /(?:true)|(?:false)/,
     identifier:       /(?:[A-Za-z_][A-Za-z0-9_]*)|(?:[0-9]+[A-Za-z_][A-Za-z0-9_]*)/,
-    number:           /\-?[0-9]+(?:\.[0-9]*)?/,
+    number:           /-?[0-9]+(?:\.[0-9]*)?/,
+    comma:            ',',
+    colon:            ':',
+    hyphen:           '-',
     string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) }
   })
   const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Default']
@@ -99,12 +100,19 @@ WidgetAttr -> %widgetswitchattr                                                 
   | %widgetfrcitmattr WidgetBooleanAttrValue                                      {% (d) => ['forceAsItem', d[1]] %}
   | %widgetboolattr WidgetBooleanAttrValue                                        {% (d) => [d[0].value, d[1]] %}
   | %widgetfreqattr WidgetAttrValue                                               {% (d) => ['frequency', d[1]] %}
+  | %icon WidgetIconAttrValue                                                     {% (d) => [d[0].value, d[1].join("")] %}
   | WidgetAttrName WidgetAttrValue                                                {% (d) => [d[0][0].value, d[1]] %}
   | WidgetVisibilityAttrName WidgetVisibilityAttrValue                            {% (d) => [d[0][0].value, d[1]] %}
   | WidgetColorAttrName WidgetColorAttrValue                                      {% (d) => [d[0][0].value, d[1]] %}
-WidgetAttrName -> %item | %label | %icon | %widgetattr
+WidgetAttrName -> %item | %label | %widgetattr
 WidgetBooleanAttrValue -> %boolean                                                {% (d) => (d[0].value === 'true') %}
   | %string                                                                       {% (d) => (d[0].value === 'true') %}
+WidgetIconAttrValue -> %string
+  | WidgetIconName
+  | %identifier %colon WidgetIconName
+  | %identifier %colon %identifier %colon WidgetIconName
+WidgetIconName -> %identifier
+  | %identifier %hyphen WidgetIconName                                            {% (d) => d[0].value + "-" + d[2] %}
 WidgetAttrValue -> %number                                                        {% (d) => { return parseFloat(d[0].value) } %}
   | %identifier                                                                   {% (d) => d[0].value %}
   | %string                                                                       {% (d) => d[0].value %}
