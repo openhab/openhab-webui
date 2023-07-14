@@ -443,6 +443,10 @@ export default {
       this.$oh.api.get('/rest/persistence/' + this.serviceId).then((data) => {
         this.$set(this, 'persistence', data)
         this.savedPersistence = cloneDeep(this.persistence)
+        // Ensure arrays for all filter types defined in the filterTypes object are existent
+        this.filterTypes.forEach((ft) => {
+          if (!this.persistence[ft.name]) this.persistence[ft.name] = []
+        })
         this.loading = false
         this.ready = true
       }).catch((e) => {
@@ -459,10 +463,6 @@ export default {
       if (!this.isEditable) return
       if (this.currentTab === 'code') this.fromYaml()
 
-      // Ensure arrays for all filter types defined in the filterTypes object are existent
-      this.filterTypes.forEach((ft) => {
-        if (!this.persistence[ft.name]) this.persistence[ft.name] = []
-      })
       // Ensure relative is set on threshold filter, otherwise the save request fails with a 500
       this.persistence.thresholdFilters.forEach((f) => {
         if (f.relative === undefined) f.relative = false
@@ -546,7 +546,7 @@ export default {
     },
     saveConfiguration (index, configuration) {
       const idx = this.persistence.configs.findIndex((cfg) => cfg.items.join() === configuration.items.join())
-      if (idx !== -1 && idx !== index) {
+      if (index === null && idx !== -1) {
         this.$f7.dialog.alert('A configuration for this/these Item(s) already exists!')
         return
       }
@@ -575,7 +575,7 @@ export default {
     },
     saveCronStrategy (index, cronStrategy) {
       const idx = this.persistence.cronStrategies.findIndex((cs) => cs.name === cronStrategy.name)
-      if ((idx !== -1 && idx !== index) || this.predefinedStrategies.includes(cronStrategy.name)) {
+      if ((index === null && idx !== -1) || this.predefinedStrategies.includes(cronStrategy.name)) {
         this.$f7.dialog.alert('A (cron) strategy with the same name already exists!')
         return
       }
