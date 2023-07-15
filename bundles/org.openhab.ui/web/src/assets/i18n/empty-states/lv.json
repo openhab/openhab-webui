@@ -17,6 +17,8 @@
   "pages.text": "Izveidojiet lapas, lai dažādos veidos parādītu informāciju un mijiedarbotos ar jūsu vienumiem. Jūs varat izveidot vairāku veidu lapas: diagrammas, kartes, plānus...<br><br>Lai izveidotu savu pirmo lapu, noklikšķiniet uz zemāk esošās pogas.",
   "rules.title": "Nav kārtulu",
   "rules.text": "Kārtulas ir jūsu mājas automatizācijas pamatelementi, tie nosaka darbības, kas jāveic, kad notiek konkrēti notikumi.<br><br>Izveidojiet savu pirmo kārtulu ar zemāk redzamo pogu; Lai izveidotu sarežģītākus scenārijus, skriptu failus varat arī ierakstīt konfigurācijas mapē.",
+  "scenes.title": "Pagaidām scenāriju nav",
+  "scenes.text": "Scenāriji ir kārtulas, kas nosūta komandas, lai uzstādītu vairākus vienumus vēlamajā stāvoklī.<br />Tās var palaist pēc pieprasījuma vai izsaukt tās no citām kārtulām.<br><br>Izveidojiet savu pirmo scenāriju, izmantojot zemāk esošo pogu.",
   "scripts.title": "Nav skriptu",
   "scripts.text": "Skripti ir īpaša veida kārtulas, bez aktivizētājiem un viena moduļa koda izpildei.<br />Jūs varat tos palaist pēc pieprasījuma vai izsaukt no citām kārtulām.<br><br>Izveidojiet savu pirmo skriptu ar pogu zemāk.",
   "schedule.title": "Plānotājā nekā nav",
