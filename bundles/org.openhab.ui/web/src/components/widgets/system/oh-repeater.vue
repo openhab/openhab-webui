@@ -1,4 +1,4 @@
-<template v-if="ready">
+<template>
   <ul v-if="config.listContainer" :class="config.containerClasses" :style="config.containerStyle">
     <generic-widget-component :context="ctx" v-for="(ctx, idx) in childrenContexts" :key="'repeater-' + idx" @command="onCommand" />
   </ul>
@@ -24,12 +24,8 @@ export default {
   widget: OhRepeaterDefinition,
   data () {
     return {
-      ready: false,
-      loadedSource: null
+      sourceCache: null
     }
-  },
-  created () {
-    this.load()
   },
   computed: {
     childrenContexts () {
@@ -75,41 +71,36 @@ export default {
       }
 
       return contexts
-    },
-    source () {
-      if (this.loadedSource !== null) return this.loadedSource
-      switch (this.config.sourceType) {
-        case 'range':
-          const start = this.config.rangeStart || 0
-          const stop = this.config.rangeStop || 10
-          const step = this.config.rangeStep || 1
-          return Array(Math.ceil((stop + 1 - start) / step)).fill(start).map((x, y) => x + y * step)
-        default:
-          return this.config.in
-      }
     }
   },
-  methods: {
-    load () {
-      let loadPromise
-      if (this.config.sourceType === 'itemsWithTags' && this.config.itemTags) {
-        loadPromise = this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((d) => Promise.resolve(d.sort(compareItems)))
+  asyncComputed: {
+    source () {
+      if (this.config.cacheSource && this.sourceCache) return this.sourceCache
+      let sourceResult
+      if (this.config.sourceType === 'range') {
+        const start = this.config.rangeStart || 0
+        const stop = this.config.rangeStop || 10
+        const step = this.config.rangeStep || 1
+        sourceResult = Promise.resolve(Array(Math.ceil((stop + 1 - start) / step)).fill(start).map((x, y) => x + y * step))
+      } else if (this.config.sourceType === 'itemsWithTags' && this.config.itemTags) {
+        sourceResult = this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((d) => Promise.resolve(d.sort(compareItems)))
+        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
       } else if (this.config.sourceType === 'itemsInGroup') {
-        loadPromise = this.$oh.api.get('/rest/items/' + this.config.groupItem + '?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((i) => Promise.resolve(i.members.sort(compareItems)))
+        sourceResult = this.$oh.api.get('/rest/items/' + this.config.groupItem + '?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((i) => Promise.resolve(i.members.sort(compareItems)))
+        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
       } else if (this.config.sourceType === 'itemStateOptions') {
-        loadPromise = this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.stateDescription) ? i.stateDescription.options : []))
+        sourceResult = this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.stateDescription) ? i.stateDescription.options : []))
+        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
       } else if (this.config.sourceType === 'itemCommandOptions') {
-        loadPromise = this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.commandDescription) ? i.commandDescription.commandOptions : []))
+        sourceResult = this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.commandDescription) ? i.commandDescription.commandOptions : []))
+        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
       } else if (this.config.sourceType === 'rulesWithTags' && this.config.ruleTags) {
-        loadPromise = this.$oh.api.get('/rest/rules?summary=true' + '&tags=' + this.config.ruleTags).then((r) => Promise.resolve(r.sort(compareRules)))
+        sourceResult = this.$oh.api.get('/rest/rules?summary=true' + '&tags=' + this.config.ruleTags).then((r) => Promise.resolve(r.sort(compareRules)))
+        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
       } else {
-        this.ready = true
-        return
+        sourceResult = Promise.resolve(this.config.in)
       }
-      loadPromise.then((d) => {
-        this.loadedSource = d
-        this.ready = true
-      })
+      return sourceResult
     }
   }
 }
