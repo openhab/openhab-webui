@@ -151,6 +151,15 @@
 				height: 28px;
 			}
 		}
+		svg {
+			width: 32px;
+			height: 32px;
+			object-fit: contain;
+			html.ui-layout-condensed & {
+				width: 28px;
+				height: 28px;
+			}
+		}
 		iconify-icon {
 			font-size: 32px;
 			vertical-align: middle;

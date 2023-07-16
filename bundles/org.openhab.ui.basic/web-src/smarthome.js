@@ -361,7 +361,15 @@
 		_t.visible = !_t.formRow.classList.contains(o.formRowHidden);
 		_t.label = _t.parentNode.parentNode.querySelector(o.formLabel);
 
+		function convertToInlineSVG() {
+			this.removeEventListener("load", convertToInlineSVG);
+			if (smarthome.UI.inlineSVG) {
+				_t.getSVGIconAndReplaceWithInline(this.src, true, null);
+			}
+		}
+
 		function replaceImageWithNone() {
+			this.removeEventListener("load", convertToInlineSVG);
 			this.removeEventListener("error", replaceImageWithNone);
 			this.src = noneImageSrc;
 		}
@@ -371,36 +379,77 @@
 			_t.iconSet = splittedIconAttr[0];
 			_t.iconName = splittedIconAttr[1];
 			if (_t.icon.src !== noneImageSrc) {
+				_t.icon.addEventListener("load", convertToInlineSVG);
 				_t.icon.addEventListener("error", replaceImageWithNone);
 			}
 		}
 
+		_t.replaceIconWithInlineSVG = function(svgText) {
+			var
+				parser,
+				docSvg,
+				newIconElement,
+				dataIcon;
+
+			// Parse the SVG text and turn it into DOM nodes
+			parser = new DOMParser();
+			docSvg = parser.parseFromString(svgText, "image/svg+xml");
+			newIconElement = docSvg.querySelector("svg");
+
+			// Keep the attribute data-icon
+			dataIcon = _t.icon.getAttribute("data-icon");
+			if (dataIcon !== null) {
+				newIconElement.setAttribute("data-icon", dataIcon);
+			}
+
+			// Replace the current icon element with the built inline SVG
+			_t.iconContainer.replaceChild(newIconElement, _t.icon);
+			_t.icon = _t.parentNode.parentNode.querySelector(o.formIconSvg);
+		};
+
+		_t.getSVGIconAndReplaceWithInline = function(srcUrl, checkCurrentColor, defaultSVG) {
+			fetch(srcUrl).then(function(response) {
+				if (response.ok && response.headers.get("content-type") === "image/svg+xml") {
+					response.text().then(function(data) {
+						if (!checkCurrentColor || data.indexOf("currentColor") !== -1) {
+							_t.replaceIconWithInlineSVG(data);
+						} else if (defaultSVG !== null) {
+							_t.replaceIconWithInlineSVG(defaultSVG);
+						}
+					});
+				} else if (defaultSVG !== null) {
+					_t.replaceIconWithInlineSVG(defaultSVG);
+				}
+			}).catch(function() {
+				if (defaultSVG !== null) {
+					_t.replaceIconWithInlineSVG(defaultSVG);
+				}
+			});
+		};
+
 		_t.reloadIcon = function(state) {
+			var
+				src;
+
 			// Some widgets don't have icons
 			if (_t.icon !== null) {
-				_t.icon.addEventListener("error", replaceImageWithNone);
 				if (state.length < 200) {
-					_t.icon.setAttribute("src",
-						"/icon/" +
-						encodeURIComponent(_t.iconName) +
-						"?state=" +
-						encodeURIComponent(state) +
-						"&iconset=" +
-						encodeURIComponent(_t.iconSet) +
-						"&format=" +
-						smarthome.UI.iconType +
-						"&anyFormat=true"
-					);
+					src = "/icon/" + encodeURIComponent(_t.iconName) +
+						"?state=" + encodeURIComponent(state) +
+						"&iconset=" + encodeURIComponent(_t.iconSet) +
+						"&format=" + smarthome.UI.iconType +
+						"&anyFormat=true";
 				} else {
-					_t.icon.setAttribute("src",
-						"/icon/" +
-						encodeURIComponent(_t.iconName) +
-						"?iconset=" +
-						encodeURIComponent(_t.iconSet) +
-						"&format=" +
-						smarthome.UI.iconType +
-						"&anyFormat=true"
-					);
+					src = "/icon/" + encodeURIComponent(_t.iconName) +
+						"?iconset=" + encodeURIComponent(_t.iconSet) +
+						"&format=" + smarthome.UI.iconType +
+						"&anyFormat=true";
+				}
+				if (_t.icon.tagName.toLowerCase() === "img") {
+					_t.icon.addEventListener("error", replaceImageWithNone);
+					_t.icon.setAttribute("src", src);
+				} else if (smarthome.UI.inlineSVG) {
+					_t.getSVGIconAndReplaceWithInline(src, false, "<svg/>");
 				}
 			}
 		};
@@ -450,6 +499,7 @@
 
 		_t.destroy = function() {
 			if (_t.icon !== null) {
+				_t.icon.removeEventListener("load", convertToInlineSVG);
 				_t.icon.removeEventListener("error", replaceImageWithNone);
 			}
 
@@ -1924,6 +1974,7 @@
 		_t.loading = _t.root.querySelector(o.uiLoadingBar);
 		_t.layoutTitle = document.querySelector(o.layoutTitle);
 		_t.iconType = document.body.getAttribute(o.iconTypeAttribute);
+		_t.inlineSVG = document.body.getAttribute(o.inlineSvgAttribute) === "true";
 		_t.primaryColor = document.body.getAttribute(o.primaryColorAttribute);
 		_t.secondaryColor = document.body.getAttribute(o.secondaryColorAttribute);
 		_t.notification = document.querySelector(o.notify);
@@ -2684,6 +2735,7 @@
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",
+	inlineSvgAttribute: "data-inline-svg",
 	primaryColorAttribute: "data-primary-color",
 	secondaryColorAttribute: "data-secondary-color",
 	controlButton: "button",
@@ -2701,6 +2753,7 @@
 	formRadioControl: ".mdl-radio__button",
 	formIcon: ".mdl-form__icon",
 	formIconImg: ".mdl-form__icon img",
+	formIconSvg: ".mdl-form__icon svg",
 	formLabel: ".mdl-form__label",
 	uiLoadingBar: ".ui__loading",
 	layoutTitle: ".mdl-layout-title",
