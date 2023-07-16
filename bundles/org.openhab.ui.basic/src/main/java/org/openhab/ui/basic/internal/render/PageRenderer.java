@@ -116,6 +116,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%sitemap%", sitemap);
         snippet = snippet.replace("%htmlclass%", config.getCssClassList());
         snippet = snippet.replace("%icon_type%", ICON_TYPE);
+        snippet = snippet.replace("%inline%", config.isInlineSvgEnabled() ? "true" : "false");
         snippet = snippet.replace("%theme%", config.getTheme());
         snippet = snippet.replace("%sitemapquery%", String.format("?sitemap=%s", sitemap));
         snippet = snippet.replace("%primarycolor%", PRIMARY_COLOR);

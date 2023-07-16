@@ -37,12 +37,13 @@ public class WebAppConfig {
     private static final String DEFAULT_THEME = THEME_NAME_BRIGHT;
 
     private static final String DEFAULT_ICONIFY = "false";
-
+    private static final String DEFAULT_INLINE_SVG = "false";
     private static final String DEFAULT_WEB_AUDIO = "false";
 
     private String defaultSitemap = DEFAULT_SITEMAP;
     private String theme = DEFAULT_THEME;
     private boolean iconify = Boolean.parseBoolean(DEFAULT_ICONIFY);
+    private boolean inlineSvg = Boolean.parseBoolean(DEFAULT_INLINE_SVG);
     private boolean webAudio = Boolean.parseBoolean(DEFAULT_WEB_AUDIO);
 
     private List<String> cssClassList = new ArrayList<>();
@@ -90,6 +91,7 @@ public class WebAppConfig {
             theme = DEFAULT_THEME;
         }
         iconify = "true".equalsIgnoreCase((String) configProps.getOrDefault("enableIconify", DEFAULT_ICONIFY));
+        inlineSvg = "true".equalsIgnoreCase((String) configProps.getOrDefault("inlineSvg", DEFAULT_INLINE_SVG));
         webAudio = "true".equalsIgnoreCase((String) configProps.getOrDefault("webAudio", DEFAULT_WEB_AUDIO));
 
         applyCssClasses(configProps);
@@ -113,6 +115,10 @@ public class WebAppConfig {
 
     public boolean isIconifyEnabled() {
         return iconify;
+    }
+
+    public boolean isInlineSvgEnabled() {
+        return inlineSvg;
     }
 
     public boolean isWebAudio() {

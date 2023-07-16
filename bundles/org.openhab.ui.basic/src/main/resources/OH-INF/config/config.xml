@@ -25,6 +25,20 @@
 			</options>
 			<default>true</default>
 		</parameter>
+		<parameter name="inlineSvg" type="text" required="true">
+			<label>Inline SVG</label>
+			<description>If enabled, any SVG icon provided by the openHAB icon server will automatically be converted to an
+				inline SVG in the WEB page, allowing control of its color with the sitemap widget property "iconcolor" in
+				the case
+				where the SVG icon sets "currentColor" as the fill color. Note that this will work with custom SVG icons but not
+				with all the packaged icons from the classic iconset since they are defined with a hard-coded color palette. This
+				feature is disabled by default.</description>
+			<options>
+				<option value="true">Enable</option>
+				<option value="false">Disable</option>
+			</options>
+			<default>false</default>
+		</parameter>
 		<parameter name="enableIconify" type="text">
 			<label>Enable Iconify Icons</label>
 			<description>If enabled, the UI will render iconify icons directly by downloading them from the Internet and caching

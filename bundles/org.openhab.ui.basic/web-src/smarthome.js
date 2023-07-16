@@ -363,7 +363,9 @@
 
 		function convertToInlineSVG() {
 			this.removeEventListener("load", convertToInlineSVG);
-			_t.getSVGIconAndReplaceWithInline(this.src, true, null);
+			if (smarthome.UI.inlineSVG) {
+				_t.getSVGIconAndReplaceWithInline(this.src, true, null);
+			}
 		}
 
 		function replaceImageWithNone() {
@@ -406,7 +408,6 @@
 		};
 
 		_t.getSVGIconAndReplaceWithInline = function(srcUrl, checkCurrentColor, defaultSVG) {
-			// fetch(srcUrl, { cache: "force-cache" }).then(function(response) {
 			fetch(srcUrl).then(function(response) {
 				if (response.ok && response.headers.get("content-type") === "image/svg+xml") {
 					response.text().then(function(data) {
@@ -447,7 +448,7 @@
 				if (_t.icon.tagName.toLowerCase() === "img") {
 					_t.icon.addEventListener("error", replaceImageWithNone);
 					_t.icon.setAttribute("src", src);
-				} else {
+				} else if (smarthome.UI.inlineSVG) {
 					_t.getSVGIconAndReplaceWithInline(src, false, "<svg/>");
 				}
 			}
@@ -1973,6 +1974,7 @@
 		_t.loading = _t.root.querySelector(o.uiLoadingBar);
 		_t.layoutTitle = document.querySelector(o.layoutTitle);
 		_t.iconType = document.body.getAttribute(o.iconTypeAttribute);
+		_t.inlineSVG = document.body.getAttribute(o.inlineSvgAttribute) === "true";
 		_t.primaryColor = document.body.getAttribute(o.primaryColorAttribute);
 		_t.secondaryColor = document.body.getAttribute(o.secondaryColorAttribute);
 		_t.notification = document.querySelector(o.notify);
@@ -2733,6 +2735,7 @@
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",
+	inlineSvgAttribute: "data-inline-svg",
 	primaryColorAttribute: "data-primary-color",
 	secondaryColorAttribute: "data-secondary-color",
 	controlButton: "button",
