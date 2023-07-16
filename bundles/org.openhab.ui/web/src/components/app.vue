@@ -24,7 +24,7 @@
           <f7-icon slot="media" ios="f7:menu" aurora="f7:menu" md="material:list"></f7-icon>
         </f7-list-item> -->
           <f7-list-item v-for="page in pages" :animate="false" :key="page.uid"
-                        :class="{ currentsection: currentUrl.indexOf('/page/' + page.uid) >= 0 }"
+                        :class="{ currentsection: currentUrl === '/page/' + page.uid || currentUrl.indexOf('/page/' + page.uid + '/') >= 0 }"
                         :link="'/page/' + page.uid"
                         :title="page.config.label" view=".view-main" panel-close>
             <f7-icon slot="media" :f7="pageIcon(page)" />
