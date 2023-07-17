@@ -7,6 +7,7 @@
   "dialogs.close": "Aizvērt",
   "dialogs.copy": "Kopēt",
   "dialogs.delete": "Dzēst",
+  "dialogs.reload": "Pārlādēt",
   "dialogs.search": "Meklēt",
   "dialogs.search.items": "Meklēt lietas",
   "dialogs.search.things": "Meklēt lietas",
@@ -39,5 +40,7 @@
   "sidebar.tip.signIn": "Pierakstieties kā administrators, lai piekļūtu iestatījumiem",
   "page.navbar.back": "Atpakaļ",
   "page.navbar.edit": "Rediģēt",
-  "admin.notTranslatedYet": "Administrēšanas vietne vēl nav iztulkota."
+  "admin.notTranslatedYet": "Administrēšanas vietne vēl nav iztulkota.",
+  "error.communicationFailure": "Komunikācijas kļūda",
+  "error.itemNotFound": "%s nav atrasts"
 }
