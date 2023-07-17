@@ -42,5 +42,5 @@
   "page.navbar.edit": "Editer",
   "admin.notTranslatedYet": "Les écrans d'administration ne sont pas traduits pour le moment.",
   "error.communicationFailure": "Erreur de communication",
-  "error.itemNotFound": "%s  non trouvé"
+  "error.itemNotFound": "%s non trouvé"
 }
