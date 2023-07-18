@@ -21,6 +21,16 @@
     <f7-tabs>
       <!-- Design Tab -->
       <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+        <f7-block class="block-narrow">
+          <f7-col>
+            <f7-block-footer>
+              Persistence stores data over time, which can be retrieved at a later time, e.g. to restore Item states after startup, or to display graphs in the UI.
+              <f7-link external color="blue" target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/persistence`">
+                Learn more about persistence.
+              </f7-link>
+            </f7-block-footer>
+          </f7-col>
+        </f7-block>
         <!-- Skeletons for not ready -->
         <f7-block v-if="!ready" class="block-narrow">
           <f7-col class="modules">
@@ -73,7 +83,7 @@
               <f7-list :media-list="isEditable" swipeout>
                 <f7-list-item v-for="(cfg, index) in persistence.configs" :key="cfg.items.join()"
                               :title="cfg.items.join(', ')"
-                              :footer="cfg.strategies.join(', ')" :link="isEditable"
+                              :footer="cfg.strategies.join(', ') + (cfg.filters.length > 0 ? ' - ' + cfg.filters.join(', ') : '')" :link="isEditable"
                               @click.native="(ev) => editConfiguration(ev, index, cfg)" swipeout>
                   <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled"
                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
@@ -138,7 +148,7 @@
                 </f7-block-title>
                 <f7-list :media-list="isEditable" swipeout>
                   <f7-list-item v-for="(f, index) in persistence[ft.name]" :key="f.name" :title="f.name"
-                                :link="isEditable"
+                                :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''" :link="isEditable"
                                 @click.native="(ev) => editFilter(ev, ft, index, f)" swipeout>
                     <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled"
                              icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
@@ -281,7 +291,8 @@ export default {
               required: false,
               type: 'STRING'
             }
-          ]
+          ],
+          footerFn: (f) => f.relative ? f.value + ' %' : (f.unit ? f.value + ' ' + f.unit : f.value)
         },
         {
           name: 'timeFilters',
@@ -297,13 +308,22 @@ export default {
             },
             {
               advanced: false,
-              description: 'Time unit (defaults to seconds <code>s</code>)',
+              description: 'Time unit (defaults to seconds)',
               label: 'Unit',
+              limitToOptions: true,
+              multiple: false,
               name: 'unit',
+              options: [
+                { label: 'seconds', value: 's' },
+                { label: 'minutes', value: 'm' },
+                { label: 'hours', value: 'h' },
+                { label: 'days', value: 'd' }
+              ],
               required: false,
               type: 'STRING'
             }
-          ]
+          ],
+          footerFn: (f) => f.value + ' ' + (f.unit || 's')
         },
         {
           name: 'equalsFilters',
@@ -318,7 +338,8 @@ export default {
               type: ''
             },
             filterInvertedParameter
-          ]
+          ],
+          footerFn: (f) => (f.inverted === true ? 'not ' : '') + 'equals ' + f.values.join(', ')
         },
         {
           name: 'includeFilters',
@@ -349,7 +370,8 @@ export default {
               type: 'STRING'
             },
             filterInvertedParameter
-          ]
+          ],
+          footerFn: (f) => (f.inverted === true ? ']' : '[') + f.lower + ';' + f.upper + (f.inverted === true ? '[' : ']' + (f.unit ? ' ' + f.unit : ''))
         }
       ],
       notEditableMgs: 'This persistence configuration is not editable because it has been provisioned from a file.'
@@ -428,6 +450,10 @@ export default {
       this.$oh.api.get('/rest/persistence/' + this.serviceId).then((data) => {
         this.$set(this, 'persistence', data)
         this.savedPersistence = cloneDeep(this.persistence)
+        // Ensure arrays for all filter types defined in the filterTypes object are existent
+        this.filterTypes.forEach((ft) => {
+          if (!this.persistence[ft.name]) this.persistence[ft.name] = []
+        })
         this.loading = false
         this.ready = true
       }).catch((e) => {
@@ -444,10 +470,6 @@ export default {
       if (!this.isEditable) return
       if (this.currentTab === 'code') this.fromYaml()
 
-      // Ensure arrays for all filter types defined in the filterTypes object are existent
-      this.filterTypes.forEach((ft) => {
-        if (!this.persistence[ft.name]) this.persistence[ft.name] = []
-      })
       // Ensure relative is set on threshold filter, otherwise the save request fails with a 500
       this.persistence.thresholdFilters.forEach((f) => {
         if (f.relative === undefined) f.relative = false
@@ -531,7 +553,7 @@ export default {
     },
     saveConfiguration (index, configuration) {
       const idx = this.persistence.configs.findIndex((cfg) => cfg.items.join() === configuration.items.join())
-      if (idx !== -1 && idx !== index) {
+      if (index === null && idx !== -1) {
         this.$f7.dialog.alert('A configuration for this/these Item(s) already exists!')
         return
       }
@@ -560,7 +582,7 @@ export default {
     },
     saveCronStrategy (index, cronStrategy) {
       const idx = this.persistence.cronStrategies.findIndex((cs) => cs.name === cronStrategy.name)
-      if ((idx !== -1 && idx !== index) || this.predefinedStrategies.includes(cronStrategy.name)) {
+      if ((index === null && idx !== -1) || this.predefinedStrategies.includes(cronStrategy.name)) {
         this.$f7.dialog.alert('A (cron) strategy with the same name already exists!')
         return
       }
