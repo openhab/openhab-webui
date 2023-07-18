@@ -311,6 +311,7 @@ export default {
       if (!component.slots.masonry || !component.slots.masonry.length) {
         this.$set(this.page.slots, 'masonry', [{
           component: 'oh-masonry',
+          config: {},
           slots: { default: [] }
         }])
       }
