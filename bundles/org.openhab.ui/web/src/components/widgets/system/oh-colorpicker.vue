@@ -46,7 +46,7 @@ export default {
         color[2] = color[2] / 100
         return color
       }
-      return null
+      return JSON.parse(this.config.defaultColor) || null
     }
   },
   watch: {
