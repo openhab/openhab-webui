@@ -21,6 +21,16 @@
     <f7-tabs>
       <!-- Design Tab -->
       <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+        <f7-block class="block-narrow">
+          <f7-col>
+            <f7-block-footer>
+              Persistence stores data over time, which can be retrieved at a later time, e.g. to restore Item states after startup, or to display graphs in the UI.
+              <f7-link external color="blue" target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/persistence`">
+                Learn more about persistence.
+              </f7-link>
+            </f7-block-footer>
+          </f7-col>
+        </f7-block>
         <!-- Skeletons for not ready -->
         <f7-block v-if="!ready" class="block-narrow">
           <f7-col class="modules">
@@ -162,12 +172,9 @@
               </div>
             </div>
           </f7-col>
-          <f7-col>
+          <f7-col v-if="isEditable && !newPersistence">
             <f7-list>
-              <f7-list-button color="blue" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/docs/configuration/persistence.html`" external target="_blank">
-                Open documentation
-              </f7-list-button>
-              <f7-list-button v-if="isEditable && !newPersistence" color="red" @click="deletePersistence">
+              <f7-list-button color="red" @click="deletePersistence">
                 Remove persistence configuration
               </f7-list-button>
             </f7-list>
