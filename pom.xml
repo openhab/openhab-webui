@@ -72,9 +72,11 @@
     <jackson.version>2.14.1</jackson.version>
     <karaf.version>4.4.3</karaf.version>
     <ohc.version>4.0.0-SNAPSHOT</ohc.version>
-    <sat.version>0.13.0</sat.version>
-    <spotless.version>2.28.0</spotless.version>
-    <spotless.eclipse.version>4.21.0</spotless.eclipse.version>
+    <sat.version>0.15.0</sat.version>
+    <spotless.version>2.37.0</spotless.version>
+    <!-- Eclipse Java formatter version 4.26+ does not check test files -->
+    <spotless.eclipse.version>4.25.0</spotless.eclipse.version>
+    <spotless.eclipse.wtp.version>4.21.0</spotless.eclipse.wtp.version>
   </properties>
 
   <build>
@@ -473,7 +475,22 @@ Import-Package: \\
                   <files>
                     <file>openhab_wst_xml_files.prefs</file>
                   </files>
-                  <version>${spotless.eclipse.version}</version>
+                  <version>${spotless.eclipse.wtp.version}</version>
+                </eclipseWtp>
+                <trimTrailingWhitespace/>
+                <endWithNewline/>
+              </format>
+              <format>
+                <!-- feature.xml -->
+                <includes>
+                  <include>**/src/main/feature/feature.xml</include>
+                </includes>
+                <eclipseWtp>
+                  <type>XML</type>
+                  <files>
+                    <file>openhab_wst_feature_file.prefs</file>
+                  </files>
+                  <version>${spotless.eclipse.wtp.version}</version>
                 </eclipseWtp>
                 <trimTrailingWhitespace/>
                 <endWithNewline/>
@@ -488,7 +505,7 @@ Import-Package: \\
                   <files>
                     <file>openhab_wst_pom_file.prefs</file>
                   </files>
-                  <version>${spotless.eclipse.version}</version>
+                  <version>${spotless.eclipse.wtp.version}</version>
                 </eclipseWtp>
                 <trimTrailingWhitespace/>
                 <endWithNewline/>
