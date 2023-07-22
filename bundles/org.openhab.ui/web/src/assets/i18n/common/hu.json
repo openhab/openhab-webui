@@ -7,6 +7,7 @@
   "dialogs.close": "Bezárás",
   "dialogs.copy": "Másolás",
   "dialogs.delete": "Törlés",
+  "dialogs.reload": "Újratöltés",
   "dialogs.search": "Keresés",
   "dialogs.search.items": "Tétel keresése",
   "dialogs.search.things": "Dolgok keresése",
@@ -39,5 +40,7 @@
   "sidebar.tip.signIn": "A beállítások módosításához lépjen be rendszergazdai azonosítóval",
   "page.navbar.back": "Vissza",
   "page.navbar.edit": "Szerkesztés",
-  "admin.notTranslatedYet": "Az adminisztrációs felület még nincs lefordítva."
+  "admin.notTranslatedYet": "Az adminisztrációs felület még nincs lefordítva.",
+  "error.communicationFailure": "Kommunikációs hiba",
+  "error.itemNotFound": "%s nem található"
 }

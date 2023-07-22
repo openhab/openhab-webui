@@ -17,6 +17,8 @@
   "pages.text": "Szerkesszen oldalakat bizonyos információk megjelenítéséhez és elemek kezeléséhez. Sokféle oldalt hozhat létre: diagram, térkép, emelet terv...<br><br>Klikkeljen az alsó gombra az első oldal létrehozásához.",
   "rules.title": "Nincsenek még szabályok",
   "rules.text": "Otthona automatizálásának alapvető építőkövei a szabályok - megadják, mely akciók kerülnek végrehajtásra bizonyos események bekövetkeztekor. <br><br>A lenti gombbal hozhatja létre az első szabályt; bonyolultabb forgatókönyv megadásához létrehozhat programokat a beállító mappában is.",
+  "scenes.title": "Nincsenek még jelenetek",
+  "scenes.text": "A jelenetek olyan szabályok, amelyek parancsokat küldenek az elemek egy halmazának a kívánt állapotba való visszaállításához.<br />Igény szerint futtathatja őket, vagy meghívhatja őket más szabályokból.<br><br>Hozza létre első jelenetét az alábbi gombbal.",
   "scripts.title": "Nincsenek még programok",
   "scripts.text": "A programok speciális szabályok, melyek nincsenek eseményhez kötve és modul szerűen hajtanak végre utasításokat.<br />Más szabályokból szükség szerint futtathatja őket.<br><br>Adja hozzá az első programot a lenti gombra klikkelve.",
   "schedule.title": "Nincs a ütemezőben semmi",
