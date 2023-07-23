@@ -28,7 +28,7 @@
       <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" />
     </div>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" href="https://www.openhab.org/link/google-assistant">
+      <f7-link color="blue" external target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/google-assistant`">
         Google Assistant Integration Documentation
       </f7-link>
     </p>
