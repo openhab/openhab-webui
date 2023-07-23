@@ -642,7 +642,7 @@ export default {
       const filterName = this.persistence[module][index].name
       this.persistence.configs.forEach((cfg) => {
         const i = cfg.filters.findIndex((f) => f === filterName)
-        cfg.filters.splice(i, 1)
+        if (i > -1) cfg.filters.splice(i, 1)
       })
       this.deleteModule(ev, module, index)
     },
