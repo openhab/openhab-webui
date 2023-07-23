@@ -25,7 +25,7 @@
           <f7-col>
             <f7-block-footer>
               Persistence stores data over time, which can be retrieved at a later time, e.g. to restore Item states after startup, or to display graphs in the UI.
-              <f7-link external color="blue" target="_blank" :href="`https://${$store.state.runtimeInfo && $store.state.runtimeInfo.buildString !== 'Release Build' ? 'next' : 'www'}.openhab.org/link/persistence`">
+              <f7-link external color="blue" target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/persistence`">
                 Learn more about persistence.
               </f7-link>
             </f7-block-footer>
