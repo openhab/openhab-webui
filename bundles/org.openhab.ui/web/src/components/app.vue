@@ -475,7 +475,8 @@ export default {
               })
             }
           } else {
-            this.$f7.dialog.alert('openHAB REST API connection failed with error ' + err.message || err.status)
+            alert('openHAB REST API connection failed with error: ' + err.message || err.status) // Framework7 alert does not work, use Window alert() instead
+            return Promise.reject('openHAB REST API connection failed with error: ' + err.message || err.status)
           }
         })
         .then((res) => res.data)
