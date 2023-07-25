@@ -261,7 +261,7 @@ export default {
 
       predefinedStrategies: ['everyChange', 'everyUpdate', 'restoreOnStartup'],
       // Filter configuration is completely based on these definitions, when adding new filters, no code needs to be updated.
-      // However, please note that some validation and checks are in place for some filter types in save(), editFilter(), saveFilter() and filter-popup.vue
+      // However, please note that some validation and checks are in place for some filter types in editFilter(), saveFilter() and filter-popup.vue
       filterTypes: [
         {
           name: 'thresholdFilters',
@@ -470,17 +470,6 @@ export default {
       if (!this.isEditable) return
       if (this.currentTab === 'code') this.fromYaml()
 
-      // Ensure relative is set on threshold filter, otherwise the save request fails with a 500
-      this.persistence.thresholdFilters.forEach((f) => {
-        if (f.relative === undefined) f.relative = false
-      })
-      // Ensure inverted is set for equals and include filter, otherwise the save request fails with a 500
-      this.persistence.equalsFilters.forEach((f) => {
-        if (f.inverted === undefined) f.inverted = false
-      })
-      this.persistence.includeFilters.forEach((f) => {
-        if (f.inverted === undefined) f.inverted = false
-      })
       // Update the code tab
       if (this.persistenceYaml) this.toYaml()
 
