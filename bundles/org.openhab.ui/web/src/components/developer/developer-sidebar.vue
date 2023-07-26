@@ -557,7 +557,7 @@ export default {
           Promise.resolve(this.cachedObjects[3])
         ] : [
           this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.*'),
-          this.$oh.api.get('/rest/things?staticDataOnly=true'),
+          this.$oh.api.get('/rest/things?summary=true'),
           this.$oh.api.get('/rest/rules?summary=false'),
           Promise.resolve(this.$store.getters.pages)
         ]
