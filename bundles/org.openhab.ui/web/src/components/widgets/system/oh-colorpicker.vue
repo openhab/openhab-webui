@@ -126,8 +126,8 @@ export default {
     },
     areHSBEqual (hsb1, hsb2) {
       // for the purposes of NOT entering an endless loop, we consider transient non-HSB values to be equal
-      if (hsb1.length !== hsb2.length) return true
-      if (hsb1.length !== 3 || hsb2.length !== 3) return true
+      if (hsb1.length !== hsb2.length) return false
+      if (hsb1.length !== 3 || hsb2.length !== 3) return false
       return (hsb1[0] === hsb2[0] && hsb1[1] === hsb2[1] && hsb1[2] === hsb2[2])
     },
     roundedHSB (state) {
