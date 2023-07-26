@@ -46,7 +46,14 @@ export default {
         color[2] = color[2] / 100
         return color
       }
-      return JSON.parse(this.config.defaultColor) || null
+      if (this.config.defaultColor) {
+        try {
+          return JSON.parse(this.config.defaultColor)
+        } catch {
+          return null
+        }
+      }
+      return null
     }
   },
   watch: {
