@@ -26,7 +26,11 @@ const actions = {
           state.Properties = tags.filter(t => t.uid.startsWith('Property_')).map(t => t.name)
           // Store i18n labels
           Object.values(tags).forEach(t => {
-            if (t.label) state.Labels[t.name] = t.label
+            if (t.label) {
+              state.Labels[t.name] = t.label
+            } else {
+              state.Labels[t.name] = t.name
+            }
           })
           // Save as i18n messages
           i18n.mergeLocaleMessage(this.getters.locale, state.Labels)
