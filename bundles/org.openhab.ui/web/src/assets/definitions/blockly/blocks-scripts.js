@@ -211,6 +211,8 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         if (this.methodName === 'itemState' || this.methodName === 'oldItemState' || this.methodName === 'itemCommand') {
           if (asType === 'asNumber') {
             this.setOutput(true, 'Number')
+          } else if (asType === 'asQuantity') {
+            this.setOutput(true, 'oh_quantity')
           } else {
             this.setOutput(true, 'String')
           }
@@ -228,7 +230,8 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         if (!this.getInput('asTypeInput')) {
           this.appendDummyInput('asTypeInput').appendField(new Blockly.FieldDropdown([
             ['as String', 'asString'],
-            ['as Number', 'asNumber']
+            ['as Number', 'asNumber'],
+            ['as Quantity', 'asQuantity']
           ]),
           'asType')
         }
@@ -245,8 +248,13 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
     const type = block.getFieldValue('asType')
     if (contextInfo === 'ruleUID') return ['ctx.ruleUID', javascriptGenerator.ORDER_ATOMIC]
     if (contextInfo === 'itemState' || contextInfo === 'oldItemState' || contextInfo === 'itemCommand') {
-      if (type === 'asNumber') return [`parseFloat(event.${contextInfo}.toString())`, javascriptGenerator.ORDER_ATOMIC]
-      return [`event.${contextInfo}.toString()`, javascriptGenerator.ORDER_ATOMIC]
+      if (type === 'asNumber') {
+        return [`parseFloat(event.${contextInfo}.toString())`, javascriptGenerator.ORDER_ATOMIC]
+      } else if (type === 'asQuantity') {
+        return [`Quantity(event.${contextInfo}.toString())`, javascriptGenerator.ORDER_ATOMIC]
+      } else {
+        return [`event.${contextInfo}.toString()`, javascriptGenerator.ORDER_ATOMIC]
+      }
     }
     return [`event.${contextInfo}`, javascriptGenerator.ORDER_ATOMIC]
   }
