@@ -382,7 +382,8 @@ export default {
       showDeveloperSidebar: false,
       currentUrl: '',
 
-      communicationFailureToast: null
+      communicationFailureToast: null,
+      communicationFailureTimeoutId: null
     }
   },
   computed: {
@@ -785,9 +786,16 @@ export default {
         if (mutation.type === 'sseConnected') {
           if (!window.OHApp && this.$f7) {
             if (mutation.payload === false) {
-              if (this.communicationFailureToast === null) this.communicationFailureToast = this.displayFailureToast(this.$t('error.communicationFailure'), true, false)
-              this.communicationFailureToast.open()
+              if (this.communicationFailureToast === null) {
+                this.communicationFailureTimeoutId = setTimeout(() => {
+                  if (this.communicationFailureToast !== null) return
+                  this.communicationFailureToast = this.displayFailureToast(this.$t('error.communicationFailure'), true, false)
+                  this.communicationFailureToast.open()
+                  this.communicationFailureTimeoutId = null
+                }, 1000)
+              }
             } else if (mutation.payload === true) {
+              if (this.communicationFailureTimeoutId !== null) clearTimeout(this.communicationFailureTimeoutId)
               if (this.communicationFailureToast !== null) {
                 this.communicationFailureToast.close()
                 this.communicationFailureToast.destroy()
