@@ -1,11 +1,13 @@
 <template>
-  <div v-if="!config.openIn" ref="container" style="width: 100%" />
-  <div v-else ref="swatch" :class="config.swatchClasses || ['elevation-4', 'elevation-hover-8', 'elevation-pressed-1', 'elevation-transition']" :style="{
+  <div :style="config.style">
+    <div v-if="!config.openIn" ref="container" style="width: 100%" />
+    <div v-else ref="swatch" :class="config.swatchClasses || ['elevation-4', 'elevation-hover-8', 'elevation-pressed-1', 'elevation-transition']" :style="{
     width: (config.swatchSize) ? config.swatchSize + 'px' : '32px',
     height: (config.swatchSize) ? config.swatchSize + 'px' : '32px',
     borderRadius: (config.swatchBorderRadius) ? config.swatchBorderRadius + 'px' : '6px',
     cursor: 'pointer'
-  }" />
+    }" />
+  </div>
 </template>
 
 <script>
