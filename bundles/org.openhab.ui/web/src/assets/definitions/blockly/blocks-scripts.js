@@ -195,8 +195,8 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#retrieve-rule-context-information')
     },
     onchange: function (event) {
-      let contextInfo = this.getFieldValue('contextInfo')
-      let asType = this.getFieldValue('asType')
+      const contextInfo = this.getFieldValue('contextInfo')
+      const asType = this.getFieldValue('asType')
       if (this.contextInfo !== contextInfo) {
         this.contextInfo = contextInfo
         if (contextInfo === 'itemName') {
@@ -242,8 +242,12 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
 
   javascriptGenerator['oh_context_info'] = function (block) {
     const contextInfo = block.getFieldValue('contextInfo')
-    if (contextInfo === 'ruleUID') { return ['ctx.ruleUID', javascriptGenerator.ORDER_ATOMIC] }
-    if (contextInfo === 'itemState' || contextInfo === 'oldItemState' || contextInfo === 'itemCommand') { return [`event.${contextInfo}.toString()`, javascriptGenerator.ORDER_ATOMIC] }
+    const type = block.getFieldValue('asType')
+    if (contextInfo === 'ruleUID') return ['ctx.ruleUID', javascriptGenerator.ORDER_ATOMIC]
+    if (contextInfo === 'itemState' || contextInfo === 'oldItemState' || contextInfo === 'itemCommand') {
+      if (type === 'asNumber') return [`parseFloat(event.${contextInfo}.toString())`, javascriptGenerator.ORDER_ATOMIC]
+      return [`event.${contextInfo}.toString()`, javascriptGenerator.ORDER_ATOMIC]
+    }
     return [`event.${contextInfo}`, javascriptGenerator.ORDER_ATOMIC]
   }
 
