@@ -171,7 +171,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
           ['received command', 'itemCommand'],
           ['triggered channel', 'channel'],
           ['triggered event', 'event']
-        ]),
+        ], this.handleTypeSelection.bind(this)),
         'contextInfo')
       this.contextInfo = this.getFieldValue('contextInfo')
       this.setInputsInline(true)
@@ -195,15 +195,49 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#retrieve-rule-context-information')
     },
     onchange: function (event) {
-      let contextInfo = this.getFieldValue('contextInfo')
+      const contextInfo = this.getFieldValue('contextInfo')
+      const asType = this.getFieldValue('asType')
       if (this.contextInfo !== contextInfo) {
         this.contextInfo = contextInfo
         if (contextInfo === 'itemName') {
           this.setOutput(true, 'oh_item')
-          console.log('type = oh_item')
         } else {
           this.setOutput(true, 'String')
-          console.log('type = State String')
+        }
+      }
+
+      if (this.asType !== asType) {
+        this.asType = asType
+        if (this.methodName === 'itemState' || this.methodName === 'oldItemState' || this.methodName === 'itemCommand') {
+          if (asType === 'asNumber') {
+            this.setOutput(true, 'Number')
+          } else if (asType === 'asQuantity') {
+            this.setOutput(true, 'oh_quantity')
+          } else {
+            this.setOutput(true, 'String')
+          }
+        }
+      }
+    },
+    handleTypeSelection: function (methodName) {
+      if (this.methodName !== methodName) {
+        this.methodName = methodName
+        this.updateShape()
+      }
+    },
+    updateShape: function () {
+      if (this.methodName === 'itemState' || this.methodName === 'oldItemState' || this.methodName === 'itemCommand') {
+        if (!this.getInput('asTypeInput')) {
+          this.appendDummyInput('asTypeInput').appendField(new Blockly.FieldDropdown([
+            ['as String', 'asString'],
+            ['as Number', 'asNumber'],
+            ['as Quantity', 'asQuantity']
+          ]),
+          'asType')
+        }
+      } else {
+        if (this.getInput('asTypeInput')) {
+          this.removeInput('asTypeInput')
         }
       }
     }
@@ -211,7 +245,17 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
 
   javascriptGenerator['oh_context_info'] = function (block) {
     const contextInfo = block.getFieldValue('contextInfo')
+    const type = block.getFieldValue('asType')
     if (contextInfo === 'ruleUID') return ['ctx.ruleUID', javascriptGenerator.ORDER_ATOMIC]
+    if (contextInfo === 'itemState' || contextInfo === 'oldItemState' || contextInfo === 'itemCommand') {
+      if (type === 'asNumber') {
+        return [`parseFloat(event.${contextInfo}.toString())`, javascriptGenerator.ORDER_ATOMIC]
+      } else if (type === 'asQuantity') {
+        return [`Quantity(event.${contextInfo}.toString())`, javascriptGenerator.ORDER_ATOMIC]
+      } else {
+        return [`event.${contextInfo}.toString()`, javascriptGenerator.ORDER_ATOMIC]
+      }
+    }
     return [`event.${contextInfo}`, javascriptGenerator.ORDER_ATOMIC]
   }
 
