@@ -10,7 +10,7 @@
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
         <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseScriptCategory">
           <f7-icon size="35" f7="doc_plaintext" class="margin" />
-          Run<br>Script
+          Inline<br>Script
         </f7-link>
       </f7-col>
     </f7-row>
@@ -18,7 +18,7 @@
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
         <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseRulesCategory">
           <f7-icon size="35" f7="wand_stars" class="margin" />
-          Other<br>Rules
+          Scenes, Scripts<br>& Rules
         </f7-link>
       </f7-col>
       <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
@@ -111,8 +111,8 @@
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'rules'">
     <f7-list>
-      <f7-list-item radio :checked="rulesEventType === 'run'" name="rulesEventType" title="run these rule(s)" @click="updateRulesEventType('run')" />
-      <f7-list-item radio :checked="rulesEventType === 'enable'" name="rulesEventType" title="enable or disable these rule(s)" @click="updateRulesEventType('enable')" />
+      <f7-list-item radio :checked="rulesEventType === 'run'" name="rulesEventType" title="run" @click="updateRulesEventType('run')" />
+      <f7-list-item radio :checked="rulesEventType === 'enable'" name="rulesEventType" title="enable or disable" @click="updateRulesEventType('enable')" />
     </f7-list>
     <config-sheet v-if="currentModuleType" :key="currentModule.id"
                   :parameterGroups="[]"
