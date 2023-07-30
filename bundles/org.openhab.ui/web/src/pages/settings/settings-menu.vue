@@ -60,6 +60,8 @@
               :footer="objectsSubtitles.pages">
               <f7-icon slot="media" f7="tv" color="gray" />
             </f7-list-item>
+          </f7-list>
+          <f7-list media-list class="search-list">
             <f7-list-item
               v-if="$store.getters.apiEndpoint('transformations')"
               media-item
