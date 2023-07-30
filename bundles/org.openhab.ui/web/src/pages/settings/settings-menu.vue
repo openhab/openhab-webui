@@ -81,6 +81,7 @@
               media-item
               link="rules/"
               title="Rules"
+              :after="rulesCount"
               badge-color="blue"
               :footer="objectsSubtitles.rules">
               <f7-icon slot="media" f7="wand_stars" color="gray" />
@@ -89,6 +90,7 @@
               media-item
               link="scenes/"
               title="Scenes"
+              :after="scenesCount"
               badge-color="blue"
               :footer="objectsSubtitles.scenes">
               <f7-icon slot="media" f7="film" color="gray" />
@@ -97,6 +99,7 @@
               media-item
               link="scripts/"
               title="Scripts"
+              :after="scriptsCount"
               badge-color="blue"
               :footer="objectsSubtitles.scripts">
               <f7-icon slot="media" f7="doc_plaintext" color="gray" />
@@ -185,7 +188,10 @@ export default {
       thingsCount: '',
       itemsCount: '',
       transformationsCount: '',
-      sitemapsCount: 0
+      sitemapsCount: 0,
+      rulesCount: '',
+      scenesCount: '',
+      scriptsCount: ''
     }
   },
   computed: {
@@ -222,7 +228,14 @@ export default {
       if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => { this.thingsCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.itemsCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('ui')) this.$oh.api.get('/rest/ui/components/system:sitemap').then((data) => { this.sitemapsCount = data.length })
-      if (this.$store.getters.apiEndpoint('transformations')) this.$oh.api.get('/rest/transformations').then((data) => { this.transformationsCount = data.length })
+      if (this.$store.getters.apiEndpoint('transformations')) this.$oh.api.get('/rest/transformations').then((data) => { this.transformationsCount = data.length.toString() })
+      if (this.$store.getters.apiEndpoint('rules')) {
+        this.$oh.api.get('/rest/rules?staticDataOnly=true').then((data) => {
+          this.rulesCount = data.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0).length.toString()
+          this.scenesCount = data.filter((r) => r.tags.indexOf('Scene') >= 0).length.toString()
+          this.scriptsCount = data.filter((r) => r.tags.indexOf('Script') >= 0).length.toString()
+        })
+      }
     },
     navigateToStore (tab) {
       this.$f7.views.main.router.navigate('addons', { props: { initialTab: tab } })
