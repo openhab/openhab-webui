@@ -16,7 +16,7 @@
         search-in=".item-title"
         :disable-button="!$theme.aurora" />
     </f7-navbar>
-    <f7-block class="block-narrow after-big-title settings-menu" v-show="servicesLoaded">
+    <f7-block class="block-narrow settings-menu" v-show="servicesLoaded && addonsLoaded">
       <f7-row>
         <f7-col width="100" medium="50">
           <f7-block-title>Configuration</f7-block-title>
@@ -111,7 +111,7 @@
             </f7-list-item>
           </f7-list>
           <f7-block-title v-if="$store.getters.apiEndpoint('addons')">
-            Add-ons
+            Add-on Store
           </f7-block-title>
           <f7-list media-list class="search-list"
                    v-if="$store.getters.apiEndpoint('addons')">
@@ -127,15 +127,29 @@
             </f7-list-item>
           </f7-list>
         </f7-col>
-        <f7-col width="100" medium="50" v-if="$store.getters.apiEndpoint('services') && servicesLoaded">
-          <f7-block-title>System Services</f7-block-title>
-          <f7-list class="search-list">
-            <f7-list-item
-              v-for="service in systemServices"
-              :key="service.id"
-              :link="'services/' + service.id"
-              :title="service.label" />
-          </f7-list>
+        <f7-col width="100" medium="50">
+          <div v-if="$store.getters.apiEndpoint('services') && servicesLoaded">
+            <f7-block-title>System Settings</f7-block-title>
+            <f7-list class="search-list">
+              <f7-list-item
+                v-for="service in systemServices"
+                :key="service.id"
+                :link="'services/' + service.id"
+                :title="service.label" />
+            </f7-list>
+          </div>
+          <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded">
+            <f7-block-title>
+              Add-on Settings
+            </f7-block-title>
+            <f7-list class="search-list">
+              <f7-list-item
+                v-for="a in addonsInstalled"
+                :key="a.uid"
+                :link="'addons/' + a.uid + '/config'"
+                :title="a.label" />
+            </f7-list>
+          </div>
         </f7-col>
       </f7-row>
       <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
@@ -154,6 +168,7 @@ export default {
       addonsLoaded: false,
       servicesLoaded: false,
       addonStoreTabShortcuts: AddonStoreTabShortcuts,
+      addonsInstalled: [],
       systemServices: [],
       objectsSubtitles: {
         things: 'Manage the physical layer',
@@ -189,12 +204,16 @@ export default {
       if (!this.apiEndpoints) return
 
       const servicesPromise = (this.$store.getters.apiEndpoint('services')) ? this.$oh.api.get('/rest/services') : Promise.resolve([])
-      const addonsPromise = (this.$store.getters.apiEndpoint('addons')) ? this.$oh.api.get('/rest/addons/types') : Promise.resolve([])
+      const addonsPromise = (this.$store.getters.apiEndpoint('addons')) ? this.$oh.api.get('/rest/addons') : Promise.resolve([])
 
       // can be done in parallel!
       servicesPromise.then((data) => {
         this.systemServices = data.filter(s => s.category === 'system')
         this.servicesLoaded = true
+      })
+      addonsPromise.then((data) => {
+        this.addonsInstalled = data.filter(a => a.installed === true)
+        this.addonsLoaded = true
       })
     },
     loadCounters () {
