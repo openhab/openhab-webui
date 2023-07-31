@@ -375,6 +375,7 @@
 		}
 
 		if (_t.icon !== null) {
+			_t.staticIcon = _t.icon.getAttribute(o.staticAttribute) === "true";
 			splittedIconAttr = _t.icon.getAttribute(o.iconAttribute).split(":");
 			_t.iconSet = splittedIconAttr[0];
 			_t.iconName = splittedIconAttr[1];
@@ -432,7 +433,7 @@
 				src;
 
 			// Some widgets don't have icons
-			if (_t.icon !== null) {
+			if (_t.icon !== null && !_t.staticIcon) {
 				if (state.length < 200) {
 					src = "/icon/" + encodeURIComponent(_t.iconName) +
 						"?state=" + encodeURIComponent(state) +
@@ -2735,6 +2736,7 @@
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",
+	staticAttribute: "data-static",
 	inlineSvgAttribute: "data-inline-svg",
 	primaryColorAttribute: "data-primary-color",
 	secondaryColorAttribute: "data-secondary-color",

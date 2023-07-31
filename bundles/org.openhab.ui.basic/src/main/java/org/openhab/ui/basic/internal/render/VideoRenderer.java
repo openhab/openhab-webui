@@ -66,7 +66,7 @@ public class VideoRenderer extends AbstractWidgetRenderer {
                 && videoWidget.getEncoding().toLowerCase().contains("mjpeg")) ? "image" : "video";
 
         snippet = getSnippet(snippetName);
-        snippet = preprocessSnippet(snippet, w);
+        snippet = preprocessSnippet(snippet, w, true);
 
         State state = itemUIRegistry.getState(w);
         String url;

@@ -123,7 +123,7 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             }
 
             String snippet = getSnippet("chart");
-            snippet = preprocessSnippet(snippet, w);
+            snippet = preprocessSnippet(snippet, w, true);
 
             if (chart.getRefresh() > 0) {
                 snippet = snippet.replace("%update_interval%", Integer.toString(chart.getRefresh()));
