@@ -70,7 +70,7 @@
               :after="transformationsCount"
               badge-color="blue"
               :footer="objectsSubtitles.transform">
-              <f7-icon slot="media" f7="arrow_2_squarepath" color="gray" />
+              <f7-icon slot="media" f7="function" color="gray" />
             </f7-list-item>
           </f7-list>
           <f7-block-title v-if="$store.getters.apiEndpoint('rules')">
@@ -178,7 +178,7 @@ export default {
         model: 'The semantic model of your home',
         items: 'Manage the functional layer',
         pages: 'Design displays for user control & monitoring',
-        transform: 'Manage transformations',
+        transform: 'Make raw data human-readable',
         rules: 'Automate with triggers and actions',
         scenes: 'Store a set of desired states as a scene',
         scripts: 'Rules dedicated to running code',
