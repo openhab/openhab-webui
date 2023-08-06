@@ -4,6 +4,7 @@
 
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
+import { blockGetCheckedInputType } from './utils'
 
 export default function (f7, isGraalJs) {
   Blockly.Blocks['oh_bit_not'] = {
@@ -88,13 +89,25 @@ export default function (f7, isGraalJs) {
           block.updateType(operation)
         })
       this.appendValueInput('NUM')
-        .setCheck('Number')
+        .setCheck(['Number', 'oh_quantity'])
         .appendField(dropDown, 'op')
+
       this.setColour('%{BKY_MATH_HUE}')
       this.setInputsInline(false)
       this.setTooltip('Round a number up or down')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-math.html#round')
-      this.setOutput(true, 'Number')
+      this.setOutput(true, null)
+    },
+    updateShape_: function () {
+      if (this.getInput('NUM')) {
+        let type = blockGetCheckedInputType(this, 'NUM')
+        if (type) {
+          this.setOutput(true, type)
+        }
+      }
+    },
+    onchange: function () {
+      this.updateShape_()
     },
     updateType: function (type) {
       if (type === 'toFixed') {
@@ -111,13 +124,20 @@ export default function (f7, isGraalJs) {
         this.removeInput('declabel')
         this.setInputsInline(false)
       }
+      this.updateShape_()
     }
   }
 
   javascriptGenerator['math_round'] = function (block) {
-    const math_number = javascriptGenerator.valueToCode(block, 'NUM', javascriptGenerator.ORDER_FUNCTION_CALL)
+    const inputType = blockGetCheckedInputType(block, 'NUM')
+    const math_number_input = javascriptGenerator.valueToCode(block, 'NUM', javascriptGenerator.ORDER_FUNCTION_CALL)
+    let math_number = math_number_input
+    if (inputType === 'oh_quantity') {
+      math_number = math_number_input + '.float'
+    }
     const decimals = javascriptGenerator.valueToCode(block, 'DECIMALS', javascriptGenerator.ORDER_NONE)
     const operand = block.getFieldValue('op')
+
     let code = ''
     if (operand !== 'toFixed') {
       let method = ''
@@ -135,6 +155,10 @@ export default function (f7, isGraalJs) {
       code = `${method}(${math_number})`
     } else {
       code = `(${math_number}).toFixed(${decimals})`
+    }
+
+    if (inputType === 'oh_quantity') {
+      code = `Quantity((${code}).toString() + ' ' + ${math_number_input}.symbol)`
     }
     return [code, 0]
   }
