@@ -147,10 +147,16 @@
             </f7-block-title>
             <f7-list class="search-list">
               <f7-list-item
-                v-for="a in addonsInstalled"
+                v-for="a in addonsSettings"
                 :key="a.uid"
                 :link="'addons/' + a.uid + '/config'"
                 :title="a.label" />
+              <f7-list-button v-if="!showingAll('addonsInstalled')" color="blue" @click="$set(expandedTypes, 'addonsInstalled', true)">
+                Show Advanced
+              </f7-list-button>
+              <f7-list-button v-if="showingAll('addonsInstalled')" color="red" @click="$set(expandedTypes, 'addonsInstalled', false)">
+                Hide Advanced
+              </f7-list-button>
             </f7-list>
           </div>
         </f7-col>
@@ -172,6 +178,7 @@ export default {
       servicesLoaded: false,
       addonStoreTabShortcuts: AddonStoreTabShortcuts,
       addonsInstalled: [],
+      addonsServices: [],
       systemServices: [],
       objectsSubtitles: {
         things: 'Manage the physical layer',
@@ -191,12 +198,21 @@ export default {
       sitemapsCount: 0,
       rulesCount: '',
       scenesCount: '',
-      scriptsCount: ''
+      scriptsCount: '',
+
+      expandedTypes: {}
     }
   },
   computed: {
     apiEndpoints () {
       return this.$store.state.apiEndpoints
+    },
+    addonsSettings () {
+      if (this.expandedTypes.addonsInstalled) return this.addonsInstalled
+      return this.addonsInstalled.filter((a) =>
+        a.type === 'persistence' ||
+        this.addonsServices.findIndex((as) => as.configDescriptionURI === a.uid.replace('-', ':')) > -1
+      )
     }
   },
   watch: {
@@ -215,6 +231,7 @@ export default {
       // can be done in parallel!
       servicesPromise.then((data) => {
         this.systemServices = data.filter(s => s.category === 'system')
+        this.addonsServices = data.filter(s => s.category !== 'system')
         this.servicesLoaded = true
       })
       addonsPromise.then((data) => {
@@ -236,6 +253,9 @@ export default {
           this.scriptsCount = data.filter((r) => r.tags.indexOf('Script') >= 0).length.toString()
         })
       }
+    },
+    showingAll (type) {
+      return (this.expandedTypes[type] || this[type].length <= 5)
     },
     navigateToStore (tab) {
       this.$f7.views.main.router.navigate('addons', { props: { initialTab: tab } })
