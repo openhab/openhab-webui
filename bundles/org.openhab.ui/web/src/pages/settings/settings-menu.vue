@@ -211,7 +211,7 @@ export default {
       if (this.expandedTypes.addonsInstalled) return this.addonsInstalled
       return this.addonsInstalled.filter((a) =>
         a.type === 'persistence' ||
-        this.addonsServices.findIndex((as) => as.configDescriptionURI === a.uid.replace('-', ':')) > -1
+        this.addonsServices.findIndex((as) => as.configDescriptionURI.split(':')[1] === a.id) > -1
       )
     }
   },
