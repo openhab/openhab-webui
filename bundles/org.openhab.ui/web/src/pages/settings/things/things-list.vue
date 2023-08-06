@@ -48,6 +48,18 @@
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found" />
     </f7-list>
+
+    <f7-block class="block-narrow">
+      <f7-col>
+        <f7-block-footer>
+          Things represent the physical layer of an openHAB system. From a configuration standpoint, Things tell openHAB which physical entities (devices, web services, information sources, etc.) are to be managed by the system.
+          <f7-link external color="blue" target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/thing`">
+            Learn more about Things.
+          </f7-link>
+        </f7-block-footer>
+      </f7-col>
+    </f7-block>
+
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title class="searchbar-hide-on-search">

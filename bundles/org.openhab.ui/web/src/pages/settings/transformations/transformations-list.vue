@@ -43,6 +43,17 @@
     </f7-list>
 
     <f7-block class="block-narrow">
+      <f7-col>
+        <f7-block-footer>
+          Transformations are used to translate data from a cluttered or technical raw value to a processed human-readable representation.
+          <f7-link external color="blue" target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/transformations`">
+            Learn more about transformations.
+          </f7-link>
+        </f7-block-footer>
+      </f7-col>
+    </f7-block>
+
+    <f7-block class="block-narrow">
       <!-- skeleton for not ready -->
       <f7-col v-if="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>

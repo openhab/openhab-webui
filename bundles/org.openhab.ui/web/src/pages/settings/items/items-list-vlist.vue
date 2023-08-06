@@ -30,6 +30,18 @@
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found" />
     </f7-list>
+
+    <f7-block class="block-narrow">
+      <f7-col>
+        <f7-block-footer>
+          In openHAB, Items represent all properties and capabilities of the user's home automation.<br>While a Thing is quite specific to the device or service, Items provide a unified way to monitor and control functionality provided by Things.
+          <f7-link external color="blue" target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/items`">
+            Learn more about Items.
+          </f7-link>
+        </f7-block-footer>
+      </f7-col>
+    </f7-block>
+
     <!-- skeleton for not ready -->
     <f7-block class="block-narrow">
       <f7-col v-show="!ready">
