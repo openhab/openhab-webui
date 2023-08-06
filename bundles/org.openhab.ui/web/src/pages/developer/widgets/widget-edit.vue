@@ -55,6 +55,9 @@
         </f7-navbar>
         <f7-block v-if="widget.props">
           <f7-col>
+            <f7-block-footer>
+              Please note that expressions in properties are not evaluated inside the widget editor, but are evaluated when the widget is used on pages.
+            </f7-block-footer>
             <config-sheet
               :parameterGroups="widget.props.parameterGroups || []"
               :parameters="widget.props.parameters || []"
