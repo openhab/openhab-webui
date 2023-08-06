@@ -230,8 +230,7 @@ export function blockGetCheckedInputType (block, inputName) {
   // Get the input type checks for this block
   const thisBlock = block.getInput(inputName).connection.getCheck()
   // Get the output type checks for the connected block
-  if (!block.getInput(inputName).connection.targetBlock()) return ''
-  const connectedBlock = block.getInput(inputName).connection.targetBlock().outputConnection.getCheck()
+  const connectedBlock = block.getInput(inputName).connection.targetBlock()?.outputConnection.getCheck()
   // Skip if no checks are available
   if (!thisBlock || !connectedBlock) return ''
   // Find any intersection in the checklist
