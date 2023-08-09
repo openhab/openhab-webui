@@ -61,6 +61,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     private static final String ICON_SOURCE_IF = "if";
     private static final String ICON_SOURCE_ICONIFY = "iconify";
     private static final String ICON_SOURCE_MATERIAL = "material";
+    private static final String ICON_SOURCE_FRAMEWORK7 = "f7";
     private static final String ICON_SET_OH_CLASSIC = "classic";
     private static final String DEFAULT_ICON_SOURCE = ICON_SOURCE_OH;
     private static final String DEFAULT_ICON_SET = ICON_SET_OH_CLASSIC;
@@ -173,6 +174,9 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
                     break;
                 case ICON_SOURCE_MATERIAL:
                     iconSnippet = getSnippet("icon_material");
+                    break;
+                case ICON_SOURCE_FRAMEWORK7:
+                    iconSnippet = getSnippet("icon_framework7");
                     break;
                 default:
                     break;
