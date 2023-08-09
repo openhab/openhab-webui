@@ -167,6 +167,16 @@
 				font-size: 28px;
 			}
 		}
+		.material-icons {
+			font-size: 32px;
+			vertical-align: middle;
+			html:not(.ui-icons-enabled) & {
+				display: none;
+			}
+			html.ui-layout-condensed & {
+				font-size: 28px;
+			}
+		}
 	}
 	&__label {
 		@media screen and (max-width: $layout-tablet-size-threshold) {
