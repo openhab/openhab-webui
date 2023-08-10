@@ -17,6 +17,8 @@
   "pages.text": "Costruisci pagine per visualizzare informazioni in modi diversi e interagire con i tuoi item. Puoi creare diversi tipi di pagine: grafici, sitemap, mappe...<br><br>Clicca il pulsante di seguito per creare la tua prima pagina.",
   "rules.title": "Nessuna regola",
   "rules.text": "Le regole sono il meccanismo per automatizzare la tua casa - definiscono quali azioni devono accadere al verificarsi di determinati eventi.<br><br>Crea la tua prima regola con il pulsante di seguito; per scenari più avanzati puoi anche aggiungere file di script nella cartella di configurazione.",
+  "scenes.title": "Ancora nessuna scena",
+  "scenes.text": "Le scene sono regole che inviano comandi per ripristinare un insieme di elementi a uno stato desiderato.<br />Puoi eseguirli su richiesta o chiamarli da altre regole.<br><br>Crea la tua prima scena con il pulsante qui sotto.",
   "scripts.title": "Nessuno script",
   "scripts.text": "Gli script sono un tipo speciale di regole, senza trigger e con un singolo modulo di codice.<br>Si possono eseguire su richiesta o essere richiamati dal altre regole.<br><br>Crea il tuo primo script con il pulsante qui sotto.",
   "schedule.title": "Niente in questa pianificazione",
