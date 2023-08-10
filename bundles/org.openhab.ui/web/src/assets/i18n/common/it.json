@@ -7,6 +7,7 @@
   "dialogs.close": "Chiudi",
   "dialogs.copy": "Copia",
   "dialogs.delete": "Elimina",
+  "dialogs.reload": "Aggiorna",
   "dialogs.search": "Cerca",
   "dialogs.search.items": "Cerca Item",
   "dialogs.search.things": "Cerca Things",
@@ -39,5 +40,7 @@
   "sidebar.tip.signIn": "Accedi come amministratore per accedere alle Impostazioni",
   "page.navbar.back": "Indietro",
   "page.navbar.edit": "Modifica",
-  "admin.notTranslatedYet": "La sezione Amministrazione non è stata ancora tradotta."
+  "admin.notTranslatedYet": "La sezione Amministrazione non è stata ancora tradotta.",
+  "error.communicationFailure": "Errore di comunicazione",
+  "error.itemNotFound": "%s non trovato"
 }
