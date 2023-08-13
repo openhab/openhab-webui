@@ -46,6 +46,9 @@
 
 .page-content {
 	max-width: 1080px;
+	html.ui-large-window & {
+		max-width: 1620px;
+	}
 	@media screen and (max-width: $layout-tablet-size-threshold) {
 		padding: 0;
 	}
