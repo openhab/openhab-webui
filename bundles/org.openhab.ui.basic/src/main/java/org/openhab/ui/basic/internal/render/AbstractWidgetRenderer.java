@@ -61,6 +61,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     private static final String ICON_SOURCE_IF = "if";
     private static final String ICON_SOURCE_ICONIFY = "iconify";
     private static final String ICON_SOURCE_MATERIAL = "material";
+    private static final String ICON_SOURCE_FRAMEWORK7 = "f7";
     private static final String ICON_SET_OH_CLASSIC = "classic";
     private static final String DEFAULT_ICON_SOURCE = ICON_SOURCE_OH;
     private static final String DEFAULT_ICON_SET = ICON_SET_OH_CLASSIC;
@@ -124,6 +125,8 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     protected String preprocessSnippet(String originalSnippet, Widget w, boolean ignoreStateForIcon) {
         String snippet = preprocessIcon(originalSnippet, w, ignoreStateForIcon);
 
+        snippet = snippet.replace("%cells%", String.valueOf(12 / config.getNbColsDesktop()));
+        snippet = snippet.replace("%cells_tablet%", String.valueOf(8 / config.getNbColsTablet()));
         snippet = snippet.replace("%widget_id%", itemUIRegistry.getWidgetId(w));
         snippet = snippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
         // Optimization: avoid calling 3 times itemUIRegistry.getLabel(w)
@@ -173,6 +176,9 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
                     break;
                 case ICON_SOURCE_MATERIAL:
                     iconSnippet = getSnippet("icon_material");
+                    break;
+                case ICON_SOURCE_FRAMEWORK7:
+                    iconSnippet = getSnippet("icon_framework7");
                     break;
                 default:
                     break;

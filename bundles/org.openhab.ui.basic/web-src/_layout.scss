@@ -46,6 +46,9 @@
 
 .page-content {
 	max-width: 1080px;
+	html.ui-large-window & {
+		max-width: 1620px;
+	}
 	@media screen and (max-width: $layout-tablet-size-threshold) {
 		padding: 0;
 	}
@@ -167,7 +170,8 @@
 				font-size: 28px;
 			}
 		}
-		.material-icons {
+		.material-icons,
+		.f7-icons {
 			font-size: 32px;
 			vertical-align: middle;
 			html:not(.ui-icons-enabled) & {

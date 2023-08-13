@@ -40,8 +40,14 @@ public class WebAppConfig {
     private static final String DEFAULT_INLINE_SVG = "false";
     private static final String DEFAULT_WEB_AUDIO = "false";
 
+    private static final String DEFAULT_CONFIG_NB_COLUMNS = "3-2";
+    private static final int DEFAULT_NB_COLUMNS_DESKTOP = 3;
+    private static final int DEFAULT_NB_COLUMNS_TABLET = 2;
+
     private String defaultSitemap = DEFAULT_SITEMAP;
     private String theme = DEFAULT_THEME;
+    private int nbColsDesktop = DEFAULT_NB_COLUMNS_DESKTOP;
+    private int nbColsTablet = DEFAULT_NB_COLUMNS_TABLET;
     private boolean iconify = Boolean.parseBoolean(DEFAULT_ICONIFY);
     private boolean inlineSvg = Boolean.parseBoolean(DEFAULT_INLINE_SVG);
     private boolean webAudio = Boolean.parseBoolean(DEFAULT_WEB_AUDIO);
@@ -53,6 +59,7 @@ public class WebAppConfig {
 
     private static final String CONFIG_ENABLE_ICONS = "enableIcons";
     private static final String CONFIG_CONDENSED_LAYOUT = "condensedLayout";
+    private static final String CONFIG_NB_COLUMNS = "nbColumns";
     private static final String CONFIG_CAPITALIZE = "capitalizeValues";
 
     static {
@@ -81,6 +88,9 @@ public class WebAppConfig {
                 cssClassList.add(entry.getValue());
             }
         }
+        if (nbColsDesktop == 3) {
+            cssClassList.add("ui-large-window");
+        }
     }
 
     public void applyConfig(Map<String, Object> configProps) {
@@ -89,6 +99,22 @@ public class WebAppConfig {
         // "default" was previously valid. For backward compatibility, accept it but convert it to DEFAULT_THEME
         if ("default".equals(theme)) {
             theme = DEFAULT_THEME;
+        }
+        String nbColumns = (String) configProps.getOrDefault(CONFIG_NB_COLUMNS, DEFAULT_CONFIG_NB_COLUMNS);
+        if (nbColumns.length() == 3) {
+            try {
+                nbColsDesktop = Integer.parseInt(nbColumns.substring(0, 1));
+            } catch (NumberFormatException e) {
+                nbColsDesktop = DEFAULT_NB_COLUMNS_DESKTOP;
+            }
+            try {
+                nbColsTablet = Integer.parseInt(nbColumns.substring(2, 3));
+            } catch (NumberFormatException e) {
+                nbColsTablet = DEFAULT_NB_COLUMNS_TABLET;
+            }
+        } else {
+            nbColsDesktop = DEFAULT_NB_COLUMNS_DESKTOP;
+            nbColsTablet = DEFAULT_NB_COLUMNS_TABLET;
         }
         iconify = "true".equalsIgnoreCase((String) configProps.getOrDefault("enableIconify", DEFAULT_ICONIFY));
         inlineSvg = "true".equalsIgnoreCase((String) configProps.getOrDefault("inlineSvg", DEFAULT_INLINE_SVG));
@@ -111,6 +137,14 @@ public class WebAppConfig {
             result += item + " ";
         }
         return result;
+    }
+
+    public int getNbColsDesktop() {
+        return nbColsDesktop;
+    }
+
+    public int getNbColsTablet() {
+        return nbColsTablet;
     }
 
     public boolean isIconifyEnabled() {

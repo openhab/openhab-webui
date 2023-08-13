@@ -16,7 +16,9 @@
 	
 	var paths = {
 	        FontLibs: [
-			'./node_modules/material-icons/iconfont/material-icons.woff*'
+			'./node_modules/material-icons/iconfont/material-icons.woff*',
+			'./node_modules/framework7-icons/fonts/Framework7Icons-Regular.woff*',
+			'./node_modules/framework7-icons/fonts/Framework7Icons-Regular.ttf'
 	        ]
 	    };
 	
