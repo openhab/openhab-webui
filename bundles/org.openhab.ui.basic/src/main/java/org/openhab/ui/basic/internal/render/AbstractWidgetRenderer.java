@@ -124,6 +124,8 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     protected String preprocessSnippet(String originalSnippet, Widget w, boolean ignoreStateForIcon) {
         String snippet = preprocessIcon(originalSnippet, w, ignoreStateForIcon);
 
+        snippet = snippet.replace("%cells%", String.valueOf(12 / config.getNbColsDesktop()));
+        snippet = snippet.replace("%cells_tablet%", String.valueOf(8 / config.getNbColsTablet()));
         snippet = snippet.replace("%widget_id%", itemUIRegistry.getWidgetId(w));
         snippet = snippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
         // Optimization: avoid calling 3 times itemUIRegistry.getLabel(w)
