@@ -11,6 +11,9 @@
   "things.nobindings.title": "No bindings",
   "things.nobindings.text": "To add things to your system, you first need to install binding add-ons.",
 
+  "transformations.title": "No transformations yet",
+  "transformations.text": "Transformations are used to translate data from a cluttered or technical raw value to a processed human-readable representation.",
+
   "model.title": "Start modelling your home",
   "model.text": "Build a model from your items to organize them and relate them to each other semantically.<br><br>Begin with a hierarchy of locations: buildings, outside areas, floors and rooms, as needed. Then, insert equipment and points from your things (or manually).",
 
