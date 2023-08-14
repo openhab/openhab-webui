@@ -43,17 +43,6 @@
     </f7-list>
 
     <f7-block class="block-narrow">
-      <f7-col>
-        <f7-block-footer>
-          Transformations are used to translate data from a cluttered or technical raw value to a processed human-readable representation.
-          <f7-link external color="blue" target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/transformations`">
-            Learn more about transformations.
-          </f7-link>
-        </f7-block-footer>
-      </f7-col>
-    </f7-block>
-
-    <f7-block class="block-narrow">
       <!-- skeleton for not ready -->
       <f7-col v-if="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
@@ -71,11 +60,12 @@
         </f7-list>
       </f7-col>
 
-      <f7-col v-else>
+      <f7-col v-else-if="transformations.length > 0">
         <f7-block-title class="searchbar-hide-on-search">
-          {{ transformations.length }} transformations
+          {{ transformations.length }} transformations -
+          <f7-link external :href="documentationLink" target="_blank" text="Open documentation" color="blue" />
         </f7-block-title>
-        <div class="padding-left padding-right searchbar-found" v-show="transformations.length > 0">
+        <div class="padding-left padding-right searchbar-found">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical
@@ -87,7 +77,6 @@
         </div>
 
         <f7-list
-          v-show="transformations.length > 0"
           class="searchbar-found col transformations-list"
           ref="transformationsList"
           :contacts-list="groupBy === 'alphabetical'">
@@ -113,9 +102,14 @@
         </f7-list>
       </f7-col>
     </f7-block>
+
     <f7-block v-if="ready && !transformations.length" class="service-config block-narrow">
       <empty-state-placeholder icon="arrow_2_squarepath" title="transformations.title" text="transformations.text" />
+      <f7-row class="display-flex justify-content-center">
+        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+      </f7-row>
     </f7-block>
+
     <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
     </f7-fab>
@@ -140,6 +134,9 @@ export default {
     }
   },
   computed: {
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/transformations`
+    },
     indexedTransformations () {
       if (this.groupBy === 'alphabetical') {
         return this.transformations.reduce((prev, transformation, i, transformations) => {

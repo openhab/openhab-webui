@@ -32,18 +32,7 @@
     </f7-list>
 
     <f7-block class="block-narrow">
-      <f7-col>
-        <f7-block-footer>
-          In openHAB, Items represent all properties and capabilities of the user's home automation.<br>While a Thing is quite specific to the device or service, Items provide a unified way to monitor and control functionality provided by Things.
-          <f7-link external color="blue" target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/items`">
-            Learn more about Items.
-          </f7-link>
-        </f7-block-footer>
-      </f7-col>
-    </f7-block>
-
-    <!-- skeleton for not ready -->
-    <f7-block class="block-narrow">
+      <!-- skeleton for not ready -->
       <f7-col v-show="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list media-list class="col wide">
@@ -62,9 +51,11 @@
           </f7-list-group>
         </f7-list>
       </f7-col>
-      <f7-col v-show="ready">
+
+      <f7-col v-show="ready && items.length > 0">
         <f7-block-title class="searchbar-hide-on-search">
-          {{ items.length }} Items
+          {{ items.length }} Items -
+          <f7-link external :href="documentationLink" target="_blank" text="Open documentation" color="blue" />
         </f7-block-title>
         <f7-list
           v-show="items.length > 0"
@@ -100,9 +91,14 @@
         </f7-list>
       </f7-col>
     </f7-block>
+
     <f7-block v-if="ready && !items.length" class="service-config block-narrow">
       <empty-state-placeholder icon="square_on_circle" title="items.title" text="items.text" />
+      <f7-row class="display-flex justify-content-center">
+        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+      </f7-row>
     </f7-block>
+
     <f7-fab v-show="!showCheckboxes" position="center-bottom" text="Refresh" slot="fixed" color="blue" @click="load()">
       <f7-icon ios="f7:arrow_clockwise" md="material:refresh" aurora="f7:arrow_clockwise" />
     </f7-fab>
@@ -293,6 +289,9 @@ export default {
     }
   },
   computed: {
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/items`
+    },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }

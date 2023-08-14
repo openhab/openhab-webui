@@ -768,17 +768,14 @@ export default {
       }
 
       for (const channel of this.thing.channels) {
-        if (isExtensible(channel, this.thingType)) {
-          console.debug(`Adding ${channel.uid} to code because it is extensible`)
-          const editableChannel = {
-            id: channel.id,
-            channelTypeUID: channel.channelTypeUID,
-            label: channel.label,
-            description: channel.description,
-            configuration: channel.configuration
-          }
-          editableChannels.push(editableChannel)
+        const editableChannel = {
+          id: channel.id,
+          channelTypeUID: channel.channelTypeUID,
+          label: channel.label,
+          description: channel.description,
+          configuration: channel.configuration
         }
+        editableChannels.push(editableChannel)
       }
 
       if (editableChannels.length > 0) editableThing.channels = editableChannels
