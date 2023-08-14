@@ -152,10 +152,7 @@
                 :link="'addons/' + a.uid + '/config'"
                 :title="a.label" />
               <f7-list-button v-if="!showingAll('addonsInstalled')" color="blue" @click="$set(expandedTypes, 'addonsInstalled', true)">
-                Show Advanced
-              </f7-list-button>
-              <f7-list-button v-if="showingAll('addonsInstalled')" color="red" @click="$set(expandedTypes, 'addonsInstalled', false)">
-                Hide Advanced
+                Show All
               </f7-list-button>
             </f7-list>
           </div>
