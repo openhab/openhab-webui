@@ -84,6 +84,10 @@ body {
 	color: var(--container-text-color, #616161) !important;
 }
 
+.mdl-form__row--header {
+	border-bottom: none;
+}
+
 .mdl-switch .mdl-switch__track {
 	background: rgba(0,0,0,.26);
 	background: var(--switch-off-track-bg, rgba(0,0,0,.26));

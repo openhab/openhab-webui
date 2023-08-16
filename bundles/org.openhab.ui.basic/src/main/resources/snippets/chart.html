@@ -1,3 +1,38 @@
+<div class="mdl-form__row mdl-form__row--header mdl-cell mdl-cell--12-col %visibility_class%">
+	<span %iconstyle% class="mdl-form__icon">
+		%icon_snippet%
+	</span>
+	<span %labelstyle% class="mdl-form__label">
+		%label%
+	</span>
+	<div class="mdl-form__header">
+		<button id="button1-%widget_id%" class="mdl-button mdl-button--raised mdl-js-button mdl-js-ripple-effect chart-legend-button">
+			<!-- legend_toggle -->
+			<i class="material-icons">&#xF11B;</i>
+		</button>
+		<spam class="mdl-tooltip mdl-tooltip--top" for="button1-%widget_id%">Show or hde legend</spam>
+		<button id="button2-%widget_id%" class="mdl-button mdl-button--raised mdl-js-button mdl-js-ripple-effect chart-period-button">
+			<!-- more_time -->
+			<i class="material-icons">&#xEA5D;</i>
+		</button>
+		<spam class="mdl-tooltip mdl-tooltip--top" for="button2-%widget_id%">Choose time frame</spam>
+		<script type="text/html" class="mdl-form__header-rows">
+			<div class="mdl-radio__group">
+				%period_rows%
+			</div>
+		</script>
+		<button id="button3-%widget_id%" class="mdl-button mdl-button--raised mdl-js-button mdl-js-ripple-effect image-upscale-button">
+			<!-- fullscreen -->
+			<i class="material-icons">&#xE5D0;</i>
+		</button>
+		<spam class="mdl-tooltip mdl-tooltip--top" for="button3-%widget_id%">Upscale chart or not</spam>
+		<button id="button4-%widget_id%" class="mdl-button mdl-button--raised mdl-js-button mdl-js-ripple-effect chart-refresh-button">
+			<!-- refresh -->
+			<i class="material-icons">&#xE5D5;</i>
+		</button>
+		<spam class="mdl-tooltip mdl-tooltip--top" for="button4-%widget_id%">Refresh chart</spam>
+	</div>
+</div>
 <div class="mdl-form__row mdl-form__row--height-auto mdl-cell mdl-cell--12-col %visibility_class%">
 	<div
 		class="mdl-form__control mdl-form__image"
@@ -7,6 +42,8 @@
 		data-proxied-url="%proxied_url%"
 		data-valid-url="%valid_url%"
 		data-ignore-refresh="%ignore_refresh%"
+		data-header-row="true"
+		data-legend="%legend%"
 	>
 		<img src="%url%" />
 	</div>
