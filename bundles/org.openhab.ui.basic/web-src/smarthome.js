@@ -353,13 +353,15 @@
 			splittedIconAttr;
 
 		_t.parentNode = parentNode;
-		_t.formRow = parentNode.parentNode;
+		if (_t.formRow === undefined) {
+			_t.formRow = parentNode.parentNode;
+		}
 		_t.item = _t.parentNode.getAttribute(o.itemAttribute);
 		_t.id = _t.parentNode.getAttribute(o.idAttribute);
-		_t.iconContainer = _t.parentNode.parentNode.querySelector(o.formIcon);
-		_t.icon = _t.parentNode.parentNode.querySelector(o.formIconImg);
+		_t.iconContainer = _t.formRow.querySelector(o.formIcon);
+		_t.icon = _t.formRow.querySelector(o.formIconImg);
 		_t.visible = !_t.formRow.classList.contains(o.formRowHidden);
-		_t.label = _t.parentNode.parentNode.querySelector(o.formLabel);
+		_t.label = _t.formRow.querySelector(o.formLabel);
 
 		function convertToInlineSVG() {
 			this.removeEventListener("load", convertToInlineSVG);
@@ -1591,6 +1593,7 @@
 
 	/* class ControlInput extends Control */
 	function ControlInput(parentNode) {
+		this.formRow = parentNode.parentNode.parentNode;
 		Control.call(this, parentNode);
 
 		var
