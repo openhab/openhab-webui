@@ -20,10 +20,10 @@ const actions = {
     if (this.getters.apiEndpoint('tags')) {
       api.get('/rest/tags')
         .then((tags) => {
-          state.Locations = tags.filter(t => t.uid.startsWith('Location_')).map(t => t.name)
-          state.Equipment = tags.filter(t => t.uid.startsWith('Equipment_')).map(t => t.name)
-          state.Points = tags.filter(t => t.uid.startsWith('Point_')).map(t => t.name)
-          state.Properties = tags.filter(t => t.uid.startsWith('Property_')).map(t => t.name)
+          state.Locations = tags.filter(t => t.uid.startsWith('Location')).map(t => t.name)
+          state.Equipment = tags.filter(t => t.uid.startsWith('Equipment')).map(t => t.name)
+          state.Points = tags.filter(t => t.uid.startsWith('Point')).map(t => t.name)
+          state.Properties = tags.filter(t => t.uid.startsWith('Property')).map(t => t.name)
           // Store i18n labels
           Object.values(tags).forEach(t => {
             if (t.label) {
