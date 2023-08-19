@@ -113,22 +113,6 @@
               <f7-icon slot="media" f7="calendar" color="gray" />
             </f7-list-item>
           </f7-list>
-          <f7-block-title v-if="$store.getters.apiEndpoint('addons')">
-            Add-on Store
-          </f7-block-title>
-          <f7-list media-list class="search-list"
-                   v-if="$store.getters.apiEndpoint('addons')">
-            <f7-list-item
-              media-item
-              v-for="shortcut in addonStoreTabShortcuts"
-              :key="shortcut.id"
-              :link="true"
-              @click="navigateToStore(shortcut.id)"
-              :title="shortcut.label"
-              :footer="shortcut.subtitle">
-              <f7-icon slot="media" :f7="shortcut.icon" color="gray" />
-            </f7-list-item>
-          </f7-list>
         </f7-col>
         <f7-col width="100" medium="50">
           <div v-if="$store.getters.apiEndpoint('services') && servicesLoaded">
@@ -142,19 +126,7 @@
             </f7-list>
           </div>
           <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded">
-            <f7-block-title>
-              Add-on Settings
-            </f7-block-title>
-            <f7-list class="search-list">
-              <f7-list-item
-                v-for="a in addonsSettings"
-                :key="a.uid"
-                :link="'addons/' + a.uid + '/config'"
-                :title="a.label" />
-              <f7-list-button v-if="!showingAll('addonsInstalled')" color="blue" @click="$set(expandedTypes, 'addonsInstalled', true)">
-                Show All
-              </f7-list-button>
-            </f7-list>
+            <add-on-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
           </div>
         </f7-col>
       </f7-row>
@@ -166,9 +138,12 @@
 </template>
 
 <script>
-import { AddonStoreTabShortcuts } from '@/assets/addon-store'
+import AddOnSection from './add-on-section.vue'
 
 export default {
+  components: {
+    AddOnSection: AddOnSection
+  },
   data () {
     return {
       addonsLoaded: false,
@@ -203,13 +178,6 @@ export default {
   computed: {
     apiEndpoints () {
       return this.$store.state.apiEndpoints
-    },
-    addonsSettings () {
-      if (this.expandedTypes.addonsInstalled) return this.addonsInstalled
-      return this.addonsInstalled.filter((a) =>
-        a.type === 'persistence' ||
-        this.addonsServices.findIndex((as) => as.configDescriptionURI.split(':')[1] === a.id) > -1
-      )
     }
   },
   watch: {
