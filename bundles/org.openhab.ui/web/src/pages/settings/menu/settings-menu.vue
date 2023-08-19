@@ -18,7 +18,7 @@
     </f7-navbar>
     <f7-block class="block-narrow settings-menu" v-show="servicesLoaded && addonsLoaded">
       <f7-row>
-        <f7-col width="100" medium="50">
+        <f7-col class="settings-col" width="100" medium="50">
           <f7-block-title>Configuration</f7-block-title>
           <f7-list media-list class="search-list">
             <f7-list-item
@@ -114,17 +114,25 @@
             </f7-list-item>
           </f7-list>
         </f7-col>
-        <f7-col width="100" medium="50">
+        <f7-col class="settings-col" width="100" medium="50">
           <div v-if="$store.getters.apiEndpoint('services') && servicesLoaded">
             <f7-block-title>System Settings</f7-block-title>
             <f7-list class="search-list">
               <f7-list-item
-                v-for="service in systemServices"
+                v-for="service in systemSettings"
                 :key="service.id"
                 :link="'services/' + service.id"
                 :title="service.label" />
+              <f7-list-button v-if="!showingAll('systemSettings')" color="blue" @click="$set(expandedTypes, 'systemSettings', true)">
+                Show All
+              </f7-list-button>
             </f7-list>
           </div>
+          <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded">
+            <add-on-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
+          </div>
+        </f7-col>
+        <f7-col width="33" class="add-on-col">
           <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded">
             <add-on-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
           </div>
@@ -148,7 +156,6 @@ export default {
     return {
       addonsLoaded: false,
       servicesLoaded: false,
-      addonStoreTabShortcuts: AddonStoreTabShortcuts,
       addonsInstalled: [],
       addonsServices: [],
       systemServices: [],
@@ -172,12 +179,27 @@ export default {
       scenesCount: '',
       scriptsCount: '',
 
+      advancedSystemServices: [
+        'org.openhab.storage.json',
+        'org.openhab.restauth',
+        'org.openhab.addons',
+        'org.openhab.marketplace',
+        'org.openhab.jsonaddonservice',
+        'org.openhab.inbox',
+        'org.openhab.sitemap',
+        'org.openhab.lsp'
+      ],
+
       expandedTypes: {}
     }
   },
   computed: {
     apiEndpoints () {
       return this.$store.state.apiEndpoints
+    },
+    systemSettings () {
+      if (this.expandedTypes.systemSettings) return this.systemServices
+      return this.systemServices.filter((s) => this.advancedSystemServices.indexOf(s.id) < 0)
     }
   },
   watch: {
@@ -222,9 +244,6 @@ export default {
     showingAll (type) {
       return (this.expandedTypes[type] || this[type].length <= 5)
     },
-    navigateToStore (tab) {
-      this.$f7.views.main.router.navigate('addons', { props: { initialTab: tab } })
-    },
     onPageInit () {
       this.loadMenu()
     },
@@ -239,6 +258,20 @@ export default {
 <style lang="stylus">
 .device-desktop .settings-menu
   --f7-list-item-footer-line-height 1.3
+  @media (max-width 1449px)
+    z-index auto
+  @media (min-width 1450px)
+    .row
+      width 1065px
+      max-width 100%
+    .settings-col
+      width 33%
+      .add-on-section
+        visibility hidden
+  .add-on-col
+    visibility hidden
+    @media (min-width 1450px)
+      visibility visible
 .settings-menu .icon
   color var(--f7-color-blue)
 .theme-filled .settings-menu .icon
