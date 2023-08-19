@@ -50,6 +50,43 @@ describe('dslUtil', () => {
     ])
   })
 
+  it('renders a widget with icon correctly', () => {
+    const component = createSitemapComponent('test', 'Test')
+    const widget = {
+    }
+    addWidget(component, 'Switch', {
+      item: 'TestItem',
+      label: 'Test Switch',
+      icon: 'lightbulb'
+    })
+    const sitemap = dslUtil.toDsl(component).split('\n')
+    expect(sitemap).toEqual([
+      'sitemap test label="Test" {',
+      '    Switch item=TestItem label="Test Switch" icon=lightbulb',
+      '}',
+      ''
+    ])
+  })
+
+  it('renders a widget with static icon correctly', () => {
+    const component = createSitemapComponent('test', 'Test')
+    const widget = {
+    }
+    addWidget(component, 'Switch', {
+      item: 'TestItem',
+      label: 'Test Switch',
+      icon: 'lightbulb',
+      staticIcon: true
+    })
+    const sitemap = dslUtil.toDsl(component).split('\n')
+    expect(sitemap).toEqual([
+      'sitemap test label="Test" {',
+      '    Switch item=TestItem label="Test Switch" staticIcon=lightbulb',
+      '}',
+      ''
+    ])
+  })
+
   it('renders a sitemap with a frame container widget correctly', () => {
     const component = createSitemapComponent('test', 'Test')
     const frame = addWidget(component, 'Frame', {})

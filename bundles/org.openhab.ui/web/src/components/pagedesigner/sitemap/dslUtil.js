@@ -7,12 +7,17 @@ function writeWidget (widget, indent) {
       if ((Array.isArray(widget.config[key]) && widget.config[key].filter(Boolean).length <= 0)) continue
       if (key === 'switchEnabled') {
         dsl += ' switchSupport'
-      } else if (key === 'staticIcon') {
-        dsl += ' staticIcon'
       } else if (key === 'frequency') {
         dsl += ' sendFrequency=' + widget.config[key]
       } else if (key === 'forceAsItem') {
         dsl += ' forceasitem=' + widget.config[key]
+      } else if (key === 'staticIcon') {
+      } else if (key === 'icon') {
+        if (widget.config.staticIcon) {
+          dsl += ' staticIcon=' + widget.config[key]
+        } else {
+          dsl += ' icon=' + widget.config[key]
+        }
       } else {
         dsl += ` ${key}=`
         if (key === 'item' || key === 'period' || key === 'legend' || Number.isFinite(widget.config[key])) {
