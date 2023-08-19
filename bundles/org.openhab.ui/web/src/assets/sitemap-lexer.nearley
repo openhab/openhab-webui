@@ -8,7 +8,8 @@
     label:            'label=',
     item:             'item=',
     icon:             'icon=',
-    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint='],
+    widgetstaticattr: 'staticIcon',
+    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'height=', 'mappings=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint='],
     widgetboolattr:   ['legend='],
     widgetfreqattr:   'sendFrequency=',
     widgetfrcitmattr: 'forceasitem=',
@@ -99,6 +100,7 @@ Widget -> %nlwidget _ WidgetAttrs:*                                             
 WidgetAttrs -> WidgetAttr                                                         {% (d) => [d[0]] %}
   | WidgetAttrs _ WidgetAttr                                                      {% (d) => d[0].concat([d[2]]) %}
 WidgetAttr -> %widgetswitchattr                                                   {% (d) => ['switchEnabled', true] %}
+  | %widgetstaticattr                                                             {% (d) => ['staticIcon', true] %}
   | %widgetfrcitmattr _ WidgetBooleanAttrValue                                    {% (d) => ['forceAsItem', d[2]] %}
   | %widgetboolattr _ WidgetBooleanAttrValue                                      {% (d) => [d[0].value, d[2]] %}
   | %widgetfreqattr _ WidgetAttrValue                                             {% (d) => ['frequency', d[2]] %}
