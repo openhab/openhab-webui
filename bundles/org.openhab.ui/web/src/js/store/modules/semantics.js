@@ -18,7 +18,7 @@ const getters = {
 const actions = {
   loadSemantics () {
     if (this.getters.apiEndpoint('tags')) {
-      api.get('/rest/tags')
+      return api.get('/rest/tags')
         .then((tags) => {
           state.Locations = tags.filter(t => t.uid.startsWith('Location_')).map(t => t.name)
           state.Equipment = tags.filter(t => t.uid.startsWith('Equipment_')).map(t => t.name)
