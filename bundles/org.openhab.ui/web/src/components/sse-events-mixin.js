@@ -6,7 +6,8 @@ export default {
   data () {
     return {
       eventSource: null,
-      audioContext: null
+      audioContext: null,
+      audioSources: new Map()
     }
   },
   methods: {
@@ -107,6 +108,13 @@ export default {
     },
     playAudioUrl (audioUrl) {
       try {
+        if (audioUrl === '') {
+          this.audioSources.forEach(function (value, key) {
+            value.stop(0)
+          })
+          this.audioSources.clear()
+          return
+        }
         if (!this.audioContext) {
           window.AudioContext = window.AudioContext || window.webkitAudioContext
           if (typeof (window.AudioContext) !== 'undefined') {
@@ -120,6 +128,12 @@ export default {
             let source = this.audioContext.createBufferSource()
             source.buffer = buffer
             source.connect(this.audioContext.destination)
+            let customId = Date.now().toString()
+            this.audioSources.set(customId, source)
+            source.onended = () => {
+              source.stop(0)
+              this.audioSources.delete(customId)
+            }
             source.start(0)
           })
         })
