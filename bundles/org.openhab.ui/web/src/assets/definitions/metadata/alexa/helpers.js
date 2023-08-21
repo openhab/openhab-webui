@@ -41,9 +41,9 @@ export const getSemanticFormat = (type, format) =>
 
 export const getTemperatureScale = (item) => {
   const itemType = item.groupType || item.type
-  const state = (item.state !== 'NULL' && item.state !== 'UNDEF' && item.state) || ''
+  const unitSymbol = item.unitSymbol
   const statePresentation = (item.stateDescription && item.stateDescription.pattern) || ''
-  const format = (itemType === 'Number:Temperature' && state) || statePresentation
+  const format = (itemType === 'Number:Temperature' && unitSymbol) || statePresentation
   if (format.endsWith('°C')) return 'CELSIUS'
   if (format.endsWith('°F')) return 'FAHRENHEIT'
   const { measurementSystem } = (item.settings && item.settings.regional) || {}
@@ -53,11 +53,11 @@ export const getTemperatureScale = (item) => {
 
 export const getUnitOfMeasure = (item) => {
   const itemType = item.groupType || item.type
-  const state = (item.state !== 'NULL' && item.state !== 'UNDEF' && item.state) || ''
+  const unitSymbol = item.unitSymbol
   const statePresentation = (item.stateDescription && item.stateDescription.pattern) || ''
   const format =
     ((itemType === 'Dimmer' || itemType === 'Rollershutter') && '%') ||
-    (itemType.startsWith('Number:') && state) ||
+    (itemType.startsWith('Number:') && unitSymbol) ||
     statePresentation
   return Object.keys(UNITS_OF_MEASURE).find((id) => format.endsWith(UNITS_OF_MEASURE[id]))
 }
