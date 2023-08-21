@@ -33,7 +33,7 @@
         <f7-block-title v-if="$store.getters.isAdmin" v-t="'sidebar.administration'" />
         <f7-list class="admin-links" v-if="$store.getters.isAdmin">
           <f7-list-item link="/settings/" :title="$t('sidebar.settings')" view=".view-main" panel-close :animate="false"
-                        :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/addons/') >= 0 || currentUrl.indexOf('/settings/services/') >= 0 }">
+                        :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/services/') >= 0 }">
             <f7-icon slot="media" ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
           </f7-list-item>
           <li v-if="showSettingsSubmenu">
@@ -72,6 +72,11 @@
               </f7-list-item>
             </ul>
           </li>
+
+          <f7-list-item link="/settings/addons/" :title="$t('sidebar.addOnStore')" panel-close :animate="false"
+                        :class="{ currentsection: currentUrl.indexOf('/settings/addons/') >= 0 }">
+            <f7-icon slot="media" ios="f7:bag" aurora="f7:bag" md="material:shopping_bag" color="gray" />
+          </f7-list-item>
 
           <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close :animate="false"
                         :class="{ currentsection: currentUrl.indexOf('/developer/') >= 0 && currentUrl.indexOf('/developer/widgets') < 0 &&
@@ -749,7 +754,7 @@ export default {
 
       this.$f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
-          this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0
+          this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0 && page.route.url.indexOf('addons') === -1
           this.showDeveloperSubmenu = page.route.url.indexOf('/developer/') === 0
           this.currentUrl = page.route.url
         }

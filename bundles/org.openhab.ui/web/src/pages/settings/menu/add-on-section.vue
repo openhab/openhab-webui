@@ -1,18 +1,8 @@
 <template>
   <div>
     <f7-block-title>
-      Add-ons
+      Add-on Settings
     </f7-block-title>
-    <f7-list media-list>
-      <f7-list-item
-        media-item
-        :link="true"
-        @click="$f7.views.main.router.navigate('addons')"
-        title="Add-on Store"
-        footer="Bindings, automations, UIs and others">
-        <f7-icon slot="media" f7="bag" color="gray" />
-      </f7-list-item>
-    </f7-list>
     <f7-list class="search-list">
       <f7-list-item
         v-for="a in addonsSettings"
