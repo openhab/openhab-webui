@@ -598,6 +598,10 @@
           </block>
         </category>
         <category name="Units of Measurement" v-if="isGraalJs">
+          <button
+            helpUrl="https://www.openhab.org/docs/configuration/blockly/rules-blockly-uom.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
           <block type="oh_quantity">
             <value name="quantity">
               <shadow type="text">
