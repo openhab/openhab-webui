@@ -128,12 +128,12 @@
               </f7-list-button>
             </f7-list>
           </div>
-          <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded">
+          <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && $f7.width < 1450">
             <add-on-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
           </div>
         </f7-col>
         <f7-col width="33" class="add-on-col">
-          <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded">
+          <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && $f7.width >= 1450">
             <add-on-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
           </div>
         </f7-col>
@@ -258,20 +258,12 @@ export default {
 <style lang="stylus">
 .device-desktop .settings-menu
   --f7-list-item-footer-line-height 1.3
-  @media (max-width 1449px)
-    z-index auto
   @media (min-width 1450px)
     .row
       width 1065px
       max-width 100%
     .settings-col
       width 33%
-      .add-on-section
-        visibility hidden
-  .add-on-col
-    visibility hidden
-    @media (min-width 1450px)
-      visibility visible
 .settings-menu .icon
   color var(--f7-color-blue)
 .theme-filled .settings-menu .icon
