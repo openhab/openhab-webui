@@ -225,6 +225,28 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         this.updateShape()
       }
     },
+    mutationToDom: function () {
+      let container = Blockly.utils.xml.createElement('mutation')
+      container.setAttribute('asType', this.asType)
+      container.setAttribute('contextInfo', this.contextInfo)
+      return container
+    },
+    domToMutation: function (xmlElement) {
+      this.contextInfo = xmlElement.getAttribute('contextInfo')
+      if (this.contextInfo === 'itemName') {
+        this.setOutput(true, 'oh_item')
+      } else {
+        this.setOutput(true, 'String')
+      }
+      this.asType = xmlElement.getAttribute('asType')
+      if (this.asType === 'asNumber') {
+        this.setOutput(true, 'Number')
+      } else if (this.asType === 'asQuantity') {
+        this.setOutput(true, 'oh_quantity')
+      } else {
+        this.setOutput(true, 'String')
+      }
+    },
     updateShape: function () {
       if (this.methodName === 'itemState' || this.methodName === 'oldItemState' || this.methodName === 'itemCommand') {
         if (!this.getInput('asTypeInput')) {
