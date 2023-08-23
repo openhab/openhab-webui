@@ -15,9 +15,9 @@
   "setupwizard.location.retrieveFromDevice.error": "Fehler bei der Positionsbestimmung",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Entschuldigung",
   "setupwizard.location.retrieveFromDevice.notAvailable.message": "Geoposition ist nicht verfügbar",
-  "setupwizard.location.footer": "Dies wird Ihr Gerät um die Erlaubnis bitten, seinen aktuellen Standort zu verwenden, nur um Ihnen zu helfen, Ihren aktuellen Breitengrad und Längengrad oben einzutragen. Sie können die Berechtigung später widerrufen.",
+  "setupwizard.location.footer": "Dadurch wird Ihr Gerät um die Erlaubnis gebeten, seinen aktuellen Standort zu verwenden, nur um Ihnen zu helfen, Ihren aktuellen Breiten- und Längengrad oben einzutragen. Sie können die Erlaubnis nachträglich widerrufen.",
   "setupwizard.location.setLocation": "Position speichern",
-  "setupwizard.location.configureLater": "Später konfigurieren",
+  "setupwizard.location.configureLater": "Später in den Einstellungen konfigurieren",
   "setupwizard.addons.title": "Installiere Add-ons",
   "setupwizard.addons.header1": "Die meisten Funktionalitäten von openHAB werden über Add-ons bereitgestellt.",
   "setupwizard.addons.header2": "Wähle aus, welche Add-Ons du jetzt installieren möchtest.",
@@ -27,12 +27,12 @@
   "setupwizard.addons.selectAddons.placeholder": "Versuche: astro, mqtt, hue, knx...",
   "setupwizard.addons.footer": "Zur optimalen Ausnutzung der Systemressourcen installiere bitte nur die Add-ons, die Du wirklich benötigst! Die Installation kann ein wenig Zeit in Anspruch nehmen. Bitte einen Moment Geduld und bleibe auf dieser Seite, bis die Installation abgeschlossen ist.",
   "setupwizard.addons.installAddons": "Installiere 1 add-on | Installiere {n} add-ons",
-  "setupwizard.addons.installLater": "Später installieren",
+  "setupwizard.addons.installLater": "Add-ons später installieren",
   "setupwizard.addons.installing": "Installiere Add-ons...",
   "setupwizard.addons.installingAddon": "Installiere Add-on: {addon}",
   "setupwizard.addons.progress": "{current} von {total}",
   "setupwizard.addons.pleaseWait": "Bitte warten...",
   "setupwizard.addons.waitMessage": "Es kann einen Moment dauern, bis alle ausgewählten Add-ons installiert sind.",
   "setupwizard.welcome.title": "Wilkommen bei openHAB!",
-  "setupwizard.welcome.getStarted": "Beginne"
+  "setupwizard.welcome.getStarted": "Los geht's"
 }
