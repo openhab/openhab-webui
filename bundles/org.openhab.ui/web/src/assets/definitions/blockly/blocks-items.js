@@ -8,6 +8,7 @@ import { javascriptGenerator } from 'blockly/javascript'
 import { FieldItemModelPicker } from './fields/item-field'
 import { FieldThingPicker } from './fields/thing-field'
 import api from '@/js/openhab/api'
+import { blockGetCheckedInputType } from './utils'
 
 export default function (f7, isGraalJs) {
   /* Helper block to allow selecting an item */
@@ -190,7 +191,7 @@ export default function (f7, isGraalJs) {
           block._updateType(newMode)
         })
       this.appendValueInput('item')
-        .setCheck('oh_itemtype')
+        .setCheck(['oh_itemtype', 'oh_item'])
         .appendField('get ')
         .appendField(dropdown, 'attributeName')
         .appendField('of item')
@@ -201,7 +202,7 @@ export default function (f7, isGraalJs) {
       this.setTooltip('Retrieve a specific attribute from the item. Note that groups and tags return a list and should be used with the loops-block \'for each item ... in list\'. ')
       this.setTooltip(function () {
         const attributeName = block.getFieldValue('attributeName')
-        const TIP = {
+        let TIP = {
           'Name': 'name of the Item (string)',
           'Label': 'label of the Item (string)',
           'State': 'state of the Item (string)',
@@ -212,7 +213,7 @@ export default function (f7, isGraalJs) {
           'NumericState': 'numeric state of the Item (number)',
           'QuantityState': 'Unit of Measurement / quantity state of Item (Quantity)'
         }
-        return TIP[attributeName]
+        return TIP[attributeName] + ' \n Note: make sure to use "get item xxx"-Block for the connected block when working with Variables, not "item xxx"-Block'
       })
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-particular-attributes-of-an-item')
     },
@@ -256,11 +257,13 @@ export default function (f7, isGraalJs) {
   */
   javascriptGenerator['oh_getitem_attribute'] = function (block) {
     const theItem = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
+    const inputType = blockGetCheckedInputType(block, 'item')
     let attributeName = block.getFieldValue('attributeName')
 
     if (isGraalJs) {
       attributeName = attributeName.charAt(0).toLowerCase() + attributeName.slice(1)
-      return [`${theItem}.${attributeName}`, 0]
+      let code = (inputType === 'oh_item') ? `items.getItem(${theItem}).${attributeName}` : `${theItem}.${attributeName}`
+      return [code, 0]
     } else {
       if (attributeName === 'Tags' || attributeName === 'GroupNames') {
         return [`Java.from(${theItem}.get${attributeName}())`, 0]
