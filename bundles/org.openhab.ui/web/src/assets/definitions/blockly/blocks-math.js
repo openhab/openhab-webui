@@ -162,4 +162,146 @@ export default function (f7, isGraalJs) {
     }
     return [code, 0]
   }
+
+  Blockly.Blocks['math_single'] = {
+    init: function () {
+      const block = this
+      const dropDown = new Blockly.FieldDropdown([
+        ['square root', 'ROOT'],
+        ['absolute', 'ABS'],
+        ['-', 'NEG'],
+        ['n', 'LN'],
+        ['log10', 'LOG10'],
+        ['e^', 'EXP'],
+        ['10^', 'POW10']
+      ])
+      this.appendValueInput('NUM')
+        .setCheck(['Number', 'oh_quantity'])
+        .appendField(dropDown, 'OP')
+
+      this.setColour('%{BKY_MATH_HUE}')
+      this.setInputsInline(false)
+      let thisBlock = this
+      this.setTooltip(function () {
+        const operand = thisBlock.getFieldValue('OP')
+        switch (operand) {
+          case 'ROOT': return 'Return the square root of the input'
+          case 'ABS': return 'Return the absolute value of the input'
+          case 'NEG': return 'Return the negation of the input'
+          case 'LN': return 'Return the logarithm of the input'
+          case 'LOG10': return 'Return the 10 logarithm of the input'
+          case 'EXP': return 'Return e to the power of the input'
+          case 'POW10': return 'Return 10 to the power of the input'
+        }
+      })
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-math.html#functions')
+      this.setOutput(true, null)
+    }
+  }
+
+  javascriptGenerator['math_single'] = function (block) {
+    const inputType = blockGetCheckedInputType(block, 'NUM')
+    const math_number_input = javascriptGenerator.valueToCode(block, 'NUM', javascriptGenerator.ORDER_FUNCTION_CALL)
+    let math_number = math_number_input
+    if (inputType === 'oh_quantity') {
+      math_number = math_number_input + '.float'
+    }
+    const operand = block.getFieldValue('OP')
+
+    let code = ''
+
+    let method = ''
+    switch (operand) {
+      case 'ROOT':
+        method = `Math.sqrt(${math_number})`
+        break
+      case 'ABS':
+        method = `Math.abs(${math_number})`
+        break
+      case 'NEG':
+        method = `-${math_number}`
+        break
+      case 'LN':
+        method = `Math.log(${math_number})`
+        break
+      case 'LOG10':
+        method = `Math.log(${math_number}) / Math.log(10)`
+        break
+      case 'EXP':
+        method = `Math.exp(${math_number})`
+        break
+      case 'POW10':
+        method = `Math.pow(10,${math_number})`
+        break
+    }
+    code = `${method}`
+
+    if (inputType === 'oh_quantity') {
+      code = `Quantity((${code}).toString() + ' ' + ${math_number_input}.symbol)`
+    }
+    return [code, javascriptGenerator.ORDER_FUNCTION_CALL]
+  }
+
+  Blockly.Blocks['oh_math_minmax'] = {
+    init: function () {
+      const block = this
+      const dropDown = new Blockly.FieldDropdown([
+        ['minimum of', 'min'],
+        ['maximum of', 'max']
+      ])
+      this.appendDummyInput()
+        .appendField(dropDown, 'OP')
+      this.appendValueInput('NUM1')
+        .setCheck(['Number', 'oh_quantity'])
+      this.appendValueInput('NUM2')
+        .appendField(' and ')
+        .setCheck(['Number', 'oh_quantity'])
+
+      this.setColour('%{BKY_MATH_HUE}')
+      this.setInputsInline(true)
+      let thisBlock = this
+      this.setTooltip(function () {
+        const operand = thisBlock.getFieldValue('OP')
+        switch (operand) {
+          case 'min': return 'Return the mimimum of both inputs'
+          case 'max': return 'Return the maximum of both inputs'
+        }
+      })
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-math.html#minmax')
+      this.setOutput(true, null)
+    }
+  }
+
+  javascriptGenerator['oh_math_minmax'] = function (block) {
+    const inputType1 = blockGetCheckedInputType(block, 'NUM1')
+    const inputType2 = blockGetCheckedInputType(block, 'NUM2')
+    let math_number_input1 = javascriptGenerator.valueToCode(block, 'NUM1', javascriptGenerator.ORDER_FUNCTION_CALL)
+    let math_number_input2 = javascriptGenerator.valueToCode(block, 'NUM2', javascriptGenerator.ORDER_FUNCTION_CALL)
+    if (inputType1 !== 'oh_quantity' && inputType2 === 'oh_quantity') {
+      math_number_input2 = `${math_number_input2}.float`
+    }
+    if (inputType1 === 'oh_quantity' && inputType2 !== 'oh_quantity') {
+      math_number_input1 = `${math_number_input1}.float`
+    }
+    const operand = block.getFieldValue('OP')
+
+    let code = ''
+    switch (operand) {
+      case 'min':
+        code = `Math.min(${math_number_input1},${math_number_input2})`
+        if (inputType1 === 'oh_quantity' && inputType2 === 'oh_quantity') {
+          code = `(${math_number_input1}.lessThan(${math_number_input2})) ? ${math_number_input1} : ${math_number_input2}`
+        }
+        break
+
+      case 'max':
+        code = `Math.max(${math_number_input1},${math_number_input2})`
+        if (inputType1 === 'oh_quantity' && inputType2 === 'oh_quantity') {
+          code = `(${math_number_input1}.greaterThan(${math_number_input2})) ? ${math_number_input1} : ${math_number_input2}`
+        }
+        break
+    }
+
+    return [code, javascriptGenerator.ORDER_FUNCTION_CALL]
+  }
 }
