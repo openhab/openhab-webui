@@ -737,7 +737,7 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   javascriptGenerator['oh_zdt_between'] = function (block) {
-    let zdtCompare = addDateComparisonSupportNashorn()
+    let zdtCompare = (isGraalJs) ? addDateComparisonSupportGraalVM() : addDateComparisonSupportNashorn()
     let zdtOne = javascriptGenerator.valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
     let zdtTwo = javascriptGenerator.valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)
     let zdtThree = javascriptGenerator.valueToCode(block, 'zdtThree', javascriptGenerator.ORDER_ATOMIC)
