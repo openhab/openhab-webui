@@ -3,16 +3,16 @@
 
   let lexer = moo.compile({
     WS:               /[ \t]+/,
-    comment:          /\/\/.*?$/,
     sitemap:          'sitemap ',
     name:             'name=',
     label:            'label=',
     item:             'item=',
     icon:             'icon=',
-    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'height=', 'mappings=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint='],
+    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint='],
     widgetboolattr:   ['legend='],
     widgetfreqattr:   'sendFrequency=',
     widgetfrcitmattr: 'forceasitem=',
+    widgetmapattr:    'mappings=',
     widgetvisiattr:   'visibility=',
     widgetcolorattr:  ['labelcolor=', 'valuecolor=', 'iconcolor='],
     widgetswitchattr: 'switchSupport',
@@ -32,6 +32,8 @@
     gt:               '>',
     equals:           '=',
     NL:               { match: /\n/, lineBreaks: true },
+    SL_COMMENT:       /\/\/.*$/,
+    ML_COMMENT:       /\/\*[\s\S]*?\*\//,
     boolean:          /(?:true)|(?:false)/,
     identifier:       /(?:[A-Za-z_][A-Za-z0-9_]*)|(?:[0-9]+[A-Za-z_][A-Za-z0-9_]*)/,
     number:           /-?[0-9]+(?:\.[0-9]*)?/,
@@ -85,7 +87,7 @@ Sitemap -> %sitemap _ SitemapName __ SitemapLabel __ %lbrace _ Widgets _ %rbrace
 
 SitemapName -> %identifier
 SitemapLabel -> null                                                              {% (d) => { return {} } %}
-  | %label %string                                                                {% (d) => { return { 'label': d[1].value } } %}
+  | %label _ %string                                                              {% (d) => { return { 'label': d[2].value } } %}
 
 Widgets -> Widget                                                                 {% (d) => [d[0]] %}
   | Widgets _ Widget                                                              {% (d) => d[0].concat([d[2]]) %}
@@ -97,11 +99,12 @@ Widget -> %nlwidget _ WidgetAttrs:*                                             
 WidgetAttrs -> WidgetAttr                                                         {% (d) => [d[0]] %}
   | WidgetAttrs _ WidgetAttr                                                      {% (d) => d[0].concat([d[2]]) %}
 WidgetAttr -> %widgetswitchattr                                                   {% (d) => ['switchEnabled', true] %}
-  | %widgetfrcitmattr WidgetBooleanAttrValue                                      {% (d) => ['forceAsItem', d[1]] %}
-  | %widgetboolattr WidgetBooleanAttrValue                                        {% (d) => [d[0].value, d[1]] %}
-  | %widgetfreqattr WidgetAttrValue                                               {% (d) => ['frequency', d[1]] %}
-  | %icon WidgetIconAttrValue                                                     {% (d) => [d[0].value, d[1].join("")] %}
-  | WidgetAttrName WidgetAttrValue                                                {% (d) => [d[0][0].value, d[1]] %}
+  | %widgetfrcitmattr _ WidgetBooleanAttrValue                                    {% (d) => ['forceAsItem', d[2]] %}
+  | %widgetboolattr _ WidgetBooleanAttrValue                                      {% (d) => [d[0].value, d[2]] %}
+  | %widgetfreqattr _ WidgetAttrValue                                             {% (d) => ['frequency', d[2]] %}
+  | %icon _ WidgetIconAttrValue                                                   {% (d) => [d[0].value, d[2].join("")] %}
+  | WidgetAttrName _ WidgetAttrValue                                              {% (d) => [d[0][0].value, d[2]] %}
+  | WidgetMappingsAttrName WidgetMappingsAttrValue                                {% (d) => [d[0][0].value, d[1]] %}
   | WidgetVisibilityAttrName WidgetVisibilityAttrValue                            {% (d) => [d[0][0].value, d[1]] %}
   | WidgetColorAttrName WidgetColorAttrValue                                      {% (d) => [d[0][0].value, d[1]] %}
 WidgetAttrName -> %item | %label | %widgetattr
@@ -116,7 +119,8 @@ WidgetIconName -> %identifier
 WidgetAttrValue -> %number                                                        {% (d) => { return parseFloat(d[0].value) } %}
   | %identifier                                                                   {% (d) => d[0].value %}
   | %string                                                                       {% (d) => d[0].value %}
-  | %lbracket _ Mappings _ %rbracket                                              {% (d) => d[2] %}
+WidgetMappingsAttrName -> %widgetmapattr
+WidgetMappingsAttrValue -> %lbracket _ Mappings _ %rbracket                       {% (d) => d[2] %}
 WidgetVisibilityAttrName -> %widgetvisiattr
 WidgetVisibilityAttrValue -> %lbracket _ Visibilities _ %rbracket                 {% (d) => d[2] %}
 WidgetColorAttrName -> %widgetcolorattr
@@ -146,17 +150,16 @@ ColorComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
 ColorValue ->  %number | %identifier | %string
 ColorName ->  %identifier | %string
 
-_ -> null {% () => null %}
-	| _ %WS  {% () => null %}
-	| _ %NL  {% () => null %}
-# | _ %comment {% () => null %}
+_ -> null               {% () => null %}
+	| __                  {% () => null %}
 
-__ -> %WS			{% () => null %}
-	| %NL			{% () => null %}
-	| %comment		{% () => null %}
-	| __ %WS    	{% () => null %}
-	| __ %NL    	{% () => null %}
-	| __ %comment 	{% () => null %}
+__ -> %WS               {% () => null %}
+	| %NL                 {% () => null %}
+	| Comment 		        {% () => null %}
+	| __ %WS    	        {% () => null %}
+	| __ %NL    	        {% () => null %}
+	| __ Comment 	        {% () => null %}
 
-NL -> %NL {% () => null %}
-  | _ %NL {% () => null %}
+Comment -> %SL_COMMENT  {% () => null %}
+  | %ML_COMMENT         {% () => null %}
+
