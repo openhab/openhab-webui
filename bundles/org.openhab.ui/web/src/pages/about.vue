@@ -129,7 +129,7 @@ export default {
         runtimeInfo: this.$store.state.runtimeInfo,
         locale: this.$store.getters.locale,
         systemInfo: this.systemInfo,
-        bindings: this.bindings,
+        addons: this.addons,
         clientInfo: {
           device: Object.assign({}, this.$device, { prefersColorScheme: this.$device.prefersColorScheme() }),
           isSecureContext: window.isSecureContext,
@@ -157,7 +157,7 @@ export default {
     beforePageIn () {
       if (this.$store.getters.isAdmin) {
         this.$oh.api.get('/rest/systeminfo').then((data) => { this.systemInfo = data.systemInfo })
-        this.$oh.api.get('/rest/bindings').then((data) => { this.bindings = data.map((b) => b.id).sort() })
+        this.$oh.api.get('/rest/addons').then((data) => { this.addons = data.filter((a) => a.installed).map((a) => a.uid).sort() })
       }
       if (navigator.serviceWorker) {
         navigator.serviceWorker.getRegistrations().then((registrations) => {
