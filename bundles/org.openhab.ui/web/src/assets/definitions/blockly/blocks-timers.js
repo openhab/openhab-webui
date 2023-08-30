@@ -89,7 +89,6 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
       let code = `if (cache.${cacheType}.exists(${timerName}) === false || cache.${cacheType}.get(${timerName}).hasTerminated()) {\n`
       code += `  cache.${cacheType}.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function () {\n`
       code += timerCode.replace(/^/gm, '  ')
-      code += `  cache.${cacheType}.remove(${timerName});\n`
       code += '  }));\n'
       code += '};\n'
       return code
@@ -157,7 +156,6 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
       let code = `if (cache.${cacheType}.exists(${timerName}) === false || cache.${cacheType}.get(${timerName}).hasTerminated()) {\n`
       code += `  cache.${cacheType}.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function () {\n`
       code += timerCode.replace(/^/gm, '  ')
-      code += `  cache.${cacheType}.remove(${timerName});\n`
       code += '  }));\n'
       code += '} else {\n'
       switch (retrigger) {
