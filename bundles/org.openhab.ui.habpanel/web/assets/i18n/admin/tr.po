@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
-"PO-Revision-Date: 2022-12-11 11:15\n"
+"PO-Revision-Date: 2023-08-30 20:20\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
@@ -275,12 +275,12 @@ msgstr "Panel yapılandırmalarını kaldırın"
 #. Message of the dialog box when deleting a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
 msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
-msgstr ""
+msgstr "Lütfen bu panel yapılandırmasını sunucunun kayıt defterinden silmek istediğinizi onaylayın: {{name}}. Başka hiçbir örneğin bu panel yapılandırmasını kullanmadığından emin olun!"
 
 #. Message of the dialog box when switching from local storage to a server-based panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
 msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
-msgstr ""
+msgstr "Yerel depolamadan panel yapılandırmasına geçmek, yerel yapılandırmanızın üzerine yazacaktır! Emin misin?"
 
 #. Panel name (section header)
 msgctxt "settings.panel.name"
@@ -395,7 +395,7 @@ msgstr "Kullanılabilir sesler işletim sistemine ve tarayıcı ortamlarına ba�
 #. Test button below the voice selection - make the voice say "habpanel 1 2 3"
 msgctxt "settings.panel.voicesupport.speech_synthesis_voice.test"
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 #. Checkbox
 msgctxt "settings.panel.voicesupport.floating_speech_button"
