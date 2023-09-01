@@ -48,22 +48,12 @@
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found" />
     </f7-list>
+
     <f7-block class="block-narrow">
-      <f7-col>
-        <f7-block-title class="searchbar-hide-on-search">
-          <span v-if="ready">{{ things.length }} things</span><span v-else>Loading...</span>
-        </f7-block-title>
-        <div class="searchbar-found padding-left padding-right" v-show="!ready || things.length > 0">
-          <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
-              Alphabetical
-            </f7-button>
-            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
-              By binding
-            </f7-button>
-          </f7-segmented>
-        </div>
-        <f7-list v-if="!ready" contacts-list class="col things-list">
+      <!-- skeleton for not ready -->
+      <f7-col v-if="!ready">
+        <f7-block-title>&nbsp;Loading...</f7-block-title>
+        <f7-list contacts-list class="col things-list">
           <f7-list-group>
             <f7-list-item
               media-item
@@ -75,7 +65,24 @@
               after="status badge" />
           </f7-list-group>
         </f7-list>
-        <f7-list v-else class="searchbar-found col things-list" :contacts-list="groupBy === 'alphabetical'">
+      </f7-col>
+
+      <f7-col v-else-if="things.length > 0">
+        <f7-block-title class="searchbar-hide-on-search">
+          {{ things.length }} Things -
+          <f7-link external :href="documentationLink" target="_blank" text="Open documentation" color="blue" />
+        </f7-block-title>
+        <div class="searchbar-found padding-left padding-right">
+          <f7-segmented strong tag="p">
+            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
+              Alphabetical
+            </f7-button>
+            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
+              By binding
+            </f7-button>
+          </f7-segmented>
+        </div>
+        <f7-list class="searchbar-found col things-list" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
             <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -103,9 +110,14 @@
         </f7-list>
       </f7-col>
     </f7-block>
+
     <f7-block v-if="ready && !things.length" class="block-narrow">
       <empty-state-placeholder icon="lightbulb" title="things.title" text="things.text" />
+      <f7-row class="display-flex justify-content-center">
+        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+      </f7-row>
     </f7-block>
+
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <!-- <f7-fab-buttons position="top">
@@ -151,6 +163,9 @@ export default {
 
   },
   computed: {
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/thing`
+    },
     indexedThings () {
       if (this.groupBy === 'alphabetical') {
         return this.things.reduce((prev, thing, i, things) => {
