@@ -74,11 +74,9 @@ jobs:
         with:
           name: report
           path: /home/runner/work/openhab-webui/openhab-webui/bundles/org.openhab.ui/web/report.html
-
-      # Send bundle stats and build information to RelativeCI
-      - name: Send bundle stats to RelativeCI
-        uses: relative-ci/agent-action@v2.1.7
+      
+      # Upload bundle stats to use on relative-ci.yaml workflow
+      - name: Upload webpack stats artifact
+        uses: relative-ci/agent-upload-artifact-action@v1.0.3
         with:
           webpackStatsFile: ./bundles/org.openhab.ui/web/stats.json
-          key: ${{ secrets.RELATIVE_CI_KEY }}
-          token: ${{ secrets.GITHUB_TOKEN }}
