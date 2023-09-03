@@ -75,7 +75,7 @@
 
           <f7-list-item link="/settings/addons/" :title="$t('sidebar.addOnStore')" panel-close :animate="false"
                         :class="{ currentsection: currentUrl.indexOf('/settings/addons/') >= 0 }">
-            <f7-icon slot="media" ios="f7:bag" aurora="f7:bag" md="material:shopping_bag" color="gray" />
+            <f7-icon slot="media" ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
           </f7-list-item>
 
           <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close :animate="false"
