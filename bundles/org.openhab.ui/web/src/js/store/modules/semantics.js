@@ -18,22 +18,19 @@ const getters = {
 const actions = {
   loadSemantics () {
     if (this.getters.apiEndpoint('tags')) {
-      api.get('/rest/tags')
+      return api.get('/rest/tags')
         .then((tags) => {
-          state.Locations = tags.filter(t => t.uid.startsWith('Location_')).map(t => t.name)
-          state.Equipment = tags.filter(t => t.uid.startsWith('Equipment_')).map(t => t.name)
-          state.Points = tags.filter(t => t.uid.startsWith('Point_')).map(t => t.name)
-          state.Properties = tags.filter(t => t.uid.startsWith('Property_')).map(t => t.name)
+          state.Locations = tags.filter(t => t.uid.startsWith('Location')).map(t => t.name)
+          state.Equipment = tags.filter(t => t.uid.startsWith('Equipment')).map(t => t.name)
+          state.Points = tags.filter(t => t.uid.startsWith('Point')).map(t => t.name)
+          state.Properties = tags.filter(t => t.uid.startsWith('Property')).map(t => t.name)
           // Store i18n labels
-          Object.values(tags).forEach(t => {
-            if (t.label) {
-              state.Labels[t.name] = t.label
-            } else {
-              state.Labels[t.name] = t.name
-            }
-          })
+          for (const i in tags) {
+            const t = tags[i]
+            state.Labels[t.name] = t.label || t.name
+          }
           // Save as i18n messages
-          i18n.mergeLocaleMessage(this.getters.locale, state.Labels)
+          i18n.mergeLocaleMessage(i18n.locale, state.Labels)
 
           return Promise.resolve()
         })

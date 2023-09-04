@@ -45,20 +45,8 @@
 
     <!-- skeleton for not ready -->
     <f7-block class="block-narrow">
-      <f7-col>
-        <f7-block-title class="searchbar-hide-on-search">
-          <span v-if="ready">{{ pages.length }} pages</span><span v-else>Loading...</span>
-        </f7-block-title>
-        <div class="padding-left padding-right searchbar-found" v-show="!ready || pages.length > 0">
-          <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
-              Alphabetical
-            </f7-button>
-            <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')">
-              By type
-            </f7-button>
-          </f7-segmented>
-        </div>
+      <f7-col v-if="!ready">
+        <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list v-if="!ready" contacts-list class="col wide pages-list">
           <f7-list-group>
             <f7-list-item
@@ -74,8 +62,25 @@
             </f7-list-item>
           </f7-list-group>
         </f7-list>
-        <f7-list v-else
-                 v-show="pages.length > 0"
+      </f7-col>
+
+      <f7-col v-else>
+        <f7-block-title class="searchbar-hide-on-search">
+          {{ pages.length }} pages -
+          <f7-link external :href="documentationLink" target="_blank" text="Open documentation" color="blue" />
+        </f7-block-title>
+        <div class="padding-left padding-right searchbar-found" v-show="!ready || pages.length > 0">
+          <f7-segmented strong tag="p">
+            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
+              Alphabetical
+            </f7-button>
+            <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')">
+              By type
+            </f7-button>
+          </f7-segmented>
+        </div>
+
+        <f7-list v-show="pages.length > 0"
                  class="searchbar-found col pages-list"
                  ref="pagesList"
                  :contacts-list="groupBy === 'alphabetical'" media-list>
@@ -112,9 +117,9 @@
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-block v-if="ready && !pages.length" class="service-config block-narrow">
-      <empty-state-placeholder icon="tv" title="pages.title" text="pages.text" />
-    </f7-block>
+
+    <!-- empty-state-placeholder not needed because the overview page cannot be deleted, so there is at least 1 page -->
+
     <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
@@ -144,9 +149,6 @@
 
 <script>
 export default {
-  components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
-  },
   data () {
     return {
       ready: false,
@@ -168,6 +170,9 @@ export default {
     }
   },
   computed: {
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/pages`
+    },
     indexedPages () {
       if (this.groupBy === 'alphabetical') {
         return this.pages.reduce((prev, page, i, pages) => {

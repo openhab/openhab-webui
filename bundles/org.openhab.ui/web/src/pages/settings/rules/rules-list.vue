@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
-    <f7-navbar :title="(showScripts) ? 'Scripts' : ((showScenes) ? 'Scenes' : 'Rules')" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar :title="type" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
@@ -53,8 +53,8 @@
 
     <empty-state-placeholder v-if="noRuleEngine" icon="exclamationmark_triangle" title="rules.missingengine.title" text="rules.missingengine.text" />
 
-    <!-- skeleton for not ready -->
     <f7-block class="block-narrow" v-show="!noRuleEngine">
+      <!-- skeleton for not ready -->
       <f7-col v-if="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list contacts-list class="col rules-list">
@@ -71,15 +71,11 @@
           </f7-list-group>
         </f7-list>
       </f7-col>
-      <f7-col v-else>
-        <f7-block-title v-if="showScripts" class="searchbar-hide-on-search">
-          {{ rules.length }} scripts
-        </f7-block-title>
-        <f7-block-title v-else-if="showScenes" class="searchbar-hide-on-search">
-          {{ rules.length }} scenes
-        </f7-block-title>
-        <f7-block-title v-else class="searchbar-hide-on-search">
-          {{ rules.length }} rules
+
+      <f7-col v-else-if="rules.length > 0">
+        <f7-block-title class="searchbar-hide-on-search">
+          {{ rules.length }} {{ type.toLowerCase() }} -
+          <f7-link external :href="documentationLink" target="_blank" text="Open documentation" color="blue" />
         </f7-block-title>
 
         <f7-list
@@ -117,11 +113,16 @@
         </f7-list>
       </f7-col>
     </f7-block>
+
     <f7-block v-if="ready && !noRuleEngine && !rules.length" class="service-config block-narrow">
       <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
       <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
       <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
+      <f7-row class="display-flex justify-content-center">
+        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+      </f7-row>
     </f7-block>
+
     <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
@@ -151,6 +152,12 @@ export default {
     }
   },
   computed: {
+    type () {
+      return this.showScripts ? 'Scripts' : (this.showScenes ? 'Scenes' : 'Rules')
+    },
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/${this.type.toLowerCase()}`
+    },
     indexedRules () {
       return this.rules.reduce((prev, rule, i, rules) => {
         const initial = rule.name.substring(0, 1).toUpperCase()

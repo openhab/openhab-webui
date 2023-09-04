@@ -109,6 +109,23 @@
         </f7-list-button>
       </f7-list>
     </f7-block>
+    <!-- Transformations -->
+    <f7-block class="no-margin no-padding" v-if="searchResults.transformations.length">
+      <f7-block-title class="padding-left">
+        <f7-icon class="margin-right" f7="arrow_2_squarepath" />Transformations ({{ searchResults.transformations.length }})
+      </f7-block-title>
+      <f7-list media-list>
+        <f7-list-item media-item v-for="transformation in filteredSearchResults.transformations" :key="transformation.uid"
+                      :title="transformation.label" :footer="transformation.uid" link="" no-chevron @click="(evt) => togglePin(evt, 'transformations', transformation, 'uid')">
+          <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/transformations/' + transformation.uid" :animate="false" />
+          <f7-link slot="after" v-if="isPinned('transformations', transformation, 'uid')" @click="$emit('unpin', 'transformations', transformation, 'uid')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
+          <f7-link slot="after" v-else @click="$emit('pin', 'transformations', transformation, 'uid')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+        </f7-list-item>
+        <f7-list-button v-if="!showingAll('transformations')" color="blue" @click="$set(expandedTypes, 'transformations', true)">
+          Show All
+        </f7-list-button>
+      </f7-list>
+    </f7-block>
   </div>
 </template>
 
@@ -143,7 +160,8 @@ export default {
       const scenes = (this.expandedTypes.scenes) ? this.searchResults.scenes : (this.searchResults.scenes ? this.searchResults.scenes.slice(0, 5) : [])
       const scripts = (this.expandedTypes.scripts) ? this.searchResults.scripts : (this.searchResults.scripts ? this.searchResults.scripts.slice(0, 5) : [])
       const pages = (this.expandedTypes.pages) ? this.searchResults.pages : (this.searchResults.pages ? this.searchResults.pages.slice(0, 5) : [])
-      return { items, things, rules, scenes, scripts, pages }
+      const transformations = (this.expandedTypes.transformations) ? this.searchResults.transformations : (this.searchResults.transformations ? this.searchResults.transformations.slice(0, 5) : [])
+      return { items, things, rules, scenes, scripts, pages, transformations }
     }
   },
   watch: {

@@ -21,7 +21,7 @@
             Pinned Objects
           </f7-block-title>
         </f7-block>
-        <f7-block class="no-margin no-padding" v-if="!pinnedObjects.items.length && !pinnedObjects.things.length && !pinnedObjects.rules.length && !pinnedObjects.pages.length">
+        <f7-block class="no-margin no-padding" v-if="!pinnedObjects.items.length && !pinnedObjects.things.length && !pinnedObjects.rules.length && !pinnedObjects.pages.length && !pinnedObjects.transformations.length">
           <p class="padding-horizontal">
             Use the search box above or the button below to temporarily pin objects here for quick access.
           </p>
@@ -169,6 +169,26 @@
                   <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="View" :href="'/page/' + page.uid" :animate="false" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/pages/' + getPageType(page).type + '/' + page.uid" :animate="false" />
                   <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('pages', page, 'uid')" />
+                </div>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
+        <!-- Pinned Transformations -->
+        <f7-block class="no-margin no-padding" v-if="pinnedObjects.transformations.length">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Transformations</span>
+            <span style="margin-left:auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('transformations')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item v-for="transformation in pinnedObjects.transformations" :key="transformation.uid" media-item
+                            :title="transformation.label" :footer="transformation.uid">
+                <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/transformations/' + transformation.uid" :animate="false" />
+                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('transformations', transformation, 'uid')" />
                 </div>
               </f7-list-item>
             </ul>
@@ -361,7 +381,8 @@ export default {
         rules: [],
         scenes: [],
         scripts: [],
-        pages: []
+        pages: [],
+        transformations: []
       },
       pinnedObjects: {
         items: [],
@@ -369,7 +390,8 @@ export default {
         rules: [],
         scenes: [],
         scripts: [],
-        pages: []
+        pages: [],
+        transformations: []
       },
       sseEvents: [],
       openedItem: null,
@@ -554,12 +576,14 @@ export default {
           Promise.resolve(this.cachedObjects[0]),
           Promise.resolve(this.cachedObjects[1]),
           Promise.resolve(this.cachedObjects[2]),
-          Promise.resolve(this.cachedObjects[3])
+          Promise.resolve(this.cachedObjects[3]),
+          Promise.resolve(this.cachedObjects[4])
         ] : [
           this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.*'),
           this.$oh.api.get('/rest/things?summary=true'),
           this.$oh.api.get('/rest/rules?summary=false'),
-          Promise.resolve(this.$store.getters.pages)
+          Promise.resolve(this.$store.getters.pages),
+          this.$oh.api.get('/rest/transformations')
         ]
 
       this.searchResultsLoading = true
@@ -590,13 +614,19 @@ export default {
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
         })
+        const transformations = data[4].filter((t) => t.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return (labelA) ? labelA.localeCompare(labelB) : 0
+        })
         this.$set(this, 'searchResults', {
           items,
           things,
           rules,
           scenes,
           scripts,
-          pages
+          pages,
+          transformations
         })
       })
     },
