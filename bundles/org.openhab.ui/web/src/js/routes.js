@@ -9,7 +9,7 @@ import AnalyzerPopup from '../pages/analyzer/analyzer-popup.vue'
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '../pages/about.vue')
 const UserProfilePage = () => import(/* webpackChunkName: "profile-page" */ '../pages/profile.vue')
 
-const SettingsMenuPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/settings-menu.vue')
+const SettingsMenuPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/menu/settings-menu.vue')
 const ServiceSettingsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/services/service-settings.vue')
 const AddonsListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-list.vue')
 const AddonsAddPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-add.vue')

@@ -353,7 +353,9 @@
 			splittedIconAttr;
 
 		_t.parentNode = parentNode;
-		_t.formRow = parentNode.parentNode;
+		if (_t.formRow === undefined) {
+			_t.formRow = parentNode.parentNode;
+		}
 		_t.item = _t.parentNode.getAttribute(o.itemAttribute);
 		_t.id = _t.parentNode.getAttribute(o.idAttribute);
 		_t.visible = !_t.formRow.classList.contains(o.formRowHidden);
@@ -1763,6 +1765,7 @@
 
 	/* class ControlInput extends Control */
 	function ControlInput(parentNode) {
+		this.formRow = parentNode.parentNode.parentNode;
 		Control.call(this, parentNode);
 
 		var
