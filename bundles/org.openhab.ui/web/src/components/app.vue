@@ -141,7 +141,7 @@
       <developer-sidebar />
     </f7-panel>
 
-    <f7-view main v-if="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
+    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
 
   <!-- <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
     <f7-view name="login" v-if="$device.cordova">
