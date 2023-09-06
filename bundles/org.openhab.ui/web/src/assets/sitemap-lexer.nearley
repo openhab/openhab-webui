@@ -9,7 +9,7 @@
     item:             'item=',
     staticIcon:       'staticIcon=',
     icon:             'icon=',
-    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'height=', 'mappings=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint='],
+    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint='],
     widgetboolattr:   ['legend='],
     widgetfreqattr:   'sendFrequency=',
     widgetfrcitmattr: 'forceasitem=',
