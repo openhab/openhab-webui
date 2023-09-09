@@ -52,7 +52,14 @@ public class WebviewRenderer extends AbstractWidgetRenderer {
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Webview webview = (Webview) w;
         String snippet = getSnippet("webview");
+
+        boolean showHeaderRow = !getLabel(w).isEmpty();
+        snippet = snippet.replace("%header_visibility_class%",
+                showHeaderRow ? "%visibility_class%" : "mdl-form__row--hidden");
+        snippet = snippet.replace("%header_row%", Boolean.valueOf(showHeaderRow).toString());
+
         snippet = preprocessSnippet(snippet, webview, true);
+
         // Process the color tags
         snippet = processColor(w, snippet);
 
