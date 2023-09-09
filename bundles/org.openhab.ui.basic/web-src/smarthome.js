@@ -358,6 +358,7 @@
 		}
 		_t.item = _t.parentNode.getAttribute(o.itemAttribute);
 		_t.id = _t.parentNode.getAttribute(o.idAttribute);
+		_t.iconWithState = _t.parentNode.getAttribute(o.iconWithStateAttribute) === "true";
 		_t.visible = !_t.formRow.classList.contains(o.formRowHidden);
 		_t.headerRow = _t.parentNode.getAttribute("data-header-row");
 		if (_t.headerRow !== null) {
@@ -447,7 +448,7 @@
 				src;
 
 			// Some widgets don't have icons
-			if (_t.icon !== null) {
+			if (_t.icon !== null && _t.iconWithState) {
 				if (state.length < 200) {
 					src = "/icon/" + encodeURIComponent(_t.iconName) +
 						"?state=" + encodeURIComponent(state) +
@@ -2910,6 +2911,7 @@
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",
+	iconWithStateAttribute: "data-icon-with-state",
 	inlineSvgAttribute: "data-inline-svg",
 	primaryColorAttribute: "data-primary-color",
 	secondaryColorAttribute: "data-secondary-color",
