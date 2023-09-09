@@ -71,6 +71,9 @@ public class ImageRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%id%", widgetId);
         snippet = preprocessSnippet(snippet, w, true);
 
+        // Process the color tags
+        snippet = processColor(w, snippet);
+
         boolean validUrl = isValidURL(image.getUrl());
         String proxiedUrl = "../proxy?sitemap=" + sitemap + "&amp;widgetId=" + widgetId;
         State state = itemUIRegistry.getState(w);

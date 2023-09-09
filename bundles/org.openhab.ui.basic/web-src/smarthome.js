@@ -359,10 +359,19 @@
 		_t.item = _t.parentNode.getAttribute(o.itemAttribute);
 		_t.id = _t.parentNode.getAttribute(o.idAttribute);
 		_t.iconWithState = _t.parentNode.getAttribute(o.iconWithStateAttribute) === "true";
-		_t.iconContainer = _t.formRow.querySelector(o.formIcon);
-		_t.icon = _t.formRow.querySelector(o.formIconImg);
 		_t.visible = !_t.formRow.classList.contains(o.formRowHidden);
-		_t.label = _t.formRow.querySelector(o.formLabel);
+		_t.headerRow = _t.parentNode.getAttribute("data-header-row");
+		if (_t.headerRow !== null) {
+			_t.formHeaderRow = _t.formRow.previousElementSibling;
+			_t.iconContainer = _t.formHeaderRow.querySelector(o.formIcon);
+			_t.icon = _t.formHeaderRow.querySelector(o.formIconImg);
+			_t.label = _t.formHeaderRow.querySelector(o.formLabel);
+		} else {
+			_t.formHeaderRow = null;
+			_t.iconContainer = _t.formRow.querySelector(o.formIcon);
+			_t.icon = _t.formRow.querySelector(o.formIconImg);
+			_t.label = _t.formRow.querySelector(o.formLabel);
+		}
 
 		function convertToInlineSVG() {
 			this.removeEventListener("load", convertToInlineSVG);
@@ -407,7 +416,11 @@
 
 			// Replace the current icon element with the built inline SVG
 			_t.iconContainer.replaceChild(newIconElement, _t.icon);
-			_t.icon = _t.parentNode.parentNode.querySelector(o.formIconSvg);
+			if (_t.headerRow !== null) {
+				_t.icon = _t.formHeaderRow.querySelector(o.formIconSvg);
+			} else {
+				_t.icon = _t.formRow.querySelector(o.formIconSvg);
+			}
 		};
 
 		_t.getSVGIconAndReplaceWithInline = function(srcUrl, checkCurrentColor, defaultSVG) {
@@ -459,8 +472,14 @@
 
 		_t.setVisible = function(state) {
 			if (state) {
+				if (_t.headerRow === "true") {
+					_t.formHeaderRow.classList.remove(o.formRowHidden);
+				}
 				_t.formRow.classList.remove(o.formRowHidden);
 			} else {
+				if (_t.headerRow === "true") {
+					_t.formHeaderRow.classList.add(o.formRowHidden);
+				}
 				_t.formRow.classList.add(o.formRowHidden);
 			}
 
@@ -556,6 +575,12 @@
 		} else {
 			this.parentNode = parentNode;
 			this.id = this.parentNode.getAttribute(o.idAttribute);
+			this.headerRow = this.parentNode.getAttribute("data-header-row");
+			if (this.headerRow !== null) {
+				this.formHeaderRow = this.parentNode.parentNode.previousElementSibling;
+			} else {
+				this.formHeaderRow = null;
+			}
 		}
 
 		var
@@ -569,6 +594,27 @@
 		_t.url = parentNode.getAttribute("data-proxied-url");
 		_t.validUrl = parentNode.getAttribute("data-valid-url") === "true";
 		_t.ignoreRefresh = parentNode.getAttribute("data-ignore-refresh") === "true";
+		_t.legendButton = null;
+		_t.periodButton = null;
+		_t.upscaleButton = null;
+		_t.refreshButton = null;
+		_t.displayLegend = _t.parentNode.getAttribute("data-legend") === "true";
+		_t.period = null;
+		_t.upscale = false;
+
+		if (_t.headerRow === "true") {
+			_t.legendButton = _t.formHeaderRow.querySelector(o.image.legendButton);
+			_t.periodButton = _t.formHeaderRow.querySelector(o.image.periodButton);
+			_t.upscaleButton = _t.formHeaderRow.querySelector(o.image.upscaleButton);
+			_t.refreshButton = _t.formHeaderRow.querySelector(o.image.refreshButton);
+			if (_t.legendButton !== null) {
+				if (_t.displayLegend) {
+					_t.legendButton.classList.add(o.buttonActiveClass);
+				} else {
+					_t.legendButton.classList.remove(o.buttonActiveClass);
+				}
+			}
+		}
 
 		_t.setValuePrivate = function(value, itemState, visible) {
 			if (!visible) {
@@ -592,9 +638,15 @@
 
 		_t.setVisible = function(state) {
 			if (state) {
+				if (_t.headerRow === "true") {
+					_t.formHeaderRow.classList.remove(o.formRowHidden);
+				}
 				_t.formRow.classList.remove(o.formRowHidden);
 				_t.activateRefresh();
 			} else {
+				if (_t.headerRow === "true") {
+					_t.formHeaderRow.classList.add(o.formRowHidden);
+				}
 				_t.formRow.classList.add(o.formRowHidden);
 				_t.deactivateRefresh();
 			}
@@ -629,13 +681,133 @@
 			}, _t.updateInterval);
 		};
 
+		function onLegendClick() {
+			_t.displayLegend = !_t.displayLegend;
+			if (_t.displayLegend) {
+				_t.legendButton.classList.add(o.buttonActiveClass);
+			} else {
+				_t.legendButton.classList.remove(o.buttonActiveClass);
+			}
+			_t.url = _t.url.replace(/&legend=(true|false)/, "");
+			if (_t.displayLegend) {
+				_t.url = _t.url + "&legend=true";
+			} else {
+				_t.url = _t.url + "&legend=false";
+			}
+			_t.image.setAttribute("src", _t.url + "&t=" + Date.now());
+		}
+
+		function onPeriodChange(event) {
+			event.stopPropagation();
+
+			if (event.target.tagName.toLowerCase() !== "input") {
+				return;
+			}
+
+			_t.period = event.target.getAttribute("value");
+			_t.url = _t.url.replace(/&period=(h|4h|8h|12h|D|2D|3D|W|2W|M|2M|4M|Y)/, "&period=" + _t.period);
+			_t.image.setAttribute("src", _t.url + "&t=" + Date.now());
+
+			setTimeout(function() {
+				_t.modalPeriods.hide();
+			}, 300);
+		}
+
+		_t.showModalPeriods = function() {
+			var
+				content = _t.formHeaderRow.querySelector(o.image.periodRows).innerHTML;
+
+			_t.modalPeriods = new Modal(content);
+			_t.modalPeriods.show();
+			_t.modalPeriods.onHide = function() {
+				var
+					items = [].slice.call(_t.modalPeriods.container.querySelectorAll(o.formRadio));
+
+				componentHandler.downgradeElements(items);
+				items.forEach(function(control) {
+					control.removeEventListener("click", onPeriodChange);
+				});
+
+				_t.modalPeriods = null;
+			};
+
+			var
+				controls = [].slice.call(_t.modalPeriods.container.querySelectorAll(o.formRadio));
+
+			if (_t.period !== null) {
+				var
+					items = [].slice.call(_t.modalPeriods.container.querySelectorAll("input[type=radio]"));
+
+				items.forEach(function(radioItem) {
+					if (radioItem.value === _t.period) {
+						radioItem.checked = true;
+					} else {
+						radioItem.checked = false;
+					}
+				});
+			}
+
+			controls.forEach(function(control) {
+				componentHandler.upgradeElement(control, "MaterialRadio");
+				control.addEventListener("click", onPeriodChange);
+			});
+		};
+
+		function onUpscaleClick() {
+			_t.upscale = !_t.upscale;
+			if (_t.upscale) {
+				_t.upscaleButton.classList.add(o.buttonActiveClass);
+			} else {
+				_t.upscaleButton.classList.remove(o.buttonActiveClass);
+			}
+			if (_t.upscale) {
+				_t.parentNode.classList.add(o.image.upscaleClass);
+			} else {
+				_t.parentNode.classList.remove(o.image.upscaleClass);
+			}
+		}
+
+		function onRefreshClick() {
+			_t.image.setAttribute("src", _t.url + "&t=" + Date.now());
+		}
+
 		_t.destroy = function() {
 			var
 				imageParent = _t.image.parentNode;
 
 			_t.image.setAttribute("src", urlNoneIcon);
 			imageParent.removeChild(_t.image);
+
+			if (_t.legendButton !== null) {
+				componentHandler.downgradeElements([ _t.legendButton ]);
+				_t.legendButton.removeEventListener("click", onLegendClick);
+			}
+			if (_t.periodButton !== null) {
+				componentHandler.downgradeElements([ _t.periodButton ]);
+				_t.periodButton.removeEventListener("click", _t.showModalPeriods);
+			}
+			if (_t.upscaleButton !== null) {
+				componentHandler.downgradeElements([ _t.upscaleButton ]);
+				_t.upscaleButton.removeEventListener("click", onUpscaleClick);
+			}
+			if (_t.refreshButton !== null) {
+				componentHandler.downgradeElements([ _t.refreshButton ]);
+				_t.refreshButton.removeEventListener("click", onRefreshClick);
+			}
 		};
+
+		if (_t.legendButton !== null) {
+			_t.legendButton.addEventListener("click", onLegendClick);
+		}
+		if (_t.periodButton !== null) {
+			_t.periodButton.addEventListener("click", _t.showModalPeriods);
+		}
+		if (_t.upscaleButton !== null) {
+			_t.upscaleButton.addEventListener("click", onUpscaleClick);
+		}
+		if (_t.refreshButton !== null) {
+			_t.refreshButton.addEventListener("click", onRefreshClick);
+		}
 
 		if (_t.visible) {
 			_t.activateRefresh();
@@ -2784,6 +2956,14 @@
 		background: ".colorpicker__background",
 		colorpicker: ".colorpicker",
 		button: ".colorpicker__buttons > button"
+	},
+	image: {
+		legendButton: ".chart-legend-button",
+		periodButton: ".chart-period-button",
+		periodRows: ".mdl-form__header-rows",
+		upscaleButton: ".image-upscale-button",
+		upscaleClass: "mdl-form__image-upscale",
+		refreshButton: ".chart-refresh-button"
 	},
 	notify: ".mdl-notify__container",
 	notifyHidden: "mdl-notify--hidden",

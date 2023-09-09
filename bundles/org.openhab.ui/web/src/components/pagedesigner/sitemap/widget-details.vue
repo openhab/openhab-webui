@@ -17,7 +17,7 @@
         <ul>
           <!-- additional controls -->
           <f7-list-input v-if="supports('url')" label="URL" type="url" :value="widget.config.url" @input="updateParameter('url', $event)" clear-button />
-          <f7-list-input v-if="supports('refresh')" label="Refresh interval" type="text" :value="widget.config.refresh" @input="updateParameter('refresh', $event)" clear-button />
+          <f7-list-input v-if="supports('refresh')" label="Refresh interval" type="number" :value="widget.config.refresh" @input="updateParameter('refresh', $event)" clear-button />
           <f7-list-input v-if="supports('encoding')" label="Encoding" type="text" :value="widget.config.encoding" @input="updateParameter('encoding', $event)" clear-button />
           <f7-list-input v-if="supports('service')" label="Service" type="text" :value="widget.config.service" @input="updateParameter('service', $event)" clear-button />
           <f7-list-item v-if="supports('period')" title="Period" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
@@ -28,7 +28,7 @@
             </select>
           </f7-list-item>
           <f7-list-input v-if="supports('height')" label="Height" type="number" :value="widget.config.height" @input="updateParameter('height', $event)" clear-button />
-          <f7-list-input v-if="supports('sendFrequency')" label="Frequency" type="text" :value="widget.config.sendFrequency" @input="updateParameter('sendFrequency', $event)" clear-button />
+          <f7-list-input v-if="supports('sendFrequency')" label="Frequency" type="number" :value="widget.config.sendFrequency" @input="updateParameter('sendFrequency', $event)" clear-button />
           <f7-list-input v-if="supports('minValue')" label="Minimum" type="number" :value="widget.config.minValue" @input="updateParameter('minValue', $event)" clear-button />
           <f7-list-input v-if="supports('maxValue')" label="Maximum" type="number" :value="widget.config.maxValue" @input="updateParameter('maxValue', $event)" clear-button />
           <f7-list-input v-if="supports('step')" label="Step" type="number" :value="widget.config.step" @input="updateParameter('step', $event)" clear-button />

@@ -66,7 +66,16 @@ public class VideoRenderer extends AbstractWidgetRenderer {
                 && videoWidget.getEncoding().toLowerCase().contains("mjpeg")) ? "image" : "video";
 
         snippet = getSnippet(snippetName);
+
+        boolean showHeaderRow = !getLabel(w).isEmpty();
+        snippet = snippet.replace("%header_visibility_class%",
+                showHeaderRow ? "%visibility_class%" : "mdl-form__row--hidden");
+        snippet = snippet.replace("%header_row%", Boolean.valueOf(showHeaderRow).toString());
+
         snippet = preprocessSnippet(snippet, w, true);
+
+        // Process the color tags
+        snippet = processColor(w, snippet);
 
         State state = itemUIRegistry.getState(w);
         String url;
