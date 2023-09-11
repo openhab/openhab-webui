@@ -8,6 +8,7 @@
   "dialogs.copy": "Copy",
   "dialogs.delete": "Delete",
   "dialogs.reload": "Reload",
+  "dialogs.retry": "Try Again",
   "dialogs.search": "Search",
   "dialogs.search.items": "Search items",
   "dialogs.search.things": "Search things",
@@ -43,5 +44,7 @@
   "page.navbar.edit": "Edit",
   "admin.notTranslatedYet": "The administration area is not translated yet.",
   "error.communicationFailure": "Communication failure",
-  "error.itemNotFound": "%s not found"
+  "error.itemNotFound": "%s not found",
+  "error.notReachable.title": "openHAB is offline",
+  "error.notReachable.msg": "The openHAB server cannot be reached at the moment. Please check your network connection and your server."
 }

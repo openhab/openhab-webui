@@ -1,5 +1,5 @@
 <template>
-  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || loginScreenOpened) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
+  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || loginScreenOpened || communicationFailureMsg) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
@@ -141,6 +141,23 @@
       <developer-sidebar />
     </f7-panel>
 
+    <f7-block v-if="!ready && communicationFailureMsg" class="block-narrow">
+      <empty-state-placeholder icon="wifi_slash" :title="$t('error.notReachable.title')" :text="$t('error.notReachable.msg') + '<br/><br/>Error: ' + communicationFailureMsg" />
+      <f7-col>
+        <f7-list>
+          <f7-list-button color="blue" @click="loadData">
+            {{ $t('dialogs.retry') }}
+          </f7-list-button>
+          <f7-list-button color="blue" @click="reload">
+            {{ $t('about.reload.reloadApp') }}
+          </f7-list-button>
+          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches">
+            {{ $t('about.reload.purgeCachesAndRefresh') }}
+          </f7-list-button>
+        </f7-list>
+      </f7-col>
+    </f7-block>
+
     <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
 
   <!-- <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
@@ -266,6 +283,9 @@ import cordovaApp from '../js/cordova-app.js'
 import routes from '../js/routes.js'
 import PanelRight from '../pages/panel-right.vue'
 import DeveloperSidebar from './developer/developer-sidebar.vue'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+
+import { loadLocaleMessages } from '@/js/i18n'
 
 import auth from './auth-mixin.js'
 import i18n from './i18n-mixin.js'
@@ -276,6 +296,7 @@ import dayjsLocales from 'dayjs/locale.json'
 export default {
   mixins: [auth, i18n],
   components: {
+    EmptyStatePlaceholder,
     PanelRight,
     DeveloperSidebar
   },
@@ -387,9 +408,17 @@ export default {
       showDeveloperSidebar: false,
       currentUrl: '',
 
+      // For the communication failure toast
       communicationFailureToast: null,
-      communicationFailureTimeoutId: null
+      communicationFailureTimeoutId: null,
+      // For the communication failure page
+      communicationFailureMsg: null,
+
+      showCachePurgeOption: false
     }
+  },
+  i18n: {
+    messages: loadLocaleMessages(require.context('@/assets/i18n/about'))
   },
   computed: {
     isAdmin () {
@@ -475,7 +504,8 @@ export default {
               })
             }
           } else {
-            alert('openHAB REST API connection failed with error: ' + err.message || err.status) // Framework7 alert does not work, use Window alert() instead
+            // Make sure this is set to a value, otherwise the page won't show up
+            this.communicationFailureMsg = err.message || err.status || 'Unknown Error'
             return Promise.reject('openHAB REST API connection failed with error: ' + err.message || err.status)
           }
         })
@@ -690,6 +720,40 @@ export default {
       })
       toast.open()
       return toast
+    },
+    purgeServiceWorkerAndCaches () {
+      this.$f7.dialog.confirm(
+        this.$t('about.reload.confirmPurge'),
+        () => {
+          navigator.serviceWorker.getRegistrations().then(function (registrations) {
+            for (let registration of registrations) {
+              registration.unregister().then(function () {
+                return self.clients.matchAll()
+              }).then(function (clients) {
+                clients.forEach(client => {
+                  if (client.url && 'navigate' in client) {
+                    setTimeout(() => { client.navigate(client.url.split('#')[0]) }, 1000)
+                  }
+                })
+              })
+            }
+          })
+          window.caches.keys().then(function (cachesNames) {
+            console.log('Deleting caches')
+            return Promise.all(cachesNames.map(function (cacheName) {
+              return caches.delete(cacheName).then(function () {
+                console.log('Cache with name ' + cacheName + ' is deleted')
+              })
+            }))
+          }).then(function () {
+            console.log('Caches deleted')
+            setTimeout(() => { location.reload(true) }, 1000)
+          })
+        }
+      )
+    },
+    reload () {
+      document.location.reload()
     }
   },
   created () {
@@ -701,6 +765,22 @@ export default {
         window.OHApp.goFullscreen()
       } catch {}
     }
+
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        if (registrations.length > 0) {
+          this.showCachePurgeOption = true
+        }
+      })
+    }
+    if (window.caches) {
+      window.caches.keys().then((cachesNames) => {
+        if (cachesNames.length > 0) {
+          this.showCachePurgeOption = true
+        }
+      })
+    }
+
     // this.loginScreenOpened = true
     const refreshToken = this.getRefreshToken()
     if (refreshToken) {
@@ -789,23 +869,25 @@ export default {
       })
 
       this.$store.subscribe((mutation, state) => {
-        if (mutation.type === 'sseConnected') {
-          if (!window.OHApp && this.$f7) {
-            if (mutation.payload === false) {
-              if (this.communicationFailureToast === null) {
-                this.communicationFailureTimeoutId = setTimeout(() => {
-                  if (this.communicationFailureToast !== null) return
-                  this.communicationFailureToast = this.displayFailureToast(this.$t('error.communicationFailure'), true, false)
-                  this.communicationFailureToast.open()
-                  this.communicationFailureTimeoutId = null
-                }, 1000)
-              }
-            } else if (mutation.payload === true) {
-              if (this.communicationFailureTimeoutId !== null) clearTimeout(this.communicationFailureTimeoutId)
-              if (this.communicationFailureToast !== null) {
-                this.communicationFailureToast.close()
-                this.communicationFailureToast.destroy()
-                this.communicationFailureToast = null
+        if (this.ready) {
+          if (mutation.type === 'sseConnected') {
+            if (!window.OHApp && this.$f7) {
+              if (mutation.payload === false) {
+                if (this.communicationFailureToast === null) {
+                  this.communicationFailureTimeoutId = setTimeout(() => {
+                    if (this.communicationFailureToast !== null) return
+                    this.communicationFailureToast = this.displayFailureToast(this.$t('error.communicationFailure'), true, false)
+                    this.communicationFailureToast.open()
+                    this.communicationFailureTimeoutId = null
+                  }, 1000)
+                }
+              } else if (mutation.payload === true) {
+                if (this.communicationFailureTimeoutId !== null) clearTimeout(this.communicationFailureTimeoutId)
+                if (this.communicationFailureToast !== null) {
+                  this.communicationFailureToast.close()
+                  this.communicationFailureToast.destroy()
+                  this.communicationFailureToast = null
+                }
               }
             }
           }
