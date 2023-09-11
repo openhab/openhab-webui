@@ -1,5 +1,5 @@
 <template>
-  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || loginScreenOpened || communicationFailureMsg) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
+  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || communicationFailureMsg) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
@@ -159,43 +159,6 @@
     </f7-block>
 
     <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
-
-  <!-- <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
-    <f7-view name="login" v-if="$device.cordova">
-      <f7-page login-screen>
-        <f7-login-screen-title><img src="@/images/openhab-logo.svg" type="image/svg+xml" width="200px"><br>Login</f7-login-screen-title>
-        <f7-list form>
-          <f7-list-input
-            type="text"
-            name="serverUrl"
-            placeholder="openHAB server URL"
-            :value="serverUrl"
-            @input="serverUrl = $event.target.value"
-          ></f7-list-input>
-          <f7-list-input
-            type="text"
-            name="username"
-            placeholder="Username (optional)"
-            :value="username"
-            @input="username = $event.target.value"
-          ></f7-list-input>
-          <f7-list-input
-            type="password"
-            name="password"
-            placeholder="Password (optional)"
-            :value="password"
-            @input="password = $event.target.value"
-          ></f7-list-input>
-        </f7-list>
-        <f7-list>
-          <f7-list-button title="Sign In" @click="login"></f7-list-button>
-          <f7-block-footer>
-            Some text about login information.
-          </f7-block-footer>
-        </f7-list>
-      </f7-page>
-    </f7-view>
-  </f7-login-screen> -->
   </f7-app>
 </template>
 
@@ -395,7 +358,6 @@ export default {
       pages: null,
       showSidebar: true,
       visibleBreakpointDisabled: false,
-      loginScreenOpened: false,
       loggedIn: false,
 
       themeOptions: {
@@ -456,7 +418,6 @@ export default {
               this.loadData(true)
               return Promise.reject()
             }
-            this.loginScreenOpened = true
             this.$nextTick(() => {
               this.$f7.dialog.login(
                 window.location.host,
@@ -583,7 +544,6 @@ export default {
       localStorage.setItem('openhab.ui:username', this.username)
       localStorage.setItem('openhab.ui:password', this.password)
       this.loadData().then(() => {
-        this.loginScreenOpened = false
         this.loggedIn = true
       }).catch((err) => {
         localStorage.removeItem('openhab.ui:serverUrl')
@@ -607,7 +567,6 @@ export default {
         this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
         window.location = window.location.origin
         if (this.$device.cordova) {
-          this.loginScreenOpened = true
         }
       }).catch((err) => {
         this.$f7.preloader.hide()
@@ -781,12 +740,10 @@ export default {
       })
     }
 
-    // this.loginScreenOpened = true
     const refreshToken = this.getRefreshToken()
     if (refreshToken) {
       this.refreshAccessToken().then(() => {
         this.loggedIn = true
-        // this.loadData()
         this.init = true
       }).catch((err) => {
         console.warn('Error while using the stored refresh_token to get a new access_token: ' + err + '. Logging out & cleaning session.')
