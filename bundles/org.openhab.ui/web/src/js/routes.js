@@ -11,11 +11,11 @@ const UserProfilePage = () => import(/* webpackChunkName: "profile-page" */ '../
 
 const SettingsMenuPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/menu/settings-menu.vue')
 const ServiceSettingsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/services/service-settings.vue')
-const AddonsListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-list.vue')
-const AddonsAddPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-add.vue')
-const AddonsConfigureBindingPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addon-config.vue')
-const AddonsStorePage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-store.vue')
-const AddonDetailsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addon-details.vue')
+const AddonsListPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addons-list.vue')
+const AddonsAddPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addons-add.vue')
+const AddonsConfigureBindingPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addon-config.vue')
+const AddonsStorePage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addons-store.vue')
+const AddonDetailsPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addon-details.vue')
 
 const ItemsListPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/items-list-vlist.vue')
 const ItemDetailsPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/item-details.vue')
@@ -318,11 +318,6 @@ export default [
           {
             path: ':addonId',
             beforeEnter: [enforceAdminForRoute],
-            async: loadAsync(AddonDetailsPage)
-          },
-          {
-            path: ':addonId/config',
-            beforeEnter: [enforceAdminForRoute],
             async: loadAsync(AddonsConfigureBindingPage)
           }
         ]
@@ -332,6 +327,18 @@ export default [
         beforeEnter: [enforceAdminForRoute],
         beforeLeave: [checkDirtyBeforeLeave],
         async: loadAsync(ServiceSettingsPage)
+      }
+    ]
+  },
+  {
+    path: '/addons/',
+    beforeEnter: [enforceAdminForRoute],
+    async: loadAsync(AddonsStorePage),
+    routes: [
+      {
+        path: ':addonId',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(AddonDetailsPage)
       }
     ]
   },
