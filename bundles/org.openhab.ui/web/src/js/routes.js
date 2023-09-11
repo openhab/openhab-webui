@@ -336,6 +336,31 @@ export default [
     async: loadAsync(AddonsStorePage),
     routes: [
       {
+        path: 'bindings/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(AddonsStorePage, { initialTab: 'bindings' })
+      },
+      {
+        path: 'automation/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(AddonsStorePage, { initialTab: 'automation' })
+      },
+      {
+        path: 'ui/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(AddonsStorePage, { initialTab: 'ui' })
+      },
+      {
+        path: 'other/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(AddonsStorePage, { initialTab: 'other' })
+      },
+      {
+        path: 'search/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(AddonsStorePage, { initialTab: 'search' })
+      },
+      {
         path: ':addonId',
         beforeEnter: [enforceAdminForRoute],
         async: loadAsync(AddonDetailsPage)
