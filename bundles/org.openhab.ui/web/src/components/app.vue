@@ -755,7 +755,7 @@ export default {
 
       this.$f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
-          this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0 || page.route.url.indexOf('/settings/addons/') > -1
+          this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0 || page.route.url.indexOf('/settings/addons/') === 0
           this.showDeveloperSubmenu = page.route.url.indexOf('/developer/') === 0
           this.currentUrl = page.route.url
         }
