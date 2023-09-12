@@ -141,7 +141,7 @@
     </f7-panel>
 
     <f7-panel v-if="showDeveloperSidebar" right :visible-breakpoint="1280" resizable>
-      <developer-sidebar />
+      <developer-dock />
     </f7-panel>
 
     <f7-block v-if="!ready && communicationFailureMsg" class="block-narrow">

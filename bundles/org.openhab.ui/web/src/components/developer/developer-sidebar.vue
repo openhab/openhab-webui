@@ -1,6 +1,6 @@
 <template>
   <f7-page class="developer-sidebar">
-    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'">
+    <f7-navbar title="Developer Tools" subtitle="(Shift+Alt+D)" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'">
       <f7-subnavbar :inner="false" v-if="!$theme.md">
         <f7-searchbar custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
       </f7-subnavbar>
