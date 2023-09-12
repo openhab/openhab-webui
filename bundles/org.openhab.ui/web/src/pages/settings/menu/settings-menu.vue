@@ -124,7 +124,7 @@
                 :link="'services/' + service.id"
                 :title="service.label" />
               <f7-list-button v-if="!showingAll('systemSettings')" color="blue" @click="$set(expandedTypes, 'systemSettings', true)">
-                Show All
+                {{ $t('dialogs.showAll') }}
               </f7-list-button>
             </f7-list>
           </div>

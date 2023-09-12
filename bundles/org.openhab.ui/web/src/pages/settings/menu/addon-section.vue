@@ -10,7 +10,7 @@
         :link="'addons/' + a.uid"
         :title="a.label" />
       <f7-list-button v-if="!expanded && addonsInstalled.length > addonsSettings.length" color="blue" @click="expanded = true">
-        Show All
+        {{ $t('dialogs.showAll') }}
       </f7-list-button>
     </f7-list>
   </div>
