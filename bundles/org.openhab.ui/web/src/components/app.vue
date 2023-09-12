@@ -31,6 +31,7 @@
           </f7-list-item>
         </f7-list>
         <f7-block-title v-if="$store.getters.isAdmin" v-t="'sidebar.administration'" />
+        <!-- Settings -->
         <f7-list class="admin-links" v-if="$store.getters.isAdmin">
           <f7-list-item link="/settings/" :title="$t('sidebar.settings')" view=".view-main" panel-close :animate="false"
                         :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/services/') === 0 || currentUrl.indexOf('/settings/addons/') === 0 || currentUrl.indexOf('/settings/persistence/') === 0 }">
@@ -73,15 +74,18 @@
             </ul>
           </li>
 
+          <!-- Add-on Store -->
           <f7-list-item link="/addons/" :title="$t('sidebar.addOnStore')" panel-close :animate="false"
                         :class="{ currentsection: currentUrl.indexOf('/addons/') === 0 }">
             <f7-icon slot="media" ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
           </f7-list-item>
 
+          <!-- Developer Tools -->
           <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close :animate="false"
                         :class="{ currentsection: currentUrl.indexOf('/developer/') === 0 && currentUrl.indexOf('/developer/widgets') < 0 &&
                           currentUrl.indexOf('/developer/blocks') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 }">
-            <f7-icon slot="media" ios="f7:exclamationmark_shield_fill" aurora="f7:exclamationmark_shield_fill" md="material:extension" color="gray" />
+            <f7-icon slot="media" ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:extension" color="gray" />
+            <f7-icon slot="media" ios="f7:hammer_fill" aurora="f7:hammer_fill" md="material:extension" color="gray" />
           </f7-list-item>
           <li v-if="showDeveloperSubmenu">
             <ul class="menu-sublinks">
