@@ -190,7 +190,9 @@ export default {
         'org.openhab.lsp'
       ],
 
-      expandedTypes: {}
+      expandedTypes: {
+        systemSettings: this.$f7.width >= 1450
+      }
     }
   },
   computed: {
