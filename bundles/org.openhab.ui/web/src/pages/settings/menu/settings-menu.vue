@@ -129,12 +129,12 @@
             </f7-list>
           </div>
           <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && $f7.width < 1450">
-            <add-on-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
+            <addon-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
           </div>
         </f7-col>
         <f7-col width="33" class="add-on-col">
           <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && $f7.width >= 1450">
-            <add-on-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
+            <addon-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
           </div>
         </f7-col>
       </f7-row>
@@ -146,11 +146,11 @@
 </template>
 
 <script>
-import AddOnSection from './add-on-section.vue'
+import AddonSection from './addon-section.vue'
 
 export default {
   components: {
-    AddOnSection: AddOnSection
+    AddonSection: AddonSection
   },
   data () {
     return {
