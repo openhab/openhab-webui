@@ -266,7 +266,7 @@ export default {
   components: {
     EmptyStatePlaceholder,
     PanelRight,
-    DeveloperSidebar
+    DeveloperDock
   },
   data () {
     let theme = localStorage.getItem('openhab.ui:theme')

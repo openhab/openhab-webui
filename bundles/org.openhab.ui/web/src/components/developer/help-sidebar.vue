@@ -1,6 +1,6 @@
 <template>
-  <f7-page class="help-sidebar">
-    <f7-navbar title="Help Sidebar" subtitle="(Shift+Alt+H)" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'" />
+  <f7-block class="help-sidebar">
+    <f7-navbar style="width: 100%" title="Help" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'" />
     <div class="help-sidebar-content">
       <f7-segmented strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left))">
         <f7-button :active="activeHelpTab === 'quick'" icon-f7="cursor_rays" icon-size="18" @click="activeHelpTab = 'quick'" />
@@ -131,7 +131,7 @@
       </div>
     </div>
 
-  </f7-page>
+  </f7-block>
 </template>
 
 <style lang="stylus">
@@ -148,6 +148,9 @@
 .help-sidebar
   scrollbar-width none /* Firefox */
   -ms-overflow-style none  /* IE 10+ */
+  margin 0
+  padding 0
+  width 100%
 
   .help-sidebar-content
     padding-top 0.3rem

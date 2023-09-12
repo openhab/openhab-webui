@@ -1,11 +1,11 @@
 <template>
-  <f7-page class="developer-sidebar">
-    <f7-navbar title="Developer Tools" subtitle="(Shift+Alt+D)" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'">
+  <f7-block class="developer-sidebar">
+    <f7-navbar title="Tools" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'">
       <f7-subnavbar :inner="false" v-if="!$theme.md">
-        <f7-searchbar custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
+        <f7-searchbar style="width: 100%" custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-subnavbar :inner="false" v-if="$theme.md">
+    <f7-subnavbar style="width: 100%" :inner="false" v-if="$theme.md">
       <f7-searchbar custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
     </f7-subnavbar>
     <div v-if="!searching" class="developer-sidebar-content">
@@ -311,7 +311,7 @@
       <item-standalone-control v-if="openedItem" :item="openedItem" :context="context" :no-border="true" />
     </f7-popover>
     <search-results v-if="searching" :searchResults="searchResults" :pinnedObjects="pinnedObjects" @pin="pin" @unpin="unpin" :cachedObjects="cachedObjects" :loading="searchResultsLoading" />
-  </f7-page>
+  </f7-block>
 </template>
 
 <style lang="stylus">
@@ -328,9 +328,13 @@
 .developer-sidebar
   scrollbar-width none /* Firefox */
   -ms-overflow-style none  /* IE 10+ */
+  margin 0 !important
+  padding 0
+  width 100%
 
   .developer-sidebar-content
     margin-top var(--f7-subnavbar-height)
+    margin-bottom 16px
     padding-top 0.3rem
 
   &.page
