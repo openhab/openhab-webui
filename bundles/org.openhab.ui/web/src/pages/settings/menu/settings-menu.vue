@@ -16,7 +16,7 @@
         search-in=".item-title"
         :disable-button="!$theme.aurora" />
     </f7-navbar>
-    <f7-block class="block-narrow settings-menu" v-show="servicesLoaded && addonsLoaded">
+    <f7-block class="block-narrow after-big-title settings-menu" v-show="servicesLoaded && addonsLoaded">
       <f7-row>
         <f7-col class="settings-col" width="100" medium="50">
           <f7-block-title>Configuration</f7-block-title>
