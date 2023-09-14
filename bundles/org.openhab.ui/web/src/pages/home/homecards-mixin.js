@@ -114,6 +114,7 @@ export default {
       item.children.forEach(child => this.sortModel(child))
     },
     loadModel (page) {
+      this.modelReady = false
       console.debug('Loading semantic model and building semantic homepages ...')
       this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=semantics,listWidget,widgetOrder')
         .then((data) => {

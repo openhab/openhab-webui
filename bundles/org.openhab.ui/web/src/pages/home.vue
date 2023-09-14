@@ -175,6 +175,12 @@ export default {
       this.$store.dispatch('stopTrackingStates')
     },
     onPageInit () {
+      this.$store.subscribe((mutation, state) => {
+        if (mutation.type === 'setSemantics') {
+          this.loadModel()
+        }
+      })
+
       if (window.OHApp) {
         if (window.OHApp.pinToHome) this.showPinToHome = true
         if (window.OHApp.exitToApp) this.showExitToApp = true
