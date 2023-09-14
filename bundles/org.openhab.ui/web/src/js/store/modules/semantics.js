@@ -26,6 +26,7 @@ const actions = {
           state.Points = tags.filter(t => t.uid.startsWith('Point')).map(t => t.name)
           state.Properties = tags.filter(t => t.uid.startsWith('Property')).map(t => t.name)
           // Store i18n labels
+          state.Labels = {} // Clear existing labels
           for (const i in tags) {
             const t = tags[i]
             state.Labels[t.name] = t.label || t.name
