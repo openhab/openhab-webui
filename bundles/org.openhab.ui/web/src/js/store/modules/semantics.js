@@ -17,6 +17,7 @@ const getters = {
 
 const actions = {
   loadSemantics () {
+    console.debug('Loading semantic tags ...')
     if (this.getters.apiEndpoint('tags')) {
       return api.get('/rest/tags')
         .then((tags) => {
@@ -32,9 +33,14 @@ const actions = {
           // Save as i18n messages
           i18n.mergeLocaleMessage(i18n.locale, state.Labels)
 
+          console.debug('Successfully loaded semantic tags.')
           return Promise.resolve()
         })
-        .catch((e) => Promise.reject(e))
+        .catch((e) => {
+          console.error('Failed to load semantic tags:')
+          console.error(e)
+          Promise.reject('Failed to load semantic tags: ' + e)
+        })
     } else {
       return Promise.resolve()
     }
