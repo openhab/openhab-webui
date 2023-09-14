@@ -156,7 +156,6 @@ export default {
   watch: {
     ready (val, oldVal) {
       if (val && !oldVal) {
-        this.loadModel()
         this.$store.dispatch('startTrackingStates')
       }
     }
