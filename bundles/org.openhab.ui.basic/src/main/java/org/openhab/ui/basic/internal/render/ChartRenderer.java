@@ -15,10 +15,12 @@ package org.openhab.ui.basic.internal.render;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.items.GroupItem;
@@ -91,7 +93,9 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             }
 
             // if legend parameter is given, add corresponding GET parameter
+            boolean legend = item instanceof GroupItem && !forceAsItem;
             if (chart.getLegend() != null) {
+                legend = chart.getLegend();
                 if (chart.getLegend()) {
                     chartUrl += "&legend=true";
                 } else {
@@ -123,7 +127,10 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             }
 
             String snippet = getSnippet("chart");
-            snippet = preprocessSnippet(snippet, w);
+            snippet = preprocessSnippet(snippet, w, true);
+
+            // Process the color tags
+            snippet = processColor(w, snippet);
 
             if (chart.getRefresh() > 0) {
                 snippet = snippet.replace("%update_interval%", Integer.toString(chart.getRefresh()));
@@ -136,11 +143,43 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             snippet = snippet.replace("%valid_url%", "true");
             snippet = snippet.replace("%ignore_refresh%", ignoreRefresh ? "true" : "false");
             snippet = snippet.replace("%url%", url);
+            snippet = snippet.replace("%legend%", Boolean.valueOf(legend).toString());
+
+            List<List<String>> periods = List.of(List.of("Last hour", "h"), List.of("Last 4 hours", "4h"),
+                    List.of("Last 8 hours", "8h"), List.of("Last 12 hours", "12h"), List.of("Last day", "D"),
+                    List.of("Last 2 days", "2D"), List.of("Last 3 days", "3D"), List.of("Last week", "W"),
+                    List.of("Last 2 weeks", "2W"), List.of("Last month", "M"), List.of("Last 2 months", "2M"),
+                    List.of("Last 4 months", "4M"), List.of("Last year", "Y"));
+            StringBuilder rowSB = new StringBuilder();
+            for (List<String> period : periods) {
+                buildRow(chart, period.get(0), period.get(1), chart.getPeriod(), rowSB);
+            }
+            snippet = snippet.replace("%period_rows%", rowSB.toString());
 
             sb.append(snippet);
         } catch (ItemNotFoundException e) {
             logger.warn("Chart cannot be rendered as item '{}' does not exist.", chart.getItem());
         }
         return ECollections.emptyEList();
+    }
+
+    private void buildRow(Chart w, @Nullable String lab, String cmd, String current, StringBuilder rowSB)
+            throws RenderException {
+        String rowSnippet = getSnippet("selection_row");
+
+        String command = cmd;
+        String label = lab == null ? cmd : lab;
+
+        rowSnippet = rowSnippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
+        rowSnippet = rowSnippet.replace("%cmd%", escapeHtml(command));
+        rowSnippet = rowSnippet.replace("%label%", escapeHtml(label));
+
+        if (command.equals(current)) {
+            rowSnippet = rowSnippet.replace("%checked%", "checked=\"true\"");
+        } else {
+            rowSnippet = rowSnippet.replace("%checked%", "");
+        }
+
+        rowSB.append(rowSnippet);
     }
 }

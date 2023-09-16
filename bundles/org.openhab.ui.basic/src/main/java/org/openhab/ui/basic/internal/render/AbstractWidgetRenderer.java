@@ -111,7 +111,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      * @return HTML code
      */
     protected String preprocessSnippet(String originalSnippet, Widget w) {
-        return preprocessSnippet(originalSnippet, w, false);
+        return preprocessSnippet(originalSnippet, w, w.getStaticIcon() != null);
     }
 
     /**
@@ -128,6 +128,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         snippet = snippet.replace("%cells%", String.valueOf(12 / config.getNbColsDesktop()));
         snippet = snippet.replace("%cells_tablet%", String.valueOf(8 / config.getNbColsTablet()));
         snippet = snippet.replace("%widget_id%", itemUIRegistry.getWidgetId(w));
+        snippet = snippet.replace("%icon_with_state%", Boolean.valueOf(!ignoreStateForIcon).toString());
         snippet = snippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
         // Optimization: avoid calling 3 times itemUIRegistry.getLabel(w)
         String text = itemUIRegistry.getLabel(w);

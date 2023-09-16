@@ -94,6 +94,9 @@ export default {
     defaultAttributes: ['PowerState', 'FanSpeed'],
     supportedAttributes: fanAttributes
   },
+  AirQualityMonitor: {
+    supportedAttributes: ['CurrentTemperature', 'CurrentHumidity', ...sensorAttributes]
+  },
   Automobile: {
     supportedAttributes: [
       'BatteryLevel',
@@ -232,6 +235,10 @@ export default {
     supportedAttributes: genericDeviceAttributes
   },
   Printer: {
+    defaultAttributes: ['PowerState'],
+    supportedAttributes: genericDeviceAttributes
+  },
+  Remote: {
     defaultAttributes: ['PowerState'],
     supportedAttributes: genericDeviceAttributes
   },
