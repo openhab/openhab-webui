@@ -23,7 +23,8 @@ const store = new Vuex.Store({
     apiEndpoints: null,
     locale: null,
     runtimeInfo: null,
-    developerSidebar: false
+    developerDock: false,
+    pagePath: null
   },
   getters: {
     apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type),
@@ -38,9 +39,12 @@ const store = new Vuex.Store({
     setLocale (state, locale) {
       state.locale = locale
     },
-    setDeveloperSidebar (state, value) {
-      state.developerSidebar = value
+    setDeveloperDock (state, value) {
+      state.developerDock = value
       state.states.keepConnectionOpen = value
+    },
+    setPagePath (state, value) {
+      state.pagePath = value
     }
   },
   actions: {

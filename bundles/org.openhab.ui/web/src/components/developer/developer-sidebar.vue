@@ -1,20 +1,18 @@
 <template>
   <f7-block class="developer-sidebar">
-    <f7-navbar title="Tools" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'">
-      <f7-subnavbar :inner="false" v-if="!$theme.md">
-        <f7-searchbar style="width: 100%" custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
-      </f7-subnavbar>
-    </f7-navbar>
-    <f7-subnavbar style="width: 100%" :inner="false" v-if="$theme.md">
+    <f7-segmented strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left)); margin-top: 0">
+      <f7-button :active="activeTab === 'pin'" icon-f7="pin_fill" icon-size="18" @click="activeTab = 'pin'" />
+      <f7-button :active="activeTab === 'events'" icon-f7="bolt_horizontal_fill" icon-size="18" @click="activeTab = 'events'" />
+      <f7-button :active="activeTab === 'scripting'" icon-f7="pencil_ellipsis_rectangle" icon-size="18" @click="activeTab = 'scripting'" />
+      <f7-button :active="activeTab === 'tools'" icon-f7="rectangle_stack_badge_plus" icon-size="18" @click="activeTab = 'tools'" />
+    </f7-segmented>
+    <f7-row :inner="false" v-if="!$theme.md">
+      <f7-searchbar style="width: 100%" custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
+    </f7-row>
+    <f7-row style="width: 100%" :inner="false" v-if="$theme.md">
       <f7-searchbar custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
-    </f7-subnavbar>
+    </f7-row>
     <div v-if="!searching" class="developer-sidebar-content">
-      <f7-segmented strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left))">
-        <f7-button :active="activeTab === 'pin'" icon-f7="pin_fill" icon-size="18" @click="activeTab = 'pin'" />
-        <f7-button :active="activeTab === 'events'" icon-f7="bolt_horizontal_fill" icon-size="18" @click="activeTab = 'events'" />
-        <f7-button :active="activeTab === 'scripting'" icon-f7="pencil_ellipsis_rectangle" icon-size="18" @click="activeTab = 'scripting'" />
-        <f7-button :active="activeTab === 'tools'" icon-f7="rectangle_stack_badge_plus" icon-size="18" @click="activeTab = 'tools'" />
-      </f7-segmented>
       <div v-if="activeTab === 'pin'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal" medium>
@@ -315,26 +313,15 @@
 </template>
 
 <style lang="stylus">
-.panel-right.panel-in-breakpoint:before
-  position absolute
-  left 0
-  top 0
-  height 100%
-  width 1px
-  background rgba(0,0,0,0.1)
-  content ''
-  z-index 6000
-
 .developer-sidebar
   scrollbar-width none /* Firefox */
   -ms-overflow-style none  /* IE 10+ */
   margin 0 !important
   padding 0
+  padding-top 0.3rem
   width 100%
 
   .developer-sidebar-content
-    margin-top var(--f7-subnavbar-height)
-    margin-bottom 16px
     padding-top 0.3rem
 
   &.page

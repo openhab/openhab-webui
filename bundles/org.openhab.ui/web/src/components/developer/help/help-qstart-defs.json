@@ -1,0 +1,146 @@
+[
+  {
+    "opened": true,
+    "title": "1. Install a Binding (Add-on)",
+    "steps": [
+      {
+        "link": "/settings/addons",
+        "title": "Addon-Store",
+        "text": "Left panel > Settings > Add-on Store or click here"
+      },
+      {
+        "title": "Install",
+        "text": "Scroll to the Binding you need and click the install button"
+      }
+    ],
+    "button": {
+      "title": "More help on Bindings",
+      "link": "https://www.openhab.org/docs/configuration/addons.html"
+    }
+  },
+  {
+    "title": "2. Add a Thing",
+    "steps": [
+      {
+        "link": "/settings/things/inbox",
+        "title": "Thing Inbox",
+        "text": "Left panel > Settings > Things > Inbox or click here"
+      },
+      {
+        "title": "New Thing",
+        "text": "Click the blue + button in the lower-right corner"
+      },
+      {
+        "title": "Choose Binding",
+        "text": "Click on the listing of the Binding for the Thing you want to add to openHAB"
+      },
+      {
+        "title": "Scan",
+        "text": "Click the blue Scan button to automatically search for related devices"
+      },
+      {
+        "title": "Add Thing",
+        "text": "Select the device from the list of Discovered Things and Click OK to add the Thing"
+      }
+    ],
+    "button": {
+      "title": "More help on Things",
+      "link": "https://www.openhab.org/docs/tutorial/things_intermediate.html"
+    }
+  },
+  {
+    "title": "3. Configure the Thing",
+    "steps": [
+      {
+        "link": "/settings/things/",
+        "title": "Thing List",
+        "text": "Left panel > Settings > Things or click here"
+      },
+      {
+        "title": "Select Thing",
+        "text": "Click on the listing for the Thing you want to configure"
+      },
+      {
+        "title": "Configuration",
+        "text": "Follow the documentation for the Thing's Binding to add configuration then click Save in upper right-hand corner"
+      }
+    ],
+    "button": {
+      "title": "Binding Documentation",
+      "link": "https://www.openhab.org/addons/"
+    }
+  },
+  {
+    "title": "4. Create an Item",
+    "steps": [
+      {
+        "link": "/settings/things/",
+        "title": "Thing List",
+        "text": "Left panel > Settings > Things or click here"
+      },
+      {
+        "title": "Select Thing",
+        "text": "Click on the listing for the Thing you want to interface with"
+      },
+      {
+        "title": "Channels",
+        "text": "Click on the Channels tab in the center at the top of the Thing Page"
+      },
+      {
+        "title": "Select Channel",
+        "text": "Click to expand the Channel you will control and then click Add Link to Item"
+      },
+      {
+        "title": "New Item",
+        "text": "Select the Create a new Item option"
+      },
+      {
+        "title": "Add Item",
+        "text": "Click the blue Link button at the bottom of the page"
+      }
+    ],
+    "button": {
+      "title": "More help on Items",
+      "link": "https://www.openhab.org/docs/configuration/items.html"
+    }
+  },
+  {
+    "title": "5. Display Item in UI",
+    "steps": [
+      {
+        "link": "/settings/pages/layout/overview",
+        "title": "Select Page from Page List",
+        "text": "Left panel > Settings > Pages > Overview or click here"
+      },
+      {
+        "title": "Add Block, Row, and Column",
+        "text": "Click on the Add Block, Add Row, and Add Column buttons in the editor"
+      },
+      {
+        "title": "Add Widget",
+        "text": "Click the gray rectangle and select a card appropriate for the intended item (for example, a toggle card for a switch item)"
+      },
+      {
+        "title": "Configure Widget",
+        "text": "Click the black menu button above the right corner of the widget and select Configure Widget"
+      },
+      {
+        "title": "Select Item",
+        "text": "Click on the Item field and select an appropriate item from the list then click Done"
+      },
+      {
+        "title": "Save Page",
+        "text": "Click Save in the upper right corner of the editor"
+      },
+      {
+        "link": "/",
+        "title": "View Home Page",
+        "text": "Click here to return to the Home Overview Page"
+      }
+    ],
+    "button": {
+      "title": "More help on UI pages",
+      "link": "https://www.openhab.org/docs/tutorial/pages_intro.html"
+    }
+  }
+]

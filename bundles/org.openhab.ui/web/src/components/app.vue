@@ -100,8 +100,8 @@
                             :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') === 0 }">
                 <f7-icon slot="media" f7="burn" color="gray" />
               </f7-list-item>
-              <!-- <f7-list-item link="" @click="$f7.emit('toggleDeveloperSidebar')" title="Sidebar" view=".view-main" panel-close :animate="false" no-chevron>
-                <f7-icon slot="media" :f7="$store.state.developerSidebar ? 'wrench_fill' : 'wrench'" color="gray" />
+              <!-- <f7-list-item link="" @click="$f7.emit('toggleDeveloperDock')" title="Dock" view=".view-main" panel-close :animate="false" no-chevron>
+                <f7-icon slot="media" :f7="$store.state.developerDock ? 'wrench_fill' : 'wrench'" color="gray" />
               </f7-list-item> -->
             </ul>
           </li>
@@ -140,7 +140,7 @@
     <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
 
-    <f7-panel v-if="showDeveloperSidebar" right :visible-breakpoint="1280" resizable>
+    <f7-panel v-if="showDeveloperDock" right :visible-breakpoint="1280" resizable>
       <developer-dock />
     </f7-panel>
 
@@ -370,8 +370,11 @@ export default {
 
       showSettingsSubmenu: false,
       showDeveloperSubmenu: false,
-      showDeveloperSidebar: false,
-      currentUrl: ''
+      showDeveloperDock: false,
+      currentUrl: '',
+
+      communicationFailureToast: null,
+      communicationFailureTimeoutId: null
     }
   },
   i18n: {
@@ -586,11 +589,11 @@ export default {
         this.$nextTick(() => this.$f7.panel.get('left').disableVisibleBreakpoint())
       }
     },
-    toggleDeveloperSidebar () {
+    toggleDeveloperDock () {
       if (!this.$store.getters.isAdmin) return
-      this.showDeveloperSidebar = !this.showDeveloperSidebar
-      if (this.showDeveloperSidebar) this.$store.dispatch('startTrackingStates')
-      this.$store.commit('setDeveloperSidebar', this.showDeveloperSidebar)
+      this.showDeveloperDock = !this.showDeveloperDock
+      if (this.showDeveloperDock) this.$store.dispatch('startTrackingStates')
+      this.$store.commit('setDeveloperDock', this.showDeveloperDock)
     },
     toggleVisibleBreakpoint () {
       this.$f7.panel.get('left').toggleVisibleBreakpoint()
@@ -599,7 +602,7 @@ export default {
     },
     keyDown (ev) {
       if (ev.keyCode === 68 && ev.shiftKey && ev.altKey) {
-        this.toggleDeveloperSidebar()
+        this.toggleDeveloperDock()
         ev.stopPropagation()
         ev.preventDefault()
       }
@@ -671,6 +674,7 @@ export default {
           this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0 || page.route.url.indexOf('/settings/addons/') === 0
           this.showDeveloperSubmenu = page.route.url.indexOf('/developer/') === 0
           this.currentUrl = page.route.url
+          this.$store.commit('setPagePath', this.currentUrl)
         }
       })
 
@@ -690,8 +694,8 @@ export default {
         this.updateThemeOptions()
       })
 
-      this.$f7.on('toggleDeveloperSidebar', () => {
-        this.toggleDeveloperSidebar()
+      this.$f7.on('toggleDeveloperDock', () => {
+        this.toggleDeveloperDock()
       })
 
       this.$f7.on('smartSelectOpened', (smartSelect) => {

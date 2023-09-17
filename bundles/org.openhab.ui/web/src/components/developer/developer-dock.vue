@@ -1,27 +1,12 @@
 <template>
   <f7-page class="developer-dock">
-    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" style="width: 100%" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'">
-      <!--
-      <f7-navbar-right>
-        <f7-menu-item icon-f7="line_horizontal_3" dropdown>
-          <f7-menu-dropdown right>
-            <f7-menu-dropdown-item href="#" text="Tools"></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item href="#" text="Help"></f7-menu-dropdown-item>
-          </f7-menu-dropdown>
-        </f7-menu-item>
-      </f7-navbar-right>
-      -->
-    </f7-navbar>
-    <f7-row class="align-items-stretch">
-      <f7-col resizable class="display-flex flex-direction-column" style="padding: 0px; border: none; min-width: 50px; background-color: transparent">
-        <f7-row resizable style="height: 50%; min-height: 50px; margin: 0">
-          <developer-sidebar />
-        </f7-row>
-        <f7-row resizable style="height: 50%; min-height: 50px; margin: 0">
-          <help-sidebar />
-        </f7-row>
-      </f7-col>
-    </f7-row>
+    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" style="width: 100%" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'"></f7-navbar>
+    <f7-segmented strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left)); margin-top: 5px; margin-bottom: 5px">
+      <f7-button :active="dockView === 'tools'" @click="dockView = 'tools'">Tools</f7-button>
+      <f7-button :active="dockView === 'help'" @click="dockView = 'help'">Help</f7-button>
+    </f7-segmented>
+    <developer-sidebar v-if="dockView === 'tools'"/>
+    <help-sidebar v-if="dockView === 'help'"/>
   </f7-page>
 </template>
 
@@ -50,5 +35,10 @@ export default {
     DeveloperSidebar,
     HelpSidebar
   },
+  data () {
+    return {
+      dockView: 'tools'
+    }
+  }
 }
 </script>
