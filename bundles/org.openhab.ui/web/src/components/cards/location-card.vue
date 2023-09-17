@@ -14,7 +14,7 @@
         </span>
       </div>
       <div class="location-stats margin-top-half" v-if="!config.disableBadges">
-        <span v-for="badgeType in ['temperature', 'humidity', 'luminance']" :key="badgeType">
+        <span v-for="badgeType in ['temperature', 'humidity', 'co2', 'luminance']" :key="badgeType">
           <measurement-badge v-if="!config.badges || !config.badges.length || config.badges.indexOf(badgeType) >= 0"
                              :store="context.store" :element="element" :type="badgeType" :invert-color="config.invertText" :badgeOverrides="badgeOverrides" />
         </span>

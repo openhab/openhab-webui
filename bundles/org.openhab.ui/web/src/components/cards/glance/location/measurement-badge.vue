@@ -34,6 +34,7 @@ export default {
       badgeConfigs: {
         temperature: { icon: 'f7:thermometer', unit: '°' },
         humidity: { icon: 'f7:drop', unit: '%' },
+        co2: { icon: 'f7:wind', unit: 'ppm' },
         luminance: { icon: 'f7:sun_min', unit: 'lx' }
       }
     }
@@ -59,6 +60,10 @@ export default {
           direct = findPoints(this.element.properties, 'Point_Measurement', true, 'Property_Humidity')
           if (direct.length) return direct
           return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_Humidity')
+        case 'co2':
+          direct = findPoints(this.element.properties, 'Point_Measurement', true, 'Property_CO2')
+          if (direct.length) return direct
+          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_CO2')
         case 'luminance':
           direct = findPoints(this.element.properties, 'Point_Measurement', true, 'Property_Light')
           if (direct.length) return direct

@@ -490,7 +490,8 @@ export default {
             ...this.$store.getters.apiEndpoint('ui')
               ? [this.$oh.api.get('/rest/ui/components/ui:page'), this.$oh.api.get('/rest/ui/components/ui:widget')]
               : [Promise.resolve([]), Promise.resolve([])],
-            dayjsLocalePromise
+            dayjsLocalePromise,
+            this.$store.dispatch('loadSemantics')
           ])
         }).then((data) => {
           // store the pages & widgets
@@ -505,11 +506,9 @@ export default {
 
           if (data[2]) dayjs.locale(data[2].key)
 
-          // load the Semantic tags
-          this.$store.dispatch('loadSemantics').then(() => {
-            this.ready = true
-            return Promise.resolve()
-          })
+          // finished with loading
+          this.ready = true
+          return Promise.resolve()
         })
     },
     pageIsVisible (page) {
