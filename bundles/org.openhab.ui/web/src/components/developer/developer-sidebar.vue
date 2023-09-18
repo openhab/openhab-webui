@@ -1,11 +1,5 @@
 <template>
   <f7-block class="developer-sidebar">
-    <f7-segmented strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left)); margin-top: 0">
-      <f7-button :active="activeTab === 'pin'" icon-f7="pin_fill" icon-size="18" @click="activeTab = 'pin'" />
-      <f7-button :active="activeTab === 'events'" icon-f7="bolt_horizontal_fill" icon-size="18" @click="activeTab = 'events'" />
-      <f7-button :active="activeTab === 'scripting'" icon-f7="pencil_ellipsis_rectangle" icon-size="18" @click="activeTab = 'scripting'" />
-      <f7-button :active="activeTab === 'tools'" icon-f7="rectangle_stack_badge_plus" icon-size="18" @click="activeTab = 'tools'" />
-    </f7-segmented>
     <f7-row :inner="false" v-if="!$theme.md">
       <f7-searchbar style="width: 100%" custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
     </f7-row>
@@ -355,12 +349,12 @@ export default {
     SearchResults,
     ExpressionTester
   },
+  props: ['activeTab'],
   data () {
     return {
       searchQuery: '',
       searchResultsLoading: false,
       searching: false,
-      activeTab: 'pin',
       monitoredItems: [],
       sseClient: null,
       eventTopicFilter: '',

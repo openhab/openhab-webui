@@ -5,7 +5,7 @@
         "target" : "settings/items/",
         "text" : "Settings > Items"
     },
-    "text" : "Click on the blue + in the lower right corner and select Add item.",
+    "text" : "Click on the <i class=\"f7-icons size-22 add-button-icon\">plus_circle_fill</i> in the lower right corner and select Add item.",
     "doclink" : "https://www.openhab.org/docs/configuration/items.html"
   },
   {
@@ -14,7 +14,7 @@
         "target" : "settings/pages/",
         "text" : "Settings > Pages"
     },
-    "text" : "Click on the blue + in the lower right corner and select the type of page you want to create.",
+    "text" : "Click on the <i class=\"f7-icons size-22 add-button-icon\">plus_circle_fill</i> in the lower right corner and select the type of page you want to create.",
     "doclink" : "https://www.openhab.org/docs/tutorial/rules_introduction.html"
   },
   {
@@ -23,7 +23,7 @@
         "target" : "settings/rules/",
         "text" : "Settings > Rules"
     },
-    "text" : "Click on the blue + in the lower right corner.",
+    "text" : "Click on the <i class=\"f7-icons size-22 add-button-icon\">plus_circle_fill</i> in the lower right corner.",
     "doclink" : "https://www.openhab.org/docs/tutorial/rules_introduction.html"
   },
   {
@@ -40,7 +40,7 @@
       "target" : "settings/items/",
       "text" : "Settings > Items"
     },
-    "text" : "Click on Select in the upper-right corner (or <kbd>ctrl</kbd> + click on an Item).  Select all Items to be deleted using the checkboxes and then click on the <span style=\"color: red\">Remove</span> button at the bottom of the screen."
+    "text" : "Click on Select in the upper-right corner (or Ctrl + Click on an Item).  Select all Items to be deleted using the checkboxes and then click on the <span style=\"color: red\">Remove</span> button at the bottom of the screen."
   },
   {
     "title" : "Find available icons",

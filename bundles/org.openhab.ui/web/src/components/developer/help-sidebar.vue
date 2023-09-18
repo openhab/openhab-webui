@@ -1,12 +1,6 @@
 <template>
   <f7-block class="help-sidebar">
     <div class="help-sidebar-content">
-      <f7-segmented strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left)); margin-top: 0">
-        <f7-button :active="activeHelpTab === 'quick'" icon-f7="cursor_rays" icon-size="18" @click="activeHelpTab = 'quick'" />
-        <f7-button :active="activeHelpTab === 'current'" icon-f7="doc_richtext" icon-size="18" @click="activeHelpTab = 'current'" />
-        <f7-button :active="activeHelpTab === 'faq'" icon-f7="question_diamond_fill" icon-size="18" @click="activeHelpTab = 'faq'" />
-        <f7-button :active="activeHelpTab === 'binding'" icon-f7="bag_fill" icon-size="18" @click="activeHelpTab = 'binding'" />
-      </f7-segmented>
       <div v-if="activeHelpTab === 'quick'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal" medium>
@@ -71,6 +65,12 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <thing-context v-if="($store.state.pagePath).indexOf('things')>=0"/>
+          <item-context v-if="($store.state.pagePath).indexOf('items')>=0"/>
+          <model-context v-if="($store.state.pagePath).indexOf('model')>=0"/>
+          <page-context v-if="($store.state.pagePath).indexOf('pages')>=0"/>
+          <rule-context v-if="($store.state.pagePath).indexOf('rules')>=0 || ($store.state.pagePath).indexOf('scenes')>=0 || ($store.state.pagePath).indexOf('scripts')>=0 || ($store.state.pagePath).indexOf('schedule')>=0"/>
+          <widget-context v-if="($store.state.pagePath).indexOf('widgets')>=0"/>
+          <addon-context v-if="($store.state.pagePath).indexOf('addons')>=0"/>
           <default-context v-else/>
         </f7-block>
         <f7-block>
@@ -110,21 +110,36 @@
   .help-sidebar
     &.page
       background #232323 !important
+
+.add-button-icon
+  color: blue
 </style>
 
 <script>
 import { loadLocaleMessages } from '@/js/i18n'
 import ThingContext from './help/thing-context.vue'
+import ItemContext from './help/item-context.vue'
+import ModelContext from './help/model-context.vue'
+import PageContext from './help/page-context.vue'
+import RuleContext from './help/rule-context.vue'
+import WidgetContext from './help/widget-context.vue'
+import AddonContext from './help/addon-context.vue'
 import DefaultContext from './help/default-context.vue'
 
 export default {
   components: {
     ThingContext,
+    ItemContext,
+    ModelContext,
+    PageContext,
+    RuleContext,
+    WidgetContext,
+    AddonContext,
     DefaultContext
   },
+  props: ['activeHelpTab'],
   data () {
     return {
-      activeHelpTab: 'quick',
       addons: []
     }
   },
