@@ -169,7 +169,7 @@ export default function (f7, isGraalJs) {
         ['square root', 'ROOT'],
         ['absolute', 'ABS'],
         ['-', 'NEG'],
-        ['n', 'LN'],
+        ['ln', 'LN'],
         ['log10', 'LOG10'],
         ['e^', 'EXP'],
         ['10^', 'POW10']
@@ -187,14 +187,14 @@ export default function (f7, isGraalJs) {
           case 'ROOT': return 'Return the square root of the input'
           case 'ABS': return 'Return the absolute value of the input'
           case 'NEG': return 'Return the negation of the input'
-          case 'LN': return 'Return the logarithm of the input'
-          case 'LOG10': return 'Return the 10 logarithm of the input'
+          case 'LN': return 'Return the natural (base e) logarithm of the input'
+          case 'LOG10': return 'Return the base 10 logarithm of the input'
           case 'EXP': return 'Return e to the power of the input'
           case 'POW10': return 'Return 10 to the power of the input'
         }
       })
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-math.html#functions')
-      this.setOutput(true, null)
+      this.setOutput(true, 'Number')
     }
   }
 
@@ -222,7 +222,7 @@ export default function (f7, isGraalJs) {
         method = `Math.log(${math_number})`
         break
       case 'LOG10':
-        method = `Math.log(${math_number}) / Math.log(10)`
+        method = `Math.log10(${math_number})`
         break
       case 'EXP':
         method = `Math.exp(${math_number})`
@@ -272,29 +272,24 @@ export default function (f7, isGraalJs) {
   javascriptGenerator['oh_math_minmax'] = function (block) {
     const inputType1 = blockGetCheckedInputType(block, 'NUM1')
     const inputType2 = blockGetCheckedInputType(block, 'NUM2')
-    let math_number_input1 = javascriptGenerator.valueToCode(block, 'NUM1', javascriptGenerator.ORDER_FUNCTION_CALL)
-    let math_number_input2 = javascriptGenerator.valueToCode(block, 'NUM2', javascriptGenerator.ORDER_FUNCTION_CALL)
+    const math_number_input1 = javascriptGenerator.valueToCode(block, 'NUM1', javascriptGenerator.ORDER_FUNCTION_CALL)
+    const math_number_input2 = javascriptGenerator.valueToCode(block, 'NUM2', javascriptGenerator.ORDER_FUNCTION_CALL)
 
     const operand = block.getFieldValue('OP')
 
     if (inputType1 !== inputType2) {
-      throw new Error(`both operand types need to be equal for  ${operand.toUpperCase()}-block (${math_number_input1} -> ${inputType1},${math_number_input2} -> ${inputType2})`)
+      throw new Error(`Both operand types need to be equal for ${operand.toUpperCase()}-block (${math_number_input1} -> ${inputType1}, ${math_number_input2} -> ${inputType2})`)
     }
 
     let code = ''
-    switch (operand) {
-      case 'min':
-        code = `Math.min(${math_number_input1},${math_number_input2})`
-        if (inputType1 === 'oh_quantity' && inputType2 === 'oh_quantity') {
-          code = `(${math_number_input1}.lessThan(${math_number_input2})) ? ${math_number_input1} : ${math_number_input2}`
-        }
-        break
 
-      case 'max':
-        code = `Math.max(${math_number_input1},${math_number_input2})`
-        if (inputType1 === 'oh_quantity' && inputType2 === 'oh_quantity') {
-          code = `(${math_number_input1}.greaterThan(${math_number_input2})) ? ${math_number_input1} : ${math_number_input2}`
-        }
+    switch (inputType1) {
+      case 'oh_quantity':
+        const op = (operand === 'min') ? 'lessThan' : 'greaterThan'
+        code = `(${math_number_input1}.${op}(${math_number_input2})) ? ${math_number_input1} : ${math_number_input2}`
+        break
+      default:
+        code = `Math.${operand}(${math_number_input1},${math_number_input2})`
         break
     }
 
