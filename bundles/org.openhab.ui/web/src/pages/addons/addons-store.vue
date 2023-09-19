@@ -198,6 +198,7 @@ export default {
   },
   methods: {
     onPageAfterIn () {
+      this.$f7router.updateCurrentUrl('/addons/' + this.currentTab + '/')
       this.load()
     },
     onPageBeforeOut () {
@@ -227,6 +228,7 @@ export default {
     switchTab (tab) {
       this.currentTab = ''
       this.$nextTick(() => {
+        this.$f7router.updateCurrentUrl('/addons/' + tab + '/')
         this.$f7.lazy.create('.page-addon-store')
         this.currentTab = tab
         if (this.currentTab === 'search') {

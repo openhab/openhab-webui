@@ -114,6 +114,7 @@ export default {
       item.children.forEach(child => this.sortModel(child))
     },
     loadModel (page) {
+      console.debug('Loading semantic model and building semantic homepages ...')
       this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=semantics,listWidget,widgetOrder')
         .then((data) => {
           this.items = data
@@ -167,6 +168,7 @@ export default {
           this.model.equipment = Object.keys(equipment).sort((a, b) => this.$t(a).localeCompare(this.$t(b))).map(k => this.buildModelCard('equipment', equipment[k], k, page))
           this.model.properties = Object.keys(properties).sort((a, b) => this.$t(a).localeCompare(this.$t(b))).map(k => this.buildModelCard('property', properties[k], k, page))
           this.modelReady = true
+          console.debug('Successfully loaded semantic model and build semantic homepages.')
         })
         .catch((err) => {
           console.log('Error while loading model: ' + err)

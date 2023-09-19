@@ -24,77 +24,80 @@
           <f7-icon slot="media" ios="f7:menu" aurora="f7:menu" md="material:list"></f7-icon>
         </f7-list-item> -->
           <f7-list-item v-for="page in pages" :animate="false" :key="page.uid"
-                        :class="{ currentsection: currentUrl === '/page/' + page.uid || currentUrl.indexOf('/page/' + page.uid + '/') >= 0 }"
+                        :class="{ currentsection: currentUrl === '/page/' + page.uid || currentUrl.indexOf('/page/' + page.uid + '/') === 0 }"
                         :link="'/page/' + page.uid"
                         :title="page.config.label" view=".view-main" panel-close>
             <f7-icon slot="media" :f7="pageIcon(page)" />
           </f7-list-item>
         </f7-list>
         <f7-block-title v-if="$store.getters.isAdmin" v-t="'sidebar.administration'" />
+        <!-- Settings -->
         <f7-list class="admin-links" v-if="$store.getters.isAdmin">
           <f7-list-item link="/settings/" :title="$t('sidebar.settings')" view=".view-main" panel-close :animate="false"
-                        :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/services/') >= 0 }">
+                        :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/services/') === 0 || currentUrl.indexOf('/settings/addons/') === 0 || currentUrl.indexOf('/settings/persistence/') === 0 }">
             <f7-icon slot="media" ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
           </f7-list-item>
           <li v-if="showSettingsSubmenu">
             <ul class="menu-sublinks">
               <f7-list-item v-if="$store.getters.apiEndpoint('things')" link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/things') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/things') === 0 }">
                 <f7-icon slot="media" f7="lightbulb" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('items')" link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/model') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/model') === 0 }">
                 <f7-icon slot="media" f7="list_bullet_indent" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('items')" link="/settings/items/" title="Items" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/items') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/items') === 0 }">
                 <f7-icon slot="media" f7="square_on_circle" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/settings/pages/" title="Pages" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/pages') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/pages') === 0 }">
                 <f7-icon slot="media" f7="tv" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/rules') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/rules') === 0 }">
                 <f7-icon slot="media" f7="wand_stars" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scenes/" title="Scenes" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/scenes') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/scenes') === 0 }">
                 <f7-icon slot="media" f7="film" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scripts/" title="Scripts" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/scripts') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/scripts') === 0 }">
                 <f7-icon slot="media" f7="doc_plaintext" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/schedule/" title="Schedule" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/schedule') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/schedule') === 0 }">
                 <f7-icon slot="media" f7="calendar" color="gray" />
               </f7-list-item>
             </ul>
           </li>
 
-          <f7-list-item link="/settings/addons/" :title="$t('sidebar.addOnStore')" panel-close :animate="false"
-                        :class="{ currentsection: currentUrl.indexOf('/settings/addons/') >= 0 }">
-            <f7-icon slot="media" ios="f7:bag" aurora="f7:bag" md="material:shopping_bag" color="gray" />
+          <!-- Add-on Store -->
+          <f7-list-item link="/addons/" :title="$t('sidebar.addOnStore')" panel-close :animate="false"
+                        :class="{ currentsection: currentUrl.indexOf('/addons/') === 0 }">
+            <f7-icon slot="media" ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
           </f7-list-item>
 
+          <!-- Developer Tools -->
           <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close :animate="false"
-                        :class="{ currentsection: currentUrl.indexOf('/developer/') >= 0 && currentUrl.indexOf('/developer/widgets') < 0 &&
+                        :class="{ currentsection: currentUrl.indexOf('/developer/') === 0 && currentUrl.indexOf('/developer/widgets') < 0 &&
                           currentUrl.indexOf('/developer/blocks') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 }">
-            <f7-icon slot="media" ios="f7:exclamationmark_shield_fill" aurora="f7:exclamationmark_shield_fill" md="material:extension" color="gray" />
+            <f7-icon slot="media" ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
           </f7-list-item>
           <li v-if="showDeveloperSubmenu">
             <ul class="menu-sublinks">
               <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/widgets/" title="Widgets" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/developer/widgets') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/developer/widgets') === 0 }">
                 <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/blocks/" title="Block Libraries" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/developer/blocks') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/developer/blocks') === 0 }">
                 <f7-icon slot="media" f7="ticket" color="gray" />
               </f7-list-item>
               <f7-list-item link="/developer/api-explorer" title="API Explorer" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') === 0 }">
                 <f7-icon slot="media" f7="burn" color="gray" />
               </f7-list-item>
               <!-- <f7-list-item link="" @click="$f7.emit('toggleDeveloperSidebar')" title="Sidebar" view=".view-main" panel-close :animate="false" no-chevron>
@@ -498,7 +501,8 @@ export default {
             ...this.$store.getters.apiEndpoint('ui')
               ? [this.$oh.api.get('/rest/ui/components/ui:page'), this.$oh.api.get('/rest/ui/components/ui:widget')]
               : [Promise.resolve([]), Promise.resolve([])],
-            dayjsLocalePromise
+            dayjsLocalePromise,
+            this.$store.dispatch('loadSemantics')
           ])
         }).then((data) => {
           // store the pages & widgets
@@ -513,11 +517,9 @@ export default {
 
           if (data[2]) dayjs.locale(data[2].key)
 
-          // load the Semantic tags
-          this.$store.dispatch('loadSemantics').then(() => {
-            this.ready = true
-            return Promise.resolve()
-          })
+          // finished with loading
+          this.ready = true
+          return Promise.resolve()
         })
     },
     pageIsVisible (page) {
@@ -678,7 +680,7 @@ export default {
         text: message,
         closeButton: reloadButton,
         closeButtonText: this.$t('dialogs.reload'),
-        destroyOnClose: autoClose,
+        destroyOnClose: true,
         closeTimeout: (autoClose) ? 5000 : undefined,
         cssClass: 'failure-toast button-outline',
         position: 'bottom',
@@ -705,7 +707,6 @@ export default {
     if (refreshToken) {
       this.refreshAccessToken().then(() => {
         this.loggedIn = true
-        // this.loadData()
         this.init = true
       }).catch((err) => {
         console.warn('Error while using the stored refresh_token to get a new access_token: ' + err + '. Logging out & cleaning session.')
@@ -755,7 +756,7 @@ export default {
 
       this.$f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
-          this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0 && page.route.url.indexOf('addons') === -1
+          this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0 || page.route.url.indexOf('/settings/addons/') === 0
           this.showDeveloperSubmenu = page.route.url.indexOf('/developer/') === 0
           this.currentUrl = page.route.url
         }
@@ -795,7 +796,6 @@ export default {
                 this.communicationFailureTimeoutId = setTimeout(() => {
                   if (this.communicationFailureToast !== null) return
                   this.communicationFailureToast = this.displayFailureToast(this.$t('error.communicationFailure'), true, false)
-                  this.communicationFailureToast.open()
                   this.communicationFailureTimeoutId = null
                 }, 1000)
               }
@@ -803,7 +803,6 @@ export default {
               if (this.communicationFailureTimeoutId !== null) clearTimeout(this.communicationFailureTimeoutId)
               if (this.communicationFailureToast !== null) {
                 this.communicationFailureToast.close()
-                this.communicationFailureToast.destroy()
                 this.communicationFailureToast = null
               }
             }

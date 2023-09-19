@@ -19,10 +19,10 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar labels bottom v-if="tabsVisible">
-      <f7-link tab-link @click="currentTab = 'overview'" :tab-link-active="currentTab === 'overview'" icon-ios="f7:house_fill" icon-aurora="f7:house_fill" icon-md="material:home" :text="$t('home.overview.tab')" />
-      <f7-link tab-link v-if="tabVisible('locations')" @click="currentTab = 'locations'" :tab-link-active="currentTab === 'locations'" icon-ios="f7:placemark_fill" icon-aurora="f7:placemark_fill" icon-md="material:place" :text="$t('home.locations.tab')" />
-      <f7-link tab-link v-if="tabVisible('equipment')" @click="currentTab = 'equipment'" :tab-link-active="currentTab === 'equipment'" icon-ios="f7:cube_box_fill" icon-aurora="f7:cube_box_fill" icon-md="material:payments" :text="$t('home.equipment.tab')" />
-      <f7-link tab-link v-if="tabVisible('properties')" @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" :text="$t('home.properties.tab')" />
+      <f7-link tab-link @click="switchTab('overview')" :tab-link-active="currentTab === 'overview'" icon-ios="f7:house_fill" icon-aurora="f7:house_fill" icon-md="material:home" :text="$t('home.overview.tab')" />
+      <f7-link tab-link v-if="tabVisible('locations')" @click="switchTab('locations')" :tab-link-active="currentTab === 'locations'" icon-ios="f7:placemark_fill" icon-aurora="f7:placemark_fill" icon-md="material:place" :text="$t('home.locations.tab')" />
+      <f7-link tab-link v-if="tabVisible('equipment')" @click="switchTab('equipment')" :tab-link-active="currentTab === 'equipment'" icon-ios="f7:cube_box_fill" icon-aurora="f7:cube_box_fill" icon-md="material:payments" :text="$t('home.equipment.tab')" />
+      <f7-link tab-link v-if="tabVisible('properties')" @click="switchTab('properties')" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" :text="$t('home.properties.tab')" />
     </f7-toolbar>
 
     <f7-block v-if="!ready || (currentTab !== 'overview' && !modelReady)" class="text-align-center padding-top margin-top">
@@ -86,6 +86,7 @@ import ModelTab from './home/model-tab.vue'
 import HomeCards from './home/homecards-mixin'
 
 export default {
+  props: ['initialTab'],
   mixins: [HomeCards],
   components: {
     OverviewTab,
@@ -98,7 +99,7 @@ export default {
       showCards: false,
       showPinToHome: false,
       showExitToApp: false,
-      currentTab: 'overview',
+      currentTab: this.initialTab || 'overview',
       overviewPageKey: this.$utils.id(),
       items: []
     }
@@ -156,13 +157,13 @@ export default {
   watch: {
     ready (val, oldVal) {
       if (val && !oldVal) {
-        this.loadModel()
         this.$store.dispatch('startTrackingStates')
       }
     }
   },
   methods: {
     onPageBeforeIn () {
+      this.$f7router.updateCurrentUrl('/' + this.currentTab)
       this.overviewPageKey = this.$utils.id()
     },
     onPageAfterIn () {
@@ -175,6 +176,12 @@ export default {
       this.$store.dispatch('stopTrackingStates')
     },
     onPageInit () {
+      this.$store.subscribe((mutation, state) => {
+        if (mutation.type === 'setSemantics') {
+          this.loadModel()
+        }
+      })
+
       if (window.OHApp) {
         if (window.OHApp.pinToHome) this.showPinToHome = true
         if (window.OHApp.exitToApp) this.showExitToApp = true
@@ -185,6 +192,10 @@ export default {
     },
     exitToApp () {
       window.OHApp.exitToApp()
+    },
+    switchTab (tab) {
+      this.currentTab = tab
+      this.$f7router.updateCurrentUrl('/' + this.currentTab)
     },
     tabVisible (tab) {
       if (!this.tabsVisible) return false
