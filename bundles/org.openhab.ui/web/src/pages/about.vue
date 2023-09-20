@@ -107,7 +107,10 @@ import ThemeSwitcher from '../components/theme-switcher.vue'
 import YAML from 'yaml'
 import { loadLocaleMessages } from '@/js/i18n'
 
+import reloadMixin from '../components/reload-mixin.js'
+
 export default {
+  mixins: [reloadMixin],
   components: {
     ThemeSwitcher
   },
@@ -115,7 +118,6 @@ export default {
     return {
       systemInfo: null,
       textualSystemInfoOpened: false,
-      showCachePurgeOption: false,
       bindings: null
     }
   },
@@ -159,54 +161,7 @@ export default {
         this.$oh.api.get('/rest/systeminfo').then((data) => { this.systemInfo = data.systemInfo })
         this.$oh.api.get('/rest/addons').then((data) => { this.addons = data.filter((a) => a.installed).map((a) => a.uid).sort() })
       }
-      if (navigator.serviceWorker) {
-        navigator.serviceWorker.getRegistrations().then((registrations) => {
-          if (registrations.length > 0) {
-            this.showCachePurgeOption = true
-          }
-        })
-      }
-      if (window.caches) {
-        window.caches.keys().then((cachesNames) => {
-          if (cachesNames.length > 0) {
-            this.showCachePurgeOption = true
-          }
-        })
-      }
-    },
-    purgeServiceWorkerAndCaches () {
-      this.$f7.dialog.confirm(
-        this.$t('about.reload.confirmPurge'),
-        () => {
-          navigator.serviceWorker.getRegistrations().then(function (registrations) {
-            for (let registration of registrations) {
-              registration.unregister().then(function () {
-                return self.clients.matchAll()
-              }).then(function (clients) {
-                clients.forEach(client => {
-                  if (client.url && 'navigate' in client) {
-                    setTimeout(() => { client.navigate(client.url.split('#')[0]) }, 1000)
-                  }
-                })
-              })
-            }
-          })
-          window.caches.keys().then(function (cachesNames) {
-            console.log('Deleting caches')
-            return Promise.all(cachesNames.map(function (cacheName) {
-              return caches.delete(cacheName).then(function () {
-                console.log('Cache with name ' + cacheName + ' is deleted')
-              })
-            }))
-          }).then(function () {
-            console.log('Caches deleted')
-            setTimeout(() => { location.reload(true) }, 1000)
-          })
-        }
-      )
-    },
-    reload () {
-      document.location.reload()
+      this.checkPurgeServiceWorkerAndCachesAvailable()
     },
     copyTextualSystemInfo () {
       let el = document.getElementById('textual-systeminfo')

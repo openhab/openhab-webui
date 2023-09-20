@@ -1,12 +1,14 @@
+import mixin from 'reload-mixin.js'
+
 export default {
+  mixins: [mixin],
   data () {
     return {
       // For the communication failure toast
       communicationFailureToast: null,
       communicationFailureTimeoutId: null,
       // For the communication failure page
-      communicationFailureMsg: null,
-      showCachePurgeOption: false
+      communicationFailureMsg: null
     }
   },
   methods: {
@@ -34,56 +36,9 @@ export default {
       toast.open()
       return toast
     },
-    purgeServiceWorkerAndCaches () {
-      this.$f7.dialog.confirm(
-        this.$t('about.reload.confirmPurge'),
-        () => {
-          navigator.serviceWorker.getRegistrations().then(function (registrations) {
-            for (let registration of registrations) {
-              registration.unregister().then(function () {
-                return self.clients.matchAll()
-              }).then(function (clients) {
-                clients.forEach(client => {
-                  if (client.url && 'navigate' in client) {
-                    setTimeout(() => { client.navigate(client.url.split('#')[0]) }, 1000)
-                  }
-                })
-              })
-            }
-          })
-          window.caches.keys().then(function (cachesNames) {
-            console.log('Deleting caches')
-            return Promise.all(cachesNames.map(function (cacheName) {
-              return caches.delete(cacheName).then(function () {
-                console.log('Cache with name ' + cacheName + ' is deleted')
-              })
-            }))
-          }).then(function () {
-            console.log('Caches deleted')
-            setTimeout(() => { location.reload(true) }, 1000)
-          })
-        }
-      )
-    },
-    reload () {
-      document.location.reload()
-    }
   },
   created () {
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker.getRegistrations().then((registrations) => {
-        if (registrations.length > 0) {
-          this.showCachePurgeOption = true
-        }
-      })
-    }
-    if (window.caches) {
-      window.caches.keys().then((cachesNames) => {
-        if (cachesNames.length > 0) {
-          this.showCachePurgeOption = true
-        }
-      })
-    }
+    this.checkPurgeServiceWorkerAndCachesAvailable()
   },
   mounted () {
     this.$f7ready((f7) => {
