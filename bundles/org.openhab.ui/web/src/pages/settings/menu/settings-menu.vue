@@ -16,7 +16,7 @@
         search-in=".item-title"
         :disable-button="!$theme.aurora" />
     </f7-navbar>
-    <f7-block class="block-narrow settings-menu" v-show="servicesLoaded && addonsLoaded">
+    <f7-block class="block-narrow after-big-title settings-menu" v-show="servicesLoaded && addonsLoaded">
       <f7-row>
         <f7-col class="settings-col" width="100" medium="50">
           <f7-block-title>Configuration</f7-block-title>
@@ -124,17 +124,17 @@
                 :link="'services/' + service.id"
                 :title="service.label" />
               <f7-list-button v-if="!showingAll('systemSettings')" color="blue" @click="$set(expandedTypes, 'systemSettings', true)">
-                Show All
+                {{ $t('dialogs.showAll') }}
               </f7-list-button>
             </f7-list>
           </div>
           <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && $f7.width < 1450">
-            <add-on-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
+            <addon-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
           </div>
         </f7-col>
         <f7-col width="33" class="add-on-col">
           <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && $f7.width >= 1450">
-            <add-on-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
+            <addon-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
           </div>
         </f7-col>
       </f7-row>
@@ -146,11 +146,11 @@
 </template>
 
 <script>
-import AddOnSection from './add-on-section.vue'
+import AddonSection from './addon-section.vue'
 
 export default {
   components: {
-    AddOnSection: AddOnSection
+    AddonSection: AddonSection
   },
   data () {
     return {
@@ -190,7 +190,9 @@ export default {
         'org.openhab.lsp'
       ],
 
-      expandedTypes: {}
+      expandedTypes: {
+        systemSettings: this.$f7.width >= 1450
+      }
     }
   },
   computed: {

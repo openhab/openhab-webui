@@ -210,7 +210,7 @@ export default {
     parameters: () => [p.retrievable()]
   },
   ColorTemperature: {
-    itemTypes: ['Dimmer', 'Number'],
+    itemTypes: ['Dimmer', 'Number', 'Number:Temperature'],
     parameters: (item) => [
       ...(item.type === 'Dimmer' ? [p.colorTemperatureBinding()] : []),
       p.colorTemperatureRange(),
