@@ -215,7 +215,7 @@ export default {
       if (!this.apiEndpoints) return
 
       const servicesPromise = (this.$store.getters.apiEndpoint('services')) ? this.$oh.api.get('/rest/services') : Promise.resolve([])
-      const addonsPromise = (this.$store.getters.apiEndpoint('addons')) ? this.$oh.api.get('/rest/addons') : Promise.resolve([])
+      const addonsPromise = (this.$store.getters.apiEndpoint('addons')) ? this.$oh.api.get('/rest/addons?serviceId=all') : Promise.resolve([])
 
       // can be done in parallel!
       servicesPromise.then((data) => {
