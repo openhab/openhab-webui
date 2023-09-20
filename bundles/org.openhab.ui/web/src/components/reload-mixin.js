@@ -12,19 +12,19 @@ export default {
   methods: {
     checkPurgeServiceWorkerAndCachesAvailable () {
       if (navigator.serviceWorker) {
-      navigator.serviceWorker.getRegistrations().then((registrations) => {
-        if (registrations.length > 0) {
-          this.showCachePurgeOption = true
-        }
-      })
-    }
-    if (window.caches) {
-      window.caches.keys().then((cachesNames) => {
-        if (cachesNames.length > 0) {
-          this.showCachePurgeOption = true
-        }
-      })
-    }
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          if (registrations.length > 0) {
+            this.showCachePurgeOption = true
+          }
+        })
+      }
+      if (window.caches) {
+        window.caches.keys().then((cachesNames) => {
+          if (cachesNames.length > 0) {
+            this.showCachePurgeOption = true
+          }
+        })
+      }
     },
     purgeServiceWorkerAndCaches () {
       this.$f7.dialog.confirm(

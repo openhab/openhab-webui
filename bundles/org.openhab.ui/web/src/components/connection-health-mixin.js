@@ -35,7 +35,7 @@ export default {
       })
       toast.open()
       return toast
-    },
+    }
   },
   created () {
     this.checkPurgeServiceWorkerAndCachesAvailable()
