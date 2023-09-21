@@ -58,7 +58,7 @@ export default {
       )
     },
     reload () {
-      document.location.reload()
+      window.location.reload()
     }
   }
 }

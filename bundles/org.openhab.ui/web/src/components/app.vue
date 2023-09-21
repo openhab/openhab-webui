@@ -253,9 +253,9 @@ import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { loadLocaleMessages } from '@/js/i18n'
 
-import auth from './auth-mixin.js'
-import i18n from './i18n-mixin.js'
-import connectionHealth from './connection-health-mixin.js'
+import auth from './auth-mixin'
+import i18n from './i18n-mixin'
+import connectionHealth from './connection-health-mixin'
 
 import dayjs from 'dayjs'
 import dayjsLocales from 'dayjs/locale.json'

@@ -1,7 +1,7 @@
-import mixin from 'reload-mixin.js'
+import reloadMixin from './reload-mixin'
 
 export default {
-  mixins: [mixin],
+  mixins: [reloadMixin],
   data () {
     return {
       // For the communication failure toast
@@ -31,7 +31,7 @@ export default {
         horizontalPosition: 'center'
       })
       toast.on('closeButtonClick', () => {
-        window.location.reload()
+        this.reload()
       })
       toast.open()
       return toast
