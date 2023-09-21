@@ -123,7 +123,7 @@
         <f7-block class="padding">
           <f7-row>
             <f7-col width="100">
-              <f7-button ref="selectAddons" large icon-f7="cart_fill" icon-size="24" @click="selectAddons" :text="$t('setupwizard.addons.selectAddons')" />
+              <f7-button ref="selectAddons" large icon-f7="bag_fill_badge_plus" icon-size="24" @click="selectAddons" :text="$t('setupwizard.addons.selectAddons')" />
             </f7-col>
           </f7-row>
           <f7-list class="search-list searchbar-found" ref="selectAddons" media-list v-show="!installingAddons">
