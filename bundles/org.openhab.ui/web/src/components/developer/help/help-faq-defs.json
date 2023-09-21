@@ -44,7 +44,7 @@
   },
   {
     "title" : "Find available icons",
-    "text" : "OpenHAB specific icons can be found at the docs page linked below. F7 icons are listed in the <a href=\"https://framework7.io/icons/\">F7 docs</a>.",
+    "text" : "OpenHAB specific icons can be found at the docs page linked below. F7 icons are listed in the <a target=\"_blank\" href=\"https://framework7.io/icons/\">F7 docs</a>. Material icons can be found <a target=\"_blank\" href=\"https://jossef.github.io/material-design-icons-iconfont/\">here</a>. The entire <a target=\"_blank\" href=\"https://icon-sets.iconify.design/\">Iconify library</a> is also available for use.",
     "doclink" : "https://www.openhab.org/docs/configuration/iconsets/classic/"
   }
 ]

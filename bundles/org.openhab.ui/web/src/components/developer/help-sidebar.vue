@@ -12,7 +12,9 @@
             <f7-list-item v-for="instruct in qstart" :key="instruct.title" accordion-item :accordion-item-opened="instruct.opened" :title="instruct.title">
               <f7-accordion-content>
                 <f7-list media-list>
-                  <f7-list-item v-for="step in instruct.steps" :key="step.title" :link="step.link" :title="step.title" :text="step.text"></f7-list-item>
+                  <f7-list-item v-for="step in instruct.steps" :key="step.title" :link="step.link" :title="step.title">
+                    <div class="item-text" v-html="step.text"></div>
+                  </f7-list-item>
                   <f7-list-button v-if="instruct.button" :external="true" :title="instruct.button.title" :href="instruct.button.link" target="_blank"></f7-list-button>
                 </f7-list>
               </f7-accordion-content>
@@ -65,12 +67,12 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <thing-context v-if="($store.state.pagePath).indexOf('things')>=0"/>
-          <item-context v-if="($store.state.pagePath).indexOf('items')>=0"/>
-          <model-context v-if="($store.state.pagePath).indexOf('model')>=0"/>
-          <page-context v-if="($store.state.pagePath).indexOf('pages')>=0"/>
-          <rule-context v-if="($store.state.pagePath).indexOf('rules')>=0 || ($store.state.pagePath).indexOf('scenes')>=0 || ($store.state.pagePath).indexOf('scripts')>=0 || ($store.state.pagePath).indexOf('schedule')>=0"/>
-          <widget-context v-if="($store.state.pagePath).indexOf('widgets')>=0"/>
-          <addon-context v-if="($store.state.pagePath).indexOf('addons')>=0"/>
+          <item-context v-else-if="($store.state.pagePath).indexOf('items')>=0"/>
+          <model-context v-else-if="($store.state.pagePath).indexOf('model')>=0"/>
+          <page-context v-else-if="($store.state.pagePath).indexOf('pages')>=0"/>
+          <rule-context v-else-if="($store.state.pagePath).indexOf('rules')>=0 || ($store.state.pagePath).indexOf('scenes')>=0 || ($store.state.pagePath).indexOf('scripts')>=0 || ($store.state.pagePath).indexOf('schedule')>=0"/>
+          <widget-context v-else-if="($store.state.pagePath).indexOf('widgets')>=0"/>
+          <addon-context v-else-if="($store.state.pagePath).indexOf('addons')>=0"/>
           <default-context v-else/>
         </f7-block>
         <f7-block>
@@ -95,6 +97,7 @@
   margin 0 !important
   padding 0
   width 100%
+  --f7-list-item-text-max-lines 4
 
   .help-sidebar-content
     padding-top 0.3rem

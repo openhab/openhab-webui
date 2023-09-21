@@ -141,7 +141,7 @@
     </f7-panel>
 
     <f7-panel v-if="showDeveloperDock" right :visible-breakpoint="1280" resizable>
-      <developer-dock />
+      <developer-dock :dock="activeDock" :helpTab="activeHelpTab" :toolTab="activeToolTab"/>
     </f7-panel>
 
     <f7-block v-if="!ready && communicationFailureMsg" class="block-narrow">
@@ -371,6 +371,9 @@ export default {
       showSettingsSubmenu: false,
       showDeveloperSubmenu: false,
       showDeveloperDock: false,
+      activeDock: 'tools',
+      activeToolTab: 'pin',
+      activeHelpTab: 'current',
       currentUrl: '',
 
       communicationFailureToast: null,
@@ -595,6 +598,14 @@ export default {
       if (this.showDeveloperDock) this.$store.dispatch('startTrackingStates')
       this.$store.commit('setDeveloperDock', this.showDeveloperDock)
     },
+    selectDeveloperDock (dockOpts) {
+      if (dockOpts) {
+        if (dockOpts.dock) this.activeDock = dockOpts.dock
+        if (dockOpts.helpTab) this.activeHelpTab = dockOpts.helpTab
+        if (dockOpts.toolTab) this.activeToolTab = dockOpts.toolTab
+      }
+      if (!this.showDeveloperDock) this.toggleDeveloperDock()
+    },
     toggleVisibleBreakpoint () {
       this.$f7.panel.get('left').toggleVisibleBreakpoint()
       this.visibleBreakpointDisabled = this.$f7.panel.get('left').visibleBreakpointDisabled
@@ -696,6 +707,10 @@ export default {
 
       this.$f7.on('toggleDeveloperDock', () => {
         this.toggleDeveloperDock()
+      })
+
+      this.$f7.on('selectDeveloperDock', (opts) => {
+        this.selectDeveloperDock(opts)
       })
 
       this.$f7.on('smartSelectOpened', (smartSelect) => {

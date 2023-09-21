@@ -10,7 +10,7 @@
       },
       {
         "title": "Install",
-        "text": "Scroll to the Binding you need and click the install button"
+        "text": "Scroll to the Binding you need and click the <span style=\"background: var(--f7-list-item-border-color); border-radius: 20% / 100%; color: #2196f3; padding: 0 5px 0 5px\">INSTALL</span> button"
       }
     ],
     "button": {
@@ -28,7 +28,7 @@
       },
       {
         "title": "New Thing",
-        "text": "Click the blue + button in the lower-right corner"
+        "text": "Click on the <i class=\"f7-icons size-22 add-button-icon\">plus_circle_fill</i> in the lower-right corner"
       },
       {
         "title": "Choose Binding",
@@ -36,7 +36,7 @@
       },
       {
         "title": "Scan",
-        "text": "Click the blue Scan button to automatically search for related devices"
+        "text": "Click the <span style=\"background: blue; border-radius: 3px; color: white; padding: 0 5px 0 5px\">Scan</span> button to automatically search for related devices"
       },
       {
         "title": "Add Thing",

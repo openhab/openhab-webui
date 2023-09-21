@@ -2,6 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar title="Items" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
+        <f7-link icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -54,8 +55,7 @@
 
       <f7-col v-show="ready && items.length > 0">
         <f7-block-title class="searchbar-hide-on-search">
-          {{ items.length }} Items -
-          <f7-link external :href="documentationLink" target="_blank" text="Open documentation" color="blue" />
+          {{ items.length }} Items
         </f7-block-title>
         <f7-list
           v-show="items.length > 0"
@@ -297,9 +297,6 @@ export default {
     }
   },
   computed: {
-    documentationLink () {
-      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/items`
-    },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }

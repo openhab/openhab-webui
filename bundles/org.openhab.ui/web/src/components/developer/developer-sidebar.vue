@@ -7,7 +7,7 @@
       <f7-searchbar custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
     </f7-row>
     <div v-if="!searching" class="developer-sidebar-content">
-      <div v-if="activeTab === 'pin'">
+      <div v-if="activeToolTab === 'pin'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal" medium>
             Pinned Objects
@@ -188,7 +188,7 @@
         </f7-block>
       </div>
 
-      <div v-else-if="activeTab === 'events'">
+      <div v-else-if="activeToolTab === 'events'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex" medium>
             <span>Event Monitor</span>
@@ -214,7 +214,7 @@
         </f7-block>
       </div>
 
-      <div v-else-if="activeTab === 'scripting'">
+      <div v-else-if="activeToolTab === 'scripting'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal" medium>
             Code Tools
@@ -233,7 +233,7 @@
         </f7-block>
       </div>
 
-      <div v-else-if="activeTab === 'tools'">
+      <div v-else-if="activeToolTab === 'tools'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal" medium>
             Create Shortcuts
@@ -349,7 +349,7 @@ export default {
     SearchResults,
     ExpressionTester
   },
-  props: ['activeTab'],
+  props: ['activeToolTab'],
   data () {
     return {
       searchQuery: '',
