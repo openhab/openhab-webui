@@ -16,17 +16,23 @@
           Add group items with semantic equipment tags to represent devices of interest to users in specific locations
         </f7-list-item>
         <f7-list-item title="Add new points">
-          Add items with seemantic class and property tags to represent the actual information and interactions that users will need
+          Add items with semantic class and property tags to represent the actual information and interactions that users will need
         </f7-list-item>
         <f7-list-item title="Bulk creation of points">
           Create equipement directly from your Things with the desired items for rapid building of a semantic model
         </f7-list-item>
       </f7-list>
     </p>
+    <f7-link external :href="documentationLink" target="_blank" text="Open full documentation" color="blue" />
   </f7-block>
 </template>
 
 <script>
 export default {
+  computed: {
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/docs/tutorial/model`
+    }
+  }
 }
 </script>

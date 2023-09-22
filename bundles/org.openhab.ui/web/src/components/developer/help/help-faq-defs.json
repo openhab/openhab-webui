@@ -2,34 +2,34 @@
   {
     "title" : "Create an Item",
     "goto" : {
-        "target" : "settings/items/",
+        "target" : "/settings/items/",
         "text" : "Settings > Items"
     },
     "text" : "Click on the <i class=\"f7-icons size-22 add-button-icon\">plus_circle_fill</i> in the lower right corner and select Add item.",
-    "doclink" : "https://www.openhab.org/docs/configuration/items.html"
+    "doclink" : "docs/configuration/items.html"
   },
   {
     "title" : "Create a Page",
     "goto" : {
-        "target" : "settings/pages/",
+        "target" : "/settings/pages/",
         "text" : "Settings > Pages"
     },
     "text" : "Click on the <i class=\"f7-icons size-22 add-button-icon\">plus_circle_fill</i> in the lower right corner and select the type of page you want to create.",
-    "doclink" : "https://www.openhab.org/docs/tutorial/rules_introduction.html"
+    "doclink" : "docs/tutorial/pages_intro.html"
   },
   {
     "title" : "Create a Rule",
     "goto" : {
-        "target" : "settings/rules/",
+        "target" : "/settings/rules/",
         "text" : "Settings > Rules"
     },
     "text" : "Click on the <i class=\"f7-icons size-22 add-button-icon\">plus_circle_fill</i> in the lower right corner.",
-    "doclink" : "https://www.openhab.org/docs/tutorial/rules_introduction.html"
+    "doclink" : "docs/tutorial/rules_introduction.html"
   },
   {
     "title" : "Delete an Item",
     "goto" : {
-      "target" : "settings/items/",
+      "target" : "/settings/items/",
       "text" : "Settings > Items"
     },
     "text" : "Select the item from the list to go to the details page. Click on the <span style=\"color: red\">Remove Item</span> button at the bottom of the page."
@@ -37,7 +37,7 @@
   {
     "title" : "Delete multiple Items",
     "goto" : {
-      "target" : "settings/items/",
+      "target" : "/settings/items/",
       "text" : "Settings > Items"
     },
     "text" : "Click on Select in the upper-right corner (or Ctrl + Click on an Item).  Select all Items to be deleted using the checkboxes and then click on the <span style=\"color: red\">Remove</span> button at the bottom of the screen."
@@ -45,6 +45,6 @@
   {
     "title" : "Find available icons",
     "text" : "OpenHAB specific icons can be found at the docs page linked below. F7 icons are listed in the <a target=\"_blank\" href=\"https://framework7.io/icons/\">F7 docs</a>. Material icons can be found <a target=\"_blank\" href=\"https://jossef.github.io/material-design-icons-iconfont/\">here</a>. The entire <a target=\"_blank\" href=\"https://icon-sets.iconify.design/\">Iconify library</a> is also available for use.",
-    "doclink" : "https://www.openhab.org/docs/configuration/iconsets/classic/"
+    "doclink" : "docs/configuration/iconsets/classic/"
   }
 ]

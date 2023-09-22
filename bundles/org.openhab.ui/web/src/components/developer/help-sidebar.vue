@@ -38,7 +38,7 @@
                     In the left panel go to <f7-link :href="faq.goto.target">{{ faq.goto.text }}</f7-link>
                   </p>
                   <p v-html="faq.text"></p>
-                  <p v-if="faq.doclink"><f7-link external target="_blank" :href="faq.doclink">Full Help Docs</f7-link></p>
+                  <p v-if="faq.doclink"><f7-link external target="_blank" :href="documentationLinkPrefix+faq.doclink">Full Help Docs</f7-link></p>
                 </f7-block>
               </f7-accordion-content>
             </f7-list-item>
@@ -70,7 +70,9 @@
           <item-context v-else-if="($store.state.pagePath).indexOf('items')>=0"/>
           <model-context v-else-if="($store.state.pagePath).indexOf('model')>=0"/>
           <page-context v-else-if="($store.state.pagePath).indexOf('pages')>=0"/>
-          <rule-context v-else-if="($store.state.pagePath).indexOf('rules')>=0 || ($store.state.pagePath).indexOf('scenes')>=0 || ($store.state.pagePath).indexOf('scripts')>=0 || ($store.state.pagePath).indexOf('schedule')>=0"/>
+          <rule-context v-else-if="($store.state.pagePath).indexOf('rules')>=0 || ($store.state.pagePath).indexOf('schedule')>=0" type="Rules"/>
+          <rule-context v-else-if="($store.state.pagePath).indexOf('scenes')>=0" type="Scenes"/>
+          <rule-context v-else-if="($store.state.pagePath).indexOf('scripts')>=0" type="Scripts"/>
           <widget-context v-else-if="($store.state.pagePath).indexOf('widgets')>=0"/>
           <addon-context v-else-if="($store.state.pagePath).indexOf('addons')>=0"/>
           <default-context v-else/>
@@ -81,7 +83,7 @@
           </f7-block-title>
           <p>You can find many more details and help at these resources</p>
           <p><f7-link external target="_blank" href="https://www.openhab.org/" v-t="'about.homePage'" /></p>
-          <p><f7-link external target="_blank" href="https://www.openhab.org/docs/" v-t="'about.documentation'" /></p>
+          <p><f7-link external target="_blank" :href="`${documentationLinkPrefix}link/docs`" v-t="'about.documentation'" /></p>
           <p><f7-link external target="_blank" href="https://community.openhab.org/" v-t="'about.communityForum'" /></p>
         </f7-block>
       </div>
@@ -144,6 +146,11 @@ export default {
   data () {
     return {
       addons: []
+    }
+  },
+  computed: {
+    documentationLinkPrefix () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/`
     }
   },
   created () {
