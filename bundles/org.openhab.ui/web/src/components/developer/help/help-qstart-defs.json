@@ -15,7 +15,7 @@
     ],
     "button": {
       "title": "More help on Bindings",
-      "link": "https://www.openhab.org/docs/configuration/addons.html"
+      "link": "docs/configuration/addons.html"
     }
   },
   {
@@ -45,7 +45,7 @@
     ],
     "button": {
       "title": "More help on Things",
-      "link": "https://www.openhab.org/docs/tutorial/things_intermediate.html"
+      "link": "docs/tutorial/things_intermediate.html"
     }
   },
   {
@@ -67,7 +67,7 @@
     ],
     "button": {
       "title": "Binding Documentation",
-      "link": "https://www.openhab.org/addons/"
+      "link": "addons/"
     }
   },
   {
@@ -101,7 +101,7 @@
     ],
     "button": {
       "title": "More help on Items",
-      "link": "https://www.openhab.org/docs/configuration/items.html"
+      "link": "docs/configuration/items.html"
     }
   },
   {
@@ -140,7 +140,7 @@
     ],
     "button": {
       "title": "More help on UI pages",
-      "link": "https://www.openhab.org/docs/tutorial/pages_intro.html"
+      "link": "docs/tutorial/pages_intro.html"
     }
   }
 ]

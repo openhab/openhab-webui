@@ -15,7 +15,7 @@
                   <f7-list-item v-for="step in instruct.steps" :key="step.title" :link="step.link" :title="step.title">
                     <div class="item-text" v-html="step.text"></div>
                   </f7-list-item>
-                  <f7-list-button v-if="instruct.button" :external="true" :title="instruct.button.title" :href="instruct.button.link" target="_blank"></f7-list-button>
+                  <f7-list-button v-if="instruct.button" :external="true" :title="instruct.button.title" :href="documentationLinkPrefix+instruct.button.link" target="_blank"></f7-list-button>
                 </f7-list>
               </f7-accordion-content>
             </f7-list-item>
