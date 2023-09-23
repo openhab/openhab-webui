@@ -1,7 +1,7 @@
 [
   {
     "title" : "Access openHAB from a remote network",
-    "text" : "The most secure ways to enable remote access to your openHAB instance are through a VPN or a service such as <a class=\"external\" target=\"_blank\" href=\"https://myopenhab.org/\">myopenhab.org</a> with the openHAB Cloud Connector. <strong>DO NOT</strong> expose your openHAB instance directly, that is insecure",
+    "text" : "The most secure ways to enable remote access to your openHAB instance are through a VPN or a service such as <a class=\"external\" target=\"_blank\" href=\"https://myopenhab.org/\">myopenhab.org</a> with the openHAB Cloud Connector. <strong>DO NOT</strong> expose your openHAB instance directly to the internet, that is insecure",
     "doclink" : "addons/integrations/openhabcloud/"
   },
   {
@@ -39,13 +39,22 @@
     "doclink" : "docs/configuration/iconsets/classic/"
   },
   {
+    "title" : "Get involved in openHAB",
+    "text" : "openHAB only grows with contributions from volunteers. You can answer questions in the community forum, help with language translations, or even contribute your own code.",
+    "doclink" : "docs/developer/contributing.html"
+  },
+  {
     "title" : "Get openHAB notifications",
+    "goto" : {
+      "target" : "/addons/",
+      "text" : "Add-on Store"
+    },
     "text" : "There are many different add-ons that will allow you to send messages from openHAB to other devices. One easy and secure method is to use <a class=\"external\" target=\"_blank\" href=\"https://myopenhab.org/\">myopenhab.org</a> with the openHAB Cloud Connector.",
     "doclink" : "addons/integrations/openhabcloud/"
   },
   {
     "title" : "See openHAB logs",
-    "text" : "If you have installed openHAB using openaHABian, then you can use the openHABian config <strong>Optional Components</strong> menu to install a web based log view.  Otherwise the location of the log files will depend on your installation method so use the link below to find out more.",
+    "text" : "If you have installed openHAB using openaHABian, then you can use the openHABian config <strong>Optional Components</strong> menu to install a web based log viewer.  Otherwise the location of the log files will depend on your installation method so use the link below to find out more.",
     "doclink" : "docs/administration/logging.html"
   },
   {
