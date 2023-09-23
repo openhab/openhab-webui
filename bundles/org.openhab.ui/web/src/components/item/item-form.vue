@@ -75,7 +75,7 @@ export default {
         tagsNonS = this.item.tags.filter((t) =>
           t !== this.item.metadata.semantics.value.split('_').pop() &&
           t !== ((this.item.metadata.semantics.config && this.item.metadata.semantics.config.relatesTo) ? this.item.metadata.semantics.config.relatesTo.split('_').pop() : '')
-          )
+        )
       }
       return tagsNonS.length
     }

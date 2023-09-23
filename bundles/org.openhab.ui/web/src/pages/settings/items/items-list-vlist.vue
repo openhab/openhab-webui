@@ -226,9 +226,9 @@ export default {
           tagsNonS = item.tags.filter((t) =>
             t !== item.metadata.semantics.value.split('_').pop() &&
             t !== ((item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) ? item.metadata.semantics.config.relatesTo.split('_').pop() : '')
-            )
+          )
         }
-        if (tagsNonS.length ) {
+        if (tagsNonS.length) {
           vlHeight += 24
           if (this.$theme.ios) vlHeight += 4
           if (this.$theme.md) vlHeight += 12
@@ -244,7 +244,7 @@ export default {
           tagsNonS = item.tags.filter((t) =>
             t !== item.metadata.semantics.value.split('_').pop() &&
             t !== ((item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) ? item.metadata.semantics.config.relatesTo.split('_').pop() : '')
-            )
+          )
         }
       }
       return tagsNonS
@@ -258,7 +258,7 @@ export default {
         if (classParts.length > 1) {
           ret += ' > ' + classParts.pop()
           if (item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) {
-            const relatesToParts  = item.metadata.semantics.config.relatesTo.split('_')
+            const relatesToParts = item.metadata.semantics.config.relatesTo.split('_')
             if (relatesToParts.length > 1) {
               ret += ' · ' + relatesToParts.pop()
             }

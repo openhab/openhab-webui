@@ -36,7 +36,7 @@ export default {
         if (classParts.length > 1) {
           ret += ' > ' + classParts.pop()
           if (this.item.metadata.semantics.config && this.item.metadata.semantics.config.relatesTo) {
-            const relatesToParts  = this.item.metadata.semantics.config.relatesTo.split('_')
+            const relatesToParts = this.item.metadata.semantics.config.relatesTo.split('_')
             if (relatesToParts.length > 1) {
               ret += ' · ' + relatesToParts.pop()
             }
