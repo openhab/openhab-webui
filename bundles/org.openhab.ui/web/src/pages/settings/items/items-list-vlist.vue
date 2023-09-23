@@ -218,8 +218,8 @@ export default {
       let vlHeight
       if (this.$theme.ios) vlHeight = 78
       if (this.$theme.aurora) vlHeight = 60.77
-      if (this.$theme.md) vlHeight = 87
-      if (this.$device.firefox) vlHeight += 0.23
+      if (this.$theme.md) vlHeight = 87.4
+      if (this.$device.macos) vlHeight -= 0.77
       if (item.tags) {
         let tagsNonS = item.tags
         if (item.metadata && item.metadata.semantics) {
@@ -228,7 +228,11 @@ export default {
             t !== ((item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) ? item.metadata.semantics.config.relatesTo.split('_').pop() : '')
             )
         }
-        if (tagsNonS.length ) vlHeight += 24
+        if (tagsNonS.length ) {
+          vlHeight += 24
+          if (this.$theme.ios) vlHeight += 4
+          if (this.$theme.md) vlHeight += 12
+        }
       }
       return vlHeight
     },
