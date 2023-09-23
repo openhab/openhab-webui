@@ -246,6 +246,23 @@
 			box-shadow: none;
 			-webkit-box-shadow: none;
 		}
+		.mdl-button-icon {
+			min-width: 0;
+			img {
+				width: 24px;
+				height: 24px;
+				object-fit: contain;
+			}
+			iconify-icon {
+				font-size: 24px;
+				vertical-align: middle;
+			}
+			.material-icons,
+			.f7-icons {
+				font-size: 24px;
+				vertical-align: middle;
+			}
+		}
 		.mdl-textfield {
 			&__input,
 			&__label {

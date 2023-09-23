@@ -123,7 +123,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      * @return HTML code
      */
     protected String preprocessSnippet(String originalSnippet, Widget w, boolean ignoreStateForIcon) {
-        String snippet = preprocessIcon(originalSnippet, w, ignoreStateForIcon);
+        String snippet = preprocessIcon(originalSnippet, getCategory(w), ignoreStateForIcon);
 
         snippet = snippet.replace("%cells%", String.valueOf(12 / config.getNbColsDesktop()));
         snippet = snippet.replace("%cells_tablet%", String.valueOf(8 / config.getNbColsTablet()));
@@ -144,13 +144,12 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         return snippet;
     }
 
-    private String preprocessIcon(String originalSnippet, Widget w, boolean ignoreState) {
-        String category = getCategory(w);
+    protected String preprocessIcon(String originalSnippet, @Nullable String icon, boolean ignoreState) {
         String iconSource = DEFAULT_ICON_SOURCE;
         String iconSet = DEFAULT_ICON_SET;
         String iconName = DEFAULT_ICON_NAME;
-        if (category != null) {
-            String[] segments = category.split(":", 3);
+        if (icon != null) {
+            String[] segments = icon.split(":", 3);
             if (segments.length == 1) {
                 iconName = segments[0];
             } else if (segments.length == 2) {

@@ -34,6 +34,7 @@ import org.openhab.core.types.CommandOption;
 import org.openhab.core.types.State;
 import org.openhab.core.types.util.UnitUtils;
 import org.openhab.core.ui.items.ItemUIRegistry;
+import org.openhab.ui.basic.internal.WebAppConfig;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
@@ -49,6 +50,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
+ * @author Laurent Garnier - Use icon instead of label for button if icon is set
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -126,12 +128,13 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
                 if (commandDescription != null) {
                     for (CommandOption option : commandDescription.getCommandOptions()) {
                         // Truncate the button label to MAX_LABEL_SIZE characters
-                        buildButton(s, option.getLabel(), option.getCommand(), MAX_LABEL_SIZE, item, state, buttons);
+                        buildButton(s, option.getLabel(), option.getCommand(), null, MAX_LABEL_SIZE, item, state,
+                                buttons);
                     }
                 }
             } else {
                 for (Mapping mapping : s.getMappings()) {
-                    buildButton(s, mapping.getLabel(), mapping.getCmd(), -1, item, state, buttons);
+                    buildButton(s, mapping.getLabel(), mapping.getCmd(), mapping.getIcon(), -1, item, state, buttons);
                 }
             }
             snippet = snippet.replace("%buttons%", buttons.toString());
@@ -145,8 +148,8 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         return ECollections.emptyEList();
     }
 
-    private void buildButton(Switch w, @Nullable String lab, String cmd, int maxLabelSize, @Nullable Item item,
-            @Nullable State state, StringBuilder buttons) throws RenderException {
+    private void buildButton(Switch w, @Nullable String lab, String cmd, @Nullable String icon, int maxLabelSize,
+            @Nullable Item item, @Nullable State state, StringBuilder buttons) throws RenderException {
         String button = getSnippet("button");
 
         String command = cmd;
@@ -166,9 +169,28 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
 
         button = button.replace("%item%", w.getItem());
         button = button.replace("%cmd%", escapeHtml(command));
-        button = button.replace("%label%", escapeHtml(label));
+        String buttonClass = "";
+        String style = "";
+        if (icon == null || !config.isIconsEnabled()) {
+            button = button.replace("%label%", escapeHtml(label));
+            button = button.replace("%icon_snippet%", "");
+        } else {
+            button = button.replace("%label%", "");
+            button = preprocessIcon(button, icon, true);
+            buttonClass = "mdl-button-icon";
+            switch (config.getTheme()) {
+                case WebAppConfig.THEME_NAME_BRIGHT:
+                    style = "style=\"color-scheme: light\"";
+                    break;
+                case WebAppConfig.THEME_NAME_DARK:
+                    style = "style=\"color-scheme: dark\"";
+                    break;
+                default:
+                    break;
+            }
+        }
+        button = button.replace("%buttonstyle%", style);
 
-        String buttonClass;
         State compareMappingState = state;
         if (state instanceof QuantityType) { // convert the item state to the command value for proper
                                              // comparison and buttonClass calculation
@@ -176,9 +198,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         }
 
         if (compareMappingState != null && compareMappingState.toString().equals(command)) {
-            buttonClass = "mdl-button--accent";
-        } else {
-            buttonClass = "mdl-button";
+            buttonClass += " mdl-button--accent";
         }
         button = button.replace("%class%", buttonClass);
 
