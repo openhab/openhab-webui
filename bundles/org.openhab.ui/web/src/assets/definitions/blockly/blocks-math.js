@@ -270,20 +270,32 @@ export default function (f7, isGraalJs) {
   }
 
   javascriptGenerator['oh_math_minmax'] = function (block) {
-    const inputType1 = blockGetCheckedInputType(block, 'NUM1')
-    const inputType2 = blockGetCheckedInputType(block, 'NUM2')
     const math_number_input1 = javascriptGenerator.valueToCode(block, 'NUM1', javascriptGenerator.ORDER_FUNCTION_CALL)
     const math_number_input2 = javascriptGenerator.valueToCode(block, 'NUM2', javascriptGenerator.ORDER_FUNCTION_CALL)
 
-    const operand = block.getFieldValue('OP')
+    let inputType1 = blockGetCheckedInputType(block, 'NUM1')
+    let inputType2 = blockGetCheckedInputType(block, 'NUM2')
 
-    if (inputType1 !== inputType2) {
+    /*
+     * When dealing with variables we need to find out best what we are dealing with to generate the right code
+     * if after detection still both types are different, we will throw an exception, but only of not a var is involved!
+     * if we don't know we will get back '' (=var) as the type and if both types are vars we need to assume the vars WILL contain a Number
+     * if only one of the types is a var, then we base the code generation on the other given input type
+     */
+    inputType1 = detectVarQuantityNumberType(inputType1, math_number_input1)
+    inputType2 = detectVarQuantityNumberType(inputType2, math_number_input2)
+
+    const operand = block.getFieldValue('OP')
+    const containsOneVar = (inputType1 === '' && inputType2 !== '') || (inputType1 !== '' && inputType2 === '')
+
+    if (inputType1 !== inputType2 && !containsOneVar) {
       throw new Error(`Both operand types need to be equal for ${operand.toUpperCase()}-block (${math_number_input1} -> ${inputType1}, ${math_number_input2} -> ${inputType2})`)
     }
 
+    const leadType = (!containsOneVar) ? inputType1 : ((inputType1 === '') ? inputType2 : inputType1)
     let code = ''
 
-    switch (inputType1) {
+    switch (leadType) {
       case 'oh_quantity':
         const op = (operand === 'min') ? 'lessThan' : 'greaterThan'
         code = `(${math_number_input1}.${op}(${math_number_input2})) ? ${math_number_input1} : ${math_number_input2}`
@@ -294,5 +306,19 @@ export default function (f7, isGraalJs) {
     }
 
     return [code, javascriptGenerator.ORDER_FUNCTION_CALL]
+  }
+
+  /*
+ * let's deal with variables and try to do our best
+ * if the type is either Number or Quantity, then we don't mind
+ * only if the type is empty then we try to detect the type
+ *    if the content of the block contains the word "Quantity", then type is oh_quantity
+ *    if the content of the block otherwise contains a number, then the type is Number
+ */
+  function detectVarQuantityNumberType (inputType, math_number_input) {
+    if (inputType !== '') return inputType
+    if (math_number_input.includes('Quantity')) return 'oh_quantity'
+    if (!isNaN(math_number_input)) return 'Number'
+    return ''
   }
 }
