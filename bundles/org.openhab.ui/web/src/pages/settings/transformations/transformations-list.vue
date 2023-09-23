@@ -2,6 +2,8 @@
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar title="Transformations" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
+        <f7-link v-if="$store.state.developerDock" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
+        <f7-link v-else icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -62,8 +64,7 @@
 
       <f7-col v-else-if="transformations.length > 0">
         <f7-block-title class="searchbar-hide-on-search">
-          {{ transformations.length }} transformations -
-          <f7-link external :href="documentationLink" target="_blank" text="Open documentation" color="blue" />
+          {{ transformations.length }} transformations
         </f7-block-title>
         <div class="padding-left padding-right searchbar-found">
           <f7-segmented strong tag="p">
@@ -134,9 +135,6 @@ export default {
     }
   },
   computed: {
-    documentationLink () {
-      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/transformations`
-    },
     indexedTransformations () {
       if (this.groupBy === 'alphabetical') {
         return this.transformations.reduce((prev, transformation, i, transformations) => {

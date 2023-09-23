@@ -31,7 +31,7 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list accordion-list>
-            <f7-list-item  accordion-item v-for="faq in faqs" :key="faq.title" :title="faq.title">
+            <f7-list-item  class="faq-title" accordion-item v-for="faq in faqs" :key="faq.title" :title="faq.title">
               <f7-accordion-content>
                 <f7-block>
                   <p v-if="faq.goto">
@@ -74,6 +74,7 @@
           <rule-context v-else-if="($store.state.pagePath).indexOf('scenes')>=0" type="Scenes"/>
           <rule-context v-else-if="($store.state.pagePath).indexOf('scripts')>=0" type="Scripts"/>
           <widget-context v-else-if="($store.state.pagePath).indexOf('widgets')>=0"/>
+          <transform-context v-else-if="($store.state.pagePath).indexOf('transformations')>=0"/>
           <addon-context v-else-if="($store.state.pagePath).indexOf('addons')>=0"/>
           <default-context v-else/>
         </f7-block>
@@ -118,6 +119,12 @@
 
 .add-button-icon
   color: blue
+
+.chevron-icon
+  color: blue
+
+.faq-title .item-title
+  white-space: normal !important
 </style>
 
 <script>
@@ -129,6 +136,7 @@ import PageContext from './help/page-context.vue'
 import RuleContext from './help/rule-context.vue'
 import WidgetContext from './help/widget-context.vue'
 import AddonContext from './help/addon-context.vue'
+import TransformContext from './help/transform-context.vue'
 import DefaultContext from './help/default-context.vue'
 
 export default {
@@ -140,6 +148,7 @@ export default {
     RuleContext,
     WidgetContext,
     AddonContext,
+    TransformContext,
     DefaultContext
   },
   props: ['activeHelpTab'],

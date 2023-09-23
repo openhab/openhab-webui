@@ -1,50 +1,61 @@
 [
   {
-    "title" : "Create an Item",
-    "goto" : {
-        "target" : "/settings/items/",
-        "text" : "Settings > Items"
-    },
-    "text" : "Click on the <i class=\"f7-icons size-22 add-button-icon\">plus_circle_fill</i> in the lower right corner and select Add item.",
-    "doclink" : "docs/configuration/items.html"
+    "title" : "Access openHAB from a remote network",
+    "text" : "The most secure ways to enable remote access to your openHAB instance are through a VPN or a service such as <a class=\"external\" target=\"_blank\" href=\"https://myopenhab.org/\">myopenhab.org</a> with the openHAB Cloud Connector. <strong>DO NOT</strong> expose your openHAB instance directly, that is insecure",
+    "doclink" : "addons/integrations/openhabcloud/"
   },
   {
-    "title" : "Create a Page",
-    "goto" : {
-        "target" : "/settings/pages/",
-        "text" : "Settings > Pages"
-    },
-    "text" : "Click on the <i class=\"f7-icons size-22 add-button-icon\">plus_circle_fill</i> in the lower right corner and select the type of page you want to create.",
-    "doclink" : "docs/tutorial/pages_intro.html"
+    "title" : "Change the UID of a configuration",
+    "text" : "Once a configuration is created you cannot change its UID.  You can delete the configuration and create a new one that is identical except for the UID, but beware of potential consequeces of other configurations that may rely on the deleted UID."
   },
   {
-    "title" : "Create a Rule",
+    "title" : "Create a new configuration",
     "goto" : {
-        "target" : "/settings/rules/",
-        "text" : "Settings > Rules"
+        "target" : "/settings/",
+        "text" : "Settings"
     },
-    "text" : "Click on the <i class=\"f7-icons size-22 add-button-icon\">plus_circle_fill</i> in the lower right corner.",
-    "doclink" : "docs/tutorial/rules_introduction.html"
+    "text" : "Use the Settings page to go to the listing page for the type of configuration you want to create then click on the <i class=\"f7-icons size-22 add-button-icon\">plus_circle_fill</i> in the lower right corner to add a new configuration of that type.",
+    "doclink" : "docs/configuration/"
   },
   {
-    "title" : "Delete an Item",
+    "title" : "Delete a configuration",
     "goto" : {
-      "target" : "/settings/items/",
-      "text" : "Settings > Items"
+      "target" : "/settings/",
+      "text" : "Settings"
     },
-    "text" : "Select the item from the list to go to the details page. Click on the <span style=\"color: red\">Remove Item</span> button at the bottom of the page."
+    "text" : "Use the Settings page to go to the listing page for the type of configuration you want to delete and then goto the details page of that configuration. Click on the <span style=\"color: red\">Remove</span> button at the bottom of the page (you may have to expand the bottom bar of the configuration window by clicking on the <i class=\"f7-icons size-22 chevron-icon\">chevron_up</i> button in the bottom right corner)."
   },
   {
-    "title" : "Delete multiple Items",
+    "title" : "Delete multiple configurations",
     "goto" : {
-      "target" : "/settings/items/",
-      "text" : "Settings > Items"
+      "target" : "/settings/",
+      "text" : "Settings"
     },
-    "text" : "Click on Select in the upper-right corner (or Ctrl + Click on an Item).  Select all Items to be deleted using the checkboxes and then click on the <span style=\"color: red\">Remove</span> button at the bottom of the screen."
+    "text" : "Use the Settings page to go to the listing page for the type of configurations you want to delete and then click on Select in the upper-right corner (or Ctrl + Click on any listing).  Select all configurations to be deleted using the checkboxes and then click on the <span style=\"color: red\">Remove</span> button at the bottom of the screen."
   },
   {
     "title" : "Find available icons",
-    "text" : "OpenHAB specific icons can be found at the docs page linked below. F7 icons are listed in the <a target=\"_blank\" href=\"https://framework7.io/icons/\">F7 docs</a>. Material icons can be found <a target=\"_blank\" href=\"https://jossef.github.io/material-design-icons-iconfont/\">here</a>. The entire <a target=\"_blank\" href=\"https://icon-sets.iconify.design/\">Iconify library</a> is also available for use.",
+    "text" : "OpenHAB specific icons can be found at the docs page linked below. F7 icons are listed in the <a class=\"external\" target=\"_blank\" href=\"https://framework7.io/icons/\">F7 docs</a>. Material icons can be found <a class=\"external\" target=\"_blank\" href=\"https://jossef.github.io/material-design-icons-iconfont/\">here</a>. The entire <a class=\"external\" target=\"_blank\" href=\"https://icon-sets.iconify.design/\">Iconify library</a> is also available for use.",
     "doclink" : "docs/configuration/iconsets/classic/"
+  },
+  {
+    "title" : "Get openHAB notifications",
+    "text" : "There are many different add-ons that will allow you to send messages from openHAB to other devices. One easy and secure method is to use <a class=\"external\" target=\"_blank\" href=\"https://myopenhab.org/\">myopenhab.org</a> with the openHAB Cloud Connector.",
+    "doclink" : "addons/integrations/openhabcloud/"
+  },
+  {
+    "title" : "See openHAB logs",
+    "text" : "If you have installed openHAB using openaHABian, then you can use the openHABian config <strong>Optional Components</strong> menu to install a web based log view.  Otherwise the location of the log files will depend on your installation method so use the link below to find out more.",
+    "doclink" : "docs/administration/logging.html"
+  },
+  {
+    "title" : "View openHAB on an Android device",
+    "text" : "openHAB UIs can all be viewed via any web browser, desktop or mobile.  There is also an Android app that can connect to your openHAB instance and give you better integration with the mobile device.",
+    "doclink" : "docs/apps/android.html"
+  },
+  {
+    "title" : "View openHAB on an iOS device",
+    "text" : "openHAB UIs can all be viewed via any web browser, desktop or mobile.  There is also an iOS app that can connect to your openHAB instance and give you better integration with the mobile device.",
+    "doclink" : "docs/apps/ios.html"
   }
 ]
