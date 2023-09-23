@@ -138,7 +138,7 @@ export default function (f7, isGraalJs) {
     const decimals = javascriptGenerator.valueToCode(block, 'DECIMALS', javascriptGenerator.ORDER_NONE)
     const operand = block.getFieldValue('op')
 
-    let code = ''
+    let code
     if (operand !== 'toFixed') {
       let method = ''
       switch (operand) {
@@ -165,7 +165,6 @@ export default function (f7, isGraalJs) {
 
   Blockly.Blocks['math_single'] = {
     init: function () {
-      const block = this
       const dropDown = new Blockly.FieldDropdown([
         ['square root', 'ROOT'],
         ['absolute', 'ABS'],
@@ -208,8 +207,6 @@ export default function (f7, isGraalJs) {
     }
     const operand = block.getFieldValue('OP')
 
-    let code = ''
-
     let method = ''
     switch (operand) {
       case 'ROOT':
@@ -234,7 +231,8 @@ export default function (f7, isGraalJs) {
         method = `Math.pow(10,${math_number})`
         break
     }
-    code = `${method}`
+
+    let code = `${method}`
 
     if (inputType === 'oh_quantity') {
       code = `Quantity((${code}).toString() + ' ' + ${math_number_input}.symbol)`
@@ -244,7 +242,6 @@ export default function (f7, isGraalJs) {
 
   Blockly.Blocks['oh_math_minmax'] = {
     init: function () {
-      const block = this
       const dropDown = new Blockly.FieldDropdown([
         ['minimum of', 'min'],
         ['maximum of', 'max']
@@ -277,13 +274,12 @@ export default function (f7, isGraalJs) {
     const inputType2 = blockGetCheckedInputType(block, 'NUM2')
     let math_number_input1 = javascriptGenerator.valueToCode(block, 'NUM1', javascriptGenerator.ORDER_FUNCTION_CALL)
     let math_number_input2 = javascriptGenerator.valueToCode(block, 'NUM2', javascriptGenerator.ORDER_FUNCTION_CALL)
-    if (inputType1 !== 'oh_quantity' && inputType2 === 'oh_quantity') {
-      math_number_input2 = `${math_number_input2}.float`
-    }
-    if (inputType1 === 'oh_quantity' && inputType2 !== 'oh_quantity') {
-      math_number_input1 = `${math_number_input1}.float`
-    }
+
     const operand = block.getFieldValue('OP')
+
+    if (inputType1 !== inputType2) {
+      throw new Error(`both operand types need to be equal for  ${operand.toUpperCase()}-block (${math_number_input1} -> ${inputType1},${math_number_input2} -> ${inputType2})`)
+    }
 
     let code = ''
     switch (operand) {
