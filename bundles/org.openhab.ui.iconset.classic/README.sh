@@ -10,7 +10,7 @@ The set is provided with the distribution in both the PNG and SVG file format.
 
 EOF
 
-for icon in $(ls icons/*.png | sort -V); do
+for icon in $(ls icons/*.svg | sort -V); do
   name=$(basename "$icon")
   echo "Adding icon '$name'"
   if [ "$name" = "none.png" ] || [ "$name" = "none.svg" ]; then continue; fi
@@ -42,7 +42,7 @@ cat <<EOF >> "$READMEMD"
 {% for category in placesCategoryNames %}
   {% assign iconSrc = base | append: "/img/icon_no_category.png" %}
   {% if allIconsWithoutExtension contains category %}
-    {% assign iconSrc = "icons/" | append: category | append: ".png" %}
+    {% assign iconSrc = "icons/" | append: category | append: ".svg" %}
   {% endif %}
   <figure>
     <img src="{{iconSrc}}" alt="{{category}}" title="{{category}}">
@@ -63,7 +63,7 @@ cat <<EOF >> "$READMEMD"
 {% for category in thingCategoryNames %}
   {% assign iconSrc = base | append: "/img/icon_no_category.png" %}
   {% if allIconsWithoutExtension contains category %}
-    {% assign iconSrc = "icons/" | append: category | append: ".png" %}
+    {% assign iconSrc = "icons/" | append: category | append: ".svg" %}
   {% endif %}
 
   {% assign altText = "" %}
@@ -105,7 +105,7 @@ cat <<EOF >> "$READMEMD"
   {% for channelCategory in channelCategoryNames %}
     {% assign iconSrc = base | append: "/img/icon_no_category.png" %}
     {% if allIconsWithoutExtension contains channelCategory %}
-      {% assign iconSrc = "icons/" | append: channelCategory | append: ".png" %}
+      {% assign iconSrc = "icons/" | append: channelCategory | append: ".svg" %}
     {% endif %}
 
     {% assign altText = "" %}
