@@ -82,7 +82,7 @@
           <widget-context v-else-if="($store.state.pagePath).indexOf('widgets')>=0" />
           <transform-context v-else-if="($store.state.pagePath).indexOf('transformations')>=0" />
           <addon-context v-else-if="($store.state.pagePath).indexOf('addons')>=0" />
-          <default-context v-else/>
+          <default-context v-else />
         </f7-block>
         <f7-block>
           <f7-block-title class="padding-horizontal" medium>
