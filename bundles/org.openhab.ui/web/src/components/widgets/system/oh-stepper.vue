@@ -21,14 +21,14 @@ export default {
   },
   computed: {
     value () {
-      const applyOffset = (value) => (typeof this.config.offset === 'number') ? value + this.config.offset : value
+      const applyOffset = (value) => (typeof this.config.offset === 'number') ? Number(this.toStepFixed(value + this.config.offset)) : value
       if (this.config.variable) {
         if (this.config.variableKey) {
           return applyOffset(this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey))
         }
         return applyOffset(this.context.vars[this.config.variable])
       }
-      let value = applyOffset(this.toStepFixed(parseFloat(this.context.store[this.config.item].state)))
+      let value = applyOffset(Number(this.context.store[this.config.item].state))
       if (this.config.min !== undefined) value = Math.max(value, this.config.min)
       if (this.config.max !== undefined) value = Math.min(value, this.config.max)
       return value
@@ -37,7 +37,7 @@ export default {
   watch: {
     value (newValue) {
       if (isNaN(newValue) || !isFinite(newValue)) return
-      this.$refs.stepper.setValue(this.toStepFixed(newValue).toString())
+      this.$refs.stepper.setValue(Number(this.toStepFixed(newValue)))
     }
   },
   methods: {
@@ -48,11 +48,11 @@ export default {
       // uses the number of decimals in the step config to round the provided number
       if (!this.config.step) return value
       const nbDecimals = Number(this.config.step).toString().replace(',', '.').split('.')[1]
-      return parseFloat(Number(value).toFixed(nbDecimals))
+      return parseFloat(Number(value)).toFixed(nbDecimals.length)
     },
     onChange (value) {
-      const applyOffset = (value) => (typeof this.config.offset === 'number') ? value - this.config.offset : value
-      let newValue = applyOffset(this.toStepFixed(value))
+      const applyOffset = (value) => (typeof this.config.offset === 'number') ? Number(this.toStepFixed(value - this.config.offset)) : value
+      let newValue = applyOffset(Number(this.toStepFixed(value)))
       if (newValue === this.value) return
       if (this.config.variable) {
         if (this.config.variableKey) {
