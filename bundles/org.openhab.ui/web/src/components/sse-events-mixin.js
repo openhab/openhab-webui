@@ -24,12 +24,6 @@ export default {
       if (!topics) return
       this.eventSource = this.$oh.sse.connect(`/rest/events?topics=${topics}`, null, (event) => {
         console.debug('Received SSE event: ' + JSON.stringify(event))
-        function closePopup () {
-          const popupEl = this.$el.querySelector('.popup')
-          if (popupEl) {
-            this.$f7.popup.close(popupEl)
-          }
-        }
         switch (event.topic) {
           case topicAudio:
             const topicParts = event.topic.split('/')
