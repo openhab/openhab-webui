@@ -4,7 +4,11 @@
       <strong>Transformations</strong> are openHAB objects that convert a value or item state into different value or state.  Transformations can be used in many different instances including Links betweens Channels and Items, Rule scripts, and some Thing configurations.
     </p>
     <p>
-      The different available Transformation methods must be individually installed via the <strong>Other</strong> tab of the <f7-link href="/addons/">Add-on Store</f7-link>.
+      The different available Transformation methods must be individually installed via the <strong>Other</strong> tab of the
+      <f7-link href="/addons/">
+        Add-on Store
+      </f7-link>
+      .
     </p>
     <p>
       On these pages you can manage all the Transformations you have added to your system.

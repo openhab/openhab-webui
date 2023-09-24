@@ -141,7 +141,7 @@
     </f7-panel>
 
     <f7-panel v-if="showDeveloperDock" right :visible-breakpoint="1280" resizable>
-      <developer-dock :dock="activeDock" :helpTab="activeHelpTab" :toolTab="activeToolTab"/>
+      <developer-dock :dock="activeDock" :helpTab="activeHelpTab" :toolTab="activeToolTab" />
     </f7-panel>
 
     <f7-block v-if="!ready && communicationFailureMsg" class="block-narrow">
@@ -508,9 +508,9 @@ export default {
 
           if (data[2]) dayjs.locale(data[2].key)
 
-          const page = data[0].find((p) => p.uid == 'overview')
+          const page = data[0].find((p) => p.uid === 'overview')
           if ((!page) || (page.component !== 'oh-layout-page') || (!page.slots || (!page.slots.default.length && !page.slots.masonry && !page.slots.canvas && !page.slots.grid))) {
-            if (this.quickStartShow) this.selectDeveloperDock({'dock':'help','helpTab':'quick'})
+            if (this.quickStartShow) this.selectDeveloperDock({ 'dock': 'help', 'helpTab': 'quick' })
             this.quickStartShow = false
           }
 

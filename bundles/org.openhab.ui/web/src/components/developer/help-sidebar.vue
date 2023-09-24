@@ -13,9 +13,9 @@
               <f7-accordion-content>
                 <f7-list media-list>
                   <f7-list-item v-for="step in instruct.steps" :key="step.title" :link="step.link" :title="step.title">
-                    <div class="item-text" v-html="step.text"></div>
+                    <div class="item-text" v-html="step.text" />
                   </f7-list-item>
-                  <f7-list-button v-if="instruct.button" :external="true" :title="instruct.button.title" :href="documentationLinkPrefix+instruct.button.link" target="_blank"></f7-list-button>
+                  <f7-list-button v-if="instruct.button" :external="true" :title="instruct.button.title" :href="documentationLinkPrefix+instruct.button.link" target="_blank" />
                 </f7-list>
               </f7-accordion-content>
             </f7-list-item>
@@ -31,14 +31,20 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list accordion-list>
-            <f7-list-item  class="faq-title" accordion-item v-for="faq in faqs" :key="faq.title" :title="faq.title">
+            <f7-list-item class="faq-title" accordion-item v-for="faq in faqs" :key="faq.title" :title="faq.title">
               <f7-accordion-content>
                 <f7-block>
                   <p v-if="faq.goto">
-                    In the left panel go to <f7-link :href="faq.goto.target">{{ faq.goto.text }}</f7-link>
+                    In the left panel go to <f7-link :href="faq.goto.target">
+                      {{ faq.goto.text }}
+                    </f7-link>
                   </p>
-                  <p v-html="faq.text"></p>
-                  <p v-if="faq.doclink"><f7-link external target="_blank" :href="documentationLinkPrefix+faq.doclink">Full Help Docs</f7-link></p>
+                  <p v-html="faq.text" />
+                  <p v-if="faq.doclink">
+                    <f7-link external target="_blank" :href="documentationLinkPrefix+faq.doclink">
+                      Full Help Docs
+                    </f7-link>
+                  </p>
                 </f7-block>
               </f7-accordion-content>
             </f7-list-item>
@@ -54,7 +60,7 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list media-list>
-            <f7-list-item v-for="addon in addons" :key="addon.uid" :link="addon.link" :external="true" target="_blank" :title="addon.label.replaceAll(/Binding|Transformation|Persistence/gi,'')" :text="addon.type"></f7-list-item>
+            <f7-list-item v-for="addon in addons" :key="addon.uid" :link="addon.link" :external="true" target="_blank" :title="addon.label.replaceAll(/Binding|Transformation|Persistence/gi,'')" :text="addon.type" />
           </f7-list>
         </f7-block>
       </div>
@@ -66,16 +72,16 @@
           </f7-block-title>
         </f7-block>
         <f7-block class="no-margin no-padding">
-          <thing-context v-if="($store.state.pagePath).indexOf('things')>=0"/>
-          <item-context v-else-if="($store.state.pagePath).indexOf('items')>=0"/>
-          <model-context v-else-if="($store.state.pagePath).indexOf('model')>=0"/>
-          <page-context v-else-if="($store.state.pagePath).indexOf('pages')>=0"/>
-          <rule-context v-else-if="($store.state.pagePath).indexOf('rules')>=0 || ($store.state.pagePath).indexOf('schedule')>=0" type="Rules"/>
-          <rule-context v-else-if="($store.state.pagePath).indexOf('scenes')>=0" type="Scenes"/>
-          <rule-context v-else-if="($store.state.pagePath).indexOf('scripts')>=0" type="Scripts"/>
-          <widget-context v-else-if="($store.state.pagePath).indexOf('widgets')>=0"/>
-          <transform-context v-else-if="($store.state.pagePath).indexOf('transformations')>=0"/>
-          <addon-context v-else-if="($store.state.pagePath).indexOf('addons')>=0"/>
+          <thing-context v-if="($store.state.pagePath).indexOf('things')>=0" />
+          <item-context v-else-if="($store.state.pagePath).indexOf('items')>=0" />
+          <model-context v-else-if="($store.state.pagePath).indexOf('model')>=0" />
+          <page-context v-else-if="($store.state.pagePath).indexOf('pages')>=0" />
+          <rule-context v-else-if="($store.state.pagePath).indexOf('rules')>=0 || ($store.state.pagePath).indexOf('schedule')>=0" type="Rules" />
+          <rule-context v-else-if="($store.state.pagePath).indexOf('scenes')>=0" type="Scenes" />
+          <rule-context v-else-if="($store.state.pagePath).indexOf('scripts')>=0" type="Scripts" />
+          <widget-context v-else-if="($store.state.pagePath).indexOf('widgets')>=0" />
+          <transform-context v-else-if="($store.state.pagePath).indexOf('transformations')>=0" />
+          <addon-context v-else-if="($store.state.pagePath).indexOf('addons')>=0" />
           <default-context v-else/>
         </f7-block>
         <f7-block>
@@ -89,7 +95,6 @@
         </f7-block>
       </div>
     </div>
-
   </f7-block>
 </template>
 

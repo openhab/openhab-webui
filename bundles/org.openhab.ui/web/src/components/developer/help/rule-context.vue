@@ -7,7 +7,11 @@
       Community made Rule Templates can also be added to your system from the <strong>Automation</strong> tab of the Add-on Store.
     </p>
     <p v-else-if="(type == 'Rules' && ($store.state.pagePath).indexOf('schedule')>=0)">
-      The shedule page shows you a calendar layout of all Rules that have the <f7-chip text="Schedule" media-bg-color="blue"><f7-icon slot="media" f7="tag_fill"></f7-icon></f7-chip> tag and trigger at one or more defined times.
+      The shedule page shows you a calendar layout of all Rules that have the
+      <f7-chip text="Schedule" media-bg-color="blue">
+        <f7-icon slot="media" f7="tag_fill" />
+      </f7-chip>
+      tag and trigger at one or more defined times.
     </p>
     <p>
       On these pages you can manage all the basic {{ type }} you have added to your system.
@@ -25,7 +29,7 @@
           Click on any Scene in the main list to edit scene's item commands
         </f7-list-item>
         <f7-list-item :title="`Delete ${type}`">
-          Select multiple {{ type }} using the top <strong>Select</strong> button and use the <strong>Remove</strong> button at the bottom or use the <span style="color: red">Remove {{ type }}</span> button on the individual {{ type.slice(0,-1).toLowerCase() }} pages 
+          Select multiple {{ type }} using the top <strong>Select</strong> button and use the <strong>Remove</strong> button at the bottom or use the <span style="color: red">Remove {{ type }}</span> button on the individual {{ type.slice(0,-1).toLowerCase() }} pages
         </f7-list-item>
         <f7-list-item v-if="(type == 'Rules' || type == 'Scripts')" :title="`Enable/Disable ${type}`">
           Select multiple {{ type }} using the top <strong>Select</strong> button and use the <strong>Enable</strong> or <strong>Disable</strong> buttons at the bottom or use the <i class="f7-icons size-22">play_circle</i> and <i class="f7-icons size-22">pause_circle</i> buttons on the individual {{ type.slice(0,-1).toLowerCase() }} pages

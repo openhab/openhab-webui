@@ -1,9 +1,13 @@
 <template>
   <f7-page class="developer-dock">
-    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" style="width: 100%" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'"></f7-navbar>
+    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" style="width: 100%" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'" />
     <f7-segmented strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left)); margin-top: 5px; margin-bottom: 5px">
-      <f7-button :active="dockView === 'tools'" @click="$f7.emit('selectDeveloperDock',{'dock': 'tools'})">Tools</f7-button>
-      <f7-button :active="dockView === 'help'" @click="$f7.emit('selectDeveloperDock',{'dock': 'help'})">Help</f7-button>
+      <f7-button :active="dockView === 'tools'" @click="$f7.emit('selectDeveloperDock',{'dock': 'tools'})">
+        Tools
+      </f7-button>
+      <f7-button :active="dockView === 'help'" @click="$f7.emit('selectDeveloperDock',{'dock': 'help'})">
+        Help
+      </f7-button>
     </f7-segmented>
     <f7-segmented v-if="dockView === 'help'" strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left)); margin-top: 0">
       <f7-button :active="activeHelpTab === 'current'" icon-f7="doc_richtext" icon-size="18" @click="$f7.emit('selectDeveloperDock',{'dock': 'help','helpTab': 'current'})" />
@@ -17,8 +21,8 @@
       <f7-button :active="activeToolTab === 'scripting'" icon-f7="pencil_ellipsis_rectangle" icon-size="18" @click="$f7.emit('selectDeveloperDock',{'dock': 'tools','toolTab': 'scripting'})" />
       <f7-button :active="activeToolTab === 'tools'" icon-f7="rectangle_stack_badge_plus" icon-size="18" @click="$f7.emit('selectDeveloperDock',{'dock': 'tools','toolTab': 'tools'})" />
     </f7-segmented>
-    <developer-sidebar v-if="dockView === 'tools'" :activeToolTab="activeToolTab"/>
-    <help-sidebar v-if="dockView === 'help'" :activeHelpTab="activeHelpTab"/>
+    <developer-sidebar v-if="dockView === 'tools'" :activeToolTab="activeToolTab" />
+    <help-sidebar v-if="dockView === 'help'" :activeHelpTab="activeHelpTab" />
   </f7-page>
 </template>
 
@@ -47,7 +51,7 @@ export default {
     DeveloperSidebar,
     HelpSidebar
   },
-  props: ['dock','helpTab','toolTab'],
+  props: ['dock', 'helpTab', 'toolTab'],
   computed: {
     dockView () {
       return this.dock
