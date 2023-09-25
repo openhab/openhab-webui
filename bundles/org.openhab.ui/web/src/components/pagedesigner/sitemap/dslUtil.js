@@ -41,7 +41,7 @@ function writeWidget (widget, indent) {
           dsl += '['
           dsl += widget.config[key].filter(Boolean).map(color => {
             let index = color.lastIndexOf('=') + 1
-            let colorvalue = color.substring(index)
+            let colorvalue = color.substring(index).trim()
             if (!/^(".*")|('.*')$/.test(colorvalue)) {
               colorvalue = '"' + colorvalue + '"'
             }
