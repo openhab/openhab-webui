@@ -12,13 +12,35 @@
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar bottom class="toolbar-details">
+    <f7-toolbar bottom class="toolbar-details" v-if="!(this.$theme.ios || this.$theme.md)">
       <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
         Clear
       </f7-link>
       <div class="padding-right text-align-right">
         <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
         <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
+        <f7-checkbox style="margin-left: 5px" :checked="includeItemName" @change="toggleItemName" />
+        <label @click="toggleItemName" class="advanced-label">Show name</label>
+        <f7-checkbox style="margin-left: 5px" :checked="includeItemTags" @change="toggleItemTags" />
+        <label @click="toggleItemTags" class="advanced-label">Show tags</label>
+      </div>
+      <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
+    </f7-toolbar>
+    <f7-toolbar bottom class="toolbar-details" v-if="this.$theme.ios || this.$theme.md" style="height: 50px">
+      <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
+        Clear
+      </f7-link>
+      <div class="padding-right text-align-center" style="font-size: 12px">
+        <div>
+          <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
+          <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
+        </div>
+        <div>
+          <f7-checkbox :checked="includeItemName" @change="toggleItemName" />
+          <label @click="toggleItemName" class="advanced-label">Show name</label>
+          <f7-checkbox style="margin-left: 5px" :checked="includeItemTags" @change="toggleItemTags" />
+          <label @click="toggleItemTags" class="advanced-label">Show tags</label>
+        </div>
       </div>
       <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
@@ -35,7 +57,8 @@
             <f7-treeview>
               <model-treeview-item v-for="node in [rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
                                    :key="node.item.name" :model="node"
-                                   @selected="selectItem" :selected="selectedItem" />
+                                   @selected="selectItem" :selected="selectedItem"
+                                   :includeItemName="includeItemName" :includeItemTags="includeItemTags"/>
             </f7-treeview>
           </f7-block>
         </f7-col>
@@ -213,6 +236,8 @@ export default {
       ready: false,
       loading: false,
       includeNonSemantic: false,
+      includeItemName: false,
+      includeItemTags: false,
       items: [],
       links: [],
       locations: [],
@@ -433,6 +458,14 @@ export default {
       this.rootGroups = []
       this.rootItems = []
       this.includeNonSemantic = !this.includeNonSemantic
+      this.load()
+    },
+    toggleItemName () {
+      this.includeItemName = !this.includeItemName
+      this.load()
+    },
+    toggleItemTags () {
+      this.includeItemTags = !this.includeItemTags
       this.load()
     },
     addSemanticItem (semanticType) {

@@ -1,5 +1,5 @@
 <template>
-  <f7-treeview-item selectable :label="(model.item.created === false) ? '(New Item)' : (model.item.label || model.item.name)"
+  <f7-treeview-item selectable :label="(model.item.created === false) ? '(New Item)' : ((model.item.label) ? ((includeItemName) ? model.item.label + ' (' + model.item.name + ')' : model.item.label) : model.item.name)"
                     :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
                     :textColor="iconColor" :color="(model.item.created !== false) ? 'blue' :'orange'"
                     :selected="selected && selected.item.name === model.item.name"
@@ -12,9 +12,18 @@
                          :model="node"
                          @selected="(event) => $emit('selected', event)"
                          :selected="selected"
+                         :includeItemName="includeItemName" :includeItemTags="includeItemTags"
                          @checked="(item, check) => $emit('checked', item, check)" />
     <div slot="label" class="semantic-class">
       {{ className() }}
+      <div class="semantic-class chip" v-if="includeItemTags" v-for="tag in getNonSemanticTags(model.item)" :key="tag" style="height: 16px; margin-left: 4px">
+          <div class="chip-media bg-color-blue" style="height: 16px; width: 16px">
+            <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" style="font-size: 8px; height: 16px; line-height: 16px" />
+          </div>
+          <div class="chip-label" style="height: 16px; line-height: 16px">
+            {{ tag }}
+          </div>
+      </div>
     </div>
     <f7-checkbox slot="content-start" v-if="model.checkable"
                  :checked="model.checked === true" :disabled="model.disabled" @change="check" />
@@ -23,7 +32,7 @@
 
 <script>
 export default {
-  props: ['model', 'selected'],
+  props: ['model', 'selected', 'includeItemName', 'includeItemTags'],
   computed: {
     children () {
       return [this.model.children.locations,
@@ -68,6 +77,19 @@ export default {
       if (this.model.disabled) return
       this.model.checked = event.target.checked
       this.$emit('checked', this.model, event.target.checked)
+    },
+    getNonSemanticTags (item) {
+      let tagsNonS = []
+      if (item.tags) {
+        tagsNonS = item.tags
+        if (item.metadata && item.metadata.semantics) {
+          tagsNonS = item.tags.filter((t) =>
+            t !== item.metadata.semantics.value.split('_').pop() &&
+            t !== ((item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) ? item.metadata.semantics.config.relatesTo.split('_').pop() : '')
+            )
+        }
+      }
+      return tagsNonS
     }
   }
 }
