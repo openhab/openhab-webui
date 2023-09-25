@@ -58,7 +58,7 @@
               <model-treeview-item v-for="node in [rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
                                    :key="node.item.name" :model="node"
                                    @selected="selectItem" :selected="selectedItem"
-                                   :includeItemName="includeItemName" :includeItemTags="includeItemTags"/>
+                                   :includeItemName="includeItemName" :includeItemTags="includeItemTags" />
             </f7-treeview>
           </f7-block>
         </f7-col>

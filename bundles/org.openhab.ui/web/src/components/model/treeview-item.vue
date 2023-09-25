@@ -16,14 +16,16 @@
                          @checked="(item, check) => $emit('checked', item, check)" />
     <div slot="label" class="semantic-class">
       {{ className() }}
-      <div class="semantic-class chip" v-if="includeItemTags" v-for="tag in getNonSemanticTags(model.item)" :key="tag" style="height: 16px; margin-left: 4px">
+      <template v-if="includeItemTags">
+        <div class="semantic-class chip" v-for="tag in getNonSemanticTags(model.item)" :key="tag" style="height: 16px; margin-left: 4px">
           <div class="chip-media bg-color-blue" style="height: 16px; width: 16px">
             <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" style="font-size: 8px; height: 16px; line-height: 16px" />
           </div>
           <div class="chip-label" style="height: 16px; line-height: 16px">
             {{ tag }}
           </div>
-      </div>
+        </div>
+      </template>
     </div>
     <f7-checkbox slot="content-start" v-if="model.checkable"
                  :checked="model.checked === true" :disabled="model.disabled" @change="check" />
@@ -86,7 +88,7 @@ export default {
           tagsNonS = item.tags.filter((t) =>
             t !== item.metadata.semantics.value.split('_').pop() &&
             t !== ((item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) ? item.metadata.semantics.config.relatesTo.split('_').pop() : '')
-            )
+          )
         }
       }
       return tagsNonS
