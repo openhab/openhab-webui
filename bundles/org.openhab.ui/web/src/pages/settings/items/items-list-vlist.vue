@@ -219,7 +219,9 @@ export default {
       if (this.$theme.ios) vlHeight = 78
       if (this.$theme.aurora) vlHeight = 60.77
       if (this.$theme.md) vlHeight = 87.4
-      if (this.$device.macos) vlHeight -= 0.77
+      if (this.$device.macos) {
+        if (window.navigator.userAgent.includes('Safari') && !window.navigator.userAgent.includes('Chrome')) vlHeight -= 0.77
+      }
       if (item.tags) {
         let tagsNonS = item.tags
         if (item.metadata && item.metadata.semantics) {
