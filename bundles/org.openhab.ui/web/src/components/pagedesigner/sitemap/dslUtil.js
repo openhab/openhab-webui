@@ -11,8 +11,7 @@ function writeWidget (widget, indent) {
         dsl += ' sendFrequency=' + widget.config[key]
       } else if (key === 'forceAsItem') {
         dsl += ' forceasitem=' + widget.config[key]
-      } else if (key === 'staticIcon') {
-      } else if (key === 'icon') {
+      } else if (['icon', 'staticIcon'].includes(key)) {
         if (widget.config.staticIcon) {
           dsl += ' staticIcon=' + widget.config[key]
         } else {
