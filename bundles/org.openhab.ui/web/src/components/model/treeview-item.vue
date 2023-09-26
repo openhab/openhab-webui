@@ -1,5 +1,5 @@
 <template>
-  <f7-treeview-item selectable :label="(model.item.created === false) ? '(New Item)' : ((model.item.label) ? ((includeItemName) ? model.item.label + ' (' + model.item.name + ')' : model.item.label) : model.item.name)"
+  <f7-treeview-item selectable :label="(model.item.created === false) ? '(New Item)' : (model.item.label ? (includeItemName ? model.item.label + ' (' + model.item.name + ')' : model.item.label) : model.item.name)"
                     :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
                     :textColor="iconColor" :color="(model.item.created !== false) ? 'blue' :'orange'"
                     :selected="selected && selected.item.name === model.item.name"
@@ -33,7 +33,10 @@
 </template>
 
 <script>
+import ItemMixin from '@/components/item/item-mixin'
+
 export default {
+  mixins: [ItemMixin],
   props: ['model', 'selected', 'includeItemName', 'includeItemTags'],
   computed: {
     children () {
@@ -79,19 +82,6 @@ export default {
       if (this.model.disabled) return
       this.model.checked = event.target.checked
       this.$emit('checked', this.model, event.target.checked)
-    },
-    getNonSemanticTags (item) {
-      let tagsNonS = []
-      if (item.tags) {
-        tagsNonS = item.tags
-        if (item.metadata && item.metadata.semantics) {
-          tagsNonS = item.tags.filter((t) =>
-            t !== item.metadata.semantics.value.split('_').pop() &&
-            t !== ((item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) ? item.metadata.semantics.config.relatesTo.split('_').pop() : '')
-          )
-        }
-      }
-      return tagsNonS
     }
   }
 }
