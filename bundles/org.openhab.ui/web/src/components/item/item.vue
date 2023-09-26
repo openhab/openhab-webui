@@ -5,7 +5,7 @@
     :link="link"
     :title="(item.label) ? item.label :item.name"
     :footer="(item.label) ? item.name : '\xa0'"
-    :subtitle="getItemTypeAndMetaLabel(item)"
+    :subtitle="noType ? '' : getItemTypeAndMetaLabel(item)"
     :after="state"
     v-on="$listeners">
     <oh-icon v-if="!noIcon && item.category" slot="media" :icon="item.category" :state="(noState) ? null : (context && context.store) ? context.store[item.name].state : item.state" height="32" width="32" />
@@ -16,34 +16,16 @@
 </template>
 
 <script>
+import ItemMixin from '@/components/item/item-mixin'
+
 export default {
+  mixins: [ItemMixin],
   props: ['item', 'context', 'ignoreEditable', 'noState', 'noType', 'noIcon', 'link'],
   computed: {
     state () {
       if (this.noState) return
       if (!this.context || !this.context.store) return this.item.state
       return this.context.store[this.item.name].displayState || this.context.store[this.item.name].state
-    }
-  },
-  methods: {
-    getItemTypeAndMetaLabel () {
-      if (this.noType) return
-      let ret = this.item.type
-      if (this.item.metadata && this.item.metadata.semantics) {
-        ret += ' · '
-        const classParts = this.item.metadata.semantics.value.split('_')
-        ret += classParts[0]
-        if (classParts.length > 1) {
-          ret += ' > ' + classParts.pop()
-          if (this.item.metadata.semantics.config && this.item.metadata.semantics.config.relatesTo) {
-            const relatesToParts = this.item.metadata.semantics.config.relatesTo.split('_')
-            if (relatesToParts.length > 1) {
-              ret += ' · ' + relatesToParts.pop()
-            }
-          }
-        }
-      }
-      return ret
     }
   }
 }
