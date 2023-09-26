@@ -12,7 +12,9 @@
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar bottom class="toolbar-details" v-if="!(this.$theme.ios || this.$theme.md)">
+
+    <!-- Toolbar -->
+    <f7-toolbar bottom class="toolbar-details" v-if="$f7.width >= 500">
       <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
         Clear
       </f7-link>
@@ -26,11 +28,11 @@
       </div>
       <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
-    <f7-toolbar bottom class="toolbar-details" v-if="this.$theme.ios || this.$theme.md" style="height: 50px">
+    <f7-toolbar bottom class="toolbar-details" v-else style="height: 50px">
       <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
         Clear
       </f7-link>
-      <div class="padding-right text-align-center" style="font-size: 12px">
+      <div class="padding-left padding-right text-align-center" style="font-size: 12px">
         <div>
           <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
           <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
@@ -44,6 +46,7 @@
       </div>
       <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
+
     <f7-block v-if="!ready" class="text-align-center">
       <f7-preloader />
       <div>Loading...</div>
@@ -57,8 +60,8 @@
             <f7-treeview>
               <model-treeview-item v-for="node in [rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
                                    :key="node.item.name" :model="node"
-                                   @selected="selectItem" :selected="selectedItem"
-                                   :includeItemName="includeItemName" :includeItemTags="includeItemTags" />
+                                   :includeItemName="includeItemName" :includeItemTags="includeItemTags"
+                                   @selected="selectItem" :selected="selectedItem" />
             </f7-treeview>
           </f7-block>
         </f7-col>
