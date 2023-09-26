@@ -7,7 +7,7 @@ export default {
     'oh-plan-page': () => import('@/components/widgets/plan/oh-plan-page.vue'),
     'oh-chart-page': () => import('@/components/widgets/chart/oh-chart-page.vue')
   },
-  props: ['uid', 'el', 'modalParams'],
+  props: ['uid', 'el', 'modalConfig'],
   data () {
     return {
       currentTab: 0,
@@ -22,7 +22,7 @@ export default {
         component: component,
         root: component,
         store: this.$store.getters.trackedItems,
-        props: this.modalParams,
+        props: this.modalConfig,
         vars: this.vars
       }
     },
