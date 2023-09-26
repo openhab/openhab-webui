@@ -241,19 +241,6 @@ export default {
       }
       return vlHeight
     },
-    getNonSemanticTags (item) {
-      let tagsNonS = []
-      if (item.tags) {
-        tagsNonS = item.tags
-        if (item.metadata && item.metadata.semantics) {
-          tagsNonS = item.tags.filter((t) =>
-            t !== item.metadata.semantics.value.split('_').pop() &&
-            t !== ((item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) ? item.metadata.semantics.config.relatesTo.split('_').pop() : '')
-          )
-        }
-      }
-      return tagsNonS
-    },
     toggleCheck () {
       this.showCheckboxes = !this.showCheckboxes
     },

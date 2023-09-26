@@ -1,4 +1,7 @@
+import TagMixin from '@/components/tags/tag-mixin'
+
 export default {
+  mixins: [TagMixin],
   methods: {
     getItemTypeAndMetaLabel (item) {
       let ret = item.type
@@ -17,6 +20,10 @@ export default {
         }
       }
       return ret
+    },
+    getNonSemanticTags (item) {
+      if (!item.tags) return []
+      return item.tags.filter((t) => !this.isSemanticTag(t))
     }
   }
 }
