@@ -23,7 +23,8 @@ export default {
         root: component,
         store: this.$store.getters.trackedItems,
         props: this.modalConfig,
-        vars: this.vars
+        vars: this.vars,
+        modalConfig: this.modalConfig // For configuration of oh- components
       }
     },
     modalStyle () {
