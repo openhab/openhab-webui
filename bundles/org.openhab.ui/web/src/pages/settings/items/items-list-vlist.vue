@@ -225,19 +225,12 @@ export default {
       if (this.$device.macos) {
         if (window.navigator.userAgent.includes('Safari') && !window.navigator.userAgent.includes('Chrome')) vlHeight -= 0.77
       }
-      if (item.tags) {
-        let tagsNonS = item.tags
-        if (item.metadata && item.metadata.semantics) {
-          tagsNonS = item.tags.filter((t) =>
-            t !== item.metadata.semantics.value.split('_').pop() &&
-            t !== ((item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) ? item.metadata.semantics.config.relatesTo.split('_').pop() : '')
-          )
-        }
-        if (tagsNonS.length) {
-          vlHeight += 24
-          if (this.$theme.ios) vlHeight += 4
-          if (this.$theme.md) vlHeight += 12
-        }
+
+      const nonSemanticTags = this.getNonSemanticTags(item)
+      if (nonSemanticTags.length > 0) {
+        vlHeight += 24
+        if (this.$theme.ios) vlHeight += 4
+        if (this.$theme.md) vlHeight += 12
       }
       return vlHeight
     },
