@@ -135,15 +135,16 @@
     </f7-panel>
 
     <!-- Right Panel -->
-    <f7-panel right reveal theme-dark v-if="ready">
+    <f7-panel v-if="ready" right theme-dark>
       <panel-right />
-    <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
 
-    <f7-panel v-if="showDeveloperSidebar" right :visible-breakpoint="1280" resizable>
+    <!-- Developer Sidebar -->
+    <f7-panel v-if="showDeveloperSidebar" right resizable :visible-breakpoint="1280">
       <developer-sidebar />
     </f7-panel>
 
+    <!-- Main Content -->
     <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
 
   <!-- <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
