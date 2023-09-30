@@ -264,23 +264,37 @@ export default function (f7, isGraalJs) {
           case 'max': return 'Return the maximum of both inputs'
         }
       })
+      this.setOnChange(function (changeEvent) {
+        if (changeEvent.type === 'move') {
+          const typeInfo = computeMinMaxOutputType(this, false)
+          this.setOutput(true, typeInfo.leadType)
+        }
+      })
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-math.html#minmax')
       this.setOutput(true, null)
     }
   }
 
-  javascriptGenerator['oh_math_minmax'] = function (block) {
+  function computeMinMaxOutputType (block, throwError) {
     const operand = block.getFieldValue('OP')
 
-    const math_number_input1 = javascriptGenerator.valueToCode(block, 'NUM1', javascriptGenerator.ORDER_FUNCTION_CALL)
-    const math_number_input2 = javascriptGenerator.valueToCode(block, 'NUM2', javascriptGenerator.ORDER_FUNCTION_CALL)
+    let math_number_input1
+    let math_number_input2
+    try { // may throw an exception on workspace startup in unitialized state but we then we can ignore
+      math_number_input1 = javascriptGenerator.valueToCode(block, 'NUM1', javascriptGenerator.ORDER_FUNCTION_CALL)
+      math_number_input2 = javascriptGenerator.valueToCode(block, 'NUM2', javascriptGenerator.ORDER_FUNCTION_CALL)
+    } catch (e) {}
 
     /*
     When dealing with variables, Blockly does not provide type information (type is "").
     In this case, we fall back to checking whether the actual input contains "Quantity" or is a number.
      */
-    const inputType1 = blockGetCheckedInputType(block, 'NUM1') || getVariableType(math_number_input1)
-    const inputType2 = blockGetCheckedInputType(block, 'NUM2') || getVariableType(math_number_input2)
+    let inputType1
+    let inputType2
+    try { // may throw an exception on workspace startup in unitialized state but we then we can ignore
+      inputType1 = blockGetCheckedInputType(block, 'NUM1') || getVariableType(math_number_input1)
+      inputType2 = blockGetCheckedInputType(block, 'NUM2') || getVariableType(math_number_input2)
+    } catch (e) {}
 
     /*
     If exactly one of the two inputs is a variable, assume it has the same type as the other input.
@@ -291,12 +305,16 @@ export default function (f7, isGraalJs) {
     /*
     If both inputs are not the same type and none of them is a variable, throw an Error on code generation.
      */
-    if (inputType1 !== inputType2 && !containsOneVar) {
+    if (throwError && inputType1 !== inputType2 && !containsOneVar) {
       throw new Error(`Both operand types need to be equal for ${operand.toUpperCase()}-block (${math_number_input1} -> ${inputType1}, ${math_number_input2} -> ${inputType2})`)
     }
 
     const leadType = inputType1 || inputType1
+    return { leadType, math_number_input1, math_number_input2, operand }
+  }
 
+  javascriptGenerator['oh_math_minmax'] = function (block) {
+    const { leadType, math_number_input1, math_number_input2, operand } = computeMinMaxOutputType(block, true)
     let code = ''
 
     switch (leadType) {
