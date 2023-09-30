@@ -95,6 +95,14 @@
                 </f7-list>
               </f7-card-content>
             </f7-card>
+            <div><f7-block-title>Model Templates</f7-block-title></div>
+            <f7-card>
+              <f7-card-content>
+                <f7-list>
+                  <f7-list-button color="blue" title="Location Templates" @click="addLocationTemplate()" />
+                </f7-list>
+              </f7-card-content>
+            </f7-card>
           </f7-block>
         </f7-col>
       </f7-row>
@@ -227,6 +235,7 @@
 <script>
 import ModelDetailsPane from '@/components/model/details-pane.vue'
 import AddFromThing from './add-from-thing.vue'
+import AddFromTemplate from './add-from-template.vue'
 
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import ItemDetails from '@/components/model/item-details.vue'
@@ -379,6 +388,20 @@ export default {
           this.applyExpandedOption()
         })
         if (!this.eventSource) this.startEventSource()
+      
+        if (this.empty) {
+          let dialog = this.$f7.dialog.confirm('There is no semantic model. Create model locations from template?', () => {
+            this.$f7router.navigate({
+              url: 'add-template',
+              route: {
+                component: AddFromTemplate,
+                path: 'add-template',
+                props: {
+                }
+              }
+            })
+          })
+        }
       })
     },
     update () {
@@ -584,6 +607,22 @@ export default {
         props: {
           parent: this.selectedItem,
           createEquipment
+        }
+      })
+    },
+    addLocationTemplate () {
+      const self = this
+      this.$f7router.navigate({
+        url: 'add-template',
+        route: {
+          component: AddFromTemplate,
+          path: 'add-template',
+          props: {
+          }
+        }
+      }, {
+        props: {
+          itemList: this.items
         }
       })
     }
