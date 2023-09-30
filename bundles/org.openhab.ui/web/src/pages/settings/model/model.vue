@@ -2,8 +2,8 @@
   <f7-page name="Model" :stacked="true" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @click="selectItem(null)">
     <f7-navbar title="Semantic Model" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
-        <f7-link v-if="$store.state.developerDock" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
-        <f7-link v-else icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
+        <f7-link v-if="$store.state.developerDock && windowWidth >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
+        <f7-link v-else-if="windowWidth >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -262,7 +262,8 @@ export default {
       detailsOpened: false,
       detailsTab: 'state',
       eventSource: null,
-      itemDetailsKey: this.$f7.utils.id()
+      itemDetailsKey: this.$f7.utils.id(),
+      windowWidth: window.innerWidth
     }
   },
   created () {
