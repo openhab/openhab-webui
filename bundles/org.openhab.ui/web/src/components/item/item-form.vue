@@ -29,6 +29,13 @@
       </f7-list-input>
     </f7-list>
     <semantics-picker v-if="!hideSemantics" :item="item" :same-class-only="true" :hide-type="true" :hide-none="forceSemantics" />
+    <f7-list inline-labels accordion-list no-hairline-md>
+      <f7-list-item accordion-item title="Non-Semantic Tags" :after="numberOfTags">
+        <f7-accordion-content>
+          <tag-input :item="item" />
+        </f7-accordion-content>
+      </f7-list-item>
+    </f7-list>
   </div>
 </template>
 
@@ -42,13 +49,18 @@
 
 <script>
 import SemanticsPicker from '@/components/tags/semantics-picker.vue'
+import TagInput from '@/components/tags/tag-input.vue'
 import * as Types from '@/assets/item-types.js'
 import { Categories } from '@/assets/categories.js'
 
+import ItemMixin from '@/components/item/item-mixin'
+
 export default {
+  mixins: [ItemMixin],
   props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
   components: {
-    SemanticsPicker
+    SemanticsPicker,
+    TagInput
   },
   data () {
     return {
@@ -56,6 +68,11 @@ export default {
       categoryInputId: '',
       categoryAutocomplete: null,
       nameErrorMessage: ''
+    }
+  },
+  computed: {
+    numberOfTags () {
+      return this.getNonSemanticTags(this.item).length
     }
   },
   methods: {

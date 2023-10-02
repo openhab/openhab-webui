@@ -11,6 +11,12 @@ function writeWidget (widget, indent) {
         dsl += ' sendFrequency=' + widget.config[key]
       } else if (key === 'forceAsItem') {
         dsl += ' forceasitem=' + widget.config[key]
+      } else if (['icon', 'staticIcon'].includes(key)) {
+        if (widget.config.staticIcon) {
+          dsl += ' staticIcon=' + widget.config[key]
+        } else {
+          dsl += ' icon=' + widget.config[key]
+        }
       } else {
         dsl += ` ${key}=`
         if (key === 'item' || key === 'period' || key === 'legend' || Number.isFinite(widget.config[key])) {
@@ -41,7 +47,7 @@ function writeWidget (widget, indent) {
           dsl += '['
           dsl += widget.config[key].filter(Boolean).map(color => {
             let index = color.lastIndexOf('=') + 1
-            let colorvalue = color.substring(index)
+            let colorvalue = color.substring(index).trim()
             if (!/^(".*")|('.*')$/.test(colorvalue)) {
               colorvalue = '"' + colorvalue + '"'
             }

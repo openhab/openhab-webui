@@ -25,21 +25,17 @@
 </template>
 
 <script>
+import TagMixin from '@/components/tags/tag-mixin'
+
 export default {
+  mixins: [TagMixin],
   props: ['item', 'disabled', 'inScriptEditor'],
   data () {
     return {
-      pendingTag: '',
-      semanticClasses: this.$store.getters.semanticClasses
+      pendingTag: ''
     }
   },
   methods: {
-    isSemanticTag (tag) {
-      return [this.semanticClasses.Locations,
-        this.semanticClasses.Equipment,
-        this.semanticClasses.Points,
-        this.semanticClasses.Properties].some((t) => t.indexOf(tag) >= 0)
-    },
     isScriptTag (tag) {
       if (this.inScriptEditor !== true) return false
       if (tag === 'Script') return true
