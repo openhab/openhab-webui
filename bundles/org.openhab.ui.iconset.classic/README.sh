@@ -45,7 +45,7 @@ cat <<EOF >> "$READMEMD"
     {% assign iconSrc = "icons/" | append: category | append: ".svg" %}
   {% endif %}
   <figure>
-    <img src="{{iconSrc}}" alt="{{category}}" title="{{category}}">
+    <img src="{{iconSrc}}" alt="{{category}}" title="{{category}}" width="64" height="64">
     <figcaption>{{category}}</figcaption>
   </figure>
 {% endfor %}
@@ -75,7 +75,7 @@ cat <<EOF >> "$READMEMD"
     {% endif %}
   {% endfor %}
   <figure>
-    <img src="{{iconSrc}}" alt="{{altText}}" title="{{altText}}">
+    <img src="{{iconSrc}}" alt="{{altText}}" title="{{altText}}" width="64" height="64">
     <figcaption>{{category}}</figcaption>
   </figure>
 {% endfor %}
@@ -118,7 +118,7 @@ cat <<EOF >> "$READMEMD"
     {% endfor %}
 
     <figure>
-      <img src="{{iconSrc}}" alt="{{altText}}" title="{{altText}}">
+      <img src="{{iconSrc}}" alt="{{altText}}" title="{{altText}}" width="64" height="64">
       <figcaption>{{channelCategory}}</figcaption>
     </figure>
   {% endfor %}
@@ -162,7 +162,7 @@ cat <<EOF >> "$READMEMD"
     {% endfor %}
   
     <figure>
-      <img src="icons/{{icon}}" alt="{{altText}}" title="{{altText}}">
+      <img src="icons/{{icon}}" alt="{{altText}}" title="{{altText}}" width="64" height="64">
       <figcaption>{{plainCategory}}</figcaption>
     </figure>
   {% endunless %}
