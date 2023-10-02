@@ -30,16 +30,16 @@
           </f7-block-title>
           <f7-list>
             <f7-list-input label="Prefix" type="text" placeholder="item prefix"
-                            @input="onPrefixInput" clear-button  :error-message="prefixErrorMessage"
-                            :error-message-force="!!prefixErrorMessage"/>
+                           @input="onPrefixInput" clear-button :error-message="prefixErrorMessage"
+                           :error-message-force="!!prefixErrorMessage" />
           </f7-list>
           <f7-block-footer class="padding-left padding-right">
-              Add a prefix to each created item's name (optional: default is 'l')
+            Add a prefix to each created item's name (optional: default is 'l')
           </f7-block-footer>
         </f7-block>
         <f7-block v-if="selectedTemplate !== null" class="semantic-tree-wrapper">
           <f7-block-footer class="padding-left padding-right">
-              Select the locations to add to your model (you may add others from the model page at a later time).
+            Select the locations to add to your model (you may add others from the model page at a later time).
           </f7-block-footer>
           <f7-block class="semantic-tree">
             <model-treeview class="model-picker-treeview" :rootNodes="rootLocations"
@@ -122,361 +122,361 @@ export default {
   },
   computed: {
     locations () {
-      let floor1 = (this.selectedTemplate == 0) ? 'lAppartment' : (this.selectedTemplate == 1) ? 'lHouse' : 'lFloor_Ground'
-      let floor2 = (this.selectedTemplate == 0) ? 'lAppartment' : (this.selectedTemplate == 1) ? 'lHouse' : 'lFloor_Second'
+      let floor1 = (this.selectedTemplate === 0) ? 'lApartment' : (this.selectedTemplate === 1) ? 'lHouse' : 'lFloor_Ground'
+      let floor2 = (this.selectedTemplate === 0) ? 'lApartment' : (this.selectedTemplate === 1) ? 'lHouse' : 'lFloor_Second'
 
       return [
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Room_Bathroom",
-              "config": {
-                "isPartOf": floor2
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Room_Bathroom',
+              'config': {
+                'isPartOf': floor2
               }
             }
           },
-          "type": "Group",
-          "name": "lBathroom2",
-          "label": "Bathroom",
-          "category": "",
-          "tags": [
-            "Bathroom"
+          'type': 'Group',
+          'name': 'lBathroom2',
+          'label': 'Bathroom',
+          'category': '',
+          'tags': [
+            'Bathroom'
           ],
-          "groupNames": [
+          'groupNames': [
             floor2
           ],
-          "templates": 4
+          'templates': 4
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Building",
-              "config": {
-                "isPartOf": "lProperty"
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Building',
+              'config': {
+                'isPartOf': 'lProperty'
               }
             }
           },
-          "type": "Group",
-          "name": "lAppartment",
-          "label": "Appartment",
-          "category": "",
-          "tags": [
-            "Building"
+          'type': 'Group',
+          'name': 'lApartment',
+          'label': 'Apartment',
+          'category': '',
+          'tags': [
+            'Building'
           ],
-          "groupNames": [
-            "lProperty"
+          'groupNames': [
+            'lProperty'
           ],
-          "templates": 1
+          'templates': 1
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Building",
-              "config": {
-                "isPartOf": "lProperty"
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Building',
+              'config': {
+                'isPartOf': 'lProperty'
               }
             }
           },
-          "type": "Group",
-          "name": "lHouse",
-          "label": "House",
-          "category": "",
-          "tags": [
-            "Building"
+          'type': 'Group',
+          'name': 'lHouse',
+          'label': 'House',
+          'category': '',
+          'tags': [
+            'Building'
           ],
-          "groupNames": [
-            "lProperty"
+          'groupNames': [
+            'lProperty'
           ],
-          "templates": 6
+          'templates': 6
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location"
+          'metadata': {
+            'semantics': {
+              'value': 'Location'
             }
           },
-          "type": "Group",
-          "name": "lProperty",
-          "label": "Property",
-          "category": "",
-          "tags": [
-            "Location"
+          'type': 'Group',
+          'name': 'lProperty',
+          'label': 'Property',
+          'category': '',
+          'tags': [
+            'Location'
           ],
-          "groupNames": [],
-          "templates": 7
+          'groupNames': [],
+          'templates': 7
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Room_Kitchen",
-              "config": {
-                "isPartOf": floor1
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Room_Kitchen',
+              'config': {
+                'isPartOf': floor1
               }
             }
           },
-          "type": "Group",
-          "name": "lKitchen",
-          "label": "Kitchen",
-          "category": "",
-          "tags": [
-            "Kitchen"
+          'type': 'Group',
+          'name': 'lKitchen',
+          'label': 'Kitchen',
+          'category': '',
+          'tags': [
+            'Kitchen'
           ],
-          "groupNames": [
+          'groupNames': [
             floor1
           ],
-          "templates": 7
+          'templates': 7
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Building_Garage",
-              "config": {
-                "isPartOf": floor1
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Building_Garage',
+              'config': {
+                'isPartOf': floor1
               }
             }
           },
-          "type": "Group",
-          "name": "lGarage",
-          "label": "Garage",
-          "category": "",
-          "tags": [
-            "Garage"
+          'type': 'Group',
+          'name': 'lGarage',
+          'label': 'Garage',
+          'category': '',
+          'tags': [
+            'Garage'
           ],
-          "groupNames": [
+          'groupNames': [
             floor1
           ],
-          "templates": 6
+          'templates': 6
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location",
-              "config": {
-                "isPartOf": "lProperty"
+          'metadata': {
+            'semantics': {
+              'value': 'Location',
+              'config': {
+                'isPartOf': 'lProperty'
               }
             }
           },
-          "type": "Group",
-          "name": "lBackYard",
-          "label": "Back Yard",
-          "category": "",
-          "tags": [
-            "Location"
+          'type': 'Group',
+          'name': 'lBackYard',
+          'label': 'Back Yard',
+          'category': '',
+          'tags': [
+            'Location'
           ],
-          "groupNames": [
-            "lProperty"
+          'groupNames': [
+            'lProperty'
           ],
-          "templates": 6
+          'templates': 6
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Room_Entry",
-              "config": {
-                "isPartOf": floor1
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Room_Entry',
+              'config': {
+                'isPartOf': floor1
               }
             }
           },
-          "type": "Group",
-          "name": "lEntry",
-          "label": "Entry",
-          "category": "",
-          "tags": [
-            "Entry"
+          'type': 'Group',
+          'name': 'lEntry',
+          'label': 'Entry',
+          'category': '',
+          'tags': [
+            'Entry'
           ],
-          "groupNames": [
+          'groupNames': [
             floor1
           ],
-          "templates": 7
+          'templates': 7
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Room_LivingRoom",
-              "config": {
-                "isPartOf": floor1
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Room_LivingRoom',
+              'config': {
+                'isPartOf': floor1
               }
             }
           },
-          "type": "Group",
-          "name": "lLivingRoom",
-          "label": "Living Room",
-          "category": "",
-          "tags": [
-            "LivingRoom"
+          'type': 'Group',
+          'name': 'lLivingRoom',
+          'label': 'Living Room',
+          'category': '',
+          'tags': [
+            'LivingRoom'
           ],
-          "groupNames": [
+          'groupNames': [
             floor1
           ],
-          "templates": 7
+          'templates': 7
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Floor",
-              "config": {
-                "isPartOf": "lHouse"
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Floor',
+              'config': {
+                'isPartOf': 'lHouse'
               }
             }
           },
-          "type": "Group",
-          "name": "lFloor_Ground",
-          "label": "Ground Floor",
-          "category": "",
-          "tags": [
-            "Floor"
+          'type': 'Group',
+          'name': 'lFloor_Ground',
+          'label': 'Ground Floor',
+          'category': '',
+          'tags': [
+            'Floor'
           ],
-          "groupNames": [
-            "lHouse"
+          'groupNames': [
+            'lHouse'
           ],
-          "templates": 4
+          'templates': 4
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Room_DiningRoom",
-              "config": {
-                "isPartOf": floor1
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Room_DiningRoom',
+              'config': {
+                'isPartOf': floor1
               }
             }
           },
-          "type": "Group",
-          "name": "lDiningRoom",
-          "label": "Dining Room",
-          "category": "",
-          "tags": [
-            "DiningRoom"
+          'type': 'Group',
+          'name': 'lDiningRoom',
+          'label': 'Dining Room',
+          'category': '',
+          'tags': [
+            'DiningRoom'
           ],
-          "groupNames": [
+          'groupNames': [
             floor1
           ],
-          "templates": 6
+          'templates': 6
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Room_Office",
-              "config": {
-                "isPartOf": floor2
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Room_Office',
+              'config': {
+                'isPartOf': floor2
               }
             }
           },
-          "type": "Group",
-          "name": "lOffice",
-          "label": "Office",
-          "category": "",
-          "tags": [
-            "Office"
+          'type': 'Group',
+          'name': 'lOffice',
+          'label': 'Office',
+          'category': '',
+          'tags': [
+            'Office'
           ],
-          "groupNames": [
+          'groupNames': [
             floor2
           ],
-          "templates": 4
+          'templates': 4
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location",
-              "config": {
-                "isPartOf": "lProperty"
+          'metadata': {
+            'semantics': {
+              'value': 'Location',
+              'config': {
+                'isPartOf': 'lProperty'
               }
             }
           },
-          "type": "Group",
-          "name": "lFrontYard",
-          "label": "Front Yard",
-          "category": "",
-          "tags": [
-            "Location"
+          'type': 'Group',
+          'name': 'lFrontYard',
+          'label': 'Front Yard',
+          'category': '',
+          'tags': [
+            'Location'
           ],
-          "groupNames": [
-            "lProperty"
+          'groupNames': [
+            'lProperty'
           ],
-          "templates": 6
+          'templates': 6
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Room_Bedroom",
-              "config": {
-                "isPartOf": floor2
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Room_Bedroom',
+              'config': {
+                'isPartOf': floor2
               }
             }
           },
-          "type": "Group",
-          "name": "lBedroom1",
-          "label": "Main Bedroom",
-          "category": "",
-          "tags": [
-            "Bedroom"
+          'type': 'Group',
+          'name': 'lBedroom1',
+          'label': 'Main Bedroom',
+          'category': '',
+          'tags': [
+            'Bedroom'
           ],
-          "groupNames": [
+          'groupNames': [
             floor2
           ],
-          "templates": 7
+          'templates': 7
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Room_Bedroom",
-              "config": {
-                "isPartOf": floor2
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Room_Bedroom',
+              'config': {
+                'isPartOf': floor2
               }
             }
           },
-          "type": "Group",
-          "name": "lBedroom2",
-          "label": "Second Bedroom",
-          "category": "",
-          "tags": [
-            "Bedroom"
+          'type': 'Group',
+          'name': 'lBedroom2',
+          'label': 'Second Bedroom',
+          'category': '',
+          'tags': [
+            'Bedroom'
           ],
-          "groupNames": [
+          'groupNames': [
             floor2
           ],
-          "templates": 6
+          'templates': 6
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Room_Bathroom",
-              "config": {
-                "isPartOf": floor1
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Room_Bathroom',
+              'config': {
+                'isPartOf': floor1
               }
             }
           },
-          "type": "Group",
-          "name": "lBathroom1",
-          "label": "Bathroom",
-          "category": "",
-          "tags": [
-            "Bathroom"
+          'type': 'Group',
+          'name': 'lBathroom1',
+          'label': 'Bathroom',
+          'category': '',
+          'tags': [
+            'Bathroom'
           ],
-          "groupNames": [
+          'groupNames': [
             floor1
           ],
-          "templates": 7
+          'templates': 7
         },
         {
-          "metadata": {
-            "semantics": {
-              "value": "Location_Indoor_Floor",
-              "config": {
-                "isPartOf": "lHouse"
+          'metadata': {
+            'semantics': {
+              'value': 'Location_Indoor_Floor',
+              'config': {
+                'isPartOf': 'lHouse'
               }
             }
           },
-          "type": "Group",
-          "name": "lFloor_Second",
-          "label": "Upstairs",
-          "category": "",
-          "tags": [
-            "Floor"
+          'type': 'Group',
+          'name': 'lFloor_Second',
+          'label': 'Upstairs',
+          'category': '',
+          'tags': [
+            'Floor'
           ],
-          "groupNames": [
-            "lHouse"
+          'groupNames': [
+            'lHouse'
           ],
-          "templates": 4
+          'templates': 4
         }
       ]
     },
@@ -536,7 +536,7 @@ export default {
       }
     },
     findLocation (searchNode, name) {
-      if (searchNode.item.name == name) {
+      if (searchNode.item.name === name) {
         return searchNode
       } else if (searchNode.children.locations != null) {
         let foundNode = null
@@ -557,15 +557,15 @@ export default {
         if (item.item.groupNames.length > 0) {
           let parentNode = this.findLocation(this.rootLocations[0], item.item.groupNames[0])
           if (parentNode && !parentNode.checked) {
-            parentNode.checked=true
+            parentNode.checked = true
             this.checkItem(parentNode, true)
           }
         }
       } else {
         this.checkedItems.splice(this.checkedItems.indexOf(item), 1)
         item.children.locations.forEach((i) => {
-          i.checked=false
-          this.checkItem(i,false)
+          i.checked = false
+          this.checkItem(i, false)
         })
       }
     },
@@ -590,12 +590,10 @@ export default {
       let existingNames = this.itemList.map((i) => i.name)
       if (this.checkedItems.length === 0) {
         this.$f7.dialog.alert('Please select some locations')
-        return
       } else if (this.checkedItems.some((i) => existingNames.includes(i.item.name))) {
-      this.$f7.dialog.confirm('Some Item names already exist. Continuing will overwrite those Items. Continue?','Warning',
-        () => { this.doAdd() },
-        () => { return }
-      )
+        this.$f7.dialog.confirm('Some Item names already exist. Continuing will overwrite those Items. Continue?','Warning',
+          () => { this.doAdd() }
+        )
       } else {
         this.doAdd()
       }
