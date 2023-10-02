@@ -59,8 +59,9 @@ export default {
     config () {
       if (!this.context || !this.context.component) return null
       let evalConfig = {}
-      if (this.context.component.config) {
-        const sourceConfig = this.context.component.config
+      // Fallback to modelConfig for oh- components to allow configuring them in modals
+      const sourceConfig = this.context.component.config || (this.componentType.startsWith('oh-') ? this.context.modalConfig : {})
+      if (sourceConfig) {
         if (typeof sourceConfig !== 'object') return {}
         for (const key in sourceConfig) {
           if (key === 'visible' || key === 'visibleTo' || key === 'stylesheet') continue

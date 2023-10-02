@@ -13,6 +13,9 @@
               <oh-icon :icon="widget.config.icon" height="32" width="32" />
             </div>
           </f7-list-input>
+          <f7-list-item title="Static icon">
+            <f7-toggle slot="after" :checked="widget.config.staticIcon" @toggle:change="widget.config.staticIcon = $event" />
+          </f7-list-item>
         </ul>
         <ul>
           <!-- additional controls -->

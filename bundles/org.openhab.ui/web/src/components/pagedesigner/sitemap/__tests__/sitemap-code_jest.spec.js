@@ -102,6 +102,56 @@ describe('SitemapCode', () => {
     })
   })
 
+  it('parses a staticIcon definition', async () => {
+    expect(wrapper.vm.sitemapDsl).toBeDefined()
+    // simulate updating the sitemap in code
+    const sitemap = [
+      'sitemap test label="Test" {',
+      '    Switch item=Item_Icon icon=lightbulb',
+      '    Switch item=Item_Icon staticIcon=lightbulb_static',
+      '    Switch item=Item_Icon icon=lightbulb staticIcon=lightbulb_static',
+      '}',
+      ''
+    ].join('\n')
+    wrapper.vm.updateSitemap(sitemap)
+    expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
+    expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
+
+    await wrapper.vm.$nextTick()
+
+    // check whether an 'updated' event was emitted and its payload
+    // (should contain the parsing result for the new sitemap definition)
+    const events = wrapper.emitted().updated
+    expect(events).toBeTruthy()
+    expect(events.length).toBe(1)
+    const payload = events[0][0]
+    expect(payload.slots).toBeDefined()
+    expect(payload.slots.widgets).toBeDefined()
+    expect(payload.slots.widgets.length).toBe(3)
+    expect(payload.slots.widgets[0]).toEqual({
+      component: 'Switch',
+      config: {
+        item: 'Item_Icon',
+        icon: 'lightbulb'
+      }
+    })
+    expect(payload.slots.widgets[1]).toEqual({
+      component: 'Switch',
+      config: {
+        item: 'Item_Icon',
+        icon: 'lightbulb_static',
+        staticIcon: true
+      }
+    })
+    expect(payload.slots.widgets[2]).toEqual({
+      component: 'Switch',
+      config: {
+        item: 'Item_Icon',
+        icon: 'lightbulb'
+      }
+    })
+  })
+
   it('parses a segmented icon name with hyphens', async () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
     // simulate updating the sitemap in code

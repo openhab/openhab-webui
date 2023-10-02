@@ -7,6 +7,7 @@
     name:             'name=',
     label:            'label=',
     item:             'item=',
+    staticIcon:       'staticIcon=',
     icon:             'icon=',
     widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint='],
     widgetboolattr:   ['legend='],
@@ -71,6 +72,15 @@
       }
     }
 
+    // if icon exists remove staticIcon, if not set icon to staticIcon and make saticIcon=true
+    if (widget.config.icon) {
+     delete widget.config.staticIcon
+    }
+    if (widget.config.staticIcon) {
+      widget.config.icon = widget.config.staticIcon
+      widget.config.staticIcon = true
+    }
+
     // reject widgets with missing parameters
     if (requiresItem.includes(widget.component) && !widget.config.item) return reject
     if ((widget.component === 'Video' || widget.component === 'Webview') && !widget.config.url) return reject
@@ -103,6 +113,7 @@ WidgetAttr -> %widgetswitchattr                                                 
   | %widgetboolattr _ WidgetBooleanAttrValue                                      {% (d) => [d[0].value, d[2]] %}
   | %widgetfreqattr _ WidgetAttrValue                                             {% (d) => ['frequency', d[2]] %}
   | %icon _ WidgetIconAttrValue                                                   {% (d) => [d[0].value, d[2].join("")] %}
+  | %staticIcon_ WidgetIconAttrValue                                              {% (d) => [d[0].value, d[2].join("")] %}
   | WidgetAttrName _ WidgetAttrValue                                              {% (d) => [d[0][0].value, d[2]] %}
   | WidgetMappingsAttrName WidgetMappingsAttrValue                                {% (d) => [d[0][0].value, d[1]] %}
   | WidgetVisibilityAttrName WidgetVisibilityAttrValue                            {% (d) => [d[0][0].value, d[1]] %}

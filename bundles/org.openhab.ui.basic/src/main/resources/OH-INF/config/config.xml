@@ -60,7 +60,7 @@
 			<default>false</default>
 		</parameter>
 		<parameter name="nbColumns" type="text">
-			<label>Number Columns</label>
+			<label>Number of Columns</label>
 			<description>The number of columns to consider to fill the grid in large screen width (desktop) and medium screen
 				width (tablet).</description>
 			<options>

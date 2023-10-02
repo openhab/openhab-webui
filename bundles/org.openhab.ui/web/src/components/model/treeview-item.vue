@@ -1,5 +1,5 @@
 <template>
-  <f7-treeview-item selectable :label="(model.item.created === false) ? '(New Item)' : (model.item.label || model.item.name)"
+  <f7-treeview-item selectable :label="(model.item.created === false) ? '(New Item)' : (model.item.label ? (includeItemName ? model.item.label + ' (' + model.item.name + ')' : model.item.label) : model.item.name)"
                     :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
                     :textColor="iconColor" :color="(model.item.created !== false) ? 'blue' :'orange'"
                     :selected="selected && selected.item.name === model.item.name"
@@ -12,9 +12,20 @@
                          :model="node"
                          @selected="(event) => $emit('selected', event)"
                          :selected="selected"
+                         :includeItemName="includeItemName" :includeItemTags="includeItemTags"
                          @checked="(item, check) => $emit('checked', item, check)" />
     <div slot="label" class="semantic-class">
       {{ className() }}
+      <template v-if="includeItemTags">
+        <div class="semantic-class chip" v-for="tag in getNonSemanticTags(model.item)" :key="tag" style="height: 16px; margin-left: 4px">
+          <div class="chip-media bg-color-blue" style="height: 16px; width: 16px">
+            <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" style="font-size: 8px; height: 16px; line-height: 16px" />
+          </div>
+          <div class="chip-label" style="height: 16px; line-height: 16px">
+            {{ tag }}
+          </div>
+        </div>
+      </template>
     </div>
     <f7-checkbox slot="content-start" v-if="model.checkable"
                  :checked="model.checked === true" :disabled="model.disabled" @change="check" />
@@ -22,8 +33,11 @@
 </template>
 
 <script>
+import ItemMixin from '@/components/item/item-mixin'
+
 export default {
-  props: ['model', 'selected'],
+  mixins: [ItemMixin],
+  props: ['model', 'selected', 'includeItemName', 'includeItemTags'],
   computed: {
     children () {
       return [this.model.children.locations,
