@@ -488,7 +488,7 @@ export default {
         .filter((i) => (!i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf) && (i.templates & (1 << this.selectedTemplate)))
         .map(this.modelItem).sort(compareModelItems)
       newModel.forEach(this.getChildren)
-      this.setCurrentTemplate(newModel)
+      this.setCurrentModel(newModel)
 
       return newModel
     }
@@ -518,8 +518,8 @@ export default {
 
       return modelItem
     },
-    setCurrentTemplate (model) {
-
+    setCurrentModel (model) {
+      this.currentModel = model
     },
     getChildren (parent) {
       // restore previous selection
@@ -568,8 +568,10 @@ export default {
       } else {
         this.checkedItems.splice(this.checkedItems.indexOf(item), 1)
         item.children.locations.forEach((i) => {
-          i.checked = false
-          this.checkItem(i, false)
+          if (i.checked) {
+            i.checked = false
+            this.checkItem(i, false)
+          }
         })
       }
     },
