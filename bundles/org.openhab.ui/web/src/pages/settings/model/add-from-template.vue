@@ -484,12 +484,13 @@ export default {
       if (this.currentModel) {
         return this.currentModel
       }
-      this.currentModel = this.locations
+      let newModel = this.locations
         .filter((i) => (!i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf) && (i.templates & (1 << this.selectedTemplate)))
         .map(this.modelItem).sort(compareModelItems)
-      this.currentModel.forEach(this.getChildren)
+      newModel.forEach(this.getChildren)
+      this.setCurrentTemplate(newModel)
 
-      return this.currentModel
+      return newModel
     }
   },
   methods: {
@@ -516,6 +517,9 @@ export default {
       this.checkedItems.push(modelItem)
 
       return modelItem
+    },
+    setCurrentTemplate (model) {
+
     },
     getChildren (parent) {
       // restore previous selection
@@ -591,7 +595,8 @@ export default {
       if (this.checkedItems.length === 0) {
         this.$f7.dialog.alert('Please select some locations')
       } else if (this.checkedItems.some((i) => existingNames.includes(i.item.name))) {
-        this.$f7.dialog.confirm('Some Item names already exist. Continuing will overwrite those Items. Continue?','Warning',
+        this.$f7.dialog.confirm('Some Item names already exist. Continuing will overwrite those Items. Continue?',
+          'Warning',
           () => { this.doAdd() }
         )
       } else {
