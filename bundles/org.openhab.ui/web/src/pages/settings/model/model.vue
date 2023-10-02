@@ -388,7 +388,7 @@ export default {
           this.applyExpandedOption()
         })
         if (!this.eventSource) this.startEventSource()
-      
+
         if (this.empty) {
           let dialog = this.$f7.dialog.confirm('There is no semantic model. Create model locations from template?', () => {
             this.$f7router.navigate({
