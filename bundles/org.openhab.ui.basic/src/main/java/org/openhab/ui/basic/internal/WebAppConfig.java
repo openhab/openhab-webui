@@ -36,6 +36,7 @@ public class WebAppConfig {
     public static final String THEME_NAME_SYSTEM = "system";
     private static final String DEFAULT_THEME = THEME_NAME_BRIGHT;
 
+    private static final String DEFAULT_ICONS = "true";
     private static final String DEFAULT_ICONIFY = "false";
     private static final String DEFAULT_INLINE_SVG = "false";
     private static final String DEFAULT_WEB_AUDIO = "false";
@@ -48,6 +49,7 @@ public class WebAppConfig {
     private String theme = DEFAULT_THEME;
     private int nbColsDesktop = DEFAULT_NB_COLUMNS_DESKTOP;
     private int nbColsTablet = DEFAULT_NB_COLUMNS_TABLET;
+    private boolean icons = Boolean.parseBoolean(DEFAULT_ICONS);
     private boolean iconify = Boolean.parseBoolean(DEFAULT_ICONIFY);
     private boolean inlineSvg = Boolean.parseBoolean(DEFAULT_INLINE_SVG);
     private boolean webAudio = Boolean.parseBoolean(DEFAULT_WEB_AUDIO);
@@ -116,6 +118,7 @@ public class WebAppConfig {
             nbColsDesktop = DEFAULT_NB_COLUMNS_DESKTOP;
             nbColsTablet = DEFAULT_NB_COLUMNS_TABLET;
         }
+        icons = "true".equalsIgnoreCase((String) configProps.getOrDefault(CONFIG_ENABLE_ICONS, DEFAULT_ICONS));
         iconify = "true".equalsIgnoreCase((String) configProps.getOrDefault("enableIconify", DEFAULT_ICONIFY));
         inlineSvg = "true".equalsIgnoreCase((String) configProps.getOrDefault("inlineSvg", DEFAULT_INLINE_SVG));
         webAudio = "true".equalsIgnoreCase((String) configProps.getOrDefault("webAudio", DEFAULT_WEB_AUDIO));
@@ -145,6 +148,10 @@ public class WebAppConfig {
 
     public int getNbColsTablet() {
         return nbColsTablet;
+    }
+
+    public boolean isIconsEnabled() {
+        return icons;
     }
 
     public boolean isIconifyEnabled() {
