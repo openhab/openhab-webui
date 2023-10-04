@@ -48,7 +48,7 @@ export default {
       // uses the number of decimals in the step config to round the provided number
       if (!this.config.step) return value
       const nbDecimals = Number(this.config.step).toString().replace(',', '.').split('.')[1]
-      return parseFloat(Number(value)).toFixed(nbDecimals.length)
+      return parseFloat(Number(value)).toFixed(nbDecimals ? nbDecimals.length : 0)
     },
     onChange (value) {
       const applyOffset = (value) => (typeof this.config.offset === 'number') ? Number(this.toStepFixed(value - this.config.offset)) : value
