@@ -111,7 +111,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      * @return HTML code
      */
     protected String preprocessSnippet(String originalSnippet, Widget w) {
-        return preprocessSnippet(originalSnippet, w, w.getStaticIcon() != null);
+        return preprocessSnippet(originalSnippet, w, w.getStaticIcon() != null || !w.getIconRules().isEmpty());
     }
 
     /**
