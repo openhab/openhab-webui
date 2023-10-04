@@ -1,6 +1,6 @@
 <template>
-  <f7-stepper ref="stepper" v-bind="config" :value="value" @stepper:change="onChange" @click.native.stop
-              :input="config.enableInput === true" :manual-input-mode="false" :format-value="formatValue" />
+  <f7-stepper ref="stepper" v-bind="config" @stepper:plusclick="onPlusMinusClick" @stepper:minusclick="onPlusMinusClick" @input="onInput"
+              :input="config.enableInput === true" :manual-input-mode="true" :format-value="formatValue" />
 </template>
 
 <style lang="stylus">
@@ -18,6 +18,7 @@ export default {
   widget: OhStepperDefinition,
   mounted () {
     delete this.config.value
+    this.$refs.stepper.setValue(this.value)
   },
   computed: {
     value () {
@@ -51,7 +52,20 @@ export default {
       // do NOT convert to number, instead return string, otherwise formatting wouldn't work
       return parseFloat(value).toFixed(nbDecimals ? nbDecimals.length : 0)
     },
-    onChange (value) {
+    onPlusMinusClick () {
+      setTimeout(() => {
+        this.sendCommand(this.$refs.stepper.getValue())
+      }, 10)
+    },
+    onInput () {
+      if (!this.config.enableInput) return
+      setTimeout(() => {
+        const newValue = this.$refs.stepper.getValue()
+        if (Math.abs(newValue - this.value) < (this.config.step || 1)) return
+        this.sendCommand(newValue)
+      }, 1500)
+    },
+    sendCommand (value) {
       const applyOffset = (num) => (!isNaN(this.config.offset)) ? Number(this.toStepFixed(num - Number(this.config.offset))) : num
       let newValue = applyOffset(Number(this.toStepFixed(value)))
       if (isNaN(newValue)) newValue = this.config.min || this.config.max || 0
