@@ -63,7 +63,7 @@
           ref="itemsList"
           media-list
           virtual-list
-          :virtual-list-params="{ items, searchAll, renderExternal, height: vlData.height }">
+          :virtual-list-params="{ items, searchAll, renderExternal, height }">
           <ul>
             <f7-list-item
               v-for="(item, index) in vlData.items"
@@ -86,6 +86,11 @@
               <span v-else slot="media" class="item-initial">{{ item.name[0] }}</span>
               <f7-icon v-if="!item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
               <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
+              <div slot="subtitle">
+                <f7-chip v-for="tag in getNonSemanticTags(item)" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                  <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                </f7-chip>
+              </div>
             </f7-list-item>
           </ul>
         </f7-list>
@@ -127,23 +132,20 @@
 </style>
 
 <script>
+import ItemMixin from '@/components/item/item-mixin'
+
 export default {
+  mixins: [ItemMixin],
   components: {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
   },
   data () {
-    let vlHeight
-    if (this.$theme.ios) vlHeight = 78
-    if (this.$theme.aurora) vlHeight = 60
-    if (this.$theme.md) vlHeight = 87
-    if (this.$device.firefox) vlHeight += 1
     return {
       ready: false,
       items: [], // [{ label: 'Staircase', name: 'Staircase'}],
       indexedItems: {},
       vlData: {
-        items: [],
-        height: vlHeight
+        items: []
       },
       selectedItems: [],
       showCheckboxes: false,
@@ -203,6 +205,7 @@ export default {
       for (let i = 0; i < items.length; i += 1) {
         let haystack = items[i].name
         if (items[i].label) haystack += ' ' + items[i].label
+        if (items[i].tags) for (let j = 0; j < items[i].tags.length; j += 1) haystack += ' ' + items[i].tags[j]
         haystack += ' ' + this.getItemTypeAndMetaLabel(items[i])
         if (
           haystack.toLowerCase().indexOf(query.toLowerCase()) >= 0 ||
@@ -214,17 +217,22 @@ export default {
     renderExternal (vl, vlData) {
       this.vlData = vlData
     },
-    getItemTypeAndMetaLabel (item) {
-      let ret = item.type
-      if (item.metadata && item.metadata.semantics) {
-        ret += ' · '
-        const classParts = item.metadata.semantics.value.split('_')
-        ret += classParts[0]
-        if (classParts.length > 1) {
-          ret += '>' + classParts.pop()
-        }
+    height (item) {
+      let vlHeight
+      if (this.$theme.ios) vlHeight = 78
+      if (this.$theme.aurora) vlHeight = 60.77
+      if (this.$theme.md) vlHeight = 87.4
+      if (this.$device.macos) {
+        if (window.navigator.userAgent.includes('Safari') && !window.navigator.userAgent.includes('Chrome')) vlHeight -= 0.77
       }
-      return ret
+
+      const nonSemanticTags = this.getNonSemanticTags(item)
+      if (nonSemanticTags.length > 0) {
+        vlHeight += 24
+        if (this.$theme.ios) vlHeight += 4
+        if (this.$theme.md) vlHeight += 12
+      }
+      return vlHeight
     },
     toggleCheck () {
       this.showCheckboxes = !this.showCheckboxes

@@ -3,7 +3,7 @@
     <f7-card-content>
       <f7-list media-list accordion-list>
         <ul>
-          <item v-if="!createMode" :item="model.item" :link="'/settings/items/' + model.item.name" :context="context" />
+          <item v-if="!createMode" :item="model.item" :link="'/settings/items/' + model.item.name" :context="context" :no-tags="editMode" />
           <!-- <f7-list-button v-if="!editMode && !createMode" color="blue" title="Edit Item" @click="editMode = true">Edit Item</f7-list-button> -->
         </ul>
       </f7-list>

@@ -37,10 +37,6 @@
             <f7-block-title>Group Settings</f7-block-title>
             <group-form :item="item" />
           </f7-col>
-          <f7-col class="tags-editor">
-            <f7-block-title>Non-Semantic Tags</f7-block-title>
-            <tag-input :item="item" />
-          </f7-col>
         </f7-block>
       </f7-tab>
 
@@ -79,7 +75,6 @@ import YAML from 'yaml'
 
 import ItemForm from '@/components/item/item-form.vue'
 import GroupForm from '@/components/item/group-form.vue'
-import TagInput from '@/components/tags/tag-input.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import DirtyMixin from '../dirty-mixin'
 
@@ -90,7 +85,6 @@ export default {
     ItemPicker,
     ItemForm,
     GroupForm,
-    TagInput,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
   data () {

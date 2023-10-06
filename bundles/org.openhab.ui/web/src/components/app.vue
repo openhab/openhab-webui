@@ -1,5 +1,5 @@
 <template>
-  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || loginScreenOpened) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
+  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || communicationFailureMsg) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
@@ -144,44 +144,24 @@
       <developer-sidebar />
     </f7-panel>
 
-    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
-
-  <!-- <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
-    <f7-view name="login" v-if="$device.cordova">
-      <f7-page login-screen>
-        <f7-login-screen-title><img src="@/images/openhab-logo.svg" type="image/svg+xml" width="200px"><br>Login</f7-login-screen-title>
-        <f7-list form>
-          <f7-list-input
-            type="text"
-            name="serverUrl"
-            placeholder="openHAB server URL"
-            :value="serverUrl"
-            @input="serverUrl = $event.target.value"
-          ></f7-list-input>
-          <f7-list-input
-            type="text"
-            name="username"
-            placeholder="Username (optional)"
-            :value="username"
-            @input="username = $event.target.value"
-          ></f7-list-input>
-          <f7-list-input
-            type="password"
-            name="password"
-            placeholder="Password (optional)"
-            :value="password"
-            @input="password = $event.target.value"
-          ></f7-list-input>
-        </f7-list>
+    <f7-block v-if="!ready && communicationFailureMsg" class="block-narrow">
+      <empty-state-placeholder icon="wifi_slash" :title="$t('error.notReachable.title')" :text="$t('error.notReachable.msg') + '<br/><br/>Error: ' + communicationFailureMsg" />
+      <f7-col>
         <f7-list>
-          <f7-list-button title="Sign In" @click="login"></f7-list-button>
-          <f7-block-footer>
-            Some text about login information.
-          </f7-block-footer>
+          <f7-list-button color="blue" @click="loadData">
+            {{ $t('dialogs.retry') }}
+          </f7-list-button>
+          <f7-list-button color="blue" @click="reload">
+            {{ $t('about.reload.reloadApp') }}
+          </f7-list-button>
+          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches">
+            {{ $t('about.reload.purgeCachesAndRefresh') }}
+          </f7-list-button>
         </f7-list>
-      </f7-page>
-    </f7-view>
-  </f7-login-screen> -->
+      </f7-col>
+    </f7-block>
+
+    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
   </f7-app>
 </template>
 
@@ -269,17 +249,22 @@ import cordovaApp from '../js/cordova-app.js'
 import routes from '../js/routes.js'
 import PanelRight from '../pages/panel-right.vue'
 import DeveloperSidebar from './developer/developer-sidebar.vue'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
-import auth from './auth-mixin.js'
-import i18n from './i18n-mixin.js'
+import { loadLocaleMessages } from '@/js/i18n'
+
+import auth from './auth-mixin'
+import i18n from './i18n-mixin'
+import connectionHealth from './connection-health-mixin'
 import sseEvents from './sse-events-mixin'
 
 import dayjs from 'dayjs'
 import dayjsLocales from 'dayjs/locale.json'
 
 export default {
-  mixins: [auth, i18n, sseEvents],
+  mixins: [auth, i18n, connectionHealth, sseEvents],
   components: {
+    EmptyStatePlaceholder,
     PanelRight,
     DeveloperSidebar
   },
@@ -376,7 +361,6 @@ export default {
       pages: null,
       showSidebar: true,
       visibleBreakpointDisabled: false,
-      loginScreenOpened: false,
       loggedIn: false,
 
       themeOptions: {
@@ -387,11 +371,11 @@ export default {
       showSettingsSubmenu: false,
       showDeveloperSubmenu: false,
       showDeveloperSidebar: false,
-      currentUrl: '',
-
-      communicationFailureToast: null,
-      communicationFailureTimeoutId: null
+      currentUrl: ''
     }
+  },
+  i18n: {
+    messages: loadLocaleMessages(require.context('@/assets/i18n/about'))
   },
   computed: {
     isAdmin () {
@@ -429,7 +413,6 @@ export default {
               this.loadData(true)
               return Promise.reject()
             }
-            this.loginScreenOpened = true
             this.$nextTick(() => {
               this.$f7.dialog.login(
                 window.location.host,
@@ -477,7 +460,9 @@ export default {
               })
             }
           } else {
-            this.$f7.dialog.alert('openHAB REST API connection failed with error ' + err.message || err.status)
+            // Make sure this is set to a value, otherwise the page won't show up
+            this.communicationFailureMsg = err.message || err.status || 'Unknown Error'
+            return Promise.reject('openHAB REST API connection failed with error: ' + err.message || err.status)
           }
         })
         .then((res) => res.data)
@@ -553,7 +538,6 @@ export default {
       localStorage.setItem('openhab.ui:username', this.username)
       localStorage.setItem('openhab.ui:password', this.password)
       this.loadData().then(() => {
-        this.loginScreenOpened = false
         this.loggedIn = true
       }).catch((err) => {
         localStorage.removeItem('openhab.ui:serverUrl')
@@ -577,7 +561,6 @@ export default {
         this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
         window.location = window.location.origin
         if (this.$device.cordova) {
-          this.loginScreenOpened = true
         }
       }).catch((err) => {
         this.$f7.preloader.hide()
@@ -620,30 +603,6 @@ export default {
         ev.stopPropagation()
         ev.preventDefault()
       }
-    },
-    /**
-     * Creates and opens a toast message that indicates a failure, e.g. of SSE connection
-     * @param {string} message message to show
-     * @param {boolean} [reloadButton=false] displays a reload button
-     * @param {boolean} [autoClose=true] closes toast automatically
-     * @returns {Toast.Toast}
-     */
-    displayFailureToast (message, reloadButton = false, autoClose = true) {
-      const toast = this.$f7.toast.create({
-        text: message,
-        closeButton: reloadButton,
-        closeButtonText: this.$t('dialogs.reload'),
-        destroyOnClose: true,
-        closeTimeout: (autoClose) ? 5000 : undefined,
-        cssClass: 'failure-toast button-outline',
-        position: 'bottom',
-        horizontalPosition: 'center'
-      })
-      toast.on('closeButtonClick', () => {
-        window.location.reload()
-      })
-      toast.open()
-      return toast
     }
   },
   created () {
@@ -655,7 +614,7 @@ export default {
         window.OHApp.goFullscreen()
       } catch {}
     }
-    // this.loginScreenOpened = true
+
     const refreshToken = this.getRefreshToken()
     if (refreshToken) {
       this.refreshAccessToken().then(() => {
@@ -738,50 +697,6 @@ export default {
       this.$f7.on('smartSelectOpened', (smartSelect) => {
         if (smartSelect && smartSelect.searchbar && this.$device.desktop) {
           smartSelect.searchbar.$inputEl.focus()
-        }
-      })
-
-      this.$store.subscribe((mutation, state) => {
-        if (mutation.type === 'sseConnected') {
-          if (!window.OHApp && this.$f7) {
-            if (mutation.payload === false) {
-              if (this.communicationFailureToast === null) {
-                this.communicationFailureTimeoutId = setTimeout(() => {
-                  if (this.communicationFailureToast !== null) return
-                  this.communicationFailureToast = this.displayFailureToast(this.$t('error.communicationFailure'), true, false)
-                  this.communicationFailureTimeoutId = null
-                }, 1000)
-              }
-            } else if (mutation.payload === true) {
-              if (this.communicationFailureTimeoutId !== null) clearTimeout(this.communicationFailureTimeoutId)
-              if (this.communicationFailureToast !== null) {
-                this.communicationFailureToast.close()
-                this.communicationFailureToast = null
-              }
-            }
-          }
-        }
-      })
-
-      this.$store.subscribeAction({
-        error: (action, state, error) => {
-          if (action.type === 'sendCommand') {
-            let reloadButton = true
-            let msg = this.$t('error.communicationFailure')
-            switch (error) {
-              case 404:
-              case 'Not Found':
-                msg = this.$t('error.itemNotFound').replace('%s', action.payload.itemName)
-                reloadButton = false
-                return this.displayFailureToast(msg, reloadButton)
-            }
-            if (this.communicationFailureToast === null) {
-              this.communicationFailureToast = this.displayFailureToast(this.$t('error.communicationFailure'), true, true)
-              this.communicationFailureToast.on('closed', () => {
-                this.communicationFailureToast = null
-              })
-            }
-          }
         }
       })
 

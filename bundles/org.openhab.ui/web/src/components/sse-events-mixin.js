@@ -45,7 +45,7 @@ export default {
               case 'popover':
               case 'sheet':
                 if (combined.indexOf('page:') !== 0 && combined.indexOf('widget:') !== 0 && combined.indexOf('oh-') !== 0) {
-                  console.error('Action target is not of the format page:uid or widget:uid')
+                  console.error('Action target is not of the format page:uid or widget:uid or oh-')
                   return
                 }
                 console.debug(`Opening ${combined} in ${command} modal`)
