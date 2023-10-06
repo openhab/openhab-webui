@@ -272,7 +272,7 @@ import DeveloperSidebar from './developer/developer-sidebar.vue'
 
 import auth from './auth-mixin.js'
 import i18n from './i18n-mixin.js'
-import sseEvents from './sse-events-mixin.js'
+import sseEvents from './sse-events-mixin'
 
 import dayjs from 'dayjs'
 import dayjsLocales from 'dayjs/locale.json'
@@ -298,8 +298,6 @@ export default {
     return {
       init: false,
       ready: false,
-      eventSource: null,
-      audioContext: null,
 
       // Framework7 Parameters
       f7params: {
@@ -790,7 +788,6 @@ export default {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
-      // sse-event mixin
       this.startEventSource()
     })
   }

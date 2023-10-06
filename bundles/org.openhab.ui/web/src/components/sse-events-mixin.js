@@ -79,6 +79,8 @@ export default {
                 const payload = {
                   text: segments[0],
                   closeOnClick: true,
+                  closeButton: true,
+                  swipeToClose: true,
                   closeTimeout: 5000
                 }
                 if (segments.length > 1) {
