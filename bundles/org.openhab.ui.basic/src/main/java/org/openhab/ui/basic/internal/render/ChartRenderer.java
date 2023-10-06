@@ -127,6 +127,12 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             }
 
             String snippet = getSnippet("chart");
+
+            boolean showHeaderRow = chart.getLabel() != null;
+            snippet = snippet.replace("%header_visibility_class%",
+                    showHeaderRow ? "%visibility_class%" : "mdl-form__row--hidden");
+            snippet = snippet.replace("%header_row%", Boolean.valueOf(showHeaderRow).toString());
+
             snippet = preprocessSnippet(snippet, w, true);
 
             // Process the color tags
