@@ -78,7 +78,6 @@ export default {
               case 'notification':
                 const payload = {
                   text: segments[0],
-                  closeOnClick: true,
                   closeButton: true,
                   swipeToClose: true,
                   closeTimeout: 5000
