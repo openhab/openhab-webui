@@ -15,7 +15,7 @@
   "setupwizard.location.retrieveFromDevice.error": "Fehler bei der Positionsbestimmung",
   "setupwizard.location.retrieveFromDevice.notAvailable.title": "Entschuldigung",
   "setupwizard.location.retrieveFromDevice.notAvailable.message": "Geoposition ist nicht verfügbar",
-  "setupwizard.location.footer": "Dadurch wird Ihr Gerät um die Erlaubnis gebeten, seinen aktuellen Standort zu verwenden, nur um Ihnen zu helfen, Ihren aktuellen Breiten- und Längengrad oben einzutragen. Sie können die Erlaubnis nachträglich widerrufen.",
+  "setupwizard.location.footer": "Dies wird Ihr Gerät um die Erlaubnis bitten, seinen aktuellen Standort zu verwenden, nur um Ihnen zu helfen, Ihren aktuellen Breitengrad und Längengrad oben einzutragen. Sie können die Berechtigung später widerrufen.",
   "setupwizard.location.setLocation": "Position speichern",
   "setupwizard.location.configureLater": "Später in den Einstellungen konfigurieren",
   "setupwizard.addons.title": "Installiere Add-ons",
@@ -31,7 +31,7 @@
   "setupwizard.addons.installing": "Installiere Add-ons...",
   "setupwizard.addons.installingAddon": "Installiere Add-on: {addon}",
   "setupwizard.addons.progress": "{current} von {total}",
-  "setupwizard.addons.pleaseWait": "Bitte warten...",
+  "setupwizard.addons.pleaseWait": "Bitte warten ...",
   "setupwizard.addons.waitMessage": "Es kann einen Moment dauern, bis alle ausgewählten Add-ons installiert sind.",
   "setupwizard.welcome.title": "Wilkommen bei openHAB!",
   "setupwizard.welcome.getStarted": "Los geht's"
