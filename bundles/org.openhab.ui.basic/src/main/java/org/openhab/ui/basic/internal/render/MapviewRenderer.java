@@ -58,7 +58,7 @@ public class MapviewRenderer extends AbstractWidgetRenderer {
         Mapview mapview = (Mapview) w;
         String snippet = getSnippet("mapview");
 
-        boolean showHeaderRow = !getLabel(w).isEmpty();
+        boolean showHeaderRow = w.getLabel() != null;
         snippet = snippet.replace("%header_visibility_class%",
                 showHeaderRow ? "%visibility_class%" : "mdl-form__row--hidden");
         snippet = snippet.replace("%header_row%", Boolean.valueOf(showHeaderRow).toString());

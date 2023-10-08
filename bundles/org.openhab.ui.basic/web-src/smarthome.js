@@ -602,17 +602,15 @@
 		_t.period = null;
 		_t.upscale = false;
 
-		if (_t.headerRow === "true") {
-			_t.legendButton = _t.formHeaderRow.querySelector(o.image.legendButton);
-			_t.periodButton = _t.formHeaderRow.querySelector(o.image.periodButton);
-			_t.upscaleButton = _t.formHeaderRow.querySelector(o.image.upscaleButton);
-			_t.refreshButton = _t.formHeaderRow.querySelector(o.image.refreshButton);
-			if (_t.legendButton !== null) {
-				if (_t.displayLegend) {
-					_t.legendButton.classList.add(o.buttonActiveClass);
-				} else {
-					_t.legendButton.classList.remove(o.buttonActiveClass);
-				}
+		_t.legendButton = _t.formHeaderRow.querySelector(o.image.legendButton);
+		_t.periodButton = _t.formHeaderRow.querySelector(o.image.periodButton);
+		_t.upscaleButton = _t.formHeaderRow.querySelector(o.image.upscaleButton);
+		_t.refreshButton = _t.formHeaderRow.querySelector(o.image.refreshButton);
+		if (_t.legendButton !== null) {
+			if (_t.displayLegend) {
+				_t.legendButton.classList.add(o.buttonActiveClass);
+			} else {
+				_t.legendButton.classList.remove(o.buttonActiveClass);
 			}
 		}
 
@@ -771,6 +769,15 @@
 			_t.image.setAttribute("src", _t.url + "&t=" + Date.now());
 		}
 
+		function toggleHeaderRow() {
+			_t.headerRow = _t.headerRow === "true" ? "false" : "true";
+			if (_t.headerRow === "true") {
+				_t.formHeaderRow.classList.remove(o.formRowHidden);
+			} else {
+				_t.formHeaderRow.classList.add(o.formRowHidden);
+			}
+		}
+
 		_t.destroy = function() {
 			var
 				imageParent = _t.image.parentNode;
@@ -794,6 +801,8 @@
 				componentHandler.downgradeElements([ _t.refreshButton ]);
 				_t.refreshButton.removeEventListener("click", onRefreshClick);
 			}
+
+			_t.parentNode.parentNode.removeEventListener("click", toggleHeaderRow);
 		};
 
 		if (_t.legendButton !== null) {
@@ -808,6 +817,8 @@
 		if (_t.refreshButton !== null) {
 			_t.refreshButton.addEventListener("click", onRefreshClick);
 		}
+
+		_t.parentNode.parentNode.addEventListener("click", toggleHeaderRow);
 
 		if (_t.visible) {
 			_t.activateRefresh();
