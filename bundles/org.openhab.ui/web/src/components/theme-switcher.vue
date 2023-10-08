@@ -74,6 +74,10 @@
             <span v-t="'about.miscellaneous.webaudio.enable'" />
             <f7-toggle :checked="webAudio === 'enabled'" @toggle:change="setWebAudio" />
           </f7-list-item>
+          <f7-list-item>
+            <span v-t="'about.miscellaneous.commandItem.title'" />
+            <item-picker title="Item" :multiple="false" :value="commandItem" @input="setCommandItem" />
+          </f7-list-item>
         </f7-list>
       </f7-col>
     </f7-row>
@@ -81,7 +85,12 @@
 </template>
 <script>
 import { loadLocaleMessages } from '@/js/i18n'
+import ItemPicker from '@/components/config/controls/item-picker.vue'
+
 export default {
+  components: {
+    ItemPicker
+  },
   i18n: {
     messages: loadLocaleMessages(require.context('@/assets/i18n/theme-switcher'))
   },
@@ -127,6 +136,10 @@ export default {
     setWebAudio (value) {
       localStorage.setItem('openhab.ui:webaudio.enable', (value) ? 'enabled' : 'default')
       location.reload()
+    },
+    setCommandItem (value) {
+      localStorage.setItem('openhab.ui:commandItem', value)
+      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
     }
   },
   computed: {
@@ -156,6 +169,9 @@ export default {
     },
     webAudio () {
       return localStorage.getItem('openhab.ui:webaudio.enable') || 'default'
+    },
+    commandItem () {
+      return localStorage.getItem('openhab.ui:commandItem') || ''
     }
   }
 }

@@ -256,12 +256,13 @@ import { loadLocaleMessages } from '@/js/i18n'
 import auth from './auth-mixin'
 import i18n from './i18n-mixin'
 import connectionHealth from './connection-health-mixin'
+import sseEvents from './sse-events-mixin'
 
 import dayjs from 'dayjs'
 import dayjsLocales from 'dayjs/locale.json'
 
 export default {
-  mixins: [auth, i18n, connectionHealth],
+  mixins: [auth, i18n, connectionHealth, sseEvents],
   components: {
     EmptyStatePlaceholder,
     PanelRight,
@@ -282,8 +283,6 @@ export default {
     return {
       init: false,
       ready: false,
-      eventSource: null,
-      audioContext: null,
 
       // Framework7 Parameters
       f7params: {
@@ -604,52 +603,6 @@ export default {
         ev.stopPropagation()
         ev.preventDefault()
       }
-    },
-    startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/webaudio/playurl', null, (event) => {
-        const topicParts = event.topic.split('/')
-        switch (topicParts[2]) {
-          case 'playurl':
-            this.playAudioUrl(JSON.parse(event.payload))
-            break
-        }
-      })
-    },
-    stopEventSource () {
-      this.$oh.sse.close(this.eventSource)
-      this.eventSource = null
-    },
-    playAudioUrl (audioUrl) {
-      try {
-        if (!this.audioContext) {
-          window.AudioContext = window.AudioContext || window.webkitAudioContext
-          if (typeof (window.AudioContext) !== 'undefined') {
-            this.audioContext = new AudioContext()
-            unlockAudioContext(this.audioContext)
-          }
-        }
-        console.log('Playing audio URL: ' + audioUrl)
-        this.$oh.api.getPlain(audioUrl, '', '*/*', 'arraybuffer').then((data) => {
-          this.audioContext.decodeAudioData(data, (buffer) => {
-            let source = this.audioContext.createBufferSource()
-            source.buffer = buffer
-            source.connect(this.audioContext.destination)
-            source.start(0)
-          })
-        })
-      } catch (e) {
-        console.warn('Error while playing audio URL: ' + e.toString())
-      }
-      // Safari requires a touch event after the stream has started, hence this workaround
-      // Credit: https://www.mattmontag.com/web/unlock-web-audio-in-safari-for-ios-and-macos
-      function unlockAudioContext (audioContext) {
-        if (audioContext.state !== 'suspended') return
-        const b = document.body
-        const events = ['touchstart', 'touchend', 'mousedown', 'keydown']
-        events.forEach(e => b.addEventListener(e, unlock, false))
-        function unlock () { audioContext.resume().then(clean) }
-        function clean () { events.forEach(e => b.removeEventListener(e, unlock)) }
-      }
     }
   },
   created () {
@@ -751,9 +704,7 @@ export default {
         window.addEventListener('keydown', this.keyDown)
       }
 
-      if (localStorage.getItem('openhab.ui:webaudio.enable') === 'enabled') {
-        this.startEventSource()
-      }
+      this.startEventSource()
     })
   }
 }
