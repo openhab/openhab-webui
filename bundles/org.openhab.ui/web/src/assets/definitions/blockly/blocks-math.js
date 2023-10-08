@@ -228,7 +228,7 @@ export default function (f7, isGraalJs) {
         method = `Math.exp(${math_number})`
         break
       case 'POW10':
-        method = `Math.pow(10,${math_number})`
+        method = `Math.pow(10, ${math_number})`
         break
     }
 
@@ -266,7 +266,7 @@ export default function (f7, isGraalJs) {
       })
       this.setOnChange(function (changeEvent) {
         if (changeEvent.type === 'move') {
-          const typeInfo = computeMinMaxOutputType(this, false)
+          const typeInfo = computeMinMaxOutputType(this)
           this.setOutput(true, typeInfo.leadType)
         }
       })
@@ -275,12 +275,12 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  function computeMinMaxOutputType (block, throwError) {
+  function computeMinMaxOutputType (block, throwError = false) {
     const operand = block.getFieldValue('OP')
 
     let math_number_input1
     let math_number_input2
-    try { // may throw an exception on workspace startup in unitialized state but we then we can ignore
+    try { // may throw an exception on workspace startup in uninitialized state but in this case we can ignore
       math_number_input1 = javascriptGenerator.valueToCode(block, 'NUM1', javascriptGenerator.ORDER_FUNCTION_CALL)
       math_number_input2 = javascriptGenerator.valueToCode(block, 'NUM2', javascriptGenerator.ORDER_FUNCTION_CALL)
     } catch (e) {}
@@ -291,7 +291,7 @@ export default function (f7, isGraalJs) {
      */
     let inputType1
     let inputType2
-    try { // may throw an exception on workspace startup in unitialized state but we then we can ignore
+    try { // may throw an exception on workspace startup in uninitialized state but in this case we can ignore
       inputType1 = blockGetCheckedInputType(block, 'NUM1') || getVariableType(math_number_input1)
       inputType2 = blockGetCheckedInputType(block, 'NUM2') || getVariableType(math_number_input2)
     } catch (e) {}
@@ -309,7 +309,7 @@ export default function (f7, isGraalJs) {
       throw new Error(`Both operand types need to be equal for ${operand.toUpperCase()}-block (${math_number_input1} -> ${inputType1}, ${math_number_input2} -> ${inputType2})`)
     }
 
-    const leadType = inputType1 || inputType1
+    const leadType = inputType1 || inputType2 || 'Number'
     return { leadType, math_number_input1, math_number_input2, operand }
   }
 
@@ -331,12 +331,8 @@ export default function (f7, isGraalJs) {
   }
 
   /*
- * let's deal with variables and try to do our best
- * if the type is either Number or Quantity, then we don't mind
- * only if the type is empty then we try to detect the type
- *    if the content of the block contains the word "Quantity", then type is oh_quantity
- *    if the content of the block otherwise contains a number, then the type is Number
- */
+   * As Blockly does not provide type information for variables, try to determine it based on the content of the block.
+   */
   function getVariableType (math_number_input) {
     if (math_number_input.includes('Quantity')) return 'oh_quantity'
     if (!isNaN(math_number_input)) return 'Number'
