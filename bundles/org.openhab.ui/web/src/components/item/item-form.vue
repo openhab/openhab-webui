@@ -14,9 +14,9 @@
               {{ type }}
             </option>
           </optgroup>
-          <optgroup label="Numbers with Dimensions">
-            <option v-for="dimension in types.Dimensions" :key="dimension" :value="'Number:' + dimension" :selected="item.type === 'Number:' + dimension">
-              {{ 'Number:' + dimension }}
+          <optgroup label="Numbers with Dimensions (System Unit)">
+            <option v-for="dimension in dimensions" :key="dimension.name" :value="'Number:' + dimension.name" :selected="item.type === 'Number:' + dimension.name">
+              {{ 'Number:' + dimension.label }}
             </option>
           </optgroup>
         </select>
@@ -50,13 +50,14 @@
 <script>
 import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import TagInput from '@/components/tags/tag-input.vue'
-import * as Types from '@/assets/item-types.js'
+import * as types from '@/assets/item-types.js'
 import { Categories } from '@/assets/categories.js'
 
 import ItemMixin from '@/components/item/item-mixin'
+import uomMixin from '@/components/item/uom-mixin'
 
 export default {
-  mixins: [ItemMixin],
+  mixins: [ItemMixin, uomMixin],
   props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
   components: {
     SemanticsPicker,
@@ -64,7 +65,7 @@ export default {
   },
   data () {
     return {
-      types: Types,
+      types,
       categoryInputId: '',
       categoryAutocomplete: null,
       nameErrorMessage: ''

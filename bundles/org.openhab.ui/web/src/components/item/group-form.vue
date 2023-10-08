@@ -8,9 +8,9 @@
               {{ type }}
             </option>
           </optgroup>
-          <optgroup label="Numbers with Dimensions">
-            <option v-for="dimension in types.Dimensions" :key="dimension" :value="'Number:' + dimension" :selected="item.groupType === 'Number:' + dimension">
-              {{ 'Number:' + dimension }}
+          <optgroup label="Numbers with Dimensions (System Unit)">
+            <option v-for="dimension in dimensions" :key="dimension.name" :value="'Number:' + dimension.name" :selected="item.groupType === 'Number:' + dimension.name">
+              {{ 'Number:' + dimension.label }}
             </option>
           </optgroup>
         </select>
@@ -57,7 +57,10 @@
 <script>
 import * as types from '@/assets/item-types.js'
 
+import uomMixin from '@/components/item/uom-mixin'
+
 export default {
+  mixins: [uomMixin],
   props: ['item'],
   data () {
     return {
