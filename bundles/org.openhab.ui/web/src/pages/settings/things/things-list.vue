@@ -80,6 +80,9 @@
             <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
               By binding
             </f7-button>
+            <f7-button :active="groupBy === 'location'" @click="switchGroupOrder('location')">
+              By location
+            </f7-button>
           </f7-segmented>
         </div>
         <f7-list class="searchbar-found col things-list" :contacts-list="groupBy === 'alphabetical'">
@@ -100,6 +103,11 @@
               <div slot="footer">
                 {{ thing.UID }}
                 <clipboard-icon :value="thing.UID" tooltip="Copy UID" />
+              </div>
+
+              <div slot="subtitle" v-if="thing.location && groupBy !== 'location'">
+                {{ thing.location }}
+                <f7-icon f7="placemark" color="gray" style="font-size: 16px; width: 16px; height: 16px;" />
               </div>
               <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
                 {{ thingStatusBadgeText(thing.statusInfo) }}
@@ -177,7 +185,7 @@ export default {
 
           return prev
         }, {})
-      } else {
+      } else if (this.groupBy === 'binding') {
         const bindingGroups = this.things.reduce((prev, thing, i, things) => {
           const binding = thing.thingTypeUID.split(':')[0]
           if (!prev[binding]) {
@@ -189,6 +197,20 @@ export default {
         }, {})
         return Object.keys(bindingGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
           objEntries[key] = bindingGroups[key]
+          return objEntries
+        }, {})
+      } else {
+        const locationGroups = this.things.reduce((prev, thing, i, things) => {
+          const location = thing.location || '- No location -'
+          if (!prev[location]) {
+            prev[location] = []
+          }
+          prev[location].push(thing)
+
+          return prev
+        }, {})
+        return Object.keys(locationGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
+          objEntries[key] = locationGroups[key]
           return objEntries
         }, {})
       }
