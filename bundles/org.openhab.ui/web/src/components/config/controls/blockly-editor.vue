@@ -116,6 +116,18 @@
             </shadow>
           </value>
         </block>
+        <block type="oh_math_minmax">
+          <value name="NUM1">
+            <shadow type="math_number">
+              <field name="NUM">3</field>
+            </shadow>
+          </value>
+          <value name="NUM2">
+            <shadow type="math_number">
+              <field name="NUM">4</field>
+            </shadow>
+          </value>
+        </block>
         <block type="math_on_list" />
         <block type="math_modulo">
           <value name="DIVIDEND">
