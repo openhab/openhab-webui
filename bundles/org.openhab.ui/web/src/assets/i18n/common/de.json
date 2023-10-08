@@ -8,8 +8,10 @@
   "dialogs.copy": "Kopieren",
   "dialogs.delete": "Löschen",
   "dialogs.reload": "Neu laden",
+  "dialogs.retry": "Erneut Versuchen",
+  "dialogs.showAll": "Alle Zeigen",
   "dialogs.search": "Suchen",
-  "dialogs.search.items": "Items Suchen",
+  "dialogs.search.items": "Items suchen",
   "dialogs.search.things": "Things suchen",
   "dialogs.search.rules": "Regeln suchen",
   "dialogs.search.nothingFound": "Nichts gefunden",
@@ -34,6 +36,7 @@
   "sidebar.noPages": "Keine Seiten",
   "sidebar.administration": "Administration",
   "sidebar.settings": "Einstellungen",
+  "sidebar.addOnStore": "Add-on Store",
   "sidebar.developerTools": "Entwickler Tools",
   "sidebar.helpAbout": "Über & Hilfe",
   "sidebar.unlockAdmin": "Administration entsperren",
@@ -42,5 +45,7 @@
   "page.navbar.edit": "Bearbeiten",
   "admin.notTranslatedYet": "Der Administrationsbereich ist noch nicht übersetzt.",
   "error.communicationFailure": "Kommunikation fehlgeschlagen",
-  "error.itemNotFound": "%s nicht gefunden"
+  "error.itemNotFound": "%s nicht gefunden",
+  "error.notReachable.title": "openHAB ist offline",
+  "error.notReachable.msg": "Der openHAB Server kann momentan nicht erreicht werden. Bitte überprüfen Sie Ihre Netzwerkverbindung und Ihren Server."
 }
