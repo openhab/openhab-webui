@@ -188,7 +188,6 @@ export default {
     },
     indexedRules () {
       const filteredRules = this.filterRules()
-      // console.warn('filteredRules:', filteredRules)
       if (this.groupBy === 'alphabetical') {
         const initialGroup = filteredRules.reduce((prev, rule, i, rules) => {
           const initial = rule.name.substring(0, 1).toUpperCase()
@@ -438,7 +437,6 @@ export default {
     },
     filterRules () {
       return this.rules.filter((r) => {
-        console.warn('checkedTags', this.checkedTags)
         if (this.checkedTags.length === 0) return true
         let found = false
         for (let i = 0; i < this.checkedTags.length; i++) {
