@@ -13,6 +13,6 @@
   "about.miscellaneous.home.disableCardExpansionAnimation": "Disable card expansion animations",
   "about.miscellaneous.theme.disablePageTransition": "Disable page transition animations",
   "about.miscellaneous.webaudio.enable": "Enable Web Audio sink support",
-  "about.miscellaneous.commandItem.title": "Listen for UI commands",
+  "about.miscellaneous.commandItem.title": "Listen for UI commands to ",
   "about.miscellaneous.commandItem.selectItem": "Item"
 }

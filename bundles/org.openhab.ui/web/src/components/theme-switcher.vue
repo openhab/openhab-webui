@@ -74,10 +74,7 @@
             <span v-t="'about.miscellaneous.webaudio.enable'" />
             <f7-toggle :checked="webAudio === 'enabled'" @toggle:change="setWebAudio" />
           </f7-list-item>
-          <f7-list-item>
-            <span v-t="'about.miscellaneous.commandItem.title'" />
-            <item-picker title="Item" :multiple="false" :value="commandItem" @input="setCommandItem" />
-          </f7-list-item>
+          <item-picker :title="$t('about.miscellaneous.commandItem.title')" :multiple="false" :value="commandItem" @input="setCommandItem" />
         </f7-list>
       </f7-col>
     </f7-row>
