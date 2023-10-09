@@ -14,7 +14,7 @@
               {{ type }}
             </option>
           </optgroup>
-          <optgroup label="Numbers with Dimensions (System Unit)">
+          <optgroup label="Numbers with Dimensions">
             <option v-for="dimension in dimensions" :key="dimension.name" :value="'Number:' + dimension.name" :selected="item.type === 'Number:' + dimension.name">
               {{ 'Number:' + dimension.label }}
             </option>
