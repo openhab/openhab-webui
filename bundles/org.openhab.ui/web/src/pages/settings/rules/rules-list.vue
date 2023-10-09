@@ -417,7 +417,7 @@ export default {
           searchbar.clear()
           searchbar.search(filterQuery)
         }
-        /*if (groupBy === 'alphabetical')*/ this.$refs.listIndex.update()
+        this.$refs.listIndex.update()
       })
     },
     toggleSearchTag (e, item) {
