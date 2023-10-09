@@ -7,6 +7,8 @@
   "things.text": "Things són els dispositius i serveis connectats a l'openHAB, que es proporcionen mitjançant complements Bindings.<br><br>Els Bindings instal·lats que admeten la detecció automàtica afegiran candidats a Things a la vostra safata d'entrada. També podeu iniciar una exploració d'una determinat Binding o afegir la vostra primera Thing manualment amb el botó següent.",
   "things.nobindings.title": "No hi ha Bindings",
   "things.nobindings.text": "Per afegir Things al sistema, primer necessites instal·lar complements Binding.",
+  "transformations.title": "Encara no hi ha transformacions",
+  "transformations.text": "Les Transformacions s'utilitzen per a traduïr dades brutes o desordenades a una representació per a la lectura humana.",
   "model.title": "Comença a modelar el teu habitatge",
   "model.text": "Creeu un model a partir dels vostres Items per organitzar-los i relacionar-los entre si semànticament.<br><br>Comenceu amb una jerarquia d'ubicacions: edificis, zones exteriors, plantes i habitacions, segons sigui necessari. A continuació, inseriu equips i punts als vostres Things (o manualment).",
   "items.title": "Encara no hi ha cap Item",
