@@ -86,6 +86,9 @@
             <f7-button v-if="type === 'Rules'" :active="groupBy === 'semantic'" @click="switchGroupOrder('semantic')">
               By Semantic
             </f7-button>
+            <f7-button :active="groupBy === 'tags'" @click="switchGroupOrder('tags')">
+              By Tags
+            </f7-button>
           </f7-segmented>
         </div>
         <f7-list
@@ -196,6 +199,32 @@ export default {
         }, {})
         return Object.keys(semanticGroup).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
           objEntries[key] = semanticGroup[key]
+          return objEntries
+        }, {})
+      } else if (this.groupBy === 'tags') {
+        const tagsMap = new Map()
+        this.rules.forEach((rule, i, rules) => {
+          if (rule.tags.length > 0) {
+            rule.tags.filter((t) => t !== 'Scratchpad')
+              .forEach(t => {
+                let tag = t.substring(0, 1).toUpperCase() + t.slice(1)
+                if (tag.includes('Marketplace:')) tag = '- Marketplace -'
+                let tags = []
+                if (tagsMap.has(tag)) tags = tagsMap.get(tag)
+                if (!tags.includes(rule)) tags.push(rule)
+                tagsMap.set(tag, tags)
+              })
+          } else {
+            let tags = []
+            if (tagsMap.has('- No Tags -')) tags = tagsMap.get('- No Tags -')
+            tags.push(rule)
+            tagsMap.set('- No Tags -', tags)
+          }
+        })
+
+        let tagsRules = Object.fromEntries(tagsMap)
+        return Object.keys(tagsRules).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
+          objEntries[key] = tagsRules[key]
           return objEntries
         }, {})
       }
