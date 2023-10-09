@@ -3,16 +3,19 @@
     <f7-list inline-labels no-hairlines-md>
       <f7-list-item v-if="item.type === 'Group'" title="Members Base Type" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
         <select name="select-basetype" @change="setGroupType($event.target.value)">
-          <optgroup label="Basic Types">
-            <option v-for="type in types.GroupTypes" :key="type" :value="type" :selected="type === item.groupType">
-              {{ type }}
-            </option>
-          </optgroup>
-          <optgroup label="Numbers with Dimensions">
-            <option v-for="dimension in dimensions" :key="dimension.name" :value="'Number:' + dimension.name" :selected="item.groupType === 'Number:' + dimension.name">
-              {{ 'Number:' + dimension.label }}
-            </option>
-          </optgroup>
+          <option v-for="type in types.GroupTypes" :key="type" :value="type" :selected="type === item.groupType.split(':')[0]">
+            {{ type }}
+          </option>
+        </select>
+      </f7-list-item>
+      <f7-list-item v-if="dimensions.length && item.groupType && item.groupType.startsWith('Number')" title="Dimension" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <select name="select-dimension" @change="setGroupType($event.target.value)">
+          <option key="Number" value="Number" :selected="item.type === 'Number'">
+            &nbsp;
+          </option>
+          <option v-for="d in dimensions" :key="d.name" :value="'Number:' + d.name" :selected="'Number:' + d.name === item.groupType">
+            {{ d.label }}
+          </option>
         </select>
       </f7-list-item>
       <f7-list-item key="function-picker-arithmetic" v-if="item.type === 'Group' && item.groupType && (['Dimmer', 'Rollershutter'].indexOf(item.groupType) >= 0 || item.groupType.indexOf('Number') === 0)" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
