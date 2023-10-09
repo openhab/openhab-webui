@@ -15,11 +15,11 @@
         </select>
       </f7-list-item>
       <f7-list-item v-if="dimensions.length && item.type && !hideType && item.type.startsWith('Number')" title="Dimension" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
-        <select name="select-dimension" @change="item.type = $event.target.value">
+        <select name="select-dimension" @change="setDimension($event.target.value)">
           <option key="Number" value="Number" :selected="item.type === 'Number'">
             &nbsp;
           </option>
-          <option v-for="d in dimensions" :key="d.name" :value="'Number:' + d.name" :selected="'Number:' + d.name === item.type">
+          <option v-for="(d, i) in dimensions" :key="d.name" :value="i" :selected="'Number:' + d.name === item.type">
             {{ d.label }}
           </option>
         </select>
@@ -80,6 +80,11 @@ export default {
     }
   },
   methods: {
+    setDimension (index) {
+      const dimension = this.dimensions[index]
+      this.$set(this.item, 'type', 'Number:' + dimension.name)
+      this.$set(this.item, 'unit', dimension.systemUnit)
+    },
     initializeAutocomplete (inputElement) {
       this.categoryAutocomplete = this.$f7.autocomplete.create({
         inputEl: inputElement,

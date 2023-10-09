@@ -9,7 +9,8 @@ export default {
       data.uomInfo.dimensions.forEach((d) => {
         this.dimensions.push({
           name: d.dimension,
-          label: d.dimension + ' (' + d.systemUnit + ')'
+          label: d.dimension + ' (' + d.systemUnit + ')',
+          systemUnit: d.systemUnit
         })
       })
     })

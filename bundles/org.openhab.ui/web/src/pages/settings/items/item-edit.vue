@@ -164,7 +164,17 @@ export default {
       if (this.item.groupType === 'None') delete this.item.groupType
 
       // TODO: Add support for saving metadata
-      this.$oh.api.put('/rest/items/' + this.item.name, this.item).then((data) => {
+      this.$oh.api.put('/rest/items/' + this.item.name, this.item).then(() => {
+        let unitPromise = Promise.resolve()
+        if (this.createMode && this.item.unit) {
+          const metadata = {
+            value: this.item.unit,
+            config: {}
+          }
+          unitPromise = this.$oh.api.put('/rest/items/' + this.item.name + '/metadata/unit', metadata)
+        }
+        return unitPromise
+      }).then(() => {
         if (this.createMode) {
           this.$f7.toast.create({
             text: 'Item created',
