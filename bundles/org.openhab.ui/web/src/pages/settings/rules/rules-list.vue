@@ -83,8 +83,8 @@
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical
             </f7-button>
-            <f7-button :active="groupBy === 'semantic'" @click="switchGroupOrder('semantic')">
-              By Semantic Tag
+            <f7-button v-if="type === 'Rules'" :active="groupBy === 'semantic'" @click="switchGroupOrder('semantic')">
+              By Semantic
             </f7-button>
           </f7-segmented>
         </div>
@@ -184,7 +184,7 @@ export default {
       } else if (this.groupBy === 'semantic') {
         const semanticGroup = this.rules.reduce((prev, rule, i, rules) => {
           let initial = rule.tags.filter((t) => t !== 'Script' && t !== 'Scene' &&
-            t !== 'Schedule' && this.isSemanticTag(t))
+            this.isSemanticTag(t))
           if (initial.length === 0) initial = '- No Semantic Tags -'
 
           if (!prev[initial]) {
