@@ -91,6 +91,17 @@
             </f7-button>
           </f7-segmented>
         </div>
+        <div class="block-title">
+          Tags:
+        </div>
+        <div class="block block-strong-ios block-outline-ios" ref="filterTags">
+          <f7-chip v-for="tag in uniqueTags" :key="tag" :text="tag" media-bg-color="blue"
+                   :color="isTagSelected(tag) ? 'blue' : ''"
+                   style="margin-right: 6px"
+                   @click="(e) => toggleSearchTag(e, tag)">
+            <f7-icon v-if="isTagSelected(tag)" slot="media" ios="f7:checkmark_circle_fill" md="material:check-circle" aurora="f7:checkmark_circle_fill" />
+          </f7-chip>
+        </div>
         <f7-list
           v-show="rules.length > 0"
           class="searchbar-found col rules-list"
@@ -159,6 +170,8 @@ export default {
       loading: false,
       noRuleEngine: false,
       rules: [],
+      uniqueTags: [],
+      checkedTags: [],
       initSearchbar: false,
       selectedItems: [],
       showCheckboxes: false,
@@ -174,8 +187,10 @@ export default {
       return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/${this.type.toLowerCase()}`
     },
     indexedRules () {
+      const filteredRules = this.filterRules()
+      // console.warn('filteredRules:', filteredRules)
       if (this.groupBy === 'alphabetical') {
-        return this.rules.reduce((prev, rule, i, rules) => {
+        const initialGroup = filteredRules.reduce((prev, rule, i, rules) => {
           const initial = rule.name.substring(0, 1).toUpperCase()
           if (!prev[initial]) {
             prev[initial] = []
@@ -184,8 +199,9 @@ export default {
 
           return prev
         }, {})
+        return initialGroup
       } else if (this.groupBy === 'semantic') {
-        const semanticGroup = this.rules.reduce((prev, rule, i, rules) => {
+        const semanticGroup = filteredRules.reduce((prev, rule, i, rules) => {
           let initial = rule.tags.filter((t) => t !== 'Script' && t !== 'Scene' &&
             this.isSemanticTag(t))
           if (initial.length === 0) initial = '- No Semantic Tags -'
@@ -203,7 +219,7 @@ export default {
         }, {})
       } else if (this.groupBy === 'tags') {
         const tagsMap = new Map()
-        this.rules.forEach((rule, i, rules) => {
+        filteredRules.forEach((rule, i, rules) => {
           if (rule.tags.length > 0) {
             rule.tags.filter((t) => t !== 'Scratchpad')
               .forEach(t => {
@@ -261,6 +277,14 @@ export default {
         if (!this.showScenes) {
           this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Scene') < 0)
         }
+
+        this.rules.forEach(rule => {
+          rule.tags.forEach(t => {
+            let tag = t.substring(0, 1).toUpperCase() + t.slice(1)
+            if (tag.includes('Marketplace:')) tag = 'Marketplace'
+            if (!this.uniqueTags.includes(tag)) this.uniqueTags.push(tag)
+          })
+        })
 
         this.loading = false
         this.ready = true
@@ -394,7 +418,38 @@ export default {
           searchbar.clear()
           searchbar.search(filterQuery)
         }
-        if (groupBy === 'alphabetical') this.$refs.listIndex.update()
+        /*if (groupBy === 'alphabetical')*/ this.$refs.listIndex.update()
+      })
+    },
+    toggleSearchTag (e, item) {
+      const target = e.target
+
+      const idx = this.checkedTags.indexOf(item)
+      if (idx !== -1) {
+        this.checkedTags.splice(idx, 1)
+      } else {
+        this.checkedTags.push(item)
+      }
+      // update rules list
+      this.$refs.listIndex.update()
+    },
+    isTagSelected (tag) {
+      return this.checkedTags.includes(tag)
+    },
+    filterRules () {
+      return this.rules.filter((r) => {
+        console.warn('checkedTags', this.checkedTags)
+        if (this.checkedTags.length === 0) return true
+        let found = false
+        for (let i = 0; i < this.checkedTags.length; i++) {
+          for (let j = 0; j < r.tags.length; j++) {
+            if (r.tags[j].toLowerCase().indexOf(this.checkedTags[i].toLowerCase()) !== -1) {
+              found = true
+              break
+            }
+          }
+        }
+        return found
       })
     }
   }
