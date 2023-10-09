@@ -9,16 +9,19 @@
                      @input="item.label = $event.target.value" clear-button />
       <f7-list-item v-if="item.type && !hideType" title="Type" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
         <select name="select-type" @change="item.type = $event.target.value">
-          <optgroup label="Basic Types">
-            <option v-for="type in types.ItemTypes" :key="type" :value="type" :selected="type === item.type">
-              {{ type }}
-            </option>
-          </optgroup>
-          <optgroup label="Numbers with Dimensions">
-            <option v-for="dimension in types.Dimensions" :key="dimension" :value="'Number:' + dimension" :selected="item.type === 'Number:' + dimension">
-              {{ 'Number:' + dimension }}
-            </option>
-          </optgroup>
+          <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === item.type.split(':')[0]">
+            {{ t }}
+          </option>
+        </select>
+      </f7-list-item>
+      <f7-list-item v-if="dimensions.length && item.type && !hideType && item.type.startsWith('Number')" title="Dimension" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <select name="select-dimension" @change="item.type = $event.target.value">
+          <option key="Number" value="Number" :selected="item.type === 'Number'">
+            &nbsp;
+          </option>
+          <option v-for="d in dimensions" :key="d.name" :value="'Number:' + d.name" :selected="'Number:' + d.name === item.type">
+            {{ d.label }}
+          </option>
         </select>
       </f7-list-item>
       <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
@@ -50,13 +53,14 @@
 <script>
 import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import TagInput from '@/components/tags/tag-input.vue'
-import * as Types from '@/assets/item-types.js'
+import * as types from '@/assets/item-types.js'
 import { Categories } from '@/assets/categories.js'
 
 import ItemMixin from '@/components/item/item-mixin'
+import uomMixin from '@/components/item/uom-mixin'
 
 export default {
-  mixins: [ItemMixin],
+  mixins: [ItemMixin, uomMixin],
   props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
   components: {
     SemanticsPicker,
@@ -64,7 +68,7 @@ export default {
   },
   data () {
     return {
-      types: Types,
+      types,
       categoryInputId: '',
       categoryAutocomplete: null,
       nameErrorMessage: ''

@@ -2,8 +2,16 @@ import { findParent } from './yaml-utils'
 import { filterPartialCompletions, addTooltipHandlers } from './hint-utils'
 import * as Types from '@/assets/item-types.js'
 import Metadata from '@/assets/definitions/metadata/namespaces'
+import api from '@/js/openhab/api'
 
+const dimensions = []
 let itemsCache = null
+
+api.get('/rest/systeminfo/uom').then((data) => {
+  data.uomInfo.dimensions.forEach((d) => {
+    dimensions.push(d.dimension)
+  })
+})
 
 function hintItemTypes (cm, line) {
   if (!cm.state.$oh) return
@@ -17,7 +25,7 @@ function hintItemTypes (cm, line) {
   }
   ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^type:( )?/)
   if (line.indexOf('Number:') !== -1) {
-    ret.list = Types.Dimensions.map((t) => {
+    ret.list = dimensions.map((t) => {
       return {
         text: t,
         displayText: t
