@@ -81,6 +81,10 @@ export default {
   },
   methods: {
     setDimension (index) {
+      if (index === 'Number') {
+        this.$set(this.item, 'type', 'Number')
+        return
+      }
       const dimension = this.dimensions[index]
       this.$set(this.item, 'type', 'Number:' + dimension.name)
       this.$set(this.item, 'unit', dimension.systemUnit)

@@ -3,7 +3,7 @@
     <f7-list inline-labels no-hairlines-md>
       <f7-list-item v-if="item.type === 'Group'" title="Members Base Type" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
         <select name="select-basetype" @change="setGroupType($event.target.value)">
-          <option v-for="type in types.GroupTypes" :key="type" :value="type" :selected="type === item.groupType.split(':')[0]">
+          <option v-for="type in types.GroupTypes" :key="type" :value="type" :selected="item.groupType ? type === item.groupType.split(':')[0] : false">
             {{ type }}
           </option>
         </select>
@@ -89,6 +89,10 @@ export default {
       })
     },
     setDimension (index) {
+      if (index === 'Number') {
+        this.setGroupType('Number')
+        return
+      }
       const dimension = this.dimensions[index]
       this.setGroupType('Number:' + dimension.name)
       this.$set(this.item, 'unit', dimension.systemUnit)
