@@ -132,7 +132,6 @@ export default {
       } else {
         const loadItem = this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=.*')
         loadItem.then((data) => {
-          if (!data.groupType) data.groupType = 'None'
           this.item = data
           this.$nextTick(() => {
             this.ready = true
@@ -162,11 +161,12 @@ export default {
       if (!this.item.name) return // user cannot change name
       if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0])) return this.$f7.dialog.alert('Please give Item a valid type').open()
       if (this.item.groupType === 'None') delete this.item.groupType
+      if (this.item.function === 'None') delete this.item.groupType
 
       // TODO: Add support for saving metadata
       this.$oh.api.put('/rest/items/' + this.item.name, this.item).then(() => {
         let unitPromise = Promise.resolve()
-        if (this.createMode && this.item.unit) {
+        if (this.createMode && (this.item.type.startsWith('Number:') || this.item.groupType?.startsWith('Number:')) && this.item.unit) {
           const metadata = {
             value: this.item.unit,
             config: {}
@@ -205,16 +205,19 @@ export default {
       this.dirty = true
     },
     toYaml () {
-      this.itemYaml = YAML.stringify({
+      const yamlObj = {
         label: this.item.label,
         type: this.item.type,
         category: this.item.category,
         groupNames: this.item.groupNames,
-        groupType: this.item.groupType,
-        function: this.item.function,
         tags: this.item.tags
         // metadata: this.item.metadata
-      })
+      }
+      if (this.item.type === 'Group') {
+        yamlObj.groupType = this.item.groupType || 'None'
+        yamlObj.function = this.item.function || 'None'
+      }
+      this.itemYaml = YAML.stringify(yamlObj)
     },
     fromYaml () {
       if (!this.item.editable) return false
