@@ -106,7 +106,7 @@
           v-show="rules.length"
           class="searchbar-found col rules-list"
           ref="rulesList"
-          media-list contacts-list>
+          media-list :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(rulesWithInitial, initial) in indexedRules" :key="initial">
             <f7-list-item v-if="rulesWithInitial.length" :title="initial" group-title />
             <f7-list-item
