@@ -91,9 +91,7 @@
             </f7-button>
           </f7-segmented>
         </div>
-        <div v-if="uniqueTags.length" class="block-title">
-          Tags:
-        </div>
+
         <div v-if="uniqueTags.length" class="block block-strong-ios block-outline-ios" ref="filterTags">
           <f7-chip v-for="tag in uniqueTags" :key="tag" :text="tag" media-bg-color="blue"
                    :color="isTagSelected(tag) ? 'blue' : ''"
@@ -286,6 +284,8 @@ export default {
             if (!this.uniqueTags.includes(tag)) this.uniqueTags.push(tag)
           })
         })
+
+        this.uniqueTags.sort()
 
         this.loading = false
         this.ready = true
