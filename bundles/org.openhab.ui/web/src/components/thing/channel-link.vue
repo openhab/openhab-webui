@@ -44,6 +44,7 @@
       <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
     </f7-list-item>
     <f7-list-button class="searchbar-ignore" color="blue" :title="(channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'" @click="configureChannel()" />
+    <f7-list-button class="searchbar-ignore" color="blue" :title="(channelType.parameterGroups.length || channelType.parameters.length) ? 'Copy Channel' : ''" @click="copyChannel()" />
     <f7-list-button class="searchbar-ignore" v-if="extensible" color="red" title="Remove Channel" @click="removeChannel()" />
   </f7-list>
 </template>
@@ -61,6 +62,8 @@
 import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
 import ConfigureLinkPage from '@/pages/settings/things/link/link-edit.vue'
 import ConfigureChannelPage from '@/pages/settings/things/channel/channel-edit.vue'
+import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
+import CopyChannelPage from '@/pages/settings/things/channel/channel-copy.vue'
 
 import ItemMixin from '@/components/item/item-mixin'
 
@@ -177,6 +180,39 @@ export default {
                 self.$emit('channel-updated', true)
               } else {
                 self.$emit('channel-updated', false)
+              }
+            }
+          }
+        }
+      }, {
+        props: {
+          thing: this.thing,
+          channel: this.channel,
+          channelType: this.channelType,
+          channelId: this.channelId
+        }
+      })
+    },
+    copyChannel () {
+      const self = this
+      const path = 'channels/' + this.channelId + '/edit'
+      this.$f7router.navigate({
+        url: path,
+        route: {
+          component: CopyChannelPage,
+          path: path,
+          context: {
+            operation: 'copy-channel'
+          },
+          on: {
+            pageAfterOut (event, page) {
+              const context = page.route.route.context
+              const finalChannel = context.finalChannel
+              if (finalChannel) {
+                self.thing.channels.push(finalChannel)
+                self.onChannelsUpdated(true)
+              } else {
+                self.onChannelsUpdated(false)
               }
             }
           }
