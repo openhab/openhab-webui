@@ -210,9 +210,9 @@ export default {
               const finalChannel = context.finalChannel
               if (finalChannel) {
                 self.thing.channels.push(finalChannel)
-                self.onChannelsUpdated(true)
+                self.$emit('channel-updated', true)
               } else {
-                self.onChannelsUpdated(false)
+                self.$emit('channel-updated', false)
               }
             }
           }
