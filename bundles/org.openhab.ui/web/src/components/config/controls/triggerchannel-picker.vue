@@ -27,7 +27,40 @@ export default {
         view: this.$f7.view.main,
         openIn: 'popup',
         searchbar: true,
-        searchbarPlaceholder: 'Search channels'
+        searchbarPlaceholder: 'Search channels',
+        renderItem: (item, index) => {
+          let html, value, thing, channel, description
+          if (index > 0 && !item.isLabel) {
+            value = item.value.substring(0, item.value.lastIndexOf(':'))
+            thing = (index > 0) ? this.things.find((th) => th.UID === value) : ''
+            channel = (thing && thing.triggerChannels.length > 0)
+              ? thing.triggerChannels.find((ch) => ch.uid === item.value) : undefined
+          }
+
+          if (item.isLabel) {
+            html = `
+                      <li class="item-divider">
+                      ${item.groupLabel}
+                      </li>
+                    `
+          } else {
+            description = (channel !== undefined) ? channel.description : ''
+            html = `
+                <li class="media-item">
+                  <label class="item-radio item-content">
+                    <input type="radio" name="${item.inputName}" value="${item.value}" ${item.selected ? 'checked' : ''}>
+                    <i class="icon icon-radio"></i>
+                    <div class="item-inner">
+                      <div class="text">${item.text}</div>
+                      <div class="item-footer">${description}</div>
+                    </div>
+                  </label>
+                </li>
+              `
+          }
+
+          return html
+        }
       }
     }
   },
