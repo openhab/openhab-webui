@@ -22,6 +22,9 @@
           </option>
         </select>
       </f7-list-item>
+      <f7-list-input v-if="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="Unit" type="text" :value="item.unit"
+                     info="All processed values are internally normalized to the specified unit. The normalized value is used to propagate the value to external integrations (e.g. persistence, REST API, WebSocket) so these values will always have the specified unit and scale."
+                     @input="item.unit = $event.target.value" clear-button />
       <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
                      @input="item.category = $event.target.value" clear-button>
         <div slot="root-end" style="margin-left: calc(35% + 8px)">

@@ -16,6 +16,9 @@
           </option>
         </select>
       </f7-list-item>
+      <f7-list-input v-if="item.groupType && item.groupType.startsWith('Number:') && createMode" label="Unit" type="text" :value="item.unit"
+                     info="All processed values are internally normalized to the specified unit. The normalized value is used to propagate the value to external integrations (e.g. persistence, REST API, WebSocket) so these values will always have the specified unit and scale."
+                     @input="item.unit = $event.target.value" clear-button />
       <f7-list-item key="function-picker-arithmetic" v-if="item.type === 'Group' && item.groupType && (['Dimmer', 'Rollershutter'].indexOf(item.groupType) >= 0 || item.groupType.indexOf('Number') === 0)" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
         <select name="select-function" @change="setFunction($event.target.value)">
           <option v-for="type in types.ArithmeticFunctions" :key="type.name" :value="type.name" :selected="type.name === item.functionKey">
@@ -62,7 +65,7 @@ import uomMixin from '@/components/item/uom-mixin'
 
 export default {
   mixins: [uomMixin],
-  props: ['item'],
+  props: ['item', 'createMode'],
   data () {
     return {
       types

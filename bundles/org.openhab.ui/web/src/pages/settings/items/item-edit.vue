@@ -35,7 +35,7 @@
           </f7-col>
           <f7-col v-if="item && item.type === 'Group'">
             <f7-block-title>Group Settings</f7-block-title>
-            <group-form :item="item" />
+            <group-form :item="item" :createMode="createMode" />
           </f7-col>
         </f7-block>
       </f7-tab>
