@@ -157,6 +157,9 @@
           </f7-col>
           <f7-col v-if="isEditable && !createMode">
             <f7-list>
+              <f7-list-button color="blue" @click="copyRule">
+                Copy Rule
+              </f7-list-button>
               <f7-list-button color="red" @click="deleteRule">
                 Remove Rule
               </f7-list-button>
@@ -402,6 +405,23 @@ export default {
       }).catch((err) => {
         this.$f7.toast.create({
           text: 'Error while disabling or enabling: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
+    },
+    copyRule () {
+      let ruleClone = cloneDeep(this.rule)
+      ruleClone.uid = this.$f7.utils.id()
+      ruleClone.name = ruleClone.name + ' Copy'
+      const promise = this.$oh.api.postPlain('/rest/rules', JSON.stringify(ruleClone), 'text/plain', 'application/json')
+      promise.then((data) => {
+        this.$f7router.back()
+        this.$f7router.navigate((this.rule.editable) ? '/settings/rules/' + ruleClone.uid : '/settings/scripts/' + ruleClone.uid)
+        if (this.rule.status.statusDetail === 'DISABLED') this.$oh.api.postPlain('/rest/rules/' + ruleClone.uid + '/enable', 'false')
+      }).catch((err) => {
+        this.$f7.toast.create({
+          text: 'Error while copying rule: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
