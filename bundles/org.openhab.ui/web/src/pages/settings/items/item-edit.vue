@@ -76,10 +76,12 @@ import YAML from 'yaml'
 import ItemForm from '@/components/item/item-form.vue'
 import GroupForm from '@/components/item/group-form.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
+
 import DirtyMixin from '../dirty-mixin'
+import ItemMixin from '@/components/item/item-mixin'
 
 export default {
-  mixins: [DirtyMixin],
+  mixins: [DirtyMixin, ItemMixin],
   props: ['itemName', 'createMode'],
   components: {
     ItemPicker,
@@ -158,42 +160,10 @@ export default {
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) return Promise.reject()
       }
-      if (!this.item.name) return // user cannot change name
+      if (!this.item.name) return this.$f7.dialog.alert('Please give Item a valid name').open() // user cannot change name
       if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0])) return this.$f7.dialog.alert('Please give Item a valid type').open()
-      if (this.item.groupType === 'None') delete this.item.groupType
-      if (this.item.function === 'None') delete this.item.groupType
 
-      const unit = this.item.unit
-      delete this.item.unit
-      const stateDescriptionPattern = this.item.stateDescriptionPattern
-      delete this.item.stateDescriptionPattern
-
-      // TODO: Add support for saving metadata
-      this.$oh.api.put('/rest/items/' + this.item.name, this.item).then(() => {
-        let unitPromise = Promise.resolve()
-        if (this.createMode && (this.item.type.startsWith('Number:') || this.item.groupType?.startsWith('Number:')) && unit) {
-          const metadata = {
-            value: unit,
-            config: {}
-          }
-          unitPromise = this.$oh.api.put('/rest/items/' + this.item.name + '/metadata/unit', metadata)
-        }
-        return unitPromise
-      }).then(() => {
-        let stateDescriptionPromise = Promise.resolve()
-        if (this.createMode && (this.item.type.startsWith('Number:') || this.item.groupType?.startsWith('Number:')) && stateDescriptionPattern) {
-          if (stateDescriptionPattern !== `%.0f ${unit}`) {
-            const metadata = {
-              value: ' ',
-              config: {
-                pattern: stateDescriptionPattern
-              }
-            }
-            stateDescriptionPromise = this.$oh.api.put('/rest/items/' + this.item.name + '/metadata/stateDescription', metadata)
-          }
-        }
-        return stateDescriptionPromise
-      }).then(() => {
+      this.doSave(this.item).then(() => {
         if (this.createMode) {
           this.$f7.toast.create({
             text: 'Item created',
@@ -209,6 +179,7 @@ export default {
             closeTimeout: 2000
           }).open()
         }
+
         this.dirty = false
         this.$f7router.back()
       }).catch((err) => {
