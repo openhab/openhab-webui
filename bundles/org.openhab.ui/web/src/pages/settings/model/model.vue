@@ -61,7 +61,15 @@
     <f7-block v-else class="semantic-tree-wrapper" :class="{ 'sheet-opened' : detailsOpened }">
       <f7-row>
         <f7-col width="100" medium="50">
-          <empty-state-placeholder v-if="empty" icon="list_bullet_indent" title="model.title" text="model.text" />
+          <f7-block v-if="empty">
+            <empty-state-placeholder icon="list_bullet_indent" title="model.title" text="model.text" />
+            <f7-row class="display-flex justify-content-center">
+              <f7-button color="blue" large raised fill @click="addLocationTemplate()">
+                Create Locations From Templates
+              </f7-button>
+            </f7-row>
+          </f7-block>
+
           <f7-block v-show="!empty" strong class="semantic-tree" no-gap @click.native="clearSelection">
             <!-- <empty-state-placeholder v-if="empty" icon="list_bullet_indent" title="model.title" text="model.text" /> -->
             <f7-treeview>
@@ -92,14 +100,6 @@
                   <f7-list-button color="blue" title="Add Equipment" @click="addSemanticItem('Equipment')" />
                   <f7-list-button color="blue" title="Add Point" @click="addSemanticItem('Point')" />
                   <f7-list-button color="blue" v-if="includeNonSemantic" title="Add Item" @click="addNonSemanticItem(false)" />
-                </f7-list>
-              </f7-card-content>
-            </f7-card>
-            <div><f7-block-title>Model Templates</f7-block-title></div>
-            <f7-card>
-              <f7-card-content>
-                <f7-list>
-                  <f7-list-button color="blue" title="Location Templates" @click="addLocationTemplate()" />
                 </f7-list>
               </f7-card-content>
             </f7-card>
