@@ -122,7 +122,7 @@
 
     <f7-block v-if="ready && !things.length" class="block-narrow">
       <empty-state-placeholder icon="lightbulb" title="things.title" text="things.text" />
-      <f7-row class="display-flex justify-content-center">
+      <f7-row v-if="windowWidth < 1280" class="display-flex justify-content-center">
         <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
       </f7-row>
     </f7-block>

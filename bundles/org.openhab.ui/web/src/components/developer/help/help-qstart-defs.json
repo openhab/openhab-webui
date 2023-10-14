@@ -6,7 +6,7 @@
       {
         "link": "/settings/addons",
         "title": "Addon-Store",
-        "text": "Left panel > Settings > Add-on Store or click here"
+        "text": "Left panel > Settings > Add-on Store or click here <i class=\"f7-icons size-22 add-button-icon\">arrow_right</i>"
       },
       {
         "title": "Install",
@@ -24,7 +24,7 @@
       {
         "link": "/settings/things/inbox",
         "title": "Thing Inbox",
-        "text": "Left panel > Settings > Things > Inbox or click here"
+        "text": "Left panel > Settings > Things > Inbox or click here <i class=\"f7-icons size-22 add-button-icon\">arrow_right</i>"
       },
       {
         "title": "New Thing",
@@ -36,7 +36,7 @@
       },
       {
         "title": "Scan",
-        "text": "Click the <span style=\"background: blue; border-radius: 3px; color: white; padding: 0 5px 0 5px\">Scan</span> button to automatically search for related devices"
+        "text": "Click the <span style=\"background: #2196f3; border-radius: 3px; color: white; padding: 0 5px 0 5px\">Scan</span> button to automatically search for related devices"
       },
       {
         "title": "Add Thing",
@@ -54,7 +54,7 @@
       {
         "link": "/settings/things/",
         "title": "Thing List",
-        "text": "Left panel > Settings > Things or click here"
+        "text": "Left panel > Settings > Things or click here <i class=\"f7-icons size-22 add-button-icon\">arrow_right</i>"
       },
       {
         "title": "Select Thing",
@@ -76,7 +76,7 @@
       {
         "link": "/settings/things/",
         "title": "Thing List",
-        "text": "Left panel > Settings > Things or click here"
+        "text": "Left panel > Settings > Things or click here <i class=\"f7-icons size-22 add-button-icon\">arrow_right</i>"
       },
       {
         "title": "Select Thing",
@@ -88,7 +88,7 @@
       },
       {
         "title": "Select Channel",
-        "text": "Click to expand the Channel you will control and then click Add Link to Item"
+        "text": "Click to expand the Channel you will control and then click <i class=\"f7-icons size-22 link-item-icon\">plus_circle_fill</i> Add Link to Item"
       },
       {
         "title": "New Item",
@@ -110,7 +110,7 @@
       {
         "link": "/settings/pages/layout/overview",
         "title": "Select Page from Page List",
-        "text": "Left panel > Settings > Pages > Overview or click here"
+        "text": "Left panel > Settings > Pages > Overview or click here <i class=\"f7-icons size-22 add-button-icon\">arrow_right</i>"
       },
       {
         "title": "Add Block, Row, and Column",
@@ -135,7 +135,7 @@
       {
         "link": "/",
         "title": "View Home Page",
-        "text": "Click here to return to the Home Overview Page"
+        "text": "Click here to return to the Home Overview Page <i class=\"f7-icons size-22 add-button-icon\">arrow_right</i>"
       }
     ],
     "button": {

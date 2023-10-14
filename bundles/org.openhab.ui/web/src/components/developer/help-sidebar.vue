@@ -123,10 +123,13 @@
       background #232323 !important
 
 .add-button-icon
-  color: blue
+  color: #2196f3
+
+.link-item-icon
+  color: #4cd964
 
 .chevron-icon
-  color: blue
+  color: #2196f3
 
 .faq-title .item-title
   white-space: normal !important

@@ -100,7 +100,7 @@
 
     <f7-block v-if="ready && !items.length" class="service-config block-narrow">
       <empty-state-placeholder icon="square_on_circle" title="items.title" text="items.text" />
-      <f7-row class="display-flex justify-content-center">
+      <f7-row v-if="windowWidth < 1280" class="display-flex justify-content-center">
         <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
       </f7-row>
     </f7-block>
