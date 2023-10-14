@@ -16,7 +16,7 @@
         <h2>{{ item.label }}</h2>
         <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
         <h5 v-show="item.type">
-          <small>{{ item.type }}</small>
+          <small>{{ item.type === 'Group' ? `${item.type} (${item.groupType})` : item.type }}</small>
         </h5>
       </f7-subnavbar>
     </f7-navbar>

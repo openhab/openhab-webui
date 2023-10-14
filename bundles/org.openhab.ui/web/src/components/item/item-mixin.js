@@ -5,6 +5,9 @@ export default {
   methods: {
     getItemTypeAndMetaLabel (item) {
       let ret = item.type
+      if (item.type === 'Group') {
+        ret += ` (${item.groupType})`
+      }
       if (item.metadata && item.metadata.semantics) {
         ret += ' · '
         const classParts = item.metadata.semantics.value.split('_')
