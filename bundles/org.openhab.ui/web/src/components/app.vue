@@ -248,7 +248,7 @@ import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
 import cordovaApp from '../js/cordova-app.js'
 import routes from '../js/routes.js'
 import PanelRight from '../pages/panel-right.vue'
-import DeveloperSidebar from './developer/developer-sidebar.vue'
+import DeveloperDock from './developer/developer-dock.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { loadLocaleMessages } from '@/js/i18n'
