@@ -163,17 +163,36 @@ export default {
       if (this.item.groupType === 'None') delete this.item.groupType
       if (this.item.function === 'None') delete this.item.groupType
 
+      const unit = this.item.unit
+      delete this.item.unit
+      const stateDescriptionPattern = this.item.stateDescriptionPattern
+      delete this.item.stateDescriptionPattern
+
       // TODO: Add support for saving metadata
       this.$oh.api.put('/rest/items/' + this.item.name, this.item).then(() => {
         let unitPromise = Promise.resolve()
-        if (this.createMode && (this.item.type.startsWith('Number:') || this.item.groupType?.startsWith('Number:')) && this.item.unit) {
+        if (this.createMode && (this.item.type.startsWith('Number:') || this.item.groupType?.startsWith('Number:')) && unit) {
           const metadata = {
-            value: this.item.unit,
+            value: unit,
             config: {}
           }
           unitPromise = this.$oh.api.put('/rest/items/' + this.item.name + '/metadata/unit', metadata)
         }
         return unitPromise
+      }).then(() => {
+        let stateDescriptionPromise = Promise.resolve()
+        if (this.createMode && (this.item.type.startsWith('Number:') || this.item.groupType?.startsWith('Number:')) && stateDescriptionPattern) {
+          if (stateDescriptionPattern !== `%.0f ${unit}`) {
+            const metadata = {
+              value: ' ',
+              config: {
+                pattern: stateDescriptionPattern
+              }
+            }
+            stateDescriptionPromise = this.$oh.api.put('/rest/items/' + this.item.name + '/metadata/stateDescription', metadata)
+          }
+        }
+        return stateDescriptionPromise
       }).then(() => {
         if (this.createMode) {
           this.$f7.toast.create({

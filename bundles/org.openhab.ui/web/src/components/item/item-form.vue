@@ -22,9 +22,13 @@
           </option>
         </select>
       </f7-list-item>
-      <f7-list-input v-if="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="Unit" type="text" :value="item.unit"
-                     info="All processed values are internally normalized to the specified unit. The normalized value is used to propagate the value to external integrations (e.g. persistence, REST API, WebSocket) so these values will always have the specified unit and scale."
+      <!-- Use v-show instead of v-if, because otherwise the autocomplete for category would take over the unit -->
+      <f7-list-input v-show="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="Unit" type="text" :value="item.unit"
+                     info="Used internally and for persistence & API(s). It is independent from the state description, which is used for display purposes only."
                      @input="item.unit = $event.target.value" clear-button />
+      <f7-list-input v-show="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="State Description Pattern" type="text" :value="item.stateDescriptionPattern"
+                     info="Pattern or transformation applied to the state for display purposes."
+                     @input="item.stateDescriptionPattern = $event.target.value" clear-button />
       <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
                      @input="item.category = $event.target.value" clear-button>
         <div slot="root-end" style="margin-left: calc(35% + 8px)">
@@ -89,6 +93,7 @@ export default {
       const dimension = this.dimensions[index]
       this.$set(this.item, 'type', 'Number:' + dimension.name)
       this.$set(this.item, 'unit', dimension.systemUnit)
+      this.$set(this.item, 'stateDescriptionPattern', `%.0f ${dimension.systemUnit}`)
     },
     initializeAutocomplete (inputElement) {
       this.categoryAutocomplete = this.$f7.autocomplete.create({
