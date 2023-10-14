@@ -53,6 +53,7 @@ export default {
     onChange (value) {
       const applyOffset = (value) => (typeof this.config.offset === 'number') ? Number(this.toStepFixed(value - this.config.offset)) : value
       let newValue = applyOffset(Number(this.toStepFixed(value)))
+      if (isNaN(newValue)) newValue = this.config.min || this.config.max || 0
       if (newValue === this.value) return
       if (this.config.variable) {
         if (this.config.variableKey) {
