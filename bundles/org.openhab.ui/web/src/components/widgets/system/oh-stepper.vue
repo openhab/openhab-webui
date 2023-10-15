@@ -28,7 +28,7 @@ export default {
         }
         return applyOffset(this.context.vars[this.config.variable])
       }
-      let value = applyOffset(Number(this.context.store[this.config.item].state))
+      let value = applyOffset(parseFloat(this.context.store[this.config.item].state))
       if (this.config.min !== undefined) value = Math.max(value, this.config.min)
       if (this.config.max !== undefined) value = Math.min(value, this.config.max)
       return value
