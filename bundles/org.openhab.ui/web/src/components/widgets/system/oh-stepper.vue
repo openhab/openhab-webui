@@ -21,7 +21,7 @@ export default {
   },
   computed: {
     value () {
-      const applyOffset = (value) => (typeof this.config.offset === 'number') ? Number(this.toStepFixed(value + this.config.offset)) : value
+      const applyOffset = (num) => (!isNaN(this.config.offset)) ? Number(this.toStepFixed(num + Number(this.config.offset))) : num
       if (this.config.variable) {
         if (this.config.variableKey) {
           return applyOffset(this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey))
@@ -48,10 +48,11 @@ export default {
       // uses the number of decimals in the step config to round the provided number
       if (!this.config.step) return value
       const nbDecimals = Number(this.config.step).toString().replace(',', '.').split('.')[1]
-      return parseFloat(Number(value)).toFixed(nbDecimals ? nbDecimals.length : 0)
+      // do NOT convert to number, instead return string, otherwise formatting wouldn't work
+      return parseFloat(value).toFixed(nbDecimals ? nbDecimals.length : 0)
     },
     onChange (value) {
-      const applyOffset = (value) => (typeof this.config.offset === 'number') ? Number(this.toStepFixed(value - this.config.offset)) : value
+      const applyOffset = (num) => (!isNaN(this.config.offset)) ? Number(this.toStepFixed(num - Number(this.config.offset))) : num
       let newValue = applyOffset(Number(this.toStepFixed(value)))
       if (isNaN(newValue)) newValue = this.config.min || this.config.max || 0
       if (newValue === this.value) return
