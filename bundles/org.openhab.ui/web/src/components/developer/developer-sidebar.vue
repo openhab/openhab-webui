@@ -542,7 +542,7 @@ export default {
       return false
     },
     /**
-     * Search for the query string inside a single page.
+     * Search for the query string inside a single page or sitemap.
      * All searches are non case-intensive.
      *
      * Checks:
@@ -577,13 +577,15 @@ export default {
           Promise.resolve(this.cachedObjects[1]),
           Promise.resolve(this.cachedObjects[2]),
           Promise.resolve(this.cachedObjects[3]),
-          Promise.resolve(this.cachedObjects[4])
+          Promise.resolve(this.cachedObjects[4]),
+          Promise.resolve(this.cachedObjects[5])
         ] : [
           this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.*'),
           this.$oh.api.get('/rest/things?summary=true'),
           this.$oh.api.get('/rest/rules?summary=false'),
           Promise.resolve(this.$store.getters.pages),
-          this.$oh.api.get('/rest/transformations')
+          this.$oh.api.get('/rest/transformations'),
+          this.$oh.api.get('/rest/ui/components/system:sitemap')
         ]
 
       this.searchResultsLoading = true
@@ -609,7 +611,7 @@ export default {
         const rules = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0)
         const scenes = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') >= 0)
         const scripts = rulesScenesScripts.filter((r) => r.tags.indexOf('Script') >= 0)
-        const pages = data[3].filter((p) => this.searchPage(p, this.searchQuery)).sort((a, b) => {
+        const pages = [...data[3], ...data[5]].filter((p) => this.searchPage(p, this.searchQuery)).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
