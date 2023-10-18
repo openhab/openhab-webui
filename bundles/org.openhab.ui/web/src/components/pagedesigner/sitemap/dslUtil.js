@@ -11,13 +11,13 @@ function writeWidget (widget, indent) {
         dsl += ' sendFrequency=' + widget.config[key]
       } else if (key === 'forceAsItem') {
         dsl += ' forceasitem=' + widget.config[key]
-      } else if (['icon', 'staticIcon'].includes(key)) {
+      } else if (key === 'icon') {
         if (widget.config.staticIcon) {
           dsl += ' staticIcon=' + widget.config[key]
         } else {
           dsl += ' icon=' + widget.config[key]
         }
-      } else {
+      } else if (key !== 'staticIcon') {
         dsl += ` ${key}=`
         if (key === 'item' || key === 'period' || key === 'legend' || Number.isFinite(widget.config[key])) {
           dsl += widget.config[key]
