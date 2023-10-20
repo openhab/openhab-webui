@@ -143,6 +143,7 @@ WidgetColorAttrValue -> %lbracket _ Colors _ %rbracket                          
 Mappings -> Mapping                                                               {% (d) => [d[0]] %}
   | Mappings _ %comma _ Mapping                                                   {% (d) => d[0].concat([d[4]]) %}
 Mapping -> MappingCommand _ %equals _ MappingLabel                                {% (d) => d[0][0].value + '=' + d[4][0].value %}
+  |  MappingCommand _ %equals _ MappingLabel _ %equals _ WidgetIconAttrValue      {% (d) => d[0][0].value + '=' + d[4][0].value + '=' + d[8].join("") %}
 MappingCommand -> %number | %identifier | %string
 MappingLabel -> %number | %identifier | %string
 

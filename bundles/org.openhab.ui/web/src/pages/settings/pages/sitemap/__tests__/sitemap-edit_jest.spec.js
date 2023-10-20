@@ -312,7 +312,7 @@ describe('SitemapEdit', () => {
       '10=Cinéma',
       '11=TV',
       '3=Bed time',
-      '4=Night'
+      '4=Night=moon'
     ])
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()

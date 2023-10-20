@@ -68,7 +68,7 @@
               </f7-block>
               <f7-block v-if="selectedWidget && ['Switch', 'Selection'].indexOf(selectedWidget.component) >= 0">
                 <div><f7-block-title>Mappings</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label" />
+                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label = icon" />
               </f7-block>
               <f7-block v-if="selectedWidget && canAddChildren">
                 <div><f7-block-title>Add Child Widget</f7-block-title></div>
@@ -452,7 +452,7 @@ export default {
           if (widget.config) {
             Object.keys(widget.config).filter(attr => ['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)).forEach(attr => {
               widget.config[attr].forEach(param => {
-                if (((attr === 'mappings') && !(/^\s*("[^\n"]*"|[^\n"]+)\s*=\s*("[^\n"]*"|[^\n"]+)\s*$/u.test(param))) ||
+                if (((attr === 'mappings') && !(/^\s*("[^\n"]*"|[^\n="]+)\s*=\s*("[^\n"]*"|[^\n="]+)\s*(=\s*("[^\n"]*"|[^\n="]+))?$/u.test(param))) ||
                     ((attr === 'visibility') && !this.validateRule(param)) ||
                     ((['valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)) && !this.validateRule(param, true))) {
                   let label = widget.config && widget.config.label ? widget.config.label : 'without label'

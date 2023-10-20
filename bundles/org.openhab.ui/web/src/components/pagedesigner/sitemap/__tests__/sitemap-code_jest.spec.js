@@ -193,7 +193,7 @@ describe('SitemapCode', () => {
     // simulate updating the sitemap in code
     const sitemap = [
       'sitemap test label="Test" {',
-      '    Selection item=Scene_General mappings=[1=Morning,2="Evening",10="Cinéma",11=TV,3="Bed time",4=Night]',
+      '    Selection item=Scene_General mappings=[1=Morning,2="Evening",10="Cinéma",11=TV,3="Bed time",4=Night=moon]',
       '}',
       ''
     ].join('\n')
@@ -222,7 +222,7 @@ describe('SitemapCode', () => {
           '10=Cinéma',
           '11=TV',
           '3=Bed time',
-          '4=Night'
+          '4=Night=moon'
         ]
       }
     })
