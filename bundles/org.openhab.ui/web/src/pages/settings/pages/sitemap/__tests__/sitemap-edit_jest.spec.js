@@ -328,7 +328,7 @@ describe('SitemapEdit', () => {
     localVue.set(wrapper.vm.selectedWidget.config, 'item', 'Item1')
     localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Text Test')
     localVue.set(wrapper.vm.selectedWidget.config, 'visibility', [
-      true
+      'true>"="test'
     ])
 
     // should not validate as the visibility has a syntax error
@@ -378,7 +378,7 @@ describe('SitemapEdit', () => {
       'Heat_Warning==It is hot=gray',
       'Last_Update==Uninitialized=gray',
       '>=25=orange',
-      '==15=green',
+      '==15 AND Heat_Warning==It is a nice temperature=green',
       '0=white',
       'blue'
     ])

@@ -215,4 +215,18 @@ describe('dslUtil', () => {
     const sitemap = dslUtil.toDsl(component).split('\n')
     expect(sitemap[1]).toEqual('    Text item=Temperature valuecolor=[Heat_Warning=="It is hot"="gray"]')
   })
+
+  it('renders widget with valuecolor and AND condition correctly', () => {
+    const component = createSitemapComponent('test', 'Test')
+    const widget = {
+    }
+    addWidget(component, 'Text', {
+      item: 'Temperature',
+      valuecolor: [
+        'Heat_Warning==It is hot AND >=25=gray'
+      ]
+    })
+    const sitemap = dslUtil.toDsl(component).split('\n')
+    expect(sitemap[1]).toEqual('    Text item=Temperature valuecolor=[Heat_Warning=="It is hot" AND >=25="gray"]')
+  })
 })

@@ -152,13 +152,12 @@ describe('SitemapCode', () => {
     })
   })
 
-  it('parses a segmented icon name with hyphens', async () => {
+  it('parses an icon rule correctly', async () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
     // simulate updating the sitemap in code
     const sitemap = [
       'sitemap test label="Test" {',
-      '    Default item=Item_Icon icon=iconify:wi:day-sunny-overcast',
-      '    Default item=Item_Icon_String icon="iconify:wi:day-sunny-overcast"',
+      '    Default item=Item_Icon icon=[>5=iconify:wi:day-sunny-overcast,<=5 AND Test_Item=="check error"=error]',
       '}',
       ''
     ].join('\n')
@@ -176,19 +175,15 @@ describe('SitemapCode', () => {
     const payload = events[0][0]
     expect(payload.slots).toBeDefined()
     expect(payload.slots.widgets).toBeDefined()
-    expect(payload.slots.widgets.length).toBe(2)
+    expect(payload.slots.widgets.length).toBe(1)
     expect(payload.slots.widgets[0]).toEqual({
       component: 'Default',
       config: {
         item: 'Item_Icon',
-        icon: 'iconify:wi:day-sunny-overcast'
-      }
-    })
-    expect(payload.slots.widgets[1]).toEqual({
-      component: 'Default',
-      config: {
-        item: 'Item_Icon_String',
-        icon: 'iconify:wi:day-sunny-overcast'
+        iconrules: [
+          '>5=iconify:wi:day-sunny-overcast',
+          '<=5 AND Test_Item==check error=error'
+        ]
       }
     })
   })

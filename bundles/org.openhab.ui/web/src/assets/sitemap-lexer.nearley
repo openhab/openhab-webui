@@ -31,6 +31,7 @@
     gteq:             '>=',
     lt:               '<',
     gt:               '>',
+    and:              'AND',
     equals:           '=',
     NL:               { match: /\n/, lineBreaks: true },
     SL_COMMENT:       /\/\/.*$/,
@@ -112,6 +113,7 @@ WidgetAttr -> %widgetswitchattr                                                 
   | %widgetfrcitmattr _ WidgetBooleanAttrValue                                    {% (d) => ['forceAsItem', d[2]] %}
   | %widgetboolattr _ WidgetBooleanAttrValue                                      {% (d) => [d[0].value, d[2]] %}
   | %widgetfreqattr _ WidgetAttrValue                                             {% (d) => ['frequency', d[2]] %}
+  | %icon _ WidgetIconRulesAttrValue                                              {% (d) => ['iconrules', d[2]] %}
   | %icon _ WidgetIconAttrValue                                                   {% (d) => [d[0].value, d[2].join("")] %}
   | %staticIcon _ WidgetIconAttrValue                                             {% (d) => [d[0].value, d[2].join("")] %}
   | WidgetAttrName _ WidgetAttrValue                                              {% (d) => [d[0][0].value, d[2]] %}
@@ -125,8 +127,9 @@ WidgetIconAttrValue -> %string
   | WidgetIconName
   | %identifier %colon WidgetIconName
   | %identifier %colon %identifier %colon WidgetIconName
+WidgetIconRulesAttrValue -> %lbracket _ IconRules _ %rbracket                     {% (d) => d[2] %}
 WidgetIconName -> %identifier
-  | %identifier %hyphen WidgetIconName                                            {% (d) => d[0].value + "-" + d[2] %}
+  | WidgetIconName %hyphen %identifier                                            {% (d) => d[0] + "-" + d[2].value %}
 WidgetAttrValue -> %number                                                        {% (d) => { return parseFloat(d[0].value) } %}
   | %identifier                                                                   {% (d) => d[0].value %}
   | %string                                                                       {% (d) => d[0].value %}
@@ -143,23 +146,28 @@ Mapping -> MappingCommand _ %equals _ MappingLabel                              
 MappingCommand -> %number | %identifier | %string
 MappingLabel -> %number | %identifier | %string
 
-Visibilities -> Visibility                                                        {% (d) => [d[0]] %}
-  | Visibilities _ %comma _ Visibility                                            {% (d) => d[0].concat([d[4]]) %}
-Visibility -> VisibilityCommand _ VisibilityComparator _ VisibilityValue          {% (d) => d[0][0].value + d[2][0].value + d[4][0].value %}
-VisibilityCommand -> %identifier
-VisibilityComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
-VisibilityValue -> %number | %identifier | %string
+Visibilities -> Conditions                                                        {% (d) => d[0] %}
+  | Visibilities _ %comma _ Conditions                                            {% (d) => d[0].concat(d[4]) %}
 
 Colors -> Color                                                                   {% (d) => [d[0]] %}
   | Colors _ %comma _ Color                                                       {% (d) => d[0].concat([d[4]]) %}
-Color -> ColorCommand _ ColorComparator _ ColorValue _ %equals _ ColorName        {% (d) => d[0][0].value + d[2][0].value + d[4][0].value + '=' + d[8][0].value %}
-  | ColorComparator _ ColorValue _ %equals _ ColorName                            {% (d) => d[0][0].value + d[2][0].value + '=' + d[6][0].value %}
-  | ColorValue _ %equals _ ColorName                                              {% (d) => d[0][0].value + '=' + d[4][0].value %}
+Color -> Conditions _ %equals _ ColorName                                         {% (d) => d[0] + '=' + d[4][0].value %}
   | ColorName                                                                     {% (d) => d[0][0].value %}
-ColorCommand -> %identifier
-ColorComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
-ColorValue ->  %number | %identifier | %string
 ColorName ->  %identifier | %string
+
+IconRules -> IconRule                                                             {% (d) => [d[0]] %}
+  | IconRules _ %comma _ IconRule                                                 {% (d) => d[0].concat([d[4]]) %}
+IconRule -> Conditions _ %equals _ WidgetIconAttrValue                            {% (d) => d[0] + '=' + d[4].join("") %}
+  | WidgetIconAttrValue                                                           {% (d) => d[0].join("") %}
+
+Conditions -> Condition
+  | Conditions _ %and _ Condition                                                 {% (d) => d[0] + ' AND ' + d[4] %}
+Condition -> ConditionCommand _ ConditionComparator _ ConditionValue              {% (d) => d[0][0].value + d[2][0].value + d[4][0].value %}
+  | ConditionComparator _ ConditionValue                                          {% (d) => d[0][0].value + d[2][0].value %}
+  | ConditionValue                                                                {% (d) => d[0][0].value %}
+ConditionCommand -> %identifier
+ConditionComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
+ConditionValue -> %number | %identifier | %string
 
 _ -> null               {% () => null %}
 	| __                  {% () => null %}
