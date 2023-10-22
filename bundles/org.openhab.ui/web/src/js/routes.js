@@ -298,9 +298,9 @@ export default [
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(RuleEditPage, (routeTo) =>
-              (routeTo.params.ruleId === 'add')
-                ? { createMode: true } : (routeTo.params.ruleId === 'copy')
-                  ? { copyMode: true } : {}),
+              routeTo.params.ruleId === 'add' ? { createMode: true }
+                : routeTo.params.ruleId === 'copy' ? { copyMode: true }
+                  : {}),
             routes: [
               {
                 path: 'script/:moduleId',
