@@ -56,7 +56,7 @@
             <f7-list inline-labels no-hairlines-md>
               <f7-list-input label="Unique ID" type="text" placeholder="Required" value="_______" required validate
                              :disabled="true" :info="(isNewRule) ? 'Note: cannot be changed after the creation' : ''"
-                             @input="rule.uid = $event.target.value" :clear-button="createMode" />
+                             @input="rule.uid = $event.target.value" :clear-button="isNewRule" />
               <f7-list-input label="Name" type="text" placeholder="Required" required validate
                              :disabled="true" @input="rule.name = $event.target.value" :clear-button="isEditable" />
               <f7-list-input label="Description" type="text" value="__ _____ ___ __ ___"
@@ -71,7 +71,7 @@
               <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" required validate
                              :disabled="!isNewRule" :info="(isNewRule) ? 'Note: cannot be changed after the creation' : ''"
                              pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
-                             @input="rule.uid = $event.target.value" :clear-button="createMode" />
+                             @input="rule.uid = $event.target.value" :clear-button="isNewRule" />
               <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" required validate
                              :disabled="!isEditable" @input="rule.name = $event.target.value" :clear-button="isEditable" />
               <f7-list-input label="Description" type="text" :value="rule.description"
@@ -150,7 +150,7 @@
               </f7-list>
             </div>
           </f7-col>
-          <f7-col v-if="(isEditable || rule.tags.length > 0) && (!createMode || !hasTemplate)">
+          <f7-col v-if="(isEditable || rule.tags.length > 0) && !hasTemplate">
             <f7-block-title>Tags</f7-block-title>
             <semantics-picker v-if="isEditable" :item="rule" />
             <tag-input :item="rule" :disabled="!isEditable" />
@@ -352,6 +352,7 @@ export default {
             }
           })
           loadingFinished()
+          // no need for an event source, the rule doesn't exist yet
         } else {
           this.$oh.api.get('/rest/rules/' + this.ruleId).then((data2) => {
             this.$set(this, 'rule', data2)
@@ -412,7 +413,7 @@ export default {
       })
     },
     toggleDisabled () {
-      if (this.createMode) return
+      if (this.isNewRule) return
       const enable = (this.rule.status.statusDetail === 'DISABLED')
       this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString()).then((data) => {
         this.$f7.toast.create({
