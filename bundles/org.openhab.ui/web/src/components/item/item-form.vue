@@ -84,6 +84,14 @@ export default {
       return this.getNonSemanticTags(this.item).length
     }
   },
+  watch: {
+    // Required for pre-filling unit and state description pattern fields in "Add Items from Thing" functionality
+    dimensions () {
+      if (this.createMode && this.item.type && this.item.type.startsWith('Number:')) {
+        this.setDimension(this.dimensions.findIndex((d) => d.name === this.item.type.split(':')[1]))
+      }
+    }
+  },
   methods: {
     setDimension (index) {
       if (index === 'Number') {
