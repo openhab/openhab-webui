@@ -20,6 +20,10 @@ import ColorpickerParameters from './colorpicker.js'
 export const OhColorpickerDefinition = () => new WidgetDefinition('oh-colorpicker', 'Colorpicker', 'Control to pick a color')
   .params(ColorpickerParameters())
 
+import ContextParameters from './context.js'
+export const OhContextDefinition = () => new WidgetDefinition('oh-context', 'Context', 'Non-rendered component with functions and constants for widgets')
+  .params(ContextParameters())
+
 import GaugeParameters from './gauge.js'
 export const OhGaugeDefinition = () => new WidgetDefinition('oh-gauge', 'Gauge', 'Circular or semi-circular read-only gauge')
   .params(GaugeParameters())
