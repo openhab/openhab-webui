@@ -24,7 +24,7 @@
       </f7-list-item>
       <!-- Use v-show instead of v-if, because otherwise the autocomplete for category would take over the unit -->
       <f7-list-input v-show="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="Unit" type="text" :value="item.unit"
-                     info="Used internally and for persistence & API(s). It is independent from the state description, which is used for display purposes only."
+                     info="Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description."
                      @input="item.unit = $event.target.value" clear-button />
       <f7-list-input v-show="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="State Description Pattern" type="text" :value="item.stateDescriptionPattern"
                      info="Pattern or transformation applied to the state for display purposes."
