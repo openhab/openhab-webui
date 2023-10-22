@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
-    <f7-navbar :title="(createMode) ? 'Create rule' : rule.name" back-link="Back" no-hairline>
+    <f7-navbar :title="isNewRule ? 'Create rule' : rule.name" back-link="Back" no-hairline>
       <f7-nav-right v-if="isEditable">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
@@ -18,8 +18,8 @@
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
       <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
-        <f7-block v-if="ready && rule.status && !createMode" class="block-narrow padding-left padding-right" strong>
-          <f7-col v-if="!createMode">
+        <f7-block v-if="ready && rule.status && (!isNewRule)" class="block-narrow padding-left padding-right" strong>
+          <f7-col v-if="!isNewRule">
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
               <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled" />
@@ -39,7 +39,7 @@
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
-        <f7-block v-else-if="!createMode" class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
+        <f7-block v-else-if="!isNewRule" class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
           <f7-col>
             ______:
             <f7-chip class="margin-left" text="________" />
@@ -55,8 +55,8 @@
           <f7-col class="skeleton-text skeleton-effect-blink">
             <f7-list inline-labels no-hairlines-md>
               <f7-list-input label="Unique ID" type="text" placeholder="Required" value="_______" required validate
-                             :disabled="true" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                             @input="rule.uid = $event.target.value" :clear-button="createMode" />
+                             :disabled="true" :info="(isNewRule) ? 'Note: cannot be changed after the creation' : ''"
+                             @input="rule.uid = $event.target.value" :clear-button="isNewRule" />
               <f7-list-input label="Name" type="text" placeholder="Required" required validate
                              :disabled="true" @input="rule.name = $event.target.value" :clear-button="isEditable" />
               <f7-list-input label="Description" type="text" value="__ _____ ___ __ ___"
@@ -69,9 +69,9 @@
           <f7-col>
             <f7-list inline-labels no-hairlines-md>
               <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" required validate
-                             :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+                             :disabled="!isNewRule" :info="(isNewRule) ? 'Note: cannot be changed after the creation' : ''"
                              pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
-                             @input="rule.uid = $event.target.value" :clear-button="createMode" />
+                             @input="rule.uid = $event.target.value" :clear-button="isNewRule" />
               <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" required validate
                              :disabled="!isEditable" @input="rule.name = $event.target.value" :clear-button="isEditable" />
               <f7-list-input label="Description" type="text" :value="rule.description"
@@ -150,13 +150,16 @@
               </f7-list>
             </div>
           </f7-col>
-          <f7-col v-if="(isEditable || rule.tags.length > 0) && (!createMode || !hasTemplate)">
+          <f7-col v-if="(isEditable || rule.tags.length > 0) && !hasTemplate">
             <f7-block-title>Tags</f7-block-title>
             <semantics-picker v-if="isEditable" :item="rule" />
             <tag-input :item="rule" :disabled="!isEditable" />
           </f7-col>
-          <f7-col v-if="isEditable && !createMode">
+          <f7-col v-if="isEditable && (!isNewRule)">
             <f7-list>
+              <f7-list-button color="blue" @click="copyRule">
+                Copy Rule
+              </f7-list-button>
               <f7-list-button color="red" @click="deleteRule">
                 Remove Rule
               </f7-list-button>
@@ -227,7 +230,7 @@ export default {
     TagInput,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
-  props: ['ruleId', 'createMode', 'schedule'],
+  props: ['ruleId', 'createMode', 'copyMode', 'ruleCopy', 'schedule'],
   data () {
     return {
       ready: false,
@@ -334,6 +337,22 @@ export default {
             loadingFinished()
           })
           // no need for an event source, the rule doesn't exist yet
+        } else if (this.copyMode) {
+          this.$set(this, 'rule', {
+            uid: this.$f7.utils.id(),
+            name: this.ruleCopy.name + ' Copy',
+            triggers: this.ruleCopy.triggers,
+            actions: this.ruleCopy.actions,
+            conditions: this.ruleCopy.conditions,
+            tags: this.ruleCopy.tags,
+            configuration: this.ruleCopy.configuration,
+            visibility: 'VISIBLE',
+            status: {
+              status: 'NEW'
+            }
+          })
+          loadingFinished()
+          // no need for an event source, the rule doesn't exist yet
         } else {
           this.$oh.api.get('/rest/rules/' + this.ruleId).then((data2) => {
             this.$set(this, 'rule', data2)
@@ -358,18 +377,21 @@ export default {
         this.$f7.dialog.alert('Please give a name to the rule')
         return Promise.reject()
       }
-      const promise = (this.createMode)
+      const promise = (this.isNewRule)
         ? this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/rules/' + this.rule.uid, this.rule)
       return promise.then((data) => {
         this.dirty = false
-        if (this.createMode) {
+        if (this.isNewRule) {
           this.$f7.toast.create({
             text: 'Rule created',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.rule.uid).replace('/schedule/', '/rules/'), { reloadCurrent: true })
+          this.$f7router.navigate(this.$f7route.url
+            .replace('/add', '/' + this.rule.uid)
+            .replace('/copy', '/' + this.rule.uid)
+            .replace('/schedule/', '/rules/'), { reloadCurrent: true })
           this.load()
         } else {
           if (!noToast) {
@@ -391,7 +413,7 @@ export default {
       })
     },
     toggleDisabled () {
-      if (this.createMode) return
+      if (this.isNewRule) return
       const enable = (this.rule.status.statusDetail === 'DISABLED')
       this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString()).then((data) => {
         this.$f7.toast.create({
@@ -407,8 +429,18 @@ export default {
         }).open()
       })
     },
+    copyRule () {
+      let ruleClone = cloneDeep(this.rule)
+      this.$f7router.navigate({
+        url: '/settings/rules/copy'
+      }, {
+        props: {
+          ruleCopy: ruleClone
+        }
+      })
+    },
     runNow () {
-      if (this.createMode) return
+      if (this.isNewRule) return
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
         return this.$f7.toast.create({
           text: `Rule cannot be run ${(this.rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
@@ -642,7 +674,7 @@ export default {
       this.currentModuleType = mod.type
       this.scriptCode = mod.configuration.script
 
-      const updatePromise = (this.rule.editable || this.createMode) ? this.save() : Promise.resolve()
+      const updatePromise = (this.rule.editable || this.isNewRule) ? this.save() : Promise.resolve()
       updatePromise.then(() => {
         this.$f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + mod.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
       })
@@ -713,6 +745,9 @@ export default {
     },
     hasTemplate () {
       return this.rule && this.currentTemplate !== null
+    },
+    isNewRule () {
+      return this.createMode || this.copyMode
     },
     templateTopicLink () {
       if (!this.currentTemplate) return null
