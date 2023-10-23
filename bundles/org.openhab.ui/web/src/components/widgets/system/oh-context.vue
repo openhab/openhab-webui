@@ -14,6 +14,22 @@ export default {
   components: {
     Fragment
   },
+  beforeMount () {
+    const evaluateConstants = () => {
+      if (!this.context || !this.context.component || !this.context.component.config || !this.context.component.config.constants) return {}
+      let evalConst = {}
+      const sourceConst = this.context.component.config.constants || {}
+      if (sourceConst) {
+        if (typeof sourceConst !== 'object') return {}
+        for (const key in sourceConst) {
+          this.$set(evalConst, key, this.evaluateExpression(key, sourceConst[key]))
+        }
+      }
+      return evalConst
+    }
+
+    this.const = evaluateConstants()
+  },
   widget: OhContextDefinition,
   computed: {
     func () {
@@ -40,7 +56,8 @@ export default {
       }
       this.$set(ctx, 'func', ctxFunctions)
 
-      const ctxConstants = (this.context.component.config && this.context.component.config.constants) || {}
+      //const ctxConstants = (this.context.component.config && this.context.component.config.constants) || {}
+      const ctxConstants = this.const
       if (ctx.const) {
         for (const constKey in this.context.const) {
           if (!ctxConstants[constKey]) this.$set(ctxConstants, constKey, this.context.const[constKey])
