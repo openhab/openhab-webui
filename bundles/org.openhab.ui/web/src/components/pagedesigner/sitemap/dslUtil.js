@@ -29,7 +29,7 @@ function writeWidget (widget, indent) {
           dsl += '['
           dsl += widget.config[key].filter(Boolean).map(mapping => {
             return mapping.split('=').map(value => {
-              if (/^[^"'].*\W.*[^"']$/.test(value)) {
+              if (/^.*\W.*$/.test(value) && /^[^"'].*[^"']$/.test(value)) {
                 return '"' + value + '"'
               }
               return value
@@ -74,7 +74,7 @@ function writeConditions (value, hasArgument = false) {
     return conditions.split(' AND ').map(condition => {
       let index = Math.max(condition.lastIndexOf('='), condition.lastIndexOf('>'), condition.lastIndexOf('<')) + 1
       let conditionValue = condition.substring(index).trim()
-      if (/^[^"'].*\W.*[^"']$/.test(conditionValue)) {
+      if (/^.*\W.*$/.test(conditionValue) && /^[^"'].*[^"']$/.test(conditionValue)) {
         conditionValue = '"' + conditionValue + '"'
       }
       return condition.substring(0, index) + conditionValue
