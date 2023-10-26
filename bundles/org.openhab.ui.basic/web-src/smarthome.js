@@ -349,8 +349,7 @@
 		var
 			_t = this,
 			suppress = false,
-			noneImageSrc = "/icon/none.png",
-			splittedIconAttr;
+			noneImageSrc = "/icon/none.png";
 
 		_t.parentNode = parentNode;
 		if (_t.formRow === undefined) {
@@ -364,14 +363,54 @@
 		if (_t.headerRow !== null) {
 			_t.formHeaderRow = _t.formRow.previousElementSibling;
 			_t.iconContainer = _t.formHeaderRow.querySelector(o.formIcon);
-			_t.icon = _t.formHeaderRow.querySelector(o.formIconImg);
 			_t.label = _t.formHeaderRow.querySelector(o.formLabel);
 		} else {
 			_t.formHeaderRow = null;
 			_t.iconContainer = _t.formRow.querySelector(o.formIcon);
-			_t.icon = _t.formRow.querySelector(o.formIconImg);
 			_t.label = _t.formRow.querySelector(o.formLabel);
 		}
+
+		_t.findIcon = function() {
+			var
+				splitIconAttr,
+				formRow = _t.formHeaderRow !== null ? _t.formHeaderRow : _t.formRow;
+
+			_t.iconSource = null;
+			_t.icon = formRow.querySelector(o.formIconImg);
+			if (_t.icon !== null) {
+				_t.iconSource = "oh";
+				splitIconAttr = _t.icon.getAttribute(o.iconAttribute).split(":");
+				if (splitIconAttr.length === 2) {
+					_t.iconSet = splitIconAttr[0];
+					_t.iconName = splitIconAttr[1];
+				}
+				return;
+			}
+			_t.icon = formRow.querySelector(o.formIconSvg);
+			if (_t.icon !== null) {
+				_t.iconSource = "oh";
+				splitIconAttr = _t.icon.getAttribute(o.iconAttribute).split(":");
+				if (splitIconAttr.length === 2) {
+					_t.iconSet = splitIconAttr[0];
+					_t.iconName = splitIconAttr[1];
+				}
+				return;
+			}
+			_t.icon = formRow.querySelector(o.formIconIconify);
+			if (_t.icon !== null) {
+				_t.iconSource = "if";
+				return;
+			}
+			_t.icon = formRow.querySelector(o.formIconMaterial);
+			if (_t.icon !== null) {
+				_t.iconSource = "material";
+				return;
+			}
+			_t.icon = formRow.querySelector(o.formIconFramework7);
+			if (_t.icon !== null) {
+				_t.iconSource = "f7";
+			}
+		};
 
 		function convertToInlineSVG() {
 			this.removeEventListener("load", convertToInlineSVG);
@@ -386,14 +425,10 @@
 			this.src = noneImageSrc;
 		}
 
-		if (_t.icon !== null) {
-			splittedIconAttr = _t.icon.getAttribute(o.iconAttribute).split(":");
-			_t.iconSet = splittedIconAttr[0];
-			_t.iconName = splittedIconAttr[1];
-			if (_t.icon.src !== noneImageSrc) {
-				_t.icon.addEventListener("load", convertToInlineSVG);
-				_t.icon.addEventListener("error", replaceImageWithNone);
-			}
+		_t.findIcon();
+		if (_t.icon !== null && _t.iconSource === "oh") {
+			_t.icon.addEventListener("load", convertToInlineSVG);
+			_t.icon.addEventListener("error", replaceImageWithNone);
 		}
 
 		_t.replaceIconWithInlineSVG = function(svgText) {
@@ -416,11 +451,7 @@
 
 			// Replace the current icon element with the built inline SVG
 			_t.iconContainer.replaceChild(newIconElement, _t.icon);
-			if (_t.headerRow !== null) {
-				_t.icon = _t.formHeaderRow.querySelector(o.formIconSvg);
-			} else {
-				_t.icon = _t.formRow.querySelector(o.formIconSvg);
-			}
+			_t.findIcon();
 		};
 
 		_t.getSVGIconAndReplaceWithInline = function(srcUrl, checkCurrentColor, defaultSVG) {
@@ -443,29 +474,109 @@
 			});
 		};
 
-		_t.reloadIcon = function(state) {
+		_t.replaceIcon = function(htmlText) {
 			var
-				src;
+				parser,
+				doc,
+				newIconElement;
+
+			// Parse the HTML text and turn it into DOM nodes
+			parser = new DOMParser();
+			doc = parser.parseFromString(htmlText, "text/html");
+			newIconElement = doc.body.firstChild;
+
+			if (_t.iconSource === "oh") {
+				_t.icon.removeEventListener("load", convertToInlineSVG);
+				_t.icon.removeEventListener("error", replaceImageWithNone);
+			}
+
+			// Replace the current icon element
+			_t.iconContainer.replaceChild(newIconElement, _t.icon);
+
+			_t.findIcon();
+			if (_t.iconSource === "oh") {
+				_t.icon.addEventListener("load", convertToInlineSVG);
+				_t.icon.addEventListener("error", replaceImageWithNone);
+			}
+		};
+
+		_t.reloadIcon = function(state, icon) {
+			var
+				src,
+				imgURL,
+				splitIcon,
+				iconSrc = "oh",
+				iconSet = "classic",
+				iconName = "none";
 
 			// Some widgets don't have icons
-			if (_t.icon !== null && _t.iconWithState) {
-				if (state.length < 200) {
-					src = "/icon/" + encodeURIComponent(_t.iconName) +
-						"?state=" + encodeURIComponent(state) +
-						"&iconset=" + encodeURIComponent(_t.iconSet) +
-						"&format=" + smarthome.UI.iconType +
-						"&anyFormat=true";
-				} else {
-					src = "/icon/" + encodeURIComponent(_t.iconName) +
-						"?iconset=" + encodeURIComponent(_t.iconSet) +
-						"&format=" + smarthome.UI.iconType +
-						"&anyFormat=true";
+			if (_t.icon === null) {
+				return;
+			}
+
+			if (icon === undefined) {
+				// No reload expected
+				return;
+			}
+
+			splitIcon = icon.split(":");
+			if (splitIcon.length === 1) {
+				iconName = splitIcon[0];
+			} else if (splitIcon.length === 2) {
+				iconSrc = splitIcon[0];
+				iconName = splitIcon[1];
+			} else if (splitIcon.length === 3) {
+				iconSrc = splitIcon[0];
+				iconSet = splitIcon[1];
+				iconName = splitIcon[2];
+			}
+			if (iconSrc === "iconify") {
+				iconSrc = "if";
+			}
+
+			if (iconSrc === "oh") {
+				imgURL = "/icon/" + encodeURIComponent(iconName) +
+					"?iconset=" + encodeURIComponent(iconSet) +
+					"&format=" + smarthome.UI.iconType +
+					"&anyFormat=true";
+				if (_t.iconWithState && state.length < 200) {
+					imgURL += "&state=" + encodeURIComponent(state);
 				}
-				if (_t.icon.tagName.toLowerCase() === "img") {
-					_t.icon.addEventListener("error", replaceImageWithNone);
-					_t.icon.setAttribute("src", src);
-				} else if (smarthome.UI.inlineSVG) {
-					_t.getSVGIconAndReplaceWithInline(src, false, "<svg/>");
+			}
+			if (iconSrc === _t.iconSource) {
+				if (iconSrc === "oh") {
+					if (iconSet !== _t.iconSet || iconName !== _t.iconName) {
+						src = "<img data-icon=\"" + iconSet + ":" + iconName + "\" src=\".." + imgURL + "\" />";
+						_t.replaceIcon(src);
+					} else if (_t.icon.tagName.toLowerCase() === "img" && !_t.icon.src.endsWith(noneImageSrc)) {
+						_t.icon.addEventListener("error", replaceImageWithNone);
+						_t.icon.setAttribute("src", imgURL);
+					} else if (_t.icon.tagName.toLowerCase() === "svg" && smarthome.UI.inlineSVG) {
+						_t.getSVGIconAndReplaceWithInline(imgURL, false, "<svg/>");
+					}
+				} else if (iconSrc === "if") {
+					_t.icon.setAttribute("icon", encodeURIComponent(iconSet) + ":" + encodeURIComponent(iconName));
+				} else if (iconSrc === "material" || iconSrc === "f7") {
+					_t.icon.innerHTML = iconName;
+				}
+			} else {
+				// Different icon source => DOM element to be be replaced
+
+				if (iconSrc === "oh") {
+					src = "<img data-icon=\"" + iconSet + ":" + iconName + "\" src=\".." + imgURL + "\" />";
+				} else if (iconSrc === "if") {
+					src = "<iconify-icon icon=\"" +
+						encodeURIComponent(iconSet) + ":" + encodeURIComponent(iconName) +
+						"\"></iconify-icon>";
+				} else if (iconSrc === "material") {
+					src = "<span class=\"material-icons\">" + iconName + "</span>";
+				} else if (iconSrc === "f7") {
+					src = "<span class=\"f7-icons\">" + iconName + "</span>";
+				} else {
+					src = null;
+				}
+				if (src !== null) {
+					_t.replaceIcon(src);
 				}
 			}
 		};
@@ -486,8 +597,8 @@
 			_t.visible = state;
 		};
 
-		_t.setValue = function(value, itemState, visible) {
-			_t.reloadIcon(itemState);
+		_t.setValue = function(value, itemState, visible, icon) {
+			_t.reloadIcon(itemState, icon);
 			if (suppress) {
 				suppress = false;
 			} else {
@@ -520,7 +631,7 @@
 		};
 
 		_t.destroy = function() {
-			if (_t.icon !== null) {
+			if (_t.icon !== null && _t.iconSource === "oh") {
 				_t.icon.removeEventListener("load", convertToInlineSVG);
 				_t.icon.removeEventListener("error", replaceImageWithNone);
 			}
@@ -2476,7 +2587,7 @@
 				if (value === null) {
 					value = update.state;
 				}
-				widget.setValue(smarthome.UI.escapeHtml(value), update.state, update.visibility);
+				widget.setValue(smarthome.UI.escapeHtml(value), update.state, update.visibility, update.icon);
 			}
 
 			if (labelColor === "primary") {
@@ -2541,7 +2652,8 @@
 				data = JSON.parse(payload.data),
 				itemIncluded = false,
 				state = "NULL",
-				title;
+				title,
+				icon;
 
 			if (data.TYPE === "ALIVE") {
 				return;
@@ -2583,6 +2695,8 @@
 
 			title = _t.getTitleFromLabel(data.label);
 
+			icon = data.reloadIcon ? data.icon : undefined;
+
 			if (
 				(data.widgetId === smarthome.UI.page) &&
 				(title !== null)
@@ -2596,7 +2710,8 @@
 					label: data.label,
 					labelcolor: data.labelcolor,
 					valuecolor: data.valuecolor,
-					iconcolor: data.iconcolor
+					iconcolor: data.iconcolor,
+					icon: icon
 				};
 				_t.updateWidget(smarthome.dataModel[data.widgetId], update);
 			}
@@ -2664,7 +2779,8 @@
 							label: widget.label,
 							labelcolor: widget.labelcolor,
 							valuecolor: widget.valuecolor,
-							iconcolor: widget.iconcolor
+							iconcolor: widget.iconcolor,
+							icon: widget.icon
 						};
 						_t.updateWidget(w, update);
 					}
@@ -2942,6 +3058,9 @@
 	formIcon: ".mdl-form__icon",
 	formIconImg: ".mdl-form__icon img",
 	formIconSvg: ".mdl-form__icon svg",
+	formIconIconify: ".mdl-form__icon iconify-icon",
+	formIconMaterial: ".material-icons",
+	formIconFramework7: ".f7-icons",
 	formLabel: ".mdl-form__label",
 	uiLoadingBar: ".ui__loading",
 	layoutTitle: ".mdl-layout-title",
