@@ -1,5 +1,5 @@
 <template>
-  <f7-card expandable ref="card" class="model-card" :class="type + '-card'" :animate="$f7.data.themeOptions.expandableCardAnimation !== 'disabled'" card-tablet-fullscreen @card:opened="cardOpening" @card:closed="cardClosed">
+  <f7-card v-if="visible" expandable ref="card" class="model-card" :class="type + '-card'" :animate="$f7.data.themeOptions.expandableCardAnimation !== 'disabled'" card-tablet-fullscreen @card:opened="cardOpening" @card:closed="cardClosed">
     <f7-card-content :padding="false">
       <div :class="(!backgroundImageUrl) ? `bg-color-${color}` : undefined" :style="{ height: `calc(var(--f7-safe-area-top) + ${headerHeight})` }">
         <f7-card-header :text-color="config.invertText ? 'black' : 'white'" class="display-block card-header" :style="{ height: `calc(var(--f7-safe-area-top) + ${headerHeight})` }">
