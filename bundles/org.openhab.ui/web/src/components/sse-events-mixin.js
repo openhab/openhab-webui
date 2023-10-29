@@ -1,6 +1,6 @@
-import OhPopup from './widgets/modals/oh-popup.vue'
-import OhSheet from './widgets/modals/oh-sheet.vue'
-import OhPopover from './widgets/modals/oh-popover.vue'
+import OhPopup from '@/components/widgets/modals/oh-popup.vue'
+import OhSheet from '@/components/widgets/modals/oh-sheet.vue'
+import OhPopover from '@/components/widgets/modals/oh-popover.vue'
 
 export default {
   data () {
