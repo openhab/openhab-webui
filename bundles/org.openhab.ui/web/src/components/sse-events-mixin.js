@@ -35,7 +35,7 @@ export default {
             break
           case topicCommand:
             const payload = JSON.parse(event.payload)
-            const [command, ...segments] = payload.value.trim().split(/(?<!\\):/)
+            const [command, ...segments] = payload.value.trim().split(':') // NOT use a RegEx lookbehind assertions here, because they are unsupported on Safari < 16.4, i.e. iOS 15.x
             const combined = segments.join(':')
             switch (command) {
               case 'navigate':
