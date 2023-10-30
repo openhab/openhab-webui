@@ -145,6 +145,7 @@
     "diacritic": "0.0.2",
     "eslint": "^7.19.0",
     "eslint-plugin-cypress": "^2.11.2",
+    "eslint-plugin-es": "^4.1.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-vue": "^7.5.0",
