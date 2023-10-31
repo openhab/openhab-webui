@@ -53,7 +53,7 @@
           v-if="suggestedAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
           :addons="suggestedAddons.filter((a) => a.type === 'binding')"
-          :show-as-cards="true"
+          :suggested="true"
           :title="'Binding Suggestions'"
           :subtitle="'Suggested bindings from network scan'" />
         <addons-section
@@ -117,7 +117,7 @@
         <addons-section
           v-if="suggestedAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
-          :show-as-cards="true"
+          :suggested="true"
           :addons="suggestedAddons.filter((a) => a.type === 'misc')"
           :title="'System Integrations Suggestions'"
           :subtitle="'Suggested system integrations from network scan'" />
