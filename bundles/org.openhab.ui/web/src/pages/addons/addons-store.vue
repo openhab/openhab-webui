@@ -65,7 +65,7 @@
         <addons-section
           v-if="addons && addons.marketplace"
           @addonButtonClick="addonButtonClick"
-          :addons="addons.marketplace.filter((a) => a.type === 'binding')"
+          :addons="marketplaceAddons.filter((a) => a.type === 'binding')"
           :title="'Community Marketplace'"
           :subtitle="'Bindings independently released by the community'" />
         <addons-section
@@ -124,7 +124,7 @@
         <addons-section
           v-if="addons && officialAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
-          :addons="allAddons.filter((a) => a.type === 'misc')"
+          :addons="unsuggestedAddons.filter((a) => a.type === 'misc')"
           :title="'System Integrations'"
           :featured="['misc-openhabcloud', 'misc-homekit', 'misc-metrics']"
           :subtitle="'Integrate openHAB with external systems'" />
@@ -195,17 +195,26 @@ export default {
     return {
       currentTab: this.initialTab || 'bindings',
       services: null,
-      suggestedAddons: [],
+      suggestions: [],
       ready: false,
       searchResults: []
     }
   },
   computed: {
     allAddons () {
+      return Object.keys(this.addons).flatMap((k) => this.addons[k])
+    },
+    suggestedAddons () {
+      return Object.keys(this.addons).flatMap((k) => this.addons[k]).filter((a) => this.suggestions.some((s) => s.uid === a.uid))
+    },
+    unsuggestedAddons () {
       return Object.keys(this.addons).flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
     },
     officialAddons () {
       return Object.keys(this.addons).filter((k) => k === 'eclipse' || k === 'karaf').flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
+    },
+    marketplaceAddons () {
+      return this.addons.marketplace.filter((a) => !this.suggestedAddons.includes(a))
     },
     otherAddons () {
       return Object.keys(this.addons).filter((k) => k !== 'eclipse' && k !== 'karaf' && k !== 'marketplace').flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
@@ -222,7 +231,7 @@ export default {
     load () {
       this.stopEventSource()
       this.$oh.api.get('/rest/addons/suggestions').then((data) => {
-        this.$set(this, 'suggestedAddons', data)
+        this.$set(this, 'suggestions', data)
       })
       this.$oh.api.get('/rest/addons/services').then((data) => {
         this.services = data

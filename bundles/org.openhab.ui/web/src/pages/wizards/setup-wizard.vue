@@ -416,9 +416,10 @@ export default {
       }
     })
     this.$oh.api.get('/rest/addons/suggestions').then((suggestedAddons) => {
+      let suggestions = suggestedAddons.flatMap((s) => s.uid)
       this.$oh.api.get('/rest/addons').then((data) => {
         this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
-        this.selectedAddons = this.addons.filter((a) => (this.recommendedAddons.includes(a.uid) || suggestedAddons.includes(a.uid)) && !a.installed)
+        this.selectedAddons = this.addons.filter((a) => (this.recommendedAddons.includes(a.uid) || suggestions.includes(a.uid)) && !a.installed)
         const self = this
         this.autocompleteAddons = this.$f7.autocomplete.create({
           openIn: 'popup',
@@ -440,7 +441,7 @@ export default {
               self.$set(self, 'selectedAddons', selected)
             }
           },
-          value: this.addons.filter((a) => this.recommendedAddons.includes(a.uid) || suggestedAddons.includes(a.uid)).map((a) => a.label)
+          value: this.addons.filter((a) => this.recommendedAddons.includes(a.uid) || suggestions.includes(a.uid)).map((a) => a.label)
         })
       })
     })
