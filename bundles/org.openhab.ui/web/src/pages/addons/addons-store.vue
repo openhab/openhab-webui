@@ -50,6 +50,13 @@
     <f7-tabs>
       <f7-tab :tab-active="currentTab === 'bindings'">
         <addons-section
+          v-if="suggestedAddons" :show-all="true"
+          @addonButtonClick="addonButtonClick"
+          :addons="suggestedAddons.filter((a) => a.type === 'binding')"
+          :show-as-cards="true"
+          :title="'Binding Suggestions'"
+          :subtitle="'Suggested bindings from network scan'" />
+        <addons-section
           v-if="officialAddons"
           @addonButtonClick="addonButtonClick"
           :addons="officialAddons.filter((a) => a.type === 'binding')"
@@ -107,6 +114,13 @@
           :subtitle="'Alternative user interfaces and icon sets'" />
       </f7-tab>
       <f7-tab :tab-active="currentTab === 'other'">
+        <addons-section
+          v-if="suggestedAddons" :show-all="true"
+          @addonButtonClick="addonButtonClick"
+          :show-as-cards="true"
+          :addons="suggestedAddons.filter((a) => a.type === 'misc')"
+          :title="'System Integrations Suggestions'"
+          :subtitle="'Suggested system integrations from network scan'" />
         <addons-section
           v-if="addons && officialAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
@@ -181,19 +195,20 @@ export default {
     return {
       currentTab: this.initialTab || 'bindings',
       services: null,
+      suggestedAddons: [],
       ready: false,
       searchResults: []
     }
   },
   computed: {
     allAddons () {
-      return Object.keys(this.addons).flatMap((k) => this.addons[k])
+      return Object.keys(this.addons).flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
     },
     officialAddons () {
-      return Object.keys(this.addons).filter((k) => k === 'eclipse' || k === 'karaf').flatMap((k) => this.addons[k])
+      return Object.keys(this.addons).filter((k) => k === 'eclipse' || k === 'karaf').flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
     },
     otherAddons () {
-      return Object.keys(this.addons).filter((k) => k !== 'eclipse' && k !== 'karaf' && k !== 'marketplace').flatMap((k) => this.addons[k])
+      return Object.keys(this.addons).filter((k) => k !== 'eclipse' && k !== 'karaf' && k !== 'marketplace').flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
     }
   },
   methods: {
@@ -206,6 +221,9 @@ export default {
     },
     load () {
       this.stopEventSource()
+      this.$oh.api.get('/rest/addons/suggestions').then((data) => {
+        this.$set(this, 'suggestedAddons', data)
+      })
       this.$oh.api.get('/rest/addons/services').then((data) => {
         this.services = data
         Promise.all(this.services.map((s) => this.$oh.api.get('/rest/addons?serviceId=' + s.id))).then((data2) => {
