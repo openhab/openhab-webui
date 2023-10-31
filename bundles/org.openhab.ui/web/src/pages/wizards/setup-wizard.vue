@@ -416,10 +416,11 @@ export default {
       }
     })
     this.$oh.api.get('/rest/addons/suggestions').then((suggestedAddons) => {
-      let suggestions = suggestedAddons.flatMap((s) => s.uid)
+      let suggestions = suggestedAddons.flatMap((s) => s.id)
       this.$oh.api.get('/rest/addons').then((data) => {
         this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
-        this.selectedAddons = this.addons.filter((a) => (this.recommendedAddons.includes(a.uid) || suggestions.includes(a.uid)) && !a.installed)
+        this.selectedAddons = this.addons.filter((a) => (this.recommendedAddons.includes(a.uid) || suggestions.includes(a.id)) && !a.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+        const sortedAddons = this.selectedAddons.concat(this.addons.filter((a) => (!this.selectedAddons.includes(a))))
         const self = this
         this.autocompleteAddons = this.$f7.autocomplete.create({
           openIn: 'popup',
@@ -430,9 +431,9 @@ export default {
           requestSourceOnOpen: true,
           source: (query, render) => {
             if (query.length === 0) {
-              render(self.addons.filter((a) => !a.installed).map((a) => a.label))
+              render(sortedAddons.filter((a) => !a.installed).map((a) => a.label))
             } else {
-              render(self.addons.filter((a) => !a.installed && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map((a) => a.label))
+              render(sortedAddons.filter((a) => !a.installed && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map((a) => a.label))
             }
           },
           on: {
@@ -441,7 +442,7 @@ export default {
               self.$set(self, 'selectedAddons', selected)
             }
           },
-          value: this.addons.filter((a) => this.recommendedAddons.includes(a.uid) || suggestions.includes(a.uid)).map((a) => a.label)
+          value: this.addons.filter((a) => this.recommendedAddons.includes(a.uid) || suggestions.includes(a.id)).map((a) => a.label)
         })
       })
     })
