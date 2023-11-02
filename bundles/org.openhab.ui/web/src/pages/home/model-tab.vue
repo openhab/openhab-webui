@@ -1,5 +1,5 @@
 <template>
-  <div class="disable-user-select">
+  <div class="disable-user-select model-tab">
     <div v-for="(elements, idx) in groups" :key="idx">
       <f7-block-title medium v-if="elements.length > 0 && elements[0].separator">
         {{ elements[0].separator }}
@@ -19,6 +19,8 @@
 </template>
 
 <style lang="stylus">
+.model-tab > div:not(:has(.model-card))
+  display none
 
 .model-cards-section
   justify-content center

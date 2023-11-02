@@ -24,7 +24,8 @@ module.exports = {
     '@babel',
     'import',
     'cypress',
-    'vue'
+    'vue',
+    'es'
   ],
 
   globals: {
@@ -57,6 +58,7 @@ module.exports = {
     'no-case-declarations': 'off',
     'no-console': 'off',
     'no-debugger': 'off',
+    'es/no-regexp-lookbehind-assertions': 'error', // Supported in Safari  >= 16.4, which breaks iOS 15.x.
     'no-trailing-spaces': 'error',
     'no-unsafe-optional-chaining': 'error',
     'no-whitespace-before-property': 'error',

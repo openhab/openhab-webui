@@ -62,9 +62,13 @@
                 <div><f7-block-title>Icon Color</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
               </f7-block>
+              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+                <div><f7-block-title>Icon Rules</f7-block-title></div>
+                <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon" />
+              </f7-block>
               <f7-block v-if="selectedWidget && ['Switch', 'Selection'].indexOf(selectedWidget.component) >= 0">
                 <div><f7-block-title>Mappings</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label" />
+                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label = icon" />
               </f7-block>
               <f7-block v-if="selectedWidget && canAddChildren">
                 <div><f7-block-title>Add Child Widget</f7-block-title></div>
@@ -446,11 +450,11 @@ export default {
         })
         widgetList.forEach(widget => {
           if (widget.config) {
-            Object.keys(widget.config).filter(attr => ['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor'].includes(attr)).forEach(attr => {
+            Object.keys(widget.config).filter(attr => ['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)).forEach(attr => {
               widget.config[attr].forEach(param => {
-                if (((attr === 'mappings') && !(/^\s*("[^\n"]*"|[^\n"]+)\s*=\s*("[^\n"]*"|[^\n"]+)\s*$/u.test(param))) ||
-                    ((attr === 'visibility') && !(/^\s*\S+\s*(==|>=|<=|!=|>|<)\s*("[^\n"]*"|[^\n"]+)\s*$/u.test(param))) ||
-                    ((attr.includes('color')) && !(/^\s*(((\S+\s*)?(==|>=|<=|!=|>|<)\s*)?(("[^\n"]*"|[^\n"]+)\s*=\s*))?("#?\w+"|'#?\w+'|#?\w+)\s*$/u.test(param)))) {
+                if (((attr === 'mappings') && !(/^\s*("[^\n"]*"|[^\n="]+)\s*=\s*("[^\n"]*"|[^\n="]+)\s*(=\s*("[^\n"]*"|[^\n="]+))?$/u.test(param))) ||
+                    ((attr === 'visibility') && !this.validateRule(param)) ||
+                    ((['valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)) && !this.validateRule(param, true))) {
                   let label = widget.config && widget.config.label ? widget.config.label : 'without label'
                   validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in ' + attr + ': ' + param)
                 }
@@ -474,6 +478,16 @@ export default {
         }
         return true
       }
+    },
+    validateRule (rule, hasArgument = false) {
+      let conditions = rule
+      if (hasArgument) {
+        let index = rule.lastIndexOf('=') + 1
+        if (!/^("#?(\w|:|-)+"|'#?(\w|:|-)+'|#?(\w|:|-)+)$/.test(rule.substring(index).trim())) return false
+        conditions = rule.substring(0, index - 1)
+        if (conditions === '') return true
+      }
+      return conditions.split(' AND ').every(p => /^\s*((\S+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|[^\n"]+)\s*$/u.test(p))
     },
     cleanConfig (widget) {
       if (widget.config) {

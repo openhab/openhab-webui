@@ -1,5 +1,8 @@
 <template>
-  <div :style="config.style">
+  <div :style="{
+    width: '100%',
+    ...config.style
+  }">
     <div v-if="!config.openIn" ref="container" style="width: 100%" />
     <div v-else ref="swatch" :class="config.swatchClasses || ['elevation-4', 'elevation-hover-8', 'elevation-pressed-1', 'elevation-transition']" :style="{
       width: (config.swatchSize) ? config.swatchSize + 'px' : '32px',

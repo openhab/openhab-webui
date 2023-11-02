@@ -1,6 +1,6 @@
-import OhPopup from './widgets/modals/oh-popup.vue'
-import OhSheet from './widgets/modals/oh-sheet.vue'
-import OhPopover from './widgets/modals/oh-popover.vue'
+import OhPopup from '@/components/widgets/modals/oh-popup.vue'
+import OhSheet from '@/components/widgets/modals/oh-sheet.vue'
+import OhPopover from '@/components/widgets/modals/oh-popover.vue'
 
 export default {
   data () {
@@ -35,7 +35,7 @@ export default {
             break
           case topicCommand:
             const payload = JSON.parse(event.payload)
-            const [command, ...segments] = payload.value.trim().split(/(?<!\\):/)
+            const [command, ...segments] = payload.value.trim().split(':') // NOT use a RegEx lookbehind assertions here, because they are unsupported on Safari < 16.4, i.e. iOS 15.x
             const combined = segments.join(':')
             switch (command) {
               case 'navigate':

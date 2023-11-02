@@ -11,21 +11,25 @@ function writeWidget (widget, indent) {
         dsl += ' sendFrequency=' + widget.config[key]
       } else if (key === 'forceAsItem') {
         dsl += ' forceasitem=' + widget.config[key]
-      } else if (['icon', 'staticIcon'].includes(key)) {
+      } else if (key === 'icon') {
         if (widget.config.staticIcon) {
           dsl += ' staticIcon=' + widget.config[key]
-        } else {
+        } else if (!widget.config['iconrules'] || widget.config['iconrules'].length === 0) {
           dsl += ' icon=' + widget.config[key]
         }
-      } else {
-        dsl += ` ${key}=`
+      } else if (key !== 'staticIcon') {
+        if (key === 'iconrules') {
+          dsl += ' icon='
+        } else {
+          dsl += ` ${key}=`
+        }
         if (key === 'item' || key === 'period' || key === 'legend' || Number.isFinite(widget.config[key])) {
           dsl += widget.config[key]
         } else if (key === 'mappings') {
           dsl += '['
           dsl += widget.config[key].filter(Boolean).map(mapping => {
             return mapping.split('=').map(value => {
-              if (/^[^"'].*\W.*[^"']$/.test(value)) {
+              if (/^.*\W.*$/.test(value) && /^[^"'].*[^"']$/.test(value)) {
                 return '"' + value + '"'
               }
               return value
@@ -33,34 +37,9 @@ function writeWidget (widget, indent) {
           }).join(',')
           dsl += ']'
         } else if (key === 'visibility') {
-          dsl += '['
-          dsl += widget.config[key].filter(Boolean).map(visibility => {
-            let index = Math.max(visibility.lastIndexOf('='), visibility.lastIndexOf('>'), visibility.lastIndexOf('<')) + 1
-            let value = visibility.substring(index)
-            if (/^[^"'].*\W.*[^"']$/.test(value)) {
-              value = '"' + value + '"'
-            }
-            return visibility.substring(0, index) + value
-          }).join(',')
-          dsl += ']'
-        } else if (['valuecolor', 'labelcolor', 'iconcolor'].includes(key)) {
-          dsl += '['
-          dsl += widget.config[key].filter(Boolean).map(color => {
-            let index = color.lastIndexOf('=') + 1
-            let colorvalue = color.substring(index).trim()
-            if (!/^(".*")|('.*')$/.test(colorvalue)) {
-              colorvalue = '"' + colorvalue + '"'
-            }
-            colorvalue = (index > 0 ? '=' + colorvalue : colorvalue)
-            let value = color.substring(0, index - 1)
-            index = Math.max(value.lastIndexOf('='), value.lastIndexOf('>'), value.lastIndexOf('<')) + 1
-            let condition = value.substring(index)
-            if (/^[^"'].*\W.*[^"']$/.test(condition)) {
-              condition = '"' + condition + '"'
-            }
-            return color.substring(0, index) + condition + colorvalue
-          }).join(',')
-          dsl += ']'
+          dsl += '[' + writeConditions(widget.config[key]) + ']'
+        } else if (['valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(key)) {
+          dsl += '[' + writeConditions(widget.config[key], true) + ']'
         } else {
           dsl += '"' + widget.config[key] + '"'
         }
@@ -77,6 +56,30 @@ function writeWidget (widget, indent) {
   dsl += '\n'
 
   return dsl
+}
+
+function writeConditions (value, hasArgument = false) {
+  return value.filter(Boolean).map(rule => {
+    let argument = ''
+    let conditions = rule
+    if (hasArgument) {
+      let index = rule.lastIndexOf('=') + 1
+      argument = rule.substring(index).trim()
+      if (!/^(".*")|('.*')$/.test(argument)) {
+        argument = '"' + argument + '"'
+      }
+      argument = (index > 0 ? '=' + argument : argument)
+      conditions = rule.substring(0, index - 1)
+    }
+    return conditions.split(' AND ').map(condition => {
+      let index = Math.max(condition.lastIndexOf('='), condition.lastIndexOf('>'), condition.lastIndexOf('<')) + 1
+      let conditionValue = condition.substring(index).trim()
+      if (/^.*\W.*$/.test(conditionValue) && /^[^"'].*[^"']$/.test(conditionValue)) {
+        conditionValue = '"' + conditionValue + '"'
+      }
+      return condition.substring(0, index) + conditionValue
+    }).join(' AND ') + argument
+  }).join(',')
 }
 
 export default {

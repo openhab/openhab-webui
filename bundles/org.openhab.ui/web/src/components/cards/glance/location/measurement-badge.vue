@@ -79,6 +79,10 @@ export default {
           direct = findPoints(this.element.properties, 'Point_Setpoint', true, 'Property_Temperature')
           if (direct.length) return direct
           return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Setpoint', true, 'Property_Temperature')
+        case 'humidity':
+          direct = findPoints(this.element.properties, 'Point_Setpoint', true, 'Property_Humidity')
+          if (direct.length) return direct
+          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Setpoint', true, 'Property_Humidity')
         default:
           return []
       }
@@ -101,7 +105,7 @@ export default {
       return (this.type === 'temperature') ? Math.round(ret * 10) / 10 : Math.round(ret)
     },
     reduceAux () {
-      if (this.type !== 'temperature') return undefined
+      if (this.type !== 'temperature' && this.type !== 'humidity') return undefined
       const ret = this.mapAux.reduce((avg, state, arr, { length }) => {
         const value = Number.parseFloat(state)
         if (Number.isFinite(value)) {
