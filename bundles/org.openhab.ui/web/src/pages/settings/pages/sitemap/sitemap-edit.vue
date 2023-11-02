@@ -427,7 +427,7 @@ export default {
           }
         })
         widgetList.filter(widget => widget.component === 'Chart').forEach(widget => {
-          if (!(widget.config && widget.config.period && ['h', '4h', '8h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '3M', 'Y'].includes(widget.config.period))) {
+          if (!(widget.config && widget.config.period && ['h', '4h', '8h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '4M', 'Y'].includes(widget.config.period))) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid period configured: ' + widget.config.period)
           }
