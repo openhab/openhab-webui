@@ -253,10 +253,13 @@ export const actionsMixin = {
           break
         case 'analyze':
         case 'analyzer':
-          const actionAnalyzerItems = actionConfig[prefix + 'actionAnalyzerItems']
+          let actionAnalyzerItems = actionConfig[prefix + 'actionAnalyzerItems']
           const actionAnalyzerChartType = actionConfig[prefix + 'actionAnalyzerChartType']
           const actionAnalyzerCoordSystem = actionConfig[prefix + 'actionAnalyzerCoordSystem']
-          this.$f7.views.main.router.navigate(`/analyzer/?items=${actionAnalyzerItems.join(',')}&chartType=${actionAnalyzerChartType || ''}&coordSystem=${actionAnalyzerCoordSystem || ''}`)
+          if (Array.isArray(actionAnalyzerItems)) {
+            actionAnalyzerItems = actionAnalyzerItems.join(',')
+          }
+          this.$f7.views.main.router.navigate(`/analyzer/?items=${actionAnalyzerItems || ''}&chartType=${actionAnalyzerChartType || ''}&coordSystem=${actionAnalyzerCoordSystem || ''}`)
           console.log('Opening the analyzer')
           break
         case 'url':
