@@ -109,7 +109,7 @@ export default {
         { key: '2W', value: '2 Weeks' },
         { key: 'M', value: 'Month' },
         { key: '2M', value: '2 Months' },
-        { key: '3M', value: '3 Months' },
+        { key: '4M', value: '4 Months' },
         { key: 'Y', value: 'Year' }
       ],
       inputHintDefs: [
