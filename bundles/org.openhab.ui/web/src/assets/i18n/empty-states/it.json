@@ -7,6 +7,8 @@
   "things.text": "Le Thing sono dispositivi e servizi connessi a openHAB forniti dai binding.<br><br>I binding installati che supportano la scansione automatica aggiungeranno le Thing trovate nella Inbox. Puoi anche avviare una scansione per un binding specifico o aggiungere Thing manualmente con il pulsante di seguito.",
   "things.nobindings.title": "Nessun binding",
   "things.nobindings.text": "Per aggiungere Thing al tuo sistema, devi prima installare dei binding.",
+  "transformations.title": "Ancora nessuna trasformazione (Transfomation)",
+  "transformations.text": "Le trasformazioni sono utilizzate per tradurre i dati da un valore grezzo confuso o tecnico a una rappresentazione leggibile dall'uomo.",
   "model.title": "Inizia a modellare la tua casa",
   "model.text": "Costruisci un modello per i tuoi Item per organizzarli e associarli semanticamente.<br><br>Comincia con una gerarchia di ambienti: edificio, aree esterne, piani e stanze in base alla tua struttura di casa. Quindi aggiungi dispositivi dalle tue Thing (o manualmente).",
   "items.title": "Nessun Item",
