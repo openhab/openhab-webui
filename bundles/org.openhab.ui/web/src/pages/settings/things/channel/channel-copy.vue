@@ -4,7 +4,7 @@
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
-          Done
+          Save
         </f7-link>
       </f7-nav-right>
     </f7-navbar>
