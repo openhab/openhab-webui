@@ -40,7 +40,7 @@ export default {
     ChannelGeneralSettings,
     ConfigSheet
   },
-  props: ['thing', 'thingType', 'channel', 'channelType', 'channelId', 'createMode'],
+  props: ['thing', 'channel', 'channelType', 'channelId'],
   data () {
     return {
       configDescription: {},
