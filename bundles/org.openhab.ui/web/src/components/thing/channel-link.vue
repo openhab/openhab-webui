@@ -44,7 +44,7 @@
       <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
     </f7-list-item>
     <f7-list-button class="searchbar-ignore" color="blue" :title="(channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'" @click="configureChannel()" />
-    <f7-list-button class="searchbar-ignore" v-if="extensible" color="blue" :title="(channelType.parameterGroups.length || channelType.parameters.length) ? 'Copy Channel' : ''" @click="copyChannel()" />
+    <f7-list-button class="searchbar-ignore" v-if="extensible && thing.editable" color="blue" :title="(channelType.parameterGroups.length || channelType.parameters.length) ? 'Copy Channel' : ''" @click="copyChannel()" />
     <f7-list-button class="searchbar-ignore" v-if="extensible" color="red" title="Remove Channel" @click="removeChannel()" />
   </f7-list>
 </template>
