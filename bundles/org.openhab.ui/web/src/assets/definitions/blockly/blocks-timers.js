@@ -336,7 +336,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   }
 
   /*
-  * Allows cancelation of a named timer
+  * Cancels a named timer
   *
   * Block type definition
   */
@@ -348,6 +348,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
       if (isGraalJs) {
         tn.appendField(new Blockly.FieldDropdown([['private', 'private'], ['shared', 'shared']]), 'cache')
       }
+      tn.appendField('timer')
 
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -358,7 +359,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   }
 
   /*
-  * Allows cancelation of a named timer
+  * Cancels a named timer
   *
   * Code generation
   */
@@ -395,6 +396,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
       if (isGraalJs) {
         tn.appendField(new Blockly.FieldDropdown([['private', 'private'], ['shared', 'shared']]), 'cache')
       }
+      tn.appendField('timer')
 
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)

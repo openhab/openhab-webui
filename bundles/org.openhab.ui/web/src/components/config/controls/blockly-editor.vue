@@ -526,6 +526,18 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_timer_reschedule">
+            <value name="timerName">
+              <shadow type="text">
+                <field name="TEXT">MyTimer</field>
+              </shadow>
+            </value>
+            <value name="delay">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
           <block type="oh_timer_isActive">
             <value name="timerName">
               <shadow type="text">
@@ -544,18 +556,6 @@
             <value name="timerName">
               <shadow type="text">
                 <field name="TEXT">MyTimer</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="oh_timer_reschedule">
-            <value name="timerName">
-              <shadow type="text">
-                <field name="TEXT">MyTimer</field>
-              </shadow>
-            </value>
-            <value name="delay">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
               </shadow>
             </value>
           </block>
