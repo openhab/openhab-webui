@@ -62,7 +62,6 @@
 import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
 import ConfigureLinkPage from '@/pages/settings/things/link/link-edit.vue'
 import ConfigureChannelPage from '@/pages/settings/things/channel/channel-edit.vue'
-import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 import CopyChannelPage from '@/pages/settings/things/channel/channel-copy.vue'
 
 import ItemMixin from '@/components/item/item-mixin'
