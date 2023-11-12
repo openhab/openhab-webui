@@ -6,7 +6,6 @@
 [![Jenkins Build Status](https://ci.openhab.org/job/openHAB-WebUI/badge/icon)](https://ci.openhab.org/job/openHAB-WebUI/)
 [![EPL-2.0](https://img.shields.io/badge/license-EPL%202-green.svg)](https://opensource.org/licenses/EPL-2.0)
 [![Crowdin](https://badges.crowdin.net/openhab-webui/localized.svg)](https://crowdin.com/project/openhab-webui)
-[![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=2164344)](https://www.bountysource.com/teams/openhab/issues?tracker_ids=2164344)
 
 This repository contains the official web user interfaces for openHAB.
 
