@@ -375,10 +375,7 @@ export default {
       activeToolTab: 'pin',
       activeHelpTab: 'current',
       quickStartShow: true,
-      currentUrl: '',
-
-      communicationFailureToast: null,
-      communicationFailureTimeoutId: null
+      currentUrl: ''
     }
   },
   i18n: {
