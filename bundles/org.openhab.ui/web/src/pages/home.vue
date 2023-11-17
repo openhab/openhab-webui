@@ -12,8 +12,8 @@
         {{ title }}
       </f7-nav-title>
       <f7-nav-right>
-        <f7-link v-if="(this.$store.getters.isAdmin && $store.state.developerDock && windowWidth >= 1280)" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
-        <f7-link v-else-if="(this.$store.getters.isAdmin && !$store.state.developerDock && windowWidth >= 1280)" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
+        <f7-link v-if="(this.$store.getters.isAdmin && $store.state.developerDock && $f7.width >= 1280)" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
+        <f7-link v-else-if="(this.$store.getters.isAdmin && !$store.state.developerDock && $f7.width >= 1280)" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
         <f7-link v-if="this.$store.getters.isAdmin" icon-ios="f7:pencil" icon-aurora="f7:pencil" icon-md="material:edit" :tooltip="$t('home.editHome')" :href="(homePageComponent) ? '/settings/pages/home/home' : '/settings/pages/home/add'" />
         <f7-link v-if="showPinToHome" icon-ios="f7:pin_fill" icon-aurora="f7:pin_fill" icon-md="material:add_location" :tooltip="$t('home.pinToHome')" @click="pinToHome" />
         <f7-link v-if="showExitToApp" icon-ios="f7:square_arrow_right" icon-aurora="f7:square_arrow_right" icon-md="material:exit_to_app" :tooltip="$t('home.exitToApp')" @click="exitToApp" />
@@ -103,8 +103,7 @@ export default {
       showExitToApp: false,
       currentTab: this.initialTab || 'overview',
       overviewPageKey: this.$utils.id(),
-      items: [],
-      windowWidth: window.innerWidth
+      items: []
     }
   },
   computed: {

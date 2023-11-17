@@ -153,11 +153,11 @@ export default {
     }
   },
   computed: {
-    documentationLink () {
-      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/${this.type.toLowerCase()}`
-    },
     type () {
       return this.showScripts ? 'Scripts' : (this.showScenes ? 'Scenes' : 'Rules')
+    },
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/${this.type.toLowerCase()}`
     },
     indexedRules () {
       return this.rules.reduce((prev, rule, i, rules) => {
