@@ -2,6 +2,8 @@
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
     <f7-navbar :title="type" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
+        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
+        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -74,8 +76,7 @@
 
       <f7-col v-else-if="rules.length > 0">
         <f7-block-title class="searchbar-hide-on-search">
-          {{ rules.length }} {{ type.toLowerCase() }} -
-          <f7-link external :href="documentationLink" target="_blank" text="Open documentation" color="blue" />
+          {{ rules.length }} {{ type.toLowerCase() }}
         </f7-block-title>
 
         <f7-list
@@ -118,7 +119,7 @@
       <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
       <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
       <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
-      <f7-row class="display-flex justify-content-center">
+      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
         <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
       </f7-row>
     </f7-block>

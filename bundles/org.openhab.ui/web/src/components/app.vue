@@ -100,8 +100,8 @@
                             :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') === 0 }">
                 <f7-icon slot="media" f7="burn" color="gray" />
               </f7-list-item>
-              <!-- <f7-list-item link="" @click="$f7.emit('toggleDeveloperSidebar')" title="Sidebar" view=".view-main" panel-close :animate="false" no-chevron>
-                <f7-icon slot="media" :f7="$store.state.developerSidebar ? 'wrench_fill' : 'wrench'" color="gray" />
+              <!-- <f7-list-item link="" @click="$f7.emit('toggleDeveloperDock')" title="Dock" view=".view-main" panel-close :animate="false" no-chevron>
+                <f7-icon slot="media" :f7="$store.state.developerDock ? 'wrench_fill' : 'wrench'" color="gray" />
               </f7-list-item> -->
             </ul>
           </li>
@@ -140,8 +140,8 @@
     <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
 
-    <f7-panel v-if="showDeveloperSidebar" right :visible-breakpoint="1280" resizable>
-      <developer-sidebar />
+    <f7-panel v-if="showDeveloperDock" right :visible-breakpoint="1280" resizable>
+      <developer-dock :dock="activeDock" :helpTab="activeHelpTab" :toolTab="activeToolTab" />
     </f7-panel>
 
     <f7-block v-if="!ready && communicationFailureMsg" class="block-narrow">
@@ -248,7 +248,7 @@ import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
 import cordovaApp from '../js/cordova-app.js'
 import routes from '../js/routes.js'
 import PanelRight from '../pages/panel-right.vue'
-import DeveloperSidebar from './developer/developer-sidebar.vue'
+import DeveloperDock from './developer/developer-dock.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { loadLocaleMessages } from '@/js/i18n'
@@ -266,7 +266,7 @@ export default {
   components: {
     EmptyStatePlaceholder,
     PanelRight,
-    DeveloperSidebar
+    DeveloperDock
   },
   data () {
     let theme = localStorage.getItem('openhab.ui:theme')
@@ -370,7 +370,11 @@ export default {
 
       showSettingsSubmenu: false,
       showDeveloperSubmenu: false,
-      showDeveloperSidebar: false,
+      showDeveloperDock: false,
+      activeDock: 'tools',
+      activeToolTab: 'pin',
+      activeHelpTab: 'current',
+      quickStartShow: true,
       currentUrl: ''
     }
   },
@@ -501,6 +505,12 @@ export default {
 
           if (data[2]) dayjs.locale(data[2].key)
 
+          const page = data[0].find((p) => p.uid === 'overview')
+          if ((!page) || (page.component !== 'oh-layout-page') || (!page.slots || (!page.slots.default.length && !page.slots.masonry && !page.slots.canvas && !page.slots.grid))) {
+            if (this.quickStartShow) this.selectDeveloperDock({ 'dock': 'help', 'helpTab': 'quick' })
+            this.quickStartShow = false
+          }
+
           // finished with loading
           this.ready = true
           return Promise.resolve()
@@ -586,11 +596,19 @@ export default {
         this.$nextTick(() => this.$f7.panel.get('left').disableVisibleBreakpoint())
       }
     },
-    toggleDeveloperSidebar () {
+    toggleDeveloperDock () {
       if (!this.$store.getters.isAdmin) return
-      this.showDeveloperSidebar = !this.showDeveloperSidebar
-      if (this.showDeveloperSidebar) this.$store.dispatch('startTrackingStates')
-      this.$store.commit('setDeveloperSidebar', this.showDeveloperSidebar)
+      this.showDeveloperDock = !this.showDeveloperDock
+      if (this.showDeveloperDock) this.$store.dispatch('startTrackingStates')
+      this.$store.commit('setDeveloperDock', this.showDeveloperDock)
+    },
+    selectDeveloperDock (dockOpts) {
+      if (dockOpts) {
+        if (dockOpts.dock) this.activeDock = dockOpts.dock
+        if (dockOpts.helpTab) this.activeHelpTab = dockOpts.helpTab
+        if (dockOpts.toolTab) this.activeToolTab = dockOpts.toolTab
+      }
+      if (!this.showDeveloperDock) this.toggleDeveloperDock()
     },
     toggleVisibleBreakpoint () {
       this.$f7.panel.get('left').toggleVisibleBreakpoint()
@@ -599,7 +617,7 @@ export default {
     },
     keyDown (ev) {
       if (ev.keyCode === 68 && ev.shiftKey && ev.altKey) {
-        this.toggleDeveloperSidebar()
+        this.toggleDeveloperDock()
         ev.stopPropagation()
         ev.preventDefault()
       }
@@ -671,6 +689,7 @@ export default {
           this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0 || page.route.url.indexOf('/settings/addons/') === 0
           this.showDeveloperSubmenu = page.route.url.indexOf('/developer/') === 0
           this.currentUrl = page.route.url
+          this.$store.commit('setPagePath', this.currentUrl)
         }
       })
 
@@ -690,8 +709,12 @@ export default {
         this.updateThemeOptions()
       })
 
-      this.$f7.on('toggleDeveloperSidebar', () => {
-        this.toggleDeveloperSidebar()
+      this.$f7.on('toggleDeveloperDock', () => {
+        this.toggleDeveloperDock()
+      })
+
+      this.$f7.on('selectDeveloperDock', (opts) => {
+        this.selectDeveloperDock(opts)
       })
 
       this.$f7.on('smartSelectOpened', (smartSelect) => {

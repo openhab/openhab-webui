@@ -1,21 +1,13 @@
 <template>
-  <f7-page class="developer-sidebar">
-    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'">
-      <f7-subnavbar :inner="false" v-if="!$theme.md">
-        <f7-searchbar custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
-      </f7-subnavbar>
-    </f7-navbar>
-    <f7-subnavbar :inner="false" v-if="$theme.md">
+  <f7-block class="developer-sidebar">
+    <f7-row :inner="false" v-if="!$theme.md">
+      <f7-searchbar style="width: 100%" custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
+    </f7-row>
+    <f7-row style="width: 100%" :inner="false" v-if="$theme.md">
       <f7-searchbar custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
-    </f7-subnavbar>
+    </f7-row>
     <div v-if="!searching" class="developer-sidebar-content">
-      <f7-segmented strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left))">
-        <f7-button :active="activeTab === 'pin'" icon-f7="pin_fill" icon-size="18" @click="activeTab = 'pin'" />
-        <f7-button :active="activeTab === 'events'" icon-f7="bolt_horizontal_fill" icon-size="18" @click="activeTab = 'events'" />
-        <f7-button :active="activeTab === 'scripting'" icon-f7="pencil_ellipsis_rectangle" icon-size="18" @click="activeTab = 'scripting'" />
-        <f7-button :active="activeTab === 'tools'" icon-f7="rectangle_stack_badge_plus" icon-size="18" @click="activeTab = 'tools'" />
-      </f7-segmented>
-      <div v-if="activeTab === 'pin'">
+      <div v-if="activeToolTab === 'pin'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal" medium>
             Pinned Objects
@@ -196,7 +188,7 @@
         </f7-block>
       </div>
 
-      <div v-else-if="activeTab === 'events'">
+      <div v-else-if="activeToolTab === 'events'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex" medium>
             <span>Event Monitor</span>
@@ -222,7 +214,7 @@
         </f7-block>
       </div>
 
-      <div v-else-if="activeTab === 'scripting'">
+      <div v-else-if="activeToolTab === 'scripting'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal" medium>
             Code Tools
@@ -241,7 +233,7 @@
         </f7-block>
       </div>
 
-      <div v-else-if="activeTab === 'tools'">
+      <div v-else-if="activeToolTab === 'tools'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal" medium>
             Create Shortcuts
@@ -311,26 +303,19 @@
       <item-standalone-control v-if="openedItem" :item="openedItem" :context="context" :no-border="true" />
     </f7-popover>
     <search-results v-if="searching" :searchResults="searchResults" :pinnedObjects="pinnedObjects" @pin="pin" @unpin="unpin" :cachedObjects="cachedObjects" :loading="searchResultsLoading" />
-  </f7-page>
+  </f7-block>
 </template>
 
 <style lang="stylus">
-.panel-right.panel-in-breakpoint:before
-  position absolute
-  left 0
-  top 0
-  height 100%
-  width 1px
-  background rgba(0,0,0,0.1)
-  content ''
-  z-index 6000
-
 .developer-sidebar
   scrollbar-width none /* Firefox */
   -ms-overflow-style none  /* IE 10+ */
+  margin 0 !important
+  padding 0
+  padding-top 0.3rem
+  width 100%
 
   .developer-sidebar-content
-    margin-top var(--f7-subnavbar-height)
     padding-top 0.3rem
 
   &.page
@@ -364,12 +349,12 @@ export default {
     SearchResults,
     ExpressionTester
   },
+  props: ['activeToolTab'],
   data () {
     return {
       searchQuery: '',
       searchResultsLoading: false,
       searching: false,
-      activeTab: 'pin',
       monitoredItems: [],
       sseClient: null,
       eventTopicFilter: '',
