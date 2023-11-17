@@ -15,7 +15,7 @@
                   <f7-list-item v-for="step in instruct.steps" :key="step.title" :link="step.link" :title="step.title">
                     <div class="item-text" v-html="step.text" />
                   </f7-list-item>
-                  <f7-list-button v-if="instruct.button" :external="true" :title="instruct.button.title" :href="documentationLinkPrefix+instruct.button.link" target="_blank" />
+                  <f7-list-button v-if="instruct.button" :external="true" :title="instruct.button.title" :href="documentationLinkPrefix + instruct.button.link" target="_blank" />
                 </f7-list>
               </f7-accordion-content>
             </f7-list-item>
@@ -71,27 +71,32 @@
             Page Help
           </f7-block-title>
         </f7-block>
-        <f7-block class="no-margin no-padding">
-          <thing-context v-if="($store.state.pagePath).indexOf('things')>=0" />
-          <item-context v-else-if="($store.state.pagePath).indexOf('items')>=0" />
-          <model-context v-else-if="($store.state.pagePath).indexOf('model')>=0" />
-          <page-context v-else-if="($store.state.pagePath).indexOf('pages')>=0" />
-          <rule-context v-else-if="($store.state.pagePath).indexOf('rules')>=0 || ($store.state.pagePath).indexOf('schedule')>=0" type="Rules" />
-          <rule-context v-else-if="($store.state.pagePath).indexOf('scenes')>=0" type="Scenes" />
-          <rule-context v-else-if="($store.state.pagePath).indexOf('scripts')>=0" type="Scripts" />
-          <widget-context v-else-if="($store.state.pagePath).indexOf('widgets')>=0" />
-          <transform-context v-else-if="($store.state.pagePath).indexOf('transformations')>=0" />
-          <addon-context v-else-if="($store.state.pagePath).indexOf('addons')>=0" />
-          <default-context v-else />
-        </f7-block>
-        <f7-block>
+
+        <thing-context v-if="($store.state.pagePath).indexOf('things') >= 0" />
+        <item-context v-else-if="($store.state.pagePath).indexOf('items') >= 0" />
+        <model-context v-else-if="($store.state.pagePath).indexOf('model') >= 0" />
+        <page-context v-else-if="($store.state.pagePath).indexOf('pages') >= 0" />
+        <rule-context v-else-if="($store.state.pagePath).indexOf('rules') >= 0 || ($store.state.pagePath).indexOf('schedule') >= 0" type="Rules" />
+        <rule-context v-else-if="($store.state.pagePath).indexOf('scenes') >= 0" type="Scenes" />
+        <rule-context v-else-if="($store.state.pagePath).indexOf('scripts') >= 0" type="Scripts" />
+        <widget-context v-else-if="($store.state.pagePath).indexOf('widgets') >= 0" />
+        <transform-context v-else-if="($store.state.pagePath).indexOf('transformations') >= 0" />
+        <addon-context v-else-if="($store.state.pagePath).indexOf('addons') >= 0" />
+        <default-context v-else style="width: 100%" />
+
+        <f7-block class="no-padding no-margin">
           <f7-block-title class="padding-horizontal" medium>
             More Help
           </f7-block-title>
-          <p>You can find many more details and help at these resources</p>
-          <p><f7-link external target="_blank" href="https://www.openhab.org/" v-t="'about.homePage'" /></p>
-          <p><f7-link external target="_blank" :href="`${documentationLinkPrefix}link/docs`" v-t="'about.documentation'" /></p>
-          <p><f7-link external target="_blank" href="https://community.openhab.org/" v-t="'about.communityForum'" /></p>
+        </f7-block>
+        <f7-block>
+          You can find many more details and help at these resources:
+          <ul>
+            <li><f7-link external target="_blank" href="https://www.openhab.org/" v-t="'about.homePage'" /></li>
+            <li><f7-link external target="_blank" :href="`${documentationLinkPrefix}link/docs`" v-t="'about.documentation'" /></li>
+            <li><f7-link external :href="`${documentationLinkPrefix}link/tutorial`" target="_blank" v-t="'home.overview.button.tutorial'" /></li>
+            <li><f7-link external target="_blank" href="https://community.openhab.org/" v-t="'about.communityForum'" /></li>
+          </ul>
         </f7-block>
       </div>
     </div>
@@ -162,7 +167,9 @@ export default {
   props: ['activeHelpTab'],
   data () {
     return {
-      addons: []
+      addons: [],
+      faqs: require('./help/help-faq-defs.json'),
+      qstart: require('./help/help-qstart-defs.json')
     }
   },
   computed: {
@@ -171,14 +178,14 @@ export default {
     }
   },
   created () {
-    this.faqs = require('./help/help-faq-defs.json')
-    this.qstart = require('./help/help-qstart-defs.json')
     this.$oh.api.get('/rest/addons').then(data => {
       this.addons = data.filter(addon => addon.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
     }).catch((err) => {
       // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
-      console.log('Error while accessing the API, retrying every 5 seconds: ', err)
-      setTimeout(this.load, 5000)
+      if (err === 'Bad Gateway' || err === 502) {
+        console.log('Error while accessing the API, retrying every 5 seconds: ', err)
+        setTimeout(this.load, 5000)
+      }
     })
   },
   i18n: {
