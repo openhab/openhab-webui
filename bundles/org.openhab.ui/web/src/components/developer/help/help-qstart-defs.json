@@ -27,6 +27,7 @@
         "text": "Left panel > Settings > Things > Inbox or click here <i class=\"f7-icons size-22 add-button-icon\">arrow_right</i>"
       },
       {
+        "link": "/settings/things/add",
         "title": "New Thing",
         "text": "Click on the <i class=\"f7-icons size-22 add-button-icon\">plus_circle_fill</i> in the lower-right corner"
       },
