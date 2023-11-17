@@ -2,8 +2,8 @@
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar title="Transformations" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
-        <f7-link v-if="$store.state.developerDock && windowWidth >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
-        <f7-link v-else-if="windowWidth >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
+        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
+        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -106,7 +106,7 @@
 
     <f7-block v-if="ready && !transformations.length" class="service-config block-narrow">
       <empty-state-placeholder icon="arrow_2_squarepath" title="transformations.title" text="transformations.text" />
-      <f7-row v-if="windowWidth < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
         <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
       </f7-row>
     </f7-block>
@@ -131,11 +131,13 @@ export default {
       initSearchbar: false,
       selectedTransformations: [],
       groupBy: 'alphabetical',
-      showCheckboxes: false,
-      windowWidth: window.innerWidth
+      showCheckboxes: false
     }
   },
   computed: {
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/transformations`
+    },
     indexedTransformations () {
       if (this.groupBy === 'alphabetical') {
         return this.transformations.reduce((prev, transformation, i, transformations) => {

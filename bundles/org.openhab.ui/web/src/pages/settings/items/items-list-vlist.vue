@@ -2,8 +2,8 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar title="Items" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
-        <f7-link v-if="$store.state.developerDock && windowWidth >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
-        <f7-link v-else-if="windowWidth >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
+        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
+        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -100,7 +100,7 @@
 
     <f7-block v-if="ready && !items.length" class="service-config block-narrow">
       <empty-state-placeholder icon="square_on_circle" title="items.title" text="items.text" />
-      <f7-row v-if="windowWidth < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
         <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
       </f7-row>
     </f7-block>
@@ -150,8 +150,7 @@ export default {
       },
       selectedItems: [],
       showCheckboxes: false,
-      eventSource: null,
-      windowWidth: window.innerWidth
+      eventSource: null
     }
   },
   methods: {
@@ -299,6 +298,9 @@ export default {
     }
   },
   computed: {
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/items`
+    },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
