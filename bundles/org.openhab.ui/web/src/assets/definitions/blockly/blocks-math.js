@@ -7,6 +7,24 @@ import { javascriptGenerator } from 'blockly/javascript'
 import { blockGetCheckedInputType } from './utils'
 
 export default function (f7, isGraalJs) {
+  Blockly.Blocks['oh_toNumber'] = {
+    init: function () {
+      this.appendValueInput('valueAsText')
+        .setCheck('String')
+        .appendField('Number')
+      this.setColour('%{BKY_MATH_HUE}')
+      this.setInputsInline(true)
+      this.setTooltip('convert text to number')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-math.html#toNumber')
+      this.setOutput(true, 'Number')
+    }
+  }
+
+  javascriptGenerator['oh_toNumber'] = function (block) {
+    const value = javascriptGenerator.valueToCode(block, 'valueAsText', javascriptGenerator.ORDER_FUNCTION_CALL)
+    return [`parseFloat(${value})`, 0]
+  }
+
   Blockly.Blocks['oh_bit_not'] = {
     init: function () {
       this.appendValueInput('value')
