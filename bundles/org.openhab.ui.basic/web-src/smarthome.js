@@ -814,7 +814,7 @@
 			}
 
 			_t.period = event.target.getAttribute("value");
-			_t.url = _t.url.replace(/&period=(h|4h|8h|12h|D|2D|3D|W|2W|M|2M|4M|Y)/, "&period=" + _t.period);
+			_t.url = _t.url.replace(/&period=\w+/, "&period=" + _t.period);
 			_t.image.setAttribute("src", _t.url + "&t=" + Date.now());
 
 			setTimeout(function() {
