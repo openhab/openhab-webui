@@ -218,9 +218,8 @@ export default {
 
         this.rules.forEach(rule => {
           rule.tags.forEach(t => {
-            let tag = t.substring(0, 1).toUpperCase() + t.slice(1)
-            if (tag.includes('Marketplace:')) tag = 'Marketplace'
-            if (!this.uniqueTags.includes(tag)) this.uniqueTags.push(tag)
+            if (t.startsWith('marketplace:')) t = 'Marketplace'
+            if (!this.uniqueTags.includes(t)) this.uniqueTags.push(t)
           })
         })
 
