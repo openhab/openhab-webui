@@ -56,6 +56,13 @@
         <block type="math_number">
           <field name="NUM">123</field>
         </block>
+        <block type="oh_toNumber">
+          <value name="valueAsText">
+            <shadow type="text">
+              <field name="TEXT">123</field>
+            </shadow>
+          </value>
+        </block>
         <block type="math_arithmetic">
           <value name="A">
             <shadow type="math_number">
