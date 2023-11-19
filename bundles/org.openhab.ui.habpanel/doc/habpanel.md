@@ -260,7 +260,7 @@ For more information, please read the [community thread about this feature](http
 
 #### Managing custom widgets
 
-The list of custom widgets either via the dashboard designer (click/tap the gears icon in the _Add Widget_ dropdown menu), or with the _Manage_ button in the settings screen.
+The list of custom widgets can be found either via the dashboard designer (click/tap the gears icon in the _Add Widget_ dropdown menu), or with the _Manage_ button in the settings screen.
 
 From the list, custom widgets can be created from scratch, or imported from a previously exported .json file or a GitHub repository. Members of the openHAB community also present their custom widgets on the forum: the _Get more..._ link brings up a filtered lists of custom widgets from the community.
 
