@@ -79,7 +79,7 @@
           {{ rules.length }} {{ type.toLowerCase() }}
         </f7-block-title>
 
-        <div v-if="uniqueTags.length" class="block block-strong-ios block-outline-ios" ref="filterTags">
+        <div v-if="uniqueTags.length > 0" class="block block-strong-ios block-outline-ios" ref="filterTags">
           <f7-chip v-for="tag in uniqueTags" :key="tag" :text="tag" media-bg-color="blue"
                    :color="isTagSelected(tag) ? 'blue' : ''"
                    style="margin-right: 6px; cursor: pointer;"
@@ -156,7 +156,7 @@ export default {
       noRuleEngine: false,
       rules: [],
       uniqueTags: [],
-      checkedTags: [],
+      selectedTags: [],
       initSearchbar: false,
       selectedItems: [],
       showCheckboxes: false,
@@ -170,9 +170,17 @@ export default {
     documentationLink () {
       return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/${this.type.toLowerCase()}`
     },
+    filteredRules () {
+      if (this.selectedTags.length === 0) return this.rules
+      return this.rules.filter((r) => {
+        for (const t of this.selectedTags) {
+          if (r.tags.includes(t)) return true
+        }
+        return false
+      })
+    },
     indexedRules () {
-      const filteredRules = this.filterRules()
-      const initialGroup = filteredRules.reduce((prev, rule, i, rules) => {
+      return this.filteredRules.reduce((prev, rule, i, rules) => {
         const initial = rule.name.substring(0, 1).toUpperCase()
         if (!prev[initial]) {
           prev[initial] = []
@@ -181,7 +189,6 @@ export default {
 
         return prev
       }, {})
-      return initialGroup
     },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
@@ -349,34 +356,17 @@ export default {
       })
     },
     toggleSearchTag (e, item) {
-      const target = e.target
-
-      const idx = this.checkedTags.indexOf(item)
+      const idx = this.selectedTags.indexOf(item)
       if (idx !== -1) {
-        this.checkedTags.splice(idx, 1)
+        this.selectedTags.splice(idx, 1)
       } else {
-        this.checkedTags.push(item)
+        this.selectedTags.push(item)
       }
       // update rules list
       this.$refs.listIndex.update()
     },
     isTagSelected (tag) {
-      return this.checkedTags.includes(tag)
-    },
-    filterRules () {
-      return this.rules.filter((r) => {
-        if (this.checkedTags.length === 0) return true
-        let found = false
-        for (let i = 0; i < this.checkedTags.length; i++) {
-          for (let j = 0; j < r.tags.length; j++) {
-            if (r.tags[j].toLowerCase().indexOf(this.checkedTags[i].toLowerCase()) !== -1) {
-              found = true
-              break
-            }
-          }
-        }
-        return found
-      })
+      return this.selectedTags.includes(tag)
     }
   }
 }
