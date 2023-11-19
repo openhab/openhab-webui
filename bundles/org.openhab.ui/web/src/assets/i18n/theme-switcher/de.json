@@ -12,5 +12,7 @@
   "about.miscellaneous.home.hideChatInput": "Chat Eingabebox auf dem Startbildschirm nicht anzeigen",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Animation für Kartenerweiterung abschalten",
   "about.miscellaneous.theme.disablePageTransition": "Animation für Seitenübergänge abschalten",
-  "about.miscellaneous.webaudio.enable": "Unterstützung für Audioausgang über Web Audio im Browser aktivieren"
+  "about.miscellaneous.webaudio.enable": "Unterstützung für Audioausgang über Web Audio im Browser aktivieren",
+  "about.miscellaneous.commandItem.title": "Empfange UI-Befehle an ",
+  "about.miscellaneous.commandItem.selectItem": "Item"
 }

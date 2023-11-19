@@ -55,12 +55,14 @@ export default {
         value: sourceName
       })
 
-      info.push({
-        id: 'author',
-        title: 'Provided By',
-        value: this.addon.author,
-        afterIcon: (this.addon.verifiedAuthor) ? 'checkmark_seal_fill' : ''
-      })
+      if (this.addon.author) {
+        info.push({
+          id: 'author',
+          title: 'Provided By',
+          value: this.addon.author,
+          afterIcon: (this.addon.verifiedAuthor) ? 'checkmark_seal_fill' : ''
+        })
+      }
 
       if (this.addon.version) {
         info.push({
@@ -85,7 +87,7 @@ export default {
       let format
       if (source === 'eclipse') {
         format = Formats.eclipse
-      } else if (source === 'karaf') {
+      } else if (source === 'karaf' || source === 'jar') {
         format = Formats.karaf
       } else if (Object.keys(this.addon.properties).length > 0) {
         for (const property in this.addon.properties) {
@@ -157,7 +159,7 @@ export default {
           afterIcon: 'chat_bubble_2_fill',
           linkUrl: 'https://community.openhab.org/search?q=' + this.addon.id
         })
-      } else {
+      } else if (this.addon.link) {
         info.push({
           id: 'documentationLink',
           title: 'Documentation',

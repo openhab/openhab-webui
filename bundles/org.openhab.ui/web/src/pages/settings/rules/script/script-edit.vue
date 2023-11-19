@@ -2,8 +2,8 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="pageTitle" :subtitle="(!newScript) ? mode : undefined" back-link="Back">
       <f7-nav-right v-if="isEditable && !newScript">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
+        <f7-link @click="onSave()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="onSave()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
       </f7-nav-right>
@@ -25,6 +25,7 @@
                  :tooltip="rule.status.description" />
       </span>
       <span class="display-flex flex-direction-row align-items-center">
+        <f7-button v-if="!newScript && isBlockly && !blocklyCodePreview" outline small :active="blocklyShowLabels" icon-f7="square_on_circle" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" style="margin-right: 5px" @click="toggleBlocklyItemLabelId" :tooltip="'Toggle to show either Item labels or IDs'" />
         <f7-segmented v-if="!newScript && isBlockly" class="margin-right">
           <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" />
           <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" />
@@ -144,7 +145,8 @@ export default {
       eventSource: null,
       keyHandler: null,
       detailsOpened: false,
-      blocklyCodePreview: false
+      blocklyCodePreview: false,
+      blocklyShowLabels: false
     }
   },
   computed: {
@@ -304,12 +306,23 @@ export default {
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-        return Promise.reject()
+        return Promise.reject('saveWhileRunningRejected')
       }
       if (this.isBlockly) {
         try {
-          this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
-          this.script = this.$refs.blocklyEditor.getCode()
+          if (!this.blocklyCodePreview) {
+            this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
+            this.script = this.$refs.blocklyEditor.getCode()
+          } else {
+            this.$f7.toast.create({
+              text: 'Running / saving is only supported in block mode!<br>Please switch back from code preview to block editor.',
+              position: 'center',
+              icon: '<i class="f7-icons">exclamationmark_bubble</i>',
+              destroyOnClose: true,
+              closeTimeout: 3000
+            }).open()
+            return Promise.reject('saveOnCodePreviewRejected')
+          }
         } catch (e) {
           this.$f7.dialog.alert(e)
           return Promise.reject(e)
@@ -333,6 +346,9 @@ export default {
           closeTimeout: 2000
         }).open()
       })
+    },
+    onSave () {
+      this.save().catch((e) => { if (!['saveWhileRunningRejected', 'saveOnCodePreviewRejected'].includes(e)) { throw (e) } })
     },
     changeLanguage (contentType) {
       if (this.createMode) return
@@ -381,6 +397,7 @@ export default {
           }).open()
         })
       })
+        .catch((e) => { if (e !== 'saveOnCodePreviewRejected') { throw (e) } })
     },
     deleteRule () {
       this.$f7.dialog.confirm(
@@ -392,6 +409,10 @@ export default {
           })
         }
       )
+    },
+    toggleBlocklyItemLabelId () {
+      this.blocklyShowLabels = !this.blocklyShowLabels
+      this.$refs.blocklyEditor.showHideLabels(this.blocklyShowLabels)
     },
     showBlocklyCode () {
       try {
@@ -452,7 +473,7 @@ export default {
             ev.preventDefault()
             break
           case 83:
-            this.save()
+            this.onSave()
             ev.stopPropagation()
             ev.preventDefault()
             break

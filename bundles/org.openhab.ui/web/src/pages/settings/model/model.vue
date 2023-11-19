@@ -1,6 +1,10 @@
 <template>
   <f7-page name="Model" :stacked="true" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @click="selectItem(null)">
     <f7-navbar title="Semantic Model" back-link="Settings" back-link-url="/settings/" back-link-force>
+      <f7-nav-right v-if="$f7.width >= 1280">
+        <f7-link v-if="$store.state.developerDock" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
+        <f7-link v-else icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
+      </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
@@ -12,16 +16,41 @@
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar bottom class="toolbar-details">
+
+    <!-- Toolbar -->
+    <f7-toolbar bottom class="toolbar-details" v-if="$f7.width >= 500">
       <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
         Clear
       </f7-link>
       <div class="padding-right text-align-right">
         <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
         <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
+        <f7-checkbox style="margin-left: 5px" :checked="includeItemName" @change="toggleItemName" />
+        <label @click="toggleItemName" class="advanced-label">Show name</label>
+        <f7-checkbox style="margin-left: 5px" :checked="includeItemTags" @change="toggleItemTags" />
+        <label @click="toggleItemTags" class="advanced-label">Show tags</label>
       </div>
       <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
+    <f7-toolbar bottom class="toolbar-details" v-else style="height: 50px">
+      <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
+        Clear
+      </f7-link>
+      <div class="padding-left padding-right text-align-center" style="font-size: 12px">
+        <div>
+          <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
+          <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
+        </div>
+        <div>
+          <f7-checkbox :checked="includeItemName" @change="toggleItemName" />
+          <label @click="toggleItemName" class="advanced-label">Show name</label>
+          <f7-checkbox style="margin-left: 5px" :checked="includeItemTags" @change="toggleItemTags" />
+          <label @click="toggleItemTags" class="advanced-label">Show tags</label>
+        </div>
+      </div>
+      <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
+    </f7-toolbar>
+
     <f7-block v-if="!ready" class="text-align-center">
       <f7-preloader />
       <div>Loading...</div>
@@ -35,6 +64,7 @@
             <f7-treeview>
               <model-treeview-item v-for="node in [rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
                                    :key="node.item.name" :model="node"
+                                   :includeItemName="includeItemName" :includeItemTags="includeItemTags"
                                    @selected="selectItem" :selected="selectedItem" />
             </f7-treeview>
           </f7-block>
@@ -213,6 +243,8 @@ export default {
       ready: false,
       loading: false,
       includeNonSemantic: false,
+      includeItemName: false,
+      includeItemTags: false,
       items: [],
       links: [],
       locations: [],
@@ -292,7 +324,7 @@ export default {
     load (update) {
       // if (this.ready) return
       this.loading = true
-      const items = this.$oh.api.get('/rest/items?metadata=.+')
+      const items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
       const links = this.$oh.api.get('/rest/links')
       Promise.all([items, links]).then((data) => {
         this.items = data[0]
@@ -433,6 +465,14 @@ export default {
       this.rootGroups = []
       this.rootItems = []
       this.includeNonSemantic = !this.includeNonSemantic
+      this.load()
+    },
+    toggleItemName () {
+      this.includeItemName = !this.includeItemName
+      this.load()
+    },
+    toggleItemTags () {
+      this.includeItemTags = !this.includeItemTags
       this.load()
     },
     addSemanticItem (semanticType) {

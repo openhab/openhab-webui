@@ -46,6 +46,9 @@
 
 .page-content {
 	max-width: 1080px;
+	html.ui-large-window & {
+		max-width: 1620px;
+	}
 	@media screen and (max-width: $layout-tablet-size-threshold) {
 		padding: 0;
 	}
@@ -67,6 +70,9 @@
 		@include align-items-2011(center);
 		white-space: nowrap;
 		height: $form-row-desktop-height;
+		html.ui-layout-condensed & {
+			height: $form-row-desktop-height-condensed;
+		}
 		box-sizing: content-box;
 		padding: 4px 0;
 		margin: 0 $mdl-grid-spacing;
@@ -76,7 +82,7 @@
 			padding: 4px $mdl-grid-spacing;
 			margin: 0;
 			html.ui-layout-condensed & {
-				height: $form-row-desktop-height-condensed;
+				height: $form-row-mobile-height-condensed;
 			}
 		}
 		@media screen and (min-width: $layout-tablet-size-threshold) {
@@ -95,11 +101,18 @@
 				height: auto;
 			}
 		}
+		&--header {
+			border-bottom: none;
+			padding-bottom: 0;
+			padding-left: 48px;
+			padding-right: 48px;
+			@media screen and (max-width: $layout-tablet-size-threshold) {
+				padding-left: $mdl-grid-spacing + 16px;
+				padding-right: $mdl-grid-spacing + 16px;
+			}
+		}
 		&--hidden {
 			display: none;
-		}
-		html.ui-layout-condensed & {
-			height: $form-row-desktop-height-condensed;
 		}
 	}
 	&__image {
@@ -111,11 +124,7 @@
 				max-width: 100%;
 			}
 		}
-		@media screen and (max-width: $layout-tablet-size-threshold) {
-			&.mdl-form__control {
-				padding-left: 0;
-				padding-right: 0;
-			}
+		&-upscale {
 			width: 100%;
 			img {
 				height: auto;
@@ -151,9 +160,29 @@
 				height: 28px;
 			}
 		}
+		svg {
+			width: 32px;
+			height: 32px;
+			object-fit: contain;
+			html.ui-layout-condensed & {
+				width: 28px;
+				height: 28px;
+			}
+		}
 		iconify-icon {
 			font-size: 32px;
 			vertical-align: middle;
+			html.ui-layout-condensed & {
+				font-size: 28px;
+			}
+		}
+		.material-icons,
+		.f7-icons {
+			font-size: 32px;
+			vertical-align: middle;
+			html:not(.ui-icons-enabled) & {
+				display: none;
+			}
 			html.ui-layout-condensed & {
 				font-size: 28px;
 			}
@@ -217,6 +246,23 @@
 			box-shadow: none;
 			-webkit-box-shadow: none;
 		}
+		.mdl-button-icon {
+			min-width: 0;
+			img {
+				width: 24px;
+				height: 24px;
+				object-fit: contain;
+			}
+			iconify-icon {
+				font-size: 24px;
+				vertical-align: middle;
+			}
+			.material-icons,
+			.f7-icons {
+				font-size: 24px;
+				vertical-align: middle;
+			}
+		}
 		.mdl-textfield {
 			&__input,
 			&__label {
@@ -228,12 +274,8 @@
 				font-weight: 700;
 			}
 			&__label {
-				margin: 0 -16px;
-				padding: 0 16px 0 0;
-				@media screen and (max-width: $layout-tablet-size-threshold) {
-					margin: 0 -12px;
-					padding: 0 12px 0 0;
-				}
+				margin: 0;
+				padding: 0;
 			}
 		}
 	}
@@ -243,6 +285,22 @@
 		.mdl-button {
 			min-width: 0;
 			padding-top: 6px;
+		}
+	}
+	&__header {
+		padding-left: 8px;
+		padding-right: $form-row-desktop-padding;
+		@media screen and (max-width: $layout-tablet-size-threshold) {
+			padding-right: $form-row-mobile-padding;
+		}
+		.mdl-button {
+			box-shadow: none;
+			-webkit-box-shadow: none;
+			min-width: 0;
+			padding-top: 6px;
+		}
+		&-rows {
+			display: none;
 		}
 	}
 	&__group {
@@ -265,6 +323,45 @@
 	}
 	&__input {
 		width: 60%;
+		display: flex;
+		align-items: center;
+		box-sizing: border-box;
+		padding: 0 16px 0 0;
+		@media screen and (max-width: $layout-tablet-size-threshold) {
+			padding: 0 12px 0 0;
+		}
+		&-container {
+			flex-grow: 1;
+			width: auto;
+			padding-right: 0;
+		}
+		&-unit {
+			display: inline-block;
+			box-sizing: border-box;
+			font-family: "Helvetica","Arial",sans-serif;
+			font-size: 14px;
+			font-weight: 700;
+			text-align: right;
+			padding-left: 8px;
+		}
+		&-prefix {
+			display: inline-block;
+			box-sizing: border-box;
+			font-family: "Helvetica","Arial",sans-serif;
+			font-size: 14px;
+			font-weight: 700;
+			text-align: right;
+			padding-right: 8px;
+		}
+		&-postfix {
+			display: inline-block;
+			box-sizing: border-box;
+			font-family: "Helvetica","Arial",sans-serif;
+			font-size: 14px;
+			font-weight: 700;
+			text-align: right;
+			padding-left: 8px;
+		}
 	}
 	&__title {
 		margin: 0;
@@ -582,7 +679,7 @@ $colorpicker-mobile-size: 270px;
 			padding-right: 6px;
 		}
 		a {
-			text-transform: capitalize;
+			// text-transform: capitalize;
 		}
 	}
 	&__empty {
@@ -624,6 +721,47 @@ $colorpicker-mobile-size: 270px;
 	&--hidden {
 		display: none;
 	}
+}
+
+// Some extra formatting for input widget on webkit browsers
+input[type=date],
+input[type=time],
+input[type=datetime-local],
+input[type=number] {
+	-webkit-align-items: center;
+	align-items: center;
+	overflow: hidden;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	appearance: none;
+	display: none;
+	margin: 0;
+}
+/* Works for Firefox */
+input[type="number"] {
+	-moz-appearance: textfield;
+}
+input::-webkit-datetime-edit {
+	-webkit-flex: 1;
+	flex: 1;
+	display: inline-block;
+	min-width: 0;
+	overflow: hidden;
+}
+input::-webkit-datetime-edit-fields-wrapper {
+	display: inline-block;
+	padding: 1px 8px 1px 0px;
+	white-space: pre;
+}
+input[type=time]::-webkit-datetime-edit-fields-wrapper {
+	padding: 1px 0px;
+}
+input::-webkit-calendar-picker-indicator {
+	display: inline-block;
+	width: 1.2em;
+	height: 1.2em;
 }
 
 // MS Edge hacks

@@ -1,11 +1,16 @@
 <template>
-  <div v-if="!config.openIn" ref="container" style="width: 100%" />
-  <div v-else ref="swatch" :class="config.swatchClasses || ['elevation-4', 'elevation-hover-8', 'elevation-pressed-1', 'elevation-transition']" :style="{
-    width: (config.swatchSize) ? config.swatchSize + 'px' : '32px',
-    height: (config.swatchSize) ? config.swatchSize + 'px' : '32px',
-    borderRadius: (config.swatchBorderRadius) ? config.swatchBorderRadius + 'px' : '6px',
-    cursor: 'pointer'
-  }" />
+  <div :style="{
+    width: '100%',
+    ...config.style
+  }">
+    <div v-if="!config.openIn" ref="container" style="width: 100%" />
+    <div v-else ref="swatch" :class="config.swatchClasses || ['elevation-4', 'elevation-hover-8', 'elevation-pressed-1', 'elevation-transition']" :style="{
+      width: (config.swatchSize) ? config.swatchSize + 'px' : '32px',
+      height: (config.swatchSize) ? config.swatchSize + 'px' : '32px',
+      borderRadius: (config.swatchBorderRadius) ? config.swatchBorderRadius + 'px' : '6px',
+      cursor: 'pointer'
+    }" />
+  </div>
 </template>
 
 <script>
@@ -45,6 +50,13 @@ export default {
         color[1] = color[1] / 100
         color[2] = color[2] / 100
         return color
+      }
+      if (this.config.defaultColor) {
+        try {
+          return JSON.parse(this.config.defaultColor)
+        } catch {
+          return null
+        }
       }
       return null
     }
@@ -119,8 +131,8 @@ export default {
     },
     areHSBEqual (hsb1, hsb2) {
       // for the purposes of NOT entering an endless loop, we consider transient non-HSB values to be equal
-      if (hsb1.length !== hsb2.length) return true
-      if (hsb1.length !== 3 || hsb2.length !== 3) return true
+      if (hsb1.length !== hsb2.length) return false
+      if (hsb1.length !== 3 || hsb2.length !== 3) return false
       return (hsb1[0] === hsb2[0] && hsb1[1] === hsb2[1] && hsb1[2] === hsb2[2])
     },
     roundedHSB (state) {

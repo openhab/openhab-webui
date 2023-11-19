@@ -43,7 +43,7 @@
 
         <!-- Create new item -->
         <f7-col v-else>
-          <item-form :item="newItem" :items="items" :enable-name="true" @valid="itemValid = $event" />
+          <item-form :item="newItem" :items="items" :createMode="true" @valid="itemValid = $event" />
           <f7-list>
             <item-picker key="newItem-groups" title="Parent Group(s)" name="parent-groups" :value="newItem.groupNames" :items="items" @input="(value) => newItem.groupNames = value" :multiple="true" filterType="Group" />
           </f7-list>
@@ -80,7 +80,7 @@
         <f7-block-title>Profile</f7-block-title>
         <f7-block-footer class="padding-left padding-right">
           Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
-          <f7-link external color="blue" target="_blank" href="https://www.openhab.org/link/profiles">
+          <f7-link external color="blue" target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/profiles`">
             Learn more about profiles.
           </f7-link>
         </f7-block-footer>
@@ -133,7 +133,6 @@ import ItemForm from '@/components/item/item-form.vue'
 import Item from '@/components/item/item.vue'
 
 import * as Types from '@/assets/item-types.js'
-import * as SemanticClasses from '@/assets/semantics.js'
 
 export default {
   components: {
@@ -167,8 +166,7 @@ export default {
       profileTypeConfiguration: null,
       newItem: {},
       configuration: {},
-      types: Types,
-      semanticClasses: SemanticClasses
+      types: Types
     }
   },
   created () {
@@ -201,7 +199,7 @@ export default {
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
         type: this.channel.itemType || 'Switch',
-        tags: (defaultTags.find((t) => SemanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
+        tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
       })
     },
     loadProfileTypes (channel) {

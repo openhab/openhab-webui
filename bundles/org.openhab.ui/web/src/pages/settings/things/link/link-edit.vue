@@ -30,7 +30,7 @@
                   <span slot="media" class="item-initial">{{ (channel.label) ? channel.label[0] : (channelType.label) ? channelType.label[0] : '?' }}</span>
                 </f7-list-item>
                 <f7-list-item divider title="Item" />
-                <item :item="item" :context="context" :no-state="true" :link="'/settings/items/' + item.name" />
+                <item :item="item" :context="context" :link="'/settings/items/' + item.name" />
               </ul>
             </f7-list>
           </f7-card-content>
@@ -48,7 +48,7 @@
         <f7-block-title>Profile</f7-block-title>
         <f7-block-footer class="padding-left padding-right">
           Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
-          <f7-link external color="blue" target="_blank" href="https://www.openhab.org/link/profiles">
+          <f7-link external color="blue" target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/profiles`">
             Learn more about profiles.
           </f7-link>
           <f7-block v-if="!ready" class="text-align-center">

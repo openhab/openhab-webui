@@ -37,15 +37,11 @@
 </template>
 
 <script>
-import * as Types from '@/assets/item-types.js'
-import * as SemanticClasses from '@/assets/semantics.js'
-
 export default {
   props: ['item', 'sameClassOnly', 'hideType', 'hideNone'],
   data () {
     return {
-      types: Types,
-      semanticClasses: SemanticClasses,
+      semanticClasses: this.$store.getters.semanticClasses,
       semanticClass: '',
       semanticProperty: '',
       show: true

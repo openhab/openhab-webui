@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.openhab.ui.features</groupId>
     <artifactId>org.openhab.ui.reactor.features</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>4.1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>org.openhab.ui.features</artifactId>
@@ -32,7 +32,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.8</version>
+        <version>3.1.0</version>
         <inherited>false</inherited>
         <executions>
           <execution>

@@ -10,23 +10,23 @@
       <video v-show="showLocalVideo" ref="localVideo" autoplay playsinline muted="muted" class="local-video" />
     </div>
     <!-- Show yellow dial button if connection is not established -->
-    <f7-button v-if="!connected" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.iconSize" />
+    <f7-button v-if="!connected" :style="computedButtonStyle" icon-f7="phone_fill_arrow_up_right" icon-color="yellow" :icon-size="config.iconSize" />
     <!-- Show dial menu when there`s no call -->
-    <f7-button v-else-if="(!session || session.isEnded())" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.iconSize" @click.stop="dial()" />
+    <f7-button v-else-if="(!session || session.isEnded())" :style="computedButtonStyle" icon-f7="phone_fill_arrow_up_right" icon-color="green" :icon-size="config.iconSize" @click.stop="dial()" />
     <!-- Show answer button on incoming call -->
-    <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()">
-      <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.iconSize" @click.stop="answer()">
-        {{ (!config.hideCallerId) ? this.remoteParty : '' }}
+    <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()" style="width: 100%; height: 100%">
+      <f7-button :style="computedButtonStyle" icon-f7="phone_fill_arrow_down_left" icon-color="green" :icon-size="config.iconSize" @click.stop="answer()">
+        {{ (!config.hideCallerId) ? remoteParty : '' }}
       </f7-button>
-      <f7-button :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize" @click.stop="session.terminate()" />
+      <f7-button :style="computedButtonStyle" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize" @click.stop="session.terminate()" />
     </f7-segmented>
-    <f7-segmented v-else>
+    <f7-segmented v-else style="width: 100%; height: 100%">
       <!-- Show hangup button for outgoing call -->
-      <f7-button v-if="session && session.isInProgress()" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="yellow" :icon-size="config.iconSize" @click.stop="session.terminate()" />
+      <f7-button v-if="session && session.isInProgress()" :style="computedButtonStyle" icon-f7="phone_down_fill" icon-color="yellow" :icon-size="config.iconSize" @click.stop="session.terminate()" />
       <!-- Show hangup button for ongoing call -->
-      <f7-button v-else-if="session && !session.isEnded()" :style="{ height: config.iconSize + 'px' }" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize" @click.stop="session.terminate()" />
+      <f7-button v-else-if="session && !session.isEnded()" :style="computedButtonStyle" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize" @click.stop="session.terminate()" />
       <!-- Show send dtmf button if in a call and feature is enabled-->
-      <f7-button v-if="session && !session.isInProgress() && !session.isEnded() && config.dtmfString && config.dtmfString.length > 0" :style="{ height: config.iconSize + 'px' }" icon-f7="number_square" icon-color="orange" :icon-size="config.iconSize" @click.stop="sendDTMF()" />
+      <f7-button v-if="session && !session.isInProgress() && !session.isEnded() && config.dtmfString && config.dtmfString.length > 0" :style="computedButtonStyle" icon-f7="number_square" icon-color="orange" :icon-size="config.iconSize" @click.stop="sendDTMF()" />
     </f7-segmented>
   </div>
 </template>
@@ -34,6 +34,7 @@
 <style lang="stylus">
 .main-container
   width: 100%
+  height: 100%
   .video-container
     position relative
     .remote-video
@@ -73,6 +74,15 @@ export default {
   },
   mixins: [mixin, foregroundService, actionsMixin],
   widget: OhSIPClientDefinition,
+  computed: {
+    computedButtonStyle () {
+      return {
+        'min-height': this.config.iconSize + 'px',
+        height: '100%',
+        display: 'flex'
+      }
+    }
+  },
   methods: {
     startForegroundActivity () {
       // Load device specific configuration
@@ -90,7 +100,7 @@ export default {
 
       // Make sure we have Mic/Camera permissions
       if (!navigator.mediaDevices) {
-        this.$f7.dialog.alert('Please ensure that HTTPS is in use and WebRTC is supported in this browser.')
+        this.$f7.dialog.alert('To use the SIP widget, please make sure that HTTPS is in use and WebRTC is supported by this browser.')
       } else {
         navigator.mediaDevices.getUserMedia({ audio: true, video: this.config.enableVideo })
           .then((stream) => {
@@ -108,8 +118,9 @@ export default {
     },
     stopForegroundActivity () {
       // Stop MediaDevices access here, otherwise Mic/Camera access will stay active on iOS
-      this.stream.getTracks().forEach((track) => track.stop())
+      if (this.stream) this.stream.getTracks().forEach((track) => track.stop())
       if (this.phone) this.phone.stop()
+      this.remoteAudio = null
     },
     /**
      * Starts the JsSIP UserAgent and connects to the SIP server.
@@ -131,7 +142,8 @@ export default {
           sockets: [socket],
           uri: 'sip:' + this.config.username + '@' + this.config.domain,
           password: this.config.password,
-          session_timers: false
+          session_timers: false,
+          register: (this.config.disableRegister !== true)
         }
         this.phone = new JsSIP.UA(configuration)
 
@@ -229,12 +241,17 @@ export default {
      * Stops all MediaStreams (remote audio, remote & eventually local video) of the SIP call.
      */
     stopMedia () {
-      if (this.config.enableVideo) this.$refs.remoteVideo.srcObject = null
-      if (this.config.enableLocalVideo) {
-        // Make sure all tracks are stopped
-        this.$refs.localVideo.srcObject.getTracks().forEach((track) => track.stop())
-        this.$refs.localVideo.srcObject = null
-        this.showLocalVideo = false
+      if (this.config.enableVideo) {
+        this.$refs.remoteVideo.srcObject = null
+        if (this.config.enableLocalVideo) {
+          // Make sure all tracks are stopped
+          this.$refs.localVideo.srcObject.getTracks().forEach((track) => track.stop())
+          this.$refs.localVideo.srcObject = null
+          this.showLocalVideo = false
+        }
+      } else {
+        this.remoteAudio.srcObject = null
+        this.remoteAudio.pause()
       }
     },
     call (target) {

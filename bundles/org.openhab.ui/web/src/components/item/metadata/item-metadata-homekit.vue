@@ -53,7 +53,7 @@
       </f7-block-footer>
     </f7-block>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" href="https://www.openhab.org/link/homekit">
+      <f7-link color="blue" external target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/homekit`">
         HomeKit integration documentation
       </f7-link>
     </p>

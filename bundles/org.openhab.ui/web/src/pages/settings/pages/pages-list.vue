@@ -2,6 +2,8 @@
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar title="Pages" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
+        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
+        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -45,20 +47,8 @@
 
     <!-- skeleton for not ready -->
     <f7-block class="block-narrow">
-      <f7-col>
-        <f7-block-title class="searchbar-hide-on-search">
-          <span v-if="ready">{{ pages.length }} pages</span><span v-else>Loading...</span>
-        </f7-block-title>
-        <div class="padding-left padding-right searchbar-found" v-show="!ready || pages.length > 0">
-          <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
-              Alphabetical
-            </f7-button>
-            <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')">
-              By type
-            </f7-button>
-          </f7-segmented>
-        </div>
+      <f7-col v-if="!ready">
+        <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list v-if="!ready" contacts-list class="col wide pages-list">
           <f7-list-group>
             <f7-list-item
@@ -74,8 +64,24 @@
             </f7-list-item>
           </f7-list-group>
         </f7-list>
-        <f7-list v-else
-                 v-show="pages.length > 0"
+      </f7-col>
+
+      <f7-col v-else>
+        <f7-block-title class="searchbar-hide-on-search">
+          {{ pages.length }} pages
+        </f7-block-title>
+        <div class="padding-left padding-right searchbar-found" v-show="!ready || pages.length > 0">
+          <f7-segmented strong tag="p">
+            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
+              Alphabetical
+            </f7-button>
+            <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')">
+              By type
+            </f7-button>
+          </f7-segmented>
+        </div>
+
+        <f7-list v-show="pages.length > 0"
                  class="searchbar-found col pages-list"
                  ref="pagesList"
                  :contacts-list="groupBy === 'alphabetical'" media-list>
@@ -112,9 +118,9 @@
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-block v-if="ready && !pages.length" class="service-config block-narrow">
-      <empty-state-placeholder icon="tv" title="pages.title" text="pages.text" />
-    </f7-block>
+
+    <!-- empty-state-placeholder not needed because the overview page cannot be deleted, so there is at least 1 page -->
+
     <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
@@ -144,9 +150,6 @@
 
 <script>
 export default {
-  components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
-  },
   data () {
     return {
       ready: false,
@@ -181,7 +184,7 @@ export default {
           return prev
         }, {})
       } else {
-        return this.pages.reduce((prev, page, i, things) => {
+        const typeGroups = this.pages.reduce((prev, page, i, things) => {
           const type = this.getPageType(page).label
           if (!prev[type]) {
             prev[type] = []
@@ -189,6 +192,10 @@ export default {
           prev[type].push(page)
 
           return prev
+        }, {})
+        return Object.keys(typeGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
+          objEntries[key] = typeGroups[key]
+          return objEntries
         }, {})
       }
     },

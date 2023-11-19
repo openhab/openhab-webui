@@ -29,33 +29,6 @@ export const Formats = {
   'karaf': 'Karaf'
 }
 
-export const AddonStoreTabShortcuts = [
-  {
-    id: 'bindings',
-    label: 'Bindings',
-    icon: 'circle_grid_hex',
-    subtitle: 'Connect and control hardware and online services'
-  },
-  {
-    id: 'automation',
-    label: 'Automation',
-    icon: 'sparkles',
-    subtitle: 'Scripting languages, templates and module types'
-  },
-  {
-    id: 'ui',
-    label: 'User Interfaces',
-    icon: 'play_rectangle',
-    subtitle: 'Community widgets & alternative frontends'
-  },
-  {
-    id: 'other',
-    label: 'Other Add-ons',
-    icon: 'ellipsis',
-    subtitle: 'System integrations, persistence, voice & more'
-  }
-]
-
 export function compareAddons (a1, a2) {
   if (a1.installed && !a2.installed) return -1
   if (a2.installed && !a1.installed) return 1

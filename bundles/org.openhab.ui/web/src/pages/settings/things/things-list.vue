@@ -2,6 +2,8 @@
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
     <f7-navbar title="Things" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
+        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
+        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -48,22 +50,12 @@
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found" />
     </f7-list>
+
     <f7-block class="block-narrow">
-      <f7-col>
-        <f7-block-title class="searchbar-hide-on-search">
-          <span v-if="ready">{{ things.length }} things</span><span v-else>Loading...</span>
-        </f7-block-title>
-        <div class="searchbar-found padding-left padding-right" v-show="!ready || things.length > 0">
-          <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
-              Alphabetical
-            </f7-button>
-            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
-              By binding
-            </f7-button>
-          </f7-segmented>
-        </div>
-        <f7-list v-if="!ready" contacts-list class="col things-list">
+      <!-- skeleton for not ready -->
+      <f7-col v-if="!ready">
+        <f7-block-title>&nbsp;Loading...</f7-block-title>
+        <f7-list contacts-list class="col things-list">
           <f7-list-group>
             <f7-list-item
               media-item
@@ -75,7 +67,26 @@
               after="status badge" />
           </f7-list-group>
         </f7-list>
-        <f7-list v-else class="searchbar-found col things-list" :contacts-list="groupBy === 'alphabetical'">
+      </f7-col>
+
+      <f7-col v-else-if="things.length > 0">
+        <f7-block-title class="searchbar-hide-on-search">
+          {{ things.length }} Things
+        </f7-block-title>
+        <div class="searchbar-found padding-left padding-right">
+          <f7-segmented strong tag="p">
+            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
+              Alphabetical
+            </f7-button>
+            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
+              By binding
+            </f7-button>
+            <f7-button :active="groupBy === 'location'" @click="switchGroupOrder('location')">
+              By location
+            </f7-button>
+          </f7-segmented>
+        </div>
+        <f7-list class="searchbar-found col things-list" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
             <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -94,6 +105,11 @@
                 {{ thing.UID }}
                 <clipboard-icon :value="thing.UID" tooltip="Copy UID" />
               </div>
+
+              <div slot="subtitle" v-if="thing.location && groupBy !== 'location'">
+                {{ thing.location }}
+                <f7-icon f7="placemark" color="gray" style="font-size: 16px; width: 16px; height: 16px;" />
+              </div>
               <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
                 {{ thingStatusBadgeText(thing.statusInfo) }}
               </f7-badge>
@@ -103,9 +119,14 @@
         </f7-list>
       </f7-col>
     </f7-block>
+
     <f7-block v-if="ready && !things.length" class="block-narrow">
       <empty-state-placeholder icon="lightbulb" title="things.title" text="things.text" />
+      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+      </f7-row>
     </f7-block>
+
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <!-- <f7-fab-buttons position="top">
@@ -151,6 +172,9 @@ export default {
 
   },
   computed: {
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/thing`
+    },
     indexedThings () {
       if (this.groupBy === 'alphabetical') {
         return this.things.reduce((prev, thing, i, things) => {
@@ -162,8 +186,8 @@ export default {
 
           return prev
         }, {})
-      } else {
-        return this.things.reduce((prev, thing, i, things) => {
+      } else if (this.groupBy === 'binding') {
+        const bindingGroups = this.things.reduce((prev, thing, i, things) => {
           const binding = thing.thingTypeUID.split(':')[0]
           if (!prev[binding]) {
             prev[binding] = []
@@ -171,6 +195,24 @@ export default {
           prev[binding].push(thing)
 
           return prev
+        }, {})
+        return Object.keys(bindingGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
+          objEntries[key] = bindingGroups[key]
+          return objEntries
+        }, {})
+      } else {
+        const locationGroups = this.things.reduce((prev, thing, i, things) => {
+          const location = thing.location || '- No location -'
+          if (!prev[location]) {
+            prev[location] = []
+          }
+          prev[location].push(thing)
+
+          return prev
+        }, {})
+        return Object.keys(locationGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
+          objEntries[key] = locationGroups[key]
+          return objEntries
         }, {})
       }
     },

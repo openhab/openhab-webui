@@ -9,13 +9,13 @@ import AnalyzerPopup from '../pages/analyzer/analyzer-popup.vue'
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '../pages/about.vue')
 const UserProfilePage = () => import(/* webpackChunkName: "profile-page" */ '../pages/profile.vue')
 
-const SettingsMenuPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/settings-menu.vue')
+const SettingsMenuPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/menu/settings-menu.vue')
 const ServiceSettingsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/services/service-settings.vue')
-const AddonsListPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-list.vue')
-const AddonsAddPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-add.vue')
-const AddonsConfigureBindingPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addon-config.vue')
-const AddonsStorePage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addons-store.vue')
-const AddonDetailsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/addons/addon-details.vue')
+const AddonsListPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addons-list.vue')
+const AddonsAddPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addons-add.vue')
+const AddonsConfigureBindingPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addon-config.vue')
+const AddonsStorePage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addons-store.vue')
+const AddonDetailsPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addon-details.vue')
 
 const ItemsListPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/items-list-vlist.vue')
 const ItemDetailsPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/item-details.vue')
@@ -33,6 +33,8 @@ const InboxListPage = () => import(/* webpackChunkName: "admin-config" */ '../pa
 
 const TransformationsListPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/transformations/transformations-list.vue')
 const TransformationsEditPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/transformations/transformation-edit.vue')
+
+const PersistenceEditPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/persistence/persistence-edit.vue')
 
 const SemanticModelPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/model/model.vue')
 
@@ -90,7 +92,45 @@ export default [
     // keepAlive: true,
     options: {
       transition: 'f7-dive'
-    }
+    },
+    routes: [
+      {
+        path: 'overview',
+        component: HomePage,
+        options: {
+          props: {
+            initialTab: 'overview'
+          }
+        }
+      },
+      {
+        path: 'locations',
+        component: HomePage,
+        options: {
+          props: {
+            initialTab: 'locations'
+          }
+        }
+      },
+      {
+        path: 'equipment',
+        component: HomePage,
+        options: {
+          props: {
+            initialTab: 'equipment'
+          }
+        }
+      },
+      {
+        path: 'properties',
+        component: HomePage,
+        options: {
+          props: {
+            initialTab: 'properties'
+          }
+        }
+      }
+    ]
   },
   {
     path: '/page/:uid',
@@ -238,6 +278,17 @@ export default [
         async: loadAsync(SemanticModelPage)
       },
       {
+        path: 'persistence/',
+        routes: [
+          {
+            path: ':serviceId',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(PersistenceEditPage)
+          }
+        ]
+      },
+      {
         path: 'rules/',
         beforeEnter: [enforceAdminForRoute],
         async: loadAsync(RulesListPage),
@@ -246,7 +297,10 @@ export default [
             path: ':ruleId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(RuleEditPage, (routeTo) => (routeTo.params.ruleId === 'add') ? { createMode: true } : {}),
+            async: loadAsync(RuleEditPage, (routeTo) =>
+              routeTo.params.ruleId === 'add' ? { createMode: true }
+                : routeTo.params.ruleId === 'copy' ? { copyMode: true }
+                  : {}),
             routes: [
               {
                 path: 'script/:moduleId',
@@ -305,11 +359,6 @@ export default [
           {
             path: ':addonId',
             beforeEnter: [enforceAdminForRoute],
-            async: loadAsync(AddonDetailsPage)
-          },
-          {
-            path: ':addonId/config',
-            beforeEnter: [enforceAdminForRoute],
             async: loadAsync(AddonsConfigureBindingPage)
           }
         ]
@@ -319,6 +368,43 @@ export default [
         beforeEnter: [enforceAdminForRoute],
         beforeLeave: [checkDirtyBeforeLeave],
         async: loadAsync(ServiceSettingsPage)
+      }
+    ]
+  },
+  {
+    path: '/addons/',
+    beforeEnter: [enforceAdminForRoute],
+    async: loadAsync(AddonsStorePage),
+    routes: [
+      {
+        path: 'bindings/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(AddonsStorePage, { initialTab: 'bindings' })
+      },
+      {
+        path: 'automation/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(AddonsStorePage, { initialTab: 'automation' })
+      },
+      {
+        path: 'ui/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(AddonsStorePage, { initialTab: 'ui' })
+      },
+      {
+        path: 'other/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(AddonsStorePage, { initialTab: 'other' })
+      },
+      {
+        path: 'search/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(AddonsStorePage, { initialTab: 'search' })
+      },
+      {
+        path: ':addonId',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(AddonDetailsPage)
       }
     ]
   },

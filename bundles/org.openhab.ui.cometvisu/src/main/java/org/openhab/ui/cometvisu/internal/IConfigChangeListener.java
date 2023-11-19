@@ -25,5 +25,5 @@ public interface IConfigChangeListener {
      *
      * @param key the key of the configuration option that has been changed
      */
-    public void handleConfigChange(String key);
+    void handleConfigChange(String key);
 }

@@ -61,6 +61,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     private static final String ICON_SOURCE_IF = "if";
     private static final String ICON_SOURCE_ICONIFY = "iconify";
     private static final String ICON_SOURCE_MATERIAL = "material";
+    private static final String ICON_SOURCE_FRAMEWORK7 = "f7";
     private static final String ICON_SET_OH_CLASSIC = "classic";
     private static final String DEFAULT_ICON_SOURCE = ICON_SOURCE_OH;
     private static final String DEFAULT_ICON_SET = ICON_SET_OH_CLASSIC;
@@ -110,7 +111,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      * @return HTML code
      */
     protected String preprocessSnippet(String originalSnippet, Widget w) {
-        return preprocessSnippet(originalSnippet, w, false);
+        return preprocessSnippet(originalSnippet, w, w.getStaticIcon() != null || !w.getIconRules().isEmpty());
     }
 
     /**
@@ -122,9 +123,12 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      * @return HTML code
      */
     protected String preprocessSnippet(String originalSnippet, Widget w, boolean ignoreStateForIcon) {
-        String snippet = preprocessIcon(originalSnippet, w, ignoreStateForIcon);
+        String snippet = preprocessIcon(originalSnippet, getCategory(w), ignoreStateForIcon);
 
+        snippet = snippet.replace("%cells%", String.valueOf(12 / config.getNbColsDesktop()));
+        snippet = snippet.replace("%cells_tablet%", String.valueOf(8 / config.getNbColsTablet()));
         snippet = snippet.replace("%widget_id%", itemUIRegistry.getWidgetId(w));
+        snippet = snippet.replace("%icon_with_state%", Boolean.valueOf(!ignoreStateForIcon).toString());
         snippet = snippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
         // Optimization: avoid calling 3 times itemUIRegistry.getLabel(w)
         String text = itemUIRegistry.getLabel(w);
@@ -140,13 +144,12 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         return snippet;
     }
 
-    private String preprocessIcon(String originalSnippet, Widget w, boolean ignoreState) {
-        String category = getCategory(w);
+    protected String preprocessIcon(String originalSnippet, @Nullable String icon, boolean ignoreState) {
         String iconSource = DEFAULT_ICON_SOURCE;
         String iconSet = DEFAULT_ICON_SET;
         String iconName = DEFAULT_ICON_NAME;
-        if (category != null) {
-            String[] segments = category.split(":", 3);
+        if (icon != null) {
+            String[] segments = icon.split(":", 3);
             if (segments.length == 1) {
                 iconName = segments[0];
             } else if (segments.length == 2) {
@@ -173,6 +176,9 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
                     break;
                 case ICON_SOURCE_MATERIAL:
                     iconSnippet = getSnippet("icon_material");
+                    break;
+                case ICON_SOURCE_FRAMEWORK7:
+                    iconSnippet = getSnippet("icon_framework7");
                     break;
                 default:
                     break;
@@ -387,6 +393,18 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
+        } else {
+            switch (config.getTheme()) {
+                case WebAppConfig.THEME_NAME_BRIGHT:
+                    style = "style=\"color-scheme: light\"";
+                    break;
+                case WebAppConfig.THEME_NAME_DARK:
+                    style = "style=\"color-scheme: dark\"";
+                    break;
+                default:
+                    break;
+            }
+
         }
         snippet = snippet.replace("%iconstyle%", style);
 

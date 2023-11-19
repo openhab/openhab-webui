@@ -1,7 +1,9 @@
 <template>
-  <f7-page @page:beforein="load" @page:afterout="stopEventSource">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar title="Items" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
+        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
+        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -30,8 +32,9 @@
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found" />
     </f7-list>
-    <!-- skeleton for not ready -->
+
     <f7-block class="block-narrow">
+      <!-- skeleton for not ready -->
       <f7-col v-show="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list media-list class="col wide">
@@ -50,9 +53,10 @@
           </f7-list-group>
         </f7-list>
       </f7-col>
-      <f7-col v-show="ready">
+
+      <f7-col v-show="ready && items.length > 0">
         <f7-block-title class="searchbar-hide-on-search">
-          {{ items.length }} items
+          {{ items.length }} Items
         </f7-block-title>
         <f7-list
           v-show="items.length > 0"
@@ -60,7 +64,7 @@
           ref="itemsList"
           media-list
           virtual-list
-          :virtual-list-params="{ items, searchAll, renderExternal, height: vlData.height }">
+          :virtual-list-params="{ items, searchAll, renderExternal, height }">
           <ul>
             <f7-list-item
               v-for="(item, index) in vlData.items"
@@ -78,18 +82,32 @@
               :subtitle="getItemTypeAndMetaLabel(item)"
               :style="`top: ${vlData.topPosition}px`"
               :after="(item.state) ? item.state : '\xa0'">
-              <oh-icon v-if="item.category" slot="media" :icon="item.category" height="32" width="32" />
+              <!-- Note: Using dynamic states is not possible since state tracking has a heavy performance impact -->
+              <oh-icon v-if="item.category" slot="media" :icon="item.category" :state="(item.state) ? item.state : null" height="32" width="32" />
               <span v-else slot="media" class="item-initial">{{ item.name[0] }}</span>
               <f7-icon v-if="!item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
               <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
+              <div slot="subtitle">
+                <f7-chip v-for="tag in getNonSemanticTags(item)" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                  <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                </f7-chip>
+              </div>
             </f7-list-item>
           </ul>
         </f7-list>
       </f7-col>
     </f7-block>
+
     <f7-block v-if="ready && !items.length" class="service-config block-narrow">
       <empty-state-placeholder icon="square_on_circle" title="items.title" text="items.text" />
+      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+      </f7-row>
     </f7-block>
+
+    <f7-fab v-show="!showCheckboxes" position="center-bottom" text="Refresh" slot="fixed" color="blue" @click="load()">
+      <f7-icon ios="f7:arrow_clockwise" md="material:refresh" aurora="f7:arrow_clockwise" />
+    </f7-fab>
     <f7-fab v-show="!showCheckboxes" position="right-bottom" slot="fixed" color="blue">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
@@ -115,23 +133,20 @@
 </style>
 
 <script>
+import ItemMixin from '@/components/item/item-mixin'
+
 export default {
+  mixins: [ItemMixin],
   components: {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
   },
   data () {
-    let vlHeight
-    if (this.$theme.ios) vlHeight = 78
-    if (this.$theme.aurora) vlHeight = 60
-    if (this.$theme.md) vlHeight = 87
-    if (this.$device.firefox) vlHeight += 1
     return {
       ready: false,
       items: [], // [{ label: 'Staircase', name: 'Staircase'}],
       indexedItems: {},
       vlData: {
-        items: [],
-        height: vlHeight
+        items: []
       },
       selectedItems: [],
       showCheckboxes: false,
@@ -139,6 +154,12 @@ export default {
     }
   },
   methods: {
+    onPageAfterIn (event) {
+      this.load()
+    },
+    onPageBeforeOut (event) {
+      this.stopEventSource()
+    },
     load () {
       this.ready = false
       this.$oh.api.get('/rest/items?metadata=semantics').then(data => {
@@ -185,6 +206,7 @@ export default {
       for (let i = 0; i < items.length; i += 1) {
         let haystack = items[i].name
         if (items[i].label) haystack += ' ' + items[i].label
+        if (items[i].tags) for (let j = 0; j < items[i].tags.length; j += 1) haystack += ' ' + items[i].tags[j]
         haystack += ' ' + this.getItemTypeAndMetaLabel(items[i])
         if (
           haystack.toLowerCase().indexOf(query.toLowerCase()) >= 0 ||
@@ -196,17 +218,22 @@ export default {
     renderExternal (vl, vlData) {
       this.vlData = vlData
     },
-    getItemTypeAndMetaLabel (item) {
-      let ret = item.type
-      if (item.metadata && item.metadata.semantics) {
-        ret += ' · '
-        const classParts = item.metadata.semantics.value.split('_')
-        ret += classParts[0]
-        if (classParts.length > 1) {
-          ret += '>' + classParts.pop()
-        }
+    height (item) {
+      let vlHeight
+      if (this.$theme.ios) vlHeight = 78
+      if (this.$theme.aurora) vlHeight = 60.77
+      if (this.$theme.md) vlHeight = 87.4
+      if (this.$device.macos) {
+        if (window.navigator.userAgent.includes('Safari') && !window.navigator.userAgent.includes('Chrome')) vlHeight -= 0.77
       }
-      return ret
+
+      const nonSemanticTags = this.getNonSemanticTags(item)
+      if (nonSemanticTags.length > 0) {
+        vlHeight += 24
+        if (this.$theme.ios) vlHeight += 4
+        if (this.$theme.md) vlHeight += 12
+      }
+      return vlHeight
     },
     toggleCheck () {
       this.showCheckboxes = !this.showCheckboxes
@@ -270,12 +297,10 @@ export default {
       })
     }
   },
-  asyncComputed: {
-    iconUrl () {
-      return icon => this.$oh.media.getIcon(icon)
-    }
-  },
   computed: {
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/items`
+    },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }

@@ -98,6 +98,7 @@ import NashornDefs from '@/assets/nashorn-tern-defs.json'
 import OpenhabJsDefs from '@/assets/openhab-js-tern-defs.json'
 
 import componentsHint from '../editor/hint-components'
+import itemsHint from '../editor/hint-items'
 import rulesHint from '../editor/hint-rules'
 import thingsHint from '../editor/hint-things'
 import pythonHint from '../editor/hint-python'
@@ -234,7 +235,7 @@ export default {
             }
             server.on('completion', this.ternComplete)
           })
-          this.$oh.api.get('/rest/items').then((data) => { this.$set(this, 'itemsCache', data) })
+          this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.$set(this, 'itemsCache', data) })
         }
         const server = new _CodeMirror.TernServer({
           defs: (this.mode.indexOf('version=ECMAScript-5.1') > 0) ? [EcmascriptDefs, NashornDefs] : [EcmascriptDefs, OpenhabJsDefs],
@@ -273,6 +274,8 @@ export default {
           hint (cm, option) {
             if (self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
               return componentsHint(cm, option, self.mode)
+            } else if (self.mode === 'application/vnd.openhab.item+yaml') {
+              return itemsHint(cm, option, self.mode)
             } else if (self.mode === 'application/vnd.openhab.rule+yaml') {
               return rulesHint(cm, option, self.mode)
             } else if (self.mode === 'application/vnd.openhab.thing+yaml') {

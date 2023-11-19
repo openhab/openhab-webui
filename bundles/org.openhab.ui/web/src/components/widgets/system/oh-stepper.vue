@@ -1,7 +1,12 @@
 <template>
   <f7-stepper ref="stepper" v-bind="config" :value="value" @stepper:change="onChange" @click.native.stop
-              :manual-input-mode="false" :format-value="formatValue" />
+              :input="config.enableInput === true" :manual-input-mode="false" :format-value="formatValue" />
 </template>
+
+<style lang="stylus">
+.stepper-value
+  margin-top: 0px
+</style>
 
 <script>
 import mixin from '../widget-mixin'
@@ -16,13 +21,14 @@ export default {
   },
   computed: {
     value () {
+      const applyOffset = (num) => (!isNaN(this.config.offset)) ? Number(this.toStepFixed(num + Number(this.config.offset))) : num
       if (this.config.variable) {
         if (this.config.variableKey) {
-          return this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey)
+          return applyOffset(this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey))
         }
-        return this.context.vars[this.config.variable]
+        return applyOffset(this.context.vars[this.config.variable])
       }
-      let value = this.toStepFixed(parseFloat(this.context.store[this.config.item].state))
+      let value = applyOffset(parseFloat(this.context.store[this.config.item].state))
       if (this.config.min !== undefined) value = Math.max(value, this.config.min)
       if (this.config.max !== undefined) value = Math.min(value, this.config.max)
       return value
@@ -31,7 +37,7 @@ export default {
   watch: {
     value (newValue) {
       if (isNaN(newValue) || !isFinite(newValue)) return
-      this.$refs.stepper.setValue(this.toStepFixed(newValue).toString())
+      this.$refs.stepper.setValue(Number(this.toStepFixed(newValue)))
     }
   },
   methods: {
@@ -42,14 +48,17 @@ export default {
       // uses the number of decimals in the step config to round the provided number
       if (!this.config.step) return value
       const nbDecimals = Number(this.config.step).toString().replace(',', '.').split('.')[1]
-      return parseFloat(Number(value).toFixed(nbDecimals))
+      // do NOT convert to number, instead return string, otherwise formatting wouldn't work
+      return parseFloat(value).toFixed(nbDecimals ? nbDecimals.length : 0)
     },
     onChange (value) {
-      let newValue = this.toStepFixed(value)
+      const applyOffset = (num) => (!isNaN(this.config.offset)) ? Number(this.toStepFixed(num - Number(this.config.offset))) : num
+      let newValue = applyOffset(Number(this.toStepFixed(value)))
+      if (isNaN(newValue)) newValue = this.config.min || this.config.max || 0
       if (newValue === this.value) return
       if (this.config.variable) {
         if (this.config.variableKey) {
-          newValue = this.setVariableKeyValues(this.context.vars[this.config.variable], this.config.variableKey, value)
+          newValue = applyOffset(this.setVariableKeyValues(this.context.vars[this.config.variable], this.config.variableKey, value))
         }
         this.$set(this.context.vars, this.config.variable, newValue)
       } else if (this.config.item) {

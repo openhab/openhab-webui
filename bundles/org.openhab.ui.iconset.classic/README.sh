@@ -10,7 +10,7 @@ The set is provided with the distribution in both the PNG and SVG file format.
 
 EOF
 
-for icon in $(ls icons/*.png | sort -V); do
+for icon in $(ls icons/*.svg | sort -V); do
   name=$(basename "$icon")
   echo "Adding icon '$name'"
   if [ "$name" = "none.png" ] || [ "$name" = "none.svg" ]; then continue; fi
@@ -42,10 +42,10 @@ cat <<EOF >> "$READMEMD"
 {% for category in placesCategoryNames %}
   {% assign iconSrc = base | append: "/img/icon_no_category.png" %}
   {% if allIconsWithoutExtension contains category %}
-    {% assign iconSrc = "icons/" | append: category | append: ".png" %}
+    {% assign iconSrc = "icons/" | append: category | append: ".svg" %}
   {% endif %}
   <figure>
-    <img src="{{iconSrc}}" alt="{{category}}" title="{{category}}">
+    <img src="{{iconSrc}}" alt="{{category}}" title="{{category}}" width="64" height="64">
     <figcaption>{{category}}</figcaption>
   </figure>
 {% endfor %}
@@ -63,7 +63,7 @@ cat <<EOF >> "$READMEMD"
 {% for category in thingCategoryNames %}
   {% assign iconSrc = base | append: "/img/icon_no_category.png" %}
   {% if allIconsWithoutExtension contains category %}
-    {% assign iconSrc = "icons/" | append: category | append: ".png" %}
+    {% assign iconSrc = "icons/" | append: category | append: ".svg" %}
   {% endif %}
 
   {% assign altText = "" %}
@@ -75,7 +75,7 @@ cat <<EOF >> "$READMEMD"
     {% endif %}
   {% endfor %}
   <figure>
-    <img src="{{iconSrc}}" alt="{{altText}}" title="{{altText}}">
+    <img src="{{iconSrc}}" alt="{{altText}}" title="{{altText}}" width="64" height="64">
     <figcaption>{{category}}</figcaption>
   </figure>
 {% endfor %}
@@ -105,7 +105,7 @@ cat <<EOF >> "$READMEMD"
   {% for channelCategory in channelCategoryNames %}
     {% assign iconSrc = base | append: "/img/icon_no_category.png" %}
     {% if allIconsWithoutExtension contains channelCategory %}
-      {% assign iconSrc = "icons/" | append: channelCategory | append: ".png" %}
+      {% assign iconSrc = "icons/" | append: channelCategory | append: ".svg" %}
     {% endif %}
 
     {% assign altText = "" %}
@@ -118,7 +118,7 @@ cat <<EOF >> "$READMEMD"
     {% endfor %}
 
     <figure>
-      <img src="{{iconSrc}}" alt="{{altText}}" title="{{altText}}">
+      <img src="{{iconSrc}}" alt="{{altText}}" title="{{altText}}" width="64" height="64">
       <figcaption>{{channelCategory}}</figcaption>
     </figure>
   {% endfor %}
@@ -162,7 +162,7 @@ cat <<EOF >> "$READMEMD"
     {% endfor %}
   
     <figure>
-      <img src="icons/{{icon}}" alt="{{altText}}" title="{{altText}}">
+      <img src="icons/{{icon}}" alt="{{altText}}" title="{{altText}}" width="64" height="64">
       <figcaption>{{plainCategory}}</figcaption>
     </figure>
   {% endunless %}

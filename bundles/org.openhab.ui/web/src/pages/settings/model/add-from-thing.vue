@@ -60,7 +60,7 @@
           <div>Loading...</div>
         </f7-block>
         <div v-else-if="selectedThing.UID && selectedThingType.UID">
-          <item-form v-if="createEquipment" :item="newEquipmentItem" :items="items" :enable-name="true" :hide-type="true" :force-semantics="true" />
+          <item-form v-if="createEquipment" :item="newEquipmentItem" :items="items" :createMode="true" :hide-type="true" :force-semantics="true" />
           <f7-block-title>Channels</f7-block-title>
           <f7-block-footer class="padding-left padding-right">
             Check the channels you wish to create as new Point items.

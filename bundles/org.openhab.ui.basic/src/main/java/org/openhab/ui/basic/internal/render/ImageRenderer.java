@@ -61,6 +61,11 @@ public class ImageRenderer extends AbstractWidgetRenderer {
         Image image = (Image) w;
         String snippet = (image.getChildren().size() > 0) ? getSnippet("image_link") : getSnippet("image");
 
+        boolean showHeaderRow = image.getLabel() != null;
+        snippet = snippet.replace("%header_visibility_class%",
+                showHeaderRow ? "%visibility_class%" : "mdl-form__row--hidden");
+        snippet = snippet.replace("%header_row%", Boolean.valueOf(showHeaderRow).toString());
+
         if (image.getRefresh() > 0) {
             snippet = snippet.replace("%update_interval%", Integer.toString(image.getRefresh()));
         } else {
@@ -69,7 +74,10 @@ public class ImageRenderer extends AbstractWidgetRenderer {
 
         String widgetId = itemUIRegistry.getWidgetId(w);
         snippet = snippet.replace("%id%", widgetId);
-        snippet = preprocessSnippet(snippet, w);
+        snippet = preprocessSnippet(snippet, w, true);
+
+        // Process the color tags
+        snippet = processColor(w, snippet);
 
         boolean validUrl = isValidURL(image.getUrl());
         String proxiedUrl = "../proxy?sitemap=" + sitemap + "&amp;widgetId=" + widgetId;

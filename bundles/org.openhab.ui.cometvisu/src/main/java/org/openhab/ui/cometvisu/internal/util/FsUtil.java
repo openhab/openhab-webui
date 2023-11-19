@@ -156,7 +156,7 @@ public class FsUtil {
 
                 String backupFileName = filename + "-" + this.dateFormat.format(new Date());
                 if (!extension.isEmpty()) {
-                    backupFileName += "." + extension;
+                    backupFileName += extension;
                 }
                 backupFile = new File(settings.getBackupPath() + backupFileName);
                 try {

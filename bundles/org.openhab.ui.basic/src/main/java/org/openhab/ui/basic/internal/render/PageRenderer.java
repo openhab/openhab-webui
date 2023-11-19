@@ -116,6 +116,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%sitemap%", sitemap);
         snippet = snippet.replace("%htmlclass%", config.getCssClassList());
         snippet = snippet.replace("%icon_type%", ICON_TYPE);
+        snippet = snippet.replace("%inline%", config.isInlineSvgEnabled() ? "true" : "false");
         snippet = snippet.replace("%theme%", config.getTheme());
         snippet = snippet.replace("%sitemapquery%", String.format("?sitemap=%s", sitemap));
         snippet = snippet.replace("%primarycolor%", PRIMARY_COLOR);
@@ -216,13 +217,16 @@ public class PageRenderer extends AbstractWidgetRenderer {
     }
 
     public CharSequence renderSitemapList(Set<SitemapProvider> sitemapProviders) throws RenderException {
-        List<String> sitemapList = new LinkedList<String>();
+        List<Sitemap> sitemapList = new LinkedList<>();
 
         for (SitemapProvider sitemapProvider : sitemapProviders) {
             Set<String> sitemaps = sitemapProvider.getSitemapNames();
-            for (String sitemap : sitemaps) {
-                if (!"_default".equals(sitemap)) {
-                    sitemapList.add(sitemap);
+            for (String sitemapName : sitemaps) {
+                if (!"_default".equals(sitemapName)) {
+                    Sitemap sitemap = sitemapProvider.getSitemap(sitemapName);
+                    if (sitemap != null) {
+                        sitemapList.add(sitemap);
+                    }
                 }
             }
         }
@@ -240,8 +244,31 @@ public class PageRenderer extends AbstractWidgetRenderer {
             }
             sb.append(listEmptySnippet);
         } else {
-            for (String sitemap : sitemapList) {
-                sb.append(sitemapSnippet.replace("%sitemap%", sitemap));
+            sitemapList.sort((s1, s2) -> {
+                String s1Label = s1.getLabel();
+                String s2Label = s2.getLabel();
+                s1Label = s1Label != null ? s1Label : s1.getName();
+                s2Label = s2Label != null ? s2Label : s2.getName();
+                int result = s1Label.compareTo(s2Label);
+                if (result == 0) {
+                    result = s1.getName().compareTo(s2.getName());
+                }
+                return result;
+            });
+
+            for (Sitemap sitemap : sitemapList) {
+                String label = sitemap.getLabel();
+                final String name = sitemap.getName();
+                if (label != null) {
+                    if (sitemapList.stream()
+                            .filter(s -> sitemap.getLabel().equals(s.getLabel() != null ? s.getLabel() : s.getName()))
+                            .count() > 1) {
+                        label = label + " (" + name + ")";
+                    }
+                } else {
+                    label = name;
+                }
+                sb.append(sitemapSnippet.replace("%label%", label).replace("%name%", name));
             }
         }
 

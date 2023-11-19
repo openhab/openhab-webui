@@ -1,4 +1,4 @@
-import { pi, pt, po } from '../helpers.js'
+import { pi, pt, po, pn } from '../helpers.js'
 
 export default () => [
   pi('trendItem', 'Trend Line Item', 'Item to show as a trend line in the background'),
@@ -11,5 +11,5 @@ export default () => [
     { value: 'left', label: 'left' },
     { value: 'right', label: 'right' }
   ]).a(),
-  pt('trendSampling', 'Trend Line Sampling', 'Amount of minutes between each point of the trendline (default: 60). Affected by persistence strategies different from "every minute"').a()
+  pn('trendSampling', 'Trend Line Sampling', 'Amount of minutes between each point of the trendline (default: 60). Affected by persistence strategies different from "every minute"').a()
 ]

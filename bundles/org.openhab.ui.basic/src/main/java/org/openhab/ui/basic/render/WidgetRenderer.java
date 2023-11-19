@@ -32,7 +32,7 @@ public interface WidgetRenderer {
      * @param w the widget to check
      * @return true, if this renderer can handle the widget
      */
-    public boolean canRender(Widget w);
+    boolean canRender(Widget w);
 
     /**
      * Produces HTML code for a given widget and writes it to a string builder.
@@ -43,12 +43,12 @@ public interface WidgetRenderer {
      *         a "%children%" placeholder for them.
      * @throws RenderException if an error occurs during rendering
      */
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException;
+    EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException;
 
     /**
      * Applies a servlet configuration to the renderer
      *
      * @param config servlet configuration
      */
-    public void setConfig(WebAppConfig config);
+    void setConfig(WebAppConfig config);
 }

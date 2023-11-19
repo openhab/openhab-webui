@@ -25,9 +25,10 @@
 </template>
 
 <script>
-import * as SemanticClasses from '@/assets/semantics.js'
+import TagMixin from '@/components/tags/tag-mixin'
 
 export default {
+  mixins: [TagMixin],
   props: ['item', 'disabled', 'inScriptEditor'],
   data () {
     return {
@@ -35,12 +36,6 @@ export default {
     }
   },
   methods: {
-    isSemanticTag (tag) {
-      return [SemanticClasses.Locations,
-        SemanticClasses.Equipment,
-        SemanticClasses.Points,
-        SemanticClasses.Properties].some((t) => t.indexOf(tag) >= 0)
-    },
     isScriptTag (tag) {
       if (this.inScriptEditor !== true) return false
       if (tag === 'Script') return true

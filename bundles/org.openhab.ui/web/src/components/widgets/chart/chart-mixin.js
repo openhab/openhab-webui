@@ -155,8 +155,9 @@ export default {
           seriesStartTime = seriesStartTime.subtract(component.config.offsetAmount, component.config.offsetUnit)
           seriesEndTime = seriesEndTime.subtract(component.config.offsetAmount, component.config.offsetUnit)
         }
+        let serviceId = component.config.service ? this.evaluateExpression('.serviceId', component.config.service) : undefined
         let query = {
-          serviceId: component.config.service || undefined,
+          serviceId: serviceId,
           starttime: seriesStartTime.toISOString(),
           endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
           boundary: boundary

@@ -1,6 +1,6 @@
 <template>
-  <round-slider v-bind="resolvedConfig" :value="value" :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`" mouseScrollAction="true"
-                @input="sendCommandDebounced($event)" @click.native.stop="sendCommandDebounced(value, true)" @touchend.native.stop="sendCommandDebounced(value, true)" />
+  <round-slider v-bind="resolvedConfig" :value="computedValue" :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`" mouseScrollAction="true"
+                @input="onChange" @click.native.stop="sendCommandDebounced(value, true)" @touchend.native.stop="sendCommandDebounced(value, true)" />
 </template>
 
 <script>
@@ -16,6 +16,9 @@ export default {
   },
   widget: OhKnobDefinition,
   computed: {
+    computedValue () {
+      return (typeof this.config.offset === 'number') ? (this.value + this.config.offset) : this.value
+    },
     resolvedConfig () {
       const cfg = this.config
       return {
@@ -29,6 +32,12 @@ export default {
         startAngle: !cfg.circleShape !== undefined ? (cfg.startAngle !== undefined ? cfg.startAngle : -50) : null,
         endAngle: !cfg.circleShape !== undefined ? (cfg.endAngle !== undefined ? cfg.endAngle : -130) : null
       }
+    }
+  },
+  methods: {
+    onChange (newValue) {
+      if (typeof this.config.offset === 'number') newValue -= this.config.offset
+      this.sendCommandDebounced(newValue)
     }
   }
 }

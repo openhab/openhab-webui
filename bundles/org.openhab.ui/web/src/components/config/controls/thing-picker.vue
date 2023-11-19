@@ -33,11 +33,10 @@ export default {
   },
   created () {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
-    // TODO use a Vuex store
-    this.$oh.api.get('/rest/things?summary=true').then((data) => {
+    this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => {
       this.things = data.sort((a, b) => {
-        const labelA = a.label || a.uid
-        const labelB = b.label || b.uid
+        const labelA = a.label || a.UID
+        const labelB = b.label || b.UID
         return labelA.localeCompare(labelB)
       })
       if (this.filterType) {

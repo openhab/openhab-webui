@@ -6,7 +6,7 @@
  * Refer to {@see itemContextLabel} for valid options.
  */
 
-import * as Semantics from '@/assets/semantics'
+import store from '@/js/store'
 
 export default function itemDefaultListComponent (item, footer) {
   const stateDescription = item.stateDescription || {}
@@ -22,10 +22,10 @@ export default function itemDefaultListComponent (item, footer) {
     }
   } else {
     item.tags.forEach((tag) => {
-      if (Semantics.Points.indexOf(tag) >= 0) {
+      if (store.getters.semanticClasses.Points.indexOf(tag) >= 0) {
         semanticClass = tag
       }
-      if (Semantics.Properties.indexOf(tag) >= 0) {
+      if (store.getters.semanticClasses.Properties.indexOf(tag) >= 0) {
         semanticProperty = tag
       }
     })
@@ -165,8 +165,10 @@ export default function itemDefaultListComponent (item, footer) {
   }
   if (!component.config.item) component.config.item = item.name
   if (!component.config.title) component.config.title = item.label || item.name
-  if (item.category && !component.config.icon) component.config.icon = 'oh:' + item.category
-  if (item.category && ['Switch', 'Rollershutter', 'Contact', 'Dimmer', 'Group'].indexOf(item.type) >= 0) component.config.iconUseState = true
+  if (item.category && !component.config.icon) component.config.icon = item.category
+  // Only enable dynamic icon by default for Item types with good support for dynamic icons and "predictable" states
+  const discreteItemTypes = ['Contact', 'Dimmer', 'Rollershutter', 'Switch']
+  if (item.category && component.config.iconUseState === undefined && (discreteItemTypes.includes(item.type) || (item.type === 'Group' && discreteItemTypes.includes(item.groupType)))) component.config.iconUseState = true
   if (item.label && footer && footer.contextLabelSource) {
     let text = itemContextLabel(item, footer)
     if (text) component.config.footer = text

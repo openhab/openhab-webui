@@ -2,33 +2,43 @@
   <div v-if="item" class="quick-link-form no-padding">
     <f7-list inline-labels no-hairlines-md>
       <f7-list-input label="Name" type="text" placeholder="Required" :value="item.name"
-                     :disabled="!enableName" :info="(enableName) ? 'Note: cannot be changed after the creation' : ''"
+                     :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
                      required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage"
-                     @input="onNameInput" :clear-button="enableName" />
+                     @input="onNameInput" :clear-button="createMode" />
       <f7-list-input label="Label" type="text" placeholder="Label" :value="item.label"
                      @input="item.label = $event.target.value" clear-button />
       <f7-list-item v-if="item.type && !hideType" title="Type" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
         <select name="select-type" @change="item.type = $event.target.value">
-          <optgroup label="Basic Types">
-            <option v-for="type in types.ItemTypes" :key="type" :value="type" :selected="type === item.type">
-              {{ type }}
-            </option>
-          </optgroup>
-          <optgroup label="Numbers with Dimensions">
-            <option v-for="dimension in types.Dimensions" :key="dimension" :value="'Number:' + dimension" :selected="item.type === 'Number:' + dimension">
-              {{ 'Number:' + dimension }}
-            </option>
-          </optgroup>
+          <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === item.type.split(':')[0]">
+            {{ t }}
+          </option>
+        </select>
+      </f7-list-item>
+      <f7-list-item v-if="dimensions.length && item.type && !hideType && item.type.startsWith('Number')" title="Dimension" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <select name="select-dimension" @change="item.type = $event.target.value">
+          <option key="Number" value="Number" :selected="item.type === 'Number'">
+            &nbsp;
+          </option>
+          <option v-for="d in dimensions" :key="d.name" :value="'Number:' + d.name" :selected="'Number:' + d.name === item.type">
+            {{ d.label }}
+          </option>
         </select>
       </f7-list-item>
       <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
                      @input="item.category = $event.target.value" clear-button>
         <div slot="root-end" style="margin-left: calc(35% + 8px)">
-          <oh-icon :icon="item.category" height="32" width="32" />
+          <oh-icon :icon="item.category" :state="(createMode) ? null : item.state" height="32" width="32" />
         </div>
       </f7-list-input>
     </f7-list>
     <semantics-picker v-if="!hideSemantics" :item="item" :same-class-only="true" :hide-type="true" :hide-none="forceSemantics" />
+    <f7-list inline-labels accordion-list no-hairline-md>
+      <f7-list-item accordion-item title="Non-Semantic Tags" :after="numberOfTags">
+        <f7-accordion-content>
+          <tag-input :item="item" />
+        </f7-accordion-content>
+      </f7-list-item>
+    </f7-list>
   </div>
 </template>
 
@@ -42,20 +52,31 @@
 
 <script>
 import SemanticsPicker from '@/components/tags/semantics-picker.vue'
-import * as Types from '@/assets/item-types.js'
+import TagInput from '@/components/tags/tag-input.vue'
+import * as types from '@/assets/item-types.js'
 import { Categories } from '@/assets/categories.js'
 
+import ItemMixin from '@/components/item/item-mixin'
+import uomMixin from '@/components/item/uom-mixin'
+
 export default {
-  props: ['item', 'items', 'enableName', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
+  mixins: [ItemMixin, uomMixin],
+  props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
   components: {
-    SemanticsPicker
+    SemanticsPicker,
+    TagInput
   },
   data () {
     return {
-      types: Types,
+      types,
       categoryInputId: '',
       categoryAutocomplete: null,
       nameErrorMessage: ''
+    }
+  },
+  computed: {
+    numberOfTags () {
+      return this.getNonSemanticTags(this.item).length
     }
   },
   methods: {
@@ -91,7 +112,7 @@ export default {
   mounted () {
     if (!this.item) return
     if (!this.item.category) this.$set(this.item, 'category', '')
-    if (this.enableName) {
+    if (this.createMode) {
       if (!this.items) this.items = []
       this.validateName(this.item.name)
     }

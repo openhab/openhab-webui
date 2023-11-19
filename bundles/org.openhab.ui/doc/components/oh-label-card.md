@@ -421,7 +421,7 @@ Display the state of an item in a card
 </PropBlock>
 <PropBlock type="BOOLEAN" name="iconUseState" label="Icon depends on state">
   <PropDescription>
-    Use the state of the item to get a dynamic icon (for openHAB icons only)
+    Use the state of the Item to get a dynamic icon (enabled by default for <code>Contact</code>, <code>Dimmer</code>, <code>Rollershutter</code> & <code>Switch</code> Item types) (for openHAB icons only)
   </PropDescription>
 </PropBlock>
 <PropBlock type="BOOLEAN" name="vertical" label="Vertical arrangement">
@@ -467,7 +467,7 @@ Display the state of an item in a card
     <PropOption value="right" label="right" />
   </PropOptions>
 </PropBlock>
-<PropBlock type="TEXT" name="trendSampling" label="Trend Line Sampling">
+<PropBlock type="INTEGER" name="trendSampling" label="Trend Line Sampling">
   <PropDescription>
     Amount of minutes between each point of the trendline (default: 60). Affected by persistence strategies different from "every minute"
   </PropDescription>

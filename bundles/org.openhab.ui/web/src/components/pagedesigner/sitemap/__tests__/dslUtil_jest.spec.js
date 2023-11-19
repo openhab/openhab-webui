@@ -50,6 +50,43 @@ describe('dslUtil', () => {
     ])
   })
 
+  it('renders a widget with icon correctly', () => {
+    const component = createSitemapComponent('test', 'Test')
+    const widget = {
+    }
+    addWidget(component, 'Switch', {
+      item: 'TestItem',
+      label: 'Test Switch',
+      icon: 'lightbulb'
+    })
+    const sitemap = dslUtil.toDsl(component).split('\n')
+    expect(sitemap).toEqual([
+      'sitemap test label="Test" {',
+      '    Switch item=TestItem label="Test Switch" icon=lightbulb',
+      '}',
+      ''
+    ])
+  })
+
+  it('renders a widget with static icon correctly', () => {
+    const component = createSitemapComponent('test', 'Test')
+    const widget = {
+    }
+    addWidget(component, 'Switch', {
+      item: 'TestItem',
+      label: 'Test Switch',
+      icon: 'lightbulb',
+      staticIcon: true
+    })
+    const sitemap = dslUtil.toDsl(component).split('\n')
+    expect(sitemap).toEqual([
+      'sitemap test label="Test" {',
+      '    Switch item=TestItem label="Test Switch" staticIcon=lightbulb',
+      '}',
+      ''
+    ])
+  })
+
   it('renders a sitemap with a frame container widget correctly', () => {
     const component = createSitemapComponent('test', 'Test')
     const frame = addWidget(component, 'Frame', {})
@@ -79,11 +116,11 @@ describe('dslUtil', () => {
         '10=Cinéma',
         '11=TV',
         '3=Bed time',
-        '4=Night'
+        '4=Night=moon'
       ]
     })
     const sitemap = dslUtil.toDsl(component).split('\n')
-    expect(sitemap[1]).toEqual('    Selection item=Scene_General mappings=[1=Morning,2=Evening,10="Cinéma",11=TV,3="Bed time",4=Night]')
+    expect(sitemap[1]).toEqual('    Selection item=Scene_General mappings=[1=Morning,2=Evening,10="Cinéma",11=TV,3="Bed time",4=Night=moon]')
   })
 
   it('renders a widget with mappings and string keys correctly', () => {
@@ -162,7 +199,7 @@ describe('dslUtil', () => {
       ]
     })
     const sitemap = dslUtil.toDsl(component).split('\n')
-    expect(sitemap[1]).toEqual('    Text item=Temperature valuecolor=[Last_Update==Uninitialized=gray,>=25=orange,==15=green,0=white,blue]')
+    expect(sitemap[1]).toEqual('    Text item=Temperature valuecolor=[Last_Update==Uninitialized="gray",>=25="orange",==15="green",0="white","blue"]')
   })
 
   it('renders widget with valuecolor and text condition correctly', () => {
@@ -176,6 +213,20 @@ describe('dslUtil', () => {
       ]
     })
     const sitemap = dslUtil.toDsl(component).split('\n')
-    expect(sitemap[1]).toEqual('    Text item=Temperature valuecolor=[Heat_Warning=="It is hot"=gray]')
+    expect(sitemap[1]).toEqual('    Text item=Temperature valuecolor=[Heat_Warning=="It is hot"="gray"]')
+  })
+
+  it('renders widget with valuecolor and AND condition correctly', () => {
+    const component = createSitemapComponent('test', 'Test')
+    const widget = {
+    }
+    addWidget(component, 'Text', {
+      item: 'Temperature',
+      valuecolor: [
+        'Heat_Warning==It is hot AND >=25=gray'
+      ]
+    })
+    const sitemap = dslUtil.toDsl(component).split('\n')
+    expect(sitemap[1]).toEqual('    Text item=Temperature valuecolor=[Heat_Warning=="It is hot" AND >=25="gray"]')
   })
 })

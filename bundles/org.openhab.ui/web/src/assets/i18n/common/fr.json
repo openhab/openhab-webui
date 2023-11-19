@@ -7,6 +7,7 @@
   "dialogs.close": "Fermer",
   "dialogs.copy": "Copier",
   "dialogs.delete": "Supprimer",
+  "dialogs.reload": "Recharger",
   "dialogs.search": "Rechercher",
   "dialogs.search.items": "Rechercher items",
   "dialogs.search.things": "Rechercher things",
@@ -39,5 +40,7 @@
   "sidebar.tip.signIn": "Connectez-vous pour accéder aux paramètres",
   "page.navbar.back": "Retour",
   "page.navbar.edit": "Editer",
-  "admin.notTranslatedYet": "Les écrans d'administration ne sont pas traduits pour le moment."
+  "admin.notTranslatedYet": "Les écrans d'administration ne sont pas traduits pour le moment.",
+  "error.communicationFailure": "Erreur de communication",
+  "error.itemNotFound": "%s non trouvé"
 }

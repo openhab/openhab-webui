@@ -25,6 +25,20 @@
 			</options>
 			<default>true</default>
 		</parameter>
+		<parameter name="inlineSvg" type="text" required="true">
+			<label>Inline SVG</label>
+			<description>If enabled, any SVG icon provided by the openHAB icon server will automatically be converted to an
+				inline SVG in the WEB page, allowing control of its color with the sitemap widget property "iconcolor" in
+				the case
+				where the SVG icon sets "currentColor" as the fill color. Note that this will work with custom SVG icons but not
+				with all the packaged icons from the classic iconset since they are defined with a hard-coded color palette. This
+				feature is disabled by default.</description>
+			<options>
+				<option value="true">Enable</option>
+				<option value="false">Disable</option>
+			</options>
+			<default>false</default>
+		</parameter>
 		<parameter name="enableIconify" type="text">
 			<label>Enable Iconify Icons</label>
 			<description>If enabled, the UI will render iconify icons directly by downloading them from the Internet and caching
@@ -44,6 +58,19 @@
 				<option value="false">Disable</option>
 			</options>
 			<default>false</default>
+		</parameter>
+		<parameter name="nbColumns" type="text">
+			<label>Number of Columns</label>
+			<description>The number of columns to consider to fill the grid in large screen width (desktop) and medium screen
+				width (tablet).</description>
+			<options>
+				<option value="1-1">1 column on desktop and tablet</option>
+				<option value="2-1">2 columns on desktop but only 1 on tablet</option>
+				<option value="2-2">2 columns on desktop and tablet</option>
+				<option value="3-1">3 columns on desktop but only 1 on tablet</option>
+				<option value="3-2">3 columns on desktop but only 2 on tablet</option>
+			</options>
+			<default>3-2</default>
 		</parameter>
 		<parameter name="capitalizeValues" type="text" required="true">
 			<label>Capitalize Values</label>

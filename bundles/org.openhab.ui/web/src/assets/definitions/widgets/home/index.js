@@ -115,6 +115,7 @@ export const OhLocationCardParameters = () => new WidgetDefinition('oh-location-
         { value: 'speakers', label: 'Speakers/AV Receivers Powered On' },
         { value: 'temperature', label: 'Average Temperature (+ Setpoint)' },
         { value: 'humidity', label: 'Average Humidity' },
+        { value: 'co2', label: 'Average CO2' },
         { value: 'luminance', label: 'Average Luminance' }
       ], true, true)
   ])

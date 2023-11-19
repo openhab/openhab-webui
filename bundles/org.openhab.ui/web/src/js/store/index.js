@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import components from './modules/components'
 import states from './modules/states'
+import semantics from './modules/semantics'
 import user from './modules/user'
 import { convertJavaLocale } from '@/js/i18n'
 
@@ -13,6 +14,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     components,
+    semantics,
     states,
     user
   },
@@ -21,7 +23,8 @@ const store = new Vuex.Store({
     apiEndpoints: null,
     locale: null,
     runtimeInfo: null,
-    developerSidebar: false
+    developerDock: false,
+    pagePath: null
   },
   getters: {
     apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type),
@@ -36,9 +39,12 @@ const store = new Vuex.Store({
     setLocale (state, locale) {
       state.locale = locale
     },
-    setDeveloperSidebar (state, value) {
-      state.developerSidebar = value
+    setDeveloperDock (state, value) {
+      state.developerDock = value
       state.states.keepConnectionOpen = value
+    },
+    setPagePath (state, value) {
+      state.pagePath = value
     }
   },
   actions: {

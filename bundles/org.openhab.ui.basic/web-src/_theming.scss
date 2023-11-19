@@ -9,6 +9,7 @@ body[data-theme="bright"] {
 	--switch-on-track-bg: #9fa8da;
 	--border-color: #ccc;
 	--input-undef-color: rgba(0,0,0,.26);
+	--input-icon-filter: invert(0%);
 	--button-color: #000000;
 }
 
@@ -23,6 +24,7 @@ body[data-theme="dark"] {
 	--switch-on-track-bg: #9fa8da;
 	--border-color: #343434;
 	--input-undef-color: rgba(158,158,158,.26);
+	--input-icon-filter: invert(100%);
 	--button-color: #e0e0e0;
 }
 
@@ -37,6 +39,7 @@ body[data-theme="system"] {
 	--switch-on-track-bg: #9fa8da;
 	--border-color: #ccc;
 	--input-undef-color: rgba(0,0,0,.26);
+	--input-icon-filter: invert(0%);
 	--button-color: #000000;
 
 	@media (prefers-color-scheme: dark) {
@@ -50,6 +53,7 @@ body[data-theme="system"] {
 		--switch-on-track-bg: #9fa8da;
 		--border-color: #343434;
 		--input-undef-color: rgba(158,158,158,.26);
+		--input-icon-filter: invert(100%);
 		--button-color: #e0e0e0;
 	}
 }
@@ -80,6 +84,10 @@ body {
 	color: var(--container-text-color, #616161) !important;
 }
 
+.mdl-form__row--header {
+	border-bottom: none;
+}
+
 .mdl-switch .mdl-switch__track {
 	background: rgba(0,0,0,.26);
 	background: var(--switch-off-track-bg, rgba(0,0,0,.26));
@@ -106,4 +114,8 @@ body {
 }
 .mdl-textfield__label {
 	color: var(--input-undef-color, rgba(0,0,0,.26));
+}
+
+input::-webkit-calendar-picker-indicator {
+	filter: var(--input-icon-filter, invert(0%));
 }

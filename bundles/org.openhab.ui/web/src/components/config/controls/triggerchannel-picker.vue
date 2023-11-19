@@ -33,7 +33,6 @@ export default {
   },
   created () {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
-    // TODO use a Vuex store
     this.$oh.api.get('/rest/things').then((data) => {
       this.things = data.sort((a, b) => {
         const labelA = a.label

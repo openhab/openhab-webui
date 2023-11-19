@@ -1,5 +1,5 @@
 {
-  "dialogs.ok": "OK",
+  "dialogs.ok": "D'acord",
   "dialogs.cancel": "Cancel·la",
   "dialogs.back": "Enrere",
   "dialogs.done": "Fet",
@@ -7,6 +7,9 @@
   "dialogs.close": "Tanca",
   "dialogs.copy": "Copia",
   "dialogs.delete": "Elimina",
+  "dialogs.reload": "Torna a carregar",
+  "dialogs.retry": "Torneu-ho a provar",
+  "dialogs.showAll": "Mostra-ho tot",
   "dialogs.search": "Cerca",
   "dialogs.search.items": "Cerca Items",
   "dialogs.search.things": "Cerca Things",
@@ -33,11 +36,16 @@
   "sidebar.noPages": "No hi ha pàgines",
   "sidebar.administration": "Administració",
   "sidebar.settings": "Preferències",
+  "sidebar.addOnStore": "Botiga de complements",
   "sidebar.developerTools": "Eines de desenvolupament",
   "sidebar.helpAbout": "Ajut i quant a",
   "sidebar.unlockAdmin": "Desbloqueja administració",
   "sidebar.tip.signIn": "Entra com a administrador per accedir a les preferències",
   "page.navbar.back": "Enrere",
   "page.navbar.edit": "Edita",
-  "admin.notTranslatedYet": "L'àrea d'administració encara no està traduïda."
+  "admin.notTranslatedYet": "L'àrea d'administració encara no està traduïda.",
+  "error.communicationFailure": "Fallada de comunicació",
+  "error.itemNotFound": "%s no s'ha trobat",
+  "error.notReachable.title": "openHAB fora de línia",
+  "error.notReachable.msg": "No es pot connectar amb el servidor d'openHAB. Si us plau, comproveu la connexió a internet i el servidor."
 }

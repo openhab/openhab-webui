@@ -34,7 +34,7 @@
         :footer="(link.item.label) ? link.item.name : '\xa0'"
         :subtitle="getItemTypeAndMetaLabel(link.item)"
         :after="context.store[link.item.name] ? context.store[link.item.name].displayState || context.store[link.item.name].state : link.item.state">
-        <oh-icon v-if="link.item.category" slot="media" :icon="link.item.category" height="32" width="32" />
+        <oh-icon v-if="link.item.category" slot="media" :icon="link.item.category" :state="context.store[link.item.name] ? context.store[link.item.name].state : link.item.state" height="32" width="32" />
         <span v-else slot="media" class="item-initial">{{ link.item.name[0] }}</span>
         <f7-icon v-if="!link.item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
         <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
@@ -44,7 +44,8 @@
       <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
     </f7-list-item>
     <f7-list-button class="searchbar-ignore" color="blue" :title="(channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'" @click="configureChannel()" />
-    <f7-list-button class="searchbar-ignore" v-if="extensible" color="red" title="Remove Channel" @click="removeChannel()" />
+    <f7-list-button class="searchbar-ignore" v-if="extensible && thing.editable" color="blue" title="Copy Channel" @click="copyChannel()" />
+    <f7-list-button class="searchbar-ignore" v-if="extensible && thing.editable" color="red" title="Remove Channel" @click="removeChannel()" />
   </f7-list>
 </template>
 
@@ -61,8 +62,12 @@
 import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
 import ConfigureLinkPage from '@/pages/settings/things/link/link-edit.vue'
 import ConfigureChannelPage from '@/pages/settings/things/channel/channel-edit.vue'
+import CopyChannelPage from '@/pages/settings/things/channel/channel-copy.vue'
+
+import ItemMixin from '@/components/item/item-mixin'
 
 export default {
+  mixins: [ItemMixin],
   props: ['channelType', 'channelId', 'channel', 'thing', 'opened', 'extensible', 'context'],
   data () {
     return {
@@ -187,6 +192,39 @@ export default {
         }
       })
     },
+    copyChannel () {
+      const self = this
+      const path = 'channels/' + this.channelId + '/edit'
+      this.$f7router.navigate({
+        url: path,
+        route: {
+          component: CopyChannelPage,
+          path: path,
+          context: {
+            operation: 'copy-channel'
+          },
+          on: {
+            pageAfterOut (event, page) {
+              const context = page.route.route.context
+              const finalChannel = context.finalChannel
+              if (finalChannel) {
+                self.thing.channels.push(finalChannel)
+                self.$emit('channel-updated', true)
+              } else {
+                self.$emit('channel-updated', false)
+              }
+            }
+          }
+        }
+      }, {
+        props: {
+          thing: this.thing,
+          channel: this.channel,
+          channelType: this.channelType,
+          channelId: this.channelId
+        }
+      })
+    },
     removeChannel () {
       const self = this
 
@@ -203,18 +241,6 @@ export default {
           self.thing.channels.splice(idx, 1)
           self.$emit('channel-updated', true)
         })
-    },
-    getItemTypeAndMetaLabel (item) {
-      let ret = item.type
-      if (item.metadata && item.metadata.semantics) {
-        ret += ' · '
-        const classParts = item.metadata.semantics.value.split('_')
-        ret += classParts[0]
-        if (classParts.length > 1) {
-          ret += '>' + classParts.pop()
-        }
-      }
-      return ret
     }
   },
   watch: {

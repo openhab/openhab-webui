@@ -349,74 +349,256 @@
 		var
 			_t = this,
 			suppress = false,
-			noneImageSrc = "/icon/none.png",
-			splittedIconAttr;
+			noneImageSrc = "/icon/none.png";
 
 		_t.parentNode = parentNode;
-		_t.formRow = parentNode.parentNode;
+		if (_t.formRow === undefined) {
+			_t.formRow = parentNode.parentNode;
+		}
 		_t.item = _t.parentNode.getAttribute(o.itemAttribute);
 		_t.id = _t.parentNode.getAttribute(o.idAttribute);
-		_t.iconContainer = _t.parentNode.parentNode.querySelector(o.formIcon);
-		_t.icon = _t.parentNode.parentNode.querySelector(o.formIconImg);
+		_t.iconWithState = _t.parentNode.getAttribute(o.iconWithStateAttribute) === "true";
 		_t.visible = !_t.formRow.classList.contains(o.formRowHidden);
-		_t.label = _t.parentNode.parentNode.querySelector(o.formLabel);
+		_t.headerRow = _t.parentNode.getAttribute("data-header-row");
+		if (_t.headerRow !== null) {
+			_t.formHeaderRow = _t.formRow.previousElementSibling;
+			_t.iconContainer = _t.formHeaderRow.querySelector(o.formIcon);
+			_t.label = _t.formHeaderRow.querySelector(o.formLabel);
+		} else {
+			_t.formHeaderRow = null;
+			_t.iconContainer = _t.formRow.querySelector(o.formIcon);
+			_t.label = _t.formRow.querySelector(o.formLabel);
+		}
+
+		_t.findIcon = function() {
+			var
+				splitIconAttr,
+				formRow = _t.formHeaderRow !== null ? _t.formHeaderRow : _t.formRow;
+
+			_t.iconSource = null;
+			_t.icon = formRow.querySelector(o.formIconImg);
+			if (_t.icon !== null) {
+				_t.iconSource = "oh";
+				splitIconAttr = _t.icon.getAttribute(o.iconAttribute).split(":");
+				if (splitIconAttr.length === 2) {
+					_t.iconSet = splitIconAttr[0];
+					_t.iconName = splitIconAttr[1];
+				}
+				return;
+			}
+			_t.icon = formRow.querySelector(o.formIconSvg);
+			if (_t.icon !== null) {
+				_t.iconSource = "oh";
+				splitIconAttr = _t.icon.getAttribute(o.iconAttribute).split(":");
+				if (splitIconAttr.length === 2) {
+					_t.iconSet = splitIconAttr[0];
+					_t.iconName = splitIconAttr[1];
+				}
+				return;
+			}
+			_t.icon = formRow.querySelector(o.formIconIconify);
+			if (_t.icon !== null) {
+				_t.iconSource = "if";
+				return;
+			}
+			_t.icon = formRow.querySelector(o.formIconMaterial);
+			if (_t.icon !== null) {
+				_t.iconSource = "material";
+				return;
+			}
+			_t.icon = formRow.querySelector(o.formIconFramework7);
+			if (_t.icon !== null) {
+				_t.iconSource = "f7";
+			}
+		};
+
+		function convertToInlineSVG() {
+			this.removeEventListener("load", convertToInlineSVG);
+			if (smarthome.UI.inlineSVG) {
+				_t.getSVGIconAndReplaceWithInline(this.src, true, null);
+			}
+		}
 
 		function replaceImageWithNone() {
+			this.removeEventListener("load", convertToInlineSVG);
 			this.removeEventListener("error", replaceImageWithNone);
 			this.src = noneImageSrc;
 		}
 
-		if (_t.icon !== null) {
-			splittedIconAttr = _t.icon.getAttribute(o.iconAttribute).split(":");
-			_t.iconSet = splittedIconAttr[0];
-			_t.iconName = splittedIconAttr[1];
-			if (_t.icon.src !== noneImageSrc) {
-				_t.icon.addEventListener("error", replaceImageWithNone);
-			}
+		_t.findIcon();
+		if (_t.icon !== null && _t.iconSource === "oh") {
+			_t.icon.addEventListener("load", convertToInlineSVG);
+			_t.icon.addEventListener("error", replaceImageWithNone);
 		}
 
-		_t.reloadIcon = function(state) {
-			// Some widgets don't have icons
-			if (_t.icon !== null) {
+		_t.replaceIconWithInlineSVG = function(svgText) {
+			var
+				parser,
+				docSvg,
+				newIconElement,
+				dataIcon;
+
+			// Parse the SVG text and turn it into DOM nodes
+			parser = new DOMParser();
+			docSvg = parser.parseFromString(svgText, "image/svg+xml");
+			newIconElement = docSvg.querySelector("svg");
+
+			// Keep the attribute data-icon
+			dataIcon = _t.icon.getAttribute("data-icon");
+			if (dataIcon !== null) {
+				newIconElement.setAttribute("data-icon", dataIcon);
+			}
+
+			// Replace the current icon element with the built inline SVG
+			_t.iconContainer.replaceChild(newIconElement, _t.icon);
+			_t.findIcon();
+		};
+
+		_t.getSVGIconAndReplaceWithInline = function(srcUrl, checkCurrentColor, defaultSVG) {
+			fetch(srcUrl).then(function(response) {
+				if (response.ok && response.headers.get("content-type") === "image/svg+xml") {
+					response.text().then(function(data) {
+						if (!checkCurrentColor || data.indexOf("currentColor") !== -1) {
+							_t.replaceIconWithInlineSVG(data);
+						} else if (defaultSVG !== null) {
+							_t.replaceIconWithInlineSVG(defaultSVG);
+						}
+					});
+				} else if (defaultSVG !== null) {
+					_t.replaceIconWithInlineSVG(defaultSVG);
+				}
+			}).catch(function() {
+				if (defaultSVG !== null) {
+					_t.replaceIconWithInlineSVG(defaultSVG);
+				}
+			});
+		};
+
+		_t.replaceIcon = function(htmlText) {
+			var
+				parser,
+				doc,
+				newIconElement;
+
+			// Parse the HTML text and turn it into DOM nodes
+			parser = new DOMParser();
+			doc = parser.parseFromString(htmlText, "text/html");
+			newIconElement = doc.body.firstChild;
+
+			if (_t.iconSource === "oh") {
+				_t.icon.removeEventListener("load", convertToInlineSVG);
+				_t.icon.removeEventListener("error", replaceImageWithNone);
+			}
+
+			// Replace the current icon element
+			_t.iconContainer.replaceChild(newIconElement, _t.icon);
+
+			_t.findIcon();
+			if (_t.iconSource === "oh") {
+				_t.icon.addEventListener("load", convertToInlineSVG);
 				_t.icon.addEventListener("error", replaceImageWithNone);
-				if (state.length < 200) {
-					_t.icon.setAttribute("src",
-						"/icon/" +
-						encodeURIComponent(_t.iconName) +
-						"?state=" +
-						encodeURIComponent(state) +
-						"&iconset=" +
-						encodeURIComponent(_t.iconSet) +
-						"&format=" +
-						smarthome.UI.iconType +
-						"&anyFormat=true"
-					);
+			}
+		};
+
+		_t.reloadIcon = function(state, icon) {
+			var
+				src,
+				imgURL,
+				splitIcon,
+				iconSrc = "oh",
+				iconSet = "classic",
+				iconName = "none";
+
+			// Some widgets don't have icons
+			if (_t.icon === null) {
+				return;
+			}
+
+			if (icon === undefined) {
+				// No reload expected
+				return;
+			}
+
+			splitIcon = icon.split(":");
+			if (splitIcon.length === 1) {
+				iconName = splitIcon[0];
+			} else if (splitIcon.length === 2) {
+				iconSrc = splitIcon[0];
+				iconName = splitIcon[1];
+			} else if (splitIcon.length === 3) {
+				iconSrc = splitIcon[0];
+				iconSet = splitIcon[1];
+				iconName = splitIcon[2];
+			}
+			if (iconSrc === "iconify") {
+				iconSrc = "if";
+			}
+
+			if (iconSrc === "oh") {
+				imgURL = "/icon/" + encodeURIComponent(iconName) +
+					"?iconset=" + encodeURIComponent(iconSet) +
+					"&format=" + smarthome.UI.iconType +
+					"&anyFormat=true";
+				if (_t.iconWithState && state.length < 200) {
+					imgURL += "&state=" + encodeURIComponent(state);
+				}
+			}
+			if (iconSrc === _t.iconSource) {
+				if (iconSrc === "oh") {
+					if (iconSet !== _t.iconSet || iconName !== _t.iconName) {
+						src = "<img data-icon=\"" + iconSet + ":" + iconName + "\" src=\".." + imgURL + "\" />";
+						_t.replaceIcon(src);
+					} else if (_t.icon.tagName.toLowerCase() === "img" && !_t.icon.src.endsWith(noneImageSrc)) {
+						_t.icon.addEventListener("error", replaceImageWithNone);
+						_t.icon.setAttribute("src", imgURL);
+					} else if (_t.icon.tagName.toLowerCase() === "svg" && smarthome.UI.inlineSVG) {
+						_t.getSVGIconAndReplaceWithInline(imgURL, false, "<svg/>");
+					}
+				} else if (iconSrc === "if") {
+					_t.icon.setAttribute("icon", encodeURIComponent(iconSet) + ":" + encodeURIComponent(iconName));
+				} else if (iconSrc === "material" || iconSrc === "f7") {
+					_t.icon.innerHTML = iconName;
+				}
+			} else {
+				// Different icon source => DOM element to be be replaced
+
+				if (iconSrc === "oh") {
+					src = "<img data-icon=\"" + iconSet + ":" + iconName + "\" src=\".." + imgURL + "\" />";
+				} else if (iconSrc === "if") {
+					src = "<iconify-icon icon=\"" +
+						encodeURIComponent(iconSet) + ":" + encodeURIComponent(iconName) +
+						"\"></iconify-icon>";
+				} else if (iconSrc === "material") {
+					src = "<span class=\"material-icons\">" + iconName + "</span>";
+				} else if (iconSrc === "f7") {
+					src = "<span class=\"f7-icons\">" + iconName + "</span>";
 				} else {
-					_t.icon.setAttribute("src",
-						"/icon/" +
-						encodeURIComponent(_t.iconName) +
-						"?iconset=" +
-						encodeURIComponent(_t.iconSet) +
-						"&format=" +
-						smarthome.UI.iconType +
-						"&anyFormat=true"
-					);
+					src = null;
+				}
+				if (src !== null) {
+					_t.replaceIcon(src);
 				}
 			}
 		};
 
 		_t.setVisible = function(state) {
 			if (state) {
+				if (_t.headerRow === "true") {
+					_t.formHeaderRow.classList.remove(o.formRowHidden);
+				}
 				_t.formRow.classList.remove(o.formRowHidden);
 			} else {
+				if (_t.headerRow === "true") {
+					_t.formHeaderRow.classList.add(o.formRowHidden);
+				}
 				_t.formRow.classList.add(o.formRowHidden);
 			}
 
 			_t.visible = state;
 		};
 
-		_t.setValue = function(value, itemState, visible) {
-			_t.reloadIcon(itemState);
+		_t.setValue = function(value, itemState, visible, icon) {
+			_t.reloadIcon(itemState, icon);
 			if (suppress) {
 				suppress = false;
 			} else {
@@ -449,7 +631,8 @@
 		};
 
 		_t.destroy = function() {
-			if (_t.icon !== null) {
+			if (_t.icon !== null && _t.iconSource === "oh") {
+				_t.icon.removeEventListener("load", convertToInlineSVG);
 				_t.icon.removeEventListener("error", replaceImageWithNone);
 			}
 
@@ -503,6 +686,12 @@
 		} else {
 			this.parentNode = parentNode;
 			this.id = this.parentNode.getAttribute(o.idAttribute);
+			this.headerRow = this.parentNode.getAttribute("data-header-row");
+			if (this.headerRow !== null) {
+				this.formHeaderRow = this.parentNode.parentNode.previousElementSibling;
+			} else {
+				this.formHeaderRow = null;
+			}
 		}
 
 		var
@@ -516,6 +705,25 @@
 		_t.url = parentNode.getAttribute("data-proxied-url");
 		_t.validUrl = parentNode.getAttribute("data-valid-url") === "true";
 		_t.ignoreRefresh = parentNode.getAttribute("data-ignore-refresh") === "true";
+		_t.legendButton = null;
+		_t.periodButton = null;
+		_t.upscaleButton = null;
+		_t.refreshButton = null;
+		_t.displayLegend = _t.parentNode.getAttribute("data-legend") === "true";
+		_t.period = null;
+		_t.upscale = false;
+
+		_t.legendButton = _t.formHeaderRow.querySelector(o.image.legendButton);
+		_t.periodButton = _t.formHeaderRow.querySelector(o.image.periodButton);
+		_t.upscaleButton = _t.formHeaderRow.querySelector(o.image.upscaleButton);
+		_t.refreshButton = _t.formHeaderRow.querySelector(o.image.refreshButton);
+		if (_t.legendButton !== null) {
+			if (_t.displayLegend) {
+				_t.legendButton.classList.add(o.buttonActiveClass);
+			} else {
+				_t.legendButton.classList.remove(o.buttonActiveClass);
+			}
+		}
 
 		_t.setValuePrivate = function(value, itemState, visible) {
 			if (!visible) {
@@ -525,7 +733,7 @@
 				// Image element associated to an item of type ImageItem
 				_t.ignoreRefresh = true;
 				_t.image.setAttribute("src", itemState);
-			} else if ((itemState !== "UNDEF") || (_t.validUrl)) {
+			} else if ((itemState !== "NULL" && itemState !== "UNDEF") || (_t.validUrl)) {
 				// Image element associated to an item of type StringItem (URL)
 				// Or no associated item but url is set and valid in the image element
 				_t.ignoreRefresh = false;
@@ -539,9 +747,15 @@
 
 		_t.setVisible = function(state) {
 			if (state) {
+				if (_t.headerRow === "true") {
+					_t.formHeaderRow.classList.remove(o.formRowHidden);
+				}
 				_t.formRow.classList.remove(o.formRowHidden);
 				_t.activateRefresh();
 			} else {
+				if (_t.headerRow === "true") {
+					_t.formHeaderRow.classList.add(o.formRowHidden);
+				}
 				_t.formRow.classList.add(o.formRowHidden);
 				_t.deactivateRefresh();
 			}
@@ -576,13 +790,146 @@
 			}, _t.updateInterval);
 		};
 
+		function onLegendClick() {
+			_t.displayLegend = !_t.displayLegend;
+			if (_t.displayLegend) {
+				_t.legendButton.classList.add(o.buttonActiveClass);
+			} else {
+				_t.legendButton.classList.remove(o.buttonActiveClass);
+			}
+			_t.url = _t.url.replace(/&legend=(true|false)/, "");
+			if (_t.displayLegend) {
+				_t.url = _t.url + "&legend=true";
+			} else {
+				_t.url = _t.url + "&legend=false";
+			}
+			_t.image.setAttribute("src", _t.url + "&t=" + Date.now());
+		}
+
+		function onPeriodChange(event) {
+			event.stopPropagation();
+
+			if (event.target.tagName.toLowerCase() !== "input") {
+				return;
+			}
+
+			_t.period = event.target.getAttribute("value");
+			_t.url = _t.url.replace(/&period=(h|4h|8h|12h|D|2D|3D|W|2W|M|2M|4M|Y)/, "&period=" + _t.period);
+			_t.image.setAttribute("src", _t.url + "&t=" + Date.now());
+
+			setTimeout(function() {
+				_t.modalPeriods.hide();
+			}, 300);
+		}
+
+		_t.showModalPeriods = function() {
+			var
+				content = _t.formHeaderRow.querySelector(o.image.periodRows).innerHTML;
+
+			_t.modalPeriods = new Modal(content);
+			_t.modalPeriods.show();
+			_t.modalPeriods.onHide = function() {
+				var
+					items = [].slice.call(_t.modalPeriods.container.querySelectorAll(o.formRadio));
+
+				componentHandler.downgradeElements(items);
+				items.forEach(function(control) {
+					control.removeEventListener("click", onPeriodChange);
+				});
+
+				_t.modalPeriods = null;
+			};
+
+			var
+				controls = [].slice.call(_t.modalPeriods.container.querySelectorAll(o.formRadio));
+
+			if (_t.period !== null) {
+				var
+					items = [].slice.call(_t.modalPeriods.container.querySelectorAll("input[type=radio]"));
+
+				items.forEach(function(radioItem) {
+					if (radioItem.value === _t.period) {
+						radioItem.checked = true;
+					} else {
+						radioItem.checked = false;
+					}
+				});
+			}
+
+			controls.forEach(function(control) {
+				componentHandler.upgradeElement(control, "MaterialRadio");
+				control.addEventListener("click", onPeriodChange);
+			});
+		};
+
+		function onUpscaleClick() {
+			_t.upscale = !_t.upscale;
+			if (_t.upscale) {
+				_t.upscaleButton.classList.add(o.buttonActiveClass);
+			} else {
+				_t.upscaleButton.classList.remove(o.buttonActiveClass);
+			}
+			if (_t.upscale) {
+				_t.parentNode.classList.add(o.image.upscaleClass);
+			} else {
+				_t.parentNode.classList.remove(o.image.upscaleClass);
+			}
+		}
+
+		function onRefreshClick() {
+			_t.image.setAttribute("src", _t.url + "&t=" + Date.now());
+		}
+
+		function toggleHeaderRow() {
+			_t.headerRow = _t.headerRow === "true" ? "false" : "true";
+			if (_t.headerRow === "true") {
+				_t.formHeaderRow.classList.remove(o.formRowHidden);
+			} else {
+				_t.formHeaderRow.classList.add(o.formRowHidden);
+			}
+		}
+
 		_t.destroy = function() {
 			var
 				imageParent = _t.image.parentNode;
 
 			_t.image.setAttribute("src", urlNoneIcon);
 			imageParent.removeChild(_t.image);
+
+			if (_t.legendButton !== null) {
+				componentHandler.downgradeElements([ _t.legendButton ]);
+				_t.legendButton.removeEventListener("click", onLegendClick);
+			}
+			if (_t.periodButton !== null) {
+				componentHandler.downgradeElements([ _t.periodButton ]);
+				_t.periodButton.removeEventListener("click", _t.showModalPeriods);
+			}
+			if (_t.upscaleButton !== null) {
+				componentHandler.downgradeElements([ _t.upscaleButton ]);
+				_t.upscaleButton.removeEventListener("click", onUpscaleClick);
+			}
+			if (_t.refreshButton !== null) {
+				componentHandler.downgradeElements([ _t.refreshButton ]);
+				_t.refreshButton.removeEventListener("click", onRefreshClick);
+			}
+
+			_t.parentNode.parentNode.removeEventListener("click", toggleHeaderRow);
 		};
+
+		if (_t.legendButton !== null) {
+			_t.legendButton.addEventListener("click", onLegendClick);
+		}
+		if (_t.periodButton !== null) {
+			_t.periodButton.addEventListener("click", _t.showModalPeriods);
+		}
+		if (_t.upscaleButton !== null) {
+			_t.upscaleButton.addEventListener("click", onUpscaleClick);
+		}
+		if (_t.refreshButton !== null) {
+			_t.refreshButton.addEventListener("click", onRefreshClick);
+		}
+
+		_t.parentNode.parentNode.addEventListener("click", toggleHeaderRow);
 
 		if (_t.visible) {
 			_t.activateRefresh();
@@ -612,7 +959,7 @@
 
 			if (!visible) {
 				mapUrl = urlNoneIcon;
-			} else if (itemState !== "UNDEF") {
+			} else if (itemState !== "NULL" && itemState !== "UNDEF") {
 				splittedState = itemState.split(",");
 				lat = parseFloat(splittedState[0]);
 				lon = parseFloat(splittedState[1]);
@@ -955,6 +1302,7 @@
 		_t.up = _t.parentNode.querySelector(o.setpoint.up);
 		_t.down = _t.parentNode.querySelector(o.setpoint.down);
 
+		_t.hasValue = _t.parentNode.getAttribute("data-has-value") === "true";
 		_t.value = _t.parentNode.getAttribute("data-value");
 		_t.max = parseFloat(_t.parentNode.getAttribute("data-max"));
 		_t.min = parseFloat(_t.parentNode.getAttribute("data-min"));
@@ -966,14 +1314,19 @@
 		_t.unit = _t.parentNode.getAttribute("data-unit");
 
 		_t.setValuePrivate = function(value, itemState) {
-			if (itemState.indexOf(" ") > 0) {
+			// itemState contains value + unit in the display unit (in case unit is set in label pattern)
+			if (itemState === "NULL" || itemState === "UNDEF") {
+				_t.value = 0;
+			} else  if (itemState.indexOf(" ") > 0) {
 				var stateAndUnit = itemState.split(" ");
 				_t.value = stateAndUnit[0] * 1;
 				_t.unit = stateAndUnit[1];
 			} else {
 				_t.value = itemState * 1;
 			}
-			_t.valueNode.innerHTML = value;
+			if (_t.hasValue) {
+				_t.valueNode.innerHTML = value;
+			}
 		};
 
 		_t.setValueColor = function(color) {
@@ -1027,6 +1380,7 @@
 
 		smarthome.eventMapper.map(eventMap);
 	}
+
 	/* class Colorpicker */
 	function Colorpicker(parentNode, color, callback) {
 		var
@@ -1534,51 +1888,125 @@
 
 	/* class ControlInput extends Control */
 	function ControlInput(parentNode) {
+		this.formRow = parentNode.parentNode.parentNode;
 		Control.call(this, parentNode);
 
 		var
 			_t = this;
 
-		_t.input = _t.parentNode.querySelector("input[type=text]");
+		_t.input = _t.parentNode.querySelector("input");
 		_t.itemType = _t.parentNode.getAttribute(o.itemTypeAttribute);
+		_t.inputHint = _t.parentNode.getAttribute(o.inputHintAttribute);
+		_t.itemState = _t.parentNode.getAttribute(o.itemStateAttribute);
+		_t.unit = _t.parentNode.getAttribute(o.unitAttribute);
+		_t.prefixField = _t.parentNode.parentNode.querySelector(".mdl-form__input-prefix");
+		_t.postfixField = _t.parentNode.parentNode.querySelector(".mdl-form__input-postfix");
+		_t.unitField =  _t.parentNode.parentNode.querySelector(".mdl-form__input-unit");
 		_t.verify = undefined;
 
 		var
 			lastValue = _t.input.value,
-			lastItemState,
-			numberPattern = /^(\+|-)?[0-9\.,]+/,
-			dotSeparatorPattern = /^-?(([0-9]{1,3}(,[0-9]{3})*)|([0-9]*))?(\.[0-9]+)?$/,
-			commaSeparatorPattern = /^-?(([0-9]{1,3}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?$/;
+			lastUndef = _t.input.nextElementSibling.innerHTML.trim(),
+			lastItemState = _t.itemState,
+			numberPattern = /^(\+|-)?[0-9\.,]+((e|E)(\+|-)?[0-9]+)?/,
+			datePattern = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/,
+			timePattern = /^[0-9]{2}:[0-9]{2}/,
+			timeWithSecondsPattern = /[0-9]{2}:[0-9]{2}:[0-9]{2}$/,
+			commaSeparatorPattern = /^-?(([1-9][0-9]{0,2}(\.[0-9]{3})*)|([0-9]*))?(,[0-9]+)?((e|E)(\+|-)?[0-9]+)?$/;
 
-		if (_t.input.nextElementSibling.innerHTML.trim() === "") {
-			lastItemState = lastValue;
-		} else {
-			lastValue = _t.input.nextElementSibling.innerHTML.trim();
-			lastItemState = "NULL";
+		// This kicks in when the browser does not support date, time or datetime-local input elements.
+		// Set the placeholder to the right patterns. This cannot be done in the snippet creation in Java because the browser is unknown there.
+		if (_t.itemType === "datetime" && _t.inputHint && _t.input.type === "text") {
+			var placeholder = "YYYY-MM-DD hh:mm";
+			if (_t.inputHint === "date") {
+				placeholder = "YYYY-MM-DD";
+			} else if (_t.inputHint === "time") {
+				placeholder = "hh:mm";
+			}
+			_t.parentNode.querySelector("label").innerHTML = placeholder;
+		}
+
+		function setColor(element, color) {
+			if (element) {
+				element.style.setProperty("color", color);
+			}
+		}
+
+		function parseNumber(value, unit, keepExponentChar) {
+			var newValue = value.trim();
+			var numberMatch = newValue.match(numberPattern);
+			if (numberMatch && (numberMatch.length > 0)) {
+				var numberValue = numberMatch[0];
+				var unitValue = newValue.substring(numberValue.length).trim();
+				newValue = numberValue.replace(/^\+/, "");
+				// when sending updates, only uppercase E for exponent is accepted, don't change when only parsing for visualisation
+				newValue = keepExponentChar ? newValue : newValue.replace("e", "E");
+				if (commaSeparatorPattern.test(newValue)) {
+					newValue = newValue.replace(/\./g, "").replace(",", ".");
+				}
+				if (unitValue.length > 0) {
+					newValue = newValue + " " + unitValue;
+				} else if (unit !== undefined && unit.length > 0) {
+					newValue = newValue + " " + unit;
+				}
+				return { value: newValue, changed: true };
+			} else {
+				return { value: value, changed: false };
+			}
+		}
+
+		function cleanValue(value) {
+			var prefix = _t.prefixField !== null ? _t.prefixField.innerHTML : "";
+			var postfix = _t.postfixField !== null ? _t.postfixField.innerHTML : "";
+			var newValue = value.startsWith(prefix) ? value.substr(prefix.length) : value;
+			newValue = value.endsWith(postfix) ? newValue.substr(0, newValue.lastIndexOf(postfix)) : newValue;
+			return newValue.trim();
 		}
 
 		function onChange() {
 			var
 				changeValue = _t.input.value,
 				changed = true;
-			if (_t.itemType === "Number") {
-				changeValue = changeValue.trim();
-				var numberValue = changeValue.match(numberPattern);
-				if (!numberValue || numberValue.length < 1) {
-					changed = false;
+
+			if (_t.itemType === "number") {
+				var parsedValue = parseNumber(changeValue, _t.unit);
+				if (parsedValue.changed) {
+					changeValue = parsedValue.value;
 				} else {
-					var unitValue = changeValue.substring(numberValue[0].length).trim();
-					changeValue = numberValue[0].replace(/^\+/, "");
-					if (commaSeparatorPattern.test(changeValue) && !dotSeparatorPattern.test(changeValue)) {
-						changeValue = changeValue.replace(/\./g, "").replace(",", ".");
+					changed = false;
+				}
+			} else if (_t.itemType === "datetime") {
+				changeValue = changeValue.trim();
+				if (changeValue.match(datePattern) && (lastItemState !== "NULL") && (lastItemState !== "UNDEF")) {
+					var lastStateArray = lastItemState.split("T");
+					if (lastStateArray.length > 1) {
+						changeValue = changeValue + "T" + lastStateArray[1];
 					}
-					if (unitValue.length > 1) {
-						changeValue = changeValue + " " + unitValue;
+				} else if (changeValue.match(timePattern)) {
+					var date = ((lastItemState !== "NULL") && (lastItemState !== "UNDEF")) ? lastItemState.split("T")[0] : (new Date(0)).toISOString();
+					changeValue = date.split("T")[0] + "T" + changeValue;
+				} else if (_t.input.type === "text") {
+					var valueArray = changeValue.split(" ");
+					changeValue = valueArray[0];
+					if (valueArray.length > 1) {
+						changeValue = changeValue + "T" + valueArray[1];
 					}
+				}
+				if (isNaN(Date.parse(changeValue))) {
+					changed = false;
 				}
 			}
 
 			if (!changed) {
+				if ((_t.inputHint === "date") && lastValue.match(datePattern) && (lastItemState !== "NULL") && (lastItemState !== "UNDEF")) {
+					lastStateArray = lastItemState.split("T");
+					if (lastStateArray.length > 1) {
+						lastValue = lastValue + "T" + lastStateArray[1];
+					}
+				} else if (_t.inputHint === "time" && lastValue.match(timePattern)) {
+					date = ((lastItemState !== "NULL") && (lastItemState !== "UNDEF")) ? lastItemState.split("T")[0] : (new Date(0)).toISOString();
+					lastValue = date.split("T")[0] + "T" + lastValue;
+				}
 				_t.setValuePrivate(lastValue, lastItemState);
 			} else {
 				_t.parentNode.dispatchEvent(createEvent("control-change", {
@@ -1588,7 +2016,7 @@
 				// We don't know if the sent value is a valid command and will update the item state.
 				// If we don't receive an update in 1s, revert to the previous value.
 				_t.verify = new WaitingTimer(function() {
-					_t.setValuePrivate(lastValue, lastItemState);
+					_t.setValuePrivate(lastValue);
 				}, 1000);
 				_t.verify.wait();
 			}
@@ -1599,25 +2027,67 @@
 				_t.verify.cancel();
 			}
 
-			var newValue = value;
+			var newValue = cleanValue(value);
 			var undefValue = "";
-			if (itemState === "undefined" || itemState === "NULL" || itemState === "UNDEF") {
+			if (itemState === undefined) {
+				undefValue = lastUndef;
+			} else if (itemState === "NULL" || itemState === "UNDEF") {
+				if (_t.itemType === "datetime") {
+					undefValue = "";
+					if (_t.input.type === "text") {
+						undefValue = "YYYY-MM-DD hh:mm";
+					}
+				} else {
+					undefValue = !(newValue === "" || newValue === "NULL" || newValue === "UNDEF") ? newValue : lastUndef;
+				}
 				newValue = "";
-				undefValue = value;
 			}
 
+			if (_t.inputHint === "number") {
+				if (newValue !== "") {
+					newValue = parseNumber(newValue, _t.unit, true).value;
+					var valueArray = newValue.trim().split(" ");
+					newValue = valueArray[0];
+					if (valueArray.length > 1) {
+						_t.input.parentNode.nextElementSibling.innerHTML = valueArray[1];
+					}
+				} else {
+					var undefArray = undefValue.split(" ");
+					undefValue = undefArray[0];
+				}
+			} else if (_t.itemType === "datetime") {
+				newValue = ((itemState !== "NULL") && (itemState !== "UNDEF")) ? itemState : newValue;
+				newValue = newValue.trim().split(".")[0];		// drop millis
+				if (newValue.match(timeWithSecondsPattern)) {	// drop seconds
+					newValue = newValue.split(":").slice(0, -1).join(":");
+				}
+				if (newValue !== "") {
+					if (_t.inputHint === "date") {
+						newValue = newValue.split("T")[0];
+					} else if (_t.inputHint === "time") {
+						newValue = newValue.split("T")[1];
+					}
+					if (_t.input.type === "text") {
+						newValue = newValue.replace("T", " ");
+					}
+				}
+			}
 			_t.input.value = newValue;
 			_t.input.nextElementSibling.innerHTML = undefValue;
 
 			_t.input.parentNode.MaterialTextfield.change();
 			_t.input.parentNode.MaterialTextfield.checkValidity();
-
 			lastValue = value;
-			lastItemState = itemState;
+			if (itemState !== undefined) {
+				lastItemState = itemState;
+			}
 		};
 
 		_t.setValueColor = function(color) {
-			_t.input.style.color = color;
+			setColor(_t.input, color);
+			setColor(_t.unitField, color);
+			setColor(_t.prefixField, color);
+			setColor(_t.postfixField, color);
 		};
 
 		_t.destroy = function() {
@@ -1684,7 +2154,11 @@
 				var valueAndUnit = value.split(" ");
 				_t.unit = valueAndUnit[1];
 			}
-			_t.input.value = itemState;
+			if (itemState === "NULL" || itemState === "UNDEF") {
+				_t.input.value = 0;
+			} else {
+				_t.input.value = itemState.split(" ")[0] * 1;
+			}
 			_t.input.MaterialSlider.change();
 		};
 
@@ -1798,6 +2272,7 @@
 		_t.loading = _t.root.querySelector(o.uiLoadingBar);
 		_t.layoutTitle = document.querySelector(o.layoutTitle);
 		_t.iconType = document.body.getAttribute(o.iconTypeAttribute);
+		_t.inlineSVG = document.body.getAttribute(o.inlineSvgAttribute) === "true";
 		_t.primaryColor = document.body.getAttribute(o.primaryColorAttribute);
 		_t.secondaryColor = document.body.getAttribute(o.secondaryColorAttribute);
 		_t.notification = document.querySelector(o.notify);
@@ -2108,11 +2583,11 @@
 				});
 			}
 
-			if (makeVisible || update.state !== "NULL") {
+			if (makeVisible || update.itemIncluded) {
 				if (value === null) {
 					value = update.state;
 				}
-				widget.setValue(smarthome.UI.escapeHtml(value), update.state, update.visibility);
+				widget.setValue(smarthome.UI.escapeHtml(value), update.state, update.visibility, update.icon);
 			}
 
 			if (labelColor === "primary") {
@@ -2175,8 +2650,10 @@
 
 			var
 				data = JSON.parse(payload.data),
+				itemIncluded = false,
 				state = "NULL",
-				title;
+				title,
+				icon;
 
 			if (data.TYPE === "ALIVE") {
 				return;
@@ -2208,6 +2685,7 @@
 			}
 
 			if (data.item !== undefined) {
+				itemIncluded = true;
 				if (data.state === undefined) {
 					state = data.item.state;
 				} else {
@@ -2217,6 +2695,8 @@
 
 			title = _t.getTitleFromLabel(data.label);
 
+			icon = data.reloadIcon ? data.icon : undefined;
+
 			if (
 				(data.widgetId === smarthome.UI.page) &&
 				(title !== null)
@@ -2225,11 +2705,13 @@
 			} else if (smarthome.dataModel[data.widgetId] !== undefined) {
 				var update = {
 					visibility: data.visibility,
+					itemIncluded: itemIncluded,
 					state: state,
 					label: data.label,
 					labelcolor: data.labelcolor,
 					valuecolor: data.valuecolor,
-					iconcolor: data.iconcolor
+					iconcolor: data.iconcolor,
+					icon: icon
 				};
 				_t.updateWidget(smarthome.dataModel[data.widgetId], update);
 			}
@@ -2277,10 +2759,12 @@
 
 					var
 						w = smarthome.dataModel[widget.widgetId],
+						itemIncluded = false,
 						state = "NULL",
 						update;
 
 					if (widget.item !== undefined) {
+						itemIncluded = true;
 						if (widget.state === undefined) {
 							state = widget.item.state;
 						} else {
@@ -2290,11 +2774,13 @@
 					if (!w.visible || widget.item !== undefined) {
 						update = {
 							visibility: true,
+							itemIncluded: itemIncluded,
 							state: state,
 							label: widget.label,
 							labelcolor: widget.labelcolor,
 							valuecolor: widget.valuecolor,
-							iconcolor: widget.iconcolor
+							iconcolor: widget.iconcolor,
+							icon: widget.icon
 						};
 						_t.updateWidget(w, update);
 					}
@@ -2546,9 +3032,14 @@
 })({
 	itemAttribute: "data-item",
 	itemTypeAttribute: "data-item-type",
+	inputHintAttribute: "data-input-hint",
+	itemStateAttribute: "data-item-state",
+	unitAttribute: "data-item-unit",
 	idAttribute: "data-widget-id",
 	iconAttribute: "data-icon",
 	iconTypeAttribute: "data-icon-type",
+	iconWithStateAttribute: "data-icon-with-state",
+	inlineSvgAttribute: "data-inline-svg",
 	primaryColorAttribute: "data-primary-color",
 	secondaryColorAttribute: "data-secondary-color",
 	controlButton: "button",
@@ -2566,6 +3057,10 @@
 	formRadioControl: ".mdl-radio__button",
 	formIcon: ".mdl-form__icon",
 	formIconImg: ".mdl-form__icon img",
+	formIconSvg: ".mdl-form__icon svg",
+	formIconIconify: ".mdl-form__icon iconify-icon",
+	formIconMaterial: ".material-icons",
+	formIconFramework7: ".f7-icons",
 	formLabel: ".mdl-form__label",
 	uiLoadingBar: ".ui__loading",
 	layoutTitle: ".mdl-layout-title",
@@ -2591,6 +3086,14 @@
 		background: ".colorpicker__background",
 		colorpicker: ".colorpicker",
 		button: ".colorpicker__buttons > button"
+	},
+	image: {
+		legendButton: ".chart-legend-button",
+		periodButton: ".chart-period-button",
+		periodRows: ".mdl-form__header-rows",
+		upscaleButton: ".image-upscale-button",
+		upscaleClass: "mdl-form__image-upscale",
+		refreshButton: ".chart-refresh-button"
 	},
 	notify: ".mdl-notify__container",
 	notifyHidden: "mdl-notify--hidden",

@@ -62,9 +62,13 @@
                 <div><f7-block-title>Icon Color</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
               </f7-block>
+              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+                <div><f7-block-title>Icon Rules</f7-block-title></div>
+                <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon" />
+              </f7-block>
               <f7-block v-if="selectedWidget && ['Switch', 'Selection'].indexOf(selectedWidget.component) >= 0">
                 <div><f7-block-title>Mappings</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label" />
+                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label = icon" />
               </f7-block>
               <f7-block v-if="selectedWidget && canAddChildren">
                 <div><f7-block-title>Add Child Widget</f7-block-title></div>
@@ -82,7 +86,7 @@
 
         <f7-actions ref="widgetTypeSelection" id="widget-type-selection" :grid="true">
           <f7-actions-group>
-            <f7-actions-button v-for="widgetType in widgetTypes" :key="widgetType.type" @click="addWidget(widgetType.type)">
+            <f7-actions-button v-for="widgetType in addableWidgetTypes" :key="widgetType.type" @click="addWidget(widgetType.type)">
               <f7-icon :f7="widgetType.icon" slot="media" />
               <span>{{ widgetType.type }}</span>
             </f7-actions-button>
@@ -264,6 +268,24 @@ export default {
       if (!this.selectedWidget) return false
       if (this.linkableWidgetTypes.indexOf(this.selectedWidget.component) < 0) return false
       return true
+    },
+    addableWidgetTypes () {
+      if (!this.selectedWidget) return
+      // No frames in frame
+      if (this.selectedWidget.component === 'Frame') return this.widgetTypes.filter(w => w.type !== 'Frame')
+      // Linkable widget types only contain frames or none at all
+      if (this.linkableWidgetTypes.includes(this.selectedWidget.component)) {
+        if (this.selectedWidget.slots && this.selectedWidget.slots.widgets && this.selectedWidget.slots.widgets.length > 0) {
+          if (this.selectedWidget.slots.widgets.find(w => w.component === 'Frame')) {
+            return this.widgetTypes.filter(w => w.type === 'Frame')
+          } else {
+            return this.widgetTypes.filter(w => w.type !== 'Frame')
+          }
+        } else {
+          return this.widgetTypes
+        }
+      }
+      return this.widgetTypes
     }
   },
   watch: {
@@ -362,6 +384,7 @@ export default {
     },
     validateWidgets (stay) {
       if (this.sitemap.slots && Array.isArray(this.sitemap.slots.widgets)) {
+        let validationWarnings = []
         const widgetList = this.sitemap.slots.widgets.reduce(function iter (widgets, widget) {
           widgets.push(widget)
           if (widget.slots && Array.isArray(widget.slots.widgets)) {
@@ -369,17 +392,32 @@ export default {
           }
           return widgets
         }, [])
-        let validationWarnings = []
+        let isFrame = [false]
+        let siblingIsFrame = [undefined]
+        this.sitemap.slots.widgets.forEach(function iter (widget) {
+          if (isFrame[isFrame.length - 1] && widget.component === 'Frame') {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push('Frame widget ' + label + ', frame not allowed in frame')
+          }
+          if (siblingIsFrame[siblingIsFrame.length - 1] !== undefined) {
+            if ((siblingIsFrame[siblingIsFrame.length - 1] && (widget.component !== 'Frame')) || (!siblingIsFrame[siblingIsFrame.length - 1] && (widget.component === 'Frame'))) {
+              let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+              validationWarnings.push('Widget ' + label + ', only frames or no frames at all allowed in linkable widget')
+            }
+          }
+          siblingIsFrame.push(siblingIsFrame.pop() || widget.component === 'Frame')
+          if (widget.slots && Array.isArray(widget.slots.widgets)) {
+            isFrame.push(widget.component === 'Frame')
+            siblingIsFrame.push(undefined)
+            widget.slots.widgets.forEach(iter)
+            isFrame.pop()
+            siblingIsFrame.pop()
+          }
+        })
         widgetList.filter(widget => this.widgetTypesRequiringItem.includes(widget.component)).forEach(widget => {
           if (!(widget.config && widget.config.item)) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
-          }
-        })
-        widgetList.filter(widget => widget.component === 'List').forEach(widget => {
-          if (!(widget.config && widget.config.separator)) {
-            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
-            validationWarnings.push(widget.component + ' widget ' + label + ', no separator configured')
           }
         })
         widgetList.filter(widget => widget.component === 'Video' || widget.component === 'Webview').forEach(widget => {
@@ -389,24 +427,34 @@ export default {
           }
         })
         widgetList.filter(widget => widget.component === 'Chart').forEach(widget => {
-          if (!(widget.config && widget.config.period)) {
+          if (!(widget.config && widget.config.period && ['h', '4h', '8h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '4M', 'Y'].includes(widget.config.period))) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
-            validationWarnings.push(widget.component + ' widget ' + label + ', no period configured')
+            validationWarnings.push(widget.component + ' widget ' + label + ', invalid period configured: ' + widget.config.period)
           }
         })
         widgetList.filter(widget => widget.component === 'Input').forEach(widget => {
-          if (!(widget.config && widget.config.inputHint && ['text', 'number', 'date', 'time', 'datetime'].includes(widget.config.inputHint))) {
+          if (widget.config && widget.config.inputHint && !['text', 'number', 'date', 'time', 'datetime'].includes(widget.config.inputHint)) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid inputHint configured: ' + widget.config.inputHint)
           }
         })
+        widgetList.filter(widget => widget.component === 'Slider' || widget.component === 'Setpoint').forEach(widget => {
+          if (widget.config && (widget.config.step !== undefined) && (widget.config.step <= 0)) {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push(widget.component + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.config.step)
+          }
+          if (widget.config && (widget.config.minValue !== undefined) && (widget.config.maxValue !== undefined) && (widget.config.minValue > widget.config.maxValue)) {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push(widget.component + ' widget ' + label + ', minValue must be less than or equal maxValue: ' + widget.config.minValue + ' > ' + widget.config.maxValue)
+          }
+        })
         widgetList.forEach(widget => {
           if (widget.config) {
-            Object.keys(widget.config).filter(attr => ['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor'].includes(attr)).forEach(attr => {
+            Object.keys(widget.config).filter(attr => ['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)).forEach(attr => {
               widget.config[attr].forEach(param => {
-                if (((attr === 'mappings') && !(/^\s*("[^\n"]*"|[^\n"]+)\s*=\s*("[^\n"]*"|[^\n"]+)\s*$/u.test(param))) ||
-                    ((attr === 'visibility') && !(/^\s*\S+\s*(==|>=|<=|!=|>|<)\s*("[^\n"]*"|[^\n"]+)\s*$/u.test(param))) ||
-                    ((attr.includes('color')) && !(/^\s*(((\S+\s*)?(==|>=|<=|!=|>|<)\s*)?(("[^\n"]*"|[^\n"]+)\s*=\s*))?("#?\w+"|'#?\w+'|#?\w+)\s*$/u.test(param)))) {
+                if (((attr === 'mappings') && !(/^\s*("[^\n"]*"|[^\n="]+)\s*=\s*("[^\n"]*"|[^\n="]+)\s*(=\s*("[^\n"]*"|[^\n="]+))?$/u.test(param))) ||
+                    ((attr === 'visibility') && !this.validateRule(param)) ||
+                    ((['valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)) && !this.validateRule(param, true))) {
                   let label = widget.config && widget.config.label ? widget.config.label : 'without label'
                   validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in ' + attr + ': ' + param)
                 }
@@ -416,9 +464,10 @@ export default {
         })
         if (validationWarnings.length > 0) {
           this.$f7.dialog.create({
+            cssClass: 'sitemap-validation-dialog',
             title: 'Validation errors',
             text: 'Sitemap definition has validation errors:',
-            content: '<ul style="max-height: 100px; overflow-y: scroll"><li>' + validationWarnings.join('</li><li>') + '</li></ul>',
+            content: '<ul style="max-height: 200px; overflow-y: scroll"><li>' + validationWarnings.join('</li><li>') + '</li></ul>',
             buttons: [
               { text: 'Cancel', color: 'gray', close: true },
               { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.save(stay, true) }
@@ -429,6 +478,16 @@ export default {
         }
         return true
       }
+    },
+    validateRule (rule, hasArgument = false) {
+      let conditions = rule
+      if (hasArgument) {
+        let index = rule.lastIndexOf('=') + 1
+        if (!/^("#?(\w|:|-)+"|'#?(\w|:|-)+'|#?(\w|:|-)+)$/.test(rule.substring(index).trim())) return false
+        conditions = rule.substring(0, index - 1)
+        if (conditions === '') return true
+      }
+      return conditions.split(' AND ').every(p => /^\s*((\S+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|[^\n"]+)\s*$/u.test(p))
     },
     cleanConfig (widget) {
       if (widget.config) {

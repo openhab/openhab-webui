@@ -1,7 +1,9 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
-    <f7-navbar :title="(showScripts) ? 'Scripts' : ((showScenes) ? 'Scenes' : 'Rules')" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar :title="type" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
+        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
+        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -53,8 +55,8 @@
 
     <empty-state-placeholder v-if="noRuleEngine" icon="exclamationmark_triangle" title="rules.missingengine.title" text="rules.missingengine.text" />
 
-    <!-- skeleton for not ready -->
     <f7-block class="block-narrow" v-show="!noRuleEngine">
+      <!-- skeleton for not ready -->
       <f7-col v-if="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list contacts-list class="col rules-list">
@@ -71,17 +73,29 @@
           </f7-list-group>
         </f7-list>
       </f7-col>
-      <f7-col v-else>
-        <f7-block-title v-if="showScripts" class="searchbar-hide-on-search">
-          {{ rules.length }} scripts
-        </f7-block-title>
-        <f7-block-title v-else-if="showScenes" class="searchbar-hide-on-search">
-          {{ rules.length }} scenes
-        </f7-block-title>
-        <f7-block-title v-else class="searchbar-hide-on-search">
-          {{ rules.length }} rules
+
+      <f7-col v-else-if="rules.length > 0">
+        <f7-block-title class="searchbar-hide-on-search">
+          {{ filteredRules.length }} {{ type.toLowerCase() }} {{ selectedTags.length > 0 ? ' - ' : '' }}
+          <f7-link v-if="selectedTags.length > 0" @click="selectedTags = []">
+            Reset filter(s)
+          </f7-link>
         </f7-block-title>
 
+        <f7-list v-if="uniqueTags.length > 0">
+          <f7-list-item accordion-item title="Filter by tags">
+            <f7-accordion-content>
+              <div class="block block-strong-ios block-outline-ios padding-bottom" ref="filterTags">
+                <f7-chip v-for="tag in uniqueTags" :key="tag" :text="tag" media-bg-color="blue"
+                         :color="isTagSelected(tag) ? 'blue' : ''"
+                         style="margin-right: 6px; cursor: pointer;"
+                         @click="(e) => toggleSearchTag(e, tag)">
+                  <f7-icon v-if="isTagSelected(tag)" slot="media" ios="f7:checkmark_circle_fill" md="material:check_circle" aurora="f7:checkmark_circle_fill" />
+                </f7-chip>
+              </div>
+            </f7-accordion-content>
+          </f7-list-item>
+        </f7-list>
         <f7-list
           v-show="rules.length > 0"
           class="searchbar-found col rules-list"
@@ -117,11 +131,16 @@
         </f7-list>
       </f7-col>
     </f7-block>
+
     <f7-block v-if="ready && !noRuleEngine && !rules.length" class="service-config block-narrow">
       <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
       <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
       <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
+      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+      </f7-row>
     </f7-block>
+
     <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
@@ -144,6 +163,8 @@ export default {
       loading: false,
       noRuleEngine: false,
       rules: [],
+      uniqueTags: [],
+      selectedTags: [],
       initSearchbar: false,
       selectedItems: [],
       showCheckboxes: false,
@@ -151,8 +172,23 @@ export default {
     }
   },
   computed: {
+    type () {
+      return this.showScripts ? 'Scripts' : (this.showScenes ? 'Scenes' : 'Rules')
+    },
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/${this.type.toLowerCase()}`
+    },
+    filteredRules () {
+      if (this.selectedTags.length === 0) return this.rules
+      return this.rules.filter((r) => {
+        for (const t of this.selectedTags) {
+          if (r.tags.includes(t)) return true
+        }
+        return false
+      })
+    },
     indexedRules () {
-      return this.rules.reduce((prev, rule, i, rules) => {
+      return this.filteredRules.reduce((prev, rule, i, rules) => {
         const initial = rule.name.substring(0, 1).toUpperCase()
         if (!prev[initial]) {
           prev[initial] = []
@@ -194,6 +230,15 @@ export default {
         if (!this.showScenes) {
           this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Scene') < 0)
         }
+
+        this.rules.forEach(rule => {
+          rule.tags.forEach(t => {
+            if (t.startsWith('marketplace:')) t = 'Marketplace'
+            if (!this.uniqueTags.includes(t)) this.uniqueTags.push(t)
+          })
+        })
+
+        this.uniqueTags.sort()
 
         this.loading = false
         this.ready = true
@@ -317,6 +362,19 @@ export default {
         console.error(err)
         this.$f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
       })
+    },
+    toggleSearchTag (e, item) {
+      const idx = this.selectedTags.indexOf(item)
+      if (idx !== -1) {
+        this.selectedTags.splice(idx, 1)
+      } else {
+        this.selectedTags.push(item)
+      }
+      // update rules list
+      this.$refs.listIndex.update()
+    },
+    isTagSelected (tag) {
+      return this.selectedTags.includes(tag)
     }
   }
 }
