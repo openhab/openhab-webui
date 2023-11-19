@@ -168,8 +168,8 @@ export default {
   data () {
     return {
       addons: [],
-      faqs: require('./help/help-faq-defs.json'),
-      qstart: require('./help/help-qstart-defs.json')
+      faqs: require('@/assets/definitions/help/help-faq-defs.json'),
+      qstart: require('@/assets/definitions/help/help-qstart-defs.json')
     }
   },
   computed: {
