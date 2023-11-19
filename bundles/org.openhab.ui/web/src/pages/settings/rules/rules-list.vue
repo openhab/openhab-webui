@@ -78,18 +78,24 @@
         <f7-block-title class="searchbar-hide-on-search">
           {{ filteredRules.length }} {{ type.toLowerCase() }} {{ selectedTags.length > 0 ? ' - ' : '' }}
           <f7-link v-if="selectedTags.length > 0" @click="selectedTags = []">
-            Reset filter
+            Reset filter(s)
           </f7-link>
         </f7-block-title>
 
-        <div v-if="uniqueTags.length > 0" class="block block-strong-ios block-outline-ios" ref="filterTags">
-          <f7-chip v-for="tag in uniqueTags" :key="tag" :text="tag" media-bg-color="blue"
-                   :color="isTagSelected(tag) ? 'blue' : ''"
-                   style="margin-right: 6px; cursor: pointer;"
-                   @click="(e) => toggleSearchTag(e, tag)">
-            <f7-icon v-if="isTagSelected(tag)" slot="media" ios="f7:checkmark_circle_fill" md="material:check_circle" aurora="f7:checkmark_circle_fill" />
-          </f7-chip>
-        </div>
+        <f7-list v-if="uniqueTags.length > 0">
+          <f7-list-item accordion-item title="Filter by tags">
+            <f7-accordion-content>
+              <div class="block block-strong-ios block-outline-ios padding-bottom" ref="filterTags">
+                <f7-chip v-for="tag in uniqueTags" :key="tag" :text="tag" media-bg-color="blue"
+                         :color="isTagSelected(tag) ? 'blue' : ''"
+                         style="margin-right: 6px; cursor: pointer;"
+                         @click="(e) => toggleSearchTag(e, tag)">
+                  <f7-icon v-if="isTagSelected(tag)" slot="media" ios="f7:checkmark_circle_fill" md="material:check_circle" aurora="f7:checkmark_circle_fill" />
+                </f7-chip>
+              </div>
+            </f7-accordion-content>
+          </f7-list-item>
+        </f7-list>
         <f7-list
           v-show="rules.length > 0"
           class="searchbar-found col rules-list"
