@@ -35,8 +35,9 @@ You can also use Majestic GUI to run the unit tests and temporarily collect code
 ## Vue DevTools
 
 Since openHAB's MainUI is using Vue, it is really helpful to install the [Vue DevTools](https://devtools.vuejs.org/) in your browser.
+Please note that you can only use the Vue DevTools with the development server.
 
-Some of it's very helpful features are:
+Some of its very helpful features are:
 
 - Access to all Vue components of the current page in a tree model (like the `Elements` tab of the browsers DevTools)
 - Read (and write) `props`, `data` and `computed` of Vue components.
@@ -47,28 +48,38 @@ Some of it's very helpful features are:
 
 This FAQ tries to provide some guidance on how to start off with some common changes to MainUI.
 
-- **Edit an existing page?**
-  
-  In general, it is a good start to open the [web/src/pages](web/src/pages) directory.
-  In this directory, open the sub-folders according to the path of the MainUI page.
-  E.g.: You want to edit `/settings/transformations`. Open [web/src/pages/settings/transformations](web/src/pages/settings/transformations). You'll find `transformations-list.vue` and `transformation-edit.vue`, it should be self-explaining which page does what.
-  When you open a `.vue` file, check out the `template` for the structure of the page. You will note, that several UI structures are packed into Vue components, which you can directly open from the `template` inside your IDE.
-  Instead of following the way described above, you can also use the [Vue DevTools](#vue-devtools) to find out which component you need to modify.
+### Edit an existing page?
 
-- **Edit or add a widget?**
+In general, it is a good start to open the [web/src/pages](web/src/pages) directory.
+In this directory, open the sub-folders according to the path of the MainUI page.
+E.g.: You want to edit `/settings/transformations`. Open [web/src/pages/settings/transformations](web/src/pages/settings/transformations). You'll find `transformations-list.vue` and `transformation-edit.vue`, it should be self-explaining which page does what.
 
-  Widgets are Vue components, not pages, therefore you'll find all types of widgets in the [web/src/components/widgets](web/src/components/widgets) directory.
-  Widgets like `oh-toggle-card` are inside [web/src/components/widgets/standard](web/src/components/widgets/standard), when opening such a card widget, you'll notice that it basically wraps a component of [web/src/components/widgets/system](web/src/components/widgets/system), so this the `.../system` folder is the place to edit widgets.
-  In case you want to edit widget parameters, make sure to adjust the according parameter definition in [web/src/assets/definitions/widgets/system](web/src/assets/definitions/widgets/system).
+When you open a `.vue` file, check out the `template` tags for the structure of the page. You will note, that several UI structures are packed into Vue components, which you can directly open from the `template` tags inside your IDE.
+E.g. for IntelliJ-based IDEs: To open a component from the `template` tags, press `CTRL` and then click on the component name. To follow the example with the transformations, open `transformation-edit.vue`, and search for `transformation-general-settings` inside the `template` tags. `CTRL` + click on it, and the Vue component will open up.
 
-- **Edit or add Blockly blocks?**
+Instead of following the way described above, you can also use the [Vue DevTools](#vue-devtools) to find out which component you need to modify.
 
-  Blocks are defined inside the [web/src/assets/definitions/blockly](web/src/assets/definitions/blockly) directory.
-  Please refer to the [Blockly block](https://developers.google.com/blockly/guides/create-custom-blocks/define-blocks) & [Blockly code generation](https://developers.google.com/blockly/guides/create-custom-blocks/code-generation/overview) documentation on how to define blocks.
+### Edit or add a widget?
 
-- **Update the FAQ or Quick Start of the developer sidebar's help?**
+UI widgets are Vue components, not pages, therefore you'll find them in the [web/src/components/widgets/standard](web/src/components/widgets/standard) directory.
 
-  The "How do I..." and "Quick Start" sections are created from JSON definitions located at the [web/src/assets/definitions/help](web/src/assets/definitions/help).
+When opening one of those widgets you can use in the UI, e.g. `oh-clock-card.vue`, you'll notice that it basically wraps the `oh-clock.vue` component from [web/src/components/widgets/system](web/src/components/widgets/system).
+If you now want to modify the functionality or appearance of the clock widget, your changes usually need to be done inside the wrapped component, in this case `oh-clock.vue`, not `oh-clock-card.vue`.
+
+In case you want to edit widget parameters, make sure to adjust the widget's parameter definition in [web/src/assets/definitions/widgets/system](web/src/assets/definitions/widgets/system).
+After editing those definitions, it is required to regenerate the component docs, see [Documentation & Resources](#documentation--resources)
+
+### Edit or add Blockly blocks?
+
+- Blocks are defined within [blockly-editor.vue](web/src/components/config/controls/blockly-editor.vue).
+- Blocks are implemented inside the [web/src/assets/definitions/blockly](web/src/assets/definitions/blockly) directory.
+- Each block requires a _Blockly.Blocks_ section that defines the visual representation and a _javascriptGenerator_ section that implements the code generation of the block.
+- Please refer to the [visualisation](https://developers.google.com/blockly/guides/create-custom-blocks/define-blocks) and [code generation](https://developers.google.com/blockly/guides/create-custom-blocks/code-generation/overview) documentation on how to define blocks.
+- Also follow the [Blockly Best Practices](https://developers.google.com/blockly/guides/app-integration/best-practices) and [Blockly Style guide](https://developers.google.com/blockly/guides/create-custom-blocks/style-guide)
+
+### Update the FAQ or Quick Start of the developer sidebar's help?
+
+The "How do I..." and "Quick Start" sections are created from JSON definitions located at the [web/src/assets/definitions/help](web/src/assets/definitions/help).
 
 ## PWA
 
