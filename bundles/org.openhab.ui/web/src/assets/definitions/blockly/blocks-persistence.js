@@ -19,7 +19,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
           ['state average', 'averageSince'], ['state delta', 'deltaSince'],
           ['state deviation', 'deviationSince'], ['state variance', 'varianceSince'], ['evolution rate', 'evolutionRateSince'],
           ['state minimum', 'minimumSince'], ['state maximum', 'maximumSince'], ['state sum', 'sumSince'],
-          ['previous state value', 'previousState'], ['previous state value time', 'previousStateTime'],
+          ['previous state value', 'previousState'], ['previous state numeric value', 'previousNumericState'], ['previous state value time', 'previousStateTime'],
           ['historic state', 'historicState']
         ], this.handleTypeSelection.bind(this)
         ), 'methodName')
@@ -49,6 +49,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
           'maximumSince': 'Gets the maximum value of the State of a persisted Item since a certain point in time',
           'sumSince': 'Gets the sum of the previous States of a persisted Item since a certain point in time',
           'previousState': 'Gets the previous state with option to skip to different value as current',
+          'previousNumericState': 'Gets the previous state without the unit with option to skip to different value as current',
           'previousStateTime': 'Gets the time when previous state last occurred with option to skip to different value as current',
           'historicState': 'Gets the historic state at a certain point in time'
         }
@@ -67,7 +68,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       if (!persistenceNameInput.getShadowDom()) {
         persistenceNameInput.setShadowDom(Blockly.Xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
       }
-      if (this.methodName === 'previousState' || this.methodName === 'previousStateTime') {
+      if (this.methodName === 'previousState' || this.methodName === 'previousNumericState' || this.methodName === 'previousStateTime') {
         if (this.getInput('dayInfo')) {
           this.removeInput('dayInfo')
         }
@@ -124,6 +125,10 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
 
       case 'previousState':
         code = (isGraalJs) ? `${itemCode}.history.previousState(${skipPrevious}${persistenceExtension})?.state` : `${persistence}.previousState(${itemCode},${skipPrevious}${persistenceExtension}).getState()`
+        break
+
+      case 'previousNumericState':
+        code = (isGraalJs) ? `${itemCode}.history.previousState(${skipPrevious}${persistenceExtension})?.numericState` : `${persistence}.previousState(${itemCode},${skipPrevious}${persistenceExtension}).getNumericState()`
         break
 
       case 'previousStateTime':
