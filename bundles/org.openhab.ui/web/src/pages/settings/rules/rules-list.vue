@@ -78,19 +78,6 @@
         <f7-block-title class="searchbar-hide-on-search">
           {{ rules.length }} {{ type.toLowerCase() }}
         </f7-block-title>
-        <div class="searchbar-found padding-left padding-right">
-          <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
-              Alphabetical
-            </f7-button>
-            <f7-button v-if="type === 'Rules'" :active="groupBy === 'semantic'" @click="switchGroupOrder('semantic')">
-              By Semantic
-            </f7-button>
-            <f7-button :active="groupBy === 'tags'" @click="switchGroupOrder('tags')">
-              By Tags
-            </f7-button>
-          </f7-segmented>
-        </div>
 
         <div v-if="uniqueTags.length" class="block block-strong-ios block-outline-ios" ref="filterTags">
           <f7-chip v-for="tag in uniqueTags" :key="tag" :text="tag" media-bg-color="blue"
@@ -101,10 +88,10 @@
           </f7-chip>
         </div>
         <f7-list
-          v-show="rules.length"
+          v-show="rules.length > 0"
           class="searchbar-found col rules-list"
           ref="rulesList"
-          media-list :contacts-list="groupBy === 'alphabetical'">
+          media-list contacts-list>
           <f7-list-group v-for="(rulesWithInitial, initial) in indexedRules" :key="initial">
             <f7-list-item v-if="rulesWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -173,7 +160,6 @@ export default {
       initSearchbar: false,
       selectedItems: [],
       showCheckboxes: false,
-      groupBy: 'alphabetical',
       eventSource: null
     }
   },
@@ -186,63 +172,16 @@ export default {
     },
     indexedRules () {
       const filteredRules = this.filterRules()
-      if (this.groupBy === 'alphabetical') {
-        const initialGroup = filteredRules.reduce((prev, rule, i, rules) => {
-          const initial = rule.name.substring(0, 1).toUpperCase()
-          if (!prev[initial]) {
-            prev[initial] = []
-          }
-          prev[initial].push(rule)
+      const initialGroup = filteredRules.reduce((prev, rule, i, rules) => {
+        const initial = rule.name.substring(0, 1).toUpperCase()
+        if (!prev[initial]) {
+          prev[initial] = []
+        }
+        prev[initial].push(rule)
 
-          return prev
-        }, {})
-        return initialGroup
-      } else if (this.groupBy === 'semantic') {
-        const semanticGroup = filteredRules.reduce((prev, rule, i, rules) => {
-          let initial = rule.tags.filter((t) => t !== 'Script' && t !== 'Scene' &&
-            this.isSemanticTag(t))
-          if (initial.length === 0) initial = '- No Semantic Tags -'
-
-          if (!prev[initial]) {
-            prev[initial] = []
-          }
-          prev[initial].push(rule)
-
-          return prev
-        }, {})
-        return Object.keys(semanticGroup).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
-          objEntries[key] = semanticGroup[key]
-          return objEntries
-        }, {})
-      } else if (this.groupBy === 'tags') {
-        const tagsMap = new Map()
-        filteredRules.forEach((rule, i, rules) => {
-          if (rule.tags.length > 0) {
-            rule.tags.filter((t) => t !== 'Scratchpad')
-              .forEach(t => {
-                let tag = t.substring(0, 1).toUpperCase() + t.slice(1)
-                if (tag.includes('Marketplace:')) tag = '- Marketplace -'
-                let tags = []
-                if (tagsMap.has(tag)) tags = tagsMap.get(tag)
-                if (!tags.includes(rule)) tags.push(rule)
-                tagsMap.set(tag, tags)
-              })
-          } else {
-            let tags = []
-            if (tagsMap.has('- No Tags -')) tags = tagsMap.get('- No Tags -')
-            tags.push(rule)
-            tagsMap.set('- No Tags -', tags)
-          }
-        })
-
-        let tagsRules = Object.fromEntries(tagsMap)
-        return Object.keys(tagsRules).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
-          objEntries[key] = tagsRules[key]
-          return objEntries
-        }, {})
-      } else {
-        return this.rules
-      }
+        return prev
+      }, {})
+      return initialGroup
     },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
@@ -408,18 +347,6 @@ export default {
         this.load()
         console.error(err)
         this.$f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
-      })
-    },
-    switchGroupOrder (groupBy) {
-      this.groupBy = groupBy
-      const searchbar = this.$refs.searchbar.$el.f7Searchbar
-      const filterQuery = searchbar.query
-      this.$nextTick(() => {
-        if (filterQuery) {
-          searchbar.clear()
-          searchbar.search(filterQuery)
-        }
-        this.$refs.listIndex.update()
       })
     },
     toggleSearchTag (e, item) {
