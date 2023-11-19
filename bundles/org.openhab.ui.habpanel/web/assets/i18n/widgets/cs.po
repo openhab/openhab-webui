@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
-"PO-Revision-Date: 2022-12-11 11:15\n"
+"PO-Revision-Date: 2023-02-23 10:33\n"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.min"
@@ -410,7 +410,7 @@ msgstr "Digitální formát"
 #. Color picker header
 msgctxt "widget.clock.digital_color"
 msgid "Digital Color"
-msgstr ""
+msgstr "Digitální barva"
 
 #. Textbox header
 msgctxt "widget.clock.font_size"
@@ -480,17 +480,17 @@ msgstr "Rozvržení"
 #. Color picker header
 msgctxt "widget.dummy.value_color"
 msgid "Value color"
-msgstr ""
+msgstr "Barva hodnoty"
 
 #. Checkboxes header
 msgctxt "widget.dummy.state"
 msgid "State"
-msgstr ""
+msgstr "Stav"
 
 #. Checkbox label
 msgctxt "widget.dummy.state.description"
 msgid "Use state description"
-msgstr ""
+msgstr "Použít popis stavu"
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.frame"

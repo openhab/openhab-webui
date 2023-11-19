@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
-"PO-Revision-Date: 2022-12-11 11:15\n"
+"PO-Revision-Date: 2023-08-30 20:20\n"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.min"
@@ -380,7 +380,7 @@ msgstr "Mod"
 #. Dropdown option
 msgctxt "widget.clock.mode.analog"
 msgid "Analog"
-msgstr ""
+msgstr "Analog"
 
 #. Dropdown option
 msgctxt "widget.clock.mode.digital"
@@ -410,7 +410,7 @@ msgstr "Dijital Format"
 #. Color picker header
 msgctxt "widget.clock.digital_color"
 msgid "Digital Color"
-msgstr ""
+msgstr "Dijital Renk"
 
 #. Textbox header
 msgctxt "widget.clock.font_size"
@@ -480,17 +480,17 @@ msgstr "Düzen"
 #. Color picker header
 msgctxt "widget.dummy.value_color"
 msgid "Value color"
-msgstr ""
+msgstr "Değer rengi"
 
 #. Checkboxes header
 msgctxt "widget.dummy.state"
 msgid "State"
-msgstr ""
+msgstr "Durum"
 
 #. Checkbox label
 msgctxt "widget.dummy.state.description"
 msgid "Use state description"
-msgstr ""
+msgstr "Durum açıklamasını kullanın"
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.frame"
@@ -780,7 +780,7 @@ msgstr "Basit"
 #. Radio button label
 msgctxt "widget.knob.skin.type.tron"
 msgid "Tron"
-msgstr ""
+msgstr "Tron"
 
 #. Section header
 msgctxt "widget.knob.skin.tronsettings"
