@@ -150,10 +150,9 @@
 
 <script>
 import RuleStatus from '@/components/rule/rule-status-mixin'
-import TagMixin from '@/components/tags/tag-mixin'
 
 export default {
-  mixins: [RuleStatus, TagMixin],
+  mixins: [RuleStatus],
   props: ['showScripts', 'showScenes'],
   components: {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
