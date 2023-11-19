@@ -76,9 +76,26 @@
 
       <f7-col v-else-if="rules.length > 0">
         <f7-block-title class="searchbar-hide-on-search">
-          {{ rules.length }} {{ type.toLowerCase() }}
+          {{ filteredRules.length }} {{ type.toLowerCase() }} {{ selectedTags.length > 0 ? ' - ' : '' }}
+          <f7-link v-if="selectedTags.length > 0" @click="selectedTags = []">
+            Reset filter(s)
+          </f7-link>
         </f7-block-title>
 
+        <f7-list v-if="uniqueTags.length > 0">
+          <f7-list-item accordion-item title="Filter by tags">
+            <f7-accordion-content>
+              <div class="block block-strong-ios block-outline-ios padding-bottom" ref="filterTags">
+                <f7-chip v-for="tag in uniqueTags" :key="tag" :text="tag" media-bg-color="blue"
+                         :color="isTagSelected(tag) ? 'blue' : ''"
+                         style="margin-right: 6px; cursor: pointer;"
+                         @click="(e) => toggleSearchTag(e, tag)">
+                  <f7-icon v-if="isTagSelected(tag)" slot="media" ios="f7:checkmark_circle_fill" md="material:check_circle" aurora="f7:checkmark_circle_fill" />
+                </f7-chip>
+              </div>
+            </f7-accordion-content>
+          </f7-list-item>
+        </f7-list>
         <f7-list
           v-show="rules.length > 0"
           class="searchbar-found col rules-list"
@@ -146,6 +163,8 @@ export default {
       loading: false,
       noRuleEngine: false,
       rules: [],
+      uniqueTags: [],
+      selectedTags: [],
       initSearchbar: false,
       selectedItems: [],
       showCheckboxes: false,
@@ -159,8 +178,17 @@ export default {
     documentationLink () {
       return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/${this.type.toLowerCase()}`
     },
+    filteredRules () {
+      if (this.selectedTags.length === 0) return this.rules
+      return this.rules.filter((r) => {
+        for (const t of this.selectedTags) {
+          if (r.tags.includes(t)) return true
+        }
+        return false
+      })
+    },
     indexedRules () {
-      return this.rules.reduce((prev, rule, i, rules) => {
+      return this.filteredRules.reduce((prev, rule, i, rules) => {
         const initial = rule.name.substring(0, 1).toUpperCase()
         if (!prev[initial]) {
           prev[initial] = []
@@ -202,6 +230,15 @@ export default {
         if (!this.showScenes) {
           this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Scene') < 0)
         }
+
+        this.rules.forEach(rule => {
+          rule.tags.forEach(t => {
+            if (t.startsWith('marketplace:')) t = 'Marketplace'
+            if (!this.uniqueTags.includes(t)) this.uniqueTags.push(t)
+          })
+        })
+
+        this.uniqueTags.sort()
 
         this.loading = false
         this.ready = true
@@ -325,6 +362,19 @@ export default {
         console.error(err)
         this.$f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
       })
+    },
+    toggleSearchTag (e, item) {
+      const idx = this.selectedTags.indexOf(item)
+      if (idx !== -1) {
+        this.selectedTags.splice(idx, 1)
+      } else {
+        this.selectedTags.push(item)
+      }
+      // update rules list
+      this.$refs.listIndex.update()
+    },
+    isTagSelected (tag) {
+      return this.selectedTags.includes(tag)
     }
   }
 }
