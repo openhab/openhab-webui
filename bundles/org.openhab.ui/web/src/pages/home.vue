@@ -17,7 +17,7 @@
         <f7-link v-if="this.$store.getters.isAdmin" icon-ios="f7:pencil" icon-aurora="f7:pencil" icon-md="material:edit" :tooltip="$t('home.editHome')" :href="(homePageComponent) ? '/settings/pages/home/home' : '/settings/pages/home/add'" />
         <f7-link v-if="showPinToHome" icon-ios="f7:pin_fill" icon-aurora="f7:pin_fill" icon-md="material:add_location" :tooltip="$t('home.pinToHome')" @click="pinToHome" />
         <f7-link v-if="showExitToApp" icon-ios="f7:square_arrow_right" icon-aurora="f7:square_arrow_right" icon-md="material:exit_to_app" :tooltip="$t('home.exitToApp')" @click="exitToApp" />
-        <f7-link v-else icon-ios="f7:sidebar_right" icon-aurora="f7:sidebar_right" icon-md="material:exit_to_app" :tooltip="$t('home.otherApps')" panel-open="right" />
+        <f7-link v-else icon-ios="f7:sidebar_right" icon-aurora="f7:sidebar_right" icon-md="material:exit_to_app" :tooltip="$t('home.otherApps')" panel-open="right" @click="($store.state.developerDock) ? $f7.emit('toggleDeveloperDock') : ''" />
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar labels bottom v-if="tabsVisible">
