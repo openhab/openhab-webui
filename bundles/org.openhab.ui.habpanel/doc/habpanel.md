@@ -208,6 +208,14 @@ The knob widget is similar in essence to the slider, but in a rotary fashion. It
 
 The selection widget displays the current state of an item, much like a dummy widget, except it opens a menu or a grid of automatically or manually configured choices for sending commands to this item. Various display options are available.
 
+To display different scenes on a Selection widget (like the image above), you could create an item with type `String` (e.g. call it modes).
+Then create different rules for you different scenes (i.e. a rule per scene) such as 'meditation', 'work', 'sleep' ... etc. 
+The Trigger (i.e. When) of every rule should be `an item receives a command` and every rule's triggering Item should be the one that you have just created (the one we called 'modes') and the command string could be any string of your choice (e.g. meditation, work, sleep).
+Finally, in your HABPanel Selection widget, you could send any of these commands to that item by setting the `List of comma-separated choices` to the list of the rules that you have just created.
+Selecting any of them will trigger the corresponding rule.
+To display a different label for a command, you could use the form `command=label` (e.g. `meditation=Meditation, work=Work`).
+Please refer to [this link](https://www.openhab.org/docs/tutorial/rules_basic.html#create-the-rule) for how to create a rule.
+
 #### Color picker (colorpicker)
 
 ![Color picker widget](images/habpanel_widget-colorpicker.png)
