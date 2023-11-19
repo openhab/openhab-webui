@@ -32,9 +32,47 @@ You can also run the unit tests (`test/jest`) and e2e (`test/cypress`) tests usi
 Cypress is configured to assume the development server is running on port 8081 - you can change that in `cypress.json` but remember not to commit.
 You can also use Majestic GUI to run the unit tests and temporarily collect code coverage and view coverage reports (it is disabled by default for performance reasons): install it globally with `npm install -g majestic`, and run `majestic` in the root web folder to open Majestic in a browser window.
 
+## Vue DevTools
+
+Since openHAB's MainUI is using Vue, it is really helpful to install the [Vue DevTools](https://devtools.vuejs.org/) in your browser.
+
+Some of it's very helpful features are:
+
+- Access to all Vue components of the current page in a tree model (like the `Elements` tab of the browsers DevTools)
+- Read (and write) `props`, `data` and `computed` of Vue components.
+- Select a component by clicking on it (very helpful when you want to change something in MainUI, but don't know which component you have to edit).
+- Access to the Vuex storage.
+
+## How Do I?
+
+This FAQ tries to provide some guidance on how to start off with some common changes to MainUI.
+
+- **Edit an existing page?**
+  
+  In general, it is a good start to open the [web/src/pages](web/src/pages) directory.
+  In this directory, open the sub-folders according to the path of the MainUI page.
+  E.g.: You want to edit `/settings/transformations`. Open [web/src/pages/settings/transformations](web/src/pages/settings/transformations). You'll find `transformations-list.vue` and `transformation-edit.vue`, it should be self-explaining which page does what.
+  When you open a `.vue` file, check out the `template` for the structure of the page. You will note, that several UI structures are packed into Vue components, which you can directly open from the `template` inside your IDE.
+  Instead of following the way described above, you can also use the [Vue DevTools](#vue-devtools) to find out which component you need to modify.
+
+- **Edit or add a widget?**
+
+  Widgets are Vue components, not pages, therefore you'll find all types of widgets in the [web/src/components/widgets](web/src/components/widgets) directory.
+  Widgets like `oh-toggle-card` are inside [web/src/components/widgets/standard](web/src/components/widgets/standard), when opening such a card widget, you'll notice that it basically wraps a component of [web/src/components/widgets/system](web/src/components/widgets/system), so this the `.../system` folder is the place to edit widgets.
+  In case you want to edit widget parameters, make sure to adjust the according parameter definition in [web/src/assets/definitions/widgets/system](web/src/assets/definitions/widgets/system).
+
+- **Edit or add Blockly blocks?**
+
+  Blocks are defined inside the [web/src/assets/definitions/blockly](web/src/assets/definitions/blockly) directory.
+  Please refer to the [Blockly block](https://developers.google.com/blockly/guides/create-custom-blocks/define-blocks) & [Blockly code generation](https://developers.google.com/blockly/guides/create-custom-blocks/code-generation/overview) documentation on how to define blocks.
+
+- **Update the FAQ or Quick Start of the developer sidebar's help?**
+
+  The "How do I..." and "Quick Start" sections are created from JSON definitions located at the [web/src/assets/definitions/help](web/src/assets/definitions/help).
+
 ## PWA
 
-This is a PWA. Don't forget to check what is inside of your `service-worker.js`. It is also recommended that you disable the service worker (or enable "Update on reload") in your browser's dev tools during development.
+This is a PWA. Don't forget to check what is inside your `service-worker.js`. It is also recommended that you disable the service worker (or enable "Update on reload") in your browser's dev tools during development.
 
 ## Cordova
 
