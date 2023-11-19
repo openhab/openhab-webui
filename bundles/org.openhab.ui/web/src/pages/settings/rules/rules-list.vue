@@ -76,7 +76,10 @@
 
       <f7-col v-else-if="rules.length > 0">
         <f7-block-title class="searchbar-hide-on-search">
-          {{ rules.length }} {{ type.toLowerCase() }}
+          {{ filteredRules.length }} {{ type.toLowerCase() }} {{ selectedTags.length > 0 ? ' - ' : '' }}
+          <f7-link v-if="selectedTags.length > 0" @click="selectedTags = []">
+            Reset filter
+          </f7-link>
         </f7-block-title>
 
         <div v-if="uniqueTags.length > 0" class="block block-strong-ios block-outline-ios" ref="filterTags">
