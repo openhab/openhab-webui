@@ -164,6 +164,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         .appendField('contextual info')
         .appendField(new Blockly.FieldDropdown([
           ['rule UID', 'ruleUID'],
+          ['event available', 'eventAvailable'],
           ['event type', 'type'],
           ['new state of item', 'itemState'],
           ['previous state of item', 'oldItemState'],
@@ -182,6 +183,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         const contextData = thisBlock.getFieldValue('contextInfo')
         const TIP = {
           'ruleUID': 'The current rule\'s UID',
+          'eventAvailable': 'check if the event information is available',
           'type': 'the event type name',
           'itemState': 'the new item state (only applicable for rules with triggers related to changed and updated items)',
           'oldItemState': 'the old item state (only applicable for rules with triggers related to changed and updated items)',
@@ -197,8 +199,13 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
     onchange: function (event) {
       const contextInfo = this.getFieldValue('contextInfo')
       const asType = this.getFieldValue('asType')
+
       if (this.contextInfo !== contextInfo) {
         this.contextInfo = contextInfo
+        if (contextInfo === 'eventAvailable') {
+          this.setOutput(true, 'Boolean')
+          return
+        }
         if (contextInfo === 'itemName') {
           this.setOutput(true, 'oh_item')
         } else {
@@ -233,6 +240,10 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
     },
     domToMutation: function (xmlElement) {
       this.contextInfo = xmlElement.getAttribute('contextInfo')
+      if (this.contextInfo === 'eventAvailable') {
+        this.setOutput(true, 'Boolean')
+        return
+      }
       if (this.contextInfo === 'itemName') {
         this.setOutput(true, 'oh_item')
       } else {
@@ -268,6 +279,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   javascriptGenerator['oh_context_info'] = function (block) {
     const contextInfo = block.getFieldValue('contextInfo')
     const type = block.getFieldValue('asType')
+    if (contextInfo === 'eventAvailable') return ['(event !== undefined)', javascriptGenerator.ORDER_ATOMIC]
     if (contextInfo === 'ruleUID') return ['ctx.ruleUID', javascriptGenerator.ORDER_ATOMIC]
     if (contextInfo === 'itemState' || contextInfo === 'oldItemState' || contextInfo === 'itemCommand') {
       if (type === 'asNumber') {
