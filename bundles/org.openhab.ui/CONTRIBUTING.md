@@ -2,7 +2,7 @@
 
 The [standard contributing and community guidelines for the openHAB project](https://github.com/openhab/openhab-core/blob/main/CONTRIBUTING.md), including signing off your commits, also apply for the development of the UI.
 
-The repository for web user interfaces, including this project, is located at https://github.com/openhab/openhab-webui and the code of this project, including this file, is found in the `bundles/org.openhab.ui` folder.
+The repository for web user interfaces, including this project, is located at <https://github.com/openhab/openhab-webui> and the code of this project, including this file, is found in the `bundles/org.openhab.ui` folder.
 
 ## Prerequisites
 
@@ -39,10 +39,10 @@ Please note that you can only use the Vue DevTools with the development server.
 
 Some of its very helpful features are:
 
-- Access to all Vue components of the current page in a tree model (like the `Elements` tab of the browsers DevTools)
-- Read (and write) `props`, `data` and `computed` of Vue components.
-- Select a component by clicking on it (very helpful when you want to change something in MainUI, but don't know which component you have to edit).
-- Access to the Vuex storage.
+* Access to all Vue components of the current page in a tree model (like the `Elements` tab of the browsers DevTools)
+* Read (and write) `props`, `data` and `computed` of Vue components.
+* Select a component by clicking on it (very helpful when you want to change something in MainUI, but don't know which component you have to edit).
+* Access to the Vuex storage.
 
 ## How Do I?
 
@@ -71,11 +71,11 @@ After editing those definitions, it is required to regenerate the component docs
 
 ### Edit or add Blockly blocks?
 
-- Blocks are defined within [blockly-editor.vue](web/src/components/config/controls/blockly-editor.vue).
-- Blocks are implemented inside the [web/src/assets/definitions/blockly](web/src/assets/definitions/blockly) directory.
-- Each block requires a _Blockly.Blocks_ section that defines the visual representation and a _javascriptGenerator_ section that implements the code generation of the block.
-- Please refer to the [visualisation](https://developers.google.com/blockly/guides/create-custom-blocks/define-blocks) and [code generation](https://developers.google.com/blockly/guides/create-custom-blocks/code-generation/overview) documentation on how to define blocks.
-- Also follow the [Blockly Best Practices](https://developers.google.com/blockly/guides/app-integration/best-practices) and [Blockly Style guide](https://developers.google.com/blockly/guides/create-custom-blocks/style-guide)
+* Blocks are defined within [blockly-editor.vue](web/src/components/config/controls/blockly-editor.vue).
+* Blocks are implemented inside the [web/src/assets/definitions/blockly](web/src/assets/definitions/blockly) directory.
+* Each block requires a _Blockly.Blocks_ section that defines the visual representation and a _javascriptGenerator_ section that implements the code generation of the block.
+* Please refer to the [visualisation](https://developers.google.com/blockly/guides/create-custom-blocks/define-blocks) and [code generation](https://developers.google.com/blockly/guides/create-custom-blocks/code-generation/overview) documentation on how to define blocks.
+* Also follow the [Blockly Best Practices](https://developers.google.com/blockly/guides/app-integration/best-practices) and [Blockly Style guide](https://developers.google.com/blockly/guides/create-custom-blocks/style-guide)
 
 ### Update the FAQ or Quick Start of the developer sidebar's help?
 
