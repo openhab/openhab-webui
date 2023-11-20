@@ -67,7 +67,7 @@ When opening one of those widgets you can use in the UI, e.g. `oh-clock-card.vue
 If you now want to modify the functionality or appearance of the clock widget, your changes usually need to be done inside the wrapped component, in this case `oh-clock.vue`, not `oh-clock-card.vue`.
 
 In case you want to edit widget parameters, make sure to adjust the widget's parameter definition in [web/src/assets/definitions/widgets/system](web/src/assets/definitions/widgets/system).
-After editing those definitions, it is required to regenerate the component docs, see [Documentation & Resources](#documentation--resources)
+After editing those definitions, it is required to regenerate the component docs, see [Documentation & Resources](#documentation--resources).
 
 ### Edit or add Blockly blocks?
 
@@ -75,11 +75,11 @@ After editing those definitions, it is required to regenerate the component docs
 * Blocks are implemented inside the [web/src/assets/definitions/blockly](web/src/assets/definitions/blockly) directory.
 * Each block requires a _Blockly.Blocks_ section that defines the visual representation and a _javascriptGenerator_ section that implements the code generation of the block.
 * Please refer to the [visualisation](https://developers.google.com/blockly/guides/create-custom-blocks/define-blocks) and [code generation](https://developers.google.com/blockly/guides/create-custom-blocks/code-generation/overview) documentation on how to define blocks.
-* Also follow the [Blockly Best Practices](https://developers.google.com/blockly/guides/app-integration/best-practices) and [Blockly Style guide](https://developers.google.com/blockly/guides/create-custom-blocks/style-guide)
+* Also follow the [Blockly Best Practices](https://developers.google.com/blockly/guides/app-integration/best-practices) and [Blockly Style guide](https://developers.google.com/blockly/guides/create-custom-blocks/style-guide).
 
 ### Update the FAQ or Quick Start of the developer sidebar's help?
 
-The "How do I..." and "Quick Start" sections are created from JSON definitions located at the [web/src/assets/definitions/help](web/src/assets/definitions/help).
+The "How do I..." and "Quick Start" sections are created from JSON definitions located at the [web/src/assets/definitions/help](web/src/assets/definitions/help) directory.
 
 ## PWA
 
