@@ -24,7 +24,8 @@ const store = new Vuex.Store({
     locale: null,
     runtimeInfo: null,
     developerDock: false,
-    pagePath: null
+    pagePath: null,
+    searchQuery: null
   },
   getters: {
     apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type),
@@ -45,6 +46,9 @@ const store = new Vuex.Store({
     },
     setPagePath (state, value) {
       state.pagePath = value
+    },
+    setSearchQuery (state, value) {
+      state.searchQuery = value
     }
   },
   actions: {

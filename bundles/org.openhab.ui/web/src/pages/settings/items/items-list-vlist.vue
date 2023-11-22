@@ -166,9 +166,12 @@ export default {
     },
     onPageBeforeOut (event) {
       this.stopEventSource()
+      this.$store.commit('setSearchQuery', this.$refs.searchbar?.f7Searchbar.query)
     },
     load () {
       this.ready = false
+      this.$store.commit('setSearchQuery', this.$refs.searchbar?.f7Searchbar.query)
+
       this.$oh.api.get('/rest/items?metadata=semantics').then(data => {
         this.items = data.sort((a, b) => {
           const labelA = a.label || a.name
@@ -178,14 +181,10 @@ export default {
         this.$refs.itemsList.f7VirtualList.replaceAllItems(this.items)
         if (!this.eventSource) this.startEventSource()
 
-        // replaceAllItems() overrides search, run again
-        let searchbarQuery = this.$refs.searchbar.f7Searchbar.query
-        this.$refs.searchbar.clear() // same search doesn't get re-executed, reset first
-        this.$refs.searchbar.search(searchbarQuery)
-
         this.$nextTick(() => {
           if (this.$device.desktop) {
-            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+            this.$refs.searchbar?.f7Searchbar.$inputEl[0].focus()
+            this.$refs.searchbar?.f7Searchbar.search(this.$store.state.searchQuery || '')
           }
         })
 
