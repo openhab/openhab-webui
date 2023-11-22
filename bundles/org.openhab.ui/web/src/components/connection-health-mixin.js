@@ -24,7 +24,7 @@ export default {
         text: message,
         closeButton: reloadButton,
         closeButtonText: this.$t('dialogs.reload'),
-        destroyOnClose: autoClose,
+        destroyOnClose: true,
         closeTimeout: (autoClose) ? 5000 : undefined,
         cssClass: 'failure-toast button-outline',
         position: 'bottom',
@@ -51,7 +51,6 @@ export default {
                   this.communicationFailureTimeoutId = setTimeout(() => {
                     if (this.communicationFailureToast !== null) return
                     this.communicationFailureToast = this.displayFailureToast(this.$t('error.communicationFailure'), true, false)
-                    this.communicationFailureToast.open()
                     this.communicationFailureTimeoutId = null
                   }, 1000)
                 }
@@ -59,7 +58,6 @@ export default {
                 if (this.communicationFailureTimeoutId !== null) clearTimeout(this.communicationFailureTimeoutId)
                 if (this.communicationFailureToast !== null) {
                   this.communicationFailureToast.close()
-                  this.communicationFailureToast.destroy()
                   this.communicationFailureToast = null
                 }
               }
