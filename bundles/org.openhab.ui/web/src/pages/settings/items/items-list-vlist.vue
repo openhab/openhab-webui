@@ -8,7 +8,9 @@
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="ready">
+        <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the Items list. -->
         <f7-searchbar
+          v-if="ready"
           ref="searchbar"
           class="searchbar-items"
           search-container=".virtual-list"
