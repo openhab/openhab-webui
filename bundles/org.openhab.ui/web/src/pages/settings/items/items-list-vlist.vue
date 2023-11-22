@@ -66,7 +66,7 @@
           ref="itemsList"
           media-list
           virtual-list
-          :virtual-list-params="{ items, searchAll, renderExternal, height }">
+          :virtual-list-params="vlParams">
           <ul>
             <f7-list-item
               v-for="(item, index) in vlData.items"
@@ -146,9 +146,14 @@ export default {
     return {
       ready: false,
       items: [], // [{ label: 'Staircase', name: 'Staircase'}],
-      indexedItems: {},
       vlData: {
         items: []
+      },
+      vlParams: {
+        items: [],
+        searchAll: this.searchAll,
+        renderExternal: this.renderExternal,
+        height: this.height
       },
       selectedItems: [],
       showCheckboxes: false,
