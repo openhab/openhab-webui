@@ -129,12 +129,12 @@
             </f7-list>
           </div>
           <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && $f7.width < 1450">
-            <addon-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
+            <addon-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" :expanded="expandedTypes.addonSettings" @expanded="expandedTypes.addonSettings = true" />
           </div>
         </f7-col>
         <f7-col width="33" class="add-on-col">
           <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && $f7.width >= 1450">
-            <addon-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
+            <addon-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" :expanded="expandedTypes.addonSettings" @expanded="expandedTypes.addonSettings = true" />
           </div>
         </f7-col>
       </f7-row>
@@ -191,7 +191,8 @@ export default {
       ],
 
       expandedTypes: {
-        systemSettings: this.$f7.width >= 1450
+        systemSettings: this.$f7.width >= 1450,
+        addonSettings: false
       }
     }
   },
@@ -250,6 +251,8 @@ export default {
       this.loadMenu()
     },
     onPageAfterIn () {
+      this.$set(this.expandedTypes, 'systemSettings', this.$f7.width >= 1450)
+      this.$set(this.expandedTypes, 'addonSettings', false)
       // this.loadMenu()
       this.loadCounters()
     }

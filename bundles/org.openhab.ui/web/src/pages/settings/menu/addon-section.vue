@@ -9,7 +9,7 @@
         :key="a.uid"
         :link="'addons/' + a.uid"
         :title="a.label" />
-      <f7-list-button v-if="!expanded && addonsInstalled.length > addonsSettings.length" color="blue" @click="expanded = true">
+      <f7-list-button v-if="!expanded && addonsInstalled.length > addonsSettings.length" color="blue" @click="$emit('expanded', true)">
         {{ $t('dialogs.showAll') }}
       </f7-list-button>
     </f7-list>
@@ -18,16 +18,16 @@
 
 <script>
 export default {
-  props: ['addonsInstalled', 'addonsServices'],
+  props: ['addonsInstalled', 'addonsServices', 'expanded'],
+  emits: ['expanded'],
   data () {
     return {
-      ready: false,
-      expanded: false
+      ready: false
     }
   },
   computed: {
     addonsSettings () {
-      if (this.expanded) return this.addonsInstalled
+      if (this.expanded !== false) return this.addonsInstalled
       return this.addonsInstalled.filter((a) =>
         a.type === 'persistence' ||
         this.addonsServices.findIndex((as) => as.configDescriptionURI.split(':')[1] === a.id) > -1
