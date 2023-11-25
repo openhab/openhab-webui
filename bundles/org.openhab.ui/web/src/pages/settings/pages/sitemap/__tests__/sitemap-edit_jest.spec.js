@@ -187,16 +187,24 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
-    localVue.set(wrapper.vm.selectedWidget.config, 'period', '5h')
+    localVue.set(wrapper.vm.selectedWidget.config, 'period', '5d')
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(/Chart widget Chart Test, invalid period configured: 5h/)
+    expect(lastDialogConfig.content).toMatch(/Chart widget Chart Test, invalid period configured: 5d/)
 
     // configure a period for the Chart and check that there are no validation errors anymore
     lastDialogConfig = null
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
     localVue.set(wrapper.vm.selectedWidget.config, 'period', '4h')
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+
+    // configure an ISO-8601 period for the Chart and check that there are no validation errors
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'period', 'P10M2W1DT12H30M')
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
   })
