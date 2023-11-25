@@ -23,7 +23,7 @@
           <f7-list-input v-if="supports('refresh')" label="Refresh interval" type="number" :value="widget.config.refresh" @input="updateParameter('refresh', $event)" clear-button />
           <f7-list-input v-if="supports('encoding')" label="Encoding" type="text" :value="widget.config.encoding" @input="updateParameter('encoding', $event)" clear-button />
           <f7-list-input v-if="supports('service')" label="Service" type="text" :value="widget.config.service" @input="updateParameter('service', $event)" clear-button />
-          <f7-list-input v-if="supports('period')" title="Period" placeholder="PnYnMnDTnHnMnS" type="text" :value="widget.config.period" @input="updateParameter('period', $event)" clear-button />
+          <f7-list-input v-if="supports('period')" label="Period" placeholder="PnYnMnDTnHnMnS" type="text" :value="widget.config.period" @input="updateParameter('period', $event)" clear-button />
           <f7-list-input v-if="supports('height')" label="Height" type="number" :value="widget.config.height" @input="updateParameter('height', $event)" clear-button />
           <f7-list-input v-if="supports('sendFrequency')" label="Frequency" type="number" :value="widget.config.sendFrequency" @input="updateParameter('sendFrequency', $event)" clear-button />
           <f7-list-input v-if="supports('minValue')" label="Minimum" type="number" :value="widget.config.minValue" @input="updateParameter('minValue', $event)" clear-button />
