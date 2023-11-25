@@ -415,31 +415,35 @@ export default {
         this.i18nReady = true
       }
     })
-    this.$oh.api.get('/rest/addons').then((data) => {
-      this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
-      this.selectedAddons = this.addons.filter((a) => this.recommendedAddons.includes(a.uid) && !a.installed)
-      const self = this
-      this.autocompleteAddons = this.$f7.autocomplete.create({
-        openIn: 'popup',
-        pageTitle: this.$t('setupwizard.addons.selectAddons'),
-        searchbarPlaceholder: this.$t('setupwizard.addons.selectAddons.placeholder'),
-        openerEl: this.$refs.selectAddons,
-        multiple: true,
-        requestSourceOnOpen: true,
-        source: (query, render) => {
-          if (query.length === 0) {
-            render(self.addons.filter((a) => !a.installed).map((a) => a.label))
-          } else {
-            render(self.addons.filter((a) => !a.installed && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map((a) => a.label))
-          }
-        },
-        on: {
-          change (value) {
-            const selected = value.map((label) => self.addons.find((a) => a.label === label))
-            self.$set(self, 'selectedAddons', selected)
-          }
-        },
-        value: this.addons.filter((a) => this.recommendedAddons.includes(a.uid)).map((a) => a.label)
+    this.$oh.api.get('/rest/addons/suggestions').then((suggestedAddons) => {
+      let suggestions = suggestedAddons.flatMap((s) => s.id)
+      this.$oh.api.get('/rest/addons').then((data) => {
+        this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+        this.selectedAddons = this.addons.filter((a) => (this.recommendedAddons.includes(a.uid) || suggestions.includes(a.id)) && !a.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+        const sortedAddons = this.selectedAddons.concat(this.addons.filter((a) => (!this.selectedAddons.includes(a))))
+        const self = this
+        this.autocompleteAddons = this.$f7.autocomplete.create({
+          openIn: 'popup',
+          pageTitle: this.$t('setupwizard.addons.selectAddons'),
+          searchbarPlaceholder: this.$t('setupwizard.addons.selectAddons.placeholder'),
+          openerEl: this.$refs.selectAddons,
+          multiple: true,
+          requestSourceOnOpen: true,
+          source: (query, render) => {
+            if (query.length === 0) {
+              render(sortedAddons.filter((a) => !a.installed).map((a) => a.label))
+            } else {
+              render(sortedAddons.filter((a) => !a.installed && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map((a) => a.label))
+            }
+          },
+          on: {
+            change (value) {
+              const selected = value.map((label) => self.addons.find((a) => a.label === label))
+              self.$set(self, 'selectedAddons', selected)
+            }
+          },
+          value: this.addons.filter((a) => this.recommendedAddons.includes(a.uid) || suggestions.includes(a.id)).map((a) => a.label)
+        })
       })
     })
   }
