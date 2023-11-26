@@ -286,7 +286,6 @@ export default {
           }
         }
       })
-      this.load()
     }
   }
 }
