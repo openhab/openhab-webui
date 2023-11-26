@@ -8,6 +8,7 @@ body[data-theme="bright"] {
 	--switch-off-track-bg: rgba(0,0,0,.26);
 	--switch-on-track-bg: #9fa8da;
 	--border-color: #ccc;
+	--radio-unchecked-color: rgba(0,0,0,.5);
 	--input-undef-color: rgba(0,0,0,.26);
 	--input-icon-filter: invert(0%);
 	--button-color: #000000;
@@ -22,7 +23,8 @@ body[data-theme="dark"] {
 	--container-text-color: #c0c0c0;
 	--switch-off-track-bg: rgba(255,255,255,.26);
 	--switch-on-track-bg: #9fa8da;
-	--border-color: #343434;
+	--border-color: #545454;
+	--radio-unchecked-color: rgba(255,255,255,.5);
 	--input-undef-color: rgba(158,158,158,.26);
 	--input-icon-filter: invert(100%);
 	--button-color: #e0e0e0;
@@ -38,6 +40,7 @@ body[data-theme="system"] {
 	--switch-off-track-bg: rgba(0,0,0,.26);
 	--switch-on-track-bg: #9fa8da;
 	--border-color: #ccc;
+	--radio-unchecked-color: rgba(0,0,0,.5);
 	--input-undef-color: rgba(0,0,0,.26);
 	--input-icon-filter: invert(0%);
 	--button-color: #000000;
@@ -51,7 +54,8 @@ body[data-theme="system"] {
 		--container-text-color: #c0c0c0;
 		--switch-off-track-bg: rgba(255,255,255,.26);
 		--switch-on-track-bg: #9fa8da;
-		--border-color: #343434;
+		--border-color: #545454;
+		--radio-unchecked-color: rgba(255,255,255,.5);
 		--input-undef-color: rgba(158,158,158,.26);
 		--input-icon-filter: invert(100%);
 		--button-color: #e0e0e0;
@@ -70,7 +74,8 @@ body {
 	background-color: var(--body-bg, #f5f5f5) !important;
 }
 
-.mdl-form {
+.mdl-form,
+.mdl-radio__group {
 	background-color: #fff !important;
 	background-color: var(--container-bg, #fff) !important;
 	color: #616161 !important;
@@ -102,6 +107,21 @@ body {
 .mdl-switch__ripple-container .mdl-ripple {
 	background: #3f51b5;
 	background: var(--primary-color, #3f51b5);
+}
+
+.mdl-radio__group {
+	border: 3px solid #ccc;
+	border: 3px solid var(--border-color, #ccc);
+}
+
+.mdl-radio__item {
+	border-bottom: 1px solid #ccc;
+	border-bottom: 1px solid var(--border-color, #ccc);
+}
+
+.mdl-radio:not(.is-checked) .mdl-radio__outer-circle {
+	border-color: rgba(0,0,0,.5);
+	border-color: var(--radio-unchecked-color, rgba(0,0,0,.5));
 }
 
 .mdl-button {
