@@ -259,7 +259,7 @@ export default {
       currentCronStrategy: null,
       currentFilter: null,
 
-      predefinedStrategies: ['everyChange', 'everyUpdate', 'restoreOnStartup'],
+      predefinedStrategies: ['everyChange', 'everyUpdate', 'restoreOnStartup', 'forecast'],
       // Filter configuration is completely based on these definitions, when adding new filters, no code needs to be updated.
       // However, please note that some validation and checks are in place for some filter types in editFilter(), saveFilter() and filter-popup.vue
       filterTypes: [
