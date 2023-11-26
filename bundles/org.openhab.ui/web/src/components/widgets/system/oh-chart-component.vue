@@ -15,7 +15,7 @@
       </f7-menu-item>
       <f7-menu-item v-else dropdown :text="period">
         <f7-menu-dropdown right>
-          <f7-menu-dropdown-item v-for="p in ['h', '2h', '4h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '4M', '6M', 'Y']"
+          <f7-menu-dropdown-item v-for="p in ['h', '2h', '4h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '4M', '6M', 'Y', '3Y', '5Y', '10Y']"
                                  :key="p" @click="setPeriod(p)" href="#" :text="p" />
         </f7-menu-dropdown>
       </f7-menu-item>
