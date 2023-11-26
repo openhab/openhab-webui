@@ -23,7 +23,10 @@ export default () => [
     { value: '2M', label: '2M' },
     { value: '4M', label: '4M' },
     { value: '6M', label: '6M' },
-    { value: 'Y', label: 'Y' }
+    { value: 'Y', label: 'Y' },
+    { value: '3Y', label: '3Y' },
+    { value: '5Y', label: '5Y' },
+    { value: '10Y', label: '10Y' }
   ]).v((value, configuration, configDescription, parameters) => {
     return !configuration.chartType
   })
