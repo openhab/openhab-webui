@@ -27,6 +27,7 @@
                          placeholder="PnYnMnDTnHnMnS" validate pattern="^P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?$|^\d*[YMWDh]$"
                          :value="widget.config.period" @input="updateParameter('period', $event)" clear-button />
           <f7-list-input v-if="supports('height')" label="Height" type="number" :value="widget.config.height" @input="updateParameter('height', $event)" clear-button />
+          <f7-list-input v-if="supports('columns')" label="Columns" type="number" :value="widget.config.columns" @input="updateParameter('columns', $event)" clear-button />
           <f7-list-input v-if="supports('sendFrequency')" label="Frequency" type="number" :value="widget.config.sendFrequency" @input="updateParameter('sendFrequency', $event)" clear-button />
           <f7-list-input v-if="supports('minValue')" label="Minimum" type="number" :value="widget.config.minValue" @input="updateParameter('minValue', $event)" clear-button />
           <f7-list-input v-if="supports('maxValue')" label="Maximum" type="number" :value="widget.config.maxValue" @input="updateParameter('maxValue', $event)" clear-button />
@@ -91,6 +92,7 @@ export default {
         Setpoint: ['minValue', 'maxValue', 'step'],
         Colorpicker: ['sendFrequency'],
         Input: ['inputHint'],
+        Buttongrid: ['columns'],
         Default: ['height']
       },
       inputHintDefs: [

@@ -42,6 +42,8 @@ export default {
           return 'f7:drop'
         case 'Mapview':
           return 'f7:map'
+        case 'Buttongrid':
+          return 'f7:square_grid_3x2'
         case 'Default':
           return 'f7:rectangle'
         case 'Text':

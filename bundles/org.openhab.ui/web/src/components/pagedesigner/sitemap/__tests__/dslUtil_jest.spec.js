@@ -123,6 +123,26 @@ describe('dslUtil', () => {
     expect(sitemap[1]).toEqual('    Selection item=Scene_General mappings=[1=Morning,2=Evening,10="Cinéma",11=TV,3="Bed time",4=Night=moon]')
   })
 
+  it('renders a Buttongrid widget correctly', () => {
+    const component = createSitemapComponent('test', 'Test')
+    const widget = {
+    }
+    addWidget(component, 'Buttongrid', {
+      item: 'Scene_General',
+      columns: 3,
+      buttons: [
+        { position: 1, command: '1=Morning' },
+        { position: 2, command: '2=Evening' },
+        { position: 3, command: '10=Cinéma' },
+        { position: 4, command: '11=TV' },
+        { position: 5, command: '3=Bed time' },
+        { position: 6, command: '4=Night=moon' }
+      ]
+    })
+    const sitemap = dslUtil.toDsl(component).split('\n')
+    expect(sitemap[1]).toEqual('    Buttongrid item=Scene_General columns=3 buttons=[1:1=Morning,2:2=Evening,3:10="Cinéma",4:11=TV,5:3="Bed time",6:4=Night=moon]')
+  })
+
   it('renders a widget with mappings and string keys correctly', () => {
     const component = createSitemapComponent('test', 'Test')
     const widget = {
