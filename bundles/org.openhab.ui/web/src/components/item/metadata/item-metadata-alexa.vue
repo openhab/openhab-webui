@@ -126,7 +126,7 @@ export default {
     parameters () {
       return this.classes.reduce((parameters, cl) => {
         const { parameters: params = [] } = this.getDefinition(cl)
-        for (const p of params.map((p) => p(this.item, this.metadata.config)).flat()) {
+        for (const p of params.map((p) => p(this.itemType, this.item, this.metadata.config)).flat()) {
           if (p.description) p.description = p.description.replace('%DOC_URL%', this.docUrl)
           if (!parameters.find((e) => e.name === p.name)) parameters.push(p)
         }
