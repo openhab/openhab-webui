@@ -379,7 +379,7 @@ export default {
 
       if (!force && !this.validateWidgets(stay)) return
 
-      const sitemap = this.preProcessSitemapSave()
+      const sitemap = this.preProcessSitemapSave(this.sitemap)
 
       const promise = (this.createMode)
         ? this.$oh.api.postPlain('/rest/ui/components/system:sitemap', JSON.stringify(sitemap), 'text/plain', 'application/json')
@@ -546,7 +546,7 @@ export default {
       }
     },
     preProcessSitemapLoad (sitemap) {
-      const processed = sitemap
+      const processed = JSON.parse(JSON.stringify(sitemap))
       if (processed.slots && processed.slots.widgets) {
         processed.slots.widgets.forEach(this.preProcessWidgetLoad)
       }
@@ -571,7 +571,7 @@ export default {
       }
     },
     preProcessSitemapSave (sitemap) {
-      const processed = sitemap
+      const processed = JSON.parse(JSON.stringify(sitemap))
       if (processed.slots && processed.slots.widgets) {
         processed.slots.widgets.forEach(this.preProcessWidgetSave)
       }

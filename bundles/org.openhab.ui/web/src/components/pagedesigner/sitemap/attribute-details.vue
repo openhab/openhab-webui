@@ -1,12 +1,9 @@
 <template>
   <f7-card v-if="widget">
     <f7-card-content v-if="attributes.length">
-      <f7-list v-if="!fields" inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
-        <f7-list-input v-for="(attr, idx) in attributes" :key="attr.key"
-                       type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute($event, idx, attr)" clear-button />
-      </f7-list>
-      <f7-list v-if="fields" inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
+      <f7-list inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
         <f7-list-item v-for="(attr, idx) in attributes" :key="attr.key">
+          <f7-input v-if="!fields" type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute($event, idx, attr)" />
           <f7-input v-for="(field, fieldidx) in fieldDefs" :key="JSON.stringify(field)"
                     :style="fieldStyle(field, fieldidx)"
                     :inputStyle="inputFieldStyle(field, fieldidx)"
@@ -15,8 +12,8 @@
                     :max="fieldProp(field, 'max')"
                     :placeholder="fieldProp(field, 'placeholder')"
                     :value="attr.value[Object.keys(field)[0]]"
-                    :clear-button="fieldidx === fieldDefs.length - 1"
                     validate @change="updateAttribute($event, idx, attr, Object.keys(field)[0])" />
+          <f7-button text="" icon-material="clear" small @click="removeAttribute(idx)" />
         </f7-list-item>
       </f7-list>
     </f7-card-content>
@@ -27,6 +24,14 @@
     </f7-card-footer>
   </f7-card>
 </template>
+
+<style lang="stylus">
+.button
+  padding-left 5px
+  padding-right 0px
+.input
+  width inherit
+</style>
 
 <script>
 export default {
@@ -40,7 +45,7 @@ export default {
   },
   computed: {
     fieldDefs () {
-      return JSON.parse(this.fields)
+      return this.fields ? JSON.parse(this.fields) : []
     },
     attributes () {
       if (this.widget && this.widget.config && this.widget.config[this.attribute]) {
@@ -64,8 +69,6 @@ export default {
       let style = {}
       if (this.fieldProp(field, 'width') !== undefined) {
         style.width = this.fieldProp(field, 'width')
-      } else {
-        style.width = 'inherit'
       }
       if (fieldidx > 0) {
         style.paddingLeft = '5px'
@@ -82,7 +85,7 @@ export default {
     updateAttribute ($event, idx, attr, field) {
       let value = $event.target.value
       if (!value) {
-        this.widget.config[this.attribute].splice(idx, 1)
+        this.removeAttribute(idx)
         return
       }
       if (field) {
@@ -90,6 +93,9 @@ export default {
         value[field] = $event.target.value
       }
       this.$set(this.widget.config[this.attribute], idx, value)
+    },
+    removeAttribute (idx) {
+      this.widget.config[this.attribute].splice(idx, 1)
     },
     addAttribute () {
       if (this.widget && this.widget.config && this.widget.config[this.attribute]) {
