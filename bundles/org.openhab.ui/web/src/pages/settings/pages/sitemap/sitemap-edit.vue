@@ -52,7 +52,9 @@
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component === 'Buttongrid'">
                 <div><f7-block-title>Buttons</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="buttons" placeholder="command = label = icon" />
+                <attribute-details :widget="selectedWidget" attribute="buttons" placeholder="command = label = icon"
+                                   :fields="JSON.stringify([{position: {width: '10%', type: 'number', min: 1, placeholder: '0'}},
+                                                            {command: {}}])" />
               </f7-block>
               <f7-block v-if="selectedWidget && ['Switch', 'Selection'].indexOf(selectedWidget.component) >= 0">
                 <div><f7-block-title>Mappings</f7-block-title></div>
@@ -141,7 +143,9 @@
           <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'buttons'">
-          <attribute-details :widget="selectedWidget" attribute="buttons" placeholder="command = label = icon" />
+          <attribute-details :widget="selectedWidget" attribute="buttons" placeholder="command = label = icon"
+                             :fields="JSON.stringify([{position: {width: '10%', type: 'number', min: 1, placeholder: '0'}},
+                                                      {command: {}}])" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'mappings'">
           <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label = icon" />
@@ -349,7 +353,8 @@ export default {
         this.ready = true
       } else {
         this.$oh.api.get('/rest/ui/components/system:sitemap/' + this.uid).then((data) => {
-          this.$set(this, 'sitemap', data)
+          const sitemap = this.preProcessSitemapLoad(data)
+          this.$set(this, 'sitemap', sitemap)
           this.$nextTick(() => {
             this.ready = true
             this.loading = false
@@ -374,7 +379,7 @@ export default {
 
       if (!force && !this.validateWidgets(stay)) return
 
-      const sitemap = this.preProcessSitemap()
+      const sitemap = this.preProcessSitemapSave()
 
       const promise = (this.createMode)
         ? this.$oh.api.postPlain('/rest/ui/components/system:sitemap', JSON.stringify(sitemap), 'text/plain', 'application/json')
@@ -540,25 +545,50 @@ export default {
         value = value.replace(/"|'/g, '')
       }
     },
-    preProcessSitemap () {
-      const sitemap = this.sitemap
-      if (sitemap.slots && sitemap.slots.widgets) {
-        sitemap.slots.widgets.forEach(this.preProcessWidget)
+    preProcessSitemapLoad (sitemap) {
+      const processed = sitemap
+      if (processed.slots && processed.slots.widgets) {
+        processed.slots.widgets.forEach(this.preProcessWidgetLoad)
       }
-      return sitemap
+      return processed
     },
-    preProcessWidget (widget) {
+    preProcessWidgetLoad (widget) {
       if (widget.config) {
         for (let key in widget.config) {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
             if (key === 'buttons') {
-              widget.config[key].forEach(value => value.position + ':' + value.command)
+              widget.config[key].forEach((value, index) => {
+                const position = value.split(':')[0]
+                const command = value.slice(position.length + 1)
+                widget.config[key][index] = { 'position': position, 'command': command }
+              })
             }
           }
         }
       }
       if (widget.slots && widget.slots.widgets) {
-        widget.slots.widgets.forEach(this.preProcessWidget)
+        widget.slots.widgets.forEach(this.preProcessWidgetLoad)
+      }
+    },
+    preProcessSitemapSave (sitemap) {
+      const processed = sitemap
+      if (processed.slots && processed.slots.widgets) {
+        processed.slots.widgets.forEach(this.preProcessWidgetSave)
+      }
+      return processed
+    },
+    preProcessWidgetSave (widget) {
+      if (widget.config) {
+        for (let key in widget.config) {
+          if (widget.config[key] && Array.isArray(widget.config[key])) {
+            if (key === 'buttons') {
+              widget.config[key].forEach((value, index) => { widget.config[key][index] = value.position + ':' + value.command })
+            }
+          }
+        }
+      }
+      if (widget.slots && widget.slots.widgets) {
+        widget.slots.widgets.forEach(this.preProcessWidgetSave)
       }
     },
     update (value) {

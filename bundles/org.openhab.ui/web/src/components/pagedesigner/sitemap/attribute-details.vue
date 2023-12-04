@@ -1,11 +1,22 @@
 <template>
   <f7-card v-if="widget">
     <f7-card-content v-if="attributes.length">
-      <f7-list inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
+      <f7-list v-if="!fields" inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
+        <f7-list-input v-for="(attr, idx) in attributes" :key="attr.key"
+                       type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute($event, idx, attr)" clear-button />
+      </f7-list>
+      <f7-list v-if="fields" inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
         <f7-list-item v-for="(attr, idx) in attributes" :key="attr.key">
-          <f7-input v-if="attribute === 'buttons'" type="number" min="1" placeholder="0" validate :value="attr.value.position" @change="updatePositionAttribute(idx, attr, $event)" />
-          <f7-input v-if="attribute === 'buttons'" type="text" :placeholder="placeholder" :value="attr.value.command" @change="updateAttribute(idx, attr, $event)" clear-button />
-          <f7-input v-if="attribute !== 'buttons'" type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute(idx, attr, $event)" clear-button />
+          <f7-input v-for="(field, fieldidx) in fieldDefs" :key="JSON.stringify(field)"
+                    :style="fieldStyle(field, fieldidx)"
+                    :inputStyle="inputFieldStyle(field, fieldidx)"
+                    :type="fieldProp(field, 'type')"
+                    :min="fieldProp(field, 'min')"
+                    :max="fieldProp(field, 'max')"
+                    :placeholder="fieldProp(field, 'placeholder')"
+                    :value="attr.value[Object.keys(field)[0]]"
+                    :clear-button="fieldidx === fieldDefs.length - 1"
+                    validate @change="updateAttribute($event, idx, attr, Object.keys(field)[0])" />
         </f7-list-item>
       </f7-list>
     </f7-card-content>
@@ -19,8 +30,18 @@
 
 <script>
 export default {
-  props: ['widget', 'attribute', 'placeholder'],
+  props: ['widget', 'attribute', 'placeholder', 'fields'],
+  data () {
+    return {
+      fieldDefaults: {
+        type: 'text'
+      }
+    }
+  },
   computed: {
+    fieldDefs () {
+      return JSON.parse(this.fields)
+    },
     attributes () {
       if (this.widget && this.widget.config && this.widget.config[this.attribute]) {
         return this.widget.config[this.attribute].map((attr, idx) => ({ key: idx + ': ' + JSON.stringify(attr), value: attr }))
@@ -29,21 +50,46 @@ export default {
     }
   },
   methods: {
-    updateAttribute (idx, attr, $event) {
-      const value = $event.target.value
+    fieldProp (field, prop) {
+      const fieldProps = field[Object.keys(field)[0]]
+      if (fieldProps[prop] !== undefined) {
+        return fieldProps[prop]
+      }
+      if (prop === 'placeholder') {
+        return this.placeholder
+      }
+      return this.fieldDefaults[prop]
+    },
+    fieldStyle (field, fieldidx) {
+      let style = {}
+      if (this.fieldProp(field, 'width') !== undefined) {
+        style.width = this.fieldProp(field, 'width')
+      } else {
+        style.width = 'inherit'
+      }
+      if (fieldidx > 0) {
+        style.paddingLeft = '5px'
+      }
+      return style
+    },
+    inputFieldStyle (field, fieldidx) {
+      let style = {}
+      if (this.fieldProp(field, 'type') === 'number') {
+        style.textAlign = 'end'
+      }
+      return style
+    },
+    updateAttribute ($event, idx, attr, field) {
+      let value = $event.target.value
       if (!value) {
         this.widget.config[this.attribute].splice(idx, 1)
-      } else if (this.attribute === 'buttons') {
-        const position = (attr.value && attr.value.position) ? attr.value.position : undefined
-        this.$set(this.widget.config[this.attribute], idx, { position: position, command: value })
-      } else {
-        this.$set(this.widget.config[this.attribute], idx, value)
+        return
       }
-    },
-    updatePositionAttribute (idx, attr, $event) {
-      const position = $event.target.value
-      const command = (attr.value && attr.value.command) ? attr.value.command : undefined
-      this.$set(this.widget.config[this.attribute], idx, { position: position, command: command })
+      if (field) {
+        value = attr.value
+        value[field] = $event.target.value
+      }
+      this.$set(this.widget.config[this.attribute], idx, value)
     },
     addAttribute () {
       if (this.widget && this.widget.config && this.widget.config[this.attribute]) {
