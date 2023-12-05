@@ -110,7 +110,7 @@
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
     </f7-fab>
 
-    <f7-sheet v-if="currentTab === 'tree'" class="sitemap-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:opened="detailsTab = 'widget'" @sheet:closed="detailsOpened = false">
+    <f7-sheet v-if="currentTab === 'tree'" class="sitemap-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
       <f7-page>
         <f7-toolbar tabbar bottom>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'widget'" @click="detailsTab = 'widget'">
@@ -217,6 +217,8 @@
         padding-top 0
         .block
           margin-top 0
+  .sitemap-details-sheet
+    visibility hidden !important
   .toolbar-details
     .details-link
       visibility hidden !important
