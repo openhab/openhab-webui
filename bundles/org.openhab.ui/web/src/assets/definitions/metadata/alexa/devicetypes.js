@@ -58,20 +58,19 @@ const thermostatAttributes = [
   ...genericAttributes
 ]
 
-const blindParameters = (item) => {
+const blindParameters = (_, item) => {
   const attributes = ['PositionState', 'TiltAngle']
   const metadata = item.members.map((mbr) => mbr.metadata && mbr.metadata.alexa.value).join(',')
   return attributes.every((attr) => metadata.includes(attr)) ? [p.primaryControl()] : []
 }
 
-const networkParameters = (item) => {
+const networkParameters = (_, item) => {
   const deviceTypes = ['NetworkHardware', 'Router']
   const connection = item.groups.find((g) => deviceTypes.includes(g.metadata.alexa.value))
   return connection ? [p.connectedTo(connection.label || connection.name), p.hostname(), p.macAddress()] : []
 }
 
-export const defaultParameters = (item) => {
-  const itemType = item.groupType || item.type
+export const defaultParameters = (itemType, item) => {
   return itemType === 'Group' || !item.groups.length
     ? [p.deviceName(item.label), p.deviceDescription(`${itemType} ${item.name}`)]
     : []
@@ -304,7 +303,7 @@ export default {
   Thermostat: {
     defaultAttributes: ['HeatingCoolingMode'],
     supportedAttributes: thermostatAttributes,
-    groupParameters: (item) => [p.scale(item, true)]
+    groupParameters: (_, item) => [p.scale(item, true)]
   },
   VacuumCleaner: {
     defaultAttributes: ['PowerState', 'VacuumMode'],
