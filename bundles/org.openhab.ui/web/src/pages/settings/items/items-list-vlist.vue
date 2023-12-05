@@ -166,11 +166,11 @@ export default {
     },
     onPageBeforeOut (event) {
       this.stopEventSource()
-      this.$store.commit('setSearchQuery', this.$refs.searchbar?.f7Searchbar.query)
+      this.$f7.data.lastItemSearchQuery = this.$refs.searchbar?.f7Searchbar.query
     },
     load () {
+      if (this.ready) this.$f7.data.lastItemSearchQuery = this.$refs.searchbar?.f7Searchbar.query
       this.ready = false
-      this.$store.commit('setSearchQuery', this.$refs.searchbar?.f7Searchbar.query)
 
       this.$oh.api.get('/rest/items?metadata=semantics').then(data => {
         this.items = data.sort((a, b) => {
@@ -184,8 +184,8 @@ export default {
         this.$nextTick(() => {
           if (this.$device.desktop) {
             this.$refs.searchbar?.f7Searchbar.$inputEl[0].focus()
-            this.$refs.searchbar?.f7Searchbar.search(this.$store.state.searchQuery || '')
           }
+          this.$refs.searchbar?.f7Searchbar.search(this.$f7.data.lastItemSearchQuery || '')
         })
 
         this.ready = true

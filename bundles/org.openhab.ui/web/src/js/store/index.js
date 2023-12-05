@@ -24,12 +24,11 @@ const store = new Vuex.Store({
     locale: null,
     runtimeInfo: null,
     developerDock: false,
-    pagePath: null,
-    searchQuery: null
+    pagePath: null
   },
   getters: {
     apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type),
-    locale: (state, getters) => state.locale ?? 'default'
+    locale: (state) => state.locale ?? 'default'
   },
   mutations: {
     setRootResource (state, { rootResponse }) {
@@ -46,9 +45,6 @@ const store = new Vuex.Store({
     },
     setPagePath (state, value) {
       state.pagePath = value
-    },
-    setSearchQuery (state, value) {
-      state.searchQuery = value
     }
   },
   actions: {
