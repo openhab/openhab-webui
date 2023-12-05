@@ -20,7 +20,7 @@
       <f7-link :disabled="selectedWidget != null" class="left" @click="selectedWidget = null">
         Clear
       </f7-link>
-      <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
+      <f7-link v-if="selectedWidget" class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
       <f7-tab class="design" id="tree" @tab:show="() => this.currentTab = 'tree'" :tab-active="currentTab === 'tree'">
@@ -105,12 +105,12 @@
       </f7-tab>
     </f7-tabs>
 
-    <f7-fab class="add-to-sitemap-fab" v-if="canAddChildren" position="right-bottom" slot="fixed" color="blue" @click="$refs.widgetTypeSelection.open()">
+    <f7-fab class="add-to-sitemap-fab" v-if="canAddChildren" position="right-center" slot="fixed" color="blue" @click="$refs.widgetTypeSelection.open()">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
     </f7-fab>
 
-    <f7-sheet v-if="currentTab === 'tree'" class="sitemap-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
+    <f7-sheet v-if="currentTab === 'tree'" class="sitemap-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:opened="detailsTab = 'widget'" @sheet:closed="detailsOpened = false">
       <f7-page>
         <f7-toolbar tabbar bottom>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'widget'" @click="detailsTab = 'widget'">
@@ -676,11 +676,14 @@ export default {
       this.$nextTick(() => {
         this.selectedWidget = widget
         this.selectedWidgetParent = parentWidget
-        const detailsLink = this.$refs.detailsLink
-        const visibility = window.getComputedStyle(detailsLink.$el).visibility
-        if (!visibility || visibility !== 'hidden') {
-          this.detailsOpened = true
-        }
+        this.detailsTab = 'widget'
+        this.$nextTick(() => {
+          const detailsLink = this.$refs.detailsLink
+          const visibility = window.getComputedStyle(detailsLink.$el).visibility
+          if (!visibility || visibility !== 'hidden') {
+            this.detailsOpened = true
+          }
+        })
       })
     },
     clearSelection (ev) {
