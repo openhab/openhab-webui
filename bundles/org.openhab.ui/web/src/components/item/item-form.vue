@@ -15,15 +15,20 @@
         </select>
       </f7-list-item>
       <f7-list-item v-if="dimensions.length && item.type && !hideType && item.type.startsWith('Number')" title="Dimension" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
-        <select name="select-dimension" @change="item.type = $event.target.value">
-          <option key="Number" value="Number" :selected="item.type === 'Number'">
-            &nbsp;
-          </option>
-          <option v-for="d in dimensions" :key="d.name" :value="'Number:' + d.name" :selected="'Number:' + d.name === item.type">
+        <select name="select-dimension" @change="setDimension($event.target.value)">
+          <option key="Number" value="Number" :selected="item.type === 'Number'" />
+          <option v-for="(d, i) in dimensions" :key="d.name" :value="i" :selected="'Number:' + d.name === item.type">
             {{ d.label }}
           </option>
         </select>
       </f7-list-item>
+      <!-- Use v-show instead of v-if, because otherwise the autocomplete for category would take over the unit -->
+      <f7-list-input v-show="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="Unit" type="text" :value="item.unit"
+                     info="Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description."
+                     @input="item.unit = $event.target.value" clear-button />
+      <f7-list-input v-show="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="State Description Pattern" type="text" :value="item.stateDescriptionPattern"
+                     info="Pattern or transformation applied to the state for display purposes."
+                     @input="item.stateDescriptionPattern = $event.target.value" clear-button />
       <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
                      @input="item.category = $event.target.value" clear-button>
         <div slot="root-end" style="margin-left: calc(35% + 8px)">
@@ -79,7 +84,25 @@ export default {
       return this.getNonSemanticTags(this.item).length
     }
   },
+  watch: {
+    // Required for pre-filling unit and state description pattern fields in "Add Items from Thing" functionality
+    dimensions () {
+      if (this.createMode && this.item.type && this.item.type.startsWith('Number:')) {
+        this.setDimension(this.dimensions.findIndex((d) => d.name === this.item.type.split(':')[1]))
+      }
+    }
+  },
   methods: {
+    setDimension (index) {
+      if (index === 'Number') {
+        this.$set(this.item, 'type', 'Number')
+        return
+      }
+      const dimension = this.dimensions[index]
+      this.$set(this.item, 'type', 'Number:' + dimension.name)
+      this.$set(this.item, 'unit', dimension.systemUnit)
+      this.$set(this.item, 'stateDescriptionPattern', `%.0f ${dimension.systemUnit}`)
+    },
     initializeAutocomplete (inputElement) {
       this.categoryAutocomplete = this.$f7.autocomplete.create({
         inputEl: inputElement,

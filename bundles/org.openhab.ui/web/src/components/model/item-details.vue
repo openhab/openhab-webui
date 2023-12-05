@@ -14,6 +14,10 @@
       <div class="padding-top" v-else-if="createMode">
         <item-form :item="editedItem" :items="items" :createMode="true" :force-semantics="forceSemantics" />
       </div>
+      <div v-if="(createMode || editMode) && editedItem && editedItem.type === 'Group'">
+        <f7-block-title>Group Settings</f7-block-title>
+        <group-form :item="editedItem" :createMode="createMode" />
+      </div>
     </f7-card-content>
     <f7-card-footer v-if="createMode || editMode" key="item-card-buttons">
       <f7-button v-if="createMode" color="blue" fill raised @click="create">
@@ -40,10 +44,15 @@
 <script>
 import Item from '@/components/item/item.vue'
 import ItemForm from '@/components/item/item-form.vue'
+import GroupForm from '@/components/item/group-form.vue'
+
+import ItemMixin from '@/components/item/item-mixin'
 
 export default {
+  mixins: [ItemMixin],
   props: ['model', 'links', 'items', 'context'],
   components: {
+    GroupForm,
     Item,
     ItemForm
   },
@@ -91,14 +100,20 @@ export default {
     },
     save () {
       this.editMode = false
-      this.$oh.api.put('/rest/items/' + this.editedItem.name, this.editedItem).then((data) => {
+      this.doSave(this.editedItem).then(() => {
         this.$f7.toast.create({
           text: 'Item updated',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
+        this.$emit('item-updated', this.editedItem)
+      }).catch((err) => {
+        this.$f7.toast.create({
+          text: 'Item not saved: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
       })
-      this.$emit('item-updated', this.editedItem)
     },
     create () {
       this.editMode = false
@@ -106,20 +121,20 @@ export default {
       // TODO properly validate item
       if (!this.editedItem.name) return
 
-      this.$oh.api.put('/rest/items/' + this.editedItem.name, this.editedItem).then((data) => {
+      this.doSave(this.editedItem).then(() => {
         this.$f7.toast.create({
           text: 'Item created',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-        this.$set(this.model, 'item', JSON.parse(data))
+        this.$set(this.model, 'item', this.editedItem)
         this.model.item.created = true
         this.model.item.editable = true
         this.$emit('item-created', this.model.item)
         this.onModelChange()
       }).catch((err) => {
         this.$f7.toast.create({
-          text: 'Item not created: ' + err,
+          text: 'Item not saved: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()

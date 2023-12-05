@@ -35,7 +35,7 @@
           </f7-col>
           <f7-col v-if="item && item.type === 'Group'">
             <f7-block-title>Group Settings</f7-block-title>
-            <group-form :item="item" />
+            <group-form :item="item" :createMode="createMode" />
           </f7-col>
         </f7-block>
       </f7-tab>
@@ -76,10 +76,12 @@ import YAML from 'yaml'
 import ItemForm from '@/components/item/item-form.vue'
 import GroupForm from '@/components/item/group-form.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
+
 import DirtyMixin from '../dirty-mixin'
+import ItemMixin from '@/components/item/item-mixin'
 
 export default {
-  mixins: [DirtyMixin],
+  mixins: [DirtyMixin, ItemMixin],
   props: ['itemName', 'createMode'],
   components: {
     ItemPicker,
@@ -132,7 +134,6 @@ export default {
       } else {
         const loadItem = this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=.*')
         loadItem.then((data) => {
-          if (!data.groupType) data.groupType = 'None'
           this.item = data
           this.$nextTick(() => {
             this.ready = true
@@ -159,12 +160,10 @@ export default {
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) return Promise.reject()
       }
-      if (!this.item.name) return // user cannot change name
+      if (!this.item.name) return this.$f7.dialog.alert('Please give Item a valid name').open() // user cannot change name
       if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0])) return this.$f7.dialog.alert('Please give Item a valid type').open()
-      if (this.item.groupType === 'None') delete this.item.groupType
 
-      // TODO: Add support for saving metadata
-      this.$oh.api.put('/rest/items/' + this.item.name, this.item).then((data) => {
+      this.doSave(this.item).then(() => {
         if (this.createMode) {
           this.$f7.toast.create({
             text: 'Item created',
@@ -180,6 +179,7 @@ export default {
             closeTimeout: 2000
           }).open()
         }
+
         this.dirty = false
         this.$f7router.back()
       }).catch((err) => {
@@ -195,16 +195,19 @@ export default {
       this.dirty = true
     },
     toYaml () {
-      this.itemYaml = YAML.stringify({
+      const yamlObj = {
         label: this.item.label,
         type: this.item.type,
         category: this.item.category,
         groupNames: this.item.groupNames,
-        groupType: this.item.groupType,
-        function: this.item.function,
         tags: this.item.tags
         // metadata: this.item.metadata
-      })
+      }
+      if (this.item.type === 'Group') {
+        yamlObj.groupType = this.item.groupType || 'None'
+        yamlObj.function = this.item.function || 'None'
+      }
+      this.itemYaml = YAML.stringify(yamlObj)
     },
     fromYaml () {
       if (!this.item.editable) return false
