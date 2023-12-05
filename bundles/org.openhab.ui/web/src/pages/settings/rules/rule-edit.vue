@@ -50,35 +50,9 @@
           </f7-col>
         </f7-block>
 
-        <!-- skeletons -->
-        <f7-block v-if="!ready" class="block-narrow">
-          <f7-col class="skeleton-text skeleton-effect-blink">
-            <f7-list inline-labels no-hairlines-md>
-              <f7-list-input label="Unique ID" type="text" placeholder="Required" value="_______" required validate
-                             :disabled="true" :info="(isNewRule) ? 'Note: cannot be changed after the creation' : ''"
-                             @input="rule.uid = $event.target.value" :clear-button="isNewRule" />
-              <f7-list-input label="Name" type="text" placeholder="Required" required validate
-                             :disabled="true" @input="rule.name = $event.target.value" :clear-button="isEditable" />
-              <f7-list-input label="Description" type="text" value="__ _____ ___ __ ___"
-                             :disabled="true" @input="rule.description = $event.target.value" :clear-button="isEditable" />
-            </f7-list>
-          </f7-col>
-        </f7-block>
+        <rule-general-settings :rule="rule" :ready="ready" :createMode="isNewRule" :isEditable="isEditable" :hasTemplate="hasTemplate" />
 
-        <f7-block v-else class="block-narrow">
-          <f7-col>
-            <f7-list inline-labels no-hairlines-md>
-              <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" required validate
-                             :disabled="!isNewRule" :info="(isNewRule) ? 'Note: cannot be changed after the creation' : ''"
-                             pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
-                             @input="rule.uid = $event.target.value" :clear-button="isNewRule" />
-              <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" required validate
-                             :disabled="!isEditable" @input="rule.name = $event.target.value" :clear-button="isEditable" />
-              <f7-list-input label="Description" type="text" :value="rule.description"
-                             :disabled="!isEditable" @input="rule.description = $event.target.value" :clear-button="isEditable" />
-            </f7-list>
-          </f7-col>
-
+        <f7-block v-if="ready" class="block-narrow">
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
             <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable because it has been provisioned from a file.
           </f7-block-footer>
@@ -150,11 +124,6 @@
               </f7-list>
             </div>
           </f7-col>
-          <f7-col v-if="(isEditable || rule.tags.length > 0) && !hasTemplate">
-            <f7-block-title>Tags</f7-block-title>
-            <semantics-picker v-if="isEditable" :item="rule" />
-            <tag-input :item="rule" :disabled="!isEditable" />
-          </f7-col>
           <f7-col v-if="isEditable && (!isNewRule)">
             <f7-list>
               <f7-list-button color="blue" @click="copyRule">
@@ -211,23 +180,21 @@ import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
-import SemanticsPicker from '@/components/tags/semantics-picker.vue'
-import TagInput from '@/components/tags/tag-input.vue'
-
 import RuleModulePopup from './rule-module-popup.vue'
 
+import RuleMixin from './rule-edit-mixin'
 import ModuleDescriptionSuggestions from './module-description-suggestions'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import DirtyMixin from '../dirty-mixin'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
 
 export default {
-  mixins: [ModuleDescriptionSuggestions, RuleStatus, DirtyMixin],
+  mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus, DirtyMixin],
   components: {
+    RuleGeneralSettings,
     ConfigSheet,
-    SemanticsPicker,
-    TagInput,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
   props: ['ruleId', 'createMode', 'copyMode', 'ruleCopy', 'schedule'],
@@ -242,7 +209,6 @@ export default {
         conditions: [],
         triggers: []
       },
-      showModuleControls: false,
       currentSection: 'actions',
       currentTab: 'design',
       currentModuleType: null,
@@ -253,8 +219,6 @@ export default {
         actions: ['Then', 'Add Action'],
         conditions: ['But only if', 'Add Condition']
       },
-      eventSource: null,
-      keyHandler: null,
 
       codeEditorOpened: false,
       cronPopupOpened: false,
@@ -281,22 +245,6 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
-      if (window) {
-        window.addEventListener('keydown', this.keyDown)
-      }
-      this.load()
-    },
-    onPageAfterOut () {
-      this.stopEventSource()
-      if (window) {
-        window.removeEventListener('keydown', this.keyDown)
-      }
-    },
-    onEditorInput (value) {
-      this.ruleYaml = value
-      this.dirty = true
-    },
     load () {
       if (this.loading) return
       this.loading = true
@@ -412,23 +360,6 @@ export default {
         }).open()
       })
     },
-    toggleDisabled () {
-      if (this.isNewRule) return
-      const enable = (this.rule.status.statusDetail === 'DISABLED')
-      this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString()).then((data) => {
-        this.$f7.toast.create({
-          text: (enable) ? 'Rule enabled' : 'Rule disabled',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      }).catch((err) => {
-        this.$f7.toast.create({
-          text: 'Error while disabling or enabling: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
-    },
     copyRule () {
       let ruleClone = cloneDeep(this.rule)
       this.$f7router.navigate({
@@ -477,20 +408,6 @@ export default {
         }
       )
     },
-    startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/' + this.ruleId + '/*', null, (event) => {
-        const topicParts = event.topic.split('/')
-        switch (topicParts[3]) {
-          case 'state':
-            this.$set(this.rule, 'status', JSON.parse(event.payload))
-            break
-        }
-      })
-    },
-    stopEventSource () {
-      this.$oh.sse.close(this.eventSource)
-      this.eventSource = null
-    },
     selectTemplate (uid) {
       this.$set(this.rule, 'configuration', {})
       this.$set(this.rule, 'triggers', [])
@@ -502,42 +419,6 @@ export default {
       }
       this.$set(this, 'currentTemplate', this.templates.find((t) => t.uid === uid))
       this.rule.templateUID = uid
-    },
-    keyDown (ev) {
-      if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
-        if (this.currentModule) return
-        switch (ev.keyCode) {
-          case 68:
-            this.toggleDisabled()
-            ev.stopPropagation()
-            ev.preventDefault()
-            break
-          case 82:
-            this.runNow()
-            ev.stopPropagation()
-            ev.preventDefault()
-            break
-          case 83:
-            this.save()
-            ev.stopPropagation()
-            ev.preventDefault()
-            break
-        }
-      }
-    },
-    toggleModuleControls () {
-      this.showModuleControls = !this.showModuleControls
-    },
-    showSwipeout (ev) {
-      let swipeoutElement = ev.target
-      ev.cancelBubble = true
-      while (!swipeoutElement.classList.contains('swipeout')) {
-        swipeoutElement = swipeoutElement.parentElement
-      }
-
-      if (swipeoutElement) {
-        this.$f7.swipeout.open(swipeoutElement)
-      }
     },
     editModule (ev, section, mod, force) {
       if (this.showModuleControls) return
@@ -740,9 +621,6 @@ export default {
     }
   },
   computed: {
-    isEditable () {
-      return this.rule && this.rule.editable !== false
-    },
     hasTemplate () {
       return this.rule && this.currentTemplate !== null
     },
@@ -755,15 +633,6 @@ export default {
       const marketplaceTag = this.currentTemplate.tags.find((t) => t.indexOf('marketplace:') === 0)
       if (marketplaceTag) return 'https://community.openhab.org/t/' + marketplaceTag.replace('marketplace:', '')
       return null
-    },
-    yamlError () {
-      if (this.currentTab !== 'code') return null
-      try {
-        YAML.parse(this.ruleYaml, { prettyErrors: true })
-        return 'OK'
-      } catch (e) {
-        return e
-      }
     }
   }
 }
