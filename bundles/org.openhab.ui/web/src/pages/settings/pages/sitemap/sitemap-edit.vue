@@ -53,7 +53,8 @@
               <f7-block v-if="selectedWidget && selectedWidget.component === 'Buttongrid'">
                 <div><f7-block-title>Buttons</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="buttons" placeholder="command = label = icon"
-                                   :fields="JSON.stringify([{position: {width: '10%', type: 'number', min: 1, placeholder: '0'}},
+                                   :fields="JSON.stringify([{row: {width: '10%', type: 'number', min: 1, placeholder: 'row'}},
+                                                            {column: {width: '10%', type: 'number', min: 1, placeholder: 'col'}},
                                                             {command: {}}])" />
               </f7-block>
               <f7-block v-if="selectedWidget && ['Switch', 'Selection'].indexOf(selectedWidget.component) >= 0">
@@ -144,7 +145,8 @@
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'buttons'">
           <attribute-details :widget="selectedWidget" attribute="buttons" placeholder="command = label = icon"
-                             :fields="JSON.stringify([{position: {width: '10%', type: 'number', min: 1, placeholder: '0'}},
+                             :fields="JSON.stringify([{row: {width: '10%', type: 'number', min: 1, placeholder: 'row'}},
+                                                      {column: {width: '10%', type: 'number', min: 1, placeholder: 'col'}},
                                                       {command: {}}])" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'mappings'">
@@ -477,15 +479,45 @@ export default {
             validationWarnings.push(widget.component + ' widget ' + label + ', minValue must be less than or equal maxValue: ' + widget.config.minValue + ' > ' + widget.config.maxValue)
           }
         })
+        widgetList.filter(widget => widget.component === 'Buttongrid').forEach(widget => {
+          if (widget.config && (!widget.config.buttons || widget.config.buttons.length === 0)) {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push(widget.component + ' widget ' + label + ', no buttons defined')
+          }
+          if (widget.config && (widget.config.buttons !== undefined)) {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            let occurrences = {}
+            const duplicates = widget.config.buttons.map(param => { return { row: param.row, column: param.column } }).filter(pos => {
+              const jsonpos = JSON.stringify(pos)
+              if (occurrences[jsonpos]) return true
+              occurrences[jsonpos] = true
+              return false
+            })
+            duplicates.forEach(duplicate =>
+              validationWarnings.push(widget.component + ' widget ' + label + ', duplicate button position : row ' + duplicate.row + ' column ' + duplicate.column)
+            )
+          }
+        })
         widgetList.forEach(widget => {
           if (widget.config) {
-            Object.keys(widget.config).filter(attr => ['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)).forEach(attr => {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            Object.keys(widget.config).filter(attr => ['buttons', 'mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)).forEach(attr => {
               widget.config[attr].forEach(param => {
-                if (((attr === 'mappings') && !(/^\s*("[^\n"]*"|[^\n="]+)\s*=\s*("[^\n"]*"|[^\n="]+)\s*(=\s*("[^\n"]*"|[^\n="]+))?$/u.test(param))) ||
+                if (((attr === 'mappings') && !this.validateMapping(param)) ||
                     ((attr === 'visibility') && !this.validateRule(param)) ||
                     ((['valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)) && !this.validateRule(param, true))) {
-                  let label = widget.config && widget.config.label ? widget.config.label : 'without label'
                   validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in ' + attr + ': ' + param)
+                }
+                if (attr === 'buttons') {
+                  if (!param.row || isNaN(param.row)) {
+                    validationWarnings.push(widget.component + ' widget ' + label + ', invalid row configured: ' + param.row)
+                  }
+                  if (!param.column || isNaN(param.column)) {
+                    validationWarnings.push(widget.component + ' widget ' + label + ', invalid column configured: ' + param.column)
+                  }
+                  if (!this.validateMapping(param.command)) {
+                    validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in button command: ' + param.command)
+                  }
                 }
               })
             })
@@ -508,6 +540,9 @@ export default {
         return true
       }
     },
+    validateMapping (mapping) {
+      return /^\s*("[^\n"]*"|[^\n="]+)\s*=\s*("[^\n"]*"|[^\n="]+)\s*(=\s*("[^\n"]*"|[^\n="]+))?$/u.test(mapping)
+    },
     validateRule (rule, hasArgument = false) {
       let conditions = rule
       if (hasArgument) {
@@ -524,7 +559,7 @@ export default {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
             widget.config[key] = widget.config[key].filter(Boolean)
             if (key === 'buttons') {
-              widget.config[key].sort((value1, value2) => value1.position - value2.position)
+              widget.config[key].sort((value1, value2) => (value1.row - value2.row) || (value1.column - value2.column))
               widget.config[key].forEach(value => this.removeQuotes(value.command))
             }
             if (['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(key)) {
@@ -542,7 +577,13 @@ export default {
     },
     removeQuotes (value) {
       if (value) {
-        value = value.replace(/"|'/g, '')
+        if (typeof value === 'string') {
+          value = value.replace(/"|'/g, '')
+          return
+        } else if (typeof value === 'number') {
+          return
+        }
+        Object.keys(value).forEach(k => this.removeQuotes(value[k]))
       }
     },
     preProcessSitemapLoad (sitemap) {
@@ -558,9 +599,11 @@ export default {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
             if (key === 'buttons') {
               widget.config[key].forEach((value, index) => {
-                const position = value.split(':')[0]
-                const command = value.slice(position.length + 1)
-                widget.config[key][index] = { 'position': position, 'command': command }
+                const vArray = value.split(':')
+                const row = vArray[0]
+                const column = vArray[1]
+                const command = vArray.slice(2).join(':')
+                widget.config[key][index] = { 'row': row, 'column': column, 'command': command }
               })
             }
           }
@@ -582,7 +625,7 @@ export default {
         for (let key in widget.config) {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
             if (key === 'buttons') {
-              widget.config[key].forEach((value, index) => { widget.config[key][index] = value.position + ':' + value.command })
+              widget.config[key].forEach((value, index) => { widget.config[key][index] = value.row + ':' + value.column + ':' + value.command })
             }
           }
         }

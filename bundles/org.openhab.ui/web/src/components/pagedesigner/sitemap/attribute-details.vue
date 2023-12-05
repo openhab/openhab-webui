@@ -89,7 +89,7 @@ export default {
         return
       }
       if (field) {
-        value = attr.value
+        value = attr.value ? attr.value : {}
         value[field] = $event.target.value
       }
       this.$set(this.widget.config[this.attribute], idx, value)

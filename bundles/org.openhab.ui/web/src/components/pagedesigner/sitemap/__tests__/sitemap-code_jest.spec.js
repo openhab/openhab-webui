@@ -193,7 +193,8 @@ describe('SitemapCode', () => {
     // simulate updating the sitemap in code
     const sitemap = [
       'sitemap test label="Test" {',
-      '    Buttongrid item=Scene_General columns=3 buttons=[1:1=Morning,2:2="Evening",3:10="Cinéma",4:11=TV,5:3="Bed time",6:4=Night=moon]',
+      '    Buttongrid item=Scene_General buttons=[1:1:1=Morning, 1:2:2="Evening", 1:3:10="Cinéma",',
+      '                                           2:1:11=TV, 2:2:3="Bed time", 2:3:4=Night=moon]',
       '}',
       ''
     ].join('\n')
@@ -216,14 +217,13 @@ describe('SitemapCode', () => {
       component: 'Buttongrid',
       config: {
         item: 'Scene_General',
-        columns: 3,
         buttons: [
-          { position: 1, command: '1=Morning' },
-          { position: 2, command: '2=Evening' },
-          { position: 3, command: '10=Cinéma' },
-          { position: 4, command: '11=TV' },
-          { position: 5, command: '3=Bed time' },
-          { position: 6, command: '4=Night=moon' }
+          { row: 1, column: 1, command: '1=Morning' },
+          { row: 1, column: 2, command: '2=Evening' },
+          { row: 1, column: 3, command: '10=Cinéma' },
+          { row: 2, column: 1, command: '11=TV' },
+          { row: 2, column: 2, command: '3=Bed time' },
+          { row: 2, column: 3, command: '4=Night=moon' }
         ]
       }
     })

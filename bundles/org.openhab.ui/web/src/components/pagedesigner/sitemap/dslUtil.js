@@ -28,19 +28,19 @@ function writeWidget (widget, indent) {
         } else if (key === 'mappings') {
           dsl += '[' + widget.config[key].filter(Boolean).map(mapping => {
             return writeCommand(mapping)
-          }).join(',') + ']'
+          }).join(', ') + ']'
         } else if (key === 'buttons') {
           dsl += '[' + widget.config[key].filter(Boolean).map(button => {
-            return button.position + ':' + writeCommand(button.command)
-          }).join(',') + ']'
+            return button.row + ':' + button.column + ':' + writeCommand(button.command)
+          }).join(', ') + ']'
         } else if (key === 'visibility') {
           dsl += '[' + widget.config[key].filter(Boolean).map(rule => {
             return writeCondition(rule)
-          }).join(',') + ']'
+          }).join(', ') + ']'
         } else if (['valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(key)) {
           dsl += '[' + widget.config[key].filter(Boolean).map(rule => {
             return writeCondition(rule, true)
-          }).join(',') + ']'
+          }).join(', ') + ']'
         } else {
           dsl += '"' + widget.config[key] + '"'
         }

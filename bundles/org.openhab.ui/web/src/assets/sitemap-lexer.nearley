@@ -151,7 +151,7 @@ Mapping -> Command _ %equals _ Label                                            
 
 Buttons -> Button                                                                 {% (d) => [d[0]] %}
   | Buttons _ %comma _ Button                                                     {% (d) => d[0].concat([d[4]]) %}
-Button -> %number _ %colon _ ButtonValue                                          {% (d) => { return { 'position':  parseInt(d[0].value), 'command': d[4] } } %}
+Button -> %number _ %colon _ %number _ %colon _ ButtonValue                       {% (d) => { return { 'row':  parseInt(d[0].value), 'column': parseInt(d[4].value), 'command': d[8] } } %}
 ButtonValue -> Command _ %equals _ Label                                          {% (d) => d[0][0].value + '=' + d[4][0].value %}
   | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0][0].value + '=' + d[4][0].value + '=' + d[8].join("") %}
 
