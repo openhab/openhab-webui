@@ -28,7 +28,7 @@ const store = new Vuex.Store({
   },
   getters: {
     apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type),
-    locale: (state) => state.locale ?? 'default'
+    locale: (state, getters) => state.locale ?? 'default'
   },
   mutations: {
     setRootResource (state, { rootResponse }) {
