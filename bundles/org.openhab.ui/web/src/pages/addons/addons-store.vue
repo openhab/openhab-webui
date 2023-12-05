@@ -50,13 +50,6 @@
     <f7-tabs>
       <f7-tab :tab-active="currentTab === 'bindings'">
         <addons-section
-          v-if="suggestedAddons" :show-all="true"
-          @addonButtonClick="addonButtonClick"
-          :addons="suggestedAddons.filter((a) => a.type === 'binding')"
-          :suggested="true"
-          :title="'Binding Suggestions'"
-          :subtitle="'Suggested bindings from network scan'" />
-        <addons-section
           v-if="officialAddons"
           @addonButtonClick="addonButtonClick"
           :addons="officialAddons.filter((a) => a.type === 'binding')"
@@ -65,7 +58,7 @@
         <addons-section
           v-if="addons && addons.marketplace"
           @addonButtonClick="addonButtonClick"
-          :addons="marketplaceAddons.filter((a) => a.type === 'binding')"
+          :addons="addons.marketplace.filter((a) => a.type === 'binding')"
           :title="'Community Marketplace'"
           :subtitle="'Bindings independently released by the community'" />
         <addons-section
@@ -115,16 +108,9 @@
       </f7-tab>
       <f7-tab :tab-active="currentTab === 'other'">
         <addons-section
-          v-if="suggestedAddons" :show-all="true"
-          @addonButtonClick="addonButtonClick"
-          :suggested="true"
-          :addons="suggestedAddons.filter((a) => a.type === 'misc')"
-          :title="'System Integrations Suggestions'"
-          :subtitle="'Suggested system integrations from network scan'" />
-        <addons-section
           v-if="addons && officialAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
-          :addons="unsuggestedAddons.filter((a) => a.type === 'misc')"
+          :addons="allAddons.filter((a) => a.type === 'misc')"
           :title="'System Integrations'"
           :featured="['misc-openhabcloud', 'misc-homekit', 'misc-metrics']"
           :subtitle="'Integrate openHAB with external systems'" />
@@ -195,7 +181,6 @@ export default {
     return {
       currentTab: this.initialTab || 'bindings',
       services: null,
-      suggestions: [],
       ready: false,
       searchResults: []
     }
@@ -204,20 +189,11 @@ export default {
     allAddons () {
       return Object.keys(this.addons).flatMap((k) => this.addons[k])
     },
-    suggestedAddons () {
-      return Object.keys(this.addons).flatMap((k) => this.addons[k]).filter((a) => this.suggestions.some((s) => s.id === a.id))
-    },
-    unsuggestedAddons () {
-      return Object.keys(this.addons).flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
-    },
     officialAddons () {
-      return Object.keys(this.addons).filter((k) => k === 'eclipse' || k === 'karaf').flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
-    },
-    marketplaceAddons () {
-      return this.addons.marketplace.filter((a) => !this.suggestedAddons.includes(a))
+      return Object.keys(this.addons).filter((k) => k === 'eclipse' || k === 'karaf').flatMap((k) => this.addons[k])
     },
     otherAddons () {
-      return Object.keys(this.addons).filter((k) => k !== 'eclipse' && k !== 'karaf' && k !== 'marketplace').flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
+      return Object.keys(this.addons).filter((k) => k !== 'eclipse' && k !== 'karaf' && k !== 'marketplace').flatMap((k) => this.addons[k])
     }
   },
   methods: {
@@ -230,9 +206,6 @@ export default {
     },
     load () {
       this.stopEventSource()
-      this.$oh.api.get('/rest/addons/suggestions').then((data) => {
-        this.$set(this, 'suggestions', data)
-      })
       this.$oh.api.get('/rest/addons/services').then((data) => {
         this.services = data
         Promise.all(this.services.map((s) => this.$oh.api.get('/rest/addons?serviceId=' + s.id))).then((data2) => {
