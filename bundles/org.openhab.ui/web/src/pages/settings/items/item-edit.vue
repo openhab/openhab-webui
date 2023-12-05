@@ -160,7 +160,7 @@ export default {
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) return Promise.reject()
       }
-      if (!this.item.name) return this.$f7.dialog.alert('Please give Item a valid name').open() // user cannot change name
+      if (!this.item.name) return this.$f7.dialog.alert('Please give the Item a valid name').open() // user cannot change name
       if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0])) return this.$f7.dialog.alert('Please give Item a valid type').open()
 
       this.doSave(this.item).then(() => {
