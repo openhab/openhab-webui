@@ -233,6 +233,7 @@ export default {
 
         this.rules.forEach(rule => {
           rule.tags.forEach(t => {
+            if (t === 'Scene' || t === 'Script') return
             if (t.startsWith('marketplace:')) t = 'Marketplace'
             if (!this.uniqueTags.includes(t)) this.uniqueTags.push(t)
           })
