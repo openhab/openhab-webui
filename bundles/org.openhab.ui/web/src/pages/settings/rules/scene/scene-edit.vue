@@ -23,7 +23,7 @@
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
               <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled" />
-              <f7-link :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" color="blue" @click="runNow" />
+              <f7-link :tooltip="'Activate Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" color="blue" @click="runNow" />
             </div>
             Status:
             <f7-chip class="margin-left"
@@ -50,37 +50,9 @@
           </f7-col>
         </f7-block>
 
-        <!-- skeletons -->
-        <f7-block v-if="!ready" class="block-narrow">
-          <f7-col class="skeleton-text skeleton-effect-blink">
-            <f7-list inline-labels no-hairlines-md>
-              <f7-list-input label="Unique ID" type="text" placeholder="Required" value="_______" required validate
-                             :disabled="true" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                             @input="rule.uid = $event.target.value" :clear-button="createMode" />
-              <f7-list-input label="Name" type="text" placeholder="Required" required validate
-                             :disabled="true" @input="rule.name = $event.target.value" :clear-button="isEditable" />
-              <f7-list-input label="Description" type="text" value="__ _____ ___ __ ___"
-                             :disabled="true" @input="rule.description = $event.target.value" :clear-button="isEditable" />
-            </f7-list>
-          </f7-col>
-        </f7-block>
+        <rule-general-settings :rule="rule" :ready="ready" :createMode="createMode" :isEditable="isEditable" :isSceneEditor="true" />
 
-        <f7-block v-else class="block-narrow">
-          <f7-col>
-            <f7-list inline-labels no-hairlines-md>
-              <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" required validate
-                             :disabled="!createMode"
-                             :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                             pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
-                             @input="rule.uid = $event.target.value" :clear-button="createMode" />
-              <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" required validate
-                             :disabled="!isEditable" @input="rule.name = $event.target.value" :clear-button="isEditable" />
-              <f7-list-input label="Description" type="text" :value="rule.description"
-                             :disabled="!isEditable" @input="rule.description = $event.target.value"
-                             :clear-button="isEditable" />
-            </f7-list>
-          </f7-col>
-
+        <f7-block v-if="ready" class="block-narrow">
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
             <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable because it has been
             provisioned from a file.
@@ -140,11 +112,6 @@
                 <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
               </f7-list>
             </div>
-          </f7-col>
-          <f7-col v-if="(isEditable || rule.tags.length > 0)">
-            <f7-block-title>Tags</f7-block-title>
-            <semantics-picker v-if="isEditable" :item="rule" />
-            <tag-input :item="rule" :disabled="!isEditable" />
           </f7-col>
           <f7-col v-if="isEditable && !createMode">
             <f7-list>
@@ -221,22 +188,21 @@
 <script>
 import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
-
-import SemanticsPicker from '@/components/tags/semantics-picker.vue'
-import ItemPicker from '@/components/config/controls/item-picker.vue'
-import TagInput from '@/components/tags/tag-input.vue'
+import fastDeepEqual from 'fast-deep-equal/es6'
 
 import SceneConfigureItemPopup from './scene-configure-item-popup.vue'
 
+import RuleMixin from '../rule-edit-mixin'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import DirtyMixin from '../../dirty-mixin'
-import fastDeepEqual from 'fast-deep-equal/es6'
+
+import ItemPicker from '@/components/config/controls/item-picker.vue'
+import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
 
 export default {
-  mixins: [RuleStatus, DirtyMixin],
+  mixins: [RuleMixin, RuleStatus, DirtyMixin],
   components: {
-    SemanticsPicker,
-    TagInput,
+    RuleGeneralSettings,
     ItemPicker,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
@@ -245,7 +211,6 @@ export default {
     return {
       ready: false,
       loading: false,
-      eventSource: null,
       rule: {},
       ruleYaml: '',
       moduleTypes: {
@@ -253,12 +218,10 @@ export default {
         conditions: [],
         triggers: []
       },
-      showModuleControls: false,
       currentTab: 'design',
       currentModuleType: null,
       currentModule: null,
       currentModuleConfig: {},
-      keyHandler: null,
       selectedItems: [],
 
       codeEditorOpened: false
@@ -281,22 +244,6 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
-      if (window) {
-        window.addEventListener('keydown', this.keyDown)
-      }
-      this.load()
-    },
-    onPageAfterOut () {
-      this.stopEventSource()
-      if (window) {
-        window.removeEventListener('keydown', this.keyDown)
-      }
-    },
-    onEditorInput (value) {
-      this.ruleYaml = value
-      this.dirty = true
-    },
     load () {
       if (this.loading) return
       this.loading = true
@@ -393,23 +340,6 @@ export default {
         }).open()
       })
     },
-    toggleDisabled () {
-      if (this.createMode) return
-      const enable = (this.rule.status.statusDetail === 'DISABLED')
-      this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString()).then((data) => {
-        this.$f7.toast.create({
-          text: (enable) ? 'Scene enabled' : 'Scene disabled',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      }).catch((err) => {
-        this.$f7.toast.create({
-          text: 'Error while disabling or enabling: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
-    },
     runNow () {
       if (this.createMode) return
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
@@ -443,60 +373,10 @@ export default {
         'Delete Scene',
         () => {
           this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
-            this.$f7router.back('/settings/rules/', { force: true })
+            this.$f7router.back('/settings/scenes/', { force: true })
           })
         }
       )
-    },
-    startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/' + this.ruleId + '/*', null, (event) => {
-        const topicParts = event.topic.split('/')
-        switch (topicParts[3]) {
-          case 'state':
-            this.$set(this.rule, 'status', JSON.parse(event.payload)) // e.g. {"status":"RUNNING","statusDetail":"NONE"}
-            break
-        }
-      })
-    },
-    stopEventSource () {
-      this.$oh.sse.close(this.eventSource)
-      this.eventSource = null
-    },
-    keyDown (ev) {
-      if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
-        if (this.currentModule) return
-        switch (ev.keyCode) {
-          case 68:
-            this.toggleDisabled()
-            ev.stopPropagation()
-            ev.preventDefault()
-            break
-          case 82:
-            this.runNow()
-            ev.stopPropagation()
-            ev.preventDefault()
-            break
-          case 83:
-            this.save()
-            ev.stopPropagation()
-            ev.preventDefault()
-            break
-        }
-      }
-    },
-    toggleModuleControls () {
-      this.showModuleControls = !this.showModuleControls
-    },
-    showSwipeout (ev) {
-      let swipeoutElement = ev.target
-      ev.cancelBubble = true
-      while (!swipeoutElement.classList.contains('swipeout')) {
-        swipeoutElement = swipeoutElement.parentElement
-      }
-
-      if (swipeoutElement) {
-        this.$f7.swipeout.open(swipeoutElement)
-      }
     },
     editModule (ev, mod) {
       if (ev.target.tagName.toLowerCase() === 'input') {
@@ -653,20 +533,6 @@ export default {
       } catch (e) {
         this.$f7.dialog.alert(e).open()
         return false
-      }
-    }
-  },
-  computed: {
-    isEditable () {
-      return this.rule && this.rule.editable !== false
-    },
-    yamlError () {
-      if (this.currentTab !== 'code') return null
-      try {
-        YAML.parse(this.ruleYaml, { prettyErrors: true })
-        return 'OK'
-      } catch (e) {
-        return e
       }
     }
   }
