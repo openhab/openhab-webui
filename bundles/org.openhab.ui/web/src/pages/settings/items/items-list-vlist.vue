@@ -8,7 +8,9 @@
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="ready">
+        <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the Items list. -->
         <f7-searchbar
+          v-if="ready"
           ref="searchbar"
           class="searchbar-items"
           search-container=".virtual-list"
@@ -64,7 +66,7 @@
           ref="itemsList"
           media-list
           virtual-list
-          :virtual-list-params="{ items, searchAll, renderExternal, height }">
+          :virtual-list-params="vlParams">
           <ul>
             <f7-list-item
               v-for="(item, index) in vlData.items"
@@ -144,9 +146,14 @@ export default {
     return {
       ready: false,
       items: [], // [{ label: 'Staircase', name: 'Staircase'}],
-      indexedItems: {},
       vlData: {
         items: []
+      },
+      vlParams: {
+        items: [],
+        searchAll: this.searchAll,
+        renderExternal: this.renderExternal,
+        height: this.height
       },
       selectedItems: [],
       showCheckboxes: false,
@@ -159,9 +166,12 @@ export default {
     },
     onPageBeforeOut (event) {
       this.stopEventSource()
+      this.$f7.data.lastItemSearchQuery = this.$refs.searchbar?.f7Searchbar.query
     },
     load () {
+      if (this.ready) this.$f7.data.lastItemSearchQuery = this.$refs.searchbar?.f7Searchbar.query
       this.ready = false
+
       this.$oh.api.get('/rest/items?metadata=semantics').then(data => {
         this.items = data.sort((a, b) => {
           const labelA = a.label || a.name
@@ -171,15 +181,11 @@ export default {
         this.$refs.itemsList.f7VirtualList.replaceAllItems(this.items)
         if (!this.eventSource) this.startEventSource()
 
-        // replaceAllItems() overrides search, run again
-        let searchbarQuery = this.$refs.searchbar.f7Searchbar.query
-        this.$refs.searchbar.clear() // same search doesn't get re-executed, reset first
-        this.$refs.searchbar.search(searchbarQuery)
-
         this.$nextTick(() => {
           if (this.$device.desktop) {
-            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+            this.$refs.searchbar?.f7Searchbar.$inputEl[0].focus()
           }
+          this.$refs.searchbar?.f7Searchbar.search(this.$f7.data.lastItemSearchQuery || '')
         })
 
         this.ready = true
