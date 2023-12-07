@@ -674,7 +674,7 @@ export default {
       this.currentModuleType = mod.type
       this.scriptCode = mod.configuration.script
 
-      const updatePromise = (this.rule.editable || this.isNewRule) ? this.save() : Promise.resolve()
+      const updatePromise = (this.rule.editable || this.isNewRule) && this.dirty ? this.save() : Promise.resolve()
       updatePromise.then(() => {
         this.$f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + mod.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
       })
