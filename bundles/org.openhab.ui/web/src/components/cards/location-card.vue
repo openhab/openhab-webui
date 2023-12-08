@@ -13,7 +13,7 @@
                              :store="context.store" :element="element" :type="badgeType" :invert-color="config.invertText" :badgeOverrides="badgeOverrides" />
         </span>
       </div>
-      <div class="location-stats margin-top-half" v-if="!config.disableBadges">
+      <div class="location-stats margin-top-half" :class="config.invertText ? 'invert-text' : ''" v-if="!config.disableBadges">
         <span v-for="badgeType in ['alarms', 'battery', 'lights', 'windows', 'doors', 'garagedoors', 'blinds', 'presence', 'lock', 'climate', 'screens', 'projectors', 'speakers']" :key="badgeType">
           <status-badge v-if="!config.badges || !config.badges.length || config.badges.indexOf(badgeType) >= 0"
                         :store="context.store" :element="element" :type="badgeType" :invert-color="config.invertText" :badgeOverrides="badgeOverrides" />
