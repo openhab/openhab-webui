@@ -1,5 +1,5 @@
 <template>
-  <div class="after-big-title">
+  <div>
     <f7-block v-if="loading" class="text-align-center">
       <f7-preloader />
       <div>Loading...</div>

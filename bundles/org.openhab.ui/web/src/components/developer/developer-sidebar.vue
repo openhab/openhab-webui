@@ -322,7 +322,7 @@
     <f7-popover ref="itemPopover" class="item-popover">
       <item-standalone-control v-if="openedItem" :item="openedItem" :context="context" :no-border="true" />
     </f7-popover>
-    <search-results v-if="searching" :searchResults="searchResults" :pinnedObjects="pinnedObjects" @pin="pin" @unpin="unpin" :cachedObjects="cachedObjects" :loading="searchResultsLoading" />
+    <search-results v-if="searching" class="margin-top" :searchResults="searchResults" :pinnedObjects="pinnedObjects" @pin="pin" @unpin="unpin" :cachedObjects="cachedObjects" :loading="searchResultsLoading" />
   </f7-block>
 </template>
 
@@ -336,7 +336,7 @@
   width 100%
 
   .developer-sidebar-content
-    padding-top 0.3rem
+    margin-top 1rem
 
   &.page
     background #e7e7e7 !important
