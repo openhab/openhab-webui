@@ -20,6 +20,9 @@
         <span style="width: 8px" />
         <f7-button large color="blue" external :href="`${documentationLinkPrefix}link/tutorial`" target="_blank" v-t="'home.overview.button.tutorial'" />
       </f7-row>
+      <f7-row v-else class="display-flex justify-content-center">
+        <f7-button large fill color="blue" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'quick'})" v-t="'home.overview.button.quickstart'" />
+      </f7-row>
     </div>
   </div>
 </template>

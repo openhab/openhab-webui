@@ -374,7 +374,6 @@ export default {
       activeDock: 'tools',
       activeToolTab: 'pin',
       activeHelpTab: 'current',
-      quickStartShow: true,
       currentUrl: ''
     }
   },
@@ -504,12 +503,6 @@ export default {
             })
 
           if (data[2]) dayjs.locale(data[2].key)
-
-          const page = data[0].find((p) => p.uid === 'overview')
-          if ((!page) || (page.component !== 'oh-layout-page') || (!page.slots || (!page.slots.default.length && !page.slots.masonry && !page.slots.canvas && !page.slots.grid))) {
-            if (this.quickStartShow) this.selectDeveloperDock({ 'dock': 'help', 'helpTab': 'quick' })
-            this.quickStartShow = false
-          }
 
           // finished with loading
           this.ready = true
