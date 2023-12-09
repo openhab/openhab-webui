@@ -186,6 +186,26 @@
             </ul>
           </f7-list>
         </f7-block>
+        <!-- Pinned Persistence configs -->
+        <f7-block class="no-margin no-padding" v-if="pinnedObjects.persistenceConfigs.length">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Persistence Configs</span>
+            <span style="margin-left:auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('persistenceConfigs')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item v-for="persistenceConfig in pinnedObjects.persistenceConfigs" :key="persistenceConfig.serviceId" media-item
+                            :title="persistenceConfig.label" :footer="persistenceConfig.serviceId">
+                <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/persistence/' + persistenceConfig.serviceId" :animate="false" />
+                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('persistenceConfig', persistenceConfig, 'serviceId')" />
+                </div>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
       </div>
 
       <div v-else-if="activeToolTab === 'events'">
@@ -367,7 +387,8 @@ export default {
         scenes: [],
         scripts: [],
         pages: [],
-        transformations: []
+        transformations: [],
+        persistenceConfigs: []
       },
       pinnedObjects: {
         items: [],
@@ -376,7 +397,8 @@ export default {
         scenes: [],
         scripts: [],
         pages: [],
-        transformations: []
+        transformations: [],
+        persistenceConfigs: []
       },
       sseEvents: [],
       openedItem: null,
@@ -546,6 +568,54 @@ export default {
       if (p.slots && JSON.stringify(p.slots).toLowerCase().indexOf(query) >= 0) return true
       return false
     },
+    /**
+     * Search for the query string inside a persistence configuration.
+     * All searches are non case-intensive.
+     *
+     * Checks:
+     *  - serviceId
+     *  - label
+     *  - Items
+     *
+     * @param pc persistence config
+     * @param query search query (as typed, not in lowercase)
+     * @returns {boolean}
+     */
+    searchPersistenceConfigs (pc, query) {
+      query = query.toLowerCase()
+      if (pc.serviceId.toLowerCase().indexOf(query) >= 0) return true
+      if (pc.label.toLowerCase().indexOf(query) >= 0) return true
+      for (const conf of pc.configs) {
+        if (conf.items.toString().toLowerCase().indexOf(query) >= 0) return true
+      }
+      return false
+    },
+    /**
+     * Load all persistence configs and extend them with the persistence service label.
+     *
+     * @returns {Promise} load promise
+     */
+    loadPersistenceConfigs () {
+      return this.$oh.api.get('/rest/persistence').then((data) => {
+        const labels = {}
+        data.forEach((p) => {
+          labels[p.id] = p.label
+        })
+        const loadPromises = data.map(p => this.$oh.api.get('/rest/persistence/' + p.id))
+        const configs = []
+
+        Promise.allSettled(loadPromises).then((results) => {
+          for (const result of results) {
+            if (result.value) {
+              result.value.label = labels[result.value.serviceId]
+              configs.push(result.value)
+            }
+          }
+        })
+
+        return configs
+      })
+    },
     search (searchbar, query, previousQuery) {
       if (!query) {
         this.clearSearch()
@@ -563,20 +633,21 @@ export default {
           Promise.resolve(this.cachedObjects[2]),
           Promise.resolve(this.cachedObjects[3]),
           Promise.resolve(this.cachedObjects[4]),
-          Promise.resolve(this.cachedObjects[5])
+          Promise.resolve(this.cachedObjects[5]),
+          Promise.resolve(this.cachedObjects[6])
         ] : [
           this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.*'),
           this.$oh.api.get('/rest/things?summary=true'),
           this.$oh.api.get('/rest/rules?summary=false'),
           Promise.resolve(this.$store.getters.pages),
           this.$oh.api.get('/rest/transformations'),
-          this.$oh.api.get('/rest/ui/components/system:sitemap')
+          this.$oh.api.get('/rest/ui/components/system:sitemap'),
+          this.loadPersistenceConfigs()
         ]
 
       this.searchResultsLoading = true
       Promise.all(promises).then((data) => {
         this.$set(this, 'cachedObjects', data)
-        this.searchResultsLoading = false
         const items = data[0].filter((i) => this.searchItem(i, this.searchQuery)).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
@@ -606,6 +677,11 @@ export default {
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
         })
+        const persistenceConfigs = data[6].filter((pc) => this.searchPersistenceConfigs(pc, this.searchQuery)).sort((a, b) => {
+          const idA = a.id
+          const idB = b.id
+          return (idA) ? idA.localeCompare(idB) : 0
+        })
         this.$set(this, 'searchResults', {
           items,
           things,
@@ -613,8 +689,10 @@ export default {
           scenes,
           scripts,
           pages,
-          transformations
+          transformations,
+          persistenceConfigs
         })
+        this.searchResultsLoading = false
       })
     },
     clearSearch () {
@@ -622,7 +700,7 @@ export default {
       this.searchResultsLoading = false
       this.searchSuery = ''
       this.$set(this, 'cachedObjects', null)
-      this.$set(this, 'searchResults', { items: [], things: [], rules: [], pages: [] })
+      this.$set(this, 'searchResults', { items: [], things: [], rules: [], scenes: [], scripts: [], pages: [], transformations: [], persistenceConfigs: [] })
     },
     pin (type, obj) {
       this.pinnedObjects[type].push(obj)
