@@ -112,7 +112,7 @@
 
     <f7-sheet v-if="currentTab === 'tree'" class="sitemap-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
       <f7-page>
-        <f7-toolbar tabbar bottom>
+        <f7-toolbar tabbar bottom scrollable>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'widget'" @click="detailsTab = 'widget'">
             Widget
           </f7-link>
