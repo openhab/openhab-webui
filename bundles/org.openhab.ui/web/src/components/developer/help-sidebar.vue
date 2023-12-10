@@ -60,7 +60,7 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list media-list>
-            <f7-list-item v-for="addon in addons" :key="addon.uid" :link="addon.link" :external="true" target="_blank" :title="addon.label.replaceAll(/Binding|Transformation|Persistence/gi,'')" :text="addon.type" />
+            <f7-list-item v-for="addon in addons" :key="addon.uid" :link="addon.link.replace('https://www.openhab.org/', documentationLinkPrefix)" :external="true" target="_blank" :title="addon.label.replaceAll(/Binding|Transformation|Persistence/gi,'')" :text="addon.type" />
           </f7-list>
         </f7-block>
       </div>
