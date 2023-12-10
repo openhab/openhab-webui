@@ -5,7 +5,7 @@
 
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
-import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js';
+import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7, isGraalJs) {
   /*
@@ -69,17 +69,13 @@ export default function (f7, isGraalJs) {
     const inputType = blockGetCheckedInputType(block, 'item')
     let attributeName = block.getFieldValue('attributeName')
 
-    if (!isGraalJs) {
-      attributeName = attributeName.charAt(0).toLowerCase() + attributeName.slice(1)
-      let code = (inputType === 'oh_item') ? `items.getItem(${theItem}).rawState.${attributeName}` : `${theItem}.rawState.${attributeName}`
-      return [code, 0]
+    let code = ''
+    if (isGraalJs) {
+      code = (inputType === 'oh_item') ? `items.getItem(${theItem}).rawState.get${attributeName}()` : `${theItem}.rawState.get${attributeName}()`
     } else {
-      if (attributeName === 'Tags' || attributeName === 'GroupNames') {
-        return [`Java.from(${theItem}.getRawState().get${attributeName}())`, 0]
-      } else {
-        return [`${theItem}.getRawState().get${attributeName}()`, 0]
-      }
+      code = (inputType === 'oh_item') ? `itemRegistry.getItem(${theItem}).getRawState().get${attributeName}()` : `${theItem}.getRawState().get${attributeName}()`
     }
+    return [code, 0]
   }
 
   /*
