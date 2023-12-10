@@ -78,7 +78,6 @@ export default {
       setTimeout(() => { this.$f7.card.close(this.$refs.card.$el) }, 100)
     },
     back (evt) {
-      console.debug(evt.state)
       if (!evt.state || evt.state.cardId === this.cardId) return
       if (this.opened) this.closeCard()
     }

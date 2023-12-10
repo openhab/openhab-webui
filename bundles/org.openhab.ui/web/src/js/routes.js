@@ -92,45 +92,7 @@ export default [
     // keepAlive: true,
     options: {
       transition: 'f7-dive'
-    },
-    routes: [
-      {
-        path: 'overview',
-        component: HomePage,
-        options: {
-          props: {
-            initialTab: 'overview'
-          }
-        }
-      },
-      {
-        path: 'locations',
-        component: HomePage,
-        options: {
-          props: {
-            initialTab: 'locations'
-          }
-        }
-      },
-      {
-        path: 'equipment',
-        component: HomePage,
-        options: {
-          props: {
-            initialTab: 'equipment'
-          }
-        }
-      },
-      {
-        path: 'properties',
-        component: HomePage,
-        options: {
-          props: {
-            initialTab: 'properties'
-          }
-        }
-      }
-    ]
+    }
   },
   {
     path: '/page/:uid',

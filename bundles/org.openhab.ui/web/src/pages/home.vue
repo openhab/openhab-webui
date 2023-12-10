@@ -88,7 +88,6 @@ import ModelTab from './home/model-tab.vue'
 import HomeCards from './home/homecards-mixin'
 
 export default {
-  props: ['initialTab'],
   mixins: [HomeCards],
   components: {
     OverviewTab,
@@ -101,7 +100,7 @@ export default {
       showCards: false,
       showPinToHome: false,
       showExitToApp: false,
-      currentTab: this.initialTab || 'overview',
+      currentTab: this.$f7.data.currentHomeTab || 'overview',
       overviewPageKey: this.$utils.id(),
       items: []
     }
@@ -165,7 +164,7 @@ export default {
   },
   methods: {
     onPageBeforeIn () {
-      this.$f7router.updateCurrentUrl('/' + this.currentTab)
+      this.$f7.data.currentHomeTab = this.currentTab
       this.overviewPageKey = this.$utils.id()
     },
     onPageAfterIn () {
@@ -176,6 +175,7 @@ export default {
     },
     onPageBeforeOut () {
       this.$store.dispatch('stopTrackingStates')
+      this.$f7.data.currentHomeTab = this.currentTab
     },
     onPageInit () {
       this.$store.subscribe((mutation, state) => {
@@ -197,7 +197,6 @@ export default {
     },
     switchTab (tab) {
       this.currentTab = tab
-      this.$f7router.updateCurrentUrl('/' + this.currentTab)
     },
     tabVisible (tab) {
       if (!this.tabsVisible) return false
