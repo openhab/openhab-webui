@@ -5,6 +5,7 @@
 
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
+import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js';
 
 export default function (f7, isGraalJs) {
   /*
@@ -33,6 +34,52 @@ export default function (f7, isGraalJs) {
     const hexColor = javascriptGenerator.valueToCode(block, 'hexColor', javascriptGenerator.ORDER_ATOMIC)
     let code = `${conversionFunction}(${hexColor})`
     return [code, 0]
+  }
+
+  Blockly.Blocks['oh_color_item'] = {
+    init: function () {
+      const dropDown = new Blockly.FieldDropdown([
+        ['hue', 'Hue'],
+        ['saturation', 'Saturation'],
+        ['brightness', 'Brightness']
+      ])
+      this.appendValueInput('item')
+        .setCheck(['oh_itemtype', 'oh_item'])
+        .appendField(dropDown, 'attributeName')
+        .appendField(' of ')
+
+      this.setInputsInline(false)
+      let thisBlock = this
+      this.setTooltip(function () {
+        const operand = thisBlock.getFieldValue('attributeName')
+        switch (operand) {
+          case 'Hue': return 'Return Hue of the color item'
+          case 'Saturation': return 'Return Saturation of a color item'
+          case 'Brightness': return 'Return Brightness of a color item'
+        }
+      })
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#item-color')
+      this.setOutput(true, 'Number')
+      this.setColour('%{BKY_COLOUR_HUE}')
+    }
+  }
+
+  javascriptGenerator['oh_color_item'] = function (block) {
+    const theItem = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
+    const inputType = blockGetCheckedInputType(block, 'item')
+    let attributeName = block.getFieldValue('attributeName')
+
+    if (!isGraalJs) {
+      attributeName = attributeName.charAt(0).toLowerCase() + attributeName.slice(1)
+      let code = (inputType === 'oh_item') ? `items.getItem(${theItem}).rawState.${attributeName}` : `${theItem}.rawState.${attributeName}`
+      return [code, 0]
+    } else {
+      if (attributeName === 'Tags' || attributeName === 'GroupNames') {
+        return [`Java.from(${theItem}.getRawState().get${attributeName}())`, 0]
+      } else {
+        return [`${theItem}.getRawState().get${attributeName}()`, 0]
+      }
+    }
   }
 
   /*
