@@ -46,7 +46,7 @@ export default {
         return this.context.vars[this.config.variable]
       } else if (this.config.sendButton && this.pendingUpdate !== null) {
         return this.pendingUpdate
-      } else if (this.config.item && this.context.store[this.config.item].state !== 'NULL' && this.context.store[this.config.item].state !== 'UNDEF') {
+      } else if (this.config.item && this.context.store[this.config.item].state !== 'NULL' && this.context.store[this.config.item].state !== 'UNDEF' && this.context.store[this.config.item].state !== 'Invalid Date') {
         if (this.config.useDisplayState) {
           return this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
         } else {
@@ -118,6 +118,7 @@ export default {
         if (this.config.type === 'datepicker' && Array.isArray(cmd)) {
           cmd = dayjs(cmd[0]).format()
         }
+        if (cmd === 'Invalid Date') return
         this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd })
         this.$set(this, 'pendingUpdate', null)
       }
