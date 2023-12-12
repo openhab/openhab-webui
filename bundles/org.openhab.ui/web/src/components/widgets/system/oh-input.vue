@@ -1,9 +1,9 @@
 <template>
-  <f7-input v-if="!config.item || !config.sendButton" class="input-field" ref="input" v-bind="config" :value="(config.type.indexOf('date') === 0) ? valueForDatepicker : value"
+  <f7-input v-if="!config.item || !config.sendButton" class="input-field" ref="input" v-bind="config" :value="(config.type.indexOf('date') === 0 || config.type === 'time') ? valueForDatepicker : value"
             :calendar-params="calendarParams" :step="config.step ? config.step : 'any'"
             @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated" />
   <f7-row no-gap v-else class="oh-input-with-send-button">
-    <f7-input class="input-field col-90" ref="input" v-bind="config" :value="(config.type.indexOf('date') === 0) ? valueForDatepicker : value"
+    <f7-input class="input-field col-90" ref="input" v-bind="config" :value="(config.type.indexOf('date') === 0 || config.type === 'time') ? valueForDatepicker : value"
               :calendar-params="calendarParams" :step="config.step ? config.step : 'any'"
               @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated" />
     <f7-button class="send-button col-10" v-if="this.config.sendButton" @click.stop="sendButtonClicked" v-bind="config.sendButtonConfig || { iconMaterial: 'done', iconColor: 'gray' }" />
@@ -76,6 +76,8 @@ export default {
           return dayjs(datetime).format('YYYY-MM-DD')
         case 'datetime-local':
           return dayjs(datetime).format('YYYY-MM-DDTHH:mm')
+        case 'time':
+          return dayjs(datetime).format('HH:mm:ss')
         default:
           return null
       }
@@ -86,6 +88,18 @@ export default {
       if (this.config.type === 'texteditor') {
         value = this.$$(this.$refs.input.$el).find('.text-editor-content')[0].innerHTML
         if (value === this.value) return
+      }
+      if (this.config.type === 'time') {
+        const oldDate = dayjs(Array.isArray[this.value] ? this.value[0] : this.value).set('millisecond', 0)
+        let time = value.match(/(?<hour>[0-9]{2}):(?<minute>[0-9]{2})(:(?<second>[0-9]{2}))?/).groups
+        if (isNaN(time.hour) || isNaN(time.minute)) return
+        value = dayjs(oldDate).set('hour', time.hour).set('minute', time.minute).set('second', isNaN(time.second) ? 0 : time.second).set('millisecond', 0).format()
+        if ((new Date(oldDate)).getTime() === (new Date(value)).getTime()) return
+      }
+      if (this.config.type === 'date') {
+        const oldDate = dayjs(Array.isArray[this.value] ? this.value[0] : this.value).set('millisecond', 0)
+        value = dayjs(value).set('hour', oldDate.get('hour')).set('minute', oldDate.get('minute')).set('second', oldDate.get('second')).set('millisecond', 0).format()
+        if ((new Date(oldDate)).getTime() === (new Date(value)).getTime()) return
       }
       if (this.config.type === 'datepicker' && Array.isArray(value) && this.valueForDatepicker[0].getTime() === value[0].getTime()) return
       if (this.config.sendButton) {
