@@ -115,6 +115,13 @@
 			display: none;
 		}
 	}
+	&__row-buttongrid {
+		margin: 0;
+		border-bottom: 1px solid $item-separator-color;
+		&:last-child {
+			border: none;
+		}
+	}
 	&__image {
 		&.mdl-form__control {
 			padding-left: 0;
@@ -239,6 +246,13 @@
 			}
 			&.is-upgraded.is-lowest-value~.mdl-slider__background-flex>.mdl-slider__background-upper {
 				left: 0;
+			}
+		}
+		.buttongrid-cell {
+			height: 36px;
+			.buttongrid-button {
+				min-width: 100%;
+				text-transform: none;
 			}
 		}
 		.mdl-button,
@@ -416,6 +430,9 @@
 	}
 	&__buttons {
 		padding-top: 2px;
+	}
+	&__buttongrid {
+		padding: 0;
 	}
 	&--no-label {
 		.mdl-form__title {
