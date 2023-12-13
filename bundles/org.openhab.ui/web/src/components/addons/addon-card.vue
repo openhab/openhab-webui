@@ -1,5 +1,5 @@
 <template>
-  <f7-link v-if="addon" class="addon-card padding-right-half" :href="'/addons/' + addon.uid">
+  <f7-link v-if="addon" class="addon-card" :href="'/addons/' + addon.uid">
     <div class="addon-card-inner card">
       <div class="addon-card-headline">
         <div>{{ headline || autoHeadline || "&nbsp;" }}</div>
@@ -36,7 +36,9 @@
 
 <style lang="stylus">
 .addon-card
-  padding 5px
+  padding-left 10px
+  padding-right 15px
+  padding-bottom 5px
   width: 100%
   position relative
 
