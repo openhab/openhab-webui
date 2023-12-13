@@ -224,7 +224,7 @@ export default {
         this.servicesLoaded = true
       })
       addonsPromise.then((data) => {
-        this.addonsInstalled = data.filter(a => a.installed === true)
+        this.addonsInstalled = data.filter(a => { return a.installed && ['application/vnd.openhab.bundle', 'application/vnd.openhab.feature;type=karfile'].includes(a.contentType) })
         this.addonsLoaded = true
       })
     },
