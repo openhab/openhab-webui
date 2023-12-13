@@ -326,6 +326,82 @@ describe('SitemapEdit', () => {
     expect(lastDialogConfig).toBeFalsy()
   })
 
+  it('validates buttons', async () => {
+    wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Buttongrid')
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'item', 'Item1')
+    localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Buttongrid Test')
+
+    // should not validate as no buttons defined
+    lastDialogConfig = null
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, no buttons defined/)
+
+    // add button, should not validate as the button has no row defined
+    lastDialogConfig = null
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'buttons', [
+      { column: 1, command: '1=Morning' }
+    ])
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, invalid row configured: undefined/)
+
+    // configure a correct row, should not validate as wrong column set
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'buttons', [
+      { row: 1, column: 'column', command: '1=Morning' }
+    ])
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, invalid column configured: column/)
+
+    // configure a correct column, should not validate as wrong command set
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'buttons', [
+      { row: 1, column: 2, command: 'Morning' }
+    ])
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, syntax error in button command: Morning/)
+
+    // configure correct commands, should not validate as duplicate positions
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'buttons', [
+      { row: 1, column: 1, command: '1=Morning' },
+      { row: 1, column: 1, command: '2=Evening' }
+    ])
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, duplicate button position : row 1 column 1/)
+
+    // configure a correct command and check that there are no validation errors anymore
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'buttons', [
+      { row: 1, column: 1, command: '1=Morning' },
+      { row: 1, column: 3, command: '2=Evening' },
+      { row: 2, column: 1, command: '10=Cinéma' },
+      { row: 2, column: 2, command: '11=TV' },
+      { row: 2, column: 3, command: '3=Bed time' },
+      { row: 3, column: 2, command: '4=night=moon' }
+    ])
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+  })
+
   it('validates visibility', async () => {
     wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
     await wrapper.vm.$nextTick()

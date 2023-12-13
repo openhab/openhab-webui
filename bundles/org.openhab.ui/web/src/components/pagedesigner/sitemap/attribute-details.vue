@@ -2,8 +2,19 @@
   <f7-card v-if="widget">
     <f7-card-content v-if="attributes.length">
       <f7-list inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
-        <f7-list-input v-for="(attr, idx) in attributes" :key="attr.key"
-                       type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute(idx, $event)" clear-button />
+        <f7-list-item v-for="(attr, idx) in attributes" :key="attr.key">
+          <f7-input v-if="!fields" type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute($event, idx, attr)" />
+          <f7-input v-for="(field, fieldidx) in fieldDefs" :key="JSON.stringify(field)"
+                    :style="fieldStyle(field, fieldidx)"
+                    :inputStyle="inputFieldStyle(field, fieldidx)"
+                    :type="fieldProp(field, 'type')"
+                    :min="fieldProp(field, 'min')"
+                    :max="fieldProp(field, 'max')"
+                    :placeholder="fieldProp(field, 'placeholder')"
+                    :value="attr.value[Object.keys(field)[0]]"
+                    validate @change="updateAttribute($event, idx, attr, Object.keys(field)[0])" />
+          <f7-button text="" icon-material="clear" small @click="removeAttribute(idx)" />
+        </f7-list-item>
       </f7-list>
     </f7-card-content>
     <f7-card-footer key="item-card-buttons-edit-mode" v-if="widget.component !== 'Sitemap'">
@@ -14,25 +25,77 @@
   </f7-card>
 </template>
 
+<style lang="stylus">
+.button
+  padding-left 5px
+  padding-right 0px
+.input
+  width inherit
+</style>
+
 <script>
 export default {
-  props: ['widget', 'attribute', 'placeholder'],
+  props: ['widget', 'attribute', 'placeholder', 'fields'],
+  data () {
+    return {
+      fieldDefaults: {
+        type: 'text'
+      }
+    }
+  },
   computed: {
+    fieldDefs () {
+      return this.fields ? JSON.parse(this.fields) : []
+    },
     attributes () {
       if (this.widget && this.widget.config && this.widget.config[this.attribute]) {
-        return this.widget.config[this.attribute].map((attr, idx) => ({ key: idx + ': ' + attr, value: attr }))
+        return this.widget.config[this.attribute].map((attr, idx) => ({ key: idx + ': ' + JSON.stringify(attr), value: attr }))
       }
       return []
     }
   },
   methods: {
-    updateAttribute (idx, $event) {
-      const value = $event.target.value
-      if (!value) {
-        this.widget.config[this.attribute].splice(idx, 1)
-      } else {
-        this.$set(this.widget.config[this.attribute], idx, value)
+    fieldProp (field, prop) {
+      const fieldProps = field[Object.keys(field)[0]]
+      if (fieldProps[prop] !== undefined) {
+        return fieldProps[prop]
       }
+      if (prop === 'placeholder') {
+        return this.placeholder
+      }
+      return this.fieldDefaults[prop]
+    },
+    fieldStyle (field, fieldidx) {
+      let style = {}
+      if (this.fieldProp(field, 'width') !== undefined) {
+        style.width = this.fieldProp(field, 'width')
+      }
+      if (fieldidx > 0) {
+        style.paddingLeft = '5px'
+      }
+      return style
+    },
+    inputFieldStyle (field, fieldidx) {
+      let style = {}
+      if (this.fieldProp(field, 'type') === 'number') {
+        style.textAlign = 'end'
+      }
+      return style
+    },
+    updateAttribute ($event, idx, attr, field) {
+      let value = $event.target.value
+      if (!value) {
+        this.removeAttribute(idx)
+        return
+      }
+      if (field) {
+        value = attr.value ? attr.value : {}
+        value[field] = $event.target.value
+      }
+      this.$set(this.widget.config[this.attribute], idx, value)
+    },
+    removeAttribute (idx) {
+      this.widget.config[this.attribute].splice(idx, 1)
     },
     addAttribute () {
       if (this.widget && this.widget.config && this.widget.config[this.attribute]) {

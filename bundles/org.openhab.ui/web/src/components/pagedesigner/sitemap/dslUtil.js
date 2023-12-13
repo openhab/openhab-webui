@@ -26,20 +26,21 @@ function writeWidget (widget, indent) {
         if (key === 'item' || key === 'period' || key === 'legend' || Number.isFinite(widget.config[key])) {
           dsl += widget.config[key]
         } else if (key === 'mappings') {
-          dsl += '['
-          dsl += widget.config[key].filter(Boolean).map(mapping => {
-            return mapping.split('=').map(value => {
-              if (/^.*\W.*$/.test(value) && /^[^"'].*[^"']$/.test(value)) {
-                return '"' + value + '"'
-              }
-              return value
-            }).join('=')
-          }).join(',')
-          dsl += ']'
+          dsl += '[' + widget.config[key].filter(Boolean).map(mapping => {
+            return writeCommand(mapping)
+          }).join(', ') + ']'
+        } else if (key === 'buttons') {
+          dsl += '[' + widget.config[key].filter(Boolean).map(button => {
+            return button.row + ':' + button.column + ':' + writeCommand(button.command)
+          }).join(', ') + ']'
         } else if (key === 'visibility') {
-          dsl += '[' + writeConditions(widget.config[key]) + ']'
+          dsl += '[' + widget.config[key].filter(Boolean).map(rule => {
+            return writeCondition(rule)
+          }).join(', ') + ']'
         } else if (['valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(key)) {
-          dsl += '[' + writeConditions(widget.config[key], true) + ']'
+          dsl += '[' + widget.config[key].filter(Boolean).map(rule => {
+            return writeCondition(rule, true)
+          }).join(', ') + ']'
         } else {
           dsl += '"' + widget.config[key] + '"'
         }
@@ -58,28 +59,35 @@ function writeWidget (widget, indent) {
   return dsl
 }
 
-function writeConditions (value, hasArgument = false) {
-  return value.filter(Boolean).map(rule => {
-    let argument = ''
-    let conditions = rule
-    if (hasArgument) {
-      let index = rule.lastIndexOf('=') + 1
-      argument = rule.substring(index).trim()
-      if (!/^(".*")|('.*')$/.test(argument)) {
-        argument = '"' + argument + '"'
-      }
-      argument = (index > 0 ? '=' + argument : argument)
-      conditions = rule.substring(0, index - 1)
+function writeCommand (command) {
+  return command.split('=').map(value => {
+    if (/^.*\W.*$/.test(value) && /^[^"'].*[^"']$/.test(value)) {
+      return '"' + value + '"'
     }
-    return conditions.split(' AND ').map(condition => {
-      let index = Math.max(condition.lastIndexOf('='), condition.lastIndexOf('>'), condition.lastIndexOf('<')) + 1
-      let conditionValue = condition.substring(index).trim()
-      if (/^.*\W.*$/.test(conditionValue) && /^[^"'].*[^"']$/.test(conditionValue)) {
-        conditionValue = '"' + conditionValue + '"'
-      }
-      return condition.substring(0, index) + conditionValue
-    }).join(' AND ') + argument
-  }).join(',')
+    return value
+  }).join('=')
+}
+
+function writeCondition (rule, hasArgument = false) {
+  let argument = ''
+  let conditions = rule
+  if (hasArgument) {
+    let index = rule.lastIndexOf('=') + 1
+    argument = rule.substring(index).trim()
+    if (!/^(".*")|('.*')$/.test(argument)) {
+      argument = '"' + argument + '"'
+    }
+    argument = (index > 0 ? '=' + argument : argument)
+    conditions = rule.substring(0, index - 1)
+  }
+  return conditions.split(' AND ').map(condition => {
+    let index = Math.max(condition.lastIndexOf('='), condition.lastIndexOf('>'), condition.lastIndexOf('<')) + 1
+    let conditionValue = condition.substring(index).trim()
+    if (/^.*\W.*$/.test(conditionValue) && /^[^"'].*[^"']$/.test(conditionValue)) {
+      conditionValue = '"' + conditionValue + '"'
+    }
+    return condition.substring(0, index) + conditionValue
+  }).join(' AND ') + argument
 }
 
 export default {
