@@ -113,6 +113,11 @@
     <f7-sheet v-if="currentTab === 'tree'" class="sitemap-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
       <f7-page>
         <f7-toolbar tabbar bottom scrollable>
+          <div class="left">
+            <f7-link sheet-close class="padding-right">
+              <f7-icon f7="chevron_down" />
+            </f7-link>
+          </div>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'widget'" @click="detailsTab = 'widget'">
             Widget
           </f7-link>
@@ -131,11 +136,6 @@
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'colors'" @click="detailsTab = 'colors'" v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
             Colors
           </f7-link>
-          <div class="right">
-            <f7-link sheet-close class="padding-right">
-              <f7-icon f7="chevron_down" />
-            </f7-link>
-          </div>
         </f7-toolbar>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'widget'">
           <widget-details :widget="selectedWidget" :createMode="createMode" @remove="removeWidget" @movedown="moveWidgetDown" @moveup="moveWidgetUp" />
