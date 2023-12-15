@@ -166,6 +166,7 @@ export default {
   methods: {
     onPageBeforeIn () {
       this.$f7router.updateCurrentUrl('/' + this.currentTab)
+      this.$f7router.url = '/' + this.currentTab
       this.overviewPageKey = this.$utils.id()
     },
     onPageAfterIn () {
@@ -198,6 +199,7 @@ export default {
     switchTab (tab) {
       this.currentTab = tab
       this.$f7router.updateCurrentUrl('/' + this.currentTab)
+      this.$f7router.url = '/' + this.currentTab
     },
     tabVisible (tab) {
       if (!this.tabsVisible) return false
