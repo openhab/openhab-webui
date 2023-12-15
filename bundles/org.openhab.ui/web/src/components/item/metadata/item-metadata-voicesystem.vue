@@ -7,56 +7,35 @@
         <small>Enter each rule on a separate line. Available placeholders: $name$, $cmd$ and $*$.</small>
       </f7-block-footer>
     </f7-list>
-    <f7-list>
-      <f7-list-item checkbox :checked="isForced" @change="updateForcedConfig" title="Is Forced">
-        <small>Force send command without check current item state.</small>
-      </f7-list-item>
-      <f7-list-item checkbox :checked="isSilent" @change="updateSilentConfig" title="Is Silent">
-        <small>Disable success confirmation message.</small>
-      </f7-list-item>
-      <f7-list-item checkbox :checked="isTemplate" @change="updateTemplateConfig" title="Is Template">
-        <small>Target similar items instead of the current one.</small>
-      </f7-list-item>
-      <f7-block-footer class="param-description" slot="after-list">
-        <small>Flags for modifying rule behavior.</small>
-      </f7-block-footer>
-    </f7-list>
+    <config-sheet :parameterGroups="[]" :parameters="ruleOptionParameters" :configuration="metadata.config" />
   </div>
 </template>
 
 <script>
+import ConfigSheet from '@/components/config/config-sheet.vue'
 export default {
   props: ['itemName', 'metadata', 'namespace'],
+  components: {
+    ConfigSheet
+  },
+  data: () => {
+    return {
+      ruleOptionParameters: [
+        { type: 'BOOLEAN', name: 'isForced', label: 'Is Forced', description: 'Send command without check current item state' },
+        { type: 'BOOLEAN', name: 'isSilent', label: 'Is Silent', description: 'Disable success confirmation message' },
+        { type: 'BOOLEAN', name: 'isTemplate', label: 'Is Template', description: 'Target similar items instead of the current one' }
+      ]
+    }
+  },
   computed: {
     customRules () {
       if (!this.metadata.value) return []
       return this.metadata.value.split('\n').map((s) => s.trim()).join('\n')
-    },
-    isSilent () {
-      return this.metadata.config?.['isSilent'] ?? false
-    },
-    isForced () {
-      return this.metadata.config?.['isForced'] ?? false
-    },
-    isTemplate () {
-      return this.metadata.config?.['isTemplate'] ?? false
     }
   },
   methods: {
     updateValue (ev) {
       this.metadata.value = ev.target.value.split('\n').map((s) => s.trim()).join('\n')
-    },
-    updateSilentConfig (ev) {
-      const config = this.metadata.config ?? (this.metadata.config = {})
-      config.isSilent = ev.target.checked
-    },
-    updateForcedConfig (ev) {
-      const config = this.metadata.config ?? (this.metadata.config = {})
-      config.isForced = ev.target.checked
-    },
-    updateTemplateConfig (ev) {
-      const config = this.metadata.config ?? (this.metadata.config = {})
-      config.isTemplate = ev.target.checked
     }
   }
 }

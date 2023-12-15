@@ -9,8 +9,8 @@ export default [
   { name: 'widgetOrder', label: 'Default Widget Order Index' },
   { name: 'autoupdate', label: 'Auto-update' },
   { name: 'expire', label: 'Expiration Timer' },
+  { name: 'voiceSystem', label: 'Voice System' },
   { name: 'alexa', label: 'Amazon Alexa' },
   { name: 'homekit', label: 'Apple HomeKit' },
-  { name: 'ga', label: 'Google Assistant' },
-  { name: 'voiceSystem', label: 'Voice System' }
+  { name: 'ga', label: 'Google Assistant' }
 ]
