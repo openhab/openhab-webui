@@ -11,5 +11,6 @@ export default [
   { name: 'expire', label: 'Expiration Timer' },
   { name: 'alexa', label: 'Amazon Alexa' },
   { name: 'homekit', label: 'Apple HomeKit' },
-  { name: 'ga', label: 'Google Assistant' }
+  { name: 'ga', label: 'Google Assistant' },
+  { name: 'voiceSystem', label: 'Voice System' }
 ]

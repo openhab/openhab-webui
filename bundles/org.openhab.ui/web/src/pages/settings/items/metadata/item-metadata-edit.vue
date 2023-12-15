@@ -75,6 +75,7 @@ import ItemMetadataExpire from '@/components/item/metadata/item-metadata-expire.
 import ItemMetadataAlexa from '@/components/item/metadata/item-metadata-alexa.vue'
 import ItemMetadataHomeKit from '@/components/item/metadata/item-metadata-homekit.vue'
 import ItemMetadataGa from '@/components/item/metadata/item-metadata-ga.vue'
+import ItemMetadataVoiceSystem from '@/components/item/metadata/item-metadata-voicesystem.vue'
 import DirtyMixin from '../../dirty-mixin'
 
 export default {
@@ -128,6 +129,8 @@ export default {
           return ItemMetadataAlexa
         case 'homekit':
           return ItemMetadataHomeKit
+        case 'voiceSystem':
+          return ItemMetadataVoiceSystem
         case 'ga':
           return ItemMetadataGa
         default:
