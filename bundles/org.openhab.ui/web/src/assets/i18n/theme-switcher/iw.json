@@ -12,5 +12,7 @@
   "about.miscellaneous.home.hideChatInput": "הסתר חלונית שיחות בדף הבית",
   "about.miscellaneous.home.disableCardExpansionAnimation": "בטל אנימציה בפתיחת כרטיסיות",
   "about.miscellaneous.theme.disablePageTransition": "בטל אנימציה במעבר עמוד",
-  "about.miscellaneous.webaudio.enable": "אפשר תמיכה ביעד שמע של Web Audio"
+  "about.miscellaneous.webaudio.enable": "אפשר תמיכה ביעד שמע של Web Audio",
+  "about.miscellaneous.commandItem.title": "האזן לפקודות ממשק המשתמש ",
+  "about.miscellaneous.commandItem.selectItem": "פריט"
 }
