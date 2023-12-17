@@ -138,7 +138,6 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
                 }
             }
             snippet = snippet.replace("%buttons%", buttons.toString());
-            snippet = snippet.replace("%count%", Integer.toString(nbButtons));
         }
 
         // Process the color tags

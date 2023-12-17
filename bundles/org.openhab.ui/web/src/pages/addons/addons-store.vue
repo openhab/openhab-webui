@@ -55,7 +55,7 @@
           :addons="suggestedAddons.filter((a) => a.type === 'binding')"
           :suggested="true"
           :title="'Binding Suggestions'"
-          :subtitle="'Suggested bindings from network scan'" />
+          :subtitle="'Suggested bindings, identified from network scan'" />
         <addons-section
           v-if="officialAddons"
           @addonButtonClick="addonButtonClick"
@@ -120,7 +120,28 @@
           :suggested="true"
           :addons="suggestedAddons.filter((a) => a.type === 'misc')"
           :title="'System Integrations Suggestions'"
-          :subtitle="'Suggested system integrations from network scan'" />
+          :subtitle="'Suggested system integrations, identified from network scan'" />
+        <addons-section
+          v-if="suggestedAddons" :show-all="true"
+          @addonButtonClick="addonButtonClick"
+          :suggested="true"
+          :addons="suggestedAddons.filter((a) => a.type === 'persistence')"
+          :title="'Persistence Services'"
+          :subtitle="'Suggested backend connectors to store historical data, identified from network scan'" />
+        <addons-section
+          v-if="suggestedAddons" :show-all="true"
+          @addonButtonClick="addonButtonClick"
+          :suggested="true"
+          :addons="suggestedAddons.filter((a) => a.type === 'transformation')"
+          :title="'Transformation Add-ons'"
+          :subtitle="'Suggested transformation add-ons to translate raw values into processed or human-readable representations, identified from network scan'" />
+        <addons-section
+          v-if="suggestedAddons" :show-all="true"
+          @addonButtonClick="addonButtonClick"
+          :suggested="true"
+          :addons="suggestedAddons.filter((a) => a.type === 'voice')"
+          :title="'Voice &amp; Speech'"
+          :subtitle="'Suggested voice add-ons to convert between text and speech, interpret human language queries, identified from network scan'" />
         <addons-section
           v-if="addons && officialAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
@@ -131,21 +152,21 @@
         <addons-section
           v-if="addons && officialAddons"
           @addonButtonClick="addonButtonClick"
-          :addons="allAddons.filter((a) => a.type === 'persistence')" :show-all="true"
+          :addons="unsuggestedAddons.filter((a) => a.type === 'persistence')" :show-all="true"
           :featured="['persistence-rrd4j', 'persistence-influxdb', 'persistence-mongodb']"
           :title="'Persistence Services'"
           :subtitle="'Backend connectors to store historical data'" />
         <addons-section
           v-if="addons && officialAddons"
           @addonButtonClick="addonButtonClick"
-          :addons="allAddons.filter((a) => a.type === 'transformation')" :show-all="true"
+          :addons="unsuggestedAddons.filter((a) => a.type === 'transformation')" :show-all="true"
           :featured="['transformation-jsonpath', 'transformation-javascript', 'transformation-regex']"
           :title="'Transformation Add-ons'"
           :subtitle="'Translate raw values into processed or human-readable representations'" />
         <addons-section
           v-if="addons && officialAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
-          :addons="allAddons.filter((a) => a.type === 'voice')"
+          :addons="unsuggestedAddons.filter((a) => a.type === 'voice')"
           :featured="['voice-googletts', 'voice-pollytts', 'voice-voicerss']"
           :title="'Voice &amp; Speech'"
           :subtitle="'Convert between text and speech, interpret human language queries'" />

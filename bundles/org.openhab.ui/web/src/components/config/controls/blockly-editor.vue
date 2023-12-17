@@ -394,6 +394,15 @@
             </shadow>
           </value>
         </block>
+        <block type="oh_color_item">
+          <value name="item">
+            <shadow type="oh_getitem">
+              <value name="itemName">
+                <shadow type="oh_item" />
+              </value>
+            </shadow>
+          </value>
+        </block>
       </category>
 
       <category name="openHAB" colour="0" :expanded="$f7.device.desktop">

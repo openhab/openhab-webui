@@ -14,6 +14,10 @@
           search-in=".treeview-item-label"
           :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
+        <div class="expand-button">
+          <f7-button v-if="!expanded" icon-size="24" tooltip="Expand" icon-f7="rectangle_expand_vertical" @click="toggleExpanded()" />
+          <f7-button v-else color="gray" icon-size="24" tooltip="Collapse" icon-f7="rectangle_compress_vertical" @click="toggleExpanded()" />
+        </div>
       </f7-subnavbar>
     </f7-navbar>
 
@@ -212,6 +216,13 @@
     margin-bottom var(--f7-sheet-height)
   .details-sheet
     height calc(1.4*var(--f7-sheet-height))
+
+.expand-button
+  margin-right 8px
+  text-overflow unset
+  align-self center
+  .icon
+    margin-bottom 2.75px !important
 </style>
 
 <script>
@@ -245,6 +256,7 @@ export default {
       includeNonSemantic: false,
       includeItemName: false,
       includeItemTags: false,
+      expanded: false,
       items: [],
       links: [],
       locations: [],
@@ -474,6 +486,21 @@ export default {
     toggleItemTags () {
       this.includeItemTags = !this.includeItemTags
       this.load()
+    },
+    toggleExpanded () {
+      this.expanded = !this.expanded
+
+      const treeviewItems = document.querySelectorAll('.treeview-item')
+
+      treeviewItems.forEach(item => {
+        if (item.classList.contains('treeview-item')) {
+          if (this.expanded) {
+            item.classList.add('treeview-item-opened')
+          } else {
+            item.classList.remove('treeview-item-opened')
+          }
+        }
+      })
     },
     addSemanticItem (semanticType) {
       this.newItem = {

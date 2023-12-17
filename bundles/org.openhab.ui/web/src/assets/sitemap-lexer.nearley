@@ -9,15 +9,16 @@
     item:             'item=',
     staticIcon:       'staticIcon=',
     icon:             'icon=',
-    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint='],
+    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint=', 'columns='],
     widgetboolattr:   ['legend='],
     widgetfreqattr:   'sendFrequency=',
     widgetfrcitmattr: 'forceasitem=',
     widgetmapattr:    'mappings=',
+    widgetbuttonattr: 'buttons=',
     widgetvisiattr:   'visibility=',
     widgetcolorattr:  ['labelcolor=', 'valuecolor=', 'iconcolor='],
     widgetswitchattr: 'switchSupport',
-    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Default '],
+    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Buttongrid ', 'Default '],
     lwidget:          ['Text ', 'Group ', 'Image ', 'Frame '],
     lparen:           '(',
     rparen:           ')',
@@ -118,6 +119,7 @@ WidgetAttr -> %widgetswitchattr                                                 
   | %staticIcon _ WidgetIconAttrValue                                             {% (d) => [d[0].value, d[2].join("")] %}
   | WidgetAttrName _ WidgetAttrValue                                              {% (d) => [d[0][0].value, d[2]] %}
   | WidgetMappingsAttrName WidgetMappingsAttrValue                                {% (d) => [d[0][0].value, d[1]] %}
+  | WidgetButtonsAttrName WidgetButtonsAttrValue                                  {% (d) => [d[0][0].value, d[1]] %}
   | WidgetVisibilityAttrName WidgetVisibilityAttrValue                            {% (d) => [d[0][0].value, d[1]] %}
   | WidgetColorAttrName WidgetColorAttrValue                                      {% (d) => [d[0][0].value, d[1]] %}
 WidgetAttrName -> %item | %label | %widgetattr
@@ -135,6 +137,8 @@ WidgetAttrValue -> %number                                                      
   | %string                                                                       {% (d) => d[0].value %}
 WidgetMappingsAttrName -> %widgetmapattr
 WidgetMappingsAttrValue -> %lbracket _ Mappings _ %rbracket                       {% (d) => d[2] %}
+WidgetButtonsAttrName -> %widgetbuttonattr
+WidgetButtonsAttrValue -> %lbracket _ Buttons _ %rbracket                         {% (d) => d[2] %}
 WidgetVisibilityAttrName -> %widgetvisiattr
 WidgetVisibilityAttrValue -> %lbracket _ Visibilities _ %rbracket                 {% (d) => d[2] %}
 WidgetColorAttrName -> %widgetcolorattr
@@ -142,10 +146,17 @@ WidgetColorAttrValue -> %lbracket _ Colors _ %rbracket                          
 
 Mappings -> Mapping                                                               {% (d) => [d[0]] %}
   | Mappings _ %comma _ Mapping                                                   {% (d) => d[0].concat([d[4]]) %}
-Mapping -> MappingCommand _ %equals _ MappingLabel                                {% (d) => d[0][0].value + '=' + d[4][0].value %}
-  |  MappingCommand _ %equals _ MappingLabel _ %equals _ WidgetIconAttrValue      {% (d) => d[0][0].value + '=' + d[4][0].value + '=' + d[8].join("") %}
-MappingCommand -> %number | %identifier | %string
-MappingLabel -> %number | %identifier | %string
+Mapping -> Command _ %equals _ Label                                              {% (d) => d[0][0].value + '=' + d[4][0].value %}
+  |  Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                    {% (d) => d[0][0].value + '=' + d[4][0].value + '=' + d[8].join("") %}
+
+Buttons -> Button                                                                 {% (d) => [d[0]] %}
+  | Buttons _ %comma _ Button                                                     {% (d) => d[0].concat([d[4]]) %}
+Button -> %number _ %colon _ %number _ %colon _ ButtonValue                       {% (d) => { return { 'row':  parseInt(d[0].value), 'column': parseInt(d[4].value), 'command': d[8] } } %}
+ButtonValue -> Command _ %equals _ Label                                          {% (d) => d[0][0].value + '=' + d[4][0].value %}
+  | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0][0].value + '=' + d[4][0].value + '=' + d[8].join("") %}
+
+Command -> %number | %identifier | %string
+Label -> %number | %identifier | %string
 
 Visibilities -> Conditions                                                        {% (d) => d[0] %}
   | Visibilities _ %comma _ Conditions                                            {% (d) => d[0].concat(d[4]) %}

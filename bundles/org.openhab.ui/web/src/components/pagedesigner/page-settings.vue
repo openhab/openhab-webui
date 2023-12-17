@@ -27,7 +27,7 @@
           </f7-list>
         </f7-accordion-content>
       </f7-list-item>
-      <f7-list-item accordion-item title="Tags" :disabled="page.uid === 'overview'">
+      <f7-list-item accordion-item title="Tags" :disabled="page.uid === 'overview'" :after="(page && page.tags && page.tags.length) ? page.tags.length : ''">
         <f7-accordion-content>
           <tag-input :item="page" />
         </f7-accordion-content>

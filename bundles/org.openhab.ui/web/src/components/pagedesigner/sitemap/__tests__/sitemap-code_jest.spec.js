@@ -188,6 +188,47 @@ describe('SitemapCode', () => {
     })
   })
 
+  it('parses a Buttongrid component correctly', async () => {
+    expect(wrapper.vm.sitemapDsl).toBeDefined()
+    // simulate updating the sitemap in code
+    const sitemap = [
+      'sitemap test label="Test" {',
+      '    Buttongrid item=Scene_General buttons=[1:1:1=Morning, 1:2:2="Evening", 1:3:10="Cinéma",',
+      '                                           2:1:11=TV, 2:2:3="Bed time", 2:3:4=Night=moon]',
+      '}',
+      ''
+    ].join('\n')
+    wrapper.vm.updateSitemap(sitemap)
+    expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
+    expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
+
+    await wrapper.vm.$nextTick()
+
+    // check whether an 'updated' event was emitted and its payload
+    // (should contain the parsing result for the new sitemap definition)
+    const events = wrapper.emitted().updated
+    expect(events).toBeTruthy()
+    expect(events.length).toBe(1)
+    const payload = events[0][0]
+    expect(payload.slots).toBeDefined()
+    expect(payload.slots.widgets).toBeDefined()
+    expect(payload.slots.widgets.length).toBe(1)
+    expect(payload.slots.widgets[0]).toEqual({
+      component: 'Buttongrid',
+      config: {
+        item: 'Scene_General',
+        buttons: [
+          { row: 1, column: 1, command: '1=Morning' },
+          { row: 1, column: 2, command: '2=Evening' },
+          { row: 1, column: 3, command: '10=Cinéma' },
+          { row: 2, column: 1, command: '11=TV' },
+          { row: 2, column: 2, command: '3=Bed time' },
+          { row: 2, column: 3, command: '4=Night=moon' }
+        ]
+      }
+    })
+  })
+
   it('parses a mapping code back to a mapping on a component', async () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
     // simulate updating the sitemap in code

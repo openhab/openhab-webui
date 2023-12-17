@@ -3,7 +3,7 @@
     <f7-list>
       <f7-list-item>
         <div slot="inner">
-          <f7-chip v-for="tag in item.tags.filter((t) => !isSemanticTag(t) && !isScriptTag(t))" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="blue">
+          <f7-chip v-for="tag in item.tags.filter((t) => (showSemanticTags ? true : !isSemanticTag(t)) && !isScriptTag(t) && !isSceneTag(t))" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="blue">
             <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
           </f7-chip>
         </div>
@@ -29,7 +29,7 @@ import TagMixin from '@/components/tags/tag-mixin'
 
 export default {
   mixins: [TagMixin],
-  props: ['item', 'disabled', 'inScriptEditor'],
+  props: ['item', 'disabled', 'inScriptEditor', 'inSceneEditor', 'showSemanticTags'],
   data () {
     return {
       pendingTag: ''
@@ -39,6 +39,10 @@ export default {
     isScriptTag (tag) {
       if (this.inScriptEditor !== true) return false
       if (tag === 'Script') return true
+    },
+    isSceneTag (tag) {
+      if (this.inSceneEditor !== true) return false
+      if (tag === 'Scene') return true
     },
     addTag () {
       if (this.pendingTag && this.item.tags.indexOf(this.pendingTag) === -1) {

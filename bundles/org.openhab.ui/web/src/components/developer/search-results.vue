@@ -1,5 +1,5 @@
 <template>
-  <div class="after-big-title">
+  <div>
     <f7-block v-if="loading" class="text-align-center">
       <f7-preloader />
       <div>Loading...</div>
@@ -126,6 +126,23 @@
         </f7-list-button>
       </f7-list>
     </f7-block>
+    <!-- Persistence configs -->
+    <f7-block class="no-margin no-padding" v-if="searchResults.persistenceConfigs.length">
+      <f7-block-title class="padding-left">
+        <f7-icon class="margin-right" f7="download_circle" />Persistence Configs ({{ searchResults.persistenceConfigs.length }})
+      </f7-block-title>
+      <f7-list media-list>
+        <f7-list-item media-item v-for="persistenceConfig in filteredSearchResults.persistenceConfigs" :key="persistenceConfig.serviceId"
+                      :title="persistenceConfig.label" :footer="persistenceConfig.serviceId" link="" no-chevron @click="(evt) => togglePin(evt, 'persistenceConfigs', persistenceConfig, 'serviceId')">
+          <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/persistence/' + persistenceConfig.serviceId" :animate="false" />
+          <f7-link slot="after" v-if="isPinned('persistenceConfigs', persistenceConfig, 'serviceId')" @click="$emit('unpin', 'persistenceConfigs', persistenceConfig, 'serviceId')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
+          <f7-link slot="after" v-else @click="$emit('pin', 'persistenceConfigs', persistenceConfig, 'serviceId')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+        </f7-list-item>
+        <f7-list-button v-if="!showingAll('persistenceConfigs')" color="blue" @click="$set(expandedTypes, 'persistenceConfigs', true)">
+          Show All
+        </f7-list-button>
+      </f7-list>
+    </f7-block>
   </div>
 </template>
 
@@ -161,7 +178,8 @@ export default {
       const scripts = (this.expandedTypes.scripts) ? this.searchResults.scripts : (this.searchResults.scripts ? this.searchResults.scripts.slice(0, 5) : [])
       const pages = (this.expandedTypes.pages) ? this.searchResults.pages : (this.searchResults.pages ? this.searchResults.pages.slice(0, 5) : [])
       const transformations = (this.expandedTypes.transformations) ? this.searchResults.transformations : (this.searchResults.transformations ? this.searchResults.transformations.slice(0, 5) : [])
-      return { items, things, rules, scenes, scripts, pages, transformations }
+      const persistenceConfigs = (this.expandedTypes.persistenceConfigs) ? this.searchResults.persistenceConfigs : (this.searchResults.persistenceConfigs ? this.searchResults.persistenceConfigs.slice(0, 5) : [])
+      return { items, things, rules, scenes, scripts, pages, transformations, persistenceConfigs }
     }
   },
   watch: {

@@ -21,8 +21,10 @@
           search-item=".treeview-item"
           search-in=".treeview-item-label"
           :disable-button="!$theme.aurora" />
-        <f7-button v-if="!expanded" style="text-overflow:unset; bottom: 2px" icon-size="24" tooltip="Expand" icon-f7="rectangle_expand_vertical" @click="toggleExpanded()" />
-        <f7-button v-else style="text-overflow:unset; bottom: 2px" color="gray" icon-size="24" tooltip="Collapse" icon-f7="rectangle_compress_vertical" @click="toggleExpanded()" />
+        <div class="expand-button">
+          <f7-button v-if="!expanded" icon-size="24" tooltip="Expand" icon-f7="rectangle_expand_vertical" @click="toggleExpanded()" />
+          <f7-button v-else color="gray" icon-size="24" tooltip="Collapse" icon-f7="rectangle_compress_vertical" @click="toggleExpanded()" />
+        </div>
       </f7-subnavbar>
       <f7-toolbar bottom class="toolbar-details">
         <f7-link v-if="!multiple" :disabled="selectedItem != null" class="left" @click="selectedItem = null">
@@ -47,6 +49,15 @@
     </f7-page>
   </f7-popup>
 </template>
+
+<style lang="stylus">
+.expand-button
+  margin-right 8px
+  text-overflow: unset
+  align-self: center
+  .icon
+    margin-bottom: 2.75px !important
+</style>
 
 <script>
 import ModelTreeview from '@/components/model/model-treeview.vue'

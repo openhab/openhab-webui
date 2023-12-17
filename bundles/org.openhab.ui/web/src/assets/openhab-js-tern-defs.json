@@ -156,6 +156,14 @@
                 "!doc": "Gets the evolution rate of the state of a given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
+            "getAllStatesBetween": {
+                "!doc": "Retrieves persisted data for a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> [HistoricItem]"
+            },
+            "getAllStatesSince": {
+                "!doc": "Retrieves persisted data for a given Item since a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> [HistoricItem]"
+            },
             "historicState": {
                 "!doc": "Retrieves the historic Item state for a given Item at a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> HistoricItem"
@@ -255,6 +263,26 @@
             "semanticType": {
                 "!doc": "Determines the semantic type (i.e. a sub-type of Location, Equipment or Point).",
                 "!type": "string|null"
+            },
+            "isLocation": {
+                "!doc": "Whether the Item is a Location.",
+                "!type": "boolean"
+            },
+            "isEquipment": {
+                "!doc": "Whether the Item is an Equipment.",
+                "!type": "boolean"
+            },
+            "isPoint": {
+                "!doc": "Whether the Item is a Point.",
+                "!type": "boolean"
+            },
+            "location": {
+                "!doc": "The Location Item where this Item is situated or `null` if it's not in a Location.",
+                "!type": "Item|null"
+            },
+            "equipment": {
+                "!doc": "The Equipment Item where this Item is situated or `null` if it's not in an Equipment.",
+                "!type": "Item|null"
             }
         },
         "ItemConfig": {
@@ -442,11 +470,11 @@
             },
             "divide": {
                 "!doc": "Divide this Quantity by the given value.",
-                "!type": "fn(value: number|string|QuantityClass) -> QuantityClass"
+                "!type": "fn(value: number|string|QuantityClass|Item) -> QuantityClass"
             },
             "multiply": {
                 "!doc": "Multiply this Quantity by the given value.",
-                "!type": "fn(value: number|string|QuantityClass) -> QuantityClass"
+                "!type": "fn(value: number|string|QuantityClass|Item) -> QuantityClass"
             },
             "subtract": {
                 "!doc": "Subtract the given value from this Quantity.",
@@ -748,7 +776,7 @@
     },
     "Quantity": {
         "!doc": "Quantity class. It greatly simplifies Quantity handling by providing unit conversion, comparisons and mathematical operations. A Quantity consists of a measurement and its Unit of Measurement (UoM), e.g. 5.7 m (the measurement is 5.7, the unit is m meters).",
-        "!type": "fn(value: string|QuantityClass) -> QuantityClass"
+        "!type": "fn(value: string|Item|QuantityClass) -> QuantityClass"
     },
     "things": {
         "!doc": "Things namespace. This namespace handles querying and updating openHAB Things.",

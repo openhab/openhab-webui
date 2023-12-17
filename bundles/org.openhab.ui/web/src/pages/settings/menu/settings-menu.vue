@@ -224,7 +224,7 @@ export default {
         this.servicesLoaded = true
       })
       addonsPromise.then((data) => {
-        this.addonsInstalled = data.filter(a => a.installed === true)
+        this.addonsInstalled = data.filter(a => a.installed && !['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent;type=widget', 'application/vnd.openhab.uicomponent;type=blocks'].includes(a.contentType))
         this.addonsLoaded = true
       })
     },
