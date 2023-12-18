@@ -219,8 +219,8 @@ export default {
 
       // can be done in parallel!
       servicesPromise.then((data) => {
-        this.systemServices = data.filter(s => s.category === 'system')
-        this.addonsServices = data.filter(s => s.category !== 'system')
+        this.systemServices = data.filter(s => s.category === 'system').sort((s1, s2) => s1.label.toLowerCase() > s2.label.toLowerCase() ? 1 : -1)
+        this.addonsServices = data.filter(s => s.category !== 'system').sort((s1, s2) => s1.label.toLowerCase() > s2.label.toLowerCase() ? 1 : -1)
         this.servicesLoaded = true
       })
       addonsPromise.then((data) => {
