@@ -8,6 +8,7 @@
   "dialogs.copy": "העתק",
   "dialogs.delete": "מחק",
   "dialogs.reload": "רענן",
+  "dialogs.retry": "נסה שוב",
   "dialogs.showAll": "הצג הכל",
   "dialogs.search": "חיפוש",
   "dialogs.search.items": "חפש פריטים",
@@ -18,6 +19,7 @@
   "home.overview.tab": "סקירה",
   "home.overview.button.documentation": "תיעוד",
   "home.overview.button.tutorial": "הדרכה",
+  "home.overview.button.quickstart": "פתח את מסייע התחלה מהירה",
   "home.locations.title": "מיקומים",
   "home.locations.tab": "מיקומים",
   "home.equipment.title": "ציוד",
@@ -44,5 +46,7 @@
   "page.navbar.edit": "ערוך",
   "admin.notTranslatedYet": "אזור הניהול עדיין לא מתורגם.",
   "error.communicationFailure": "כשל בתקשורת",
-  "error.itemNotFound": "%s לא נמצא"
+  "error.itemNotFound": "%s לא נמצא",
+  "error.notReachable.title": "openHAB איננו מחובר",
+  "error.notReachable.msg": "לא ניתן להתחבר לשרת openHAB כרגע. אנא בדוק את חיבור הרשת שלך ואת השרת שלך."
 }
