@@ -226,7 +226,7 @@ export default {
       return Object.keys(this.addons).flatMap((k) => this.addons[k])
     },
     suggestedAddons () {
-      return Object.keys(this.addons).flatMap((k) => this.addons[k]).filter((a) => this.suggestions.some((s) => s.id === a.id))
+      return Object.keys(this.addons).flatMap((k) => this.addons[k]).filter((a) => !a.installed && this.suggestions.some((s) => s.id === a.id))
     },
     unsuggestedAddons () {
       return Object.keys(this.addons).flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
