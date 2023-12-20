@@ -12,10 +12,10 @@
     <f7-block form v-if="persistenceList.length > 0">
       <f7-row>
         <f7-col>
-          <f7-block-title>Default Persistence</f7-block-title>
+          <f7-block-title>General Settings</f7-block-title>
           <config-sheet
-            :parameter-groups="[]"
-            :parameters="params"
+            :parameter-groups="configDescriptions.parameterGroups"
+            :parameters="configDescriptions.parameters"
             :configuration="config"
             :set-empty-config-as-null="true" />
           <f7-block-title>Configure Persistence Policies</f7-block-title>
@@ -63,7 +63,7 @@ export default {
       serviceId: 'org.openhab.persistence',
       persistenceList: [],
       service: {},
-      params: null,
+      configDescriptions: null,
       config: null
     }
   },
@@ -104,7 +104,7 @@ export default {
         this.service = data
         if (this.service.configDescriptionURI) {
           this.$oh.api.get('/rest/config-descriptions/' + this.service.configDescriptionURI).then(data2 => {
-            this.params = data2.parameters ? data2.parameters : []
+            this.configDescriptions = data2
             this.$oh.api.get('/rest/services/' + this.serviceId + '/config').then(data3 => {
               this.config = data3
               this.$nextTick(() => {
