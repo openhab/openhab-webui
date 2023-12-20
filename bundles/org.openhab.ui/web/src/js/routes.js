@@ -34,6 +34,7 @@ const InboxListPage = () => import(/* webpackChunkName: "admin-config" */ '../pa
 const TransformationsListPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/transformations/transformations-list.vue')
 const TransformationsEditPage = () => import(/* webpackChunkName: "admin-rules" */ '../pages/settings/transformations/transformation-edit.vue')
 
+const PersistenceSettingsPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/persistence/persistence-settings.vue')
 const PersistenceEditPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/persistence/persistence-edit.vue')
 
 const SemanticModelPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/model/model.vue')
@@ -279,6 +280,8 @@ export default [
       },
       {
         path: 'persistence/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(PersistenceSettingsPage),
         routes: [
           {
             path: ':serviceId',

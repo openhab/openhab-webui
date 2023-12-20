@@ -45,5 +45,8 @@
   "addons.text": "Add-ons add functionality to your openHAB system.<br><br>Install them with the button below.",
 
   "page.unavailable.title": "Page Unavailable",
-  "page.unavailable.text": "You are not allowed to view this page because of visibility restrictions."
+  "page.unavailable.text": "You are not allowed to view this page because of visibility restrictions.",
+
+  "persistence.title": "No persistence add-on installed",
+  "persistence.text": "With a persistence configuration you can automatically store item states for the future. To configure persistence, you need at least one persistence add-on to be installed.<br><br>Install one from the Add-On store following the button below."
 }

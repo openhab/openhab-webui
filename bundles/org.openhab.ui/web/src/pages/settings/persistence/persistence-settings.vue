@@ -1,0 +1,148 @@
+<template>
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+    <f7-navbar title="Persistence Settings" back-link="Settings" back-link-url="/settings/" back-link-force>
+      <f7-nav-right v-if="persistenceList.length > 0">
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md">
+          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+        </f7-link>
+      </f7-nav-right>
+    </f7-navbar>
+
+    <f7-block form v-if="persistenceList.length > 0">
+      <f7-row>
+        <f7-col>
+          <f7-block-title>Default Persistence</f7-block-title>
+          <config-sheet
+            :parameter-groups="[]"
+            :parameters="params"
+            :configuration="config"
+            :set-empty-config-as-null="true" />
+          <f7-block-title>Configure Persistence Policies</f7-block-title>
+          <f7-list>
+            <f7-list-item
+              v-for="persistence in persistenceList"
+              media-item
+              :key="persistence.id"
+              :link="persistence.id"
+              :title="persistence.label"
+              :footer="persistence.id" />
+          </f7-list>
+        </f7-col>
+      </f7-row>
+    </f7-block>
+
+    <f7-block v-if="ready && !persistenceList.length" class="service-config block-narrow">
+      <empty-state-placeholder icon="tray-arrow-down" title="persistence.title" text="persistence.text" />
+      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+      </f7-row>
+    </f7-block>
+
+    <f7-fab v-show="ready" position="right-bottom" slot="fixed" color="blue" href="/addons/other/">
+      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+      <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
+    </f7-fab>
+  </f7-page>
+</template>
+
+<script>
+import DirtyMixin from '../dirty-mixin'
+import ConfigSheet from '@/components/config/config-sheet.vue'
+
+export default {
+  mixins: [DirtyMixin],
+  components: {
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
+    ConfigSheet
+  },
+  data () {
+    return {
+      loading: false,
+      ready: false,
+      serviceId: 'org.openhab.persistence',
+      persistenceList: [],
+      service: {},
+      params: null,
+      config: null
+    }
+  },
+  computed: {
+    documentationLink () {
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/docs/configuration/persistence.html`
+    }
+  },
+  watch: {
+    config: {
+      handler: function () {
+        if (!this.loading) {
+          this.dirty = true
+        }
+      }
+    }
+  },
+  methods: {
+    onPageAfterIn () {
+      if (window) {
+        window.addEventListener('keydown', this.keyDown)
+      }
+      this.load()
+    },
+    onPageBeforeOut () {
+      if (window) {
+        window.removeEventListener('keydown', this.keyDown)
+      }
+    },
+    load () {
+      if (this.loading) return
+      this.loading = true
+
+      this.$oh.api.get('/rest/persistence').then((data) => {
+        this.$set(this, 'persistenceList', data)
+      })
+      this.$oh.api.get('/rest/services/' + this.serviceId).then(data => {
+        this.service = data
+        if (this.service.configDescriptionURI) {
+          this.$oh.api.get('/rest/config-descriptions/' + this.service.configDescriptionURI).then(data2 => {
+            this.params = data2.parameters ? data2.parameters : []
+            this.$oh.api.get('/rest/services/' + this.serviceId + '/config').then(data3 => {
+              this.config = data3
+              this.$nextTick(() => {
+                this.loading = false
+                this.ready = true
+              })
+            })
+          })
+        }
+      }).catch((e) => {
+        if (e === 404 || e === 'Not Found') {
+          this.loading = false
+        } else {
+          Promise.reject(e)
+        }
+      })
+    },
+    save () {
+      this.$oh.api.put('/rest/services/' + this.serviceId + '/config', this.config).then(() => {
+        this.$f7.toast.create({
+          text: 'Default persistence setting saved',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
+      this.dirty = false
+    },
+    keyDown (ev) {
+      if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
+        switch (ev.keyCode) {
+          case 83:
+            this.save()
+            ev.stopPropagation()
+            ev.preventDefault()
+            break
+        }
+      }
+    }
+  }
+}
+</script>
