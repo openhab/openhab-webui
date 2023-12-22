@@ -349,7 +349,7 @@
 		var
 			_t = this,
 			suppress = false,
-			noneImageSrc = "/icon/none.svg";
+			noneImageSrc = "images/none.png";
 
 		_t.parentNode = parentNode;
 		if (_t.formRow === undefined) {
@@ -697,7 +697,7 @@
 		var
 			_t = this,
 			interval = null,
-			urlNoneIcon = "/icon/none.svg";
+			urlNoneIcon = "images/none.png";
 
 		_t.image = parentNode.querySelector("img");
 		_t.updateInterval = parseInt(parentNode.getAttribute("data-update-interval"), 10);
@@ -943,7 +943,7 @@
 		var
 			_t = this,
 			urlMarkerOffIcon = "images/map-marker-off.png",
-			urlNoneIcon = "/icon/none.svg";
+			urlNoneIcon = "images/none.png";
 
 		_t.iframe = parentNode.querySelector("iframe");
 		_t.url = parentNode.getAttribute("data-map-url");
