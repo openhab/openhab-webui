@@ -41,7 +41,7 @@ import org.osgi.service.component.annotations.Reference;
 @NonNullByDefault
 public class VideoRenderer extends AbstractWidgetRenderer {
 
-    private static final String URL_NONE_ICON = "images/none.png";
+    private static final String URL_NONE_ICON = "/icon/none.svg";
 
     @Activate
     public VideoRenderer(final BundleContext bundleContext, final @Reference TranslationProvider i18nProvider,

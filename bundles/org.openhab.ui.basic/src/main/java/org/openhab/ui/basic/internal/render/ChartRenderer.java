@@ -58,7 +58,7 @@ public class ChartRenderer extends AbstractWidgetRenderer {
 
     private final Logger logger = LoggerFactory.getLogger(ChartRenderer.class);
 
-    private static final String URL_NONE_ICON = "images/none.png";
+    private static final String URL_NONE_ICON = "/icon/none.svg";
 
     @Override
     public boolean canRender(Widget w) {
