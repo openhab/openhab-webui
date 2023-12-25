@@ -231,7 +231,9 @@ export default {
 
       // can be done in parallel!
       servicesPromise.then((data) => {
-        this.systemServices = data.filter(s => s.category === 'system').sort((s1, s2) => this.sortByLabel(s1, s2))
+        this.systemServices = data
+          .filter(s => (s.category === 'system') && (s.id !== 'org.openhab.persistence'))
+          .sort((s1, s2) => this.sortByLabel(s1, s2))
         this.addonsServices = data.filter(s => s.category !== 'system').sort((s1, s2) => this.sortByLabel(s1, s2))
         this.servicesLoaded = true
       })
