@@ -709,19 +709,25 @@
 		_t.periodButton = null;
 		_t.upscaleButton = null;
 		_t.refreshButton = null;
-		_t.displayLegend = _t.parentNode.getAttribute("data-legend") === "true";
-		_t.period = null;
-		_t.upscale = false;
 
-		_t.legendButton = _t.formHeaderRow.querySelector(o.image.legendButton);
-		_t.periodButton = _t.formHeaderRow.querySelector(o.image.periodButton);
-		_t.upscaleButton = _t.formHeaderRow.querySelector(o.image.upscaleButton);
-		_t.refreshButton = _t.formHeaderRow.querySelector(o.image.refreshButton);
-		if (_t.legendButton !== null) {
-			if (_t.displayLegend) {
-				_t.legendButton.classList.add(o.buttonActiveClass);
-			} else {
-				_t.legendButton.classList.remove(o.buttonActiveClass);
+		if (_t.headerRow !== null) {
+			_t.legendButton = _t.formHeaderRow.querySelector(o.image.legendButton);
+			_t.periodButton = _t.formHeaderRow.querySelector(o.image.periodButton);
+			_t.upscaleButton = _t.formHeaderRow.querySelector(o.image.upscaleButton);
+			_t.refreshButton = _t.formHeaderRow.querySelector(o.image.refreshButton);
+			if (_t.legendButton !== null) {
+				_t.displayLegend = _t.parentNode.getAttribute("data-legend") === "true";
+				if (_t.displayLegend) {
+					_t.legendButton.classList.add(o.buttonActiveClass);
+				} else {
+					_t.legendButton.classList.remove(o.buttonActiveClass);
+				}
+			}
+			if (_t.periodButton !== null) {
+				_t.period = null;
+			}
+			if (_t.upscaleButton !== null) {
+				_t.upscale = false;
 			}
 		}
 
@@ -912,8 +918,9 @@
 				componentHandler.downgradeElements([ _t.refreshButton ]);
 				_t.refreshButton.removeEventListener("click", onRefreshClick);
 			}
-
-			_t.parentNode.parentNode.removeEventListener("click", toggleHeaderRow);
+			if (_t.headerRow !== null) {
+				_t.parentNode.parentNode.removeEventListener("click", toggleHeaderRow);
+			}
 		};
 
 		if (_t.legendButton !== null) {
@@ -928,8 +935,9 @@
 		if (_t.refreshButton !== null) {
 			_t.refreshButton.addEventListener("click", onRefreshClick);
 		}
-
-		_t.parentNode.parentNode.addEventListener("click", toggleHeaderRow);
+		if (_t.headerRow !== null) {
+			_t.parentNode.parentNode.addEventListener("click", toggleHeaderRow);
+		}
 
 		if (_t.visible) {
 			_t.activateRefresh();
