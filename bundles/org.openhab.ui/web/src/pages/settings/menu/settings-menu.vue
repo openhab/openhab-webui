@@ -72,8 +72,6 @@
               :footer="objectsSubtitles.transform">
               <f7-icon slot="media" f7="function" color="gray" />
             </f7-list-item>
-          </f7-list>
-          <f7-list media-list class="search-list">
             <f7-list-item
               media-item
               link="persistence/"
