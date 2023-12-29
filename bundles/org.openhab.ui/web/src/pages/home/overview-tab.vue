@@ -15,7 +15,7 @@
     <component :is="overviewPage.component" v-if="overviewPage" v-show="!inChatSession" :context="overviewPageContext" :class="{notready: !ready}" @command="onCommand" />
     <div class="empty-overview" v-else-if="!inChatSession">
       <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
-      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="!$store.getters.isAdmin || $f7.width < 1280" class="display-flex justify-content-center">
         <f7-button large fill color="blue" external :href="`${documentationLinkPrefix}link/docs`" target="_blank" v-t="'home.overview.button.documentation'" />
         <span style="width: 8px" />
         <f7-button large color="blue" external :href="`${documentationLinkPrefix}link/tutorial`" target="_blank" v-t="'home.overview.button.tutorial'" />
