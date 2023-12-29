@@ -281,6 +281,7 @@ export default [
       {
         path: 'persistence/',
         beforeEnter: [enforceAdminForRoute],
+        beforeLeave: [checkDirtyBeforeLeave],
         async: loadAsync(PersistenceSettingsPage),
         routes: [
           {

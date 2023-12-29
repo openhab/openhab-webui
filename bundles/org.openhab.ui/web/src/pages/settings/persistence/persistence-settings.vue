@@ -78,7 +78,8 @@ export default {
         if (!this.loading) {
           this.dirty = true
         }
-      }
+      },
+      deep: true
     }
   },
   methods: {
