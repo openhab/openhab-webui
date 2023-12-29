@@ -10,11 +10,9 @@
     </f7-navbar>
     <f7-block v-if="type === 'persistence'" class="service-config block-narrow">
       <f7-col>
-        <f7-block-title medium>
-          <f7-link color="blue" :href="'/settings/persistence/' + name">
-            Persistence configuration
-          </f7-link>
-        </f7-block-title>
+        <f7-button large fill color="blue" :href="'/settings/persistence/' + name">
+          Configure Persistence Policies
+        </f7-button>
       </f7-col>
     </f7-block>
     <f7-block form v-if="configDescription && config" class="service-config block-narrow">
