@@ -69,7 +69,7 @@ export default {
   },
   computed: {
     documentationLink () {
-      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/docs/configuration/persistence.html`
+      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/persistence`
     }
   },
   watch: {
