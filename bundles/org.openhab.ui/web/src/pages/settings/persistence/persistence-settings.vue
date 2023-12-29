@@ -9,40 +9,48 @@
       </f7-nav-right>
     </f7-navbar>
 
-    <f7-block form v-if="persistenceList.length > 0">
-      <f7-row>
-        <f7-col>
-          <f7-block-title>General Settings</f7-block-title>
-          <config-sheet
-            :parameter-groups="configDescriptions.parameterGroups"
-            :parameters="configDescriptions.parameters"
-            :configuration="config"
-            :set-empty-config-as-null="true" />
-          <f7-block-title>Configure Persistence Policies</f7-block-title>
-          <f7-list>
-            <f7-list-item
-              v-for="persistence in persistenceList"
-              media-item
-              :key="persistence.id"
-              :link="persistence.id"
-              :title="persistence.label"
-              :footer="persistence.id" />
-          </f7-list>
-        </f7-col>
-      </f7-row>
+    <f7-block form v-if="ready && persistenceList.length" class="block-narrow">
+      <f7-col>
+        <f7-block-title medium>
+          General Settings
+        </f7-block-title>
+        <config-sheet
+          :parameter-groups="configDescriptions.parameterGroups"
+          :parameters="configDescriptions.parameters"
+          :configuration="config"
+          :set-empty-config-as-null="true" />
+      </f7-col>
+    </f7-block>
+    <f7-block v-if="ready && persistenceList.length" class="block-narrow">
+      <f7-col>
+        <f7-block-title medium>
+          Configure Persistence Policies
+        </f7-block-title>
+        <f7-list style="margin-top: 15px">
+          <f7-list-item
+            v-for="persistence in persistenceList"
+            media-item
+            :key="persistence.id"
+            :link="persistence.id"
+            :title="persistence.label"
+            :footer="persistence.id" />
+          <f7-list-item link="/addons/other/" no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" subtitle="Install more persistence add-ons">
+            <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
+          </f7-list-item>
+        </f7-list>
+      </f7-col>
     </f7-block>
 
     <f7-block v-if="ready && !persistenceList.length" class="service-config block-narrow">
       <empty-state-placeholder icon="tray-arrow-down" title="persistence.title" text="persistence.text" />
-      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+      <f7-row class="display-flex justify-content-center">
         <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+        <span style="width: 8px" />
+        <f7-button large fill color="blue" href="/addons/other/">
+          Install a persistence add-on
+        </f7-button>
       </f7-row>
     </f7-block>
-
-    <f7-fab v-show="ready" position="right-bottom" slot="fixed" color="blue" href="/addons/other/">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
-    </f7-fab>
   </f7-page>
 </template>
 
