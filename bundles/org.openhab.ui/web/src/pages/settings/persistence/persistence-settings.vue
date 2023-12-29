@@ -62,7 +62,6 @@ export default {
       ready: false,
       serviceId: 'org.openhab.persistence',
       persistenceList: [],
-      service: {},
       configDescriptions: null,
       config: null
     }
@@ -102,24 +101,17 @@ export default {
         this.$set(this, 'persistenceList', data)
       })
       this.$oh.api.get('/rest/services/' + this.serviceId).then(data => {
-        this.service = data
-        if (this.service.configDescriptionURI) {
-          this.$oh.api.get('/rest/config-descriptions/' + this.service.configDescriptionURI).then(data2 => {
-            this.configDescriptions = data2
+        if (data.configDescriptionURI) {
+          this.$oh.api.get('/rest/config-descriptions/' + data.configDescriptionURI).then(data2 => {
+            this.$set(this, 'configDescriptions', data2)
             this.$oh.api.get('/rest/services/' + this.serviceId + '/config').then(data3 => {
-              this.config = data3
+              this.$set(this, 'config', data3)
               this.$nextTick(() => {
                 this.loading = false
                 this.ready = true
               })
             })
           })
-        }
-      }).catch((e) => {
-        if (e === 404 || e === 'Not Found') {
-          this.loading = false
-        } else {
-          Promise.reject(e)
         }
       })
     },
