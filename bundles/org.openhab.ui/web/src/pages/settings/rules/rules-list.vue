@@ -132,7 +132,7 @@
       </f7-col>
     </f7-block>
 
-    <f7-block v-if="ready && !noRuleEngine && !rules.length" class="service-config block-narrow">
+    <f7-block v-if="ready && !noRuleEngine && !rules.length" class="block-narrow">
       <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
       <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
       <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />

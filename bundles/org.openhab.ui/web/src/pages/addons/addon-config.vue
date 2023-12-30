@@ -8,14 +8,14 @@
         </f7-link>
       </f7-nav-right>
     </f7-navbar>
-    <f7-block v-if="type === 'persistence'" class="service-config block-narrow">
+    <f7-block v-if="type === 'persistence'" class="block-narrow">
       <f7-col>
-        <f7-button large fill color="blue" :href="'/settings/persistence/' + name">
+        <f7-button large fill color="blue" :href="'/settings/persistence/' + name" class="persistence-button">
           Configure Persistence Policies
         </f7-button>
       </f7-col>
     </f7-block>
-    <f7-block form v-if="configDescription && config" class="service-config block-narrow">
+    <f7-block form v-if="configDescription && config" class="block-narrow">
       <f7-col>
         <f7-block-title medium>
           Add-on configuration
@@ -26,7 +26,7 @@
           :configuration="config" />
       </f7-col>
     </f7-block>
-    <f7-block form v-if="loggerPackages.length > 0" class="service-config block-narrow">
+    <f7-block form v-if="loggerPackages.length > 0" class="block-narrow">
       <f7-col>
         <f7-block-title medium>
           Add-on log settings
@@ -61,6 +61,18 @@
     </f7-block>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.config-sheet
+  .config-parameter
+    margin-top 0px
+    margin-bottom 0px
+
+.persistence-button
+  @media (max-width 1023px)
+    margin-left 16px
+    margin-right 16px
+</style>
 
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
@@ -151,9 +163,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-.service-config
-  .item-input-info
-    white-space  normal
-</style>

@@ -26,7 +26,7 @@
         <f7-block-title medium>
           Configure Persistence Policies
         </f7-block-title>
-        <f7-list style="margin-top: 15px">
+        <f7-list>
           <f7-list-item
             v-for="persistence in persistenceList"
             media-item
@@ -41,7 +41,7 @@
       </f7-col>
     </f7-block>
 
-    <f7-block v-if="ready && !persistenceList.length" class="service-config block-narrow">
+    <f7-block v-if="ready && !persistenceList.length" class="block-narrow">
       <empty-state-placeholder icon="tray-arrow-down" title="persistence.title" text="persistence.text" />
       <f7-row class="display-flex justify-content-center">
         <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
@@ -53,6 +53,13 @@
     </f7-block>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.config-sheet
+  .config-parameter
+    margin-top 0px
+    margin-bottom 0px
+</style>
 
 <script>
 import DirtyMixin from '../dirty-mixin'
