@@ -26,7 +26,7 @@
         <f7-block-title medium>
           Configure Persistence Policies
         </f7-block-title>
-        <f7-list style="margin-top: 15px">
+        <f7-list>
           <f7-list-item
             v-for="persistence in persistenceList"
             media-item
@@ -56,8 +56,6 @@
 
 <style lang="stylus">
 .config-sheet
-  margin-top 0px
-  margin-bottom 0px
   .config-parameter
     margin-top 0px
     margin-bottom 0px

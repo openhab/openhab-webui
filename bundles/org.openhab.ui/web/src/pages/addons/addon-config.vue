@@ -64,8 +64,6 @@
 
 <style lang="stylus">
 .config-sheet
-  margin-top 0px
-  margin-bottom 0px
   .config-parameter
     margin-top 0px
     margin-bottom 0px
