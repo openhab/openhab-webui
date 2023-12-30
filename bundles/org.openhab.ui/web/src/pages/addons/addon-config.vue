@@ -10,7 +10,7 @@
     </f7-navbar>
     <f7-block v-if="type === 'persistence'" class="block-narrow">
       <f7-col>
-        <f7-button large fill color="blue" :href="'/settings/persistence/' + name">
+        <f7-button large fill color="blue" :href="'/settings/persistence/' + name" class="persistence-button">
           Configure Persistence Policies
         </f7-button>
       </f7-col>
@@ -69,6 +69,11 @@
   .config-parameter
     margin-top 0px
     margin-bottom 0px
+
+.persistence-button
+  @media (max-width 1023px)
+    margin-left 16px
+    margin-right 16px
 </style>
 
 <script>
