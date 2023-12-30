@@ -78,7 +78,7 @@
               title="Persistence"
               badge-color="blue"
               :footer="objectsSubtitles.persistence">
-              <f7-icon slot="media" f7="tray-arrow-down" color="gray" />
+              <f7-icon slot="media" f7="download_circle" color="gray" />
             </f7-list-item>
           </f7-list>
           <f7-block-title v-if="$store.getters.apiEndpoint('rules')">
