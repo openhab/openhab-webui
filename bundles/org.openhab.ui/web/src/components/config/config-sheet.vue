@@ -50,7 +50,6 @@
 </template>
 
 <style lang="stylus">
-
 .config-sheet
   margin-left calc(-1*var(--f7-block-padding-horizontal))
   padding-left 0 !important
@@ -68,6 +67,9 @@
 
 .advanced-label
   cursor pointer
+
+.item-input-info
+    white-space normal
 </style>
 
 <script>

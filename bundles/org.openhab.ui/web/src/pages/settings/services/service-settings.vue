@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="service-config">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="service.label" back-link="Settings">
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
@@ -8,7 +8,7 @@
         </f7-link>
       </f7-nav-right>
     </f7-navbar>
-    <f7-block form v-if="configDescriptions && config" class="service-config block-narrow">
+    <f7-block form v-if="configDescriptions && config" class="block-narrow">
       <f7-col>
         <config-sheet
           :parameter-groups="configDescriptions.parameterGroups"
@@ -19,13 +19,6 @@
     </f7-block>
   </f7-page>
 </template>
-
-<style lang="stylus">
-.service-config
-  overflow-x hidden !important
-  .item-input-info
-    white-space normal
-</style>
 
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'

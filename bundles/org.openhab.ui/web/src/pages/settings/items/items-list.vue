@@ -74,7 +74,7 @@
         </f7-list-group>
       </f7-list>
     </f7-block>
-    <!-- <f7-block v-if="!items.length" class="service-config block-narrow">
+    <!-- <f7-block v-if="!items.length" class="block-narrow">
       <f7-col>
         <f7-block strong>
           <p>No items.</p>
