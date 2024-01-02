@@ -32,7 +32,9 @@
 				the case
 				where the SVG icon sets "currentColor" as the fill color. Note that this will work with custom SVG icons but not
 				with all the packaged icons from the classic iconset since they are defined with a hard-coded color palette. This
-				feature is disabled by default.</description>
+				feature is disabled by default due to additional non-standard processing required leading to a larger page size and
+				because it is unnecessary if you only use Material/framework7/iconify icons or openHAB icons from the classic icon
+				set.</description>
 			<options>
 				<option value="true">Enable</option>
 				<option value="false">Disable</option>
