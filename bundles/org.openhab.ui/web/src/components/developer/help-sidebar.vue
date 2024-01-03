@@ -74,7 +74,7 @@
 
         <!-- /settings/* docs -->
         <context v-if="($store.state.pagePath) === '/settings/'" path="/settings/index" />
-        <context v-else-if="/\/settings\/[A-z]*/.test($store.state.pagePath)" :path="/(\/[A-z]*\/[A-z]*)/.exec($store.state.pagePath)[0]" />
+        <context v-else-if="/\/settings\/[A-z]+/.test($store.state.pagePath)" :path="/(\/[A-z]+\/[A-z]+)/.exec($store.state.pagePath)[0]" />
         <!-- /developer/* docs -->
         <context v-else-if="($store.state.pagePath) === '/developer/'" path="/developer/index" />
         <context v-else-if="($store.state.pagePath).indexOf('/developer/widgets') >= 0" path="/developer/widgets" />
