@@ -5,7 +5,7 @@
         <f7-link href="add">Add</f7-link>
       </f7-nav-right>-->
     </f7-navbar>
-    <f7-block form class="service-config block-narrow">
+    <f7-block form class="block-narrow">
       <f7-col>
         <f7-block-title v-if="!ready">
           Loading...
@@ -44,7 +44,7 @@
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-block form v-if="ready && !addons.length" class="service-config block-narrow">
+    <f7-block form v-if="ready && !addons.length" class="block-narrow">
       <empty-state-placeholder :icon="addonsIcons[addonType]" :title="'No ' + addonsLabels[addonType] + ' installed yet'" text="addons.text" />
     </f7-block>
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">

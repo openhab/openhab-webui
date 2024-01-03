@@ -72,6 +72,14 @@
               :footer="objectsSubtitles.transform">
               <f7-icon slot="media" f7="function" color="gray" />
             </f7-list-item>
+            <f7-list-item
+              media-item
+              link="persistence/"
+              title="Persistence"
+              badge-color="blue"
+              :footer="objectsSubtitles.persistence">
+              <f7-icon slot="media" f7="download_circle" color="gray" />
+            </f7-list-item>
           </f7-list>
           <f7-block-title v-if="$store.getters.apiEndpoint('rules')">
             Automation
@@ -157,6 +165,7 @@ export default {
       addonsLoaded: false,
       servicesLoaded: false,
       addonsInstalled: [],
+      persistenceAddonsInstalled: [],
       addonsServices: [],
       systemServices: [],
       objectsSubtitles: {
@@ -165,6 +174,7 @@ export default {
         items: 'Manage the functional layer',
         pages: 'Design displays for user control & monitoring',
         transform: 'Make raw data human-readable',
+        persistence: 'Persist data for future use',
         rules: 'Automate with triggers and actions',
         scenes: 'Store a set of desired states as a scene',
         scripts: 'Rules dedicated to running code',
@@ -219,14 +229,22 @@ export default {
 
       // can be done in parallel!
       servicesPromise.then((data) => {
-        this.systemServices = data.filter(s => s.category === 'system')
-        this.addonsServices = data.filter(s => s.category !== 'system')
+        this.systemServices = data
+          .filter(s => (s.category === 'system') && (s.id !== 'org.openhab.persistence'))
+          .sort((s1, s2) => this.sortByLabel(s1, s2))
+        this.addonsServices = data.filter(s => s.category !== 'system').sort((s1, s2) => this.sortByLabel(s1, s2))
         this.servicesLoaded = true
       })
       addonsPromise.then((data) => {
-        this.addonsInstalled = data.filter(a => a.installed && !['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent;type=widget', 'application/vnd.openhab.uicomponent;type=blocks'].includes(a.contentType))
+        this.addonsInstalled = data
+          .filter(a => a.installed && !['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent;type=widget', 'application/vnd.openhab.uicomponent;type=blocks'].includes(a.contentType))
+          .sort((s1, s2) => this.sortByLabel(s1, s2))
+        this.persistenceAddonsInstalled = this.addonsInstalled.filter(a => a.installed && a.type === 'persistence')
         this.addonsLoaded = true
       })
+    },
+    sortByLabel (s1, s2) {
+      return s1.label.toLowerCase() > s2.label.toLowerCase() ? 1 : -1
     },
     loadCounters () {
       if (!this.apiEndpoints) return
