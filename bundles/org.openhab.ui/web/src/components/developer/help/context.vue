@@ -28,6 +28,7 @@ export default {
       return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/docs`
     },
     docSrcUrl () {
+      return `https://raw.githubusercontent.com/florian-h05/openhab-docs/mainui-doc-integration/mainui` // TODO: Remove this line
       return `https://raw.githubusercontent.com/openhab/openhab-docs/${this.docsBranch}/mainui`
     },
     documentationLink () {
