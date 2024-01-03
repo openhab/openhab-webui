@@ -86,14 +86,15 @@ export default {
             body = body.replace(/<h1 .*$/gm, '') // Remove h1 headings
             body = body.replace(/<img src=".*$/gm, '') // Remove images
 
-            body = body.replace(/<a href="\/docs/gm, `<a class="external" target="_blank" href="${this.docUrl}`) // Fix anchor href
-            body = body.replace(/<a href="#/gm, '<a href="') // Fix local anchor href
+            body = body.replace(/<a href="\/docs/gm, `<a class="external" target="_blank" href="${this.docUrl}`) // Fix docs page anchor href
+            // Fix local folder anchor href: Rewrite folder to /folder/
+            body = body.replace(/(<a href=")([A-z]+)(")/gm, '$1/$2/$3')
+            // Fix page.html anchor href: Rewrite page.html to page/
+            body = body.replace(/(<a href=")([A-z]+).html(")/gm, '$1$2/$3')
 
-            // Allow embedding framework7 icons by using <!--F7(:blue) ICON_NAME F7--> comments
-            body = body.replace(/<!--F7 /gm, '<i class="f7-icons size-22">')
-            body = body.replace(/<!--F7:blue /gm, '<i class="f7-icons size-22" style="color: #2196f3">')
-
-            body = body.replace(/ F7-->/gm, '</i>')
+            // Allow embedding framework7 icons by using <!--F7(:blue) ICON_NAME --> comments
+            body = body.replace(/(<!--F7 )([A-z]*)( -->)/gm, '<i class="f7-icons size-22">$2</i>')
+            body = body.replace(/(<!--F7:blue )([A-z]*)( -->)/gm, '<i class="f7-icons size-22" style="color: #2196f3">$2</i>')
 
             body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
             body = body.replace(/<\/pre>/gm, '</pre></div>')
