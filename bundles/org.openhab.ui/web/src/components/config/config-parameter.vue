@@ -58,7 +58,7 @@ export default {
     },
     control () {
       const configDescription = this.configDescription
-      if (configDescription.options && configDescription.options.length && configDescription.limitToOptions && !configDescription.context) {
+      if (configDescription.options?.length && configDescription.limitToOptions && (!configDescription.context || configDescription.context === 'network-interface')) {
         return ParameterOptions
       } else if (configDescription.type === 'INTEGER' || configDescription.type === 'DECIMAL') {
         return ParameterNumber
