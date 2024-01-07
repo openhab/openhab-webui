@@ -262,7 +262,8 @@
 		}
 		.mdl-button-icon {
 			min-width: 0;
-			img {
+			img,
+			svg {
 				width: 24px;
 				height: 24px;
 				object-fit: contain;

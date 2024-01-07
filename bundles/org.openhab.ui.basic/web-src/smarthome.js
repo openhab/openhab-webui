@@ -412,26 +412,26 @@
 			}
 		};
 
-		function convertToInlineSVG() {
-			this.removeEventListener("load", convertToInlineSVG);
+		_t.convertToInlineSVG = function() {
+			this.removeEventListener("load", _t.convertToInlineSVG);
 			if (smarthome.UI.inlineSVG) {
-				_t.getSVGIconAndReplaceWithInline(this.src, true, null);
+				_t.getSVGIconAndReplaceWithInline(this, this.src, true, null);
 			}
-		}
+		};
 
-		function replaceImageWithNone() {
-			this.removeEventListener("load", convertToInlineSVG);
-			this.removeEventListener("error", replaceImageWithNone);
+		_t.replaceImageWithNone = function() {
+			this.removeEventListener("load", _t.convertToInlineSVG);
+			this.removeEventListener("error", _t.replaceImageWithNone);
 			this.src = noneImageSrc;
-		}
+		};
 
 		_t.findIcon();
 		if (_t.icon !== null && _t.iconSource === "oh") {
-			_t.icon.addEventListener("load", convertToInlineSVG);
-			_t.icon.addEventListener("error", replaceImageWithNone);
+			_t.icon.addEventListener("load", _t.convertToInlineSVG);
+			_t.icon.addEventListener("error", _t.replaceImageWithNone);
 		}
 
-		_t.replaceIconWithInlineSVG = function(svgText) {
+		_t.replaceIconWithInlineSVG = function(iconElement, svgText) {
 			var
 				parser,
 				docSvg,
@@ -444,32 +444,34 @@
 			newIconElement = docSvg.querySelector("svg");
 
 			// Keep the attribute data-icon
-			dataIcon = _t.icon.getAttribute("data-icon");
+			dataIcon = iconElement.getAttribute("data-icon");
 			if (dataIcon !== null) {
 				newIconElement.setAttribute("data-icon", dataIcon);
 			}
 
 			// Replace the current icon element with the built inline SVG
-			_t.iconContainer.replaceChild(newIconElement, _t.icon);
-			_t.findIcon();
+			iconElement.parentNode.replaceChild(newIconElement, iconElement);
+			if (iconElement === _t.icon) {
+				_t.findIcon();
+			}
 		};
 
-		_t.getSVGIconAndReplaceWithInline = function(srcUrl, checkCurrentColor, defaultSVG) {
+		_t.getSVGIconAndReplaceWithInline = function(iconElement, srcUrl, checkCurrentColor, defaultSVG) {
 			fetch(srcUrl).then(function(response) {
 				if (response.ok && response.headers.get("content-type") === "image/svg+xml") {
 					response.text().then(function(data) {
 						if (!checkCurrentColor || data.indexOf("currentColor") !== -1) {
-							_t.replaceIconWithInlineSVG(data);
+							_t.replaceIconWithInlineSVG(iconElement, data);
 						} else if (defaultSVG !== null) {
-							_t.replaceIconWithInlineSVG(defaultSVG);
+							_t.replaceIconWithInlineSVG(iconElement, defaultSVG);
 						}
 					});
 				} else if (defaultSVG !== null) {
-					_t.replaceIconWithInlineSVG(defaultSVG);
+					_t.replaceIconWithInlineSVG(iconElement, defaultSVG);
 				}
 			}).catch(function() {
 				if (defaultSVG !== null) {
-					_t.replaceIconWithInlineSVG(defaultSVG);
+					_t.replaceIconWithInlineSVG(iconElement, defaultSVG);
 				}
 			});
 		};
@@ -486,8 +488,8 @@
 			newIconElement = doc.body.firstChild;
 
 			if (_t.iconSource === "oh") {
-				_t.icon.removeEventListener("load", convertToInlineSVG);
-				_t.icon.removeEventListener("error", replaceImageWithNone);
+				_t.icon.removeEventListener("load", _t.convertToInlineSVG);
+				_t.icon.removeEventListener("error", _t.replaceImageWithNone);
 			}
 
 			// Replace the current icon element
@@ -495,8 +497,8 @@
 
 			_t.findIcon();
 			if (_t.iconSource === "oh") {
-				_t.icon.addEventListener("load", convertToInlineSVG);
-				_t.icon.addEventListener("error", replaceImageWithNone);
+				_t.icon.addEventListener("load", _t.convertToInlineSVG);
+				_t.icon.addEventListener("error", _t.replaceImageWithNone);
 			}
 		};
 
@@ -549,10 +551,10 @@
 						src = "<img data-icon=\"" + iconSet + ":" + iconName + "\" src=\".." + imgURL + "\" />";
 						_t.replaceIcon(src);
 					} else if (_t.icon.tagName.toLowerCase() === "img" && !_t.icon.src.endsWith(noneImageSrc)) {
-						_t.icon.addEventListener("error", replaceImageWithNone);
+						_t.icon.addEventListener("error", _t.replaceImageWithNone);
 						_t.icon.setAttribute("src", imgURL);
 					} else if (_t.icon.tagName.toLowerCase() === "svg" && smarthome.UI.inlineSVG) {
-						_t.getSVGIconAndReplaceWithInline(imgURL, false, "<svg/>");
+						_t.getSVGIconAndReplaceWithInline(_t.icon, imgURL, false, "<svg/>");
 					}
 				} else if (iconSrc === "if") {
 					_t.icon.setAttribute("icon", encodeURIComponent(iconSet) + ":" + encodeURIComponent(iconName));
@@ -632,8 +634,8 @@
 
 		_t.destroy = function() {
 			if (_t.icon !== null && _t.iconSource === "oh") {
-				_t.icon.removeEventListener("load", convertToInlineSVG);
-				_t.icon.removeEventListener("error", replaceImageWithNone);
+				_t.icon.removeEventListener("load", _t.convertToInlineSVG);
+				_t.icon.removeEventListener("error", _t.replaceImageWithNone);
 			}
 
 			[].forEach.call(_t.parentNode.querySelectorAll("video, audio"), function(media) {
@@ -1077,15 +1079,31 @@
 
 		_t.buttons.forEach.call(_t.buttons, function(button) {
 			var
+				icon,
 				value = button.getAttribute("data-value") + "";
 
 			_t.valueMap[value] = button;
 			button.addEventListener("click", _t.onclick);
+
+			icon = button.querySelector("img");
+			if (icon !== null) {
+				icon.addEventListener("load", _t.convertToInlineSVG);
+				icon.addEventListener("error", _t.replaceImageWithNone);
+			}
 		});
 
 		_t.destroy = function() {
 			_t.buttons.forEach(function(button) {
+				var
+					icon;
+
 				button.removeEventListener("click", _t.onclick);
+
+				icon = button.querySelector("img");
+				if (icon !== null) {
+					icon.removeEventListener("load", _t.convertToInlineSVG);
+					icon.removeEventListener("error", _t.replaceImageWithNone);
+				}
 			});
 			componentHandler.downgradeElements(_t.buttons);
 		};
