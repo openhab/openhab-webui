@@ -15,7 +15,7 @@ package org.openhab.ui.habot.card;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.IllegalFormatConversionException;
-import java.util.Optional;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,7 +34,6 @@ import org.openhab.core.types.State;
 import org.openhab.core.types.StateDescription;
 import org.openhab.ui.habot.card.internal.CardRegistry;
 import org.openhab.ui.habot.nlp.Intent;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Reference;
 
@@ -76,7 +75,7 @@ public class CardBuilder {
         String location = intent.getEntities().get("location");
 
         Collection<Card> cardsInRegistry = this.cardRegistry.getCardMatchingAttributes(object, location).stream()
-                .filter(c -> !c.isNotReuseableInChat() && !c.isEphemeral()).collect(Collectors.toList());
+                .filter(c -> !c.isNotReuseableInChat() && !c.isEphemeral()).toList();
         if (!cardsInRegistry.isEmpty()) {
             // don't handle multiple cards, just return the first one
             Card existingCard = cardsInRegistry.iterator().next();
@@ -307,14 +306,13 @@ public class CardBuilder {
                 }
             } else {
                 card.setTitle(intent.getEntities().entrySet().stream().filter(e -> !e.getKey().equals("period"))
-                        .map(e -> e.getValue()).collect(Collectors.joining(", ")));
+                        .map(Map.Entry::getValue).collect(Collectors.joining(", ")));
             }
             card.setSubtitle(period + " - " + matchingNonGroupItems.get().count() + " items"); // TODO: i18n
         }
 
         Component chart = new Component("HbChartImage");
-        chart.addConfig("items",
-                matchingNonGroupItems.get().map(i -> i.getName()).collect(Collectors.toList()).toArray(new String[0]));
+        chart.addConfig("items", matchingNonGroupItems.get().map(Item::getName).toArray(String[]::new));
         chart.addConfig("period", period);
 
         Component analyzeButton = new Component("HbAnalyzeActionButton");
@@ -336,11 +334,10 @@ public class CardBuilder {
      * @return an optional group eligible for the card's title, or null if none was found
      */
     private @Nullable GroupItem getMatchingGroup(Collection<Item> items) {
-        Optional<Item> groupItem = items.stream().filter(i -> i instanceof GroupItem)
+        return (GroupItem) items.stream().filter(GroupItem.class::isInstance)
                 .filter(g -> items.stream().allMatch(i -> i.getName().equals(g.getName())
                         || ((GroupItem) g).getAllMembers().stream().anyMatch(i2 -> i2.getName().contains(i.getName()))))
-                .findFirst();
-        return groupItem.isPresent() ? (GroupItem) groupItem.get() : null;
+                .findFirst().orElse(null);
     }
 
     private String formatState(Item item, State state) throws TransformationException {
@@ -350,9 +347,7 @@ public class CardBuilder {
                 if (stateDescription != null) {
                     final String pattern = stateDescription.getPattern();
                     if (pattern != null) {
-                        String transformedState = TransformationHelper.transform(
-                                FrameworkUtil.getBundle(CardBuilder.class).getBundleContext(), pattern,
-                                state.toString());
+                        String transformedState = TransformationHelper.transform(pattern, state.toString());
                         if (transformedState == null) {
                             return state.toString();
                         }

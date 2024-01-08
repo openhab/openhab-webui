@@ -185,11 +185,10 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
             throws RenderException {
         String button = getSnippet("button");
 
-        String command = cmd;
         String label = lab == null ? cmd : lab;
 
         button = button.replace("%item%", item);
-        button = button.replace("%cmd%", escapeHtml(command));
+        button = button.replace("%cmd%", escapeHtml(cmd));
         String buttonClass = "buttongrid-button";
         String style = "";
         if (icon == null || !config.isIconsEnabled()) {

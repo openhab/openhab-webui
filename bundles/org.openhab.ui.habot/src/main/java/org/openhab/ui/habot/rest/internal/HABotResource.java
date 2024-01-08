@@ -170,8 +170,8 @@ public class HABotResource implements RESTResource {
 
         itemResolver.setLocale(locale);
         Map<String, Set<ItemNamedAttribute>> attributesByItemName = new HashMap<>();
-        itemResolver.getAllItemNamedAttributes().entrySet().stream()
-                .forEach(entry -> attributesByItemName.put(entry.getKey().getName(), entry.getValue()));
+        itemResolver.getAllItemNamedAttributes()
+                .forEach((key, value) -> attributesByItemName.put(key.getName(), value));
 
         return Response.ok(attributesByItemName).build();
     }

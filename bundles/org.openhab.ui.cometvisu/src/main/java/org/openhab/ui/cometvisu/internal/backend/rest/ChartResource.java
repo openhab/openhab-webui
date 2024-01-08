@@ -252,8 +252,7 @@ public class ChartResource implements RESTResource {
         try {
             List<String> itemNames = new ArrayList<>();
 
-            if (item instanceof GroupItem) {
-                GroupItem groupItem = (GroupItem) item;
+            if (item instanceof GroupItem groupItem) {
                 for (Item member : groupItem.getMembers()) {
                     itemNames.add(member.getName());
                 }

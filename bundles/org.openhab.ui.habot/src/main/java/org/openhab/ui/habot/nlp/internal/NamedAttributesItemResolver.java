@@ -132,7 +132,7 @@ public class NamedAttributesItemResolver implements ItemResolver {
             }
 
             return (object != null && location != null) ? objectMatch && locationMatch : objectMatch || locationMatch;
-        }).map(entry -> entry.getKey());
+        }).map(Map.Entry::getKey);
     }
 
     private void updateItemNamedAttributes() {

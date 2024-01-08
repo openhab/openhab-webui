@@ -136,12 +136,12 @@ public class PageRenderer extends AbstractWidgetRenderer {
         return preChildren.append(postChildren);
     }
 
-    private void processChildren(StringBuilder sb_pre, StringBuilder sb_post, EList<Widget> children, String sitemap)
+    private void processChildren(StringBuilder sbPre, StringBuilder sbPost, EList<Widget> children, String sitemap)
             throws RenderException {
         // put a single frame around all children widgets, if there are no explicit frames
         if (!children.isEmpty()) {
-            EObject firstChild = children.get(0);
-            EObject parent = itemUIRegistry.getParent((Widget) firstChild);
+            Widget firstChild = children.get(0);
+            EObject parent = itemUIRegistry.getParent(firstChild);
             if (!(firstChild instanceof Frame || parent instanceof Frame || parent instanceof Sitemap)) {
                 String frameSnippet = getSnippet("frame");
                 frameSnippet = frameSnippet.replace("%widget_id%", "");
@@ -150,8 +150,8 @@ public class PageRenderer extends AbstractWidgetRenderer {
 
                 String[] parts = frameSnippet.split("%children%");
                 if (parts.length > 1) {
-                    sb_pre.append(parts[0]);
-                    sb_post.insert(0, parts[1]);
+                    sbPre.append(parts[0]);
+                    sbPost.insert(0, parts[1]);
                 }
                 if (parts.length > 2) {
                     logger.error("Snippet 'frame' contains multiple %children% sections, but only one is allowed!");
@@ -185,10 +185,10 @@ public class PageRenderer extends AbstractWidgetRenderer {
                             widgetType);
                 }
                 processChildren(newPre, newPost, nextChildren, sitemap);
-                sb_pre.append(newPre);
-                sb_pre.append(newPost);
+                sbPre.append(newPre);
+                sbPre.append(newPost);
             } else {
-                sb_pre.append(widgetSB);
+                sbPre.append(widgetSB);
             }
         }
     }

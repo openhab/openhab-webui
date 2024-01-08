@@ -134,7 +134,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
         State state = itemUIRegistry.getState(w);
 
         String prefix = getPrefix(w);
-        boolean hasUnit = item instanceof NumberItem ? (((NumberItem) item).getDimension() != null) : false;
+        boolean hasUnit = item instanceof NumberItem && (((NumberItem) item).getDimension() != null);
         String postfix = hasUnit ? "" : getPostfix(w);
         String prefixSnippet = !prefix.isBlank()
                 ? "<span %valuestyle% class=\"mdl-form__input-prefix\">" + prefix + "</span>"
@@ -181,8 +181,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
 
         String unitSnippet = "";
         String unit = "";
-        if (item instanceof NumberItem) {
-            NumberItem numberItem = (NumberItem) item;
+        if (item instanceof NumberItem numberItem) {
             if (numberItem.getDimension() != null) {
                 unit = getUnit(w, numberItem);
                 if ("number".equals(inputHint)) {
@@ -211,7 +210,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
             if (COMMA_SEPARATOR_PATTERN.matcher(newValue).find()) {
                 newValue = newValue.replace("/\\./g", "").replace(",", ".");
             }
-            if (unitValue.length() > 0) {
+            if (!unitValue.isEmpty()) {
                 newValue = newValue + " " + unitValue;
             }
             return newValue;
@@ -230,8 +229,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
                 value = "-";
             }
         }
-        if (item instanceof NumberItem) {
-            NumberItem numberItem = (NumberItem) item;
+        if (item instanceof NumberItem numberItem) {
             if (numberItem.getDimension() != null) {
                 String[] stateArray = value.split(" ");
                 if (stateArray.length <= 1) {
@@ -245,7 +243,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
 
     private String cleanValue(String value, Widget w, Item item) {
         String prefix = getPrefix(w);
-        boolean hasUnit = item instanceof NumberItem ? (((NumberItem) item).getDimension() != null) : false;
+        boolean hasUnit = item instanceof NumberItem && (((NumberItem) item).getDimension() != null);
         String postfix = hasUnit ? "" : getPostfix(w);
         String newValue = value.startsWith(prefix) ? value.substring(prefix.length()) : value;
         newValue = value.endsWith(postfix) ? newValue.substring(0, newValue.lastIndexOf(postfix)) : newValue;

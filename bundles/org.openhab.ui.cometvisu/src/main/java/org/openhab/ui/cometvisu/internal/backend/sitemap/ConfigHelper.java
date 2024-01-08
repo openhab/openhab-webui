@@ -429,13 +429,8 @@ public class ConfigHelper {
                 setter.invoke(element, label);
                 return label;
             }
-        } catch (NoSuchMethodException | SecurityException e) {
-            logger.error("{}", e.getMessage());
-        } catch (IllegalAccessException e) {
-            logger.error("{}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            logger.error("{}", e.getMessage());
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException | SecurityException | InvocationTargetException | IllegalArgumentException
+                | IllegalAccessException e) {
             logger.error("{}", e.getMessage());
         }
         return null;
@@ -468,13 +463,8 @@ public class ConfigHelper {
                 Method setter = element.getClass().getMethod("setMapping", String.class);
                 setter.invoke(element, mapping.getName());
                 return mapping;
-            } catch (NoSuchMethodException | SecurityException e) {
-                logger.error("{}", e.getMessage());
-            } catch (IllegalAccessException e) {
-                logger.error("{}", e.getMessage());
-            } catch (IllegalArgumentException e) {
-                logger.error("{}", e.getMessage());
-            } catch (InvocationTargetException e) {
+            } catch (NoSuchMethodException | SecurityException | InvocationTargetException | IllegalArgumentException
+                    | IllegalAccessException e) {
                 logger.error("{}", e.getMessage());
             }
         }
@@ -628,11 +618,7 @@ public class ConfigHelper {
             mapping = (EList<org.openhab.core.model.sitemap.sitemap.Mapping>) getter.invoke(widget);
         } catch (NoSuchMethodException | SecurityException e) {
             // do nothing, normal behaviour for item that have no mappingdefined
-        } catch (IllegalAccessException e) {
-            logger.error("{}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            logger.error("{}", e.getMessage());
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
             logger.error("{}", e.getMessage());
         }
         return mapping;
@@ -641,7 +627,7 @@ public class ConfigHelper {
     public Mapping addMapping(Object element, Widget widget) {
         Mapping mapping = null;
         EList<org.openhab.core.model.sitemap.sitemap.Mapping> smap = getMapping(widget);
-        if (smap != null && smap.size() > 0) {
+        if (smap != null && !smap.isEmpty()) {
             mapping = addMapping(element, String.valueOf(smap.hashCode()), smap);
         }
 
@@ -944,13 +930,8 @@ public class ConfigHelper {
                 format = m.group(2);
                 method.invoke(elem, format);
             }
-        } catch (NoSuchMethodException | SecurityException e) {
-            logger.error("{}", e.getMessage());
-        } catch (IllegalAccessException e) {
-            logger.error("{}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            logger.error("{}", e.getMessage());
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException | SecurityException | InvocationTargetException | IllegalArgumentException
+                | IllegalAccessException e) {
             logger.error("{}", e.getMessage());
         }
     }
@@ -973,10 +954,9 @@ public class ConfigHelper {
         List<JAXBElement<?>> childsToAdd = new ArrayList<>();
         List<JAXBElement<?>> groupsToDelete = new ArrayList<>();
         for (JAXBElement<?> element : children) {
-            if (element.getValue() instanceof Page) {
+            if (element.getValue() instanceof Page p) {
                 // check if this page only has invisible subpages and a pagejump
                 // in the navbar => change the pagejump to the first subpage
-                Page p = (Page) element.getValue();
                 int visible = 0;
                 Page firstChildPage = null;
                 for (JAXBElement<?> ge : p.getPageOrGroupOrNavbar()) {
@@ -995,11 +975,9 @@ public class ConfigHelper {
                 if (visible == 0 && firstChildPage != null) {
                     // find the pagejumps (only on the root page)
                     for (JAXBElement<?> e : pages.getPage().getPageOrGroupOrNavbar()) {
-                        if (e.getValue() instanceof Navbar) {
-                            Navbar navbar = (Navbar) e.getValue();
+                        if (e.getValue() instanceof Navbar navbar) {
                             for (JAXBElement<?> ne : navbar.getPageOrGroupOrLine()) {
-                                if (ne.getValue() instanceof Pagejump) {
-                                    Pagejump pj = (Pagejump) ne.getValue();
+                                if (ne.getValue() instanceof Pagejump pj) {
                                     if (pj.getTarget().equals(p.getName())) {
                                         pj.setTarget(firstChildPage.getName());
                                     }
@@ -1009,16 +987,14 @@ public class ConfigHelper {
                     }
                 }
                 cleanup(element.getValue(), pages);
-            } else if (element.getValue() instanceof Group) {
-                Group group = (Group) element.getValue();
+            } else if (element.getValue() instanceof Group group) {
                 // check for visible elements
                 int visible = 0;
                 for (JAXBElement<?> ge : group.getPageOrGroupOrLine()) {
                     if (ge == null || ge.getValue() == null) {
                         continue;
                     }
-                    if (ge.getValue() instanceof Page) {
-                        Page p = (Page) ge.getValue();
+                    if (ge.getValue() instanceof Page p) {
                         if (p.isVisible() == null || p.isVisible().booleanValue()) {
                             visible++;
                         }

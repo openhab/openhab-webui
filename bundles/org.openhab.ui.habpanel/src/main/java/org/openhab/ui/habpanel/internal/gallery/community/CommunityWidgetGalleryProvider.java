@@ -51,7 +51,7 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
 
     @Override
     public Stream<GalleryWidgetsListItem> getGalleryList() throws Exception {
-        List<DiscourseGalleryResponse> pages = new ArrayList<DiscourseGalleryResponse>();
+        List<DiscourseGalleryResponse> pages = new ArrayList<>();
 
         URL url = new URL(COMMUNITY_GALLERY_URL);
         int pageNb = 1;
@@ -71,7 +71,7 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
             }
         }
 
-        return pages.stream().flatMap(p -> Stream.of(p.topic_list.topics)).map(t -> convertTopicToWidgetsListItem(t));
+        return pages.stream().flatMap(p -> Stream.of(p.topic_list.topics)).map(this::convertTopicToWidgetsListItem);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
                             widget.contents = new String(widgetDownload.getInputStream().readAllBytes(),
                                     StandardCharsets.UTF_8);
                             String cDisp = widgetDownload.getHeaderField("Content-Disposition");
-                            if (cDisp != null && cDisp.indexOf("=") != -1 && cDisp.indexOf(".widget.json") != -1) {
+                            if (cDisp != null && cDisp.contains("=") && cDisp.contains(".widget.json")) {
                                 widget.id = cDisp.split("=")[1].replaceAll("\"", "").replaceAll("]", "")
                                         .replaceAll(".widget.json", "");
 
@@ -141,7 +141,7 @@ public class CommunityWidgetGalleryProvider implements GalleryWidgetProvider {
     /**
      * Transforms a Discourse topic to a {@link GalleryWidgetsListItem}
      *
-     * @param topic the topic
+     * @param t the topic
      * @return the list item
      */
     private GalleryWidgetsListItem convertTopicToWidgetsListItem(Object t) {

@@ -71,10 +71,10 @@ public class WebPushNotificationActionHandler extends BaseModuleHandler<Action> 
 
         try {
             Gson gson = new Gson();
-            HashMap<String, Object> payload = new HashMap<String, Object>();
+            HashMap<String, Object> payload = new HashMap<>();
             payload.put("title", (title != null) ? title : "HABot");
             payload.put("body", body);
-            HashMap<String, Object> data = new HashMap<String, Object>();
+            HashMap<String, Object> data = new HashMap<>();
             if (cardUID != null) {
                 data.put("cardUID", cardUID);
             }

@@ -183,7 +183,7 @@ public class IntentTrainer {
             intent.getEntities().put(spans[i].getType(), names[i]);
         }
 
-        logger.debug("{}", intent.toString());
+        logger.debug("{}", intent);
 
         return intent;
     }

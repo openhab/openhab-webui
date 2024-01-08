@@ -41,10 +41,10 @@ public class Card extends Component implements Identifiable<String> {
     @Nullable
     String subtitle;
 
-    Set<String> objects = new HashSet<String>();
-    Set<String> locations = new HashSet<String>();
+    Set<String> objects = new HashSet<>();
+    Set<String> locations = new HashSet<>();
 
-    Set<String> tags = new HashSet<String>();
+    Set<String> tags = new HashSet<>();
 
     boolean bookmarked;
     boolean notReuseableInChat;
@@ -213,7 +213,7 @@ public class Card extends Component implements Identifiable<String> {
      * Specifies whether the card is ephemeral, meaning it is not saved permanently to the @link {@link CardRegistry}
      * and will be purged once a number of newer ephemeral cards are added
      *
-     * @return true if the card is ephemeral, false (default) otherwise
+     * @param ephemeral true if the card is ephemeral, false (default) otherwise
      */
     public void setEphemeral(boolean ephemeral) {
         this.ephemeral = ephemeral;
@@ -300,7 +300,7 @@ public class Card extends Component implements Identifiable<String> {
     /**
      * Adds an object attribute to the card
      *
-     * @param tag the tag to add
+     * @param object the object to add
      */
     public void addObjectAttribute(String object) {
         this.objects.add(object);
@@ -309,7 +309,7 @@ public class Card extends Component implements Identifiable<String> {
     /**
      * Adds several object attributes to the card
      *
-     * @param tags the tags to add
+     * @param objects the objects to add
      */
     public void addObjectAttributes(Collection<String> objects) {
         this.objects.addAll(objects);
@@ -318,7 +318,7 @@ public class Card extends Component implements Identifiable<String> {
     /**
      * Adds several object attributes to the card
      *
-     * @param tags the tags to add
+     * @param objects the objects to add
      */
     public void addObjectAttributes(String... objects) {
         this.objects.addAll(Arrays.asList(objects));
@@ -327,7 +327,7 @@ public class Card extends Component implements Identifiable<String> {
     /**
      * Removes an object attribute on a card
      *
-     * @param tag the tag to remove
+     * @param object the object to remove
      */
     public void removeObjectAttribute(String object) {
         this.objects.remove(object);
@@ -348,7 +348,7 @@ public class Card extends Component implements Identifiable<String> {
     /**
      * Adds an location attribute to the card
      *
-     * @param tag the tag to add
+     * @param location the location to add
      */
     public void addLocationAttribute(String location) {
         this.locations.add(location);
@@ -357,7 +357,7 @@ public class Card extends Component implements Identifiable<String> {
     /**
      * Adds several object attributes to the card
      *
-     * @param tags the tags to add
+     * @param locations the locations to add
      */
     public void addLocationAttributes(Collection<String> locations) {
         this.locations.addAll(locations);
@@ -366,7 +366,7 @@ public class Card extends Component implements Identifiable<String> {
     /**
      * Adds several object attributes to the card
      *
-     * @param tags the tags to add
+     * @param locations the locations to add
      */
     public void addLocationAttributes(String... locations) {
         this.locations.addAll(Arrays.asList(locations));
@@ -375,7 +375,7 @@ public class Card extends Component implements Identifiable<String> {
     /**
      * Removes an object attribute on a card
      *
-     * @param tag the tag to remove
+     * @param location the location to remove
      */
     public void removeLocationAttribute(String location) {
         this.locations.remove(location);
@@ -384,7 +384,7 @@ public class Card extends Component implements Identifiable<String> {
     /**
      * Returns whether the card has the specified location attribute
      *
-     * @param object
+     * @param location
      */
     public boolean hasLocationAttribute(@Nullable String location) {
         if (this.locations == null || location == null || location.isEmpty()) {

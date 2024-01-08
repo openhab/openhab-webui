@@ -193,9 +193,7 @@ public class NotificationService {
                 generateVAPIDKeyPair();
             } catch (InvalidAlgorithmParameterException | NoSuchProviderException | NoSuchAlgorithmException
                     | IOException e1) {
-                RuntimeException ex = new RuntimeException("Cannot get the VAPID keypair for push notifications");
-                ex.initCause(e1);
-                throw ex;
+                throw new RuntimeException("Cannot get the VAPID keypair for push notifications", e1);
             }
         }
     }

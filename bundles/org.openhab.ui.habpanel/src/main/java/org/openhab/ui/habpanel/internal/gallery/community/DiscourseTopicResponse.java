@@ -36,13 +36,13 @@ public class DiscourseTopicResponse {
 
     public DiscourseTopicDetails details;
 
-    public class DiscoursePostAuthor {
+    public static class DiscoursePostAuthor {
         public Integer id;
         public String username;
         public String avatar_template;
     }
 
-    public class DiscoursePostLink {
+    public static class DiscoursePostLink {
         public String url;
         public Boolean internal;
         public Integer clicks;

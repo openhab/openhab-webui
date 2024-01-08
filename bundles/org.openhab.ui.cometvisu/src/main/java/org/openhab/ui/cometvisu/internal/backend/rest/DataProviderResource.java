@@ -154,7 +154,7 @@ public class DataProviderResource implements RESTResource {
         // all designs
         File designDir = ManagerSettings.getInstance().getDesignFolder();
         File[] designs = designDir.listFiles();
-        List<String> res = new ArrayList<String>();
+        List<String> res = new ArrayList<>();
         if (designs != null) {
             Arrays.sort(designs);
             for (File design : designs) {

@@ -13,7 +13,6 @@
 package org.openhab.ui.basic.internal.render;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -35,6 +34,7 @@ import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
 import org.openhab.core.ui.items.ItemUIRegistry;
+import org.openhab.core.util.ColorUtil;
 import org.openhab.ui.basic.internal.WebAppConfig;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
@@ -106,7 +106,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     /**
      * Replace some common values in the widget template
      *
-     * @param snippet snippet HTML code
+     * @param originalSnippet snippet HTML code
      * @param w corresponding widget
      * @return HTML code
      */
@@ -117,7 +117,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     /**
      * Replace some common values in the widget template
      *
-     * @param snippet snippet HTML code
+     * @param originalSnippet snippet HTML code
      * @param w corresponding widget
      * @param ignoreStateForIcon true if state has to be ignored when requesting the icon
      * @return HTML code
@@ -338,12 +338,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
             return "";
         }
 
-        try {
-            return URLEncoder.encode(string, "UTF-8");
-        } catch (UnsupportedEncodingException use) {
-            logger.warn("Cannot escape string '{}'. Returning unmodified string.", string);
-            return string;
-        }
+        return URLEncoder.encode(string, StandardCharsets.UTF_8);
     }
 
     /**
@@ -351,7 +346,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      *
      * @param w
      *            The widget to process
-     * @param snippet
+     * @param originalSnippet
      *            The snippet to translate
      * @return The updated snippet
      */
@@ -423,9 +418,8 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     }
 
     protected @Nullable String getRGBHexCodeFromItemState(@Nullable State itemState) {
-        if (itemState instanceof HSBType) {
-            HSBType hsbState = (HSBType) itemState;
-            return "#" + Integer.toHexString(hsbState.getRGB()).substring(2);
+        if (itemState instanceof HSBType hsbState) {
+            return "#" + Integer.toHexString(ColorUtil.hsbTosRgb(hsbState)).substring(2);
         }
         return null;
     }

@@ -44,7 +44,7 @@ public class IntentDocumentSampleStream implements ObjectStream<DocumentSample> 
             String[] tokens = WhitespaceTokenizer.INSTANCE.tokenize(sampleString);
 
             // remove entities
-            Vector<String> vector = new Vector<String>(tokens.length);
+            Vector<String> vector = new Vector<>(tokens.length);
             // boolean skip = false;
             for (String token : tokens) {
                 if (!token.startsWith("<")) {
