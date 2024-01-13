@@ -1,5 +1,5 @@
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
+import { javascriptGenerator } from 'blockly/javascript.js'
 import { FieldItemModelPicker } from './ohitemfield'
 
 export default function defineOHBlocks_Exec (f7) {

@@ -101,15 +101,13 @@
 </style>
 
 <script>
-import YAML from 'yaml'
-import { strOptions } from 'yaml/types'
+import YAML, { Schema } from 'yaml'
 
 import BlocklyEditor from '@/components/config/controls/blockly-editor.vue'
 import BlockPreview from './block-preview.vue'
-import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 
-strOptions.fold.lineWidth = 0
+Schema.toStringDefaults.lineWidth = 0
 
 export default {
   mixins: [DirtyMixin],

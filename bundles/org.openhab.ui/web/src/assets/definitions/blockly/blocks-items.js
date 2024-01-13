@@ -4,11 +4,11 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
-import { FieldItemModelPicker } from './fields/item-field'
-import { FieldThingPicker } from './fields/thing-field'
+import { javascriptGenerator } from 'blockly/javascript.js'
+import { FieldItemModelPicker } from './fields/item-field.js'
+import { FieldThingPicker } from './fields/thing-field.js'
 import api from '@/js/openhab/api'
-import { blockGetCheckedInputType } from './utils'
+import { blockGetCheckedInputType } from './utils.js'
 
 export default function (f7, isGraalJs) {
   /* Helper block to allow selecting an item */

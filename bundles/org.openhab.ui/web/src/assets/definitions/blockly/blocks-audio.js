@@ -11,7 +11,7 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
+import { javascriptGenerator } from 'blockly/javascript.js'
 import { FieldSlider } from '@blockly/field-slider'
 
 export default function (f7, isGraalJs, sinks, voices) {
