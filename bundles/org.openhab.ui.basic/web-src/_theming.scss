@@ -82,8 +82,7 @@ body {
 	color: var(--container-text-color, #616161) !important;
 }
 
-.mdl-form__row,
-.mdl-form__row-buttongrid {
+.mdl-form__row {
 	border-bottom: 1px solid #ccc;
 	border-bottom: 1px solid var(--border-color, #ccc);
 	color: #616161 !important;
