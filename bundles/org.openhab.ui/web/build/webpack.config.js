@@ -101,11 +101,6 @@ module.exports = {
         ]
       },
       {
-        test: /(blockly\/.*\.js)$/,
-        enforce: "pre",
-        use: (buildSourceMaps) ? ["source-map-loader"] : [],
-      },
-      {
         test: /\.vue$/,
         use: 'vue-loader'
       },
@@ -210,7 +205,6 @@ module.exports = {
       new webpack.optimize.ModuleConcatenationPlugin()
     ] : [
       // Development only plugins
-      new webpack.HotModuleReplacementPlugin(),
     ]),
     new HtmlWebpackPlugin({
       filename: './index.html',
@@ -242,7 +236,7 @@ module.exports = {
         to: resolvePath('www/robots.txt')
       }
     ]),
-    ...(!isCordova ? [
+    ...(!isCordova && env === 'production' ? [
       new WorkboxPlugin.InjectManifest({
         swSrc: resolvePath('src/service-worker.js'),
         maximumFileSizeToCacheInBytes: 100000000,
