@@ -14,6 +14,5 @@ export default () => [
     { value: 'palette', label: 'Palette' },
     { value: 'current-color', label: 'Current color' },
     { value: 'initial-current-colors', label: 'Initial current colors' }
-  ], true, true),
-  pt('defaultColor', 'Default Color', 'Color (e.g. <code>[0,0,0]</code> for black) to use for the color picker if state does not contain a color (e.g. because it is <code>NULL</code>)')
+  ], true, true)
 ]
