@@ -115,13 +115,6 @@
 			display: none;
 		}
 	}
-	&__row-buttongrid {
-		margin: 0;
-		border-bottom: 1px solid $item-separator-color;
-		&:last-child {
-			border: none;
-		}
-	}
 	&__image {
 		&.mdl-form__control {
 			padding-left: 0;
@@ -434,6 +427,8 @@
 	}
 	&__buttongrid {
 		padding: 0;
+		display: flex;
+		width: 100%;
 	}
 	&--no-label {
 		.mdl-form__title {
