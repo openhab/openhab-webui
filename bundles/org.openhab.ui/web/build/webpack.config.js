@@ -32,8 +32,8 @@ module.exports = {
     path: resolvePath(isCordova ? 'cordova/www' : 'www'),
     filename: 'js/app.[contenthash].js',
     publicPath: '/',
-    hotUpdateChunkFilename: 'hot/hot-update.js',
-    hotUpdateMainFilename: 'hot/hot-update.json'
+    hotUpdateChunkFilename: 'hot/[id].[fullhash].hot-update.js',
+    hotUpdateMainFilename: 'hot/[runtime].hot-update.json'
   },
   resolve: {
     fallback: {
