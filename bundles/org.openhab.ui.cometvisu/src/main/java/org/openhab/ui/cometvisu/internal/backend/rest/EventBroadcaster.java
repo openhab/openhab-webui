@@ -30,7 +30,6 @@ public interface EventBroadcaster {
      * Broadcasts an event described by the given parameters to all currently
      * listening clients.
      *
-     * @param item the item that should be broadcasted
      * @param eventObject bean that can be converted to a JSON object.
      */
     void broadcastEvent(final Object eventObject);

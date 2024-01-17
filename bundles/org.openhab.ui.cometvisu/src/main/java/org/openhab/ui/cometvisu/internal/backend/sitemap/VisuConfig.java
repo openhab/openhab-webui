@@ -144,7 +144,7 @@ public class VisuConfig {
             classes[0] = bean.getClass();
             JAXBContext jaxbContext = JAXBContext.newInstance(bean.getClass());
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = (xsdSchema == null || xsdSchema.trim().length() == 0) ? null
+            Schema schema = (xsdSchema == null || xsdSchema.trim().isEmpty()) ? null
                     : schemaFactory.newSchema(new File(xsdSchema));
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setSchema(schema);
@@ -153,9 +153,7 @@ public class VisuConfig {
             StringWriter sw = new StringWriter();
             marshaller.marshal(bean, sw);
             res = sw.toString();
-        } catch (JAXBException e) {
-            logger.error("{}", e.getMessage(), e);
-        } catch (SAXException e) {
+        } catch (JAXBException | SAXException e) {
             logger.error("{}", e.getMessage(), e);
         }
         return res;
@@ -206,7 +204,7 @@ public class VisuConfig {
 
         if (widget instanceof LinkableWidget) {
             EList<Widget> children = app.getItemUIRegistry().getChildren((LinkableWidget) widget);
-            if (children.size() == 0) {
+            if (children.isEmpty()) {
                 processItemWidget(rootPage, widget, item, pages, level);
             } else if (widget instanceof org.openhab.core.model.sitemap.sitemap.Frame) {
                 Group group = new Group();
@@ -220,8 +218,7 @@ public class VisuConfig {
                 Page page = new Page();
                 page.setName(configHelper.getLabel(widget));
                 configHelper.addToRoot(rootPage, factory.createPagePage(page));
-                if (widget instanceof org.openhab.core.model.sitemap.sitemap.Group) {
-                    org.openhab.core.model.sitemap.sitemap.Group group = (org.openhab.core.model.sitemap.sitemap.Group) widget;
+                if (widget instanceof org.openhab.core.model.sitemap.sitemap.Group group) {
                     // add Group item to the Navbar
                     // logger.debug("page '{}' on level {}",page.getName(),level);
                     NavbarPositionType position = (level <= 1) ? NavbarPositionType.TOP : NavbarPositionType.LEFT;
@@ -247,17 +244,16 @@ public class VisuConfig {
     }
 
     private void processItemWidget(Object rootPage, Widget widget, Item item, Pages pages, int level) {
-        if (widget instanceof org.openhab.core.model.sitemap.sitemap.Switch) {
+        if (widget instanceof org.openhab.core.model.sitemap.sitemap.Switch switchWidget) {
             if (item == null) {
                 return;
             }
-            org.openhab.core.model.sitemap.sitemap.Switch switchWidget = (org.openhab.core.model.sitemap.sitemap.Switch) widget;
 
             if (item instanceof RollershutterItem) {
                 // in the demo-sitemap a rullershutter item is defined as
                 // switch???
                 configHelper.addRollershutter(rootPage, item, switchWidget);
-            } else if (switchWidget.getMappings().size() > 0) {
+            } else if (!switchWidget.getMappings().isEmpty()) {
                 // up to 5 mapping we can use a multitrigger
                 if (switchWidget.getMappings().size() <= 4) {
                     configHelper.mapToMultiTrigger(rootPage, item, switchWidget);
@@ -315,11 +311,10 @@ public class VisuConfig {
             configHelper.addAddress(bean, item, Transform.DIMMER);
             configHelper.addLabel(bean, widget);
             configHelper.addToRoot(rootPage, factory.createPageSlide(bean));
-        } else if (widget instanceof Setpoint) {
+        } else if (widget instanceof Setpoint setpoint) {
             if (item == null) {
                 return;
             }
-            Setpoint setpoint = (Setpoint) widget;
             Slide bean = new Slide();
             bean.setFormat("%d");
             bean.setMin(setpoint.getMinValue());
@@ -330,11 +325,10 @@ public class VisuConfig {
             configHelper.addLabel(bean, widget);
 
             configHelper.addToRoot(rootPage, factory.createPageSlide(bean));
-        } else if (widget instanceof Selection) {
+        } else if (widget instanceof Selection selection) {
             if (item == null) {
                 return;
             }
-            Selection selection = (Selection) widget;
             // Map a Selection to a Group of triggers
             Group bean = new Group();
             bean.setNowidget(true);
@@ -356,8 +350,7 @@ public class VisuConfig {
             }
 
             configHelper.addToRoot(rootPage, factory.createPageGroup(bean));
-        } else if (widget instanceof Webview) {
-            Webview webview = (Webview) widget;
+        } else if (widget instanceof Webview webview) {
             Web bean = new Web();
             bean.setHeight(String.valueOf(webview.getHeight()) + "%");
             bean.setWidth("100%");
@@ -367,8 +360,7 @@ public class VisuConfig {
             configHelper.addLabel(bean, widget);
 
             configHelper.addToRoot(rootPage, factory.createPageWeb(bean));
-        } else if (widget instanceof org.openhab.core.model.sitemap.sitemap.Image) {
-            org.openhab.core.model.sitemap.sitemap.Image image = (org.openhab.core.model.sitemap.sitemap.Image) widget;
+        } else if (widget instanceof org.openhab.core.model.sitemap.sitemap.Image image) {
             Image bean = new Image();
             bean.setSrc(image.getUrl());
             bean.setRefresh(new BigDecimal(image.getRefresh()));
@@ -376,22 +368,20 @@ public class VisuConfig {
             configHelper.addLabel(bean, widget);
 
             configHelper.addToRoot(rootPage, factory.createPageImage(bean));
-        } else if (widget instanceof org.openhab.core.model.sitemap.sitemap.Video) {
-            org.openhab.core.model.sitemap.sitemap.Video video = (org.openhab.core.model.sitemap.sitemap.Video) widget;
+        } else if (widget instanceof org.openhab.core.model.sitemap.sitemap.Video video) {
             Video bean = new Video();
             bean.setSrc(video.getUrl());
 
             configHelper.addLabel(bean, widget);
 
             configHelper.addToRoot(rootPage, factory.createPageVideo(bean));
-        } else if (widget instanceof org.openhab.core.model.sitemap.sitemap.Chart && item != null) {
+        } else if (widget instanceof org.openhab.core.model.sitemap.sitemap.Chart chart && item != null) {
             if (item == null) {
                 return;
             }
             Plugin plugin = new Plugin();
             plugin.setName("diagram");
             configHelper.addPlugin(plugin);
-            org.openhab.core.model.sitemap.sitemap.Chart chart = (org.openhab.core.model.sitemap.sitemap.Chart) widget;
             Diagram bean = new Diagram();
             bean.setSeries(configHelper.getCvChartPeriod(chart.getPeriod()));
             bean.setRefresh(new BigInteger(String.valueOf(chart.getRefresh())));

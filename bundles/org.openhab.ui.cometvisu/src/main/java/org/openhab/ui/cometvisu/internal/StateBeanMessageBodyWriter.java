@@ -70,14 +70,12 @@ public class StateBeanMessageBodyWriter implements MessageBodyWriter<Object> {
      */
     public String serialize(Object bean) {
         String msg = "{\"d\":{";
-        if (bean instanceof StateBean) {
-            StateBean stateBean = (StateBean) bean;
+        if (bean instanceof StateBean stateBean) {
             msg += "\"" + stateBean.name + "\":\"" + stateBean.state + "\"";
         } else if (bean instanceof List<?>) {
             List<String> states = new ArrayList<>();
             for (Object bo : (List<?>) bean) {
-                if (bo instanceof StateBean) {
-                    StateBean stateBean = (StateBean) bo;
+                if (bo instanceof StateBean stateBean) {
                     states.add("\"" + stateBean.name + "\":\"" + stateBean.state + "\"");
                 }
             }

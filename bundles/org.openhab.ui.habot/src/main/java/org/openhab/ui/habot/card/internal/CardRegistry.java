@@ -66,7 +66,7 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
      * @return matching cards
      */
     public Collection<Card> getCardByTags(Set<String> tags) {
-        List<Card> filteredCards = new ArrayList<Card>();
+        List<Card> filteredCards = new ArrayList<>();
         for (Card card : getAll()) {
             if (cardHasTags(card, tags)) {
                 filteredCards.add(card);
@@ -84,7 +84,7 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
      *         both are provided, matching cards have both.
      */
     public Collection<Card> getCardMatchingAttributes(@Nullable String object, @Nullable String location) {
-        List<Card> filteredCards = new ArrayList<Card>();
+        List<Card> filteredCards = new ArrayList<>();
         for (Card card : getAll()) {
             if (cardMatchesAttributes(card, object, location)) {
                 filteredCards.add(card);
@@ -96,8 +96,7 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
     @Override
     public Card add(Card element) {
         // Remove old ephemeral cards
-        List<Card> oldCards = getAll().stream().filter(card -> card.isEphemeral()).sorted(byTimestamp).skip(10)
-                .collect(Collectors.toList());
+        List<Card> oldCards = getAll().stream().filter(Card::isEphemeral).sorted(byTimestamp).skip(10).toList();
 
         for (Card card : oldCards) {
             logger.debug("Removing old ephemeral card {}", card.getUID());
@@ -116,10 +115,8 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
      */
     public Collection<Card> getRecent(int skip, int count) {
         int limit = (count < 1) ? 10 : count;
-        List<Card> recentCards = getAll().stream().sorted(byTimestamp).skip(skip).limit(limit)
-                .collect(Collectors.toList());
 
-        return recentCards;
+        return getAll().stream().sorted(byTimestamp).skip(skip).limit(limit).collect(Collectors.toList());
     }
 
     /**

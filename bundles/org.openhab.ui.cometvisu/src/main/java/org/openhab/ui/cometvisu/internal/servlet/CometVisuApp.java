@@ -196,11 +196,11 @@ public class CometVisuApp {
                 Object propertyValue = properties.get(Config.COMETVISU_AUTODOWNLOAD_PROPERTY);
 
                 // Value might be a string or a boolean
-                Boolean newValue = false;
-                if (propertyValue instanceof String) {
-                    newValue = Boolean.valueOf((String) propertyValue);
-                } else if (propertyValue instanceof Boolean) {
-                    newValue = (Boolean) propertyValue;
+                boolean newValue = false;
+                if (propertyValue instanceof String s) {
+                    newValue = Boolean.parseBoolean(s);
+                } else if (propertyValue instanceof Boolean b) {
+                    newValue = b;
                 }
 
                 boolean changed = Config.cometvisuAutoDownload != newValue;
@@ -237,9 +237,7 @@ public class CometVisuApp {
      * Called by the SCR to activate the component with its configuration read
      * from CAS
      *
-     * @param bundleContext
-     *            BundleContext of the Bundle that defines this component
-     * @param configuration
+     * @param configProps
      *            Configuration properties for this component obtained from the
      *            ConfigAdmin service
      */
@@ -272,9 +270,7 @@ public class CometVisuApp {
         servlet = new CometVisuServlet(Config.cometvisuWebfolder, this);
         try {
             httpService.registerServlet(Config.cometvisuWebappAlias, servlet, servletParams, null);
-        } catch (ServletException e) {
-            logger.error("Error during servlet startup", e);
-        } catch (NamespaceException e) {
+        } catch (ServletException | NamespaceException e) {
             logger.error("Error during servlet startup", e);
         }
     }
@@ -287,7 +283,7 @@ public class CometVisuApp {
      * Called by the SCR when the configuration of a binding has been changed
      * through the ConfigAdmin service.
      *
-     * @param configuration
+     * @param configProps
      *            Updated configuration properties
      */
     @Modified

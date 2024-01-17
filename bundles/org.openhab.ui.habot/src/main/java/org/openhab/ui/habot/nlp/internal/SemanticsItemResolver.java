@@ -71,13 +71,12 @@ public class SemanticsItemResolver implements ItemResolver {
         if (location != null) {
             items = semanticsService.getItemsInLocation(location, currentLocale).stream();
         } else {
-            items = new HashSet<Item>(itemRegistry.getAll()).stream();
+            items = new HashSet<>(itemRegistry.getAll()).stream();
         }
 
         if (object != null) {
             List<Class<? extends Tag>> semanticTagTypes = semanticsService.getByLabelOrSynonym(object, currentLocale);
-            if (!semanticTagTypes.isEmpty()
-                    && semanticTagTypes.stream().noneMatch(t -> Location.class.isAssignableFrom(t))) {
+            if (!semanticTagTypes.isEmpty() && semanticTagTypes.stream().noneMatch(Location.class::isAssignableFrom)) {
                 Predicate<Item> tagsPredicate = null;
                 for (Class<? extends Tag> tag : semanticTagTypes) {
                     Predicate<Item> tagPredicate = Property.class.isAssignableFrom(tag)
@@ -102,14 +101,14 @@ public class SemanticsItemResolver implements ItemResolver {
             throw new UnsupportedLanguageException(currentLocale);
         }
 
-        Map<Item, Set<ItemNamedAttribute>> attributes = new HashMap<Item, Set<ItemNamedAttribute>>();
+        Map<Item, Set<ItemNamedAttribute>> attributes = new HashMap<>();
 
         for (Item item : itemRegistry.getAll()) {
             Class<? extends Tag> semanticType = SemanticTags.getSemanticType(item);
             if (semanticType != null) {
-                Set<ItemNamedAttribute> itemAttributes = new HashSet<ItemNamedAttribute>();
+                Set<ItemNamedAttribute> itemAttributes = new HashSet<>();
 
-                attributes.put(item, new HashSet<ItemNamedAttribute>());
+                attributes.put(item, new HashSet<>());
                 String attributeType = (Location.class.isAssignableFrom(semanticType)) ? "location" : "object";
 
                 // Add the item's label

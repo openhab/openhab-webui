@@ -233,7 +233,7 @@ public class FsUtil {
      * @return A list of MointPoints that are mounted as directories in this path
      */
     public ArrayList<MountPoint> getMounts(Path path) {
-        ArrayList<MountPoint> mounts = new ArrayList<MountPoint>();
+        ArrayList<MountPoint> mounts = new ArrayList<>();
         for (final MountPoint mount : ManagerSettings.getInstance().getMounts()) {
             if (mount.getAbsoluteTarget().startsWith(path)) {
                 mounts.add(mount);
@@ -248,7 +248,7 @@ public class FsUtil {
         entry.setName(file.getName());
         entry.setHasChildren(file.isDirectory() && file.listFiles().length > 0);
         entry.setParentFolder(mount.getPath());
-        entry.setWriteable(mount.isReadonlyMount() ? false : file.canWrite());
+        entry.setWriteable(!mount.isReadonlyMount() && file.canWrite());
         entry.setReadable(file.canRead());
         entry.setMounted(false);
         entry.setInTrash(this.isInTrash(file));

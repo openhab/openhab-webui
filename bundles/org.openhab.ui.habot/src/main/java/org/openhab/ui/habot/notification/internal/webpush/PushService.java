@@ -154,7 +154,7 @@ public class PushService {
         byte[] salt = encrypted.getSalt();
 
         Invocation.Builder invocationBuilder = ClientBuilder.newClient().target(notification.getEndpoint()).request();
-        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add("TTL", String.valueOf(notification.getTTL()));
 
         if (notification.hasPayload()) {

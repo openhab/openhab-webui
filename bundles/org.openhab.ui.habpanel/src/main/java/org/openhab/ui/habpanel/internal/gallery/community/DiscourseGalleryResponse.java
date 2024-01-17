@@ -24,19 +24,19 @@ public class DiscourseGalleryResponse {
     public DiscourseUser[] users;
     public DiscourseTopicList topic_list;
 
-    public class DiscourseUser {
+    public static class DiscourseUser {
         public Integer id;
         public String username;
         public String avatar_template;
     }
 
-    public class DiscourseTopicList {
+    public static class DiscourseTopicList {
         public String more_topics_url;
         public Integer per_page;
         public DiscourseTopic[] topics;
     }
 
-    public class DiscourseTopic {
+    public static class DiscourseTopic {
         public Integer id;
         public String title;
         public String slug;

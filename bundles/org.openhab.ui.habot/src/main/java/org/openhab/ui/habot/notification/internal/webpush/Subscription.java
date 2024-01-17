@@ -35,7 +35,7 @@ public class Subscription implements Identifiable<Keys> {
         this.keys = keys;
     }
 
-    public class Keys {
+    public static class Keys {
         public final String p256dh;
 
         public final String auth;

@@ -234,10 +234,9 @@ public class ClientInstaller {
                     List<Map<String, Object>> jsonResponse = new Gson().fromJson(response, ArrayList.class);
 
                     // releases are ordered top-down, the latest release comes first
-                    for (int i = 0; i < jsonResponse.size(); i++) {
-                        var release = jsonResponse.get(i);
-                        if (((boolean) release.getOrDefault("prerelease", true)) == false
-                                && ((boolean) release.getOrDefault("draft", true)) == false) {
+                    for (Map<String, Object> release : jsonResponse) {
+                        if (!((boolean) release.getOrDefault("prerelease", true))
+                                && !((boolean) release.getOrDefault("draft", true))) {
                             latestRelease = release;
                             break;
                         }
@@ -259,8 +258,7 @@ public class ClientInstaller {
         List<Map<String, Object>> assets = (List<Map<String, Object>>) latestRelease.get("assets");
 
         Map<String, Object> releaseAsset = null;
-        for (Object assetObj : assets) {
-            Map<String, Object> asset = (Map<String, Object>) assetObj;
+        for (Map<String, Object> asset : assets) {
             String contentType = ((String) asset.getOrDefault("content_type", ""));
             String name = ((String) asset.getOrDefault("name", ""));
             if (contentType.equalsIgnoreCase("application/zip")
@@ -313,8 +311,7 @@ public class ClientInstaller {
                     }
                     new File(file.getParent()).mkdirs();
 
-                    try (InputStream is = zipFile.getInputStream(entry);
-                            OutputStream os = new FileOutputStream(file);) {
+                    try (InputStream is = zipFile.getInputStream(entry); OutputStream os = new FileOutputStream(file)) {
                         for (int len; (len = is.read(BUFFER)) != -1;) {
                             os.write(BUFFER, 0, len);
                         }

@@ -35,7 +35,6 @@ import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.IntentInterpretation;
 import org.openhab.ui.habot.nlp.ItemResolver;
 import org.openhab.ui.habot.nlp.Skill;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Reference;
 
@@ -134,9 +133,7 @@ public class HistoryLastChangesSkill extends AbstractItemIntentInterpreter {
                 final String pattern = stateDescription.getPattern();
                 if (pattern != null) {
                     try {
-                        String transformedState = TransformationHelper.transform(
-                                FrameworkUtil.getBundle(HistoryLastChangesSkill.class).getBundleContext(), pattern,
-                                state.toString());
+                        String transformedState = TransformationHelper.transform(pattern, state.toString());
                         if (transformedState != null && transformedState.equals(state.toString())) {
                             return state.format(pattern);
                         } else {

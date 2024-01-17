@@ -60,8 +60,7 @@ public abstract class AbstractItemIntentInterpreter implements Skill {
 
         // expand group items
         for (Item item : items.toArray(new Item[0])) {
-            if (item instanceof GroupItem) {
-                GroupItem gItem = (GroupItem) item;
+            if (item instanceof GroupItem gItem) {
                 items.addAll(gItem.getMembers());
             }
         }

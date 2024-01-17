@@ -59,7 +59,7 @@ public class ImageRenderer extends AbstractWidgetRenderer {
     @Override
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Image image = (Image) w;
-        String snippet = (image.getChildren().size() > 0) ? getSnippet("image_link") : getSnippet("image");
+        String snippet = (!image.getChildren().isEmpty()) ? getSnippet("image_link") : getSnippet("image");
 
         boolean showHeaderRow = image.getLabel() != null;
         snippet = snippet.replace("%header_visibility_class%",

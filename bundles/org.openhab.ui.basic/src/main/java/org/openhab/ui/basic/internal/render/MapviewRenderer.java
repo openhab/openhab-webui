@@ -69,8 +69,7 @@ public class MapviewRenderer extends AbstractWidgetRenderer {
         snippet = processColor(w, snippet);
 
         State state = itemUIRegistry.getState(mapview);
-        if (state instanceof PointType) {
-            PointType pointState = (PointType) state;
+        if (state instanceof PointType pointState) {
             double latitude = pointState.getLatitude().doubleValue();
             double longitude = pointState.getLongitude().doubleValue();
             snippet = snippet.replace("%url%", MAP_URL);
