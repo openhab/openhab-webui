@@ -5,7 +5,7 @@
       <f7-col v-if="!createMode && languages">
         <f7-block-title>Scripting Language</f7-block-title>
         <f7-list media-list>
-          <f7-list-item media-item radio radio-icon="start"
+          <f7-list-item media-item radio radio-icon="start" :disabled="true"
                         :value="mode" :checked="mode === language.contentType" @change="$emit('newLanguage', language.contentType)"
                         v-for="language in languages" :key="language.contentType"
                         :title="language.name" :after="language.version" :footer="language.contentType" />
@@ -23,6 +23,11 @@ export default {
   emits: ['newLanguage'],
   components: {
     RuleGeneralSettings
+  },
+  computed: {
+    editable () {
+      return this.rule && this.rule.editable
+    }
   }
 }
 </script>

@@ -50,7 +50,7 @@
           </f7-col>
         </f7-block>
 
-        <rule-general-settings :rule="rule" :ready="ready" :createMode="isNewRule" :isEditable="isEditable" :hasTemplate="hasTemplate" />
+        <rule-general-settings :rule="rule" :ready="ready" :createMode="isNewRule" :hasTemplate="hasTemplate" />
 
         <f7-block v-if="ready" class="block-narrow">
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
