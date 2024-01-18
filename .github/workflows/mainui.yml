@@ -1,10 +1,12 @@
 name: Main UI
 
 on:
+  push:
+    branches: [ main ]
+    paths: bundles/org.openhab.ui/web/**
   pull_request:
     branches: [ main ]
     paths: bundles/org.openhab.ui/web/**
-
   workflow_dispatch:
 
 defaults:
