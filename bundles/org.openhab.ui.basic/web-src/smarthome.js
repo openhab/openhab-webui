@@ -2955,9 +2955,7 @@
 				responseJSON,
 				subscribeLocation,
 				subscribeLocationArray,
-				sitemap,
-				subscriptionId,
-				page;
+				subscriptionId;
 
 			try {
 				responseJSON = JSON.parse(response.responseText);
@@ -2978,14 +2976,11 @@
 			subscribeLocationArray = subscribeLocation.split("/");
 			subscriptionId = subscribeLocationArray[subscribeLocationArray.length - 1];
 
-			sitemap = document.body.getAttribute("data-sitemap");
-			page = document.body.getAttribute("data-page-id");
-
 			smarthome.subscriptionId = subscriptionId;
 
 			initSubscription(subscribeLocation +
-				"?sitemap=" + sitemap +
-				"&pageid=" + page);
+				"?sitemap=" + smarthome.UI.sitemap +
+				"&pageid=" + smarthome.UI.page);
 		};
 
 		_t.subscriberError = function(xhr) {
