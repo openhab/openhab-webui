@@ -2677,7 +2677,7 @@
 		_t.navigate = function(){};
 		_t.source = new EventSource(subscribeLocation);
 
-		_t.source.addEventListener("event", function(payload) {
+		function handleEventSourceEvent(payload) {
 			if (_t.paused) {
 				return;
 			}
@@ -2749,10 +2749,17 @@
 				};
 				_t.updateWidget(smarthome.dataModel[data.widgetId], update);
 			}
-		});
+		}
+
+		_t.source.addEventListener("event", handleEventSourceEvent);
+
+		_t.closeConnection = function() {
+			_t.source.removeEventListener("event", handleEventSourceEvent);
+			_t.source.close();
+		};
 
 		_t.source.onerror = function() {
-			_t.source.close();
+			_t.closeConnection();
 			_t.connectionError();
 		};
 	}
@@ -2994,6 +3001,8 @@
 			initSubscription(null);
 		};
 
+		_t.closeConnection = function(){};
+
 		ajax({
 			url: _t.subscribeRequestURL,
 			type: "POST",
@@ -3056,6 +3065,7 @@
 
 		window.addEventListener("beforeunload", function() {
 			smarthome.changeListener.suppressErrors();
+			smarthome.changeListener.closeConnection();
 		});
 	});
 })({
