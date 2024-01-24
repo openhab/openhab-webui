@@ -438,7 +438,9 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     }
 
     protected String escapeHtml(@Nullable String s) {
-        return StringEscapeUtils.escapeHtml4(s);
+        String result = StringEscapeUtils.escapeHtml4(s);
+        // Also replace non printable characters by the unicode replacement character
+        return result != null ? result.replaceAll("[\\p{C}]", "\uFFFD") : "";
     }
 
     @Override
