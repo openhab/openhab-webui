@@ -77,7 +77,14 @@ module.exports = {
           sourceMap: true
         }
       }),
-      new CssMinimizerPlugin(),
+      new CssMinimizerPlugin({
+        minimizerOptions: {
+          processorOptions: {
+            safe: true,
+            map: { inline: false }
+          },
+        },
+      }),
     ]
   },
   module: {
