@@ -23,6 +23,9 @@ const isCordova = target === 'cordova'
 
 const apiBaseUrl = process.env.OH_APIBASE || 'http://localhost:8080'
 
+/**
+ * @type {import('webpack').Configuration}
+ */
 module.exports = {
   mode: env,
   entry: [
@@ -81,7 +84,7 @@ module.exports = {
         minimizerOptions: {
           processorOptions: {
             safe: true,
-            map: { inline: false }
+            map: { inline: false, annotation: env !== 'production' }
           },
         },
       }),
