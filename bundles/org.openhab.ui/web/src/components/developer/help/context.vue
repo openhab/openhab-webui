@@ -31,8 +31,13 @@ export default {
       return 'https://raw.githubusercontent.com/florian-h05/openhab-docs/mainui-doc-integration/mainui' // TODO: Remove this line
       // return `https://raw.githubusercontent.com/openhab/openhab-docs/${this.docsBranch}/mainui`
     },
+    localUrl () {
+      if (!this.$store.state.pagePath.endsWith('/')) return '/'
+      return this.$store.state.pagePath
+    },
     documentationLink () {
-      return `${this.docUrl}/mainui${this.path}.html`
+      if (this.path.endsWith('index')) return `${this.docUrl}/mainui${this.path.replace('index', '')}`
+      return `${this.docUrl}/mainui${this.path}`
     }
   },
   watch: {
@@ -86,15 +91,15 @@ export default {
             body = body.replace(/<h1 .*$/gm, '') // Remove h1 headings
             body = body.replace(/<img src=".*$/gm, '') // Remove images
 
-            body = body.replace(/<a href="\/docs/gm, `<a class="external" target="_blank" href="${this.docUrl}`) // Fix docs page anchor href
+            // Fix {{base}} and /docs anchor href for doc pages
+            body = body.replace(/<a href="(%7B%7Bbase%7D%7D|\/docs)/gm, `<a class="external" target="_blank" href="${this.docUrl}`)
             // Fix local folder anchor href: Rewrite folder to /folder/
-            body = body.replace(/(<a href=")([A-z]+)(")/gm, '$1/$2/$3')
-            // Fix page.html anchor href: Rewrite page.html to page/
-            body = body.replace(/(<a href=")([A-z]+).html(")/gm, '$1$2/$3')
+            body = body.replace(/(<a href=")([A-z]+)(")/gm, '$1' + this.localUrl + '$2/$3')
 
-            // Allow embedding framework7 icons by using <!--F7(:blue) ICON_NAME --> comments
-            body = body.replace(/(<!--F7 )([A-z]*)( -->)/gm, '<i class="f7-icons size-22">$2</i>')
-            body = body.replace(/(<!--F7:blue )([A-z]*)( -->)/gm, '<i class="f7-icons size-22" style="color: #2196f3">$2</i>')
+            // Allow embedding framework7 icons by using <!--F7(:blue|:green) ICON_NAME --> comments
+            body = body.replace(/<!--F7 ([A-z]*) -->/gm, '<i class="f7-icons size-22">$1</i>')
+            body = body.replace(/<!--F7:blue ([A-z]*) -->/gm, '<i class="f7-icons size-22" style="color: #2196f3">$1</i>')
+            body = body.replace(/<!--F7:green ([A-z]*) -->/gm, '<i class="f7-icons size-22" style="color: #4cd964">$1</i>')
 
             body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
             body = body.replace(/<\/pre>/gm, '</pre></div>')
