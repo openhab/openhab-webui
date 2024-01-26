@@ -147,7 +147,7 @@ export default {
       return localStorage.getItem('openhab.ui:theme.dark') || 'auto'
     },
     barsStyle () {
-      return localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.ios || this.$f7.darkTheme || this.darkMode === 'dark') ? 'light' : 'filled')
+      return localStorage.getItem('openhab.ui:theme.bars') || 'light'
     },
     homePageNavbarStyle () {
       return localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
