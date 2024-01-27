@@ -2314,10 +2314,13 @@
 		_t.escapeHtml = function(text) {
 			var
 				escapedText = text,
+				nonPrintable = new RegExp(/\p{C}/, "gu"),
 				escapeTable = [
-					[ /&/g, "&amp;" ],
-					[ /</g, "&lt;"  ],
-					[ />/g, "&gt;"  ]
+					[ /&/g,         "&amp;"  ],
+					[ /</g,         "&lt;"   ],
+					[ />/g,         "&gt;"   ],
+					[ /"/g,         "&quot;" ],
+					[ nonPrintable, "\uFFFD" ]
 				];
 
 			for (var i = 0; i < escapeTable.length; i++) {
