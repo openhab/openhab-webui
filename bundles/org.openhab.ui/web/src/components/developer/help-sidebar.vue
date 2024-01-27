@@ -72,17 +72,18 @@
           </f7-block-title>
         </f7-block>
 
-        <thing-context v-if="($store.state.pagePath).indexOf('things') >= 0" />
-        <item-context v-else-if="($store.state.pagePath).indexOf('items') >= 0" />
-        <model-context v-else-if="($store.state.pagePath).indexOf('model') >= 0" />
-        <page-context v-else-if="($store.state.pagePath).indexOf('pages') >= 0" />
-        <rule-context v-else-if="($store.state.pagePath).indexOf('rules') >= 0 || ($store.state.pagePath).indexOf('schedule') >= 0" type="Rules" />
-        <rule-context v-else-if="($store.state.pagePath).indexOf('scenes') >= 0" type="Scenes" />
-        <rule-context v-else-if="($store.state.pagePath).indexOf('scripts') >= 0" type="Scripts" />
-        <widget-context v-else-if="($store.state.pagePath).indexOf('widgets') >= 0" />
-        <transform-context v-else-if="($store.state.pagePath).indexOf('transformations') >= 0" />
-        <addon-context v-else-if="($store.state.pagePath).indexOf('addons') >= 0" />
-        <default-context v-else style="width: 100%" />
+        <!-- /settings/* docs -->
+        <context v-if="($store.state.pagePath) === '/settings/'" path="/settings/index" />
+        <context v-else-if="/\/settings\/[A-z]+/.test($store.state.pagePath)" :path="/(\/[A-z]+\/[A-z]+)/.exec($store.state.pagePath)[0]" />
+        <!-- /addons/ docs -->
+        <context v-else-if="($store.state.pagePath).indexOf('/addons/') >= 0" path="/addons" />
+        <!-- /developer/* docs -->
+        <context v-else-if="($store.state.pagePath) === '/developer/'" path="/developer/index" />
+        <context v-else-if="($store.state.pagePath).indexOf('/developer/widgets') >= 0" path="/developer/widgets" />
+        <!-- /about/ docs -->
+        <context v-else-if="($store.state.pagePath).indexOf('/about/') >= 0" path="/about" />
+        <!-- default docs -->
+        <context v-else path="/index" />
 
         <f7-block class="no-padding no-margin">
           <f7-block-title class="padding-horizontal" medium>
@@ -142,27 +143,11 @@
 
 <script>
 import { loadLocaleMessages } from '@/js/i18n'
-import ThingContext from './help/thing-context.vue'
-import ItemContext from './help/item-context.vue'
-import ModelContext from './help/model-context.vue'
-import PageContext from './help/page-context.vue'
-import RuleContext from './help/rule-context.vue'
-import WidgetContext from './help/widget-context.vue'
-import AddonContext from './help/addon-context.vue'
-import TransformContext from './help/transform-context.vue'
-import DefaultContext from './help/default-context.vue'
+import Context from '@/components/developer/help/context.vue'
 
 export default {
   components: {
-    ThingContext,
-    ItemContext,
-    ModelContext,
-    PageContext,
-    RuleContext,
-    WidgetContext,
-    AddonContext,
-    TransformContext,
-    DefaultContext
+    Context
   },
   props: ['activeHelpTab'],
   data () {

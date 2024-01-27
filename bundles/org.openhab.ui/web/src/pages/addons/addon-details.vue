@@ -289,8 +289,6 @@ export default {
         let addonTypeFolder = '_addons_' + this.addon.type
         if (this.addon.type === 'misc') addonTypeFolder = '_addons_io'
         if (this.addon.type !== 'automation') addonTypeFolder += 's'
-        let docUrl = (this.$store.state.runtimeInfo.buildString === 'Release Build') ? 'https://www.openhab.org' : 'https://next.openhab.org'
-        docUrl += `/addons/${this.addon.type}/${this.addon.id}`
         let docSrcUrl = `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/${addonTypeFolder}/${this.addon.id}`
 
         fetch(docSrcUrl + '/readme.md').then((readme) => {

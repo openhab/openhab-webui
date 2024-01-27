@@ -2,6 +2,8 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar title="Persistence Settings" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right v-if="persistenceList.length > 0">
+        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
+        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
