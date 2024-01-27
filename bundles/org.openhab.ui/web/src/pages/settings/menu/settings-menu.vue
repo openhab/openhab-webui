@@ -18,7 +18,7 @@
     </f7-navbar>
     <f7-block class="block-narrow after-big-title settings-menu" v-show="servicesLoaded && addonsLoaded">
       <f7-row>
-        <f7-col class="settings-col" width="100" medium="50">
+        <f7-col :class="addonsLoaded && addonsInstalled.length > 0 ? 'settings-col' : ''" width="100" medium="50">
           <f7-block-title>Configuration</f7-block-title>
           <f7-list media-list class="search-list">
             <f7-list-item
@@ -122,7 +122,7 @@
             </f7-list-item>
           </f7-list>
         </f7-col>
-        <f7-col class="settings-col" width="100" medium="50">
+        <f7-col :class="addonsLoaded && addonsInstalled.length > 0 ? 'settings-col' : ''" width="100" medium="50">
           <div v-if="$store.getters.apiEndpoint('services') && servicesLoaded">
             <f7-block-title>System Settings</f7-block-title>
             <f7-list class="search-list">
@@ -136,14 +136,12 @@
               </f7-list-button>
             </f7-list>
           </div>
-          <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && $f7.width < 1450">
+          <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && addonsInstalled.length > 0 && $f7.width < 1450">
             <addon-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
           </div>
         </f7-col>
-        <f7-col width="33" class="add-on-col">
-          <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && $f7.width >= 1450">
-            <addon-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
-          </div>
+        <f7-col width="33" class="add-on-col" v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && addonsInstalled.length > 0 && $f7.width >= 1450">
+          <addon-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
         </f7-col>
       </f7-row>
       <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
