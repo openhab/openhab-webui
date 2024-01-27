@@ -113,6 +113,9 @@ export default {
             this.ready = true
           })
         })
+      }).catch((err) => {
+        this.parsedDocs = '<p>Failed to load docs.</p><p>This might be an issue with your internet connection.</p><h3>Debug Information</h3><blockquote>' + err + '</blockquote>'
+        this.ready = true
       })
     }
   },
