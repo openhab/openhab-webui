@@ -122,7 +122,12 @@ export default {
       return page
     },
     tabsVisible () {
+      // Show the tabs bar if the home page component is unavailable
       if (!this.homePageComponent) return true
+      // Hide the tabs bar if all model tabs are hidden
+      if (this.homePageComponent.config?.hiddenModelTabs?.length === 3) return false
+      // Hide the tabs bar if model cards are restricted to a role and/or users and the current users doesn't satisfy the requirements
+      // Note: User configuration takes precedence over role configuration
       const visibleTo = this.homePageComponent.config.displayModelCardsTo
       if (visibleTo === undefined || !visibleTo.length) return true
       const user = this.$store.getters.user
