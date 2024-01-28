@@ -44,7 +44,7 @@
     </f7-fab>
     -->
 
-    <f7-sheet ref="detailsSheet" class="transformation-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
+    <f7-sheet v-if="ready" ref="detailsSheet" class="transformation-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
       <f7-page>
         <f7-toolbar tabbar bottom>
           <span class="margin-left">Transformation details</span>
@@ -62,7 +62,7 @@
                 Remove Transformation
               </f7-list-button>
             </f7-list>
-            <p v-if="ready" class="text-align-center">
+            <p class="text-align-center">
               Tip: Use <code>{{ itemStateTransformationCode }}</code> <clipboard-icon :value="itemStateTransformationCode" tooltip="Copy transformation" /> for Item state transformations.
             </p>
           </f7-col>
