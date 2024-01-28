@@ -25,7 +25,7 @@ export default function (f7, isGraalJs, sinks, voices) {
     }
   }
 
-  javascriptGenerator['oh_volumeslider'] = function (block) {
+  javascriptGenerator.forBlock['oh_volumeslider'] = function (block) {
     const fieldName = block.getFieldValue('volume')
     let code = `'${fieldName}'`
     return [code, 0]
@@ -43,7 +43,7 @@ export default function (f7, isGraalJs, sinks, voices) {
       this.appendValueInput('sinkName')
         .setCheck(null)
         .appendField('on')
-      this.setInputsInline(false)
+      this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
@@ -56,7 +56,7 @@ export default function (f7, isGraalJs, sinks, voices) {
   * Plays a file (like mp3) which resides in conf/sounds to the given sink
   * Code part
   */
-  javascriptGenerator['oh_playmedia_sink'] = function (block) {
+  javascriptGenerator.forBlock['oh_playmedia_sink'] = function (block) {
     let fileName = javascriptGenerator.valueToCode(block, 'fileName', javascriptGenerator.ORDER_ATOMIC)
     let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
@@ -73,13 +73,13 @@ export default function (f7, isGraalJs, sinks, voices) {
       this.appendValueInput('fileName')
         .appendField('play audio')
         .setCheck('String')
-      this.appendValueInput('sinkName')
-        .setCheck(null)
-        .appendField('on')
       this.appendValueInput('volume')
         .setCheck(null)
         .appendField('at volume')
-      this.setInputsInline(false)
+      this.appendValueInput('sinkName')
+        .setCheck(null)
+        .appendField('on')
+      this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
@@ -93,7 +93,7 @@ export default function (f7, isGraalJs, sinks, voices) {
   * Note: In general, though more complex, rather create a volume item for that device and set the volume first as it is more reliable.
   * Code part
   */
-  javascriptGenerator['oh_playmedia_sink_volume'] = function (block) {
+  javascriptGenerator.forBlock['oh_playmedia_sink_volume'] = function (block) {
     let fileName = javascriptGenerator.valueToCode(block, 'fileName', javascriptGenerator.ORDER_ATOMIC)
     let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
     let volume = javascriptGenerator.valueToCode(block, 'volume', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
@@ -118,7 +118,7 @@ export default function (f7, isGraalJs, sinks, voices) {
       this.appendValueInput('sinkName')
         .setCheck(null)
         .appendField('on')
-      this.setInputsInline(false)
+      this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
@@ -131,7 +131,7 @@ export default function (f7, isGraalJs, sinks, voices) {
   * Plays a stream from a URL on a specific sink
   * Blockly part
   */
-  javascriptGenerator['oh_playstream_sink'] = function (block) {
+  javascriptGenerator.forBlock['oh_playstream_sink'] = function (block) {
     let url = javascriptGenerator.valueToCode(block, 'url', javascriptGenerator.ORDER_ATOMIC)
     let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
@@ -161,7 +161,7 @@ export default function (f7, isGraalJs, sinks, voices) {
   * Stops a stream on a specific sink
   * Blockly part
   */
-  javascriptGenerator['oh_stopstream_sink'] = function (block) {
+  javascriptGenerator.forBlock['oh_stopstream_sink'] = function (block) {
     let url = block.getFieldValue('url')
     let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
@@ -177,13 +177,13 @@ export default function (f7, isGraalJs, sinks, voices) {
     init: function () {
       this.appendValueInput('textToSay')
         .appendField('say')
-      this.appendValueInput('deviceSink')
-        .appendField('on')
-        .setCheck('String')
       this.appendValueInput('voice')
         .appendField('with')
         .setCheck('String')
-      this.setInputsInline(false)
+      this.appendValueInput('deviceSink')
+        .appendField('on')
+        .setCheck('String')
+      this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
@@ -196,7 +196,7 @@ export default function (f7, isGraalJs, sinks, voices) {
   * Says some text via a device sink - TTS has to be installed for that
   * Code part
   */
-  javascriptGenerator['oh_say'] = function (block) {
+  javascriptGenerator.forBlock['oh_say'] = function (block) {
     const textToSay = javascriptGenerator.valueToCode(block, 'textToSay', javascriptGenerator.ORDER_ATOMIC)
     const voiceName = javascriptGenerator.valueToCode(block, 'voice', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
     const deviceSink = javascriptGenerator.valueToCode(block, 'deviceSink', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
@@ -211,7 +211,6 @@ export default function (f7, isGraalJs, sinks, voices) {
   Blockly.Blocks['oh_audiosink_dropdown'] = {
     init: function () {
       let input = this.appendDummyInput()
-        .appendField('audio sink')
         .appendField(new Blockly.FieldDropdown(this.generateOptions), 'sinks')
       this.setOutput(true, null)
     },
@@ -229,7 +228,7 @@ export default function (f7, isGraalJs, sinks, voices) {
     }
   }
 
-  javascriptGenerator['oh_audiosink_dropdown'] = function (block) {
+  javascriptGenerator.forBlock['oh_audiosink_dropdown'] = function (block) {
     let sinkName = block.getFieldValue('sinks')
     return [`'${sinkName}'`, javascriptGenerator.ORDER_NONE]
   }
@@ -259,7 +258,7 @@ export default function (f7, isGraalJs, sinks, voices) {
     }
   }
 
-  javascriptGenerator['oh_voices_dropdown'] = function (block) {
+  javascriptGenerator.forBlock['oh_voices_dropdown'] = function (block) {
     let voiceName = block.getFieldValue('voiceName')
     return [`'${voiceName}'`, javascriptGenerator.ORDER_NONE]
   }

@@ -241,3 +241,21 @@ export function blockGetCheckedInputType (block, inputName) {
   }
   return ''
 }
+
+/**
+ * Generates the code for item object based on the inputType.
+ *
+ * @param {string} input the input to convert into code of item object
+ * @param {string} inputType Either a 'String', 'oh_item', or 'oh_itemtype'
+ * @param {boolean} isGraalJs determines the type of code to generate
+ * @returns {string}
+ */
+export function generateItemCode (input, inputType, isGraalJs) {
+  if (inputType === 'oh_itemtype') {
+    return input // oh_itemtype already returns the code for item object
+  } else if (isGraalJs) {
+    return `items.getItem(${input})`
+  } else {
+    return `itemRegistry.getItem(${input})`
+  }
+}

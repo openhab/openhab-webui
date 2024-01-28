@@ -23,7 +23,7 @@ export default function defineOHBlocks_Exec (f7) {
     }
   }
 
-  javascriptGenerator['oh_exec'] = function (block) {
+  javascriptGenerator.forBlock['oh_exec'] = function (block) {
     let runCommand = block.getFieldValue('execCommand')
     const itemName = javascriptGenerator.valueToCode(block, 'sendTo', javascriptGenerator.ORDER_ATOMIC)
     let code = 'var exec = Java.type("org.openhab.core.model.script.actions.Exec");\n'
@@ -49,7 +49,7 @@ export default function defineOHBlocks_Exec (f7) {
     }
   }
 
-  javascriptGenerator['oh_exec2'] = function (block) {
+  javascriptGenerator.forBlock['oh_exec2'] = function (block) {
     const exec = javascriptGenerator.provideFunction_(
       'exec',
       ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Exec");'])
@@ -79,7 +79,7 @@ export default function defineOHBlocks_Exec (f7) {
     }
   }
 
-  javascriptGenerator['oh_exec3'] = function (block) {
+  javascriptGenerator.forBlock['oh_exec3'] = function (block) {
     const exec = javascriptGenerator.provideFunction_(
       'exec',
       ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Exec\');'])

@@ -5,7 +5,7 @@
 
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
-import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js'
+import { blockGetCheckedInputType, generateItemCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7, isGraalJs) {
   /*
@@ -29,7 +29,7 @@ export default function (f7, isGraalJs) {
   * converts a hex color string in to an openHAB hue-saturation-brightness string
   * Code generation
   */
-  javascriptGenerator['oh_color_to_hsb'] = function (block) {
+  javascriptGenerator.forBlock['oh_color_to_hsb'] = function (block) {
     let conversionFunction = addConvertColourHexToHSB()
     const hexColor = javascriptGenerator.valueToCode(block, 'hexColor', javascriptGenerator.ORDER_ATOMIC)
     let code = `${conversionFunction}(${hexColor})`
@@ -44,9 +44,9 @@ export default function (f7, isGraalJs) {
         ['brightness', 'Brightness']
       ])
       this.appendValueInput('item')
-        .setCheck(['oh_itemtype', 'oh_item'])
+        .setCheck(['String', 'oh_itemtype', 'oh_item'])
         .appendField(dropDown, 'attributeName')
-        .appendField(' of ')
+        .appendField('of item')
 
       this.setInputsInline(false)
       let thisBlock = this
@@ -64,18 +64,17 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_color_item'] = function (block) {
-    const theItem = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
-    const inputType = blockGetCheckedInputType(block, 'item')
-    let attributeName = block.getFieldValue('attributeName')
+  javascriptGenerator.forBlock['oh_color_item'] = function (block) {
+    const item = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
+    const itemType = blockGetCheckedInputType(block, 'item')
+    const itemCode = generateItemCode(item, itemType, isGraalJs)
+    const attributeName = block.getFieldValue('attributeName')
 
-    let code = ''
     if (isGraalJs) {
-      code = (inputType === 'oh_item') ? `items.getItem(${theItem}).rawState.get${attributeName}()` : `${theItem}.rawState.get${attributeName}()`
+      return [`${itemCode}.rawState.get${attributeName}()`, 0]
     } else {
-      code = (inputType === 'oh_item') ? `itemRegistry.getItem(${theItem}).getRawState().get${attributeName}()` : `${theItem}.getRawState().get${attributeName}()`
+      return [`${itemCode}.getRawState().get${attributeName}()`, 0]
     }
-    return [code, 0]
   }
 
   /*

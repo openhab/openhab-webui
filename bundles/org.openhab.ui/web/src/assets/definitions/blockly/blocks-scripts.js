@@ -32,7 +32,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Calls a script that is provided in openHABs scripts folder
   * Code part
   */
-  javascriptGenerator['oh_callscriptfile'] = function (block) {
+  javascriptGenerator.forBlock['oh_callscriptfile'] = function (block) {
     let scriptfile = javascriptGenerator.valueToCode(block, 'scriptfile', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return `actions.ScriptExecution.callScript(${scriptfile});\n`
@@ -57,7 +57,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
       this.appendValueInput('parameters')
         .appendField('with context')
         .setCheck('Dictionary')
-      this.setInputsInline(false)
+      this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
@@ -71,7 +71,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Parameters can be provided with the special parameter block oh_scriptparam
   * Code part
   */
-  javascriptGenerator['oh_runrule'] = function (block) {
+  javascriptGenerator.forBlock['oh_runrule'] = function (block) {
     const ruleUID = javascriptGenerator.valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
     const scriptParameters = javascriptGenerator.valueToCode(block, 'parameters', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
@@ -107,14 +107,12 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   Blockly.Blocks['oh_transformation'] = {
     init: function () {
       this.appendValueInput('value')
-        .setAlign(Blockly.ALIGN_RIGHT)
         .appendField('transform')
       this.appendValueInput('function')
-        .appendField('apply')
-        .appendField(new Blockly.FieldTextInput('MAP'), 'type')
         .appendField('with')
+        .appendField(new Blockly.FieldTextInput('MAP'), 'type')
 
-      this.setInputsInline(false)
+      this.setInputsInline(true)
       this.setOutput(true, null)
       this.setColour(0)
 
@@ -123,11 +121,11 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         const type = thisBlock.getFieldValue('type')
         switch (type) {
           case 'MAP':
-            return 'transforms an input via a map file. Specify the file as the function.\nREGEX und JSONPATH are also valid.'
+            return 'transforms an input via a map file. Specify the file as the function.\nREGEX and JSONPATH are also valid.'
           case 'REGEX':
-            return 'transforms / filters an input by applying the provided regular expression.\nMAP und JSONPATH are also valid.'
+            return 'transforms / filters an input by applying the provided regular expression.\nMAP and JSONPATH are also valid.'
           case 'JSONPATH':
-            return 'transforms / filters an JSON input by executing the provided JSONPath query.\nMAP und REGEX are also valid.'
+            return 'transforms / filters a JSON input by executing the provided JSONPath query.\nMAP and REGEX are also valid.'
           default:
             return 'transforms the input with the ' + type + ' transformation.'
         }
@@ -143,7 +141,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Allow transformations via different methods
   * Code part
   */
-  javascriptGenerator['oh_transformation'] = function (block) {
+  javascriptGenerator.forBlock['oh_transformation'] = function (block) {
     const transformationType = block.getFieldValue('type')
     const transformationFunction = javascriptGenerator.valueToCode(block, 'function', javascriptGenerator.ORDER_ATOMIC)
     const transformationValue = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
@@ -276,7 +274,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
     }
   }
 
-  javascriptGenerator['oh_context_info'] = function (block) {
+  javascriptGenerator.forBlock['oh_context_info'] = function (block) {
     const contextInfo = block.getFieldValue('contextInfo')
     const type = block.getFieldValue('asType')
     if (contextInfo === 'eventAvailable') return ['(event !== undefined)', javascriptGenerator.ORDER_ATOMIC]
@@ -314,7 +312,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Allows retrieving parameters provided by a rule
   * Code part
   */
-  javascriptGenerator['oh_context_attribute'] = function (block) {
+  javascriptGenerator.forBlock['oh_context_attribute'] = function (block) {
     const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     let code = `ctx[${key}]`
     return [code, 0]
@@ -349,7 +347,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Allows inlining arbitrary code
   * Code part
   */
-  javascriptGenerator['oh_script_inline'] = function (block) {
+  javascriptGenerator.forBlock['oh_script_inline'] = function (block) {
     const code = block.getFieldValue('inlineScript') + '\n'
     return code
   }

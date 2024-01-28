@@ -20,7 +20,7 @@ export default function defineOHBlocks_Variables (f7, isGraalJs) {
 
       if (isGraalJs) {
         this.appendDummyInput()
-          .appendField('to ')
+          .appendField('in')
           .appendField(new Blockly.FieldDropdown([['private', '.private'], ['shared', '.shared']]), 'cacheType')
           .appendField('cache')
       }
@@ -37,7 +37,7 @@ export default function defineOHBlocks_Variables (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_store_value'] = function (block) {
+  javascriptGenerator.forBlock['oh_store_value'] = function (block) {
     let key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     let value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
@@ -72,7 +72,7 @@ export default function defineOHBlocks_Variables (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_get_value'] = function (block) {
+  javascriptGenerator.forBlock['oh_get_value'] = function (block) {
     let key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       const cacheType = block.getFieldValue('cacheType')
@@ -89,12 +89,12 @@ export default function defineOHBlocks_Variables (f7, isGraalJs) {
         .appendField('is undefined')
       if (isGraalJs) {
         this.appendDummyInput()
-          .appendField('in ')
+          .appendField('in')
           .appendField(new Blockly.FieldDropdown([['private', '.private'], ['shared', '.shared']]), 'cacheType')
           .appendField('cache')
       }
       this.setInputsInline(true)
-      this.setOutput(true, null)
+      this.setOutput(true, 'Boolean')
       this.setColour(0)
       if (isGraalJs) {
         this.setTooltip('returns whether the given value is undefined in the private rule or shared global cache')
@@ -105,7 +105,7 @@ export default function defineOHBlocks_Variables (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_check_undefined_value'] = function (block) {
+  javascriptGenerator.forBlock['oh_check_undefined_value'] = function (block) {
     let key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       const cacheType = block.getFieldValue('cacheType')

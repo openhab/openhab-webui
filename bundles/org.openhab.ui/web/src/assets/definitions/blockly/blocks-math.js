@@ -20,7 +20,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_toNumber'] = function (block) {
+  javascriptGenerator.forBlock['oh_toNumber'] = function (block) {
     const value = javascriptGenerator.valueToCode(block, 'valueAsText', javascriptGenerator.ORDER_FUNCTION_CALL)
     return [`parseFloat(${value})`, 0]
   }
@@ -38,7 +38,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_bit_not'] = function (block) {
+  javascriptGenerator.forBlock['oh_bit_not'] = function (block) {
     const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_BITWISE_NOT)
     return [`~${value}`, 0]
   }
@@ -74,7 +74,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_bitwise'] = function (block) {
+  javascriptGenerator.forBlock['oh_bitwise'] = function (block) {
     const first = javascriptGenerator.valueToCode(block, 'first', javascriptGenerator.ORDER_BITWISE_SHIFT)
     const second = javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_NONE)
     const operand = block.getFieldValue('operand')
@@ -133,7 +133,7 @@ export default function (f7, isGraalJs) {
         this.appendValueInput('DECIMALS')
           .setCheck('Number')
           .appendField('by')
-          .setShadowDom(Blockly.Xml.textToDom('<shadow type="math_number"><field name="NUM">2</field></shadow>'))
+          .setShadowDom(Blockly.utils.xml.textToDom('<shadow type="math_number"><field name="NUM">2</field></shadow>'))
         this.appendDummyInput('declabel')
           .appendField('decimals')
         this.setInputsInline(true)
@@ -146,7 +146,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['math_round'] = function (block) {
+  javascriptGenerator.forBlock['math_round'] = function (block) {
     const inputType = blockGetCheckedInputType(block, 'NUM')
     const math_number_input = javascriptGenerator.valueToCode(block, 'NUM', javascriptGenerator.ORDER_FUNCTION_CALL)
     let math_number = math_number_input
@@ -216,7 +216,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['math_single'] = function (block) {
+  javascriptGenerator.forBlock['math_single'] = function (block) {
     const inputType = blockGetCheckedInputType(block, 'NUM')
     const math_number_input = javascriptGenerator.valueToCode(block, 'NUM', javascriptGenerator.ORDER_FUNCTION_CALL)
     let math_number = math_number_input
@@ -298,10 +298,16 @@ export default function (f7, isGraalJs) {
 
     let math_number_input1
     let math_number_input2
-    try { // may throw an exception on workspace startup in uninitialized state but in this case we can ignore
+    const wasInitialized = javascriptGenerator.isInitialized
+    try {
+      javascriptGenerator.isInitialized = 1 // workaround to avoid console warnings
       math_number_input1 = javascriptGenerator.valueToCode(block, 'NUM1', javascriptGenerator.ORDER_FUNCTION_CALL)
       math_number_input2 = javascriptGenerator.valueToCode(block, 'NUM2', javascriptGenerator.ORDER_FUNCTION_CALL)
-    } catch (e) {}
+    } catch (e) {
+      // may throw an exception on workspace startup in uninitialized state but in this case we can ignore
+    } finally {
+      javascriptGenerator.isInitialized = wasInitialized
+    }
 
     /*
     When dealing with variables, Blockly does not provide type information (type is "").
@@ -331,7 +337,7 @@ export default function (f7, isGraalJs) {
     return { leadType, math_number_input1, math_number_input2, operand }
   }
 
-  javascriptGenerator['oh_math_minmax'] = function (block) {
+  javascriptGenerator.forBlock['oh_math_minmax'] = function (block) {
     const { leadType, math_number_input1, math_number_input2, operand } = computeMinMaxOutputType(block, true)
     let code = ''
 

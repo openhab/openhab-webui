@@ -11,7 +11,6 @@ export default function (f7, isGraalJs) {
   * allows adding a CR/LF in string concatenation
   * Block
   */
-
   Blockly.Blocks['oh_text_crlf'] = {
     init: function () {
       this.appendDummyInput()
@@ -23,7 +22,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_text_crlf'] = function (block) {
+  javascriptGenerator.forBlock['oh_text_crlf'] = function (block) {
     return ['\'\\r\\n\'', javascriptGenerator.ORDER_NONE]
   }
 
@@ -38,11 +37,9 @@ export default function (f7, isGraalJs) {
         .setCheck('String')
       this.appendValueInput('replacement')
         .appendField('with')
-        .setAlign(Blockly.ALIGN_RIGHT)
         .setCheck('String')
       this.appendValueInput('origin')
         .appendField('in')
-        .setAlign(Blockly.ALIGN_RIGHT)
         .setCheck('String')
       this.setInputsInline(true)
       this.setOutput(true, 'String')
@@ -52,7 +49,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_text_replace'] = function (block) {
+  javascriptGenerator.forBlock['oh_text_replace'] = function (block) {
     const pattern = javascriptGenerator.valueToCode(block, 'pattern', javascriptGenerator.ORDER_ATOMIC)
     const replacement = javascriptGenerator.valueToCode(block, 'replacement', javascriptGenerator.ORDER_ATOMIC)
     const originText = javascriptGenerator.valueToCode(block, 'origin', javascriptGenerator.ORDER_ATOMIC)

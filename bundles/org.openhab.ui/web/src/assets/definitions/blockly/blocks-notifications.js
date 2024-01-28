@@ -16,14 +16,14 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
         .appendField('to e-mail address')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setInputsInline(false)
+      this.setInputsInline(true)
       this.setColour(0)
       this.setTooltip('Send a notification message to a specific openhab user (requires openHAB Cloud Connector)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-specific-cloud-email-user')
     }
   }
 
-  javascriptGenerator['oh_sendNotification'] = function (block) {
+  javascriptGenerator.forBlock['oh_sendNotification'] = function (block) {
     let email = javascriptGenerator.valueToCode(block, 'email', javascriptGenerator.ORDER_ATOMIC)
     let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
@@ -46,14 +46,14 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
         .appendField('to all devices')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setInputsInline(false)
+      this.setInputsInline(true)
       this.setColour(0)
       this.setTooltip('send a notification to all clients. Provide icon name without prefix. (requires openHAB Cloud Connector)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-all-devices-and-users')
     }
   }
 
-  javascriptGenerator['oh_sendBroadcastNotification'] = function (block) {
+  javascriptGenerator.forBlock['oh_sendBroadcastNotification'] = function (block) {
     let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     let icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
@@ -77,14 +77,14 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
         .appendField('to log only')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setInputsInline(false)
+      this.setInputsInline(true)
       this.setColour(0)
       this.setTooltip('Sends a notification to the cloud log only, not to any device (requires openHAB Cloud Connector)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-log-only')
     }
   }
 
-  javascriptGenerator['oh_sendLogNotification'] = function (block) {
+  javascriptGenerator.forBlock['oh_sendLogNotification'] = function (block) {
     let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     let icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')

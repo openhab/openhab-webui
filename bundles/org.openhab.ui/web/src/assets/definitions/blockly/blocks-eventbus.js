@@ -5,7 +5,7 @@
 
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
-import { blockGetCheckedInputType } from './utils.js'
+import { blockGetCheckedInputType, generateItemCode } from './utils.js'
 
 export default function (f7, isGraalJs) {
   /*
@@ -17,9 +17,8 @@ export default function (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('value')
         .appendField(new Blockly.FieldDropdown([['send command', 'sendCommand'], ['post update', 'postUpdate']]), 'eventType')
-      this.appendValueInput('itemName')
+      this.appendValueInput('item')
         .appendField('to')
-        .setAlign(Blockly.ALIGN_RIGHT)
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
@@ -30,18 +29,21 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_event'] = function (block) {
+  javascriptGenerator.forBlock['oh_event'] = function (block) {
     const eventType = block.getFieldValue('eventType')
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
-    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
 
-    const inputType = blockGetCheckedInputType(block, 'itemName')
+    const item = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
+    const itemType = blockGetCheckedInputType(block, 'item')
+    const itemCode = generateItemCode(item, itemType, isGraalJs)
+
+    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
 
     // Expect oh_itemtype as default because oh_groupmembers & oh_taggeditems return them
     if (isGraalJs) {
-      return (inputType === 'oh_item' || inputType === 'String') ? `items.getItem(${itemName}).${eventType}(${value});\n` : `${itemName}.${eventType}(${value});\n`
+      return `${itemCode}.${eventType}(${value});\n`
     } else {
-      return (inputType === 'oh_item' || inputType === 'String') ? `events.${eventType}(${itemName}, ${value});\n` : `events.${eventType}(${itemName}.getName(), ${value});\n`
+      const itemName = (itemType === 'oh_item' || itemType === 'String') ? item : `${item}.getName()`
+      return `events.${eventType}(${itemName}, ${value});\n`
     }
   }
 }

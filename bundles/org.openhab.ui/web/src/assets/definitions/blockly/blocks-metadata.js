@@ -17,8 +17,8 @@ export default function (f7, isGraalJs) {
   */
   Blockly.Blocks['oh_get_meta_value'] = {
     init: function () {
-      this.appendValueInput('theItem')
-        .appendField('get metadata value of item')
+      this.appendValueInput('item')
+        .appendField('get metadata value of')
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       this.appendValueInput('namespace')
         .appendField('from namespace')
@@ -30,12 +30,12 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_get_meta_value'] = function (block) {
-    const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
+  javascriptGenerator.forBlock['oh_get_meta_value'] = function (block) {
+    const item = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
 
     if (isGraalJs) {
-      return [`(items.metadata.getMetadata(${theItem}, ${namespace}) !== null) ? (items.metadata.getMetadata(${theItem}, ${namespace}).value) : 'undefined'`, javascriptGenerator.ORDER_CONDITIONAL]
+      return [`(items.metadata.getMetadata(${item}, ${namespace}) !== null) ? (items.metadata.getMetadata(${item}, ${namespace}).value) : 'undefined'`, javascriptGenerator.ORDER_CONDITIONAL]
     } else {
       throw new Error(unavailMsg)
     }
@@ -52,8 +52,8 @@ export default function (f7, isGraalJs) {
       this.appendValueInput('configKey')
         .appendField('get metadata config')
         .setCheck('String')
-      this.appendValueInput('theItem')
-        .appendField('of item')
+      this.appendValueInput('item')
+        .appendField('of')
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       this.appendValueInput('namespace')
         .appendField('from namespace')
@@ -65,14 +65,14 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_get_meta_config'] = function (block) {
+  javascriptGenerator.forBlock['oh_get_meta_config'] = function (block) {
     const configKey = javascriptGenerator.valueToCode(block, 'configKey', javascriptGenerator.ORDER_ATOMIC)
-    const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
+    const item = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
     addGetItemMetaConfigValue()
 
     if (isGraalJs) {
-      return [`getItemMetaConfigValue(${theItem}, ${namespace}, ${configKey})`, javascriptGenerator.ORDER_CONDITIONAL]
+      return [`getItemMetaConfigValue(${item}, ${namespace}, ${configKey})`, javascriptGenerator.ORDER_CONDITIONAL]
     } else {
       throw new Error(unavailMsg)
     }
@@ -92,8 +92,8 @@ export default function (f7, isGraalJs) {
         .setCheck(['Number', 'Boolean', 'String'])
       this.appendValueInput('namespace')
         .appendField('to value into namespace')
-      this.appendValueInput('theItem')
-        .appendField('of item')
+      this.appendValueInput('item')
+        .appendField('of')
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
 
       this.setInputsInline(true)
@@ -105,16 +105,16 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_store_meta_value'] = function (block) {
+  javascriptGenerator.forBlock['oh_store_meta_value'] = function (block) {
     const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
-    const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
+    const item = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
 
     let itemMeta = addItemMeta()
-    let code = `${itemMeta} = items.metadata.getMetadata(${theItem}, ${namespace});\n`
+    let code = `${itemMeta} = items.metadata.getMetadata(${item}, ${namespace});\n`
     code += `${itemMeta} = (${itemMeta} === null) ? { value: '', configuration: {} } : ${itemMeta};\n`
     code += `${itemMeta}.value = ${value};\n`
-    code += `items.metadata.replaceMetadata(${theItem}, ${namespace}, ${itemMeta}.value, ${itemMeta}.configuration);\n`
+    code += `items.metadata.replaceMetadata(${item}, ${namespace}, ${itemMeta}.value, ${itemMeta}.configuration);\n`
     if (isGraalJs) {
       return code
     } else {
@@ -139,8 +139,8 @@ export default function (f7, isGraalJs) {
         .appendField('to config')
       this.appendValueInput('namespace')
         .appendField('into namespace')
-      this.appendValueInput('theItem')
-        .appendField('of item')
+      this.appendValueInput('item')
+        .appendField('of')
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
 
       this.setInputsInline(true)
@@ -152,17 +152,17 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_store_meta_config'] = function (block) {
+  javascriptGenerator.forBlock['oh_store_meta_config'] = function (block) {
     const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     const configKey = javascriptGenerator.valueToCode(block, 'configKey', javascriptGenerator.ORDER_ATOMIC).replaceAll('\'', '')
-    const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
+    const item = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
 
     let itemMeta = addItemMeta()
-    let code = `${itemMeta} = items.metadata.getMetadata(${theItem}, ${namespace});\n`
+    let code = `${itemMeta} = items.metadata.getMetadata(${item}, ${namespace});\n`
     code += `${itemMeta} = (${itemMeta} === null) ? { value: '', configuration: {} } : ${itemMeta};\n`
     code += `${itemMeta}.configuration.${configKey} = ${value};\n`
-    code += `items.metadata.replaceMetadata(${theItem}, ${namespace}, ${itemMeta}.value, ${itemMeta}.configuration);\n`
+    code += `items.metadata.replaceMetadata(${item}, ${namespace}, ${itemMeta}.value, ${itemMeta}.configuration);\n`
     if (isGraalJs) {
       return code
     } else {

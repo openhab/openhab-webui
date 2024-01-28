@@ -6,20 +6,25 @@
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import { FieldItemModelPicker } from './fields/item-field.js'
-import { blockGetCheckedInputType } from './utils.js'
+import { blockGetCheckedInputType, generateItemCode } from './utils.js'
 
 import api from '@/js/openhab/api'
 
 export default function (f7, isGraalJs) {
+  // this data was copy/pasted from https://icon-sets.iconify.design/f7/square-on-circle/ -> CSS:URL
+  // to match MainUI's icon for Items menu
+  const itemImage =
+    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 56 56"%3E%3Cpath fill="%23000" d="M22.516 54.66h25.031c4.898 0 7.36-2.437 7.36-7.265V22.48c0-4.804-2.462-7.242-7.36-7.242h-8.602C36.601 7.246 29.148 1.34 20.406 1.34c-10.594 0-19.312 8.719-19.312 19.312c0 8.766 5.976 16.243 14.062 18.563v8.18c0 4.828 2.461 7.265 7.36 7.265M4.96 20.652c0-8.648 6.726-15.632 15.445-15.632c6.797 0 12.399 4.265 14.531 10.218h-12.42c-4.899 0-7.36 2.414-7.36 7.243v12.867C9.133 33.215 4.961 27.449 4.961 20.652m17.625 30.235c-2.344 0-3.656-1.266-3.656-3.703V22.69c0-2.437 1.312-3.68 3.656-3.68H47.5c2.297 0 3.633 1.243 3.633 3.68v24.516c0 2.414-1.336 3.68-3.633 3.68Z"/%3E%3C/svg%3E'
+
   /* Helper block to allow selecting an item */
   Blockly.Blocks['oh_item'] = {
     fieldPicker: null,
     init: function () {
       this.fieldPicker = new FieldItemModelPicker('MyItem', null, { f7 })
       this.appendDummyInput()
-        .appendField('item')
+        .appendField(new Blockly.FieldImage(itemImage, 15, 15))
         .appendField(this.fieldPicker, 'itemName')
-      this.setColour(160)
+      this.setColour(0)
       this.setInputsInline(true)
 
       this.setTooltip(() => {
@@ -58,7 +63,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_item'] = function (block) {
+  javascriptGenerator.forBlock['oh_item'] = function (block) {
     const itemName = block.fieldPicker.data[0]
     return [`'${itemName}'`, 0]
   }
@@ -78,7 +83,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_groupmembers'] = function (block) {
+  javascriptGenerator.forBlock['oh_groupmembers'] = function (block) {
     const groupName = javascriptGenerator.valueToCode(block, 'groupName', javascriptGenerator.ORDER_ATOMIC)
 
     if (isGraalJs) {
@@ -103,7 +108,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_taggeditems'] = function (block) {
+  javascriptGenerator.forBlock['oh_taggeditems'] = function (block) {
     let tagNames = javascriptGenerator.valueToCode(block, 'tagName', javascriptGenerator.ORDER_ATOMIC)
     tagNames = tagNames.split(',')
     let tags = ''
@@ -134,7 +139,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_getitem'] = function (block) {
+  javascriptGenerator.forBlock['oh_getitem'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return [`items.getItem(${itemName})`, 0]
@@ -146,9 +151,9 @@ export default function (f7, isGraalJs) {
   /* get info from items */
   Blockly.Blocks['oh_getitem_state'] = {
     init: function () {
-      this.appendValueInput('itemName')
-        .appendField('get state of item')
-        .setCheck(['String', 'oh_item'])
+      this.appendValueInput('item')
+        .appendField('get state of')
+        .setCheck(['String', 'oh_item', 'oh_itemtype'])
       this.setInputsInline(false)
       this.setOutput(true, 'String')
       this.setColour(0)
@@ -157,13 +162,12 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_getitem_state'] = function (block) {
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
-    if (isGraalJs) {
-      return [`items.getItem(${itemName}).state`, 0]
-    } else {
-      return [`itemRegistry.getItem(${itemName}).getState()`, 0]
-    }
+  javascriptGenerator.forBlock['oh_getitem_state'] = function (block) {
+    const item = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
+    const itemType = blockGetCheckedInputType(block, 'item')
+    const itemCode = generateItemCode(item, itemType, isGraalJs)
+
+    return [`${itemCode}.state`, 0]
   }
 
   /*
@@ -191,10 +195,10 @@ export default function (f7, isGraalJs) {
           block._updateType(newMode)
         })
       this.appendValueInput('item')
-        .setCheck(['oh_itemtype', 'oh_item'])
-        .appendField('get ')
+        .setCheck(['String', 'oh_item', 'oh_itemtype'])
+        .appendField('get')
         .appendField(dropdown, 'attributeName')
-        .appendField('of item')
+        .appendField('of')
       this.setInputsInline(false)
 
       this.setOutput(true, 'String')
@@ -255,21 +259,22 @@ export default function (f7, isGraalJs) {
   * Provides all attributes from an item
   * Code part
   */
-  javascriptGenerator['oh_getitem_attribute'] = function (block) {
-    const theItem = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
-    const inputType = blockGetCheckedInputType(block, 'item')
+  javascriptGenerator.forBlock['oh_getitem_attribute'] = function (block) {
+    const item = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
+    const itemType = blockGetCheckedInputType(block, 'item')
+    const itemCode = generateItemCode(item, itemType, isGraalJs)
     let attributeName = block.getFieldValue('attributeName')
 
+    let code
     if (isGraalJs) {
       attributeName = attributeName.charAt(0).toLowerCase() + attributeName.slice(1)
-      let code = (inputType === 'oh_item') ? `items.getItem(${theItem}).${attributeName}` : `${theItem}.${attributeName}`
-      return [code, 0]
+      code = `${itemCode}.${attributeName}`
     } else {
+      code = `${itemCode}.get${attributeName}()`
       if (attributeName === 'Tags' || attributeName === 'GroupNames') {
-        return [`Java.from(${theItem}.get${attributeName}())`, 0]
-      } else {
-        return [`${theItem}.get${attributeName}()`, 0]
+        code = `Java.from(${code}())`
       }
     }
+    return [code, 0]
   }
 }

@@ -396,11 +396,7 @@
         </block>
         <block type="oh_color_item">
           <value name="item">
-            <shadow type="oh_getitem">
-              <value name="itemName">
-                <shadow type="oh_item" />
-              </value>
-            </shadow>
+            <shadow type="oh_item" />
           </value>
         </block>
       </category>
@@ -412,21 +408,12 @@
             text="Help"
             callbackKey="ohBlocklyHelp" />
           <block type="oh_getitem_state">
-            <value name="itemName">
+            <value name="item">
               <shadow type="oh_item" />
             </value>
           </block>
           <block type="oh_getitem_attribute">
             <value name="item">
-              <shadow type="oh_getitem">
-                <value name="itemName">
-                  <shadow type="oh_item" />
-                </value>
-              </shadow>
-            </value>
-          </block>
-          <block type="oh_getitem">
-            <value name="itemName">
               <shadow type="oh_item" />
             </value>
           </block>
@@ -446,12 +433,12 @@
                 <field name="TEXT">value</field>
               </shadow>
             </value>
-            <value name="itemName">
+            <value name="item">
               <shadow type="oh_item" />
             </value>
           </block>
           <block type="oh_get_meta_value" v-if="isGraalJs">
-            <value name="theItem">
+            <value name="item">
               <shadow type="oh_item" />
             </value>
             <value name="namespace">
@@ -462,7 +449,7 @@
             <value name="configKey">
               <shadow type="text" />
             </value>
-            <value name="theItem">
+            <value name="item">
               <shadow type="oh_item" />
             </value>
             <value name="namespace">
@@ -473,7 +460,7 @@
             <value name="value">
               <shadow type="text" />
             </value>
-            <value name="theItem">
+            <value name="item">
               <shadow type="oh_item" />
             </value>
             <value name="namespace">
@@ -487,7 +474,7 @@
             <value name="configKey">
               <shadow type="text" />
             </value>
-            <value name="theItem">
+            <value name="item">
               <shadow type="oh_item" />
             </value>
             <value name="namespace">
@@ -495,6 +482,11 @@
             </value>
           </block>
           <block type="oh_item" />
+          <block type="oh_getitem">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
           <sep gap="48" />
           <block type="oh_getthing_state">
             <value name="thingUid">
@@ -688,7 +680,7 @@
             </value>
           </block>
         </category>
-        <category name="Dates &amp; Times">
+        <category name="Date &amp; Time">
           <button
             helpUrl="configuration/blockly/rules-blockly-date-handling.html"
             text="Help"
@@ -697,9 +689,7 @@
           <block type="oh_zdt_plusminus">
             <value name="offset">
               <shadow type="math_number">
-                <field name="NUM">
-                  0
-                </field>
+                <field name="NUM">0</field>
               </shadow>
             </value>
           </block>
@@ -784,7 +774,7 @@
           </block>
           <sep gap="48" />
           <block type="oh_get_zdt_part">
-            <value name="date">
+            <value name="zdt">
               <shadow type="oh_zdt" />
             </value>
           </block>
@@ -849,7 +839,6 @@
                 <field name="TEXT">message</field>
               </shadow>
             </value>
-            <value name="severity" />
           </block>
           <block type="oh_sendBroadcastNotification">
             <value name="message">
@@ -862,7 +851,6 @@
                 <field name="TEXT">temperature_cold</field>
               </shadow>
             </value>
-            <value name="severity" />
           </block>
           <block type="oh_sendLogNotification">
             <value name="message">
@@ -875,7 +863,6 @@
                 <field name="TEXT">temperature_hot</field>
               </shadow>
             </value>
-            <value name="severity" />
           </block>
         </category>
 
@@ -887,11 +874,11 @@
           <block type="oh_zdt_plusminus">
             <value name="offset">
               <shadow type="math_number">
-                <field name="NUM">
-                  0
-                </field>
+                <field name="NUM">1</field>
               </shadow>
             </value>
+            <field name="plusminus">minus</field>
+            <field name="period">Hours</field>
           </block>
           <block type="oh_zdt" />
           <block type="oh_zdt_fromText">
@@ -908,16 +895,14 @@
           </block>
           <sep gap="48" />
           <block type="oh_get_persistvalue">
-            <value name="itemName">
+            <value name="item">
               <shadow type="oh_item" />
             </value>
             <value name="dayInfo">
               <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
-                    <field name="NUM">
-                      1
-                    </field>
+                    <field name="NUM">1</field>
                   </shadow>
                 </value>
                 <field name="period">Hours</field>
@@ -926,16 +911,14 @@
             </value>
           </block>
           <block type="oh_persist_changed">
-            <value name="itemName">
+            <value name="item">
               <shadow type="oh_item" />
             </value>
             <value name="dayInfo">
               <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
-                    <field name="NUM">
-                      1
-                    </field>
+                    <field name="NUM">1</field>
                   </shadow>
                 </value>
                 <field name="period">Hours</field>
@@ -944,7 +927,7 @@
             </value>
           </block>
           <block type="oh_get_persistence_lastupdate">
-            <value name="itemName">
+            <value name="item">
               <shadow type="oh_item" />
             </value>
           </block>
@@ -1205,21 +1188,22 @@ export default {
           {
             controls: true,
             wheel: true,
-            startScale: 1.0,
+            startScale: 0.8,
             maxScale: 3,
             minScale: 0.3,
             scaleSpeed: 1.2,
             pinch: true
           },
         trashcan: false,
-        showLabels: false
+        showLabels: false,
+        renderer: 'Zelos'
       })
       this.workspace.addChangeListener(shadowBlockConversionChangeListener)
       const workspaceSearch = new WorkspaceSearch(this.workspace)
       workspaceSearch.init()
 
-      Blockly.HSV_SATURATION = 0.45 // default
-      Blockly.HSV_VALUE = 0.65 // a little bit more contract for the different colors
+      Blockly.utils.colour.setHsvSaturation(0.45) // default
+      Blockly.utils.colour.setHsvValue(0.65) // a little bit more contrast for the different colors
 
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
@@ -1239,7 +1223,7 @@ export default {
       }
 
       this.registerLibraryCallbacks(libraryDefinitions)
-      const xml = Blockly.Xml.textToDom(this.blocks)
+      const xml = Blockly.utils.xml.textToDom(this.blocks)
       Blockly.Xml.domToWorkspace(xml, this.workspace)
       this.workspace.addChangeListener(this.onChange)
 
