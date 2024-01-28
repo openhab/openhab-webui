@@ -8,12 +8,12 @@
                          pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
                          @input="rule.uid = $event.target.value" :clear-button="createMode" />
           <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" required validate
-                         :disabled="!isEditable" @input="rule.name = $event.target.value" :clear-button="isEditable" />
+                         :disabled="!editable" @input="rule.name = $event.target.value" :clear-button="editable" />
           <f7-list-input label="Description" type="text" :value="rule.description"
-                         :disabled="!isEditable" @input="rule.description = $event.target.value" :clear-button="isEditable" />
-          <f7-list-item v-if="(isEditable || rule.tags.length > 0) && (!createMode || !hasRuleTemplate)" accordion-item title="Tags" :after="numberOfTags" :disabled="!isEditable">
+                         :disabled="!editable" @input="rule.description = $event.target.value" :clear-button="editable" />
+          <f7-list-item v-if="!createMode || !hasRuleTemplate" accordion-item title="Tags" :after="numberOfTags">
             <f7-accordion-content>
-              <tag-input :item="rule" :showSemanticTags="true" :inScriptEditor="inScriptEditor" :inSceneEditor="inSceneEditor" />
+              <tag-input :item="rule" :disabled="!editable" :showSemanticTags="true" :inScriptEditor="inScriptEditor" :inSceneEditor="inSceneEditor" />
             </f7-accordion-content>
           </f7-list-item>
         </f7-list>
@@ -28,10 +28,10 @@
                          :disabled="true" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
                          @input="rule.uid = $event.target.value" :clear-button="createMode" />
           <f7-list-input label="Name" type="text" placeholder="Required" required validate
-                         :disabled="true" @input="rule.name = $event.target.value" :clear-button="isEditable" />
+                         :disabled="true" @input="rule.name = $event.target.value" :clear-button="editable" />
           <f7-list-input label="Description" type="text" value="__ _____ ___ __ ___"
-                         :disabled="true" @input="rule.description = $event.target.value" :clear-button="isEditable" />
-          <f7-list-item accordion-item title="Tags" :disabled="!isEditable">
+                         :disabled="true" @input="rule.description = $event.target.value" :clear-button="editable" />
+          <f7-list-item accordion-item title="Tags" :disabled="!editable">
             <f7-accordion-content>
               <tag-input :item="rule" :showSemanticTags="true" />
             </f7-accordion-content>
@@ -46,7 +46,7 @@
 import TagInput from '@/components/tags/tag-input.vue'
 
 export default {
-  props: ['rule', 'ready', 'createMode', 'isEditable', 'hasRuleTemplate', 'inScriptEditor', 'inSceneEditor'],
+  props: ['rule', 'ready', 'createMode', 'hasRuleTemplate', 'inScriptEditor', 'inSceneEditor'],
   components: {
     TagInput
   },
@@ -54,6 +54,9 @@ export default {
     numberOfTags () {
       if (!this.rule.tags) return 0
       return this.rule.tags.filter((t) => !this.isScriptTag(t) && !this.isSceneTag(t)).length
+    },
+    editable () {
+      return this.rule && this.rule.editable
     }
   },
   methods: {
