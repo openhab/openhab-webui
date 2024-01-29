@@ -265,7 +265,7 @@ export default {
   components: {
     EmptyStatePlaceholder,
     PanelRight,
-    DeveloperDock: () => import(/* webpackChunkName: "DeveloperDock" */ '@/components/developer/developer-dock.vue')
+    DeveloperDock: () => import(/* webpackChunkName: "admin-base" */ '@/components/developer/developer-dock.vue')
   },
   data () {
     let theme = localStorage.getItem('openhab.ui:theme')
