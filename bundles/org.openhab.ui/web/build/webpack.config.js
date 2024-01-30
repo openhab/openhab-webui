@@ -247,20 +247,22 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'css/app.[contenthash].css'
     }),
-    new CopyWebpackPlugin([
-      {
-        from: resolvePath('src/res'),
-        to: resolvePath(isCordova ? 'cordova/www/res' : 'www/res')
-      },
-      {
-        from: resolvePath('src/manifest.json'),
-        to: resolvePath('www/manifest.json')
-      },
-      {
-        from: resolvePath('src/robots.txt'),
-        to: resolvePath('www/robots.txt')
-      }
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: resolvePath('src/res'),
+          to: resolvePath(isCordova ? 'cordova/www/res' : 'www/res')
+        },
+        {
+          from: resolvePath('src/manifest.json'),
+          to: resolvePath('www/manifest.json')
+        },
+        {
+          from: resolvePath('src/robots.txt'),
+          to: resolvePath('www/robots.txt')
+        }
+      ]
+    }),
     ...(!isCordova && env === 'production' ? [
       new WorkboxPlugin.InjectManifest({
         swSrc: resolvePath('src/service-worker.js'),
