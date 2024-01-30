@@ -98,7 +98,6 @@
     "stream-browserify": "^3.0.0",
     "template7": "^1.4.2",
     "tern": "^0.23.0",
-    "terser-webpack-plugin": "^5.3.10",
     "v-clipboard": "^2.2.3",
     "video.js": "^7.10.2",
     "vue": "^2.6.12",
