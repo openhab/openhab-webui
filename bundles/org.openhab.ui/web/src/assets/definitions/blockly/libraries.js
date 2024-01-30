@@ -1,6 +1,6 @@
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
-import { addOSGiService } from './utils'
+import { javascriptGenerator } from 'blockly/javascript.js'
+import { addOSGiService } from './utils.js'
 
 const generateCodeForBlock = (block) => {
   const blockTypeId = block.openhab.blockTypeId

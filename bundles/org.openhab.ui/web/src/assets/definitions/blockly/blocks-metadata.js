@@ -4,8 +4,8 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
-import { addGetItemMetaConfigValue } from './utils'
+import { javascriptGenerator } from 'blockly/javascript.js'
+import { addGetItemMetaConfigValue } from './utils.js'
 
 const unavailMsg = 'Metadata blocks aren\'t supported in "application/javascript;version=ECMAScript-5.1"'
 

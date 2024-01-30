@@ -4,8 +4,8 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
-import { blockGetCheckedInputType } from './utils'
+import { javascriptGenerator } from 'blockly/javascript.js'
+import { blockGetCheckedInputType } from './utils.js'
 
 const unavailMsg = 'Units of Measurements blocks aren\'t supported in "application/javascript;version=ECMAScript-5.1"'
 

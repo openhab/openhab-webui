@@ -4,7 +4,7 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
+import { javascriptGenerator } from 'blockly/javascript.js'
 
 export default function (f7, isGraalJs) {
   Blockly.Blocks['oh_print'] = {

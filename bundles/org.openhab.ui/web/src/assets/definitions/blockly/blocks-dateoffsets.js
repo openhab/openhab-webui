@@ -2,9 +2,9 @@
  * supports jsscripting
  */
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
-import { FieldDatePicker } from './fields/date-field'
-import { addDateSupport, addDateComparisonSupportNashorn, addDateComparisonSupportGraalVM, addGetZdtComponent, addChrono } from './utils'
+import { javascriptGenerator } from 'blockly/javascript.js'
+import { FieldDatePicker } from './fields/date-field.js'
+import { addDateSupport, addDateComparisonSupportNashorn, addDateComparisonSupportGraalVM, addGetZdtComponent, addChrono } from './utils.js'
 
 export default function (f7, isGraalJs) {
   /*

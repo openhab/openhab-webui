@@ -4,7 +4,7 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
+import { javascriptGenerator } from 'blockly/javascript.js'
 import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7, isGraalJs) {

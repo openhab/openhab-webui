@@ -3,8 +3,8 @@
 * supports jsscripting
 */
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
-import { addDateSupport, blockGetCheckedInputType } from './utils'
+import { javascriptGenerator } from 'blockly/javascript.js'
+import { addDateSupport, blockGetCheckedInputType } from './utils.js'
 
 export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceServices) {
   /*

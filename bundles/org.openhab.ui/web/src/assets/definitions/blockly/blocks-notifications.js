@@ -4,7 +4,7 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
+import { javascriptGenerator } from 'blockly/javascript.js'
 
 // TODO: Add options to set icon and level (argument order should be the same as for broadcast notification etc.)
 export default function defineOHBlocks_Notifications (f7, isGraalJs) {

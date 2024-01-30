@@ -5,7 +5,7 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
+import { javascriptGenerator } from 'blockly/javascript.js'
 
 export default function defineOHBlocks_Variables (f7, isGraalJs) {
   Blockly.Blocks['oh_store_value'] = {

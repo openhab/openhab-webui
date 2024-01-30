@@ -4,7 +4,7 @@
  */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
+import { javascriptGenerator } from 'blockly/javascript.js'
 
 export default function defineOHBlocks_Timers (f7, isGraalJs) {
   /*

@@ -4,9 +4,8 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
-import { FieldItemModelPicker } from './fields/item-field'
-import { FieldThingPicker } from './fields/thing-field'
+import { javascriptGenerator } from 'blockly/javascript.js'
+import { FieldThingPicker } from './fields/thing-field.js'
 
 export default function defineOHBlocks (f7, isGraalJs) {
   Blockly.Blocks['oh_thing'] = {

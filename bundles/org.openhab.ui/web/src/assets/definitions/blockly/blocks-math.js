@@ -3,8 +3,8 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
-import { blockGetCheckedInputType } from './utils'
+import { javascriptGenerator } from 'blockly/javascript.js'
+import { blockGetCheckedInputType } from './utils.js'
 
 export default function (f7, isGraalJs) {
   Blockly.Blocks['oh_toNumber'] = {
