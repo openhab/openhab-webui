@@ -4,6 +4,7 @@
 */
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
+
 export default function (f7, isGraalJs) {
   /*
   * allows to concatenate a list into a new list

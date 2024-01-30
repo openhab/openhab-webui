@@ -3,7 +3,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin')
 const WorkboxPlugin = require('workbox-webpack-plugin')
 const WebpackAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
@@ -50,7 +50,7 @@ module.exports = {
       '@': resolvePath('src')
     }
   },
-  devtool: env === 'production' ? (buildSourceMaps) ? 'source-map' : false : 'eval-source-map',
+  devtool: env === 'production' ? (buildSourceMaps ? 'source-map' : false) : 'eval-source-map',
   devServer: {
     hot: true,
     // open: true,
