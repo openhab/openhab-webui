@@ -222,8 +222,7 @@ module.exports = {
     ...(env === 'production' ? [
       new ESLintPlugin({
         extensions: ['js', 'vue']
-      }),
-      new webpack.optimize.ModuleConcatenationPlugin()
+      })
     ] : [
       // Development only plugins
     ]),
