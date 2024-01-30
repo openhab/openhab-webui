@@ -53,16 +53,12 @@ module.exports = {
   devtool: env === 'production' ? (buildSourceMaps ? 'source-map' : false) : 'eval-source-map',
   devServer: {
     hot: true,
-    // open: true,
-    // compress: true,
+    compress: false, // disable compression as this seems to break the SSE event stream
     static: [
       path.resolve(__dirname, 'www'),
     ],
     allowedHosts: "all",
     historyApiFallback: true,
-    // watchOptions: {
-    //   poll: 1000,
-    // },
     proxy: [{
       context: ['/auth', '/rest', '/chart', '/proxy', '/icon', '/static', '/changePassword', '/createApiToken', '/audio'],
       target: apiBaseUrl
