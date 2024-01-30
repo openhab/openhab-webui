@@ -60,7 +60,7 @@ const thermostatAttributes = [
 
 const blindParameters = (_, item) => {
   const attributes = ['PositionState', 'TiltAngle']
-  const metadata = item.members.map((mbr) => mbr.metadata && mbr.metadata.alexa.value).join(',')
+  const metadata = item.members.map((mbr) => mbr.metadata?.alexa?.value).filter(Boolean).join(',')
   return attributes.every((attr) => metadata.includes(attr)) ? [p.primaryControl()] : []
 }
 

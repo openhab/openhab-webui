@@ -48,7 +48,7 @@ export default {
     parameters: (itemType, item) => [
       p.inverted(itemType === 'Rollershutter'),
       p.presets(item.stateDescription, '20=Morning,60=Afternoon,80=Evening:@Setting.Night'),
-      p.language(item.settings && item.settings.regional.language),
+      p.language(item.settings?.regional?.language),
       p.actionMappings({ default: 'value' }, 'Close=0,Open=100,Lower=0,Raise=100', (config) => {
         const primaryControl = getGroupParameter('primaryControl', item.groups) || 'position'
         if (itemType === 'Dimmer') {
@@ -73,7 +73,7 @@ export default {
     parameters: (itemType, item) => [
       p.inverted(itemType === 'Rollershutter'),
       p.presets(item.stateDescription, '20=Morning,60=Afternoon,80=Evening:@Setting.Night'),
-      p.language(item.settings && item.settings.regional.language),
+      p.language(item.settings?.regional?.language),
       ...(getGroupParameter('primaryControl', item.groups) !== 'tilt' ? [] : [
         p.actionMappings({ default: 'value' }, 'Close=0,Open=100', (config) => {
           if (itemType === 'Dimmer') {
@@ -107,7 +107,7 @@ export default {
     itemTypes: ['Number', 'String'],
     parameters: (itemType, item) => [
       p.supportedInputs(item.stateDescription, itemType === 'String' ? 'HDMI1=Cable,HDMI2=Kodi' : '1=Cable,2=Kodi'),
-      p.language(item.settings && item.settings.regional.language),
+      p.language(item.settings?.regional?.language),
       p.retrievable()
     ]
   },
@@ -410,7 +410,7 @@ export default {
       p.retrievable(),
       p.supportedModes(item.stateDescription),
       p.ordered(),
-      p.language(item.settings && item.settings.regional.language),
+      p.language(item.settings?.regional?.language),
       p.actionMappings(
         { set: 'mode', ...(config.ordered && { adjust: '(±deltaValue)' }) },
         'Close=Down,Open=Up,Lower=Down,Raise=Up'
@@ -421,7 +421,7 @@ export default {
   RangeValue: {
     itemTypes: ['Dimmer', 'Number', 'Number:*', 'Rollershutter'],
     supports: ['multiInstance'],
-    parameters: (itemType, item) => [
+    parameters: (itemType, item, config) => [
       p.capabilityNames(item.groups.length ? item.label : '@Setting.RangeValue', '@Setting.FanSpeed,Speed'),
       p.inverted(itemType === 'Rollershutter'),
       p.nonControllable(item.stateDescription),
@@ -432,12 +432,17 @@ export default {
           ? [p.supportedCommands(['UP', 'DOWN', 'MOVE', 'STOP'], 'UP=@Value.Open,DOWN=@Value.Close,STOP=@Value.Stop')]
           : []),
       p.supportedRange(
-        item.stateDescription,
-        itemType === 'Dimmer' || itemType === 'Rollershutter' ? '0:100:1' : '0:10:1'
+        item,
+        config,
+        itemType === 'Dimmer' || itemType === 'Rollershutter'
+          ? '0:100:1'
+          : config.nonControllable
+            ? '0:10:0.01'
+            : '0:10:1'
       ),
       p.presets(item.stateDescription, '1=@Value.Low:Lowest,10=@Value.High:Highest'),
       p.unitOfMeasure(item),
-      p.language(item.settings && item.settings.regional.language),
+      p.language(item.settings?.regional?.language),
       p.actionMappings({ set: 'value', adjust: '(±deltaValue)' }, 'Close=0,Open=100,Lower=(-10),Raise=(+10)'),
       p.stateMappings({ default: 'value', range: 'minValue:maxValue' }, 'Closed=0,Open=1:100')
     ]
@@ -452,7 +457,7 @@ export default {
         : [p.inverted()]),
       p.nonControllable(item.stateDescription),
       p.retrievable(),
-      p.language(item.settings && item.settings.regional.language),
+      p.language(item.settings?.regional?.language),
       p.actionMappings(['ON', 'OFF'], 'Close=OFF,Open=ON'),
       p.stateMappings(['ON', 'OFF'], 'Closed=OFF,Open=ON')
     ]
