@@ -256,12 +256,13 @@ import auth from './auth-mixin'
 import i18n from './i18n-mixin'
 import connectionHealth from './connection-health-mixin'
 import sseEvents from './sse-events-mixin'
+import dialog from './dialog-mixin'
 
 import dayjs from 'dayjs'
 import dayjsLocales from 'dayjs/locale.json'
 
 export default {
-  mixins: [auth, i18n, connectionHealth, sseEvents],
+  mixins: [auth, i18n, connectionHealth, sseEvents, dialog],
   components: {
     EmptyStatePlaceholder,
     PanelRight,
@@ -715,11 +716,16 @@ export default {
         }
       })
 
+      this.$f7.on('triggerDialog', () => {
+        this.triggerDialog()
+      })
+
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
 
       this.startEventSource()
+      this.startAudioWebSocket()
     })
   }
 }

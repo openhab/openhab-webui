@@ -60,8 +60,9 @@ module.exports = {
     allowedHosts: "all",
     historyApiFallback: true,
     proxy: [{
-      context: ['/auth', '/rest', '/chart', '/proxy', '/icon', '/static', '/changePassword', '/createApiToken', '/audio'],
-      target: apiBaseUrl
+      context: ['/auth', '/rest', '/chart', '/proxy', '/icon', '/static', '/changePassword', '/createApiToken', '/audio', '/ws/pcm-audio'],
+      target: apiBaseUrl,
+      ws: true
     }]
   },
   performance: {
