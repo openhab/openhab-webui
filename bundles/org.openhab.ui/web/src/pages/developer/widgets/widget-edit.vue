@@ -100,14 +100,14 @@
 </style>
 
 <script>
-import YAML, { Schema } from 'yaml'
+import YAML from 'yaml'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 
 import * as StandardListWidgets from '@/components/widgets/standard/list'
 
-Schema.toStringDefaults.lineWidth = 0
+const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
 export default {
   mixins: [DirtyMixin],
@@ -152,7 +152,7 @@ export default {
     widget () {
       try {
         if (!this.widgetDefinition) return {}
-        return YAML.parse(this.widgetDefinition, { prettyErrors: true })
+        return YAML.parse(this.widgetDefinition, { prettyErrors: true, toStringOptions })
       } catch (e) {
         return { component: 'Error', config: { error: e.message } }
       }
@@ -235,14 +235,14 @@ export default {
             footer: '=props.prop1',
             content: '=items[props.item].displayState || items[props.item].state'
           }
-        })
+        }, { toStringOptions })
         this.$nextTick(() => {
           this.loading = false
           this.ready = true
         })
       } else {
         this.$oh.api.get('/rest/ui/components/ui:widget/' + this.uid).then((data) => {
-          this.$set(this, 'widgetDefinition', YAML.stringify(data))
+          this.$set(this, 'widgetDefinition', YAML.stringify(data, { toStringOptions }))
           this.$nextTick(() => {
             this.loading = false
             this.ready = true
