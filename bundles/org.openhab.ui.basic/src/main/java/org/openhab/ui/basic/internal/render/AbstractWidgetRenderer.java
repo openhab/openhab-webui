@@ -69,6 +69,9 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
     public static final String ICON_TYPE = "svg";
 
+    private static final int DEFAULT_NB_COLUMNS_DESKTOP = 3;
+    private static final int DEFAULT_NB_COLUMNS_TABLET = 2;
+
     public static final String PRIMARY_COLOR = "#3f51b5";
     public static final String SECONDARY_COLOR = "#ff4081";
 
@@ -125,8 +128,8 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     protected String preprocessSnippet(String originalSnippet, Widget w, boolean ignoreStateForIcon) {
         String snippet = preprocessIcon(originalSnippet, getCategory(w), ignoreStateForIcon);
 
-        snippet = snippet.replace("%cells%", String.valueOf(12 / config.getNbColsDesktop()));
-        snippet = snippet.replace("%cells_tablet%", String.valueOf(8 / config.getNbColsTablet()));
+        snippet = snippet.replace("%cells%", String.valueOf(12 / DEFAULT_NB_COLUMNS_DESKTOP));
+        snippet = snippet.replace("%cells_tablet%", String.valueOf(8 / DEFAULT_NB_COLUMNS_TABLET));
         snippet = snippet.replace("%widget_id%", itemUIRegistry.getWidgetId(w));
         snippet = snippet.replace("%icon_with_state%", Boolean.valueOf(!ignoreStateForIcon).toString());
         snippet = snippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
@@ -170,9 +173,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
                     break;
                 case ICON_SOURCE_IF:
                 case ICON_SOURCE_ICONIFY:
-                    if (config.isIconifyEnabled()) {
-                        iconSnippet = getSnippet("icon_iconify");
-                    }
+                    iconSnippet = getSnippet("icon_iconify");
                     break;
                 case ICON_SOURCE_MATERIAL:
                     iconSnippet = getSnippet("icon_material");
@@ -388,18 +389,6 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
 
         if (color != null) {
             style = "style=\"color:" + color + "\"";
-        } else {
-            switch (config.getTheme()) {
-                case WebAppConfig.THEME_NAME_BRIGHT:
-                    style = "style=\"color-scheme: light\"";
-                    break;
-                case WebAppConfig.THEME_NAME_DARK:
-                    style = "style=\"color-scheme: dark\"";
-                    break;
-                default:
-                    break;
-            }
-
         }
         snippet = snippet.replace("%iconstyle%", style);
 
@@ -446,13 +435,13 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         this.config = config;
     }
 
-    protected @Nullable String localizeText(String key) {
+    protected String localizeText(String key) {
         String result = "";
         if (I18nUtil.isConstant(key)) {
             result = i18nProvider.getText(bundleContext.getBundle(), I18nUtil.stripConstant(key), "",
                     localeProvider.getLocale());
         }
-        return result;
+        return result != null ? result : "";
     }
 
     protected @Nullable String getUnitForWidget(Widget widget) {

@@ -14,7 +14,6 @@ package org.openhab.ui.basic.internal.render;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.List;
 
 import org.eclipse.emf.common.util.ECollections;
@@ -29,7 +28,6 @@ import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.model.sitemap.sitemap.Chart;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.ui.items.ItemUIRegistry;
-import org.openhab.ui.basic.internal.WebAppConfig;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
@@ -45,6 +43,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
+ * @author Laurent Garnier - Delegate the definition of certain chart URL parameters to the frontend (smarthome.js)
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -102,29 +101,6 @@ public class ChartRenderer extends AbstractWidgetRenderer {
                     chartUrl += "&legend=false";
                 }
             }
-            // add theme GET parameter
-            String chartTheme = null;
-            switch (config.getTheme()) {
-                case WebAppConfig.THEME_NAME_BRIGHT:
-                    chartTheme = "bright";
-                    break;
-                case WebAppConfig.THEME_NAME_DARK:
-                    chartTheme = "dark";
-                    break;
-            }
-            if (chartTheme != null) {
-                chartUrl += "&theme=" + chartTheme;
-            }
-            String url;
-            boolean ignoreRefresh;
-            if (!itemUIRegistry.getVisiblity(w)) {
-                url = URL_NONE_ICON;
-                ignoreRefresh = true;
-            } else {
-                // add timestamp to circumvent browser cache
-                url = chartUrl + "&t=" + (new Date()).getTime();
-                ignoreRefresh = false;
-            }
 
             String snippet = getSnippet("chart");
 
@@ -147,8 +123,10 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             snippet = snippet.replace("%id%", itemUIRegistry.getWidgetId(w));
             snippet = snippet.replace("%proxied_url%", chartUrl);
             snippet = snippet.replace("%valid_url%", "true");
-            snippet = snippet.replace("%ignore_refresh%", ignoreRefresh ? "true" : "false");
-            snippet = snippet.replace("%url%", url);
+            // Let the frontend set the final URL with additional parameters depending on browser settings
+            // and schedule the refresh
+            snippet = snippet.replace("%ignore_refresh%", "true");
+            snippet = snippet.replace("%url%", URL_NONE_ICON);
             snippet = snippet.replace("%legend%", Boolean.valueOf(legend).toString());
 
             List<List<String>> periods = List.of(List.of("Last hour", "h"), List.of("Last 2 hours", "2h"),

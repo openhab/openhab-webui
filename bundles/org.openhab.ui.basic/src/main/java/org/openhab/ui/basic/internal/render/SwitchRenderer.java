@@ -34,7 +34,6 @@ import org.openhab.core.types.CommandOption;
 import org.openhab.core.types.State;
 import org.openhab.core.types.util.UnitUtils;
 import org.openhab.core.ui.items.ItemUIRegistry;
-import org.openhab.ui.basic.internal.WebAppConfig;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
@@ -166,29 +165,17 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
             label = label.substring(0, maxLabelSize - 1) + ELLIPSIS;
         }
 
-        button = button.replace("%item%", w.getItem());
         button = button.replace("%cmd%", escapeHtml(command));
         String buttonClass = "";
-        String style = "";
-        if (icon == null || !config.isIconsEnabled()) {
-            button = button.replace("%label%", escapeHtml(label));
+        button = button.replace("%label%", escapeHtml(label));
+        if (icon == null) {
+            button = button.replace("%textclass%", "mdl-button-text");
             button = button.replace("%icon_snippet%", "");
         } else {
-            button = button.replace("%label%", "");
+            button = button.replace("%textclass%", "mdl-button-icon-text");
             button = preprocessIcon(button, icon, true);
             buttonClass = "mdl-button-icon";
-            switch (config.getTheme()) {
-                case WebAppConfig.THEME_NAME_BRIGHT:
-                    style = "style=\"color-scheme: light\"";
-                    break;
-                case WebAppConfig.THEME_NAME_DARK:
-                    style = "style=\"color-scheme: dark\"";
-                    break;
-                default:
-                    break;
-            }
         }
-        button = button.replace("%buttonstyle%", style);
 
         State compareMappingState = state;
         if (state instanceof QuantityType) { // convert the item state to the command value for proper

@@ -1,8 +1,9 @@
 /**
- * Eclipse SmartHome BasicUI javascript
+ * openHAB BasicUI javascript
  *
  * @author Vlad Ivanov — initial version
  * @author Mark Herwege - input widget
+ * @author Laurent Garnier — handling of app settings stored in browser local storage
  */
 
 /*eslint-env browser */
@@ -359,6 +360,9 @@
 		_t.id = _t.parentNode.getAttribute(o.idAttribute);
 		_t.iconWithState = _t.parentNode.getAttribute(o.iconWithStateAttribute) === "true";
 		_t.visible = !_t.formRow.classList.contains(o.formRowHidden);
+		_t.fillFullWidth = _t.formRow.classList.contains(o.cell12Col);
+		_t.cellSizeTablet = 4;
+		_t.cellSizeDesktop = 4;
 		_t.headerRow = _t.parentNode.getAttribute("data-header-row");
 		if (_t.headerRow !== null) {
 			_t.formHeaderRow = _t.formRow.previousElementSibling;
@@ -399,6 +403,11 @@
 			_t.icon = formRow.querySelector(o.formIconIconify);
 			if (_t.icon !== null) {
 				_t.iconSource = "if";
+				splitIconAttr = _t.icon.getAttribute("icon").split(":");
+				if (splitIconAttr.length === 2) {
+					_t.iconSet = splitIconAttr[0];
+					_t.iconName = splitIconAttr[1];
+				}
 				return;
 			}
 			_t.icon = formRow.querySelector(o.formIconMaterial);
@@ -424,12 +433,6 @@
 			this.removeEventListener("error", _t.replaceImageWithNone);
 			this.src = noneImageSrc;
 		};
-
-		_t.findIcon();
-		if (_t.icon !== null && _t.iconSource === "oh") {
-			_t.icon.addEventListener("load", _t.convertToInlineSVG);
-			_t.icon.addEventListener("error", _t.replaceImageWithNone);
-		}
 
 		_t.replaceIconWithInlineSVG = function(iconElement, svgText) {
 			var
@@ -535,6 +538,15 @@
 			if (iconSrc === "iconify") {
 				iconSrc = "if";
 			}
+			if (iconSrc === "if" && !smarthome.UI.iconify) {
+				// Replace the iconify icon by the none OH icon
+				_t.iconifyIconReplaced = true;
+				iconSrc = "oh";
+				iconSet = "classic";
+				iconName = "none";
+			} else {
+				_t.iconifyIconReplaced = false;
+			}
 
 			if (iconSrc === "oh") {
 				imgURL = "/icon/" + encodeURIComponent(iconName) +
@@ -629,8 +641,51 @@
 		_t.setIconColor = function(color) {
 			if (_t.iconContainer !== null) {
 				_t.iconContainer.style.color = color;
+				_t.iconContainer.style.colorScheme = "";
 			}
 		};
+
+		function setIconColorScheme(value) {
+			if (_t.iconContainer !== null && _t.iconContainer.style.color === "") {
+				_t.iconContainer.style.colorScheme = value;
+			}
+		}
+
+		function setCellSize(sizeTablet, sizeDesktop) {
+			if (_t.fillFullWidth) {
+				return;
+			}
+			if (_t.cellSizeTablet !== sizeTablet) {
+				_t.formRow.classList.remove("mdl-cell--" + _t.cellSizeTablet + "-col-tablet");
+				_t.formRow.classList.add("mdl-cell--" + sizeTablet + "-col-tablet");
+				_t.cellSizeTablet = sizeTablet;
+			}
+			if (_t.cellSizeDesktop !== sizeDesktop) {
+				_t.formRow.classList.remove("mdl-cell--" + _t.cellSizeDesktop + "-col");
+				_t.formRow.classList.add("mdl-cell--" + sizeDesktop + "-col");
+				_t.cellSizeDesktop = sizeDesktop;
+			}
+		}
+
+		_t.applyLocalSettings = function() {
+			setCellSize(smarthome.UI.cellSizeTablet, smarthome.UI.cellSizeDesktop);
+
+			if (_t.icon !== null) {
+				if (smarthome.UI.iconify && _t.iconifyIconReplaced) {
+					// Reload current page without affecting the history
+					smarthome.UI.navigate(smarthome.UI.page, false);
+					return;
+				} else if (!smarthome.UI.iconify && _t.iconSource === "if") {
+					_t.reloadIcon("", _t.iconSource + ":" + _t.iconSet + ":" + _t.iconName);
+				}
+			}
+
+			setIconColorScheme(smarthome.UI.theme);
+
+			_t.applyLocalSettingsPrivate();
+		};
+
+		_t.applyLocalSettingsPrivate = function() {};
 
 		_t.destroy = function() {
 			if (_t.icon !== null && _t.iconSource === "oh") {
@@ -644,6 +699,18 @@
 				}
 			});
 		};
+
+		setCellSize(smarthome.UI.cellSizeTablet, smarthome.UI.cellSizeDesktop);
+
+		_t.findIcon();
+		_t.iconifyIconReplaced = false;
+		if (_t.icon !== null && _t.iconSource === "oh") {
+			_t.icon.addEventListener("load", _t.convertToInlineSVG);
+			_t.icon.addEventListener("error", _t.replaceImageWithNone);
+		} else if (_t.icon !== null && _t.iconSource === "if" && !smarthome.UI.iconify) {
+			_t.reloadIcon("", _t.iconSource + ":" + _t.iconSet + ":" + _t.iconName);
+		}
+		setIconColorScheme(smarthome.UI.theme);
 	}
 
 	/* class Frame */
@@ -676,6 +743,7 @@
 		_t.setValueColor = function() {};
 		_t.setIconColor = function() {};
 		_t.suppressUpdate = function() {};
+		_t.applyLocalSettings = function() {};
 		_t.destroy = function() {};
 	}
 
@@ -707,27 +775,12 @@
 		_t.url = parentNode.getAttribute("data-proxied-url");
 		_t.validUrl = parentNode.getAttribute("data-valid-url") === "true";
 		_t.ignoreRefresh = parentNode.getAttribute("data-ignore-refresh") === "true";
-		_t.legendButton = null;
-		_t.periodButton = null;
 		_t.upscaleButton = null;
 		_t.refreshButton = null;
 
 		if (_t.headerRow !== null) {
-			_t.legendButton = _t.formHeaderRow.querySelector(o.image.legendButton);
-			_t.periodButton = _t.formHeaderRow.querySelector(o.image.periodButton);
 			_t.upscaleButton = _t.formHeaderRow.querySelector(o.image.upscaleButton);
 			_t.refreshButton = _t.formHeaderRow.querySelector(o.image.refreshButton);
-			if (_t.legendButton !== null) {
-				_t.displayLegend = _t.parentNode.getAttribute("data-legend") === "true";
-				if (_t.displayLegend) {
-					_t.legendButton.classList.add(o.buttonActiveClass);
-				} else {
-					_t.legendButton.classList.remove(o.buttonActiveClass);
-				}
-			}
-			if (_t.periodButton !== null) {
-				_t.period = null;
-			}
 			if (_t.upscaleButton !== null) {
 				_t.upscale = false;
 			}
@@ -797,6 +850,98 @@
 				_t.image.setAttribute("src", _t.url + "&t=" + Date.now());
 			}, _t.updateInterval);
 		};
+
+		function onUpscaleClick() {
+			_t.upscale = !_t.upscale;
+			if (_t.upscale) {
+				_t.upscaleButton.classList.add(o.buttonActiveClass);
+			} else {
+				_t.upscaleButton.classList.remove(o.buttonActiveClass);
+			}
+			if (_t.upscale) {
+				_t.parentNode.classList.add(o.image.upscaleClass);
+			} else {
+				_t.parentNode.classList.remove(o.image.upscaleClass);
+			}
+		}
+
+		function onRefreshClick() {
+			_t.image.setAttribute("src", _t.url + "&t=" + Date.now());
+		}
+
+		function toggleHeaderRow() {
+			_t.headerRow = _t.headerRow === "true" ? "false" : "true";
+			if (_t.headerRow === "true") {
+				_t.formHeaderRow.classList.remove(o.formRowHidden);
+			} else {
+				_t.formHeaderRow.classList.add(o.formRowHidden);
+			}
+		}
+
+		_t.destroy = function() {
+			var
+				imageParent = _t.image.parentNode;
+
+			_t.image.setAttribute("src", urlNoneIcon);
+			imageParent.removeChild(_t.image);
+
+			if (_t.upscaleButton !== null) {
+				componentHandler.downgradeElements([ _t.upscaleButton ]);
+				_t.upscaleButton.removeEventListener("click", onUpscaleClick);
+			}
+			if (_t.refreshButton !== null) {
+				componentHandler.downgradeElements([ _t.refreshButton ]);
+				_t.refreshButton.removeEventListener("click", onRefreshClick);
+			}
+			if (_t.headerRow !== null) {
+				_t.parentNode.parentNode.removeEventListener("click", toggleHeaderRow);
+			}
+
+			_t.destroyPrivate();
+		};
+
+		_t.destroyPrivate = function() {};
+
+		if (_t.upscaleButton !== null) {
+			_t.upscaleButton.addEventListener("click", onUpscaleClick);
+		}
+		if (_t.refreshButton !== null) {
+			_t.refreshButton.addEventListener("click", onRefreshClick);
+		}
+		if (_t.headerRow !== null) {
+			_t.parentNode.parentNode.addEventListener("click", toggleHeaderRow);
+		}
+
+		if (_t.visible) {
+			_t.activateRefresh();
+		}
+	}
+
+	/* class ControlChart */
+	function ControlChart(parentNode) {
+		ControlImage.call(this, parentNode, true);
+
+		var
+			_t = this;
+
+		_t.legendButton = null;
+		_t.periodButton = null;
+
+		if (_t.headerRow !== null) {
+			_t.legendButton = _t.formHeaderRow.querySelector(o.image.legendButton);
+			_t.periodButton = _t.formHeaderRow.querySelector(o.image.periodButton);
+			if (_t.legendButton !== null) {
+				_t.displayLegend = _t.parentNode.getAttribute("data-legend") === "true";
+				if (_t.displayLegend) {
+					_t.legendButton.classList.add(o.buttonActiveClass);
+				} else {
+					_t.legendButton.classList.remove(o.buttonActiveClass);
+				}
+			}
+			if (_t.periodButton !== null) {
+				_t.period = null;
+			}
+		}
 
 		function onLegendClick() {
 			_t.displayLegend = !_t.displayLegend;
@@ -870,40 +1015,34 @@
 			});
 		};
 
-		function onUpscaleClick() {
-			_t.upscale = !_t.upscale;
-			if (_t.upscale) {
-				_t.upscaleButton.classList.add(o.buttonActiveClass);
-			} else {
-				_t.upscaleButton.classList.remove(o.buttonActiveClass);
-			}
-			if (_t.upscale) {
-				_t.parentNode.classList.add(o.image.upscaleClass);
-			} else {
-				_t.parentNode.classList.remove(o.image.upscaleClass);
-			}
-		}
-
-		function onRefreshClick() {
-			_t.image.setAttribute("src", _t.url + "&t=" + Date.now());
-		}
-
-		function toggleHeaderRow() {
-			_t.headerRow = _t.headerRow === "true" ? "false" : "true";
-			if (_t.headerRow === "true") {
-				_t.formHeaderRow.classList.remove(o.formRowHidden);
-			} else {
-				_t.formHeaderRow.classList.add(o.formRowHidden);
-			}
-		}
-
-		_t.destroy = function() {
+		_t.applyLocalSettingsPrivate = function() {
 			var
-				imageParent = _t.image.parentNode;
+				splittedSize;
 
-			_t.image.setAttribute("src", urlNoneIcon);
-			imageParent.removeChild(_t.image);
+			// Add chart parameters to chart URL
+			_t.url = _t.url.replace(/&theme=\w+/, "");
+			_t.url = _t.url + "&theme=" + (smarthome.UI.theme === "dark" ? "dark" : "bright");
 
+			_t.url = _t.url.replace(/&w=\w+/, "");
+			_t.url = _t.url.replace(/&h=\w+/, "");
+			if (smarthome.UI.chartSize !== null) {
+				splittedSize = smarthome.UI.chartSize.split("x");
+				_t.url = _t.url + "&w=" + splittedSize[0];
+				_t.url = _t.url + "&h=" + splittedSize[1];
+			}
+
+			_t.url = _t.url.replace(/&dpi=\w+/, "");
+			if (smarthome.UI.chartDPI !== null) {
+				_t.url = _t.url + "&dpi=" + smarthome.UI.chartDPI;
+			}
+
+			_t.setValuePrivate("", "", _t.visible);
+			if (_t.visible) {
+				_t.activateRefresh();
+			}
+		};
+
+		_t.destroyPrivate = function() {
 			if (_t.legendButton !== null) {
 				componentHandler.downgradeElements([ _t.legendButton ]);
 				_t.legendButton.removeEventListener("click", onLegendClick);
@@ -912,37 +1051,15 @@
 				componentHandler.downgradeElements([ _t.periodButton ]);
 				_t.periodButton.removeEventListener("click", _t.showModalPeriods);
 			}
-			if (_t.upscaleButton !== null) {
-				componentHandler.downgradeElements([ _t.upscaleButton ]);
-				_t.upscaleButton.removeEventListener("click", onUpscaleClick);
-			}
-			if (_t.refreshButton !== null) {
-				componentHandler.downgradeElements([ _t.refreshButton ]);
-				_t.refreshButton.removeEventListener("click", onRefreshClick);
-			}
-			if (_t.headerRow !== null) {
-				_t.parentNode.parentNode.removeEventListener("click", toggleHeaderRow);
-			}
 		};
+
+		_t.applyLocalSettingsPrivate();
 
 		if (_t.legendButton !== null) {
 			_t.legendButton.addEventListener("click", onLegendClick);
 		}
 		if (_t.periodButton !== null) {
 			_t.periodButton.addEventListener("click", _t.showModalPeriods);
-		}
-		if (_t.upscaleButton !== null) {
-			_t.upscaleButton.addEventListener("click", onUpscaleClick);
-		}
-		if (_t.refreshButton !== null) {
-			_t.refreshButton.addEventListener("click", onRefreshClick);
-		}
-		if (_t.headerRow !== null) {
-			_t.parentNode.parentNode.addEventListener("click", toggleHeaderRow);
-		}
-
-		if (_t.visible) {
-			_t.activateRefresh();
 		}
 	}
 
@@ -1023,6 +1140,7 @@
 		_t.hasValue = _t.parentNode.getAttribute("data-has-value") === "true";
 		_t.value = _t.parentNode.parentNode.querySelector(o.formValue);
 		_t.suppressUpdateButtons = false;
+
 		_t.reset = function() {
 			_t.buttons.forEach(function(button) {
 				button.classList.remove(o.buttonActiveClass);
@@ -1076,6 +1194,76 @@
 				_t.value.style.color = color;
 			}
 		};
+
+		function checkIconifyInButtons() {
+			var
+				found = false,
+				buttons = [].slice.call(_t.parentNode.querySelectorAll(o.buttonIcon));
+
+			buttons.forEach(function(button) {
+				if (button.querySelector("iconify-icon") !== null) {
+					found = true;
+				}
+			});
+			return found;
+		}
+
+		function removeIconifyFromButtons() {
+			var
+				removed = false,
+				buttons = [].slice.call(_t.parentNode.querySelectorAll(o.buttonIcon));
+
+			buttons.forEach(function(button) {
+				var
+					icon = button.querySelector("iconify-icon"),
+					textNode = button.querySelector(o.buttonIconText);
+
+				if (icon !== null) {
+					button.classList.remove("mdl-button-icon");
+					button.style.colorScheme = "";
+					button.removeChild(icon);
+					if (textNode !== null) {
+						textNode.classList.remove("mdl-button-icon-text");
+						textNode.classList.add("mdl-button-text");
+					}
+					removed = true;
+				}
+			});
+			return removed;
+		}
+
+		function setButtonsColorScheme(value) {
+			var
+				buttons = [].slice.call(_t.parentNode.querySelectorAll(o.buttonIcon));
+
+			buttons.forEach(function(button) {
+				button.style.colorScheme = value;
+			});
+		}
+
+		_t.applyLocalSettingsPrivate = function() {
+			var
+				removed;
+
+			if (_t.iconifyInButtons) {
+				if (smarthome.UI.iconify && _t.iconifyRemoved) {
+					// Reload current page without affecting the history
+					smarthome.UI.navigate(smarthome.UI.page, false);
+					return;
+				} else if (!smarthome.UI.iconify) {
+					removed = removeIconifyFromButtons();
+					if (!_t.iconifyRemoved && removed) {
+						_t.iconifyRemoved = true;
+					}
+				}
+			}
+
+			setButtonsColorScheme(smarthome.UI.theme);
+		};
+
+		_t.iconifyInButtons = checkIconifyInButtons();
+		_t.iconifyRemoved = _t.iconifyInButtons && !smarthome.UI.iconify ? removeIconifyFromButtons() : false;
+		setButtonsColorScheme(smarthome.UI.theme);
 
 		_t.buttons.forEach.call(_t.buttons, function(button) {
 			var
@@ -2286,6 +2474,47 @@
 		});
 	}
 
+	function PlayAudioUrlListener() {
+		var
+			_t = this;
+
+		_t.source = new EventSource("/rest/events?topics=openhab/webaudio/playurl");
+		_t.source.addEventListener("message", function(event) {
+			var context;
+			try {
+				window.AudioContext = window.AudioContext || window.webkitAudioContext;
+				if (typeof (window.AudioContext) !== "undefined") {
+					context = new AudioContext();
+				}
+
+				var data = JSON.parse(event.data);
+				var audioUrl = JSON.parse(data.payload);
+
+				ajax({
+					url: audioUrl,
+					type: "GET",
+					reponseType: "arraybuffer",
+					callback: function(request) {
+						context.decodeAudioData(request.response, function(buffer) {
+							var source = context.createBufferSource();
+							source.buffer = buffer;
+							source.connect(context.destination);
+							source.onended = function () {
+								context.close();
+							};
+							source.start(0);
+						});
+					}
+				});
+			}
+			catch (e) {
+				if (context) {
+					context.close();
+				}
+			}
+		});
+	}
+
 	function UI(root) {
 		/* const */
 		var
@@ -2310,6 +2539,7 @@
 		_t.primaryColor = document.body.getAttribute(o.primaryColorAttribute);
 		_t.secondaryColor = document.body.getAttribute(o.secondaryColorAttribute);
 		_t.notification = document.querySelector(o.notify);
+		_t.iconifyScript = null;
 
 		_t.escapeHtml = function(text) {
 			var
@@ -2330,6 +2560,143 @@
 		_t.setTitle = function(title) {
 			document.querySelector("title").innerHTML = title;
 			_t.layoutTitle.innerHTML = title;
+		};
+
+		_t.updateLocalSetting = function(param) {
+			var
+				oldValue,
+				newValue,
+				id;
+
+			if (param === null || param === "openhab.ui:theme.dark") {
+				oldValue = _t.theme;
+				newValue = window.localStorage.getItem("openhab.ui:theme.dark");
+				if (newValue !== "light" && newValue !== "dark") {
+					newValue = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+				}
+				_t.theme = newValue;
+				if (oldValue !== newValue) {
+					_t.root.body.setAttribute("data-theme", newValue);
+					for (id in smarthome.dataModel) {
+						smarthome.dataModel[id].applyLocalSettings();
+					}
+				}
+			}
+
+			if (param === null || param === "openhab.ui.basic:icons") {
+				newValue = window.localStorage.getItem("openhab.ui.basic:icons");
+				_t.root.documentElement.classList.remove("ui-icons-enabled");
+				if (newValue === null || newValue === "enabled") {
+					_t.root.documentElement.classList.add("ui-icons-enabled");
+				}
+			}
+
+			if (param === null || param === "openhab.ui.basic:iconify") {
+				oldValue = _t.iconify;
+				newValue = window.localStorage.getItem("openhab.ui.basic:iconify") === null ||
+						window.localStorage.getItem("openhab.ui.basic:iconify") === "enabled";
+				_t.iconify = newValue;
+				if (oldValue !== newValue) {
+					if (newValue && _t.iconifyScript === null) {
+						_t.iconifyScript = _t.root.createElement("script");
+						_t.iconifyScript.src = "iconify/iconify-icon.min.js";
+						_t.root.head.appendChild(_t.iconifyScript);
+					} else if (!newValue && _t.iconifyScript !== null) {
+						_t.root.head.removeChild(_t.iconifyScript);
+						_t.iconifyScript = null;
+					}
+					for (id in smarthome.dataModel) {
+						smarthome.dataModel[id].applyLocalSettings();
+					}
+				}
+			}
+
+			if (param === null || param === "openhab.ui.basic:biggerFontSize") {
+				_t.root.documentElement.classList.remove("ui-bigger-font");
+				if (window.localStorage.getItem("openhab.ui.basic:biggerFontSize") === "enabled") {
+					_t.root.documentElement.classList.add("ui-bigger-font");
+				}
+			}
+
+			if (param === null || param === "openhab.ui.basic:condensedLayout") {
+				_t.root.documentElement.classList.remove("ui-layout-condensed");
+				if (window.localStorage.getItem("openhab.ui.basic:condensedLayout") === "enabled") {
+					_t.root.documentElement.classList.add("ui-layout-condensed");
+				}
+			}
+
+			if (param === null || param === "openhab.ui.basic:nbColumnsTablet") {
+				oldValue = _t.cellSizeTablet;
+				newValue = window.localStorage.getItem("openhab.ui.basic:nbColumnsTablet") === null ? 4
+					: 8 / (window.localStorage.getItem("openhab.ui.basic:nbColumnsTablet") * 1);
+				_t.cellSizeTablet = newValue;
+				if (oldValue !== newValue) {
+					for (id in smarthome.dataModel) {
+						smarthome.dataModel[id].applyLocalSettings();
+					}
+				}
+			}
+
+			if (param === null || param === "openhab.ui.basic:nbColumnsDesktop") {
+				oldValue = _t.cellSizeDesktop;
+				newValue = window.localStorage.getItem("openhab.ui.basic:nbColumnsDesktop") === null ? 4
+					: 12 / (window.localStorage.getItem("openhab.ui.basic:nbColumnsDesktop") * 1);
+				_t.cellSizeDesktop = newValue;
+				if (oldValue !== newValue) {
+					_t.root.documentElement.classList.remove("ui-large-window");
+					if (newValue === 4) {
+						_t.root.documentElement.classList.add("ui-large-window");
+					}
+					for (id in smarthome.dataModel) {
+						smarthome.dataModel[id].applyLocalSettings();
+					}
+				}
+			}
+
+			if (param === null || param === "openhab.ui.basic:capitalizeValues") {
+				_t.root.documentElement.classList.remove("ui-capitalize-values");
+				if (window.localStorage.getItem("openhab.ui.basic:capitalizeValues") === "enabled") {
+					_t.root.documentElement.classList.add("ui-capitalize-values");
+				}
+			}
+
+			if (param === null || param === "openhab.ui:webaudio.enable") {
+				oldValue = _t.webAudioEnabled;
+				newValue = window.localStorage.getItem("openhab.ui:webaudio.enable") === "enabled";
+				_t.webAudioEnabled = newValue;
+				if (oldValue !== newValue) {
+					if (newValue) {
+						smarthome.playAudioUrlListener = new PlayAudioUrlListener();
+					} else {
+						if (oldValue !== undefined) {
+							smarthome.playAudioUrlListener.source.close();
+						}
+						smarthome.playAudioUrlListener = null;
+					}
+				}
+			}
+
+			if (param === null || param === "openhab.ui.basic:chartSize") {
+				oldValue = _t.chartSize;
+				newValue = window.localStorage.getItem("openhab.ui.basic:chartSize");
+				_t.chartSize = newValue;
+				if (oldValue !== newValue) {
+					for (id in smarthome.dataModel) {
+						smarthome.dataModel[id].applyLocalSettings();
+					}
+				}
+			}
+
+			if (param === null || param === "openhab.ui.basic:chartDPI") {
+				oldValue = _t.chartDPI;
+				newValue = window.localStorage.getItem("openhab.ui.basic:chartDPI");
+				_t.chartDPI = newValue;
+				if (oldValue !== newValue) {
+					for (id in smarthome.dataModel) {
+						smarthome.dataModel[id].applyLocalSettings();
+					}
+				}
+			}
 		};
 
 		function replaceContent(xmlResponse) {
@@ -2492,6 +2859,8 @@
 					appendControl(new ControlSlider(e));
 					break;
 				case "chart":
+					appendControl(new ControlChart(e));
+					break;
 				case "image":
 					appendControl(new ControlImage(e, true));
 					break;
@@ -2546,6 +2915,10 @@
 				_t.header.classList.remove("navigation-home");
 				_t.header.classList.add("navigation-page");
 			}
+
+			document.querySelector(o.settingsButton).addEventListener("click", function() {
+				location.href = location.href.replace("\/basicui\/app", "/basicui/app/settings");
+			});
 
 			document.querySelector(o.backButton).addEventListener("click", function() {
 				if (historyStack.level > 0) {
@@ -3011,61 +3384,47 @@
 		});
 	}
 
-	function PlayAudioUrlListener() {
-		var
-			_t = this;
-
-		_t.source = new EventSource("/rest/events?topics=openhab/webaudio/playurl");
-		_t.source.addEventListener("message", function(event) {
-			var context;
-			try {
-				window.AudioContext = window.AudioContext || window.webkitAudioContext;
-				if (typeof (window.AudioContext) !== "undefined") {
-					context = new AudioContext();
-				}
-
-				var data = JSON.parse(event.data);
-				var audioUrl = JSON.parse(data.payload);
-
-				ajax({
-					url: audioUrl,
-					type: "GET",
-					reponseType: "arraybuffer",
-					callback: function(request) {
-						context.decodeAudioData(request.response, function(buffer) {
-							var source = context.createBufferSource();
-							source.buffer = buffer;
-							source.connect(context.destination);
-							source.onended = function () {
-								context.close();
-							};
-							source.start(0);
-						});
-					}
-				});
-			}
-			catch (e) {
-				if (context) {
-					context.close();
-				}
-			}
-		});
-	}
-
 	document.addEventListener("DOMContentLoaded", function() {
 		smarthome.UI = new UI(document);
+		smarthome.UI.updateLocalSetting(null);
 		smarthome.UI.layoutChangeProxy = new VisibilityChangeProxy(100, 50);
 		smarthome.eventMapper = new EventMapper();
 		smarthome.UI.initControls();
 		smarthome.changeListener = new ChangeListener();
 
-		if (JSON.parse(document.getElementById("config").text).webAudio) {
-			smarthome.playAudioUrlListener = new PlayAudioUrlListener();
+		function updateTheme() {
+			smarthome.UI.updateLocalSetting("openhab.ui:theme.dark");
 		}
+
+		function handleStorageEvent(event) {
+			smarthome.UI.updateLocalSetting(event.key);
+		}
+
+		if (window.matchMedia) {
+			var
+				colorSchemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+			colorSchemeQuery.addEventListener("change", updateTheme);
+		}
+
+		window.addEventListener("storage", handleStorageEvent);
 
 		window.addEventListener("beforeunload", function() {
 			smarthome.changeListener.suppressErrors();
 			smarthome.changeListener.closeConnection();
+
+			if (window.matchMedia) {
+				var
+					colorSchemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+				colorSchemeQuery.removeEventListener("change", updateTheme);
+			}
+
+			window.removeEventListener("storage", handleStorageEvent);
+
+			if (smarthome.UI.webAudioEnabled) {
+				smarthome.playAudioUrlListener.source.close();
+			}
 		});
 	});
 })({
@@ -3083,6 +3442,8 @@
 	secondaryColorAttribute: "data-secondary-color",
 	controlButton: "button",
 	buttonActiveClass: "mdl-button--accent",
+	buttonIcon: ".mdl-button-icon",
+	buttonIconText: ".mdl-button-icon-text",
 	modal: ".mdl-modal",
 	modalContainer: ".mdl-modal__content",
 	selectionRows: ".mdl-form__selection-rows",
@@ -3091,6 +3452,7 @@
 	formHidden: "mdl-form--hidden",
 	formControls: ".mdl-form__control",
 	formRowHidden: "mdl-form__row--hidden",
+	cell12Col: "mdl-cell--12-col",
 	formValue: ".mdl-form__value",
 	formRadio: ".mdl-radio",
 	formRadioControl: ".mdl-radio__button",
@@ -3104,6 +3466,7 @@
 	uiLoadingBar: ".ui__loading",
 	layoutTitle: ".mdl-layout-title",
 	layoutHeader: ".mdl-layout__header",
+	settingsButton: ".navigation__button-settings",
 	backButton: ".navigation__button-back",
 	rollerblind: {
 		up: ".mdl-form__rollerblind--up",
