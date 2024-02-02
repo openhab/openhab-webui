@@ -294,11 +294,10 @@ export default {
           if (parsed.errors.length > 0) {
             parsed.errors.forEach((e) => {
               const message = e.message
-              e.makePretty()
               found.push({
                 message: message,
-                from: (e.linePos.end) ? { line: e.linePos.start.line - 1, ch: e.linePos.start.col - 1 } : undefined,
-                to: (e.linePos.end) ? { line: e.linePos.end.line - 1, ch: e.linePos.end.col - 1 } : undefined
+                from: (e.linePos[0]) ? { line: e.linePos[0].line - 1, ch: e.linePos[0].col - 1 } : undefined,
+                to: (e.linePos[1]) ? { line: e.linePos[1].line - 1, ch: e.linePos[1].col - 1 } : undefined
               })
             })
           }
