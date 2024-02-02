@@ -21,8 +21,7 @@ expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
 expr.addUnaryOp('@', (itemName) => {
   if (itemName === undefined) return undefined
   const itemState = store.getters.trackedItems[itemName]
-  if (itemState.displayState === undefined) return itemState.state
-  return itemState.displayState
+  return itemState.displayState || itemState.state
 })
 expr.addUnaryOp('@@', (itemName) => {
   if (itemName === undefined) return undefined
