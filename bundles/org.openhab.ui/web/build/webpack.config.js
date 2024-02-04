@@ -54,6 +54,13 @@ module.exports = {
   devServer: {
     hot: true,
     compress: false, // disable compression as this seems to break the SSE event stream
+    client: {
+      overlay: {
+        errors: true,
+        runtimeErrors: false,
+        warnings: false
+      }
+    },
     static: [
       path.resolve(__dirname, 'www'),
     ],
