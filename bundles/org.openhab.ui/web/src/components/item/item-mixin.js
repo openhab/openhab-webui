@@ -40,7 +40,7 @@ export default {
       } else if (this.items && this.items.some(item => item.name === name)) {
         return 'An Item with this name already exists'
       }
-      return ``
+      return ''
     },
     /**
      * Save an Item, i.e. add a new Item or update an existing Item.
