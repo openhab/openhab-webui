@@ -27,7 +27,7 @@
                      info="Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description."
                      @input="item.unit = $event.target.value" clear-button />
       <f7-list-input v-show="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="State Description Pattern" type="text" :value="item.stateDescriptionPattern"
-                     info="Pattern or transformation applied to the state for display purposes."
+                     info="Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value."
                      @input="item.stateDescriptionPattern = $event.target.value" clear-button />
       <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
                      @input="item.category = $event.target.value" clear-button>
@@ -118,18 +118,7 @@ export default {
     },
     onNameInput (event) {
       this.item.name = event.target.value
-      this.validateName(this.item.name)
-    },
-    validateName (name) {
-      let oldError = this.nameErrorMessage
-      if (!/^[A-Za-z0-9_]+$/.test(name)) {
-        this.nameErrorMessage = 'Required. A-Z,a-z,0-9,_ only'
-      } else if (this.items.some(item => item.name === name)) {
-        this.nameErrorMessage = 'An Item with this name already exists'
-      } else {
-        this.nameErrorMessage = ''
-      }
-      if (oldError !== this.nameErrorMessage) this.$emit('valid', !this.nameErrorMessage)
+      this.$set(this, 'nameErrorMessage', this.validateItemName(this.item.name))
     }
   },
   mounted () {
@@ -137,7 +126,7 @@ export default {
     if (!this.item.category) this.$set(this.item, 'category', '')
     if (this.createMode) {
       if (!this.items) this.items = []
-      this.validateName(this.item.name)
+      this.$set(this, 'nameErrorMessage', this.validateItemName(this.item.name))
     }
     const categoryControl = this.$refs.category
     if (!categoryControl || !categoryControl.$el) return

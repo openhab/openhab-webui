@@ -20,7 +20,7 @@
                      info="Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description."
                      @input="item.unit = $event.target.value" clear-button />
       <f7-list-input v-if="item.type && item.type.startsWith('Number:') && createMode" label="State Description Pattern" type="text" :value="item.stateDescriptionPattern"
-                     info="Pattern or transformation applied to the state for display purposes."
+                     info="Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value."
                      @input="item.stateDescriptionPattern = $event.target.value" clear-button />
       <f7-list-item key="function-picker-arithmetic" v-if="item.type === 'Group' && item.groupType && (['Dimmer', 'Rollershutter'].indexOf(item.groupType) >= 0 || item.groupType.indexOf('Number') === 0)" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
         <select name="select-function" @change="setFunction($event.target.value)">
