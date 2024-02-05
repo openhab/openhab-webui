@@ -11,5 +11,8 @@
   "about.miscellaneous.home.background": "Стандартный цвет фона домашней страницы",
   "about.miscellaneous.home.hideChatInput": "Скрыть окно ввода чата на главной странице",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Отключить анимацию перехода карточек",
-  "about.miscellaneous.theme.disablePageTransition": "Отключить анимацию перехода между страницами"
+  "about.miscellaneous.theme.disablePageTransition": "Отключить анимацию перехода между страницами",
+  "about.miscellaneous.webaudio.enable": "Включить поддержку Web Audio",
+  "about.miscellaneous.commandItem.title": "Слушать пользовательские команды ",
+  "about.miscellaneous.commandItem.selectItem": "Пункт"
 }
