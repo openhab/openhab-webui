@@ -28,13 +28,13 @@
         <f7-col>
           <f7-block-title>Item</f7-block-title>
           <f7-list media-list>
-            <f7-list-item radio :checked="!createItem" value="false" @change="createItem = false" title="Use an existing Item" name="item-creation-choice" />
-            <f7-list-item radio :checked="createItem" value="true" @change="createItem = true" title="Create a new Item" name="item-creation-choice" />
+            <f7-list-item radio :checked="!createMode" value="false" @change="createMode = false" title="Use an existing Item" name="item-creation-choice" />
+            <f7-list-item radio :checked="createMode" value="true" @change="createMode = true" title="Create a new Item" name="item-creation-choice" />
           </f7-list>
         </f7-col>
 
         <!-- Choose item to link -->
-        <f7-col v-if="!createItem">
+        <f7-col v-if="!createMode">
           <f7-list>
             <item-picker key="itemLink" title="Item to Link" name="item" :value="selectedItemName" :multiple="false" :items="items" :filterType="getCompatibleItemTypes()"
                          @input="(value) => selectedItemName = value" />
@@ -43,7 +43,7 @@
 
         <!-- Create new item -->
         <f7-col v-else>
-          <item-form :item="newItem" :items="items" :createMode="true" @valid="itemValid = $event" />
+          <item-form :item="newItem" :items="items" :createMode="true" />
           <f7-list>
             <item-picker key="newItem-groups" title="Parent Group(s)" name="parent-groups" :value="newItem.groupNames" :items="items" @input="(value) => newItem.groupNames = value" :multiple="true" filterType="Group" />
           </f7-list>
@@ -133,8 +133,10 @@ import ItemForm from '@/components/item/item-form.vue'
 import Item from '@/components/item/item.vue'
 
 import * as Types from '@/assets/item-types.js'
+import ItemMixin from '@/components/item/item-mixin'
 
 export default {
+  mixins: [ItemMixin],
   components: {
     ConfigSheet,
     ItemPicker,
@@ -147,9 +149,8 @@ export default {
   data () {
     return {
       ready: true,
-      createItem: false,
+      createMode: false,
       items: null,
-      itemValid: true,
       link: {
         itemName: null,
         channelUID: null,
@@ -178,7 +179,7 @@ export default {
   },
   computed: {
     currentItem () {
-      return this.item ? this.item : this.createItem ? this.newItem : this.items ? this.items.find(item => item.name === this.selectedItemName) : null
+      return this.item ? this.item : this.createMode ? this.newItem : this.items ? this.items.find(item => item.name === this.selectedItemName) : null
     },
     compatibleProfileTypes () {
       let currentItemType = this.currentItem && this.currentItem.type ? this.currentItem.type : ''
@@ -259,8 +260,8 @@ export default {
       }
 
       // checks
-      if (this.createItem && !this.itemValid) {
-        this.$f7.dialog.alert('Please correct the item to link')
+      if (this.createMode && this.validateItemName(this.newItem.name) !== '') {
+        this.$f7.dialog.alert('Please correct the newly created item')
         return
       }
       if (!link.itemName) {
@@ -287,8 +288,8 @@ export default {
         }
       }
 
-      if (this.createItem) {
-        this.$oh.api.put('/rest/items/' + this.newItem.name, this.newItem).then((data) => {
+      if (this.createMode) {
+        this.saveItem(this.newItem).then((data) => {
           this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
             this.$f7.toast.create({
               text: 'Item and link created',

@@ -28,9 +28,29 @@ export default {
       if (!item.tags) return []
       return item.tags.filter((t) => !this.isSemanticTag(t))
     },
-    doSave (item) {
-      console.log(item)
-
+    /**
+     * Validate the Item name against valid characters and (if existing Items are available on `this.items`) names of existing Items.
+     *
+     * @param {string} name Item name to validate
+     * @returns {string} The error message if the name is invalid, or an empty string if the name is valid.
+     */
+    validateItemName (name) {
+      if (!/^[A-Za-z0-9_]+$/.test(name)) {
+        return 'Required. A-Z,a-z,0-9,_ only'
+      } else if (this.items && this.items.some(item => item.name === name)) {
+        return 'An Item with this name already exists'
+      }
+      return ''
+    },
+    /**
+     * Save an Item, i.e. add a new Item or update an existing Item.
+     *
+     * If a new Item is created (checks `this.createMode`), and it is an UoM Item, unit metadata and state description (if changed from the default) metadata are saved as well.
+     *
+     * @param item
+     * @returns {Promise}
+     */
+    saveItem (item) {
       if (item.groupType === 'None') delete item.groupType
       if (item.function === 'None') delete item.groupType
 
@@ -41,17 +61,17 @@ export default {
 
       // TODO: Add support for saving metadata
       return this.$oh.api.put('/rest/items/' + item.name, item).then(() => {
-        let unitPromise = Promise.resolve()
+        // Save unit metadata if Item is an UoM Item
         if (this.createMode && (item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && unit) {
           const metadata = {
             value: unit,
             config: {}
           }
-          unitPromise = this.$oh.api.put('/rest/items/' + item.name + '/metadata/unit', metadata)
+          return this.$oh.api.put('/rest/items/' + item.name + '/metadata/unit', metadata)
         }
-        return unitPromise
+        return Promise.resolve()
       }).then(() => {
-        let stateDescriptionPromise = Promise.resolve()
+        // Save state description if Item is an UoM Item and if state description changed from the default value
         if (this.createMode && (item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && stateDescriptionPattern) {
           if (stateDescriptionPattern !== `%.0f ${unit}`) {
             const metadata = {
@@ -60,11 +80,9 @@ export default {
                 pattern: stateDescriptionPattern
               }
             }
-            stateDescriptionPromise = this.$oh.api.put('/rest/items/' + item.name + '/metadata/stateDescription', metadata)
+            return this.$oh.api.put('/rest/items/' + item.name + '/metadata/stateDescription', metadata)
           }
         }
-        return stateDescriptionPromise
-      }).then(() => {
         return Promise.resolve()
       }).catch((err) => {
         return Promise.reject(err)

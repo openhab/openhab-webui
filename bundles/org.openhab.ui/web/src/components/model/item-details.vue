@@ -100,7 +100,7 @@ export default {
     },
     save () {
       this.editMode = false
-      this.doSave(this.editedItem).then(() => {
+      this.saveItem(this.editedItem).then(() => {
         this.$f7.toast.create({
           text: 'Item updated',
           destroyOnClose: true,
@@ -121,7 +121,7 @@ export default {
       // TODO properly validate item
       if (!this.editedItem.name) return
 
-      this.doSave(this.editedItem).then(() => {
+      this.saveItem(this.editedItem).then(() => {
         this.$f7.toast.create({
           text: 'Item created',
           destroyOnClose: true,
