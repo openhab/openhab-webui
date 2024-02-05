@@ -1,9 +1,9 @@
 <template>
   <div>
-    <f7-block v-if="visible" class="oh-block" :style="{ 'z-index': (context.editmode) ? 100 - context.parent.component.slots.default.indexOf(context.component) : 'auto !important' }">
+    <f7-block v-if="visible" class="oh-block" :style="{ 'z-index': (context.editmode) ? 100 - context.parent.component.slots.default.indexOf(context.component) : 'auto !important', ...config.style}">
       <hr v-if="context.editmode">
-      <f7-block-title v-if="context.component.config.title">
-        {{ context.component.config.title }}
+      <f7-block-title v-if="config.title">
+        {{ config.title }}
       </f7-block-title>
       <f7-menu v-if="context.editmode" class="configure-layout-menu padding-bottom">
         <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-grid-row')" icon-f7="plus" text="Add Row" />
