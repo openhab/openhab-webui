@@ -154,7 +154,6 @@ import { OhHomePageDefinition, OhLocationsTabParameters, OhEquipmentTabParameter
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ModelTab from '@/pages/home/model-tab.vue'
-import PageSettings from '@/components/pagedesigner/page-settings.vue'
 
 const ConfigurableWidgets = {
   'oh-location-card': OhLocationCardParameters,
@@ -165,7 +164,6 @@ const ConfigurableWidgets = {
 export default {
   mixins: [PageDesigner, HomeCards],
   components: {
-    PageSettings,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     ConfigSheet,
     ModelTab
