@@ -363,6 +363,7 @@ export default [
           {
             path: ':addonId',
             beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(AddonsConfigureBindingPage)
           }
         ]
