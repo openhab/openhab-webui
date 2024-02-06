@@ -298,10 +298,16 @@ export default function (f7, isGraalJs) {
 
     let math_number_input1
     let math_number_input2
-    try { // may throw an exception on workspace startup in uninitialized state but in this case we can ignore
+    const wasInitialized = javascriptGenerator.isInitialized
+    try {
+      javascriptGenerator.isInitialized = 1 // workaround to avoid console warnings
       math_number_input1 = javascriptGenerator.valueToCode(block, 'NUM1', javascriptGenerator.ORDER_FUNCTION_CALL)
       math_number_input2 = javascriptGenerator.valueToCode(block, 'NUM2', javascriptGenerator.ORDER_FUNCTION_CALL)
-    } catch (e) {}
+    } catch (e) {
+      // may throw an exception on workspace startup in uninitialized state but in this case we can ignore
+    } finally {
+      javascriptGenerator.isInitialized = wasInitialized
+    }
 
     /*
     When dealing with variables, Blockly does not provide type information (type is "").
