@@ -29,7 +29,7 @@ export default function (f7, isGraalJs) {
   * converts a hex color string in to an openHAB hue-saturation-brightness string
   * Code generation
   */
-  javascriptGenerator['oh_color_to_hsb'] = function (block) {
+  javascriptGenerator.forBlock['oh_color_to_hsb'] = function (block) {
     let conversionFunction = addConvertColourHexToHSB()
     const hexColor = javascriptGenerator.valueToCode(block, 'hexColor', javascriptGenerator.ORDER_ATOMIC)
     let code = `${conversionFunction}(${hexColor})`
@@ -64,7 +64,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_color_item'] = function (block) {
+  javascriptGenerator.forBlock['oh_color_item'] = function (block) {
     const theItem = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'item')
     let attributeName = block.getFieldValue('attributeName')

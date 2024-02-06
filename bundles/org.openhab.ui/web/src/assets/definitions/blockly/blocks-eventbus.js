@@ -30,7 +30,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_event'] = function (block) {
+  javascriptGenerator.forBlock['oh_event'] = function (block) {
     const eventType = block.getFieldValue('eventType')
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)

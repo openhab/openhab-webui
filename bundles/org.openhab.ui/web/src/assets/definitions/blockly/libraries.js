@@ -56,7 +56,7 @@ const generateCodeForBlock = (block) => {
           context.fields[placeholderName] = block.getFieldValue(placeholderName)
           return code.replace(placeholder, context.fields[placeholderName])
         case 'input':
-          const order = placeholderOption ? javascriptGenerator['ORDER_' + placeholderOption.replace('ORDER_', '')] : javascriptGenerator.ORDER_NONE
+          const order = placeholderOption ? javascriptGenerator.forBlock['ORDER_' + placeholderOption.replace('ORDER_', '')] : javascriptGenerator.ORDER_NONE
           context.inputs[placeholderName] = javascriptGenerator.valueToCode(block, placeholderName, order)
           return code.replace(placeholder, context.inputs[placeholderName])
         case 'utility':
@@ -98,7 +98,7 @@ const generateCodeForBlock = (block) => {
   }
 
   if (block.outputConnection) {
-    const order = codeComponent.config.order ? javascriptGenerator[codeComponent.config.order] : javascriptGenerator.ORDER_NONE
+    const order = codeComponent.config.order ? javascriptGenerator.forBlock[codeComponent.config.order] : javascriptGenerator.ORDER_NONE
     return [code, order]
   } else {
     return code
@@ -148,7 +148,7 @@ export const defineLibraryToolboxCategory = (library, f7) => (workspace) => {
           console.warn('unknown toolbox component type')
       }
 
-      const block = Blockly.Xml.textToDom(xml)
+      const block = Blockly.utils.xml.textToDom(xml)
       category.push(block)
     })
   }
@@ -172,7 +172,7 @@ export const defineLibraries = (libraryDefinitions) => {
           }
         }
 
-        javascriptGenerator[blockTypeId] = generateCodeForBlock
+        javascriptGenerator.forBlock[blockTypeId] = generateCodeForBlock
       })
     }
   })
