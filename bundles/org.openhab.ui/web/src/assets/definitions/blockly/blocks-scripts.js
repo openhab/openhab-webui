@@ -123,11 +123,11 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         const type = thisBlock.getFieldValue('type')
         switch (type) {
           case 'MAP':
-            return 'transforms an input via a map file. Specify the file as the function.\nREGEX und JSONPATH are also valid.'
+            return 'transforms an input via a map file. Specify the file as the function.\nREGEX and JSONPATH are also valid.'
           case 'REGEX':
-            return 'transforms / filters an input by applying the provided regular expression.\nMAP und JSONPATH are also valid.'
+            return 'transforms / filters an input by applying the provided regular expression.\nMAP and JSONPATH are also valid.'
           case 'JSONPATH':
-            return 'transforms / filters an JSON input by executing the provided JSONPath query.\nMAP und REGEX are also valid.'
+            return 'transforms / filters a JSON input by executing the provided JSONPath query.\nMAP and REGEX are also valid.'
           default:
             return 'transforms the input with the ' + type + ' transformation.'
         }
