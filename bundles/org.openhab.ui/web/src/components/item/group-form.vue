@@ -1,14 +1,14 @@
 <template>
   <div v-if="item" class="group-form no-padding">
     <f7-list inline-labels no-hairlines-md>
-      <f7-list-item v-if="item.type === 'Group'" title="Members Base Type" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
+      <f7-list-item v-if="item.type === 'Group'" :disabled="!editable" title="Members Base Type" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
         <select name="select-basetype" @change="setGroupType($event.target.value)">
           <option v-for="type in types.GroupTypes" :key="type" :value="type" :selected="item.groupType ? type === item.groupType.split(':')[0] : false">
             {{ type }}
           </option>
         </select>
       </f7-list-item>
-      <f7-list-item v-if="dimensions.length && item.groupType && item.groupType.startsWith('Number')" title="Dimension" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+      <f7-list-item v-if="dimensions.length && item.groupType && item.groupType.startsWith('Number')" :disabled="!editable" title="Dimension" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
         <select name="select-dimension" @change="setDimension($event.target.value)">
           <option key="Number" value="Number" :selected="item.type === 'Number'" />
           <option v-for="(d, i) in dimensions" :key="d.name" :value="i" :selected="'Number:' + d.name === item.groupType">
@@ -16,41 +16,41 @@
           </option>
         </select>
       </f7-list-item>
-      <f7-list-input v-if="item.groupType && item.groupType.startsWith('Number:') && createMode" label="Unit" type="text" :value="item.unit"
+      <f7-list-input v-if="item.groupType && item.groupType.startsWith('Number:') && createMode" :disabled="!editable" label="Unit" type="text" :value="item.unit"
                      info="Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description."
                      @input="item.unit = $event.target.value" clear-button />
-      <f7-list-input v-if="item.type && item.type.startsWith('Number:') && createMode" label="State Description Pattern" type="text" :value="item.stateDescriptionPattern"
+      <f7-list-input v-if="item.type && item.type.startsWith('Number:') && createMode" :disabled="!editable" label="State Description Pattern" type="text" :value="item.stateDescriptionPattern"
                      info="Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value."
                      @input="item.stateDescriptionPattern = $event.target.value" clear-button />
-      <f7-list-item key="function-picker-arithmetic" v-if="item.type === 'Group' && item.groupType && (['Dimmer', 'Rollershutter'].indexOf(item.groupType) >= 0 || item.groupType.indexOf('Number') === 0)" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
+      <f7-list-item key="function-picker-arithmetic" v-if="item.type === 'Group' && item.groupType && (['Dimmer', 'Rollershutter'].indexOf(item.groupType) >= 0 || item.groupType.indexOf('Number') === 0)" :disabled="!editable" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
         <select name="select-function" @change="setFunction($event.target.value)">
           <option v-for="type in types.ArithmeticFunctions" :key="type.name" :value="type.name" :selected="type.name === item.functionKey">
             {{ type.value }}
           </option>
         </select>
       </f7-list-item>
-      <f7-list-item key="function-picker-logicalopenclosed" v-else-if="item.type === 'Group' && item.groupType && ['Contact'].indexOf(item.groupType) >= 0" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
+      <f7-list-item key="function-picker-logicalopenclosed" v-else-if="item.type === 'Group' && item.groupType && ['Contact'].indexOf(item.groupType) >= 0" :disabled="!editable" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
         <select name="select-function" @change="setFunction($event.target.value)">
           <option v-for="type in types.LogicalOpenClosedFunctions" :key="type.name" :value="type.name" :selected="type.name === item.functionKey">
             {{ type.value }}
           </option>
         </select>
       </f7-list-item>
-      <f7-list-item key="function-picker-logicalplaypause" v-else-if="item.type === 'Group' && item.groupType && ['Player'].indexOf(item.groupType) >= 0" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
+      <f7-list-item key="function-picker-logicalplaypause" v-else-if="item.type === 'Group' && item.groupType && ['Player'].indexOf(item.groupType) >= 0" :disabled="!editable" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
         <select name="select-function" @change="setFunction($event.target.value)">
           <option v-for="type in types.LogicalPlayPauseFunctions" :key="type.name" :value="type.name" :selected="type.name === item.functionKey">
             {{ type.value }}
           </option>
         </select>
       </f7-list-item>
-      <f7-list-item key="function-picker-datetime" v-else-if="item.type === 'Group' && item.groupType && ['DateTime'].indexOf(item.groupType) >= 0" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
+      <f7-list-item key="function-picker-datetime" v-else-if="item.type === 'Group' && item.groupType && ['DateTime'].indexOf(item.groupType) >= 0" :disabled="!editable" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
         <select name="select-function" @change="setFunction($event.target.value)">
           <option v-for="type in types.DateTimeFunctions" :key="type.name" :value="type.name" :selected="type.name === item.functionKey">
             {{ type.value }}
           </option>
         </select>
       </f7-list-item>
-      <f7-list-item key="function-picker-logicalonoff" v-else-if="item.type === 'Group' && item.groupType && ['Switch', 'None'].indexOf(item.groupType) >= 0" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
+      <f7-list-item key="function-picker-logicalonoff" v-else-if="item.type === 'Group' && item.groupType && ['Switch', 'None'].indexOf(item.groupType) >= 0" :disabled="!editable" title="Aggregation Function" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
         <select name="select-function" @change="setFunction($event.target.value)">
           <option v-for="type in types.LogicalOnOffFunctions" :key="type.name" :value="type.name" :selected="type.name === item.functionKey">
             {{ type.value }}
@@ -72,6 +72,11 @@ export default {
   data () {
     return {
       types
+    }
+  },
+  computed: {
+    editable () {
+      return this.createMode || (this.item && this.item.editable)
     }
   },
   beforeMount () {
