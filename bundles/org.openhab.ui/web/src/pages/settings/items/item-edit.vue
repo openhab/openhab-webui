@@ -7,6 +7,7 @@
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
       </f7-nav-right>
+      <f7-link v-else slot="right" icon-f7="lock_fill" icon-only tooltip="This item is not editable through the UI" />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">
@@ -42,7 +43,7 @@
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
         <f7-icon v-if="item.editable === false" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMgs" />
-        <editor class="item-code-editor" mode="application/vnd.openhab.item+yaml" :value="itemYaml" @input="onEditorInput" :read-only="item.editable === false" />
+        <editor class="item-code-editor" mode="application/vnd.openhab.item+yaml" :value="itemYaml" @input="onEditorInput" :readOnly="item.editable === false" />
       </f7-tab>
     </f7-tabs>
 
@@ -102,6 +103,11 @@ export default {
       pendingTag: '',
       currentTab: 'design',
       notEditableMgs: 'This Item is not editable because it has been provisioned from a file.'
+    }
+  },
+  computed: {
+    editable () {
+      return this.createMode || this.item.editable
     }
   },
   watch: {

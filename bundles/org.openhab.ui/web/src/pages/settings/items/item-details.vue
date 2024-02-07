@@ -2,8 +2,11 @@
   <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline class="item-details-navbar">
       <f7-nav-right>
-        <f7-link icon-md="material:edit" href="edit">
+        <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
           {{ $theme.md ? '' : 'Edit' }}
+        </f7-link>
+        <f7-link v-else slot="right" icon-f7="lock_fill" tooltip="This item is not editable through the UI" href="edit">
+          Details
         </f7-link>
       </f7-nav-right>
       <f7-subnavbar sliding class="item-header">

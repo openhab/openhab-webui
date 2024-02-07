@@ -6,15 +6,15 @@
                      required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage"
                      @input="onNameInput" :clear-button="createMode" />
       <f7-list-input label="Label" type="text" placeholder="Label" :value="item.label"
-                     @input="item.label = $event.target.value" clear-button />
-      <f7-list-item v-if="item.type && !hideType" title="Type" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+                     @input="item.label = $event.target.value" :disabled="item.editable !== true" :clear-button="item.editable === true" />
+      <f7-list-item v-if="item.type && !hideType" title="Type" type="text" :disabled="item.editable !== true" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
         <select name="select-type" @change="item.type = $event.target.value">
           <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === item.type.split(':')[0]">
             {{ t }}
           </option>
         </select>
       </f7-list-item>
-      <f7-list-item v-if="dimensions.length && item.type && !hideType && item.type.startsWith('Number')" title="Dimension" type="text" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+      <f7-list-item v-if="dimensions.length && item.type && !hideType && item.type.startsWith('Number')" title="Dimension" type="text" :disabled="item.editable !== true" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
         <select name="select-dimension" @change="setDimension($event.target.value)">
           <option key="Number" value="Number" :selected="item.type === 'Number'" />
           <option v-for="(d, i) in dimensions" :key="d.name" :value="i" :selected="'Number:' + d.name === item.type">
@@ -25,12 +25,12 @@
       <!-- Use v-show instead of v-if, because otherwise the autocomplete for category would take over the unit -->
       <f7-list-input v-show="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="Unit" type="text" :value="item.unit"
                      info="Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description."
-                     @input="item.unit = $event.target.value" clear-button />
+                     @input="item.unit = $event.target.value" :disabled="item.editable !== true" :clear-button="item.editable === true" />
       <f7-list-input v-show="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="State Description Pattern" type="text" :value="item.stateDescriptionPattern"
                      info="Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value."
-                     @input="item.stateDescriptionPattern = $event.target.value" clear-button />
+                     @input="item.stateDescriptionPattern = $event.target.value" :disabled="item.editable !== true" :clear-button="item.editable === true" />
       <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
-                     @input="item.category = $event.target.value" clear-button>
+                     @input="item.category = $event.target.value" :disabled="item.editable !== true" :clear-button="item.editable === true">
         <div slot="root-end" style="margin-left: calc(35% + 8px)">
           <oh-icon :icon="item.category" :state="(createMode) ? null : item.state" height="32" width="32" />
         </div>
