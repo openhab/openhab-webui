@@ -2,6 +2,7 @@
   <f7-treeview class="model-treeview">
     <model-treeview-item v-for="node in rootNodes"
                          :key="node.item.name" :model="node"
+                         :includeItemName="includeItemName" :includeItemTags="includeItemTags"
                          @selected="nodeSelected" :selected="selectedItem"
                          @checked="(item, check) => $emit('checked', item, check)" />
   </f7-treeview>
@@ -21,7 +22,7 @@
 
 <script>
 export default {
-  props: ['rootNodes', 'selectedItem'],
+  props: ['rootNodes', 'selectedItem', 'includeItemName', 'includeItemTags'],
   methods: {
     nodeSelected (node) {
       this.$emit('selected', node)
