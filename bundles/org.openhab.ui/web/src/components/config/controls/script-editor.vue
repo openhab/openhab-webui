@@ -179,7 +179,7 @@ export default {
       if (mode.indexOf('application/javascript') === 0 || mode === 'js') return 'text/javascript'
       if (mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
       if (mode === 'py') return 'text/x-python'
-      if (mode === 'rb') return 'text/x-ruby'
+      if (mode === 'rb' || mode === 'application/x-ruby') return 'text/x-ruby'
       if (mode.indexOf('jinja') >= 0) return 'text/jinja2'
       return mode
     },
