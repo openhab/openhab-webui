@@ -1,11 +1,11 @@
 <template>
   <div>
-    <rule-general-settings v-if="createMode || isScriptRule" :ready="true" :rule="rule" :createMode="createMode" :isEditable="true" :inScriptEditor="true" />
+    <rule-general-settings v-if="createMode || isScriptRule" :ready="true" :rule="rule" :createMode="createMode" :inScriptEditor="true" />
     <f7-block class="block-narrow">
       <f7-col v-if="!createMode && languages">
         <f7-block-title>Scripting Language</f7-block-title>
         <f7-list media-list>
-          <f7-list-item media-item radio radio-icon="start" :disabled="true"
+          <f7-list-item media-item radio radio-icon="start" :disabled="!editable"
                         :value="mode" :checked="mode === language.contentType" @change="$emit('newLanguage', language.contentType)"
                         v-for="language in languages" :key="language.contentType"
                         :title="language.name" :after="language.version" :footer="language.contentType" />
@@ -26,7 +26,7 @@ export default {
   },
   computed: {
     editable () {
-      return this.rule && this.rule.editable
+      return this.createMode || (this.rule && this.rule.editable)
     }
   }
 }

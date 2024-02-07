@@ -56,7 +56,7 @@ export default {
       return this.rule.tags.filter((t) => !this.isScriptTag(t) && !this.isSceneTag(t)).length
     },
     editable () {
-      return this.rule && this.rule.editable
+      return this.createMode || (this.rule && this.rule.editable)
     }
   },
   methods: {
