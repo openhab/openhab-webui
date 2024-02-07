@@ -415,6 +415,8 @@ export default {
       this.$refs.blocklyEditor.showHideLabels(this.blocklyShowLabels)
     },
     showBlocklyCode () {
+      if (this.blocklyCodePreview) return
+
       try {
         this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
         this.script = this.$refs.blocklyEditor.getCode()
