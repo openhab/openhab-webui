@@ -1,6 +1,6 @@
 <template>
   <f7-list no-hairlines-md v-if="show">
-    <f7-list-item title="Semantic Class" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
+    <f7-list-item :disabled="!editable" title="Semantic Class" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
       <select name="select-semantics-class" @change="update('class', $event.target.value)">
         <option v-if="!hideNone" :value="''">
           None
@@ -22,8 +22,8 @@
         </optgroup>
       </select>
     </f7-list-item>
-    <f7-list-item v-if="currentSemanticType && !hideType" title="Semantic Type" :after="currentSemanticType" />
-    <f7-list-item v-if="currentSemanticType == 'Point'" title="Semantic Property" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
+    <f7-list-item v-if="currentSemanticType && !hideType" :disabled="!editable" title="Semantic Type" :after="currentSemanticType" />
+    <f7-list-item v-if="currentSemanticType == 'Point'" :disabled="!editable" title="Semantic Property" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
       <select name="select-semantics-proerty" :value="semanticProperty" @change="update('property', $event.target.value)">
         <option :value="''">
           None
@@ -105,6 +105,9 @@ export default {
     }
   },
   computed: {
+    editable () {
+      return this.item && this.item.editable
+    },
     orderedLocations () {
       return [...this.semanticClasses.Locations].sort((a, b) => {
         return a.localeCompare(b)

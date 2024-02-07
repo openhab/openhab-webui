@@ -1,13 +1,13 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar :title="createMode ? 'Create New Item': 'Edit Item'" back-link="Cancel">
-      <f7-nav-right v-if="createMode || item.editable">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
+      <f7-nav-right>
+        <f7-link @click="save()" v-if="editable && $theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="editable && !$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
+        <f7-link v-else icon-f7="lock_fill" icon-only tooltip="This item is not editable through the UI" />
       </f7-nav-right>
-      <f7-link v-else slot="right" icon-f7="lock_fill" icon-only tooltip="This item is not editable through the UI" />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">
@@ -31,7 +31,7 @@
           <f7-col>
             <f7-block-title>Group Membership</f7-block-title>
             <f7-list v-if="ready">
-              <item-picker title="Parent Group(s)" name="parent-groups" :value="item.groupNames" @input="(value) => item.groupNames = value" :items="items" :multiple="true" filterType="Group" />
+              <item-picker title="Parent Group(s)" name="parent-groups" :value="item.groupNames" :disabled="!editable" @input="(value) => item.groupNames = value" :items="items" :multiple="true" filterType="Group" />
             </f7-list>
           </f7-col>
           <f7-col v-if="item && item.type === 'Group'">
@@ -42,8 +42,8 @@
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="item.editable === false" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMgs" />
-        <editor class="item-code-editor" mode="application/vnd.openhab.item+yaml" :value="itemYaml" @input="onEditorInput" :readOnly="item.editable === false" />
+        <f7-icon v-if="!editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMgs" />
+        <editor class="item-code-editor" mode="application/vnd.openhab.item+yaml" :value="itemYaml" @input="onEditorInput" :readOnly="!editable" />
       </f7-tab>
     </f7-tabs>
 
@@ -80,6 +80,8 @@ import ItemPicker from '@/components/config/controls/item-picker.vue'
 
 import DirtyMixin from '../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin'
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
   mixins: [DirtyMixin, ItemMixin],
@@ -94,6 +96,7 @@ export default {
     return {
       ready: false,
       item: {},
+      savedItem: {},
       itemYaml: '',
       items: [],
       types: Types,
@@ -114,7 +117,10 @@ export default {
     item: {
       handler: function () {
         if (this.ready) {
-          this.dirty = true
+          // create rule object clone in order to be able to delete status part
+          // which can change from eventsource but doesn't mean a rule modification
+          let itemClone = cloneDeep(this.item)
+          this.dirty = !fastDeepEqual(itemClone, this.savedItem)
         }
       },
       deep: true
@@ -133,11 +139,13 @@ export default {
           created: false
         }
         this.$set(this, 'item', newItem)
+        this.$set(this, 'savedItem', cloneDeep(this.item))
         this.$oh.api.get('/rest/items?staticDataOnly=true').then((items) => {
           this.items = items
           this.ready = true
         })
       } else {
+        this.$set(this, 'savedItem', cloneDeep(this.item))
         const loadItem = this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=.*')
         loadItem.then((data) => {
           this.item = data
@@ -198,7 +206,6 @@ export default {
     },
     onEditorInput (value) {
       this.itemYaml = value
-      this.dirty = true
     },
     toYaml () {
       const yamlObj = {
