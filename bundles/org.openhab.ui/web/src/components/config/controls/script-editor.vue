@@ -63,6 +63,8 @@ import 'codemirror/theme/gruvbox-dark.css'
 import 'codemirror/addon/edit/matchbrackets.js'
 import 'codemirror/addon/edit/closebrackets.js'
 
+import 'codemirror/addon/comment/comment.js'
+
 // for autocomplete
 import 'codemirror/addon/hint/show-hint.js'
 import 'codemirror/addon/hint/show-hint.css'
@@ -317,6 +319,8 @@ export default {
         }
       }
       extraKeys['Shift-Tab'] = 'indentLess'
+      extraKeys['Cmd-/'] = 'toggleComment'
+      extraKeys['Ctrl-/'] = 'toggleComment'
       cm.setOption('extraKeys', extraKeys)
       cm.addOverlay(indentGuidesOverlay)
       cm.refresh()
