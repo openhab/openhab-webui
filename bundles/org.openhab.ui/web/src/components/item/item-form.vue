@@ -1,48 +1,81 @@
 <template>
   <div v-if="item" class="quick-link-form no-padding">
     <f7-list inline-labels no-hairlines-md>
-      <f7-list-input label="Name" type="text" placeholder="Required" :value="item.name"
-                     :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                     required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage"
-                     @input="onNameInput" :clear-button="createMode" />
-      <f7-list-input label="Label" type="text" placeholder="Label" :value="item.label"
-                     @input="item.label = $event.target.value" :disabled="!editable" :clear-button="editable" />
-      <f7-list-item v-if="item.type && !hideType" title="Type" type="text" :disabled="!editable" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
-        <select name="select-type" @change="item.type = $event.target.value">
-          <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === item.type.split(':')[0]">
+      <f7-list-group>
+        <f7-list-input label="Name" type="text" placeholder="Required" :value="item.name"
+                       :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+                       required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage"
+                       @input="onNameInput" :clear-button="createMode" />
+        <f7-list-input label="Label" type="text" placeholder="Label" :value="item.label"
+                       @input="item.label = $event.target.value" :disabled="!editable" :clear-button="editable" />
+      </f7-list-group>
+      <f7-list-group v-if="item.type && !hideType" :key="item.type">
+        <f7-list-input label="Type" type="select" :disabled="!editable" :value="item.type.split(':')[0]" @input="item.type = $event.target.value">
+          <option v-for="t in types.ItemTypes" :key="t">
             {{ t }}
           </option>
-        </select>
-      </f7-list-item>
-      <f7-list-item v-if="dimensions.length && item.type && !hideType && item.type.startsWith('Number')" title="Dimension" type="text" :disabled="!editable" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
-        <select name="select-dimension" @change="setDimension($event.target.value)">
-          <option key="Number" value="Number" :selected="item.type === 'Number'" />
-          <option v-for="(d, i) in dimensions" :key="d.name" :value="i" :selected="'Number:' + d.name === item.type">
+        </f7-list-input>
+
+        <!-- Dimensions -->
+        <f7-list-input v-if="dimensions.length && item.type.startsWith('Number')"
+                       label="Dimension"
+                       type="select"
+                       :disabled="!editable"
+                       :value="itemDimension"
+                       @input="setDimension($event.target.value)">
+          <option value="" />
+          <option v-for="d in dimensions" :key="d.name" :value="d.name">
             {{ d.label }}
           </option>
-        </select>
-      </f7-list-item>
-      <!-- Use v-show instead of v-if, because otherwise the autocomplete for category would take over the unit -->
-      <f7-list-input v-show="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="Unit" type="text" :value="item.unit"
-                     info="Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description."
-                     @input="item.unit = $event.target.value" :disabled="!editable" :clear-button="editable" />
-      <f7-list-input v-show="!hideType && item.type && item.type.startsWith('Number:') && createMode" label="State Description Pattern" type="text" :value="item.stateDescriptionPattern"
-                     info="Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value."
-                     @input="item.stateDescriptionPattern = $event.target.value" :disabled="!editable" :clear-button="editable" />
-      <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
-                     @input="item.category = $event.target.value" :disabled="!editable" :clear-button="editable">
-        <div slot="root-end" style="margin-left: calc(35% + 8px)">
-          <oh-icon :icon="item.category" :state="(createMode) ? null : item.state" height="32" width="32" />
-        </div>
-      </f7-list-input>
+        </f7-list-input>
+        <!-- Use v-show instead of v-if, because otherwise the autocomplete for category would take over the unit -->
+        <f7-list-input v-show="itemDimension"
+                       label="Unit"
+                       type="text"
+                       info="Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description."
+                       :disabled="!editable"
+                       :value="item.unit"
+                       @input="item.unit = $event.target.value"
+                       :clear-button="editable" />
+        <f7-list-input v-show="itemDimension"
+                       label="State Description Pattern"
+                       type="text"
+                       info="Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value."
+                       :disabled="!editable"
+                       :value="item.stateDescriptionPattern"
+                       @input="item.stateDescriptionPattern = $event.target.value"
+                       :clear-button="editable" />
+
+        <!-- Group Item -->
+        <group-form v-if="item.type === 'Group'" :item="item" :createMode="createMode" />
+      </f7-list-group>
+      <f7-list-group v-if="!hideCategory">
+        <f7-list-input ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
+                       @input="item.category = $event.target.value" :disabled="!editable" :clear-button="editable">
+          <div slot="root-end" style="margin-left: calc(35% + 14px)">
+            <oh-icon :key="item.category" :icon="item.category" :state="(createMode) ? null : item.state" height="32" width="32" />
+          </div>
+        </f7-list-input>
+      </f7-list-group>
     </f7-list>
-    <semantics-picker v-if="!hideSemantics" :item="item" :same-class-only="true" :hide-type="true" :hide-none="forceSemantics" />
-    <f7-list inline-labels accordion-list no-hairline-md>
-      <f7-list-item accordion-item title="Non-Semantic Tags" :after="numberOfTags">
-        <f7-accordion-content>
-          <tag-input :disabled="!editable" :item="item" />
-        </f7-accordion-content>
-      </f7-list-item>
+    <semantics-picker v-if="!hideSemantics" :item="item" :key="item.tags.toString()" :same-class-only="true" :hide-type="true" :hide-none="forceSemantics" :createMode="createMode" />
+    <f7-list inline-labels no-hairline-md>
+      <f7-list-item title="Non-Semantic Tags" :badge="numberOfTags" />
+      <tag-input :disabled="!editable" :item="item" />
+    </f7-list>
+    <f7-list no-hairline-md>
+      <f7-list-item title="Parent Groups" :badge="numberOfGroups" />
+      <!-- make it cosmetically similar to the non-semantic tags above -->
+      <ul>
+        <f7-list-item :key="item.groupNames.toString()" v-if="numberOfGroups > 0">
+          <div slot="inner">
+            <f7-chip v-for="group in item.groupNames" :key="group" :text="group" :deleteable="editable" @delete="deleteGroup" media-bg-color="blue" style="margin-right: 6px">
+              <f7-icon slot="media" ios="f7:folder_fill" md="material:folder" aurora="f7:folder_fill" />
+            </f7-chip>
+          </div>
+        </f7-list-item>
+      </ul>
+      <item-picker v-if="editable" title="Select" :value="item.groupNames" :items="items" @input="(value) => this.item.groupNames = value" :multiple="true" filterType="Group" :set-value-text="false" />
     </f7-list>
   </div>
 </template>
@@ -57,6 +90,8 @@
 
 <script>
 import SemanticsPicker from '@/components/tags/semantics-picker.vue'
+import ItemPicker from '@/components/config/controls/item-picker.vue'
+import GroupForm from '@/components/item/group-form.vue'
 import TagInput from '@/components/tags/tag-input.vue'
 import * as types from '@/assets/item-types.js'
 import { Categories } from '@/assets/categories.js'
@@ -69,6 +104,8 @@ export default {
   props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
   components: {
     SemanticsPicker,
+    ItemPicker,
+    GroupForm,
     TagInput
   },
   data () {
@@ -84,24 +121,31 @@ export default {
       return this.createMode || (this.item && this.item.editable)
     },
     numberOfTags () {
-      return this.getNonSemanticTags(this.item).length
+      return this.getNonSemanticTags(this.item).length.toString()
+    },
+    numberOfGroups () {
+      return this.item.groupNames?.length.toString() || '0'
+    },
+    itemDimension () {
+      const parts = this.item.type.split(':')
+      return parts.length > 1 ? parts[1] : ''
     }
   },
   watch: {
     // Required for pre-filling unit and state description pattern fields in "Add Items from Thing" functionality
     dimensions () {
       if (this.createMode && this.item.type && this.item.type.startsWith('Number:')) {
-        this.setDimension(this.dimensions.findIndex((d) => d.name === this.item.type.split(':')[1]))
+        this.setDimension(this.item.type.split(':')[1])
       }
     }
   },
   methods: {
-    setDimension (index) {
-      if (index === 'Number') {
+    setDimension (newDimension) {
+      if (!newDimension) {
         this.$set(this.item, 'type', 'Number')
         return
       }
-      const dimension = this.dimensions[index]
+      const dimension = this.dimensions.find((d) => d.name === newDimension)
       this.$set(this.item, 'type', 'Number:' + dimension.name)
       this.$set(this.item, 'unit', dimension.systemUnit)
       this.$set(this.item, 'stateDescriptionPattern', `%.0f ${dimension.systemUnit}`)
@@ -122,11 +166,19 @@ export default {
     onNameInput (event) {
       this.item.name = event.target.value
       this.$set(this, 'nameErrorMessage', this.validateItemName(this.item.name))
+    },
+    deleteGroup (event) {
+      const group = event.target.previousSibling.innerText
+      const groupIndex = this.item.groupNames.indexOf(group)
+      if (groupIndex >= 0) {
+        this.item.groupNames.splice(groupIndex, 1)
+      }
     }
   },
   mounted () {
     if (!this.item) return
     if (!this.item.category) this.$set(this.item, 'category', '')
+    if (!this.item.groupNames) this.$set(this.item, 'groupNames', [])
     if (this.createMode) {
       if (!this.items) this.items = []
       this.$set(this, 'nameErrorMessage', this.validateItemName(this.item.name))

@@ -1,44 +1,40 @@
 <template>
-  <f7-list no-hairlines-md v-if="show">
-    <f7-list-item :disabled="!editable" title="Semantic Class" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
-      <select name="select-semantics-class" @change="update('class', $event.target.value)">
-        <option v-if="!hideNone" :value="''">
-          None
-        </option>
-        <optgroup label="Location" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Location')">
-          <option v-for="type in orderedLocations" :key="type" :value="type" :selected="type === semanticClass">
-            {{ type }}
-          </option>
-        </optgroup>
-        <optgroup label="Equipment" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Equipment')">
-          <option v-for="type in orderedEquipment" :key="type" :value="type" :selected="type === semanticClass">
-            {{ type }}
-          </option>
-        </optgroup>
-        <optgroup label="Point" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Point')">
-          <option v-for="type in orderedPoints" :key="type" :value="type" :selected="type === semanticClass">
-            {{ type }}
-          </option>
-        </optgroup>
-      </select>
-    </f7-list-item>
-    <f7-list-item v-if="currentSemanticType && !hideType" :disabled="!editable" title="Semantic Type" :after="currentSemanticType" />
-    <f7-list-item v-if="currentSemanticType == 'Point'" :disabled="!editable" title="Semantic Property" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
-      <select name="select-semantics-proerty" :value="semanticProperty" @change="update('property', $event.target.value)">
-        <option :value="''">
-          None
-        </option>
-        <option v-for="type in orderedProperties" :key="type" :value="type" :selected="type === semanticProperty">
+  <f7-list inline-labels no-hairlines-md v-if="show">
+    <f7-list-input :disabled="!editable" label="Semantic Class" type="select" :value="semanticClass" @input="update('class', $event.target.value)">
+      <option v-if="!hideNone" value="">
+        None
+      </option>
+      <optgroup label="Location" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Location')">
+        <option v-for="type in orderedLocations" :key="type" :value="type">
           {{ type }}
         </option>
-      </select>
-    </f7-list-item>
+      </optgroup>
+      <optgroup label="Equipment" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Equipment')">
+        <option v-for="type in orderedEquipment" :key="type" :value="type">
+          {{ type }}
+        </option>
+      </optgroup>
+      <optgroup label="Point" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Point')">
+        <option v-for="type in orderedPoints" :key="type" :value="type">
+          {{ type }}
+        </option>
+      </optgroup>
+    </f7-list-input>
+    <f7-list-item v-if="currentSemanticType && !hideType" :disabled="!editable" title="Semantic Type" :after="currentSemanticType" />
+    <f7-list-input v-if="currentSemanticType == 'Point'" :disabled="!editable" label="Semantic Property" type="select" :value="semanticProperty" @input="update('property', $event.target.value)">
+      <option value="">
+        None
+      </option>
+      <option v-for="type in orderedProperties" :key="type" :value="type">
+        {{ type }}
+      </option>
+    </f7-list-input>
   </f7-list>
 </template>
 
 <script>
 export default {
-  props: ['item', 'sameClassOnly', 'hideType', 'hideNone'],
+  props: ['item', 'sameClassOnly', 'hideType', 'hideNone', 'createMode'],
   data () {
     return {
       semanticClasses: this.$store.getters.semanticClasses,
@@ -106,7 +102,7 @@ export default {
   },
   computed: {
     editable () {
-      return this.item && this.item.editable
+      return this.createMode || (this.item && this.item.editable)
     },
     orderedLocations () {
       return [...this.semanticClasses.Locations].sort((a, b) => {

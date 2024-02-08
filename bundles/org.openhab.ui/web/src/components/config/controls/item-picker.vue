@@ -30,7 +30,7 @@
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 export default {
-  props: ['title', 'name', 'value', 'items', 'multiple', 'filterType', 'required', 'editableOnly', 'disabled'],
+  props: ['title', 'name', 'value', 'items', 'multiple', 'filterType', 'required', 'editableOnly', 'disabled', 'setValueText'],
   data () {
     return {
       ready: false,
@@ -48,6 +48,7 @@ export default {
   },
   created () {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
+    if (this.setValueText === false) this.smartSelectParams.setValueText = false
     if (!this.items || !this.items.length) {
       this.$oh.api.get('/rest/items?staticDataOnly=true').then((items) => {
         this.sortAndFilterItems(items)
