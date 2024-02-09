@@ -18,9 +18,9 @@
         search-in=".item-title"
         :disable-button="!$theme.aurora" />
     </f7-navbar>
-    <f7-block class="block-narrow after-big-title settings-menu" v-show="servicesLoaded && addonsLoaded">
+    <f7-block class="block-narrow after-big-title settings-menu">
       <f7-row>
-        <f7-col :class="addonsLoaded && addonsInstalled.length > 0 ? 'settings-col' : ''" width="100" medium="50">
+        <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
           <f7-block-title>Configuration</f7-block-title>
           <f7-list media-list class="search-list">
             <f7-list-item
@@ -124,8 +124,8 @@
             </f7-list-item>
           </f7-list>
         </f7-col>
-        <f7-col :class="addonsLoaded && addonsInstalled.length > 0 ? 'settings-col' : ''" width="100" medium="50">
-          <div v-if="$store.getters.apiEndpoint('services') && servicesLoaded">
+        <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
+          <div v-if="servicesLoaded">
             <f7-block-title>System Settings</f7-block-title>
             <f7-list class="search-list">
               <f7-list-item
@@ -138,12 +138,47 @@
               </f7-list-button>
             </f7-list>
           </div>
-          <div v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && addonsInstalled.length > 0 && $f7.width < 1450">
-            <addon-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
+          <!-- skeleton for not servicesLoaded -->
+          <div v-else-if="!servicesLoaded">
+            <f7-block-title>System Settings</f7-block-title>
+            <f7-list>
+              <f7-list-item
+                v-for="n in 9"
+                :key="n"
+                :class="`skeleton-text skeleton-effect-blink`"
+                title="Service Label" />
+            </f7-list>
+          </div>
+          <div v-if="$f7.width < 1450">
+            <div v-if="addonsLoaded && addonsInstalled.length > 0">
+              <addon-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
+            </div>
+            <!-- skeleton for not addonsLoaded -->
+            <div v-else-if="!addonsLoaded">
+              <f7-block-title>Add-on Settings</f7-block-title>
+              <f7-list>
+                <f7-list-item
+                  v-for="n in 4"
+                  :key="n"
+                  :class="`skeleton-text skeleton-effect-blink`"
+                  title="Service Label" />
+              </f7-list>
+            </div>
           </div>
         </f7-col>
-        <f7-col width="33" class="add-on-col" v-if="$store.getters.apiEndpoint('addons') && addonsLoaded && addonsInstalled.length > 0 && $f7.width >= 1450">
+        <f7-col width="33" class="add-on-col" v-if="addonsLoaded && addonsInstalled.length > 0 && $f7.width >= 1450">
           <addon-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
+        </f7-col>
+        <!-- skeleton for not addonsLoaded -->
+        <f7-col width="33" class="add-on-col" v-else-if="!addonsLoaded && $f7.width >= 1450">
+          <f7-block-title>Add-on Settings</f7-block-title>
+          <f7-list>
+            <f7-list-item
+              v-for="n in 9"
+              :key="n"
+              :class="`skeleton-text skeleton-effect-blink`"
+              title="Service Label" />
+          </f7-list>
         </f7-col>
       </f7-row>
       <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
@@ -224,24 +259,25 @@ export default {
     loadMenu () {
       if (!this.apiEndpoints) return
 
-      const servicesPromise = (this.$store.getters.apiEndpoint('services')) ? this.$oh.api.get('/rest/services') : Promise.resolve([])
-      const addonsPromise = (this.$store.getters.apiEndpoint('addons')) ? this.$oh.api.get('/rest/addons?serviceId=all') : Promise.resolve([])
-
       // can be done in parallel!
-      servicesPromise.then((data) => {
-        this.systemServices = data
-          .filter(s => (s.category === 'system') && (s.id !== 'org.openhab.persistence'))
-          .sort((s1, s2) => this.sortByLabel(s1, s2))
-        this.addonsServices = data.filter(s => s.category !== 'system').sort((s1, s2) => this.sortByLabel(s1, s2))
-        this.servicesLoaded = true
-      })
-      addonsPromise.then((data) => {
-        this.addonsInstalled = data
-          .filter(a => a.installed && !['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent;type=widget', 'application/vnd.openhab.uicomponent;type=blocks'].includes(a.contentType))
-          .sort((s1, s2) => this.sortByLabel(s1, s2))
-        this.persistenceAddonsInstalled = this.addonsInstalled.filter(a => a.installed && a.type === 'persistence')
-        this.addonsLoaded = true
-      })
+      if (this.$store.getters.apiEndpoint('services')) {
+        this.$oh.api.get('/rest/services').then((data) => {
+          this.systemServices = data
+            .filter(s => (s.category === 'system') && (s.id !== 'org.openhab.persistence'))
+            .sort((s1, s2) => this.sortByLabel(s1, s2))
+          this.addonsServices = data.filter(s => s.category !== 'system').sort((s1, s2) => this.sortByLabel(s1, s2))
+          this.servicesLoaded = true
+        })
+      }
+      if (this.$store.getters.apiEndpoint('addons')) {
+        this.$oh.api.get('/rest/addons?serviceId=all').then((data) => {
+          this.addonsInstalled = data
+            .filter(a => a.installed && !['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent;type=widget', 'application/vnd.openhab.uicomponent;type=blocks'].includes(a.contentType))
+            .sort((s1, s2) => this.sortByLabel(s1, s2))
+          this.persistenceAddonsInstalled = this.addonsInstalled.filter(a => a.installed && a.type === 'persistence')
+          this.addonsLoaded = true
+        })
+      }
     },
     sortByLabel (s1, s2) {
       return s1.label.toLowerCase() > s2.label.toLowerCase() ? 1 : -1
