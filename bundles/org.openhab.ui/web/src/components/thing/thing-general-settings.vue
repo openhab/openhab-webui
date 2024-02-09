@@ -14,9 +14,9 @@
                 </span>
               </f7-list-input>
               <f7-list-input label="Label" type="text" :disabled="!ready || readOnly" placeholder="e.g. My Thing" :value="thing.label"
-                             @input="thing.label = $event.target.value; $emit('updated')" required validate />
+                             @input="thing.label = $event.target.value" required validate />
               <f7-list-input label="Location" type="text" :disabled="!ready || readOnly" placeholder="e.g. Kitchen" :value="thing.location"
-                             @input="thing.location = $event.target.value; $emit('updated')" :clear-button="ready && !readOnly" />
+                             @input="thing.location = $event.target.value" :clear-button="ready && !readOnly" />
             </f7-list>
             <f7-block-title v-if="ready && thingType.supportedBridgeTypeUIDs.length">
               Parent Bridge
@@ -60,7 +60,6 @@ export default {
     },
     updateBridge (value) {
       this.thing.bridgeUID = value
-      this.$emit('updated')
       if (this.createMode) this.thing.UID = this.computedThingUid()
     }
   }
