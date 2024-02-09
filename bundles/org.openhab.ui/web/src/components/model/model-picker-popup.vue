@@ -69,7 +69,7 @@ function compareModelItems (o1, o2) {
 }
 
 export default {
-  props: ['value', 'multiple', 'semanticOnly', 'groupsOnly', 'allowEmpty', 'popupTitle', 'actionLabel'],
+  props: ['value', 'multiple', 'semanticOnly', 'groupsOnly', 'editableOnly', 'allowEmpty', 'popupTitle', 'actionLabel'],
   components: {
     ModelTreeview
   },
@@ -166,7 +166,11 @@ export default {
       const items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
       const links = this.$oh.api.get('/rest/links')
       Promise.all([items, links]).then((data) => {
-        this.items = data[0]
+        if (this.editableOnly) {
+          this.items = data[0].filter((i) => i.editable)
+        } else {
+          this.items = data[0]
+        }
         this.links = data[1]
 
         if (this.newItem) {
