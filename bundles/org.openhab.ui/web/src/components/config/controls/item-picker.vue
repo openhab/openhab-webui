@@ -109,7 +109,8 @@ export default {
           multiple: this.multiple,
           allowEmpty: true,
           popupTitle: this.title,
-          groupsOnly: this.filterType && this.filterType === 'Group'
+          groupsOnly: this.filterType && this.filterType === 'Group',
+          editableOnly: this.editableOnly
         }
       })
 
