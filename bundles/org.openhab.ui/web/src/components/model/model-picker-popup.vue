@@ -34,12 +34,17 @@
         <div class="padding-right text-align-right">
           <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
           <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
+          <f7-checkbox style="margin-left: 5px" :checked="includeItemName" @change="toggleItemName" />
+          <label @click="toggleItemName" class="advanced-label">Show name</label>
+          <f7-checkbox style="margin-left: 5px" :checked="includeItemTags" @change="toggleItemTags" />
+          <label @click="toggleItemTags" class="advanced-label">Show tags</label>
         </div>
         <span />
         <!-- <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link> -->
       </f7-toolbar>
       <f7-block strong class="no-padding" v-if="ready">
         <model-treeview class="model-picker-treeview" :root-nodes="rootNodes"
+                        :includeItemName="includeItemName" :includeItemTags="includeItemTags"
                         :selected-item="selectedItem" @selected="selectItem" @checked="checkItem" />
       </f7-block>
       <f7-block v-else-if="!ready" class="text-align-center">
@@ -79,6 +84,8 @@ export default {
       loading: false,
       initSearchbar: false,
       includeNonSemantic: false,
+      includeItemName: false,
+      includeItemTags: false,
       expanded: false,
       items: [],
       links: [],
@@ -285,6 +292,14 @@ export default {
       this.rootGroups = []
       this.rootItems = []
       this.includeNonSemantic = !this.includeNonSemantic
+      this.load()
+    },
+    toggleItemName () {
+      this.includeItemName = !this.includeItemName
+      this.load()
+    },
+    toggleItemTags () {
+      this.includeItemTags = !this.includeItemTags
       this.load()
     },
     toggleExpanded () {
