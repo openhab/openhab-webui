@@ -203,6 +203,7 @@ export default {
       ready: false,
       loading: false,
       rule: {},
+      savedRule: {},
       ruleYaml: '',
       moduleTypes: {
         actions: [],
