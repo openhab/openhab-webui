@@ -43,7 +43,7 @@
     <f7-list-item class="searchbar-ignore" link color="blue" subtitle="Add Link to Item..." @click="addLink()">
       <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
     </f7-list-item>
-    <f7-list-button class="searchbar-ignore" color="blue" :title="(channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'" @click="configureChannel()" />
+    <f7-list-button class="searchbar-ignore" color="blue" :title="thing.editable && (channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'" @click="configureChannel()" />
     <f7-list-button class="searchbar-ignore" v-if="extensible && thing.editable" color="blue" title="Copy Channel" @click="copyChannel()" />
     <f7-list-button class="searchbar-ignore" v-if="extensible && thing.editable" color="red" title="Remove Channel" @click="removeChannel()" />
   </f7-list>
@@ -132,7 +132,6 @@ export default {
       })
     },
     configureLink (link) {
-      const self = this
       const path = 'links/' + link.itemName + '/' + this.channelId
       this.$f7router.navigate({
         url: path,
@@ -175,7 +174,6 @@ export default {
                 // replace the channel in-place
                 const idx = self.thing.channels.findIndex((c) => c.uid === finalChannel.uid)
                 self.$set(self.thing.channels, idx, finalChannel)
-                self.channel = finalChannel
                 self.$emit('channel-updated', true)
               } else {
                 self.$emit('channel-updated', false)

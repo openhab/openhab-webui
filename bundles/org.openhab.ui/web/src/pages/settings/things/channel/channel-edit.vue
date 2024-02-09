@@ -11,7 +11,7 @@
     <f7-block class="block-narrow">
       <f7-col v-if="channel">
         <f7-block-title>Channel</f7-block-title>
-        <channel-general-settings :channel="channel" :channelType="channelType" :createMode="false" />
+        <channel-general-settings :channel="channel" :channelType="channelType" :createMode="false" :disabled="!thing.editable" />
       </f7-col>
       <f7-col v-if="channelType != null">
         <f7-block-title v-if="configDescription.parameters">
@@ -25,7 +25,8 @@
         <config-sheet
           :parameter-groups="configDescription.parameterGroups"
           :parameters="configDescription.parameters"
-          :configuration="config" />
+          :configuration="config"
+          :read-only="!thing.editable"/>
       </f7-col>
     </f7-block>
   </f7-page>

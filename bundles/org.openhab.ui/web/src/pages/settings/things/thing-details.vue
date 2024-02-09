@@ -2,10 +2,11 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
     <f7-navbar :title="thing.label || thing.UID" back-link="Back" no-hairline>
       <f7-nav-right v-show="!error">
-        <f7-link @click="save()" v-if="$theme.md && thing.editable" icon-md="material:save" icon-only />
-        <f7-link @click="save()" v-if="!$theme.md && thing.editable">
+        <f7-link @click="save()" v-if="$theme.md && editable" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md && editable">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
+        <f7-link v-else icon-f7="lock_fill" icon-only tooltip="This Thing is not editable through the UI" />
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
@@ -496,7 +497,7 @@ export default {
       })
     },
     save (saveThing) {
-      if (!this.ready) return
+      if (!this.ready || !this.editable) return
 
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) {
