@@ -14,9 +14,9 @@
                 </span>
               </f7-list-input>
               <f7-list-input label="Label" type="text" :disabled="!ready || readOnly" placeholder="e.g. My Thing" :value="thing.label"
-                             @input="thing.label = $event.target.value; $emit('updated')" required validate />
+                             @input="thing.label = $event.target.value" required validate />
               <f7-list-input label="Location" type="text" :disabled="!ready || readOnly" placeholder="e.g. Kitchen" :value="thing.location"
-                             @input="thing.location = $event.target.value; $emit('updated')" :clear-button="ready && !readOnly" />
+                             @input="thing.location = $event.target.value" :clear-button="ready && !readOnly" />
             </f7-list>
             <f7-block-title v-if="ready && thingType.supportedBridgeTypeUIDs.length">
               Parent Bridge
@@ -26,10 +26,11 @@
               This type of Thing needs to be associated to a working Bridge to function properly.
             </f7-block-footer>
             <f7-list v-if="ready && thingType.supportedBridgeTypeUIDs.length" inline-labels no-hairlines-md>
-              <thing-picker
-                title="Bridge" name="bridge" :value="thing.bridgeUID"
-                @input="updateBridge"
-                :filterType="thingType.supportedBridgeTypeUIDs" />
+              <thing-picker v-if="thing.editable"
+                            title="Bridge" name="bridge" :value="thing.bridgeUID"
+                            @input="updateBridge"
+                            :filterType="thingType.supportedBridgeTypeUIDs" />
+              <f7-list-item v-else title="Bridge" :after="thing.bridgeUID" />
             </f7-list>
           </f7-col>
         </f7-row>
@@ -60,7 +61,6 @@ export default {
     },
     updateBridge (value) {
       this.thing.bridgeUID = value
-      this.$emit('updated')
       if (this.createMode) this.thing.UID = this.computedThingUid()
     }
   }
