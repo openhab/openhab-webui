@@ -784,11 +784,6 @@ export default {
 
       const editableChannels = []
 
-      const isExtensible = (channel, thingType) => {
-        const bindingId = thingType.UID.split(':')[0]
-        return thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t).indexOf(channel.channelTypeUID) >= 0
-      }
-
       for (const channel of this.thing.channels) {
         const editableChannel = {
           id: channel.id,

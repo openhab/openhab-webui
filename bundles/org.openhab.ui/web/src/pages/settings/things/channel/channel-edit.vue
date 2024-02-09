@@ -26,7 +26,7 @@
           :parameter-groups="configDescription.parameterGroups"
           :parameters="configDescription.parameters"
           :configuration="config"
-          :read-only="!thing.editable"/>
+          :read-only="!thing.editable" />
       </f7-col>
     </f7-block>
   </f7-page>
