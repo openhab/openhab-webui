@@ -31,7 +31,6 @@
                 </f7-link>
               </f7-block-footer>
             </div>
-
           </f7-col>
         </f7-block>
         <!-- Skeletons for not ready -->
