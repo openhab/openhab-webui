@@ -13,9 +13,9 @@
           </div>
         </f7-list-item>
         <f7-list-input label="Label" type="text" :disabled="disabled" :placeholder="(channelType !== null) ? channelType.label : 'Required'" :value="channel.label" required validate
-                       @input="channel.label = $event.target.value" clear-button />
+                       @input="channel.label = $event.target.value" :clear-button="disabled !== true" />
         <f7-list-input label="Description" type="text" :disabled="disabled" :placeholder="(channelType !== null) ? channelType.description : ''" :value="channel.description"
-                       @input="channel.description = $event.target.value" clear-button />
+                       @input="channel.description = $event.target.value" :clear-button="disabled !== true" />
       </f7-list>
     </f7-col>
   </f7-block>
