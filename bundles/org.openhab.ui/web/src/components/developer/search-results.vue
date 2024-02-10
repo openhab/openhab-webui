@@ -4,7 +4,7 @@
       <f7-preloader />
       <div>Loading...</div>
     </f7-block>
-    <f7-block v-else-if="!searchResults.items.length && !searchResults.things.length && !searchResults.rules.length && !searchResults.pages.length" class="text-align-center">
+    <f7-block v-else-if="!searchResults.items.length && !searchResults.things.length && !searchResults.rules.length && !searchResults.pages.length && !searchResults.scenes.length && !searchResults.scripts.length" class="text-align-center">
       <div>Nothing found</div>
     </f7-block>
     <!-- Items -->
