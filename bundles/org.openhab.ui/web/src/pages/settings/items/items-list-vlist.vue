@@ -114,7 +114,7 @@
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
       <f7-fab-buttons position="top">
-        <f7-fab-button fab-close label="Add Item" href="add">
+        <f7-fab-button fab-close label="Add Item" href="add-item">
           <f7-icon ios="material:label_outline" md="material:label_outline" aurora="material:label_outline" />
         </f7-fab-button>
         <f7-fab-button fab-close label="Add Items from Textual Definition" href="add-from-textual-definition">

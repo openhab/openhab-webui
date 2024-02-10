@@ -176,7 +176,7 @@ export default [
         async: loadAsync(ItemsListPage),
         routes: [
           {
-            path: 'add',
+            path: 'add-item',
             beforeEnter: [enforceAdminForRoute],
             async: loadAsync(ItemEditPage, { createMode: true })
           },

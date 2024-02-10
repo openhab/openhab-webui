@@ -272,7 +272,7 @@
               Inbox
             </f7-list-button>
             <f7-list-item divider title="Items" />
-            <f7-list-button href="/settings/items/add" color="blue" :animate="false">
+            <f7-list-button href="/settings/items/add-item" color="blue" :animate="false">
               Create Item
             </f7-list-button>
             <f7-list-button href="/settings/items/add-from-textual-definition" color="blue" :animate="false">
