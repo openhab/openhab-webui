@@ -87,9 +87,7 @@ export default {
       itemType: this.item.groupType || this.item.type,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
       classSelectKey: this.$f7.utils.id(),
-      docUrl:
-        `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org` +
-        '/link/alexa',
+      docUrl: `${this.$store.state.websiteUrl}/link/alexa`,
       ready: false
     }
   },

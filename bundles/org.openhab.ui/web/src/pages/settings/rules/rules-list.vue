@@ -137,7 +137,7 @@
       <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
       <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
       <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+        <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/${type.toLowerCase()}`" target="_blank" v-t="'home.overview.button.documentation'" />
       </f7-row>
     </f7-block>
 
@@ -174,9 +174,6 @@ export default {
   computed: {
     type () {
       return this.showScripts ? 'Scripts' : (this.showScenes ? 'Scenes' : 'Rules')
-    },
-    documentationLink () {
-      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/${this.type.toLowerCase()}`
     },
     filteredRules () {
       if (this.selectedTags.length === 0) return this.rules

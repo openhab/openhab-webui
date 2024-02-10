@@ -123,7 +123,7 @@
     <f7-block v-if="ready && !things.length" class="block-narrow">
       <empty-state-placeholder icon="lightbulb" title="things.title" text="things.text" />
       <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+        <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/thing`" target="_blank" v-t="'home.overview.button.documentation'" />
       </f7-row>
     </f7-block>
 
@@ -172,9 +172,6 @@ export default {
 
   },
   computed: {
-    documentationLink () {
-      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/thing`
-    },
     indexedThings () {
       if (this.groupBy === 'alphabetical') {
         return this.things.reduce((prev, thing, i, things) => {

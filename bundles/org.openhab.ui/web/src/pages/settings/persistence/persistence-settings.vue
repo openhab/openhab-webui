@@ -46,7 +46,7 @@
     <f7-block v-if="ready && !persistenceList.length" class="block-narrow">
       <empty-state-placeholder icon="tray-arrow-down" title="persistence.title" text="persistence.text" />
       <f7-row class="display-flex justify-content-center">
-        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+        <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/persistence`" target="_blank" v-t="'home.overview.button.documentation'" />
         <span style="width: 8px" />
         <f7-button large fill color="blue" href="/addons/other/">
           Install a persistence add-on
@@ -81,11 +81,6 @@ export default {
       persistenceList: [],
       configDescriptions: null,
       config: null
-    }
-  },
-  computed: {
-    documentationLink () {
-      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/persistence`
     }
   },
   watch: {

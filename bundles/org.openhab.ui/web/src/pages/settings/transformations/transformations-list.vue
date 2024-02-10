@@ -107,7 +107,7 @@
     <f7-block v-if="ready && !transformations.length" class="block-narrow">
       <empty-state-placeholder icon="arrow_2_squarepath" title="transformations.title" text="transformations.text" />
       <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+        <f7-button large fill color="blue" external :href="`${this.$store.state.websiteUrl}/link/transformations`" target="_blank" v-t="'home.overview.button.documentation'" />
       </f7-row>
     </f7-block>
 
@@ -135,9 +135,6 @@ export default {
     }
   },
   computed: {
-    documentationLink () {
-      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/transformations`
-    },
     indexedTransformations () {
       if (this.groupBy === 'alphabetical') {
         return this.transformations.reduce((prev, transformation, i, transformations) => {

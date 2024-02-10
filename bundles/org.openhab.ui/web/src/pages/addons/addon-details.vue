@@ -237,10 +237,9 @@ export default {
     docLinkUrl () {
       if (!this.addon) return ''
       if (this.serviceId && this.serviceId !== 'karaf') return this.addon.link ? this.addon.link : ''
-      let url = `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org` +
+      return this.$store.state.websiteUrl +
         `/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}` +
         `/${this.addon.id}`
-      return url
     },
     showInstallActions () {
       let splitted = this.addon.uid.split(':')

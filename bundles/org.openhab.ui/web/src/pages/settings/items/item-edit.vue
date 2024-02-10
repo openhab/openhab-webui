@@ -171,8 +171,9 @@ export default {
       }
     },
     save () {
+      if (!this.item.editable) return
       if (this.currentTab === 'code') {
-        if (!this.fromYaml()) return Promise.reject()
+        if (!this.fromYaml()) return
       }
       if (this.validateItemName(this.item.name) !== '') return this.$f7.dialog.alert('Please give the Item a valid name: ' + this.validateItemName(this.item.name)).open()
       if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0])) return this.$f7.dialog.alert('Please give Item a valid type').open()

@@ -23,6 +23,7 @@ const store = new Vuex.Store({
     apiEndpoints: null,
     locale: null,
     runtimeInfo: null,
+    websiteUrl: null,
     developerDock: false,
     pagePath: null
   },
@@ -35,6 +36,7 @@ const store = new Vuex.Store({
       state.apiVersion = rootResponse.version
       state.runtimeInfo = rootResponse.runtimeInfo
       state.apiEndpoints = rootResponse.links
+      state.websiteUrl = `https://${rootResponse.runtimeInfo?.buildString !== 'Release Build' ? 'next' : 'www'}.openhab.org`
     },
     setLocale (state, locale) {
       state.locale = locale

@@ -23,12 +23,14 @@
       <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
         <f7-block class="block-narrow">
           <f7-col>
-            <f7-block-footer>
-              Persistence stores data over time, which can be retrieved at a later time, e.g. to restore Item states after startup, or to display graphs in the UI.
-              <f7-link external color="blue" target="_blank" :href="`https://${$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/persistence`">
-                Learn more about persistence.
-              </f7-link>
-            </f7-block-footer>
+            <div>
+              <f7-block-footer style="padding-left: 16px; padding-right: 16px">
+                Persistence stores data over time, which can be retrieved at a later time, e.g. to restore Item states after startup, or to display graphs in the UI.
+                <f7-link external color="blue" target="_blank" :href="`${$store.state.runtimeInfo.websiteUrl}/link/persistence`">
+                  Learn more about persistence.
+                </f7-link>
+              </f7-block-footer>
+            </div>
           </f7-col>
         </f7-block>
         <!-- Skeletons for not ready -->
@@ -405,7 +407,6 @@ export default {
   },
   methods: {
     onPageAfterIn () {
-      if (this.ready) return
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }

@@ -23,6 +23,8 @@
     padding 0
   .item-inner:after
     display none
+  .item-title
+    padding-left 8px
 </style>
 
 <script>
