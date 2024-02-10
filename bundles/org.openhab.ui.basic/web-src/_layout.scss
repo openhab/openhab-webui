@@ -423,7 +423,14 @@
 		width: 100%;
 	}
 	&__buttons {
-		padding-top: 2px;
+		margin: 6px 0;
+		html.ui-layout-condensed & {
+			margin: 0;
+		}
+		max-width: 60%;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
 	}
 	&__buttongrid {
 		padding: 0;
