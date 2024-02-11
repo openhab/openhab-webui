@@ -6,12 +6,12 @@
                        required validate pattern="[A-Za-z0-9_]+" error-message="Required. A-Z,a-z,0-9,_ only"
                        info="Note: cannot be changed after the creation"
                        @input="transformation.uid = $event.target.value" clear-button />
-        <f7-list-input v-else label="Transformation UID" type="text" :input="false" disabled>
-          <template slot="input">
+        <f7-list-item v-else title="Transformation UID" media-item>
+          <div slot="subtitle">
             {{ transformation.uid }}
             <clipboard-icon :value="transformation.uid" tooltip="Copy UID" style="pointer-events: initial !important" />
-          </template>
-        </f7-list-input>
+          </div>
+        </f7-list-item>
         <f7-list-input label="Label" type="text" placeholder="Required" :value="transformation.label" required validate :disabled="!transformation.editable" @input="transformation.label = $event.target.value" :clear-button="createMode || transformation.editable" />
         <f7-list-item v-if="createMode && languages" title="Language" smart-select :smart-select-params="smartSelectParams">
           <select name="language" @change="$emit('newLanguage', $event.target.value)">
