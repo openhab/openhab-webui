@@ -82,14 +82,16 @@
     padding-left var(--f7-safe-area-left)
     .addon-card
       width 100%
-      @media (min-width: 481px)
+      @media (min-width: 400px)
         width 50%
-      @media (min-width: 768px)
+      @media (min-width: 550px)
         width 33.333%
-      @media (min-width: 1281px)
+      @media (min-width: 800px)
         width 25%
-      @media (min-width: 1601px)
+      @media (min-width: 1250px)
         width 20%
+      @media (min-width: 1600px)
+        width: 16.667%
 </style>
 
 <script>
