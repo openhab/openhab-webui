@@ -94,9 +94,12 @@
               @click.exact="(e) => click(e, transformation)"
               link=""
               :title="transformation.label"
-              :subtitle="transformation.type"
-              :footer="transformation.uid">
+              :subtitle="transformation.type">
               <f7-icon v-if="!transformation.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
+              <template slot="footer">
+                {{ transformation.uid }}
+                <clipboard-icon :value="transformation.uid" tooltip="Copy UID" />
+              </template>
             </f7-list-item>
           </f7-list-group>
         </f7-list>
@@ -124,10 +127,12 @@
 </style>
 
 <script>
+import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
+    ClipboardIcon
   },
   data () {
     return {

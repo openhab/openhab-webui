@@ -1,7 +1,7 @@
 <template>
   <f7-col>
     <f7-list inline-labels accordion-list no-hairline-md>
-      <f7-list-input label="ID" type="text" placeholder="Required" :value="page.uid" @input="page.uid = $event.target.value"
+      <f7-list-input label="Page ID" type="text" placeholder="Required" :value="page.uid" @input="page.uid = $event.target.value"
                      :clear-button="createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
                      required validate pattern="[A-Za-z0-9_]+" error-message="Required. A-Z,a-z,0-9,_ only" :disabled="!createMode" />
       <f7-list-input label="Label" type="text" placeholder="Label" :value="page.config.label" @input="page.config.label = $event.target.value" required validate clear-button />

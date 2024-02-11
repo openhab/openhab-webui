@@ -114,8 +114,8 @@ export default {
     onPageAfterIn () {
       if (this.createMode) {
         const newItem = {
-          name: 'NewItem',
-          label: 'New Item',
+          name: '',
+          label: '',
           category: '',
           type: 'String',
           groupNames: [],

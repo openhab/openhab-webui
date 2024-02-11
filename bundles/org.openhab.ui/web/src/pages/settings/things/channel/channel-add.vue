@@ -78,7 +78,7 @@ export default {
     },
     save () {
       if (!this.channel.id) {
-        this.$f7.dialog.alert('Please give an unique identifier')
+        this.$f7.dialog.alert('Please give a unique identifier')
         return
       }
       if (!this.channel.id.match(/^[a-zA-Z0-9_-]*$/)) {
