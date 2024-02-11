@@ -58,8 +58,8 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
 
     private final Logger logger = LoggerFactory.getLogger(SwitchRenderer.class);
 
-    private static final int MAX_BUTTONS = 4;
-    private static final int MAX_LABEL_SIZE = 9;
+    private static final int MAX_BUTTONS = 20;
+    private static final int MAX_LABEL_SIZE = 15;
     private static final String ELLIPSIS = "\u2026";
 
     @Activate
