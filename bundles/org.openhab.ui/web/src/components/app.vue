@@ -27,7 +27,7 @@
                         :class="{ currentsection: currentUrl === '/page/' + page.uid || currentUrl.indexOf('/page/' + page.uid + '/') === 0 }"
                         :link="'/page/' + page.uid"
                         :title="page.config.label" view=".view-main" panel-close>
-            <f7-icon slot="media" :f7="pageIcon(page)" />
+            <oh-icon slot="media" :icon="pageIcon(page)" />
           </f7-list-item>
         </f7-list>
         <f7-block-title v-if="$store.getters.isAdmin" v-t="'sidebar.administration'" />
@@ -518,21 +518,22 @@ export default {
       return false
     },
     pageIcon (page) {
+      if (page.config && page.config.icon) return page.config.icon
       switch (page.component) {
         case 'Sitemap':
-          return 'menu'
+          return 'f7:menu'
         case 'oh-layout-page':
-          return 'rectangle_grid_2x2'
+          return 'f7:rectangle_grid_2x2'
         case 'oh-tabs-page':
-          return 'squares_below_rectangle'
+          return 'f7:squares_below_rectangle'
         case 'oh-map-page':
-          return 'map'
+          return 'f7:map'
         case 'oh-plan-page':
-          return 'square_stack_3d_up'
+          return 'f7:square_stack_3d_up'
         case 'oh-chart-page':
-          return 'graph_square'
+          return 'f7:graph_square'
         default:
-          return 'tv'
+          return 'f7:tv'
       }
     },
     login () {
