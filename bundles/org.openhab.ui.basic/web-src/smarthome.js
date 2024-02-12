@@ -360,7 +360,7 @@
 		_t.iconWithState = _t.parentNode.getAttribute(o.iconWithStateAttribute) === "true";
 		_t.visible = !_t.formRow.classList.contains(o.formRowHidden);
 		_t.headerRow = _t.parentNode.getAttribute("data-header-row");
-		if (_t.headerRow !== null) {
+		if (_t.headerRow !== null && _t.headerRow !== "") {
 			_t.formHeaderRow = _t.formRow.previousElementSibling;
 			_t.iconContainer = _t.formHeaderRow.querySelector(o.formIcon);
 			_t.label = _t.formHeaderRow.querySelector(o.formLabel);
@@ -376,6 +376,10 @@
 				formRow = _t.formHeaderRow !== null ? _t.formHeaderRow : _t.formRow;
 
 			_t.iconSource = null;
+			if (_t.iconContainer === null) {
+				_t.icon = null;
+				return;
+			}
 			_t.icon = formRow.querySelector(o.formIconImg);
 			if (_t.icon !== null) {
 				_t.iconSource = "oh";
@@ -689,7 +693,7 @@
 			this.parentNode = parentNode;
 			this.id = this.parentNode.getAttribute(o.idAttribute);
 			this.headerRow = this.parentNode.getAttribute("data-header-row");
-			if (this.headerRow !== null) {
+			if (this.headerRow !== null && this.headerRow !== "") {
 				this.formHeaderRow = this.parentNode.parentNode.previousElementSibling;
 			} else {
 				this.formHeaderRow = null;
@@ -712,7 +716,7 @@
 		_t.upscaleButton = null;
 		_t.refreshButton = null;
 
-		if (_t.headerRow !== null) {
+		if (_t.headerRow !== null && _t.headerRow !== "") {
 			_t.legendButton = _t.formHeaderRow.querySelector(o.image.legendButton);
 			_t.periodButton = _t.formHeaderRow.querySelector(o.image.periodButton);
 			_t.upscaleButton = _t.formHeaderRow.querySelector(o.image.upscaleButton);
@@ -920,7 +924,7 @@
 				componentHandler.downgradeElements([ _t.refreshButton ]);
 				_t.refreshButton.removeEventListener("click", onRefreshClick);
 			}
-			if (_t.headerRow !== null) {
+			if (_t.headerRow !== null && _t.headerRow !== "") {
 				_t.parentNode.parentNode.removeEventListener("click", toggleHeaderRow);
 			}
 		};
@@ -937,7 +941,7 @@
 		if (_t.refreshButton !== null) {
 			_t.refreshButton.addEventListener("click", onRefreshClick);
 		}
-		if (_t.headerRow !== null) {
+		if (_t.headerRow !== null && _t.headerRow !== "") {
 			_t.parentNode.parentNode.addEventListener("click", toggleHeaderRow);
 		}
 
