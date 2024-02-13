@@ -12,80 +12,81 @@ export default {
         // triggers
         case 'timer.TimeOfDayTrigger':
           if (!config.time) return moduleType.label
-          return 'When the time is ' + config.time
+          return 'the time is ' + config.time
         case 'timer.GenericCronTrigger':
           if (!config.cronExpression) return moduleType.label
           try {
-            return cronstrue.toString(config.cronExpression, {
+            const cron = cronstrue.toString(config.cronExpression, {
               use24HourTimeFormat: true
             })
+            return cron.charAt(0).toLowerCase() + cron.slice(1)
           } catch (err) {
             return err.toString()
           }
         case 'core.ItemCommandTrigger':
           if (!config.itemName && !config.command) return moduleType.label
-          if (!config.command) return 'When ' + config.itemName + ' received a command'
-          return 'When ' + config.itemName + ' received command ' + config.command
+          if (!config.command) return 'item ' + config.itemName + ' received a command'
+          return 'item ' + config.itemName + ' received command ' + config.command
         case 'core.ItemStateUpdateTrigger':
           if (!config.itemName) return moduleType.label
-          return 'When ' + config.itemName + ' was updated' +
+          return 'item ' + config.itemName + ' was updated' +
                         ((config.state) ? ' to ' + config.state : '')
         case 'core.ItemStateChangeTrigger':
           if (!config.itemName) return moduleType.label
-          return 'When ' + config.itemName + ' changed' +
+          return 'item ' + config.itemName + ' changed' +
               ((config.previousState) ? ' from ' + config.previousState : '') +
               ((config.state) ? ' to ' + config.state : '')
         case 'core.ChannelEventTrigger':
           if (!config.channelUID) return moduleType.label
-          return 'When channel ' + config.channelUID + ' was triggered'
+          return 'channel ' + config.channelUID + ' was triggered'
         case 'core.GroupCommandTrigger':
           if (!config.groupName && !config.command) return moduleType.label
-          if (!config.command) return 'When a member of ' + config.groupName + ' received a command'
-          return 'When a member of ' + config.groupName + ' received command ' + config.command
+          if (!config.command) return 'a member of ' + config.groupName + ' received a command'
+          return 'a member of ' + config.groupName + ' received command ' + config.command
         case 'core.GroupStateUpdateTrigger':
           if (!config.groupName) return moduleType.label
-          return 'When a member of ' + config.groupName + ' was updated' +
+          return 'a member of ' + config.groupName + ' was updated' +
                         ((config.state) ? ' to ' + config.state : '')
         case 'core.GroupStateChangeTrigger':
           if (!config.groupName) return moduleType.label
-          return 'When a member of ' + config.groupName + ' changed' +
+          return 'a member of ' + config.groupName + ' changed' +
               ((config.previousState) ? ' from ' + config.previousState : '') +
               ((config.state) ? ' to ' + config.state : '')
         case 'core.ThingStatusUpdateTrigger':
           if (!config.thingUID) return moduleType.label
-          return 'When ' + config.thingUID + ' status was updated' +
+          return 'thing ' + config.thingUID + ' status was updated' +
                         ((config.status) ? ' to ' + config.status : '')
         case 'core.ThingStatusChangeTrigger':
           if (!config.thingUID) return moduleType.label
-          return 'When ' + config.thingUID + ' changed' +
+          return 'thing ' + config.thingUID + ' status changed' +
               ((config.previousStatus) ? ' from ' + config.previousStatus : '') +
               ((config.status) ? ' to ' + config.status : '')
         case 'core.SystemStartlevelTrigger':
           if (config.startlevel === undefined) return moduleType.label
-          return 'When the system has reached start level ' + config.startlevel
+          return 'the system has reached start level ' + config.startlevel
         // actions
         case 'core.ItemCommandAction':
           if (!config.itemName || !config.command) return moduleType.label
-          return 'Send command ' + config.command + ' to ' + config.itemName
+          return 'send command ' + config.command + ' to ' + config.itemName
         case 'core.ItemStateUpdateAction':
           if (!config.itemName || !config.state) return moduleType.label
-          return 'Update the state of ' + config.itemName + ' to ' + config.state
+          return 'update the state of ' + config.itemName + ' to ' + config.state
         case 'media.SayAction':
           if (!config.text) return moduleType.label
-          return 'Say "' + config.text + '"'
-        case 'media.PlaySound':
+          return 'say "' + config.text + '"'
+        case 'media.PlayAction':
           if (!config.sound) return moduleType.label
-          return 'Say ' + config.sound
+          return 'play "' + config.sound + '"'
         // conditions
         case 'timer.DayOfWeekCondition':
           if (!config.days || !config.days.join || !config.days.length) return moduleType.label
-          return 'If the day is ' + config.days.join(',')
+          return 'the day is ' + config.days.join(',')
         case 'core.TimeOfDayCondition':
           if (!config.startTime || !config.endTime) return moduleType.label
-          return 'If the time is between ' + config.startTime + ' and ' + config.endTime
+          return 'the time is between ' + config.startTime + ' and ' + config.endTime
         case 'core.ItemStateCondition':
           if (!config.itemName || !config.operator || !config.state) return moduleType.label
-          return 'If ' + config.itemName + ' ' + config.operator + ' ' + config.state
+          return config.itemName + ' ' + config.operator + ' ' + config.state
         default:
           return moduleType.label
       }
