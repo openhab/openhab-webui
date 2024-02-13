@@ -171,7 +171,7 @@ export default {
       }
     },
     save () {
-      if (!this.item.editable) return
+      if (!this.editable) return
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) return
       }
