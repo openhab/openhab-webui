@@ -70,7 +70,7 @@
         <f7-block-title class="searchbar-hide-on-search">
           {{ pages.length }} pages
         </f7-block-title>
-        <div class="padding-left padding-right searchbar-found" v-show="!ready || pages.length > 0">
+        <div class="searchbar-found" v-show="!ready || pages.length > 0">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical

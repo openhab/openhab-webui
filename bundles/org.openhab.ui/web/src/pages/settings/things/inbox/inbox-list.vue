@@ -52,7 +52,7 @@
             <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label> <f7-checkbox :checked="showIgnored" @change="toggleIgnored" />
           </div>
         </f7-block-title>
-        <div class="padding-left padding-right searchbar-found" v-show="!ready || inboxCount > 0">
+        <div class="searchbar-found" v-show="!ready || inboxCount > 0">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical

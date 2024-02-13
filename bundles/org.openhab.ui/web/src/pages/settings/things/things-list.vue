@@ -73,7 +73,7 @@
         <f7-block-title class="searchbar-hide-on-search">
           {{ things.length }} Things
         </f7-block-title>
-        <div class="searchbar-found padding-left padding-right">
+        <div class="searchbar-found">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical

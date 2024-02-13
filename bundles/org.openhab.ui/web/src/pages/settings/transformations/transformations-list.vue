@@ -66,7 +66,7 @@
         <f7-block-title class="searchbar-hide-on-search">
           {{ transformations.length }} transformations
         </f7-block-title>
-        <div class="padding-left padding-right searchbar-found">
+        <div class="searchbar-found">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical
