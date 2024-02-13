@@ -83,9 +83,9 @@ export default {
       ready: false,
       loading: false,
       initSearchbar: false,
-      includeNonSemantic: false,
-      includeItemName: false,
-      includeItemTags: false,
+      includeNonSemantic: localStorage.getItem('openhab.ui:model-picker.includeNonSemantic') === 'true',
+      includeItemName: localStorage.getItem('openhab.ui:model-picker.includeItemName') === 'true',
+      includeItemTags: localStorage.getItem('openhab.ui:model-picker.includeItemTags') === 'true',
       expanded: false,
       items: [],
       links: [],
@@ -292,14 +292,17 @@ export default {
       this.rootGroups = []
       this.rootItems = []
       this.includeNonSemantic = !this.includeNonSemantic
+      localStorage.setItem('openhab.ui:model-picker.includeNonSemantic', this.includeNonSemantic)
       this.load()
     },
     toggleItemName () {
       this.includeItemName = !this.includeItemName
+      localStorage.setItem('openhab.ui:model-picker.includeItemName', this.includeItemName)
       this.load()
     },
     toggleItemTags () {
       this.includeItemTags = !this.includeItemTags
+      localStorage.setItem('openhab.ui:model-picker.includeItemTags', this.includeItemTags)
       this.load()
     },
     toggleExpanded () {
