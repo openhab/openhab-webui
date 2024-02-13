@@ -52,7 +52,7 @@
             <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label> <f7-checkbox :checked="showIgnored" @change="toggleIgnored" />
           </div>
         </f7-block-title>
-        <div class="searchbar-found" v-show="!ready || inboxCount > 0">
+        <div class="searchbar-found padding-left padding-right" v-show="!ready || inboxCount > 0">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical
@@ -115,6 +115,13 @@
     </f7-fab>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.searchbar-found
+  @media (min-width 960px)
+    padding-left 0 !important
+    padding-right 0 !important
+</style>
 
 <script>
 export default {

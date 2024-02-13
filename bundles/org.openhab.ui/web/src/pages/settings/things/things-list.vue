@@ -73,7 +73,7 @@
         <f7-block-title class="searchbar-hide-on-search">
           {{ things.length }} Things
         </f7-block-title>
-        <div class="searchbar-found">
+        <div class="searchbar-found padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical
@@ -143,6 +143,11 @@
 <style lang="stylus">
 .things-list
   margin-bottom calc(var(--f7-fab-size) + 2 * calc(var(--f7-fab-margin) + var(--f7-safe-area-bottom)))
+
+.searchbar-found
+  @media (min-width 960px)
+    padding-left 0 !important
+    padding-right 0 !important
 </style>
 
 <script>
