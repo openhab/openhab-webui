@@ -21,7 +21,7 @@
       </optgroup>
     </f7-list-input>
     <f7-list-item v-if="currentSemanticType && !hideType" :disabled="!editable" title="Semantic Type" :after="currentSemanticType" />
-    <f7-list-input v-if="currentSemanticType == 'Point'" :disabled="!editable" label="Semantic Property" type="select" :value="semanticProperty" @input="update('property', $event.target.value)">
+    <f7-list-input v-if="currentSemanticType === 'Point'" :disabled="!editable" label="Semantic Property" type="select" :value="semanticProperty" @input="update('property', $event.target.value)">
       <option value="">
         None
       </option>

@@ -9,7 +9,7 @@
         <f7-list-input label="Label" type="text" placeholder="Label" :value="item.label"
                        @input="item.label = $event.target.value" :disabled="!editable" :clear-button="editable" />
       </f7-list-group>
-      <f7-list-group v-if="item.type && !hideType" :key="item.type">
+      <f7-list-group v-if="item.type && !hideType">
         <f7-list-input label="Type" type="select" :disabled="!editable" :value="item.type.split(':')[0]" @input="item.type = $event.target.value">
           <option v-for="t in types.ItemTypes" :key="t">
             {{ t }}
@@ -53,28 +53,26 @@
         <f7-list-input ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
                        @input="item.category = $event.target.value" :disabled="!editable" :clear-button="editable">
           <div slot="root-end" style="margin-left: calc(35% + 14px)">
-            <oh-icon :key="item.category" :icon="item.category" :state="(createMode) ? null : item.state" height="32" width="32" />
+            <oh-icon :icon="item.category" :state="(createMode) ? null : item.state" height="32" width="32" />
           </div>
         </f7-list-input>
       </f7-list-group>
     </f7-list>
-    <semantics-picker v-if="!hideSemantics" :item="item" :key="item.tags.toString()" :same-class-only="true" :hide-type="true" :hide-none="forceSemantics" :createMode="createMode" />
+    <semantics-picker v-if="!hideSemantics" :item="item" :same-class-only="true" :hide-type="true" :hide-none="forceSemantics" :createMode="createMode" />
     <f7-list inline-labels no-hairline-md>
       <f7-list-item title="Non-Semantic Tags" :badge="numberOfTags" />
       <tag-input :disabled="!editable" :item="item" />
     </f7-list>
-    <f7-list no-hairline-md>
+    <f7-list inline-labels no-hairline-md>
       <f7-list-item title="Parent Groups" :badge="numberOfGroups" />
       <!-- make it cosmetically similar to the non-semantic tags above -->
-      <ul>
-        <f7-list-item :key="item.groupNames.toString()" v-if="numberOfGroups > 0">
-          <div slot="inner">
-            <f7-chip v-for="group in item.groupNames" :key="group" :text="group" :deleteable="editable" @delete="deleteGroup" media-bg-color="blue" style="margin-right: 6px">
-              <f7-icon slot="media" ios="f7:folder_fill" md="material:folder" aurora="f7:folder_fill" />
-            </f7-chip>
-          </div>
-        </f7-list-item>
-      </ul>
+      <f7-list-item v-if="numberOfGroups > 0">
+        <div slot="inner">
+          <f7-chip v-for="group in item.groupNames" :key="group" :text="group" :deleteable="editable" @delete="deleteGroup" media-bg-color="blue" style="margin-right: 6px">
+            <f7-icon slot="media" ios="f7:folder_fill" md="material:folder" aurora="f7:folder_fill" />
+          </f7-chip>
+        </div>
+      </f7-list-item>
       <item-picker v-if="editable" title="Select" :value="item.groupNames" :items="items" @input="(value) => this.item.groupNames = value" :multiple="true" filterType="Group" :set-value-text="false" />
     </f7-list>
   </div>
@@ -119,9 +117,6 @@ export default {
   computed: {
     editable () {
       return this.createMode || (this.item && this.item.editable)
-    },
-    numberOfTags () {
-      return this.getNonSemanticTags(this.item).length.toString()
     },
     numberOfGroups () {
       return this.item.groupNames?.length.toString() || '0'

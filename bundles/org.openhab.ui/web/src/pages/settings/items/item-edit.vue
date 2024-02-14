@@ -20,7 +20,7 @@
     <f7-tabs class="sitemap-editor-tabs">
       <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
         <f7-block class="block-narrow" v-if="item.name || item.created === false">
-          <f7-col v-if="editable === false">
+          <f7-col v-if="!editable">
             <div class="padding-left">
               Note: {{ notEditableMgs }}
             </div>
