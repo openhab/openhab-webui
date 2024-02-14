@@ -79,13 +79,14 @@ export default {
     ModelTreeview
   },
   data () {
+    if (!this.$f7.data.modelPicker) this.$f7.data.modelPicker = {}
     return {
       ready: false,
       loading: false,
       initSearchbar: false,
-      includeNonSemantic: false,
-      includeItemName: false,
-      includeItemTags: false,
+      includeNonSemantic: this.$f7.data.modelPicker.includeNonSemantic || false,
+      includeItemName: this.$f7.data.modelPicker.includeItemName || false,
+      includeItemTags: this.$f7.data.modelPicker.includeItemTags || false,
       expanded: false,
       items: [],
       links: [],
@@ -292,14 +293,17 @@ export default {
       this.rootGroups = []
       this.rootItems = []
       this.includeNonSemantic = !this.includeNonSemantic
+      this.$f7.data.modelPicker.includeNonSemantic = this.includeNonSemantic
       this.load()
     },
     toggleItemName () {
       this.includeItemName = !this.includeItemName
+      this.$f7.data.modelPicker.includeItemName = this.includeItemName
       this.load()
     },
     toggleItemTags () {
       this.includeItemTags = !this.includeItemTags
+      this.$f7.data.modelPicker.includeItemTags = this.includeItemTags
       this.load()
     },
     toggleExpanded () {
