@@ -160,6 +160,7 @@ export default {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-layout-page',
         config: {},
+        tags: [],
         slots: {
           default: [],
           grid: [],

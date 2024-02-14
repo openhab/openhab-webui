@@ -114,6 +114,7 @@ export default {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-tabs-page',
         config: {},
+        tags: [],
         slots: { default: [] }
       }
     }

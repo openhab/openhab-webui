@@ -60,7 +60,6 @@
     </f7-list>
     <semantics-picker v-if="!hideSemantics" :item="item" :same-class-only="true" :hide-type="true" :hide-none="forceSemantics" :createMode="createMode" />
     <f7-list inline-labels no-hairline-md>
-      <f7-list-item title="Non-Semantic Tags" :badge="numberOfTags" />
       <tag-input :disabled="!editable" :item="item" />
     </f7-list>
     <f7-list inline-labels no-hairline-md>
