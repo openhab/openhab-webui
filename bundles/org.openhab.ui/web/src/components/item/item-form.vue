@@ -27,6 +27,7 @@
             </option>
           </select>
         </f7-list-item>
+        <!-- (Internal) Unit & State Description -->
         <!-- Use v-show instead of v-if, because otherwise the autocomplete for category would take over the unit -->
         <f7-list-input v-show="itemDimension && createMode"
                        label="Unit"
@@ -45,7 +46,7 @@
                        @input="item.stateDescriptionPattern = $event.target.value"
                        :clear-button="editable" />
 
-        <!-- Group Item -->
+        <!-- Group Item Form -->
         <group-form v-if="item.type === 'Group'" :item="item" :createMode="createMode" />
       </f7-list-group>
       <f7-list-group v-if="!hideCategory">
@@ -59,7 +60,7 @@
     </f7-list>
     <semantics-picker v-if="!hideSemantics" :item="item" :same-class-only="true" :hide-type="true" :hide-none="forceSemantics" :createMode="createMode" />
     <f7-list inline-labels no-hairline-md>
-      <tag-input :disabled="!editable" :item="item" />
+      <tag-input title="Non-Semantic Tags" :disabled="!editable" :item="item" />
     </f7-list>
     <f7-list inline-labels no-hairline-md>
       <f7-list-item title="Parent Groups" :badge="numberOfGroups" />

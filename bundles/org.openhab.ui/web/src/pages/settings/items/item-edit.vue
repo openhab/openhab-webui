@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar :title="createMode ? 'Create New Item': 'Edit Item'" back-link="Cancel">
+    <f7-navbar :title="createMode ? 'Create New Item': (editable ? 'Edit Item' : 'Item Details')" :back-link="editable ? 'Cancel': 'Back'">
       <f7-nav-right>
         <f7-link @click="save()" v-if="editable && $theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="editable && !$theme.md">
@@ -32,7 +32,7 @@
           <div v-if="ready" class="flex-shrink-0 if-aurora display-flex justify-content-center">
             <f7-button text="Create" v-if="createMode" style="width: 150px" class="margin-horizontal" color="blue" raised fill @click="save" />
             <f7-button text="Save" v-else-if="editable" style="width: 150px" class="margin-horizontal" color="blue" raised fill @click="save" />
-            <f7-button text="Cancel" color="blue" @click="$f7router.back()" />
+            <f7-button :text="editable ? 'Cancel' : 'Back'" color="blue" @click="$f7router.back()" />
           </div>
         </f7-block>
       </f7-tab>

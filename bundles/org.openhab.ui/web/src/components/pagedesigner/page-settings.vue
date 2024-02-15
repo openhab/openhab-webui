@@ -30,7 +30,7 @@
       </f7-list-item>
     </f7-list>
     <f7-list inline-labels no-hairline-md>
-      <tag-input title="Tags" :item="page" :disabled="page.uid === 'overview'" />
+      <tag-input :item="page" :disabled="page.uid === 'overview'" />
     </f7-list>
   </f7-col>
 </template>

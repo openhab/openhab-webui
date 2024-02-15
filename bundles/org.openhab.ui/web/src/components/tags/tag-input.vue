@@ -1,7 +1,7 @@
 <template>
   <div v-if="item && item.tags" class="tag-editor">
     <f7-list>
-      <f7-list-item :title="title || 'Non-Semantic Tags'" :badge="tags.length.toString()" />
+      <f7-list-item :title="title || 'Tags'" :badge="tags.length.toString()" />
       <f7-list-item v-if="tags.length > 0">
         <div slot="inner">
           <f7-chip v-for="tag in tags" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="blue">

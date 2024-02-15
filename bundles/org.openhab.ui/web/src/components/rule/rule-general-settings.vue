@@ -31,7 +31,7 @@
                          :disabled="true" @input="rule.description = $event.target.value" :clear-button="editable" />
         </f7-list>
         <f7-list inline-labels no-hairlines-md>
-          <tag-input v-if="!createMode || !hasRuleTemplate" title="Tags" :item="rule" :disabled="!editable" :showSemanticTags="true" :inScriptEditor="inScriptEditor" :inSceneEditor="inSceneEditor" />
+          <tag-input v-if="!createMode || !hasRuleTemplate" :item="rule" :disabled="!editable" :showSemanticTags="true" :inScriptEditor="inScriptEditor" :inSceneEditor="inSceneEditor" />
         </f7-list>
       </f7-col>
     </f7-block>

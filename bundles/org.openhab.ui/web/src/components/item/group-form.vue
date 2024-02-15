@@ -1,5 +1,6 @@
 <template>
-  <div v-if="item.type === 'Group'" class="group-form no-padding">
+  <div class="group-form no-padding">
+    <!-- Type -->
     <f7-list-item v-if="item.type === 'Group'" :disabled="!editable" title="Members Base Type" class="align-popup-list-item members" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-basetype" @change="groupType = $event.target.value">
         <option v-for="type in types.GroupTypes" :key="type" :value="type" :selected="item.groupType ? type === item.groupType.split(':')[0] : false">
@@ -7,6 +8,7 @@
         </option>
       </select>
     </f7-list-item>
+    <!-- Dimension -->
     <f7-list-item v-if="dimensions.length && item.groupType && item.groupType.startsWith('Number')" :disabled="!editable" title="Dimension" class="align-popup-list-item members" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-dimension" @change="groupDimension = $event.target.value">
         <option key="" value="Number" :selected="item.type === 'Number'" />
@@ -15,7 +17,7 @@
         </option>
       </select>
     </f7-list-item>
-
+    <!-- (Internal) Unit & State Description -->
     <template v-if="createMode && groupType && groupDimension">
       <f7-list-input label="Unit"
                      type="text"
@@ -28,7 +30,7 @@
                      :value="item.stateDescriptionPattern"
                      @input="item.stateDescriptionPattern = $event.target.value" clear-button />
     </template>
-
+    <!-- Aggregation Functions -->
     <f7-list-item v-if="aggregationFunctions" :disabled="!editable" title="Aggregation Function" class="align-popup-list-item members" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
       <select name="select-function" @change="groupFunctionKey = $event.target.value">
         <option v-for="type in aggregationFunctions" :key="type.name" :value="type.name" :selected="type.name === groupFunctionKey">
@@ -40,8 +42,12 @@
 </template>
 
 <style lang="stylus">
-.align-popup-list-item.members
-  padding-left 14px
+.group-form
+  .item-inner
+    padding-left 1em
+  .list
+    margin-top 0
+    margin-bottom 0
 </style>
 
 <script>
@@ -145,12 +151,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-.group-form
-  .item-label
-    padding-left 1em
-  .list
-    margin-top 0
-    margin-bottom 0
-</style>
