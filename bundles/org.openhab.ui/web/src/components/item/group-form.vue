@@ -1,21 +1,20 @@
 <template>
   <div v-if="item.type === 'Group'" class="group-form no-padding">
-    <f7-list-input :disabled="!editable" label="Members Base Type" type="select" :value="groupType" @input="groupType = $event.target.value">
-      <option v-for="type in types.GroupTypes" :key="type" :value="type">
-        {{ type }}
-      </option>
-    </f7-list-input>
-    <f7-list-input v-if="dimensions.length && groupType === 'Number'"
-                   :disabled="!editable"
-                   label="Dimension"
-                   type="select"
-                   :value="groupDimension"
-                   @input="groupDimension = $event.target.value">
-      <option value="" />
-      <option v-for="d in dimensions" :key="d.name" :value="d.name">
-        {{ d.label }}
-      </option>
-    </f7-list-input>
+    <f7-list-item v-if="item.type === 'Group'" :disabled="!editable" title="Members Base Type" class="align-popup-list-item members" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+      <select name="select-basetype" @change="groupType = $event.target.value">
+        <option v-for="type in types.GroupTypes" :key="type" :value="type" :selected="item.groupType ? type === item.groupType.split(':')[0] : false">
+          {{ type }}
+        </option>
+      </select>
+    </f7-list-item>
+    <f7-list-item v-if="dimensions.length && item.groupType && item.groupType.startsWith('Number')" :disabled="!editable" title="Dimension" class="align-popup-list-item members" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+      <select name="select-dimension" @change="groupDimension = $event.target.value">
+        <option key="Number" value="Number" :selected="item.type === 'Number'" />
+        <option v-for="(d, i) in dimensions" :key="d.name" :value="i" :selected="'Number:' + d.name === item.groupType">
+          {{ d.label }}
+        </option>
+      </select>
+    </f7-list-item>
 
     <template v-if="createMode && groupType && groupDimension">
       <f7-list-input label="Unit"
@@ -30,18 +29,20 @@
                      @input="item.stateDescriptionPattern = $event.target.value" clear-button />
     </template>
 
-    <f7-list-input v-if="aggregationFunctions"
-                   :disabled="!editable"
-                   label="Aggregation Function"
-                   type="select"
-                   :value="groupFunctionKey"
-                   @input="groupFunctionKey = $event.target.value">
-      <option v-for="type in aggregationFunctions" :key="type.name" :value="type.name">
-        {{ type.value }}
-      </option>
-    </f7-list-input>
+    <f7-list-item v-if="aggregationFunctions" :disabled="!editable" title="Aggregation Function" class="align-popup-list-item members" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
+      <select name="select-function" @change="groupFunctionKey = $event.target.value">
+        <option v-for="type in aggregationFunctions" :key="type.name" :value="type.name" :selected="type.name === groupFunctionKey">
+          {{ type.value }}
+        </option>
+      </select>
+    </f7-list-item>
   </div>
 </template>
+
+<style lang="stylus">
+.align-popup-list-item.members
+  padding-left 14px
+</style>
 
 <script>
 import * as types from '@/assets/item-types.js'
