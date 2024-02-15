@@ -250,12 +250,13 @@ export default {
     LinkDetails
   },
   data () {
+    if (!this.$f7.data.model) this.$f7.data.model = {}
     return {
       ready: false,
       loading: false,
-      includeNonSemantic: false,
-      includeItemName: false,
-      includeItemTags: false,
+      includeNonSemantic: this.$f7.data.model.includeNonSemantic || false,
+      includeItemName: this.$f7.data.model.includeItemName || false,
+      includeItemTags: this.$f7.data.model.includeItemTags || false,
       expanded: false,
       items: [],
       links: [],
@@ -477,14 +478,17 @@ export default {
       this.rootGroups = []
       this.rootItems = []
       this.includeNonSemantic = !this.includeNonSemantic
+      this.$f7.data.model.includeNonSemantic = this.includeNonSemantic
       this.load()
     },
     toggleItemName () {
       this.includeItemName = !this.includeItemName
+      this.$f7.data.model.includeItemName = this.includeItemName
       this.load()
     },
     toggleItemTags () {
       this.includeItemTags = !this.includeItemTags
+      this.$f7.data.model.includeItemTags = this.includeItemTags
       this.load()
     },
     toggleExpanded () {
