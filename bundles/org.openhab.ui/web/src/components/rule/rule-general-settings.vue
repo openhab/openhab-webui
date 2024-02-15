@@ -11,11 +11,9 @@
                          :disabled="!editable" @input="rule.name = $event.target.value" :clear-button="editable" />
           <f7-list-input label="Description" type="text" :value="rule.description"
                          :disabled="!editable" @input="rule.description = $event.target.value" :clear-button="editable" />
-          <f7-list-item v-if="!createMode || !hasRuleTemplate" accordion-item title="Tags" :after="numberOfTags">
-            <f7-accordion-content>
-              <tag-input :item="rule" :disabled="!editable" :showSemanticTags="true" :inScriptEditor="inScriptEditor" :inSceneEditor="inSceneEditor" />
-            </f7-accordion-content>
-          </f7-list-item>
+        </f7-list>
+        <f7-list inline-labels no-hairlines-md>
+          <tag-input v-if="!createMode || !hasRuleTemplate" title="Tags" :item="rule" :disabled="!editable" :showSemanticTags="true" :inScriptEditor="inScriptEditor" :inSceneEditor="inSceneEditor" />
         </f7-list>
       </f7-col>
     </f7-block>
@@ -31,11 +29,9 @@
                          :disabled="true" @input="rule.name = $event.target.value" :clear-button="editable" />
           <f7-list-input label="Description" type="text" value="__ _____ ___ __ ___"
                          :disabled="true" @input="rule.description = $event.target.value" :clear-button="editable" />
-          <f7-list-item accordion-item title="Tags" :disabled="!editable">
-            <f7-accordion-content>
-              <tag-input :item="rule" :showSemanticTags="true" />
-            </f7-accordion-content>
-          </f7-list-item>
+        </f7-list>
+        <f7-list inline-labels no-hairlines-md>
+          <tag-input v-if="!createMode || !hasRuleTemplate" :item="rule" :disabled="!editable" :showSemanticTags="true" :inScriptEditor="inScriptEditor" :inSceneEditor="inSceneEditor" />
         </f7-list>
       </f7-col>
     </f7-block>
@@ -51,10 +47,6 @@ export default {
     TagInput
   },
   computed: {
-    numberOfTags () {
-      if (!this.rule.tags) return 0
-      return this.rule.tags.filter((t) => !this.isScriptTag(t) && !this.isSceneTag(t)).length
-    },
     editable () {
       return this.createMode || (this.rule && this.rule.editable)
     }

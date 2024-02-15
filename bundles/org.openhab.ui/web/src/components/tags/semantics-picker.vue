@@ -1,8 +1,8 @@
 <template>
-  <f7-list no-hairlines-md v-if="show">
-    <f7-list-item :disabled="!editable" title="Semantic Class" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
+  <f7-list inline-labels no-hairlines-md v-if="show">
+    <f7-list-item :disabled="!editable" title="Semantic Class" class="align-popup-list-item" :key="'class-' + semanticClass" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
       <select name="select-semantics-class" @change="update('class', $event.target.value)">
-        <option v-if="!hideNone" :value="''">
+        <option v-if="!hideNone" value="">
           None
         </option>
         <optgroup label="Location" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Location')">
@@ -22,9 +22,9 @@
         </optgroup>
       </select>
     </f7-list-item>
-    <f7-list-item v-if="currentSemanticType && !hideType" :disabled="!editable" title="Semantic Type" :after="currentSemanticType" />
-    <f7-list-item v-if="currentSemanticType == 'Point'" :disabled="!editable" title="Semantic Property" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
-      <select name="select-semantics-proerty" :value="semanticProperty" @change="update('property', $event.target.value)">
+    <f7-list-item v-if="currentSemanticType && !hideType" :disabled="!editable" title="Semantic Type" class="align-popup-list-item" :after="currentSemanticType" />
+    <f7-list-item v-if="currentSemanticType === 'Point'" :disabled="!editable" title="Semantic Property" class="align-popup-list-item" :key="'property-' + semanticProperty" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
+      <select name="select-semantics-property" :value="semanticProperty" @change="update('property', $event.target.value)">
         <option :value="''">
           None
         </option>
@@ -38,7 +38,7 @@
 
 <script>
 export default {
-  props: ['item', 'sameClassOnly', 'hideType', 'hideNone'],
+  props: ['item', 'sameClassOnly', 'hideType', 'hideNone', 'createMode'],
   data () {
     return {
       semanticClasses: this.$store.getters.semanticClasses,
@@ -105,7 +105,7 @@ export default {
   },
   computed: {
     editable () {
-      return this.item && this.item.editable
+      return this.createMode || (this.item && this.item.editable)
     },
     orderedLocations () {
       return [...this.semanticClasses.Locations].sort((a, b) => {
