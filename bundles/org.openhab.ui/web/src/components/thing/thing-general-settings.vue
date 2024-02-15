@@ -26,7 +26,7 @@
               This type of Thing needs to be associated to a working Bridge to function properly.
             </f7-block-footer>
             <f7-list v-if="ready && thingType.supportedBridgeTypeUIDs.length" inline-labels no-hairlines-md>
-              <thing-picker v-if="thing.editable"
+              <thing-picker v-if="editable"
                             title="Bridge" name="bridge" :value="thing.bridgeUID"
                             @input="updateBridge"
                             :filterType="thingType.supportedBridgeTypeUIDs" />
@@ -48,6 +48,11 @@ export default {
   components: {
     ThingPicker,
     ClipboardIcon
+  },
+  computed: {
+    editable () {
+      return this.createMode || (this.thing && this.thing.editable)
+    }
   },
   methods: {
     computedThingUid () {
