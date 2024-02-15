@@ -88,6 +88,7 @@ export default {
       includeItemTags: false,
       expanded: false,
       doubleClickStarted: null,
+      doubleClickItem: null,
       items: [],
       links: [],
       locations: [],
@@ -278,10 +279,11 @@ export default {
     selectItem (item) {
       if (!this.multiple) {
         this.selectedItem = item
-        if (this.doubleClickStarted) {
+        if (this.doubleClickStarted && this.doubleClickItem === item) {
           this.pickItems()
         } else {
           this.doubleClickStarted = setTimeout(() => { this.doubleClickStarted = null }, 500)
+          this.doubleClickItem = item
         }
       } else if (item.children && item.opened !== undefined) {
         item.opened = !item.opened
