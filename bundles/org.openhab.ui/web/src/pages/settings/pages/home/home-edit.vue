@@ -32,21 +32,20 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <!-- <f7-block class="block-narrow" v-if="ready && !previewMode">
-          <page-settings :page="page" :createMode="createMode" />
-        </f7-block> -->
 
-        <f7-block class="block-narrow" style="padding-bottom: 8rem" v-else-if="ready && modelReady && !previewMode">
-          <f7-col>
-            <f7-block-title>Page Configuration</f7-block-title>
-            <config-sheet
-              :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
-              :parameters="pageWidgetDefinition.props.parameters || []"
-              :configuration="page.config"
-              @updated="dirty = true" />
-          </f7-col>
+        <div v-else-if="!previewMode">
+          <f7-block class="block-narrow no-padding">
+            <f7-col>
+              <f7-block-title>Page Configuration</f7-block-title>
+              <config-sheet
+                :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
+                :parameters="pageWidgetDefinition.props.parameters || []"
+                :configuration="page.config"
+                @updated="dirty = true" />
+            </f7-col>
+          </f7-block>
 
-          <f7-col>
+          <f7-block>
             <f7-segmented strong tag="p">
               <f7-button v-for="tab in modelTabs" :key="tab.value" @click="showCardControls = false; currentModelTab = tab.value" :active="currentModelTab === tab.value" :text="tab.label" />
             </f7-segmented>
@@ -83,7 +82,9 @@
                 </f7-list-item>
               </f7-list>
             </div>
+          </f7-block>
 
+          <f7-block style="z-index: -1">
             <div v-if="currentModelTab === 'locations'">
               <config-sheet
                 :parameterGroups="locationsTabParameters.props.parameterGroups || []"
@@ -107,9 +108,10 @@
                 :configuration="page.slots.properties[0].config"
                 @updated="dirty = true" />
             </div>
-          </f7-col>
-        </f7-block>
-        <div v-else-if="ready && previewMode && currentTab === 'design'" :context="context" :key="pageKey">
+          </f7-block>
+        </div>
+
+        <div v-else :context="context" :key="pageKey">
           <model-tab style="margin-bottom: 4rem" :context="context" :type="currentModelTab" :model="model" :page="page" />
         </div>
       </f7-tab>
