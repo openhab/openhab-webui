@@ -11,7 +11,7 @@
       </f7-list-group>
       <f7-list-group v-if="item.type && !hideType">
         <!-- Type -->
-        <f7-list-item class="align-popup-list-item" v-if="item.type && !hideType" title="Type" type="text" :disabled="!editable" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <f7-list-item v-if="item.type && !hideType" title="Type" class="align-popup-list-item" :disabled="!editable" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
           <select name="select-type" @change="item.type = $event.target.value">
             <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === item.type.split(':')[0]">
               {{ t }}
@@ -19,10 +19,10 @@
           </select>
         </f7-list-item>
         <!-- Dimensions -->
-        <f7-list-item class="align-popup-list-item" v-if="dimensions.length && item.type && !hideType && item.type.startsWith('Number')" title="Dimension" type="text" :disabled="!editable" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <f7-list-item v-if="dimensions.length && item.type && !hideType && item.type.startsWith('Number')" title="Dimension" class="align-popup-list-item" :disabled="!editable" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
           <select name="select-dimension" @change="setDimension($event.target.value)">
-            <option key="Number" value="Number" :selected="item.type === 'Number'" />
-            <option v-for="(d, i) in dimensions" :key="d.name" :value="i" :selected="'Number:' + d.name === item.type">
+            <option key="" value="Number" :selected="item.type === 'Number'" />
+            <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="'Number:' + d.name === item.type">
               {{ d.label }}
             </option>
           </select>
