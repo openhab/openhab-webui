@@ -86,12 +86,13 @@
   .item-title
     // f7-input-item uses 35% for the item-title,
     // but since their item-inner has less padding (16px vs 31px) on the left side, add those 15px difference
-    min-width calc(35% + 0.35*15px) !important
+    min-width calc(35% + 0.35*15px)
   .item-after
-    width 100% !important
+    width 100%
     margin 0
     padding 0
     margin-left 8px
+    color var(--f7-input-text-color)
 </style>
 
 <script>
