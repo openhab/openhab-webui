@@ -28,7 +28,7 @@
           </select>
         </f7-list-item>
         <!-- Use v-show instead of v-if, because otherwise the autocomplete for category would take over the unit -->
-        <f7-list-input v-show="itemDimension"
+        <f7-list-input v-show="itemDimension && createMode"
                        label="Unit"
                        type="text"
                        info="Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description."
@@ -36,7 +36,7 @@
                        :value="item.unit"
                        @input="item.unit = $event.target.value"
                        :clear-button="editable" />
-        <f7-list-input v-show="itemDimension"
+        <f7-list-input v-show="itemDimension && createMode"
                        label="State Description Pattern"
                        type="text"
                        info="Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value."
