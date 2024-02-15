@@ -239,7 +239,23 @@
   // --f7-list-item-media-margin 24px
   // --f7-list-item-padding-horizontal 32px
   // --f7-list-chevron-icon-color var(--f7-color-blue-tint) !important
+</style>
 
+<style lang="stylus">
+// align smart select popup list item with input fields of f7-list-input elements
+a.item-link.smart-select
+  .item-content
+    .item-inner
+      .item-title
+        // f7-input-item uses 35% for the item-title,
+        // but since their item-inner has less padding (16px vs 31px) on the left side, add those 15px difference
+        min-width calc(35% + 0.35*15px) !important
+      .item-after
+        width 100%
+        margin 0
+        padding 0
+        margin-left 8px
+        color var(--f7-input-text-color)
 </style>
 
 <script>
