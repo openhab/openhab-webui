@@ -9,8 +9,8 @@
     </f7-list-item>
     <f7-list-item v-if="dimensions.length && item.groupType && item.groupType.startsWith('Number')" :disabled="!editable" title="Dimension" class="align-popup-list-item members" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-dimension" @change="groupDimension = $event.target.value">
-        <option key="Number" value="Number" :selected="item.type === 'Number'" />
-        <option v-for="(d, i) in dimensions" :key="d.name" :value="i" :selected="'Number:' + d.name === item.groupType">
+        <option key="" value="Number" :selected="item.type === 'Number'" />
+        <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="'Number:' + d.name === item.groupType">
           {{ d.label }}
         </option>
       </select>
