@@ -105,6 +105,7 @@ export default {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-chart-page',
         config: {},
+        tags: [],
         slots: { grid: [], xAxis: [], yAxis: [], series: [] }
       },
       currentSlot: null,
