@@ -10,24 +10,23 @@
                        @input="item.label = $event.target.value" :disabled="!editable" :clear-button="editable" />
       </f7-list-group>
       <f7-list-group v-if="item.type && !hideType">
-        <f7-list-input label="Type" type="select" :disabled="!editable" :value="item.type.split(':')[0]" @input="item.type = $event.target.value">
-          <option v-for="t in types.ItemTypes" :key="t">
-            {{ t }}
-          </option>
-        </f7-list-input>
-
+        <!-- Type -->
+        <f7-list-item class="align-popup-list-item" v-if="item.type && !hideType" title="Type" type="text" :disabled="!editable" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+          <select name="select-type" @change="item.type = $event.target.value">
+            <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === item.type.split(':')[0]">
+              {{ t }}
+            </option>
+          </select>
+        </f7-list-item>
         <!-- Dimensions -->
-        <f7-list-input v-if="dimensions.length && item.type.startsWith('Number')"
-                       label="Dimension"
-                       type="select"
-                       :disabled="!editable"
-                       :value="itemDimension"
-                       @input="setDimension($event.target.value)">
-          <option value="" />
-          <option v-for="d in dimensions" :key="d.name" :value="d.name">
-            {{ d.label }}
-          </option>
-        </f7-list-input>
+        <f7-list-item class="align-popup-list-item" v-if="dimensions.length && item.type && !hideType && item.type.startsWith('Number')" title="Dimension" type="text" :disabled="!editable" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+          <select name="select-dimension" @change="setDimension($event.target.value)">
+            <option key="Number" value="Number" :selected="item.type === 'Number'" />
+            <option v-for="(d, i) in dimensions" :key="d.name" :value="i" :selected="'Number:' + d.name === item.type">
+              {{ d.label }}
+            </option>
+          </select>
+        </f7-list-item>
         <!-- Use v-show instead of v-if, because otherwise the autocomplete for category would take over the unit -->
         <f7-list-input v-show="itemDimension"
                        label="Unit"
@@ -83,6 +82,16 @@
     display inherit !important
   .item-title
     font-weight inherit !important
+.align-popup-list-item
+  .item-title
+    // f7-input-item uses 35% for the item-title,
+    // but since their item-inner has less padding (16px vs 31px) on the left side, add those 15px difference
+    min-width calc(35% + 0.35*15px) !important
+  .item-after
+    width 100% !important
+    margin 0
+    padding 0
+    margin-left 8px
 </style>
 
 <script>
