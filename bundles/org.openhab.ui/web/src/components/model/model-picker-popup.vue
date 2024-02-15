@@ -88,6 +88,8 @@ export default {
       includeItemName: this.$f7.data.modelPicker.includeItemName || false,
       includeItemTags: this.$f7.data.modelPicker.includeItemTags || false,
       expanded: false,
+      doubleClickStarted: null,
+      doubleClickItem: null,
       items: [],
       links: [],
       locations: [],
@@ -278,6 +280,12 @@ export default {
     selectItem (item) {
       if (!this.multiple) {
         this.selectedItem = item
+        if (this.doubleClickStarted && this.doubleClickItem === item) {
+          this.pickItems()
+        } else {
+          this.doubleClickStarted = setTimeout(() => { this.doubleClickStarted = null }, 500)
+          this.doubleClickItem = item
+        }
       } else if (item.children && item.opened !== undefined) {
         item.opened = !item.opened
       }
