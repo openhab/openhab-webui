@@ -94,7 +94,7 @@ export default function defineOHBlocks_Variables (f7, isGraalJs) {
           .appendField('cache')
       }
       this.setInputsInline(true)
-      this.setOutput(true, null)
+      this.setOutput(true, 'Boolean')
       this.setColour(0)
       if (isGraalJs) {
         this.setTooltip('returns whether the given value is undefined in the private rule or shared global cache')

@@ -15,7 +15,7 @@
                   <f7-list-item v-for="step in instruct.steps" :key="step.title" :link="step.link" :title="step.title">
                     <div class="item-text" v-html="step.text" />
                   </f7-list-item>
-                  <f7-list-button v-if="instruct.button" :external="true" :title="instruct.button.title" :href="documentationLinkPrefix + instruct.button.link" target="_blank" />
+                  <f7-list-button v-if="instruct.button" :external="true" :title="instruct.button.title" :href="$store.state.websiteUrl + '/' + instruct.button.link" target="_blank" />
                 </f7-list>
               </f7-accordion-content>
             </f7-list-item>
@@ -41,7 +41,7 @@
                   </p>
                   <p v-html="faq.text" />
                   <p v-if="faq.doclink">
-                    <f7-link external target="_blank" :href="documentationLinkPrefix+faq.doclink">
+                    <f7-link external target="_blank" :href="$store.state.websiteUrl + '/' + faq.doclink">
                       Full Help Docs
                     </f7-link>
                   </p>
@@ -60,7 +60,7 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list media-list>
-            <f7-list-item v-for="addon in addons" :key="addon.uid" :link="addon.link.replace('https://www.openhab.org/', documentationLinkPrefix)" :external="true" target="_blank" :title="addon.label.replaceAll(/Binding|Transformation|Persistence/gi,'')" :text="addon.type" />
+            <f7-list-item v-for="addon in addons" :key="addon.uid" :link="addon.link.replace('https://www.openhab.org', $store.state.websiteUrl)" :external="true" target="_blank" :title="addon.label.replaceAll(/Binding|Transformation|Persistence/gi,'')" :text="addon.type" />
           </f7-list>
         </f7-block>
       </div>
@@ -72,8 +72,10 @@
           </f7-block-title>
         </f7-block>
 
+        <!-- script editor docs -->
+        <context v-if="/\/settings\/(scripts\/|rules\/[A-z0-9]+\/script)/.test($store.state.pagePath)" path="/settings/script-editor" />
         <!-- /settings/* docs -->
-        <context v-if="($store.state.pagePath) === '/settings/'" path="/settings/index" />
+        <context v-else-if="($store.state.pagePath) === '/settings/'" path="/settings/index" />
         <context v-else-if="/\/settings\/[A-z]+/.test($store.state.pagePath)" :path="/(\/[A-z]+\/[A-z]+)/.exec($store.state.pagePath)[0]" />
         <!-- /addons/ docs -->
         <context v-else-if="($store.state.pagePath).indexOf('/addons/') >= 0" path="/addons" />
@@ -94,8 +96,8 @@
           You can find many more details and help at these resources:
           <ul>
             <li><f7-link external target="_blank" href="https://www.openhab.org/" v-t="'about.homePage'" /></li>
-            <li><f7-link external target="_blank" :href="`${documentationLinkPrefix}link/docs`" v-t="'about.documentation'" /></li>
-            <li><f7-link external :href="`${documentationLinkPrefix}link/tutorial`" target="_blank" v-t="'home.overview.button.tutorial'" /></li>
+            <li><f7-link external target="_blank" :href="`${$store.state.websiteUrl}/link/docs`" v-t="'about.documentation'" /></li>
+            <li><f7-link external :href="`${$store.state.websiteUrl}/link/tutorial`" target="_blank" v-t="'home.overview.button.tutorial'" /></li>
             <li><f7-link external target="_blank" href="https://community.openhab.org/" v-t="'about.communityForum'" /></li>
           </ul>
         </f7-block>
@@ -155,11 +157,6 @@ export default {
       addons: [],
       faqs: require('@/assets/definitions/help/help-faq-defs.json'),
       qstart: require('@/assets/definitions/help/help-qstart-defs.json')
-    }
-  },
-  computed: {
-    documentationLinkPrefix () {
-      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/`
     }
   },
   created () {

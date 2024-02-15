@@ -6,7 +6,7 @@
         <f7-link @click="save()" v-if="editable && !$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
-        <f7-link v-else icon-f7="lock_fill" icon-only tooltip="This item is not editable through the UI" />
+        <f7-link v-else icon-f7="lock_fill" icon-only tooltip="This Item is not editable through the UI" />
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
@@ -155,8 +155,9 @@ export default {
       }
     },
     save () {
+      if (!this.editable) return
       if (this.currentTab === 'code') {
-        if (!this.fromYaml()) return Promise.reject()
+        if (!this.fromYaml()) return
       }
       if (this.validateItemName(this.item.name) !== '') return this.$f7.dialog.alert('Please give the Item a valid name: ' + this.validateItemName(this.item.name)).open()
       if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0])) return this.$f7.dialog.alert('Please give Item a valid type').open()

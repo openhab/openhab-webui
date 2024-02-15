@@ -5,7 +5,7 @@
         <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
           {{ $theme.md ? '' : 'Edit' }}
         </f7-link>
-        <f7-link v-else icon-f7="lock_fill" tooltip="This item is not editable through the UI" href="edit">
+        <f7-link v-else icon-f7="lock_fill" tooltip="This Item is not editable through the UI" href="edit">
           Details
         </f7-link>
       </f7-nav-right>

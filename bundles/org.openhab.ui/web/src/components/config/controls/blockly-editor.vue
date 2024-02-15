@@ -697,9 +697,7 @@
           <block type="oh_zdt_plusminus">
             <value name="offset">
               <shadow type="math_number">
-                <field name="NUM">
-                  0
-                </field>
+                <field name="NUM">0</field>
               </shadow>
             </value>
           </block>
@@ -784,7 +782,7 @@
           </block>
           <sep gap="48" />
           <block type="oh_get_zdt_part">
-            <value name="date">
+            <value name="zdt">
               <shadow type="oh_zdt" />
             </value>
           </block>
@@ -849,7 +847,6 @@
                 <field name="TEXT">message</field>
               </shadow>
             </value>
-            <value name="severity" />
           </block>
           <block type="oh_sendBroadcastNotification">
             <value name="message">
@@ -862,7 +859,6 @@
                 <field name="TEXT">temperature_cold</field>
               </shadow>
             </value>
-            <value name="severity" />
           </block>
           <block type="oh_sendLogNotification">
             <value name="message">
@@ -875,7 +871,6 @@
                 <field name="TEXT">temperature_hot</field>
               </shadow>
             </value>
-            <value name="severity" />
           </block>
         </category>
 
@@ -887,9 +882,7 @@
           <block type="oh_zdt_plusminus">
             <value name="offset">
               <shadow type="math_number">
-                <field name="NUM">
-                  0
-                </field>
+                <field name="NUM">1</field>
               </shadow>
             </value>
           </block>
@@ -915,9 +908,7 @@
               <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
-                    <field name="NUM">
-                      1
-                    </field>
+                    <field name="NUM">1</field>
                   </shadow>
                 </value>
                 <field name="period">Hours</field>
@@ -933,9 +924,7 @@
               <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
-                    <field name="NUM">
-                      1
-                    </field>
+                    <field name="NUM">1</field>
                   </shadow>
                 </value>
                 <field name="period">Hours</field>

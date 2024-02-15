@@ -16,9 +16,9 @@
     <div class="empty-overview" v-else-if="!inChatSession">
       <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
       <f7-row v-if="!$store.getters.isAdmin || $f7.width < 1280" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" external :href="`${documentationLinkPrefix}link/docs`" target="_blank" v-t="'home.overview.button.documentation'" />
+        <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/docs`" target="_blank" v-t="'home.overview.button.documentation'" />
         <span style="width: 8px" />
-        <f7-button large color="blue" external :href="`${documentationLinkPrefix}link/tutorial`" target="_blank" v-t="'home.overview.button.tutorial'" />
+        <f7-button large color="blue" external :href="`${$store.state.websiteUrl}/link/tutorial`" target="_blank" v-t="'home.overview.button.tutorial'" />
       </f7-row>
       <f7-row v-else class="display-flex justify-content-center">
         <f7-button large fill color="blue" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'quick'})" v-t="'home.overview.button.quickstart'" />
@@ -80,9 +80,6 @@ export default {
     pageStyle () {
       if (!this.overviewPage) return null
       return this.overviewPage.config.style
-    },
-    documentationLinkPrefix () {
-      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/`
     }
   },
   methods: {

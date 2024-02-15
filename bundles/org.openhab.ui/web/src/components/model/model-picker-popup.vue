@@ -34,12 +34,17 @@
         <div class="padding-right text-align-right">
           <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
           <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
+          <f7-checkbox style="margin-left: 5px" :checked="includeItemName" @change="toggleItemName" />
+          <label @click="toggleItemName" class="advanced-label">Show name</label>
+          <f7-checkbox style="margin-left: 5px" :checked="includeItemTags" @change="toggleItemTags" />
+          <label @click="toggleItemTags" class="advanced-label">Show tags</label>
         </div>
         <span />
         <!-- <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up"></f7-link> -->
       </f7-toolbar>
       <f7-block strong class="no-padding" v-if="ready">
         <model-treeview class="model-picker-treeview" :root-nodes="rootNodes"
+                        :includeItemName="includeItemName" :includeItemTags="includeItemTags"
                         :selected-item="selectedItem" @selected="selectItem" @checked="checkItem" />
       </f7-block>
       <f7-block v-else-if="!ready" class="text-align-center">
@@ -69,17 +74,22 @@ function compareModelItems (o1, o2) {
 }
 
 export default {
-  props: ['value', 'multiple', 'semanticOnly', 'groupsOnly', 'allowEmpty', 'popupTitle', 'actionLabel'],
+  props: ['value', 'multiple', 'semanticOnly', 'groupsOnly', 'editableOnly', 'allowEmpty', 'popupTitle', 'actionLabel'],
   components: {
     ModelTreeview
   },
   data () {
+    if (!this.$f7.data.modelPicker) this.$f7.data.modelPicker = {}
     return {
       ready: false,
       loading: false,
       initSearchbar: false,
-      includeNonSemantic: false,
+      includeNonSemantic: this.$f7.data.modelPicker.includeNonSemantic || false,
+      includeItemName: this.$f7.data.modelPicker.includeItemName || false,
+      includeItemTags: this.$f7.data.modelPicker.includeItemTags || false,
       expanded: false,
+      doubleClickStarted: null,
+      doubleClickItem: null,
       items: [],
       links: [],
       locations: [],
@@ -166,7 +176,11 @@ export default {
       const items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
       const links = this.$oh.api.get('/rest/links')
       Promise.all([items, links]).then((data) => {
-        this.items = data[0]
+        if (this.editableOnly) {
+          this.items = data[0].filter((i) => i.editable)
+        } else {
+          this.items = data[0]
+        }
         this.links = data[1]
 
         if (this.newItem) {
@@ -266,6 +280,12 @@ export default {
     selectItem (item) {
       if (!this.multiple) {
         this.selectedItem = item
+        if (this.doubleClickStarted && this.doubleClickItem === item) {
+          this.pickItems()
+        } else {
+          this.doubleClickStarted = setTimeout(() => { this.doubleClickStarted = null }, 500)
+          this.doubleClickItem = item
+        }
       } else if (item.children && item.opened !== undefined) {
         item.opened = !item.opened
       }
@@ -281,6 +301,17 @@ export default {
       this.rootGroups = []
       this.rootItems = []
       this.includeNonSemantic = !this.includeNonSemantic
+      this.$f7.data.modelPicker.includeNonSemantic = this.includeNonSemantic
+      this.load()
+    },
+    toggleItemName () {
+      this.includeItemName = !this.includeItemName
+      this.$f7.data.modelPicker.includeItemName = this.includeItemName
+      this.load()
+    },
+    toggleItemTags () {
+      this.includeItemTags = !this.includeItemTags
+      this.$f7.data.modelPicker.includeItemTags = this.includeItemTags
       this.load()
     },
     toggleExpanded () {

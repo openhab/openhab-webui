@@ -24,9 +24,6 @@ export default {
       if (this.$store.state.runtimeInfo.buildString === 'Release Build') return 'final-stable'
       return 'final'
     },
-    docUrl () {
-      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/docs`
-    },
     docSrcUrl () {
       return `https://raw.githubusercontent.com/openhab/openhab-docs/${this.docsBranch}/mainui`
     },
@@ -35,8 +32,8 @@ export default {
       return this.$store.state.pagePath
     },
     documentationLink () {
-      if (this.path.endsWith('index')) return `${this.docUrl}/mainui${this.path.replace('index', '')}`
-      return `${this.docUrl}/mainui${this.path}`
+      if (this.path.endsWith('index')) return `${this.$store.state.websiteUrl}/docs/mainui${this.path.replace('index', '')}`
+      return `${this.$store.state.websiteUrl}/docs/mainui${this.path}`
     }
   },
   watch: {
@@ -91,7 +88,7 @@ export default {
             body = body.replace(/<img src=".*$/gm, '') // Remove images
 
             // Fix {{base}} and /docs anchor href for doc pages
-            body = body.replace(/<a href="(%7B%7Bbase%7D%7D|\/docs)/gm, `<a class="external" target="_blank" href="${this.docUrl}`)
+            body = body.replace(/<a href="(%7B%7Bbase%7D%7D|\/docs)/gm, `<a class="external" target="_blank" href="${this.$store.state.websiteUrl}/docs`)
             // Fix local folder anchor href: Rewrite folder to /folder/
             body = body.replace(/(<a href=")([A-z]+)(")/gm, '$1' + this.localUrl + '$2/$3')
 

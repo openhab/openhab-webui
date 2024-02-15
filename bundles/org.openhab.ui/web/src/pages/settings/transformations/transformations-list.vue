@@ -66,7 +66,7 @@
         <f7-block-title class="searchbar-hide-on-search">
           {{ transformations.length }} transformations
         </f7-block-title>
-        <div class="padding-left padding-right searchbar-found">
+        <div class="searchbar-found padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical
@@ -107,7 +107,7 @@
     <f7-block v-if="ready && !transformations.length" class="block-narrow">
       <empty-state-placeholder icon="arrow_2_squarepath" title="transformations.title" text="transformations.text" />
       <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" external :href="documentationLink" target="_blank" v-t="'home.overview.button.documentation'" />
+        <f7-button large fill color="blue" external :href="`${this.$store.state.websiteUrl}/link/transformations`" target="_blank" v-t="'home.overview.button.documentation'" />
       </f7-row>
     </f7-block>
 
@@ -116,6 +116,13 @@
     </f7-fab>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.searchbar-found
+  @media (min-width 960px)
+    padding-left 0 !important
+    padding-right 0 !important
+</style>
 
 <script>
 
@@ -135,9 +142,6 @@ export default {
     }
   },
   computed: {
-    documentationLink () {
-      return `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/link/transformations`
-    },
     indexedTransformations () {
       if (this.groupBy === 'alphabetical') {
         return this.transformations.reduce((prev, transformation, i, transformations) => {

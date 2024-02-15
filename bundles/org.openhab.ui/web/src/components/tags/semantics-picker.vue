@@ -60,8 +60,7 @@ export default {
         this.semanticClass = value
       }
       this.item.tags = this.item.tags.filter((t) => !this.semanticType(t) && !this.isSemanticPropertyTag(t))
-      if (!value) return
-      this.item.tags.push(this.semanticClass)
+      if (this.semanticClass) this.item.tags.push(this.semanticClass)
       if (this.semanticType(this.semanticClass) === 'Point' && this.semanticProperty.length) {
         this.item.tags.push(this.semanticProperty)
       }

@@ -82,15 +82,20 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         if (this.getInput('skipPrevious')) {
           this.removeInput('skipPrevious')
         }
-        if (this.getInput('dayInfo')) {
-          this.removeInput('dayInfo')
-        }
+
         const preposition = (this.methodName === 'historicState') ? 'at' : 'since'
 
-        this.appendValueInput('dayInfo')
-          .appendField(preposition)
-          .setAlign(Blockly.ALIGN_RIGHT)
-          .setCheck(['ZonedDateTime'])
+        if (!this.getInput('dayInfo')) {
+          this.appendValueInput('dayInfo')
+            .appendField(preposition, 'preposition')
+            .setCheck(['ZonedDateTime'])
+          this.moveInputBefore('dayInfo', 'persistenceName')
+        } else {
+          const prepositionField = this.getField('preposition')
+          if (prepositionField.getText() !== preposition) {
+            prepositionField.setValue(preposition)
+          }
+        }
       }
     }
   }
