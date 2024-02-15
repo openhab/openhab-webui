@@ -94,7 +94,7 @@ export default {
   },
   computed: {
     editable () {
-      return this.createMode || this.item.editable
+      return this.createMode || (this.item && this.item.editable)
     }
   },
   watch: {

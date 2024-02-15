@@ -9,20 +9,20 @@
         <f7-list-input label="Label" type="text" placeholder="Label" :value="item.label"
                        @input="item.label = $event.target.value" :disabled="!editable" :clear-button="editable" />
       </f7-list-group>
-      <f7-list-group v-if="item.type && !hideType">
+      <f7-list-group v-if="itemType && !hideType">
         <!-- Type -->
-        <f7-list-item v-if="item.type && !hideType" title="Type" class="align-popup-list-item" :disabled="!editable" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <f7-list-item v-if="itemType && !hideType" title="Type" class="align-popup-list-item" :disabled="!editable" :key="'type-' + itemType" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
           <select name="select-type" @change="item.type = $event.target.value">
-            <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === item.type.split(':')[0]">
+            <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === itemType">
               {{ t }}
             </option>
           </select>
         </f7-list-item>
         <!-- Dimensions -->
-        <f7-list-item v-if="dimensions.length && item.type && !hideType && item.type.startsWith('Number')" title="Dimension" class="align-popup-list-item" :disabled="!editable" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <f7-list-item v-if="dimensions.length && !hideType && itemType === 'Number'" title="Dimension" class="align-popup-list-item" :disabled="!editable" :key="'dimension-' + itemDimension" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
           <select name="select-dimension" @change="setDimension($event.target.value)">
-            <option key="" value="Number" :selected="item.type === 'Number'" />
-            <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="'Number:' + d.name === item.type">
+            <option key="" value="Number" :selected="itemDimension === ''" />
+            <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="d.name === itemDimension">
               {{ d.label }}
             </option>
           </select>
@@ -47,7 +47,7 @@
                        :clear-button="editable" />
 
         <!-- Group Item Form -->
-        <group-form v-if="item.type === 'Group'" :item="item" :createMode="createMode" />
+        <group-form v-if="itemType === 'Group'" :item="item" :createMode="createMode" />
       </f7-list-group>
       <f7-list-group v-if="!hideCategory">
         <f7-list-input ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
@@ -58,7 +58,7 @@
         </f7-list-input>
       </f7-list-group>
     </f7-list>
-    <semantics-picker v-if="!hideSemantics" :item="item" :same-class-only="true" :hide-type="true" :hide-none="forceSemantics" :createMode="createMode" />
+    <semantics-picker v-if="!hideSemantics" :item="item" :same-class-only="true" :hide-type="true" :hide-none="forceSemantics" :createMode="createMode" :key="'semantics-' + item.tags.toString()" />
     <f7-list inline-labels no-hairline-md>
       <tag-input title="Non-Semantic Tags" :disabled="!editable" :item="item" />
     </f7-list>
@@ -130,6 +130,9 @@ export default {
     },
     numberOfGroups () {
       return this.item.groupNames?.length.toString() || '0'
+    },
+    itemType () {
+      return this.item.type.split(':')[0]
     },
     itemDimension () {
       const parts = this.item.type.split(':')
