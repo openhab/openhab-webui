@@ -9,7 +9,7 @@
       </select>
     </f7-list-item>
     <!-- Dimension -->
-    <f7-list-item v-if="dimensions.length && item.groupType && item.groupType.startsWith('Number')" :disabled="!editable" title="Dimension" class="align-popup-list-item members" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item v-if="dimensions.length && item.groupType && item.groupType.startsWith('Number')" :disabled="!editable" title="Dimension" class="align-popup-list-item" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-dimension" @change="groupDimension = $event.target.value">
         <option key="" value="Number" :selected="item.type === 'Number'" />
         <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="'Number:' + d.name === item.groupType">
@@ -31,7 +31,7 @@
                      @input="item.stateDescriptionPattern = $event.target.value" clear-button />
     </template>
     <!-- Aggregation Functions -->
-    <f7-list-item v-if="aggregationFunctions" :disabled="!editable" title="Aggregation Function" class="align-popup-list-item members" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item v-if="aggregationFunctions" :disabled="!editable" title="Aggregation Function" class="align-popup-list-item" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
       <select name="select-function" @change="groupFunctionKey = $event.target.value">
         <option v-for="type in aggregationFunctions" :key="type.name" :value="type.name" :selected="type.name === groupFunctionKey">
           {{ type.value }}
