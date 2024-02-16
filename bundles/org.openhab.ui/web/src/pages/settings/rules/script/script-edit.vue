@@ -86,7 +86,7 @@
           </div>
         </f7-toolbar>
         <f7-block class="block-narrow">
-          <script-general-settings :createMode="newScript" :rule="rule" :isScriptRule="isScriptRule" :mode="mode" :languages="languages" @newLanguage="changeLanguage" />
+          <script-general-settings :createMode="newScript" :rule="rule" :module="currentModule" :module-type="scriptModuleType" :module-types="moduleTypes" :isScriptRule="isScriptRule" :mode="mode" :languages="languages" @newLanguage="changeLanguage" />
           <f7-col v-if="isEditable && isScriptRule">
             <f7-list>
               <f7-list-button color="red" @click="deleteRule">
@@ -153,7 +153,20 @@ export default {
     pageTitle () {
       if (this.newScript) return 'Create Script'
       if (this.isScriptRule) return this.rule.name
-      if (this.currentModule && this.currentModule.label) return this.currentModule.label
+      if (this.currentModule) {
+        let title = 'Edit'
+        switch (this.currentModule.type) {
+          case 'script.ScriptAction':
+          case 'script.ScriptCondition':
+            title += ' ' + this.currentModule.type.slice('script.Script'.length)
+            break
+        }
+        title += ' Script'
+        if (this.currentModule.label) {
+          title += ': ' + this.currentModule.label
+        }
+        return title
+      }
       return 'Edit Script'
     },
     isEditable () {

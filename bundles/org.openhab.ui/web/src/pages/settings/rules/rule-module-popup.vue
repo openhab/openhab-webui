@@ -6,19 +6,19 @@
           <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
         </f7-nav-left>
         <f7-nav-title v-if="ruleModule && ruleModule.new">
-          {{ sectionLabels[currentSection][1] }}
+          Add {{ sectionLabels[currentSection][1] }}
         </f7-nav-title>
         <f7-nav-title v-else>
-          Edit module
+          Edit {{ sectionLabels[currentSection][1] }}
         </f7-nav-title>
         <f7-nav-right>
           <f7-link v-show="currentRuleModuleType" @click="updateModuleConfig">
-            Done
+            Save
           </f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-block v-if="ruleModule" class="no-margin no-padding">
-        <f7-col v-if="!isSceneModule" class="margin-top">
+        <f7-col v-if="!isSceneModule && currentRuleModuleType" class="margin-top">
           <f7-list inline-labels no-hairlines-md class="no-margin">
             <f7-list-input type="text" :placeholder="moduleTitleSuggestion" :value="ruleModule.label" required
                            @input="ruleModule.label = $event.target.value" clear-button />
@@ -96,9 +96,9 @@ export default {
       currentRuleModuleType: this.ruleModuleType,
       advancedTypePicker: false,
       sectionLabels: {
-        triggers: ['When', 'Add Trigger'],
-        actions: ['Then', 'Add Action'],
-        conditions: ['But only if', 'Add Condition']
+        triggers: ['When', 'Trigger'],
+        actions: ['Then', 'Action'],
+        conditions: ['But only if', 'Condition']
       }
     }
   },
