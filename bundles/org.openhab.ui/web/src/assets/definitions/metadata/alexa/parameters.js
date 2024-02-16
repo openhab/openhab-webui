@@ -10,7 +10,6 @@ import {
 } from './constants.js'
 import {
   docLink,
-  getGroupParameter,
   getOptions,
   getSemanticFormat,
   getSupportedRange,
@@ -106,11 +105,7 @@ export default {
     label: 'Comfort Range',
     type: 'INTEGER',
     min: 1,
-    default: (config) => {
-      const scale = config.scale || getGroupParameter('scale', item.groups) || getTemperatureScale(item)
-      if (scale === 'CELSIUS') return 1
-      if (scale === 'FAHRENHEIT') return 2
-    }
+    default: (config) => (config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? 2 : 1
   }),
   connectedTo: (value) => ({
     name: 'connectedTo',
@@ -286,7 +281,7 @@ export default {
     name: 'scale',
     label: 'Scale',
     type: 'TEXT',
-    default: getGroupParameter('scale', item.groups) || getTemperatureScale(item),
+    default: getTemperatureScale(item) === 'FAHRENHEIT' ? 'FAHRENHEIT' : 'CELSIUS',
     options: getOptions(TEMPERATURE_SCALES),
     limitToOptions: true,
     advanced
@@ -296,11 +291,7 @@ export default {
     label: 'Setpoint Range',
     description: 'Formatted as <code>minValue:maxValue</code>',
     type: 'TEXT',
-    default: (config) => {
-      const scale = config.scale || getGroupParameter('scale', item.groups) || getTemperatureScale(item)
-      if (scale === 'CELSIUS') return '4:32'
-      if (scale === 'FAHRENHEIT') return '40:90'
-    },
+    default: (config) => (config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? '40:90' : '4:32',
     pattern: '[+-]?[0-9]+:[+-]?[0-9]+'
   }),
   speedLevels: () => ({
