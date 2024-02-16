@@ -289,7 +289,7 @@ export default {
             const triggerModuleType = this.moduleTypes.triggers.find((t) => t.uid === trigger.type)
             let description = this.suggestedModuleTitle(trigger, triggerModuleType, 'trigger')
             if (triggerModuleType.uid === 'timer.GenericCronTrigger') {
-              description = description.charAt(0).toUpperCase() + description.slice(1);
+              description = description.charAt(0).toUpperCase() + description.slice(1)
             } else {
               description = 'When ' + description
             }
