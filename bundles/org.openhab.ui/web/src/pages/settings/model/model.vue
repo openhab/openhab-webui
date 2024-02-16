@@ -254,7 +254,7 @@ export default {
     return {
       ready: false,
       loading: false,
-      includeNonSemantic: this.$f7.data.model.includeNonSemantic || false,
+      includeNonSemantic: false,
       includeItemName: this.$f7.data.model.includeItemName || false,
       includeItemTags: this.$f7.data.model.includeItemTags || false,
       expanded: false,
@@ -478,7 +478,6 @@ export default {
       this.rootGroups = []
       this.rootItems = []
       this.includeNonSemantic = !this.includeNonSemantic
-      this.$f7.data.model.includeNonSemantic = this.includeNonSemantic
       this.load()
     },
     toggleItemName () {
