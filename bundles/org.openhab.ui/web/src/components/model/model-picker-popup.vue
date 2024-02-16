@@ -84,7 +84,7 @@ export default {
       ready: false,
       loading: false,
       initSearchbar: false,
-      includeNonSemantic: this.$f7.data.modelPicker.includeNonSemantic || false,
+      includeNonSemantic: false,
       includeItemName: this.$f7.data.modelPicker.includeItemName || false,
       includeItemTags: this.$f7.data.modelPicker.includeItemTags || false,
       expanded: false,
@@ -301,7 +301,6 @@ export default {
       this.rootGroups = []
       this.rootItems = []
       this.includeNonSemantic = !this.includeNonSemantic
-      this.$f7.data.modelPicker.includeNonSemantic = this.includeNonSemantic
       this.load()
     },
     toggleItemName () {
