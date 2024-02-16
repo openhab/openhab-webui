@@ -287,7 +287,13 @@ export default {
           let triggerDescriptionComments = `${commentChar} Triggers:\n`
           for (const trigger of this.rule.triggers) {
             const triggerModuleType = this.moduleTypes.triggers.find((t) => t.uid === trigger.type)
-            triggerDescriptionComments += `${commentChar} - ${this.suggestedModuleTitle(trigger, triggerModuleType, 'trigger')}\n`
+            let description = this.suggestedModuleTitle(trigger, triggerModuleType, 'trigger')
+            if (triggerModuleType.uid === 'timer.GenericCronTrigger') {
+              description = description.charAt(0).toUpperCase() + description.slice(1);
+            } else {
+              description = 'When ' + description
+            }
+            triggerDescriptionComments += `${commentChar} - ${description}\n`
           }
           this.script = triggerDescriptionComments + '\n' + this.script
         }
