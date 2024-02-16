@@ -40,6 +40,8 @@ export const getSemanticFormat = (type, format) =>
   )
 
 export const getTemperatureScale = (item) => {
+  const scale = getGroupParameter('scale', item.groups)
+  if (scale) return scale
   const itemType = item.groupType || item.type
   const unitSymbol = item.unitSymbol
   const statePresentation = (item.stateDescription && item.stateDescription.pattern) || ''
