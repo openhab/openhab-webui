@@ -134,7 +134,6 @@ export default {
       loading: false,
       initSearchbar: false,
       inbox: [],
-      // indexedInbox: {},
       selectedItems: [],
       showIgnored: false,
       groupBy: 'alphabetical',
@@ -232,6 +231,7 @@ export default {
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
     openEntryActions (e, entry) {
+      const isZWave = entry.thingTypeUID.startsWith('zwave')
       if (this.showCheckboxes) {
         this.toggleItemCheck(e, entry.thingUID)
         return
@@ -266,6 +266,7 @@ export default {
               text: 'Add as Thing (with custom ID)',
               color: 'blue',
               bold: true,
+              disabled: isZWave,
               onClick: () => {
                 this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID}. You can change the suggested thing ID below:`,
                   'Add as Thing',
