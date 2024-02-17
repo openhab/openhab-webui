@@ -1,17 +1,20 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="pageTitle" :subtitle="(!newScript) ? mode : undefined" back-link="Back">
-      <f7-nav-right v-if="isEditable && !newScript">
-        <f7-link @click="onSave()" v-if="$theme.md" icon-md="material:save" icon-only />
-        <f7-link @click="onSave()" v-if="!$theme.md">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
-      <f7-nav-right v-else-if="isEditable && newScript">
-        <f7-link @click="createScript" v-if="$theme.md && newScript" icon-md="material:save" icon-only />
-        <f7-link @click="createScript" v-if="$theme.ios && newScript">
-          Create
-        </f7-link>
+      <f7-nav-right>
+        <developer-dock-icon />
+        <template v-if="isEditable && !newScript">
+          <f7-link @click="onSave()" v-if="$theme.md" icon-md="material:save" icon-only />
+          <f7-link @click="onSave()" v-if="!$theme.md">
+            Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+          </f7-link>
+        </template>
+        <template v-else-if="isEditable && newScript">
+          <f7-link @click="createScript" v-if="$theme.md && newScript" icon-md="material:save" icon-only />
+          <f7-link @click="createScript" v-if="$theme.ios && newScript">
+            Create
+          </f7-link>
+        </template>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar v-if="!newScript && ready" position="bottom">
