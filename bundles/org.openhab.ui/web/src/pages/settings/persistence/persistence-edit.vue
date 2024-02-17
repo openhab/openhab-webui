@@ -1,8 +1,8 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="newPersistence ? 'Create persistence configuration' : 'Edit persistence configuration'"
+    <f7-navbar :title="editable ? `${newPersistence ? 'Create' : 'Edit'} ${serviceId} persistence configuration` : `${serviceId} persistence configuration details`"
                back-link="Back">
-      <f7-nav-right v-if="isEditable">
+      <f7-nav-right v-if="editable">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
@@ -71,7 +71,7 @@
         </f7-block>
 
         <f7-block v-if="ready" class="block-narrow">
-          <f7-col v-if="!isEditable">
+          <f7-col v-if="!editable">
             <div class="padding-left">
               Note: {{ notEditableMgs }}
             </div>
@@ -82,15 +82,15 @@
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Configuration
               </f7-block-title>
-              <f7-list :media-list="isEditable" swipeout>
+              <f7-list :media-list="editable" swipeout>
                 <f7-list-item v-for="(cfg, index) in persistence.configs" :key="cfg.items.join()"
                               :title="cfg.items.join(', ')"
-                              :footer="cfg.strategies.join(', ') + (cfg.filters.length > 0 ? ' - ' + cfg.filters.join(', ') : '')" :link="isEditable"
+                              :footer="cfg.strategies.join(', ') + (cfg.filters.length > 0 ? ' - ' + cfg.filters.join(', ') : '')" :link="editable"
                               @click.native="(ev) => editConfiguration(ev, index, cfg)" swipeout>
-                  <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled"
+                  <f7-link slot="media" v-if="editable" icon-color="red" icon-aurora="f7:minus_circle_filled"
                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
-                  <f7-swipeout-actions right v-if="isEditable">
+                  <f7-swipeout-actions right v-if="editable">
                     <f7-swipeout-button @click="(ev) => deleteModule(ev, 'configs', index)"
                                         style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
@@ -98,7 +98,7 @@
                   </f7-swipeout-actions>
                 </f7-list-item>
               </f7-list>
-              <f7-list v-if="isEditable">
+              <f7-list v-if="editable">
                 <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
                               subtitle="Add configuration" @click="editConfiguration(undefined, null)">
                   <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
@@ -112,14 +112,14 @@
                 Strategies
               </f7-block-title>
               <!-- Cron Strategies -->
-              <f7-list :media-list="isEditable" swipeout>
+              <f7-list :media-list="editable" swipeout>
                 <f7-list-item v-for="(cs, index) in persistence.cronStrategies" :key="cs.name" :title="cs.name"
-                              :footer="cs.cronExpression" :link="isEditable"
+                              :footer="cs.cronExpression" :link="editable"
                               @click.native="(ev) => editCronStrategy(ev, index, cs)" swipeout>
-                  <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled"
+                  <f7-link slot="media" v-if="editable" icon-color="red" icon-aurora="f7:minus_circle_filled"
                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
-                  <f7-swipeout-actions right v-if="isEditable">
+                  <f7-swipeout-actions right v-if="editable">
                     <f7-swipeout-button @click="(ev) => deleteCronStrategy(ev, index)"
                                         style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
@@ -127,7 +127,7 @@
                   </f7-swipeout-actions>
                 </f7-list-item>
               </f7-list>
-              <f7-list v-if="isEditable">
+              <f7-list v-if="editable">
                 <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
                               subtitle="Add cron strategy" @click="editCronStrategy(undefined, null)">
                   <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
@@ -136,7 +136,7 @@
               </f7-list>
               <!-- Default Strategies -->
               <strategy-picker title="Default Strategies" name="defaults" :strategies="strategies"
-                               :value="persistence.defaults" :disabled="!isEditable"
+                               :value="persistence.defaults" :disabled="!editable"
                                @strategiesSelected="persistence.defaults = $event" />
             </div>
             <!-- Filters -->
@@ -148,14 +148,14 @@
                 <f7-block-title>
                   {{ ft.label }}
                 </f7-block-title>
-                <f7-list :media-list="isEditable" swipeout>
+                <f7-list :media-list="editable" swipeout>
                   <f7-list-item v-for="(f, index) in persistence[ft.name]" :key="f.name" :title="f.name"
-                                :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''" :link="isEditable"
+                                :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''" :link="editable"
                                 @click.native="(ev) => editFilter(ev, ft, index, f)" swipeout>
-                    <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled"
+                    <f7-link slot="media" v-if="editable" icon-color="red" icon-aurora="f7:minus_circle_filled"
                              icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                              @click="showSwipeout" />
-                    <f7-swipeout-actions right v-if="isEditable">
+                    <f7-swipeout-actions right v-if="editable">
                       <f7-swipeout-button @click="(ev) => deleteFilter(ev, ft.name, index)"
                                           style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                         Delete
@@ -163,7 +163,7 @@
                     </f7-swipeout-actions>
                   </f7-list-item>
                 </f7-list>
-                <f7-list v-if="isEditable">
+                <f7-list v-if="editable">
                   <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
                                 :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
                                 @click="editFilter(undefined, ft, null)">
@@ -174,7 +174,7 @@
               </div>
             </div>
           </f7-col>
-          <f7-col v-if="isEditable && !newPersistence">
+          <f7-col v-if="editable && !newPersistence">
             <f7-list>
               <f7-list-button color="red" @click="deletePersistence">
                 Remove persistence configuration
@@ -186,12 +186,12 @@
 
       <!-- Code Tab -->
       <f7-tab id="code" @tab:show="() => { currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!isEditable" f7="lock" class="float-right margin"
+        <f7-icon v-if="!editable" f7="lock" class="float-right margin"
                  style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray"
                  :tooltip="notEditableMgs" />
         <editor v-if="currentTab === 'code'" class="persistence-code-editor"
                 mode="application/vnd.openhab.persistence+yaml" :value="persistenceYaml" @input="onEditorInput"
-                :read-only="!isEditable" />
+                :read-only="!editable" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
@@ -380,7 +380,7 @@ export default {
     }
   },
   computed: {
-    isEditable () {
+    editable () {
       return this.newPersistence || (this.persistence && this.persistence.editable === true)
     },
     strategies () {
@@ -468,7 +468,7 @@ export default {
       })
     },
     save (noToast) {
-      if (!this.isEditable) return
+      if (!this.editable) return
       if (this.currentTab === 'code') this.fromYaml()
 
       // Update the code tab
@@ -502,7 +502,7 @@ export default {
         'Delete persistence configuration',
         () => {
           this.$oh.api.delete('/rest/persistence/' + this.serviceId).then(() => {
-            this.$f7router.back(`/settings/addons/persistence-${this.serviceId}/config`, { force: true })
+            this.$f7router.back({ force: true })
           })
         }
       )
@@ -519,7 +519,7 @@ export default {
       }
     },
     editConfiguration (ev, index, configuration) {
-      if (!this.isEditable) return
+      if (!this.editable) return
       this.currentConfiguration = configuration
 
       const popup = {
@@ -550,7 +550,7 @@ export default {
       this.saveModule('configs', index, configuration)
     },
     editCronStrategy (ev, index, cronStrategy) {
-      if (!this.isEditable) return
+      if (!this.editable) return
       this.currentCronStrategy = cronStrategy
 
       const popup = {
@@ -588,7 +588,7 @@ export default {
       this.deleteModule(ev, 'cronStrategies', index)
     },
     editFilter (ev, filterType, index, filter) {
-      if (!this.isEditable) return
+      if (!this.editable) return
       this.currentFilter = filter
 
       // Stringify values array from equals filter
@@ -650,7 +650,7 @@ export default {
     },
     deleteModule (ev, module, index) {
       let swipeoutElement = ev.target
-      if (!this.isEditable) return
+      if (!this.editable) return
       ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
         swipeoutElement = swipeoutElement.parentElement
@@ -677,7 +677,7 @@ export default {
       this.persistenceYaml = YAML.stringify(toCode)
     },
     fromYaml () {
-      if (!this.isEditable) return false
+      if (!this.editable) return false
       try {
         const updatedPersistence = YAML.parse(this.persistenceYaml)
         this.$set(this.persistence, 'configs', updatedPersistence.configurations)
