@@ -80,8 +80,8 @@
         <!-- /addons/ docs -->
         <context v-else-if="($store.state.pagePath).indexOf('/addons/') >= 0" path="/addons" />
         <!-- /developer/* docs -->
-        <context v-else-if="($store.state.pagePath) === '/developer/'" path="/developer/index" />
         <context v-else-if="($store.state.pagePath).indexOf('/developer/widgets') >= 0" path="/developer/widgets" />
+        <context v-else-if="($store.state.pagePath).indexOf('/developer/') >= 0" path="/developer/index" />
         <!-- /about/ docs -->
         <context v-else-if="($store.state.pagePath).indexOf('/about/') >= 0" path="/about" />
         <!-- default docs -->
