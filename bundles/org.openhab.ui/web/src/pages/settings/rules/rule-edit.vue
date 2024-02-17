@@ -454,6 +454,7 @@ export default {
         }
       }, {
         props: {
+          rule: this.rule,
           currentSection: this.currentSection,
           ruleModule: this.currentModule,
           ruleModuleType: this.currentModuleType,
