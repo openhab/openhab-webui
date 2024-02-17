@@ -2,8 +2,7 @@
   <f7-page @page:init="onPageInit" @page:afterin="onPageAfterIn" class="page-settings">
     <f7-navbar large :large-transparent="false" title-large="Settings" title="Settings" back-link="Back" back-link-url="/home/" back-link-force>
       <f7-nav-right>
-        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
-        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
+        <developer-dock-icon />
         <f7-link
           class="searchbar-enable"
           data-searchbar=".searchbar-demo"
