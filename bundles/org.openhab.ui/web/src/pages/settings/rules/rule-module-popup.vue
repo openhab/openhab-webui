@@ -63,12 +63,18 @@
           Configuration
         </f7-block-title>
         <f7-col v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)">
-          <config-sheet :key="currentSection + ruleModule.id"
+          <config-sheet v-if="!(ruleModule.configuration && ruleModule.configuration.blockSource)"
+                        :key="currentSection + ruleModule.id"
                         ref="parameters"
                         :parameterGroups="[]"
                         :parameters="currentRuleModuleType.configDescriptions"
                         :configuration="ruleModule.configuration"
                         @updated="dirty = true" />
+          <f7-block v-else>
+            <f7-button @click="editBlockly" color="blue" outline fill>
+              Edit Blockly
+            </f7-button>
+          </f7-block>
         </f7-col>
       </f7-block>
     </f7-page>
@@ -120,6 +126,10 @@ export default {
       }
       this.$f7.emit('ruleModuleConfigUpdate', this.ruleModule)
       this.$refs.modulePopup.close()
+    },
+    editBlockly () {
+      this.updateModuleConfig()
+      this.$f7.views.main.router.navigate(`/settings/rules/${this.rule.uid}/script/${this.ruleModule.id}`)
     },
     startScripting (language) {
       const contentType = (language === 'blockly') ? 'application/javascript' : language
