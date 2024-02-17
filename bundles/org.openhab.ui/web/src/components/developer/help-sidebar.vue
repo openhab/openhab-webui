@@ -73,7 +73,7 @@
         </f7-block>
 
         <!-- script editor docs -->
-        <context v-if="/\/settings\/(scripts\/|rules\/[A-z0-9]+\/script)/.test($store.state.pagePath)" path="/settings/script-editor" />
+        <context v-if="/\/settings\/(scripts\/[A-z0-9]+|rules\/[A-z0-9]+\/script)/.test($store.state.pagePath)" path="/settings/script-editor" />
         <!-- /settings/* docs -->
         <context v-else-if="($store.state.pagePath) === '/settings/'" path="/settings/index" />
         <context v-else-if="/\/settings\/[A-z]+/.test($store.state.pagePath)" :path="/(\/[A-z]+\/[A-z]+)/.exec($store.state.pagePath)[0]" />
