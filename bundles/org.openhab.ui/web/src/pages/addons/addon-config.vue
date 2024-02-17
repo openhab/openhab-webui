@@ -92,7 +92,9 @@ export default {
       bindingId: null,
       loggerPackages: [],
       serviceId: null,
-      strippedAddonId: ''
+      strippedAddonId: '',
+      loadingConfig: true,
+      loadingLoggers: true
     }
   },
   computed: {
@@ -106,7 +108,15 @@ export default {
   watch: {
     config: {
       handler: function () {
-        if (!this.loading) {
+        if (!this.loadingConfig) {
+          this.dirty = true
+        }
+      },
+      deep: true
+    },
+    loggerPackages: {
+      handler: function () {
+        if (!this.loadingLoggers) {
           this.dirty = true
         }
       },
@@ -172,21 +182,32 @@ export default {
 
     this.$oh.api.get(requestUri).then(data => {
       this.addon = data
-      let configDescriptionURI = this.addon.configDescriptionURI || ''
+      const configDescriptionURI = this.addon.configDescriptionURI
+
       if (configDescriptionURI) {
         this.$oh.api.get('/rest/config-descriptions/' + configDescriptionURI).then(data2 => {
           this.configDescription = data2
           this.$oh.api.get('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then(data3 => {
             this.config = data3
+            this.$nextTick(() => {
+              this.loadingConfig = false
+            })
           })
         })
+      } else {
+        this.loadingConfig = false
       }
       if (Array.isArray(this.addon.loggerPackages)) {
         this.addon.loggerPackages.forEach(loggerPackage => {
           this.$oh.api.get('/rest/logging/' + loggerPackage).then(data4 => {
             data4.loggers.forEach(logger => this.loggerPackages.push(logger))
+            this.$nextTick(() => {
+              this.loadingLoggers = false
+            })
           })
         })
+      } else {
+        this.loadingLoggers = false
       }
     })
   }
