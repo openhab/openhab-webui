@@ -170,6 +170,13 @@
   </div>
 </template>
 
+<style lang="stylus">
+.item-after
+  .link
+    .icon
+      padding-left 5px
+</style>
+
 <script>
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
