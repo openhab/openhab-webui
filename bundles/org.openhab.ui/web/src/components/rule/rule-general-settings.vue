@@ -3,11 +3,11 @@
     <f7-block v-if="ready" class="block-narrow">
       <f7-col>
         <f7-list inline-labels no-hairlines-md>
-          <f7-list-input label="Rule ID" type="text" placeholder="Required" :value="rule.uid" required validate
-                         :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+          <f7-list-input :label="`${type} ID`" type="text" :placeholder="`A unique identifier for the ${type.toLowerCase()}`" :value="rule.uid" required validate
+                         :disabled="!createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
                          pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
                          @input="rule.uid = $event.target.value" :clear-button="createMode" />
-          <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" required validate
+          <f7-list-input label="Name" type="text" :placeholder="`${type} name for display purposes`" :info="(createMode) ? 'Required' : ''" :value="rule.name" required validate
                          :disabled="!editable" @input="rule.name = $event.target.value" :clear-button="editable" />
           <f7-list-input label="Description" type="text" :value="rule.description"
                          :disabled="!editable" @input="rule.description = $event.target.value" :clear-button="editable" />
@@ -49,6 +49,11 @@ export default {
   computed: {
     editable () {
       return this.createMode || (this.rule && this.rule.editable)
+    },
+    type () {
+      if (this.inScriptEditor) return 'Script'
+      if (this.inSceneEditor) return 'Scene'
+      return 'Rule'
     }
   },
   methods: {

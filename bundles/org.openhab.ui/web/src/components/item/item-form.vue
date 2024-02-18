@@ -3,7 +3,7 @@
     <f7-list inline-labels no-hairlines-md>
       <f7-list-group>
         <f7-list-input label="Name" type="text" placeholder="A unique identifier for the Item." :value="item.name"
-                       :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+                       :disabled="!createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
                        required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage"
                        @input="onNameInput" :clear-button="createMode" />
         <f7-list-input label="Label" type="text" placeholder="Item label for display purposes" :value="item.label"

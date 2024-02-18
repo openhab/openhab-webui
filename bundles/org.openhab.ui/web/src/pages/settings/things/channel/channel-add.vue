@@ -85,6 +85,7 @@ export default {
         this.$f7.dialog.alert('The identifier should only contain alphanumeric characters')
         return
       }
+      if (!this.channel.label && this.currentChannelType.label) this.channel.label = this.currentChannelType.label
       if (!this.channel.label) {
         this.$f7.dialog.alert('Please give a label')
         return
