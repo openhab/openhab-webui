@@ -17,7 +17,8 @@
         Code
       </f7-link>
     </f7-toolbar>
-    <f7-tabs class="sitemap-editor-tabs">
+
+    <f7-tabs v-if="ready">
       <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
         <f7-block class="block-narrow" v-if="item.name || item.created === false">
           <f7-col v-if="!editable">
@@ -29,7 +30,7 @@
             <item-form :item="item" :items="items" :createMode="createMode" />
           </f7-col>
 
-          <div v-if="ready" class="flex-shrink-0 if-aurora display-flex justify-content-center">
+          <div class="flex-shrink-0 if-aurora display-flex justify-content-center">
             <f7-button text="Create" v-if="createMode" style="width: 150px" class="margin-horizontal" color="blue" raised fill @click="save" />
             <f7-button text="Save" v-else-if="editable" style="width: 150px" class="margin-horizontal" color="blue" raised fill @click="save" />
             <f7-button :text="editable ? 'Cancel' : 'Back'" color="blue" @click="$f7router.back()" />
