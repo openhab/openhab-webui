@@ -1,11 +1,14 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar :title="isNewRule ? 'Create rule' : rule.name" back-link="Back" no-hairline>
-      <f7-nav-right v-if="isEditable">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
+      <f7-nav-right>
+        <developer-dock-icon />
+        <template v-if="isEditable">
+          <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+          <f7-link @click="save()" v-if="!$theme.md">
+            Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+          </f7-link>
+        </template>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
