@@ -303,7 +303,7 @@ export default {
           let triggerDescriptionComments = `${commentChar} Triggers:\n`
           for (const trigger of this.rule.triggers) {
             const triggerModuleType = this.moduleTypes.triggers.find((t) => t.uid === trigger.type)
-            let description = this.suggestedModuleTitle(trigger, triggerModuleType, 'trigger')
+            let description = trigger.label || this.suggestedModuleTitle(trigger, triggerModuleType, 'trigger')
             if (triggerModuleType.uid === 'timer.GenericCronTrigger') {
               description = description.charAt(0).toUpperCase() + description.slice(1)
             } else {
