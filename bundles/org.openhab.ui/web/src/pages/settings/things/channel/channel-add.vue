@@ -78,13 +78,14 @@ export default {
     },
     save () {
       if (!this.channel.id) {
-        this.$f7.dialog.alert('Please give an unique identifier')
+        this.$f7.dialog.alert('Please give a unique identifier')
         return
       }
       if (!this.channel.id.match(/^[a-zA-Z0-9_-]*$/)) {
         this.$f7.dialog.alert('The identifier should only contain alphanumeric characters')
         return
       }
+      if (!this.channel.label && this.currentChannelType.label) this.channel.label = this.currentChannelType.label
       if (!this.channel.label) {
         this.$f7.dialog.alert('Please give a label')
         return

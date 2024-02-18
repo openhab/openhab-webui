@@ -2,11 +2,11 @@
   <div v-if="item" class="quick-link-form no-padding">
     <f7-list inline-labels no-hairlines-md>
       <f7-list-group>
-        <f7-list-input label="Name" type="text" placeholder="Required" :value="item.name"
-                       :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+        <f7-list-input label="Name" type="text" placeholder="A unique identifier for the Item." :value="item.name"
+                       :disabled="!createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
                        required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage"
                        @input="onNameInput" :clear-button="createMode" />
-        <f7-list-input label="Label" type="text" placeholder="Label" :value="item.label"
+        <f7-list-input label="Label" type="text" placeholder="Item label for display purposes" :value="item.label"
                        @input="item.label = $event.target.value" :disabled="!editable" :clear-button="editable" />
       </f7-list-group>
       <f7-list-group v-if="itemType && !hideType">
@@ -176,10 +176,6 @@ export default {
     if (!this.item) return
     if (!this.item.category) this.$set(this.item, 'category', '')
     if (!this.item.groupNames) this.$set(this.item, 'groupNames', [])
-    if (this.createMode) {
-      if (!this.items) this.items = []
-      this.$set(this, 'nameErrorMessage', this.validateItemName(this.item.name))
-    }
     const categoryControl = this.$refs.category
     if (!categoryControl || !categoryControl.$el) return
     const inputElement = this.$$(categoryControl.$el).find('input')

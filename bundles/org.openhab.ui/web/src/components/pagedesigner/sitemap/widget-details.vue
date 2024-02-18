@@ -2,7 +2,7 @@
   <f7-card v-if="widget">
     <f7-card-content>
       <f7-list inline-labels>
-        <f7-list-input v-if="widget.component === 'Sitemap'" label="ID" type="text" placeholder="ID" :value="widget.uid" @input="widget.uid = $event.target.value"
+        <f7-list-input v-if="widget.component === 'Sitemap'" label="Widget ID" type="text" placeholder="Widget ID" :value="widget.uid" @input="widget.uid = $event.target.value"
                        required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only" :disabled="!createMode" />
         <f7-list-input label="Label" type="text" placeholder="Label" :value="widget.config.label" @input="updateParameter('label', $event)" clear-button />
         <item-picker v-if="widget.component !== 'Sitemap' && widget.component !== 'Frame'" title="Item" :value="widget.config.item" @input="(value) => widget.config.item = value" />

@@ -100,7 +100,7 @@ export default {
     },
     save () {
       if (!this.thing.ID) {
-        this.$f7.dialog.alert('Please give an unique identifier')
+        this.$f7.dialog.alert('Please give a unique identifier')
         return
       }
       if (!this.thing.label) {

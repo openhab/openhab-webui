@@ -58,7 +58,7 @@
               title="Title of the page"
               subtitle="Page type"
               after="The item state"
-              footer="Page UID">
+              footer="Page ID">
               <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media" />
             </f7-list-item>
           </f7-list-group>
