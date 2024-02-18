@@ -6,12 +6,13 @@
                        info="Required. Note: cannot be changed after the creation"
                        required validate pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
                        @input="channel.id = $event.target.value" />
-        <f7-list-item v-else :disabled="disabled" media-item class="channel-item" title="Channel UID">
+        <f7-list-item v-if="!createMode" :disabled="disabled" media-item class="channel-item" title="Channel UID">
           <div slot="subtitle">
             {{ channel.uid }}
-            <clipboard-icon :value="channel.uid" tooltip="Copy UID" style="pointer-events: initial !important" />
+            <clipboard-icon :value="channel.uid" tooltip="Copy UID" />
           </div>
         </f7-list-item>
+
         <f7-list-input label="Label" type="text" :disabled="disabled" :placeholder="(channelType !== null) ? channelType.label : 'Channel label for display purposes'" :value="channel.label"
                        required validate :info="(createMode) ? 'Required.' : ''"
                        @input="channel.label = $event.target.value" :clear-button="disabled !== true" />
