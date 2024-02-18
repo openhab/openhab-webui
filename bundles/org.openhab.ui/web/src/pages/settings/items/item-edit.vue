@@ -60,6 +60,9 @@
 </style>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
+
 import * as Types from '@/assets/item-types.js'
 import YAML from 'yaml'
 
@@ -67,8 +70,6 @@ import ItemForm from '@/components/item/item-form.vue'
 
 import DirtyMixin from '../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin'
-import cloneDeep from 'lodash/cloneDeep'
-import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
   mixins: [DirtyMixin, ItemMixin],
@@ -101,11 +102,8 @@ export default {
   watch: {
     item: {
       handler: function () {
-        if (this.ready) {
-          // create rule object clone in order to be able to delete status part
-          // which can change from eventsource but doesn't mean a rule modification
-          let itemClone = cloneDeep(this.item)
-          this.dirty = !fastDeepEqual(itemClone, this.savedItem)
+        if (this.ready) { // ignore changes during loading
+          this.dirty = !fastDeepEqual(this.item, this.savedItem)
         }
       },
       deep: true
@@ -124,16 +122,16 @@ export default {
           created: false
         }
         this.$set(this, 'item', newItem)
-        this.$set(this, 'savedItem', cloneDeep(this.item))
+        this.savedItem = cloneDeep(this.item)
         this.$oh.api.get('/rest/items?staticDataOnly=true').then((items) => {
           this.items = items
           this.ready = true
         })
       } else {
-        this.$set(this, 'savedItem', cloneDeep(this.item))
         const loadItem = this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=.*')
         loadItem.then((data) => {
           this.item = data
+          this.savedItem = cloneDeep(this.item)
           this.$nextTick(() => {
             this.ready = true
           })

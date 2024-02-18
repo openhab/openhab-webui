@@ -277,7 +277,7 @@ export default {
   watch: {
     persistence: {
       handler: function () {
-        if (!this.loading) { // ignore initial rule assignment
+        if (!this.loading) { // ignore changes during loading
           this.dirty = !fastDeepEqual(this.persistence, this.savedPersistence)
         }
       },

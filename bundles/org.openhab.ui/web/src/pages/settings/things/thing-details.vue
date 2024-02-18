@@ -246,6 +246,8 @@ p.action-description
 
 <script>
 import YAML from 'yaml'
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 
@@ -264,8 +266,6 @@ import buildTextualDefinition from './thing-textual-definition'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 
 import DirtyMixin from '../dirty-mixin'
-import cloneDeep from 'lodash/cloneDeep'
-import fastDeepEqual from 'fast-deep-equal/es6'
 
 let copyToast = null
 
@@ -338,7 +338,7 @@ export default {
     thingDirty: function () { this.dirty = this.configDirty || this.thingDirty },
     thing: {
       handler () {
-        if (!this.loading) { // ignore initial rule assignment
+        if (!this.loading) { // ignore changes during loading
           // create rule object clone in order to be able to delete status part
           // which can change from eventsource but doesn't mean a rule modification
           let thingClone = cloneDeep(this.thing)

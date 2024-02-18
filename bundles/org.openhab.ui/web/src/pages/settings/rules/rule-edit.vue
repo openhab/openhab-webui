@@ -100,7 +100,7 @@
             </div>
             <div v-for="section in ['triggers', 'actions', 'conditions']" :key="section">
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)" v-if="isEditable || rule[section].length > 0">
-                {{ sectionLabels[section][0] }}
+                {{ SECTION_LABELS[section][0] }}
               </f7-block-title>
               <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
                 <f7-list-item media
@@ -118,7 +118,7 @@
                 </f7-list-item>
               </f7-list>
               <f7-list v-if="isEditable">
-                <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="sectionLabels[section][1]" @click="addModule(section)">
+                <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="SECTION_LABELS[section][1]" @click="addModule(section)">
                   <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
                 </f7-list-item>
                 <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
@@ -201,8 +201,15 @@ export default {
   props: ['ruleId', 'createMode', 'copyMode', 'ruleCopy', 'schedule'],
   data () {
     return {
+      SECTION_LABELS: {
+        triggers: ['When', 'Add Trigger'],
+        actions: ['Then', 'Add Action'],
+        conditions: ['But only if', 'Add Condition']
+      },
+
       ready: false,
       loading: false,
+
       rule: {},
       savedRule: {},
       ruleYaml: '',
@@ -212,16 +219,11 @@ export default {
         triggers: []
       },
       currentSection: 'actions',
-      currentTab: 'design',
       currentModuleType: null,
       currentModule: null,
       currentModuleConfig: {},
-      sectionLabels: {
-        triggers: ['When', 'Add Trigger'],
-        actions: ['Then', 'Add Action'],
-        conditions: ['But only if', 'Add Condition']
-      },
 
+      currentTab: 'design',
       codeEditorOpened: false,
       cronPopupOpened: false,
       scriptCode: '',
@@ -232,8 +234,8 @@ export default {
   },
   watch: {
     rule: {
-      handler: function (newRule, oldRule) {
-        if (!this.loading) { // ignore initial rule assignment
+      handler: function () {
+        if (!this.loading) { // ignore changes during loading
           // create rule object clone in order to be able to delete status part
           // which can change from eventsource but doesn't mean a rule modification
           let ruleClone = cloneDeep(this.rule)
