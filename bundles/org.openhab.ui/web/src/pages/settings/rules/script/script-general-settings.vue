@@ -34,12 +34,6 @@ export default {
   },
   computed: {
     editable () {
-      console.log('module')
-      console.log(this.module)
-      console.log('moduleType')
-      console.log(this.moduleType)
-      console.log('isScriptRule')
-      console.log(this.isScriptRule)
       return this.createMode || (this.rule && this.rule.editable)
     },
     scriptType () {
