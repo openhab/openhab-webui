@@ -441,6 +441,8 @@ export default {
 
       this.currentSection = section
       this.currentModule = Object.assign({}, mod)
+      if (!this.currentModule.label) this.currentModule.label = ''
+      if (!this.currentModule.description) this.currentModule.description = ''
       this.currentModuleType = this.moduleTypes[section].find((m) => m.uid === mod.type)
 
       const popup = {
@@ -489,6 +491,8 @@ export default {
       const newModule = {
         id: moduleId.toString(),
         configuration: {},
+        description: '',
+        label: '',
         type: '',
         new: true
       }
