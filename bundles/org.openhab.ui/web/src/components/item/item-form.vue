@@ -11,7 +11,7 @@
       </f7-list-group>
       <f7-list-group v-if="itemType && !hideType">
         <!-- Type -->
-        <f7-list-item v-if="itemType && !hideType" title="Type" class="align-popup-list-item" :disabled="!editable" :key="'type-' + itemType" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <f7-list-item v-if="itemType && !hideType" title="Type" class="aligned-smart-select" :disabled="!editable" :key="'type-' + itemType" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
           <select name="select-type" @change="item.type = $event.target.value">
             <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === itemType">
               {{ t }}
@@ -19,7 +19,7 @@
           </select>
         </f7-list-item>
         <!-- Dimensions -->
-        <f7-list-item v-if="dimensions.length && !hideType && itemType === 'Number'" title="Dimension" class="align-popup-list-item" :disabled="!editable" :key="'dimension-' + itemDimension" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <f7-list-item v-if="dimensions.length && !hideType && itemType === 'Number'" title="Dimension" class="aligned-smart-select" :disabled="!editable" :key="'dimension-' + itemDimension" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
           <select name="select-dimension" @change="setDimension($event.target.value)">
             <option key="" value="Number" :selected="itemDimension === ''" />
             <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="d.name === itemDimension">
@@ -83,17 +83,6 @@
     display inherit !important
   .item-title
     font-weight inherit !important
-.align-popup-list-item
-  .item-title
-    // f7-input-item uses 35% for the item-title,
-    // but since their item-inner has less padding (16px vs 31px) on the left side, add those 15px difference
-    min-width calc(35% + 0.35*15px)
-  .item-after
-    width 100%
-    margin 0
-    padding 0
-    margin-left 8px
-    color var(--f7-input-text-color)
 </style>
 
 <script>
