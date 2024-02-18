@@ -107,8 +107,6 @@
                               :link="isEditable && !showModuleControls"
                               @click.native="(ev) => editModule(ev, section, mod)" swipeout>
                   <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout" />
-                  <f7-link slot="after" v-if="mod.type && mod.type.indexOf('script') === 0" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" :tooltip="'Edit module'" />
-                  <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" tooltip="Edit module" />
                   <f7-swipeout-actions right v-if="isEditable">
                     <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
@@ -421,7 +419,7 @@ export default {
       this.$set(this, 'currentTemplate', this.templates.find((t) => t.uid === uid))
       this.rule.templateUID = uid
     },
-    editModule (ev, section, mod, force) {
+    editModule (ev, section, mod) {
       if (this.showModuleControls) return
       if (!this.isEditable) return
       let swipeoutElement = ev.target
@@ -430,18 +428,15 @@ export default {
         swipeoutElement = swipeoutElement.parentElement
       }
       if (swipeoutElement && swipeoutElement.classList.contains('swipeout-opened')) return
-      this.currentSection = section
-      this.currentModule = Object.assign({}, mod)
-      this.currentModuleType = this.moduleTypes[section].find((m) => m.uid === mod.type)
 
-      if (mod.type && mod.type.indexOf('script') === 0 && !force) {
+      if (mod.type && mod.type.indexOf('script') === 0) {
         this.editScriptDirect(ev, mod)
         return
       }
-      if (mod.type && mod.type === 'timer.GenericCronTrigger' && !force) {
-        this.buildCronExpression(ev, mod)
-        return
-      }
+
+      this.currentSection = section
+      this.currentModule = Object.assign({}, mod)
+      this.currentModuleType = this.moduleTypes[section].find((m) => m.uid === mod.type)
 
       const popup = {
         component: RuleModulePopup
@@ -559,37 +554,6 @@ export default {
       const updatePromise = (this.rule.editable || this.isNewRule) && this.dirty ? this.save() : Promise.resolve()
       updatePromise.then(() => {
         this.$f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + mod.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
-      })
-    },
-    buildCronExpression (ev, mod) {
-      ev.cancelBubble = true
-      this.currentModule = mod
-      this.currentModuleType = mod.type
-      this.cronExpression = mod.configuration.cronExpression
-      import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
-        const popup = {
-          component: c.default
-        }
-        this.$f7router.navigate({
-          url: 'cron-edit',
-          route: {
-            path: 'cron-edit',
-            popup
-          }
-        }, {
-          props: {
-            value: this.cronExpression
-          }
-        })
-
-        this.$f7.once('cronEditorUpdate', this.updateCronExpression)
-        this.$f7.once('cronEditorClosed', () => {
-          this.$f7.off('cronEditorUpdate', this.updateCronExpression)
-          this.$nextTick(() => {
-            this.currentModule = null
-            this.currentModuleType = null
-          })
-        })
       })
     },
     updateScript (value) {
