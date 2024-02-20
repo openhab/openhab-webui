@@ -47,11 +47,11 @@
     <f7-block class="block-narrow" v-if="$store.getters.apiEndpoint('addons')">
       <f7-col v-if="bindings.length">
         <f7-list>
-          <f7-list-button color="blue" title="Install More Bindings" href="/addons/" />
+          <f7-list-button color="blue" title="Install More Bindings" href="/addons/binding/" />
         </f7-list>
       </f7-col>
       <f7-row v-else-if="ready" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" href="/addons/">
+        <f7-button large fill color="blue" href="/addons/binding/">
           Install Bindings
         </f7-button>
       </f7-row>

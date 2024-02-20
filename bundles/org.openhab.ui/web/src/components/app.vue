@@ -75,10 +75,22 @@
           </li>
 
           <!-- Add-on Store -->
-          <f7-list-item link="/addons/" :title="$t('sidebar.addOnStore')" panel-close :animate="false"
-                        :class="{ currentsection: currentUrl.indexOf('/addons/') === 0 }">
+          <f7-list-item link="/addons/" :title="$t('sidebar.addOnStore')" view=".view-main" panel-close :animate="false"
+                        :class="{ currentsection: currentUrl === '/addons/' }">
             <f7-icon slot="media" ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
           </f7-list-item>
+          <li v-if="showAddonsSubmenu && $store.getters.apiEndpoint('addons')">
+            <ul class="menu-sublinks">
+              <f7-list-item v-for="section in Object.keys(AddonTitles)"
+                            :key="section"
+                            :link="`/addons/${section}/`"
+                            :title="AddonTitles[section]"
+                            view=".view-main" panel-close :animate="false" no-chevron
+                            :class="{ currentsection: currentUrl.indexOf(`/addons/${section}`) === 0 }">
+                <f7-icon slot="media" :f7="AddonIcons[section]" color="gray" />
+              </f7-list-item>
+            </ul>
+          </li>
 
           <!-- Developer Tools -->
           <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close :animate="false"
@@ -260,6 +272,8 @@ import sseEvents from './sse-events-mixin'
 import dayjs from 'dayjs'
 import dayjsLocales from 'dayjs/locale.json'
 
+import { AddonIcons, AddonTitles } from '@/assets/addon-store'
+
 export default {
   mixins: [auth, i18n, connectionHealth, sseEvents],
   components: {
@@ -368,6 +382,7 @@ export default {
       },
 
       showSettingsSubmenu: false,
+      showAddonsSubmenu: false,
       showDeveloperSubmenu: false,
       showDeveloperDock: false,
       activeDock: 'tools',
@@ -614,6 +629,13 @@ export default {
         ev.stopPropagation()
         ev.preventDefault()
       }
+    },
+    updateUrl (newUrl) {
+      this.showSettingsSubmenu = newUrl.indexOf('/settings/') === 0
+      this.showAddonsSubmenu = newUrl.indexOf('/addons/') === 0
+      this.showDeveloperSubmenu = newUrl.indexOf('/developer/') === 0
+      this.currentUrl = newUrl
+      this.$store.commit('setPagePath', this.currentUrl)
     }
   },
   created () {
@@ -639,6 +661,9 @@ export default {
     } else {
       this.init = true
     }
+
+    this.AddonIcons = AddonIcons
+    this.AddonTitles = AddonTitles
   },
   mounted () {
     this.$f7ready((f7) => {
@@ -679,11 +704,13 @@ export default {
 
       this.$f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
-          this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0
-          this.showDeveloperSubmenu = page.route.url.indexOf('/developer/') === 0
-          this.currentUrl = page.route.url
-          this.$store.commit('setPagePath', this.currentUrl)
+          this.updateUrl(page.route.url)
         }
+      })
+
+      // needed by updateCurrentUrl() inside addon-store onTabShow()
+      this.$f7.on('routeUrlUpdate', (newRoute, router) => {
+        this.updateUrl(newRoute.url)
       })
 
       this.$f7.on('sidebarRefresh', () => {

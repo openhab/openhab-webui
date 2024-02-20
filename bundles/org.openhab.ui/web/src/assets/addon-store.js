@@ -1,11 +1,21 @@
 export const AddonIcons = {
-  automation: 'wand_stars',
   binding: 'circle_grid_hex_fill',
-  persistence: 'download_circle',
+  automation: 'wand_stars',
   transformation: 'function',
-  misc: 'rectangle_3_offgrid',
+  persistence: 'download_circle',
   ui: 'play_rectangle',
+  misc: 'rectangle_3_offgrid',
   voice: 'chat_bubble_2_fill'
+}
+
+export const AddonTitles = {
+  binding: 'Bindings',
+  automation: 'Automation',
+  transformation: 'Transformations',
+  persistence: 'Persistence',
+  ui: 'User Interfaces',
+  misc: 'System Integrations',
+  voice: 'Voice & Speech'
 }
 
 export const ContentTypes = {

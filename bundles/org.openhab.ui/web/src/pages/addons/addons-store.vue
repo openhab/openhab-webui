@@ -1,62 +1,84 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" ref="addonstore" class="page-addon-store">
-    <f7-navbar large :large-transparent="true" :back-link="initialTab ? 'Settings' : 'Back'" class="store-nav">
+    <f7-navbar large :large-transparent="true" back-link="Back" class="store-nav">
       <f7-nav-title-large class="store-title-large">
-        <span v-if="currentTab === 'bindings'">Bindings</span>
-        <span v-if="currentTab === 'automation'">Automation</span>
-        <span v-if="currentTab === 'ui'">User Interfaces</span>
-        <span v-if="currentTab === 'other'">Other Add-ons</span>
-        <span v-if="currentTab === 'search'">Search</span>
+        <span>{{ TabNames[currentTab] }}{{ currentTab !== 'main' ? ' ' + TabNames.main : '' }}</span>
       </f7-nav-title-large>
       <f7-nav-title>
-        <span v-if="currentTab === 'bindings'">Bindings</span>
-        <span v-if="currentTab === 'automation'">Automation</span>
-        <span v-if="currentTab === 'ui'">User Interfaces</span>
-        <span v-if="currentTab === 'other'">Other Add-ons</span>
-        <span v-if="currentTab === 'search'">Search</span>
+        <span>{{ TabNames[currentTab] }}{{ currentTab !== 'main' ? ' ' + TabNames.main : '' }}</span>
       </f7-nav-title>
       <f7-nav-right>
         <developer-dock-icon />
-        <f7-link
-          v-show="currentTab === 'search'"
-          class="searchbar-enable"
-          data-searchbar=".searchbar-store"
-          icon-ios="f7:search_strong"
-          icon-aurora="f7:search_strong"
-          icon-md="material:search" />
       </f7-nav-right>
+    </f7-navbar>
+    <f7-block>
       <f7-searchbar
         ref="storeSearchbar"
         class="searchbar-store"
-        placeholder="Search add-ons"
-        expandable
         custom-search
         search-in=".item-title"
+        :placeholder="'Search ' + (currentTab == 'main' ? 'all add-ons' : TabNames[currentTab].toLowerCase())"
         :disable-button="!$theme.aurora"
-        @searchbar:search="search" @searchbar:clear="clearSearch" />
-    </f7-navbar>
-    <f7-toolbar tabbar labels bottom>
-      <f7-link tab-link @click="switchTab('bindings')" :tab-link-active="currentTab === 'bindings'" icon-ios="f7:circle_grid_hex_fill" icon-aurora="f7:circle_grid_hex_fill" icon-md="f7:circle_grid_hex_fill" text="Bindings" />
-      <f7-link tab-link @click="switchTab('automation')" :tab-link-active="currentTab === 'automation'" icon-ios="f7:sparkles" icon-aurora="f7:sparkles" icon-md="f7:sparkles" text="Automation" />
-      <f7-link tab-link @click="switchTab('ui')" :tab-link-active="currentTab === 'ui'" icon-ios="f7:play_rectangle_fill" icon-aurora="f7:play_rectangle_fill" icon-md="f7:play_rectangle_fill" text="UI" />
-      <f7-link tab-link @click="switchTab('other')" :tab-link-active="currentTab === 'other'" icon-ios="f7:ellipsis" icon-aurora="f7:ellipsis" icon-md="f7:ellipsis" text="Other" />
-      <f7-link tab-link @click="switchTab('search')" :tab-link-active="currentTab === 'search'" icon-ios="f7:search" icon-aurora="f7:search" icon-md="f7:search" text="Search" />
-    </f7-toolbar>
+        @searchbar:search="search"
+        @searchbar:clear="clearSearch" />
+    </f7-block>
     <f7-block v-if="!ready" class="text-align-center padding-top margin-top">
       <f7-block-title>
         <f7-preloader :size="30" />
         <div>Loading...</div>
       </f7-block-title>
     </f7-block>
-    <f7-tabs>
-      <f7-tab :tab-active="currentTab === 'bindings'">
+
+    <!-- Search Results -->
+    <div v-if="searchResults">
+      <f7-block v-if="searchResults.length === 0">
+        '{{ this.$refs.storeSearchbar.f7Searchbar.query }}'  not found in {{ currentTab === 'main' ? 'any' : currentTab }} add-ons
+        <div class="flex-shrink-0 if-aurora display-flex justify-content-center">
+          <f7-button color="blue" fill raised @click="clearSearch">
+            Clear Search
+          </f7-button>
+        </div>
+      </f7-block>
+      <addons-section
+        v-else
+        :show-as-cards="searchResults.length <= 3"
+        @addonButtonClick="addonButtonClick"
+        :title="'Found: ' + searchResults.length + (currentTab == 'main' ? '' : ' ' + currentTab) +
+          ' add-on' + ((searchResults.length === 1) ? '' : 's')"
+        :addons="searchResults" />
+    </div>
+
+    <f7-tabs v-show="ready && !searchResults" routable>
+      <f7-tab id="main" @tabShow="onTabShow">
+        <!-- Show Suggested Add-ons -->
+        <addons-section
+          v-for="section in Object.keys(SuggestionLabels)"
+          :key="'suggested-' + section"
+          :show-all="true"
+          @addonButtonClick="addonButtonClick"
+          :addons="suggestedAddons.filter((a) => a.type === section)"
+          :suggested="true"
+          :title="SuggestionLabels[section].title"
+          :subtitle="SuggestionLabels[section].subtitle" />
+
+        <!-- Show Installed Add-ons -->
+        <addons-section
+          v-for="section in Object.keys(AddonTitles)"
+          :key="'installed-' + section"
+          :show-as-cards="installedAddons.length <= 3"
+          @addonButtonClick="addonButtonClick"
+          :title="'Installed ' + AddonTitles[section]"
+          :addons="installedAddons.filter((a) => a.type === section)" />
+      </f7-tab>
+
+      <f7-tab id="binding" @tabShow="onTabShow">
         <addons-section
           v-if="suggestedAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
           :addons="suggestedAddons.filter((a) => a.type === 'binding')"
           :suggested="true"
-          :title="'Binding Suggestions'"
-          :subtitle="'Suggested bindings, identified from network scan'" />
+          :title="SuggestionLabels.binding.title"
+          :subtitle="SuggestionLabels.binding.subtitle" />
         <addons-section
           v-if="officialAddons"
           @addonButtonClick="addonButtonClick"
@@ -75,7 +97,8 @@
           :addons="otherAddons.filter((a) => a.type === 'binding')"
           :title="'Other Add-ons'" />
       </f7-tab>
-      <f7-tab :tab-active="currentTab === 'automation'">
+
+      <f7-tab id="automation" @tabShow="onTabShow">
         <addons-section
           v-if="addons"
           @addonButtonClick="addonButtonClick"
@@ -95,10 +118,11 @@
           @addonButtonClick="addonButtonClick"
           :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType === 'application/vnd.openhab.uicomponent;type=blocks')"
           :install-action-text="'Add'"
-          :title="'Block Libraries'"
+          :title="'Blockly Libraries'"
           :subtitle="'Community extensions to the Blockly toolbox'" />
       </f7-tab>
-      <f7-tab :tab-active="currentTab === 'ui'">
+
+      <f7-tab id="ui" @tabShow="onTabShow">
         <addons-section
           v-if="addons && addons.marketplace"
           @addonButtonClick="addonButtonClick"
@@ -114,35 +138,15 @@
           :title="'Other UI Add-ons'"
           :subtitle="'Alternative user interfaces and icon sets'" />
       </f7-tab>
-      <f7-tab :tab-active="currentTab === 'other'">
+
+      <f7-tab id="misc" @tabShow="onTabShow">
         <addons-section
           v-if="suggestedAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
           :suggested="true"
           :addons="suggestedAddons.filter((a) => a.type === 'misc')"
-          :title="'System Integrations Suggestions'"
-          :subtitle="'Suggested system integrations, identified from network scan'" />
-        <addons-section
-          v-if="suggestedAddons" :show-all="true"
-          @addonButtonClick="addonButtonClick"
-          :suggested="true"
-          :addons="suggestedAddons.filter((a) => a.type === 'persistence')"
-          :title="'Persistence Services'"
-          :subtitle="'Suggested backend connectors to store historical data, identified from network scan'" />
-        <addons-section
-          v-if="suggestedAddons" :show-all="true"
-          @addonButtonClick="addonButtonClick"
-          :suggested="true"
-          :addons="suggestedAddons.filter((a) => a.type === 'transformation')"
-          :title="'Transformation Add-ons'"
-          :subtitle="'Suggested transformation add-ons to translate raw values into processed or human-readable representations, identified from network scan'" />
-        <addons-section
-          v-if="suggestedAddons" :show-all="true"
-          @addonButtonClick="addonButtonClick"
-          :suggested="true"
-          :addons="suggestedAddons.filter((a) => a.type === 'voice')"
-          :title="'Voice &amp; Speech'"
-          :subtitle="'Suggested voice add-ons to convert between text and speech, interpret human language queries, identified from network scan'" />
+          :title="SuggestionLabels.misc.title"
+          :subtitle="SuggestionLabels.misc.subtitle" />
         <addons-section
           v-if="addons && officialAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
@@ -150,20 +154,50 @@
           :title="'System Integrations'"
           :featured="['misc-openhabcloud', 'misc-homekit', 'misc-metrics']"
           :subtitle="'Integrate openHAB with external systems'" />
+      </f7-tab>
+
+      <f7-tab id="persistence" @tabShow="onTabShow">
+        <addons-section
+          v-if="suggestedAddons" :show-all="true"
+          @addonButtonClick="addonButtonClick"
+          :suggested="true"
+          :addons="suggestedAddons.filter((a) => a.type === 'persistence')"
+          :title="SuggestionLabels.persistence.title"
+          :subtitle="SuggestionLabels.persistence.subtitle" />
         <addons-section
           v-if="addons && officialAddons"
           @addonButtonClick="addonButtonClick"
           :addons="unsuggestedAddons.filter((a) => a.type === 'persistence')" :show-all="true"
-          :featured="['persistence-rrd4j', 'persistence-influxdb', 'persistence-mongodb']"
+          :featured="['persistence-rrd4j', 'persistence-influxdb', 'persistence-mapdb']"
           :title="'Persistence Services'"
           :subtitle="'Backend connectors to store historical data'" />
+      </f7-tab>
+
+      <f7-tab id="transformation" @tabShow="onTabShow">
+        <addons-section
+          v-if="suggestedAddons" :show-all="true"
+          @addonButtonClick="addonButtonClick"
+          :suggested="true"
+          :addons="suggestedAddons.filter((a) => a.type === 'transformation')"
+          :title="SuggestionLabels.transformation.title"
+          :subtitle="SuggestionLabels.transformation.subtitle" />
         <addons-section
           v-if="addons && officialAddons"
           @addonButtonClick="addonButtonClick"
           :addons="unsuggestedAddons.filter((a) => a.type === 'transformation')" :show-all="true"
-          :featured="['transformation-jsonpath', 'transformation-javascript', 'transformation-regex']"
+          :featured="['transformation-jsonpath', 'transformation-map', 'transformation-regex']"
           :title="'Transformation Add-ons'"
           :subtitle="'Translate raw values into processed or human-readable representations'" />
+      </f7-tab>
+
+      <f7-tab id="voice" @tabShow="onTabShow">
+        <addons-section
+          v-if="suggestedAddons" :show-all="true"
+          @addonButtonClick="addonButtonClick"
+          :suggested="true"
+          :addons="suggestedAddons.filter((a) => a.type === 'voice')"
+          :title="SuggestionLabels.voice.title"
+          :subtitle="SuggestionLabels.voice.subtitle" />
         <addons-section
           v-if="addons && officialAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
@@ -171,14 +205,6 @@
           :featured="['voice-googletts', 'voice-pollytts', 'voice-voicerss']"
           :title="'Voice &amp; Speech'"
           :subtitle="'Convert between text and speech, interpret human language queries'" />
-      </f7-tab>
-      <f7-tab :tab-active="currentTab === 'search'" style="padding-top: 2rem">
-        <addons-section
-          v-if="addons && searchResults.length"
-          :show-as-cards="searchResults.length <= 3"
-          @addonButtonClick="addonButtonClick"
-          :title="searchResults.length + ' result' + ((searchResults.length === 1) ? '' : 's')"
-          :addons="searchResults" />
       </f7-tab>
     </f7-tabs>
     <addon-details-sheet
@@ -201,36 +227,68 @@
 .theme-filled .store-nav.navbar-large.navbar-large-collapsed .link
   color var(--f7-navbar-link-color)
   transition color 0.3s
+.searchbar-store
+  margin-left 2em
+  margin-right 2em
 </style>
 
 <script>
 import AddonStoreMixin from './addon-store-mixin'
 import AddonsSection from '@/components/addons/addons-section.vue'
+import { AddonTitles } from '@/assets/addon-store'
 
 export default {
   mixins: [AddonStoreMixin],
-  props: ['initialTab'],
   components: {
     AddonsSection
   },
   data () {
     return {
-      currentTab: this.initialTab || 'bindings',
+      currentTab: 'main',
       services: null,
       suggestions: [],
       ready: false,
-      searchResults: []
+      searchResults: null
+    }
+  },
+  created () {
+    this.AddonTitles = AddonTitles
+    this.TabNames = Object.assign({ main: 'Add-on Store' }, AddonTitles)
+    this.SuggestionLabels = {
+      binding: {
+        title: 'Suggested Bindings',
+        subtitle: 'Suggested bindings, identified from network scan'
+      },
+      misc: {
+        title: 'Suggested System Integration Add-ons',
+        subtitle: 'Suggested system integrations, identified from network scan'
+      },
+      persistence: {
+        title: 'Suggested Persistence Services',
+        subtitle: 'Suggested backend connectors to store historical data, identified from network scan'
+      },
+      transformation: {
+        title: 'Suggested Transformation Add-ons',
+        subtitle: 'Suggested transformation add-ons to translate raw values into processed or human-readable representations, identified from network scan'
+      },
+      voice: {
+        title: 'Suggested Voice &amp; Speech Add-ons',
+        subtitle: 'Convert between text and speech, interpret human language queries'
+      }
     }
   },
   computed: {
     allAddons () {
       return Object.keys(this.addons).flatMap((k) => this.addons[k])
     },
+    installedAddons () {
+      return this.allAddons.filter((a) => a.installed)
+    },
     suggestedAddons () {
-      return Object.keys(this.addons).flatMap((k) => this.addons[k]).filter((a) => !a.installed && this.suggestions.some((s) => s.id === a.id))
+      return this.allAddons.filter((a) => !a.installed && this.suggestions.some((s) => s.id === a.id))
     },
     unsuggestedAddons () {
-      return Object.keys(this.addons).flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
+      return this.allAddons.filter((a) => !this.suggestedAddons.includes(a))
     },
     officialAddons () {
       return Object.keys(this.addons).filter((k) => k === 'eclipse' || k === 'karaf').flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
@@ -244,7 +302,6 @@ export default {
   },
   methods: {
     onPageAfterIn () {
-      this.$f7router.updateCurrentUrl('/addons/' + this.currentTab + '/')
       this.load()
     },
     onPageBeforeOut () {
@@ -266,48 +323,52 @@ export default {
           setTimeout(() => {
             this.$f7.lazy.create('.page-addon-store')
           }, 100)
-          if (this.currentTab === 'search') {
-            const searchbar = this.$refs.storeSearchbar.f7Searchbar
-            const filterQuery = searchbar.query
-            this.search(this.$refs.storeSearchbar.$el, filterQuery)
-          }
         })
-      })
-    },
-    switchTab (tab) {
-      this.currentTab = ''
-      this.$nextTick(() => {
-        this.$f7router.updateCurrentUrl('/addons/' + tab + '/')
-        this.$f7.lazy.create('.page-addon-store')
-        this.currentTab = tab
-        if (this.currentTab === 'search') {
-          this.$refs.storeSearchbar.enable()
-          setTimeout(() => {
-            this.$refs.storeSearchbar.f7Searchbar.$inputEl.focus()
-          }, 500)
-        } else {
-          this.$refs.storeSearchbar.disable()
-        }
       })
     },
     addonButtonClick (addon) {
       const serviceId = (addon.uid.indexOf(':') > 0) ? addon.uid.substring(0, addon.uid.indexOf(':')) : undefined
       this.openAddonPopup(addon.uid, serviceId, addon)
     },
+    onTabShow (tab) {
+      this.currentTab = tab.id
+
+      const section = tab.id === 'main' ? '' : (tab.id + '/')
+      this.$f7router.updateCurrentUrl('/addons/' + section)
+
+      this.clearSearch()
+
+      this.$nextTick(() => {
+        this.$f7.lazy.create('.page-addon-store')
+      })
+    },
     search (searchbar, query, previousQuery) {
-      let results = []
-      if (query) {
-        for (const service in this.addons) {
-          results = results.concat(this.addons[service].filter((a) => a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0))
-        }
+      if (!this.ready) return
+
+      query = query.trim()
+      if (!query) {
+        this.clearSearch()
+        return
       }
+
+      let results = this.allAddons
+      if (this.currentTab !== 'main') {
+        results = results.filter((a) => a.type === this.currentTab)
+      }
+      query = query.toLowerCase()
+      results = results.filter((a) => a.label.toLowerCase().indexOf(query) >= 0)
+
       this.$set(this, 'searchResults', results)
       setTimeout(() => {
         this.$f7.lazy.create('.page-addon-store')
       }, 100)
     },
-    clearSearch () {
-
+    clearSearch (searchbar, previousQuery) {
+      this.$refs.storeSearchbar.f7Searchbar.$inputEl.val('')
+      this.$set(this, 'searchResults', null)
+      this.$nextTick(() => {
+        this.$refs.storeSearchbar.f7Searchbar.$inputEl.focus()
+      })
     }
   }
 }
