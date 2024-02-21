@@ -49,6 +49,7 @@
     justify-content center
     height var(--f7-button-small-height)
     --f7-preloader-size var(--f7-button-small-height)
+    align-self auto !important
   .install-button
     // --f7-button-bg-color var(--f7-color-gray)
     --f7-button-text-transform uppercase
