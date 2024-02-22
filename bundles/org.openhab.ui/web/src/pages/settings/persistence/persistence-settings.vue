@@ -43,7 +43,7 @@
     </f7-block>
 
     <f7-block v-if="ready && !persistenceList.length" class="block-narrow">
-      <empty-state-placeholder icon="tray-arrow-down" title="persistence.title" text="persistence.text" />
+      <empty-state-placeholder icon="download_circle" title="persistence.title" text="persistence.text" />
       <f7-row class="display-flex justify-content-center">
         <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/persistence`" target="_blank" v-t="'home.overview.button.documentation'" />
         <span style="width: 8px" />
