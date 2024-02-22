@@ -35,6 +35,9 @@
           <f7-list-item v-if="supports('switchEnabled')" title="Switch enabled">
             <f7-toggle slot="after" :checked="widget.config.switchEnabled" @toggle:change="widget.config.switchEnabled = $event" />
           </f7-list-item>
+          <f7-list-item v-if="supports('releaseOnly')" title="Release only">
+            <f7-toggle slot="after" :checked="widget.config.releaseOnly" @toggle:change="widget.config.releaseOnly = $event" />
+          </f7-list-item>
           <f7-list-item v-if="supports('legend')" title="Legend">
             <f7-toggle slot="after" :checked="widget.config.legend" @toggle:change="widget.config.legend = $event" />
           </f7-list-item>
@@ -87,7 +90,7 @@ export default {
         Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern'],
         Webview: ['url', 'height'],
         Mapview: ['height'],
-        Slider: ['sendFrequency', 'switchEnabled', 'minValue', 'maxValue', 'step'],
+        Slider: ['sendFrequency', 'switchEnabled', 'releaseOnly', 'minValue', 'maxValue', 'step'],
         Setpoint: ['minValue', 'maxValue', 'step'],
         Colorpicker: ['sendFrequency'],
         Input: ['inputHint'],
