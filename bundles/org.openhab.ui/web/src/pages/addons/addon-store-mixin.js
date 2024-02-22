@@ -5,9 +5,8 @@ export default {
     AddonDetailsSheet
   },
   data () {
-    if (!this.$f7.data.addonsStore) this.$f7.data.addonsStore = {}
     return {
-      addons: this.$f7.data.addonsStore.addons || {},
+      addons: {},
       currentAddon: null,
       currentAddonId: null,
       currentServiceId: null,
@@ -55,7 +54,6 @@ export default {
       this.currentServiceId = null
     },
     startEventSource () {
-      this.$f7.data.addonsStore.addons = this.addons
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/addons/*/*', null, (event) => {
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {
