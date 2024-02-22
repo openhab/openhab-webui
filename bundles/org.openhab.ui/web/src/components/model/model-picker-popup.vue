@@ -87,7 +87,7 @@ export default {
       includeNonSemantic: false,
       includeItemName: this.$f7.data.modelPicker.includeItemName || false,
       includeItemTags: this.$f7.data.modelPicker.includeItemTags || false,
-      expanded: false,
+      expanded: this.$f7.data.modelPicker.expanded || false,
       doubleClickStarted: null,
       doubleClickItem: null,
       items: [],
@@ -215,7 +215,10 @@ export default {
 
         this.loading = false
         this.ready = true
-        this.$nextTick(() => { this.initSearchbar = true })
+        this.$nextTick(() => {
+          this.initSearchbar = true
+          this.applyExpandedOption()
+        })
       })
     },
     getChildren (parent) {
@@ -315,7 +318,10 @@ export default {
     },
     toggleExpanded () {
       this.expanded = !this.expanded
-
+      this.$f7.data.modelPicker.expanded = this.expanded
+      this.applyExpandedOption()
+    },
+    applyExpandedOption () {
       const treeviewItems = document.querySelectorAll('.treeview-item')
 
       treeviewItems.forEach(item => {

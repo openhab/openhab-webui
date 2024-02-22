@@ -256,7 +256,7 @@ export default {
       includeNonSemantic: false,
       includeItemName: this.$f7.data.model.includeItemName || false,
       includeItemTags: this.$f7.data.model.includeItemTags || false,
-      expanded: false,
+      expanded: this.$f7.data.model.expanded || false,
       items: [],
       links: [],
       locations: [],
@@ -374,7 +374,10 @@ export default {
 
         this.loading = false
         this.ready = true
-        this.$nextTick(() => { this.initSearchbar = true })
+        this.$nextTick(() => {
+          this.initSearchbar = true
+          this.applyExpandedOption()
+        })
         if (!this.eventSource) this.startEventSource()
       })
     },
@@ -491,7 +494,10 @@ export default {
     },
     toggleExpanded () {
       this.expanded = !this.expanded
-
+      this.$f7.data.model.expanded = this.expanded
+      this.applyExpandedOption()
+    },
+    applyExpandedOption () {
       const treeviewItems = document.querySelectorAll('.treeview-item')
 
       treeviewItems.forEach(item => {
