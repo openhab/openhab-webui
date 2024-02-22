@@ -302,6 +302,7 @@ export default {
   },
   methods: {
     onPageAfterIn () {
+      this.ready = Object.keys(this.addons).length > 0
       this.load()
     },
     onPageBeforeOut () {
