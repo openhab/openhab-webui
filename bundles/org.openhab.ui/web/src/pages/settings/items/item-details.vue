@@ -42,13 +42,14 @@
       <f7-row v-if="item && item.metadata && item.metadata.semantics">
         <f7-col>
           <f7-block-title>Semantic Classification</f7-block-title>
-          <f7-list>
-            <f7-list-item title="class" :after="item.metadata.semantics.value" />
-            <f7-list-item
+          <f7-list inline-labels>
+            <f7-list-input label="class" :value="item.metadata.semantics.value" readonly />
+            <f7-list-input
               v-for="(value, key) in item.metadata.semantics.config"
               :key="key"
-              :title="key"
-              :after="value" />
+              :label="key"
+              :value="value"
+              readonly />
           </f7-list>
         </f7-col>
       </f7-row>
