@@ -1177,6 +1177,7 @@
 		Control.call(this, parentNode);
 
 		var
+			maxButtonWidth = 0,
 			_t = this;
 
 		_t.ignoreState = _t.parentNode.getAttribute("data-ignore-state") === "true";
@@ -1239,6 +1240,7 @@
 			) {
 				_t.valueMap[itemState].classList.add(o.buttonActiveClass);
 			}
+			_t.minimizeWidth();
 		};
 
 		_t.setValueColor = function(color) {
@@ -1337,7 +1339,35 @@
 				icon.addEventListener("load", _t.convertToInlineSVG);
 				icon.addEventListener("error", _t.replaceImageWithNone);
 			}
+
+			if (maxButtonWidth < button.offsetWidth) {
+				maxButtonWidth = button.offsetWidth;
+			}
 		});
+
+		if (_t.buttons.length > 1 && _t.parentNode.classList.contains(o.buttonsMultilineClass)) {
+			_t.minimizeWidth = function() {
+				// Minimize the width taken by the buttons without adding extra rows.
+				// Start from the maximum width (limited by `mdl-form__buttons-multiline.max-width`),
+				// then shrink it down to the minimum without causing additional wrapping.
+				var buttons = _t.parentNode;
+				if (_t.label.textContent.trim() === "") {
+					buttons.style.maxWidth = "100%";
+				}
+				var width = buttons.parentElement.offsetWidth + 100; // start wider than max-width allows
+				buttons.style.width = width + "px";
+				var height = buttons.offsetHeight;
+				while (buttons.offsetHeight === height && width >= maxButtonWidth) {
+					buttons.style.width = --width + "px";
+				}
+				buttons.style.width = (width+1) + "px";
+			};
+
+			_t.minimizeWidth();
+			window.addEventListener("resize", _t.minimizeWidth);
+		} else {
+			_t.minimizeWidth = function() {};
+		}
 
 		_t.destroy = function() {
 			_t.buttons.forEach(function(button) {
@@ -1361,6 +1391,7 @@
 				}
 			});
 			componentHandler.downgradeElements(_t.buttons);
+			window.removeEventListener("resize", _t.minimizeWidth);
 		};
 
 		_t.setValueColor(_t.valueColor);
@@ -3936,6 +3967,7 @@
 	buttonTextClass: "mdl-button-text",
 	buttonIconText: ".mdl-button-icon-text",
 	buttonIconTextClass: "mdl-button-icon-text",
+	buttonsMultilineClass: "mdl-form__buttons-multiline",
 	modal: ".mdl-modal",
 	modalContainer: ".mdl-modal__content",
 	selectionRows: ".mdl-form__selection-rows",

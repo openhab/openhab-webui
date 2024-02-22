@@ -168,7 +168,7 @@
 		@media screen and (max-width: $layout-tablet-size-threshold) {
 			padding-left: $form-row-mobile-padding;
 			html.ui-layout-condensed & {
-				padding-left: $form-row-mobile-padding-condensed;
+				padding-left: 0; // there's already padding in .mdl-form__row
 			}
 		}
 		html:not(.ui-icons-enabled) & {
@@ -212,15 +212,15 @@
 		}
 	}
 	&__label {
+		padding-left: $form-row-desktop-padding;
+		html.ui-layout-condensed & {
+			padding-left: $form-row-desktop-padding-condensed;
+		}
 		@media screen and (max-width: $layout-tablet-size-threshold) {
 			padding-left: $form-row-mobile-padding;
 			html.ui-layout-condensed & {
 				padding-left: $form-row-mobile-padding-condensed;
 			}
-		}
-		padding-left: $form-row-desktop-padding;
-		html.ui-layout-condensed & {
-			padding-left: $form-row-desktop-padding-condensed;
 		}
 		@include flex-shrink(0);
 		@include flex-grow(2);
@@ -233,16 +233,13 @@
 		}
 	}
 	&__control {
-		@media screen and (max-width: $layout-tablet-size-threshold) {
-			padding-right: $form-row-mobile-padding;
-			html.ui-layout-condensed & {
-				padding-left: $form-row-mobile-padding-condensed;
-			}
-		}
 		padding-right: $form-row-desktop-padding;
 		padding-left: 4px;
 		html.ui-layout-condensed & {
-			padding-left: $form-row-desktop-padding-condensed;
+			padding-left: 0;
+		}
+		@media screen and (max-width: $layout-tablet-size-threshold) {
+			padding-right: $form-row-mobile-padding;
 		}
 		font-weight: 700;
 		html.ui-capitalize-values & {
@@ -270,7 +267,7 @@
 		.buttongrid-cell {
 			height: 36px;
 			.buttongrid-button {
-				min-width: 100%;
+				min-width: 100% !important;
 				text-transform: none;
 			}
 		}
@@ -279,6 +276,11 @@
 			box-shadow: none;
 			-webkit-box-shadow: none;
 			text-transform: unset;
+			html.ui-layout-condensed & {
+				min-width: 40px;
+				padding-left: 4px;
+				padding-right: 4px;
+			}
 		}
 		.mdl-button-text {
 			html.ui-bigger-font & {
@@ -501,16 +503,19 @@
 		width: 100%;
 	}
 	&__buttons {
-		padding-top: 2px;
+		padding: 2px;
 	}
 	&__buttons-multiline {
 		margin: 6px 0;
 		html.ui-layout-condensed & {
 			margin: 0;
+			gap: 2px;
 		}
-		max-width: 60%;
+		padding: 2px;
+		max-width: 70%;
 		display: flex;
 		flex-wrap: wrap;
+		justify-content: end;
 		gap: 4px;
 	}
 	&__buttongrid {
