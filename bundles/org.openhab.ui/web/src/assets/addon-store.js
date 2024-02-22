@@ -18,6 +18,29 @@ export const AddonTitles = {
   voice: 'Voice & Speech'
 }
 
+export const AddonSuggestionLabels = {
+  binding: {
+    title: 'Suggested Bindings',
+    subtitle: 'Suggested bindings, identified from network scan'
+  },
+  misc: {
+    title: 'Suggested System Integration Add-ons',
+    subtitle: 'Suggested system integrations, identified from network scan'
+  },
+  persistence: {
+    title: 'Suggested Persistence Services',
+    subtitle: 'Suggested backend connectors to store historical data, identified from network scan'
+  },
+  transformation: {
+    title: 'Suggested Transformation Add-ons',
+    subtitle: 'Suggested transformation add-ons to translate raw values into processed or human-readable representations, identified from network scan'
+  },
+  voice: {
+    title: 'Suggested Voice &amp; Speech Add-ons',
+    subtitle: 'Convert between text and speech, interpret human language queries'
+  }
+}
+
 export const ContentTypes = {
   'application/java-archive': 'Java Archive',
   'application/vnd.openhab.bundle': 'OSGi Bundle',

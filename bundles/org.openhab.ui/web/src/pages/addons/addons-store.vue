@@ -2,16 +2,17 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" ref="addonstore" class="page-addon-store">
     <f7-navbar large :large-transparent="true" back-link="Back" class="store-nav">
       <f7-nav-title-large class="store-title-large">
-        <span>{{ TabNames[currentTab] }}{{ currentTab !== 'main' ? ' ' + TabNames.main : '' }}</span>
+        <span>{{ TabNames[currentTab] + (currentTab !== 'main') ? `${TabNames.main} ` : '' }}</span>
       </f7-nav-title-large>
       <f7-nav-title>
-        <span>{{ TabNames[currentTab] }}{{ currentTab !== 'main' ? ' ' + TabNames.main : '' }}</span>
+        <span>{{ TabNames[currentTab] + (currentTab !== 'main') ? `${TabNames.main} ` : '' }}</span>
       </f7-nav-title>
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
     </f7-navbar>
-    <f7-block>
+
+    <f7-block class="no-padding" style="margin-top: 0">
       <f7-searchbar
         ref="storeSearchbar"
         class="searchbar-store"
@@ -32,20 +33,16 @@
     <!-- Search Results -->
     <div v-if="searchResults">
       <f7-block v-if="searchResults.length === 0">
-        '{{ this.$refs.storeSearchbar.f7Searchbar.query }}'  not found in {{ currentTab === 'main' ? 'any' : currentTab }} add-ons
+        '{{ this.$refs.storeSearchbar.f7Searchbar.query }}' not found in {{ currentTab === 'main' ? 'any' : currentTab }} add-ons
         <div class="flex-shrink-0 if-aurora display-flex justify-content-center">
           <f7-button color="blue" fill raised @click="clearSearch">
             Clear Search
           </f7-button>
         </div>
       </f7-block>
-      <addons-section
-        v-else
-        :show-as-cards="searchResults.length <= 3"
-        @addonButtonClick="addonButtonClick"
-        :title="'Found: ' + searchResults.length + (currentTab == 'main' ? '' : ' ' + currentTab) +
-          ' add-on' + ((searchResults.length === 1) ? '' : 's')"
-        :addons="searchResults" />
+      <addons-section v-else :show-as-cards="searchResults.length <= 3" :addons="searchResults"
+                      :title="'Found: ' + searchResults.length + (currentTab == 'main' ? '' : ' ' + currentTab) + ' add-on' + ((searchResults.length === 1) ? '' : 's')"
+                      @addonButtonClick="addonButtonClick" />
     </div>
 
     <f7-tabs v-show="ready && !searchResults" routable>
@@ -235,7 +232,7 @@
 <script>
 import AddonStoreMixin from './addon-store-mixin'
 import AddonsSection from '@/components/addons/addons-section.vue'
-import { AddonTitles } from '@/assets/addon-store'
+import { AddonTitles, AddonSuggestionLabels } from '@/assets/addon-store'
 
 export default {
   mixins: [AddonStoreMixin],
@@ -244,37 +241,15 @@ export default {
   },
   data () {
     return {
+      AddonTitles: AddonTitles,
+      SuggestionLabels: AddonSuggestionLabels,
+      TabNames: Object.assign({ main: 'Add-on Store' }, AddonTitles),
+
       currentTab: 'main',
       services: null,
       suggestions: [],
       ready: false,
       searchResults: null
-    }
-  },
-  created () {
-    this.AddonTitles = AddonTitles
-    this.TabNames = Object.assign({ main: 'Add-on Store' }, AddonTitles)
-    this.SuggestionLabels = {
-      binding: {
-        title: 'Suggested Bindings',
-        subtitle: 'Suggested bindings, identified from network scan'
-      },
-      misc: {
-        title: 'Suggested System Integration Add-ons',
-        subtitle: 'Suggested system integrations, identified from network scan'
-      },
-      persistence: {
-        title: 'Suggested Persistence Services',
-        subtitle: 'Suggested backend connectors to store historical data, identified from network scan'
-      },
-      transformation: {
-        title: 'Suggested Transformation Add-ons',
-        subtitle: 'Suggested transformation add-ons to translate raw values into processed or human-readable representations, identified from network scan'
-      },
-      voice: {
-        title: 'Suggested Voice &amp; Speech Add-ons',
-        subtitle: 'Convert between text and speech, interpret human language queries'
-      }
     }
   },
   computed: {
@@ -336,6 +311,7 @@ export default {
 
       const section = tab.id === 'main' ? '' : (tab.id + '/')
       this.$f7router.updateCurrentUrl('/addons/' + section)
+      this.$f7router.url = '/' + this.currentTab
 
       this.clearSearch()
 

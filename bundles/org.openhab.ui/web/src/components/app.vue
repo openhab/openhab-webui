@@ -81,11 +81,8 @@
           </f7-list-item>
           <li v-if="showAddonsSubmenu && $store.getters.apiEndpoint('addons')">
             <ul class="menu-sublinks">
-              <f7-list-item v-for="section in Object.keys(AddonTitles)"
-                            :key="section"
-                            :link="`/addons/${section}/`"
-                            :title="AddonTitles[section]"
-                            view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-for="section in Object.keys(AddonTitles)" :key="section" :link="`/addons/${section}/`"
+                            :title="AddonTitles[section]" view=".view-main" panel-close :animate="false" no-chevron
                             :class="{ currentsection: currentUrl.indexOf(`/addons/${section}`) === 0 }">
                 <f7-icon slot="media" :f7="AddonIcons[section]" color="gray" />
               </f7-list-item>
@@ -294,6 +291,9 @@ export default {
     }
 
     return {
+      AddonIcons: AddonIcons,
+      AddonTitles: AddonTitles,
+
       init: false,
       ready: false,
 
@@ -661,9 +661,6 @@ export default {
     } else {
       this.init = true
     }
-
-    this.AddonIcons = AddonIcons
-    this.AddonTitles = AddonTitles
   },
   mounted () {
     this.$f7ready((f7) => {

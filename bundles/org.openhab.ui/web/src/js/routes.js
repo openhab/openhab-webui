@@ -1,4 +1,3 @@
-import store from '@/js/store'
 import { authorize, isLoggedIn, enforceAdminForRoute } from '@/js/openhab/auth'
 
 import HomePage from '../pages/home.vue'
@@ -358,7 +357,6 @@ export default [
       },
       {
         path: 'addons',
-        redirect: '/addons/',
         routes: [
           {
             path: ':addonId',
