@@ -245,11 +245,6 @@ export default {
   },
   data () {
     return {
-      AddonTitles: AddonTitles,
-      AddonIcons: AddonIcons,
-      SuggestionLabels: AddonSuggestionLabels,
-      TabNames: Object.assign({ main: 'Add-on Store' }, AddonTitles),
-
       currentTab: 'main',
       services: null,
       suggestions: [],
@@ -351,6 +346,12 @@ export default {
         this.$refs.storeSearchbar.f7Searchbar.$inputEl.focus()
       })
     }
+  },
+  created () {
+    this.AddonTitles = AddonTitles
+    this.AddonIcons = AddonIcons
+    this.SuggestionLabels = AddonSuggestionLabels
+    this.TabNames = Object.assign({ main: 'Add-on Store' }, AddonTitles)
   }
 }
 </script>

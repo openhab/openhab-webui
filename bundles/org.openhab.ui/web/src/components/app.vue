@@ -291,9 +291,6 @@ export default {
     }
 
     return {
-      AddonIcons: AddonIcons,
-      AddonTitles: AddonTitles,
-
       init: false,
       ready: false,
 
@@ -639,6 +636,9 @@ export default {
     }
   },
   created () {
+    this.AddonIcons = AddonIcons
+    this.AddonTitles = AddonTitles
+
     // special treatment for this option because it's needed to configure the app initialization
     this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.pagetransition') || 'default'
     // tell the app to go fullscreen (if the OHApp is supported)
