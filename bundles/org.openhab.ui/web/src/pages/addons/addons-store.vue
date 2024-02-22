@@ -11,6 +11,10 @@
         <developer-dock-icon />
       </f7-nav-right>
     </f7-navbar>
+    <f7-toolbar v-if="$f7.width < 1024" tabbar labels bottom>
+      <f7-link tab-link :tab-link-active="$store.state.pagePath === '/addons/'" href="/addons/" icon-ios="f7:bag_fill" icon-aurora="f7:bag_fill" icon-md="f7:bag_fill" />
+      <f7-link v-for="section in Object.keys(AddonTitles)" :key="section" tab-link :tab-link-active="$store.state.pagePath === `/addons/${section}/`" :href="`/addons/${section}`" :icon-ios="`f7:${AddonIcons[section]}`" :icon-aurora="`f7:${AddonIcons[section]}`" :icon-md="`f7:${AddonIcons[section]}`" />
+    </f7-toolbar>
 
     <f7-block class="no-padding" style="margin-top: 0">
       <f7-searchbar
@@ -232,7 +236,7 @@
 <script>
 import AddonStoreMixin from './addon-store-mixin'
 import AddonsSection from '@/components/addons/addons-section.vue'
-import { AddonTitles, AddonSuggestionLabels } from '@/assets/addon-store'
+import { AddonTitles, AddonIcons, AddonSuggestionLabels } from '@/assets/addon-store'
 
 export default {
   mixins: [AddonStoreMixin],
@@ -242,6 +246,7 @@ export default {
   data () {
     return {
       AddonTitles: AddonTitles,
+      AddonIcons: AddonIcons,
       SuggestionLabels: AddonSuggestionLabels,
       TabNames: Object.assign({ main: 'Add-on Store' }, AddonTitles),
 
