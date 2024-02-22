@@ -1,6 +1,6 @@
 <template>
   <f7-list inline-labels no-hairlines-md v-if="show">
-    <f7-list-item :disabled="!editable" title="Semantic Class" class="align-popup-list-item" :key="'class-' + semanticClass" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
+    <f7-list-item :disabled="!editable" title="Semantic Class" class="aligned-smart-select" :key="'class-' + semanticClass" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
       <select name="select-semantics-class" @change="update('class', $event.target.value)">
         <option v-if="!hideNone" value="">
           None
@@ -22,8 +22,8 @@
         </optgroup>
       </select>
     </f7-list-item>
-    <f7-list-item v-if="currentSemanticType && !hideType" :disabled="!editable" title="Semantic Type" class="align-popup-list-item" :after="currentSemanticType" />
-    <f7-list-item v-if="currentSemanticType === 'Point'" :disabled="!editable" title="Semantic Property" class="align-popup-list-item" :key="'property-' + semanticProperty" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
+    <f7-list-item v-if="currentSemanticType && !hideType" :disabled="!editable" title="Semantic Type" class="aligned-smart-select" :after="currentSemanticType" />
+    <f7-list-item v-if="currentSemanticType === 'Point'" :disabled="!editable" title="Semantic Property" class="aligned-smart-select" :key="'property-' + semanticProperty" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
       <select name="select-semantics-property" :value="semanticProperty" @change="update('property', $event.target.value)">
         <option :value="''">
           None
