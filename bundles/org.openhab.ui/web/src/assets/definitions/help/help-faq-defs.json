@@ -2,7 +2,7 @@
   {
     "title" : "Access openHAB from a remote network",
     "goto" : {
-      "target" : "/addons/misc-openhabcloud",
+      "target": "/addons/misc/misc-openhabcloud",
       "text" : "the openHAB Cloud Connector"
     },
     "text" : "The most secure ways to enable remote access to your openHAB instance are through a VPN or a service such as <a class=\"external\" target=\"_blank\" href=\"https://myopenhab.org/\">myopenhab.org</a> with the openHAB Cloud Connector. <strong>DO NOT</strong> expose your openHAB instance directly to the internet, that is insecure",
@@ -50,7 +50,7 @@
   {
     "title" : "Get openHAB notifications",
     "goto" : {
-      "target" : "/addons/misc-openhabcloud",
+      "target": "/addons/misc/misc-openhabcloud",
       "text" : "the openHAB Cloud Connector"
     },
     "text" : "There are many different add-ons that will allow you to send messages from openHAB to other devices. One easy and secure method is to use <a class=\"external\" target=\"_blank\" href=\"https://myopenhab.org/\">myopenhab.org</a> with the openHAB Cloud Connector.",

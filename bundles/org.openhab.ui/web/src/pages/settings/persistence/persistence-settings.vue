@@ -35,7 +35,7 @@
             :link="persistence.id"
             :title="persistence.label"
             :footer="persistence.id" />
-          <f7-list-item link="/addons/other/" no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" subtitle="Install more persistence add-ons">
+          <f7-list-item link="/addons/persistence/" no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" subtitle="Install more persistence add-ons">
             <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
           </f7-list-item>
         </f7-list>
@@ -47,7 +47,7 @@
       <f7-row class="display-flex justify-content-center">
         <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/persistence`" target="_blank" v-t="'home.overview.button.documentation'" />
         <span style="width: 8px" />
-        <f7-button large fill color="blue" href="/addons/other/">
+        <f7-button large fill color="blue" href="/addons/persistence/">
           Install a persistence add-on
         </f7-button>
       </f7-row>
