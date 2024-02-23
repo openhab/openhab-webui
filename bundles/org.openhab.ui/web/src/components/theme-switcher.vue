@@ -36,13 +36,13 @@
     </f7-row>
     <f7-block-title v-t="'about.navigationBarsStyle'" />
     <f7-row>
-      <f7-col width="50" class="nav-bars-picker nav-bars-picker-fill" @click="setBarsStyle('filled')">
-        <div class="demo-navbar" />
-        <f7-checkbox checked disabled v-if="barsStyle === 'filled'" />
-      </f7-col>
       <f7-col width="50" class="nav-bars-picker nav-bars-picker-empty" @click="setBarsStyle('light')">
         <div class="demo-navbar" />
         <f7-checkbox checked disabled v-if="barsStyle === 'light'" />
+      </f7-col>
+      <f7-col width="50" class="nav-bars-picker nav-bars-picker-fill" @click="setBarsStyle('filled')">
+        <div class="demo-navbar" />
+        <f7-checkbox checked disabled v-if="barsStyle === 'filled'" />
       </f7-col>
     </f7-row>
 
@@ -147,7 +147,7 @@ export default {
       return localStorage.getItem('openhab.ui:theme.dark') || 'auto'
     },
     barsStyle () {
-      return localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.ios || this.$f7.darkTheme || this.darkMode === 'dark') ? 'light' : 'filled')
+      return localStorage.getItem('openhab.ui:theme.bars') || 'light'
     },
     homePageNavbarStyle () {
       return localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
