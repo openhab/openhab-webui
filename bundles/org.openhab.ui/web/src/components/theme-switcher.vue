@@ -36,13 +36,13 @@
     </f7-row>
     <f7-block-title v-t="'about.navigationBarsStyle'" />
     <f7-row>
-      <f7-col width="50" class="nav-bars-picker nav-bars-picker-fill" @click="setBarsStyle('filled')">
-        <div class="demo-navbar" />
-        <f7-checkbox checked disabled v-if="barsStyle === 'filled'" />
-      </f7-col>
       <f7-col width="50" class="nav-bars-picker nav-bars-picker-empty" @click="setBarsStyle('light')">
         <div class="demo-navbar" />
         <f7-checkbox checked disabled v-if="barsStyle === 'light'" />
+      </f7-col>
+      <f7-col width="50" class="nav-bars-picker nav-bars-picker-fill" @click="setBarsStyle('filled')">
+        <div class="demo-navbar" />
+        <f7-checkbox checked disabled v-if="barsStyle === 'filled'" />
       </f7-col>
     </f7-row>
 
