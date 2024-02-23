@@ -59,7 +59,7 @@
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Filters
               </f7-block-title>
-              <div v-for="ft in filterTypes" :key="ft.name">
+              <div v-for="ft in FilterTypes" :key="ft.name">
                 <f7-block-title>
                   {{ ft.label }}
                 </f7-block-title>
@@ -145,7 +145,7 @@
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Filters
               </f7-block-title>
-              <div v-for="ft in filterTypes" :key="ft.name">
+              <div v-for="ft in FilterTypes" :key="ft.name">
                 <f7-block-title>
                   {{ ft.label }}
                 </f7-block-title>
@@ -224,23 +224,16 @@
 </style>
 
 <script>
-import DirtyMixin from '../dirty-mixin'
 import YAML from 'yaml'
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
+
+import DirtyMixin from '../dirty-mixin'
+import { FilterTypes, PredefinedStrategies } from '@/assets/definitions/persistence'
 import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
 import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
-import cloneDeep from 'lodash/cloneDeep'
-import fastDeepEqual from 'fast-deep-equal/es6'
-
-const filterInvertedParameter = {
-  advanced: false,
-  description: 'Whether to invert the above filter, i.e. persist values that do not equal the above values or are outside of the specified range',
-  label: 'Inverted',
-  name: 'inverted',
-  required: false,
-  type: 'BOOLEAN'
-}
 
 export default {
   mixins: [DirtyMixin],
@@ -262,121 +255,6 @@ export default {
       currentCronStrategy: null,
       currentFilter: null,
 
-      predefinedStrategies: ['everyChange', 'everyUpdate', 'restoreOnStartup', 'forecast'],
-      // Filter configuration is completely based on these definitions, when adding new filters, no code needs to be updated.
-      // However, please note that some validation and checks are in place for some filter types in editFilter(), saveFilter() and filter-popup.vue
-      filterTypes: [
-        {
-          name: 'thresholdFilters',
-          label: 'Threshold',
-          configDescriptionParameters: [
-            {
-              advanced: false,
-              description: 'Difference to last stored value that must be exceeded to persist a new value',
-              label: 'Value',
-              name: 'value',
-              required: true,
-              type: 'DECIMAL'
-            },
-            {
-              advanced: false,
-              description: 'Whether the difference is relative (i.e. in percent)',
-              label: 'Relative',
-              name: 'relative',
-              required: false,
-              type: 'BOOLEAN'
-            },
-            {
-              advanced: false,
-              description: 'Unit of the given value, only used for UoM Items and if relative is disabled',
-              label: 'Unit',
-              name: 'unit',
-              required: false,
-              type: 'STRING'
-            }
-          ],
-          footerFn: (f) => f.relative ? f.value + ' %' : (f.unit ? f.value + ' ' + f.unit : f.value)
-        },
-        {
-          name: 'timeFilters',
-          label: 'Time',
-          configDescriptionParameters: [
-            {
-              advanced: false,
-              description: 'Amount of time that must have passed since the last value has been persisted',
-              label: 'Value',
-              name: 'value',
-              required: true,
-              type: 'DECIMAL'
-            },
-            {
-              advanced: false,
-              description: 'Time unit (defaults to seconds)',
-              label: 'Unit',
-              limitToOptions: true,
-              multiple: false,
-              name: 'unit',
-              options: [
-                { label: 'seconds', value: 's' },
-                { label: 'minutes', value: 'm' },
-                { label: 'hours', value: 'h' },
-                { label: 'days', value: 'd' }
-              ],
-              required: false,
-              type: 'STRING'
-            }
-          ],
-          footerFn: (f) => f.value + ' ' + (f.unit || 's')
-        },
-        {
-          name: 'equalsFilters',
-          label: 'Equals/Not Equals',
-          configDescriptionParameters: [
-            {
-              advanced: false,
-              description: 'Enter values separated by comma (use point <code>.</code> as decimal point), e.g. <code>one, two, three</code>, to be persisted',
-              label: 'Values',
-              name: 'values',
-              required: true,
-              type: ''
-            },
-            filterInvertedParameter
-          ],
-          footerFn: (f) => (f.inverted === true ? 'not ' : '') + 'equals ' + f.values.join(', ')
-        },
-        {
-          name: 'includeFilters',
-          label: 'Include/Exclude',
-          configDescriptionParameters: [
-            {
-              advanced: false,
-              description: 'Lower bound of the range of values to be persisted',
-              label: 'Lower Bound',
-              name: 'lower',
-              required: true,
-              type: 'DECIMAL'
-            },
-            {
-              advanced: false,
-              description: 'Upper bound of the range of values to be persisted',
-              label: 'Upper Bound',
-              name: 'upper',
-              required: true,
-              type: 'DECIMAL'
-            },
-            {
-              advanced: false,
-              description: 'Unit of the given bounds, only used for UoM Items',
-              label: 'Unit',
-              name: 'unit',
-              required: false,
-              type: 'STRING'
-            },
-            filterInvertedParameter
-          ],
-          footerFn: (f) => (f.inverted === true ? ']' : '[') + f.lower + ';' + f.upper + (f.inverted === true ? '[' : ']' + (f.unit ? ' ' + f.unit : ''))
-        }
-      ],
       notEditableMgs: 'This persistence configuration is not editable because it has been provisioned from a file.'
     }
   },
@@ -385,12 +263,12 @@ export default {
       return this.newPersistence || (this.persistence && this.persistence.editable === true)
     },
     strategies () {
-      return this.predefinedStrategies.concat(this.persistence.cronStrategies.map(cs => cs.name))
+      return this.PredefinedStrategies.concat(this.persistence.cronStrategies.map(cs => cs.name))
     },
     filters () {
       let names = []
-      for (let i = 0; i < this.filterTypes.length; i++) {
-        const filterTypeName = this.filterTypes[i].name
+      for (let i = 0; i < this.FilterTypes.length; i++) {
+        const filterTypeName = this.FilterTypes[i].name
         if (this.persistence[filterTypeName]) names = names.concat(this.persistence[filterTypeName].map((f) => f.name))
       }
       return names
@@ -398,7 +276,7 @@ export default {
   },
   watch: {
     persistence: {
-      handler: function (newPersistence, oldPersistence) {
+      handler: function () {
         if (!this.loading) { // ignore initial rule assignment
           this.dirty = !fastDeepEqual(this.persistence, this.savedPersistence)
         }
@@ -441,8 +319,9 @@ export default {
           }
         ]
       }
-      // Dynamically add empty arrays for all filter types defined in the filterTypes object
-      this.filterTypes.forEach((ft) => { this.persistence[ft.name] = [] })
+      // Dynamically add empty arrays for all filter types defined in the FilterTypes object
+      this.FilterTypes.forEach((ft) => { this.persistence[ft.name] = [] })
+      this.savedPersistence = cloneDeep(this.persistence)
       this.ready = true
     },
     load () {
@@ -452,8 +331,8 @@ export default {
       this.$oh.api.get('/rest/persistence/' + this.serviceId).then((data) => {
         this.$set(this, 'persistence', data)
         this.savedPersistence = cloneDeep(this.persistence)
-        // Ensure arrays for all filter types defined in the filterTypes object are existent
-        this.filterTypes.forEach((ft) => {
+        // Ensure arrays for all filter types defined in the FilterTypes object are existent
+        this.FilterTypes.forEach((ft) => {
           if (!this.persistence[ft.name]) this.persistence[ft.name] = []
         })
         this.loading = false
@@ -573,7 +452,7 @@ export default {
     },
     saveCronStrategy (index, cronStrategy) {
       const idx = this.persistence.cronStrategies.findIndex((cs) => cs.name === cronStrategy.name)
-      if ((index === null && idx !== -1) || this.predefinedStrategies.includes(cronStrategy.name)) {
+      if ((index === null && idx !== -1) || this.PredefinedStrategies.includes(cronStrategy.name)) {
         this.$f7.dialog.alert('A (cron) strategy with the same name already exists!')
         return
       }
@@ -672,7 +551,7 @@ export default {
         cronStrategies: this.persistence.cronStrategies,
         defaultStrategies: this.persistence.defaults
       }
-      this.filterTypes.forEach((ft) => {
+      this.FilterTypes.forEach((ft) => {
         toCode[ft.name] = this.persistence[ft.name]
       })
       this.persistenceYaml = YAML.stringify(toCode)
@@ -684,7 +563,7 @@ export default {
         this.$set(this.persistence, 'configs', updatedPersistence.configurations)
         this.$set(this.persistence, 'cronStrategies', updatedPersistence.cronStrategies)
         this.$set(this.persistence, 'defaults', updatedPersistence.defaultStrategies)
-        this.filterTypes.forEach((ft) => {
+        this.FilterTypes.forEach((ft) => {
           this.$set(this.persistence, ft.name, updatedPersistence[ft.name])
         })
         return true
@@ -704,6 +583,10 @@ export default {
         }
       }
     }
+  },
+  created () {
+    this.PredefinedStrategies = PredefinedStrategies
+    this.FilterTypes = FilterTypes
   }
 }
 </script>
