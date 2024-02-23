@@ -1,12 +1,12 @@
 <template>
   <div>
-    <rule-general-settings v-if="createMode || isScriptRule" :ready="true" :rule="rule" :createMode="createMode" :inScriptEditor="true" />
-    <f7-block class="block-narrow">
+    <rule-general-settings v-if="createMode || isScriptRule" :ready="true" :rule="rule" :createMode="createMode" :inScriptEditor="true" style="margin-bottom: -15px" />
+    <f7-block class="block-narrow" style="margin-top: 0">
       <f7-col v-if="!createMode && languages">
-        <f7-list inline-labels>
+        <f7-list inline-labels style="margin-top: 0">
           <template v-if="module && !isScriptRule">
-            <f7-list-input :label="scriptType + ' Title'" type="text" :value="module.label" :placeholder="suggestedModuleTitle(module, moduleType)" @input="module.label = $event.target.value" :disabled="!editable" :clear-button="editable" />
-            <f7-list-input label="Description" type="text" :value="module.description" :placeholder="suggestedModuleDescription(module, moduleType)" @input="module.description = $event.target.value" :disabled="!editable" :clear-button="editable" />
+            <f7-list-input :label="scriptType + ' Title'" type="text" :value="module.label" :placeholder="suggestedModuleTitle(module, moduleType)" @input="$set(module, 'label', $event.target.value)" :disabled="!editable" :clear-button="editable" />
+            <f7-list-input label="Description" type="text" :value="module.description" :placeholder="suggestedModuleDescription(module, moduleType)" @input="$set(module, 'description', $event.target.value)" :disabled="!editable" :clear-button="editable" />
           </template>
           <f7-list-item title="Scripting Language" class="aligned-smart-select" :disabled="!editable" :key="mode" smart-select :smart-select-params="{openIn: 'sheet', closeOnSelect: true}">
             <select @change="$emit('newLanguage', $event.target.value)">
