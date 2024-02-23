@@ -218,7 +218,7 @@ export default {
       }
     },
     inboxCount () {
-      return this.inbox.filter((e) => e.flag !== 'IGNORED').length
+      return this.inbox.length
     },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'

@@ -158,7 +158,7 @@ export default {
       this.loading = true
       this.$oh.api.get('/rest/inbox').then((data) => {
         this.loading = false
-        this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.bindingId && e.flag !== 'IGNORED')
+        this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.bindingId)
         const searchbar = this.$refs.searchbar.$el.f7Searchbar
         const filterQuery = searchbar.query
         this.initSearchbar = false
