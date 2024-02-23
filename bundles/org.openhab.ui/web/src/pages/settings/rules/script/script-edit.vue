@@ -509,20 +509,12 @@ export default {
       }
 
       if (this.editable && this.dirty) {
-        this.$f7.dialog.create({
-          title: 'Changes not saved yet',
-          text: 'Do you want to save the changes before running the script?',
-          buttons: [
-            {
-              text: 'Skip',
-              onClick: () => run(false)
-            },
-            {
-              text: 'Save',
-              onClick: () => run(true)
-            }
-          ]
-        }).open()
+        this.$f7.dialog.confirm(
+          'Do you want to save the changes before running the script?',
+          'Changes have not been saved',
+          () => run(this),
+          () => {}
+        )
       } else {
         run(false)
       }
