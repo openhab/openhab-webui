@@ -19,7 +19,7 @@
     </f7-navbar>
 
     <template v-if="ready">
-      <f7-toolbar v-if="ready && !createMode" position="bottom">
+      <f7-toolbar v-if="!createMode" position="bottom">
         <span class="display-flex flex-direction-row align-items-center">
           <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" color="orange" @click="toggleDisabled" />
           <f7-link v-if="!$theme.aurora" :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" color="blue" @click="runNow" />
@@ -134,9 +134,6 @@ export default {
   props: ['ruleId', 'moduleId', 'createMode'],
   data () {
     return {
-      GRAALJS_MIME_TYPE: 'application/javascript',
-      NASHORNJS_MIME_TYPE: 'application/javascript;version=ECMAScript-5.1',
-
       ready: false,
       loading: false,
       isScriptRule: false,
@@ -261,7 +258,8 @@ export default {
       this.dirty = this.scriptDirty || this.modeDirty || this.ruleDirty || this.currentModuleDirty
     },
     resetDirty () {
-      this.scriptDirty = this.modeDirty = this.ruleDirty = this.currentModuleDirty = this.dirty = false
+      this.scriptDirty = this.modeDirty = this.ruleDirty = this.currentModuleDirty = false
+      this.calculateDirty()
     },
     onPageAfterIn () {
       if (this.ready) return
@@ -496,7 +494,7 @@ export default {
         closeTimeout: 2000
       }).open()
 
-      const savePromise = (this.editable && (this.dirty || this.isBlockly)) ? this.save(true) : Promise.resolve()
+      const savePromise = (this.editable && this.dirty) ? this.save(true) : Promise.resolve()
 
       savePromise.then(() => {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
@@ -591,6 +589,10 @@ export default {
         }
       }
     }
+  },
+  created () {
+    this.GRAALJS_MIME_TYPE = 'application/javascript'
+    this.NASHORNJS_MIME_TYPE = 'application/javascript;version=ECMAScript-5.1'
   }
 }
 </script>
