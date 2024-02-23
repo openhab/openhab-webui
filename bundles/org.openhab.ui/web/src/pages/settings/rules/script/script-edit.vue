@@ -488,24 +488,44 @@ export default {
           closeTimeout: 2000
         }).open()
       }
-      this.$f7.toast.create({
-        text: 'Running ' + (this.isScriptRule ? 'script' : 'rule'),
-        destroyOnClose: true,
-        closeTimeout: 2000
-      }).open()
 
-      const savePromise = (this.editable && this.dirty) ? this.save(true) : Promise.resolve()
+      const run = (saveBefore) => {
+        const savePromise = saveBefore ? this.save(true) : Promise.resolve()
+        savePromise.then(() => {
+          this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').then(
+            this.$f7.toast.create({
+              text: 'Running ' + (this.isScriptRule ? 'script' : 'rule'),
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+          ).catch((err) => {
+            this.$f7.toast.create({
+              text: 'Error while running: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+          })
+        }).catch((e) => { if (e !== 'saveOnCodePreviewRejected') { throw (e) } })
+      }
 
-      savePromise.then(() => {
-        this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
-          this.$f7.toast.create({
-            text: 'Error while running: ' + err,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        })
-      })
-        .catch((e) => { if (e !== 'saveOnCodePreviewRejected') { throw (e) } })
+      if (this.editable && this.dirty) {
+        this.$f7.dialog.create({
+          title: 'Changes not saved yet',
+          text: 'Do you want to save the changes before running the script?',
+          buttons: [
+            {
+              text: 'Skip',
+              onClick: () => run(false)
+            },
+            {
+              text: 'Save',
+              onClick: () => run(true)
+            }
+          ]
+        }).open()
+      } else {
+        run(false)
+      }
     },
     deleteRule () {
       this.$f7.dialog.confirm(
