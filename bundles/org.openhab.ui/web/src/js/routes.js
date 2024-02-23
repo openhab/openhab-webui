@@ -1,10 +1,10 @@
-import store from '@/js/store'
 import { authorize, isLoggedIn, enforceAdminForRoute } from '@/js/openhab/auth'
 
 import HomePage from '../pages/home.vue'
 import NotFoundPage from '../pages/not-found.vue'
 import PageViewPage from '../pages/page/page-view.vue'
 import AnalyzerPopup from '../pages/analyzer/analyzer-popup.vue'
+import { AddonTitles } from '@/assets/addon-store'
 
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '../pages/about.vue')
 const UserProfilePage = () => import(/* webpackChunkName: "profile-page" */ '../pages/profile.vue')
@@ -357,8 +357,6 @@ export default [
       },
       {
         path: 'addons',
-        beforeEnter: [enforceAdminForRoute],
-        async: loadAsync(AddonsStorePage),
         routes: [
           {
             path: ':addonId',
@@ -380,34 +378,20 @@ export default [
     path: '/addons/',
     beforeEnter: [enforceAdminForRoute],
     async: loadAsync(AddonsStorePage),
+    tabs: [
+      {
+        path: '/',
+        id: 'main'
+      }
+    ].concat(Object.keys(AddonTitles).map((section) => {
+      return {
+        path: section,
+        id: section
+      }
+    })),
     routes: [
       {
-        path: 'bindings/',
-        beforeEnter: [enforceAdminForRoute],
-        async: loadAsync(AddonsStorePage, { initialTab: 'bindings' })
-      },
-      {
-        path: 'automation/',
-        beforeEnter: [enforceAdminForRoute],
-        async: loadAsync(AddonsStorePage, { initialTab: 'automation' })
-      },
-      {
-        path: 'ui/',
-        beforeEnter: [enforceAdminForRoute],
-        async: loadAsync(AddonsStorePage, { initialTab: 'ui' })
-      },
-      {
-        path: 'other/',
-        beforeEnter: [enforceAdminForRoute],
-        async: loadAsync(AddonsStorePage, { initialTab: 'other' })
-      },
-      {
-        path: 'search/',
-        beforeEnter: [enforceAdminForRoute],
-        async: loadAsync(AddonsStorePage, { initialTab: 'search' })
-      },
-      {
-        path: ':addonId',
+        path: ':section/:addonId',
         beforeEnter: [enforceAdminForRoute],
         async: loadAsync(AddonDetailsPage)
       }

@@ -1,11 +1,44 @@
 export const AddonIcons = {
-  automation: 'wand_stars',
   binding: 'circle_grid_hex_fill',
-  persistence: 'download_circle',
+  automation: 'wand_stars',
   transformation: 'function',
-  misc: 'rectangle_3_offgrid',
+  persistence: 'download_circle',
   ui: 'play_rectangle',
+  misc: 'rectangle_3_offgrid',
   voice: 'chat_bubble_2_fill'
+}
+
+export const AddonTitles = {
+  binding: 'Bindings',
+  automation: 'Automation',
+  transformation: 'Transformations',
+  persistence: 'Persistence',
+  ui: 'User Interfaces',
+  misc: 'System Integrations',
+  voice: 'Voice & Speech'
+}
+
+export const AddonSuggestionLabels = {
+  binding: {
+    title: 'Suggested Bindings',
+    subtitle: 'Suggested bindings, identified from network scan'
+  },
+  misc: {
+    title: 'Suggested System Integration Add-ons',
+    subtitle: 'Suggested system integrations, identified from network scan'
+  },
+  persistence: {
+    title: 'Suggested Persistence Services',
+    subtitle: 'Suggested backend connectors to store historical data, identified from network scan'
+  },
+  transformation: {
+    title: 'Suggested Transformation Add-ons',
+    subtitle: 'Suggested transformation add-ons to translate raw values into processed or human-readable representations, identified from network scan'
+  },
+  voice: {
+    title: 'Suggested Voice &amp; Speech Add-ons',
+    subtitle: 'Convert between text and speech, interpret human language queries'
+  }
 }
 
 export const ContentTypes = {
