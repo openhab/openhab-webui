@@ -84,7 +84,7 @@
 <script>
 import DirtyMixin from '../dirty-mixin'
 import TransformationGeneralSettings from '@/pages/settings/transformations/transformation-general-settings'
-import TransformationDefinitions from '@/assets/definitions/transformations.js'
+import { CodeSnippets, EditorModes } from '@/assets/definitions/transformations.js'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
@@ -180,7 +180,7 @@ export default {
       }
 
       // Insert code example if available
-      if (TransformationDefinitions.SNIPPETS[this.transformation.type.toUpperCase()]) this.transformation.configuration.function = TransformationDefinitions.SNIPPETS[this.transformation.type.toUpperCase()]
+      if (CodeSnippets[this.transformation.type.toLowerCase()]) this.transformation.configuration.function = CodeSnippets[this.transformation.type.toLowerCase()]
 
       this.$oh.api.put('/rest/transformations/' + this.transformation.uid, this.transformation).then(() => {
         this.$f7.toast.create({
@@ -197,7 +197,7 @@ export default {
 
       this.$oh.api.get('/rest/transformations/' + this.transformationId).then((data) => {
         this.$set(this, 'transformation', data)
-        this.editorMode = TransformationDefinitions.EDITOR_MODES[this.transformation.type.toUpperCase()] || this.transformation.type
+        this.editorMode = EditorModes[this.transformation.type.toLowerCase()] || this.transformation.type
         this.loading = false
         this.ready = true
       })
