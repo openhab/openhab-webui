@@ -291,6 +291,28 @@ export default {
               }
             },
             {
+              text: 'Show equivalent Thing file configuration (basic properties)',
+              color: 'blue',
+              bold: true,
+              onClick: () => {
+                let properties = Object.entries(entry.properties).map(([k, v]) => `${k}="${v}"`)
+                let explanatoryText = 'NOTE: If this is a bridge, substitute <code>Thing</code> with <code>Bridge</code>' +
+                  '<p>All properties are show here, but you may not want to include them all in the file configuraiton. Refer to binding docs for this particular binding for more details.</p>'
+                let content = `<p><code>Thing ${entry.thingUID} "${entry.label}" [ ${properties} ]</code></p>`
+                this.$f7.dialog.create({
+                  title: 'Equivalent Thing file configuration',
+                  text: explanatoryText + content,
+                  cssClass: 'thing-file-configuration-dialog',
+                  buttons: [
+                    {
+                      text: 'Close',
+                      color: 'orange'
+                    }
+                  ]
+                }).open()
+              }
+            },
+            {
               text: (!ignored) ? 'Ignore' : 'Unignore',
               color: (!ignored) ? 'orange' : 'blue',
               onClick: () => {
