@@ -1,7 +1,7 @@
 <template>
   <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline class="item-details-navbar">
-      <f7-nav-right>
+      <f7-nav-right v-if="ready">
         <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
           {{ $theme.md ? '' : 'Edit' }}
         </f7-link>
@@ -169,7 +169,8 @@ export default {
   data () {
     return {
       item: {},
-      links: []
+      links: [],
+      ready: false
     }
   },
   computed: {
@@ -195,6 +196,7 @@ export default {
     load () {
       this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`).then((data) => {
         this.item = data
+        this.ready = true
         this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
       })
     },

@@ -1,8 +1,8 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar :title="createMode ? 'Create New Item': (editable ? 'Edit Item' : 'Item Details')" :back-link="editable ? 'Cancel': 'Back'">
+    <f7-navbar :title="pageTitle" :back-link="editable ? 'Cancel': 'Back'">
       <f7-nav-right v-show="ready">
-        <f7-link v-if="!editable" icon-f7="lock_fill" icon-only tooltip="This Item is not editable through the UI" />
+        <f7-link v-if="!editable" icon-f7="lock_fill" icon-only :tooltip="notEditableMsg" />
         <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
         <f7-link v-else @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
@@ -23,7 +23,7 @@
         <f7-block class="block-narrow" v-if="item.name || item.created === false">
           <f7-col v-if="!editable">
             <div class="padding-left">
-              Note: {{ notEditableMgs }}
+              Note: {{ notEditableMsg }}
             </div>
           </f7-col>
           <f7-col>
@@ -39,7 +39,7 @@
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMgs" />
+        <f7-icon v-if="!editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
         <editor class="item-code-editor" mode="application/vnd.openhab.item+yaml" :value="itemYaml" @input="onEditorInput" :readOnly="!editable" />
       </f7-tab>
     </f7-tabs>
@@ -92,12 +92,21 @@ export default {
       semanticProperty: '',
       pendingTag: '',
       currentTab: 'design',
-      notEditableMgs: 'This Item is not editable because it has been provisioned from a file.'
+      notEditableMsg: 'This Item is not editable because it has been provisioned from a file.'
     }
   },
   computed: {
     editable () {
       return this.createMode || (this.item && this.item.editable)
+    },
+    pageTitle () {
+      if (this.createMode) {
+        return 'Create New Item'
+      }
+      if (!this.ready) {
+        return ''
+      }
+      return this.editable ? 'Edit Item' : 'Item Details'
     }
   },
   watch: {
