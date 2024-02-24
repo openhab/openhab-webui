@@ -9,9 +9,8 @@
       <f7-row>
         <f7-col class="margin-left">
           <div class="addon-header">
-            <f7-link class="logo-container" :href="docLinkUrl" external target="_blank">
-              <f7-icon v-show="!logoLoaded" size="100" color="gray" :f7="addonIcon" style="opacity: 0.2; position: absolute;" />
-              <img v-if="!logoError" class="logo lazy" :style="{ visibility: logoLoaded ? 'visible': 'hidden' }" ref="logo" :data-src="imageUrl">
+            <f7-link :href="docLinkUrl" external target="_blank">
+              <addon-logo class="logo-container" :addon="addon" size="100" />
             </f7-link>
             <div class="addon-header-content">
               <div class="addon-header-title">
@@ -181,13 +180,14 @@
 
 <script>
 import AddonStoreMixin from './addon-store-mixin'
-import { AddonIcons, ContentTypes, Formats } from '@/assets/addon-store'
 import AddonStatsLine from '@/components/addons/addon-stats-line.vue'
 import AddonInfoTable from '@/components/addons/addon-info-table.vue'
+import AddonLogo from '@/components/addons/addon-logo.vue'
 
 export default {
   mixins: [AddonStoreMixin],
   components: {
+    AddonLogo,
     AddonStatsLine,
     AddonInfoTable
   },
@@ -196,9 +196,6 @@ export default {
     return {
       addon: null,
       ready: false,
-      logoLoaded: false,
-      logoError: false,
-      addonIcon: null,
       descriptionReady: false,
       parsedDescription: '',
       descriptionExpanded: false
@@ -215,13 +212,6 @@ export default {
     serviceId () {
       if (!this.addon) return null
       return (this.addon.uid.indexOf(':') > 0) ? this.addon.uid.substring(0, this.addon.uid.indexOf(':')) : undefined
-    },
-    imageUrl () {
-      if (!this.addon) return null
-      if (this.addon.imageLink) return this.addon.imageLink.replace(/^\/\//, 'https://')
-      let docsBranch = 'final'
-      if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
-      return `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/images/addons/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}.png`
     },
     addonDescription () {
       if (!this.descriptionReady) return null
@@ -263,19 +253,11 @@ export default {
       this.$oh.api.get('/rest/addons/' + this.addonId + (serviceId ? '?serviceId=' + serviceId : '')).then((data) => {
         this.resetPending()
         this.$set(this, 'addon', data)
-        this.addonIcon = AddonIcons[this.addon.type]
         this.ready = true
         this.processDescription()
         this.startEventSource()
 
         setTimeout(() => {
-          this.$$(this.$refs.logo).once('lazy:loaded', (e) => {
-            console.log(this.addon.id + ' logo lazy loaded')
-            this.logoLoaded = true
-          })
-          this.$$(this.$refs.logo).once('lazy:error', (e) => {
-            this.logoError = true
-          })
           this.$f7.lazy.create('.page-addon-details')
         })
       })
