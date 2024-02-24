@@ -342,9 +342,11 @@ export default {
     clearSearch (searchbar, previousQuery) {
       this.$refs.storeSearchbar.f7Searchbar.$inputEl.val('')
       this.$set(this, 'searchResults', null)
-      this.$nextTick(() => {
-        this.$refs.storeSearchbar.f7Searchbar.$inputEl.focus()
-      })
+      if (this.$device.desktop) {
+        this.$nextTick(() => {
+          this.$refs.storeSearchbar.f7Searchbar.$inputEl.focus()
+        })
+      }
     }
   },
   created () {
