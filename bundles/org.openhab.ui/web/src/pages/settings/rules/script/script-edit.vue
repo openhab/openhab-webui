@@ -30,11 +30,11 @@
                    :tooltip="rule.status.description" />
         </span>
         <span class="display-flex flex-direction-row align-items-center">
-        <f7-button v-if="isBlockly && !blocklyCodePreview" outline small class="no-ripple" style="margin-right: 5px; padding: 3px" :tooltip="'Block style'">
-          <select @change="setBlocklyRenderer($event)" style="text-align-last: center">
-            <option v-for="renderer in blocklyRenderers" :key="renderer" :selected="renderer === blocklyRenderer">{{ renderer }}</option>
-          </select>
-        </f7-button>
+          <f7-button v-if="isBlockly && !blocklyCodePreview" outline small class="no-ripple" style="margin-right: 5px; padding: 3px" :tooltip="'Block style'">
+            <select @change="setBlocklyRenderer($event)" style="text-align-last: center">
+              <option v-for="renderer in blocklyRenderers" :key="renderer" :selected="renderer === blocklyRenderer">{{ renderer }}</option>
+            </select>
+          </f7-button>
           <f7-button v-if="!createMode && isBlockly && !blocklyCodePreview" outline small :active="blocklyShowLabels" icon-f7="square_on_circle" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" style="margin-right: 5px" @click="toggleBlocklyItemLabelId" tooltip="Toggle to show either Item labels or IDs" />
           <f7-segmented v-if="!createMode && isBlockly" class="margin-right">
             <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" tooltip="Show blocks" />
