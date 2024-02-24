@@ -298,14 +298,15 @@ html
   --f7-dialog-width 80%
 
 // Align smart-select item with f7-list-input fields
-.aligned-smart-select
-  .item-title
-    // f7-input-item uses 35% for the item-title,
-    // but since their item-inner has less padding (16px vs 31px) on the left side, add those 15px difference
-    min-width calc(35% + 0.35*15px)
-  .item-after
-    width 100%
-    margin 0
-    padding 0
-    margin-left 8px
-    color var(--f7-input-text-color)
+@media (min-width 1024px)
+  .aligned-smart-select
+    .item-title
+      // f7-input-item uses 35% for the item-title,
+      // but since their item-inner has less padding (16px vs 31px) on the left side, add those 15px difference
+      min-width calc(35% + 0.35*15px)
+    .item-after
+      width 100%
+      margin 0
+      padding 0
+      margin-left 8px
+      color var(--f7-input-text-color)
