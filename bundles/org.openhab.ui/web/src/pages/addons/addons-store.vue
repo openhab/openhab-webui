@@ -1,12 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" ref="addonstore" class="page-addon-store">
-    <f7-navbar large :large-transparent="true" back-link="Back" class="store-nav">
-      <f7-nav-title-large class="store-title-large">
-        <span>{{ TabNames[currentTab] + (currentTab !== 'main') ? `${TabNames.main} ` : '' }}</span>
-      </f7-nav-title-large>
-      <f7-nav-title>
-        <span>{{ TabNames[currentTab] + (currentTab !== 'main') ? `${TabNames.main} ` : '' }}</span>
-      </f7-nav-title>
+    <f7-navbar large :large-transparent="false" back-link="Back" class="store-nav" 
+      :title="((currentTab === 'main' || $f7.width < 1024) ? '' : TabNames[currentTab] + ' ') + TabNames.main">
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
