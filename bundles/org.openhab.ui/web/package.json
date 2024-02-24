@@ -72,7 +72,7 @@
     "@jsep-plugin/object": "^1.2.1",
     "@jsep-plugin/regex": "^1.0.3",
     "@jsep-plugin/template": "^1.0.2",
-    "blockly": "^10.4.1",
+    "blockly": "^10.4.2",
     "cronstrue": "^1.100.0",
     "crypto-browserify": "^3.12.0",
     "dayjs": "^1.9.6",
