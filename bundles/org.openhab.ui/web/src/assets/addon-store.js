@@ -8,7 +8,7 @@ export const AddonIcons = {
   voice: 'chat_bubble_2_fill'
 }
 
-export const AddonTitles = {
+export const AddonTabs = {
   binding: 'Bindings',
   automation: 'Automation',
   transformation: 'Transformations',
@@ -16,6 +16,16 @@ export const AddonTitles = {
   ui: 'User Interfaces',
   misc: 'System Integrations',
   voice: 'Voice & Speech'
+}
+
+export const AddonTitles = {
+  binding: 'Binding Add-ons',
+  automation: 'Automation Add-ons',
+  transformation: 'Transformation Add-ons',
+  persistence: 'Persistence Add-ons',
+  ui: 'User Interface Add-ons',
+  misc: 'System Integration Add-ons',
+  voice: 'Voice & Speech Add-ons'
 }
 
 export const AddonSuggestionLabels = {

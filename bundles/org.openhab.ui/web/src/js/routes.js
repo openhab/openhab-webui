@@ -4,7 +4,7 @@ import HomePage from '../pages/home.vue'
 import NotFoundPage from '../pages/not-found.vue'
 import PageViewPage from '../pages/page/page-view.vue'
 import AnalyzerPopup from '../pages/analyzer/analyzer-popup.vue'
-import { AddonTitles } from '@/assets/addon-store'
+import { AddonTabs } from '@/assets/addon-store'
 
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '../pages/about.vue')
 const UserProfilePage = () => import(/* webpackChunkName: "profile-page" */ '../pages/profile.vue')
@@ -383,7 +383,7 @@ export default [
         path: '/',
         id: 'main'
       }
-    ].concat(Object.keys(AddonTitles).map((section) => {
+    ].concat(Object.keys(AddonTabs).map((section) => {
       return {
         path: section,
         id: section
