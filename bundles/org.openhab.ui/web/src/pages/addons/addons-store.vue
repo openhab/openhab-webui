@@ -119,7 +119,7 @@
           @addonButtonClick="addonButtonClick"
           :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType === 'application/vnd.openhab.uicomponent;type=blocks')"
           :install-action-text="'Add'"
-          :title="'Blockly Libraries'"
+          :title="'Block Libraries'"
           :subtitle="'Community extensions to the Blockly toolbox'" />
       </f7-tab>
 
