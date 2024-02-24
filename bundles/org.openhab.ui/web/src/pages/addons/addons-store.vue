@@ -11,8 +11,8 @@
         <developer-dock-icon />
       </f7-nav-right>
     </f7-navbar>
-    <f7-toolbar v-if="$f7.width < 1024" tabbar labels bottom>
-      <f7-link tab-link :tab-link-active="$store.state.pagePath === '/addons/'" href="/addons/" icon-ios="f7:bag_fill" icon-aurora="f7:bag_fill" icon-md="f7:bag_fill" />
+    <f7-toolbar v-if="$f7.width < 1024" tabbar bottom>
+      <f7-link tab-link :tab-link-active="$store.state.pagePath === '/addons/'" href="/addons/" icon-ios="f7:bag_fill" icon-aurora="f7:bag_fill" icon-md="material:shopping_bag" />
       <f7-link v-for="section in Object.keys(AddonTitles)" :key="section" tab-link :tab-link-active="$store.state.pagePath === `/addons/${section}/`" :href="`/addons/${section}`" :icon-ios="`f7:${AddonIcons[section]}`" :icon-aurora="`f7:${AddonIcons[section]}`" :icon-md="`f7:${AddonIcons[section]}`" />
     </f7-toolbar>
 
