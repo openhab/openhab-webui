@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" ref="addonstore" class="page-addon-store">
-    <f7-navbar large :large-transparent="false" back-link="Back" class="store-nav" :title="AddonTitles[currentTab] || 'Add-on Store'">
+    <f7-navbar large :large-transparent="false" back-link="Back" class="store-nav" :title-large="(AddonTitles[currentTab] || 'Add-on Store').replace(/Add-ons$/, '')" :title="AddonTitles[currentTab] || 'Add-on Store'">
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
@@ -146,7 +146,6 @@
           v-if="addons && officialAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
           :addons="unsuggestedAddons.filter((a) => a.type === 'misc')"
-          :title="'System Integrations'"
           :featured="['misc-openhabcloud', 'misc-homekit', 'misc-metrics']"
           :subtitle="'Integrate openHAB with external systems'" />
       </f7-tab>
@@ -198,7 +197,6 @@
           @addonButtonClick="addonButtonClick"
           :addons="unsuggestedAddons.filter((a) => a.type === 'voice')"
           :featured="['voice-googletts', 'voice-pollytts', 'voice-voicerss']"
-          :title="'Voice &amp; Speech'"
           :subtitle="'Convert between text and speech, interpret human language queries'" />
       </f7-tab>
     </f7-tabs>
