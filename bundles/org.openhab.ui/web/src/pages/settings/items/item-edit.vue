@@ -104,7 +104,9 @@ export default {
     item: {
       handler: function () {
         if (!this.loading) { // ignore changes during loading
-          this.dirty = !fastDeepEqual(this.item, this.savedItem)
+          const itemClone = cloneDeep(this.item)
+          delete itemClone.functionKey
+          this.dirty = !fastDeepEqual(itemClone, this.savedItem)
         }
       },
       deep: true
