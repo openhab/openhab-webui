@@ -37,7 +37,7 @@ export default function defineOHBlocks_Variables (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_store_value'] = function (block) {
+  javascriptGenerator.forBlock['oh_store_value'] = function (block) {
     let key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     let value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
@@ -72,7 +72,7 @@ export default function defineOHBlocks_Variables (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_get_value'] = function (block) {
+  javascriptGenerator.forBlock['oh_get_value'] = function (block) {
     let key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       const cacheType = block.getFieldValue('cacheType')
@@ -105,7 +105,7 @@ export default function defineOHBlocks_Variables (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_check_undefined_value'] = function (block) {
+  javascriptGenerator.forBlock['oh_check_undefined_value'] = function (block) {
     let key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       const cacheType = block.getFieldValue('cacheType')

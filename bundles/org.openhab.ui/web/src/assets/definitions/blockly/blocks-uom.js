@@ -26,7 +26,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_quantity_ext'] = function (block) {
+  javascriptGenerator.forBlock['oh_quantity_ext'] = function (block) {
     let value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_NONE)
     const unit = javascriptGenerator.valueToCode(block, 'unit', javascriptGenerator.ORDER_NONE)
     const inputType = blockGetCheckedInputType(block, 'value')
@@ -66,7 +66,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_quantity'] = function (block) {
+  javascriptGenerator.forBlock['oh_quantity'] = function (block) {
     if (isGraalJs) {
       return [generateQuantityCode(block, 'quantity'), 0]
     } else {
@@ -95,7 +95,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_quantity_arithmetic'] = function (block) {
+  javascriptGenerator.forBlock['oh_quantity_arithmetic'] = function (block) {
     if (isGraalJs) {
       const operand = block.getFieldValue('operand')
 
@@ -135,7 +135,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_quantity_compare'] = function (block) {
+  javascriptGenerator.forBlock['oh_quantity_compare'] = function (block) {
     if (isGraalJs) {
       const operand = block.getFieldValue('operand')
 
@@ -163,7 +163,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_quantity_to_unit'] = function (block) {
+  javascriptGenerator.forBlock['oh_quantity_to_unit'] = function (block) {
     const quantity = javascriptGenerator.valueToCode(block, 'quantity', javascriptGenerator.ORDER_NONE)
     const unit = javascriptGenerator.valueToCode(block, 'unit', javascriptGenerator.ORDER_NONE)
     if (isGraalJs) {

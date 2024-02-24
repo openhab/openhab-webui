@@ -23,7 +23,7 @@ export default function defineOHBlocks_HTTP (f7, scripts) {
     }
   }
 
-  javascriptGenerator['oh_httprequest'] = function (block) {
+  javascriptGenerator.forBlock['oh_httprequest'] = function (block) {
     const http = javascriptGenerator.provideFunction_(
       'http',
       ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.HTTP\');'])
@@ -59,7 +59,7 @@ export default function defineOHBlocks_HTTP (f7, scripts) {
     }
   }
 
-  javascriptGenerator['oh_script_dropdown'] = function (block) {
+  javascriptGenerator.forBlock['oh_script_dropdown'] = function (block) {
     let scriptName = block.getFieldValue('script')
     let code = scriptName
     return [code, javascriptGenerator.ORDER_NONE]
@@ -77,7 +77,7 @@ export default function defineOHBlocks_HTTP (f7, scripts) {
     }
   }
 
-  javascriptGenerator['oh_ping'] = function (block) {
+  javascriptGenerator.forBlock['oh_ping'] = function (block) {
     const actions = javascriptGenerator.provideFunction_(
       'actions',
       ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ping");'])

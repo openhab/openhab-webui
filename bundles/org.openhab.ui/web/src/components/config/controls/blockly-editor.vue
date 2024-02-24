@@ -1207,8 +1207,8 @@ export default {
       const workspaceSearch = new WorkspaceSearch(this.workspace)
       workspaceSearch.init()
 
-      Blockly.HSV_SATURATION = 0.45 // default
-      Blockly.HSV_VALUE = 0.65 // a little bit more contract for the different colors
+      Blockly.utils.colour.setHsvSaturation(0.45) // default
+      Blockly.utils.colour.setHsvValue(0.65) // a little bit more contrast for the different colors
 
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
@@ -1228,7 +1228,7 @@ export default {
       }
 
       this.registerLibraryCallbacks(libraryDefinitions)
-      const xml = Blockly.Xml.textToDom(this.blocks)
+      const xml = Blockly.utils.xml.textToDom(this.blocks)
       Blockly.Xml.domToWorkspace(xml, this.workspace)
       this.workspace.addChangeListener(this.onChange)
 

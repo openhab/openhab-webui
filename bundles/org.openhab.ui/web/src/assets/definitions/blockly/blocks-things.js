@@ -21,7 +21,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_thing'] = function (block) {
+  javascriptGenerator.forBlock['oh_thing'] = function (block) {
     const thingUid = block.getFieldValue('thingUid')
     let code = `'${thingUid}'`
     return [code, 0]
@@ -40,7 +40,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_getthing_state'] = function (block) {
+  javascriptGenerator.forBlock['oh_getthing_state'] = function (block) {
     const thingUid = javascriptGenerator.valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return [`things.getThing(${thingUid}).status`, 0]
