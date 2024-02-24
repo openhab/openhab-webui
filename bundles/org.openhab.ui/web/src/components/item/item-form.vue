@@ -174,8 +174,6 @@ export default {
   },
   mounted () {
     if (!this.item) return
-    if (!this.item.category) this.$set(this.item, 'category', '')
-    if (!this.item.groupNames) this.$set(this.item, 'groupNames', [])
     const categoryControl = this.$refs.category
     if (!categoryControl || !categoryControl.$el) return
     const inputElement = this.$$(categoryControl.$el).find('input')

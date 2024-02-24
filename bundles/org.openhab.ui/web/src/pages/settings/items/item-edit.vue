@@ -81,6 +81,7 @@ export default {
   data () {
     return {
       ready: false,
+      loading: false,
       item: {},
       savedItem: {},
       itemYaml: '',
@@ -102,7 +103,7 @@ export default {
   watch: {
     item: {
       handler: function () {
-        if (this.ready) { // ignore changes during loading
+        if (!this.loading) { // ignore changes during loading
           this.dirty = !fastDeepEqual(this.item, this.savedItem)
         }
       },
@@ -111,6 +112,26 @@ export default {
   },
   methods: {
     onPageAfterIn () {
+      this.load()
+      if (window) {
+        window.addEventListener('keydown', this.keyDown)
+      }
+    },
+    onPageBeforeOut () {
+      if (window) {
+        window.removeEventListener('keydown', this.keyDown)
+      }
+    },
+    keyDown (ev) {
+      if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
+        this.save()
+        ev.stopPropagation()
+        ev.preventDefault()
+      }
+    },
+    load () {
+      if (this.loading) return
+      this.loading = true
       if (this.createMode) {
         const newItem = {
           name: '',
@@ -126,31 +147,17 @@ export default {
         this.$oh.api.get('/rest/items?staticDataOnly=true').then((items) => {
           this.items = items
           this.ready = true
+          this.loading = false
         })
       } else {
-        const loadItem = this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=.*')
-        loadItem.then((data) => {
+        this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=.*').then((data) => {
           this.item = data
           this.savedItem = cloneDeep(this.item)
           this.$nextTick(() => {
             this.ready = true
+            this.loading = false
           })
         })
-      }
-      if (window) {
-        window.addEventListener('keydown', this.keyDown)
-      }
-    },
-    onPageBeforeOut () {
-      if (window) {
-        window.removeEventListener('keydown', this.keyDown)
-      }
-    },
-    keyDown (ev) {
-      if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
-        this.save()
-        ev.stopPropagation()
-        ev.preventDefault()
       }
     },
     save () {
@@ -195,8 +202,8 @@ export default {
       const yamlObj = {
         label: this.item.label,
         type: this.item.type,
-        category: this.item.category,
-        groupNames: this.item.groupNames,
+        category: this.item.category || '',
+        groupNames: this.item.groupNames || [],
         tags: this.item.tags
         // metadata: this.item.metadata
       }

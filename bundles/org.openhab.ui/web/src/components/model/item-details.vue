@@ -66,7 +66,6 @@ export default {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
-      this.load()
     },
     onPageBeforeOut () {
       if (window) {
