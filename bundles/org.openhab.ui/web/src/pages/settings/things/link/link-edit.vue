@@ -1,13 +1,13 @@
 <template>
   <f7-page @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="item.label || item.name" :subtitle="thing.label" back-link="Cancel">
-      <f7-nav-right v-if="link.editable">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
+      <f7-nav-right>
+        <f7-link v-if="!link.editable" slot="right" icon-f7="lock_fill" icon-only tooltip="links defined in a .items file are not editable from this screen" />
+        <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
+        <f7-link v-else @click="save()">
           Save
         </f7-link>
       </f7-nav-right>
-      <f7-link v-else slot="right" icon-f7="lock_fill" icon-only tooltip="links defined in a .items file are not editable from this screen" />
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col>
