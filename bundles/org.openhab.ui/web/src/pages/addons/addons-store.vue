@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" ref="addonstore" class="page-addon-store">
-    <f7-navbar large :large-transparent="false" back-link="Back" class="store-nav" :title-large="(AddonTitles[currentTab] || 'Add-on Store').replace(/Add-ons$/, '')" :title="AddonTitles[currentTab] || 'Add-on Store'">
+    <f7-navbar large :large-transparent="false" back-link="Back" class="store-nav" :title-large="AddonTabs[currentTab] || 'Add-on Store'" :title="AddonTitles[currentTab] || 'Add-on Store'">
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
