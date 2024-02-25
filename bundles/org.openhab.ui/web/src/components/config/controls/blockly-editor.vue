@@ -1127,6 +1127,7 @@ export default {
   },
   mounted () {
     this.load()
+    this.$emit('mounted')
   },
   methods: {
     load () {
@@ -1201,7 +1202,8 @@ export default {
             pinch: true
           },
         trashcan: false,
-        showLabels: false
+        showLabels: false,
+        renderer: this.getCurrentRenderer()
       })
       this.workspace.addChangeListener(shadowBlockConversionChangeListener)
       const workspaceSearch = new WorkspaceSearch(this.workspace)
@@ -1267,6 +1269,27 @@ export default {
     },
     getCode () {
       return javascriptGenerator.workspaceToCode(this.workspace)
+    },
+    getRenderers () {
+      const excludedRenderers = ['minimalist']
+      const renderers = Object.keys(Blockly.registry.getAllItems('renderer'))
+        .filter(r => !excludedRenderers.includes(r))
+        .sort()
+      return renderers
+    },
+    getCurrentRenderer () {
+      return this.$f7.data.themeOptions.blocklyRenderer
+    },
+    changeRenderer (newRenderer) {
+      this.$f7.data.themeOptions.blocklyRenderer = newRenderer
+      localStorage.setItem('openhab.ui:blockly.renderer', newRenderer)
+
+      const dom = Blockly.Xml.workspaceToDom(this.workspace)
+      this.workspace.dispose()
+      this.initBlockly(this.blockLibraries)
+      this.workspace.clear()
+      Blockly.Xml.domToWorkspace(dom, this.workspace)
+      this.workspace.refreshToolboxSelection()
     },
     onChange (event) {
       if (event.type === Blockly.Events.FINISHED_LOADING) {

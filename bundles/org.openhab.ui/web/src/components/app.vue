@@ -600,6 +600,7 @@ export default {
         this.visibleBreakpointDisabled = true
         this.$nextTick(() => this.$f7.panel.get('left').disableVisibleBreakpoint())
       }
+      this.themeOptions.blocklyRenderer = localStorage.getItem('openhab.ui:blockly.renderer')
     },
     toggleDeveloperDock () {
       if (!this.$store.getters.isAdmin) return
