@@ -370,7 +370,7 @@ export default function (f7, isGraalJs) {
       this.setTooltip('click arrow to scroll through year, month, day, hour, minute, second, milli, nano, day of year')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#create-datetime-based-on-a-specific-date-copy-of')
     },
-    onClick (nextField) {
+    onClick () {
       let block = this.getSourceBlock()
       let currentBlockType = block.currentBlockType
       let blockTypes = block.blockTypes
