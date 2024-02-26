@@ -23,6 +23,8 @@ const ItemEditPage = () => import(/* webpackChunkName: "admin-config" */ '../pag
 const ItemMetadataEditPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/metadata/item-metadata-edit.vue')
 const ItemsAddFromTextualDefinition = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/items/parser/items-add-from-textual-definition.vue')
 
+const HealthOverviewPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/health/health-overview.vue')
+const HealthOrphanLinksPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/health/health-orphanlinks.vue')
 const ThingsListPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/things-list.vue')
 const ThingDetailsPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/thing-details.vue')
 const AddThingChooseBindingPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/add/choose-binding.vue')
@@ -67,7 +69,7 @@ const SetupWizardPage = () => import(/* webpackChunkName: "setup-wizard" */ '../
 
 const checkDirtyBeforeLeave = function (routeTo, routeFrom, resolve, reject) {
   if (this.currentPageEl && this.currentPageEl.__vue__ && this.currentPageEl.__vue__.$parent && this.currentPageEl.__vue__.$parent.beforeLeave &&
-      !routeTo.path.startsWith(routeFrom.path)) {
+    !routeTo.path.startsWith(routeFrom.path)) {
     this.currentPageEl.__vue__.$parent.beforeLeave(this, routeTo, routeFrom, resolve, reject)
   } else {
     resolve()
@@ -77,11 +79,17 @@ const checkDirtyBeforeLeave = function (routeTo, routeFrom, resolve, reject) {
 const loadAsync = (page, props) => {
   return (routeTo, routeFrom, resolve, reject) => {
     if (!props) {
-      page().then((c) => { resolve({ component: c.default }) })
+      page().then((c) => {
+        resolve({ component: c.default })
+      })
     } else if (typeof props === 'object') {
-      page().then((c) => { resolve({ component: c.default }, { props }) })
+      page().then((c) => {
+        resolve({ component: c.default }, { props })
+      })
     } else if (typeof props === 'function') {
-      page().then((c) => { resolve({ component: c.default }, { props: props(routeTo, routeFrom, resolve, reject) }) })
+      page().then((c) => {
+        resolve({ component: c.default }, { props: props(routeTo, routeFrom, resolve, reject) })
+      })
     }
   }
 }
@@ -216,7 +224,9 @@ export default [
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
             async: (routeTo, routeFrom, resolve, reject) => {
-              PageEditors[routeTo.params.type]().then((c) => { resolve({ component: c.default }, (routeTo.params.uid === 'add') ? { props: { createMode: true } } : {}) })
+              PageEditors[routeTo.params.type]().then((c) => {
+                resolve({ component: c.default }, (routeTo.params.uid === 'add') ? { props: { createMode: true } } : {})
+              })
             }
           }
         ]
@@ -229,6 +239,18 @@ export default [
             path: ':transformationId',
             beforeLeave: checkDirtyBeforeLeave,
             async: loadAsync(TransformationsEditPage, (routeTo) => (routeTo.params.transformationId === 'add') ? { createMode: true } : {})
+          }
+        ]
+      },
+      {
+        path: 'health',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(HealthOverviewPage),
+        routes: [
+          {
+            path: 'orphanlinks',
+            beforeEnter: [enforceAdminForRoute],
+            async: loadAsync(HealthOrphanLinksPage)
           }
         ]
       },

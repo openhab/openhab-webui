@@ -39,6 +39,10 @@
           </f7-list-item>
           <li v-if="showSettingsSubmenu">
             <ul class="menu-sublinks">
+              <f7-list-item v-if="$store.getters.apiEndpoint('links')" link="/settings/health/" title="Health checks" view=".view-main" panel-close :animate="false" no-chevron
+                            :class="{ currentsection: currentUrl.indexOf('/settings/health') === 0 }">
+                <f7-icon slot="media" f7="heart" color="gray" />
+              </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('things')" link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false" no-chevron
                             :class="{ currentsection: currentUrl.indexOf('/settings/things') === 0 }">
                 <f7-icon slot="media" f7="lightbulb" color="gray" />
