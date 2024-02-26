@@ -76,11 +76,17 @@ export default function (f7, isGraalJs) {
       this.hasHeader = hasHeader
       if (hasTimeout) {
         if (!this.getInput('timeoutInput')) {
-          this.appendValueInput('timeoutInput')
+          const timeoutInput = this.appendValueInput('timeoutInput')
             .setCheck('Number')
             .appendField('with Timeout (ms)')
-          const parentConnection = this.getInput('timeoutInput').connection
+
+          const blockAfter = (this.getInput('requestHeader')) ? 'requestHeader' : (this.getInput('payload')) ? 'payload' : undefined
+
+          if (blockAfter) {
+            this.moveInputBefore('timeoutInput', blockAfter)
+          }
           if (addNumBlock) {
+            const parentConnection = timeoutInput.connection
             const mathNumberBlock = this.workspace.newBlock('math_number')
             mathNumberBlock.setFieldValue('3000', 'NUM')
             mathNumberBlock.initSvg()
@@ -101,9 +107,14 @@ export default function (f7, isGraalJs) {
       }
       if (hasHeader) {
         if (!this.getInput('requestHeader')) {
-          this.appendValueInput('requestHeader')
+          const headerInput = this.appendValueInput('requestHeader')
             .setCheck('Dictionary')
             .appendField('with Headers')
+          const blockAfter = (this.getInput('payload')) ? 'payload' : undefined
+
+          if (blockAfter) {
+            this.moveInputBefore('requestHeader', blockAfter)
+          }
         }
       } else {
         if (this.getInput('requestHeader')) {
