@@ -33,7 +33,7 @@
           <f7-popover class="config-popover">
             <f7-list class="config-menu">
               <f7-list-item group-title title="Block Style" />
-              <f7-list-item v-for="renderer in blocklyRenderers" :key="renderer" :title="renderer" color="blue" radio :checked="renderer === blocklyRenderer" @click="setBlocklyRenderer(renderer)" />
+              <f7-list-item v-for="renderer in blocklyRenderers" :key="renderer" :title="renderer" style="text-transform:capitalize" color="blue" radio :checked="renderer === blocklyRenderer" @click="setBlocklyRenderer(renderer)" />
               <f7-list-item group-title title="Show Items" />
               <f7-list-item title="As Labels" color="blue" radio :checked="blocklyShowLabels" @click="setBlocklyShowLabels(true)" />
               <f7-list-item title="As Item IDs" color="blue" radio :checked="!blocklyShowLabels" @click="setBlocklyShowLabels(false)" />
