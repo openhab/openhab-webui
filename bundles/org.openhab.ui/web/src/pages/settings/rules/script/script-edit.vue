@@ -30,20 +30,26 @@
                    :tooltip="rule.status.description" />
         </span>
         <span class="display-flex flex-direction-row align-items-center">
-          <f7-popover class="config-popover">
-            <f7-list class="config-menu">
-              <f7-list-item group-title title="Block Style" />
-              <f7-list-item v-for="renderer in blocklyRenderers" :key="renderer" :title="renderer" style="text-transform:capitalize" color="blue" radio :checked="renderer === blocklyRenderer" @click="setBlocklyRenderer(renderer)" />
-              <f7-list-item group-title title="Show Items" />
-              <f7-list-item title="As Labels" color="blue" radio :checked="blocklyShowLabels" @click="setBlocklyShowLabels(true)" />
-              <f7-list-item title="As Item IDs" color="blue" radio :checked="!blocklyShowLabels" @click="setBlocklyShowLabels(false)" />
-            </f7-list>
-          </f7-popover>
-          <f7-button v-if="isBlockly && !blocklyCodePreview" outline small icon-f7="ellipsis_vertical" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" style="margin-right: 5px" tooltip="Blockly Settings" popover-open=".config-popover" />
-          <f7-segmented v-if="!createMode && isBlockly" class="margin-right">
-            <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" tooltip="Show blocks" />
-            <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" tooltip="Show generated code" />
-          </f7-segmented>
+          <template v-if="isBlockly">
+            <f7-popover class="config-popover">
+              <f7-list class="config-menu">
+                <f7-list-item group-title title="Block Style" />
+                <f7-list-item v-for="renderer in blocklyRenderers" :key="renderer" :title="renderer" style="text-transform:capitalize" color="blue" radio :checked="renderer === blocklyRenderer" @click="setBlocklyRenderer(renderer)" />
+                <f7-list-item v-if="!$device.desktop" group-title title="Show Items" />
+                <f7-list-item v-if="!$device.desktop" title="As Labels" color="blue" radio :checked="blocklyShowLabels" @click="setBlocklyShowLabels(true)" />
+                <f7-list-item v-if="!$device.desktop" title="As Item IDs" color="blue" radio :checked="!blocklyShowLabels" @click="setBlocklyShowLabels(false)" />
+              </f7-list>
+            </f7-popover>
+            <template v-if="$device.desktop">
+              <f7-button v-if="!blocklyCodePreview" outline small icon-f7="paintbrush" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" style="margin-right: 5px" tooltip="Block Style" popover-open=".config-popover" />
+              <f7-button v-if="!createMode && !blocklyCodePreview" outline small :active="blocklyShowLabels" icon-f7="square_on_circle" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" style="margin-right: 5px" @click="setBlocklyShowLabels(!blocklyShowLabels)" tooltip="Toggle to show either Item labels or IDs" />
+            </template>
+            <f7-button v-else-if="!blocklyCodePreview" outline small icon-f7="ellipsis_vertical" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" style="margin-right: 5px" tooltip="Blockly Settings" popover-open=".config-popover" />
+            <f7-segmented v-if="!createMode" class="margin-right">
+              <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" tooltip="Show blocks" />
+              <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" tooltip="Show generated code" />
+            </f7-segmented>
+          </template>
           <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
         </span>
       </f7-toolbar>
