@@ -30,12 +30,16 @@
                    :tooltip="rule.status.description" />
         </span>
         <span class="display-flex flex-direction-row align-items-center">
-          <f7-button v-if="isBlockly && !blocklyCodePreview" outline small class="no-ripple" style="margin-right: 5px; padding: 3px" :tooltip="'Block style'">
-            <select @change="setBlocklyRenderer($event)" style="text-align-last: center">
-              <option v-for="renderer in blocklyRenderers" :key="renderer" :selected="renderer === blocklyRenderer">{{ renderer }}</option>
-            </select>
-          </f7-button>
-          <f7-button v-if="!createMode && isBlockly && !blocklyCodePreview" outline small :active="blocklyShowLabels" icon-f7="square_on_circle" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" style="margin-right: 5px" @click="toggleBlocklyItemLabelId" tooltip="Toggle to show either Item labels or IDs" />
+          <f7-popover class="config-popover">
+            <f7-list class="config-menu">
+              <f7-list-item group-title title="Block Style" />
+              <f7-list-item v-for="renderer in blocklyRenderers" :key="renderer" :title="renderer" color="blue" radio :checked="renderer === blocklyRenderer" @click="setBlocklyRenderer(renderer)" />
+              <f7-list-item group-title title="Show Items" />
+              <f7-list-item title="As Labels" color="blue" radio :checked="blocklyShowLabels" @click="setBlocklyShowLabels(true)" />
+              <f7-list-item title="As Item IDs" color="blue" radio :checked="!blocklyShowLabels" @click="setBlocklyShowLabels(false)" />
+            </f7-list>
+          </f7-popover>
+          <f7-button v-if="isBlockly && !blocklyCodePreview" outline small icon-f7="ellipsis_vertical" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" style="margin-right: 5px" tooltip="Blockly Settings" popover-open=".config-popover" />
           <f7-segmented v-if="!createMode && isBlockly" class="margin-right">
             <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" tooltip="Show blocks" />
             <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" tooltip="Show generated code" />
@@ -541,12 +545,12 @@ export default {
       this.blocklyRenderer = this.$refs.blocklyEditor.getCurrentRenderer()
       this.blocklyRenderers = this.$refs.blocklyEditor.getRenderers()
     },
-    setBlocklyRenderer (event) {
-      this.blocklyRenderer = event.target.value
+    setBlocklyRenderer (newRenderer) {
+      this.blocklyRenderer = newRenderer
       this.$refs.blocklyEditor.changeRenderer(this.blocklyRenderer)
     },
-    toggleBlocklyItemLabelId () {
-      this.blocklyShowLabels = !this.blocklyShowLabels
+    setBlocklyShowLabels (showLabels) {
+      this.blocklyShowLabels = showLabels
       this.$refs.blocklyEditor.showHideLabels(this.blocklyShowLabels)
     },
     showBlocklyCode () {
