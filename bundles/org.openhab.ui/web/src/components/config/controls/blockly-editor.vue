@@ -1202,16 +1202,19 @@ export default {
         toolbox: this.$refs.toolbox,
         horizontalLayout: !this.$device.desktop,
         theme: this.$f7.data.themeOptions.dark === 'dark' ? DarkTheme : undefined,
-        zoom:
-          {
-            controls: true,
-            wheel: true,
-            startScale: 1.0,
-            maxScale: 3,
-            minScale: 0.3,
-            scaleSpeed: 1.2,
-            pinch: true
-          },
+        zoom: {
+          controls: true,
+          wheel: true,
+          startScale: 1.0,
+          maxScale: 3,
+          minScale: 0.3,
+          scaleSpeed: 1.2,
+          pinch: true
+        },
+        move: {
+          drag: true,
+          wheel: true
+        },
         trashcan: false,
         showLabels: false,
         renderer: this.getCurrentRenderer()
