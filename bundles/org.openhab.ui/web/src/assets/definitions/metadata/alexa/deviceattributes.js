@@ -223,10 +223,7 @@ export default {
   // Networking Attributes
   NetworkAccess: {
     itemTypes: ['Switch'],
-    parameters: () => [p.inverted(), p.retrievable()],
-    visible: (item) => item.groups
-      .map((group) => group.metadata.alexa.config || {})
-      .some((config) => !!config.macAddress)
+    parameters: () => [p.inverted(), p.retrievable()]
   },
 
   // Scene Attributes
