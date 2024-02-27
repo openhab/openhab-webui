@@ -1077,7 +1077,6 @@ import Blockly from 'blockly'
 import { WorkspaceSearch } from '@blockly/plugin-workspace-search'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import DarkTheme from '@blockly/theme-dark'
-import { CrossTabCopyPaste } from '@blockly/plugin-cross-tab-copy-paste'
 import { ZoomToFitControl } from '@blockly/zoom-to-fit'
 import { shadowBlockConversionChangeListener } from '@blockly/shadow-block-converter'
 
@@ -1214,20 +1213,6 @@ export default {
 
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
-
-      if (!Blockly.ContextMenuRegistry.registry.getItem('blockCopyToStorage')) {
-        const copyAndPasteOptions = {
-          contextMenu: true,
-          shortcut: true
-        }
-        const copyAndPastePlugin = new CrossTabCopyPaste()
-        copyAndPastePlugin.init(copyAndPasteOptions, () => {
-          console.log('There has been a block type error during copying and pasting')
-        })
-
-        Blockly.Msg['CROSS_TAB_COPY'] = 'Cross-Rule-Copy'
-        Blockly.Msg['CROSS_TAB_PASTE'] = 'Cross-Rule-Paste'
-      }
 
       this.registerLibraryCallbacks(libraryDefinitions)
       const xml = Blockly.utils.xml.textToDom(this.blocks)
