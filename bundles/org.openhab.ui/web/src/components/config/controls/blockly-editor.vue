@@ -1091,6 +1091,7 @@ import { javascriptGenerator } from 'blockly/javascript.js'
 import DarkTheme from '@blockly/theme-dark'
 import { ZoomToFitControl } from '@blockly/zoom-to-fit'
 import { shadowBlockConversionChangeListener } from '@blockly/shadow-block-converter'
+import { Multiselect, MultiselectBlockDragger } from '@mit-app-inventor/blockly-plugin-workspace-multiselect'
 
 import Vue from 'vue'
 
@@ -1198,8 +1199,11 @@ export default {
       }, this.isGraalJs)
       this.addLibraryToToolbox(libraryDefinitions || [])
 
-      this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
+      const options = {
         toolbox: this.$refs.toolbox,
+        plugins: {
+          'blockDragger': MultiselectBlockDragger
+        },
         horizontalLayout: !this.$device.desktop,
         theme: this.$f7.data.themeOptions.dark === 'dark' ? DarkTheme : undefined,
         zoom: {
@@ -1217,8 +1221,20 @@ export default {
         },
         trashcan: false,
         showLabels: false,
+
+        // Multi-select-options
+        multiselectCopyPaste: {
+          crossTab: true,
+          menu: true
+        },
+        multiselectIcon: {
+          hideIcon: true // hide it because it doesn't work in v0.1.11
+        },
+        multiFieldUpdate: true,
+
         renderer: this.getCurrentRenderer()
-      })
+      }
+      this.workspace = Blockly.inject(this.$refs.blocklyEditor, options)
       this.workspace.addChangeListener(shadowBlockConversionChangeListener)
       const workspaceSearch = new WorkspaceSearch(this.workspace)
       workspaceSearch.init()
@@ -1228,6 +1244,9 @@ export default {
 
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
+
+      const multiselectPlugin = new Multiselect(this.workspace)
+      multiselectPlugin.init(options)
 
       this.registerLibraryCallbacks(libraryDefinitions)
       const xml = Blockly.utils.xml.textToDom(this.blocks)
