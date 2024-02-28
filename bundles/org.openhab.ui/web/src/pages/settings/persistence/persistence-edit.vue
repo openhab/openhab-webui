@@ -262,9 +262,10 @@ export default {
       return this.newPersistence || (this.persistence && this.persistence.editable === true)
     },
     pageTitle () {
+      if (this.newPersistence) return 'Create new persistence configuration'
       if (!this.ready) return ''
       if (!this.editable) return `${this.serviceId} persistence configuration details`
-      return `${this.newPersistence ? 'Create' : 'Edit'} ${this.serviceId} persistence configuration`
+      return `Edit ${this.serviceId} persistence configuration`
     },
     strategies () {
       return this.PredefinedStrategies.concat(this.persistence.cronStrategies.map(cs => cs.name))
