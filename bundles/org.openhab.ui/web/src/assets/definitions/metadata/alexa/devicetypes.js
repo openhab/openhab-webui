@@ -64,12 +64,6 @@ const blindParameters = (_, item) => {
   return attributes.every((attr) => metadata.includes(attr)) ? [p.primaryControl()] : []
 }
 
-const networkParameters = (_, item) => {
-  const deviceTypes = ['NetworkHardware', 'Router']
-  const connection = item.groups.find((g) => deviceTypes.includes(g.metadata.alexa.value))
-  return connection ? [p.connectedTo(connection.label || connection.name), p.hostname(), p.macAddress()] : []
-}
-
 export const defaultParameters = (itemType, item) => {
   return itemType === 'Group' || !item.groups.length
     ? [p.deviceName(item.label), p.deviceDescription(`${itemType} ${item.name}`)]
@@ -138,8 +132,7 @@ export default {
   },
   Computer: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: networkDeviceAttributes,
-    groupParameters: networkParameters
+    supportedAttributes: networkDeviceAttributes
   },
   ContactSensor: {
     defaultAttributes: ['ContactDetectionState'],
@@ -172,8 +165,7 @@ export default {
   },
   GameConsole: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: networkDeviceAttributes,
-    groupParameters: networkParameters
+    supportedAttributes: networkDeviceAttributes
   },
   GarageDoor: {
     defaultAttributes: ['OpenState'],
@@ -189,8 +181,7 @@ export default {
   },
   Laptop: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: mobileDeviceAttributes,
-    groupParameters: networkParameters
+    supportedAttributes: mobileDeviceAttributes
   },
   Light: {
     defaultAttributes: ['PowerState', 'Brightness', 'Color'],
@@ -206,8 +197,7 @@ export default {
   },
   MobilePhone: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: mobileDeviceAttributes,
-    groupParameters: networkParameters
+    supportedAttributes: mobileDeviceAttributes
   },
   MotionSensor: {
     defaultAttributes: ['MotionDetectionState'],
@@ -289,8 +279,7 @@ export default {
   },
   Tablet: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: mobileDeviceAttributes,
-    groupParameters: networkParameters
+    supportedAttributes: mobileDeviceAttributes
   },
   Television: {
     defaultAttributes: ['PowerState', 'Channel'],
@@ -319,10 +308,9 @@ export default {
   },
   Wearable: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: mobileDeviceAttributes,
-    groupParameters: networkParameters
+    supportedAttributes: mobileDeviceAttributes
   },
   Other: {
-    supportedAttributes: Object.keys(attributes).filter((attr) => attr !== 'NetworkAccess' && attr !== 'Scene')
+    supportedAttributes: Object.keys(attributes).filter((attr) => attr !== 'Scene')
   }
 }

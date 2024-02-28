@@ -107,13 +107,6 @@ export default {
     min: 1,
     default: (config) => (config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? 2 : 1
   }),
-  connectedTo: (value) => ({
-    name: 'connectedTo',
-    label: 'Connected To',
-    type: 'TEXT',
-    default: value,
-    readOnly: true
-  }),
   deviceDescription: (defaultValue) => ({
     name: 'description',
     label: 'Device Description',
@@ -156,13 +149,6 @@ export default {
     max: 255,
     advanced: true
   }),
-  hostname: () => ({
-    name: 'hostname',
-    label: 'Hostname',
-    type: 'TEXT',
-    default: 'N/A',
-    advanced: true
-  }),
   increment: (defaultValue) => ({
     name: 'increment',
     label: 'Default Increment',
@@ -186,13 +172,6 @@ export default {
     options: getOptions(LANGUAGES),
     limitToOptions: true,
     advanced: true
-  }),
-  macAddress: () => ({
-    name: 'macAddress',
-    label: 'MAC Address',
-    description: 'Formatted as EUI-48 or EUI-64 address with colon or dash separators',
-    type: 'TEXT',
-    pattern: '([0-9a-fA-F]{2}(-|:)){7}[0-9a-fA-F]{2}$|^([0-9a-fA-F]{2}(-|:)){5}[0-9a-fA-F]{2}'
   }),
   nonControllable: (stateDescription) => ({
     name: 'nonControllable',
@@ -350,7 +329,7 @@ export default {
         .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true,
-    required: !stateDescription || !stateDescription.options || !stateDescription.options.length
+    required: !stateDescription?.options?.length
   }),
   supportedModes: (stateDescription) => ({
     name: 'supportedModes',
@@ -363,7 +342,7 @@ export default {
         .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: 'Normal=Normal:Cottons\nWhites=Whites',
     multiple: true,
-    required: !stateDescription || !stateDescription.options || !stateDescription.options.length
+    required: !stateDescription?.options?.length
   }),
   supportedOperations: () => ({
     name: 'supportedOperations',
