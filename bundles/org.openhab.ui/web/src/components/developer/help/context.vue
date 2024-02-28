@@ -9,6 +9,11 @@
   </f7-block>
 </template>
 
+<style lang="stylus">
+ul
+  padding-left 20px
+</style>
+
 <script>
 export default {
   props: ['path'],
