@@ -1,13 +1,13 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" ref="addonstore" class="page-addon-store">
-    <f7-navbar large :large-transparent="false" back-link="Back" class="store-nav" :title-large="AddonTabs[currentTab] || 'Add-on Store'" :title="AddonTitles[currentTab] || 'Add-on Store'">
+    <f7-navbar large :large-transparent="false" back-link="Back" class="store-nav" :title-large="AddonTitles[currentTab] || 'Add-on Store'" :title="pageTitle">
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar v-if="$f7.width < 1024" tabbar bottom>
       <f7-link tab-link :tab-link-active="$store.state.pagePath === '/addons/'" href="/addons/" icon-ios="f7:bag_fill" icon-aurora="f7:bag_fill" icon-md="material:shopping_bag" />
-      <f7-link v-for="section in Object.keys(AddonTabs)" :key="section" tab-link :tab-link-active="$store.state.pagePath === `/addons/${section}/`" :href="`/addons/${section}`" :icon-ios="`f7:${AddonIcons[section]}`" :icon-aurora="`f7:${AddonIcons[section]}`" :icon-md="`f7:${AddonIcons[section]}`" />
+      <f7-link v-for="section in Object.keys(AddonTitles)" :key="section" tab-link :tab-link-active="$store.state.pagePath === `/addons/${section}/`" :href="`/addons/${section}`" :icon-ios="`f7:${AddonIcons[section]}`" :icon-aurora="`f7:${AddonIcons[section]}`" :icon-md="`f7:${AddonIcons[section]}`" />
     </f7-toolbar>
 
     <f7-block class="no-padding" style="margin-top: 0">
@@ -16,7 +16,7 @@
         class="searchbar-store"
         custom-search
         search-in=".item-title"
-        :placeholder="'Search ' + Object.assign({ main: 'all add-ons' }, AddonTabs)[currentTab].toLowerCase()"
+        :placeholder="'Search ' + Object.assign({ main: 'all add-ons' }, AddonTitles)[currentTab].toLowerCase()"
         :disable-button="!$theme.aurora"
         @searchbar:search="search"
         @searchbar:clear="clearSearch" />
@@ -58,11 +58,11 @@
 
         <!-- Show Installed Add-ons -->
         <addons-section
-          v-for="section in Object.keys(AddonTabs)"
+          v-for="section in Object.keys(AddonTitles)"
           :key="'installed-' + section"
           :show-as-cards="installedAddons.length <= 3"
           @addonButtonClick="addonButtonClick"
-          :title="'Installed ' + AddonTabs[section]"
+          :title="'Installed ' + AddonTitles[section]"
           :addons="installedAddons.filter((a) => a.type === section)" />
       </f7-tab>
 
@@ -228,7 +228,7 @@
 <script>
 import AddonStoreMixin from './addon-store-mixin'
 import AddonsSection from '@/components/addons/addons-section.vue'
-import { AddonIcons, AddonTabs, AddonTitles, AddonSuggestionLabels } from '@/assets/addon-store'
+import { AddonIcons, AddonTitles, AddonSuggestionLabels } from '@/assets/addon-store'
 
 export default {
   mixins: [AddonStoreMixin],
@@ -265,6 +265,10 @@ export default {
     },
     otherAddons () {
       return Object.keys(this.addons).filter((k) => k !== 'eclipse' && k !== 'karaf' && k !== 'marketplace').flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
+    },
+    pageTitle () {
+      if (!AddonTitles[this.currentTab]) return 'Add-on Store'
+      return AddonTitles[this.currentTab].replace(/s$/, '') + ' Add-ons'
     }
   },
   methods: {
@@ -343,7 +347,6 @@ export default {
   },
   created () {
     this.AddonIcons = AddonIcons
-    this.AddonTabs = AddonTabs
     this.AddonTitles = AddonTitles
     this.SuggestionLabels = AddonSuggestionLabels
   }

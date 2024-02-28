@@ -81,8 +81,8 @@
           </f7-list-item>
           <li v-if="showAddonsSubmenu && $store.getters.apiEndpoint('addons')">
             <ul class="menu-sublinks">
-              <f7-list-item v-for="section in Object.keys(AddonTabs)" :key="section" :link="`/addons/${section}/`"
-                            :title="AddonTabs[section]" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-for="section in Object.keys(AddonTitles)" :key="section" :link="`/addons/${section}/`"
+                            :title="AddonTitles[section]" view=".view-main" panel-close :animate="false" no-chevron
                             :class="{ currentsection: currentUrl.indexOf(`/addons/${section}`) === 0 }">
                 <f7-icon slot="media" :f7="AddonIcons[section]" color="gray" />
               </f7-list-item>
@@ -269,7 +269,7 @@ import sseEvents from './sse-events-mixin'
 import dayjs from 'dayjs'
 import dayjsLocales from 'dayjs/locale.json'
 
-import { AddonIcons, AddonTabs } from '@/assets/addon-store'
+import { AddonIcons, AddonTitles } from '@/assets/addon-store'
 
 export default {
   mixins: [auth, i18n, connectionHealth, sseEvents],
@@ -637,7 +637,7 @@ export default {
   },
   created () {
     this.AddonIcons = AddonIcons
-    this.AddonTabs = AddonTabs
+    this.AddonTitles = AddonTitles
 
     // special treatment for this option because it's needed to configure the app initialization
     this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.pagetransition') || 'default'
