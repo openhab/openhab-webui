@@ -1,13 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="editable ? `${newPersistence ? 'Create' : 'Edit'} ${serviceId} persistence configuration` : `${serviceId} persistence configuration details`"
-               back-link="Back">
-      <f7-nav-right>
-        <f7-link @click="save()" v-if="editable && $theme.md" icon-md="material:save" icon-only />
-        <f7-link @click="save()" v-if="editable && !$theme.md">
+    <f7-navbar :title="pageTitle" back-link="Back">
+      <f7-nav-right v-show="ready">
+        <f7-link v-if="!editable" icon-f7="lock_fill" icon-only tooltip="This persistence configuration is not editable through the UI" />
+        <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
+        <f7-link v-else @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
-        <f7-link v-else icon-f7="lock_fill" icon-only tooltip="This persistence configuration is not editable through the UI" />
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
@@ -261,6 +260,12 @@ export default {
   computed: {
     editable () {
       return this.newPersistence || (this.persistence && this.persistence.editable === true)
+    },
+    pageTitle () {
+      if (this.newPersistence) return 'Create new persistence configuration'
+      if (!this.ready) return ''
+      if (!this.editable) return `${this.serviceId} persistence configuration details`
+      return `Edit ${this.serviceId} persistence configuration`
     },
     strategies () {
       return this.PredefinedStrategies.concat(this.persistence.cronStrategies.map(cs => cs.name))
