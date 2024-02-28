@@ -971,7 +971,19 @@
             </value>
           </block>
         </category>
-
+        <category name="HTTP" v-if="isGraalJs">
+          <button
+            helpUrl="configuration/blockly/rules-blockly-http.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
+          <block type="oh_httprequest">
+            <value name="url">
+              <shadow type="text">
+                <field name="TEXT">http://openhab.org</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
         <category name="Run &amp; Process">
           <button
             helpUrl="configuration/blockly/rules-blockly-run-and-process.html"
