@@ -6,7 +6,7 @@
                        required validate pattern="[A-Za-z0-9_]+" error-message="Required. A-Z,a-z,0-9,_ only"
                        info="Note: cannot be changed after the creation"
                        @input="transformation.uid = $event.target.value" clear-button />
-        <f7-list-input v-else label="Transformation UID" type="text" :input="false" disabled>
+        <f7-list-input v-else label="Transformation UID" type="text" :input="false">
           <span slot="input">
             {{ transformation.uid }}
             <clipboard-icon :value="transformation.uid" tooltip="Copy UID" style="pointer-events: initial !important" />
