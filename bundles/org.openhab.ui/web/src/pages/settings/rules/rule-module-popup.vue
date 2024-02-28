@@ -1,15 +1,15 @@
 <template>
-  <f7-popup ref="modulePopup" class="moduleconfig-popup" @popupClosed="moduleConfigClosed">
+  <f7-popup ref="modulePopup" class="moduleconfig-popup" :close-by-backdrop-click="false" @popupClosed="moduleConfigClosed">
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
+          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" @click="onBackClicked" />
         </f7-nav-left>
         <f7-nav-title v-if="ruleModule && ruleModule.new">
-          Add {{ sectionLabels[currentSection][1] }}
+          Add {{ SectionLabels[currentSection][1] }}
         </f7-nav-title>
         <f7-nav-title v-else>
-          Edit {{ sectionLabels[currentSection][1] }}
+          Edit {{ SectionLabels[currentSection][1] }}
         </f7-nav-title>
         <f7-nav-right>
           <f7-link v-show="currentRuleModuleType" @click="updateModuleConfig">
@@ -30,7 +30,7 @@
 
         <div v-if="ruleModule.new">
           <f7-block-title class="no-margin padding-horizontal margin-vertical" v-if="!advancedTypePicker" medium>
-            {{ sectionLabels[currentSection][0] }}
+            {{ SectionLabels[currentSection][0] }}
           </f7-block-title>
           <f7-list v-if="advancedTypePicker && !ruleModule.type">
             <ul v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope">
@@ -47,7 +47,7 @@
           <action-module-wizard v-else-if="!advancedTypePicker && currentSection === 'actions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
         </div>
         <f7-list v-if="!isSceneModule && ruleModule.type && (!ruleModule.new || advancedTypePicker)">
-          <f7-list-item :title="sectionLabels[currentSection][0]" ref="ruleModuleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
+          <f7-list-item :title="SectionLabels[currentSection][0]" ref="ruleModuleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
             <select name="ruleModuleType"
                     @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)">
               <optgroup v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope" :label="scope">
@@ -82,6 +82,10 @@
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
+
+import DirtyMixin from '../dirty-mixin'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import TriggerModuleWizard from '@/components/rule/trigger-module-wizard.vue'
 import ConditionModuleWizard from '@/components/rule/condition-module-wizard.vue'
@@ -89,7 +93,7 @@ import ActionModuleWizard from '@/components/rule/action-module-wizard.vue'
 import ModuleDescriptionSuggestions from './module-description-suggestions'
 
 export default {
-  mixins: [ModuleDescriptionSuggestions],
+  mixins: [ModuleDescriptionSuggestions, DirtyMixin],
   components: {
     TriggerModuleWizard,
     ConditionModuleWizard,
@@ -100,12 +104,25 @@ export default {
   data () {
     return {
       currentRuleModuleType: this.ruleModuleType,
-      advancedTypePicker: false,
-      sectionLabels: {
-        triggers: ['When', 'Trigger'],
-        actions: ['Then', 'Action'],
-        conditions: ['But only if', 'Condition']
-      }
+      advancedTypePicker: false
+    }
+  },
+  computed: {
+    moduleTitleSuggestion () {
+      if (!this.ruleModule || !this.currentRuleModuleType) return 'Title'
+      return this.suggestedModuleTitle(this.ruleModule, this.currentRuleModuleType)
+    },
+    moduleDescriptionSuggestion () {
+      if (!this.ruleModule || !this.currentRuleModuleType) return 'Description'
+      return this.suggestedModuleDescription(this.ruleModule, this.currentRuleModuleType)
+    }
+  },
+  watch: {
+    ruleModule: {
+      handler: function () {
+        this.dirty = !fastDeepEqual(this.ruleModule, this.originalModule)
+      },
+      deep: true
     }
   },
   methods: {
@@ -157,17 +174,24 @@ export default {
           prev[key] = moduleTypesByScope[key]
           return prev
         }, {})
+    },
+    onBackClicked () {
+      if (this.dirty) {
+        this.confirmLeaveWithoutSaving(this.$refs.modulePopup.close)
+      } else {
+        this.$refs.modulePopup.close()
+      }
     }
   },
-  computed: {
-    moduleTitleSuggestion () {
-      if (!this.ruleModule || !this.currentRuleModuleType) return 'Title'
-      return this.suggestedModuleTitle(this.ruleModule, this.currentRuleModuleType)
-    },
-    moduleDescriptionSuggestion () {
-      if (!this.ruleModule || !this.currentRuleModuleType) return 'Description'
-      return this.suggestedModuleDescription(this.ruleModule, this.currentRuleModuleType)
+  created () {
+    this.SectionLabels = {
+      triggers: ['When', 'Trigger'],
+      actions: ['Then', 'Action'],
+      conditions: ['But only if', 'Condition']
     }
+  },
+  mounted () {
+    this.originalModule = cloneDeep(this.ruleModule)
   }
 }
 </script>
