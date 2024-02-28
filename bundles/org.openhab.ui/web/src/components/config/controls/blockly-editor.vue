@@ -971,7 +971,7 @@
             </value>
           </block>
         </category>
-        <category name="HTTP">
+        <category name="HTTP" v-if="isGraalJs">
           <button
             helpUrl="configuration/blockly/rules-blockly-http.html"
             text="Help"
@@ -979,7 +979,7 @@
           <block type="oh_httprequest">
             <value name="url">
               <shadow type="text">
-                <field name="TEXT">http://mydomain.org/endpoint</field>
+                <field name="TEXT">http://openhab.org</field>
               </shadow>
             </value>
           </block>
