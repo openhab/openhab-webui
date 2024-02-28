@@ -1,12 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" ref="addonstore" class="page-addon-store">
-    <f7-navbar large :large-transparent="true" back-link="Back" class="store-nav">
-      <f7-nav-title-large class="store-title-large">
-        <span>{{ TabNames[currentTab] + (currentTab !== 'main') ? `${TabNames.main} ` : '' }}</span>
-      </f7-nav-title-large>
-      <f7-nav-title>
-        <span>{{ TabNames[currentTab] + (currentTab !== 'main') ? `${TabNames.main} ` : '' }}</span>
-      </f7-nav-title>
+    <f7-navbar large :large-transparent="false" back-link="Back" class="store-nav" :title-large="AddonTitles[currentTab] || 'Add-on Store'" :title="pageTitle">
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
@@ -22,7 +16,7 @@
         class="searchbar-store"
         custom-search
         search-in=".item-title"
-        :placeholder="'Search ' + (currentTab == 'main' ? 'all add-ons' : TabNames[currentTab].toLowerCase())"
+        :placeholder="'Search ' + Object.assign({ main: 'all add-ons' }, AddonTitles)[currentTab].toLowerCase()"
         :disable-button="!$theme.aurora"
         @searchbar:search="search"
         @searchbar:clear="clearSearch" />
@@ -152,7 +146,6 @@
           v-if="addons && officialAddons" :show-all="true"
           @addonButtonClick="addonButtonClick"
           :addons="unsuggestedAddons.filter((a) => a.type === 'misc')"
-          :title="'System Integrations'"
           :featured="['misc-openhabcloud', 'misc-homekit', 'misc-metrics']"
           :subtitle="'Integrate openHAB with external systems'" />
       </f7-tab>
@@ -204,7 +197,6 @@
           @addonButtonClick="addonButtonClick"
           :addons="unsuggestedAddons.filter((a) => a.type === 'voice')"
           :featured="['voice-googletts', 'voice-pollytts', 'voice-voicerss']"
-          :title="'Voice &amp; Speech'"
           :subtitle="'Convert between text and speech, interpret human language queries'" />
       </f7-tab>
     </f7-tabs>
@@ -236,7 +228,7 @@
 <script>
 import AddonStoreMixin from './addon-store-mixin'
 import AddonsSection from '@/components/addons/addons-section.vue'
-import { AddonTitles, AddonIcons, AddonSuggestionLabels } from '@/assets/addon-store'
+import { AddonIcons, AddonTitles, AddonSuggestionLabels } from '@/assets/addon-store'
 
 export default {
   mixins: [AddonStoreMixin],
@@ -273,6 +265,10 @@ export default {
     },
     otherAddons () {
       return Object.keys(this.addons).filter((k) => k !== 'eclipse' && k !== 'karaf' && k !== 'marketplace').flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
+    },
+    pageTitle () {
+      if (!AddonTitles[this.currentTab]) return 'Add-on Store'
+      return AddonTitles[this.currentTab].replace(/s$/, '') + ' Add-ons'
     }
   },
   methods: {
@@ -342,16 +338,17 @@ export default {
     clearSearch (searchbar, previousQuery) {
       this.$refs.storeSearchbar.f7Searchbar.$inputEl.val('')
       this.$set(this, 'searchResults', null)
-      this.$nextTick(() => {
-        this.$refs.storeSearchbar.f7Searchbar.$inputEl.focus()
-      })
+      if (this.$device.desktop) {
+        this.$nextTick(() => {
+          this.$refs.storeSearchbar.f7Searchbar.$inputEl.focus()
+        })
+      }
     }
   },
   created () {
-    this.AddonTitles = AddonTitles
     this.AddonIcons = AddonIcons
+    this.AddonTitles = AddonTitles
     this.SuggestionLabels = AddonSuggestionLabels
-    this.TabNames = Object.assign({ main: 'Add-on Store' }, AddonTitles)
   }
 }
 </script>
