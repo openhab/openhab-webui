@@ -72,20 +72,7 @@
           </f7-block-title>
         </f7-block>
 
-        <!-- script editor docs -->
-        <context v-if="/\/settings\/(scripts\/[A-z0-9]+|rules\/[A-z0-9]+\/script)/.test($store.state.pagePath)" path="/settings/script-editor" />
-        <!-- /settings/* docs -->
-        <context v-else-if="($store.state.pagePath) === '/settings/'" path="/settings/index" />
-        <context v-else-if="/\/settings\/[A-z]+/.test($store.state.pagePath)" :path="/(\/[A-z]+\/[A-z]+)/.exec($store.state.pagePath)[0]" />
-        <!-- /addons/ docs -->
-        <context v-else-if="($store.state.pagePath).indexOf('/addons/') >= 0" path="/addons" />
-        <!-- /developer/* docs -->
-        <context v-else-if="($store.state.pagePath).indexOf('/developer/widgets') >= 0" path="/developer/widgets" />
-        <context v-else-if="($store.state.pagePath).indexOf('/developer/') >= 0" path="/developer/index" />
-        <!-- /about/ docs -->
-        <context v-else-if="($store.state.pagePath).indexOf('/about/') >= 0" path="/about" />
-        <!-- default docs -->
-        <context v-else path="/index" />
+        <context :path="contextPath" />
 
         <f7-block class="no-padding no-margin">
           <f7-block-title class="padding-horizontal" medium>
@@ -169,6 +156,35 @@ export default {
         setTimeout(this.load, 5000)
       }
     })
+  },
+  computed: {
+    contextPath () {
+      const path = this.$store.state.pagePath
+
+      // script editor docs
+      if (/\/settings\/(scripts\/[A-z0-9]+|rules\/[A-z0-9]+\/script)/.test(path)) {
+        if (path.indexOf('?blockly') >= 0) return '/settings/blockly-editor'
+        return '/settings/script-editor'
+      }
+
+      // /settings/* docs
+      if (path === '/settings/') return '/settings/index'
+      const settings_path = /(\/settings\/[A-z]+)/.exec(path)
+      if (settings_path) return settings_path[0]
+
+      // /addons/ docs
+      if (path.indexOf('/addons/') >= 0) return '/addons'
+
+      // /developer/* docs
+      if (path.indexOf('/developer/widgets') >= 0) return '/developer/widgets'
+      if (path.indexOf('/developer/') >= 0) return '/developer/index'
+
+      // /about/ docs
+      if (path.indexOf('/about/') >= 0) return '/about'
+
+      // default docs
+      return '/index'
+    }
   },
   i18n: {
     messages: loadLocaleMessages(require.context('@/assets/i18n/about'))
