@@ -163,6 +163,7 @@ export default {
 
       // script editor docs
       if (/\/settings\/(scripts\/[A-z0-9]+|rules\/[A-z0-9]+\/script)/.test(path)) {
+        if (path.indexOf('?blockly') >= 0) return '/settings/blockly-editor'
         return '/settings/script-editor'
       }
 

@@ -550,6 +550,10 @@ export default {
     onBlocklyMounted () {
       this.blocklyRenderer = this.$refs.blocklyEditor.getCurrentRenderer()
       this.blocklyRenderers = this.$refs.blocklyEditor.getRenderers()
+      if (this.$store.state.pagePath.indexOf('?blockly') < 0) {
+        // A hint for 'help-sidebar.vue' to differentiate blockly vs normal script
+        this.$store.commit('setPagePath', this.$store.state.pagePath + '?blockly')
+      }
     },
     setBlocklyRenderer (newRenderer) {
       this.blocklyRenderer = newRenderer
