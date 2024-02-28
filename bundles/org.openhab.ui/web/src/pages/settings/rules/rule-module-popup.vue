@@ -82,10 +82,10 @@
 </template>
 
 <script>
-import DirtyMixin from '../dirty-mixin'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
+import DirtyMixin from '../dirty-mixin'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import TriggerModuleWizard from '@/components/rule/trigger-module-wizard.vue'
 import ConditionModuleWizard from '@/components/rule/condition-module-wizard.vue'
@@ -107,15 +107,23 @@ export default {
       advancedTypePicker: false
     }
   },
-  created () {
-    this.SectionLabels = {
-      triggers: ['When', 'Trigger'],
-      actions: ['Then', 'Action'],
-      conditions: ['But only if', 'Condition']
+  computed: {
+    moduleTitleSuggestion () {
+      if (!this.ruleModule || !this.currentRuleModuleType) return 'Title'
+      return this.suggestedModuleTitle(this.ruleModule, this.currentRuleModuleType)
+    },
+    moduleDescriptionSuggestion () {
+      if (!this.ruleModule || !this.currentRuleModuleType) return 'Description'
+      return this.suggestedModuleDescription(this.ruleModule, this.currentRuleModuleType)
     }
   },
-  mounted () {
-    this.originalModule = cloneDeep(this.ruleModule)
+  watch: {
+    ruleModule: {
+      handler: function () {
+        this.dirty = !fastDeepEqual(this.ruleModule, this.originalModule)
+      },
+      deep: true
+    }
   },
   methods: {
     setModuleType (val, clearConfig) {
@@ -175,23 +183,15 @@ export default {
       }
     }
   },
-  watch: {
-    ruleModule: {
-      handler: function () {
-        this.dirty = !fastDeepEqual(this.ruleModule, this.originalModule)
-      },
-      deep: true
+  created () {
+    this.SectionLabels = {
+      triggers: ['When', 'Trigger'],
+      actions: ['Then', 'Action'],
+      conditions: ['But only if', 'Condition']
     }
   },
-  computed: {
-    moduleTitleSuggestion () {
-      if (!this.ruleModule || !this.currentRuleModuleType) return 'Title'
-      return this.suggestedModuleTitle(this.ruleModule, this.currentRuleModuleType)
-    },
-    moduleDescriptionSuggestion () {
-      if (!this.ruleModule || !this.currentRuleModuleType) return 'Description'
-      return this.suggestedModuleDescription(this.ruleModule, this.currentRuleModuleType)
-    }
+  mounted () {
+    this.originalModule = cloneDeep(this.ruleModule)
   }
 }
 </script>
