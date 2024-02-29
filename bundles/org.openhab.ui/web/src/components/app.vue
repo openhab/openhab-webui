@@ -326,7 +326,7 @@ export default {
 
         // Register service worker
         serviceWorker: (location.hostname === 'localhost') ? {} : {
-          path: '/service-worker.js'
+          path: './service-worker.js'
         },
         card: {
           swipeToClose: true

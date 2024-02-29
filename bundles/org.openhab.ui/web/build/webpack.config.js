@@ -265,9 +265,13 @@ module.exports = {
       ]
     }),
     ...(env === 'production' ? [
-      new WorkboxPlugin.InjectManifest({
-        swSrc: resolvePath('src/service-worker.js'),
+      new WorkboxPlugin.GenerateSW({
+        swDest: 'service-worker.js',
         maximumFileSizeToCacheInBytes: 100000000,
+        // these options encourage the ServiceWorkers to get in there fast
+        // and not allow any straggling "old" SWs to hang around
+        clientsClaim: true,
+        skipWaiting: true
       })
     ] : []),
     ...(env === 'production' ? [
