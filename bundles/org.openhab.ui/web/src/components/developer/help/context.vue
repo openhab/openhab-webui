@@ -9,12 +9,13 @@
   </f7-block>
 </template>
 
-<style lang="stylus">
-ul
-  padding-left 20px
-</style>
-
 <script>
+const renderer = {
+  list (body, ordered, start) {
+    return `<ul style="padding-left: 20px">${body}</ul>`
+  }
+}
+
 export default {
   props: ['path'],
   data () {
@@ -67,6 +68,7 @@ export default {
         }
         response.text().then((text) => {
           import('marked').then((marked) => {
+            marked.use({ renderer })
             const startComment = '<!-- START MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
             const endComment = '<!-- END MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
 
