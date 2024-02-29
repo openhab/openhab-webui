@@ -6,7 +6,6 @@
   "license": "EPL-2.0",
   "framework7": {
     "type": [
-      "cordova",
       "web",
       "pwa"
     ],
@@ -21,24 +20,10 @@
     "cssPreProcessor": "stylus",
     "customColor": true,
     "color": "ff7700",
-    "bundler": "webpack",
-    "cordova": {
-      "folder": "cordova",
-      "platforms": [
-        "ios",
-        "android"
-      ],
-      "plugins": [
-        "cordova-plugin-statusbar",
-        "cordova-plugin-keyboard",
-        "cordova-plugin-splashscreen",
-        "cordova-plugin-wkwebview-engine"
-      ]
-    }
+    "bundler": "webpack"
   },
   "scripts": {
     "build-prod": "cross-env NODE_ENV=production node ./build/build.js",
-    "build-cordova-prod": "cross-env TARGET=cordova cross-env NODE_ENV=production node ./build/build.js && cd cordova && cordova build",
     "webpack-analyzer": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 node ./build/build.js",
     "webpack-analyzer-report": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 WEBPACK_ANALYZER_REPORT=1 node ./build/build.js",
     "webpack-analyzer-report-stats": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 WEBPACK_ANALYZER_REPORT=1 WEBPACK_ANALYZER_REPORT_STATS=1 node ./build/build.js",

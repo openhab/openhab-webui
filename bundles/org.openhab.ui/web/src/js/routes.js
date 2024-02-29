@@ -446,24 +446,6 @@ export default [
       component: AnalyzerPopup
     }
   },
-  /* For Cordova */
-  {
-    path: '/res/(.*)',
-    redirect: '/'
-  },
-  {
-    path: '/home/',
-    redirect: '/'
-  },
-  // temp disable
-  // {
-  //   path: '/android_asset/(.*)',
-  //   redirect: '/'
-  // },
-  // {
-  //   path: '/var/containers/(.*)',
-  //   redirect: '/'
-  // },
   {
     path: '(.*)',
     component: NotFoundPage

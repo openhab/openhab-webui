@@ -254,7 +254,6 @@
 <script>
 import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
 
-import cordovaApp from '@/js/cordova-app.js'
 import routes from '@/js/routes.js'
 import PanelRight from '@/pages/panel-right.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
@@ -313,10 +312,10 @@ export default {
         // App routes
         routes: routes,
         view: {
-          // disable f7 swipeback on iOS (if not in cordova) because it's handled natively by Safari
-          iosSwipeBack: !this.$device.ios || this.$device.cordova,
-          auroraSwipeBack: !this.$device.ios || this.$device.cordova,
-          pushState: true, // !this.$device.cordova
+          // disable f7 swipeback on iOS because it's handled natively by Safari
+          iosSwipeBack: !this.$device.ios,
+          auroraSwipeBack: !this.$device.ios,
+          pushState: true,
           pushStateSeparator: ''
         },
         // Enable panel left visibility breakpoint
@@ -326,20 +325,14 @@ export default {
         },
 
         // Register service worker
-        serviceWorker: (this.$device.cordova || location.hostname === 'localhost') ? {} : {
+        serviceWorker: (location.hostname === 'localhost') ? {} : {
           path: '/service-worker.js'
-        },
-        // Input settings
-        input: {
-          scrollIntoViewOnFocus: !!this.$device.cordova,
-          scrollIntoViewCentered: !!this.$device.cordova
         },
         card: {
           swipeToClose: true
         },
-        // Cordova Statusbar settings
         statusbar: {
-          overlay: (this.$device.cordova && this.$device.ios) || 'auto',
+          overlay: 'auto',
           iosOverlaysWebView: true,
           androidOverlaysWebView: false
         },
@@ -575,8 +568,6 @@ export default {
         this.loggedIn = false
         this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
         window.location = window.location.origin
-        if (this.$device.cordova) {
-        }
       }).catch((err) => {
         this.$f7.preloader.hide()
         this.$f7.dialog.alert('Error while signing out: ' + err)
@@ -667,18 +658,6 @@ export default {
     this.$f7ready((f7) => {
       this.updateThemeOptions()
       this.$f7.data.themeOptions = this.themeOptions
-
-      // Init cordova APIs (see cordova-app.js)
-      if (f7.device.cordova) {
-        cordovaApp.init(f7)
-
-        if (!localStorage.getItem('openhab.ui:serverUrl')) {
-          this.loginScreenOpened = true
-          return
-        }
-
-        this.loggedIn = true
-      }
 
       if (!this.user) {
         this.tryExchangeAuthorizationCode().then((user) => {
