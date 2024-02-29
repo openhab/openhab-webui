@@ -19,7 +19,6 @@ function resolvePath(dir) {
 const env = process.env.NODE_ENV || 'development'
 const target = process.env.TARGET || 'web'
 const buildSourceMaps = process.env.SOURCE_MAPS || false
-const isCordova = target === 'cordova'
 
 const apiBaseUrl = process.env.OH_APIBASE || 'http://localhost:8080'
 
@@ -32,7 +31,7 @@ module.exports = {
     './src/js/app.js'
   ],
   output: {
-    path: resolvePath(isCordova ? 'cordova/www' : 'www'),
+    path: resolvePath('www'),
     filename: 'js/app.[contenthash].js',
     publicPath: '/',
     hotUpdateChunkFilename: 'hot/[id].[fullhash].hot-update.js',
@@ -253,7 +252,7 @@ module.exports = {
       patterns: [
         {
           from: resolvePath('src/res'),
-          to: resolvePath(isCordova ? 'cordova/www/res' : 'www/res')
+          to: resolvePath('www/res')
         },
         {
           from: resolvePath('src/manifest.json'),
@@ -265,7 +264,7 @@ module.exports = {
         }
       ]
     }),
-    ...(!isCordova && env === 'production' ? [
+    ...(env === 'production' ? [
       new WorkboxPlugin.InjectManifest({
         swSrc: resolvePath('src/service-worker.js'),
         maximumFileSizeToCacheInBytes: 100000000,
