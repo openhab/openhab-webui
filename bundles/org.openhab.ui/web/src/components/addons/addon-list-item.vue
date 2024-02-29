@@ -27,7 +27,7 @@
     padding-right 3px !important
   .logo-square
     background white
-    border-radius 5px
+    border-radius 10%
     width 64px
     height 64px
     margin-left 3px
