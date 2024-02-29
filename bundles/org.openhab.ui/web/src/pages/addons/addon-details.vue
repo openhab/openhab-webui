@@ -102,7 +102,7 @@
       align-items center
       width 118px
       height 118px
-      border-radius 22%
+      border-radius 10%
       margin-right var(--f7-block-padding-horizontal)
       flex-shrink 0
       background white
