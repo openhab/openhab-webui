@@ -44,8 +44,9 @@ export default {
     },
     /**
      * Save an Item, i.e. add a new Item or update an existing Item.
+     * If the Item is an UoM Item, unit metadata is saved as well.
      *
-     * If a new Item is created (checks `this.createMode`), and it is an UoM Item, unit metadata and state description (if changed from the default) metadata are saved as well.
+     * If a new Item is created (checks `this.createMode`), and it is an UoM Item, state description (if changed from the default) metadata is also saved.
      *
      * @param item
      * @returns {Promise}
@@ -62,7 +63,7 @@ export default {
       // TODO: Add support for saving metadata
       return this.$oh.api.put('/rest/items/' + item.name, item).then(() => {
         // Save unit metadata if Item is an UoM Item
-        if (this.createMode && (item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && unit) {
+        if ((item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && unit) {
           const metadata = {
             value: unit,
             config: {}
@@ -73,7 +74,7 @@ export default {
       }).then(() => {
         // Save state description if Item is an UoM Item and if state description changed from the default value
         if (this.createMode && (item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && stateDescriptionPattern) {
-          if (stateDescriptionPattern !== `%.0f ${unit}`) {
+          if (stateDescriptionPattern !== '%.0f %unit%') {
             const metadata = {
               value: ' ',
               config: {
