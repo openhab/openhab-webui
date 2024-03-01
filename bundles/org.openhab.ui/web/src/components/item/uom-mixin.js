@@ -24,7 +24,7 @@ export default {
   methods: {
     getUnitHint (dimension, channelType) {
       const units = ((channelType && channelType.unitHint) ? channelType.unitHint : '').split(',')
-      let unit = (this.measurementSystem === 'US' && units.length > 1) ? units[1].trim() : units[0].trim() 
+      let unit = (this.measurementSystem === 'US' && units.length > 1) ? units[1].trim() : units[0].trim()
       if (!unit) {
         const unitCurated = Units.Units.find(u => u.dimension === dimension)
         if (unitCurated) {
@@ -34,7 +34,7 @@ export default {
             unit = unitCurated.defaultUS
           } else if (unitCurated.default) {
             unit = unitCurated.default
-          }            
+          }
         }
       }
       if (!unit) {
