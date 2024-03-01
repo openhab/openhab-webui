@@ -30,6 +30,7 @@
         <!-- (Internal) Unit & State Description -->
         <!-- Use v-show instead of v-if, because otherwise the autocomplete for category would take over the unit -->
         <f7-list-input v-show="itemDimension"
+                       ref="unit"
                        label="Unit"
                        type="text"
                        :info="(createMode) ? 'Type any valid unit or select from one of the proposed (non-exhaustive list of) units. Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description.' : ''"

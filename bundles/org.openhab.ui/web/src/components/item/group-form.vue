@@ -19,7 +19,8 @@
     </f7-list-item>
     <!-- (Internal) Unit & State Description -->
     <template v-if="createMode && groupType && groupDimension">
-      <f7-list-input label="Unit"
+      <f7-list-input ref="unit"
+                     label="Unit"
                      type="text"
                      :info="(createMode) ? 'Type any valid unit or select from one of the proposed (non-exhaustive list of) units. Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description.' : ''"
                      :value="item.unit"
