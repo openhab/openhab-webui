@@ -1,21 +1,28 @@
-// Units defines the possible units for UI unit selection. Each unit is defined by one or more fields:
-//   dimension: required field, unit dimension
-//   units: units used in a curated shortlist of units, not specific to SI or Imperial measurement system
-//   unitsSI: units used in a curated shortlist of units, specific to the SI measurement system
-//   unitsUS: units used in a curated shortlist of units, specific to the Imperial measurement system
-//   default: default unit, to be set to override core default unit, not specific to SI or Imperial measurement system
-//   defaultSI: default unit in SI measurement system, to be set to override OH core default SI unit
-//   defaultUS: default unit in Imperial measurement system, to be set to override OH core default Imperial unit
-//   baseUnits: all supported base units that don't allow metric or binary prefixes
-//   baseUnitsMetric: metric base units, the full list of units will include all of these with all metric prefixes
-//   baseUnitsBinary: binary base units, the full list of units will include all of these with all binary prefixes
-// If nothing is defined for an allowed dimension, the UI will fall back on the OH core default unit in the configured
-// measurement system.
-// For dimensions defined, any of the fields can be ommitted. Logical defaults will be used.
-// Units from curated units lists will always be added to the full unit list constructed from baseUnits and prefixes. So it
-// is not necessary to explicitely add what is already in the curated units for the full units list. However, no prefixes
-// will be applied to these. If you want prefixes to be applied, you should add them in the respective baseUnits Array as well.
+// Units defines the possible units for UI unit selection.
+// If nothing is defined for an allowed dimension, the UI will fall back on the OH core default unit in the configured measurement system.
+// For dimensions defined, any of the fields can be omitted. Logical defaults will be used.
+// Units from curated units lists will always be added to the full unit list constructed from baseUnits and prefixes.
+// So it is not necessary to explicitly add what is already in the curated units for the full units list.
+// However, no prefixes will be applied to these. If you want prefixes to be applied, you should add them in the respective baseUnits Array as well.
 
+/**
+ * @typedef Unit
+ * @property {string} dimension unit dimension (required)
+ * @property {string[]} [units] units used in a curated shortlist of units, not specific to SI or Imperial measurement system
+ * @property {string[]} [unitsSI] units used in a curated shortlist of units, specific to the SI measurement system
+ * @property {string[]} [unitsUS] units used in a curated shortlist of units, specific to the Imperial measurement system
+ * @property {string} [default] default unit, to be set to override core default unit, not specific to SI or Imperial measurement system
+ * @property {string} [defaultsSI] default unit in SI measurement system, to be set to override OH core default SI unit
+ * @property {string} [defaultUS] default unit in Imperial measurement system, to be set to override OH core default Imperial unit
+ * @property {string[]} [baseUnits] all supported base units that don't allow metric or binary prefixes
+ * @property {string[]} [baseUnitsMetric] metric base units, the full list of units will include all of these with all metric prefixes
+ * @property {string[]} [baseUnitsBinary] binary base units, the full list of units will include all of these with all binary prefixes
+ */
+
+/**
+ * Defines the possible units for UI unit selection.
+ * @type {Unit[]}
+ */
 export const Units = [{
   dimension: 'Acceleration',
   baseUnits: ['gₙ'],
@@ -160,5 +167,14 @@ export const Units = [{
   baseUnitsMetric: ['m³/s', 'm³/min', 'm³/h', 'm³/d']
 }]
 
+/**
+ * Metric prefixes for metric base units.
+ * @type {string[]}
+ */
 export const MetricPrefixes = ['y', 'z', 'a', 'f', 'p', 'n', 'µ', 'm', 'c', 'd', 'da', 'h', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+
+/**
+ * Binary prefixes for binary base units.
+ * @type {string[]}
+ */
 export const BinaryPrefixes = ['ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']

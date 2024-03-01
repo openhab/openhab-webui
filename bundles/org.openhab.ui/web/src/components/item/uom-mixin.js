@@ -20,11 +20,22 @@ export default {
     }).then(this.dimensionsReady = true)
   },
   computed: {
+    /**
+     * The unit shown in the UI when configuring the Item.
+     * It is pre-filled with the unit hint if in `createMode`, or else the {@link configuredUnit}.
+     * @returns {string}
+     */
     unit () {
+      if (!this.item) return ''
       if (!this.dimensionsReady) return ''
       return this.item.unit ? this.item.unit : (this.createMode ? this.getUnitHint(this.dimension) : this.configuredUnit)
     },
+    /**
+     * The unit currently configured and used by the openHAB server.
+     * @returns {string}
+     */
     configuredUnit () {
+      if (!this.item) return ''
       if (this.item.unitSymbol) return this.item.unitSymbol
       if (!this.dimensionsReady) return ''
       return this.item.type === 'Group' ? this.getSystemUnit(this.groupDimension) : this.getSystemUnit(this.itemDimension)
@@ -58,6 +69,11 @@ export default {
       }
       return unitHint
     },
+    /**
+     * Get the list of curated units for the given dimension.
+     * @param dimension
+     * @returns {string[]}
+     */
     getUnitList (dimension) {
       let unitList = []
       const unitCurated = Units.find(u => u.dimension === dimension)
@@ -87,6 +103,11 @@ export default {
       unitList = [...new Set(unitList)]
       return unitList
     },
+    /**
+     * Get the full list of units for the given dimensions, i.e. the curated units plus all base units with all prefixes.
+     * @param dimension
+     * @returns {string[]}
+     */
     getFullUnitList (dimension) {
       let unitList = []
       const unit = Units.find(u => u.dimension === dimension)
