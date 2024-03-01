@@ -24,7 +24,7 @@
                    type="text"
                    :info="(createMode) ? 'Type any valid unit for the dimension or select from one of the proposed units. Used internally, for persistence and external systems. \
                                           It is independent from the state visualization in the UI, which is defined through the state description pattern.' : ''"
-                   :value="groupDimension ? unit : ''"
+                   :value="groupDimension ? groupUnit : ''"
                    @change="groupUnit = $event.target.value" :clear-button="editable" />
     <f7-list-input v-show="groupType && groupDimension"
                    label="State Description Pattern"
@@ -80,7 +80,7 @@ export default {
         const previousAggregationFunctions = this.aggregationFunctions
         this.$set(this.item, 'groupType', '')
         if (!this.createMode) {
-          this.$set(this, 'oldGroupDimension', '')
+          this.oldGroupDimension = ''
         }
         this.$nextTick(() => {
           if (newType !== 'None') {
@@ -99,7 +99,7 @@ export default {
       },
       set (newDimension) {
         if (!this.createMode) {
-          this.$set(this, 'oldGroupDimension', this.groupDimension)
+          this.oldGroupDimension = this.groupDimension
         }
         if (!newDimension) {
           this.groupType = 'Number'
@@ -109,7 +109,6 @@ export default {
         this.$set(this.item, 'groupType', 'Number:' + dimension.name)
         this.groupUnit = this.getUnitHint(dimension.name)
         this.$set(this.item, 'stateDescriptionPattern', this.getStateDescription())
-        this.$nextTick(() => this.initializeAutocompleteGroupUnit(this.groupDimension))
       }
     },
     groupUnit: {
@@ -118,7 +117,7 @@ export default {
       },
       set (newUnit) {
         if (!this.createMode) {
-          this.$set(this, 'oldGroupUnit', this.unit)
+          this.oldGroupUnit = this.unit
         }
         this.$set(this.item, 'unit', newUnit)
       }
@@ -190,30 +189,22 @@ export default {
         this.groupType = 'Number:' + this.oldGroupDimension
         this.$set(this.item, 'unit', this.oldGroupUnit)
       }
-      this.initializeAutocompleteGroupUnit(this.groupDimension)
     },
     getStateDescription () {
       return this.item.stateDescriptionPattern ? this.item.stateDescriptionPattern : '%.0f %unit%'
     },
-    initializeAutocompleteGroupUnit (dimension) {
+    initializeAutocompleteGroupUnit () {
+      const self = this
       const unitControl = this.$refs.groupUnit
-      if (!(unitControl && unitControl.$el)) {
-        return
-      }
+      if (!unitControl || !unitControl.$el) return
       const inputElement = this.$$(unitControl.$el).find('input')
-      if (this.groupUnitAutocomplete) {
-        this.$f7.autocomplete.destroy(this.groupUnitAutocomplete)
-        this.$set(this, 'groupUnitAutocomplete', '')
-      }
-      if (!dimension) return
-
-      let curatedUnits = this.getUnitList(dimension)
-      let allUnits = this.getFullUnitList(dimension)
       this.groupUnitAutocomplete = this.$f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
-        dropdownPlaceHolderText: this.getUnitHint(dimension),
+        dropdownPlaceholderText: self.getUnitHint(this.dimension),
         source (query, render) {
+          let curatedUnits = self.groupDimension ? self.getUnitList(self.groupDimension) : []
+          let allUnits = self.groupDimension ? self.getFullUnitList(self.groupDimension) : []
           if (!query || !query.length) {
           // Render curated list by default
             render(curatedUnits)
@@ -233,14 +224,15 @@ export default {
   },
   mounted () {
     if (!this.createMode && this.groupDimension) {
-      this.$set(this, 'oldGroupDimension', this.groupDimension)
-      this.$set(this, 'oldGroupUnit', this.groupUnit)
+      this.oldGroupDimension = this.groupDimension
+      this.oldGroupUnit = this.groupUnit
+      this.initializeAutocompleteGroupUnit()
     }
   },
   beforeDestroy () {
     if (this.groupUnitAutocomplete) {
       this.$f7.autocomplete.destroy(this.groupUnitAutocomplete)
-      this.$set(this, 'groupUnitAutocomplete', '')
+      this.groupUnitAutocomplete = null
     }
   }
 }
