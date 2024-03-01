@@ -47,7 +47,7 @@ export const Units = [{
   baseUnitsBinary: ['bit', 'B', 'o']
 }, {
   dimension: 'DataTransferRate',
-  units: ['bit/s', 'kbit/s', 'Mbit/s', 'GBit/s'],
+  units: ['bit/s', 'kbit/s', 'Mbit/s', 'Gbit/s'],
   baseUnitsMetric: ['bit/s'],
   baseUnitsBinary: ['bit/s']
 }, {
