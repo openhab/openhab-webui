@@ -21,16 +21,17 @@
     <template v-if="createMode && groupType && groupDimension">
       <f7-list-input label="Unit"
                      type="text"
-                     info="Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description."
+                     :info="(createMode) ? 'Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description.' : ''"
                      :value="item.unit"
-                     @input="item.unit = $event.target.value" clear-button />
+                     @input="item.unit = $event.target.value" :clear-button="editable" />
       <f7-list-input label="State Description Pattern"
                      type="text"
-                     info="Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value."
+                     :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : ''"
                      :value="item.stateDescriptionPattern"
-                     @input="item.stateDescriptionPattern = $event.target.value" clear-button />
+                     @input="item.stateDescriptionPattern = $event.target.value" :clear-button:="editable" />
     </template>
     <!-- Aggregation Functions -->
+
     <f7-list-item v-if="aggregationFunctions" :disabled="!editable" title="Aggregation Function" class="align-popup-list-item" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
       <select name="select-function" @change="groupFunctionKey = $event.target.value">
         <option v-for="type in aggregationFunctions" :key="type.name" :value="type.name" :selected="type.name === groupFunctionKey">
@@ -165,9 +166,34 @@ export default {
       const dimension = this.dimensions[index]
       this.setGroupType('Number:' + dimension.name)
       if (!this.item.unit) {
-        this.$set(this.item, 'unit', dimension.systemUnit)
+        this.$set(this.item, 'unit', this.getUnitHint(dimension.name))
+      }
+      const unitControl = this.$refs.unit
+      if (unitControl && unitControl.$el) {
+        const inputElement = this.$$(unitControl.$el).find('input')
+        this.initializeAutocompleteUnit(inputElement)
       }
       this.$set(this.item, 'stateDescriptionPattern', '%.0f %unit%')
+    },
+    initializeAutocompleteUnit (inputElement, dimension) {
+      if (this.unitAutocomplete) {
+        this.$f7.autocomplete.destroy(this.unitAutocomplete)
+      }
+      // item.unit can be set to unitHint from channel type, make sure it is at beginning of list
+      let units = this.getUnitList(dimension)
+      const index = units.indexOf(this.item.unit)
+      if (index >= 0) {
+        units.splice(index, 1)
+      }
+      units = [this.item.unit].concat(units)
+      this.unitAutocomplete = this.$f7.autocomplete.create({
+        inputEl: inputElement,
+        openIn: 'dropdown',
+        source (query, render) {
+          // Always render full list
+          render(units)
+        }
+      })
     },
     setFunction (key) {
       if (!key) {

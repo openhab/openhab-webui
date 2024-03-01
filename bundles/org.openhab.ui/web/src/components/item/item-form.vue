@@ -29,18 +29,18 @@
         </f7-list-item>
         <!-- (Internal) Unit & State Description -->
         <!-- Use v-show instead of v-if, because otherwise the autocomplete for category would take over the unit -->
-        <f7-list-input v-show="itemDimension && createMode"
+        <f7-list-input v-show="itemDimension"
                        label="Unit"
                        type="text"
-                       info="Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description."
+                       :info="(createMode) ? 'Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description.' : ''"
                        :disabled="!editable"
                        :value="item.unit"
                        @input="item.unit = $event.target.value"
                        :clear-button="editable" />
-        <f7-list-input v-show="itemDimension && createMode"
+        <f7-list-input v-show="itemDimension"
                        label="State Description Pattern"
                        type="text"
-                       info="Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value."
+                       :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : ''"
                        :disabled="!editable"
                        :value="item.stateDescriptionPattern"
                        @input="item.stateDescriptionPattern = $event.target.value"
@@ -108,6 +108,7 @@ export default {
   data () {
     return {
       types,
+      unitAutocomplete: null,
       categoryInputId: '',
       categoryAutocomplete: null,
       nameErrorMessage: ''
@@ -144,12 +145,35 @@ export default {
       }
       const dimension = this.dimensions.find((d) => d.name === newDimension)
       this.$set(this.item, 'type', 'Number:' + dimension.name)
-      if (!this.item.unit) {
-        this.$set(this.item, 'unit', dimension.systemUnit)
+      this.$set(this.item, 'unit', this.unitHint ? this.unitHint : this.getUnitHint(dimension.name))
+      const unitControl = this.$refs.unit
+      if (unitControl && unitControl.$el) {
+        const inputElement = this.$$(unitControl.$el).find('input')
+        this.initializeAutocompleteUnit(inputElement, dimension)
       }
       this.$set(this.item, 'stateDescriptionPattern', '%.0f %unit%')
     },
-    initializeAutocomplete (inputElement) {
+    initializeAutocompleteUnit (inputElement, dimension) {
+      if (this.unitAutocomplete) {
+        this.$f7.autocomplete.destroy(this.unitAutocomplete)
+      }
+      // item.unit can be set to unitHint from channel type, make sure it is at beginning of list
+      let units = this.getUnitList(dimension.name)
+      const index = units.indexOf(this.item.unit)
+      if (index >= 0) {
+        units.splice(index, 1)
+      }
+      units = [this.item.unit].concat(units)
+      this.unitAutocomplete = this.$f7.autocomplete.create({
+        inputEl: inputElement,
+        openIn: 'dropdown',
+        source (query, render) {
+          // Always render full list
+          render(units)
+        }
+      })
+    },
+    initializeAutocompleteCategory (inputElement) {
       this.categoryAutocomplete = this.$f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
@@ -177,11 +201,15 @@ export default {
   mounted () {
     if (!this.item) return
     const categoryControl = this.$refs.category
-    if (!categoryControl || !categoryControl.$el) return
-    const inputElement = this.$$(categoryControl.$el).find('input')
-    this.initializeAutocomplete(inputElement)
+    if (categoryControl && categoryControl.$el) {
+      const inputElement = this.$$(categoryControl.$el).find('input')
+      this.initializeAutocompleteCategory(inputElement)
+    }
   },
   beforeDestroy () {
+    if (this.unitAutocomplete) {
+      this.$f7.autocomplete.destroy(this.unitAutocomplete)
+    }
     if (this.categoryAutocomplete) {
       this.$f7.autocomplete.destroy(this.categoryAutocomplete)
     }

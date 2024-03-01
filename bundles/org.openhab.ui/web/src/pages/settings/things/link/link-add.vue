@@ -43,7 +43,7 @@
 
         <!-- Create new item -->
         <f7-col v-else>
-          <item-form :item="newItem" :items="items" :createMode="true" />
+          <item-form :item="newItem" :items="items" :createMode="true" :unitHint="unit()" />
         </f7-col>
       </template>
 
@@ -193,16 +193,19 @@ export default {
       newItemName += '_'
       newItemName += this.$oh.utils.normalizeLabel(this.channel.label || this.channelType.label)
       const defaultTags = (this.channel.defaultTags.length > 0) ? this.channel.defaultTags : this.channelType.tags
-      const unit = this.getUnitHint(this.channelType)
       this.$set(this, 'newItem', {
         name: newItemName,
         label: this.channel.label || this.channelType.label,
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
         type: this.channel.itemType || 'Switch',
-        unit: unit,
+        unit: this.unit(),
         tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
       })
+    },
+    unit () {
+      const dimension = this.channel.itemType.startsWith('Number:') ? this.dimensions.find(d => d.name === this.channel.itemType.split(':')[1]) : ''
+      return dimension ? this.getUnitHint(dimension.name, this.channelType) : ''
     },
     loadProfileTypes (channel) {
       this.ready = false

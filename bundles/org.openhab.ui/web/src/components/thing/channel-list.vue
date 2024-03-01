@@ -47,8 +47,8 @@
                               :thing="thing" :channelId="channelId" :channelType="channelType" :channel="channel" :extensible="extensible" :context="context"
                               @channel-updated="(e) => $emit('channels-updated', e)" />
               </template>
-              <template #default="{ channel }" v-else-if="multipleLinksMode">
-                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :items="items" :createMode="true" :channel="channel" :checked="isChecked(channel)" />
+              <template #default="{ channelType, channel }" v-else-if="multipleLinksMode">
+                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :items="items" :createMode="true" :channel="channel" :checked="isChecked(channel)" :unitHint="unit(channel, channelType)" />
               </template>
               <!-- <channel-link #default="{ channelId }" /> -->
             </channel-group>
@@ -192,7 +192,6 @@ export default {
         }
         newItemName += this.$oh.utils.normalizeLabel(suffix)
         const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
-        const unit = this.getUnitHint(channelType)
         const newItem = {
           channel: channel,
           channelType: channelType,
@@ -200,11 +199,15 @@ export default {
           label: channel.label || channelType.label,
           category: (channelType) ? channelType.category : '',
           type: channel.itemType,
-          unit: unit,
+          unit: this.unit(channel, channelType),
           tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
         }
         this.newItems.push(newItem)
       }
+    },
+    unit (channel, channelType) {
+      const dimension = channel.itemType.startsWith('Number:') ? this.dimensions.find(d => d.name === channel.itemType.split(':')[1]) : ''
+      return dimension ? this.getUnitHint(dimension.name, channelType) : ''
     },
     toggleAllChecks (checked) {
       this.thing.channels.forEach((c) => {
