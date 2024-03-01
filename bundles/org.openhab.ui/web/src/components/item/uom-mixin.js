@@ -46,18 +46,31 @@ export default {
       let unitList = []
       const unitCurated = Units.Units.find(u => u.dimension === dimension)
       if (unitCurated) {
-        if (this.measurementSystem === 'SI' && unitCurated.unitsSI) {
-          unitList = unitList.concat(unitCurated.unitsSI)
-        } else if (this.measurementSystem === 'US' && unitCurated.unitsUS) {
-          unitList = unitList.concat(unitCurated.unitsUS)
-        } else {
+        if (unitCurated.units()) {
           unitList = unitList.concat(unitCurated.units)
+        }
+        if (this.measurementSystem === 'SI') {
+          if (unitCurated.unitsSI) {
+            unitList = unitList.concat(unitCurated.unitsSI)
+          }
+          if (unitCurated.unitsUS) {
+            unitList = unitList.concat(unitCurated.unitsUS)
+          }
+        } else if (this.measurementSystem === 'US') {
+          if (unitCurated.unitsUS) {
+            unitList = unitList.concat(unitCurated.unitsUS)
+          }
+          if (unitCurated.unitsSI) {
+            unitList = unitList.concat(unitCurated.unitsSI)
+          }
         }
       }
       const systemUnit = this.dimensions.find(d => d.name === dimension).systemUnit
       if (!unitList.includes(systemUnit)) {
         unitList = [systemUnit].concat(unitList)
       }
+      // remove duplicates
+      unitList = [...new Set(unitList)]
       return unitList
     }
   }

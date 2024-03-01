@@ -180,12 +180,7 @@ export default {
         this.$f7.autocomplete.destroy(this.unitAutocomplete)
       }
       // item.unit can be set to unitHint from channel type, make sure it is at beginning of list
-      let units = this.getUnitList(dimension)
-      const index = units.indexOf(this.item.unit)
-      if (index >= 0) {
-        units.splice(index, 1)
-      }
-      units = [this.item.unit].concat(units)
+      let units = [...new Set([this.item.unit].concat(this.getUnitList(dimension.name)))]
       this.unitAutocomplete = this.$f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
