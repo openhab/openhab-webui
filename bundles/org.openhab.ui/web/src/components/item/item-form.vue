@@ -158,18 +158,18 @@ export default {
         this.$f7.autocomplete.destroy(this.unitAutocomplete)
       }
       // item.unit can be set to unitHint from channel type, make sure it is at beginning of list
-      let units = [...new Set([this.item.unit].concat(this.getUnitList(dimension.name)))]
-      const index = units.indexOf(this.item.unit)
-      if (index >= 0) {
-        units.splice(index, 1)
-      }
-      units = [this.item.unit].concat(units)
+      let curatedUnits = [...new Set([this.item.unit].concat(this.getUnitList(dimension.name)))]
+      let allUnits = this.getFullUnitList(dimension.name)
       this.unitAutocomplete = this.$f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
         source (query, render) {
-          // Always render full list
-          render(units)
+          if (!query || !query.length) {
+          // Render curated list by default
+            render(curatedUnits)
+          } else {
+            render(allUnits.filter(u => u.toLowerCase().indexOf(query.toLowerCase()) >= 0))
+          }
         }
       })
     },

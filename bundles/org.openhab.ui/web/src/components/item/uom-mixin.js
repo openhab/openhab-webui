@@ -72,6 +72,34 @@ export default {
       // remove duplicates
       unitList = [...new Set(unitList)]
       return unitList
+    },
+    getFullUnitList (dimension) {
+      let unitList = []
+      const unit = Units.Units.find(u => u.dimension === dimension)
+      let units = unit.baseUnits
+      if (units) {
+        unitList = unitList.concat(units)
+      }
+      let metricUnits = unit.baseUnitsMetric?.map(
+        u => Units.prefixesMetric.map(
+          p => unitList.concat(p.concat(u))
+        ).concat())
+      if (metricUnits) {
+        unitList = unitList.concat(metricUnits)
+      }
+      let binaryUnits = unit.baseUnitsBinary?.map(
+        u => Units.prefixesBinary.map(
+          p => unitList.concat(p.concat(u))
+        ).concat())
+      if (binaryUnits) {
+        unitList = unitList.concat(binaryUnits)
+      }
+      // Make sure all curated units are also included, even if missing info in units.js
+      // This avoids having to double define them if they are already all in the curated list
+      unitList = unitList.concat(this.getUnitList(dimension))
+      unitList = [...new Set(unitList)]
+      unitList.sort()
+      return unitList
     }
   }
 }
