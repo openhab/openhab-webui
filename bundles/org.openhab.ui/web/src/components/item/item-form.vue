@@ -32,7 +32,7 @@
         <f7-list-input v-show="itemDimension"
                        label="Unit"
                        type="text"
-                       :info="(createMode) ? 'Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description.' : ''"
+                       :info="(createMode) ? 'Type any valid unit or select from one of the proposed (non-exhaustive list of) units. Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description.' : ''"
                        :disabled="!editable"
                        :value="item.unit"
                        @input="item.unit = $event.target.value"
