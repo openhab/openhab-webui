@@ -168,8 +168,13 @@ export default {
         this.$set(this.item, 'unit', newUnit)
       }
     },
-    itemCategory () {
-      return this.item.category || ''
+    itemCategory: {
+      get () {
+        return this.item.category || ''
+      },
+      set (newCategory) {
+        this.$set(this.item, 'category', newCategory)
+      }
     }
   },
   methods: {
