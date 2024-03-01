@@ -44,9 +44,9 @@ export default {
     },
     /**
      * Save an Item, i.e. add a new Item or update an existing Item.
-     * Unit metadata is saved as well for a UoM Item.
+     * If the Item is an UoM Item, unit metadata is saved as well.
      *
-     * If a new Item is created (checks `this.createMode`), and it is an UoM Item, state description (if changed from the default) metadata are saved as well.
+     * If a new Item is created (checks `this.createMode`), and it is an UoM Item, state description (if changed from the default) metadata is also saved.
      *
      * @param item
      * @returns {Promise}
