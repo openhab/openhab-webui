@@ -79,7 +79,7 @@ export const Units = [{
   baseUnitsMetric: ['Ω']
 }, {
   dimension: 'Energy',
-  units: ['kWh', 'Wh', 'VAh', 'varh', 'J', 'kJ', 'cal', 'kcal'],
+  units: ['kWh', 'Wh', 'kVAh', 'kvarh', 'J', 'kJ', 'cal', 'kcal'],
   baseUnitsMetric: ['Ws', 'Wh', 'VAs', 'VAh', 'vars', 'varh', 'J', 'cal']
 }, {
   dimension: 'Force',

@@ -61,7 +61,9 @@ export default {
   props: ['item', 'createMode'],
   data () {
     return {
-      types
+      types,
+      unitAutocomplete: null,
+      unitInitialized: !this.createMode
     }
   },
   computed: {
@@ -185,12 +187,16 @@ export default {
       this.unitAutocomplete = this.$f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
+        typeahead: true,
         source (query, render) {
-          if (!query || !query.length) {
+          if (!query || !query.length || !this.unitInitialized) {
           // Render curated list by default
             render(curatedUnits)
+            this.unitInitialized = true
           } else {
-            render(allUnits.filter(u => u.toLowerCase().indexOf(query.toLowerCase()) >= 0))
+            // Always show currated units on top (don't filter them)
+            let units = [...new Set(curatedUnits.concat(allUnits.filter(u => u.indexOf(query) >= 0)))]
+            render(units)
           }
         }
       })
@@ -209,6 +215,11 @@ export default {
         func.params = [splitted[1], splitted[2]]
       }
       this.$set(this.item, 'function', func)
+    }
+  },
+  beforeDestroy () {
+    if (this.unitAutocomplete) {
+      this.$f7.autocomplete.destroy(this.unitAutocomplete)
     }
   }
 }

@@ -45,24 +45,22 @@ export default {
     getUnitList (dimension) {
       let unitList = []
       const unitCurated = Units.Units.find(u => u.dimension === dimension)
-      if (unitCurated) {
-        if (unitCurated.units()) {
-          unitList = unitList.concat(unitCurated.units)
+      if (unitCurated?.units) {
+        unitList = unitList.concat(unitCurated.units)
+      }
+      if (this.measurementSystem === 'SI') {
+        if (unitCurated?.unitsSI) {
+          unitList = unitList.concat(unitCurated.unitsSI)
         }
-        if (this.measurementSystem === 'SI') {
-          if (unitCurated.unitsSI) {
-            unitList = unitList.concat(unitCurated.unitsSI)
-          }
-          if (unitCurated.unitsUS) {
-            unitList = unitList.concat(unitCurated.unitsUS)
-          }
-        } else if (this.measurementSystem === 'US') {
-          if (unitCurated.unitsUS) {
-            unitList = unitList.concat(unitCurated.unitsUS)
-          }
-          if (unitCurated.unitsSI) {
-            unitList = unitList.concat(unitCurated.unitsSI)
-          }
+        if (unitCurated?.unitsUS) {
+          unitList = unitList.concat(unitCurated.unitsUS)
+        }
+      } else if (this.measurementSystem === 'US') {
+        if (unitCurated?.unitsUS) {
+          unitList = unitList.concat(unitCurated.unitsUS)
+        }
+        if (unitCurated?.unitsSI) {
+          unitList = unitList.concat(unitCurated.unitsSI)
         }
       }
       const systemUnit = this.dimensions.find(d => d.name === dimension).systemUnit
@@ -76,29 +74,28 @@ export default {
     getFullUnitList (dimension) {
       let unitList = []
       const unit = Units.Units.find(u => u.dimension === dimension)
-      let units = unit.baseUnits
+      let units = unit?.baseUnits
       if (units) {
         unitList = unitList.concat(units)
       }
-      let metricUnits = unit.baseUnitsMetric?.map(
+      let metricUnits = unit?.baseUnitsMetric?.flatMap(
         u => Units.prefixesMetric.map(
-          p => unitList.concat(p.concat(u))
-        ).concat())
+          p => p.concat(u)
+        ))
       if (metricUnits) {
         unitList = unitList.concat(metricUnits)
       }
-      let binaryUnits = unit.baseUnitsBinary?.map(
+      let binaryUnits = unit?.baseUnitsBinary?.flatMap(
         u => Units.prefixesBinary.map(
-          p => unitList.concat(p.concat(u))
-        ).concat())
+          p => p.concat(u)
+        ))
       if (binaryUnits) {
         unitList = unitList.concat(binaryUnits)
       }
-      // Make sure all curated units are also included, even if missing info in units.js
+      // Make sure all curated units are also included at top, even if missing info in units.js
       // This avoids having to double define them if they are already all in the curated list
       unitList = unitList.concat(this.getUnitList(dimension))
       unitList = [...new Set(unitList)]
-      unitList.sort()
       return unitList
     }
   }

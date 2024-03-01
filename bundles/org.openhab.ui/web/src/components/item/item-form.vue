@@ -109,6 +109,7 @@ export default {
     return {
       types,
       unitAutocomplete: null,
+      unitInitialized: !this.createMode,
       categoryInputId: '',
       categoryAutocomplete: null,
       nameErrorMessage: ''
@@ -163,12 +164,17 @@ export default {
       this.unitAutocomplete = this.$f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
+        typeahead: true,
+        dropdownPlaceHolderText: this.getUnitHint(dimension.name),
         source (query, render) {
-          if (!query || !query.length) {
+          if (!query || !query.length || !this.unitInitialized) {
           // Render curated list by default
             render(curatedUnits)
+            this.unitInitialized = true
           } else {
-            render(allUnits.filter(u => u.toLowerCase().indexOf(query.toLowerCase()) >= 0))
+            // Always show currated units on top (don't filter them)
+            let units = [...new Set(curatedUnits.concat(allUnits.filter(u => u.indexOf(query) >= 0)))]
+            render(units)
           }
         }
       })
