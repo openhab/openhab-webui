@@ -98,7 +98,7 @@ import uomMixin from '@/components/item/uom-mixin'
 
 export default {
   mixins: [ItemMixin, uomMixin],
-  props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
+  props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics', 'unitHint'],
   components: {
     SemanticsPicker,
     ItemPicker,
@@ -144,8 +144,10 @@ export default {
       }
       const dimension = this.dimensions.find((d) => d.name === newDimension)
       this.$set(this.item, 'type', 'Number:' + dimension.name)
-      this.$set(this.item, 'unit', dimension.systemUnit)
-      this.$set(this.item, 'stateDescriptionPattern', `%.0f ${dimension.systemUnit}`)
+      if (!this.item.unit) {
+        this.$set(this.item, 'unit', dimension.systemUnit)
+      }
+      this.$set(this.item, 'stateDescriptionPattern', '%.0f %unit%')
     },
     initializeAutocomplete (inputElement) {
       this.categoryAutocomplete = this.$f7.autocomplete.create({

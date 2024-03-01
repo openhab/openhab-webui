@@ -153,6 +153,7 @@ export default {
         channelUID: null,
         configuration: {}
       },
+      measurementSystem: 'SI',
       selectedItemName: null,
       selectedThingId: '',
       selectedThing: {},
@@ -172,6 +173,9 @@ export default {
       this.$oh.api.get('/rest/items').then((items) => {
         this.items = items
       })
+      this.$oh.api.get('/').then((root) => {
+        this.measurementSystem = root.measurementSystem
+      })
     }
   },
   computed: {
@@ -181,6 +185,10 @@ export default {
     compatibleProfileTypes () {
       let currentItemType = this.currentItem && this.currentItem.type ? this.currentItem.type : ''
       return this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(currentItemType.split(':', 1)[0]))
+    },
+    unit () {
+      let units = (this.channelType ? this.channelType.unitHint : '').split(',')
+      return (this.measurementSystem === 'US' && units.length > 1) ? units[1].trim() : units[0].trim
     }
   },
   methods: {
@@ -197,6 +205,7 @@ export default {
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
         type: this.channel.itemType || 'Switch',
+        unit: this.unit,
         tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
       })
     },
