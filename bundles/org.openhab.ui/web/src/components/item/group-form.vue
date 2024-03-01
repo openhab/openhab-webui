@@ -1,7 +1,7 @@
 <template>
   <div class="group-form no-padding">
     <!-- Type -->
-    <f7-list-item v-if="item.type === 'Group'" :disabled="!editable" title="Members Base Type" class="align-popup-list-item" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item v-if="item.type === 'Group'" :disabled="!editable" title="Members Base Type" class="aligned-smart-select" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-basetype" @change="groupType = $event.target.value">
         <option v-for="type in types.GroupTypes" :key="type" :value="type" :selected="item.groupType ? type === item.groupType : false">
           {{ type }}
@@ -9,7 +9,7 @@
       </select>
     </f7-list-item>
     <!-- Dimension -->
-    <f7-list-item v-if="dimensions.length && item.groupType && item.groupType.startsWith('Number')" :disabled="!editable" title="Dimension" class="align-popup-list-item" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item v-if="dimensions.length && item.groupType && item.groupType.startsWith('Number')" :disabled="!editable" title="Dimension" class="aligned-smart-select" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-dimension" @change="groupDimension = $event.target.value">
         <option key="" value="Number" :selected="item.type === 'Number'" />
         <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="'Number:' + d.name === item.groupType">

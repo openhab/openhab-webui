@@ -20,7 +20,7 @@
         </f7-list-item>
         <!-- Dimensions -->
         <f7-list-item v-if="dimensions.length && !hideType && itemType === 'Number'" title="Dimension" class="aligned-smart-select" :disabled="!editable" :key="'dimension-' + itemDimension" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
-          <select name="select-dimension" @change="setDimension($event.target.value)">
+          <select name="select-dimension" @change="itemDimension = $event.target.value">
             <option key="" value="Number" :selected="itemDimension === ''" />
             <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="d.name === itemDimension">
               {{ d.label }}
@@ -168,16 +168,6 @@ export default {
       }
     }
   },
-  /*
-  watch: {
-    // Required for pre-filling unit and state description pattern fields in "Add Items from Thing" functionality
-    unitsReady () {
-      if (this.createMode && this.item.type && this.item.type.startsWith('Number:')) {
-        this.itemDimension = this.item.type.split(':')[1]
-      }
-    }
-  },
-  */
   methods: {
     dimensionChanged () {
       if (this.$refs.groupForm && this.$refs.groupForm.dimensionChanged()) return true
