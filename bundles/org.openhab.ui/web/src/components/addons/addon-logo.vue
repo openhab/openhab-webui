@@ -1,10 +1,10 @@
 <template>
   <div>
     <f7-icon v-show="!logoLoaded" :size="size" color="gray" :f7="addonIcon" class="default-icon" style="padding-left: 0; opacity: 0.2; position: absolute" />
-    <img v-if="!svgLogoError" class="lazy logo" :style="imgStyle" :width="logoWidth" ref="svgLogo"
+    <img v-if="!svgLogoError" class="lazy logo" :style="imgStyle" ref="svgLogo"
          :data-src="imageUrl('svg')">
     <img v-else-if="!pngLogoError" class="logo" :style="imgStyle" ref="pngLogo"
-         :src="imageUrl('png')" :width="logoWidth" @load="logoLoaded = true" @error="pngLogoError = true">
+         :src="imageUrl('png')" @load="logoLoaded = true" @error="pngLogoError = true">
   </div>
 </template>
 
@@ -12,7 +12,7 @@
 import { AddonIcons } from '@/assets/addon-store'
 
 export default {
-  props: ['addon', 'size', 'logoWidth'],
+  props: ['addon', 'size'],
   data () {
     return {
       addonIcon: AddonIcons[this.addon.type],
@@ -33,7 +33,7 @@ export default {
       if (this.addon.imageLink) return this.addon.imageLink.replace(/^\/\//, 'https://')
       let docsBranch = 'final'
       if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
-      return `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/images/addons/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}.${type}`
+      return `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/images/addons/${this.addon.id}.${type}`
     }
   },
   mounted () {
