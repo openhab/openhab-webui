@@ -27,7 +27,7 @@ export default {
     configuredUnit () {
       if (this.item.unitSymbol) return this.item.unitSymbol
       if (!this.dimensionsReady) return ''
-      return this.item.type === 'Group' ? this.systemUnit(this.groupDimension) : this.systemUnit(this.itemDimension)
+      return this.item.type === 'Group' ? this.getSystemUnit(this.groupDimension) : this.getSystemUnit(this.itemDimension)
     },
     dimension () {
       const parts = this.item.type === 'Group' ? this.item.groupType?.split(':') : this.item.type?.split(':')
@@ -35,7 +35,7 @@ export default {
     }
   },
   methods: {
-    systemUnit (dimension) {
+    getSystemUnit (dimension) {
       return this.dimensions.find(d => d.name === dimension)?.systemUnit
     },
     getUnitHint (dimension, channelType) {
@@ -54,7 +54,7 @@ export default {
         }
       }
       if (!unitHint) {
-        unitHint = this.systemUnit(dimension)
+        unitHint = this.getSystemUnit(dimension)
       }
       return unitHint
     },
@@ -79,7 +79,7 @@ export default {
           unitList = unitList.concat(unitCurated.unitsSI)
         }
       }
-      const systemUnit = this.systemUnit(dimension)
+      const systemUnit = this.getSystemUnit(dimension)
       if (systemUnit && !unitList.includes(systemUnit)) {
         unitList = [systemUnit].concat(unitList)
       }

@@ -206,7 +206,7 @@ export default {
       }
     },
     channelUnit (channel, channelType) {
-      const dimension = channel.itemType.startsWith('Number:') ? this.dimensions.find(d => d.name === channel.itemType.split(':')[1]) : ''
+      const dimension = channel.itemType.startsWith('Number:') ? channel.itemType.split(':')[1] : ''
       return dimension ? this.getUnitHint(dimension.name, channelType) : ''
     },
     toggleAllChecks (checked) {

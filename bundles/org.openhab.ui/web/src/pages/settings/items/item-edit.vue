@@ -183,21 +183,21 @@ export default {
       const unitChange = this.$refs.itemForm.unitChanged()
       if (dimensionChange || unitChange) {
         const title = 'WARNING: ' + (dimensionChange ? 'Dimension' : 'Unit') + ' Changed'
-        const text = dimensionChange ? 'Existing links to channels with dimension may no longer be valid!' : 'Changing the internal unit can corrupt your persisted data!'
+        const text = dimensionChange ? 'Existing links to channels with dimension may no longer be valid!' : 'Changing the internal unit can corrupt your persisted data and affect rules!'
         return this.$f7.dialog.create({
           title: title,
           text: text,
           buttons: [
             { text: 'Cancel', color: 'gray', close: true, onClick: () => this.$refs.itemForm.revertDimensionChange() },
-            { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.saveConfirmed() }
+            { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.doSave() }
           ],
           destroyOnClose: true
         }).open()
       } else {
-        this.saveConfirmed()
+        this.doSave()
       }
     },
-    saveConfirmed () {
+    doSave () {
       this.saveItem(this.item).then(() => {
         if (this.createMode) {
           this.$f7.toast.create({

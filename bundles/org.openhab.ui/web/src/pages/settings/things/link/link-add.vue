@@ -204,7 +204,7 @@ export default {
       })
     },
     linkUnit () {
-      const dimension = this.channel.itemType.startsWith('Number:') ? this.dimensions.find(d => d.name === this.channel.itemType.split(':')[1]) : ''
+      const dimension = this.channel.itemType.startsWith('Number:') ? this.channel.itemType.split(':')[1] : ''
       return dimension ? this.getUnitHint(dimension.name, this.channelType) : ''
     },
     loadProfileTypes (channel) {

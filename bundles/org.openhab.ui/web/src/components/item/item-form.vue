@@ -51,10 +51,10 @@
         <group-form ref="groupForm" v-if="itemType === 'Group'" :item="item" :createMode="createMode" />
       </f7-list-group>
       <f7-list-group v-if="!hideCategory">
-        <f7-list-input ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
-                       @input="item.category = $event.target.value" :disabled="!editable" :clear-button="editable">
+        <f7-list-input ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="itemCategory"
+                       @input="itemCategory = $event.target.value" :disabled="!editable" :clear-button="editable">
           <div slot="root-end" style="margin-left: calc(35% + 14px)">
-            <oh-icon :icon="item.category" :state="(createMode) ? null : item.state" height="32" width="32" />
+            <oh-icon :icon="itemCategory" :state="(createMode) ? null : item.state" height="32" width="32" />
           </div>
         </f7-list-input>
       </f7-list-group>
@@ -112,8 +112,8 @@ export default {
       unitAutocomplete: null,
       categoryAutocomplete: null,
       nameErrorMessage: '',
-      oldItemDimension: '',
-      oldItemUnit: ''
+      oldItemDimension: (!this.createMode && this.item.type.split(':').length > 1) ? this.item.type.split(':')[1] : '',
+      oldItemUnit: !this.createMode ? (this.unit || '') : ''
     }
   },
   watch: {
@@ -168,6 +168,9 @@ export default {
         }
         this.$set(this.item, 'unit', newUnit)
       }
+    },
+    itemCategory () {
+      return this.item.category || ''
     }
   },
   methods: {
@@ -263,16 +266,6 @@ export default {
   },
   mounted () {
     if (!this.item) return
-    if (!this.item.category) this.$set(this.item, 'category', '')
-    if (!this.item.groupNames) this.$set(this.item, 'groupNames', [])
-    if (this.createMode) {
-      if (!this.items) this.items = []
-      this.nameErrorMessage = this.validateItemName(this.item.name)
-    }
-    if (!this.createMode && this.itemDimension) {
-      this.oldItemDimension = this.itemDimension
-      this.oldItemUnit = this.itemUnit
-    }
     this.initializeAutocompleteCategory()
     if (this.dimensionsReady) this.initializeAutocompleteUnit()
   },
