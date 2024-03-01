@@ -100,13 +100,58 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="addons" ref="addons">
+      <f7-tab id="persistence" ref="persistence">
         <f7-block>
           <f7-link
             icon-ios="f7:arrow_left"
             icon-aurora="f7:arrow_left"
             icon-md="material:arrow_back"
             tab-link="#location"
+            color="blue"
+            tab-link-active />
+          <f7-login-screen-title>
+            <div class="padding">
+              <f7-icon size="48" color="blue" f7="bag_badge_plus" />
+            </div>
+            {{ $t('setupwizard.persistence.title') }}
+          </f7-login-screen-title>
+        </f7-block>
+        <f7-block strong>
+          {{ $t('setupwizard.persistence.header1') }}<br>{{ $t('setupwizard.persistence.header2') }}<br><br>
+        </f7-block>
+        <f7-block>
+          <f7-list media-list v-for="addon in recommendedPersistenceAddons" :key="addon.uid" :title="addon.label">
+            <f7-list-item :title="addon.label">
+              <tr class="grid no-grid-gap">
+                <td style="vertical-align:middle">
+                  <f7-checkbox checked @change="changeSelectedAddon(addon, !$event.target.value)" />
+                </td>
+                <td style="vertical-align:middle">
+                  <img :src="imageUrl(addon.uid)" width="60">
+                </td>
+                <td width="70%" style="vertical-align:top">
+                  {{ $t('setupwizard.persistence.' + addon.uid + '.line1') }}<br>{{ $t('setupwizard.persistence.' + addon.uid + '.line2') }}
+                </td>
+              </tr>
+            </f7-list-item>
+          </f7-list>
+          <f7-block-footer class="margin-bottom">
+            <small v-t="'setupwizard.persistence.footer'" />
+          </f7-block-footer>
+          <div>
+            <f7-button v-if="selectedAddons.length > 0" large fill color="blue" :text="$t('setupwizard.persistence.install')" @click="selectPersistence" />
+            <f7-button large color="blue" :text="$t('setupwizard.persistence.installLater')" class="margin-top" @click="skipPersistence" />
+          </div>
+        </f7-block>
+      </f7-tab>
+
+      <f7-tab id="addons" ref="addons">
+        <f7-block>
+          <f7-link
+            icon-ios="f7:arrow_left"
+            icon-aurora="f7:arrow_left"
+            icon-md="material:arrow_back"
+            tab-link="#persistence"
             color="blue"
             tab-link-active />
           <f7-login-screen-title>
@@ -229,7 +274,7 @@ export default {
       autocompleteAddons: null,
       addons: [],
       selectedAddons: [],
-      recommendedAddons: ['automation-jsscripting', 'persistence-rrd4j', 'ui-basic'],
+      recommendedAddons: ['persistence-rrd4j', 'persistence-mapdb', 'automation-jsscripting', 'ui-basic'],
       installingAddons: false
     }
   },
@@ -241,6 +286,9 @@ export default {
       if (!this.language) return null
       if (!this.region) return this.language
       return this.language + '-' + this.region.toLowerCase()
+    },
+    recommendedPersistenceAddons () {
+      return this.addons.filter(a => ((a.type === 'persistence') && this.recommendedAddons.includes(a.uid)))
     }
   },
   watch: {
@@ -298,11 +346,30 @@ export default {
       this.$oh.api.put('/rest/services/org.openhab.i18n/config', {
         location: this.location
       }).then(() => {
-        this.$refs.addons.show()
+        this.$refs.persistence.show()
       })
     },
     skipLocation () {
+      this.$refs.persistence.show()
+    },
+    imageUrl (addonUid) {
+      let docsBranch = 'final'
+      if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
+      return `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/images/addons/${addonUid.substring(addonUid.indexOf('-') + 1)}.png`
+    },
+    selectPersistence () {
       this.$refs.addons.show()
+    },
+    skipPersistence () {
+      this.$set(this, 'selectedAddons', this.selectedAddons.filter(a => a.type !== 'persistence'))
+      this.$refs.addons.show()
+    },
+    changeSelectedAddon (addon, remove) {
+      if (remove) {
+        this.$set(this, 'selectedAddons', this.selectedAddons.filter(a => (a.uid !== addon.uid)))
+        return
+      }
+      this.$set(this, 'selectedAddons', [...new Set(this.selectedAddons.concat(addon))])
     },
     selectAddons () {
       if (this.autocompleteAddons) this.autocompleteAddons.open()
@@ -368,6 +435,11 @@ export default {
       installNextAddon()
     },
     skipAddons () {
+      this.$set(this, 'selectedAddons', this.selectedAddons.filter(a => a.type === 'persistence'))
+      if (this.selectedAddons.length) {
+        this.installAddons()
+        return
+      }
       this.$refs.finish.show()
     },
     finish () {
@@ -416,33 +488,36 @@ export default {
       }
     })
     this.$oh.api.get('/rest/addons/suggestions').then((suggestedAddons) => {
+      const self = this
       let suggestions = suggestedAddons.flatMap((s) => s.id)
       this.$oh.api.get('/rest/addons').then((data) => {
-        this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
-        this.selectedAddons = this.addons.filter((a) => (this.recommendedAddons.includes(a.uid) || suggestions.includes(a.id)) && !a.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
-        const sortedAddons = this.selectedAddons.concat(this.addons.filter((a) => (!this.selectedAddons.includes(a))))
-        const self = this
-        this.autocompleteAddons = this.$f7.autocomplete.create({
+        const addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+        const selectedAddons = addons.filter((a) => !a.installed && (self.recommendedAddons.includes(a.uid) || suggestions.includes(a.id))).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+        self.$set(self, 'addons', addons)
+        self.$set(self, 'selectedAddons', selectedAddons)
+        const selectableAddons = selectedAddons.filter(a => a.type !== 'persistence').concat(addons.filter(a => (a.type !== 'persistence') && !selectedAddons.includes(a)))
+        self.autocompleteAddons = self.$f7.autocomplete.create({
           openIn: 'popup',
-          pageTitle: this.$t('setupwizard.addons.selectAddons'),
-          searchbarPlaceholder: this.$t('setupwizard.addons.selectAddons.placeholder'),
-          openerEl: this.$refs.selectAddons,
+          pageTitle: self.$t('setupwizard.addons.selectAddons'),
+          searchbarPlaceholder: self.$t('setupwizard.addons.selectAddons.placeholder'),
+          openerEl: self.$refs.selectAddons,
           multiple: true,
           requestSourceOnOpen: true,
           source: (query, render) => {
             if (query.length === 0) {
-              render(sortedAddons.filter((a) => !a.installed).map((a) => a.label))
+              render(selectableAddons.filter((a) => !a.installed).map((a) => a.label))
             } else {
-              render(sortedAddons.filter((a) => !a.installed && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map((a) => a.label))
+              render(selectableAddons.filter((a) => !a.installed && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map((a) => a.label))
             }
           },
           on: {
             change (value) {
-              const selected = value.map((label) => self.addons.find((a) => a.label === label))
-              self.$set(self, 'selectedAddons', selected)
+              const selected = value.map((label) => this.addons.find((a) => a.label === label))
+              const allSelected = self.selectedAddons.filter(a => a.type === 'persistence').concat(selected)
+              self.$set(self, 'selectedAddons', allSelected)
             }
           },
-          value: this.addons.filter((a) => this.recommendedAddons.includes(a.uid) || suggestions.includes(a.id)).map((a) => a.label)
+          value: self.addons.filter(a => (a.type !== 'persistence') && (self.recommendedAddons.includes(a.uid) || suggestions.includes(a.id))).map(a => a.label)
         })
       })
     })
