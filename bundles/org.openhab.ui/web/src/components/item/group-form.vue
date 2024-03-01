@@ -22,8 +22,7 @@
                    ref="groupUnit"
                    label="Unit"
                    type="text"
-                   :info="(createMode) ? 'Type any valid unit for the dimension or select from one of the proposed units. Used internally, for persistence and external systems. \
-                                          It is independent from the state visualization in the UI, which is defined through the state description pattern.' : ''"
+                   :info="(createMode) ? 'Type a valid unit for the dimension or select from the proposed units. Used internally, for persistence and external systems. Is independent from state visualization in the UI, which is defined through the state description pattern.' : ''"
                    :value="groupDimension ? groupUnit : ''"
                    @change="groupUnit = $event.target.value" :clear-button="editable" />
     <f7-list-input v-show="groupType && groupDimension"

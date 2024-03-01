@@ -33,8 +33,7 @@
                        ref="unit"
                        label="Unit"
                        type="text"
-                       :info="(createMode) ? 'Type any valid unit for the dimension or select from one of the proposed units. Used internally, for persistence and external systems. \
-                                              It is independent from the state visualization in the UI, which is defined through the state description pattern.' : ''"
+                       :info="(createMode) ? 'Type a valid unit for the dimension or select from the proposed units. Used internally, for persistence and external systems. Is independent from state visualization in the UI, which is defined through the state description pattern.' : ''"
                        :disabled="!editable"
                        :value="itemDimension ? itemUnit : ''"
                        @change="itemUnit = $event.target.value" />
