@@ -132,8 +132,10 @@ import Item from '@/components/item/item.vue'
 import * as Types from '@/assets/item-types.js'
 import ItemMixin from '@/components/item/item-mixin'
 
+import uomMixin from '@/components/item/uom-mixin'
+
 export default {
-  mixins: [ItemMixin],
+  mixins: [ItemMixin, uomMixin],
   components: {
     ConfigSheet,
     ItemPicker,
@@ -153,7 +155,6 @@ export default {
         channelUID: null,
         configuration: {}
       },
-      measurementSystem: 'SI',
       selectedItemName: null,
       selectedThingId: '',
       selectedThing: {},
@@ -173,9 +174,6 @@ export default {
       this.$oh.api.get('/rest/items').then((items) => {
         this.items = items
       })
-      this.$oh.api.get('/').then((root) => {
-        this.measurementSystem = root.measurementSystem
-      })
     }
   },
   computed: {
@@ -186,10 +184,6 @@ export default {
       let currentItemType = this.currentItem && this.currentItem.type ? this.currentItem.type : ''
       return this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(currentItemType.split(':', 1)[0]))
     },
-    unit () {
-      let units = (this.channelType ? this.channelType.unitHint : '').split(',')
-      return (this.measurementSystem === 'US' && units.length > 1) ? units[1].trim() : units[0].trim
-    }
   },
   methods: {
     onPageAfterIn (event) {
@@ -199,13 +193,14 @@ export default {
       newItemName += '_'
       newItemName += this.$oh.utils.normalizeLabel(this.channel.label || this.channelType.label)
       const defaultTags = (this.channel.defaultTags.length > 0) ? this.channel.defaultTags : this.channelType.tags
+      const unit = this.getUnitHint(this.channelType)
       this.$set(this, 'newItem', {
         name: newItemName,
         label: this.channel.label || this.channelType.label,
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
         type: this.channel.itemType || 'Switch',
-        unit: this.unit,
+        unit: unit,
         tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
       })
     },

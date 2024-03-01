@@ -93,7 +93,10 @@ import ChannelGroup from './channel-group.vue'
 import ChannelLink from './channel-link.vue'
 import ItemForm from '@/components/item/item-form.vue'
 
+import uomMixin from '@/components/item/uom-mixin'
+
 export default {
+  mixins: [uomMixin],
   props: ['thingType', 'thing', 'channelTypes', 'items', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems', 'context'],
   components: {
     ChannelGroup,
@@ -189,6 +192,7 @@ export default {
         }
         newItemName += this.$oh.utils.normalizeLabel(suffix)
         const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
+        const unit = this.getUnitHint(channelType);
         const newItem = {
           channel: channel,
           channelType: channelType,
@@ -196,6 +200,7 @@ export default {
           label: channel.label || channelType.label,
           category: (channelType) ? channelType.category : '',
           type: channel.itemType,
+          unit: unit,
           tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
         }
         this.newItems.push(newItem)
