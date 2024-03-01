@@ -183,7 +183,7 @@ export default {
     compatibleProfileTypes () {
       let currentItemType = this.currentItem && this.currentItem.type ? this.currentItem.type : ''
       return this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(currentItemType.split(':', 1)[0]))
-    },
+    }
   },
   methods: {
     onPageAfterIn (event) {

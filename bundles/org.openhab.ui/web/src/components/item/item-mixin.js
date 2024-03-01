@@ -73,7 +73,7 @@ export default {
       }).then(() => {
         // Save state description if Item is an UoM Item and if state description changed from the default value
         if (this.createMode && (item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && stateDescriptionPattern) {
-          if (stateDescriptionPattern !== `%.0f ${unit}`) {
+          if (stateDescriptionPattern !== '%.0f %unit%') {
             const metadata = {
               value: ' ',
               config: {

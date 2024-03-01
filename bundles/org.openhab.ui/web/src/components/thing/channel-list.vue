@@ -192,7 +192,7 @@ export default {
         }
         newItemName += this.$oh.utils.normalizeLabel(suffix)
         const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
-        const unit = this.getUnitHint(channelType);
+        const unit = this.getUnitHint(channelType)
         const newItem = {
           channel: channel,
           channelType: channelType,

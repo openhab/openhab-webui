@@ -8,7 +8,7 @@ export default {
   created () {
     this.$oh.api.get('/').then((root) => {
       this.measurementSystem = root.measurementSystem
-    }),
+    })
     this.$oh.api.get('/rest/systeminfo/uom').then((data) => {
       data.uomInfo.dimensions.forEach((d) => {
         this.dimensions.push({
