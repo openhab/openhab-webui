@@ -12,7 +12,7 @@
       <f7-list-group v-if="itemType && !hideType">
         <!-- Type -->
         <f7-list-item v-if="itemType && !hideType" title="Type" class="aligned-smart-select" :disabled="!editable" :key="'type-' + itemType" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
-          <select name="select-type" @change="item.type = $event.target.value">
+          <select name="select-type" @change="itemType = $event.target.value">
             <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === itemType">
               {{ t }}
             </option>
@@ -29,26 +29,27 @@
         </f7-list-item>
         <!-- (Internal) Unit & State Description -->
         <!-- Use v-show instead of v-if, because otherwise the autocomplete for category would take over the unit -->
-        <f7-list-input v-show="itemDimension"
+        <f7-list-input v-show="itemDimension && unitsReady"
                        ref="unit"
                        label="Unit"
                        type="text"
-                       :info="(createMode) ? 'Type any valid unit or select from one of the proposed (non-exhaustive list of) units. Used internally, for persistence and external systems. It is independent from the state visualization in the UI, which is defined through the state description.' : ''"
+                       :info="(createMode) ? 'Type any valid unit for the dimension or select from one of the proposed units. Used internally, for persistence and external systems. \
+                                              It is independent from the state visualization in the UI, which is defined through the state description pattern.' : ''"
                        :disabled="!editable"
-                       :value="item.unit"
-                       @input="item.unit = $event.target.value"
+                       :value="itemDimension ? unit : ''"
+                       @change="itemUnit = $event.target.value"
                        :clear-button="editable" />
         <f7-list-input v-show="itemDimension"
                        label="State Description Pattern"
                        type="text"
                        :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : ''"
                        :disabled="!editable"
-                       :value="item.stateDescriptionPattern"
+                       :value="getStateDescription()"
                        @input="item.stateDescriptionPattern = $event.target.value"
                        :clear-button="editable" />
 
         <!-- Group Item Form -->
-        <group-form v-if="itemType === 'Group'" :item="item" :createMode="createMode" />
+        <group-form ref="groupForm" v-if="itemType === 'Group'" :item="item" :createMode="createMode" />
       </f7-list-group>
       <f7-list-group v-if="!hideCategory">
         <f7-list-input ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
@@ -112,7 +113,9 @@ export default {
       unitAutocomplete: null,
       categoryInputId: '',
       categoryAutocomplete: null,
-      nameErrorMessage: ''
+      nameErrorMessage: '',
+      oldItemDimension: '',
+      oldItemUnit: ''
     }
   },
   computed: {
@@ -122,67 +125,129 @@ export default {
     numberOfGroups () {
       return this.item.groupNames?.length.toString() || '0'
     },
-    itemType () {
-      return this.item.type.split(':')[0]
+    itemType: {
+      get () {
+        return this.item.type.split(':')[0]
+      },
+      set (newType) {
+        if (!this.createMode) {
+          this.$set(this, 'oldItemDimension', this.itemDimension)
+        }
+        this.$set(this.item, 'type', newType)
+      }
     },
-    itemDimension () {
-      const parts = this.item.type.split(':')
-      return parts.length > 1 ? parts[1] : ''
+    itemDimension: {
+      get () {
+        const parts = this.item.type.split(':')
+        return parts.length > 1 ? parts[1] : ''
+      },
+      set (newDimension) {
+        if (!this.createMode) {
+          this.$set(this, 'oldItemDimension', this.itemDimension)
+        }
+        if (!newDimension) {
+          this.$set(this.item, 'type', 'Number')
+          return
+        }
+        const dimension = this.dimensions.find((d) => d.name === newDimension)
+        this.$set(this.item, 'type', 'Number:' + dimension.name)
+        this.itemUnit = (this.unitHint ? this.unitHint : this.getUnitHint(dimension.name))
+        this.$set(this.item, 'stateDescription', this.getStateDescription())
+        this.$nextTick(() => this.initializeAutocompleteUnit(this.itemDimension))
+      }
+    },
+    itemUnit: {
+      get () {
+        return this.unit
+      },
+      set (newUnit) {
+        if (!this.createMode) {
+          this.$set(this, 'oldItemUnit', this.unit)
+        }
+        this.$set(this.item, 'unit', newUnit)
+      }
     }
   },
+  /*
   watch: {
     // Required for pre-filling unit and state description pattern fields in "Add Items from Thing" functionality
-    dimensions () {
+    unitsReady () {
       if (this.createMode && this.item.type && this.item.type.startsWith('Number:')) {
-        this.setDimension(this.item.type.split(':')[1])
+        this.itemDimension = this.item.type.split(':')[1]
       }
     }
   },
+  */
   methods: {
-    setDimension (newDimension) {
-      if (!newDimension) {
-        this.$set(this.item, 'type', 'Number')
+    dimensionChanged () {
+      if (this.$refs.groupForm && this.$refs.groupForm.dimensionChanged()) return true
+      if (!this.oldItemDimension) return false
+      return this.oldItemDimension !== this.dimension
+    },
+    unitChanged () {
+      if (this.$refs.groupForm && this.$refs.groupForm.unitChanged()) return true
+      return this.oldItemUnit && this.item.unit && this.oldItemUnit !== this.item.unit
+    },
+    revertDimensionChange () {
+      if (this.itemType === 'Group') {
+        this.$refs.groupForm.revertDimensionChange()
         return
       }
-      const dimension = this.dimensions.find((d) => d.name === newDimension)
-      this.$set(this.item, 'type', 'Number:' + dimension.name)
-      this.$set(this.item, 'unit', this.unitHint ? this.unitHint : this.getUnitHint(dimension.name))
-      const unitControl = this.$refs.unit
-      if (unitControl && unitControl.$el) {
-        const inputElement = this.$$(unitControl.$el).find('input')
-        this.initializeAutocompleteUnit(inputElement, dimension)
+      if (!this.oldItemDimension) {
+        this.$set(this.item, 'type', 'Number')
+        this.$set(this.item, 'unit', '')
+      } else {
+        this.$set(this.item, 'type', 'Number:' + this.oldItemDimension)
+        this.$set(this.item, 'unit', this.oldItemUnit)
       }
-      this.$set(this.item, 'stateDescriptionPattern', '%.0f %unit%')
+      this.initializeAutocompleteUnit(this.itemDimension)
     },
-    initializeAutocompleteUnit (inputElement, dimension) {
+    getStateDescription () {
+      return this.item.stateDescriptionPattern ? this.item.stateDescriptionPattern : '%.0f %unit%'
+    },
+    initializeAutocompleteUnit (dimension) {
+      const unitControl = this.$refs.unit
+      if (!(unitControl && unitControl.$el)) {
+        return
+      }
+      const inputElement = this.$$(unitControl.$el).find('input')
       if (this.unitAutocomplete) {
         this.$f7.autocomplete.destroy(this.unitAutocomplete)
+        this.$set(this, 'unitAutocomplete', '')
       }
+      if (!dimension) return
+
       // item.unit can be set to unitHint from channel type, make sure it is at beginning of list
-      let curatedUnits = [...new Set([this.item.unit].concat(this.getUnitList(dimension.name)))]
-      let allUnits = this.getFullUnitList(dimension.name)
+      let curatedUnits = this.getUnitList(dimension)
+      if (this.item.unit) {
+        curatedUnits = [...new Set([this.item.unit].concat(curatedUnits))]
+      }
+      let allUnits = this.getFullUnitList(dimension)
       this.unitAutocomplete = this.$f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
-        typeahead: true,
-        dropdownPlaceHolderText: this.getUnitHint(dimension.name),
+        dropdownPlaceHolderText: this.getUnitHint(dimension),
         source (query, render) {
           if (!query || !query.length) {
           // Render curated list by default
             render(curatedUnits)
           } else {
-            // First filter on curated list
             let units = curatedUnits.filter(u => u.indexOf(query) >= 0)
-            if (!units.length) {
+            if (units.length) {
+              // Show full curated list if in curated list
+              render(curatedUnits)
+            } else {
               // If no match filter on full list
-              units = allUnits.filter(u => u.indexOf(query) >= 0)
+              render(allUnits.filter(u => u.indexOf(query) >= 0))
             }
-            render(units)
           }
         }
       })
     },
-    initializeAutocompleteCategory (inputElement) {
+    initializeAutocompleteCategory () {
+      const categoryControl = this.$refs.category
+      if (!categoryControl || !categoryControl.$el) return
+      const inputElement = this.$$(categoryControl.$el).find('input')
       this.categoryAutocomplete = this.$f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
@@ -209,6 +274,16 @@ export default {
   },
   mounted () {
     if (!this.item) return
+    if (!this.item.category) this.$set(this.item, 'category', '')
+    if (!this.item.groupNames) this.$set(this.item, 'groupNames', [])
+    if (this.createMode) {
+      if (!this.items) this.items = []
+      this.$set(this, 'nameErrorMessage', this.validateItemName(this.item.name))
+    }
+    if (!this.createMode && this.itemDimension) {
+      this.$set(this, 'oldItemDimension', this.itemDimension)
+      this.$set(this, 'oldItemUnit', this.itemUnit)
+    }
     const categoryControl = this.$refs.category
     if (categoryControl && categoryControl.$el) {
       const inputElement = this.$$(categoryControl.$el).find('input')
@@ -218,9 +293,11 @@ export default {
   beforeDestroy () {
     if (this.unitAutocomplete) {
       this.$f7.autocomplete.destroy(this.unitAutocomplete)
+      this.$set(this, 'unitAutocomplete', '')
     }
     if (this.categoryAutocomplete) {
       this.$f7.autocomplete.destroy(this.categoryAutocomplete)
+      this.$set(this, 'categoryAutocomplete', '')
     }
   }
 }

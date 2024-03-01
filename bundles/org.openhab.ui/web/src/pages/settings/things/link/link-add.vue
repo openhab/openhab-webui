@@ -43,7 +43,7 @@
 
         <!-- Create new item -->
         <f7-col v-else>
-          <item-form :item="newItem" :items="items" :createMode="true" :unitHint="unit()" />
+          <item-form ref="itemForm" :item="newItem" :items="items" :createMode="true" :unitHint="linkUnit()" />
         </f7-col>
       </template>
 
@@ -199,11 +199,11 @@ export default {
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
         type: this.channel.itemType || 'Switch',
-        unit: this.unit(),
+        unit: this.linkUnit(),
         tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
       })
     },
-    unit () {
+    linkUnit () {
       const dimension = this.channel.itemType.startsWith('Number:') ? this.dimensions.find(d => d.name === this.channel.itemType.split(':')[1]) : ''
       return dimension ? this.getUnitHint(dimension.name, this.channelType) : ''
     },

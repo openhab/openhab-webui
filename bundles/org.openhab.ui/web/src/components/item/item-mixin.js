@@ -62,7 +62,7 @@ export default {
       // TODO: Add support for saving metadata
       return this.$oh.api.put('/rest/items/' + item.name, item).then(() => {
         // Save unit metadata if Item is an UoM Item
-        if (this.createMode && (item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && unit) {
+        if ((item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && unit) {
           const metadata = {
             value: unit,
             config: {}

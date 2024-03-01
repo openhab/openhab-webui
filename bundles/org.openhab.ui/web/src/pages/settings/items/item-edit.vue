@@ -27,7 +27,7 @@
             </div>
           </f7-col>
           <f7-col>
-            <item-form :item="item" :items="items" :createMode="createMode" />
+            <item-form ref="itemForm" :item="item" :items="items" :createMode="createMode" />
           </f7-col>
 
           <div class="flex-shrink-0 if-aurora display-flex justify-content-center">
@@ -179,6 +179,25 @@ export default {
       if (this.validateItemName(this.item.name) !== '') return this.$f7.dialog.alert('Please give the Item a valid name: ' + this.validateItemName(this.item.name)).open()
       if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0])) return this.$f7.dialog.alert('Please give Item a valid type').open()
 
+      const dimensionChange = this.$refs.itemForm.dimensionChanged()
+      const unitChange = this.$refs.itemForm.unitChanged()
+      if (dimensionChange || unitChange) {
+        const title = 'WARNING: ' + (dimensionChange ? 'Dimension' : 'Unit') + ' Changed'
+        const text = dimensionChange ? 'Existing links to channels with dimension may no longer be valid!' : 'Changing the internal unit can corrupt your persisted data!'
+        return this.$f7.dialog.create({
+          title: title,
+          text: text,
+          buttons: [
+            { text: 'Cancel', color: 'gray', close: true, onClick: () => this.$refs.itemForm.revertDimensionChange() },
+            { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.saveConfirmed() }
+          ],
+          destroyOnClose: true
+        }).open()
+      } else {
+        this.saveConfirmed()
+      }
+    },
+    saveConfirmed () {
       this.saveItem(this.item).then(() => {
         if (this.createMode) {
           this.$f7.toast.create({

@@ -3,8 +3,9 @@ import * as Units from '@/assets/units.js'
 export default {
   data () {
     return {
-      measurementSystem: 'SI',
-      dimensions: []
+      measurementSystem: '',
+      dimensions: [],
+      dimensionsReady: false
     }
   },
   created () {
@@ -19,28 +20,56 @@ export default {
           systemUnit: d.systemUnit
         })
       })
-    })
+    }).then(this.dimensionsReady = true)
+  },
+  computed: {
+    unitsReady () {
+      const ready = this.measurementSystem && this.dimensionsReady
+      if (!ready) return false
+      if (this.item.type === 'Group') {
+        this.initializeAutocompleteGroupUnit(this.groupDimension)
+      } else {
+        this.initializeAutocompleteUnit(this.itemDimension)
+      }
+      return true
+    },
+    unit () {
+      if (!this.unitsReady) return ''
+      return this.item.unit ? this.item.unit : (this.createMode ? this.getUnitHint(this.dimension) : this.configuredUnit)
+    },
+    configuredUnit () {
+      if (this.item.unitSymbol) return this.item.unitSymbol
+      if (!this.unitsReady) return ''
+      return this.item.type === 'Group' ? this.systemUnit(this.groupDimension) : this.systemUnit(this.itemDimension)
+    },
+    dimension () {
+      const parts = this.item.type === 'Group' ? this.item.groupType?.split(':') : this.item.type?.split(':')
+      return parts && parts.length > 1 ? parts[1] : ''
+    }
   },
   methods: {
+    systemUnit (dimension) {
+      return this.dimensions.find(d => d.name === dimension)?.systemUnit
+    },
     getUnitHint (dimension, channelType) {
       const units = ((channelType && channelType.unitHint) ? channelType.unitHint : '').split(',')
-      let unit = (this.measurementSystem === 'US' && units.length > 1) ? units[1].trim() : units[0].trim()
-      if (!unit) {
+      let unitHint = (this.measurementSystem === 'US' && units.length > 1) ? units[1].trim() : units[0].trim()
+      if (!unitHint) {
         const unitCurated = Units.Units.find(u => u.dimension === dimension)
         if (unitCurated) {
           if (this.measurementSystem === 'SI' && unitCurated.defaultSI) {
-            unit = unitCurated.defaultSI
+            unitHint = unitCurated.defaultSI
           } else if (this.measurementSystem === 'US' && unitCurated.defaultUS) {
-            unit = unitCurated.defaultUS
+            unitHint = unitCurated.defaultUS
           } else if (unitCurated.default) {
-            unit = unitCurated.default
+            unitHint = unitCurated.default
           }
         }
       }
-      if (!unit) {
-        unit = this.dimensions.find(d => d.name === dimension).systemUnit
+      if (!unitHint) {
+        unitHint = this.systemUnit(dimension)
       }
-      return unit
+      return unitHint
     },
     getUnitList (dimension) {
       let unitList = []
@@ -63,8 +92,8 @@ export default {
           unitList = unitList.concat(unitCurated.unitsSI)
         }
       }
-      const systemUnit = this.dimensions.find(d => d.name === dimension).systemUnit
-      if (!unitList.includes(systemUnit)) {
+      const systemUnit = this.systemUnit(dimension)
+      if (systemUnit && !unitList.includes(systemUnit)) {
         unitList = [systemUnit].concat(unitList)
       }
       // remove duplicates
