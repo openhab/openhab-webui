@@ -146,7 +146,43 @@ export default {
         this.item.functionKey += '_' + this.item.function.params.join('_')
       }
     } else {
-      this.$set(this.item, 'functionKey', '')
+      this.$set(this.item, 'functionKey', 'None')
+    }
+  },
+  methods: {
+    setGroupType (type) {
+      this.$set(this.item, 'groupType', '')
+      this.$set(this.item, 'functionKey', 'None')
+      this.$nextTick(() => {
+        if (type !== 'None') this.$set(this.item, 'groupType', type)
+      })
+    },
+    setDimension (index) {
+      if (index === 'Number') {
+        this.setGroupType('Number')
+        return
+      }
+      const dimension = this.dimensions[index]
+      this.setGroupType('Number:' + dimension.name)
+      if (!this.item.unit) {
+        this.$set(this.item, 'unit', dimension.systemUnit)
+      }
+      this.$set(this.item, 'stateDescriptionPattern', '%.0f %unit%')
+    },
+    setFunction (key) {
+      if (!key) {
+        delete this.item.function
+        return
+      }
+      this.$set(this.item, 'functionKey', key)
+      const splitted = key.split('_')
+      let func = {
+        name: splitted[0]
+      }
+      if (splitted.length > 1) {
+        func.params = [splitted[1], splitted[2]]
+      }
+      this.$set(this.item, 'function', func)
     }
   }
 }
