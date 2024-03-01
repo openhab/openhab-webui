@@ -109,7 +109,6 @@ export default {
     return {
       types,
       unitAutocomplete: null,
-      unitInitialized: !this.createMode,
       categoryInputId: '',
       categoryAutocomplete: null,
       nameErrorMessage: ''
@@ -167,13 +166,16 @@ export default {
         typeahead: true,
         dropdownPlaceHolderText: this.getUnitHint(dimension.name),
         source (query, render) {
-          if (!query || !query.length || !this.unitInitialized) {
+          if (!query || !query.length) {
           // Render curated list by default
             render(curatedUnits)
-            this.unitInitialized = true
           } else {
-            // Always show currated units on top (don't filter them)
-            let units = [...new Set(curatedUnits.concat(allUnits.filter(u => u.indexOf(query) >= 0)))]
+            // First filter on curated list
+            let units = curatedUnits.filter(u => u.indexOf(query) >= 0)
+            if (!units.length) {
+              // If no match filter on full list
+              units = allUnits.filter(u => u.indexOf(query) >= 0)
+            }
             render(units)
           }
         }
