@@ -207,7 +207,7 @@ export default {
     },
     channelUnit (channel, channelType) {
       const dimension = channel.itemType.startsWith('Number:') ? channel.itemType.split(':')[1] : ''
-      return dimension ? this.getUnitHint(dimension.name, channelType) : ''
+      return dimension ? this.getUnitHint(dimension, channelType) : ''
     },
     toggleAllChecks (checked) {
       this.thing.channels.forEach((c) => {

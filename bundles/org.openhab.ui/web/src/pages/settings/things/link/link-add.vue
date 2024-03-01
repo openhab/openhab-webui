@@ -205,7 +205,7 @@ export default {
     },
     linkUnit () {
       const dimension = this.channel.itemType.startsWith('Number:') ? this.channel.itemType.split(':')[1] : ''
-      return dimension ? this.getUnitHint(dimension.name, this.channelType) : ''
+      return dimension ? this.getUnitHint(dimension, this.channelType) : ''
     },
     loadProfileTypes (channel) {
       this.ready = false
