@@ -20,6 +20,7 @@ const store = new Vuex.Store({
   },
   state: {
     apiVersion: null,
+    measurementSystem: null,
     apiEndpoints: null,
     locale: null,
     runtimeInfo: null,
@@ -34,6 +35,7 @@ const store = new Vuex.Store({
   mutations: {
     setRootResource (state, { rootResponse }) {
       state.apiVersion = rootResponse.version
+      state.measurementSystem = rootResponse.measurementSystem
       state.runtimeInfo = rootResponse.runtimeInfo
       state.apiEndpoints = rootResponse.links
       state.websiteUrl = `https://${rootResponse.runtimeInfo?.buildString !== 'Release Build' ? 'next' : 'www'}.openhab.org`

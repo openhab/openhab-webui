@@ -9,9 +9,9 @@
         <f7-list-input label="Label" type="text" placeholder="Item label for display purposes" :value="item.label"
                        @input="item.label = $event.target.value" :disabled="!editable" :clear-button="editable" />
       </f7-list-group>
-      <f7-list-group v-if="itemType && !hideType">
+      <f7-list-group v-if="!hideType" v-show="itemType">
         <!-- Type -->
-        <f7-list-item v-if="itemType && !hideType" title="Type" class="aligned-smart-select" :disabled="!editable" :key="'type-' + itemType" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <f7-list-item title="Type" class="aligned-smart-select" :disabled="!editable" :key="'type-' + itemType" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
           <select name="select-type" @change="itemType = $event.target.value">
             <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === itemType">
               {{ t }}
@@ -19,9 +19,9 @@
           </select>
         </f7-list-item>
         <!-- Dimensions -->
-        <f7-list-item v-if="dimensions.length && !hideType && itemType === 'Number'" title="Dimension" class="aligned-smart-select" :disabled="!editable" :key="'dimension-' + itemDimension" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <f7-list-item v-if="dimensions.length && itemType === 'Number'" title="Dimension" class="aligned-smart-select" :disabled="!editable" :key="'dimension-' + itemDimension" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
           <select name="select-dimension" @change="itemDimension = $event.target.value">
-            <option key="" value="Number" :selected="itemDimension === ''" />
+            <option key="" value="" :selected="itemDimension === ''" />
             <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="d.name === itemDimension">
               {{ d.label }}
             </option>
@@ -29,7 +29,7 @@
         </f7-list-item>
         <!-- (Internal) Unit & State Description -->
         <!-- Use v-show instead of v-if, because otherwise the autocomplete for unit cannot be initialized -->
-        <f7-list-input v-show="itemDimension && unitsReady"
+        <f7-list-input v-show="itemDimension && dimensionsReady"
                        ref="unit"
                        label="Unit"
                        type="text"
@@ -37,8 +37,7 @@
                                               It is independent from the state visualization in the UI, which is defined through the state description pattern.' : ''"
                        :disabled="!editable"
                        :value="itemDimension ? itemUnit : ''"
-                       @change="itemUnit = $event.target.value"
-                       :clear-button="editable" />
+                       @change="itemUnit = $event.target.value" />
         <f7-list-input v-show="itemDimension"
                        label="State Description Pattern"
                        type="text"
@@ -117,6 +116,11 @@ export default {
       oldItemUnit: ''
     }
   },
+  watch: {
+    dimensionsReady (newValue, oldValue) {
+      if (oldValue === false && newValue === true) this.initializeAutocompleteUnit()
+    }
+  },
   computed: {
     editable () {
       return this.createMode || (this.item && this.item.editable)
@@ -193,6 +197,7 @@ export default {
       return this.item.stateDescriptionPattern ? this.item.stateDescriptionPattern : '%.0f %unit%'
     },
     initializeAutocompleteUnit () {
+      if (this.hideType) return
       const self = this
       const unitControl = this.$refs.unit
       if (!unitControl || !unitControl.$el) return
@@ -228,6 +233,7 @@ export default {
       })
     },
     initializeAutocompleteCategory () {
+      if (this.hideCategory) return
       const categoryControl = this.$refs.category
       if (!categoryControl || !categoryControl.$el) return
       const inputElement = this.$$(categoryControl.$el).find('input')
@@ -245,7 +251,7 @@ export default {
     },
     onNameInput (event) {
       this.item.name = event.target.value
-      this.thisnameErrorMessage = this.validateItemName(this.item.name)
+      this.$set(this, 'nameErrorMessage', this.validateItemName(this.item.name))
     },
     deleteGroup (event) {
       const group = event.target.previousSibling.innerText
@@ -268,7 +274,7 @@ export default {
       this.oldItemUnit = this.itemUnit
     }
     this.initializeAutocompleteCategory()
-    this.initializeAutocompleteUnit()
+    if (this.dimensionsReady) this.initializeAutocompleteUnit()
   },
   beforeDestroy () {
     if (this.unitAutocomplete) {

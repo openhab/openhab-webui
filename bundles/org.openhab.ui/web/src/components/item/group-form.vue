@@ -18,7 +18,7 @@
       </select>
     </f7-list-item>
     <!-- (Internal) Unit & State Description -->
-    <f7-list-input v-show="groupType && groupDimension && unitsReady"
+    <f7-list-input v-show="groupType && groupDimension && dimensionsReady"
                    ref="groupUnit"
                    label="Unit"
                    type="text"
@@ -66,6 +66,11 @@ export default {
       groupUnitAutocomplete: null,
       oldGroupDimension: '',
       oldGroupUnit: ''
+    }
+  },
+  watch: {
+    dimensionsReady (newValue, oldValue) {
+      if (oldValue === false && newValue === true) this.initializeAutocompleteGroupUnit()
     }
   },
   computed: {
@@ -226,7 +231,7 @@ export default {
     if (!this.createMode && this.groupDimension) {
       this.oldGroupDimension = this.groupDimension
       this.oldGroupUnit = this.groupUnit
-      this.initializeAutocompleteGroupUnit()
+      if (this.dimensionsReady) this.initializeAutocompleteGroupUnit()
     }
   },
   beforeDestroy () {

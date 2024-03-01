@@ -160,5 +160,5 @@ export const Units = [{
   baseUnitsMetric: ['m³/s', 'm³/min', 'm³/h', 'm³/d']
 }]
 
-export const prefixesMetric = ['y', 'z', 'a', 'f', 'p', 'n', 'µ', 'm', 'c', 'd', 'da', 'h', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
-export const prefixesBinary = ['ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']
+export const MetricPrefixes = ['y', 'z', 'a', 'f', 'p', 'n', 'µ', 'm', 'c', 'd', 'da', 'h', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+export const BinaryPrefixes = ['ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']

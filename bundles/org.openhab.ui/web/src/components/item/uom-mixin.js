@@ -1,17 +1,14 @@
-import * as Units from '@/assets/units.js'
+import { Units, MetricPrefixes, BinaryPrefixes } from '@/assets/units'
 
 export default {
   data () {
     return {
-      measurementSystem: '',
+      measurementSystem: this.$store.state.measurementSystem,
       dimensions: [],
       dimensionsReady: false
     }
   },
   created () {
-    this.$oh.api.get('/rest/').then((data) => {
-      this.measurementSystem = data.measurementSystem
-    })
     this.$oh.api.get('/rest/systeminfo/uom').then((data) => {
       data.uomInfo.dimensions.forEach((d) => {
         this.dimensions.push({
@@ -23,23 +20,13 @@ export default {
     }).then(this.dimensionsReady = true)
   },
   computed: {
-    unitsReady () {
-      const ready = this.measurementSystem && this.dimensionsReady
-      if (!ready) return false
-      if (this.item.type === 'Group') {
-        this.initializeAutocompleteGroupUnit(this.groupDimension)
-      } else {
-        this.initializeAutocompleteUnit(this.itemDimension)
-      }
-      return true
-    },
     unit () {
-      if (!this.unitsReady) return ''
+      if (!this.dimensionsReady) return ''
       return this.item.unit ? this.item.unit : (this.createMode ? this.getUnitHint(this.dimension) : this.configuredUnit)
     },
     configuredUnit () {
       if (this.item.unitSymbol) return this.item.unitSymbol
-      if (!this.unitsReady) return ''
+      if (!this.dimensionsReady) return ''
       return this.item.type === 'Group' ? this.systemUnit(this.groupDimension) : this.systemUnit(this.itemDimension)
     },
     dimension () {
@@ -55,7 +42,7 @@ export default {
       const units = ((channelType && channelType.unitHint) ? channelType.unitHint : '').split(',')
       let unitHint = (this.measurementSystem === 'US' && units.length > 1) ? units[1].trim() : units[0].trim()
       if (!unitHint) {
-        const unitCurated = Units.Units.find(u => u.dimension === dimension)
+        const unitCurated = Units.find(u => u.dimension === dimension)
         if (unitCurated) {
           if (this.measurementSystem === 'SI' && unitCurated.defaultSI) {
             unitHint = unitCurated.defaultSI
@@ -73,7 +60,7 @@ export default {
     },
     getUnitList (dimension) {
       let unitList = []
-      const unitCurated = Units.Units.find(u => u.dimension === dimension)
+      const unitCurated = Units.find(u => u.dimension === dimension)
       if (unitCurated?.units) {
         unitList = unitList.concat(unitCurated.units)
       }
@@ -102,20 +89,20 @@ export default {
     },
     getFullUnitList (dimension) {
       let unitList = []
-      const unit = Units.Units.find(u => u.dimension === dimension)
+      const unit = Units.find(u => u.dimension === dimension)
       let units = unit?.baseUnits
       if (units) {
         unitList = unitList.concat(units)
       }
       let metricUnits = unit?.baseUnitsMetric?.flatMap(
-        u => Units.prefixesMetric.map(
+        u => MetricPrefixes.map(
           p => p.concat(u)
         ))
       if (metricUnits) {
         unitList = unitList.concat(metricUnits)
       }
       let binaryUnits = unit?.baseUnitsBinary?.flatMap(
-        u => Units.prefixesBinary.map(
+        u => BinaryPrefixes.map(
           p => p.concat(u)
         ))
       if (binaryUnits) {
