@@ -20,12 +20,16 @@ expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
 
 expr.addUnaryOp('@', (itemName) => {
   if (itemName === undefined) return undefined
-  const itemState = store.getters.trackedItems[itemName]
-  return itemState.displayState || itemState.state
+  const item = store.getters.trackedItems[itemName]
+  return item.displayState || item.state
 })
 expr.addUnaryOp('@@', (itemName) => {
   if (itemName === undefined) return undefined
   return store.getters.trackedItems[itemName].state
+})
+expr.addUnaryOp('#', (itemName) => {
+  if (itemName === undefined) return undefined
+  return store.getters.trackedItems[itemName].numericState
 })
 
 dayjs.extend(relativeTime)
