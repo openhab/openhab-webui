@@ -29,8 +29,7 @@ expr.addUnaryOp('@@', (itemName) => {
 })
 expr.addUnaryOp('#', (itemName) => {
   if (itemName === undefined) return undefined
-  const item = store.getters.trackedItems[itemName]
-  return item.numericState
+  return store.getters.trackedItems[itemName].numericState
 })
 
 dayjs.extend(relativeTime)
