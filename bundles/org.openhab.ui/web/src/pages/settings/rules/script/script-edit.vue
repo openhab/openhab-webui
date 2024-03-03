@@ -248,8 +248,6 @@ export default {
     // handle script action module type, label, description ect.
     currentModule: {
       handler: function () {
-        console.log('Running')
-
         if (this.savedCurrentModule && !this.loading) { // ignore changes during loading
           this.currentModuleDirty = !fastDeepEqual(this.currentModule, this.savedCurrentModule)
         }
@@ -386,11 +384,7 @@ export default {
         if (this.moduleId) {
           this.$set(this, 'currentModule', this.rule.actions.concat(this.rule.conditions).find((m) => m.id === this.moduleId))
         } else {
-          let mod = this.rule.actions.find((m) => m.id === 'script')
-          if (!this.currentModule) {
-            mod = this.rule.actions.find((m) => m.configuration.script)
-          }
-          this.$set(this, 'currentModule', mod)
+          this.$set(this, 'currentModule', this.rule.actions.find((m) => m.id === 'script' || m.configuration.script))
           this.isScriptRule = true
         }
 
