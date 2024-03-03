@@ -22,6 +22,9 @@
 		}
 	}
 	&-title {
+		html.ui-bigger-font & {
+			font-size: 24px;
+		}
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -33,6 +36,11 @@
 .navigation {
 	&__button-home {
 		cursor: default;
+		.navigation-page & {
+			display: none;
+		}
+	}
+	&__button-settings {
 		.navigation-page & {
 			display: none;
 		}
@@ -109,6 +117,21 @@
 			@media screen and (max-width: $layout-tablet-size-threshold) {
 				padding-left: $mdl-grid-spacing + 16px;
 				padding-right: $mdl-grid-spacing + 16px;
+			}
+		}
+		&--setting {
+			height: $form-row-desktop-height-condensed;
+			border-bottom: none;
+			html.ui-bigger-font & {
+				font-size: 18px;
+			}
+		}
+		&--setting-descr {
+			white-space: normal;
+			height: 100%;
+			font-size: 11px;
+			html.ui-bigger-font & {
+				font-size: 15px;
 			}
 		}
 		&--hidden {
@@ -205,6 +228,9 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		html.ui-bigger-font & {
+			font-size: 18px;
+		}
 	}
 	&__control {
 		@media screen and (max-width: $layout-tablet-size-threshold) {
@@ -253,22 +279,44 @@
 			box-shadow: none;
 			-webkit-box-shadow: none;
 		}
+		.mdl-button-text {
+			html.ui-bigger-font & {
+				font-size: 18px;
+			}
+		}
 		.mdl-button-icon {
 			min-width: 0;
+			&-text {
+				html.ui-bigger-font & {
+					font-size: 18px;
+				}
+				html.ui-icons-enabled & {
+					display: none;
+				}
+			}
 			img,
 			svg {
 				width: 24px;
 				height: 24px;
 				object-fit: contain;
+				html:not(.ui-icons-enabled) & {
+					display: none;
+				}
 			}
 			iconify-icon {
 				font-size: 24px;
 				vertical-align: middle;
+				html:not(.ui-icons-enabled) & {
+					display: none;
+				}
 			}
 			.material-icons,
 			.f7-icons {
 				font-size: 24px;
 				vertical-align: middle;
+				html:not(.ui-icons-enabled) & {
+					display: none;
+				}
 			}
 		}
 		.mdl-textfield {
@@ -276,6 +324,9 @@
 			&__label {
 				font-family: "Helvetica","Arial",sans-serif;
 				font-size: 14px;
+				html.ui-bigger-font & {
+					font-size: 18px;
+				}
 				text-align: right;
 			}
 			&__input {
@@ -348,6 +399,9 @@
 			box-sizing: border-box;
 			font-family: "Helvetica","Arial",sans-serif;
 			font-size: 14px;
+			html.ui-bigger-font & {
+				font-size: 18px;
+			}
 			font-weight: 700;
 			text-align: right;
 			padding-left: 8px;
@@ -357,6 +411,9 @@
 			box-sizing: border-box;
 			font-family: "Helvetica","Arial",sans-serif;
 			font-size: 14px;
+			html.ui-bigger-font & {
+				font-size: 18px;
+			}
 			font-weight: 700;
 			text-align: right;
 			padding-right: 8px;
@@ -366,6 +423,9 @@
 			box-sizing: border-box;
 			font-family: "Helvetica","Arial",sans-serif;
 			font-size: 14px;
+			html.ui-bigger-font & {
+				font-size: 18px;
+			}
 			font-weight: 700;
 			text-align: right;
 			padding-left: 8px;
@@ -391,6 +451,9 @@
 		}
 	}
 	&__value {
+		html.ui-bigger-font & {
+			font-size: 18px;
+		}
 		font-weight: 700;
 		html.ui-capitalize-values & {
 			text-transform: uppercase;
@@ -412,6 +475,9 @@
 		}
 	}
 	&__text {
+		html.ui-bigger-font & {
+			font-size: 18px;
+		}
 		overflow: hidden;
 		flex-shrink: 2;
 		text-overflow: ellipsis;
@@ -496,6 +562,11 @@
 	}
 	&__group & {
 		padding-left: 35px;
+	}
+	&__label {
+		html.ui-bigger-font & {
+			font-size: 20px;
+		}
 	}
 	&__outer-circle,
 	&__inner-circle,
@@ -682,6 +753,18 @@ $colorpicker-mobile-size: 270px;
 	position: relative;
 }
 
+h4 {
+	html.ui-bigger-font & {
+		font-size: 28px;
+	}
+}
+
+h5 {
+	html.ui-bigger-font & {
+		font-size: 24px;
+	}
+}
+
 .page {
 	&-static {
 		&__content {
@@ -694,6 +777,9 @@ $colorpicker-mobile-size: 270px;
 }
 
 .welcome-sitemaps {
+	html.ui-bigger-font & {
+		font-size: 18px;
+	}
 	&__sitemap {
 		padding: 5px 0;
 		.material-icons {

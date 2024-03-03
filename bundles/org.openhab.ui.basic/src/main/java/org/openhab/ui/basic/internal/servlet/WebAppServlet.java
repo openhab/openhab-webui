@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - Basic UI changes
- *
+ * @author Laurent Garnier - New page /basicui/app/settings
  */
 @Component(immediate = true, service = Servlet.class, configurationPid = "org.openhab.basicui", //
         property = Constants.SERVICE_PID + "=org.openhab.basicui")
@@ -125,6 +125,14 @@ public class WebAppServlet extends HttpServlet {
         res.setContentType(CONTENT_TYPE);
     }
 
+    private void showSettings(ServletResponse res) throws IOException, RenderException {
+        PrintWriter resWriter;
+        resWriter = res.getWriter();
+        resWriter.append(renderer.renderSettings());
+
+        res.setContentType(CONTENT_TYPE);
+    }
+
     @Override
     protected void service(@NonNullByDefault({}) HttpServletRequest req, @NonNullByDefault({}) HttpServletResponse res)
             throws ServletException, IOException {
@@ -151,6 +159,11 @@ public class WebAppServlet extends HttpServlet {
         }
 
         try {
+            if ("/settings".equals(req.getPathInfo())) {
+                showSettings(res);
+                return;
+            }
+
             if (sitemap == null) {
                 showSitemapList(res);
                 return;
