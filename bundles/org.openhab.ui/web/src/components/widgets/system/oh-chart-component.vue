@@ -3,7 +3,7 @@
     <chart
       ref="chart"
       v-if="ready"
-      :options="options"
+      :option="options"
       class="oh-chart"
       @click="handleClick"
       :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
@@ -42,31 +42,23 @@ import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 dayjs.extend(LocalizedFormat)
 
-// import echarts from 'echarts/lib/echarts'
-import 'echarts/lib/chart/line'
-import 'echarts/lib/chart/bar'
-import 'echarts/lib/chart/gauge'
-import 'echarts/lib/chart/heatmap'
-import 'echarts/lib/chart/pie'
-import 'echarts/lib/chart/scatter'
-import 'echarts/lib/component/title'
-import 'echarts/lib/component/legend'
-import 'echarts/lib/component/legendScroll'
-import 'echarts/lib/component/toolbox'
-import 'echarts/lib/component/tooltip'
-import 'echarts/lib/component/dataZoom'
-import 'echarts/lib/component/markLine'
-import 'echarts/lib/component/markPoint'
-import 'echarts/lib/component/markArea'
-import 'echarts/lib/component/visualMap'
-import 'echarts/lib/component/calendar'
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart } from 'echarts/charts'
+import {
+  TitleComponent, LegendComponent, LegendScrollComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent,
+  DataZoomComponent, MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent
+} from 'echarts/components'
+import VChart from 'vue-echarts'
 
-import ECharts from 'vue-echarts/components/ECharts'
+use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, TitleComponent,
+  LegendComponent, LegendScrollComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
+  MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent])
 
 export default {
   mixins: [mixin, chart, actionsMixin],
   components: {
-    'chart': ECharts
+    'chart': VChart
   },
   computed: {
     activeHeight () {

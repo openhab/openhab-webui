@@ -67,7 +67,7 @@
             </f7-list>
           </f7-card>
         </div>
-        <chart-skeleton :options="skeletonGridOptions(grid, gridIdx)" style="height: 400px; width: 100%" :autoresize="true" />
+        <chart-skeleton :option="skeletonGridOptions(grid, gridIdx)" style="height: 400px; width: 100%" :autoresize="true" />
       </div>
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
@@ -121,7 +121,7 @@
             </f7-list>
           </f7-card>
         </div>
-        <chart-skeleton :options="skeletonCalendarOptions(calendar, calendarIdx)" style="height: 400px; width: 100%" :autoresize="true" />
+        <chart-skeleton :option="skeletonCalendarOptions(calendar, calendarIdx)" style="height: 400px; width: 100%" :autoresize="true" />
       </div>
     </f7-block>
 
@@ -221,10 +221,22 @@
 import widget from '@/components/widgets/widget-mixin'
 import EditContextMenu from '@/components/pagedesigner/edit-menu.vue'
 
-import ECharts from 'vue-echarts/components/ECharts'
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart } from 'echarts/charts'
+import {
+  TitleComponent, LegendComponent, LegendScrollComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent,
+  DataZoomComponent, MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent
+} from 'echarts/components'
+import VChart from 'vue-echarts'
+
+use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, TitleComponent,
+  LegendComponent, LegendScrollComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
+  MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent])
 
 import * as dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
+import OhChartComponent from '@/components/widgets/system/oh-chart-component.vue'
 dayjs.extend(IsoWeek)
 
 const defaultSlotComponentType = {
@@ -239,7 +251,8 @@ const defaultSlotComponentType = {
 export default {
   mixins: [widget],
   components: {
-    'chart-skeleton': ECharts,
+    OhChartComponent,
+    'chart-skeleton': VChart,
     EditContextMenu
   },
   methods: {

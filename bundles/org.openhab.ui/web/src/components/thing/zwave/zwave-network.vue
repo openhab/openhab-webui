@@ -22,10 +22,15 @@
 <script>
 
 // import ECharts modules manually to reduce bundle size
-import 'echarts/lib/chart/graph'
 import 'echarts/lib/component/tooltip'
 
-import ECharts from 'vue-echarts/components/ECharts'
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { GraphChart } from 'echarts/charts'
+import { ToolboxComponent } from 'echarts/components'
+import VChart from 'vue-echarts'
+
+use([CanvasRenderer, GraphChart, ToolboxComponent])
 
 import ThingStatus from '@/components/thing/thing-status-mixin'
 
@@ -33,7 +38,7 @@ export default {
   mixins: [ThingStatus],
   props: ['bridgeUID'],
   components: {
-    'chart': ECharts
+    'chart': VChart
   },
   computed: {
     finalOptions () {
