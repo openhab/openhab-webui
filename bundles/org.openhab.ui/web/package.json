@@ -59,7 +59,7 @@
     "@mit-app-inventor/blockly-plugin-workspace-multiselect": "^0.1.12",
     "@vue/composition-api": "^1.7.2",
     "blockly": "^10.4.2",
-    "cronstrue": "^1.100.0",
+    "cronstrue": "^2.48.0",
     "crypto-browserify": "^3.12.0",
     "dayjs": "^1.9.6",
     "dom7": "^2.1.5",
