@@ -12,7 +12,7 @@ function wrapPromise (f7promise) {
 Framework7.request.setup({
   xhrFields: { withCredentials: true },
   beforeSend (xhr) {
-    if (getAccessToken() && xhr.requestParameters.method !== 'HEAD') {
+    if (getAccessToken() && xhr.requestParameters.method !== 'HEAD' && xhr.requestParameters.url.startsWith('/rest/')) {
       if (getTokenInCustomHeader()) {
         xhr.setRequestHeader('X-OPENHAB-TOKEN', getAccessToken())
       } else {
