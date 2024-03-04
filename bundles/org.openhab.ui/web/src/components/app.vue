@@ -27,7 +27,7 @@
                         :class="{ currentsection: currentUrl === '/page/' + page.uid || currentUrl.indexOf('/page/' + page.uid + '/') === 0 }"
                         :link="'/page/' + page.uid"
                         :title="page.config.label" view=".view-main" panel-close>
-            <oh-icon slot="media" :icon="pageIcon(page)" />
+            <oh-icon slot="media" :icon="pageIcon(page)" height="18" width="18" />
           </f7-list-item>
         </f7-list>
         <f7-block-title v-if="$store.getters.isAdmin" v-t="'sidebar.administration'" />
