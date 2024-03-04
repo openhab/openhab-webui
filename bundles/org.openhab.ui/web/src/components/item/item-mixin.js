@@ -35,7 +35,7 @@ export default {
      * @returns {string} The error message if the name is invalid, or an empty string if the name is valid.
      */
     validateItemName (name) {
-      if (!/^[A-z][A-z0-9_]+$/.test(name)) {
+      if (!/^[A-z][A-z0-9_]*$/.test(name)) {
         return 'Required. Must not start with a number. A-Z,a-z,0-9,_ only'
       } else if (this.items && this.items.some(item => item.name === name)) {
         return 'An Item with this name already exists'
