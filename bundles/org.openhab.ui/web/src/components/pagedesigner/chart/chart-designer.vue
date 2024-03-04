@@ -236,7 +236,6 @@ use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, Sc
 
 import * as dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
-import OhChartComponent from '@/components/widgets/system/oh-chart-component.vue'
 dayjs.extend(IsoWeek)
 
 const defaultSlotComponentType = {
@@ -251,7 +250,6 @@ const defaultSlotComponentType = {
 export default {
   mixins: [widget],
   components: {
-    OhChartComponent,
     'chart-skeleton': VChart,
     EditContextMenu
   },
