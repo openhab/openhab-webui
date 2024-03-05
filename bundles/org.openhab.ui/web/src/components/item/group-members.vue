@@ -4,7 +4,7 @@
       <f7-list>
         <ul v-if="!editMembers">
           <item
-            v-for="member in groupItem.members" :key="member.name"
+            v-for="member in sortedGroupMembers" :key="member.name"
             :item="member" :link="'/settings/items/' + member.name"
             :context="context" />
           <!-- <f7-list-button @click="enableEditMode" color="blue" title="Add or Remove Members" /> -->
@@ -49,6 +49,9 @@ export default {
   computed: {
     editableMemberNames () {
       return this.groupItem.members.filter((m) => m.editable).map((m) => m.name)
+    },
+    sortedGroupMembers () {
+      return this.groupItem.members.toSorted((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
     }
   },
   methods: {
