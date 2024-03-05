@@ -19,7 +19,7 @@
         <h2>{{ item.label }}</h2>
         <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
         <h5 v-show="item.type">
-          <small>{{ item.type === 'Group' ? `${item.type} (${item.groupType})` : item.type }}</small>
+          <small>{{ itemTypeDisplay }}</small>
         </h5>
       </f7-subnavbar>
     </f7-navbar>
@@ -178,6 +178,10 @@ export default {
       return {
         store: this.$store.getters.trackedItems
       }
+    },
+    itemTypeDisplay () {
+      if (this.item.type !== 'Group' || !this.item.groupType) return this.item.type
+      return `${this.item.type} (${this.item.groupType})`
     }
   },
   methods: {
