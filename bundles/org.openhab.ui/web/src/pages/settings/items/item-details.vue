@@ -19,7 +19,7 @@
         <h2>{{ item.label }}</h2>
         <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
         <h5 v-show="item.type">
-          <small>{{ item.type === 'Group' ? `${item.type} (${item.groupType})` : item.type }}</small>
+          <small>{{ getItemTypeLabel(item) }}</small>
         </h5>
       </f7-subnavbar>
     </f7-navbar>
@@ -157,8 +157,10 @@ import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
+import ItemMixin from '@/components/item/item-mixin'
 
 export default {
+  mixins: [ItemMixin],
   props: ['itemName'],
   components: {
     LinkDetails,
