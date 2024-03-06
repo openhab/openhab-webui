@@ -30,5 +30,7 @@
   "addons.title": "Nessun add-on installato",
   "addons.text": "Gli add-on aggiungono funzionalità a openHAB.<br><br>Installali con il pulsante di seguito.",
   "page.unavailable.title": "Pagina non disponibile",
-  "page.unavailable.text": "Non puoi visualizzare questa pagina a causa di restrizioni di visibilità."
+  "page.unavailable.text": "Non puoi visualizzare questa pagina a causa di restrizioni di visibilità.",
+  "persistence.title": "Nessun componente aggiuntivo di persistenza installato",
+  "persistence.text": "Con la persistenza è possibile memorizzare gli stati degli oggetti nel tempo, indipendentemente dal fatto che si tratti di valori storici o futuri. Per configurare la persistenza, è necessario che sia installato almeno un componente aggiuntivo di persistenza."
 }
