@@ -32,7 +32,7 @@
                    :value="getStateDescription()"
                    @input="item.stateDescriptionPattern = $event.target.value" :clear-button:="editable" />
     <!-- Aggregation Functions -->
-    <f7-list-item v-if="aggregationFunctions" :disabled="!editable" title="Aggregation Function" class="align-popup-list-item" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item v-if="aggregationFunctions" :disabled="!editable" title="Aggregation Function" class="aligned-smart-select" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
       <select name="select-function" @change="groupFunctionKey = $event.target.value">
         <option v-for="type in aggregationFunctions" :key="type.name" :value="type.name" :selected="type.name === groupFunctionKey">
           {{ type.value }}
