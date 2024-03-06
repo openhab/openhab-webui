@@ -3,11 +3,15 @@ import TagMixin from '@/components/tags/tag-mixin'
 export default {
   mixins: [TagMixin],
   methods: {
-    getItemTypeAndMetaLabel (item) {
+    getItemTypeLabel (item) {
       let ret = item.type
-      if (item.type === 'Group') {
+      if (item.type === 'Group' && item.groupType) {
         ret += ` (${item.groupType})`
       }
+      return ret
+    },
+    getItemTypeAndMetaLabel (item) {
+      let ret = this.getItemTypeLabel(item)
       if (item.metadata && item.metadata.semantics) {
         ret += ' · '
         const classParts = item.metadata.semantics.value.split('_')
