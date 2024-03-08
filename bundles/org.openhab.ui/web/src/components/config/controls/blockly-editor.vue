@@ -10,6 +10,7 @@
         <block type="logic_negate" />
         <block type="logic_boolean" />
         <block type="logic_null" />
+        <block type="oh_logic_undefined" />
         <block type="logic_ternary" />
       </category>
 
