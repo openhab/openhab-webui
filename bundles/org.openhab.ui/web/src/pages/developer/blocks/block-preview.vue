@@ -98,7 +98,7 @@ export default {
       xml += `<block type="${this.currentBlock}" deletable="false"></block>`
       xml += '</xml>'
       this.workspace.clear()
-      Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(xml), this.workspace)
+      Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(xml), this.workspace)
     }
   }
 }

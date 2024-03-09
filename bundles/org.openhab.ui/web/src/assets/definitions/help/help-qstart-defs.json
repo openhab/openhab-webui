@@ -4,8 +4,8 @@
     "title": "1. Install a Binding (Add-on)",
     "steps": [
       {
-        "link": "/settings/addons",
-        "title": "Addon-Store",
+        "link": "/addons/binding/",
+        "title": "Add-on Store",
         "text": "Left panel > Settings > Add-on Store or click here <i class=\"f7-icons size-22 add-button-icon\">arrow_right</i>"
       },
       {

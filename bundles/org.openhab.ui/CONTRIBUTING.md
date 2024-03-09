@@ -16,7 +16,6 @@ Change to the `web` directory, gather the necessary dependencies with `npm insta
 
 * `npm start` - run the development server (see below)
 * `npm run build-prod` - build web app for production (note: no need to prepare a production version when submitting a PR, the build server will do it)
-* `npm run build-cordova-prod` - build cordova's `www` folder from source and build a Cordova app
 * `npm run dev` - run the development server (same as above)
 * `npm run dev:blockly` - run the development server with Blockly source-maps (allows Blockly debugging)
 * `npm run test:unit` - start the Jest test runner and run the unit tests
@@ -86,10 +85,6 @@ The "How do I..." and "Quick Start" sections are created from JSON definitions l
 ## PWA
 
 This is a PWA. Don't forget to check what is inside your `service-worker.js`. It is also recommended that you disable the service worker (or enable "Update on reload") in your browser's dev tools during development.
-
-## Cordova
-
-The Cordova project is located in the `cordova` folder. You shouldn't modify content of the `cordova/www` folder. Its content will be correctly generated when you call `npm run build-cordova-prod` (see [NPM Scripts](#npm-scripts)).
 
 ## Documentation & Resources
 

@@ -43,10 +43,7 @@
 
         <!-- Create new item -->
         <f7-col v-else>
-          <item-form :item="newItem" :items="items" :createMode="true" />
-          <f7-list>
-            <item-picker key="newItem-groups" title="Parent Group(s)" name="parent-groups" :value="newItem.groupNames" :items="items" @input="(value) => newItem.groupNames = value" :multiple="true" filterType="Group" />
-          </f7-list>
+          <item-form ref="itemForm" :item="newItem" :items="items" :createMode="true" :unitHint="linkUnit()" />
         </f7-col>
       </template>
 
@@ -135,8 +132,10 @@ import Item from '@/components/item/item.vue'
 import * as Types from '@/assets/item-types.js'
 import ItemMixin from '@/components/item/item-mixin'
 
+import uomMixin from '@/components/item/uom-mixin'
+
 export default {
-  mixins: [ItemMixin],
+  mixins: [ItemMixin, uomMixin],
   components: {
     ConfigSheet,
     ItemPicker,
@@ -200,8 +199,13 @@ export default {
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
         type: this.channel.itemType || 'Switch',
+        unit: this.linkUnit(),
         tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
       })
+    },
+    linkUnit () {
+      const dimension = this.channel.itemType.startsWith('Number:') ? this.channel.itemType.split(':')[1] : ''
+      return dimension ? this.getUnitHint(dimension, this.channelType) : ''
     },
     loadProfileTypes (channel) {
       this.ready = false

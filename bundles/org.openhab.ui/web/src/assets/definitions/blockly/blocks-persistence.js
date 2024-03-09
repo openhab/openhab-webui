@@ -66,7 +66,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
     updateShape: function () {
       const persistenceNameInput = this.getInput('persistenceName')
       if (!persistenceNameInput.getShadowDom()) {
-        persistenceNameInput.setShadowDom(Blockly.Xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
+        persistenceNameInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
       }
       if (this.methodName === 'previousState' || this.methodName === 'previousNumericState' || this.methodName === 'previousStateTime') {
         if (this.getInput('dayInfo')) {
@@ -82,15 +82,20 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         if (this.getInput('skipPrevious')) {
           this.removeInput('skipPrevious')
         }
-        if (this.getInput('dayInfo')) {
-          this.removeInput('dayInfo')
-        }
+
         const preposition = (this.methodName === 'historicState') ? 'at' : 'since'
 
-        this.appendValueInput('dayInfo')
-          .appendField(preposition)
-          .setAlign(Blockly.ALIGN_RIGHT)
-          .setCheck(['ZonedDateTime'])
+        if (!this.getInput('dayInfo')) {
+          this.appendValueInput('dayInfo')
+            .appendField(preposition, 'preposition')
+            .setCheck(['ZonedDateTime'])
+          this.moveInputBefore('dayInfo', 'persistenceName')
+        } else {
+          const prepositionField = this.getField('preposition')
+          if (prepositionField.getText() !== preposition) {
+            prepositionField.setValue(preposition)
+          }
+        }
       }
     }
   }
@@ -99,7 +104,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
   * Provides a number of different (non-)statistical metrics for an item according to the given date
   * Code part
   */
-  javascriptGenerator['oh_get_persistvalue'] = function (block) {
+  javascriptGenerator.forBlock['oh_get_persistvalue'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'itemName')
 
@@ -158,7 +163,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         .appendField('from')
         .setCheck(null)
       if (!persistenceNameInput.getShadowDom()) {
-        persistenceNameInput.setShadowDom(Blockly.Xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
+        persistenceNameInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
       }
       this.appendValueInput('dayInfo')
         .appendField(new Blockly.FieldDropdown([['has changed since', 'changedSince'], ['has been updated since', 'updatedSince']]), 'methodName')
@@ -187,7 +192,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
   * Checks if an item has changed or has been updated since some given date
   * Code part
   */
-  javascriptGenerator['oh_persist_changed'] = function (block) {
+  javascriptGenerator.forBlock['oh_persist_changed'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
 
     const inputType = blockGetCheckedInputType(block, 'itemName')
@@ -223,7 +228,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         .appendField('from')
         .setCheck(null)
       if (!persistenceNameInput.getShadowDom()) {
-        persistenceNameInput.setShadowDom(Blockly.Xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
+        persistenceNameInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
       }
 
       this.setInputsInline(true)
@@ -238,7 +243,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
   * Returns the state before the current state of that item
   * Code part
   */
-  javascriptGenerator['oh_get_persistence_lastupdate'] = function (block) {
+  javascriptGenerator.forBlock['oh_get_persistence_lastupdate'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'itemName')
     const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
@@ -293,7 +298,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
     }
   }
 
-  javascriptGenerator['oh_persistence_dropdown'] = function (block) {
+  javascriptGenerator.forBlock['oh_persistence_dropdown'] = function (block) {
     let persistenceName = block.getFieldValue('persistence')
     return [`'${persistenceName}'`, javascriptGenerator.ORDER_NONE]
   }

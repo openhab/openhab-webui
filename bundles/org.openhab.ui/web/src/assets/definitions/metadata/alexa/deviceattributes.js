@@ -223,10 +223,7 @@ export default {
   // Networking Attributes
   NetworkAccess: {
     itemTypes: ['Switch'],
-    parameters: () => [p.inverted(), p.retrievable()],
-    visible: (item) => item.groups
-      .map((group) => group.metadata.alexa.config || {})
-      .some((config) => !!config.macAddress)
+    parameters: () => [p.inverted(), p.retrievable()]
   },
 
   // Scene Attributes
@@ -309,7 +306,7 @@ export default {
   },
   CurrentTemperature: {
     itemTypes: ['Number', 'Number:Temperature'],
-    parameters: (item) => [p.scale(item)]
+    parameters: (_, item) => [p.scale(item)]
   },
   ContactDetectionState: {
     itemTypes: ['Contact', 'Switch'],
@@ -343,27 +340,27 @@ export default {
   // Thermostat Attributes
   TargetTemperature: {
     itemTypes: ['Number', 'Number:Temperature'],
-    parameters: (item) => [p.scale(item), p.setpointRange(item), p.retrievable()]
+    parameters: (_, item) => [p.scale(item), p.setpointRange(item), p.retrievable()]
   },
   CoolingSetpoint: {
     itemTypes: ['Number', 'Number:Temperature'],
     requires: ['HeatingSetpoint'],
-    parameters: (item) => [p.scale(item), p.comfortRange(item), p.setpointRange(item), p.retrievable()]
+    parameters: (_, item) => [p.scale(item), p.comfortRange(item), p.setpointRange(item), p.retrievable()]
   },
   HeatingSetpoint: {
     itemTypes: ['Number', 'Number:Temperature'],
     requires: ['CoolingSetpoint'],
-    parameters: (item) => [p.scale(item), p.comfortRange(item), p.setpointRange(item), p.retrievable()]
+    parameters: (_, item) => [p.scale(item), p.comfortRange(item), p.setpointRange(item), p.retrievable()]
   },
   EcoCoolingSetpoint: {
     itemTypes: ['Number', 'Number:Temperature'],
     requires: ['EcoHeatingSetpoint'],
-    parameters: (item) => [p.scale(item), p.comfortRange(item), p.setpointRange(item), p.retrievable()]
+    parameters: (_, item) => [p.scale(item), p.comfortRange(item), p.setpointRange(item), p.retrievable()]
   },
   EcoHeatingSetpoint: {
     itemTypes: ['Number', 'Number:Temperature'],
     requires: ['EcoCoolingSetpoint'],
-    parameters: (item) => [p.scale(item), p.comfortRange(item), p.setpointRange(item), p.retrievable()]
+    parameters: (_, item) => [p.scale(item), p.comfortRange(item), p.setpointRange(item), p.retrievable()]
   },
   HeatingCoolingMode: {
     itemTypes: ['Number', 'String', 'Switch'],

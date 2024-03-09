@@ -27,7 +27,7 @@
                         :class="{ currentsection: currentUrl === '/page/' + page.uid || currentUrl.indexOf('/page/' + page.uid + '/') === 0 }"
                         :link="'/page/' + page.uid"
                         :title="page.config.label" view=".view-main" panel-close>
-            <oh-icon slot="media" :icon="pageIcon(page)" />
+            <oh-icon slot="media" :icon="pageIcon(page)" height="18" width="18" />
           </f7-list-item>
         </f7-list>
         <f7-block-title v-if="$store.getters.isAdmin" v-t="'sidebar.administration'" />
@@ -75,10 +75,19 @@
           </li>
 
           <!-- Add-on Store -->
-          <f7-list-item link="/addons/" :title="$t('sidebar.addOnStore')" panel-close :animate="false"
-                        :class="{ currentsection: currentUrl.indexOf('/addons/') === 0 }">
+          <f7-list-item link="/addons/" :title="$t('sidebar.addOnStore')" view=".view-main" panel-close :animate="false"
+                        :class="{ currentsection: currentUrl === '/addons/' }">
             <f7-icon slot="media" ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
           </f7-list-item>
+          <li v-if="showAddonsSubmenu && $store.getters.apiEndpoint('addons')">
+            <ul class="menu-sublinks">
+              <f7-list-item v-for="section in Object.keys(AddonTitles)" :key="section" :link="`/addons/${section}/`"
+                            :title="AddonTitles[section]" view=".view-main" panel-close :animate="false" no-chevron
+                            :class="{ currentsection: currentUrl.indexOf(`/addons/${section}`) === 0 }">
+                <f7-icon slot="media" :f7="AddonIcons[section]" color="gray" />
+              </f7-list-item>
+            </ul>
+          </li>
 
           <!-- Developer Tools -->
           <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close :animate="false"
@@ -245,7 +254,6 @@
 <script>
 import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
 
-import cordovaApp from '@/js/cordova-app.js'
 import routes from '@/js/routes.js'
 import PanelRight from '@/pages/panel-right.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
@@ -259,6 +267,8 @@ import sseEvents from './sse-events-mixin'
 
 import dayjs from 'dayjs'
 import dayjsLocales from 'dayjs/locale.json'
+
+import { AddonIcons, AddonTitles } from '@/assets/addon-store'
 
 export default {
   mixins: [auth, i18n, connectionHealth, sseEvents],
@@ -302,10 +312,10 @@ export default {
         // App routes
         routes: routes,
         view: {
-          // disable f7 swipeback on iOS (if not in cordova) because it's handled natively by Safari
-          iosSwipeBack: !this.$device.ios || this.$device.cordova,
-          auroraSwipeBack: !this.$device.ios || this.$device.cordova,
-          pushState: true, // !this.$device.cordova
+          // disable f7 swipeback on iOS because it's handled natively by Safari
+          iosSwipeBack: !this.$device.ios,
+          auroraSwipeBack: !this.$device.ios,
+          pushState: true,
           pushStateSeparator: ''
         },
         // Enable panel left visibility breakpoint
@@ -315,20 +325,14 @@ export default {
         },
 
         // Register service worker
-        serviceWorker: (this.$device.cordova || location.hostname === 'localhost') ? {} : {
-          path: '/service-worker.js'
-        },
-        // Input settings
-        input: {
-          scrollIntoViewOnFocus: !!this.$device.cordova,
-          scrollIntoViewCentered: !!this.$device.cordova
+        serviceWorker: (location.hostname === 'localhost') ? {} : {
+          path: './service-worker.js'
         },
         card: {
           swipeToClose: true
         },
-        // Cordova Statusbar settings
         statusbar: {
-          overlay: (this.$device.cordova && this.$device.ios) || 'auto',
+          overlay: 'auto',
           iosOverlaysWebView: true,
           androidOverlaysWebView: false
         },
@@ -368,6 +372,7 @@ export default {
       },
 
       showSettingsSubmenu: false,
+      showAddonsSubmenu: false,
       showDeveloperSubmenu: false,
       showDeveloperDock: false,
       activeDock: 'tools',
@@ -563,8 +568,6 @@ export default {
         this.loggedIn = false
         this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
         window.location = window.location.origin
-        if (this.$device.cordova) {
-        }
       }).catch((err) => {
         this.$f7.preloader.hide()
         this.$f7.dialog.alert('Error while signing out: ' + err)
@@ -572,7 +575,7 @@ export default {
     },
     updateThemeOptions () {
       this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || ((window.OHApp && window.OHApp.preferDarkMode) ? window.OHApp.preferDarkMode().toString() : (this.$f7.darkTheme ? 'dark' : 'light'))
-      this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.ios || this.$f7.darkTheme || this.themeOptions.dark === 'dark') ? 'light' : 'filled')
+      this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || 'light'
       this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
       this.themeOptions.homeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
       this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
@@ -588,6 +591,7 @@ export default {
         this.visibleBreakpointDisabled = true
         this.$nextTick(() => this.$f7.panel.get('left').disableVisibleBreakpoint())
       }
+      this.themeOptions.blocklyRenderer = localStorage.getItem('openhab.ui:blockly.renderer')
     },
     toggleDeveloperDock () {
       if (!this.$store.getters.isAdmin) return
@@ -614,9 +618,19 @@ export default {
         ev.stopPropagation()
         ev.preventDefault()
       }
+    },
+    updateUrl (newUrl) {
+      this.showSettingsSubmenu = newUrl.indexOf('/settings/') === 0
+      this.showAddonsSubmenu = newUrl.indexOf('/addons/') === 0
+      this.showDeveloperSubmenu = newUrl.indexOf('/developer/') === 0
+      this.currentUrl = newUrl
+      this.$store.commit('setPagePath', this.currentUrl)
     }
   },
   created () {
+    this.AddonIcons = AddonIcons
+    this.AddonTitles = AddonTitles
+
     // special treatment for this option because it's needed to configure the app initialization
     this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.pagetransition') || 'default'
     // tell the app to go fullscreen (if the OHApp is supported)
@@ -645,18 +659,6 @@ export default {
       this.updateThemeOptions()
       this.$f7.data.themeOptions = this.themeOptions
 
-      // Init cordova APIs (see cordova-app.js)
-      if (f7.device.cordova) {
-        cordovaApp.init(f7)
-
-        if (!localStorage.getItem('openhab.ui:serverUrl')) {
-          this.loginScreenOpened = true
-          return
-        }
-
-        this.loggedIn = true
-      }
-
       if (!this.user) {
         this.tryExchangeAuthorizationCode().then((user) => {
           this.loggedIn = true
@@ -679,11 +681,13 @@ export default {
 
       this.$f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
-          this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0 || page.route.url.indexOf('/settings/addons/') === 0
-          this.showDeveloperSubmenu = page.route.url.indexOf('/developer/') === 0
-          this.currentUrl = page.route.url
-          this.$store.commit('setPagePath', this.currentUrl)
+          this.updateUrl(page.route.url)
         }
+      })
+
+      // needed by updateCurrentUrl() inside addon-store onTabShow()
+      this.$f7.on('routeUrlUpdate', (newRoute, router) => {
+        this.updateUrl(newRoute.url)
       })
 
       this.$f7.on('sidebarRefresh', () => {

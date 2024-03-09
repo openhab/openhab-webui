@@ -65,10 +65,14 @@ export default {
     },
     overviewPage () {
       const page = this.$store.getters.page('overview')
-      if (!page) return null
-      if (page.component !== 'oh-layout-page') return null
-      if (!page.slots || (!page.slots.default.length && !page.slots.masonry && !page.slots.canvas && !page.slots.grid)) return null
-      return page
+      if (page) {
+        if (page.component === 'oh-layout-page') return page
+        if (page.slots) {
+          if (page.slots.default && page.slots.default.length) return page
+          if (page.slots.masonry || page.slots.canvas || page.slots.grid) return page
+        }
+      }
+      return null
     },
     overviewPageContext () {
       return {

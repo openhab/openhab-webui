@@ -2,7 +2,7 @@
   <f7-card v-if="widget">
     <f7-card-content>
       <f7-list inline-labels>
-        <f7-list-input v-if="widget.component === 'Sitemap'" label="ID" type="text" placeholder="ID" :value="widget.uid" @input="widget.uid = $event.target.value"
+        <f7-list-input v-if="widget.component === 'Sitemap'" label="Widget ID" type="text" placeholder="Widget ID" :value="widget.uid" @input="widget.uid = $event.target.value"
                        required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only" :disabled="!createMode" />
         <f7-list-input label="Label" type="text" placeholder="Label" :value="widget.config.label" @input="updateParameter('label', $event)" clear-button />
         <item-picker v-if="widget.component !== 'Sitemap' && widget.component !== 'Frame'" title="Item" :value="widget.config.item" @input="(value) => widget.config.item = value" />
@@ -34,6 +34,9 @@
           <f7-list-input v-if="supports('yAxisDecimalPattern')" label="Y-axis decimal pattern" type="text" :value="widget.config.separator" @input="updateParameter('yAxisDecimalPattern', $event)" clear-button />
           <f7-list-item v-if="supports('switchEnabled')" title="Switch enabled">
             <f7-toggle slot="after" :checked="widget.config.switchEnabled" @toggle:change="widget.config.switchEnabled = $event" />
+          </f7-list-item>
+          <f7-list-item v-if="supports('releaseOnly')" title="Release only">
+            <f7-toggle slot="after" :checked="widget.config.releaseOnly" @toggle:change="widget.config.releaseOnly = $event" />
           </f7-list-item>
           <f7-list-item v-if="supports('legend')" title="Legend">
             <f7-toggle slot="after" :checked="widget.config.legend" @toggle:change="widget.config.legend = $event" />
@@ -87,7 +90,7 @@ export default {
         Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern'],
         Webview: ['url', 'height'],
         Mapview: ['height'],
-        Slider: ['sendFrequency', 'switchEnabled', 'minValue', 'maxValue', 'step'],
+        Slider: ['sendFrequency', 'switchEnabled', 'releaseOnly', 'minValue', 'maxValue', 'step'],
         Setpoint: ['minValue', 'maxValue', 'step'],
         Colorpicker: ['sendFrequency'],
         Input: ['inputHint'],

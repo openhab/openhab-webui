@@ -155,7 +155,7 @@
       <f7-list-item radio :checked="timeEventType === 'timeOfDay'" name="timeEventType" title="at a fixed time of the day" @click="updateTimeEventType('timeOfDay')" />
       <f7-list-item radio :checked="timeEventType === 'dateTime'" name="timeEventType" title="at the time specified in an item's state" @click="updateTimeEventType('dateTime')" />
     </f7-list>
-    <config-sheet v-if="currentModuleType" :key="currentSection + currentModule.id"
+    <config-sheet v-if="currentModuleType" :key="currentModule.id"
                   :parameterGroups="[]"
                   :parameters="currentModuleType.configDescriptions"
                   :configuration="currentModule.configuration"
@@ -168,7 +168,7 @@
     <f7-block-footer class="padding-horizontal margin-vertical">
       and this start level has been reached:
     </f7-block-footer>
-    <config-sheet v-if="currentModuleType" :key="currentSection + currentModule.id"
+    <config-sheet v-if="currentModuleType" :key="currentModule.id"
                   :parameterGroups="[]"
                   :parameters="currentModuleType.configDescriptions"
                   :configuration="currentModule.configuration"

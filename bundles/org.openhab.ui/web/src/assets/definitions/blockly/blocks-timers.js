@@ -31,7 +31,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  javascriptGenerator['oh_sleep'] = function (block) {
+  javascriptGenerator.forBlock['oh_sleep'] = function (block) {
     const thread = javascriptGenerator.provideFunction_(
       'thread',
       ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.lang.Thread\')'])
@@ -78,7 +78,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  javascriptGenerator['oh_timer'] = function (block) {
+  javascriptGenerator.forBlock['oh_timer'] = function (block) {
     const delayUnits = block.getFieldValue('delayUnits')
     const delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
@@ -144,7 +144,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  javascriptGenerator['oh_timer_ext'] = function (block) {
+  javascriptGenerator.forBlock['oh_timer_ext'] = function (block) {
     const delayUnits = block.getFieldValue('delayUnits')
     const delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
@@ -232,7 +232,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  javascriptGenerator['oh_timer_isActive'] = function (block) {
+  javascriptGenerator.forBlock['oh_timer_isActive'] = function (block) {
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       const cacheType = getCacheType(this)
@@ -276,7 +276,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  javascriptGenerator['oh_timer_isRunning'] = function (block) {
+  javascriptGenerator.forBlock['oh_timer_isRunning'] = function (block) {
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       // Keep the isRunning block although it doesn't make sense because in GraalJS access to the context is synchronized and therefore it is not possible to run some code the same time a timer is running
@@ -322,7 +322,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  javascriptGenerator['oh_timer_hasTerminated'] = function (block) {
+  javascriptGenerator.forBlock['oh_timer_hasTerminated'] = function (block) {
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       const cacheType = getCacheType(this)
@@ -363,7 +363,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  javascriptGenerator['oh_timer_cancel'] = function (block) {
+  javascriptGenerator.forBlock['oh_timer_cancel'] = function (block) {
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       const cacheType = getCacheType(this)
@@ -412,7 +412,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
   *
   * Code generation
   */
-  javascriptGenerator['oh_timer_reschedule'] = function (block) {
+  javascriptGenerator.forBlock['oh_timer_reschedule'] = function (block) {
     const delayUnits = block.getFieldValue('delayUnits')
     const delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)

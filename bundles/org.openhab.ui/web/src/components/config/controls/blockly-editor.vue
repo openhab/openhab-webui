@@ -10,6 +10,7 @@
         <block type="logic_negate" />
         <block type="logic_boolean" />
         <block type="logic_null" />
+        <block type="oh_logic_undefined" />
         <block type="logic_ternary" />
       </category>
 
@@ -697,9 +698,7 @@
           <block type="oh_zdt_plusminus">
             <value name="offset">
               <shadow type="math_number">
-                <field name="NUM">
-                  0
-                </field>
+                <field name="NUM">0</field>
               </shadow>
             </value>
           </block>
@@ -784,7 +783,7 @@
           </block>
           <sep gap="48" />
           <block type="oh_get_zdt_part">
-            <value name="date">
+            <value name="zdt">
               <shadow type="oh_zdt" />
             </value>
           </block>
@@ -849,7 +848,6 @@
                 <field name="TEXT">message</field>
               </shadow>
             </value>
-            <value name="severity" />
           </block>
           <block type="oh_sendBroadcastNotification">
             <value name="message">
@@ -862,7 +860,6 @@
                 <field name="TEXT">temperature_cold</field>
               </shadow>
             </value>
-            <value name="severity" />
           </block>
           <block type="oh_sendLogNotification">
             <value name="message">
@@ -875,7 +872,6 @@
                 <field name="TEXT">temperature_hot</field>
               </shadow>
             </value>
-            <value name="severity" />
           </block>
         </category>
 
@@ -887,9 +883,7 @@
           <block type="oh_zdt_plusminus">
             <value name="offset">
               <shadow type="math_number">
-                <field name="NUM">
-                  0
-                </field>
+                <field name="NUM">1</field>
               </shadow>
             </value>
           </block>
@@ -915,9 +909,7 @@
               <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
-                    <field name="NUM">
-                      1
-                    </field>
+                    <field name="NUM">1</field>
                   </shadow>
                 </value>
                 <field name="period">Hours</field>
@@ -933,9 +925,7 @@
               <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
-                    <field name="NUM">
-                      1
-                    </field>
+                    <field name="NUM">1</field>
                   </shadow>
                 </value>
                 <field name="period">Hours</field>
@@ -982,7 +972,19 @@
             </value>
           </block>
         </category>
-
+        <category name="HTTP" v-if="isGraalJs">
+          <button
+            helpUrl="configuration/blockly/rules-blockly-http.html"
+            text="Help"
+            callbackKey="ohBlocklyHelp" />
+          <block type="oh_httprequest">
+            <value name="url">
+              <shadow type="text">
+                <field name="TEXT">http://openhab.org</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
         <category name="Run &amp; Process">
           <button
             helpUrl="configuration/blockly/rules-blockly-run-and-process.html"
@@ -1088,9 +1090,9 @@ import Blockly from 'blockly'
 import { WorkspaceSearch } from '@blockly/plugin-workspace-search'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import DarkTheme from '@blockly/theme-dark'
-import { CrossTabCopyPaste } from '@blockly/plugin-cross-tab-copy-paste'
 import { ZoomToFitControl } from '@blockly/zoom-to-fit'
 import { shadowBlockConversionChangeListener } from '@blockly/shadow-block-converter'
+import { Multiselect, MultiselectBlockDragger } from '@mit-app-inventor/blockly-plugin-workspace-multiselect'
 
 import Vue from 'vue'
 
@@ -1138,6 +1140,7 @@ export default {
   },
   mounted () {
     this.load()
+    this.$emit('mounted')
   },
   methods: {
     load () {
@@ -1197,49 +1200,57 @@ export default {
       }, this.isGraalJs)
       this.addLibraryToToolbox(libraryDefinitions || [])
 
-      this.workspace = Blockly.inject(this.$refs.blocklyEditor, {
+      const options = {
         toolbox: this.$refs.toolbox,
+        plugins: {
+          'blockDragger': MultiselectBlockDragger
+        },
         horizontalLayout: !this.$device.desktop,
         theme: this.$f7.data.themeOptions.dark === 'dark' ? DarkTheme : undefined,
-        zoom:
-          {
-            controls: true,
-            wheel: true,
-            startScale: 1.0,
-            maxScale: 3,
-            minScale: 0.3,
-            scaleSpeed: 1.2,
-            pinch: true
-          },
+        zoom: {
+          controls: true,
+          wheel: true,
+          startScale: 1.0,
+          maxScale: 3,
+          minScale: 0.3,
+          scaleSpeed: 1.2,
+          pinch: true
+        },
+        move: {
+          drag: true,
+          wheel: true
+        },
         trashcan: false,
-        showLabels: false
-      })
+        showLabels: false,
+
+        // Multi-select-options
+        multiselectCopyPaste: {
+          crossTab: true,
+          menu: true
+        },
+        multiselectIcon: {
+          hideIcon: true // hide it because it doesn't work in v0.1.11
+        },
+        multiFieldUpdate: true,
+
+        renderer: this.getCurrentRenderer()
+      }
+      this.workspace = Blockly.inject(this.$refs.blocklyEditor, options)
       this.workspace.addChangeListener(shadowBlockConversionChangeListener)
       const workspaceSearch = new WorkspaceSearch(this.workspace)
       workspaceSearch.init()
 
-      Blockly.HSV_SATURATION = 0.45 // default
-      Blockly.HSV_VALUE = 0.65 // a little bit more contract for the different colors
+      Blockly.utils.colour.setHsvSaturation(0.45) // default
+      Blockly.utils.colour.setHsvValue(0.65) // a little bit more contrast for the different colors
 
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
 
-      if (!Blockly.ContextMenuRegistry.registry.getItem('blockCopyToStorage')) {
-        const copyAndPasteOptions = {
-          contextMenu: true,
-          shortcut: true
-        }
-        const copyAndPastePlugin = new CrossTabCopyPaste()
-        copyAndPastePlugin.init(copyAndPasteOptions, () => {
-          console.log('There has been a block type error during copying and pasting')
-        })
-
-        Blockly.Msg['CROSS_TAB_COPY'] = 'Cross-Rule-Copy'
-        Blockly.Msg['CROSS_TAB_PASTE'] = 'Cross-Rule-Paste'
-      }
+      const multiselectPlugin = new Multiselect(this.workspace)
+      multiselectPlugin.init(options)
 
       this.registerLibraryCallbacks(libraryDefinitions)
-      const xml = Blockly.Xml.textToDom(this.blocks)
+      const xml = Blockly.utils.xml.textToDom(this.blocks)
       Blockly.Xml.domToWorkspace(xml, this.workspace)
       this.workspace.addChangeListener(this.onChange)
 
@@ -1278,6 +1289,27 @@ export default {
     },
     getCode () {
       return javascriptGenerator.workspaceToCode(this.workspace)
+    },
+    getRenderers () {
+      const excludedRenderers = ['minimalist']
+      const renderers = Object.keys(Blockly.registry.getAllItems('renderer'))
+        .filter(r => !excludedRenderers.includes(r))
+        .sort()
+      return renderers
+    },
+    getCurrentRenderer () {
+      return this.$f7.data.themeOptions.blocklyRenderer
+    },
+    changeRenderer (newRenderer) {
+      this.$f7.data.themeOptions.blocklyRenderer = newRenderer
+      localStorage.setItem('openhab.ui:blockly.renderer', newRenderer)
+
+      const dom = Blockly.Xml.workspaceToDom(this.workspace)
+      this.workspace.dispose()
+      this.initBlockly(this.blockLibraries)
+      this.workspace.clear()
+      Blockly.Xml.domToWorkspace(dom, this.workspace)
+      this.workspace.refreshToolboxSelection()
     },
     onChange (event) {
       if (event.type === Blockly.Events.FINISHED_LOADING) {

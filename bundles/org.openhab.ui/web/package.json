@@ -6,7 +6,6 @@
   "license": "EPL-2.0",
   "framework7": {
     "type": [
-      "cordova",
       "web",
       "pwa"
     ],
@@ -21,24 +20,10 @@
     "cssPreProcessor": "stylus",
     "customColor": true,
     "color": "ff7700",
-    "bundler": "webpack",
-    "cordova": {
-      "folder": "cordova",
-      "platforms": [
-        "ios",
-        "android"
-      ],
-      "plugins": [
-        "cordova-plugin-statusbar",
-        "cordova-plugin-keyboard",
-        "cordova-plugin-splashscreen",
-        "cordova-plugin-wkwebview-engine"
-      ]
-    }
+    "bundler": "webpack"
   },
   "scripts": {
     "build-prod": "cross-env NODE_ENV=production node ./build/build.js",
-    "build-cordova-prod": "cross-env TARGET=cordova cross-env NODE_ENV=production node ./build/build.js && cd cordova && cordova build",
     "webpack-analyzer": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 node ./build/build.js",
     "webpack-analyzer-report": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 WEBPACK_ANALYZER_REPORT=1 node ./build/build.js",
     "webpack-analyzer-report-stats": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 WEBPACK_ANALYZER_REPORT=1 WEBPACK_ANALYZER_REPORT_STATS=1 node ./build/build.js",
@@ -62,17 +47,17 @@
     "Samsung >= 5"
   ],
   "dependencies": {
-    "@blockly/field-slider": "^4.0.3",
-    "@blockly/plugin-cross-tab-copy-paste": "^2.0.4",
-    "@blockly/plugin-workspace-search": "^6.0.7",
-    "@blockly/shadow-block-converter": "^2.0.13",
-    "@blockly/theme-dark": "^4.0.1",
-    "@blockly/zoom-to-fit": "^3.0.3",
+    "@blockly/field-slider": "^6.1.4",
+    "@blockly/plugin-workspace-search": "^8.1.2",
+    "@blockly/shadow-block-converter": "^5.0.0",
+    "@blockly/theme-dark": "^6.0.5",
+    "@blockly/zoom-to-fit": "^5.0.11",
+    "@mit-app-inventor/blockly-plugin-workspace-multiselect": "^0.1.12",
     "@jsep-plugin/arrow": "^1.0.5",
     "@jsep-plugin/object": "^1.2.1",
     "@jsep-plugin/regex": "^1.0.3",
     "@jsep-plugin/template": "^1.0.2",
-    "blockly": "^9.2.0",
+    "blockly": "^10.4.2",
     "cronstrue": "^1.100.0",
     "crypto-browserify": "^3.12.0",
     "dayjs": "^1.9.6",

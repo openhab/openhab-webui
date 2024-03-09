@@ -5,11 +5,17 @@ export default {
     }
   },
   methods: {
+    confirmLeaveWithoutSaving (callbackLeave, callbackCancel) {
+      this.$f7.dialog.confirm(
+        'Do you want to leave this page without saving?',
+        'Changes have not been saved',
+        callbackLeave,
+        callbackCancel
+      )
+    },
     beforeLeave (router, routeTo, routeFrom, resolve, reject) {
       if (this.dirty) {
-        this.$f7.dialog.confirm(
-          'Do you want to leave this page without saving?',
-          'Changes have not been saved',
+        this.confirmLeaveWithoutSaving(
           function () { resolve() },
           function () {
             const { pushStateRoot = '', pushStateSeparator } = router.params

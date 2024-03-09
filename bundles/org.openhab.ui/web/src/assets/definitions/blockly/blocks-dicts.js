@@ -16,7 +16,7 @@ export default function (f7, isGraalJs) {
       this.itemCount_ = 3
       this.updateShape_()
       this.setOutput(true, 'Dictionary')
-      this.setMutator(new Blockly.Mutator(['dicts_create_with_item']))
+      this.setMutator(new Blockly.icons.MutatorIcon(['dicts_create_with_item'], this))
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#dictionary-for-managing-key-value-pairs')
       this.setTooltip('Create a key/value dictionary')
     },
@@ -84,7 +84,7 @@ export default function (f7, isGraalJs) {
       this.updateShape_()
       // Reconnect any child blocks.
       for (let i = 0; i < this.itemCount_; i++) {
-        Blockly.Mutator.reconnect(connections[i], this, 'ADD' + i)
+        Blockly.icons.MutatorIcon.reconnect(connections[i], this, 'ADD' + i)
       }
     },
     /**
@@ -166,7 +166,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['dicts_create_with'] = function (block) {
+  javascriptGenerator.forBlock['dicts_create_with'] = function (block) {
     // Create an object with any number of elements of any type.
     let elements = new Array(block.itemCount_)
     for (let i = 0; i < block.itemCount_; i++) {
@@ -203,7 +203,7 @@ export default function (f7, isGraalJs) {
   * Either a map can be directly used and an intermediate variable is created or a variable is directly provided
   * Code part
   */
-  javascriptGenerator['dicts_get'] = function (block) {
+  javascriptGenerator.forBlock['dicts_get'] = function (block) {
     const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     const varName = javascriptGenerator.valueToCode(block, 'varName', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
     let code = `${varName}[${key}]`
@@ -242,7 +242,7 @@ export default function (f7, isGraalJs) {
     * creates a loop for dictionaries
     * Code part
     */
-  javascriptGenerator['dicts_for'] = function (block) {
+  javascriptGenerator.forBlock['dicts_for'] = function (block) {
     const loopVar = block.getField('loopVar').getVariable().name
     const dict = javascriptGenerator.valueToCode(block, 'dict', javascriptGenerator.ORDER_ATOMIC)
     const dictForCode = javascriptGenerator.statementToCode(block, 'dictForCode')

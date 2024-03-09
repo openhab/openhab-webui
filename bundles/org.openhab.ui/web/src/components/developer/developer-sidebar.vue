@@ -37,6 +37,9 @@
             <ul>
               <item v-for="item in pinnedObjects.items" :key="item.name" link="" :item="item" :context="context" :no-icon="true" :no-type="true" :no-tags="true" @click="(evt) => showItem(evt, item)">
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right itemlist-actions">
+                    <clipboard-icon :value="item.name" size="18" tooltip="Copy Item name" />
+                  </f7-link>
                   <f7-link class="margin-right itemlist-actions" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/items/' + item.name" :animate="false" />
                   <f7-link class="itemlist-actions" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('items', item, 'name')" />
                 </div>
@@ -61,6 +64,9 @@
                   {{ thingStatusBadgeText(thing.statusInfo) }}
                 </f7-badge>
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="thing.UID" size="18" tooltip="Copy Thing UID" />
+                  </f7-link>
                   <f7-link class="margin-right" :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleThingDisabled(thing)" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/things/' + thing.UID" :animate="false" />
                   <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('things', thing, 'UID')" />
@@ -85,6 +91,9 @@
                   {{ ruleStatusBadgeText(rule.status) }}
                 </f7-badge>
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="rule.uid" size="18" tooltip="Copy Rule UID" />
+                  </f7-link>
                   <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
                   <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
@@ -110,6 +119,9 @@
                   {{ ruleStatusBadgeText(rule.status) }}
                 </f7-badge>
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="rule.uid" size="18" tooltip="Copy Rule UID" />
+                  </f7-link>
                   <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
                   <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
@@ -135,6 +147,9 @@
                   {{ ruleStatusBadgeText(rule.status) }}
                 </f7-badge>
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="rule.uid" size="18" tooltip="Copy Rule UID" />
+                  </f7-link>
                   <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
                   <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
@@ -157,6 +172,9 @@
               <f7-list-item v-for="page in pinnedObjects.pages" :key="page.uid" media-item
                             :title="page.config.label" :footer="page.uid">
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="page.uid" size="18" tooltip="Copy Page UID" />
+                  </f7-link>
                   <!-- <f7-link class="margin-right" color="blue" icon-f7="rectangle_on_rectangle" icon-size="18" tooltip="Open in Popup" /> -->
                   <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="View" :href="'/page/' + page.uid" :animate="false" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/pages/' + getPageType(page).type + '/' + page.uid" :animate="false" />
@@ -179,6 +197,9 @@
               <f7-list-item v-for="transformation in pinnedObjects.transformations" :key="transformation.uid" media-item
                             :title="transformation.label" :footer="transformation.uid">
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="transformation.uid" size="18" tooltip="Copy Transformation UID" />
+                  </f7-link>
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/transformations/' + transformation.uid" :animate="false" />
                   <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('transformations', transformation, 'uid')" />
                 </div>
@@ -199,6 +220,9 @@
               <f7-list-item v-for="persistenceConfig in pinnedObjects.persistenceConfigs" :key="persistenceConfig.serviceId" media-item
                             :title="persistenceConfig.label" :footer="persistenceConfig.serviceId">
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="persistenceConfig.serviceId" size="18" tooltip="Copy Service ID" />
+                  </f7-link>
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/persistence/' + persistenceConfig.serviceId" :animate="false" />
                   <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('persistenceConfig', persistenceConfig, 'serviceId')" />
                 </div>
@@ -357,6 +381,7 @@ import ItemStandaloneControl from '@/components/item/item-standalone-control.vue
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 import SearchResults from './search-results.vue'
 import ExpressionTester from './expression-tester.vue'
+import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import ThingStatus from '@/components/thing/thing-status-mixin'
@@ -364,6 +389,7 @@ import ThingStatus from '@/components/thing/thing-status-mixin'
 export default {
   mixins: [RuleStatus, ThingStatus],
   components: {
+    ClipboardIcon,
     Item,
     ItemStandaloneControl,
     SearchResults,

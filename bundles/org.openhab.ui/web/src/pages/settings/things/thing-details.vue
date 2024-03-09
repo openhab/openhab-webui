@@ -1,12 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
-    <f7-navbar :title="thing.label || thing.UID" back-link="Back" no-hairline>
-      <f7-nav-right v-show="!error">
-        <f7-link @click="save()" v-if="$theme.md && editable" icon-md="material:save" icon-only />
-        <f7-link @click="save()" v-if="!$theme.md && editable">
+    <f7-navbar :title="pageTitle" back-link="Back" no-hairline>
+      <f7-nav-right v-show="!error && ready">
+        <f7-link v-if="!editable" icon-f7="lock_fill" icon-only tooltip="This Thing is not editable through the UI" />
+        <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
+        <f7-link v-else @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
-        <f7-link v-else icon-f7="lock_fill" icon-only tooltip="This Thing is not editable through the UI" />
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
@@ -246,6 +246,8 @@ p.action-description
 
 <script>
 import YAML from 'yaml'
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 
@@ -264,8 +266,6 @@ import buildTextualDefinition from './thing-textual-definition'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 
 import DirtyMixin from '../dirty-mixin'
-import cloneDeep from 'lodash/cloneDeep'
-import fastDeepEqual from 'fast-deep-equal/es6'
 
 let copyToast = null
 
@@ -310,6 +310,10 @@ export default {
     editable () {
       return this.thing && this.thing.editable
     },
+    pageTitle () {
+      if (!this.ready) return ''
+      return this.thing.label || this.thing.UID
+    },
     isExtensible () {
       if (!this.thingType || !this.thingType.extensibleChannelTypeIds) return false
       return this.thingType.extensibleChannelTypeIds.length > 0
@@ -338,7 +342,7 @@ export default {
     thingDirty: function () { this.dirty = this.configDirty || this.thingDirty },
     thing: {
       handler () {
-        if (!this.loading) { // ignore initial rule assignment
+        if (!this.loading) { // ignore changes during loading
           // create rule object clone in order to be able to delete status part
           // which can change from eventsource but doesn't mean a rule modification
           let thingClone = cloneDeep(this.thing)

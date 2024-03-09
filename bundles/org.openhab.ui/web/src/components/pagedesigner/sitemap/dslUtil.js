@@ -7,6 +7,8 @@ function writeWidget (widget, indent) {
       if ((Array.isArray(widget.config[key]) && widget.config[key].filter(Boolean).length <= 0)) continue
       if (key === 'switchEnabled') {
         dsl += ' switchSupport'
+      } else if (key === 'releaseOnly') {
+        dsl += ' releaseOnly'
       } else if (key === 'frequency') {
         dsl += ' sendFrequency=' + widget.config[key]
       } else if (key === 'forceAsItem') {

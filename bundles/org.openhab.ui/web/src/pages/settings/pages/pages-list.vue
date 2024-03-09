@@ -2,8 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar title="Pages" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
-        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
-        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
+        <developer-dock-icon />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -59,7 +58,7 @@
               title="Title of the page"
               subtitle="Page type"
               after="The item state"
-              footer="Page UID">
+              footer="Page ID">
               <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media" />
             </f7-list-item>
           </f7-list-group>
@@ -70,7 +69,7 @@
         <f7-block-title class="searchbar-hide-on-search">
           {{ pages.length }} pages
         </f7-block-title>
-        <div class="padding-left padding-right searchbar-found" v-show="!ready || pages.length > 0">
+        <div class="searchbar-found padding-left padding-right" v-show="!ready || pages.length > 0">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical
@@ -147,6 +146,13 @@
     </f7-fab>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.searchbar-found
+  @media (min-width 960px)
+    padding-left 0 !important
+    padding-right 0 !important
+</style>
 
 <script>
 export default {

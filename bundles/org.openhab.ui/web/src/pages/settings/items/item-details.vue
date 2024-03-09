@@ -1,7 +1,7 @@
 <template>
   <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline class="item-details-navbar">
-      <f7-nav-right>
+      <f7-nav-right v-if="ready">
         <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
           {{ $theme.md ? '' : 'Edit' }}
         </f7-link>
@@ -19,7 +19,7 @@
         <h2>{{ item.label }}</h2>
         <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
         <h5 v-show="item.type">
-          <small>{{ item.type === 'Group' ? `${item.type} (${item.groupType})` : item.type }}</small>
+          <small>{{ getItemTypeLabel(item) }}</small>
         </h5>
       </f7-subnavbar>
     </f7-navbar>
@@ -157,8 +157,10 @@ import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
+import ItemMixin from '@/components/item/item-mixin'
 
 export default {
+  mixins: [ItemMixin],
   props: ['itemName'],
   components: {
     LinkDetails,
@@ -169,7 +171,8 @@ export default {
   data () {
     return {
       item: {},
-      links: []
+      links: [],
+      ready: false
     }
   },
   computed: {
@@ -195,6 +198,7 @@ export default {
     load () {
       this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`).then((data) => {
         this.item = data
+        this.ready = true
         this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
       })
     },

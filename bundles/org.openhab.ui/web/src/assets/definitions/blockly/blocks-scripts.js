@@ -32,7 +32,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Calls a script that is provided in openHABs scripts folder
   * Code part
   */
-  javascriptGenerator['oh_callscriptfile'] = function (block) {
+  javascriptGenerator.forBlock['oh_callscriptfile'] = function (block) {
     let scriptfile = javascriptGenerator.valueToCode(block, 'scriptfile', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return `actions.ScriptExecution.callScript(${scriptfile});\n`
@@ -71,7 +71,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Parameters can be provided with the special parameter block oh_scriptparam
   * Code part
   */
-  javascriptGenerator['oh_runrule'] = function (block) {
+  javascriptGenerator.forBlock['oh_runrule'] = function (block) {
     const ruleUID = javascriptGenerator.valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
     const scriptParameters = javascriptGenerator.valueToCode(block, 'parameters', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
@@ -143,7 +143,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Allow transformations via different methods
   * Code part
   */
-  javascriptGenerator['oh_transformation'] = function (block) {
+  javascriptGenerator.forBlock['oh_transformation'] = function (block) {
     const transformationType = block.getFieldValue('type')
     const transformationFunction = javascriptGenerator.valueToCode(block, 'function', javascriptGenerator.ORDER_ATOMIC)
     const transformationValue = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
@@ -276,7 +276,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
     }
   }
 
-  javascriptGenerator['oh_context_info'] = function (block) {
+  javascriptGenerator.forBlock['oh_context_info'] = function (block) {
     const contextInfo = block.getFieldValue('contextInfo')
     const type = block.getFieldValue('asType')
     if (contextInfo === 'eventAvailable') return ['(event !== undefined)', javascriptGenerator.ORDER_ATOMIC]
@@ -314,7 +314,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Allows retrieving parameters provided by a rule
   * Code part
   */
-  javascriptGenerator['oh_context_attribute'] = function (block) {
+  javascriptGenerator.forBlock['oh_context_attribute'] = function (block) {
     const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     let code = `ctx[${key}]`
     return [code, 0]
@@ -349,7 +349,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Allows inlining arbitrary code
   * Code part
   */
-  javascriptGenerator['oh_script_inline'] = function (block) {
+  javascriptGenerator.forBlock['oh_script_inline'] = function (block) {
     const code = block.getFieldValue('inlineScript') + '\n'
     return code
   }

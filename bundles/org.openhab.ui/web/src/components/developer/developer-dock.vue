@@ -1,6 +1,6 @@
 <template>
   <f7-page class="developer-dock">
-    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" style="width: 100%" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'" />
+    <f7-navbar :title="title" :subtitle="subtitle" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'" />
     <f7-segmented strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left)); margin-top: 5px; margin-bottom: 5px">
       <f7-button :active="dockView === 'tools'" @click="$f7.emit('selectDeveloperDock',{'dock': 'tools'})">
         Tools
@@ -47,12 +47,26 @@ import DeveloperSidebar from './developer-sidebar.vue'
 import HelpSidebar from './help-sidebar.vue'
 
 export default {
+  props: ['dock', 'helpTab', 'toolTab'],
   components: {
     DeveloperSidebar,
     HelpSidebar
   },
-  props: ['dock', 'helpTab', 'toolTab'],
+  data () {
+    return {
+      ready: false
+    }
+  },
   computed: {
+    // work-around styling issues when lazy-loading the developer-dock by setting (sub)title after component creation
+    title () {
+      if (!this.ready) return ''
+      return 'Developer Sidebar'
+    },
+    subtitle () {
+      if (!this.ready) return ''
+      return '(Shift+Alt+D)'
+    },
     dockView () {
       return this.dock
     },
@@ -62,6 +76,11 @@ export default {
     activeToolTab () {
       return (this.toolTab || 'pin')
     }
+  },
+  created () {
+    this.$nextTick(() => {
+      this.ready = true
+    })
   }
 }
 </script>

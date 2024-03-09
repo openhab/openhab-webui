@@ -9,7 +9,7 @@
 
 	var
 		sources = {
-			js: "web-src/smarthome.js",
+			js: [ "web-src/smarthome.js", "web-src/static.js", "web-src/settings.js" ],
 			sass: "web-src/smarthome.scss"
 		};
 

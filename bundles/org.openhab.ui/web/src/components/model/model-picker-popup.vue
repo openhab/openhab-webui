@@ -79,14 +79,17 @@ export default {
     ModelTreeview
   },
   data () {
+    if (!this.$f7.data.modelPicker) this.$f7.data.modelPicker = {}
     return {
       ready: false,
       loading: false,
       initSearchbar: false,
       includeNonSemantic: false,
-      includeItemName: false,
-      includeItemTags: false,
-      expanded: false,
+      includeItemName: this.$f7.data.modelPicker.includeItemName || false,
+      includeItemTags: this.$f7.data.modelPicker.includeItemTags || false,
+      expanded: this.$f7.data.modelPicker.expanded || false,
+      doubleClickStarted: null,
+      doubleClickItem: null,
       items: [],
       links: [],
       locations: [],
@@ -212,7 +215,10 @@ export default {
 
         this.loading = false
         this.ready = true
-        this.$nextTick(() => { this.initSearchbar = true })
+        this.$nextTick(() => {
+          this.initSearchbar = true
+          this.applyExpandedOption()
+        })
       })
     },
     getChildren (parent) {
@@ -277,6 +283,12 @@ export default {
     selectItem (item) {
       if (!this.multiple) {
         this.selectedItem = item
+        if (this.doubleClickStarted && this.doubleClickItem === item) {
+          this.pickItems()
+        } else {
+          this.doubleClickStarted = setTimeout(() => { this.doubleClickStarted = null }, 500)
+          this.doubleClickItem = item
+        }
       } else if (item.children && item.opened !== undefined) {
         item.opened = !item.opened
       }
@@ -296,15 +308,20 @@ export default {
     },
     toggleItemName () {
       this.includeItemName = !this.includeItemName
+      this.$f7.data.modelPicker.includeItemName = this.includeItemName
       this.load()
     },
     toggleItemTags () {
       this.includeItemTags = !this.includeItemTags
+      this.$f7.data.modelPicker.includeItemTags = this.includeItemTags
       this.load()
     },
     toggleExpanded () {
       this.expanded = !this.expanded
-
+      this.$f7.data.modelPicker.expanded = this.expanded
+      this.applyExpandedOption()
+    },
+    applyExpandedOption () {
       const treeviewItems = document.querySelectorAll('.treeview-item')
 
       treeviewItems.forEach(item => {

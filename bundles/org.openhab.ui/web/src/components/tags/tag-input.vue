@@ -1,13 +1,16 @@
 <template>
   <div v-if="item && item.tags" class="tag-editor">
     <f7-list>
-      <f7-list-item>
+      <f7-list-item :title="title || 'Tags'" :badge="tags.length.toString()" />
+      <f7-list-item v-if="tags.length > 0">
         <div slot="inner">
-          <f7-chip v-for="tag in item.tags.filter((t) => (showSemanticTags ? true : !isSemanticTag(t)) && !isScriptTag(t) && !isSceneTag(t))" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="blue">
+          <f7-chip v-for="tag in tags" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="blue">
             <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
           </f7-chip>
         </div>
       </f7-list-item>
+    </f7-list>
+    <f7-list>
       <f7-list-input
         v-if="!disabled"
         type="text"
@@ -29,10 +32,15 @@ import TagMixin from '@/components/tags/tag-mixin'
 
 export default {
   mixins: [TagMixin],
-  props: ['item', 'disabled', 'inScriptEditor', 'inSceneEditor', 'showSemanticTags'],
+  props: ['item', 'disabled', 'inScriptEditor', 'inSceneEditor', 'showSemanticTags', 'title'],
   data () {
     return {
       pendingTag: ''
+    }
+  },
+  computed: {
+    tags () {
+      return this.item.tags.filter((t) => (this.showSemanticTags ? true : !this.isSemanticTag(t)) && !this.isScriptTag(t) && !this.isSceneTag(t))
     }
   },
   methods: {
@@ -80,5 +88,4 @@ export default {
     border 0
   .chip
     margin-right 6px !important
-
 </style>

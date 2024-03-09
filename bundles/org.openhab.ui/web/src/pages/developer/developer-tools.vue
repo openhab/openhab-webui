@@ -2,8 +2,7 @@
   <f7-page name="devtools" @page:beforeremove="onPageBeforeRemove">
     <f7-navbar title="Developer Tools" back-link="Back" back-link-url="/" back-link-force no-hairline>
       <f7-nav-right>
-        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
-        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
+        <developer-dock-icon />
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">

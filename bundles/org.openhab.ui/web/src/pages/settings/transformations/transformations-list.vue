@@ -2,8 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar title="Transformations" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
-        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
-        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
+        <developer-dock-icon />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -66,7 +65,7 @@
         <f7-block-title class="searchbar-hide-on-search">
           {{ transformations.length }} transformations
         </f7-block-title>
-        <div class="padding-left padding-right searchbar-found">
+        <div class="searchbar-found padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical
@@ -95,9 +94,12 @@
               @click.exact="(e) => click(e, transformation)"
               link=""
               :title="transformation.label"
-              :subtitle="transformation.type"
-              :footer="transformation.uid">
+              :subtitle="transformation.type">
               <f7-icon v-if="!transformation.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
+              <template slot="footer">
+                {{ transformation.uid }}
+                <clipboard-icon :value="transformation.uid" tooltip="Copy UID" />
+              </template>
             </f7-list-item>
           </f7-list-group>
         </f7-list>
@@ -117,11 +119,20 @@
   </f7-page>
 </template>
 
+<style lang="stylus">
+.searchbar-found
+  @media (min-width 960px)
+    padding-left 0 !important
+    padding-right 0 !important
+</style>
+
 <script>
+import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
+    ClipboardIcon
   },
   data () {
     return {

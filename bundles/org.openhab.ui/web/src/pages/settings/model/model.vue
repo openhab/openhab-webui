@@ -1,9 +1,8 @@
 <template>
   <f7-page name="Model" :stacked="true" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @click="selectItem(null)">
     <f7-navbar title="Semantic Model" back-link="Settings" back-link-url="/settings/" back-link-force>
-      <f7-nav-right v-if="$f7.width >= 1280">
-        <f7-link v-if="$store.state.developerDock" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
-        <f7-link v-else icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
+      <f7-nav-right>
+        <developer-dock-icon />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -250,13 +249,14 @@ export default {
     LinkDetails
   },
   data () {
+    if (!this.$f7.data.model) this.$f7.data.model = {}
     return {
       ready: false,
       loading: false,
       includeNonSemantic: false,
-      includeItemName: false,
-      includeItemTags: false,
-      expanded: false,
+      includeItemName: this.$f7.data.model.includeItemName || false,
+      includeItemTags: this.$f7.data.model.includeItemTags || false,
+      expanded: this.$f7.data.model.expanded || false,
       items: [],
       links: [],
       locations: [],
@@ -374,7 +374,10 @@ export default {
 
         this.loading = false
         this.ready = true
-        this.$nextTick(() => { this.initSearchbar = true })
+        this.$nextTick(() => {
+          this.initSearchbar = true
+          this.applyExpandedOption()
+        })
         if (!this.eventSource) this.startEventSource()
       })
     },
@@ -481,15 +484,20 @@ export default {
     },
     toggleItemName () {
       this.includeItemName = !this.includeItemName
+      this.$f7.data.model.includeItemName = this.includeItemName
       this.load()
     },
     toggleItemTags () {
       this.includeItemTags = !this.includeItemTags
+      this.$f7.data.model.includeItemTags = this.includeItemTags
       this.load()
     },
     toggleExpanded () {
       this.expanded = !this.expanded
-
+      this.$f7.data.model.expanded = this.expanded
+      this.applyExpandedOption()
+    },
+    applyExpandedOption () {
       const treeviewItems = document.querySelectorAll('.treeview-item')
 
       treeviewItems.forEach(item => {

@@ -2,8 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar title="Persistence Settings" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right v-if="persistenceList.length > 0">
-        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
-        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
+        <developer-dock-icon />
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
@@ -36,7 +35,7 @@
             :link="persistence.id"
             :title="persistence.label"
             :footer="persistence.id" />
-          <f7-list-item link="/addons/other/" no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" subtitle="Install more persistence add-ons">
+          <f7-list-item link="/addons/persistence/" no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" subtitle="Install more persistence add-ons">
             <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
           </f7-list-item>
         </f7-list>
@@ -44,11 +43,11 @@
     </f7-block>
 
     <f7-block v-if="ready && !persistenceList.length" class="block-narrow">
-      <empty-state-placeholder icon="tray-arrow-down" title="persistence.title" text="persistence.text" />
+      <empty-state-placeholder icon="download_circle" title="persistence.title" text="persistence.text" />
       <f7-row class="display-flex justify-content-center">
         <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/persistence`" target="_blank" v-t="'home.overview.button.documentation'" />
         <span style="width: 8px" />
-        <f7-button large fill color="blue" href="/addons/other/">
+        <f7-button large fill color="blue" href="/addons/persistence/">
           Install a persistence add-on
         </f7-button>
       </f7-row>

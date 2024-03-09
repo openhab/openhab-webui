@@ -10,7 +10,6 @@ import {
 } from './constants.js'
 import {
   docLink,
-  getGroupParameter,
   getOptions,
   getSemanticFormat,
   getSupportedRange,
@@ -106,18 +105,7 @@ export default {
     label: 'Comfort Range',
     type: 'INTEGER',
     min: 1,
-    default: (config) => {
-      const scale = config.scale || getGroupParameter('scale', item.groups) || getTemperatureScale(item)
-      if (scale === 'CELSIUS') return 1
-      if (scale === 'FAHRENHEIT') return 2
-    }
-  }),
-  connectedTo: (value) => ({
-    name: 'connectedTo',
-    label: 'Connected To',
-    type: 'TEXT',
-    default: value,
-    readOnly: true
+    default: (config) => (config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? 2 : 1
   }),
   deviceDescription: (defaultValue) => ({
     name: 'description',
@@ -161,13 +149,6 @@ export default {
     max: 255,
     advanced: true
   }),
-  hostname: () => ({
-    name: 'hostname',
-    label: 'Hostname',
-    type: 'TEXT',
-    default: 'N/A',
-    advanced: true
-  }),
   increment: (defaultValue) => ({
     name: 'increment',
     label: 'Default Increment',
@@ -191,13 +172,6 @@ export default {
     options: getOptions(LANGUAGES),
     limitToOptions: true,
     advanced: true
-  }),
-  macAddress: () => ({
-    name: 'macAddress',
-    label: 'MAC Address',
-    description: 'Formatted as EUI-48 or EUI-64 address with colon or dash separators',
-    type: 'TEXT',
-    pattern: '([0-9a-fA-F]{2}(-|:)){7}[0-9a-fA-F]{2}$|^([0-9a-fA-F]{2}(-|:)){5}[0-9a-fA-F]{2}'
   }),
   nonControllable: (stateDescription) => ({
     name: 'nonControllable',
@@ -286,7 +260,7 @@ export default {
     name: 'scale',
     label: 'Scale',
     type: 'TEXT',
-    default: getGroupParameter('scale', item.groups) || getTemperatureScale(item),
+    default: getTemperatureScale(item) === 'FAHRENHEIT' ? 'FAHRENHEIT' : 'CELSIUS',
     options: getOptions(TEMPERATURE_SCALES),
     limitToOptions: true,
     advanced
@@ -296,11 +270,7 @@ export default {
     label: 'Setpoint Range',
     description: 'Formatted as <code>minValue:maxValue</code>',
     type: 'TEXT',
-    default: (config) => {
-      const scale = config.scale || getGroupParameter('scale', item.groups) || getTemperatureScale(item)
-      if (scale === 'CELSIUS') return '4:32'
-      if (scale === 'FAHRENHEIT') return '40:90'
-    },
+    default: (config) => (config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? '40:90' : '4:32',
     pattern: '[+-]?[0-9]+:[+-]?[0-9]+'
   }),
   speedLevels: () => ({
@@ -359,7 +329,7 @@ export default {
         .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true,
-    required: !stateDescription || !stateDescription.options || !stateDescription.options.length
+    required: !stateDescription?.options?.length
   }),
   supportedModes: (stateDescription) => ({
     name: 'supportedModes',
@@ -372,7 +342,7 @@ export default {
         .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: 'Normal=Normal:Cottons\nWhites=Whites',
     multiple: true,
-    required: !stateDescription || !stateDescription.options || !stateDescription.options.length
+    required: !stateDescription?.options?.length
   }),
   supportedOperations: () => ({
     name: 'supportedOperations',

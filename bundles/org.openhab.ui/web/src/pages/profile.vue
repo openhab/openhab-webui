@@ -229,9 +229,6 @@ export default {
         this.loggedIn = false
         this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
         window.location = window.location.origin
-        if (this.$device.cordova) {
-          this.loginScreenOpened = true
-        }
       }).catch((err) => {
         this.$f7.preloader.hide()
         this.$f7.dialog.alert(this.$t('profile.sessions.signOut.error') + err)

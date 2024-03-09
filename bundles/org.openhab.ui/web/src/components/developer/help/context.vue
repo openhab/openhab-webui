@@ -10,6 +10,12 @@
 </template>
 
 <script>
+const renderer = {
+  list (body, ordered, start) {
+    return `<ul style="padding-left: 20px">${body}</ul>`
+  }
+}
+
 export default {
   props: ['path'],
   data () {
@@ -62,6 +68,7 @@ export default {
         }
         response.text().then((text) => {
           import('marked').then((marked) => {
+            marked.use({ renderer })
             const startComment = '<!-- START MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
             const endComment = '<!-- END MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
 
@@ -91,6 +98,8 @@ export default {
             body = body.replace(/<a href="(%7B%7Bbase%7D%7D|\/docs)/gm, `<a class="external" target="_blank" href="${this.$store.state.websiteUrl}/docs`)
             // Fix local folder anchor href: Rewrite folder to /folder/
             body = body.replace(/(<a href=")([A-z]+)(")/gm, '$1' + this.localUrl + '$2/$3')
+            // Fix external anchor href
+            body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
 
             // Allow embedding framework7 icons by using <!--F7(:blue|:green) ICON_NAME --> comments
             body = body.replace(/<!--F7 ([A-z]*) -->/gm, '<i class="f7-icons size-22">$1</i>')

@@ -2,6 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Widgets" back-link="Developer Tools" back-link-url="/developer/" back-link-force>
       <f7-nav-right>
+        <developer-dock-icon />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>

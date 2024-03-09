@@ -151,6 +151,7 @@ export default {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-plan-page',
         config: {},
+        tags: [],
         slots: { default: [] }
       }
     }

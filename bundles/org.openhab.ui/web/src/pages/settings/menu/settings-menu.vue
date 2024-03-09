@@ -1,9 +1,8 @@
 <template>
   <f7-page @page:init="onPageInit" @page:afterin="onPageAfterIn" class="page-settings">
-    <f7-navbar large :large-transparent="false" title-large="Settings" title="Settings" back-link="Back" back-link-url="/home/" back-link-force>
+    <f7-navbar large :large-transparent="false" title-large="Settings" title="Settings" back-link="Back" back-link-url="/" back-link-force>
       <f7-nav-right>
-        <f7-link v-if="$store.state.developerDock && $f7.width >= 1280" icon-f7="question_circle_fill" @click="$f7.emit('toggleDeveloperDock')" />
-        <f7-link v-else-if="$f7.width >= 1280" icon-f7="question_circle" @click="$f7.emit('selectDeveloperDock',{'dock':'help','helpTab':'current'})" />
+        <developer-dock-icon />
         <f7-link
           class="searchbar-enable"
           data-searchbar=".searchbar-demo"
@@ -16,6 +15,7 @@
         expandable
         search-container=".search-list"
         search-in=".item-title"
+        @searchbar:search="expandAll"
         :disable-button="!$theme.aurora" />
     </f7-navbar>
     <f7-block class="block-narrow after-big-title settings-menu">
@@ -125,21 +125,22 @@
           </f7-list>
         </f7-col>
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
-          <div v-if="servicesLoaded">
+          <div v-show="servicesLoaded">
             <f7-block-title>System Settings</f7-block-title>
             <f7-list class="search-list">
               <f7-list-item
                 v-for="service in systemSettings"
                 :key="service.id"
                 :link="'services/' + service.id"
-                :title="service.label" />
-              <f7-list-button v-if="!showingAll('systemSettings')" color="blue" @click="$set(expandedTypes, 'systemSettings', true)">
+                :title="service.label"
+                v-show="!service.hidden" />
+              <f7-list-button v-if="!expanded('systemSettings')" color="blue" @click="expand('systemSettings')">
                 {{ $t('dialogs.showAll') }}
               </f7-list-button>
             </f7-list>
           </div>
           <!-- skeleton for not servicesLoaded -->
-          <div v-else-if="!servicesLoaded">
+          <div v-if="!servicesLoaded">
             <f7-block-title>System Settings</f7-block-title>
             <f7-list>
               <f7-list-item
@@ -149,12 +150,12 @@
                 title="Service Label" />
             </f7-list>
           </div>
-          <div v-if="$f7.width < 1450">
-            <div v-if="addonsLoaded && addonsInstalled.length > 0">
-              <addon-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
+          <div v-show="$f7.width < 1450">
+            <div v-show="addonsLoaded && addonsInstalled.length > 0">
+              <addon-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" :expanded="expanded('addonsSettings')" @expand="expand('addonsSettings')" />
             </div>
             <!-- skeleton for not addonsLoaded -->
-            <div v-else-if="!addonsLoaded">
+            <div v-if="!addonsLoaded">
               <f7-block-title>Add-on Settings</f7-block-title>
               <f7-list>
                 <f7-list-item
@@ -166,19 +167,21 @@
             </div>
           </div>
         </f7-col>
-        <f7-col width="33" class="add-on-col" v-if="addonsLoaded && addonsInstalled.length > 0 && $f7.width >= 1450">
-          <addon-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" />
-        </f7-col>
-        <!-- skeleton for not addonsLoaded -->
-        <f7-col width="33" class="add-on-col" v-else-if="!addonsLoaded && $f7.width >= 1450">
-          <f7-block-title>Add-on Settings</f7-block-title>
-          <f7-list>
-            <f7-list-item
-              v-for="n in 9"
-              :key="n"
-              :class="`skeleton-text skeleton-effect-blink`"
-              title="Service Label" />
-          </f7-list>
+        <f7-col width="33" class="add-on-col" v-show="$f7.width >= 1450">
+          <div v-show="addonsLoaded && addonsInstalled.length > 0">
+            <addon-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" :expanded="expanded('addonsSettings')" @expand="expand('addonsSettings')" />
+          </div>
+          <!-- skeleton for not addonsLoaded -->
+          <div v-if="!addonsLoaded">
+            <f7-block-title>Add-on Settings</f7-block-title>
+            <f7-list>
+              <f7-list-item
+                v-for="n in 9"
+                :key="n"
+                :class="`skeleton-text skeleton-effect-blink`"
+                title="Service Label" />
+            </f7-list>
+          </div>
         </f7-col>
       </f7-row>
       <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
@@ -236,7 +239,8 @@ export default {
       ],
 
       expandedTypes: {
-        systemSettings: this.$f7.width >= 1450
+        systemSettings: this.$f7.width >= 1450,
+        addonsSettings: false
       }
     }
   },
@@ -246,7 +250,10 @@ export default {
     },
     systemSettings () {
       if (this.expandedTypes.systemSettings) return this.systemServices
-      return this.systemServices.filter((s) => this.advancedSystemServices.indexOf(s.id) < 0)
+      return this.systemServices.map((service) => {
+        const hide = this.advancedSystemServices.includes(service.id)
+        return Object.assign({ hidden: hide }, service)
+      })
     }
   },
   watch: {
@@ -297,8 +304,14 @@ export default {
         })
       }
     },
-    showingAll (type) {
-      return (this.expandedTypes[type] || this[type].length <= 5)
+    expand (type) {
+      this.$set(this.expandedTypes, type, true)
+    },
+    expanded (type) {
+      return this.expandedTypes[type] || (this[type] && this[type].length <= 5)
+    },
+    expandAll () {
+      Object.keys(this.expandedTypes).forEach((type) => this.expand(type))
     },
     onPageInit () {
       this.loadMenu()

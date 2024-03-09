@@ -1,11 +1,14 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar :title="isNewRule ? 'Create rule' : rule.name" back-link="Back" no-hairline>
-      <f7-nav-right v-if="isEditable">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
+      <f7-nav-right>
+        <developer-dock-icon />
+        <template v-if="isEditable">
+          <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+          <f7-link @click="save()" v-if="!$theme.md">
+            Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+          </f7-link>
+        </template>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
@@ -97,7 +100,7 @@
             </div>
             <div v-for="section in ['triggers', 'actions', 'conditions']" :key="section">
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)" v-if="isEditable || rule[section].length > 0">
-                {{ sectionLabels[section][0] }}
+                {{ SECTION_LABELS[section][0] }}
               </f7-block-title>
               <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
                 <f7-list-item media
@@ -107,8 +110,6 @@
                               :link="isEditable && !showModuleControls"
                               @click.native="(ev) => editModule(ev, section, mod)" swipeout>
                   <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout" />
-                  <f7-link slot="after" v-if="mod.type && mod.type.indexOf('script') === 0" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" :tooltip="'Edit module'" />
-                  <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger' && isEditable" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editModule(ev, section, mod, true)" tooltip="Edit module" />
                   <f7-swipeout-actions right v-if="isEditable">
                     <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
@@ -117,7 +118,7 @@
                 </f7-list-item>
               </f7-list>
               <f7-list v-if="isEditable">
-                <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="sectionLabels[section][1]" @click="addModule(section)">
+                <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="SECTION_LABELS[section][1]" @click="addModule(section)">
                   <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
                 </f7-list-item>
                 <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
@@ -200,8 +201,15 @@ export default {
   props: ['ruleId', 'createMode', 'copyMode', 'ruleCopy', 'schedule'],
   data () {
     return {
+      SECTION_LABELS: {
+        triggers: ['When', 'Add Trigger'],
+        actions: ['Then', 'Add Action'],
+        conditions: ['But only if', 'Add Condition']
+      },
+
       ready: false,
       loading: false,
+
       rule: {},
       savedRule: {},
       ruleYaml: '',
@@ -211,16 +219,11 @@ export default {
         triggers: []
       },
       currentSection: 'actions',
-      currentTab: 'design',
       currentModuleType: null,
       currentModule: null,
       currentModuleConfig: {},
-      sectionLabels: {
-        triggers: ['When', 'Add Trigger'],
-        actions: ['Then', 'Add Action'],
-        conditions: ['But only if', 'Add Condition']
-      },
 
+      currentTab: 'design',
       codeEditorOpened: false,
       cronPopupOpened: false,
       scriptCode: '',
@@ -231,8 +234,8 @@ export default {
   },
   watch: {
     rule: {
-      handler: function (newRule, oldRule) {
-        if (!this.loading) { // ignore initial rule assignment
+      handler: function () {
+        if (!this.loading) { // ignore changes during loading
           // create rule object clone in order to be able to delete status part
           // which can change from eventsource but doesn't mean a rule modification
           let ruleClone = cloneDeep(this.rule)
@@ -421,7 +424,7 @@ export default {
       this.$set(this, 'currentTemplate', this.templates.find((t) => t.uid === uid))
       this.rule.templateUID = uid
     },
-    editModule (ev, section, mod, force) {
+    editModule (ev, section, mod) {
       if (this.showModuleControls) return
       if (!this.isEditable) return
       let swipeoutElement = ev.target
@@ -430,18 +433,17 @@ export default {
         swipeoutElement = swipeoutElement.parentElement
       }
       if (swipeoutElement && swipeoutElement.classList.contains('swipeout-opened')) return
-      this.currentSection = section
-      this.currentModule = Object.assign({}, mod)
-      this.currentModuleType = this.moduleTypes[section].find((m) => m.uid === mod.type)
 
-      if (mod.type && mod.type.indexOf('script') === 0 && !force) {
+      if (mod.type && mod.type.indexOf('script') === 0) {
         this.editScriptDirect(ev, mod)
         return
       }
-      if (mod.type && mod.type === 'timer.GenericCronTrigger' && !force) {
-        this.buildCronExpression(ev, mod)
-        return
-      }
+
+      this.currentSection = section
+      this.currentModule = Object.assign({}, mod)
+      if (!this.currentModule.label) this.currentModule.label = ''
+      if (!this.currentModule.description) this.currentModule.description = ''
+      this.currentModuleType = this.moduleTypes[section].find((m) => m.uid === mod.type)
 
       const popup = {
         component: RuleModulePopup
@@ -454,6 +456,7 @@ export default {
         }
       }, {
         props: {
+          rule: this.rule,
           currentSection: this.currentSection,
           ruleModule: this.currentModule,
           ruleModuleType: this.currentModuleType,
@@ -488,6 +491,8 @@ export default {
       const newModule = {
         id: moduleId.toString(),
         configuration: {},
+        description: '',
+        label: '',
         type: '',
         new: true
       }
@@ -559,37 +564,6 @@ export default {
       const updatePromise = (this.rule.editable || this.isNewRule) && this.dirty ? this.save() : Promise.resolve()
       updatePromise.then(() => {
         this.$f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + mod.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
-      })
-    },
-    buildCronExpression (ev, mod) {
-      ev.cancelBubble = true
-      this.currentModule = mod
-      this.currentModuleType = mod.type
-      this.cronExpression = mod.configuration.cronExpression
-      import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
-        const popup = {
-          component: c.default
-        }
-        this.$f7router.navigate({
-          url: 'cron-edit',
-          route: {
-            path: 'cron-edit',
-            popup
-          }
-        }, {
-          props: {
-            value: this.cronExpression
-          }
-        })
-
-        this.$f7.once('cronEditorUpdate', this.updateCronExpression)
-        this.$f7.once('cronEditorClosed', () => {
-          this.$f7.off('cronEditorUpdate', this.updateCronExpression)
-          this.$nextTick(() => {
-            this.currentModule = null
-            this.currentModuleType = null
-          })
-        })
       })
     },
     updateScript (value) {

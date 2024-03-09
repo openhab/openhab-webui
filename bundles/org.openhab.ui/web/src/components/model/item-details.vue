@@ -14,10 +14,6 @@
       <div class="padding-top" v-else-if="createMode">
         <item-form :item="editedItem" :items="items" :createMode="true" :force-semantics="forceSemantics" />
       </div>
-      <div v-if="(createMode || editMode) && editedItem && editedItem.type === 'Group'">
-        <f7-block-title>Group Settings</f7-block-title>
-        <group-form :item="editedItem" :createMode="createMode" />
-      </div>
     </f7-card-content>
     <f7-card-footer v-if="createMode || editMode" key="item-card-buttons">
       <f7-button v-if="createMode" color="blue" fill raised @click="create">
@@ -44,7 +40,6 @@
 <script>
 import Item from '@/components/item/item.vue'
 import ItemForm from '@/components/item/item-form.vue'
-import GroupForm from '@/components/item/group-form.vue'
 
 import ItemMixin from '@/components/item/item-mixin'
 
@@ -52,7 +47,6 @@ export default {
   mixins: [ItemMixin],
   props: ['model', 'links', 'items', 'context'],
   components: {
-    GroupForm,
     Item,
     ItemForm
   },
@@ -72,7 +66,6 @@ export default {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
-      this.load()
     },
     onPageBeforeOut () {
       if (window) {

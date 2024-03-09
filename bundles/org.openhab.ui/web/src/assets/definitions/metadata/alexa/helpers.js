@@ -53,6 +53,8 @@ export const getSupportedRange = (item, config, defaultValue) => {
 }
 
 export const getTemperatureScale = (item) => {
+  const scale = getGroupParameter('scale', item.groups)
+  if (scale) return scale
   const itemType = item.groupType || item.type
   const format = (itemType === 'Number:Temperature' && item.unitSymbol) || item.stateDescription?.pattern
   if (format?.endsWith('°C')) return 'CELSIUS'

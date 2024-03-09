@@ -1,10 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="newPersistence ? 'Create persistence configuration' : 'Edit persistence configuration'"
-               back-link="Back">
-      <f7-nav-right v-if="isEditable">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
+    <f7-navbar :title="pageTitle" back-link="Back">
+      <f7-nav-right v-show="ready">
+        <f7-link v-if="!editable" icon-f7="lock_fill" icon-only tooltip="This persistence configuration is not editable through the UI" />
+        <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
+        <f7-link v-else @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
       </f7-nav-right>
@@ -26,7 +26,7 @@
             <div>
               <f7-block-footer style="padding-left: 16px; padding-right: 16px">
                 Persistence stores data over time, which can be retrieved at a later time, e.g. to restore Item states after startup, or to display graphs in the UI.
-                <f7-link external color="blue" target="_blank" :href="`${$store.state.runtimeInfo.websiteUrl}/link/persistence`">
+                <f7-link external color="blue" target="_blank" :href="`${$store.state.websiteUrl}/link/persistence`">
                   Learn more about persistence.
                 </f7-link>
               </f7-block-footer>
@@ -58,7 +58,7 @@
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Filters
               </f7-block-title>
-              <div v-for="ft in filterTypes" :key="ft.name">
+              <div v-for="ft in FilterTypes" :key="ft.name">
                 <f7-block-title>
                   {{ ft.label }}
                 </f7-block-title>
@@ -71,7 +71,7 @@
         </f7-block>
 
         <f7-block v-if="ready" class="block-narrow">
-          <f7-col v-if="!isEditable">
+          <f7-col v-if="!editable">
             <div class="padding-left">
               Note: {{ notEditableMgs }}
             </div>
@@ -82,15 +82,15 @@
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Configuration
               </f7-block-title>
-              <f7-list :media-list="isEditable" swipeout>
+              <f7-list :media-list="editable" swipeout>
                 <f7-list-item v-for="(cfg, index) in persistence.configs" :key="cfg.items.join()"
                               :title="cfg.items.join(', ')"
-                              :footer="cfg.strategies.join(', ') + (cfg.filters.length > 0 ? ' - ' + cfg.filters.join(', ') : '')" :link="isEditable"
+                              :footer="cfg.strategies.join(', ') + (cfg.filters.length > 0 ? ' - ' + cfg.filters.join(', ') : '')" :link="editable"
                               @click.native="(ev) => editConfiguration(ev, index, cfg)" swipeout>
-                  <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled"
+                  <f7-link slot="media" v-if="editable" icon-color="red" icon-aurora="f7:minus_circle_filled"
                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
-                  <f7-swipeout-actions right v-if="isEditable">
+                  <f7-swipeout-actions right v-if="editable">
                     <f7-swipeout-button @click="(ev) => deleteModule(ev, 'configs', index)"
                                         style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
@@ -98,7 +98,7 @@
                   </f7-swipeout-actions>
                 </f7-list-item>
               </f7-list>
-              <f7-list v-if="isEditable">
+              <f7-list v-if="editable">
                 <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
                               subtitle="Add configuration" @click="editConfiguration(undefined, null)">
                   <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
@@ -112,14 +112,14 @@
                 Strategies
               </f7-block-title>
               <!-- Cron Strategies -->
-              <f7-list :media-list="isEditable" swipeout>
+              <f7-list :media-list="editable" swipeout>
                 <f7-list-item v-for="(cs, index) in persistence.cronStrategies" :key="cs.name" :title="cs.name"
-                              :footer="cs.cronExpression" :link="isEditable"
+                              :footer="cs.cronExpression" :link="editable"
                               @click.native="(ev) => editCronStrategy(ev, index, cs)" swipeout>
-                  <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled"
+                  <f7-link slot="media" v-if="editable" icon-color="red" icon-aurora="f7:minus_circle_filled"
                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
-                  <f7-swipeout-actions right v-if="isEditable">
+                  <f7-swipeout-actions right v-if="editable">
                     <f7-swipeout-button @click="(ev) => deleteCronStrategy(ev, index)"
                                         style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
@@ -127,7 +127,7 @@
                   </f7-swipeout-actions>
                 </f7-list-item>
               </f7-list>
-              <f7-list v-if="isEditable">
+              <f7-list v-if="editable">
                 <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
                               subtitle="Add cron strategy" @click="editCronStrategy(undefined, null)">
                   <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
@@ -136,7 +136,7 @@
               </f7-list>
               <!-- Default Strategies -->
               <strategy-picker title="Default Strategies" name="defaults" :strategies="strategies"
-                               :value="persistence.defaults" :disabled="!isEditable"
+                               :value="persistence.defaults" :disabled="!editable"
                                @strategiesSelected="persistence.defaults = $event" />
             </div>
             <!-- Filters -->
@@ -144,18 +144,18 @@
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Filters
               </f7-block-title>
-              <div v-for="ft in filterTypes" :key="ft.name">
+              <div v-for="ft in FilterTypes" :key="ft.name">
                 <f7-block-title>
                   {{ ft.label }}
                 </f7-block-title>
-                <f7-list :media-list="isEditable" swipeout>
+                <f7-list :media-list="editable" swipeout>
                   <f7-list-item v-for="(f, index) in persistence[ft.name]" :key="f.name" :title="f.name"
-                                :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''" :link="isEditable"
+                                :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''" :link="editable"
                                 @click.native="(ev) => editFilter(ev, ft, index, f)" swipeout>
-                    <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled"
+                    <f7-link slot="media" v-if="editable" icon-color="red" icon-aurora="f7:minus_circle_filled"
                              icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                              @click="showSwipeout" />
-                    <f7-swipeout-actions right v-if="isEditable">
+                    <f7-swipeout-actions right v-if="editable">
                       <f7-swipeout-button @click="(ev) => deleteFilter(ev, ft.name, index)"
                                           style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                         Delete
@@ -163,7 +163,7 @@
                     </f7-swipeout-actions>
                   </f7-list-item>
                 </f7-list>
-                <f7-list v-if="isEditable">
+                <f7-list v-if="editable">
                   <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
                                 :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
                                 @click="editFilter(undefined, ft, null)">
@@ -174,7 +174,7 @@
               </div>
             </div>
           </f7-col>
-          <f7-col v-if="isEditable && !newPersistence">
+          <f7-col v-if="editable && !newPersistence">
             <f7-list>
               <f7-list-button color="red" @click="deletePersistence">
                 Remove persistence configuration
@@ -186,12 +186,12 @@
 
       <!-- Code Tab -->
       <f7-tab id="code" @tab:show="() => { currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!isEditable" f7="lock" class="float-right margin"
+        <f7-icon v-if="!editable" f7="lock" class="float-right margin"
                  style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray"
                  :tooltip="notEditableMgs" />
         <editor v-if="currentTab === 'code'" class="persistence-code-editor"
                 mode="application/vnd.openhab.persistence+yaml" :value="persistenceYaml" @input="onEditorInput"
-                :read-only="!isEditable" />
+                :read-only="!editable" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
@@ -223,23 +223,16 @@
 </style>
 
 <script>
-import DirtyMixin from '../dirty-mixin'
 import YAML from 'yaml'
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
+
+import DirtyMixin from '../dirty-mixin'
+import { FilterTypes, PredefinedStrategies } from '@/assets/definitions/persistence'
 import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
 import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
-import cloneDeep from 'lodash/cloneDeep'
-import fastDeepEqual from 'fast-deep-equal/es6'
-
-const filterInvertedParameter = {
-  advanced: false,
-  description: 'Whether to invert the above filter, i.e. persist values that do not equal the above values or are outside of the specified range',
-  label: 'Inverted',
-  name: 'inverted',
-  required: false,
-  type: 'BOOLEAN'
-}
 
 export default {
   mixins: [DirtyMixin],
@@ -261,135 +254,26 @@ export default {
       currentCronStrategy: null,
       currentFilter: null,
 
-      predefinedStrategies: ['everyChange', 'everyUpdate', 'restoreOnStartup', 'forecast'],
-      // Filter configuration is completely based on these definitions, when adding new filters, no code needs to be updated.
-      // However, please note that some validation and checks are in place for some filter types in editFilter(), saveFilter() and filter-popup.vue
-      filterTypes: [
-        {
-          name: 'thresholdFilters',
-          label: 'Threshold',
-          configDescriptionParameters: [
-            {
-              advanced: false,
-              description: 'Difference to last stored value that must be exceeded to persist a new value',
-              label: 'Value',
-              name: 'value',
-              required: true,
-              type: 'DECIMAL'
-            },
-            {
-              advanced: false,
-              description: 'Whether the difference is relative (i.e. in percent)',
-              label: 'Relative',
-              name: 'relative',
-              required: false,
-              type: 'BOOLEAN'
-            },
-            {
-              advanced: false,
-              description: 'Unit of the given value, only used for UoM Items and if relative is disabled',
-              label: 'Unit',
-              name: 'unit',
-              required: false,
-              type: 'STRING'
-            }
-          ],
-          footerFn: (f) => f.relative ? f.value + ' %' : (f.unit ? f.value + ' ' + f.unit : f.value)
-        },
-        {
-          name: 'timeFilters',
-          label: 'Time',
-          configDescriptionParameters: [
-            {
-              advanced: false,
-              description: 'Amount of time that must have passed since the last value has been persisted',
-              label: 'Value',
-              name: 'value',
-              required: true,
-              type: 'DECIMAL'
-            },
-            {
-              advanced: false,
-              description: 'Time unit (defaults to seconds)',
-              label: 'Unit',
-              limitToOptions: true,
-              multiple: false,
-              name: 'unit',
-              options: [
-                { label: 'seconds', value: 's' },
-                { label: 'minutes', value: 'm' },
-                { label: 'hours', value: 'h' },
-                { label: 'days', value: 'd' }
-              ],
-              required: false,
-              type: 'STRING'
-            }
-          ],
-          footerFn: (f) => f.value + ' ' + (f.unit || 's')
-        },
-        {
-          name: 'equalsFilters',
-          label: 'Equals/Not Equals',
-          configDescriptionParameters: [
-            {
-              advanced: false,
-              description: 'Enter values separated by comma (use point <code>.</code> as decimal point), e.g. <code>one, two, three</code>, to be persisted',
-              label: 'Values',
-              name: 'values',
-              required: true,
-              type: ''
-            },
-            filterInvertedParameter
-          ],
-          footerFn: (f) => (f.inverted === true ? 'not ' : '') + 'equals ' + f.values.join(', ')
-        },
-        {
-          name: 'includeFilters',
-          label: 'Include/Exclude',
-          configDescriptionParameters: [
-            {
-              advanced: false,
-              description: 'Lower bound of the range of values to be persisted',
-              label: 'Lower Bound',
-              name: 'lower',
-              required: true,
-              type: 'DECIMAL'
-            },
-            {
-              advanced: false,
-              description: 'Upper bound of the range of values to be persisted',
-              label: 'Upper Bound',
-              name: 'upper',
-              required: true,
-              type: 'DECIMAL'
-            },
-            {
-              advanced: false,
-              description: 'Unit of the given bounds, only used for UoM Items',
-              label: 'Unit',
-              name: 'unit',
-              required: false,
-              type: 'STRING'
-            },
-            filterInvertedParameter
-          ],
-          footerFn: (f) => (f.inverted === true ? ']' : '[') + f.lower + ';' + f.upper + (f.inverted === true ? '[' : ']' + (f.unit ? ' ' + f.unit : ''))
-        }
-      ],
       notEditableMgs: 'This persistence configuration is not editable because it has been provisioned from a file.'
     }
   },
   computed: {
-    isEditable () {
+    editable () {
       return this.newPersistence || (this.persistence && this.persistence.editable === true)
     },
+    pageTitle () {
+      if (this.newPersistence) return 'Create new persistence configuration'
+      if (!this.ready) return ''
+      if (!this.editable) return `${this.serviceId} persistence configuration details`
+      return `Edit ${this.serviceId} persistence configuration`
+    },
     strategies () {
-      return this.predefinedStrategies.concat(this.persistence.cronStrategies.map(cs => cs.name))
+      return this.PredefinedStrategies.concat(this.persistence.cronStrategies.map(cs => cs.name))
     },
     filters () {
       let names = []
-      for (let i = 0; i < this.filterTypes.length; i++) {
-        const filterTypeName = this.filterTypes[i].name
+      for (let i = 0; i < this.FilterTypes.length; i++) {
+        const filterTypeName = this.FilterTypes[i].name
         if (this.persistence[filterTypeName]) names = names.concat(this.persistence[filterTypeName].map((f) => f.name))
       }
       return names
@@ -397,8 +281,8 @@ export default {
   },
   watch: {
     persistence: {
-      handler: function (newPersistence, oldPersistence) {
-        if (!this.loading) { // ignore initial rule assignment
+      handler: function () {
+        if (!this.loading) { // ignore changes during loading
           this.dirty = !fastDeepEqual(this.persistence, this.savedPersistence)
         }
       },
@@ -440,8 +324,9 @@ export default {
           }
         ]
       }
-      // Dynamically add empty arrays for all filter types defined in the filterTypes object
-      this.filterTypes.forEach((ft) => { this.persistence[ft.name] = [] })
+      // Dynamically add empty arrays for all filter types defined in the FilterTypes object
+      this.FilterTypes.forEach((ft) => { this.persistence[ft.name] = [] })
+      this.savedPersistence = cloneDeep(this.persistence)
       this.ready = true
     },
     load () {
@@ -451,8 +336,8 @@ export default {
       this.$oh.api.get('/rest/persistence/' + this.serviceId).then((data) => {
         this.$set(this, 'persistence', data)
         this.savedPersistence = cloneDeep(this.persistence)
-        // Ensure arrays for all filter types defined in the filterTypes object are existent
-        this.filterTypes.forEach((ft) => {
+        // Ensure arrays for all filter types defined in the FilterTypes object are existent
+        this.FilterTypes.forEach((ft) => {
           if (!this.persistence[ft.name]) this.persistence[ft.name] = []
         })
         this.loading = false
@@ -468,7 +353,7 @@ export default {
       })
     },
     save (noToast) {
-      if (!this.isEditable) return
+      if (!this.editable) return
       if (this.currentTab === 'code') this.fromYaml()
 
       // Update the code tab
@@ -502,7 +387,7 @@ export default {
         'Delete persistence configuration',
         () => {
           this.$oh.api.delete('/rest/persistence/' + this.serviceId).then(() => {
-            this.$f7router.back(`/settings/addons/persistence-${this.serviceId}/config`, { force: true })
+            this.$f7router.back({ force: true })
           })
         }
       )
@@ -519,7 +404,7 @@ export default {
       }
     },
     editConfiguration (ev, index, configuration) {
-      if (!this.isEditable) return
+      if (!this.editable) return
       this.currentConfiguration = configuration
 
       const popup = {
@@ -550,7 +435,7 @@ export default {
       this.saveModule('configs', index, configuration)
     },
     editCronStrategy (ev, index, cronStrategy) {
-      if (!this.isEditable) return
+      if (!this.editable) return
       this.currentCronStrategy = cronStrategy
 
       const popup = {
@@ -572,7 +457,7 @@ export default {
     },
     saveCronStrategy (index, cronStrategy) {
       const idx = this.persistence.cronStrategies.findIndex((cs) => cs.name === cronStrategy.name)
-      if ((index === null && idx !== -1) || this.predefinedStrategies.includes(cronStrategy.name)) {
+      if ((index === null && idx !== -1) || this.PredefinedStrategies.includes(cronStrategy.name)) {
         this.$f7.dialog.alert('A (cron) strategy with the same name already exists!')
         return
       }
@@ -588,7 +473,7 @@ export default {
       this.deleteModule(ev, 'cronStrategies', index)
     },
     editFilter (ev, filterType, index, filter) {
-      if (!this.isEditable) return
+      if (!this.editable) return
       this.currentFilter = filter
 
       // Stringify values array from equals filter
@@ -650,7 +535,7 @@ export default {
     },
     deleteModule (ev, module, index) {
       let swipeoutElement = ev.target
-      if (!this.isEditable) return
+      if (!this.editable) return
       ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
         swipeoutElement = swipeoutElement.parentElement
@@ -671,19 +556,19 @@ export default {
         cronStrategies: this.persistence.cronStrategies,
         defaultStrategies: this.persistence.defaults
       }
-      this.filterTypes.forEach((ft) => {
+      this.FilterTypes.forEach((ft) => {
         toCode[ft.name] = this.persistence[ft.name]
       })
       this.persistenceYaml = YAML.stringify(toCode)
     },
     fromYaml () {
-      if (!this.isEditable) return false
+      if (!this.editable) return false
       try {
         const updatedPersistence = YAML.parse(this.persistenceYaml)
         this.$set(this.persistence, 'configs', updatedPersistence.configurations)
         this.$set(this.persistence, 'cronStrategies', updatedPersistence.cronStrategies)
         this.$set(this.persistence, 'defaults', updatedPersistence.defaultStrategies)
-        this.filterTypes.forEach((ft) => {
+        this.FilterTypes.forEach((ft) => {
           this.$set(this.persistence, ft.name, updatedPersistence[ft.name])
         })
         return true
@@ -703,6 +588,10 @@ export default {
         }
       }
     }
+  },
+  created () {
+    this.PredefinedStrategies = PredefinedStrategies
+    this.FilterTypes = FilterTypes
   }
 }
 </script>

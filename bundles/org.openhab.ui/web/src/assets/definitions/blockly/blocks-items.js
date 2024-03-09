@@ -58,7 +58,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_item'] = function (block) {
+  javascriptGenerator.forBlock['oh_item'] = function (block) {
     const itemName = block.fieldPicker.data[0]
     return [`'${itemName}'`, 0]
   }
@@ -78,7 +78,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_groupmembers'] = function (block) {
+  javascriptGenerator.forBlock['oh_groupmembers'] = function (block) {
     const groupName = javascriptGenerator.valueToCode(block, 'groupName', javascriptGenerator.ORDER_ATOMIC)
 
     if (isGraalJs) {
@@ -103,7 +103,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_taggeditems'] = function (block) {
+  javascriptGenerator.forBlock['oh_taggeditems'] = function (block) {
     let tagNames = javascriptGenerator.valueToCode(block, 'tagName', javascriptGenerator.ORDER_ATOMIC)
     tagNames = tagNames.split(',')
     let tags = ''
@@ -134,7 +134,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_getitem'] = function (block) {
+  javascriptGenerator.forBlock['oh_getitem'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return [`items.getItem(${itemName})`, 0]
@@ -157,7 +157,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_getitem_state'] = function (block) {
+  javascriptGenerator.forBlock['oh_getitem_state'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return [`items.getItem(${itemName}).state`, 0]
@@ -255,7 +255,7 @@ export default function (f7, isGraalJs) {
   * Provides all attributes from an item
   * Code part
   */
-  javascriptGenerator['oh_getitem_attribute'] = function (block) {
+  javascriptGenerator.forBlock['oh_getitem_attribute'] = function (block) {
     const theItem = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'item')
     let attributeName = block.getFieldValue('attributeName')

@@ -17,6 +17,8 @@ import defineListBlocks from './blocks-list.js'
 import defineUomBlocks from './blocks-uom.js'
 import defineMetaBlocks from './blocks-metadata.js'
 import defineMathBlocks from './blocks-math.js'
+import defineHttpBlocks from './blocks-http.js'
+import defineLogicBlocks from './blocks-logic.js'
 
 import { defineLibraries } from './libraries.js'
 
@@ -42,5 +44,7 @@ export default function (f7, libraryDefinitions, data, isGraalJs) {
   defineUomBlocks(f7, isGraalJs)
   defineMathBlocks(f7, isGraalJs)
   defineMetaBlocks(f7, isGraalJs)
+  defineHttpBlocks(f7, isGraalJs)
+  defineLogicBlocks(f7, isGraalJs)
   defineLibraries(libraryDefinitions)
 }
