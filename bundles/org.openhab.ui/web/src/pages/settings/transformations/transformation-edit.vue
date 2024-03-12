@@ -236,6 +236,7 @@ export default {
         'Delete Transformation',
         () => {
           this.$oh.api.delete('/rest/transformations/' + this.transformation.uid).then(() => {
+            this.dirty = false
             this.$f7router.back('/settings/transformations/', { force: true })
           })
         }

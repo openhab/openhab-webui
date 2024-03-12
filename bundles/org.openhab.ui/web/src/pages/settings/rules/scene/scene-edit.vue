@@ -373,6 +373,7 @@ export default {
         'Delete Scene',
         () => {
           this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
+            this.dirty = false
             this.$f7router.back('/settings/scenes/', { force: true })
           })
         }
@@ -441,7 +442,6 @@ export default {
       this.$set(this.rule, section, newSection)
     },
     buildActionModules () {
-      const currentItemNames = this.rule.actions.map((a) => a.configuration.itemName)
       const modulesToRemove = this.rule.actions.filter((a) => this.selectedItems.indexOf(a.configuration.itemName) < 0)
       if (modulesToRemove.length > 0) console.debug('Removing: ' + modulesToRemove.map((m) => m.configuration.itemName).join(', '))
       this.$set(this.rule, 'actions', this.rule.actions.filter((a) => this.selectedItems.indexOf(a.configuration.itemName) >= 0))
