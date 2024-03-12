@@ -387,6 +387,7 @@ export default {
         'Delete persistence configuration',
         () => {
           this.$oh.api.delete('/rest/persistence/' + this.serviceId).then(() => {
+            this.dirty = false
             this.$f7router.back({ force: true })
           })
         }

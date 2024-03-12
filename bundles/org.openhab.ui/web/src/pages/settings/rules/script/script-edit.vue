@@ -536,6 +536,7 @@ export default {
         'Delete ' + (this.isScriptRule ? 'Script' : 'Rule'),
         () => {
           this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
+            this.dirty = false
             this.$f7router.back('/settings/scripts/', { force: true })
           })
         }
