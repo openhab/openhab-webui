@@ -18,7 +18,7 @@
         </f7-nav-right>
       </f7-navbar>
       <f7-block v-if="ruleModule" class="no-margin no-padding">
-        <f7-col v-if="!isSceneModule && currentRuleModuleType" class="margin-top">
+        <f7-col v-if="!currentRuleModuleType" class="margin-top">
           <f7-list inline-labels no-hairlines-md class="no-margin">
             <f7-list-input type="text" :placeholder="moduleTitleSuggestion" :value="ruleModule.label" required
                            @input="ruleModule.label = $event.target.value" clear-button />
@@ -28,6 +28,7 @@
         </f7-col>
         <!-- <f7-block-footer class="no-margin padding-left"><small>Tip: leave fields blank to set automatically to the suggested name and description. <f7-link @click="ruleModule.label = null; ruleModule.description = null">Clear</f7-link></small></f7-block-footer> -->
 
+        <!-- module type picker -->
         <div v-if="ruleModule.new">
           <f7-block-title class="no-margin padding-horizontal margin-vertical" v-if="!advancedTypePicker" medium>
             {{ SectionLabels[currentSection][0] }}
@@ -46,7 +47,9 @@
           <condition-module-wizard v-else-if="!advancedTypePicker && currentSection === 'conditions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
           <action-module-wizard v-else-if="!advancedTypePicker && currentSection === 'actions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
         </div>
-        <f7-list v-if="!isSceneModule && ruleModule.type && (!ruleModule.new || advancedTypePicker)">
+
+        <!-- module configuration -->
+        <f7-list v-if="ruleModule.type && (!ruleModule.new || advancedTypePicker)">
           <f7-list-item :title="SectionLabels[currentSection][0]" ref="ruleModuleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
             <select name="ruleModuleType"
                     @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)">
@@ -59,7 +62,7 @@
             </select>
           </f7-list-item>
         </f7-list>
-        <f7-block-title v-if="!isSceneModule && ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">
+        <f7-block-title v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">
           Configuration
         </f7-block-title>
         <f7-col v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)">
@@ -100,7 +103,7 @@ export default {
     ActionModuleWizard,
     ConfigSheet
   },
-  props: ['rule', 'ruleModule', 'ruleModuleType', 'moduleTypes', 'currentSection', 'isSceneModule'],
+  props: ['rule', 'ruleModule', 'ruleModuleType', 'moduleTypes', 'currentSection'],
   data () {
     return {
       currentRuleModuleType: this.ruleModuleType,
