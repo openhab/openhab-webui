@@ -65,6 +65,8 @@
             </f7-button>
           </f7-segmented>
         </div>
+
+        <!-- skeleton for not ready -->
         <f7-list v-if="!ready" contacts-list class="col inbox-list">
           <f7-list-group>
             <f7-list-item
@@ -77,6 +79,7 @@
               footer="binding:thingUID" />
           </f7-list-group>
         </f7-list>
+
         <f7-list v-else class="searchbar-found col" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(inboxWithInitial, initial) in indexedInbox" :key="initial">
             <f7-list-item v-if="inboxWithInitial.length" :title="initial" group-title />
@@ -105,9 +108,11 @@
         </f7-list>
       </f7-col>
     </f7-block>
+
     <f7-block v-if="ready && inboxCount === 0" class="block-narrow">
       <empty-state-placeholder icon="tray" title="inbox.title" text="inbox.text" />
     </f7-block>
+
     <f7-fab v-show="!showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="/settings/things/add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
