@@ -8,7 +8,7 @@
               <f7-list-input v-if="createMode" label="Thing ID" type="text" placeholder="Required" :value="thing.ID"
                              @input="changeUID" info="Note: cannot be changed after the creation"
                              required validate pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only" />
-              <f7-list-input v-else label="Thing UID" type="text" :input="false" disabled>
+              <f7-list-input label="Thing UID" type="text" :input="false" disabled>
                 <span slot="input">
                   {{ thing.UID }}
                   <clipboard-icon v-if="thing.UID && ready" :value="thing.UID" tooltip="Copy UID" style="pointer-events: initial !important" />
@@ -62,7 +62,7 @@ export default {
         : [this.thing.thingTypeUID, this.thing.ID].join(':')
     },
     changeUID (event) {
-      this.thing.ID = event.target.value
+      this.$set(this.thing, 'ID', event.target.value)
       if (this.createMode) this.thing.UID = this.computedThingUid()
     },
     updateBridge (value) {
