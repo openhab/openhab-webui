@@ -567,12 +567,6 @@ export default {
         this.$f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + mod.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
       })
     },
-    updateScript (value) {
-      if (this.isEditable) this.currentModule.configuration.script = value
-    },
-    updateCronExpression (value) {
-      this.currentModule.configuration.cronExpression = value
-    },
     toYaml () {
       this.ruleYaml = YAML.stringify({
         configuration: this.rule.configuration,
