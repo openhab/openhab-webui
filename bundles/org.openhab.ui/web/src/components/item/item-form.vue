@@ -42,8 +42,8 @@
                        type="text"
                        :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : ''"
                        :disabled="!editable"
-                       :value="getStateDescription()"
-                       @input="item.stateDescriptionPattern = $event.target.value"
+                       :value="stateDescriptionPattern"
+                       @input="stateDescriptionPattern = $event.target.value"
                        :clear-button="editable" />
 
         <!-- Group Item Form -->
@@ -175,6 +175,15 @@ export default {
       set (newCategory) {
         this.$set(this.item, 'category', newCategory)
       }
+    },
+    stateDescriptionPattern: {
+      get () {
+        if (this.item.stateDescriptionPattern) return this.item.stateDescriptionPattern
+        return this.item.metadata?.stateDescription?.config.pattern || '%.0f %unit%'
+      },
+      set (newPattern) {
+        this.$set(this.item, 'stateDescriptionPattern', newPattern)
+      }
     }
   },
   methods: {
@@ -199,9 +208,6 @@ export default {
         this.$set(this.item, 'type', 'Number:' + this.oldItemDimension)
         this.$set(this.item, 'unit', this.oldItemUnit)
       }
-    },
-    getStateDescription () {
-      return this.item.stateDescriptionPattern ? this.item.stateDescriptionPattern : '%.0f %unit%'
     },
     initializeAutocompleteUnit () {
       if (this.hideType) return
