@@ -1,18 +1,18 @@
 <template>
   <div class="group-form no-padding">
     <!-- Type -->
-    <f7-list-item v-if="item.type === 'Group'" :disabled="!editable" title="Members Base Type" class="aligned-smart-select" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item v-if="item.type === 'Group'" :disabled="!editable" :key="'type-' + groupType" title="Members Base Type" class="aligned-smart-select" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-basetype" @change="groupType = $event.target.value">
-        <option v-for="type in types.GroupTypes" :key="type" :value="type" :selected="item.groupType ? type === item.groupType : false">
+        <option v-for="type in types.GroupTypes" :key="type" :value="type" :selected="type === groupType">
           {{ type }}
         </option>
       </select>
     </f7-list-item>
     <!-- Dimension -->
-    <f7-list-item v-if="dimensions.length && item.groupType && item.groupType.startsWith('Number')" :disabled="!editable" title="Dimension" class="aligned-smart-select" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item v-if="dimensions.length && groupType && groupType === 'Number'" :disabled="!editable" :key="'dimension-' + groupDimension" title="Dimension" class="aligned-smart-select" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-dimension" @change="groupDimension = $event.target.value">
-        <option key="" value="Number" :selected="item.type === 'Number'" />
-        <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="'Number:' + d.name === item.groupType">
+        <option key="" value="Number" :selected="groupType === 'Number'" />
+        <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="d.name === groupDimension">
           {{ d.label }}
         </option>
       </select>
@@ -63,7 +63,8 @@ export default {
     return {
       types,
       groupUnitAutocomplete: null,
-      oldGroupDimension: '',
+      oldGroupType: !this.createMode ? this.item.groupType?.split(':')[0] : '',
+      oldGroupDimension: (!this.createMode && this.item.groupType?.split(':').length > 1) ? this.item.groupType.split(':')[1] : '',
       oldGroupUnit: ''
     }
   },
@@ -83,9 +84,6 @@ export default {
       set (newType) {
         const previousAggregationFunctions = this.aggregationFunctions
         this.$set(this.item, 'groupType', '')
-        if (!this.createMode) {
-          this.oldGroupDimension = ''
-        }
         this.$nextTick(() => {
           if (newType !== 'None') {
             this.$set(this.item, 'groupType', newType)
@@ -102,9 +100,6 @@ export default {
         return parts && parts.length > 1 ? parts[1] : ''
       },
       set (newDimension) {
-        if (!this.createMode) {
-          this.oldGroupDimension = this.groupDimension
-        }
         if (!newDimension) {
           this.groupType = 'Number'
           return
@@ -120,9 +115,6 @@ export default {
         return this.unit
       },
       set (newUnit) {
-        if (!this.createMode) {
-          this.oldGroupUnit = this.unit
-        }
         this.$set(this.item, 'unit', newUnit)
       }
     },
@@ -176,21 +168,23 @@ export default {
     }
   },
   methods: {
+    typeChanged () {
+      if (!this.oldGroupType) return false
+      return this.oldGroupType !== this.groupType
+    },
     dimensionChanged () {
-      if (!this.oldGroupDimension) {
-        return false
-      }
+      if (!this.oldGroupDimension) return false
       return this.oldGroupDimension !== this.dimension
     },
     unitChanged () {
       return this.oldGroupUnit && this.item.unit && this.oldGroupUnit !== this.item.unit
     },
-    revertDimensionChange () {
+    revertChange () {
       if (!this.oldGroupDimension) {
-        this.groupType = 'Number'
+        this.groupType = this.oldGroupType
         this.$set(this.item, 'unit', '')
       } else {
-        this.groupType = 'Number:' + this.oldGroupDimension
+        this.groupType = this.oldGroupType + ':' + this.oldGroupDimension
         this.$set(this.item, 'unit', this.oldGroupUnit)
       }
     },
