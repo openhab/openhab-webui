@@ -29,8 +29,8 @@
                    label="State Description Pattern"
                    type="text"
                    :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : ''"
-                   :value="getStateDescription()"
-                   @input="item.stateDescriptionPattern = $event.target.value" :clear-button:="editable" />
+                   :value="stateDescriptionPattern"
+                   @input="stateDescriptionPattern = $event.target.value" :clear-button:="editable" />
     <!-- Aggregation Functions -->
     <f7-list-item v-if="aggregationFunctions" :disabled="!editable" title="Aggregation Function" class="aligned-smart-select" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
       <select name="select-function" @change="groupFunctionKey = $event.target.value">
@@ -118,6 +118,15 @@ export default {
         this.$set(this.item, 'unit', newUnit)
       }
     },
+    stateDescriptionPattern: {
+      get () {
+        if (this.item.stateDescriptionPattern) return this.item.stateDescriptionPattern
+        return this.item.metadata?.stateDescription?.config.pattern || '%.0f %unit%'
+      },
+      set (newPattern) {
+        this.$set(this.item, 'stateDescriptionPattern', newPattern)
+      }
+    },
     groupFunctionKey: {
       get () {
         return this.item.functionKey
@@ -187,9 +196,6 @@ export default {
         this.groupType = this.oldGroupType + ':' + this.oldGroupDimension
         this.$set(this.item, 'unit', this.oldGroupUnit)
       }
-    },
-    getStateDescription () {
-      return this.item.stateDescriptionPattern ? this.item.stateDescriptionPattern : '%.0f %unit%'
     },
     initializeAutocompleteGroupUnit () {
       const self = this

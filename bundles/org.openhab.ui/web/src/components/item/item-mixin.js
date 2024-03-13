@@ -73,11 +73,12 @@ export default {
             config: {}
           }
           return this.$oh.api.put('/rest/items/' + item.name + '/metadata/unit', metadata)
+        } else {
+          return Promise.resolve()
         }
-        return Promise.resolve()
       }).then(() => {
         // Save state description if Item is an UoM Item and if state description changed from the default value
-        if (this.createMode && (item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && stateDescriptionPattern) {
+        if ((item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && stateDescriptionPattern) {
           if (stateDescriptionPattern !== '%.0f %unit%') {
             const metadata = {
               value: ' ',
@@ -87,8 +88,9 @@ export default {
             }
             return this.$oh.api.put('/rest/items/' + item.name + '/metadata/stateDescription', metadata)
           }
+        } else {
+          return Promise.resolve()
         }
-        return Promise.resolve()
       }).catch((err) => {
         return Promise.reject(err)
       })
