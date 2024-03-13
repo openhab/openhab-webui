@@ -111,8 +111,9 @@ export default {
       unitAutocomplete: null,
       categoryAutocomplete: null,
       nameErrorMessage: '',
+      oldItemType: !this.createMode ? this.item.type.split(':')[0] : '',
       oldItemDimension: (!this.createMode && this.item.type.split(':').length > 1) ? this.item.type.split(':')[1] : '',
-      oldItemUnit: !this.createMode ? (this.unit || '') : ''
+      oldItemUnit: !this.createMode ? (this.item.unitSymbol || '') : ''
     }
   },
   watch: {
@@ -132,9 +133,6 @@ export default {
         return this.item.type.split(':')[0]
       },
       set (newType) {
-        if (!this.createMode) {
-          this.oldItemDimension = this.itemDimension
-        }
         this.$set(this.item, 'type', newType)
       }
     },
@@ -144,9 +142,6 @@ export default {
         return parts.length > 1 ? parts[1] : ''
       },
       set (newDimension) {
-        if (!this.createMode) {
-          this.oldItemDimension = this.itemDimension
-        }
         if (!newDimension) {
           this.$set(this.item, 'type', 'Number')
           return
@@ -162,9 +157,6 @@ export default {
         return this.unit
       },
       set (newUnit) {
-        if (!this.createMode) {
-          this.oldItemUnit = this.unit
-        }
         this.$set(this.item, 'unit', newUnit)
       }
     },
@@ -178,6 +170,11 @@ export default {
     }
   },
   methods: {
+    typeChanged () {
+      if (this.$refs.groupForm && this.$refs.groupForm.typeChanged()) return true
+      if (!this.oldItemType) return false
+      return this.oldItemType !== this.itemType
+    },
     dimensionChanged () {
       if (this.$refs.groupForm && this.$refs.groupForm.dimensionChanged()) return true
       if (!this.oldItemDimension) return false
@@ -187,16 +184,16 @@ export default {
       if (this.$refs.groupForm && this.$refs.groupForm.unitChanged()) return true
       return this.oldItemUnit && this.item.unit && this.oldItemUnit !== this.item.unit
     },
-    revertDimensionChange () {
+    revertChange () {
       if (this.itemType === 'Group') {
-        this.$refs.groupForm.revertDimensionChange()
+        this.$refs.groupForm.revertChange()
         return
       }
       if (!this.oldItemDimension) {
-        this.$set(this.item, 'type', 'Number')
+        this.$set(this.item, 'type', this.oldItemType)
         this.$set(this.item, 'unit', '')
       } else {
-        this.$set(this.item, 'type', 'Number:' + this.oldItemDimension)
+        this.$set(this.item, 'type', this.oldItemType + ':' + this.oldItemDimension)
         this.$set(this.item, 'unit', this.oldItemUnit)
       }
     },
