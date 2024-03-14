@@ -103,8 +103,19 @@ export default {
       return this.context.component.slots.tooltip.map((c) => OhChartTooltip.get(c, this.startTime, this.endTime, this, this.$device))
     },
     visualMap () {
-      if (!this.context.component.slots || !this.context.component.slots.visualMap) return undefined
-      return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(c, this.startTime, this.endTime, this, this.$device))
+      if (!this.context.component.slots) return undefined
+      if (this.context.component.slots.visualMap) {
+        return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(c, this.startTime, this.endTime, this, this.$device))
+      } else if (JSON.stringify(this.context.component.slots.series).includes('heatmap')) { // heatmap needs a visualMap, therefore fall back to a default
+        const config = {
+          calculable: true,
+          presetPalette: 'bluered',
+          show: false,
+          type: 'continuous'
+        }
+        return OhChartVisualMap.get({ config }, this.startTime, this.endTime, this, this.$device)
+      }
+      return undefined
     },
     dataZoom () {
       if (!this.context.component.slots || !this.context.component.slots.dataZoom) return undefined

@@ -1,6 +1,6 @@
 <template>
   <div class="network-fit">
-    <chart :options="finalOptions" :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize />
+    <chart :option="finalOptions" :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize />
   </div>
 </template>
 
@@ -22,10 +22,13 @@
 <script>
 
 // import ECharts modules manually to reduce bundle size
-import 'echarts/lib/chart/graph'
-import 'echarts/lib/component/tooltip'
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { GraphChart } from 'echarts/charts'
+import { ToolboxComponent } from 'echarts/components'
+import VChart from 'vue-echarts'
 
-import ECharts from 'vue-echarts/components/ECharts'
+use([CanvasRenderer, GraphChart, ToolboxComponent])
 
 import ThingStatus from '@/components/thing/thing-status-mixin'
 
@@ -33,7 +36,7 @@ export default {
   mixins: [ThingStatus],
   props: ['bridgeUID'],
   components: {
-    'chart': ECharts
+    'chart': VChart
   },
   computed: {
     finalOptions () {
@@ -41,7 +44,8 @@ export default {
         tooltip: {
           formatter: '{b}: {c}',
           confine: true,
-          position: [10, 10]
+          x: 10,
+          y: 10
         },
         backgroundColor: (this.$f7.data.themeOptions.dark === 'dark') ? '#121212' : undefined,
         series: this.series
@@ -76,7 +80,6 @@ export default {
         //   color: 'blue'
         // },
         roam: true,
-        focusNodeAdjacency: true,
         lineStyle: {
           normal: {
             width: 1,
@@ -84,7 +87,8 @@ export default {
             opacity: 0.7
           },
           emphasis: {
-            width: 6
+            width: 6,
+            focus: 'adjacency'
           }
         },
         symbolSize: 28,
