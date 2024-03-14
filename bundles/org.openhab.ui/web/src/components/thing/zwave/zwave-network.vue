@@ -1,6 +1,6 @@
 <template>
   <div class="network-fit">
-    <chart :options="finalOptions" :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize />
+    <chart :option="finalOptions" :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize />
   </div>
 </template>
 
@@ -22,8 +22,6 @@
 <script>
 
 // import ECharts modules manually to reduce bundle size
-import 'echarts/lib/component/tooltip'
-
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { GraphChart } from 'echarts/charts'
@@ -46,7 +44,8 @@ export default {
         tooltip: {
           formatter: '{b}: {c}',
           confine: true,
-          position: [10, 10]
+          x: 10,
+          y: 10
         },
         backgroundColor: (this.$f7.data.themeOptions.dark === 'dark') ? '#121212' : undefined,
         series: this.series
@@ -81,7 +80,6 @@ export default {
         //   color: 'blue'
         // },
         roam: true,
-        focusNodeAdjacency: true,
         lineStyle: {
           normal: {
             width: 1,
@@ -89,7 +87,8 @@ export default {
             opacity: 0.7
           },
           emphasis: {
-            width: 6
+            width: 6,
+            focus: 'adjacency'
           }
         },
         symbolSize: 28,
