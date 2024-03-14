@@ -46,13 +46,13 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart } from 'echarts/charts'
 import {
-  TitleComponent, LegendComponent, LegendScrollComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent,
+  TitleComponent, LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent,
   DataZoomComponent, MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent
 } from 'echarts/components'
 import VChart from 'vue-echarts'
 
 use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, TitleComponent,
-  LegendComponent, LegendScrollComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
+  LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
   MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent])
 
 export default {
