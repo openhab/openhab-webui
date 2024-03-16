@@ -156,7 +156,7 @@ export default {
     loadInbox () {
       if (this.loading) return
       this.loading = true
-      this.$oh.api.get('/rest/inbox').then((data) => {
+      this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => {
         this.loading = false
         this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.bindingId)
         const searchbar = this.$refs.searchbar.$el.f7Searchbar
