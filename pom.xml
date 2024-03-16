@@ -63,16 +63,14 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <oh.java.version>17</oh.java.version>
-    <maven.compiler.source>${oh.java.version}</maven.compiler.source>
-    <maven.compiler.target>${oh.java.version}</maven.compiler.target>
-    <maven.compiler.compilerVersion>${oh.java.version}</maven.compiler.compilerVersion>
+    <maven.compiler.release>${oh.java.version}</maven.compiler.release>
 
     <bnd.version>7.0.0</bnd.version>
     <eea.version>2.3.0</eea.version>
     <jackson.version>2.16.0</jackson.version>
     <karaf.version>4.4.5</karaf.version>
     <ohc.version>4.2.0-SNAPSHOT</ohc.version>
-    <sat.version>0.15.0</sat.version>
+    <sat.version>0.16.0</sat.version>
     <spotless.version>2.38.0</spotless.version>
     <!-- Eclipse Java formatter version 4.26+ does not check test files -->
     <spotless.eclipse.version>4.25</spotless.eclipse.version>
@@ -266,7 +264,7 @@ Import-Package: \\
             <dependency>
               <groupId>org.eclipse.jdt</groupId>
               <artifactId>ecj</artifactId>
-              <version>3.30.0</version>
+              <version>3.36.0</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -592,7 +590,7 @@ Import-Package: \\
             <configuration>
               <rules>
                 <requireJavaVersion>
-                  <version>[17.0,18.0)</version>
+                  <version>[17.0,18.0),[21.0,22.0)</version>
                 </requireJavaVersion>
               </rules>
             </configuration>
@@ -714,6 +712,13 @@ Import-Package: \\
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>j21</id>
+      <properties>
+        <oh.java.version>21</oh.java.version>
+        <maven.compiler.release>${oh.java.version}</maven.compiler.release>
+      </properties>
     </profile>
   </profiles>
 
