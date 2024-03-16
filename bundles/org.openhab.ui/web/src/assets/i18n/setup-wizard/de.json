@@ -5,7 +5,7 @@
   "setupwizard.beginSetup": "Setup starten",
   "setupwizard.skipSetup": "Überspringe Setup",
   "setupwizard.skipSetup.confirm.title": "Überspringe Setup",
-  "setupwizard.skipSetup.confirm.message": "Bist Du sicher? Der Setupassistent spart Dir Zeit indem einige grundlegende Einstellungen gemacht werden. Du solltest nur überspringen wählen, wenn Du Dir absolut sicher bist.",
+  "setupwizard.skipSetup.confirm.message": "Bist Du sicher? Der Setupassistent spart Dir Zeit, indem einige grundlegende Einstellungen gemacht werden. Du solltest nur überspringen wählen, wenn Du Dir absolut sicher bist.",
   "setupwizard.location.title": "Standort festlegen",
   "setupwizard.location.header1": "Möchtest Du Deinen eigenen Standort teilen?",
   "setupwizard.location.header2": "Standort teilen ist hilfreich bei der Ermittlung positionsabhängiger Informationen wie Sonnenauf-/untergang oder Wetterdaten.",
@@ -20,8 +20,8 @@
   "setupwizard.location.configureLater": "Später in den Einstellungen konfigurieren",
   "setupwizard.addons.title": "Installiere Add-ons",
   "setupwizard.addons.header1": "Die meisten Funktionalitäten von openHAB werden über Add-ons bereitgestellt.",
-  "setupwizard.addons.header2": "Wähle aus, welche Add-Ons du jetzt installieren möchtest.",
-  "setupwizard.addons.header3": "Eine Empfehlung von Add-Ons wurde vorausgewählt.",
+  "setupwizard.addons.header2": "Wähle aus, welche Add-ons du jetzt installieren möchtest.",
+  "setupwizard.addons.header3": "Eine Empfehlung von Add-ons wurde vorausgewählt.",
   "setupwizard.addons.browseAddonsOnWebsite": "Informiere Dich über verfügbare Add-ons auf openhab.org",
   "setupwizard.addons.selectAddons": "Wähle zu installierende Add-ons",
   "setupwizard.addons.selectAddons.placeholder": "Versuche: astro, mqtt, hue, knx...",
@@ -33,6 +33,6 @@
   "setupwizard.addons.progress": "{current} von {total}",
   "setupwizard.addons.pleaseWait": "Bitte warten ...",
   "setupwizard.addons.waitMessage": "Es kann einen Moment dauern, bis alle ausgewählten Add-ons installiert sind.",
-  "setupwizard.welcome.title": "Wilkommen bei openHAB!",
+  "setupwizard.welcome.title": "Willkommen bei openHAB!",
   "setupwizard.welcome.getStarted": "Los geht's"
 }
