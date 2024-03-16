@@ -78,18 +78,58 @@
         </f7-list>
       </f7-col>
     </f7-row>
+
+    <f7-row v-if="showDialogOptions">
+      <f7-col>
+        <f7-block-title v-t="'about.dialog'" />
+        <f7-list>
+          <f7-list-item>
+            <span v-t="'about.dialog.enable'" />
+            <f7-toggle :checked="dialog === 'true'" @toggle:change="setDialog" />
+          </f7-list-item>
+          <f7-list-item>
+            <span v-t="'about.dialog.id'" />
+            <f7-input type="button" :value="identifier" />
+          </f7-list-item>
+          <f7-list-item class="title-fixed" :title="$t('about.dialog.keyword') + ': ' + selectedWakeword">
+            <f7-button type="button" small @click="openDialogWakeword" v-t="'about.dialog.keyword.choose'" />
+            <input style="display: none;" ref="wakewordInput" type="file" accept=".rpw" @input="setDialogWakeword">
+            <f7-button v-if="!!selectedWakeword.length" type="button" small @click="cleanDialogWakeword"
+                       v-t="'about.dialog.keyword.remove'" />
+          </f7-list-item>
+          <f7-list-item :title="$t('about.dialog.keyword.threshold')">
+            <f7-input class="input-right" type="number" min="0" max="1" step="0.01" :value="keywordThreshold" @blur="setKeywordThreshold" />
+          </f7-list-item>
+          <f7-list-item :title="$t('about.dialog.keyword.minScores')">
+            <f7-input class="input-right" type="number" min="0" max="30" step="1" :value="keywordMinScores" @blur="setKeywordMinScores" />
+          </f7-list-item>
+          <item-picker :title="$t('about.dialog.listeningItem')" :multiple="false" :value="listeningItem"
+                       @input="setDialogListeningItem" />
+          <item-picker :title="$t('about.dialog.locationItem')" :multiple="false" :value="locationItem"
+                       @input="setDialogLocationItem" />
+        </f7-list>
+      </f7-col>
+    </f7-row>
   </f7-block>
 </template>
 <script>
 import { loadLocaleMessages } from '@/js/i18n'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
-
+import { wakewordStorage } from '../js/voice/wakeword-storage'
 export default {
   components: {
     ItemPicker
   },
   i18n: {
     messages: loadLocaleMessages(require.context('@/assets/i18n/theme-switcher'))
+  },
+  data () {
+    return {
+      selectedWakeword: ''
+    }
+  },
+  created () {
+    wakewordStorage.getFile().then(file => { this.selectedWakeword = file ? file.name : '' })
   },
   methods: {
     switchTheme (theme) {
@@ -137,6 +177,55 @@ export default {
     setCommandItem (value) {
       localStorage.setItem('openhab.ui:commandItem', value)
       setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+    },
+    setDialog (value) {
+      localStorage.setItem('openhab.ui:dialog.enabled', value)
+      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+    },
+    setDialogListeningItem (value) {
+      localStorage.setItem('openhab.ui:dialog.listeningItem', value)
+      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+    },
+    setDialogLocationItem (value) {
+      localStorage.setItem('openhab.ui:dialog.locationItem', value)
+      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+    },
+    openDialogWakeword () {
+      const fileInput = this.$refs['wakewordInput']
+      if (fileInput) {
+        fileInput.click()
+      }
+    },
+    setDialogWakeword (event) {
+      const file = event.target.files[0]
+      wakewordStorage.storeFile(file)
+        .then(() => {
+          console.log('Wakeword stored')
+          setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+        })
+        .catch(err => {
+          console.error(err)
+        })
+      this.selectedWakeword = file.name
+    },
+    setKeywordThreshold (event) {
+      localStorage.setItem('openhab.ui:dialog.keyword.threshold', event.target.value)
+      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+    },
+    setKeywordMinScores (event) {
+      localStorage.setItem('openhab.ui:dialog.keyword.scores', event.target.value)
+      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+    },
+    cleanDialogWakeword () {
+      wakewordStorage.clean()
+        .then(() => {
+          console.log('Wakeword removed')
+          setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+        })
+        .catch(err => {
+          console.error(err)
+        })
+      this.selectedWakeword = ''
     }
   },
   computed: {
@@ -169,6 +258,43 @@ export default {
     },
     commandItem () {
       return localStorage.getItem('openhab.ui:commandItem') || ''
+    },
+    showDialogOptions () {
+      const getUserMediaSupported = !!(window.navigator && window.navigator.mediaDevices && window.navigator.mediaDevices.getUserMedia)
+      return getUserMediaSupported &&
+        !!window.AudioContext &&
+        !!window.WebAssembly &&
+        !!window.Worklet &&
+        !!window.Worker &&
+        !!window.indexedDB
+    },
+    dialog () {
+      return localStorage.getItem('openhab.ui:dialog.enabled') || 'default'
+    },
+    identifier () {
+      const key = 'openhab.ui:dialog.id'
+      let id = localStorage.getItem(key)
+      if (!id) {
+        id = `ui-${Math.round(Math.random() * 100)}-${Math.round(Math.random() * 100)}`
+        localStorage.setItem(key, id)
+      }
+      return id
+    },
+    keywordThreshold () {
+      const value = localStorage.getItem('openhab.ui:dialog.keyword.threshold')
+      const numberValue = Number(value || '0.75')
+      return numberValue
+    },
+    keywordMinScores () {
+      const value = localStorage.getItem('openhab.ui:dialog.keyword.minScores')
+      const numberValue = Number(value || '5')
+      return numberValue
+    },
+    listeningItem () {
+      return localStorage.getItem('openhab.ui:dialog.listeningItem') || ''
+    },
+    locationItem () {
+      return localStorage.getItem('openhab.ui:dialog.locationItem') || ''
     }
   }
 }
@@ -256,5 +382,8 @@ export default {
 .nav-bars-picker-fill .demo-navbar:before,
 .nav-bars-picker-fill .demo-navbar:after
   background #fff
-
+.title-fixed .item-title
+  width: 200%
+.input-right input
+  text-align: right
 </style>
