@@ -1,5 +1,6 @@
 # openHAB Web Interface Add-ons
 
+
 <img align="right" width="220" src="./logo.svg" type="image/svg+xml"/>
 
 [![GitHub Actions Build Status](https://github.com/openhab/openhab-webui/actions/workflows/ci-build.yml/badge.svg?branch=main)](https://github.com/openhab/openhab-webui/actions/workflows/ci-build.yml)
