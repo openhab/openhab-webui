@@ -92,12 +92,10 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
             return ECollections.emptyEList();
         }
 
-        String snippet = getSnippet("buttongrid");
-
         boolean showHeaderRow = grid.getLabel() != null;
-        snippet = snippet.replace("%header_visibility_class%",
-                showHeaderRow ? "%visibility_class%" : "mdl-form__row--hidden");
-        snippet = snippet.replace("%header_row%", Boolean.valueOf(showHeaderRow).toString());
+        String snippet = (showHeaderRow ? getSnippet("header_row") : "") + getSnippet("buttongrid");
+
+        snippet = snippet.replace("%header_row%", showHeaderRow ? "true" : "");
 
         snippet = preprocessSnippet(snippet, w, true);
 
