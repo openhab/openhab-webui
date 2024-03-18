@@ -218,7 +218,7 @@ export default {
       }
     },
     inboxCount () {
-      return this.inbox.filter((e) => e.flag !== 'IGNORED').length
+      return this.inbox.length
     },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
@@ -244,7 +244,7 @@ export default {
       this.loadInbox()
     },
     loadInbox () {
-      this.$oh.api.get('/rest/inbox').then((data) => {
+      this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => {
         this.inbox = data
       })
     },

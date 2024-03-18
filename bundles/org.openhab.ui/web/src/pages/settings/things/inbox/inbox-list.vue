@@ -187,7 +187,7 @@ export default {
   methods: {
     load () {
       this.loading = true
-      this.$oh.api.get('/rest/inbox').then((data) => {
+      this.$oh.api.get('/rest/inbox?includeIgnored=true').then((data) => {
         this.inbox = data.sort((a, b) => a.label.localeCompare(b.label))
         this.initSearchbar = true
         this.loading = false
