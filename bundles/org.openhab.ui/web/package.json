@@ -78,7 +78,7 @@
     "nearley": "^2.20.1",
     "path-browserify": "^1.0.1",
     "pkce-challenge": "^4.1.0",
-    "qrcode": "^1.0.0",
+    "qrcode": "^1.5.3",
     "scope-css": "^1.2.1",
     "sprintf-js": "^1.1.2",
     "stream-browserify": "^3.0.0",
