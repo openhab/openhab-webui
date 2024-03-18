@@ -77,7 +77,7 @@
     "moo": "^0.5.2",
     "nearley": "^2.20.1",
     "path-browserify": "^1.0.1",
-    "pkce-challenge": "^2.1.0",
+    "pkce-challenge": "^4.1.0",
     "qrcode": "^1.0.0",
     "scope-css": "^1.2.1",
     "sprintf-js": "^1.1.2",
