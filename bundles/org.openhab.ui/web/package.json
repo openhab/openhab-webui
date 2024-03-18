@@ -73,7 +73,7 @@
     "jssip": "^3.10.1",
     "leaflet": "^1.9.4",
     "leaflet-providers": "^2.0.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "moo": "^0.5.1",
     "nearley": "^2.19.6",
     "path-browserify": "^1.0.1",
