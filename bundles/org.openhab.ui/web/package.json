@@ -82,7 +82,7 @@
     "scope-css": "^1.2.1",
     "stream-browserify": "^3.0.0",
     "template7": "^1.4.2",
-    "tern": "^0.23.0",
+    "tern": "^0.24.3",
     "v-clipboard": "^2.2.3",
     "video.js": "^7.10.2",
     "vue": "^2.6.12",
