@@ -80,7 +80,6 @@
     "pkce-challenge": "^4.1.0",
     "qrcode": "^1.5.3",
     "scope-css": "^1.2.1",
-    "sprintf-js": "^1.1.2",
     "stream-browserify": "^3.0.0",
     "template7": "^1.4.2",
     "tern": "^0.23.0",
