@@ -264,9 +264,12 @@ export default {
       }
 
       // checks
-      if (this.createMode && this.validateItemName(this.newItem.name) !== '') {
-        this.$f7.dialog.alert('Please correct the newly created item')
-        return
+      if (this.createMode) {
+        const errorMessage = this.validateItemName(this.newItem.name)
+        if (errorMessage !== '') {
+          this.$f7.dialog.alert('Please correct the item name. ' + errorMessage)
+          return
+        }
       }
       if (!link.itemName) {
         this.$f7.dialog.alert('Please configure the item to link')
