@@ -90,7 +90,7 @@
     "vue-codemirror": "^4.0.6",
     "vue-draggable-resizable": "^2.3.0",
     "vue-echarts": "^6.6.9",
-    "vue-fragment": "^1.5.1",
+    "vue-fragment": "^1.6.0",
     "vue-fullscreen": "^2.2.0",
     "vue-grid-layout": "^2.3.12",
     "vue-i18n": "^8.22.2",
