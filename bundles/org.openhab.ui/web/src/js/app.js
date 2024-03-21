@@ -56,7 +56,7 @@ import i18n from './i18n'
 import Trend from 'vuetrend'
 Vue.use(Trend)
 
-// Import Fulscreen Plugin
+// Import Fullscreen Plugin
 import fullscreen from 'vue-fullscreen'
 Vue.use(fullscreen)
 
