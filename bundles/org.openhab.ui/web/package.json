@@ -99,7 +99,7 @@
     "vue-round-slider": "^1.0.1",
     "vue2-leaflet": "^2.7.1",
     "vuetrend": "^0.3.4",
-    "vuex": "^3.5.1",
+    "vuex": "^3.6.2",
     "yaml": "^2.4.1"
   },
   "devDependencies": {
