@@ -180,7 +180,7 @@ module.exports = {
           }
         },
         generator: {
-          filename: 'images/[name].[ext]'
+          filename: 'images/[name][ext]'
         }
       },
       {
@@ -192,7 +192,7 @@ module.exports = {
           }
         },
         generator: {
-          filename: 'media/[name].[ext]'
+          filename: 'media/[name][ext]'
         }
       },
       {
@@ -204,7 +204,7 @@ module.exports = {
           }
         },
         generator: {
-          filename: 'fonts/[name].[ext]'
+          filename: 'fonts/[name][ext]'
         }
       },
       {
