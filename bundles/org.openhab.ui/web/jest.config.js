@@ -2,6 +2,7 @@ module.exports = {
   globals: {
     __DEV__: true
   },
+  testEnvironment: 'jest-environment-jsdom',
   // setupFilesAfterEnv: [
   //   '<rootDir>/test/jest/jest.setup.js'
   // ],
@@ -50,7 +51,7 @@ module.exports = {
     // '.*css$': '<rootDir>/test/jest/utils/stub.css'
   },
   transform: {
-    '.*\\.(vue)$': '<rootDir>/node_modules/vue-jest',
+    '.*\\.(vue)$': '@vue/vue2-jest',
     '.*\\.js$': 'babel-jest',
     '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
     '^.+\\.nearley$': 'jest-transform-nearley'
