@@ -267,7 +267,7 @@ export default {
       if (this.createMode) {
         const errorMessage = this.validateItemName(this.newItem.name)
         if (errorMessage !== '') {
-          this.$f7.dialog.alert('Please correct the item name. ' + errorMessage)
+          this.$f7.dialog.alert('Please correct the item name: ' + errorMessage)
           return
         }
       }
