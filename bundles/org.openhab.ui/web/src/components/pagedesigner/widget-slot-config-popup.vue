@@ -67,7 +67,7 @@ export default {
   methods: {
     switchTab (idx) {
       this.currentTab = undefined
-      this.$nextTick(() => { this.currentTab = idx }, 500)
+      this.$nextTick(() => { this.currentTab = idx })
     },
     widgetSlotConfigOpened () {
     },
